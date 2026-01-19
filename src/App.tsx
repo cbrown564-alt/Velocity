@@ -4,6 +4,7 @@ import { FileUp, Table, RotateCcw, X, CheckCircle2, Search, BarChart3, LayoutGri
 
 import { MOCK_DATASET } from './constants';
 import { DraggableVariable } from './features/dashboard/components/DraggableVariable';
+import { VirtualizedVariableList } from './features/dashboard/components/VirtualizedVariableList';
 import { DropZone } from './components/common/DropZone';
 import { DataTable } from './features/dashboard/components/DataTable';
 import { CollaboratorCursor } from './components/common/CollaboratorCursor';
@@ -342,19 +343,16 @@ export default function App() {
                 </div>
               </div>
 
-              <div className={`flex-1 p-3 custom-scrollbar ${draggingId ? 'overflow-visible' : 'overflow-y-auto'}`}>
-                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3 px-1">
-                  Survey Questions
+              <div className="flex-1 flex flex-col min-h-0">
+                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3 px-4 pt-3 shrink-0">
+                  Survey Questions ({filteredVariables.length})
                 </p>
-                <div className="space-y-1">
-                  {filteredVariables.map(variable => (
-                    <DraggableVariable
-                      key={variable.id}
-                      variable={variable as any}
-                      onRecode={handleRecodeClick as any}
-                      onClick={handleVariableClick}
-                    />
-                  ))}
+                <div className="flex-1 min-h-0 px-3">
+                  <VirtualizedVariableList
+                    variables={filteredVariables as any}
+                    onRecode={handleRecodeClick}
+                    onClick={handleVariableClick}
+                  />
                 </div>
               </div>
 

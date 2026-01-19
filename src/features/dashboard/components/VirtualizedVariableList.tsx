@@ -1,0 +1,105 @@
+/**
+ * VirtualizedVariableList
+ * 
+ * A virtualized list component for rendering 500+ variables efficiently.
+ * Uses react-window for virtualization with a custom ResizeObserver hook
+ * for responsive container sizing (avoiding react-virtualized-auto-sizer import issues).
+ */
+
+import React, { useRef, useState, useLayoutEffect, useCallback } from 'react';
+import { FixedSizeList as List, ListChildComponentProps } from 'react-window';
+import { DraggableVariable } from './DraggableVariable';
+import { Variable } from '../../../types';
+
+interface VirtualizedVariableListProps {
+    variables: Variable[];
+    onRecode: (variable: Variable) => void;
+    onClick: (variable: Variable) => void;
+}
+
+// Fixed height for each variable card (56px content + 8px gap)
+const ITEM_HEIGHT = 64;
+// Number of items to render outside visible area for smoother scrolling
+const OVERSCAN_COUNT = 5;
+
+/**
+ * Custom hook to measure container dimensions using ResizeObserver.
+ * This replaces react-virtualized-auto-sizer to avoid import issues.
+ */
+function useContainerSize(): [React.RefObject<HTMLDivElement | null>, { width: number; height: number }] {
+    const ref = useRef<HTMLDivElement>(null);
+    const [size, setSize] = useState({ width: 0, height: 0 });
+
+    useLayoutEffect(() => {
+        const element = ref.current;
+        if (!element) return;
+
+        const updateSize = () => {
+            const { clientWidth, clientHeight } = element;
+            setSize({ width: clientWidth, height: clientHeight });
+        };
+
+        // Initial measurement
+        updateSize();
+
+        // Observe resize
+        const resizeObserver = new ResizeObserver(updateSize);
+        resizeObserver.observe(element);
+
+        return () => {
+            resizeObserver.disconnect();
+        };
+    }, []);
+
+    return [ref, size];
+}
+
+export const VirtualizedVariableList: React.FC<VirtualizedVariableListProps> = ({
+    variables,
+    onRecode,
+    onClick
+}) => {
+    const [containerRef, { width, height }] = useContainerSize();
+
+    // Row renderer for react-window
+    const Row = useCallback(
+        ({ index, style }: ListChildComponentProps) => {
+            const variable = variables[index];
+
+            return (
+                <div style={{ ...style, paddingRight: 4, paddingBottom: 8 }}>
+                    <DraggableVariable
+                        variable={variable}
+                        onRecode={onRecode}
+                        onClick={onClick}
+                    />
+                </div>
+            );
+        },
+        [variables, onRecode, onClick]
+    );
+
+    if (variables.length === 0) {
+        return (
+            <div className="flex items-center justify-center h-32 text-gray-400 text-sm">
+                No variables found
+            </div>
+        );
+    }
+
+    return (
+        <div ref={containerRef} style={{ height: '100%', width: '100%' }}>
+            {height > 0 && width > 0 && (
+                <List
+                    height={height}
+                    width={width}
+                    itemCount={variables.length}
+                    itemSize={ITEM_HEIGHT}
+                    overscanCount={OVERSCAN_COUNT}
+                >
+                    {Row}
+                </List>
+            )}
+        </div>
+    );
+};

@@ -18,7 +18,7 @@
 - [x] Create `VariableStore` (Zustand) backed by DuckDB (`store/index.ts`)
 - [x] Build Variable List Component (`DraggableVariable.tsx`)
 - [x] Implement "Smart Icon" detection (Nominal/Ordinal/Scale)
-- [ ] Virtualized List Component (React-Window) for 500+ variables
+- [x] Virtualized List Component (React-Window) for 500+ variables
 
 ### Milestone 1.3: The Canvas (Crosstabs) (Week 3)
 *Goal: Drag-and-drop analysis*
