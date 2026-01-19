@@ -1,20 +1,50 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Velocity
 
-# Run and deploy your AI Studio app
+> **The Anti-SPSS.** A local-first, instant statistical environment for the modern web.
 
-This contains everything you need to run your app locally.
+Velocity is a browser-based research tool designed to replace legacy desktop software (SPSS, WinCross) with a fast, modern, and privacy-centric "Notion for Data."
 
-View your app in AI Studio: https://ai.studio/apps/drive/16PXTL0ddORjzqTDEUseOGLoDHOZoAIx6
+## 🚀 The Vision
 
-## Run Locally
+We are building a tool that spans three evolutionary phases:
 
-**Prerequisites:**  Node.js
+1.  **Velocity Core:** An instant `.SAV` viewer that runs entirely in the browser (DuckDB-Wasm).
+2.  **Strategic Workbench:** A commercial-grade analysis tool with weighting, nets, and editable PowerPoint export.
+3.  **Project Aletheia:** An academic environment for longitudinal research, powered by WebR and Pyodide.
 
+## 📚 Documentation
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+The project is heavily documented in the `docs/` folder. Start here:
+
+### 🔹 The Plan
+*   [`docs/tracker_00_implementation_status.md`](docs/tracker_00_implementation_status.md) - **Start Here.** The daily task tracker.
+*   [`docs/blue_01_unified_roadmap.md`](docs/blue_01_unified_roadmap.md) - The high-level phased roadmap.
+*   [`docs/blue_02_feature_matrix.md`](docs/blue_02_feature_matrix.md) - Comprehensive feature list (Keep/Reject/Delay).
+
+### 🔹 The Tech
+*   [`docs/arch_01_system_architecture.md`](docs/arch_01_system_architecture.md) - System design (React, Worker, DuckDB).
+*   [`docs/arch_02_data_model.md`](docs/arch_02_data_model.md) - Core TypeScript interfaces and data storage.
+*   [`docs/design_01_system.md`](docs/design_01_system.md) - "The Research Desk" design system & CSS tokens.
+*   [`docs/dec_01_stats_engine_r_vs_python.md`](docs/dec_01_stats_engine_r_vs_python.md) - Decision record on the stats engine.
+
+### 🔹 For Developers
+*   [`docs/dev_01_contributing.md`](docs/dev_01_contributing.md) - Setup guide and coding standards.
+*   [`docs/ref_00_glossary.md`](docs/ref_00_glossary.md) - Domain terminology.
+
+## 🛠️ Quick Start
+
+**Prerequisites:** Node.js v20+
+
+```bash
+# Clone
+git clone https://github.com/your-org/velocity.git
+cd velocity
+
+# Install
+npm install
+
+# Dev Mode (with Cross-Origin headers for Wasm)
+npm run dev
+```
+
+velocity is **Local-First software**. No data is ever uploaded to a server.

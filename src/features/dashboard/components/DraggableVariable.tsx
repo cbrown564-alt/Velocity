@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { GripVertical, Hash, Type, BarChart2, Wand2 } from 'lucide-react';
-import { Variable } from '../types';
+import { Variable } from '../../../types';
 
 interface DraggableVariableProps {
   variable: Variable;
@@ -16,12 +16,19 @@ export const DraggableVariable: React.FC<DraggableVariableProps> = ({
   onDragEnd,
   onRecode
 }) => {
-  // Helper to get icon based on type
+  // Helper to get icon based on type (supports both old and new type values)
   const getIcon = (type: Variable['type']) => {
     switch (type) {
-      case 'numeric': return <Hash size={14} className="text-slate-400" />;
-      case 'categorical': return <Type size={14} className="text-slate-400" />;
-      case 'ordinal': return <BarChart2 size={14} className="text-slate-400" />;
+      case 'numeric':
+      case 'scale':
+        return <Hash size={14} className="text-slate-400" />;
+      case 'categorical':
+      case 'nominal':
+        return <Type size={14} className="text-slate-400" />;
+      case 'ordinal':
+        return <BarChart2 size={14} className="text-slate-400" />;
+      default:
+        return <Type size={14} className="text-slate-400" />;
     }
   };
 
@@ -31,9 +38,9 @@ export const DraggableVariable: React.FC<DraggableVariableProps> = ({
       drag
       dragSnapToOrigin // Snaps back if not dropped in a valid zone (handled via logic)
       dragMomentum={false} // Gives a tighter, "software tool" feel rather than "physics toy"
-      whileDrag={{ 
-        scale: 1.05, 
-        rotate: 2, 
+      whileDrag={{
+        scale: 1.05,
+        rotate: 2,
         opacity: 0.9,
         backgroundColor: "white",
         boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
@@ -60,7 +67,7 @@ export const DraggableVariable: React.FC<DraggableVariableProps> = ({
 
       {/* Recode Action Button (Visible on Hover) */}
       {onRecode && (
-        <button 
+        <button
           onPointerDown={(e) => {
             e.stopPropagation(); // Prevent drag start
             onRecode(variable);

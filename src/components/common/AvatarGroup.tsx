@@ -1,12 +1,12 @@
 
 import React from 'react';
-import { Collaborator } from '../types';
+import { Collaborator } from '../../types';
 
 export const AvatarGroup: React.FC<{ users: Collaborator[] }> = ({ users }) => {
   return (
     <div className="flex items-center -space-x-2">
       {users.map((user) => (
-        <div 
+        <div
           key={user.id}
           className="w-8 h-8 rounded-full border-2 border-white bg-slate-100 flex items-center justify-center text-[10px] font-bold shadow-sm relative group cursor-help"
           style={{ backgroundColor: user.color, color: 'white' }}

@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Plus } from 'lucide-react';
-import { Variable } from '../types';
+import { Variable } from '../../types';
 
 interface DropZoneProps {
   id: string; // The DOM id used for collision detection
@@ -20,7 +20,7 @@ export const DropZone: React.FC<DropZoneProps> = ({
   currentVariable,
   onRemove,
 }) => {
-  
+
   if (currentVariable) {
     return (
       <motion.div
@@ -31,7 +31,7 @@ export const DropZone: React.FC<DropZoneProps> = ({
           ${type === 'column' ? 'min-w-[120px]' : 'w-full'}`}
       >
         <span className="text-sm font-medium text-indigo-700">{currentVariable.label}</span>
-        <button 
+        <button
           onClick={onRemove}
           className="ml-2 p-1 text-indigo-400 hover:text-indigo-700 hover:bg-indigo-100 rounded-full transition-colors"
         >
@@ -45,15 +45,15 @@ export const DropZone: React.FC<DropZoneProps> = ({
   }
 
   return (
-    <div 
+    <div
       id={id} // CRITICAL: This ID is read by document.elementFromPoint on dragEnd
       className={`relative flex items-center justify-center transition-all duration-200 rounded-lg border-2 border-dashed
-        ${active 
-          ? 'border-indigo-400 bg-indigo-50/50 text-indigo-600 scale-[1.01]' 
+        ${active
+          ? 'border-indigo-400 bg-indigo-50/50 text-indigo-600 scale-[1.01]'
           : 'border-gray-200 text-gray-400 hover:border-gray-300 hover:bg-gray-50'
         }
-        ${type === 'column' 
-          ? 'h-10 w-48' 
+        ${type === 'column'
+          ? 'h-10 w-48'
           : 'h-16 w-full'
         }
       `}
