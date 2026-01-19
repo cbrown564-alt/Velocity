@@ -86,9 +86,13 @@ async function loadSAV(buffer: ArrayBuffer): Promise<{ variables: any[]; rowCoun
     // 1. Generate ID (using name as unique identifier)
     const id = v.name;
 
-    // 2. Map Types (ReadStat 'numeric' -> 'scale', 'string' -> 'nominal')
-    // TODO: Improve heuristic for ordinal based on value labels or measure level if available
-    const type = v.type === 'numeric' ? 'scale' : 'nominal';
+    // 2. Map Types: Variables with value labels are categorical (nominal)
+    // SPSS encodes categorical variables as numeric with value labels
+    const hasValueLabels = v.valueLabelSetName &&
+      parsed.metadata.valueLabelSets[v.valueLabelSetName]?.length > 0;
+    const type = hasValueLabels
+      ? 'nominal'
+      : (v.type === 'numeric' ? 'scale' : 'nominal');
 
     // 3. Transform Value Labels
     let valueLabels: { value: number; label: string }[] = [];
@@ -155,9 +159,63 @@ async function loadSAV(buffer: ArrayBuffer): Promise<{ variables: any[]; rowCoun
   // Drop existing table first to ensure clean state
   await conn.query(`DROP TABLE IF EXISTS main`);
   console.log(`📊 [Worker] DEBUG: Inserting Arrow table into DuckDB...`);
-  await conn.insertArrowTable(table as any, { name: 'main', create: true });
-  console.log(`📊 [Worker] DEBUG: Arrow table inserted successfully`);
 
+  try {
+    await conn.insertArrowTable(table as any, { name: 'main', create: true });
+    console.log(`📊 [Worker] DEBUG: Arrow table inserted successfully`);
+
+    // Verify the table was actually created
+    const verifyResult = await conn.query(`SELECT COUNT(*) as cnt FROM main`);
+    const count = verifyResult.toArray()[0]?.cnt;
+    console.log(`📊 [Worker] DEBUG: Verification - Table 'main' has ${count} rows`);
+
+    if (count === undefined || count === 0) {
+      throw new Error('Table verification failed - no rows found after insertion');
+    }
+  } catch (insertError: any) {
+    console.error(`📊 [Worker] DEBUG: insertArrowTable failed, trying manual CREATE TABLE:`, insertError.message);
+
+    // Fallback: Create table manually using SQL
+    // First, build column definitions from metadata
+    const columnDefs = parsed.metadata.variables.map(v => {
+      const sqlType = v.type === 'numeric' ? 'DOUBLE' : 'VARCHAR';
+      return `"${v.name}" ${sqlType}`;
+    }).join(', ');
+
+    await conn.query(`CREATE TABLE main (${columnDefs})`);
+    console.log(`📊 [Worker] DEBUG: Created table schema manually`);
+
+    // Insert data row by row (less efficient but more reliable)
+    if (parsed.rows.length > 0) {
+      // Create prepared INSERT statement
+      const placeholders = parsed.metadata.variables.map(() => '?').join(', ');
+
+      // Batch the inserts
+      for (let batchStart = 0; batchStart < parsed.rows.length; batchStart += 1000) {
+        const batchEnd = Math.min(batchStart + 1000, parsed.rows.length);
+        const batchRows = parsed.rows.slice(batchStart, batchEnd);
+
+        // Build VALUES clause for batch
+        const valuesClause = batchRows.map(row => {
+          const values = row.map((val: any) => {
+            if (val === null || val === undefined) return 'NULL';
+            if (typeof val === 'string') return `'${val.replace(/'/g, "''")}'`;
+            return String(val);
+          }).join(', ');
+          return `(${values})`;
+        }).join(',\n');
+
+        const insertSql = `INSERT INTO main VALUES ${valuesClause}`;
+        await conn.query(insertSql);
+      }
+      console.log(`📊 [Worker] DEBUG: Inserted ${parsed.rows.length} rows via SQL fallback`);
+    }
+
+    // Verify again
+    const verifyResult = await conn.query(`SELECT COUNT(*) as cnt FROM main`);
+    const count = verifyResult.toArray()[0]?.cnt;
+    console.log(`📊 [Worker] DEBUG: Fallback verification - Table 'main' has ${count} rows`);
+  }
 
   const durationMs = performance.now() - start;
   console.log(`🦆 [Worker] Loaded SAV with ReadStat-WASM: ${parsed.metadata.rowCount} rows, ${variables.length} variables in ${durationMs.toFixed(2)}ms`);

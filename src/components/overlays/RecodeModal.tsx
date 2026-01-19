@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ArrowRight, Wand2, Save } from 'lucide-react';
 import { Variable } from '../../types';
-import { dbService } from '../../services/duckDb';
+import { useVelocityStore } from '../../store';
 
 interface RecodeModalProps {
   isOpen: boolean;
@@ -18,12 +18,17 @@ export const RecodeModal: React.FC<RecodeModalProps> = ({ isOpen, onClose, varia
   // Map: OriginalValue -> NewGroupValue
   const [mappings, setMappings] = useState<Record<string, string>>({});
 
+  // Get store actions for unified data access
+  const getUniqueValues = useVelocityStore(state => state.getUniqueValues);
+  const recodeVariable = useVelocityStore(state => state.recodeVariable);
+
   useEffect(() => {
     if (isOpen && variable) {
       const loadValues = async () => {
         setLoading(true);
         try {
-          const values = await dbService.getUniqueValues(variable.id);
+          // Use store action which routes through worker (or uses embedded metadata)
+          const values = await getUniqueValues(variable.id);
           setUniqueValues(values);
           // Default mapping is 1:1
           const initialMap: Record<string, string> = {};
@@ -38,7 +43,7 @@ export const RecodeModal: React.FC<RecodeModalProps> = ({ isOpen, onClose, varia
       };
       loadValues();
     }
-  }, [isOpen, variable]);
+  }, [isOpen, variable, getUniqueValues]);
 
   const handleMappingChange = (oldVal: string, newVal: string) => {
     setMappings(prev => ({ ...prev, [oldVal]: newVal }));
@@ -48,7 +53,8 @@ export const RecodeModal: React.FC<RecodeModalProps> = ({ isOpen, onClose, varia
     if (!variable) return;
     setLoading(true);
     try {
-      await dbService.recodeVariable(variable.id, newVarName, mappings);
+      // Use store action which routes through worker
+      await recodeVariable(variable.id, newVarName, mappings);
       onSave(); // Refresh parent
       onClose();
     } catch (e) {

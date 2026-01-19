@@ -141,6 +141,10 @@ interface VelocityState {
     openRecodeModal: (variable: Variable) => void;
     closeRecodeModal: () => void;
 
+    // Data Access (routed through worker)
+    getUniqueValues: (variableId: string) => Promise<string[]>;
+    recodeVariable: (sourceColId: string, newColName: string, mappings: Record<string, string>) => Promise<string>;
+
     // Drill Down
     openDrillDown: (rowValue: string, colValue: string | null) => Promise<void>;
     closeDrillDown: () => void;
@@ -176,6 +180,13 @@ export const useVelocityStore = create<VelocityState>((set, get) => ({
 
     // Initialize Web Worker
     initWorker: async () => {
+        // Guard: Prevent multiple worker initializations (important for React Strict Mode)
+        const currentWorker = get().worker;
+        if (currentWorker) {
+            console.log('[Store] Worker already initialized, skipping duplicate init');
+            return;
+        }
+
         try {
             const worker = new Worker(
                 new URL('../services/analysisWorker.ts', import.meta.url),
@@ -397,6 +408,78 @@ export const useVelocityStore = create<VelocityState>((set, get) => ({
     // Recode modal
     openRecodeModal: (variable) => set({ recodeModal: { isOpen: true, variable } }),
     closeRecodeModal: () => set({ recodeModal: { isOpen: false, variable: null } }),
+
+    // Data Access (routed through worker for unified data source)
+    getUniqueValues: async (variableId: string): Promise<string[]> => {
+        const { worker, dataset } = get();
+        if (!worker) throw new Error('Worker not initialized');
+
+        // Strategy: First check for embedded value labels (SAV files have these)
+        const variable = dataset?.variables.find(v => v.id === variableId);
+        if (variable?.valueLabels && variable.valueLabels.length > 0) {
+            // Return value labels from metadata (more reliable for SAV files)
+            return variable.valueLabels.map(vl => String(vl.value));
+        }
+
+        // Fallback: Query DuckDB for unique values (CSV files without metadata)
+        return new Promise((resolve, reject) => {
+            const handler = (event: MessageEvent<WorkerResponse>) => {
+                const response = event.data;
+                if (response.type === 'uniqueValues') {
+                    worker.removeEventListener('message', handler);
+                    resolve(response.data);
+                } else if (response.type === 'error') {
+                    worker.removeEventListener('message', handler);
+                    reject(new Error(response.message));
+                }
+            };
+            worker.addEventListener('message', handler);
+            worker.postMessage({ type: 'getUniqueValues', column: variableId } as WorkerRequest);
+        });
+    },
+
+    recodeVariable: async (sourceColId: string, newColName: string, mappings: Record<string, string>): Promise<string> => {
+        const { worker, dataset } = get();
+        if (!worker) throw new Error('Worker not initialized');
+
+        return new Promise((resolve, reject) => {
+            const handler = (event: MessageEvent<WorkerResponse>) => {
+                const response = event.data;
+                if (response.type === 'recodeComplete') {
+                    // Add the new variable to the dataset
+                    if (dataset) {
+                        const sourceVar = dataset.variables.find(v => v.id === sourceColId);
+                        const newVariable: Variable = {
+                            id: response.newColName,
+                            name: response.newColName,
+                            label: newColName,
+                            type: 'nominal',
+                            valueLabels: [],
+                            missingValues: {},
+                        };
+                        set({
+                            dataset: {
+                                ...dataset,
+                                variables: [...dataset.variables, newVariable],
+                            },
+                        });
+                    }
+                    worker.removeEventListener('message', handler);
+                    resolve(response.newColName);
+                } else if (response.type === 'error') {
+                    worker.removeEventListener('message', handler);
+                    reject(new Error(response.message));
+                }
+            };
+            worker.addEventListener('message', handler);
+            worker.postMessage({
+                type: 'recodeVariable',
+                sourceCol: sourceColId,
+                newColName,
+                mappings
+            } as WorkerRequest);
+        });
+    },
 
     // Drill down
     openDrillDown: async (rowValue, colValue) => {

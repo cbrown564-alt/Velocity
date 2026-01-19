@@ -55,6 +55,16 @@
 - [x] Test fixtures aligned with `arch_02_data_model.md`
 - [x] Architecture doc: `docs/arch_03_testing.md`
 
+### Milestone 1.7: Data Ingestion Bug Fixes
+*Goal: Fix issues discovered during real-world SAV testing*
+> [!CAUTION]
+> Critical bugs found: Dual DuckDB instances cause data to be unavailable to some components.
+
+- [x] **Fix Dual DuckDB Architecture** - `RecodeModal` uses main-thread `duckDb.ts` but data is in Worker
+- [x] **Fix Variable Type Detection** - SAV variables with value labels should be `nominal`, not `scale`
+- [x] **Unify Data Access** - All components must query via store/worker, deprecate `duckDb.ts`
+- [x] **Test with `test_data/sleep.sav`** - Verify filter, recode, and table all show correct data
+
 ---
 
 ## Phase 2: The Strategic Workbench (Commercial)

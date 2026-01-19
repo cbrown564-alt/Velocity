@@ -1,3 +1,19 @@
+/**
+ * @deprecated This file is DEPRECATED as of 2026-01-19.
+ * 
+ * REASON: This creates a main-thread DuckDB instance that is SEPARATE from the
+ * Analysis Worker's DuckDB instance. Data is loaded into the worker's DB,
+ * so any queries against this instance return empty results.
+ * 
+ * MIGRATION: Use the Zustand store actions instead:
+ * - `getUniqueValues(variableId)` - Get unique values for a variable
+ * - `recodeVariable(sourceId, newName, mappings)` - Create a recoded variable
+ * 
+ * These actions route through the Analysis Worker which has the actual data.
+ * 
+ * See: docs/bug_01_data_ingestion_issues.md for details on the dual-DB issue.
+ */
+
 import * as duckdb from '@duckdb/duckdb-wasm';
 
 const JSDELIVR_BUNDLES = duckdb.getJsDelivrBundles();
@@ -8,7 +24,7 @@ export class DuckDBService {
   private conn: duckdb.AsyncDuckDBConnection | null = null;
   private isInitialized = false;
 
-  private constructor() {}
+  private constructor() { }
 
   public static getInstance(): DuckDBService {
     if (!DuckDBService.instance) {
@@ -38,14 +54,14 @@ export class DuckDBService {
 
     const worker = new Worker(workerUrl);
     const logger = new duckdb.ConsoleLogger();
-    
+
     this.db = new duckdb.AsyncDuckDB(logger, worker);
-    
+
     // CRITICAL FIX: Pass bundle.mainModule (WASM) to instantiate, NOT bundle.mainWorker (JS)
     await this.db.instantiate(bundle.mainModule, bundle.pthreadWorker);
-    
+
     URL.revokeObjectURL(workerUrl);
-    
+
     this.conn = await this.db.connect();
     this.isInitialized = true;
     console.log("🦆 DuckDB Initialized");
@@ -53,31 +69,31 @@ export class DuckDBService {
 
   public async loadCSV(fileName: string, csvContent: string) {
     if (!this.db || !this.conn) throw new Error("DB not initialized");
-    
+
     await this.db.registerFileText(fileName, csvContent);
     // Create main table
     await this.conn.query(`CREATE OR REPLACE TABLE main AS SELECT * FROM read_csv_auto('${fileName}')`);
   }
 
-  public async getTableSchema(): Promise<{name: string, type: string}[]> {
-     if (!this.conn) throw new Error("DB not initialized");
-     
-     // Get column names and types
-     const result = await this.conn.query(`PRAGMA table_info('main')`);
-     return result.toArray().map((row: any) => ({
-        name: row.name,
-        type: row.type
-     }));
+  public async getTableSchema(): Promise<{ name: string, type: string }[]> {
+    if (!this.conn) throw new Error("DB not initialized");
+
+    // Get column names and types
+    const result = await this.conn.query(`PRAGMA table_info('main')`);
+    return result.toArray().map((row: any) => ({
+      name: row.name,
+      type: row.type
+    }));
   }
 
   public async runQuery(sql: string): Promise<any[]> {
     if (!this.conn) throw new Error("DB not initialized");
-    
+
     const start = performance.now();
     const result = await this.conn.query(sql);
     const end = performance.now();
     console.log(`⏱️ Query took ${(end - start).toFixed(2)}ms: ${sql}`);
-    
+
     // Convert Apache Arrow result to JSON array
     return result.toArray().map((row) => row.toJSON());
   }
@@ -91,27 +107,27 @@ export class DuckDBService {
 
   // -- NEW: Create Computed Column --
   public async recodeVariable(sourceCol: string, newColName: string, mappings: Record<string, string>) {
-     if (!this.conn) throw new Error("DB not initialized");
+    if (!this.conn) throw new Error("DB not initialized");
 
-     // 1. Sanitize name (simple version)
-     const safeNewCol = newColName.replace(/[^a-zA-Z0-9_]/g, '_');
+    // 1. Sanitize name (simple version)
+    const safeNewCol = newColName.replace(/[^a-zA-Z0-9_]/g, '_');
 
-     // 2. Add Column
-     await this.conn.query(`ALTER TABLE main ADD COLUMN "${safeNewCol}" VARCHAR`);
+    // 2. Add Column
+    await this.conn.query(`ALTER TABLE main ADD COLUMN "${safeNewCol}" VARCHAR`);
 
-     // 3. Build Case Statement
-     let caseSql = `CASE `;
-     for (const [oldVal, newVal] of Object.entries(mappings)) {
-        // Simple SQL escaping for values
-        caseSql += `WHEN "${sourceCol}" = '${oldVal.replace(/'/g, "''")}' THEN '${newVal.replace(/'/g, "''")}' `;
-     }
-     caseSql += `ELSE "${sourceCol}" END`;
+    // 3. Build Case Statement
+    let caseSql = `CASE `;
+    for (const [oldVal, newVal] of Object.entries(mappings)) {
+      // Simple SQL escaping for values
+      caseSql += `WHEN "${sourceCol}" = '${oldVal.replace(/'/g, "''")}' THEN '${newVal.replace(/'/g, "''")}' `;
+    }
+    caseSql += `ELSE "${sourceCol}" END`;
 
-     // 4. Update
-     const updateSql = `UPDATE main SET "${safeNewCol}" = ${caseSql}`;
-     await this.runQuery(updateSql);
+    // 4. Update
+    const updateSql = `UPDATE main SET "${safeNewCol}" = ${caseSql}`;
+    await this.runQuery(updateSql);
 
-     return safeNewCol;
+    return safeNewCol;
   }
 }
 
