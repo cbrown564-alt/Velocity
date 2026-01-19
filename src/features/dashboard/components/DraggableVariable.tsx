@@ -1,83 +1,130 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { useDraggable } from '@dnd-kit/core';
 import { GripVertical, Hash, Type, BarChart2, Wand2 } from 'lucide-react';
 import { Variable } from '../../../types';
 
-interface DraggableVariableProps {
+interface VariableCardProps {
   variable: Variable;
-  onDragStart: (id: string) => void;
-  onDragEnd: (event: any, info: any) => void;
+  isDragging?: boolean;
+  isOverlay?: boolean;
   onRecode?: (variable: Variable) => void;
+  onClick?: (variable: Variable) => void;
+  dragListeners?: any;
+  dragAttributes?: any;
+  setNodeRef?: (node: HTMLElement | null) => void;
+  style?: React.CSSProperties;
 }
 
-export const DraggableVariable: React.FC<DraggableVariableProps> = ({
+export const VariableCard: React.FC<VariableCardProps> = ({
   variable,
-  onDragStart,
-  onDragEnd,
-  onRecode
+  isDragging,
+  isOverlay,
+  onRecode,
+  onClick,
+  dragListeners,
+  dragAttributes,
+  setNodeRef,
+  style
 }) => {
-  // Helper to get icon based on type (supports both old and new type values)
+  // Helper to get icon based on type
   const getIcon = (type: Variable['type']) => {
     switch (type) {
       case 'numeric':
       case 'scale':
-        return <Hash size={14} className="text-slate-400" />;
+        return <Hash size={14} className="text-[var(--gray-400)]" />;
       case 'categorical':
       case 'nominal':
-        return <Type size={14} className="text-slate-400" />;
+        return <Type size={14} className="text-[var(--gray-400)]" />;
       case 'ordinal':
-        return <BarChart2 size={14} className="text-slate-400" />;
+        return <BarChart2 size={14} className="text-[var(--gray-400)]" />;
       default:
-        return <Type size={14} className="text-slate-400" />;
+        return <Type size={14} className="text-[var(--gray-400)]" />;
     }
   };
 
+  const cardStyle = {
+    ...style,
+    opacity: isDragging ? 0.3 : 1,
+  };
+
+  const Component = isOverlay ? 'div' : motion.div;
+
   return (
-    <motion.div
-      layoutId={`var-${variable.id}`}
-      drag
-      dragSnapToOrigin // Snaps back if not dropped in a valid zone (handled via logic)
-      dragMomentum={false} // Gives a tighter, "software tool" feel rather than "physics toy"
-      whileDrag={{
-        scale: 1.05,
-        rotate: 2,
-        opacity: 0.9,
-        backgroundColor: "white",
-        boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
-        cursor: 'grabbing',
-        zIndex: 9999, // Ensure it sits on top of everything
-        pointerEvents: 'none' // CRITICAL FIX: Allows document.elementFromPoint to see the drop zone underneath
-      }}
-      onDragStart={() => onDragStart(variable.id)}
-      onDragEnd={onDragEnd}
-      className="group flex items-center gap-3 p-3 mb-2 bg-white border border-gray-200 rounded-lg shadow-sm cursor-grab hover:border-indigo-300 hover:shadow-md transition-all active:cursor-grabbing relative pr-10"
+    <Component
+      ref={setNodeRef}
+      layoutId={isOverlay ? undefined : `var-${variable.id}`}
+      style={cardStyle}
+      {...dragListeners}
+      {...dragAttributes}
+      className={`group flex items-center gap-3 p-3 mb-2 bg-[var(--color-parchment)] border border-[var(--gray-200)] rounded-lg shadow-sm cursor-grab hover:border-[var(--color-terracotta)] hover:shadow-md transition-all active:cursor-grabbing relative pr-10 
+        ${isDragging ? 'ring-2 ring-[var(--color-terracotta)] ring-opacity-50 grayscale' : ''}
+        ${isOverlay ? 'shadow-xl scale-105 cursor-grabbing !opacity-100 z-50' : ''}
+      `}
+      onClick={(e: React.MouseEvent) => !isDragging && onClick?.(variable)}
     >
-      <div className="text-gray-300 group-hover:text-indigo-400 transition-colors">
+      <div className="text-[var(--gray-300)] group-hover:text-[var(--color-terracotta)] transition-colors">
         <GripVertical size={16} />
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-slate-700 truncate">{variable.label}</span>
+          <span className="text-sm font-medium text-[var(--color-ink)] truncate font-body">{variable.label}</span>
         </div>
         <div className="flex items-center gap-1 mt-0.5">
           {getIcon(variable.type)}
-          <span className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">{variable.type}</span>
+          <span className="text-[10px] uppercase tracking-wider text-[var(--gray-400)] font-semibold font-body">{variable.type}</span>
         </div>
       </div>
 
       {/* Recode Action Button (Visible on Hover) */}
-      {onRecode && (
-        <button
+      {onRecode && !isOverlay && (
+        <div
           onPointerDown={(e) => {
             e.stopPropagation(); // Prevent drag start
-            onRecode(variable);
           }}
-          className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-md bg-white border border-gray-200 text-slate-400 hover:text-indigo-600 hover:border-indigo-200 hover:bg-indigo-50 shadow-sm opacity-0 group-hover:opacity-100 transition-all z-10"
-          title="Recode / Group Values"
+          className="absolute right-2 top-1/2 -translate-y-1/2 z-10"
         >
-          <Wand2 size={14} />
-        </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onRecode(variable);
+            }}
+            className="p-1.5 rounded-md bg-[var(--color-paper)] border border-[var(--gray-200)] text-[var(--gray-400)] hover:text-[var(--color-terracotta)] hover:border-[var(--color-terracotta)] hover:bg-[var(--gray-50)] shadow-sm opacity-0 group-hover:opacity-100 transition-all"
+            title="Recode / Group Values"
+          >
+            <Wand2 size={14} />
+          </button>
+        </div>
       )}
-    </motion.div>
+    </Component>
+  );
+};
+
+interface DraggableVariableProps {
+  variable: Variable;
+  onRecode?: (variable: Variable) => void;
+  onClick?: (variable: Variable) => void;
+}
+
+export const DraggableVariable: React.FC<DraggableVariableProps> = ({
+  variable,
+  onRecode,
+  onClick
+}) => {
+  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
+    id: variable.id,
+    data: { variable }
+  });
+
+  return (
+    <VariableCard
+      variable={variable}
+      isDragging={isDragging}
+      onRecode={onRecode}
+      onClick={onClick}
+      setNodeRef={setNodeRef}
+      dragListeners={listeners}
+      dragAttributes={attributes}
+    />
   );
 };

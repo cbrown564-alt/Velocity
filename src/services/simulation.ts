@@ -17,7 +17,7 @@ export class SimulationService {
   private configListeners: ConfigListener[] = [];
   private interval: any;
 
-  private constructor() {}
+  private constructor() { }
 
   public static getInstance(): SimulationService {
     if (!SimulationService.instance) {
@@ -76,7 +76,7 @@ export class SimulationService {
     // Pick a random user to do something
     const actorIndex = Math.floor(Math.random() * this.users.length);
     const actor = this.users[actorIndex];
-    
+
     // Pick random variables
     const rowVar = variables[Math.floor(Math.random() * variables.length)];
     const colVar = Math.random() > 0.5 ? variables[Math.floor(Math.random() * variables.length)] : null;
@@ -89,11 +89,11 @@ export class SimulationService {
 
     // Trigger config update
     setTimeout(() => {
-       const newConfig: TableConfig = {
-         rowVar: rowVar.id,
-         colVar: colVar?.id || null
-       };
-       this.configListeners.forEach(fn => fn(newConfig, actor.name));
+      const newConfig: TableConfig = {
+        rowVars: [rowVar.id],
+        colVar: colVar?.id || null
+      };
+      this.configListeners.forEach(fn => fn(newConfig, actor.name));
     }, 1000);
   }
 }

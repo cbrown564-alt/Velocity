@@ -94,13 +94,13 @@ export interface VariableSet {
 // ============================================================================
 
 export interface AggregatedRow {
-  rowKey: string;
+  rowKeys: string[];
   colKey: string;
   count: number;
 }
 
 export interface TableConfig {
-  rowVar: string | null;
+  rowVars: string[];
   colVar: string | null;
 }
 

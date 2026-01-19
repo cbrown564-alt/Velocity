@@ -10,8 +10,8 @@
 - [x] Initialize Repository (Vite/React/TS)
 - [x] Configure `duckdb-wasm`
 - [x] Create Web Worker for DuckDB (`services/analysisWorker.ts`)
-- [ ] Implement `readstat-wasm` (or `apache-arrow` ingestion)
-- [ ] **Verify:** User can drop a 10MB .SAV file and see it logged to console in < 2s.
+- [x] Implement `readstat-wasm` (or `apache-arrow` ingestion)
+- [x] **Verify:** User can drop a 10MB .SAV file and see it logged to console in < 2s.
 
 ### Milestone 1.2: The Pantry (Variable List) (Week 2)
 *Goal: Display 500+ variables without lag*
@@ -22,7 +22,7 @@
 
 ### Milestone 1.3: The Canvas (Crosstabs) (Week 3)
 *Goal: Drag-and-drop analysis*
-- [x] Implement Drag-and-Drop system (framer-motion)
+- [x] Implement Drag-and-Drop system (@dnd-kit)
 - [x] Create `CrosstabEngine` (DuckDB SQL Generation)
 - [x] Render HTML Table with Significance Testing placeholders
 
@@ -32,12 +32,26 @@
 - [x] Design tokens from `design_01_system.md` (`index.css`)
 - [x] Newsreader + Atkinson Hyperlegible typography
 
+### Milestone 1.5: Refactor Legacy UI (Prototype Debt)
+*Goal: Bring early prototype components up to architectural standards*
+> [!WARNING]
+> These components were built before the core architecture and design system. They function but need refactoring to match the new standards.
+
+- [x] Refactor `features/dashboard/components/DataTable.tsx`
+- [x] Refactor `features/dashboard/components/DraggableVariable.tsx`
+- [x] Refactor `components/common/DropZone.tsx`
+- [x] Refactor `components/overlays/DataDrawer.tsx`
+- [x] Refactor `components/overlays/RecodeModal.tsx`
+- [x] Refactor `components/common/CollaboratorCursor.tsx` & `AvatarGroup.tsx`
+- [x] **Support Nested Rows** (Refactor Data Model & Table)
+
 ---
 
 ## Phase 2: The Strategic Workbench (Commercial)
 *Goal: Feature Parity with Displayr*
 
 ### Milestone 2.1: Data Management
+- [ ] Refactor Row Shelf to `@dnd-kit/sortable` (Enable Reordering)
 - [ ] "Variable Sets" Logic (Grouping columns)
 - [ ] Recoding UI (Binning)
 

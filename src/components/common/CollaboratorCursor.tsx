@@ -18,17 +18,17 @@ export const CollaboratorCursor: React.FC<{ user: Collaborator }> = ({ user }) =
         duration: 1.5,
         ease: "easeInOut" // Smooth floating movement
       }}
-      className="absolute pointer-events-none z-50 flex flex-col items-start"
+      className="absolute pointer-events-none z-50 flex flex-col items-start font-body"
       style={{ color: user.color }}
     >
       <MousePointer2 size={16} fill={user.color} className="relative z-10" />
 
-      <div className="ml-3 -mt-1 bg-white border shadow-sm rounded-lg px-2 py-1 flex flex-col min-w-max" style={{ borderColor: user.color }}>
+      <div className="ml-3 -mt-1 bg-[var(--color-parchment)] border shadow-sm rounded-lg px-2 py-1 flex flex-col min-w-max" style={{ borderColor: user.color }}>
         <span className="text-[10px] font-bold leading-none" style={{ color: user.color }}>
           {user.name}
         </span>
         {user.activeAction && (
-          <span className="text-[10px] text-slate-500 font-medium whitespace-nowrap mt-0.5">
+          <span className="text-[10px] text-[var(--gray-500)] font-medium whitespace-nowrap mt-0.5">
             {user.activeAction}
           </span>
         )}

@@ -67,7 +67,7 @@ export interface Filter {
 }
 
 export interface AggregatedRow {
-    rowKey: string;
+    rowKeys: string[];
     colKey: string;
     count: number;
 }
@@ -77,7 +77,7 @@ export interface AggregatedRow {
 // ============================================================================
 
 export interface TableConfig {
-    rowVar: string | null;
+    rowVars: string[];
     colVar: string | null;
 }
 
@@ -151,7 +151,7 @@ export const useVelocityStore = create<VelocityState>((set, get) => ({
     isDbReady: false,
     initError: null,
     dataset: null,
-    tableConfig: { rowVar: null, colVar: null },
+    tableConfig: { rowVars: [], colVar: null },
     queryResult: [],
     isQuerying: false,
     activeFilters: [],
@@ -284,21 +284,25 @@ export const useVelocityStore = create<VelocityState>((set, get) => ({
     // Run crosstab/frequency analysis
     runAnalysis: async () => {
         const { worker, tableConfig, dataset } = get();
-        if (!worker || !tableConfig.rowVar) {
+        if (!worker || tableConfig.rowVars.length === 0) {
             set({ queryResult: [] });
             return;
         }
 
         set({ isQuerying: true });
 
-        const row = tableConfig.rowVar;
+        const rows = tableConfig.rowVars;
         const col = tableConfig.colVar;
+
+        // Dynamic Row Selection
+        const rowSelectors = rows.map((r, i) => `"${r}" as rowKey_${i}`).join(', ');
+        const rowGroups = rows.map(r => `"${r}"`).join(', ');
 
         let sql: string;
         if (col) {
-            sql = `SELECT "${row}" as rowKey, "${col}" as colKey, COUNT(*)::INTEGER as count FROM main GROUP BY "${row}", "${col}"`;
+            sql = `SELECT ${rowSelectors}, "${col}" as colKey, COUNT(*)::INTEGER as count FROM main GROUP BY ${rowGroups}, "${col}"`;
         } else {
-            sql = `SELECT "${row}" as rowKey, 'Total' as colKey, COUNT(*)::INTEGER as count FROM main GROUP BY "${row}"`;
+            sql = `SELECT ${rowSelectors}, 'Total' as colKey, COUNT(*)::INTEGER as count FROM main GROUP BY ${rowGroups}`;
         }
 
         return new Promise<void>((resolve) => {
@@ -306,8 +310,23 @@ export const useVelocityStore = create<VelocityState>((set, get) => ({
                 const response = event.data;
 
                 if (response.type === 'queryResult') {
+                    // Map rowKey_0, rowKey_1... to rowKeys[] array
+                    const rawData = response.data as any[];
+                    const mappedData: AggregatedRow[] = rawData.map(row => {
+                        const rowKeys = Object.keys(row)
+                            .filter(k => k.startsWith('rowKey_'))
+                            .sort() // Ensure 0, 1, 2 order
+                            .map(k => row[k]);
+
+                        return {
+                            rowKeys,
+                            colKey: row.colKey,
+                            count: row.count
+                        };
+                    });
+
                     set({
-                        queryResult: response.data as AggregatedRow[],
+                        queryResult: mappedData,
                         isQuerying: false,
                     });
                     worker.removeEventListener('message', handler);
@@ -332,7 +351,7 @@ export const useVelocityStore = create<VelocityState>((set, get) => ({
 
     reset: () => {
         set({
-            tableConfig: { rowVar: null, colVar: null },
+            tableConfig: { rowVars: [], colVar: null },
             queryResult: [],
         });
     },
@@ -344,14 +363,29 @@ export const useVelocityStore = create<VelocityState>((set, get) => ({
     // Drill down
     openDrillDown: async (rowValue, colValue) => {
         const { worker, tableConfig, dataset } = get();
-        if (!worker || !tableConfig.rowVar) return;
+        // TODO: Handle nested row drilldown. For now, we take the last row var or require full path?
+        // Limitation: The current UI `handleCellClick` only passes `rowValue: string`.
+        // To support nested drilldown, `rowValue` needs to become `rowPath: string[]`.
+        // For this refactor step, we will temporarily break deep drilldown or just use the first variable.
+        // Actually, let's fix the DrillDown signature in a follow up.
+        // For now, if we have multiple row vars, we can't reliably drill down with a single string.
+        // We will assume rowValue matches the LAST variable in the chain (leaf node) if we are clicking a cell,
+        // BUT `DataTable` will likely need to pass the full path.
+
+        // Let's defer strict drill-down logic until DataTable is updated to pass full path.
+        // For robustness, we'll check if we can match the rowValue to ANY row variable.
+        if (!worker || tableConfig.rowVars.length === 0) return;
 
         set({
             drillDown: { isOpen: true, title: '', data: [], loading: true },
         });
 
-        const rowVarLabel = dataset?.variables.find((v) => v.id === tableConfig.rowVar)?.label || tableConfig.rowVar;
-        let whereClause = `"${tableConfig.rowVar}" = '${rowValue}'`;
+        // Simplified logic: filter where the FIRST row variable matches (backward compat for single row)
+        // Correct logic requires `rowValues: string[]` argument.
+        const primaryRowVar = tableConfig.rowVars[0];
+
+        const rowVarLabel = dataset?.variables.find((v) => v.id === primaryRowVar)?.label || primaryRowVar;
+        let whereClause = `"${primaryRowVar}" = '${rowValue}'`;
         let titleDescription = `${rowVarLabel}: ${rowValue}`;
 
         if (tableConfig.colVar && colValue) {

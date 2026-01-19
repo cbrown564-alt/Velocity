@@ -1,12 +1,13 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { AggregatedRow, Variable } from '../../../types';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ChevronRight, ChevronDown } from 'lucide-react';
 
 interface DataTableProps {
-  data: AggregatedRow[]; // Now accepts SQL results
-  rowVariable: Variable;
+  data: AggregatedRow[];
+  rowVariables: Variable[];
   colVariable: Variable | null;
-  totalCount: number; // Passed from parent query
+  totalCount: number;
   viewMode?: 'table' | 'chart';
   onCellClick?: (rowValue: string, colValue: string | null) => void;
 }
@@ -21,19 +22,35 @@ const CHART_COLORS = [
   'bg-teal-400'
 ];
 
+interface TableRowNode {
+  key: string;
+  label: string;
+  depth: number;
+  cells: Record<string, { count: number, percent: number, sig?: string }>;
+  total: number;
+  children: TableRowNode[];
+  isExpanded?: boolean; // For UI state
+}
+
 export const DataTable: React.FC<DataTableProps> = ({
   data,
-  rowVariable,
+  rowVariables,
   colVariable,
   totalCount,
   viewMode = 'table',
   onCellClick
 }) => {
+  // UI State for expanded rows
+  const [expandedKeys, setExpandedKeys] = useState<Record<string, boolean>>({});
+
+  const toggleRow = (key: string) => {
+    setExpandedKeys(prev => ({ ...prev, [key]: !prev[key] }));
+  };
 
   const tableData = useMemo(() => {
-    // 1. Extract Unique Keys
-    const rowKeys = Array.from(new Set(data.map(d => d.rowKey))).sort() as string[];
+    if (!rowVariables.length) return null;
 
+    // 1. Extract Column Keys
     let colKeys: string[] = ['Total'];
     if (colVariable) {
       colKeys = Array.from(new Set(data.map(d => d.colKey))).sort() as string[];
@@ -42,58 +59,79 @@ export const DataTable: React.FC<DataTableProps> = ({
     // 2. Compute Column Totals
     const colTotals: Record<string, number> = {};
     colKeys.forEach(k => colTotals[k] = 0);
-
     let grandTotal = 0;
 
-    // 3. Build Pivot Structure
-    const rows = rowKeys.map(rKey => {
-      const cells: Record<string, { count: number, percent: number, sig?: string }> = {};
-      let rowTotal = 0;
-
-      // Find all data points for this row
-      const rowData = data.filter(d => d.rowKey === rKey);
-
-      if (colVariable) {
-        colKeys.forEach((cKey, idx) => {
-          const match = rowData.find(d => d.colKey === cKey);
-          const count = match ? match.count : 0;
-          rowTotal += count;
-          colTotals[cKey] += count;
-          grandTotal += count;
-
-          cells[cKey] = { count, percent: 0 };
-        });
-      } else {
-        // Frequency Mode
-        const match = rowData.find(d => d.colKey === 'Total');
-        const count = match ? match.count : 0;
-        rowTotal += count;
-        colTotals['Total'] += count;
-        grandTotal += count;
-        cells['Total'] = { count, percent: 0 };
-      }
-
-      return {
-        label: rKey,
-        cells,
-        total: rowTotal
-      };
+    data.forEach(d => {
+      // For column totals, we sum up everything. 
+      // Note: AggregatedRow count is the count for that specific intersection.
+      colTotals[d.colKey] += d.count;
+      grandTotal += d.count;
     });
 
-    // 4. Calculate Percentages (Post-Aggregation)
-    rows.forEach(row => {
-      colKeys.forEach((cKey, idx) => {
-        const cell = row.cells[cKey];
-        const divisor = colVariable ? colTotals[cKey] : grandTotal; // Col % for crosstab, Total % for freq
-        cell.percent = divisor > 0 ? (cell.count / divisor) * 100 : 0;
+    // 3. Build Tree (Recursive Aggregation) 
+    // We need to group by level 0, then level 1...
 
-        // Add Sig Testing Mock
-        if (colVariable && colKeys.length > 1 && cell.percent > 25 && Math.random() > 0.7) {
-          const otherIdx = (idx + 1) % colKeys.length;
-          cell.sig = String.fromCharCode(65 + otherIdx);
-        }
+    const buildTree = (
+      subset: AggregatedRow[],
+      depth: number,
+      parentKey: string
+    ): TableRowNode[] => {
+      if (depth >= rowVariables.length) return [];
+
+      // Group by current depth key
+      const groups: Record<string, AggregatedRow[]> = {};
+      subset.forEach(row => {
+        const key = row.rowKeys[depth];
+        if (!key) return; // Should not happen if data is consistent
+        if (!groups[key]) groups[key] = [];
+        groups[key].push(row);
       });
-    });
+
+      const nodes: TableRowNode[] = Object.keys(groups).sort().map(label => {
+        const groupData = groups[label];
+        const uniqueKey = parentKey ? `${parentKey}-${label}` : label;
+
+        // Calculate totals for this node
+        const nodeCells: Record<string, { count: number, percent: number, sig?: string }> = {};
+        let nodeRowTotal = 0;
+
+        colKeys.forEach(cKey => {
+          // Sum counts for this column in this group
+          const count = groupData
+            .filter(d => d.colKey === cKey)
+            .reduce((sum, d) => sum + d.count, 0);
+
+          nodeRowTotal += count;
+
+          // Helper: Percent calc
+          const divisor = colVariable ? colTotals[cKey] : grandTotal; // Column % logic
+          const percent = divisor > 0 ? (count / divisor) * 100 : 0;
+
+          nodeCells[cKey] = {
+            count,
+            percent,
+            // Mock sig test for demo
+            sig: (colVariable && percent > 25 && Math.random() > 0.8) ? 'A' : undefined
+          };
+        });
+
+        // Recurse
+        const children = buildTree(groupData, depth + 1, uniqueKey);
+
+        return {
+          key: uniqueKey,
+          label,
+          depth,
+          cells: nodeCells,
+          total: nodeRowTotal,
+          children
+        };
+      });
+
+      return nodes;
+    };
+
+    const rows = buildTree(data, 0, '');
 
     return {
       colKeys,
@@ -102,99 +140,123 @@ export const DataTable: React.FC<DataTableProps> = ({
       grandTotal
     };
 
-  }, [data, rowVariable, colVariable]);
+  }, [data, rowVariables, colVariable]);
 
   if (!tableData) return null;
 
   const getColLetter = (index: number) => String.fromCharCode(65 + index);
 
+  // Flatten rows for Chart view (or just show top level)
+  // For Chart: Let's show the top level only for now, or all leaf nodes? 
+  // Let's go with Top Level for simplicity in this refactor.
+  const chartRows = tableData.rows;
+
   // -- RENDER MODE: TABLE --
   if (viewMode === 'table') {
+    const renderRow = (row: TableRowNode) => {
+      const isExpanded = expandedKeys[row.key] ?? true; // Default expanded?
+      const hasChildren = row.children.length > 0;
+      const paddingLeft = row.depth * 24 + 16; // Indent
+
+      return (
+        <React.Fragment key={row.key}>
+          <tr className="group hover:bg-[var(--gray-50)] transition-colors">
+            <td className="py-3 font-medium text-[var(--color-ink)] align-top border-r border-transparent" style={{ paddingLeft }}>
+              <div className="flex items-center gap-2">
+                {hasChildren && (
+                  <button
+                    onClick={(e) => { e.stopPropagation(); toggleRow(row.key); }}
+                    className="p-0.5 rounded hover:bg-[var(--gray-200)] text-[var(--gray-400)] transition-colors"
+                  >
+                    {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+                  </button>
+                )}
+                {!hasChildren && <div className="w-4" />} {/* Spacer */}
+                <span>{row.label}</span>
+              </div>
+            </td>
+            {tableData.colKeys.map(col => {
+              const cell = row.cells[col];
+              return (
+                <td
+                  key={col}
+                  className="px-4 py-3 text-right align-top cursor-pointer relative hover:bg-[var(--gray-100)] transition-colors border-l border-[var(--gray-50)]"
+                  onClick={() => onCellClick?.(row.label, colVariable ? col : null)}
+                  title="Click to X-Ray"
+                >
+                  <div className="flex flex-col items-end">
+                    <div className="flex items-baseline gap-0.5">
+                      <span className="font-bold text-[var(--color-ink)]">{cell.percent.toFixed(1)}%</span>
+                      {cell.sig && <sup className="sig-marker">{cell.sig}</sup>}
+                    </div>
+                    <span className="text-[10px] text-[var(--gray-400)] font-mono tracking-tight opacity-0 group-hover:opacity-100 transition-opacity">n={cell.count}</span>
+                  </div>
+                </td>
+              );
+            })}
+            <td className="px-4 py-3 text-right font-mono font-semibold text-[var(--color-ink)] bg-[var(--gray-50)] align-top">
+              <div className="flex flex-col items-end">
+                <span>{((row.total / tableData.grandTotal) * 100).toFixed(1)}%</span>
+                <span className="text-[10px] text-[var(--gray-400)]">n={row.total}</span>
+              </div>
+            </td>
+          </tr>
+          {/* Render Children */}
+          {hasChildren && isExpanded && row.children.map(child => renderRow(child))}
+        </React.Fragment>
+      );
+    };
+
     return (
       <motion.div
         key="table"
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -10 }}
-        transition={{ duration: 0.2 }}
-        className="w-full overflow-hidden bg-white border border-gray-200 rounded-lg shadow-sm"
+        className="w-full overflow-hidden bg-[var(--color-paper)] border-none rounded-lg shadow-sm"
       >
-        <div className="p-4 border-b border-gray-100 bg-gray-50 flex justify-between items-end">
+        <div className="p-4 border-b border-[var(--gray-200)] flex justify-between items-end">
           <div>
-            <h3 className="text-sm font-semibold text-gray-900">
-              {colVariable ? `${rowVariable.label} by ${colVariable.label}` : `${rowVariable.label} Frequency`}
+            <h3 className="text-lg font-semibold text-[var(--color-ink)] font-display">
+              {colVariable ? `${rowVariables.map(v => v.label).join(' > ')} by ${colVariable.label}` : `${rowVariables[0].label} Frequency`}
             </h3>
-            <p className="text-xs text-slate-500 mt-1">N = {tableData.grandTotal} Respondents</p>
+            <p className="text-xs text-[var(--gray-500)] mt-1 font-body">N = {tableData.grandTotal} Respondents</p>
           </div>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left border-collapse">
-            <thead className="text-xs text-slate-500 uppercase bg-white border-b-2 border-slate-800">
-              <tr>
-                <th className="px-4 py-3 font-semibold text-slate-900 tracking-wider text-left w-1/4 align-bottom">
-                  {rowVariable.label}
+            <thead className="text-xs uppercase bg-[var(--color-paper)] border-b-2 border-[var(--gray-300)]">
+              <tr className="font-body">
+                <th className="px-4 py-3 font-bold text-[var(--color-charcoal)] tracking-wider text-left w-1/4 align-bottom">
+                  {rowVariables[0].label}
                 </th>
                 {tableData.colKeys.map((col, idx) => (
-                  <th key={col} className="px-4 py-3 font-bold text-right w-32 align-bottom">
+                  <th key={col} className="px-4 py-3 font-bold text-[var(--color-charcoal)] text-right w-32 align-bottom">
                     <div className="flex flex-col gap-1 items-end">
                       <span>{col}</span>
                       {colVariable && (
-                        <span className="text-[10px] text-slate-400 font-normal border border-slate-200 rounded px-1 min-w-[20px] text-center">
+                        <span className="text-[10px] text-[var(--gray-400)] font-normal border border-[var(--gray-200)] rounded px-1 min-w-[20px] text-center">
                           {getColLetter(idx)}
                         </span>
                       )}
                     </div>
                   </th>
                 ))}
-                <th className="px-4 py-3 font-bold text-right w-24 text-slate-900 bg-slate-50 align-bottom">
+                <th className="px-4 py-3 font-bold text-right w-24 text-[var(--color-ink)] bg-[var(--gray-50)] align-bottom">
                   Total
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
-              {tableData.rows.map((row) => (
-                <tr key={row.label} className="group hover:bg-indigo-50/30 transition-colors">
-                  <td className="px-4 py-2 font-medium text-slate-800 align-top pt-3 group-hover:text-indigo-700">
-                    {row.label}
-                  </td>
-                  {tableData.colKeys.map(col => {
-                    const cell = row.cells[col];
-                    return (
-                      <td
-                        key={col}
-                        className="px-4 py-2 text-right align-top cursor-pointer relative hover:bg-indigo-100/50 transition-colors"
-                        onClick={() => onCellClick?.(row.label, colVariable ? col : null)}
-                        title="Click to X-Ray (Drill down)"
-                      >
-                        <div className="flex flex-col items-end">
-                          <div className="flex items-baseline gap-0.5">
-                            <span className="font-bold text-slate-700">{cell.percent.toFixed(1)}%</span>
-                            {cell.sig && (
-                              <sup className="text-[10px] font-bold text-slate-900 leading-none">{cell.sig}</sup>
-                            )}
-                          </div>
-                          <span className="text-[10px] text-slate-400 font-mono tracking-tight group-hover:text-indigo-400">n={cell.count}</span>
-                        </div>
-                      </td>
-                    );
-                  })}
-                  <td className="px-4 py-2 text-right font-mono font-semibold text-slate-900 bg-slate-50 align-top">
-                    <div className="flex flex-col items-end">
-                      <span>{((row.total / tableData.grandTotal) * 100).toFixed(1)}%</span>
-                      <span className="text-[10px] text-slate-400">n={row.total}</span>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-              <tr className="bg-slate-50 font-semibold border-t-4 border-double border-b-4 border-slate-300">
-                <td className="px-4 py-3 text-slate-900">Total</td>
+            <tbody className="divide-y divide-[var(--gray-100)] font-body">
+              {tableData.rows.map(row => renderRow(row))}
+              <tr className="bg-[var(--gray-50)] font-semibold border-t border-[var(--gray-300)] border-b border-[var(--gray-300)]">
+                <td className="px-4 py-3 text-[var(--color-ink)] pl-8">Total</td>
                 {tableData.colKeys.map(col => (
-                  <td key={col} className="px-4 py-3 text-right font-mono text-slate-900">
+                  <td key={col} className="px-4 py-3 text-right font-mono text-[var(--color-ink)]">
                     {tableData.colTotals[col]}
                   </td>
                 ))}
-                <td className="px-4 py-3 text-right font-mono text-slate-900">
+                <td className="px-4 py-3 text-right font-mono text-[var(--color-ink)]">
                   {tableData.grandTotal}
                 </td>
               </tr>
@@ -206,19 +268,18 @@ export const DataTable: React.FC<DataTableProps> = ({
   }
 
   // -- RENDER MODE: CHART (STACKED BAR) --
+  // Note: Only charting top-level rows for now
   return (
     <motion.div
       key="chart"
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -10 }}
-      transition={{ duration: 0.2 }}
-      className="w-full bg-white border border-gray-200 rounded-lg shadow-sm p-6"
+      className="w-full bg-[var(--color-paper)] border border-[var(--gray-200)] rounded-lg shadow-sm p-6"
     >
       <div className="mb-6 flex justify-between items-center">
         <div>
-          <h3 className="text-lg font-bold text-slate-900">{rowVariable.label} Distribution</h3>
-          {colVariable && <p className="text-sm text-slate-500">Broken down by {colVariable.label}</p>}
+          <h3 className="text-lg font-bold text-[var(--color-ink)] font-display">{rowVariables[0].label} Distribution</h3>
+          {colVariable && <p className="text-sm text-[var(--gray-500)] font-body">Broken down by {colVariable.label}</p>}
         </div>
 
         {/* Legend */}
@@ -227,23 +288,23 @@ export const DataTable: React.FC<DataTableProps> = ({
             {tableData.colKeys.map((col, idx) => (
               <div key={col} className="flex items-center gap-1.5">
                 <div className={`w-3 h-3 rounded-full ${CHART_COLORS[idx % CHART_COLORS.length]}`}></div>
-                <span className="text-xs font-medium text-slate-600">{col}</span>
+                <span className="text-xs font-medium text-[var(--gray-600)] font-body">{col}</span>
               </div>
             ))}
           </div>
         )}
       </div>
 
-      <div className="space-y-6">
-        {tableData.rows.map((row) => (
-          <div key={row.label} className="space-y-1.5">
+      <div className="space-y-6 font-body">
+        {chartRows.map((row) => (
+          <div key={row.key} className="space-y-1.5">
             <div className="flex justify-between text-sm">
-              <span className="font-semibold text-slate-700">{row.label}</span>
-              <span className="text-slate-400 text-xs">n={row.total}</span>
+              <span className="font-semibold text-[var(--color-charcoal)]">{row.label}</span>
+              <span className="text-[var(--gray-400)] text-xs">n={row.total}</span>
             </div>
 
             {/* 100% Stacked Bar */}
-            <div className="h-8 w-full bg-gray-100 rounded-md overflow-hidden flex relative">
+            <div className="h-8 w-full bg-[var(--gray-100)] rounded-md overflow-hidden flex relative">
               {colVariable ? (
                 tableData.colKeys.map((col, idx) => {
                   const count = row.cells[col].count;
