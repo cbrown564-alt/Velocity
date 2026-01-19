@@ -25,7 +25,7 @@
 - [x] Implement Drag-and-Drop system (@dnd-kit)
 - [x] Create `CrosstabEngine` (DuckDB SQL Generation)
 - [x] Render HTML Table with Significance Testing placeholders
-- [ ] **Implement Global Filter Bar UI & Logic** (Currently hardcoded in App.tsx)
+- [x] **Implement Global Filter Bar UI & Logic** (Currently hardcoded in App.tsx)
 
 ### Milestone 1.4: Architecture & Design System
 *Added based on arch docs*
