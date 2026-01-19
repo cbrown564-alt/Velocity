@@ -5,7 +5,13 @@
  * All database operations go through this worker via message passing.
  */
 
+// Polyfill for Node.js 'global' - required by jsavvy
+// @ts-ignore
+globalThis.global = globalThis;
+
 import * as duckdb from '@duckdb/duckdb-wasm';
+// savParser imports jsavvy which needs 'global' - we load it dynamically after polyfill
+import type { SavColumn } from './savParser';
 
 const JSDELIVR_BUNDLES = duckdb.getJsDelivrBundles();
 
@@ -16,6 +22,7 @@ let conn: duckdb.AsyncDuckDBConnection | null = null;
 export type WorkerRequest =
   | { type: 'init' }
   | { type: 'loadCSV'; fileName: string; content: string }
+  | { type: 'loadSAV'; buffer: ArrayBuffer }
   | { type: 'query'; sql: string }
   | { type: 'getSchema' }
   | { type: 'getUniqueValues'; column: string }
@@ -24,6 +31,7 @@ export type WorkerRequest =
 export type WorkerResponse =
   | { type: 'ready' }
   | { type: 'schema'; data: { name: string; type: string }[] }
+  | { type: 'savLoaded'; variables: any[]; rowCount: number; durationMs: number }
   | { type: 'queryResult'; data: any[]; durationMs: number }
   | { type: 'uniqueValues'; data: string[] }
   | { type: 'recodeComplete'; newColName: string }
@@ -62,6 +70,46 @@ async function loadCSV(fileName: string, content: string) {
 
   await db.registerFileText(fileName, content);
   await conn.query(`CREATE OR REPLACE TABLE main AS SELECT * FROM read_csv_auto('${fileName}')`);
+}
+
+async function loadSAV(buffer: ArrayBuffer): Promise<{ variables: any[]; rowCount: number; durationMs: number }> {
+  if (!db || !conn) throw new Error('DB not initialized');
+
+  const start = performance.now();
+
+  // Dynamic import to ensure global polyfill is applied first
+  const { parseSavFile, savColumnsToVariables } = await import('./savParser');
+
+  // Parse the SAV file
+  const parsed = await parseSavFile(buffer);
+  const variables = savColumnsToVariables(parsed.columns);
+
+  // Create table with appropriate schema
+  const columnDefs = parsed.columns.map(c => `"${c.name}" ${c.type}`).join(', ');
+  await conn.query(`CREATE OR REPLACE TABLE main (${columnDefs})`);
+
+  // Insert data in chunks to avoid memory issues
+  const CHUNK_SIZE = 1000;
+  for (let i = 0; i < parsed.rows.length; i += CHUNK_SIZE) {
+    const chunk = parsed.rows.slice(i, i + CHUNK_SIZE);
+    const values = chunk.map(row => {
+      const vals = row.map(v => {
+        if (v === null) return 'NULL';
+        if (typeof v === 'string') return `'${v.replace(/'/g, "''")}'`;
+        return String(v);
+      });
+      return `(${vals.join(', ')})`;
+    }).join(', ');
+
+    if (values) {
+      await conn.query(`INSERT INTO main VALUES ${values}`);
+    }
+  }
+
+  const durationMs = performance.now() - start;
+  console.log(`🦆 [Worker] Loaded SAV: ${parsed.rowCount} rows, ${variables.length} variables in ${durationMs.toFixed(2)}ms`);
+
+  return { variables, rowCount: parsed.rowCount, durationMs };
 }
 
 async function getSchema(): Promise<{ name: string; type: string }[]> {
@@ -133,6 +181,16 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
         await loadCSV(request.fileName, request.content);
         const schema = await getSchema();
         self.postMessage({ type: 'schema', data: schema } as WorkerResponse);
+        break;
+
+      case 'loadSAV':
+        const savResult = await loadSAV(request.buffer);
+        self.postMessage({
+          type: 'savLoaded',
+          variables: savResult.variables,
+          rowCount: savResult.rowCount,
+          durationMs: savResult.durationMs,
+        } as WorkerResponse);
         break;
 
       case 'query':

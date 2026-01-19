@@ -41,6 +41,7 @@ export default function App() {
     drillDown,
     initWorker,
     loadCSV,
+    loadSAV,
     setTableConfig,
     setDraggingId,
     setSearchQuery,
@@ -83,8 +84,18 @@ export default function App() {
     setMode('uploading');
 
     try {
-      const text = await file.text();
-      await loadCSV(file.name, text);
+      const ext = file.name.toLowerCase().split('.').pop();
+
+      if (ext === 'sav') {
+        // SAV file - read as ArrayBuffer
+        const buffer = await file.arrayBuffer();
+        await loadSAV(file.name, buffer);
+      } else {
+        // CSV or other text file
+        const text = await file.text();
+        await loadCSV(file.name, text);
+      }
+
       setMode('dashboard');
     } catch (err) {
       console.error(err);
@@ -147,7 +158,7 @@ export default function App() {
   return (
     <div className={`min-h-screen bg-white text-slate-800 antialiased overflow-hidden flex flex-col ${draggingId ? 'select-none cursor-grabbing' : ''}`}>
 
-      <input type="file" ref={fileInputRef} onChange={handleFileUpload} className="hidden" accept=".csv" />
+      <input type="file" ref={fileInputRef} onChange={handleFileUpload} className="hidden" accept=".csv,.sav" />
 
       {/* MODALS */}
       <DataDrawer
@@ -212,7 +223,7 @@ export default function App() {
                   {isDbReady ? <FileUp className="w-8 h-8 text-indigo-500" /> : <Loader2 className="w-8 h-8 text-gray-400 animate-spin" />}
                 </div>
                 <div className="space-y-1">
-                  <p className="font-medium text-slate-700">Drop CSV file to analyze</p>
+                  <p className="font-medium text-slate-700">Drop .SAV or .CSV file to analyze</p>
                   <p className="text-sm text-slate-400">
                     <span className="hover:text-indigo-600 hover:underline z-50 relative" onClick={(e) => { e.stopPropagation(); handleDemoClick(); }}>
                       or use example data

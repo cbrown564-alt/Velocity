@@ -124,6 +124,7 @@ interface VelocityState {
     // Actions
     initWorker: () => Promise<void>;
     loadCSV: (fileName: string, content: string) => Promise<void>;
+    loadSAV: (fileName: string, buffer: ArrayBuffer) => Promise<void>;
     setTableConfig: (config: Partial<TableConfig>) => void;
     runAnalysis: () => Promise<void>;
     setDraggingId: (id: string | null) => void;
@@ -234,6 +235,40 @@ export const useVelocityStore = create<VelocityState>((set, get) => ({
 
             worker.addEventListener('message', handler);
             worker.postMessage({ type: 'loadCSV', fileName, content } as WorkerRequest);
+        });
+    },
+
+    // Load SAV file
+    loadSAV: async (fileName: string, buffer: ArrayBuffer) => {
+        const { worker } = get();
+        if (!worker) throw new Error('Worker not initialized');
+
+        return new Promise((resolve, reject) => {
+            const handler = (event: MessageEvent<WorkerResponse>) => {
+                const response = event.data;
+
+                if (response.type === 'savLoaded') {
+                    set({
+                        dataset: {
+                            id: crypto.randomUUID(),
+                            name: fileName,
+                            rowCount: response.rowCount,
+                            variables: response.variables,
+                            source: 'sav',
+                        },
+                    });
+
+                    console.log(`📊 [Store] SAV loaded: ${response.rowCount} rows, ${response.variables.length} variables in ${response.durationMs.toFixed(2)}ms`);
+                    worker.removeEventListener('message', handler);
+                    resolve(undefined);
+                } else if (response.type === 'error') {
+                    worker.removeEventListener('message', handler);
+                    reject(new Error(response.message));
+                }
+            };
+
+            worker.addEventListener('message', handler);
+            worker.postMessage({ type: 'loadSAV', buffer } as WorkerRequest);
         });
     },
 
