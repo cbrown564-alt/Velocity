@@ -1,0 +1,183 @@
+/**
+ * DropZone Component Tests
+ */
+
+import { describe, it, expect, vi } from 'vitest';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { DndContext } from '@dnd-kit/core';
+import { DropZone } from './DropZone';
+import { mockNominalVariable, mockOrdinalVariable } from '../../test/fixtures/variables';
+
+// Wrap component with DndContext for droppable functionality
+const renderWithDnd = (ui: React.ReactElement) => {
+    return render(<DndContext>{ui}</DndContext>);
+};
+
+describe('DropZone', () => {
+    // ==========================================================================
+    // Empty State
+    // ==========================================================================
+
+    describe('empty state', () => {
+        it('renders empty state with correct label', () => {
+            renderWithDnd(
+                <DropZone
+                    id="drop-zone-rows"
+                    type="row"
+                    label="Drop rows here"
+                    active={false}
+                    currentVariables={[]}
+                    onRemove={vi.fn()}
+                />
+            );
+
+            expect(screen.getByText(/drop rows here/i)).toBeInTheDocument();
+        });
+
+        it('renders plus icon in empty state', () => {
+            const { container } = renderWithDnd(
+                <DropZone
+                    id="drop-zone-columns"
+                    type="column"
+                    label="Columns"
+                    active={false}
+                    currentVariables={[]}
+                    onRemove={vi.fn()}
+                />
+            );
+
+            // Plus icon should be present
+            expect(container.querySelector('svg')).toBeInTheDocument();
+        });
+
+        it('applies correct sizing for row type', () => {
+            const { container } = renderWithDnd(
+                <DropZone
+                    id="test-zone"
+                    type="row"
+                    label="Rows"
+                    active={false}
+                    currentVariables={[]}
+                    onRemove={vi.fn()}
+                />
+            );
+
+            const zone = container.firstChild as HTMLElement;
+            expect(zone.className).toContain('w-full');
+        });
+
+        it('applies correct sizing for column type', () => {
+            const { container } = renderWithDnd(
+                <DropZone
+                    id="test-zone"
+                    type="column"
+                    label="Columns"
+                    active={false}
+                    currentVariables={[]}
+                    onRemove={vi.fn()}
+                />
+            );
+
+            const zone = container.firstChild as HTMLElement;
+            expect(zone.className).toContain('w-48');
+        });
+    });
+
+    // ==========================================================================
+    // With Variables
+    // ==========================================================================
+
+    describe('with variables', () => {
+        it('renders variable labels', () => {
+            renderWithDnd(
+                <DropZone
+                    id="drop-zone-rows"
+                    type="row"
+                    label="Rows"
+                    active={false}
+                    currentVariables={[mockNominalVariable]}
+                    onRemove={vi.fn()}
+                />
+            );
+
+            expect(screen.getByText('Gender')).toBeInTheDocument();
+        });
+
+        it('renders multiple variables', () => {
+            renderWithDnd(
+                <DropZone
+                    id="drop-zone-rows"
+                    type="row"
+                    label="Rows"
+                    active={false}
+                    currentVariables={[mockNominalVariable, mockOrdinalVariable]}
+                    onRemove={vi.fn()}
+                />
+            );
+
+            expect(screen.getByText('Gender')).toBeInTheDocument();
+            expect(screen.getByText('Overall Satisfaction')).toBeInTheDocument();
+        });
+
+        it('calls onRemove when remove button is clicked', () => {
+            const onRemove = vi.fn();
+
+            renderWithDnd(
+                <DropZone
+                    id="drop-zone-rows"
+                    type="row"
+                    label="Rows"
+                    active={false}
+                    currentVariables={[mockNominalVariable]}
+                    onRemove={onRemove}
+                />
+            );
+
+            // Find and click the remove button (X)
+            const removeButton = screen.getByRole('button');
+            fireEvent.click(removeButton);
+
+            expect(onRemove).toHaveBeenCalledWith('var_gender');
+        });
+    });
+
+    // ==========================================================================
+    // Drag States
+    // ==========================================================================
+
+    describe('drag states', () => {
+        it('shows active styling when active prop is true', () => {
+            const { container } = renderWithDnd(
+                <DropZone
+                    id="test-zone"
+                    type="row"
+                    label="Rows"
+                    active={true}
+                    currentVariables={[]}
+                    onRemove={vi.fn()}
+                />
+            );
+
+            const zone = container.firstChild as HTMLElement;
+            // Active state should apply terracotta border
+            expect(zone.className).toContain('border-[var(--color-terracotta)]');
+        });
+
+        it('does not show active styling when active is false', () => {
+            const { container } = renderWithDnd(
+                <DropZone
+                    id="test-zone"
+                    type="row"
+                    label="Rows"
+                    active={false}
+                    currentVariables={[]}
+                    onRemove={vi.fn()}
+                />
+            );
+
+            const zone = container.firstChild as HTMLElement;
+            // Should have default gray border
+            expect(zone.className).toContain('border-[var(--gray-200)]');
+        });
+    });
+});

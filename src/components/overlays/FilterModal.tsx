@@ -1,0 +1,276 @@
+/**
+ * FilterModal Component
+ * 
+ * Modal for creating filters. Two-step flow:
+ * 1. Select a variable from searchable list
+ * 2. Select values to include (multi-select checkboxes)
+ */
+
+import React, { useState, useMemo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { X, Search, ChevronLeft, Check } from 'lucide-react';
+import type { Variable, Filter } from '../../store';
+
+interface FilterModalProps {
+    isOpen: boolean;
+    onClose: () => void;
+    variables: Variable[];
+    onSave: (filter: Omit<Filter, 'id'>) => void;
+}
+
+type Step = 'variable' | 'values';
+
+export const FilterModal: React.FC<FilterModalProps> = ({
+    isOpen,
+    onClose,
+    variables,
+    onSave,
+}) => {
+    const [step, setStep] = useState<Step>('variable');
+    const [searchQuery, setSearchQuery] = useState('');
+    const [selectedVariable, setSelectedVariable] = useState<Variable | null>(null);
+    const [selectedValues, setSelectedValues] = useState<number[]>([]);
+
+    // Filter variables based on search (only show categoricals with value labels)
+    const filteredVariables = useMemo(() => {
+        const categoricalVars = variables.filter(v =>
+            v.type === 'nominal' || v.type === 'ordinal' || v.valueLabels.length > 0
+        );
+
+        if (!searchQuery.trim()) return categoricalVars;
+
+        const query = searchQuery.toLowerCase();
+        return categoricalVars.filter(v =>
+            v.label.toLowerCase().includes(query) ||
+            v.name.toLowerCase().includes(query)
+        );
+    }, [variables, searchQuery]);
+
+    // Reset state when modal closes
+    const handleClose = () => {
+        setStep('variable');
+        setSearchQuery('');
+        setSelectedVariable(null);
+        setSelectedValues([]);
+        onClose();
+    };
+
+    const handleVariableSelect = (variable: Variable) => {
+        setSelectedVariable(variable);
+        setSelectedValues([]);
+        setStep('values');
+    };
+
+    const handleValueToggle = (value: number) => {
+        setSelectedValues(prev =>
+            prev.includes(value)
+                ? prev.filter(v => v !== value)
+                : [...prev, value]
+        );
+    };
+
+    const handleApply = () => {
+        if (!selectedVariable || selectedValues.length === 0) return;
+
+        onSave({
+            variableId: selectedVariable.id,
+            operator: selectedValues.length === 1 ? 'eq' : 'in',
+            value: selectedValues.length === 1 ? selectedValues[0] : selectedValues,
+        });
+
+        handleClose();
+    };
+
+    const handleBack = () => {
+        setStep('variable');
+        setSelectedValues([]);
+    };
+
+    if (!isOpen) return null;
+
+    return (
+        <AnimatePresence>
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center"
+                onClick={handleClose}
+            >
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                    transition={{ duration: 0.2 }}
+                    onClick={(e) => e.stopPropagation()}
+                    className="w-full max-w-md rounded-lg overflow-hidden shadow-xl"
+                    style={{
+                        backgroundColor: 'var(--color-parchment)',
+                        border: '1px solid var(--gray-200)',
+                    }}
+                >
+                    {/* Header */}
+                    <div
+                        className="flex items-center justify-between px-5 py-4 border-b"
+                        style={{ borderColor: 'var(--gray-200)' }}
+                    >
+                        <div className="flex items-center gap-3">
+                            {step === 'values' && (
+                                <button
+                                    onClick={handleBack}
+                                    className="p-1 rounded-md transition-colors"
+                                    style={{ color: 'var(--gray-500)' }}
+                                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--gray-100)'}
+                                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                                >
+                                    <ChevronLeft size={18} />
+                                </button>
+                            )}
+                            <h2
+                                className="text-lg font-semibold"
+                                style={{
+                                    fontFamily: 'var(--font-display)',
+                                    color: 'var(--color-ink)',
+                                }}
+                            >
+                                {step === 'variable' ? 'Add Filter' : selectedVariable?.label}
+                            </h2>
+                        </div>
+                        <button
+                            onClick={handleClose}
+                            className="p-1.5 rounded-md transition-colors"
+                            style={{ color: 'var(--gray-400)' }}
+                            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--gray-100)'}
+                            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                        >
+                            <X size={18} />
+                        </button>
+                    </div>
+
+                    {/* Content */}
+                    <div className="p-5">
+                        {step === 'variable' ? (
+                            <>
+                                {/* Search */}
+                                <div className="relative mb-4">
+                                    <Search
+                                        className="absolute left-3 top-1/2 -translate-y-1/2"
+                                        size={16}
+                                        style={{ color: 'var(--gray-400)' }}
+                                    />
+                                    <input
+                                        type="text"
+                                        placeholder="Search variables..."
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                        className="w-full pl-10 pr-4 py-2.5 rounded-md text-sm outline-none transition-all"
+                                        style={{
+                                            backgroundColor: 'var(--gray-100)',
+                                            border: '1px solid var(--gray-200)',
+                                            color: 'var(--color-ink)',
+                                        }}
+                                        onFocus={(e) => e.currentTarget.style.borderColor = 'var(--color-terracotta)'}
+                                        onBlur={(e) => e.currentTarget.style.borderColor = 'var(--gray-200)'}
+                                        autoFocus
+                                    />
+                                </div>
+
+                                {/* Variable List */}
+                                <div
+                                    className="max-h-64 overflow-y-auto custom-scrollbar space-y-1"
+                                >
+                                    {filteredVariables.length === 0 ? (
+                                        <p
+                                            className="text-sm text-center py-8"
+                                            style={{ color: 'var(--gray-400)' }}
+                                        >
+                                            No categorical variables found
+                                        </p>
+                                    ) : (
+                                        filteredVariables.map(variable => (
+                                            <button
+                                                key={variable.id}
+                                                onClick={() => handleVariableSelect(variable)}
+                                                className="w-full text-left px-3 py-2.5 rounded-md transition-colors"
+                                                style={{ color: 'var(--color-charcoal)' }}
+                                                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--gray-100)'}
+                                                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                                            >
+                                                <p className="text-sm font-medium truncate">{variable.label}</p>
+                                                <p
+                                                    className="text-xs truncate"
+                                                    style={{ color: 'var(--gray-400)' }}
+                                                >
+                                                    {variable.name} • {variable.valueLabels.length} values
+                                                </p>
+                                            </button>
+                                        ))
+                                    )}
+                                </div>
+                            </>
+                        ) : (
+                            <>
+                                {/* Value List */}
+                                <div className="max-h-64 overflow-y-auto custom-scrollbar space-y-1">
+                                    {selectedVariable?.valueLabels.map(vl => {
+                                        const isSelected = selectedValues.includes(vl.value);
+                                        return (
+                                            <button
+                                                key={vl.value}
+                                                onClick={() => handleValueToggle(vl.value)}
+                                                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors"
+                                                style={{
+                                                    backgroundColor: isSelected ? 'var(--gray-100)' : 'transparent',
+                                                    color: 'var(--color-charcoal)',
+                                                }}
+                                                onMouseEnter={(e) => {
+                                                    if (!isSelected) e.currentTarget.style.backgroundColor = 'var(--gray-50)';
+                                                }}
+                                                onMouseLeave={(e) => {
+                                                    if (!isSelected) e.currentTarget.style.backgroundColor = 'transparent';
+                                                }}
+                                            >
+                                                <div
+                                                    className="w-5 h-5 rounded border-2 flex items-center justify-center transition-colors"
+                                                    style={{
+                                                        borderColor: isSelected ? 'var(--color-terracotta)' : 'var(--gray-300)',
+                                                        backgroundColor: isSelected ? 'var(--color-terracotta)' : 'transparent',
+                                                    }}
+                                                >
+                                                    {isSelected && <Check size={12} color="white" strokeWidth={3} />}
+                                                </div>
+                                                <span className="text-sm truncate">{vl.label}</span>
+                                                <span
+                                                    className="text-xs ml-auto"
+                                                    style={{ color: 'var(--gray-400)' }}
+                                                >
+                                                    ({vl.value})
+                                                </span>
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+
+                                {/* Apply Button */}
+                                <div className="mt-4 pt-4 border-t" style={{ borderColor: 'var(--gray-200)' }}>
+                                    <button
+                                        onClick={handleApply}
+                                        disabled={selectedValues.length === 0}
+                                        className="w-full py-2.5 rounded-md text-sm font-medium transition-all"
+                                        style={{
+                                            backgroundColor: selectedValues.length > 0 ? 'var(--color-terracotta)' : 'var(--gray-200)',
+                                            color: selectedValues.length > 0 ? 'white' : 'var(--gray-400)',
+                                            cursor: selectedValues.length > 0 ? 'pointer' : 'not-allowed',
+                                        }}
+                                    >
+                                        Apply Filter ({selectedValues.length} selected)
+                                    </button>
+                                </div>
+                            </>
+                        )}
+                    </div>
+                </motion.div>
+            </motion.div>
+        </AnimatePresence>
+    );
+};

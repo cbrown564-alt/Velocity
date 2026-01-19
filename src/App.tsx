@@ -7,10 +7,11 @@ import { DraggableVariable } from './features/dashboard/components/DraggableVari
 import { VirtualizedVariableList } from './features/dashboard/components/VirtualizedVariableList';
 import { DropZone } from './components/common/DropZone';
 import { DataTable } from './features/dashboard/components/DataTable';
-import { CollaboratorCursor } from './components/common/CollaboratorCursor';
-import { AvatarGroup } from './components/common/AvatarGroup';
+
 import { DataDrawer } from './components/overlays/DataDrawer';
 import { RecodeModal } from './components/overlays/RecodeModal';
+import { FilterModal } from './components/overlays/FilterModal';
+import { FilterBar } from './components/common/FilterBar';
 import { useVelocityStore, Variable } from './store';
 import { DndContext, DragOverlay, useSensor, useSensors, MouseSensor, TouchSensor, DragEndEvent, DragStartEvent, useDroppable } from '@dnd-kit/core';
 import { VariableCard } from './features/dashboard/components/DraggableVariable';
@@ -34,15 +35,7 @@ const SmartCanvas: React.FC<{ children: React.ReactNode; className?: string }> =
 // App Modes
 type AppMode = 'splash' | 'uploading' | 'dashboard';
 
-// Collaborator type for future expansion
-interface Collaborator {
-  id: string;
-  name: string;
-  color: string;
-  x: number;
-  y: number;
-  activeAction?: string;
-}
+
 
 export default function App() {
   // Access store state and actions
@@ -58,6 +51,8 @@ export default function App() {
     viewMode,
     recodeModal,
     drillDown,
+    activeFilters,
+    filterModal,
     initWorker,
     loadCSV,
     loadSAV,
@@ -70,10 +65,14 @@ export default function App() {
     closeRecodeModal,
     openDrillDown,
     closeDrillDown,
+    addFilter,
+    removeFilter,
+    openFilterModal,
+    closeFilterModal,
   } = useVelocityStore();
 
   const [mode, setMode] = React.useState<AppMode>('splash');
-  const [collaborators] = React.useState<Collaborator[]>([]);
+
   const [activeDragVariable, setActiveDragVariable] = React.useState<Variable | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -243,6 +242,13 @@ export default function App() {
         onSave={handleRecodeComplete}
       />
 
+      <FilterModal
+        isOpen={filterModal.isOpen}
+        onClose={closeFilterModal}
+        variables={variables}
+        onSave={addFilter}
+      />
+
       {/* GLOBAL PROGRESS BAR */}
       <AnimatePresence>
         {mode === 'uploading' && (
@@ -315,13 +321,6 @@ export default function App() {
             animate={{ opacity: 1 }}
             className="flex h-screen"
           >
-            {/* CURSOR OVERLAY (Reserved for V2) */}
-            <div className="absolute inset-0 z-50 pointer-events-none overflow-hidden">
-              {collaborators.map(user => (
-                <CollaboratorCursor key={user.id} user={user} />
-              ))}
-            </div>
-
             {/* SIDEBAR */}
             <aside className="w-72 bg-gray-50/50 border-r border-gray-200 flex flex-col shrink-0 z-30 relative">
               <div className="p-4 border-b border-gray-100 bg-white">
@@ -375,8 +374,7 @@ export default function App() {
                 </div>
 
                 <div className="flex items-center gap-6">
-                  <AvatarGroup users={collaborators} />
-                  <div className="h-4 w-px bg-gray-200"></div>
+
 
                   <div className="flex items-center bg-gray-100 p-1 rounded-lg">
                     <button
@@ -404,18 +402,12 @@ export default function App() {
               </header>
 
               {/* FILTER BAR */}
-              <div className="h-12 border-b border-gray-100 bg-white flex items-center px-6 gap-3 shrink-0 z-10">
-                <button className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-slate-600 border border-dashed border-gray-300 rounded-full hover:border-indigo-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors group">
-                  <span className="text-lg leading-none font-light text-slate-400 group-hover:text-indigo-500">+</span>
-                  Add Filter
-                </button>
-                <div className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-slate-700 bg-gray-100 rounded-full border border-gray-200 group-hover:border-gray-300 transition-colors">
-                  <span>Gender = Female</span>
-                  <button className="text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-200 p-0.5 transition-colors">
-                    <X size={12} />
-                  </button>
-                </div>
-              </div>
+              <FilterBar
+                filters={activeFilters}
+                variables={variables}
+                onAddFilter={openFilterModal}
+                onRemoveFilter={removeFilter}
+              />
 
               {/* WORKSPACE */}
               <SmartCanvas className="flex-1 overflow-auto bg-[#FAFAFA] relative flex flex-col">

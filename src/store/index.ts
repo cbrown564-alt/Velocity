@@ -93,6 +93,10 @@ export interface DrillDownState {
     loading: boolean;
 }
 
+export interface FilterModalState {
+    isOpen: boolean;
+}
+
 // ============================================================================
 // Store State
 // ============================================================================
@@ -113,6 +117,7 @@ interface VelocityState {
 
     // Filters
     activeFilters: Filter[];
+    filterModal: FilterModalState;
 
     // UI
     draggingId: string | null;
@@ -139,6 +144,13 @@ interface VelocityState {
     // Drill Down
     openDrillDown: (rowValue: string, colValue: string | null) => Promise<void>;
     closeDrillDown: () => void;
+
+    // Filters
+    addFilter: (filter: Omit<Filter, 'id'>) => void;
+    removeFilter: (filterId: string) => void;
+    clearFilters: () => void;
+    openFilterModal: () => void;
+    closeFilterModal: () => void;
 }
 
 // ============================================================================
@@ -155,6 +167,7 @@ export const useVelocityStore = create<VelocityState>((set, get) => ({
     queryResult: [],
     isQuerying: false,
     activeFilters: [],
+    filterModal: { isOpen: false },
     draggingId: null,
     searchQuery: '',
     viewMode: 'table',
@@ -283,7 +296,7 @@ export const useVelocityStore = create<VelocityState>((set, get) => ({
 
     // Run crosstab/frequency analysis
     runAnalysis: async () => {
-        const { worker, tableConfig, dataset } = get();
+        const { worker, tableConfig, dataset, activeFilters } = get();
         if (!worker || tableConfig.rowVars.length === 0) {
             set({ queryResult: [] });
             return;
@@ -298,11 +311,35 @@ export const useVelocityStore = create<VelocityState>((set, get) => ({
         const rowSelectors = rows.map((r, i) => `"${r}" as rowKey_${i}`).join(', ');
         const rowGroups = rows.map(r => `"${r}"`).join(', ');
 
+        // Build WHERE clause from active filters
+        const whereConditions = activeFilters.map(filter => {
+            const varId = `"${filter.variableId}"`;
+            switch (filter.operator) {
+                case 'eq':
+                    return `${varId} = ${filter.value}`;
+                case 'neq':
+                    return `${varId} != ${filter.value}`;
+                case 'in':
+                    const values = Array.isArray(filter.value) ? filter.value : [filter.value];
+                    return `${varId} IN (${values.join(', ')})`;
+                case 'gt':
+                    return `${varId} > ${filter.value}`;
+                case 'lt':
+                    return `${varId} < ${filter.value}`;
+                default:
+                    return null;
+            }
+        }).filter(Boolean);
+
+        const whereClause = whereConditions.length > 0
+            ? `WHERE ${whereConditions.join(' AND ')}`
+            : '';
+
         let sql: string;
         if (col) {
-            sql = `SELECT ${rowSelectors}, "${col}" as colKey, COUNT(*)::INTEGER as count FROM main GROUP BY ${rowGroups}, "${col}"`;
+            sql = `SELECT ${rowSelectors}, "${col}" as colKey, COUNT(*)::INTEGER as count FROM main ${whereClause} GROUP BY ${rowGroups}, "${col}"`;
         } else {
-            sql = `SELECT ${rowSelectors}, 'Total' as colKey, COUNT(*)::INTEGER as count FROM main GROUP BY ${rowGroups}`;
+            sql = `SELECT ${rowSelectors}, 'Total' as colKey, COUNT(*)::INTEGER as count FROM main ${whereClause} GROUP BY ${rowGroups}`;
         }
 
         return new Promise<void>((resolve) => {
@@ -353,6 +390,7 @@ export const useVelocityStore = create<VelocityState>((set, get) => ({
         set({
             tableConfig: { rowVars: [], colVar: null },
             queryResult: [],
+            activeFilters: [],
         });
     },
 
@@ -425,4 +463,33 @@ export const useVelocityStore = create<VelocityState>((set, get) => ({
     },
 
     closeDrillDown: () => set({ drillDown: { isOpen: false, title: '', data: [], loading: false } }),
+
+    // Filter actions
+    addFilter: (filterData) => {
+        const filter: Filter = {
+            ...filterData,
+            id: crypto.randomUUID(),
+        };
+        set((state) => ({
+            activeFilters: [...state.activeFilters, filter],
+        }));
+        // Trigger analysis with new filter
+        get().runAnalysis();
+    },
+
+    removeFilter: (filterId) => {
+        set((state) => ({
+            activeFilters: state.activeFilters.filter(f => f.id !== filterId),
+        }));
+        // Trigger analysis without removed filter
+        get().runAnalysis();
+    },
+
+    clearFilters: () => {
+        set({ activeFilters: [] });
+        get().runAnalysis();
+    },
+
+    openFilterModal: () => set({ filterModal: { isOpen: true } }),
+    closeFilterModal: () => set({ filterModal: { isOpen: false } }),
 }));

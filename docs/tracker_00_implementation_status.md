@@ -25,6 +25,7 @@
 - [x] Implement Drag-and-Drop system (@dnd-kit)
 - [x] Create `CrosstabEngine` (DuckDB SQL Generation)
 - [x] Render HTML Table with Significance Testing placeholders
+- [ ] **Implement Global Filter Bar UI & Logic** (Currently hardcoded in App.tsx)
 
 ### Milestone 1.4: Architecture & Design System
 *Added based on arch docs*
@@ -40,10 +41,19 @@
 - [x] Refactor `features/dashboard/components/DataTable.tsx`
 - [x] Refactor `features/dashboard/components/DraggableVariable.tsx`
 - [x] Refactor `components/common/DropZone.tsx`
-- [x] Refactor `components/overlays/DataDrawer.tsx`
+- [x] Refactor `components/overlays/DataDrawer.tsx` (UI Only)
 - [x] Refactor `components/overlays/RecodeModal.tsx`
-- [x] Refactor `components/common/CollaboratorCursor.tsx` & `AvatarGroup.tsx`
 - [x] **Support Nested Rows** (Refactor Data Model & Table)
+
+### Milestone 1.6: Testing Infrastructure
+*Goal: Comprehensive testing apparatus for current and future development*
+- [x] Configure Vitest with React Testing Library
+- [x] GitHub Actions CI/CD workflow (`.github/workflows/test.yml`)
+- [x] Extract `queryBuilder.ts` for pure SQL generation testing
+- [x] Unit tests: 25 tests for SQL generation logic
+- [x] Component tests: 25 tests for DropZone & DraggableVariable
+- [x] Test fixtures aligned with `arch_02_data_model.md`
+- [x] Architecture doc: `docs/arch_03_testing.md`
 
 ---
 
@@ -54,6 +64,7 @@
 - [ ] Refactor Row Shelf to `@dnd-kit/sortable` (Enable Reordering)
 - [ ] "Variable Sets" Logic (Grouping columns)
 - [ ] Recoding UI (Binning)
+- [ ] **Connect DataDrawer to Worker** (Implement drill-down SQL & Pagination)
 
 ### Milestone 2.2: The Weighting Engine
 - [ ] Apply Weight Variable to DuckDB Queries
@@ -75,3 +86,13 @@
 ### Milestone 3.2: Advanced Stats
 - [ ] Implement `lme4` (Mixed Models)
 - [ ] Implement `survey` package (Raking)
+
+---
+
+## Phase 4: Future Concepts (Parking Lot)
+*Goal: Ideas that require a backend/server, conflicting with current Local-First architecture.*
+
+### Milestone 4.1: Real-time Collaboration
+- [ ] Backend: WebSocket / Firebase Sync Service
+- [ ] Refactor `CollaboratorCursor.tsx` (Currently mock-only)
+- [ ] Refactor `AvatarGroup.tsx` (Currently mock-only)

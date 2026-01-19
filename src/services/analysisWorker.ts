@@ -112,6 +112,15 @@ async function loadSAV(buffer: ArrayBuffer): Promise<{ variables: any[]; rowCoun
   // Pivot data from row-major to column-major for Arrow
   const numRows = parsed.rows.length;
   const numCols = parsed.metadata.variables.length;
+
+  console.log(`📊 [Worker] DEBUG: parsed.rows.length = ${numRows}, metadata.rowCount = ${parsed.metadata.rowCount}, variables = ${numCols}`);
+
+  // Check if we have actual data
+  if (numRows === 0) {
+    console.error(`📊 [Worker] ERROR: No rows parsed! Metadata claims ${parsed.metadata.rowCount} rows but parsed.rows is empty.`);
+    throw new Error(`SAV parsing failed: No row data extracted (expected ${parsed.metadata.rowCount} rows)`);
+  }
+
   const columnsData: any[][] = Array.from({ length: numCols }, () => new Array(numRows));
 
   for (let r = 0; r < numRows; r++) {
@@ -120,6 +129,8 @@ async function loadSAV(buffer: ArrayBuffer): Promise<{ variables: any[]; rowCoun
       columnsData[c][r] = row[c];
     }
   }
+
+  console.log(`📊 [Worker] DEBUG: First row sample: ${JSON.stringify(parsed.rows[0]?.slice(0, 5))}`);
 
   // Create Arrow Vectors
   const vectors: Record<string, arrow.Vector> = {};
@@ -138,11 +149,14 @@ async function loadSAV(buffer: ArrayBuffer): Promise<{ variables: any[]; rowCoun
 
   // Create Arrow Table
   const table = new arrow.Table(vectors);
+  console.log(`📊 [Worker] DEBUG: Arrow table created with ${table.numRows} rows, ${table.numCols} columns`);
 
   // Bulk load into DuckDB
   // Drop existing table first to ensure clean state
   await conn.query(`DROP TABLE IF EXISTS main`);
+  console.log(`📊 [Worker] DEBUG: Inserting Arrow table into DuckDB...`);
   await conn.insertArrowTable(table as any, { name: 'main', create: true });
+  console.log(`📊 [Worker] DEBUG: Arrow table inserted successfully`);
 
 
   const durationMs = performance.now() - start;
