@@ -17,7 +17,14 @@ export default defineConfig(({ mode }) => {
     resolve: {
       alias: {
         '@': path.resolve(__dirname, 'src'),
+        '@velocity/readstat-wasm': path.resolve(__dirname, 'packages/readstat-wasm/ts'),
       }
+    },
+    optimizeDeps: {
+      exclude: ['@velocity/readstat-wasm']
+    },
+    worker: {
+      format: 'es'
     }
   };
 });

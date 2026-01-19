@@ -5,13 +5,8 @@
  * All database operations go through this worker via message passing.
  */
 
-// Polyfill for Node.js 'global' - required by jsavvy
-// @ts-ignore
-globalThis.global = globalThis;
-
 import * as duckdb from '@duckdb/duckdb-wasm';
-// savParser imports jsavvy which needs 'global' - we load it dynamically after polyfill
-import type { SavColumn } from './savParser';
+import * as arrow from 'apache-arrow';
 
 const JSDELIVR_BUNDLES = duckdb.getJsDelivrBundles();
 
@@ -77,39 +72,68 @@ async function loadSAV(buffer: ArrayBuffer): Promise<{ variables: any[]; rowCoun
 
   const start = performance.now();
 
-  // Dynamic import to ensure global polyfill is applied first
-  const { parseSavFile, savColumnsToVariables } = await import('./savParser');
+  // Use the new high-performance ReadStat WASM parser
+  const { parseSavFile } = await import('@velocity/readstat-wasm');
 
   // Parse the SAV file
-  const parsed = await parseSavFile(buffer);
-  const variables = savColumnsToVariables(parsed.columns);
+  const parsed = await parseSavFile(buffer, (progress) => {
+    // Could emit progress events here if needed
+    console.log(`📊 [Worker] Parse progress: ${(progress.progress * 100).toFixed(1)}%`);
+  });
 
-  // Create table with appropriate schema
-  const columnDefs = parsed.columns.map(c => `"${c.name}" ${c.type}`).join(', ');
-  await conn.query(`CREATE OR REPLACE TABLE main (${columnDefs})`);
+  // Convert variables to the format expected by the store
+  const variables = parsed.metadata.variables.map(v => ({
+    name: v.name,
+    label: v.label || v.name,
+    type: v.type,
+    valueLabels: v.valueLabelSetName
+      ? parsed.metadata.valueLabelSets[v.valueLabelSetName]?.reduce((acc, vl) => {
+        acc[vl.value] = vl.label;
+        return acc;
+      }, {} as Record<number, string>)
+      : undefined
+  }));
 
-  // Insert data in chunks to avoid memory issues
-  const CHUNK_SIZE = 1000;
-  for (let i = 0; i < parsed.rows.length; i += CHUNK_SIZE) {
-    const chunk = parsed.rows.slice(i, i + CHUNK_SIZE);
-    const values = chunk.map(row => {
-      const vals = row.map(v => {
-        if (v === null) return 'NULL';
-        if (typeof v === 'string') return `'${v.replace(/'/g, "''")}'`;
-        return String(v);
-      });
-      return `(${vals.join(', ')})`;
-    }).join(', ');
+  // Pivot data from row-major to column-major for Arrow
+  const numRows = parsed.rows.length;
+  const numCols = parsed.metadata.variables.length;
+  const columnsData: any[][] = Array.from({ length: numCols }, () => new Array(numRows));
 
-    if (values) {
-      await conn.query(`INSERT INTO main VALUES ${values}`);
+  for (let r = 0; r < numRows; r++) {
+    const row = parsed.rows[r];
+    for (let c = 0; c < numCols; c++) {
+      columnsData[c][r] = row[c];
     }
   }
 
-  const durationMs = performance.now() - start;
-  console.log(`🦆 [Worker] Loaded SAV: ${parsed.rowCount} rows, ${variables.length} variables in ${durationMs.toFixed(2)}ms`);
+  // Create Arrow Vectors
+  const vectors: Record<string, arrow.Vector> = {};
 
-  return { variables, rowCount: parsed.rowCount, durationMs };
+  parsed.metadata.variables.forEach((v, i) => {
+    // ReadStat 'numeric' is generally Double, 'string' is UTF8
+    const data = columnsData[i];
+
+    if (v.type === 'numeric') {
+      // Using Float64 for all numerics from ReadStat to be safe
+      vectors[v.name] = arrow.vectorFromArray(data, new arrow.Float64());
+    } else {
+      vectors[v.name] = arrow.vectorFromArray(data, new arrow.Utf8());
+    }
+  });
+
+  // Create Arrow Table
+  const table = new arrow.Table(vectors);
+
+  // Bulk load into DuckDB
+  // Drop existing table first to ensure clean state
+  await conn.query(`DROP TABLE IF EXISTS main`);
+  await conn.insertArrowTable(table as any, { name: 'main', create: true });
+
+
+  const durationMs = performance.now() - start;
+  console.log(`🦆 [Worker] Loaded SAV with ReadStat-WASM: ${parsed.metadata.rowCount} rows, ${variables.length} variables in ${durationMs.toFixed(2)}ms`);
+
+  return { variables, rowCount: parsed.metadata.rowCount, durationMs };
 }
 
 async function getSchema(): Promise<{ name: string; type: string }[]> {

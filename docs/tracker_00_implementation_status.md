@@ -10,7 +10,7 @@
 - [x] Initialize Repository (Vite/React/TS)
 - [x] Configure `duckdb-wasm`
 - [x] Create Web Worker for DuckDB (`services/analysisWorker.ts`)
-- [x] Implement `readstat-wasm` (or `apache-arrow` ingestion)
+- [ ] Implement `readstat-wasm` (or `apache-arrow` ingestion)
 - [ ] **Verify:** User can drop a 10MB .SAV file and see it logged to console in < 2s.
 
 ### Milestone 1.2: The Pantry (Variable List) (Week 2)

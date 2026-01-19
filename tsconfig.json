@@ -18,9 +18,13 @@
     "moduleDetection": "force",
     "allowJs": true,
     "jsx": "react-jsx",
+    "baseUrl": ".",
     "paths": {
       "@/*": [
         "./src/*"
+      ],
+      "@velocity/readstat-wasm": [
+        "./packages/readstat-wasm/ts/index.ts"
       ]
     },
     "allowImportingTsExtensions": true,

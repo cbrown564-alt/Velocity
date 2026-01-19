@@ -1,0 +1,3 @@
+[submodule "packages/readstat-wasm/lib/ReadStat"]
+	path = packages/readstat-wasm/lib/ReadStat
+	url = https://github.com/WizardMac/ReadStat.git

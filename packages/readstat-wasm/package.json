@@ -1,0 +1,31 @@
+{
+    "name": "@velocity/readstat-wasm",
+    "version": "0.1.0",
+    "description": "High-performance SPSS SAV file parser using libreadstat compiled to WebAssembly",
+    "type": "module",
+    "main": "./ts/index.ts",
+    "types": "./ts/index.ts",
+    "exports": {
+        ".": {
+            "types": "./ts/index.ts",
+            "import": "./ts/index.ts"
+        }
+    },
+    "files": [
+        "dist/",
+        "ts/"
+    ],
+    "scripts": {
+        "build": "make all",
+        "clean": "make clean"
+    },
+    "keywords": [
+        "spss",
+        "sav",
+        "readstat",
+        "wasm",
+        "webassembly",
+        "statistics"
+    ],
+    "license": "MIT"
+}
