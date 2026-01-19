@@ -1,12 +1,13 @@
 # Bug Report: Data Ingestion Architecture Issues
 
-**Status:** ✅ Resolved  
+**Status:** ✅ Resolved (Proper Fix Applied)  
 **Priority:** Critical  
 **Discovered:** 2026-01-19  
 **Fixed:** 2026-01-19  
 **Milestone:** 1.7
 
----
+> [!IMPORTANT]
+> **2026-01-19 Update:** The initial SQL fallback workaround was replaced with a proper fix. Root cause was `apache-arrow@18.0.0` incompatible with `@duckdb/duckdb-wasm@1.29.0`. Fixed by downgrading to `apache-arrow@17.0.0`. Arrow insertion now works correctly at ~38ms.
 
 ## Summary
 

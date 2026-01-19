@@ -18,7 +18,7 @@
     "@duckdb/duckdb-wasm": "1.29.0",
     "@types/react-virtualized-auto-sizer": "^1.0.4",
     "@types/react-window": "^1.8.5",
-    "apache-arrow": "18.0.0",
+    "apache-arrow": "17.0.0",
     "framer-motion": "^12.27.0",
     "jsavvy": "^0.0.6",
     "lucide-react": "^0.562.0",

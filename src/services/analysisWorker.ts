@@ -161,60 +161,29 @@ async function loadSAV(buffer: ArrayBuffer): Promise<{ variables: any[]; rowCoun
   console.log(`📊 [Worker] DEBUG: Inserting Arrow table into DuckDB...`);
 
   try {
-    await conn.insertArrowTable(table as any, { name: 'main', create: true });
-    console.log(`📊 [Worker] DEBUG: Arrow table inserted successfully`);
+    const insertStart = performance.now();
+    await conn.insertArrowTable(table, { name: 'main', create: true });
+    const insertDuration = performance.now() - insertStart;
+    console.log(`📊 [Worker] DEBUG: Arrow table inserted successfully in ${insertDuration.toFixed(2)}ms`);
 
     // Verify the table was actually created
+    // Note: DuckDB returns BigInt for COUNT(*), so we convert to Number for comparison
     const verifyResult = await conn.query(`SELECT COUNT(*) as cnt FROM main`);
-    const count = verifyResult.toArray()[0]?.cnt;
-    console.log(`📊 [Worker] DEBUG: Verification - Table 'main' has ${count} rows`);
+    const count = Number(verifyResult.toArray()[0]?.cnt);
 
-    if (count === undefined || count === 0) {
-      throw new Error('Table verification failed - no rows found after insertion');
+    if (count !== numRows) {
+      throw new Error(`Arrow insertion verification failed: expected ${numRows} rows, got ${count}`);
     }
+
+    console.log(`📊 [Worker] DEBUG: Verification passed - Table 'main' has ${count} rows`);
   } catch (insertError: any) {
-    console.error(`📊 [Worker] DEBUG: insertArrowTable failed, trying manual CREATE TABLE:`, insertError.message);
-
-    // Fallback: Create table manually using SQL
-    // First, build column definitions from metadata
-    const columnDefs = parsed.metadata.variables.map(v => {
-      const sqlType = v.type === 'numeric' ? 'DOUBLE' : 'VARCHAR';
-      return `"${v.name}" ${sqlType}`;
-    }).join(', ');
-
-    await conn.query(`CREATE TABLE main (${columnDefs})`);
-    console.log(`📊 [Worker] DEBUG: Created table schema manually`);
-
-    // Insert data row by row (less efficient but more reliable)
-    if (parsed.rows.length > 0) {
-      // Create prepared INSERT statement
-      const placeholders = parsed.metadata.variables.map(() => '?').join(', ');
-
-      // Batch the inserts
-      for (let batchStart = 0; batchStart < parsed.rows.length; batchStart += 1000) {
-        const batchEnd = Math.min(batchStart + 1000, parsed.rows.length);
-        const batchRows = parsed.rows.slice(batchStart, batchEnd);
-
-        // Build VALUES clause for batch
-        const valuesClause = batchRows.map(row => {
-          const values = row.map((val: any) => {
-            if (val === null || val === undefined) return 'NULL';
-            if (typeof val === 'string') return `'${val.replace(/'/g, "''")}'`;
-            return String(val);
-          }).join(', ');
-          return `(${values})`;
-        }).join(',\n');
-
-        const insertSql = `INSERT INTO main VALUES ${valuesClause}`;
-        await conn.query(insertSql);
-      }
-      console.log(`📊 [Worker] DEBUG: Inserted ${parsed.rows.length} rows via SQL fallback`);
-    }
-
-    // Verify again
-    const verifyResult = await conn.query(`SELECT COUNT(*) as cnt FROM main`);
-    const count = verifyResult.toArray()[0]?.cnt;
-    console.log(`📊 [Worker] DEBUG: Fallback verification - Table 'main' has ${count} rows`);
+    // Log detailed error for debugging - Arrow insertion should NOT fail with correct versions
+    console.error(`📊 [Worker] CRITICAL: insertArrowTable failed!`, {
+      error: insertError.message,
+      numRows,
+      numCols,
+    });
+    throw new Error(`Arrow insertion failed: ${insertError.message}. Check apache-arrow version compatibility.`);
   }
 
   const durationMs = performance.now() - start;
