@@ -82,17 +82,32 @@ async function loadSAV(buffer: ArrayBuffer): Promise<{ variables: any[]; rowCoun
   });
 
   // Convert variables to the format expected by the store
-  const variables = parsed.metadata.variables.map(v => ({
-    name: v.name,
-    label: v.label || v.name,
-    type: v.type,
-    valueLabels: v.valueLabelSetName
-      ? parsed.metadata.valueLabelSets[v.valueLabelSetName]?.reduce((acc, vl) => {
-        acc[vl.value] = vl.label;
-        return acc;
-      }, {} as Record<number, string>)
-      : undefined
-  }));
+  const variables = parsed.metadata.variables.map(v => {
+    // 1. Generate ID (using name as unique identifier)
+    const id = v.name;
+
+    // 2. Map Types (ReadStat 'numeric' -> 'scale', 'string' -> 'nominal')
+    // TODO: Improve heuristic for ordinal based on value labels or measure level if available
+    const type = v.type === 'numeric' ? 'scale' : 'nominal';
+
+    // 3. Transform Value Labels
+    let valueLabels: { value: number; label: string }[] = [];
+    if (v.valueLabelSetName && parsed.metadata.valueLabelSets[v.valueLabelSetName]) {
+      valueLabels = parsed.metadata.valueLabelSets[v.valueLabelSetName].map((vl: any) => ({
+        value: vl.value,
+        label: vl.label
+      }));
+    }
+
+    return {
+      id,
+      name: v.name,
+      label: v.label || v.name,
+      type,
+      valueLabels,
+      missingValues: { discrete: [], range: undefined }
+    };
+  });
 
   // Pivot data from row-major to column-major for Arrow
   const numRows = parsed.rows.length;
