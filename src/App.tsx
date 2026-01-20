@@ -18,6 +18,7 @@ import { DndContext, DragOverlay, useSensor, useSensors, MouseSensor, TouchSenso
 import { SortableContext, arrayMove, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { VariableCard } from './features/dashboard/components/DraggableVariable';
 import { ContextMenu } from './features/dashboard/components/ContextMenu';
+import { InputModal } from './components/overlays/InputModal';
 
 // Smart Canvas Wrapper
 const SmartCanvas: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className }) => {
@@ -84,6 +85,7 @@ export default function App() {
   const [contextMenu, setContextMenu] = React.useState<{ visible: boolean; x: number; y: number } | null>(null);
 
   const [activeDragSet, setActiveDragSet] = React.useState<VariableSet | null>(null);
+  const [showCombineModal, setShowCombineModal] = React.useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const sensors = useSensors(
@@ -291,14 +293,15 @@ export default function App() {
   };
 
   const handleCombineSets = () => {
-    const name = prompt("Enter name for new variable set:");
-    if (name) {
-      createVariableSet(name, Array.from(selectedSetIds).flatMap(id => {
-        const set = variableSets.find(s => s.id === id);
-        return set ? set.variableIds : [];
-      }));
-      setSelectedSetIds(new Set());
-    }
+    setShowCombineModal(true);
+  };
+
+  const handleCombineSubmit = (name: string) => {
+    createVariableSet(name, Array.from(selectedSetIds).flatMap(id => {
+      const set = variableSets.find(s => s.id === id);
+      return set ? set.variableIds : [];
+    }));
+    setSelectedSetIds(new Set());
   };
 
   // Derive values from store
@@ -369,6 +372,15 @@ export default function App() {
         onClose={closeFilterModal}
         variables={variables}
         onSave={addFilter}
+      />
+
+      <InputModal
+        isOpen={showCombineModal}
+        onClose={() => setShowCombineModal(false)}
+        onSubmit={handleCombineSubmit}
+        title="Combine Variables"
+        placeholder="Enter name for new variable set..."
+        submitLabel="Create"
       />
 
       {contextMenu && contextMenu.visible && (

@@ -268,20 +268,8 @@ async function recodeVariable(
     }
   }
 
-  caseSql += `ELSE "${sourceCol}" END`; // Fallback to original value (as string)
-
-  // NOTE: If binning, original value might be numeric, but new col is VARCHAR. 
-  // DuckDB handles cast implicitly usually, or we might need CAST.
-  // For 'ELSE', if source is numeric and target is string, simple assignment works in DuckDB?
-  // It might need CAST("${sourceCol}" AS VARCHAR). Let's be safe.
+  // Single ELSE clause with proper CAST for type safety
   caseSql += `ELSE CAST("${sourceCol}" AS VARCHAR) END`;
-
-  // Wait, I duplicated ELSE. Let's fix.
-  // Actually, previous ELSE logic was: `ELSE "${sourceCol}" END`.
-  // If source is int and target is string, this might fail or be weird.
-  // Safe bet: `ELSE CAST("${sourceCol}" AS VARCHAR) END`.
-
-  // Let's rewrite the method cleanly in replacement.
 
   await conn.query(`UPDATE main SET "${safeNewCol}" = ${caseSql}`);
 
