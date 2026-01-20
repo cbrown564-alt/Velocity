@@ -26,6 +26,7 @@ export type WorkerRequest =
 export type WorkerResponse =
   | { type: 'ready' }
   | { type: 'schema'; data: { name: string; type: string }[] }
+  | { type: 'csvLoaded'; schema: { name: string; type: string }[]; rowCount: number; durationMs: number }
   | { type: 'savLoaded'; variables: any[]; rowCount: number; durationMs: number }
   | { type: 'queryResult'; data: any[]; durationMs: number }
   | { type: 'uniqueValues'; data: string[] }
@@ -60,11 +61,24 @@ async function init() {
   console.log('🦆 [Worker] DuckDB Initialized');
 }
 
-async function loadCSV(fileName: string, content: string) {
+async function loadCSV(fileName: string, content: string): Promise<{ schema: { name: string; type: string }[]; rowCount: number; durationMs: number }> {
   if (!db || !conn) throw new Error('DB not initialized');
 
+  const start = performance.now();
   await db.registerFileText(fileName, content);
   await conn.query(`CREATE OR REPLACE TABLE main AS SELECT * FROM read_csv_auto('${fileName}')`);
+
+  // Get Schema
+  const schema = await getSchema();
+
+  // Get Row Count
+  const countResult = await conn.query(`SELECT COUNT(*) as cnt FROM main`);
+  const rowCount = Number(countResult.toArray()[0]?.cnt);
+
+  const durationMs = performance.now() - start;
+  console.log(`🦆 [Worker] Loaded CSV: ${rowCount} rows, ${schema.length} columns in ${durationMs.toFixed(2)}ms`);
+
+  return { schema, rowCount, durationMs };
 }
 
 async function loadSAV(buffer: ArrayBuffer): Promise<{ variables: any[]; rowCount: number; durationMs: number }> {
@@ -258,9 +272,13 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
         break;
 
       case 'loadCSV':
-        await loadCSV(request.fileName, request.content);
-        const schema = await getSchema();
-        self.postMessage({ type: 'schema', data: schema } as WorkerResponse);
+        const csvResult = await loadCSV(request.fileName, request.content);
+        self.postMessage({
+          type: 'csvLoaded',
+          schema: csvResult.schema,
+          rowCount: csvResult.rowCount,
+          durationMs: csvResult.durationMs
+        } as WorkerResponse);
         break;
 
       case 'loadSAV':

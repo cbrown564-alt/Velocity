@@ -9,7 +9,8 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Search, ChevronLeft, Check } from 'lucide-react';
-import type { Variable, Filter } from '../../store';
+import { useVelocityStore, type Variable, type Filter } from '../../store';
+import { Loader2 } from 'lucide-react';
 
 interface FilterModalProps {
     isOpen: boolean;
@@ -29,7 +30,13 @@ export const FilterModal: React.FC<FilterModalProps> = ({
     const [step, setStep] = useState<Step>('variable');
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedVariable, setSelectedVariable] = useState<Variable | null>(null);
-    const [selectedValues, setSelectedValues] = useState<number[]>([]);
+    const [selectedValues, setSelectedValues] = useState<number[] | string[]>([]);
+
+    // New state for async values
+    const [availableValues, setAvailableValues] = useState<{ value: string | number; label: string }[]>([]);
+    const [loadingValues, setLoadingValues] = useState(false);
+
+    const getUniqueValues = useVelocityStore(state => state.getUniqueValues);
 
     // Filter variables based on search (only show categoricals with value labels)
     const filteredVariables = useMemo(() => {
@@ -61,11 +68,35 @@ export const FilterModal: React.FC<FilterModalProps> = ({
         setStep('values');
     };
 
-    const handleValueToggle = (value: number) => {
+    // Effect to load values when step changes to 'values'
+    React.useEffect(() => {
+        if (step === 'values' && selectedVariable) {
+            const loadValues = async () => {
+                setLoadingValues(true);
+                try {
+                    // Check if we have embedded labels (SAV)
+                    if (selectedVariable.valueLabels && selectedVariable.valueLabels.length > 0) {
+                        setAvailableValues(selectedVariable.valueLabels);
+                    } else {
+                        // Otherwise fetch from DB (CSV)
+                        const values = await getUniqueValues(selectedVariable.id);
+                        setAvailableValues(values.map(v => ({ value: v, label: v })));
+                    }
+                } catch (e) {
+                    console.error("Failed to load unique values", e);
+                } finally {
+                    setLoadingValues(false);
+                }
+            };
+            loadValues();
+        }
+    }, [step, selectedVariable, getUniqueValues]);
+
+    const handleValueToggle = (value: number | string) => {
         setSelectedValues(prev =>
-            prev.includes(value)
+            prev.includes(value as any)
                 ? prev.filter(v => v !== value)
-                : [...prev, value]
+                : [...prev, value] as any
         );
     };
 
@@ -75,7 +106,7 @@ export const FilterModal: React.FC<FilterModalProps> = ({
         onSave({
             variableId: selectedVariable.id,
             operator: selectedValues.length === 1 ? 'eq' : 'in',
-            value: selectedValues.length === 1 ? selectedValues[0] : selectedValues,
+            value: (selectedValues.length === 1 ? selectedValues[0] : selectedValues) as any,
         });
 
         handleClose();
@@ -201,7 +232,7 @@ export const FilterModal: React.FC<FilterModalProps> = ({
                                                     className="text-xs truncate"
                                                     style={{ color: 'var(--gray-400)' }}
                                                 >
-                                                    {variable.name} • {variable.valueLabels.length} values
+                                                    {variable.name} • {variable.valueLabels.length > 0 ? `${variable.valueLabels.length} values` : variable.type}
                                                 </p>
                                             </button>
                                         ))
@@ -212,43 +243,54 @@ export const FilterModal: React.FC<FilterModalProps> = ({
                             <>
                                 {/* Value List */}
                                 <div className="max-h-64 overflow-y-auto custom-scrollbar space-y-1">
-                                    {selectedVariable?.valueLabels.map(vl => {
-                                        const isSelected = selectedValues.includes(vl.value);
-                                        return (
-                                            <button
-                                                key={vl.value}
-                                                onClick={() => handleValueToggle(vl.value)}
-                                                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors"
-                                                style={{
-                                                    backgroundColor: isSelected ? 'var(--gray-100)' : 'transparent',
-                                                    color: 'var(--color-charcoal)',
-                                                }}
-                                                onMouseEnter={(e) => {
-                                                    if (!isSelected) e.currentTarget.style.backgroundColor = 'var(--gray-50)';
-                                                }}
-                                                onMouseLeave={(e) => {
-                                                    if (!isSelected) e.currentTarget.style.backgroundColor = 'transparent';
-                                                }}
-                                            >
-                                                <div
-                                                    className="w-5 h-5 rounded border-2 flex items-center justify-center transition-colors"
+                                    {loadingValues ? (
+                                        <div className="flex flex-col items-center justify-center py-8 text-[var(--gray-400)] gap-2">
+                                            <Loader2 className="animate-spin" size={20} />
+                                            <span className="text-sm">Loading values...</span>
+                                        </div>
+                                    ) : availableValues.length === 0 ? (
+                                        <p className="text-sm text-center py-8 text-[var(--gray-400)]">
+                                            No values found
+                                        </p>
+                                    ) : (
+                                        availableValues.map(vl => {
+                                            const isSelected = selectedValues.includes(vl.value as any);
+                                            return (
+                                                <button
+                                                    key={vl.value}
+                                                    onClick={() => handleValueToggle(vl.value)}
+                                                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors"
                                                     style={{
-                                                        borderColor: isSelected ? 'var(--color-terracotta)' : 'var(--gray-300)',
-                                                        backgroundColor: isSelected ? 'var(--color-terracotta)' : 'transparent',
+                                                        backgroundColor: isSelected ? 'var(--gray-100)' : 'transparent',
+                                                        color: 'var(--color-charcoal)',
+                                                    }}
+                                                    onMouseEnter={(e) => {
+                                                        if (!isSelected) e.currentTarget.style.backgroundColor = 'var(--gray-50)';
+                                                    }}
+                                                    onMouseLeave={(e) => {
+                                                        if (!isSelected) e.currentTarget.style.backgroundColor = 'transparent';
                                                     }}
                                                 >
-                                                    {isSelected && <Check size={12} color="white" strokeWidth={3} />}
-                                                </div>
-                                                <span className="text-sm truncate">{vl.label}</span>
-                                                <span
-                                                    className="text-xs ml-auto"
-                                                    style={{ color: 'var(--gray-400)' }}
-                                                >
-                                                    ({vl.value})
-                                                </span>
-                                            </button>
-                                        );
-                                    })}
+                                                    <div
+                                                        className="w-5 h-5 rounded border-2 flex items-center justify-center transition-colors shrink-0"
+                                                        style={{
+                                                            borderColor: isSelected ? 'var(--color-terracotta)' : 'var(--gray-300)',
+                                                            backgroundColor: isSelected ? 'var(--color-terracotta)' : 'transparent',
+                                                        }}
+                                                    >
+                                                        {isSelected && <Check size={12} color="white" strokeWidth={3} />}
+                                                    </div>
+                                                    <span className="text-sm truncate text-left">{vl.label}</span>
+                                                    <span
+                                                        className="text-xs ml-auto shrink-0"
+                                                        style={{ color: 'var(--gray-400)' }}
+                                                    >
+                                                        ({vl.value})
+                                                    </span>
+                                                </button>
+                                            );
+                                        })
+                                    )}
                                 </div>
 
                                 {/* Apply Button */}

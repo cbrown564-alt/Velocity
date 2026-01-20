@@ -63,7 +63,7 @@ export interface Filter {
     id: string;
     variableId: string;
     operator: 'eq' | 'neq' | 'in' | 'gt' | 'lt';
-    value: number | number[];
+    value: number | string | (number | string)[];
 }
 
 export interface AggregatedRow {
@@ -228,9 +228,9 @@ export const useVelocityStore = create<VelocityState>((set, get) => ({
             const handler = (event: MessageEvent<WorkerResponse>) => {
                 const response = event.data;
 
-                if (response.type === 'schema') {
+                if (response.type === 'csvLoaded') {
                     // Convert schema to variables
-                    const variables: Variable[] = response.data.map((col) => ({
+                    const variables: Variable[] = response.schema.map((col) => ({
                         id: col.name,
                         name: col.name,
                         label: col.name.replace(/_/g, ' '),
@@ -243,7 +243,7 @@ export const useVelocityStore = create<VelocityState>((set, get) => ({
                         dataset: {
                             id: crypto.randomUUID(),
                             name: fileName,
-                            rowCount: 0, // Will be updated
+                            rowCount: response.rowCount,
                             variables,
                             source: 'csv',
                         },
@@ -325,18 +325,22 @@ export const useVelocityStore = create<VelocityState>((set, get) => ({
         // Build WHERE clause from active filters
         const whereConditions = activeFilters.map(filter => {
             const varId = `"${filter.variableId}"`;
+
+            // Helper to quote string values
+            const formatValue = (v: number | string) => typeof v === 'string' ? `'${v.replace(/'/g, "''")}'` : v;
+
             switch (filter.operator) {
                 case 'eq':
-                    return `${varId} = ${filter.value}`;
+                    return `${varId} = ${formatValue(filter.value as number | string)}`;
                 case 'neq':
-                    return `${varId} != ${filter.value}`;
+                    return `${varId} != ${formatValue(filter.value as number | string)}`;
                 case 'in':
                     const values = Array.isArray(filter.value) ? filter.value : [filter.value];
-                    return `${varId} IN (${values.join(', ')})`;
+                    return `${varId} IN (${values.map(formatValue).join(', ')})`;
                 case 'gt':
-                    return `${varId} > ${filter.value}`;
+                    return `${varId} > ${formatValue(filter.value as number | string)}`;
                 case 'lt':
-                    return `${varId} < ${filter.value}`;
+                    return `${varId} < ${formatValue(filter.value as number | string)}`;
                 default:
                     return null;
             }
