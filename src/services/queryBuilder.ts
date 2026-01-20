@@ -79,36 +79,90 @@ export function buildCrosstabQuery(options: CrosstabQueryOptions): string {
 // ============================================================================
 
 export interface DrillDownQueryOptions {
-    rowVar: string;
-    rowValue: string;
+    /** Row variable(s) - supports nested rows as array */
+    rowVars: { variable: string; value: string }[];
     colVar?: string | null;
     colValue?: string | null;
+    /** Global filters to apply */
+    filters?: Filter[];
     limit?: number;
+    offset?: number;
 }
 
 /**
  * Builds a drill-down query to fetch raw data for a specific cell.
+ * Supports nested row variables, global filters, and pagination.
  * 
  * @example Single variable:
- * buildDrillDownQuery({ rowVar: 'Gender', rowValue: 'Male' })
- * // SELECT * FROM main WHERE "Gender" = 'Male' LIMIT 100
+ * buildDrillDownQuery({ rowVars: [{ variable: 'Gender', value: 'Male' }] })
+ * // SELECT * FROM main WHERE "Gender" = 'Male' LIMIT 100 OFFSET 0
  * 
- * @example With column:
- * buildDrillDownQuery({ rowVar: 'Gender', rowValue: 'Male', colVar: 'Region', colValue: 'North' })
- * // SELECT * FROM main WHERE "Gender" = 'Male' AND "Region" = 'North' LIMIT 100
+ * @example Nested rows with column:
+ * buildDrillDownQuery({ 
+ *   rowVars: [{ variable: 'Region', value: 'North' }, { variable: 'City', value: 'NYC' }],
+ *   colVar: 'Gender', 
+ *   colValue: 'Male' 
+ * })
+ * // SELECT * FROM main WHERE "Region" = 'North' AND "City" = 'NYC' AND "Gender" = 'Male' LIMIT 100 OFFSET 0
+ * 
+ * @example With pagination:
+ * buildDrillDownQuery({ rowVars: [{ variable: 'Gender', value: 'Male' }], limit: 50, offset: 100 })
+ * // SELECT * FROM main WHERE "Gender" = 'Male' LIMIT 50 OFFSET 100
  */
 export function buildDrillDownQuery(options: DrillDownQueryOptions): string {
-    const { rowVar, rowValue, colVar, colValue, limit = 100 } = options;
+    const { rowVars, colVar, colValue, filters, limit = 100, offset = 0 } = options;
 
-    const conditions: string[] = [
-        `"${escapeIdentifier(rowVar)}" = '${escapeString(rowValue)}'`,
-    ];
+    const conditions: string[] = [];
 
+    // Add row variable conditions
+    for (const row of rowVars) {
+        conditions.push(`"${escapeIdentifier(row.variable)}" = '${escapeString(row.value)}'`);
+    }
+
+    // Add column variable condition
     if (colVar && colValue) {
         conditions.push(`"${escapeIdentifier(colVar)}" = '${escapeString(colValue)}'`);
     }
 
-    return `SELECT * FROM main WHERE ${conditions.join(' AND ')} LIMIT ${limit}`;
+    // Add global filter conditions
+    const filterClause = buildFilterClause(filters);
+    if (filterClause) {
+        conditions.push(filterClause);
+    }
+
+    const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
+
+    return `SELECT * FROM main ${whereClause} LIMIT ${limit} OFFSET ${offset}`;
+}
+
+/**
+ * Builds a count query for drill-down pagination.
+ * Returns total matching records without limit/offset.
+ */
+export function buildDrillDownCountQuery(options: Omit<DrillDownQueryOptions, 'limit' | 'offset'>): string {
+    const { rowVars, colVar, colValue, filters } = options;
+
+    const conditions: string[] = [];
+
+    // Add row variable conditions
+    for (const row of rowVars) {
+        conditions.push(`"${escapeIdentifier(row.variable)}" = '${escapeString(row.value)}'`);
+    }
+
+    // Add column variable condition
+    if (colVar && colValue) {
+        conditions.push(`"${escapeIdentifier(colVar)}" = '${escapeString(colValue)}'`);
+    }
+
+    // Add global filter conditions
+    const filterClause = buildFilterClause(filters);
+    if (filterClause) {
+        conditions.push(filterClause);
+    }
+
+    const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
+
+    return `SELECT COUNT(*) as total FROM main ${whereClause}`;
 }
 
 // ============================================================================
@@ -190,10 +244,21 @@ export function escapeString(value: string): string {
 
 /**
  * Formats a value for SQL based on type.
+ * Strings are quoted with single quotes, numbers are left as-is.
  */
-function formatValue(value: number | number[]): string {
+function formatValue(value: number | string | (number | string)[]): string {
     if (Array.isArray(value)) {
-        return value.map(v => String(v)).join(', ');
+        return value.map(v => formatSingleValue(v)).join(', ');
+    }
+    return formatSingleValue(value);
+}
+
+/**
+ * Formats a single value for SQL.
+ */
+function formatSingleValue(value: number | string): string {
+    if (typeof value === 'string') {
+        return `'${escapeString(value)}'`;
     }
     return String(value);
 }

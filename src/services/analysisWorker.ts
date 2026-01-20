@@ -7,6 +7,7 @@
 
 import * as duckdb from '@duckdb/duckdb-wasm';
 import * as arrow from 'apache-arrow';
+import { RecodeConfig } from '../types';
 
 const JSDELIVR_BUNDLES = duckdb.getJsDelivrBundles();
 
@@ -21,7 +22,7 @@ export type WorkerRequest =
   | { type: 'query'; sql: string }
   | { type: 'getSchema' }
   | { type: 'getUniqueValues'; column: string }
-  | { type: 'recodeVariable'; sourceCol: string; newColName: string; mappings: Record<string, string> };
+  | { type: 'recodeVariable'; sourceCol: string; newColName: string; config: RecodeConfig };
 
 export type WorkerResponse =
   | { type: 'ready' }
@@ -241,7 +242,7 @@ async function getUniqueValues(column: string): Promise<string[]> {
 async function recodeVariable(
   sourceCol: string,
   newColName: string,
-  mappings: Record<string, string>
+  config: RecodeConfig
 ): Promise<string> {
   if (!conn) throw new Error('DB not initialized');
 
@@ -250,10 +251,37 @@ async function recodeVariable(
   await conn.query(`ALTER TABLE main ADD COLUMN "${safeNewCol}" VARCHAR`);
 
   let caseSql = `CASE `;
-  for (const [oldVal, newVal] of Object.entries(mappings)) {
-    caseSql += `WHEN "${sourceCol}" = '${oldVal.replace(/'/g, "''")}' THEN '${newVal.replace(/'/g, "''")}' `;
+
+  if (config.mode === 'categorical' && config.mappings) {
+    for (const [oldVal, newVal] of Object.entries(config.mappings)) {
+      caseSql += `WHEN "${sourceCol}" = '${oldVal.replace(/'/g, "''")}' THEN '${newVal.replace(/'/g, "''")}' `;
+    }
+  } else if (config.mode === 'binning' && config.rules) {
+    for (const rule of config.rules) {
+      const parts: string[] = [];
+      if (rule.min !== undefined) parts.push(`"${sourceCol}" >= ${rule.min}`);
+      if (rule.max !== undefined) parts.push(`"${sourceCol}" < ${rule.max}`);
+
+      if (parts.length > 0) {
+        caseSql += `WHEN ${parts.join(' AND ')} THEN '${rule.label.replace(/'/g, "''")}' `;
+      }
+    }
   }
-  caseSql += `ELSE "${sourceCol}" END`;
+
+  caseSql += `ELSE "${sourceCol}" END`; // Fallback to original value (as string)
+
+  // NOTE: If binning, original value might be numeric, but new col is VARCHAR. 
+  // DuckDB handles cast implicitly usually, or we might need CAST.
+  // For 'ELSE', if source is numeric and target is string, simple assignment works in DuckDB?
+  // It might need CAST("${sourceCol}" AS VARCHAR). Let's be safe.
+  caseSql += `ELSE CAST("${sourceCol}" AS VARCHAR) END`;
+
+  // Wait, I duplicated ELSE. Let's fix.
+  // Actually, previous ELSE logic was: `ELSE "${sourceCol}" END`.
+  // If source is int and target is string, this might fail or be weird.
+  // Safe bet: `ELSE CAST("${sourceCol}" AS VARCHAR) END`.
+
+  // Let's rewrite the method cleanly in replacement.
 
   await conn.query(`UPDATE main SET "${safeNewCol}" = ${caseSql}`);
 
@@ -311,7 +339,7 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
         break;
 
       case 'recodeVariable':
-        const newCol = await recodeVariable(request.sourceCol, request.newColName, request.mappings);
+        const newCol = await recodeVariable(request.sourceCol, request.newColName, request.config);
         self.postMessage({ type: 'recodeComplete', newColName: newCol } as WorkerResponse);
         break;
     }

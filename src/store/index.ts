@@ -7,6 +7,7 @@
 
 import { create } from 'zustand';
 import type { WorkerRequest, WorkerResponse } from '../services/analysisWorker';
+import { RecodeConfig } from '../types';
 
 // ============================================================================
 // Data Model Types (from arch_02_data_model.md)
@@ -86,15 +87,48 @@ export interface RecodeModalState {
     variable: Variable | null;
 }
 
+export interface DrillDownFilter {
+    variable: string;
+    value: string;
+}
+
 export interface DrillDownState {
     isOpen: boolean;
     title: string;
     data: any[];
     loading: boolean;
+    // Pagination
+    totalCount: number;
+    currentPage: number;
+    pageSize: number;
+    // Context for fetching more pages
+    rowFilters: DrillDownFilter[];
+    colFilter: DrillDownFilter | null;
 }
 
 export interface FilterModalState {
     isOpen: boolean;
+}
+
+// ============================================================================
+// Variable Set Types (Milestone 2.1)
+// ============================================================================
+
+export interface VariableSet {
+    id: string;
+    /** Display name for the set */
+    name: string;
+    /** IDs of variables in this set */
+    variableIds: string[];
+    /** 
+     * Structure type:
+     * - 'single': Standard single variable (default)
+     * - 'multi': Multiple response set
+     * - 'grid': Grid/matrix structure
+     */
+    structure: 'single' | 'multi' | 'grid';
+    /** Inferred variable type for the set */
+    type?: VariableType;
 }
 
 // ============================================================================
@@ -109,6 +143,7 @@ interface VelocityState {
 
     // Dataset
     dataset: Dataset | null;
+    variableSets: VariableSet[];
 
     // Analysis
     tableConfig: TableConfig;
@@ -143,10 +178,12 @@ interface VelocityState {
 
     // Data Access (routed through worker)
     getUniqueValues: (variableId: string) => Promise<string[]>;
-    recodeVariable: (sourceColId: string, newColName: string, mappings: Record<string, string>) => Promise<string>;
 
-    // Drill Down
-    openDrillDown: (rowValue: string, colValue: string | null) => Promise<void>;
+    recodeVariable: (sourceColId: string, newColName: string, config: RecodeConfig) => Promise<string>;
+
+    // Drill Down (accepts full row path for nested rows)
+    openDrillDown: (rowPath: { variable: string; value: string }[], colValue: string | null) => Promise<void>;
+    loadMoreDrillDown: () => Promise<void>;
     closeDrillDown: () => void;
 
     // Filters
@@ -155,6 +192,10 @@ interface VelocityState {
     clearFilters: () => void;
     openFilterModal: () => void;
     closeFilterModal: () => void;
+
+    // Variable Sets (Milestone 2.1)
+    createVariableSet: (name: string, variableIds: string[]) => void;
+    splitVariableSet: (setId: string) => void;
 }
 
 // ============================================================================
@@ -167,6 +208,7 @@ export const useVelocityStore = create<VelocityState>((set, get) => ({
     isDbReady: false,
     initError: null,
     dataset: null,
+    variableSets: [],
     tableConfig: { rowVars: [], colVar: null },
     queryResult: [],
     isQuerying: false,
@@ -176,7 +218,17 @@ export const useVelocityStore = create<VelocityState>((set, get) => ({
     searchQuery: '',
     viewMode: 'table',
     recodeModal: { isOpen: false, variable: null },
-    drillDown: { isOpen: false, title: '', data: [], loading: false },
+    drillDown: {
+        isOpen: false,
+        title: '',
+        data: [],
+        loading: false,
+        totalCount: 0,
+        currentPage: 1,
+        pageSize: 50,
+        rowFilters: [],
+        colFilter: null,
+    },
 
     // Initialize Web Worker
     initWorker: async () => {
@@ -239,6 +291,15 @@ export const useVelocityStore = create<VelocityState>((set, get) => ({
                         missingValues: {},
                     }));
 
+                    // Create default 1:1 Variable Sets
+                    const variableSets: VariableSet[] = variables.map(v => ({
+                        id: crypto.randomUUID(),
+                        name: v.label || v.name,
+                        variableIds: [v.id],
+                        structure: 'single',
+                        type: v.type,
+                    }));
+
                     set({
                         dataset: {
                             id: crypto.randomUUID(),
@@ -247,6 +308,7 @@ export const useVelocityStore = create<VelocityState>((set, get) => ({
                             variables,
                             source: 'csv',
                         },
+                        variableSets,
                     });
 
                     worker.removeEventListener('message', handler);
@@ -272,6 +334,15 @@ export const useVelocityStore = create<VelocityState>((set, get) => ({
                 const response = event.data;
 
                 if (response.type === 'savLoaded') {
+                    // Create default 1:1 Variable Sets
+                    const variableSets: VariableSet[] = response.variables.map(v => ({
+                        id: crypto.randomUUID(),
+                        name: v.label || v.name,
+                        variableIds: [v.id],
+                        structure: 'single',
+                        type: v.type,
+                    }));
+
                     set({
                         dataset: {
                             id: crypto.randomUUID(),
@@ -280,6 +351,7 @@ export const useVelocityStore = create<VelocityState>((set, get) => ({
                             variables: response.variables,
                             source: 'sav',
                         },
+                        variableSets,
                     });
 
                     console.log(`📊 [Store] SAV loaded: ${response.rowCount} rows, ${response.variables.length} variables in ${response.durationMs.toFixed(2)}ms`);
@@ -307,7 +379,7 @@ export const useVelocityStore = create<VelocityState>((set, get) => ({
 
     // Run crosstab/frequency analysis
     runAnalysis: async () => {
-        const { worker, tableConfig, dataset, activeFilters } = get();
+        const { worker, tableConfig, dataset, variableSets, activeFilters } = get();
         if (!worker || tableConfig.rowVars.length === 0) {
             set({ queryResult: [] });
             return;
@@ -315,10 +387,22 @@ export const useVelocityStore = create<VelocityState>((set, get) => ({
 
         set({ isQuerying: true });
 
-        const rows = tableConfig.rowVars;
-        const col = tableConfig.colVar;
+        // Helper to resolve ID (Set ID -> Variable ID)
+        const resolveToCol = (id: string): string => {
+            const set = variableSets.find(s => s.id === id);
+            if (set && set.variableIds.length > 0) {
+                return set.variableIds[0]; // Logic: Use 1st var of set
+            }
+            // Fallback: Check if it's a raw variable ID (though UI mostly uses Sets now)
+            return id;
+        };
+
+        const rows = tableConfig.rowVars.map(resolveToCol);
+        const col = tableConfig.colVar ? resolveToCol(tableConfig.colVar) : null;
 
         // Dynamic Row Selection
+        // Note: We use original IDs for aliases to keep tracking consistent? 
+        // Actually, aliases are rowKey_0 etc. The key match is implicit by order.
         const rowSelectors = rows.map((r, i) => `"${r}" as rowKey_${i}`).join(', ');
         const rowGroups = rows.map(r => `"${r}"`).join(', ');
 
@@ -442,7 +526,7 @@ export const useVelocityStore = create<VelocityState>((set, get) => ({
         });
     },
 
-    recodeVariable: async (sourceColId: string, newColName: string, mappings: Record<string, string>): Promise<string> => {
+    recodeVariable: async (sourceColId: string, newColName: string, config: RecodeConfig): Promise<string> => {
         const { worker, dataset } = get();
         if (!worker) throw new Error('Worker not initialized');
 
@@ -467,6 +551,17 @@ export const useVelocityStore = create<VelocityState>((set, get) => ({
                                 variables: [...dataset.variables, newVariable],
                             },
                         });
+
+                        // Also create a new Variable Set for this variable
+                        set((state) => ({
+                            variableSets: [...state.variableSets, {
+                                id: crypto.randomUUID(),
+                                name: newColName,
+                                variableIds: [response.newColName],
+                                structure: 'single',
+                                type: 'nominal'
+                            }]
+                        }));
                     }
                     worker.removeEventListener('message', handler);
                     resolve(response.newColName);
@@ -480,62 +575,184 @@ export const useVelocityStore = create<VelocityState>((set, get) => ({
                 type: 'recodeVariable',
                 sourceCol: sourceColId,
                 newColName,
-                mappings
+                config
             } as WorkerRequest);
         });
     },
 
-    // Drill down
-    openDrillDown: async (rowValue, colValue) => {
-        const { worker, tableConfig, dataset } = get();
-        // TODO: Handle nested row drilldown. For now, we take the last row var or require full path?
-        // Limitation: The current UI `handleCellClick` only passes `rowValue: string`.
-        // To support nested drilldown, `rowValue` needs to become `rowPath: string[]`.
-        // For this refactor step, we will temporarily break deep drilldown or just use the first variable.
-        // Actually, let's fix the DrillDown signature in a follow up.
-        // For now, if we have multiple row vars, we can't reliably drill down with a single string.
-        // We will assume rowValue matches the LAST variable in the chain (leaf node) if we are clicking a cell,
-        // BUT `DataTable` will likely need to pass the full path.
+    // Drill down with pagination support
+    openDrillDown: async (rowPath, colValue) => {
+        const { worker, tableConfig, dataset, activeFilters, variableSets } = get();
+        if (!worker || rowPath.length === 0) return;
 
-        // Let's defer strict drill-down logic until DataTable is updated to pass full path.
-        // For robustness, we'll check if we can match the rowValue to ANY row variable.
-        if (!worker || tableConfig.rowVars.length === 0) return;
+        const pageSize = 50;
+
+        // Helper to resolve ID (Set ID -> Variable ID)
+        const resolveToCol = (id: string): string => {
+            const set = variableSets.find(s => s.id === id);
+            if (set && set.variableIds.length > 0) {
+                return set.variableIds[0];
+            }
+            return id;
+        };
+
+        const resolvedColVar = tableConfig.colVar ? resolveToCol(tableConfig.colVar) : null;
+
+        // Build filter context for storing and title generation
+        const rowFilters: DrillDownFilter[] = rowPath.map(p => ({
+            variable: p.variable,
+            value: p.value,
+        }));
+        const colFilter: DrillDownFilter | null = resolvedColVar && colValue
+            ? { variable: resolvedColVar, value: colValue }
+            : null;
+
+        // Build title from filters
+        const titleParts: string[] = rowPath.map(p => {
+            const varLabel = dataset?.variables.find(v => v.id === p.variable)?.label || p.variable;
+            return `${varLabel}: ${p.value}`;
+        });
+        if (colFilter) {
+            const colVarLabel = dataset?.variables.find(v => v.id === colFilter.variable)?.label || colFilter.variable;
+            titleParts.push(`${colVarLabel}: ${colFilter.value}`);
+        }
+        const title = titleParts.join(' • ');
 
         set({
-            drillDown: { isOpen: true, title: '', data: [], loading: true },
+            drillDown: {
+                isOpen: true,
+                title,
+                data: [],
+                loading: true,
+                totalCount: 0,
+                currentPage: 1,
+                pageSize,
+                rowFilters,
+                colFilter,
+            },
         });
 
-        // Simplified logic: filter where the FIRST row variable matches (backward compat for single row)
-        // Correct logic requires `rowValues: string[]` argument.
-        const primaryRowVar = tableConfig.rowVars[0];
+        // Build SQL queries using queryBuilder
+        const { buildDrillDownQuery, buildDrillDownCountQuery } = await import('../services/queryBuilder');
 
-        const rowVarLabel = dataset?.variables.find((v) => v.id === primaryRowVar)?.label || primaryRowVar;
-        let whereClause = `"${primaryRowVar}" = '${rowValue}'`;
-        let titleDescription = `${rowVarLabel}: ${rowValue}`;
+        const queryOptions = {
+            rowVars: rowPath,
+            colVar: colFilter?.variable || null,
+            colValue: colFilter?.value || null,
+            filters: activeFilters,
+            limit: pageSize,
+            offset: 0,
+        };
 
-        if (tableConfig.colVar && colValue) {
-            const colVarLabel = dataset?.variables.find((v) => v.id === tableConfig.colVar)?.label || tableConfig.colVar;
-            whereClause += ` AND "${tableConfig.colVar}" = '${colValue}'`;
-            titleDescription += ` • ${colVarLabel}: ${colValue}`;
-        }
+        const dataSql = buildDrillDownQuery(queryOptions);
+        const countSql = buildDrillDownCountQuery(queryOptions);
+
+        // Execute both queries
+        return new Promise<void>((resolve) => {
+            let dataResult: any[] | null = null;
+            let totalCount: number | null = null;
+            let responseCount = 0;
+
+            const checkComplete = () => {
+                if (responseCount === 2) {
+                    set((state) => ({
+                        drillDown: {
+                            ...state.drillDown,
+                            data: dataResult || [],
+                            totalCount: totalCount || 0,
+                            loading: false,
+                        },
+                    }));
+                    resolve();
+                }
+            };
+
+            // Data query handler
+            const dataHandler = (event: MessageEvent<WorkerResponse>) => {
+                const response = event.data;
+                if (response.type === 'queryResult') {
+                    dataResult = response.data;
+                    responseCount++;
+                    worker.removeEventListener('message', dataHandler);
+                    checkComplete();
+                } else if (response.type === 'error') {
+                    console.error('[Store] Drill-down data query error:', response.message);
+                    dataResult = [];
+                    responseCount++;
+                    worker.removeEventListener('message', dataHandler);
+                    checkComplete();
+                }
+            };
+
+            // Count query handler
+            const countHandler = (event: MessageEvent<WorkerResponse>) => {
+                const response = event.data;
+                if (response.type === 'queryResult') {
+                    totalCount = response.data[0]?.total ?? 0;
+                    responseCount++;
+                    worker.removeEventListener('message', countHandler);
+                    checkComplete();
+                } else if (response.type === 'error') {
+                    console.error('[Store] Drill-down count query error:', response.message);
+                    totalCount = 0;
+                    responseCount++;
+                    worker.removeEventListener('message', countHandler);
+                    checkComplete();
+                }
+            };
+
+            worker.addEventListener('message', dataHandler);
+            worker.postMessage({ type: 'query', sql: dataSql } as WorkerRequest);
+
+            // Small delay between queries to avoid response collision
+            setTimeout(() => {
+                worker.addEventListener('message', countHandler);
+                worker.postMessage({ type: 'query', sql: countSql } as WorkerRequest);
+            }, 10);
+        });
+    },
+
+    loadMoreDrillDown: async () => {
+        const { worker, drillDown, activeFilters } = get();
+        if (!worker || drillDown.loading) return;
+
+        const { rowFilters, colFilter, currentPage, pageSize, data } = drillDown;
+        const nextPage = currentPage + 1;
+        const offset = currentPage * pageSize; // currentPage is 1-indexed, so offset = (page-1)*size after increment
 
         set((state) => ({
-            drillDown: { ...state.drillDown, title: titleDescription },
+            drillDown: { ...state.drillDown, loading: true },
         }));
 
-        const sql = `SELECT * FROM main WHERE ${whereClause} LIMIT 100`;
+        const { buildDrillDownQuery } = await import('../services/queryBuilder');
+
+        const queryOptions = {
+            rowVars: rowFilters,
+            colVar: colFilter?.variable || null,
+            colValue: colFilter?.value || null,
+            filters: activeFilters,
+            limit: pageSize,
+            offset,
+        };
+
+        const sql = buildDrillDownQuery(queryOptions);
 
         return new Promise<void>((resolve) => {
             const handler = (event: MessageEvent<WorkerResponse>) => {
                 const response = event.data;
-
                 if (response.type === 'queryResult') {
                     set((state) => ({
-                        drillDown: { ...state.drillDown, data: response.data, loading: false },
+                        drillDown: {
+                            ...state.drillDown,
+                            data: [...data, ...response.data], // Append new data
+                            currentPage: nextPage,
+                            loading: false,
+                        },
                     }));
                     worker.removeEventListener('message', handler);
                     resolve();
                 } else if (response.type === 'error') {
+                    console.error('[Store] Load more drill-down error:', response.message);
                     set((state) => ({
                         drillDown: { ...state.drillDown, loading: false },
                     }));
@@ -549,7 +766,19 @@ export const useVelocityStore = create<VelocityState>((set, get) => ({
         });
     },
 
-    closeDrillDown: () => set({ drillDown: { isOpen: false, title: '', data: [], loading: false } }),
+    closeDrillDown: () => set({
+        drillDown: {
+            isOpen: false,
+            title: '',
+            data: [],
+            loading: false,
+            totalCount: 0,
+            currentPage: 1,
+            pageSize: 50,
+            rowFilters: [],
+            colFilter: null,
+        },
+    }),
 
     // Filter actions
     addFilter: (filterData) => {
@@ -579,4 +808,56 @@ export const useVelocityStore = create<VelocityState>((set, get) => ({
 
     openFilterModal: () => set({ filterModal: { isOpen: true } }),
     closeFilterModal: () => set({ filterModal: { isOpen: false } }),
+
+    // Variable Sets (Milestone 2.1)
+    createVariableSet: (name, variableIds) => {
+        const { variableSets, dataset } = get();
+        if (!dataset || variableIds.length === 0) return;
+
+        // Infer type from first variable
+        const firstVar = dataset.variables.find(v => v.id === variableIds[0]);
+        const inferredType = firstVar?.type;
+
+        const newSet: VariableSet = {
+            id: crypto.randomUUID(),
+            name,
+            variableIds,
+            structure: variableIds.length > 1 ? 'multi' : 'single',
+            type: inferredType,
+        };
+
+        // Remove any existing sets that contain ONLY these variables
+        // (we're combining them into a new set)
+        const existingVarIds = new Set(variableIds);
+        const filteredSets = variableSets.filter(s => {
+            const allInNew = s.variableIds.every(vId => existingVarIds.has(vId));
+            return !allInNew || s.variableIds.length > variableIds.length;
+        });
+
+        set({ variableSets: [...filteredSets, newSet] });
+    },
+
+    splitVariableSet: (setId) => {
+        const { variableSets, dataset } = get();
+        if (!dataset) return;
+
+        const setToSplit = variableSets.find(s => s.id === setId);
+        if (!setToSplit || setToSplit.variableIds.length <= 1) return;
+
+        // Create individual sets for each variable
+        const newSets: VariableSet[] = setToSplit.variableIds.map(vId => {
+            const variable = dataset.variables.find(v => v.id === vId);
+            return {
+                id: crypto.randomUUID(),
+                name: variable?.label || vId,
+                variableIds: [vId],
+                structure: 'single' as const,
+                type: variable?.type,
+            };
+        });
+
+        // Replace the original set with the new individual sets
+        const otherSets = variableSets.filter(s => s.id !== setId);
+        set({ variableSets: [...otherSets, ...newSets] });
+    },
 }));

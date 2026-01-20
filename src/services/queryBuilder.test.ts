@@ -8,6 +8,7 @@ import { describe, it, expect } from 'vitest';
 import {
     buildCrosstabQuery,
     buildDrillDownQuery,
+    buildDrillDownCountQuery,
     buildFilterClause,
     buildUniqueValuesQuery,
     escapeIdentifier,
@@ -84,35 +85,81 @@ describe('queryBuilder', () => {
     // ==========================================================================
 
     describe('buildDrillDownQuery', () => {
-        it('builds a basic drill-down query', () => {
-            const sql = buildDrillDownQuery({ rowVar: 'Gender', rowValue: 'Male' });
+        it('builds a basic drill-down query with single row variable', () => {
+            const sql = buildDrillDownQuery({
+                rowVars: [{ variable: 'Gender', value: 'Male' }]
+            });
 
-            expect(sql).toBe(`SELECT * FROM main WHERE "Gender" = 'Male' LIMIT 100`);
+            expect(sql).toBe(`SELECT * FROM main WHERE "Gender" = 'Male' LIMIT 100 OFFSET 0`);
         });
 
         it('includes column filter when provided', () => {
             const sql = buildDrillDownQuery({
-                rowVar: 'Gender',
-                rowValue: 'Male',
+                rowVars: [{ variable: 'Gender', value: 'Male' }],
                 colVar: 'Region',
                 colValue: 'North',
             });
 
             expect(sql).toBe(
-                `SELECT * FROM main WHERE "Gender" = 'Male' AND "Region" = 'North' LIMIT 100`
+                `SELECT * FROM main WHERE "Gender" = 'Male' AND "Region" = 'North' LIMIT 100 OFFSET 0`
             );
         });
 
-        it('respects custom limit', () => {
-            const sql = buildDrillDownQuery({ rowVar: 'Gender', rowValue: 'Male', limit: 50 });
+        it('supports multiple row variables (nested)', () => {
+            const sql = buildDrillDownQuery({
+                rowVars: [
+                    { variable: 'Region', value: 'North' },
+                    { variable: 'City', value: 'NYC' },
+                ],
+                colVar: 'Gender',
+                colValue: 'Male',
+            });
+
+            expect(sql).toContain(`"Region" = 'North'`);
+            expect(sql).toContain(`"City" = 'NYC'`);
+            expect(sql).toContain(`"Gender" = 'Male'`);
+        });
+
+        it('respects custom limit and offset for pagination', () => {
+            const sql = buildDrillDownQuery({
+                rowVars: [{ variable: 'Gender', value: 'Male' }],
+                limit: 50,
+                offset: 100
+            });
 
             expect(sql).toContain('LIMIT 50');
+            expect(sql).toContain('OFFSET 100');
         });
 
         it('escapes single quotes in values', () => {
-            const sql = buildDrillDownQuery({ rowVar: 'Name', rowValue: "O'Brien" });
+            const sql = buildDrillDownQuery({
+                rowVars: [{ variable: 'Name', value: "O'Brien" }]
+            });
 
             expect(sql).toContain("'O''Brien'"); // Escaped single quote
+        });
+    });
+
+    describe('buildDrillDownCountQuery', () => {
+        it('builds a count query without limit/offset', () => {
+            const sql = buildDrillDownCountQuery({
+                rowVars: [{ variable: 'Gender', value: 'Male' }]
+            });
+
+            expect(sql).toBe(`SELECT COUNT(*) as total FROM main WHERE "Gender" = 'Male'`);
+        });
+
+        it('includes all filters in count query', () => {
+            const sql = buildDrillDownCountQuery({
+                rowVars: [{ variable: 'Region', value: 'North' }],
+                colVar: 'Gender',
+                colValue: 'Male',
+            });
+
+            expect(sql).toContain(`"Region" = 'North'`);
+            expect(sql).toContain(`"Gender" = 'Male'`);
+            expect(sql).not.toContain('LIMIT');
+            expect(sql).not.toContain('OFFSET');
         });
     });
 

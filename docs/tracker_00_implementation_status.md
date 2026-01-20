@@ -74,7 +74,7 @@
 - [ ] Refactor Row Shelf to `@dnd-kit/sortable` (Enable Reordering)
 - [ ] "Variable Sets" Logic (Grouping columns)
 - [ ] Recoding UI (Binning)
-- [ ] **Connect DataDrawer to Worker** (Implement drill-down SQL & Pagination)
+- [x] **Connect DataDrawer to Worker** (Implement drill-down SQL & Pagination)
 
 ### Milestone 2.2: The Weighting Engine
 - [ ] Apply Weight Variable to DuckDB Queries

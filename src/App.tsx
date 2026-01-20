@@ -12,9 +12,10 @@ import { DataDrawer } from './components/overlays/DataDrawer';
 import { RecodeModal } from './components/overlays/RecodeModal';
 import { FilterModal } from './components/overlays/FilterModal';
 import { FilterBar } from './components/common/FilterBar';
-import { useVelocityStore, Variable } from './store';
+import { useVelocityStore, Variable, VariableSet } from './store';
 import { DndContext, DragOverlay, useSensor, useSensors, MouseSensor, TouchSensor, DragEndEvent, DragStartEvent, useDroppable } from '@dnd-kit/core';
 import { VariableCard } from './features/dashboard/components/DraggableVariable';
+import { ContextMenu } from './features/dashboard/components/ContextMenu';
 
 // Smart Canvas Wrapper
 const SmartCanvas: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className }) => {
@@ -43,6 +44,7 @@ export default function App() {
     isDbReady,
     initError,
     dataset,
+    variableSets,
     tableConfig,
     queryResult,
     isQuerying,
@@ -61,9 +63,11 @@ export default function App() {
     setSearchQuery,
     setViewMode,
     reset,
+    createVariableSet,
     openRecodeModal,
     closeRecodeModal,
     openDrillDown,
+    loadMoreDrillDown,
     closeDrillDown,
     addFilter,
     removeFilter,
@@ -72,8 +76,10 @@ export default function App() {
   } = useVelocityStore();
 
   const [mode, setMode] = React.useState<AppMode>('splash');
+  const [selectedSetIds, setSelectedSetIds] = React.useState<Set<string>>(new Set());
+  const [contextMenu, setContextMenu] = React.useState<{ visible: boolean; x: number; y: number } | null>(null);
 
-  const [activeDragVariable, setActiveDragVariable] = React.useState<Variable | null>(null);
+  const [activeDragSet, setActiveDragSet] = React.useState<VariableSet | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const sensors = useSensors(
@@ -147,53 +153,89 @@ export default function App() {
   // -- LOGIC: DRAG & DROP --
   const handleDragStart = (event: DragStartEvent) => {
     const { active } = event;
-    const variable = active.data.current?.variable;
-    if (variable) {
-      setActiveDragVariable(variable);
-      setDraggingId(variable.id); // Keep store in sync for UI states
+    const set = active.data.current?.variableSet;
+    if (set) {
+      setActiveDragSet(set);
+      setDraggingId(set.id); // Keep store in sync for UI states
     }
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { over, active } = event;
 
-    setActiveDragVariable(null);
+    setActiveDragSet(null);
     setDraggingId(null);
 
-    if (over && active.data.current?.variable) {
+    if (over && active.data.current?.variableSet) {
       const zoneId = over.id;
-      const varId = active.data.current.variable.id;
+      const setId = active.data.current.variableSet.id;
 
       if (zoneId === 'drop-zone-rows') {
         // Add to existing rows if not already present
-        if (!tableConfig.rowVars.includes(varId)) {
-          setTableConfig({ rowVars: [...tableConfig.rowVars, varId] });
+        if (!tableConfig.rowVars.includes(setId)) {
+          setTableConfig({ rowVars: [...tableConfig.rowVars, setId] });
         }
       } else if (zoneId === 'drop-zone-cols') {
-        setTableConfig({ colVar: varId });
+        setTableConfig({ colVar: setId });
       } else if (zoneId === 'canvas') {
         // Smart Drop Logic
         if (tableConfig.rowVars.length === 0) {
-          setTableConfig({ rowVars: [varId] });
+          setTableConfig({ rowVars: [setId] });
         } else {
           // Default to Column if Row is present, or replace Column if present
-          setTableConfig({ colVar: varId });
+          setTableConfig({ colVar: setId });
         }
       }
     }
   };
 
-  const handleVariableClick = (variable: Variable) => {
-    // Interaction: First rows, then columns
+  const handleVariableClick = (set: VariableSet, e: React.MouseEvent) => {
+    // Multi-select Logic
+    if (e.metaKey || e.ctrlKey) {
+      const newSelected = new Set(selectedSetIds);
+      if (newSelected.has(set.id)) {
+        newSelected.delete(set.id);
+      } else {
+        newSelected.add(set.id);
+      }
+      setSelectedSetIds(newSelected);
+      return;
+    }
+
+    // Default Interaction: Add to analysis (First rows, then columns)
+    // Clear selection on regular click? Maybe not.
     if (tableConfig.rowVars.length === 0) {
-      setTableConfig({ rowVars: [variable.id] });
+      setTableConfig({ rowVars: [set.id] });
     } else if (!tableConfig.colVar) {
-      setTableConfig({ colVar: variable.id });
+      setTableConfig({ colVar: set.id });
     } else {
-      // If both are full, maybe replace Col logic?
-      // Since we support nested rows now, maybe we append to rows if Shift is held?
-      // For simple click interaction, let's keep it simple: Replace Col if both exist.
-      setTableConfig({ colVar: variable.id });
+      setTableConfig({ colVar: set.id });
+    }
+  };
+
+  const handleContextMenu = (set: VariableSet, e: React.MouseEvent) => {
+    // If clicking something not selected, select only that
+    let newSelected = new Set(selectedSetIds);
+    if (!selectedSetIds.has(set.id)) {
+      newSelected = new Set([set.id]);
+      setSelectedSetIds(newSelected);
+    }
+
+    setContextMenu({
+      visible: true,
+      x: e.clientX,
+      y: e.clientY
+    });
+  };
+
+  const handleCombineSets = () => {
+    const name = prompt("Enter name for new variable set:");
+    if (name) {
+      createVariableSet(name, Array.from(selectedSetIds).flatMap(id => {
+        const set = variableSets.find(s => s.id === id);
+        return set ? set.variableIds : [];
+      }));
+      setSelectedSetIds(new Set());
     }
   };
 
@@ -202,19 +244,24 @@ export default function App() {
   const filename = dataset?.name || '';
   const totalRows = dataset?.rowCount || queryResult.reduce((sum, r) => sum + r.count, 0);
 
+  const displaySets = variableSets || [];
+
   // Filter variables based on search
-  const filteredVariables = variables.filter(v =>
-    v.label.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredSets = displaySets.filter(s =>
+    s.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // Handle cell click for drill down
-  const handleCellClick = (rowValue: string, colValue: string | null) => {
-    openDrillDown(rowValue, colValue);
+  // Handle cell click for drill down (accepts full row path for nested rows)
+  const handleCellClick = (rowPath: { variable: string; value: string }[], colValue: string | null) => {
+    openDrillDown(rowPath, colValue);
   };
 
   // Handle recode
-  const handleRecodeClick = (variable: Variable) => {
-    openRecodeModal(variable);
+  const handleRecodeClick = (set: VariableSet) => {
+    // For MVP, if it's a set, prevent or handle differently?
+    // Since Sets are 1:1 mostly, we resolve to the first var
+    const variable = variables.find(v => v.id === set.variableIds[0]);
+    if (variable) openRecodeModal(variable);
   };
 
   const handleRecodeComplete = async () => {
@@ -233,6 +280,13 @@ export default function App() {
         title={drillDown.title}
         data={drillDown.data}
         loading={drillDown.loading}
+        totalCount={drillDown.totalCount}
+        loadedCount={drillDown.data.length}
+        onLoadMore={loadMoreDrillDown}
+        filterColumns={[
+          ...drillDown.rowFilters.map(f => f.variable),
+          ...(drillDown.colFilter ? [drillDown.colFilter.variable] : [])
+        ]}
       />
 
       <RecodeModal
@@ -248,6 +302,21 @@ export default function App() {
         variables={variables}
         onSave={addFilter}
       />
+
+      {contextMenu && contextMenu.visible && (
+        <ContextMenu
+          x={contextMenu.x}
+          y={contextMenu.y}
+          onClose={() => setContextMenu(null)}
+          actions={[
+            {
+              label: 'Combine Variables',
+              onClick: handleCombineSets,
+              disabled: selectedSetIds.size < 2 // Require at least 2 to combine
+            }
+          ]}
+        />
+      )}
 
       {/* GLOBAL PROGRESS BAR */}
       <AnimatePresence>
@@ -344,13 +413,15 @@ export default function App() {
 
               <div className="flex-1 flex flex-col min-h-0">
                 <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3 px-4 pt-3 shrink-0">
-                  Survey Questions ({filteredVariables.length})
+                  Survey Questions ({filteredSets.length})
                 </p>
                 <div className="flex-1 min-h-0 px-3">
                   <VirtualizedVariableList
-                    variables={filteredVariables as any}
+                    variableSets={filteredSets}
+                    selectedIds={selectedSetIds}
                     onRecode={handleRecodeClick}
                     onClick={handleVariableClick}
+                    onContextMenu={handleContextMenu}
                   />
                 </div>
               </div>
@@ -423,7 +494,7 @@ export default function App() {
                       type="column"
                       label="Drop Column Variable"
                       active={!!draggingId}
-                      currentVariables={tableConfig.colVar ? [variables.find(v => v.id === tableConfig.colVar)!] : []}
+                      currentVariables={tableConfig.colVar ? [variableSets.find(s => s.id === tableConfig.colVar)!].filter(Boolean) : []}
                       onRemove={() => setTableConfig({ colVar: null })}
                     />
                   </div>
@@ -436,7 +507,7 @@ export default function App() {
                         type="row"
                         label="Drop Row Variable(s)"
                         active={!!draggingId}
-                        currentVariables={tableConfig.rowVars.map(id => variables.find(v => v.id === id)).filter(Boolean) as Variable[]}
+                        currentVariables={tableConfig.rowVars.map(id => variableSets.find(s => s.id === id)).filter(Boolean) as VariableSet[]}
                         onRemove={(id) => setTableConfig({ rowVars: tableConfig.rowVars.filter(r => r !== id) })}
                       />
                       <span className="text-xs font-bold text-gray-300 uppercase tracking-wider pr-1">Rows</span>
@@ -453,8 +524,16 @@ export default function App() {
                           )}
                           <DataTable
                             data={queryResult}
-                            rowVariables={tableConfig.rowVars.map(id => variables.find(v => v.id === id)).filter(Boolean) as Variable[]}
-                            colVariable={variables.find(v => v.id === tableConfig.colVar) as any || null}
+                            rowVariables={tableConfig.rowVars
+                              .map(id => variableSets.find(s => s.id === id)) // Resolve Set
+                              .filter(Boolean)
+                              .map(set => variables.find(v => v.id === set!.variableIds[0])) // Resolve Var
+                              .filter(Boolean) as Variable[]
+                            }
+                            colVariable={(() => {
+                              const set = variableSets.find(s => s.id === tableConfig.colVar);
+                              return set ? variables.find(v => v.id === set.variableIds[0]) : null;
+                            })() as any}
                             totalCount={totalRows}
                             viewMode={viewMode}
                             onCellClick={handleCellClick}
@@ -475,9 +554,9 @@ export default function App() {
           </motion.div>
 
           <DragOverlay dropAnimation={null}>
-            {activeDragVariable ? (
+            {activeDragSet ? (
               <VariableCard
-                variable={activeDragVariable}
+                variableSet={activeDragSet}
                 isOverlay
               />
             ) : null}

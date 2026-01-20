@@ -9,12 +9,14 @@
 import React, { useRef, useState, useLayoutEffect, useCallback } from 'react';
 import { FixedSizeList as List, ListChildComponentProps } from 'react-window';
 import { DraggableVariable } from './DraggableVariable';
-import { Variable } from '../../../types';
+import { Variable, VariableSet } from '../../../types';
 
 interface VirtualizedVariableListProps {
-    variables: Variable[];
-    onRecode: (variable: Variable) => void;
-    onClick: (variable: Variable) => void;
+    variableSets: VariableSet[];
+    selectedIds: Set<string>;
+    onRecode: (variable: VariableSet) => void;
+    onClick: (variable: VariableSet, e: React.MouseEvent) => void;
+    onContextMenu: (variable: VariableSet, e: React.MouseEvent) => void;
 }
 
 // Fixed height for each variable card (56px content + 8px gap)
@@ -55,31 +57,35 @@ function useContainerSize(): [React.RefObject<HTMLDivElement | null>, { width: n
 }
 
 export const VirtualizedVariableList: React.FC<VirtualizedVariableListProps> = ({
-    variables,
+    variableSets,
+    selectedIds,
     onRecode,
-    onClick
+    onClick,
+    onContextMenu,
 }) => {
     const [containerRef, { width, height }] = useContainerSize();
 
     // Row renderer for react-window
     const Row = useCallback(
         ({ index, style }: ListChildComponentProps) => {
-            const variable = variables[index];
+            const set = variableSets[index];
 
             return (
                 <div style={{ ...style, paddingRight: 4, paddingBottom: 8 }}>
                     <DraggableVariable
-                        variable={variable}
+                        variableSet={set}
+                        isSelected={selectedIds.has(set.id)}
                         onRecode={onRecode}
                         onClick={onClick}
+                        onContextMenu={onContextMenu}
                     />
                 </div>
             );
         },
-        [variables, onRecode, onClick]
+        [variableSets, selectedIds, onRecode, onClick, onContextMenu]
     );
 
-    if (variables.length === 0) {
+    if (variableSets.length === 0) {
         return (
             <div className="flex items-center justify-center h-32 text-gray-400 text-sm">
                 No variables found
@@ -93,7 +99,7 @@ export const VirtualizedVariableList: React.FC<VirtualizedVariableListProps> = (
                 <List
                     height={height}
                     width={width}
-                    itemCount={variables.length}
+                    itemCount={variableSets.length}
                     itemSize={ITEM_HEIGHT}
                     overscanCount={OVERSCAN_COUNT}
                 >

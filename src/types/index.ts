@@ -66,7 +66,7 @@ export interface Filter {
   id: string;
   variableId: string;
   operator: 'eq' | 'neq' | 'in' | 'gt' | 'lt';
-  value: number | number[];
+  value: number | string | (number | string)[];
 }
 
 export interface Recode {
@@ -82,11 +82,37 @@ export interface RecodeMapping {
   targetLabel: string;
 }
 
+export type RecodeMode = 'categorical' | 'binning';
+
+export interface RecodeRule {
+  min?: number;
+  max?: number;
+  label: string;
+}
+
+export interface RecodeConfig {
+  mode: RecodeMode;
+  mappings?: Record<string, string>;
+  rules?: RecodeRule[];
+}
+
 export interface VariableSet {
   id: string;
+  /** Display name for the set (e.g., "Brand Awareness") */
   name: string;
+  /** IDs of variables in this set */
   variableIds: string[];
-  setType: 'grid' | 'multi';
+  /** 
+   * Structure type determines how the set is used in analysis:
+   * - 'single': Standard single variable (1:1 mapping, default)
+   * - 'multi': Multiple response set (e.g., "Select all that apply")
+   * - 'grid': Grid/matrix structure (rows x columns)
+   */
+  structure: 'single' | 'multi' | 'grid';
+  /** Inferred or explicit variable type for the set */
+  type?: VariableType;
+  /** Optional description */
+  description?: string;
 }
 
 // ============================================================================

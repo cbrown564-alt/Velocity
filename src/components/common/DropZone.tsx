@@ -2,14 +2,14 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { useDroppable } from '@dnd-kit/core';
 import { Plus } from 'lucide-react';
-import { Variable } from '../../types';
+import { VariableSet } from '../../types';
 
 interface DropZoneProps {
   id: string; // The DOM id used for collision detection
   type: 'row' | 'column';
   label: string;
   active: boolean; // Is the user currently dragging something globally?
-  currentVariables: Variable[];
+  currentVariables: VariableSet[];
   onRemove: (id: string) => void;
 }
 
@@ -31,17 +31,17 @@ export const DropZone: React.FC<DropZoneProps> = ({
         ref={setNodeRef}
         className={`flex flex-col gap-2 ${type === 'column' ? 'min-w-[120px]' : 'w-full'} ${isOver ? 'ring-2 ring-[var(--color-terracotta)] ring-opacity-50 bg-[var(--gray-50)]' : ''} transition-all rounded-md p-1`}
       >
-        {currentVariables.map((variable) => (
+        {currentVariables.map((set) => (
           <motion.div
-            key={variable.id}
+            key={set.id}
             layout
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             className={`relative flex items-center justify-between p-2 pl-3 pr-2 bg-[var(--gray-50)] border border-[var(--gray-200)] rounded-md group`}
           >
-            <span className="text-sm font-medium text-[var(--color-ink)] font-body">{variable.label}</span>
+            <span className="text-sm font-medium text-[var(--color-ink)] font-body truncate max-w-[140px]" title={set.name}>{set.name}</span>
             <button
-              onClick={() => onRemove(variable.id)}
+              onClick={() => onRemove(set.id)}
               className="ml-2 p-1 text-[var(--gray-400)] hover:text-[var(--color-terracotta)] hover:bg-[var(--gray-100)] rounded-full transition-colors"
             >
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">

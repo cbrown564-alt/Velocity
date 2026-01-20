@@ -3,13 +3,20 @@ import { AggregatedRow, Variable } from '../../../types';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight, ChevronDown } from 'lucide-react';
 
+/** Row path entry for drill-down */
+export interface RowPathEntry {
+  variable: string;  // Variable ID
+  value: string;     // Raw value (not label)
+}
+
 interface DataTableProps {
   data: AggregatedRow[];
   rowVariables: Variable[];
   colVariable: Variable | null;
   totalCount: number;
   viewMode?: 'table' | 'chart';
-  onCellClick?: (rowValue: string, colValue: string | null) => void;
+  /** Called when a cell is clicked for drill-down */
+  onCellClick?: (rowPath: RowPathEntry[], colValue: string | null) => void;
 }
 
 const CHART_COLORS = [
@@ -25,11 +32,14 @@ const CHART_COLORS = [
 interface TableRowNode {
   key: string;
   label: string;
+  rawValue: string;  // Original value from data
   depth: number;
   cells: Record<string, { count: number, percent: number, sig?: string }>;
   total: number;
   children: TableRowNode[];
-  isExpanded?: boolean; // For UI state
+  isExpanded?: boolean;
+  /** Full path from root to this node for drill-down */
+  rowPath: RowPathEntry[];
 }
 
 export const DataTable: React.FC<DataTableProps> = ({
@@ -74,7 +84,8 @@ export const DataTable: React.FC<DataTableProps> = ({
     const buildTree = (
       subset: AggregatedRow[],
       depth: number,
-      parentKey: string
+      parentKey: string,
+      parentRowPath: RowPathEntry[]
     ): TableRowNode[] => {
       if (depth >= rowVariables.length) return [];
 
@@ -96,55 +107,58 @@ export const DataTable: React.FC<DataTableProps> = ({
         let label = groupKey;
 
         if (variable && variable.valueLabels && variable.valueLabels.length > 0) {
-          // values are typically stored as numbers in valueLabels, but keys are strings here
-          // handle loose equality or conversion
           const foundLabel = variable.valueLabels.find(vl => String(vl.value) === String(groupKey));
           if (foundLabel) {
             label = foundLabel.label;
           }
         }
 
+        // Build row path for this node (append current variable/value to parent path)
+        const nodeRowPath: RowPathEntry[] = [
+          ...parentRowPath,
+          { variable: variable.id, value: groupKey }
+        ];
+
         // Calculate totals for this node
         const nodeCells: Record<string, { count: number, percent: number, sig?: string }> = {};
         let nodeRowTotal = 0;
 
         colKeys.forEach(cKey => {
-          // Sum counts for this column in this group
           const count = groupData
             .filter(d => d.colKey === cKey)
             .reduce((sum, d) => sum + d.count, 0);
 
           nodeRowTotal += count;
 
-          // Helper: Percent calc
-          const divisor = colVariable ? colTotals[cKey] : grandTotal; // Column % logic
+          const divisor = colVariable ? colTotals[cKey] : grandTotal;
           const percent = divisor > 0 ? (count / divisor) * 100 : 0;
 
           nodeCells[cKey] = {
             count,
             percent,
-            // Mock sig test for demo
             sig: (colVariable && percent > 25 && Math.random() > 0.8) ? 'A' : undefined
           };
         });
 
-        // Recurse
-        const children = buildTree(groupData, depth + 1, uniqueKey);
+        // Recurse with updated path
+        const children = buildTree(groupData, depth + 1, uniqueKey, nodeRowPath);
 
         return {
           key: uniqueKey,
           label,
+          rawValue: groupKey,
           depth,
           cells: nodeCells,
           total: nodeRowTotal,
-          children
+          children,
+          rowPath: nodeRowPath
         };
       });
 
       return nodes;
     };
 
-    const rows = buildTree(data, 0, '');
+    const rows = buildTree(data, 0, '', []);
 
     return {
       colKeys,
@@ -194,7 +208,7 @@ export const DataTable: React.FC<DataTableProps> = ({
                 <td
                   key={col}
                   className="px-4 py-3 text-right align-top cursor-pointer relative hover:bg-[var(--gray-100)] transition-colors border-l border-[var(--gray-50)]"
-                  onClick={() => onCellClick?.(row.label, colVariable ? col : null)}
+                  onClick={() => onCellClick?.(row.rowPath, colVariable ? col : null)}
                   title="Click to X-Ray"
                 >
                   <div className="flex flex-col items-end">
