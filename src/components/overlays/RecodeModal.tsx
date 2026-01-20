@@ -122,20 +122,26 @@ export const RecodeModal: React.FC<RecodeModalProps> = ({ isOpen, onClose, varia
                     {loading ? (
                       <div className="p-8 text-center text-[var(--gray-400)]">Loading values...</div>
                     ) : (
-                      uniqueValues.map((val) => (
-                        <div key={val} className="grid grid-cols-[1fr_auto_1fr] gap-4 p-3 items-center hover:bg-[var(--gray-50)] transition-colors group">
-                          <div className="text-sm text-[var(--color-charcoal)] font-medium truncate" title={val}>{val}</div>
-                          <div className="text-[var(--gray-300)] group-hover:text-[var(--color-terracotta)]/50">
-                            <ArrowRight size={16} />
+                      uniqueValues.map((val) => {
+                        // Find label if available
+                        const labelObj = variable?.valueLabels?.find(vl => String(vl.value) === String(val));
+                        const displayLabel = labelObj ? `${labelObj.label} (${val})` : val;
+
+                        return (
+                          <div key={val} className="grid grid-cols-[1fr_auto_1fr] gap-4 p-3 items-center hover:bg-[var(--gray-50)] transition-colors group">
+                            <div className="text-sm text-[var(--color-charcoal)] font-medium truncate" title={displayLabel}>{displayLabel}</div>
+                            <div className="text-[var(--gray-300)] group-hover:text-[var(--color-terracotta)]/50">
+                              <ArrowRight size={16} />
+                            </div>
+                            <input
+                              type="text"
+                              value={mappings[val] || val}
+                              onChange={(e) => handleMappingChange(val, e.target.value)}
+                              className="w-full px-3 py-1.5 border border-[var(--gray-200)] rounded-md text-sm text-[var(--color-ink)] focus:border-[var(--color-terracotta)] focus:ring-2 focus:ring-[var(--color-terracotta)]/20 outline-none"
+                            />
                           </div>
-                          <input
-                            type="text"
-                            value={mappings[val] || val}
-                            onChange={(e) => handleMappingChange(val, e.target.value)}
-                            className="w-full px-3 py-1.5 border border-[var(--gray-200)] rounded-md text-sm text-[var(--color-ink)] focus:border-[var(--color-terracotta)] focus:ring-2 focus:ring-[var(--color-terracotta)]/20 outline-none"
-                          />
-                        </div>
-                      ))
+                        );
+                      })
                     )}
                   </div>
                 </div>

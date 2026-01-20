@@ -82,14 +82,27 @@ export const DataTable: React.FC<DataTableProps> = ({
       const groups: Record<string, AggregatedRow[]> = {};
       subset.forEach(row => {
         const key = row.rowKeys[depth];
-        if (!key) return; // Should not happen if data is consistent
+        if (key === undefined || key === null) return; // Allow "0" (falsy) values
         if (!groups[key]) groups[key] = [];
         groups[key].push(row);
       });
 
-      const nodes: TableRowNode[] = Object.keys(groups).sort().map(label => {
-        const groupData = groups[label];
-        const uniqueKey = parentKey ? `${parentKey}-${label}` : label;
+      const nodes: TableRowNode[] = Object.keys(groups).sort().map(groupKey => {
+        const groupData = groups[groupKey];
+        const uniqueKey = parentKey ? `${parentKey}-${groupKey}` : groupKey;
+
+        // Resolve Label: Look up value label if available
+        const variable = rowVariables[depth];
+        let label = groupKey;
+
+        if (variable && variable.valueLabels && variable.valueLabels.length > 0) {
+          // values are typically stored as numbers in valueLabels, but keys are strings here
+          // handle loose equality or conversion
+          const foundLabel = variable.valueLabels.find(vl => String(vl.value) === String(groupKey));
+          if (foundLabel) {
+            label = foundLabel.label;
+          }
+        }
 
         // Calculate totals for this node
         const nodeCells: Record<string, { count: number, percent: number, sig?: string }> = {};
