@@ -75,6 +75,7 @@ export default function App() {
     openFilterModal,
     closeFilterModal,
     reorderRowVars,
+    setWeightVariable,
   } = useVelocityStore();
 
   const [mode, setMode] = React.useState<AppMode>('splash');
@@ -513,6 +514,25 @@ export default function App() {
 
                 <div className="flex items-center gap-6">
 
+                  {/* Weight Variable Selector */}
+                  <div className="flex items-center gap-2">
+                    <label className="text-xs font-medium text-gray-500">Weight:</label>
+                    <select
+                      value={dataset?.weightVariable || ''}
+                      onChange={(e) => setWeightVariable(e.target.value || null)}
+                      className={`text-xs px-2 py-1.5 border rounded-md bg-white focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all min-w-[120px] ${dataset?.weightVariable ? 'border-indigo-300 text-indigo-700 font-medium' : 'border-gray-200 text-gray-600'
+                        }`}
+                    >
+                      <option value="">None</option>
+                      {variables
+                        .filter(v => v.type === 'scale')
+                        .map(v => (
+                          <option key={v.id} value={v.id}>
+                            {v.label || v.name}
+                          </option>
+                        ))}
+                    </select>
+                  </div>
 
                   <div className="flex items-center bg-gray-100 p-1 rounded-lg">
                     <button
@@ -603,6 +623,7 @@ export default function App() {
                             })() as any}
                             totalCount={totalRows}
                             viewMode={viewMode}
+                            isWeighted={!!dataset?.weightVariable}
                             onCellClick={handleCellClick}
                           />
                         </div>

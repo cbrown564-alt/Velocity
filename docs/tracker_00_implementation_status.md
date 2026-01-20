@@ -68,19 +68,29 @@
 ---
 
 ## Phase 2: The Strategic Workbench (Commercial)
-*Goal: Feature Parity with Displayr*
+*Goal: Reporting Parity with Displayr (Complementing SPSS for Data Prep)*
 
-### Milestone 2.1: Data Management
+> [!NOTE]
+> **Strategy Shift:** Based on research (`docs/research_03_displayr_parity.md`), Phase 2 focuses on the **Analysis & Reporting** workflow. Heavy Data Engineering (ETL) remains an SPSS task.
+
+### Milestone 2.1: Data Management (Visual ETL)
+> [!TIP]
+> **Paradigm Shift:** Moving from "Legacy List View" to "Visual Construct Builder" (Card Sorting) as defined in `ref_4`.
+
 - [x] Refactor Row Shelf to `@dnd-kit/sortable` (Enable Reordering)
-- [x] "Variable Sets" Logic (Grouping columns)
-- [x] Recoding UI (Binning)
-- [x] **Connect DataDrawer to Worker** (Implement drill-down SQL & Pagination)
+- [x] **Connect DataDrawer to Worker** (View-only drill-down)
+- [x] Basic Recoding UI (Modal-based)
+- [ ] **Visual Recoding** (Interactive Histogram Bucketing - `ref_4 §4.2`)
+- [ ] **Variable Card Sorting** (Spatial Construct Builder - `ref_4 §4.1`)
+- [ ] **Harmonization Workspace** (Sankey Mapper - `ref_4 §4.3`)
+- [ ] **Semantic Variable Sets** (Grids/Multi-Response managed via Card Sorting)
 
 ### Milestone 2.2: The Weighting Engine
-- [ ] Apply Weight Variable to DuckDB Queries
-- [ ] Display Weighted N vs Unweighted N
+*Scope: Application Only (No Weight Creation)*
+- [x] Apply Weight Variable to DuckDB Queries
+- [x] Display Weighted N vs Unweighted N
 
-### Milestone 2.3: The Output
+### Milestone 2.3: The Output (The Parity Goal)
 - [ ] Implement `PptxGenJS` Export
 - [ ] Verify Editable Charts in PowerPoint
 

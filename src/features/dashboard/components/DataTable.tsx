@@ -15,6 +15,8 @@ interface DataTableProps {
   colVariable: Variable | null;
   totalCount: number;
   viewMode?: 'table' | 'chart';
+  /** Whether weighted analysis is active */
+  isWeighted?: boolean;
   /** Called when a cell is clicked for drill-down */
   onCellClick?: (rowPath: RowPathEntry[], colValue: string | null) => void;
 }
@@ -48,6 +50,7 @@ export const DataTable: React.FC<DataTableProps> = ({
   colVariable,
   totalCount,
   viewMode = 'table',
+  isWeighted = false,
   onCellClick
 }) => {
   // UI State for expanded rows
@@ -66,16 +69,16 @@ export const DataTable: React.FC<DataTableProps> = ({
       colKeys = Array.from(new Set(data.map(d => d.colKey))).sort() as string[];
     }
 
-    // 2. Compute Column Totals
+    // 2. Compute Column Totals (use weighted counts when weighted)
     const colTotals: Record<string, number> = {};
     colKeys.forEach(k => colTotals[k] = 0);
     let grandTotal = 0;
 
     data.forEach(d => {
-      // For column totals, we sum up everything. 
-      // Note: AggregatedRow count is the count for that specific intersection.
-      colTotals[d.colKey] += d.count;
-      grandTotal += d.count;
+      // Use weightedCount if available, otherwise count
+      const effectiveCount = isWeighted && d.weightedCount !== undefined ? d.weightedCount : d.count;
+      colTotals[d.colKey] += effectiveCount;
+      grandTotal += effectiveCount;
     });
 
     // 3. Build Tree (Recursive Aggregation) 
@@ -124,9 +127,13 @@ export const DataTable: React.FC<DataTableProps> = ({
         let nodeRowTotal = 0;
 
         colKeys.forEach(cKey => {
+          // Use weightedCount when weighted, otherwise count
           const count = groupData
             .filter(d => d.colKey === cKey)
-            .reduce((sum, d) => sum + d.count, 0);
+            .reduce((sum, d) => {
+              const effectiveCount = isWeighted && d.weightedCount !== undefined ? d.weightedCount : d.count;
+              return sum + effectiveCount;
+            }, 0);
 
           nodeRowTotal += count;
 

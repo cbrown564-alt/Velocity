@@ -123,6 +123,8 @@ export interface AggregatedRow {
   rowKeys: string[];
   colKey: string;
   count: number;
+  /** Weighted count when a weight variable is applied */
+  weightedCount?: number;
 }
 
 export interface TableConfig {

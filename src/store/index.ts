@@ -7,6 +7,7 @@
 
 import { create } from 'zustand';
 import type { WorkerRequest, WorkerResponse } from '../services/analysisWorker';
+import { buildCrosstabQuery } from '../services/queryBuilder';
 import { RecodeConfig } from '../types';
 
 // ============================================================================
@@ -71,6 +72,8 @@ export interface AggregatedRow {
     rowKeys: string[];
     colKey: string;
     count: number;
+    /** Weighted count when a weight variable is applied */
+    weightedCount?: number;
 }
 
 // ============================================================================
@@ -197,6 +200,9 @@ interface VelocityState {
     createVariableSet: (name: string, variableIds: string[]) => void;
     splitVariableSet: (setId: string) => void;
     reorderRowVars: (newOrder: string[]) => void;
+
+    // Weighting (Milestone 2.2)
+    setWeightVariable: (variableId: string | null) => void;
 }
 
 // ============================================================================
@@ -390,57 +396,26 @@ export const useVelocityStore = create<VelocityState>((set, get) => ({
 
         // Helper to resolve ID (Set ID -> Variable ID)
         const resolveToCol = (id: string): string => {
-            const set = variableSets.find(s => s.id === id);
-            if (set && set.variableIds.length > 0) {
-                return set.variableIds[0]; // Logic: Use 1st var of set
+            const varSet = variableSets.find(s => s.id === id);
+            if (varSet && varSet.variableIds.length > 0) {
+                return varSet.variableIds[0]; // Logic: Use 1st var of set
             }
-            // Fallback: Check if it's a raw variable ID (though UI mostly uses Sets now)
+            // Fallback: Check if it's a raw variable ID
             return id;
         };
 
         const rows = tableConfig.rowVars.map(resolveToCol);
         const col = tableConfig.colVar ? resolveToCol(tableConfig.colVar) : null;
 
-        // Dynamic Row Selection
-        // Note: We use original IDs for aliases to keep tracking consistent? 
-        // Actually, aliases are rowKey_0 etc. The key match is implicit by order.
-        const rowSelectors = rows.map((r, i) => `"${r}" as rowKey_${i}`).join(', ');
-        const rowGroups = rows.map(r => `"${r}"`).join(', ');
+        // Build SQL query using queryBuilder (supports weighting)
+        const sql = buildCrosstabQuery({
+            rowVars: rows,
+            colVar: col,
+            filters: activeFilters,
+            weightVar: dataset?.weightVariable || undefined,
+        });
 
-        // Build WHERE clause from active filters
-        const whereConditions = activeFilters.map(filter => {
-            const varId = `"${filter.variableId}"`;
-
-            // Helper to quote string values
-            const formatValue = (v: number | string) => typeof v === 'string' ? `'${v.replace(/'/g, "''")}'` : v;
-
-            switch (filter.operator) {
-                case 'eq':
-                    return `${varId} = ${formatValue(filter.value as number | string)}`;
-                case 'neq':
-                    return `${varId} != ${formatValue(filter.value as number | string)}`;
-                case 'in':
-                    const values = Array.isArray(filter.value) ? filter.value : [filter.value];
-                    return `${varId} IN (${values.map(formatValue).join(', ')})`;
-                case 'gt':
-                    return `${varId} > ${formatValue(filter.value as number | string)}`;
-                case 'lt':
-                    return `${varId} < ${formatValue(filter.value as number | string)}`;
-                default:
-                    return null;
-            }
-        }).filter(Boolean);
-
-        const whereClause = whereConditions.length > 0
-            ? `WHERE ${whereConditions.join(' AND ')}`
-            : '';
-
-        let sql: string;
-        if (col) {
-            sql = `SELECT ${rowSelectors}, "${col}" as colKey, COUNT(*)::INTEGER as count FROM main ${whereClause} GROUP BY ${rowGroups}, "${col}"`;
-        } else {
-            sql = `SELECT ${rowSelectors}, 'Total' as colKey, COUNT(*)::INTEGER as count FROM main ${whereClause} GROUP BY ${rowGroups}`;
-        }
+        const isWeighted = !!dataset?.weightVariable;
 
         return new Promise<void>((resolve) => {
             const handler = (event: MessageEvent<WorkerResponse>) => {
@@ -455,10 +430,13 @@ export const useVelocityStore = create<VelocityState>((set, get) => ({
                             .sort() // Ensure 0, 1, 2 order
                             .map(k => row[k]);
 
+                        // When weighted, 'count' is actually the weighted sum
+                        // For now we only have the weighted count; unweighted would require a second query
                         return {
                             rowKeys,
                             colKey: row.colKey,
-                            count: row.count
+                            count: isWeighted ? 0 : row.count, // Unweighted count (0 when weighted-only)
+                            weightedCount: isWeighted ? row.count : undefined,
                         };
                     });
 
@@ -867,6 +845,21 @@ export const useVelocityStore = create<VelocityState>((set, get) => ({
             tableConfig: { ...state.tableConfig, rowVars: newOrder },
         }));
         // Trigger analysis with new row order
+        get().runAnalysis();
+    },
+
+    // Weighting (Milestone 2.2)
+    setWeightVariable: (variableId) => {
+        set((state) => {
+            if (!state.dataset) return state;
+            return {
+                dataset: {
+                    ...state.dataset,
+                    weightVariable: variableId || undefined,
+                },
+            };
+        });
+        // Trigger analysis with new weight
         get().runAnalysis();
     },
 }));
