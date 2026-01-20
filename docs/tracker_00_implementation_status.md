@@ -79,7 +79,7 @@
 - [x] Implement App Shell & Navigation (Sidebar/Tabs for Modes).
 - [x] Refactor State Manager for Multi-Mode support.
 - [x] **Refactor Store:** Slice `src/store/index.ts` (currently 700+ lines) into modular slices (e.g., `createDataSlice`, `createUISlice`).
-- [ ] **Local-First State:** Persistent state across modes without reloading [ref](research_08_UX_patterns_for_surveys.md#L385).
+- [x] **Local-First State:** Persistent state across modes without reloading [ref](research_08_UX_patterns_for_surveys.md#L385).
 
 ### Milestone 2.2: Data Management (Visual ETL)
 > [!TIP]

@@ -3,9 +3,12 @@
  * 
  * Zustand store composing modular slices per arch_02_data_model.md.
  * Each slice manages a specific domain of state.
+ * 
+ * Uses persist middleware for local-first state per research_08_UX_patterns_for_surveys.md.
  */
 
 import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
 import {
     createDataSlice,
     createUISlice,
@@ -16,6 +19,12 @@ import {
     type AnalysisSlice,
     type DrillDownSlice,
 } from './slices';
+import {
+    STORAGE_KEY,
+    STORAGE_VERSION,
+    partialize,
+    onRehydrateStorage,
+} from './persistConfig';
 
 // ============================================================================
 // Combined Store Type
@@ -27,12 +36,23 @@ export type VelocityState = DataSlice & UISlice & AnalysisSlice & DrillDownSlice
 // Store Implementation
 // ============================================================================
 
-export const useVelocityStore = create<VelocityState>()((...args) => ({
-    ...createDataSlice(...args),
-    ...createUISlice(...args),
-    ...createAnalysisSlice(...args),
-    ...createDrillDownSlice(...args),
-}));
+export const useVelocityStore = create<VelocityState>()(
+    persist(
+        (...args) => ({
+            ...createDataSlice(...args),
+            ...createUISlice(...args),
+            ...createAnalysisSlice(...args),
+            ...createDrillDownSlice(...args),
+        }),
+        {
+            name: STORAGE_KEY,
+            version: STORAGE_VERSION,
+            storage: createJSONStorage(() => localStorage),
+            partialize,
+            onRehydrateStorage: () => onRehydrateStorage,
+        }
+    )
+);
 
 // ============================================================================
 // Re-exports for Backward Compatibility
