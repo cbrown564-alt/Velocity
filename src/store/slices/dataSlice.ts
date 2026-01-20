@@ -49,6 +49,18 @@ export interface VariableSet {
     variableIds: string[];
     structure: 'single' | 'multi' | 'grid';
     type?: VariableType;
+    /** Hidden from Analysis Canvas (Data Gardening only) */
+    hidden?: boolean;
+    /** Folder this set belongs to (null = ungrouped) */
+    folderId?: string;
+    /** Display order within folder */
+    order?: number;
+}
+
+export interface Folder {
+    id: string;
+    name: string;
+    order: number;
 }
 
 // ============================================================================
@@ -62,6 +74,7 @@ export interface DataSlice {
     initError: string | null;
     dataset: Dataset | null;
     variableSets: VariableSet[];
+    folders: Folder[];
 
     // Actions
     initWorker: () => Promise<void>;
@@ -72,6 +85,15 @@ export interface DataSlice {
     createVariableSet: (name: string, variableIds: string[]) => void;
     splitVariableSet: (setId: string) => void;
     setWeightVariable: (variableId: string | null) => void;
+    // Folder management
+    createFolder: (name: string) => string;
+    renameFolder: (folderId: string, name: string) => void;
+    deleteFolder: (folderId: string) => void;
+    moveToFolder: (variableSetIds: string[], folderId: string | null) => void;
+    // Bulk actions
+    reorderVariableSets: (activeId: string, overId: string) => void;
+    bulkSetType: (variableSetIds: string[], type: VariableType) => void;
+    bulkHide: (variableSetIds: string[], hidden: boolean) => void;
 }
 
 export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set, get) => ({
@@ -81,6 +103,8 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
     initError: null,
     dataset: null,
     variableSets: [],
+    folders: [],
+
 
     // Initialize Web Worker
     initWorker: async () => {
@@ -349,4 +373,86 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
             };
         });
     },
+
+    // ========================================================================
+    // Folder Management Actions
+    // ========================================================================
+
+    createFolder: (name) => {
+        const id = crypto.randomUUID();
+        set((state) => ({
+            folders: [...state.folders, {
+                id,
+                name,
+                order: state.folders.length,
+            }],
+        }));
+        return id;
+    },
+
+    renameFolder: (folderId, name) => {
+        set((state) => ({
+            folders: state.folders.map(f =>
+                f.id === folderId ? { ...f, name } : f
+            ),
+        }));
+    },
+
+    deleteFolder: (folderId) => {
+        set((state) => ({
+            folders: state.folders.filter(f => f.id !== folderId),
+            // Move variables in deleted folder back to ungrouped
+            variableSets: state.variableSets.map(vs =>
+                vs.folderId === folderId ? { ...vs, folderId: undefined } : vs
+            ),
+        }));
+    },
+
+    moveToFolder: (variableSetIds, folderId) => {
+        set((state) => ({
+            variableSets: state.variableSets.map(vs =>
+                variableSetIds.includes(vs.id)
+                    ? { ...vs, folderId: folderId || undefined }
+                    : vs
+            ),
+        }));
+    },
+
+    // ========================================================================
+    // Bulk Actions
+    // ========================================================================
+
+    reorderVariableSets: (activeId, overId) => {
+        set((state) => {
+            const oldIndex = state.variableSets.findIndex(vs => vs.id === activeId);
+            const newIndex = state.variableSets.findIndex(vs => vs.id === overId);
+            if (oldIndex === -1 || newIndex === -1) return state;
+
+            const newSets = [...state.variableSets];
+            const [moved] = newSets.splice(oldIndex, 1);
+            newSets.splice(newIndex, 0, moved);
+
+            // Update order property
+            return {
+                variableSets: newSets.map((vs, idx) => ({ ...vs, order: idx })),
+            };
+        });
+    },
+
+    bulkSetType: (variableSetIds, type) => {
+        set((state) => ({
+            variableSets: state.variableSets.map(vs =>
+                variableSetIds.includes(vs.id) ? { ...vs, type } : vs
+            ),
+        }));
+    },
+
+    bulkHide: (variableSetIds, hidden) => {
+        set((state) => ({
+            variableSets: state.variableSets.map(vs =>
+                variableSetIds.includes(vs.id) ? { ...vs, hidden } : vs
+            ),
+        }));
+    },
 });
+

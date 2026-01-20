@@ -87,7 +87,7 @@
 - [x] Refactor Row Shelf to `@dnd-kit/sortable`
 - [x] **Connect DataDrawer to Worker** (View-only drill-down)
 - [x] Basic Recoding UI (Modal-based)
-- [ ] **Variable Card Sorting** (The "Variable Manager" Screen).
+- [x] **Variable Card Sorting** (The "Variable Manager" Screen).
 - [ ] **Visual Recoding** (Interactive Histogram Bucketing).
 - [ ] **Semantic Variable Sets** (Grids represented as Card Clusters).
 - [ ] **Verify Multi-Response Interaction:** Ensure `VariableSet` works for multiple response data.

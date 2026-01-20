@@ -36,6 +36,12 @@ export interface UISlice {
     viewMode: ViewMode;
     recodeModal: RecodeModalState;
     filterModal: FilterModalState;
+    /** Selected variable set IDs in Variable Manager */
+    selectedVariableSetIds: string[];
+    /** Last selected ID for shift-click range selection */
+    lastSelectedId: string | null;
+    /** Active folder filter in Variable Manager (null = all) */
+    activeFolderId: string | null;
 
     // Actions
     setAppMode: (mode: AppMode) => void;
@@ -47,6 +53,13 @@ export interface UISlice {
     closeRecodeModal: () => void;
     openFilterModal: () => void;
     closeFilterModal: () => void;
+    /** Toggle selection of a variable set (multi = Cmd/Ctrl held) */
+    toggleVariableSetSelection: (id: string, multi?: boolean) => void;
+    /** Select a range from lastSelectedId to id (for Shift+click) */
+    selectVariableSetRange: (id: string, allIds: string[]) => void;
+    selectAllVariableSets: (ids: string[]) => void;
+    clearSelection: () => void;
+    setActiveFolderId: (folderId: string | null) => void;
 }
 
 export const createUISlice: StateCreator<UISlice, [], [], UISlice> = (set) => ({
@@ -57,12 +70,17 @@ export const createUISlice: StateCreator<UISlice, [], [], UISlice> = (set) => ({
     viewMode: 'table',
     recodeModal: { isOpen: false, variable: null },
     filterModal: { isOpen: false },
+    selectedVariableSetIds: [],
+    lastSelectedId: null,
+    activeFolderId: null,
 
     // Actions
     setAppMode: (mode) => set({ appMode: mode }),
 
     toggleAppMode: () => set((state) => ({
-        appMode: state.appMode === 'analysis' ? 'variables' : 'analysis'
+        appMode: state.appMode === 'analysis' ? 'variables' : 'analysis',
+        // Clear selection when leaving Variable Manager
+        selectedVariableSetIds: state.appMode === 'variables' ? [] : state.selectedVariableSetIds,
     })),
 
     setDraggingId: (id) => set({ draggingId: id }),
@@ -74,4 +92,43 @@ export const createUISlice: StateCreator<UISlice, [], [], UISlice> = (set) => ({
 
     openFilterModal: () => set({ filterModal: { isOpen: true } }),
     closeFilterModal: () => set({ filterModal: { isOpen: false } }),
+
+    toggleVariableSetSelection: (id, multi = false) => set((state) => {
+        const isSelected = state.selectedVariableSetIds.includes(id);
+        if (multi) {
+            // Cmd/Ctrl+click: toggle individual item
+            return {
+                selectedVariableSetIds: isSelected
+                    ? state.selectedVariableSetIds.filter(i => i !== id)
+                    : [...state.selectedVariableSetIds, id],
+                lastSelectedId: id,
+            };
+        } else {
+            // Single click: replace selection
+            return {
+                selectedVariableSetIds: isSelected ? [] : [id],
+                lastSelectedId: id,
+            };
+        }
+    }),
+
+    selectVariableSetRange: (id, allIds) => set((state) => {
+        if (!state.lastSelectedId) {
+            return { selectedVariableSetIds: [id], lastSelectedId: id };
+        }
+        const startIdx = allIds.indexOf(state.lastSelectedId);
+        const endIdx = allIds.indexOf(id);
+        if (startIdx === -1 || endIdx === -1) {
+            return { selectedVariableSetIds: [id], lastSelectedId: id };
+        }
+        const [from, to] = startIdx < endIdx ? [startIdx, endIdx] : [endIdx, startIdx];
+        const rangeIds = allIds.slice(from, to + 1);
+        // Merge with existing selection
+        const newSelection = [...new Set([...state.selectedVariableSetIds, ...rangeIds])];
+        return { selectedVariableSetIds: newSelection };
+    }),
+
+    selectAllVariableSets: (ids) => set({ selectedVariableSetIds: ids }),
+    clearSelection: () => set({ selectedVariableSetIds: [], lastSelectedId: null }),
+    setActiveFolderId: (folderId) => set({ activeFolderId: folderId }),
 });

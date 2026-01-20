@@ -114,6 +114,21 @@ export interface VariableSet {
   type?: VariableType;
   /** Optional description */
   description?: string;
+  /** Whether to hide from Analysis Canvas (Data Gardening only) */
+  hidden?: boolean;
+  /** Folder this set belongs to (null = ungrouped) */
+  folderId?: string;
+}
+
+/**
+ * Folder for organizing variable sets.
+ * Flat structure (no nesting) per implementation decision.
+ */
+export interface Folder {
+  id: string;
+  name: string;
+  /** Order for display (lower = higher) */
+  order: number;
 }
 
 // ============================================================================
