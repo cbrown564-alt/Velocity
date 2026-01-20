@@ -28,6 +28,7 @@ export interface Variable {
   name: string;
   label: string;
   type: VariableType;
+  semanticType?: 'text' | 'entity' | 'sentiment' | 'location' | 'temporal';
   valueLabels: ValueLabel[];
   missingValues: MissingValueDef;
 }

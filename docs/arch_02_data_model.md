@@ -22,16 +22,20 @@ interface Dataset {
 A `Variable` is the atomic unit of survey data. It stores both the raw data reference and the rich metadata required for survey analysis.
 
 ```typescript
+```typescript
 interface Variable {
   id: string;                     // Internal ID (e.g., "var_001")
   name: string;                   // Short name from file (e.g., "Q1_a")
   label: string;                  // Human-readable label (e.g., "Satisfaction with Product")
   type: VariableType;
+  semanticType?: SemanticType;    // AI-ready semantic classification
   valueLabels: ValueLabel[];      // Mapping of codes to labels
   missingValues: MissingValueDef; // Definition of "User Missing" codes
 }
 
 type VariableType = "nominal" | "ordinal" | "scale";
+type SemanticType = "text" | "entity" | "sentiment" | "location" | "temporal";
+```
 
 interface ValueLabel {
   value: number;                  // The raw integer code (e.g., 1)

@@ -71,32 +71,56 @@
 *Goal: Reporting Parity with Displayr (Complementing SPSS for Data Prep)*
 
 > [!NOTE]
-> **Strategy Shift:** Based on research (`docs/research_03_displayr_parity.md`), Phase 2 focuses on the **Analysis & Reporting** workflow. Heavy Data Engineering (ETL) remains an SPSS task.
+> **Strategy Shift:** Phase 2 transforms Velocity from a single-screen prototype into a **Multi-Mode Application**. It introduces Visual Data Engineering (Card Sorting) and a robust Statistical Foundation (Summary Stats) before tackling advanced features.
 
-### Milestone 2.1: Data Management (Visual ETL)
+### Milestone 2.1: The Hybrid Hub-and-Spoke Architecture
+*Goal: Separate "Data Management" from "Analysis" workflows as per `research_08_UX_patterns_for_surveys.md`.*
+- [x] **Design Task:** Define "Variable Manager" (Card Sorting) vs "Analysis Canvas" (Tables) modes.
+- [x] Implement App Shell & Navigation (Sidebar/Tabs for Modes).
+- [x] Refactor State Manager for Multi-Mode support.
+- [x] **Refactor Store:** Slice `src/store/index.ts` (currently 700+ lines) into modular slices (e.g., `createDataSlice`, `createUISlice`).
+
+### Milestone 2.2: Data Management (Visual ETL)
 > [!TIP]
-> **Paradigm Shift:** Moving from "Legacy List View" to "Visual Construct Builder" (Card Sorting) as defined in `ref_4`.
+> **Paradigm Shift:** Moving from "Legacy List View" to "Visual Construct Builder" (Card Sorting).
 
-- [x] Refactor Row Shelf to `@dnd-kit/sortable` (Enable Reordering)
+- [x] Refactor Row Shelf to `@dnd-kit/sortable`
 - [x] **Connect DataDrawer to Worker** (View-only drill-down)
 - [x] Basic Recoding UI (Modal-based)
-- [ ] **Visual Recoding** (Interactive Histogram Bucketing - `ref_4 §4.2`)
-- [ ] **Variable Card Sorting** (Spatial Construct Builder - `ref_4 §4.1`)
-- [ ] **Harmonization Workspace** (Sankey Mapper - `ref_4 §4.3`)
-- [ ] **Semantic Variable Sets** (Grids/Multi-Response managed via Card Sorting)
+- [ ] **Variable Card Sorting** (The "Variable Manager" Screen).
+- [ ] **Visual Recoding** (Interactive Histogram Bucketing).
+- [ ] **Semantic Variable Sets** (Grids represented as Card Clusters).
+- [ ] **Verify Multi-Response Interaction:** Ensure `VariableSet` works for multiple response data.
 
-### Milestone 2.2: The Weighting Engine
+### Milestone 2.3: Statistical Foundation
+*Goal: "Contextually Relevant Statistics" (Beyond simple counts)*
+- [ ] **Numeric Summaries:** Mean, Median, StdDev, Min/Max for Scale variables.
+- [ ] **Smart Table Stats:** Auto-toggle between Counts (Nominal) and Averages (Scale).
+- [ ] **Significance Testing:** T-Test/Z-Test implementation for table cells.
+
+### Milestone 2.4: The Weighting Engine
 *Scope: Application Only (No Weight Creation)*
 - [x] Apply Weight Variable to DuckDB Queries
 - [x] Display Weighted N vs Unweighted N
+- [ ] **Implement Weighting UI Controls:** Global Weight Dropzone and Toggle.
 
-### Milestone 2.3: The Output (The Parity Goal)
+
+### Milestone 2.5: The Output (The Parity Goal)
+- [ ] **Implement Chart View:** Integrate charting library (Recharts/Visx) for in-app visualization.
 - [ ] Implement `PptxGenJS` Export
 - [ ] Verify Editable Charts in PowerPoint
+
+### Reference
+*   **Source:** `docs/research_08_UX_patterns_for_surveys.md` - Validates the Hub-and-Spoke model and Visual ETL patterns.
 
 ---
 
 ## Phase 3: Project Aletheia (Academic)
+*Goal: Advanced Statistics & Deep Harmonization*
+
+### Milestone 3.0: The Harmonization Workspace
+- [ ] **Sankey Mapper:** Visualizing wave-over-wave changes.
+- [ ] **Harmonization Logic:** Generating mapping scripts.
 *Goal: Advanced Statistics*
 
 ### Milestone 3.1: The WebR Bridge
@@ -105,14 +129,33 @@
 
 ### Milestone 3.2: Advanced Stats
 - [ ] Implement `lme4` (Mixed Models)
-- [ ] Implement `survey` package (Raking)
+- [ ] **Implement Weight Creation (Raking):**
+    - [ ] Port C++ Raking library to Wasm (Replacing original WebR plan)
+    - [ ] UI for Target Definition (Rim Weighting)
+
 
 ---
 
-## Phase 4: Future Concepts (Parking Lot)
-*Goal: Ideas that require a backend/server, conflicting with current Local-First architecture.*
+## Phase 4: The Cognitive Engine (AI-Native)
+*Goal: Additive AI capabilities that leverage the local-first architecture for privacy-preserving intelligence.*
 
-### Milestone 4.1: Real-time Collaboration
+### Milestone 4.1: Semantic Reasoning ("Glass Box")
+- [ ] Implement WebGPU-based Local LLM (e.g., Llama via Wasm/WebLLM)
+- [ ] Build "Auto-Code" interface for Text Variables
+- [ ] Implement "Semantic Cross-Tabs" (Correlating themes with quant data)
+
+### Milestone 4.2: Natural Language Querying
+- [ ] Implement Text-to-SQL / Text-to-State interpreter
+- [ ] Build Chat Interface compatible with `queryBuilder`
+
+### Milestone 4.3: The Action Hub
+- [ ] Implement OAuth Connectors for Linear/Jira
+- [ ] Create "Export to Issue Tracker" flow
+
+## Phase 5: Cloud Extensions (Future)
+*Goal: Features that strictly require a backend.*
+
+### Milestone 5.1: Real-time Collaboration
 - [ ] Backend: WebSocket / Firebase Sync Service
 - [ ] Refactor `CollaboratorCursor.tsx` (Currently mock-only)
 - [ ] Refactor `AvatarGroup.tsx` (Currently mock-only)

@@ -26,6 +26,14 @@ Before sequencing, we must address where the "Simple" (MVP) and "Complex" (Aleth
         *   *Layer 2 (The Workbench):* Reveal Weights and Grid management.
         *   *Layer 3 (The Lab):* Full IDE view.
 
+### C. UX: Single Screen vs. Modal "Hub-and-Spoke"
+*   **Conflict:**
+    *   **MVP:** Single-screen immediacy (Sidebar + Canvas).
+    *   **Reality:** 500+ variables cause cognitive overload and list management fatigue.
+*   **Resolution (driven by `research_08_UX_patterns_for_surveys.md`):**
+    *   **Hybrid Hub-and-Spoke Model:** A dedicated **"Variable Manager"** (Gardening Mode) that overlays the **"Analysis Canvas"** (Harvesting Mode).
+    *   **Zero-Latency Switching:** Leveraging DuckDB-Wasm to switch modes instantly, preserving flow without the "loading..." penalties of server-side tools.
+
 ---
 
 ## 2. Shared Goals (The Foundation)
@@ -75,8 +83,10 @@ These elements exist in ALL three visions and can be built immediately.
     *   **Engine:** Supports Metadata (Labels), User Missing Values.
 
 ### Phase 2: The "Strategic Workbench" (Commercial Viability)
-*Goal: Feature parity with minimal Displayr/SPSS needs.*
+*Goal: Feature parity with minimal Displayr/SPSS needs via a Hybrid Hub-and-Spoke Architecture.*
 *   **Features:**
+    *   **The Hub-and-Spoke UI:** Implement the **Variable Manager** (Visual ETL) as a distinct high-density mode.
+    *   **Visual Recoding:** Drag-and-drop merging on the canvas and in the manager.
     *   **Weighting:** Apply weights to DuckDB queries.
     *   **Variable Sets:** Group columns into Grids.
     *   **Smart Export:** Use **PptxGenJS** to export editable slides.
@@ -86,6 +96,13 @@ These elements exist in ALL three visions and can be built immediately.
 *   **Features:**
     *   **WebR:** Lazy-load R for `lme4`/`psych`.
     *   **Visualizations:** GPU Scatterplots (Regl).
+
+### Phase 4: The Cognitive Engine (AI-Native)
+*Goal: Transform Velocity from an analysis tool into an agentic research partner.*
+*   **Features:**
+    *   **Semantic Reasoning ("The Glass Box"):** Local LLM (WebGPU) or Privacy-Preserving API to auto-code open-ended text.
+    *   **Text-to-SQL:** "Ask your data" interface powered by `queryBuilder` and LLM intent recognition.
+    *   **The Action Hub:** Secure integration with Linear/Jira to export insights directly to product trackers.
 
 ---
 

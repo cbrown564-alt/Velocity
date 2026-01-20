@@ -12,6 +12,7 @@ import { DataDrawer } from './components/overlays/DataDrawer';
 import { RecodeModal } from './components/overlays/RecodeModal';
 import { FilterModal } from './components/overlays/FilterModal';
 import { FilterBar } from './components/common/FilterBar';
+import { AppShell, ModeToggleButton } from './components/layout/AppShell';
 import { useVelocityStore, Variable, VariableSet } from './store';
 import { DndContext, DragOverlay, useSensor, useSensors, MouseSensor, TouchSensor, DragEndEvent, DragStartEvent, useDroppable, closestCenter, pointerWithin, rectIntersection } from '@dnd-kit/core';
 import { SortableContext, arrayMove, verticalListSortingStrategy } from '@dnd-kit/sortable';
@@ -447,209 +448,213 @@ export default function App() {
 
       {/* DASHBOARD */}
       {mode === 'dashboard' && (
-        <DndContext
-          sensors={sensors}
-          collisionDetection={customCollisionDetection}
-          onDragStart={handleDragStart}
-          onDragEnd={handleDragEnd}
-        >
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="flex h-screen"
+        <AppShell>
+          <DndContext
+            sensors={sensors}
+            collisionDetection={customCollisionDetection}
+            onDragStart={handleDragStart}
+            onDragEnd={handleDragEnd}
           >
-            {/* SIDEBAR */}
-            <aside className="w-72 bg-gray-50/50 border-r border-gray-200 flex flex-col shrink-0 z-30 relative">
-              <div className="p-4 border-b border-gray-100 bg-white">
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="w-6 h-6 bg-indigo-600 rounded flex items-center justify-center">
-                    <span className="text-white font-bold text-xs">V</span>
-                  </div>
-                  <span className="font-semibold text-slate-800 tracking-tight">Velocity</span>
-                </div>
-                <div className="relative">
-                  <Search className="absolute left-2.5 top-2.5 w-4 h-4 text-gray-400" />
-                  <input
-                    type="text"
-                    placeholder="Search variables..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-9 pr-3 py-2 bg-gray-100 border-none rounded-md text-sm focus:ring-2 focus:ring-indigo-500/20 focus:bg-white transition-all outline-none"
-                  />
-                </div>
-              </div>
-
-              <div className="flex-1 flex flex-col min-h-0">
-                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3 px-4 pt-3 shrink-0">
-                  Survey Questions ({filteredSets.length})
-                </p>
-                <div className="flex-1 min-h-0 px-3">
-                  <VirtualizedVariableList
-                    variableSets={filteredSets}
-                    selectedIds={selectedSetIds}
-                    onRecode={handleRecodeClick}
-                    onClick={handleVariableClick}
-                    onContextMenu={handleContextMenu}
-                  />
-                </div>
-              </div>
-
-              <div className="p-3 border-t border-gray-200 bg-white">
-                <div className="flex items-center gap-3 text-xs text-gray-500 px-2">
-                  <CheckCircle2 size={12} className="text-green-500" />
-                  <span>{filename} ({totalRows} rows)</span>
-                </div>
-              </div>
-            </aside>
-
-            {/* MAIN CANVAS */}
-            <main className="flex-1 flex flex-col bg-white relative overflow-hidden z-0">
-              {/* HEADER */}
-              <header className="h-14 border-b border-gray-100 flex items-center justify-between px-6 bg-white shrink-0 z-10">
-                <div className="flex items-center gap-2 text-sm text-gray-500">
-                  <span>Analysis</span>
-                  <span>/</span>
-                  <span className="text-gray-900 font-medium">Untitled Crosstab</span>
-                </div>
-
-                <div className="flex items-center gap-6">
-
-                  {/* Weight Variable Selector */}
-                  <div className="flex items-center gap-2">
-                    <label className="text-xs font-medium text-gray-500">Weight:</label>
-                    <select
-                      value={dataset?.weightVariable || ''}
-                      onChange={(e) => setWeightVariable(e.target.value || null)}
-                      className={`text-xs px-2 py-1.5 border rounded-md bg-white focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all min-w-[120px] ${dataset?.weightVariable ? 'border-indigo-300 text-indigo-700 font-medium' : 'border-gray-200 text-gray-600'
-                        }`}
-                    >
-                      <option value="">None</option>
-                      {variables
-                        .filter(v => v.type === 'scale')
-                        .map(v => (
-                          <option key={v.id} value={v.id}>
-                            {v.label || v.name}
-                          </option>
-                        ))}
-                    </select>
-                  </div>
-
-                  <div className="flex items-center bg-gray-100 p-1 rounded-lg">
-                    <button
-                      onClick={() => setViewMode('table')}
-                      className={`p-1.5 rounded-md transition-all ${viewMode === 'table' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}
-                    >
-                      <Table size={16} />
-                    </button>
-                    <button
-                      onClick={() => setViewMode('chart')}
-                      className={`p-1.5 rounded-md transition-all ${viewMode === 'chart' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}
-                    >
-                      <BarChart3 size={16} />
-                    </button>
-                  </div>
-
-                  <button
-                    onClick={reset}
-                    className="text-xs font-medium text-gray-500 hover:text-indigo-600 flex items-center gap-1.5 px-3 py-1.5 rounded-md hover:bg-gray-50 transition-colors"
-                  >
-                    <RotateCcw size={12} />
-                    Reset
-                  </button>
-                </div>
-              </header>
-
-              {/* FILTER BAR */}
-              <FilterBar
-                filters={activeFilters}
-                variables={variables}
-                onAddFilter={openFilterModal}
-                onRemoveFilter={removeFilter}
-              />
-
-              {/* WORKSPACE */}
-              <SmartCanvas className="flex-1 overflow-auto bg-[#FAFAFA] relative flex flex-col">
-                <div className="w-full max-w-5xl mx-auto p-8 flex flex-col gap-6">
-
-                  {/* COLUMN SHELF */}
-                  <div className="flex gap-4 items-center pl-32">
-                    <div className="w-8 flex justify-center">
-                      <span className="text-xs font-bold text-gray-300 uppercase tracking-wider rotate-180 writing-mode-vertical">Columns</span>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="flex h-screen"
+            >
+              {/* SIDEBAR */}
+              <aside className="w-72 bg-gray-50/50 border-r border-gray-200 flex flex-col shrink-0 z-30 relative">
+                <div className="p-4 border-b border-gray-100 bg-white">
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="w-6 h-6 bg-indigo-600 rounded flex items-center justify-center">
+                      <span className="text-white font-bold text-xs">V</span>
                     </div>
-                    <DropZone
-                      id="drop-zone-cols"
-                      type="column"
-                      label="Drop Column Variable"
-                      active={!!draggingId}
-                      currentVariables={tableConfig.colVar ? [variableSets.find(s => s.id === tableConfig.colVar)!].filter(Boolean) : []}
-                      onRemove={() => setTableConfig({ colVar: null })}
+                    <span className="font-semibold text-slate-800 tracking-tight">Velocity</span>
+                  </div>
+                  <div className="relative">
+                    <Search className="absolute left-2.5 top-2.5 w-4 h-4 text-gray-400" />
+                    <input
+                      type="text"
+                      placeholder="Search variables..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-full pl-9 pr-3 py-2 bg-gray-100 border-none rounded-md text-sm focus:ring-2 focus:ring-indigo-500/20 focus:bg-white transition-all outline-none"
                     />
                   </div>
+                </div>
 
-                  <div className="flex gap-4 items-start">
-                    {/* ROW SHELF */}
-                    <div className="w-40 flex flex-col items-end gap-2 pt-16">
-                      <DropZone
-                        id="drop-zone-rows"
-                        type="row"
-                        label="Drop Row Variable(s)"
-                        active={!!draggingId}
-                        currentVariables={tableConfig.rowVars.map(id => variableSets.find(s => s.id === id)).filter(Boolean) as VariableSet[]}
-                        onRemove={(id) => setTableConfig({ rowVars: tableConfig.rowVars.filter(r => r !== id) })}
-                      />
-                      <span className="text-xs font-bold text-gray-300 uppercase tracking-wider pr-1">Rows</span>
-                    </div>
+                <div className="flex-1 flex flex-col min-h-0">
+                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3 px-4 pt-3 shrink-0">
+                    Survey Questions ({filteredSets.length})
+                  </p>
+                  <div className="flex-1 min-h-0 px-3">
+                    <VirtualizedVariableList
+                      variableSets={filteredSets}
+                      selectedIds={selectedSetIds}
+                      onRecode={handleRecodeClick}
+                      onClick={handleVariableClick}
+                      onContextMenu={handleContextMenu}
+                    />
+                  </div>
+                </div>
 
-                    {/* RESULT AREA */}
-                    <div className="flex-1 min-h-[400px]">
-                      {tableConfig.rowVars.length > 0 ? (
-                        <div className="relative">
-                          {isQuerying && (
-                            <div className="absolute inset-0 bg-white/50 z-20 flex items-center justify-center backdrop-blur-sm">
-                              <Loader2 className="animate-spin text-indigo-600" size={32} />
-                            </div>
-                          )}
-                          <DataTable
-                            data={queryResult}
-                            rowVariables={tableConfig.rowVars
-                              .map(id => variableSets.find(s => s.id === id)) // Resolve Set
-                              .filter(Boolean)
-                              .map(set => variables.find(v => v.id === set!.variableIds[0])) // Resolve Var
-                              .filter(Boolean) as Variable[]
-                            }
-                            colVariable={(() => {
-                              const set = variableSets.find(s => s.id === tableConfig.colVar);
-                              return set ? variables.find(v => v.id === set.variableIds[0]) : null;
-                            })() as any}
-                            totalCount={totalRows}
-                            viewMode={viewMode}
-                            isWeighted={!!dataset?.weightVariable}
-                            onCellClick={handleCellClick}
-                          />
-                        </div>
-                      ) : (
-                        <div className="w-full h-64 border-2 border-dashed border-gray-100 rounded-lg flex flex-col items-center justify-center text-gray-300 gap-4 bg-white">
-                          <LayoutGrid size={48} className="opacity-20" />
-                          <p className="text-sm font-medium">Drag variables to the Row shelf to start</p>
-                        </div>
-                      )}
-                    </div>
+                <div className="p-3 border-t border-gray-200 bg-white">
+                  <div className="flex items-center gap-3 text-xs text-gray-500 px-2">
+                    <CheckCircle2 size={12} className="text-green-500" />
+                    <span>{filename} ({totalRows} rows)</span>
+                  </div>
+                </div>
+              </aside>
+
+              {/* MAIN CANVAS */}
+              <main className="flex-1 flex flex-col bg-white relative overflow-hidden z-0">
+                {/* HEADER */}
+                <header className="h-14 border-b border-gray-100 flex items-center justify-between px-6 bg-white shrink-0 z-10">
+                  <div className="flex items-center gap-2 text-sm text-gray-500">
+                    <span>Analysis</span>
+                    <span>/</span>
+                    <span className="text-gray-900 font-medium">Untitled Crosstab</span>
                   </div>
 
-                </div>
-              </SmartCanvas>
-            </main>
-          </motion.div>
+                  <div className="flex items-center gap-6">
 
-          <DragOverlay dropAnimation={null}>
-            {activeDragSet ? (
-              <VariableCard
-                variableSet={activeDragSet}
-                isOverlay
-              />
-            ) : null}
-          </DragOverlay>
-        </DndContext>
+                    {/* Weight Variable Selector */}
+                    <div className="flex items-center gap-2">
+                      <label className="text-xs font-medium text-gray-500">Weight:</label>
+                      <select
+                        value={dataset?.weightVariable || ''}
+                        onChange={(e) => setWeightVariable(e.target.value || null)}
+                        className={`text-xs px-2 py-1.5 border rounded-md bg-white focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all min-w-[120px] ${dataset?.weightVariable ? 'border-indigo-300 text-indigo-700 font-medium' : 'border-gray-200 text-gray-600'
+                          }`}
+                      >
+                        <option value="">None</option>
+                        {variables
+                          .filter(v => v.type === 'scale')
+                          .map(v => (
+                            <option key={v.id} value={v.id}>
+                              {v.label || v.name}
+                            </option>
+                          ))}
+                      </select>
+                    </div>
+
+                    <div className="flex items-center bg-gray-100 p-1 rounded-lg">
+                      <button
+                        onClick={() => setViewMode('table')}
+                        className={`p-1.5 rounded-md transition-all ${viewMode === 'table' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}
+                      >
+                        <Table size={16} />
+                      </button>
+                      <button
+                        onClick={() => setViewMode('chart')}
+                        className={`p-1.5 rounded-md transition-all ${viewMode === 'chart' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}
+                      >
+                        <BarChart3 size={16} />
+                      </button>
+                    </div>
+
+                    <ModeToggleButton />
+
+                    <button
+                      onClick={reset}
+                      className="text-xs font-medium text-gray-500 hover:text-indigo-600 flex items-center gap-1.5 px-3 py-1.5 rounded-md hover:bg-gray-50 transition-colors"
+                    >
+                      <RotateCcw size={12} />
+                      Reset
+                    </button>
+                  </div>
+                </header>
+
+                {/* FILTER BAR */}
+                <FilterBar
+                  filters={activeFilters}
+                  variables={variables}
+                  onAddFilter={openFilterModal}
+                  onRemoveFilter={removeFilter}
+                />
+
+                {/* WORKSPACE */}
+                <SmartCanvas className="flex-1 overflow-auto bg-[#FAFAFA] relative flex flex-col">
+                  <div className="w-full max-w-5xl mx-auto p-8 flex flex-col gap-6">
+
+                    {/* COLUMN SHELF */}
+                    <div className="flex gap-4 items-center pl-32">
+                      <div className="w-8 flex justify-center">
+                        <span className="text-xs font-bold text-gray-300 uppercase tracking-wider rotate-180 writing-mode-vertical">Columns</span>
+                      </div>
+                      <DropZone
+                        id="drop-zone-cols"
+                        type="column"
+                        label="Drop Column Variable"
+                        active={!!draggingId}
+                        currentVariables={tableConfig.colVar ? [variableSets.find(s => s.id === tableConfig.colVar)!].filter(Boolean) : []}
+                        onRemove={() => setTableConfig({ colVar: null })}
+                      />
+                    </div>
+
+                    <div className="flex gap-4 items-start">
+                      {/* ROW SHELF */}
+                      <div className="w-40 flex flex-col items-end gap-2 pt-16">
+                        <DropZone
+                          id="drop-zone-rows"
+                          type="row"
+                          label="Drop Row Variable(s)"
+                          active={!!draggingId}
+                          currentVariables={tableConfig.rowVars.map(id => variableSets.find(s => s.id === id)).filter(Boolean) as VariableSet[]}
+                          onRemove={(id) => setTableConfig({ rowVars: tableConfig.rowVars.filter(r => r !== id) })}
+                        />
+                        <span className="text-xs font-bold text-gray-300 uppercase tracking-wider pr-1">Rows</span>
+                      </div>
+
+                      {/* RESULT AREA */}
+                      <div className="flex-1 min-h-[400px]">
+                        {tableConfig.rowVars.length > 0 ? (
+                          <div className="relative">
+                            {isQuerying && (
+                              <div className="absolute inset-0 bg-white/50 z-20 flex items-center justify-center backdrop-blur-sm">
+                                <Loader2 className="animate-spin text-indigo-600" size={32} />
+                              </div>
+                            )}
+                            <DataTable
+                              data={queryResult}
+                              rowVariables={tableConfig.rowVars
+                                .map(id => variableSets.find(s => s.id === id)) // Resolve Set
+                                .filter(Boolean)
+                                .map(set => variables.find(v => v.id === set!.variableIds[0])) // Resolve Var
+                                .filter(Boolean) as Variable[]
+                              }
+                              colVariable={(() => {
+                                const set = variableSets.find(s => s.id === tableConfig.colVar);
+                                return set ? variables.find(v => v.id === set.variableIds[0]) : null;
+                              })() as any}
+                              totalCount={totalRows}
+                              viewMode={viewMode}
+                              isWeighted={!!dataset?.weightVariable}
+                              onCellClick={handleCellClick}
+                            />
+                          </div>
+                        ) : (
+                          <div className="w-full h-64 border-2 border-dashed border-gray-100 rounded-lg flex flex-col items-center justify-center text-gray-300 gap-4 bg-white">
+                            <LayoutGrid size={48} className="opacity-20" />
+                            <p className="text-sm font-medium">Drag variables to the Row shelf to start</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                  </div>
+                </SmartCanvas>
+              </main>
+            </motion.div>
+
+            <DragOverlay dropAnimation={null}>
+              {activeDragSet ? (
+                <VariableCard
+                  variableSet={activeDragSet}
+                  isOverlay
+                />
+              ) : null}
+            </DragOverlay>
+          </DndContext>
+        </AppShell>
       )}
     </div>
   );
