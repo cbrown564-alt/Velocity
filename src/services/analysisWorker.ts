@@ -3,6 +3,9 @@
  * 
  * Runs DuckDB-WASM in a dedicated Web Worker to keep the main thread responsive.
  * All database operations go through this worker via message passing.
+ * 
+ * Data is now persisted using the Origin Private File System (OPFS) so that
+ * users do not need to re-import files on reload.
  */
 
 import * as duckdb from '@duckdb/duckdb-wasm';
@@ -10,6 +13,9 @@ import * as arrow from 'apache-arrow';
 import { RecodeConfig } from '../types';
 
 const JSDELIVR_BUNDLES = duckdb.getJsDelivrBundles();
+
+// OPFS database path for persistent storage
+const OPFS_DB_PATH = 'opfs://velocity_data.db';
 
 let db: duckdb.AsyncDuckDB | null = null;
 let conn: duckdb.AsyncDuckDBConnection | null = null;
@@ -22,7 +28,9 @@ export type WorkerRequest =
   | { type: 'query'; sql: string }
   | { type: 'getSchema' }
   | { type: 'getUniqueValues'; column: string }
-  | { type: 'recodeVariable'; sourceCol: string; newColName: string; config: RecodeConfig };
+  | { type: 'recodeVariable'; sourceCol: string; newColName: string; config: RecodeConfig }
+  | { type: 'checkPersistedData' }
+  | { type: 'clearPersistedData' };
 
 export type WorkerResponse =
   | { type: 'ready' }
@@ -32,6 +40,9 @@ export type WorkerResponse =
   | { type: 'queryResult'; data: any[]; durationMs: number }
   | { type: 'uniqueValues'; data: string[] }
   | { type: 'recodeComplete'; newColName: string }
+  | { type: 'persistedDataFound'; schema: { name: string; type: string }[]; rowCount: number }
+  | { type: 'noPersistedData' }
+  | { type: 'persistedDataCleared' }
   | { type: 'error'; message: string };
 
 async function init() {
@@ -58,8 +69,112 @@ async function init() {
 
   URL.revokeObjectURL(workerUrl);
 
+  // Open persistent database from OPFS
+  // This will create or open an existing database file
+  let opfsSuccess = false;
+  try {
+    await db.open({
+      path: OPFS_DB_PATH,
+      accessMode: duckdb.DuckDBAccessMode.READ_WRITE
+    });
+    console.log('🦆 [Worker] DuckDB opened with OPFS persistence:', OPFS_DB_PATH);
+    opfsSuccess = true;
+  } catch (opfsError: any) {
+    // Check if this is a corrupt file error
+    const errorMsg = opfsError.message || '';
+    if (errorMsg.includes('not a valid DuckDB database file')) {
+      console.warn('🦆 [Worker] Corrupt OPFS file detected, attempting to clear and retry...');
+
+      // DuckDB stores OPFS files in a .duckdb directory structure
+      // We need to recursively clear that directory
+      try {
+        const opfsRoot = await navigator.storage.getDirectory();
+
+        // Recursively remove a directory
+        async function recursiveRemove(dir: FileSystemDirectoryHandle, name: string): Promise<void> {
+          try {
+            const entry = await dir.getDirectoryHandle(name);
+            // @ts-expect-error - recursive option is valid but not always typed
+            await dir.removeEntry(name, { recursive: true });
+          } catch {
+            // Try as file
+            try {
+              await dir.removeEntry(name);
+            } catch {
+              // Entry doesn't exist, that's fine
+            }
+          }
+        }
+
+        // Clear DuckDB's OPFS structures
+        await recursiveRemove(opfsRoot, '.duckdb');
+        await recursiveRemove(opfsRoot, 'velocity_data.db');
+        console.log('🦆 [Worker] Cleared OPFS DuckDB storage');
+
+        // Retry opening the database
+        await db.open({
+          path: OPFS_DB_PATH,
+          accessMode: duckdb.DuckDBAccessMode.READ_WRITE
+        });
+        console.log('🦆 [Worker] DuckDB opened with OPFS persistence (after cleanup):', OPFS_DB_PATH);
+        opfsSuccess = true;
+      } catch (cleanupError: any) {
+        console.warn('🦆 [Worker] Failed to cleanup corrupt OPFS file:', cleanupError.message);
+      }
+    } else {
+      // OPFS may not be available (e.g., in tests or unsupported browsers)
+      console.warn('🦆 [Worker] OPFS not available, falling back to in-memory:', errorMsg);
+    }
+  }
+
+  if (!opfsSuccess) {
+    console.log('🦆 [Worker] Running in in-memory mode (no persistence)');
+  }
+
   conn = await db.connect();
   console.log('🦆 [Worker] DuckDB Initialized');
+}
+
+/**
+ * Check if persisted data exists in the OPFS database
+ */
+async function checkPersistedData(): Promise<{ exists: boolean; schema?: { name: string; type: string }[]; rowCount?: number }> {
+  if (!conn) throw new Error('DB not initialized');
+
+  try {
+    // Check if the 'main' table exists
+    const tableCheck = await conn.query(`
+      SELECT COUNT(*) as cnt 
+      FROM information_schema.tables 
+      WHERE table_name = 'main'
+    `);
+    const tableExists = Number(tableCheck.toArray()[0]?.cnt) > 0;
+
+    if (!tableExists) {
+      return { exists: false };
+    }
+
+    // Table exists, get schema and row count
+    const schema = await getSchema();
+    const countResult = await conn.query(`SELECT COUNT(*) as cnt FROM main`);
+    const rowCount = Number(countResult.toArray()[0]?.cnt);
+
+    console.log(`🦆 [Worker] Found persisted data: ${rowCount} rows, ${schema.length} columns`);
+    return { exists: true, schema, rowCount };
+  } catch (error: any) {
+    console.warn('🦆 [Worker] Error checking persisted data:', error.message);
+    return { exists: false };
+  }
+}
+
+/**
+ * Clear all persisted data by dropping the main table
+ */
+async function clearPersistedData(): Promise<void> {
+  if (!conn) throw new Error('DB not initialized');
+
+  await conn.query(`DROP TABLE IF EXISTS main`);
+  console.log('🦆 [Worker] Persisted data cleared');
 }
 
 async function loadCSV(fileName: string, content: string): Promise<{ schema: { name: string; type: string }[]; rowCount: number; durationMs: number }> {
@@ -329,6 +444,24 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
       case 'recodeVariable':
         const newCol = await recodeVariable(request.sourceCol, request.newColName, request.config);
         self.postMessage({ type: 'recodeComplete', newColName: newCol } as WorkerResponse);
+        break;
+
+      case 'checkPersistedData':
+        const persistedResult = await checkPersistedData();
+        if (persistedResult.exists) {
+          self.postMessage({
+            type: 'persistedDataFound',
+            schema: persistedResult.schema!,
+            rowCount: persistedResult.rowCount!
+          } as WorkerResponse);
+        } else {
+          self.postMessage({ type: 'noPersistedData' } as WorkerResponse);
+        }
+        break;
+
+      case 'clearPersistedData':
+        await clearPersistedData();
+        self.postMessage({ type: 'persistedDataCleared' } as WorkerResponse);
         break;
     }
   } catch (error: any) {
