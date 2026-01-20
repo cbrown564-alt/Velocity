@@ -61,6 +61,15 @@ Velocity is a **local-first, browser-based** survey data analysis tool. All comp
 *   **Pyodide:** For NLP (spaCy, scikit-learn).
 *   **Loading:** These are **not** bundled. They are fetched on-demand when the user activates "Analyst Mode."
 
+### 2.6 The UX Architecture (Soft Modal)
+*   **Concept:** "Hub-and-Spoke".
+    *   **Hub:** The **Analysis Canvas** (Low density, Drag-and-Drop, Reading mode).
+    *   **Spoke:** The **Variable Manager** (High density, Miller Columns, Writing/Cleaning mode).
+*   **Interaction:** 
+    *   The Manager overlays the Canvas (Z-index layer) rather than replacing the router view.
+    *   **State Persistence:** Because it's a "Soft Modal," the Canvas state (scroll position, active selection) is preserved in DOM/Memory when the Manager is open.
+    *   **Context Awareness:** Selecting a variable in the Canvas prompts the Manager to open with that variable pre-selected in the Miller Column.
+
 ## 3. Data Flow
 
 ```mermaid

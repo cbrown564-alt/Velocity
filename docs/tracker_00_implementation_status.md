@@ -79,6 +79,7 @@
 - [x] Implement App Shell & Navigation (Sidebar/Tabs for Modes).
 - [x] Refactor State Manager for Multi-Mode support.
 - [x] **Refactor Store:** Slice `src/store/index.ts` (currently 700+ lines) into modular slices (e.g., `createDataSlice`, `createUISlice`).
+- [ ] **Local-First State:** Persistent state across modes without reloading [ref](research_08_UX_patterns_for_surveys.md#L385).
 
 ### Milestone 2.2: Data Management (Visual ETL)
 > [!TIP]
@@ -88,7 +89,13 @@
 - [x] **Connect DataDrawer to Worker** (View-only drill-down)
 - [x] Basic Recoding UI (Modal-based)
 - [x] **Variable Card Sorting** (The "Variable Manager" Screen).
+- [ ] **Miller Column Navigation:** Hierarchy: Data Sources > Folders > Sets > Variables > Inspector [ref](research_08_UX_patterns_for_surveys.md#L149).
+- [ ] **Rich Variable Cards:** Sparklines (Mini-histograms) and Quality Indicators (Missingness %) [ref](research_08_UX_patterns_for_surveys.md#L177).
+- [ ] **Context Awareness:** Bi-directional focus (Selecting variable in Analysis opens it in Manager) [ref](research_08_UX_patterns_for_surveys.md#L131).
+- [ ] **Faceted Search:** Filter variable list by Type, Status, and Quality [ref](research_08_UX_patterns_for_surveys.md#L168).
 - [ ] **Visual Recoding** (Interactive Histogram Bucketing).
+- [ ] **Visual ETL (Charts):** Click-to-filter and Click-to-exclude context menus [ref](research_08_UX_patterns_for_surveys.md#L252).
+- [ ] **Lasso Selection:** Spatial grouping/recoding on scatterplots [ref](research_08_UX_patterns_for_surveys.md#L353).
 - [ ] **Semantic Variable Sets** (Grids represented as Card Clusters).
 - [ ] **Verify Multi-Response Interaction:** Ensure `VariableSet` works for multiple response data.
 
@@ -133,6 +140,13 @@
     - [ ] Port C++ Raking library to Wasm (Replacing original WebR plan)
     - [ ] UI for Target Definition (Rim Weighting)
 
+### Milestone 3.3: Advanced Data Preparation
+*Goal: Reproducibility and Complex Logic*
+- [ ] **Recipe Manager:** Non-destructive step history (Import -> Rename -> Recode) [ref](research_08_UX_patterns_for_surveys.md#L226).
+- [ ] **Time Travel:** Edit/Revert any step in the recipe stack.
+- [ ] **Block-based Formula Builder:** Visual logic construction [ref](research_08_UX_patterns_for_surveys.md#L244).
+- [ ] **Programming by Example:** Smart text cleaning (Flash Fill style) [ref](research_08_UX_patterns_for_surveys.md#L199).
+
 
 ---
 
@@ -159,3 +173,6 @@
 - [ ] Backend: WebSocket / Firebase Sync Service
 - [ ] Refactor `CollaboratorCursor.tsx` (Currently mock-only)
 - [ ] Refactor `AvatarGroup.tsx` (Currently mock-only)
+
+### Milestone 5.2: Direct Data Imports
+- [ ] **Serverless Connection Manager:** Backend proxy for Qualtrics/Decipher API auth & CORS. (Option A from research)

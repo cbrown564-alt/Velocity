@@ -81,21 +81,28 @@ These elements exist in ALL three visions and can be built immediately.
     *   **"Card" List:** Virtualized list of variables.
     *   **The Canvas:** Drag X and Y to generate a Crosstab.
     *   **Engine:** Supports Metadata (Labels), User Missing Values.
+    *   **Reference:** `docs/arch_01_system_architecture.md` (Core Components).
 
 ### Phase 2: The "Strategic Workbench" (Commercial Viability)
 *Goal: Feature parity with minimal Displayr/SPSS needs via a Hybrid Hub-and-Spoke Architecture.*
 *   **Features:**
     *   **The Hub-and-Spoke UI:** Implement the **Variable Manager** (Visual ETL) as a distinct high-density mode.
-    *   **Visual Recoding:** Drag-and-drop merging on the canvas and in the manager.
+    *   **Navigation Pattern:** **Miller Columns** (Finder-style) for navigating Data Sources > Folders > Sets > Variables.
+    *   **Visual ETL:** **Card Sorting** for organization and **Drag-and-Merge** for recoding on the canvas.
+    *   **Faceted Search:** Filter variables by type, status, and data quality (missingness).
+    *   **Rich Cards:** Variable lists include sparklines and quality indicators.
     *   **Weighting:** Apply weights to DuckDB queries.
-    *   **Variable Sets:** Group columns into Grids.
     *   **Smart Export:** Use **PptxGenJS** to export editable slides.
+    *   **Reference:** `docs/research_08_UX_patterns_for_surveys.md` (Detailed UX Specs).
 
 ### Phase 3: "Project Aletheia" (Advanced/Long Term)
 *Goal: The Academic/Longitudinal Environment.*
 *   **Features:**
     *   **WebR:** Lazy-load R for `lme4`/`psych`.
     *   **Visualizations:** GPU Scatterplots (Regl).
+    *   **Visual Recipe Stack:** Non-destructive "Time Travel" for data cleaning steps (Import -> Rename -> Recode).
+    *   **Advanced Visual ETL:** **Sankey Diagrams** for harmonizing longitudinal data (Wave 1 vs Wave 2).
+    *   **Logic Builder:** Block-based formula builder for complex variable derivation.
 
 ### Phase 4: The Cognitive Engine (AI-Native)
 *Goal: Transform Velocity from an analysis tool into an agentic research partner.*

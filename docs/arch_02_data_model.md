@@ -67,6 +67,14 @@ interface VariableSet {
   name: string;                   // e.g., "Brand Ratings"
   variableIds: string[];          // List of Variable IDs in this set
   setType: "grid" | "multi";      // "grid" = rating matrix, "multi" = multi-select
+  folderId?: string;              // Parent folder
+}
+
+interface Folder {
+  id: string;
+  name: string;
+  parentId?: string;              // For nested folders
+  order: number;
 }
 ```
 
@@ -123,4 +131,24 @@ interface RecodeMapping {
   targetValue: number;            // e.g., 1
   targetLabel: string;            // e.g., "Low"
 }
+
+## 7. The Recipe (ETL History)
+
+A `Recipe` tracks the sequence of transformations applied to the raw dataset to reach the current state. This allows for "Time Travel" and non-destructive editing.
+
+```typescript
+interface Recipe {
+  id: string;
+  datasetId: string;
+  steps: RecipeStep[];
+}
+
+interface RecipeStep {
+  id: string;
+  type: "filter" | "recode" | "rename" | "set_type" | "merge";
+  timestamp: number;
+  parameters: Record<string, any>; // Flexible payload depending on type
+  active: boolean;                 // Allows soft-disabling a step
+}
+```
 ```
