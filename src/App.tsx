@@ -98,28 +98,43 @@ export default function App() {
     })
   );
 
-  // Custom collision detection: prioritize sortable items, then fall back to drop zones
+  // Custom collision detection: distinguish between sidebar drags and reordering
   const customCollisionDetection = (args: any) => {
-    // First, try to find sortable collisions (for reordering within row shelf)
-    const sortableCollisions = closestCenter(args);
+    const { active } = args;
+    const activeData = active?.data?.current;
 
-    // If we found a collision within row variables, use it for reordering
-    if (sortableCollisions.length > 0) {
-      const firstCollision = sortableCollisions[0];
-      // Check if the collision target is a row variable (for reordering)
-      if (tableConfig.rowVars.includes(firstCollision.id as string)) {
-        return sortableCollisions;
+    // Check if we're dragging FROM the sidebar (adding new variable) vs reordering existing
+    const isDraggingFromSidebar = activeData?.variableSet && !activeData?.type?.includes('sortable');
+    const isReordering = activeData?.type === 'sortable-row';
+
+    if (isReordering) {
+      // For reordering: prioritize sortable collisions within the row shelf
+      const sortableCollisions = closestCenter(args);
+      if (sortableCollisions.length > 0) {
+        const firstCollision = sortableCollisions[0];
+        // If collision is with another row variable, use it for reordering
+        if (tableConfig.rowVars.includes(firstCollision.id as string)) {
+          return sortableCollisions;
+        }
       }
     }
 
-    // Otherwise, use pointer-based detection for drop zones
-    const pointerCollisions = pointerWithin(args);
-    if (pointerCollisions.length > 0) {
-      return pointerCollisions;
+    // For sidebar drags (or when reordering but not over a sortable item):
+    // Use rectIntersection which is more forgiving for larger areas
+    const rectCollisions = rectIntersection(args);
+    if (rectCollisions.length > 0) {
+      // Prioritize drop zones over sortable items when dragging from sidebar
+      const dropZoneCollision = rectCollisions.find(c =>
+        c.id === 'drop-zone-rows' || c.id === 'drop-zone-cols' || c.id === 'canvas'
+      );
+      if (dropZoneCollision && isDraggingFromSidebar) {
+        return [dropZoneCollision];
+      }
+      return rectCollisions;
     }
 
-    // Final fallback to rect intersection
-    return rectIntersection(args);
+    // Final fallback to pointer-based detection
+    return pointerWithin(args);
   };
 
   // -- INIT WORKER --
@@ -553,7 +568,7 @@ export default function App() {
 
                   <div className="flex gap-4 items-start">
                     {/* ROW SHELF */}
-                    <div className="w-32 flex flex-col items-end gap-2 pt-16">
+                    <div className="w-40 flex flex-col items-end gap-2 pt-16">
                       <DropZone
                         id="drop-zone-rows"
                         type="row"

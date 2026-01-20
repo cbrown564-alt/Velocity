@@ -26,24 +26,55 @@ export const DropZone: React.FC<DropZoneProps> = ({
     id: id,
   });
 
-  if (currentVariables.length > 0) {
-    // For row type, use sortable shelf to enable reordering
+  const hasVariables = currentVariables.length > 0;
+
+  // Populated state: Render pills with expanded droppable area around them
+  if (hasVariables) {
+    // For row type, use sortable shelf with expanded container
     if (type === 'row') {
       return (
         <div
           ref={setNodeRef}
-          className={`w-full ${isOver ? 'ring-2 ring-[var(--color-terracotta)] ring-opacity-50 bg-[var(--gray-50)]' : ''} transition-all rounded-md p-1`}
+          className={`
+            w-full min-h-[120px] p-3 rounded-lg transition-all duration-200
+            ${active
+              ? 'border-2 border-dashed border-[var(--color-terracotta)] border-opacity-40 bg-[var(--gray-50)]/50'
+              : 'border-2 border-dashed border-transparent'
+            }
+            ${isOver
+              ? 'ring-2 ring-[var(--color-terracotta)] bg-[var(--gray-50)] border-[var(--color-terracotta)]'
+              : ''
+            }
+          `}
         >
           <SortableRowShelf variableSets={currentVariables} onRemove={onRemove} />
+
+          {/* Hint text when dragging */}
+          {active && (
+            <div className="mt-3 flex items-center justify-center gap-1.5 text-[var(--color-terracotta)] opacity-60">
+              <Plus size={12} />
+              <span className="text-[10px] font-medium uppercase tracking-wide">Add more rows</span>
+            </div>
+          )}
         </div>
       );
     }
 
-    // For column type, use static pills (single variable only)
+    // For column type, use static pills with expanded container
     return (
       <div
         ref={setNodeRef}
-        className={`flex flex-col gap-2 ${type === 'column' ? 'min-w-[120px]' : 'w-full'} ${isOver ? 'ring-2 ring-[var(--color-terracotta)] ring-opacity-50 bg-[var(--gray-50)]' : ''} transition-all rounded-md p-1`}
+        className={`
+          flex flex-col gap-2 min-w-[200px] min-h-[56px] p-3 rounded-lg transition-all duration-200
+          ${active
+            ? 'border-2 border-dashed border-[var(--color-terracotta)] border-opacity-40 bg-[var(--gray-50)]/50'
+            : 'border-2 border-dashed border-transparent'
+          }
+          ${isOver
+            ? 'ring-2 ring-[var(--color-terracotta)] bg-[var(--gray-50)] border-[var(--color-terracotta)]'
+            : ''
+          }
+        `}
       >
         {currentVariables.map((set) => (
           <motion.div
@@ -51,9 +82,9 @@ export const DropZone: React.FC<DropZoneProps> = ({
             layout
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className={`relative flex items-center justify-between p-2 pl-3 pr-2 bg-[var(--gray-50)] border border-[var(--gray-200)] rounded-md group`}
+            className="relative flex items-center justify-between p-2 pl-3 pr-2 bg-[var(--gray-50)] border border-[var(--gray-200)] rounded-md group"
           >
-            <span className="text-sm font-medium text-[var(--color-ink)] font-body truncate max-w-[140px]" title={set.name}>{set.name}</span>
+            <span className="text-sm font-medium text-[var(--color-ink)] font-body truncate max-w-[160px]" title={set.name}>{set.name}</span>
             <button
               onClick={() => onRemove(set.id)}
               className="ml-2 p-1 text-[var(--gray-400)] hover:text-[var(--color-terracotta)] hover:bg-[var(--gray-100)] rounded-full transition-colors"
@@ -69,19 +100,21 @@ export const DropZone: React.FC<DropZoneProps> = ({
     );
   }
 
+  // Empty state: Generous dimensions with clear visual affordance
   return (
     <div
       ref={setNodeRef}
-      className={`relative flex items-center justify-center transition-all duration-200 rounded-lg border-2 border-dashed
+      className={`
+        relative flex items-center justify-center transition-all duration-200 rounded-lg border-2 border-dashed
         ${isOver
           ? 'border-[var(--color-terracotta)] bg-[var(--gray-50)] text-[var(--color-terracotta)] scale-[1.02] shadow-sm'
           : active
-            ? 'border-[var(--color-terracotta)] opacity-60 bg-[var(--gray-50)] text-[var(--color-terracotta)]'
+            ? 'border-[var(--color-terracotta)] border-opacity-60 bg-[var(--gray-50)]/50 text-[var(--color-terracotta)]'
             : 'border-[var(--gray-200)] text-[var(--gray-400)] hover:border-[var(--gray-300)] hover:bg-[var(--gray-50)]'
         }
         ${type === 'column'
-          ? 'h-10 w-48'
-          : 'h-16 w-full'
+          ? 'h-14 min-w-[200px]'
+          : 'min-h-[100px] w-full'
         }
       `}
     >
