@@ -6,7 +6,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { DndContext } from '@dnd-kit/core';
 import { DropZone } from './DropZone';
-import { mockNominalVariable, mockOrdinalVariable } from '../../test/fixtures/variables';
+import { mockNominalSet, mockOrdinalSet } from '../../test/fixtures/variables';
 
 // Wrap component with DndContext for droppable functionality
 const renderWithDnd = (ui: React.ReactElement) => {
@@ -95,7 +95,7 @@ describe('DropZone', () => {
                     type="row"
                     label="Rows"
                     active={false}
-                    currentVariables={[mockNominalVariable]}
+                    currentVariables={[mockNominalSet]}
                     onRemove={vi.fn()}
                 />
             );
@@ -110,7 +110,7 @@ describe('DropZone', () => {
                     type="row"
                     label="Rows"
                     active={false}
-                    currentVariables={[mockNominalVariable, mockOrdinalVariable]}
+                    currentVariables={[mockNominalSet, mockOrdinalSet]}
                     onRemove={vi.fn()}
                 />
             );
@@ -128,7 +128,7 @@ describe('DropZone', () => {
                     type="row"
                     label="Rows"
                     active={false}
-                    currentVariables={[mockNominalVariable]}
+                    currentVariables={[mockNominalSet]}
                     onRemove={onRemove}
                 />
             );
@@ -137,7 +137,7 @@ describe('DropZone', () => {
             const removeButton = screen.getByRole('button');
             fireEvent.click(removeButton);
 
-            expect(onRemove).toHaveBeenCalledWith('var_gender');
+            expect(onRemove).toHaveBeenCalledWith('set_gender');
         });
     });
 

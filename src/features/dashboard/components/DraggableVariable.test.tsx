@@ -7,10 +7,11 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { DndContext } from '@dnd-kit/core';
 import { DraggableVariable, VariableCard } from './DraggableVariable';
 import {
-    mockNominalVariable,
-    mockOrdinalVariable,
-    mockScaleVariable,
+    mockNominalSet,
+    mockOrdinalSet,
+    mockScaleSet,
 } from '../../../test/fixtures/variables';
+import { VariableSet } from '../../../types';
 
 // Wrap component with DndContext for draggable functionality
 const renderWithDnd = (ui: React.ReactElement) => {
@@ -23,9 +24,9 @@ describe('VariableCard', () => {
     // ==========================================================================
 
     describe('rendering', () => {
-        it('displays variable label', () => {
+        it('displays variable name', () => {
             render(
-                <VariableCard variable={mockNominalVariable} />
+                <VariableCard variableSet={mockNominalSet} />
             );
 
             expect(screen.getByText('Gender')).toBeInTheDocument();
@@ -33,7 +34,7 @@ describe('VariableCard', () => {
 
         it('displays variable type', () => {
             render(
-                <VariableCard variable={mockNominalVariable} />
+                <VariableCard variableSet={mockNominalSet} />
             );
 
             expect(screen.getByText('nominal')).toBeInTheDocument();
@@ -41,7 +42,7 @@ describe('VariableCard', () => {
 
         it('displays ordinal type', () => {
             render(
-                <VariableCard variable={mockOrdinalVariable} />
+                <VariableCard variableSet={mockOrdinalSet} />
             );
 
             expect(screen.getByText('ordinal')).toBeInTheDocument();
@@ -49,7 +50,7 @@ describe('VariableCard', () => {
 
         it('displays scale type', () => {
             render(
-                <VariableCard variable={mockScaleVariable} />
+                <VariableCard variableSet={mockScaleSet} />
             );
 
             expect(screen.getByText('scale')).toBeInTheDocument();
@@ -63,7 +64,7 @@ describe('VariableCard', () => {
     describe('type icons', () => {
         it('renders Hash icon for scale variables', () => {
             const { container } = render(
-                <VariableCard variable={mockScaleVariable} />
+                <VariableCard variableSet={mockScaleSet} />
             );
 
             // Hash icon should be present (lucide-react)
@@ -72,7 +73,7 @@ describe('VariableCard', () => {
 
         it('renders Type icon for nominal variables', () => {
             const { container } = render(
-                <VariableCard variable={mockNominalVariable} />
+                <VariableCard variableSet={mockNominalSet} />
             );
 
             expect(container.querySelector('svg')).toBeInTheDocument();
@@ -80,7 +81,7 @@ describe('VariableCard', () => {
 
         it('renders BarChart2 icon for ordinal variables', () => {
             const { container } = render(
-                <VariableCard variable={mockOrdinalVariable} />
+                <VariableCard variableSet={mockOrdinalSet} />
             );
 
             expect(container.querySelector('svg')).toBeInTheDocument();
@@ -96,17 +97,17 @@ describe('VariableCard', () => {
             const onClick = vi.fn();
 
             render(
-                <VariableCard variable={mockNominalVariable} onClick={onClick} />
+                <VariableCard variableSet={mockNominalSet} onClick={onClick} />
             );
 
             fireEvent.click(screen.getByText('Gender'));
 
-            expect(onClick).toHaveBeenCalledWith(mockNominalVariable);
+            expect(onClick).toHaveBeenCalledWith(mockNominalSet, expect.any(Object));
         });
 
         it('shows recode button when onRecode is provided', () => {
             render(
-                <VariableCard variable={mockNominalVariable} onRecode={vi.fn()} />
+                <VariableCard variableSet={mockNominalSet} onRecode={vi.fn()} />
             );
 
             // Recode button should exist (visible on hover via CSS)
@@ -117,18 +118,18 @@ describe('VariableCard', () => {
             const onRecode = vi.fn();
 
             render(
-                <VariableCard variable={mockNominalVariable} onRecode={onRecode} />
+                <VariableCard variableSet={mockNominalSet} onRecode={onRecode} />
             );
 
             fireEvent.click(screen.getByTitle('Recode / Group Values'));
 
-            expect(onRecode).toHaveBeenCalledWith(mockNominalVariable);
+            expect(onRecode).toHaveBeenCalledWith(mockNominalSet);
         });
 
         it('does not show recode button when in overlay mode', () => {
             render(
                 <VariableCard
-                    variable={mockNominalVariable}
+                    variableSet={mockNominalSet}
                     onRecode={vi.fn()}
                     isOverlay={true}
                 />
@@ -145,7 +146,7 @@ describe('VariableCard', () => {
     describe('styling', () => {
         it('applies dragging styles when isDragging is true', () => {
             const { container } = render(
-                <VariableCard variable={mockNominalVariable} isDragging={true} />
+                <VariableCard variableSet={mockNominalSet} isDragging={true} />
             );
 
             const card = container.firstChild as HTMLElement;
@@ -155,7 +156,7 @@ describe('VariableCard', () => {
 
         it('applies overlay styles when isOverlay is true', () => {
             const { container } = render(
-                <VariableCard variable={mockNominalVariable} isOverlay={true} />
+                <VariableCard variableSet={mockNominalSet} isOverlay={true} />
             );
 
             const card = container.firstChild as HTMLElement;
@@ -168,7 +169,7 @@ describe('VariableCard', () => {
 describe('DraggableVariable', () => {
     it('renders with DndContext', () => {
         renderWithDnd(
-            <DraggableVariable variable={mockNominalVariable} />
+            <DraggableVariable variableSet={mockNominalSet} />
         );
 
         expect(screen.getByText('Gender')).toBeInTheDocument();
@@ -178,19 +179,19 @@ describe('DraggableVariable', () => {
         const onClick = vi.fn();
 
         renderWithDnd(
-            <DraggableVariable variable={mockNominalVariable} onClick={onClick} />
+            <DraggableVariable variableSet={mockNominalSet} onClick={onClick} />
         );
 
         fireEvent.click(screen.getByText('Gender'));
 
-        expect(onClick).toHaveBeenCalledWith(mockNominalVariable);
+        expect(onClick).toHaveBeenCalledWith(mockNominalSet, expect.any(Object));
     });
 
     it('passes onRecode to VariableCard', () => {
         const onRecode = vi.fn();
 
         renderWithDnd(
-            <DraggableVariable variable={mockNominalVariable} onRecode={onRecode} />
+            <DraggableVariable variableSet={mockNominalSet} onRecode={onRecode} />
         );
 
         expect(screen.getByTitle('Recode / Group Values')).toBeInTheDocument();

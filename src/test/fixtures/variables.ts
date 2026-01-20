@@ -115,7 +115,32 @@ export const mockVariableSet: VariableSet = {
     id: 'varset_001',
     name: 'Brand Ratings',
     variableIds: ['var_brand_1', 'var_brand_2', 'var_brand_3'],
-    setType: 'grid',
+    structure: 'grid',
+    type: 'scale', // Assuming ratings are scale
+};
+
+export const mockNominalSet: VariableSet = {
+    id: 'set_gender',
+    name: 'Gender',
+    variableIds: ['var_gender'],
+    structure: 'single',
+    type: 'nominal',
+};
+
+export const mockOrdinalSet: VariableSet = {
+    id: 'set_satisfaction',
+    name: 'Overall Satisfaction',
+    variableIds: ['var_satisfaction'],
+    structure: 'single',
+    type: 'ordinal',
+};
+
+export const mockScaleSet: VariableSet = {
+    id: 'set_age',
+    name: 'Age (years)',
+    variableIds: ['var_age'],
+    structure: 'single',
+    type: 'scale',
 };
 
 // ============================================================================
