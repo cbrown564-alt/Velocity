@@ -13,7 +13,8 @@ import { RecodeModal } from './components/overlays/RecodeModal';
 import { FilterModal } from './components/overlays/FilterModal';
 import { FilterBar } from './components/common/FilterBar';
 import { useVelocityStore, Variable, VariableSet } from './store';
-import { DndContext, DragOverlay, useSensor, useSensors, MouseSensor, TouchSensor, DragEndEvent, DragStartEvent, useDroppable } from '@dnd-kit/core';
+import { DndContext, DragOverlay, useSensor, useSensors, MouseSensor, TouchSensor, DragEndEvent, DragStartEvent, useDroppable, closestCenter, pointerWithin, rectIntersection } from '@dnd-kit/core';
+import { SortableContext, arrayMove, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { VariableCard } from './features/dashboard/components/DraggableVariable';
 import { ContextMenu } from './features/dashboard/components/ContextMenu';
 
@@ -73,6 +74,7 @@ export default function App() {
     removeFilter,
     openFilterModal,
     closeFilterModal,
+    reorderRowVars,
   } = useVelocityStore();
 
   const [mode, setMode] = React.useState<AppMode>('splash');
@@ -95,6 +97,30 @@ export default function App() {
       },
     })
   );
+
+  // Custom collision detection: prioritize sortable items, then fall back to drop zones
+  const customCollisionDetection = (args: any) => {
+    // First, try to find sortable collisions (for reordering within row shelf)
+    const sortableCollisions = closestCenter(args);
+
+    // If we found a collision within row variables, use it for reordering
+    if (sortableCollisions.length > 0) {
+      const firstCollision = sortableCollisions[0];
+      // Check if the collision target is a row variable (for reordering)
+      if (tableConfig.rowVars.includes(firstCollision.id as string)) {
+        return sortableCollisions;
+      }
+    }
+
+    // Otherwise, use pointer-based detection for drop zones
+    const pointerCollisions = pointerWithin(args);
+    if (pointerCollisions.length > 0) {
+      return pointerCollisions;
+    }
+
+    // Final fallback to rect intersection
+    return rectIntersection(args);
+  };
 
   // -- INIT WORKER --
   useEffect(() => {
@@ -166,7 +192,26 @@ export default function App() {
     setActiveDragSet(null);
     setDraggingId(null);
 
-    if (over && active.data.current?.variableSet) {
+    if (!over) return;
+
+    // Check if this is a sortable reorder event (both active and over are row variable IDs)
+    const activeId = active.id as string;
+    const overId = over.id as string;
+
+    // If both IDs are in the rowVars array, this is a reorder event
+    if (tableConfig.rowVars.includes(activeId) && tableConfig.rowVars.includes(overId)) {
+      const oldIndex = tableConfig.rowVars.indexOf(activeId);
+      const newIndex = tableConfig.rowVars.indexOf(overId);
+
+      if (oldIndex !== newIndex) {
+        const newOrder = arrayMove(tableConfig.rowVars, oldIndex, newIndex);
+        reorderRowVars(newOrder);
+      }
+      return;
+    }
+
+    // Otherwise, handle as a drop from sidebar to shelf
+    if (active.data.current?.variableSet) {
       const zoneId = over.id;
       const setId = active.data.current.variableSet.id;
 
@@ -246,10 +291,16 @@ export default function App() {
 
   const displaySets = variableSets || [];
 
-  // Filter variables based on search
-  const filteredSets = displaySets.filter(s =>
-    s.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Get IDs of variables currently in use on the canvas
+  const inUseIds = new Set([
+    ...tableConfig.rowVars,
+    ...(tableConfig.colVar ? [tableConfig.colVar] : [])
+  ]);
+
+  // Filter variables based on search AND exclude those already in use
+  const filteredSets = displaySets
+    .filter(s => !inUseIds.has(s.id)) // Exclude variables in use
+    .filter(s => s.name.toLowerCase().includes(searchQuery.toLowerCase()));
 
   // Handle cell click for drill down (accepts full row path for nested rows)
   const handleCellClick = (rowPath: { variable: string; value: string }[], colValue: string | null) => {
@@ -382,6 +433,7 @@ export default function App() {
       {mode === 'dashboard' && (
         <DndContext
           sensors={sensors}
+          collisionDetection={customCollisionDetection}
           onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
         >

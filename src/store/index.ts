@@ -196,6 +196,7 @@ interface VelocityState {
     // Variable Sets (Milestone 2.1)
     createVariableSet: (name: string, variableIds: string[]) => void;
     splitVariableSet: (setId: string) => void;
+    reorderRowVars: (newOrder: string[]) => void;
 }
 
 // ============================================================================
@@ -859,5 +860,13 @@ export const useVelocityStore = create<VelocityState>((set, get) => ({
         // Replace the original set with the new individual sets
         const otherSets = variableSets.filter(s => s.id !== setId);
         set({ variableSets: [...otherSets, ...newSets] });
+    },
+
+    reorderRowVars: (newOrder) => {
+        set((state) => ({
+            tableConfig: { ...state.tableConfig, rowVars: newOrder },
+        }));
+        // Trigger analysis with new row order
+        get().runAnalysis();
     },
 }));

@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { useDroppable } from '@dnd-kit/core';
 import { Plus } from 'lucide-react';
 import { VariableSet } from '../../types';
+import { SortableRowShelf } from './SortableRowShelf';
 
 interface DropZoneProps {
   id: string; // The DOM id used for collision detection
@@ -26,6 +27,19 @@ export const DropZone: React.FC<DropZoneProps> = ({
   });
 
   if (currentVariables.length > 0) {
+    // For row type, use sortable shelf to enable reordering
+    if (type === 'row') {
+      return (
+        <div
+          ref={setNodeRef}
+          className={`w-full ${isOver ? 'ring-2 ring-[var(--color-terracotta)] ring-opacity-50 bg-[var(--gray-50)]' : ''} transition-all rounded-md p-1`}
+        >
+          <SortableRowShelf variableSets={currentVariables} onRemove={onRemove} />
+        </div>
+      );
+    }
+
+    // For column type, use static pills (single variable only)
     return (
       <div
         ref={setNodeRef}
@@ -51,9 +65,6 @@ export const DropZone: React.FC<DropZoneProps> = ({
             </button>
           </motion.div>
         ))}
-        {/* Helper drop area for more? For now, dropping on the existing list works via parent container logic roughly */}
-        {/* But strictly, if we drop ON a pill, dnd-kit might report that pill as the target. */}
-        {/* We rely on the container 'drop-zone-rows' being the droppable. */}
       </div>
     );
   }

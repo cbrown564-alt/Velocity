@@ -1,7 +1,7 @@
 # Velocity Implementation Tracker
 
-**Current Phase:** Phase 1 (Foundation)
-**Key Goal:** Ship a local-first `.SAV` viewer that is faster than Displayr.
+**Current Phase:** Phase 2 (The Strategic Workbench)
+**Key Goal:** Feature Parity with Displayr.
 
 ## Phase 1: The Core (Foundation)
 
@@ -71,9 +71,9 @@
 *Goal: Feature Parity with Displayr*
 
 ### Milestone 2.1: Data Management
-- [ ] Refactor Row Shelf to `@dnd-kit/sortable` (Enable Reordering)
-- [ ] "Variable Sets" Logic (Grouping columns)
-- [ ] Recoding UI (Binning)
+- [x] Refactor Row Shelf to `@dnd-kit/sortable` (Enable Reordering)
+- [x] "Variable Sets" Logic (Grouping columns)
+- [x] Recoding UI (Binning)
 - [x] **Connect DataDrawer to Worker** (Implement drill-down SQL & Pagination)
 
 ### Milestone 2.2: The Weighting Engine
