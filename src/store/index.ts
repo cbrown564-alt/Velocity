@@ -24,7 +24,10 @@ import {
     STORAGE_VERSION,
     partialize,
     onRehydrateStorage,
+    type DataFingerprint,
 } from './persistConfig';
+
+export type { DataFingerprint };
 
 // ============================================================================
 // Combined Store Type
@@ -66,6 +69,8 @@ export type {
     Variable,
     Dataset,
     VariableSet,
+    PersistenceState,
+    PersistedDataInfo,
 } from './slices/dataSlice';
 
 // UI types

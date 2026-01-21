@@ -1,6 +1,6 @@
 /**
  * Persist Configuration
- * 
+ *
  * Configuration for Zustand persist middleware.
  * Defines what state is persisted vs. ephemeral.
  */
@@ -13,6 +13,20 @@ import type { VelocityState } from './index';
 
 export const STORAGE_KEY = 'velocity-state';
 export const STORAGE_VERSION = 1;
+
+// ============================================================================
+// Data Fingerprint Type
+// ============================================================================
+
+/**
+ * Fingerprint for reconciling localStorage metadata with OPFS data.
+ * Used to determine if session can be auto-restored or needs user confirmation.
+ */
+export interface DataFingerprint {
+    rowCount: number;
+    columnCount: number;
+    lastModified: number;
+}
 
 // ============================================================================
 // Persisted State Type
@@ -36,6 +50,9 @@ export interface PersistedState {
     // From AnalysisSlice
     tableConfig: VelocityState['tableConfig'];
     activeFilters: VelocityState['activeFilters'];
+
+    // Data fingerprint for OPFS/localStorage reconciliation
+    dataFingerprint?: DataFingerprint;
 }
 
 // ============================================================================
@@ -60,6 +77,16 @@ export const partialize = (state: VelocityState): PersistedState => ({
     // AnalysisSlice - persist configuration but NOT query results
     tableConfig: state.tableConfig,
     activeFilters: state.activeFilters,
+
+    // Data fingerprint - used for OPFS/localStorage reconciliation
+    // Only set when dataset exists
+    dataFingerprint: state.dataset
+        ? {
+            rowCount: state.dataset.rowCount,
+            columnCount: state.dataset.variables.length,
+            lastModified: Date.now()
+        }
+        : undefined,
 
     // DrillDownSlice - entirely ephemeral, not persisted
 });

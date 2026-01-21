@@ -64,6 +64,24 @@ export interface Folder {
 }
 
 // ============================================================================
+// Persistence Types
+// ============================================================================
+
+export type PersistenceState =
+    | 'idle'        // Initial state, not yet checked
+    | 'checking'    // Checking for persisted data
+    | 'found'       // Persisted data found, awaiting user decision
+    | 'restoring'   // User chose to restore, loading data
+    | 'ready'       // Ready for use (with or without restored data)
+    | 'corrupt'     // Corruption detected, recovery in progress
+    | 'error';      // Unrecoverable error
+
+export interface PersistedDataInfo {
+    schema: { name: string; type: string }[];
+    rowCount: number;
+}
+
+// ============================================================================
 // Slice State & Actions
 // ============================================================================
 
@@ -76,8 +94,19 @@ export interface DataSlice {
     variableSets: VariableSet[];
     folders: Folder[];
 
+    // OPFS Persistence State
+    opfsAvailable: boolean;
+    persistenceState: PersistenceState;
+    persistedDataInfo: PersistedDataInfo | null;
+
     // Actions
     initWorker: () => Promise<void>;
+    terminateWorker: () => void;
+    respawnWorker: (cleanStart?: boolean) => Promise<void>;
+    checkPersistedData: () => Promise<void>;
+    clearPersistedData: () => Promise<void>;
+    restoreFromPersistence: () => void;
+    discardPersistedData: () => Promise<void>;
     loadCSV: (fileName: string, content: string) => Promise<void>;
     loadSAV: (fileName: string, buffer: ArrayBuffer) => Promise<void>;
     getUniqueValues: (variableId: string) => Promise<string[]>;
@@ -105,6 +134,10 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
     variableSets: [],
     folders: [],
 
+    // OPFS Persistence State
+    opfsAvailable: false,
+    persistenceState: 'idle',
+    persistedDataInfo: null,
 
     // Initialize Web Worker
     initWorker: async () => {
@@ -120,25 +153,266 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                 { type: 'module' }
             );
 
-            worker.onmessage = (event: MessageEvent<WorkerResponse>) => {
+            // Create promise to handle init response
+            const initPromise = new Promise<void>((resolve, reject) => {
+                const initHandler = (event: MessageEvent<WorkerResponse>) => {
+                    const response = event.data;
+                    switch (response.type) {
+                        case 'ready':
+                            worker.removeEventListener('message', initHandler);
+                            set({
+                                isDbReady: true,
+                                opfsAvailable: response.opfsAvailable
+                            });
+                            console.log(`[DataSlice] Worker ready, OPFS available: ${response.opfsAvailable}`);
+                            resolve();
+                            break;
+                        case 'corruptionDetected':
+                            worker.removeEventListener('message', initHandler);
+                            console.warn('[DataSlice] OPFS corruption detected:', response.message);
+                            set({ persistenceState: 'corrupt' });
+                            // Respawn worker with clean start
+                            get().respawnWorker(true);
+                            resolve(); // Resolve - respawn will handle the rest
+                            break;
+                        case 'error':
+                            worker.removeEventListener('message', initHandler);
+                            console.error('[DataSlice] Worker error:', response.message);
+                            set({ initError: response.message, persistenceState: 'error' });
+                            reject(new Error(response.message));
+                            break;
+                    }
+                };
+                worker.addEventListener('message', initHandler);
+            });
+
+            // Set up general error handler for runtime errors
+            worker.onerror = (error) => {
+                console.error('[DataSlice] Worker runtime error:', error);
+                set({ initError: error.message || 'Worker runtime error' });
+            };
+
+            set({ worker, persistenceState: 'checking' });
+            worker.postMessage({ type: 'init' } as WorkerRequest);
+
+            await initPromise;
+
+            // If OPFS is available, check for persisted data
+            if (get().opfsAvailable && get().persistenceState !== 'corrupt') {
+                await get().checkPersistedData();
+            } else {
+                set({ persistenceState: 'ready' });
+            }
+        } catch (error: any) {
+            console.error('[DataSlice] Failed to init worker:', error);
+            set({
+                initError: error.message || 'Failed to initialize worker',
+                persistenceState: 'error'
+            });
+        }
+    },
+
+    // Terminate the current worker
+    terminateWorker: () => {
+        const { worker } = get();
+        if (worker) {
+            worker.terminate();
+            console.log('[DataSlice] Worker terminated');
+        }
+        set({
+            worker: null,
+            isDbReady: false,
+            initError: null
+        });
+    },
+
+    // Respawn worker (terminates existing and creates fresh)
+    respawnWorker: async (cleanStart: boolean = false) => {
+        console.log(`[DataSlice] Respawning worker (cleanStart: ${cleanStart})`);
+        get().terminateWorker();
+
+        // Small delay to ensure clean termination
+        await new Promise(resolve => setTimeout(resolve, 100));
+
+        try {
+            const worker = new Worker(
+                new URL('../../services/analysisWorker.ts', import.meta.url),
+                { type: 'module' }
+            );
+
+            const initPromise = new Promise<void>((resolve, reject) => {
+                const initHandler = (event: MessageEvent<WorkerResponse>) => {
+                    const response = event.data;
+                    switch (response.type) {
+                        case 'ready':
+                            worker.removeEventListener('message', initHandler);
+                            set({
+                                isDbReady: true,
+                                opfsAvailable: response.opfsAvailable,
+                                persistenceState: 'ready'
+                            });
+                            console.log(`[DataSlice] Worker respawned, OPFS available: ${response.opfsAvailable}`);
+                            resolve();
+                            break;
+                        case 'corruptionDetected':
+                            // This shouldn't happen with cleanStart, but handle it
+                            worker.removeEventListener('message', initHandler);
+                            console.error('[DataSlice] Corruption still detected after clean start');
+                            set({
+                                initError: 'Unable to recover from OPFS corruption',
+                                persistenceState: 'error',
+                                opfsAvailable: false
+                            });
+                            reject(new Error('Unable to recover from corruption'));
+                            break;
+                        case 'error':
+                            worker.removeEventListener('message', initHandler);
+                            console.error('[DataSlice] Worker error during respawn:', response.message);
+                            set({ initError: response.message, persistenceState: 'error' });
+                            reject(new Error(response.message));
+                            break;
+                    }
+                };
+                worker.addEventListener('message', initHandler);
+            });
+
+            set({ worker });
+            worker.postMessage({ type: 'init', forceCleanStart: cleanStart } as WorkerRequest);
+
+            await initPromise;
+        } catch (error: any) {
+            console.error('[DataSlice] Failed to respawn worker:', error);
+            set({
+                initError: error.message || 'Failed to respawn worker',
+                persistenceState: 'error'
+            });
+        }
+    },
+
+    // Check for persisted data in OPFS
+    checkPersistedData: async () => {
+        const { worker } = get();
+        if (!worker) throw new Error('Worker not initialized');
+
+        set({ persistenceState: 'checking' });
+
+        return new Promise((resolve, reject) => {
+            const handler = (event: MessageEvent<WorkerResponse>) => {
                 const response = event.data;
-                switch (response.type) {
-                    case 'ready':
-                        set({ isDbReady: true });
-                        break;
-                    case 'error':
-                        console.error('[DataSlice] Worker error:', response.message);
-                        set({ initError: response.message });
-                        break;
+                if (response.type === 'persistedDataFound') {
+                    worker.removeEventListener('message', handler);
+                    set({
+                        persistenceState: 'found',
+                        persistedDataInfo: {
+                            schema: response.schema,
+                            rowCount: response.rowCount
+                        }
+                    });
+                    console.log(`[DataSlice] Found persisted data: ${response.rowCount} rows, ${response.schema.length} columns`);
+                    resolve(undefined);
+                } else if (response.type === 'noPersistedData') {
+                    worker.removeEventListener('message', handler);
+                    set({
+                        persistenceState: 'ready',
+                        persistedDataInfo: null
+                    });
+                    console.log('[DataSlice] No persisted data found');
+                    resolve(undefined);
+                } else if (response.type === 'error') {
+                    worker.removeEventListener('message', handler);
+                    set({ persistenceState: 'ready' });
+                    reject(new Error(response.message));
                 }
             };
 
-            set({ worker });
-            worker.postMessage({ type: 'init' } as WorkerRequest);
-        } catch (error: any) {
-            console.error('[DataSlice] Failed to init worker:', error);
-            set({ initError: error.message || 'Failed to initialize worker' });
+            worker.addEventListener('message', handler);
+            worker.postMessage({ type: 'checkPersistedData' } as WorkerRequest);
+        });
+    },
+
+    // Clear persisted data from OPFS
+    clearPersistedData: async () => {
+        const { worker } = get();
+        if (!worker) throw new Error('Worker not initialized');
+
+        return new Promise((resolve, reject) => {
+            const handler = (event: MessageEvent<WorkerResponse>) => {
+                const response = event.data;
+                if (response.type === 'persistedDataCleared') {
+                    worker.removeEventListener('message', handler);
+                    set({ persistedDataInfo: null });
+                    console.log('[DataSlice] Persisted data cleared');
+                    resolve(undefined);
+                } else if (response.type === 'error') {
+                    worker.removeEventListener('message', handler);
+                    reject(new Error(response.message));
+                }
+            };
+
+            worker.addEventListener('message', handler);
+            worker.postMessage({ type: 'clearPersistedData' } as WorkerRequest);
+        });
+    },
+
+    // Restore session from persisted data (user chose to restore)
+    restoreFromPersistence: () => {
+        const { persistedDataInfo, dataset } = get();
+
+        if (!persistedDataInfo) {
+            console.warn('[DataSlice] No persisted data info to restore from');
+            set({ persistenceState: 'ready' });
+            return;
         }
+
+        // If we have localStorage dataset metadata, use it
+        // Otherwise, reconstruct minimal dataset from schema
+        if (dataset) {
+            console.log('[DataSlice] Restoring with existing dataset metadata');
+            set({ persistenceState: 'ready' });
+        } else {
+            // Reconstruct minimal dataset from OPFS schema
+            console.log('[DataSlice] Reconstructing dataset from OPFS schema');
+            const variables: Variable[] = persistedDataInfo.schema.map(col => ({
+                id: col.name,
+                name: col.name,
+                label: col.name.replace(/_/g, ' '),
+                type: col.type.includes('VARCHAR') || col.type.includes('UTF') ? 'nominal' : 'scale',
+                valueLabels: [],
+                missingValues: {}
+            }));
+
+            const variableSets: VariableSet[] = variables.map(v => ({
+                id: crypto.randomUUID(),
+                name: v.label || v.name,
+                variableIds: [v.id],
+                structure: 'single',
+                type: v.type
+            }));
+
+            set({
+                dataset: {
+                    id: crypto.randomUUID(),
+                    name: 'Restored Session',
+                    rowCount: persistedDataInfo.rowCount,
+                    variables,
+                    source: 'sav' // Assume SAV since that's what we persist
+                },
+                variableSets,
+                persistenceState: 'ready'
+            });
+        }
+    },
+
+    // Discard persisted data and start fresh
+    discardPersistedData: async () => {
+        await get().clearPersistedData();
+        set({
+            persistenceState: 'ready',
+            persistedDataInfo: null,
+            dataset: null,
+            variableSets: [],
+            folders: []
+        });
     },
 
     // Load CSV file

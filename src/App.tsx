@@ -13,7 +13,7 @@ import { RecodeModal } from './components/overlays/RecodeModal';
 import { FilterModal } from './components/overlays/FilterModal';
 import { FilterBar } from './components/common/FilterBar';
 import { AppShell, ModeToggleButton } from './components/layout/AppShell';
-import { useVelocityStore, Variable, VariableSet } from './store';
+import { useVelocityStore, Variable, VariableSet, PersistenceState } from './store';
 import { DndContext, DragOverlay, useSensor, useSensors, MouseSensor, TouchSensor, DragEndEvent, DragStartEvent, useDroppable, closestCenter, pointerWithin, rectIntersection } from '@dnd-kit/core';
 import { SortableContext, arrayMove, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { VariableCard } from './features/dashboard/components/DraggableVariable';
@@ -37,9 +37,79 @@ const SmartCanvas: React.FC<{ children: React.ReactNode; className?: string }> =
 };
 
 // App Modes
-type AppMode = 'splash' | 'uploading' | 'dashboard';
+type AppMode = 'splash' | 'uploading' | 'dashboard' | 'restoring';
 
+// RestorationPrompt Component
+interface RestorationPromptProps {
+  rowCount: number;
+  columnCount: number;
+  datasetName?: string;
+  onRestore: () => void;
+  onDiscard: () => void;
+}
 
+const RestorationPrompt: React.FC<RestorationPromptProps> = ({
+  rowCount,
+  columnCount,
+  datasetName,
+  onRestore,
+  onDiscard,
+}) => {
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 flex items-center justify-center bg-white z-40"
+    >
+      <div className="text-center space-y-6 max-w-md w-full px-6">
+        <div className="space-y-2">
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900">Welcome Back</h1>
+          <p className="text-slate-500 text-lg">We found your previous session.</p>
+        </div>
+
+        <div className="bg-gray-50 rounded-xl p-6 text-left space-y-3">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
+              <Table className="w-5 h-5 text-indigo-600" />
+            </div>
+            <div>
+              <p className="font-medium text-slate-800">
+                {datasetName || 'Previous Session'}
+              </p>
+              <p className="text-sm text-slate-500">
+                {rowCount.toLocaleString()} rows, {columnCount} columns
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex gap-3">
+          <motion.button
+            onClick={onRestore}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="flex-1 px-6 py-3 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition-colors"
+          >
+            Restore Session
+          </motion.button>
+          <motion.button
+            onClick={onDiscard}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="flex-1 px-6 py-3 bg-gray-100 text-slate-700 font-medium rounded-lg hover:bg-gray-200 transition-colors"
+          >
+            Start Fresh
+          </motion.button>
+        </div>
+
+        <p className="text-xs text-slate-400">
+          Your data is stored locally in your browser.
+        </p>
+      </div>
+    </motion.div>
+  );
+};
 
 export default function App() {
   // Access store state and actions
@@ -58,6 +128,10 @@ export default function App() {
     drillDown,
     activeFilters,
     filterModal,
+    // Persistence state
+    opfsAvailable,
+    persistenceState,
+    persistedDataInfo,
     initWorker,
     loadCSV,
     loadSAV,
@@ -78,6 +152,9 @@ export default function App() {
     closeFilterModal,
     reorderRowVars,
     setWeightVariable,
+    // Persistence actions
+    restoreFromPersistence,
+    discardPersistedData,
   } = useVelocityStore();
 
   const [mode, setMode] = React.useState<AppMode>('splash');
@@ -145,6 +222,58 @@ export default function App() {
   useEffect(() => {
     initWorker();
   }, [initWorker]);
+
+  // -- PERSISTENCE STATE HANDLING --
+  // Track whether we've processed the persistence check
+  const hasProcessedPersistence = useRef(false);
+
+  useEffect(() => {
+    // Only process once when persistence state becomes 'found' or 'ready'
+    if (hasProcessedPersistence.current) return;
+
+    if (persistenceState === 'found' && persistedDataInfo) {
+      // Check if we have matching localStorage dataset metadata
+      const hasMatchingMetadata = dataset &&
+        dataset.rowCount === persistedDataInfo.rowCount &&
+        dataset.variables.length === persistedDataInfo.schema.length;
+
+      if (hasMatchingMetadata) {
+        // Auto-restore: metadata matches, go straight to dashboard
+        console.log('[App] Auto-restoring: localStorage metadata matches OPFS data');
+        hasProcessedPersistence.current = true;
+        restoreFromPersistence();
+        setMode('dashboard');
+      } else {
+        // Show restoration prompt
+        console.log('[App] Showing restoration prompt: metadata mismatch or missing');
+        setMode('restoring');
+      }
+    } else if (persistenceState === 'ready' && mode === 'restoring') {
+      // User made a choice or no persisted data - go to appropriate mode
+      hasProcessedPersistence.current = true;
+      if (dataset) {
+        setMode('dashboard');
+      } else {
+        setMode('splash');
+      }
+    } else if (persistenceState === 'ready' && mode === 'splash') {
+      // Normal startup with no persisted data
+      hasProcessedPersistence.current = true;
+    }
+  }, [persistenceState, persistedDataInfo, dataset, mode, restoreFromPersistence]);
+
+  // -- HANDLE RESTORE/DISCARD ACTIONS --
+  const handleRestore = () => {
+    restoreFromPersistence();
+    setMode('dashboard');
+    hasProcessedPersistence.current = true;
+  };
+
+  const handleDiscard = async () => {
+    await discardPersistedData();
+    setMode('splash');
+    hasProcessedPersistence.current = true;
+  };
 
   // -- HELPER: CONVERT MOCK TO CSV (For Demo) --
   const loadMockData = async () => {
@@ -455,6 +584,19 @@ export default function App() {
               </motion.button>
             </div>
           </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* RESTORATION PROMPT */}
+      <AnimatePresence>
+        {mode === 'restoring' && persistedDataInfo && (
+          <RestorationPrompt
+            rowCount={persistedDataInfo.rowCount}
+            columnCount={persistedDataInfo.schema.length}
+            datasetName={dataset?.name}
+            onRestore={handleRestore}
+            onDiscard={handleDiscard}
+          />
         )}
       </AnimatePresence>
 

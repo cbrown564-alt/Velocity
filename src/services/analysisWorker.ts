@@ -22,7 +22,7 @@ let conn: duckdb.AsyncDuckDBConnection | null = null;
 
 // Message types for type-safe communication
 export type WorkerRequest =
-  | { type: 'init' }
+  | { type: 'init'; forceCleanStart?: boolean }
   | { type: 'loadCSV'; fileName: string; content: string }
   | { type: 'loadSAV'; buffer: ArrayBuffer }
   | { type: 'query'; sql: string }
@@ -33,7 +33,8 @@ export type WorkerRequest =
   | { type: 'clearPersistedData' };
 
 export type WorkerResponse =
-  | { type: 'ready' }
+  | { type: 'ready'; opfsAvailable: boolean }
+  | { type: 'corruptionDetected'; message: string }
   | { type: 'schema'; data: { name: string; type: string }[] }
   | { type: 'csvLoaded'; schema: { name: string; type: string }[]; rowCount: number; durationMs: number }
   | { type: 'savLoaded'; variables: any[]; rowCount: number; durationMs: number }
@@ -45,8 +46,37 @@ export type WorkerResponse =
   | { type: 'persistedDataCleared' }
   | { type: 'error'; message: string };
 
-async function init() {
-  if (db) return; // Already initialized
+/**
+ * Clean OPFS storage by removing DuckDB files
+ */
+async function cleanOPFS(): Promise<void> {
+  try {
+    const opfsRoot = await navigator.storage.getDirectory();
+
+    // Recursively remove a directory or file
+    async function removeEntry(dir: FileSystemDirectoryHandle, name: string): Promise<void> {
+      try {
+        // @ts-expect-error - recursive option is valid but not always typed
+        await dir.removeEntry(name, { recursive: true });
+      } catch {
+        // Entry doesn't exist, that's fine
+      }
+    }
+
+    // Clear DuckDB's OPFS structures
+    await removeEntry(opfsRoot, '.duckdb');
+    await removeEntry(opfsRoot, 'velocity_data.db');
+    console.log('🦆 [Worker] Cleared OPFS DuckDB storage');
+  } catch (error: any) {
+    console.warn('🦆 [Worker] Failed to clean OPFS:', error.message);
+  }
+}
+
+// Track OPFS availability for reporting
+let opfsAvailable = false;
+
+async function init(forceCleanStart: boolean = false): Promise<{ opfsAvailable: boolean; corruptionDetected?: boolean; corruptionMessage?: string }> {
+  if (db) return { opfsAvailable }; // Already initialized
 
   const bundle = await duckdb.selectBundle(JSDELIVR_BUNDLES);
   console.log('🦆 [Worker] DuckDB Bundle Selected:', bundle);
@@ -69,70 +99,48 @@ async function init() {
 
   URL.revokeObjectURL(workerUrl);
 
+  // If forceCleanStart, clean OPFS before attempting to open
+  if (forceCleanStart) {
+    console.log('🦆 [Worker] Force clean start requested, clearing OPFS...');
+    await cleanOPFS();
+  }
+
   // Open persistent database from OPFS
   // This will create or open an existing database file
-  let opfsSuccess = false;
+  opfsAvailable = false;
   try {
     await db.open({
       path: OPFS_DB_PATH,
       accessMode: duckdb.DuckDBAccessMode.READ_WRITE
     });
     console.log('🦆 [Worker] DuckDB opened with OPFS persistence:', OPFS_DB_PATH);
-    opfsSuccess = true;
+    opfsAvailable = true;
   } catch (opfsError: any) {
     // Check if this is a corrupt file error
     const errorMsg = opfsError.message || '';
-    if (errorMsg.includes('not a valid DuckDB database file')) {
-      console.warn('🦆 [Worker] Corrupt OPFS file detected, attempting to clear and retry...');
-
-      // DuckDB stores OPFS files in a .duckdb directory structure
-      // We need to recursively clear that directory
-      try {
-        const opfsRoot = await navigator.storage.getDirectory();
-
-        // Recursively remove a directory
-        async function recursiveRemove(dir: FileSystemDirectoryHandle, name: string): Promise<void> {
-          try {
-            const entry = await dir.getDirectoryHandle(name);
-            // @ts-expect-error - recursive option is valid but not always typed
-            await dir.removeEntry(name, { recursive: true });
-          } catch {
-            // Try as file
-            try {
-              await dir.removeEntry(name);
-            } catch {
-              // Entry doesn't exist, that's fine
-            }
-          }
-        }
-
-        // Clear DuckDB's OPFS structures
-        await recursiveRemove(opfsRoot, '.duckdb');
-        await recursiveRemove(opfsRoot, 'velocity_data.db');
-        console.log('🦆 [Worker] Cleared OPFS DuckDB storage');
-
-        // Retry opening the database
-        await db.open({
-          path: OPFS_DB_PATH,
-          accessMode: duckdb.DuckDBAccessMode.READ_WRITE
-        });
-        console.log('🦆 [Worker] DuckDB opened with OPFS persistence (after cleanup):', OPFS_DB_PATH);
-        opfsSuccess = true;
-      } catch (cleanupError: any) {
-        console.warn('🦆 [Worker] Failed to cleanup corrupt OPFS file:', cleanupError.message);
-      }
+    if (errorMsg.includes('not a valid DuckDB database file') || errorMsg.includes('corrupt')) {
+      // Signal corruption - DO NOT attempt in-worker recovery
+      // The worker is now "tainted" and must be respawned
+      console.error('🦆 [Worker] OPFS corruption detected:', errorMsg);
+      return {
+        opfsAvailable: false,
+        corruptionDetected: true,
+        corruptionMessage: errorMsg
+      };
     } else {
       // OPFS may not be available (e.g., in tests or unsupported browsers)
       console.warn('🦆 [Worker] OPFS not available, falling back to in-memory:', errorMsg);
     }
   }
 
-  if (!opfsSuccess) {
+  if (!opfsAvailable) {
     console.log('🦆 [Worker] Running in in-memory mode (no persistence)');
   }
 
   conn = await db.connect();
   console.log('🦆 [Worker] DuckDB Initialized');
+
+  return { opfsAvailable };
 }
 
 /**
@@ -398,8 +406,18 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
   try {
     switch (request.type) {
       case 'init':
-        await init();
-        self.postMessage({ type: 'ready' } as WorkerResponse);
+        const initResult = await init(request.forceCleanStart);
+        if (initResult.corruptionDetected) {
+          self.postMessage({
+            type: 'corruptionDetected',
+            message: initResult.corruptionMessage || 'OPFS database corruption detected'
+          } as WorkerResponse);
+        } else {
+          self.postMessage({
+            type: 'ready',
+            opfsAvailable: initResult.opfsAvailable
+          } as WorkerResponse);
+        }
         break;
 
       case 'loadCSV':
