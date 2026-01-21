@@ -17,6 +17,10 @@ const JSDELIVR_BUNDLES = duckdb.getJsDelivrBundles();
 // OPFS database path for persistent storage
 const OPFS_DB_PATH = 'opfs://velocity_data.db';
 
+// Feature flag: Disable OPFS during development due to corruption loop bug
+// See: docs/bugs/opfs_corruption_loop.md
+const ENABLE_OPFS = false;
+
 let db: duckdb.AsyncDuckDB | null = null;
 let conn: duckdb.AsyncDuckDBConnection | null = null;
 
@@ -114,36 +118,41 @@ async function init(forceCleanStart: boolean = false): Promise<{ opfsAvailable: 
 
   URL.revokeObjectURL(workerUrl);
 
-  // Open persistent database from OPFS
-  // This will create or open an existing database file
+  // Open persistent database from OPFS (or in-memory if disabled)
   opfsAvailable = false;
-  try {
-    await db.open({
-      path: OPFS_DB_PATH,
-      accessMode: duckdb.DuckDBAccessMode.READ_WRITE
-    });
-    console.log('🦆 [Worker] DuckDB opened with OPFS persistence:', OPFS_DB_PATH);
-    opfsAvailable = true;
-  } catch (opfsError: any) {
-    // Check if this is a corrupt file error
-    const errorMsg = opfsError.message || '';
-    const isCorruption = errorMsg.includes('not a valid DuckDB database file') || errorMsg.includes('corrupt');
 
-    if (isCorruption && !forceCleanStart) {
-      // First time seeing corruption - signal it so main thread can respawn with clean start
-      console.error('🦆 [Worker] OPFS corruption detected:', errorMsg);
-      return {
-        opfsAvailable: false,
-        corruptionDetected: true,
-        corruptionMessage: errorMsg
-      };
-    } else if (isCorruption && forceCleanStart) {
-      // Already tried clean start but OPFS still corrupted
-      // Fall back to in-memory mode instead of infinite loop
-      console.warn('🦆 [Worker] OPFS still corrupted after cleanup, falling back to in-memory mode');
-    } else {
-      // OPFS may not be available (e.g., in tests or unsupported browsers)
-      console.warn('🦆 [Worker] OPFS not available, falling back to in-memory:', errorMsg);
+  if (!ENABLE_OPFS) {
+    console.log('🦆 [Worker] OPFS disabled (ENABLE_OPFS=false), using in-memory mode');
+  } else {
+    // Try OPFS persistence
+    try {
+      await db.open({
+        path: OPFS_DB_PATH,
+        accessMode: duckdb.DuckDBAccessMode.READ_WRITE
+      });
+      console.log('🦆 [Worker] DuckDB opened with OPFS persistence:', OPFS_DB_PATH);
+      opfsAvailable = true;
+    } catch (opfsError: any) {
+      // Check if this is a corrupt file error
+      const errorMsg = opfsError.message || '';
+      const isCorruption = errorMsg.includes('not a valid DuckDB database file') || errorMsg.includes('corrupt');
+
+      if (isCorruption && !forceCleanStart) {
+        // First time seeing corruption - signal it so main thread can respawn with clean start
+        console.error('🦆 [Worker] OPFS corruption detected:', errorMsg);
+        return {
+          opfsAvailable: false,
+          corruptionDetected: true,
+          corruptionMessage: errorMsg
+        };
+      } else if (isCorruption && forceCleanStart) {
+        // Already tried clean start but OPFS still corrupted
+        // Fall back to in-memory mode instead of infinite loop
+        console.warn('🦆 [Worker] OPFS still corrupted after cleanup, falling back to in-memory mode');
+      } else {
+        // OPFS may not be available (e.g., in tests or unsupported browsers)
+        console.warn('🦆 [Worker] OPFS not available, falling back to in-memory:', errorMsg);
+      }
     }
   }
 
