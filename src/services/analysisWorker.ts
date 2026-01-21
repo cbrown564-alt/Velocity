@@ -78,6 +78,12 @@ let opfsAvailable = false;
 async function init(forceCleanStart: boolean = false): Promise<{ opfsAvailable: boolean; corruptionDetected?: boolean; corruptionMessage?: string }> {
   if (db) return { opfsAvailable }; // Already initialized
 
+  // IMPORTANT: Clean OPFS BEFORE DuckDB initialization to avoid cached file handle issues
+  if (forceCleanStart) {
+    console.log('🦆 [Worker] Force clean start requested, clearing OPFS before DuckDB init...');
+    await cleanOPFS();
+  }
+
   const bundle = await duckdb.selectBundle(JSDELIVR_BUNDLES);
   console.log('🦆 [Worker] DuckDB Bundle Selected:', bundle);
 
@@ -98,12 +104,6 @@ async function init(forceCleanStart: boolean = false): Promise<{ opfsAvailable: 
   await db.instantiate(bundle.mainModule, bundle.pthreadWorker);
 
   URL.revokeObjectURL(workerUrl);
-
-  // If forceCleanStart, clean OPFS before attempting to open
-  if (forceCleanStart) {
-    console.log('🦆 [Worker] Force clean start requested, clearing OPFS...');
-    await cleanOPFS();
-  }
 
   // Open persistent database from OPFS
   // This will create or open an existing database file
