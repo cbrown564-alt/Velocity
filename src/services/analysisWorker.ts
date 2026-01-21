@@ -47,26 +47,35 @@ export type WorkerResponse =
   | { type: 'error'; message: string };
 
 /**
- * Clean OPFS storage by removing DuckDB files
+ * Clean OPFS storage by removing ALL DuckDB-related files
+ * DuckDB-WASM stores files in various locations, so we need to be thorough
  */
 async function cleanOPFS(): Promise<void> {
   try {
     const opfsRoot = await navigator.storage.getDirectory();
 
-    // Recursively remove a directory or file
-    async function removeEntry(dir: FileSystemDirectoryHandle, name: string): Promise<void> {
+    // List and remove ALL entries in OPFS root
+    // This is aggressive but ensures complete cleanup
+    const entriesToDelete: string[] = [];
+
+    // @ts-expect-error - entries() returns an async iterator
+    for await (const [name] of opfsRoot.entries()) {
+      entriesToDelete.push(name);
+    }
+
+    console.log('🦆 [Worker] Found OPFS entries to clean:', entriesToDelete);
+
+    for (const name of entriesToDelete) {
       try {
         // @ts-expect-error - recursive option is valid but not always typed
-        await dir.removeEntry(name, { recursive: true });
-      } catch {
-        // Entry doesn't exist, that's fine
+        await opfsRoot.removeEntry(name, { recursive: true });
+        console.log(`🦆 [Worker] Removed OPFS entry: ${name}`);
+      } catch (e: any) {
+        console.warn(`🦆 [Worker] Failed to remove ${name}:`, e.message);
       }
     }
 
-    // Clear DuckDB's OPFS structures
-    await removeEntry(opfsRoot, '.duckdb');
-    await removeEntry(opfsRoot, 'velocity_data.db');
-    console.log('🦆 [Worker] Cleared OPFS DuckDB storage');
+    console.log('🦆 [Worker] Cleared all OPFS storage');
   } catch (error: any) {
     console.warn('🦆 [Worker] Failed to clean OPFS:', error.message);
   }
@@ -118,15 +127,20 @@ async function init(forceCleanStart: boolean = false): Promise<{ opfsAvailable: 
   } catch (opfsError: any) {
     // Check if this is a corrupt file error
     const errorMsg = opfsError.message || '';
-    if (errorMsg.includes('not a valid DuckDB database file') || errorMsg.includes('corrupt')) {
-      // Signal corruption - DO NOT attempt in-worker recovery
-      // The worker is now "tainted" and must be respawned
+    const isCorruption = errorMsg.includes('not a valid DuckDB database file') || errorMsg.includes('corrupt');
+
+    if (isCorruption && !forceCleanStart) {
+      // First time seeing corruption - signal it so main thread can respawn with clean start
       console.error('🦆 [Worker] OPFS corruption detected:', errorMsg);
       return {
         opfsAvailable: false,
         corruptionDetected: true,
         corruptionMessage: errorMsg
       };
+    } else if (isCorruption && forceCleanStart) {
+      // Already tried clean start but OPFS still corrupted
+      // Fall back to in-memory mode instead of infinite loop
+      console.warn('🦆 [Worker] OPFS still corrupted after cleanup, falling back to in-memory mode');
     } else {
       // OPFS may not be available (e.g., in tests or unsupported browsers)
       console.warn('🦆 [Worker] OPFS not available, falling back to in-memory:', errorMsg);
