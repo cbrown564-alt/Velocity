@@ -463,7 +463,11 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                         // Clear variable stats cache on new dataset load
                         variableStats: {},
                         variableStatsLoading: {},
-                    });
+                        // Reset analysis state - old UUIDs won't match new variableSets
+                        tableConfig: { rowVars: [], colVar: null },
+                        queryResult: [],
+                        activeFilters: [],
+                    } as any);
 
                     worker.removeEventListener('message', handler);
                     resolve(undefined);
@@ -508,7 +512,11 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                         // Clear variable stats cache on new dataset load
                         variableStats: {},
                         variableStatsLoading: {},
-                    });
+                        // Reset analysis state - old UUIDs won't match new variableSets
+                        tableConfig: { rowVars: [], colVar: null },
+                        queryResult: [],
+                        activeFilters: [],
+                    } as any);
 
                     console.log(`📊 [DataSlice] SAV loaded: ${response.rowCount} rows, ${response.variables.length} variables in ${response.durationMs.toFixed(2)}ms`);
                     worker.removeEventListener('message', handler);
