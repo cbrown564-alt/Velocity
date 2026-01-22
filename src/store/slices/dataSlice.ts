@@ -6,7 +6,7 @@
  */
 
 import type { StateCreator } from 'zustand';
-import type { WorkerRequest, WorkerResponse } from '../../services/analysisWorker';
+import type { WorkerRequest, WorkerResponse, VariableStatsResult } from '../../services/analysisWorker';
 import type { RecodeConfig } from '../../types';
 
 // ============================================================================
@@ -94,6 +94,10 @@ export interface DataSlice {
     variableSets: VariableSet[];
     folders: Folder[];
 
+    // Variable stats cache (keyed by variable ID)
+    variableStats: Record<string, VariableStatsResult>;
+    variableStatsLoading: Record<string, boolean>;
+
     // OPFS Persistence State
     opfsAvailable: boolean;
     persistenceState: PersistenceState;
@@ -110,6 +114,7 @@ export interface DataSlice {
     loadCSV: (fileName: string, content: string) => Promise<void>;
     loadSAV: (fileName: string, buffer: ArrayBuffer) => Promise<void>;
     getUniqueValues: (variableId: string) => Promise<string[]>;
+    getVariableStats: (variableId: string) => Promise<VariableStatsResult | null>;
     recodeVariable: (sourceColId: string, newColName: string, config: RecodeConfig) => Promise<string>;
     createVariableSet: (name: string, variableIds: string[]) => void;
     splitVariableSet: (setId: string) => void;
@@ -133,6 +138,10 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
     dataset: null,
     variableSets: [],
     folders: [],
+
+    // Variable stats cache
+    variableStats: {},
+    variableStatsLoading: {},
 
     // OPFS Persistence State
     opfsAvailable: false,
@@ -451,6 +460,9 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                             source: 'csv',
                         },
                         variableSets,
+                        // Clear variable stats cache on new dataset load
+                        variableStats: {},
+                        variableStatsLoading: {},
                     });
 
                     worker.removeEventListener('message', handler);
@@ -493,6 +505,9 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                             source: 'sav',
                         },
                         variableSets,
+                        // Clear variable stats cache on new dataset load
+                        variableStats: {},
+                        variableStatsLoading: {},
                     });
 
                     console.log(`📊 [DataSlice] SAV loaded: ${response.rowCount} rows, ${response.variables.length} variables in ${response.durationMs.toFixed(2)}ms`);
@@ -532,6 +547,50 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
             };
             worker.addEventListener('message', handler);
             worker.postMessage({ type: 'getUniqueValues', column: variableId } as WorkerRequest);
+        });
+    },
+
+    // Get variable statistics (frequencies, missing count)
+    getVariableStats: async (variableId: string): Promise<VariableStatsResult | null> => {
+        const { worker, variableStats, variableStatsLoading } = get();
+        if (!worker) return null;
+
+        // Return cached result if available
+        if (variableStats[variableId]) {
+            return variableStats[variableId];
+        }
+
+        // Don't request if already loading
+        if (variableStatsLoading[variableId]) {
+            return null;
+        }
+
+        // Mark as loading
+        set((state) => ({
+            variableStatsLoading: { ...state.variableStatsLoading, [variableId]: true }
+        }));
+
+        return new Promise((resolve, reject) => {
+            const handler = (event: MessageEvent<WorkerResponse>) => {
+                const response = event.data;
+                if (response.type === 'variableStats' && response.stats.column === variableId) {
+                    worker.removeEventListener('message', handler);
+                    // Cache the result
+                    set((state) => ({
+                        variableStats: { ...state.variableStats, [variableId]: response.stats },
+                        variableStatsLoading: { ...state.variableStatsLoading, [variableId]: false }
+                    }));
+                    resolve(response.stats);
+                } else if (response.type === 'error') {
+                    worker.removeEventListener('message', handler);
+                    set((state) => ({
+                        variableStatsLoading: { ...state.variableStatsLoading, [variableId]: false }
+                    }));
+                    reject(new Error(response.message));
+                }
+            };
+            worker.addEventListener('message', handler);
+            worker.postMessage({ type: 'getVariableStats', column: variableId } as WorkerRequest);
         });
     },
 

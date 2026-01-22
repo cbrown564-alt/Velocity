@@ -32,9 +32,22 @@ export type WorkerRequest =
   | { type: 'query'; sql: string }
   | { type: 'getSchema' }
   | { type: 'getUniqueValues'; column: string }
+  | { type: 'getVariableStats'; column: string }
   | { type: 'recodeVariable'; sourceCol: string; newColName: string; config: RecodeConfig }
   | { type: 'checkPersistedData' }
   | { type: 'clearPersistedData' };
+
+export interface VariableStatsFrequency {
+  value: number | string | null;
+  count: number;
+}
+
+export interface VariableStatsResult {
+  column: string;
+  frequencies: VariableStatsFrequency[];
+  missingCount: number;
+  totalCount: number;
+}
 
 export type WorkerResponse =
   | { type: 'ready'; opfsAvailable: boolean }
@@ -44,6 +57,7 @@ export type WorkerResponse =
   | { type: 'savLoaded'; variables: any[]; rowCount: number; durationMs: number }
   | { type: 'queryResult'; data: any[]; durationMs: number }
   | { type: 'uniqueValues'; data: string[] }
+  | { type: 'variableStats'; stats: VariableStatsResult }
   | { type: 'recodeComplete'; newColName: string }
   | { type: 'persistedDataFound'; schema: { name: string; type: string }[]; rowCount: number }
   | { type: 'noPersistedData' }
@@ -385,6 +399,40 @@ async function getUniqueValues(column: string): Promise<string[]> {
   return result.toArray().map((row) => String(row.val));
 }
 
+async function getVariableStats(column: string): Promise<VariableStatsResult> {
+  if (!conn) throw new Error('DB not initialized');
+
+  // Get total count
+  const totalResult = await conn.query(`SELECT COUNT(*) as cnt FROM main`);
+  const totalCount = Number(totalResult.toArray()[0]?.cnt);
+
+  // Get missing count (NULL values)
+  const missingResult = await conn.query(`SELECT COUNT(*) as cnt FROM main WHERE "${column}" IS NULL`);
+  const missingCount = Number(missingResult.toArray()[0]?.cnt);
+
+  // Get frequency distribution (top 10 values by count)
+  const freqResult = await conn.query(`
+    SELECT "${column}" as value, COUNT(*) as cnt
+    FROM main
+    WHERE "${column}" IS NOT NULL
+    GROUP BY "${column}"
+    ORDER BY cnt DESC
+    LIMIT 10
+  `);
+
+  const frequencies: VariableStatsFrequency[] = freqResult.toArray().map((row: any) => ({
+    value: row.value,
+    count: Number(row.cnt),
+  }));
+
+  return {
+    column,
+    frequencies,
+    missingCount,
+    totalCount,
+  };
+}
+
 async function recodeVariable(
   sourceCol: string,
   newColName: string,
@@ -480,6 +528,11 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
       case 'getUniqueValues':
         const uniqueVals = await getUniqueValues(request.column);
         self.postMessage({ type: 'uniqueValues', data: uniqueVals } as WorkerResponse);
+        break;
+
+      case 'getVariableStats':
+        const stats = await getVariableStats(request.column);
+        self.postMessage({ type: 'variableStats', stats } as WorkerResponse);
         break;
 
       case 'recodeVariable':

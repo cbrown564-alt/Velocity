@@ -4,12 +4,14 @@
  * Column 3 in the Miller Column navigation.
  * Displays variable sets filtered by the active folder.
  * Supports single-click navigation and multi-select for bulk operations.
+ * Includes sparklines and missingness indicators.
  */
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect, useCallback } from 'react';
 import { Hash, Tag, BarChart2, Grid3X3, ChevronRight, EyeOff } from 'lucide-react';
 import { useVelocityStore } from '../../store';
 import type { VariableSet } from '../../store/slices/dataSlice';
+import { Sparkline, MissingnessBadge } from './Sparkline';
 import styles from './MillerColumns.module.css';
 
 interface VariableSetItemProps {
@@ -17,6 +19,9 @@ interface VariableSetItemProps {
     isActive: boolean;
     isSelected: boolean;
     onClick: (e: React.MouseEvent) => void;
+    onHover: () => void;
+    frequencies?: number[];
+    missingPercent?: number;
 }
 
 const getTypeIcon = (type?: string) => {
@@ -44,6 +49,9 @@ const VariableSetItem: React.FC<VariableSetItemProps> = ({
     isActive,
     isSelected,
     onClick,
+    onHover,
+    frequencies,
+    missingPercent,
 }) => {
     const varCount = variableSet.variableIds.length;
     const structureLabel = getStructureLabel(variableSet.structure, varCount);
@@ -51,6 +59,7 @@ const VariableSetItem: React.FC<VariableSetItemProps> = ({
     return (
         <div
             onClick={onClick}
+            onMouseEnter={onHover}
             className={`${styles.item} ${isActive ? styles.itemActive : ''}`}
             style={{
                 backgroundColor: isSelected && !isActive ? 'var(--gray-200)' : undefined,
@@ -79,6 +88,22 @@ const VariableSetItem: React.FC<VariableSetItemProps> = ({
                 </span>
             </div>
             <div className={styles.itemMeta}>
+                {/* Show sparkline for single-variable sets */}
+                {frequencies && frequencies.length > 0 && (
+                    <Sparkline
+                        frequencies={frequencies}
+                        width={50}
+                        height={14}
+                        maxBars={5}
+                    />
+                )}
+                {/* Show missingness badge if significant */}
+                {missingPercent !== undefined && (
+                    <MissingnessBadge
+                        missingPercent={missingPercent}
+                        threshold={5}
+                    />
+                )}
                 {structureLabel && (
                     <span className={styles.itemCount}>{structureLabel}</span>
                 )}
@@ -100,6 +125,8 @@ export const VariableSetColumn: React.FC = () => {
         setSelectedVariableId,
         toggleVariableSetSelection,
         selectVariableSetRange,
+        getVariableStats,
+        variableStats,
     } = useVelocityStore();
 
     // Filter variable sets by folder and search
@@ -123,6 +150,40 @@ export const VariableSetColumn: React.FC = () => {
     }, [variableSets, activeFolderId, searchQuery]);
 
     const filteredIds = useMemo(() => filteredSets.map(vs => vs.id), [filteredSets]);
+
+    // Helper to get stats for a variable set (uses first variable for single sets)
+    const getStatsForSet = useCallback((variableSet: VariableSet) => {
+        // Only show sparklines for single-variable sets to keep UI clean
+        if (variableSet.variableIds.length !== 1) {
+            return { frequencies: undefined, missingPercent: undefined };
+        }
+
+        const variableId = variableSet.variableIds[0];
+        const stats = variableStats[variableId];
+
+        if (!stats) {
+            return { frequencies: undefined, missingPercent: undefined };
+        }
+
+        const frequencies = stats.frequencies.map(f => f.count);
+        const missingPercent = stats.totalCount > 0
+            ? (stats.missingCount / stats.totalCount) * 100
+            : 0;
+
+        return { frequencies, missingPercent };
+    }, [variableStats]);
+
+    // Lazy-load stats on hover
+    const handleHover = useCallback((variableSet: VariableSet) => {
+        // Only fetch for single-variable sets
+        if (variableSet.variableIds.length === 1) {
+            const variableId = variableSet.variableIds[0];
+            // getVariableStats handles caching internally
+            getVariableStats(variableId).catch(err => {
+                console.warn('[VariableSetColumn] Failed to fetch stats:', err);
+            });
+        }
+    }, [getVariableStats]);
 
     const handleClick = (variableSet: VariableSet, e: React.MouseEvent) => {
         // Handle bulk selection with modifier keys
@@ -170,15 +231,21 @@ export const VariableSetColumn: React.FC = () => {
 
             <div className={styles.columnContent}>
                 {filteredSets.length > 0 ? (
-                    filteredSets.map(vs => (
-                        <VariableSetItem
-                            key={vs.id}
-                            variableSet={vs}
-                            isActive={selectedVariableSetId === vs.id}
-                            isSelected={selectedVariableSetIds.includes(vs.id)}
-                            onClick={(e) => handleClick(vs, e)}
-                        />
-                    ))
+                    filteredSets.map(vs => {
+                        const { frequencies, missingPercent } = getStatsForSet(vs);
+                        return (
+                            <VariableSetItem
+                                key={vs.id}
+                                variableSet={vs}
+                                isActive={selectedVariableSetId === vs.id}
+                                isSelected={selectedVariableSetIds.includes(vs.id)}
+                                onClick={(e) => handleClick(vs, e)}
+                                onHover={() => handleHover(vs)}
+                                frequencies={frequencies}
+                                missingPercent={missingPercent}
+                            />
+                        );
+                    })
                 ) : (
                     <div className={styles.emptyState}>
                         <Tag className={styles.emptyIcon} />
