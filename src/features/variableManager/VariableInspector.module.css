@@ -1,0 +1,315 @@
+/**
+ * Variable Inspector Styles
+ *
+ * Column 5 in the Miller Column navigation.
+ * Full metadata panel for the selected variable.
+ */
+
+/* ============================================================================
+   Container
+   ============================================================================ */
+
+.inspector {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 280px;
+  background-color: var(--color-parchment);
+  border-left: 1px solid var(--gray-200);
+  overflow: hidden;
+  animation: slideIn var(--transition-base);
+}
+
+.inspectorHidden {
+  display: none;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ============================================================================
+   Header
+   ============================================================================ */
+
+.header {
+  padding: var(--space-6);
+  border-bottom: 1px solid var(--gray-200);
+  background-color: white;
+}
+
+.variableName {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 600;
+  color: var(--color-ink);
+  margin: 0 0 var(--space-2) 0;
+  line-height: 1.2;
+}
+
+.variableLabel {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--gray-500);
+  margin: 0;
+}
+
+/* ============================================================================
+   Content Sections
+   ============================================================================ */
+
+.content {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-4);
+}
+
+.section {
+  margin-bottom: var(--space-6);
+}
+
+.sectionTitle {
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--gray-500);
+  margin: 0 0 var(--space-3) 0;
+}
+
+/* ============================================================================
+   Metadata Section
+   ============================================================================ */
+
+.metaGrid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--space-2) var(--space-4);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+}
+
+.metaLabel {
+  color: var(--gray-500);
+}
+
+.metaValue {
+  color: var(--color-ink);
+  font-weight: 500;
+}
+
+/* ============================================================================
+   Type Badge (larger version for inspector)
+   ============================================================================ */
+
+.typeBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: var(--border-radius-sm);
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.typeBadgeNominal {
+  background-color: rgba(224, 122, 95, 0.15);
+  color: var(--color-terracotta);
+}
+
+.typeBadgeOrdinal {
+  background-color: rgba(132, 165, 157, 0.15);
+  color: var(--color-info);
+}
+
+.typeBadgeScale {
+  background-color: rgba(61, 56, 53, 0.1);
+  color: var(--color-charcoal);
+}
+
+/* ============================================================================
+   Value Labels Table
+   ============================================================================ */
+
+.valueLabelsTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+}
+
+.valueLabelsTable th {
+  text-align: left;
+  padding: var(--space-2) var(--space-3);
+  font-weight: 600;
+  color: var(--gray-500);
+  background-color: var(--gray-100);
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.valueLabelsTable th:first-child {
+  width: 60px;
+  border-radius: var(--border-radius-sm) 0 0 0;
+}
+
+.valueLabelsTable th:last-child {
+  border-radius: 0 var(--border-radius-sm) 0 0;
+}
+
+.valueLabelsTable td {
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--gray-100);
+}
+
+.valueLabelsTable tr:last-child td {
+  border-bottom: none;
+}
+
+.valueCode {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--gray-500);
+  background-color: var(--gray-100);
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+.valueLabel {
+  color: var(--color-ink);
+}
+
+.valueLabelsScroll {
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--border-radius-sm);
+}
+
+/* ============================================================================
+   Missing Values
+   ============================================================================ */
+
+.missingValues {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--gray-600);
+}
+
+.missingValuesList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.missingValueChip {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  background-color: var(--color-warning);
+  color: white;
+  border-radius: var(--border-radius-sm);
+  font-size: var(--text-xs);
+  font-weight: 500;
+}
+
+.noMissing {
+  color: var(--gray-400);
+  font-style: italic;
+}
+
+/* ============================================================================
+   Distribution Chart
+   ============================================================================ */
+
+.distributionChart {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.distributionRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.distributionLabel {
+  flex: 0 0 120px;
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  color: var(--gray-600);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.distributionBar {
+  flex: 1;
+  height: 16px;
+  background-color: var(--gray-100);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.distributionFill {
+  height: 100%;
+  background-color: var(--color-terracotta);
+  border-radius: 2px;
+  transition: width var(--transition-base);
+}
+
+.distributionPercent {
+  flex: 0 0 40px;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--gray-500);
+  text-align: right;
+}
+
+/* ============================================================================
+   Empty State
+   ============================================================================ */
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: var(--space-8);
+  text-align: center;
+}
+
+.emptyIcon {
+  width: 48px;
+  height: 48px;
+  color: var(--gray-300);
+  margin-bottom: var(--space-4);
+}
+
+.emptyTitle {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--gray-400);
+  margin: 0 0 var(--space-2) 0;
+}
+
+.emptyText {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--gray-400);
+  margin: 0;
+}

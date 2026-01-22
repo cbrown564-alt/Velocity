@@ -36,12 +36,20 @@ export interface UISlice {
     viewMode: ViewMode;
     recodeModal: RecodeModalState;
     filterModal: FilterModalState;
-    /** Selected variable set IDs in Variable Manager */
+    /** Selected variable set IDs in Variable Manager (for bulk operations) */
     selectedVariableSetIds: string[];
     /** Last selected ID for shift-click range selection */
     lastSelectedId: string | null;
     /** Active folder filter in Variable Manager (null = all) */
     activeFolderId: string | null;
+
+    // Miller Column Navigation State
+    /** Selected data source ID (for future multi-source support) */
+    selectedDataSourceId: string | null;
+    /** Single variable set selection for Miller column navigation */
+    selectedVariableSetId: string | null;
+    /** Single variable selection for Miller column navigation */
+    selectedVariableId: string | null;
 
     // Actions
     setAppMode: (mode: AppMode) => void;
@@ -60,6 +68,11 @@ export interface UISlice {
     selectAllVariableSets: (ids: string[]) => void;
     clearSelection: () => void;
     setActiveFolderId: (folderId: string | null) => void;
+
+    // Miller Column Navigation Actions
+    setSelectedDataSourceId: (id: string | null) => void;
+    setSelectedVariableSetId: (id: string | null) => void;
+    setSelectedVariableId: (id: string | null) => void;
 }
 
 export const createUISlice: StateCreator<UISlice, [], [], UISlice> = (set) => ({
@@ -74,6 +87,11 @@ export const createUISlice: StateCreator<UISlice, [], [], UISlice> = (set) => ({
     lastSelectedId: null,
     activeFolderId: null,
 
+    // Miller Column Navigation State
+    selectedDataSourceId: null,
+    selectedVariableSetId: null,
+    selectedVariableId: null,
+
     // Actions
     setAppMode: (mode) => set({ appMode: mode }),
 
@@ -81,6 +99,9 @@ export const createUISlice: StateCreator<UISlice, [], [], UISlice> = (set) => ({
         appMode: state.appMode === 'analysis' ? 'variables' : 'analysis',
         // Clear selection when leaving Variable Manager
         selectedVariableSetIds: state.appMode === 'variables' ? [] : state.selectedVariableSetIds,
+        // Clear Miller column navigation state when leaving Variable Manager
+        selectedVariableSetId: state.appMode === 'variables' ? null : state.selectedVariableSetId,
+        selectedVariableId: state.appMode === 'variables' ? null : state.selectedVariableId,
     })),
 
     setDraggingId: (id) => set({ draggingId: id }),
@@ -130,5 +151,27 @@ export const createUISlice: StateCreator<UISlice, [], [], UISlice> = (set) => ({
 
     selectAllVariableSets: (ids) => set({ selectedVariableSetIds: ids }),
     clearSelection: () => set({ selectedVariableSetIds: [], lastSelectedId: null }),
-    setActiveFolderId: (folderId) => set({ activeFolderId: folderId }),
+    setActiveFolderId: (folderId) => set({
+        activeFolderId: folderId,
+        // Cascade: clear variable set and variable selection when folder changes
+        selectedVariableSetId: null,
+        selectedVariableId: null,
+    }),
+
+    // Miller Column Navigation Actions
+    setSelectedDataSourceId: (id) => set({
+        selectedDataSourceId: id,
+        // Cascade: clear folder, variable set, and variable selection
+        activeFolderId: null,
+        selectedVariableSetId: null,
+        selectedVariableId: null,
+    }),
+
+    setSelectedVariableSetId: (id) => set({
+        selectedVariableSetId: id,
+        // Cascade: clear variable selection when variable set changes
+        selectedVariableId: null,
+    }),
+
+    setSelectedVariableId: (id) => set({ selectedVariableId: id }),
 });

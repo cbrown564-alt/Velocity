@@ -1,10 +1,11 @@
 /**
  * VariableManager Component
- * 
+ *
  * The "Data Gardening" spoke in the hub-and-spoke architecture.
  * Full-screen overlay for organizing and managing variables.
- * 
+ *
  * Features (Milestone 2.2 - Card Sorting):
+ * - Miller Column navigation: Sources → Folders → Variable Sets → Variables → Inspector
  * - Multi-select with Shift and Cmd/Ctrl click
  * - Drag-and-drop reordering
  * - Folder organization
@@ -20,18 +21,16 @@ import {
     useSensor,
     useSensors,
     DragEndEvent,
-    DragOverEvent,
 } from '@dnd-kit/core';
-import {
-    SortableContext,
-    sortableKeyboardCoordinates,
-    rectSortingStrategy,
-} from '@dnd-kit/sortable';
-import { X, Search, Grid3X3, List, Tag, BarChart2 } from 'lucide-react';
+import { X, Search, Grid3X3, Tag, BarChart2 } from 'lucide-react';
 import { useVelocityStore } from '../../store';
-import { SortableVariableCard } from './SortableVariableCard';
 import { BulkActionBar } from './BulkActionBar';
-import { FolderPanel } from './FolderPanel';
+import { DataSourceColumn } from './DataSourceColumn';
+import { FolderColumn } from './FolderColumn';
+import { VariableSetColumn } from './VariableSetColumn';
+import { VariableColumn } from './VariableColumn';
+import { VariableInspector } from './VariableInspector';
+import millerStyles from './MillerColumns.module.css';
 
 interface VariableManagerProps {
     onClose: () => void;
@@ -44,28 +43,22 @@ export const VariableManager: React.FC<VariableManagerProps> = ({ onClose }) => 
         searchQuery,
         setSearchQuery,
         selectedVariableSetIds,
+        selectedVariableId,
         activeFolderId,
-        toggleVariableSetSelection,
-        selectVariableSetRange,
         selectAllVariableSets,
         clearSelection,
-        reorderVariableSets,
         moveToFolder,
     } = useVelocityStore();
-
-    const [viewStyle, setViewStyle] = React.useState<'grid' | 'list'>('grid');
 
     // Configure dnd-kit sensors
     const sensors = useSensors(
         useSensor(PointerSensor, {
             activationConstraint: { distance: 8 },
         }),
-        useSensor(KeyboardSensor, {
-            coordinateGetter: sortableKeyboardCoordinates,
-        })
+        useSensor(KeyboardSensor)
     );
 
-    // Filter variable sets by search and folder
+    // Filter variable sets by search and folder for keyboard shortcuts
     const filteredSets = useMemo(() => {
         let sets = variableSets;
 
@@ -98,7 +91,7 @@ export const VariableManager: React.FC<VariableManagerProps> = ({ onClose }) => 
         return stats;
     }, [variableSets]);
 
-    // Handle drag end for reordering
+    // Handle drag end for folder drops
     const handleDragEnd = (event: DragEndEvent) => {
         const { active, over } = event;
         if (!over || active.id === over.id) return;
@@ -110,8 +103,6 @@ export const VariableManager: React.FC<VariableManagerProps> = ({ onClose }) => 
                 ? selectedVariableSetIds
                 : [String(active.id)];
             moveToFolder(idsToMove, folderId === 'ungrouped' ? null : folderId);
-        } else {
-            reorderVariableSets(String(active.id), String(over.id));
         }
     };
 
@@ -140,13 +131,8 @@ export const VariableManager: React.FC<VariableManagerProps> = ({ onClose }) => 
         return () => document.removeEventListener('keydown', handleKeyDown);
     }, [handleKeyDown]);
 
-    const handleSelect = (id: string, multi: boolean) => {
-        toggleVariableSetSelection(id, multi);
-    };
-
-    const handleShiftSelect = (id: string) => {
-        selectVariableSetRange(id, filteredIds);
-    };
+    // Determine if Inspector should be visible
+    const showInspector = !!selectedVariableId;
 
     return (
         <DndContext
@@ -154,140 +140,153 @@ export const VariableManager: React.FC<VariableManagerProps> = ({ onClose }) => 
             collisionDetection={closestCenter}
             onDragEnd={handleDragEnd}
         >
-            <div className="h-full bg-white flex flex-col">
+            <div style={{
+                height: '100%',
+                backgroundColor: 'var(--color-paper)',
+                display: 'flex',
+                flexDirection: 'column',
+            }}>
                 {/* Header */}
-                <header className="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-gray-50">
-                    <div className="flex items-center gap-4">
-                        <div className="flex items-center gap-2">
-                            <Grid3X3 className="w-5 h-5 text-indigo-600" />
-                            <h1 className="text-lg font-semibold text-gray-900">Variable Manager</h1>
+                <header style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: 'var(--space-4) var(--space-6)',
+                    borderBottom: '1px solid var(--gray-200)',
+                    backgroundColor: 'var(--gray-50)',
+                }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-4)' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
+                            <Grid3X3 style={{ width: 20, height: 20, color: 'var(--color-terracotta)' }} />
+                            <h1 style={{
+                                fontFamily: 'var(--font-display)',
+                                fontSize: 'var(--text-lg)',
+                                fontWeight: 600,
+                                color: 'var(--color-ink)',
+                                margin: 0,
+                            }}>
+                                Variable Manager
+                            </h1>
                         </div>
 
                         {/* Quick Stats */}
-                        <div className="flex items-center gap-3 text-xs text-gray-500 ml-4">
-                            <span className="flex items-center gap-1">
-                                <Tag size={12} className="text-rose-500" />
+                        <div style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 'var(--space-3)',
+                            fontSize: 'var(--text-xs)',
+                            color: 'var(--gray-500)',
+                            marginLeft: 'var(--space-4)',
+                        }}>
+                            <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                                <Tag size={12} style={{ color: 'var(--color-terracotta)' }} />
                                 {typeStats.nominal} Categorical
                             </span>
-                            <span className="flex items-center gap-1">
-                                <BarChart2 size={12} className="text-blue-500" />
+                            <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                                <BarChart2 size={12} style={{ color: 'var(--color-info)' }} />
                                 {typeStats.scale} Numeric
                             </span>
-                            <span className="text-gray-300">|</span>
+                            <span style={{ color: 'var(--gray-300)' }}>|</span>
                             <span>{variableSets.length} total</span>
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-4">
-                        {/* View Toggle */}
-                        <div className="flex items-center bg-gray-100 p-1 rounded-lg">
-                            <button
-                                onClick={() => setViewStyle('grid')}
-                                className={`p-1.5 rounded-md transition-all ${viewStyle === 'grid'
-                                    ? 'bg-white text-indigo-600 shadow-sm'
-                                    : 'text-gray-400 hover:text-gray-600'
-                                    }`}
-                            >
-                                <Grid3X3 size={16} />
-                            </button>
-                            <button
-                                onClick={() => setViewStyle('list')}
-                                className={`p-1.5 rounded-md transition-all ${viewStyle === 'list'
-                                    ? 'bg-white text-indigo-600 shadow-sm'
-                                    : 'text-gray-400 hover:text-gray-600'
-                                    }`}
-                            >
-                                <List size={16} />
-                            </button>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-4)' }}>
+                        {/* Search */}
+                        <div style={{ position: 'relative', width: 240 }}>
+                            <Search style={{
+                                position: 'absolute',
+                                left: 10,
+                                top: '50%',
+                                transform: 'translateY(-50%)',
+                                width: 14,
+                                height: 14,
+                                color: 'var(--gray-400)',
+                            }} />
+                            <input
+                                type="text"
+                                placeholder="Search variables..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                style={{
+                                    width: '100%',
+                                    padding: '6px 12px 6px 32px',
+                                    backgroundColor: 'var(--gray-100)',
+                                    border: '1px solid var(--gray-200)',
+                                    borderRadius: 'var(--border-radius-sm)',
+                                    fontSize: 'var(--text-sm)',
+                                    fontFamily: 'var(--font-body)',
+                                    outline: 'none',
+                                }}
+                            />
                         </div>
 
                         {/* Close Button */}
                         <button
                             onClick={onClose}
-                            className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-md transition-colors"
+                            style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                width: 32,
+                                height: 32,
+                                padding: 0,
+                                border: 'none',
+                                borderRadius: 'var(--border-radius-sm)',
+                                backgroundColor: 'transparent',
+                                color: 'var(--gray-400)',
+                                cursor: 'pointer',
+                            }}
                         >
                             <X size={20} />
                         </button>
                     </div>
                 </header>
 
-                {/* Search Bar */}
-                <div className="px-6 py-4 border-b border-gray-100 bg-white">
-                    <div className="relative max-w-xl">
-                        <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
-                        <input
-                            type="text"
-                            placeholder="Search variables..."
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300 focus:bg-white transition-all outline-none"
-                        />
-                    </div>
-                </div>
+                {/* Miller Columns */}
+                <div className={millerStyles.container}>
+                    {/* Column 1: Data Sources */}
+                    <DataSourceColumn />
 
-                {/* Main Content with Folder Panel */}
-                <div className="flex-1 flex overflow-hidden">
-                    {/* Folder Panel */}
-                    <FolderPanel />
+                    {/* Column 2: Folders */}
+                    <FolderColumn />
 
-                    {/* Card Grid */}
-                    <main className="flex-1 overflow-auto p-6">
-                        <SortableContext items={filteredIds} strategy={rectSortingStrategy}>
-                            {viewStyle === 'grid' ? (
-                                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-                                    {filteredSets.map((vs) => (
-                                        <SortableVariableCard
-                                            key={vs.id}
-                                            id={vs.id}
-                                            name={vs.name}
-                                            type={vs.type}
-                                            structure={vs.structure}
-                                            isSelected={selectedVariableSetIds.includes(vs.id)}
-                                            hidden={vs.hidden}
-                                            onSelect={handleSelect}
-                                            onShiftSelect={handleShiftSelect}
-                                        />
-                                    ))}
-                                </div>
-                            ) : (
-                                <div className="space-y-2 max-w-4xl">
-                                    {filteredSets.map((vs) => (
-                                        <SortableVariableCard
-                                            key={vs.id}
-                                            id={vs.id}
-                                            name={vs.name}
-                                            type={vs.type}
-                                            structure={vs.structure}
-                                            isSelected={selectedVariableSetIds.includes(vs.id)}
-                                            hidden={vs.hidden}
-                                            onSelect={handleSelect}
-                                            onShiftSelect={handleShiftSelect}
-                                        />
-                                    ))}
-                                </div>
-                            )}
-                        </SortableContext>
+                    {/* Column 3: Variable Sets */}
+                    <VariableSetColumn />
 
-                        {filteredSets.length === 0 && (
-                            <div className="flex flex-col items-center justify-center h-64 text-gray-400">
-                                <Grid3X3 size={48} className="opacity-20 mb-4" />
-                                <p className="text-sm font-medium">No variables found</p>
-                                {searchQuery && (
-                                    <p className="text-xs mt-1">Try adjusting your search</p>
-                                )}
-                            </div>
-                        )}
-                    </main>
+                    {/* Column 4: Variables (conditionally shown) */}
+                    <VariableColumn />
+
+                    {/* Column 5: Inspector (conditionally shown) */}
+                    {showInspector && <VariableInspector />}
                 </div>
 
                 {/* Footer */}
-                <footer className="px-6 py-3 border-t border-gray-200 bg-gray-50 text-xs text-gray-500 flex items-center justify-between">
+                <footer style={{
+                    padding: 'var(--space-3) var(--space-6)',
+                    borderTop: '1px solid var(--gray-200)',
+                    backgroundColor: 'var(--gray-50)',
+                    fontSize: 'var(--text-xs)',
+                    color: 'var(--gray-500)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                }}>
                     <span>
                         {dataset?.name} • {dataset?.rowCount.toLocaleString()} rows
                     </span>
-                    <span className="text-gray-400">
-                        <kbd className="px-1.5 py-0.5 bg-gray-200 rounded">⌘A</kbd> Select all •
-                        <kbd className="px-1.5 py-0.5 bg-gray-200 rounded ml-1">Esc</kbd> Close
+                    <span style={{ color: 'var(--gray-400)' }}>
+                        <kbd style={{
+                            padding: '2px 6px',
+                            backgroundColor: 'var(--gray-200)',
+                            borderRadius: 3,
+                        }}>⌘A</kbd> Select all •
+                        <kbd style={{
+                            padding: '2px 6px',
+                            backgroundColor: 'var(--gray-200)',
+                            borderRadius: 3,
+                            marginLeft: 4,
+                        }}>Esc</kbd> Close
                     </span>
                 </footer>
 
