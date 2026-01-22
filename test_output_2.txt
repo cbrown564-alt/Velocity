@@ -1,0 +1,44 @@
+
+> velocity@0.0.0 test:run
+> vitest run
+
+
+ RUN  v2.1.9 /Users/cobro/Code/Velocity
+
+ ✓ src/services/queryBuilder.test.ts (28 tests) 12ms
+stdout | src/store/variableSet.test.ts
+🔄 [Persist] State rehydrated from localStorage
+
+stdout | src/store/persistence.test.ts
+🔄 [Persist] State rehydrated from localStorage
+
+ ✓ src/store/persistence.test.ts (4 tests) 35ms
+ ↓ src/services/duckDbArrow.test.ts (7 tests | 7 skipped)
+ ✓ src/services/arrowIngestion.test.ts (10 tests) 21ms
+stderr | src/features/dashboard/components/DraggableVariable.test.tsx > VariableCard > interactions > does not show recode button when in overlay mode
+React does not recognize the `layoutId` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `layoutid` instead. If you accidentally passed it from a parent component, remove it from the DOM element.
+
+ ✓ src/features/dashboard/components/DraggableVariable.test.tsx (16 tests) 139ms
+ ✓ src/components/common/DropZone.test.tsx (9 tests) 111ms
+stdout | src/store/reorderRowVars.test.ts
+🔄 [Persist] State rehydrated from localStorage
+
+ ✓ src/store/reorderRowVars.test.ts (4 tests) 18ms
+ ✓ src/components/common/SortableRowShelf.test.tsx (5 tests) 59ms
+ ❯ src/store/variableSet.test.ts (2 tests | 1 failed) 5015ms
+   × Variable Logic > should dispatch recodeVariable action correctly for binning 5008ms
+     → Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/store/variableSet.test.ts > Variable Logic > should dispatch recodeVariable action correctly for binning
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed | 7 passed | 1 skipped (9)
+      Tests  1 failed | 77 passed | 7 skipped (85)
+   Start at  07:18:21
+   Duration  5.93s (transform 344ms, setup 1.83s, collect 1.75s, tests 5.41s, environment 2.01s, prepare 718ms)
+

@@ -1,0 +1,38 @@
+
+> velocity@0.0.0 test:run
+> vitest run src/store/variableSet.test.ts
+
+
+ RUN  v2.1.9 /Users/cobro/Code/Velocity
+
+ ❯ src/store/variableSet.test.ts (0 test)
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/store/variableSet.test.ts [ src/store/variableSet.test.ts ]
+Error: Transform failed with 1 error:
+/Users/cobro/Code/Velocity/src/store/slices/dataSlice.ts:458:35: ERROR: Expected ";" but found ":"
+  Plugin: vite:esbuild
+  File: /Users/cobro/Code/Velocity/src/store/slices/dataSlice.ts:458:35
+  
+  Expected ";" but found ":"
+  456|                      worker.removeEventListener('message', handler);
+  457|                      name: variable?.label || vId,
+  458|                          variableIds: [vId],
+     |                                     ^
+  459|                              structure: 'single' as const,
+  460|                                  type: variable?.type,
+  
+ ❯ failureErrorWithLog node_modules/vitest/node_modules/esbuild/lib/main.js:1472:15
+ ❯ node_modules/vitest/node_modules/esbuild/lib/main.js:755:50
+ ❯ responseCallbacks.<computed> node_modules/vitest/node_modules/esbuild/lib/main.js:622:9
+ ❯ handleIncomingPacket node_modules/vitest/node_modules/esbuild/lib/main.js:677:12
+ ❯ Socket.readFromStdout node_modules/vitest/node_modules/esbuild/lib/main.js:600:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed (1)
+      Tests  no tests
+   Start at  07:18:49
+   Duration  561ms (transform 36ms, setup 132ms, collect 0ms, tests 0ms, environment 118ms, prepare 66ms)
+

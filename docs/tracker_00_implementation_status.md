@@ -89,10 +89,10 @@
 - [x] **Connect DataDrawer to Worker** (View-only drill-down)
 - [x] Basic Recoding UI (Modal-based)
 - [x] **Variable Card Sorting** (The "Variable Manager" Screen).
-- [ ] **Miller Column Navigation:** Hierarchy: Data Sources > Folders > Sets > Variables > Inspector [ref](research_08_UX_patterns_for_surveys.md#L149).
-- [ ] **Rich Variable Cards:** Sparklines (Mini-histograms) and Quality Indicators (Missingness %) [ref](research_08_UX_patterns_for_surveys.md#L177).
-- [ ] **Context Awareness:** Bi-directional focus (Selecting variable in Analysis opens it in Manager) [ref](research_08_UX_patterns_for_surveys.md#L131).
-- [ ] **Faceted Search:** Filter variable list by Type, Status, and Quality [ref](research_08_UX_patterns_for_surveys.md#L168).
+- [x] **Miller Column Navigation:** Hierarchy: Data Sources > Folders > Sets > Variables > Inspector [ref](research_08_UX_patterns_for_surveys.md#L149).
+- [x] **Rich Variable Cards:** Sparklines (Mini-histograms) and Quality Indicators (Missingness %) [ref](research_08_UX_patterns_for_surveys.md#L177).
+- [x] **Context Awareness:** Bi-directional focus (Selecting variable in Analysis opens it in Manager) [ref](research_08_UX_patterns_for_surveys.md#L131).
+- [x] **Faceted Search:** Filter variable list by Type, Status, and Quality [ref](research_08_UX_patterns_for_surveys.md#L168).
 - [ ] **Visual Recoding** (Interactive Histogram Bucketing).
 - [ ] **Visual ETL (Charts):** Click-to-filter and Click-to-exclude context menus [ref](research_08_UX_patterns_for_surveys.md#L252).
 - [ ] **Lasso Selection:** Spatial grouping/recoding on scatterplots [ref](research_08_UX_patterns_for_surveys.md#L353).

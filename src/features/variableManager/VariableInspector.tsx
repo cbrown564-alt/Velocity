@@ -6,11 +6,12 @@
  * Shows real distribution data from DuckDB queries.
  */
 
-import React, { useMemo, useEffect } from 'react';
+import React, { useMemo, useEffect, useState, useCallback } from 'react';
 import { Tag, Hash, BarChart2, Info, AlertTriangle, CheckCircle } from 'lucide-react';
 import { useVelocityStore } from '../../store';
 import type { Variable } from '../../store/slices/dataSlice';
 import type { VariableStatsResult } from '../../services/analysisWorker';
+import { InteractiveBarChart, BarClickEvent, BarDatum } from '../../components/charts';
 import styles from './VariableInspector.module.css';
 
 const getTypeIcon = (type: string) => {
@@ -56,6 +57,13 @@ interface VariableInspectorProps {
     className?: string;
 }
 
+// Simple context menu for bar click actions
+interface ContextMenuState {
+    isOpen: boolean;
+    position: { x: number; y: number };
+    datum: BarDatum | null;
+}
+
 export const VariableInspector: React.FC<VariableInspectorProps> = ({ className }) => {
     const {
         dataset,
@@ -64,6 +72,13 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
         variableStats,
         variableStatsLoading,
     } = useVelocityStore();
+
+    // Context menu state for chart interactions
+    const [contextMenu, setContextMenu] = useState<ContextMenuState>({
+        isOpen: false,
+        position: { x: 0, y: 0 },
+        datum: null,
+    });
 
     // Get the selected variable
     const variable = useMemo((): Variable | null => {
@@ -95,6 +110,62 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
     const missingPercent = stats && stats.totalCount > 0
         ? (stats.missingCount / stats.totalCount) * 100
         : null;
+
+    // Transform frequencies into chart data
+    const chartData = useMemo((): BarDatum[] => {
+        if (!stats || !variable) return [];
+
+        const hasValueLabels = variable.valueLabels && variable.valueLabels.length > 0;
+
+        return stats.frequencies.map((freq) => {
+            const label = hasValueLabels
+                ? variable.valueLabels.find(vl => vl.value === freq.value)?.label || String(freq.value)
+                : String(freq.value);
+
+            return {
+                label,
+                value: freq.count,
+                code: freq.value,
+            };
+        });
+    }, [stats, variable]);
+
+    // Handle bar right-click - show context menu
+    const handleBarContextMenu = useCallback((event: BarClickEvent) => {
+        setContextMenu({
+            isOpen: true,
+            position: event.position,
+            datum: event.datum,
+        });
+    }, []);
+
+    // Close context menu
+    const closeContextMenu = useCallback(() => {
+        setContextMenu(prev => ({ ...prev, isOpen: false }));
+    }, []);
+
+    // Handle context menu actions
+    const handleCreateGroup = useCallback(() => {
+        if (contextMenu.datum && variable) {
+            console.log('[VariableInspector] Create group starting with:', {
+                variable: variable.name,
+                value: contextMenu.datum.code,
+                label: contextMenu.datum.label,
+            });
+            // TODO: Open recode modal pre-populated with this value
+            // This will allow drag-and-drop or manual selection to group values
+        }
+        closeContextMenu();
+    }, [contextMenu.datum, variable, closeContextMenu]);
+
+    // Close context menu on click outside
+    useEffect(() => {
+        if (contextMenu.isOpen) {
+            const handleClick = () => closeContextMenu();
+            document.addEventListener('click', handleClick);
+            return () => document.removeEventListener('click', handleClick);
+        }
+    }, [contextMenu.isOpen, closeContextMenu]);
 
     // If no variable selected, show empty state
     if (!variable) {
@@ -287,54 +358,65 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
                     )}
                 </div>
 
-                {/* Distribution Section (real data from DuckDB) */}
-                {stats && stats.frequencies.length > 0 && (
+                {/* Distribution Section (Interactive Chart) */}
+                {chartData.length > 0 && (
                     <div className={styles.section}>
-                        <h3 className={styles.sectionTitle}>Distribution</h3>
-                        <div className={styles.distributionChart}>
-                            {stats.frequencies.map((freq) => {
-                                // Get label from valueLabels if available
-                                const label = hasValueLabels
-                                    ? variable.valueLabels.find(vl => vl.value === freq.value)?.label || String(freq.value)
-                                    : String(freq.value);
-
-                                // Calculate percentage of valid responses
-                                const validTotal = stats.totalCount - stats.missingCount;
-                                const percent = validTotal > 0
-                                    ? (freq.count / validTotal) * 100
-                                    : 0;
-
-                                return (
-                                    <div key={String(freq.value)} className={styles.distributionRow}>
-                                        <span className={styles.distributionLabel} title={label}>
-                                            {label}
-                                        </span>
-                                        <div className={styles.distributionBar}>
-                                            <div
-                                                className={styles.distributionFill}
-                                                style={{ width: `${percent}%` }}
-                                            />
-                                        </div>
-                                        <span className={styles.distributionPercent}>
-                                            {percent.toFixed(1)}%
-                                        </span>
-                                    </div>
-                                );
-                            })}
-                            {stats.frequencies.length === 10 && (
-                                <p style={{
-                                    fontSize: 'var(--text-xs)',
-                                    color: 'var(--gray-400)',
-                                    marginTop: 'var(--space-2)',
-                                    fontStyle: 'italic',
-                                }}>
-                                    Showing top 10 values
-                                </p>
-                            )}
-                        </div>
+                        <h3 className={styles.sectionTitle}>
+                            Distribution
+                            <span style={{
+                                fontSize: 'var(--text-xs)',
+                                color: 'var(--gray-400)',
+                                fontWeight: 400,
+                                marginLeft: 'var(--space-2)',
+                            }}>
+                                (right-click to group)
+                            </span>
+                        </h3>
+                        <InteractiveBarChart
+                            data={chartData}
+                            width={280}
+                            height={Math.max(150, chartData.length * 28)}
+                            orientation="horizontal"
+                            onBarContextMenu={handleBarContextMenu}
+                            showValues
+                        />
+                        {chartData.length === 10 && (
+                            <p style={{
+                                fontSize: 'var(--text-xs)',
+                                color: 'var(--gray-400)',
+                                marginTop: 'var(--space-2)',
+                                fontStyle: 'italic',
+                            }}>
+                                Showing top 10 values
+                            </p>
+                        )}
                     </div>
                 )}
             </div>
+
+            {/* Context Menu */}
+            {contextMenu.isOpen && contextMenu.datum && (
+                <div
+                    className={styles.contextMenu}
+                    style={{
+                        position: 'fixed',
+                        top: contextMenu.position.y,
+                        left: contextMenu.position.x,
+                        zIndex: 1000,
+                    }}
+                    onClick={(e) => e.stopPropagation()}
+                >
+                    <div className={styles.contextMenuHeader}>
+                        {contextMenu.datum.label}
+                    </div>
+                    <button
+                        className={styles.contextMenuItem}
+                        onClick={handleCreateGroup}
+                    >
+                        Create group from this value
+                    </button>
+                </div>
+            )}
         </div>
     );
 };
