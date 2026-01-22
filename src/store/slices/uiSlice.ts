@@ -15,6 +15,17 @@ import type { Variable } from './dataSlice';
 export type AppMode = 'analysis' | 'variables';
 export type ViewMode = 'table' | 'chart';
 
+// Faceted Search Types
+export type TypeFacet = 'categorical' | 'numeric';
+export type StatusFacet = 'visible' | 'hidden' | 'derived';
+export type QualityFacet = 'complete' | 'incomplete';
+
+export interface FacetFilters {
+    types: TypeFacet[];
+    statuses: StatusFacet[];
+    qualities: QualityFacet[];
+}
+
 export interface RecodeModalState {
     isOpen: boolean;
     variable: Variable | null;
@@ -73,6 +84,11 @@ export interface UISlice {
     setSelectedDataSourceId: (id: string | null) => void;
     setSelectedVariableSetId: (id: string | null) => void;
     setSelectedVariableId: (id: string | null) => void;
+
+    // Faceted Search
+    facetFilters: FacetFilters;
+    setFacetFilters: (filters: Partial<FacetFilters>) => void;
+    clearFacetFilters: () => void;
 }
 
 export const createUISlice: StateCreator<UISlice, [], [], UISlice> = (set) => ({
@@ -91,6 +107,9 @@ export const createUISlice: StateCreator<UISlice, [], [], UISlice> = (set) => ({
     selectedDataSourceId: null,
     selectedVariableSetId: null,
     selectedVariableId: null,
+
+    // Faceted Search State
+    facetFilters: { types: [], statuses: [], qualities: [] },
 
     // Actions
     setAppMode: (mode) => set({ appMode: mode }),
@@ -175,4 +194,13 @@ export const createUISlice: StateCreator<UISlice, [], [], UISlice> = (set) => ({
     }),
 
     setSelectedVariableId: (id) => set({ selectedVariableId: id }),
+
+    // Faceted Search Actions
+    setFacetFilters: (filters) => set((state) => ({
+        facetFilters: { ...state.facetFilters, ...filters },
+    })),
+
+    clearFacetFilters: () => set({
+        facetFilters: { types: [], statuses: [], qualities: [] },
+    }),
 });

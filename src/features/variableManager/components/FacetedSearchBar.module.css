@@ -1,0 +1,208 @@
+/**
+ * FacetedSearchBar Styles
+ *
+ * Horizontal bar with dropdown facet filters for Variable Manager.
+ * Follows "The Research Desk" design system.
+ */
+
+/* ============================================================================
+   Container
+   ============================================================================ */
+
+.container {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-4);
+  background-color: var(--gray-100);
+  border-bottom: 1px solid var(--gray-200);
+}
+
+/* ============================================================================
+   Facet Dropdown
+   ============================================================================ */
+
+.facetGroup {
+  position: relative;
+}
+
+.facetButton {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  background-color: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--border-radius-sm);
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  color: var(--gray-600);
+  cursor: pointer;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.facetButton:hover {
+  background-color: var(--color-paper);
+  border-color: var(--gray-300);
+}
+
+.facetButtonActive {
+  background-color: var(--color-terracotta);
+  border-color: var(--color-terracotta);
+  color: white;
+}
+
+.facetButtonActive:hover {
+  background-color: var(--color-terracotta);
+  opacity: 0.9;
+}
+
+.facetCount {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.facetButtonActive .facetCount {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* ============================================================================
+   Dropdown Menu
+   ============================================================================ */
+
+.dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 100;
+  min-width: 160px;
+  margin-top: var(--space-1);
+  padding: var(--space-2);
+  background-color: var(--color-parchment);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-float);
+}
+
+.dropdownItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.dropdownItem:hover {
+  background-color: var(--gray-100);
+}
+
+.checkbox {
+  width: 14px;
+  height: 14px;
+  border: 1px solid var(--gray-300);
+  border-radius: 3px;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.checkboxChecked {
+  background-color: var(--color-terracotta);
+  border-color: var(--color-terracotta);
+}
+
+.checkmark {
+  color: white;
+  width: 10px;
+  height: 10px;
+}
+
+.dropdownLabel {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--color-ink);
+}
+
+/* ============================================================================
+   Active Filter Chips
+   ============================================================================ */
+
+.chips {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.chip {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  background-color: var(--color-terracotta);
+  border-radius: 12px;
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  color: white;
+}
+
+.chipRemove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.chipRemove:hover {
+  background-color: rgba(255, 255, 255, 0.4);
+}
+
+/* ============================================================================
+   Clear All Link
+   ============================================================================ */
+
+.clearAll {
+  padding: 0;
+  border: none;
+  background: none;
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  color: var(--gray-500);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.clearAll:hover {
+  color: var(--color-terracotta);
+}
+
+/* ============================================================================
+   Separator
+   ============================================================================ */
+
+.separator {
+  width: 1px;
+  height: 20px;
+  background-color: var(--gray-300);
+}

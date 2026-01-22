@@ -30,6 +30,7 @@ import { FolderColumn } from './FolderColumn';
 import { VariableSetColumn } from './VariableSetColumn';
 import { VariableColumn } from './VariableColumn';
 import { VariableInspector } from './VariableInspector';
+import { FacetedSearchBar } from './components/FacetedSearchBar';
 import millerStyles from './MillerColumns.module.css';
 
 interface VariableManagerProps {
@@ -48,6 +49,8 @@ export const VariableManager: React.FC<VariableManagerProps> = ({ onClose }) => 
         selectAllVariableSets,
         clearSelection,
         moveToFolder,
+        facetFilters,
+        variableStats,
     } = useVelocityStore();
 
     // Configure dnd-kit sensors
@@ -58,7 +61,7 @@ export const VariableManager: React.FC<VariableManagerProps> = ({ onClose }) => 
         useSensor(KeyboardSensor)
     );
 
-    // Filter variable sets by search and folder for keyboard shortcuts
+    // Filter variable sets by search, folder, and facets for keyboard shortcuts
     const filteredSets = useMemo(() => {
         let sets = variableSets;
 
@@ -75,8 +78,45 @@ export const VariableManager: React.FC<VariableManagerProps> = ({ onClose }) => 
             sets = sets.filter(vs => vs.name.toLowerCase().includes(query));
         }
 
+        // Type facet filter
+        if (facetFilters.types.length > 0) {
+            sets = sets.filter(vs => {
+                const isCategorical = ['nominal', 'ordinal', 'categorical'].includes(vs.type || '');
+                const isNumeric = ['scale', 'numeric'].includes(vs.type || '');
+                return (facetFilters.types.includes('categorical') && isCategorical) ||
+                       (facetFilters.types.includes('numeric') && isNumeric);
+            });
+        }
+
+        // Status facet filter
+        if (facetFilters.statuses.length > 0) {
+            sets = sets.filter(vs => {
+                if (facetFilters.statuses.includes('hidden') && vs.hidden) return true;
+                if (facetFilters.statuses.includes('visible') && !vs.hidden) return true;
+                if (facetFilters.statuses.includes('derived') && vs.derived) return true;
+                return false;
+            });
+        }
+
+        // Quality facet filter
+        if (facetFilters.qualities.length > 0) {
+            sets = sets.filter(vs => {
+                if (vs.variableIds.length === 1) {
+                    const stats = variableStats[vs.variableIds[0]];
+                    if (!stats) return true;
+                    const missingPercent = stats.totalCount > 0
+                        ? (stats.missingCount / stats.totalCount) * 100
+                        : 0;
+                    const isComplete = missingPercent === 0;
+                    return (facetFilters.qualities.includes('complete') && isComplete) ||
+                           (facetFilters.qualities.includes('incomplete') && !isComplete);
+                }
+                return true;
+            });
+        }
+
         return sets;
-    }, [variableSets, searchQuery, activeFolderId]);
+    }, [variableSets, searchQuery, activeFolderId, facetFilters, variableStats]);
 
     const filteredIds = useMemo(() => filteredSets.map(vs => vs.id), [filteredSets]);
 
@@ -242,6 +282,9 @@ export const VariableManager: React.FC<VariableManagerProps> = ({ onClose }) => 
                         </button>
                     </div>
                 </header>
+
+                {/* Faceted Search Bar */}
+                <FacetedSearchBar />
 
                 {/* Miller Columns */}
                 <div className={millerStyles.container}>

@@ -103,7 +103,7 @@ export interface VariableSet {
   name: string;
   /** IDs of variables in this set */
   variableIds: string[];
-  /** 
+  /**
    * Structure type determines how the set is used in analysis:
    * - 'single': Standard single variable (1:1 mapping, default)
    * - 'multi': Multiple response set (e.g., "Select all that apply")
@@ -118,6 +118,8 @@ export interface VariableSet {
   hidden?: boolean;
   /** Folder this set belongs to (null = ungrouped) */
   folderId?: string;
+  /** True if created via recode/compute operation */
+  derived?: boolean;
 }
 
 /**

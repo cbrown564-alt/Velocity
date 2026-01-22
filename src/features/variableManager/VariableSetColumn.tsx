@@ -132,6 +132,7 @@ export const VariableSetColumn: React.FC = () => {
         getVariableStats,
         variableStats,
         setActiveFolderId,
+        facetFilters,
     } = useVelocityStore();
 
     // Ref for the column content container (for scroll-into-view)
@@ -139,7 +140,7 @@ export const VariableSetColumn: React.FC = () => {
     // Track refs for each item
     const itemRefs = useRef<Map<string, HTMLDivElement>>(new Map());
 
-    // Filter variable sets by folder and search
+    // Filter variable sets by folder, search, and facets
     const filteredSets = useMemo(() => {
         let sets = variableSets;
 
@@ -156,8 +157,47 @@ export const VariableSetColumn: React.FC = () => {
             sets = sets.filter(vs => vs.name.toLowerCase().includes(query));
         }
 
+        // Type facet filter
+        if (facetFilters.types.length > 0) {
+            sets = sets.filter(vs => {
+                const isCategorical = ['nominal', 'ordinal', 'categorical'].includes(vs.type || '');
+                const isNumeric = ['scale', 'numeric'].includes(vs.type || '');
+                return (facetFilters.types.includes('categorical') && isCategorical) ||
+                       (facetFilters.types.includes('numeric') && isNumeric);
+            });
+        }
+
+        // Status facet filter
+        if (facetFilters.statuses.length > 0) {
+            sets = sets.filter(vs => {
+                if (facetFilters.statuses.includes('hidden') && vs.hidden) return true;
+                if (facetFilters.statuses.includes('visible') && !vs.hidden) return true;
+                if (facetFilters.statuses.includes('derived') && vs.derived) return true;
+                return false;
+            });
+        }
+
+        // Quality facet filter (uses variableStats)
+        if (facetFilters.qualities.length > 0) {
+            sets = sets.filter(vs => {
+                // For single-variable sets, check the variable's stats
+                if (vs.variableIds.length === 1) {
+                    const stats = variableStats[vs.variableIds[0]];
+                    if (!stats) return true; // Include if stats not loaded yet
+                    const missingPercent = stats.totalCount > 0
+                        ? (stats.missingCount / stats.totalCount) * 100
+                        : 0;
+                    const isComplete = missingPercent === 0;
+                    return (facetFilters.qualities.includes('complete') && isComplete) ||
+                           (facetFilters.qualities.includes('incomplete') && !isComplete);
+                }
+                // For multi-variable sets, include by default (no quality filter)
+                return true;
+            });
+        }
+
         return sets;
-    }, [variableSets, activeFolderId, searchQuery]);
+    }, [variableSets, activeFolderId, searchQuery, facetFilters, variableStats]);
 
     const filteredIds = useMemo(() => filteredSets.map(vs => vs.id), [filteredSets]);
 
