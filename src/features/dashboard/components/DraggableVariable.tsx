@@ -9,6 +9,8 @@ interface VariableCardProps {
   isDragging?: boolean;
   isOverlay?: boolean;
   isSelected?: boolean;
+  /** Indicates this card has bi-directional focus (from Variable Manager) */
+  isFocused?: boolean;
   onRecode?: (variableSet: VariableSet) => void;
   onClick?: (variableSet: VariableSet, e: React.MouseEvent) => void;
   onContextMenu?: (variableSet: VariableSet, e: React.MouseEvent) => void;
@@ -22,6 +24,7 @@ export const VariableCard: React.FC<VariableCardProps> = ({
   variableSet,
   isDragging,
   isSelected,
+  isFocused,
   isOverlay,
   onRecode,
   onClick,
@@ -66,9 +69,10 @@ export const VariableCard: React.FC<VariableCardProps> = ({
       style={cardStyle}
       {...dragListeners}
       {...dragAttributes}
-      className={`group flex items-center gap-3 p-3 h-14 bg-[var(--color-parchment)] border border-[var(--gray-200)] rounded-lg shadow-sm cursor-grab hover:border-[var(--color-terracotta)] hover:shadow-md transition-all active:cursor-grabbing relative pr-10 
+      className={`group flex items-center gap-3 p-3 h-14 bg-[var(--color-parchment)] border border-[var(--gray-200)] rounded-lg shadow-sm cursor-grab hover:border-[var(--color-terracotta)] hover:shadow-md transition-all active:cursor-grabbing relative pr-10
         ${isDragging ? 'ring-2 ring-[var(--color-terracotta)] ring-opacity-50 grayscale' : ''}
         ${isSelected ? 'bg-indigo-50 border-indigo-300 ring-1 ring-indigo-300' : ''}
+        ${isFocused && !isSelected ? 'border-[var(--color-terracotta)] bg-[var(--color-terracotta)]/5 ring-1 ring-[var(--color-terracotta)]/30' : ''}
         ${isOverlay ? 'shadow-xl scale-105 cursor-grabbing !opacity-100 z-50' : ''}
       `}
       onClick={(e: React.MouseEvent) => !isDragging && onClick?.(variableSet, e)}
@@ -121,6 +125,8 @@ export const VariableCard: React.FC<VariableCardProps> = ({
 interface DraggableVariableProps {
   variableSet: VariableSet;
   isSelected?: boolean;
+  /** Indicates this card has bi-directional focus (from Variable Manager) */
+  isFocused?: boolean;
   onRecode?: (variableSet: VariableSet) => void;
   onClick?: (variableSet: VariableSet, e: React.MouseEvent) => void;
   onContextMenu?: (variableSet: VariableSet, e: React.MouseEvent) => void;
@@ -129,6 +135,7 @@ interface DraggableVariableProps {
 export const DraggableVariable: React.FC<DraggableVariableProps> = ({
   variableSet,
   isSelected,
+  isFocused,
   onRecode,
   onClick,
   onContextMenu
@@ -143,6 +150,7 @@ export const DraggableVariable: React.FC<DraggableVariableProps> = ({
       variableSet={variableSet}
       isDragging={isDragging}
       isSelected={isSelected}
+      isFocused={isFocused}
       onRecode={onRecode}
       onClick={onClick}
       onContextMenu={onContextMenu}

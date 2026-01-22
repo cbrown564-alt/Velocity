@@ -155,6 +155,9 @@ export default function App() {
     // Persistence actions
     restoreFromPersistence,
     discardPersistedData,
+    // Context awareness: bi-directional focus between Analysis and Variable Manager
+    selectedVariableSetId,
+    setSelectedVariableSetId,
   } = useVelocityStore();
 
   const [mode, setMode] = React.useState<AppMode>('splash');
@@ -383,6 +386,10 @@ export default function App() {
   };
 
   const handleVariableClick = (set: VariableSet, e: React.MouseEvent) => {
+    // Always update the focused variable for bi-directional context awareness
+    // This enables: click in Analysis → open Variable Manager → focused on same variable
+    setSelectedVariableSetId(set.id);
+
     // Multi-select Logic
     if (e.metaKey || e.ctrlKey) {
       const newSelected = new Set(selectedSetIds);
@@ -396,7 +403,6 @@ export default function App() {
     }
 
     // Default Interaction: Add to analysis (First rows, then columns)
-    // Clear selection on regular click? Maybe not.
     if (tableConfig.rowVars.length === 0) {
       setTableConfig({ rowVars: [set.id] });
     } else if (!tableConfig.colVar) {
@@ -643,6 +649,7 @@ export default function App() {
                     <VirtualizedVariableList
                       variableSets={filteredSets}
                       selectedIds={selectedSetIds}
+                      focusedId={selectedVariableSetId}
                       onRecode={handleRecodeClick}
                       onClick={handleVariableClick}
                       onContextMenu={handleContextMenu}

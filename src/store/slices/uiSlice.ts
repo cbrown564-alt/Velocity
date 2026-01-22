@@ -97,11 +97,12 @@ export const createUISlice: StateCreator<UISlice, [], [], UISlice> = (set) => ({
 
     toggleAppMode: () => set((state) => ({
         appMode: state.appMode === 'analysis' ? 'variables' : 'analysis',
-        // Clear selection when leaving Variable Manager
+        // Clear bulk selection when leaving Variable Manager (used for multi-select operations)
         selectedVariableSetIds: state.appMode === 'variables' ? [] : state.selectedVariableSetIds,
-        // Clear Miller column navigation state when leaving Variable Manager
-        selectedVariableSetId: state.appMode === 'variables' ? null : state.selectedVariableSetId,
-        selectedVariableId: state.appMode === 'variables' ? null : state.selectedVariableId,
+        // PRESERVE Miller column navigation state for bi-directional focus
+        // selectedVariableSetId persists across mode switches to enable:
+        // - Analysis → Variable Manager: opens with selected variable focused
+        // - Variable Manager → Analysis: sidebar highlights selected variable
     })),
 
     setDraggingId: (id) => set({ draggingId: id }),

@@ -14,6 +14,8 @@ import { Variable, VariableSet } from '../../../types';
 interface VirtualizedVariableListProps {
     variableSets: VariableSet[];
     selectedIds: Set<string>;
+    /** ID of the variable set that has focus (for bi-directional context awareness) */
+    focusedId?: string | null;
     onRecode: (variable: VariableSet) => void;
     onClick: (variable: VariableSet, e: React.MouseEvent) => void;
     onContextMenu: (variable: VariableSet, e: React.MouseEvent) => void;
@@ -59,6 +61,7 @@ function useContainerSize(): [React.RefObject<HTMLDivElement | null>, { width: n
 export const VirtualizedVariableList: React.FC<VirtualizedVariableListProps> = ({
     variableSets,
     selectedIds,
+    focusedId,
     onRecode,
     onClick,
     onContextMenu,
@@ -75,6 +78,7 @@ export const VirtualizedVariableList: React.FC<VirtualizedVariableListProps> = (
                     <DraggableVariable
                         variableSet={set}
                         isSelected={selectedIds.has(set.id)}
+                        isFocused={focusedId === set.id}
                         onRecode={onRecode}
                         onClick={onClick}
                         onContextMenu={onContextMenu}
@@ -82,7 +86,7 @@ export const VirtualizedVariableList: React.FC<VirtualizedVariableListProps> = (
                 </div>
             );
         },
-        [variableSets, selectedIds, onRecode, onClick, onContextMenu]
+        [variableSets, selectedIds, focusedId, onRecode, onClick, onContextMenu]
     );
 
     if (variableSets.length === 0) {

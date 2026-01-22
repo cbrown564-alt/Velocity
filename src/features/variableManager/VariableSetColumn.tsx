@@ -7,7 +7,7 @@
  * Includes sparklines and missingness indicators.
  */
 
-import React, { useMemo, useEffect, useCallback } from 'react';
+import React, { useMemo, useEffect, useCallback, useRef } from 'react';
 import { Hash, Tag, BarChart2, Grid3X3, ChevronRight, EyeOff } from 'lucide-react';
 import { useVelocityStore } from '../../store';
 import type { VariableSet } from '../../store/slices/dataSlice';
@@ -22,6 +22,7 @@ interface VariableSetItemProps {
     onHover: () => void;
     frequencies?: number[];
     missingPercent?: number;
+    itemRef?: (el: HTMLDivElement | null) => void;
 }
 
 const getTypeIcon = (type?: string) => {
@@ -52,12 +53,15 @@ const VariableSetItem: React.FC<VariableSetItemProps> = ({
     onHover,
     frequencies,
     missingPercent,
+    itemRef,
 }) => {
     const varCount = variableSet.variableIds.length;
     const structureLabel = getStructureLabel(variableSet.structure, varCount);
 
     return (
         <div
+            ref={itemRef}
+            data-variable-set-id={variableSet.id}
             onClick={onClick}
             onMouseEnter={onHover}
             className={`${styles.item} ${isActive ? styles.itemActive : ''}`}
@@ -127,7 +131,13 @@ export const VariableSetColumn: React.FC = () => {
         selectVariableSetRange,
         getVariableStats,
         variableStats,
+        setActiveFolderId,
     } = useVelocityStore();
+
+    // Ref for the column content container (for scroll-into-view)
+    const contentRef = useRef<HTMLDivElement>(null);
+    // Track refs for each item
+    const itemRefs = useRef<Map<string, HTMLDivElement>>(new Map());
 
     // Filter variable sets by folder and search
     const filteredSets = useMemo(() => {
@@ -150,6 +160,45 @@ export const VariableSetColumn: React.FC = () => {
     }, [variableSets, activeFolderId, searchQuery]);
 
     const filteredIds = useMemo(() => filteredSets.map(vs => vs.id), [filteredSets]);
+
+    // Bi-directional focus: scroll to selected variable set when it changes
+    // This enables context awareness between Analysis Canvas and Variable Manager
+    useEffect(() => {
+        if (!selectedVariableSetId || !dataset) return;
+
+        // Find the selected variable set
+        const targetSet = variableSets.find(vs => vs.id === selectedVariableSetId);
+        if (!targetSet) return;
+
+        // Check if we need to switch folders to show the selected variable
+        const targetFolderId = targetSet.folderId || 'ungrouped';
+        const isInCurrentFolder =
+            activeFolderId === null || // "All" folder shows everything
+            activeFolderId === targetFolderId ||
+            (activeFolderId === 'ungrouped' && !targetSet.folderId);
+
+        if (!isInCurrentFolder) {
+            // Switch to the folder containing the selected variable
+            // Use null for ungrouped items to show "All" view, or the specific folder
+            setActiveFolderId(targetSet.folderId || null);
+        }
+
+        // Scroll to the item after a short delay (allow folder switch to render)
+        const scrollToItem = () => {
+            const itemElement = itemRefs.current.get(selectedVariableSetId);
+            if (itemElement) {
+                itemElement.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'nearest',
+                });
+            }
+        };
+
+        // Use requestAnimationFrame to ensure DOM has updated
+        requestAnimationFrame(() => {
+            requestAnimationFrame(scrollToItem);
+        });
+    }, [selectedVariableSetId, dataset, variableSets, activeFolderId, setActiveFolderId]);
 
     // Helper to get stats for a variable set (uses first variable for single sets)
     const getStatsForSet = useCallback((variableSet: VariableSet) => {
@@ -243,6 +292,13 @@ export const VariableSetColumn: React.FC = () => {
                                 onHover={() => handleHover(vs)}
                                 frequencies={frequencies}
                                 missingPercent={missingPercent}
+                                itemRef={(el) => {
+                                    if (el) {
+                                        itemRefs.current.set(vs.id, el);
+                                    } else {
+                                        itemRefs.current.delete(vs.id);
+                                    }
+                                }}
                             />
                         );
                     })
