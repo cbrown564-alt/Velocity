@@ -11,7 +11,14 @@ import { Tag, Hash, BarChart2, Info, AlertTriangle, CheckCircle } from 'lucide-r
 import { useVelocityStore } from '../../store';
 import type { Variable } from '../../store/slices/dataSlice';
 import type { VariableStatsResult } from '../../services/analysisWorker';
-import { InteractiveBarChart, BarClickEvent, BarDatum } from '../../components/charts';
+import {
+    InteractiveBarChart,
+    BarClickEvent,
+    BarDatum,
+    MosaicBarChart,
+    MosaicSelectionEvent,
+    MosaicBarDatum,
+} from '../../components/charts';
 import styles from './VariableInspector.module.css';
 
 const getTypeIcon = (type: string) => {
@@ -57,11 +64,16 @@ interface VariableInspectorProps {
     className?: string;
 }
 
+// Chart engine toggle for testing
+type ChartEngine = 'observable' | 'mosaic';
+
 // Simple context menu for bar click actions
 interface ContextMenuState {
     isOpen: boolean;
     position: { x: number; y: number };
     datum: BarDatum | null;
+    // For Mosaic multi-selection
+    mosaicSelection?: MosaicSelectionEvent | null;
 }
 
 export const VariableInspector: React.FC<VariableInspectorProps> = ({ className }) => {
@@ -73,11 +85,15 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
         variableStatsLoading,
     } = useVelocityStore();
 
+    // Chart engine toggle for A/B testing Observable Plot vs Mosaic
+    const [chartEngine, setChartEngine] = useState<ChartEngine>('mosaic');
+
     // Context menu state for chart interactions
     const [contextMenu, setContextMenu] = useState<ContextMenuState>({
         isOpen: false,
         position: { x: 0, y: 0 },
         datum: null,
+        mosaicSelection: null,
     });
 
     // Get the selected variable
@@ -144,19 +160,37 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
         setContextMenu(prev => ({ ...prev, isOpen: false }));
     }, []);
 
+    // Handle Mosaic selection context menu
+    const handleMosaicContextMenu = useCallback((event: MosaicSelectionEvent) => {
+        setContextMenu({
+            isOpen: true,
+            position: event.position,
+            datum: null,
+            mosaicSelection: event,
+        });
+    }, []);
+
     // Handle context menu actions
     const handleCreateGroup = useCallback(() => {
-        if (contextMenu.datum && variable) {
+        // Handle Mosaic multi-selection
+        if (contextMenu.mosaicSelection && variable) {
+            console.log('[VariableInspector] Create group from selection:', {
+                variable: variable.name,
+                selectedLabels: contextMenu.mosaicSelection.selectedLabels,
+                selectedCodes: contextMenu.mosaicSelection.selectedCodes,
+            });
+            // TODO: Show inline input for group name
+        }
+        // Handle Observable Plot single selection
+        else if (contextMenu.datum && variable) {
             console.log('[VariableInspector] Create group starting with:', {
                 variable: variable.name,
                 value: contextMenu.datum.code,
                 label: contextMenu.datum.label,
             });
-            // TODO: Open recode modal pre-populated with this value
-            // This will allow drag-and-drop or manual selection to group values
         }
         closeContextMenu();
-    }, [contextMenu.datum, variable, closeContextMenu]);
+    }, [contextMenu.datum, contextMenu.mosaicSelection, variable, closeContextMenu]);
 
     // Close context menu on click outside
     useEffect(() => {
@@ -361,25 +395,58 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
                 {/* Distribution Section (Interactive Chart) */}
                 {chartData.length > 0 && (
                     <div className={styles.section}>
-                        <h3 className={styles.sectionTitle}>
-                            Distribution
-                            <span style={{
-                                fontSize: 'var(--text-xs)',
-                                color: 'var(--gray-400)',
-                                fontWeight: 400,
-                                marginLeft: 'var(--space-2)',
-                            }}>
-                                (right-click to group)
-                            </span>
-                        </h3>
-                        <InteractiveBarChart
-                            data={chartData}
-                            width={280}
-                            height={Math.max(150, chartData.length * 28)}
-                            orientation="horizontal"
-                            onBarContextMenu={handleBarContextMenu}
-                            showValues
-                        />
+                        <div style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            marginBottom: 'var(--space-3)',
+                        }}>
+                            <h3 className={styles.sectionTitle} style={{ margin: 0 }}>
+                                Distribution
+                                <span style={{
+                                    fontSize: 'var(--text-xs)',
+                                    color: 'var(--gray-400)',
+                                    fontWeight: 400,
+                                    marginLeft: 'var(--space-2)',
+                                }}>
+                                    {chartEngine === 'mosaic' ? '(click to select, right-click to group)' : '(right-click to group)'}
+                                </span>
+                            </h3>
+                            {/* Engine toggle for A/B testing */}
+                            <select
+                                value={chartEngine}
+                                onChange={(e) => setChartEngine(e.target.value as ChartEngine)}
+                                style={{
+                                    fontSize: 'var(--text-xs)',
+                                    padding: '2px 4px',
+                                    border: '1px solid var(--gray-300)',
+                                    borderRadius: '3px',
+                                    backgroundColor: 'var(--gray-50)',
+                                }}
+                            >
+                                <option value="mosaic">Mosaic</option>
+                                <option value="observable">Observable</option>
+                            </select>
+                        </div>
+
+                        {chartEngine === 'mosaic' ? (
+                            <MosaicBarChart
+                                data={chartData}
+                                width={280}
+                                height={Math.max(180, chartData.length * 28)}
+                                orientation="horizontal"
+                                onSelectionContextMenu={handleMosaicContextMenu}
+                            />
+                        ) : (
+                            <InteractiveBarChart
+                                data={chartData}
+                                width={280}
+                                height={Math.max(150, chartData.length * 28)}
+                                orientation="horizontal"
+                                onBarContextMenu={handleBarContextMenu}
+                                showValues
+                            />
+                        )}
                         {chartData.length === 10 && (
                             <p style={{
                                 fontSize: 'var(--text-xs)',
@@ -394,8 +461,8 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
                 )}
             </div>
 
-            {/* Context Menu */}
-            {contextMenu.isOpen && contextMenu.datum && (
+            {/* Context Menu - handles both Observable Plot (single) and Mosaic (multi) selections */}
+            {contextMenu.isOpen && (contextMenu.datum || contextMenu.mosaicSelection) && (
                 <div
                     className={styles.contextMenu}
                     style={{
@@ -407,13 +474,32 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
                     onClick={(e) => e.stopPropagation()}
                 >
                     <div className={styles.contextMenuHeader}>
-                        {contextMenu.datum.label}
+                        {contextMenu.mosaicSelection
+                            ? `${contextMenu.mosaicSelection.selectedLabels.length} value${contextMenu.mosaicSelection.selectedLabels.length > 1 ? 's' : ''} selected`
+                            : contextMenu.datum?.label
+                        }
                     </div>
+                    {contextMenu.mosaicSelection && contextMenu.mosaicSelection.selectedLabels.length > 1 && (
+                        <div style={{
+                            padding: 'var(--space-2) var(--space-3)',
+                            fontSize: 'var(--text-xs)',
+                            color: 'var(--gray-500)',
+                            borderBottom: '1px solid var(--gray-200)',
+                            maxWidth: 200,
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                        }}>
+                            {contextMenu.mosaicSelection.selectedLabels.join(', ')}
+                        </div>
+                    )}
                     <button
                         className={styles.contextMenuItem}
                         onClick={handleCreateGroup}
                     >
-                        Create group from this value
+                        {contextMenu.mosaicSelection && contextMenu.mosaicSelection.selectedLabels.length > 1
+                            ? 'Group these values'
+                            : 'Create group from this value'
+                        }
                     </button>
                 </div>
             )}
