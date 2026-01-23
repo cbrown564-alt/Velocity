@@ -136,6 +136,8 @@
 
 ### Reference
 *   **Source:** `docs/research_08_UX_patterns_for_surveys.md` - Validates the Hub-and-Spoke model and Visual ETL patterns.
+*   **Expansion:** `docs/research_11_UX_data_analysis.md` - Defines "Magnetic Canvas" and "Just-in-Time" variable access.
+*   **Strategy:** `docs/research_12_pathways_and_recommendations.md` - Strategic roadmap for Spotlight Search and Grid Layouts.
 
 ---
 

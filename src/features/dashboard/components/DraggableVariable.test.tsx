@@ -105,38 +105,11 @@ describe('VariableCard', () => {
             expect(onClick).toHaveBeenCalledWith(mockNominalSet, expect.any(Object));
         });
 
-        it('shows recode button when onRecode is provided', () => {
-            render(
-                <VariableCard variableSet={mockNominalSet} onRecode={vi.fn()} />
-            );
 
-            // Recode button should exist (visible on hover via CSS)
-            expect(screen.getByTitle('Recode / Group Values')).toBeInTheDocument();
-        });
 
-        it('calls onRecode when recode button is clicked', () => {
-            const onRecode = vi.fn();
 
-            render(
-                <VariableCard variableSet={mockNominalSet} onRecode={onRecode} />
-            );
 
-            fireEvent.click(screen.getByTitle('Recode / Group Values'));
 
-            expect(onRecode).toHaveBeenCalledWith(mockNominalSet);
-        });
-
-        it('does not show recode button when in overlay mode', () => {
-            render(
-                <VariableCard
-                    variableSet={mockNominalSet}
-                    onRecode={vi.fn()}
-                    isOverlay={true}
-                />
-            );
-
-            expect(screen.queryByTitle('Recode / Group Values')).not.toBeInTheDocument();
-        });
     });
 
     // ==========================================================================
@@ -187,13 +160,5 @@ describe('DraggableVariable', () => {
         expect(onClick).toHaveBeenCalledWith(mockNominalSet, expect.any(Object));
     });
 
-    it('passes onRecode to VariableCard', () => {
-        const onRecode = vi.fn();
 
-        renderWithDnd(
-            <DraggableVariable variableSet={mockNominalSet} onRecode={onRecode} />
-        );
-
-        expect(screen.getByTitle('Recode / Group Values')).toBeInTheDocument();
-    });
 });

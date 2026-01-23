@@ -453,9 +453,10 @@ export default function App() {
     ...(tableConfig.colVar ? [tableConfig.colVar] : [])
   ]);
 
-  // Filter variables based on search AND exclude those already in use
+  // Filter variables based on search AND exclude those already in use AND exclude hidden variables
   const filteredSets = displaySets
     .filter(s => !inUseIds.has(s.id)) // Exclude variables in use
+    .filter(s => !s.hidden) // Exclude hidden variables (managed in Data Mode)
     .filter(s => s.name.toLowerCase().includes(searchQuery.toLowerCase()));
 
   // Handle cell click for drill down (accepts full row path for nested rows)

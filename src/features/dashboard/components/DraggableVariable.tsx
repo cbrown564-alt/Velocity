@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useDraggable } from '@dnd-kit/core';
-import { GripVertical, Hash, Type, BarChart2, Wand2, Layers, Grid } from 'lucide-react';
+import { GripVertical, Hash, Type, BarChart2, Layers, Grid } from 'lucide-react';
 import { VariableSet, VariableType } from '../../../types';
 
 interface VariableCardProps {
@@ -98,26 +98,7 @@ export const VariableCard: React.FC<VariableCardProps> = ({
         </div>
       </div>
 
-      {/* Recode Action Button (Visible on Hover) */}
-      {onRecode && !isOverlay && (
-        <div
-          onPointerDown={(e) => {
-            e.stopPropagation(); // Prevent drag start
-          }}
-          className="absolute right-2 top-1/2 -translate-y-1/2 z-10"
-        >
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onRecode(variableSet);
-            }}
-            className="p-1.5 rounded-md bg-[var(--color-paper)] border border-[var(--gray-200)] text-[var(--gray-400)] hover:text-[var(--color-terracotta)] hover:border-[var(--color-terracotta)] hover:bg-[var(--gray-50)] shadow-sm opacity-0 group-hover:opacity-100 transition-all"
-            title="Recode / Group Values"
-          >
-            <Wand2 size={14} />
-          </button>
-        </div>
-      )}
+
     </Component>
   );
 };
