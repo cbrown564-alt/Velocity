@@ -62,7 +62,7 @@ describe('Variable Logic', () => {
         const newSet = variableSets.find(s => s.name === 'Combined Set');
         expect(newSet).toBeDefined();
         expect(newSet?.variableIds).toEqual(['v1', 'v2']);
-        expect(newSet?.structure).toBe('multi');
+        expect(newSet?.structure).toBe('multiple');
     });
 
     it('should dispatch recodeVariable action correctly for binning', async () => {

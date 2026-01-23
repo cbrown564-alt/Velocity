@@ -20,6 +20,7 @@ interface VariableSetItemProps {
     isSelected: boolean;
     onClick: (e: React.MouseEvent) => void;
     onHover: () => void;
+    onContextMenu?: (e: React.MouseEvent) => void;
     frequencies?: number[];
     missingPercent?: number;
     itemRef?: (el: HTMLDivElement | null) => void;
@@ -55,6 +56,7 @@ const VariableSetItem: React.FC<VariableSetItemProps> = ({
     isSelected,
     onClick,
     onHover,
+    onContextMenu,
     frequencies,
     missingPercent,
     itemRef,
@@ -68,6 +70,7 @@ const VariableSetItem: React.FC<VariableSetItemProps> = ({
             data-variable-set-id={variableSet.id}
             onClick={onClick}
             onMouseEnter={onHover}
+            onContextMenu={onContextMenu}
             className={`${styles.item} ${isActive ? styles.itemActive : ''}`}
             style={{
                 backgroundColor: isSelected && !isActive ? 'var(--gray-200)' : undefined,
@@ -139,6 +142,7 @@ export const VariableSetColumn: React.FC = () => {
         variableStats,
         setActiveFolderId,
         facetFilters,
+        convertMultipleToGrid,
     } = useVelocityStore();
 
     // Ref for the column content container (for scroll-into-view)
@@ -303,6 +307,21 @@ export const VariableSetColumn: React.FC = () => {
         }
     };
 
+    const handleContextMenu = (variableSet: VariableSet, e: React.MouseEvent) => {
+        e.preventDefault();
+
+        // Only show context menu for multiple-response sets
+        if (variableSet.structure === 'multiple') {
+            const confirmed = window.confirm(
+                `Convert "${variableSet.name}" to a grid to show all response values?\n\n` +
+                `This will change from showing only "${variableSet.countedValue ? 'selected' : 'positive'}" responses to showing all response options.`
+            );
+            if (confirmed) {
+                convertMultipleToGrid(variableSet.id);
+            }
+        }
+    };
+
     if (!dataset) {
         return (
             <div className={`${styles.column} ${styles.col3}`}>
@@ -338,6 +357,7 @@ export const VariableSetColumn: React.FC = () => {
                                 isSelected={selectedVariableSetIds.includes(vs.id)}
                                 onClick={(e) => handleClick(vs, e)}
                                 onHover={() => handleHover(vs)}
+                                onContextMenu={(e) => handleContextMenu(vs, e)}
                                 frequencies={frequencies}
                                 missingPercent={missingPercent}
                                 itemRef={(el) => {

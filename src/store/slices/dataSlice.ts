@@ -57,6 +57,10 @@ export interface VariableSet {
     order?: number;
     /** True if created via recode/compute operation */
     derived?: boolean;
+    /** For multiple-response sets, which value counts as "selected" */
+    countedValue?: number;
+    /** Optional description */
+    description?: string;
 }
 
 export interface Folder {
@@ -130,6 +134,8 @@ export interface DataSlice {
     reorderVariableSets: (activeId: string, overId: string) => void;
     bulkSetType: (variableSetIds: string[], type: VariableType) => void;
     bulkHide: (variableSetIds: string[], hidden: boolean) => void;
+    // Structure conversion
+    convertMultipleToGrid: (setId: string) => void;
 }
 
 export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set, get) => ({
@@ -810,6 +816,20 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
         set((state) => ({
             variableSets: state.variableSets.map(vs =>
                 variableSetIds.includes(vs.id) ? { ...vs, hidden } : vs
+            ),
+        }));
+    },
+
+    // ========================================================================
+    // Structure Conversion
+    // ========================================================================
+
+    convertMultipleToGrid: (setId) => {
+        set((state) => ({
+            variableSets: state.variableSets.map(vs =>
+                vs.id === setId
+                    ? { ...vs, structure: 'grid' as const, countedValue: undefined }
+                    : vs
             ),
         }));
     },

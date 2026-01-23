@@ -122,6 +122,8 @@ export interface VariableSet {
   folderId?: string;
   /** True if created via recode/compute operation */
   derived?: boolean;
+  /** For multiple-response sets, which value counts as "selected" */
+  countedValue?: number;
 }
 
 /**

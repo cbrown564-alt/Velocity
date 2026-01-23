@@ -343,6 +343,136 @@ function isDateFormat(format: string | undefined): boolean {
   return dateFormats.some(df => upperFormat.startsWith(df));
 }
 
+/**
+ * Heuristic Grid Detection Helpers
+ *
+ * These functions detect implicit variable sets (grids) based on:
+ * - Shared value label sets
+ * - Sequential naming patterns (e.g., Q1, Q2, Q3)
+ * - Consecutive file positions
+ */
+
+interface VariableWithIndex {
+  variable: Variable;
+  index: number;
+  valueLabelSetName?: string;
+}
+
+/**
+ * Detect by position: consecutive variables in the original file
+ */
+function detectByPosition(vars: VariableWithIndex[]): Variable[] {
+  if (vars.length < 3) return [];
+
+  // Sort by original file index
+  const sorted = [...vars].sort((a, b) => a.index - b.index);
+
+  // Find longest consecutive sequence (allowing gap of 1)
+  let bestGroup: Variable[] = [];
+  let currentGroup: Variable[] = [sorted[0].variable];
+
+  for (let i = 1; i < sorted.length; i++) {
+    const prev = sorted[i - 1];
+    const curr = sorted[i];
+
+    // Allow gap of 1 (consecutive or adjacent)
+    if (curr.index - prev.index <= 2) {
+      currentGroup.push(curr.variable);
+    } else {
+      if (currentGroup.length >= 3 && currentGroup.length > bestGroup.length) {
+        bestGroup = [...currentGroup];
+      }
+      currentGroup = [curr.variable];
+    }
+  }
+
+  // Check final group
+  if (currentGroup.length >= 3 && currentGroup.length > bestGroup.length) {
+    bestGroup = currentGroup;
+  }
+
+  return bestGroup;
+}
+
+/**
+ * Detect by naming: sequential numeric suffixes (e.g., Q1, Q2, Q3)
+ */
+function detectByNaming(vars: Variable[]): Variable[] {
+  if (vars.length < 3) return [];
+
+  // Extract patterns: prefix + number
+  const patterns = vars.map(v => {
+    // Match: "impact1", "Q5_1", "rating_01"
+    const match = v.name.match(/^([a-zA-Z_]+?)(\d+)$/);
+    if (!match) return null;
+    return { variable: v, prefix: match[1], number: parseInt(match[2], 10) };
+  }).filter((p): p is { variable: Variable; prefix: string; number: number } => p !== null);
+
+  if (patterns.length < 3) return [];
+
+  // Group by common prefix
+  const byPrefix = new Map<string, typeof patterns>();
+  for (const p of patterns) {
+    if (!byPrefix.has(p.prefix)) byPrefix.set(p.prefix, []);
+    byPrefix.get(p.prefix)!.push(p);
+  }
+
+  // Find largest sequential group with same prefix
+  let bestGroup: Variable[] = [];
+  for (const [prefix, group] of byPrefix.entries()) {
+    if (group.length < 3) continue;
+
+    // Sort by number
+    group.sort((a, b) => a.number - b.number);
+
+    // Check if sequential (allowing gaps)
+    const numbers = group.map(g => g.number);
+    const range = numbers[numbers.length - 1] - numbers[0];
+
+    // Accept if: (1) truly sequential OR (2) range < 2x count (allows small gaps)
+    if (range === numbers.length - 1 || range < numbers.length * 2) {
+      const vars = group.map(g => g.variable);
+      if (vars.length > bestGroup.length) {
+        bestGroup = vars;
+      }
+    }
+  }
+
+  return bestGroup;
+}
+
+/**
+ * Detect sequential patterns using both position and naming methods
+ */
+function detectSequentialPattern(vars: VariableWithIndex[]): Variable[] {
+  // Method 1: Position-based detection (primary)
+  const positionGroup = detectByPosition(vars);
+
+  // Method 2: Name-based detection (fallback)
+  const nameGroup = detectByNaming(vars.map(v => v.variable));
+
+  // Return the largest group found
+  return positionGroup.length >= nameGroup.length ? positionGroup : nameGroup;
+}
+
+/**
+ * Infer which value represents "positive" in binary scales (e.g., Yes/No, True/False)
+ */
+function inferPositiveValue(valueLabels: { value: number; label: string }[]): number {
+  // Common positive indicators
+  const positivePatterns = /yes|true|selected|agree|1/i;
+
+  // Try to match label text
+  for (const vl of valueLabels) {
+    if (positivePatterns.test(vl.label)) {
+      return vl.value;
+    }
+  }
+
+  // Fallback: assume higher value is positive
+  return Math.max(...valueLabels.map(vl => vl.value));
+}
+
 async function loadSAV(buffer: ArrayBuffer): Promise<{ variables: Variable[]; variableSets: VariableSet[]; rowCount: number; durationMs: number }> {
   if (!db || !conn) throw new Error('DB not initialized');
 
@@ -455,7 +585,93 @@ async function loadSAV(buffer: ArrayBuffer): Promise<{ variables: Variable[]; va
     }
   }
 
-  // Create 'single' VariableSets for variables NOT in any MR set
+  // ============================================================================
+  // Heuristic Grid Detection
+  // ============================================================================
+
+  // Step 1: Collect ungrouped variables (not in MR sets)
+  const ungroupedVariables = variables.filter(v => !variablesInMRSets.has(v.id));
+
+  // Step 2: Group by shared value label set
+  const byValueLabelSet = new Map<string, VariableWithIndex[]>();
+  for (const v of ungroupedVariables) {
+    const parsedVar = parsed.metadata.variables.find(pv => pv.name === v.id);
+    const setName = parsedVar?.valueLabelSetName;
+    if (setName) {
+      if (!byValueLabelSet.has(setName)) {
+        byValueLabelSet.set(setName, []);
+      }
+      byValueLabelSet.get(setName)!.push({
+        variable: v,
+        index: parsedVar?.index ?? -1,
+        valueLabelSetName: setName
+      });
+    }
+  }
+
+  // Step 3: Detect sequential patterns within each group
+  for (const [labelSetName, varsInGroup] of byValueLabelSet.entries()) {
+    if (varsInGroup.length < 3) continue; // Minimum threshold
+
+    // Try to detect sequential naming patterns
+    const gridCandidates = detectSequentialPattern(varsInGroup);
+
+    if (gridCandidates.length >= 3) {
+      // Check if this should be a multi-response set (binary value labels)
+      const valueLabels = parsed.metadata.valueLabelSets[labelSetName];
+      const isBinary = valueLabels && valueLabels.length === 2;
+
+      let structure: 'grid' | 'multiple' = 'grid';
+      let countedValue: number | undefined;
+
+      // Sort variables by name for consistent ordering
+      gridCandidates.sort((a, b) => a.name.localeCompare(b.name));
+
+      const variableIds = gridCandidates.map(v => v.id);
+      const firstVar = gridCandidates[0];
+
+      // Extract common prefix for set name
+      const prefix = firstVar.name.match(/^([a-zA-Z_]+?)\d+$/)?.[1] || 'Set';
+
+      // Mark variables as grouped
+      for (const v of gridCandidates) {
+        variablesInMRSets.add(v.id);
+      }
+
+      if (isBinary) {
+        // Default to 'multiple' structure for binary questions
+        structure = 'multiple';
+
+        // Infer positive value (higher value, or match common patterns)
+        countedValue = inferPositiveValue(valueLabels);
+
+        console.log(`📊 [Worker] Detected implicit multi-response "${prefix}" with ${gridCandidates.length} variables (counted value: ${countedValue})`);
+
+        variableSets.push({
+          id: `heuristic_${structure}_${prefix}_${labelSetName}`,
+          name: `${prefix} (${gridCandidates.length} items)`,
+          variableIds,
+          structure,
+          type: firstVar.type,
+          countedValue,
+          description: `Detected multi-response with shared Yes/No scale`
+        });
+      } else {
+        console.log(`📊 [Worker] Detected implicit grid "${prefix}" with ${gridCandidates.length} variables`);
+
+        variableSets.push({
+          id: `heuristic_${structure}_${prefix}_${labelSetName}`,
+          name: `${prefix} (${gridCandidates.length} items)`,
+          variableIds,
+          structure,
+          type: firstVar.type,
+          description: `Detected grid with shared scale: ${labelSetName}`
+        });
+      }
+    }
+  }
+
+  // Create 'single' VariableSets for variables NOT in any MR set or detected grid
   for (const v of variables) {
     if (!variablesInMRSets.has(v.id)) {
       variableSets.push({
@@ -468,7 +684,8 @@ async function loadSAV(buffer: ArrayBuffer): Promise<{ variables: Variable[]; va
     }
   }
 
-  console.log(`📊 [Worker] Created ${variableSets.length} VariableSets (${mrSets.length} MR sets, ${variableSets.length - mrSets.length} single variables)`);
+  const detectedGrids = variableSets.filter(vs => vs.id.startsWith('heuristic_'));
+  console.log(`📊 [Worker] Created ${variableSets.length} VariableSets (${mrSets.length} MR sets, ${detectedGrids.length} detected grids, ${variableSets.length - mrSets.length - detectedGrids.length} single variables)`);
 
   // Pivot data from row-major to column-major for Arrow
   const numRows = parsed.rows.length;
