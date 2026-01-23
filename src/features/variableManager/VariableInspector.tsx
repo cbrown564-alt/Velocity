@@ -115,13 +115,19 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
         : false;
 
     // Fetch stats when variable is selected
+    // Also re-fetch if scale variable is missing numeric stats (from older cache)
     useEffect(() => {
-        if (selectedVariableId && !stats && !isLoadingStats) {
+        if (!selectedVariableId || isLoadingStats) return;
+
+        const needsStats = !stats;
+        const needsNumericStats = variable?.type === 'scale' && stats && !stats.numeric;
+
+        if (needsStats || needsNumericStats) {
             getVariableStats(selectedVariableId).catch(err => {
                 console.warn('[VariableInspector] Failed to fetch stats:', err);
             });
         }
-    }, [selectedVariableId, stats, isLoadingStats, getVariableStats]);
+    }, [selectedVariableId, stats, isLoadingStats, getVariableStats, variable?.type]);
 
     // Calculate derived stats
     const completenessPercent = stats && stats.totalCount > 0
