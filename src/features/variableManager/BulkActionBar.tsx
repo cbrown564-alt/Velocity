@@ -79,13 +79,13 @@ export const BulkActionBar: React.FC<BulkActionBarProps> = ({
                         transition={{ type: 'spring', damping: 25, stiffness: 300 }}
                         className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50"
                     >
-                        <div className="bg-gray-900 text-white rounded-xl shadow-2xl px-4 py-3 flex items-center gap-4">
+                        <div className="bg-paper border border-gray-200 text-ink rounded-xl shadow-float px-4 py-3 flex items-center gap-4">
                             {/* Selection Count */}
-                            <div className="flex items-center gap-2 pr-4 border-r border-gray-700">
-                                <span className="bg-indigo-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                            <div className="flex items-center gap-2 pr-4 border-r border-gray-200">
+                                <span className="bg-terracotta text-white text-xs font-bold px-2 py-1 rounded-full">
                                     {selectedCount}
                                 </span>
-                                <span className="text-sm text-gray-300">selected</span>
+                                <span className="text-sm text-gray-500 font-body">selected</span>
                             </div>
 
                             {/* Actions */}
@@ -93,7 +93,7 @@ export const BulkActionBar: React.FC<BulkActionBarProps> = ({
                                 {/* Create Group */}
                                 <button
                                     onClick={handleCreateGroup}
-                                    className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-800 transition-colors text-sm"
+                                    className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors text-sm font-medium text-gray-700 hover:text-ink"
                                 >
                                     <FolderPlus size={16} />
                                     <span>Group</span>
@@ -103,33 +103,33 @@ export const BulkActionBar: React.FC<BulkActionBarProps> = ({
                                 <div className="relative">
                                     <button
                                         onClick={() => setShowTypeMenu(!showTypeMenu)}
-                                        className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-800 transition-colors text-sm"
+                                        className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-colors text-sm font-medium ${showTypeMenu ? 'bg-gray-100 text-ink' : 'text-gray-700 hover:bg-gray-100 hover:text-ink'}`}
                                     >
                                         <Tag size={16} />
                                         <span>Type</span>
                                     </button>
 
                                     {showTypeMenu && (
-                                        <div className="absolute bottom-full left-0 mb-2 bg-gray-800 rounded-lg shadow-xl py-1 min-w-32">
+                                        <div className="absolute bottom-full left-0 mb-2 bg-white border border-gray-200 rounded-lg shadow-float py-1 min-w-32 z-50 overflow-hidden">
                                             <button
                                                 onClick={() => handleSetType('nominal')}
-                                                className="w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-700 text-left text-sm"
+                                                className="w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-50 text-left text-sm font-body text-gray-700"
                                             >
-                                                <Tag size={14} className="text-rose-400" />
+                                                <Tag size={14} className="text-terracotta" />
                                                 Nominal
                                             </button>
                                             <button
                                                 onClick={() => handleSetType('ordinal')}
-                                                className="w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-700 text-left text-sm"
+                                                className="w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-50 text-left text-sm font-body text-gray-700"
                                             >
-                                                <Layers size={14} className="text-amber-400" />
+                                                <Layers size={14} className="text-info" />
                                                 Ordinal
                                             </button>
                                             <button
                                                 onClick={() => handleSetType('scale')}
-                                                className="w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-700 text-left text-sm"
+                                                className="w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-50 text-left text-sm font-body text-gray-700"
                                             >
-                                                <BarChart2 size={14} className="text-blue-400" />
+                                                <BarChart2 size={14} className="text-charcoal" />
                                                 Scale
                                             </button>
                                         </div>
@@ -139,7 +139,7 @@ export const BulkActionBar: React.FC<BulkActionBarProps> = ({
                                 {/* Hide/Show */}
                                 <button
                                     onClick={handleToggleHide}
-                                    className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-800 transition-colors text-sm"
+                                    className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors text-sm font-medium text-gray-700 hover:text-ink"
                                 >
                                     {anyHidden ? (
                                         <>
@@ -158,7 +158,7 @@ export const BulkActionBar: React.FC<BulkActionBarProps> = ({
                             {/* Clear Selection */}
                             <button
                                 onClick={onClearSelection}
-                                className="ml-2 p-2 rounded-lg hover:bg-gray-800 transition-colors text-gray-400 hover:text-white"
+                                className="ml-2 p-2 rounded-lg hover:bg-gray-100 transition-colors text-gray-400 hover:text-gray-600"
                             >
                                 <X size={16} />
                             </button>

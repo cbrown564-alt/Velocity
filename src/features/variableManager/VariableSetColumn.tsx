@@ -80,6 +80,9 @@ const VariableSetItem: React.FC<VariableSetItemProps> = ({
         transform: CSS.Transform.toString(transform),
         opacity: isDragging ? 0.5 : 1,
         zIndex: isDragging ? 1000 : undefined,
+        // Use terracotta background for selection too, to match active state
+        backgroundColor: isSelected && !isActive ? '#fcece9' : undefined,
+        userSelect: 'none' as const, // Prevent text selection during drag/multi-select
     };
 
     // Combine the dnd ref with the itemRef passed from parent
@@ -102,7 +105,6 @@ const VariableSetItem: React.FC<VariableSetItemProps> = ({
         >
             <div
                 className={styles.itemContent}
-                style={{ backgroundColor: isSelected && !isActive ? 'var(--gray-200)' : undefined }}
             >
                 <span className={styles.itemIcon}>
                     {variableSet.structure === 'grid' ? (
@@ -168,6 +170,14 @@ export const VariableSetColumn: React.FC = () => {
         setSelectedVariableId,
         toggleVariableSetSelection,
         selectVariableSetRange,
+        getVariableStats,
+        variableStats,
+        setActiveFolderId,
+        facetFilters,
+        setSelectedVariableId,
+        toggleVariableSetSelection,
+        selectVariableSetRange,
+        selectSingleVariableSet,
         getVariableStats,
         variableStats,
         setActiveFolderId,
@@ -399,6 +409,9 @@ export const VariableSetColumn: React.FC = () => {
 
         // Single click - Miller column navigation
         setSelectedVariableSetId(variableSet.id);
+
+        // Single click - Exclusive selection
+        selectSingleVariableSet(variableSet.id);
 
         // Smart column skip: if single-variable set, auto-select the variable
         if (variableSet.variableIds.length === 1) {

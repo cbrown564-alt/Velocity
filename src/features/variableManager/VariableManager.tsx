@@ -146,6 +146,7 @@ export const VariableManager: React.FC<VariableManagerProps> = ({ onClose }) => 
                 ? selectedVariableSetIds
                 : [String(active.id)];
             moveToFolder(idsToMove, folderId === 'ungrouped' ? null : folderId);
+            clearSelection();
         }
     };
 

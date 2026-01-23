@@ -76,6 +76,8 @@ export interface UISlice {
     toggleVariableSetSelection: (id: string, multi?: boolean) => void;
     /** Select a range from lastSelectedId to id (for Shift+click) */
     selectVariableSetRange: (id: string, allIds: string[]) => void;
+    /** Select a single variable set exclusively (resetting others) */
+    selectSingleVariableSet: (id: string) => void;
     selectAllVariableSets: (ids: string[]) => void;
     clearSelection: () => void;
     setActiveFolderId: (folderId: string | null) => void;
@@ -169,6 +171,11 @@ export const createUISlice: StateCreator<UISlice, [], [], UISlice> = (set) => ({
         return { selectedVariableSetIds: newSelection };
     }),
 
+    selectSingleVariableSet: (id) => set({
+        selectedVariableSetIds: [id],
+        lastSelectedId: id
+    }),
+
     selectAllVariableSets: (ids) => set({ selectedVariableSetIds: ids }),
     clearSelection: () => set({ selectedVariableSetIds: [], lastSelectedId: null }),
     setActiveFolderId: (folderId) => set({
@@ -176,6 +183,8 @@ export const createUISlice: StateCreator<UISlice, [], [], UISlice> = (set) => ({
         // Cascade: clear variable set and variable selection when folder changes
         selectedVariableSetId: null,
         selectedVariableId: null,
+        selectedVariableSetIds: [], // Clear bulk selection
+        lastSelectedId: null,
     }),
 
     // Miller Column Navigation Actions
@@ -185,6 +194,8 @@ export const createUISlice: StateCreator<UISlice, [], [], UISlice> = (set) => ({
         activeFolderId: null,
         selectedVariableSetId: null,
         selectedVariableId: null,
+        selectedVariableSetIds: [], // Clear bulk selection
+        lastSelectedId: null,
     }),
 
     setSelectedVariableSetId: (id) => set({
