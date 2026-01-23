@@ -494,13 +494,15 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                 const response = event.data;
 
                 if (response.type === 'savLoaded') {
-                    const variableSets: VariableSet[] = response.variables.map(v => ({
-                        id: crypto.randomUUID(),
-                        name: v.label || v.name,
-                        variableIds: [v.id],
-                        structure: 'single',
-                        type: v.type,
-                    }));
+                    // Use pre-built variableSets from worker (includes MR sets as grid/multiple)
+                    const variableSets: VariableSet[] = response.variableSets;
+
+                    // Log MR set detection results
+                    const gridSets = variableSets.filter(vs => vs.structure === 'grid');
+                    const multipleSets = variableSets.filter(vs => vs.structure === 'multiple');
+                    if (gridSets.length > 0 || multipleSets.length > 0) {
+                        console.log(`📊 [DataSlice] Detected ${gridSets.length} grid sets, ${multipleSets.length} multi-response sets`);
+                    }
 
                     set({
                         dataset: {
@@ -520,7 +522,7 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                         activeFilters: [],
                     } as any);
 
-                    console.log(`📊 [DataSlice] SAV loaded: ${response.rowCount} rows, ${response.variables.length} variables in ${response.durationMs.toFixed(2)}ms`);
+                    console.log(`📊 [DataSlice] SAV loaded: ${response.rowCount} rows, ${response.variables.length} variables, ${variableSets.length} variable sets in ${response.durationMs.toFixed(2)}ms`);
                     worker.removeEventListener('message', handler);
                     resolve(undefined);
                 } else if (response.type === 'error') {

@@ -8,7 +8,7 @@
  */
 
 import React, { useMemo, useEffect, useCallback, useRef } from 'react';
-import { Hash, Tag, BarChart2, Grid3X3, ChevronRight, EyeOff, Type, Calendar } from 'lucide-react';
+import { Hash, Tag, BarChart2, Grid3X3, Layers, ChevronRight, EyeOff, Type, Calendar } from 'lucide-react';
 import { useVelocityStore } from '../../store';
 import type { VariableSet } from '../../store/slices/dataSlice';
 import { Sparkline, MissingnessBadge } from './Sparkline';
@@ -44,9 +44,9 @@ const getTypeIcon = (type?: string) => {
 
 const getStructureLabel = (structure: string, count: number) => {
     if (structure === 'single' || count === 1) return null;
-    if (structure === 'multiple') return `${count} items`;
-    if (structure === 'grid') return `${count} cols`;
-    return null;
+    if (structure === 'multiple') return `Multi (${count})`;
+    if (structure === 'grid') return `Grid (${count})`;
+    return `${count} items`;
 };
 
 const VariableSetItem: React.FC<VariableSetItemProps> = ({
@@ -77,6 +77,8 @@ const VariableSetItem: React.FC<VariableSetItemProps> = ({
                 <span className={styles.itemIcon}>
                     {variableSet.structure === 'grid' ? (
                         <Grid3X3 size={14} />
+                    ) : variableSet.structure === 'multiple' ? (
+                        <Layers size={14} />
                     ) : (
                         getTypeIcon(variableSet.type)
                     )}

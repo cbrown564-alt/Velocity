@@ -8,6 +8,7 @@
 import type {
     SavVariable,
     SavValueLabel,
+    SavMultipleResponseSet,
     SavMetadata,
     SavParseResult,
     ProgressCallback,
@@ -17,6 +18,7 @@ import type {
 export type {
     SavVariable,
     SavValueLabel,
+    SavMultipleResponseSet,
     SavMetadata,
     SavParseResult,
     ProgressCallback,
@@ -42,6 +44,15 @@ interface ReadStatModule {
     _get_string_value: (row: number, col: number) => number;
     _free_parse_results: () => void;
     _get_error_message: (errorCode: number) => number;
+
+    // Multiple Response Set accessors
+    _get_mr_set_count: () => number;
+    _get_mr_set_name: (index: number) => number;
+    _get_mr_set_label: (index: number) => number;
+    _get_mr_set_type: (index: number) => number;
+    _get_mr_set_counted_value: (index: number) => number;
+    _get_mr_set_subvar_count: (index: number) => number;
+    _get_mr_set_subvar: (setIndex: number, subvarIndex: number) => number;
 
     // Runtime methods
     HEAPU8: Uint8Array;
@@ -158,6 +169,34 @@ export async function parseSavFile(
             }
         }
 
+        // Extract Multiple Response Sets
+        const mrSetCount = mod._get_mr_set_count();
+        const multipleResponseSets: SavMultipleResponseSet[] = [];
+        for (let i = 0; i < mrSetCount; i++) {
+            const subvarCount = mod._get_mr_set_subvar_count(i);
+            const subvariables: string[] = [];
+            for (let j = 0; j < subvarCount; j++) {
+                const subvarPtr = mod._get_mr_set_subvar(i, j);
+                subvariables.push(mod.UTF8ToString(subvarPtr));
+            }
+
+            const namePtr = mod._get_mr_set_name(i);
+            const labelPtr = mod._get_mr_set_label(i);
+            const typeCode = mod._get_mr_set_type(i);
+
+            multipleResponseSets.push({
+                name: mod.UTF8ToString(namePtr),
+                label: mod.UTF8ToString(labelPtr),
+                type: String.fromCharCode(typeCode) as 'C' | 'D',
+                countedValue: mod._get_mr_set_counted_value(i),
+                subvariables,
+            });
+        }
+
+        if (mrSetCount > 0) {
+            console.log(`📦 [ReadStat] Found ${mrSetCount} Multiple Response Sets`);
+        }
+
         // Extract rows
         const rows: (number | string | null)[][] = [];
         for (let r = 0; r < rowCount; r++) {
@@ -191,6 +230,7 @@ export async function parseSavFile(
                 rowCount,
                 variables,
                 valueLabelSets,
+                multipleResponseSets,
             },
             rows,
             durationMs,

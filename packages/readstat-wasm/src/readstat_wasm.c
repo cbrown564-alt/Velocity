@@ -33,6 +33,16 @@ typedef struct {
   char label[MAX_LABEL_LENGTH];
 } value_label_t;
 
+// Multiple Response Set info
+typedef struct {
+  char name[MAX_NAME_LENGTH];
+  char label[MAX_LABEL_LENGTH];
+  char type;  // 'C' = category/grid, 'D' = dichotomy/multi-response
+  int counted_value;
+  char **subvariables;
+  int num_subvars;
+} mr_set_info_t;
+
 // Parse state
 static variable_info_t *g_variables = NULL;
 static int g_variable_count = 0;
@@ -40,6 +50,10 @@ static value_label_t *g_value_labels = NULL;
 static int g_value_label_count = 0;
 static int g_row_count = 0;
 static int g_expected_row_count = 0;
+
+// Multiple Response Sets state
+static mr_set_info_t *g_mr_sets = NULL;
+static int g_mr_set_count = 0;
 
 // Data storage - dynamic array of values
 static double *g_numeric_data = NULL;
@@ -129,6 +143,41 @@ static int handle_metadata(readstat_metadata_t *metadata, void *ctx) {
   // Allocate variables array
   g_variables =
       (variable_info_t *)calloc(g_variable_count, sizeof(variable_info_t));
+
+  // Extract Multiple Response Sets
+  size_t mr_count = readstat_get_multiple_response_sets_length(metadata);
+  const mr_set_t *mr_sets = readstat_get_multiple_response_sets(metadata);
+
+  if (mr_count > 0 && mr_sets) {
+    g_mr_set_count = (int)mr_count;
+    g_mr_sets = (mr_set_info_t *)calloc(mr_count, sizeof(mr_set_info_t));
+
+    for (size_t i = 0; i < mr_count; i++) {
+      const mr_set_t *src = &mr_sets[i];
+      mr_set_info_t *dst = &g_mr_sets[i];
+
+      // Copy name and label
+      if (src->name)
+        strncpy(dst->name, src->name, MAX_NAME_LENGTH - 1);
+      if (src->label)
+        strncpy(dst->label, src->label, MAX_LABEL_LENGTH - 1);
+
+      // Set type: 'C' for category/grid, 'D' for dichotomy
+      dst->type = src->type;
+      dst->counted_value = src->counted_value;
+      dst->num_subvars = src->num_subvars;
+
+      // Copy subvariable names
+      if (src->num_subvars > 0 && src->subvariables) {
+        dst->subvariables = (char **)calloc(src->num_subvars, sizeof(char *));
+        for (int j = 0; j < src->num_subvars; j++) {
+          if (src->subvariables[j]) {
+            dst->subvariables[j] = strdup(src->subvariables[j]);
+          }
+        }
+      }
+    }
+  }
 
   return READSTAT_HANDLER_OK;
 }
@@ -282,6 +331,21 @@ static void cleanup_parse_state(void) {
     free(g_is_missing);
     g_is_missing = NULL;
   }
+  // Free MR sets
+  if (g_mr_sets) {
+    for (int i = 0; i < g_mr_set_count; i++) {
+      if (g_mr_sets[i].subvariables) {
+        for (int j = 0; j < g_mr_sets[i].num_subvars; j++) {
+          if (g_mr_sets[i].subvariables[j])
+            free(g_mr_sets[i].subvariables[j]);
+        }
+        free(g_mr_sets[i].subvariables);
+      }
+    }
+    free(g_mr_sets);
+    g_mr_sets = NULL;
+  }
+  g_mr_set_count = 0;
   g_variable_count = 0;
   g_value_label_count = 0;
   g_row_count = 0;
@@ -411,4 +475,58 @@ void free_parse_results(void) { cleanup_parse_state(); }
 EMSCRIPTEN_KEEPALIVE
 const char *get_error_message(int error_code) {
   return readstat_error_message((readstat_error_t)error_code);
+}
+
+// ============================================================================
+// Multiple Response Set Accessors
+// ============================================================================
+
+EMSCRIPTEN_KEEPALIVE
+int get_mr_set_count(void) { return g_mr_set_count; }
+
+EMSCRIPTEN_KEEPALIVE
+const char *get_mr_set_name(int index) {
+  if (index < 0 || index >= g_mr_set_count)
+    return "";
+  return g_mr_sets[index].name;
+}
+
+EMSCRIPTEN_KEEPALIVE
+const char *get_mr_set_label(int index) {
+  if (index < 0 || index >= g_mr_set_count)
+    return "";
+  return g_mr_sets[index].label;
+}
+
+EMSCRIPTEN_KEEPALIVE
+char get_mr_set_type(int index) {
+  if (index < 0 || index >= g_mr_set_count)
+    return 0;
+  return g_mr_sets[index].type;
+}
+
+EMSCRIPTEN_KEEPALIVE
+int get_mr_set_counted_value(int index) {
+  if (index < 0 || index >= g_mr_set_count)
+    return 0;
+  return g_mr_sets[index].counted_value;
+}
+
+EMSCRIPTEN_KEEPALIVE
+int get_mr_set_subvar_count(int index) {
+  if (index < 0 || index >= g_mr_set_count)
+    return 0;
+  return g_mr_sets[index].num_subvars;
+}
+
+EMSCRIPTEN_KEEPALIVE
+const char *get_mr_set_subvar(int set_index, int subvar_index) {
+  if (set_index < 0 || set_index >= g_mr_set_count)
+    return "";
+  if (subvar_index < 0 || subvar_index >= g_mr_sets[set_index].num_subvars)
+    return "";
+  if (!g_mr_sets[set_index].subvariables ||
+      !g_mr_sets[set_index].subvariables[subvar_index])
+    return "";
+  return g_mr_sets[set_index].subvariables[subvar_index];
 }

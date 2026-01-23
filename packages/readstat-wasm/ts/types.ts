@@ -22,6 +22,19 @@ export interface SavValueLabel {
     label: string;
 }
 
+export interface SavMultipleResponseSet {
+    /** MR set name (e.g., "$brands") */
+    name: string;
+    /** Human-readable label */
+    label: string;
+    /** Type: 'C' for category/grid, 'D' for dichotomy/multi-response */
+    type: 'C' | 'D';
+    /** For dichotomy sets, the value that indicates "selected" */
+    countedValue: number;
+    /** Variable names included in this set */
+    subvariables: string[];
+}
+
 export interface SavMetadata {
     /** Number of variables (columns) */
     variableCount: number;
@@ -31,6 +44,8 @@ export interface SavMetadata {
     variables: SavVariable[];
     /** Value labels grouped by set name */
     valueLabelSets: Record<string, SavValueLabel[]>;
+    /** Multiple Response Sets (grids and multi-response questions) */
+    multipleResponseSets: SavMultipleResponseSet[];
 }
 
 export interface SavParseResult {

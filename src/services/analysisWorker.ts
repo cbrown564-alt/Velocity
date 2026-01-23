@@ -10,7 +10,7 @@
 
 import * as duckdb from '@duckdb/duckdb-wasm';
 import * as arrow from 'apache-arrow';
-import { RecodeConfig } from '../types';
+import { RecodeConfig, VariableSet, Variable } from '../types';
 
 const JSDELIVR_BUNDLES = duckdb.getJsDelivrBundles();
 
@@ -73,7 +73,7 @@ export type WorkerResponse =
   | { type: 'corruptionDetected'; message: string }
   | { type: 'schema'; data: { name: string; type: string }[] }
   | { type: 'csvLoaded'; schema: { name: string; type: string }[]; rowCount: number; durationMs: number }
-  | { type: 'savLoaded'; variables: any[]; rowCount: number; durationMs: number }
+  | { type: 'savLoaded'; variables: Variable[]; variableSets: VariableSet[]; rowCount: number; durationMs: number }
   | { type: 'queryResult'; data: any[]; durationMs: number }
   | { type: 'uniqueValues'; data: string[] }
   | { type: 'variableStats'; stats: VariableStatsResult }
@@ -343,7 +343,7 @@ function isDateFormat(format: string | undefined): boolean {
   return dateFormats.some(df => upperFormat.startsWith(df));
 }
 
-async function loadSAV(buffer: ArrayBuffer): Promise<{ variables: any[]; rowCount: number; durationMs: number }> {
+async function loadSAV(buffer: ArrayBuffer): Promise<{ variables: Variable[]; variableSets: VariableSet[]; rowCount: number; durationMs: number }> {
   if (!db || !conn) throw new Error('DB not initialized');
 
   const start = performance.now();
@@ -358,7 +358,7 @@ async function loadSAV(buffer: ArrayBuffer): Promise<{ variables: any[]; rowCoun
   });
 
   // Convert variables to the format expected by the store
-  const variables = parsed.metadata.variables.map(v => {
+  const variables: Variable[] = parsed.metadata.variables.map(v => {
     // 1. Generate ID (using name as unique identifier)
     const id = v.name;
 
@@ -402,6 +402,73 @@ async function loadSAV(buffer: ArrayBuffer): Promise<{ variables: any[]; rowCoun
       missingValues: { discrete: [], range: undefined }
     };
   });
+
+  // Build variable name to ID map
+  const varNameToId = new Map<string, string>();
+  for (const v of variables) {
+    varNameToId.set(v.name, v.id);
+  }
+
+  // Track which variables are part of MR sets
+  const variablesInMRSets = new Set<string>();
+
+  // Create VariableSets from Multiple Response Sets
+  const variableSets: VariableSet[] = [];
+  const mrSets = parsed.metadata.multipleResponseSets || [];
+
+  for (const mrSet of mrSets) {
+    // Map subvariable names to IDs
+    const variableIds: string[] = [];
+    for (const subvarName of mrSet.subvariables) {
+      const varId = varNameToId.get(subvarName);
+      if (varId) {
+        variableIds.push(varId);
+        variablesInMRSets.add(varId);
+      } else {
+        console.warn(`📊 [Worker] MR set "${mrSet.name}" references unknown variable "${subvarName}"`);
+      }
+    }
+
+    if (variableIds.length > 0) {
+      // Determine structure type: 'C' = category/grid, 'D' = dichotomy/multiple
+      const structure = mrSet.type === 'C' ? 'grid' : 'multiple';
+
+      // Clean up name (MR set names often start with $)
+      const cleanName = mrSet.name.startsWith('$') ? mrSet.name.slice(1) : mrSet.name;
+
+      // Infer variable type from first variable in the set
+      const firstVar = variables.find(v => v.id === variableIds[0]);
+      const setType = firstVar?.type;
+
+      variableSets.push({
+        id: `mrset_${cleanName}`,
+        name: mrSet.label || cleanName,
+        variableIds,
+        structure,
+        type: setType,
+        description: mrSet.type === 'D'
+          ? `Multiple response set (counted value: ${mrSet.countedValue})`
+          : 'Grid/category set'
+      });
+
+      console.log(`📊 [Worker] Created ${structure} VariableSet "${mrSet.label || cleanName}" with ${variableIds.length} variables`);
+    }
+  }
+
+  // Create 'single' VariableSets for variables NOT in any MR set
+  for (const v of variables) {
+    if (!variablesInMRSets.has(v.id)) {
+      variableSets.push({
+        id: `vs_${v.id}`,
+        name: v.label || v.name,
+        variableIds: [v.id],
+        structure: 'single',
+        type: v.type
+      });
+    }
+  }
+
+  console.log(`📊 [Worker] Created ${variableSets.length} VariableSets (${mrSets.length} MR sets, ${variableSets.length - mrSets.length} single variables)`);
 
   // Pivot data from row-major to column-major for Arrow
   const numRows = parsed.rows.length;
@@ -479,7 +546,7 @@ async function loadSAV(buffer: ArrayBuffer): Promise<{ variables: any[]; rowCoun
   const durationMs = performance.now() - start;
   console.log(`🦆 [Worker] Loaded SAV with ReadStat-WASM: ${parsed.metadata.rowCount} rows, ${variables.length} variables in ${durationMs.toFixed(2)}ms`);
 
-  return { variables, rowCount: parsed.metadata.rowCount, durationMs };
+  return { variables, variableSets, rowCount: parsed.metadata.rowCount, durationMs };
 }
 
 async function getSchema(): Promise<{ name: string; type: string }[]> {
@@ -715,6 +782,7 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
         self.postMessage({
           type: 'savLoaded',
           variables: savResult.variables,
+          variableSets: savResult.variableSets,
           rowCount: savResult.rowCount,
           durationMs: savResult.durationMs,
         } as WorkerResponse);
