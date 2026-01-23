@@ -44,6 +44,11 @@ interface TableRowNode {
     count: number;
     percent: number;
     sig?: string;
+    stats?: {
+      tScore: number;
+      pValue: number;
+      effN: number;
+    };
     mean?: number;
     median?: number;
     stdDev?: number;
@@ -137,12 +142,47 @@ export const DataTable: React.FC<DataTableProps> = ({
         groups[key].push(row);
       });
 
-      const nodes: TableRowNode[] = Object.keys(groups).sort().map(groupKey => {
-        const groupData = groups[groupKey];
+      // 4a. Gather all potential keys (Data + Labels)
+      // This ensures we show "0" count rows if they have a label (e.g., "Very Underweight" = 0)
+      const variable = rowVariables[depth];
+      const allKeys = new Set<string>();
+
+      // Add keys from actual data
+      Object.keys(groups).forEach(k => allKeys.add(k));
+
+      // Add keys from value labels (if they don't exist in data)
+      if (variable && variable.valueLabels) {
+        variable.valueLabels.forEach(vl => allKeys.add(String(vl.value)));
+      }
+
+      // 4b. GAP FILLING (for Ordinal/Scale)
+      // Ensure we don't show "1, 3, 4" skipping "2" if it's a numeric scale
+      if (variable && (variable.type === 'ordinal' || variable.type === 'scale')) {
+        const numericKeys = Array.from(allKeys)
+          .map(k => parseFloat(k))
+          .filter(n => !isNaN(n) && Number.isInteger(n));
+
+        if (numericKeys.length >= 2) {
+          const min = Math.min(...numericKeys);
+          const max = Math.max(...numericKeys);
+
+          // Only fill gaps for reasonable survey scale ranges (e.g., 0-100)
+          // Prevents massive loops if data has outliers (e.g. 0 and 999999)
+          if (max - min < 100) {
+            for (let i = min; i <= max; i++) {
+              allKeys.add(String(i));
+            }
+          }
+        }
+      }
+
+      // Convert to array and map to Nodes
+      let nodes: TableRowNode[] = Array.from(allKeys).map(groupKey => {
+        const groupData = groups[groupKey] || []; // Might be empty if coming from labels only
         const uniqueKey = parentKey ? `${parentKey}-${groupKey}` : groupKey;
 
         // Resolve Label: Look up value label if available
-        const variable = rowVariables[depth];
+        // const variable = rowVariables[depth]; // Already declared above
         let label = groupKey;
 
         if (variable && variable.valueLabels && variable.valueLabels.length > 0) {
@@ -163,6 +203,11 @@ export const DataTable: React.FC<DataTableProps> = ({
           count: number;
           percent: number;
           sig?: string;
+          stats?: {
+            tScore: number;
+            pValue: number;
+            effN: number;
+          };
           mean?: number;
           median?: number;
           stdDev?: number;
@@ -187,13 +232,16 @@ export const DataTable: React.FC<DataTableProps> = ({
 
           nodeRowTotal += count;
 
-          const divisor = colVariable ? colTotals[cKey] : grandTotal;
+          // Use column total as divisor for correct column percentages (even in Grids)
+          // Fallback to grandTotal only if colTotal is missing (should not happen if colKeys exist)
+          const divisor = colTotals[cKey];
           const percent = divisor > 0 ? (count / divisor) * 100 : 0;
 
           nodeCells[cKey] = {
             count,
             percent,
             sig: matchingRows[0]?.sig,
+            stats: matchingRows[0]?.stats,
             // Pass through metric data
             mean: hasMetric ? metricRow.mean : undefined,
             median: hasMetric ? metricRow.median : undefined,
@@ -244,6 +292,41 @@ export const DataTable: React.FC<DataTableProps> = ({
           children,
           rowPath: nodeRowPath
         };
+      });
+
+
+
+      // 4b. SORTING LOGIC
+      // Default: Sort by alphanumeric
+      // Ordinal/Scale: Sort by numeric value
+      // Nominal: Sort by Frequency (Total Count)
+      nodes.sort((a, b) => {
+        const type = variable?.type || 'nominal';
+
+        if (type === 'ordinal' || type === 'scale') {
+          // Try to parse as numbers
+          const valA = parseFloat(a.rawValue);
+          const valB = parseFloat(b.rawValue);
+
+          if (!isNaN(valA) && !isNaN(valB)) {
+            return valA - valB;
+          }
+          // Fallback to value label index if available?
+          // Or just alphanumeric if not numbers
+          return a.rawValue.localeCompare(b.rawValue, undefined, { numeric: true });
+        }
+
+        if (type === 'nominal') {
+          // Sort by Frequency (Total Count) - Descending
+          // Secondary sort: Alphabetical by label
+          if (b.total !== a.total) {
+            return b.total - a.total;
+          }
+          return a.label.localeCompare(b.label);
+        }
+
+        // Default: Alphanumeric
+        return a.label.localeCompare(b.label, undefined, { numeric: true });
       });
 
       return nodes;
@@ -305,7 +388,11 @@ export const DataTable: React.FC<DataTableProps> = ({
                   key={col}
                   className="px-4 py-3 text-right align-top cursor-pointer relative hover:bg-[var(--gray-100)] transition-colors border-l border-[var(--gray-50)]"
                   onClick={() => onCellClick?.(row.rowPath, colVariable ? col : null)}
-                  title="Click to X-Ray"
+                  title={
+                    cell.stats && typeof cell.stats.effN === 'number'
+                      ? `Significance Test (vs Rest)\nT-Score: ${(cell.stats.tScore ?? 0).toFixed(2)}\np-value: ${(cell.stats.pValue ?? 1).toFixed(4)}\nEff. Sample Size: ${cell.stats.effN.toFixed(1)}\n\nClick to X-Ray`
+                      : "Click to X-Ray"
+                  }
                 >
                   <div className="flex flex-col items-end">
                     {cell.mean !== undefined ? (
@@ -325,11 +412,17 @@ export const DataTable: React.FC<DataTableProps> = ({
                       <>
                         <div className="flex items-center gap-0.5">
                           <span className="font-bold text-[var(--color-ink)]">{cell.percent.toFixed(1)}%</span>
-                          {cell.sig === 'high' && (
+                          {cell.sig === 'high_95' && (
                             <ArrowUp size={12} className="text-emerald-500" />
                           )}
-                          {cell.sig === 'low' && (
+                          {cell.sig === 'high_80' && (
+                            <ArrowUp size={12} className="text-slate-400" />
+                          )}
+                          {cell.sig === 'low_95' && (
                             <ArrowDown size={12} className="text-rose-500" />
+                          )}
+                          {cell.sig === 'low_80' && (
+                            <ArrowDown size={12} className="text-slate-400" />
                           )}
                         </div>
                         <span className="text-[10px] text-[var(--gray-400)] font-mono tracking-tight opacity-0 group-hover:opacity-100 transition-opacity">n={cell.count}</span>
@@ -341,7 +434,7 @@ export const DataTable: React.FC<DataTableProps> = ({
             })}
             {/* Only show Row Total if we have columns OR if it's a frequency table (always show 100%)
                 For Metric tables without columns, the single column is already the total. */}
-            {(colVariable || !variantIsMetric) && (
+            {(tableData.colKeys.length > 1) && (
               <td className="px-4 py-3 text-right font-mono font-semibold text-[var(--color-ink)] bg-[var(--gray-50)] align-top">
                 <div className="flex flex-col items-end">
                   {row.mean ? (
@@ -386,7 +479,7 @@ export const DataTable: React.FC<DataTableProps> = ({
             <h3 className="text-lg font-semibold text-[var(--color-ink)] font-display">
               {colVariable ? `${rowVariables.map(v => v.label).join(' > ')} by ${colVariable.label}` : `${rowVariables[0].label} Frequency`}
             </h3>
-            <p className="text-xs text-[var(--gray-500)] mt-1 font-body">N = {tableData.grandTotal} Respondents</p>
+            <p className="text-xs text-[var(--gray-500)] mt-1 font-body">N = {totalCount} Respondents</p>
           </div>
         </div>
 
@@ -409,7 +502,7 @@ export const DataTable: React.FC<DataTableProps> = ({
                     </div>
                   </th>
                 ))}
-                {(colVariable || !variableStats) && (
+                {(tableData.colKeys.length > 1) && (
                   <th className="px-4 py-3 font-bold text-right w-24 text-[var(--color-ink)] bg-[var(--gray-50)] align-bottom">
                     Total
                   </th>
@@ -425,27 +518,29 @@ export const DataTable: React.FC<DataTableProps> = ({
                     {tableData.colTotals[col]}
                   </td>
                 ))}
-                <td className="px-4 py-3 text-right font-mono text-[var(--color-ink)]">
-                  {/* GRAND TOTAL CELL - SHOW SPARKLINE IF STATS AVAILABLE */}
-                  {variableStats && (
-                    <div className="flex flex-col items-end gap-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <div className="text-right">
-                          <div className="text-xs font-bold">{variableStats.numeric?.mean.toFixed(1)}</div>
-                          <div className="text-[9px] text-[var(--gray-500)] uppercase tracking-wide">Mean</div>
+                {(tableData.colKeys.length > 1) && (
+                  <td className="px-4 py-3 text-right font-mono text-[var(--color-ink)]">
+                    {/* GRAND TOTAL CELL - SHOW SPARKLINE IF STATS AVAILABLE */}
+                    {variableStats && (
+                      <div className="flex flex-col items-end gap-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <div className="text-right">
+                            <div className="text-xs font-bold">{variableStats.numeric?.mean.toFixed(1)}</div>
+                            <div className="text-[9px] text-[var(--gray-500)] uppercase tracking-wide">Mean</div>
+                          </div>
+                          <Sparkline
+                            type="scale"
+                            histogramBins={variableStats.numeric?.histogramBins}
+                            width={80}
+                            height={24}
+                          />
                         </div>
-                        <Sparkline
-                          type="scale"
-                          histogramBins={variableStats.numeric?.histogramBins}
-                          width={80}
-                          height={24}
-                        />
+                        <span className="text-[10px] text-[var(--gray-400)]">N={variableStats.totalCount}</span>
                       </div>
-                      <span className="text-[10px] text-[var(--gray-400)]">N={variableStats.totalCount}</span>
-                    </div>
-                  )}
-                  {!variableStats && tableData.grandTotal}
-                </td>
+                    )}
+                    {!variableStats && totalCount}
+                  </td>
+                )}
               </tr>
             </tbody>
           </table>

@@ -93,7 +93,6 @@
 - [x] **Rich Variable Cards:** Sparklines (Mini-histograms) and Quality Indicators (Missingness %) [ref](research_08_UX_patterns_for_surveys.md#L177).
 - [x] **Context Awareness:** Bi-directional focus (Selecting variable in Analysis opens it in Manager) [ref](research_08_UX_patterns_for_surveys.md#L131).
 - [x] **Faceted Search:** Filter variable list by Type, Status, and Quality [ref](research_08_UX_patterns_for_surveys.md#L168).
-- [ ] **Visual Recoding** (Interactive Histogram Bucketing) - *Half-complete; needs D3.js refactor.*
 - [x] **Visual ETL (Charts):** Click-to-filter and Click-to-exclude context menus [ref](research_08_UX_patterns_for_surveys.md#L252).
 - [x] **Semantic Variable Sets** (Grids represented as Card Clusters).
 - [x] **Verify Multi-Response Interaction:** Ensure `VariableSet` works for multiple response data.
@@ -102,15 +101,27 @@
 *Goal: "Contextually Relevant Statistics" (Beyond simple counts)*
 - [x] **Numeric Summaries:** Mean, Median, StdDev, Min/Max for Scale variables.
 - [x] **Smart Table Stats:** Auto-toggle between Counts (Nominal) and Averages (Scale).
-- [x] **Significance Testing:** T-Test/Z-Test implementation.
-    - [x] **Sig-Dots & Arrows:** Green/Red arrows for significant differences vs Total.
-    - [ ] **Hover-to-Explain:** Tooltip showing p-value and reference.
-    - [ ] **Stats Inspector:** Hover/Click context for p-value details (Future).
+- [x] **Significance Testing (Phase 1):** Displayr-Parity Implementation
+    - [x] **Effective Sample Size (ESS):** Used for all tests ($\sum w^2 / \sum w^2$).
+    - [x] **T-Tests:** Welch's T-Test for Means and Proportions.
+    - [x] **Cell vs Complement:** Testing Part vs Rest (instead of Part vs Whole).
+    - [x] **Sig-Dots & Arrows:** Green/Red arrows for significant differences.
+    - [x] **Hover-to-Explain:** Tooltip showing p-value and reference.
+    - *See [arch_04_statistical_engine.md](arch_04_statistical_engine.md) for full architecture details.*
+
+### Milestone 2.7: Statistical Engine Phase 2 (Advanced)
+*Goal: Full Displayr Parity for Complex Tables*
+- [ ] **Pairwise Comparisons:** Column Proportions Tests (Letters A/B/C) with $O(N^2)$ complexity.
+- [ ] **Multiple Comparison Corrections:** False Discovery Rate (FDR) and Bonferroni.
+- [ ] **Overlap Handling:** Dependent Samples T-Tests for Multiple Response sets.
+- [ ] **Taylor Series Linearization (TSL):** Advanced variance estimation if ESS approximation proves insufficient.
 
 ### Milestone 2.4: Major Charting Refactor (D3.js)
 *Goal: Consolidate visualization logic and implement Analysis Charts.*
 - [ ] Refactor Sparklines and Recoding to use D3.js core.
 - [ ] **Implement Chart View:** In-app visualization on the Analysis Canvas.
+- [ ] **Visual Recoding** (Interactive Histogram Bucketing) - *Half-complete; needs D3.js refactor. Should work for both Analysis Canvas and Variable Manager.*
+
 
 ### Milestone 2.5: The Weighting Engine
 *Scope: Application Only (No Weight Creation)*

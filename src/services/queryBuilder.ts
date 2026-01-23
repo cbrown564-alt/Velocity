@@ -177,13 +177,26 @@ export function buildCrosstabQuery(options: CrosstabQueryOptions): string {
             MIN(${col}) as min,
             MAX(${col}) as max,
             MEDIAN(${col}) as median,
-            COUNT(${col})::INTEGER as validCount
+            COUNT(${col})::INTEGER as validCount,
+            COUNT(*)::INTEGER as count
         `;
+
+        // Add ESS components if weighted
+        if (weightVar) {
+            const w = `"${escapeIdentifier(weightVar)}"`;
+            statsExpr += `, SUM(${w} * ${w})::DOUBLE as sumSqWeights`;
+        }
     } else {
         // Frequency Counts
-        statsExpr = weightVar
-            ? `SUM("${escapeIdentifier(weightVar)}")::DOUBLE as count`
-            : `COUNT(*)::INTEGER as count`;
+        if (weightVar) {
+            const w = `"${escapeIdentifier(weightVar)}"`;
+            statsExpr = `
+                SUM(${w})::DOUBLE as count, 
+                SUM(${w} * ${w})::DOUBLE as sumSqWeights
+            `;
+        } else {
+            statsExpr = `COUNT(*)::INTEGER as count`;
+        }
     }
 
     // Build GROUP BY clause

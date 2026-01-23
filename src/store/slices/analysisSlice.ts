@@ -169,6 +169,7 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
                             max: row.max,
                             validCount: row.validCount !== undefined ? Number(row.validCount) : undefined,
                             sig: row.sig, // Signficance flag from worker
+                            stats: row.stats, // Detailed stats for tooltip
                         };
                     });
 

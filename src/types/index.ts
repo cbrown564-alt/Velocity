@@ -147,6 +147,8 @@ export interface AggregatedRow {
   count: number;
   /** Weighted count when a weight variable is applied */
   weightedCount?: number;
+  /** Sum of squared weights (for Effective Sample Size calculation) */
+  sumSqWeights?: number;
   // Scale variable stats
   mean?: number;
   median?: number;
@@ -154,8 +156,14 @@ export interface AggregatedRow {
   min?: number;
   max?: number;
   validCount?: number;
-  /** Significance marker: 'high' | 'low' compared to total */
-  sig?: 'high' | 'low';
+  /** Significance marker: 95% (strong) or 80% (weak) confidence */
+  sig?: 'high_95' | 'high_80' | 'low_95' | 'low_80';
+  /** Detailed statistics for tooltip explanation */
+  stats?: {
+    tScore: number;
+    pValue: number;
+    effN: number;
+  };
 }
 
 export interface TableConfig {

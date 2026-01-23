@@ -12,6 +12,7 @@ import * as duckdb from '@duckdb/duckdb-wasm';
 import * as arrow from 'apache-arrow';
 import { RecodeConfig, VariableSet, Variable, Filter } from '../types';
 import { buildCrosstabQuery, CrosstabQueryOptions } from './queryBuilder';
+import { calculateZScore, calculateTScore, calculateESS, calculatePValue } from './statistics';
 
 const JSDELIVR_BUNDLES = duckdb.getJsDelivrBundles();
 
@@ -331,6 +332,13 @@ function isOrdinal(valueLabels: { value: number; label: string }[]): boolean {
 
   // Normalize labels to lowercase for comparison
   const labels = valueLabels.map(vl => vl.label.toLowerCase().trim());
+
+  // Check for binary Yes/No
+  if (valueLabels.length === 2) {
+    const yes = labels.some(l => l === 'yes' || l === 'true' || l.includes('yes '));
+    const no = labels.some(l => l === 'no' || l === 'false' || l.includes('no '));
+    if (yes && no) return true;
+  }
 
   // Check 1: Match against known ordinal patterns
   for (const pattern of Object.values(ORDINAL_PATTERNS)) {
@@ -1041,24 +1049,7 @@ async function getVariableStats(
  * Statistics and Significance Testing Helpers
  */
 
-function calculateZScore(p1: number, n1: number, p2: number, n2: number): number {
-  if (n1 === 0 || n2 === 0) return 0;
-
-  // Pooled proportion
-  const p = (p1 * n1 + p2 * n2) / (n1 + n2);
-  const se = Math.sqrt(p * (1 - p) * (1 / n1 + 1 / n2));
-
-  if (se === 0) return 0;
-  return (p1 - p2) / se;
-}
-
-function calculateTScore(m1: number, s1: number, n1: number, m2: number, s2: number, n2: number): number {
-  if (n1 < 2 || n2 < 2 || s1 === 0 || s2 === 0) return 0;
-
-  // Welch's t-test
-  const se = Math.sqrt((s1 * s1) / n1 + (s2 * s2) / n2);
-  return (m1 - m2) / se;
-}
+// Imported from statistics.ts
 
 async function runCrosstab(options: CrosstabQueryOptions, variableTypes: Record<string, string>): Promise<any[]> {
   if (!conn) throw new Error('DB not initialized');
@@ -1093,11 +1084,10 @@ async function runCrosstab(options: CrosstabQueryOptions, variableTypes: Record<
   const rows = mainResult.toArray().map(r => r.toJSON());
 
   // 3. Significance Testing
-  // We compare each cell against the "Total" for that Row Group.
-  // We need to fetch Row Totals first.
+  // We compare each cell against the "Total" for that Row Group (or rather, the Complement "Rest").
+  // We need to fetch Row Totals first to derive the "Rest" component.
 
   // Construct Totals Query: Same query but remove the Column Variable
-  // (Only if there IS a column variable)
   if (modifiedOptions.colVar) {
     const totalsOptions = {
       ...modifiedOptions,
@@ -1120,7 +1110,19 @@ async function runCrosstab(options: CrosstabQueryOptions, variableTypes: Record<
       totalsMap.set(keyParts.join('|'), t);
     });
 
-    // 4. Apply Sig Tests
+    // 4. Calculate Column Totals (for Proportions)
+    const colStats = new Map<string, { n: number; ess: number }>();
+    rows.forEach(row => {
+      const colKey = row.colKey || 'Total';
+      // Use weighted count if available, else raw count
+      const n = row.weightedCount ?? row.count;
+      const ess = calculateESS(n, row.sumSqWeights ?? n);
+
+      const current = colStats.get(colKey) || { n: 0, ess: 0 };
+      colStats.set(colKey, { n: current.n + n, ess: current.ess + ess });
+    });
+
+    // 5. Apply Sig Tests (T-Test for Cell vs Rest)
     rows.forEach(row => {
       // Reconstruct Row Key
       const keyParts = [];
@@ -1133,72 +1135,132 @@ async function runCrosstab(options: CrosstabQueryOptions, variableTypes: Record<
       const totalRow = totalsMap.get(rowKey);
 
       if (totalRow) {
+        let tScore = 0;
         const isMeans = modifiedOptions.measureVar !== undefined;
-        let z = 0;
 
-        if (isMeans) {
-          // T-Test for Means
-          z = calculateTScore(
-            Number(row.mean), Number(row.stdDev), Number(row.validCount),
-            Number(totalRow.mean), Number(totalRow.stdDev), Number(totalRow.validCount)
-          );
-        } else {
-          // Z-Test for Proportions
-          // Note: Denominators. 
-          // row.count is cell count. 
-          // totalRow.count is Row Total (sum of all cols).
-          // We are comparing Cell % (row.count / totalRow.count ? No)
-          // We are comparing Column % ? 
-          // Usually Sig Test in Crosstabs compares Column A vs Column B, or Column A vs Total.
-          // IF Column A vs Total:
-          // P1 = Count(Cell) / Count(ColTotal)  <-- Wait, Col Total is needed.
-          // P2 = Count(RowTotal) / Count(GrandTotal)
+        // --- CELL COMPONENT (Part) ---
+        const cellN = row.weightedCount ?? row.count;
+        const cellESS = calculateESS(cellN, row.sumSqWeights ?? cellN);
 
-          // Let's assume user wants "Cell Value vs Row Average"? 
-          // Re-reading Research: "Difference between 'NPS in Region A' (45%) and 'Region B' (48%)"
-          // This implies Column Comparison (if Regions are Columns).
-          // OR Row Comparison (if Regions are Rows).
+        // --- TOTAL COMPONENT (Whole) ---
+        const totalN = totalRow.weightedCount ?? totalRow.count;
+        const totalESS = calculateESS(totalN, totalRow.sumSqWeights ?? totalN);
 
-          // Pattern: "Green Arrow = Significantly Higher (vs Total)"
-          // If we have Demographics in Rows, and Segments in Cols.
-          // Cell: Segment A, Young People. (20%)
-          // Total: All Segments, Young People. (15%)
-          // We compare Cell % vs Row Total %.
+        // --- REST COMPONENT (Complement = Whole - Part) ---
+        // Note: For ESS, we subtract. Ideally we'd sum(sqWeights_Rest) but subtraction is a safe approx here if mutually exclusive.
+        const restN = totalN - cellN;
+        const restESS = Math.max(0, totalESS - cellESS);
 
-          // Need Column Totals to compute percentages properly?
-          // Using N from the row itself?
+        if (cellESS > 2 && restESS > 2) {
+          if (isMeans) {
+            // T-Test for Means (Welch's)
+            // Cell Stats
+            const m1 = Number(row.mean);
+            const s1 = Number(row.stdDev); // Standard Deviation
+            const n1 = cellESS;
 
-          // Simplest approximation for "Row Total" comparison:
-          // Comparison: Cell Proportion vs (Total Row Count / Total N) ? 
-          // No, Standard is:
-          // p1 = row.count / colTotal
-          // p2 = totalRow.count / grandTotal
-          // BUT we don't have ColTotals here easily without another query or aggregation.
+            // Total Stats (Need to derive Rest Stats)
+            const mT = Number(totalRow.mean);
+            const sT = Number(totalRow.stdDev);
+            const nT = totalESS;
 
-          // Optimization: We can pass ColTotals if we have them, or assuming `DataTable` calculates them?
-          // Worker should return raw data + sig flags.
-          // Let's stick to simplest valid test for now:
-          // Using strict counts if possible. 
+            // Derive Rest Stats (Algebraic decomposition of Mean/Variance)
+            // m_rest = (m_total * n_total - m_cell * n_cell) / n_rest
+            const m2 = (mT * totalN - m1 * cellN) / restN;
 
-          // For now, let's just mark standard deviation overlaps or simple Z-Score placeholder
-          // if we lack full context.
-          // BUT we can use the stored totals!
+            // Pooled Variance Calculation to recover s2 is complex without sumSq.
+            // Approx: Just use Total SD as proxy for Rest SD if rest is large.
+            // Better: If we have sumReqs, we can do it exact. 
+            // For now, let's look at Proportions first which is the primary request.
+            // Taking a safe path: Compare Cell vs Total (Part-Whole) for Means if decomposition is risky,
+            // BUT Displayr uses Part-Rest. 
+            // Let's stick to T-Test of Cell vs Total for Means in this iteration to avoid negative variance bugs,
+            // unless we have exact sumSq for the measure variable.
+            // Actually, let's use the simple T-Test(Cell, Total) for Means for now as a safe upgrade step,
+            // but use Cell, Rest for proportions below.
 
-          // Let's use a simpler heuristic for the MVP stats:
-          // If (Cell Count / Total Row Count) differs significantly from (Expected Distribution)?
-          // No, that's Chi-Square.
+            tScore = calculateTScore(m1, s1, n1, mT, sT, nT);
 
-          // Let's implement T-Test for means as it's cleaner.
-          // For proportions, we'll wait for the "Column Totals" to be computed by the caller or passed in.
-          // Or we compute Col Totals in memory here.
+          } else {
+            // T-Test for Proportions (Cell vs Rest)
+            // We treat Proportions as Means of 0/1 data.
 
-          // Let's compute Col Totals in memory from the main result!
-          // We have all cells.
+            // Col Total (Base) for this cell's column
+            const colKey = row.colKey || 'Total';
+            const colBase = colStats.get(colKey);
+            const colN = colBase?.n || 0;
+
+            if (colN > 0) {
+              // Cell Proportion
+              const p1 = cellN / colN;
+              const s1 = Math.sqrt(p1 * (1 - p1)); // SD of binary data
+              const n1 = cellESS;
+
+              // Rest of Population (Row Total - Cell)
+              // "Rest" here is the aggregated "Other Columns".
+              // RowTotal represents (Cell + Rest).
+
+              // Grand Total (Sum of all columns for this row)
+              // Actually, totalRow IS the Row Total.
+              // But we need the Base for the Row Total. 
+              // Usually Row Base = Grand Total of Table.
+              // Let's assume Row Total % is calculated against Grand Total.
+
+              // Wait, Proportions test "Is this column special?".
+              // So we compare Cell % (within Column) vs Rest-of-Row % (within Rest-of-Columns).
+              // Example: "Male" % for Brand A vs "Male" % for (Not Brand A).
+              // Or "Brand A" % for Male vs "Brand A" % for (Not Male).
+              // Usually the latter: Column is the Segment (Male), Row is the Variable (Brand A).
+              // We check if Brand A is higher in Male than in Non-Male.
+
+              // Setup:
+              // Group 1 (Cell): Cell Count / Column Total
+              // Group 2 (Rest): (Row Count - Cell Count) / (Grand Total - Column Total)
+
+              // Grand Total of Table (All Columns)
+              let grandCurrent = 0;
+              for (const v of colStats.values()) grandCurrent += v.n;
+
+              const restCount = totalN - cellN;
+              const restBase = grandCurrent - colN;
+
+              if (restBase > 0) {
+                const p2 = restCount / restBase;
+                const s2 = Math.sqrt(p2 * (1 - p2));
+
+                // We need ESS for the Rest Group.
+                // Approx: TableTotalESS - ColESS ? No, unrelated.
+                // Approx: Scale restBase by weighting factor?
+                // Let's estimate Rest ESS:
+                // Efficiency Factor = ColESS / ColN
+                // Assume similar efficiency for rest?
+                // Better: We really need sumSqWeights for the WHOLE table to do this right.
+                // For now, let's approximate Rest ESS = RestBase * (TotalRowESS / TotalRowN).
+                const eff = totalESS / totalN;
+                const n2 = restBase * eff;
+
+                tScore = calculateTScore(p1, s1, n1, p2, s2, n2);
+              }
+            }
+          }
         }
 
-        // Apply Threshold (p < 0.05 approx Z > 1.96)
-        if (Math.abs(z) > 1.96) {
-          row.sig = z > 0 ? 'high' : 'low';
+        // Apply Thresholds
+        // Strong: 95% CI (Z > 1.96) -> Green/Red
+        // Weak: 80% CI (Z > 1.28) -> Grey
+        const absT = Math.abs(tScore);
+        const pValue = calculatePValue(tScore);
+
+        // Attach detailed stats for tooltip
+        row.stats = {
+          tScore,
+          pValue,
+          effN: cellESS
+        };
+        if (absT > 1.96) {
+          row.sig = tScore > 0 ? 'high_95' : 'low_95';
+        } else if (absT > 1.28) {
+          row.sig = tScore > 0 ? 'high_80' : 'low_80';
         }
       }
     });
