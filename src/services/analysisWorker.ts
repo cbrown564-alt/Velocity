@@ -35,7 +35,8 @@ export type WorkerRequest =
   | { type: 'getVariableStats'; column: string; variableType?: 'nominal' | 'ordinal' | 'scale' | 'text' | 'date' }
   | { type: 'recodeVariable'; sourceCol: string; newColName: string; config: RecodeConfig }
   | { type: 'checkPersistedData' }
-  | { type: 'clearPersistedData' };
+  | { type: 'clearPersistedData' }
+  | { type: 'ping' }; // Health check - verifies worker and database are alive
 
 export interface VariableStatsFrequency {
   value: number | string | null;
@@ -81,6 +82,7 @@ export type WorkerResponse =
   | { type: 'persistedDataFound'; schema: { name: string; type: string }[]; rowCount: number }
   | { type: 'noPersistedData' }
   | { type: 'persistedDataCleared' }
+  | { type: 'pong'; hasData: boolean; rowCount?: number }
   | { type: 'error'; message: string };
 
 /**
@@ -121,6 +123,35 @@ async function cleanOPFS(): Promise<void> {
 // Track OPFS availability for reporting
 let opfsAvailable = false;
 
+// Keepalive interval to prevent browser from suspending/terminating idle worker
+// This runs a lightweight query every 20 seconds to keep DuckDB "warm"
+let keepaliveInterval: ReturnType<typeof setInterval> | null = null;
+
+function startKeepalive() {
+  if (keepaliveInterval) return;
+
+  keepaliveInterval = setInterval(async () => {
+    if (conn) {
+      try {
+        // Run a minimal query to keep the connection and memory active
+        await conn.query('SELECT 1');
+      } catch (e) {
+        console.warn('🦆 [Worker] Keepalive query failed:', e);
+      }
+    }
+  }, 20000); // Every 20 seconds
+
+  console.log('🦆 [Worker] Keepalive started (20s interval)');
+}
+
+function stopKeepalive() {
+  if (keepaliveInterval) {
+    clearInterval(keepaliveInterval);
+    keepaliveInterval = null;
+    console.log('🦆 [Worker] Keepalive stopped');
+  }
+}
+
 async function init(forceCleanStart: boolean = false): Promise<{ opfsAvailable: boolean; corruptionDetected?: boolean; corruptionMessage?: string }> {
   if (db) return { opfsAvailable }; // Already initialized
 
@@ -156,6 +187,10 @@ async function init(forceCleanStart: boolean = false): Promise<{ opfsAvailable: 
 
   if (!ENABLE_OPFS) {
     console.log('🦆 [Worker] OPFS disabled (ENABLE_OPFS=false), using in-memory mode');
+    // IMPORTANT: Even in-memory mode needs explicit db.open() call
+    // Without this, DuckDB may not properly initialize and can lose data
+    await db.open({ path: ':memory:' });
+    console.log('🦆 [Worker] DuckDB opened in :memory: mode');
   } else {
     // Try OPFS persistence
     try {
@@ -195,6 +230,9 @@ async function init(forceCleanStart: boolean = false): Promise<{ opfsAvailable: 
 
   conn = await db.connect();
   console.log('🦆 [Worker] DuckDB Initialized');
+
+  // Start keepalive to prevent browser from suspending the worker
+  startKeepalive();
 
   return { opfsAvailable };
 }
@@ -1050,6 +1088,32 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
       case 'clearPersistedData':
         await clearPersistedData();
         self.postMessage({ type: 'persistedDataCleared' } as WorkerResponse);
+        break;
+
+      case 'ping':
+        // Health check - verify database is alive and check if table exists
+        if (!conn) {
+          self.postMessage({ type: 'pong', hasData: false } as WorkerResponse);
+        } else {
+          try {
+            const tableCheck = await conn.query(`
+              SELECT COUNT(*) as cnt
+              FROM information_schema.tables
+              WHERE table_name = 'main'
+            `);
+            const tableExists = Number(tableCheck.toArray()[0]?.cnt) > 0;
+
+            if (tableExists) {
+              const countResult = await conn.query(`SELECT COUNT(*) as cnt FROM main`);
+              const rowCount = Number(countResult.toArray()[0]?.cnt);
+              self.postMessage({ type: 'pong', hasData: true, rowCount } as WorkerResponse);
+            } else {
+              self.postMessage({ type: 'pong', hasData: false } as WorkerResponse);
+            }
+          } catch (e) {
+            self.postMessage({ type: 'pong', hasData: false } as WorkerResponse);
+          }
+        }
         break;
     }
   } catch (error: any) {
