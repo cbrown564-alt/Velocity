@@ -485,12 +485,16 @@ async function getVariableStats(
         // Compute histogram bins (10 bins by default)
         const binCount = 10;
         const range = maxVal - minVal;
-        const binWidth = range / binCount;
+        const binWidth = range > 0 ? range / binCount : 1;
 
-        // Use DuckDB's histogram function or compute manually with width_bucket
+        // Compute histogram using FLOOR for bucket assignment
+        // LEAST ensures values at maxVal go into the last bin (bin 10, not 11)
         const histResult = await conn.query(`
           SELECT
-            width_bucket("${column}", ${minVal}, ${maxVal + 0.0001}, ${binCount}) as bucket,
+            CASE
+              WHEN ${range} = 0 THEN 1
+              ELSE LEAST(FLOOR(("${column}" - ${minVal}) / ${binWidth}) + 1, ${binCount})::INTEGER
+            END as bucket,
             COUNT(*) as cnt
           FROM main
           WHERE "${column}" IS NOT NULL
