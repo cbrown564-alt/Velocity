@@ -81,8 +81,10 @@ export const VariableManager: React.FC<VariableManagerProps> = ({ onClose }) => 
         // Type facet filter
         if (facetFilters.types.length > 0) {
             sets = sets.filter(vs => {
-                const isCategorical = ['nominal', 'ordinal', 'categorical'].includes(vs.type || '');
-                const isNumeric = ['scale', 'numeric'].includes(vs.type || '');
+                // Categorical includes: nominal (unordered), ordinal (ordered), text (open-ended)
+                const isCategorical = ['nominal', 'ordinal', 'text'].includes(vs.type || '');
+                // Numeric includes: scale (continuous), date (temporal)
+                const isNumeric = ['scale', 'date'].includes(vs.type || '');
                 return (facetFilters.types.includes('categorical') && isCategorical) ||
                        (facetFilters.types.includes('numeric') && isNumeric);
             });

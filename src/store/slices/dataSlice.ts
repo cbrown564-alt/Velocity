@@ -13,7 +13,7 @@ import type { RecodeConfig } from '../../types';
 // Types
 // ============================================================================
 
-export type VariableType = 'nominal' | 'ordinal' | 'scale';
+export type VariableType = 'nominal' | 'ordinal' | 'scale' | 'text' | 'date';
 
 export interface ValueLabel {
     value: number;
@@ -47,7 +47,7 @@ export interface VariableSet {
     id: string;
     name: string;
     variableIds: string[];
-    structure: 'single' | 'multi' | 'grid';
+    structure: 'single' | 'multiple' | 'grid';
     type?: VariableType;
     /** Hidden from Analysis Canvas (Data Gardening only) */
     hidden?: boolean;
@@ -55,6 +55,8 @@ export interface VariableSet {
     folderId?: string;
     /** Display order within folder */
     order?: number;
+    /** True if created via recode/compute operation */
+    derived?: boolean;
 }
 
 export interface Folder {
@@ -680,7 +682,7 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
             id: crypto.randomUUID(),
             name,
             variableIds,
-            structure: variableIds.length > 1 ? 'multi' : 'single',
+            structure: variableIds.length > 1 ? 'multiple' : 'single',
             type: inferredType,
         };
 

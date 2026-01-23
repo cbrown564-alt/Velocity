@@ -7,7 +7,7 @@
  */
 
 import React, { useMemo, useEffect, useState, useCallback } from 'react';
-import { Tag, Hash, BarChart2, Info, AlertTriangle, CheckCircle } from 'lucide-react';
+import { Tag, Hash, BarChart2, Info, AlertTriangle, CheckCircle, Type, Calendar } from 'lucide-react';
 import { useVelocityStore } from '../../store';
 import type { Variable } from '../../store/slices/dataSlice';
 import type { VariableStatsResult } from '../../services/analysisWorker';
@@ -23,6 +23,10 @@ const getTypeIcon = (type: string) => {
             return <BarChart2 size={14} />;
         case 'scale':
             return <Hash size={14} />;
+        case 'text':
+            return <Type size={14} />;
+        case 'date':
+            return <Calendar size={14} />;
         default:
             return <Tag size={14} />;
     }
@@ -36,6 +40,10 @@ const getTypeBadgeClass = (type: string) => {
             return styles.typeBadgeOrdinal;
         case 'scale':
             return styles.typeBadgeScale;
+        case 'text':
+            return styles.typeBadgeText;
+        case 'date':
+            return styles.typeBadgeDate;
         default:
             return styles.typeBadgeNominal;
     }
@@ -49,6 +57,10 @@ const getTypeLabel = (type: string) => {
             return 'Ordinal';
         case 'scale':
             return 'Numeric';
+        case 'text':
+            return 'Text';
+        case 'date':
+            return 'Date';
         default:
             return type;
     }

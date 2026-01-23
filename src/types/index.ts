@@ -10,8 +10,10 @@
 // Core Data Model (from arch_02_data_model.md)
 // ============================================================================
 
-// Core types from arch_02_data_model.md with legacy compatibility
-export type VariableType = 'nominal' | 'ordinal' | 'scale' | 'categorical' | 'numeric';
+// Core types from arch_02_data_model.md
+// Survey-centric type system: nominal (categorical unordered), ordinal (categorical ordered),
+// scale (continuous numeric), text (open-ended string), date (temporal)
+export type VariableType = 'nominal' | 'ordinal' | 'scale' | 'text' | 'date';
 
 export interface ValueLabel {
   value: number;
@@ -106,10 +108,10 @@ export interface VariableSet {
   /**
    * Structure type determines how the set is used in analysis:
    * - 'single': Standard single variable (1:1 mapping, default)
-   * - 'multi': Multiple response set (e.g., "Select all that apply")
+   * - 'multiple': Multiple response set (e.g., "Select all that apply")
    * - 'grid': Grid/matrix structure (rows x columns)
    */
-  structure: 'single' | 'multi' | 'grid';
+  structure: 'single' | 'multiple' | 'grid';
   /** Inferred or explicit variable type for the set */
   type?: VariableType;
   /** Optional description */

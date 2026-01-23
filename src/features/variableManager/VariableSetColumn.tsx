@@ -8,7 +8,7 @@
  */
 
 import React, { useMemo, useEffect, useCallback, useRef } from 'react';
-import { Hash, Tag, BarChart2, Grid3X3, ChevronRight, EyeOff } from 'lucide-react';
+import { Hash, Tag, BarChart2, Grid3X3, ChevronRight, EyeOff, Type, Calendar } from 'lucide-react';
 import { useVelocityStore } from '../../store';
 import type { VariableSet } from '../../store/slices/dataSlice';
 import { Sparkline, MissingnessBadge } from './Sparkline';
@@ -33,6 +33,10 @@ const getTypeIcon = (type?: string) => {
             return <BarChart2 size={14} />;
         case 'scale':
             return <Hash size={14} />;
+        case 'text':
+            return <Type size={14} />;
+        case 'date':
+            return <Calendar size={14} />;
         default:
             return <Tag size={14} />;
     }
@@ -40,7 +44,7 @@ const getTypeIcon = (type?: string) => {
 
 const getStructureLabel = (structure: string, count: number) => {
     if (structure === 'single' || count === 1) return null;
-    if (structure === 'multi') return `${count} items`;
+    if (structure === 'multiple') return `${count} items`;
     if (structure === 'grid') return `${count} cols`;
     return null;
 };
@@ -160,8 +164,10 @@ export const VariableSetColumn: React.FC = () => {
         // Type facet filter
         if (facetFilters.types.length > 0) {
             sets = sets.filter(vs => {
-                const isCategorical = ['nominal', 'ordinal', 'categorical'].includes(vs.type || '');
-                const isNumeric = ['scale', 'numeric'].includes(vs.type || '');
+                // Categorical includes: nominal (unordered), ordinal (ordered), text (open-ended)
+                const isCategorical = ['nominal', 'ordinal', 'text'].includes(vs.type || '');
+                // Numeric includes: scale (continuous), date (temporal)
+                const isNumeric = ['scale', 'date'].includes(vs.type || '');
                 return (facetFilters.types.includes('categorical') && isCategorical) ||
                        (facetFilters.types.includes('numeric') && isNumeric);
             });

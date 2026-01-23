@@ -32,7 +32,7 @@ export type WorkerRequest =
   | { type: 'query'; sql: string }
   | { type: 'getSchema' }
   | { type: 'getUniqueValues'; column: string }
-  | { type: 'getVariableStats'; column: string; variableType?: 'nominal' | 'ordinal' | 'scale' }
+  | { type: 'getVariableStats'; column: string; variableType?: 'nominal' | 'ordinal' | 'scale' | 'text' | 'date' }
   | { type: 'recodeVariable'; sourceCol: string; newColName: string; config: RecodeConfig }
   | { type: 'checkPersistedData' }
   | { type: 'clearPersistedData' };
@@ -261,6 +261,88 @@ async function loadCSV(fileName: string, content: string): Promise<{ schema: { n
   return { schema, rowCount, durationMs };
 }
 
+/**
+ * Ordinal Detection Patterns
+ *
+ * Common ordinal scale keywords for detecting Likert-type scales.
+ * These patterns help distinguish ordinal (ordered categorical) from nominal (unordered categorical).
+ */
+const ORDINAL_PATTERNS = {
+  agreement: ['strongly disagree', 'disagree', 'neutral', 'agree', 'strongly agree'],
+  satisfaction: ['very dissatisfied', 'dissatisfied', 'neutral', 'satisfied', 'very satisfied'],
+  frequency: ['never', 'rarely', 'sometimes', 'often', 'always'],
+  likelihood: ['very unlikely', 'unlikely', 'neutral', 'likely', 'very likely'],
+  quality: ['very poor', 'poor', 'fair', 'good', 'excellent'],
+  importance: ['not important', 'somewhat important', 'important', 'very important'],
+  amount: ['none', 'a little', 'some', 'a lot', 'a great deal'],
+};
+
+// Comparative/ordering words that suggest ordinal scale
+const ORDINAL_KEYWORDS = ['more', 'less', 'better', 'worse', 'higher', 'lower', 'most', 'least', 'very', 'extremely', 'somewhat', 'slightly'];
+
+/**
+ * Detect if value labels suggest an ordinal (ordered) scale
+ *
+ * @param valueLabels - Array of {value, label} pairs
+ * @returns true if the labels suggest an ordinal scale
+ */
+function isOrdinal(valueLabels: { value: number; label: string }[]): boolean {
+  if (!valueLabels || valueLabels.length < 2) return false;
+
+  // Normalize labels to lowercase for comparison
+  const labels = valueLabels.map(vl => vl.label.toLowerCase().trim());
+
+  // Check 1: Match against known ordinal patterns
+  for (const pattern of Object.values(ORDINAL_PATTERNS)) {
+    // Check if at least 3 labels match a pattern (allowing for variations)
+    let matchCount = 0;
+    for (const label of labels) {
+      if (pattern.some(p => label.includes(p) || p.includes(label))) {
+        matchCount++;
+      }
+    }
+    if (matchCount >= 3) return true;
+  }
+
+  // Check 2: Labels contain ordinal keywords (e.g., "very satisfied", "somewhat agree")
+  let keywordMatches = 0;
+  for (const label of labels) {
+    if (ORDINAL_KEYWORDS.some(kw => label.includes(kw))) {
+      keywordMatches++;
+    }
+  }
+  if (keywordMatches >= 2) return true;
+
+  // Check 3: Numeric-prefixed labels (e.g., "1 - Poor", "2 - Fair", "3 - Good")
+  const numericPrefixPattern = /^\d+\s*[-–—:]\s*/;
+  const numericPrefixCount = labels.filter(l => numericPrefixPattern.test(l)).length;
+  if (numericPrefixCount >= 3 && numericPrefixCount === labels.length) return true;
+
+  // Check 4: Sequential integers with consistent spacing as values (Likert 1-5, 1-7, etc.)
+  if (valueLabels.length >= 3 && valueLabels.length <= 10) {
+    const values = valueLabels.map(vl => vl.value).sort((a, b) => a - b);
+    const differences = values.slice(1).map((v, i) => v - values[i]);
+    const isSequential = differences.every(d => d === differences[0] && d > 0);
+    if (isSequential && values[0] >= 0 && values[0] <= 1) {
+      // Likely a Likert scale (1-5, 0-10, etc.)
+      return true;
+    }
+  }
+
+  return false;
+}
+
+/**
+ * Detect if a variable is a date type based on SPSS format specification
+ * Common SPSS date formats: DATE, ADATE, EDATE, SDATE, DATETIME, TIME, etc.
+ */
+function isDateFormat(format: string | undefined): boolean {
+  if (!format) return false;
+  const dateFormats = ['DATE', 'ADATE', 'EDATE', 'SDATE', 'JDATE', 'QYR', 'MOYR', 'WKYR', 'DATETIME', 'TIME', 'DTIME', 'WKDAY', 'MONTH'];
+  const upperFormat = format.toUpperCase();
+  return dateFormats.some(df => upperFormat.startsWith(df));
+}
+
 async function loadSAV(buffer: ArrayBuffer): Promise<{ variables: any[]; rowCount: number; durationMs: number }> {
   if (!db || !conn) throw new Error('DB not initialized');
 
@@ -280,21 +362,35 @@ async function loadSAV(buffer: ArrayBuffer): Promise<{ variables: any[]; rowCoun
     // 1. Generate ID (using name as unique identifier)
     const id = v.name;
 
-    // 2. Map Types: Variables with value labels are categorical (nominal)
-    // SPSS encodes categorical variables as numeric with value labels
-    const hasValueLabels = v.valueLabelSetName &&
-      parsed.metadata.valueLabelSets[v.valueLabelSetName]?.length > 0;
-    const type = hasValueLabels
-      ? 'nominal'
-      : (v.type === 'numeric' ? 'scale' : 'nominal');
-
-    // 3. Transform Value Labels
+    // 2. Transform Value Labels first (needed for type detection)
     let valueLabels: { value: number; label: string }[] = [];
     if (v.valueLabelSetName && parsed.metadata.valueLabelSets[v.valueLabelSetName]) {
       valueLabels = parsed.metadata.valueLabelSets[v.valueLabelSetName].map((vl: any) => ({
         value: vl.value,
         label: vl.label
       }));
+    }
+
+    // 3. Map Types using survey-centric type system:
+    //    - text: String variables
+    //    - date: Variables with date formats (when format info is available)
+    //    - ordinal: Numeric with value labels that suggest ordered scale
+    //    - nominal: Numeric with value labels (unordered categorical)
+    //    - scale: Numeric without value labels (continuous)
+    let type: 'nominal' | 'ordinal' | 'scale' | 'text' | 'date';
+
+    if (v.type === 'string') {
+      // String type → 'text'
+      type = 'text';
+    } else if ((v as any).format && isDateFormat((v as any).format)) {
+      // SPSS date format → 'date' (when format info is available)
+      type = 'date';
+    } else if (valueLabels.length > 0) {
+      // Has value labels - check if ordinal or nominal
+      type = isOrdinal(valueLabels) ? 'ordinal' : 'nominal';
+    } else {
+      // Numeric without value labels → 'scale'
+      type = 'scale';
     }
 
     return {
@@ -420,7 +516,7 @@ async function getUniqueValues(column: string): Promise<string[]> {
 
 async function getVariableStats(
   column: string,
-  variableType?: 'nominal' | 'ordinal' | 'scale'
+  variableType?: 'nominal' | 'ordinal' | 'scale' | 'text' | 'date'
 ): Promise<VariableStatsResult> {
   if (!conn) throw new Error('DB not initialized');
 

@@ -138,6 +138,16 @@
   color: var(--color-charcoal);
 }
 
+.typeBadgeText {
+  background-color: rgba(103, 58, 183, 0.15);
+  color: #673ab7;
+}
+
+.typeBadgeDate {
+  background-color: rgba(33, 150, 243, 0.15);
+  color: #2196f3;
+}
+
 /* ============================================================================
    Value Labels Table
    ============================================================================ */

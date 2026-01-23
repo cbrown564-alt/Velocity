@@ -36,17 +36,17 @@ export const VariableCard: React.FC<VariableCardProps> = ({
 }) => {
   // Helper to get icon based on type and structure
   const getIcon = (set: VariableSet) => {
-    if (set.structure === 'multi' || set.structure === 'grid') {
+    if (set.structure === 'multiple' || set.structure === 'grid') {
       return <Layers size={14} className="text-[var(--color-terracotta)]" />;
     }
 
     const type = set.type as VariableType;
     switch (type) {
-      case 'numeric':
       case 'scale':
+      case 'date':
         return <Hash size={14} className="text-[var(--gray-400)]" />;
-      case 'categorical':
       case 'nominal':
+      case 'text':
         return <Type size={14} className="text-[var(--gray-400)]" />;
       case 'ordinal':
         return <BarChart2 size={14} className="text-[var(--gray-400)]" />;

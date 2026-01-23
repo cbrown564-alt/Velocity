@@ -39,8 +39,8 @@ export const RecodeModal: React.FC<RecodeModalProps> = ({ isOpen, onClose, varia
           values.forEach(v => initialMap[v] = v);
           setMappings(initialMap);
 
-          // Determine default mode
-          const defaultMode = (variable.type === 'scale' || variable.type === 'numeric') ? 'binning' : 'categorical';
+          // Determine default mode - scale and date are numeric types
+          const defaultMode = (variable.type === 'scale' || variable.type === 'date') ? 'binning' : 'categorical';
           setMode(defaultMode);
 
           if (defaultMode === 'binning') {
@@ -130,8 +130,8 @@ export const RecodeModal: React.FC<RecodeModalProps> = ({ isOpen, onClose, varia
                   />
                 </div>
 
-                {/* Mode Switcher (Only for numeric/scale) */}
-                {(variable?.type === 'scale' || variable?.type === 'numeric') && (
+                {/* Mode Switcher (Only for numeric types: scale and date) */}
+                {(variable?.type === 'scale' || variable?.type === 'date') && (
                   <div className="flex gap-2 mb-6 bg-[var(--color-parchment)] p-1 rounded-lg border border-[var(--gray-200)] w-fit">
                     <button
                       onClick={() => setMode('categorical')}
