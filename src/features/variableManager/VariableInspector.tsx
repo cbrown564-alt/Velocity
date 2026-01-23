@@ -12,6 +12,7 @@ import { useVelocityStore } from '../../store';
 import type { Variable } from '../../store/slices/dataSlice';
 import type { VariableStatsResult } from '../../services/analysisWorker';
 import { D3BarChart, BarDatum, SelectionEvent, D3Histogram } from '../../components/charts';
+import { InputModal } from '../../components/overlays/InputModal';
 import styles from './VariableInspector.module.css';
 
 const getTypeIcon = (type: string) => {
@@ -71,6 +72,8 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
         getVariableStats,
         variableStats,
         variableStatsLoading,
+        recodeVariable,
+        getUniqueValues,
     } = useVelocityStore();
 
     // Context menu state for chart interactions
@@ -79,6 +82,11 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
         position: { x: 0, y: 0 },
         selected: [],
     });
+
+    // State for group name input modal
+    const [showGroupNameModal, setShowGroupNameModal] = useState(false);
+    const [pendingGroupSelection, setPendingGroupSelection] = useState<BarDatum[]>([]);
+    const [isCreatingRecode, setIsCreatingRecode] = useState(false);
 
     // Get the selected variable
     const variable = useMemo((): Variable | null => {
@@ -149,18 +157,58 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
         setContextMenu(prev => ({ ...prev, isOpen: false }));
     }, []);
 
-    // Handle context menu actions
+    // Handle context menu actions - show modal to get group name
     const handleCreateGroup = useCallback(() => {
         if (contextMenu.selected.length > 0 && variable) {
-            console.log('[VariableInspector] Create group from selection:', {
-                variable: variable.name,
-                selectedLabels: contextMenu.selected.map(d => d.label),
-                selectedCodes: contextMenu.selected.map(d => d.code),
-            });
-            // TODO: Show inline input for group name
+            setPendingGroupSelection([...contextMenu.selected]);
+            setShowGroupNameModal(true);
         }
         closeContextMenu();
     }, [contextMenu.selected, variable, closeContextMenu]);
+
+    // Handle group name submission - create the recode
+    const handleGroupNameSubmit = useCallback(async (groupName: string) => {
+        if (!variable || pendingGroupSelection.length === 0) return;
+
+        setIsCreatingRecode(true);
+        try {
+            // Get all unique values for the variable to create complete mappings
+            const allValues = await getUniqueValues(variable.id);
+
+            // Create mappings: selected values -> groupName, others -> keep original
+            const mappings: Record<string, string> = {};
+            const selectedCodes = new Set(pendingGroupSelection.map(d => String(d.code)));
+
+            for (const val of allValues) {
+                if (selectedCodes.has(String(val))) {
+                    mappings[val] = groupName;
+                } else {
+                    mappings[val] = val;
+                }
+            }
+
+            // Create the recoded variable
+            const newVarName = `${variable.name}_grouped`;
+            await recodeVariable(variable.id, newVarName, {
+                mode: 'categorical',
+                mappings,
+            });
+
+            console.log('[VariableInspector] Created recode:', {
+                source: variable.name,
+                newVar: newVarName,
+                groupName,
+                groupedValues: pendingGroupSelection.map(d => d.label),
+            });
+
+            // Clear selection state
+            setPendingGroupSelection([]);
+        } catch (error) {
+            console.error('[VariableInspector] Failed to create recode:', error);
+        } finally {
+            setIsCreatingRecode(false);
+        }
+    }, [variable, pendingGroupSelection, getUniqueValues, recodeVariable]);
 
     // Close context menu on click outside
     useEffect(() => {
@@ -493,6 +541,20 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
                     </button>
                 </div>
             )}
+
+            {/* Group Name Input Modal */}
+            <InputModal
+                isOpen={showGroupNameModal}
+                onClose={() => {
+                    setShowGroupNameModal(false);
+                    setPendingGroupSelection([]);
+                }}
+                onSubmit={handleGroupNameSubmit}
+                title="Name this group"
+                placeholder="e.g., Low Income, Age 18-34..."
+                initialValue=""
+                submitLabel={isCreatingRecode ? 'Creating...' : 'Create Group'}
+            />
         </div>
     );
 };
