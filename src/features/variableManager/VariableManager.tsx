@@ -44,6 +44,7 @@ export const VariableManager: React.FC<VariableManagerProps> = ({ onClose }) => 
         searchQuery,
         setSearchQuery,
         selectedVariableSetIds,
+        selectedVariableSetId,
         selectedVariableId,
         activeFolderId,
         selectAllVariableSets,
@@ -176,6 +177,22 @@ export const VariableManager: React.FC<VariableManagerProps> = ({ onClose }) => 
     // Determine if Inspector should be visible
     const showInspector = !!selectedVariableId;
 
+    // Responsive: Track window width to collapse columns on small screens
+    const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
+
+    useEffect(() => {
+        const handleResize = () => setWindowWidth(window.innerWidth);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+    // Compact mode: < 1200px
+    const isCompact = windowWidth < 1200;
+
+    // Collapse navigation columns (Sources, Folders) if in compact mode and a variable set is selected
+    // This gives space to the actual variable content
+    const shouldCollapseNav = isCompact && !!selectedVariableSetId;
+
     return (
         <DndContext
             sensors={sensors}
@@ -237,10 +254,14 @@ export const VariableManager: React.FC<VariableManagerProps> = ({ onClose }) => 
                 {/* Miller Columns */}
                 <div className={millerStyles.container}>
                     {/* Column 1: Data Sources */}
-                    <DataSourceColumn />
+                    <DataSourceColumn
+                        className={shouldCollapseNav ? millerStyles.columnHidden : ''}
+                    />
 
                     {/* Column 2: Folders */}
-                    <FolderColumn />
+                    <FolderColumn
+                        className={shouldCollapseNav ? millerStyles.columnHidden : ''}
+                    />
 
                     {/* Column 3: Variable Sets */}
                     <VariableSetColumn />

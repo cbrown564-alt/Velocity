@@ -10,7 +10,11 @@ import { Database, ChevronRight } from 'lucide-react';
 import { useVelocityStore } from '../../store';
 import styles from './MillerColumns.module.css';
 
-export const DataSourceColumn: React.FC = () => {
+interface DataSourceColumnProps {
+    className?: string;
+}
+
+export const DataSourceColumn: React.FC<DataSourceColumnProps> = ({ className }) => {
     const {
         dataset,
         selectedDataSourceId,
@@ -29,7 +33,7 @@ export const DataSourceColumn: React.FC = () => {
     };
 
     return (
-        <div className={`${styles.column} ${styles.col1}`}>
+        <div className={`${styles.column} ${styles.col1} ${className || ''}`}>
             <div className={styles.columnHeader}>
                 <span className={styles.columnTitle}>Sources</span>
             </div>

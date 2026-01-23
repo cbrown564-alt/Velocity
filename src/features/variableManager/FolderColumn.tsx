@@ -63,7 +63,11 @@ const FolderItem: React.FC<FolderItemProps> = ({
     );
 };
 
-export const FolderColumn: React.FC = () => {
+interface FolderColumnProps {
+    className?: string;
+}
+
+export const FolderColumn: React.FC<FolderColumnProps> = ({ className }) => {
     const {
         folders,
         variableSets,
@@ -115,7 +119,7 @@ export const FolderColumn: React.FC = () => {
     });
 
     return (
-        <div className={`${styles.column} ${styles.col2}`}>
+        <div className={`${styles.column} ${styles.col2} ${className || ''}`}>
             <div className={styles.columnHeader}>
                 <span className={styles.columnTitle}>Folders</span>
                 <button
