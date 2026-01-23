@@ -85,23 +85,51 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
 
         set({ isQuerying: true });
 
-        const resolveToCol = (id: string): string => {
-            const varSet = variableSets.find((s: VariableSet) => s.id === id);
-            if (varSet && varSet.variableIds.length > 0) {
-                return varSet.variableIds[0];
-            }
-            return id;
-        };
+        // Check if the first row variable is a grid or multiple structure
+        const firstRowVarSet = variableSets.find((s: VariableSet) => s.id === tableConfig.rowVars[0]);
 
-        const rows = tableConfig.rowVars.map(resolveToCol);
-        const col = tableConfig.colVar ? resolveToCol(tableConfig.colVar) : null;
+        let sql: string;
 
-        const sql = buildCrosstabQuery({
-            rowVars: rows,
-            colVar: col,
-            filters: activeFilters,
-            weightVar: dataset?.weightVariable || undefined,
-        });
+        if (firstRowVarSet?.structure === 'grid') {
+            // Grid structure: unpivot all variables to show scale values as rows, variables as columns
+            sql = buildCrosstabQuery({
+                rowVars: [],
+                gridColumns: firstRowVarSet.variableIds,
+                filters: activeFilters,
+                weightVar: dataset?.weightVariable || undefined,
+            });
+        } else if (firstRowVarSet?.structure === 'multiple') {
+            // Multiple structure: show only counted value for each variable
+            const multipleColumns = firstRowVarSet.variableIds.map(varId => ({
+                column: varId,
+                countedValue: firstRowVarSet.countedValue ?? 1, // Default to 1 if not specified
+            }));
+            sql = buildCrosstabQuery({
+                rowVars: [],
+                multipleColumns,
+                filters: activeFilters,
+                weightVar: dataset?.weightVariable || undefined,
+            });
+        } else {
+            // Standard single variable or nested rows
+            const resolveToCol = (id: string): string => {
+                const varSet = variableSets.find((s: VariableSet) => s.id === id);
+                if (varSet && varSet.variableIds.length > 0) {
+                    return varSet.variableIds[0];
+                }
+                return id;
+            };
+
+            const rows = tableConfig.rowVars.map(resolveToCol);
+            const col = tableConfig.colVar ? resolveToCol(tableConfig.colVar) : null;
+
+            sql = buildCrosstabQuery({
+                rowVars: rows,
+                colVar: col,
+                filters: activeFilters,
+                weightVar: dataset?.weightVariable || undefined,
+            });
+        }
 
         const isWeighted = !!dataset?.weightVariable;
 

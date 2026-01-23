@@ -71,8 +71,8 @@ export const D3Histogram: React.FC<D3HistogramProps> = ({
     thresholds: customThresholds,
     width = 280,
     height = 200,
-    color = 'var(--color-terracotta)',
-    selectedColor = 'var(--color-ink)',
+    color = 'var(--color-charcoal)',
+    selectedColor = 'var(--color-terracotta)',
     onBinsChange,
     onSelectionChange,
     onContextMenu,
@@ -254,7 +254,7 @@ export const D3Histogram: React.FC<D3HistogramProps> = ({
             .style('cursor', 'pointer');
 
         // Bar click handler
-        bars.on('click', function(event: MouseEvent, d: BinData) {
+        bars.on('click', function (event: MouseEvent, d: BinData) {
             event.stopPropagation();
             const index = bins.indexOf(d);
             handleBinClick(index, event);
@@ -309,7 +309,7 @@ export const D3Histogram: React.FC<D3HistogramProps> = ({
 
         // Drag behavior
         const dragBehavior = drag<SVGGElement, number>()
-            .on('drag', function(event, d) {
+            .on('drag', function (event, d) {
                 const index = thresholds.indexOf(d);
                 const newValue = xScale.invert(event.x);
                 handleThresholdDrag(index, newValue);
@@ -318,12 +318,12 @@ export const D3Histogram: React.FC<D3HistogramProps> = ({
         handles.call(dragBehavior);
 
         // Context menu handler
-        svg.on('contextmenu', function(event: MouseEvent) {
+        svg.on('contextmenu', function (event: MouseEvent) {
             handleContextMenu(event);
         });
 
         // Click outside to clear selection
-        svg.on('click', function(event: MouseEvent) {
+        svg.on('click', function (event: MouseEvent) {
             if (event.target === svgRef.current) {
                 updateSelection(new Set());
             }

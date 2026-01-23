@@ -11,30 +11,136 @@ import type { Filter } from '../types';
 // Crosstab / Frequency Queries
 // ============================================================================
 
+/**
+ * Builds a query for grid structure (unpivots multiple columns with shared scale)
+ */
+interface GridQueryOptions {
+    columns: string[];
+    filters?: Filter[];
+    weightVar?: string;
+    colVar?: string | null;
+}
+
+function buildGridQuery(options: GridQueryOptions): string {
+    const { columns, filters, weightVar, colVar } = options;
+
+    const whereClause = buildFilterClause(filters);
+    const countExpr = weightVar
+        ? `SUM("${escapeIdentifier(weightVar)}")::DOUBLE`
+        : `COUNT(*)::INTEGER`;
+
+    // Build UNION ALL query for each column
+    const unionParts = columns.map(col => {
+        const parts = [
+            `SELECT '${escapeString(col)}' as colKey, "${escapeIdentifier(col)}" as rowKey_0, ${countExpr} as count`,
+            `FROM main`,
+        ];
+
+        const conditions: string[] = [];
+        // Filter out NULL values for this column
+        conditions.push(`"${escapeIdentifier(col)}" IS NOT NULL`);
+        if (whereClause) {
+            conditions.push(whereClause);
+        }
+
+        if (conditions.length > 0) {
+            parts.push(`WHERE ${conditions.join(' AND ')}`);
+        }
+
+        parts.push(`GROUP BY "${escapeIdentifier(col)}"`);
+
+        return parts.join(' ');
+    });
+
+    return unionParts.join(' UNION ALL ');
+}
+
+/**
+ * Builds a query for multiple structure (shows only counted value for each variable)
+ */
+interface MultipleQueryOptions {
+    columns: Array<{ column: string; countedValue: number }>;
+    filters?: Filter[];
+    weightVar?: string;
+    colVar?: string | null;
+}
+
+function buildMultipleQuery(options: MultipleQueryOptions): string {
+    const { columns, filters, weightVar, colVar } = options;
+
+    const whereClause = buildFilterClause(filters);
+    const countExpr = weightVar
+        ? `SUM("${escapeIdentifier(weightVar)}")::DOUBLE`
+        : `COUNT(*)::INTEGER`;
+
+    // Build UNION ALL query for each column, filtering by countedValue
+    const unionParts = columns.map(({ column, countedValue }) => {
+        const parts = [
+            `SELECT '${escapeString(column)}' as rowKey_0, 'Total' as colKey, ${countExpr} as count`,
+            `FROM main`,
+        ];
+
+        const conditions: string[] = [];
+        // Filter for counted value only
+        conditions.push(`"${escapeIdentifier(column)}" = ${countedValue}`);
+        if (whereClause) {
+            conditions.push(whereClause);
+        }
+
+        parts.push(`WHERE ${conditions.join(' AND ')}`);
+
+        return parts.join(' ');
+    });
+
+    return unionParts.join(' UNION ALL ');
+}
+
 export interface CrosstabQueryOptions {
     rowVars: string[];
     colVar?: string | null;
     filters?: Filter[];
     weightVar?: string;
+    /** For grid structure: array of column names to unpivot */
+    gridColumns?: string[];
+    /** For multiple structure: column names and their counted value */
+    multipleColumns?: Array<{ column: string; countedValue: number }>;
 }
 
 /**
  * Builds a crosstab or frequency SQL query.
- * 
+ *
  * @example Frequency (single row var, no col):
  * buildCrosstabQuery({ rowVars: ['Q1'] })
  * // SELECT "Q1" as rowKey_0, 'Total' as colKey, COUNT(*)::INTEGER as count FROM main GROUP BY "Q1"
- * 
+ *
  * @example Crosstab (row + col):
  * buildCrosstabQuery({ rowVars: ['Gender'], colVar: 'Region' })
  * // SELECT "Gender" as rowKey_0, "Region" as colKey, COUNT(*)::INTEGER as count FROM main GROUP BY "Gender", "Region"
- * 
+ *
  * @example Nested rows:
  * buildCrosstabQuery({ rowVars: ['Region', 'City'], colVar: 'Gender' })
  * // SELECT "Region" as rowKey_0, "City" as rowKey_1, "Gender" as colKey, COUNT(*)::INTEGER as count FROM main GROUP BY "Region", "City", "Gender"
+ *
+ * @example Grid structure (unpivot multiple columns):
+ * buildCrosstabQuery({ rowVars: [], gridColumns: ['impact1', 'impact2', 'impact3'] })
+ * // Unpivots columns to show: rows = scale values, columns = variable names
+ *
+ * @example Multiple structure (filter by counted value):
+ * buildCrosstabQuery({ rowVars: [], multipleColumns: [{ column: 'smoke', countedValue: 1 }, { column: 'drink', countedValue: 1 }] })
+ * // Shows only rows where value equals countedValue for each variable
  */
 export function buildCrosstabQuery(options: CrosstabQueryOptions): string {
-    const { rowVars, colVar, filters, weightVar } = options;
+    const { rowVars, colVar, filters, weightVar, gridColumns, multipleColumns } = options;
+
+    // Special case: Grid structure (unpivot multiple columns)
+    if (gridColumns && gridColumns.length > 0) {
+        return buildGridQuery({ columns: gridColumns, filters, weightVar, colVar });
+    }
+
+    // Special case: Multiple structure (filtered by counted value)
+    if (multipleColumns && multipleColumns.length > 0) {
+        return buildMultipleQuery({ columns: multipleColumns, filters, weightVar, colVar });
+    }
 
     if (rowVars.length === 0) {
         throw new Error('At least one row variable is required');

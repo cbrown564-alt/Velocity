@@ -59,8 +59,8 @@ export const D3BarChart: React.FC<D3BarChartProps> = ({
     width = 280,
     height = 200,
     orientation = 'horizontal',
-    color = 'var(--color-terracotta)',
-    selectedColor = 'var(--color-ink)',
+    color = 'var(--color-charcoal)',
+    selectedColor = 'var(--color-terracotta)',
     onSelectionChange,
     onContextMenu,
     className,
@@ -208,13 +208,13 @@ export const D3BarChart: React.FC<D3BarChartProps> = ({
             .text(d => d.value);
 
         // Click handler
-        bars.on('click', function(event: MouseEvent, d: BarDatum) {
+        bars.on('click', function (event: MouseEvent, d: BarDatum) {
             event.stopPropagation();
             handleBarClick(d, event);
         });
 
         // Context menu handler
-        svg.on('contextmenu', function(event: MouseEvent) {
+        svg.on('contextmenu', function (event: MouseEvent) {
             handleContextMenu(event);
         });
 
@@ -261,7 +261,7 @@ export const D3BarChart: React.FC<D3BarChartProps> = ({
             .attr('stroke', 'var(--color-terracotta)');
 
         // Click outside to clear selection
-        svg.on('click', function(event: MouseEvent) {
+        svg.on('click', function (event: MouseEvent) {
             if (event.target === svgRef.current) {
                 updateSelection(new Set());
             }

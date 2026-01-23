@@ -48,9 +48,9 @@ export const SortableVariableCard: React.FC<SortableVariableCardProps> = ({
     };
 
     const typeColors = {
-        nominal: 'bg-rose-50 border-rose-200 text-rose-700',
-        ordinal: 'bg-amber-50 border-amber-200 text-amber-700',
-        scale: 'bg-blue-50 border-blue-200 text-blue-700',
+        nominal: 'bg-[#fcece9] border-[#edbaac] text-terracotta',
+        ordinal: 'bg-[#f3f6f5] border-[#cbdad6] text-info',
+        scale: 'bg-[#f5f5f4] border-[#d8d7d6] text-charcoal',
     };
 
     const typeIcons = {
@@ -76,25 +76,25 @@ export const SortableVariableCard: React.FC<SortableVariableCardProps> = ({
             style={style}
             onClick={handleClick}
             className={`
-                relative p-4 rounded-lg border-2 cursor-pointer group
-                transition-all duration-150
+                relative p-4 rounded-md border cursor-pointer group
+                transition-all duration-150 bg-[#FDFCFA]
                 ${typeColor}
                 ${isSelected
-                    ? 'ring-2 ring-indigo-500 ring-offset-2 border-indigo-400'
-                    : 'hover:shadow-md hover:border-indigo-300'
+                    ? 'ring-2 ring-terracotta ring-offset-2 border-terracotta'
+                    : 'hover:shadow-float hover:border-terracotta/30'
                 }
-                ${isDragging ? 'z-50 shadow-xl' : ''}
-                ${hidden ? 'grayscale' : ''}
+                ${isDragging ? 'z-50 shadow-drag scale-105' : ''}
+                ${hidden ? 'opacity-50 grayscale' : ''}
             `}
         >
             {/* Selection Checkbox */}
             <div
                 className={`
-                    absolute -top-2 -left-2 w-5 h-5 rounded-full border-2 
-                    flex items-center justify-center transition-all
+                    absolute -top-2 -left-2 w-5 h-5 rounded-full border 
+                    flex items-center justify-center transition-all shadow-sm
                     ${isSelected
-                        ? 'bg-indigo-600 border-indigo-600 text-white scale-100'
-                        : 'bg-white border-gray-300 scale-0 group-hover:scale-100'
+                        ? 'bg-terracotta border-terracotta text-white scale-100'
+                        : 'bg-paper border-gray-300 scale-0 group-hover:scale-100'
                     }
                 `}
             >
@@ -111,14 +111,14 @@ export const SortableVariableCard: React.FC<SortableVariableCardProps> = ({
             </div>
 
             {/* Type Badge */}
-            <div className="flex items-center gap-1 text-xs font-medium uppercase tracking-wider opacity-60 mb-1">
+            <div className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider opacity-80 mb-1.5 font-body">
                 <TypeIcon size={12} />
                 {type || 'unknown'}
             </div>
 
             {/* Variable Name */}
             <div
-                className="font-medium text-sm truncate pr-4"
+                className="font-medium text-sm truncate pr-4 text-ink font-body"
                 title={name}
             >
                 {name}
@@ -126,14 +126,14 @@ export const SortableVariableCard: React.FC<SortableVariableCardProps> = ({
 
             {/* Structure Badge */}
             {structure !== 'single' && (
-                <div className="text-xs mt-2 opacity-60">
+                <div className="text-[10px] mt-2 text-gray-500 font-mono bg-white/50 inline-block px-1 rounded">
                     {structure === 'multi' ? 'Multiple response' : 'Grid'}
                 </div>
             )}
 
             {/* Hidden Indicator */}
             {hidden && (
-                <div className="absolute bottom-2 right-2 text-[10px] font-medium text-gray-400 uppercase">
+                <div className="absolute bottom-2 right-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
                     Hidden
                 </div>
             )}

@@ -86,7 +86,7 @@ export const VariableManager: React.FC<VariableManagerProps> = ({ onClose }) => 
                 // Numeric includes: scale (continuous), date (temporal)
                 const isNumeric = ['scale', 'date'].includes(vs.type || '');
                 return (facetFilters.types.includes('categorical') && isCategorical) ||
-                       (facetFilters.types.includes('numeric') && isNumeric);
+                    (facetFilters.types.includes('numeric') && isNumeric);
             });
         }
 
@@ -111,7 +111,7 @@ export const VariableManager: React.FC<VariableManagerProps> = ({ onClose }) => 
                         : 0;
                     const isComplete = missingPercent === 0;
                     return (facetFilters.qualities.includes('complete') && isComplete) ||
-                           (facetFilters.qualities.includes('incomplete') && !isComplete);
+                        (facetFilters.qualities.includes('incomplete') && !isComplete);
                 }
                 return true;
             });
@@ -182,103 +182,49 @@ export const VariableManager: React.FC<VariableManagerProps> = ({ onClose }) => 
             collisionDetection={closestCenter}
             onDragEnd={handleDragEnd}
         >
-            <div style={{
-                height: '100%',
-                backgroundColor: 'var(--color-paper)',
-                display: 'flex',
-                flexDirection: 'column',
-            }}>
+            <div className="h-full bg-paper flex flex-col">
                 {/* Header */}
-                <header style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    padding: 'var(--space-4) var(--space-6)',
-                    borderBottom: '1px solid var(--gray-200)',
-                    backgroundColor: 'var(--gray-50)',
-                }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-4)' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
-                            <Grid3X3 style={{ width: 20, height: 20, color: 'var(--color-terracotta)' }} />
-                            <h1 style={{
-                                fontFamily: 'var(--font-display)',
-                                fontSize: 'var(--text-lg)',
-                                fontWeight: 600,
-                                color: 'var(--color-ink)',
-                                margin: 0,
-                            }}>
+                <header className="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-gray-50">
+                    <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-2">
+                            <Grid3X3 className="w-5 h-5 text-terracotta" />
+                            <h1 className="font-display text-lg font-semibold text-ink m-0">
                                 Variable Manager
                             </h1>
                         </div>
 
                         {/* Quick Stats */}
-                        <div style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 'var(--space-3)',
-                            fontSize: 'var(--text-xs)',
-                            color: 'var(--gray-500)',
-                            marginLeft: 'var(--space-4)',
-                        }}>
-                            <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                                <Tag size={12} style={{ color: 'var(--color-terracotta)' }} />
+                        <div className="flex items-center gap-3 text-xs text-gray-500 ml-4">
+                            <span className="flex items-center gap-1">
+                                <Tag size={12} className="text-terracotta" />
                                 {typeStats.nominal} Categorical
                             </span>
-                            <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                                <BarChart2 size={12} style={{ color: 'var(--color-info)' }} />
+                            <span className="flex items-center gap-1">
+                                <BarChart2 size={12} className="text-info" />
                                 {typeStats.scale} Numeric
                             </span>
-                            <span style={{ color: 'var(--gray-300)' }}>|</span>
+                            <span className="text-gray-300">|</span>
                             <span>{variableSets.length} total</span>
                         </div>
                     </div>
 
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-4)' }}>
+                    <div className="flex items-center gap-4">
                         {/* Search */}
-                        <div style={{ position: 'relative', width: 240 }}>
-                            <Search style={{
-                                position: 'absolute',
-                                left: 10,
-                                top: '50%',
-                                transform: 'translateY(-50%)',
-                                width: 14,
-                                height: 14,
-                                color: 'var(--gray-400)',
-                            }} />
+                        <div className="relative w-60">
+                            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
                             <input
                                 type="text"
                                 placeholder="Search variables..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                style={{
-                                    width: '100%',
-                                    padding: '6px 12px 6px 32px',
-                                    backgroundColor: 'var(--gray-100)',
-                                    border: '1px solid var(--gray-200)',
-                                    borderRadius: 'var(--border-radius-sm)',
-                                    fontSize: 'var(--text-sm)',
-                                    fontFamily: 'var(--font-body)',
-                                    outline: 'none',
-                                }}
+                                className="w-full pl-8 pr-3 py-1.5 bg-transparent border-b border-gray-300 text-sm font-body outline-none focus:border-terracotta focus:border-b-2 transition-all placeholder:text-gray-400"
                             />
                         </div>
 
                         {/* Close Button */}
                         <button
                             onClick={onClose}
-                            style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                width: 32,
-                                height: 32,
-                                padding: 0,
-                                border: 'none',
-                                borderRadius: 'var(--border-radius-sm)',
-                                backgroundColor: 'transparent',
-                                color: 'var(--gray-400)',
-                                cursor: 'pointer',
-                            }}
+                            className="flex items-center justify-center w-8 h-8 p-0 border-none rounded-sm bg-transparent text-gray-400 cursor-pointer hover:bg-gray-200 hover:text-gray-600 transition-colors"
                         >
                             <X size={20} />
                         </button>
@@ -307,31 +253,13 @@ export const VariableManager: React.FC<VariableManagerProps> = ({ onClose }) => 
                 </div>
 
                 {/* Footer */}
-                <footer style={{
-                    padding: 'var(--space-3) var(--space-6)',
-                    borderTop: '1px solid var(--gray-200)',
-                    backgroundColor: 'var(--gray-50)',
-                    fontSize: 'var(--text-xs)',
-                    color: 'var(--gray-500)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                }}>
+                <footer className="px-6 py-3 border-t border-gray-200 bg-gray-50 text-xs text-gray-500 flex items-center justify-between">
                     <span>
                         {dataset?.name} • {dataset?.rowCount.toLocaleString()} rows
                     </span>
-                    <span style={{ color: 'var(--gray-400)' }}>
-                        <kbd style={{
-                            padding: '2px 6px',
-                            backgroundColor: 'var(--gray-200)',
-                            borderRadius: 3,
-                        }}>⌘A</kbd> Select all •
-                        <kbd style={{
-                            padding: '2px 6px',
-                            backgroundColor: 'var(--gray-200)',
-                            borderRadius: 3,
-                            marginLeft: 4,
-                        }}>Esc</kbd> Close
+                    <span className="text-gray-400">
+                        <kbd className="px-1.5 py-0.5 bg-gray-200 rounded text-[10px] font-mono mr-1">⌘A</kbd> Select all •
+                        <kbd className="px-1.5 py-0.5 bg-gray-200 rounded text-[10px] font-mono mx-1">Esc</kbd> Close
                     </span>
                 </footer>
 
