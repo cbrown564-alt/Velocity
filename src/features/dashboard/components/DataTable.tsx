@@ -81,7 +81,18 @@ export const DataTable: React.FC<DataTableProps> = ({
       grandTotal += effectiveCount;
     });
 
-    // 3. Build Tree (Recursive Aggregation) 
+    // 3. Resolve Column Labels
+    const colLabels: Record<string, string> = {};
+    colKeys.forEach(key => {
+      let label = key;
+      if (colVariable && colVariable.valueLabels) {
+        const found = colVariable.valueLabels.find(vl => String(vl.value) === String(key));
+        if (found) label = found.label;
+      }
+      colLabels[key] = label;
+    });
+
+    // 4. Build Tree (Recursive Aggregation) 
     // We need to group by level 0, then level 1...
 
     const buildTree = (
@@ -169,6 +180,7 @@ export const DataTable: React.FC<DataTableProps> = ({
 
     return {
       colKeys,
+      colLabels,
       rows,
       colTotals,
       grandTotal
@@ -267,7 +279,7 @@ export const DataTable: React.FC<DataTableProps> = ({
                 {tableData.colKeys.map((col, idx) => (
                   <th key={col} className="px-4 py-3 font-bold text-[var(--color-charcoal)] text-right w-32 align-bottom">
                     <div className="flex flex-col gap-1 items-end">
-                      <span>{col}</span>
+                      <span>{tableData.colLabels[col]}</span>
                       {colVariable && (
                         <span className="text-[10px] text-[var(--gray-400)] font-normal border border-[var(--gray-200)] rounded px-1 min-w-[20px] text-center">
                           {getColLetter(idx)}
@@ -322,7 +334,7 @@ export const DataTable: React.FC<DataTableProps> = ({
             {tableData.colKeys.map((col, idx) => (
               <div key={col} className="flex items-center gap-1.5">
                 <div className={`w-3 h-3 rounded-full ${CHART_COLORS[idx % CHART_COLORS.length]}`}></div>
-                <span className="text-xs font-medium text-[var(--gray-600)] font-body">{col}</span>
+                <span className="text-xs font-medium text-[var(--gray-600)] font-body">{tableData.colLabels[col]}</span>
               </div>
             ))}
           </div>
