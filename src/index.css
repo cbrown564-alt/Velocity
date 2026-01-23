@@ -1,3 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Newsreader:wght@400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 /**
  * Velocity Design System Tokens
  * Based on design_01_system.md - "The Research Desk"
@@ -7,8 +14,6 @@
    1. Typography
    ============================================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Newsreader:wght@400;600&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap');
 
 :root {
   /* Font Families */
@@ -17,29 +22,44 @@
   --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 
   /* Type Scale */
-  --text-xs: 0.75rem;    /* 12px - Table footnotes */
-  --text-sm: 0.875rem;   /* 14px - Table cells */
-  --text-base: 1rem;     /* 16px - Body text */
-  --text-lg: 1.125rem;   /* 18px - Subheadings */
-  --text-xl: 1.5rem;     /* 24px - Section headers */
-  --text-2xl: 2rem;      /* 32px - Page titles */
+  --text-xs: 0.75rem;
+  /* 12px - Table footnotes */
+  --text-sm: 0.875rem;
+  /* 14px - Table cells */
+  --text-base: 1rem;
+  /* 16px - Body text */
+  --text-lg: 1.125rem;
+  /* 18px - Subheadings */
+  --text-xl: 1.5rem;
+  /* 24px - Section headers */
+  --text-2xl: 2rem;
+  /* 32px - Page titles */
 
   /* ============================================================================
      2. Colors: "Ink & Paper" Palette
      ============================================================================ */
 
   /* Primary Palette */
-  --color-ink: #1C1C1C;           /* Rich black - Primary text */
-  --color-paper: #F5F3EF;         /* Warm off-white - Background */
-  --color-terracotta: #E07A5F;    /* Accent - Sig markers, CTAs */
-  --color-charcoal: #3D3835;      /* Dark gray - Secondary text */
-  --color-parchment: #FDFCFA;     /* Lighter warm white - Cards */
+  --color-ink: #1C1C1C;
+  /* Rich black - Primary text */
+  --color-paper: #F5F3EF;
+  /* Warm off-white - Background */
+  --color-terracotta: #E07A5F;
+  /* Accent - Sig markers, CTAs */
+  --color-charcoal: #3D3835;
+  /* Dark gray - Secondary text */
+  --color-parchment: #FDFCFA;
+  /* Lighter warm white - Cards */
 
   /* Functional Colors */
-  --color-success: #52796F;       /* Muted teal */
-  --color-warning: #F4A261;       /* Warm amber */
-  --color-error: #C1666B;         /* Muted red */
-  --color-info: #84A59D;          /* Sage green */
+  --color-success: #52796F;
+  /* Muted teal */
+  --color-warning: #F4A261;
+  /* Warm amber */
+  --color-error: #C1666B;
+  /* Muted red */
+  --color-info: #84A59D;
+  /* Sage green */
 
   /* Neutrals (Warm Grays) */
   --gray-50: #FAFAF9;
@@ -57,14 +77,22 @@
      3. Spacing (8px base)
      ============================================================================ */
 
-  --space-1: 0.25rem;  /* 4px */
-  --space-2: 0.5rem;   /* 8px */
-  --space-3: 0.75rem;  /* 12px */
-  --space-4: 1rem;     /* 16px */
-  --space-6: 1.5rem;   /* 24px */
-  --space-8: 2rem;     /* 32px */
-  --space-12: 3rem;    /* 48px */
-  --space-16: 4rem;    /* 64px */
+  --space-1: 0.25rem;
+  /* 4px */
+  --space-2: 0.5rem;
+  /* 8px */
+  --space-3: 0.75rem;
+  /* 12px */
+  --space-4: 1rem;
+  /* 16px */
+  --space-6: 1.5rem;
+  /* 24px */
+  --space-8: 2rem;
+  /* 32px */
+  --space-12: 3rem;
+  /* 48px */
+  --space-16: 4rem;
+  /* 64px */
 
   /* ============================================================================
      4. Borders & Corners
@@ -72,9 +100,12 @@
 
   --border-width: 1px;
   --border-color: var(--gray-200);
-  --border-radius-sm: 4px;   /* Buttons, inputs */
-  --border-radius-md: 8px;   /* Cards, modals */
-  --border-radius-lg: 12px;  /* Large panels */
+  --border-radius-sm: 4px;
+  /* Buttons, inputs */
+  --border-radius-md: 8px;
+  /* Cards, modals */
+  --border-radius-lg: 12px;
+  /* Large panels */
 
   /* ============================================================================
      5. Shadows
@@ -93,8 +124,10 @@
      6. Motion & Interaction
      ============================================================================ */
 
-  --ease-standard: cubic-bezier(0.4, 0.0, 0.2, 1);  /* Material standard */
-  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1); /* Elastic snap */
+  --ease-standard: cubic-bezier(0.4, 0.0, 0.2, 1);
+  /* Material standard */
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  /* Elastic snap */
 
   --transition-fast: 150ms var(--ease-standard);
   --transition-base: 250ms var(--ease-standard);
@@ -115,7 +148,9 @@ body {
 }
 
 /* Display headings use Newsreader */
-h1, h2, h3 {
+h1,
+h2,
+h3 {
   font-family: var(--font-display);
   font-weight: 600;
   color: var(--color-ink);
@@ -165,6 +200,7 @@ h1, h2, h3 {
     opacity: 0;
     transform: translateY(8px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -172,9 +208,12 @@ h1, h2, h3 {
 }
 
 @keyframes pulse {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 1;
   }
+
   50% {
     opacity: 0.5;
   }
