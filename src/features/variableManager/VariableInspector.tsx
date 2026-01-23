@@ -11,7 +11,7 @@ import { Tag, Hash, BarChart2, Info, AlertTriangle, CheckCircle } from 'lucide-r
 import { useVelocityStore } from '../../store';
 import type { Variable } from '../../store/slices/dataSlice';
 import type { VariableStatsResult } from '../../services/analysisWorker';
-import { D3BarChart, BarDatum, SelectionEvent, D3Histogram } from '../../components/charts';
+import { D3BarChart, BarDatum, SelectionEvent, D3Histogram, BinData, BinSelectionEvent } from '../../components/charts';
 import { InputModal } from '../../components/overlays/InputModal';
 import styles from './VariableInspector.module.css';
 
@@ -86,7 +86,19 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
     // State for group name input modal
     const [showGroupNameModal, setShowGroupNameModal] = useState(false);
     const [pendingGroupSelection, setPendingGroupSelection] = useState<BarDatum[]>([]);
+    const [pendingBinSelection, setPendingBinSelection] = useState<BinData[]>([]);
     const [isCreatingRecode, setIsCreatingRecode] = useState(false);
+
+    // State for histogram context menu
+    const [histogramContextMenu, setHistogramContextMenu] = useState<{
+        isOpen: boolean;
+        position: { x: number; y: number };
+        selected: BinData[];
+    }>({
+        isOpen: false,
+        position: { x: 0, y: 0 },
+        selected: [],
+    });
 
     // Get the selected variable
     const variable = useMemo((): Variable | null => {
@@ -168,56 +180,114 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
 
     // Handle group name submission - create the recode
     const handleGroupNameSubmit = useCallback(async (groupName: string) => {
-        if (!variable || pendingGroupSelection.length === 0) return;
+        if (!variable) return;
+
+        // Check if this is a binning recode (from histogram) or categorical (from bar chart)
+        const isBinning = pendingBinSelection.length > 0;
+
+        if (!isBinning && pendingGroupSelection.length === 0) return;
 
         setIsCreatingRecode(true);
         try {
-            // Get all unique values for the variable to create complete mappings
-            const allValues = await getUniqueValues(variable.id);
+            if (isBinning) {
+                // Create binning recode from histogram bins
+                // Sort bins by x0 to ensure proper ordering
+                const sortedBins = [...pendingBinSelection].sort((a, b) => a.x0 - b.x0);
+                const minVal = sortedBins[0].x0;
+                const maxVal = sortedBins[sortedBins.length - 1].x1;
 
-            // Create mappings: selected values -> groupName, others -> keep original
-            const mappings: Record<string, string> = {};
-            const selectedCodes = new Set(pendingGroupSelection.map(d => String(d.code)));
+                const rules = [{
+                    min: minVal,
+                    max: maxVal,
+                    label: groupName,
+                }];
 
-            for (const val of allValues) {
-                if (selectedCodes.has(String(val))) {
-                    mappings[val] = groupName;
-                } else {
-                    mappings[val] = val;
+                const newVarName = `${variable.name}_binned`;
+                await recodeVariable(variable.id, newVarName, {
+                    mode: 'binning',
+                    rules,
+                });
+
+                console.log('[VariableInspector] Created binning recode:', {
+                    source: variable.name,
+                    newVar: newVarName,
+                    groupName,
+                    range: `${minVal} - ${maxVal}`,
+                });
+
+                setPendingBinSelection([]);
+            } else {
+                // Categorical recode from bar chart
+                const allValues = await getUniqueValues(variable.id);
+
+                const mappings: Record<string, string> = {};
+                const selectedCodes = new Set(pendingGroupSelection.map(d => String(d.code)));
+
+                for (const val of allValues) {
+                    if (selectedCodes.has(String(val))) {
+                        mappings[val] = groupName;
+                    } else {
+                        mappings[val] = val;
+                    }
                 }
+
+                const newVarName = `${variable.name}_grouped`;
+                await recodeVariable(variable.id, newVarName, {
+                    mode: 'categorical',
+                    mappings,
+                });
+
+                console.log('[VariableInspector] Created categorical recode:', {
+                    source: variable.name,
+                    newVar: newVarName,
+                    groupName,
+                    groupedValues: pendingGroupSelection.map(d => d.label),
+                });
+
+                setPendingGroupSelection([]);
             }
-
-            // Create the recoded variable
-            const newVarName = `${variable.name}_grouped`;
-            await recodeVariable(variable.id, newVarName, {
-                mode: 'categorical',
-                mappings,
-            });
-
-            console.log('[VariableInspector] Created recode:', {
-                source: variable.name,
-                newVar: newVarName,
-                groupName,
-                groupedValues: pendingGroupSelection.map(d => d.label),
-            });
-
-            // Clear selection state
-            setPendingGroupSelection([]);
         } catch (error) {
             console.error('[VariableInspector] Failed to create recode:', error);
         } finally {
             setIsCreatingRecode(false);
         }
-    }, [variable, pendingGroupSelection, getUniqueValues, recodeVariable]);
+    }, [variable, pendingGroupSelection, pendingBinSelection, getUniqueValues, recodeVariable]);
 
-    // Close context menu on click outside
+    // Handle histogram context menu
+    const handleHistogramContextMenu = useCallback((event: BinSelectionEvent) => {
+        if (event.bins.length === 0) return;
+        setHistogramContextMenu({
+            isOpen: true,
+            position: event.position,
+            selected: event.bins,
+        });
+    }, []);
+
+    // Close histogram context menu
+    const closeHistogramContextMenu = useCallback(() => {
+        setHistogramContextMenu(prev => ({ ...prev, isOpen: false }));
+    }, []);
+
+    // Handle histogram group action
+    const handleHistogramCreateGroup = useCallback(() => {
+        if (histogramContextMenu.selected.length > 0 && variable) {
+            setPendingBinSelection([...histogramContextMenu.selected]);
+            setShowGroupNameModal(true);
+        }
+        closeHistogramContextMenu();
+    }, [histogramContextMenu.selected, variable, closeHistogramContextMenu]);
+
+    // Close context menus on click outside
     useEffect(() => {
-        if (contextMenu.isOpen) {
-            const handleClick = () => closeContextMenu();
+        if (contextMenu.isOpen || histogramContextMenu.isOpen) {
+            const handleClick = () => {
+                closeContextMenu();
+                closeHistogramContextMenu();
+            };
             document.addEventListener('click', handleClick);
             return () => document.removeEventListener('click', handleClick);
         }
-    }, [contextMenu.isOpen, closeContextMenu]);
+    }, [contextMenu.isOpen, histogramContextMenu.isOpen, closeContextMenu, closeHistogramContextMenu]);
 
     // If no variable selected, show empty state
     if (!variable) {
@@ -456,13 +526,14 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
                                 fontWeight: 400,
                                 marginLeft: 'var(--space-2)',
                             }}>
-                                (drag boundaries to adjust bins)
+                                (click bins, right-click to group)
                             </span>
                         </h3>
                         <D3Histogram
                             precomputedBins={numericStats.histogramBins}
                             width={280}
                             height={180}
+                            onContextMenu={handleHistogramContextMenu}
                         />
                     </div>
                 ) : chartData.length > 0 && (
@@ -542,12 +613,53 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
                 </div>
             )}
 
+            {/* Histogram Context Menu */}
+            {histogramContextMenu.isOpen && histogramContextMenu.selected.length > 0 && (
+                <div
+                    className={styles.contextMenu}
+                    style={{
+                        position: 'fixed',
+                        top: histogramContextMenu.position.y,
+                        left: histogramContextMenu.position.x,
+                        zIndex: 1000,
+                    }}
+                    onClick={(e) => e.stopPropagation()}
+                >
+                    <div className={styles.contextMenuHeader}>
+                        {histogramContextMenu.selected.length === 1
+                            ? `${histogramContextMenu.selected[0].x0.toFixed(1)} – ${histogramContextMenu.selected[0].x1.toFixed(1)}`
+                            : `${histogramContextMenu.selected.length} bins selected`
+                        }
+                    </div>
+                    {histogramContextMenu.selected.length > 1 && (
+                        <div style={{
+                            padding: 'var(--space-2) var(--space-3)',
+                            fontSize: 'var(--text-xs)',
+                            color: 'var(--gray-500)',
+                            borderBottom: '1px solid var(--gray-200)',
+                        }}>
+                            Range: {Math.min(...histogramContextMenu.selected.map(b => b.x0)).toFixed(1)} – {Math.max(...histogramContextMenu.selected.map(b => b.x1)).toFixed(1)}
+                        </div>
+                    )}
+                    <button
+                        className={styles.contextMenuItem}
+                        onClick={handleHistogramCreateGroup}
+                    >
+                        {histogramContextMenu.selected.length > 1
+                            ? 'Group this range'
+                            : 'Create group from this bin'
+                        }
+                    </button>
+                </div>
+            )}
+
             {/* Group Name Input Modal */}
             <InputModal
                 isOpen={showGroupNameModal}
                 onClose={() => {
                     setShowGroupNameModal(false);
                     setPendingGroupSelection([]);
+                    setPendingBinSelection([]);
                 }}
                 onSubmit={handleGroupNameSubmit}
                 title="Name this group"
