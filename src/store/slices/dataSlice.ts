@@ -563,19 +563,25 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
         const { worker, variableStats, variableStatsLoading, dataset } = get();
         if (!worker) return null;
 
-        // Return cached result if available
-        if (variableStats[variableId]) {
-            return variableStats[variableId];
+        // Look up the variable type from the dataset
+        const variable = dataset?.variables.find(v => v.id === variableId);
+        const variableType = variable?.type;
+
+        // Check if we have cached stats
+        const cachedStats = variableStats[variableId];
+        if (cachedStats) {
+            // For scale variables, ensure we have numeric stats (may need re-fetch if cached before feature was added)
+            const needsNumericStats = variableType === 'scale' && !cachedStats.numeric;
+            if (!needsNumericStats) {
+                return cachedStats;
+            }
+            // Fall through to re-fetch with numeric stats
         }
 
         // Don't request if already loading
         if (variableStatsLoading[variableId]) {
             return null;
         }
-
-        // Look up the variable type from the dataset
-        const variable = dataset?.variables.find(v => v.id === variableId);
-        const variableType = variable?.type;
 
         // Mark as loading
         set((state) => ({

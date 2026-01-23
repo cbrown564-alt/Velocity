@@ -93,15 +93,15 @@
 - [x] **Rich Variable Cards:** Sparklines (Mini-histograms) and Quality Indicators (Missingness %) [ref](research_08_UX_patterns_for_surveys.md#L177).
 - [x] **Context Awareness:** Bi-directional focus (Selecting variable in Analysis opens it in Manager) [ref](research_08_UX_patterns_for_surveys.md#L131).
 - [x] **Faceted Search:** Filter variable list by Type, Status, and Quality [ref](research_08_UX_patterns_for_surveys.md#L168).
-- [ ] **Visual Recoding** (Interactive Histogram Bucketing).
-- [ ] **Visual ETL (Charts):** Click-to-filter and Click-to-exclude context menus [ref](research_08_UX_patterns_for_surveys.md#L252).
+- [x] **Visual Recoding** (Interactive Histogram Bucketing).
+- [x] **Visual ETL (Charts):** Click-to-filter and Click-to-exclude context menus [ref](research_08_UX_patterns_for_surveys.md#L252).
 - [ ] **Lasso Selection:** Spatial grouping/recoding on scatterplots [ref](research_08_UX_patterns_for_surveys.md#L353).
 - [ ] **Semantic Variable Sets** (Grids represented as Card Clusters).
 - [ ] **Verify Multi-Response Interaction:** Ensure `VariableSet` works for multiple response data.
 
 ### Milestone 2.3: Statistical Foundation
 *Goal: "Contextually Relevant Statistics" (Beyond simple counts)*
-- [ ] **Numeric Summaries:** Mean, Median, StdDev, Min/Max for Scale variables.
+- [x] **Numeric Summaries:** Mean, Median, StdDev, Min/Max for Scale variables.
 - [ ] **Smart Table Stats:** Auto-toggle between Counts (Nominal) and Averages (Scale).
 - [ ] **Significance Testing:** T-Test/Z-Test implementation for table cells.
 
