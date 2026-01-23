@@ -8,20 +8,25 @@
  */
 
 import React, { useMemo, useEffect, useCallback, useRef } from 'react';
+import { useDraggable } from '@dnd-kit/core';
+import { CSS } from '@dnd-kit/utilities';
 import { Hash, Tag, BarChart2, Grid3X3, Layers, ChevronRight, EyeOff, Type, Calendar } from 'lucide-react';
 import { useVelocityStore } from '../../store';
-import type { VariableSet } from '../../store/slices/dataSlice';
+import type { VariableSet, Dataset } from '../../store/slices/dataSlice';
 import { Sparkline, MissingnessBadge } from './Sparkline';
 import styles from './MillerColumns.module.css';
 
 interface VariableSetItemProps {
     variableSet: VariableSet;
+    dataset: Dataset | null; // Needed for value labels
     isActive: boolean;
     isSelected: boolean;
     onClick: (e: React.MouseEvent) => void;
     onHover: () => void;
     onContextMenu?: (e: React.MouseEvent) => void;
     frequencies?: number[];
+    histogramBins?: any[]; // HistogramBin[] from worker
+    topCategory?: { label: string; percent: number; count: number }; // For Nominal Leaderboard
     missingPercent?: number;
     itemRef?: (el: HTMLDivElement | null) => void;
 }
@@ -52,31 +57,53 @@ const getStructureLabel = (structure: string, count: number) => {
 
 const VariableSetItem: React.FC<VariableSetItemProps> = ({
     variableSet,
+    dataset,
     isActive,
     isSelected,
     onClick,
     onHover,
     onContextMenu,
     frequencies,
+    histogramBins,
+    topCategory,
     missingPercent,
     itemRef,
 }) => {
     const varCount = variableSet.variableIds.length;
     const structureLabel = getStructureLabel(variableSet.structure, varCount);
 
+    const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
+        id: variableSet.id,
+    });
+
+    const style = {
+        transform: CSS.Transform.toString(transform),
+        opacity: isDragging ? 0.5 : 1,
+        zIndex: isDragging ? 1000 : undefined,
+    };
+
+    // Combine the dnd ref with the itemRef passed from parent
+    const setRefs = useCallback((node: HTMLDivElement | null) => {
+        setNodeRef(node);
+        if (itemRef) itemRef(node);
+    }, [setNodeRef, itemRef]);
+
     return (
         <div
-            ref={itemRef}
+            ref={setRefs}
+            style={style}
+            {...listeners}
+            {...attributes}
             data-variable-set-id={variableSet.id}
             onClick={onClick}
             onMouseEnter={onHover}
             onContextMenu={onContextMenu}
             className={`${styles.item} ${isActive ? styles.itemActive : ''}`}
-            style={{
-                backgroundColor: isSelected && !isActive ? 'var(--gray-200)' : undefined,
-            }}
         >
-            <div className={styles.itemContent}>
+            <div
+                className={styles.itemContent}
+                style={{ backgroundColor: isSelected && !isActive ? 'var(--gray-200)' : undefined }}
+            >
                 <span className={styles.itemIcon}>
                     {variableSet.structure === 'grid' ? (
                         <Grid3X3 size={14} />
@@ -102,9 +129,12 @@ const VariableSetItem: React.FC<VariableSetItemProps> = ({
             </div>
             <div className={styles.itemMeta}>
                 {/* Show sparkline for single-variable sets */}
-                {frequencies && frequencies.length > 0 && (
+                {(frequencies || histogramBins || topCategory) && (
                     <Sparkline
+                        type={variableSet.type as any}
                         frequencies={frequencies}
+                        histogramBins={histogramBins}
+                        topCategory={topCategory}
                         width={50}
                         height={14}
                         maxBars={5}
@@ -114,7 +144,7 @@ const VariableSetItem: React.FC<VariableSetItemProps> = ({
                 {missingPercent !== undefined && (
                     <MissingnessBadge
                         missingPercent={missingPercent}
-                        threshold={5}
+                        threshold={1} // Show distinct dot even for small missingness
                     />
                 )}
                 {structureLabel && (
@@ -150,6 +180,45 @@ export const VariableSetColumn: React.FC = () => {
     // Track refs for each item
     const itemRefs = useRef<Map<string, HTMLDivElement>>(new Map());
 
+    // Intersection Observer for auto-loading stats
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        const variableSetId = entry.target.getAttribute('data-variable-set-id');
+                        if (variableSetId) {
+                            const variableSet = variableSets.find(vs => vs.id === variableSetId);
+                            // Only load for single-variable sets
+                            if (variableSet && variableSet.variableIds.length === 1) {
+                                const variableId = variableSet.variableIds[0];
+                                // Check if already loaded or loading to avoid spamming
+                                if (!variableStats[variableId]) {
+                                    getVariableStats(variableId).catch(() => { });
+                                }
+                            }
+                        }
+                    }
+                });
+            },
+            {
+                root: contentRef.current,
+                rootMargin: '50px', // Preload just outside viewport
+                threshold: 0.1,
+            }
+        );
+
+        // Observe all current items
+        const currentRefs = itemRefs.current;
+        currentRefs.forEach((element) => {
+            if (element) observer.observe(element);
+        });
+
+        return () => {
+            observer.disconnect();
+        };
+    }, [variableSets, variableStats, getVariableStats, activeFolderId, searchQuery, facetFilters]); // Re-run when list changes
+
     // Filter variable sets by folder, search, and facets
     const filteredSets = useMemo(() => {
         let sets = variableSets;
@@ -175,7 +244,7 @@ export const VariableSetColumn: React.FC = () => {
                 // Numeric includes: scale (continuous), date (temporal)
                 const isNumeric = ['scale', 'date'].includes(vs.type || '');
                 return (facetFilters.types.includes('categorical') && isCategorical) ||
-                       (facetFilters.types.includes('numeric') && isNumeric);
+                    (facetFilters.types.includes('numeric') && isNumeric);
             });
         }
 
@@ -201,7 +270,7 @@ export const VariableSetColumn: React.FC = () => {
                         : 0;
                     const isComplete = missingPercent === 0;
                     return (facetFilters.qualities.includes('complete') && isComplete) ||
-                           (facetFilters.qualities.includes('incomplete') && !isComplete);
+                        (facetFilters.qualities.includes('incomplete') && !isComplete);
                 }
                 // For multi-variable sets, include by default (no quality filter)
                 return true;
@@ -256,25 +325,55 @@ export const VariableSetColumn: React.FC = () => {
     const getStatsForSet = useCallback((variableSet: VariableSet) => {
         // Only show sparklines for single-variable sets to keep UI clean
         if (variableSet.variableIds.length !== 1) {
-            return { frequencies: undefined, missingPercent: undefined };
+            return { frequencies: undefined, missingPercent: undefined, histogramBins: undefined, topCategory: undefined };
         }
 
         const variableId = variableSet.variableIds[0];
         const stats = variableStats[variableId];
 
         if (!stats) {
-            return { frequencies: undefined, missingPercent: undefined };
+            return { frequencies: undefined, missingPercent: undefined, histogramBins: undefined, topCategory: undefined };
         }
 
         const frequencies = stats.frequencies.map(f => f.count);
+        const histogramBins = stats.numeric?.histogramBins; // Get histogram bins if available
+
         const missingPercent = stats.totalCount > 0
             ? (stats.missingCount / stats.totalCount) * 100
             : 0;
 
-        return { frequencies, missingPercent };
-    }, [variableStats]);
+        // Calculate Top Category for Nominal/Ordinal variables
+        let topCategory: { label: string; percent: number; count: number } | undefined;
 
-    // Lazy-load stats on hover
+        if (variableSet.type === 'nominal' || variableSet.type === 'text') {
+            // Find max frequency item
+            // Note: We need to match back to value label using the original stats data
+            if (stats.frequencies && stats.frequencies.length > 0) {
+                // Sort by count descending
+                const sorted = [...stats.frequencies].sort((a, b) => b.count - a.count);
+                const topItem = sorted[0];
+
+                // Get label from dataset metadata
+                let label = String(topItem.value);
+                if (dataset) {
+                    const variable = dataset.variables.find(v => v.id === variableId);
+                    if (variable?.valueLabels) {
+                        const valueLabel = variable.valueLabels.find(vl => vl.value === topItem.value as any);
+                        if (valueLabel) {
+                            label = valueLabel.label;
+                        }
+                    }
+                }
+
+                const percent = stats.totalCount > 0 ? (topItem.count / stats.totalCount) * 100 : 0;
+                topCategory = { label, percent, count: topItem.count };
+            }
+        }
+
+        return { frequencies, missingPercent, histogramBins, topCategory };
+    }, [variableStats, dataset]); // Added dataset dependency
+
+    // Lazy-load stats on hover (fallback for intersection observer)
     const handleHover = useCallback((variableSet: VariableSet) => {
         // Only fetch for single-variable sets
         if (variableSet.variableIds.length === 1) {
@@ -345,20 +444,23 @@ export const VariableSetColumn: React.FC = () => {
                 </span>
             </div>
 
-            <div className={styles.columnContent}>
+            <div className={styles.columnContent} ref={contentRef}>
                 {filteredSets.length > 0 ? (
                     filteredSets.map(vs => {
-                        const { frequencies, missingPercent } = getStatsForSet(vs);
+                        const { frequencies, missingPercent, histogramBins, topCategory } = getStatsForSet(vs);
                         return (
                             <VariableSetItem
                                 key={vs.id}
                                 variableSet={vs}
+                                dataset={dataset}
                                 isActive={selectedVariableSetId === vs.id}
                                 isSelected={selectedVariableSetIds.includes(vs.id)}
                                 onClick={(e) => handleClick(vs, e)}
                                 onHover={() => handleHover(vs)}
                                 onContextMenu={(e) => handleContextMenu(vs, e)}
                                 frequencies={frequencies}
+                                histogramBins={histogramBins}
+                                topCategory={topCategory}
                                 missingPercent={missingPercent}
                                 itemRef={(el) => {
                                     if (el) {
