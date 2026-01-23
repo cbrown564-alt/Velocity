@@ -154,6 +154,8 @@ export interface AggregatedRow {
   min?: number;
   max?: number;
   validCount?: number;
+  /** Significance marker: 'high' | 'low' compared to total */
+  sig?: 'high' | 'low';
 }
 
 export interface TableConfig {

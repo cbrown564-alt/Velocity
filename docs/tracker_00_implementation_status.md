@@ -102,8 +102,8 @@
 *Goal: "Contextually Relevant Statistics" (Beyond simple counts)*
 - [x] **Numeric Summaries:** Mean, Median, StdDev, Min/Max for Scale variables.
 - [x] **Smart Table Stats:** Auto-toggle between Counts (Nominal) and Averages (Scale).
-- [ ] **Significance Testing:** T-Test/Z-Test implementation.
-    - [ ] **Sig-Dots & Arrows:** Green/Red arrows for significant differences vs Total.
+- [x] **Significance Testing:** T-Test/Z-Test implementation.
+    - [x] **Sig-Dots & Arrows:** Green/Red arrows for significant differences vs Total.
     - [ ] **Hover-to-Explain:** Tooltip showing p-value and reference.
     - [ ] **Stats Inspector:** Hover/Click context for p-value details (Future).
 

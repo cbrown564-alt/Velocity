@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { AggregatedRow, Variable } from '../../../types';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronRight, ChevronDown } from 'lucide-react';
+import { ChevronRight, ChevronDown, ArrowUp, ArrowDown } from 'lucide-react';
 import type { VariableStatsResult } from '../../../services/analysisWorker';
 import { Sparkline } from '../../variableManager/Sparkline';
 
@@ -82,8 +82,16 @@ export const DataTable: React.FC<DataTableProps> = ({
 
     // 1. Extract Column Keys
     let colKeys: string[] = ['Total'];
-    if (colVariable) {
-      colKeys = Array.from(new Set(data.map(d => d.colKey))).sort() as string[];
+
+    // Check if we have implicit columns (from Grid/Multiple unpivot) even if colVariable is null
+    const uniqueDataKeys = Array.from(new Set(data.map(d => d.colKey))).sort() as string[];
+
+    // Use data keys if:
+    // a) We have an explicit column variable
+    // b) We have multiple data keys (implicit columns)
+    // c) We have a single data key that is NOT 'Total' (renamed implicit column)
+    if (colVariable || uniqueDataKeys.length > 1 || (uniqueDataKeys.length === 1 && uniqueDataKeys[0] !== 'Total')) {
+      colKeys = uniqueDataKeys;
     }
 
     // 2. Compute Column Totals (use weighted counts when weighted)
@@ -185,7 +193,7 @@ export const DataTable: React.FC<DataTableProps> = ({
           nodeCells[cKey] = {
             count,
             percent,
-            sig: (colVariable && percent > 25 && Math.random() > 0.8) ? 'A' : undefined,
+            sig: matchingRows[0]?.sig,
             // Pass through metric data
             mean: hasMetric ? metricRow.mean : undefined,
             median: hasMetric ? metricRow.median : undefined,
@@ -315,9 +323,14 @@ export const DataTable: React.FC<DataTableProps> = ({
                     ) : (
                       // FREQUENCY DISPLAY
                       <>
-                        <div className="flex items-baseline gap-0.5">
+                        <div className="flex items-center gap-0.5">
                           <span className="font-bold text-[var(--color-ink)]">{cell.percent.toFixed(1)}%</span>
-                          {cell.sig && <sup className="sig-marker">{cell.sig}</sup>}
+                          {cell.sig === 'high' && (
+                            <ArrowUp size={12} className="text-emerald-500" />
+                          )}
+                          {cell.sig === 'low' && (
+                            <ArrowDown size={12} className="text-rose-500" />
+                          )}
                         </div>
                         <span className="text-[10px] text-[var(--gray-400)] font-mono tracking-tight opacity-0 group-hover:opacity-100 transition-opacity">n={cell.count}</span>
                       </>

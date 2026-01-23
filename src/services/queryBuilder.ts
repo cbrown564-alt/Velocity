@@ -190,14 +190,14 @@ export function buildCrosstabQuery(options: CrosstabQueryOptions): string {
     let groupBy = '';
 
     if (measureVar) {
-        // When aggregating a measure, we only group by the COLUMN variable (if any)
-        // We do NOT group by the measure variable itself
-        if (colVar) {
-            groupBy = `GROUP BY "${escapeIdentifier(colVar)}"`;
-        } else {
-            // Grand summary (no group by needed for scalar aggregates, but effectively implicit)
-            groupBy = '';
-        }
+        // When aggregating a measure, we usually group by row variables + column variable
+        // The previous logic incorrectly cleared grouping for measure variables
+
+        const rowGroups = rowVars.map(r => `"${escapeIdentifier(r)}"`).join(', ');
+        const colGroup = colVar ? `"${escapeIdentifier(colVar)}"` : '';
+
+        const groups = [rowGroups, colGroup].filter(Boolean).join(', ');
+        groupBy = groups ? `GROUP BY ${groups}` : '';
     } else {
         // Standard Crosstab Grouping
         const rowGroups = rowVars.map(r => `"${escapeIdentifier(r)}"`).join(', ');

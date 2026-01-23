@@ -5,7 +5,7 @@
  */
 
 import type { StateCreator } from 'zustand';
-import { buildCrosstabQuery } from '../../services/queryBuilder';
+// buildCrosstabQuery import removed
 import type { WorkerRequest, WorkerResponse, VariableStatsResult } from '../../services/analysisWorker';
 import type { DataSlice, VariableSet } from './dataSlice';
 
@@ -25,19 +25,8 @@ export interface Filter {
     value: number | string | (number | string)[];
 }
 
-export interface AggregatedRow {
-    rowKeys: string[];
-    colKey: string;
-    count: number;
-    weightedCount?: number;
-    // Scale variable stats
-    mean?: number;
-    median?: number;
-    stdDev?: number;
-    min?: number;
-    max?: number;
-    validCount?: number;
-}
+import { AggregatedRow } from '../../types';
+import { CrosstabQueryOptions } from '../../services/queryBuilder';
 
 // ============================================================================
 // Slice State & Actions
@@ -98,63 +87,50 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
         // Check if the first row variable is a grid or multiple structure
         const firstRowVarSet = variableSets.find((s: VariableSet) => s.id === tableConfig.rowVars[0]);
 
-        let sql: string;
+        // Create Variable Type Map for Worker
+        const variableTypes: Record<string, string> = {};
+        dataset?.variables.forEach(v => { variableTypes[v.id] = v.type });
+
+        const options: CrosstabQueryOptions = {
+            rowVars: [],
+            colVar: tableConfig.colVar,
+            filters: activeFilters,
+            weightVar: dataset?.weightVariable
+        };
 
         if (firstRowVarSet?.structure === 'grid') {
-            // Grid structure: unpivot all variables to show scale values as rows, variables as columns
-            // Map variable IDs to their labels
-            const gridColumns = firstRowVarSet.variableIds.map(varId => {
+            // Grid structure
+            options.gridColumns = firstRowVarSet.variableIds.map(varId => {
                 const variable = dataset?.variables.find(v => v.id === varId);
                 return {
                     name: varId,
                     label: variable?.label || varId,
                 };
-            });
-            sql = buildCrosstabQuery({
-                rowVars: [],
-                gridColumns,
-                filters: activeFilters,
-                weightVar: dataset?.weightVariable || undefined,
             });
         } else if (firstRowVarSet?.structure === 'multiple') {
-            // Multiple structure: show only counted value for each variable
-            // Map variable IDs to their labels
-            const multipleColumns = firstRowVarSet.variableIds.map(varId => {
+            // Multiple structure
+            options.multipleColumns = firstRowVarSet.variableIds.map(varId => {
                 const variable = dataset?.variables.find(v => v.id === varId);
                 return {
                     name: varId,
                     label: variable?.label || varId,
-                    countedValue: firstRowVarSet.countedValue ?? 1, // Default to 1 if not specified
+                    countedValue: firstRowVarSet.countedValue ?? 1,
                 };
             });
-            sql = buildCrosstabQuery({
-                rowVars: [],
-                multipleColumns,
-                filters: activeFilters,
-                weightVar: dataset?.weightVariable || undefined,
-            });
         } else if (firstRowVarSet?.type === 'scale') {
-            // Scale Variable: Show Summary Stats instead of frequencies
-            // Get the first variable ID (assuming single variable for now)
+            // Scale Variable
             const measureVarId = firstRowVarSet.variableIds[0];
-
-            // Also fetch the full distribution stats for the Sparkline
             get().fetchVariableStats(measureVarId);
 
             const col = tableConfig.colVar
                 ? (variableSets.find((s: VariableSet) => s.id === tableConfig.colVar)?.variableIds[0] || tableConfig.colVar)
                 : null;
 
-            sql = buildCrosstabQuery({
-                rowVars: [], // No row grouping, we group by Col only
-                colVar: col,
-                filters: activeFilters,
-                weightVar: dataset?.weightVariable || undefined,
-                measureVar: measureVarId,
-                measureLabel: firstRowVarSet.name,
-            });
+            options.measureVar = measureVarId;
+            options.measureLabel = firstRowVarSet.name;
+            options.colVar = col;
         } else {
-            // Standard single variable or nested rows
+            // Standard / Nested
             const resolveToCol = (id: string): string => {
                 const varSet = variableSets.find((s: VariableSet) => s.id === id);
                 if (varSet && varSet.variableIds.length > 0) {
@@ -163,15 +139,8 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
                 return id;
             };
 
-            const rows = tableConfig.rowVars.map(resolveToCol);
-            const col = tableConfig.colVar ? resolveToCol(tableConfig.colVar) : null;
-
-            sql = buildCrosstabQuery({
-                rowVars: rows,
-                colVar: col,
-                filters: activeFilters,
-                weightVar: dataset?.weightVariable || undefined,
-            });
+            options.rowVars = tableConfig.rowVars.map(resolveToCol);
+            options.colVar = tableConfig.colVar ? resolveToCol(tableConfig.colVar) : null;
         }
 
         const isWeighted = !!dataset?.weightVariable;
@@ -191,17 +160,15 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
                         return {
                             rowKeys,
                             colKey: row.colKey,
-                            // Convert to Number to handle potential BigInts from DuckDB
                             count: isWeighted ? 0 : Number(row.count ?? row.validCount ?? 0),
                             weightedCount: isWeighted ? Number(row.count) : undefined,
-
-                            // Map stats if present
                             mean: row.mean,
                             median: row.median,
                             stdDev: row.stdDev,
                             min: row.min,
                             max: row.max,
                             validCount: row.validCount !== undefined ? Number(row.validCount) : undefined,
+                            sig: row.sig, // Signficance flag from worker
                         };
                     });
 
@@ -220,7 +187,7 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
             };
 
             worker.addEventListener('message', handler);
-            worker.postMessage({ type: 'query', sql } as WorkerRequest);
+            worker.postMessage({ type: 'runCrosstab', options, variableTypes } as WorkerRequest);
         });
     },
 
