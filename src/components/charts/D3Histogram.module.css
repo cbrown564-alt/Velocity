@@ -1,0 +1,72 @@
+/**
+ * D3Histogram Styles
+ */
+
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.svg {
+    overflow: visible;
+    font-family: var(--font-body);
+}
+
+.bar {
+    transition: fill 0.1s ease;
+}
+
+.bar:hover {
+    opacity: 0.85;
+}
+
+.axis text {
+    font-family: var(--font-body);
+    font-size: 10px;
+    fill: var(--gray-600);
+}
+
+.axis line {
+    stroke: var(--gray-200);
+}
+
+.countLabel {
+    font-family: var(--font-body);
+    font-size: 9px;
+    fill: var(--gray-500);
+    pointer-events: none;
+}
+
+.thresholdHandle {
+    cursor: ew-resize;
+}
+
+.thresholdHandle:hover line {
+    stroke: var(--color-terracotta);
+    stroke-width: 3;
+}
+
+.thresholdHandle:hover .handleGrip {
+    fill: var(--color-terracotta);
+}
+
+.handleGrip {
+    transition: fill 0.1s ease;
+}
+
+.selectionInfo {
+    padding: var(--space-2) var(--space-3);
+    background-color: var(--gray-100);
+    border-radius: var(--border-radius-sm);
+    font-size: var(--text-xs);
+    color: var(--gray-600);
+    text-align: center;
+}
+
+.hint {
+    font-size: var(--text-xs);
+    color: var(--gray-400);
+    text-align: center;
+    font-style: italic;
+}

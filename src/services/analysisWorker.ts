@@ -32,7 +32,7 @@ export type WorkerRequest =
   | { type: 'query'; sql: string }
   | { type: 'getSchema' }
   | { type: 'getUniqueValues'; column: string }
-  | { type: 'getVariableStats'; column: string }
+  | { type: 'getVariableStats'; column: string; variableType?: 'nominal' | 'ordinal' | 'scale' }
   | { type: 'recodeVariable'; sourceCol: string; newColName: string; config: RecodeConfig }
   | { type: 'checkPersistedData' }
   | { type: 'clearPersistedData' };
@@ -42,11 +42,30 @@ export interface VariableStatsFrequency {
   count: number;
 }
 
+export interface HistogramBin {
+  x0: number;
+  x1: number;
+  count: number;
+}
+
+export interface NumericStats {
+  min: number;
+  max: number;
+  mean: number;
+  median: number;
+  stdDev: number;
+  q1: number;  // 25th percentile
+  q3: number;  // 75th percentile
+  histogramBins: HistogramBin[];
+}
+
 export interface VariableStatsResult {
   column: string;
   frequencies: VariableStatsFrequency[];
   missingCount: number;
   totalCount: number;
+  // Only present for scale/numeric variables
+  numeric?: NumericStats;
 }
 
 export type WorkerResponse =
@@ -399,7 +418,10 @@ async function getUniqueValues(column: string): Promise<string[]> {
   return result.toArray().map((row) => String(row.val));
 }
 
-async function getVariableStats(column: string): Promise<VariableStatsResult> {
+async function getVariableStats(
+  column: string,
+  variableType?: 'nominal' | 'ordinal' | 'scale'
+): Promise<VariableStatsResult> {
   if (!conn) throw new Error('DB not initialized');
 
   // Get total count
@@ -425,12 +447,99 @@ async function getVariableStats(column: string): Promise<VariableStatsResult> {
     count: Number(row.cnt),
   }));
 
-  return {
+  const result: VariableStatsResult = {
     column,
     frequencies,
     missingCount,
     totalCount,
   };
+
+  // Compute numeric statistics for scale variables
+  if (variableType === 'scale') {
+    try {
+      // Get summary statistics using DuckDB's built-in functions
+      const statsResult = await conn.query(`
+        SELECT
+          MIN("${column}") as min_val,
+          MAX("${column}") as max_val,
+          AVG("${column}") as mean_val,
+          MEDIAN("${column}") as median_val,
+          STDDEV("${column}") as stddev_val,
+          QUANTILE_CONT("${column}", 0.25) as q1_val,
+          QUANTILE_CONT("${column}", 0.75) as q3_val
+        FROM main
+        WHERE "${column}" IS NOT NULL
+      `);
+
+      const statsRow = statsResult.toArray()[0];
+
+      if (statsRow && statsRow.min_val !== null && statsRow.max_val !== null) {
+        const minVal = Number(statsRow.min_val);
+        const maxVal = Number(statsRow.max_val);
+        const mean = Number(statsRow.mean_val) || 0;
+        const median = Number(statsRow.median_val) || 0;
+        const stdDev = Number(statsRow.stddev_val) || 0;
+        const q1 = Number(statsRow.q1_val) || minVal;
+        const q3 = Number(statsRow.q3_val) || maxVal;
+
+        // Compute histogram bins (10 bins by default)
+        const binCount = 10;
+        const range = maxVal - minVal;
+        const binWidth = range / binCount;
+
+        // Use DuckDB's histogram function or compute manually with width_bucket
+        const histResult = await conn.query(`
+          SELECT
+            width_bucket("${column}", ${minVal}, ${maxVal + 0.0001}, ${binCount}) as bucket,
+            COUNT(*) as cnt
+          FROM main
+          WHERE "${column}" IS NOT NULL
+          GROUP BY bucket
+          ORDER BY bucket
+        `);
+
+        const histogramBins: HistogramBin[] = [];
+        const bucketCounts = new Map<number, number>();
+
+        for (const row of histResult.toArray()) {
+          bucketCounts.set(Number(row.bucket), Number(row.cnt));
+        }
+
+        // Create bins with proper boundaries
+        for (let i = 1; i <= binCount; i++) {
+          histogramBins.push({
+            x0: minVal + (i - 1) * binWidth,
+            x1: minVal + i * binWidth,
+            count: bucketCounts.get(i) || 0,
+          });
+        }
+
+        result.numeric = {
+          min: minVal,
+          max: maxVal,
+          mean,
+          median,
+          stdDev,
+          q1,
+          q3,
+          histogramBins,
+        };
+
+        console.log(`🦆 [Worker] Computed numeric stats for ${column}:`, {
+          min: minVal,
+          max: maxVal,
+          mean: mean.toFixed(2),
+          median: median.toFixed(2),
+          binCount: histogramBins.length,
+        });
+      }
+    } catch (error: any) {
+      console.warn(`🦆 [Worker] Failed to compute numeric stats for ${column}:`, error.message);
+      // Continue without numeric stats - frequencies will still be available
+    }
+  }
+
+  return result;
 }
 
 async function recodeVariable(
@@ -531,7 +640,7 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
         break;
 
       case 'getVariableStats':
-        const stats = await getVariableStats(request.column);
+        const stats = await getVariableStats(request.column, request.variableType);
         self.postMessage({ type: 'variableStats', stats } as WorkerResponse);
         break;
 

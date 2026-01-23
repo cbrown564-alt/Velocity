@@ -11,7 +11,7 @@ import { Tag, Hash, BarChart2, Info, AlertTriangle, CheckCircle } from 'lucide-r
 import { useVelocityStore } from '../../store';
 import type { Variable } from '../../store/slices/dataSlice';
 import type { VariableStatsResult } from '../../services/analysisWorker';
-import { D3BarChart, BarDatum, SelectionEvent } from '../../components/charts';
+import { D3BarChart, BarDatum, SelectionEvent, D3Histogram } from '../../components/charts';
 import styles from './VariableInspector.module.css';
 
 const getTypeIcon = (type: string) => {
@@ -111,7 +111,7 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
         ? (stats.missingCount / stats.totalCount) * 100
         : null;
 
-    // Transform frequencies into chart data
+    // Transform frequencies into chart data (for categorical variables)
     const chartData = useMemo((): BarDatum[] => {
         if (!stats || !variable) return [];
 
@@ -129,6 +129,10 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
             };
         });
     }, [stats, variable]);
+
+    // Check if variable is numeric/scale type and has numeric stats
+    const isNumericVariable = variable?.type === 'scale';
+    const numericStats = stats?.numeric;
 
     // Handle chart context menu (from D3 chart)
     const handleChartContextMenu = useCallback((event: SelectionEvent) => {
@@ -358,8 +362,67 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
                     )}
                 </div>
 
-                {/* Distribution Section (Interactive D3 Chart) */}
-                {chartData.length > 0 && (
+                {/* Numeric Summary Stats (for scale variables) */}
+                {isNumericVariable && numericStats && (
+                    <div className={styles.section}>
+                        <h3 className={styles.sectionTitle}>Summary Statistics</h3>
+                        <div className={styles.numericStatsGrid}>
+                            <div className={styles.numericStatItem}>
+                                <span className={styles.numericStatLabel}>Min</span>
+                                <span className={styles.numericStatValue}>{numericStats.min.toLocaleString(undefined, { maximumFractionDigits: 2 })}</span>
+                            </div>
+                            <div className={styles.numericStatItem}>
+                                <span className={styles.numericStatLabel}>Max</span>
+                                <span className={styles.numericStatValue}>{numericStats.max.toLocaleString(undefined, { maximumFractionDigits: 2 })}</span>
+                            </div>
+                            <div className={styles.numericStatItem}>
+                                <span className={styles.numericStatLabel}>Mean</span>
+                                <span className={styles.numericStatValue}>{numericStats.mean.toLocaleString(undefined, { maximumFractionDigits: 2 })}</span>
+                            </div>
+                            <div className={styles.numericStatItem}>
+                                <span className={styles.numericStatLabel}>Median</span>
+                                <span className={styles.numericStatValue}>{numericStats.median.toLocaleString(undefined, { maximumFractionDigits: 2 })}</span>
+                            </div>
+                            <div className={styles.numericStatItem}>
+                                <span className={styles.numericStatLabel}>Std Dev</span>
+                                <span className={styles.numericStatValue}>{numericStats.stdDev.toLocaleString(undefined, { maximumFractionDigits: 2 })}</span>
+                            </div>
+                            <div className={styles.numericStatItem}>
+                                <span className={styles.numericStatLabel}>IQR</span>
+                                <span className={styles.numericStatValue}>
+                                    {numericStats.q1.toLocaleString(undefined, { maximumFractionDigits: 1 })} – {numericStats.q3.toLocaleString(undefined, { maximumFractionDigits: 1 })}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Distribution Section - Histogram for numeric, Bar chart for categorical */}
+                {isNumericVariable && numericStats && numericStats.histogramBins.length > 0 ? (
+                    <div className={styles.section}>
+                        <h3 className={styles.sectionTitle}>
+                            Distribution
+                            <span style={{
+                                fontSize: 'var(--text-xs)',
+                                color: 'var(--gray-400)',
+                                fontWeight: 400,
+                                marginLeft: 'var(--space-2)',
+                            }}>
+                                (drag boundaries to adjust bins)
+                            </span>
+                        </h3>
+                        <D3Histogram
+                            values={numericStats.histogramBins.flatMap(bin => {
+                                // Expand bins back to representative values for the histogram component
+                                const midpoint = (bin.x0 + bin.x1) / 2;
+                                return Array(bin.count).fill(midpoint);
+                            })}
+                            width={280}
+                            height={180}
+                            binCount={numericStats.histogramBins.length}
+                        />
+                    </div>
+                ) : chartData.length > 0 && (
                     <div className={styles.section}>
                         <h3 className={styles.sectionTitle}>
                             Distribution

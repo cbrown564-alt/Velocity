@@ -558,9 +558,9 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
         });
     },
 
-    // Get variable statistics (frequencies, missing count)
+    // Get variable statistics (frequencies, missing count, and numeric stats for scale variables)
     getVariableStats: async (variableId: string): Promise<VariableStatsResult | null> => {
-        const { worker, variableStats, variableStatsLoading } = get();
+        const { worker, variableStats, variableStatsLoading, dataset } = get();
         if (!worker) return null;
 
         // Return cached result if available
@@ -572,6 +572,10 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
         if (variableStatsLoading[variableId]) {
             return null;
         }
+
+        // Look up the variable type from the dataset
+        const variable = dataset?.variables.find(v => v.id === variableId);
+        const variableType = variable?.type;
 
         // Mark as loading
         set((state) => ({
@@ -598,7 +602,11 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                 }
             };
             worker.addEventListener('message', handler);
-            worker.postMessage({ type: 'getVariableStats', column: variableId } as WorkerRequest);
+            worker.postMessage({
+                type: 'getVariableStats',
+                column: variableId,
+                variableType
+            } as WorkerRequest);
         });
     },
 
