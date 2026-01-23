@@ -38,8 +38,10 @@ export interface BinSelectionEvent {
 }
 
 export interface D3HistogramProps {
-    /** Raw numeric values */
-    values: number[];
+    /** Raw numeric values (for client-side binning) */
+    values?: number[];
+    /** Pre-computed bins from worker (avoids re-binning) */
+    precomputedBins?: BinData[];
     /** Number of initial bins (default: auto) */
     binCount?: number;
     /** Custom bin thresholds (overrides binCount) */
@@ -64,6 +66,7 @@ export interface D3HistogramProps {
 
 export const D3Histogram: React.FC<D3HistogramProps> = ({
     values,
+    precomputedBins,
     binCount = 10,
     thresholds: customThresholds,
     width = 280,
@@ -84,17 +87,30 @@ export const D3Histogram: React.FC<D3HistogramProps> = ({
     const innerWidth = width - margin.left - margin.right;
     const innerHeight = height - margin.top - margin.bottom;
 
-    // Compute data extent
+    // Compute data extent from values or precomputed bins
     const dataExtent = useMemo(() => {
-        const [minVal, maxVal] = extent(values) as [number, number];
-        return { min: minVal, max: maxVal };
-    }, [values]);
+        if (precomputedBins && precomputedBins.length > 0) {
+            return {
+                min: precomputedBins[0].x0,
+                max: precomputedBins[precomputedBins.length - 1].x1,
+            };
+        }
+        if (values && values.length > 0) {
+            const [minVal, maxVal] = extent(values) as [number, number];
+            return { min: minVal, max: maxVal };
+        }
+        return { min: 0, max: 1 };
+    }, [values, precomputedBins]);
 
-    // Initialize thresholds
+    // Initialize thresholds from precomputed bins or create evenly spaced
     useEffect(() => {
         if (customThresholds && customThresholds.length > 0) {
             setThresholds(customThresholds);
-        } else if (values.length > 0) {
+        } else if (precomputedBins && precomputedBins.length > 1) {
+            // Extract thresholds from precomputed bins (bin boundaries between bins)
+            const newThresholds = precomputedBins.slice(0, -1).map(bin => bin.x1);
+            setThresholds(newThresholds);
+        } else if (values && values.length > 0) {
             // Create evenly spaced thresholds
             const step = (dataExtent.max - dataExtent.min) / binCount;
             const newThresholds: number[] = [];
@@ -103,11 +119,20 @@ export const D3Histogram: React.FC<D3HistogramProps> = ({
             }
             setThresholds(newThresholds);
         }
-    }, [values, binCount, customThresholds, dataExtent]);
+    }, [values, precomputedBins, binCount, customThresholds, dataExtent]);
 
-    // Compute bins from thresholds
+    // Compute bins - use precomputed if available, otherwise bin from values
     const bins = useMemo((): BinData[] => {
-        if (values.length === 0) return [];
+        // Use precomputed bins if available
+        if (precomputedBins && precomputedBins.length > 0) {
+            return precomputedBins.map((bin, i) => ({
+                ...bin,
+                selected: selectedIndices.has(i),
+            }));
+        }
+
+        // Otherwise compute from raw values
+        if (!values || values.length === 0) return [];
 
         const allThresholds = [dataExtent.min, ...thresholds, dataExtent.max];
         const binner = d3Bin<number, number>()
@@ -122,7 +147,7 @@ export const D3Histogram: React.FC<D3HistogramProps> = ({
             count: b.length,
             selected: selectedIndices.has(i),
         }));
-    }, [values, thresholds, dataExtent, selectedIndices]);
+    }, [values, precomputedBins, thresholds, dataExtent, selectedIndices]);
 
     // Handle selection change
     const updateSelection = useCallback((indices: Set<number>) => {

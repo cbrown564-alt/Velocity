@@ -412,14 +412,9 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
                             </span>
                         </h3>
                         <D3Histogram
-                            values={numericStats.histogramBins.flatMap(bin => {
-                                // Expand bins back to representative values for the histogram component
-                                const midpoint = (bin.x0 + bin.x1) / 2;
-                                return Array(bin.count).fill(midpoint);
-                            })}
+                            precomputedBins={numericStats.histogramBins}
                             width={280}
                             height={180}
-                            binCount={numericStats.histogramBins.length}
                         />
                     </div>
                 ) : chartData.length > 0 && (
