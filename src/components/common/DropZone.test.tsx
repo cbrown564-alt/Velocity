@@ -79,7 +79,7 @@ describe('DropZone', () => {
             );
 
             const zone = container.firstChild as HTMLElement;
-            expect(zone.className).toContain('w-48');
+            expect(zone.className).toContain('min-w-[200px]');
         });
     });
 
@@ -134,7 +134,7 @@ describe('DropZone', () => {
             );
 
             // Find and click the remove button (X)
-            const removeButton = screen.getByRole('button');
+            const removeButton = screen.getByRole('button', { name: /remove variable/i });
             fireEvent.click(removeButton);
 
             expect(onRemove).toHaveBeenCalledWith('set_gender');

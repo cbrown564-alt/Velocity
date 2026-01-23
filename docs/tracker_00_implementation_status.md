@@ -93,27 +93,33 @@
 - [x] **Rich Variable Cards:** Sparklines (Mini-histograms) and Quality Indicators (Missingness %) [ref](research_08_UX_patterns_for_surveys.md#L177).
 - [x] **Context Awareness:** Bi-directional focus (Selecting variable in Analysis opens it in Manager) [ref](research_08_UX_patterns_for_surveys.md#L131).
 - [x] **Faceted Search:** Filter variable list by Type, Status, and Quality [ref](research_08_UX_patterns_for_surveys.md#L168).
-- [x] **Visual Recoding** (Interactive Histogram Bucketing).
+- [ ] **Visual Recoding** (Interactive Histogram Bucketing) - *Half-complete; needs D3.js refactor.*
 - [x] **Visual ETL (Charts):** Click-to-filter and Click-to-exclude context menus [ref](research_08_UX_patterns_for_surveys.md#L252).
-- [ ] **Lasso Selection:** Spatial grouping/recoding on scatterplots [ref](research_08_UX_patterns_for_surveys.md#L353).
 - [x] **Semantic Variable Sets** (Grids represented as Card Clusters).
 - [x] **Verify Multi-Response Interaction:** Ensure `VariableSet` works for multiple response data.
 
 ### Milestone 2.3: Statistical Foundation
 *Goal: "Contextually Relevant Statistics" (Beyond simple counts)*
 - [x] **Numeric Summaries:** Mean, Median, StdDev, Min/Max for Scale variables.
-- [ ] **Smart Table Stats:** Auto-toggle between Counts (Nominal) and Averages (Scale).
-- [ ] **Significance Testing:** T-Test/Z-Test implementation for table cells.
+- [x] **Smart Table Stats:** Auto-toggle between Counts (Nominal) and Averages (Scale).
+- [ ] **Significance Testing:** T-Test/Z-Test implementation.
+    - [ ] **Sig-Dots & Arrows:** Green/Red arrows for significant differences vs Total.
+    - [ ] **Hover-to-Explain:** Tooltip showing p-value and reference.
+    - [ ] **Stats Inspector:** Hover/Click context for p-value details (Future).
 
-### Milestone 2.4: The Weighting Engine
+### Milestone 2.4: Major Charting Refactor (D3.js)
+*Goal: Consolidate visualization logic and implement Analysis Charts.*
+- [ ] Refactor Sparklines and Recoding to use D3.js core.
+- [ ] **Implement Chart View:** In-app visualization on the Analysis Canvas.
+
+### Milestone 2.5: The Weighting Engine
 *Scope: Application Only (No Weight Creation)*
 - [x] Apply Weight Variable to DuckDB Queries
 - [x] Display Weighted N vs Unweighted N
 - [ ] **Implement Weighting UI Controls:** Global Weight Dropzone and Toggle.
 
-
-### Milestone 2.5: The Output (The Parity Goal)
-- [ ] **Implement Chart View:** Integrate charting library (Recharts/Visx) for in-app visualization.
+### Milestone 2.6: PowerPoint Export
+*Goal: Presentation Parity*
 - [ ] Implement `PptxGenJS` Export
 - [ ] Verify Editable Charts in PowerPoint
 
@@ -126,6 +132,7 @@
 *Goal: Advanced Statistics & Deep Harmonization*
 
 ### Milestone 3.0: The Harmonization Workspace
+- [ ] **Lasso Selection:** Spatial grouping/recoding on scatterplots [ref](research_08_UX_patterns_for_surveys.md#L353).
 - [ ] **Sankey Mapper:** Visualizing wave-over-wave changes.
 - [ ] **Harmonization Logic:** Generating mapping scripts.
 *Goal: Advanced Statistics*

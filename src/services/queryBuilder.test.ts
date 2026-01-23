@@ -59,7 +59,7 @@ describe('queryBuilder', () => {
 
         it('throws error when no row variables provided', () => {
             expect(() => buildCrosstabQuery({ rowVars: [] })).toThrow(
-                'At least one row variable is required'
+                'At least one row variable or a measure variable is required'
             );
         });
 

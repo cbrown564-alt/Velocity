@@ -66,24 +66,28 @@ describe('Variable Logic', () => {
     });
 
     it('should dispatch recodeVariable action correctly for binning', async () => {
-        // We need to initialize worker for this test as recodeVariable checks it
-        await useVelocityStore.getState().initWorker();
+        // Start initWorker but don't await yet
+        const initPromise = useVelocityStore.getState().initWorker();
+
+        // Find the init handler and trigger ready
+        const initCalls = mockAddEventListener.mock.calls.filter(call => call[0] === 'message');
+        const initHandler = initCalls[initCalls.length - 1][1];
+        initHandler({ data: { type: 'ready', opfsAvailable: false } });
+
+        await initPromise;
 
         const { recodeVariable } = useVelocityStore.getState();
 
-        // Determine the promise we want to intercept, but recodeVariable waits for worker response.
-        // We'll mimic worker response. 
-        // However, since we can't easily trigger the worker's onmessage from here without complexity,
-        // we'll mainly check if postMessage was called with correct data.
-
-        // We start the promise but don't await it strictly or we'll hang, unless we fire the event back.
+        // Determine the promise we want to intercept
         const promise = recodeVariable('v3', 'v3_binned', {
             mode: 'binning',
             rules: [{ min: 0, max: 10, label: 'Low' }]
         });
 
         // Simulate worker response
-        const handler = mockAddEventListener.mock.calls.find(call => call[0] === 'message')[1];
+        // Get the last added event listener (since initWorker added one too, and maybe checkPersistedData)
+        const listenerCalls = mockAddEventListener.mock.calls.filter(call => call[0] === 'message');
+        const handler = listenerCalls[listenerCalls.length - 1][1];
         handler({ data: { type: 'recodeComplete', newColName: 'v3_binned' } });
 
         await promise;
