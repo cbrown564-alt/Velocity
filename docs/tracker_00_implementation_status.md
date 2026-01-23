@@ -96,8 +96,8 @@
 - [x] **Visual Recoding** (Interactive Histogram Bucketing).
 - [x] **Visual ETL (Charts):** Click-to-filter and Click-to-exclude context menus [ref](research_08_UX_patterns_for_surveys.md#L252).
 - [ ] **Lasso Selection:** Spatial grouping/recoding on scatterplots [ref](research_08_UX_patterns_for_surveys.md#L353).
-- [ ] **Semantic Variable Sets** (Grids represented as Card Clusters).
-- [ ] **Verify Multi-Response Interaction:** Ensure `VariableSet` works for multiple response data.
+- [x] **Semantic Variable Sets** (Grids represented as Card Clusters).
+- [x] **Verify Multi-Response Interaction:** Ensure `VariableSet` works for multiple response data.
 
 ### Milestone 2.3: Statistical Foundation
 *Goal: "Contextually Relevant Statistics" (Beyond simple counts)*

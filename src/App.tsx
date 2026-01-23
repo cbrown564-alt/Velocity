@@ -127,6 +127,7 @@ export default function App() {
     recodeModal,
     drillDown,
     activeFilters,
+    activeVariableStats,
     filterModal,
     // Persistence state
     opfsAvailable,
@@ -790,6 +791,7 @@ export default function App() {
                               viewMode={viewMode}
                               isWeighted={!!dataset?.weightVariable}
                               onCellClick={handleCellClick}
+                              variableStats={activeVariableStats}
                             />
                           </div>
                         ) : (

@@ -104,6 +104,10 @@ export interface CrosstabQueryOptions {
     gridColumns?: string[];
     /** For multiple structure: column names and their counted value */
     multipleColumns?: Array<{ column: string; countedValue: number }>;
+    /** For scale variables: the variable to aggregate (Mean, Median, etc.) */
+    measureVar?: string;
+    /** Label to use for the measure row (e.g. "Age") */
+    measureLabel?: string;
 }
 
 /**
@@ -113,24 +117,21 @@ export interface CrosstabQueryOptions {
  * buildCrosstabQuery({ rowVars: ['Q1'] })
  * // SELECT "Q1" as rowKey_0, 'Total' as colKey, COUNT(*)::INTEGER as count FROM main GROUP BY "Q1"
  *
- * @example Crosstab (row + col):
- * buildCrosstabQuery({ rowVars: ['Gender'], colVar: 'Region' })
- * // SELECT "Gender" as rowKey_0, "Region" as colKey, COUNT(*)::INTEGER as count FROM main GROUP BY "Gender", "Region"
- *
- * @example Nested rows:
- * buildCrosstabQuery({ rowVars: ['Region', 'City'], colVar: 'Gender' })
- * // SELECT "Region" as rowKey_0, "City" as rowKey_1, "Gender" as colKey, COUNT(*)::INTEGER as count FROM main GROUP BY "Region", "City", "Gender"
- *
- * @example Grid structure (unpivot multiple columns):
- * buildCrosstabQuery({ rowVars: [], gridColumns: ['impact1', 'impact2', 'impact3'] })
- * // Unpivots columns to show: rows = scale values, columns = variable names
- *
- * @example Multiple structure (filter by counted value):
- * buildCrosstabQuery({ rowVars: [], multipleColumns: [{ column: 'smoke', countedValue: 1 }, { column: 'drink', countedValue: 1 }] })
- * // Shows only rows where value equals countedValue for each variable
+ * @example Metric Table (Mean of Scale Var by Col):
+ * buildCrosstabQuery({ rowVars: [], colVar: 'Gender', measureVar: 'Age', measureLabel: 'Age' })
+ * // SELECT 'Age' as rowKey_0, "Gender" as colKey, AVG("Age") as mean, ... FROM main GROUP BY "Gender"
  */
 export function buildCrosstabQuery(options: CrosstabQueryOptions): string {
-    const { rowVars, colVar, filters, weightVar, gridColumns, multipleColumns } = options;
+    const {
+        rowVars,
+        colVar,
+        filters,
+        weightVar,
+        gridColumns,
+        multipleColumns,
+        measureVar,
+        measureLabel
+    } = options;
 
     // Special case: Grid structure (unpivot multiple columns)
     if (gridColumns && gridColumns.length > 0) {
@@ -142,32 +143,72 @@ export function buildCrosstabQuery(options: CrosstabQueryOptions): string {
         return buildMultipleQuery({ columns: multipleColumns, filters, weightVar, colVar });
     }
 
-    if (rowVars.length === 0) {
-        throw new Error('At least one row variable is required');
+    // Validation
+    if (rowVars.length === 0 && !measureVar) {
+        throw new Error('At least one row variable or a measure variable is required');
     }
 
     // Build SELECT clause
-    const rowSelectors = rowVars.map((r, i) => `"${escapeIdentifier(r)}" as rowKey_${i}`).join(', ');
+    let rowSelectors = '';
+
+    if (measureVar && measureLabel) {
+        // If measuring a scale variable, the "row" is just the label of that variable
+        rowSelectors = `'${escapeString(measureLabel)}' as rowKey_0`;
+    } else {
+        // Standard grouping by row variables
+        rowSelectors = rowVars.map((r, i) => `"${escapeIdentifier(r)}" as rowKey_${i}`).join(', ');
+    }
+
     const colSelector = colVar
         ? `"${escapeIdentifier(colVar)}" as colKey`
         : `'Total' as colKey`;
 
-    // Aggregate based on whether we have a weight
-    const countExpr = weightVar
-        ? `SUM("${escapeIdentifier(weightVar)}")::DOUBLE as count`
-        : `COUNT(*)::INTEGER as count`;
+    // Aggregate based on whether we have a measure variable (Scale) or just counting (Nominal)
+    let statsExpr = '';
+
+    if (measureVar) {
+        // Scale Variable Stats
+        const col = `"${escapeIdentifier(measureVar)}"`;
+        // Weighting for means is complex (weighted avg), simple AVG for now.
+        // TODO: Implement proper weighted mean/stddev if weightVar is present
+        statsExpr = `
+            AVG(${col}) as mean,
+            STDDEV(${col}) as stdDev,
+            MIN(${col}) as min,
+            MAX(${col}) as max,
+            MEDIAN(${col}) as median,
+            COUNT(${col})::INTEGER as validCount
+        `;
+    } else {
+        // Frequency Counts
+        statsExpr = weightVar
+            ? `SUM("${escapeIdentifier(weightVar)}")::DOUBLE as count`
+            : `COUNT(*)::INTEGER as count`;
+    }
 
     // Build GROUP BY clause
-    const rowGroups = rowVars.map(r => `"${escapeIdentifier(r)}"`).join(', ');
-    const groupBy = colVar
-        ? `${rowGroups}, "${escapeIdentifier(colVar)}"`
-        : rowGroups;
+    let groupBy = '';
+
+    if (measureVar) {
+        // When aggregating a measure, we only group by the COLUMN variable (if any)
+        // We do NOT group by the measure variable itself
+        if (colVar) {
+            groupBy = `GROUP BY "${escapeIdentifier(colVar)}"`;
+        } else {
+            // Grand summary (no group by needed for scalar aggregates, but effectively implicit)
+            groupBy = '';
+        }
+    } else {
+        // Standard Crosstab Grouping
+        const rowGroups = rowVars.map(r => `"${escapeIdentifier(r)}"`).join(', ');
+        groupBy = `GROUP BY ${colVar ? `${rowGroups}, "${escapeIdentifier(colVar)}"` : rowGroups}`;
+    }
 
     // Build WHERE clause if filters exist
     const whereClause = buildFilterClause(filters);
 
     const parts = [
-        `SELECT ${rowSelectors}, ${colSelector}, ${countExpr}`,
+        `SELECT ${rowSelectors}, ${colSelector}, ${statsExpr}`,
         `FROM main`,
     ];
 
@@ -175,7 +216,9 @@ export function buildCrosstabQuery(options: CrosstabQueryOptions): string {
         parts.push(`WHERE ${whereClause}`);
     }
 
-    parts.push(`GROUP BY ${groupBy}`);
+    if (groupBy) {
+        parts.push(groupBy);
+    }
 
     return parts.join(' ');
 }

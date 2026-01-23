@@ -2,6 +2,8 @@ import React, { useMemo, useState } from 'react';
 import { AggregatedRow, Variable } from '../../../types';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight, ChevronDown } from 'lucide-react';
+import type { VariableStatsResult } from '../../../services/analysisWorker';
+import { Sparkline } from '../../variableManager/Sparkline';
 
 /** Row path entry for drill-down */
 export interface RowPathEntry {
@@ -19,6 +21,8 @@ interface DataTableProps {
   isWeighted?: boolean;
   /** Called when a cell is clicked for drill-down */
   onCellClick?: (rowPath: RowPathEntry[], colValue: string | null) => void;
+  /** Stats for the main scale variable (if applicable) */
+  variableStats?: VariableStatsResult | null;
 }
 
 const CHART_COLORS = [
@@ -36,8 +40,20 @@ interface TableRowNode {
   label: string;
   rawValue: string;  // Original value from data
   depth: number;
-  cells: Record<string, { count: number, percent: number, sig?: string }>;
+  cells: Record<string, {
+    count: number;
+    percent: number;
+    sig?: string;
+    mean?: number;
+    median?: number;
+    stdDev?: number;
+    min?: number;
+    max?: number;
+    validCount?: number;
+  }>;
   total: number;
+  /** Calculated mean for the row (weighted average of children or direct) */
+  mean?: number;
   children: TableRowNode[];
   isExpanded?: boolean;
   /** Full path from root to this node for drill-down */
@@ -51,7 +67,8 @@ export const DataTable: React.FC<DataTableProps> = ({
   totalCount,
   viewMode = 'table',
   isWeighted = false,
-  onCellClick
+  onCellClick,
+  variableStats
 }) => {
   // UI State for expanded rows
   const [expandedKeys, setExpandedKeys] = useState<Record<string, boolean>>({});
@@ -134,17 +151,31 @@ export const DataTable: React.FC<DataTableProps> = ({
         ];
 
         // Calculate totals for this node
-        const nodeCells: Record<string, { count: number, percent: number, sig?: string }> = {};
+        const nodeCells: Record<string, {
+          count: number;
+          percent: number;
+          sig?: string;
+          mean?: number;
+          median?: number;
+          stdDev?: number;
+          min?: number;
+          max?: number;
+          validCount?: number;
+        }> = {};
         let nodeRowTotal = 0;
 
         colKeys.forEach(cKey => {
           // Use weightedCount when weighted, otherwise count
-          const count = groupData
-            .filter(d => d.colKey === cKey)
-            .reduce((sum, d) => {
-              const effectiveCount = isWeighted && d.weightedCount !== undefined ? d.weightedCount : d.count;
-              return sum + effectiveCount;
-            }, 0);
+          const matchingRows = groupData.filter(d => d.colKey === cKey);
+
+          const count = matchingRows.reduce((sum, d) => {
+            const effectiveCount = isWeighted && d.weightedCount !== undefined ? d.weightedCount : d.count;
+            return sum + effectiveCount;
+          }, 0);
+
+          // Check if we have metric data (take from first matching row)
+          const metricRow = matchingRows[0];
+          const hasMetric = metricRow && metricRow.mean !== undefined;
 
           nodeRowTotal += count;
 
@@ -154,9 +185,42 @@ export const DataTable: React.FC<DataTableProps> = ({
           nodeCells[cKey] = {
             count,
             percent,
-            sig: (colVariable && percent > 25 && Math.random() > 0.8) ? 'A' : undefined
+            sig: (colVariable && percent > 25 && Math.random() > 0.8) ? 'A' : undefined,
+            // Pass through metric data
+            mean: hasMetric ? metricRow.mean : undefined,
+            median: hasMetric ? metricRow.median : undefined,
+            stdDev: hasMetric ? metricRow.stdDev : undefined,
+            min: hasMetric ? metricRow.min : undefined,
+            max: hasMetric ? metricRow.max : undefined,
+            validCount: hasMetric ? metricRow.validCount : undefined,
           };
         });
+
+        // 5. Calculate Aggregate Mean for this Node (Row Total)
+        // If children have means, we should weight-average them?
+        // Actually, for the "Total" column of the row, we want the mean of ALL data in this row group.
+        // But we don't have the raw data here to calc mean.
+        // However, if we are in Metric Mode, the Query Builder groups by Col but NOT by Row (since Row is just the Label).
+        // So for "Age" (depth 0), groups['Age'] contains all the column splits.
+        // We can't easily sum means.
+        // BUT, usually we have a "Total" column in the data? No.
+
+        // HACK: For now, if we have variableStats and this is depth 0, we can use that.
+        // For nested rows, we might need a smarter query.
+        // Let's attach the `mean` to the row node itself if possible.
+        let nodeMean: number | undefined;
+
+        // If we are dealing with a Metric Table (inferred by presence of mean in cells)
+        const hasMetricCells = Object.values(nodeCells).some(c => c.mean !== undefined);
+        if (hasMetricCells) {
+          // If we have variableStats and this is the root, use it?
+          // Or calculate weighted average from cells? (Approximate)
+          const totalN = Object.values(nodeCells).reduce((sum, c) => sum + (c.validCount || 0), 0);
+          if (totalN > 0) {
+            const weightedSum = Object.values(nodeCells).reduce((sum, c) => sum + ((c.mean || 0) * (c.validCount || 0)), 0);
+            nodeMean = weightedSum / totalN;
+          }
+        }
 
         // Recurse with updated path
         const children = buildTree(groupData, depth + 1, uniqueKey, nodeRowPath);
@@ -168,6 +232,7 @@ export const DataTable: React.FC<DataTableProps> = ({
           depth,
           cells: nodeCells,
           total: nodeRowTotal,
+          mean: nodeMean, // Attach mean to row node
           children,
           rowPath: nodeRowPath
         };
@@ -204,6 +269,10 @@ export const DataTable: React.FC<DataTableProps> = ({
       const hasChildren = row.children.length > 0;
       const paddingLeft = row.depth * 24 + 16; // Indent
 
+      // Check if this row is metric-based (has mean)
+      const variantIsMetric = row.mean !== undefined || (variableStats && row.depth === 0);
+
+
       return (
         <React.Fragment key={row.key}>
           <tr className="group hover:bg-[var(--gray-50)] transition-colors">
@@ -231,21 +300,60 @@ export const DataTable: React.FC<DataTableProps> = ({
                   title="Click to X-Ray"
                 >
                   <div className="flex flex-col items-end">
-                    <div className="flex items-baseline gap-0.5">
-                      <span className="font-bold text-[var(--color-ink)]">{cell.percent.toFixed(1)}%</span>
-                      {cell.sig && <sup className="sig-marker">{cell.sig}</sup>}
-                    </div>
-                    <span className="text-[10px] text-[var(--gray-400)] font-mono tracking-tight opacity-0 group-hover:opacity-100 transition-opacity">n={cell.count}</span>
+                    {cell.mean !== undefined ? (
+                      // METRIC DISPLAY
+                      <>
+                        <div className="flex items-baseline gap-1">
+                          <span className="font-bold text-[var(--color-ink)]">{cell.mean.toFixed(1)}</span>
+                          <span className="text-[10px] text-[var(--gray-500)] bg-[var(--gray-100)] px-1 rounded">Mean</span>
+                        </div>
+                        <span className="text-[10px] text-[var(--gray-400)] font-mono tracking-tight group-hover:opacity-100 transition-opacity flex gap-2">
+                          {cell.stdDev !== undefined && <span>SD: {cell.stdDev.toFixed(1)}</span>}
+                          <span>n={cell.validCount ?? cell.count}</span>
+                        </span>
+                      </>
+                    ) : (
+                      // FREQUENCY DISPLAY
+                      <>
+                        <div className="flex items-baseline gap-0.5">
+                          <span className="font-bold text-[var(--color-ink)]">{cell.percent.toFixed(1)}%</span>
+                          {cell.sig && <sup className="sig-marker">{cell.sig}</sup>}
+                        </div>
+                        <span className="text-[10px] text-[var(--gray-400)] font-mono tracking-tight opacity-0 group-hover:opacity-100 transition-opacity">n={cell.count}</span>
+                      </>
+                    )}
                   </div>
                 </td>
               );
             })}
-            <td className="px-4 py-3 text-right font-mono font-semibold text-[var(--color-ink)] bg-[var(--gray-50)] align-top">
-              <div className="flex flex-col items-end">
-                <span>{((row.total / tableData.grandTotal) * 100).toFixed(1)}%</span>
-                <span className="text-[10px] text-[var(--gray-400)]">n={row.total}</span>
-              </div>
-            </td>
+            {/* Only show Row Total if we have columns OR if it's a frequency table (always show 100%)
+                For Metric tables without columns, the single column is already the total. */}
+            {(colVariable || !variantIsMetric) && (
+              <td className="px-4 py-3 text-right font-mono font-semibold text-[var(--color-ink)] bg-[var(--gray-50)] align-top">
+                <div className="flex flex-col items-end">
+                  {row.mean ? (
+                    // METRIC ROW TOTAL (Global Mean for this row)
+                    // If this is the top-level row and we have variableStats, use that for precision
+                    // Otherwise use the aggregated mean from the row node
+                    <>
+                      <div className="flex items-baseline gap-1">
+                        <span className="font-bold text-[var(--color-ink)]">
+                          {(variableStats && row.depth === 0) ? variableStats.numeric?.mean.toFixed(1) : row.mean?.toFixed(1)}
+                        </span>
+                        <span className="text-[10px] text-[var(--gray-500)] bg-[var(--gray-100)] px-1 rounded">Mean</span>
+                      </div>
+                      <span className="text-[10px] text-[var(--gray-400)]">n={row.total}</span>
+                    </>
+                  ) : (
+                    // FREQUENCY ROW TOTAL
+                    <>
+                      <span>{((row.total / tableData.grandTotal) * 100).toFixed(1)}%</span>
+                      <span className="text-[10px] text-[var(--gray-400)]">n={row.total}</span>
+                    </>
+                  )}
+                </div>
+              </td>
+            )}
           </tr>
           {/* Render Children */}
           {hasChildren && isExpanded && row.children.map(child => renderRow(child))}
@@ -288,9 +396,11 @@ export const DataTable: React.FC<DataTableProps> = ({
                     </div>
                   </th>
                 ))}
-                <th className="px-4 py-3 font-bold text-right w-24 text-[var(--color-ink)] bg-[var(--gray-50)] align-bottom">
-                  Total
-                </th>
+                {(colVariable || !variableStats) && (
+                  <th className="px-4 py-3 font-bold text-right w-24 text-[var(--color-ink)] bg-[var(--gray-50)] align-bottom">
+                    Total
+                  </th>
+                )}
               </tr>
             </thead>
             <tbody className="divide-y divide-[var(--gray-100)] font-body">
@@ -303,7 +413,25 @@ export const DataTable: React.FC<DataTableProps> = ({
                   </td>
                 ))}
                 <td className="px-4 py-3 text-right font-mono text-[var(--color-ink)]">
-                  {tableData.grandTotal}
+                  {/* GRAND TOTAL CELL - SHOW SPARKLINE IF STATS AVAILABLE */}
+                  {variableStats && (
+                    <div className="flex flex-col items-end gap-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <div className="text-right">
+                          <div className="text-xs font-bold">{variableStats.numeric?.mean.toFixed(1)}</div>
+                          <div className="text-[9px] text-[var(--gray-500)] uppercase tracking-wide">Mean</div>
+                        </div>
+                        <Sparkline
+                          type="scale"
+                          histogramBins={variableStats.numeric?.histogramBins}
+                          width={80}
+                          height={24}
+                        />
+                      </div>
+                      <span className="text-[10px] text-[var(--gray-400)]">N={variableStats.totalCount}</span>
+                    </div>
+                  )}
+                  {!variableStats && tableData.grandTotal}
                 </td>
               </tr>
             </tbody>

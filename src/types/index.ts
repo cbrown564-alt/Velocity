@@ -147,6 +147,13 @@ export interface AggregatedRow {
   count: number;
   /** Weighted count when a weight variable is applied */
   weightedCount?: number;
+  // Scale variable stats
+  mean?: number;
+  median?: number;
+  stdDev?: number;
+  min?: number;
+  max?: number;
+  validCount?: number;
 }
 
 export interface TableConfig {

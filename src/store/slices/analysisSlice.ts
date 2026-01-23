@@ -6,7 +6,7 @@
 
 import type { StateCreator } from 'zustand';
 import { buildCrosstabQuery } from '../../services/queryBuilder';
-import type { WorkerRequest, WorkerResponse } from '../../services/analysisWorker';
+import type { WorkerRequest, WorkerResponse, VariableStatsResult } from '../../services/analysisWorker';
 import type { DataSlice, VariableSet } from './dataSlice';
 
 // ============================================================================
@@ -30,6 +30,13 @@ export interface AggregatedRow {
     colKey: string;
     count: number;
     weightedCount?: number;
+    // Scale variable stats
+    mean?: number;
+    median?: number;
+    stdDev?: number;
+    min?: number;
+    max?: number;
+    validCount?: number;
 }
 
 // ============================================================================
@@ -42,6 +49,7 @@ export interface AnalysisSlice {
     queryResult: AggregatedRow[];
     isQuerying: boolean;
     activeFilters: Filter[];
+    activeVariableStats: VariableStatsResult | null;
 
     // Actions
     setTableConfig: (config: Partial<TableConfig>) => void;
@@ -50,6 +58,7 @@ export interface AnalysisSlice {
     addFilter: (filter: Omit<Filter, 'id'>) => void;
     removeFilter: (filterId: string) => void;
     clearFilters: () => void;
+    fetchVariableStats: (variableId: string) => Promise<void>;
     reset: () => void;
 }
 
@@ -67,6 +76,7 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
     queryResult: [],
     isQuerying: false,
     activeFilters: [],
+    activeVariableStats: null,
 
     // Actions
     setTableConfig: (config) => {
@@ -110,6 +120,26 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
                 filters: activeFilters,
                 weightVar: dataset?.weightVariable || undefined,
             });
+        } else if (firstRowVarSet?.type === 'scale') {
+            // Scale Variable: Show Summary Stats instead of frequencies
+            // Get the first variable ID (assuming single variable for now)
+            const measureVarId = firstRowVarSet.variableIds[0];
+
+            // Also fetch the full distribution stats for the Sparkline
+            get().fetchVariableStats(measureVarId);
+
+            const col = tableConfig.colVar
+                ? (variableSets.find((s: VariableSet) => s.id === tableConfig.colVar)?.variableIds[0] || tableConfig.colVar)
+                : null;
+
+            sql = buildCrosstabQuery({
+                rowVars: [], // No row grouping, we group by Col only
+                colVar: col,
+                filters: activeFilters,
+                weightVar: dataset?.weightVariable || undefined,
+                measureVar: measureVarId,
+                measureLabel: firstRowVarSet.name,
+            });
         } else {
             // Standard single variable or nested rows
             const resolveToCol = (id: string): string => {
@@ -148,8 +178,17 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
                         return {
                             rowKeys,
                             colKey: row.colKey,
-                            count: isWeighted ? 0 : row.count,
-                            weightedCount: isWeighted ? row.count : undefined,
+                            // Convert to Number to handle potential BigInts from DuckDB
+                            count: isWeighted ? 0 : Number(row.count ?? row.validCount ?? 0),
+                            weightedCount: isWeighted ? Number(row.count) : undefined,
+
+                            // Map stats if present
+                            mean: row.mean,
+                            median: row.median,
+                            stdDev: row.stdDev,
+                            min: row.min,
+                            max: row.max,
+                            validCount: row.validCount !== undefined ? Number(row.validCount) : undefined,
                         };
                     });
 
@@ -200,6 +239,24 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
     clearFilters: () => {
         set({ activeFilters: [] });
         get().runAnalysis();
+    },
+
+    fetchVariableStats: async (variableId: string) => {
+        const { worker } = get();
+        if (!worker) return;
+
+        return new Promise<void>((resolve) => {
+            const handler = (event: MessageEvent<WorkerResponse>) => {
+                const response = event.data;
+                if (response.type === 'variableStats' && response.stats.column === variableId) {
+                    set({ activeVariableStats: response.stats });
+                    worker.removeEventListener('message', handler);
+                    resolve();
+                }
+            };
+            worker.addEventListener('message', handler);
+            worker.postMessage({ type: 'getVariableStats', column: variableId } as WorkerRequest);
+        });
     },
 
     reset: () => {
