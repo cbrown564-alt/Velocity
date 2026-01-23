@@ -102,18 +102,31 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
 
         if (firstRowVarSet?.structure === 'grid') {
             // Grid structure: unpivot all variables to show scale values as rows, variables as columns
+            // Map variable IDs to their labels
+            const gridColumns = firstRowVarSet.variableIds.map(varId => {
+                const variable = dataset?.variables.find(v => v.id === varId);
+                return {
+                    name: varId,
+                    label: variable?.label || varId,
+                };
+            });
             sql = buildCrosstabQuery({
                 rowVars: [],
-                gridColumns: firstRowVarSet.variableIds,
+                gridColumns,
                 filters: activeFilters,
                 weightVar: dataset?.weightVariable || undefined,
             });
         } else if (firstRowVarSet?.structure === 'multiple') {
             // Multiple structure: show only counted value for each variable
-            const multipleColumns = firstRowVarSet.variableIds.map(varId => ({
-                column: varId,
-                countedValue: firstRowVarSet.countedValue ?? 1, // Default to 1 if not specified
-            }));
+            // Map variable IDs to their labels
+            const multipleColumns = firstRowVarSet.variableIds.map(varId => {
+                const variable = dataset?.variables.find(v => v.id === varId);
+                return {
+                    name: varId,
+                    label: variable?.label || varId,
+                    countedValue: firstRowVarSet.countedValue ?? 1, // Default to 1 if not specified
+                };
+            });
             sql = buildCrosstabQuery({
                 rowVars: [],
                 multipleColumns,

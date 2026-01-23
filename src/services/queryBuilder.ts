@@ -15,7 +15,7 @@ import type { Filter } from '../types';
  * Builds a query for grid structure (unpivots multiple columns with shared scale)
  */
 interface GridQueryOptions {
-    columns: string[];
+    columns: Array<{ name: string; label: string }>;
     filters?: Filter[];
     weightVar?: string;
     colVar?: string | null;
@@ -30,15 +30,15 @@ function buildGridQuery(options: GridQueryOptions): string {
         : `COUNT(*)::INTEGER`;
 
     // Build UNION ALL query for each column
-    const unionParts = columns.map(col => {
+    const unionParts = columns.map(({ name, label }) => {
         const parts = [
-            `SELECT '${escapeString(col)}' as colKey, "${escapeIdentifier(col)}" as rowKey_0, ${countExpr} as count`,
+            `SELECT '${escapeString(label)}' as colKey, "${escapeIdentifier(name)}" as rowKey_0, ${countExpr} as count`,
             `FROM main`,
         ];
 
         const conditions: string[] = [];
         // Filter out NULL values for this column
-        conditions.push(`"${escapeIdentifier(col)}" IS NOT NULL`);
+        conditions.push(`"${escapeIdentifier(name)}" IS NOT NULL`);
         if (whereClause) {
             conditions.push(whereClause);
         }
@@ -47,7 +47,7 @@ function buildGridQuery(options: GridQueryOptions): string {
             parts.push(`WHERE ${conditions.join(' AND ')}`);
         }
 
-        parts.push(`GROUP BY "${escapeIdentifier(col)}"`);
+        parts.push(`GROUP BY "${escapeIdentifier(name)}"`);
 
         return parts.join(' ');
     });
@@ -59,7 +59,7 @@ function buildGridQuery(options: GridQueryOptions): string {
  * Builds a query for multiple structure (shows only counted value for each variable)
  */
 interface MultipleQueryOptions {
-    columns: Array<{ column: string; countedValue: number }>;
+    columns: Array<{ name: string; label: string; countedValue: number }>;
     filters?: Filter[];
     weightVar?: string;
     colVar?: string | null;
@@ -74,15 +74,15 @@ function buildMultipleQuery(options: MultipleQueryOptions): string {
         : `COUNT(*)::INTEGER`;
 
     // Build UNION ALL query for each column, filtering by countedValue
-    const unionParts = columns.map(({ column, countedValue }) => {
+    const unionParts = columns.map(({ name, label, countedValue }) => {
         const parts = [
-            `SELECT '${escapeString(column)}' as rowKey_0, 'Total' as colKey, ${countExpr} as count`,
+            `SELECT '${escapeString(label)}' as rowKey_0, 'Total' as colKey, ${countExpr} as count`,
             `FROM main`,
         ];
 
         const conditions: string[] = [];
         // Filter for counted value only
-        conditions.push(`"${escapeIdentifier(column)}" = ${countedValue}`);
+        conditions.push(`"${escapeIdentifier(name)}" = ${countedValue}`);
         if (whereClause) {
             conditions.push(whereClause);
         }
@@ -100,10 +100,10 @@ export interface CrosstabQueryOptions {
     colVar?: string | null;
     filters?: Filter[];
     weightVar?: string;
-    /** For grid structure: array of column names to unpivot */
-    gridColumns?: string[];
-    /** For multiple structure: column names and their counted value */
-    multipleColumns?: Array<{ column: string; countedValue: number }>;
+    /** For grid structure: array of columns with names and labels to unpivot */
+    gridColumns?: Array<{ name: string; label: string }>;
+    /** For multiple structure: column names, labels, and their counted value */
+    multipleColumns?: Array<{ name: string; label: string; countedValue: number }>;
     /** For scale variables: the variable to aggregate (Mean, Median, etc.) */
     measureVar?: string;
     /** Label to use for the measure row (e.g. "Age") */
