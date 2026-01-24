@@ -46,8 +46,23 @@ export function recommendChart(context: RecommenderContext): ChartRecommendation
                 reason: 'Comparing nominal/ordinal groups across columns.',
             };
         }
-        // Scale x Nominal (e.g. Age by Gender) -> Box Plot (Future)
-        // For now, fall back to Grouped Bar if we bin it, or just warning.
+        // Scale x Nominal (e.g. Age by Gender) -> Box Plot
+        if (primaryRowVar?.type === 'scale') {
+            return {
+                default: 'grouped-box-plot',
+                alternatives: ['violin', 'ridgeline'],
+                reason: 'Comparing distributions across groups.',
+            };
+        }
+    }
+
+    // 4. Two Scales (Scatter)
+    if (primaryRowVar?.type === 'scale' && colVar?.type === 'scale') {
+        return {
+            default: 'scatter',
+            alternatives: ['hexbin'],
+            reason: 'Exploring relationship between two numeric variables.',
+        };
     }
 
     // 4. Single Variable Analysis

@@ -18,11 +18,9 @@ export type ViewMode = 'table' | 'chart';
 // Faceted Search Types
 export type TypeFacet = 'categorical' | 'numeric';
 export type StatusFacet = 'visible' | 'hidden' | 'derived';
+export type QualityFacet = 'valid' | 'flagged';
 // Chart Types
-export type ChartType =
-    | 'horizontal-bar' | 'vertical-bar' | 'grouped-bar'
-    | 'stacked-bar' | 'stacked-bar-100' | 'diverging-bar'
-    | 'donut' | 'histogram' | 'box-plot' | 'scatter' | 'lollipop';
+import type { ChartType } from '../../types/charts';
 
 export interface FacetFilters {
     types: TypeFacet[];

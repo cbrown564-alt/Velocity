@@ -1,0 +1,190 @@
+import React, { useMemo, useRef, useCallback, useEffect } from 'react';
+import * as d3 from 'd3-scale';
+import { select } from 'd3-selection';
+import { max } from 'd3-array';
+import { BaseChartRendererProps } from '../../../types/charts';
+import { getChartColor } from '../shared/chartColors';
+
+/**
+ * Lollipop Chart Renderer
+ * Used for single-variable frequency distributions, alternative to Horizontal Bar.
+ * Effective for ranking multiple response items or long lists.
+ */
+export const LollipopRenderer: React.FC<BaseChartRendererProps> = ({
+    width,
+    height,
+    colors,
+    processedData,
+    interactive = true,
+    selectedKeys,
+    onSelectionChange,
+    onContextMenu,
+}) => {
+    const series = processedData.series[0];
+    const chartData = series?.data || [];
+
+    // Dynamic margin similar to Horizontal Bar
+    const maxLabelLength = Math.max(...chartData.map(d => (d.label || '').length), 10);
+    const leftMargin = Math.min(Math.max(maxLabelLength * 6, 80), 180);
+
+    const margin = { top: 24, right: 60, bottom: 24, left: leftMargin };
+    const innerWidth = Math.max(width - margin.left - margin.right, 100);
+    const innerHeight = Math.max(height - margin.top - margin.bottom, 100);
+
+    const barHeight = Math.min(Math.max(innerHeight / chartData.length - 8, 20), 40);
+    const actualHeight = (barHeight + 8) * chartData.length;
+
+    const yScale = useMemo(() => {
+        return d3.scalePoint()
+            .domain(chartData.map(d => d.label))
+            .range([0, actualHeight])
+            .padding(0.5);
+    }, [chartData, actualHeight]);
+
+    const xScale = useMemo(() => {
+        const maxVal = max(chartData, d => d.value) || 1;
+        return d3.scaleLinear()
+            .domain([0, maxVal * 1.1])
+            .range([0, innerWidth]);
+    }, [chartData, innerWidth]);
+
+    const handlePointClick = useCallback((d: any, event: React.MouseEvent) => {
+        if (!interactive || !onSelectionChange) return;
+
+        const newSelection = new Set(selectedKeys);
+        if (event.metaKey || event.ctrlKey) {
+            if (newSelection.has(d.label)) {
+                newSelection.delete(d.label);
+            } else {
+                newSelection.add(d.label);
+            }
+        } else {
+            newSelection.clear();
+            newSelection.add(d.label);
+        }
+        onSelectionChange(newSelection);
+    }, [interactive, onSelectionChange, selectedKeys]);
+
+
+    // X-axis ticks
+    const xTicks = xScale.ticks(5);
+
+    return (
+        <svg
+            width={width}
+            height={Math.max(height, actualHeight + margin.top + margin.bottom)}
+            className="overflow-visible font-body"
+            onContextMenu={(e) => {
+                if (interactive && onContextMenu && selectedKeys && selectedKeys.size > 0) {
+                    e.preventDefault();
+                    const selectedItems = chartData.filter(d => selectedKeys.has(d.label));
+                    onContextMenu({
+                        selected: selectedItems,
+                        position: { x: e.clientX, y: e.clientY }
+                    });
+                }
+            }}
+        >
+            <g transform={`translate(${margin.left},${margin.top})`}>
+                {/* Grid lines */}
+                {xTicks.map(tick => (
+                    <line
+                        key={tick}
+                        x1={xScale(tick)}
+                        y1={0}
+                        x2={xScale(tick)}
+                        y2={actualHeight}
+                        stroke="var(--gray-100)"
+                        strokeDasharray="2,2"
+                    />
+                ))}
+
+                {/* X-axis */}
+                <g transform={`translate(0,${actualHeight})`}>
+                    <line x1={0} y1={0} x2={innerWidth} y2={0} stroke="var(--gray-200)" />
+                    {xTicks.map(tick => (
+                        <g key={tick} transform={`translate(${xScale(tick)},0)`}>
+                            <line y2={4} stroke="var(--gray-300)" />
+                            <text
+                                y={16}
+                                textAnchor="middle"
+                                className="text-[10px] fill-gray-500"
+                            >
+                                {tick}
+                            </text>
+                        </g>
+                    ))}
+                </g>
+
+                {/* Y Axis Labels */}
+                {chartData.map((d) => (
+                    <text
+                        key={d.label}
+                        x={-12}
+                        y={yScale(d.label)}
+                        dy=".35em"
+                        textAnchor="end"
+                        className={`text-xs ${selectedKeys?.has(d.label) ? 'font-bold fill-gray-900' : 'fill-gray-700'}`}
+                        style={{ fontFamily: 'var(--font-body)' }}
+                    >
+                        {(d.label || '').length > 25 ? (d.label || '').substring(0, 23) + '...' : d.label}
+                    </text>
+                ))}
+
+                {/* Lines and Circles */}
+                {chartData.map((d) => {
+                    const xVal = xScale(d.value);
+                    const yVal = yScale(d.label) || 0;
+                    const isSelected = selectedKeys?.has(d.label);
+                    const color = isSelected
+                        ? (colors ? colors[1] : 'var(--color-terracotta)')
+                        : (colors ? colors[0] : getChartColor(0));
+
+                    return (
+                        <g
+                            key={d.label}
+                            className={`transition-all duration-300 ${interactive ? 'cursor-pointer hover:opacity-80' : ''}`}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                handlePointClick(d, e);
+                            }}
+                        >
+                            {/* Stick */}
+                            <line
+                                x1={0}
+                                y1={yVal}
+                                x2={xVal}
+                                y2={yVal}
+                                stroke={isSelected ? 'var(--gray-400)' : 'var(--gray-300)'}
+                                strokeWidth={2}
+                            />
+
+                            {/* Head */}
+                            <circle
+                                cx={xVal}
+                                cy={yVal}
+                                r={isSelected ? 8 : 6}
+                                fill={color}
+                                stroke="white"
+                                strokeWidth={2}
+                            />
+
+                            {/* Value label */}
+                            <text
+                                x={xVal + 12}
+                                y={yVal}
+                                dy=".35em"
+                                className={`text-xs ${isSelected ? 'font-bold fill-gray-900' : 'font-medium fill-gray-600'}`}
+                            >
+                                {d.value.toLocaleString()}
+                                <tspan className="fill-gray-400 font-normal">
+                                    {' '}({d.percent.toFixed(1)}%)
+                                </tspan>
+                            </text>
+                        </g>
+                    );
+                })}
+            </g>
+        </svg>
+    );
+};

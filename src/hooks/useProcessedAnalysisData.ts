@@ -77,6 +77,23 @@ export interface ChartDataPoint {
     percent: number;
     /** Significance marker */
     sig?: string;
+    // For Box Plot / Distribution
+    stats?: {
+        min?: number;
+        q1?: number;
+        median?: number;
+        q3?: number;
+        max?: number;
+        mean?: number;
+        n?: number;
+    };
+    // For Histogram/Violin/Ridgeline Bins
+    x0?: number;
+    x1?: number;
+    count?: number;
+    // For Scatter/Hexbin
+    x?: number;
+    y?: number;
 }
 
 /** A chart series (one per column) */
@@ -87,6 +104,16 @@ export interface ChartSeries {
     label: string;
     /** Data points (one per row category) */
     data: ChartDataPoint[];
+    // For Grouped Box Plot where series = group
+    stats?: {
+        min?: number;
+        q1?: number;
+        median?: number;
+        q3?: number;
+        max?: number;
+        mean?: number;
+        n?: number;
+    };
 }
 
 /** The complete processed analysis data */

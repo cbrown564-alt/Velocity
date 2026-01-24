@@ -11,7 +11,11 @@ export type ChartType =
     | 'histogram'
     | 'box-plot'
     | 'scatter'
-    | 'lollipop';
+    | 'lollipop'
+    | 'grouped-box-plot'
+    | 'violin'
+    | 'ridgeline'
+    | 'hexbin';
 
 export interface ChartRecommendation {
     default: ChartType;

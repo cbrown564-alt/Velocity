@@ -29,7 +29,11 @@ const CHART_ICONS: Record<ChartType, React.ReactNode> = {
     'histogram': <BarChart3 size={16} />,
     'box-plot': <BoxSelect size={16} />,
     'scatter': <ScatterChart size={16} />,
-    'lollipop': <LineChart size={16} />, // Approximation
+    'lollipop': <LineChart size={16} />,
+    'grouped-box-plot': <BoxSelect size={16} />,
+    'violin': <BarChart3 size={16} />, // Polyfill icon
+    'ridgeline': <BarChart3 size={16} />, // Polyfill icon
+    'hexbin': <ScatterChart size={16} />, // Polyfill icon
 };
 
 const CHART_LABELS: Record<ChartType, string> = {
@@ -44,6 +48,10 @@ const CHART_LABELS: Record<ChartType, string> = {
     'box-plot': 'Box Plot',
     'scatter': 'Scatterplot',
     'lollipop': 'Lollipop Chart',
+    'grouped-box-plot': 'Grouped Box Plot',
+    'violin': 'Violin Chart',
+    'ridgeline': 'Ridgeline Chart',
+    'hexbin': 'Hexbin Chart',
 };
 
 export const ChartSelector: React.FC<ChartSelectorProps> = ({

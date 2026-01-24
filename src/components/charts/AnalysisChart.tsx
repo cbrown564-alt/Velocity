@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useMemo } from 'react';
 import { AggregatedRow } from '../../types';
 import { BaseChartRendererProps, AnalysisChartConfig } from '../../types/charts';
 import { CHART_PALETTE } from './shared/chartColors';
@@ -8,10 +8,17 @@ import {
     GroupedBarRenderer,
     DivergingBarRenderer,
     DonutRenderer,
-    HistogramRenderer
+    HistogramRenderer,
+    LollipopRenderer,
+    BoxPlotRenderer,
+    GroupedBoxPlotRenderer,
+    ViolinRenderer,
+    RidgelineRenderer,
+    HexbinRenderer
 } from './renderers';
 import { ProcessedAnalysisData } from '../../hooks/useProcessedAnalysisData';
 import { ChartSelector } from './ChartSelector';
+import { recommendChart } from '../../services/chartRecommender';
 import { ChartLegend } from './shared/ChartLegend';
 import { ChartType } from '../../types/charts';
 import { useVelocityStore } from '../../store';
@@ -45,6 +52,17 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
 
     // Use selected type if available, otherwise fallback to recommender config
     const activeChartType = selectedChartType || config.type;
+
+    // Derive available charts from context
+    const recommendation = useMemo(() => {
+        if (!processedData) return null;
+        return recommendChart({
+            rowVars: processedData.rowVariables,
+            colVar: processedData.colVariable,
+            isGrid: false, // TODO: detect grid
+            isMultiResponse: false, // TODO: detect multi-response
+        });
+    }, [processedData]);
 
     // Simple resize observer
     useEffect(() => {
@@ -109,6 +127,18 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
             case 'vertical-bar':
                 // Fallback to grouped for now or implement VerticalBarRenderer
                 return <GroupedBarRenderer {...commonProps} />;
+            case 'lollipop':
+                return <LollipopRenderer {...commonProps} />;
+            case 'box-plot':
+                return <BoxPlotRenderer {...commonProps} />;
+            case 'grouped-box-plot':
+                return <GroupedBoxPlotRenderer {...commonProps} />;
+            case 'violin':
+                return <ViolinRenderer {...commonProps} />;
+            case 'ridgeline':
+                return <RidgelineRenderer {...commonProps} />;
+            case 'hexbin':
+                return <HexbinRenderer {...commonProps} />;
             default:
                 return (
                     <div className="flex items-center justify-center h-full text-gray-400">
@@ -131,6 +161,7 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
                 <div className="flex items-center gap-4">
                     <ChartSelector
                         currentType={activeChartType}
+                        availableTypes={recommendation?.alternatives ? [recommendation.default, ...recommendation.alternatives] : undefined}
                         onSelect={(type) => useVelocityStore.getState().setSelectedChartType(type)}
                     />
 
