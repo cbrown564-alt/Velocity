@@ -18,7 +18,11 @@ export type ViewMode = 'table' | 'chart';
 // Faceted Search Types
 export type TypeFacet = 'categorical' | 'numeric';
 export type StatusFacet = 'visible' | 'hidden' | 'derived';
-export type QualityFacet = 'complete' | 'incomplete';
+// Chart Types
+export type ChartType =
+    | 'horizontal-bar' | 'vertical-bar' | 'grouped-bar'
+    | 'stacked-bar' | 'stacked-bar-100' | 'diverging-bar'
+    | 'donut' | 'histogram' | 'box-plot' | 'scatter' | 'lollipop';
 
 export interface FacetFilters {
     types: TypeFacet[];
@@ -62,6 +66,10 @@ export interface UISlice {
     /** Single variable selection for Miller column navigation */
     selectedVariableId: string | null;
 
+    // Chart State
+    /** User-selected chart type override (null = auto) */
+    selectedChartType: ChartType | null;
+
     // Actions
     setAppMode: (mode: AppMode) => void;
     toggleAppMode: () => void;
@@ -87,6 +95,9 @@ export interface UISlice {
     setSelectedVariableSetId: (id: string | null) => void;
     setSelectedVariableId: (id: string | null) => void;
 
+    // Chart Actions
+    setSelectedChartType: (type: ChartType | null) => void;
+
     // Faceted Search
     facetFilters: FacetFilters;
     setFacetFilters: (filters: Partial<FacetFilters>) => void;
@@ -109,6 +120,9 @@ export const createUISlice: StateCreator<UISlice, [], [], UISlice> = (set) => ({
     selectedDataSourceId: null,
     selectedVariableSetId: null,
     selectedVariableId: null,
+
+    // Chart State
+    selectedChartType: null,
 
     // Faceted Search State
     facetFilters: { types: [], statuses: [], qualities: [] },
@@ -205,6 +219,8 @@ export const createUISlice: StateCreator<UISlice, [], [], UISlice> = (set) => ({
     }),
 
     setSelectedVariableId: (id) => set({ selectedVariableId: id }),
+
+    setSelectedChartType: (type) => set({ selectedChartType: type }),
 
     // Faceted Search Actions
     setFacetFilters: (filters) => set((state) => ({

@@ -4,6 +4,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight, ChevronDown, ArrowUp, ArrowDown } from 'lucide-react';
 import type { VariableStatsResult } from '../../../services/analysisWorker';
 import { Sparkline } from '../../variableManager/Sparkline';
+import { AnalysisChart } from '../../../components/charts/AnalysisChart';
+import { useProcessedAnalysisData } from '../../../hooks/useProcessedAnalysisData';
+import { recommendChart } from '../../../services/chartRecommender';
 
 /** Row path entry for drill-down */
 export interface RowPathEntry {
@@ -84,6 +87,28 @@ export const DataTable: React.FC<DataTableProps> = ({
   const toggleRow = (key: string) => {
     setExpandedKeys(prev => ({ ...prev, [key]: !prev[key] }));
   };
+
+  // Process data for Visualization (Chart & Future Table)
+  const processedData = useProcessedAnalysisData({
+    data,
+    rowVariables,
+    colVariable,
+    isWeighted,
+    isMultipleResponse
+  });
+
+  // Determine default chart type
+  const chartConfig = useMemo(() => {
+    if (!processedData) return { type: 'horizontal-bar' as const };
+
+    return {
+      type: recommendChart({
+        rowVars: rowVariables,
+        colVar: colVariable,
+        isMultiResponse: isMultipleResponse,
+      }).default
+    };
+  }, [processedData, rowVariables, colVariable, isMultipleResponse]);
 
   const tableData = useMemo(() => {
     if (!rowVariables.length) return null;
@@ -561,82 +586,24 @@ export const DataTable: React.FC<DataTableProps> = ({
     );
   }
 
-  // -- RENDER MODE: CHART (STACKED BAR) --
-  // Note: Only charting top-level rows for now
+  // -- RENDER MODE: CHART --
   return (
     <motion.div
       key="chart"
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="w-full bg-[var(--color-paper)] border border-[var(--gray-200)] rounded-lg shadow-sm p-6"
+      className="w-full h-[500px] bg-[var(--color-paper)] border border-[var(--gray-200)] rounded-lg shadow-sm p-6"
     >
-      <div className="mb-6 flex justify-between items-center">
-        <div>
-          <h3 className="text-lg font-bold text-[var(--color-ink)] font-display">{rowVariables[0].label} Distribution</h3>
-          {colVariable && <p className="text-sm text-[var(--gray-500)] font-body">Broken down by {colVariable.label}</p>}
-        </div>
-
-        {/* Legend */}
-        {colVariable && (
-          <div className="flex flex-wrap gap-3 max-w-md justify-end">
-            {tableData.colKeys.map((col, idx) => (
-              <div key={col} className="flex items-center gap-1.5">
-                <div className={`w-3 h-3 rounded-full ${CHART_COLORS[idx % CHART_COLORS.length]}`}></div>
-                <span className="text-xs font-medium text-[var(--gray-600)] font-body">{tableData.colLabels[col]}</span>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-
-      <div className="space-y-6 font-body">
-        {chartRows.map((row) => (
-          <div key={row.key} className="space-y-1.5">
-            <div className="flex justify-between text-sm">
-              <span className="font-semibold text-[var(--color-charcoal)]">{row.label}</span>
-              <span className="text-[var(--gray-400)] text-xs">n={row.total}</span>
-            </div>
-
-            {/* 100% Stacked Bar */}
-            <div className="h-8 w-full bg-[var(--gray-100)] rounded-md overflow-hidden flex relative">
-              {colVariable ? (
-                tableData.colKeys.map((col, idx) => {
-                  const count = row.cells[col].count;
-                  const widthPct = row.total > 0 ? (count / row.total) * 100 : 0;
-                  if (widthPct === 0) return null;
-
-                  return (
-                    <motion.div
-                      key={col}
-                      initial={{ width: 0 }}
-                      animate={{ width: `${widthPct}%` }}
-                      transition={{ duration: 0.5, delay: idx * 0.05 }}
-                      className={`h-full ${CHART_COLORS[idx % CHART_COLORS.length]} border-r border-white/20 last:border-none flex items-center justify-center`}
-                    >
-                      {widthPct > 8 && (
-                        <span className="text-[10px] font-bold text-white/90 drop-shadow-md">
-                          {widthPct.toFixed(0)}%
-                        </span>
-                      )}
-                    </motion.div>
-                  );
-                })
-              ) : (
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: `${(row.total / tableData.grandTotal) * 100}%` }}
-                  transition={{ duration: 0.5 }}
-                  className={`h-full ${CHART_COLORS[0]} rounded-r-md flex items-center justify-start pl-3`}
-                >
-                  <span className="text-xs font-bold text-white/90">
-                    {(row.total / tableData.grandTotal * 100).toFixed(1)}%
-                  </span>
-                </motion.div>
-              )}
-            </div>
-          </div>
-        ))}
-      </div>
+      <AnalysisChart
+        data={data}
+        processedData={processedData}
+        config={{
+          type: chartConfig.type,
+          showLegend: true,
+          showTooltip: true,
+          enableVisualETL: true
+        }}
+      />
     </motion.div>
   );
 };
