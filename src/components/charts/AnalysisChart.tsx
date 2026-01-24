@@ -60,7 +60,7 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
             rowVars: processedData.rowVariables,
             colVar: processedData.colVariable,
             isGrid: false, // TODO: detect grid
-            isMultiResponse: false, // TODO: detect multi-response
+            isMultiResponse: processedData.isMultipleResponse,
         });
     }, [processedData]);
 
@@ -130,8 +130,11 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
             case 'lollipop':
                 return <LollipopRenderer {...commonProps} />;
             case 'box-plot':
-                return <BoxPlotRenderer {...commonProps} />;
+                // Check if we have stats, if not try to use processedData series stats if available
+                const boxStats = variableStats || (processedData?.series[0]?.stats ? { stats: processedData.series[0].stats } : undefined);
+                return <BoxPlotRenderer {...commonProps} variableStats={boxStats} />;
             case 'grouped-box-plot':
+                // If no explicit stats, try to infer from data if it's raw values (rare) or just pass through
                 return <GroupedBoxPlotRenderer {...commonProps} />;
             case 'violin':
                 return <ViolinRenderer {...commonProps} />;

@@ -10,8 +10,8 @@
 
 import * as duckdb from '@duckdb/duckdb-wasm';
 import * as arrow from 'apache-arrow';
-import { RecodeConfig, VariableSet, Variable, Filter } from '../types';
-import { buildCrosstabQuery, CrosstabQueryOptions } from './queryBuilder';
+import { RecodeConfig, VariableSet, Variable, Filter, HistogramBin } from '../types';
+import { buildCrosstabQuery, CrosstabQueryOptions, buildFilterClause, escapeIdentifier } from './queryBuilder';
 import { calculateZScore, calculateTScore, calculateESS, calculatePValue } from './statistics';
 
 const JSDELIVR_BUNDLES = duckdb.getJsDelivrBundles();
@@ -46,11 +46,7 @@ export interface VariableStatsFrequency {
   count: number;
 }
 
-export interface HistogramBin {
-  x0: number;
-  x1: number;
-  count: number;
-}
+
 
 export interface NumericStats {
   min: number;
@@ -1082,6 +1078,111 @@ async function runCrosstab(options: CrosstabQueryOptions, variableTypes: Record<
 
   const mainResult = await conn.query(sql);
   const rows = mainResult.toArray().map(r => r.toJSON());
+
+  // 2.5 Grouped Histogram (for Violin/Ridgeline)
+  if (modifiedOptions.measureVar && modifiedOptions.includeDistributions) {
+    try {
+      const measure = modifiedOptions.measureVar;
+      const binCount = 20; // Fixed bin count for density visualization
+      const safeMeasure = `"${escapeIdentifier(measure)}"`;
+
+      let whereSql = '';
+      if (modifiedOptions.filters && modifiedOptions.filters.length > 0) {
+        const clause = buildFilterClause(modifiedOptions.filters);
+        if (clause) whereSql = `WHERE ${clause}`;
+      }
+
+      // 2.5a Get Global Min/Max for consistent binning
+      const rangeSql = `SELECT MIN(${safeMeasure}) as minVal, MAX(${safeMeasure}) as maxVal FROM main ${whereSql}`;
+      const rangeRes = await conn.query(rangeSql);
+      const rangeRow = rangeRes.toArray()[0];
+
+      if (rangeRow && rangeRow.minVal !== null && rangeRow.maxVal !== null) {
+        const minVal = Number(rangeRow.minVal);
+        const maxVal = Number(rangeRow.maxVal);
+        const range = maxVal - minVal;
+        const binWidth = range > 0 ? range / binCount : 1;
+
+        // 2.5b Run Grouped Histogram Query
+        const rowGroups = modifiedOptions.rowVars.map((r, i) => `"${escapeIdentifier(r)}" as rowKey_${i}`);
+        const colGroup = modifiedOptions.colVar
+          ? `"${escapeIdentifier(modifiedOptions.colVar)}" as colKey`
+          : `'Total' as colKey`;
+
+        const groupByCols = [
+          ...modifiedOptions.rowVars.map(r => `"${escapeIdentifier(r)}"`),
+          modifiedOptions.colVar ? `"${escapeIdentifier(modifiedOptions.colVar)}"` : null
+        ].filter((c): c is string => Boolean(c)).join(', ');
+
+        const bucketExpr = `
+              CASE
+                  WHEN ${range} = 0 THEN 1
+                  ELSE LEAST(FLOOR((${safeMeasure} - ${minVal}) / ${binWidth}) + 1, ${binCount})::INTEGER
+              END
+          `;
+
+        const histSql = `
+              SELECT
+                  ${rowGroups.length > 0 ? rowGroups.join(', ') + ',' : ''}
+                  ${colGroup},
+                  ${bucketExpr} as bucket,
+                  COUNT(*) as cnt
+              FROM main
+              ${whereSql}
+              ${whereSql ? 'AND' : 'WHERE'} ${safeMeasure} IS NOT NULL
+              GROUP BY ${groupByCols ? groupByCols + ',' : ''} bucket
+          `;
+
+        const histRes = await conn.query(histSql);
+
+        // 2.5c Map Bins to Rows
+        const binMap = new Map<string, HistogramBin[]>();
+
+        for (const row of histRes.toArray()) {
+          // Construct Composite Key matching the main result rows
+          const keyParts = [];
+          let i = 0;
+          while (row[`rowKey_${i}`] !== undefined) {
+            keyParts.push(String(row[`rowKey_${i}`]));
+            i++;
+          }
+          keyParts.push(String(row.colKey));
+          const key = keyParts.join('|||');
+
+          if (!binMap.has(key)) binMap.set(key, []);
+
+          const b = Number(row.bucket);
+          binMap.get(key)!.push({
+            x0: minVal + (b - 1) * binWidth,
+            x1: minVal + b * binWidth,
+            count: Number(row.cnt)
+          });
+        }
+
+        // Attach bins to Main Rows
+        rows.forEach(r => {
+          const keyParts = [];
+          let i = 0;
+          while (r[`rowKey_${i}`] !== undefined) {
+            keyParts.push(String(r[`rowKey_${i}`]));
+            i++;
+          }
+          keyParts.push(String(r.colKey));
+          const key = keyParts.join('|||');
+
+          const bins = binMap.get(key) || [];
+          // Ensure bins are sorted by x axis
+          bins.sort((a, b) => a.x0 - b.x0);
+
+          r.histogramBins = bins;
+        });
+
+        console.log(`🦆 [Worker] Attached histogram bins for ${rows.length} rows`);
+      }
+    } catch (e) {
+      console.warn('🦆 [Worker] Histogram generation failed:', e);
+    }
+  }
 
   // 3. Significance Testing
   // We compare each cell against the "Total" for that Row Group (or rather, the Complement "Rest").

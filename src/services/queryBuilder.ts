@@ -108,6 +108,8 @@ export interface CrosstabQueryOptions {
     measureVar?: string;
     /** Label to use for the measure row (e.g. "Age") */
     measureLabel?: string;
+    /** Whether to include histogram bins for distribution charts (Violin/Ridgeline) */
+    includeDistributions?: boolean;
 }
 
 /**
@@ -177,6 +179,8 @@ export function buildCrosstabQuery(options: CrosstabQueryOptions): string {
             MIN(${col}) as min,
             MAX(${col}) as max,
             MEDIAN(${col}) as median,
+            QUANTILE_CONT(${col}, 0.25) as q1,
+            QUANTILE_CONT(${col}, 0.75) as q3,
             COUNT(${col})::INTEGER as validCount,
             COUNT(*)::INTEGER as count
         `;

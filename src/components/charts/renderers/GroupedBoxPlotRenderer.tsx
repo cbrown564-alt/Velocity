@@ -39,7 +39,7 @@ export const GroupedBoxPlotRenderer: React.FC<BaseChartRendererProps> = ({
         // Look for stats in the series object or lookup in variableStats
         // This relies on how the data is shaped upstream.
         // For now, let's look for 'stats' property on the series or fallback to variableStats using label.
-        const stats = s.stats || (variableStats?.byColumn ? variableStats.byColumn[s.label] : null);
+        const stats = s.stats || s.data[0]?.stats || (variableStats?.byColumn ? variableStats.byColumn[s.label] : null);
         return {
             label: s.label,
             stats,

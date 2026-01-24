@@ -35,7 +35,7 @@ export const BoxPlotRenderer: React.FC<BaseChartRendererProps> = ({
     // For checking purposes, let's create a placeholder that warns if no stats available,
     // or renders provided stats.
 
-    const stats = variableStats?.stats;
+    const stats = variableStats?.numeric || variableStats?.stats;
 
     // Check if we have valid box plot stats
     if (!stats || typeof stats.median === 'undefined') {

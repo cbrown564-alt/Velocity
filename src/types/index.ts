@@ -141,6 +141,12 @@ export interface Folder {
 // UI Types
 // ============================================================================
 
+export interface HistogramBin {
+  x0: number;
+  x1: number;
+  count: number;
+}
+
 export interface AggregatedRow {
   rowKeys: string[];
   colKey: string;
@@ -155,7 +161,11 @@ export interface AggregatedRow {
   stdDev?: number;
   min?: number;
   max?: number;
+  q1?: number; // 25th percentile
+  q3?: number; // 75th percentile
   validCount?: number;
+  /** Histogram bins for Violin/Ridgeline charts */
+  histogramBins?: HistogramBin[];
   /** Significance marker: 95% (strong) or 80% (weak) confidence */
   sig?: 'high_95' | 'high_80' | 'low_95' | 'low_80';
   /** Detailed statistics for tooltip explanation */

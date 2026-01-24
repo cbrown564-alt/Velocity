@@ -117,18 +117,46 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
                     countedValue: firstRowVarSet.countedValue ?? 1,
                 };
             });
-        } else if (firstRowVarSet?.type === 'scale') {
-            // Scale Variable
-            const measureVarId = firstRowVarSet.variableIds[0];
+        } else if (firstRowVarSet?.type === 'scale' || (tableConfig.colVar && variableSets.find((s: VariableSet) => s.id === tableConfig.colVar)?.type === 'scale')) {
+            // Scale Variable Analysis (Metric)
+            const colVarSet = tableConfig.colVar ? variableSets.find((s: VariableSet) => s.id === tableConfig.colVar) : null;
+            const isRowScale = firstRowVarSet?.type === 'scale';
+
+            // Determine Measure Variable
+            // If Row is scale, it's the measure.
+            // If Row is NOT scale but Col is, Col is the measure.
+            const measureVarSet = isRowScale ? firstRowVarSet! : colVarSet!;
+            const measureVarId = measureVarSet.variableIds[0];
+
             get().fetchVariableStats(measureVarId, 'scale');
 
-            const col = tableConfig.colVar
-                ? (variableSets.find((s: VariableSet) => s.id === tableConfig.colVar)?.variableIds[0] || tableConfig.colVar)
-                : null;
-
             options.measureVar = measureVarId;
-            options.measureLabel = firstRowVarSet.name;
-            options.colVar = col;
+            options.measureLabel = measureVarSet.name;
+
+            if (isRowScale) {
+                // Standard Metric: Scale on Row, Grouping on Col (if any)
+                const col = tableConfig.colVar
+                    ? (colVarSet?.variableIds[0] || tableConfig.colVar)
+                    : null;
+                options.colVar = col;
+            } else {
+                // Grouped Box Plot case: Nominal on Row, Scale on Col
+                // The "Column" passed to config is actually the Measure.
+                // The "Rows" passed to config are the Grouping variables.
+
+                // Resolve Row Vars (Grouping)
+                const resolveToCol = (id: string): string => {
+                    const varSet = variableSets.find((s: VariableSet) => s.id === id);
+                    if (varSet && varSet.variableIds.length > 0) {
+                        return varSet.variableIds[0];
+                    }
+                    return id;
+                };
+                options.rowVars = tableConfig.rowVars.map(resolveToCol);
+
+                // Clear colVar because it's now being used as measureVar
+                options.colVar = null;
+            }
         } else {
             // Standard / Nested
             const resolveToCol = (id: string): string => {
@@ -167,7 +195,10 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
                             stdDev: row.stdDev,
                             min: row.min,
                             max: row.max,
+                            q1: row.q1,
+                            q3: row.q3,
                             validCount: row.validCount !== undefined ? Number(row.validCount) : undefined,
+                            histogramBins: row.histogramBins, // Bins for violin/ridgeline
                             sig: row.sig, // Signficance flag from worker
                             stats: row.stats, // Detailed stats for tooltip
                         };

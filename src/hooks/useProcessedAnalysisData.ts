@@ -30,6 +30,8 @@ export interface ProcessedCell {
     stdDev?: number;
     min?: number;
     max?: number;
+    q1?: number;
+    q3?: number;
     validCount?: number;
 }
 
@@ -131,6 +133,7 @@ export interface ProcessedAnalysisData {
     /** Source variables for reference */
     rowVariables: Variable[];
     colVariable: Variable | null;
+    isMultipleResponse: boolean;
 }
 
 // ============================================================================
@@ -304,6 +307,8 @@ export function useProcessedAnalysisData({
                         stdDev: hasMetric ? metricRow.stdDev : undefined,
                         min: hasMetric ? metricRow.min : undefined,
                         max: hasMetric ? metricRow.max : undefined,
+                        q1: hasMetric ? metricRow.q1 : undefined,
+                        q3: hasMetric ? metricRow.q3 : undefined,
                         validCount: hasMetric ? metricRow.validCount : undefined,
                     };
                 });
@@ -383,6 +388,15 @@ export function useProcessedAnalysisData({
                 value: row.cells[col.key]?.count || 0,
                 percent: row.cells[col.key]?.percent || 0,
                 sig: row.cells[col.key]?.sig,
+                stats: {
+                    min: row.cells[col.key]?.min,
+                    max: row.cells[col.key]?.max,
+                    mean: row.cells[col.key]?.mean,
+                    median: row.cells[col.key]?.median,
+                    q1: row.cells[col.key]?.q1,
+                    q3: row.cells[col.key]?.q3,
+                    n: row.cells[col.key]?.validCount,
+                }
             })),
         }));
 
@@ -397,6 +411,7 @@ export function useProcessedAnalysisData({
             isMetric,
             rowVariables,
             colVariable,
+            isMultipleResponse,
         };
     }, [data, rowVariables, colVariable, isWeighted, isMultipleResponse]);
 }
