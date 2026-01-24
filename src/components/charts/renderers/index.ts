@@ -1,4 +1,5 @@
 export * from './HorizontalBarRenderer';
+export * from './VerticalBarRenderer';
 export * from './StackedBarRenderer';
 export * from './GroupedBarRenderer';
 export * from './DivergingBarRenderer';

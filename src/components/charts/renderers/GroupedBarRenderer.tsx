@@ -200,7 +200,6 @@ export const GroupedBarRenderer: React.FC<BaseChartRendererProps> = ({
                                             width={barWidth}
                                             height={barHeight}
                                             fill={colors ? colors[i % colors.length] : getChartColor(i)}
-                                            rx={2}
                                             style={{
                                                 transition: 'all 0.3s',
                                                 cursor: interactive ? 'pointer' : 'default',

@@ -31,6 +31,7 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
     onSelectionChange,
     onContextMenu,
     onMerge,
+    labelMode = 'count',
 }) => {
     const brushRef = useRef<SVGGElement>(null);
     const svgRef = useRef<SVGSVGElement>(null);
@@ -50,7 +51,7 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
 
     // Dynamic margin based on label length
     const maxLabelLength = Math.max(...chartData.map(d => (d.label || '').length), 10);
-    const leftMargin = Math.min(Math.max(maxLabelLength * 6, 80), 180);
+    const leftMargin = Math.min(Math.max(maxLabelLength * 6, 80), 220); // More space for labels
 
     const margin = { top: 24, right: 60, bottom: 24, left: leftMargin };
     const innerWidth = Math.max(width - margin.left - margin.right, 100);
@@ -272,7 +273,7 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
                         x2={xScale(tick)}
                         y2={actualHeight}
                         stroke="var(--gray-100)"
-                        strokeDasharray="2,2"
+                        strokeDasharray="0"
                     />
                 ))}
 
@@ -301,14 +302,13 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
                         y={(yScale(d.label) || 0) + yScale.bandwidth() / 2}
                         dy=".35em"
                         textAnchor="end"
+                        className="text-xs font-body fill-gray-700"
                         style={{
-                            fontSize: 'var(--font-size-xs)',
-                            fontFamily: 'var(--font-body)',
-                            fontWeight: selectedKeys?.has(d.label) ? 700 : 400,
+                            fontWeight: selectedKeys?.has(d.label) ? 600 : 400,
                             fill: selectedKeys?.has(d.label) ? 'var(--gray-900)' : 'var(--gray-700)',
                         }}
                     >
-                        {(d.label || '').length > 25 ? (d.label || '').substring(0, 23) + '...' : d.label}
+                        {(d.label || '').length > 35 ? (d.label || '').substring(0, 32) + '...' : d.label}
                     </text>
                 ))}
 
@@ -321,13 +321,8 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
                     const isDropTarget = dragState.isDragging && dragState.dropTarget === d.label;
 
                     // Determine bar color based on state
-                    let barColor = colors ? colors[0] : getChartColor(0);
-                    if (isSelected) {
-                        barColor = colors ? colors[1] : 'var(--color-terracotta)';
-                    }
-                    if (isDropTarget) {
-                        barColor = 'var(--color-success)'; // Green for drop target
-                    }
+                    // Single color for all bars in this chart type
+                    const barColor = colors ? colors[0] : getChartColor(0);
 
                     return (
                         <g
@@ -365,77 +360,40 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
                                     rx={5}
                                 />
                             )}
-                            {/* Bar background (subtle) */}
-                            <rect
-                                y={y}
-                                height={yScale.bandwidth()}
-                                width={innerWidth}
-                                fill={isDropTarget ? 'var(--color-success-bg)' : (isSelected ? 'var(--gray-100)' : 'var(--gray-50)')}
-                                rx={3}
-                            />
-                            {/* Actual bar */}
+
+                            {/* Actual bar - Square, no shadow */}
                             <rect
                                 y={y}
                                 height={yScale.bandwidth()}
                                 width={barWidth}
-                                fill={barColor}
-                                rx={3}
+                                fill={isDropTarget ? 'var(--color-success)' : barColor}
+                                stroke={isSelected ? 'var(--gray-900)' : 'none'}
+                                strokeWidth={isSelected ? 2 : 0}
                                 style={{
-                                    transition: dragState.isDragging ? 'none' : 'all 0.3s',
+                                    transition: dragState.isDragging ? 'none' : 'width 0.3s ease-out',
                                     cursor: onMerge ? 'grab' : (interactive ? 'pointer' : 'default'),
                                 }}
+                                className="hover:opacity-90"
                             />
-                            {/* Drag handle indicator (visible on hover when merge is enabled) */}
-                            {onMerge && !dragState.isDragging && (
-                                <g
-                                    style={{ opacity: 0.3 }}
-                                    className="drag-handle"
+
+                            {/* Label Logic */}
+                            {labelMode !== 'none' && (
+                                <text
+                                    x={barWidth + 8}
+                                    y={y + yScale.bandwidth() / 2}
+                                    dy=".35em"
+                                    style={{
+                                        fontSize: 'var(--text-xs)',
+                                        fontFamily: 'var(--font-body)',
+                                        fill: isSelected ? 'var(--gray-900)' : 'var(--gray-600)',
+                                    }}
                                 >
-                                    <line
-                                        x1={barWidth - 12}
-                                        y1={y + yScale.bandwidth() / 2 - 4}
-                                        x2={barWidth - 4}
-                                        y2={y + yScale.bandwidth() / 2 - 4}
-                                        stroke="white"
-                                        strokeWidth={2}
-                                        strokeLinecap="round"
-                                    />
-                                    <line
-                                        x1={barWidth - 12}
-                                        y1={y + yScale.bandwidth() / 2}
-                                        x2={barWidth - 4}
-                                        y2={y + yScale.bandwidth() / 2}
-                                        stroke="white"
-                                        strokeWidth={2}
-                                        strokeLinecap="round"
-                                    />
-                                    <line
-                                        x1={barWidth - 12}
-                                        y1={y + yScale.bandwidth() / 2 + 4}
-                                        x2={barWidth - 4}
-                                        y2={y + yScale.bandwidth() / 2 + 4}
-                                        stroke="white"
-                                        strokeWidth={2}
-                                        strokeLinecap="round"
-                                    />
-                                </g>
+                                    {labelMode === 'percent'
+                                        ? `${d.percent.toFixed(1)}%`
+                                        : d.value.toLocaleString()
+                                    }
+                                </text>
                             )}
-                            {/* Value label */}
-                            <text
-                                x={barWidth + 8}
-                                y={y + yScale.bandwidth() / 2}
-                                dy=".35em"
-                                style={{
-                                    fontSize: 'var(--font-size-xs)',
-                                    fontWeight: isSelected ? 700 : 500,
-                                    fill: isSelected ? 'var(--gray-900)' : 'var(--gray-600)',
-                                }}
-                            >
-                                {d.value.toLocaleString()}
-                                <tspan style={{ fill: 'var(--gray-400)', fontWeight: 400 }}>
-                                    {' '}({d.percent.toFixed(1)}%)
-                                </tspan>
-                            </text>
                         </g>
                     );
                 })}

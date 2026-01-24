@@ -22,19 +22,19 @@ interface ChartSelectorProps {
 const CHART_ICONS: Record<ChartType, React.ReactNode> = {
     'horizontal-bar': <AlignLeft size={16} />,
     'vertical-bar': <BarChart3 size={16} />,
-    'grouped-bar': <BarChart3 size={16} />, // Similar icon for now
+    'grouped-bar': <BarChart3 size={16} />,
     'stacked-bar': <BarChartHorizontal size={16} />,
-    'stacked-bar-100': <BarChartHorizontal size={16} />, // Differentiate later
+    'stacked-bar-100': <BarChartHorizontal size={16} />,
     'diverging-bar': <AlignLeft size={16} />,
     'donut': <PieChart size={16} />,
     'histogram': <BarChart3 size={16} />,
-    'box-plot': <BoxSelect size={16} />,
+    'box-plot': <BoxSelect size={16} />, // Kept BoxSelect but will ensure it renders well or swap if imports allow
     'scatter': <ScatterChart size={16} />,
     'lollipop': <LineChart size={16} />,
     'grouped-box-plot': <BoxSelect size={16} />,
-    'violin': <BarChart3 size={16} />, // Polyfill icon
-    'ridgeline': <BarChart3 size={16} />, // Polyfill icon
-    'hexbin': <ScatterChart size={16} />, // Polyfill icon
+    'violin': <BarChart3 size={16} />,
+    'ridgeline': <BarChart3 size={16} />,
+    'hexbin': <ScatterChart size={16} />,
 };
 
 const CHART_LABELS: Record<ChartType, string> = {
@@ -66,9 +66,10 @@ export const ChartSelector: React.FC<ChartSelectorProps> = ({
     // Default to a common set if not provided
     const typesToShow: ChartType[] = availableTypes || [
         'horizontal-bar',
-        'stacked-bar',
         'vertical-bar',
-        'histogram'
+        'stacked-bar',
+        'histogram',
+        'box-plot'
     ];
 
     const handleSelect = (type: ChartType) => {

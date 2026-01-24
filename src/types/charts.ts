@@ -60,6 +60,8 @@ export interface BaseChartRendererProps {
     onMerge?: (event: MergeEvent) => void;
     /** Optional variable stats (e.g. for histogram bins) */
     variableStats?: any; // typed as VariableStatsResult in implementation
+    /** Mode for data labels */
+    labelMode?: 'count' | 'percent' | 'none';
 }
 
 /**

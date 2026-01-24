@@ -126,25 +126,50 @@ export const DonutRenderer: React.FC<BaseChartRendererProps> = ({
                                 fill={sliceColor}
                                 stroke={isSelected ? 'var(--gray-800)' : 'white'}
                                 strokeWidth={isSelected ? 3 : 2}
-                                className="transition-all duration-300 hover:opacity-80"
+                                className="transition-all duration-300 hover:opacity-90"
                                 style={{
-                                    transform: isSelected ? 'scale(1.05)' : 'scale(1)',
-                                    transformOrigin: 'center',
+                                    transform: isSelected ? 'scale(1.02)' : 'scale(1)',
+                                    transformOrigin: '0 0',
                                 }}
                             />
 
-                            {/* Inner Percentage (if slice is large enough) */}
-                            {isLargeSlice && (
-                                <text
-                                    transform={`translate(${arc.centroid(d)})`}
-                                    dy=".35em"
-                                    textAnchor="middle"
-                                    className="text-xs font-semibold fill-white pointer-events-none"
-                                    style={{ textShadow: '0 1px 2px rgba(0,0,0,0.5)' }}
-                                >
-                                    {Math.round(d.data.percent)}%
-                                </text>
-                            )}
+                            {/* Direct Labels (Polylines + Text) */}
+                            {(() => {
+                                const pos = labelArc.centroid(d);
+                                const midAngle = d.startAngle + (d.endAngle - d.startAngle) / 2;
+                                const isRightSide = midAngle < Math.PI;
+
+                                // Polyline points
+                                const startPoint = arc.centroid(d);
+                                const breakPoint = labelArc.centroid(d);
+                                const endPoint = [...breakPoint];
+                                endPoint[0] = radius * 1.15 * (isRightSide ? 1 : -1);
+
+                                return (
+                                    <g className="pointer-events-none">
+                                        <polyline
+                                            points={`${startPoint},${breakPoint},${endPoint}`}
+                                            fill="none"
+                                            stroke="var(--gray-300)"
+                                            strokeWidth={1}
+                                        />
+                                        <text
+                                            x={endPoint[0] + (isRightSide ? 8 : -8)}
+                                            y={endPoint[1]}
+                                            dy=".35em"
+                                            textAnchor={isRightSide ? 'start' : 'end'}
+                                            style={{
+                                                fontSize: '11px',
+                                                fontFamily: 'var(--font-body)',
+                                                fill: 'var(--gray-700)',
+                                                fontWeight: isSelected ? 700 : 400
+                                            }}
+                                        >
+                                            {d.data.label} ({Math.round(d.data.percent)}%)
+                                        </text>
+                                    </g>
+                                );
+                            })()}
                         </g>
                     );
                 })}
@@ -152,26 +177,31 @@ export const DonutRenderer: React.FC<BaseChartRendererProps> = ({
                 {/* Center Text (Total) */}
                 <text
                     textAnchor="middle"
-                    dy="-0.5em"
-                    className="text-sm text-gray-500 font-medium"
+                    dy="-0.6em"
+                    style={{
+                        fontSize: 'var(--text-xs)',
+                        fill: 'var(--gray-500)',
+                        fontWeight: 500,
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em',
+                        fontFamily: 'var(--font-body)'
+                    }}
                 >
                     Total
                 </text>
                 <text
                     textAnchor="middle"
-                    dy="1em"
-                    className="text-xl text-gray-800 font-bold"
+                    dy="0.8em"
+                    style={{
+                        fontSize: 'var(--text-xl)',
+                        fill: 'var(--gray-900)',
+                        fontWeight: 700,
+                        fontFamily: 'var(--font-body)'
+                    }}
                 >
                     {series.data.reduce((sum, d) => sum + d.value, 0).toLocaleString()}
                 </text>
             </g>
-
-
-            {/* External Labels with lines? 
-                For simplicity in this iteration, I'm relying on inner labels and a legend if provided.
-                But since I noticed AnalysisChart legend issue, I should probably add simple labels if possible.
-                Let's add simple legend on the right if width allows/requires.
-            */}
         </svg>
     );
 };

@@ -241,9 +241,8 @@ export const StackedBarRenderer: React.FC<StackedBarRendererProps> = ({
                                         width={Math.max(barWidth, 0)}
                                         height={yScale.bandwidth()}
                                         className="transition-all duration-300 hover:opacity-80"
-                                        rx={seriesIndex === 0 ? 3 : 0}
                                         opacity={isSelected ? 1 : 0.9}
-                                        stroke={isSelected ? 'var(--gray-800)' : 'none'}
+                                        stroke={isSelected ? 'var(--gray-900)' : 'none'}
                                         strokeWidth={isSelected ? 2 : 0}
                                     />
                                     {showLabel && (

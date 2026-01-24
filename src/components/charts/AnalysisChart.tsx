@@ -4,6 +4,7 @@ import { BaseChartRendererProps, AnalysisChartConfig, ChartContextMenuEvent, Mer
 import { CHART_PALETTE } from './shared/chartColors';
 import {
     HorizontalBarRenderer,
+    VerticalBarRenderer,
     StackedBarRenderer,
     GroupedBarRenderer,
     DivergingBarRenderer,
@@ -60,6 +61,9 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
         position: { x: 0, y: 0 },
         selectedItems: [],
     });
+
+    // Label Mode State
+    const [labelMode, setLabelMode] = useState<'count' | 'percent' | 'none'>('count');
 
     // Merge modal state (Visual ETL)
     const [mergeModal, setMergeModal] = useState<{
@@ -276,6 +280,7 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
             onContextMenu: enableVisualETL ? combinedContextMenuHandler : undefined,
             onMerge: enableVisualETL ? handleMerge : undefined,
             variableStats,
+            labelMode,
         };
 
         // TODO: Pass proper height accounting for toolbar
@@ -295,8 +300,7 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
             case 'histogram':
                 return <HistogramRenderer {...commonProps} />;
             case 'vertical-bar':
-                // Fallback to grouped for now or implement VerticalBarRenderer
-                return <GroupedBarRenderer {...commonProps} />;
+                return <VerticalBarRenderer {...commonProps} />;
             case 'lollipop':
                 return <LollipopRenderer {...commonProps} />;
             case 'box-plot':
@@ -364,6 +368,34 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
                 {config.showLegend && legendItems.length > 0 && (
                     <ChartLegend items={legendItems} />
                 )}
+                {config.showLegend && legendItems.length > 0 && (
+                    <ChartLegend items={legendItems} />
+                )}
+
+                {/* Label Toggle */}
+                <div className={styles.labelToggle}>
+                    <button
+                        className={`${styles.toggleButton} ${labelMode === 'count' ? styles.active : ''}`}
+                        onClick={() => setLabelMode('count')}
+                        title="Show Count"
+                    >
+                        #
+                    </button>
+                    <button
+                        className={`${styles.toggleButton} ${labelMode === 'percent' ? styles.active : ''}`}
+                        onClick={() => setLabelMode('percent')}
+                        title="Show Percent"
+                    >
+                        %
+                    </button>
+                    <button
+                        className={`${styles.toggleButton} ${labelMode === 'none' ? styles.active : ''}`}
+                        onClick={() => setLabelMode('none')}
+                        title="Hide Labels"
+                    >
+                        ∅
+                    </button>
+                </div>
             </div>
 
             {/* Chart Canvas */}
