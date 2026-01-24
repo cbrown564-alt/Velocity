@@ -59,7 +59,7 @@ describe('Store: reorderRowVars', () => {
         // Verify that a query was posted (runAnalysis was called)
         expect(mockWorker.postMessage).toHaveBeenCalled();
         const lastCall = mockWorker.postMessage.mock.calls[mockWorker.postMessage.mock.calls.length - 1];
-        expect(lastCall[0].type).toBe('query');
+        expect(lastCall[0].type).toBe('runCrosstab');
     });
 
     it('should preserve column variable when reordering rows', () => {

@@ -6,7 +6,8 @@ import { MOCK_DATASET } from './constants';
 import { DraggableVariable } from './features/dashboard/components/DraggableVariable';
 import { VirtualizedVariableList } from './features/dashboard/components/VirtualizedVariableList';
 import { DropZone } from './components/common/DropZone';
-import { DataTable } from './features/dashboard/components/DataTable';
+import { SlideContainer } from './features/dashboard/components/SlideContainer';
+// import { DataTable } from './features/dashboard/components/DataTable'; // Keeping import for now if needed by other components, but effectively replaced
 
 import { DataDrawer } from './components/overlays/DataDrawer';
 import { RecodeModal } from './components/overlays/RecodeModal';
@@ -776,24 +777,7 @@ export default function App() {
                                 <Loader2 className="animate-spin text-indigo-600" size={32} />
                               </div>
                             )}
-                            <DataTable
-                              data={queryResult}
-                              rowVariables={tableConfig.rowVars
-                                .map(id => variableSets.find(s => s.id === id)) // Resolve Set
-                                .filter(Boolean)
-                                .map(set => variables.find(v => v.id === set!.variableIds[0])) // Resolve Var
-                                .filter(Boolean) as Variable[]
-                              }
-                              colVariable={(() => {
-                                const set = variableSets.find(s => s.id === tableConfig.colVar);
-                                return set ? variables.find(v => v.id === set.variableIds[0]) : null;
-                              })() as any}
-                              totalCount={totalRows}
-                              viewMode={viewMode}
-                              isWeighted={!!dataset?.weightVariable}
-                              onCellClick={handleCellClick}
-                              variableStats={activeVariableStats}
-                            />
+                            <SlideContainer className="h-full w-full" />
                           </div>
                         ) : (
                           <div className="w-full h-64 border-2 border-dashed border-gray-100 rounded-lg flex flex-col items-center justify-center text-gray-300 gap-4 bg-white">
@@ -818,8 +802,9 @@ export default function App() {
               ) : null}
             </DragOverlay>
           </DndContext>
-        </AppShell>
-      )}
-    </div>
+        </AppShell >
+      )
+      }
+    </div >
   );
 }
