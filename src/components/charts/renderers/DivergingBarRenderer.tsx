@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import * as d3 from 'd3-scale';
 import { max } from 'd3-array';
 import { BaseChartRendererProps } from '../../../types/charts';
@@ -14,6 +14,10 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
     height,
     colors,
     processedData,
+    interactive = true,
+    selectedKeys,
+    onSelectionChange,
+    onContextMenu,
 }) => {
     const { rows, columns } = processedData;
     const colCount = columns.length;
@@ -71,6 +75,47 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
         .domain(rows.map(r => r.label))
         .range([0, actualHeight])
         .padding(0.2);
+
+    // Handle row click for selection
+    const handleRowClick = useCallback((rowLabel: string, event: React.MouseEvent) => {
+        if (!interactive || !onSelectionChange) return;
+
+        const newSelection = new Set(selectedKeys);
+        if (event.metaKey || event.ctrlKey) {
+            if (newSelection.has(rowLabel)) {
+                newSelection.delete(rowLabel);
+            } else {
+                newSelection.add(rowLabel);
+            }
+        } else {
+            newSelection.clear();
+            newSelection.add(rowLabel);
+        }
+        onSelectionChange(newSelection);
+    }, [interactive, onSelectionChange, selectedKeys]);
+
+    // Handle right-click context menu
+    const handleRowContextMenu = useCallback((rowLabel: string, event: React.MouseEvent) => {
+        if (!interactive || !onContextMenu) return;
+        event.preventDefault();
+        event.stopPropagation();
+
+        // Find the row data
+        const row = rows.find(r => r.label === rowLabel);
+        if (!row) return;
+
+        const dataPoint = {
+            label: rowLabel,
+            value: row.total,
+            percent: 100,
+            rawValue: row.label,
+        };
+
+        onContextMenu({
+            selected: [dataPoint],
+            position: { x: event.clientX, y: event.clientY },
+        });
+    }, [interactive, onContextMenu, rows]);
 
     // Color Logic: Generate a diverging palette if none provided
     // Negative (Red/Orange) -> Neutral (Gray) -> Positive (Green/Blue)
@@ -135,20 +180,41 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
                     const y = yScale(row.label) || 0;
                     const h = yScale.bandwidth();
                     const neutralVal = neutral ? (row.cells[neutral]?.count || 0) : 0;
+                    const isSelected = selectedKeys?.has(row.label);
 
                     // Track position for stacking
                     let currentLeft = -(neutralVal / 2);
                     let currentRight = (neutralVal / 2);
 
                     return (
-                        <g key={row.label}>
+                        <g
+                            key={row.label}
+                            onClick={(e) => handleRowClick(row.label, e)}
+                            onContextMenu={(e) => handleRowContextMenu(row.label, e)}
+                            style={{ cursor: interactive ? 'pointer' : 'default' }}
+                        >
+                            {/* Selection highlight background */}
+                            {isSelected && (
+                                <rect
+                                    x={0}
+                                    y={y - 2}
+                                    width={innerWidth}
+                                    height={h + 4}
+                                    fill="var(--gray-100)"
+                                    rx={3}
+                                />
+                            )}
                             {/* Y Axis Label */}
                             <text
                                 x={-10}
                                 y={y + h / 2}
                                 dy=".35em"
                                 textAnchor="end"
-                                className="text-xs fill-gray-700"
+                                className="text-xs"
+                                style={{
+                                    fill: isSelected ? 'var(--gray-900)' : 'var(--gray-700)',
+                                    fontWeight: isSelected ? 600 : 400,
+                                }}
                             >
                                 {(row.label || '').length > 25 ? (row.label || '').substring(0, 23) + '...' : (row.label || '')}
                             </text>

@@ -1,4 +1,4 @@
-import { ProcessedAnalysisData } from '../hooks/useProcessedAnalysisData';
+import { ProcessedAnalysisData, ChartDataPoint } from '../hooks/useProcessedAnalysisData';
 
 export type ChartType =
     | 'horizontal-bar'
@@ -24,6 +24,16 @@ export interface ChartRecommendation {
 }
 
 /**
+ * Data for a merge operation (Visual ETL drag-to-merge)
+ */
+export interface MergeEvent {
+    /** The items being merged (dragged onto target) */
+    sourceItems: ChartDataPoint[];
+    /** The target item being merged into */
+    targetItem: ChartDataPoint;
+}
+
+/**
  * Common props passed to all chart renderers.
  * This ensures uniform handling of dimensions, data, and interactions.
  */
@@ -46,6 +56,8 @@ export interface BaseChartRendererProps {
     onSelectionChange?: (keys: Set<string>) => void;
     /** Callback for right-click context menu */
     onContextMenu?: (event: { selected: any[]; position: { x: number; y: number } }) => void;
+    /** Callback for drag-to-merge (Visual ETL) */
+    onMerge?: (event: MergeEvent) => void;
     /** Optional variable stats (e.g. for histogram bins) */
     variableStats?: any; // typed as VariableStatsResult in implementation
 }

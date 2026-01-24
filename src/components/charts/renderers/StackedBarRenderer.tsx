@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useCallback, useState } from 'react';
 import * as d3 from 'd3-scale';
 import * as d3Shape from 'd3-shape';
 import { max } from 'd3-array';
@@ -20,6 +20,10 @@ export const StackedBarRenderer: React.FC<StackedBarRendererProps> = ({
     colors,
     type,
     processedData,
+    interactive = true,
+    selectedKeys,
+    onSelectionChange,
+    onContextMenu,
 }) => {
     const { rows, columns, series } = processedData;
 
@@ -62,6 +66,48 @@ export const StackedBarRenderer: React.FC<StackedBarRendererProps> = ({
     }
 
     const stackedSeries = stackGenerator(stackData);
+
+    // Handle row click for selection
+    const handleRowClick = useCallback((rowLabel: string, event: React.MouseEvent) => {
+        if (!interactive || !onSelectionChange) return;
+
+        const newSelection = new Set(selectedKeys);
+        if (event.metaKey || event.ctrlKey) {
+            if (newSelection.has(rowLabel)) {
+                newSelection.delete(rowLabel);
+            } else {
+                newSelection.add(rowLabel);
+            }
+        } else {
+            newSelection.clear();
+            newSelection.add(rowLabel);
+        }
+        onSelectionChange(newSelection);
+    }, [interactive, onSelectionChange, selectedKeys]);
+
+    // Handle right-click context menu
+    const handleRowContextMenu = useCallback((rowLabel: string, event: React.MouseEvent) => {
+        if (!interactive || !onContextMenu) return;
+        event.preventDefault();
+        event.stopPropagation();
+
+        // Find the row data
+        const row = rows.find(r => r.label === rowLabel);
+        if (!row) return;
+
+        // Build data point info
+        const dataPoint = {
+            label: rowLabel,
+            value: row.total,
+            percent: 100, // Full row
+            rawValue: row.label,
+        };
+
+        onContextMenu({
+            selected: [dataPoint],
+            position: { x: event.clientX, y: event.clientY },
+        });
+    }, [interactive, onContextMenu, rows]);
 
     // Scales
     const yScale = useMemo(() => {
@@ -173,6 +219,7 @@ export const StackedBarRenderer: React.FC<StackedBarRendererProps> = ({
                         {seriesItem.map((d, i) => {
                             const barWidth = xScale(d[1]) - xScale(d[0]);
                             const y = yScale(d.data.label) || 0;
+                            const isSelected = selectedKeys?.has(d.data.label);
 
                             // Only show label if segment is wide enough
                             const showLabel = barWidth > 30;
@@ -182,14 +229,22 @@ export const StackedBarRenderer: React.FC<StackedBarRendererProps> = ({
                                 : value.toLocaleString();
 
                             return (
-                                <g key={d.data.label}>
+                                <g
+                                    key={d.data.label}
+                                    onClick={(e) => handleRowClick(d.data.label, e)}
+                                    onContextMenu={(e) => handleRowContextMenu(d.data.label, e)}
+                                    style={{ cursor: interactive ? 'pointer' : 'default' }}
+                                >
                                     <rect
                                         y={y}
                                         x={xScale(d[0])}
                                         width={Math.max(barWidth, 0)}
                                         height={yScale.bandwidth()}
-                                        className="transition-all duration-300 hover:opacity-80 cursor-pointer"
+                                        className="transition-all duration-300 hover:opacity-80"
                                         rx={seriesIndex === 0 ? 3 : 0}
+                                        opacity={isSelected ? 1 : 0.9}
+                                        stroke={isSelected ? 'var(--gray-800)' : 'none'}
+                                        strokeWidth={isSelected ? 2 : 0}
                                     />
                                     {showLabel && (
                                         <text

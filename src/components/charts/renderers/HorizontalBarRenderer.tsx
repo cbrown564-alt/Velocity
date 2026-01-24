@@ -1,15 +1,25 @@
-import React, { useMemo, useEffect, useRef, useCallback } from 'react';
+import React, { useMemo, useEffect, useRef, useCallback, useState } from 'react';
 import * as d3 from 'd3-scale';
 import { select } from 'd3-selection';
 import { brushY } from 'd3-brush';
 import { max } from 'd3-array';
 import { BaseChartRendererProps } from '../../../types/charts';
 import { getChartColor } from '../shared/chartColors';
+import { ChartDataPoint } from '../../../hooks/useProcessedAnalysisData';
+
+interface DragState {
+    isDragging: boolean;
+    draggedItem: ChartDataPoint | null;
+    dropTarget: string | null;
+    startY: number;
+    currentY: number;
+}
 
 /**
  * Horizontal Bar Chart Renderer
  * Used for single-variable frequency distributions.
  * Data comes pre-sorted and with labels resolved via processedData.
+ * Supports Visual ETL: drag-to-merge bars.
  */
 export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
     width,
@@ -20,8 +30,19 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
     selectedKeys,
     onSelectionChange,
     onContextMenu,
+    onMerge,
 }) => {
     const brushRef = useRef<SVGGElement>(null);
+    const svgRef = useRef<SVGSVGElement>(null);
+
+    // Drag-to-merge state
+    const [dragState, setDragState] = useState<DragState>({
+        isDragging: false,
+        draggedItem: null,
+        dropTarget: null,
+        startY: 0,
+        currentY: 0,
+    });
 
     // Use the first series (single column analysis) or "Total" column
     const series = processedData.series[0];
@@ -105,6 +126,92 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
         });
     }, [interactive, onContextMenu, chartData, selectedKeys]);
 
+    // ==================== Drag-to-Merge Handlers ====================
+
+    // Start dragging a bar
+    const handleDragStart = useCallback((item: ChartDataPoint, event: React.MouseEvent) => {
+        if (!interactive || !onMerge) return;
+        event.preventDefault();
+
+        setDragState({
+            isDragging: true,
+            draggedItem: item,
+            dropTarget: null,
+            startY: event.clientY,
+            currentY: event.clientY,
+        });
+    }, [interactive, onMerge]);
+
+    // Track mouse movement during drag
+    useEffect(() => {
+        if (!dragState.isDragging || !svgRef.current) return;
+
+        const handleMouseMove = (e: MouseEvent) => {
+            const svgRect = svgRef.current?.getBoundingClientRect();
+            if (!svgRect) return;
+
+            // Calculate which bar the cursor is over
+            const relativeY = e.clientY - svgRect.top - margin.top;
+            let foundTarget: string | null = null;
+
+            for (const item of chartData) {
+                const barY = yScale(item.label) || 0;
+                const barHeight = yScale.bandwidth();
+                if (relativeY >= barY && relativeY <= barY + barHeight) {
+                    // Don't target the same bar being dragged
+                    if (item.label !== dragState.draggedItem?.label) {
+                        foundTarget = item.label;
+                    }
+                    break;
+                }
+            }
+
+            setDragState(prev => ({
+                ...prev,
+                currentY: e.clientY,
+                dropTarget: foundTarget,
+            }));
+        };
+
+        const handleMouseUp = (e: MouseEvent) => {
+            if (dragState.dropTarget && dragState.draggedItem && onMerge) {
+                const targetItem = chartData.find(d => d.label === dragState.dropTarget);
+                if (targetItem) {
+                    // Get all selected items (or just the dragged one if nothing selected)
+                    const sourceItems = selectedKeys?.has(dragState.draggedItem.label)
+                        ? chartData.filter(d => selectedKeys.has(d.label))
+                        : [dragState.draggedItem];
+
+                    // Remove the target from sources if it's there
+                    const filteredSources = sourceItems.filter(s => s.label !== targetItem.label);
+
+                    if (filteredSources.length > 0) {
+                        onMerge({
+                            sourceItems: filteredSources,
+                            targetItem,
+                        });
+                    }
+                }
+            }
+
+            setDragState({
+                isDragging: false,
+                draggedItem: null,
+                dropTarget: null,
+                startY: 0,
+                currentY: 0,
+            });
+        };
+
+        document.addEventListener('mousemove', handleMouseMove);
+        document.addEventListener('mouseup', handleMouseUp);
+
+        return () => {
+            document.removeEventListener('mousemove', handleMouseMove);
+            document.removeEventListener('mouseup', handleMouseUp);
+        };
+    }, [dragState.isDragging, dragState.draggedItem, dragState.dropTarget, chartData, yScale, margin.top, selectedKeys, onMerge]);
+
 
     // D3 Brush Implementation
     useEffect(() => {
@@ -145,9 +252,14 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
 
     return (
         <svg
+            ref={svgRef}
             width={width}
             height={Math.max(height, actualHeight + margin.top + margin.bottom)}
-            style={{ overflow: 'visible', fontFamily: 'var(--font-body)' }}
+            style={{
+                overflow: 'visible',
+                fontFamily: 'var(--font-body)',
+                cursor: dragState.isDragging ? 'grabbing' : 'default',
+            }}
             onContextMenu={handleBackgroundContextMenu}
         >
             <g transform={`translate(${margin.left},${margin.top})`}>
@@ -205,25 +317,60 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
                     const barWidth = xScale(d.value);
                     const y = yScale(d.label) || 0;
                     const isSelected = selectedKeys?.has(d.label);
-                    const barColor = isSelected
-                        ? (colors ? colors[1] : 'var(--color-terracotta)') // Use secondary/highlight color
-                        : (colors ? colors[0] : getChartColor(0));
+                    const isDragging = dragState.isDragging && dragState.draggedItem?.label === d.label;
+                    const isDropTarget = dragState.isDragging && dragState.dropTarget === d.label;
+
+                    // Determine bar color based on state
+                    let barColor = colors ? colors[0] : getChartColor(0);
+                    if (isSelected) {
+                        barColor = colors ? colors[1] : 'var(--color-terracotta)';
+                    }
+                    if (isDropTarget) {
+                        barColor = 'var(--color-success)'; // Green for drop target
+                    }
 
                     return (
                         <g
                             key={d.label}
                             onClick={(e) => {
-                                e.stopPropagation();
-                                handleBarClick(d, e);
+                                if (!dragState.isDragging) {
+                                    e.stopPropagation();
+                                    handleBarClick(d, e);
+                                }
                             }}
                             onContextMenu={(e) => handleBarContextMenu(d, e)}
+                            onMouseDown={(e) => {
+                                // Only start drag with left button
+                                if (e.button === 0 && onMerge) {
+                                    handleDragStart(d, e);
+                                }
+                            }}
+                            style={{
+                                opacity: isDragging ? 0.5 : 1,
+                                transform: isDropTarget ? 'scale(1.02)' : 'scale(1)',
+                                transformOrigin: 'left center',
+                            }}
                         >
+                            {/* Drop target highlight */}
+                            {isDropTarget && (
+                                <rect
+                                    y={y - 4}
+                                    height={yScale.bandwidth() + 8}
+                                    width={innerWidth + 8}
+                                    x={-4}
+                                    fill="none"
+                                    stroke="var(--color-success)"
+                                    strokeWidth={2}
+                                    strokeDasharray="4,2"
+                                    rx={5}
+                                />
+                            )}
                             {/* Bar background (subtle) */}
                             <rect
                                 y={y}
                                 height={yScale.bandwidth()}
                                 width={innerWidth}
-                                fill={isSelected ? 'var(--gray-100)' : 'var(--gray-50)'}
+                                fill={isDropTarget ? 'var(--color-success-bg)' : (isSelected ? 'var(--gray-100)' : 'var(--gray-50)')}
                                 rx={3}
                             />
                             {/* Actual bar */}
@@ -234,10 +381,45 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
                                 fill={barColor}
                                 rx={3}
                                 style={{
-                                    transition: 'all 0.3s',
-                                    cursor: interactive ? 'pointer' : 'default',
+                                    transition: dragState.isDragging ? 'none' : 'all 0.3s',
+                                    cursor: onMerge ? 'grab' : (interactive ? 'pointer' : 'default'),
                                 }}
                             />
+                            {/* Drag handle indicator (visible on hover when merge is enabled) */}
+                            {onMerge && !dragState.isDragging && (
+                                <g
+                                    style={{ opacity: 0.3 }}
+                                    className="drag-handle"
+                                >
+                                    <line
+                                        x1={barWidth - 12}
+                                        y1={y + yScale.bandwidth() / 2 - 4}
+                                        x2={barWidth - 4}
+                                        y2={y + yScale.bandwidth() / 2 - 4}
+                                        stroke="white"
+                                        strokeWidth={2}
+                                        strokeLinecap="round"
+                                    />
+                                    <line
+                                        x1={barWidth - 12}
+                                        y1={y + yScale.bandwidth() / 2}
+                                        x2={barWidth - 4}
+                                        y2={y + yScale.bandwidth() / 2}
+                                        stroke="white"
+                                        strokeWidth={2}
+                                        strokeLinecap="round"
+                                    />
+                                    <line
+                                        x1={barWidth - 12}
+                                        y1={y + yScale.bandwidth() / 2 + 4}
+                                        x2={barWidth - 4}
+                                        y2={y + yScale.bandwidth() / 2 + 4}
+                                        stroke="white"
+                                        strokeWidth={2}
+                                        strokeLinecap="round"
+                                    />
+                                </g>
+                            )}
                             {/* Value label */}
                             <text
                                 x={barWidth + 8}
@@ -257,6 +439,39 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
                         </g>
                     );
                 })}
+
+                {/* Drag ghost indicator */}
+                {dragState.isDragging && dragState.draggedItem && (
+                    <g
+                        style={{
+                            pointerEvents: 'none',
+                            opacity: 0.8,
+                        }}
+                    >
+                        <rect
+                            x={0}
+                            y={dragState.currentY - (svgRef.current?.getBoundingClientRect().top || 0) - margin.top - yScale.bandwidth() / 2}
+                            width={xScale(dragState.draggedItem.value)}
+                            height={yScale.bandwidth()}
+                            fill="var(--color-terracotta)"
+                            rx={3}
+                            stroke="var(--gray-800)"
+                            strokeWidth={2}
+                        />
+                        <text
+                            x={xScale(dragState.draggedItem.value) / 2}
+                            y={dragState.currentY - (svgRef.current?.getBoundingClientRect().top || 0) - margin.top}
+                            textAnchor="middle"
+                            style={{
+                                fontSize: 'var(--font-size-xs)',
+                                fontWeight: 600,
+                                fill: 'white',
+                            }}
+                        >
+                            {dragState.dropTarget ? 'Merge into this category' : 'Drag to another bar to merge'}
+                        </text>
+                    </g>
+                )}
 
                 {/* Brush Loop Overlay */}
                 <g ref={brushRef} className="brush" />

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import * as d3 from 'd3-shape';
 import { BaseChartRendererProps } from '../../../types/charts';
 import { getChartColor } from '../shared/chartColors';
@@ -7,6 +7,7 @@ interface DonutDatum {
     label: string;
     value: number;
     percent: number;
+    rawValue?: number | string;
 }
 
 /**
@@ -18,6 +19,10 @@ export const DonutRenderer: React.FC<BaseChartRendererProps> = ({
     height,
     colors,
     processedData,
+    interactive = true,
+    selectedKeys,
+    onSelectionChange,
+    onContextMenu,
 }) => {
     // Use the first series (single column analysis)
     const series = processedData.series[0];
@@ -30,9 +35,45 @@ export const DonutRenderer: React.FC<BaseChartRendererProps> = ({
             .map(d => ({
                 label: d.label,
                 value: d.value,
-                percent: d.percent
+                percent: d.percent,
+                rawValue: (d as any).rawValue ?? d.label,
             }));
     }, [data]);
+
+    // Handle slice click for selection
+    const handleSliceClick = useCallback((datum: DonutDatum, event: React.MouseEvent) => {
+        if (!interactive || !onSelectionChange) return;
+
+        const newSelection = new Set(selectedKeys);
+        if (event.metaKey || event.ctrlKey) {
+            if (newSelection.has(datum.label)) {
+                newSelection.delete(datum.label);
+            } else {
+                newSelection.add(datum.label);
+            }
+        } else {
+            newSelection.clear();
+            newSelection.add(datum.label);
+        }
+        onSelectionChange(newSelection);
+    }, [interactive, onSelectionChange, selectedKeys]);
+
+    // Handle right-click context menu
+    const handleSliceContextMenu = useCallback((datum: DonutDatum, event: React.MouseEvent) => {
+        if (!interactive || !onContextMenu) return;
+        event.preventDefault();
+        event.stopPropagation();
+
+        onContextMenu({
+            selected: [{
+                label: datum.label,
+                value: datum.value,
+                percent: datum.percent,
+                rawValue: datum.rawValue,
+            }],
+            position: { x: event.clientX, y: event.clientY },
+        });
+    }, [interactive, onContextMenu]);
 
     const margin = { top: 20, right: 20, bottom: 20, left: 20 };
     const innerWidth = width - margin.left - margin.right;
@@ -63,6 +104,7 @@ export const DonutRenderer: React.FC<BaseChartRendererProps> = ({
                 {arcs.map((d, i) => {
                     const sliceColor = colors ? colors[i % colors.length] : getChartColor(i);
                     const isLargeSlice = (d.endAngle - d.startAngle) > 0.2;
+                    const isSelected = selectedKeys?.has(d.data.label);
 
                     // Callout line computations
                     const pos = labelArc.centroid(d);
@@ -73,13 +115,22 @@ export const DonutRenderer: React.FC<BaseChartRendererProps> = ({
                     const textAnchor = midAngle < Math.PI ? 'start' : 'end';
 
                     return (
-                        <g key={d.data.label}>
+                        <g
+                            key={d.data.label}
+                            onClick={(e) => handleSliceClick(d.data, e)}
+                            onContextMenu={(e) => handleSliceContextMenu(d.data, e)}
+                            style={{ cursor: interactive ? 'pointer' : 'default' }}
+                        >
                             <path
                                 d={arc(d) || ''}
                                 fill={sliceColor}
-                                stroke="white"
-                                strokeWidth={2}
-                                className="transition-all duration-300 hover:opacity-80 cursor-pointer"
+                                stroke={isSelected ? 'var(--gray-800)' : 'white'}
+                                strokeWidth={isSelected ? 3 : 2}
+                                className="transition-all duration-300 hover:opacity-80"
+                                style={{
+                                    transform: isSelected ? 'scale(1.05)' : 'scale(1)',
+                                    transformOrigin: 'center',
+                                }}
                             />
 
                             {/* Inner Percentage (if slice is large enough) */}
