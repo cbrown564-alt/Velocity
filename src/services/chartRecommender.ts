@@ -50,7 +50,8 @@ export function recommendChart(context: RecommenderContext): ChartRecommendation
         if (primaryRowVar?.type === 'scale') {
             return {
                 default: 'grouped-box-plot',
-                alternatives: ['violin', 'ridgeline'],
+                // Note: violin/ridgeline require grouped histogram data from backend (not yet implemented)
+                alternatives: ['box-plot'],
                 reason: 'Comparing distributions across groups.',
             };
         }
@@ -60,7 +61,8 @@ export function recommendChart(context: RecommenderContext): ChartRecommendation
     if (primaryRowVar?.type === 'scale' && colVar?.type === 'scale') {
         return {
             default: 'scatter',
-            alternatives: ['hexbin'],
+            // Note: hexbin requires raw (x,y) pairs, currently backend aggregates
+            alternatives: [],
             reason: 'Exploring relationship between two numeric variables.',
         };
     }

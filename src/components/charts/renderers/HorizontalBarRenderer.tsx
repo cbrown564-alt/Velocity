@@ -72,17 +72,33 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
         onSelectionChange(newSelection);
     }, [interactive, onSelectionChange, selectedKeys]);
 
-    const handleContextMenu = useCallback((event: React.MouseEvent) => {
+    // Handle right-click on individual bars
+    const handleBarContextMenu = useCallback((d: any, event: React.MouseEvent) => {
+        if (!interactive || !onContextMenu) return;
+        event.preventDefault();
+        event.stopPropagation();
+
+        // If clicking on a bar that isn't already selected, use just that bar
+        // If clicking on a selected bar, use all selected items
+        const isCurrentlySelected = selectedKeys?.has(d.label);
+        const selectedItems = isCurrentlySelected
+            ? chartData.filter(item => selectedKeys?.has(item.label))
+            : [d];
+
+        onContextMenu({
+            selected: selectedItems,
+            position: { x: event.clientX, y: event.clientY },
+        });
+    }, [interactive, onContextMenu, chartData, selectedKeys]);
+
+    // Handle right-click on chart background (uses current selection)
+    const handleBackgroundContextMenu = useCallback((event: React.MouseEvent) => {
         if (!interactive || !onContextMenu) return;
         event.preventDefault();
 
-        // If we right-click on a bar that isn't selected, select it (unless multiselect modifier)
-        // Note: This logic depends on where the user clicked.
-        // For simplicity, we assume the user has already selected what they want,
-        // or the click handler above ran first (mousedown/up vs contextmenu).
-        // Standard behavior: provide the currently selected items.
-
         const selectedItems = chartData.filter(d => selectedKeys?.has(d.label));
+        if (selectedItems.length === 0) return; // Nothing selected, don't show menu
+
         onContextMenu({
             selected: selectedItems,
             position: { x: event.clientX, y: event.clientY },
@@ -131,8 +147,8 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
         <svg
             width={width}
             height={Math.max(height, actualHeight + margin.top + margin.bottom)}
-            className="overflow-visible font-body"
-            onContextMenu={handleContextMenu}
+            style={{ overflow: 'visible', fontFamily: 'var(--font-body)' }}
+            onContextMenu={handleBackgroundContextMenu}
         >
             <g transform={`translate(${margin.left},${margin.top})`}>
                 {/* Grid lines */}
@@ -157,7 +173,7 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
                             <text
                                 y={16}
                                 textAnchor="middle"
-                                className="text-[10px] fill-gray-500"
+                                style={{ fontSize: '10px', fill: 'var(--gray-500)' }}
                             >
                                 {tick}
                             </text>
@@ -173,8 +189,12 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
                         y={(yScale(d.label) || 0) + yScale.bandwidth() / 2}
                         dy=".35em"
                         textAnchor="end"
-                        className={`text-xs ${selectedKeys?.has(d.label) ? 'font-bold fill-gray-900' : 'fill-gray-700'}`}
-                        style={{ fontFamily: 'var(--font-body)' }}
+                        style={{
+                            fontSize: 'var(--font-size-xs)',
+                            fontFamily: 'var(--font-body)',
+                            fontWeight: selectedKeys?.has(d.label) ? 700 : 400,
+                            fill: selectedKeys?.has(d.label) ? 'var(--gray-900)' : 'var(--gray-700)',
+                        }}
                     >
                         {(d.label || '').length > 25 ? (d.label || '').substring(0, 23) + '...' : d.label}
                     </text>
@@ -196,6 +216,7 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
                                 e.stopPropagation();
                                 handleBarClick(d, e);
                             }}
+                            onContextMenu={(e) => handleBarContextMenu(d, e)}
                         >
                             {/* Bar background (subtle) */}
                             <rect
@@ -212,17 +233,24 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
                                 width={barWidth}
                                 fill={barColor}
                                 rx={3}
-                                className={`transition-all duration-300 ${interactive ? 'cursor-pointer hover:opacity-80' : ''}`}
+                                style={{
+                                    transition: 'all 0.3s',
+                                    cursor: interactive ? 'pointer' : 'default',
+                                }}
                             />
                             {/* Value label */}
                             <text
                                 x={barWidth + 8}
                                 y={y + yScale.bandwidth() / 2}
                                 dy=".35em"
-                                className={`text-xs ${isSelected ? 'font-bold fill-gray-900' : 'font-medium fill-gray-600'}`}
+                                style={{
+                                    fontSize: 'var(--font-size-xs)',
+                                    fontWeight: isSelected ? 700 : 500,
+                                    fill: isSelected ? 'var(--gray-900)' : 'var(--gray-600)',
+                                }}
                             >
                                 {d.value.toLocaleString()}
-                                <tspan className="fill-gray-400 font-normal">
+                                <tspan style={{ fill: 'var(--gray-400)', fontWeight: 400 }}>
                                     {' '}({d.percent.toFixed(1)}%)
                                 </tspan>
                             </text>

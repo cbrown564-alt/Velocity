@@ -88,6 +88,16 @@ export interface SelectionEvent {
     position: { x: number; y: number };
 }
 
+/**
+ * Event data for chart context menu (right-click)
+ */
+export interface ChartContextMenuEvent {
+    /** Selected data points */
+    selected: any[];
+    /** Screen position for menu */
+    position: { x: number; y: number };
+}
+
 export interface BinSelectionEvent {
     bins: BinData[];
     position: { x: number; y: number };

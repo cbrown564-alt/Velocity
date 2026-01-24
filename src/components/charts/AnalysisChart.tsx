@@ -1,6 +1,6 @@
-import React, { useRef, useState, useEffect, useMemo } from 'react';
+import React, { useRef, useState, useEffect, useMemo, useCallback } from 'react';
 import { AggregatedRow } from '../../types';
-import { BaseChartRendererProps, AnalysisChartConfig } from '../../types/charts';
+import { BaseChartRendererProps, AnalysisChartConfig, ChartContextMenuEvent } from '../../types/charts';
 import { CHART_PALETTE } from './shared/chartColors';
 import {
     HorizontalBarRenderer,
@@ -16,12 +16,14 @@ import {
     RidgelineRenderer,
     HexbinRenderer
 } from './renderers';
-import { ProcessedAnalysisData } from '../../hooks/useProcessedAnalysisData';
+import { ProcessedAnalysisData, ChartDataPoint } from '../../hooks/useProcessedAnalysisData';
 import { ChartSelector } from './ChartSelector';
 import { recommendChart } from '../../services/chartRecommender';
 import { ChartLegend } from './shared/ChartLegend';
 import { ChartType } from '../../types/charts';
 import { useVelocityStore } from '../../store';
+import { ChartContextMenu, ContextMenuOption } from '../overlays/ChartContextMenu';
+import styles from './AnalysisChart.module.css';
 
 interface AnalysisChartProps {
     data: AggregatedRow[];
@@ -47,8 +49,20 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
     const containerRef = useRef<HTMLDivElement>(null);
     const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
+    // Context menu state
+    const [contextMenu, setContextMenu] = useState<{
+        isOpen: boolean;
+        position: { x: number; y: number };
+        selectedItems: ChartDataPoint[];
+    }>({
+        isOpen: false,
+        position: { x: 0, y: 0 },
+        selectedItems: [],
+    });
+
     // Get user-selected chart type from store
     const selectedChartType = useVelocityStore(state => state.selectedChartType);
+    const addFilter = useVelocityStore(state => state.addFilter);
 
     // Use selected type if available, otherwise fallback to recommender config
     const activeChartType = selectedChartType || config.type;
@@ -63,6 +77,75 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
             isMultiResponse: processedData.isMultipleResponse,
         });
     }, [processedData]);
+
+    // Handle context menu from chart renderers
+    const handleContextMenu = useCallback((event: ChartContextMenuEvent) => {
+        setContextMenu({
+            isOpen: true,
+            position: event.position,
+            selectedItems: event.selected || [],
+        });
+    }, []);
+
+    // Close context menu
+    const closeContextMenu = useCallback(() => {
+        setContextMenu(prev => ({ ...prev, isOpen: false }));
+    }, []);
+
+    // Build context menu options based on selected items
+    const contextMenuOptions = useMemo((): ContextMenuOption[] => {
+        if (!processedData || contextMenu.selectedItems.length === 0) return [];
+
+        const firstRowVar = processedData.rowVariables[0];
+        if (!firstRowVar) return [];
+
+        const selectedLabels = contextMenu.selectedItems.map(item => item.label).join(', ');
+        const selectedValues = contextMenu.selectedItems.map(item => item.rawValue);
+
+        const options: ContextMenuOption[] = [];
+
+        // Filter to selection
+        if (selectedValues.length === 1) {
+            options.push({
+                label: `Filter to "${contextMenu.selectedItems[0].label}"`,
+                onClick: () => {
+                    addFilter({
+                        variableId: firstRowVar.id,
+                        operator: 'eq',
+                        value: selectedValues[0],
+                    });
+                },
+            });
+        } else if (selectedValues.length > 1) {
+            options.push({
+                label: `Filter to selected (${selectedValues.length} values)`,
+                onClick: () => {
+                    addFilter({
+                        variableId: firstRowVar.id,
+                        operator: 'in',
+                        value: selectedValues,
+                    });
+                },
+            });
+        }
+
+        // Exclude selection
+        if (selectedValues.length === 1) {
+            options.push({
+                label: `Exclude "${contextMenu.selectedItems[0].label}"`,
+                onClick: () => {
+                    addFilter({
+                        variableId: firstRowVar.id,
+                        operator: 'neq',
+                        value: selectedValues[0],
+                    });
+                },
+                danger: true,
+            });
+        }
+
+        return options;
+    }, [processedData, contextMenu.selectedItems, addFilter]);
 
     // Simple resize observer
     useEffect(() => {
@@ -89,22 +172,28 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
 
         if (!processedData) {
             return (
-                <div className="flex items-center justify-center h-full text-gray-400">
+                <div className={styles.placeholder}>
                     No data to display
                 </div>
             );
         }
 
+        // Combined context menu handler - internal + external
+        const combinedContextMenuHandler = (event: ChartContextMenuEvent) => {
+            handleContextMenu(event);
+            config.onContextMenu?.(event);
+        };
+
         // Common props for all renderers
         const commonProps = {
             width: dimensions.width,
-            height: dimensions.height, // Subtract space for header/legend if needed, but flex layout handles it better
+            height: dimensions.height,
             colors: CHART_PALETTE,
             interactive: true,
             processedData,
             selectedKeys: config.selectedKeys,
             onSelectionChange: config.onSelectionChange,
-            onContextMenu: config.onContextMenu,
+            onContextMenu: combinedContextMenuHandler,
             variableStats,
         };
 
@@ -144,7 +233,7 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
                 return <HexbinRenderer {...commonProps} />;
             default:
                 return (
-                    <div className="flex items-center justify-center h-full text-gray-400">
+                    <div className={styles.placeholder}>
                         Chart type '{activeChartType}' not yet implemented
                     </div>
                 );
@@ -158,10 +247,10 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
     })) || [];
 
     return (
-        <div className={`w-full h-full flex flex-col ${className}`}>
+        <div className={`${styles.container} ${className}`}>
             {/* Toolbar / Header */}
-            <div className="flex justify-between items-center mb-4 px-1">
-                <div className="flex items-center gap-4">
+            <div className={styles.toolbar}>
+                <div className={styles.toolbarLeft}>
                     <ChartSelector
                         currentType={activeChartType}
                         availableTypes={recommendation?.alternatives ? [recommendation.default, ...recommendation.alternatives] : undefined}
@@ -170,15 +259,15 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
 
                     {/* Bin Count Slider (Histogram Only) */}
                     {activeChartType === 'histogram' && (
-                        <div className="flex items-center gap-2 text-sm text-gray-600 bg-white px-3 py-1.5 rounded-md border border-gray-200">
-                            <span className="text-xs font-medium uppercase tracking-wide text-gray-400">Bins</span>
+                        <div className={styles.binControl}>
+                            <span className={styles.binLabel}>Bins</span>
                             <input
                                 type="range"
                                 min="5"
                                 max="50"
                                 step="1"
                                 defaultValue="10"
-                                className="w-24 h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                                className={styles.binSlider}
                                 onMouseUp={(e) => {
                                     // Debounce by only firing on mouse up
                                     const value = parseInt((e.target as HTMLInputElement).value, 10);
@@ -199,10 +288,28 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
             {/* Chart Canvas */}
             <div
                 ref={containerRef}
-                className="flex-grow min-h-[300px] relative"
+                className={styles.chartCanvas}
             >
                 {renderContent()}
             </div>
+
+            {/* Context Menu */}
+            <ChartContextMenu
+                isOpen={contextMenu.isOpen}
+                position={contextMenu.position}
+                title={contextMenu.selectedItems.length === 1
+                    ? contextMenu.selectedItems[0].label
+                    : contextMenu.selectedItems.length > 1
+                        ? `${contextMenu.selectedItems.length} items selected`
+                        : undefined
+                }
+                subtitle={contextMenu.selectedItems.length === 1
+                    ? `${contextMenu.selectedItems[0].value.toLocaleString()} (${contextMenu.selectedItems[0].percent.toFixed(1)}%)`
+                    : undefined
+                }
+                options={contextMenuOptions}
+                onClose={closeContextMenu}
+            />
         </div>
     );
 };

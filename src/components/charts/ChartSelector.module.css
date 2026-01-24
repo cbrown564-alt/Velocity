@@ -1,0 +1,41 @@
+/**
+ * ChartSelector Styles
+ */
+
+.container {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    background: white;
+    border: 1px solid var(--gray-200);
+    border-radius: 6px;
+    padding: var(--space-1);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.button {
+    padding: 6px;
+    border-radius: 6px;
+    transition: all 0.15s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: var(--gray-500);
+}
+
+.button:hover {
+    background-color: var(--gray-100);
+    color: var(--gray-900);
+}
+
+.buttonActive {
+    background-color: var(--color-terracotta-light, rgba(224, 122, 95, 0.1));
+    color: var(--color-terracotta);
+}
+
+.buttonActive:hover {
+    background-color: var(--color-terracotta-light, rgba(224, 122, 95, 0.15));
+}

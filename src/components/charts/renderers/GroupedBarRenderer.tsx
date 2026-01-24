@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import * as d3 from 'd3-scale';
 import { max } from 'd3-array';
 import { BaseChartRendererProps } from '../../../types/charts';
@@ -14,6 +14,8 @@ export const GroupedBarRenderer: React.FC<BaseChartRendererProps> = ({
     height,
     colors,
     processedData,
+    interactive = true,
+    onContextMenu,
 }) => {
     const { rows, columns } = processedData;
 
@@ -79,11 +81,31 @@ export const GroupedBarRenderer: React.FC<BaseChartRendererProps> = ({
 
     const xTicks = xScale.ticks(5);
 
+    // Handle right-click on a row group
+    const handleRowContextMenu = useCallback((row: any, event: React.MouseEvent) => {
+        if (!interactive || !onContextMenu) return;
+        event.preventDefault();
+        event.stopPropagation();
+
+        // Build data point from row
+        const firstColKey = columns[0]?.key || 'Total';
+        const cell = row.cells[firstColKey];
+        onContextMenu({
+            selected: [{
+                label: row.label,
+                rawValue: row.rawValue,
+                value: cell?.count || 0,
+                percent: cell?.percent || 0,
+            }],
+            position: { x: event.clientX, y: event.clientY },
+        });
+    }, [interactive, onContextMenu, columns]);
+
     return (
         <svg
             width={width}
             height={Math.max(height, actualHeight + margin.top + margin.bottom)}
-            className="overflow-visible font-body"
+            style={{ overflow: 'visible', fontFamily: 'var(--font-body)' }}
         >
             <g transform={`translate(${margin.left},${margin.top})`}>
                 {/* Legend (Top) */}
@@ -101,8 +123,7 @@ export const GroupedBarRenderer: React.FC<BaseChartRendererProps> = ({
                                 <text
                                     x={18}
                                     y={10}
-                                    className="text-[11px] fill-gray-600"
-                                    style={{ fontFamily: 'var(--font-body)' }}
+                                    style={{ fontSize: '11px', fill: 'var(--gray-600)', fontFamily: 'var(--font-body)' }}
                                 >
                                     {(label || '').length > 12 ? (label || '').substring(0, 10) + '...' : (label || '')}
                                 </text>
@@ -133,7 +154,7 @@ export const GroupedBarRenderer: React.FC<BaseChartRendererProps> = ({
                             <text
                                 y={18}
                                 textAnchor="middle"
-                                className="text-[10px] fill-gray-500"
+                                style={{ fontSize: '10px', fill: 'var(--gray-500)' }}
                             >
                                 {tick.toLocaleString()}
                             </text>
@@ -149,8 +170,7 @@ export const GroupedBarRenderer: React.FC<BaseChartRendererProps> = ({
                         y={(y0Scale(r.label) || 0) + y0Scale.bandwidth() / 2}
                         dy=".35em"
                         textAnchor="end"
-                        className="text-xs fill-gray-700"
-                        style={{ fontFamily: 'var(--font-body)' }}
+                        style={{ fontSize: 'var(--font-size-xs)', fill: 'var(--gray-700)', fontFamily: 'var(--font-body)' }}
                     >
                         {r.label && r.label.length > 25 ? r.label.substring(0, 23) + '...' : r.label}
                     </text>
@@ -161,7 +181,11 @@ export const GroupedBarRenderer: React.FC<BaseChartRendererProps> = ({
                     const groupY = y0Scale(row.label) || 0;
 
                     return (
-                        <g key={row.label} transform={`translate(0, ${groupY})`}>
+                        <g
+                            key={row.label}
+                            transform={`translate(0, ${groupY})`}
+                            onContextMenu={(e) => handleRowContextMenu(row, e)}
+                        >
                             {columnKeys.map((colKey, i) => {
                                 const count = row.cells[colKey]?.count || 0;
                                 const barWidth = xScale(count);
@@ -177,7 +201,10 @@ export const GroupedBarRenderer: React.FC<BaseChartRendererProps> = ({
                                             height={barHeight}
                                             fill={colors ? colors[i % colors.length] : getChartColor(i)}
                                             rx={2}
-                                            className="transition-all duration-300 hover:opacity-80 cursor-pointer"
+                                            style={{
+                                                transition: 'all 0.3s',
+                                                cursor: interactive ? 'pointer' : 'default',
+                                            }}
                                         />
                                         {/* Value label if wide enough */}
                                         {barWidth > 20 && (
@@ -186,8 +213,13 @@ export const GroupedBarRenderer: React.FC<BaseChartRendererProps> = ({
                                                 y={barY + barHeight / 2}
                                                 dy=".35em"
                                                 textAnchor="end"
-                                                className="text-[10px] font-medium fill-white pointer-events-none"
-                                                style={{ textShadow: '0 1px 2px rgba(0,0,0,0.3)' }}
+                                                style={{
+                                                    fontSize: '10px',
+                                                    fontWeight: 500,
+                                                    fill: 'white',
+                                                    pointerEvents: 'none',
+                                                    textShadow: '0 1px 2px rgba(0,0,0,0.3)',
+                                                }}
                                             >
                                                 {count.toLocaleString()}
                                             </text>

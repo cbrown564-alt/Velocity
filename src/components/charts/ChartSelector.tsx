@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { ChartType } from '../../types/charts';
 import { useVelocityStore } from '../../store';
+import styles from './ChartSelector.module.css';
 
 interface ChartSelectorProps {
     currentType: ChartType;
@@ -80,18 +81,12 @@ export const ChartSelector: React.FC<ChartSelectorProps> = ({
     };
 
     return (
-        <div className={`flex items-center space-x-1 bg-white border border-stone-200 rounded-md p-1 shadow-sm ${className}`}>
+        <div className={`${styles.container} ${className}`}>
             {typesToShow.map((type) => (
                 <button
                     key={type}
                     onClick={() => handleSelect(type)}
-                    className={`
-                        p-1.5 rounded-md transition-colors duration-150 flex items-center justify-center
-                        ${currentType === type
-                            ? 'bg-indigo-50 text-indigo-700'
-                            : 'text-stone-500 hover:bg-stone-100 hover:text-stone-900'
-                        }
-                    `}
+                    className={`${styles.button} ${currentType === type ? styles.buttonActive : ''}`}
                     title={CHART_LABELS[type]}
                     aria-label={`Select ${CHART_LABELS[type]}`}
                     aria-pressed={currentType === type}

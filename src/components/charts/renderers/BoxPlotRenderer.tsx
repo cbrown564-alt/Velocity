@@ -40,7 +40,15 @@ export const BoxPlotRenderer: React.FC<BaseChartRendererProps> = ({
     // Check if we have valid box plot stats
     if (!stats || typeof stats.median === 'undefined') {
         return (
-            <div className="flex items-center justify-center h-full text-gray-400 text-sm">
+            <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                height: '100%',
+                color: 'var(--gray-400)',
+                fontSize: 'var(--font-size-sm)',
+                fontFamily: 'var(--font-body)',
+            }}>
                 Box plot data not available (requires raw data or pre-calculated quartiles).
             </div>
         );
@@ -71,14 +79,19 @@ export const BoxPlotRenderer: React.FC<BaseChartRendererProps> = ({
     const color = colors ? colors[0] : getChartColor(0);
 
     return (
-        <svg width={width} height={height} className="overflow-visible font-body">
+        <svg width={width} height={height} style={{ overflow: 'visible', fontFamily: 'var(--font-body)' }}>
             <g transform={`translate(${margin.left},${margin.top})`}>
                 {/* Y Axis */}
                 <line x1={0} y1={0} x2={0} y2={innerHeight} stroke="var(--gray-300)" />
                 {yScale.ticks(5).map(tick => (
                     <g key={tick} transform={`translate(0,${yScale(tick)})`}>
                         <line x2={-6} stroke="var(--gray-300)" />
-                        <text x={-10} dy=".32em" textAnchor="end" className="text-xs fill-gray-500">
+                        <text
+                            x={-10}
+                            dy=".32em"
+                            textAnchor="end"
+                            style={{ fontSize: 'var(--font-size-xs)', fill: 'var(--gray-500)' }}
+                        >
                             {tick}
                         </text>
                     </g>
