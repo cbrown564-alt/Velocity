@@ -118,11 +118,13 @@
 
 ### Milestone 2.4: Major Charting Refactor (D3.js)
 *Goal: Consolidate visualization logic and implement Analysis Charts.*
-- [ ] Refactor Sparklines and Recoding to use D3.js core.
+- [x] **Refactor Sparklines and Distributions to use D3.js core** (Unified renderers).
 - [x] **Implement Chart View:** In-app visualization on the Analysis Canvas.
     - [x] Horizontal Bar, Stacked Bar, Grouped Bar
     - [x] Diverging Bar (Likert), Donut, Histogram Adapter
-- [ ] **Visual Recoding** (Interactive Histogram Bucketing) - *Half-complete; needs D3.js refactor. Should work for both Analysis Canvas and Variable Manager.*
+- [x] **Universal Context Menus:** Unified `ChartContextMenu` for all visualizations.
+- [x] **Shared Interaction Hooks:** Drag-to-select and right-click preparation for both Manager and Canvas.
+- [/] **Visual Recoding** (Interactive Histogram Bucketing) - *Core refactor complete; integrated into Variable Inspector with shared renderers.*
 
 
 ### Milestone 2.5: The Weighting Engine
