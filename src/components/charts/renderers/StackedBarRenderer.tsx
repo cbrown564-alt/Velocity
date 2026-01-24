@@ -28,7 +28,7 @@ export const StackedBarRenderer: React.FC<StackedBarRendererProps> = ({
     const columnLabels = columns.map(c => c.label);
 
     // Dynamic margin based on label lengths
-    const maxRowLabelLength = Math.max(...rows.map(r => r.label.length), 10);
+    const maxRowLabelLength = Math.max(...rows.map(r => (r.label || '').length), 10);
     const leftMargin = Math.min(Math.max(maxRowLabelLength * 6, 100), 200);
 
     // Calculate legend width
@@ -110,7 +110,7 @@ export const StackedBarRenderer: React.FC<StackedBarRendererProps> = ({
                                     className="text-[11px] fill-gray-600"
                                     style={{ fontFamily: 'var(--font-body)' }}
                                 >
-                                    {label.length > 12 ? label.substring(0, 10) + '...' : label}
+                                    {(label || '').length > 12 ? (label || '').substring(0, 10) + '...' : (label || '')}
                                 </text>
                             </g>
                         );
@@ -160,7 +160,7 @@ export const StackedBarRenderer: React.FC<StackedBarRendererProps> = ({
                         className="text-xs fill-gray-700"
                         style={{ fontFamily: 'var(--font-body)' }}
                     >
-                        {d.label.length > 25 ? d.label.substring(0, 23) + '...' : d.label}
+                        {(d.label || '').length > 25 ? (d.label || '').substring(0, 23) + '...' : d.label}
                     </text>
                 ))}
 

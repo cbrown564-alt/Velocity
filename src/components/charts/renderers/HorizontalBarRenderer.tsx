@@ -28,7 +28,7 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
     const chartData = series?.data || [];
 
     // Dynamic margin based on label length
-    const maxLabelLength = Math.max(...chartData.map(d => d.label.length), 10);
+    const maxLabelLength = Math.max(...chartData.map(d => (d.label || '').length), 10);
     const leftMargin = Math.min(Math.max(maxLabelLength * 6, 80), 180);
 
     const margin = { top: 24, right: 60, bottom: 24, left: leftMargin };
@@ -176,7 +176,7 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
                         className={`text-xs ${selectedKeys?.has(d.label) ? 'font-bold fill-gray-900' : 'fill-gray-700'}`}
                         style={{ fontFamily: 'var(--font-body)' }}
                     >
-                        {d.label.length > 25 ? d.label.substring(0, 23) + '...' : d.label}
+                        {(d.label || '').length > 25 ? (d.label || '').substring(0, 23) + '...' : d.label}
                     </text>
                 ))}
 

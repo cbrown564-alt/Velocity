@@ -22,7 +22,7 @@ export const GroupedBarRenderer: React.FC<BaseChartRendererProps> = ({
     const columnLabels = columns.map(c => c.label);
 
     // Dynamic margin based on label lengths
-    const maxRowLabelLength = Math.max(...rows.map(r => r.label.length), 10);
+    const maxRowLabelLength = Math.max(...rows.map(r => (r.label || '').length), 10);
     const leftMargin = Math.min(Math.max(maxRowLabelLength * 6, 100), 200);
 
     // Calculate legend width
@@ -104,7 +104,7 @@ export const GroupedBarRenderer: React.FC<BaseChartRendererProps> = ({
                                     className="text-[11px] fill-gray-600"
                                     style={{ fontFamily: 'var(--font-body)' }}
                                 >
-                                    {label.length > 12 ? label.substring(0, 10) + '...' : label}
+                                    {(label || '').length > 12 ? (label || '').substring(0, 10) + '...' : (label || '')}
                                 </text>
                             </g>
                         );
@@ -152,7 +152,7 @@ export const GroupedBarRenderer: React.FC<BaseChartRendererProps> = ({
                         className="text-xs fill-gray-700"
                         style={{ fontFamily: 'var(--font-body)' }}
                     >
-                        {r.label.length > 25 ? r.label.substring(0, 23) + '...' : r.label}
+                        {r.label && r.label.length > 25 ? r.label.substring(0, 23) + '...' : r.label}
                     </text>
                 ))}
 

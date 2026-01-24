@@ -53,7 +53,7 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
     }, [rows, left, right, neutral]);
 
     // Layout
-    const maxRowLabelLength = Math.max(...rows.map(r => r.label.length), 10);
+    const maxRowLabelLength = Math.max(...rows.map(r => (r.label || '').length), 10);
     const leftMargin = Math.min(Math.max(maxRowLabelLength * 6, 100), 200);
     const margin = { top: 50, right: 40, bottom: 30, left: leftMargin };
     const innerWidth = width - margin.left - margin.right;
@@ -113,7 +113,7 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
                         <g key={col.key} transform={`translate(${i * 100}, 0)`}>
                             <rect width={12} height={12} rx={2} fill={getColor(i)} />
                             <text x={18} y={10} className="text-[10px] fill-gray-600">
-                                {col.label.length > 12 ? col.label.substring(0, 10) + '...' : col.label}
+                                {(col.label || '').length > 12 ? (col.label || '').substring(0, 10) + '...' : (col.label || '')}
                             </text>
                         </g>
                     ))}
@@ -150,7 +150,7 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
                                 textAnchor="end"
                                 className="text-xs fill-gray-700"
                             >
-                                {row.label.length > 25 ? row.label.substring(0, 23) + '...' : row.label}
+                                {(row.label || '').length > 25 ? (row.label || '').substring(0, 23) + '...' : (row.label || '')}
                             </text>
 
                             {/* Neutral Bar (Centered) */}

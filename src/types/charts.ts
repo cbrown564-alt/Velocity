@@ -62,3 +62,29 @@ export interface AnalysisChartConfig {
     /** Callback for right-click context menu */
     onContextMenu?: (event: { selected: any[]; position: { x: number; y: number } }) => void;
 }
+
+export interface BarDatum {
+    label: string;
+    value: number;
+    code?: number | string;
+    percent?: number;
+}
+
+export interface BinData {
+    x0: number;
+    x1: number;
+    count: number;
+    selected?: boolean;
+    // Optional metadata that might be passed through
+    [key: string]: any;
+}
+
+export interface SelectionEvent {
+    selected: BarDatum[];
+    position: { x: number; y: number };
+}
+
+export interface BinSelectionEvent {
+    bins: BinData[];
+    position: { x: number; y: number };
+}

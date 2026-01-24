@@ -11,7 +11,7 @@ import { Tag, Hash, BarChart2, Info, AlertTriangle, CheckCircle, Type, Calendar 
 import { useVelocityStore } from '../../store';
 import type { Variable } from '../../store/slices/dataSlice';
 import type { VariableStatsResult } from '../../services/analysisWorker';
-import { D3BarChart, BarDatum, SelectionEvent, D3Histogram, BinData, BinSelectionEvent } from '../../components/charts';
+import type { BarDatum, BinData } from '../../types/charts';
 import { HorizontalBarRenderer, HistogramRenderer } from '../../components/charts/renderers';
 import { ChartContextMenu } from '../../components/overlays/ChartContextMenu';
 import { InputModal } from '../../components/overlays/InputModal';
