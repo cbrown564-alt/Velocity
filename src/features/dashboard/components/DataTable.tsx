@@ -23,6 +23,8 @@ interface DataTableProps {
   onCellClick?: (rowPath: RowPathEntry[], colValue: string | null) => void;
   /** Stats for the main scale variable (if applicable) */
   variableStats?: VariableStatsResult | null;
+  /** If true, row keys are already labels (multiple response) - skip label resolution */
+  isMultipleResponse?: boolean;
 }
 
 const CHART_COLORS = [
@@ -73,7 +75,8 @@ export const DataTable: React.FC<DataTableProps> = ({
   viewMode = 'table',
   isWeighted = false,
   onCellClick,
-  variableStats
+  variableStats,
+  isMultipleResponse = false,
 }) => {
   // UI State for expanded rows
   const [expandedKeys, setExpandedKeys] = useState<Record<string, boolean>>({});
@@ -150,27 +153,30 @@ export const DataTable: React.FC<DataTableProps> = ({
       // Add keys from actual data
       Object.keys(groups).forEach(k => allKeys.add(k));
 
-      // Add keys from value labels (if they don't exist in data)
-      if (variable && variable.valueLabels) {
-        variable.valueLabels.forEach(vl => allKeys.add(String(vl.value)));
-      }
+      // For multiple response, row keys are already labels - skip adding value labels and gap filling
+      if (!isMultipleResponse) {
+        // Add keys from value labels (if they don't exist in data)
+        if (variable && variable.valueLabels) {
+          variable.valueLabels.forEach(vl => allKeys.add(String(vl.value)));
+        }
 
-      // 4b. GAP FILLING (for Ordinal/Scale)
-      // Ensure we don't show "1, 3, 4" skipping "2" if it's a numeric scale
-      if (variable && (variable.type === 'ordinal' || variable.type === 'scale')) {
-        const numericKeys = Array.from(allKeys)
-          .map(k => parseFloat(k))
-          .filter(n => !isNaN(n) && Number.isInteger(n));
+        // 4b. GAP FILLING (for Ordinal/Scale)
+        // Ensure we don't show "1, 3, 4" skipping "2" if it's a numeric scale
+        if (variable && (variable.type === 'ordinal' || variable.type === 'scale')) {
+          const numericKeys = Array.from(allKeys)
+            .map(k => parseFloat(k))
+            .filter(n => !isNaN(n) && Number.isInteger(n));
 
-        if (numericKeys.length >= 2) {
-          const min = Math.min(...numericKeys);
-          const max = Math.max(...numericKeys);
+          if (numericKeys.length >= 2) {
+            const min = Math.min(...numericKeys);
+            const max = Math.max(...numericKeys);
 
-          // Only fill gaps for reasonable survey scale ranges (e.g., 0-100)
-          // Prevents massive loops if data has outliers (e.g. 0 and 999999)
-          if (max - min < 100) {
-            for (let i = min; i <= max; i++) {
-              allKeys.add(String(i));
+            // Only fill gaps for reasonable survey scale ranges (e.g., 0-100)
+            // Prevents massive loops if data has outliers (e.g. 0 and 999999)
+            if (max - min < 100) {
+              for (let i = min; i <= max; i++) {
+                allKeys.add(String(i));
+              }
             }
           }
         }
@@ -181,11 +187,10 @@ export const DataTable: React.FC<DataTableProps> = ({
         const groupData = groups[groupKey] || []; // Might be empty if coming from labels only
         const uniqueKey = parentKey ? `${parentKey}-${groupKey}` : groupKey;
 
-        // Resolve Label: Look up value label if available
-        // const variable = rowVariables[depth]; // Already declared above
+        // Resolve Label: For multiple response, rowKey IS the label
         let label = groupKey;
 
-        if (variable && variable.valueLabels && variable.valueLabels.length > 0) {
+        if (!isMultipleResponse && variable && variable.valueLabels && variable.valueLabels.length > 0) {
           const foundLabel = variable.valueLabels.find(vl => String(vl.value) === String(groupKey));
           if (foundLabel) {
             label = foundLabel.label;
@@ -297,10 +302,17 @@ export const DataTable: React.FC<DataTableProps> = ({
 
 
       // 4b. SORTING LOGIC
+      // Multiple response: Always sort by frequency (descending)
       // Default: Sort by alphanumeric
       // Ordinal/Scale: Sort by numeric value
       // Nominal: Sort by Frequency (Total Count)
       nodes.sort((a, b) => {
+        // Multiple response: always sort by frequency (descending)
+        if (isMultipleResponse) {
+          if (b.total !== a.total) return b.total - a.total;
+          return a.label.localeCompare(b.label);
+        }
+
         const type = variable?.type || 'nominal';
 
         if (type === 'ordinal' || type === 'scale') {
@@ -342,7 +354,7 @@ export const DataTable: React.FC<DataTableProps> = ({
       grandTotal
     };
 
-  }, [data, rowVariables, colVariable]);
+  }, [data, rowVariables, colVariable, isWeighted, isMultipleResponse]);
 
   if (!tableData) return null;
 

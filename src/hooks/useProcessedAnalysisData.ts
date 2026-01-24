@@ -115,6 +115,8 @@ interface UseProcessedAnalysisDataOptions {
     rowVariables: Variable[];
     colVariable: Variable | null;
     isWeighted?: boolean;
+    /** If true, row keys are already labels (multiple response) - skip label resolution */
+    isMultipleResponse?: boolean;
 }
 
 /**
@@ -126,6 +128,7 @@ export function useProcessedAnalysisData({
     rowVariables,
     colVariable,
     isWeighted = false,
+    isMultipleResponse = false,
 }: UseProcessedAnalysisDataOptions): ProcessedAnalysisData | null {
     return useMemo(() => {
         if (!rowVariables.length || data.length === 0) {
@@ -196,25 +199,28 @@ export function useProcessedAnalysisData({
             // Gather all potential keys (data + labels for gap filling)
             const allKeys = new Set<string>(Object.keys(groups));
 
-            // Add keys from value labels
-            if (variable?.valueLabels) {
-                variable.valueLabels.forEach(vl => allKeys.add(String(vl.value)));
-            }
+            // For multiple response, row keys are already labels - skip label resolution and gap filling
+            if (!isMultipleResponse) {
+                // Add keys from value labels (for showing 0-count categories)
+                if (variable?.valueLabels) {
+                    variable.valueLabels.forEach(vl => allKeys.add(String(vl.value)));
+                }
 
-            // Gap filling for ordinal/scale
-            if (variable && (variable.type === 'ordinal' || variable.type === 'scale')) {
-                const numericKeys = Array.from(allKeys)
-                    .map(k => parseFloat(k))
-                    .filter(n => !isNaN(n) && Number.isInteger(n));
+                // Gap filling for ordinal/scale
+                if (variable && (variable.type === 'ordinal' || variable.type === 'scale')) {
+                    const numericKeys = Array.from(allKeys)
+                        .map(k => parseFloat(k))
+                        .filter(n => !isNaN(n) && Number.isInteger(n));
 
-                if (numericKeys.length >= 2) {
-                    const min = Math.min(...numericKeys);
-                    const max = Math.max(...numericKeys);
+                    if (numericKeys.length >= 2) {
+                        const min = Math.min(...numericKeys);
+                        const max = Math.max(...numericKeys);
 
-                    // Only fill gaps for reasonable ranges
-                    if (max - min < 100) {
-                        for (let i = min; i <= max; i++) {
-                            allKeys.add(String(i));
+                        // Only fill gaps for reasonable ranges
+                        if (max - min < 100) {
+                            for (let i = min; i <= max; i++) {
+                                allKeys.add(String(i));
+                            }
                         }
                     }
                 }
@@ -225,9 +231,9 @@ export function useProcessedAnalysisData({
                 const groupData = groups[groupKey] || [];
                 const uniqueKey = parentKey ? `${parentKey}-${groupKey}` : groupKey;
 
-                // Resolve label
+                // Resolve label - for multiple response, rowKey IS the label
                 let label = groupKey;
-                if (variable?.valueLabels?.length > 0) {
+                if (!isMultipleResponse && variable?.valueLabels?.length > 0) {
                     const foundLabel = variable.valueLabels.find(
                         vl => String(vl.value) === String(groupKey)
                     );
@@ -308,6 +314,12 @@ export function useProcessedAnalysisData({
 
             // Sort nodes
             nodes.sort((a, b) => {
+                // Multiple response: always sort by frequency (descending)
+                if (isMultipleResponse) {
+                    if (b.total !== a.total) return b.total - a.total;
+                    return a.label.localeCompare(b.label);
+                }
+
                 const type = variable?.type || 'nominal';
 
                 if (type === 'ordinal' || type === 'scale') {
@@ -359,7 +371,7 @@ export function useProcessedAnalysisData({
             rowVariables,
             colVariable,
         };
-    }, [data, rowVariables, colVariable, isWeighted]);
+    }, [data, rowVariables, colVariable, isWeighted, isMultipleResponse]);
 }
 
 // ============================================================================

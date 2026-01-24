@@ -70,27 +70,30 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
         return { resolvedRowVars: rowVars, resolvedColVar: colVar };
     }, [tableConfig.rowVars, tableConfig.colVar, variableSets, allVariables]);
 
+    // Check if first row variable set is a multiple response
+    const firstVarSet = variableSets.find(vs => vs.id === tableConfig.rowVars[0]);
+    const isMultipleResponse = firstVarSet?.structure === 'multiple';
+
     // Process data through shared hook
     const processedData = useProcessedAnalysisData({
         data: chartData,
         rowVariables: resolvedRowVars,
         colVariable: resolvedColVar,
         isWeighted,
+        isMultipleResponse,
     });
 
     // Get chart recommendation based on data configuration
     const chartRecommendation = useMemo(() => {
         if (resolvedRowVars.length === 0) return null;
 
-        const firstVarSet = variableSets.find(vs => vs.id === tableConfig.rowVars[0]);
-
         return recommendChart({
             rowVars: resolvedRowVars,
             colVar: resolvedColVar,
             isGrid: firstVarSet?.structure === 'grid',
-            isMultiResponse: firstVarSet?.structure === 'multiple',
+            isMultiResponse: isMultipleResponse,
         });
-    }, [resolvedRowVars, resolvedColVar, variableSets, tableConfig.rowVars]);
+    }, [resolvedRowVars, resolvedColVar, firstVarSet, isMultipleResponse]);
 
     if (!activeSlide) {
         return <div className="p-4 text-gray-500">No active slide</div>;
@@ -135,6 +138,7 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
                             totalCount={totalCount}
                             isWeighted={isWeighted}
                             variableStats={variableStats}
+                            isMultipleResponse={isMultipleResponse}
                         />
                     </div>
                 );
