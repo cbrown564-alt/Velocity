@@ -8,6 +8,7 @@ import type { StateCreator } from 'zustand';
 // buildCrosstabQuery import removed
 import type { WorkerRequest, WorkerResponse, VariableStatsResult } from '../../services/analysisWorker';
 import type { DataSlice, VariableSet } from './dataSlice';
+import type { UISlice } from './uiSlice';
 
 // ============================================================================
 // Types
@@ -51,9 +52,9 @@ export interface AnalysisSlice {
     reset: () => void;
 }
 
-// This slice needs access to DataSlice for worker and dataset
+// This slice needs access to DataSlice for worker and dataset, and UISlice for chart type reset
 type AnalysisSliceCreator = StateCreator<
-    AnalysisSlice & DataSlice,
+    AnalysisSlice & DataSlice & UISlice,
     [],
     [],
     AnalysisSlice
@@ -71,6 +72,8 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
     setTableConfig: (config) => {
         set((state) => ({
             tableConfig: { ...state.tableConfig, ...config },
+            // Reset chart type to auto when variables change so the recommender picks the best chart
+            selectedChartType: null,
         }));
         get().runAnalysis();
     },
