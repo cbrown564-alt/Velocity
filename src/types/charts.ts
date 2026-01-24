@@ -42,6 +42,8 @@ export interface BaseChartRendererProps {
     onSelectionChange?: (keys: Set<string>) => void;
     /** Callback for right-click context menu */
     onContextMenu?: (event: { selected: any[]; position: { x: number; y: number } }) => void;
+    /** Optional variable stats (e.g. for histogram bins) */
+    variableStats?: any; // typed as VariableStatsResult in implementation
 }
 
 /**

@@ -603,6 +603,7 @@ export const DataTable: React.FC<DataTableProps> = ({
           showTooltip: true,
           enableVisualETL: true
         }}
+        variableStats={variableStats}
       />
     </motion.div>
   );

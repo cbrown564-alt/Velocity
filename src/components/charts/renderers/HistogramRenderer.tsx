@@ -13,11 +13,25 @@ export const HistogramRenderer: React.FC<BaseChartRendererProps> = ({
     colors,
     processedData,
     interactive,
+    variableStats,
 }) => {
     const { rows } = processedData;
 
     // Convert ProcessedRows to BinData
     const bins = useMemo((): BinData[] => {
+        // 1. Prefer pre-calculated bins from variableStats (from Worker)
+        // This is essential for Scale variables where the main query returns just a Mean (1 row).
+        if (variableStats?.numeric?.histogramBins) {
+            return variableStats.numeric.histogramBins.map((b: any, i: number) => ({
+                x0: b.x0,
+                x1: b.x1,
+                count: b.count,
+                selected: false
+            }));
+        }
+
+        // 2. Fallback: Try to construct bins from ProcessedRows
+        // This works if the query returned Grouped Data (e.g. "10-20", "20-30")
         return rows.map((row, i) => {
             const count = row.total;
             let x0 = 0;
@@ -60,7 +74,7 @@ export const HistogramRenderer: React.FC<BaseChartRendererProps> = ({
                 selected: false // Selection state management could be added here
             };
         });
-    }, [rows]);
+    }, [rows, variableStats]);
 
     return (
         <D3Histogram

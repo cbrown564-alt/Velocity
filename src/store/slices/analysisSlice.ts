@@ -47,7 +47,7 @@ export interface AnalysisSlice {
     addFilter: (filter: Omit<Filter, 'id'>) => void;
     removeFilter: (filterId: string) => void;
     clearFilters: () => void;
-    fetchVariableStats: (variableId: string) => Promise<void>;
+    fetchVariableStats: (variableId: string, variableType?: 'nominal' | 'ordinal' | 'scale' | 'text' | 'date', binCount?: number) => Promise<void>;
     reset: () => void;
 }
 
@@ -120,7 +120,7 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
         } else if (firstRowVarSet?.type === 'scale') {
             // Scale Variable
             const measureVarId = firstRowVarSet.variableIds[0];
-            get().fetchVariableStats(measureVarId);
+            get().fetchVariableStats(measureVarId, 'scale');
 
             const col = tableConfig.colVar
                 ? (variableSets.find((s: VariableSet) => s.id === tableConfig.colVar)?.variableIds[0] || tableConfig.colVar)
@@ -222,7 +222,7 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
         get().runAnalysis();
     },
 
-    fetchVariableStats: async (variableId: string) => {
+    fetchVariableStats: async (variableId: string, variableType?: 'nominal' | 'ordinal' | 'scale' | 'text' | 'date', binCount?: number) => {
         const { worker } = get();
         if (!worker) return;
 
@@ -236,7 +236,7 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
                 }
             };
             worker.addEventListener('message', handler);
-            worker.postMessage({ type: 'getVariableStats', column: variableId } as WorkerRequest);
+            worker.postMessage({ type: 'getVariableStats', column: variableId, variableType, binCount } as WorkerRequest);
         });
     },
 

@@ -73,17 +73,15 @@ export const D3Histogram: React.FC<D3HistogramProps> = ({
     height = 200,
     color = 'var(--color-charcoal)',
     selectedColor = 'var(--color-terracotta)',
-    onBinsChange,
     onSelectionChange,
     onContextMenu,
     className,
 }) => {
     const svgRef = useRef<SVGSVGElement>(null);
     const [selectedIndices, setSelectedIndices] = useState<Set<number>>(new Set());
-    const [thresholds, setThresholds] = useState<number[]>([]);
 
-    // Margins
-    const margin = { top: 10, right: 20, bottom: 30, left: 45 };
+    // Margins - reduced bottom margin as we don't need space for handles
+    const margin = { top: 10, right: 20, bottom: 20, left: 45 };
     const innerWidth = width - margin.left - margin.right;
     const innerHeight = height - margin.top - margin.bottom;
 
@@ -102,25 +100,6 @@ export const D3Histogram: React.FC<D3HistogramProps> = ({
         return { min: 0, max: 1 };
     }, [values, precomputedBins]);
 
-    // Initialize thresholds from precomputed bins or create evenly spaced
-    useEffect(() => {
-        if (customThresholds && customThresholds.length > 0) {
-            setThresholds(customThresholds);
-        } else if (precomputedBins && precomputedBins.length > 1) {
-            // Extract thresholds from precomputed bins (bin boundaries between bins)
-            const newThresholds = precomputedBins.slice(0, -1).map(bin => bin.x1);
-            setThresholds(newThresholds);
-        } else if (values && values.length > 0) {
-            // Create evenly spaced thresholds
-            const step = (dataExtent.max - dataExtent.min) / binCount;
-            const newThresholds: number[] = [];
-            for (let i = 1; i < binCount; i++) {
-                newThresholds.push(dataExtent.min + step * i);
-            }
-            setThresholds(newThresholds);
-        }
-    }, [values, precomputedBins, binCount, customThresholds, dataExtent]);
-
     // Compute bins - use precomputed if available, otherwise bin from values
     const bins = useMemo((): BinData[] => {
         // Use precomputed bins if available
@@ -134,20 +113,19 @@ export const D3Histogram: React.FC<D3HistogramProps> = ({
         // Otherwise compute from raw values
         if (!values || values.length === 0) return [];
 
-        const allThresholds = [dataExtent.min, ...thresholds, dataExtent.max];
         const binner = d3Bin<number, number>()
             .domain([dataExtent.min, dataExtent.max])
-            .thresholds(thresholds);
+            .thresholds(binCount); // Simple bin count based binning
 
         const binned = binner(values);
 
         return binned.map((b, i) => ({
-            x0: b.x0 ?? allThresholds[i],
-            x1: b.x1 ?? allThresholds[i + 1],
+            x0: b.x0 ?? 0,
+            x1: b.x1 ?? 1,
             count: b.length,
             selected: selectedIndices.has(i),
         }));
-    }, [values, precomputedBins, thresholds, dataExtent, selectedIndices]);
+    }, [values, precomputedBins, binCount, dataExtent, selectedIndices]);
 
     // Handle selection change
     const updateSelection = useCallback((indices: Set<number>) => {
@@ -191,19 +169,6 @@ export const D3Histogram: React.FC<D3HistogramProps> = ({
             position: { x: event.clientX, y: event.clientY },
         });
     }, [bins, selectedIndices, onContextMenu]);
-
-    // Handle threshold drag
-    const handleThresholdDrag = useCallback((index: number, newValue: number) => {
-        const newThresholds = [...thresholds];
-
-        // Clamp to valid range (between adjacent thresholds)
-        const minBound = index === 0 ? dataExtent.min + 0.01 : thresholds[index - 1] + 0.01;
-        const maxBound = index === thresholds.length - 1 ? dataExtent.max - 0.01 : thresholds[index + 1] - 0.01;
-
-        newThresholds[index] = Math.max(minBound, Math.min(maxBound, newValue));
-        setThresholds(newThresholds);
-        onBinsChange?.(newThresholds);
-    }, [thresholds, dataExtent, onBinsChange]);
 
     // Render chart
     useEffect(() => {
@@ -270,53 +235,6 @@ export const D3Histogram: React.FC<D3HistogramProps> = ({
             .attr('text-anchor', 'middle')
             .text(d => d.count > 0 ? d.count : '');
 
-        // Add draggable threshold handles
-        const handleWidth = 12;
-        const handleHeight = innerHeight;
-
-        const handles = g.selectAll<SVGGElement, number>('.threshold-handle')
-            .data(thresholds)
-            .join('g')
-            .attr('class', styles.thresholdHandle)
-            .attr('transform', d => `translate(${xScale(d)},0)`);
-
-        // Handle line
-        handles.append('line')
-            .attr('y1', 0)
-            .attr('y2', innerHeight)
-            .attr('stroke', 'var(--gray-400)')
-            .attr('stroke-width', 2)
-            .attr('stroke-dasharray', '4,2');
-
-        // Handle drag area (invisible wider area for easier grabbing)
-        handles.append('rect')
-            .attr('x', -handleWidth / 2)
-            .attr('y', 0)
-            .attr('width', handleWidth)
-            .attr('height', handleHeight)
-            .attr('fill', 'transparent')
-            .attr('cursor', 'ew-resize');
-
-        // Handle grip indicator
-        handles.append('rect')
-            .attr('class', styles.handleGrip)
-            .attr('x', -3)
-            .attr('y', innerHeight / 2 - 10)
-            .attr('width', 6)
-            .attr('height', 20)
-            .attr('rx', 2)
-            .attr('fill', 'var(--gray-300)');
-
-        // Drag behavior
-        const dragBehavior = drag<SVGGElement, number>()
-            .on('drag', function (event, d) {
-                const index = thresholds.indexOf(d);
-                const newValue = xScale.invert(event.x);
-                handleThresholdDrag(index, newValue);
-            });
-
-        handles.call(dragBehavior);
-
         // Context menu handler
         svg.on('contextmenu', function (event: MouseEvent) {
             handleContextMenu(event);
@@ -329,9 +247,9 @@ export const D3Histogram: React.FC<D3HistogramProps> = ({
             }
         });
 
-    }, [bins, thresholds, width, height, innerWidth, innerHeight, margin, dataExtent,
+    }, [bins, width, height, innerWidth, innerHeight, margin, dataExtent,
         color, selectedColor, selectedIndices, handleBinClick, handleContextMenu,
-        handleThresholdDrag, updateSelection]);
+        updateSelection]);
 
     // Update bar colors when selection changes
     useEffect(() => {
@@ -363,9 +281,6 @@ export const D3Histogram: React.FC<D3HistogramProps> = ({
                     }
                 </div>
             )}
-            <div className={styles.hint}>
-                Drag boundaries to adjust bins
-            </div>
         </div>
     );
 };

@@ -22,6 +22,8 @@ interface AnalysisChartProps {
     /** Pre-processed data with labels, sorting, etc. */
     processedData?: ProcessedAnalysisData | null;
     className?: string;
+    /** Optional variable stats for histogram/distribution charts */
+    variableStats?: any;
 }
 
 /**
@@ -33,6 +35,7 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
     config,
     processedData,
     className = '',
+    variableStats,
 }) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
@@ -84,6 +87,7 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
             selectedKeys: config.selectedKeys,
             onSelectionChange: config.onSelectionChange,
             onContextMenu: config.onContextMenu,
+            variableStats,
         };
 
         // TODO: Pass proper height accounting for toolbar
@@ -124,10 +128,34 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
         <div className={`w-full h-full flex flex-col ${className}`}>
             {/* Toolbar / Header */}
             <div className="flex justify-between items-center mb-4 px-1">
-                <ChartSelector
-                    currentType={activeChartType}
-                    onSelect={(type) => useVelocityStore.getState().setSelectedChartType(type)}
-                />
+                <div className="flex items-center gap-4">
+                    <ChartSelector
+                        currentType={activeChartType}
+                        onSelect={(type) => useVelocityStore.getState().setSelectedChartType(type)}
+                    />
+
+                    {/* Bin Count Slider (Histogram Only) */}
+                    {activeChartType === 'histogram' && (
+                        <div className="flex items-center gap-2 text-sm text-gray-600 bg-white px-3 py-1.5 rounded-md border border-gray-200">
+                            <span className="text-xs font-medium uppercase tracking-wide text-gray-400">Bins</span>
+                            <input
+                                type="range"
+                                min="5"
+                                max="50"
+                                step="1"
+                                defaultValue="10"
+                                className="w-24 h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                                onMouseUp={(e) => {
+                                    // Debounce by only firing on mouse up
+                                    const value = parseInt((e.target as HTMLInputElement).value, 10);
+                                    if (variableStats?.column) {
+                                        useVelocityStore.getState().fetchVariableStats(variableStats.column, 'scale', value);
+                                    }
+                                }}
+                            />
+                        </div>
+                    )}
+                </div>
 
                 {config.showLegend && legendItems.length > 0 && (
                     <ChartLegend items={legendItems} />

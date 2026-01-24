@@ -123,6 +123,7 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
                             data={chartData}
                             config={config}
                             processedData={processedData}
+                            variableStats={variableStats}
                         />
                     </div>
                 );

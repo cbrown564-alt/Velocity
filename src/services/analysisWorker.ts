@@ -919,7 +919,8 @@ async function getUniqueValues(column: string): Promise<string[]> {
 
 async function getVariableStats(
   column: string,
-  variableType?: 'nominal' | 'ordinal' | 'scale' | 'text' | 'date'
+  variableType?: 'nominal' | 'ordinal' | 'scale' | 'text' | 'date',
+  binCount: number = 10
 ): Promise<VariableStatsResult> {
   if (!conn) throw new Error('DB not initialized');
 
@@ -981,8 +982,7 @@ async function getVariableStats(
         const q1 = Number(statsRow.q1_val) || minVal;
         const q3 = Number(statsRow.q3_val) || maxVal;
 
-        // Compute histogram bins (10 bins by default)
-        const binCount = 10;
+        // Compute histogram bins
         const range = maxVal - minVal;
         const binWidth = range > 0 ? range / binCount : 1;
 
