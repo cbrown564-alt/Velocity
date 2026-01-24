@@ -2,8 +2,14 @@ import React, { useRef, useState, useEffect } from 'react';
 import { AggregatedRow } from '../../types';
 import { BaseChartRendererProps, AnalysisChartConfig } from '../../types/charts';
 import { CHART_PALETTE } from './shared/chartColors';
-import { HorizontalBarRenderer } from './renderers/HorizontalBarRenderer';
-import { StackedBarRenderer } from './renderers/StackedBarRenderer';
+import {
+    HorizontalBarRenderer,
+    StackedBarRenderer,
+    GroupedBarRenderer,
+    DivergingBarRenderer,
+    DonutRenderer,
+    HistogramRenderer
+} from './renderers';
 import { ProcessedAnalysisData } from '../../hooks/useProcessedAnalysisData';
 import { ChartSelector } from './ChartSelector';
 import { ChartLegend } from './shared/ChartLegend';
@@ -75,6 +81,9 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
             colors: CHART_PALETTE,
             interactive: true,
             processedData,
+            selectedKeys: config.selectedKeys,
+            onSelectionChange: config.onSelectionChange,
+            onContextMenu: config.onContextMenu,
         };
 
         // TODO: Pass proper height accounting for toolbar
@@ -86,16 +95,16 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
             case 'stacked-bar-100':
                 return <StackedBarRenderer {...commonProps} type={activeChartType} />;
             case 'grouped-bar':
-                // Fallback to stacked until grouped is implemented
-                return <StackedBarRenderer {...commonProps} type="stacked-bar" />;
-            case 'vertical-bar':
+                return <GroupedBarRenderer {...commonProps} />;
+            case 'diverging-bar':
+                return <DivergingBarRenderer {...commonProps} />;
+            case 'donut':
+                return <DonutRenderer {...commonProps} />;
             case 'histogram':
-                // Use D3Histogram for now if available, or placeholder
-                return (
-                    <div className="flex items-center justify-center h-full text-gray-400">
-                        {activeChartType} renderer coming soon
-                    </div>
-                );
+                return <HistogramRenderer {...commonProps} />;
+            case 'vertical-bar':
+                // Fallback to grouped for now or implement VerticalBarRenderer
+                return <GroupedBarRenderer {...commonProps} />;
             default:
                 return (
                     <div className="flex items-center justify-center h-full text-gray-400">
@@ -128,7 +137,7 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
             {/* Chart Canvas */}
             <div
                 ref={containerRef}
-                className="flex-grow min-h-0 relative"
+                className="flex-grow min-h-[300px] relative"
             >
                 {renderContent()}
             </div>

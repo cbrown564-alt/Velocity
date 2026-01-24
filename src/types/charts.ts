@@ -31,11 +31,17 @@ export interface BaseChartRendererProps {
     /** Pre-processed data with labels, sorting, series */
     processedData: ProcessedAnalysisData;
     /** Callback when a chart element (bar, point) is clicked */
-    onElementClick?: (elementData: any) => void;
+    onElementClick?: (elementData: any, event: React.MouseEvent) => void;
     /** Color palette to use */
     colors?: string[];
     /** Whether the chart is interactive (hover, click) */
     interactive?: boolean;
+    /** Currently selected data keys (labels/ids) */
+    selectedKeys?: Set<string>;
+    /** Callback when selection changes */
+    onSelectionChange?: (keys: Set<string>) => void;
+    /** Callback for right-click context menu */
+    onContextMenu?: (event: { selected: any[]; position: { x: number; y: number } }) => void;
 }
 
 /**
@@ -47,4 +53,10 @@ export interface AnalysisChartConfig {
     showTooltip?: boolean;
     /** If true, enables Visual ETL features (drag-to-merge, context menu) */
     enableVisualETL?: boolean;
+    /** Currently selected data keys */
+    selectedKeys?: Set<string>;
+    /** Callback when selection changes */
+    onSelectionChange?: (keys: Set<string>) => void;
+    /** Callback for right-click context menu */
+    onContextMenu?: (event: { selected: any[]; position: { x: number; y: number } }) => void;
 }

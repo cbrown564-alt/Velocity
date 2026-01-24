@@ -118,7 +118,7 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
                     enableVisualETL: true
                 };
                 return (
-                    <div className="w-full h-full p-4 bg-white rounded-lg shadow-sm border border-stone-200">
+                    <div className="w-full h-full min-h-[400px] p-4 bg-white rounded-lg shadow-sm border border-stone-200">
                         <AnalysisChart
                             data={chartData}
                             config={config}

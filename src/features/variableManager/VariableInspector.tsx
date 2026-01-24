@@ -12,6 +12,8 @@ import { useVelocityStore } from '../../store';
 import type { Variable } from '../../store/slices/dataSlice';
 import type { VariableStatsResult } from '../../services/analysisWorker';
 import { D3BarChart, BarDatum, SelectionEvent, D3Histogram, BinData, BinSelectionEvent } from '../../components/charts';
+import { HorizontalBarRenderer, HistogramRenderer } from '../../components/charts/renderers';
+import { ChartContextMenu } from '../../components/overlays/ChartContextMenu';
 import { InputModal } from '../../components/overlays/InputModal';
 import styles from './VariableInspector.module.css';
 
@@ -74,7 +76,7 @@ interface VariableInspectorProps {
 interface ContextMenuState {
     isOpen: boolean;
     position: { x: number; y: number };
-    selected: BarDatum[];
+    selected: any[]; // Allow generic items (BarDatum or BinData with metadata)
 }
 
 export const VariableInspector: React.FC<VariableInspectorProps> = ({ className }) => {
@@ -95,11 +97,17 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
         selected: [],
     });
 
+    // Close context menu
+    const closeContextMenu = useCallback(() => {
+        setContextMenu(prev => ({ ...prev, isOpen: false }));
+    }, []);
+
     // State for group name input modal
     const [showGroupNameModal, setShowGroupNameModal] = useState(false);
     const [pendingGroupSelection, setPendingGroupSelection] = useState<BarDatum[]>([]);
     const [pendingBinSelection, setPendingBinSelection] = useState<BinData[]>([]);
     const [isCreatingRecode, setIsCreatingRecode] = useState(false);
+
 
     // State for histogram context menu
     const [histogramContextMenu, setHistogramContextMenu] = useState<{
@@ -111,6 +119,10 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
         position: { x: 0, y: 0 },
         selected: [],
     });
+
+    // State for chart selection
+    const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set());
+    const [selectedBins, setSelectedBins] = useState<Set<string>>(new Set()); // Store bin labels or IDs
 
     // Get the selected variable
     const variable = useMemo((): Variable | null => {
@@ -126,8 +138,13 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
         ? variableStatsLoading[selectedVariableId] || false
         : false;
 
+    // Reset selection when variable changes
+    useEffect(() => {
+        setSelectedKeys(new Set());
+        setSelectedBins(new Set());
+    }, [selectedVariableId]);
+
     // Fetch stats when variable is selected
-    // Also re-fetch if scale variable is missing numeric stats (from older cache)
     useEffect(() => {
         if (!selectedVariableId || isLoadingStats) return;
 
@@ -149,13 +166,16 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
         ? (stats.missingCount / stats.totalCount) * 100
         : null;
 
-    // Transform frequencies into chart data (for categorical variables)
-    const chartData = useMemo((): BarDatum[] => {
-        if (!stats || !variable) return [];
+    // Check if variable is numeric/scale type and has numeric stats
+    const isNumericVariable = variable?.type === 'scale';
+    const numericStats = stats?.numeric;
 
+    // Prepare data for Nominal/Ordinal Charts (HorizontalBarRenderer)
+    const nominalChartData = useMemo(() => {
+        if (!stats || !variable || isNumericVariable) return null;
         const hasValueLabels = variable.valueLabels && variable.valueLabels.length > 0;
 
-        return stats.frequencies.map((freq) => {
+        const data = stats.frequencies.map((freq) => {
             const label = hasValueLabels
                 ? variable.valueLabels.find(vl => vl.value === freq.value)?.label || String(freq.value)
                 : String(freq.value);
@@ -163,18 +183,50 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
             return {
                 label,
                 value: freq.count,
+                percent: (freq.count / stats.totalCount) * 100,
                 code: freq.value,
             };
         });
-    }, [stats, variable]);
 
-    // Check if variable is numeric/scale type and has numeric stats
-    const isNumericVariable = variable?.type === 'scale';
-    const numericStats = stats?.numeric;
+        return {
+            series: [{
+                id: 'default',
+                label: 'Count',
+                data,
+            }],
+            colors: ['var(--color-terracotta)'],
+        } as any; // Type assertion as partial ProcessedAnalysisData
+    }, [stats, variable, isNumericVariable]);
 
-    // Handle chart context menu (from D3 chart)
-    const handleChartContextMenu = useCallback((event: SelectionEvent) => {
+    // Prepare data for Histogram (HistogramRenderer)
+    const histogramData = useMemo(() => {
+        if (!numericStats || !variable || !isNumericVariable) return null;
+
+        const data = numericStats.histogramBins.map(bin => ({
+            label: `${bin.x0} - ${bin.x1}`,
+            value: bin.count,
+            percent: (bin.count / (stats?.totalCount || 1)) * 100,
+            // Metadata for parsing in renderer if needed, though label parsing handles it
+            rawValue: String(bin.x0),
+            originalBin: bin
+        }));
+
+        return {
+            rows: data, // HistogramRenderer expects 'rows' directly in processedData usually? No, it extracts from series or rows
+            // Wait, BaseChartRendererProps processedData type has 'rows' and 'series'.
+            // Let's populate 'rows' for HistogramRenderer as per its implementation
+            series: [{
+                id: 'default',
+                label: 'Frequency',
+                data
+            }]
+        } as any;
+    }, [numericStats, variable, isNumericVariable, stats]);
+
+    // Handle generic chart context menu
+    const handleContextMenu = useCallback((event: { selected: any[]; position: { x: number; y: number } }) => {
         if (event.selected.length === 0) return;
+
         setContextMenu({
             isOpen: true,
             position: event.position,
@@ -182,15 +234,19 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
         });
     }, []);
 
-    // Close context menu
-    const closeContextMenu = useCallback(() => {
-        setContextMenu(prev => ({ ...prev, isOpen: false }));
-    }, []);
-
     // Handle context menu actions - show modal to get group name
     const handleCreateGroup = useCallback(() => {
         if (contextMenu.selected.length > 0 && variable) {
-            setPendingGroupSelection([...contextMenu.selected]);
+            // Determine if we are grouping bins (histogram) or categories (bar) based on data shape
+            const isBinData = contextMenu.selected.some(d => d.originalBin); // Check for marker we added
+
+            if (isBinData) {
+                setPendingBinSelection(contextMenu.selected.map(d => d.originalBin)); // Extract original bins
+                setPendingGroupSelection([]);
+            } else {
+                setPendingGroupSelection([...contextMenu.selected]);
+                setPendingBinSelection([]);
+            }
             setShowGroupNameModal(true);
         }
         closeContextMenu();
@@ -271,41 +327,6 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
         }
     }, [variable, pendingGroupSelection, pendingBinSelection, getUniqueValues, recodeVariable]);
 
-    // Handle histogram context menu
-    const handleHistogramContextMenu = useCallback((event: BinSelectionEvent) => {
-        if (event.bins.length === 0) return;
-        setHistogramContextMenu({
-            isOpen: true,
-            position: event.position,
-            selected: event.bins,
-        });
-    }, []);
-
-    // Close histogram context menu
-    const closeHistogramContextMenu = useCallback(() => {
-        setHistogramContextMenu(prev => ({ ...prev, isOpen: false }));
-    }, []);
-
-    // Handle histogram group action
-    const handleHistogramCreateGroup = useCallback(() => {
-        if (histogramContextMenu.selected.length > 0 && variable) {
-            setPendingBinSelection([...histogramContextMenu.selected]);
-            setShowGroupNameModal(true);
-        }
-        closeHistogramContextMenu();
-    }, [histogramContextMenu.selected, variable, closeHistogramContextMenu]);
-
-    // Close context menus on click outside
-    useEffect(() => {
-        if (contextMenu.isOpen || histogramContextMenu.isOpen) {
-            const handleClick = () => {
-                closeContextMenu();
-                closeHistogramContextMenu();
-            };
-            document.addEventListener('click', handleClick);
-            return () => document.removeEventListener('click', handleClick);
-        }
-    }, [contextMenu.isOpen, histogramContextMenu.isOpen, closeContextMenu, closeHistogramContextMenu]);
 
     // If no variable selected, show empty state
     if (!variable) {
@@ -533,28 +554,8 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
                     </div>
                 )}
 
-                {/* Distribution Section - Histogram for numeric, Bar chart for categorical */}
-                {isNumericVariable && numericStats && numericStats.histogramBins.length > 0 ? (
-                    <div className={styles.section}>
-                        <h3 className={styles.sectionTitle}>
-                            Distribution
-                            <span style={{
-                                fontSize: 'var(--text-xs)',
-                                color: 'var(--gray-400)',
-                                fontWeight: 400,
-                                marginLeft: 'var(--space-2)',
-                            }}>
-                                (click bins, right-click to group)
-                            </span>
-                        </h3>
-                        <D3Histogram
-                            precomputedBins={numericStats.histogramBins}
-                            width={280}
-                            height={180}
-                            onContextMenu={handleHistogramContextMenu}
-                        />
-                    </div>
-                ) : chartData.length > 0 && (
+                {/* Distribution Section - Unified using new Renderers */}
+                {(nominalChartData || histogramData) && (
                     <div className={styles.section}>
                         <h3 className={styles.sectionTitle}>
                             Distribution
@@ -567,109 +568,51 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
                                 (drag to select, right-click to group)
                             </span>
                         </h3>
-                        <D3BarChart
-                            data={chartData}
-                            width={280}
-                            height={Math.max(180, chartData.length * 28)}
-                            orientation="horizontal"
-                            onContextMenu={handleChartContextMenu}
-                        />
-                        {chartData.length === 10 && (
-                            <p style={{
-                                fontSize: 'var(--text-xs)',
-                                color: 'var(--gray-400)',
-                                marginTop: 'var(--space-2)',
-                                fontStyle: 'italic',
-                            }}>
-                                Showing top 10 values
-                            </p>
-                        )}
+                        {/* Rendering logic */}
+                        {isNumericVariable && histogramData ? (
+                            <HistogramRenderer
+                                width={280}
+                                height={180}
+                                processedData={histogramData}
+                                interactive={true}
+                                // selectedKeys... we might need to map keys for histogram or leave it internal to renderer if we don't control it
+                                onContextMenu={handleContextMenu}
+                            // HistogramRenderer doesn't currently support 'selectedKeys', it uses D3Histogram internal state, 
+                            // unless we update D3Histogram to be controlled. 
+                            // For now, we rely on D3Histogram triggering onContextMenu with selected items.
+                            />
+                        ) : nominalChartData ? (
+                            <HorizontalBarRenderer
+                                width={280}
+                                height={Math.max(180, nominalChartData.series[0].data.length * 28)}
+                                processedData={nominalChartData}
+                                interactive={true}
+                                selectedKeys={selectedKeys}
+                                onSelectionChange={setSelectedKeys}
+                                onContextMenu={handleContextMenu}
+                                colors={['var(--color-charcoal)', 'var(--color-terracotta)']}
+                            />
+                        ) : null}
                     </div>
                 )}
             </div>
 
-            {/* Context Menu */}
-            {contextMenu.isOpen && contextMenu.selected.length > 0 && (
-                <div
-                    className={styles.contextMenu}
-                    style={{
-                        position: 'fixed',
-                        top: contextMenu.position.y,
-                        left: contextMenu.position.x,
-                        zIndex: 1000,
-                    }}
-                    onClick={(e) => e.stopPropagation()}
-                >
-                    <div className={styles.contextMenuHeader}>
-                        {contextMenu.selected.length === 1
-                            ? contextMenu.selected[0].label
-                            : `${contextMenu.selected.length} values selected`
-                        }
-                    </div>
-                    {contextMenu.selected.length > 1 && (
-                        <div style={{
-                            padding: 'var(--space-2) var(--space-3)',
-                            fontSize: 'var(--text-xs)',
-                            color: 'var(--gray-500)',
-                            borderBottom: '1px solid var(--gray-200)',
-                            maxWidth: 200,
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                        }}>
-                            {contextMenu.selected.map(d => d.label).join(', ')}
-                        </div>
-                    )}
-                    <button
-                        className={styles.contextMenuItem}
-                        onClick={handleCreateGroup}
-                    >
-                        {contextMenu.selected.length > 1
-                            ? 'Group these values'
-                            : 'Create group from this value'
-                        }
-                    </button>
-                </div>
-            )}
-
-            {/* Histogram Context Menu */}
-            {histogramContextMenu.isOpen && histogramContextMenu.selected.length > 0 && (
-                <div
-                    className={styles.contextMenu}
-                    style={{
-                        position: 'fixed',
-                        top: histogramContextMenu.position.y,
-                        left: histogramContextMenu.position.x,
-                        zIndex: 1000,
-                    }}
-                    onClick={(e) => e.stopPropagation()}
-                >
-                    <div className={styles.contextMenuHeader}>
-                        {histogramContextMenu.selected.length === 1
-                            ? `${histogramContextMenu.selected[0].x0.toFixed(1)} – ${histogramContextMenu.selected[0].x1.toFixed(1)}`
-                            : `${histogramContextMenu.selected.length} bins selected`
-                        }
-                    </div>
-                    {histogramContextMenu.selected.length > 1 && (
-                        <div style={{
-                            padding: 'var(--space-2) var(--space-3)',
-                            fontSize: 'var(--text-xs)',
-                            color: 'var(--gray-500)',
-                            borderBottom: '1px solid var(--gray-200)',
-                        }}>
-                            Range: {Math.min(...histogramContextMenu.selected.map(b => b.x0)).toFixed(1)} – {Math.max(...histogramContextMenu.selected.map(b => b.x1)).toFixed(1)}
-                        </div>
-                    )}
-                    <button
-                        className={styles.contextMenuItem}
-                        onClick={handleHistogramCreateGroup}
-                    >
-                        {histogramContextMenu.selected.length > 1
-                            ? 'Group this range'
-                            : 'Create group from this bin'
-                        }
-                    </button>
-                </div>
-            )}
+            {/* Shared Chart Context Menu */}
+            <ChartContextMenu
+                isOpen={contextMenu.isOpen}
+                position={contextMenu.position}
+                title={contextMenu.selected.length === 1 && contextMenu.selected[0].label
+                    ? contextMenu.selected[0].label
+                    : `${contextMenu.selected.length} items selected`}
+                subtitle={contextMenu.selected.length > 1 ? 'Multiple values' : undefined}
+                options={[
+                    {
+                        label: contextMenu.selected.length > 1 ? 'Group these values' : 'Create group from this value',
+                        onClick: handleCreateGroup,
+                    }
+                ]}
+                onClose={closeContextMenu}
+            />
 
             {/* Group Name Input Modal */}
             <InputModal
