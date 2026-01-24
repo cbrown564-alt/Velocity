@@ -1,3 +1,5 @@
+import { ProcessedAnalysisData } from '../hooks/useProcessedAnalysisData';
+
 export type ChartType =
     | 'horizontal-bar'
     | 'vertical-bar'
@@ -21,13 +23,13 @@ export interface ChartRecommendation {
  * Common props passed to all chart renderers.
  * This ensures uniform handling of dimensions, data, and interactions.
  */
-export interface BaseChartRendererProps<T = any> {
-    /** The aggregated data rows to visualize */
-    data: T[];
+export interface BaseChartRendererProps {
     /** Width of the chart container in pixels */
     width: number;
     /** Height of the chart container in pixels */
     height: number;
+    /** Pre-processed data with labels, sorting, series */
+    processedData: ProcessedAnalysisData;
     /** Callback when a chart element (bar, point) is clicked */
     onElementClick?: (elementData: any) => void;
     /** Color palette to use */

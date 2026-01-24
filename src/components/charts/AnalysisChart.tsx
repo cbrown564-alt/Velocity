@@ -1,14 +1,16 @@
-import React, { useMemo, useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { AggregatedRow } from '../../types';
-import { ChartType, BaseChartRendererProps, AnalysisChartConfig } from '../../types/charts';
+import { BaseChartRendererProps, AnalysisChartConfig } from '../../types/charts';
 import { CHART_PALETTE } from './shared/chartColors';
 import { HorizontalBarRenderer } from './renderers/HorizontalBarRenderer';
 import { StackedBarRenderer } from './renderers/StackedBarRenderer';
-import { useResizeObserver } from '../../hooks/useResizeObserver';
+import { ProcessedAnalysisData } from '../../hooks/useProcessedAnalysisData';
 
 interface AnalysisChartProps {
     data: AggregatedRow[];
     config: AnalysisChartConfig;
+    /** Pre-processed data with labels, sorting, etc. */
+    processedData?: ProcessedAnalysisData | null;
     className?: string;
 }
 
@@ -19,12 +21,13 @@ interface AnalysisChartProps {
 export const AnalysisChart: React.FC<AnalysisChartProps> = ({
     data,
     config,
+    processedData,
     className = '',
 }) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
-    // Simple resize observer if not available elsewhere
+    // Simple resize observer
     useEffect(() => {
         if (!containerRef.current) return;
 
@@ -42,29 +45,37 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
         return () => observer.disconnect();
     }, []);
 
-    const rendererProps: BaseChartRendererProps<AggregatedRow> = {
-        data,
-        width: dimensions.width,
-        height: dimensions.height,
-        colors: CHART_PALETTE,
-        interactive: true, // Default to true
-    };
-
     const renderContent = () => {
         if (dimensions.width === 0 || dimensions.height === 0) {
             return null;
         }
 
+        if (!processedData) {
+            return (
+                <div className="flex items-center justify-center h-full text-gray-400">
+                    No data to display
+                </div>
+            );
+        }
+
+        // Common props for all renderers
+        const commonProps = {
+            width: dimensions.width,
+            height: dimensions.height,
+            colors: CHART_PALETTE,
+            interactive: true,
+            processedData,
+        };
+
         switch (config.type) {
             case 'horizontal-bar':
-                return <HorizontalBarRenderer {...rendererProps} />;
+                return <HorizontalBarRenderer {...commonProps} />;
             case 'stacked-bar':
-            case 'stacked-bar-100': // StackedBarRenderer can handle both
-                return <StackedBarRenderer {...rendererProps} type={config.type} />;
-            case 'grouped-bar': // StackedBarRenderer or separate GroupedBarRenderer
-                // For Phase 2 startup, we might want to map grouped to stacked or have a placeholder
-                // Using StackedBarRenderer temporarily if it supports grouping or just fallback
-                return <StackedBarRenderer {...rendererProps} type="stacked-bar" />; // Fallback until Grouped is ready
+            case 'stacked-bar-100':
+                return <StackedBarRenderer {...commonProps} type={config.type} />;
+            case 'grouped-bar':
+                // Fallback to stacked until grouped is implemented
+                return <StackedBarRenderer {...commonProps} type="stacked-bar" />;
             default:
                 return (
                     <div className="flex items-center justify-center h-full text-gray-400">
