@@ -80,8 +80,8 @@ const VariableSetItem: React.FC<VariableSetItemProps> = ({
         transform: CSS.Transform.toString(transform),
         opacity: isDragging ? 0.5 : 1,
         zIndex: isDragging ? 1000 : undefined,
-        // Use terracotta background for selection too, to match active state
-        backgroundColor: isSelected && !isActive ? '#fcece9' : undefined,
+        // Use theme-aware background for selection
+        backgroundColor: isSelected && !isActive ? 'var(--bg-active)' : undefined,
         userSelect: 'none' as const, // Prevent text selection during drag/multi-select
     };
 
@@ -108,7 +108,7 @@ const VariableSetItem: React.FC<VariableSetItemProps> = ({
             >
                 <span className={styles.itemIcon} style={
                     variableSet.structure === 'grid' || variableSet.structure === 'multiple'
-                        ? { color: 'var(--gray-400)' }
+                        ? { color: 'var(--text-secondary)' }
                         : undefined
                 }>
                     {variableSet.structure === 'grid' ? (

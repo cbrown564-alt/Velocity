@@ -35,7 +35,7 @@ export type WorkerRequest =
   | { type: 'query'; sql: string }
   | { type: 'getSchema' }
   | { type: 'getUniqueValues'; column: string }
-  | { type: 'getVariableStats'; column: string; variableType?: 'nominal' | 'ordinal' | 'scale' | 'numeric' | 'text' | 'date' }
+  | { type: 'getVariableStats'; column: string; variableType?: 'nominal' | 'ordinal' | 'scale' | 'numeric' | 'text' | 'date'; binCount?: number }
   | { type: 'recodeVariable'; sourceCol: string; newColName: string; config: RecodeConfig }
   | { type: 'checkPersistedData' }
   | { type: 'clearPersistedData' }
@@ -1567,7 +1567,7 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
         break;
 
       case 'getVariableStats':
-        const stats = await getVariableStats(request.column, request.variableType);
+        const stats = await getVariableStats(request.column, request.variableType, request.binCount);
         self.postMessage({ type: 'variableStats', stats } as WorkerResponse);
         break;
 

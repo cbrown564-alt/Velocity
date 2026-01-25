@@ -93,7 +93,7 @@ export const RecodeModal: React.FC<RecodeModalProps> = ({ isOpen, onClose, varia
             animate={{ opacity: 0.5 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-[var(--color-ink)]/40 backdrop-blur-sm z-50"
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
           />
           <motion.div
             initial={{ scale: 0.95, opacity: 0 }}
@@ -101,16 +101,16 @@ export const RecodeModal: React.FC<RecodeModalProps> = ({ isOpen, onClose, varia
             exit={{ scale: 0.95, opacity: 0 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none"
           >
-            <div className="bg-[var(--color-paper)] rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden pointer-events-auto flex flex-col max-h-[85vh]">
+            <div className="bg-[var(--bg-panel)] rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden pointer-events-auto flex flex-col max-h-[85vh]">
               {/* Header */}
-              <div className="p-6 border-b border-[var(--gray-200)] flex items-center justify-between bg-[var(--color-paper)]">
+              <div className="p-6 border-b border-[var(--border-color)] flex items-center justify-between bg-[var(--bg-panel)]">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-[var(--gray-50)] text-[var(--color-terracotta)] rounded-lg">
+                  <div className="p-2 bg-[var(--bg-surface)] text-[var(--color-accent)] rounded-lg">
                     <Wand2 size={20} />
                   </div>
                   <div>
-                    <h2 className="text-lg font-bold text-[var(--color-ink)] font-display">Recode Variable</h2>
-                    <p className="text-sm text-[var(--gray-500)] font-body">Group values from <span className="font-semibold text-[var(--color-charcoal)]">{variable?.label}</span> into a new variable.</p>
+                    <h2 className="text-lg font-bold text-[var(--text-primary)] font-display">Recode Variable</h2>
+                    <p className="text-sm text-[var(--text-secondary)] font-body">Group values from <span className="font-semibold text-[var(--text-primary)]">{variable?.label}</span> into a new variable.</p>
                   </div>
                 </div>
                 <button onClick={onClose} className="text-[var(--gray-400)] hover:text-[var(--gray-600)] transition-colors">
@@ -119,25 +119,25 @@ export const RecodeModal: React.FC<RecodeModalProps> = ({ isOpen, onClose, varia
               </div>
 
               {/* Body */}
-              <div className="p-6 overflow-y-auto bg-[var(--gray-50)]/50 flex-1 font-body">
+              <div className="p-6 overflow-y-auto bg-[var(--bg-surface)] flex-1 font-body">
                 <div className="mb-6">
-                  <label className="block text-xs font-semibold text-[var(--gray-500)] uppercase tracking-wider mb-2">New Variable Name</label>
+                  <label className="block text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-2">New Variable Name</label>
                   <input
                     type="text"
                     value={newVarName}
                     onChange={(e) => setNewVarName(e.target.value)}
-                    className="w-full px-4 py-2 border border-[var(--gray-300)] rounded-lg focus:ring-2 focus:ring-[var(--color-terracotta)]/20 focus:border-[var(--color-terracotta)] outline-none font-medium text-[var(--color-ink)] bg-[var(--color-parchment)]"
+                    className="w-full px-4 py-2 border border-[var(--border-color)] rounded-lg focus:ring-2 focus:ring-[var(--color-accent)]/20 focus:border-[var(--color-accent)] outline-none font-medium text-[var(--text-primary)] bg-[var(--bg-panel)]"
                   />
                 </div>
 
                 {/* Mode Switcher (Only for numeric types: numeric and date) */}
                 {(variable?.type === 'numeric' || variable?.type === 'date') && (
-                  <div className="flex gap-2 mb-6 bg-[var(--color-parchment)] p-1 rounded-lg border border-[var(--gray-200)] w-fit">
+                  <div className="flex gap-2 mb-6 bg-[var(--bg-panel)] p-1 rounded-lg border border-[var(--border-color)] w-fit">
                     <button
                       onClick={() => setMode('categorical')}
                       className={`flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-md transition-all ${mode === 'categorical'
-                        ? 'bg-white text-[var(--color-terracotta)] shadow-sm'
-                        : 'text-[var(--gray-400)] hover:text-[var(--gray-600)]'
+                        ? 'bg-[var(--bg-panel)] text-[var(--color-accent)] shadow-sm'
+                        : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                         }`}
                     >
                       <ListFilter size={14} />
@@ -146,8 +146,8 @@ export const RecodeModal: React.FC<RecodeModalProps> = ({ isOpen, onClose, varia
                     <button
                       onClick={() => setMode('binning')}
                       className={`flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-md transition-all ${mode === 'binning'
-                        ? 'bg-white text-[var(--color-terracotta)] shadow-sm'
-                        : 'text-[var(--gray-400)] hover:text-[var(--gray-600)]'
+                        ? 'bg-[var(--bg-panel)] text-[var(--color-accent)] shadow-sm'
+                        : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                         }`}
                     >
                       <Layers size={14} />
@@ -157,14 +157,14 @@ export const RecodeModal: React.FC<RecodeModalProps> = ({ isOpen, onClose, varia
                 )}
 
                 {mode === 'categorical' ? (
-                  <div className="bg-[var(--color-paper)] border border-[var(--gray-200)] rounded-lg shadow-sm">
-                    <div className="grid grid-cols-[1fr_auto_1fr] gap-4 p-3 bg-[var(--gray-50)] border-b border-[var(--gray-200)] text-xs font-semibold text-[var(--gray-500)] uppercase tracking-wider">
+                  <div className="bg-[var(--bg-panel)] border border-[var(--border-color)] rounded-lg shadow-sm">
+                    <div className="grid grid-cols-[1fr_auto_1fr] gap-4 p-3 bg-[var(--bg-surface)] border-b border-[var(--border-color)] text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">
                       <div>Original Value</div>
                       <div className="w-8"></div>
                       <div>New Category Label</div>
                     </div>
 
-                    <div className="max-h-[300px] overflow-y-auto divide-y divide-[var(--gray-100)]">
+                    <div className="max-h-[300px] overflow-y-auto divide-y divide-[var(--border-color-muted)]">
                       {loading ? (
                         <div className="p-8 text-center text-[var(--gray-400)]">Loading values...</div>
                       ) : (
@@ -173,16 +173,16 @@ export const RecodeModal: React.FC<RecodeModalProps> = ({ isOpen, onClose, varia
                           const displayLabel = labelObj ? `${labelObj.label} (${val})` : val;
 
                           return (
-                            <div key={val} className="grid grid-cols-[1fr_auto_1fr] gap-4 p-3 items-center hover:bg-[var(--gray-50)] transition-colors group">
-                              <div className="text-sm text-[var(--color-charcoal)] font-medium truncate" title={displayLabel}>{displayLabel}</div>
-                              <div className="text-[var(--gray-300)] group-hover:text-[var(--color-terracotta)]/50">
+                            <div key={val} className="grid grid-cols-[1fr_auto_1fr] gap-4 p-3 items-center hover:bg-[var(--bg-surface)] transition-colors group">
+                              <div className="text-sm text-[var(--text-primary)] font-medium truncate" title={displayLabel}>{displayLabel}</div>
+                              <div className="text-[var(--border-color)] group-hover:text-[var(--color-accent)]/50">
                                 <ArrowRight size={16} />
                               </div>
                               <input
                                 type="text"
                                 value={mappings[val] || val}
                                 onChange={(e) => handleMappingChange(val, e.target.value)}
-                                className="w-full px-3 py-1.5 border border-[var(--gray-200)] rounded-md text-sm text-[var(--color-ink)] focus:border-[var(--color-terracotta)] focus:ring-2 focus:ring-[var(--color-terracotta)]/20 outline-none"
+                                className="w-full px-3 py-1.5 border border-[var(--border-color)] rounded-md text-sm text-[var(--text-primary)] bg-[var(--bg-app)] focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent)]/20 outline-none"
                               />
                             </div>
                           );
@@ -192,19 +192,19 @@ export const RecodeModal: React.FC<RecodeModalProps> = ({ isOpen, onClose, varia
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    <div className="bg-[var(--color-paper)] border border-[var(--gray-200)] rounded-lg shadow-sm overflow-hidden">
+                    <div className="bg-[var(--bg-panel)] border border-[var(--border-color)] rounded-lg shadow-sm overflow-hidden">
                       <table className="w-full text-left border-collapse">
                         <thead>
-                          <tr className="bg-[var(--gray-50)] border-b border-[var(--gray-200)] text-xs text-[var(--gray-500)] uppercase tracking-wider">
+                          <tr className="bg-[var(--bg-surface)] border-b border-[var(--border-color)] text-xs text-[var(--text-secondary)] uppercase tracking-wider">
                             <th className="p-3 font-semibold">Min (&gt;=)</th>
                             <th className="p-3 font-semibold">Max (&lt;)</th>
                             <th className="p-3 font-semibold">Label</th>
                             <th className="p-3 w-10"></th>
                           </tr>
                         </thead>
-                        <tbody className="divide-y divide-[var(--gray-100)]">
+                        <tbody className="divide-y divide-[var(--border-color-muted)]">
                           {rules.map((rule, idx) => (
-                            <tr key={idx} className="group hover:bg-[var(--gray-50)] transition-colors">
+                            <tr key={idx} className="group hover:bg-[var(--bg-surface)] transition-colors">
                               <td className="p-2">
                                 <input
                                   type="number"
@@ -216,7 +216,7 @@ export const RecodeModal: React.FC<RecodeModalProps> = ({ isOpen, onClose, varia
                                     newRules[idx].min = val;
                                     setRules(newRules);
                                   }}
-                                  className="w-full px-3 py-1.5 border border-[var(--gray-200)] rounded-md text-sm text-[var(--color-ink)] focus:border-[var(--color-terracotta)] outline-none"
+                                  className="w-full px-3 py-1.5 border border-[var(--border-color)] bg-[var(--bg-app)] rounded-md text-sm text-[var(--text-primary)] focus:border-[var(--color-accent)] outline-none"
                                 />
                               </td>
                               <td className="p-2">
@@ -230,7 +230,7 @@ export const RecodeModal: React.FC<RecodeModalProps> = ({ isOpen, onClose, varia
                                     newRules[idx].max = val;
                                     setRules(newRules);
                                   }}
-                                  className="w-full px-3 py-1.5 border border-[var(--gray-200)] rounded-md text-sm text-[var(--color-ink)] focus:border-[var(--color-terracotta)] outline-none"
+                                  className="w-full px-3 py-1.5 border border-[var(--border-color)] bg-[var(--bg-app)] rounded-md text-sm text-[var(--text-primary)] focus:border-[var(--color-accent)] outline-none"
                                 />
                               </td>
                               <td className="p-2">
@@ -242,7 +242,7 @@ export const RecodeModal: React.FC<RecodeModalProps> = ({ isOpen, onClose, varia
                                     newRules[idx].label = e.target.value;
                                     setRules(newRules);
                                   }}
-                                  className="w-full px-3 py-1.5 border border-[var(--gray-200)] rounded-md text-sm text-[var(--color-ink)] focus:border-[var(--color-terracotta)] outline-none"
+                                  className="w-full px-3 py-1.5 border border-[var(--border-color)] bg-[var(--bg-app)] rounded-md text-sm text-[var(--text-primary)] focus:border-[var(--color-accent)] outline-none"
                                 />
                               </td>
                               <td className="p-2 text-center">
@@ -261,7 +261,7 @@ export const RecodeModal: React.FC<RecodeModalProps> = ({ isOpen, onClose, varia
 
                     <button
                       onClick={() => setRules([...rules, { min: undefined, max: undefined, label: `Group ${rules.length + 1}` }])}
-                      className="flex items-center gap-2 text-xs font-medium text-[var(--color-terracotta)] hover:bg-[var(--color-terracotta)]/10 px-3 py-2 rounded-lg transition-colors border border-[var(--color-terracotta)]/20"
+                      className="flex items-center gap-2 text-xs font-medium text-[var(--color-accent)] hover:bg-[var(--color-accent)]/10 px-3 py-2 rounded-lg transition-colors border border-[var(--color-accent)]/20"
                     >
                       <Plus size={14} />
                       Add Interval
@@ -271,14 +271,14 @@ export const RecodeModal: React.FC<RecodeModalProps> = ({ isOpen, onClose, varia
               </div>
 
               {/* Footer */}
-              <div className="p-4 border-t border-[var(--gray-100)] bg-[var(--color-paper)] flex justify-end gap-3 font-body">
-                <button onClick={onClose} className="px-4 py-2 text-sm font-medium text-[var(--gray-600)] hover:bg-[var(--gray-100)] rounded-lg transition-colors">
+              <div className="p-4 border-t border-[var(--border-color-muted)] bg-[var(--bg-panel)] flex justify-end gap-3 font-body">
+                <button onClick={onClose} className="px-4 py-2 text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] rounded-lg transition-colors">
                   Cancel
                 </button>
                 <button
                   onClick={handleSave}
                   disabled={loading || !newVarName}
-                  className="px-4 py-2 text-sm font-medium text-white bg-[var(--color-terracotta)] hover:bg-[#c96950] active:bg-[#b55d46] rounded-lg shadow-sm transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-4 py-2 text-sm font-medium text-[var(--text-inverse)] bg-[var(--color-accent)] hover:opacity-90 active:opacity-100 rounded-lg shadow-sm transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? <span className="animate-spin">⌛</span> : <Save size={16} />}
                   Create Variable

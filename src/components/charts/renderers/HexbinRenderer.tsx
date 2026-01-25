@@ -80,14 +80,14 @@ export const HexbinRenderer: React.FC<BaseChartRendererProps> = ({
 
                 {/* Axes */}
                 <g transform={`translate(0,${innerHeight})`}>
-                    <line x1={0} y1={0} x2={innerWidth} y2={0} stroke="var(--gray-300)" />
+                    <line x1={0} y1={0} x2={innerWidth} y2={0} stroke="var(--border-color)" />
                     {xScale.ticks(5).map(tick => (
                         <g key={tick} transform={`translate(${xScale(tick)},0)`}>
-                            <line y2={4} stroke="var(--gray-300)" />
+                            <line y2={4} stroke="var(--border-color)" />
                             <text
                                 y={16}
                                 textAnchor="middle"
-                                className="text-[10px] fill-gray-500"
+                                className="text-[10px] fill-[var(--text-secondary)]"
                             >
                                 {tick}
                             </text>
@@ -96,11 +96,11 @@ export const HexbinRenderer: React.FC<BaseChartRendererProps> = ({
                 </g>
 
                 <g>
-                    <line x1={0} y1={0} x2={0} y2={innerHeight} stroke="var(--gray-300)" />
+                    <line x1={0} y1={0} x2={0} y2={innerHeight} stroke="var(--border-color)" />
                     {yScale.ticks(5).map(tick => (
                         <g key={tick} transform={`translate(0,${yScale(tick)})`}>
-                            <line x2={-6} stroke="var(--gray-300)" />
-                            <text x={-10} dy=".32em" textAnchor="end" className="text-[10px] fill-gray-500">
+                            <line x2={-6} stroke="var(--border-color)" />
+                            <text x={-10} dy=".32em" textAnchor="end" className="text-[10px] fill-[var(--text-secondary)]">
                                 {tick}
                             </text>
                         </g>
@@ -119,7 +119,7 @@ export const HexbinRenderer: React.FC<BaseChartRendererProps> = ({
                             transform={`translate(${bin.x},${bin.y})`}
                             fill={baseColor}
                             fillOpacity={opacityScale(bin.length)}
-                            stroke="#fff"
+                            stroke="var(--bg-panel)"
                             strokeWidth={0.5}
                             className="transition-all duration-200 hover:stroke-gray-600 hover:stroke-1"
                         >

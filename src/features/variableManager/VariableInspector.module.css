@@ -14,8 +14,8 @@
   flex-direction: column;
   flex: 1;
   min-width: 280px;
-  background-color: var(--color-parchment);
-  border-left: 1px solid var(--gray-200);
+  background-color: var(--bg-panel);
+  border-left: 1px solid var(--border-color);
   overflow: hidden;
   animation: slideIn var(--transition-base);
 }
@@ -42,15 +42,15 @@
 
 .header {
   padding: var(--space-6);
-  border-bottom: 1px solid var(--gray-200);
-  background-color: white;
+  border-bottom: 1px solid var(--border-color);
+  background-color: var(--bg-app);
 }
 
 .variableName {
   font-family: var(--font-display);
   font-size: var(--text-xl);
   font-weight: 600;
-  color: var(--color-ink);
+  color: var(--text-primary);
   margin: 0 0 var(--space-2) 0;
   line-height: 1.2;
 }
@@ -58,7 +58,7 @@
 .variableLabel {
   font-family: var(--font-body);
   font-size: var(--text-sm);
-  color: var(--gray-500);
+  color: var(--text-secondary);
   margin: 0;
 }
 
@@ -82,7 +82,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--gray-500);
+  color: var(--text-secondary);
   margin: 0 0 var(--space-3) 0;
 }
 
@@ -99,11 +99,11 @@
 }
 
 .metaLabel {
-  color: var(--gray-500);
+  color: var(--text-secondary);
 }
 
 .metaValue {
-  color: var(--color-ink);
+  color: var(--text-primary);
   font-weight: 500;
 }
 
@@ -125,18 +125,18 @@
 }
 
 .typeBadgeNominal {
-  background-color: rgba(224, 122, 95, 0.15);
-  color: var(--color-terracotta);
+  background-color: var(--bg-nominal);
+  color: var(--color-nominal);
 }
 
 .typeBadgeOrdinal {
-  background-color: rgba(132, 165, 157, 0.15);
-  color: var(--color-info);
+  background-color: var(--bg-ordinal);
+  color: var(--color-ordinal);
 }
 
 .typeBadgeScale {
-  background-color: rgba(61, 56, 53, 0.1);
-  color: var(--color-charcoal);
+  background-color: var(--bg-surface);
+  color: var(--text-secondary);
 }
 
 .typeBadgeText {
@@ -165,9 +165,9 @@
   padding: var(--space-2) var(--space-3);
   font-family: var(--font-body);
   font-weight: 700;
-  color: var(--color-charcoal);
+  color: var(--text-secondary);
   background-color: transparent;
-  border-bottom: 2px solid var(--gray-300);
+  border-bottom: 2px solid var(--border-color);
 }
 
 .valueLabelsTable th:first-child {
@@ -184,13 +184,13 @@
 }
 
 .valueLabelsTable tbody tr:hover {
-  background-color: var(--gray-50);
+  background-color: var(--bg-surface);
 }
 
 .valueLabelsTable td {
   padding: var(--space-2) var(--space-3);
-  border-bottom: 1px solid var(--gray-200);
-  color: var(--color-ink);
+  border-bottom: 1px solid var(--border-color-muted);
+  color: var(--text-primary);
 }
 
 .valueLabelsTable tr:last-child td {
@@ -200,21 +200,21 @@
 .valueCode {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
-  color: var(--color-charcoal);
-  background-color: var(--gray-100);
+  color: var(--text-secondary);
+  background-color: var(--bg-active);
   padding: 2px 6px;
   border-radius: 3px;
   font-weight: 600;
 }
 
 .valueLabel {
-  color: var(--color-ink);
+  color: var(--text-primary);
 }
 
 .valueLabelsScroll {
   max-height: 200px;
   overflow-y: auto;
-  border: 1px solid var(--gray-200);
+  border: 1px solid var(--border-color);
   border-radius: var(--border-radius-sm);
 }
 
@@ -225,7 +225,7 @@
 .missingValues {
   font-family: var(--font-body);
   font-size: var(--text-sm);
-  color: var(--gray-600);
+  color: var(--text-secondary);
 }
 
 .missingValuesList {
@@ -272,14 +272,14 @@
   align-items: center;
   font-family: var(--font-body);
   font-size: var(--text-sm);
-  color: var(--gray-600);
+  color: var(--text-secondary);
   min-width: 110px;
 }
 
 .qualityBarContainer {
   flex: 1;
   height: 8px;
-  background-color: var(--gray-100);
+  background-color: var(--bg-surface);
   border-radius: 4px;
   overflow: hidden;
 }
@@ -294,7 +294,7 @@
   font-family: var(--font-mono);
   font-size: var(--text-sm);
   font-weight: 600;
-  color: var(--color-ink);
+  color: var(--text-primary);
   min-width: 50px;
   text-align: right;
 }
@@ -303,7 +303,7 @@
   display: flex;
   gap: var(--space-4);
   padding: var(--space-3);
-  background-color: var(--gray-50);
+  background-color: var(--bg-surface);
   border-radius: var(--border-radius-sm);
 }
 
@@ -318,13 +318,13 @@
   font-family: var(--font-mono);
   font-size: var(--text-lg);
   font-weight: 600;
-  color: var(--color-ink);
+  color: var(--text-primary);
 }
 
 .statLabel {
   font-family: var(--font-body);
   font-size: var(--text-xs);
-  color: var(--gray-500);
+  color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -372,7 +372,7 @@
   flex-direction: column;
   align-items: center;
   padding: var(--space-2);
-  background-color: var(--gray-50);
+  background-color: var(--bg-surface);
   border-radius: var(--border-radius-sm);
 }
 
@@ -382,7 +382,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--gray-500);
+  color: var(--text-secondary);
   margin-bottom: 2px;
 }
 
@@ -390,7 +390,7 @@
   font-family: var(--font-mono);
   font-size: var(--text-sm);
   font-weight: 600;
-  color: var(--color-ink);
+  color: var(--text-primary);
 }
 
 /* ============================================================================
@@ -413,7 +413,7 @@
   flex: 0 0 120px;
   font-family: var(--font-body);
   font-size: var(--text-xs);
-  color: var(--gray-600);
+  color: var(--text-secondary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -429,7 +429,7 @@
 
 .distributionFill {
   height: 100%;
-  background-color: var(--color-terracotta);
+  background-color: var(--color-accent);
   border-radius: 2px;
   transition: width var(--transition-base);
 }
@@ -459,7 +459,7 @@
 .emptyIcon {
   width: 48px;
   height: 48px;
-  color: var(--gray-300);
+  color: var(--border-color);
   margin-bottom: var(--space-4);
 }
 
@@ -484,8 +484,8 @@
 
 .contextMenu {
   min-width: 180px;
-  background-color: var(--color-parchment);
-  border: 1px solid var(--gray-200);
+  background-color: var(--bg-panel);
+  border: 1px solid var(--border-color);
   border-radius: var(--border-radius-md);
   box-shadow: var(--shadow-float);
   overflow: hidden;
@@ -525,7 +525,7 @@
   background: none;
   font-family: var(--font-body);
   font-size: var(--text-sm);
-  color: var(--color-ink);
+  color: var(--text-primary);
   text-align: left;
   cursor: pointer;
   transition: background-color var(--transition-fast);

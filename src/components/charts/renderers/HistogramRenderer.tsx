@@ -99,7 +99,7 @@ export const HistogramRenderer: React.FC<BaseChartRendererProps> = ({
 
     // Color resolution
     const barColor = colors ? colors[0] : 'var(--color-charcoal)';
-    const selectedBarColor = colors && colors.length > 1 ? colors[1] : 'var(--color-terracotta)';
+    const selectedBarColor = colors && colors.length > 1 ? colors[1] : 'var(--color-accent)';
 
     // Handle interactions
     const handleBinClick = useCallback((index: number, event: MouseEvent) => {
@@ -158,27 +158,28 @@ export const HistogramRenderer: React.FC<BaseChartRendererProps> = ({
         g.append('g')
             .attr('transform', `translate(0,${innerHeight})`)
             .call(axisBottom(xScale).ticks(5))
-            .call(g => g.select('.domain').attr('stroke', 'var(--gray-300)'))
-            .call(g => g.selectAll('text').style('font-family', 'var(--font-body)').style('fill', 'var(--gray-600)'));
+            .call(g => g.select('.domain').attr('stroke', 'var(--border-color)'))
+            .call(g => g.selectAll('text').style('font-family', 'var(--font-body)').style('fill', 'var(--text-secondary)'));
 
         // Y Axis
         g.append('g')
             .call(axisLeft(yScale).ticks(5).tickSize(-innerWidth))
             .call(g => g.select('.domain').remove())
-            .call(g => g.selectAll('.tick line').attr('stroke', 'var(--gray-200)'))
-            .call(g => g.selectAll('text').style('font-family', 'var(--font-body)').style('fill', 'var(--gray-600)'));
+            .call(g => g.selectAll('.tick line').attr('stroke', 'var(--border-color-muted)'))
+            .call(g => g.selectAll('text').style('font-family', 'var(--font-body)').style('fill', 'var(--text-secondary)'));
 
         // Bars
         const bars = g.selectAll('.bar')
             .data(bins)
             .join('rect')
-            .attr('class', 'histogram-bar')
-            .attr('x', d => xScale(d.x0) + 1)
+            .attr('class', styles.bar)
+            .attr('x', d => xScale(d.x0))
             .attr('y', d => yScale(d.count))
-            .attr('width', d => Math.max(0, xScale(d.x1) - xScale(d.x0) - 2))
+            .attr('width', d => Math.max(0, xScale(d.x1) - xScale(d.x0)))
             .attr('height', d => innerHeight - yScale(d.count))
             .attr('fill', (d, i) => d.selected ? selectedBarColor : barColor)
-            .attr('rx', 2)
+            .attr('stroke', 'var(--bg-panel)')
+            .attr('stroke-width', 1)
             .style('cursor', interactive ? 'pointer' : 'default');
 
         if (interactive) {
@@ -206,7 +207,7 @@ export const HistogramRenderer: React.FC<BaseChartRendererProps> = ({
             .attr('y', d => yScale(d.count) - 4)
             .attr('text-anchor', 'middle')
             .style('font-size', '10px')
-            .style('fill', 'var(--gray-600)')
+            .style('fill', 'var(--text-secondary)')
             .style('font-family', 'var(--font-body)')
             .text(d => d.count > 0 ? d.count : '');
 

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FileUp, Table, RotateCcw, X, CheckCircle2, Search, BarChart3, LayoutGrid, Loader2, AlertCircle } from 'lucide-react';
+import { FileUp, Table, RotateCcw, X, CheckCircle2, Search, BarChart3, LayoutGrid, Loader2, AlertCircle, Moon, Sun } from 'lucide-react';
+import { useTheme } from './context/ThemeContext';
 
 import { MOCK_DATASET } from './constants';
 import { DraggableVariable } from './features/dashboard/components/DraggableVariable';
@@ -65,20 +66,20 @@ const RestorationPrompt: React.FC<RestorationPromptProps> = ({
     >
       <div className="text-center space-y-6 max-w-md w-full px-6">
         <div className="space-y-2">
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900">Welcome Back</h1>
-          <p className="text-slate-500 text-lg">We found your previous session.</p>
+          <h1 className="text-3xl font-bold tracking-tight text-[var(--text-primary)]">Welcome Back</h1>
+          <p className="text-[var(--text-secondary)] text-lg">We found your previous session.</p>
         </div>
 
-        <div className="bg-gray-50 rounded-xl p-6 text-left space-y-3">
+        <div className="bg-[var(--bg-surface)] rounded-xl p-6 text-left space-y-3">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
               <Table className="w-5 h-5 text-indigo-600" />
             </div>
             <div>
-              <p className="font-medium text-slate-800">
+              <p className="font-medium text-[var(--text-primary)]">
                 {datasetName || 'Previous Session'}
               </p>
-              <p className="text-sm text-slate-500">
+              <p className="text-sm text-[var(--text-secondary)]">
                 {rowCount.toLocaleString()} rows, {columnCount} columns
               </p>
             </div>
@@ -90,7 +91,7 @@ const RestorationPrompt: React.FC<RestorationPromptProps> = ({
             onClick={onRestore}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className="flex-1 px-6 py-3 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition-colors"
+            className="flex-1 px-6 py-3 bg-[var(--color-accent)] text-[var(--text-inverse)] font-medium rounded-lg hover:opacity-90 transition-opacity"
           >
             Restore Session
           </motion.button>
@@ -98,7 +99,7 @@ const RestorationPrompt: React.FC<RestorationPromptProps> = ({
             onClick={onDiscard}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className="flex-1 px-6 py-3 bg-gray-100 text-slate-700 font-medium rounded-lg hover:bg-gray-200 transition-colors"
+            className="flex-1 px-6 py-3 bg-[var(--bg-active)] text-[var(--text-primary)] font-medium rounded-lg hover:bg-[var(--bg-surface)] transition-colors"
           >
             Start Fresh
           </motion.button>
@@ -113,6 +114,7 @@ const RestorationPrompt: React.FC<RestorationPromptProps> = ({
 };
 
 export default function App() {
+  const { theme, toggleTheme } = useTheme();
   // Access store state and actions
   const {
     isDbReady,
@@ -529,7 +531,7 @@ export default function App() {
   };
 
   return (
-    <div className={`min-h-screen bg-white text-slate-800 antialiased overflow-hidden flex flex-col ${draggingId ? 'select-none cursor-grabbing' : ''}`}>
+    <div className={`min-h-screen bg-[var(--bg-app)] text-[var(--text-primary)] antialiased overflow-hidden flex flex-col ${draggingId ? 'select-none cursor-grabbing' : ''}`}>
 
       <input type="file" ref={fileInputRef} onChange={handleFileUpload} className="hidden" accept=".csv,.sav" />
 
@@ -595,7 +597,7 @@ export default function App() {
             animate={{ width: '100%' }}
             exit={{ opacity: 0 }}
             transition={{ duration: 1.2, ease: 'easeInOut' }}
-            className="fixed top-0 left-0 h-1 bg-indigo-600 z-50 shadow-[0_0_10px_rgba(79,70,229,0.5)]"
+            className="fixed top-0 left-0 h-1 bg-[var(--color-accent)] z-50 shadow-[0_0_10px_var(--color-accent)]"
           />
         )}
       </AnimatePresence>
@@ -605,12 +607,12 @@ export default function App() {
         {mode === 'splash' && (
           <motion.div
             exit={{ opacity: 0, y: -20, pointerEvents: 'none' }}
-            className="fixed inset-0 flex items-center justify-center bg-white z-40"
+            className="fixed inset-0 flex items-center justify-center bg-[var(--bg-app)] z-40"
           >
             <div className="text-center space-y-8 max-w-md w-full px-6">
               <div className="space-y-2">
-                <h1 className="text-4xl font-bold tracking-tight text-slate-900">Velocity.</h1>
-                <p className="text-slate-500 text-lg">The zero-latency research dashboard.</p>
+                <h1 className="text-4xl font-bold tracking-tight text-[var(--text-primary)]">Velocity.</h1>
+                <p className="text-[var(--text-secondary)] text-lg">The zero-latency research dashboard.</p>
 
                 {initError ? (
                   <div className="flex items-center justify-center gap-2 text-red-500 text-sm font-medium bg-red-50 p-2 rounded-md">
@@ -625,18 +627,18 @@ export default function App() {
               <motion.button
                 onClick={() => isDbReady && fileInputRef.current?.click()}
                 disabled={!isDbReady}
-                whileHover={{ scale: 1.02, borderColor: '#4F46E5', backgroundColor: '#EEF2FF' }}
+                whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className={`w-full h-48 border-2 border-dashed rounded-2xl flex flex-col items-center justify-center gap-4 group transition-all cursor-pointer bg-gray-50/30
-                  ${isDbReady ? 'border-gray-300' : 'border-gray-200 opacity-50 cursor-not-allowed'}`}
+                className={`w-full h-48 border-2 border-dashed rounded-2xl flex flex-col items-center justify-center gap-4 group transition-all cursor-pointer bg-[var(--bg-panel)]
+                  ${isDbReady ? 'border-[var(--border-color)]' : 'border-[var(--border-color-muted)] opacity-50 cursor-not-allowed'}`}
               >
                 <div className="p-4 bg-white rounded-full shadow-sm group-hover:shadow-md transition-shadow">
                   {isDbReady ? <FileUp className="w-8 h-8 text-indigo-500" /> : <Loader2 className="w-8 h-8 text-gray-400 animate-spin" />}
                 </div>
                 <div className="space-y-1">
-                  <p className="font-medium text-slate-700">Drop .SAV or .CSV file to analyze</p>
-                  <p className="text-sm text-slate-400">
-                    <span className="hover:text-indigo-600 hover:underline z-50 relative" onClick={(e) => { e.stopPropagation(); handleDemoClick(); }}>
+                  <p className="font-medium text-[var(--text-primary)]">Drop .SAV or .CSV file to analyze</p>
+                  <p className="text-sm text-[var(--text-secondary)]">
+                    <span className="hover:text-[var(--color-accent)] hover:underline z-50 relative" onClick={(e) => { e.stopPropagation(); handleDemoClick(); }}>
                       or use example data
                     </span>
                   </p>
@@ -675,28 +677,28 @@ export default function App() {
               className="flex h-screen"
             >
               {/* SIDEBAR */}
-              <aside className="w-72 bg-gray-50/50 border-r border-gray-200 flex flex-col shrink-0 z-30 relative">
-                <div className="p-4 border-b border-gray-100 bg-white">
+              <aside className="w-72 bg-[var(--bg-panel)] border-r border-[var(--border-color)] flex flex-col shrink-0 z-30 relative">
+                <div className="p-4 border-b border-[var(--border-color-muted)] bg-[var(--bg-app)]">
                   <div className="flex items-center gap-2 mb-4">
-                    <div className="w-6 h-6 bg-indigo-600 rounded flex items-center justify-center">
-                      <span className="text-white font-bold text-xs">V</span>
+                    <div className="w-6 h-6 bg-[var(--color-accent)] rounded flex items-center justify-center">
+                      <span className="text-[var(--text-inverse)] font-bold text-xs">V</span>
                     </div>
-                    <span className="font-semibold text-slate-800 tracking-tight">Velocity</span>
+                    <span className="font-semibold text-[var(--text-primary)] tracking-tight">Velocity</span>
                   </div>
                   <div className="relative">
-                    <Search className="absolute left-2.5 top-2.5 w-4 h-4 text-gray-400" />
+                    <Search className="absolute left-2.5 top-2.5 w-4 h-4 text-[var(--text-secondary)]" />
                     <input
                       type="text"
                       placeholder="Search variables..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="w-full pl-9 pr-3 py-2 bg-gray-100 border-none rounded-md text-sm focus:ring-2 focus:ring-indigo-500/20 focus:bg-white transition-all outline-none"
+                      className="w-full pl-9 pr-3 py-2 bg-[var(--bg-surface)] border-none rounded-md text-sm focus:ring-2 focus:ring-[var(--color-accent)]/20 focus:bg-[var(--bg-panel)] transition-all outline-none text-[var(--text-primary)]"
                     />
                   </div>
                 </div>
 
                 <div className="flex-1 flex flex-col min-h-0">
-                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3 px-4 pt-3 shrink-0">
+                  <p className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-3 px-4 pt-3 shrink-0">
                     Survey Questions ({filteredSets.length})
                   </p>
                   <div className="flex-1 min-h-0 px-3">
@@ -711,33 +713,33 @@ export default function App() {
                   </div>
                 </div>
 
-                <div className="p-3 border-t border-gray-200 bg-white">
-                  <div className="flex items-center gap-3 text-xs text-gray-500 px-2">
-                    <CheckCircle2 size={12} className="text-green-500" />
+                <div className="p-3 border-t border-[var(--border-color)] bg-[var(--bg-app)]">
+                  <div className="flex items-center gap-3 text-xs text-[var(--text-secondary)] px-2">
+                    <CheckCircle2 size={12} className="text-[var(--color-success)]" />
                     <span>{filename} ({totalRows} rows)</span>
                   </div>
                 </div>
               </aside>
 
               {/* MAIN CANVAS */}
-              <main className="flex-1 flex flex-col bg-white relative overflow-hidden z-0">
+              <main className="flex-1 flex flex-col bg-[var(--bg-app)] relative overflow-hidden z-0">
                 {/* HEADER */}
-                <header className="h-14 border-b border-gray-100 flex items-center justify-between px-6 bg-white shrink-0 z-10">
-                  <div className="flex items-center gap-2 text-sm text-gray-500">
+                <header className="h-14 border-b border-[var(--border-color-muted)] flex items-center justify-between px-6 bg-[var(--bg-app)] shrink-0 z-10">
+                  <div className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
                     <span>Analysis</span>
                     <span>/</span>
-                    <span className="text-gray-900 font-medium">Untitled Crosstab</span>
+                    <span className="text-[var(--text-primary)] font-medium">Untitled Crosstab</span>
                   </div>
 
                   <div className="flex items-center gap-6">
 
                     {/* Weight Variable Selector */}
                     <div className="flex items-center gap-2">
-                      <label className="text-xs font-medium text-gray-500">Weight:</label>
+                      <label className="text-xs font-medium text-[var(--text-secondary)]">Weight:</label>
                       <select
                         value={dataset?.weightVariable || ''}
                         onChange={(e) => setWeightVariable(e.target.value || null)}
-                        className={`text-xs px-2 py-1.5 border rounded-md bg-white focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all min-w-[120px] ${dataset?.weightVariable ? 'border-indigo-300 text-indigo-700 font-medium' : 'border-gray-200 text-gray-600'
+                        className={`text-xs px-2 py-1.5 border rounded-md bg-[var(--bg-panel)] focus:ring-2 focus:ring-[var(--color-accent)]/20 outline-none transition-all min-w-[120px] ${dataset?.weightVariable ? 'border-[var(--color-accent)] text-[var(--color-accent)] font-medium' : 'border-[var(--border-color)] text-[var(--text-secondary)]'
                           }`}
                       >
                         <option value="">None</option>
@@ -751,26 +753,34 @@ export default function App() {
                       </select>
                     </div>
 
-                    <div className="flex items-center bg-gray-100 p-1 rounded-lg">
+                    <div className="flex items-center bg-[var(--bg-surface)] p-1 rounded-lg">
                       <button
                         onClick={() => setViewMode('table')}
-                        className={`p-1.5 rounded-md transition-all ${viewMode === 'table' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}
+                        className={`p-1.5 rounded-md transition-all ${viewMode === 'table' ? 'bg-[var(--bg-panel)] text-[var(--color-accent)] shadow-sm' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}
                       >
                         <Table size={16} />
                       </button>
                       <button
                         onClick={() => setViewMode('chart')}
-                        className={`p-1.5 rounded-md transition-all ${viewMode === 'chart' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}
+                        className={`p-1.5 rounded-md transition-all ${viewMode === 'chart' ? 'bg-[var(--bg-panel)] text-[var(--color-accent)] shadow-sm' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}
                       >
                         <BarChart3 size={16} />
                       </button>
                     </div>
 
+                    <button
+                      onClick={toggleTheme}
+                      className="p-2 rounded-lg hover:bg-[var(--bg-active)] text-[var(--text-secondary)] hover:text-[var(--color-accent)] transition-colors"
+                      title={`Switch to ${theme === 'research-desk' ? 'Mission Control' : 'Research Desk'}`}
+                    >
+                      {theme === 'research-desk' ? <Moon size={18} /> : <Sun size={18} />}
+                    </button>
+
                     <ModeToggleButton />
 
                     <button
                       onClick={reset}
-                      className="text-xs font-medium text-gray-500 hover:text-indigo-600 flex items-center gap-1.5 px-3 py-1.5 rounded-md hover:bg-gray-50 transition-colors"
+                      className="text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--color-accent)] flex items-center gap-1.5 px-3 py-1.5 rounded-md hover:bg-[var(--bg-surface)] transition-colors"
                     >
                       <RotateCcw size={12} />
                       Reset
@@ -788,13 +798,13 @@ export default function App() {
 
                 {/* WORKSPACE */}
                 {/* WORKSPACE */}
-                <div className="flex-1 flex flex-col min-h-0 bg-gray-50/30">
+                <div className="flex-1 flex flex-col min-h-0 bg-[var(--bg-app)]">
                   {/* SHELF */}
-                  <div className="shrink-0 bg-white border-b border-gray-200 px-6 py-4 flex flex-col gap-3 shadow-[0_1px_2px_rgba(0,0,0,0.02)] z-10">
+                  <div className="shrink-0 bg-[var(--bg-app)] border-b border-[var(--border-color)] px-6 py-4 flex flex-col gap-3 shadow-[0_1px_2px_rgba(0,0,0,0.02)] z-10">
                     {/* Columns Shelf */}
                     <div className="flex items-center gap-4">
                       <div className="w-16 flex justify-end shrink-0">
-                        <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Columns</span>
+                        <span className="text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-wider">Columns</span>
                       </div>
                       <div className="flex-1 max-w-3xl">
                         <DropZone
@@ -811,7 +821,7 @@ export default function App() {
                     {/* Rows Shelf */}
                     <div className="flex items-center gap-4">
                       <div className="w-16 flex justify-end shrink-0">
-                        <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Rows</span>
+                        <span className="text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-wider">Rows</span>
                       </div>
                       <div className="flex-1 max-w-3xl">
                         <DropZone
@@ -830,10 +840,10 @@ export default function App() {
                   <SmartCanvas className="flex-1 relative overflow-hidden p-6 flex flex-col">
                     <div className="flex-1 w-full h-full flex flex-col min-h-0">
                       {tableConfig.rowVars.length > 0 ? (
-                        <div className="flex-1 relative bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden flex flex-col">
+                        <div className="flex-1 relative bg-[var(--bg-panel)] rounded-xl border border-[var(--border-color)] shadow-sm overflow-hidden flex flex-col">
                           {isQuerying && (
-                            <div className="absolute inset-0 bg-white/50 z-20 flex items-center justify-center backdrop-blur-sm">
-                              <Loader2 className="animate-spin text-indigo-600" size={32} />
+                            <div className="absolute inset-0 bg-[var(--bg-panel)]/50 z-20 flex items-center justify-center backdrop-blur-sm">
+                              <Loader2 className="animate-spin text-[var(--color-accent)]" size={32} />
                             </div>
                           )}
                           <div className="flex-1 min-h-0">
@@ -841,7 +851,7 @@ export default function App() {
                           </div>
                         </div>
                       ) : (
-                        <div className="flex-1 border-2 border-dashed border-gray-200 rounded-xl flex flex-col items-center justify-center text-gray-400 gap-4 bg-white/50">
+                        <div className="flex-1 border-2 border-dashed border-[var(--border-color-muted)] rounded-xl flex flex-col items-center justify-center text-[var(--text-secondary)] gap-4 bg-[var(--bg-panel)]/50">
                           <LayoutGrid size={48} className="opacity-20" />
                           <p className="text-sm font-medium">Drag variables to the shelves above to start analysis</p>
                         </div>

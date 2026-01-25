@@ -84,15 +84,15 @@ export const ModeToggleButton: React.FC = () => {
                 flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium
                 transition-all duration-150
                 ${appMode === 'variables'
-                    ? 'bg-indigo-600 text-white shadow-sm'
-                    : 'text-gray-500 hover:text-indigo-600 hover:bg-gray-50'
+                    ? 'bg-[var(--color-accent)] text-[var(--text-inverse)] shadow-sm'
+                    : 'text-[var(--text-secondary)] hover:text-[var(--color-accent)] hover:bg-[var(--bg-active)]'
                 }
             `}
             title="Toggle Variable Manager (D)"
         >
             <Database size={14} />
             <span>Data</span>
-            <kbd className="hidden sm:inline-block text-[10px] px-1 py-0.5 bg-black/10 rounded ml-1">
+            <kbd className="hidden sm:inline-block text-[10px] px-1 py-0.5 bg-[var(--border-color)] rounded ml-1 text-[var(--text-secondary)]">
                 D
             </kbd>
         </button>

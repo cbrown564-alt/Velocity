@@ -1,13 +1,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Newsreader:wght@400;600&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=JetBrains+Mono&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /**
- * Velocity Design System Tokens
- * Based on design_01_system.md - "The Research Desk"
+ * Velocity Design System
  */
 
 /* ============================================================================
@@ -16,146 +16,181 @@
 
 
 :root {
-  /* Font Families */
-  --font-display: 'Newsreader', Georgia, serif;
-  --font-body: 'Atkinson Hyperlegible', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  /* ============================================================================
+     1. Semantic Tokens (The Protocol)
+     These tokens are used throughout the application.
+     Themes define their values.
+     ============================================================================ */
 
-  /* Type Scale */
+  /* Surface & Backgrounds */
+  --bg-app: var(--theme-bg-app);
+  --bg-panel: var(--theme-bg-panel);
+  --bg-surface: var(--theme-bg-surface);
+  --bg-active: var(--theme-bg-active);
+
+  /* Typography */
+  --text-primary: var(--theme-text-primary);
+  --text-secondary: var(--theme-text-secondary);
+  --text-accent: var(--theme-text-accent);
+  --text-inverse: var(--theme-text-inverse);
+
+  /* Borders & Dividers */
+  --border-color: var(--theme-border-color);
+  --border-color-muted: var(--theme-border-color-muted);
+  --border-color-active: var(--theme-border-color-active);
+
+  /* Functional */
+  --color-accent: var(--theme-color-accent);
+  --color-accent-hover: var(--theme-color-accent-hover);
+  --color-success: var(--theme-color-success);
+  --color-warning: var(--theme-color-warning);
+  --color-error: var(--theme-color-error);
+  --color-info: var(--theme-color-info);
+
+  /* Variable Type Colors */
+  --color-nominal: var(--theme-color-error);
+  --bg-nominal: var(--theme-bg-nominal);
+  --color-ordinal: var(--theme-color-info);
+  --bg-ordinal: var(--theme-bg-ordinal);
+  --color-scale: var(--theme-text-secondary);
+  --bg-scale: var(--theme-bg-surface);
+
+  /* Typography Scales (Fixed) */
   --text-xxs: 0.625rem;
-  /* 10px - Donut labels */
+  /* 10px */
   --text-xs: 0.75rem;
-  /* 12px - Table footnotes */
-  --text-sm: 0.875rem;
-  /* 14px - Table cells */
-  --text-base: 1rem;
-  /* 16px - Body text */
-  --text-lg: 1.125rem;
-  /* 18px - Subheadings */
-  --text-xl: 1.5rem;
-  /* 24px - Section headers */
-  --text-2xl: 2rem;
-  /* 32px - Page titles */
-
-  /* ============================================================================
-     2. Colors: "Ink & Paper" Palette
-     ============================================================================ */
-
-  /* Primary Palette */
-  --color-ink: #1C1C1C;
-  /* Rich black - Primary text */
-  --color-paper: #F5F3EF;
-  /* Warm off-white - Background */
-  --color-terracotta: #E07A5F;
-  /* Accent - Sig markers, CTAs */
-  --color-charcoal: #3D3835;
-  /* Dark gray - Secondary text */
-  --color-parchment: #FDFCFA;
-  /* Lighter warm white - Cards */
-
-  /* Functional Colors */
-  --color-success: #52796F;
-  /* Muted teal */
-  --color-warning: #F4A261;
-  /* Warm amber */
-  --color-error: #C1666B;
-  /* Muted red */
-  --color-info: #84A59D;
-  /* Sage green */
-
-  /* Neutrals (Warm Grays) */
-  --gray-50: #FAFAF9;
-  --gray-100: #F5F3EF;
-  --gray-200: #E8E5E0;
-  --gray-300: #D4CFC7;
-  --gray-400: #A8A29E;
-  --gray-500: #78716C;
-  --gray-600: #57534E;
-  --gray-700: #3D3835;
-  --gray-800: #292524;
-  --gray-900: #1C1C1C;
-
-  /* ============================================================================
-     3. Spacing (8px base)
-     ============================================================================ */
-
-  --space-1: 0.25rem;
-  /* 4px */
-  --space-2: 0.5rem;
-  /* 8px */
-  --space-3: 0.75rem;
   /* 12px */
-  --space-4: 1rem;
+  --text-sm: 0.875rem;
+  /* 14px */
+  --text-base: 1rem;
   /* 16px */
-  --space-6: 1.5rem;
+  --text-lg: 1.125rem;
+  /* 18px */
+  --text-xl: 1.5rem;
   /* 24px */
-  --space-8: 2rem;
+  --text-2xl: 2rem;
   /* 32px */
+
+  /* Spacing (8px base) */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
   --space-12: 3rem;
-  /* 48px */
   --space-16: 4rem;
-  /* 64px */
 
-  /* ============================================================================
-     4. Borders & Corners
-     ============================================================================ */
-
+  /* Borders & Corners */
   --border-width: 1px;
-  --border-color: var(--gray-200);
   --border-radius-sm: 4px;
-  /* Buttons, inputs */
   --border-radius-md: 8px;
-  /* Cards, modals */
   --border-radius-lg: 12px;
-  /* Large panels */
 
-  /* ============================================================================
-     5. Shadows
-     ============================================================================ */
-
-  /* Inset panels (sidebars, modals) */
-  --shadow-inset: inset 0 1px 2px rgba(28, 28, 28, 0.05);
-
-  /* Floating elements (tooltips, dropdowns) */
-  --shadow-float: 0 4px 12px rgba(28, 28, 28, 0.08);
-
-  /* Dragging state */
-  --shadow-drag: 0 8px 24px rgba(28, 28, 28, 0.15);
-
-  /* ============================================================================
-     6. Motion & Interaction
-     ============================================================================ */
-
+  /* Motion */
   --ease-standard: cubic-bezier(0.4, 0.0, 0.2, 1);
-  /* Material standard */
-  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
-  /* Elastic snap */
-
   --transition-fast: 150ms var(--ease-standard);
   --transition-base: 250ms var(--ease-standard);
   --transition-slow: 400ms var(--ease-standard);
 }
 
 /* ============================================================================
-   7. Base Styles
+   2. Theme Definitions
+   ============================================================================ */
+
+/* Theme: Research Desk (Default Light) */
+[data-theme="research-desk"],
+:root:not([data-theme]) {
+  --font-display: 'Newsreader', Georgia, serif;
+  --font-body: 'Atkinson Hyperlegible', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --theme-bg-app: #F5F3EF;
+  --theme-bg-panel: #FDFCFA;
+  --theme-bg-surface: #F5F3EF;
+  --theme-bg-active: #E8E5E0;
+
+  --theme-text-primary: #1C1C1C;
+  --theme-text-secondary: #57534E;
+  --theme-text-accent: #E07A5F;
+  --theme-text-inverse: #FDFCFA;
+
+  --theme-border-color: #E8E5E0;
+  --theme-border-color-muted: #F5F3EF;
+  --theme-border-color-active: #E07A5F;
+
+  --theme-color-accent: #E07A5F;
+  --theme-color-accent-hover: #D66D51;
+  --theme-color-success: #52796F;
+  --theme-color-warning: #F4A261;
+  --theme-color-error: #C1666B;
+  --theme-color-info: #84A59D;
+
+  --theme-bg-nominal: #fcece9;
+  --theme-bg-ordinal: #f3f6f5;
+
+  --shadow-inset: inset 0 1px 2px rgba(28, 28, 28, 0.05);
+  --shadow-float: 0 4px 12px rgba(28, 28, 28, 0.08);
+  --shadow-drag: 0 8px 24px rgba(28, 28, 28, 0.15);
+}
+
+/* Theme: Mission Control (Dark) */
+[data-theme="mission-control"] {
+  --font-display: 'DM Sans', sans-serif;
+  --font-body: 'DM Sans', -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --theme-bg-app: #0D0D0D;
+  --theme-bg-panel: #161616;
+  --theme-bg-surface: #1E1E1E;
+  --theme-bg-active: #2A2D35;
+
+  --theme-text-primary: #E8EAED;
+  --theme-text-secondary: #9AA0A6;
+  --theme-text-accent: #00D4FF;
+  --theme-text-inverse: #0D0D0D;
+
+  --theme-border-color: #2A2D35;
+  --theme-border-color-muted: #1E1E1E;
+  --theme-border-color-active: #00D4FF;
+
+  --theme-color-accent: #00D4FF;
+  --theme-color-accent-hover: #00B8EB;
+  --theme-color-success: #00E5A0;
+  --theme-color-warning: #FFB800;
+  --theme-color-error: #FF5252;
+  --theme-color-info: #00D4FF;
+
+  --theme-bg-nominal: #2D1414;
+  --theme-bg-ordinal: #142D2D;
+
+  --shadow-inset: inset 0 1px 2px rgba(0, 0, 0, 0.5);
+  --shadow-float: 0 4px 20px rgba(0, 0, 0, 0.6);
+  --shadow-drag: 0 8px 32px rgba(0, 0, 0, 0.8);
+}
+
+/* ============================================================================
+   Base Styles
    ============================================================================ */
 
 body {
   font-family: var(--font-body);
-  color: var(--color-ink);
-  background-color: var(--color-paper);
+  color: var(--text-primary);
+  background-color: var(--bg-app);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   line-height: 1.5;
+  transition: background-color var(--transition-base), color var(--transition-base);
 }
 
-/* Display headings use Newsreader */
+
+/* Display headings use font-display */
 h1,
 h2,
 h3 {
   font-family: var(--font-display);
   font-weight: 600;
-  color: var(--color-ink);
+  color: var(--text-primary);
 }
 
 /* ============================================================================
@@ -164,7 +199,7 @@ h3 {
 
 /* Significance markers */
 .sig-marker {
-  color: var(--color-terracotta);
+  color: var(--color-accent);
   font-weight: 700;
   font-size: var(--text-xs);
 }
@@ -179,17 +214,17 @@ h3 {
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: var(--gray-300);
+  background: var(--border-color);
   border-radius: 3px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: var(--gray-400);
+  background: var(--border-color-active);
 }
 
 /* Focus states */
 :focus-visible {
-  outline: 2px solid var(--color-terracotta);
+  outline: 2px solid var(--color-accent);
   outline-offset: 2px;
 }
 

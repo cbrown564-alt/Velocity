@@ -713,7 +713,10 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
             {/* Chart Canvas */}
             <div
                 ref={containerRef}
-                className={styles.chartCanvas}
+                className={`${styles.chartCanvas} ${['box-plot', 'violin', 'histogram', 'ridgeline', 'binned-scatter', 'scatter', 'hexbin', 'donut', 'lollipop', 'vertical-bar'].includes(activeChartType)
+                        ? styles.constrained
+                        : ''
+                    }`}
             >
                 {renderContent()}
             </div>
@@ -746,6 +749,6 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
                 initialValue={mergeModal.targetItem?.label || ''}
                 submitLabel="Create Group"
             />
-        </div>
+        </div >
     );
 };

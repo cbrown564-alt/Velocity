@@ -24,17 +24,17 @@
 .axis text {
     font-family: var(--font-body);
     font-size: 10px;
-    fill: var(--gray-600);
+    fill: var(--text-secondary);
 }
 
 .axis line {
-    stroke: var(--gray-200);
+    stroke: var(--border-color);
 }
 
 .countLabel {
     font-family: var(--font-body);
     font-size: 9px;
-    fill: var(--gray-500);
+    fill: var(--text-secondary);
     pointer-events: none;
 }
 
@@ -43,12 +43,12 @@
 }
 
 .thresholdHandle:hover line {
-    stroke: var(--color-terracotta);
+    stroke: var(--color-accent);
     stroke-width: 3;
 }
 
 .thresholdHandle:hover .handleGrip {
-    fill: var(--color-terracotta);
+    fill: var(--color-accent);
 }
 
 .handleGrip {
@@ -61,13 +61,14 @@
     right: 0;
     margin: var(--space-2);
     padding: var(--space-1) var(--space-2);
-    background-color: rgba(255, 255, 255, 0.9);
-    border: 1px solid var(--gray-200);
+    background-color: var(--bg-panel);
+    opacity: 0.9;
+    border: 1px solid var(--border-color);
     border-radius: var(--border-radius-sm);
     font-size: var(--text-xs);
-    color: var(--gray-600);
+    color: var(--text-secondary);
     text-align: center;
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--shadow-float);
     z-index: 10;
 }
 

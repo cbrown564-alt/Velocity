@@ -166,14 +166,17 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
     // Color Scales
     // Main Scale: Linear Blue(Low) -> Grey(Mid) -> Red(High)
     // Domain: [0, 0.5, 1] relative to the index in scaleColumns
+    // Use CSS variables for theme awareness? D3 scales need loose color strings, 
+    // but we can query the computed style or use hardcoded theme-aware fallbacks if needed.
+    // Ideally we use var(--color-info) -> var(--bg-active) -> var(--color-error)
     const colorScale = d3.scaleLinear<string>()
         .domain([0, 0.5, 1])
-        .range(['#2196f3', '#e0e0e0', '#f44336']);
+        .range(['var(--color-info)', 'var(--bg-active)', 'var(--color-error)']);
 
     const getColumnColor = (key: string) => {
         // Is it special?
         const specIdx = specialColumns.findIndex(c => c.key === key);
-        if (specIdx >= 0) return '#bdc3c7'; // Neutral Grey for N/A
+        if (specIdx >= 0) return 'var(--text-secondary)'; // Neutral Grey for N/A
 
         // Is it scale?
         const scaleIdx = scaleColumns.findIndex(c => c.key === key);
@@ -181,7 +184,7 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
             const t = scaleIdx / (scaleColumns.length - 1);
             return colorScale(t);
         }
-        return '#ccc';
+        return 'var(--bg-surface)';
     };
 
     // Color Accessor for sorting or legend
@@ -193,7 +196,7 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
         }));
         // Special labels
         specialColumns.forEach(c => {
-            labels.push({ label: c.label, color: '#bdc3c7' });
+            labels.push({ label: c.label, color: 'var(--text-secondary)' });
         });
         return labels;
     };
@@ -241,7 +244,7 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
         >
             {/* Legend (Top Centered, Wrapped) */}
             <foreignObject x={0} y={0} width={width} height={margin.top}>
-                <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 px-4 text-[10px] text-gray-600 h-full overflow-y-auto content-center">
+                <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 px-4 text-[10px] text-[var(--text-secondary)] h-full overflow-y-auto content-center">
                     {legendItems.map((item) => (
                         <div key={item.label} className="flex items-center gap-1">
                             <span className="w-3 h-3 rounded-[2px]" style={{ backgroundColor: item.color }} />
@@ -259,7 +262,7 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
                     y1={0}
                     x2={xDivScale(0)}
                     y2={actualHeight}
-                    stroke="var(--gray-400)"
+                    stroke="var(--border-color-active)"
                     strokeWidth={1}
                     strokeDasharray="4,4"
                 />
@@ -267,7 +270,7 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
                     x={xDivScale(0)}
                     y={-5}
                     textAnchor="middle"
-                    className="text-[10px] fill-gray-500"
+                    className="text-[10px] fill-[var(--text-secondary)]"
                 >
                     0
                 </text>
@@ -279,7 +282,7 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
                         y1={0}
                         x2={divergingPixelWidth + pixelGap / 2}
                         y2={actualHeight}
-                        stroke="var(--gray-300)"
+                        stroke="var(--border-color)"
                         strokeWidth={1}
                     />
                 )}
@@ -290,7 +293,7 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
                     y1={0}
                     x2={divergingPixelWidth + (maxSpecial > 0 ? pixelGap + xSpecScale.range()[1] : 0) + 12}
                     y2={actualHeight}
-                    stroke="var(--gray-200)"
+                    stroke="var(--border-color)"
                     strokeWidth={1}
                 />
 
@@ -299,7 +302,7 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
                     x={divergingPixelWidth + (maxSpecial > 0 ? pixelGap + xSpecScale.range()[1] : 0) + 20}
                     y={-5}
                     textAnchor="start"
-                    className="text-[10px] font-medium fill-gray-500"
+                    className="text-[10px] font-medium fill-[var(--text-secondary)]"
                 >
                     Avg
                 </text>
@@ -332,7 +335,7 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
                                     y={y - 2}
                                     width={innerWidth + avgColumnWidth}
                                     height={h + 4}
-                                    fill="var(--gray-100)"
+                                    fill="var(--bg-active)"
                                     rx={3}
                                 />
                             )}
@@ -345,7 +348,7 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
                                 textAnchor="end"
                                 className="text-xs"
                                 style={{
-                                    fill: isSelected ? 'var(--gray-900)' : 'var(--gray-700)',
+                                    fill: isSelected ? 'var(--text-primary)' : 'var(--text-secondary)',
                                     fontWeight: isSelected ? 600 : 400,
                                 }}
                             >
@@ -368,7 +371,7 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
                                             y={y + h / 2}
                                             dy=".35em"
                                             textAnchor="middle"
-                                            className="text-[10px] font-medium fill-gray-800 pointer-events-none"
+                                            className="text-[10px] font-medium fill-[var(--text-primary)] pointer-events-none"
                                         >
                                             {labelMode === 'percent'
                                                 ? `${Math.round(row.cells[neutral]?.percent || 0)}%`
@@ -409,14 +412,15 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
                                                 y={y + h / 2}
                                                 dy=".35em"
                                                 textAnchor="middle"
-                                                className="text-[10px] font-medium fill-white pointer-events-none"
+                                                className="text-[10px] font-medium fill-[var(--text-inverse)] pointer-events-none"
                                                 style={{ textShadow: '0 1px 2px rgba(0,0,0,0.3)' }}
                                             >
                                                 {labelMode === 'percent'
                                                     ? `${Math.round(row.cells[key]?.percent || 0)}%`
                                                     : val.toLocaleString()}
                                             </text>
-                                        )}
+                                        )
+                                        }
                                     </g>
                                 );
                             })}
@@ -450,14 +454,15 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
                                                 y={y + h / 2}
                                                 dy=".35em"
                                                 textAnchor="middle"
-                                                className="text-[10px] font-medium fill-white pointer-events-none"
+                                                className="text-[10px] font-medium fill-[var(--text-inverse)] pointer-events-none"
                                                 style={{ textShadow: '0 1px 2px rgba(0,0,0,0.3)' }}
                                             >
                                                 {labelMode === 'percent'
                                                     ? `${Math.round(row.cells[key]?.percent || 0)}%`
                                                     : val.toLocaleString()}
                                             </text>
-                                        )}
+                                        )
+                                        }
                                     </g>
                                 );
                             })}
@@ -491,7 +496,7 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
                                                 y={y + h / 2}
                                                 dy=".35em"
                                                 textAnchor="middle"
-                                                className="text-[10px] font-medium fill-white pointer-events-none"
+                                                className="text-[10px] font-medium fill-[var(--text-inverse)] pointer-events-none"
                                             >
                                                 {labelMode === 'percent'
                                                     ? `${Math.round(row.cells[key]?.percent || 0)}%`
@@ -508,14 +513,14 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
                                 y={y + h / 2}
                                 dy=".35em"
                                 textAnchor="start"
-                                className="text-[10px] font-medium text-gray-700"
+                                className="text-[10px] font-medium fill-[var(--text-primary)]"
                             >
                                 {typeof avgValue === 'number' ? avgValue.toFixed(1) : '-'}
                             </text>
                         </g>
                     );
                 })}
-            </g>
-        </svg>
+            </g >
+        </svg >
     );
 };
