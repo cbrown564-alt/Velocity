@@ -21,9 +21,10 @@ export const GroupedBoxPlotRenderer: React.FC<BaseChartRendererProps> = ({
     // For grouped box plot: rows are the nominal groups, cells contain the stats
     // We need to extract stats from each row's cells (typically the "Total" column)
 
-    // Build groups from rows, extracting stats from the first available cell
-    const groups = processedData.rows.map((row, i) => {
-        // Get stats from the first column's cell (usually "Total" for metric analysis)
+    // Extract potential groups from rows (Nominal in Rows strategy)
+    // Used when Nominal Variable is in Rows, and Metric is in Columns (or implied)
+    const rowGroups = processedData.rows.map((row, i) => {
+        // Get stats from the first column's cell (usually "Total" or the metric column)
         const firstColKey = processedData.columns[0]?.key || 'Total';
         const cell = row.cells[firstColKey];
 
@@ -52,6 +53,46 @@ export const GroupedBoxPlotRenderer: React.FC<BaseChartRendererProps> = ({
             color: colors ? colors[i % colors.length] : getChartColor(i)
         };
     }).filter((g): g is NonNullable<typeof g> => g !== null);
+
+    // Extract potential groups from columns (Nominal in Columns strategy)
+    // Used when Nominal Variable is in Columns, and Metric is in Rows
+    const colGroups = processedData.columns.map((col, i) => {
+        // We need at least one row (the metric row) to get data from
+        if (processedData.rows.length === 0) return null;
+
+        // Use the first row (the metric)
+        const row = processedData.rows[0];
+        const cell = row.cells[col.key];
+
+        const hasStats = cell &&
+            cell.min !== undefined &&
+            cell.q1 !== undefined &&
+            cell.median !== undefined &&
+            cell.q3 !== undefined &&
+            cell.max !== undefined;
+
+        if (!hasStats) return null;
+
+        return {
+            label: col.label,
+            rawValue: col.key,
+            stats: {
+                min: cell.min!,
+                q1: cell.q1!,
+                median: cell.median!,
+                q3: cell.q3!,
+                max: cell.max!,
+                mean: cell.mean,
+                n: cell.validCount,
+            },
+            // Use the column index for coloring
+            color: colors ? colors[i % colors.length] : getChartColor(i)
+        };
+    }).filter((g): g is NonNullable<typeof g> => g !== null);
+
+    // Determine which strategy yielded the best groups
+    // If we have more column groups than row groups, it's likely a Column Grouping scenario
+    const groups = colGroups.length > rowGroups.length ? colGroups : rowGroups;
 
     // Fallback: if no stats in rows, try series data points (older data path)
     if (groups.length === 0 && processedData.series.length > 0) {

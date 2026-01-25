@@ -135,6 +135,7 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
 
             options.measureVar = measureVarId;
             options.measureLabel = measureVarSet.name;
+            options.includeDistributions = true; // Always fetch distributions for metric vars to support Violin/Ridgeline
 
             if (isRowScale) {
                 // Standard Metric: Scale on Row, Grouping on Col (if any)

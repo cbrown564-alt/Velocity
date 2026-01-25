@@ -6,7 +6,7 @@
  */
 
 import { useMemo } from 'react';
-import { AggregatedRow, Variable, VariableSet } from '../types';
+import { AggregatedRow, Variable, VariableSet, HistogramBin } from '../types';
 
 // ============================================================================
 // Types
@@ -33,6 +33,8 @@ export interface ProcessedCell {
     q1?: number;
     q3?: number;
     validCount?: number;
+    /** Histogram bins for distribution charts */
+    histogramBins?: HistogramBin[];
 }
 
 /** A processed row in tree structure (for tables) */
@@ -93,6 +95,8 @@ export interface ChartDataPoint {
     x0?: number;
     x1?: number;
     count?: number;
+    // Nested bins for this point (if it represents a group)
+    histogramBins?: HistogramBin[];
     // For Scatter/Hexbin
     x?: number;
     y?: number;
@@ -310,6 +314,7 @@ export function useProcessedAnalysisData({
                         q1: hasMetric ? metricRow.q1 : undefined,
                         q3: hasMetric ? metricRow.q3 : undefined,
                         validCount: hasMetric ? metricRow.validCount : undefined,
+                        histogramBins: metricRow?.histogramBins,
                     };
                 });
 
@@ -396,7 +401,8 @@ export function useProcessedAnalysisData({
                     q1: row.cells[col.key]?.q1,
                     q3: row.cells[col.key]?.q3,
                     n: row.cells[col.key]?.validCount,
-                }
+                },
+                histogramBins: row.cells[col.key]?.histogramBins,
             })),
         }));
 

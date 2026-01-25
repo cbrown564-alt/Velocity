@@ -205,6 +205,46 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
                     series: newSeries
                 };
             }
+            if (processedData.columns.length > 1 && processedData.rows.length > 1) {
+                // ... (existing grid login) ...
+                // ...
+            }
+        }
+
+        // CASE 3: Violin / Ridgeline (Distribution Charts)
+        // These renderers expect each "Series" to be a group (Category),
+        // and the "Data" within that series to be the histogram bins.
+        if (activeChartType === 'violin' || activeChartType === 'ridgeline') {
+            // We usually have 1 series (Total) with multiple rows (Categories)
+            // We want to convert each Row into a Series.
+            // And use the row's `histogramBins` as the series data.
+
+            // Use the first available column (usually Total or the Measure column)
+            const colKey = processedData.columns[0]?.key;
+
+            const newSeries = processedData.rows
+                .filter(r => r.cells[colKey]?.histogramBins && r.cells[colKey].histogramBins.length > 0)
+                .map(r => ({
+                    key: r.rawValue,
+                    label: r.label,
+                    // Map histogram bins to ChartDataPoint structure
+                    data: (r.cells[colKey].histogramBins || []).map(bin => ({
+                        label: r.label, // Label matches the group
+                        rawValue: String(bin.x0),
+                        value: bin.count,
+                        percent: 0, // Not used for distribution shape
+                        x0: bin.x0,
+                        x1: bin.x1,
+                        count: bin.count,
+                    }))
+                }));
+
+            if (newSeries.length > 0) {
+                return {
+                    ...processedData,
+                    series: newSeries
+                };
+            }
         }
 
         return processedData;

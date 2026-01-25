@@ -1,12 +1,17 @@
 import React from 'react';
 import {
-    BarChart3,
-    BarChartHorizontal,
-    PieChart,
+    ChartColumn,
+    ChartBar,
+    ChartColumnStacked,
+    Donut,
     ScatterChart,
-    LineChart,
-    BoxSelect,
-    AlignLeft
+    Lollipop,
+    Box,
+    Boxes,
+    Activity,
+    Waves,
+    Hexagon,
+    MoveHorizontal
 } from 'lucide-react';
 import { ChartType } from '../../types/charts';
 import { useVelocityStore } from '../../store';
@@ -20,20 +25,20 @@ interface ChartSelectorProps {
 }
 
 const CHART_ICONS: Record<ChartType, React.ReactNode> = {
-    'horizontal-bar': <AlignLeft size={16} />,
-    'vertical-bar': <BarChart3 size={16} />,
-    'grouped-bar': <BarChart3 size={16} />,
-    'stacked-bar': <BarChartHorizontal size={16} />,
-    'diverging-bar': <AlignLeft size={16} />,
-    'donut': <PieChart size={16} />,
-    'histogram': <BarChart3 size={16} />,
-    'box-plot': <BoxSelect size={16} />, // Kept BoxSelect but will ensure it renders well or swap if imports allow
+    'horizontal-bar': <ChartBar size={16} />,
+    'vertical-bar': <ChartColumn size={16} />,
+    'grouped-bar': <ChartColumn size={16} />,
+    'stacked-bar': <ChartColumnStacked size={16} />,
+    'diverging-bar': <MoveHorizontal size={16} />,
+    'donut': <Donut size={16} />,
+    'histogram': <ChartColumn size={16} />,
+    'box-plot': <Box size={16} />,
     'scatter': <ScatterChart size={16} />,
-    'lollipop': <LineChart size={16} />,
-    'grouped-box-plot': <BoxSelect size={16} />,
-    'violin': <BarChart3 size={16} />,
-    'ridgeline': <BarChart3 size={16} />,
-    'hexbin': <ScatterChart size={16} />,
+    'lollipop': <Lollipop size={16} />,
+    'grouped-box-plot': <Boxes size={16} />,
+    'violin': <Activity size={16} />,
+    'ridgeline': <Waves size={16} />,
+    'hexbin': <Hexagon size={16} />,
 };
 
 const CHART_LABELS: Record<ChartType, string> = {

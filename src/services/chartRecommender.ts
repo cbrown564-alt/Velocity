@@ -40,19 +40,27 @@ export function recommendChart(context: RecommenderContext): ChartRecommendation
     if (colVar) {
         // If we have a column variable, we are comparing groups
         if (primaryRowVar?.type === 'nominal' || primaryRowVar?.type === 'ordinal') {
-            const isLikert = colVar.type === 'ordinal' || colVar.type === 'numeric';
             return {
-                default: isLikert ? 'diverging-bar' : 'grouped-bar',
-                alternatives: ['stacked-bar', 'grouped-bar', 'diverging-bar'],
+                default: 'grouped-bar',
+                alternatives: ['stacked-bar', 'diverging-bar'],
                 reason: 'Comparing nominal/ordinal groups across columns.',
             };
         }
+
+        if (primaryRowVar?.type === 'scale') {
+            return {
+                default: 'diverging-bar',
+                alternatives: ['stacked-bar', 'grouped-bar'],
+                reason: 'Comparing scale groups across columns.',
+            };
+        }
+
         // Numeric x Nominal (e.g. Age by Gender) -> Box Plot
         if (primaryRowVar?.type === 'numeric') {
             return {
                 default: 'grouped-box-plot',
                 // Note: violin/ridgeline require grouped histogram data from backend (not yet implemented)
-                alternatives: ['box-plot'],
+                alternatives: ['violin', 'ridgeline'],
                 reason: 'Comparing distributions across groups.',
             };
         }
@@ -80,7 +88,7 @@ export function recommendChart(context: RecommenderContext): ChartRecommendation
             case 'ordinal':
                 return {
                     default: 'horizontal-bar',
-                    alternatives: ['stacked-bar', 'vertical-bar'], // Diverging bar removed for single ordinal
+                    alternatives: ['stacked-bar', 'vertical-bar', 'donut'], // Diverging bar removed for single ordinal
                     reason: 'Ordinal data can be viewed as bars or distributions.',
                 };
             case 'scale':

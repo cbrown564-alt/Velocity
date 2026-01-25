@@ -23,6 +23,7 @@ export const DonutRenderer: React.FC<BaseChartRendererProps> = ({
     selectedKeys,
     onSelectionChange,
     onContextMenu,
+    labelMode = 'count',
 }) => {
     // Use the first series (single column analysis)
     const series = processedData.series[0];
@@ -135,6 +136,8 @@ export const DonutRenderer: React.FC<BaseChartRendererProps> = ({
 
                             {/* Direct Labels (Polylines + Text) */}
                             {(() => {
+                                if (labelMode === 'none') return null;
+
                                 const pos = labelArc.centroid(d);
                                 const midAngle = d.startAngle + (d.endAngle - d.startAngle) / 2;
                                 const isRightSide = midAngle < Math.PI;
@@ -165,7 +168,10 @@ export const DonutRenderer: React.FC<BaseChartRendererProps> = ({
                                                 fontWeight: isSelected ? 700 : 400
                                             }}
                                         >
-                                            {d.data.label} ({Math.round(d.data.percent)}%)
+                                            {labelMode === 'percent'
+                                                ? `${d.data.label} (${Math.round(d.data.percent)}%)`
+                                                : `${d.data.label} (${d.data.value.toLocaleString()})`
+                                            }
                                         </text>
                                     </g>
                                 );
@@ -179,7 +185,7 @@ export const DonutRenderer: React.FC<BaseChartRendererProps> = ({
                     textAnchor="middle"
                     dy="-0.6em"
                     style={{
-                        fontSize: 'var(--text-xs)',
+                        fontSize: 'var(--text-xxs)',
                         fill: 'var(--gray-500)',
                         fontWeight: 500,
                         textTransform: 'uppercase',
@@ -193,7 +199,7 @@ export const DonutRenderer: React.FC<BaseChartRendererProps> = ({
                     textAnchor="middle"
                     dy="0.8em"
                     style={{
-                        fontSize: 'var(--text-xl)',
+                        fontSize: 'var(--text-2xl)',
                         fill: 'var(--gray-900)',
                         fontWeight: 700,
                         fontFamily: 'var(--font-body)'

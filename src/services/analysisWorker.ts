@@ -38,7 +38,7 @@ export type WorkerRequest =
   | { type: 'recodeVariable'; sourceCol: string; newColName: string; config: RecodeConfig }
   | { type: 'checkPersistedData' }
   | { type: 'clearPersistedData' }
-  | { type: 'runCrosstab'; options: CrosstabQueryOptions; variableTypes: Record<string, string> }
+  | { type: 'runCrosstab'; options: CrosstabQueryOptions & { includeDistributions?: boolean }; variableTypes: Record<string, string> }
   | { type: 'ping' }; // Health check - verifies worker and database are alive
 
 export interface VariableStatsFrequency {

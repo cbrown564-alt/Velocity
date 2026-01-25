@@ -132,7 +132,8 @@ export function buildCrosstabQuery(options: CrosstabQueryOptions): string {
         gridColumns,
         multipleColumns,
         measureVar,
-        measureLabel
+        measureLabel,
+        includeDistributions
     } = options;
 
     // Special case: Grid structure (unpivot multiple columns)
@@ -184,6 +185,16 @@ export function buildCrosstabQuery(options: CrosstabQueryOptions): string {
             COUNT(${col})::INTEGER as validCount,
             COUNT(*)::INTEGER as count
         `;
+
+        if (includeDistributions) {
+            // Use DuckDB's histogram function to get a map of keys to counts
+            // For scale variables (likely integers 1-10), this map is perfect
+            // For continuous floats, it might be too large, but 'histogram' usually buckets
+            // Actually, DuckDB's `histogram(x)` creates a MAP(value, count).
+            // This is perfect for Likert scales.
+            // For safe transport, we cast to JSON or extract usage in worker.
+            statsExpr += `, histogram(${col}) as distMap`;
+        }
 
         // Add ESS components if weighted
         if (weightVar) {
