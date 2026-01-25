@@ -48,7 +48,7 @@ export interface AnalysisSlice {
     addFilter: (filter: Omit<Filter, 'id'>) => void;
     removeFilter: (filterId: string) => void;
     clearFilters: () => void;
-    fetchVariableStats: (variableId: string, variableType?: 'nominal' | 'ordinal' | 'scale' | 'text' | 'date', binCount?: number) => Promise<void>;
+    fetchVariableStats: (variableId: string, variableType?: 'nominal' | 'ordinal' | 'numeric' | 'text' | 'date', binCount?: number) => Promise<void>;
     reset: () => void;
 }
 
@@ -120,10 +120,10 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
                     countedValue: firstRowVarSet.countedValue ?? 1,
                 };
             });
-        } else if (firstRowVarSet?.type === 'scale' || (tableConfig.colVar && variableSets.find((s: VariableSet) => s.id === tableConfig.colVar)?.type === 'scale')) {
-            // Scale Variable Analysis (Metric)
+        } else if (firstRowVarSet?.type === 'numeric' || (tableConfig.colVar && variableSets.find((s: VariableSet) => s.id === tableConfig.colVar)?.type === 'numeric')) {
+            // Numeric Variable Analysis (Metric)
             const colVarSet = tableConfig.colVar ? variableSets.find((s: VariableSet) => s.id === tableConfig.colVar) : null;
-            const isRowScale = firstRowVarSet?.type === 'scale';
+            const isRowScale = firstRowVarSet?.type === 'numeric';
 
             // Determine Measure Variable
             // If Row is scale, it's the measure.
@@ -131,7 +131,7 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
             const measureVarSet = isRowScale ? firstRowVarSet! : colVarSet!;
             const measureVarId = measureVarSet.variableIds[0];
 
-            get().fetchVariableStats(measureVarId, 'scale');
+            get().fetchVariableStats(measureVarId, 'numeric');
 
             options.measureVar = measureVarId;
             options.measureLabel = measureVarSet.name;
@@ -256,7 +256,7 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
         get().runAnalysis();
     },
 
-    fetchVariableStats: async (variableId: string, variableType?: 'nominal' | 'ordinal' | 'scale' | 'text' | 'date', binCount?: number) => {
+    fetchVariableStats: async (variableId: string, variableType?: 'nominal' | 'ordinal' | 'numeric' | 'text' | 'date', binCount?: number) => {
         const { worker } = get();
         if (!worker) return;
 

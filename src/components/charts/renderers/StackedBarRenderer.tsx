@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback, useState } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import * as d3 from 'd3-scale';
 import * as d3Shape from 'd3-shape';
 import { max } from 'd3-array';
@@ -14,6 +14,7 @@ interface StackedBarRendererProps extends BaseChartRendererProps {
  * Used for cross-tabs (row variable x column variable) and grids.
  * Shows composition of each row across column categories.
  */
+
 export const StackedBarRenderer: React.FC<StackedBarRendererProps> = ({
     width,
     height,
@@ -25,97 +26,135 @@ export const StackedBarRenderer: React.FC<StackedBarRendererProps> = ({
     onSelectionChange,
     onContextMenu,
 }) => {
-    const { rows, columns, series } = processedData;
+    const { rows, columns, colVariable, rowVariables, grandTotal } = processedData;
 
-    // Get column keys and labels for the legend
-    const columnKeys = columns.map(c => c.key);
-    const columnLabels = columns.map(c => c.label);
+    // Detect if this is a single variable analysis (no column variable)
+    const isSingleVariable = !colVariable && rows.length > 0;
+
+    // Prepare data for the chart based on mode
+    const { chartData, stackKeys, stackLabels, rowLabels } = useMemo(() => {
+        if (isSingleVariable) {
+            // Single Variable: Transpose so categories become stack segments
+            // We create ONE row "Total" (or variable name), and the stack keys are the categories.
+            const variableLabel = rowVariables[0]?.label || 'Total';
+
+            // Use category labels as the stack keys
+            const keys = rows.map(r => r.label);
+
+            const item: Record<string, any> = {
+                label: variableLabel,
+                _total: grandTotal,
+            };
+
+            // Populate the single item with counts from each category row
+            rows.forEach(r => {
+                item[r.label] = r.total;
+            });
+
+            return {
+                chartData: [item],
+                stackKeys: keys,
+                stackLabels: keys, // Legend shows categories
+                rowLabels: [variableLabel],
+            };
+        } else {
+            // Cross-tab: Rows are rows, Columns are stack segments
+            const keys = columns.map(c => c.key);
+            const data = rows.map(row => {
+                const item: Record<string, any> = { label: row.label };
+                keys.forEach(key => {
+                    item[key] = row.cells[key]?.count || 0;
+                });
+                item._total = row.total;
+                return item;
+            });
+
+            return {
+                chartData: data,
+                stackKeys: keys,
+                stackLabels: columns.map(c => c.label),
+                rowLabels: rows.map(r => r.label),
+            };
+        }
+    }, [rows, columns, rowVariables, colVariable, grandTotal, isSingleVariable]);
 
     // Dynamic margin based on label lengths
-    const maxRowLabelLength = Math.max(...rows.map(r => (r.label || '').length), 10);
+    const maxRowLabelLength = Math.max(...rowLabels.map(l => (l || '').length), 10);
     const leftMargin = Math.min(Math.max(maxRowLabelLength * 6, 100), 200);
 
     // Calculate legend width
     const legendItemWidth = 100;
-    const legendWidth = Math.min(columns.length * legendItemWidth, width - leftMargin - 40);
+    const legendWidth = Math.min(stackKeys.length * legendItemWidth, width - leftMargin - 40);
 
     const margin = { top: 48, right: 40, bottom: 32, left: leftMargin };
     const innerWidth = Math.max(width - margin.left - margin.right, 200);
     const innerHeight = Math.max(height - margin.top - margin.bottom, 150);
 
     // Calculate bar height
-    const barHeight = Math.min(Math.max(innerHeight / rows.length - 8, 24), 48);
-    const actualHeight = (barHeight + 8) * rows.length;
-
-    // Build stacked data from processedData rows
-    const stackData = useMemo(() => {
-        return rows.map(row => {
-            const item: Record<string, any> = { label: row.label };
-            columnKeys.forEach(key => {
-                item[key] = row.cells[key]?.count || 0;
-            });
-            item._total = row.total;
-            return item;
-        });
-    }, [rows, columnKeys]);
+    const effectiveRowCount = chartData.length;
+    const barHeight = Math.min(Math.max(innerHeight / effectiveRowCount - 8, 24), 48);
+    const actualHeight = (barHeight + 8) * effectiveRowCount;
 
     // Create stack generator
-    const stackGenerator = d3Shape.stack<Record<string, any>>().keys(columnKeys);
+    const stackGenerator = d3Shape.stack<Record<string, any>>().keys(stackKeys);
     if (type === 'stacked-bar-100') {
         stackGenerator.offset(d3Shape.stackOffsetExpand);
     }
 
-    const stackedSeries = stackGenerator(stackData);
+    const stackedSeries = stackGenerator(chartData);
 
-    // Handle row click for selection
-    const handleRowClick = useCallback((rowLabel: string, event: React.MouseEvent) => {
+    // Handle click for selection
+    const handleClick = useCallback((rowLabel: string, segmentKey: string, event: React.MouseEvent) => {
         if (!interactive || !onSelectionChange) return;
+
+        // In single variable mode, we select the segment (category).
+        // In cross-tab mode, we select the row.
+        const keyToToggle = isSingleVariable ? segmentKey : rowLabel;
 
         const newSelection = new Set(selectedKeys);
         if (event.metaKey || event.ctrlKey) {
-            if (newSelection.has(rowLabel)) {
-                newSelection.delete(rowLabel);
+            if (newSelection.has(keyToToggle)) {
+                newSelection.delete(keyToToggle);
             } else {
-                newSelection.add(rowLabel);
+                newSelection.add(keyToToggle);
             }
         } else {
             newSelection.clear();
-            newSelection.add(rowLabel);
+            newSelection.add(keyToToggle);
         }
         onSelectionChange(newSelection);
-    }, [interactive, onSelectionChange, selectedKeys]);
+    }, [interactive, onSelectionChange, selectedKeys, isSingleVariable]);
 
     // Handle right-click context menu
-    const handleRowContextMenu = useCallback((rowLabel: string, event: React.MouseEvent) => {
+    const handleContextMenu = useCallback((rowLabel: string, segmentKey: string, value: number, event: React.MouseEvent) => {
         if (!interactive || !onContextMenu) return;
         event.preventDefault();
         event.stopPropagation();
 
-        // Find the row data
-        const row = rows.find(r => r.label === rowLabel);
-        if (!row) return;
+        // In single var mode, we want context menu for the category (segment)
+        // In cross-tab, typically the row.
+        // But for context menu, it's nice to have specific data point info.
 
-        // Build data point info
         const dataPoint = {
-            label: rowLabel,
-            value: row.total,
-            percent: 100, // Full row
-            rawValue: row.label,
+            label: isSingleVariable ? segmentKey : rowLabel,
+            value: value,
+            percent: 0, // Calculated below if needed or approximate
+            rawValue: isSingleVariable ? segmentKey : rowLabel, // Approximate mapping
         };
 
         onContextMenu({
             selected: [dataPoint],
             position: { x: event.clientX, y: event.clientY },
         });
-    }, [interactive, onContextMenu, rows]);
+    }, [interactive, onContextMenu, isSingleVariable]);
 
     // Scales
     const yScale = useMemo(() => {
         return d3.scaleBand()
-            .domain(stackData.map(d => d.label))
+            .domain(chartData.map(d => d.label))
             .range([0, actualHeight])
             .padding(0.2);
-    }, [stackData, actualHeight]);
+    }, [chartData, actualHeight]);
 
     const xScale = useMemo(() => {
         const maxVal = type === 'stacked-bar-100'
@@ -140,10 +179,10 @@ export const StackedBarRenderer: React.FC<StackedBarRendererProps> = ({
             <g transform={`translate(${margin.left},${margin.top})`}>
                 {/* Legend (Top) */}
                 <g transform={`translate(${(innerWidth - legendWidth) / 2}, -${margin.top - 8})`}>
-                    {columnLabels.map((label, i) => {
+                    {stackLabels.map((label, i) => {
                         const xOffset = i * legendItemWidth;
                         return (
-                            <g key={columnKeys[i]} transform={`translate(${xOffset}, 0)`}>
+                            <g key={stackKeys[i]} transform={`translate(${xOffset}, 0)`}>
                                 <rect
                                     width={12}
                                     height={12}
@@ -196,7 +235,7 @@ export const StackedBarRenderer: React.FC<StackedBarRendererProps> = ({
                 </g>
 
                 {/* Y Axis Labels */}
-                {stackData.map((d) => (
+                {chartData.map((d) => (
                     <text
                         key={d.label}
                         x={-12}
@@ -213,13 +252,22 @@ export const StackedBarRenderer: React.FC<StackedBarRendererProps> = ({
                 {/* Stacked Bars */}
                 {stackedSeries.map((seriesItem, seriesIndex) => (
                     <g
-                        key={columnKeys[seriesIndex]}
+                        key={stackKeys[seriesIndex]}
                         fill={colors ? colors[seriesIndex % colors.length] : getChartColor(seriesIndex)}
                     >
                         {seriesItem.map((d, i) => {
                             const barWidth = xScale(d[1]) - xScale(d[0]);
                             const y = yScale(d.data.label) || 0;
-                            const isSelected = selectedKeys?.has(d.data.label);
+
+                            // Determine if selected
+                            // In single var: selected if stackKey (segment) is in selection
+                            // In cross tab: selected if rowLabel is in selection
+                            const rowLabel = d.data.label;
+                            const segmentKey = stackKeys[seriesIndex];
+
+                            const isSelected = isSingleVariable
+                                ? selectedKeys?.has(segmentKey)
+                                : selectedKeys?.has(rowLabel);
 
                             // Only show label if segment is wide enough
                             const showLabel = barWidth > 30;
@@ -230,9 +278,9 @@ export const StackedBarRenderer: React.FC<StackedBarRendererProps> = ({
 
                             return (
                                 <g
-                                    key={d.data.label}
-                                    onClick={(e) => handleRowClick(d.data.label, e)}
-                                    onContextMenu={(e) => handleRowContextMenu(d.data.label, e)}
+                                    key={`${d.data.label}-${segmentKey}`}
+                                    onClick={(e) => handleClick(d.data.label, segmentKey, e)}
+                                    onContextMenu={(e) => handleContextMenu(d.data.label, segmentKey, value, e)}
                                     style={{ cursor: interactive ? 'pointer' : 'default' }}
                                 >
                                     <rect
@@ -264,7 +312,7 @@ export const StackedBarRenderer: React.FC<StackedBarRendererProps> = ({
                 ))}
 
                 {/* Row totals (right side) */}
-                {stackData.map((d) => {
+                {chartData.map((d) => {
                     const total = d._total;
                     const y = yScale(d.label) || 0;
                     return (
@@ -292,3 +340,4 @@ export const StackedBarRenderer: React.FC<StackedBarRendererProps> = ({
         </svg>
     );
 };
+

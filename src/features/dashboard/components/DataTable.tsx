@@ -187,7 +187,7 @@ export const DataTable: React.FC<DataTableProps> = ({
 
         // 4b. GAP FILLING (for Ordinal/Scale)
         // Ensure we don't show "1, 3, 4" skipping "2" if it's a numeric scale
-        if (variable && (variable.type === 'ordinal' || variable.type === 'scale')) {
+        if (variable && (variable.type === 'ordinal' || variable.type === 'numeric')) {
           const numericKeys = Array.from(allKeys)
             .map(k => parseFloat(k))
             .filter(n => !isNaN(n) && Number.isInteger(n));
@@ -340,7 +340,7 @@ export const DataTable: React.FC<DataTableProps> = ({
 
         const type = variable?.type || 'nominal';
 
-        if (type === 'ordinal' || type === 'scale') {
+        if (type === 'ordinal' || type === 'numeric') {
           // Try to parse as numbers
           const valA = parseFloat(a.rawValue);
           const valB = parseFloat(b.rawValue);
@@ -566,7 +566,7 @@ export const DataTable: React.FC<DataTableProps> = ({
                             <div className="text-[9px] text-[var(--gray-500)] uppercase tracking-wide">Mean</div>
                           </div>
                           <Sparkline
-                            type="scale"
+                            type="numeric"
                             histogramBins={variableStats.numeric?.histogramBins}
                             width={80}
                             height={24}

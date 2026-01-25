@@ -42,7 +42,7 @@ export const VariableCard: React.FC<VariableCardProps> = ({
 
     const type = set.type as VariableType;
     switch (type) {
-      case 'scale':
+      case 'numeric':
       case 'date':
         return <Hash size={14} className="text-[var(--gray-400)]" />;
       case 'nominal':

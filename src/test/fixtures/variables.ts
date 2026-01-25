@@ -51,7 +51,7 @@ export const mockScaleVariable: Variable = {
     id: 'var_age',
     name: 'Q3_Age',
     label: 'Age (years)',
-    type: 'scale',
+    type: 'numeric',
     valueLabels: [],
     missingValues: { range: { low: -99, high: -1 } },
 };
@@ -116,7 +116,7 @@ export const mockVariableSet: VariableSet = {
     name: 'Brand Ratings',
     variableIds: ['var_brand_1', 'var_brand_2', 'var_brand_3'],
     structure: 'grid',
-    type: 'scale', // Assuming ratings are scale
+    type: 'numeric', // Assuming ratings are numeric
 };
 
 export const mockNominalSet: VariableSet = {
@@ -140,7 +140,7 @@ export const mockScaleSet: VariableSet = {
     name: 'Age (years)',
     variableIds: ['var_age'],
     structure: 'single',
-    type: 'scale',
+    type: 'numeric',
 };
 
 // ============================================================================

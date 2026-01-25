@@ -34,7 +34,7 @@ export type WorkerRequest =
   | { type: 'query'; sql: string }
   | { type: 'getSchema' }
   | { type: 'getUniqueValues'; column: string }
-  | { type: 'getVariableStats'; column: string; variableType?: 'nominal' | 'ordinal' | 'scale' | 'text' | 'date' }
+  | { type: 'getVariableStats'; column: string; variableType?: 'nominal' | 'ordinal' | 'numeric' | 'text' | 'date' }
   | { type: 'recodeVariable'; sourceCol: string; newColName: string; config: RecodeConfig }
   | { type: 'checkPersistedData' }
   | { type: 'clearPersistedData' }
@@ -551,7 +551,7 @@ async function loadSAV(buffer: ArrayBuffer): Promise<{ variables: Variable[]; va
     //    - ordinal: Numeric with value labels that suggest ordered scale
     //    - nominal: Numeric with value labels (unordered categorical)
     //    - scale: Numeric without value labels (continuous)
-    let type: 'nominal' | 'ordinal' | 'scale' | 'text' | 'date';
+    let type: 'nominal' | 'ordinal' | 'numeric' | 'text' | 'date';
 
     if (v.type === 'string') {
       // String type → 'text'
@@ -563,8 +563,8 @@ async function loadSAV(buffer: ArrayBuffer): Promise<{ variables: Variable[]; va
       // Has value labels - check if ordinal or nominal
       type = isOrdinal(valueLabels) ? 'ordinal' : 'nominal';
     } else {
-      // Numeric without value labels → 'scale'
-      type = 'scale';
+      // Numeric without value labels → 'numeric'
+      type = 'numeric';
     }
 
     return {
@@ -640,7 +640,7 @@ async function loadSAV(buffer: ArrayBuffer): Promise<{ variables: Variable[]; va
             v.valueLabels = newLabels.sort((a, b) => a.value - b.value);
 
             // Re-evaluate type: now it has many ordinal-like labels
-            v.type = 'scale'; // Force to scale or ordinal? 'scale' is safer for mean/stats
+            v.type = 'numeric'; // Force to numeric or ordinal? 'numeric' is safer for mean/stats
 
             // Check if it should be ordinal
             if (isOrdinal(v.valueLabels)) {
@@ -915,7 +915,7 @@ async function getUniqueValues(column: string): Promise<string[]> {
 
 async function getVariableStats(
   column: string,
-  variableType?: 'nominal' | 'ordinal' | 'scale' | 'text' | 'date',
+  variableType?: 'nominal' | 'ordinal' | 'numeric' | 'text' | 'date',
   binCount: number = 10
 ): Promise<VariableStatsResult> {
   if (!conn) throw new Error('DB not initialized');
@@ -950,8 +950,8 @@ async function getVariableStats(
     totalCount,
   };
 
-  // Compute numeric statistics for scale variables
-  if (variableType === 'scale') {
+  // Compute numeric statistics for numeric variables
+  if (variableType === 'numeric') {
     try {
       // Get summary statistics using DuckDB's built-in functions
       const statsResult = await conn.query(`
@@ -1051,7 +1051,7 @@ async function runCrosstab(options: CrosstabQueryOptions, variableTypes: Record<
   if (!conn) throw new Error('DB not initialized');
 
   // 1. Handle Nested Scale Variables Logic
-  // Check if the last row variable is 'scale'. If so, treat it as a measure variable.
+  // Check if the last row variable is 'numeric'. If so, treat it as a measure variable.
   // This supports the "Nested Numeric Summary" requirement.
   const modifiedOptions = { ...options };
 
@@ -1060,7 +1060,7 @@ async function runCrosstab(options: CrosstabQueryOptions, variableTypes: Record<
     const lastRowVarId = modifiedOptions.rowVars[modifiedOptions.rowVars.length - 1];
     const lastRowType = variableTypes[lastRowVarId];
 
-    if (lastRowType === 'scale') {
+    if (lastRowType === 'numeric') {
       console.log(`🦆 [Worker] treating nested scale variable ${lastRowVarId} as measure variable`);
       // Pop the last variable from rows and use it as measure
       modifiedOptions.measureVar = lastRowVarId;

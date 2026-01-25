@@ -126,11 +126,11 @@ export const BulkActionBar: React.FC<BulkActionBarProps> = ({
                                                 Ordinal
                                             </button>
                                             <button
-                                                onClick={() => handleSetType('scale')}
+                                                onClick={() => handleSetType('numeric')}
                                                 className="w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-50 text-left text-sm font-body text-gray-700"
                                             >
                                                 <BarChart2 size={14} className="text-charcoal" />
-                                                Scale
+                                                Numeric
                                             </button>
                                         </div>
                                     )}

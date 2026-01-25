@@ -13,7 +13,7 @@ import type { RecodeConfig } from '../../types';
 // Types
 // ============================================================================
 
-export type VariableType = 'nominal' | 'ordinal' | 'scale' | 'text' | 'date';
+export type VariableType = 'nominal' | 'ordinal' | 'numeric' | 'text' | 'date';
 
 export interface ValueLabel {
     value: number;
@@ -393,7 +393,7 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                 id: col.name,
                 name: col.name,
                 label: col.name.replace(/_/g, ' '),
-                type: col.type.includes('VARCHAR') || col.type.includes('UTF') ? 'nominal' : 'scale',
+                type: col.type.includes('VARCHAR') || col.type.includes('UTF') ? 'nominal' : 'numeric',
                 valueLabels: [],
                 missingValues: {}
             }));
@@ -446,7 +446,7 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                         id: col.name,
                         name: col.name,
                         label: col.name.replace(/_/g, ' '),
-                        type: col.type === 'VARCHAR' ? 'nominal' : 'scale',
+                        type: col.type === 'VARCHAR' ? 'nominal' : 'numeric',
                         valueLabels: [],
                         missingValues: {},
                     }));
@@ -581,7 +581,7 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
         const cachedStats = variableStats[variableId];
         if (cachedStats) {
             // For scale variables, ensure we have numeric stats (may need re-fetch if cached before feature was added)
-            const needsNumericStats = variableType === 'scale' && !cachedStats.numeric;
+            const needsNumericStats = variableType === 'numeric' && !cachedStats.numeric;
             if (!needsNumericStats) {
                 return cachedStats;
             }

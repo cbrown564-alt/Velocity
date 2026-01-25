@@ -23,7 +23,7 @@ const getTypeIcon = (type: string) => {
             return <Tag size={14} />;
         case 'ordinal':
             return <BarChart2 size={14} />;
-        case 'scale':
+        case 'numeric':
             return <Hash size={14} />;
         case 'text':
             return <Type size={14} />;
@@ -40,7 +40,7 @@ const getTypeBadgeClass = (type: string) => {
             return styles.typeBadgeNominal;
         case 'ordinal':
             return styles.typeBadgeOrdinal;
-        case 'scale':
+        case 'numeric':
             return styles.typeBadgeScale;
         case 'text':
             return styles.typeBadgeText;
@@ -57,7 +57,7 @@ const getTypeLabel = (type: string) => {
             return 'Categorical';
         case 'ordinal':
             return 'Ordinal';
-        case 'scale':
+        case 'numeric':
             return 'Numeric';
         case 'text':
             return 'Text';
@@ -149,7 +149,7 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
         if (!selectedVariableId || isLoadingStats) return;
 
         const needsStats = !stats;
-        const needsNumericStats = variable?.type === 'scale' && stats && !stats.numeric;
+        const needsNumericStats = variable?.type === 'numeric' && stats && !stats.numeric;
 
         if (needsStats || needsNumericStats) {
             getVariableStats(selectedVariableId).catch(err => {
@@ -166,8 +166,8 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
         ? (stats.missingCount / stats.totalCount) * 100
         : null;
 
-    // Check if variable is numeric/scale type and has numeric stats
-    const isNumericVariable = variable?.type === 'scale';
+    // Check if variable is numeric/numeric type and has numeric stats
+    const isNumericVariable = variable?.type === 'numeric';
     const numericStats = stats?.numeric;
 
     // Prepare data for Nominal/Ordinal Charts (HorizontalBarRenderer)

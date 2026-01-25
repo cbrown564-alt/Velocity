@@ -98,6 +98,70 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
         });
     }, [processedData]);
 
+    // Data Transformation for Single-Variable Diverging Bar
+    // If we have a single ordinal variable, we need to PIVOT the data.
+    // Standard: Rows = Categories, Col = Total
+    // Diverging: Rows = Variable(s), Col = Categories
+    const chartData = useMemo(() => {
+        if (!processedData) return null;
+
+        // Check if we need to pivot
+        // 1. Chart type is diverging-bar
+        // 2. Only 1 data column (usually 'Total')
+        // 3. Multiple rows (categories)
+        // 4. Not a grid (grids are already in correct format)
+        if (activeChartType === 'diverging-bar' &&
+            processedData.columns.length === 1 &&
+            processedData.rows.length > 1) {
+
+            // Pivot!
+            // Create specific columns from the rows
+            const newColumns = processedData.rows.map(r => ({
+                key: r.rawValue,
+                label: r.label,
+                total: r.total
+            }));
+
+            // Create a single row for the variable
+            const mainVar = processedData.rowVariables[0];
+            const newRow: any = {
+                key: mainVar?.id || 'root',
+                label: mainVar?.label || 'Distribution',
+                rawValue: mainVar?.id || 'root',
+                total: processedData.grandTotal,
+                cells: {}
+            };
+
+            // Map counts to the new cells
+            processedData.rows.forEach(r => {
+                // The cell value comes from the 'Total' column of the original row
+                const originalCell = r.cells[processedData.columns[0].key];
+                if (originalCell) {
+                    newRow.cells[r.rawValue] = originalCell;
+                }
+            });
+
+            return {
+                ...processedData,
+                columns: newColumns,
+                rows: [newRow],
+                series: newColumns.map(col => ({
+                    key: col.key,
+                    label: col.label,
+                    data: [{
+                        label: newRow.label,
+                        rawValue: newRow.rawValue,
+                        value: newRow.cells[col.key]?.count || 0,
+                        percent: newRow.cells[col.key]?.percent || 0,
+                        sig: newRow.cells[col.key]?.sig,
+                    }]
+                }))
+            };
+        }
+
+        return processedData;
+    }, [processedData, activeChartType]);
+
     // Handle context menu from chart renderers
     const handleContextMenu = useCallback((event: ChartContextMenuEvent) => {
         setContextMenu({
@@ -125,9 +189,9 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
 
     // Handle merge confirmation
     const handleMergeConfirm = useCallback(async (groupName: string) => {
-        if (!processedData || !mergeModal.targetItem) return;
+        if (!chartData || !mergeModal.targetItem) return;
 
-        const firstRowVar = processedData.rowVariables[0];
+        const firstRowVar = chartData.rowVariables[0];
         if (!firstRowVar) return;
 
         // Build mappings: all source items + target item map to the new group name
@@ -152,7 +216,7 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
         }
 
         setMergeModal({ isOpen: false, sourceItems: [], targetItem: null });
-    }, [processedData, mergeModal, recodeVariable]);
+    }, [chartData, mergeModal, recodeVariable]);
 
     // Open merge modal from context menu
     const openMergeFromSelection = useCallback(() => {
@@ -170,9 +234,9 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
 
     // Build context menu options based on selected items
     const contextMenuOptions = useMemo((): ContextMenuOption[] => {
-        if (!processedData || contextMenu.selectedItems.length === 0) return [];
+        if (!chartData || contextMenu.selectedItems.length === 0) return [];
 
-        const firstRowVar = processedData.rowVariables[0];
+        const firstRowVar = chartData.rowVariables[0];
         if (!firstRowVar) return [];
 
         const selectedLabels = contextMenu.selectedItems.map(item => item.label).join(', ');
@@ -229,7 +293,7 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
         }
 
         return options;
-    }, [processedData, contextMenu.selectedItems, addFilter, enableVisualETL, openMergeFromSelection]);
+    }, [chartData, contextMenu.selectedItems, addFilter, enableVisualETL, openMergeFromSelection]);
 
     // Simple resize observer
     useEffect(() => {
@@ -254,7 +318,7 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
             return null;
         }
 
-        if (!processedData) {
+        if (!chartData) {
             return (
                 <div className={styles.placeholder}>
                     No data to display
@@ -274,7 +338,7 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
             height: dimensions.height,
             colors: CHART_PALETTE,
             interactive: true,
-            processedData,
+            processedData: chartData,
             selectedKeys: config.selectedKeys,
             onSelectionChange: config.onSelectionChange,
             onContextMenu: enableVisualETL ? combinedContextMenuHandler : undefined,
@@ -326,7 +390,7 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
     };
 
     // Extract series for legend if available
-    const legendItems = processedData?.series.map((s, i) => ({
+    const legendItems = chartData?.series.map((s, i) => ({
         label: s.label,
         color: CHART_PALETTE[i % CHART_PALETTE.length]
     })) || [];
@@ -357,7 +421,7 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
                                     // Debounce by only firing on mouse up
                                     const value = parseInt((e.target as HTMLInputElement).value, 10);
                                     if (variableStats?.column) {
-                                        useVelocityStore.getState().fetchVariableStats(variableStats.column, 'scale', value);
+                                        useVelocityStore.getState().fetchVariableStats(variableStats.column, 'numeric', value);
                                     }
                                 }}
                             />

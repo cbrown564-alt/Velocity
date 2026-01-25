@@ -9,11 +9,11 @@
  */
 
 import React from 'react';
-import type { HistogramBin } from '../../services/analysisWorker';
+import type { HistogramBin } from '../../types';
 
 export interface SparklineProps {
     /** Type determines the visualization style */
-    type?: 'nominal' | 'ordinal' | 'scale' | 'text' | 'date';
+    type?: 'nominal' | 'ordinal' | 'numeric' | 'text' | 'date';
     /** Array of frequency counts (for categorical) */
     frequencies?: number[];
     /** Array of histogram bins (for numeric/scale) */
@@ -41,7 +41,7 @@ export const Sparkline: React.FC<SparklineProps> = ({
     className,
 }) => {
     // 1. SCALAR / DATE VISUALIZATION (Histogram)
-    if (type === 'scale' || type === 'date') {
+    if (type === 'numeric' || type === 'date') {
         if (!histogramBins || histogramBins.length === 0) return null;
 
         // Determine Y scale

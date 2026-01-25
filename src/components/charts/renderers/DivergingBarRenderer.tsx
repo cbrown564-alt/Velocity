@@ -117,31 +117,29 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
         });
     }, [interactive, onContextMenu, rows]);
 
-    // Color Logic: Generate a diverging palette if none provided
-    // Negative (Red/Orange) -> Neutral (Gray) -> Positive (Green/Blue)
+    // Color Logic: Blue (Negative) -> Gray (Neutral) -> Red (Positive)
+    // Blue: #2196f3, Gray: #e0e0e0, Red: #f44336
     const getColor = (index: number) => {
-        if (colors && colors.length >= colCount) return colors[index];
+        // If we only have 1 column (fallback), use primary color
+        if (colCount <= 1) return 'var(--color-primary)';
 
         // Auto-generated diverging palette
-        if (hasNeutral && index === midPoint) return 'var(--gray-300)'; // Neutral
+        if (hasNeutral && index === midPoint) return '#e0e0e0'; // Neutral (Light Gray)
 
-        // If left side (negative)
+        // If left side (negative/low) -> Blue shades
         if (index < midPoint) {
-            // Darker red for more negative (0 is most negative)
-            // Linear interpolation from Dark Red to Light Red?
-            // Simple mapping for common sizes
-            if (index === 0) return '#d32f2f'; // Strong neg
-            if (index === 1) return '#e57373'; // Weak neg
-            return getChartColor(index);
+            // We want to go from Strong Blue (index 0) to WEAK Blue (index midPoint-1)
+            // Simple mapping
+            if (index === 0) return '#1565c0'; // Darker Blue
+            if (index === 1) return '#64b5f6'; // Light Blue
+            return '#2196f3'; // Default Blue
         }
 
-        // If right side (positive)
-        // Light Green to Dark Green
-        // Index goes from midPoint+1 to end
-        if (index === colCount - 1) return '#388e3c'; // Strong pos
-        if (index === colCount - 2) return '#81c784'; // Weak pos
-
-        return getChartColor(index);
+        // If right side (positive/high) -> Red shades
+        // We want to go from WEAK Red (midPoint+1) to STRONG Red (end)
+        if (index === colCount - 1) return '#d32f2f'; // Darker Red
+        if (index === colCount - 2) return '#ef5350'; // Light Red
+        return '#f44336'; // Default Red
     };
 
     return (
@@ -153,16 +151,19 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
             <g transform={`translate(${margin.left},${margin.top})`}>
 
                 {/* Legend */}
-                <g transform={`translate(${(innerWidth - (colCount * 100)) / 2}, -${margin.top - 10})`}>
-                    {columns.map((col, i) => (
-                        <g key={col.key} transform={`translate(${i * 100}, 0)`}>
-                            <rect width={12} height={12} rx={2} fill={getColor(i)} />
-                            <text x={18} y={10} className="text-[10px] fill-gray-600">
-                                {(col.label || '').length > 12 ? (col.label || '').substring(0, 10) + '...' : (col.label || '')}
-                            </text>
-                        </g>
-                    ))}
-                </g>
+                {/* Legend - Only show if we have multiple categories */}
+                {colCount > 1 && (
+                    <g transform={`translate(${(innerWidth - (colCount * 100)) / 2}, -${margin.top - 10})`}>
+                        {columns.map((col, i) => (
+                            <g key={col.key} transform={`translate(${i * 100}, 0)`}>
+                                <rect width={12} height={12} rx={2} fill={getColor(i)} />
+                                <text x={18} y={10} className="text-[10px] fill-gray-600">
+                                    {(col.label || '').length > 12 ? (col.label || '').substring(0, 10) + '...' : (col.label || '')}
+                                </text>
+                            </g>
+                        ))}
+                    </g>
+                )}
 
                 {/* Center Line */}
                 <line

@@ -84,8 +84,8 @@ export const VariableManager: React.FC<VariableManagerProps> = ({ onClose }) => 
             sets = sets.filter(vs => {
                 // Categorical includes: nominal (unordered), ordinal (ordered), text (open-ended)
                 const isCategorical = ['nominal', 'ordinal', 'text'].includes(vs.type || '');
-                // Numeric includes: scale (continuous), date (temporal)
-                const isNumeric = ['scale', 'date'].includes(vs.type || '');
+                // Numeric includes: numeric (continuous), date (temporal)
+                const isNumeric = ['numeric', 'date'].includes(vs.type || '');
                 return (facetFilters.types.includes('categorical') && isCategorical) ||
                     (facetFilters.types.includes('numeric') && isNumeric);
             });
@@ -125,7 +125,7 @@ export const VariableManager: React.FC<VariableManagerProps> = ({ onClose }) => 
 
     // Group variables by type for quick stats
     const typeStats = useMemo(() => {
-        const stats = { nominal: 0, ordinal: 0, scale: 0 };
+        const stats = { nominal: 0, ordinal: 0, numeric: 0 };
         variableSets.forEach(vs => {
             if (vs.type && vs.type in stats) {
                 stats[vs.type as keyof typeof stats]++;
@@ -219,7 +219,7 @@ export const VariableManager: React.FC<VariableManagerProps> = ({ onClose }) => 
                             </span>
                             <span className="flex items-center gap-1">
                                 <BarChart2 size={12} className="text-info" />
-                                {typeStats.scale} Numeric
+                                {typeStats.numeric} Numeric
                             </span>
                             <span className="text-gray-300">|</span>
                             <span>{variableSets.length} total</span>

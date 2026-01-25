@@ -21,9 +21,9 @@ export function recommendChart(context: RecommenderContext): ChartRecommendation
     // 1. Grid (Multiple Statements)
     if (isGrid) {
         return {
-            default: 'stacked-bar',
-            alternatives: ['grouped-bar', 'stacked-bar-100'],
-            reason: 'Grid variables show composition across statements.',
+            default: 'diverging-bar',
+            alternatives: ['stacked-bar', 'stacked-bar-100', 'grouped-bar'],
+            reason: 'Likert grids are best viewed as diverging bars.',
         };
     }
 
@@ -40,14 +40,15 @@ export function recommendChart(context: RecommenderContext): ChartRecommendation
     if (colVar) {
         // If we have a column variable, we are comparing groups
         if (primaryRowVar?.type === 'nominal' || primaryRowVar?.type === 'ordinal') {
+            const isLikert = colVar.type === 'ordinal' || colVar.type === 'numeric';
             return {
-                default: 'grouped-bar',
-                alternatives: ['stacked-bar-100', 'stacked-bar'],
+                default: isLikert ? 'diverging-bar' : 'grouped-bar',
+                alternatives: ['stacked-bar-100', 'stacked-bar', 'grouped-bar', 'diverging-bar'],
                 reason: 'Comparing nominal/ordinal groups across columns.',
             };
         }
-        // Scale x Nominal (e.g. Age by Gender) -> Box Plot
-        if (primaryRowVar?.type === 'scale') {
+        // Numeric x Nominal (e.g. Age by Gender) -> Box Plot
+        if (primaryRowVar?.type === 'numeric') {
             return {
                 default: 'grouped-box-plot',
                 // Note: violin/ridgeline require grouped histogram data from backend (not yet implemented)
@@ -58,7 +59,7 @@ export function recommendChart(context: RecommenderContext): ChartRecommendation
     }
 
     // 4. Two Scales (Scatter)
-    if (primaryRowVar?.type === 'scale' && colVar?.type === 'scale') {
+    if (primaryRowVar?.type === 'numeric' && colVar?.type === 'numeric') {
         return {
             default: 'scatter',
             // Note: hexbin requires raw (x,y) pairs, currently backend aggregates
@@ -78,15 +79,15 @@ export function recommendChart(context: RecommenderContext): ChartRecommendation
                 };
             case 'ordinal':
                 return {
-                    default: 'horizontal-bar', // TODO: Identify if it should be diverging
-                    alternatives: ['vertical-bar', 'diverging-bar'],
-                    reason: 'Ordinal data preserves order.',
+                    default: 'diverging-bar',
+                    alternatives: ['horizontal-bar', 'stacked-bar-100', 'vertical-bar'],
+                    reason: 'Ordinal data best viewed as distribution.',
                 };
-            case 'scale':
+            case 'numeric':
                 return {
                     default: 'histogram',
                     alternatives: ['box-plot'],
-                    reason: 'Scale variables show distribution.',
+                    reason: 'Numeric variables show distribution.',
                 };
         }
     }

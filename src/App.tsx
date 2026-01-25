@@ -691,7 +691,7 @@ export default function App() {
                       >
                         <option value="">None</option>
                         {variables
-                          .filter(v => v.type === 'scale')
+                          .filter(v => v.type === 'numeric')
                           .map(v => (
                             <option key={v.id} value={v.id}>
                               {v.label || v.name}

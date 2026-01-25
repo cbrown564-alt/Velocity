@@ -74,7 +74,7 @@ export const VARIABLES: Variable[] = [
     id: 'product_sat',
     name: 'product_sat',
     label: 'Product Satisfaction',
-    type: 'scale',
+    type: 'numeric',
     valueLabels: [],
     missingValues: { discrete: [-99] }
   },

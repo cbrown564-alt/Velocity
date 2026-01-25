@@ -48,12 +48,12 @@ describe('VariableCard', () => {
             expect(screen.getByText('ordinal')).toBeInTheDocument();
         });
 
-        it('displays scale type', () => {
+        it('displays numeric type', () => {
             render(
                 <VariableCard variableSet={mockScaleSet} />
             );
 
-            expect(screen.getByText('scale')).toBeInTheDocument();
+            expect(screen.getByText('numeric')).toBeInTheDocument();
         });
     });
 
@@ -62,7 +62,7 @@ describe('VariableCard', () => {
     // ==========================================================================
 
     describe('type icons', () => {
-        it('renders Hash icon for scale variables', () => {
+        it('renders Hash icon for numeric variables', () => {
             const { container } = render(
                 <VariableCard variableSet={mockScaleSet} />
             );

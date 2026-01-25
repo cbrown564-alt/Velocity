@@ -37,7 +37,7 @@ const getTypeIcon = (type?: string) => {
             return <Tag size={14} />;
         case 'ordinal':
             return <BarChart2 size={14} />;
-        case 'scale':
+        case 'numeric':
             return <Hash size={14} />;
         case 'text':
             return <Type size={14} />;
@@ -244,8 +244,8 @@ export const VariableSetColumn: React.FC = () => {
             sets = sets.filter(vs => {
                 // Categorical includes: nominal (unordered), ordinal (ordered), text (open-ended)
                 const isCategorical = ['nominal', 'ordinal', 'text'].includes(vs.type || '');
-                // Numeric includes: scale (continuous), date (temporal)
-                const isNumeric = ['scale', 'date'].includes(vs.type || '');
+                // Numeric includes: numeric (continuous), date (temporal)
+                const isNumeric = ['numeric', 'date'].includes(vs.type || '');
                 return (facetFilters.types.includes('categorical') && isCategorical) ||
                     (facetFilters.types.includes('numeric') && isNumeric);
             });

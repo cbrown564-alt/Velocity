@@ -236,8 +236,8 @@ export function useProcessedAnalysisData({
                     variable.valueLabels.forEach(vl => allKeys.add(String(vl.value)));
                 }
 
-                // Gap filling for ordinal/scale
-                if (variable && (variable.type === 'ordinal' || variable.type === 'scale')) {
+                // Gap filling for ordinal/numeric
+                if (variable && (variable.type === 'ordinal' || variable.type === 'numeric')) {
                     const numericKeys = Array.from(allKeys)
                         .map(k => parseFloat(k))
                         .filter(n => !isNaN(n) && Number.isInteger(n));
@@ -354,7 +354,7 @@ export function useProcessedAnalysisData({
 
                 const type = variable?.type || 'nominal';
 
-                if (type === 'ordinal' || type === 'scale') {
+                if (type === 'ordinal' || type === 'numeric') {
                     const valA = parseFloat(a.rawValue);
                     const valB = parseFloat(b.rawValue);
                     if (!isNaN(valA) && !isNaN(valB)) return valA - valB;

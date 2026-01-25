@@ -24,7 +24,7 @@ const getTypeIcon = (type: string) => {
             return <Tag size={14} />;
         case 'ordinal':
             return <BarChart2 size={14} />;
-        case 'scale':
+        case 'numeric':
             return <Hash size={14} />;
         default:
             return <Tag size={14} />;

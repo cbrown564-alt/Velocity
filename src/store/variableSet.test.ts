@@ -37,14 +37,14 @@ describe('Variable Logic', () => {
                 variables: [
                     { id: 'v1', name: 'Q1', label: 'Question 1', type: 'nominal', valueLabels: [], missingValues: {} },
                     { id: 'v2', name: 'Q2', label: 'Question 2', type: 'nominal', valueLabels: [], missingValues: {} },
-                    { id: 'v3', name: 'Q3', label: 'Question 3', type: 'scale', valueLabels: [], missingValues: {} }
+                    { id: 'v3', name: 'Q3', label: 'Question 3', type: 'numeric', valueLabels: [], missingValues: {} }
                 ],
                 source: 'sav'
             },
             variableSets: [
                 { id: 's1', name: 'Question 1', variableIds: ['v1'], structure: 'single', type: 'nominal' },
                 { id: 's2', name: 'Question 2', variableIds: ['v2'], structure: 'single', type: 'nominal' },
-                { id: 's3', name: 'Question 3', variableIds: ['v3'], structure: 'single', type: 'scale' }
+                { id: 's3', name: 'Question 3', variableIds: ['v3'], structure: 'single', type: 'numeric' }
             ]
         });
         vi.clearAllMocks();
