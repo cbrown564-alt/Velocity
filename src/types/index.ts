@@ -11,9 +11,14 @@
 // ============================================================================
 
 // Core types from arch_02_data_model.md
-// Survey-centric type system: nominal (categorical unordered), ordinal (categorical ordered),
-// numeric (continuous numeric), text (open-ended string), date (temporal)
-export type VariableType = 'nominal' | 'ordinal' | 'numeric' | 'text' | 'date';
+// Survey-centric type system:
+// - nominal: Unordered categories (e.g. Gender, City)
+// - ordinal: Ordered categories (e.g. Education, Frequency)
+// - scale: Likert items / Ratings (e.g. 1-10 Satisfaction, Agree-Disagree)
+// - numeric: Continuous variables (e.g. Age, Income)
+// - text: Open-ended string
+// - date: Temporal
+export type VariableType = 'nominal' | 'ordinal' | 'scale' | 'numeric' | 'text' | 'date';
 
 export interface ValueLabel {
   value: number;

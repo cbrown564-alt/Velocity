@@ -79,9 +79,15 @@ export function recommendChart(context: RecommenderContext): ChartRecommendation
                 };
             case 'ordinal':
                 return {
+                    default: 'horizontal-bar',
+                    alternatives: ['stacked-bar', 'stacked-bar-100', 'vertical-bar', 'diverging-bar'],
+                    reason: 'Ordinal data can be viewed as bars or distributions.',
+                };
+            case 'scale':
+                return {
                     default: 'diverging-bar',
-                    alternatives: ['horizontal-bar', 'stacked-bar-100', 'vertical-bar'],
-                    reason: 'Ordinal data best viewed as distribution.',
+                    alternatives: ['stacked-bar', 'vertical-bar', 'horizontal-bar'],
+                    reason: 'Scale data (Likert/Ratings) is best viewed as diverging bars.',
                 };
             case 'numeric':
                 return {

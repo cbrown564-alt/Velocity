@@ -13,7 +13,7 @@ import type { RecodeConfig } from '../../types';
 // Types
 // ============================================================================
 
-export type VariableType = 'nominal' | 'ordinal' | 'numeric' | 'text' | 'date';
+export type VariableType = 'nominal' | 'ordinal' | 'scale' | 'numeric' | 'text' | 'date';
 
 export interface ValueLabel {
     value: number;

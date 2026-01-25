@@ -48,7 +48,7 @@ export interface AnalysisSlice {
     addFilter: (filter: Omit<Filter, 'id'>) => void;
     removeFilter: (filterId: string) => void;
     clearFilters: () => void;
-    fetchVariableStats: (variableId: string, variableType?: 'nominal' | 'ordinal' | 'numeric' | 'text' | 'date', binCount?: number) => Promise<void>;
+    fetchVariableStats: (variableId: string, variableType?: 'nominal' | 'ordinal' | 'scale' | 'numeric' | 'text' | 'date', binCount?: number) => Promise<void>;
     reset: () => void;
 }
 
@@ -256,7 +256,7 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
         get().runAnalysis();
     },
 
-    fetchVariableStats: async (variableId: string, variableType?: 'nominal' | 'ordinal' | 'numeric' | 'text' | 'date', binCount?: number) => {
+    fetchVariableStats: async (variableId: string, variableType?: 'nominal' | 'ordinal' | 'scale' | 'numeric' | 'text' | 'date', binCount?: number) => {
         const { worker } = get();
         if (!worker) return;
 
