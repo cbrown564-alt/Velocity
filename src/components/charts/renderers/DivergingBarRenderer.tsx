@@ -169,10 +169,7 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
     // Use CSS variables for theme awareness? D3 scales need loose color strings, 
     // but we can query the computed style or use hardcoded theme-aware fallbacks if needed.
     // Ideally we use var(--color-info) -> var(--bg-active) -> var(--color-error)
-    const colorScale = d3.scaleLinear<string>()
-        .domain([0, 0.5, 1])
-        .range(['var(--color-info)', 'var(--bg-active)', 'var(--color-error)']);
-
+    // Use discrete CSS variables to avoid D3 interpolation issues with var() strings.
     const getColumnColor = (key: string) => {
         // Is it special?
         const specIdx = specialColumns.findIndex(c => c.key === key);
@@ -181,8 +178,10 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
         // Is it scale?
         const scaleIdx = scaleColumns.findIndex(c => c.key === key);
         if (scaleIdx >= 0) {
-            const t = scaleIdx / (scaleColumns.length - 1);
-            return colorScale(t);
+            // Map index (0..N-1) to 1..5 range
+            const normalized = scaleIdx / (scaleColumns.length - 1); // 0 to 1
+            const step = Math.round(normalized * 4) + 1; // 1 to 5
+            return `var(--viz-diverging-${step})`;
         }
         return 'var(--bg-surface)';
     };
@@ -190,10 +189,14 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
     // Color Accessor for sorting or legend
     const getLegendColors = () => {
         // Scale labels
-        const labels = scaleColumns.map((c, i) => ({
-            label: c.label,
-            color: colorScale(i / (scaleColumns.length - 1))
-        }));
+        const labels = scaleColumns.map((c, i) => {
+            const normalized = i / (scaleColumns.length - 1);
+            const step = Math.round(normalized * 4) + 1;
+            return {
+                label: c.label,
+                color: `var(--viz-diverging-${step})`
+            };
+        });
         // Special labels
         specialColumns.forEach(c => {
             labels.push({ label: c.label, color: 'var(--text-secondary)' });

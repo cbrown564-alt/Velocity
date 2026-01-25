@@ -193,9 +193,9 @@ export const StackedBarRenderer: React.FC<StackedBarRendererProps> = ({
                                     width={12}
                                     height={12}
                                     rx={1}
-                                    fill={colors ? colors[i % colors.length] : 'var(--viz-fill-primary)'}
+                                    fill={colors ? colors[i % colors.length] : `var(--viz-palette-${(i % 6) + 1})`}
                                     style={{
-                                        fillOpacity: 1 - (i * 0.15) // Fallback differentiation if no colors
+                                        fillOpacity: 0.8
                                     }}
                                 />
                                 <text
@@ -262,8 +262,8 @@ export const StackedBarRenderer: React.FC<StackedBarRendererProps> = ({
                 {stackedSeries.map((seriesItem, seriesIndex) => (
                     <g
                         key={stackKeys[seriesIndex]}
-                        fill={colors ? colors[seriesIndex % colors.length] : 'var(--viz-fill-primary)'}
-                        fillOpacity={colors ? 1 : 1 - (seriesIndex * 0.15)}
+                        fill={colors ? colors[seriesIndex % colors.length] : `var(--viz-palette-${(seriesIndex % 6) + 1})`}
+                        fillOpacity={colors ? 1 : 0.8}
                     >
                         {seriesItem.map((d, i) => {
                             const barWidth = xScale(d[1]) - xScale(d[0]);

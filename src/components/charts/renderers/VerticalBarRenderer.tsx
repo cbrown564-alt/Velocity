@@ -169,10 +169,11 @@ export const VerticalBarRenderer: React.FC<BaseChartRendererProps> = ({
                                 y={yScale(d.value)}
                                 width={xScale.bandwidth()}
                                 height={barHeight}
-                                // Holographic
-                                fill="var(--viz-fill-primary)"
-                                stroke={isSelected ? 'var(--text-accent)' : 'var(--viz-stroke-bar)'}
-                                strokeWidth={isSelected ? 2 : 1}
+                                // Use palette colors if available, otherwise fall back to primary
+                                fill={colors ? colors[0] : 'var(--viz-fill-secondary)'}
+                                fillOpacity={0.8}
+                                stroke={isSelected ? 'var(--text-accent)' : 'none'}
+                                strokeWidth={isSelected ? 2 : 0}
                                 rx={1}
                                 className="hover:opacity-90"
                                 style={{ transition: 'height 0.3s cubic-bezier(0.4, 0, 0.2, 1)' }}

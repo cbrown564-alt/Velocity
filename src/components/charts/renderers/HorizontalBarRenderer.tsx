@@ -369,10 +369,11 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
                                 y={y}
                                 height={yScale.bandwidth()}
                                 width={barWidth}
-                                // The Mission Control Holographic Effect:
-                                fill={isDropTarget ? 'var(--status-success-bg)' : 'var(--viz-fill-primary)'}
-                                stroke={isSelected ? 'var(--text-accent)' : 'var(--viz-stroke-bar)'}
-                                strokeWidth={isSelected ? 2 : 1} // Always have a 1px stroke
+                                // Use palette colors if available, otherwise fall back to primary
+                                fill={isDropTarget ? 'var(--status-success-bg)' : (colors ? colors[0] : 'var(--viz-fill-secondary)')}
+                                fillOpacity={0.8}
+                                stroke={isSelected ? 'var(--text-accent)' : 'none'} // Remove stroke unless selected
+                                strokeWidth={isSelected ? 2 : 0}
                                 rx={1} // Slight rounding looks more "UI" than "Data"
                                 style={{
                                     transition: dragState.isDragging ? 'none' : 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)',

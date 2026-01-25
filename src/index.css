@@ -78,6 +78,26 @@
   --viz-stroke-bar: var(--theme-viz-stroke-bar);
   /* Bar strokes */
 
+  /* Categorical Data Palette */
+  --viz-palette-1: var(--theme-viz-palette-1);
+  --viz-palette-2: var(--theme-viz-palette-2);
+  --viz-palette-3: var(--theme-viz-palette-3);
+  --viz-palette-4: var(--theme-viz-palette-4);
+  --viz-palette-5: var(--theme-viz-palette-5);
+  --viz-palette-6: var(--theme-viz-palette-6);
+
+  /* Diverging/Scale Data */
+  --viz-scale-negative: var(--theme-viz-scale-negative);
+  --viz-scale-neutral: var(--theme-viz-scale-neutral);
+  --viz-scale-neutral: var(--theme-viz-scale-neutral);
+  --viz-scale-positive: var(--theme-viz-scale-positive);
+
+  --viz-diverging-1: var(--theme-viz-diverging-1);
+  --viz-diverging-2: var(--theme-viz-diverging-2);
+  --viz-diverging-3: var(--theme-viz-diverging-3);
+  --viz-diverging-4: var(--theme-viz-diverging-4);
+  --viz-diverging-5: var(--theme-viz-diverging-5);
+
   /* Legacy Functional (Deprecating slowly or remapping) */
   --color-accent: var(--theme-color-accent);
   --color-accent-hover: var(--theme-color-accent-hover);
@@ -181,8 +201,41 @@
   --theme-viz-text-value: #FFFFFF;
   /* Text on Primary Bar */
   --theme-viz-text-axis: #78716C;
-  --theme-viz-stroke-bar: #FDFCFA;
   /* Match panel bg for gap effect */
+
+  /* Categorical Palette */
+  --theme-viz-palette-1: #57534E;
+  /* Warm Grey */
+  --theme-viz-palette-2: #E07A5F;
+  /* Terra Cotta */
+  --theme-viz-palette-3: #D97706;
+  /* Ochre */
+  --theme-viz-palette-4: #52796F;
+  /* Sage */
+  --theme-viz-palette-5: #3D405B;
+  /* Navy */
+  --theme-viz-palette-6: #81B29A;
+  /* Dusty Green */
+
+  /* Scale / Diverging */
+  --theme-viz-scale-negative: #3D405B;
+  /* Cold */
+  --theme-viz-scale-neutral: #D6D3D1;
+  /* Neutral */
+  --theme-viz-scale-positive: #E07A5F;
+  /* Hot */
+
+  /* Discrete Diverging Scale (5-point) */
+  --theme-viz-diverging-1: #3D405B;
+  /* Strong Negative */
+  --theme-viz-diverging-2: #898696;
+  /* Leaning Negative */
+  --theme-viz-diverging-3: #D6D3D1;
+  /* Neutral */
+  --theme-viz-diverging-4: #DCA698;
+  /* Leaning Positive */
+  --theme-viz-diverging-5: #E07A5F;
+  /* Strong Positive */
 
   --shadow-inset: inset 0 1px 2px rgba(28, 28, 28, 0.05);
   --shadow-float: 0 4px 12px rgba(28, 28, 28, 0.08);
@@ -253,6 +306,40 @@
   --theme-viz-text-axis: #9AA0A6;
   --theme-viz-stroke-bar: #00D4FF;
   /* Solid Cyan Stroke */
+
+  /* Categorical Palette */
+  --theme-viz-palette-1: #00D4FF;
+  /* Cyan */
+  --theme-viz-palette-2: #00E5A0;
+  /* Mint */
+  --theme-viz-palette-3: #FFB800;
+  /* Amber */
+  --theme-viz-palette-4: #D500F9;
+  /* Neon Purple */
+  --theme-viz-palette-5: #FF0080;
+  /* Hot Pink */
+  --theme-viz-palette-6: #2979FF;
+  /* Bright Blue */
+
+  /* Scale / Diverging */
+  --theme-viz-scale-negative: #00D4FF;
+  /* Cold */
+  --theme-viz-scale-neutral: #3C4043;
+  /* Neutral */
+  --theme-viz-scale-positive: #FF5252;
+  /* Hot */
+
+  /* Discrete Diverging Scale (5-point) */
+  --theme-viz-diverging-1: #00D4FF;
+  /* Strong Negative */
+  --theme-viz-diverging-2: #347A8B;
+  /* Leaning Negative */
+  --theme-viz-diverging-3: #3C4043;
+  /* Neutral */
+  --theme-viz-diverging-4: #9A4E4E;
+  /* Leaning Positive */
+  --theme-viz-diverging-5: #FF5252;
+  /* Strong Positive */
 
   --shadow-inset: inset 0 1px 2px rgba(0, 0, 0, 0.5);
   --shadow-float: 0 4px 20px rgba(0, 0, 0, 0.6);

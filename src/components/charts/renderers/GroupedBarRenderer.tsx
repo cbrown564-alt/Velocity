@@ -4,11 +4,12 @@ import { max } from 'd3-array';
 import { BaseChartRendererProps } from '../../../types/charts';
 // getChartColor removed use palette
 const DEFAULT_PALETTE = [
-    'var(--viz-fill-secondary)',
-    'var(--status-warning-text)',
-    'var(--status-error-text)',
-    'var(--status-success-text)',
-    'var(--text-primary)',
+    'var(--viz-palette-1)',
+    'var(--viz-palette-2)',
+    'var(--viz-palette-3)',
+    'var(--viz-palette-4)',
+    'var(--viz-palette-5)',
+    'var(--viz-palette-6)',
 ];
 
 /**
@@ -209,10 +210,7 @@ export const GroupedBarRenderer: React.FC<BaseChartRendererProps> = ({
                                             width={barWidth}
                                             height={barHeight}
                                             fill={color}
-                                            fillOpacity={0.2}
-                                            stroke={color}
-                                            strokeWidth={1}
-                                            rx={1}
+                                            fillOpacity={0.8}
                                             style={{
                                                 transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                                                 cursor: interactive ? 'pointer' : 'default',

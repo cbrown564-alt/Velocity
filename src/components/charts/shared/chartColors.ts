@@ -3,12 +3,12 @@
  * Maps to CSS variables defined in index.css for consistency with the design system.
  */
 export const CHART_PALETTE = [
-    'var(--color-terracotta)',   // #E07A5F
-    'var(--color-success)',      // #52796F
-    'var(--color-warning)',      // #F4A261
-    'var(--color-info)',         // #84A59D
-    'var(--gray-600)',           // #57534E
-    'var(--color-primary)',      // Fallback
+    'var(--viz-palette-1)',
+    'var(--viz-palette-2)',
+    'var(--viz-palette-3)',
+    'var(--viz-palette-4)',
+    'var(--viz-palette-5)',
+    'var(--viz-palette-6)',
 ];
 
 /**

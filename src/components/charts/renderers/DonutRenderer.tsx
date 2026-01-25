@@ -3,11 +3,12 @@ import * as d3 from 'd3-shape';
 import { BaseChartRendererProps } from '../../../types/charts';
 // getChartColor removed use palette
 const DEFAULT_PALETTE = [
-    'var(--viz-fill-secondary)',
-    'var(--status-warning-text)',
-    'var(--status-error-text)',
-    'var(--status-success-text)',
-    'var(--text-primary)',
+    'var(--viz-palette-1)',
+    'var(--viz-palette-2)',
+    'var(--viz-palette-3)',
+    'var(--viz-palette-4)',
+    'var(--viz-palette-5)',
+    'var(--viz-palette-6)',
 ];
 
 interface DonutDatum {
