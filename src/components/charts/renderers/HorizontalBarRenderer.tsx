@@ -4,7 +4,7 @@ import { select } from 'd3-selection';
 import { brushY } from 'd3-brush';
 import { max } from 'd3-array';
 import { BaseChartRendererProps } from '../../../types/charts';
-import { getChartColor } from '../shared/chartColors';
+// getChartColor removed replaced by CSS vars
 import { ChartDataPoint } from '../../../hooks/useProcessedAnalysisData';
 
 interface DragState {
@@ -51,7 +51,7 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
 
     // Dynamic margin based on label length
     const maxLabelLength = Math.max(...chartData.map(d => (d.label || '').length), 10);
-    const leftMargin = Math.min(Math.max(maxLabelLength * 6, 80), 220); // More space for labels
+    const leftMargin = Math.min(Math.max(maxLabelLength * 7, 100), 240); // Slightly wider for mono font
 
     const margin = { top: 24, right: 60, bottom: 24, left: leftMargin };
     const innerWidth = Math.max(width - margin.left - margin.right, 100);
@@ -258,10 +258,10 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
             height={Math.max(height, actualHeight + margin.top + margin.bottom)}
             style={{
                 overflow: 'visible',
-                fontFamily: 'var(--font-body)',
+                fontFamily: 'var(--font-mono)', // Changed to Mono for data precision
                 cursor: dragState.isDragging ? 'grabbing' : 'default',
             }}
-            onContextMenu={handleBackgroundContextMenu}
+        // onContextMenu={handleBackgroundContextMenu} // Add back your handler
         >
             <g transform={`translate(${margin.left},${margin.top})`}>
                 {/* Grid lines */}
@@ -273,20 +273,23 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
                         x2={xScale(tick)}
                         y2={actualHeight}
                         stroke="var(--viz-grid-line)"
-                        strokeDasharray="0"
+                        strokeDasharray="2,2" // Dashed for subtlety in dark mode
                     />
                 ))}
 
-                {/* X-axis */}
                 <g transform={`translate(0,${actualHeight})`}>
-                    <line x1={0} y1={0} x2={innerWidth} y2={0} stroke="var(--border-color)" />
+                    <line x1={0} y1={0} x2={innerWidth} y2={0} stroke="var(--viz-stroke-main)" />
                     {xTicks.map(tick => (
                         <g key={tick} transform={`translate(${xScale(tick)},0)`}>
                             <line y2={4} stroke="var(--viz-stroke-main)" />
                             <text
                                 y={16}
                                 textAnchor="middle"
-                                style={{ fontSize: '10px', fill: 'var(--viz-text-axis)' }}
+                                style={{
+                                    fontSize: '10px',
+                                    fontFamily: 'var(--font-mono)', // Mono
+                                    fill: 'var(--viz-text-axis)'
+                                }}
                             >
                                 {tick}
                             </text>
@@ -302,8 +305,9 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
                         y={(yScale(d.label) || 0) + yScale.bandwidth() / 2}
                         dy=".35em"
                         textAnchor="end"
-                        className="text-xs font-body"
+                        className="text-xs"
                         style={{
+                            fontFamily: 'var(--font-body)', // Keep labels as Sans for readability
                             fontWeight: selectedKeys?.has(d.label) ? 600 : 400,
                             fill: selectedKeys?.has(d.label) ? 'var(--text-primary)' : 'var(--viz-text-axis)',
                         }}
@@ -322,7 +326,6 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
 
                     // Determine bar color based on state
                     // Single color for all bars in this chart type
-                    const barColor = colors ? colors[0] : getChartColor(0);
 
                     return (
                         <g
@@ -354,23 +357,25 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
                                     width={innerWidth + 8}
                                     x={-4}
                                     fill="none"
-                                    stroke="var(--color-success)"
+                                    stroke="var(--status-success-text)" // Mint Green
                                     strokeWidth={2}
                                     strokeDasharray="4,2"
-                                    rx={5}
+                                    rx={4}
                                 />
                             )}
 
-                            {/* Actual bar - Square, no shadow */}
+                            {/* Actual bar: Transparent Fill + Solid Stroke */}
                             <rect
                                 y={y}
                                 height={yScale.bandwidth()}
                                 width={barWidth}
-                                fill={isDropTarget ? 'var(--color-success)' : barColor}
-                                stroke={isSelected ? 'var(--border-color-active)' : 'var(--viz-stroke-bar)'}
-                                strokeWidth={isSelected ? 2 : 0}
+                                // The Mission Control Holographic Effect:
+                                fill={isDropTarget ? 'var(--status-success-bg)' : 'var(--viz-fill-primary)'}
+                                stroke={isSelected ? 'var(--text-accent)' : 'var(--viz-stroke-bar)'}
+                                strokeWidth={isSelected ? 2 : 1} // Always have a 1px stroke
+                                rx={1} // Slight rounding looks more "UI" than "Data"
                                 style={{
-                                    transition: dragState.isDragging ? 'none' : 'width 0.3s ease-out',
+                                    transition: dragState.isDragging ? 'none' : 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                                     cursor: onMerge ? 'grab' : (interactive ? 'pointer' : 'default'),
                                 }}
                                 className="hover:opacity-90"
@@ -384,8 +389,8 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
                                     dy=".35em"
                                     style={{
                                         fontSize: 'var(--text-xs)',
-                                        fontFamily: 'var(--font-body)',
-                                        fill: isSelected ? 'var(--gray-900)' : 'var(--gray-600)',
+                                        fontFamily: 'var(--font-mono)', // Data numbers = Mono
+                                        fill: isSelected ? 'var(--text-primary)' : 'var(--viz-text-value)',
                                     }}
                                 >
                                     {labelMode === 'percent'
@@ -411,9 +416,9 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
                             y={dragState.currentY - (svgRef.current?.getBoundingClientRect().top || 0) - margin.top - yScale.bandwidth() / 2}
                             width={xScale(dragState.draggedItem.value)}
                             height={yScale.bandwidth()}
-                            fill="var(--color-terracotta)"
+                            fill="var(--viz-fill-secondary)" // Solid Cyan for dragging
                             rx={3}
-                            stroke="var(--gray-800)"
+                            stroke="var(--border-color-active)"
                             strokeWidth={2}
                         />
                         <text

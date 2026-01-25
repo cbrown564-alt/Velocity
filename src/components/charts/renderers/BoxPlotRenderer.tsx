@@ -1,7 +1,7 @@
 import React, { useMemo, useRef, useCallback } from 'react';
 import * as d3scale from 'd3-scale';
 import { BaseChartRendererProps } from '../../../types/charts';
-import { getChartColor } from '../shared/chartColors';
+// getChartColor removed
 
 /**
  * Box Plot Renderer
@@ -76,21 +76,23 @@ export const BoxPlotRenderer: React.FC<BaseChartRendererProps> = ({
     const boxWidth = Math.min(innerWidth / 2, 100);
     const center = innerWidth / 2;
 
-    const color = colors ? colors[0] : getChartColor(0);
+    // Holographic styling
+    const boxFill = 'var(--viz-fill-primary)';
+    const boxStroke = 'var(--viz-stroke-bar)';
 
     return (
-        <svg width={width} height={height} style={{ overflow: 'visible', fontFamily: 'var(--font-body)' }}>
+        <svg width={width} height={height} style={{ overflow: 'visible', fontFamily: 'var(--font-mono)' }}>
             <g transform={`translate(${margin.left},${margin.top})`}>
                 {/* Y Axis */}
-                <line x1={0} y1={0} x2={0} y2={innerHeight} stroke="var(--gray-300)" />
+                <line x1={0} y1={0} x2={0} y2={innerHeight} stroke="var(--viz-stroke-main)" />
                 {yScale.ticks(5).map(tick => (
                     <g key={tick} transform={`translate(0,${yScale(tick)})`}>
-                        <line x2={-6} stroke="var(--gray-300)" />
+                        <line x2={-6} stroke="var(--viz-stroke-main)" />
                         <text
                             x={-10}
                             dy=".32em"
                             textAnchor="end"
-                            style={{ fontSize: '10px', fill: 'var(--gray-500)' }}
+                            style={{ fontSize: '10px', fill: 'var(--viz-text-axis)' }}
                         >
                             {tick}
                         </text>
@@ -103,7 +105,7 @@ export const BoxPlotRenderer: React.FC<BaseChartRendererProps> = ({
                         textAnchor="middle"
                         style={{
                             fontSize: '11px',
-                            fill: 'var(--gray-600)',
+                            fill: 'var(--viz-text-axis)',
                             fontWeight: 500,
                         }}
                     >
@@ -119,20 +121,20 @@ export const BoxPlotRenderer: React.FC<BaseChartRendererProps> = ({
                     <line
                         x1={center} y1={yScale(stats.whiskerMin ?? min)}
                         x2={center} y2={yScale(stats.whiskerMax ?? max)}
-                        stroke="var(--gray-400)"
+                        stroke="var(--viz-stroke-bar)"
                         strokeDasharray="4,4"
                     />
                     {/* Min Cap */}
                     <line
                         x1={center - boxWidth / 4} y1={yScale(stats.whiskerMin ?? min)}
                         x2={center + boxWidth / 4} y2={yScale(stats.whiskerMin ?? min)}
-                        stroke="var(--gray-400)"
+                        stroke="var(--viz-stroke-bar)"
                     />
                     {/* Max Cap */}
                     <line
                         x1={center - boxWidth / 4} y1={yScale(stats.whiskerMax ?? max)}
                         x2={center + boxWidth / 4} y2={yScale(stats.whiskerMax ?? max)}
-                        stroke="var(--gray-400)"
+                        stroke="var(--viz-stroke-bar)"
                     />
 
                     {/* Box (Q1 to Q3) */}
@@ -141,10 +143,9 @@ export const BoxPlotRenderer: React.FC<BaseChartRendererProps> = ({
                         y={yScale(q3)}
                         width={boxWidth}
                         height={Math.abs(yScale(q1) - yScale(q3))}
-                        fill={color}
-                        fillOpacity={0.6}
-                        stroke={color}
-                        rx={2}
+                        fill={boxFill}
+                        stroke={boxStroke}
+                        rx={1}
                     />
 
                     {/* Median Line */}
@@ -153,7 +154,7 @@ export const BoxPlotRenderer: React.FC<BaseChartRendererProps> = ({
                         y1={yScale(median)}
                         x2={center + boxWidth / 2}
                         y2={yScale(median)}
-                        stroke="white"
+                        stroke="var(--text-primary)"
                         strokeWidth={2}
                     />
 
@@ -165,7 +166,7 @@ export const BoxPlotRenderer: React.FC<BaseChartRendererProps> = ({
                             cy={yScale(val)}
                             r={3}
                             fill="transparent"
-                            stroke={color}
+                            stroke={boxStroke}
                             strokeWidth={1.5}
                         >
                             <title>Outlier: {val}</title>

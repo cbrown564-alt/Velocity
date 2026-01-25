@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import * as d3scale from 'd3-scale';
 import { hexbin as d3Hexbin } from 'd3-hexbin';
 import { BaseChartRendererProps } from '../../../types/charts';
-import { getChartColor } from '../shared/chartColors';
+// getChartColor removed
 
 export const HexbinRenderer: React.FC<BaseChartRendererProps> = ({
     width,
@@ -67,27 +67,27 @@ export const HexbinRenderer: React.FC<BaseChartRendererProps> = ({
 
     // Color Scale for Density
     const maxCount = Math.max(...bins.map(b => b.length));
-    const baseColor = colors ? colors[0] : getChartColor(0);
+    const baseColor = 'var(--viz-fill-secondary)'; // Solid accent color for density mapping
 
     // Create a sequential scale based on opacity or just use the base color with opacity
     const opacityScale = d3scale.scaleLinear()
         .domain([0, maxCount])
-        .range([0.2, 1]); // Min opacity 0.2, max 1
+        .range([0.1, 0.8]); // Holographic range
 
     return (
-        <svg width={width} height={height} className="overflow-visible font-body">
+        <svg width={width} height={height} className="overflow-visible font-mono">
             <g transform={`translate(${margin.left},${margin.top})`}>
 
                 {/* Axes */}
                 <g transform={`translate(0,${innerHeight})`}>
-                    <line x1={0} y1={0} x2={innerWidth} y2={0} stroke="var(--border-color)" />
+                    <line x1={0} y1={0} x2={innerWidth} y2={0} stroke="var(--viz-stroke-main)" />
                     {xScale.ticks(5).map(tick => (
                         <g key={tick} transform={`translate(${xScale(tick)},0)`}>
-                            <line y2={4} stroke="var(--border-color)" />
+                            <line y2={4} stroke="var(--viz-stroke-main)" />
                             <text
                                 y={16}
                                 textAnchor="middle"
-                                className="text-[10px] fill-[var(--text-secondary)]"
+                                className="text-[10px] fill-[var(--viz-text-axis)] font-mono"
                             >
                                 {tick}
                             </text>
@@ -96,11 +96,11 @@ export const HexbinRenderer: React.FC<BaseChartRendererProps> = ({
                 </g>
 
                 <g>
-                    <line x1={0} y1={0} x2={0} y2={innerHeight} stroke="var(--border-color)" />
+                    <line x1={0} y1={0} x2={0} y2={innerHeight} stroke="var(--viz-stroke-main)" />
                     {yScale.ticks(5).map(tick => (
                         <g key={tick} transform={`translate(0,${yScale(tick)})`}>
-                            <line x2={-6} stroke="var(--border-color)" />
-                            <text x={-10} dy=".32em" textAnchor="end" className="text-[10px] fill-[var(--text-secondary)]">
+                            <line x2={-6} stroke="var(--viz-stroke-main)" />
+                            <text x={-10} dy=".32em" textAnchor="end" className="text-[10px] fill-[var(--viz-text-axis)] font-mono">
                                 {tick}
                             </text>
                         </g>

@@ -8,32 +8,62 @@ module.exports = {
     theme: {
         extend: {
             colors: {
-                ink: 'var(--color-ink)',
-                paper: 'var(--color-paper)',
-                terracotta: 'var(--color-terracotta)',
-                charcoal: 'var(--color-charcoal)',
-                parchment: 'var(--color-parchment)',
-                success: 'var(--color-success)',
-                warning: 'var(--color-warning)',
-                error: 'var(--color-error)',
-                info: 'var(--color-info)',
+                // 1. Surface & Backgrounds
+                bg: {
+                    app: 'var(--bg-app)',       // #0D0D0D
+                    panel: 'var(--bg-panel)',   // #141619
+                    surface: 'var(--bg-surface)', // #1C1F24
+                    active: 'var(--bg-active)',
+                },
+                // 2. Typography
+                text: {
+                    primary: 'var(--text-primary)', // #E8EAED
+                    secondary: 'var(--text-secondary)',
+                    accent: 'var(--text-accent)',   // #00D4FF
+                    inverse: 'var(--text-inverse)',
+                },
+                // 3. Borders & Dividers
+                border: {
+                    DEFAULT: 'var(--border-color)',
+                    muted: 'var(--border-color-muted)',
+                    active: 'var(--border-color-active)',
+                    grid: 'var(--border-grid)',
+                    subtle: 'var(--border-subtle)',
+                },
+                // 4. Data Visualization Palette (The Holographic System)
+                viz: {
+                    fill: {
+                        primary: 'var(--viz-fill-primary)',   // Transparent Cyan
+                        secondary: 'var(--viz-fill-secondary)', // Solid Cyan
+                        muted: 'var(--viz-fill-muted)',
+                    },
+                    stroke: {
+                        main: 'var(--viz-stroke-main)',
+                        bar: 'var(--viz-stroke-bar)',         // Solid Cyan Stroke
+                    },
+                    grid: 'var(--viz-grid-line)',
+                    text: {
+                        value: 'var(--viz-text-value)',
+                        axis: 'var(--viz-text-axis)',
+                    }
+                },
+                // 5. Functional Status
+                status: {
+                    error: { bg: 'var(--status-error-bg)', text: 'var(--status-error-text)' },
+                    warning: { bg: 'var(--status-warning-bg)', text: 'var(--status-warning-text)' },
+                    success: { bg: 'var(--status-success-bg)', text: 'var(--status-success-text)' },
+                },
+                // Legacy/Generic (Mapped to new system)
                 gray: {
-                    50: 'var(--gray-50)',
-                    100: 'var(--gray-100)',
-                    200: 'var(--gray-200)',
-                    300: 'var(--gray-300)',
-                    400: 'var(--gray-400)',
-                    500: 'var(--gray-500)',
-                    600: 'var(--gray-600)',
-                    700: 'var(--gray-700)',
-                    800: 'var(--gray-800)',
-                    900: 'var(--gray-900)',
+                    800: '#1E1E1E', // Dark Grey for manual overrides if needed
+                    900: '#0D0D0D', // Deep Charcoal
                 }
             },
             fontFamily: {
-                display: ['var(--font-display)', 'serif'],
-                body: ['var(--font-body)', 'sans-serif'],
-                mono: ['var(--font-mono)', 'monospace'],
+                // Mission Control Fonts
+                sans: ['var(--font-body)', 'sans-serif'],    // DM Sans
+                display: ['var(--font-display)', 'serif'],   // Using serif fallback as per original
+                mono: ['var(--font-mono)', 'monospace'],     // JetBrains Mono
             },
             spacing: {
                 1: 'var(--space-1)',

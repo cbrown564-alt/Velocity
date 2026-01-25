@@ -2,7 +2,14 @@ import React, { useMemo, useCallback } from 'react';
 import * as d3 from 'd3-scale';
 import { max } from 'd3-array';
 import { BaseChartRendererProps } from '../../../types/charts';
-import { getChartColor } from '../shared/chartColors';
+// getChartColor removed use palette
+const DEFAULT_PALETTE = [
+    'var(--viz-fill-secondary)',
+    'var(--status-warning-text)',
+    'var(--status-error-text)',
+    'var(--status-success-text)',
+    'var(--text-primary)',
+];
 
 /**
  * Grouped Bar Chart Renderer
@@ -105,7 +112,7 @@ export const GroupedBarRenderer: React.FC<BaseChartRendererProps> = ({
         <svg
             width={width}
             height={Math.max(height, actualHeight + margin.top + margin.bottom)}
-            style={{ overflow: 'visible', fontFamily: 'var(--font-body)' }}
+            style={{ overflow: 'visible', fontFamily: 'var(--font-mono)' }}
         >
             <g transform={`translate(${margin.left},${margin.top})`}>
                 {/* Legend (Top) */}
@@ -117,8 +124,9 @@ export const GroupedBarRenderer: React.FC<BaseChartRendererProps> = ({
                                 <rect
                                     width={12}
                                     height={12}
-                                    rx={2}
-                                    fill={colors ? colors[i % colors.length] : getChartColor(i)}
+                                    rx={1}
+                                    fill={colors ? colors[i % colors.length] : DEFAULT_PALETTE[i % DEFAULT_PALETTE.length]}
+                                    fillOpacity={0.8}
                                 />
                                 <text
                                     x={18}
@@ -140,21 +148,21 @@ export const GroupedBarRenderer: React.FC<BaseChartRendererProps> = ({
                         y1={0}
                         x2={xScale(tick)}
                         y2={actualHeight}
-                        stroke="var(--gray-100)"
+                        stroke="var(--viz-grid-line)"
                         strokeDasharray="2,2"
                     />
                 ))}
 
                 {/* X-axis */}
                 <g transform={`translate(0,${actualHeight})`}>
-                    <line x1={0} y1={0} x2={innerWidth} y2={0} stroke="var(--gray-200)" />
+                    <line x1={0} y1={0} x2={innerWidth} y2={0} stroke="var(--viz-stroke-main)" />
                     {xTicks.map(tick => (
                         <g key={tick} transform={`translate(${xScale(tick)},0)`}>
-                            <line y2={4} stroke="var(--gray-300)" />
+                            <line y2={4} stroke="var(--viz-stroke-main)" />
                             <text
                                 y={18}
                                 textAnchor="middle"
-                                style={{ fontSize: '10px', fill: 'var(--gray-500)' }}
+                                style={{ fontSize: '10px', fill: 'var(--viz-text-axis)' }}
                             >
                                 {tick.toLocaleString()}
                             </text>
@@ -170,7 +178,7 @@ export const GroupedBarRenderer: React.FC<BaseChartRendererProps> = ({
                         y={(y0Scale(r.label) || 0) + y0Scale.bandwidth() / 2}
                         dy=".35em"
                         textAnchor="end"
-                        style={{ fontSize: 'var(--font-size-xs)', fill: 'var(--gray-700)', fontFamily: 'var(--font-body)' }}
+                        style={{ fontSize: 'var(--font-size-xs)', fill: 'var(--viz-text-axis)', fontFamily: 'var(--font-body)' }}
                     >
                         {r.label && r.label.length > 25 ? r.label.substring(0, 23) + '...' : r.label}
                     </text>
@@ -192,6 +200,7 @@ export const GroupedBarRenderer: React.FC<BaseChartRendererProps> = ({
                                 const barY = y1Scale(colKey) || 0;
                                 const barHeight = y1Scale.bandwidth();
 
+                                const color = colors ? colors[i % colors.length] : DEFAULT_PALETTE[i % DEFAULT_PALETTE.length];
                                 return (
                                     <g key={colKey}>
                                         <rect
@@ -199,9 +208,13 @@ export const GroupedBarRenderer: React.FC<BaseChartRendererProps> = ({
                                             x={0}
                                             width={barWidth}
                                             height={barHeight}
-                                            fill={colors ? colors[i % colors.length] : getChartColor(i)}
+                                            fill={color}
+                                            fillOpacity={0.2}
+                                            stroke={color}
+                                            strokeWidth={1}
+                                            rx={1}
                                             style={{
-                                                transition: 'all 0.3s',
+                                                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                                                 cursor: interactive ? 'pointer' : 'default',
                                             }}
                                         />
@@ -217,7 +230,8 @@ export const GroupedBarRenderer: React.FC<BaseChartRendererProps> = ({
                                                     fontWeight: 500,
                                                     fill: 'white',
                                                     pointerEvents: 'none',
-                                                    textShadow: '0 1px 2px rgba(0,0,0,0.3)',
+                                                    textShadow: 'none',
+                                                    fontFamily: 'var(--font-mono)',
                                                 }}
                                             >
                                                 {count.toLocaleString()}
@@ -236,7 +250,7 @@ export const GroupedBarRenderer: React.FC<BaseChartRendererProps> = ({
                     y1={0}
                     x2={0}
                     y2={actualHeight}
-                    stroke="var(--gray-300)"
+                    stroke="var(--viz-stroke-main)"
                 />
             </g>
         </svg>

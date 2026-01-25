@@ -1,7 +1,14 @@
 import React, { useMemo, useCallback } from 'react';
 import * as d3 from 'd3-shape';
 import { BaseChartRendererProps } from '../../../types/charts';
-import { getChartColor } from '../shared/chartColors';
+// getChartColor removed use palette
+const DEFAULT_PALETTE = [
+    'var(--viz-fill-secondary)',
+    'var(--status-warning-text)',
+    'var(--status-error-text)',
+    'var(--status-success-text)',
+    'var(--text-primary)',
+];
 
 interface DonutDatum {
     label: string;
@@ -100,10 +107,10 @@ export const DonutRenderer: React.FC<BaseChartRendererProps> = ({
     const centerY = height / 2;
 
     return (
-        <svg width={width} height={height} className="overflow-visible font-body">
+        <svg width={width} height={height} className="overflow-visible font-mono">
             <g transform={`translate(${centerX},${centerY})`}>
                 {arcs.map((d, i) => {
-                    const sliceColor = colors ? colors[i % colors.length] : getChartColor(i);
+                    const sliceColor = colors ? colors[i % colors.length] : DEFAULT_PALETTE[i % DEFAULT_PALETTE.length];
                     const isLargeSlice = (d.endAngle - d.startAngle) > 0.2;
                     const isSelected = selectedKeys?.has(d.data.label);
 
@@ -125,8 +132,9 @@ export const DonutRenderer: React.FC<BaseChartRendererProps> = ({
                             <path
                                 d={arc(d) || ''}
                                 fill={sliceColor}
-                                stroke={isSelected ? 'var(--gray-800)' : 'white'}
-                                strokeWidth={isSelected ? 3 : 2}
+                                stroke={isSelected ? 'var(--text-accent)' : 'var(--viz-stroke-bar)'} // Separator
+                                strokeWidth={isSelected ? 3 : 1}
+                                fillOpacity={0.6} // Semi-transparent for holographic feel
                                 className="transition-all duration-300 hover:opacity-90"
                                 style={{
                                     transform: isSelected ? 'scale(1.02)' : 'scale(1)',
@@ -153,7 +161,7 @@ export const DonutRenderer: React.FC<BaseChartRendererProps> = ({
                                         <polyline
                                             points={`${startPoint},${breakPoint},${endPoint}`}
                                             fill="none"
-                                            stroke="var(--gray-300)"
+                                            stroke="var(--viz-stroke-main)"
                                             strokeWidth={1}
                                         />
                                         <text
@@ -163,8 +171,8 @@ export const DonutRenderer: React.FC<BaseChartRendererProps> = ({
                                             textAnchor={isRightSide ? 'start' : 'end'}
                                             style={{
                                                 fontSize: '11px',
-                                                fontFamily: 'var(--font-body)',
-                                                fill: 'var(--gray-700)',
+                                                fontFamily: 'var(--font-mono)',
+                                                fill: 'var(--viz-text-axis)',
                                                 fontWeight: isSelected ? 700 : 400
                                             }}
                                         >
@@ -186,11 +194,11 @@ export const DonutRenderer: React.FC<BaseChartRendererProps> = ({
                     dy="-0.6em"
                     style={{
                         fontSize: 'var(--text-xxs)',
-                        fill: 'var(--gray-500)',
+                        fill: 'var(--viz-text-axis)',
                         fontWeight: 500,
                         textTransform: 'uppercase',
                         letterSpacing: '0.05em',
-                        fontFamily: 'var(--font-body)'
+                        fontFamily: 'var(--font-mono)'
                     }}
                 >
                     Total
@@ -200,9 +208,9 @@ export const DonutRenderer: React.FC<BaseChartRendererProps> = ({
                     dy="0.8em"
                     style={{
                         fontSize: 'var(--text-2xl)',
-                        fill: 'var(--gray-900)',
+                        fill: 'var(--viz-text-value)',
                         fontWeight: 700,
-                        fontFamily: 'var(--font-body)'
+                        fontFamily: 'var(--font-mono)'
                     }}
                 >
                     {series.data.reduce((sum, d) => sum + d.value, 0).toLocaleString()}

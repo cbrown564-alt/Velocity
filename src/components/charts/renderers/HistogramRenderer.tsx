@@ -4,7 +4,7 @@ import { scaleLinear } from 'd3-scale';
 import { axisBottom, axisLeft } from 'd3-axis';
 import { max, extent } from 'd3-array';
 import { BaseChartRendererProps, BinData } from '../../../types/charts';
-import { getChartColor } from '../shared/chartColors';
+// getChartColor removed replaced by CSS vars
 
 // Optional CSS module - we'll reuse the one from D3Histogram for now or just inline styles if simple
 // For now, let's assume we can use standard D3 styling or a simple shared CSS
@@ -160,14 +160,14 @@ export const HistogramRenderer: React.FC<BaseChartRendererProps> = ({
             .attr('transform', `translate(0,${innerHeight})`)
             .call(axisBottom(xScale).ticks(5))
             .call(g => g.select('.domain').attr('stroke', 'var(--viz-stroke-main)'))
-            .call(g => g.selectAll('text').style('font-family', 'var(--font-body)').style('fill', 'var(--viz-text-axis)'));
+            .call(g => g.selectAll('text').style('font-family', 'var(--font-mono)').style('fill', 'var(--viz-text-axis)'));
 
         // Y Axis
         g.append('g')
             .call(axisLeft(yScale).ticks(5).tickSize(-innerWidth))
             .call(g => g.select('.domain').remove())
             .call(g => g.selectAll('.tick line').attr('stroke', 'var(--viz-grid-line)'))
-            .call(g => g.selectAll('text').style('font-family', 'var(--font-body)').style('fill', 'var(--viz-text-axis)'));
+            .call(g => g.selectAll('text').style('font-family', 'var(--font-mono)').style('fill', 'var(--viz-text-axis)'));
 
         // Bars
         const bars = g.selectAll('.bar')
@@ -181,6 +181,7 @@ export const HistogramRenderer: React.FC<BaseChartRendererProps> = ({
             .attr('fill', (d, i) => d.selected ? selectedBarColor : barColor)
             .attr('stroke', 'var(--viz-stroke-bar)')
             .attr('stroke-width', 1)
+            .attr('rx', 1)
             .style('cursor', interactive ? 'pointer' : 'default');
 
         if (interactive) {
@@ -209,7 +210,7 @@ export const HistogramRenderer: React.FC<BaseChartRendererProps> = ({
             .attr('text-anchor', 'middle')
             .style('font-size', '10px')
             .style('fill', 'var(--viz-text-value)')
-            .style('font-family', 'var(--font-body)')
+            .style('font-family', 'var(--font-mono)')
             .text(d => d.count > 0 ? d.count : '');
 
 

@@ -1,7 +1,14 @@
 import React from 'react';
 import * as d3scale from 'd3-scale';
 import { BaseChartRendererProps } from '../../../types/charts';
-import { getChartColor } from '../shared/chartColors';
+// getChartColor removed use palette
+const DEFAULT_PALETTE = [
+    'var(--viz-fill-secondary)',
+    'var(--status-warning-text)',
+    'var(--status-error-text)',
+    'var(--status-success-text)',
+    'var(--text-primary)',
+];
 
 /**
  * Grouped Box Plot Renderer
@@ -50,7 +57,7 @@ export const GroupedBoxPlotRenderer: React.FC<BaseChartRendererProps> = ({
                 mean: cell.mean,
                 n: cell.validCount,
             },
-            color: colors ? colors[i % colors.length] : getChartColor(i)
+            color: colors ? colors[i % colors.length] : DEFAULT_PALETTE[i % DEFAULT_PALETTE.length]
         };
     }).filter((g): g is NonNullable<typeof g> => g !== null);
 
@@ -86,7 +93,7 @@ export const GroupedBoxPlotRenderer: React.FC<BaseChartRendererProps> = ({
                 n: cell.validCount,
             },
             // Use the column index for coloring
-            color: colors ? colors[i % colors.length] : getChartColor(i)
+            color: colors ? colors[i % colors.length] : DEFAULT_PALETTE[i % DEFAULT_PALETTE.length]
         };
     }).filter((g): g is NonNullable<typeof g> => g !== null);
 
@@ -113,7 +120,7 @@ export const GroupedBoxPlotRenderer: React.FC<BaseChartRendererProps> = ({
                         mean: dp.stats.mean,
                         n: dp.stats.n,
                     },
-                    color: colors ? colors[i % colors.length] : getChartColor(i)
+                    color: colors ? colors[i % colors.length] : DEFAULT_PALETTE[i % DEFAULT_PALETTE.length]
                 };
             })
             .filter((g): g is NonNullable<typeof g> => g !== null) || [];
@@ -132,7 +139,7 @@ export const GroupedBoxPlotRenderer: React.FC<BaseChartRendererProps> = ({
                 height: '100%',
                 color: 'var(--gray-400)',
                 fontSize: 'var(--font-size-sm)',
-                fontFamily: 'var(--font-body)',
+                fontFamily: 'var(--font-mono)',
             }}>
                 No distribution data available. Try placing a scale variable in the column.
             </div>
@@ -163,21 +170,21 @@ export const GroupedBoxPlotRenderer: React.FC<BaseChartRendererProps> = ({
         <svg
             width={width}
             height={height}
-            style={{ overflow: 'visible', fontFamily: 'var(--font-body)' }}
+            style={{ overflow: 'visible', fontFamily: 'var(--font-mono)' }}
         >
             <g transform={`translate(${margin.left},${margin.top})`}>
                 {/* Y Axis */}
-                <line x1={0} y1={0} x2={0} y2={innerHeight} stroke="var(--gray-300)" />
+                <line x1={0} y1={0} x2={0} y2={innerHeight} stroke="var(--viz-stroke-main)" />
                 {yScale.ticks(5).map(tick => (
                     <g key={tick} transform={`translate(0,${yScale(tick)})`}>
-                        <line x2={-6} stroke="var(--gray-300)" />
+                        <line x2={-6} stroke="var(--viz-stroke-main)" />
                         <text
                             x={-10}
                             dy=".32em"
                             textAnchor="end"
                             style={{
                                 fontSize: '10px',
-                                fill: 'var(--gray-500)'
+                                fill: 'var(--viz-text-axis)'
                             }}
                         >
                             {tick}
@@ -186,14 +193,14 @@ export const GroupedBoxPlotRenderer: React.FC<BaseChartRendererProps> = ({
                 ))}
 
                 {/* X Axis */}
-                <line x1={0} y1={innerHeight} x2={innerWidth} y2={innerHeight} stroke="var(--gray-300)" />
+                <line x1={0} y1={innerHeight} x2={innerWidth} y2={innerHeight} stroke="var(--viz-stroke-main)" />
                 {groups.map(g => (
                     <g key={g.label} transform={`translate(${xScale(g.label)! + xScale.bandwidth() / 2}, ${innerHeight + 15})`}>
                         <text
                             textAnchor="middle"
                             style={{
                                 fontSize: '11px',
-                                fill: 'var(--gray-600)',
+                                fill: 'var(--viz-text-axis)',
                                 fontWeight: 500,
                             }}
                         >
@@ -215,20 +222,20 @@ export const GroupedBoxPlotRenderer: React.FC<BaseChartRendererProps> = ({
                             <line
                                 x1={center} y1={yScale(min)}
                                 x2={center} y2={yScale(max)}
-                                stroke="var(--gray-400)"
+                                stroke="var(--viz-stroke-bar)"
                                 strokeDasharray="4,4"
                             />
                             {/* Min Cap */}
                             <line
                                 x1={center - w / 4} y1={yScale(min)}
                                 x2={center + w / 4} y2={yScale(min)}
-                                stroke="var(--gray-400)"
+                                stroke="var(--viz-stroke-bar)"
                             />
                             {/* Max Cap */}
                             <line
                                 x1={center - w / 4} y1={yScale(max)}
                                 x2={center + w / 4} y2={yScale(max)}
-                                stroke="var(--gray-400)"
+                                stroke="var(--viz-stroke-bar)"
                             />
 
                             {/* IQR Box */}
@@ -238,9 +245,9 @@ export const GroupedBoxPlotRenderer: React.FC<BaseChartRendererProps> = ({
                                 width={w}
                                 height={Math.abs(yScale(q1) - yScale(q3))}
                                 fill={g.color}
-                                fillOpacity={0.8}
+                                fillOpacity={0.2}
                                 stroke={g.color}
-                                rx={2}
+                                rx={1}
                             />
 
                             {/* Median Line */}
@@ -249,7 +256,7 @@ export const GroupedBoxPlotRenderer: React.FC<BaseChartRendererProps> = ({
                                 y1={yScale(median)}
                                 x2={x + w}
                                 y2={yScale(median)}
-                                stroke="white"
+                                stroke="var(--text-primary)"
                                 strokeWidth={2}
                             />
 

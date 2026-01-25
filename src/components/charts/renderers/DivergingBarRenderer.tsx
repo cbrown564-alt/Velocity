@@ -240,7 +240,7 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
         <svg
             width={width}
             height={Math.max(height, actualHeight + margin.top + margin.bottom)}
-            className="overflow-visible font-body"
+            className="overflow-visible font-mono"
         >
             {/* Legend (Top Centered, Wrapped) */}
             <foreignObject x={0} y={0} width={width} height={margin.top}>
@@ -262,7 +262,8 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
                     y1={0}
                     x2={xDivScale(0)}
                     y2={actualHeight}
-                    stroke="var(--border-color-active)"
+                    // Center Line for Diverging Part
+                    stroke="var(--viz-grid-line)"
                     strokeWidth={1}
                     strokeDasharray="4,4"
                 />
@@ -270,7 +271,7 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
                     x={xDivScale(0)}
                     y={-5}
                     textAnchor="middle"
-                    className="text-[10px] fill-[var(--text-secondary)]"
+                    className="text-[10px] fill-[var(--viz-text-axis)]"
                 >
                     0
                 </text>
@@ -282,7 +283,7 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
                         y1={0}
                         x2={divergingPixelWidth + pixelGap / 2}
                         y2={actualHeight}
-                        stroke="var(--border-color)"
+                        stroke="var(--viz-grid-line)"
                         strokeWidth={1}
                     />
                 )}
@@ -293,7 +294,7 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
                     y1={0}
                     x2={divergingPixelWidth + (maxSpecial > 0 ? pixelGap + xSpecScale.range()[1] : 0) + 12}
                     y2={actualHeight}
-                    stroke="var(--border-color)"
+                    stroke="var(--viz-grid-line)"
                     strokeWidth={1}
                 />
 
@@ -346,7 +347,7 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
                                 y={y + h / 2}
                                 dy=".35em"
                                 textAnchor="end"
-                                className="text-xs"
+                                className="text-xs font-sans" // Keep rows sans for readability? HorizontalBar used Sans for Y axis labels.
                                 style={{
                                     fill: isSelected ? 'var(--text-primary)' : 'var(--text-secondary)',
                                     fontWeight: isSelected ? 600 : 400,
@@ -371,7 +372,7 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
                                             y={y + h / 2}
                                             dy=".35em"
                                             textAnchor="middle"
-                                            className="text-[10px] font-medium fill-[var(--text-primary)] pointer-events-none"
+                                            className="text-[10px] font-medium fill-[var(--text-primary)] pointer-events-none font-mono"
                                         >
                                             {labelMode === 'percent'
                                                 ? `${Math.round(row.cells[neutral]?.percent || 0)}%`
@@ -412,8 +413,8 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
                                                 y={y + h / 2}
                                                 dy=".35em"
                                                 textAnchor="middle"
-                                                className="text-[10px] font-medium fill-[var(--text-inverse)] pointer-events-none"
-                                                style={{ textShadow: '0 1px 2px rgba(0,0,0,0.3)' }}
+                                                className="text-[10px] font-medium fill-[var(--text-inverse)] pointer-events-none font-mono"
+                                                style={{ textShadow: 'none' }}
                                             >
                                                 {labelMode === 'percent'
                                                     ? `${Math.round(row.cells[key]?.percent || 0)}%`
@@ -454,8 +455,8 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
                                                 y={y + h / 2}
                                                 dy=".35em"
                                                 textAnchor="middle"
-                                                className="text-[10px] font-medium fill-[var(--text-inverse)] pointer-events-none"
-                                                style={{ textShadow: '0 1px 2px rgba(0,0,0,0.3)' }}
+                                                className="text-[10px] font-medium fill-[var(--text-inverse)] pointer-events-none font-mono"
+                                                style={{ textShadow: 'none' }}
                                             >
                                                 {labelMode === 'percent'
                                                     ? `${Math.round(row.cells[key]?.percent || 0)}%`
@@ -496,7 +497,7 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
                                                 y={y + h / 2}
                                                 dy=".35em"
                                                 textAnchor="middle"
-                                                className="text-[10px] font-medium fill-[var(--text-inverse)] pointer-events-none"
+                                                className="text-[10px] font-medium fill-[var(--text-inverse)] pointer-events-none font-mono"
                                             >
                                                 {labelMode === 'percent'
                                                     ? `${Math.round(row.cells[key]?.percent || 0)}%`

@@ -2,7 +2,14 @@ import React, { useMemo } from 'react';
 import * as d3scale from 'd3-scale';
 import { area, curveCatmullRom } from 'd3-shape';
 import { BaseChartRendererProps } from '../../../types/charts';
-import { getChartColor } from '../shared/chartColors';
+// getChartColor removed use palette
+const DEFAULT_PALETTE = [
+    'var(--viz-fill-secondary)',
+    'var(--status-warning-text)',
+    'var(--status-error-text)',
+    'var(--status-success-text)',
+    'var(--text-primary)',
+];
 
 /**
  * Violin Renderer
@@ -72,24 +79,24 @@ export const ViolinRenderer: React.FC<BaseChartRendererProps> = ({
         .curve(curveCatmullRom);
 
     return (
-        <svg width={width} height={height} className="overflow-visible font-body">
+        <svg width={width} height={height} className="overflow-visible font-mono">
             <g transform={`translate(${margin.left},${margin.top})`}>
                 {/* Y Axis */}
-                <line x1={0} y1={0} x2={0} y2={innerHeight} stroke="var(--gray-300)" />
+                <line x1={0} y1={0} x2={0} y2={innerHeight} stroke="var(--viz-stroke-main)" />
                 {yScale.ticks(5).map(tick => (
                     <g key={tick} transform={`translate(0,${yScale(tick)})`}>
-                        <line x2={-6} stroke="var(--gray-300)" />
-                        <text x={-10} dy=".32em" textAnchor="end" className="text-[10px] fill-gray-500">
+                        <line x2={-6} stroke="var(--viz-stroke-main)" />
+                        <text x={-10} dy=".32em" textAnchor="end" className="text-[10px] fill-[var(--viz-text-axis)]">
                             {tick}
                         </text>
                     </g>
                 ))}
 
                 {/* X Axis */}
-                <line x1={0} y1={innerHeight} x2={innerWidth} y2={innerHeight} stroke="var(--gray-300)" />
+                <line x1={0} y1={innerHeight} x2={innerWidth} y2={innerHeight} stroke="var(--viz-stroke-main)" />
                 {groups.map(g => (
                     <g key={g.label} transform={`translate(${xScale(g.label)! + xScale.bandwidth() / 2}, ${innerHeight + 15})`}>
-                        <text textAnchor="middle" className="text-[11px] fill-gray-600 font-medium">
+                        <text textAnchor="middle" className="text-[11px] fill-[var(--viz-text-axis)] font-medium font-mono">
                             {g.label}
                         </text>
                     </g>
@@ -98,14 +105,14 @@ export const ViolinRenderer: React.FC<BaseChartRendererProps> = ({
                 {/* Violins */}
                 {groups.map((g, i) => {
                     const x = xScale(g.label)! + xScale.bandwidth() / 2;
-                    const color = colors ? colors[i % colors.length] : getChartColor(i);
+                    const color = colors ? colors[i % colors.length] : DEFAULT_PALETTE[i % DEFAULT_PALETTE.length];
 
                     return (
                         <g key={g.label} transform={`translate(${x},0)`}>
                             <path
                                 d={areaGenerator(g.data) || ''}
                                 fill={color}
-                                fillOpacity={0.8}
+                                fillOpacity={0.2}
                                 stroke={color}
                                 strokeWidth={1}
                             />

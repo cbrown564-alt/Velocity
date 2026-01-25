@@ -3,7 +3,7 @@ import * as d3 from 'd3-scale';
 import { select } from 'd3-selection';
 import { max } from 'd3-array';
 import { BaseChartRendererProps } from '../../../types/charts';
-import { getChartColor } from '../shared/chartColors';
+// getChartColor removed
 
 /**
  * Lollipop Chart Renderer
@@ -73,7 +73,7 @@ export const LollipopRenderer: React.FC<BaseChartRendererProps> = ({
         <svg
             width={width}
             height={Math.max(height, actualHeight + margin.top + margin.bottom)}
-            className="overflow-visible font-body"
+            className="overflow-visible font-mono"
             onContextMenu={(e) => {
                 if (interactive && onContextMenu && selectedKeys && selectedKeys.size > 0) {
                     e.preventDefault();
@@ -94,21 +94,21 @@ export const LollipopRenderer: React.FC<BaseChartRendererProps> = ({
                         y1={0}
                         x2={xScale(tick)}
                         y2={actualHeight}
-                        stroke="var(--gray-100)"
+                        stroke="var(--viz-grid-line)"
                         strokeDasharray="2,2"
                     />
                 ))}
 
                 {/* X-axis */}
                 <g transform={`translate(0,${actualHeight})`}>
-                    <line x1={0} y1={0} x2={innerWidth} y2={0} stroke="var(--gray-200)" />
+                    <line x1={0} y1={0} x2={innerWidth} y2={0} stroke="var(--viz-stroke-main)" />
                     {xTicks.map(tick => (
                         <g key={tick} transform={`translate(${xScale(tick)},0)`}>
-                            <line y2={4} stroke="var(--gray-300)" />
+                            <line y2={4} stroke="var(--viz-stroke-main)" />
                             <text
                                 y={16}
                                 textAnchor="middle"
-                                className="text-[10px] fill-gray-500"
+                                className="text-[10px] fill-[var(--viz-text-axis)]"
                             >
                                 {tick}
                             </text>
@@ -124,7 +124,7 @@ export const LollipopRenderer: React.FC<BaseChartRendererProps> = ({
                         y={yScale(d.label)}
                         dy=".35em"
                         textAnchor="end"
-                        className={`text-xs ${selectedKeys?.has(d.label) ? 'font-bold fill-gray-900' : 'fill-gray-700'}`}
+                        className={`text-xs ${selectedKeys?.has(d.label) ? 'font-bold fill-[var(--text-primary)]' : 'fill-[var(--viz-text-axis)]'}`}
                         style={{ fontFamily: 'var(--font-body)' }}
                     >
                         {(d.label || '').length > 25 ? (d.label || '').substring(0, 23) + '...' : d.label}
@@ -137,8 +137,8 @@ export const LollipopRenderer: React.FC<BaseChartRendererProps> = ({
                     const yVal = yScale(d.label) || 0;
                     const isSelected = selectedKeys?.has(d.label);
                     const color = isSelected
-                        ? (colors ? colors[1] : 'var(--color-terracotta)')
-                        : (colors ? colors[0] : getChartColor(0));
+                        ? (colors ? colors[1] : 'var(--text-accent)')
+                        : (colors ? colors[0] : 'var(--viz-fill-primary)');
 
                     return (
                         <g
@@ -155,7 +155,7 @@ export const LollipopRenderer: React.FC<BaseChartRendererProps> = ({
                                 y1={yVal}
                                 x2={xVal}
                                 y2={yVal}
-                                stroke={isSelected ? 'var(--gray-400)' : 'var(--gray-300)'}
+                                stroke={isSelected ? 'var(--text-accent)' : 'var(--viz-stroke-main)'}
                                 strokeWidth={2}
                             />
 
@@ -165,7 +165,7 @@ export const LollipopRenderer: React.FC<BaseChartRendererProps> = ({
                                 cy={yVal}
                                 r={isSelected ? 8 : 6}
                                 fill={color}
-                                stroke="white"
+                                stroke={isSelected ? 'var(--text-accent)' : 'var(--viz-stroke-bar)'}
                                 strokeWidth={2}
                             />
 
@@ -174,10 +174,10 @@ export const LollipopRenderer: React.FC<BaseChartRendererProps> = ({
                                 x={xVal + 12}
                                 y={yVal}
                                 dy=".35em"
-                                className={`text-xs ${isSelected ? 'font-bold fill-gray-900' : 'font-medium fill-gray-600'}`}
+                                className={`text-xs ${isSelected ? 'font-bold fill-[var(--text-primary)]' : 'font-medium fill-[var(--viz-text-value)]'}`}
                             >
                                 {d.value.toLocaleString()}
-                                <tspan className="fill-gray-400 font-normal">
+                                <tspan className="fill-[var(--text-secondary)] font-normal">
                                     {' '}({d.percent.toFixed(1)}%)
                                 </tspan>
                             </text>

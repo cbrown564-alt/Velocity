@@ -3,7 +3,7 @@ import * as d3 from 'd3-scale';
 import * as d3Shape from 'd3-shape';
 import { max } from 'd3-array';
 import { BaseChartRendererProps } from '../../../types/charts';
-import { getChartColor } from '../shared/chartColors';
+// getChartColor removed
 
 interface StackedBarRendererProps extends BaseChartRendererProps {
     type: 'stacked-bar';
@@ -192,8 +192,11 @@ export const StackedBarRenderer: React.FC<StackedBarRendererProps> = ({
                                 <rect
                                     width={12}
                                     height={12}
-                                    rx={2}
-                                    fill={colors ? colors[i % colors.length] : getChartColor(i)}
+                                    rx={1}
+                                    fill={colors ? colors[i % colors.length] : 'var(--viz-fill-primary)'}
+                                    style={{
+                                        fillOpacity: 1 - (i * 0.15) // Fallback differentiation if no colors
+                                    }}
                                 />
                                 <text
                                     x={18}
@@ -230,7 +233,7 @@ export const StackedBarRenderer: React.FC<StackedBarRendererProps> = ({
                             <text
                                 y={18}
                                 textAnchor="middle"
-                                className="text-[10px] fill-[var(--viz-text-axis)]"
+                                className="text-[10px] fill-[var(--viz-text-axis)] font-mono"
                             >
                                 {isPercentMode
                                     ? `${Math.round(tick * 100)}%`
@@ -259,7 +262,8 @@ export const StackedBarRenderer: React.FC<StackedBarRendererProps> = ({
                 {stackedSeries.map((seriesItem, seriesIndex) => (
                     <g
                         key={stackKeys[seriesIndex]}
-                        fill={colors ? colors[seriesIndex % colors.length] : getChartColor(seriesIndex)}
+                        fill={colors ? colors[seriesIndex % colors.length] : 'var(--viz-fill-primary)'}
+                        fillOpacity={colors ? 1 : 1 - (seriesIndex * 0.15)}
                     >
                         {seriesItem.map((d, i) => {
                             const barWidth = xScale(d[1]) - xScale(d[0]);
@@ -295,9 +299,8 @@ export const StackedBarRenderer: React.FC<StackedBarRendererProps> = ({
                                         width={Math.max(barWidth, 0)}
                                         height={yScale.bandwidth()}
                                         className="transition-all duration-300 hover:opacity-80"
-                                        opacity={isSelected ? 1 : 0.9}
-                                        stroke={isSelected ? 'var(--border-color-active)' : 'var(--viz-stroke-bar)'}
-                                        strokeWidth={isSelected ? 2 : 0}
+                                        stroke={isSelected ? 'var(--text-accent)' : 'var(--viz-stroke-bar)'}
+                                        strokeWidth={isSelected ? 2 : 1}
                                     />
                                     {showLabel && (
                                         <text
@@ -305,8 +308,8 @@ export const StackedBarRenderer: React.FC<StackedBarRendererProps> = ({
                                             y={y + yScale.bandwidth() / 2}
                                             dy=".35em"
                                             textAnchor="middle"
-                                            className="text-[10px] font-medium fill-white pointer-events-none"
-                                            style={{ textShadow: '0 1px 2px rgba(0,0,0,0.3)' }}
+                                            className="text-[10px] font-medium fill-[var(--viz-text-value)] pointer-events-none font-mono"
+                                            style={{ textShadow: 'none' }}
                                         >
                                             {displayValue}
                                         </text>

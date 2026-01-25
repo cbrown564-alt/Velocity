@@ -2,7 +2,7 @@ import React, { useMemo, useCallback } from 'react';
 import * as d3 from 'd3-scale';
 import { max } from 'd3-array';
 import { BaseChartRendererProps } from '../../../types/charts';
-import { getChartColor } from '../shared/chartColors';
+// getChartColor removed
 
 /**
  * Vertical Bar (Column) Chart Renderer
@@ -87,7 +87,7 @@ export const VerticalBarRenderer: React.FC<BaseChartRendererProps> = ({
             height={height}
             style={{
                 overflow: 'visible',
-                fontFamily: 'var(--font-body)',
+                fontFamily: 'var(--font-mono)',
             }}
         >
             <g transform={`translate(${margin.left},${margin.top})`}>
@@ -100,7 +100,7 @@ export const VerticalBarRenderer: React.FC<BaseChartRendererProps> = ({
                         x2={innerWidth}
                         y2={yScale(tick)}
                         stroke="var(--viz-grid-line)"
-                        strokeDasharray="0"
+                        strokeDasharray="2,2"
                     />
                 ))}
 
@@ -135,6 +135,7 @@ export const VerticalBarRenderer: React.FC<BaseChartRendererProps> = ({
                                 fontSize: '11px',
                                 color: selectedKeys?.has(d.label) ? 'var(--text-primary)' : 'var(--viz-text-axis)',
                                 fontWeight: selectedKeys?.has(d.label) ? 600 : 400,
+                                fontFamily: 'var(--font-body)', // Categories = Sans
                                 textAlign: 'center',
                                 lineHeight: '1.2',
                                 maxHeight: '48px',
@@ -155,7 +156,6 @@ export const VerticalBarRenderer: React.FC<BaseChartRendererProps> = ({
                 {chartData.map((d, i) => {
                     const barHeight = innerHeight - yScale(d.value);
                     const isSelected = selectedKeys?.has(d.label);
-                    const barColor = colors ? colors[0] : getChartColor(0);
 
                     return (
                         <g
@@ -169,11 +169,13 @@ export const VerticalBarRenderer: React.FC<BaseChartRendererProps> = ({
                                 y={yScale(d.value)}
                                 width={xScale.bandwidth()}
                                 height={barHeight}
-                                fill={barColor}
-                                stroke={isSelected ? 'var(--border-color-active)' : 'var(--viz-stroke-bar)'}
-                                strokeWidth={isSelected ? 2 : 0}
+                                // Holographic
+                                fill="var(--viz-fill-primary)"
+                                stroke={isSelected ? 'var(--text-accent)' : 'var(--viz-stroke-bar)'}
+                                strokeWidth={isSelected ? 2 : 1}
+                                rx={1}
                                 className="hover:opacity-90"
-                                style={{ transition: 'height 0.3s ease-out' }}
+                                style={{ transition: 'height 0.3s cubic-bezier(0.4, 0, 0.2, 1)' }}
                             />
 
                             {/* Labels */}
@@ -184,8 +186,9 @@ export const VerticalBarRenderer: React.FC<BaseChartRendererProps> = ({
                                     textAnchor="middle"
                                     style={{
                                         fontSize: '11px',
-                                        fill: isSelected ? 'var(--text-primary)' : 'var(--viz-text-axis)',
-                                        fontWeight: 500
+                                        fill: isSelected ? 'var(--text-primary)' : 'var(--viz-text-value)',
+                                        fontWeight: 500,
+                                        fontFamily: 'var(--font-mono)'
                                     }}
                                 >
                                     {labelMode === 'percent'

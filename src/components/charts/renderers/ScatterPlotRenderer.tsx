@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import * as d3scale from 'd3-scale';
 import { BaseChartRendererProps } from '../../../types/charts';
-import { getChartColor } from '../shared/chartColors';
+// getChartColor removed
 
 export const ScatterPlotRenderer: React.FC<BaseChartRendererProps> = ({
     width,
@@ -54,10 +54,10 @@ export const ScatterPlotRenderer: React.FC<BaseChartRendererProps> = ({
         };
 
         return (
-            <div className="flex flex-col items-center justify-center h-full text-gray-500 text-sm p-4 text-center">
+            <div className="flex flex-col items-center justify-center h-full text-[var(--text-secondary)] text-sm p-4 text-center">
                 <div className="mb-2 font-medium">No scatter data available</div>
-                <div className="text-xs text-left bg-gray-100 p-2 rounded max-w-full overflow-auto font-mono">
-                    <div className="font-bold text-gray-700 mb-1">Debug Info:</div>
+                <div className="text-xs text-left bg-[var(--bg-surface)] p-2 rounded max-w-full overflow-auto font-mono">
+                    <div className="font-bold text-[var(--text-primary)] mb-1">Debug Info:</div>
                     <div>Rows: {debugInfo.rows}</div>
                     <div>Cols: {debugInfo.cols}</div>
                     <div>Row[0].val: "{String(debugInfo.firstRowRaw)}"</div>
@@ -78,21 +78,23 @@ export const ScatterPlotRenderer: React.FC<BaseChartRendererProps> = ({
         .range([innerHeight, 0])
         .nice();
 
-    const color = colors ? colors[0] : getChartColor(0);
+    // Holographic styling
+    const pointColor = 'var(--viz-fill-primary)';
+    const pointStroke = 'var(--viz-stroke-bar)';
 
     return (
-        <svg width={width} height={height} className="overflow-visible font-body">
+        <svg width={width} height={height} className="overflow-visible font-mono">
             <g transform={`translate(${margin.left},${margin.top})`}>
                 {/* Axes */}
                 <g transform={`translate(0,${innerHeight})`}>
-                    <line x1={0} y1={0} x2={innerWidth} y2={0} stroke="var(--gray-300)" />
+                    <line x1={0} y1={0} x2={innerWidth} y2={0} stroke="var(--viz-stroke-main)" />
                     {xScale.ticks(5).map(tick => (
                         <g key={tick} transform={`translate(${xScale(tick)},0)`}>
-                            <line y2={4} stroke="var(--gray-300)" />
+                            <line y2={4} stroke="var(--viz-stroke-main)" />
                             <text
                                 y={16}
                                 textAnchor="middle"
-                                className="text-[10px] fill-gray-500"
+                                className="text-[10px] fill-[var(--viz-text-axis)]"
                             >
                                 {tick}
                             </text>
@@ -101,11 +103,11 @@ export const ScatterPlotRenderer: React.FC<BaseChartRendererProps> = ({
                 </g>
 
                 <g>
-                    <line x1={0} y1={0} x2={0} y2={innerHeight} stroke="var(--gray-300)" />
+                    <line x1={0} y1={0} x2={0} y2={innerHeight} stroke="var(--viz-stroke-main)" />
                     {yScale.ticks(5).map(tick => (
                         <g key={tick} transform={`translate(0,${yScale(tick)})`}>
-                            <line x2={-6} stroke="var(--gray-300)" />
-                            <text x={-10} dy=".32em" textAnchor="end" className="text-[10px] fill-gray-500">
+                            <line x2={-6} stroke="var(--viz-stroke-main)" />
+                            <text x={-10} dy=".32em" textAnchor="end" className="text-[10px] fill-[var(--viz-text-axis)]">
                                 {tick}
                             </text>
                         </g>
@@ -119,8 +121,9 @@ export const ScatterPlotRenderer: React.FC<BaseChartRendererProps> = ({
                         cx={xScale(p.x!)}
                         cy={yScale(p.y!)}
                         r={4}
-                        fill={color}
-                        fillOpacity={0.6}
+                        fill={pointColor}
+                        stroke={pointStroke}
+                        strokeWidth={1}
                     >
                         <title>{`(${p.x}, ${p.y})`}</title>
                     </circle>

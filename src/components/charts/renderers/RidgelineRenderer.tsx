@@ -2,7 +2,14 @@ import React, { useMemo } from 'react';
 import * as d3scale from 'd3-scale';
 import { area, curveBasis } from 'd3-shape';
 import { BaseChartRendererProps } from '../../../types/charts';
-import { getChartColor } from '../shared/chartColors';
+// getChartColor removed use palette
+const DEFAULT_PALETTE = [
+    'var(--viz-fill-secondary)',
+    'var(--status-warning-text)',
+    'var(--status-error-text)',
+    'var(--status-success-text)',
+    'var(--text-primary)',
+];
 
 /**
  * Ridgeline Renderer
@@ -62,19 +69,19 @@ export const RidgelineRenderer: React.FC<BaseChartRendererProps> = ({
         .curve(curveBasis);
 
     return (
-        <svg width={width} height={height} className="overflow-visible font-body">
+        <svg width={width} height={height} className="overflow-visible font-mono">
             <g transform={`translate(${margin.left},${margin.top})`}>
 
                 {/* X Axis at bottom */}
                 <g transform={`translate(0,${innerHeight})`}>
-                    <line x1={0} y1={0} x2={innerWidth} y2={0} stroke="var(--gray-300)" />
+                    <line x1={0} y1={0} x2={innerWidth} y2={0} stroke="var(--viz-stroke-main)" />
                     {xScale.ticks(5).map(tick => (
                         <g key={tick} transform={`translate(${xScale(tick)},0)`}>
-                            <line y2={4} stroke="var(--gray-300)" />
+                            <line y2={4} stroke="var(--viz-stroke-main)" />
                             <text
                                 y={16}
                                 textAnchor="middle"
-                                className="text-[10px] fill-gray-500"
+                                className="text-[10px] fill-[var(--viz-text-axis)]"
                             >
                                 {tick}
                             </text>
@@ -85,7 +92,7 @@ export const RidgelineRenderer: React.FC<BaseChartRendererProps> = ({
                 {/* Ridges */}
                 {groups.map((g, i) => {
                     const y = yScale(g.label) || 0;
-                    const color = colors ? colors[i % colors.length] : getChartColor(i);
+                    const color = colors ? colors[i % colors.length] : DEFAULT_PALETTE[i % DEFAULT_PALETTE.length];
                     const isSelected = false; // Add selection logic later
 
                     return (
@@ -95,7 +102,7 @@ export const RidgelineRenderer: React.FC<BaseChartRendererProps> = ({
                                 y={0}
                                 dy=".35em"
                                 textAnchor="end"
-                                className="text-xs font-medium fill-gray-600"
+                                className="text-xs font-medium fill-[var(--viz-text-axis)] font-mono"
                             >
                                 {g.label}
                             </text>
@@ -103,8 +110,8 @@ export const RidgelineRenderer: React.FC<BaseChartRendererProps> = ({
                             <path
                                 d={areaGenerator(g.data) || ''}
                                 fill={color}
-                                fillOpacity={0.7}
-                                stroke="white"
+                                fillOpacity={0.2}
+                                stroke={color}
                                 strokeWidth={1}
                                 className="transition-all hover:fill-opacity-90 hover:stroke-gray-300"
                             />
