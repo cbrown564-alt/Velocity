@@ -18,7 +18,7 @@ export type ViewMode = 'table' | 'chart';
 // Faceted Search Types
 export type TypeFacet = 'categorical' | 'numeric';
 export type StatusFacet = 'visible' | 'hidden' | 'derived';
-export type QualityFacet = 'valid' | 'flagged';
+export type QualityFacet = 'complete' | 'incomplete';
 // Chart Types
 import type { ChartType } from '../../types/charts';
 

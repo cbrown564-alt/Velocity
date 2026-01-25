@@ -90,7 +90,7 @@ export const BoxPlotRenderer: React.FC<BaseChartRendererProps> = ({
                             x={-10}
                             dy=".32em"
                             textAnchor="end"
-                            style={{ fontSize: 'var(--font-size-xs)', fill: 'var(--gray-500)' }}
+                            style={{ fontSize: '10px', fill: 'var(--gray-500)' }}
                         >
                             {tick}
                         </text>
@@ -102,7 +102,7 @@ export const BoxPlotRenderer: React.FC<BaseChartRendererProps> = ({
                     <text
                         textAnchor="middle"
                         style={{
-                            fontSize: 'var(--font-size-sm)',
+                            fontSize: '11px',
                             fill: 'var(--gray-600)',
                             fontWeight: 500,
                         }}

@@ -19,10 +19,13 @@ export function recommendChart(context: RecommenderContext): ChartRecommendation
     const primaryRowVar = rowVars[0];
 
     // 1. Grid (Multiple Statements)
-    if (isGrid) {
+    // Detected via synthetic variables (Source Grid ID present)
+    const isSyntheticGrid = primaryRowVar?.synthetic && primaryRowVar?.sourceGridId && colVar?.synthetic && colVar?.sourceGridId;
+
+    if (isSyntheticGrid || isGrid) { // Keep isGrid for backward compatibility during migration
         return {
             default: 'diverging-bar',
-            alternatives: ['stacked-bar', 'grouped-bar'],
+            alternatives: ['grouped-bar'],
             reason: 'Likert grids are best viewed as diverging bars.',
         };
     }
@@ -56,7 +59,7 @@ export function recommendChart(context: RecommenderContext): ChartRecommendation
         }
 
         // Numeric x Nominal (e.g. Age by Gender) -> Box Plot
-        if (primaryRowVar?.type === 'numeric') {
+        if (primaryRowVar?.type === 'numeric' && (colVar?.type === 'nominal' || colVar?.type === 'ordinal')) {
             return {
                 default: 'grouped-box-plot',
                 // Note: violin/ridgeline require grouped histogram data from backend (not yet implemented)
@@ -71,12 +74,12 @@ export function recommendChart(context: RecommenderContext): ChartRecommendation
         return {
             default: 'scatter',
             // Note: hexbin requires raw (x,y) pairs, currently backend aggregates
-            alternatives: [],
+            alternatives: ['hexbin'],
             reason: 'Exploring relationship between two numeric variables.',
         };
     }
 
-    // 4. Single Variable Analysis
+    // 5. Single Variable Analysis
     if (primaryRowVar) {
         switch (primaryRowVar.type) {
             case 'nominal':
@@ -100,7 +103,7 @@ export function recommendChart(context: RecommenderContext): ChartRecommendation
             case 'numeric':
                 return {
                     default: 'histogram',
-                    alternatives: ['box-plot', 'violin', 'ridgeline'],
+                    alternatives: ['box-plot', 'violin'],
                     reason: 'Numeric variables show distribution.',
                 };
         }

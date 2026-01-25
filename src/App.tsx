@@ -364,10 +364,46 @@ export default function App() {
     }
 
     // Otherwise, handle as a drop from sidebar to shelf
+    // Otherwise, handle as a drop from sidebar to shelf
     if (active.data.current?.variableSet) {
       const zoneId = over.id;
-      const setId = active.data.current.variableSet.id;
+      const variableSet = active.data.current.variableSet;
+      const setId = variableSet.id;
 
+      // GRID AUTO-EXPANSION LOGIC
+      if (variableSet.structure === 'grid') {
+        const itemsId = `${setId}_items`;
+        const scaleId = `${setId}_scale`;
+
+        if (zoneId === 'drop-zone-rows') {
+          // Standard Grid: Items on Rows, Scale on Columns
+          // We append Items to existing rows (nesting support)
+          // But we force Scale to Columns (overwriting)
+          if (!tableConfig.rowVars.includes(itemsId)) {
+            setTableConfig({
+              rowVars: [...tableConfig.rowVars, itemsId],
+              colVar: scaleId
+            });
+          }
+        } else if (zoneId === 'drop-zone-cols') {
+          // Transposed Grid: Items on Columns, Scale on Rows
+          // We set Items on Col
+          // We add Scale to Rows?
+          setTableConfig({
+            colVar: itemsId,
+            rowVars: tableConfig.rowVars.includes(scaleId) ? tableConfig.rowVars : [...tableConfig.rowVars, scaleId]
+          });
+        } else if (zoneId === 'canvas') {
+          // Smart Drop: Defaults to Items x Scale
+          setTableConfig({
+            rowVars: [itemsId],
+            colVar: scaleId
+          });
+        }
+        return;
+      }
+
+      // STANDARD LOGIC
       if (zoneId === 'drop-zone-rows') {
         // Add to existing rows if not already present
         if (!tableConfig.rowVars.includes(setId)) {
@@ -405,12 +441,30 @@ export default function App() {
     }
 
     // Default Interaction: Add to analysis (First rows, then columns)
-    if (tableConfig.rowVars.length === 0) {
-      setTableConfig({ rowVars: [set.id] });
-    } else if (!tableConfig.colVar) {
-      setTableConfig({ colVar: set.id });
+    // Default Interaction: Add to analysis (First rows, then columns)
+    if (set.structure === 'grid') {
+      const itemsId = `${set.id}_items`;
+      const scaleId = `${set.id}_scale`;
+
+      // Auto-expand to Items x Scale
+      // If table is empty, set fully.
+      // If table has rows, maybe just append?
+      // For now, let's treat click as "Start fresh with this grid" or "Append" logic is complex.
+      // User intent on single click is usually "Show me this variable".
+      // For a grid, "Show me" means Items x Scale.
+
+      setTableConfig({
+        rowVars: [itemsId],
+        colVar: scaleId
+      });
     } else {
-      setTableConfig({ colVar: set.id });
+      if (tableConfig.rowVars.length === 0) {
+        setTableConfig({ rowVars: [set.id] });
+      } else if (!tableConfig.colVar) {
+        setTableConfig({ colVar: set.id });
+      } else {
+        setTableConfig({ colVar: set.id });
+      }
     }
   };
 
@@ -736,60 +790,68 @@ export default function App() {
                 />
 
                 {/* WORKSPACE */}
-                <SmartCanvas className="flex-1 overflow-auto bg-[#FAFAFA] relative flex flex-col">
-                  <div className="w-full max-w-5xl mx-auto p-8 flex flex-col gap-6">
-
-                    {/* COLUMN SHELF */}
-                    <div className="flex gap-4 items-center pl-32">
-                      <div className="w-8 flex justify-center">
-                        <span className="text-xs font-bold text-gray-300 uppercase tracking-wider rotate-180 writing-mode-vertical">Columns</span>
+                {/* WORKSPACE */}
+                <div className="flex-1 flex flex-col min-h-0 bg-gray-50/30">
+                  {/* SHELF */}
+                  <div className="shrink-0 bg-white border-b border-gray-200 px-6 py-4 flex flex-col gap-3 shadow-[0_1px_2px_rgba(0,0,0,0.02)] z-10">
+                    {/* Columns Shelf */}
+                    <div className="flex items-center gap-4">
+                      <div className="w-16 flex justify-end shrink-0">
+                        <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Columns</span>
                       </div>
-                      <DropZone
-                        id="drop-zone-cols"
-                        type="column"
-                        label="Drop Column Variable"
-                        active={!!draggingId}
-                        currentVariables={tableConfig.colVar ? [variableSets.find(s => s.id === tableConfig.colVar)!].filter(Boolean) : []}
-                        onRemove={() => setTableConfig({ colVar: null })}
-                      />
+                      <div className="flex-1 max-w-3xl">
+                        <DropZone
+                          id="drop-zone-cols"
+                          type="column"
+                          label="Drop Column Variable"
+                          active={!!draggingId}
+                          currentVariables={tableConfig.colVar ? [variableSets.find(s => s.id === tableConfig.colVar)!].filter(Boolean) : []}
+                          onRemove={() => setTableConfig({ colVar: null })}
+                        />
+                      </div>
                     </div>
 
-                    <div className="flex gap-4 items-start">
-                      {/* ROW SHELF */}
-                      <div className="w-40 flex flex-col items-end gap-2 pt-16">
+                    {/* Rows Shelf */}
+                    <div className="flex items-center gap-4">
+                      <div className="w-16 flex justify-end shrink-0">
+                        <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Rows</span>
+                      </div>
+                      <div className="flex-1 max-w-3xl">
                         <DropZone
                           id="drop-zone-rows"
                           type="row"
-                          label="Drop Row Variable(s)"
+                          label="Drop Row Variables"
                           active={!!draggingId}
                           currentVariables={tableConfig.rowVars.map(id => variableSets.find(s => s.id === id)).filter(Boolean) as VariableSet[]}
                           onRemove={(id) => setTableConfig({ rowVars: tableConfig.rowVars.filter(r => r !== id) })}
                         />
-                        <span className="text-xs font-bold text-gray-300 uppercase tracking-wider pr-1">Rows</span>
-                      </div>
-
-                      {/* RESULT AREA */}
-                      <div className="flex-1 min-h-[400px]">
-                        {tableConfig.rowVars.length > 0 ? (
-                          <div className="relative">
-                            {isQuerying && (
-                              <div className="absolute inset-0 bg-white/50 z-20 flex items-center justify-center backdrop-blur-sm">
-                                <Loader2 className="animate-spin text-indigo-600" size={32} />
-                              </div>
-                            )}
-                            <SlideContainer className="h-full w-full" />
-                          </div>
-                        ) : (
-                          <div className="w-full h-64 border-2 border-dashed border-gray-100 rounded-lg flex flex-col items-center justify-center text-gray-300 gap-4 bg-white">
-                            <LayoutGrid size={48} className="opacity-20" />
-                            <p className="text-sm font-medium">Drag variables to the Row shelf to start</p>
-                          </div>
-                        )}
                       </div>
                     </div>
-
                   </div>
-                </SmartCanvas>
+
+                  {/* MAIN CANVAS AREA */}
+                  <SmartCanvas className="flex-1 relative overflow-hidden p-6 flex flex-col">
+                    <div className="flex-1 w-full h-full flex flex-col min-h-0">
+                      {tableConfig.rowVars.length > 0 ? (
+                        <div className="flex-1 relative bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden flex flex-col">
+                          {isQuerying && (
+                            <div className="absolute inset-0 bg-white/50 z-20 flex items-center justify-center backdrop-blur-sm">
+                              <Loader2 className="animate-spin text-indigo-600" size={32} />
+                            </div>
+                          )}
+                          <div className="flex-1 min-h-0">
+                            <SlideContainer className="h-full w-full" />
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="flex-1 border-2 border-dashed border-gray-200 rounded-xl flex flex-col items-center justify-center text-gray-400 gap-4 bg-white/50">
+                          <LayoutGrid size={48} className="opacity-20" />
+                          <p className="text-sm font-medium">Drag variables to the shelves above to start analysis</p>
+                        </div>
+                      )}
+                    </div>
+                  </SmartCanvas>
+                </div>
               </main>
             </motion.div>
 

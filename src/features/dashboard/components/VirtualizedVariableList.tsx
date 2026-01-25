@@ -21,8 +21,8 @@ interface VirtualizedVariableListProps {
     onContextMenu: (variable: VariableSet, e: React.MouseEvent) => void;
 }
 
-// Fixed height for each variable card (56px content + 8px gap)
-const ITEM_HEIGHT = 64;
+// Fixed height for each variable card (36px content + 4px gap)
+const ITEM_HEIGHT = 40;
 // Number of items to render outside visible area for smoother scrolling
 const OVERSCAN_COUNT = 5;
 
@@ -74,7 +74,7 @@ export const VirtualizedVariableList: React.FC<VirtualizedVariableListProps> = (
             const set = variableSets[index];
 
             return (
-                <div style={{ ...style, paddingRight: 4, paddingBottom: 8 }}>
+                <div style={{ ...style, paddingRight: 4, paddingBottom: 4 }}>
                     <DraggableVariable
                         variableSet={set}
                         isSelected={selectedIds.has(set.id)}

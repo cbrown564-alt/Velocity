@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { SortableContext, useSortable, horizontalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { GripVertical } from 'lucide-react';
 import { VariableSet } from '../../types';
@@ -57,7 +57,7 @@ const SortableItem: React.FC<SortableItemProps> = ({ variableSet, onRemove }) =>
 
             {/* Variable Name */}
             <span
-                className="flex-1 text-sm font-medium text-[var(--color-ink)] font-body truncate max-w-[100px] px-2"
+                className="flex-1 text-sm font-medium text-[var(--color-ink)] font-body truncate max-w-[200px] px-2"
                 title={variableSet.name}
             >
                 {variableSet.name}
@@ -95,9 +95,9 @@ export const SortableRowShelf: React.FC<SortableRowShelfProps> = ({
     return (
         <SortableContext
             items={variableSets.map((s) => s.id)}
-            strategy={verticalListSortingStrategy}
+            strategy={horizontalListSortingStrategy}
         >
-            <div className="flex flex-col gap-2 w-full">
+            <div className="flex flex-row gap-2 w-full flex-wrap items-center">
                 {variableSets.map((set) => (
                     <SortableItem key={set.id} variableSet={set} onRemove={onRemove} />
                 ))}

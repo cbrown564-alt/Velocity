@@ -87,12 +87,7 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
 
         set({ isQuerying: true });
 
-        // Check if the first row variable is a grid or multiple structure
         const firstRowVarSet = variableSets.find((s: VariableSet) => s.id === tableConfig.rowVars[0]);
-
-        // Create Variable Type Map for Worker
-        const variableTypes: Record<string, string> = {};
-        dataset?.variables.forEach(v => { variableTypes[v.id] = v.type });
 
         const options: CrosstabQueryOptions = {
             rowVars: [],
@@ -101,17 +96,43 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
             weightVar: dataset?.weightVariable
         };
 
-        if (firstRowVarSet?.structure === 'grid') {
-            // Grid structure
-            options.gridColumns = firstRowVarSet.variableIds.map(varId => {
-                const variable = dataset?.variables.find(v => v.id === varId);
-                return {
-                    name: varId,
-                    label: variable?.label || varId,
-                };
-            });
-        } else if (firstRowVarSet?.structure === 'multiple') {
-            // Multiple structure
+        // Context for worker to resolve synthetic variables and grid definitions
+        const contextVariables: Record<string, any> = {};
+        const contextVariableSets: Record<string, any> = {};
+
+        // Helper to add context
+        const addToContext = (varId: string) => {
+            const variable = dataset?.variables.find(v => v.id === varId);
+            if (variable) contextVariables[varId] = variable;
+        };
+
+        // For synthetic variables, we need to look up source sets
+        const resolveSourceSet = (variableId: string) => {
+            const variable = dataset?.variables.find(v => v.id === variableId);
+            if (variable?.synthetic && variable.sourceGridId) {
+                const sourceSet = variableSets.find((s: VariableSet) => s.id === variable.sourceGridId);
+                if (sourceSet) {
+                    contextVariableSets[sourceSet.id] = sourceSet;
+                    // Add all related variables from the set to context
+                    sourceSet.variableIds.forEach(vid => {
+                        addToContext(vid);
+                    });
+                }
+            }
+        };
+
+        // Add row/col vars to context
+        tableConfig.rowVars.forEach(vid => {
+            addToContext(vid);
+            resolveSourceSet(vid);
+        });
+        if (tableConfig.colVar) {
+            addToContext(tableConfig.colVar);
+            resolveSourceSet(tableConfig.colVar);
+        }
+
+        if (firstRowVarSet?.structure === 'multiple') {
+            // Multiple structure - Keeping legacy handling for now
             options.multipleColumns = firstRowVarSet.variableIds.map(varId => {
                 const variable = dataset?.variables.find(v => v.id === varId);
                 return {
@@ -126,8 +147,6 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
             const isRowScale = firstRowVarSet?.type === 'numeric';
 
             // Determine Measure Variable
-            // If Row is scale, it's the measure.
-            // If Row is NOT scale but Col is, Col is the measure.
             const measureVarSet = isRowScale ? firstRowVarSet! : colVarSet!;
             const measureVarId = measureVarSet.variableIds[0];
 
@@ -135,20 +154,18 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
 
             options.measureVar = measureVarId;
             options.measureLabel = measureVarSet.name;
-            options.includeDistributions = true; // Always fetch distributions for metric vars to support Violin/Ridgeline
+            options.includeDistributions = true;
+
+            // Add measure var to context
+            addToContext(measureVarId);
 
             if (isRowScale) {
-                // Standard Metric: Scale on Row, Grouping on Col (if any)
                 const col = tableConfig.colVar
                     ? (colVarSet?.variableIds[0] || tableConfig.colVar)
                     : null;
                 options.colVar = col;
             } else {
-                // Grouped Box Plot case: Nominal on Row, Scale on Col
-                // The "Column" passed to config is actually the Measure.
-                // The "Rows" passed to config are the Grouping variables.
-
-                // Resolve Row Vars (Grouping)
+                // Grouped Box Plot logic
                 const resolveToCol = (id: string): string => {
                     const varSet = variableSets.find((s: VariableSet) => s.id === id);
                     if (varSet && varSet.variableIds.length > 0) {
@@ -157,13 +174,16 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
                     return id;
                 };
                 options.rowVars = tableConfig.rowVars.map(resolveToCol);
-
-                // Clear colVar because it's now being used as measureVar
                 options.colVar = null;
             }
         } else {
-            // Standard / Nested
+            // Standard / Nested / (Implicit Grid via Synthetic Vars)
             const resolveToCol = (id: string): string => {
+                // If the ID matches a synthetic variable, use it directly
+                const variable = dataset?.variables.find(v => v.id === id);
+                if (variable) return id;
+
+                // Else check if it's a VariableSet and take first var (legacy single var set)
                 const varSet = variableSets.find((s: VariableSet) => s.id === id);
                 if (varSet && varSet.variableIds.length > 0) {
                     return varSet.variableIds[0];
@@ -223,7 +243,14 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
             };
 
             worker.addEventListener('message', handler);
-            worker.postMessage({ type: 'runCrosstab', options, variableTypes } as WorkerRequest);
+            worker.postMessage({
+                type: 'runCrosstab',
+                options,
+                context: {
+                    variables: contextVariables,
+                    variableSets: contextVariableSets
+                }
+            } as WorkerRequest);
         });
     },
 

@@ -176,7 +176,7 @@ export const GroupedBoxPlotRenderer: React.FC<BaseChartRendererProps> = ({
                             dy=".32em"
                             textAnchor="end"
                             style={{
-                                fontSize: 'var(--font-size-xs)',
+                                fontSize: '10px',
                                 fill: 'var(--gray-500)'
                             }}
                         >
@@ -192,7 +192,7 @@ export const GroupedBoxPlotRenderer: React.FC<BaseChartRendererProps> = ({
                         <text
                             textAnchor="middle"
                             style={{
-                                fontSize: 'var(--font-size-xs)',
+                                fontSize: '11px',
                                 fill: 'var(--gray-600)',
                                 fontWeight: 500,
                             }}

@@ -38,6 +38,10 @@ export interface Variable {
   semanticType?: 'text' | 'entity' | 'sentiment' | 'location' | 'temporal';
   valueLabels: ValueLabel[];
   missingValues: MissingValueDef;
+  /** True if this variable was generated automatically (e.g. for grid rows/cols) */
+  synthetic?: boolean;
+  /** ID of the VariableSet that generated this synthetic variable */
+  sourceGridId?: string;
 }
 
 export interface Dataset {
@@ -129,6 +133,22 @@ export interface VariableSet {
   derived?: boolean;
   /** For multiple-response sets, which value counts as "selected" */
   countedValue?: number;
+
+  /** 
+   * Metadata for grid/matrix variable sets.
+   * Enables explicit row x column handling instead of monolithic processing.
+   */
+  gridMetadata?: {
+    /** The shared scale used by all items in the grid (rows) */
+    sharedScale: {
+      valueLabels: Record<number, string>;
+      type: 'ordinal' | 'nominal';
+    };
+    /** Labels for the items being rated (columns) */
+    itemLabels: string[];
+    /** Maps variableId to its index in itemLabels */
+    itemMapping: Record<string, number>;
+  };
 }
 
 /**

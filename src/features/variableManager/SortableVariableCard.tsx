@@ -8,7 +8,7 @@
 import React from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { GripVertical, Check, Tag, BarChart2, Layers } from 'lucide-react';
+import { GripVertical, Check, CheckCircle, SquareCheck, BarChart2, Grid3X3 } from 'lucide-react';
 import type { VariableType } from '../../store/slices/dataSlice';
 
 interface SortableVariableCardProps {
@@ -54,13 +54,13 @@ export const SortableVariableCard: React.FC<SortableVariableCardProps> = ({
     };
 
     const typeIcons = {
-        nominal: Tag,
-        ordinal: Layers,
+        nominal: CheckCircle,
+        ordinal: CheckCircle,
         scale: BarChart2,
     };
 
     const typeColor = type ? typeColors[type] : 'bg-gray-50 border-gray-200 text-gray-600';
-    const TypeIcon = type ? typeIcons[type] : Tag;
+    const TypeIcon = structure === 'multi' ? SquareCheck : structure === 'grid' ? Grid3X3 : type ? typeIcons[type] : CheckCircle;
 
     const handleClick = (e: React.MouseEvent) => {
         if (e.shiftKey) {
@@ -112,7 +112,10 @@ export const SortableVariableCard: React.FC<SortableVariableCardProps> = ({
 
             {/* Type Badge */}
             <div className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider opacity-80 mb-1.5 font-body">
-                <TypeIcon size={12} />
+                <TypeIcon
+                    size={12}
+                    className={structure !== 'single' ? 'text-gray-500' : ''}
+                />
                 {type || 'unknown'}
             </div>
 

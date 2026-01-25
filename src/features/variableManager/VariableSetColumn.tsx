@@ -10,7 +10,7 @@
 import React, { useMemo, useEffect, useCallback, useRef } from 'react';
 import { useDraggable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
-import { Hash, Tag, BarChart2, Grid3X3, Layers, ChevronRight, EyeOff, Type, Calendar } from 'lucide-react';
+import { Hash, Grid3X3, SquareCheck, ChevronRight, EyeOff, Type, Calendar, CheckCircle } from 'lucide-react';
 import { useVelocityStore } from '../../store';
 import type { VariableSet, Dataset } from '../../store/slices/dataSlice';
 import { Sparkline, MissingnessBadge } from './Sparkline';
@@ -34,9 +34,9 @@ interface VariableSetItemProps {
 const getTypeIcon = (type?: string) => {
     switch (type) {
         case 'nominal':
-            return <Tag size={14} />;
+            return <CheckCircle size={14} />;
         case 'ordinal':
-            return <BarChart2 size={14} />;
+            return <CheckCircle size={14} />;
         case 'numeric':
             return <Hash size={14} />;
         case 'text':
@@ -44,7 +44,7 @@ const getTypeIcon = (type?: string) => {
         case 'date':
             return <Calendar size={14} />;
         default:
-            return <Tag size={14} />;
+            return <CheckCircle size={14} />;
     }
 };
 
@@ -106,11 +106,15 @@ const VariableSetItem: React.FC<VariableSetItemProps> = ({
             <div
                 className={styles.itemContent}
             >
-                <span className={styles.itemIcon}>
+                <span className={styles.itemIcon} style={
+                    variableSet.structure === 'grid' || variableSet.structure === 'multiple'
+                        ? { color: 'var(--gray-400)' }
+                        : undefined
+                }>
                     {variableSet.structure === 'grid' ? (
                         <Grid3X3 size={14} />
                     ) : variableSet.structure === 'multiple' ? (
-                        <Layers size={14} />
+                        <SquareCheck size={14} />
                     ) : (
                         getTypeIcon(variableSet.type)
                     )}
@@ -434,7 +438,7 @@ export const VariableSetColumn: React.FC = () => {
                     <span className={styles.columnTitle}>Variable Sets</span>
                 </div>
                 <div className={styles.emptyState}>
-                    <Tag className={styles.emptyIcon} />
+                    <CheckCircle className={styles.emptyIcon} />
                     <span className={styles.emptyText}>No data loaded</span>
                 </div>
             </div>
@@ -480,7 +484,7 @@ export const VariableSetColumn: React.FC = () => {
                     })
                 ) : (
                     <div className={styles.emptyState}>
-                        <Tag className={styles.emptyIcon} />
+                        <CheckCircle className={styles.emptyIcon} />
                         <span className={styles.emptyText}>
                             {searchQuery ? 'No matching variables' : 'No variables in folder'}
                         </span>

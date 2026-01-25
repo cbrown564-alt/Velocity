@@ -78,6 +78,47 @@ describe('queryBuilder', () => {
 
             expect(sql).toContain('"Q1""a"'); // Escaped double quote
         });
+
+        it('builds a grid unpivot query using CTE and CASE WHEN', () => {
+            const sql = buildCrosstabQuery({
+                rowVars: [],
+                gridColumns: [
+                    { name: 'q1_a', label: 'Product A' },
+                    { name: 'q1_b', label: 'Product B' }
+                ]
+            });
+
+            // Verify CTE structure
+            expect(sql).toContain('WITH unpivoted AS');
+            expect(sql).toContain('CROSS JOIN (VALUES');
+
+            // Verify VALUES clause
+            expect(sql).toContain("(0, 'Product A')");
+            expect(sql).toContain("(1, 'Product B')");
+
+            // Verify CASE WHEN unpivoting
+            expect(sql).toContain('CASE items.item_index');
+            expect(sql).toContain('WHEN 0 THEN "q1_a"');
+            expect(sql).toContain('WHEN 1 THEN "q1_b"');
+
+            // Verify NOT NULL filter construction
+            expect(sql).toContain('WHEN 0 THEN "q1_a" IS NOT NULL');
+
+            // Verify final selection
+            expect(sql).toContain('item_label as colKey');
+            expect(sql).toContain('_synthetic_value as rowKey_0');
+        });
+
+        it('includes main table columns in grid CTE for filtering', () => {
+            const sql = buildCrosstabQuery({
+                rowVars: [],
+                gridColumns: [{ name: 'q1_a', label: 'Product A' }],
+                filters: [{ id: 'f1', variableId: 'Gender', operator: 'eq', value: 'Male' }]
+            });
+
+            expect(sql).toContain('main.*'); // Must select main columns
+            expect(sql).toContain('"Gender" = \'Male\''); // Filter applied in main query
+        });
     });
 
     // ==========================================================================

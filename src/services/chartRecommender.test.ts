@@ -3,7 +3,7 @@ import { recommendChart } from './chartRecommender';
 import { Variable } from '../types';
 
 describe('chartRecommender', () => {
-    it('should recommend diverging-bar for single ordinal variable', () => {
+    it('should recommend horizontal-bar for single ordinal variable', () => {
         const ordinalVar: Variable = {
             id: 'v1',
             name: 'v1',
@@ -20,7 +20,50 @@ describe('chartRecommender', () => {
             isMultiResponse: false
         });
 
+        expect(result.default).toBe('horizontal-bar');
+    });
+
+    it('should recommend diverging-bar for single scale variable', () => {
+        const scaleVar: Variable = {
+            id: 'v1',
+            name: 'v1',
+            label: 'Likert Scale',
+            type: 'scale',
+            valueLabels: [],
+            missingValues: {}
+        };
+
+        const result = recommendChart({
+            rowVars: [scaleVar],
+            colVar: null,
+            isGrid: false,
+            isMultiResponse: false
+        });
+
         expect(result.default).toBe('diverging-bar');
+    });
+
+    it('should recommend diverging-bar with grouped-bar alternative for Grid', () => {
+        const scaleVar: Variable = {
+            id: 'v1',
+            name: 'v1',
+            label: 'Likert Grid',
+            type: 'scale',
+            valueLabels: [],
+            missingValues: {}
+        };
+
+        const result = recommendChart({
+            rowVars: [scaleVar], // ProcessedData might produce 1 rowVar if flattened or just context
+            colVar: null,
+            isGrid: true,
+            isMultiResponse: false
+        });
+
+        expect(result.default).toBe('diverging-bar');
+        expect(result.alternatives).toContain('grouped-bar');
+        expect(result.alternatives).not.toContain('vertical-bar');
+        expect(result.alternatives).not.toContain('stacked-bar');
     });
 
     it('should recommend horizontal-bar for single nominal variable', () => {

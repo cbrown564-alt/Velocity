@@ -2,12 +2,16 @@ import React, { useMemo, useCallback } from 'react';
 import * as d3 from 'd3-scale';
 import { max } from 'd3-array';
 import { BaseChartRendererProps } from '../../../types/charts';
-import { getChartColor } from '../shared/chartColors';
 
 /**
  * Diverging Bar Chart Renderer
- * Used for Likert scales and sentiment analysis (Negative <-> Positive).
+ * Used for Likert scales and sentiment analysis.
  * Aligns bars around a central neutral axis.
+ * 
+ * Improvements:
+ * - Continuous color scale (Blue -> Grey -> Red)
+ * - Separation of "N/A" / "Don't know" categories
+ * - Numeric sorting of scale (handled in parent, but robust logic here)
  */
 export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
     width,
@@ -21,9 +25,36 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
     labelMode = 'none', // Default to none
 }) => {
     const { rows, columns } = processedData;
-    const colCount = columns.length;
 
-    // Determine split point
+    // 1. Separate Scale Columns vs Special Columns (N/A, Don't know)
+    const { scaleColumns, specialColumns } = useMemo(() => {
+        const specialKeywords = ['don\'t know', 'n/a', 'na', 'refused', 'prefer not to say', 'none'];
+        const scale: typeof columns = [];
+        const special: typeof columns = [];
+
+        columns.forEach(col => {
+            const labelLower = (col.label || '').toLowerCase();
+            // Check if label matches special keywords
+            // Also check if key is explicitly negative or way out of range (99) if needed, 
+            // but rely on string matching for now as per plan.
+            const isSpecial = specialKeywords.some(kw => labelLower === kw || labelLower.includes(`(${kw})`));
+
+            // Also heuristic: if the scale is mostly numeric (1-10), and this one is not?
+            // But usually "not at all" is 1. "not at all" is NOT special.
+
+            if (isSpecial) {
+                special.push(col);
+            } else {
+                scale.push(col);
+            }
+        });
+
+        return { scaleColumns: scale, specialColumns: special };
+    }, [columns]);
+
+    const colCount = scaleColumns.length;
+
+    // 2. Determine split point for Scale Columns
     // If odd (5): split=2 (idx 0,1 left, 2 middle, 3,4 right)
     // If even (4): split=2 (idx 0,1 left, 2,3 right)
     const midPoint = Math.floor(colCount / 2);
@@ -31,63 +62,150 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
 
     // Helper to determine segment position
     const getSegmentKeys = () => {
-        const left = columns.slice(0, midPoint).map(c => c.key);
+        const left = scaleColumns.slice(0, midPoint).map(c => c.key);
         const right = hasNeutral
-            ? columns.slice(midPoint + 1).map(c => c.key)
-            : columns.slice(midPoint).map(c => c.key);
-        const neutral = hasNeutral ? columns[midPoint].key : null;
-        return { left, right, neutral };
+            ? scaleColumns.slice(midPoint + 1).map(c => c.key)
+            : scaleColumns.slice(midPoint).map(c => c.key);
+        const neutral = hasNeutral ? scaleColumns[midPoint].key : null;
+
+        const special = specialColumns.map(c => c.key);
+
+        return { left, right, neutral, special };
     };
 
-    const { left, right, neutral } = getSegmentKeys();
+    const { left, right, neutral, special } = getSegmentKeys();
 
-    // Calculate extents to determine scale domain
-    const maxExtent = useMemo(() => {
-        return max(rows, row => {
+    // 3. Calculate extents
+    // For diverging part: Max(LeftSum + HalfNeutral, RightSum + HalfNeutral)
+    // For special part: Max(SpecialSum) -> We need to reserve space for this on the right.
+    const { maxDiverging, maxSpecial } = useMemo(() => {
+        let maxDiv = 0;
+        let maxSpec = 0;
+
+        rows.forEach(row => {
             let leftSum = 0;
             let rightSum = 0;
+            let specSum = 0; // Usually typically one special col per row? Or sum if multiple? treating as stacked for space
 
             left.forEach(k => leftSum += (row.cells[k]?.count || 0));
             right.forEach(k => rightSum += (row.cells[k]?.count || 0));
-
             const neutralVal = neutral ? (row.cells[neutral]?.count || 0) : 0;
 
-            // The extent on either side is Sum + Half Neutral
-            return Math.max(leftSum + neutralVal / 2, rightSum + neutralVal / 2);
-        }) || 1;
-    }, [rows, left, right, neutral]);
+            maxDiv = Math.max(maxDiv, leftSum + neutralVal / 2, rightSum + neutralVal / 2);
 
-    // Layout
+            special.forEach(k => specSum += (row.cells[k]?.count || 0));
+            maxSpec = Math.max(maxSpec, specSum);
+        });
+
+        return { maxDiverging: maxDiv || 1, maxSpecial: maxSpec };
+    }, [rows, left, right, neutral, special]);
+
+    // 4. Layout
     const maxRowLabelLength = Math.max(...rows.map(r => (r.label || '').length), 10);
     const leftMargin = Math.min(Math.max(maxRowLabelLength * 6, 100), 200);
-    const margin = { top: 50, right: 40, bottom: 30, left: leftMargin };
+
+    // Reserve space for "Avg" column
+    const avgColumnWidth = 50;
+    const rightMargin = 40 + avgColumnWidth;
+
+    const gapForSpecial = 20; // Gap between diverging and special bars
+    const margin = { top: 60, right: rightMargin, bottom: 30, left: leftMargin };
+
+    // We split inner width. 
+    // Special bars need width roughly proportional?
+    // Let's assume the same scale unit (pixels per count) for both.
+    // Total Width Unit Space = (maxDiverging * 2) + (maxSpecial > 0 ? maxSpecial + gap : 0)
+    // Note: xScale domain is [-maxDiverging, maxDiverging]. 
+    // If we want to fit special bars in the same SVG, we need to map them manually or extend the domain.
+
+    // Let's use a single linear scale for "width calculation"
+    // Domain size = maxDiverging * 2 + (specialValues?)
+    // Actually, distinct scales might be safer if we want the diverging part to be centered in its own area.
+    // But aligning the "visual size" of 10 respondents implies a shared scale.
+
     const innerWidth = width - margin.left - margin.right;
     const innerHeight = Math.max(height - margin.top - margin.bottom, 150);
+
+    const totalDomainWidth = (maxDiverging * 2) + (maxSpecial > 0 ? maxSpecial * 1.2 : 0); // 1.2 for some padding/gap logic in logical units? No, let's do pixel allocation.
+
+    // Allocate width
+    // Fraction of width for diverging
+    const divergingFraction = (maxDiverging * 2) / totalDomainWidth;
+    const divergingWidth = innerWidth * (maxSpecial > 0 ? divergingFraction : 1);
+
+    // The gap in pixels
+    const pixelGap = 30;
+    // Recalculate if we have special
+    // available = innerWidth - (special ? pixelGap : 0)
+    // scale = available / totalDomainCounts
+    const availablePixels = innerWidth - (maxSpecial > 0 ? pixelGap : 0);
+    const pixelsPerUnit = availablePixels / totalDomainWidth;
+
+    const divergingPixelWidth = (maxDiverging * 2) * pixelsPerUnit;
+    // const specialPixelWidth = maxSpecial * pixelsPerUnit; // unused directly, implied
 
     const barHeight = Math.min(Math.max(innerHeight / rows.length - 8, 24), 48);
     const actualHeight = (barHeight + 8) * rows.length;
 
     // Scales
-    const xScale = d3.scaleLinear()
-        .domain([-maxExtent, maxExtent])
-        .range([0, innerWidth]);
+    // Diverging Scale: Domain [-max, max] -> Range [0, divergingPixelWidth]
+    const xDivScale = d3.scaleLinear()
+        .domain([-maxDiverging, maxDiverging])
+        .range([0, divergingPixelWidth]);
+
+    // Special Scale: Domain [0, maxSpecial] -> Range [0, maxSpecial * pixelsPerUnit]
+    const xSpecScale = d3.scaleLinear()
+        .domain([0, maxSpecial])
+        .range([0, maxSpecial * pixelsPerUnit]);
 
     const yScale = d3.scaleBand()
         .domain(rows.map(r => r.label))
         .range([0, actualHeight])
         .padding(0.2);
 
-    // Handle row click for selection
+    // Color Scales
+    // Main Scale: Linear Blue(Low) -> Grey(Mid) -> Red(High)
+    // Domain: [0, 0.5, 1] relative to the index in scaleColumns
+    const colorScale = d3.scaleLinear<string>()
+        .domain([0, 0.5, 1])
+        .range(['#2196f3', '#e0e0e0', '#f44336']);
+
+    const getColumnColor = (key: string) => {
+        // Is it special?
+        const specIdx = specialColumns.findIndex(c => c.key === key);
+        if (specIdx >= 0) return '#bdc3c7'; // Neutral Grey for N/A
+
+        // Is it scale?
+        const scaleIdx = scaleColumns.findIndex(c => c.key === key);
+        if (scaleIdx >= 0) {
+            const t = scaleIdx / (scaleColumns.length - 1);
+            return colorScale(t);
+        }
+        return '#ccc';
+    };
+
+    // Color Accessor for sorting or legend
+    const getLegendColors = () => {
+        // Scale labels
+        const labels = scaleColumns.map((c, i) => ({
+            label: c.label,
+            color: colorScale(i / (scaleColumns.length - 1))
+        }));
+        // Special labels
+        specialColumns.forEach(c => {
+            labels.push({ label: c.label, color: '#bdc3c7' });
+        });
+        return labels;
+    };
+
+    const legendItems = getLegendColors();
+
     const handleRowClick = useCallback((rowLabel: string, event: React.MouseEvent) => {
         if (!interactive || !onSelectionChange) return;
 
         const newSelection = new Set(selectedKeys);
         if (event.metaKey || event.ctrlKey) {
-            if (newSelection.has(rowLabel)) {
-                newSelection.delete(rowLabel);
-            } else {
-                newSelection.add(rowLabel);
-            }
+            newSelection.has(rowLabel) ? newSelection.delete(rowLabel) : newSelection.add(rowLabel);
         } else {
             newSelection.clear();
             newSelection.add(rowLabel);
@@ -95,53 +213,25 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
         onSelectionChange(newSelection);
     }, [interactive, onSelectionChange, selectedKeys]);
 
-    // Handle right-click context menu
+
     const handleRowContextMenu = useCallback((rowLabel: string, event: React.MouseEvent) => {
         if (!interactive || !onContextMenu) return;
         event.preventDefault();
         event.stopPropagation();
 
-        // Find the row data
         const row = rows.find(r => r.label === rowLabel);
         if (!row) return;
 
-        const dataPoint = {
-            label: rowLabel,
-            value: row.total,
-            percent: 100,
-            rawValue: row.label,
-        };
-
         onContextMenu({
-            selected: [dataPoint],
+            selected: [{
+                label: rowLabel,
+                value: row.total,
+                percent: 100,
+                rawValue: row.label,
+            }],
             position: { x: event.clientX, y: event.clientY },
         });
     }, [interactive, onContextMenu, rows]);
-
-    // Color Logic: Blue (Negative) -> Gray (Neutral) -> Red (Positive)
-    // Blue: #2196f3, Gray: #e0e0e0, Red: #f44336
-    const getColor = (index: number) => {
-        // If we only have 1 column (fallback), use primary color
-        if (colCount <= 1) return 'var(--color-primary)';
-
-        // Auto-generated diverging palette
-        if (hasNeutral && index === midPoint) return '#e0e0e0'; // Neutral (Light Gray)
-
-        // If left side (negative/low) -> Blue shades
-        if (index < midPoint) {
-            // We want to go from Strong Blue (index 0) to WEAK Blue (index midPoint-1)
-            // Simple mapping
-            if (index === 0) return '#1565c0'; // Darker Blue
-            if (index === 1) return '#64b5f6'; // Light Blue
-            return '#2196f3'; // Default Blue
-        }
-
-        // If right side (positive/high) -> Red shades
-        // We want to go from WEAK Red (midPoint+1) to STRONG Red (end)
-        if (index === colCount - 1) return '#d32f2f'; // Darker Red
-        if (index === colCount - 2) return '#ef5350'; // Light Red
-        return '#f44336'; // Default Red
-    };
 
     return (
         <svg
@@ -149,44 +239,84 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
             height={Math.max(height, actualHeight + margin.top + margin.bottom)}
             className="overflow-visible font-body"
         >
+            {/* Legend (Top Centered, Wrapped) */}
+            <foreignObject x={0} y={0} width={width} height={margin.top}>
+                <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 px-4 text-[10px] text-gray-600 h-full overflow-y-auto content-center">
+                    {legendItems.map((item) => (
+                        <div key={item.label} className="flex items-center gap-1">
+                            <span className="w-3 h-3 rounded-[2px]" style={{ backgroundColor: item.color }} />
+                            <span className="truncate max-w-[100px]" title={item.label}>{item.label}</span>
+                        </div>
+                    ))}
+                </div>
+            </foreignObject>
+
             <g transform={`translate(${margin.left},${margin.top})`}>
 
-                {/* Legend */}
-                {/* Legend - Only show if we have multiple categories */}
-                {colCount > 1 && (
-                    <g transform={`translate(${(innerWidth - (colCount * 100)) / 2}, -${margin.top - 10})`}>
-                        {columns.map((col, i) => (
-                            <g key={col.key} transform={`translate(${i * 100}, 0)`}>
-                                <rect width={12} height={12} rx={2} fill={getColor(i)} />
-                                <text x={18} y={10} className="text-[10px] fill-gray-600">
-                                    {(col.label || '').length > 12 ? (col.label || '').substring(0, 10) + '...' : (col.label || '')}
-                                </text>
-                            </g>
-                        ))}
-                    </g>
-                )}
-
-                {/* Center Line */}
+                {/* Center Line for Diverging Part */}
                 <line
-                    x1={xScale(0)}
+                    x1={xDivScale(0)}
                     y1={0}
-                    x2={xScale(0)}
+                    x2={xDivScale(0)}
                     y2={actualHeight}
                     stroke="var(--gray-400)"
                     strokeWidth={1}
                     strokeDasharray="4,4"
                 />
+                <text
+                    x={xDivScale(0)}
+                    y={-5}
+                    textAnchor="middle"
+                    className="text-[10px] fill-gray-500"
+                >
+                    0
+                </text>
 
-                {/* Rows */}
+                {/* Separator Line for Special Part (if exists) */}
+                {maxSpecial > 0 && (
+                    <line
+                        x1={divergingPixelWidth + pixelGap / 2}
+                        y1={0}
+                        x2={divergingPixelWidth + pixelGap / 2}
+                        y2={actualHeight}
+                        stroke="var(--gray-300)"
+                        strokeWidth={1}
+                    />
+                )}
+
+                {/* Separator Line for Average Column */}
+                <line
+                    x1={divergingPixelWidth + (maxSpecial > 0 ? pixelGap + xSpecScale.range()[1] : 0) + 12}
+                    y1={0}
+                    x2={divergingPixelWidth + (maxSpecial > 0 ? pixelGap + xSpecScale.range()[1] : 0) + 12}
+                    y2={actualHeight}
+                    stroke="var(--gray-200)"
+                    strokeWidth={1}
+                />
+
+                {/* Header for Average Column */}
+                <text
+                    x={divergingPixelWidth + (maxSpecial > 0 ? pixelGap + xSpecScale.range()[1] : 0) + 20}
+                    y={-5}
+                    textAnchor="start"
+                    className="text-[10px] font-medium fill-gray-500"
+                >
+                    Avg
+                </text>
+
                 {rows.map(row => {
                     const y = yScale(row.label) || 0;
                     const h = yScale.bandwidth();
                     const neutralVal = neutral ? (row.cells[neutral]?.count || 0) : 0;
                     const isSelected = selectedKeys?.has(row.label);
 
-                    // Track position for stacking
                     let currentLeft = -(neutralVal / 2);
                     let currentRight = (neutralVal / 2);
+
+                    // Special Stack Start
+                    let currentSpecial = 0;
+
+                    const avgValue = (row as any).average;
 
                     return (
                         <g
@@ -195,17 +325,18 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
                             onContextMenu={(e) => handleRowContextMenu(row.label, e)}
                             style={{ cursor: interactive ? 'pointer' : 'default' }}
                         >
-                            {/* Selection highlight background */}
+                            {/* Selection highlight */}
                             {isSelected && (
                                 <rect
                                     x={0}
                                     y={y - 2}
-                                    width={innerWidth}
+                                    width={innerWidth + avgColumnWidth}
                                     height={h + 4}
                                     fill="var(--gray-100)"
                                     rx={3}
                                 />
                             )}
+
                             {/* Y Axis Label */}
                             <text
                                 x={-10}
@@ -221,19 +352,19 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
                                 {(row.label || '').length > 25 ? (row.label || '').substring(0, 23) + '...' : (row.label || '')}
                             </text>
 
-                            {/* Neutral Bar (Centered) */}
+                            {/* DIVERGING: Neutral Bar */}
                             {hasNeutral && neutralVal > 0 && (
                                 <g>
                                     <rect
-                                        x={xScale(-neutralVal / 2)}
+                                        x={xDivScale(-neutralVal / 2)}
                                         y={y}
-                                        width={xScale(neutralVal / 2) - xScale(-neutralVal / 2)}
+                                        width={xDivScale(neutralVal / 2) - xDivScale(-neutralVal / 2)}
                                         height={h}
-                                        fill={getColor(midPoint)}
+                                        fill={getColumnColor(neutral)}
                                     />
-                                    {labelMode !== 'none' && (xScale(neutralVal / 2) - xScale(-neutralVal / 2)) > 24 && (
+                                    {labelMode !== 'none' && (xDivScale(neutralVal / 2) - xDivScale(-neutralVal / 2)) > 24 && (
                                         <text
-                                            x={xScale(0)}
+                                            x={xDivScale(0)}
                                             y={y + h / 2}
                                             dy=".35em"
                                             textAnchor="middle"
@@ -247,10 +378,8 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
                                 </g>
                             )}
 
-                            {/* Left Bars (Negative) - Iterate backwards from midPoint-1 to 0 */}
-                            {left.slice().reverse().map((key, i) => {
-                                // Original index mapping
-                                const colIndex = midPoint - 1 - i;
+                            {/* DIVERGING: Left Bars (Negative) */}
+                            {left.slice().reverse().map((key) => {
                                 const val = row.cells[key]?.count || 0;
                                 if (val === 0) return null;
 
@@ -258,43 +387,42 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
                                 const end = currentLeft - val;
                                 currentLeft -= val;
 
-                                const width = xScale(start) - xScale(end);
-                                const cellData = row.cells[key];
-                                const labelText = labelMode === 'percent'
-                                    ? `${Math.round(cellData?.percent || 0)}%`
-                                    : val.toLocaleString();
+                                const xStart = xDivScale(start);
+                                const xEnd = xDivScale(end);
+                                const bandwidth = xStart - xEnd;
 
                                 return (
                                     <g key={key}>
                                         <rect
-                                            x={xScale(end)}
+                                            x={xEnd}
                                             y={y}
-                                            width={width}
+                                            width={Math.max(bandwidth, 0)}
                                             height={h}
-                                            fill={getColor(colIndex)}
+                                            fill={getColumnColor(key)}
                                             className="transition-opacity hover:opacity-80"
                                         >
-                                            <title>{`${columns[colIndex].label}: ${val}`}</title>
+                                            <title>{`${scaleColumns.find(c => c.key === key)?.label || ''}: ${val}`}</title>
                                         </rect>
-                                        {labelMode !== 'none' && width > 24 && (
+                                        {labelMode !== 'none' && bandwidth > 24 && (
                                             <text
-                                                x={xScale(end) + width / 2}
+                                                x={xEnd + bandwidth / 2}
                                                 y={y + h / 2}
                                                 dy=".35em"
                                                 textAnchor="middle"
                                                 className="text-[10px] font-medium fill-white pointer-events-none"
                                                 style={{ textShadow: '0 1px 2px rgba(0,0,0,0.3)' }}
                                             >
-                                                {labelText}
+                                                {labelMode === 'percent'
+                                                    ? `${Math.round(row.cells[key]?.percent || 0)}%`
+                                                    : val.toLocaleString()}
                                             </text>
                                         )}
                                     </g>
                                 );
                             })}
 
-                            {/* Right Bars (Positive) - Iterate forwards */}
-                            {right.map((key, i) => {
-                                const colIndex = hasNeutral ? midPoint + 1 + i : midPoint + i;
+                            {/* DIVERGING: Right Bars (Positive) */}
+                            {right.map((key) => {
                                 const val = row.cells[key]?.count || 0;
                                 if (val === 0) return null;
 
@@ -302,39 +430,88 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
                                 const end = currentRight + val;
                                 currentRight += val;
 
-                                const width = xScale(end) - xScale(start);
-                                const cellData = row.cells[key];
-                                const labelText = labelMode === 'percent'
-                                    ? `${Math.round(cellData?.percent || 0)}%`
-                                    : val.toLocaleString();
+                                const xStart = xDivScale(start);
+                                const xEnd = xDivScale(end);
+                                const bandwidth = xEnd - xStart;
 
                                 return (
                                     <g key={key}>
                                         <rect
-                                            x={xScale(start)}
+                                            x={xStart}
                                             y={y}
-                                            width={width}
+                                            width={Math.max(bandwidth, 0)}
                                             height={h}
-                                            fill={getColor(colIndex)}
+                                            fill={getColumnColor(key)}
                                             className="transition-opacity hover:opacity-80"
-                                        >
-                                            <title>{`${columns[colIndex].label}: ${val}`}</title>
-                                        </rect>
-                                        {labelMode !== 'none' && width > 24 && (
+                                        />
+                                        {labelMode !== 'none' && bandwidth > 24 && (
                                             <text
-                                                x={xScale(start) + width / 2}
+                                                x={xStart + bandwidth / 2}
                                                 y={y + h / 2}
                                                 dy=".35em"
                                                 textAnchor="middle"
                                                 className="text-[10px] font-medium fill-white pointer-events-none"
                                                 style={{ textShadow: '0 1px 2px rgba(0,0,0,0.3)' }}
                                             >
-                                                {labelText}
+                                                {labelMode === 'percent'
+                                                    ? `${Math.round(row.cells[key]?.percent || 0)}%`
+                                                    : val.toLocaleString()}
                                             </text>
                                         )}
                                     </g>
                                 );
                             })}
+
+                            {/* SPECIAL: Far Right Bars */}
+                            {special.map((key) => {
+                                const val = row.cells[key]?.count || 0;
+                                if (val === 0) return null;
+
+                                const start = currentSpecial;
+                                const end = currentSpecial + val;
+                                currentSpecial += val;
+
+                                const xBase = divergingPixelWidth + pixelGap;
+                                const xStart = xBase + xSpecScale(start);
+                                const bandwidth = xSpecScale(val);
+
+                                return (
+                                    <g key={key}>
+                                        <rect
+                                            x={xStart}
+                                            y={y}
+                                            width={Math.max(bandwidth, 0)}
+                                            height={h}
+                                            fill={getColumnColor(key)}
+                                            className="transition-opacity hover:opacity-80"
+                                        />
+                                        {labelMode !== 'none' && bandwidth > 24 && (
+                                            <text
+                                                x={xStart + bandwidth / 2}
+                                                y={y + h / 2}
+                                                dy=".35em"
+                                                textAnchor="middle"
+                                                className="text-[10px] font-medium fill-white pointer-events-none"
+                                            >
+                                                {labelMode === 'percent'
+                                                    ? `${Math.round(row.cells[key]?.percent || 0)}%`
+                                                    : val.toLocaleString()}
+                                            </text>
+                                        )}
+                                    </g>
+                                );
+                            })}
+
+                            {/* Average Column Value */}
+                            <text
+                                x={divergingPixelWidth + (maxSpecial > 0 ? pixelGap + xSpecScale.range()[1] : 0) + 20}
+                                y={y + h / 2}
+                                dy=".35em"
+                                textAnchor="start"
+                                className="text-[10px] font-medium text-gray-700"
+                            >
+                                {typeof avgValue === 'number' ? avgValue.toFixed(1) : '-'}
+                            </text>
                         </g>
                     );
                 })}

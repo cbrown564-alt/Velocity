@@ -134,6 +134,7 @@ export interface ProcessedAnalysisData {
     grandTotal: number;
     /** Whether this is a metric (scale) analysis */
     isMetric: boolean;
+    isMetric: boolean;
     /** Source variables for reference */
     rowVariables: Variable[];
     colVariable: Variable | null;
@@ -163,6 +164,7 @@ export function useProcessedAnalysisData({
     colVariable,
     isWeighted = false,
     isMultipleResponse = false,
+
 }: UseProcessedAnalysisDataOptions): ProcessedAnalysisData | null {
     return useMemo(() => {
         if (!rowVariables.length || data.length === 0) {

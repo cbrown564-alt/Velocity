@@ -24,35 +24,56 @@ interface GridQueryOptions {
 function buildGridQuery(options: GridQueryOptions): string {
     const { columns, filters, weightVar, colVar } = options;
 
-    const whereClause = buildFilterClause(filters);
+    // Use a CTE to unpivot the data once, instead of UNION ALL
+    // This allows access to all other columns for filtering/grouping
+
+    // 1. Build the items lookup table using VALUES
+    const itemsValues = columns
+        .map(({ label }, index) => `(${index}, '${escapeString(label)}')`)
+        .join(', ');
+
+    // 2. Build the CASE WHEN expression to extract values
+    const valueExpression = `
+        CASE items.item_index
+            ${columns.map(({ name }, index) => `WHEN ${index} THEN "${escapeIdentifier(name)}"`).join('\n            ')}
+        END
+    `;
+
+    // 3. Build the NOT NULL filter
+    const notNullCondition = `
+        CASE items.item_index
+            ${columns.map(({ name }, index) => `WHEN ${index} THEN "${escapeIdentifier(name)}" IS NOT NULL`).join('\n            ')}
+        END
+    `;
+
+    // 4. Build the WHERE clause for global filters
+    const filterClause = buildFilterClause(filters);
+    const whereConditions = [notNullCondition];
+    if (filterClause) {
+        whereConditions.push(filterClause);
+    }
+
     const countExpr = weightVar
         ? `SUM("${escapeIdentifier(weightVar)}")::DOUBLE`
         : `COUNT(*)::INTEGER`;
 
-    // Build UNION ALL query for each column
-    const unionParts = columns.map(({ name, label }) => {
-        const parts = [
-            `SELECT '${escapeString(label)}' as colKey, "${escapeIdentifier(name)}" as rowKey_0, ${countExpr} as count`,
-            `FROM main`,
-        ];
-
-        const conditions: string[] = [];
-        // Filter out NULL values for this column
-        conditions.push(`"${escapeIdentifier(name)}" IS NOT NULL`);
-        if (whereClause) {
-            conditions.push(whereClause);
-        }
-
-        if (conditions.length > 0) {
-            parts.push(`WHERE ${conditions.join(' AND ')}`);
-        }
-
-        parts.push(`GROUP BY "${escapeIdentifier(name)}"`);
-
-        return parts.join(' ');
-    });
-
-    return unionParts.join(' UNION ALL ');
+    return `
+        WITH unpivoted AS (
+            SELECT 
+                main.*,
+                items.item_label,
+                ${valueExpression} as _synthetic_value
+            FROM main
+            CROSS JOIN (VALUES ${itemsValues}) as items(item_index, item_label)
+        )
+        SELECT 
+            item_label as colKey, 
+            _synthetic_value as rowKey_0, 
+            ${countExpr} as count
+        FROM unpivoted
+        WHERE ${whereConditions.join(' AND ')}
+        GROUP BY item_label, _synthetic_value
+    `;
 }
 
 /**

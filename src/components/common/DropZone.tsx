@@ -36,26 +36,20 @@ export const DropZone: React.FC<DropZoneProps> = ({
         <div
           ref={setNodeRef}
           className={`
-            w-full min-h-[120px] p-3 rounded-lg transition-all duration-200
+            w-full min-h-[52px] px-2 py-1.5 rounded-md transition-all duration-200 flex items-center
             ${active
-              ? 'border-2 border-dashed border-[var(--color-terracotta)] border-opacity-40 bg-[var(--gray-50)]/50'
-              : 'border-2 border-dashed border-transparent'
+              ? 'bg-white border-2 border-dashed border-indigo-200'
+              : 'border-2 border-transparent bg-transparent'
             }
             ${isOver
-              ? 'ring-2 ring-[var(--color-terracotta)] bg-[var(--gray-50)] border-[var(--color-terracotta)]'
+              ? 'ring-2 ring-indigo-500 bg-white border-indigo-500'
               : ''
             }
           `}
         >
           <SortableRowShelf variableSets={currentVariables} onRemove={onRemove} />
 
-          {/* Hint text when dragging */}
-          {active && (
-            <div className="mt-3 flex items-center justify-center gap-1.5 text-[var(--color-terracotta)] opacity-60">
-              <Plus size={12} />
-              <span className="text-[10px] font-medium uppercase tracking-wide">Add more rows</span>
-            </div>
-          )}
+
         </div>
       );
     }
@@ -65,13 +59,13 @@ export const DropZone: React.FC<DropZoneProps> = ({
       <div
         ref={setNodeRef}
         className={`
-          flex flex-col gap-2 min-w-[200px] min-h-[56px] p-3 rounded-lg transition-all duration-200
+          flex flex-row flex-wrap gap-2 min-w-[120px] min-h-[40px] px-2 py-1.5 rounded-md transition-all duration-200 items-center
           ${active
-            ? 'border-2 border-dashed border-[var(--color-terracotta)] border-opacity-40 bg-[var(--gray-50)]/50'
+            ? 'bg-white border-2 border-dashed border-indigo-200'
             : 'border-2 border-dashed border-transparent'
           }
           ${isOver
-            ? 'ring-2 ring-[var(--color-terracotta)] bg-[var(--gray-50)] border-[var(--color-terracotta)]'
+            ? 'ring-2 ring-indigo-500 bg-white border-indigo-500'
             : ''
           }
         `}
@@ -105,17 +99,14 @@ export const DropZone: React.FC<DropZoneProps> = ({
     <div
       ref={setNodeRef}
       className={`
-        relative flex items-center justify-center transition-all duration-200 rounded-lg border-2 border-dashed
+        relative flex items-center justify-start px-3 transition-all duration-200 rounded-md border border-dashed
         ${isOver
-          ? 'border-[var(--color-terracotta)] bg-[var(--gray-50)] text-[var(--color-terracotta)] scale-[1.02] shadow-sm'
+          ? 'border-indigo-500 bg-indigo-50 text-indigo-600'
           : active
-            ? 'border-[var(--color-terracotta)] border-opacity-60 bg-[var(--gray-50)]/50 text-[var(--color-terracotta)]'
-            : 'border-[var(--gray-200)] text-[var(--gray-400)] hover:border-[var(--gray-300)] hover:bg-[var(--gray-50)]'
+            ? 'border-indigo-300 bg-white text-indigo-400'
+            : 'border-gray-300 text-gray-400 hover:border-gray-400 hover:bg-gray-50'
         }
-        ${type === 'column'
-          ? 'h-14 min-w-[200px]'
-          : 'min-h-[100px] w-full'
-        }
+        h-10 w-full min-w-[200px]
       `}
     >
       <div className="flex items-center gap-2 pointer-events-none">

@@ -79,7 +79,7 @@ export const ViolinRenderer: React.FC<BaseChartRendererProps> = ({
                 {yScale.ticks(5).map(tick => (
                     <g key={tick} transform={`translate(0,${yScale(tick)})`}>
                         <line x2={-6} stroke="var(--gray-300)" />
-                        <text x={-10} dy=".32em" textAnchor="end" className="text-xs fill-gray-500">
+                        <text x={-10} dy=".32em" textAnchor="end" className="text-[10px] fill-gray-500">
                             {tick}
                         </text>
                     </g>
@@ -89,7 +89,7 @@ export const ViolinRenderer: React.FC<BaseChartRendererProps> = ({
                 <line x1={0} y1={innerHeight} x2={innerWidth} y2={innerHeight} stroke="var(--gray-300)" />
                 {groups.map(g => (
                     <g key={g.label} transform={`translate(${xScale(g.label)! + xScale.bandwidth() / 2}, ${innerHeight + 15})`}>
-                        <text textAnchor="middle" className="text-xs fill-gray-600 font-medium">
+                        <text textAnchor="middle" className="text-[11px] fill-gray-600 font-medium">
                             {g.label}
                         </text>
                     </g>

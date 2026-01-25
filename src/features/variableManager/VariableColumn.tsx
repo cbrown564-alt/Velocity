@@ -7,7 +7,7 @@
  */
 
 import React, { useMemo } from 'react';
-import { Hash, Tag, BarChart2, ChevronRight } from 'lucide-react';
+import { Hash, CheckCircle, ChevronRight } from 'lucide-react';
 import { useVelocityStore } from '../../store';
 import type { Variable } from '../../store/slices/dataSlice';
 import styles from './MillerColumns.module.css';
@@ -21,13 +21,13 @@ interface VariableItemProps {
 const getTypeIcon = (type: string) => {
     switch (type) {
         case 'nominal':
-            return <Tag size={14} />;
+            return <CheckCircle size={14} />;
         case 'ordinal':
-            return <BarChart2 size={14} />;
+            return <CheckCircle size={14} />;
         case 'numeric':
             return <Hash size={14} />;
         default:
-            return <Tag size={14} />;
+            return <CheckCircle size={14} />;
     }
 };
 
@@ -127,7 +127,7 @@ export const VariableColumn: React.FC = () => {
                     ))
                 ) : (
                     <div className={styles.emptyState}>
-                        <Tag className={styles.emptyIcon} />
+                        <CheckCircle className={styles.emptyIcon} />
                         <span className={styles.emptyText}>No variables</span>
                     </div>
                 )}

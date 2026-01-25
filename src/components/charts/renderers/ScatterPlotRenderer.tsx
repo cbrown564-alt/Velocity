@@ -1,45 +1,69 @@
 import React, { useMemo } from 'react';
 import * as d3scale from 'd3-scale';
-import { hexbin as d3Hexbin } from 'd3-hexbin';
 import { BaseChartRendererProps } from '../../../types/charts';
 import { getChartColor } from '../shared/chartColors';
 
-export const HexbinRenderer: React.FC<BaseChartRendererProps> = ({
+export const ScatterPlotRenderer: React.FC<BaseChartRendererProps> = ({
     width,
     height,
     colors,
     processedData,
 }) => {
-    // Hexbin requires raw x,y data.
-    // processedData might contain a series with `data` array of {x, y} objects.
+    // Expecting processedData.series[0].data to contain { x, y, value } points
     const points = useMemo(() => {
         if (!processedData?.series?.[0]?.data) return [];
-        return processedData.series[0].data
-            .filter(p => p.x !== undefined && p.x !== null && p.y !== undefined && p.y !== null)
-            .map(p => [p.x!, p.y!] as [number, number]);
+
+        // Filter out invalid points
+        return processedData.series[0].data.filter(p =>
+            p.x !== undefined && p.x !== null &&
+            p.y !== undefined && p.y !== null
+        );
     }, [processedData]);
 
     const margin = { top: 24, right: 24, bottom: 40, left: 50 };
     const innerWidth = width - margin.left - margin.right;
     const innerHeight = height - margin.top - margin.bottom;
 
-    // Calculate domains
+    // Calculate domains with slight padding
     const xExtent = useMemo(() => {
         if (points.length === 0) return [0, 100];
-        const values = points.map(p => p[0]);
-        return [Math.min(...values), Math.max(...values)];
+        const values = points.map(p => p.x!);
+        let min = Math.min(...values);
+        let max = Math.max(...values);
+        const padding = (max - min) * 0.05 || 1; // Default padding if single point
+        return [min - padding, max + padding];
     }, [points]);
 
     const yExtent = useMemo(() => {
         if (points.length === 0) return [0, 100];
-        const values = points.map(p => p[1]);
-        return [Math.min(...values), Math.max(...values)];
+        const values = points.map(p => p.y!);
+        let min = Math.min(...values);
+        let max = Math.max(...values);
+        const padding = (max - min) * 0.05 || 1;
+        return [min - padding, max + padding];
     }, [points]);
 
     if (points.length === 0) {
+        // Capture some debug info
+        const debugInfo = {
+            rows: processedData?.rows?.length || 0,
+            cols: processedData?.columns?.length || 0,
+            firstRowRaw: processedData?.rows?.[0]?.rawValue,
+            firstColKey: processedData?.columns?.[0]?.key,
+            sampleCell: processedData?.rows?.[0]?.cells?.[processedData?.columns?.[0]?.key || '']
+        };
+
         return (
-            <div className="flex items-center justify-center h-full text-gray-400 text-sm">
-                No data available for Hexbin plot.
+            <div className="flex flex-col items-center justify-center h-full text-gray-500 text-sm p-4 text-center">
+                <div className="mb-2 font-medium">No scatter data available</div>
+                <div className="text-xs text-left bg-gray-100 p-2 rounded max-w-full overflow-auto font-mono">
+                    <div className="font-bold text-gray-700 mb-1">Debug Info:</div>
+                    <div>Rows: {debugInfo.rows}</div>
+                    <div>Cols: {debugInfo.cols}</div>
+                    <div>Row[0].val: "{String(debugInfo.firstRowRaw)}"</div>
+                    <div>Col[0].key: "{String(debugInfo.firstColKey)}"</div>
+                    <div>Points found: {points.length}</div>
+                </div>
             </div>
         );
     }
@@ -54,30 +78,11 @@ export const HexbinRenderer: React.FC<BaseChartRendererProps> = ({
         .range([innerHeight, 0])
         .nice();
 
-    // Configure Hexbin
-    const hexbinGenerator = d3Hexbin()
-        .extent([[0, 0], [innerWidth, innerHeight]])
-        .radius(10) // Fixed radius for now, could be dynamic
-        .x(d => xScale(d[0]))
-        .y(d => yScale(d[1]));
-
-    const bins = useMemo(() => {
-        return hexbinGenerator(points);
-    }, [hexbinGenerator, points]);
-
-    // Color Scale for Density
-    const maxCount = Math.max(...bins.map(b => b.length));
-    const baseColor = colors ? colors[0] : getChartColor(0);
-
-    // Create a sequential scale based on opacity or just use the base color with opacity
-    const opacityScale = d3scale.scaleLinear()
-        .domain([0, maxCount])
-        .range([0.2, 1]); // Min opacity 0.2, max 1
+    const color = colors ? colors[0] : getChartColor(0);
 
     return (
         <svg width={width} height={height} className="overflow-visible font-body">
             <g transform={`translate(${margin.left},${margin.top})`}>
-
                 {/* Axes */}
                 <g transform={`translate(0,${innerHeight})`}>
                     <line x1={0} y1={0} x2={innerWidth} y2={0} stroke="var(--gray-300)" />
@@ -107,28 +112,19 @@ export const HexbinRenderer: React.FC<BaseChartRendererProps> = ({
                     ))}
                 </g>
 
-                {/* Hexagons */}
-                <g clipPath="url(#clip)">
-                    <clipPath id="clip">
-                        <rect width={innerWidth} height={innerHeight} />
-                    </clipPath>
-                    {bins.map((bin, i) => (
-                        <path
-                            key={i}
-                            d={hexbinGenerator.hexagon()}
-                            transform={`translate(${bin.x},${bin.y})`}
-                            fill={baseColor}
-                            fillOpacity={opacityScale(bin.length)}
-                            stroke="#fff"
-                            strokeWidth={0.5}
-                            className="transition-all duration-200 hover:stroke-gray-600 hover:stroke-1"
-                        >
-                            <title>
-                                {`Count: ${bin.length}\nRange: [${Math.min(...bin.map(d => d[0])).toFixed(1)} - ${Math.max(...bin.map(d => d[0])).toFixed(1)}]`}
-                            </title>
-                        </path>
-                    ))}
-                </g>
+                {/* Points */}
+                {points.map((p, i) => (
+                    <circle
+                        key={i}
+                        cx={xScale(p.x!)}
+                        cy={yScale(p.y!)}
+                        r={4}
+                        fill={color}
+                        fillOpacity={0.6}
+                    >
+                        <title>{`(${p.x}, ${p.y})`}</title>
+                    </circle>
+                ))}
             </g>
         </svg>
     );

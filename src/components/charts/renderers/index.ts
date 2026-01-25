@@ -11,3 +11,4 @@ export * from './GroupedBoxPlotRenderer';
 export * from './ViolinRenderer';
 export * from './RidgelineRenderer';
 export * from './HexbinRenderer';
+export * from './ScatterPlotRenderer';

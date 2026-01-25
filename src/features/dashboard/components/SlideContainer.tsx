@@ -81,6 +81,7 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
         colVariable: resolvedColVar,
         isWeighted,
         isMultipleResponse,
+        isGrid: firstVarSet?.structure === 'grid',
     });
 
     // Get chart recommendation based on data configuration
@@ -140,6 +141,7 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
                             isWeighted={isWeighted}
                             variableStats={variableStats}
                             isMultipleResponse={isMultipleResponse}
+                            isGrid={firstVarSet?.structure === 'grid'}
                         />
                     </div>
                 );

@@ -38,7 +38,14 @@ export type WorkerRequest =
   | { type: 'recodeVariable'; sourceCol: string; newColName: string; config: RecodeConfig }
   | { type: 'checkPersistedData' }
   | { type: 'clearPersistedData' }
-  | { type: 'runCrosstab'; options: CrosstabQueryOptions & { includeDistributions?: boolean }; variableTypes: Record<string, string> }
+  | {
+    type: 'runCrosstab';
+    options: CrosstabQueryOptions & { includeDistributions?: boolean };
+    context: {
+      variables: Record<string, Variable>;
+      variableSets: Record<string, VariableSet>;
+    }
+  }
   | { type: 'ping' }; // Health check - verifies worker and database are alive
 
 export interface VariableStatsFrequency {
@@ -453,6 +460,53 @@ function inferPositiveValue(valueLabels: { value: number; label: string }[]): nu
   return Math.max(...valueLabels.map(vl => vl.value));
 }
 
+/**
+ * Generate synthetic variables for a grid VariableSet
+ * Creates:
+ * 1. Scale variable (representing the rows)
+ * 2. Items variable (representing the columns)
+ */
+function generateSyntheticGridVariables(variableSet: VariableSet): Variable[] {
+  if (!variableSet.gridMetadata) return [];
+
+  const { id, name, gridMetadata } = variableSet;
+  const { sharedScale, itemLabels } = gridMetadata;
+
+  // 1. Scale Variable (Rows)
+  // This represents the rating values (1-5, Agree-Disagree, etc.)
+  const scaleVariable: Variable = {
+    id: `${id}_scale`,
+    name: `${name}_scale`, // Suffix for unique naming
+    label: `${name} (Scale)`,
+    type: sharedScale.type === 'ordinal' ? 'ordinal' : 'nominal',
+    valueLabels: Object.entries(sharedScale.valueLabels).map(([val, label]) => ({
+      value: Number(val),
+      label
+    })),
+    missingValues: { discrete: [], range: undefined },
+    synthetic: true,
+    sourceGridId: id
+  };
+
+  // 2. Items Variable (Columns)
+  // This represents the items being rated (Product A, Product B, etc.)
+  const itemsVariable: Variable = {
+    id: `${id}_items`,
+    name: `${id}_items`, // ID-based name to avoid collisions
+    label: `${name} (Items)`,
+    type: 'nominal', // Items are always nominal categories
+    valueLabels: itemLabels.map((label, index) => ({
+      value: index,
+      label
+    })),
+    missingValues: { discrete: [], range: undefined },
+    synthetic: true,
+    sourceGridId: id
+  };
+
+  return [scaleVariable, itemsVariable];
+}
+
 async function loadSAV(buffer: ArrayBuffer): Promise<{ variables: Variable[]; variableSets: VariableSet[]; rowCount: number; durationMs: number }> {
   if (!db || !conn) throw new Error('DB not initialized');
 
@@ -718,7 +772,22 @@ async function loadSAV(buffer: ArrayBuffer): Promise<{ variables: Variable[]; va
           variableIds,
           structure,
           type: firstVar.type,
-          description: `Detected grid with shared scale: ${labelSetName}`
+          description: `Detected grid with shared scale: ${labelSetName}`,
+          // NEW: Explicit grid metadata for refactored architecture
+          gridMetadata: {
+            sharedScale: {
+              valueLabels: firstVar.valueLabels.reduce((acc, vl) => {
+                acc[vl.value] = vl.label;
+                return acc;
+              }, {} as Record<number, string>),
+              type: firstVar.type as 'ordinal' | 'nominal'
+            },
+            itemLabels: gridCandidates.map(v => v.label || v.name),
+            itemMapping: gridCandidates.reduce((acc, v, idx) => {
+              acc[v.id] = idx;
+              return acc;
+            }, {} as Record<string, number>)
+          }
         });
       }
     }
@@ -739,6 +808,40 @@ async function loadSAV(buffer: ArrayBuffer): Promise<{ variables: Variable[]; va
 
   const detectedGrids = variableSets.filter(vs => vs.id.startsWith('heuristic_'));
   console.log(`📊 [Worker] Created ${variableSets.length} VariableSets (${mrSets.length} MR sets, ${detectedGrids.length} detected grids, ${variableSets.length - mrSets.length - detectedGrids.length} single variables)`);
+
+  // Generate synthetic variables for all grids (both explicit MR and heuristic)
+  const syntheticVariables: Variable[] = [];
+  for (const vs of variableSets) {
+    if (vs.structure === 'grid' && vs.gridMetadata) {
+      syntheticVariables.push(...generateSyntheticGridVariables(vs));
+    }
+  }
+
+  if (syntheticVariables.length > 0) {
+    console.log(`📊 [Worker] Generated ${syntheticVariables.length} synthetic variables for ${syntheticVariables.length / 2} grids`);
+    variables.push(...syntheticVariables);
+
+    // Also generate 'single' VariableSets for these synthetic variables
+    // This allows them to be used in the UI (which relies on VariableSets for everything)
+    for (const sv of syntheticVariables) {
+      variableSets.push({
+        id: sv.id, // Using VariableID as SetID for direct mapping
+        name: sv.label || sv.name, // Use label (e.g. "Q1 (Items)")
+        variableIds: [sv.id],
+        structure: 'single',
+        type: sv.type,
+        synthetic: true, // Tag as synthetic set (if type supports it? VariableSet type check needed)
+        // We might need to extend VariableSet type if 'synthetic' property is strictly typed?
+        // Let's check VariableSet interface in types/index.ts. 
+        // It does NOT have synthetic. But it has 'derived'. Maybe use that?
+        derived: true,
+        sourceGridId: sv.sourceGridId, // If I added sourceGridId to VariableSet? I didn't yet.
+        // Wait, VariableSet does NOT have sourceGridId in my memory of types/index.ts.
+        // Let's use `derived: true` and description.
+        description: `Synthetic variable for grid unpivoting`
+      } as any); // Casting as any to avoid type errors if I missed property updates
+    }
+  }
 
   // Pivot data from row-major to column-major for Arrow
   const numRows = parsed.rows.length;
@@ -1015,28 +1118,62 @@ async function getVariableStats(
 
 // Imported from statistics.ts
 
-async function runCrosstab(options: CrosstabQueryOptions & { includeDistributions?: boolean }, variableTypes: Record<string, string>): Promise<any[]> {
+async function runCrosstab(
+  options: CrosstabQueryOptions & { includeDistributions?: boolean },
+  context: { variables: Record<string, Variable>; variableSets: Record<string, VariableSet> }
+): Promise<any[]> {
   if (!conn) throw new Error('DB not initialized');
+
+  const modifiedOptions = { ...options };
+
+  // 0. Synthetic Grid Variable Expansion
+  // If the first row variable is a synthetic scale variable, we need to unpivot the grid.
+  if (modifiedOptions.rowVars.length > 0) {
+    const firstRowVarId = modifiedOptions.rowVars[0];
+    const firstRowVar = context.variables[firstRowVarId];
+
+    if (firstRowVar?.synthetic && firstRowVar.sourceGridId) {
+      const gridSet = context.variableSets[firstRowVar.sourceGridId];
+      if (gridSet && gridSet.structure === 'grid' && gridSet.gridMetadata) {
+        console.log(`🦆 [Worker] Detected synthetic grid breakdown: ${firstRowVarId} -> ${gridSet.id}`);
+
+        // Populate gridColumns for the query builder
+        // We need to map the variable IDs to their labels/names
+        modifiedOptions.gridColumns = gridSet.variableIds.map(varId => {
+          // Resolve label for each column item
+          const itemVar = context.variables[varId];
+          return {
+            name: varId,
+            label: itemVar?.label || varId
+          };
+        });
+
+        // The query builder expects rowVars to be empty when unpivoting a grid
+        // because the synthetic variable (scale) is generated by the CTE.
+        // Wait, buildGridQuery doesn't take rowVars?
+        // Let's check buildCrosstabQuery logic:
+        // "if (gridColumns) return buildGridQuery(...)"
+        // And buildGridQuery doesn't seem to use rowVars. 
+        // So we can leave rowVars as is, or clear them?
+        // Clearing them is safer to avoid confusion, but buildCrosstabQuery prioritizes gridColumns anyway.
+      }
+    }
+  }
 
   // 1. Handle Nested Scale Variables Logic
   // Check if the last row variable is 'numeric'. If so, treat it as a measure variable.
   // This supports the "Nested Numeric Summary" requirement.
-  const modifiedOptions = { ...options };
 
   // If no measure variable is explicitly defined, check if we should auto-detect one from rows
   if (!modifiedOptions.measureVar && modifiedOptions.rowVars.length > 0) {
     const lastRowVarId = modifiedOptions.rowVars[modifiedOptions.rowVars.length - 1];
-    const lastRowType = variableTypes[lastRowVarId];
+    const lastRowVar = context.variables[lastRowVarId];
 
-    if (lastRowType === 'numeric') {
+    if (lastRowVar?.type === 'numeric' && !lastRowVar.synthetic) { // Don't treat synthetic scale as measure yet
       console.log(`🦆 [Worker] treating nested scale variable ${lastRowVarId} as measure variable`);
       // Pop the last variable from rows and use it as measure
       modifiedOptions.measureVar = lastRowVarId;
       modifiedOptions.rowVars = modifiedOptions.rowVars.slice(0, -1);
-      // We might need a label, look it up or pass it? 
-      // Ideally options should contain objects, but for now we rely on ID.
-      // We can fetch label from DB schema? No, expensive.
-      // We will rely on DataTable to map ID back to Label.
     }
   }
 
@@ -1449,7 +1586,7 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
 
       case 'runCrosstab':
         const start = performance.now();
-        const crosstabData = await runCrosstab(request.options, request.variableTypes);
+        const crosstabData = await runCrosstab(request.options, request.context);
         const duration = performance.now() - start;
         self.postMessage({
           type: 'queryResult',

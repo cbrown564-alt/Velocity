@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useDraggable } from '@dnd-kit/core';
-import { GripVertical, Hash, Type, BarChart2, Layers, Grid } from 'lucide-react';
+import { GripVertical, Hash, Grid3x3, Tag, SlidersHorizontal, CheckCircle, SquareCheck } from 'lucide-react';
 import { VariableSet, VariableType } from '../../../types';
 
 interface VariableCardProps {
@@ -36,22 +36,29 @@ export const VariableCard: React.FC<VariableCardProps> = ({
 }) => {
   // Helper to get icon based on type and structure
   const getIcon = (set: VariableSet) => {
-    if (set.structure === 'multiple' || set.structure === 'grid') {
-      return <Layers size={14} className="text-[var(--color-terracotta)]" />;
+    if (set.structure === 'grid') {
+      return <Grid3x3 size={14} className="text-[var(--gray-500)]" />;
+    }
+
+    if (set.structure === 'multiple') {
+      return <SquareCheck size={14} className="text-[var(--gray-500)]" />;
     }
 
     const type = set.type as VariableType;
     switch (type) {
       case 'numeric':
+        return <Hash size={13} className="text-[var(--gray-500)]" />;
+      case 'scale':
+        return <SlidersHorizontal size={13} className="text-[var(--gray-500)]" />;
       case 'date':
-        return <Hash size={14} className="text-[var(--gray-400)]" />;
+        return <Hash size={13} className="text-[var(--gray-500)]" />;
       case 'nominal':
       case 'text':
-        return <Type size={14} className="text-[var(--gray-400)]" />;
+        return <CheckCircle size={13} className="text-[var(--gray-500)]" />;
       case 'ordinal':
-        return <BarChart2 size={14} className="text-[var(--gray-400)]" />;
+        return <CheckCircle size={13} className="text-[var(--gray-500)]" />;
       default:
-        return <Type size={14} className="text-[var(--gray-400)]" />;
+        return <CheckCircle size={13} className="text-[var(--gray-500)]" />;
     }
   };
 
@@ -69,7 +76,7 @@ export const VariableCard: React.FC<VariableCardProps> = ({
       style={cardStyle}
       {...dragListeners}
       {...dragAttributes}
-      className={`group flex items-center gap-3 p-3 h-14 bg-[var(--color-parchment)] border border-[var(--gray-200)] rounded-lg shadow-sm cursor-grab hover:border-[var(--color-terracotta)] hover:shadow-md transition-all active:cursor-grabbing relative pr-10
+      className={`group flex items-center gap-2 px-2 h-9 bg-[var(--color-parchment)] border border-[var(--gray-200)] rounded-lg shadow-sm cursor-grab hover:border-[var(--color-terracotta)] hover:shadow-md transition-all active:cursor-grabbing relative pr-8
         ${isDragging ? 'ring-2 ring-[var(--color-terracotta)] ring-opacity-50 grayscale' : ''}
         ${isSelected ? 'bg-indigo-50 border-indigo-300 ring-1 ring-indigo-300' : ''}
         ${isFocused && !isSelected ? 'border-[var(--color-terracotta)] bg-[var(--color-terracotta)]/5 ring-1 ring-[var(--color-terracotta)]/30' : ''}
@@ -83,19 +90,15 @@ export const VariableCard: React.FC<VariableCardProps> = ({
         }
       }}
     >
-      <div className="text-[var(--gray-300)] group-hover:text-[var(--color-terracotta)] transition-colors">
-        <GripVertical size={16} />
+      <div className="text-[var(--gray-400)] group-hover:text-[var(--color-terracotta)] transition-colors shrink-0">
+        <GripVertical size={14} />
       </div>
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-[var(--color-ink)] truncate font-body">{variableSet.name}</span>
-        </div>
-        <div className="flex items-center gap-1 mt-0.5">
+
+      <div className="flex-1 min-w-0 flex items-center gap-2">
+        <span className="shrink-0 flex items-center" title={variableSet.structure === 'single' ? variableSet.type : variableSet.structure}>
           {getIcon(variableSet)}
-          <span className="text-[10px] uppercase tracking-wider text-[var(--gray-400)] font-semibold font-body">
-            {variableSet.structure === 'single' ? variableSet.type : variableSet.structure}
-          </span>
-        </div>
+        </span>
+        <span className="text-sm font-medium text-[var(--color-ink)] truncate font-body leading-none">{variableSet.name}</span>
       </div>
 
 

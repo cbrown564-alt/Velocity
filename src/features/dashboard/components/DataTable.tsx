@@ -28,6 +28,8 @@ interface DataTableProps {
   variableStats?: VariableStatsResult | null;
   /** If true, row keys are already labels (multiple response) - skip label resolution */
   isMultipleResponse?: boolean;
+  /** Whether the variables form a grid structure */
+  isGrid?: boolean;
 }
 
 const CHART_COLORS = [
@@ -44,6 +46,7 @@ interface TableRowNode {
   key: string;
   label: string;
   rawValue: string;  // Original value from data
+  sortValue: number; // Computed numeric value for sorting
   depth: number;
   cells: Record<string, {
     count: number;
@@ -80,6 +83,7 @@ export const DataTable: React.FC<DataTableProps> = ({
   onCellClick,
   variableStats,
   isMultipleResponse = false,
+  isGrid = false,
 }) => {
   // UI State for expanded rows
   const [expandedKeys, setExpandedKeys] = useState<Record<string, boolean>>({});
@@ -94,7 +98,8 @@ export const DataTable: React.FC<DataTableProps> = ({
     rowVariables,
     colVariable,
     isWeighted,
-    isMultipleResponse
+    isMultipleResponse,
+    isGrid
   });
 
   // Determine default chart type
@@ -106,6 +111,7 @@ export const DataTable: React.FC<DataTableProps> = ({
         rowVars: rowVariables,
         colVar: colVariable,
         isMultiResponse: isMultipleResponse,
+        isGrid,
       }).default
     };
   }, [processedData, rowVariables, colVariable, isMultipleResponse]);
@@ -187,7 +193,7 @@ export const DataTable: React.FC<DataTableProps> = ({
 
         // 4b. GAP FILLING (for Ordinal/Scale)
         // Ensure we don't show "1, 3, 4" skipping "2" if it's a numeric scale
-        if (variable && (variable.type === 'ordinal' || variable.type === 'numeric')) {
+        if (variable && (variable.type === 'ordinal' || variable.type === 'numeric' || variable.type === 'scale')) {
           const numericKeys = Array.from(allKeys)
             .map(k => parseFloat(k))
             .filter(n => !isNaN(n) && Number.isInteger(n));
@@ -206,6 +212,27 @@ export const DataTable: React.FC<DataTableProps> = ({
           }
         }
       }
+
+      // Helper to compute sort value
+      const getMetricValue = (key: string): number => {
+        const cleanKey = key.trim().toLowerCase();
+        // 1. Try direct number parse
+        const val = parseFloat(cleanKey);
+        if (!isNaN(val)) return val;
+
+        // 2. Try to find value from ANY matching label
+        if (variable?.valueLabels) {
+          const labelMatch = variable.valueLabels.find(vl =>
+            vl.label.toLowerCase().trim() === cleanKey ||
+            // Also try matching just the number part if label is like "1 - Not at all"
+            vl.label.toLowerCase().startsWith(`${cleanKey} `)
+          );
+          if (labelMatch) {
+            return parseFloat(String(labelMatch.value));
+          }
+        }
+        return NaN;
+      };
 
       // Convert to array and map to Nodes
       let nodes: TableRowNode[] = Array.from(allKeys).map(groupKey => {
@@ -315,6 +342,7 @@ export const DataTable: React.FC<DataTableProps> = ({
           key: uniqueKey,
           label,
           rawValue: groupKey,
+          sortValue: getMetricValue(groupKey),
           depth,
           cells: nodeCells,
           total: nodeRowTotal,
@@ -340,16 +368,21 @@ export const DataTable: React.FC<DataTableProps> = ({
 
         const type = variable?.type || 'nominal';
 
-        if (type === 'ordinal' || type === 'numeric') {
-          // Try to parse as numbers
-          const valA = parseFloat(a.rawValue);
-          const valB = parseFloat(b.rawValue);
+        if (type === 'ordinal' || type === 'numeric' || type === 'scale') {
+          const valA = a.sortValue;
+          const valB = b.sortValue;
 
-          if (!isNaN(valA) && !isNaN(valB)) {
+          // If only one is valid number, prioritize the number (put at top)
+          const isNumA = !isNaN(valA);
+          const isNumB = !isNaN(valB);
+
+          if (isNumA && isNumB) {
             return valA - valB;
           }
-          // Fallback to value label index if available?
-          // Or just alphanumeric if not numbers
+          if (isNumA && !isNumB) return -1; // Numbers first
+          if (!isNumA && isNumB) return 1;
+
+          // Fallback to alphanumeric
           return a.rawValue.localeCompare(b.rawValue, undefined, { numeric: true });
         }
 
