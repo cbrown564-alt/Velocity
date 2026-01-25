@@ -13,6 +13,7 @@ import * as arrow from 'apache-arrow';
 import { RecodeConfig, VariableSet, Variable, Filter, HistogramBin } from '../types';
 import { buildCrosstabQuery, CrosstabQueryOptions, buildFilterClause, escapeIdentifier, escapeString } from './queryBuilder';
 import { calculateZScore, calculateTScore, calculateESS, calculatePValue } from './statistics';
+import { generateSyntheticGridVariables } from './gridUtils';
 
 const JSDELIVR_BUNDLES = duckdb.getJsDelivrBundles();
 
@@ -466,45 +467,7 @@ function inferPositiveValue(valueLabels: { value: number; label: string }[]): nu
  * 1. Scale variable (representing the rows)
  * 2. Items variable (representing the columns)
  */
-function generateSyntheticGridVariables(variableSet: VariableSet): Variable[] {
-  if (!variableSet.gridMetadata) return [];
 
-  const { id, name, gridMetadata } = variableSet;
-  const { sharedScale, itemLabels } = gridMetadata;
-
-  // 1. Scale Variable (Rows)
-  // This represents the rating values (1-5, Agree-Disagree, etc.)
-  // Note: We intentionally omit valueLabels to display raw numeric values
-  // and ensure proper numeric sorting (1, 2, 3 instead of alphabetic label sorting)
-  const scaleVariable: Variable = {
-    id: `${id}_scale`,
-    name: `${name}_scale`, // Suffix for unique naming
-    label: `${name} (Scale)`,
-    type: sharedScale.type === 'ordinal' ? 'ordinal' : 'nominal',
-    valueLabels: [], // Empty - display raw values, not labels
-    missingValues: { discrete: [], range: undefined },
-    synthetic: true,
-    sourceGridId: id
-  };
-
-  // 2. Items Variable (Columns)
-  // This represents the items being rated (Product A, Product B, etc.)
-  const itemsVariable: Variable = {
-    id: `${id}_items`,
-    name: `${id}_items`, // ID-based name to avoid collisions
-    label: `${name} (Items)`,
-    type: 'nominal', // Items are always nominal categories
-    valueLabels: itemLabels.map((label, index) => ({
-      value: index,
-      label
-    })),
-    missingValues: { discrete: [], range: undefined },
-    synthetic: true,
-    sourceGridId: id
-  };
-
-  return [scaleVariable, itemsVariable];
-}
 
 async function loadSAV(buffer: ArrayBuffer): Promise<{ variables: Variable[]; variableSets: VariableSet[]; rowCount: number; durationMs: number }> {
   if (!db || !conn) throw new Error('DB not initialized');
@@ -779,7 +742,7 @@ async function loadSAV(buffer: ArrayBuffer): Promise<{ variables: Variable[]; va
                 acc[vl.value] = vl.label;
                 return acc;
               }, {} as Record<number, string>),
-              type: firstVar.type as 'ordinal' | 'nominal'
+              type: firstVar.type as 'ordinal' | 'nominal' | 'scale'
             },
             itemLabels: gridCandidates.map(v => v.label || v.name),
             itemMapping: gridCandidates.reduce((acc, v, idx) => {
