@@ -416,12 +416,17 @@ export const DataTable: React.FC<DataTableProps> = ({
 
   if (!tableData) return null;
 
-  const getColLetter = (index: number) => String.fromCharCode(65 + index);
+
 
   // Flatten rows for Chart view (or just show top level)
   // For Chart: Let's show the top level only for now, or all leaf nodes? 
   // Let's go with Top Level for simplicity in this refactor.
   const chartRows = tableData.rows;
+
+  // State for Column Highlight (Crosshair effect)
+  const [hoveredCol, setHoveredCol] = useState<string | null>(null);
+
+  // ... (rest of code) ...
 
   // -- RENDER MODE: TABLE --
   if (viewMode === 'table') {
@@ -437,7 +442,7 @@ export const DataTable: React.FC<DataTableProps> = ({
       return (
         <React.Fragment key={row.key}>
           <tr className="group mission-control-row">
-            <td className="py-1.5 font-medium text-[var(--text-primary)] align-top" style={{ paddingLeft }}>
+            <td className="py-1 font-medium text-[var(--text-primary)] align-top" style={{ paddingLeft }}>
               <div className="flex items-center gap-2">
                 {hasChildren && (
                   <button
@@ -453,10 +458,22 @@ export const DataTable: React.FC<DataTableProps> = ({
             </td>
             {tableData.colKeys.map(col => {
               const cell = row.cells[col];
+              // Dim zeros logic
+              const isZero = cell.mean !== undefined
+                ? (Math.abs(cell.mean) === 0)
+                : (cell.percent === 0);
+
+              const textClass = isZero ? 'text-[#525252]' : 'text-[var(--text-primary)]';
+              const secondaryTextClass = isZero ? 'text-[#404040]' : 'text-[var(--text-secondary)]';
+
               return (
                 <td
                   key={col}
-                  className="px-3 py-1.5 text-right align-top cursor-pointer relative data-cell border-l border-[var(--border-subtle)]"
+                  className={`px-2 py-1 text-left align-middle cursor-pointer relative data-cell border-l border-[var(--border-subtle)] transition-colors
+                    ${hoveredCol === col ? 'bg-[var(--bg-surface)]' : ''}
+                  `}
+                  onMouseEnter={() => setHoveredCol(col)}
+                  onMouseLeave={() => setHoveredCol(null)}
                   onClick={() => onCellClick?.(row.rowPath, colVariable ? col : null)}
                   title={
                     cell.stats && typeof cell.stats.effN === 'number'
@@ -464,15 +481,15 @@ export const DataTable: React.FC<DataTableProps> = ({
                       : "Click to X-Ray"
                   }
                 >
-                  <div className="flex flex-col items-end">
+                  <div className="flex flex-row items-baseline justify-start gap-2 text-left w-full">
                     {cell.mean !== undefined ? (
                       // METRIC DISPLAY
                       <>
                         <div className="flex items-baseline gap-1">
-                          <span className="font-bold text-[var(--text-primary)]">{cell.mean.toFixed(1)}</span>
-                          <span className="text-[10px] text-[var(--text-secondary)] bg-[var(--bg-panel)] px-1 rounded">Mean</span>
+                          <span className={`font-bold tabular-nums text-right w-[42px] ${textClass}`}>{cell.mean.toFixed(1)}</span>
+                          {!isZero && <span className={`text-[10px] ${secondaryTextClass} bg-[var(--bg-panel)] px-1 rounded`}>Mean</span>}
                         </div>
-                        <span className="text-[10px] text-[var(--text-secondary)] font-mono tracking-tight group-hover:opacity-100 transition-opacity flex gap-2">
+                        <span className={`text-[10px] ${secondaryTextClass} font-mono tracking-tight group-hover:opacity-100 transition-opacity flex gap-2`}>
                           {cell.stdDev !== undefined && <span>SD: {cell.stdDev.toFixed(1)}</span>}
                           <span>n={cell.validCount ?? cell.count}</span>
                         </span>
@@ -481,7 +498,7 @@ export const DataTable: React.FC<DataTableProps> = ({
                       // FREQUENCY DISPLAY
                       <>
                         <div className="flex items-center gap-0.5">
-                          <span className="font-bold text-[var(--text-primary)]">{cell.percent.toFixed(1)}%</span>
+                          <span className={`font-bold tabular-nums text-right w-[48px] ${textClass}`}>{cell.percent.toFixed(1)}%</span>
                           {cell.sig === 'high_95' && (
                             <ArrowUp size={12} className="text-[var(--color-success)]" />
                           )}
@@ -494,8 +511,9 @@ export const DataTable: React.FC<DataTableProps> = ({
                           {cell.sig === 'low_80' && (
                             <ArrowDown size={12} className="text-[var(--text-secondary)]" />
                           )}
+
                         </div>
-                        <span className="text-[10px] text-[var(--text-secondary)] font-mono tracking-tight opacity-0 group-hover:opacity-100 transition-opacity">n={cell.count}</span>
+                        <span className={`text-[10px] ${secondaryTextClass} font-mono tracking-tight opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap`}>n={cell.count}</span>
                       </>
                     )}
                   </div>
@@ -505,8 +523,8 @@ export const DataTable: React.FC<DataTableProps> = ({
             {/* Only show Row Total if we have columns OR if it's a frequency table (always show 100%)
                 For Metric tables without columns, the single column is already the total. */}
             {(tableData.colKeys.length > 1) && (
-              <td className="px-3 py-1.5 text-right font-mono font-semibold text-[var(--text-primary)] bg-[var(--bg-surface)] align-top data-cell">
-                <div className="flex flex-col items-end">
+              <td className="px-2 py-1 text-left font-mono font-semibold text-[var(--text-primary)] bg-[#1A1F24]/50 align-middle data-cell">
+                <div className="flex flex-row items-baseline justify-start gap-2 text-left w-full">
                   {row.mean ? (
                     // METRIC ROW TOTAL (Global Mean for this row)
                     // If this is the top-level row and we have variableStats, use that for precision
@@ -542,38 +560,33 @@ export const DataTable: React.FC<DataTableProps> = ({
         key="table"
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full overflow-hidden bg-[var(--color-paper)] border-none rounded-lg shadow-sm"
+        className="w-full overflow-hidden bg-[var(--bg-app)] border-none rounded-lg shadow-sm"
       >
-        <div className="p-4 border-b border-[var(--gray-200)] flex justify-between items-end">
+        <div className="p-4 border-b border-[var(--border-grid)] flex justify-between items-end">
           <div>
-            <h3 className="text-lg font-semibold text-[var(--color-ink)] font-display">
+            <h3 className="text-lg font-semibold text-[var(--text-primary)] font-display">
               {colVariable ? `${rowVariables.map(v => v.label).join(' > ')} by ${colVariable.label}` : `${rowVariables[0].label} Frequency`}
             </h3>
-            <p className="text-xs text-[var(--gray-500)] mt-1 font-body">N = {totalCount} Respondents</p>
+            <p className="text-xs text-[var(--text-secondary)] mt-1 font-body">N = {totalCount} Respondents</p>
           </div>
         </div>
 
-        <div className="overflow-x-auto overflow-y-auto max-h-[60vh]">
+        <div className="overflow-x-auto overflow-y-auto max-h-[60vh] custom-scrollbar">
           <table className="w-full text-sm text-left border-collapse">
-            <thead className="text-xs uppercase bg-[var(--bg-panel)] border-b border-[var(--border-grid)]">
+            <thead className="text-xs uppercase bg-[#2C2C2C] border-b border-[var(--border-grid)]">
               <tr className="font-body">
-                <th className="px-3 py-2 font-bold text-[var(--text-secondary)] tracking-wider text-left w-1/4 align-bottom sticky top-0 bg-[var(--bg-panel)] z-10 box-border border-b border-[var(--border-grid)]">
+                <th className="px-2 py-2 font-bold text-[var(--text-accent)] tracking-wider text-left w-64 align-bottom sticky top-0 bg-[#2C2C2C] z-10 box-border border-b border-[var(--border-grid)]">
                   {rowVariables[0].label}
                 </th>
                 {tableData.colKeys.map((col, idx) => (
-                  <th key={col} className="px-3 py-2 font-bold text-[var(--text-secondary)] text-right w-32 align-bottom sticky top-0 bg-[var(--bg-panel)] z-10 border-b border-[var(--border-grid)]">
-                    <div className="flex flex-col gap-1 items-end">
+                  <th key={col} className={`px-2 py-2 font-bold text-[var(--text-accent)] text-left w-28 align-bottom sticky top-0 bg-[#2C2C2C] z-10 border-b border-[var(--border-grid)] transition-colors ${hoveredCol === col ? 'bg-[#3A3A3A]' : ''}`}>
+                    <div className="flex flex-col gap-1 items-start">
                       <span>{tableData.colLabels[col]}</span>
-                      {colVariable && (
-                        <span className="text-[10px] text-[var(--text-secondary)] font-normal border border-[var(--border-color-muted)] rounded px-1 min-w-[20px] text-center">
-                          {getColLetter(idx)}
-                        </span>
-                      )}
                     </div>
                   </th>
                 ))}
                 {(tableData.colKeys.length > 1) && (
-                  <th className="px-3 py-2 font-bold text-right w-24 text-[var(--text-primary)] bg-[var(--bg-surface)] align-bottom sticky top-0 z-10 border-b border-[var(--border-grid)] shadow-[inset_0_-2px_0_var(--border-grid)]">
+                  <th className="px-2 py-2 font-bold text-left w-24 text-[var(--text-primary)] bg-[#1A1F24]/80 align-bottom sticky top-0 z-10 border-b border-[var(--border-grid)] shadow-[inset_0_-2px_0_var(--border-grid)]">
                     Total
                   </th>
                 )}
@@ -582,33 +595,16 @@ export const DataTable: React.FC<DataTableProps> = ({
             <tbody className="divide-y divide-[var(--border-grid)] font-body">
               {tableData.rows.map(row => renderRow(row))}
               <tr className="bg-[var(--bg-surface)] font-semibold border-t border-[var(--border-grid)] border-b border-[var(--border-grid)]">
-                <td className="px-3 py-1.5 text-[var(--text-primary)] pl-8">Total</td>
+                <td className="px-2 py-1 text-[var(--text-primary)] pl-8">Total</td>
                 {tableData.colKeys.map(col => (
-                  <td key={col} className="px-3 py-1.5 text-right font-mono text-[var(--text-primary)]">
+                  <td key={col} className="px-2 py-1 text-left font-mono text-[var(--text-primary)]">
                     {tableData.colTotals[col]}
                   </td>
                 ))}
                 {(tableData.colKeys.length > 1) && (
-                  <td className="px-3 py-1.5 text-right font-mono text-[var(--text-primary)]">
-                    {/* GRAND TOTAL CELL - SHOW SPARKLINE IF STATS AVAILABLE */}
-                    {variableStats && (
-                      <div className="flex flex-col items-end gap-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <div className="text-right">
-                            <div className="text-xs font-bold">{variableStats.numeric?.mean.toFixed(1)}</div>
-                            <div className="text-[9px] text-[var(--text-secondary)] uppercase tracking-wide">Mean</div>
-                          </div>
-                          <Sparkline
-                            type="numeric"
-                            histogramBins={variableStats.numeric?.histogramBins}
-                            width={80}
-                            height={24}
-                          />
-                        </div>
-                        <span className="text-[10px] text-[var(--gray-400)]">N={variableStats.totalCount}</span>
-                      </div>
-                    )}
-                    {!variableStats && totalCount}
+                  <td className="px-2 py-1 text-left font-mono text-[var(--text-primary)]">
+                    {/* GRAND TOTAL CELL */}
+                    {totalCount}
                   </td>
                 )}
               </tr>
