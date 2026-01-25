@@ -39,16 +39,9 @@ function buildGridQuery(options: GridQueryOptions): string {
         END
     `;
 
-    // 3. Build the NOT NULL filter
-    const notNullCondition = `
-        CASE items.item_index
-            ${columns.map(({ name }, index) => `WHEN ${index} THEN "${escapeIdentifier(name)}" IS NOT NULL`).join('\n            ')}
-        END
-    `;
-
-    // 4. Build the WHERE clause for global filters
+    // 3. Build the WHERE clause for global filters
     const filterClause = buildFilterClause(filters);
-    const whereConditions = [notNullCondition];
+    const whereConditions = ['_synthetic_value IS NOT NULL']; // Filter NULLs from unpivoted CTE
     if (filterClause) {
         whereConditions.push(filterClause);
     }
