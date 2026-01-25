@@ -198,7 +198,7 @@ export const StackedBarRenderer: React.FC<StackedBarRendererProps> = ({
                                 <text
                                     x={18}
                                     y={10}
-                                    className="text-[11px] fill-gray-600"
+                                    className="text-[11px] fill-[var(--text-secondary)]"
                                     style={{ fontFamily: 'var(--font-body)' }}
                                 >
                                     {(label || '').length > 12 ? (label || '').substring(0, 10) + '...' : (label || '')}
@@ -216,21 +216,21 @@ export const StackedBarRenderer: React.FC<StackedBarRendererProps> = ({
                         y1={0}
                         x2={xScale(tick)}
                         y2={actualHeight}
-                        stroke="var(--gray-100)"
+                        stroke="var(--viz-grid-line)"
                         strokeDasharray="2,2"
                     />
                 ))}
 
                 {/* X-axis */}
                 <g transform={`translate(0,${actualHeight})`}>
-                    <line x1={0} y1={0} x2={innerWidth} y2={0} stroke="var(--gray-200)" />
+                    <line x1={0} y1={0} x2={innerWidth} y2={0} stroke="var(--border-color)" />
                     {xTicks.map(tick => (
                         <g key={tick} transform={`translate(${xScale(tick)},0)`}>
-                            <line y2={4} stroke="var(--gray-300)" />
+                            <line y2={4} stroke="var(--viz-stroke-main)" />
                             <text
                                 y={18}
                                 textAnchor="middle"
-                                className="text-[10px] fill-gray-500"
+                                className="text-[10px] fill-[var(--viz-text-axis)]"
                             >
                                 {isPercentMode
                                     ? `${Math.round(tick * 100)}%`
@@ -248,7 +248,7 @@ export const StackedBarRenderer: React.FC<StackedBarRendererProps> = ({
                         y={(yScale(d.label) || 0) + yScale.bandwidth() / 2}
                         dy=".35em"
                         textAnchor="end"
-                        className="text-xs fill-gray-700"
+                        className="text-xs fill-[var(--viz-text-axis)]"
                         style={{ fontFamily: 'var(--font-body)' }}
                     >
                         {(d.label || '').length > 25 ? (d.label || '').substring(0, 23) + '...' : d.label}
@@ -296,7 +296,7 @@ export const StackedBarRenderer: React.FC<StackedBarRendererProps> = ({
                                         height={yScale.bandwidth()}
                                         className="transition-all duration-300 hover:opacity-80"
                                         opacity={isSelected ? 1 : 0.9}
-                                        stroke={isSelected ? 'var(--gray-900)' : 'none'}
+                                        stroke={isSelected ? 'var(--border-color-active)' : 'var(--viz-stroke-bar)'}
                                         strokeWidth={isSelected ? 2 : 0}
                                     />
                                     {showLabel && (
@@ -327,7 +327,7 @@ export const StackedBarRenderer: React.FC<StackedBarRendererProps> = ({
                             x={innerWidth + 8}
                             y={y + yScale.bandwidth() / 2}
                             dy=".35em"
-                            className="text-[10px] fill-gray-500"
+                            className="text-[10px] fill-[var(--text-secondary)]"
                         >
                             n={total.toLocaleString()}
                         </text>
@@ -340,7 +340,7 @@ export const StackedBarRenderer: React.FC<StackedBarRendererProps> = ({
                     y1={0}
                     x2={0}
                     y2={actualHeight}
-                    stroke="var(--gray-300)"
+                    stroke="var(--viz-stroke-main)"
                 />
             </g>
         </svg>

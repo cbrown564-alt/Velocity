@@ -125,18 +125,18 @@
 }
 
 .typeBadgeNominal {
-  background-color: var(--bg-nominal);
-  color: var(--color-nominal);
+  background-color: var(--tag-nominal-bg);
+  color: var(--tag-nominal-text);
 }
 
 .typeBadgeOrdinal {
-  background-color: var(--bg-ordinal);
-  color: var(--color-ordinal);
+  background-color: var(--tag-ordinal-bg);
+  color: var(--tag-ordinal-text);
 }
 
 .typeBadgeScale {
-  background-color: var(--bg-surface);
-  color: var(--text-secondary);
+  background-color: var(--tag-scale-bg);
+  color: var(--tag-scale-text);
 }
 
 .typeBadgeText {
@@ -205,6 +205,7 @@
   padding: 2px 6px;
   border-radius: 3px;
   font-weight: 600;
+  font-variant-numeric: tabular-nums;
 }
 
 .valueLabel {
@@ -297,6 +298,7 @@
   color: var(--text-primary);
   min-width: 50px;
   text-align: right;
+  font-variant-numeric: tabular-nums;
 }
 
 .statsSummary {
@@ -319,6 +321,7 @@
   font-size: var(--text-lg);
   font-weight: 600;
   color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
 }
 
 .statLabel {
@@ -391,6 +394,7 @@
   font-size: var(--text-sm);
   font-weight: 600;
   color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
 }
 
 /* ============================================================================
@@ -440,6 +444,7 @@
   font-size: var(--text-xs);
   color: var(--gray-500);
   text-align: right;
+  font-variant-numeric: tabular-nums;
 }
 
 /* ============================================================================

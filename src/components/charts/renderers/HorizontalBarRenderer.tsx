@@ -272,21 +272,21 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
                         y1={0}
                         x2={xScale(tick)}
                         y2={actualHeight}
-                        stroke="var(--gray-100)"
+                        stroke="var(--viz-grid-line)"
                         strokeDasharray="0"
                     />
                 ))}
 
                 {/* X-axis */}
                 <g transform={`translate(0,${actualHeight})`}>
-                    <line x1={0} y1={0} x2={innerWidth} y2={0} stroke="var(--gray-200)" />
+                    <line x1={0} y1={0} x2={innerWidth} y2={0} stroke="var(--border-color)" />
                     {xTicks.map(tick => (
                         <g key={tick} transform={`translate(${xScale(tick)},0)`}>
-                            <line y2={4} stroke="var(--gray-300)" />
+                            <line y2={4} stroke="var(--viz-stroke-main)" />
                             <text
                                 y={16}
                                 textAnchor="middle"
-                                style={{ fontSize: '10px', fill: 'var(--gray-500)' }}
+                                style={{ fontSize: '10px', fill: 'var(--viz-text-axis)' }}
                             >
                                 {tick}
                             </text>
@@ -302,10 +302,10 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
                         y={(yScale(d.label) || 0) + yScale.bandwidth() / 2}
                         dy=".35em"
                         textAnchor="end"
-                        className="text-xs font-body fill-gray-700"
+                        className="text-xs font-body"
                         style={{
                             fontWeight: selectedKeys?.has(d.label) ? 600 : 400,
-                            fill: selectedKeys?.has(d.label) ? 'var(--gray-900)' : 'var(--gray-700)',
+                            fill: selectedKeys?.has(d.label) ? 'var(--text-primary)' : 'var(--viz-text-axis)',
                         }}
                     >
                         {(d.label || '').length > 35 ? (d.label || '').substring(0, 32) + '...' : d.label}
@@ -367,7 +367,7 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
                                 height={yScale.bandwidth()}
                                 width={barWidth}
                                 fill={isDropTarget ? 'var(--color-success)' : barColor}
-                                stroke={isSelected ? 'var(--gray-900)' : 'none'}
+                                stroke={isSelected ? 'var(--border-color-active)' : 'var(--viz-stroke-bar)'}
                                 strokeWidth={isSelected ? 2 : 0}
                                 style={{
                                     transition: dragState.isDragging ? 'none' : 'width 0.3s ease-out',
@@ -440,7 +440,7 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
                     y1={0}
                     x2={0}
                     y2={actualHeight}
-                    stroke="var(--gray-300)"
+                    stroke="var(--viz-stroke-main)"
                 />
             </g>
         </svg>

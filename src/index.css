@@ -15,13 +15,13 @@
    ============================================================================ */
 
 
-:root {
-  /* ============================================================================
+/* ============================================================================
      1. Semantic Tokens (The Protocol)
      These tokens are used throughout the application.
      Themes define their values.
      ============================================================================ */
 
+:root {
   /* Surface & Backgrounds */
   --bg-app: var(--theme-bg-app);
   --bg-panel: var(--theme-bg-panel);
@@ -38,22 +38,49 @@
   --border-color: var(--theme-border-color);
   --border-color-muted: var(--theme-border-color-muted);
   --border-color-active: var(--theme-border-color-active);
+  --border-grid: var(--theme-border-grid);
+  /* New: For data grids */
+  --border-subtle: var(--theme-border-subtle);
+  /* New: For panel dividers */
 
-  /* Functional */
+  /* Functional Status (True semantic meanings) */
+  --status-error-bg: var(--theme-status-error-bg);
+  --status-error-text: var(--theme-status-error-text);
+  --status-warning-bg: var(--theme-status-warning-bg);
+  --status-warning-text: var(--theme-status-warning-text);
+  --status-success-bg: var(--theme-status-success-bg);
+  --status-success-text: var(--theme-status-success-text);
+
+  /* Data Identity (Variable Types, Categories - NOT status) */
+  --tag-nominal-bg: var(--theme-tag-nominal-bg);
+  --tag-nominal-text: var(--theme-tag-nominal-text);
+  --tag-ordinal-bg: var(--theme-tag-ordinal-bg);
+  --tag-ordinal-text: var(--theme-tag-ordinal-text);
+  --tag-scale-bg: var(--theme-tag-scale-bg);
+  --tag-scale-text: var(--theme-tag-scale-text);
+
+  /* Data Visualization (New Semantic Layer) */
+  --viz-fill-primary: var(--theme-viz-fill-primary);
+  /* Main bars/marks */
+  --viz-fill-secondary: var(--theme-viz-fill-secondary);
+  /* Comparison/Highlight */
+  --viz-fill-muted: var(--theme-viz-fill-muted);
+  /* Context/Background bars */
+  --viz-stroke-main: var(--theme-viz-stroke-main);
+  /* Axis lines */
+  --viz-grid-line: var(--theme-viz-grid-line);
+  /* Chart grid */
+  --viz-text-value: var(--theme-viz-text-value);
+  /* Text ON bars */
+  --viz-text-axis: var(--theme-viz-text-axis);
+  --viz-text-axis: var(--theme-viz-text-axis);
+  /* Axis labels */
+  --viz-stroke-bar: var(--theme-viz-stroke-bar);
+  /* Bar strokes */
+
+  /* Legacy Functional (Deprecating slowly or remapping) */
   --color-accent: var(--theme-color-accent);
   --color-accent-hover: var(--theme-color-accent-hover);
-  --color-success: var(--theme-color-success);
-  --color-warning: var(--theme-color-warning);
-  --color-error: var(--theme-color-error);
-  --color-info: var(--theme-color-info);
-
-  /* Variable Type Colors */
-  --color-nominal: var(--theme-color-error);
-  --bg-nominal: var(--theme-bg-nominal);
-  --color-ordinal: var(--theme-color-info);
-  --bg-ordinal: var(--theme-bg-ordinal);
-  --color-scale: var(--theme-text-secondary);
-  --bg-scale: var(--theme-bg-surface);
 
   /* Typography Scales (Fixed) */
   --text-xxs: 0.625rem;
@@ -107,7 +134,7 @@
 
   --theme-bg-app: #F5F3EF;
   --theme-bg-panel: #FDFCFA;
-  --theme-bg-surface: #F5F3EF;
+  --theme-bg-surface: #ffffff;
   --theme-bg-active: #E8E5E0;
 
   --theme-text-primary: #1C1C1C;
@@ -118,16 +145,44 @@
   --theme-border-color: #E8E5E0;
   --theme-border-color-muted: #F5F3EF;
   --theme-border-color-active: #E07A5F;
+  --theme-border-grid: #E8E5E0;
+  --theme-border-subtle: rgba(28, 28, 28, 0.05);
 
   --theme-color-accent: #E07A5F;
   --theme-color-accent-hover: #D66D51;
-  --theme-color-success: #52796F;
-  --theme-color-warning: #F4A261;
-  --theme-color-error: #C1666B;
-  --theme-color-info: #84A59D;
 
-  --theme-bg-nominal: #fcece9;
-  --theme-bg-ordinal: #f3f6f5;
+  /* Status */
+  --theme-status-error-bg: #FCECE9;
+  --theme-status-error-text: #C1666B;
+  --theme-status-warning-bg: #FEF3E6;
+  --theme-status-warning-text: #D97706;
+  --theme-status-success-bg: #E8F5E9;
+  --theme-status-success-text: #2E7D32;
+
+  /* Data Identity (Saturated in Light Mode is fine) */
+  --theme-tag-nominal-bg: #FCECE9;
+  --theme-tag-nominal-text: #C1666B;
+  --theme-tag-ordinal-bg: #f3f6f5;
+  --theme-tag-ordinal-text: #52796F;
+  --theme-tag-scale-bg: #F5F3EF;
+  --theme-tag-scale-text: #57534E;
+
+  /* Data Visualization - Light Mode */
+  --theme-viz-fill-primary: #57534E;
+  /* Dark Grey bars */
+  --theme-viz-fill-secondary: #E07A5F;
+  /* Accent */
+  --theme-viz-fill-muted: #E8E5E0;
+  /* Light Grey */
+  --theme-viz-stroke-main: #D6D3D1;
+  /* Axis */
+  --theme-viz-grid-line: #E8E5E0;
+  /* Grid */
+  --theme-viz-text-value: #FFFFFF;
+  /* Text on Primary Bar */
+  --theme-viz-text-axis: #78716C;
+  --theme-viz-stroke-bar: #FDFCFA;
+  /* Match panel bg for gap effect */
 
   --shadow-inset: inset 0 1px 2px rgba(28, 28, 28, 0.05);
   --shadow-float: 0 4px 12px rgba(28, 28, 28, 0.08);
@@ -140,29 +195,64 @@
   --font-body: 'DM Sans', -apple-system, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 
+  /* Elevation via Lightness */
   --theme-bg-app: #0D0D0D;
-  --theme-bg-panel: #161616;
-  --theme-bg-surface: #1E1E1E;
+  /* Deep Charcoal */
+  --theme-bg-panel: #141619;
+  /* Surface 1 */
+  --theme-bg-surface: #1C1F24;
+  /* Surface 2 */
   --theme-bg-active: #2A2D35;
+  /* Hover states */
 
   --theme-text-primary: #E8EAED;
-  --theme-text-secondary: #9AA0A6;
+  /* Cool White */
+  --theme-text-secondary: #8B949E;
+  /* Muted */
   --theme-text-accent: #00D4FF;
+  /* Electric Cyan */
   --theme-text-inverse: #0D0D0D;
 
   --theme-border-color: #2A2D35;
+  /* Muted Blue-Gray */
   --theme-border-color-muted: #1E1E1E;
   --theme-border-color-active: #00D4FF;
+  --theme-border-grid: rgba(255, 255, 255, 0.08);
+  --theme-border-subtle: #2A2D35;
 
   --theme-color-accent: #00D4FF;
   --theme-color-accent-hover: #00B8EB;
-  --theme-color-success: #00E5A0;
-  --theme-color-warning: #FFB800;
-  --theme-color-error: #FF5252;
-  --theme-color-info: #00D4FF;
 
-  --theme-bg-nominal: #2D1414;
-  --theme-bg-ordinal: #142D2D;
+  /* Status */
+  --theme-status-error-bg: rgba(255, 82, 82, 0.15);
+  --theme-status-error-text: #FF8A80;
+  --theme-status-warning-bg: rgba(255, 184, 0, 0.15);
+  /* Amber */
+  --theme-status-warning-text: #FFB800;
+  --theme-status-success-bg: rgba(0, 229, 160, 0.15);
+  /* Mint */
+  --theme-status-success-text: #00E5A0;
+
+  /* Data Identity */
+  --theme-tag-nominal-bg: rgba(255, 82, 82, 0.1);
+  --theme-tag-nominal-text: #E57373;
+  --theme-tag-ordinal-bg: rgba(0, 212, 255, 0.1);
+  --theme-tag-ordinal-text: #4FC3F7;
+  --theme-tag-scale-bg: rgba(255, 255, 255, 0.1);
+  --theme-tag-scale-text: #BDBDBD;
+
+  /* Data Visualization */
+  --theme-viz-fill-primary: rgba(0, 212, 255, 0.2);
+  /* Transparent Cyan */
+  --theme-viz-fill-secondary: #00D4FF;
+  /* Solid Cyan Accent */
+  --theme-viz-fill-muted: #2A2D35;
+  --theme-viz-stroke-main: #3C4043;
+  --theme-viz-grid-line: #303134;
+  --theme-viz-text-value: #E8EAED;
+  --theme-viz-text-axis: #9AA0A6;
+  --theme-viz-stroke-bar: #00D4FF;
+  /* Solid Cyan Stroke */
 
   --shadow-inset: inset 0 1px 2px rgba(0, 0, 0, 0.5);
   --shadow-float: 0 4px 20px rgba(0, 0, 0, 0.6);
@@ -260,4 +350,46 @@ h3 {
 .writing-mode-vertical {
   writing-mode: vertical-rl;
   text-orientation: mixed;
+}
+
+/* ============================================================================
+   10. Mission Control Specific Utilities
+   ============================================================================ */
+
+/* Typography for data */
+.data-cell,
+.statistic-value {
+  font-family: var(--font-mono);
+  font-variant-numeric: lining-nums tabular-nums;
+  letter-spacing: -0.02em;
+  text-align: right;
+}
+
+/* Radar Sweep Interaction */
+.mission-control-row {
+  border-bottom: 1px solid var(--border-subtle);
+  background: transparent;
+  transition: background 0.15s var(--ease-standard);
+  position: relative;
+}
+
+.mission-control-row::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 0%;
+  height: 1px;
+  background: var(--color-accent);
+  box-shadow: 0 0 8px var(--color-accent);
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 10;
+}
+
+.mission-control-row:hover {
+  background: rgba(0, 212, 255, 0.03);
+}
+
+.mission-control-row:hover::after {
+  width: 100%;
 }

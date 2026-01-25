@@ -436,13 +436,13 @@ export const DataTable: React.FC<DataTableProps> = ({
 
       return (
         <React.Fragment key={row.key}>
-          <tr className="group hover:bg-[var(--gray-50)] transition-colors">
-            <td className="py-1.5 font-medium text-[var(--color-ink)] align-top border-r border-transparent" style={{ paddingLeft }}>
+          <tr className="group mission-control-row">
+            <td className="py-1.5 font-medium text-[var(--text-primary)] align-top" style={{ paddingLeft }}>
               <div className="flex items-center gap-2">
                 {hasChildren && (
                   <button
                     onClick={(e) => { e.stopPropagation(); toggleRow(row.key); }}
-                    className="p-0.5 rounded hover:bg-[var(--gray-200)] text-[var(--gray-400)] transition-colors"
+                    className="p-0.5 rounded hover:bg-[var(--bg-active)] text-[var(--text-secondary)] transition-colors"
                   >
                     {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
                   </button>
@@ -456,7 +456,7 @@ export const DataTable: React.FC<DataTableProps> = ({
               return (
                 <td
                   key={col}
-                  className="px-3 py-1.5 text-right align-top cursor-pointer relative hover:bg-[var(--gray-100)] transition-colors border-l border-[var(--gray-50)]"
+                  className="px-3 py-1.5 text-right align-top cursor-pointer relative data-cell border-l border-[var(--border-subtle)]"
                   onClick={() => onCellClick?.(row.rowPath, colVariable ? col : null)}
                   title={
                     cell.stats && typeof cell.stats.effN === 'number'
@@ -469,10 +469,10 @@ export const DataTable: React.FC<DataTableProps> = ({
                       // METRIC DISPLAY
                       <>
                         <div className="flex items-baseline gap-1">
-                          <span className="font-bold text-[var(--color-ink)]">{cell.mean.toFixed(1)}</span>
-                          <span className="text-[10px] text-[var(--gray-500)] bg-[var(--gray-100)] px-1 rounded">Mean</span>
+                          <span className="font-bold text-[var(--text-primary)]">{cell.mean.toFixed(1)}</span>
+                          <span className="text-[10px] text-[var(--text-secondary)] bg-[var(--bg-panel)] px-1 rounded">Mean</span>
                         </div>
-                        <span className="text-[10px] text-[var(--gray-400)] font-mono tracking-tight group-hover:opacity-100 transition-opacity flex gap-2">
+                        <span className="text-[10px] text-[var(--text-secondary)] font-mono tracking-tight group-hover:opacity-100 transition-opacity flex gap-2">
                           {cell.stdDev !== undefined && <span>SD: {cell.stdDev.toFixed(1)}</span>}
                           <span>n={cell.validCount ?? cell.count}</span>
                         </span>
@@ -481,21 +481,21 @@ export const DataTable: React.FC<DataTableProps> = ({
                       // FREQUENCY DISPLAY
                       <>
                         <div className="flex items-center gap-0.5">
-                          <span className="font-bold text-[var(--color-ink)]">{cell.percent.toFixed(1)}%</span>
+                          <span className="font-bold text-[var(--text-primary)]">{cell.percent.toFixed(1)}%</span>
                           {cell.sig === 'high_95' && (
-                            <ArrowUp size={12} className="text-emerald-500" />
+                            <ArrowUp size={12} className="text-[var(--color-success)]" />
                           )}
                           {cell.sig === 'high_80' && (
-                            <ArrowUp size={12} className="text-slate-400" />
+                            <ArrowUp size={12} className="text-[var(--text-secondary)]" />
                           )}
                           {cell.sig === 'low_95' && (
-                            <ArrowDown size={12} className="text-rose-500" />
+                            <ArrowDown size={12} className="text-[var(--color-error)]" />
                           )}
                           {cell.sig === 'low_80' && (
-                            <ArrowDown size={12} className="text-slate-400" />
+                            <ArrowDown size={12} className="text-[var(--text-secondary)]" />
                           )}
                         </div>
-                        <span className="text-[10px] text-[var(--gray-400)] font-mono tracking-tight opacity-0 group-hover:opacity-100 transition-opacity">n={cell.count}</span>
+                        <span className="text-[10px] text-[var(--text-secondary)] font-mono tracking-tight opacity-0 group-hover:opacity-100 transition-opacity">n={cell.count}</span>
                       </>
                     )}
                   </div>
@@ -505,7 +505,7 @@ export const DataTable: React.FC<DataTableProps> = ({
             {/* Only show Row Total if we have columns OR if it's a frequency table (always show 100%)
                 For Metric tables without columns, the single column is already the total. */}
             {(tableData.colKeys.length > 1) && (
-              <td className="px-3 py-1.5 text-right font-mono font-semibold text-[var(--color-ink)] bg-[var(--gray-50)] align-top">
+              <td className="px-3 py-1.5 text-right font-mono font-semibold text-[var(--text-primary)] bg-[var(--bg-surface)] align-top data-cell">
                 <div className="flex flex-col items-end">
                   {row.mean ? (
                     // METRIC ROW TOTAL (Global Mean for this row)
@@ -513,18 +513,18 @@ export const DataTable: React.FC<DataTableProps> = ({
                     // Otherwise use the aggregated mean from the row node
                     <>
                       <div className="flex items-baseline gap-1">
-                        <span className="font-bold text-[var(--color-ink)]">
+                        <span className="font-bold text-[var(--text-primary)]">
                           {(variableStats && row.depth === 0) ? variableStats.numeric?.mean.toFixed(1) : row.mean?.toFixed(1)}
                         </span>
-                        <span className="text-[10px] text-[var(--gray-500)] bg-[var(--gray-100)] px-1 rounded">Mean</span>
+                        <span className="text-[10px] text-[var(--text-secondary)] bg-[var(--bg-panel)] px-1 rounded">Mean</span>
                       </div>
-                      <span className="text-[10px] text-[var(--gray-400)]">n={row.total}</span>
+                      <span className="text-[10px] text-[var(--text-secondary)]">n={row.total}</span>
                     </>
                   ) : (
                     // FREQUENCY ROW TOTAL
                     <>
                       <span>{((row.total / tableData.grandTotal) * 100).toFixed(1)}%</span>
-                      <span className="text-[10px] text-[var(--gray-400)]">n={row.total}</span>
+                      <span className="text-[10px] text-[var(--text-secondary)]">n={row.total}</span>
                     </>
                   )}
                 </div>
@@ -555,17 +555,17 @@ export const DataTable: React.FC<DataTableProps> = ({
 
         <div className="overflow-x-auto overflow-y-auto max-h-[60vh]">
           <table className="w-full text-sm text-left border-collapse">
-            <thead className="text-xs uppercase bg-[var(--color-paper)] border-b-2 border-[var(--gray-300)]">
+            <thead className="text-xs uppercase bg-[var(--bg-panel)] border-b border-[var(--border-grid)]">
               <tr className="font-body">
-                <th className="px-3 py-2 font-bold text-[var(--color-charcoal)] tracking-wider text-left w-1/4 align-bottom sticky top-0 bg-[var(--color-paper)] z-10 box-border border-b-2 border-[var(--gray-300)]">
+                <th className="px-3 py-2 font-bold text-[var(--text-secondary)] tracking-wider text-left w-1/4 align-bottom sticky top-0 bg-[var(--bg-panel)] z-10 box-border border-b border-[var(--border-grid)]">
                   {rowVariables[0].label}
                 </th>
                 {tableData.colKeys.map((col, idx) => (
-                  <th key={col} className="px-3 py-2 font-bold text-[var(--color-charcoal)] text-right w-32 align-bottom sticky top-0 bg-[var(--color-paper)] z-10 border-b-2 border-[var(--gray-300)]">
+                  <th key={col} className="px-3 py-2 font-bold text-[var(--text-secondary)] text-right w-32 align-bottom sticky top-0 bg-[var(--bg-panel)] z-10 border-b border-[var(--border-grid)]">
                     <div className="flex flex-col gap-1 items-end">
                       <span>{tableData.colLabels[col]}</span>
                       {colVariable && (
-                        <span className="text-[10px] text-[var(--gray-400)] font-normal border border-[var(--gray-200)] rounded px-1 min-w-[20px] text-center">
+                        <span className="text-[10px] text-[var(--text-secondary)] font-normal border border-[var(--border-color-muted)] rounded px-1 min-w-[20px] text-center">
                           {getColLetter(idx)}
                         </span>
                       )}
@@ -573,30 +573,30 @@ export const DataTable: React.FC<DataTableProps> = ({
                   </th>
                 ))}
                 {(tableData.colKeys.length > 1) && (
-                  <th className="px-3 py-2 font-bold text-right w-24 text-[var(--color-ink)] bg-[var(--gray-50)] align-bottom sticky top-0 z-10 border-b-2 border-[var(--gray-300)] shadow-[inset_0_-2px_0_var(--gray-300)]">
+                  <th className="px-3 py-2 font-bold text-right w-24 text-[var(--text-primary)] bg-[var(--bg-surface)] align-bottom sticky top-0 z-10 border-b border-[var(--border-grid)] shadow-[inset_0_-2px_0_var(--border-grid)]">
                     Total
                   </th>
                 )}
               </tr>
             </thead>
-            <tbody className="divide-y divide-[var(--gray-100)] font-body">
+            <tbody className="divide-y divide-[var(--border-grid)] font-body">
               {tableData.rows.map(row => renderRow(row))}
-              <tr className="bg-[var(--gray-50)] font-semibold border-t border-[var(--gray-300)] border-b border-[var(--gray-300)]">
-                <td className="px-3 py-1.5 text-[var(--color-ink)] pl-8">Total</td>
+              <tr className="bg-[var(--bg-surface)] font-semibold border-t border-[var(--border-grid)] border-b border-[var(--border-grid)]">
+                <td className="px-3 py-1.5 text-[var(--text-primary)] pl-8">Total</td>
                 {tableData.colKeys.map(col => (
-                  <td key={col} className="px-3 py-1.5 text-right font-mono text-[var(--color-ink)]">
+                  <td key={col} className="px-3 py-1.5 text-right font-mono text-[var(--text-primary)]">
                     {tableData.colTotals[col]}
                   </td>
                 ))}
                 {(tableData.colKeys.length > 1) && (
-                  <td className="px-3 py-1.5 text-right font-mono text-[var(--color-ink)]">
+                  <td className="px-3 py-1.5 text-right font-mono text-[var(--text-primary)]">
                     {/* GRAND TOTAL CELL - SHOW SPARKLINE IF STATS AVAILABLE */}
                     {variableStats && (
                       <div className="flex flex-col items-end gap-1">
                         <div className="flex items-center gap-2 mb-1">
                           <div className="text-right">
                             <div className="text-xs font-bold">{variableStats.numeric?.mean.toFixed(1)}</div>
-                            <div className="text-[9px] text-[var(--gray-500)] uppercase tracking-wide">Mean</div>
+                            <div className="text-[9px] text-[var(--text-secondary)] uppercase tracking-wide">Mean</div>
                           </div>
                           <Sparkline
                             type="numeric"

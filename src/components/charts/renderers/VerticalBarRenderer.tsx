@@ -99,7 +99,7 @@ export const VerticalBarRenderer: React.FC<BaseChartRendererProps> = ({
                         y1={yScale(tick)}
                         x2={innerWidth}
                         y2={yScale(tick)}
-                        stroke="var(--gray-100)"
+                        stroke="var(--viz-grid-line)"
                         strokeDasharray="0"
                     />
                 ))}
@@ -113,7 +113,7 @@ export const VerticalBarRenderer: React.FC<BaseChartRendererProps> = ({
                             y={yScale(tick)}
                             dy=".32em"
                             textAnchor="end"
-                            style={{ fontSize: '10px', fill: 'var(--gray-500)' }}
+                            style={{ fontSize: '10px', fill: 'var(--viz-text-axis)' }}
                         >
                             {tick.toLocaleString()}
                         </text>
@@ -133,7 +133,7 @@ export const VerticalBarRenderer: React.FC<BaseChartRendererProps> = ({
                         <div
                             style={{
                                 fontSize: '11px',
-                                color: selectedKeys?.has(d.label) ? 'var(--gray-900)' : 'var(--gray-600)',
+                                color: selectedKeys?.has(d.label) ? 'var(--text-primary)' : 'var(--viz-text-axis)',
                                 fontWeight: selectedKeys?.has(d.label) ? 600 : 400,
                                 textAlign: 'center',
                                 lineHeight: '1.2',
@@ -170,7 +170,7 @@ export const VerticalBarRenderer: React.FC<BaseChartRendererProps> = ({
                                 width={xScale.bandwidth()}
                                 height={barHeight}
                                 fill={barColor}
-                                stroke={isSelected ? 'var(--gray-900)' : 'none'}
+                                stroke={isSelected ? 'var(--border-color-active)' : 'var(--viz-stroke-bar)'}
                                 strokeWidth={isSelected ? 2 : 0}
                                 className="hover:opacity-90"
                                 style={{ transition: 'height 0.3s ease-out' }}
@@ -184,7 +184,7 @@ export const VerticalBarRenderer: React.FC<BaseChartRendererProps> = ({
                                     textAnchor="middle"
                                     style={{
                                         fontSize: '11px',
-                                        fill: isSelected ? 'var(--gray-900)' : 'var(--gray-600)',
+                                        fill: isSelected ? 'var(--text-primary)' : 'var(--viz-text-axis)',
                                         fontWeight: 500
                                     }}
                                 >
@@ -203,7 +203,7 @@ export const VerticalBarRenderer: React.FC<BaseChartRendererProps> = ({
                     y1={innerHeight}
                     x2={innerWidth}
                     y2={innerHeight}
-                    stroke="var(--gray-300)"
+                    stroke="var(--viz-stroke-main)"
                 />
             </g>
         </svg>

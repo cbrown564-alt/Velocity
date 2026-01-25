@@ -47,22 +47,34 @@ export const SortableVariableCard: React.FC<SortableVariableCardProps> = ({
         opacity: isDragging ? 0.5 : hidden ? 0.4 : 1,
     };
 
-    const typeStyles = {
-        nominal: {
-            backgroundColor: 'var(--bg-nominal)',
-            borderColor: 'var(--color-nominal)',
-            color: 'var(--color-nominal)',
-        },
-        ordinal: {
-            backgroundColor: 'var(--bg-ordinal)',
-            borderColor: 'var(--color-ordinal)',
-            color: 'var(--color-ordinal)',
-        },
-        scale: {
-            backgroundColor: 'var(--bg-surface)',
-            borderColor: 'var(--border-color)',
-            color: 'var(--text-secondary)',
-        },
+    const getTypeStyle = (variableType?: VariableType) => {
+        switch (variableType) {
+            case 'nominal':
+                return {
+                    backgroundColor: 'var(--tag-nominal-bg)',
+                    color: 'var(--tag-nominal-text)',
+                    borderColor: 'transparent'
+                };
+            case 'ordinal':
+                return {
+                    backgroundColor: 'var(--tag-ordinal-bg)',
+                    color: 'var(--tag-ordinal-text)',
+                    borderColor: 'transparent'
+                };
+            case 'scale':
+            case 'numeric':
+                return {
+                    backgroundColor: 'var(--tag-scale-bg)',
+                    color: 'var(--tag-scale-text)',
+                    borderColor: 'var(--border-color-muted)'
+                };
+            default:
+                return {
+                    backgroundColor: 'var(--bg-active)',
+                    color: 'var(--text-secondary)',
+                    borderColor: 'transparent'
+                };
+        }
     };
 
     const typeIcons = {
@@ -71,7 +83,7 @@ export const SortableVariableCard: React.FC<SortableVariableCardProps> = ({
         scale: BarChart2,
     };
 
-    const currentTypeStyle = type ? typeStyles[type] : {};
+    const currentTypeStyle = getTypeStyle(type);
     const TypeIcon = structure === 'multi' ? SquareCheck : structure === 'grid' ? Grid3X3 : type ? typeIcons[type] : CheckCircle;
 
     const handleClick = (e: React.MouseEvent) => {

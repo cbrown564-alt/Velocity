@@ -119,7 +119,7 @@ export const HexbinRenderer: React.FC<BaseChartRendererProps> = ({
                             transform={`translate(${bin.x},${bin.y})`}
                             fill={baseColor}
                             fillOpacity={opacityScale(bin.length)}
-                            stroke="var(--bg-panel)"
+                            stroke="var(--viz-stroke-bar)"
                             strokeWidth={0.5}
                             className="transition-all duration-200 hover:stroke-gray-600 hover:stroke-1"
                         >
