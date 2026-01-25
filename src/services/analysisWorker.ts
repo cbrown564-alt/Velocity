@@ -11,7 +11,7 @@
 import * as duckdb from '@duckdb/duckdb-wasm';
 import * as arrow from 'apache-arrow';
 import { RecodeConfig, VariableSet, Variable, Filter, HistogramBin } from '../types';
-import { buildCrosstabQuery, CrosstabQueryOptions, buildFilterClause, escapeIdentifier } from './queryBuilder';
+import { buildCrosstabQuery, CrosstabQueryOptions, buildFilterClause, escapeIdentifier, escapeString } from './queryBuilder';
 import { calculateZScore, calculateTScore, calculateESS, calculatePValue } from './statistics';
 
 const JSDELIVR_BUNDLES = duckdb.getJsDelivrBundles();
@@ -56,6 +56,13 @@ export interface NumericStats {
   stdDev: number;
   q1: number;  // 25th percentile
   q3: number;  // 75th percentile
+  iqr?: number; // Interquartile Range
+  lowerFence?: number; // Q1 - 1.5 * IQR
+  upperFence?: number; // Q3 + 1.5 * IQR
+  whiskerMin?: number; // Minimum value inside fences (for box plot whiskers)
+  whiskerMax?: number; // Maximum value inside fences
+  outliers?: number[]; // Values outside fences
+  sampleData?: number[]; // Random sample for jitter plot
   histogramBins: HistogramBin[];
 }
 
@@ -910,6 +917,43 @@ async function getVariableStats(
         const q1 = Number(statsRow.q1_val) || minVal;
         const q3 = Number(statsRow.q3_val) || maxVal;
 
+        const iqr = q3 - q1;
+        const lowerFence = q1 - 1.5 * iqr;
+        const upperFence = q3 + 1.5 * iqr;
+
+        // Compute adjacent values (whiskers) - closest values inside fences
+        const fenceResult = await conn.query(`
+          SELECT 
+            MIN("${column}") as whisker_min,
+            MAX("${column}") as whisker_max
+          FROM main
+          WHERE "${column}" >= ${lowerFence} AND "${column}" <= ${upperFence}
+        `);
+        const fenceRow = fenceResult.toArray()[0];
+        const whiskerMin = fenceRow?.whisker_min !== null ? Number(fenceRow.whisker_min) : minVal;
+        const whiskerMax = fenceRow?.whisker_max !== null ? Number(fenceRow.whisker_max) : maxVal;
+
+        // Fetch Outliers (values outside fences) - Limit to 100 to prevent explosion
+        const outliersResult = await conn.query(`
+          SELECT "${column}" as val 
+          FROM main 
+          WHERE ("${column}" < ${lowerFence} OR "${column}" > ${upperFence})
+          LIMIT 100
+        `);
+        const outliers = outliersResult.toArray().map((r: any) => Number(r.val));
+
+        // Fetch Sample Data for Jitter Plot
+        // Use ORDER BY random() to ensure a uniform sample that matches the true distribution.
+        // USING SAMPLE can be biased on sorted data (e.g. taking the first N blocks).
+        const sampleResult = await conn.query(`
+          SELECT "${column}" as val
+          FROM main
+          WHERE "${column}" IS NOT NULL
+          ORDER BY random()
+          LIMIT 500
+        `);
+        const sampleData = sampleResult.toArray().map((r: any) => Number(r.val));
+
         // Compute histogram bins
         const range = maxVal - minVal;
         const binWidth = range > 0 ? range / binCount : 1;
@@ -954,14 +998,22 @@ async function getVariableStats(
           q1,
           q3,
           histogramBins,
+          iqr,
+          lowerFence,
+          upperFence,
+          whiskerMin,
+          whiskerMax,
+          outliers,
+          sampleData
         };
 
         console.log(`🦆 [Worker] Computed numeric stats for ${column}:`, {
           min: minVal,
           max: maxVal,
-          mean: mean.toFixed(2),
-          median: median.toFixed(2),
-          binCount: histogramBins.length,
+          whiskerMin,
+          whiskerMax,
+          outliersCount: outliers.length,
+          sampleCount: sampleData.length
         });
       }
     } catch (error: any) {
@@ -1036,15 +1088,31 @@ async function runCrosstab(options: CrosstabQueryOptions & { includeDistribution
         const binWidth = range > 0 ? range / binCount : 1;
 
         // 2.5b Run Grouped Histogram Query
-        const rowGroups = modifiedOptions.rowVars.map((r, i) => `"${escapeIdentifier(r)}" as rowKey_${i}`);
+        // When measureVar is set and rowVars is empty, the main query uses measureLabel as rowKey_0
+        // The histogram query must match this structure
+        let rowGroups: string[] = [];
+        let groupByCols: string[] = [];
+
+        if (modifiedOptions.rowVars.length === 0 && modifiedOptions.measureLabel) {
+          // Single metric variable: include measureLabel as rowKey_0 to match main query
+          rowGroups = [`'${escapeString(modifiedOptions.measureLabel)}' as rowKey_0`];
+          // Don't group by the literal string in the histogram query
+        } else {
+          // Standard row grouping
+          rowGroups = modifiedOptions.rowVars.map((r, i) => `"${escapeIdentifier(r)}" as rowKey_${i}`);
+          groupByCols = modifiedOptions.rowVars.map(r => `"${escapeIdentifier(r)}"`);
+        }
+
         const colGroup = modifiedOptions.colVar
           ? `"${escapeIdentifier(modifiedOptions.colVar)}" as colKey`
           : `'Total' as colKey`;
 
-        const groupByCols = [
-          ...modifiedOptions.rowVars.map(r => `"${escapeIdentifier(r)}"`),
-          modifiedOptions.colVar ? `"${escapeIdentifier(modifiedOptions.colVar)}"` : null
-        ].filter((c): c is string => Boolean(c)).join(', ');
+        // Add column to grouping if present
+        if (modifiedOptions.colVar) {
+          groupByCols.push(`"${escapeIdentifier(modifiedOptions.colVar)}"`);
+        }
+
+        const groupByClause = groupByCols.length > 0 ? groupByCols.join(', ') + ',' : '';
 
         const bucketExpr = `
               CASE
@@ -1062,7 +1130,7 @@ async function runCrosstab(options: CrosstabQueryOptions & { includeDistribution
               FROM main
               ${whereSql}
               ${whereSql ? 'AND' : 'WHERE'} ${safeMeasure} IS NOT NULL
-              GROUP BY ${groupByCols ? groupByCols + ',' : ''} bucket
+              GROUP BY ${groupByClause} bucket
           `;
 
         const histRes = await conn.query(histSql);
@@ -1109,7 +1177,12 @@ async function runCrosstab(options: CrosstabQueryOptions & { includeDistribution
           r.histogramBins = bins;
         });
 
-        console.log(`🦆 [Worker] Attached histogram bins for ${rows.length} rows`);
+        console.log(`🦆 [Worker] Attached histogram bins:`, {
+          totalRows: rows.length,
+          rowsWithBins: rows.filter(r => r.histogramBins && r.histogramBins.length > 0).length,
+          binMapSize: binMap.size,
+          sampleKeys: Array.from(binMap.keys()).slice(0, 3)
+        });
       }
     } catch (e) {
       console.warn('🦆 [Worker] Histogram generation failed:', e);

@@ -108,6 +108,8 @@ export interface CrosstabQueryOptions {
     measureVar?: string;
     /** Label to use for the measure row (e.g. "Age") */
     measureLabel?: string;
+    /** If true, fetch histogram/distribution data (for Violin/Ridgeline/BoxPlot) */
+    includeDistributions?: boolean;
 }
 
 /**
