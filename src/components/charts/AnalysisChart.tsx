@@ -215,29 +215,68 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
         // These renderers expect each "Series" to be a group (Category),
         // and the "Data" within that series to be the histogram bins.
         if (activeChartType === 'violin' || activeChartType === 'ridgeline') {
-            // We usually have 1 series (Total) with multiple rows (Categories)
-            // We want to convert each Row into a Series.
-            // And use the row's `histogramBins` as the series data.
+            // Two scenarios:
+            // 1. Single metric (age only): 1 row ('Age'), 1 column ('Total')
+            //    → Create 1 series from the row
+            // 2. Grouped metric (age × sex): 1 row ('Age'), multiple columns (Male, Female)
+            //    → Create 1 series per column, using bins from that column's cell
 
-            // Use the first available column (usually Total or the Measure column)
-            const colKey = processedData.columns[0]?.key;
+            let newSeries: ChartSeries[] = [];
 
-            const newSeries = processedData.rows
-                .filter(r => r.cells[colKey]?.histogramBins && r.cells[colKey].histogramBins.length > 0)
-                .map(r => ({
-                    key: r.rawValue,
-                    label: r.label,
-                    // Map histogram bins to ChartDataPoint structure
-                    data: (r.cells[colKey].histogramBins || []).map(bin => ({
-                        label: r.label, // Label matches the group
-                        rawValue: String(bin.x0),
-                        value: bin.count,
-                        percent: 0, // Not used for distribution shape
-                        x0: bin.x0,
-                        x1: bin.x1,
-                        count: bin.count,
-                    }))
-                }));
+            if (processedData.columns.length === 1) {
+                // Scenario 1: Single metric - iterate rows
+                newSeries = processedData.rows
+                    .filter(r => {
+                        const colKey = processedData.columns[0]?.key;
+                        return r.cells[colKey]?.histogramBins && r.cells[colKey].histogramBins.length > 0;
+                    })
+                    .map(r => {
+                        const colKey = processedData.columns[0].key;
+                        return {
+                            key: r.rawValue,
+                            label: r.label,
+                            data: (r.cells[colKey].histogramBins || []).map(bin => ({
+                                label: r.label,
+                                rawValue: String(bin.x0),
+                                value: bin.count,
+                                percent: 0,
+                                x0: bin.x0,
+                                x1: bin.x1,
+                                count: bin.count,
+                            }))
+                        };
+                    });
+            } else {
+                // Scenario 2: Grouped metric - iterate columns
+                // Each column (Male, Female) becomes a series
+                newSeries = processedData.columns
+                    .filter(col => {
+                        // Check if any row has histogram bins for this column
+                        return processedData.rows.some(r =>
+                            r.cells[col.key]?.histogramBins &&
+                            r.cells[col.key].histogramBins.length > 0
+                        );
+                    })
+                    .map(col => {
+                        // Get bins from the first row (usually the metric row like 'Age')
+                        const firstRow = processedData.rows[0];
+                        const bins = firstRow?.cells[col.key]?.histogramBins || [];
+
+                        return {
+                            key: col.key,
+                            label: col.label,
+                            data: bins.map(bin => ({
+                                label: col.label,
+                                rawValue: String(bin.x0),
+                                value: bin.count,
+                                percent: 0,
+                                x0: bin.x0,
+                                x1: bin.x1,
+                                count: bin.count,
+                            }))
+                        };
+                    });
+            }
 
             if (newSeries.length > 0) {
                 return {

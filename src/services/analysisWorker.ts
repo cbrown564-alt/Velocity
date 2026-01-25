@@ -62,7 +62,6 @@ export interface NumericStats {
   whiskerMin?: number; // Minimum value inside fences (for box plot whiskers)
   whiskerMax?: number; // Maximum value inside fences
   outliers?: number[]; // Values outside fences
-  sampleData?: number[]; // Random sample for jitter plot
   histogramBins: HistogramBin[];
 }
 
@@ -942,18 +941,6 @@ async function getVariableStats(
         `);
         const outliers = outliersResult.toArray().map((r: any) => Number(r.val));
 
-        // Fetch Sample Data for Jitter Plot
-        // Use ORDER BY random() to ensure a uniform sample that matches the true distribution.
-        // USING SAMPLE can be biased on sorted data (e.g. taking the first N blocks).
-        const sampleResult = await conn.query(`
-          SELECT "${column}" as val
-          FROM main
-          WHERE "${column}" IS NOT NULL
-          ORDER BY random()
-          LIMIT 500
-        `);
-        const sampleData = sampleResult.toArray().map((r: any) => Number(r.val));
-
         // Compute histogram bins
         const range = maxVal - minVal;
         const binWidth = range > 0 ? range / binCount : 1;
@@ -1003,17 +990,14 @@ async function getVariableStats(
           upperFence,
           whiskerMin,
           whiskerMax,
-          outliers,
-          sampleData
+          outliers
         };
 
         console.log(`🦆 [Worker] Computed numeric stats for ${column}:`, {
           min: minVal,
           max: maxVal,
-          whiskerMin,
           whiskerMax,
-          outliersCount: outliers.length,
-          sampleCount: sampleData.length
+          outliersCount: outliers.length
         });
       }
     } catch (error: any) {

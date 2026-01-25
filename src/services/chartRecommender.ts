@@ -100,7 +100,7 @@ export function recommendChart(context: RecommenderContext): ChartRecommendation
             case 'numeric':
                 return {
                     default: 'histogram',
-                    alternatives: ['box-plot'],
+                    alternatives: ['box-plot', 'violin', 'ridgeline'],
                     reason: 'Numeric variables show distribution.',
                 };
         }

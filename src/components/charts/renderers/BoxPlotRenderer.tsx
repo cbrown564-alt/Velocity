@@ -97,25 +97,41 @@ export const BoxPlotRenderer: React.FC<BaseChartRendererProps> = ({
                     </g>
                 ))}
 
+                {/* X Axis Label */}
+                <g transform={`translate(${innerWidth / 2}, ${innerHeight + 25})`}>
+                    <text
+                        textAnchor="middle"
+                        style={{
+                            fontSize: 'var(--font-size-sm)',
+                            fill: 'var(--gray-600)',
+                            fontWeight: 500,
+                        }}
+                    >
+                        {processedData?.columns?.[0]?.label || "All Respondents"}
+                    </text>
+                </g>
+
                 {/* Box Plot Elements */}
                 <g className="box-plot-item">
-                    {/* Range Line (Min to Max) */}
+
+                    {/* Range Line (Whiskers: Min/Max or Fences) */}
+                    {/* If we have whiskerMin/Max (calculated fences), use them. Else fall back to Min/Max */}
                     <line
-                        x1={center} y1={yScale(min)}
-                        x2={center} y2={yScale(max)}
+                        x1={center} y1={yScale(stats.whiskerMin ?? min)}
+                        x2={center} y2={yScale(stats.whiskerMax ?? max)}
                         stroke="var(--gray-400)"
                         strokeDasharray="4,4"
                     />
                     {/* Min Cap */}
                     <line
-                        x1={center - boxWidth / 4} y1={yScale(min)}
-                        x2={center + boxWidth / 4} y2={yScale(min)}
+                        x1={center - boxWidth / 4} y1={yScale(stats.whiskerMin ?? min)}
+                        x2={center + boxWidth / 4} y2={yScale(stats.whiskerMin ?? min)}
                         stroke="var(--gray-400)"
                     />
                     {/* Max Cap */}
                     <line
-                        x1={center - boxWidth / 4} y1={yScale(max)}
-                        x2={center + boxWidth / 4} y2={yScale(max)}
+                        x1={center - boxWidth / 4} y1={yScale(stats.whiskerMax ?? max)}
+                        x2={center + boxWidth / 4} y2={yScale(stats.whiskerMax ?? max)}
                         stroke="var(--gray-400)"
                     />
 
@@ -140,6 +156,21 @@ export const BoxPlotRenderer: React.FC<BaseChartRendererProps> = ({
                         stroke="white"
                         strokeWidth={2}
                     />
+
+                    {/* Outliers */}
+                    {stats.outliers && stats.outliers.map((val: number, i: number) => (
+                        <circle
+                            key={`outlier-${i}`}
+                            cx={center}
+                            cy={yScale(val)}
+                            r={3}
+                            fill="transparent"
+                            stroke={color}
+                            strokeWidth={1.5}
+                        >
+                            <title>Outlier: {val}</title>
+                        </circle>
+                    ))}
                 </g>
             </g>
         </svg>
