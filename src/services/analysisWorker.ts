@@ -979,7 +979,7 @@ async function getVariableStats(
 
 // Imported from statistics.ts
 
-async function runCrosstab(options: CrosstabQueryOptions, variableTypes: Record<string, string>): Promise<any[]> {
+async function runCrosstab(options: CrosstabQueryOptions & { includeDistributions?: boolean }, variableTypes: Record<string, string>): Promise<any[]> {
   if (!conn) throw new Error('DB not initialized');
 
   // 1. Handle Nested Scale Variables Logic
