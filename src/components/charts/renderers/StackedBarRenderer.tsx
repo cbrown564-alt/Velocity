@@ -6,7 +6,7 @@ import { BaseChartRendererProps } from '../../../types/charts';
 import { getChartColor } from '../shared/chartColors';
 
 interface StackedBarRendererProps extends BaseChartRendererProps {
-    type: 'stacked-bar' | 'stacked-bar-100';
+    type: 'stacked-bar';
 }
 
 /**
@@ -25,6 +25,7 @@ export const StackedBarRenderer: React.FC<StackedBarRendererProps> = ({
     selectedKeys,
     onSelectionChange,
     onContextMenu,
+    labelMode,
 }) => {
     const { rows, columns, colVariable, rowVariables, grandTotal } = processedData;
 
@@ -97,7 +98,12 @@ export const StackedBarRenderer: React.FC<StackedBarRendererProps> = ({
 
     // Create stack generator
     const stackGenerator = d3Shape.stack<Record<string, any>>().keys(stackKeys);
-    if (type === 'stacked-bar-100') {
+
+    // Check if we should be in 100% stacked mode
+    // Only governed by labelMode now
+    const isPercentMode = labelMode === 'percent';
+
+    if (isPercentMode) {
         stackGenerator.offset(d3Shape.stackOffsetExpand);
     }
 
@@ -157,16 +163,16 @@ export const StackedBarRenderer: React.FC<StackedBarRendererProps> = ({
     }, [chartData, actualHeight]);
 
     const xScale = useMemo(() => {
-        const maxVal = type === 'stacked-bar-100'
+        const maxVal = isPercentMode
             ? 1
             : (max(stackedSeries, s => max(s, d => d[1])) || 1);
         return d3.scaleLinear()
             .domain([0, maxVal])
             .range([0, innerWidth]);
-    }, [stackedSeries, innerWidth, type]);
+    }, [stackedSeries, innerWidth, isPercentMode]);
 
     // X-axis ticks
-    const xTicks = type === 'stacked-bar-100'
+    const xTicks = isPercentMode
         ? [0, 0.25, 0.5, 0.75, 1]
         : xScale.ticks(5);
 
@@ -226,7 +232,7 @@ export const StackedBarRenderer: React.FC<StackedBarRendererProps> = ({
                                 textAnchor="middle"
                                 className="text-[10px] fill-gray-500"
                             >
-                                {type === 'stacked-bar-100'
+                                {isPercentMode
                                     ? `${Math.round(tick * 100)}%`
                                     : tick.toLocaleString()}
                             </text>
@@ -272,7 +278,7 @@ export const StackedBarRenderer: React.FC<StackedBarRendererProps> = ({
                             // Only show label if segment is wide enough
                             const showLabel = barWidth > 30;
                             const value = d[1] - d[0];
-                            const displayValue = type === 'stacked-bar-100'
+                            const displayValue = isPercentMode
                                 ? `${Math.round(value * 100)}%`
                                 : value.toLocaleString();
 

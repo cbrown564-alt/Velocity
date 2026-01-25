@@ -98,65 +98,113 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
         });
     }, [processedData]);
 
-    // Data Transformation for Single-Variable Diverging Bar
-    // If we have a single ordinal variable, we need to PIVOT the data.
+    // Data Transformation for Diverging Bar
     // Standard: Rows = Categories, Col = Total
-    // Diverging: Rows = Variable(s), Col = Categories
+    // Grid/Pivot: Rows = Scale Points, Cols = Items => NEED TO SWAP
+    // We want Rows = Items, Segments = Scale Points
     const chartData = useMemo(() => {
         if (!processedData) return null;
 
-        // Check if we need to pivot
-        // 1. Chart type is diverging-bar
-        // 2. Only 1 data column (usually 'Total')
-        // 3. Multiple rows (categories)
-        // 4. Not a grid (grids are already in correct format)
-        if (activeChartType === 'diverging-bar' &&
-            processedData.columns.length === 1 &&
-            processedData.rows.length > 1) {
+        if (activeChartType === 'diverging-bar') {
+            // CASE 1: Single Variable (Pivot Categories to Segments)
+            // If we have 1 column (Total) and multiple Rows (Categories)
+            if (processedData.columns.length === 1 && processedData.rows.length > 1) {
+                // Create specific columns from the rows (Scale Points)
+                const newColumns = processedData.rows.map(r => ({
+                    key: r.rawValue,
+                    label: r.label,
+                    total: r.total
+                }));
 
-            // Pivot!
-            // Create specific columns from the rows
-            const newColumns = processedData.rows.map(r => ({
-                key: r.rawValue,
-                label: r.label,
-                total: r.total
-            }));
+                // Create a single row for the variable
+                const mainVar = processedData.rowVariables[0];
+                const newRow: any = {
+                    key: mainVar?.id || 'root',
+                    label: mainVar?.label || 'Distribution',
+                    rawValue: mainVar?.id || 'root',
+                    total: processedData.grandTotal,
+                    cells: {}
+                };
 
-            // Create a single row for the variable
-            const mainVar = processedData.rowVariables[0];
-            const newRow: any = {
-                key: mainVar?.id || 'root',
-                label: mainVar?.label || 'Distribution',
-                rawValue: mainVar?.id || 'root',
-                total: processedData.grandTotal,
-                cells: {}
-            };
+                // Map counts to the new cells
+                processedData.rows.forEach(r => {
+                    // The cell value comes from the 'Total' column of the original row
+                    const originalCell = r.cells[processedData.columns[0].key];
+                    if (originalCell) {
+                        newRow.cells[r.rawValue] = originalCell;
+                    }
+                });
 
-            // Map counts to the new cells
-            processedData.rows.forEach(r => {
-                // The cell value comes from the 'Total' column of the original row
-                const originalCell = r.cells[processedData.columns[0].key];
-                if (originalCell) {
-                    newRow.cells[r.rawValue] = originalCell;
-                }
-            });
+                return {
+                    ...processedData,
+                    columns: newColumns,
+                    rows: [newRow],
+                    series: newColumns.map(col => ({
+                        key: col.key,
+                        label: col.label,
+                        data: [{
+                            label: newRow.label,
+                            rawValue: newRow.rawValue,
+                            value: newRow.cells[col.key]?.count || 0,
+                            percent: newRow.cells[col.key]?.percent || 0,
+                            sig: newRow.cells[col.key]?.sig,
+                        }]
+                    }))
+                };
+            }
 
-            return {
-                ...processedData,
-                columns: newColumns,
-                rows: [newRow],
-                series: newColumns.map(col => ({
-                    key: col.key,
-                    label: col.label,
-                    data: [{
-                        label: newRow.label,
-                        rawValue: newRow.rawValue,
-                        value: newRow.cells[col.key]?.count || 0,
-                        percent: newRow.cells[col.key]?.percent || 0,
-                        sig: newRow.cells[col.key]?.sig,
-                    }]
-                }))
-            };
+            // CASE 2: Grid Variable (Dimensions are inverted for visualization)
+            // Current: Rows = Scale Points (1..10), Columns = Items (Content, Energy...)
+            // Target: Rows = Items, Segments = Scale Points
+            if (processedData.columns.length > 1 && processedData.rows.length > 1) {
+                // 1. New Columns = Old Rows (The Scale Points)
+                const newColumns = processedData.rows.map(r => ({
+                    key: r.rawValue,
+                    label: r.label,
+                    total: r.total
+                }));
+
+                // 2. New Rows = Old Columns (The Items)
+                const newRows = processedData.columns.map(col => {
+                    const newRow: any = {
+                        key: col.key,
+                        label: col.label,
+                        rawValue: col.key,
+                        total: col.total,
+                        cells: {}
+                    };
+
+                    // Fill cells: For each Scale Point (Old Row), get the data for this Item (Old Col)
+                    processedData.rows.forEach(oldRow => {
+                        const cell = oldRow.cells[col.key];
+                        if (cell) {
+                            newRow.cells[oldRow.rawValue] = cell;
+                        }
+                    });
+
+                    return newRow;
+                });
+
+                // 3. New Series = Old Rows (The Scale Points mapped to the new items)
+                const newSeries = newColumns.map(newCol => ({
+                    key: newCol.key,
+                    label: newCol.label,
+                    data: newRows.map(row => ({
+                        label: row.label,
+                        rawValue: row.rawValue,
+                        value: row.cells[newCol.key]?.count || 0,
+                        percent: row.cells[newCol.key]?.percent || 0,
+                        sig: row.cells[newCol.key]?.sig
+                    }))
+                }));
+
+                return {
+                    ...processedData,
+                    columns: newColumns,
+                    rows: newRows,
+                    series: newSeries
+                };
+            }
         }
 
         return processedData;
@@ -353,7 +401,6 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
             case 'horizontal-bar':
                 return <HorizontalBarRenderer {...commonProps} />;
             case 'stacked-bar':
-            case 'stacked-bar-100':
                 return <StackedBarRenderer {...commonProps} type={activeChartType} />;
             case 'grouped-bar':
                 return <GroupedBarRenderer {...commonProps} />;

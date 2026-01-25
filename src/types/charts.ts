@@ -5,7 +5,6 @@ export type ChartType =
     | 'vertical-bar'
     | 'grouped-bar'
     | 'stacked-bar'
-    | 'stacked-bar-100'
     | 'diverging-bar'
     | 'donut'
     | 'histogram'

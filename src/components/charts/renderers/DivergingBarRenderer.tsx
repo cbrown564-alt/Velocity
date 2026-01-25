@@ -18,6 +18,7 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
     selectedKeys,
     onSelectionChange,
     onContextMenu,
+    labelMode = 'none', // Default to none
 }) => {
     const { rows, columns } = processedData;
     const colCount = columns.length;
@@ -222,13 +223,28 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
 
                             {/* Neutral Bar (Centered) */}
                             {hasNeutral && neutralVal > 0 && (
-                                <rect
-                                    x={xScale(-neutralVal / 2)}
-                                    y={y}
-                                    width={xScale(neutralVal / 2) - xScale(-neutralVal / 2)}
-                                    height={h}
-                                    fill={getColor(midPoint)}
-                                />
+                                <g>
+                                    <rect
+                                        x={xScale(-neutralVal / 2)}
+                                        y={y}
+                                        width={xScale(neutralVal / 2) - xScale(-neutralVal / 2)}
+                                        height={h}
+                                        fill={getColor(midPoint)}
+                                    />
+                                    {labelMode !== 'none' && (xScale(neutralVal / 2) - xScale(-neutralVal / 2)) > 24 && (
+                                        <text
+                                            x={xScale(0)}
+                                            y={y + h / 2}
+                                            dy=".35em"
+                                            textAnchor="middle"
+                                            className="text-[10px] font-medium fill-gray-800 pointer-events-none"
+                                        >
+                                            {labelMode === 'percent'
+                                                ? `${Math.round(row.cells[neutral]?.percent || 0)}%`
+                                                : neutralVal.toLocaleString()}
+                                        </text>
+                                    )}
+                                </g>
                             )}
 
                             {/* Left Bars (Negative) - Iterate backwards from midPoint-1 to 0 */}
@@ -242,18 +258,37 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
                                 const end = currentLeft - val;
                                 currentLeft -= val;
 
+                                const width = xScale(start) - xScale(end);
+                                const cellData = row.cells[key];
+                                const labelText = labelMode === 'percent'
+                                    ? `${Math.round(cellData?.percent || 0)}%`
+                                    : val.toLocaleString();
+
                                 return (
-                                    <rect
-                                        key={key}
-                                        x={xScale(end)}
-                                        y={y}
-                                        width={xScale(start) - xScale(end)}
-                                        height={h}
-                                        fill={getColor(colIndex)}
-                                        className="transition-opacity hover:opacity-80"
-                                    >
-                                        <title>{`${columns[colIndex].label}: ${val}`}</title>
-                                    </rect>
+                                    <g key={key}>
+                                        <rect
+                                            x={xScale(end)}
+                                            y={y}
+                                            width={width}
+                                            height={h}
+                                            fill={getColor(colIndex)}
+                                            className="transition-opacity hover:opacity-80"
+                                        >
+                                            <title>{`${columns[colIndex].label}: ${val}`}</title>
+                                        </rect>
+                                        {labelMode !== 'none' && width > 24 && (
+                                            <text
+                                                x={xScale(end) + width / 2}
+                                                y={y + h / 2}
+                                                dy=".35em"
+                                                textAnchor="middle"
+                                                className="text-[10px] font-medium fill-white pointer-events-none"
+                                                style={{ textShadow: '0 1px 2px rgba(0,0,0,0.3)' }}
+                                            >
+                                                {labelText}
+                                            </text>
+                                        )}
+                                    </g>
                                 );
                             })}
 
@@ -267,18 +302,37 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
                                 const end = currentRight + val;
                                 currentRight += val;
 
+                                const width = xScale(end) - xScale(start);
+                                const cellData = row.cells[key];
+                                const labelText = labelMode === 'percent'
+                                    ? `${Math.round(cellData?.percent || 0)}%`
+                                    : val.toLocaleString();
+
                                 return (
-                                    <rect
-                                        key={key}
-                                        x={xScale(start)}
-                                        y={y}
-                                        width={xScale(end) - xScale(start)}
-                                        height={h}
-                                        fill={getColor(colIndex)}
-                                        className="transition-opacity hover:opacity-80"
-                                    >
-                                        <title>{`${columns[colIndex].label}: ${val}`}</title>
-                                    </rect>
+                                    <g key={key}>
+                                        <rect
+                                            x={xScale(start)}
+                                            y={y}
+                                            width={width}
+                                            height={h}
+                                            fill={getColor(colIndex)}
+                                            className="transition-opacity hover:opacity-80"
+                                        >
+                                            <title>{`${columns[colIndex].label}: ${val}`}</title>
+                                        </rect>
+                                        {labelMode !== 'none' && width > 24 && (
+                                            <text
+                                                x={xScale(start) + width / 2}
+                                                y={y + h / 2}
+                                                dy=".35em"
+                                                textAnchor="middle"
+                                                className="text-[10px] font-medium fill-white pointer-events-none"
+                                                style={{ textShadow: '0 1px 2px rgba(0,0,0,0.3)' }}
+                                            >
+                                                {labelText}
+                                            </text>
+                                        )}
+                                    </g>
                                 );
                             })}
                         </g>

@@ -22,7 +22,7 @@ export function recommendChart(context: RecommenderContext): ChartRecommendation
     if (isGrid) {
         return {
             default: 'diverging-bar',
-            alternatives: ['stacked-bar', 'stacked-bar-100', 'grouped-bar'],
+            alternatives: ['stacked-bar', 'grouped-bar'],
             reason: 'Likert grids are best viewed as diverging bars.',
         };
     }
@@ -43,7 +43,7 @@ export function recommendChart(context: RecommenderContext): ChartRecommendation
             const isLikert = colVar.type === 'ordinal' || colVar.type === 'numeric';
             return {
                 default: isLikert ? 'diverging-bar' : 'grouped-bar',
-                alternatives: ['stacked-bar-100', 'stacked-bar', 'grouped-bar', 'diverging-bar'],
+                alternatives: ['stacked-bar', 'grouped-bar', 'diverging-bar'],
                 reason: 'Comparing nominal/ordinal groups across columns.',
             };
         }
@@ -80,7 +80,7 @@ export function recommendChart(context: RecommenderContext): ChartRecommendation
             case 'ordinal':
                 return {
                     default: 'horizontal-bar',
-                    alternatives: ['stacked-bar', 'stacked-bar-100', 'vertical-bar', 'diverging-bar'],
+                    alternatives: ['stacked-bar', 'vertical-bar'], // Diverging bar removed for single ordinal
                     reason: 'Ordinal data can be viewed as bars or distributions.',
                 };
             case 'scale':
