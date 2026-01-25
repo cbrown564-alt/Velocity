@@ -60,12 +60,12 @@ function buildGridQuery(options: GridQueryOptions): string {
             CROSS JOIN (VALUES ${itemsValues}) as items(item_index, item_label)
         )
         SELECT
-            item_label as rowKey_0,
-            _synthetic_value as colKey,
+            _synthetic_value as rowKey_0,
+            item_label as colKey,
             ${countExpr} as count
         FROM unpivoted
         WHERE ${whereConditions.join(' AND ')}
-        GROUP BY item_label, _synthetic_value
+        GROUP BY _synthetic_value, item_label
     `;
 }
 

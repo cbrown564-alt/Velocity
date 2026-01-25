@@ -376,28 +376,28 @@ export default function App() {
         const scaleId = `${setId}_scale`;
 
         if (zoneId === 'drop-zone-rows') {
-          // Standard Grid: Items on Rows, Scale on Columns
-          // We append Items to existing rows (nesting support)
-          // But we force Scale to Columns (overwriting)
-          if (!tableConfig.rowVars.includes(itemsId)) {
+          // Standard Grid: Scale on Rows, Items on Columns
+          // We append Scale to existing rows (nesting support)
+          // But we force Items to Columns (overwriting)
+          if (!tableConfig.rowVars.includes(scaleId)) {
             setTableConfig({
-              rowVars: [...tableConfig.rowVars, itemsId],
-              colVar: scaleId
+              rowVars: [...tableConfig.rowVars, scaleId],
+              colVar: itemsId
             });
           }
         } else if (zoneId === 'drop-zone-cols') {
-          // Transposed Grid: Items on Columns, Scale on Rows
-          // We set Items on Col
-          // We add Scale to Rows?
+          // Transposed Grid: Scale on Columns, Items on Rows
+          // We set Scale on Col
+          // We add Items to Rows
           setTableConfig({
-            colVar: itemsId,
-            rowVars: tableConfig.rowVars.includes(scaleId) ? tableConfig.rowVars : [...tableConfig.rowVars, scaleId]
+            colVar: scaleId,
+            rowVars: tableConfig.rowVars.includes(itemsId) ? tableConfig.rowVars : [...tableConfig.rowVars, itemsId]
           });
         } else if (zoneId === 'canvas') {
-          // Smart Drop: Defaults to Items x Scale
+          // Smart Drop: Defaults to Scale × Items
           setTableConfig({
-            rowVars: [itemsId],
-            colVar: scaleId
+            rowVars: [scaleId],
+            colVar: itemsId
           });
         }
         return;
@@ -446,16 +446,13 @@ export default function App() {
       const itemsId = `${set.id}_items`;
       const scaleId = `${set.id}_scale`;
 
-      // Auto-expand to Items x Scale
-      // If table is empty, set fully.
-      // If table has rows, maybe just append?
-      // For now, let's treat click as "Start fresh with this grid" or "Append" logic is complex.
+      // Auto-expand to Scale × Items
       // User intent on single click is usually "Show me this variable".
-      // For a grid, "Show me" means Items x Scale.
+      // For a grid, "Show me" means Scale × Items (rating scale in rows, items in columns).
 
       setTableConfig({
-        rowVars: [itemsId],
-        colVar: scaleId
+        rowVars: [scaleId],
+        colVar: itemsId
       });
     } else {
       if (tableConfig.rowVars.length === 0) {

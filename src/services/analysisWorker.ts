@@ -474,15 +474,14 @@ function generateSyntheticGridVariables(variableSet: VariableSet): Variable[] {
 
   // 1. Scale Variable (Rows)
   // This represents the rating values (1-5, Agree-Disagree, etc.)
+  // Note: We intentionally omit valueLabels to display raw numeric values
+  // and ensure proper numeric sorting (1, 2, 3 instead of alphabetic label sorting)
   const scaleVariable: Variable = {
     id: `${id}_scale`,
     name: `${name}_scale`, // Suffix for unique naming
     label: `${name} (Scale)`,
     type: sharedScale.type === 'ordinal' ? 'ordinal' : 'nominal',
-    valueLabels: Object.entries(sharedScale.valueLabels).map(([val, label]) => ({
-      value: Number(val),
-      label
-    })),
+    valueLabels: [], // Empty - display raw values, not labels
     missingValues: { discrete: [], range: undefined },
     synthetic: true,
     sourceGridId: id
