@@ -134,7 +134,8 @@ export interface ProcessedAnalysisData {
     grandTotal: number;
     /** Whether this is a metric (scale) analysis */
     isMetric: boolean;
-    isMetric: boolean;
+    /** Whether this is a grid structure (Items × Scale) */
+    isGrid: boolean;
     /** Source variables for reference */
     rowVariables: Variable[];
     colVariable: Variable | null;
@@ -411,12 +412,16 @@ export function useProcessedAnalysisData({
         // Check if this is a metric analysis
         const isMetric = rows.some(r => r.mean !== undefined);
 
+        // Check if this is a grid structure (synthetic variables from grid)
+        const isGrid = rowVariables.some(v => v.synthetic && v.sourceGridId);
+
         return {
             rows,
             series,
             columns,
             grandTotal,
             isMetric,
+            isGrid,
             rowVariables,
             colVariable,
             isMultipleResponse,

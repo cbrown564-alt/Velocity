@@ -59,16 +59,16 @@ function buildGridQuery(options: GridQueryOptions): string {
 
     return `
         WITH unpivoted AS (
-            SELECT 
+            SELECT
                 main.*,
                 items.item_label,
                 ${valueExpression} as _synthetic_value
             FROM main
             CROSS JOIN (VALUES ${itemsValues}) as items(item_index, item_label)
         )
-        SELECT 
-            item_label as colKey, 
-            _synthetic_value as rowKey_0, 
+        SELECT
+            item_label as rowKey_0,
+            _synthetic_value as colKey,
             ${countExpr} as count
         FROM unpivoted
         WHERE ${whereConditions.join(' AND ')}
