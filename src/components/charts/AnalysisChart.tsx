@@ -18,7 +18,7 @@ import {
     HexbinRenderer,
     ScatterPlotRenderer
 } from './renderers';
-import { ProcessedAnalysisData, ChartDataPoint, ChartSeries } from '../../hooks/useProcessedAnalysisData';
+import { ProcessedAnalysisData, ChartDataPoint, ChartSeries } from '../../types/processedData';
 import { ChartSelector } from './ChartSelector';
 import { recommendChart } from '../../services/chartRecommender';
 import { ChartLegend } from './shared/ChartLegend';
@@ -26,17 +26,23 @@ import { ChartType } from '../../types/charts';
 import { useVelocityStore } from '../../store';
 import { ChartContextMenu, ContextMenuOption } from '../overlays/ChartContextMenu';
 import { InputModal } from '../overlays/InputModal';
-import { transformChartData } from '../../services/chartDataTransformer';
+import { Variable } from '../../types';
+import { useProcessedAnalysisData } from '../../hooks/useProcessedAnalysisData';
 import styles from './AnalysisChart.module.css';
 
 interface AnalysisChartProps {
     data: AggregatedRow[];
     config: AnalysisChartConfig;
-    /** Pre-processed data with labels, sorting, etc. */
-    processedData?: ProcessedAnalysisData | null;
+    /** Metadata props required for data processing */
+    rowVariables: Variable[];
+    colVariable: Variable | null;
+    isWeighted?: boolean;
+    isMultipleResponse?: boolean;
     className?: string;
     /** Optional variable stats for histogram/distribution charts */
     variableStats?: any;
+    /** Optional initial processed data (fallback/optimization) */
+    initialProcessedData?: ProcessedAnalysisData | null;
 }
 
 /**
@@ -46,9 +52,13 @@ interface AnalysisChartProps {
 export const AnalysisChart: React.FC<AnalysisChartProps> = ({
     data,
     config,
-    processedData,
+    rowVariables,
+    colVariable,
+    isWeighted = false,
+    isMultipleResponse = false,
     className = '',
     variableStats,
+    initialProcessedData,
 }) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
@@ -89,21 +99,26 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
     // Use selected type if available, otherwise fallback to recommender config
     const activeChartType = selectedChartType || config.type;
 
+    // Fetch processed and transformed data from worker
+    const chartData = useProcessedAnalysisData({
+        data,
+        rowVariables,
+        colVariable,
+        isWeighted,
+        isMultipleResponse,
+        chartType: activeChartType
+    });
+
     // Derive available charts from context
     const recommendation = useMemo(() => {
-        if (!processedData) return null;
+        if (!rowVariables.length) return null;
         return recommendChart({
-            rowVars: processedData.rowVariables,
-            colVar: processedData.colVariable,
-            isGrid: processedData.isGrid,
-            isMultiResponse: processedData.isMultipleResponse,
+            rowVars: rowVariables,
+            colVar: colVariable,
+            isGrid: rowVariables.some(v => v.synthetic && v.sourceGridId),
+            isMultiResponse: isMultipleResponse,
         });
-    }, [processedData]);
-
-    // Data Transformation for Diverging Bar, Violin, Scatter, etc.
-    const chartData = useMemo(() => {
-        return transformChartData(processedData, activeChartType);
-    }, [processedData, activeChartType]);
+    }, [rowVariables, colVariable, isMultipleResponse]);
 
     // Handle context menu from chart renderers
     const handleContextMenu = useCallback((event: ChartContextMenuEvent) => {
@@ -311,7 +326,7 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
                 return <LollipopRenderer {...commonProps} />;
             case 'box-plot':
                 // Check if we have stats, if not try to use processedData series stats if available
-                const boxStats = variableStats || (processedData?.series[0]?.stats ? { stats: processedData.series[0].stats } : undefined);
+                const boxStats = variableStats || (chartData?.series[0]?.stats ? { stats: chartData.series[0].stats } : undefined);
                 return <BoxPlotRenderer {...commonProps} variableStats={boxStats} />;
             case 'grouped-box-plot':
                 // If no explicit stats, try to infer from data if it's raw values (rare) or just pass through

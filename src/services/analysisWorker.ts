@@ -14,6 +14,11 @@ import { RecodeConfig, VariableSet, Variable, Filter, HistogramBin } from '../ty
 import { buildCrosstabQuery, CrosstabQueryOptions, buildFilterClause, escapeIdentifier, escapeString } from './queryBuilder';
 import { calculateZScore, calculateTScore, calculateESS, calculatePValue } from './statistics';
 import { generateSyntheticGridVariables } from './gridUtils';
+import { processAnalysisData } from './analysisProcessor';
+import { transformChartData } from './chartDataTransformer';
+import { ProcessedAnalysisData } from '../types/processedData';
+import { AggregatedRow } from '../types';
+import { ChartType } from '../types/charts';
 
 const JSDELIVR_BUNDLES = duckdb.getJsDelivrBundles();
 
@@ -46,6 +51,17 @@ export type WorkerRequest =
       variables: Record<string, Variable>;
       variableSets: Record<string, VariableSet>;
     }
+  }
+  | {
+    type: 'processData';
+    data: AggregatedRow[];
+    options: {
+      rowVariables: Variable[];
+      colVariable: Variable | null;
+      isWeighted?: boolean;
+      isMultipleResponse?: boolean;
+    };
+    chartType?: ChartType;
   }
   | { type: 'ping' }; // Health check - verifies worker and database are alive
 
@@ -96,6 +112,7 @@ export type WorkerResponse =
   | { type: 'noPersistedData' }
   | { type: 'persistedDataCleared' }
   | { type: 'pong'; hasData: boolean; rowCount?: number }
+  | { type: 'processedData'; result: ProcessedAnalysisData | null }
   | { type: 'error'; message: string };
 
 /**
@@ -1574,6 +1591,30 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
       case 'recodeVariable':
         const newCol = await recodeVariable(request.sourceCol, request.newColName, request.config);
         self.postMessage({ type: 'recodeComplete', newColName: newCol } as WorkerResponse);
+        break;
+
+      case 'processData':
+        // 1. Process the raw aggregated data into Tree/Table structure
+        const processed = processAnalysisData({
+          data: request.data,
+          ...request.options
+        });
+
+        if (!processed) {
+          self.postMessage({ type: 'processedData', result: null } as WorkerResponse);
+          break;
+        }
+
+        // 2. If a chart type is requested, apply specific chart transformations
+        let finalResult = processed;
+        if (request.chartType) {
+          const transformed = transformChartData(processed, request.chartType);
+          if (transformed) {
+            finalResult = transformed;
+          }
+        }
+
+        self.postMessage({ type: 'processedData', result: finalResult } as WorkerResponse);
         break;
 
       case 'checkPersistedData':

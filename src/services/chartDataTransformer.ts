@@ -1,4 +1,4 @@
-import { ProcessedAnalysisData, ChartDataPoint, ChartSeries } from '../hooks/useProcessedAnalysisData';
+import { ProcessedAnalysisData, ChartDataPoint, ChartSeries } from '../types/processedData';
 import { ChartType } from '../types/charts';
 
 /**

@@ -5,7 +5,7 @@ import { brushY } from 'd3-brush';
 import { max } from 'd3-array';
 import { BaseChartRendererProps } from '../../../types/charts';
 // getChartColor removed replaced by CSS vars
-import { ChartDataPoint } from '../../../hooks/useProcessedAnalysisData';
+import { ChartDataPoint } from '../../../types/processedData';
 
 interface DragState {
     isDragging: boolean;

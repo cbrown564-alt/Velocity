@@ -4,7 +4,7 @@ import { AnalysisChart } from '../../../components/charts/AnalysisChart';
 import { DataTable } from './DataTable';
 import { AnalysisChartConfig } from '../../../types/charts';
 import { Variable } from '../../../types';
-import { useProcessedAnalysisData } from '../../../hooks/useProcessedAnalysisData';
+
 import { recommendChart } from '../../../services/chartRecommender';
 import { useResolvedVariables } from '../hooks/useResolvedVariables';
 
@@ -39,14 +39,8 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
     // Check if first row variable set is a multiple response
     const isMultipleResponse = firstVarSet?.structure === 'multiple';
 
-    // Process data through shared hook
-    const processedData = useProcessedAnalysisData({
-        data: chartData,
-        rowVariables: resolvedRowVars,
-        colVariable: resolvedColVar,
-        isWeighted,
-        isMultipleResponse,
-    });
+    // Processed data handling moved to individual components
+    // const processedData = useProcessedAnalysisData({ ... });
 
     // Get chart recommendation based on data configuration
     const chartRecommendation = useMemo(() => {
@@ -87,7 +81,10 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
                         <AnalysisChart
                             data={chartData}
                             config={config}
-                            processedData={processedData}
+                            rowVariables={resolvedRowVars}
+                            colVariable={resolvedColVar}
+                            isWeighted={isWeighted}
+                            isMultipleResponse={isMultipleResponse}
                             variableStats={variableStats}
                         />
                     </div>

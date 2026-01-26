@@ -6,7 +6,7 @@ import type { VariableStatsResult } from '../../../services/analysisWorker';
 import { AnalysisChart } from '../../../components/charts/AnalysisChart';
 import { useProcessedAnalysisData } from '../../../hooks/useProcessedAnalysisData';
 import { recommendChart } from '../../../services/chartRecommender';
-import { useAggregatedTableData, RowPathEntry, TableRowNode } from '../hooks/useAggregatedTableData';
+import { RowPathEntry, TableRowNode } from '../../../services/treeBuilder';
 export type { RowPathEntry, TableRowNode };
 
 /**
@@ -76,15 +76,28 @@ export const DataTable: React.FC<DataTableProps> = ({
     };
   }, [processedData, rowVariables, colVariable, isMultipleResponse]);
 
-  // Aggregate Data for Table View using custom hook
-  const tableData = useAggregatedTableData({
-    data,
-    rowVariables,
-    colVariable,
-    isWeighted,
-    isMultipleResponse,
-    variableStats
-  });
+  // Aggregate Data for Table View (Derived from Worker Result)
+  const tableData = useMemo(() => {
+    if (!processedData) return null;
+
+    const colKeys = processedData.columns.map(c => c.key);
+    const colLabels = processedData.columns.reduce((acc, col) => {
+      acc[col.key] = col.label;
+      return acc;
+    }, {} as Record<string, string>);
+    const colTotals = processedData.columns.reduce((acc, col) => {
+      acc[col.key] = col.total;
+      return acc;
+    }, {} as Record<string, number>);
+
+    return {
+      colKeys,
+      colLabels,
+      rows: processedData.rows,
+      colTotals,
+      grandTotal: processedData.grandTotal
+    };
+  }, [processedData]);
 
   if (!tableData) return null;
 
@@ -284,7 +297,10 @@ export const DataTable: React.FC<DataTableProps> = ({
     >
       <AnalysisChart
         data={data}
-        processedData={processedData}
+        rowVariables={rowVariables}
+        colVariable={colVariable}
+        isWeighted={isWeighted}
+        isMultipleResponse={isMultipleResponse}
         config={{
           type: chartConfig.type,
           showLegend: true,

@@ -1,41 +1,12 @@
 import { AggregatedRow, Variable } from '../types';
 import type { VariableStatsResult } from './analysisWorker';
+import { ProcessedRow } from '../types/processedData';
 
-export interface RowPathEntry {
-    variable: string;  // Variable ID
-    value: string;     // Raw value (not label)
-}
+export type RowPathEntry = { variable: string; value: string };
+export type TableRowNode = ProcessedRow;
 
-export interface TableRowNode {
-    key: string;
-    label: string;
-    rawValue: string;  // Original value from data
-    sortValue: number; // Computed numeric value for sorting
-    depth: number;
-    cells: Record<string, {
-        count: number;
-        percent: number;
-        sig?: string;
-        stats?: {
-            tScore: number;
-            pValue: number;
-            effN: number;
-        };
-        mean?: number;
-        median?: number;
-        stdDev?: number;
-        min?: number;
-        max?: number;
-        validCount?: number;
-    }>;
-    total: number;
-    /** Calculated mean for the row (weighted average of children or direct) */
-    mean?: number;
-    children: TableRowNode[];
-    isExpanded?: boolean;
-    /** Full path from root to this node for drill-down */
-    rowPath: RowPathEntry[];
-}
+// Legacy export for back-compat if needed, though ProcessedRow is preferred
+export type { ProcessedRow };
 
 /**
  * Recursive function to build the hierarchical tree for the table
@@ -143,7 +114,7 @@ export const buildTree = (
         const nodeCells: Record<string, {
             count: number;
             percent: number;
-            sig?: string;
+            sig?: 'high_95' | 'high_80' | 'low_95' | 'low_80';
             stats?: {
                 tScore: number;
                 pValue: number;
