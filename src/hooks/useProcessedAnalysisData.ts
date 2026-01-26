@@ -43,23 +43,28 @@ export function useProcessedAnalysisData({
             return;
         }
 
+        const requestId = Math.random().toString(36).substring(7);
         let isMounted = true;
 
         const handler = (event: MessageEvent<WorkerResponse>) => {
             if (!isMounted) return;
             const response = event.data;
-            if (response.type === 'processedData') {
+            if (response.type === 'processedData' && response.requestId === requestId) {
                 setResult(response.result);
+                // We got what we wanted, clean up this specific listener
                 worker.removeEventListener('message', handler);
             } else if (response.type === 'error') {
                 console.error('Worker error:', response.message);
-                worker.removeEventListener('message', handler);
+                // Don't remove listener on error, logic might retry or wait for correct response? 
+                // Actually, if it's a fatal error for this request, we should probably stop?
+                // But let's be safe and let the cleanup handle removal if needed.
             }
         };
 
         worker.addEventListener('message', handler);
         worker.postMessage({
             type: 'processData',
+            requestId,
             data,
             options: {
                 rowVariables,

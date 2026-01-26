@@ -53,6 +53,9 @@ export const DataTable: React.FC<DataTableProps> = ({
     setExpandedKeys(prev => ({ ...prev, [key]: !prev[key] }));
   };
 
+  // State for Column Highlight (Crosshair effect)
+  const [hoveredCol, setHoveredCol] = useState<string | null>(null);
+
   // Process data for Visualization (Chart & Future Table)
   const processedData = useProcessedAnalysisData({
     data,
@@ -101,8 +104,7 @@ export const DataTable: React.FC<DataTableProps> = ({
 
   if (!tableData) return null;
 
-  // State for Column Highlight (Crosshair effect)
-  const [hoveredCol, setHoveredCol] = useState<string | null>(null);
+
 
   // -- RENDER MODE: TABLE --
   if (viewMode === 'table') {

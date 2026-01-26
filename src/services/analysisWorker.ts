@@ -54,6 +54,7 @@ export type WorkerRequest =
   }
   | {
     type: 'processData';
+    requestId?: string;
     data: AggregatedRow[];
     options: {
       rowVariables: Variable[];
@@ -112,7 +113,7 @@ export type WorkerResponse =
   | { type: 'noPersistedData' }
   | { type: 'persistedDataCleared' }
   | { type: 'pong'; hasData: boolean; rowCount?: number }
-  | { type: 'processedData'; result: ProcessedAnalysisData | null }
+  | { type: 'processedData'; requestId?: string; result: ProcessedAnalysisData | null }
   | { type: 'error'; message: string };
 
 /**
@@ -1601,7 +1602,7 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
         });
 
         if (!processed) {
-          self.postMessage({ type: 'processedData', result: null } as WorkerResponse);
+          self.postMessage({ type: 'processedData', requestId: request.requestId, result: null } as WorkerResponse);
           break;
         }
 
@@ -1614,7 +1615,7 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
           }
         }
 
-        self.postMessage({ type: 'processedData', result: finalResult } as WorkerResponse);
+        self.postMessage({ type: 'processedData', requestId: request.requestId, result: finalResult } as WorkerResponse);
         break;
 
       case 'checkPersistedData':
