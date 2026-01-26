@@ -12,7 +12,7 @@ import { useVelocityStore } from '../../store';
 import type { Variable, Dataset } from '../../store/slices/dataSlice';
 import { Sparkline, MissingnessBadge } from './Sparkline';
 import { VariableTypeIcon } from '../../components/common/VariableTypeIcon';
-import { useLazyObserver } from './hooks/useLazyObserver';
+import { useLazyObserver } from '../../hooks/useLazyObserver';
 import styles from './MillerColumns.module.css';
 
 interface VariableItemProps {
