@@ -38,18 +38,16 @@ export const DropZone: React.FC<DropZoneProps> = ({
           className={`
             w-full min-h-[52px] px-2 py-1.5 rounded-md transition-all duration-200 flex items-center
             ${active
-              ? 'bg-white border-2 border-dashed border-indigo-200'
+              ? 'bg-[var(--bg-surface)] border-2 border-dashed border-[color-mix(in_srgb,var(--color-accent),transparent_70%)] backdrop-blur-sm'
               : 'border-2 border-transparent bg-transparent'
             }
             ${isOver
-              ? 'ring-2 ring-indigo-500 bg-white border-indigo-500'
+              ? 'ring-2 ring-[color-mix(in_srgb,var(--color-accent),transparent_50%)] bg-[var(--bg-surface)] border-[var(--color-accent)]'
               : ''
             }
           `}
         >
           <SortableRowShelf variableSets={currentVariables} onRemove={onRemove} />
-
-
         </div>
       );
     }
@@ -61,11 +59,11 @@ export const DropZone: React.FC<DropZoneProps> = ({
         className={`
           flex flex-row flex-wrap gap-2 min-w-[120px] min-h-[40px] px-2 py-1.5 rounded-md transition-all duration-200 items-center
           ${active
-            ? 'bg-white border-2 border-dashed border-indigo-200'
+            ? 'bg-[var(--bg-surface)] border-2 border-dashed border-[color-mix(in_srgb,var(--color-accent),transparent_70%)] backdrop-blur-sm'
             : 'border-2 border-dashed border-transparent'
           }
           ${isOver
-            ? 'ring-2 ring-indigo-500 bg-white border-indigo-500'
+            ? 'ring-2 ring-[color-mix(in_srgb,var(--color-accent),transparent_50%)] bg-[var(--bg-surface)] border-[var(--color-accent)]'
             : ''
           }
         `}
@@ -76,12 +74,12 @@ export const DropZone: React.FC<DropZoneProps> = ({
             layout
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="relative flex items-center justify-between p-2 pl-3 pr-2 bg-[var(--gray-50)] border border-[var(--gray-200)] rounded-md group"
+            className="relative flex items-center justify-between p-2 pl-3 pr-2 bg-[var(--bg-panel)] border border-[var(--border-color)] rounded-md group"
           >
-            <span className="text-sm font-medium text-[var(--color-ink)] font-body truncate max-w-[160px]" title={set.name}>{set.name}</span>
+            <span className="text-sm font-medium text-[var(--text-primary)] font-body truncate max-w-[160px]" title={set.name}>{set.name}</span>
             <button
               onClick={() => onRemove(set.id)}
-              className="ml-2 p-1 text-[var(--gray-400)] hover:text-[var(--color-terracotta)] hover:bg-[var(--gray-100)] rounded-full transition-colors"
+              className="ml-2 p-1 text-[var(--text-secondary)] hover:text-[var(--color-accent)] hover:bg-[var(--bg-active)] rounded-full transition-colors"
             >
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -101,17 +99,17 @@ export const DropZone: React.FC<DropZoneProps> = ({
       className={`
         relative flex items-center justify-start px-3 transition-all duration-200 rounded-md border border-dashed
         ${isOver
-          ? 'border-indigo-500 bg-indigo-50 text-indigo-600'
+          ? 'border-[var(--color-accent)] bg-[color-mix(in_srgb,var(--color-accent),transparent_90%)] text-[var(--color-accent)]'
           : active
-            ? 'border-indigo-300 bg-white text-indigo-400'
-            : 'border-gray-300 text-gray-400 hover:border-gray-400 hover:bg-gray-50'
+            ? 'border-[color-mix(in_srgb,var(--color-accent),transparent_50%)] bg-[var(--bg-surface)] text-[color-mix(in_srgb,var(--color-accent),transparent_30%)]'
+            : 'border-[var(--border-color)] text-[var(--text-secondary)] hover:border-[var(--border-color-active)] hover:bg-[var(--bg-active)]'
         }
         h-10 w-full min-w-[200px]
       `}
     >
       <div className="flex items-center gap-2 pointer-events-none">
-        <Plus size={16} className={(active || isOver) ? "text-[var(--color-terracotta)]" : "text-[var(--gray-300)]"} />
-        <span className="text-xs font-medium uppercase tracking-wide font-body">{label}</span>
+        <Plus size={16} className={(active || isOver) ? "text-[var(--color-accent)]" : "text-[var(--text-secondary)]"} />
+        <span className="text-xs font-medium uppercase tracking-widest font-mono">{label}</span>
       </div>
     </div>
   );

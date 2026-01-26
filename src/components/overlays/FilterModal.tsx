@@ -134,24 +134,25 @@ export const FilterModal: React.FC<FilterModalProps> = ({
                     exit={{ opacity: 0, scale: 0.95, y: 10 }}
                     transition={{ duration: 0.2 }}
                     onClick={(e) => e.stopPropagation()}
-                    className="w-full max-w-md rounded-lg overflow-hidden shadow-xl"
+                    className="w-full max-w-md rounded-lg overflow-hidden shadow-2xl"
                     style={{
-                        backgroundColor: 'var(--color-parchment)',
-                        border: '1px solid var(--gray-200)',
+                        backgroundColor: 'var(--bg-panel)',
+                        border: '1px solid var(--border-color)',
+                        backdropFilter: 'blur(16px)',
                     }}
                 >
                     {/* Header */}
                     <div
                         className="flex items-center justify-between px-5 py-4 border-b"
-                        style={{ borderColor: 'var(--gray-200)' }}
+                        style={{ borderColor: 'var(--border-color)' }}
                     >
                         <div className="flex items-center gap-3">
                             {step === 'values' && (
                                 <button
                                     onClick={handleBack}
                                     className="p-1 rounded-md transition-colors"
-                                    style={{ color: 'var(--gray-500)' }}
-                                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--gray-100)'}
+                                    style={{ color: 'var(--text-secondary)' }}
+                                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--bg-active)'}
                                     onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                                 >
                                     <ChevronLeft size={18} />
@@ -161,7 +162,7 @@ export const FilterModal: React.FC<FilterModalProps> = ({
                                 className="text-lg font-semibold"
                                 style={{
                                     fontFamily: 'var(--font-display)',
-                                    color: 'var(--color-ink)',
+                                    color: 'var(--text-primary)',
                                 }}
                             >
                                 {step === 'variable' ? 'Add Filter' : selectedVariable?.label}
@@ -170,8 +171,8 @@ export const FilterModal: React.FC<FilterModalProps> = ({
                         <button
                             onClick={handleClose}
                             className="p-1.5 rounded-md transition-colors"
-                            style={{ color: 'var(--gray-400)' }}
-                            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--gray-100)'}
+                            style={{ color: 'var(--text-secondary)' }}
+                            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--bg-active)'}
                             onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                         >
                             <X size={18} />
@@ -187,21 +188,21 @@ export const FilterModal: React.FC<FilterModalProps> = ({
                                     <Search
                                         className="absolute left-3 top-1/2 -translate-y-1/2"
                                         size={16}
-                                        style={{ color: 'var(--gray-400)' }}
+                                        style={{ color: 'var(--text-secondary)' }}
                                     />
                                     <input
                                         type="text"
                                         placeholder="Search variables..."
                                         value={searchQuery}
                                         onChange={(e) => setSearchQuery(e.target.value)}
-                                        className="w-full pl-10 pr-4 py-2.5 rounded-md text-sm outline-none transition-all"
+                                        className="w-full pl-10 pr-4 py-2.5 rounded-md text-sm outline-none transition-all font-body"
                                         style={{
-                                            backgroundColor: 'var(--gray-100)',
-                                            border: '1px solid var(--gray-200)',
-                                            color: 'var(--color-ink)',
+                                            backgroundColor: 'var(--bg-app)',
+                                            border: '1px solid var(--border-color)',
+                                            color: 'var(--text-primary)',
                                         }}
-                                        onFocus={(e) => e.currentTarget.style.borderColor = 'var(--color-terracotta)'}
-                                        onBlur={(e) => e.currentTarget.style.borderColor = 'var(--gray-200)'}
+                                        onFocus={(e) => e.currentTarget.style.borderColor = 'var(--color-accent)'}
+                                        onBlur={(e) => e.currentTarget.style.borderColor = 'var(--border-color)'}
                                         autoFocus
                                     />
                                 </div>
@@ -223,14 +224,14 @@ export const FilterModal: React.FC<FilterModalProps> = ({
                                                 key={variable.id}
                                                 onClick={() => handleVariableSelect(variable)}
                                                 className="w-full text-left px-3 py-2.5 rounded-md transition-colors"
-                                                style={{ color: 'var(--color-charcoal)' }}
-                                                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--gray-100)'}
+                                                style={{ color: 'var(--text-primary)' }}
+                                                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--bg-active)'}
                                                 onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                                             >
                                                 <p className="text-sm font-medium truncate">{variable.label}</p>
                                                 <p
-                                                    className="text-xs truncate"
-                                                    style={{ color: 'var(--gray-400)' }}
+                                                    className="text-xs truncate font-mono"
+                                                    style={{ color: 'var(--text-secondary)' }}
                                                 >
                                                     {variable.name} • {variable.valueLabels.length > 0 ? `${variable.valueLabels.length} values` : variable.type}
                                                 </p>
@@ -259,13 +260,13 @@ export const FilterModal: React.FC<FilterModalProps> = ({
                                                 <button
                                                     key={vl.value}
                                                     onClick={() => handleValueToggle(vl.value)}
-                                                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors"
+                                                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors group"
                                                     style={{
-                                                        backgroundColor: isSelected ? 'var(--gray-100)' : 'transparent',
-                                                        color: 'var(--color-charcoal)',
+                                                        backgroundColor: isSelected ? 'var(--bg-active)' : 'transparent',
+                                                        color: 'var(--text-primary)',
                                                     }}
                                                     onMouseEnter={(e) => {
-                                                        if (!isSelected) e.currentTarget.style.backgroundColor = 'var(--gray-50)';
+                                                        if (!isSelected) e.currentTarget.style.backgroundColor = 'var(--bg-panel)';
                                                     }}
                                                     onMouseLeave={(e) => {
                                                         if (!isSelected) e.currentTarget.style.backgroundColor = 'transparent';
@@ -274,16 +275,16 @@ export const FilterModal: React.FC<FilterModalProps> = ({
                                                     <div
                                                         className="w-5 h-5 rounded border-2 flex items-center justify-center transition-colors shrink-0"
                                                         style={{
-                                                            borderColor: isSelected ? 'var(--color-terracotta)' : 'var(--gray-300)',
-                                                            backgroundColor: isSelected ? 'var(--color-terracotta)' : 'transparent',
+                                                            borderColor: isSelected ? 'var(--color-accent)' : 'var(--border-color)',
+                                                            backgroundColor: isSelected ? 'var(--color-accent)' : 'transparent',
                                                         }}
                                                     >
-                                                        {isSelected && <Check size={12} color="white" strokeWidth={3} />}
+                                                        {isSelected && <Check size={12} color="var(--text-inverse)" strokeWidth={3} />}
                                                     </div>
                                                     <span className="text-sm truncate text-left">{vl.label}</span>
                                                     <span
-                                                        className="text-xs ml-auto shrink-0"
-                                                        style={{ color: 'var(--gray-400)' }}
+                                                        className="text-xs ml-auto shrink-0 font-mono"
+                                                        style={{ color: 'var(--text-secondary)' }}
                                                     >
                                                         ({vl.value})
                                                     </span>
@@ -294,15 +295,16 @@ export const FilterModal: React.FC<FilterModalProps> = ({
                                 </div>
 
                                 {/* Apply Button */}
-                                <div className="mt-4 pt-4 border-t" style={{ borderColor: 'var(--gray-200)' }}>
+                                <div className="mt-4 pt-4 border-t" style={{ borderColor: 'var(--border-color)' }}>
                                     <button
                                         onClick={handleApply}
                                         disabled={selectedValues.length === 0}
-                                        className="w-full py-2.5 rounded-md text-sm font-medium transition-all"
+                                        className="w-full py-2.5 rounded-md text-sm font-medium transition-all shadow-md active:scale-[0.98]"
                                         style={{
-                                            backgroundColor: selectedValues.length > 0 ? 'var(--color-terracotta)' : 'var(--gray-200)',
-                                            color: selectedValues.length > 0 ? 'white' : 'var(--gray-400)',
+                                            backgroundColor: selectedValues.length > 0 ? 'var(--color-accent)' : 'var(--bg-active)',
+                                            color: selectedValues.length > 0 ? 'var(--text-inverse)' : 'var(--text-secondary)',
                                             cursor: selectedValues.length > 0 ? 'pointer' : 'not-allowed',
+                                            boxShadow: selectedValues.length > 0 ? '0 0 15px color-mix(in srgb, var(--color-accent), transparent 80%)' : 'none',
                                         }}
                                     >
                                         Apply Filter ({selectedValues.length} selected)
