@@ -48,7 +48,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, actions, onClose
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.1 }}
-                className="fixed z-[9999] min-w-[180px] bg-white rounded-lg shadow-lg border border-gray-200 py-1 overflow-hidden"
+                className="fixed z-[9999] min-w-[180px] bg-[var(--bg-panel)] rounded-lg shadow-lg border border-[var(--border-color)] py-1 overflow-hidden"
                 style={style}
             >
                 {actions.map((action, index) => (
@@ -62,12 +62,12 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, actions, onClose
                             }
                         }}
                         disabled={action.disabled}
-                        className={`w-full text-left px-4 py-2 text-sm flex items-center gap-2 hover:bg-gray-50 transition-colors
+                        className={`w-full text-left px-4 py-2 text-sm flex items-center gap-2 hover:bg-[var(--bg-active)] transition-colors
               ${action.disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
-              ${action.danger ? 'text-red-600 hover:bg-red-50' : 'text-gray-700'}
+              ${action.danger ? 'text-[var(--status-error-text)] hover:bg-[var(--status-error-bg)]' : 'text-[var(--text-primary)]'}
             `}
                     >
-                        {action.icon && <span className="text-gray-400">{action.icon}</span>}
+                        {action.icon && <span className="text-[var(--text-secondary)]">{action.icon}</span>}
                         {action.label}
                     </button>
                 ))}

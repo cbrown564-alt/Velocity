@@ -433,7 +433,7 @@ export const DataTable: React.FC<DataTableProps> = ({
     const renderRow = (row: TableRowNode) => {
       const isExpanded = expandedKeys[row.key] ?? true; // Default expanded?
       const hasChildren = row.children.length > 0;
-      const paddingLeft = row.depth * 24 + 12; // Indent reduced slightly
+      const paddingLeft = row.depth * 24 + 8; // Match the px-2 (8px) padding of the header
 
       // Check if this row is metric-based (has mean)
       const variantIsMetric = row.mean !== undefined || (variableStats && row.depth === 0);
@@ -452,7 +452,7 @@ export const DataTable: React.FC<DataTableProps> = ({
                     {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
                   </button>
                 )}
-                {!hasChildren && <div className="w-4" />} {/* Spacer */}
+                {(!hasChildren && row.depth > 0) && <div className="w-4" />} {/* Spacer only for nested rows */}
                 <span>{row.label}</span>
               </div>
             </td>
@@ -463,8 +463,8 @@ export const DataTable: React.FC<DataTableProps> = ({
                 ? (Math.abs(cell.mean) === 0)
                 : (cell.percent === 0);
 
-              const textClass = isZero ? 'text-[#525252]' : 'text-[var(--text-primary)]';
-              const secondaryTextClass = isZero ? 'text-[#404040]' : 'text-[var(--text-secondary)]';
+              const textClass = isZero ? 'text-[var(--text-secondary)] opacity-50' : 'text-[var(--text-primary)]';
+              const secondaryTextClass = isZero ? 'text-[var(--text-secondary)] opacity-40' : 'text-[var(--text-secondary)]';
 
               return (
                 <td
@@ -523,7 +523,7 @@ export const DataTable: React.FC<DataTableProps> = ({
             {/* Only show Row Total if we have columns OR if it's a frequency table (always show 100%)
                 For Metric tables without columns, the single column is already the total. */}
             {(tableData.colKeys.length > 1) && (
-              <td className="px-2 py-1 text-left font-mono font-semibold text-[var(--text-primary)] bg-[#1A1F24]/50 align-middle data-cell">
+              <td className="px-2 py-1 text-left font-mono font-semibold text-[var(--text-primary)] bg-[var(--bg-active)]/30 align-middle data-cell">
                 <div className="flex flex-row items-baseline justify-start gap-2 text-left w-full">
                   {row.mean ? (
                     // METRIC ROW TOTAL (Global Mean for this row)
@@ -573,13 +573,13 @@ export const DataTable: React.FC<DataTableProps> = ({
 
         <div className="overflow-x-auto overflow-y-auto max-h-[60vh] custom-scrollbar">
           <table className="w-full text-sm text-left border-collapse">
-            <thead className="text-xs uppercase bg-[#2C2C2C] border-b border-[var(--border-grid)]">
+            <thead className="text-xs uppercase bg-[var(--bg-panel)] border-b border-[var(--border-grid)]">
               <tr className="font-body">
-                <th className="px-2 py-2 font-bold text-[var(--text-accent)] tracking-wider text-left w-64 align-bottom sticky top-0 bg-[#2C2C2C] z-10 box-border border-b border-[var(--border-grid)]">
+                <th className="px-2 py-2 font-bold text-[var(--text-accent)] tracking-wider text-left w-64 align-bottom sticky top-0 bg-[var(--bg-panel)] z-10 box-border border-b border-[var(--border-grid)]">
                   {rowVariables[0].label}
                 </th>
                 {tableData.colKeys.map((col, idx) => (
-                  <th key={col} className={`px-2 py-2 font-bold text-[var(--text-accent)] text-left w-28 align-bottom sticky top-0 bg-[#2C2C2C] z-10 border-b border-[var(--border-grid)] transition-colors ${hoveredCol === col ? 'bg-[#3A3A3A]' : ''}`}>
+                  <th key={col} className={`px-2 py-2 font-bold text-[var(--text-accent)] text-left w-28 align-bottom sticky top-0 bg-[var(--bg-panel)] z-10 border-b border-[var(--border-grid)] transition-colors ${hoveredCol === col ? 'bg-[var(--bg-active)]' : ''}`}>
                     <div className="flex flex-col gap-1 items-start">
                       <span>{tableData.colLabels[col]}</span>
                     </div>
@@ -595,7 +595,7 @@ export const DataTable: React.FC<DataTableProps> = ({
             <tbody className="divide-y divide-[var(--border-grid)] font-body">
               {tableData.rows.map(row => renderRow(row))}
               <tr className="bg-[var(--bg-surface)] font-semibold border-t border-[var(--border-grid)] border-b border-[var(--border-grid)]">
-                <td className="px-2 py-1 text-[var(--text-primary)] pl-8">Total</td>
+                <td className="px-2 py-1 text-[var(--text-primary)]">Total</td>
                 {tableData.colKeys.map(col => (
                   <td key={col} className="px-2 py-1 text-left font-mono text-[var(--text-primary)]">
                     {tableData.colTotals[col]}

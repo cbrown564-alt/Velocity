@@ -185,24 +185,37 @@ export function buildCrosstabQuery(options: CrosstabQueryOptions): string {
     if (measureVar) {
         // Scale Variable Stats
         const col = `"${escapeIdentifier(measureVar)}"`;
-        // Weighting for means is complex (weighted avg), simple AVG for now.
-        // TODO: Implement proper weighted mean/stddev if weightVar is present
-        statsExpr = `
-            AVG(${col}) as mean,
-            STDDEV(${col}) as stdDev,
-            MIN(${col}) as min,
-            MAX(${col}) as max,
-            MEDIAN(${col}) as median,
-            QUANTILE_CONT(${col}, 0.25) as q1,
-            QUANTILE_CONT(${col}, 0.75) as q3,
-            COUNT(${col})::INTEGER as validCount,
-            COUNT(*)::INTEGER as count
-        `;
 
-        // Add ESS components if weighted
         if (weightVar) {
             const w = `"${escapeIdentifier(weightVar)}"`;
-            statsExpr += `, SUM(${w} * ${w})::DOUBLE as sumSqWeights`;
+            // Weighted Mean: SUM(x * w) / SUM(w)
+            // Weighted Variance: (SUM(w * x^2) / SUM(w)) - (SUM(w * x) / SUM(w))^2
+            // Note: This is the biased weighted variance, suitable for large samples or when weights are relative.
+
+            statsExpr = `
+                (SUM(${col} * ${w}) / SUM(${w}))::DOUBLE as mean,
+                SQRT(ABS((SUM(${w} * ${col} * ${col}) / SUM(${w})) - POWER(SUM(${w} * ${col}) / SUM(${w}), 2)))::DOUBLE as stdDev,
+                MIN(${col}) as min,
+                MAX(${col}) as max,
+                QUANTILE_CONT(${col}, 0.5 ORDER BY ${w}) as median,
+                QUANTILE_CONT(${col}, 0.25 ORDER BY ${w}) as q1,
+                QUANTILE_CONT(${col}, 0.75 ORDER BY ${w}) as q3,
+                COUNT(${col})::INTEGER as validCount,
+                COUNT(*)::INTEGER as count,
+                SUM(${w} * ${w})::DOUBLE as sumSqWeights
+            `;
+        } else {
+            statsExpr = `
+                AVG(${col}) as mean,
+                STDDEV(${col}) as stdDev,
+                MIN(${col}) as min,
+                MAX(${col}) as max,
+                MEDIAN(${col}) as median,
+                QUANTILE_CONT(${col}, 0.25) as q1,
+                QUANTILE_CONT(${col}, 0.75) as q3,
+                COUNT(${col})::INTEGER as validCount,
+                COUNT(*)::INTEGER as count
+            `;
         }
     } else {
         // Frequency Counts

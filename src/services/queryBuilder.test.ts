@@ -102,7 +102,7 @@ describe('queryBuilder', () => {
             expect(sql).toContain('WHEN 1 THEN "q1_b"');
 
             // Verify NOT NULL filter construction
-            expect(sql).toContain('WHEN 0 THEN "q1_a" IS NOT NULL');
+            expect(sql).toContain('WHERE _synthetic_value IS NOT NULL');
 
             // Verify final selection
             expect(sql).toContain('item_label as colKey');
@@ -118,6 +118,30 @@ describe('queryBuilder', () => {
 
             expect(sql).toContain('main.*'); // Must select main columns
             expect(sql).toContain('"Gender" = \'Male\''); // Filter applied in main query
+        });
+
+        it('builds a weighted measure query for scale variables', () => {
+            const sql = buildCrosstabQuery({
+                rowVars: [],
+                measureVar: 'Age',
+                measureLabel: 'Age',
+                weightVar: 'weight'
+            });
+
+            expect(sql).toContain('(SUM("Age" * "weight") / SUM("weight"))::DOUBLE as mean');
+            expect(sql).toContain('SQRT(ABS((SUM("weight" * "Age" * "Age") / SUM("weight")) - POWER(SUM("weight" * "Age") / SUM("weight"), 2)))::DOUBLE as stdDev');
+            expect(sql).toContain('QUANTILE_CONT("Age", 0.5 ORDER BY "weight") as median');
+        });
+
+        it('builds an unweighted measure query for scale variables', () => {
+            const sql = buildCrosstabQuery({
+                rowVars: [],
+                measureVar: 'Age',
+                measureLabel: 'Age'
+            });
+
+            expect(sql).toContain('AVG("Age") as mean');
+            expect(sql).toContain('STDDEV("Age") as stdDev');
         });
     });
 
