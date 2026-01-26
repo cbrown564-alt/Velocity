@@ -6,6 +6,7 @@ import { AnalysisChartConfig } from '../../../types/charts';
 import { Variable } from '../../../types';
 import { useProcessedAnalysisData } from '../../../hooks/useProcessedAnalysisData';
 import { recommendChart } from '../../../services/chartRecommender';
+import { useResolvedVariables } from '../hooks/useResolvedVariables';
 
 interface SlideContainerProps {
     className?: string;
@@ -32,46 +33,10 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
 
     /**
      * Resolve VariableSet IDs to Variable objects.
-     * VariableSets contain variableIds which point to actual Variable objects.
-     * For single-structure sets, we use variableIds[0].
      */
-    const { resolvedRowVars, resolvedColVar } = useMemo(() => {
-        const resolveVarSetToVariable = (varSetId: string): Variable | null => {
-            // 1. Find the VariableSet
-            const varSet = variableSets.find(vs => vs.id === varSetId);
-            if (!varSet || varSet.variableIds.length === 0) {
-                // Fallback: try direct lookup in case ID is a variable ID
-                return allVariables.find(v => v.id === varSetId) || null;
-            }
-
-            // 2. Get the primary variable from the set
-            const primaryVarId = varSet.variableIds[0];
-            const variable = allVariables.find(v => v.id === primaryVarId);
-
-            if (variable) {
-                // Return variable with label from VariableSet if available
-                return {
-                    ...variable,
-                    label: varSet.name || variable.label,
-                };
-            }
-
-            return null;
-        };
-
-        const rowVars = tableConfig.rowVars
-            .map(resolveVarSetToVariable)
-            .filter((v): v is Variable => v !== null);
-
-        const colVar = tableConfig.colVar
-            ? resolveVarSetToVariable(tableConfig.colVar)
-            : null;
-
-        return { resolvedRowVars: rowVars, resolvedColVar: colVar };
-    }, [tableConfig.rowVars, tableConfig.colVar, variableSets, allVariables]);
+    const { resolvedRowVars, resolvedColVar, firstRowVarSet: firstVarSet } = useResolvedVariables();
 
     // Check if first row variable set is a multiple response
-    const firstVarSet = variableSets.find(vs => vs.id === tableConfig.rowVars[0]);
     const isMultipleResponse = firstVarSet?.structure === 'multiple';
 
     // Process data through shared hook
@@ -81,7 +46,6 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
         colVariable: resolvedColVar,
         isWeighted,
         isMultipleResponse,
-        isGrid: firstVarSet?.structure === 'grid',
     });
 
     // Get chart recommendation based on data configuration

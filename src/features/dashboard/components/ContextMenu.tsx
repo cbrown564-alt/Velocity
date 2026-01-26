@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export interface ContextMenuAction {
@@ -18,6 +18,7 @@ interface ContextMenuProps {
 
 export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, actions, onClose }) => {
     const ref = useRef<HTMLDivElement>(null);
+    const [position, setPosition] = useState({ top: y, left: x });
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -33,12 +34,28 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, actions, onClose
         };
     }, [onClose]);
 
-    // Adjust position to stay in viewport
-    // Simple clamping for MVP
-    const style: React.CSSProperties = {
-        top: Math.min(y, window.innerHeight - (actions.length * 40)),
-        left: Math.min(x, window.innerWidth - 200),
-    };
+    // Enhanced positioning logic to keep menu within viewport
+    useLayoutEffect(() => {
+        if (!ref.current) return;
+
+        const rect = ref.current.getBoundingClientRect();
+        const { innerWidth, innerHeight } = window;
+
+        let newTop = y;
+        let newLeft = x;
+
+        // Check vertical overflow (bottom)
+        if (y + rect.height > innerHeight) {
+            newTop = Math.max(0, y - rect.height);
+        }
+
+        // Check horizontal overflow (right)
+        if (x + rect.width > innerWidth) {
+            newLeft = Math.max(0, x - rect.width);
+        }
+
+        setPosition({ top: newTop, left: newLeft });
+    }, [x, y, actions]);
 
     return (
         <AnimatePresence>
@@ -47,9 +64,9 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, actions, onClose
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.1 }}
-                className="fixed z-[9999] min-w-[180px] bg-[var(--bg-panel)] rounded-lg shadow-lg border border-[var(--border-color)] py-1 overflow-hidden"
-                style={style}
+                transition={{ duration: 0.1, ease: "easeOut" }}
+                className="fixed z-[9999] min-w-[200px] bg-[var(--bg-surface)] rounded-lg shadow-xl border border-[var(--border-subtle)] py-1.5 overflow-hidden backdrop-blur-sm"
+                style={{ top: position.top, left: position.left }}
             >
                 {actions.map((action, index) => (
                     <button
@@ -62,12 +79,18 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, actions, onClose
                             }
                         }}
                         disabled={action.disabled}
-                        className={`w-full text-left px-4 py-2 text-sm flex items-center gap-2 hover:bg-[var(--bg-active)] transition-colors
-              ${action.disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
-              ${action.danger ? 'text-[var(--status-error-text)] hover:bg-[var(--status-error-bg)]' : 'text-[var(--text-primary)]'}
+                        className={`w-full text-left px-3 py-2 text-sm flex items-center gap-2.5 transition-colors
+              ${action.disabled
+                                ? 'opacity-50 cursor-not-allowed text-[var(--text-secondary)]'
+                                : 'cursor-pointer hover:bg-[var(--bg-active)]'
+                            }
+              ${action.danger
+                                ? 'text-[var(--status-error-text)] hover:bg-[var(--status-error-bg)]'
+                                : 'text-[var(--text-primary)]'
+                            }
             `}
                     >
-                        {action.icon && <span className="text-[var(--text-secondary)]">{action.icon}</span>}
+                        {action.icon && <span className="text-[var(--text-secondary)] opacity-80">{action.icon}</span>}
                         {action.label}
                     </button>
                 ))}

@@ -53,7 +53,8 @@ The biggest issue is the lack of a unified color system in the `DataTable`.
 *   **Fix**: Create a unit test for the `buildTree` logic (once extracted) to verify aggregation, sorting, and gap-filling logic.
 
 ## Action Plan
-1.  **Refactor Styles**: Sweep through `DataTable.tsx` and `ContextMenu.tsx` to replace hex codes with CSS variables.
-2.  **Extract Logic**: Move `buildTree` from `DataTable` to `src/features/dashboard/hooks/useTableData.ts`.
-3.  **Add Tests**: Add unit tests for the extracted `useTableData` logic.
+1.  **Refactor Styles**: Sweep through `DataTable.tsx` and `ContextMenu.tsx` to replace hex codes with CSS variables. (Partial - DataTable verified)
+2.  [x] **Extract Logic**: Move `buildTree` from `DataTable` to `src/features/dashboard/hooks/useAggregatedTableData.ts`.
+3.  [x] **Add Tests**: Add unit tests for the extracted `useAggregatedTableData` logic.
 4.  **Standardize**: Ensure `ContextMenu` uses the same visual language (dark mode/glassmorphism) as the rest of the app.
+
