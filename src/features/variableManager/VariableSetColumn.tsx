@@ -14,6 +14,8 @@ import { Hash, Grid3X3, SquareCheck, ChevronRight, EyeOff, Type, Calendar, Check
 import { useVelocityStore } from '../../store';
 import type { VariableSet, Dataset } from '../../store/slices/dataSlice';
 import { Sparkline, MissingnessBadge } from './Sparkline';
+import { VariableTypeIcon } from '../../components/common/VariableTypeIcon';
+import { useLazyObserver } from './hooks/useLazyObserver';
 import styles from './MillerColumns.module.css';
 
 interface VariableSetItemProps {
@@ -31,24 +33,7 @@ interface VariableSetItemProps {
     itemRef?: (el: HTMLDivElement | null) => void;
 }
 
-const getTypeIcon = (type?: string) => {
-    switch (type) {
-        case 'nominal':
-            return <CheckCircle size={14} />;
-        case 'ordinal':
-            return <CheckCircle size={14} />;
-        case 'scale':
-            return <SlidersHorizontal size={14} />;
-        case 'numeric':
-            return <Hash size={14} />;
-        case 'text':
-            return <Type size={14} />;
-        case 'date':
-            return <Calendar size={14} />;
-        default:
-            return <CheckCircle size={14} />;
-    }
-};
+
 
 const getStructureLabel = (structure: string, count: number) => {
     if (structure === 'single' || count === 1) return null;
@@ -113,13 +98,11 @@ const VariableSetItem: React.FC<VariableSetItemProps> = ({
                         ? { color: 'var(--text-secondary)' }
                         : undefined
                 }>
-                    {variableSet.structure === 'grid' ? (
-                        <Grid3X3 size={14} />
-                    ) : variableSet.structure === 'multiple' ? (
-                        <SquareCheck size={14} />
-                    ) : (
-                        getTypeIcon(variableSet.type)
-                    )}
+                    <VariableTypeIcon
+                        type={variableSet.type}
+                        structure={variableSet.structure as any}
+                        size={14}
+                    />
                 </span>
                 <span className={styles.itemLabel}>
                     {variableSet.name}
@@ -190,43 +173,24 @@ export const VariableSetColumn: React.FC = () => {
     const itemRefs = useRef<Map<string, HTMLDivElement>>(new Map());
 
     // Intersection Observer for auto-loading stats
-    useEffect(() => {
-        const observer = new IntersectionObserver(
-            (entries) => {
-                entries.forEach((entry) => {
-                    if (entry.isIntersecting) {
-                        const variableSetId = entry.target.getAttribute('data-variable-set-id');
-                        if (variableSetId) {
-                            const variableSet = variableSets.find(vs => vs.id === variableSetId);
-                            // Only load for single-variable sets
-                            if (variableSet && variableSet.variableIds.length === 1) {
-                                const variableId = variableSet.variableIds[0];
-                                // Check if already loaded or loading to avoid spamming
-                                if (!variableStats[variableId]) {
-                                    getVariableStats(variableId).catch(() => { });
-                                }
-                            }
-                        }
-                    }
-                });
-            },
-            {
-                root: contentRef.current,
-                rootMargin: '50px', // Preload just outside viewport
-                threshold: 0.1,
+    // Lazy-load stats using shared hook
+    useLazyObserver(
+        contentRef,
+        itemRefs,
+        useCallback((id) => {
+            const variableSet = variableSets.find(vs => vs.id === id);
+            // Only load for single-variable sets
+            if (variableSet && variableSet.variableIds.length === 1) {
+                const variableId = variableSet.variableIds[0];
+                // Check if already loaded or loading to avoid spamming
+                if (!variableStats[variableId]) {
+                    getVariableStats(variableId).catch(() => { });
+                }
             }
-        );
-
-        // Observe all current items
-        const currentRefs = itemRefs.current;
-        currentRefs.forEach((element) => {
-            if (element) observer.observe(element);
-        });
-
-        return () => {
-            observer.disconnect();
-        };
-    }, [variableSets, variableStats, getVariableStats, activeFolderId, searchQuery, facetFilters]); // Re-run when list changes
+        }, [variableSets, variableStats, getVariableStats]),
+        'data-variable-set-id',
+        [variableSets, variableStats, activeFolderId, searchQuery, facetFilters]
+    );
 
     // Filter variable sets by folder, search, and facets
     const filteredSets = useMemo(() => {

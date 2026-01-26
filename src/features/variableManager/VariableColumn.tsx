@@ -11,6 +11,8 @@ import { Hash, CheckCircle, ChevronRight, Type, Calendar, SlidersHorizontal } fr
 import { useVelocityStore } from '../../store';
 import type { Variable, Dataset } from '../../store/slices/dataSlice';
 import { Sparkline, MissingnessBadge } from './Sparkline';
+import { VariableTypeIcon } from '../../components/common/VariableTypeIcon';
+import { useLazyObserver } from './hooks/useLazyObserver';
 import styles from './MillerColumns.module.css';
 
 interface VariableItemProps {
@@ -26,24 +28,7 @@ interface VariableItemProps {
     itemRef?: (el: HTMLDivElement | null) => void;
 }
 
-const getTypeIcon = (type: string) => {
-    switch (type) {
-        case 'nominal':
-            return <CheckCircle size={14} />;
-        case 'ordinal':
-            return <CheckCircle size={14} />;
-        case 'scale':
-            return <SlidersHorizontal size={14} />;
-        case 'numeric':
-            return <Hash size={14} />;
-        case 'text':
-            return <Type size={14} />;
-        case 'date':
-            return <Calendar size={14} />;
-        default:
-            return <CheckCircle size={14} />;
-    }
-};
+
 
 const VariableItem: React.FC<VariableItemProps> = ({
     variable,
@@ -64,9 +49,7 @@ const VariableItem: React.FC<VariableItemProps> = ({
             className={`${styles.item} ${isActive ? styles.itemActive : ''}`}
         >
             <div className={styles.itemContent}>
-                <span className={styles.itemIcon}>
-                    {getTypeIcon(variable.type)}
-                </span>
+                <VariableTypeIcon type={variable.type} size={14} />
                 <div style={{ minWidth: 0, flex: 1 }}>
                     <span className={styles.itemLabel}>{variable.label || variable.name}</span>
                     {variable.label && variable.label !== variable.name && (
@@ -130,36 +113,17 @@ export const VariableColumn: React.FC = () => {
     }, [selectedSet, dataset]);
 
     // Intersection Observer for auto-loading stats
-    useEffect(() => {
-        const observer = new IntersectionObserver(
-            (entries) => {
-                entries.forEach((entry) => {
-                    if (entry.isIntersecting) {
-                        const variableId = entry.target.getAttribute('data-variable-id');
-                        if (variableId) {
-                            if (!variableStats[variableId]) {
-                                getVariableStats(variableId).catch(() => { });
-                            }
-                        }
-                    }
-                });
-            },
-            {
-                root: contentRef.current,
-                rootMargin: '50px',
-                threshold: 0.1,
+    useLazyObserver(
+        contentRef,
+        itemRefs,
+        useCallback((id) => {
+            if (!variableStats[id]) {
+                getVariableStats(id).catch(() => { });
             }
-        );
-
-        const currentRefs = itemRefs.current;
-        currentRefs.forEach((element) => {
-            if (element) observer.observe(element);
-        });
-
-        return () => {
-            observer.disconnect();
-        };
-    }, [variables, variableStats, getVariableStats]);
+        }, [variableStats, getVariableStats]),
+        'data-variable-id',
+        [variables, variableStats]
+    );
 
     // Determine if this column should be shown
     // Only show for multi-variable sets (more than 1 variable)

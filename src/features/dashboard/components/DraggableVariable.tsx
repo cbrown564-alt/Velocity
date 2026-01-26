@@ -1,7 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useDraggable } from '@dnd-kit/core';
-import { GripVertical, Hash, Grid3x3, Tag, SlidersHorizontal, CheckCircle, SquareCheck } from 'lucide-react';
+import { GripVertical } from 'lucide-react';
+import { VariableTypeIcon } from '../../../components/common/VariableTypeIcon';
 import { VariableSet, VariableType } from '../../../types';
 
 interface VariableCardProps {
@@ -34,33 +35,7 @@ export const VariableCard: React.FC<VariableCardProps> = ({
   setNodeRef,
   style
 }) => {
-  // Helper to get icon based on type and structure
-  const getIcon = (set: VariableSet) => {
-    if (set.structure === 'grid') {
-      return <Grid3x3 size={14} className="text-[var(--text-secondary)]" />;
-    }
 
-    if (set.structure === 'multiple') {
-      return <SquareCheck size={14} className="text-[var(--text-secondary)]" />;
-    }
-
-    const type = set.type as VariableType;
-    switch (type) {
-      case 'numeric':
-        return <Hash size={13} className="text-[var(--text-secondary)]" />;
-      case 'scale':
-        return <SlidersHorizontal size={13} className="text-[var(--text-secondary)]" />;
-      case 'date':
-        return <Hash size={13} className="text-[var(--text-secondary)]" />;
-      case 'nominal':
-      case 'text':
-        return <CheckCircle size={13} className="text-[var(--text-secondary)]" />;
-      case 'ordinal':
-        return <CheckCircle size={13} className="text-[var(--text-secondary)]" />;
-      default:
-        return <CheckCircle size={13} className="text-[var(--text-secondary)]" />;
-    }
-  };
 
   const cardStyle = {
     ...style,
@@ -96,7 +71,12 @@ export const VariableCard: React.FC<VariableCardProps> = ({
 
       <div className="flex-1 min-w-0 flex items-center gap-2">
         <span className="shrink-0 flex items-center text-[var(--text-secondary)]" title={variableSet.structure === 'single' ? variableSet.type : variableSet.structure}>
-          {getIcon(variableSet)}
+          <VariableTypeIcon
+            type={variableSet.type}
+            structure={variableSet.structure as any}
+            size={13}
+            className="text-[var(--text-secondary)]"
+          />
         </span>
         <span className={`text-sm font-medium truncate font-body leading-none ${isSelected ? 'text-[var(--text-primary)]' : 'text-[var(--text-secondary)] group-hover:text-[var(--text-primary)]'}`}>{variableSet.name}</span>
       </div>

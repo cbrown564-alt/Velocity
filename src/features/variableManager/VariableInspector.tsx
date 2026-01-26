@@ -16,26 +16,10 @@ import { HorizontalBarRenderer, HistogramRenderer } from '../../components/chart
 import { ChartContextMenu } from '../../components/overlays/ChartContextMenu';
 import { InputModal } from '../../components/overlays/InputModal';
 import { useResizeObserver } from '../../hooks/useResizeObserver';
+import { VariableTypeIcon } from '../../components/common/VariableTypeIcon';
 import styles from './VariableInspector.module.css';
 
-const getTypeIcon = (type: string) => {
-    switch (type) {
-        case 'nominal':
-            return <CheckCircle size={14} />;
-        case 'ordinal':
-            return <CheckCircle size={14} />;
-        case 'scale':
-            return <SlidersHorizontal size={14} />;
-        case 'numeric':
-            return <Hash size={14} />;
-        case 'text':
-            return <Type size={14} />;
-        case 'date':
-            return <Calendar size={14} />;
-        default:
-            return <CheckCircle size={14} />;
-    }
-};
+
 
 const getTypeBadgeClass = (type: string) => {
     switch (type) {
@@ -393,7 +377,7 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
                         <span className={styles.metaLabel}>Type</span>
                         <span className={styles.metaValue}>
                             <span className={`${styles.typeBadge} ${getTypeBadgeClass(variable.type)}`}>
-                                {getTypeIcon(variable.type)}
+                                <VariableTypeIcon type={variable.type} size={14} />
                                 {getTypeLabel(variable.type)}
                             </span>
                         </span>
