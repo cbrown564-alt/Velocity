@@ -396,11 +396,13 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
                 )}
 
                 {/* Label Toggle */}
-                <div className={styles.labelToggle}>
+                <div className={styles.labelToggle} role="group" aria-label="Label mode">
                     <button
                         className={`${styles.toggleButton} ${labelMode === 'count' ? styles.active : ''}`}
                         onClick={() => setLabelMode('count')}
                         title="Show Count"
+                        aria-label="Show Count"
+                        aria-pressed={labelMode === 'count'}
                     >
                         #
                     </button>
@@ -408,6 +410,8 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
                         className={`${styles.toggleButton} ${labelMode === 'percent' ? styles.active : ''}`}
                         onClick={() => setLabelMode('percent')}
                         title="Show Percent"
+                        aria-label="Show Percent"
+                        aria-pressed={labelMode === 'percent'}
                     >
                         %
                     </button>
@@ -415,6 +419,8 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
                         className={`${styles.toggleButton} ${labelMode === 'none' ? styles.active : ''}`}
                         onClick={() => setLabelMode('none')}
                         title="Hide Labels"
+                        aria-label="Hide Labels"
+                        aria-pressed={labelMode === 'none'}
                     >
                         ∅
                     </button>

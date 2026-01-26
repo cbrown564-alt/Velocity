@@ -117,4 +117,46 @@ describe('analysisProcessor', () => {
         // Grand Total = 10 + 30 + 40 + 20 = 100
         expect(result.grandTotal).toBe(100);
     });
+    it('handles metric distribution data correctly', () => {
+        const metricData: AggregatedRow[] = [
+            {
+                rowKeys: ['1'],
+                colKey: 'Total',
+                count: 100,
+                // Metric Stats
+                mean: 50,
+                median: 50,
+                min: 0,
+                max: 100,
+                q1: 25,
+                q3: 75,
+                validCount: 100
+            }
+        ];
+
+        const result = processAnalysisData({
+            data: metricData,
+            rowVariables: [mockRowVariable],
+            colVariable: null
+        });
+
+        expect(result).not.toBeNull();
+        if (!result) return;
+
+        const row = result.rows.find(r => r.rawValue === '1');
+        expect(row).toBeDefined();
+
+        // Check that stats are passed through to the cell
+        const cell = row?.cells['Total'];
+        expect(cell).toBeDefined();
+
+        expect(cell?.mean).toBe(50);
+        expect(cell?.median).toBe(50);
+        expect(cell?.min).toBe(0);
+        expect(cell?.max).toBe(100);
+        expect(cell?.q1).toBe(25);
+        expect(cell?.q3).toBe(75);
+        expect(cell?.validCount).toBe(100);
+    });
 });
+

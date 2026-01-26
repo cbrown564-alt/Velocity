@@ -1,6 +1,6 @@
 import { AggregatedRow, Variable } from '../types';
 import type { VariableStatsResult } from './analysisWorker';
-import { ProcessedRow } from '../types/processedData';
+import { ProcessedRow, ProcessedCell } from '../types/processedData';
 
 export type RowPathEntry = { variable: string; value: string };
 export type TableRowNode = ProcessedRow;
@@ -111,22 +111,7 @@ export const buildTree = (
         ];
 
         // Calculate totals for this node
-        const nodeCells: Record<string, {
-            count: number;
-            percent: number;
-            sig?: 'high_95' | 'high_80' | 'low_95' | 'low_80';
-            stats?: {
-                tScore: number;
-                pValue: number;
-                effN: number;
-            };
-            mean?: number;
-            median?: number;
-            stdDev?: number;
-            min?: number;
-            max?: number;
-            validCount?: number;
-        }> = {};
+        const nodeCells: Record<string, ProcessedCell> = {};
         let nodeRowTotal = 0;
 
         colKeys.forEach(cKey => {
@@ -159,7 +144,10 @@ export const buildTree = (
                 stdDev: hasMetric ? metricRow.stdDev : undefined,
                 min: hasMetric ? metricRow.min : undefined,
                 max: hasMetric ? metricRow.max : undefined,
+                q1: hasMetric ? metricRow.q1 : undefined,
+                q3: hasMetric ? metricRow.q3 : undefined,
                 validCount: hasMetric ? metricRow.validCount : undefined,
+                histogramBins: hasMetric ? metricRow.histogramBins : undefined,
             };
         });
 
