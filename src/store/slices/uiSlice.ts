@@ -6,6 +6,7 @@
  */
 
 import type { StateCreator } from 'zustand';
+import type { VariableType } from './dataSlice';
 import type { Variable } from './dataSlice';
 
 // ============================================================================
@@ -16,7 +17,7 @@ export type AppMode = 'analysis' | 'variables';
 export type ViewMode = 'table' | 'chart';
 
 // Faceted Search Types
-export type TypeFacet = 'categorical' | 'numeric';
+export type TypeFacet = VariableType;
 export type StatusFacet = 'visible' | 'hidden' | 'derived';
 export type QualityFacet = 'complete' | 'incomplete';
 // Chart Types

@@ -15,13 +15,16 @@ import type { BarDatum, BinData } from '../../types/charts';
 import { HorizontalBarRenderer, HistogramRenderer } from '../../components/charts/renderers';
 import { ChartContextMenu } from '../../components/overlays/ChartContextMenu';
 import { InputModal } from '../../components/overlays/InputModal';
+import { useResizeObserver } from '../../hooks/useResizeObserver';
 import styles from './VariableInspector.module.css';
 
 const getTypeIcon = (type: string) => {
     switch (type) {
         case 'nominal':
-            return <Tag size={14} />;
+            return <CheckCircle size={14} />;
         case 'ordinal':
+            return <CheckCircle size={14} />;
+        case 'scale':
             return <BarChart2 size={14} />;
         case 'numeric':
             return <Hash size={14} />;
@@ -30,7 +33,7 @@ const getTypeIcon = (type: string) => {
         case 'date':
             return <Calendar size={14} />;
         default:
-            return <Tag size={14} />;
+            return <CheckCircle size={14} />;
     }
 };
 
@@ -40,6 +43,8 @@ const getTypeBadgeClass = (type: string) => {
             return styles.typeBadgeNominal;
         case 'ordinal':
             return styles.typeBadgeOrdinal;
+        case 'scale':
+            return styles.typeBadgeScale;
         case 'numeric':
             return styles.typeBadgeScale;
         case 'text':
@@ -57,6 +62,8 @@ const getTypeLabel = (type: string) => {
             return 'Categorical';
         case 'ordinal':
             return 'Ordinal';
+        case 'scale':
+            return 'Scale';
         case 'numeric':
             return 'Numeric';
         case 'text':
@@ -124,6 +131,11 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
     const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set());
     const [selectedBins, setSelectedBins] = useState<Set<string>>(new Set()); // Store bin labels or IDs
 
+    // Responsive chart width
+    const containerRef = React.useRef<HTMLDivElement>(null);
+    const { width: containerWidth } = useResizeObserver(containerRef);
+    const chartWidth = Math.max(280, containerWidth - 32); // Subtract padding
+
     // Get the selected variable
     const variable = useMemo((): Variable | null => {
         if (!selectedVariableId || !dataset) return null;
@@ -149,7 +161,7 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
         if (!selectedVariableId || isLoadingStats) return;
 
         const needsStats = !stats;
-        const needsNumericStats = variable?.type === 'numeric' && stats && !stats.numeric;
+        const needsNumericStats = (variable?.type === 'numeric' || variable?.type === 'scale') && stats && !stats.numeric;
 
         if (needsStats || needsNumericStats) {
             getVariableStats(selectedVariableId).catch(err => {
@@ -167,7 +179,7 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
         : null;
 
     // Check if variable is numeric/numeric type and has numeric stats
-    const isNumericVariable = variable?.type === 'numeric';
+    const isNumericVariable = variable?.type === 'numeric' || variable?.type === 'scale';
     const numericStats = stats?.numeric;
 
     // Prepare data for Nominal/Ordinal Charts (HorizontalBarRenderer)
@@ -175,7 +187,20 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
         if (!stats || !variable || isNumericVariable) return null;
         const hasValueLabels = variable.valueLabels && variable.valueLabels.length > 0;
 
-        const data = stats.frequencies.map((freq) => {
+        // Sort data based on variable type
+        const sortedFrequencies = [...stats.frequencies];
+        if (variable.type === 'ordinal' || variable.type === 'scale') {
+            // For ordinal/scale, sort by value (code) to preserve natural order
+            sortedFrequencies.sort((a, b) => {
+                if (typeof a.value === 'number' && typeof b.value === 'number') return a.value - b.value;
+                return String(a.value).localeCompare(String(b.value));
+            });
+        } else {
+            // For nominal/other, sort by count descending (most frequent first)
+            sortedFrequencies.sort((a, b) => b.count - a.count);
+        }
+
+        const data = sortedFrequencies.map((freq) => {
             const label = hasValueLabels
                 ? variable.valueLabels.find(vl => vl.value === freq.value)?.label || String(freq.value)
                 : String(freq.value);
@@ -194,7 +219,8 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
                 label: 'Count',
                 data,
             }],
-            colors: ['var(--color-terracotta)'],
+            // Remove hardcoded colors to use defaults (which use CSS vars)
+            // colors: ['var(--color-terracotta)'], 
         } as any; // Type assertion as partial ProcessedAnalysisData
     }, [stats, variable, isNumericVariable]);
 
@@ -410,7 +436,7 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
                                 </thead>
                                 <tbody>
                                     {variable.valueLabels.map((vl) => (
-                                        <tr key={vl.value}>
+                                        <tr key={vl.value} className="mission-control-row">
                                             <td>
                                                 <span className={styles.valueCode}>{vl.value}</span>
                                             </td>
@@ -431,7 +457,7 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
                             {variable.missingValues.discrete && variable.missingValues.discrete.length > 0 && (
                                 <div className={styles.missingValuesList}>
                                     {variable.missingValues.discrete.map((val) => (
-                                        <span key={val} className={styles.missingValueChip}>
+                                        <span key={val} className={styles.missingValueChip} style={{ backgroundColor: 'var(--status-warning-text)', color: 'var(--bg-app)' }}>
                                             {val}
                                         </span>
                                     ))}
@@ -457,26 +483,34 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
                         <div className={styles.qualitySection}>
                             {/* Completeness Bar */}
                             <div className={styles.qualityRow}>
-                                <span className={styles.qualityLabel}>
-                                    <CheckCircle size={14} style={{ color: 'var(--color-success)', marginRight: 6 }} />
-                                    Completeness
-                                </span>
-                                <div className={styles.qualityBarContainer}>
-                                    <div
-                                        className={styles.qualityBarFill}
-                                        style={{
-                                            width: `${completenessPercent || 0}%`,
-                                            backgroundColor: completenessPercent && completenessPercent >= 80
-                                                ? 'var(--color-success)'
-                                                : completenessPercent && completenessPercent >= 50
-                                                    ? 'var(--color-warning)'
-                                                    : 'var(--color-error)',
-                                        }}
-                                    />
-                                </div>
-                                <span className={styles.qualityValue}>
-                                    {completenessPercent?.toFixed(1)}%
-                                </span>
+                                {(() => {
+                                    const completenessColor = completenessPercent && completenessPercent >= 80
+                                        ? 'var(--status-success-text)'
+                                        : completenessPercent && completenessPercent >= 50
+                                            ? 'var(--status-warning-text)'
+                                            : 'var(--status-error-text)';
+
+                                    return (
+                                        <>
+                                            <span className={styles.qualityLabel}>
+                                                <CheckCircle size={14} style={{ color: completenessColor, marginRight: 6 }} />
+                                                Completeness
+                                            </span>
+                                            <div className={styles.qualityBarContainer}>
+                                                <div
+                                                    className={styles.qualityBarFill}
+                                                    style={{
+                                                        width: `${completenessPercent || 0}%`,
+                                                        backgroundColor: completenessColor,
+                                                    }}
+                                                />
+                                            </div>
+                                            <span className={styles.qualityValue}>
+                                                {completenessPercent?.toFixed(1)}%
+                                            </span>
+                                        </>
+                                    );
+                                })()}
                             </div>
 
                             {/* Stats Summary */}
@@ -505,7 +539,7 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
                             </div>
 
                             {/* Missing warning */}
-                            {missingPercent && missingPercent > 10 && (
+                            {(missingPercent ?? 0) > 10 && (
                                 <div className={styles.warningBanner}>
                                     <AlertTriangle size={14} />
                                     <span>{missingPercent.toFixed(1)}% missing values</span>
@@ -556,7 +590,7 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
 
                 {/* Distribution Section - Unified using new Renderers */}
                 {(nominalChartData || histogramData) && (
-                    <div className={styles.section}>
+                    <div className={styles.section} ref={containerRef}>
                         <h3 className={styles.sectionTitle}>
                             Distribution
                             <span style={{
@@ -570,28 +604,30 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
                         </h3>
                         {/* Rendering logic */}
                         {isNumericVariable && histogramData ? (
-                            <HistogramRenderer
-                                width={280}
-                                height={180}
-                                processedData={histogramData}
-                                interactive={true}
-                                // selectedKeys... we might need to map keys for histogram or leave it internal to renderer if we don't control it
-                                onContextMenu={handleContextMenu}
-                            // HistogramRenderer doesn't currently support 'selectedKeys', it uses D3Histogram internal state, 
-                            // unless we update D3Histogram to be controlled. 
-                            // For now, we rely on D3Histogram triggering onContextMenu with selected items.
-                            />
+                            <div style={{ width: '100%', minHeight: 180 }}>
+                                <HistogramRenderer
+                                    width={chartWidth}
+                                    height={180}
+                                    processedData={histogramData}
+                                    interactive={true}
+                                    variableStats={stats} // Pass stats for optimized bin rendering
+                                    onContextMenu={handleContextMenu}
+                                />
+                            </div>
                         ) : nominalChartData ? (
-                            <HorizontalBarRenderer
-                                width={280}
-                                height={Math.max(180, nominalChartData.series[0].data.length * 28)}
-                                processedData={nominalChartData}
-                                interactive={true}
-                                selectedKeys={selectedKeys}
-                                onSelectionChange={setSelectedKeys}
-                                onContextMenu={handleContextMenu}
-                                colors={['var(--color-charcoal)', 'var(--color-terracotta)']}
-                            />
+                            <div style={{ width: '100%' }}>
+                                <HorizontalBarRenderer
+                                    width={chartWidth}
+                                    height={Math.max(180, nominalChartData.series[0].data.length * 28)}
+                                    processedData={nominalChartData}
+                                    interactive={true}
+                                    selectedKeys={selectedKeys}
+                                    onSelectionChange={setSelectedKeys}
+                                    onContextMenu={handleContextMenu}
+                                // Use default colors or pass primary theme color explicitly if needed, 
+                                // but removing the dark charcoal override is key.
+                                />
+                            </div>
                         ) : null}
                     </div>
                 )}

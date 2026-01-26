@@ -10,7 +10,7 @@
 import React, { useMemo, useEffect, useCallback, useRef } from 'react';
 import { useDraggable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
-import { Hash, Grid3X3, SquareCheck, ChevronRight, EyeOff, Type, Calendar, CheckCircle } from 'lucide-react';
+import { Hash, Grid3X3, SquareCheck, ChevronRight, EyeOff, Type, Calendar, CheckCircle, BarChart2 } from 'lucide-react';
 import { useVelocityStore } from '../../store';
 import type { VariableSet, Dataset } from '../../store/slices/dataSlice';
 import { Sparkline, MissingnessBadge } from './Sparkline';
@@ -37,6 +37,8 @@ const getTypeIcon = (type?: string) => {
             return <CheckCircle size={14} />;
         case 'ordinal':
             return <CheckCircle size={14} />;
+        case 'scale':
+            return <BarChart2 size={14} />;
         case 'numeric':
             return <Hash size={14} />;
         case 'text':
@@ -246,12 +248,7 @@ export const VariableSetColumn: React.FC = () => {
         // Type facet filter
         if (facetFilters.types.length > 0) {
             sets = sets.filter(vs => {
-                // Categorical includes: nominal (unordered), ordinal (ordered), text (open-ended)
-                const isCategorical = ['nominal', 'ordinal', 'text'].includes(vs.type || '');
-                // Numeric includes: numeric (continuous), date (temporal)
-                const isNumeric = ['numeric', 'date'].includes(vs.type || '');
-                return (facetFilters.types.includes('categorical') && isCategorical) ||
-                    (facetFilters.types.includes('numeric') && isNumeric);
+                return vs.type && facetFilters.types.includes(vs.type);
             });
         }
 

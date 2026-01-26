@@ -82,12 +82,7 @@ export const VariableManager: React.FC<VariableManagerProps> = ({ onClose }) => 
         // Type facet filter
         if (facetFilters.types.length > 0) {
             sets = sets.filter(vs => {
-                // Categorical includes: nominal (unordered), ordinal (ordered), text (open-ended)
-                const isCategorical = ['nominal', 'ordinal', 'text'].includes(vs.type || '');
-                // Numeric includes: numeric (continuous), date (temporal)
-                const isNumeric = ['numeric', 'date'].includes(vs.type || '');
-                return (facetFilters.types.includes('categorical') && isCategorical) ||
-                    (facetFilters.types.includes('numeric') && isNumeric);
+                return vs.type && facetFilters.types.includes(vs.type);
             });
         }
 
@@ -125,10 +120,13 @@ export const VariableManager: React.FC<VariableManagerProps> = ({ onClose }) => 
 
     // Group variables by type for quick stats
     const typeStats = useMemo(() => {
-        const stats = { nominal: 0, ordinal: 0, numeric: 0 };
+        const stats = { categorical: 0, numeric: 0 };
         variableSets.forEach(vs => {
-            if (vs.type && vs.type in stats) {
-                stats[vs.type as keyof typeof stats]++;
+            const type = vs.type || '';
+            if (['nominal', 'ordinal', 'text'].includes(type)) {
+                stats.categorical++;
+            } else if (['numeric', 'scale', 'date'].includes(type)) {
+                stats.numeric++;
             }
         });
         return stats;
@@ -202,26 +200,26 @@ export const VariableManager: React.FC<VariableManagerProps> = ({ onClose }) => 
         >
             <div className="h-full bg-paper flex flex-col">
                 {/* Header */}
-                <header className="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-gray-50">
+                <header className="flex items-center justify-between px-6 py-4 border-b border-[var(--border-color)] bg-[var(--bg-panel)]">
                     <div className="flex items-center gap-4">
                         <div className="flex items-center gap-2">
-                            <Grid3X3 className="w-5 h-5 text-terracotta" />
-                            <h1 className="font-display text-lg font-semibold text-ink m-0">
+                            <Grid3X3 className="w-5 h-5 text-[var(--color-accent)]" />
+                            <h1 className="font-display text-lg font-semibold text-[var(--text-primary)] m-0">
                                 Variable Manager
                             </h1>
                         </div>
 
                         {/* Quick Stats */}
-                        <div className="flex items-center gap-3 text-xs text-gray-500 ml-4">
+                        <div className="flex items-center gap-3 text-xs text-[var(--text-secondary)] ml-4">
                             <span className="flex items-center gap-1">
-                                <Tag size={12} className="text-terracotta" />
-                                {typeStats.nominal} Categorical
+                                <Tag size={12} className="text-[var(--color-accent)]" />
+                                {typeStats.categorical} Categorical
                             </span>
                             <span className="flex items-center gap-1">
-                                <BarChart2 size={12} className="text-info" />
+                                <BarChart2 size={12} className="text-[var(--text-accent)]" />
                                 {typeStats.numeric} Numeric
                             </span>
-                            <span className="text-gray-300">|</span>
+                            <span className="text-[var(--border-color-active)]">|</span>
                             <span>{variableSets.length} total</span>
                         </div>
                     </div>
@@ -229,20 +227,20 @@ export const VariableManager: React.FC<VariableManagerProps> = ({ onClose }) => 
                     <div className="flex items-center gap-4">
                         {/* Search */}
                         <div className="relative w-60">
-                            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
+                            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[var(--text-secondary)]" />
                             <input
                                 type="text"
                                 placeholder="Search variables..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full pl-8 pr-3 py-1.5 bg-transparent border-b border-gray-300 text-sm font-body outline-none focus:border-terracotta focus:border-b-2 transition-all placeholder:text-gray-400"
+                                className="w-full pl-8 pr-3 py-1.5 bg-transparent border-b border-[var(--border-color)] text-sm font-body outline-none focus:border-[var(--color-accent)] focus:border-b-2 transition-all placeholder:text-[var(--text-secondary)] text-[var(--text-primary)]"
                             />
                         </div>
 
                         {/* Close Button */}
                         <button
                             onClick={onClose}
-                            className="flex items-center justify-center w-8 h-8 p-0 border-none rounded-sm bg-transparent text-gray-400 cursor-pointer hover:bg-gray-200 hover:text-gray-600 transition-colors"
+                            className="flex items-center justify-center w-8 h-8 p-0 border-none rounded-sm bg-transparent text-[var(--text-secondary)] cursor-pointer hover:bg-[var(--bg-active)] hover:text-[var(--text-primary)] transition-colors"
                         >
                             <X size={20} />
                         </button>
@@ -275,13 +273,13 @@ export const VariableManager: React.FC<VariableManagerProps> = ({ onClose }) => 
                 </div>
 
                 {/* Footer */}
-                <footer className="px-6 py-3 border-t border-gray-200 bg-gray-50 text-xs text-gray-500 flex items-center justify-between">
+                <footer className="px-6 py-3 border-t border-[var(--border-color)] bg-[var(--bg-panel)] text-xs text-[var(--text-secondary)] flex items-center justify-between">
                     <span>
                         {dataset?.name} • {dataset?.rowCount.toLocaleString()} rows
                     </span>
-                    <span className="text-gray-400">
-                        <kbd className="px-1.5 py-0.5 bg-gray-200 rounded text-[10px] font-mono mr-1">⌘A</kbd> Select all •
-                        <kbd className="px-1.5 py-0.5 bg-gray-200 rounded text-[10px] font-mono mx-1">Esc</kbd> Close
+                    <span className="text-[var(--text-secondary)] opacity-70">
+                        <kbd className="px-1.5 py-0.5 bg-[var(--bg-active)] rounded text-[10px] font-mono mr-1">⌘A</kbd> Select all •
+                        <kbd className="px-1.5 py-0.5 bg-[var(--bg-active)] rounded text-[10px] font-mono mx-1">Esc</kbd> Close
                     </span>
                 </footer>
 

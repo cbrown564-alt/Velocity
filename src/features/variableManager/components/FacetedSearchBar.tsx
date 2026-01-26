@@ -17,8 +17,12 @@ import styles from './FacetedSearchBar.module.css';
 
 // Facet option definitions
 const TYPE_OPTIONS: { value: TypeFacet; label: string }[] = [
-    { value: 'categorical', label: 'Categorical' },
+    { value: 'nominal', label: 'Nominal' },
+    { value: 'ordinal', label: 'Ordinal' },
+    { value: 'scale', label: 'Scale' },
     { value: 'numeric', label: 'Numeric' },
+    { value: 'date', label: 'Date' },
+    { value: 'text', label: 'Text' },
 ];
 
 const STATUS_OPTIONS: { value: StatusFacet; label: string }[] = [
@@ -34,8 +38,12 @@ const QUALITY_OPTIONS: { value: QualityFacet; label: string }[] = [
 
 // Chip label mapping
 const FACET_LABELS: Record<string, string> = {
-    categorical: 'Categorical',
+    nominal: 'Nominal',
+    ordinal: 'Ordinal',
+    scale: 'Scale',
     numeric: 'Numeric',
+    date: 'Date',
+    text: 'Text',
     visible: 'Visible',
     hidden: 'Hidden',
     derived: 'Derived',
@@ -99,9 +107,8 @@ function FacetDropdown<T extends string>({
                                 onClick={() => onToggle(option.value)}
                             >
                                 <span
-                                    className={`${styles.checkbox} ${
-                                        isSelected ? styles.checkboxChecked : ''
-                                    }`}
+                                    className={`${styles.checkbox} ${isSelected ? styles.checkboxChecked : ''
+                                        }`}
                                 >
                                     {isSelected && <Check className={styles.checkmark} />}
                                 </span>

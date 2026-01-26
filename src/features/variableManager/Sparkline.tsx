@@ -13,7 +13,7 @@ import type { HistogramBin } from '../../types';
 
 export interface SparklineProps {
     /** Type determines the visualization style */
-    type?: 'nominal' | 'ordinal' | 'numeric' | 'text' | 'date';
+    type?: 'nominal' | 'ordinal' | 'scale' | 'numeric' | 'text' | 'date';
     /** Array of frequency counts (for categorical) */
     frequencies?: number[];
     /** Array of histogram bins (for numeric/scale) */
@@ -41,7 +41,7 @@ export const Sparkline: React.FC<SparklineProps> = ({
     className,
 }) => {
     // 1. SCALAR / DATE VISUALIZATION (Histogram)
-    if (type === 'numeric' || type === 'date') {
+    if (type === 'numeric' || type === 'scale' || type === 'date') {
         if (!histogramBins || histogramBins.length === 0) return null;
 
         // Determine Y scale
@@ -72,7 +72,7 @@ export const Sparkline: React.FC<SparklineProps> = ({
                             y={y}
                             width={binWidth + 0.5} // Slight overlap to close gaps
                             height={barHeight}
-                            fill="var(--color-terracotta)"
+                            fill="var(--color-accent)"
                             opacity={0.8}
                         />
                     );
@@ -165,7 +165,7 @@ export const Sparkline: React.FC<SparklineProps> = ({
                                 y={0}
                                 width={segmentWidth + 0.5} // Overlap to prevent sub-pixel gaps
                                 height={height}
-                                fill="var(--color-terracotta)"
+                                fill="var(--color-accent)"
                                 opacity={opacity}
                             />
                         );
