@@ -37,28 +37,28 @@ export const VariableCard: React.FC<VariableCardProps> = ({
   // Helper to get icon based on type and structure
   const getIcon = (set: VariableSet) => {
     if (set.structure === 'grid') {
-      return <Grid3x3 size={14} className="text-[var(--gray-500)]" />;
+      return <Grid3x3 size={14} className="text-[var(--text-secondary)]" />;
     }
 
     if (set.structure === 'multiple') {
-      return <SquareCheck size={14} className="text-[var(--gray-500)]" />;
+      return <SquareCheck size={14} className="text-[var(--text-secondary)]" />;
     }
 
     const type = set.type as VariableType;
     switch (type) {
       case 'numeric':
-        return <Hash size={13} className="text-[var(--gray-500)]" />;
+        return <Hash size={13} className="text-[var(--text-secondary)]" />;
       case 'scale':
-        return <SlidersHorizontal size={13} className="text-[var(--gray-500)]" />;
+        return <SlidersHorizontal size={13} className="text-[var(--text-secondary)]" />;
       case 'date':
-        return <Hash size={13} className="text-[var(--gray-500)]" />;
+        return <Hash size={13} className="text-[var(--text-secondary)]" />;
       case 'nominal':
       case 'text':
-        return <CheckCircle size={13} className="text-[var(--gray-500)]" />;
+        return <CheckCircle size={13} className="text-[var(--text-secondary)]" />;
       case 'ordinal':
-        return <CheckCircle size={13} className="text-[var(--gray-500)]" />;
+        return <CheckCircle size={13} className="text-[var(--text-secondary)]" />;
       default:
-        return <CheckCircle size={13} className="text-[var(--gray-500)]" />;
+        return <CheckCircle size={13} className="text-[var(--text-secondary)]" />;
     }
   };
 
@@ -76,10 +76,10 @@ export const VariableCard: React.FC<VariableCardProps> = ({
       style={cardStyle}
       {...dragListeners}
       {...dragAttributes}
-      className={`group flex items-center gap-2 px-2 h-9 bg-[var(--color-parchment)] border border-[var(--gray-200)] rounded-lg shadow-sm cursor-grab hover:border-[var(--color-terracotta)] hover:shadow-md transition-all active:cursor-grabbing relative pr-8
-        ${isDragging ? 'ring-2 ring-[var(--color-terracotta)] ring-opacity-50 grayscale' : ''}
-        ${isSelected ? 'bg-indigo-50 border-indigo-300 ring-1 ring-indigo-300' : ''}
-        ${isFocused && !isSelected ? 'border-[var(--color-terracotta)] bg-[var(--color-terracotta)]/5 ring-1 ring-[var(--color-terracotta)]/30' : ''}
+      className={`group flex items-center gap-2 px-2 h-9 bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-lg shadow-sm cursor-grab hover:border-[var(--color-accent)] hover:shadow-float transition-all active:cursor-grabbing relative pr-8
+        ${isDragging ? 'ring-2 ring-[var(--color-accent)] ring-opacity-50 grayscale shadow-drag' : ''}
+        ${isSelected ? 'bg-[var(--bg-active)] border-[var(--color-accent)] ring-1 ring-[var(--color-accent)]' : 'hover:bg-[var(--bg-panel)]'}
+        ${isFocused && !isSelected ? 'border-[var(--color-accent)] bg-[var(--bg-active)] ring-1 ring-[var(--color-accent)]/30' : ''}
         ${isOverlay ? 'shadow-xl scale-105 cursor-grabbing !opacity-100 z-50' : ''}
       `}
       onClick={(e: React.MouseEvent) => !isDragging && onClick?.(variableSet, e)}
@@ -90,15 +90,15 @@ export const VariableCard: React.FC<VariableCardProps> = ({
         }
       }}
     >
-      <div className="text-[var(--gray-400)] group-hover:text-[var(--color-terracotta)] transition-colors shrink-0">
+      <div className="text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors shrink-0 opacity-0 group-hover:opacity-100 -ml-1">
         <GripVertical size={14} />
       </div>
 
       <div className="flex-1 min-w-0 flex items-center gap-2">
-        <span className="shrink-0 flex items-center" title={variableSet.structure === 'single' ? variableSet.type : variableSet.structure}>
+        <span className="shrink-0 flex items-center text-[var(--text-secondary)]" title={variableSet.structure === 'single' ? variableSet.type : variableSet.structure}>
           {getIcon(variableSet)}
         </span>
-        <span className="text-sm font-medium text-[var(--color-ink)] truncate font-body leading-none">{variableSet.name}</span>
+        <span className={`text-sm font-medium truncate font-body leading-none ${isSelected ? 'text-[var(--text-primary)]' : 'text-[var(--text-secondary)] group-hover:text-[var(--text-primary)]'}`}>{variableSet.name}</span>
       </div>
 
 

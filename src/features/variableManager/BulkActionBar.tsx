@@ -71,7 +71,7 @@ export const BulkActionBar: React.FC<BulkActionBarProps> = ({
                 submitLabel="Create"
             />
             <AnimatePresence>
-                {selectedCount > 0 && (
+                {selectedCount > 1 && (
                     <motion.div
                         initial={{ y: 100, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
@@ -79,13 +79,13 @@ export const BulkActionBar: React.FC<BulkActionBarProps> = ({
                         transition={{ type: 'spring', damping: 25, stiffness: 300 }}
                         className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50"
                     >
-                        <div className="bg-paper border border-gray-200 text-ink rounded-xl shadow-float px-4 py-3 flex items-center gap-4">
+                        <div className="bg-[var(--bg-panel)] border border-[var(--border-color)] text-[var(--text-primary)] rounded-xl shadow-float px-4 py-3 flex items-center gap-4">
                             {/* Selection Count */}
-                            <div className="flex items-center gap-2 pr-4 border-r border-gray-200">
-                                <span className="bg-terracotta text-white text-xs font-bold px-2 py-1 rounded-full">
+                            <div className="flex items-center gap-2 pr-4 border-r border-[var(--border-color)]">
+                                <span className="bg-[var(--theme-viz-palette-2)] text-white text-xs font-bold px-2 py-1 rounded-full">
                                     {selectedCount}
                                 </span>
-                                <span className="text-sm text-gray-500 font-body">selected</span>
+                                <span className="text-sm text-[var(--text-secondary)] font-body">selected</span>
                             </div>
 
                             {/* Actions */}
@@ -93,7 +93,7 @@ export const BulkActionBar: React.FC<BulkActionBarProps> = ({
                                 {/* Create Group */}
                                 <button
                                     onClick={handleCreateGroup}
-                                    className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors text-sm font-medium text-gray-700 hover:text-ink"
+                                    className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-[var(--bg-surface)] transition-colors text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                                 >
                                     <FolderPlus size={16} />
                                     <span>Group</span>
@@ -103,33 +103,33 @@ export const BulkActionBar: React.FC<BulkActionBarProps> = ({
                                 <div className="relative">
                                     <button
                                         onClick={() => setShowTypeMenu(!showTypeMenu)}
-                                        className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-colors text-sm font-medium ${showTypeMenu ? 'bg-gray-100 text-ink' : 'text-gray-700 hover:bg-gray-100 hover:text-ink'}`}
+                                        className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-colors text-sm font-medium ${showTypeMenu ? 'bg-[var(--bg-surface)] text-[var(--text-primary)]' : 'text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] hover:text-[var(--text-primary)]'}`}
                                     >
                                         <Tag size={16} />
                                         <span>Type</span>
                                     </button>
 
                                     {showTypeMenu && (
-                                        <div className="absolute bottom-full left-0 mb-2 bg-white border border-gray-200 rounded-lg shadow-float py-1 min-w-32 z-50 overflow-hidden">
+                                        <div className="absolute bottom-full left-0 mb-2 bg-[var(--bg-panel)] border border-[var(--border-color)] rounded-lg shadow-float py-1 min-w-32 z-50 overflow-hidden">
                                             <button
                                                 onClick={() => handleSetType('nominal')}
-                                                className="w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-50 text-left text-sm font-body text-gray-700"
+                                                className="w-full flex items-center gap-2 px-3 py-2 hover:bg-[var(--bg-surface)] text-left text-sm font-body text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                                             >
-                                                <Tag size={14} className="text-terracotta" />
+                                                <Tag size={14} className="text-[var(--theme-viz-palette-2)]" />
                                                 Nominal
                                             </button>
                                             <button
                                                 onClick={() => handleSetType('ordinal')}
-                                                className="w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-50 text-left text-sm font-body text-gray-700"
+                                                className="w-full flex items-center gap-2 px-3 py-2 hover:bg-[var(--bg-surface)] text-left text-sm font-body text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                                             >
-                                                <Layers size={14} className="text-info" />
+                                                <Layers size={14} className="text-[var(--theme-viz-palette-4)]" />
                                                 Ordinal
                                             </button>
                                             <button
                                                 onClick={() => handleSetType('numeric')}
-                                                className="w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-50 text-left text-sm font-body text-gray-700"
+                                                className="w-full flex items-center gap-2 px-3 py-2 hover:bg-[var(--bg-surface)] text-left text-sm font-body text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                                             >
-                                                <BarChart2 size={14} className="text-charcoal" />
+                                                <BarChart2 size={14} className="text-[var(--theme-viz-palette-1)]" />
                                                 Numeric
                                             </button>
                                         </div>
@@ -139,7 +139,7 @@ export const BulkActionBar: React.FC<BulkActionBarProps> = ({
                                 {/* Hide/Show */}
                                 <button
                                     onClick={handleToggleHide}
-                                    className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors text-sm font-medium text-gray-700 hover:text-ink"
+                                    className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-[var(--bg-surface)] transition-colors text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                                 >
                                     {anyHidden ? (
                                         <>
@@ -158,7 +158,7 @@ export const BulkActionBar: React.FC<BulkActionBarProps> = ({
                             {/* Clear Selection */}
                             <button
                                 onClick={onClearSelection}
-                                className="ml-2 p-2 rounded-lg hover:bg-gray-100 transition-colors text-gray-400 hover:text-gray-600"
+                                className="ml-2 p-2 rounded-lg hover:bg-[var(--bg-surface)] transition-colors text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                             >
                                 <X size={16} />
                             </button>

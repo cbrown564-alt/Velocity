@@ -32,15 +32,7 @@ interface DataTableProps {
   isGrid?: boolean;
 }
 
-const CHART_COLORS = [
-  'bg-indigo-500',
-  'bg-emerald-500',
-  'bg-amber-400',
-  'bg-rose-400',
-  'bg-sky-400',
-  'bg-violet-400',
-  'bg-teal-400'
-];
+
 
 interface TableRowNode {
   key: string;
@@ -586,7 +578,7 @@ export const DataTable: React.FC<DataTableProps> = ({
                   </th>
                 ))}
                 {(tableData.colKeys.length > 1) && (
-                  <th className="px-2 py-2 font-bold text-left w-24 text-[var(--text-primary)] bg-[#1A1F24]/80 align-bottom sticky top-0 z-10 border-b border-[var(--border-grid)] shadow-[inset_0_-2px_0_var(--border-grid)]">
+                  <th className="px-2 py-2 font-bold text-left w-24 text-[var(--text-primary)] bg-[var(--bg-active)] align-bottom sticky top-0 z-10 border-b border-[var(--border-grid)] shadow-[inset_0_-2px_0_var(--border-grid)]">
                     Total
                   </th>
                 )}
@@ -621,7 +613,7 @@ export const DataTable: React.FC<DataTableProps> = ({
       key="chart"
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="w-full h-[500px] bg-[var(--color-paper)] border border-[var(--gray-200)] rounded-lg shadow-sm p-6"
+      className="w-full h-[500px] bg-[var(--bg-active)] border border-[var(--gray-200)] rounded-lg shadow-sm p-6"
     >
       <AnalysisChart
         data={data}

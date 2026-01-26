@@ -113,7 +113,7 @@ export const RecodeModal: React.FC<RecodeModalProps> = ({ isOpen, onClose, varia
                     <p className="text-sm text-[var(--text-secondary)] font-body">Group values from <span className="font-semibold text-[var(--text-primary)]">{variable?.label}</span> into a new variable.</p>
                   </div>
                 </div>
-                <button onClick={onClose} className="text-[var(--gray-400)] hover:text-[var(--gray-600)] transition-colors">
+                <button onClick={onClose} className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
                   <X size={20} />
                 </button>
               </div>
@@ -166,7 +166,7 @@ export const RecodeModal: React.FC<RecodeModalProps> = ({ isOpen, onClose, varia
 
                     <div className="max-h-[300px] overflow-y-auto divide-y divide-[var(--border-color-muted)]">
                       {loading ? (
-                        <div className="p-8 text-center text-[var(--gray-400)]">Loading values...</div>
+                        <div className="p-8 text-center text-[var(--text-secondary)]">Loading values...</div>
                       ) : (
                         uniqueValues.map((val) => {
                           const labelObj = variable?.valueLabels?.find(vl => String(vl.value) === String(val));
@@ -248,7 +248,7 @@ export const RecodeModal: React.FC<RecodeModalProps> = ({ isOpen, onClose, varia
                               <td className="p-2 text-center">
                                 <button
                                   onClick={() => setRules(rules.filter((_, i) => i !== idx))}
-                                  className="text-[var(--gray-300)] hover:text-red-500 transition-colors p-1"
+                                  className="text-[var(--text-secondary)] hover:text-[var(--status-error-text)] transition-colors p-1"
                                 >
                                   <Trash2 size={16} />
                                 </button>

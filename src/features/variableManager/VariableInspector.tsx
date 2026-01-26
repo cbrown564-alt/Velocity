@@ -7,7 +7,7 @@
  */
 
 import React, { useMemo, useEffect, useState, useCallback } from 'react';
-import { Tag, Hash, BarChart2, Info, AlertTriangle, CheckCircle, Type, Calendar } from 'lucide-react';
+import { Tag, Hash, SlidersHorizontal, Info, AlertTriangle, CheckCircle, Type, Calendar } from 'lucide-react';
 import { useVelocityStore } from '../../store';
 import type { Variable } from '../../store/slices/dataSlice';
 import type { VariableStatsResult } from '../../services/analysisWorker';
@@ -25,7 +25,7 @@ const getTypeIcon = (type: string) => {
         case 'ordinal':
             return <CheckCircle size={14} />;
         case 'scale':
-            return <BarChart2 size={14} />;
+            return <SlidersHorizontal size={14} />;
         case 'numeric':
             return <Hash size={14} />;
         case 'text':
@@ -400,13 +400,7 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
 
                         <span className={styles.metaLabel}>Variable ID</span>
                         <span className={styles.metaValue}>
-                            <code style={{
-                                fontFamily: 'var(--font-mono)',
-                                fontSize: 'var(--text-xs)',
-                                backgroundColor: 'var(--gray-100)',
-                                padding: '2px 6px',
-                                borderRadius: '3px',
-                            }}>
+                            <code className={styles.variableIdCode}>
                                 {variable.id}
                             </code>
                         </span>
@@ -457,7 +451,7 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
                             {variable.missingValues.discrete && variable.missingValues.discrete.length > 0 && (
                                 <div className={styles.missingValuesList}>
                                     {variable.missingValues.discrete.map((val) => (
-                                        <span key={val} className={styles.missingValueChip} style={{ backgroundColor: 'var(--status-warning-text)', color: 'var(--bg-app)' }}>
+                                        <span key={val} className={styles.missingValueChip}>
                                             {val}
                                         </span>
                                     ))}

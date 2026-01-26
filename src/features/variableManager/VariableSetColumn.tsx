@@ -10,7 +10,7 @@
 import React, { useMemo, useEffect, useCallback, useRef } from 'react';
 import { useDraggable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
-import { Hash, Grid3X3, SquareCheck, ChevronRight, EyeOff, Type, Calendar, CheckCircle, BarChart2 } from 'lucide-react';
+import { Hash, Grid3X3, SquareCheck, ChevronRight, EyeOff, Type, Calendar, CheckCircle, SlidersHorizontal } from 'lucide-react';
 import { useVelocityStore } from '../../store';
 import type { VariableSet, Dataset } from '../../store/slices/dataSlice';
 import { Sparkline, MissingnessBadge } from './Sparkline';
@@ -38,7 +38,7 @@ const getTypeIcon = (type?: string) => {
         case 'ordinal':
             return <CheckCircle size={14} />;
         case 'scale':
-            return <BarChart2 size={14} />;
+            return <SlidersHorizontal size={14} />;
         case 'numeric':
             return <Hash size={14} />;
         case 'text':

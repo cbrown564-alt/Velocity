@@ -208,10 +208,10 @@ export const MissingnessBadge: React.FC<MissingnessBadgeProps> = ({
     const isModerate = missingPercent >= 5;  // Orange
 
     const color = isCritical
-        ? 'var(--color-warning)'
+        ? 'var(--status-error-text)'
         : isModerate
-            ? '#ea580c' // Orange-600
-            : 'var(--gray-400)';
+            ? 'var(--status-warning-text)'
+            : 'var(--text-secondary)';
 
     return (
         <div

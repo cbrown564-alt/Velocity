@@ -58,6 +58,10 @@
   --tag-ordinal-text: var(--theme-tag-ordinal-text);
   --tag-scale-bg: var(--theme-tag-scale-bg);
   --tag-scale-text: var(--theme-tag-scale-text);
+  --tag-text-bg: var(--theme-tag-text-bg);
+  --tag-text-text: var(--theme-tag-text-text);
+  --tag-date-bg: var(--theme-tag-date-bg);
+  --tag-date-text: var(--theme-tag-date-text);
 
   /* Data Visualization (New Semantic Layer) */
   --viz-fill-primary: var(--theme-viz-fill-primary);
@@ -186,6 +190,14 @@
   --theme-tag-ordinal-text: #52796F;
   --theme-tag-scale-bg: #F5F3EF;
   --theme-tag-scale-text: #57534E;
+  --theme-tag-text-bg: #F3E5F5;
+  /* Purple 50 */
+  --theme-tag-text-text: #7B1FA2;
+  /* Purple 700 */
+  --theme-tag-date-bg: #E3F2FD;
+  /* Blue 50 */
+  --theme-tag-date-text: #1976D2;
+  /* Blue 700 */
 
   /* Data Visualization - Light Mode */
   --theme-viz-fill-primary: #57534E;
@@ -249,29 +261,30 @@
   --font-mono: 'JetBrains Mono', monospace;
 
   /* Elevation via Lightness */
-  --theme-bg-app: #0D0D0D;
-  /* Deep Charcoal */
-  --theme-bg-panel: #141619;
-  /* Surface 1 */
-  --theme-bg-surface: #1C1F24;
+  --theme-bg-app: #141414;
+  /* Dark Grey (was #0D0D0D) */
+  --theme-bg-panel: #1A1D21;
+  /* Surface 1 (Slightly lighter) */
+  --theme-bg-surface: #22252A;
   /* Surface 2 */
   --theme-bg-active: #2A2D35;
   /* Hover states */
 
-  --theme-text-primary: #E8EAED;
-  /* Cool White */
-  --theme-text-secondary: #8B949E;
-  /* Muted */
+  --theme-text-primary: #E0E0E0;
+  /* Off-white to reduce halation (was #E8EAED) */
+  --theme-text-secondary: #B0B8C1;
+  /* Brighter Muted color (was #8B949E) */
   --theme-text-accent: #00D4FF;
   /* Electric Cyan */
   --theme-text-inverse: #0D0D0D;
 
-  --theme-border-color: #2A2D35;
-  /* Muted Blue-Gray */
+  --theme-border-color: #2A2A2A;
+  /* Darker border (was #2A2D35) */
   --theme-border-color-muted: #1E1E1E;
   --theme-border-color-active: #00D4FF;
-  --theme-border-grid: rgba(255, 255, 255, 0.08);
-  --theme-border-subtle: #2A2D35;
+  --theme-border-grid: #2A2A2A;
+  /* Solid dark grey for gridlines (was rgba(255, 255, 255, 0.08)) */
+  --theme-border-subtle: #252525;
 
   --theme-color-accent: #00D4FF;
   --theme-color-accent-hover: #00B8EB;
@@ -293,6 +306,10 @@
   --theme-tag-ordinal-text: #4FC3F7;
   --theme-tag-scale-bg: rgba(255, 255, 255, 0.1);
   --theme-tag-scale-text: #BDBDBD;
+  --theme-tag-text-bg: rgba(224, 64, 251, 0.1);
+  --theme-tag-text-text: #EA80FC;
+  --theme-tag-date-bg: rgba(64, 196, 255, 0.1);
+  --theme-tag-date-text: #80D8FF;
 
   /* Data Visualization */
   --theme-viz-fill-primary: rgba(0, 212, 255, 0.2);
@@ -302,7 +319,7 @@
   --theme-viz-fill-muted: #2A2D35;
   --theme-viz-stroke-main: #3C4043;
   --theme-viz-grid-line: #303134;
-  --theme-viz-text-value: #E8EAED;
+  --theme-viz-text-value: #E0E0E0;
   --theme-viz-text-axis: #9AA0A6;
   --theme-viz-stroke-bar: #00D4FF;
   /* Solid Cyan Stroke */
@@ -382,21 +399,44 @@ h3 {
 }
 
 /* Scrollbar styling */
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-app);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--theme-border-color);
+  border-radius: 5px;
+  border: 2px solid var(--bg-app);
+  /* Creates padding effect */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--theme-color-accent);
+}
+
 .custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
+  width: 10px;
+  height: 10px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
+  background: var(--bg-app);
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: var(--border-color);
-  border-radius: 3px;
+  background: var(--theme-border-color);
+  border-radius: 5px;
+  border: 2px solid var(--bg-app);
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: var(--border-color-active);
+  background: var(--theme-color-accent);
 }
 
 /* Focus states */

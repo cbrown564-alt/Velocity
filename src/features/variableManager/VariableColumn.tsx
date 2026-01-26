@@ -7,7 +7,7 @@
  */
 
 import React, { useMemo, useEffect, useCallback, useRef } from 'react';
-import { Hash, CheckCircle, ChevronRight, Type, Calendar, BarChart2 } from 'lucide-react';
+import { Hash, CheckCircle, ChevronRight, Type, Calendar, SlidersHorizontal } from 'lucide-react';
 import { useVelocityStore } from '../../store';
 import type { Variable, Dataset } from '../../store/slices/dataSlice';
 import { Sparkline, MissingnessBadge } from './Sparkline';
@@ -33,7 +33,7 @@ const getTypeIcon = (type: string) => {
         case 'ordinal':
             return <CheckCircle size={14} />;
         case 'scale':
-            return <BarChart2 size={14} />;
+            return <SlidersHorizontal size={14} />;
         case 'numeric':
             return <Hash size={14} />;
         case 'text':
@@ -70,15 +70,7 @@ const VariableItem: React.FC<VariableItemProps> = ({
                 <div style={{ minWidth: 0, flex: 1 }}>
                     <span className={styles.itemLabel}>{variable.label || variable.name}</span>
                     {variable.label && variable.label !== variable.name && (
-                        <div
-                            style={{
-                                fontSize: 'var(--text-xs)',
-                                color: isActive ? 'rgba(255,255,255,0.7)' : 'var(--gray-400)',
-                                whiteSpace: 'nowrap',
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis',
-                            }}
-                        >
+                        <div className={styles.itemSubtitle}>
                             {variable.name}
                         </div>
                     )}

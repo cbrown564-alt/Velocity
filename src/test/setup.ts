@@ -14,19 +14,35 @@ afterEach(() => {
 });
 
 // Mock Web Worker globally for Node environment
-class MockWorker {
-    onmessage: ((event: MessageEvent) => void) | null = null;
-    onerror: ((event: ErrorEvent) => void) | null = null;
+// Mock Web Worker globally for Node environment
+class MockWorker extends EventTarget implements Worker {
+    onmessage: ((this: Worker, event: MessageEvent) => any) | null = null;
+    onmessageerror: ((this: Worker, event: MessageEvent) => any) | null = null;
+    onerror: ((this: Worker, event: ErrorEvent) => any) | null = null;
 
-    constructor(public url: string) { }
+    constructor(public url: string | URL) {
+        super();
+    }
 
-    postMessage(data: unknown) {
+    postMessage(data: any, transfer: Transferable[]): void;
+    postMessage(data: any, options?: StructuredSerializeOptions): void;
+    postMessage(data: any): void {
         // In tests, we'll mock specific worker behavior
         console.log('[MockWorker] postMessage:', data);
     }
 
     terminate() {
         // Cleanup
+    }
+
+    // Helper to simulate receiving a message from the worker
+    // This calls the onmessage property AND dispatches the event
+    dispatchMessage(data: any) {
+        const event = new MessageEvent('message', { data });
+        if (this.onmessage) {
+            this.onmessage.call(this, event);
+        }
+        this.dispatchEvent(event);
     }
 }
 
