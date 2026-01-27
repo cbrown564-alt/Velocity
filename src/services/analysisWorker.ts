@@ -736,7 +736,7 @@ async function loadSAV(buffer: ArrayBuffer): Promise<{ variables: Variable[]; va
 
         variableSets.push({
           id: `heuristic_${structure}_${prefix}_${labelSetName}`,
-          name: `${prefix} (${gridCandidates.length} items)`,
+          name: prefix,
           variableIds,
           structure,
           type: firstVar.type,
@@ -748,7 +748,7 @@ async function loadSAV(buffer: ArrayBuffer): Promise<{ variables: Variable[]; va
 
         variableSets.push({
           id: `heuristic_${structure}_${prefix}_${labelSetName}`,
-          name: `${prefix} (${gridCandidates.length} items)`,
+          name: prefix,
           variableIds,
           structure,
           type: firstVar.type,

@@ -143,11 +143,7 @@
    2. Theme Definitions
    ============================================================================ */
 
-/* Theme: Soft Machine overrides */
-[data-theme="soft-machine"] .data-row-interactive,
-:root:not([data-theme]) .data-row-interactive {
-  border-bottom: 1px solid var(--border-subtle);
-}
+/* Soft Machine Theme overrides are now consolidated in section 11 */
 
 /* Mission Control overrides */
 [data-theme="mission-control"] {
@@ -350,9 +346,14 @@ h3 {
   position: relative;
 }
 
-/* Mission Control Theme: Bottom Scan Line */
-[data-theme="mission-control"] .data-row-interactive {
+/* Standard border for interactive rows */
+.data-row-interactive {
   border-bottom: 1px solid var(--border-subtle);
+}
+
+/* Mission Control: Scanline Sweep on Rows */
+[data-theme="mission-control"] .data-row-interactive {
+  overflow: hidden;
 }
 
 [data-theme="mission-control"] .data-row-interactive::after {
@@ -376,37 +377,18 @@ h3 {
   width: 100%;
 }
 
-/* Soft Machine Theme (Default): Left Bar Indicator */
-[data-theme="soft-machine"] .data-row-interactive,
-:root:not([data-theme]) .data-row-interactive {
-  border-bottom: 1px solid var(--border-subtle);
-}
-
-/* Mission Control: Scanline Sweep on Rows */
-[data-theme="mission-control"] .data-row-interactive {
+/* Soft Machine: Left Accent Bar */
+/* 
+   FIX: We must apply pseudo-elements to the TD rather than the TR.
+   Some browsers treat ::before/::after on a TR as a new table cell, 
+   causing column misalignment (shifting all columns to the right).
+*/
+.data-row-interactive td:first-child {
   position: relative;
-  overflow: hidden;
-  border-bottom: 1px solid var(--border-subtle);
 }
 
-/* Mission Control: Standard Interaction */
-[data-theme="mission-control"] .data-row-interactive {
-  border-bottom: 1px solid var(--border-subtle);
-}
-
-/* Mission Control Hover: Subtle highlight */
-[data-theme="mission-control"] .data-row-interactive:hover {
-  background: rgba(0, 212, 255, 0.03);
-}
-
-/* No filters on charts - Clean vector rendering */
-.chart-bar-rect {
-  filter: none;
-}
-
-/* Left accent bar (Soft Machine) */
-[data-theme="soft-machine"] .data-row-interactive::before,
-:root:not([data-theme]) .data-row-interactive::before {
+[data-theme="soft-machine"] .data-row-interactive td:first-child::before,
+:root:not([data-theme]) .data-row-interactive td:first-child::before {
   content: '';
   position: absolute;
   left: 0;
@@ -420,12 +402,16 @@ h3 {
   border-radius: 4px;
 }
 
-[data-theme="soft-machine"] .data-row-interactive:hover,
-:root:not([data-theme]) .data-row-interactive:hover {
+[data-theme="soft-machine"] .data-row-interactive:hover {
   background: var(--bg-panel);
 }
 
-[data-theme="soft-machine"] .data-row-interactive:hover::before,
-:root:not([data-theme]) .data-row-interactive:hover::before {
+[data-theme="soft-machine"] .data-row-interactive:hover td:first-child::before,
+:root:not([data-theme]) .data-row-interactive:hover td:first-child::before {
   transform: scaleY(1);
+}
+
+/* No filters on charts - Clean vector rendering */
+.chart-bar-rect {
+  filter: none;
 }

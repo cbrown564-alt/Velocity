@@ -17,7 +17,7 @@ export function generateSyntheticGridVariables(variableSet: VariableSet): Variab
     const scaleVariable: Variable = {
         id: `${id}_scale`,
         name: `${name}_scale`, // Suffix for unique naming
-        label: `${name} (Scale)`,
+        label: name,
         type: sharedScale.type === 'ordinal' || sharedScale.type === 'scale' ? sharedScale.type : 'nominal',
         // Restore value labels so table rows show text (e.g. "Not at all")
         // Sorting logic in DataTable will handle numeric sorting based on these values
@@ -35,7 +35,7 @@ export function generateSyntheticGridVariables(variableSet: VariableSet): Variab
     const itemsVariable: Variable = {
         id: `${id}_items`,
         name: `${id}_items`, // ID-based name to avoid collisions
-        label: `${name} (Items)`,
+        label: name,
         type: 'nominal', // Items are always nominal categories
         valueLabels: itemLabels.map((label, index) => ({
             value: index,

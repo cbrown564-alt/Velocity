@@ -53,14 +53,25 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             Object.entries(theme.materials).forEach(([key, material]) => {
                 // key is 'surface', 'panel', 'overlay'
                 root.style.setProperty(`--mat-${key}-bg`, material.background);
+
                 if (material.backdropFilter) {
                     root.style.setProperty(`--mat-${key}-filter`, material.backdropFilter);
                 } else {
                     root.style.removeProperty(`--mat-${key}-filter`);
                 }
+
                 if (material.border) {
                     root.style.setProperty(`--mat-${key}-border`, material.border);
+                } else {
+                    root.style.removeProperty(`--mat-${key}-border`);
                 }
+            });
+        } else {
+            // Clean up materials if not present in the new theme (prevent style bleeding)
+            ['surface', 'panel', 'overlay'].forEach(key => {
+                root.style.removeProperty(`--mat-${key}-bg`);
+                root.style.removeProperty(`--mat-${key}-filter`);
+                root.style.removeProperty(`--mat-${key}-border`);
             });
         }
 
