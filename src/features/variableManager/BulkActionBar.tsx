@@ -79,7 +79,7 @@ export const BulkActionBar: React.FC<BulkActionBarProps> = ({
                         transition={{ type: 'spring', damping: 25, stiffness: 300 }}
                         className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50"
                     >
-                        <div className="bg-[var(--bg-panel)] border border-[var(--border-color)] text-[var(--text-primary)] rounded-xl shadow-float px-4 py-3 flex items-center gap-4">
+                        <div className="bg-[var(--mat-panel-bg,var(--bg-panel))] backdrop-blur-md border border-[var(--border-color)] text-[var(--text-primary)] rounded-xl shadow-float px-4 py-3 flex items-center gap-4">
                             {/* Selection Count */}
                             <div className="flex items-center gap-2 pr-4 border-r border-[var(--border-color)]">
                                 <span className="bg-[var(--viz-palette-2)] text-white text-xs font-bold px-2 py-1 rounded-full">
@@ -110,7 +110,7 @@ export const BulkActionBar: React.FC<BulkActionBarProps> = ({
                                     </button>
 
                                     {showTypeMenu && (
-                                        <div className="absolute bottom-full left-0 mb-2 bg-[var(--bg-panel)] border border-[var(--border-color)] rounded-lg shadow-float py-1 min-w-32 z-50 overflow-hidden">
+                                        <div className="absolute bottom-full left-0 mb-2 bg-[var(--mat-overlay-bg,var(--bg-panel))] backdrop-blur-md border border-[var(--border-color)] rounded-lg shadow-float py-1 min-w-32 z-50 overflow-hidden">
                                             <button
                                                 onClick={() => handleSetType('nominal')}
                                                 className="w-full flex items-center gap-2 px-3 py-2 hover:bg-[var(--bg-surface)] text-left text-sm font-body text-[var(--text-secondary)] hover:text-[var(--text-primary)]"

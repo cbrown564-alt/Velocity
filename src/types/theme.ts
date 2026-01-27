@@ -50,12 +50,24 @@ export interface ThemeTypography {
     monoFont: string
 }
 
+export interface ThemeMaterial {
+    background: string
+    backdropFilter?: string
+    border?: string
+    noiseOpacity?: number
+}
+
 export interface Theme {
     id: string
     name: string
     description: string
     mode: 'dark' | 'light'
     colors: ThemeColors
+    materials?: {
+        surface: ThemeMaterial
+        panel: ThemeMaterial
+        overlay: ThemeMaterial
+    }
     radius: ThemeRadius
     shadow: 'none' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'glow'
     typography: ThemeTypography

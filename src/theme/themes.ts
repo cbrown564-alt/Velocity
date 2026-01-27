@@ -112,5 +112,78 @@ export const missionControl: Theme = {
     }
 };
 
-export const themes = [softMachine, missionControl];
+export const liquidGlass: Theme = {
+    id: 'liquid-glass',
+    name: 'Liquid Glass',
+    description: 'Translucent, biomorphic interface inspired by spatial computing',
+    mode: 'light',
+    colors: {
+        background: '#e0e5ec', // Neu/Glass base
+        foreground: '#1d1d1f', // Apple text gray/black
+        card: 'rgba(255, 255, 255, 0.3)', // Much lighter
+        cardForeground: '#1d1d1f',
+        popover: 'rgba(255, 255, 255, 0.4)', // Lighter overlay
+        popoverForeground: '#1d1d1f',
+        primary: '#007AFF', // System Blue
+        primaryForeground: '#FFFFFF',
+        secondary: 'rgba(255, 255, 255, 0.2)',
+        secondaryForeground: '#007AFF',
+        muted: 'rgba(0, 0, 0, 0.05)',
+        mutedForeground: '#86868b',
+        accent: '#007AFF',
+        accentForeground: '#FFFFFF',
+        destructive: '#FF3B30',
+        destructiveForeground: '#FFFFFF',
+        border: 'rgba(255, 255, 255, 0.3)', // Subtle borders
+        input: 'rgba(0, 0, 0, 0.1)',
+        ring: '#007AFF',
+
+        // Viz
+        vizPrimary: '#007AFF',
+        vizSecondary: '#5AC8FA', // Cyan
+        vizMuted: 'rgba(255, 255, 255, 0.5)',
+        vizStroke: 'rgba(0, 0, 0, 0.2)',
+        vizGrid: 'rgba(0, 0, 0, 0.05)',
+        vizTextValue: '#1d1d1f',
+        vizTextAxis: '#86868b',
+        vizPalette1: '#007AFF',
+        vizPalette2: '#34C759', // Green
+        vizPalette3: '#FF9500', // Orange
+        vizPalette4: '#FF2D55', // Pink
+        vizPalette5: '#AF52DE', // Purple
+        vizPalette6: '#5856D6', // Indigo
+        vizDiverging1: '#007AFF',
+        vizDiverging2: '#5AC8FA',
+        vizDiverging3: '#e0e5ec',
+        vizDiverging4: '#FF9500',
+        vizDiverging5: '#FF3B30',
+        vizDiverging6: '#FF2D55',
+    },
+    radius: '2xl',
+    shadow: 'xl', // We will augment this with CSS
+    materials: {
+        surface: {
+            background: 'rgba(240, 245, 255, 0.15)', // Barely there
+            backdropFilter: 'blur(30px) saturate(140%)',
+            border: 'rgba(255, 255, 255, 0.2)',
+        },
+        panel: {
+            background: 'rgba(255, 255, 255, 0.3)', // Matches card
+            backdropFilter: 'blur(25px) saturate(180%)',
+            border: 'rgba(255, 255, 255, 0.3)',
+        },
+        overlay: {
+            background: 'rgba(255, 255, 255, 0.4)', // Matches popover
+            backdropFilter: 'blur(40px) saturate(200%)',
+            border: 'rgba(255, 255, 255, 0.4)',
+        }
+    },
+    typography: {
+        fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
+        headingFont: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif",
+        monoFont: "'SF Mono', 'Menlo', 'Monaco', 'Courier New', monospace",
+    }
+};
+
+export const themes = [softMachine, missionControl, liquidGlass];
 

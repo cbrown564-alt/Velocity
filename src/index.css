@@ -156,6 +156,60 @@
   --shadow-drag: 0 8px 32px rgba(0, 0, 0, 0.8);
 }
 
+/* Liquid Glass behavior */
+[data-theme="liquid-glass"] body {
+  background-image:
+    radial-gradient(at 0% 0%, rgba(200, 220, 255, 0.4) 0, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(255, 200, 220, 0.4) 0, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(200, 255, 240, 0.4) 0, transparent 50%),
+    radial-gradient(at 0% 100%, rgba(240, 220, 255, 0.4) 0, transparent 50%);
+  background-attachment: fixed;
+  background-size: cover;
+}
+
+/* 
+   Material Surfaces
+   These consume the --mat variables injected by the theme context.
+   If --mat variables are missing (e.g. in other themes), they can fall back or stay simple.
+*/
+
+/* Base Panel Surface */
+.surface-panel,
+[data-theme="liquid-glass"] .bg-\[var\(--bg-panel\)\] {
+  background: var(--mat-panel-bg, var(--bg-panel));
+  backdrop-filter: var(--mat-panel-filter, none);
+  -webkit-backdrop-filter: var(--mat-panel-filter, none);
+  border: 1px solid var(--mat-panel-border, transparent);
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Overlay Surface (Popovers) */
+.surface-overlay,
+[data-theme="liquid-glass"] .bg-\[var\(--bg-surface\)\] {
+  background: var(--mat-overlay-bg, var(--bg-surface));
+  backdrop-filter: var(--mat-overlay-filter, none);
+  -webkit-backdrop-filter: var(--mat-overlay-filter, none);
+  border: 1px solid var(--mat-overlay-border, transparent);
+}
+
+/* Ensure headings are crisp on glass */
+[data-theme="liquid-glass"] h1,
+[data-theme="liquid-glass"] h2,
+[data-theme="liquid-glass"] h3 {
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+/* Glass App Background: Solid in normal themes, transparent in Liquid Glass */
+.bg-glass-app {
+  background-color: var(--bg-app);
+}
+
+[data-theme="liquid-glass"] .bg-glass-app {
+  background-color: transparent;
+}
+
 /* ============================================================================
    Base Styles
    ============================================================================ */

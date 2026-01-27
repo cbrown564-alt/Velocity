@@ -77,7 +77,7 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
                     enableVisualETL: true
                 };
                 return (
-                    <div className="w-full h-full min-h-[400px] p-4 bg-[var(--bg-panel)] rounded-lg shadow-sm border border-[var(--border-color)]">
+                    <div className="w-full h-full min-h-[400px] p-4 bg-[var(--mat-panel-bg,var(--bg-panel))] backdrop-blur-[var(--mat-panel-filter,0)] rounded-lg shadow-sm border border-[var(--border-color)]">
                         <AnalysisChart
                             data={chartData}
                             config={config}
@@ -93,7 +93,7 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
                 // Render legacy table - assuming it handles its own data fetching for now
                 // In future, we pass props
                 return (
-                    <div className="w-full h-full bg-[var(--bg-panel)] rounded-lg shadow-sm border border-[var(--border-color)] overflow-hidden">
+                    <div className="w-full h-full bg-[var(--mat-panel-bg,var(--bg-panel))] backdrop-blur-[var(--mat-panel-filter,0)] rounded-lg shadow-sm border border-[var(--border-color)] overflow-hidden">
                         <DataTable
                             data={chartData}
                             rowVariables={resolvedRowVars}
@@ -112,7 +112,7 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
     };
 
     return (
-        <div className={`flex-1 flex flex-col h-full bg-[var(--bg-app)] ${className}`}>
+        <div className={`flex-1 flex flex-col h-full bg-glass-app ${className}`}>
             {/* Slide Header (Title) could go here */}
             <div className="flex-1 overflow-hidden p-4">
                 {renderCellContent()}

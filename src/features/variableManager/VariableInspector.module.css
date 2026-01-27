@@ -14,7 +14,9 @@
   flex-direction: column;
   flex: 1;
   min-width: 280px;
-  background-color: var(--bg-panel);
+  background-color: var(--mat-panel-bg, var(--bg-panel));
+  backdrop-filter: var(--mat-panel-filter, none);
+  -webkit-backdrop-filter: var(--mat-panel-filter, none);
   border-left: 1px solid var(--border-color);
   overflow: hidden;
   animation: slideIn var(--transition-base);
@@ -43,7 +45,7 @@
 .header {
   padding: var(--space-6);
   border-bottom: 1px solid var(--border-color);
-  background-color: var(--bg-app);
+  background-color: transparent;
 }
 
 .variableName {
@@ -182,7 +184,9 @@
   letter-spacing: 0.05em;
   font-weight: 600;
   color: var(--text-secondary);
-  background-color: var(--bg-surface);
+  background-color: var(--mat-overlay-bg, var(--bg-surface));
+  backdrop-filter: var(--mat-overlay-filter, none);
+  -webkit-backdrop-filter: var(--mat-overlay-filter, none);
   border-bottom: 1px solid var(--border-subtle);
 }
 
@@ -320,7 +324,9 @@
   display: flex;
   gap: var(--space-4);
   padding: var(--space-3);
-  background-color: var(--bg-surface);
+  background-color: var(--mat-overlay-bg, var(--bg-surface));
+  backdrop-filter: var(--mat-overlay-filter, none);
+  -webkit-backdrop-filter: var(--mat-overlay-filter, none);
   border-radius: var(--border-radius-sm);
 }
 
@@ -390,7 +396,9 @@
   flex-direction: column;
   align-items: center;
   padding: var(--space-2);
-  background-color: var(--bg-surface);
+  background-color: var(--mat-overlay-bg, var(--bg-surface));
+  backdrop-filter: var(--mat-overlay-filter, none);
+  -webkit-backdrop-filter: var(--mat-overlay-filter, none);
   border-radius: var(--border-radius-sm);
 }
 

@@ -48,6 +48,22 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             root.style.setProperty(cssVarName, value);
         });
 
+        // 3. Inject Materials (if present)
+        if (theme.materials) {
+            Object.entries(theme.materials).forEach(([key, material]) => {
+                // key is 'surface', 'panel', 'overlay'
+                root.style.setProperty(`--mat-${key}-bg`, material.background);
+                if (material.backdropFilter) {
+                    root.style.setProperty(`--mat-${key}-filter`, material.backdropFilter);
+                } else {
+                    root.style.removeProperty(`--mat-${key}-filter`);
+                }
+                if (material.border) {
+                    root.style.setProperty(`--mat-${key}-border`, material.border);
+                }
+            });
+        }
+
         // 3. Inject Radius
         const radiusMap: Record<string, string> = {
             'none': '0',

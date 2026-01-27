@@ -14,7 +14,9 @@
   align-items: center;
   gap: var(--space-3);
   padding: var(--space-2) var(--space-4);
-  background-color: var(--bg-panel);
+  background-color: var(--mat-panel-bg, var(--bg-panel));
+  backdrop-filter: var(--mat-panel-filter, none);
+  -webkit-backdrop-filter: var(--mat-panel-filter, none);
   border-bottom: 1px solid var(--border-color);
 }
 
@@ -87,7 +89,9 @@
   min-width: 160px;
   margin-top: var(--space-1);
   padding: var(--space-2);
-  background-color: var(--bg-surface);
+  background-color: var(--mat-overlay-bg, var(--bg-surface));
+  backdrop-filter: var(--mat-overlay-filter, none);
+  -webkit-backdrop-filter: var(--mat-overlay-filter, none);
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius-md);
   box-shadow: var(--shadow-float);

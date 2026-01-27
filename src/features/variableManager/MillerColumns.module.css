@@ -35,7 +35,7 @@
   display: flex;
   flex: 1;
   overflow: hidden;
-  background-color: var(--bg-app);
+  background-color: transparent;
 }
 
 /* ============================================================================
@@ -46,7 +46,8 @@
   display: flex;
   flex-direction: column;
   border-right: 1px solid var(--border-color);
-  background-color: var(--bg-panel);
+  background-color: var(--mat-panel-bg, var(--bg-panel));
+  backdrop-filter: var(--mat-panel-filter, none);
   overflow: hidden;
   transition: width var(--transition-base), opacity var(--transition-base);
 }

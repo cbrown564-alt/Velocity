@@ -238,7 +238,7 @@ export const DataTable: React.FC<DataTableProps> = ({
         key="table"
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full overflow-hidden bg-[var(--bg-app)] border-none rounded-lg shadow-sm"
+        className="w-full overflow-hidden bg-transparent border-none rounded-lg shadow-sm"
       >
         <div className="p-4 border-b border-[var(--border-grid)] flex justify-between items-end">
           <div>
@@ -251,13 +251,13 @@ export const DataTable: React.FC<DataTableProps> = ({
 
         <div className="overflow-x-auto overflow-y-auto max-h-[60vh] custom-scrollbar">
           <table className="w-full text-sm text-left border-collapse">
-            <thead className="text-xs uppercase bg-[var(--bg-panel)] border-b border-[var(--border-grid)]">
+            <thead className="text-xs uppercase bg-[var(--bg-panel)] border-b border-[var(--border-grid)] data-[theme=liquid-glass]:bg-[var(--mat-panel-bg)] data-[theme=liquid-glass]:backdrop-blur-md">
               <tr className="font-body">
-                <th className="px-2 py-2 font-bold text-[var(--text-accent)] tracking-wider text-left w-64 align-bottom sticky top-0 bg-[var(--bg-panel)] z-10 box-border border-b border-[var(--border-grid)]">
+                <th className="px-2 py-2 font-bold text-[var(--text-accent)] tracking-wider text-left w-64 align-bottom sticky top-0 bg-[var(--bg-panel)] data-[theme=liquid-glass]:bg-[var(--mat-panel-bg)] data-[theme=liquid-glass]:backdrop-blur-md z-10 box-border border-b border-[var(--border-grid)]">
                   {rowVariables[0].label}
                 </th>
                 {tableData.colKeys.map((col, idx) => (
-                  <th key={col} className={`px-2 py-2 font-bold text-[var(--text-accent)] text-left w-28 align-bottom sticky top-0 bg-[var(--bg-panel)] z-10 border-b border-[var(--border-grid)] transition-colors ${hoveredCol === col ? 'bg-[var(--bg-active)]' : ''}`}>
+                  <th key={col} className={`px-2 py-2 font-bold text-[var(--text-accent)] text-left w-28 align-bottom sticky top-0 bg-[var(--bg-panel)] data-[theme=liquid-glass]:bg-[var(--mat-panel-bg)] data-[theme=liquid-glass]:backdrop-blur-md z-10 border-b border-[var(--border-grid)] transition-colors ${hoveredCol === col ? 'bg-[var(--bg-active)]' : ''}`}>
                     <div className="flex flex-col gap-1 items-start">
                       <span>{tableData.colLabels[col]}</span>
                     </div>

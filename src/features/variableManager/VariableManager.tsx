@@ -198,7 +198,7 @@ export const VariableManager: React.FC<VariableManagerProps> = ({ onClose }) => 
             collisionDetection={closestCenter}
             onDragEnd={handleDragEnd}
         >
-            <div className="h-full bg-paper flex flex-col">
+            <div className="h-full bg-glass-app flex flex-col">
                 {/* Header */}
                 <header className="flex items-center justify-between px-6 py-4 border-b border-[var(--border-color)] bg-[var(--bg-panel)]">
                     <div className="flex items-center gap-4">
