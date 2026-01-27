@@ -175,7 +175,7 @@ export const VerticalBarRenderer: React.FC<BaseChartRendererProps> = ({
                                 stroke={isSelected ? 'var(--text-accent)' : 'none'}
                                 strokeWidth={isSelected ? 2 : 0}
                                 rx={1}
-                                className="hover:opacity-90"
+                                className="hover:opacity-90 chart-bar-rect"
                                 style={{ transition: 'height 0.3s cubic-bezier(0.4, 0, 0.2, 1)' }}
                             />
 

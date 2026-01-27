@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
-export type Theme = 'research-desk' | 'mission-control';
+export type Theme = 'soft-machine' | 'mission-control';
 
 interface ThemeContextType {
     theme: Theme;
@@ -13,8 +13,10 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [theme, setThemeState] = useState<Theme>(() => {
         const saved = localStorage.getItem('velocity-theme');
-        if (saved === 'mission-control' || saved === 'research-desk') return saved;
-        return 'research-desk';
+        if (saved === 'mission-control') return saved;
+        if (saved === 'soft-machine') return saved;
+        // Legacy or default fallback
+        return 'soft-machine';
     });
 
     const setTheme = (newTheme: Theme) => {
@@ -23,7 +25,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     };
 
     const toggleTheme = () => {
-        setTheme(theme === 'research-desk' ? 'mission-control' : 'research-desk');
+        setTheme(theme === 'soft-machine' ? 'mission-control' : 'soft-machine');
     };
 
     useEffect(() => {

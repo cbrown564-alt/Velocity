@@ -115,7 +115,7 @@ export const DataTable: React.FC<DataTableProps> = ({
 
       return (
         <React.Fragment key={row.key}>
-          <tr className="group mission-control-row">
+          <tr className="group data-row-interactive">
             <td className="py-1 font-medium text-[var(--text-primary)] align-top" style={{ paddingLeft }}>
               <div className="flex items-center gap-2">
                 {hasChildren && (
@@ -137,7 +137,11 @@ export const DataTable: React.FC<DataTableProps> = ({
                 ? (Math.abs(cell.mean) === 0)
                 : (cell.percent === 0);
 
-              const textClass = isZero ? 'text-[var(--text-secondary)] opacity-50' : 'text-[var(--text-primary)]';
+              const isSignificant = cell.stats?.pValue !== undefined && cell.stats.pValue < 0.05;
+              const textClass = isZero
+                ? 'text-[var(--text-secondary)] opacity-50'
+                : (isSignificant ? 'stat-significant' : 'text-[var(--text-primary)]');
+
               const secondaryTextClass = isZero ? 'text-[var(--text-secondary)] opacity-40' : 'text-[var(--text-secondary)]';
 
               return (

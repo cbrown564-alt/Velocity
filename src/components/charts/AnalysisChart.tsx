@@ -29,6 +29,7 @@ import { InputModal } from '../overlays/InputModal';
 import { Variable } from '../../types';
 import { useProcessedAnalysisData } from '../../hooks/useProcessedAnalysisData';
 import styles from './AnalysisChart.module.css';
+import { ArrowLeftRight, RotateCcw } from 'lucide-react';
 
 interface AnalysisChartProps {
     data: AggregatedRow[];
@@ -395,35 +396,57 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
                     <ChartLegend items={legendItems} />
                 )}
 
-                {/* Label Toggle */}
-                <div className={styles.labelToggle} role="group" aria-label="Label mode">
-                    <button
-                        className={`${styles.toggleButton} ${labelMode === 'count' ? styles.active : ''}`}
-                        onClick={() => setLabelMode('count')}
-                        title="Show Count"
-                        aria-label="Show Count"
-                        aria-pressed={labelMode === 'count'}
-                    >
-                        #
-                    </button>
-                    <button
-                        className={`${styles.toggleButton} ${labelMode === 'percent' ? styles.active : ''}`}
-                        onClick={() => setLabelMode('percent')}
-                        title="Show Percent"
-                        aria-label="Show Percent"
-                        aria-pressed={labelMode === 'percent'}
-                    >
-                        %
-                    </button>
-                    <button
-                        className={`${styles.toggleButton} ${labelMode === 'none' ? styles.active : ''}`}
-                        onClick={() => setLabelMode('none')}
-                        title="Hide Labels"
-                        aria-label="Hide Labels"
-                        aria-pressed={labelMode === 'none'}
-                    >
-                        ∅
-                    </button>
+                <div className="flex gap-2">
+                    {/* Row/Col Actions */}
+                    <div className={styles.labelToggle} role="group" aria-label="Data Actions">
+                        <button
+                            className={styles.toggleButton}
+                            onClick={useVelocityStore.getState().swapAxes}
+                            title="Swap Rows and Columns"
+                            aria-label="Swap Rows and Columns"
+                        >
+                            <ArrowLeftRight size={14} />
+                        </button>
+                        <button
+                            className={styles.toggleButton}
+                            onClick={useVelocityStore.getState().clearConfiguration}
+                            title="Clear Analysis"
+                            aria-label="Clear Analysis"
+                        >
+                            <RotateCcw size={14} />
+                        </button>
+                    </div>
+
+                    {/* Label Toggle */}
+                    <div className={styles.labelToggle} role="group" aria-label="Label mode">
+                        <button
+                            className={`${styles.toggleButton} ${labelMode === 'count' ? styles.active : ''}`}
+                            onClick={() => setLabelMode('count')}
+                            title="Show Count"
+                            aria-label="Show Count"
+                            aria-pressed={labelMode === 'count'}
+                        >
+                            #
+                        </button>
+                        <button
+                            className={`${styles.toggleButton} ${labelMode === 'percent' ? styles.active : ''}`}
+                            onClick={() => setLabelMode('percent')}
+                            title="Show Percent"
+                            aria-label="Show Percent"
+                            aria-pressed={labelMode === 'percent'}
+                        >
+                            %
+                        </button>
+                        <button
+                            className={`${styles.toggleButton} ${labelMode === 'none' ? styles.active : ''}`}
+                            onClick={() => setLabelMode('none')}
+                            title="Hide Labels"
+                            aria-label="Hide Labels"
+                            aria-pressed={labelMode === 'none'}
+                        >
+                            ∅
+                        </button>
+                    </div>
                 </div>
             </div>
 

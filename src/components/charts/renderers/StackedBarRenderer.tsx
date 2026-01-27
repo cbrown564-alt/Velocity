@@ -201,7 +201,7 @@ export const StackedBarRenderer: React.FC<StackedBarRendererProps> = ({
                                 <text
                                     x={18}
                                     y={10}
-                                    className="text-[11px] fill-[var(--text-secondary)]"
+                                    className="text-[11px] fill-[var(--viz-text-axis)]"
                                     style={{ fontFamily: 'var(--font-body)' }}
                                 >
                                     {(label || '').length > 12 ? (label || '').substring(0, 10) + '...' : (label || '')}
@@ -298,7 +298,7 @@ export const StackedBarRenderer: React.FC<StackedBarRendererProps> = ({
                                         x={xScale(d[0])}
                                         width={Math.max(barWidth, 0)}
                                         height={yScale.bandwidth()}
-                                        className="transition-all duration-300 hover:opacity-80"
+                                        className="transition-all duration-300 hover:opacity-80 chart-bar-rect"
                                         stroke={isSelected ? 'var(--text-accent)' : 'var(--viz-stroke-bar)'}
                                         strokeWidth={isSelected ? 2 : 1}
                                     />
@@ -330,7 +330,7 @@ export const StackedBarRenderer: React.FC<StackedBarRendererProps> = ({
                             x={innerWidth + 8}
                             y={y + yScale.bandwidth() / 2}
                             dy=".35em"
-                            className="text-[10px] fill-[var(--text-secondary)]"
+                            className="text-[10px] fill-[var(--viz-text-axis)]"
                         >
                             n={total.toLocaleString()}
                         </text>

@@ -167,17 +167,32 @@ export function buildCrosstabQuery(options: CrosstabQueryOptions): string {
     // Build SELECT clause
     let rowSelectors = '';
 
-    if (measureVar && measureLabel) {
-        // If measuring a scale variable, the "row" is just the label of that variable
+    if (measureVar && measureLabel && rowVars.length === 0) {
+        // Metric-only rows (Standard "Summary Table")
+        // e.g. Mean Age
         rowSelectors = `'${escapeString(measureLabel)}' as rowKey_0`;
     } else {
         // Standard grouping by row variables
+        // e.g. Gender -> Mean Age
         rowSelectors = rowVars.map((r, i) => `"${escapeIdentifier(r)}" as rowKey_${i}`).join(', ');
     }
 
-    const colSelector = colVar
-        ? `"${escapeIdentifier(colVar)}" as colKey`
-        : `'Total' as colKey`;
+    // Determine Column Selector
+    let colSelector = '';
+
+    if (colVar) {
+        // Explicit Column Variable
+        colSelector = `"${escapeIdentifier(colVar)}" as colKey`;
+    } else if (measureVar && measureLabel && rowVars.length > 0) {
+        // Implicit Measure Column (Profile Table)
+        // We have row groups (Gender), but no col variable.
+        // We are measuring 'Age'. So 'Age' becomes the column header 
+        // to distinguish it from just "Total" count.
+        colSelector = `'${escapeString(measureLabel)}' as colKey`;
+    } else {
+        // Default catch-all
+        colSelector = `'Total' as colKey`;
+    }
 
     // Aggregate based on whether we have a measure variable (Scale) or just counting (Nominal)
     let statsExpr = '';

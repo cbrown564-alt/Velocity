@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Newsreader:wght@400;600&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=JetBrains+Mono&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -149,109 +150,113 @@
    2. Theme Definitions
    ============================================================================ */
 
-/* Theme: Research Desk (Default Light) */
-[data-theme="research-desk"],
+/* Theme: Soft Machine */
+[data-theme="soft-machine"],
 :root:not([data-theme]) {
-  --font-display: 'Newsreader', Georgia, serif;
-  --font-body: 'Atkinson Hyperlegible', -apple-system, BlinkMacSystemFont, sans-serif;
+  /* Typography: Fraunces + Plus Jakarta Sans */
+  --font-display: 'Fraunces', serif;
+  --font-body: 'Plus Jakarta Sans', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 
-  --theme-bg-app: #F5F3EF;
-  --theme-bg-panel: #FDFCFA;
-  --theme-bg-surface: #ffffff;
-  --theme-bg-active: #E8E5E0;
+  /* Backgrounds - Warm & Organic */
+  --theme-bg-app: #F0EDE8;
+  /* Warm light gray */
+  --theme-bg-panel: #FAF8F5;
+  /* Cream panel */
+  --theme-bg-surface: #FFFFFF;
+  /* White surface */
+  --theme-bg-active: #E6E2DC;
+  /* Darker warm gray */
 
-  --theme-text-primary: #1C1C1C;
-  --theme-text-secondary: #57534E;
-  --theme-text-accent: #E07A5F;
-  --theme-text-inverse: #FDFCFA;
+  /* Text - Deep Forest Green & Dusty Blue */
+  --theme-text-primary: #2D4A3E;
+  /* Deep forest green */
+  --theme-text-secondary: #6B8BA4;
+  /* Dusty blue (Info) */
+  --theme-text-accent: #E07860;
+  /* Coral */
+  --theme-text-inverse: #FFFFFF;
 
-  --theme-border-color: #E8E5E0;
-  --theme-border-color-muted: #F5F3EF;
-  --theme-border-color-active: #E07A5F;
-  --theme-border-grid: #E8E5E0;
-  --theme-border-subtle: rgba(28, 28, 28, 0.05);
+  /* Borders - Soft Warm Gray */
+  --theme-border-color: #E0DCD6;
+  --theme-border-color-muted: #F0EDE8;
+  --theme-border-color-active: #E07860;
+  --theme-border-grid: rgba(45, 74, 62, 0.05);
+  /* Very subtle green hint */
+  --theme-border-subtle: rgba(45, 74, 62, 0.03);
 
-  --theme-color-accent: #E07A5F;
-  --theme-color-accent-hover: #D66D51;
+  --theme-color-accent: #E07860;
+  /* Coral */
+  --theme-color-accent-hover: #CC6550;
 
-  /* Status */
-  --theme-status-error-bg: #FCECE9;
-  --theme-status-error-text: #C1666B;
-  --theme-status-warning-bg: #FEF3E6;
-  --theme-status-warning-text: #D97706;
+  /* Status - Muted/Natural */
+  --theme-status-error-bg: #FBEAEA;
+  --theme-status-error-text: #D32F2F;
+  --theme-status-warning-bg: #FFF8E1;
+  --theme-status-warning-text: #F57C00;
   --theme-status-success-bg: #E8F5E9;
   --theme-status-success-text: #2E7D32;
 
-  /* Data Identity (Saturated in Light Mode is fine) */
-  --theme-tag-nominal-bg: #FCECE9;
-  --theme-tag-nominal-text: #C1666B;
-  --theme-tag-ordinal-bg: #f3f6f5;
-  --theme-tag-ordinal-text: #52796F;
-  --theme-tag-scale-bg: #F5F3EF;
-  --theme-tag-scale-text: #57534E;
-  --theme-tag-text-bg: #F3E5F5;
-  /* Purple 50 */
-  --theme-tag-text-text: #7B1FA2;
-  /* Purple 700 */
-  --theme-tag-date-bg: #E3F2FD;
-  /* Blue 50 */
-  --theme-tag-date-text: #1976D2;
-  /* Blue 700 */
+  /* Data Identity - Earthy Pastels */
+  --theme-tag-nominal-bg: #EAE6DF;
+  --theme-tag-nominal-text: #2D4A3E;
+  --theme-tag-ordinal-bg: #F0EDE8;
+  --theme-tag-ordinal-text: #5C7065;
+  --theme-tag-scale-bg: #FFFFFF;
+  --theme-tag-scale-text: #2D4A3E;
+  --theme-tag-text-bg: #EAE6DF;
+  --theme-tag-text-text: #5C7065;
+  --theme-tag-date-bg: #F0EDE8;
+  --theme-tag-date-text: #2D4A3E;
 
-  /* Data Visualization - Light Mode */
-  --theme-viz-fill-primary: #57534E;
-  /* Dark Grey bars */
-  --theme-viz-fill-secondary: #E07A5F;
-  /* Accent */
-  --theme-viz-fill-muted: #E8E5E0;
-  /* Light Grey */
-  --theme-viz-stroke-main: #D6D3D1;
-  /* Axis */
-  --theme-viz-grid-line: #E8E5E0;
-  /* Grid */
-  --theme-viz-text-value: #FFFFFF;
-  /* Text on Primary Bar */
-  --theme-viz-text-axis: #78716C;
-  /* Match panel bg for gap effect */
+  /* Data Visualization - Soft Machine (Solid & Clean) */
+  --theme-viz-fill-primary: #2D4A3E;
+  /* Forest Green */
+  --theme-viz-fill-secondary: #E07860;
+  /* Coral */
+  --theme-viz-fill-muted: #E0DCD6;
+  /* Warm Gray */
+  --theme-viz-stroke-main: #B0A8A0;
+  --theme-viz-grid-line: rgba(45, 74, 62, 0.05);
+  --theme-viz-text-value: #2D4A3E;
+  --theme-viz-text-axis: #6B8BA4;
+  --theme-viz-stroke-bar: transparent;
+  /* Solid bars */
 
-  /* Categorical Palette */
-  --theme-viz-palette-1: #57534E;
-  /* Warm Grey */
-  --theme-viz-palette-2: #E07A5F;
-  /* Terra Cotta */
-  --theme-viz-palette-3: #D97706;
-  /* Ochre */
-  --theme-viz-palette-4: #52796F;
+  /* Categorical Palette - Retro/Organic */
+  --theme-viz-palette-1: #2D4A3E;
+  /* Forest */
+  --theme-viz-palette-2: #E07860;
+  /* Coral */
+  --theme-viz-palette-3: #E8B468;
+  /* Mustard/Sand */
+  --theme-viz-palette-4: #6B8BA4;
+  /* Dusty Blue */
+  --theme-viz-palette-5: #A45D5D;
+  /* Terracotta */
+  --theme-viz-palette-6: #5C7065;
   /* Sage */
-  --theme-viz-palette-5: #3D405B;
-  /* Navy */
-  --theme-viz-palette-6: #81B29A;
-  /* Dusty Green */
 
   /* Scale / Diverging */
-  --theme-viz-scale-negative: #3D405B;
-  /* Cold */
-  --theme-viz-scale-neutral: #D6D3D1;
-  /* Neutral */
-  --theme-viz-scale-positive: #E07A5F;
-  /* Hot */
+  --theme-viz-scale-negative: #6B8BA4;
+  --theme-viz-scale-neutral: #E0DCD6;
+  --theme-viz-scale-positive: #E07860;
 
-  /* Discrete Diverging Scale (5-point) */
-  --theme-viz-diverging-1: #3D405B;
-  /* Strong Negative */
-  --theme-viz-diverging-2: #898696;
-  /* Leaning Negative */
-  --theme-viz-diverging-3: #D6D3D1;
-  /* Neutral */
-  --theme-viz-diverging-4: #DCA698;
-  /* Leaning Positive */
-  --theme-viz-diverging-5: #E07A5F;
-  /* Strong Positive */
+  /* Discrete Diverging Scale */
+  --theme-viz-diverging-1: #2D4A3E;
+  --theme-viz-diverging-2: #6B8BA4;
+  --theme-viz-diverging-3: #E0DCD6;
+  --theme-viz-diverging-4: #E8B468;
+  --theme-viz-diverging-5: #E07860;
 
-  --shadow-inset: inset 0 1px 2px rgba(28, 28, 28, 0.05);
-  --shadow-float: 0 4px 12px rgba(28, 28, 28, 0.08);
-  --shadow-drag: 0 8px 24px rgba(28, 28, 28, 0.15);
+  --shadow-inset: inset 0 1px 2px rgba(45, 74, 62, 0.03);
+  --shadow-float: 0 4px 12px rgba(45, 74, 62, 0.08);
+  --shadow-drag: 0 8px 24px rgba(45, 74, 62, 0.15);
+
+  /* Radius overrides for Soft Machine */
+  --border-radius-sm: 6px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
 }
 
 /* Theme: Mission Control (Dark) */
@@ -445,6 +450,8 @@ h3 {
   outline-offset: 2px;
 }
 
+
+
 /* ============================================================================
    9. Animation Keyframes
    ============================================================================ */
@@ -480,7 +487,7 @@ h3 {
 }
 
 /* ============================================================================
-   10. Mission Control Specific Utilities
+   10. Typography Utilities
    ============================================================================ */
 
 /* Typography for data */
@@ -492,15 +499,21 @@ h3 {
   text-align: right;
 }
 
-/* Radar Sweep Interaction */
-.mission-control-row {
-  border-bottom: 1px solid var(--border-subtle);
-  background: transparent;
+/* ============================================================================
+   11. Interactive Data Rows
+   ============================================================================ */
+
+.data-row-interactive {
   transition: background 0.15s var(--ease-standard);
   position: relative;
 }
 
-.mission-control-row::after {
+/* Mission Control Theme: Bottom Scan Line */
+[data-theme="mission-control"] .data-row-interactive {
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+[data-theme="mission-control"] .data-row-interactive::after {
   content: '';
   position: absolute;
   left: 0;
@@ -513,10 +526,64 @@ h3 {
   z-index: 10;
 }
 
-.mission-control-row:hover {
+[data-theme="mission-control"] .data-row-interactive:hover {
   background: rgba(0, 212, 255, 0.03);
 }
 
-.mission-control-row:hover::after {
+[data-theme="mission-control"] .data-row-interactive:hover::after {
   width: 100%;
+}
+
+/* Soft Machine Theme (Default): Left Bar Indicator */
+[data-theme="soft-machine"] .data-row-interactive,
+:root:not([data-theme]) .data-row-interactive {
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+/* Mission Control: Scanline Sweep on Rows */
+[data-theme="mission-control"] .data-row-interactive {
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+/* Mission Control: Standard Interaction */
+[data-theme="mission-control"] .data-row-interactive {
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+/* Mission Control Hover: Subtle highlight */
+[data-theme="mission-control"] .data-row-interactive:hover {
+  background: rgba(0, 212, 255, 0.03);
+}
+
+/* No filters on charts - Clean vector rendering */
+.chart-bar-rect {
+  filter: none;
+}
+
+/* Left accent bar (Soft Machine) */
+[data-theme="soft-machine"] .data-row-interactive::before,
+:root:not([data-theme]) .data-row-interactive::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 4px;
+  bottom: 4px;
+  width: 3px;
+  background: var(--color-accent);
+  transform: scaleY(0);
+  transition: transform 0.2s var(--ease-standard);
+  transform-origin: center;
+  border-radius: 4px;
+}
+
+[data-theme="soft-machine"] .data-row-interactive:hover,
+:root:not([data-theme]) .data-row-interactive:hover {
+  background: var(--bg-panel);
+}
+
+[data-theme="soft-machine"] .data-row-interactive:hover::before,
+:root:not([data-theme]) .data-row-interactive:hover::before {
+  transform: scaleY(1);
 }

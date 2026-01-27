@@ -140,8 +140,24 @@ describe('queryBuilder', () => {
                 measureLabel: 'Age'
             });
 
-            expect(sql).toContain('AVG("Age") as mean');
             expect(sql).toContain('STDDEV("Age") as stdDev');
+        });
+
+        it('builds a profile grid query (Row Dim + Measure Metric in Col)', () => {
+            const sql = buildCrosstabQuery({
+                rowVars: ['Gender'],
+                measureVar: 'Age',
+                measureLabel: 'Mean Age'
+            });
+
+            // Row should be Gender
+            expect(sql).toContain('"Gender" as rowKey_0');
+            // Column should be the Measure Label
+            expect(sql).toContain("'Mean Age' as colKey");
+            // Group by Gender
+            expect(sql).toContain('GROUP BY "Gender"');
+            // Should contain aggregation
+            expect(sql).toContain('AVG("Age") as mean');
         });
     });
 

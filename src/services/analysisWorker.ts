@@ -1143,7 +1143,26 @@ async function runCrosstab(
   // Check if the last row variable is 'numeric'. If so, treat it as a measure variable.
   // This supports the "Nested Numeric Summary" requirement.
 
-  // If no measure variable is explicitly defined, check if we should auto-detect one from rows
+  // If no measure variable is explicitly defined, check if we can auto-detect one.
+
+  // A. Check Column Variable
+  // If the column variable is numeric, treat it as the measure (resulting in Row Dimensions x Measure Metric)
+  if (!modifiedOptions.measureVar && modifiedOptions.colVar) {
+    const colVarId = modifiedOptions.colVar;
+    const colVar = context.variables[colVarId];
+
+    if (colVar?.type === 'numeric' && !colVar.synthetic) {
+      console.log(`🦆 [Worker] treating column scale variable ${colVarId} as measure variable`);
+      modifiedOptions.measureVar = colVarId;
+      if (!modifiedOptions.measureLabel) {
+        modifiedOptions.measureLabel = colVar.label || colVar.name;
+      }
+      modifiedOptions.colVar = null;
+    }
+  }
+
+  // B. Check Row Variables
+  // If the last row variable is numeric, treat it as the measure (resulting in Measure Metric x Col Dimensions)
   if (!modifiedOptions.measureVar && modifiedOptions.rowVars.length > 0) {
     const lastRowVarId = modifiedOptions.rowVars[modifiedOptions.rowVars.length - 1];
     const lastRowVar = context.variables[lastRowVarId];
@@ -1152,6 +1171,9 @@ async function runCrosstab(
       console.log(`🦆 [Worker] treating nested scale variable ${lastRowVarId} as measure variable`);
       // Pop the last variable from rows and use it as measure
       modifiedOptions.measureVar = lastRowVarId;
+      if (!modifiedOptions.measureLabel) {
+        modifiedOptions.measureLabel = lastRowVar.label || lastRowVar.name;
+      }
       modifiedOptions.rowVars = modifiedOptions.rowVars.slice(0, -1);
     }
   }
@@ -1203,9 +1225,15 @@ async function runCrosstab(
           groupByCols = modifiedOptions.rowVars.map(r => `"${escapeIdentifier(r)}"`);
         }
 
-        const colGroup = modifiedOptions.colVar
-          ? `"${escapeIdentifier(modifiedOptions.colVar)}" as colKey`
-          : `'Total' as colKey`;
+        let colGroup = '';
+        if (modifiedOptions.colVar) {
+          colGroup = `"${escapeIdentifier(modifiedOptions.colVar)}" as colKey`;
+        } else if (modifiedOptions.measureLabel && modifiedOptions.rowVars.length > 0) {
+          // Match logic in queryBuilder: if explicit metric column, use label
+          colGroup = `'${escapeString(modifiedOptions.measureLabel)}' as colKey`;
+        } else {
+          colGroup = `'Total' as colKey`;
+        }
 
         // Add column to grouping if present
         if (modifiedOptions.colVar) {

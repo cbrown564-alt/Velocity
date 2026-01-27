@@ -85,4 +85,23 @@ describe('chartRecommender', () => {
 
         expect(result.default).toBe('horizontal-bar');
     });
+
+    it('should recommend grouped-box-plot for Numeric x Categorical (symmetric)', () => {
+        const numVar: Variable = { id: 'num', name: 'age', label: 'Age', type: 'numeric', valueLabels: [], missingValues: {} };
+        const catVar: Variable = { id: 'cat', name: 'gender', label: 'Gender', type: 'nominal', valueLabels: [], missingValues: {} };
+
+        // Row: Numeric, Col: Categorical
+        const res1 = recommendChart({
+            rowVars: [numVar],
+            colVar: catVar,
+        });
+        expect(res1.default).toBe('grouped-box-plot');
+
+        // Row: Categorical, Col: Numeric
+        const res2 = recommendChart({
+            rowVars: [catVar],
+            colVar: numVar,
+        });
+        expect(res2.default).toBe('grouped-box-plot');
+    });
 });

@@ -132,7 +132,7 @@ export const GroupedBarRenderer: React.FC<BaseChartRendererProps> = ({
                                 <text
                                     x={18}
                                     y={10}
-                                    style={{ fontSize: '11px', fill: 'var(--gray-600)', fontFamily: 'var(--font-body)' }}
+                                    style={{ fontSize: '11px', fill: 'var(--viz-text-axis)', fontFamily: 'var(--font-body)' }}
                                 >
                                     {(label || '').length > 12 ? (label || '').substring(0, 10) + '...' : (label || '')}
                                 </text>
@@ -179,7 +179,7 @@ export const GroupedBarRenderer: React.FC<BaseChartRendererProps> = ({
                         y={(y0Scale(r.label) || 0) + y0Scale.bandwidth() / 2}
                         dy=".35em"
                         textAnchor="end"
-                        style={{ fontSize: 'var(--font-size-xs)', fill: 'var(--viz-text-axis)', fontFamily: 'var(--font-body)' }}
+                        style={{ fontSize: 'var(--text-xs)', fill: 'var(--viz-text-axis)', fontFamily: 'var(--font-body)' }}
                     >
                         {r.label && r.label.length > 25 ? r.label.substring(0, 23) + '...' : r.label}
                     </text>

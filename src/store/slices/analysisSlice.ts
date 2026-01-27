@@ -49,6 +49,8 @@ export interface AnalysisSlice {
     removeFilter: (filterId: string) => void;
     clearFilters: () => void;
     fetchVariableStats: (variableId: string, variableType?: 'nominal' | 'ordinal' | 'scale' | 'numeric' | 'text' | 'date', binCount?: number) => Promise<void>;
+    swapAxes: () => void;
+    clearConfiguration: () => void;
     reset: () => void;
 }
 
@@ -300,6 +302,44 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
             worker.addEventListener('message', handler);
             worker.postMessage({ type: 'getVariableStats', column: variableId, variableType, binCount } as WorkerRequest);
         });
+    },
+
+    swapAxes: () => {
+        const { rowVars, colVar } = get().tableConfig;
+        let newRowVars = [...rowVars];
+        let newColVar = colVar;
+
+        if (colVar && rowVars.length > 0) {
+            // Swap first row with col
+            // Row 1 -> Col, Col -> Row 1
+            const firstRow = rowVars[0];
+            newColVar = firstRow;
+            newRowVars[0] = colVar;
+        } else if (colVar && rowVars.length === 0) {
+            // Col -> Row
+            newRowVars = [colVar];
+            newColVar = null;
+        } else if (!colVar && rowVars.length > 0) {
+            // Row -> Col
+            newColVar = rowVars[0];
+            newRowVars.shift();
+        }
+
+        set((state) => ({
+            tableConfig: {
+                ...state.tableConfig,
+                rowVars: newRowVars,
+                colVar: newColVar
+            }
+        }));
+        get().runAnalysis();
+    },
+
+    clearConfiguration: () => {
+        set((state) => ({
+            tableConfig: { rowVars: [], colVar: null },
+            queryResult: [],
+        }));
     },
 
     reset: () => {

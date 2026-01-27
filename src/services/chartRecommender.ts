@@ -39,7 +39,33 @@ export function recommendChart(context: RecommenderContext): ChartRecommendation
         };
     }
 
-    // 3. Cross-Tab (Variable x Variable)
+    // 3. Two Scales (Scatter)
+    if (primaryRowVar?.type === 'numeric' && colVar?.type === 'numeric') {
+        return {
+            default: 'scatter',
+            // Note: hexbin requires raw (x,y) pairs, currently backend aggregates
+            alternatives: ['hexbin'],
+            reason: 'Exploring relationship between two numeric variables.',
+        };
+    }
+
+    // 4. Numeric vs Categorical (Distributions)
+    // Symmetric: Numeric in Rows OR Numeric in Column
+    if (colVar) {
+        const hasNumeric = primaryRowVar?.type === 'numeric' || colVar.type === 'numeric';
+        const hasCategorical = (primaryRowVar?.type === 'nominal' || primaryRowVar?.type === 'ordinal' || primaryRowVar?.type === 'scale') ||
+            (colVar.type === 'nominal' || colVar.type === 'ordinal' || colVar.type === 'scale');
+
+        if (hasNumeric && hasCategorical) {
+            return {
+                default: 'grouped-box-plot',
+                alternatives: ['violin', 'ridgeline'],
+                reason: 'Comparing distributions across groups.',
+            };
+        }
+    }
+
+    // 5. Categorical vs Categorical (Cross-Tab)
     if (colVar) {
         // If we have a column variable, we are comparing groups
         if (primaryRowVar?.type === 'nominal' || primaryRowVar?.type === 'ordinal') {
@@ -57,26 +83,6 @@ export function recommendChart(context: RecommenderContext): ChartRecommendation
                 reason: 'Comparing scale groups across columns.',
             };
         }
-
-        // Numeric x Nominal (e.g. Age by Gender) -> Box Plot
-        if (primaryRowVar?.type === 'numeric' && (colVar?.type === 'nominal' || colVar?.type === 'ordinal')) {
-            return {
-                default: 'grouped-box-plot',
-                // Note: violin/ridgeline require grouped histogram data from backend (not yet implemented)
-                alternatives: ['violin', 'ridgeline'],
-                reason: 'Comparing distributions across groups.',
-            };
-        }
-    }
-
-    // 4. Two Scales (Scatter)
-    if (primaryRowVar?.type === 'numeric' && colVar?.type === 'numeric') {
-        return {
-            default: 'scatter',
-            // Note: hexbin requires raw (x,y) pairs, currently backend aggregates
-            alternatives: ['hexbin'],
-            reason: 'Exploring relationship between two numeric variables.',
-        };
     }
 
     // 5. Single Variable Analysis
