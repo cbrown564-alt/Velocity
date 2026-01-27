@@ -685,11 +685,19 @@ async function loadSAV(buffer: ArrayBuffer): Promise<{ variables: Variable[]; va
     const parsedVar = parsed.metadata.variables.find(pv => pv.name === v.id);
 
     // Group by content, not just name (handles identical scales with different label set names)
+    // For numeric variables without labels, we group them under a special hash
+    let hash = '';
+
     if (v.valueLabels && v.valueLabels.length > 0) {
       // Sort and join to create stable hash
       const sortedLabels = [...v.valueLabels].sort((a, b) => a.value - b.value);
-      const hash = sortedLabels.map(vl => `${vl.value}:${vl.label}`).join('|');
+      hash = sortedLabels.map(vl => `${vl.value}:${vl.label}`).join('|');
+    } else if (v.type === 'numeric' || v.type === 'scale') {
+      // Numeric/Scale variables without labels can be grouped
+      hash = '__numeric_unlabeled__';
+    }
 
+    if (hash) {
       if (!byValueLabelHash.has(hash)) {
         byValueLabelHash.set(hash, []);
       }
@@ -763,6 +771,11 @@ async function loadSAV(buffer: ArrayBuffer): Promise<{ variables: Variable[]; va
 
         // Generate a deterministic ID
         const setId = `heuristic_${structure}_${variableIds.join('_')}`;
+        const isNumericGrid = hash === '__numeric_unlabeled__';
+
+        const description = isNumericGrid
+          ? `Detected numeric grid (metric set)`
+          : `Detected grid with shared scale`;
 
         variableSets.push({
           id: setId,
@@ -770,15 +783,15 @@ async function loadSAV(buffer: ArrayBuffer): Promise<{ variables: Variable[]; va
           variableIds,
           structure,
           type: firstVar.type,
-          description: `Detected grid with shared scale`,
+          description,
           // NEW: Explicit grid metadata for refactored architecture
           gridMetadata: {
             sharedScale: {
-              valueLabels: firstVar.valueLabels.reduce((acc, vl) => {
+              valueLabels: isNumericGrid ? {} : firstVar.valueLabels.reduce((acc, vl) => {
                 acc[vl.value] = vl.label;
                 return acc;
               }, {} as Record<number, string>),
-              type: firstVar.type as 'ordinal' | 'nominal' | 'scale'
+              type: isNumericGrid ? 'numeric' : (firstVar.type as 'ordinal' | 'nominal' | 'scale')
             },
             itemLabels: gridCandidates.map(v => v.label || v.name),
             itemMapping: gridCandidates.reduce((acc, v, idx) => {

@@ -18,7 +18,7 @@ export function generateSyntheticGridVariables(variableSet: VariableSet): Variab
         id: `${id}_scale`,
         name: `${name}_scale`, // Suffix for unique naming
         label: name,
-        type: sharedScale.type === 'ordinal' || sharedScale.type === 'scale' ? sharedScale.type : 'nominal',
+        type: sharedScale.type === 'ordinal' || sharedScale.type === 'scale' || sharedScale.type === 'numeric' ? sharedScale.type : 'nominal',
         // Restore value labels so table rows show text (e.g. "Not at all")
         // Sorting logic in DataTable will handle numeric sorting based on these values
         valueLabels: Object.entries(sharedScale.valueLabels).map(([val, label]) => ({

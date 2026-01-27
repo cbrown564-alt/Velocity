@@ -142,7 +142,7 @@ export interface VariableSet {
     /** The shared scale used by all items in the grid (rows) */
     sharedScale: {
       valueLabels: Record<number, string>;
-      type: 'ordinal' | 'nominal' | 'scale';
+      type: 'ordinal' | 'nominal' | 'scale' | 'numeric';
     };
     /** Labels for the items being rated (columns) */
     itemLabels: string[];
