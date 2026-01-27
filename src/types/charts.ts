@@ -4,6 +4,7 @@ export type ChartType =
     | 'horizontal-bar'
     | 'vertical-bar'
     | 'grouped-bar'
+    | 'grouped-column'
     | 'stacked-bar'
     | 'diverging-bar'
     | 'donut'

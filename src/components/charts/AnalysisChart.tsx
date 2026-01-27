@@ -7,6 +7,7 @@ import {
     VerticalBarRenderer,
     StackedBarRenderer,
     GroupedBarRenderer,
+    GroupedColumnRenderer,
     DivergingBarRenderer,
     DonutRenderer,
     HistogramRenderer,
@@ -315,6 +316,8 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
                 return <StackedBarRenderer {...commonProps} type={activeChartType} />;
             case 'grouped-bar':
                 return <GroupedBarRenderer {...commonProps} />;
+            case 'grouped-column':
+                return <GroupedColumnRenderer {...commonProps} />;
             case 'diverging-bar':
                 return <DivergingBarRenderer {...commonProps} />;
             case 'donut':

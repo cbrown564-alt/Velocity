@@ -1,8 +1,9 @@
+
 import React, { useMemo, useCallback } from 'react';
 import * as d3 from 'd3-scale';
 import { max } from 'd3-array';
 import { BaseChartRendererProps } from '../../../types/charts';
-// getChartColor removed use palette
+
 const DEFAULT_PALETTE = [
     'var(--viz-palette-1)',
     'var(--viz-palette-2)',
@@ -13,11 +14,11 @@ const DEFAULT_PALETTE = [
 ];
 
 /**
- * Grouped Bar Chart Renderer
- * Displays multiple series side-by-side for each category.
+ * Grouped Column Chart Renderer
+ * Displays multiple series side-by-side for each category (vertical bars).
  * Useful for comparing exact values across categories.
  */
-export const GroupedBarRenderer: React.FC<BaseChartRendererProps> = ({
+export const GroupedColumnRenderer: React.FC<BaseChartRendererProps> = ({
     width,
     height,
     colors,
@@ -32,54 +33,51 @@ export const GroupedBarRenderer: React.FC<BaseChartRendererProps> = ({
     const columnKeys = columns.map(c => c.key);
     const columnLabels = columns.map(c => c.label);
 
-    // Dynamic margin based on label lengths
-    const maxRowLabelLength = Math.max(...rows.map(r => (r.label || '').length), 10);
-    const leftMargin = Math.min(Math.max(maxRowLabelLength * 6, 100), 200);
+    // Calculate dynamic dimensions
+    const margin = { top: 48, right: 20, bottom: 40, left: 60 };
 
-    // Calculate legend width
-    const legendItemWidth = 100;
-    const legendWidth = Math.min(columns.length * legendItemWidth, width - leftMargin - 40);
-
-    const margin = { top: 48, right: 40, bottom: 32, left: leftMargin };
-    const innerWidth = Math.max(width - margin.left - margin.right, 200);
-    const innerHeight = Math.max(height - margin.top - margin.bottom, 150);
-
-    // Calculate height based on number of rows and groups
-    // Each group needs enough space for N bars
+    // Determine if we need to expand width based on number of groups
     const groupPadding = 0.2;
-    const barPadding = 0.1; // Padding between bars in a group
+    const barPadding = 0.1;
+    const minBarWidth = 16; // Minimum width per bar
 
-    // Minimum height per bar within a group
-    const minBarHeight = 16;
-    const groupHeight = Math.max(
-        (minBarHeight * columns.length) / (1 - barPadding),
-        40
+    // Required width per group (category)
+    const minGroupWidth = Math.max(
+        (minBarWidth * columns.length) / (1 - barPadding),
+        80 // Minimum group width to fit labels reasonably
     );
 
-    // Total chart height
-    const actualHeight = groupHeight * rows.length;
+    // Total required chart width
+    const requiredWidth = minGroupWidth * rows.length + margin.left + margin.right;
+
+    // Use the larger of provided width or required width
+    // This allows horizontal scrolling if needed (assuming parent container allows it)
+    const actualWidth = Math.max(width, requiredWidth);
+
+    const innerWidth = actualWidth - margin.left - margin.right;
+    const innerHeight = Math.max(height - margin.top - margin.bottom, 150);
 
     // Scales
-    // Y0: The main row categories
-    const y0Scale = useMemo(() => {
+    // X0: The main row categories (Groups)
+    const x0Scale = useMemo(() => {
         return d3.scaleBand()
             .domain(rows.map(r => r.label))
-            .range([0, actualHeight])
+            .range([0, innerWidth])
             .padding(groupPadding);
-    }, [rows, actualHeight]);
+    }, [rows, innerWidth]);
 
-    // Y1: The sub-categories (columns) within each row
-    const y1Scale = useMemo(() => {
+    // X1: The sub-categories (columns) within each group
+    const x1Scale = useMemo(() => {
         return d3.scaleBand()
             .domain(columnKeys)
-            .range([0, y0Scale.bandwidth()])
+            .range([0, x0Scale.bandwidth()])
             .padding(barPadding);
-    }, [columnKeys, y0Scale]);
+    }, [columnKeys, x0Scale]);
 
     const isPercentMode = labelMode === 'percent';
 
-    // X: Validation scale
-    const xScale = useMemo(() => {
+    // Y: Values scale
+    const yScale = useMemo(() => {
         let maxVal = 1;
 
         if (isPercentMode) {
@@ -88,6 +86,7 @@ export const GroupedBarRenderer: React.FC<BaseChartRendererProps> = ({
                 return max(columnKeys, key => {
                     const cell = row.cells[key];
                     if (!cell) return 0;
+                    // Use pre-calculated percent from buildTree (it's 0-100)
                     return cell.percent / 100;
                 });
             }) || 1;
@@ -100,18 +99,21 @@ export const GroupedBarRenderer: React.FC<BaseChartRendererProps> = ({
 
         return d3.scaleLinear()
             .domain([0, maxVal * 1.1]) // Add 10% padding
-            .range([0, innerWidth]);
-    }, [rows, columnKeys, innerWidth, isPercentMode]);
+            .range([innerHeight, 0]); // Inverted for SVG Y coords
+    }, [rows, columnKeys, innerHeight, isPercentMode]);
 
-    const xTicks = xScale.ticks(5);
+    const yTicks = yScale.ticks(5);
 
-    // Handle right-click on a row group
-    const handleRowContextMenu = useCallback((row: any, event: React.MouseEvent) => {
+    // Legend items
+    const legendItemWidth = 100;
+    const legendWidth = Math.min(columns.length * legendItemWidth, actualWidth - margin.left - margin.right);
+
+    // Handle right-click on a group (row)
+    const handleGroupContextMenu = useCallback((row: any, event: React.MouseEvent) => {
         if (!interactive || !onContextMenu) return;
         event.preventDefault();
         event.stopPropagation();
 
-        // Build data point from row
         const firstColKey = columns[0]?.key || 'Total';
         const cell = row.cells[firstColKey];
         onContextMenu({
@@ -126,10 +128,10 @@ export const GroupedBarRenderer: React.FC<BaseChartRendererProps> = ({
     }, [interactive, onContextMenu, columns]);
 
     return (
-        <div style={{ width, height, overflowY: 'auto', overflowX: 'hidden' }}>
+        <div style={{ width, height, overflowX: 'auto', overflowY: 'hidden' }}>
             <svg
-                width={width}
-                height={Math.max(height, actualHeight + margin.top + margin.bottom)}
+                width={actualWidth}
+                height={height}
                 style={{ display: 'block', overflow: 'visible', fontFamily: 'var(--font-mono)' }}
             >
                 <g transform={`translate(${margin.left},${margin.top})`}>
@@ -158,28 +160,29 @@ export const GroupedBarRenderer: React.FC<BaseChartRendererProps> = ({
                         })}
                     </g>
 
-                    {/* Grid lines */}
-                    {xTicks.map(tick => (
+                    {/* Grid lines (Horizontal for Column chart) */}
+                    {yTicks.map(tick => (
                         <line
                             key={tick}
-                            x1={xScale(tick)}
-                            y1={0}
-                            x2={xScale(tick)}
-                            y2={actualHeight}
+                            x1={0}
+                            y1={yScale(tick)}
+                            x2={innerWidth}
+                            y2={yScale(tick)}
                             stroke="var(--viz-grid-line)"
                             strokeDasharray="2,2"
                         />
                     ))}
 
-                    {/* X-axis */}
-                    <g transform={`translate(0,${actualHeight})`}>
-                        <line x1={0} y1={0} x2={innerWidth} y2={0} stroke="var(--viz-stroke-main)" />
-                        {xTicks.map(tick => (
-                            <g key={tick} transform={`translate(${xScale(tick)},0)`}>
-                                <line y2={4} stroke="var(--viz-stroke-main)" />
+                    {/* Y-axis Labels and Ticks */}
+                    <g>
+                        <line x1={0} y1={0} x2={0} y2={innerHeight} stroke="var(--viz-stroke-main)" />
+                        {yTicks.map(tick => (
+                            <g key={tick} transform={`translate(0, ${yScale(tick)})`}>
+                                <line x2={-4} stroke="var(--viz-stroke-main)" />
                                 <text
-                                    y={18}
-                                    textAnchor="middle"
+                                    x={-8}
+                                    y={4}
+                                    textAnchor="end"
                                     style={{ fontSize: '10px', fill: 'var(--viz-text-axis)' }}
                                 >
                                     {isPercentMode
@@ -190,44 +193,60 @@ export const GroupedBarRenderer: React.FC<BaseChartRendererProps> = ({
                         ))}
                     </g>
 
-                    {/* Y Axis Labels */}
+                    {/* X Axis Labels */}
                     {rows.map((r) => (
-                        <text
+                        <g
                             key={r.label}
-                            x={-12}
-                            y={(y0Scale(r.label) || 0) + y0Scale.bandwidth() / 2}
-                            dy=".35em"
-                            textAnchor="end"
-                            style={{ fontSize: 'var(--text-xs)', fill: 'var(--viz-text-axis)', fontFamily: 'var(--font-body)' }}
+                            transform={`translate(${(x0Scale(r.label) || 0) + x0Scale.bandwidth() / 2}, ${innerHeight + 16})`}
                         >
-                            {r.label && r.label.length > 25 ? r.label.substring(0, 23) + '...' : r.label}
-                        </text>
+                            <text
+                                textAnchor="middle"
+                                style={{
+                                    fontSize: 'var(--text-xs)',
+                                    fill: 'var(--viz-text-axis)',
+                                    fontFamily: 'var(--font-body)'
+                                }}
+                            >
+                                {r.label && r.label.length > 15 ? r.label.substring(0, 12) + '...' : r.label}
+                            </text>
+                        </g>
                     ))}
 
-                    {/* Grouped Bars */}
+                    {/* Baseline (Bottom) */}
+                    <line
+                        x1={0}
+                        y1={innerHeight}
+                        x2={innerWidth}
+                        y2={innerHeight}
+                        stroke="var(--viz-stroke-main)"
+                    />
+
+                    {/* Grouped Columns */}
                     {rows.map((row) => {
-                        const groupY = y0Scale(row.label) || 0;
+                        const groupX = x0Scale(row.label) || 0;
 
                         return (
                             <g
                                 key={row.label}
-                                transform={`translate(0, ${groupY})`}
-                                onContextMenu={(e) => handleRowContextMenu(row, e)}
+                                transform={`translate(${groupX}, 0)`}
+                                onContextMenu={(e) => handleGroupContextMenu(row, e)}
                             >
                                 {columnKeys.map((colKey, i) => {
                                     const count = row.cells[colKey]?.count || 0;
                                     const percent = row.cells[colKey]?.percent || 0;
                                     const value = isPercentMode ? percent / 100 : count;
-                                    const barWidth = xScale(value);
-                                    const barY = y1Scale(colKey) || 0;
-                                    const barHeight = y1Scale.bandwidth();
+                                    const barHeight = Math.abs(yScale(value) - yScale(0));
+                                    const barY = yScale(value);
+                                    const barX = x1Scale(colKey) || 0;
+                                    const barWidth = x1Scale.bandwidth();
 
                                     const color = colors ? colors[i % colors.length] : DEFAULT_PALETTE[i % DEFAULT_PALETTE.length];
+
                                     return (
                                         <g key={colKey}>
                                             <rect
+                                                x={barX}
                                                 y={barY}
-                                                x={0}
                                                 width={barWidth}
                                                 height={barHeight}
                                                 fill={color}
@@ -237,13 +256,12 @@ export const GroupedBarRenderer: React.FC<BaseChartRendererProps> = ({
                                                     cursor: interactive ? 'pointer' : 'default',
                                                 }}
                                             />
-                                            {/* Value label if wide enough and not hidden */}
-                                            {labelMode !== 'none' && barWidth > 20 && (
+                                            {/* Value label if tall enough/wide enough and not hidden */}
+                                            {labelMode !== 'none' && barHeight > 14 && barWidth > 20 && (
                                                 <text
-                                                    x={barWidth - 4}
-                                                    y={barY + barHeight / 2}
-                                                    dy=".35em"
-                                                    textAnchor="end"
+                                                    x={barX + barWidth / 2}
+                                                    y={barY + 12}
+                                                    textAnchor="middle"
                                                     style={{
                                                         fontSize: '10px',
                                                         fontWeight: 500,
@@ -265,14 +283,6 @@ export const GroupedBarRenderer: React.FC<BaseChartRendererProps> = ({
                         );
                     })}
 
-                    {/* Baseline */}
-                    <line
-                        x1={0}
-                        y1={0}
-                        x2={0}
-                        y2={actualHeight}
-                        stroke="var(--viz-stroke-main)"
-                    />
                 </g>
             </svg>
         </div>

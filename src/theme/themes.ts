@@ -46,6 +46,17 @@ export const softMachine: Theme = {
         vizDiverging4: '#E8B468',
         vizDiverging5: '#E07860',
         vizDiverging6: '#D32F2F', // Defaulting 6 to destructive/red just in case
+        // 10-Point Diverging Scale (Orange -> Neutral -> Green)
+        vizScale1: '#E07860', // Most Negative (Dark Orange)
+        vizScale2: '#E8A86E',
+        vizScale3: '#E4B486',
+        vizScale4: '#E0C09E',
+        vizScale5: '#DBCBB6', // Muted Orange/Beige
+        vizScale6: '#719A8E', // Muted Green
+        vizScale7: '#547A6E',
+        vizScale8: '#476A5E',
+        vizScale9: '#3A5A4E',
+        vizScale10: '#2D4A3E', // Most Positive (Dark Green)
     },
     radius: 'lg',
     shadow: 'sm',
@@ -102,6 +113,17 @@ export const missionControl: Theme = {
         vizDiverging4: '#9A4E4E',
         vizDiverging5: '#FF5252',
         vizDiverging6: '#FF5252', // Fallback
+        // 10-Point Diverging Scale (Cyan -> Grey -> Red)
+        vizScale1: '#00D4FF', // Cyan
+        vizScale2: '#00BFE6',
+        vizScale3: '#2096BD',
+        vizScale4: '#406D94',
+        vizScale5: '#605870', // Greyish
+        vizScale6: '#805060',
+        vizScale7: '#9F4858',
+        vizScale8: '#BF4050',
+        vizScale9: '#DF3848',
+        vizScale10: '#FF5252', // Red
     },
     radius: 'sm',
     shadow: 'lg',
@@ -158,6 +180,17 @@ export const liquidGlass: Theme = {
         vizDiverging4: '#FF9500',
         vizDiverging5: '#FF3B30',
         vizDiverging6: '#FF2D55',
+        // 10-Point Diverging Scale (Blue -> Grey -> Red)
+        vizScale1: '#007AFF', // Blue
+        vizScale2: '#1C86FF',
+        vizScale3: '#3992FF',
+        vizScale4: '#559EFF',
+        vizScale5: '#8CB4E0', // Pale Blue
+        vizScale6: '#E0A09C', // Pale Red
+        vizScale7: '#FF7D75',
+        vizScale8: '#FF5E54',
+        vizScale9: '#FF3F33',
+        vizScale10: '#FF3B30', // Red
     },
     radius: '2xl',
     shadow: 'xl', // We will augment this with CSS

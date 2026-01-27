@@ -12,3 +12,4 @@ export * from './ViolinRenderer';
 export * from './RidgelineRenderer';
 export * from './HexbinRenderer';
 export * from './ScatterPlotRenderer';
+export * from './GroupedColumnRenderer';

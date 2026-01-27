@@ -463,6 +463,133 @@ function detectSequentialPattern(vars: VariableWithIndex[]): Variable[][] {
 
 
 /**
+ * Calculate Jaccard similarity coefficient for two sets of strings (words)
+ */
+function calculateWordSimilarity(str1: string, str2: string): number {
+  const words1 = new Set(str1.toLowerCase().split(/[\s\-_]+/));
+  const words2 = new Set(str2.toLowerCase().split(/[\s\-_]+/));
+
+  const intersection = new Set([...words1].filter(x => words2.has(x)));
+  const union = new Set([...words1, ...words2]);
+
+  if (union.size === 0) return 0;
+  return intersection.size / union.size;
+}
+
+/**
+ * Heuristic to check if two variables likely belong to the same grid based on labels
+ */
+function areLabelsRelated(label1: string, label2: string): boolean {
+  const l1 = label1.trim();
+  const l2 = label2.trim();
+
+  // 1. Check for common prefix (at least 3 chars)
+  // "SAS Fatigue", "SAS Lethargy" -> "SAS"
+  const commonPrefixParams = [3, 4, 5]; // try different lengths?
+  // Simple check: do they share the first word?
+  const words1 = l1.split(/[\s\-_]+/);
+  const words2 = l2.split(/[\s\-_]+/);
+
+  if (words1.length > 0 && words2.length > 0) {
+    if (words1[0].length >= 2 && words1[0].toLowerCase() === words2[0].toLowerCase()) {
+      return true;
+    }
+  }
+
+  // 2. Check overlap
+  return calculateWordSimilarity(l1, l2) > 0.3; // Threshold?
+}
+
+/**
+ * Numeric Grid Detection
+ * Stricter grouping for unlabeled numeric variables.
+ * Requires:
+ * 1. Proximity (Index gap <= 2)
+ * 2. Shared Naming/Label Pattern
+ * 3. Shared Data Scale (Min/Max/Cardinality)
+ */
+function detectNumericGrids(
+  vars: VariableWithIndex[],
+  rows: any[][],
+  metaVars: any[],
+  rowCount: number
+): Variable[][] {
+  if (vars.length < 3) return [];
+
+  // Sort by original file index
+  const sorted = [...vars].sort((a, b) => a.index - b.index);
+
+  const groups: Variable[][] = [];
+  let currentGroup: VariableWithIndex[] = [sorted[0]];
+
+  // Cache scale info to avoid re-scanning
+  const getScaleInfo = (vIndex: number, pIndex: number) => {
+    // Find the correct column index in the rows array
+    // parsed.metadata.variables[pIndex] corresponds to the variable
+    return detectImplicitScale(rows, pIndex, rowCount);
+  }
+
+  // Calculate init scale
+  let currentScale = getScaleInfo(sorted[0].index, sorted[0].index);
+
+  for (let i = 1; i < sorted.length; i++) {
+    const prev = sorted[i - 1];
+    const curr = sorted[i];
+
+    // 1. Proximity Check
+    const isNeighbor = (curr.index - prev.index <= 2);
+
+    // 2. Label Check
+    const labelsRelated = areLabelsRelated(curr.variable.label, prev.variable.label);
+
+    // 3. Scale Check (expensive, do last?)
+    // Note: detectImplicitScale is somewhat expensive (1000 row scan).
+    // We only check if we suspect a match (Neighbor + Label) OR if we really need to break strict.
+    // However, the user specifically asked for Scale matching.
+    const currScale = getScaleInfo(curr.index, curr.index);
+
+    // Check if scales match (Min/Max same, roughly same cardinality?)
+    // Relaxed check: Min and Max match exactly.
+    let scaleMatches = false;
+    if (currentScale.isScale && currScale.isScale) {
+      const min1 = currentScale.values[0];
+      const max1 = currentScale.values[currentScale.values.length - 1];
+      const min2 = currScale.values[0];
+      const max2 = currScale.values[currScale.values.length - 1];
+      scaleMatches = (min1 === min2 && max1 === max2);
+    } else if (!currentScale.isScale && !currScale.isScale) {
+      // Both not scales (continuous?). Grouping them might be risky unless labels are very strong.
+      // For now, assume if not scales, they are not a grid.
+      scaleMatches = false;
+    }
+
+    // Grouping Logic
+    // We require Neighbor AND (ScaleMatches OR (LabelsRelated AND ScaleSimilar))?
+    // User demand: "Shares identical inferred 10 point scale"
+    // So distinct scales should BREAK the group.
+
+    const shouldGroup = isNeighbor && scaleMatches && labelsRelated;
+
+    if (shouldGroup) {
+      currentGroup.push(curr);
+    } else {
+      if (currentGroup.length >= 3) {
+        groups.push(currentGroup.map(v => v.variable));
+      }
+      currentGroup = [curr];
+      currentScale = currScale;
+    }
+  }
+
+  // Check final group
+  if (currentGroup.length >= 3) {
+    groups.push(currentGroup.map(v => v.variable));
+  }
+
+  return groups;
+}
+
+/**
  * Infer which value represents "positive" in binary scales (e.g., Yes/No, True/False)
  */
 function inferPositiveValue(valueLabels: { value: number; label: string }[]): number {
@@ -478,6 +605,52 @@ function inferPositiveValue(valueLabels: { value: number; label: string }[]): nu
 
   // Fallback: assume higher value is positive
   return Math.max(...valueLabels.map(vl => vl.value));
+}
+
+/**
+ * Scan data to detect if a numeric variable is implicitly a scale (e.g. 1-10 integers)
+ */
+function detectImplicitScale(
+  rows: any[][],
+  colIndex: number,
+  rowCount: number
+): { isScale: boolean; values: number[] } {
+  // Heuristic thresholds
+  const MAX_SCALE_VALUE = 20; // Allow 0-10, 1-10, perhaps up to 20?
+  const MAX_CARDINALITY = 20;
+
+  const uniqueValues = new Set<number>();
+  let nonMissingCount = 0;
+
+  // Scan limit (first 1000 rows is usually enough for a heuristic)
+  const limit = Math.min(rowCount, 1000);
+
+  for (let i = 0; i < limit; i++) {
+    // Determine row value - handle both row-major and column-major if needed, 
+    // but parser usually returns row-major rows array
+    const row = rows[i];
+    if (!row) continue;
+
+    const val = row[colIndex];
+    if (typeof val !== 'number' || isNaN(val)) continue;
+
+    nonMissingCount++;
+
+    // Check validity for scale
+    if (!Number.isInteger(val)) return { isScale: false, values: [] }; // Decimals -> likely continuous
+    if (val < 0 || val > MAX_SCALE_VALUE) return { isScale: false, values: [] }; // Out of range -> likely code or continuous
+
+    uniqueValues.add(val);
+    if (uniqueValues.size > MAX_CARDINALITY) return { isScale: false, values: [] };
+  }
+
+  // Need at least some variance and data
+  if (nonMissingCount === 0 || uniqueValues.size < 2) return { isScale: false, values: [] };
+
+  return {
+    isScale: true,
+    values: Array.from(uniqueValues).sort((a, b) => a - b)
+  };
 }
 
 /**
@@ -713,8 +886,16 @@ async function loadSAV(buffer: ArrayBuffer): Promise<{ variables: Variable[]; va
   for (const [hash, varsInGroup] of byValueLabelHash.entries()) {
     if (varsInGroup.length < 3) continue; // Minimum threshold
 
-    // Try to detect sequential patterns (now returns multiple groups)
-    const gridCandidatesList = detectSequentialPattern(varsInGroup);
+    let gridCandidatesList: Variable[][] = [];
+
+    // Special handling for implicit numeric grids (unlabeled)
+    // We utilize a stricter detector that checks for Scale Consistency and Label Patterns
+    if (hash === '__numeric_unlabeled__') {
+      gridCandidatesList = detectNumericGrids(varsInGroup, parsed.rows, parsed.metadata.variables, parsed.rows.length);
+    } else {
+      // Standard detection for labeled variables (labels match exactly, so position/name is enough)
+      gridCandidatesList = detectSequentialPattern(varsInGroup);
+    }
 
     for (const gridCandidates of gridCandidatesList) {
       // Check if this should be a multi-response set (binary value labels)
@@ -767,11 +948,46 @@ async function loadSAV(buffer: ArrayBuffer): Promise<{ variables: Variable[]; va
           description: `Detected multi-response with shared Yes/No scale`
         });
       } else {
-        console.log(`📊 [Worker] Detected implicit grid "${prefix}" with ${gridCandidates.length} variables`);
+        // Normal Grid
+
+        // Refine Numeric Grids: Check if they are implicitly Scales (e.g. 1-10)
+        let isNumericGrid = hash === '__numeric_unlabeled__';
+        let syntheticLabels: Record<number, string> | undefined;
+        let detectedType = firstVar.type;
+
+        if (isNumericGrid) {
+          // Check the first variable's data
+          const firstVarId = gridCandidates[0].id;
+          const parsedVarIndex = parsed.metadata.variables.findIndex(pv => pv.name === firstVarId);
+
+          if (parsedVarIndex !== -1) {
+            const check = detectImplicitScale(parsed.rows, parsedVarIndex, parsed.rows.length);
+
+            if (check.isScale) {
+              console.log(`📊 [Worker] Upgrading numeric grid "${prefix}" to Scale (detected values: ${check.values.join(', ')})`);
+              isNumericGrid = false;
+              detectedType = 'scale';
+
+              // Create synthetic labels for the UI
+              syntheticLabels = {};
+              check.values.forEach(val => {
+                syntheticLabels![val] = String(val);
+              });
+
+              // Update the variables themselves to be 'scale'
+              gridCandidates.forEach(v => {
+                v.type = 'scale';
+                // Add the synthetic labels to the variable so they show up in charts
+                v.valueLabels = check.values.map(val => ({ value: val, label: String(val) }));
+              });
+            }
+          }
+        }
+
+        console.log(`📊 [Worker] Detected implicit grid "${prefix}" with ${gridCandidates.length} variables (${detectedType})`);
 
         // Generate a deterministic ID
         const setId = `heuristic_${structure}_${variableIds.join('_')}`;
-        const isNumericGrid = hash === '__numeric_unlabeled__';
 
         const description = isNumericGrid
           ? `Detected numeric grid (metric set)`
@@ -782,16 +998,16 @@ async function loadSAV(buffer: ArrayBuffer): Promise<{ variables: Variable[]; va
           name: prefix,
           variableIds,
           structure,
-          type: firstVar.type,
+          type: detectedType,
           description,
           // NEW: Explicit grid metadata for refactored architecture
           gridMetadata: {
             sharedScale: {
-              valueLabels: isNumericGrid ? {} : firstVar.valueLabels.reduce((acc, vl) => {
+              valueLabels: syntheticLabels || (isNumericGrid ? {} : firstVar.valueLabels.reduce((acc, vl) => {
                 acc[vl.value] = vl.label;
                 return acc;
-              }, {} as Record<number, string>),
-              type: isNumericGrid ? 'numeric' : (firstVar.type as 'ordinal' | 'nominal' | 'scale')
+              }, {} as Record<number, string>)),
+              type: isNumericGrid ? 'numeric' : (detectedType as 'ordinal' | 'nominal' | 'scale')
             },
             itemLabels: gridCandidates.map(v => v.label || v.name),
             itemMapping: gridCandidates.reduce((acc, v, idx) => {

@@ -40,6 +40,16 @@ export interface ThemeColors {
     vizDiverging4: string
     vizDiverging5: string
     vizDiverging6: string
+    vizScale1?: string
+    vizScale2?: string
+    vizScale3?: string
+    vizScale4?: string
+    vizScale5?: string
+    vizScale6?: string
+    vizScale7?: string
+    vizScale8?: string
+    vizScale9?: string
+    vizScale10?: string
 }
 
 export type ThemeRadius = 'none' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';

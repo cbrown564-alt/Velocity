@@ -252,203 +252,205 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
     const xTicks = xScale.ticks(5);
 
     return (
-        <svg
-            ref={svgRef}
-            width={width}
-            height={Math.max(height, actualHeight + margin.top + margin.bottom)}
-            style={{
-                overflow: 'visible',
-                fontFamily: 'var(--font-mono)', // Changed to Mono for data precision
-                cursor: dragState.isDragging ? 'grabbing' : 'default',
-            }}
-        // onContextMenu={handleBackgroundContextMenu} // Add back your handler
-        >
-            <g transform={`translate(${margin.left},${margin.top})`}>
-                {/* Grid lines */}
-                {xTicks.map(tick => (
-                    <line
-                        key={tick}
-                        x1={xScale(tick)}
-                        y1={0}
-                        x2={xScale(tick)}
-                        y2={actualHeight}
-                        stroke="var(--viz-grid-line)"
-                        strokeDasharray="2,2" // Dashed for subtlety in dark mode
-                    />
-                ))}
-
-                <g transform={`translate(0,${actualHeight})`}>
-                    <line x1={0} y1={0} x2={innerWidth} y2={0} stroke="var(--viz-stroke-main)" />
+        <div style={{ width, height, overflowY: 'auto', overflowX: 'hidden' }}>
+            <svg
+                ref={svgRef}
+                width={width}
+                height={Math.max(height, actualHeight + margin.top + margin.bottom)}
+                style={{
+                    display: 'block',
+                    overflow: 'visible',
+                    fontFamily: 'var(--font-mono)', // Changed to Mono for data precision
+                    cursor: dragState.isDragging ? 'grabbing' : 'default',
+                }}
+            >
+                <g transform={`translate(${margin.left},${margin.top})`}>
+                    {/* Grid lines */}
                     {xTicks.map(tick => (
-                        <g key={tick} transform={`translate(${xScale(tick)},0)`}>
-                            <line y2={4} stroke="var(--viz-stroke-main)" />
-                            <text
-                                y={16}
-                                textAnchor="middle"
-                                style={{
-                                    fontSize: '10px',
-                                    fontFamily: 'var(--font-mono)', // Mono
-                                    fill: 'var(--viz-text-axis)'
-                                }}
-                            >
-                                {tick}
-                            </text>
-                        </g>
+                        <line
+                            key={tick}
+                            x1={xScale(tick)}
+                            y1={0}
+                            x2={xScale(tick)}
+                            y2={actualHeight}
+                            stroke="var(--viz-grid-line)"
+                            strokeDasharray="2,2" // Dashed for subtlety in dark mode
+                        />
                     ))}
-                </g>
 
-                {/* Y Axis Labels */}
-                {chartData.map((d) => (
-                    <text
-                        key={d.label}
-                        x={-12}
-                        y={(yScale(d.label) || 0) + yScale.bandwidth() / 2}
-                        dy=".35em"
-                        textAnchor="end"
-                        className="text-xs"
-                        style={{
-                            fontFamily: 'var(--font-body)', // Keep labels as Sans for readability
-                            fontWeight: selectedKeys?.has(d.label) ? 600 : 400,
-                            fill: selectedKeys?.has(d.label) ? 'var(--text-primary)' : 'var(--viz-text-axis)',
-                        }}
-                    >
-                        {(d.label || '').length > 35 ? (d.label || '').substring(0, 32) + '...' : d.label}
-                    </text>
-                ))}
-
-                {/* Bars */}
-                {chartData.map((d, i) => {
-                    const barWidth = xScale(d.value);
-                    const y = yScale(d.label) || 0;
-                    const isSelected = selectedKeys?.has(d.label);
-                    const isDragging = dragState.isDragging && dragState.draggedItem?.label === d.label;
-                    const isDropTarget = dragState.isDragging && dragState.dropTarget === d.label;
-
-                    // Determine bar color based on state
-                    // Single color for all bars in this chart type
-
-                    return (
-                        <g
-                            key={d.label}
-                            onClick={(e) => {
-                                if (!dragState.isDragging) {
-                                    e.stopPropagation();
-                                    handleBarClick(d, e);
-                                }
-                            }}
-                            onContextMenu={(e) => handleBarContextMenu(d, e)}
-                            onMouseDown={(e) => {
-                                // Only start drag with left button
-                                if (e.button === 0 && onMerge) {
-                                    handleDragStart(d, e);
-                                }
-                            }}
-                            style={{
-                                opacity: isDragging ? 0.5 : 1,
-                                transform: isDropTarget ? 'scale(1.02)' : 'scale(1)',
-                                transformOrigin: 'left center',
-                            }}
-                        >
-                            {/* Drop target highlight */}
-                            {isDropTarget && (
-                                <rect
-                                    y={y - 4}
-                                    height={yScale.bandwidth() + 8}
-                                    width={innerWidth + 8}
-                                    x={-4}
-                                    fill="none"
-                                    stroke="var(--status-success-text)" // Mint Green
-                                    strokeWidth={2}
-                                    strokeDasharray="4,2"
-                                    rx={4}
-                                />
-                            )}
-
-                            {/* Actual bar: Transparent Fill + Solid Stroke */}
-                            <rect
-                                y={y}
-                                height={yScale.bandwidth()}
-                                width={barWidth}
-                                // Use palette colors if available, otherwise fall back to primary
-                                fill={isDropTarget ? 'var(--status-success-bg)' : (colors ? colors[0] : 'var(--viz-fill-secondary)')}
-                                fillOpacity={0.8}
-                                stroke={isSelected ? 'var(--text-accent)' : 'none'} // Remove stroke unless selected
-                                strokeWidth={isSelected ? 2 : 0}
-                                rx={1} // Slight rounding looks more "UI" than "Data"
-                                style={{
-                                    transition: dragState.isDragging ? 'none' : 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                                    cursor: onMerge ? 'grab' : (interactive ? 'pointer' : 'default'),
-                                }}
-                                className="hover:opacity-90"
-                            />
-
-                            {/* Label Logic */}
-                            {labelMode !== 'none' && (
+                    <g transform={`translate(0,${actualHeight})`}>
+                        <line x1={0} y1={0} x2={innerWidth} y2={0} stroke="var(--viz-stroke-main)" />
+                        {xTicks.map(tick => (
+                            <g key={tick} transform={`translate(${xScale(tick)},0)`}>
+                                <line y2={4} stroke="var(--viz-stroke-main)" />
                                 <text
-                                    x={barWidth + 8}
-                                    y={y + yScale.bandwidth() / 2}
-                                    dy=".35em"
+                                    y={16}
+                                    textAnchor="middle"
                                     style={{
-                                        fontSize: 'var(--text-xs)',
-                                        fontFamily: 'var(--font-mono)', // Data numbers = Mono
-                                        fill: isSelected ? 'var(--text-primary)' : 'var(--viz-text-value)',
+                                        fontSize: '10px',
+                                        fontFamily: 'var(--font-mono)', // Mono
+                                        fill: 'var(--viz-text-axis)'
                                     }}
                                 >
-                                    {labelMode === 'percent'
-                                        ? `${d.percent.toFixed(1)}%`
-                                        : d.value.toLocaleString()
-                                    }
+                                    {tick}
                                 </text>
-                            )}
-                        </g>
-                    );
-                })}
+                            </g>
+                        ))}
+                    </g>
 
-                {/* Drag ghost indicator */}
-                {dragState.isDragging && dragState.draggedItem && (
-                    <g
-                        style={{
-                            pointerEvents: 'none',
-                            opacity: 0.8,
-                        }}
-                    >
-                        <rect
-                            x={0}
-                            y={dragState.currentY - (svgRef.current?.getBoundingClientRect().top || 0) - margin.top - yScale.bandwidth() / 2}
-                            width={xScale(dragState.draggedItem.value)}
-                            height={yScale.bandwidth()}
-                            fill="var(--viz-fill-secondary)" // Solid Cyan for dragging
-                            rx={3}
-                            stroke="var(--border-color-active)"
-                            strokeWidth={2}
-                        />
+                    {/* Y Axis Labels */}
+                    {chartData.map((d) => (
                         <text
-                            x={xScale(dragState.draggedItem.value) / 2}
-                            y={dragState.currentY - (svgRef.current?.getBoundingClientRect().top || 0) - margin.top}
-                            textAnchor="middle"
+                            key={d.label}
+                            x={-12}
+                            y={(yScale(d.label) || 0) + yScale.bandwidth() / 2}
+                            dy=".35em"
+                            textAnchor="end"
+                            className="text-xs"
                             style={{
-                                fontSize: 'var(--font-size-xs)',
-                                fontWeight: 600,
-                                fill: 'white',
+                                fontFamily: 'var(--font-body)', // Keep labels as Sans for readability
+                                fontWeight: selectedKeys?.has(d.label) ? 600 : 400,
+                                fill: selectedKeys?.has(d.label) ? 'var(--text-primary)' : 'var(--viz-text-axis)',
                             }}
                         >
-                            {dragState.dropTarget ? 'Merge into this category' : 'Drag to another bar to merge'}
+                            {(d.label || '').length > 35 ? (d.label || '').substring(0, 32) + '...' : d.label}
                         </text>
-                    </g>
-                )}
+                    ))}
 
-                {/* Brush Loop Overlay */}
-                <g ref={brushRef} className="brush" />
+                    {/* Bars */}
+                    {chartData.map((d, i) => {
+                        const barWidth = xScale(d.value);
+                        const y = yScale(d.label) || 0;
+                        const isSelected = selectedKeys?.has(d.label);
+                        const isDragging = dragState.isDragging && dragState.draggedItem?.label === d.label;
+                        const isDropTarget = dragState.isDragging && dragState.dropTarget === d.label;
 
-                {/* Baseline */}
-                <line
-                    x1={0}
-                    y1={0}
-                    x2={0}
-                    y2={actualHeight}
-                    stroke="var(--viz-stroke-main)"
-                />
-            </g>
-        </svg>
+                        // Determine bar color based on state
+                        // Single color for all bars in this chart type
+
+                        return (
+                            <g
+                                key={d.label}
+                                onClick={(e) => {
+                                    if (!dragState.isDragging) {
+                                        e.stopPropagation();
+                                        handleBarClick(d, e);
+                                    }
+                                }}
+                                onContextMenu={(e) => handleBarContextMenu(d, e)}
+                                onMouseDown={(e) => {
+                                    // Only start drag with left button
+                                    if (e.button === 0 && onMerge) {
+                                        handleDragStart(d, e);
+                                    }
+                                }}
+                                style={{
+                                    opacity: isDragging ? 0.5 : 1,
+                                    transform: isDropTarget ? 'scale(1.02)' : 'scale(1)',
+                                    transformOrigin: 'left center',
+                                }}
+                            >
+                                {/* Drop target highlight */}
+                                {isDropTarget && (
+                                    <rect
+                                        y={y - 4}
+                                        height={yScale.bandwidth() + 8}
+                                        width={innerWidth + 8}
+                                        x={-4}
+                                        fill="none"
+                                        stroke="var(--status-success-text)" // Mint Green
+                                        strokeWidth={2}
+                                        strokeDasharray="4,2"
+                                        rx={4}
+                                    />
+                                )}
+
+                                {/* Actual bar: Transparent Fill + Solid Stroke */}
+                                <rect
+                                    y={y}
+                                    height={yScale.bandwidth()}
+                                    width={barWidth}
+                                    // Use palette colors if available, otherwise fall back to primary
+                                    fill={isDropTarget ? 'var(--status-success-bg)' : (colors ? colors[0] : 'var(--viz-fill-secondary)')}
+                                    fillOpacity={0.8}
+                                    stroke={isSelected ? 'var(--text-accent)' : 'none'} // Remove stroke unless selected
+                                    strokeWidth={isSelected ? 2 : 0}
+                                    rx={1} // Slight rounding looks more "UI" than "Data"
+                                    style={{
+                                        transition: dragState.isDragging ? 'none' : 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                        cursor: onMerge ? 'grab' : (interactive ? 'pointer' : 'default'),
+                                    }}
+                                    className="hover:opacity-90"
+                                />
+
+                                {/* Label Logic */}
+                                {labelMode !== 'none' && (
+                                    <text
+                                        x={barWidth + 8}
+                                        y={y + yScale.bandwidth() / 2}
+                                        dy=".35em"
+                                        style={{
+                                            fontSize: 'var(--text-xs)',
+                                            fontFamily: 'var(--font-mono)', // Data numbers = Mono
+                                            fill: isSelected ? 'var(--text-primary)' : 'var(--viz-text-value)',
+                                        }}
+                                    >
+                                        {labelMode === 'percent'
+                                            ? `${d.percent.toFixed(1)}%`
+                                            : d.value.toLocaleString()
+                                        }
+                                    </text>
+                                )}
+                            </g>
+                        );
+                    })}
+
+                    {/* Drag ghost indicator */}
+                    {dragState.isDragging && dragState.draggedItem && (
+                        <g
+                            style={{
+                                pointerEvents: 'none',
+                                opacity: 0.8,
+                            }}
+                        >
+                            <rect
+                                x={0}
+                                y={dragState.currentY - (svgRef.current?.getBoundingClientRect().top || 0) - margin.top - yScale.bandwidth() / 2}
+                                width={xScale(dragState.draggedItem.value)}
+                                height={yScale.bandwidth()}
+                                fill="var(--viz-fill-secondary)" // Solid Cyan for dragging
+                                rx={3}
+                                stroke="var(--border-color-active)"
+                                strokeWidth={2}
+                            />
+                            <text
+                                x={xScale(dragState.draggedItem.value) / 2}
+                                y={dragState.currentY - (svgRef.current?.getBoundingClientRect().top || 0) - margin.top}
+                                textAnchor="middle"
+                                style={{
+                                    fontSize: 'var(--font-size-xs)',
+                                    fontWeight: 600,
+                                    fill: 'white',
+                                }}
+                            >
+                                {dragState.dropTarget ? 'Merge into this category' : 'Drag to another bar to merge'}
+                            </text>
+                        </g>
+                    )}
+
+                    {/* Brush Loop Overlay */}
+                    <g ref={brushRef} className="brush" />
+
+                    {/* Baseline */}
+                    <line
+                        x1={0}
+                        y1={0}
+                        x2={0}
+                        y2={actualHeight}
+                        stroke="var(--viz-stroke-main)"
+                    />
+                </g>
+            </svg>
+        </div>
     );
 };

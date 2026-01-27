@@ -109,7 +109,7 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
     const rightMargin = 40 + avgColumnWidth;
 
     const gapForSpecial = 20; // Gap between diverging and special bars
-    const margin = { top: 60, right: rightMargin, bottom: 30, left: leftMargin };
+    const margin = { top: 75, right: rightMargin, bottom: 30, left: leftMargin };
 
     // We split inner width. 
     // Special bars need width roughly proportional?
@@ -178,10 +178,10 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
         // Is it scale?
         const scaleIdx = scaleColumns.findIndex(c => c.key === key);
         if (scaleIdx >= 0) {
-            // Map index (0..N-1) to 1..5 range
+            // Map index (0..N-1) to 1..10 range for smoother gradients
             const normalized = scaleIdx / (scaleColumns.length - 1); // 0 to 1
-            const step = Math.round(normalized * 4) + 1; // 1 to 5
-            return `var(--viz-diverging-${step})`;
+            const step = Math.round(normalized * 9) + 1; // 1 to 10
+            return `var(--viz-scale-${step})`;
         }
         return 'var(--bg-surface)';
     };
@@ -191,10 +191,10 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
         // Scale labels
         const labels = scaleColumns.map((c, i) => {
             const normalized = i / (scaleColumns.length - 1);
-            const step = Math.round(normalized * 4) + 1;
+            const step = Math.round(normalized * 9) + 1;
             return {
                 label: c.label,
-                color: `var(--viz-diverging-${step})`
+                color: `var(--viz-scale-${step})`
             };
         });
         // Special labels
@@ -240,291 +240,318 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
     }, [interactive, onContextMenu, rows]);
 
     return (
-        <svg
-            width={width}
-            height={Math.max(height, actualHeight + margin.top + margin.bottom)}
-            className="overflow-visible font-mono"
-        >
-            {/* Legend (Top Centered, Wrapped) */}
-            <foreignObject x={0} y={0} width={width} height={margin.top}>
-                <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 px-4 text-[10px] text-[var(--text-secondary)] h-full overflow-y-auto content-center">
-                    {legendItems.map((item) => (
-                        <div key={item.label} className="flex items-center gap-1">
-                            <span className="w-3 h-3 rounded-[2px]" style={{ backgroundColor: item.color }} />
-                            <span className="truncate max-w-[100px]" title={item.label}>{item.label}</span>
-                        </div>
-                    ))}
-                </div>
-            </foreignObject>
+        <div style={{ width, height, overflowY: 'auto', overflowX: 'hidden' }}>
+            <svg
+                width={width}
+                height={Math.max(height, actualHeight + margin.top + margin.bottom)}
+                className="overflow-visible font-mono"
+                style={{ display: 'block' }}
+            >
+                {/* Legend (Top Centered, Wrapped) */}
+                <foreignObject x={0} y={0} width={width} height={margin.top}>
+                    <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 px-4 text-[10px] text-[var(--text-secondary)] h-full overflow-y-auto content-center">
+                        {legendItems.map((item) => (
+                            <div key={item.label} className="flex items-center gap-1">
+                                <span className="w-3 h-3 rounded-[2px]" style={{ backgroundColor: item.color }} />
+                                <span className="truncate max-w-[100px]" title={item.label}>{item.label}</span>
+                            </div>
+                        ))}
+                    </div>
+                </foreignObject>
 
-            <g transform={`translate(${margin.left},${margin.top})`}>
+                <g transform={`translate(${margin.left},${margin.top})`}>
 
-                {/* Center Line for Diverging Part */}
-                <line
-                    x1={xDivScale(0)}
-                    y1={0}
-                    x2={xDivScale(0)}
-                    y2={actualHeight}
-                    // Center Line for Diverging Part
-                    stroke="var(--viz-grid-line)"
-                    strokeWidth={1}
-                    strokeDasharray="4,4"
-                />
-                <text
-                    x={xDivScale(0)}
-                    y={-5}
-                    textAnchor="middle"
-                    className="text-[10px] fill-[var(--viz-text-axis)]"
-                >
-                    0
-                </text>
-
-                {/* Separator Line for Special Part (if exists) */}
-                {maxSpecial > 0 && (
+                    {/* Center Line for Diverging Part */}
                     <line
-                        x1={divergingPixelWidth + pixelGap / 2}
+                        x1={xDivScale(0)}
                         y1={0}
-                        x2={divergingPixelWidth + pixelGap / 2}
+                        x2={xDivScale(0)}
+                        y2={actualHeight}
+                        // Center Line for Diverging Part
+                        stroke="var(--viz-grid-line)"
+                        strokeWidth={1}
+                        strokeDasharray="4,4"
+                    />
+                    {/* Axis Labels: Negative, Neutral, Positive */}
+                    <g transform="translate(0, -15)">
+                        {/* Neutral Label */}
+                        <text
+                            x={xDivScale(0)}
+                            y={0}
+                            textAnchor="middle"
+                            className="text-[10px] font-bold uppercase tracking-widest fill-[var(--text-secondary)] font-sans"
+                        >
+                            neutral
+                        </text>
+
+                        {/* Negative Label */}
+                        <text
+                            x={xDivScale(-maxDiverging * 0.55)}
+                            y={2}
+                            textAnchor="middle"
+                            className="text-[9px] uppercase tracking-widest fill-[var(--text-tertiary)] opacity-70 font-sans"
+                        >
+                            ← negative
+                        </text>
+
+                        {/* Positive Label */}
+                        <text
+                            x={xDivScale(maxDiverging * 0.55)}
+                            y={2}
+                            textAnchor="middle"
+                            className="text-[9px] uppercase tracking-widest fill-[var(--text-tertiary)] opacity-70 font-sans"
+                        >
+                            positive →
+                        </text>
+                    </g>
+
+                    {/* Separator Line for Special Part (if exists) */}
+                    {maxSpecial > 0 && (
+                        <line
+                            x1={divergingPixelWidth + pixelGap / 2}
+                            y1={0}
+                            x2={divergingPixelWidth + pixelGap / 2}
+                            y2={actualHeight}
+                            stroke="var(--viz-grid-line)"
+                            strokeWidth={1}
+                        />
+                    )}
+
+                    {/* Separator Line for Average Column */}
+                    <line
+                        x1={divergingPixelWidth + (maxSpecial > 0 ? pixelGap + xSpecScale.range()[1] : 0) + 12}
+                        y1={0}
+                        x2={divergingPixelWidth + (maxSpecial > 0 ? pixelGap + xSpecScale.range()[1] : 0) + 12}
                         y2={actualHeight}
                         stroke="var(--viz-grid-line)"
                         strokeWidth={1}
                     />
-                )}
 
-                {/* Separator Line for Average Column */}
-                <line
-                    x1={divergingPixelWidth + (maxSpecial > 0 ? pixelGap + xSpecScale.range()[1] : 0) + 12}
-                    y1={0}
-                    x2={divergingPixelWidth + (maxSpecial > 0 ? pixelGap + xSpecScale.range()[1] : 0) + 12}
-                    y2={actualHeight}
-                    stroke="var(--viz-grid-line)"
-                    strokeWidth={1}
-                />
+                    {/* Header for Average Column */}
+                    <text
+                        x={divergingPixelWidth + (maxSpecial > 0 ? pixelGap + xSpecScale.range()[1] : 0) + 20}
+                        y={-15}
+                        textAnchor="start"
+                        className="text-[10px] uppercase tracking-widest font-bold fill-[var(--text-secondary)] font-sans"
+                    >
+                        avg
+                    </text>
 
-                {/* Header for Average Column */}
-                <text
-                    x={divergingPixelWidth + (maxSpecial > 0 ? pixelGap + xSpecScale.range()[1] : 0) + 20}
-                    y={-5}
-                    textAnchor="start"
-                    className="text-[10px] font-medium fill-[var(--text-secondary)]"
-                >
-                    Avg
-                </text>
+                    {rows.map(row => {
+                        const y = yScale(row.label) || 0;
+                        const h = yScale.bandwidth();
+                        const neutralVal = neutral ? (row.cells[neutral]?.count || 0) : 0;
+                        const isSelected = selectedKeys?.has(row.label);
 
-                {rows.map(row => {
-                    const y = yScale(row.label) || 0;
-                    const h = yScale.bandwidth();
-                    const neutralVal = neutral ? (row.cells[neutral]?.count || 0) : 0;
-                    const isSelected = selectedKeys?.has(row.label);
+                        let currentLeft = -(neutralVal / 2);
+                        let currentRight = (neutralVal / 2);
 
-                    let currentLeft = -(neutralVal / 2);
-                    let currentRight = (neutralVal / 2);
+                        // Special Stack Start
+                        let currentSpecial = 0;
 
-                    // Special Stack Start
-                    let currentSpecial = 0;
+                        const avgValue = (row as any).average;
 
-                    const avgValue = (row as any).average;
-
-                    return (
-                        <g
-                            key={row.label}
-                            onClick={(e) => handleRowClick(row.label, e)}
-                            onContextMenu={(e) => handleRowContextMenu(row.label, e)}
-                            style={{ cursor: interactive ? 'pointer' : 'default' }}
-                        >
-                            {/* Selection highlight */}
-                            {isSelected && (
-                                <rect
-                                    x={0}
-                                    y={y - 2}
-                                    width={innerWidth + avgColumnWidth}
-                                    height={h + 4}
-                                    fill="var(--bg-active)"
-                                    rx={3}
-                                />
-                            )}
-
-                            {/* Y Axis Label */}
-                            <text
-                                x={-10}
-                                y={y + h / 2}
-                                dy=".35em"
-                                textAnchor="end"
-                                className="text-xs font-sans" // Keep rows sans for readability? HorizontalBar used Sans for Y axis labels.
-                                style={{
-                                    fill: isSelected ? 'var(--text-primary)' : 'var(--text-secondary)',
-                                    fontWeight: isSelected ? 600 : 400,
-                                }}
+                        return (
+                            <g
+                                key={row.label}
+                                onClick={(e) => handleRowClick(row.label, e)}
+                                onContextMenu={(e) => handleRowContextMenu(row.label, e)}
+                                style={{ cursor: interactive ? 'pointer' : 'default' }}
                             >
-                                {(row.label || '').length > 25 ? (row.label || '').substring(0, 23) + '...' : (row.label || '')}
-                            </text>
-
-                            {/* DIVERGING: Neutral Bar */}
-                            {hasNeutral && neutralVal > 0 && (
-                                <g>
+                                {/* Selection highlight */}
+                                {isSelected && (
                                     <rect
-                                        x={xDivScale(-neutralVal / 2)}
-                                        y={y}
-                                        width={xDivScale(neutralVal / 2) - xDivScale(-neutralVal / 2)}
-                                        height={h}
-                                        fill={getColumnColor(neutral)}
+                                        x={0}
+                                        y={y - 2}
+                                        width={innerWidth + avgColumnWidth}
+                                        height={h + 4}
+                                        fill="var(--bg-active)"
+                                        rx={3}
                                     />
-                                    {labelMode !== 'none' && (xDivScale(neutralVal / 2) - xDivScale(-neutralVal / 2)) > 24 && (
-                                        <text
-                                            x={xDivScale(0)}
-                                            y={y + h / 2}
-                                            dy=".35em"
-                                            textAnchor="middle"
-                                            className="text-[10px] font-medium fill-[var(--text-primary)] pointer-events-none font-mono"
-                                        >
-                                            {labelMode === 'percent'
-                                                ? `${Math.round(row.cells[neutral]?.percent || 0)}%`
-                                                : neutralVal.toLocaleString()}
-                                        </text>
-                                    )}
-                                </g>
-                            )}
+                                )}
 
-                            {/* DIVERGING: Left Bars (Negative) */}
-                            {left.slice().reverse().map((key) => {
-                                const val = row.cells[key]?.count || 0;
-                                if (val === 0) return null;
+                                {/* Y Axis Label */}
+                                <text
+                                    x={-10}
+                                    y={y + h / 2}
+                                    dy=".35em"
+                                    textAnchor="end"
+                                    className="text-xs font-sans" // Keep rows sans for readability? HorizontalBar used Sans for Y axis labels.
+                                    style={{
+                                        fill: isSelected ? 'var(--text-primary)' : 'var(--text-secondary)',
+                                        fontWeight: isSelected ? 600 : 400,
+                                    }}
+                                >
+                                    {(row.label || '').length > 25 ? (row.label || '').substring(0, 23) + '...' : (row.label || '')}
+                                </text>
 
-                                const start = currentLeft;
-                                const end = currentLeft - val;
-                                currentLeft -= val;
-
-                                const xStart = xDivScale(start);
-                                const xEnd = xDivScale(end);
-                                const bandwidth = xStart - xEnd;
-
-                                return (
-                                    <g key={key}>
+                                {/* DIVERGING: Neutral Bar */}
+                                {hasNeutral && neutralVal > 0 && (
+                                    <g>
                                         <rect
-                                            x={xEnd}
+                                            x={xDivScale(-neutralVal / 2)}
                                             y={y}
-                                            width={Math.max(bandwidth, 0)}
+                                            width={xDivScale(neutralVal / 2) - xDivScale(-neutralVal / 2)}
                                             height={h}
-                                            fill={getColumnColor(key)}
-                                            className="transition-opacity hover:opacity-80"
-                                        >
-                                            <title>{`${scaleColumns.find(c => c.key === key)?.label || ''}: ${val}`}</title>
-                                        </rect>
-                                        {labelMode !== 'none' && bandwidth > 24 && (
-                                            <text
-                                                x={xEnd + bandwidth / 2}
-                                                y={y + h / 2}
-                                                dy=".35em"
-                                                textAnchor="middle"
-                                                className="text-[10px] font-medium fill-[var(--text-inverse)] pointer-events-none font-mono"
-                                                style={{ textShadow: 'none' }}
-                                            >
-                                                {labelMode === 'percent'
-                                                    ? `${Math.round(row.cells[key]?.percent || 0)}%`
-                                                    : val.toLocaleString()}
-                                            </text>
-                                        )
-                                        }
-                                    </g>
-                                );
-                            })}
-
-                            {/* DIVERGING: Right Bars (Positive) */}
-                            {right.map((key) => {
-                                const val = row.cells[key]?.count || 0;
-                                if (val === 0) return null;
-
-                                const start = currentRight;
-                                const end = currentRight + val;
-                                currentRight += val;
-
-                                const xStart = xDivScale(start);
-                                const xEnd = xDivScale(end);
-                                const bandwidth = xEnd - xStart;
-
-                                return (
-                                    <g key={key}>
-                                        <rect
-                                            x={xStart}
-                                            y={y}
-                                            width={Math.max(bandwidth, 0)}
-                                            height={h}
-                                            fill={getColumnColor(key)}
-                                            className="transition-opacity hover:opacity-80"
+                                            fill={getColumnColor(neutral)}
                                         />
-                                        {labelMode !== 'none' && bandwidth > 24 && (
+                                        {labelMode !== 'none' && (xDivScale(neutralVal / 2) - xDivScale(-neutralVal / 2)) > 24 && (
                                             <text
-                                                x={xStart + bandwidth / 2}
+                                                x={xDivScale(0)}
                                                 y={y + h / 2}
                                                 dy=".35em"
                                                 textAnchor="middle"
-                                                className="text-[10px] font-medium fill-[var(--text-inverse)] pointer-events-none font-mono"
-                                                style={{ textShadow: 'none' }}
+                                                className="text-[10px] font-medium fill-[var(--text-primary)] pointer-events-none font-mono"
                                             >
                                                 {labelMode === 'percent'
-                                                    ? `${Math.round(row.cells[key]?.percent || 0)}%`
-                                                    : val.toLocaleString()}
-                                            </text>
-                                        )
-                                        }
-                                    </g>
-                                );
-                            })}
-
-                            {/* SPECIAL: Far Right Bars */}
-                            {special.map((key) => {
-                                const val = row.cells[key]?.count || 0;
-                                if (val === 0) return null;
-
-                                const start = currentSpecial;
-                                const end = currentSpecial + val;
-                                currentSpecial += val;
-
-                                const xBase = divergingPixelWidth + pixelGap;
-                                const xStart = xBase + xSpecScale(start);
-                                const bandwidth = xSpecScale(val);
-
-                                return (
-                                    <g key={key}>
-                                        <rect
-                                            x={xStart}
-                                            y={y}
-                                            width={Math.max(bandwidth, 0)}
-                                            height={h}
-                                            fill={getColumnColor(key)}
-                                            className="transition-opacity hover:opacity-80"
-                                        />
-                                        {labelMode !== 'none' && bandwidth > 24 && (
-                                            <text
-                                                x={xStart + bandwidth / 2}
-                                                y={y + h / 2}
-                                                dy=".35em"
-                                                textAnchor="middle"
-                                                className="text-[10px] font-medium fill-[var(--text-inverse)] pointer-events-none font-mono"
-                                            >
-                                                {labelMode === 'percent'
-                                                    ? `${Math.round(row.cells[key]?.percent || 0)}%`
-                                                    : val.toLocaleString()}
+                                                    ? `${Math.round(row.cells[neutral]?.percent || 0)}%`
+                                                    : neutralVal.toLocaleString()}
                                             </text>
                                         )}
                                     </g>
-                                );
-                            })}
+                                )}
 
-                            {/* Average Column Value */}
-                            <text
-                                x={divergingPixelWidth + (maxSpecial > 0 ? pixelGap + xSpecScale.range()[1] : 0) + 20}
-                                y={y + h / 2}
-                                dy=".35em"
-                                textAnchor="start"
-                                className="text-[10px] font-medium fill-[var(--text-primary)]"
-                            >
-                                {typeof avgValue === 'number' ? avgValue.toFixed(1) : '-'}
-                            </text>
-                        </g>
-                    );
-                })}
-            </g >
-        </svg >
+                                {/* DIVERGING: Left Bars (Negative) */}
+                                {left.slice().reverse().map((key) => {
+                                    const val = row.cells[key]?.count || 0;
+                                    if (val === 0) return null;
+
+                                    const start = currentLeft;
+                                    const end = currentLeft - val;
+                                    currentLeft -= val;
+
+                                    const xStart = xDivScale(start);
+                                    const xEnd = xDivScale(end);
+                                    const bandwidth = xStart - xEnd;
+
+                                    return (
+                                        <g key={key}>
+                                            <rect
+                                                x={xEnd}
+                                                y={y}
+                                                width={Math.max(bandwidth, 0)}
+                                                height={h}
+                                                fill={getColumnColor(key)}
+                                                className="transition-opacity hover:opacity-80"
+                                            >
+                                                <title>{`${scaleColumns.find(c => c.key === key)?.label || ''}: ${val}`}</title>
+                                            </rect>
+                                            {labelMode !== 'none' && bandwidth > 24 && (
+                                                <text
+                                                    x={xEnd + bandwidth / 2}
+                                                    y={y + h / 2}
+                                                    dy=".35em"
+                                                    textAnchor="middle"
+                                                    className="text-[10px] font-medium fill-[var(--text-inverse)] pointer-events-none font-mono"
+                                                    style={{ textShadow: 'none' }}
+                                                >
+                                                    {labelMode === 'percent'
+                                                        ? `${Math.round(row.cells[key]?.percent || 0)}%`
+                                                        : val.toLocaleString()}
+                                                </text>
+                                            )
+                                            }
+                                        </g>
+                                    );
+                                })}
+
+                                {/* DIVERGING: Right Bars (Positive) */}
+                                {right.map((key) => {
+                                    const val = row.cells[key]?.count || 0;
+                                    if (val === 0) return null;
+
+                                    const start = currentRight;
+                                    const end = currentRight + val;
+                                    currentRight += val;
+
+                                    const xStart = xDivScale(start);
+                                    const xEnd = xDivScale(end);
+                                    const bandwidth = xEnd - xStart;
+
+                                    return (
+                                        <g key={key}>
+                                            <rect
+                                                x={xStart}
+                                                y={y}
+                                                width={Math.max(bandwidth, 0)}
+                                                height={h}
+                                                fill={getColumnColor(key)}
+                                                className="transition-opacity hover:opacity-80"
+                                            />
+                                            {labelMode !== 'none' && bandwidth > 24 && (
+                                                <text
+                                                    x={xStart + bandwidth / 2}
+                                                    y={y + h / 2}
+                                                    dy=".35em"
+                                                    textAnchor="middle"
+                                                    className="text-[10px] font-medium fill-[var(--text-inverse)] pointer-events-none font-mono"
+                                                    style={{ textShadow: 'none' }}
+                                                >
+                                                    {labelMode === 'percent'
+                                                        ? `${Math.round(row.cells[key]?.percent || 0)}%`
+                                                        : val.toLocaleString()}
+                                                </text>
+                                            )
+                                            }
+                                        </g>
+                                    );
+                                })}
+
+                                {/* SPECIAL: Far Right Bars */}
+                                {special.map((key) => {
+                                    const val = row.cells[key]?.count || 0;
+                                    if (val === 0) return null;
+
+                                    const start = currentSpecial;
+                                    const end = currentSpecial + val;
+                                    currentSpecial += val;
+
+                                    const xBase = divergingPixelWidth + pixelGap;
+                                    const xStart = xBase + xSpecScale(start);
+                                    const bandwidth = xSpecScale(val);
+
+                                    return (
+                                        <g key={key}>
+                                            <rect
+                                                x={xStart}
+                                                y={y}
+                                                width={Math.max(bandwidth, 0)}
+                                                height={h}
+                                                fill={getColumnColor(key)}
+                                                className="transition-opacity hover:opacity-80"
+                                            />
+                                            {labelMode !== 'none' && bandwidth > 24 && (
+                                                <text
+                                                    x={xStart + bandwidth / 2}
+                                                    y={y + h / 2}
+                                                    dy=".35em"
+                                                    textAnchor="middle"
+                                                    className="text-[10px] font-medium fill-[var(--text-inverse)] pointer-events-none font-mono"
+                                                >
+                                                    {labelMode === 'percent'
+                                                        ? `${Math.round(row.cells[key]?.percent || 0)}%`
+                                                        : val.toLocaleString()}
+                                                </text>
+                                            )}
+                                        </g>
+                                    );
+                                })}
+
+                                {/* Average Column Value */}
+                                <text
+                                    x={divergingPixelWidth + (maxSpecial > 0 ? pixelGap + xSpecScale.range()[1] : 0) + 20}
+                                    y={y + h / 2}
+                                    dy=".35em"
+                                    textAnchor="start"
+                                    className="text-[10px] font-medium fill-[var(--text-primary)]"
+                                >
+                                    {typeof avgValue === 'number' ? avgValue.toFixed(1) : '-'}
+                                </text>
+                            </g>
+                        );
+                    })}
+                </g >
+            </svg>
+        </div>
     );
 };

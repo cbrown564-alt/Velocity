@@ -43,8 +43,11 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         // 2. Inject Colors
         Object.entries(theme.colors).forEach(([key, value]) => {
             // Convert camelCase to kebab-case for CSS variables
-            // e.g. vizPrimary -> --viz-primary, vizPalette1 -> --viz-palette-1
-            const cssVarName = `--${key.replace(/([A-Z0-9])/g, '-$1').toLowerCase()}`;
+            // Ensure numbers are separated by dash but kept together (vizScale10 -> --viz-scale-10)
+            const cssVarName = `--${key
+                .replace(/([A-Z])/g, '-$1')
+                .replace(/(\d+)/g, '-$1')
+                .toLowerCase()}`;
             root.style.setProperty(cssVarName, value);
         });
 

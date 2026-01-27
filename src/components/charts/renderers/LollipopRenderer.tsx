@@ -19,6 +19,7 @@ export const LollipopRenderer: React.FC<BaseChartRendererProps> = ({
     selectedKeys,
     onSelectionChange,
     onContextMenu,
+    labelMode = 'count',
 }) => {
     const series = processedData.series[0];
     const chartData = series?.data || [];
@@ -170,17 +171,19 @@ export const LollipopRenderer: React.FC<BaseChartRendererProps> = ({
                             />
 
                             {/* Value label */}
-                            <text
-                                x={xVal + 12}
-                                y={yVal}
-                                dy=".35em"
-                                className={`text-xs ${isSelected ? 'font-bold fill-[var(--text-primary)]' : 'font-medium fill-[var(--viz-text-value)]'}`}
-                            >
-                                {d.value.toLocaleString()}
-                                <tspan className="fill-[var(--text-secondary)] font-normal">
-                                    {' '}({d.percent.toFixed(1)}%)
-                                </tspan>
-                            </text>
+                            {labelMode !== 'none' && (
+                                <text
+                                    x={xVal + 12}
+                                    y={yVal}
+                                    dy=".35em"
+                                    className={`text-xs ${isSelected ? 'font-bold fill-[var(--text-primary)]' : 'font-medium fill-[var(--viz-text-value)]'}`}
+                                >
+                                    {labelMode === 'percent'
+                                        ? `${d.percent.toFixed(1)}%`
+                                        : d.value.toLocaleString()
+                                    }
+                                </text>
+                            )}
                         </g>
                     );
                 })}

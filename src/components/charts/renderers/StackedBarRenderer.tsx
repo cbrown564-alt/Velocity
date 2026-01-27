@@ -59,22 +59,23 @@ export const StackedBarRenderer: React.FC<StackedBarRendererProps> = ({
                 rowLabels: [variableLabel],
             };
         } else {
-            // Cross-tab: Rows are rows, Columns are stack segments
-            const keys = columns.map(c => c.key);
-            const data = rows.map(row => {
-                const item: Record<string, any> = { label: row.label };
-                keys.forEach(key => {
-                    item[key] = row.cells[key]?.count || 0;
+            // Cross-tab: Columns (Series) are bars, Rows (Categories) are stack segments
+            // This aligns with survey 'Column %' where we compare distributions across banners.
+            const keys = rows.map(r => r.rawValue);
+            const data = columns.map(col => {
+                const item: Record<string, any> = { label: col.label };
+                rows.forEach(row => {
+                    item[row.rawValue] = row.cells[col.key]?.count || 0;
                 });
-                item._total = row.total;
+                item._total = col.total;
                 return item;
             });
 
             return {
                 chartData: data,
                 stackKeys: keys,
-                stackLabels: columns.map(c => c.label),
-                rowLabels: rows.map(r => r.label),
+                stackLabels: rows.map(r => r.label),
+                rowLabels: columns.map(c => c.label),
             };
         }
     }, [rows, columns, rowVariables, colVariable, grandTotal, isSingleVariable]);
@@ -177,176 +178,179 @@ export const StackedBarRenderer: React.FC<StackedBarRendererProps> = ({
         : xScale.ticks(5);
 
     return (
-        <svg
-            width={width}
-            height={Math.max(height, actualHeight + margin.top + margin.bottom)}
-            className="overflow-visible font-body"
-        >
-            <g transform={`translate(${margin.left},${margin.top})`}>
-                {/* Legend (Top) */}
-                <g transform={`translate(${(innerWidth - legendWidth) / 2}, -${margin.top - 8})`}>
-                    {stackLabels.map((label, i) => {
-                        const xOffset = i * legendItemWidth;
-                        return (
-                            <g key={stackKeys[i]} transform={`translate(${xOffset}, 0)`}>
-                                <rect
-                                    width={12}
-                                    height={12}
-                                    rx={1}
-                                    fill={colors ? colors[i % colors.length] : `var(--viz-palette-${(i % 6) + 1})`}
-                                    style={{
-                                        fillOpacity: 0.8
-                                    }}
-                                />
-                                <text
-                                    x={18}
-                                    y={10}
-                                    className="text-[11px] fill-[var(--viz-text-axis)]"
-                                    style={{ fontFamily: 'var(--font-body)' }}
-                                >
-                                    {(label || '').length > 12 ? (label || '').substring(0, 10) + '...' : (label || '')}
-                                </text>
-                            </g>
-                        );
-                    })}
-                </g>
-
-                {/* Grid lines */}
-                {xTicks.map(tick => (
-                    <line
-                        key={tick}
-                        x1={xScale(tick)}
-                        y1={0}
-                        x2={xScale(tick)}
-                        y2={actualHeight}
-                        stroke="var(--viz-grid-line)"
-                        strokeDasharray="2,2"
-                    />
-                ))}
-
-                {/* X-axis */}
-                <g transform={`translate(0,${actualHeight})`}>
-                    <line x1={0} y1={0} x2={innerWidth} y2={0} stroke="var(--border-color)" />
-                    {xTicks.map(tick => (
-                        <g key={tick} transform={`translate(${xScale(tick)},0)`}>
-                            <line y2={4} stroke="var(--viz-stroke-main)" />
-                            <text
-                                y={18}
-                                textAnchor="middle"
-                                className="text-[10px] fill-[var(--viz-text-axis)] font-mono"
-                            >
-                                {isPercentMode
-                                    ? `${Math.round(tick * 100)}%`
-                                    : tick.toLocaleString()}
-                            </text>
-                        </g>
-                    ))}
-                </g>
-
-                {/* Y Axis Labels */}
-                {chartData.map((d) => (
-                    <text
-                        key={d.label}
-                        x={-12}
-                        y={(yScale(d.label) || 0) + yScale.bandwidth() / 2}
-                        dy=".35em"
-                        textAnchor="end"
-                        className="text-xs fill-[var(--viz-text-axis)]"
-                        style={{ fontFamily: 'var(--font-body)' }}
-                    >
-                        {(d.label || '').length > 25 ? (d.label || '').substring(0, 23) + '...' : d.label}
-                    </text>
-                ))}
-
-                {/* Stacked Bars */}
-                {stackedSeries.map((seriesItem, seriesIndex) => (
-                    <g
-                        key={stackKeys[seriesIndex]}
-                        fill={colors ? colors[seriesIndex % colors.length] : `var(--viz-palette-${(seriesIndex % 6) + 1})`}
-                        fillOpacity={colors ? 1 : 0.8}
-                    >
-                        {seriesItem.map((d, i) => {
-                            const barWidth = xScale(d[1]) - xScale(d[0]);
-                            const y = yScale(d.data.label) || 0;
-
-                            // Determine if selected
-                            // In single var: selected if stackKey (segment) is in selection
-                            // In cross tab: selected if rowLabel is in selection
-                            const rowLabel = d.data.label;
-                            const segmentKey = stackKeys[seriesIndex];
-
-                            const isSelected = isSingleVariable
-                                ? selectedKeys?.has(segmentKey)
-                                : selectedKeys?.has(rowLabel);
-
-                            // Only show label if segment is wide enough
-                            const showLabel = barWidth > 30;
-                            const value = d[1] - d[0];
-                            const displayValue = isPercentMode
-                                ? `${Math.round(value * 100)}%`
-                                : value.toLocaleString();
-
+        <div style={{ width, height, overflowY: 'auto', overflowX: 'hidden' }}>
+            <svg
+                width={width}
+                height={Math.max(height, actualHeight + margin.top + margin.bottom)}
+                className="overflow-visible font-body"
+                style={{ display: 'block' }}
+            >
+                <g transform={`translate(${margin.left},${margin.top})`}>
+                    {/* Legend (Top) */}
+                    <g transform={`translate(${(innerWidth - legendWidth) / 2}, -${margin.top - 8})`}>
+                        {stackLabels.map((label, i) => {
+                            const xOffset = i * legendItemWidth;
                             return (
-                                <g
-                                    key={`${d.data.label}-${segmentKey}`}
-                                    onClick={(e) => handleClick(d.data.label, segmentKey, e)}
-                                    onContextMenu={(e) => handleContextMenu(d.data.label, segmentKey, value, e)}
-                                    style={{ cursor: interactive ? 'pointer' : 'default' }}
-                                >
+                                <g key={stackKeys[i]} transform={`translate(${xOffset}, 0)`}>
                                     <rect
-                                        y={y}
-                                        x={xScale(d[0])}
-                                        width={Math.max(barWidth, 0)}
-                                        height={yScale.bandwidth()}
-                                        className="transition-all duration-300 hover:opacity-80 chart-bar-rect"
-                                        stroke={isSelected ? 'var(--text-accent)' : 'var(--viz-stroke-bar)'}
-                                        strokeWidth={isSelected ? 2 : 1}
+                                        width={12}
+                                        height={12}
+                                        rx={1}
+                                        fill={colors ? colors[i % colors.length] : `var(--viz-palette-${(i % 6) + 1})`}
+                                        style={{
+                                            fillOpacity: 0.8
+                                        }}
                                     />
-                                    {showLabel && (
-                                        <text
-                                            x={xScale(d[0]) + barWidth / 2}
-                                            y={y + yScale.bandwidth() / 2}
-                                            dy=".35em"
-                                            textAnchor="middle"
-                                            className="text-[10px] font-medium fill-[var(--viz-text-value)] pointer-events-none font-mono"
-                                            style={{ textShadow: 'none' }}
-                                        >
-                                            {displayValue}
-                                        </text>
-                                    )}
+                                    <text
+                                        x={18}
+                                        y={10}
+                                        className="text-[11px] fill-[var(--viz-text-axis)]"
+                                        style={{ fontFamily: 'var(--font-body)' }}
+                                    >
+                                        {(label || '').length > 12 ? (label || '').substring(0, 10) + '...' : (label || '')}
+                                    </text>
                                 </g>
                             );
                         })}
                     </g>
-                ))}
 
-                {/* Row totals (right side) */}
-                {chartData.map((d) => {
-                    const total = d._total;
-                    const y = yScale(d.label) || 0;
-                    return (
+                    {/* Grid lines */}
+                    {xTicks.map(tick => (
+                        <line
+                            key={tick}
+                            x1={xScale(tick)}
+                            y1={0}
+                            x2={xScale(tick)}
+                            y2={actualHeight}
+                            stroke="var(--viz-grid-line)"
+                            strokeDasharray="2,2"
+                        />
+                    ))}
+
+                    {/* X-axis */}
+                    <g transform={`translate(0,${actualHeight})`}>
+                        <line x1={0} y1={0} x2={innerWidth} y2={0} stroke="var(--border-color)" />
+                        {xTicks.map(tick => (
+                            <g key={tick} transform={`translate(${xScale(tick)},0)`}>
+                                <line y2={4} stroke="var(--viz-stroke-main)" />
+                                <text
+                                    y={18}
+                                    textAnchor="middle"
+                                    className="text-[10px] fill-[var(--viz-text-axis)] font-mono"
+                                >
+                                    {isPercentMode
+                                        ? `${Math.round(tick * 100)}%`
+                                        : tick.toLocaleString()}
+                                </text>
+                            </g>
+                        ))}
+                    </g>
+
+                    {/* Y Axis Labels */}
+                    {chartData.map((d) => (
                         <text
-                            key={`total-${d.label}`}
-                            x={innerWidth + 8}
-                            y={y + yScale.bandwidth() / 2}
+                            key={d.label}
+                            x={-12}
+                            y={(yScale(d.label) || 0) + yScale.bandwidth() / 2}
                             dy=".35em"
-                            className="text-[10px] fill-[var(--viz-text-axis)]"
+                            textAnchor="end"
+                            className="text-xs fill-[var(--viz-text-axis)]"
+                            style={{ fontFamily: 'var(--font-body)' }}
                         >
-                            n={total.toLocaleString()}
+                            {(d.label || '').length > 25 ? (d.label || '').substring(0, 23) + '...' : d.label}
                         </text>
-                    );
-                })}
+                    ))}
 
-                {/* Baseline */}
-                <line
-                    x1={0}
-                    y1={0}
-                    x2={0}
-                    y2={actualHeight}
-                    stroke="var(--viz-stroke-main)"
-                />
-            </g>
-        </svg>
+                    {/* Stacked Bars */}
+                    {stackedSeries.map((seriesItem, seriesIndex) => (
+                        <g
+                            key={stackKeys[seriesIndex]}
+                            fill={colors ? colors[seriesIndex % colors.length] : `var(--viz-palette-${(seriesIndex % 6) + 1})`}
+                            fillOpacity={colors ? 1 : 0.8}
+                        >
+                            {seriesItem.map((d, i) => {
+                                const barWidth = xScale(d[1]) - xScale(d[0]);
+                                const y = yScale(d.data.label) || 0;
+
+                                // Determine if selected
+                                // In single var: selected if stackKey (segment) is in selection
+                                // In cross tab: selected if rowLabel is in selection
+                                const rowLabel = d.data.label;
+                                const segmentKey = stackKeys[seriesIndex];
+
+                                const isSelected = isSingleVariable
+                                    ? selectedKeys?.has(segmentKey)
+                                    : selectedKeys?.has(rowLabel);
+
+                                // Only show label if segment is wide enough
+                                const showLabel = barWidth > 30;
+                                const value = d[1] - d[0];
+                                const displayValue = isPercentMode
+                                    ? `${Math.round(value * 100)}%`
+                                    : value.toLocaleString();
+
+                                return (
+                                    <g
+                                        key={`${d.data.label}-${segmentKey}`}
+                                        onClick={(e) => handleClick(d.data.label, segmentKey, e)}
+                                        onContextMenu={(e) => handleContextMenu(d.data.label, segmentKey, value, e)}
+                                        style={{ cursor: interactive ? 'pointer' : 'default' }}
+                                    >
+                                        <rect
+                                            y={y}
+                                            x={xScale(d[0])}
+                                            width={Math.max(barWidth, 0)}
+                                            height={yScale.bandwidth()}
+                                            className="transition-all duration-300 hover:opacity-80 chart-bar-rect"
+                                            stroke={isSelected ? 'var(--text-accent)' : 'var(--viz-stroke-bar)'}
+                                            strokeWidth={isSelected ? 2 : 1}
+                                        />
+                                        {labelMode !== 'none' && showLabel && (
+                                            <text
+                                                x={xScale(d[0]) + barWidth / 2}
+                                                y={y + yScale.bandwidth() / 2}
+                                                dy=".35em"
+                                                textAnchor="middle"
+                                                className="text-[10px] font-medium fill-[var(--viz-text-value)] pointer-events-none font-mono"
+                                                style={{ textShadow: 'none' }}
+                                            >
+                                                {displayValue}
+                                            </text>
+                                        )}
+                                    </g>
+                                );
+                            })}
+                        </g>
+                    ))}
+
+                    {/* Row totals (right side) */}
+                    {labelMode !== 'none' && chartData.map((d) => {
+                        const total = d._total;
+                        const y = yScale(d.label) || 0;
+                        return (
+                            <text
+                                key={`total-${d.label}`}
+                                x={innerWidth + 8}
+                                y={y + yScale.bandwidth() / 2}
+                                dy=".35em"
+                                className="text-[10px] fill-[var(--viz-text-axis)]"
+                            >
+                                n={total.toLocaleString()}
+                            </text>
+                        );
+                    })}
+
+                    {/* Baseline */}
+                    <line
+                        x1={0}
+                        y1={0}
+                        x2={0}
+                        y2={actualHeight}
+                        stroke="var(--viz-stroke-main)"
+                    />
+                </g>
+            </svg>
+        </div>
     );
 };
 

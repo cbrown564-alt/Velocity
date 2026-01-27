@@ -33,7 +33,7 @@ export function recommendChart(context: RecommenderContext): ChartRecommendation
 
         return {
             default: 'diverging-bar',
-            alternatives: ['grouped-bar'],
+            alternatives: ['grouped-bar', 'grouped-column'],
             reason: 'Likert grids are best viewed as diverging bars.',
         };
     }
@@ -79,7 +79,7 @@ export function recommendChart(context: RecommenderContext): ChartRecommendation
         if (primaryRowVar?.type === 'nominal' || primaryRowVar?.type === 'ordinal') {
             return {
                 default: 'grouped-bar',
-                alternatives: ['stacked-bar', 'diverging-bar'],
+                alternatives: ['grouped-column', 'stacked-bar', 'diverging-bar'],
                 reason: 'Comparing nominal/ordinal groups across columns.',
             };
         }
@@ -87,7 +87,7 @@ export function recommendChart(context: RecommenderContext): ChartRecommendation
         if (primaryRowVar?.type === 'scale') {
             return {
                 default: 'diverging-bar',
-                alternatives: ['stacked-bar', 'grouped-bar'],
+                alternatives: ['stacked-bar', 'grouped-bar', 'grouped-column'],
                 reason: 'Comparing scale groups across columns.',
             };
         }

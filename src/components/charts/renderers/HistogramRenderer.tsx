@@ -23,9 +23,7 @@ export const HistogramRenderer: React.FC<BaseChartRendererProps> = ({
     interactive,
     variableStats,
     onContextMenu,
-    // Note: AnalysisChart doesn't currently pass onSelectionChange for Histograms in the same way,
-    // but we should support it if we want parity.
-    // However, the architecture says "AnalysisChart" wraps everything.
+    labelMode = 'count',
 }) => {
     const { rows } = processedData;
     const svgRef = useRef<SVGSVGElement>(null);
@@ -202,19 +200,29 @@ export const HistogramRenderer: React.FC<BaseChartRendererProps> = ({
         }
 
         // Count labels
-        g.selectAll('.count-label')
-            .data(bins)
-            .join('text')
-            .attr('x', d => xScale(d.x0) + (xScale(d.x1) - xScale(d.x0)) / 2)
-            .attr('y', d => yScale(d.count) - 4)
-            .attr('text-anchor', 'middle')
-            .style('font-size', '10px')
-            .style('fill', 'var(--viz-text-value)')
-            .style('font-family', 'var(--font-mono)')
-            .text(d => d.count > 0 ? d.count : '');
+        if (labelMode !== 'none') {
+            const totalCount = bins.reduce((sum, d) => sum + d.count, 0);
+
+            g.selectAll('.count-label')
+                .data(bins)
+                .join('text')
+                .attr('x', d => xScale(d.x0) + (xScale(d.x1) - xScale(d.x0)) / 2)
+                .attr('y', d => yScale(d.count) - 4)
+                .attr('text-anchor', 'middle')
+                .style('font-size', '10px')
+                .style('fill', 'var(--viz-text-value)')
+                .style('font-family', 'var(--font-mono)')
+                .text(d => {
+                    if (d.count === 0) return '';
+                    if (labelMode === 'percent') {
+                        return `${((d.count / totalCount) * 100).toFixed(1)}%`;
+                    }
+                    return d.count.toLocaleString();
+                });
+        }
 
 
-    }, [bins, width, height, innerWidth, innerHeight, margin, dataExtent, barColor, selectedBarColor, interactive, handleBinClick, handleContextMenuInteraction]);
+    }, [bins, width, height, innerWidth, innerHeight, margin, dataExtent, barColor, selectedBarColor, interactive, labelMode, handleBinClick, handleContextMenuInteraction]);
 
     return (
         <svg

@@ -2,7 +2,7 @@ import React from 'react';
 import {
     ChartColumn,
     ChartBar,
-    ChartColumnStacked,
+    ChartBarStacked,
     Donut,
     ScatterChart,
     Lollipop,
@@ -27,8 +27,9 @@ interface ChartSelectorProps {
 const CHART_ICONS: Record<ChartType, React.ReactNode> = {
     'horizontal-bar': <ChartBar size={16} />,
     'vertical-bar': <ChartColumn size={16} />,
-    'grouped-bar': <ChartColumn size={16} />,
-    'stacked-bar': <ChartColumnStacked size={16} />,
+    'grouped-bar': <ChartBar size={16} />,
+    'grouped-column': <ChartColumn size={16} />,
+    'stacked-bar': <ChartBarStacked size={16} />,
     'diverging-bar': <MoveHorizontal size={16} />,
     'donut': <Donut size={16} />,
     'histogram': <ChartColumn size={16} />,
@@ -45,6 +46,7 @@ const CHART_LABELS: Record<ChartType, string> = {
     'horizontal-bar': 'Horizontal Bar',
     'vertical-bar': 'Vertical Bar',
     'grouped-bar': 'Grouped Bar',
+    'grouped-column': 'Grouped Column',
     'stacked-bar': 'Stacked Bar',
     'diverging-bar': 'Diverging Bar',
     'donut': 'Donut Chart',
