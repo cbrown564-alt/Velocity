@@ -92,7 +92,7 @@ export const ChartContextMenu: React.FC<ChartContextMenuProps> = ({
                         className={`w-full text-left px-2.5 py-1.5 text-[13px] rounded transition-colors flex items-center
                             ${option.danger
                                 ? 'text-[var(--status-error-text)] hover:bg-[var(--status-error-bg)]'
-                                : 'text-[var(--text-primary)] hover:bg-[var(--theme-bg-active)]'
+                                : 'text-[var(--text-primary)] hover:bg-[var(--bg-active)]'
                             }
                         `}
                         onClick={() => {

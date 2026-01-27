@@ -24,88 +24,80 @@
 
 :root {
   /* Surface & Backgrounds */
-  --bg-app: var(--theme-bg-app);
-  --bg-panel: var(--theme-bg-panel);
-  --bg-surface: var(--theme-bg-surface);
-  --bg-active: var(--theme-bg-active);
+  --bg-app: var(--background);
+  --bg-panel: var(--card);
+  --bg-surface: var(--popover);
+  --bg-active: var(--secondary);
 
   /* Typography */
-  --text-primary: var(--theme-text-primary);
-  --text-secondary: var(--theme-text-secondary);
-  --text-accent: var(--theme-text-accent);
-  --text-inverse: var(--theme-text-inverse);
+  --text-primary: var(--foreground);
+  --text-secondary: var(--muted-foreground);
+  --text-accent: var(--accent);
+  --text-inverse: var(--primary-foreground);
 
   /* Borders & Dividers */
-  --border-color: var(--theme-border-color);
-  --border-color-muted: var(--theme-border-color-muted);
-  --border-color-active: var(--theme-border-color-active);
-  --border-grid: var(--theme-border-grid);
+  --border-color: var(--border);
+  --border-color-muted: var(--input);
+  --border-color-active: var(--ring);
+  --border-grid: var(--viz-grid);
   /* New: For data grids */
-  --border-subtle: var(--theme-border-subtle);
+  --border-subtle: var(--border);
   /* New: For panel dividers */
 
   /* Functional Status (True semantic meanings) */
-  --status-error-bg: var(--theme-status-error-bg);
-  --status-error-text: var(--theme-status-error-text);
-  --status-warning-bg: var(--theme-status-warning-bg);
-  --status-warning-text: var(--theme-status-warning-text);
-  --status-success-bg: var(--theme-status-success-bg);
-  --status-success-text: var(--theme-status-success-text);
+  --status-error-bg: var(--destructive);
+  --status-error-text: var(--destructive-foreground);
+  --status-warning-bg: var(--muted);
+  --status-warning-text: var(--viz-palette-3);
+  --status-success-bg: var(--muted);
+  --status-success-text: var(--viz-palette-2);
 
   /* Data Identity (Variable Types, Categories - NOT status) */
-  --tag-nominal-bg: var(--theme-tag-nominal-bg);
-  --tag-nominal-text: var(--theme-tag-nominal-text);
-  --tag-ordinal-bg: var(--theme-tag-ordinal-bg);
-  --tag-ordinal-text: var(--theme-tag-ordinal-text);
-  --tag-scale-bg: var(--theme-tag-scale-bg);
-  --tag-scale-text: var(--theme-tag-scale-text);
-  --tag-text-bg: var(--theme-tag-text-bg);
-  --tag-text-text: var(--theme-tag-text-text);
-  --tag-date-bg: var(--theme-tag-date-bg);
-  --tag-date-text: var(--theme-tag-date-text);
+  --tag-nominal-bg: var(--muted);
+  --tag-nominal-text: var(--viz-palette-5);
+  --tag-ordinal-bg: var(--muted);
+  --tag-ordinal-text: var(--viz-palette-6);
+  --tag-scale-bg: var(--muted);
+  --tag-scale-text: var(--muted-foreground);
+  --tag-text-bg: var(--muted);
+  --tag-text-text: var(--viz-palette-4);
+  --tag-date-bg: var(--muted);
+  --tag-date-text: var(--viz-palette-1);
 
   /* Data Visualization (New Semantic Layer) */
-  --viz-fill-primary: var(--theme-viz-fill-primary);
+  --viz-fill-primary: var(--viz-primary);
   /* Main bars/marks */
-  --viz-fill-secondary: var(--theme-viz-fill-secondary);
+  --viz-fill-secondary: var(--viz-secondary);
   /* Comparison/Highlight */
-  --viz-fill-muted: var(--theme-viz-fill-muted);
+  --viz-fill-muted: var(--viz-muted);
   /* Context/Background bars */
-  --viz-stroke-main: var(--theme-viz-stroke-main);
+  --viz-stroke-main: var(--viz-stroke);
   /* Axis lines */
-  --viz-grid-line: var(--theme-viz-grid-line);
+  --viz-grid-line: var(--viz-grid);
   /* Chart grid */
-  --viz-text-value: var(--theme-viz-text-value);
+  --viz-text-value: var(--viz-text-value);
   /* Text ON bars */
-  --viz-text-axis: var(--theme-viz-text-axis);
-  --viz-text-axis: var(--theme-viz-text-axis);
+  --viz-text-axis: var(--viz-text-axis);
   /* Axis labels */
-  --viz-stroke-bar: var(--theme-viz-stroke-bar);
+  --viz-stroke-bar: var(--viz-stroke);
   /* Bar strokes */
 
   /* Categorical Data Palette */
-  --viz-palette-1: var(--theme-viz-palette-1);
-  --viz-palette-2: var(--theme-viz-palette-2);
-  --viz-palette-3: var(--theme-viz-palette-3);
-  --viz-palette-4: var(--theme-viz-palette-4);
-  --viz-palette-5: var(--theme-viz-palette-5);
-  --viz-palette-6: var(--theme-viz-palette-6);
+  --viz-palette-1: var(--viz-palette-1);
+  --viz-palette-2: var(--viz-palette-2);
+  --viz-palette-3: var(--viz-palette-3);
+  --viz-palette-4: var(--viz-palette-4);
+  --viz-palette-5: var(--viz-palette-5);
+  --viz-palette-6: var(--viz-palette-6);
 
   /* Diverging/Scale Data */
-  --viz-scale-negative: var(--theme-viz-scale-negative);
-  --viz-scale-neutral: var(--theme-viz-scale-neutral);
-  --viz-scale-neutral: var(--theme-viz-scale-neutral);
-  --viz-scale-positive: var(--theme-viz-scale-positive);
-
-  --viz-diverging-1: var(--theme-viz-diverging-1);
-  --viz-diverging-2: var(--theme-viz-diverging-2);
-  --viz-diverging-3: var(--theme-viz-diverging-3);
-  --viz-diverging-4: var(--theme-viz-diverging-4);
-  --viz-diverging-5: var(--theme-viz-diverging-5);
+  --viz-scale-negative: var(--viz-palette-4);
+  --viz-scale-neutral: var(--viz-muted);
+  --viz-scale-positive: var(--viz-secondary);
 
   /* Legacy Functional (Deprecating slowly or remapping) */
-  --color-accent: var(--theme-color-accent);
-  --color-accent-hover: var(--theme-color-accent-hover);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--ring);
 
   /* Typography Scales (Fixed) */
   --text-xxs: 0.625rem;
@@ -135,9 +127,10 @@
 
   /* Borders & Corners */
   --border-width: 1px;
-  --border-radius-sm: 4px;
-  --border-radius-md: 8px;
-  --border-radius-lg: 12px;
+  --border-radius-sm: var(--radius);
+  /* This will be overridden by the JS injection usually, but good fallback */
+  --border-radius-md: calc(var(--radius) + 2px);
+  --border-radius-lg: calc(var(--radius) + 4px);
 
   /* Motion */
   --ease-standard: cubic-bezier(0.4, 0.0, 0.2, 1);
@@ -150,219 +143,14 @@
    2. Theme Definitions
    ============================================================================ */
 
-/* Theme: Soft Machine */
-[data-theme="soft-machine"],
-:root:not([data-theme]) {
-  /* Typography: Fraunces + Plus Jakarta Sans */
-  --font-display: 'Fraunces', serif;
-  --font-body: 'Plus Jakarta Sans', sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
-
-  /* Backgrounds - Warm & Organic */
-  --theme-bg-app: #F0EDE8;
-  /* Warm light gray */
-  --theme-bg-panel: #FAF8F5;
-  /* Cream panel */
-  --theme-bg-surface: #FFFFFF;
-  /* White surface */
-  --theme-bg-active: #E6E2DC;
-  /* Darker warm gray */
-
-  /* Text - Deep Forest Green & Dusty Blue */
-  --theme-text-primary: #2D4A3E;
-  /* Deep forest green */
-  --theme-text-secondary: #6B8BA4;
-  /* Dusty blue (Info) */
-  --theme-text-accent: #E07860;
-  /* Coral */
-  --theme-text-inverse: #FFFFFF;
-
-  /* Borders - Soft Warm Gray */
-  --theme-border-color: #E0DCD6;
-  --theme-border-color-muted: #F0EDE8;
-  --theme-border-color-active: #E07860;
-  --theme-border-grid: rgba(45, 74, 62, 0.05);
-  /* Very subtle green hint */
-  --theme-border-subtle: rgba(45, 74, 62, 0.03);
-
-  --theme-color-accent: #E07860;
-  /* Coral */
-  --theme-color-accent-hover: #CC6550;
-
-  /* Status - Muted/Natural */
-  --theme-status-error-bg: #FBEAEA;
-  --theme-status-error-text: #D32F2F;
-  --theme-status-warning-bg: #FFF8E1;
-  --theme-status-warning-text: #F57C00;
-  --theme-status-success-bg: #E8F5E9;
-  --theme-status-success-text: #2E7D32;
-
-  /* Data Identity - Earthy Pastels */
-  --theme-tag-nominal-bg: #EAE6DF;
-  --theme-tag-nominal-text: #2D4A3E;
-  --theme-tag-ordinal-bg: #F0EDE8;
-  --theme-tag-ordinal-text: #5C7065;
-  --theme-tag-scale-bg: #FFFFFF;
-  --theme-tag-scale-text: #2D4A3E;
-  --theme-tag-text-bg: #EAE6DF;
-  --theme-tag-text-text: #5C7065;
-  --theme-tag-date-bg: #F0EDE8;
-  --theme-tag-date-text: #2D4A3E;
-
-  /* Data Visualization - Soft Machine (Solid & Clean) */
-  --theme-viz-fill-primary: #2D4A3E;
-  /* Forest Green */
-  --theme-viz-fill-secondary: #E07860;
-  /* Coral */
-  --theme-viz-fill-muted: #E0DCD6;
-  /* Warm Gray */
-  --theme-viz-stroke-main: #B0A8A0;
-  --theme-viz-grid-line: rgba(45, 74, 62, 0.05);
-  --theme-viz-text-value: #2D4A3E;
-  --theme-viz-text-axis: #6B8BA4;
-  --theme-viz-stroke-bar: transparent;
-  /* Solid bars */
-
-  /* Categorical Palette - Retro/Organic */
-  --theme-viz-palette-1: #2D4A3E;
-  /* Forest */
-  --theme-viz-palette-2: #E07860;
-  /* Coral */
-  --theme-viz-palette-3: #E8B468;
-  /* Mustard/Sand */
-  --theme-viz-palette-4: #6B8BA4;
-  /* Dusty Blue */
-  --theme-viz-palette-5: #A45D5D;
-  /* Terracotta */
-  --theme-viz-palette-6: #5C7065;
-  /* Sage */
-
-  /* Scale / Diverging */
-  --theme-viz-scale-negative: #6B8BA4;
-  --theme-viz-scale-neutral: #E0DCD6;
-  --theme-viz-scale-positive: #E07860;
-
-  /* Discrete Diverging Scale */
-  --theme-viz-diverging-1: #2D4A3E;
-  --theme-viz-diverging-2: #6B8BA4;
-  --theme-viz-diverging-3: #E0DCD6;
-  --theme-viz-diverging-4: #E8B468;
-  --theme-viz-diverging-5: #E07860;
-
-  --shadow-inset: inset 0 1px 2px rgba(45, 74, 62, 0.03);
-  --shadow-float: 0 4px 12px rgba(45, 74, 62, 0.08);
-  --shadow-drag: 0 8px 24px rgba(45, 74, 62, 0.15);
-
-  /* Radius overrides for Soft Machine */
-  --border-radius-sm: 6px;
-  --border-radius-md: 8px;
-  --border-radius-lg: 12px;
+/* Theme: Soft Machine overrides */
+[data-theme="soft-machine"] .data-row-interactive,
+:root:not([data-theme]) .data-row-interactive {
+  border-bottom: 1px solid var(--border-subtle);
 }
 
-/* Theme: Mission Control (Dark) */
+/* Mission Control overrides */
 [data-theme="mission-control"] {
-  --font-display: 'DM Sans', sans-serif;
-  --font-body: 'DM Sans', -apple-system, sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
-
-  /* Elevation via Lightness */
-  --theme-bg-app: #141414;
-  /* Dark Grey (was #0D0D0D) */
-  --theme-bg-panel: #1A1D21;
-  /* Surface 1 (Slightly lighter) */
-  --theme-bg-surface: #22252A;
-  /* Surface 2 */
-  --theme-bg-active: #2A2D35;
-  /* Hover states */
-
-  --theme-text-primary: #E0E0E0;
-  /* Off-white to reduce halation (was #E8EAED) */
-  --theme-text-secondary: #B0B8C1;
-  /* Brighter Muted color (was #8B949E) */
-  --theme-text-accent: #00D4FF;
-  /* Electric Cyan */
-  --theme-text-inverse: #0D0D0D;
-
-  --theme-border-color: #2A2A2A;
-  /* Darker border (was #2A2D35) */
-  --theme-border-color-muted: #1E1E1E;
-  --theme-border-color-active: #00D4FF;
-  --theme-border-grid: #2A2A2A;
-  /* Solid dark grey for gridlines (was rgba(255, 255, 255, 0.08)) */
-  --theme-border-subtle: #252525;
-
-  --theme-color-accent: #00D4FF;
-  --theme-color-accent-hover: #00B8EB;
-
-  /* Status */
-  --theme-status-error-bg: rgba(255, 82, 82, 0.15);
-  --theme-status-error-text: #FF8A80;
-  --theme-status-warning-bg: rgba(255, 184, 0, 0.15);
-  /* Amber */
-  --theme-status-warning-text: #FFB800;
-  --theme-status-success-bg: rgba(0, 229, 160, 0.15);
-  /* Mint */
-  --theme-status-success-text: #00E5A0;
-
-  /* Data Identity */
-  --theme-tag-nominal-bg: rgba(255, 82, 82, 0.1);
-  --theme-tag-nominal-text: #E57373;
-  --theme-tag-ordinal-bg: rgba(0, 212, 255, 0.1);
-  --theme-tag-ordinal-text: #4FC3F7;
-  --theme-tag-scale-bg: rgba(255, 255, 255, 0.1);
-  --theme-tag-scale-text: #BDBDBD;
-  --theme-tag-text-bg: rgba(224, 64, 251, 0.1);
-  --theme-tag-text-text: #EA80FC;
-  --theme-tag-date-bg: rgba(64, 196, 255, 0.1);
-  --theme-tag-date-text: #80D8FF;
-
-  /* Data Visualization */
-  --theme-viz-fill-primary: rgba(0, 212, 255, 0.2);
-  /* Transparent Cyan */
-  --theme-viz-fill-secondary: #00D4FF;
-  /* Solid Cyan Accent */
-  --theme-viz-fill-muted: #2A2D35;
-  --theme-viz-stroke-main: #3C4043;
-  --theme-viz-grid-line: #303134;
-  --theme-viz-text-value: #E0E0E0;
-  --theme-viz-text-axis: #9AA0A6;
-  --theme-viz-stroke-bar: #00D4FF;
-  /* Solid Cyan Stroke */
-
-  /* Categorical Palette */
-  --theme-viz-palette-1: #00D4FF;
-  /* Cyan */
-  --theme-viz-palette-2: #00E5A0;
-  /* Mint */
-  --theme-viz-palette-3: #FFB800;
-  /* Amber */
-  --theme-viz-palette-4: #D500F9;
-  /* Neon Purple */
-  --theme-viz-palette-5: #FF0080;
-  /* Hot Pink */
-  --theme-viz-palette-6: #2979FF;
-  /* Bright Blue */
-
-  /* Scale / Diverging */
-  --theme-viz-scale-negative: #00D4FF;
-  /* Cold */
-  --theme-viz-scale-neutral: #3C4043;
-  /* Neutral */
-  --theme-viz-scale-positive: #FF5252;
-  /* Hot */
-
-  /* Discrete Diverging Scale (5-point) */
-  --theme-viz-diverging-1: #00D4FF;
-  /* Strong Negative */
-  --theme-viz-diverging-2: #347A8B;
-  /* Leaning Negative */
-  --theme-viz-diverging-3: #3C4043;
-  /* Neutral */
-  --theme-viz-diverging-4: #9A4E4E;
-  /* Leaning Positive */
-  --theme-viz-diverging-5: #FF5252;
-  /* Strong Positive */
-
   --shadow-inset: inset 0 1px 2px rgba(0, 0, 0, 0.5);
   --shadow-float: 0 4px 20px rgba(0, 0, 0, 0.6);
   --shadow-drag: 0 8px 32px rgba(0, 0, 0, 0.8);
@@ -415,14 +203,14 @@ h3 {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--theme-border-color);
+  background: var(--border-color);
   border-radius: 5px;
   border: 2px solid var(--bg-app);
   /* Creates padding effect */
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--theme-color-accent);
+  background: var(--color-accent);
 }
 
 .custom-scrollbar::-webkit-scrollbar {
@@ -435,13 +223,13 @@ h3 {
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: var(--theme-border-color);
+  background: var(--border-color);
   border-radius: 5px;
   border: 2px solid var(--bg-app);
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: var(--theme-color-accent);
+  background: var(--color-accent);
 }
 
 /* Focus states */

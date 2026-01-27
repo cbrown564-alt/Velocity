@@ -1,0 +1,116 @@
+import { Theme } from '../types/theme';
+
+export const softMachine: Theme = {
+    id: 'soft-machine',
+    name: 'Soft Machine',
+    description: 'Warm, organic, human-centric interface',
+    mode: 'light',
+    colors: {
+        background: '#F0EDE8',
+        foreground: '#2D4A3E',
+        card: '#FAF8F5',
+        cardForeground: '#2D4A3E',
+        popover: '#FFFFFF',
+        popoverForeground: '#2D4A3E',
+        primary: '#E07860',
+        primaryForeground: '#FFFFFF',
+        secondary: '#E6E2DC',
+        secondaryForeground: '#2D4A3E',
+        muted: '#F0EDE8',
+        mutedForeground: '#6B8BA4',
+        accent: '#E07860',
+        accentForeground: '#FFFFFF',
+        destructive: '#FBEAEA',
+        destructiveForeground: '#D32F2F',
+        border: '#E0DCD6',
+        input: '#E0DCD6',
+        ring: '#E07860',
+
+        // Viz
+        vizPrimary: '#2D4A3E',
+        vizSecondary: '#E07860',
+        vizMuted: '#E0DCD6',
+        vizStroke: '#B0A8A0',
+        vizGrid: 'rgba(45, 74, 62, 0.05)',
+        vizTextValue: '#2D4A3E',
+        vizTextAxis: '#6B8BA4',
+        vizPalette1: '#2D4A3E',
+        vizPalette2: '#E07860',
+        vizPalette3: '#E8B468',
+        vizPalette4: '#6B8BA4',
+        vizPalette5: '#A45D5D',
+        vizPalette6: '#5C7065',
+        vizDiverging1: '#2D4A3E',
+        vizDiverging2: '#6B8BA4',
+        vizDiverging3: '#E0DCD6',
+        vizDiverging4: '#E8B468',
+        vizDiverging5: '#E07860',
+        vizDiverging6: '#D32F2F', // Defaulting 6 to destructive/red just in case
+    },
+    radius: 'lg',
+    shadow: 'sm',
+    typography: {
+        fontFamily: "'Plus Jakarta Sans', sans-serif",
+        headingFont: "'Fraunces', serif",
+        monoFont: "'JetBrains Mono', monospace",
+    }
+};
+
+export const missionControl: Theme = {
+    id: 'mission-control',
+    name: 'Mission Control',
+    description: 'High-contrast dark mode for data-intensive work',
+    mode: 'dark',
+    colors: {
+        background: '#141414',
+        foreground: '#E0E0E0',
+        card: '#1A1D21',
+        cardForeground: '#E0E0E0',
+        popover: '#22252A',
+        popoverForeground: '#E0E0E0',
+        primary: '#00D4FF',
+        primaryForeground: '#000000',
+        secondary: '#2A2D35',
+        secondaryForeground: '#00D4FF',
+        muted: '#22252A',
+        mutedForeground: '#B0B8C1',
+        accent: '#00D4FF',
+        accentForeground: '#000000',
+        destructive: 'rgba(255, 82, 82, 0.15)',
+        destructiveForeground: '#FF8A80',
+        border: '#2A2A2A',
+        input: '#2A2A2A',
+        ring: '#00D4FF',
+
+        // Viz
+        vizPrimary: 'rgba(0, 212, 255, 0.2)',
+        vizSecondary: '#00D4FF',
+        vizMuted: '#2A2D35',
+        vizStroke: '#3C4043',
+        vizGrid: '#303134',
+        vizTextValue: '#E0E0E0',
+        vizTextAxis: '#9AA0A6',
+        vizPalette1: '#00D4FF',
+        vizPalette2: '#00E5A0',
+        vizPalette3: '#FFB800',
+        vizPalette4: '#D500F9',
+        vizPalette5: '#FF0080',
+        vizPalette6: '#2979FF',
+        vizDiverging1: '#00D4FF',
+        vizDiverging2: '#347A8B',
+        vizDiverging3: '#3C4043',
+        vizDiverging4: '#9A4E4E',
+        vizDiverging5: '#FF5252',
+        vizDiverging6: '#FF5252', // Fallback
+    },
+    radius: 'sm',
+    shadow: 'lg',
+    typography: {
+        fontFamily: "'DM Sans', -apple-system, sans-serif",
+        headingFont: "'DM Sans', sans-serif",
+        monoFont: "'JetBrains Mono', monospace",
+    }
+};
+
+export const themes = [softMachine, missionControl];
+

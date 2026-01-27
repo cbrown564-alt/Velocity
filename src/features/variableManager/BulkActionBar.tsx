@@ -82,7 +82,7 @@ export const BulkActionBar: React.FC<BulkActionBarProps> = ({
                         <div className="bg-[var(--bg-panel)] border border-[var(--border-color)] text-[var(--text-primary)] rounded-xl shadow-float px-4 py-3 flex items-center gap-4">
                             {/* Selection Count */}
                             <div className="flex items-center gap-2 pr-4 border-r border-[var(--border-color)]">
-                                <span className="bg-[var(--theme-viz-palette-2)] text-white text-xs font-bold px-2 py-1 rounded-full">
+                                <span className="bg-[var(--viz-palette-2)] text-white text-xs font-bold px-2 py-1 rounded-full">
                                     {selectedCount}
                                 </span>
                                 <span className="text-sm text-[var(--text-secondary)] font-body">selected</span>
@@ -115,21 +115,21 @@ export const BulkActionBar: React.FC<BulkActionBarProps> = ({
                                                 onClick={() => handleSetType('nominal')}
                                                 className="w-full flex items-center gap-2 px-3 py-2 hover:bg-[var(--bg-surface)] text-left text-sm font-body text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                                             >
-                                                <Tag size={14} className="text-[var(--theme-viz-palette-2)]" />
+                                                <Tag size={14} className="text-[var(--viz-palette-2)]" />
                                                 Nominal
                                             </button>
                                             <button
                                                 onClick={() => handleSetType('ordinal')}
                                                 className="w-full flex items-center gap-2 px-3 py-2 hover:bg-[var(--bg-surface)] text-left text-sm font-body text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                                             >
-                                                <Layers size={14} className="text-[var(--theme-viz-palette-4)]" />
+                                                <Layers size={14} className="text-[var(--viz-palette-4)]" />
                                                 Ordinal
                                             </button>
                                             <button
                                                 onClick={() => handleSetType('numeric')}
                                                 className="w-full flex items-center gap-2 px-3 py-2 hover:bg-[var(--bg-surface)] text-left text-sm font-body text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                                             >
-                                                <BarChart2 size={14} className="text-[var(--theme-viz-palette-1)]" />
+                                                <BarChart2 size={14} className="text-[var(--viz-palette-1)]" />
                                                 Numeric
                                             </button>
                                         </div>

@@ -771,9 +771,9 @@ export default function App() {
                     <button
                       onClick={toggleTheme}
                       className="p-2 rounded-lg hover:bg-[var(--bg-active)] text-[var(--text-secondary)] hover:text-[var(--color-accent)] transition-colors"
-                      title={`Switch to ${theme === 'soft-machine' ? 'Mission Control' : 'Soft Machine'}`}
+                      title={`Switch to ${theme.id === 'soft-machine' ? 'Mission Control' : 'Soft Machine'}`}
                     >
-                      {theme === 'soft-machine' ? <Moon size={18} /> : <Sun size={18} />}
+                      {theme.id === 'soft-machine' ? <Moon size={18} /> : <Sun size={18} />}
                     </button>
 
                     <ModeToggleButton />
