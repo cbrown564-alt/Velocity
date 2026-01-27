@@ -367,14 +367,13 @@ interface VariableWithIndex {
 /**
  * Detect by position: consecutive variables in the original file
  */
-function detectByPosition(vars: VariableWithIndex[]): Variable[] {
+function detectByPosition(vars: VariableWithIndex[]): Variable[][] {
   if (vars.length < 3) return [];
 
   // Sort by original file index
   const sorted = [...vars].sort((a, b) => a.index - b.index);
 
-  // Find longest consecutive sequence (allowing gap of 1)
-  let bestGroup: Variable[] = [];
+  const groups: Variable[][] = [];
   let currentGroup: Variable[] = [sorted[0].variable];
 
   for (let i = 1; i < sorted.length; i++) {
@@ -385,25 +384,25 @@ function detectByPosition(vars: VariableWithIndex[]): Variable[] {
     if (curr.index - prev.index <= 2) {
       currentGroup.push(curr.variable);
     } else {
-      if (currentGroup.length >= 3 && currentGroup.length > bestGroup.length) {
-        bestGroup = [...currentGroup];
+      if (currentGroup.length >= 3) {
+        groups.push([...currentGroup]);
       }
       currentGroup = [curr.variable];
     }
   }
 
   // Check final group
-  if (currentGroup.length >= 3 && currentGroup.length > bestGroup.length) {
-    bestGroup = currentGroup;
+  if (currentGroup.length >= 3) {
+    groups.push(currentGroup);
   }
 
-  return bestGroup;
+  return groups;
 }
 
 /**
  * Detect by naming: sequential numeric suffixes (e.g., Q1, Q2, Q3)
  */
-function detectByNaming(vars: Variable[]): Variable[] {
+function detectByNaming(vars: Variable[]): Variable[][] {
   if (vars.length < 3) return [];
 
   // Extract patterns: prefix + number
@@ -423,8 +422,7 @@ function detectByNaming(vars: Variable[]): Variable[] {
     byPrefix.get(p.prefix)!.push(p);
   }
 
-  // Find largest sequential group with same prefix
-  let bestGroup: Variable[] = [];
+  const groups: Variable[][] = [];
   for (const [prefix, group] of byPrefix.entries()) {
     if (group.length < 3) continue;
 
@@ -438,28 +436,31 @@ function detectByNaming(vars: Variable[]): Variable[] {
     // Accept if: (1) truly sequential OR (2) range < 2x count (allows small gaps)
     if (range === numbers.length - 1 || range < numbers.length * 2) {
       const vars = group.map(g => g.variable);
-      if (vars.length > bestGroup.length) {
-        bestGroup = vars;
-      }
+      groups.push(vars);
     }
   }
 
-  return bestGroup;
+  return groups;
 }
 
 /**
  * Detect sequential patterns using both position and naming methods
  */
-function detectSequentialPattern(vars: VariableWithIndex[]): Variable[] {
+function detectSequentialPattern(vars: VariableWithIndex[]): Variable[][] {
   // Method 1: Position-based detection (primary)
-  const positionGroup = detectByPosition(vars);
+  const positionGroups = detectByPosition(vars);
+
+  // If position gives us groups, we prefer them as they align with survey structure
+  if (positionGroups.length > 0) {
+    return positionGroups;
+  }
 
   // Method 2: Name-based detection (fallback)
-  const nameGroup = detectByNaming(vars.map(v => v.variable));
-
-  // Return the largest group found
-  return positionGroup.length >= nameGroup.length ? positionGroup : nameGroup;
+  // Only use if position failed (e.g. variables are scattered but named sequentially)
+  const nameGroups = detectByNaming(vars.map(v => v.variable));
+  return nameGroups;
 }
+
 
 /**
  * Infer which value represents "positive" in binary scales (e.g., Yes/No, True/False)
@@ -677,31 +678,37 @@ async function loadSAV(buffer: ArrayBuffer): Promise<{ variables: Variable[]; va
   // Step 1: Collect ungrouped variables (not in MR sets)
   const ungroupedVariables = variables.filter(v => !variablesInMRSets.has(v.id));
 
-  // Step 2: Group by shared value label set
-  const byValueLabelSet = new Map<string, VariableWithIndex[]>();
+  // Step 2: Group by shared value label content (hash)
+  const byValueLabelHash = new Map<string, VariableWithIndex[]>();
+
   for (const v of ungroupedVariables) {
     const parsedVar = parsed.metadata.variables.find(pv => pv.name === v.id);
-    const setName = parsedVar?.valueLabelSetName;
-    if (setName) {
-      if (!byValueLabelSet.has(setName)) {
-        byValueLabelSet.set(setName, []);
+
+    // Group by content, not just name (handles identical scales with different label set names)
+    if (v.valueLabels && v.valueLabels.length > 0) {
+      // Sort and join to create stable hash
+      const sortedLabels = [...v.valueLabels].sort((a, b) => a.value - b.value);
+      const hash = sortedLabels.map(vl => `${vl.value}:${vl.label}`).join('|');
+
+      if (!byValueLabelHash.has(hash)) {
+        byValueLabelHash.set(hash, []);
       }
-      byValueLabelSet.get(setName)!.push({
+      byValueLabelHash.get(hash)!.push({
         variable: v,
         index: parsedVar?.index ?? -1,
-        valueLabelSetName: setName
+        valueLabelSetName: hash // Use hash as key
       });
     }
   }
 
   // Step 3: Detect sequential patterns within each group
-  for (const [labelSetName, varsInGroup] of byValueLabelSet.entries()) {
+  for (const [hash, varsInGroup] of byValueLabelHash.entries()) {
     if (varsInGroup.length < 3) continue; // Minimum threshold
 
-    // Try to detect sequential naming patterns
-    const gridCandidates = detectSequentialPattern(varsInGroup);
+    // Try to detect sequential patterns (now returns multiple groups)
+    const gridCandidatesList = detectSequentialPattern(varsInGroup);
 
-    if (gridCandidates.length >= 3) {
+    for (const gridCandidates of gridCandidatesList) {
       // Check if this should be a multi-response set (binary value labels)
       // IMPORTANT: Check the actual variable labels (which might have been updated/filled)
       // rather than the raw metadata label set.
@@ -713,12 +720,17 @@ async function loadSAV(buffer: ArrayBuffer): Promise<{ variables: Variable[]; va
       let countedValue: number | undefined;
 
       // Sort variables by name for consistent ordering
-      gridCandidates.sort((a, b) => a.name.localeCompare(b.name));
+      // gridCandidates.sort((a, b) => a.name.localeCompare(b.name)); // Don't sort by name here, keep position order!
 
       const variableIds = gridCandidates.map(v => v.id);
 
       // Extract common prefix for set name
-      const prefix = firstVar.name.match(/^([a-zA-Z_]+?)\d+$/)?.[1] || 'Set';
+      // If straightforward prefix match fails, use the first variable name
+      const prefixMatch = firstVar.name.match(/^([a-zA-Z_]+?)\d+$/);
+      let prefix = prefixMatch?.[1] || firstVar.name.replace(/[0-9]+$/, ''); // Strip trailing numbers
+
+      // If prefix is too short or empty, just use the first variable name
+      if (prefix.length < 2) prefix = firstVar.name;
 
       // Mark variables as grouped
       for (const v of gridCandidates) {
@@ -734,8 +746,11 @@ async function loadSAV(buffer: ArrayBuffer): Promise<{ variables: Variable[]; va
 
         console.log(`📊 [Worker] Detected implicit multi-response "${prefix}" with ${gridCandidates.length} variables (counted value: ${countedValue})`);
 
+        // Generate a deterministic ID based on the variables in the set
+        const setId = `heuristic_${structure}_${variableIds.join('_')}`;
+
         variableSets.push({
-          id: `heuristic_${structure}_${prefix}_${labelSetName}`,
+          id: setId,
           name: prefix,
           variableIds,
           structure,
@@ -746,13 +761,16 @@ async function loadSAV(buffer: ArrayBuffer): Promise<{ variables: Variable[]; va
       } else {
         console.log(`📊 [Worker] Detected implicit grid "${prefix}" with ${gridCandidates.length} variables`);
 
+        // Generate a deterministic ID
+        const setId = `heuristic_${structure}_${variableIds.join('_')}`;
+
         variableSets.push({
-          id: `heuristic_${structure}_${prefix}_${labelSetName}`,
+          id: setId,
           name: prefix,
           variableIds,
           structure,
           type: firstVar.type,
-          description: `Detected grid with shared scale: ${labelSetName}`,
+          description: `Detected grid with shared scale`,
           // NEW: Explicit grid metadata for refactored architecture
           gridMetadata: {
             sharedScale: {
