@@ -23,6 +23,14 @@ export function recommendChart(context: RecommenderContext): ChartRecommendation
     const isSyntheticGrid = primaryRowVar?.synthetic && primaryRowVar?.sourceGridId && colVar?.synthetic && colVar?.sourceGridId;
 
     if (isSyntheticGrid || isGrid) { // Keep isGrid for backward compatibility during migration
+        if (primaryRowVar?.type === 'numeric') {
+            return {
+                default: 'grouped-box-plot',
+                alternatives: ['violin', 'ridgeline', 'box-plot'],
+                reason: 'Numeric grids are best viewed as distribution comparisons.',
+            };
+        }
+
         return {
             default: 'diverging-bar',
             alternatives: ['grouped-bar'],

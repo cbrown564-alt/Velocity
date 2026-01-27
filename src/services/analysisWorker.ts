@@ -11,7 +11,7 @@
 import * as duckdb from '@duckdb/duckdb-wasm';
 import * as arrow from 'apache-arrow';
 import { RecodeConfig, VariableSet, Variable, Filter, HistogramBin } from '../types';
-import { buildCrosstabQuery, CrosstabQueryOptions, buildFilterClause, escapeIdentifier, escapeString } from './queryBuilder';
+import { buildCrosstabQuery, buildGridHistogramQuery, CrosstabQueryOptions, buildFilterClause, escapeIdentifier, escapeString } from './queryBuilder';
 import { calculateZScore, calculateTScore, calculateESS, calculatePValue } from './statistics';
 import { generateSyntheticGridVariables } from './gridUtils';
 import { processAnalysisData } from './analysisProcessor';
@@ -1138,32 +1138,85 @@ async function runCrosstab(
   const modifiedOptions = { ...options };
 
   // 0. Synthetic Grid Variable Expansion
-  // If the first row variable is a synthetic scale variable, we need to unpivot the grid.
+  // Check if either the row variable OR column variable is a synthetic grid variable
+  let foundGridVar: Variable | null = null;
+
   if (modifiedOptions.rowVars.length > 0) {
-    const firstRowVarId = modifiedOptions.rowVars[0];
-    const firstRowVar = context.variables[firstRowVarId];
+    const v = context.variables[modifiedOptions.rowVars[0]];
+    if (v?.synthetic && v.sourceGridId) foundGridVar = v;
+  }
 
-    if (firstRowVar?.synthetic && firstRowVar.sourceGridId) {
-      const gridSet = context.variableSets[firstRowVar.sourceGridId];
-      if (gridSet && gridSet.structure === 'grid' && gridSet.gridMetadata) {
-        console.log(`🦆 [Worker] Detected synthetic grid breakdown: ${firstRowVarId} -> ${gridSet.id}`);
+  if (!foundGridVar && modifiedOptions.colVar) {
+    const v = context.variables[modifiedOptions.colVar];
+    // Only treat as grid expansion if it's the "Items" or "Scale" variable of a grid
+    if (v?.synthetic && v.sourceGridId) foundGridVar = v;
+  }
 
-        // Populate gridColumns for the query builder
-        // We need to map the variable IDs to their labels/names
-        modifiedOptions.gridColumns = gridSet.variableIds.map(varId => {
-          // Resolve label for each column item
-          const itemVar = context.variables[varId];
-          return {
-            name: varId,
-            label: itemVar?.label || varId
-          };
+  if (foundGridVar) {
+    const firstRowVar = foundGridVar; // Alias for compatibility with existing logic below
+    const gridSet = context.variableSets[firstRowVar.sourceGridId!];
+
+    if (gridSet && gridSet.structure === 'grid' && gridSet.gridMetadata) {
+      console.log(`🦆 [Worker] Detected synthetic grid breakdown: ${firstRowVar.id} -> ${gridSet.id}`);
+
+      // Populate gridColumns for the query builder
+      modifiedOptions.gridColumns = gridSet.variableIds.map(varId => {
+        const itemVar = context.variables[varId];
+        return {
+          name: varId,
+          label: itemVar?.label || varId
+        };
+      });
+
+      // SANITIZE: Prevent synthetic variables from being used as colVar or in filters
+
+      // 1. Sanitize colVar (remove if it points to the synthetic variables we are breaking down)
+      if (modifiedOptions.colVar) {
+        const v = context.variables[modifiedOptions.colVar];
+        if (v?.synthetic && v.sourceGridId === gridSet.id) {
+          console.log(`🦆 [Worker] Removing synthetic colVar ${modifiedOptions.colVar} for grid query`);
+          modifiedOptions.colVar = null;
+        }
+      }
+
+      // 2. Sanitize Filters
+      if (modifiedOptions.filters) {
+        modifiedOptions.filters = modifiedOptions.filters.map(f => {
+          const v = context.variables[f.variableId];
+          if (v?.synthetic && v.sourceGridId === gridSet.id) {
+            if (f.variableId.endsWith('_items')) {
+              console.log(`🦆 [Worker] Remapping filter ${f.variableId} -> item_index`);
+              return { ...f, variableId: 'item_index' };
+            }
+
+            if (f.variableId.endsWith('_scale')) {
+              console.log(`🦆 [Worker] Remapping filter ${f.variableId} -> _synthetic_value`);
+              return { ...f, variableId: '_synthetic_value' };
+            }
+          }
+          return f;
         });
+      }
 
-        // Disable distributions for grids - the unpivoted structure is incompatible
-        // with the histogram query which expects a simple column reference
+      // Check if this is a Numeric Grid (shared scale is numeric)
+      const isNumericGrid = gridSet.gridMetadata.sharedScale.type === 'numeric';
+
+      if (isNumericGrid) {
+        // For Numeric Grids, we want to aggregate the values (mean, median, etc.)
+        // This enables Box Plots and Trend Analysis of the items
+        modifiedOptions.gridAggregate = true;
+
+        // We still disable standard distributions because the Histogram query 
+        // doesn't support the unpivot CTE structure yet.
+        // However, the aggregate query provides Q1/Q3/Median which is enough for Box Plots.
         modifiedOptions.includeDistributions = false;
 
-        // Clear measureVar for grids - they are categorical (Items × Scale), not numeric measures
+        // We do NOT set measureVar because buildGridQuery handles the aggregation internally
+        modifiedOptions.measureVar = undefined;
+        modifiedOptions.measureLabel = undefined;
+      } else {
+        // Likert/Ordinal Grids: Treat as categorical frequencies (Stacked Bars)
+        modifiedOptions.includeDistributions = false;
         modifiedOptions.measureVar = undefined;
         modifiedOptions.measureLabel = undefined;
       }
@@ -1217,81 +1270,112 @@ async function runCrosstab(
   const rows = mainResult.toArray().map(r => r.toJSON());
 
   // 2.5 Grouped Histogram (for Violin/Ridgeline)
-  if (modifiedOptions.measureVar && modifiedOptions.includeDistributions) {
-    try {
-      const measure = modifiedOptions.measureVar;
-      const binCount = 20; // Fixed bin count for density visualization
-      const safeMeasure = `"${escapeIdentifier(measure)}"`;
+  const shouldComputeHistogram = (modifiedOptions.measureVar || (modifiedOptions.gridColumns && modifiedOptions.gridAggregate)) && modifiedOptions.includeDistributions;
 
-      let whereSql = '';
-      if (modifiedOptions.filters && modifiedOptions.filters.length > 0) {
-        const clause = buildFilterClause(modifiedOptions.filters);
-        if (clause) whereSql = `WHERE ${clause}`;
+  if (shouldComputeHistogram) {
+    try {
+      const binCount = 20;
+      let histSql = '';
+      let minVal = 0;
+      let maxVal = 0;
+      let binWidth = 1;
+
+      // Scenario A: Numeric Grid (Computed via CTE)
+      if (modifiedOptions.gridColumns && modifiedOptions.gridAggregate) {
+        // Derive global min/max from the main aggregate result to ensure consistent axes across grid items
+        // The main 'rows' result already contains min/max for each item (row)
+        const validRows = rows.filter(r => r.min !== undefined && r.max !== undefined);
+
+        if (validRows.length > 0) {
+          minVal = Math.min(...validRows.map(r => r.min as number));
+          maxVal = Math.max(...validRows.map(r => r.max as number));
+        } else {
+          // Fallback (e.g., 1-5 scale)
+          minVal = 1; maxVal = 5;
+        }
+
+        const range = maxVal - minVal;
+        binWidth = range > 0 ? range / binCount : 1;
+
+        histSql = buildGridHistogramQuery({
+          columns: modifiedOptions.gridColumns,
+          filters: modifiedOptions.filters,
+          colVar: modifiedOptions.colVar,
+          minVal,
+          maxVal,
+          binCount
+        });
+      }
+      // Scenario B: Standard Variable (Computed via WHERE/GROUP BY)
+      else if (modifiedOptions.measureVar) {
+        const measure = modifiedOptions.measureVar;
+        const safeMeasure = `"${escapeIdentifier(measure)}"`;
+
+        let whereSql = '';
+        if (modifiedOptions.filters && modifiedOptions.filters.length > 0) {
+          const clause = buildFilterClause(modifiedOptions.filters);
+          if (clause) whereSql = `WHERE ${clause}`;
+        }
+
+        // 2.5a Get Global Min/Max for consistent binning
+        const rangeSql = `SELECT MIN(${safeMeasure}) as minVal, MAX(${safeMeasure}) as maxVal FROM main ${whereSql}`;
+        const rangeRes = await conn.query(rangeSql);
+        const rangeRow = rangeRes.toArray()[0];
+
+        if (rangeRow && rangeRow.minVal !== null && rangeRow.maxVal !== null) {
+          minVal = Number(rangeRow.minVal);
+          maxVal = Number(rangeRow.maxVal);
+          const range = maxVal - minVal;
+          binWidth = range > 0 ? range / binCount : 1;
+
+          // 2.5b Run Grouped Histogram Query
+          let rowGroups: string[] = [];
+          let groupByCols: string[] = [];
+
+          if (modifiedOptions.rowVars.length === 0 && modifiedOptions.measureLabel) {
+            rowGroups = [`'${escapeString(modifiedOptions.measureLabel)}' as rowKey_0`];
+          } else {
+            rowGroups = modifiedOptions.rowVars.map((r, i) => `"${escapeIdentifier(r)}" as rowKey_${i}`);
+            groupByCols = modifiedOptions.rowVars.map(r => `"${escapeIdentifier(r)}"`);
+          }
+
+          let colGroup = '';
+          if (modifiedOptions.colVar) {
+            colGroup = `"${escapeIdentifier(modifiedOptions.colVar)}" as colKey`;
+          } else if (modifiedOptions.measureLabel && modifiedOptions.rowVars.length > 0) {
+            colGroup = `'${escapeString(modifiedOptions.measureLabel)}' as colKey`;
+          } else {
+            colGroup = `'Total' as colKey`;
+          }
+
+          if (modifiedOptions.colVar) {
+            groupByCols.push(`"${escapeIdentifier(modifiedOptions.colVar)}"`);
+          }
+
+          const groupByClause = groupByCols.length > 0 ? groupByCols.join(', ') + ',' : '';
+
+          const bucketExpr = `
+                  CASE
+                      WHEN ${range} = 0 THEN 1
+                      ELSE LEAST(FLOOR((${safeMeasure} - ${minVal}) / ${binWidth}) + 1, ${binCount})::INTEGER
+                  END
+              `;
+
+          histSql = `
+                  SELECT
+                      ${rowGroups.length > 0 ? rowGroups.join(', ') + ',' : ''}
+                      ${colGroup},
+                      ${bucketExpr} as bucket,
+                      COUNT(*) as cnt
+                  FROM main
+                  ${whereSql}
+                  ${whereSql ? 'AND' : 'WHERE'} ${safeMeasure} IS NOT NULL
+                  GROUP BY ${groupByClause} bucket
+              `;
+        }
       }
 
-      // 2.5a Get Global Min/Max for consistent binning
-      const rangeSql = `SELECT MIN(${safeMeasure}) as minVal, MAX(${safeMeasure}) as maxVal FROM main ${whereSql}`;
-      const rangeRes = await conn.query(rangeSql);
-      const rangeRow = rangeRes.toArray()[0];
-
-      if (rangeRow && rangeRow.minVal !== null && rangeRow.maxVal !== null) {
-        const minVal = Number(rangeRow.minVal);
-        const maxVal = Number(rangeRow.maxVal);
-        const range = maxVal - minVal;
-        const binWidth = range > 0 ? range / binCount : 1;
-
-        // 2.5b Run Grouped Histogram Query
-        // When measureVar is set and rowVars is empty, the main query uses measureLabel as rowKey_0
-        // The histogram query must match this structure
-        let rowGroups: string[] = [];
-        let groupByCols: string[] = [];
-
-        if (modifiedOptions.rowVars.length === 0 && modifiedOptions.measureLabel) {
-          // Single metric variable: include measureLabel as rowKey_0 to match main query
-          rowGroups = [`'${escapeString(modifiedOptions.measureLabel)}' as rowKey_0`];
-          // Don't group by the literal string in the histogram query
-        } else {
-          // Standard row grouping
-          rowGroups = modifiedOptions.rowVars.map((r, i) => `"${escapeIdentifier(r)}" as rowKey_${i}`);
-          groupByCols = modifiedOptions.rowVars.map(r => `"${escapeIdentifier(r)}"`);
-        }
-
-        let colGroup = '';
-        if (modifiedOptions.colVar) {
-          colGroup = `"${escapeIdentifier(modifiedOptions.colVar)}" as colKey`;
-        } else if (modifiedOptions.measureLabel && modifiedOptions.rowVars.length > 0) {
-          // Match logic in queryBuilder: if explicit metric column, use label
-          colGroup = `'${escapeString(modifiedOptions.measureLabel)}' as colKey`;
-        } else {
-          colGroup = `'Total' as colKey`;
-        }
-
-        // Add column to grouping if present
-        if (modifiedOptions.colVar) {
-          groupByCols.push(`"${escapeIdentifier(modifiedOptions.colVar)}"`);
-        }
-
-        const groupByClause = groupByCols.length > 0 ? groupByCols.join(', ') + ',' : '';
-
-        const bucketExpr = `
-              CASE
-                  WHEN ${range} = 0 THEN 1
-                  ELSE LEAST(FLOOR((${safeMeasure} - ${minVal}) / ${binWidth}) + 1, ${binCount})::INTEGER
-              END
-          `;
-
-        const histSql = `
-              SELECT
-                  ${rowGroups.length > 0 ? rowGroups.join(', ') + ',' : ''}
-                  ${colGroup},
-                  ${bucketExpr} as bucket,
-                  COUNT(*) as cnt
-              FROM main
-              ${whereSql}
-              ${whereSql ? 'AND' : 'WHERE'} ${safeMeasure} IS NOT NULL
-              GROUP BY ${groupByClause} bucket
-          `;
-
+      if (histSql) {
         const histRes = await conn.query(histSql);
 
         // 2.5c Map Bins to Rows
@@ -1330,7 +1414,6 @@ async function runCrosstab(
           const key = keyParts.join('|||');
 
           const bins = binMap.get(key) || [];
-          // Ensure bins are sorted by x axis
           bins.sort((a, b) => a.x0 - b.x0);
 
           r.histogramBins = bins;
@@ -1339,8 +1422,7 @@ async function runCrosstab(
         console.log(`🦆 [Worker] Attached histogram bins:`, {
           totalRows: rows.length,
           rowsWithBins: rows.filter(r => r.histogramBins && r.histogramBins.length > 0).length,
-          binMapSize: binMap.size,
-          sampleKeys: Array.from(binMap.keys()).slice(0, 3)
+          binMapSize: binMap.size
         });
       }
     } catch (e) {

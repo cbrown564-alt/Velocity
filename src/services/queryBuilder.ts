@@ -14,15 +14,16 @@ import type { Filter } from '../types';
 /**
  * Builds a query for grid structure (unpivots multiple columns with shared scale)
  */
-interface GridQueryOptions {
+export interface GridQueryOptions {
     columns: Array<{ name: string; label: string }>;
     filters?: Filter[];
     weightVar?: string;
     colVar?: string | null;
+    aggregate?: boolean;
 }
 
-function buildGridQuery(options: GridQueryOptions): string {
-    const { columns, filters, weightVar, colVar } = options;
+export function buildGridQuery(options: GridQueryOptions): string {
+    const { columns, filters, weightVar, colVar, aggregate } = options;
 
     // Use a CTE to unpivot the data once, instead of UNION ALL
     // This allows access to all other columns for filtering/grouping
@@ -36,7 +37,7 @@ function buildGridQuery(options: GridQueryOptions): string {
     const valueExpression = `
         CASE items.item_index
             ${columns.map(({ name }, index) => `WHEN ${index} THEN "${escapeIdentifier(name)}"`).join('\n            ')}
-        END
+    END
     `;
 
     // 3. Build the WHERE clause for global filters
@@ -50,22 +51,151 @@ function buildGridQuery(options: GridQueryOptions): string {
         ? `SUM("${escapeIdentifier(weightVar)}")::DOUBLE`
         : `COUNT(*)::INTEGER`;
 
+    // 4. Metric Aggregation vs Frequency
+    let selectClause = '';
+    let groupByClause = '';
+
+    if (aggregate) {
+        // Metric Mode: Group by Item, Aggregate Value
+        const colGroup = colVar ? `"${escapeIdentifier(colVar)}"` : `'Total'`;
+
+        // When aggregating, we use 'item_label' as the ROW key (listing items down the side)
+        // And the explicitly chosen colVar (e.g. Gender) as columns.
+        // If no colVar, we essentially get a summary table of items.
+
+        const w = weightVar ? `"${escapeIdentifier(weightVar)}"` : null;
+        const val = `_synthetic_value`; // No cast needed if underlying is numeric
+
+        const statsExpr = w
+            ? `
+                (SUM(${val} * ${w}) / SUM(${w}))::DOUBLE as mean,
+                SQRT(ABS((SUM(${w} * ${val} * ${val}) / SUM(${w})) - POWER(SUM(${w} * ${val}) / SUM(${w}), 2)))::DOUBLE as stdDev,
+                MIN(${val}) as min,
+                MAX(${val}) as max,
+                QUANTILE_CONT(${val}, 0.5 ORDER BY ${w}) as median,
+                QUANTILE_CONT(${val}, 0.25 ORDER BY ${w}) as q1,
+                QUANTILE_CONT(${val}, 0.75 ORDER BY ${w}) as q3,
+                COUNT(${val})::INTEGER as validCount,
+                COUNT(*)::INTEGER as count
+            `
+            : `
+                AVG(${val}) as mean,
+                STDDEV(${val}) as stdDev,
+                MIN(${val}) as min,
+                MAX(${val}) as max,
+                MEDIAN(${val}) as median,
+                QUANTILE_CONT(${val}, 0.25) as q1,
+                QUANTILE_CONT(${val}, 0.75) as q3,
+                COUNT(${val})::INTEGER as validCount,
+                COUNT(*)::INTEGER as count
+            `;
+
+        selectClause = `
+            item_label as rowKey_0,
+            ${colGroup} as colKey,
+            ${statsExpr}
+        `;
+
+        groupByClause = colVar
+            ? `GROUP BY item_label, ${colGroup}`
+            : `GROUP BY item_label, ${colGroup}`; // Total is constant, so just item_label is enough, but constant works too
+
+    } else {
+        // Frequency Mode: Group by Value and Item
+        // This is the "Stacked Bar" view: 
+        // Row = Value (1,2,3), Col = Item (Q1,Q2)
+        // OR Row = Item, Col = Value ?
+        // The original code did: _synthetic_value as rowKey_0 (Value is Row), item_label as colKey (Item is Column)
+        // This produces columns of questions, with rows being "1", "2", "3".
+
+        selectClause = `
+            _synthetic_value as rowKey_0,
+            item_label as colKey,
+            ${countExpr} as count
+        `;
+        groupByClause = `GROUP BY _synthetic_value, item_label`;
+    }
+
     return `
         WITH unpivoted AS (
             SELECT
                 main.*,
                 items.item_label,
-                ${valueExpression} as _synthetic_value
+                items.item_index,
+                CAST(${valueExpression} AS DOUBLE) as _synthetic_value
             FROM main
             CROSS JOIN (VALUES ${itemsValues}) as items(item_index, item_label)
         )
         SELECT
-            _synthetic_value as rowKey_0,
-            item_label as colKey,
-            ${countExpr} as count
+            ${selectClause}
         FROM unpivoted
         WHERE ${whereConditions.join(' AND ')}
-        GROUP BY _synthetic_value, item_label
+        ${groupByClause}
+    `;
+}
+
+export interface GridHistogramQueryOptions {
+    columns: Array<{ name: string; label: string }>;
+    filters?: Filter[];
+    colVar?: string | null;
+    minVal: number;
+    maxVal: number;
+    binCount: number;
+}
+
+export function buildGridHistogramQuery(options: GridHistogramQueryOptions): string {
+    const { columns, filters, colVar, minVal, maxVal, binCount } = options;
+    const range = maxVal - minVal;
+    const binWidth = range > 0 ? range / binCount : 1;
+
+    const itemsValues = columns
+        .map(({ label }, index) => `(${index}, '${escapeString(label)}')`)
+        .join(', ');
+
+    const valueExpression = `
+        CASE items.item_index
+            ${columns.map(({ name }, index) => `WHEN ${index} THEN "${escapeIdentifier(name)}"`).join('\n            ')}
+        END
+    `;
+
+    const filterClause = buildFilterClause(filters);
+    const whereConditions = ['_synthetic_value IS NOT NULL'];
+    if (filterClause) {
+        whereConditions.push(filterClause);
+    }
+
+    const bucketExpr = `
+        CASE
+            WHEN ${range} = 0 THEN 1
+            ELSE LEAST(FLOOR((_synthetic_value - ${minVal}) / ${binWidth}) + 1, ${binCount})::INTEGER
+        END
+    `;
+
+    // Always include item_label in grouping (Rows)
+    // If colVar is present, also group by it (Columns)
+    const colGroup = colVar ? `"${escapeIdentifier(colVar)}"` : `'Total'`;
+
+    // Rows = item_label, Cols = colKey
+    const groupByCols = colVar ? `item_label, ${colGroup}, bucket` : `item_label, bucket`;
+
+    return `
+        WITH unpivoted AS (
+            SELECT
+                main.*,
+                items.item_label,
+                items.item_index,
+                CAST(${valueExpression} AS DOUBLE) as _synthetic_value
+            FROM main
+            CROSS JOIN (VALUES ${itemsValues}) as items(item_index, item_label)
+        )
+        SELECT
+            item_label as rowKey_0,
+            ${colGroup} as colKey,
+            ${bucketExpr} as bucket,
+            COUNT(*) as cnt
+        FROM unpivoted
+        WHERE ${whereConditions.join(' AND ')}
+        GROUP BY ${groupByCols}
     `;
 }
 
@@ -124,6 +254,8 @@ export interface CrosstabQueryOptions {
     measureLabel?: string;
     /** If true, fetch histogram/distribution data (for Violin/Ridgeline/BoxPlot) */
     includeDistributions?: boolean;
+    /** For grid structure: default to aggregating values (Mean) instead of counting frequencies */
+    gridAggregate?: boolean;
 }
 
 /**
@@ -146,12 +278,13 @@ export function buildCrosstabQuery(options: CrosstabQueryOptions): string {
         gridColumns,
         multipleColumns,
         measureVar,
-        measureLabel
+        measureLabel,
+        gridAggregate
     } = options;
 
     // Special case: Grid structure (unpivot multiple columns)
     if (gridColumns && gridColumns.length > 0) {
-        return buildGridQuery({ columns: gridColumns, filters, weightVar, colVar });
+        return buildGridQuery({ columns: gridColumns, filters, weightVar, colVar, aggregate: gridAggregate });
     }
 
     // Special case: Multiple structure (filtered by counted value)
