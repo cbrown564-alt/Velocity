@@ -1,0 +1,63 @@
+/* ============================================================
+   DataTable – Drag-to-Merge Visual Feedback
+   Uses theme-aware CSS variables for cross-theme compatibility.
+   ============================================================ */
+
+/* Row/column header cells that are valid merge targets */
+.mergeSource {
+    cursor: grabbing;
+}
+
+.mergeHeader {
+    cursor: grab;
+    user-select: none;
+    transition: background-color 0.15s ease, opacity 0.15s ease, box-shadow 0.15s ease;
+}
+
+/* The item currently being dragged */
+.mergeDragging {
+    opacity: 0.45;
+    background-color: var(--bg-active) !important;
+}
+
+/* Valid drop target highlight */
+.mergeDropTarget {
+    box-shadow: inset 0 0 0 2px var(--color-accent);
+    background-color: color-mix(in srgb, var(--color-accent) 8%, transparent) !important;
+    transition: box-shadow 0.1s ease, background-color 0.1s ease;
+}
+
+/* Selected row/col headers */
+.mergeSelected {
+    background-color: color-mix(in srgb, var(--color-accent) 6%, transparent);
+    box-shadow: inset 2px 0 0 var(--color-accent);
+}
+
+/* Floating ghost label that follows the cursor */
+.mergeGhost {
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    padding: 4px 10px;
+    border-radius: var(--border-radius-sm);
+    background: var(--bg-panel);
+    border: 1px solid var(--color-accent);
+    color: var(--text-primary);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    white-space: nowrap;
+    transform: translate(12px, -50%);
+    opacity: 0.92;
+}
+
+.mergeGhost::before {
+    content: '⇢ ';
+    opacity: 0.5;
+}
+
+/* Column header selected state */
+.colSelected {
+    background-color: color-mix(in srgb, var(--color-accent) 6%, transparent) !important;
+    box-shadow: inset 0 -2px 0 var(--color-accent);
+}

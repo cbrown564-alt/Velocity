@@ -29,6 +29,7 @@ import { ChartContextMenu, ContextMenuOption } from '../overlays/ChartContextMen
 import { InputModal } from '../overlays/InputModal';
 import { Variable } from '../../types';
 import { useProcessedAnalysisData } from '../../hooks/useProcessedAnalysisData';
+import { useMergeOrchestration } from '../../hooks/useMergeOrchestration';
 import styles from './AnalysisChart.module.css';
 import { ArrowLeftRight, RotateCcw } from 'lucide-react';
 
@@ -79,24 +80,16 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
     // Label Mode State
     const [labelMode, setLabelMode] = useState<'count' | 'percent' | 'none'>('count');
 
-    // Merge modal state (Visual ETL)
-    const [mergeModal, setMergeModal] = useState<{
-        isOpen: boolean;
-        sourceItems: ChartDataPoint[];
-        targetItem: ChartDataPoint | null;
-    }>({
-        isOpen: false,
-        sourceItems: [],
-        targetItem: null,
-    });
-
     // Get user-selected chart type from store
     const selectedChartType = useVelocityStore(state => state.selectedChartType);
     const addFilter = useVelocityStore(state => state.addFilter);
-    const recodeVariable = useVelocityStore(state => state.recodeVariable);
 
     // Check if Visual ETL is enabled
     const enableVisualETL = config.enableVisualETL ?? true;
+
+    // Shared merge orchestration (modal state + recode flow)
+    const firstRowVarId = rowVariables[0]?.id;
+    const { mergeModal, openMerge, closeMerge, confirmMerge } = useMergeOrchestration(firstRowVarId);
 
     // Use selected type if available, otherwise fallback to recommender config
     const activeChartType = selectedChartType || config.type;
@@ -139,58 +132,17 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
     // Handle merge from drag-to-merge
     const handleMerge = useCallback((event: MergeEvent) => {
         if (!enableVisualETL) return;
-
-        setMergeModal({
-            isOpen: true,
-            sourceItems: event.sourceItems,
-            targetItem: event.targetItem,
-        });
-    }, [enableVisualETL]);
-
-    // Handle merge confirmation
-    const handleMergeConfirm = useCallback(async (groupName: string) => {
-        if (!chartData || !mergeModal.targetItem) return;
-
-        const firstRowVar = chartData.rowVariables[0];
-        if (!firstRowVar) return;
-
-        // Build mappings: all source items + target item map to the new group name
-        const mappings: Record<string, string> = {};
-        mergeModal.sourceItems.forEach(item => {
-            mappings[item.rawValue] = groupName;
-        });
-        mappings[mergeModal.targetItem.rawValue] = groupName;
-
-        try {
-            // Create a recoded variable with the merge
-            await recodeVariable(
-                firstRowVar.id,
-                `${firstRowVar.label} (Grouped)`,
-                {
-                    mode: 'categorical',
-                    mappings,
-                }
-            );
-        } catch (e) {
-            console.error('Failed to create merged group:', e);
-        }
-
-        setMergeModal({ isOpen: false, sourceItems: [], targetItem: null });
-    }, [chartData, mergeModal, recodeVariable]);
+        openMerge(event);
+    }, [enableVisualETL, openMerge]);
 
     // Open merge modal from context menu
     const openMergeFromSelection = useCallback(() => {
         if (contextMenu.selectedItems.length < 2) return;
 
-        // Use first item as target, rest as sources
         const [target, ...sources] = contextMenu.selectedItems;
-        setMergeModal({
-            isOpen: true,
-            sourceItems: sources,
-            targetItem: target,
-        });
+        openMerge({ sourceItems: sources, targetItem: target });
         closeContextMenu();
-    }, [contextMenu.selectedItems, closeContextMenu]);
+    }, [contextMenu.selectedItems, closeContextMenu, openMerge]);
 
     // Build context menu options based on selected items
     const contextMenuOptions = useMemo((): ContextMenuOption[] => {
@@ -485,8 +437,8 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
             {/* Merge Group Modal (Visual ETL) */}
             <InputModal
                 isOpen={mergeModal.isOpen}
-                onClose={() => setMergeModal({ isOpen: false, sourceItems: [], targetItem: null })}
-                onSubmit={handleMergeConfirm}
+                onClose={closeMerge}
+                onSubmit={confirmMerge}
                 title="Create Group"
                 placeholder="Enter group name..."
                 initialValue={mergeModal.targetItem?.label || ''}

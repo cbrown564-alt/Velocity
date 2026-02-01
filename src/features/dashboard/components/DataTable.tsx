@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useRef, useCallback } from 'react';
 import { AggregatedRow, Variable } from '../../../types';
 import { motion } from 'framer-motion';
 import { ChevronRight, ChevronDown, ArrowUp, ArrowDown } from 'lucide-react';
@@ -6,7 +6,11 @@ import type { VariableStatsResult } from '../../../services/analysisWorker';
 import { AnalysisChart } from '../../../components/charts/AnalysisChart';
 import { useProcessedAnalysisData } from '../../../hooks/useProcessedAnalysisData';
 import { recommendChart } from '../../../services/chartRecommender';
+import { useTableDragMerge, TableDragItem } from '../../../hooks/useTableDragMerge';
+import { useMergeOrchestration } from '../../../hooks/useMergeOrchestration';
+import { InputModal } from '../../../components/overlays/InputModal';
 import { RowPathEntry, TableRowNode } from '../../../services/treeBuilder';
+import mergeStyles from './DataTable.module.css';
 export type { RowPathEntry, TableRowNode };
 
 /**
@@ -55,6 +59,44 @@ export const DataTable: React.FC<DataTableProps> = ({
 
   // State for Column Highlight (Crosshair effect)
   const [hoveredCol, setHoveredCol] = useState<string | null>(null);
+
+  // Merge: selection state
+  const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
+  const [selectedCols, setSelectedCols] = useState<Set<string>>(new Set());
+  const tableContainerRef = useRef<HTMLDivElement>(null);
+
+  // Merge orchestration (modal + recode)
+  const firstRowVarId = rowVariables[0]?.id;
+  const { mergeModal, openMerge, closeMerge, confirmMerge } = useMergeOrchestration(firstRowVarId);
+
+  // Merge drag hook
+  const { dragState, handleDragStart } = useTableDragMerge({
+    enabled: true,
+    containerRef: tableContainerRef,
+    onMerge: openMerge,
+    selectedRows,
+    selectedCols,
+  });
+
+  // Toggle row selection
+  const toggleRowSelection = useCallback((rawValue: string) => {
+    setSelectedRows(prev => {
+      const next = new Set(prev);
+      if (next.has(rawValue)) next.delete(rawValue);
+      else next.add(rawValue);
+      return next;
+    });
+  }, []);
+
+  // Toggle column selection
+  const toggleColSelection = useCallback((colKey: string) => {
+    setSelectedCols(prev => {
+      const next = new Set(prev);
+      if (next.has(colKey)) next.delete(colKey);
+      else next.add(colKey);
+      return next;
+    });
+  }, []);
 
   // Process data for Visualization (Chart & Future Table)
   const processedData = useProcessedAnalysisData({
@@ -112,11 +154,48 @@ export const DataTable: React.FC<DataTableProps> = ({
       const isExpanded = expandedKeys[row.key] ?? true; // Default expanded?
       const hasChildren = row.children.length > 0;
       const paddingLeft = row.depth * 24 + 8; // Match the px-2 (8px) padding of the header
+      const rowVarId = rowVariables[row.depth]?.id ?? rowVariables[0]?.id ?? '';
+      const isRowDragging = dragState.isDragging && dragState.draggedItem?.rawValue === row.rawValue && dragState.draggedItem?.axis === 'row';
+      const isRowDropTarget = dragState.dropTarget === row.rawValue && dragState.draggedItem?.axis === 'row';
+      const isRowSelected = selectedRows.has(row.rawValue);
+
+      const rowHeaderClasses = [
+        'py-1 font-medium text-[var(--text-primary)] align-top',
+        mergeStyles.mergeHeader,
+        isRowDragging ? mergeStyles.mergeDragging : '',
+        isRowDropTarget ? mergeStyles.mergeDropTarget : '',
+        isRowSelected ? mergeStyles.mergeSelected : '',
+      ].filter(Boolean).join(' ');
 
       return (
         <React.Fragment key={row.key}>
           <tr className="group data-row-interactive">
-            <td className="py-1 font-medium text-[var(--text-primary)] align-top" style={{ paddingLeft }}>
+            <td
+              className={rowHeaderClasses}
+              style={{ paddingLeft }}
+              data-merge-key={row.rawValue}
+              data-merge-depth={row.depth}
+              data-merge-axis="row"
+              data-merge-label={row.label}
+              data-merge-var={rowVarId}
+              onMouseDown={(e) => {
+                // Only left button, ignore if clicking expand toggle
+                if (e.button !== 0 || (e.target as HTMLElement).closest('button')) return;
+                handleDragStart({
+                  label: row.label,
+                  rawValue: row.rawValue,
+                  depth: row.depth,
+                  variableId: rowVarId,
+                  axis: 'row',
+                }, e);
+              }}
+              onClick={(e) => {
+                // Toggle selection on click (not drag)
+                if (!dragState.isDragging && !(e.target as HTMLElement).closest('button')) {
+                  toggleRowSelection(row.rawValue);
+                }
+              }}
+            >
               <div className="flex items-center gap-2">
                 {hasChildren && (
                   <button
@@ -249,20 +328,57 @@ export const DataTable: React.FC<DataTableProps> = ({
           </div>
         </div>
 
-        <div className="overflow-x-auto overflow-y-auto max-h-[60vh] custom-scrollbar">
+        <div ref={tableContainerRef} className="overflow-x-auto overflow-y-auto max-h-[60vh] custom-scrollbar" style={{ position: 'relative' }}>
           <table className="w-full text-sm text-left border-collapse">
             <thead className="text-xs uppercase bg-[var(--bg-panel)] border-b border-[var(--border-grid)] data-[theme=liquid-glass]:bg-[var(--mat-panel-bg)] data-[theme=liquid-glass]:backdrop-blur-md">
               <tr className="font-body">
                 <th className="px-2 py-2 font-bold text-[var(--text-accent)] tracking-wider text-left w-64 align-bottom sticky top-0 bg-[var(--bg-panel)] data-[theme=liquid-glass]:bg-[var(--mat-panel-bg)] data-[theme=liquid-glass]:backdrop-blur-md z-10 box-border border-b border-[var(--border-grid)]">
                   {rowVariables[0].label}
                 </th>
-                {tableData.colKeys.map((col, idx) => (
-                  <th key={col} className={`px-2 py-2 font-bold text-[var(--text-accent)] text-left w-28 align-bottom sticky top-0 bg-[var(--bg-panel)] data-[theme=liquid-glass]:bg-[var(--mat-panel-bg)] data-[theme=liquid-glass]:backdrop-blur-md z-10 border-b border-[var(--border-grid)] transition-colors ${hoveredCol === col ? 'bg-[var(--bg-active)]' : ''}`}>
-                    <div className="flex flex-col gap-1 items-start">
-                      <span>{tableData.colLabels[col]}</span>
-                    </div>
-                  </th>
-                ))}
+                {tableData.colKeys.map((col) => {
+                  const isColDragging = dragState.isDragging && dragState.draggedItem?.rawValue === col && dragState.draggedItem?.axis === 'column';
+                  const isColDropTarget = dragState.dropTarget === col && dragState.draggedItem?.axis === 'column';
+                  const isColSelected = selectedCols.has(col);
+                  const colVarId = colVariable?.id ?? '';
+
+                  return (
+                    <th
+                      key={col}
+                      className={[
+                        'px-2 py-2 font-bold text-[var(--text-accent)] text-left w-28 align-bottom sticky top-0 bg-[var(--bg-panel)] data-[theme=liquid-glass]:bg-[var(--mat-panel-bg)] data-[theme=liquid-glass]:backdrop-blur-md z-10 border-b border-[var(--border-grid)] transition-colors',
+                        hoveredCol === col ? 'bg-[var(--bg-active)]' : '',
+                        colVariable ? mergeStyles.mergeHeader : '',
+                        isColDragging ? mergeStyles.mergeDragging : '',
+                        isColDropTarget ? mergeStyles.mergeDropTarget : '',
+                        isColSelected ? mergeStyles.colSelected : '',
+                      ].filter(Boolean).join(' ')}
+                      data-merge-key={col}
+                      data-merge-axis="column"
+                      data-merge-label={tableData.colLabels[col]}
+                      data-merge-var={colVarId}
+                      data-merge-depth="0"
+                      onMouseDown={(e) => {
+                        if (e.button !== 0 || !colVariable) return;
+                        handleDragStart({
+                          label: tableData.colLabels[col],
+                          rawValue: col,
+                          depth: 0,
+                          variableId: colVarId,
+                          axis: 'column',
+                        }, e);
+                      }}
+                      onClick={() => {
+                        if (!dragState.isDragging && colVariable) {
+                          toggleColSelection(col);
+                        }
+                      }}
+                    >
+                      <div className="flex flex-col gap-1 items-start">
+                        <span>{tableData.colLabels[col]}</span>
+                      </div>
+                    </th>
+                  );
+                })}
                 {(tableData.colKeys.length > 1) && (
                   <th className="px-2 py-2 font-bold text-left w-24 text-[var(--text-primary)] bg-[var(--bg-active)] align-bottom sticky top-0 z-10 border-b border-[var(--border-grid)] shadow-[inset_0_-2px_0_var(--border-grid)]">
                     Total
@@ -289,6 +405,31 @@ export const DataTable: React.FC<DataTableProps> = ({
             </tbody>
           </table>
         </div>
+        {/* Drag ghost */}
+        {dragState.isDragging && dragState.draggedItem && (
+          <div
+            className={mergeStyles.mergeGhost}
+            style={{ left: dragState.currentX, top: dragState.currentY }}
+          >
+            {dragState.draggedItem.label}
+            {(() => {
+              const selected = dragState.draggedItem.axis === 'row' ? selectedRows : selectedCols;
+              const extra = selected.has(dragState.draggedItem.rawValue) ? selected.size - 1 : 0;
+              return extra > 0 ? ` +${extra}` : '';
+            })()}
+          </div>
+        )}
+
+        {/* Merge Group Modal */}
+        <InputModal
+          isOpen={mergeModal.isOpen}
+          onClose={closeMerge}
+          onSubmit={confirmMerge}
+          title="Create Group"
+          placeholder="Enter group name..."
+          initialValue={mergeModal.targetItem?.label || ''}
+          submitLabel="Create Group"
+        />
       </motion.div>
     );
   }

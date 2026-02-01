@@ -24,13 +24,24 @@ export interface ChartRecommendation {
 }
 
 /**
+ * Minimal item for a merge operation (Visual ETL drag-to-merge).
+ * ChartDataPoint extends this, so chart and table merges share the same flow.
+ */
+export interface MergeItem {
+    label: string;
+    rawValue: string;
+}
+
+/**
  * Data for a merge operation (Visual ETL drag-to-merge)
  */
 export interface MergeEvent {
     /** The items being merged (dragged onto target) */
-    sourceItems: ChartDataPoint[];
+    sourceItems: MergeItem[];
     /** The target item being merged into */
-    targetItem: ChartDataPoint;
+    targetItem: MergeItem;
+    /** Which variable this merge applies to */
+    variableId?: string;
 }
 
 /**
