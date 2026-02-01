@@ -170,6 +170,9 @@ export default function App() {
 
   const [activeDragSet, setActiveDragSet] = React.useState<VariableSet | null>(null);
   const [showCombineModal, setShowCombineModal] = React.useState(false);
+  // Weight toggle: remember the variable when disabled so we can re-enable without re-dragging
+  const [weightEnabled, setWeightEnabled] = React.useState(true);
+  const [rememberedWeightVar, setRememberedWeightVar] = React.useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const sensors = useSensors(
@@ -213,7 +216,7 @@ export default function App() {
     if (rectCollisions.length > 0) {
       // Prioritize drop zones over sortable items when dragging from sidebar
       const dropZoneCollision = rectCollisions.find(c =>
-        c.id === 'drop-zone-rows' || c.id === 'drop-zone-cols' || c.id === 'canvas'
+        c.id === 'drop-zone-rows' || c.id === 'drop-zone-cols' || c.id === 'drop-zone-weight' || c.id === 'canvas'
       );
       if (dropZoneCollision && isDraggingFromSidebar) {
         return [dropZoneCollision];
@@ -405,6 +408,19 @@ export default function App() {
         return;
       }
 
+      // WEIGHT DROP LOGIC
+      if (zoneId === 'drop-zone-weight') {
+        // Only accept numeric (scale) variables as weights
+        const variable = dataset?.variables.find(v => v.id === variableSet.variableIds[0]);
+        if (variable && (variable.type === 'numeric' || variable.type === 'scale')) {
+          const varId = variableSet.variableIds[0];
+          setWeightVariable(varId);
+          setRememberedWeightVar(varId);
+          setWeightEnabled(true);
+        }
+        return;
+      }
+
       // STANDARD LOGIC
       if (zoneId === 'drop-zone-rows') {
         // Add to existing rows if not already present
@@ -492,6 +508,26 @@ export default function App() {
       return set ? set.variableIds : [];
     }));
     setSelectedSetIds(new Set());
+  };
+
+  // Weight toggle handler
+  const handleToggleWeight = () => {
+    if (weightEnabled && dataset?.weightVariable) {
+      // Disabling: remember the var, clear from store
+      setRememberedWeightVar(dataset.weightVariable);
+      setWeightVariable(null);
+      setWeightEnabled(false);
+    } else if (!weightEnabled && rememberedWeightVar) {
+      // Re-enabling: restore remembered var
+      setWeightVariable(rememberedWeightVar);
+      setWeightEnabled(true);
+    }
+  };
+
+  const handleWeightRemove = () => {
+    setWeightVariable(null);
+    setRememberedWeightVar(null);
+    setWeightEnabled(true);
   };
 
   // Derive values from store
@@ -733,26 +769,6 @@ export default function App() {
 
                   <div className="flex items-center gap-6">
 
-                    {/* Weight Variable Selector */}
-                    <div className="flex items-center gap-2">
-                      <label className="text-xs font-medium text-[var(--text-secondary)]">Weight:</label>
-                      <select
-                        value={dataset?.weightVariable || ''}
-                        onChange={(e) => setWeightVariable(e.target.value || null)}
-                        className={`text-xs px-2 py-1.5 border rounded-md bg-[var(--bg-panel)] focus:ring-2 focus:ring-[var(--color-accent)]/20 outline-none transition-all min-w-[120px] ${dataset?.weightVariable ? 'border-[var(--color-accent)] text-[var(--color-accent)] font-medium' : 'border-[var(--border-color)] text-[var(--text-secondary)]'
-                          }`}
-                      >
-                        <option value="">None</option>
-                        {variables
-                          .filter(v => v.type === 'numeric')
-                          .map(v => (
-                            <option key={v.id} value={v.id}>
-                              {v.label || v.name}
-                            </option>
-                          ))}
-                      </select>
-                    </div>
-
                     <div className="flex items-center bg-[var(--bg-surface)] p-1 rounded-lg">
                       <button
                         onClick={() => setViewMode('table')}
@@ -831,6 +847,27 @@ export default function App() {
                           active={!!draggingId}
                           currentVariables={tableConfig.rowVars.map(id => variableSets.find(s => s.id === id)).filter(Boolean) as VariableSet[]}
                           onRemove={(id) => setTableConfig({ rowVars: tableConfig.rowVars.filter(r => r !== id) })}
+                        />
+                      </div>
+
+                      {/* Weight Shelf - inline after rows */}
+                      <div className="flex items-center gap-2 ml-auto shrink-0">
+                        <div className="shrink-0">
+                          <span className="text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-wider">Weight</span>
+                        </div>
+                        <DropZone
+                          id="drop-zone-weight"
+                          type="weight"
+                          label="Weight"
+                          active={!!draggingId}
+                          currentVariables={
+                            (dataset?.weightVariable || rememberedWeightVar)
+                              ? [variableSets.find(s => s.variableIds.includes(dataset?.weightVariable || rememberedWeightVar || ''))].filter(Boolean) as VariableSet[]
+                              : []
+                          }
+                          onRemove={handleWeightRemove}
+                          weightEnabled={weightEnabled && !!dataset?.weightVariable}
+                          onToggleWeight={handleToggleWeight}
                         />
                       </div>
                     </div>
