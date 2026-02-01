@@ -93,7 +93,7 @@ describe('SortableRowShelf', () => {
             </DndContext>
         );
 
-        expect(container.querySelector('.flex.flex-col.gap-2')).toBeInTheDocument();
+        expect(container.querySelector('.flex.flex-row.gap-2')).toBeInTheDocument();
         expect(screen.queryByText('Age Group')).not.toBeInTheDocument();
     });
 });

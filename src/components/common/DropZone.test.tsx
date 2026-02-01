@@ -159,8 +159,8 @@ describe('DropZone', () => {
             );
 
             const zone = container.firstChild as HTMLElement;
-            // Active state should apply terracotta border
-            expect(zone.className).toContain('border-[var(--color-terracotta)]');
+            // Active state should apply accent border with transparent mix
+            expect(zone.className).toContain('border-[color-mix(in_srgb,var(--color-accent),transparent_50%)]');
         });
 
         it('does not show active styling when active is false', () => {
@@ -176,8 +176,8 @@ describe('DropZone', () => {
             );
 
             const zone = container.firstChild as HTMLElement;
-            // Should have default gray border
-            expect(zone.className).toContain('border-[var(--gray-200)]');
+            // Should have default border color
+            expect(zone.className).toContain('border-[var(--border-color)]');
         });
     });
 });

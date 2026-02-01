@@ -6,14 +6,7 @@ import { max } from 'd3-array';
 import { BaseChartRendererProps } from '../../../types/charts';
 // getChartColor removed replaced by CSS vars
 import { ChartDataPoint } from '../../../types/processedData';
-
-interface DragState {
-    isDragging: boolean;
-    draggedItem: ChartDataPoint | null;
-    dropTarget: string | null;
-    startY: number;
-    currentY: number;
-}
+import { useChartDragMerge } from '../hooks/useChartDragMerge';
 
 /**
  * Horizontal Bar Chart Renderer
@@ -35,15 +28,6 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
 }) => {
     const brushRef = useRef<SVGGElement>(null);
     const svgRef = useRef<SVGSVGElement>(null);
-
-    // Drag-to-merge state
-    const [dragState, setDragState] = useState<DragState>({
-        isDragging: false,
-        draggedItem: null,
-        dropTarget: null,
-        startY: 0,
-        currentY: 0,
-    });
 
     // Use the first series (single column analysis) or "Total" column
     const series = processedData.series[0];
@@ -127,91 +111,27 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
         });
     }, [interactive, onContextMenu, chartData, selectedKeys]);
 
-    // ==================== Drag-to-Merge Handlers ====================
-
-    // Start dragging a bar
-    const handleDragStart = useCallback((item: ChartDataPoint, event: React.MouseEvent) => {
-        if (!interactive || !onMerge) return;
-        event.preventDefault();
-
-        setDragState({
-            isDragging: true,
-            draggedItem: item,
-            dropTarget: null,
-            startY: event.clientY,
-            currentY: event.clientY,
-        });
-    }, [interactive, onMerge]);
-
-    // Track mouse movement during drag
-    useEffect(() => {
-        if (!dragState.isDragging || !svgRef.current) return;
-
-        const handleMouseMove = (e: MouseEvent) => {
-            const svgRect = svgRef.current?.getBoundingClientRect();
-            if (!svgRect) return;
-
-            // Calculate which bar the cursor is over
-            const relativeY = e.clientY - svgRect.top - margin.top;
-            let foundTarget: string | null = null;
-
-            for (const item of chartData) {
-                const barY = yScale(item.label) || 0;
-                const barHeight = yScale.bandwidth();
-                if (relativeY >= barY && relativeY <= barY + barHeight) {
-                    // Don't target the same bar being dragged
-                    if (item.label !== dragState.draggedItem?.label) {
-                        foundTarget = item.label;
-                    }
-                    break;
-                }
+    // Drag-to-Merge Logic
+    const getDropTarget = useCallback((x: number, y: number) => {
+        for (const item of chartData) {
+            const barY = yScale(item.label) || 0;
+            const barHeight = yScale.bandwidth();
+            if (y >= barY && y <= barY + barHeight) {
+                return item.label;
             }
+        }
+        return null;
+    }, [chartData, yScale]);
 
-            setDragState(prev => ({
-                ...prev,
-                currentY: e.clientY,
-                dropTarget: foundTarget,
-            }));
-        };
-
-        const handleMouseUp = (e: MouseEvent) => {
-            if (dragState.dropTarget && dragState.draggedItem && onMerge) {
-                const targetItem = chartData.find(d => d.label === dragState.dropTarget);
-                if (targetItem) {
-                    // Get all selected items (or just the dragged one if nothing selected)
-                    const sourceItems = selectedKeys?.has(dragState.draggedItem.label)
-                        ? chartData.filter(d => selectedKeys.has(d.label))
-                        : [dragState.draggedItem];
-
-                    // Remove the target from sources if it's there
-                    const filteredSources = sourceItems.filter(s => s.label !== targetItem.label);
-
-                    if (filteredSources.length > 0) {
-                        onMerge({
-                            sourceItems: filteredSources,
-                            targetItem,
-                        });
-                    }
-                }
-            }
-
-            setDragState({
-                isDragging: false,
-                draggedItem: null,
-                dropTarget: null,
-                startY: 0,
-                currentY: 0,
-            });
-        };
-
-        document.addEventListener('mousemove', handleMouseMove);
-        document.addEventListener('mouseup', handleMouseUp);
-
-        return () => {
-            document.removeEventListener('mousemove', handleMouseMove);
-            document.removeEventListener('mouseup', handleMouseUp);
-        };
-    }, [dragState.isDragging, dragState.draggedItem, dragState.dropTarget, chartData, yScale, margin.top, selectedKeys, onMerge]);
+    const { dragState, handleDragStart } = useChartDragMerge({
+        enabled: !!(interactive && onMerge),
+        onMerge,
+        chartData,
+        selectedKeys,
+        svgRef: svgRef as React.RefObject<SVGSVGElement | null>,
+        margin,
+        getDropTarget,
+    });
 
 
     // D3 Brush Implementation

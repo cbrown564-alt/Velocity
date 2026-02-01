@@ -1,0 +1,832 @@
+
+> velocity@0.0.0 test:run
+> vitest run
+
+
+ RUN  v2.1.9 /Users/cobro/Code/Velocity
+
+ ✓ src/services/analysisProcessor.test.ts (3 tests) 13ms
+ ✓ src/services/queryBuilder.test.ts (33 tests) 10ms
+ ✓ src/services/arrowIngestion.test.ts (10 tests) 62ms
+stdout | src/store/persistence.test.ts
+🔄 [Persist] State rehydrated from localStorage
+
+ ↓ src/services/duckDbArrow.test.ts (7 tests | 7 skipped)
+ ✓ src/store/persistence.test.ts (4 tests) 24ms
+stderr | src/features/dashboard/components/DraggableVariable.test.tsx > VariableCard > styling > applies overlay styles when isOverlay is true
+React does not recognize the `layoutId` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `layoutid` instead. If you accidentally passed it from a parent component, remove it from the DOM element.
+
+ ❯ src/features/dashboard/components/DraggableVariable.test.tsx (12 tests | 3 failed) 160ms
+   × VariableCard > rendering > displays variable type 13ms
+     → Unable to find an element with the text: nominal. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"group flex items-center gap-2 px-2 h-9 bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-lg shadow-sm cursor-grab hover:border-[var(--color-accent)] hover:shadow-float transition-all active:cursor-grabbing relative pr-8
+        
+        hover:bg-[var(--bg-panel)]
+        
+        
+      "[39m
+      [33mstyle[39m=[32m"opacity: 1;"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors shrink-0 opacity-0 group-hover:opacity-100 -ml-1"[39m
+      [36m>[39m
+        [36m<svg[39m
+          [33maria-hidden[39m=[32m"true"[39m
+          [33mclass[39m=[32m"lucide lucide-grip-vertical"[39m
+          [33mfill[39m=[32m"none"[39m
+          [33mheight[39m=[32m"14"[39m
+          [33mstroke[39m=[32m"currentColor"[39m
+          [33mstroke-linecap[39m=[32m"round"[39m
+          [33mstroke-linejoin[39m=[32m"round"[39m
+          [33mstroke-width[39m=[32m"2"[39m
+          [33mviewBox[39m=[32m"0 0 24 24"[39m
+          [33mwidth[39m=[32m"14"[39m
+          [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+        [36m>[39m
+          [36m<circle[39m
+            [33mcx[39m=[32m"9"[39m
+            [33mcy[39m=[32m"12"[39m
+            [33mr[39m=[32m"1"[39m
+          [36m/>[39m
+          [36m<circle[39m
+            [33mcx[39m=[32m"9"[39m
+            [33mcy[39m=[32m"5"[39m
+            [33mr[39m=[32m"1"[39m
+          [36m/>[39m
+          [36m<circle[39m
+            [33mcx[39m=[32m"9"[39m
+            [33mcy[39m=[32m"19"[39m
+            [33mr[39m=[32m"1"[39m
+          [36m/>[39m
+          [36m<circle[39m
+            [33mcx[39m=[32m"15"[39m
+            [33mcy[39m=[32m"12"[39m
+            [33mr[39m=[32m"1"[39m
+          [36m/>[39m
+          [36m<circle[39m
+            [33mcx[39m=[32m"15"[39m
+            [33mcy[39m=[32m"5"[39m
+            [33mr[39m=[32m"1"[39m
+          [36m/>[39m
+          [36m<circle[39m
+            [33mcx[39m=[32m"15"[39m
+            [33mcy[39m=[32m"19"[39m
+            [33mr[39m=[32m"1"[39m
+          [36m/>[39m
+        [36m</svg>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex-1 min-w-0 flex items-center gap-2"[39m
+      [36m>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"shrink-0 flex items-center text-[var(--text-secondary)]"[39m
+          [33mtitle[39m=[32m"nominal"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-circle-check-big text-[var(--text-secondary)]"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"13"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"13"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M21.801 10A10 10 0 1 1 17 3.335"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"m9 11 3 3L22 4"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+        [36m</span>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"text-sm font-medium truncate font-body leading-none text-[var(--text-secondary)] group-hover:text-[var(--text-primary)]"[39m
+        [36m>[39m
+          [0mGender[0m
+        [36m</span>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+   × VariableCard > rendering > displays ordinal type 4ms
+     → Unable to find an element with the text: ordinal. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"group flex items-center gap-2 px-2 h-9 bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-lg shadow-sm cursor-grab hover:border-[var(--color-accent)] hover:shadow-float transition-all active:cursor-grabbing relative pr-8
+        
+        hover:bg-[var(--bg-panel)]
+        
+        
+      "[39m
+      [33mstyle[39m=[32m"opacity: 1;"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors shrink-0 opacity-0 group-hover:opacity-100 -ml-1"[39m
+      [36m>[39m
+        [36m<svg[39m
+          [33maria-hidden[39m=[32m"true"[39m
+          [33mclass[39m=[32m"lucide lucide-grip-vertical"[39m
+          [33mfill[39m=[32m"none"[39m
+          [33mheight[39m=[32m"14"[39m
+          [33mstroke[39m=[32m"currentColor"[39m
+          [33mstroke-linecap[39m=[32m"round"[39m
+          [33mstroke-linejoin[39m=[32m"round"[39m
+          [33mstroke-width[39m=[32m"2"[39m
+          [33mviewBox[39m=[32m"0 0 24 24"[39m
+          [33mwidth[39m=[32m"14"[39m
+          [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+        [36m>[39m
+          [36m<circle[39m
+            [33mcx[39m=[32m"9"[39m
+            [33mcy[39m=[32m"12"[39m
+            [33mr[39m=[32m"1"[39m
+          [36m/>[39m
+          [36m<circle[39m
+            [33mcx[39m=[32m"9"[39m
+            [33mcy[39m=[32m"5"[39m
+            [33mr[39m=[32m"1"[39m
+          [36m/>[39m
+          [36m<circle[39m
+            [33mcx[39m=[32m"9"[39m
+            [33mcy[39m=[32m"19"[39m
+            [33mr[39m=[32m"1"[39m
+          [36m/>[39m
+          [36m<circle[39m
+            [33mcx[39m=[32m"15"[39m
+            [33mcy[39m=[32m"12"[39m
+            [33mr[39m=[32m"1"[39m
+          [36m/>[39m
+          [36m<circle[39m
+            [33mcx[39m=[32m"15"[39m
+            [33mcy[39m=[32m"5"[39m
+            [33mr[39m=[32m"1"[39m
+          [36m/>[39m
+          [36m<circle[39m
+            [33mcx[39m=[32m"15"[39m
+            [33mcy[39m=[32m"19"[39m
+            [33mr[39m=[32m"1"[39m
+          [36m/>[39m
+        [36m</svg>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex-1 min-w-0 flex items-center gap-2"[39m
+      [36m>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"shrink-0 flex items-center text-[var(--text-secondary)]"[39m
+          [33mtitle[39m=[32m"ordinal"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-circle-check-big text-[var(--text-secondary)]"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"13"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"13"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M21.801 10A10 10 0 1 1 17 3.335"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"m9 11 3 3L22 4"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+        [36m</span>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"text-sm font-medium truncate font-body leading-none text-[var(--text-secondary)] group-hover:text-[var(--text-primary)]"[39m
+        [36m>[39m
+          [0mOverall Satisfaction[0m
+        [36m</span>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+   × VariableCard > rendering > displays numeric type 26ms
+     → Unable to find an element with the text: numeric. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"group flex items-center gap-2 px-2 h-9 bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-lg shadow-sm cursor-grab hover:border-[var(--color-accent)] hover:shadow-float transition-all active:cursor-grabbing relative pr-8
+        
+        hover:bg-[var(--bg-panel)]
+        
+        
+      "[39m
+      [33mstyle[39m=[32m"opacity: 1;"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors shrink-0 opacity-0 group-hover:opacity-100 -ml-1"[39m
+      [36m>[39m
+        [36m<svg[39m
+          [33maria-hidden[39m=[32m"true"[39m
+          [33mclass[39m=[32m"lucide lucide-grip-vertical"[39m
+          [33mfill[39m=[32m"none"[39m
+          [33mheight[39m=[32m"14"[39m
+          [33mstroke[39m=[32m"currentColor"[39m
+          [33mstroke-linecap[39m=[32m"round"[39m
+          [33mstroke-linejoin[39m=[32m"round"[39m
+          [33mstroke-width[39m=[32m"2"[39m
+          [33mviewBox[39m=[32m"0 0 24 24"[39m
+          [33mwidth[39m=[32m"14"[39m
+          [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+        [36m>[39m
+          [36m<circle[39m
+            [33mcx[39m=[32m"9"[39m
+            [33mcy[39m=[32m"12"[39m
+            [33mr[39m=[32m"1"[39m
+          [36m/>[39m
+          [36m<circle[39m
+            [33mcx[39m=[32m"9"[39m
+            [33mcy[39m=[32m"5"[39m
+            [33mr[39m=[32m"1"[39m
+          [36m/>[39m
+          [36m<circle[39m
+            [33mcx[39m=[32m"9"[39m
+            [33mcy[39m=[32m"19"[39m
+            [33mr[39m=[32m"1"[39m
+          [36m/>[39m
+          [36m<circle[39m
+            [33mcx[39m=[32m"15"[39m
+            [33mcy[39m=[32m"12"[39m
+            [33mr[39m=[32m"1"[39m
+          [36m/>[39m
+          [36m<circle[39m
+            [33mcx[39m=[32m"15"[39m
+            [33mcy[39m=[32m"5"[39m
+            [33mr[39m=[32m"1"[39m
+          [36m/>[39m
+          [36m<circle[39m
+            [33mcx[39m=[32m"15"[39m
+            [33mcy[39m=[32m"19"[39m
+            [33mr[39m=[32m"1"[39m
+          [36m/>[39m
+        [36m</svg>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex-1 min-w-0 flex items-center gap-2"[39m
+      [36m>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"shrink-0 flex items-center text-[var(--text-secondary)]"[39m
+          [33mtitle[39m=[32m"numeric"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-hash text-[var(--text-secondary)]"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"13"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"13"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<line[39m
+              [33mx1[39m=[32m"4"[39m
+              [33mx2[39m=[32m"20"[39m
+              [33my1[39m=[32m"9"[39m
+              [33my2[39m=[32m"9"[39m
+            [36m/>[39m
+            [36m<line[39m
+              [33mx1[39m=[32m"4"[39m
+              [33mx2[39m=[32m"20"[39m
+              [33my1[39m=[32m"15"[39m
+              [33my2[39m=[32m"15"[39m
+            [36m/>[39m
+            [36m<line[39m
+              [33mx1[39m=[32m"10"[39m
+              [33mx2[39m=[32m"8"[39m
+              [33my1[39m=[32m"3"[39m
+              [33my2[39m=[32m"21"[39m
+            [36m/>[39m
+            [36m<line[39m
+              [33mx1[39m=[32m"16"[39m
+              [33mx2[39m=[32m"14"[39m
+              [33my1[39m=[32m"3"[39m
+              [33my2[39m=[32m"21"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+        [36m</span>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"text-sm font-medium truncate font-body leading-none text-[var(--text-secondary)] group-hover:text-[var(--text-primary)]"[39m
+        [36m>[39m
+          [0mAge (years)[0m
+        [36m</span>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ src/components/common/DropZone.test.tsx (9 tests | 2 failed) 167ms
+   × DropZone > drag states > shows active styling when active prop is true 35ms
+     → expected '\n        relative flex items-center …' to contain 'border-[var(--color-terracotta)]'
+   × DropZone > drag states > does not show active styling when active is false 8ms
+     → expected '\n        relative flex items-center …' to contain 'border-[var(--gray-200)]'
+stdout | src/store/variableSet.test.ts
+🔄 [Persist] State rehydrated from localStorage
+
+stdout | src/store/variableSet.test.ts > Variable Logic > should dispatch recodeVariable action correctly for binning
+[DataSlice] Worker ready, OPFS available: false
+
+ ✓ src/store/variableSet.test.ts (2 tests) 3ms
+stdout | src/test/integration/storeWorker.test.ts
+🔄 [Persist] State rehydrated from localStorage
+
+stdout | src/test/integration/storeWorker.test.ts > Integration: Store <-> Worker Analysis Flow > should trigger runCrosstab and update results when TableConfig changes
+[MockWorker] postMessage: {
+  type: 'runCrosstab',
+  options: {
+    rowVars: [ 'var_gender' ],
+    colVar: null,
+    filters: [],
+    weightVar: undefined
+  },
+  context: { variables: { var_gender: [Object] }, variableSets: {} }
+}
+
+ ✓ src/test/integration/storeWorker.test.ts (1 test) 9ms
+ ✓ src/services/dataHeuristics.test.ts (7 tests) 7ms
+stdout | src/test/integration/savIngestion.test.ts
+🔄 [Persist] State rehydrated from localStorage
+
+stdout | src/test/integration/savIngestion.test.ts > Integration: SAV Ingestion Flow > should initialize worker, send SAV buffer, and update store on success
+[MockWorker] postMessage: { type: 'init' }
+
+stdout | src/test/integration/savIngestion.test.ts > Integration: SAV Ingestion Flow > should initialize worker, send SAV buffer, and update store on success
+[DataSlice] Worker ready, OPFS available: false
+[MockWorker] postMessage: {
+  type: 'loadSAV',
+  buffer: ArrayBuffer {
+    [Uint8Contents]: <00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00>,
+    byteLength: 100
+  }
+}
+📊 [DataSlice] SAV loaded: 500 rows, 3 variables, 3 variable sets in 125.00ms
+
+ ✓ src/test/integration/savIngestion.test.ts (1 test) 23ms
+stdout | src/store/swapAndClear.test.ts
+🔄 [Persist] State rehydrated from localStorage
+
+ ✓ src/store/swapAndClear.test.ts (6 tests) 69ms
+ ✓ src/services/chartRecommender.test.ts (5 tests) 4ms
+ ❯ src/components/common/SortableRowShelf.test.tsx (5 tests | 1 failed) 248ms
+   × SortableRowShelf > should render empty when no variable sets provided 17ms
+     → expect(received).toBeInTheDocument()
+
+received value must be an HTMLElement or an SVGElement.
+
+ ✓ src/services/queryBuilder_numeric_grid.test.ts (3 tests) 4ms
+stdout | src/store/reorderRowVars.test.ts
+🔄 [Persist] State rehydrated from localStorage
+
+ ✓ src/features/dashboard/hooks/useAggregatedTableData.test.ts (2 tests) 16ms
+ ✓ src/store/reorderRowVars.test.ts (4 tests) 25ms
+ ✓ src/services/gridUtils.test.ts (2 tests) 5ms
+ ✓ src/services/statistics.test.ts (8 tests) 3ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/components/common/DropZone.test.tsx > DropZone > drag states > shows active styling when active prop is true
+AssertionError: expected '\n        relative flex items-center …' to contain 'border-[var(--color-terracotta)]'
+
+- Expected
++ Received
+
+- border-[var(--color-terracotta)]
++
++         relative flex items-center justify-start px-3 transition-all duration-200 rounded-md border border-dashed
++         border-[color-mix(in_srgb,var(--color-accent),transparent_50%)] bg-[var(--bg-surface)] text-[color-mix(in_srgb,var(--color-accent),transparent_30%)]
++         h-10 w-full min-w-[200px]
++       
+
+ ❯ src/components/common/DropZone.test.tsx:163:36
+    161|             const zone = container.firstChild as HTMLElement;
+    162|             // Active state should apply terracotta border
+    163|             expect(zone.className).toContain('border-[var(--color-terr…
+       |                                    ^
+    164|         });
+    165| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  src/components/common/DropZone.test.tsx > DropZone > drag states > does not show active styling when active is false
+AssertionError: expected '\n        relative flex items-center …' to contain 'border-[var(--gray-200)]'
+
+- Expected
++ Received
+
+- border-[var(--gray-200)]
++
++         relative flex items-center justify-start px-3 transition-all duration-200 rounded-md border border-dashed
++         border-[var(--border-color)] text-[var(--text-secondary)] hover:border-[var(--border-color-active)] hover:bg-[var(--bg-active)]
++         h-10 w-full min-w-[200px]
++       
+
+ ❯ src/components/common/DropZone.test.tsx:180:36
+    178|             const zone = container.firstChild as HTMLElement;
+    179|             // Should have default gray border
+    180|             expect(zone.className).toContain('border-[var(--gray-200)]…
+       |                                    ^
+    181|         });
+    182|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  src/components/common/SortableRowShelf.test.tsx > SortableRowShelf > should render empty when no variable sets provided
+Error: expect(received).toBeInTheDocument()
+
+received value must be an HTMLElement or an SVGElement.
+
+ ❯ src/components/common/SortableRowShelf.test.tsx:96:65
+     94|         );
+     95| 
+     96|         expect(container.querySelector('.flex.flex-col.gap-2')).toBeIn…
+       |                                                                 ^
+     97|         expect(screen.queryByText('Age Group')).not.toBeInTheDocument(…
+     98|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+ FAIL  src/features/dashboard/components/DraggableVariable.test.tsx > VariableCard > rendering > displays variable type
+TestingLibraryElementError: Unable to find an element with the text: nominal. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"group flex items-center gap-2 px-2 h-9 bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-lg shadow-sm cursor-grab hover:border-[var(--color-accent)] hover:shadow-float transition-all active:cursor-grabbing relative pr-8
+        
+        hover:bg-[var(--bg-panel)]
+        
+        
+      "[39m
+      [33mstyle[39m=[32m"opacity: 1;"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors shrink-0 opacity-0 group-hover:opacity-100 -ml-1"[39m
+      [36m>[39m
+        [36m<svg[39m
+          [33maria-hidden[39m=[32m"true"[39m
+          [33mclass[39m=[32m"lucide lucide-grip-vertical"[39m
+          [33mfill[39m=[32m"none"[39m
+          [33mheight[39m=[32m"14"[39m
+          [33mstroke[39m=[32m"currentColor"[39m
+          [33mstroke-linecap[39m=[32m"round"[39m
+          [33mstroke-linejoin[39m=[32m"round"[39m
+          [33mstroke-width[39m=[32m"2"[39m
+          [33mviewBox[39m=[32m"0 0 24 24"[39m
+          [33mwidth[39m=[32m"14"[39m
+          [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+        [36m>[39m
+          [36m<circle[39m
+            [33mcx[39m=[32m"9"[39m
+            [33mcy[39m=[32m"12"[39m
+            [33mr[39m=[32m"1"[39m
+          [36m/>[39m
+          [36m<circle[39m
+            [33mcx[39m=[32m"9"[39m
+            [33mcy[39m=[32m"5"[39m
+            [33mr[39m=[32m"1"[39m
+          [36m/>[39m
+          [36m<circle[39m
+            [33mcx[39m=[32m"9"[39m
+            [33mcy[39m=[32m"19"[39m
+            [33mr[39m=[32m"1"[39m
+          [36m/>[39m
+          [36m<circle[39m
+            [33mcx[39m=[32m"15"[39m
+            [33mcy[39m=[32m"12"[39m
+            [33mr[39m=[32m"1"[39m
+          [36m/>[39m
+          [36m<circle[39m
+            [33mcx[39m=[32m"15"[39m
+            [33mcy[39m=[32m"5"[39m
+            [33mr[39m=[32m"1"[39m
+          [36m/>[39m
+          [36m<circle[39m
+            [33mcx[39m=[32m"15"[39m
+            [33mcy[39m=[32m"19"[39m
+            [33mr[39m=[32m"1"[39m
+          [36m/>[39m
+        [36m</svg>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex-1 min-w-0 flex items-center gap-2"[39m
+      [36m>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"shrink-0 flex items-center text-[var(--text-secondary)]"[39m
+          [33mtitle[39m=[32m"nominal"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-circle-check-big text-[var(--text-secondary)]"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"13"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"13"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M21.801 10A10 10 0 1 1 17 3.335"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"m9 11 3 3L22 4"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+        [36m</span>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"text-sm font-medium truncate font-body leading-none text-[var(--text-secondary)] group-hover:text-[var(--text-primary)]"[39m
+        [36m>[39m
+          [0mGender[0m
+        [36m</span>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/features/dashboard/components/DraggableVariable.test.tsx:40:27
+     38|             );
+     39| 
+     40|             expect(screen.getByText('nominal')).toBeInTheDocument();
+       |                           ^
+     41|         });
+     42| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯
+
+ FAIL  src/features/dashboard/components/DraggableVariable.test.tsx > VariableCard > rendering > displays ordinal type
+TestingLibraryElementError: Unable to find an element with the text: ordinal. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"group flex items-center gap-2 px-2 h-9 bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-lg shadow-sm cursor-grab hover:border-[var(--color-accent)] hover:shadow-float transition-all active:cursor-grabbing relative pr-8
+        
+        hover:bg-[var(--bg-panel)]
+        
+        
+      "[39m
+      [33mstyle[39m=[32m"opacity: 1;"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors shrink-0 opacity-0 group-hover:opacity-100 -ml-1"[39m
+      [36m>[39m
+        [36m<svg[39m
+          [33maria-hidden[39m=[32m"true"[39m
+          [33mclass[39m=[32m"lucide lucide-grip-vertical"[39m
+          [33mfill[39m=[32m"none"[39m
+          [33mheight[39m=[32m"14"[39m
+          [33mstroke[39m=[32m"currentColor"[39m
+          [33mstroke-linecap[39m=[32m"round"[39m
+          [33mstroke-linejoin[39m=[32m"round"[39m
+          [33mstroke-width[39m=[32m"2"[39m
+          [33mviewBox[39m=[32m"0 0 24 24"[39m
+          [33mwidth[39m=[32m"14"[39m
+          [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+        [36m>[39m
+          [36m<circle[39m
+            [33mcx[39m=[32m"9"[39m
+            [33mcy[39m=[32m"12"[39m
+            [33mr[39m=[32m"1"[39m
+          [36m/>[39m
+          [36m<circle[39m
+            [33mcx[39m=[32m"9"[39m
+            [33mcy[39m=[32m"5"[39m
+            [33mr[39m=[32m"1"[39m
+          [36m/>[39m
+          [36m<circle[39m
+            [33mcx[39m=[32m"9"[39m
+            [33mcy[39m=[32m"19"[39m
+            [33mr[39m=[32m"1"[39m
+          [36m/>[39m
+          [36m<circle[39m
+            [33mcx[39m=[32m"15"[39m
+            [33mcy[39m=[32m"12"[39m
+            [33mr[39m=[32m"1"[39m
+          [36m/>[39m
+          [36m<circle[39m
+            [33mcx[39m=[32m"15"[39m
+            [33mcy[39m=[32m"5"[39m
+            [33mr[39m=[32m"1"[39m
+          [36m/>[39m
+          [36m<circle[39m
+            [33mcx[39m=[32m"15"[39m
+            [33mcy[39m=[32m"19"[39m
+            [33mr[39m=[32m"1"[39m
+          [36m/>[39m
+        [36m</svg>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex-1 min-w-0 flex items-center gap-2"[39m
+      [36m>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"shrink-0 flex items-center text-[var(--text-secondary)]"[39m
+          [33mtitle[39m=[32m"ordinal"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-circle-check-big text-[var(--text-secondary)]"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"13"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"13"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M21.801 10A10 10 0 1 1 17 3.335"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"m9 11 3 3L22 4"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+        [36m</span>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"text-sm font-medium truncate font-body leading-none text-[var(--text-secondary)] group-hover:text-[var(--text-primary)]"[39m
+        [36m>[39m
+          [0mOverall Satisfaction[0m
+        [36m</span>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/features/dashboard/components/DraggableVariable.test.tsx:48:27
+     46|             );
+     47| 
+     48|             expect(screen.getByText('ordinal')).toBeInTheDocument();
+       |                           ^
+     49|         });
+     50| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/6]⎯
+
+ FAIL  src/features/dashboard/components/DraggableVariable.test.tsx > VariableCard > rendering > displays numeric type
+TestingLibraryElementError: Unable to find an element with the text: numeric. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"group flex items-center gap-2 px-2 h-9 bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-lg shadow-sm cursor-grab hover:border-[var(--color-accent)] hover:shadow-float transition-all active:cursor-grabbing relative pr-8
+        
+        hover:bg-[var(--bg-panel)]
+        
+        
+      "[39m
+      [33mstyle[39m=[32m"opacity: 1;"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors shrink-0 opacity-0 group-hover:opacity-100 -ml-1"[39m
+      [36m>[39m
+        [36m<svg[39m
+          [33maria-hidden[39m=[32m"true"[39m
+          [33mclass[39m=[32m"lucide lucide-grip-vertical"[39m
+          [33mfill[39m=[32m"none"[39m
+          [33mheight[39m=[32m"14"[39m
+          [33mstroke[39m=[32m"currentColor"[39m
+          [33mstroke-linecap[39m=[32m"round"[39m
+          [33mstroke-linejoin[39m=[32m"round"[39m
+          [33mstroke-width[39m=[32m"2"[39m
+          [33mviewBox[39m=[32m"0 0 24 24"[39m
+          [33mwidth[39m=[32m"14"[39m
+          [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+        [36m>[39m
+          [36m<circle[39m
+            [33mcx[39m=[32m"9"[39m
+            [33mcy[39m=[32m"12"[39m
+            [33mr[39m=[32m"1"[39m
+          [36m/>[39m
+          [36m<circle[39m
+            [33mcx[39m=[32m"9"[39m
+            [33mcy[39m=[32m"5"[39m
+            [33mr[39m=[32m"1"[39m
+          [36m/>[39m
+          [36m<circle[39m
+            [33mcx[39m=[32m"9"[39m
+            [33mcy[39m=[32m"19"[39m
+            [33mr[39m=[32m"1"[39m
+          [36m/>[39m
+          [36m<circle[39m
+            [33mcx[39m=[32m"15"[39m
+            [33mcy[39m=[32m"12"[39m
+            [33mr[39m=[32m"1"[39m
+          [36m/>[39m
+          [36m<circle[39m
+            [33mcx[39m=[32m"15"[39m
+            [33mcy[39m=[32m"5"[39m
+            [33mr[39m=[32m"1"[39m
+          [36m/>[39m
+          [36m<circle[39m
+            [33mcx[39m=[32m"15"[39m
+            [33mcy[39m=[32m"19"[39m
+            [33mr[39m=[32m"1"[39m
+          [36m/>[39m
+        [36m</svg>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex-1 min-w-0 flex items-center gap-2"[39m
+      [36m>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"shrink-0 flex items-center text-[var(--text-secondary)]"[39m
+          [33mtitle[39m=[32m"numeric"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-hash text-[var(--text-secondary)]"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"13"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"13"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<line[39m
+              [33mx1[39m=[32m"4"[39m
+              [33mx2[39m=[32m"20"[39m
+              [33my1[39m=[32m"9"[39m
+              [33my2[39m=[32m"9"[39m
+            [36m/>[39m
+            [36m<line[39m
+              [33mx1[39m=[32m"4"[39m
+              [33mx2[39m=[32m"20"[39m
+              [33my1[39m=[32m"15"[39m
+              [33my2[39m=[32m"15"[39m
+            [36m/>[39m
+            [36m<line[39m
+              [33mx1[39m=[32m"10"[39m
+              [33mx2[39m=[32m"8"[39m
+              [33my1[39m=[32m"3"[39m
+              [33my2[39m=[32m"21"[39m
+            [36m/>[39m
+            [36m<line[39m
+              [33mx1[39m=[32m"16"[39m
+              [33mx2[39m=[32m"14"[39m
+              [33my1[39m=[32m"3"[39m
+              [33my2[39m=[32m"21"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+        [36m</span>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"text-sm font-medium truncate font-body leading-none text-[var(--text-secondary)] group-hover:text-[var(--text-primary)]"[39m
+        [36m>[39m
+          [0mAge (years)[0m
+        [36m</span>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/features/dashboard/components/DraggableVariable.test.tsx:56:27
+     54|             );
+     55| 
+     56|             expect(screen.getByText('numeric')).toBeInTheDocument();
+       |                           ^
+     57|         });
+     58|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/6]⎯
+
+ Test Files  3 failed | 15 passed | 1 skipped (19)
+      Tests  6 failed | 111 passed | 7 skipped (124)
+   Start at  22:06:37
+   Duration  3.43s (transform 555ms, setup 4.45s, collect 2.39s, tests 852ms, environment 6.69s, prepare 2.44s)
+

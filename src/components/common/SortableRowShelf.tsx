@@ -47,17 +47,18 @@ const SortableItem: React.FC<SortableItemProps> = ({ variableSet, onRemove }) =>
             style={style}
             {...attributes}
             {...listeners}
-            className={`relative flex items-center justify-between p-2 pl-2 pr-2 bg-[var(--gray-50)] border border-[var(--gray-200)] rounded-md group ${isDragging ? 'z-50 shadow-lg ring-2 ring-[var(--color-terracotta)]' : 'hover:bg-[var(--gray-100)]'
+            className={`relative flex items-center justify-between p-2 pl-2 pr-2 bg-[var(--bg-panel)] border border-[var(--border-color)] rounded-md group 
+                ${isDragging ? 'z-50 shadow-lg ring-2 ring-[var(--color-accent)]' : 'hover:bg-[var(--bg-active)] hover:border-[var(--color-accent-hover)]'
                 }`}
         >
             {/* Drag Handle Icon */}
-            <div className="p-1 text-[var(--gray-400)]">
+            <div className="p-1 text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors">
                 <GripVertical size={14} />
             </div>
 
             {/* Variable Name */}
             <span
-                className="flex-1 text-sm font-medium text-[var(--color-ink)] font-body truncate max-w-[200px] px-2"
+                className="flex-1 text-sm font-medium text-[var(--text-primary)] font-body truncate max-w-[200px] px-2"
                 title={variableSet.name}
             >
                 {variableSet.name}
@@ -67,7 +68,7 @@ const SortableItem: React.FC<SortableItemProps> = ({ variableSet, onRemove }) =>
             <button
                 onClick={(e) => { e.stopPropagation(); onRemove(variableSet.id); }}
                 onPointerDown={(e) => e.stopPropagation()}
-                className="p-1 text-[var(--gray-400)] hover:text-[var(--color-terracotta)] hover:bg-[var(--gray-100)] rounded-full transition-colors"
+                className="p-1 text-[var(--text-secondary)] hover:text-[var(--color-accent)] hover:bg-[var(--bg-active)] rounded-full transition-colors"
                 aria-label="Remove variable"
             >
                 <svg

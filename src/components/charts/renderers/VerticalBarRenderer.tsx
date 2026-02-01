@@ -1,8 +1,10 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, useRef } from 'react';
 import * as d3 from 'd3-scale';
 import { max } from 'd3-array';
 import { BaseChartRendererProps } from '../../../types/charts';
 // getChartColor removed
+import { ChartDataPoint } from '../../../types/processedData';
+import { useChartDragMerge } from '../hooks/useChartDragMerge';
 
 /**
  * Vertical Bar (Column) Chart Renderer
@@ -17,8 +19,11 @@ export const VerticalBarRenderer: React.FC<BaseChartRendererProps> = ({
     selectedKeys,
     onSelectionChange,
     onContextMenu,
+    onMerge,
     labelMode = 'count',
 }) => {
+    const svgRef = useRef<SVGSVGElement>(null);
+
     // Use the first series (single column analysis) or "Total" column
     const series = processedData.series[0];
     const chartData = series?.data || [];
@@ -78,16 +83,41 @@ export const VerticalBarRenderer: React.FC<BaseChartRendererProps> = ({
         });
     }, [interactive, onContextMenu, selectedKeys, chartData]);
 
+    // Drag-to-merge Logic
+    const getDropTarget = useCallback((x: number, y: number) => {
+        for (const item of chartData) {
+            const barX = xScale(item.label) || 0;
+            const barWidth = xScale.bandwidth();
+            // Check if X is within the bar's band (vertical column)
+            if (x >= barX && x <= barX + barWidth) {
+                return item.label;
+            }
+        }
+        return null;
+    }, [chartData, xScale]);
+
+    const { dragState, handleDragStart } = useChartDragMerge({
+        enabled: !!(interactive && onMerge),
+        onMerge,
+        chartData,
+        selectedKeys,
+        svgRef: svgRef as React.RefObject<SVGSVGElement | null>,
+        margin,
+        getDropTarget,
+    });
+
     // Y-axis ticks
     const yTicks = yScale.ticks(5);
 
     return (
         <svg
+            ref={svgRef}
             width={width}
             height={height}
             style={{
                 overflow: 'visible',
                 fontFamily: 'var(--font-mono)',
+                cursor: dragState.isDragging ? 'grabbing' : 'default',
             }}
         >
             <g transform={`translate(${margin.left},${margin.top})`}>
@@ -156,27 +186,59 @@ export const VerticalBarRenderer: React.FC<BaseChartRendererProps> = ({
                 {chartData.map((d, i) => {
                     const barHeight = innerHeight - yScale(d.value);
                     const isSelected = selectedKeys?.has(d.label);
+                    const isDragging = dragState.isDragging && dragState.draggedItem?.label === d.label;
+                    const isDropTarget = dragState.isDragging && dragState.dropTarget === d.label;
+
 
                     return (
                         <g
                             key={d.label}
-                            onClick={(e) => handleBarClick(d, e)}
+                            onClick={(e) => {
+                                if (!dragState.isDragging) {
+                                    handleBarClick(d, e);
+                                }
+                            }}
                             onContextMenu={(e) => handleContextMenu(d, e)}
-                            style={{ cursor: interactive ? 'pointer' : 'default' }}
+                            onMouseDown={(e) => {
+                                if (e.button === 0 && onMerge) {
+                                    handleDragStart(d, e);
+                                }
+                            }}
+                            style={{
+                                opacity: isDragging ? 0.5 : 1,
+                                transform: isDropTarget ? 'scale(1.02)' : 'scale(1)',
+                                transformOrigin: 'center bottom', // Scale from bottom for columns
+                                cursor: onMerge ? 'grab' : (interactive ? 'pointer' : 'default'),
+                            }}
                         >
+                            {/* Drop target highlight */}
+                            {isDropTarget && (
+                                <rect
+                                    x={(xScale(d.label) || 0) - 4}
+                                    y={yScale(d.value) - 4}
+                                    width={xScale.bandwidth() + 8}
+                                    height={barHeight + 8}
+                                    fill="none"
+                                    stroke="var(--status-success-text)" // Mint Green
+                                    strokeWidth={2}
+                                    strokeDasharray="4,2"
+                                    rx={4}
+                                />
+                            )}
+
                             <rect
                                 x={xScale(d.label)}
                                 y={yScale(d.value)}
                                 width={xScale.bandwidth()}
                                 height={barHeight}
                                 // Use palette colors if available, otherwise fall back to primary
-                                fill={colors ? colors[0] : 'var(--viz-fill-secondary)'}
+                                fill={isDropTarget ? 'var(--status-success-bg)' : (colors ? colors[0] : 'var(--viz-fill-secondary)')}
                                 fillOpacity={0.8}
                                 stroke={isSelected ? 'var(--text-accent)' : 'none'}
                                 strokeWidth={isSelected ? 2 : 0}
                                 rx={1}
                                 className="hover:opacity-90 chart-bar-rect"
-                                style={{ transition: 'height 0.3s cubic-bezier(0.4, 0, 0.2, 1)' }}
+                                style={{ transition: dragState.isDragging ? 'none' : 'height 0.3s cubic-bezier(0.4, 0, 0.2, 1)' }}
                             />
 
                             {/* Labels */}
@@ -201,6 +263,41 @@ export const VerticalBarRenderer: React.FC<BaseChartRendererProps> = ({
                         </g>
                     );
                 })}
+
+                {/* Drag ghost indicator */}
+                {dragState.isDragging && dragState.draggedItem && (
+                    <g
+                        style={{
+                            pointerEvents: 'none',
+                            opacity: 0.8,
+                        }}
+                    >
+                        <rect
+                            x={dragState.currentX - (svgRef.current?.getBoundingClientRect().left || 0) - margin.left - xScale.bandwidth() / 2}
+                            y={yScale(dragState.draggedItem.value)}
+                            width={xScale.bandwidth()}
+                            height={innerHeight - yScale(dragState.draggedItem.value)}
+                            fill="var(--viz-fill-secondary)"
+                            rx={3}
+                            stroke="var(--border-color-active)"
+                            strokeWidth={2}
+                        />
+                        <text
+                            x={dragState.currentX - (svgRef.current?.getBoundingClientRect().left || 0) - margin.left}
+                            y={Math.min(yScale(dragState.draggedItem.value) - 10, innerHeight - 20) /* Ensure validation msg stays on screen */}
+                            textAnchor="middle"
+                            style={{
+                                fontSize: 'var(--font-size-xs)',
+                                fontWeight: 600,
+                                fill: 'var(--text-primary)',
+                                textShadow: '0 1px 2px rgba(0,0,0,0.5)'
+                            }}
+                        >
+                            {dragState.dropTarget ? 'Merge' : 'Drag to merge'}
+                        </text>
+                    </g>
+                )}
+
                 {/* Baseline */}
                 <line
                     x1={0}
