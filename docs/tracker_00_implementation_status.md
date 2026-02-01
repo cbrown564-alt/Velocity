@@ -79,6 +79,7 @@
 - [x] Implement App Shell & Navigation (Sidebar/Tabs for Modes).
 - [x] Refactor State Manager for Multi-Mode support.
 - [x] **Refactor Store:** Slice `src/store/index.ts` (currently 700+ lines) into modular slices (e.g., `createDataSlice`, `createUISlice`).
+- [x] **Theming Infrastructure:** Refactored theme system to a dynamic token-based architecture supporting multiple themes (e.g., Mission Control, Liquid Glass).
 - [x] **Local-First State:** Persistent state across modes without reloading [ref](research_08_UX_patterns_for_surveys.md#L385).
 
 ### Milestone 2.2: Data Management (Visual ETL)
@@ -95,6 +96,7 @@
 - [x] **Faceted Search:** Filter variable list by Type, Status, and Quality [ref](research_08_UX_patterns_for_surveys.md#L168).
 - [x] **Visual ETL (Charts):** Click-to-filter and Click-to-exclude context menus [ref](research_08_UX_patterns_for_surveys.md#L252).
 - [x] **Semantic Variable Sets** (Grids represented as Card Clusters).
+    - [x] **Refinement:** Significantly improved discovery heuristics for fragmented and multi-scale Numeric Grids.
 - [x] **Verify Multi-Response Interaction:** Ensure `VariableSet` works for multiple response data.
 
 ### Milestone 2.3: Statistical Foundation
@@ -119,19 +121,20 @@
 ### Milestone 2.4: Major Charting Refactor (D3.js)
 *Goal: Consolidate visualization logic and implement Analysis Charts.*
 - [x] **Refactor Sparklines and Distributions to use D3.js core** (Unified renderers).
+- [x] **Performance Optimization:** Moved complex tree building and chart transformations to the Worker thread to ensure UI responsiveness.
 - [x] **Implement Chart View:** In-app visualization on the Analysis Canvas.
     - [x] Horizontal Bar, Stacked Bar, Grouped Bar
     - [x] Diverging Bar (Likert), Donut, Histogram Adapter
 - [x] **Universal Context Menus:** Unified `ChartContextMenu` for all visualizations.
 - [x] **Shared Interaction Hooks:** Drag-to-select and right-click preparation for both Manager and Canvas.
-- [/] **Visual Recoding** (Interactive Histogram Bucketing) - *Core refactor complete; integrated into Variable Inspector with shared renderers.*
+- [/] **Visual Recoding** (Drag-to-Merge) - *Implemented for Bar/Column charts. Histogram bucketing (resizing) deferred. Note: Drag-to-merge excluded from Grouped Bar charts by design.*
 
 
 ### Milestone 2.5: The Weighting Engine
 *Scope: Application Only (No Weight Creation)*
 - [x] Apply Weight Variable to DuckDB Queries
 - [x] Display Weighted N vs Unweighted N
-- [ ] **Implement Weighting UI Controls:** Global Weight Dropzone and Toggle.
+- [x] **Implement Weighting UI Controls:** Global Weight Dropzone and Toggle.
 
 ### Milestone 2.6: PowerPoint Export
 *Goal: Presentation Parity*
