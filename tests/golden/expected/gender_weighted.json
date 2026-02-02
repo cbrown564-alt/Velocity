@@ -1,0 +1,14 @@
+[
+  {
+    "rowKey_0": "Female",
+    "colKey": "Total",
+    "count": 10.200000000000001,
+    "sumSqWeights": 10.780000000000001
+  },
+  {
+    "rowKey_0": "Male",
+    "colKey": "Total",
+    "count": 9.9,
+    "sumSqWeights": 9.950000000000001
+  }
+]

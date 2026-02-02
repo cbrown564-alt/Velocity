@@ -1,0 +1,12 @@
+[
+  {
+    "rowKey_0": "Female",
+    "colKey": "Total",
+    "count": 10
+  },
+  {
+    "rowKey_0": "Male",
+    "colKey": "Total",
+    "count": 10
+  }
+]

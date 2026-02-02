@@ -1,0 +1,114 @@
+{
+  "column": "age",
+  "frequencies": [
+    {
+      "value": 28,
+      "count": 2
+    },
+    {
+      "value": 29,
+      "count": 2
+    },
+    {
+      "value": 27,
+      "count": 2
+    },
+    {
+      "value": 31,
+      "count": 2
+    },
+    {
+      "value": 25,
+      "count": 1
+    },
+    {
+      "value": 32,
+      "count": 1
+    },
+    {
+      "value": 26,
+      "count": 1
+    },
+    {
+      "value": 34,
+      "count": 1
+    },
+    {
+      "value": 33,
+      "count": 1
+    },
+    {
+      "value": 30,
+      "count": 1
+    }
+  ],
+  "missingCount": 0,
+  "totalCount": 20,
+  "numeric": {
+    "min": 25,
+    "max": 45,
+    "mean": 32.3,
+    "median": 31,
+    "stdDev": 5.563981913777408,
+    "q1": 28,
+    "q3": 35.25,
+    "histogramBins": [
+      {
+        "x0": 25,
+        "x1": 27,
+        "count": 2
+      },
+      {
+        "x0": 27,
+        "x1": 29,
+        "count": 4
+      },
+      {
+        "x0": 29,
+        "x1": 31,
+        "count": 3
+      },
+      {
+        "x0": 31,
+        "x1": 33,
+        "count": 3
+      },
+      {
+        "x0": 33,
+        "x1": 35,
+        "count": 2
+      },
+      {
+        "x0": 35,
+        "x1": 37,
+        "count": 2
+      },
+      {
+        "x0": 37,
+        "x1": 39,
+        "count": 1
+      },
+      {
+        "x0": 39,
+        "x1": 41,
+        "count": 1
+      },
+      {
+        "x0": 41,
+        "x1": 43,
+        "count": 1
+      },
+      {
+        "x0": 43,
+        "x1": 45,
+        "count": 1
+      }
+    ],
+    "iqr": 7.25,
+    "lowerFence": 17.125,
+    "upperFence": 46.125,
+    "whiskerMin": 25,
+    "whiskerMax": 45,
+    "outliers": []
+  }
+}
