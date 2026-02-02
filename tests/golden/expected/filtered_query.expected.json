@@ -1,0 +1,12 @@
+[
+  {
+    "rowKey_0": "NY",
+    "colKey": "Total",
+    "count": 1
+  },
+  {
+    "rowKey_0": "SF",
+    "colKey": "Total",
+    "count": 2
+  }
+]

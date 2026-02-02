@@ -1,0 +1,27 @@
+{
+    "csvFile": "empty_cells.csv",
+    "expectedFile": "empty_cells.expected.json",
+    "config": {
+        "rowVars": [
+            "varA"
+        ],
+        "colVar": "varB",
+        "weightVar": null,
+        "filters": []
+    },
+    "context": {
+        "variables": {
+            "varA": {
+                "name": "varA",
+                "type": "categorical",
+                "label": "Var A"
+            },
+            "varB": {
+                "name": "varB",
+                "type": "categorical",
+                "label": "Var B"
+            }
+        },
+        "variableSets": {}
+    }
+}

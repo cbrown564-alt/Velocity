@@ -1,17 +1,7 @@
 [
   {
-    "rowKey_0": "North",
-    "colKey": "Male",
-    "count": 4,
-    "stats": {
-      "tScore": 0.35136418446315343,
-      "pValue": 0.7253150800623125,
-      "effN": 4
-    }
-  },
-  {
     "rowKey_0": "East",
-    "colKey": "Male",
+    "colKey": "Female",
     "count": 3,
     "stats": {
       "tScore": 0,
@@ -21,7 +11,7 @@
   },
   {
     "rowKey_0": "East",
-    "colKey": "Female",
+    "colKey": "Male",
     "count": 3,
     "stats": {
       "tScore": 0,
@@ -40,13 +30,13 @@
     }
   },
   {
-    "rowKey_0": "South",
+    "rowKey_0": "North",
     "colKey": "Male",
-    "count": 3,
+    "count": 4,
     "stats": {
-      "tScore": -0.3261640365267212,
-      "pValue": 0.7443001820079402,
-      "effN": 3
+      "tScore": 0.35136418446315343,
+      "pValue": 0.7253150800623125,
+      "effN": 4
     }
   },
   {
@@ -57,6 +47,16 @@
       "tScore": 0.35136418446315343,
       "pValue": 0.7253150800623125,
       "effN": 4
+    }
+  },
+  {
+    "rowKey_0": "South",
+    "colKey": "Male",
+    "count": 3,
+    "stats": {
+      "tScore": -0.3261640365267212,
+      "pValue": 0.7443001820079402,
+      "effN": 3
     }
   }
 ]

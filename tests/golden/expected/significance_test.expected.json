@@ -1,0 +1,46 @@
+[
+  {
+    "rowKey_0": false,
+    "colKey": "A",
+    "count": 10,
+    "stats": {
+      "tScore": -8.616843969807043,
+      "pValue": 0,
+      "effN": 10
+    },
+    "sig": "low_95"
+  },
+  {
+    "rowKey_0": false,
+    "colKey": "B",
+    "count": 100,
+    "stats": {
+      "tScore": 20.598196869767854,
+      "pValue": 0,
+      "effN": 100
+    },
+    "sig": "high_95"
+  },
+  {
+    "rowKey_0": true,
+    "colKey": "A",
+    "count": 100,
+    "stats": {
+      "tScore": 20.598196869767854,
+      "pValue": 0,
+      "effN": 100
+    },
+    "sig": "high_95"
+  },
+  {
+    "rowKey_0": true,
+    "colKey": "B",
+    "count": 10,
+    "stats": {
+      "tScore": -8.616843969807043,
+      "pValue": 0,
+      "effN": 10
+    },
+    "sig": "low_95"
+  }
+]

@@ -1,0 +1,41 @@
+[
+  {
+    "rowKey_0": "Item 1",
+    "colKey": "Total",
+    "mean": 2.4,
+    "stdDev": 1.6733200530681511,
+    "min": 1,
+    "max": 5,
+    "median": 2,
+    "q1": 1,
+    "q3": 3,
+    "validCount": 5,
+    "count": 5
+  },
+  {
+    "rowKey_0": "Item 2",
+    "colKey": "Total",
+    "mean": 2.4,
+    "stdDev": 1.6733200530681511,
+    "min": 1,
+    "max": 5,
+    "median": 2,
+    "q1": 1,
+    "q3": 3,
+    "validCount": 5,
+    "count": 5
+  },
+  {
+    "rowKey_0": "Item 3",
+    "colKey": "Total",
+    "mean": 2.4,
+    "stdDev": 1.6733200530681511,
+    "min": 1,
+    "max": 5,
+    "median": 2,
+    "q1": 1,
+    "q3": 3,
+    "validCount": 5,
+    "count": 5
+  }
+]

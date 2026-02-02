@@ -1,0 +1,22 @@
+[
+  {
+    "rowKey_0": "A1",
+    "colKey": "B1",
+    "count": 2,
+    "stats": {
+      "tScore": 0,
+      "pValue": 1,
+      "effN": 2
+    }
+  },
+  {
+    "rowKey_0": "A2",
+    "colKey": "B2",
+    "count": 2,
+    "stats": {
+      "tScore": 0,
+      "pValue": 1,
+      "effN": 2
+    }
+  }
+]
