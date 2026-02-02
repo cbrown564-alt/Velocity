@@ -1,41 +1,29 @@
 /**
  * Analysis Worker
- * 
+ *
  * Runs DuckDB-WASM in a dedicated Web Worker to keep the main thread responsive.
  * All database operations go through this worker via message passing.
- * 
- * Data is now persisted using the Origin Private File System (OPFS) so that
- * users do not need to re-import files on reload.
+ *
+ * This is a thin shell that delegates to core modules:
+ * - Analysis: src/core/analysis/crosstabRunner.ts, variableStatsRunner.ts
+ * - Ingestion: src/core/ingestion/savLoader.ts
+ * - Grid Detection: src/core/gridDetection.ts
+ * - Scale Normalization: src/core/scaleNormalization.ts
  */
 
 import * as duckdb from '@duckdb/duckdb-wasm';
 import * as arrow from 'apache-arrow';
-import { RecodeConfig, VariableSet, Variable, Filter, HistogramBin } from '../types';
-import { buildCrosstabQuery, buildGridHistogramQuery, CrosstabQueryOptions, buildFilterClause, escapeIdentifier, escapeString } from './queryBuilder';
-import { calculateZScore, calculateTScore, calculateESS, calculatePValue } from './statistics';
-import { generateSyntheticGridVariables } from './gridUtils';
+import { RecodeConfig, VariableSet, Variable, HistogramBin } from '../types';
 import { processAnalysisData } from './analysisProcessor';
 import { transformChartData } from './chartDataTransformer';
-import { ProcessedAnalysisData } from '../types/processedData';
-import { AggregatedRow } from '../types';
-import { ChartType } from '../types/charts';
-import {
-  isDateFormat,
-  inferPositiveValue,
-  detectImplicitScale,
-  calculateWordSimilarity,
-  areLabelsRelated,
-  detectByPosition,
-  detectByNaming,
-  detectSequentialPattern,
-  detectNumericGrids,
-  VariableWithIndex,
-} from '../core/gridDetection';
-import { fillEndpointLabelGaps } from '../core/scaleNormalization';
+import { DuckDBWasmAdapter } from '../adapters/DuckDBWasmAdapter';
+import { runCrosstab as coreRunCrosstab } from '../core/analysis/crosstabRunner';
+import { getVariableStats as coreGetVariableStats } from '../core/analysis/variableStatsRunner';
+import { processMetadata } from '../core/ingestion/savLoader';
 
 // Re-export types from canonical location for backward compatibility
 export type { WorkerRequest, WorkerResponse, VariableStatsResult, VariableStatsFrequency, NumericStats } from '../types/worker';
-import type { WorkerRequest, WorkerResponse, VariableStatsResult, VariableStatsFrequency, NumericStats } from '../types/worker';
+import type { WorkerRequest, WorkerResponse, VariableStatsResult } from '../types/worker';
 
 const JSDELIVR_BUNDLES = duckdb.getJsDelivrBundles();
 
@@ -43,23 +31,19 @@ const JSDELIVR_BUNDLES = duckdb.getJsDelivrBundles();
 const OPFS_DB_PATH = 'opfs://velocity_data.db';
 
 // Feature flag: Disable OPFS during development due to corruption loop bug
-// See: docs/bugs/opfs_corruption_loop.md
 const ENABLE_OPFS = false;
 
 let db: duckdb.AsyncDuckDB | null = null;
 let conn: duckdb.AsyncDuckDBConnection | null = null;
+let adapter: DuckDBWasmAdapter | null = null;
 
+// ============================================================================
+// OPFS Management
+// ============================================================================
 
-/**
- * Clean OPFS storage by removing ALL DuckDB-related files
- * DuckDB-WASM stores files in various locations, so we need to be thorough
- */
 async function cleanOPFS(): Promise<void> {
   try {
     const opfsRoot = await navigator.storage.getDirectory();
-
-    // List and remove ALL entries in OPFS root
-    // This is aggressive but ensures complete cleanup
     const entriesToDelete: string[] = [];
 
     // @ts-expect-error - entries() returns an async iterator
@@ -71,7 +55,6 @@ async function cleanOPFS(): Promise<void> {
 
     for (const name of entriesToDelete) {
       try {
-        // recursive option is valid but not always typed
         await opfsRoot.removeEntry(name, { recursive: true });
         console.log(`🦆 [Worker] Removed OPFS entry: ${name}`);
       } catch (e: any) {
@@ -85,11 +68,11 @@ async function cleanOPFS(): Promise<void> {
   }
 }
 
-// Track OPFS availability for reporting
-let opfsAvailable = false;
+// ============================================================================
+// Keepalive
+// ============================================================================
 
-// Keepalive interval to prevent browser from suspending/terminating idle worker
-// This runs a lightweight query every 20 seconds to keep DuckDB "warm"
+let opfsAvailable = false;
 let keepaliveInterval: ReturnType<typeof setInterval> | null = null;
 
 function startKeepalive() {
@@ -98,13 +81,12 @@ function startKeepalive() {
   keepaliveInterval = setInterval(async () => {
     if (conn) {
       try {
-        // Run a minimal query to keep the connection and memory active
         await conn.query('SELECT 1');
       } catch (e) {
         console.warn('🦆 [Worker] Keepalive query failed:', e);
       }
     }
-  }, 20000); // Every 20 seconds
+  }, 20000);
 
   console.log('🦆 [Worker] Keepalive started (20s interval)');
 }
@@ -117,10 +99,13 @@ function stopKeepalive() {
   }
 }
 
-async function init(forceCleanStart: boolean = false): Promise<{ opfsAvailable: boolean; corruptionDetected?: boolean; corruptionMessage?: string }> {
-  if (db) return { opfsAvailable }; // Already initialized
+// ============================================================================
+// Initialization
+// ============================================================================
 
-  // IMPORTANT: Clean OPFS BEFORE DuckDB initialization to avoid cached file handle issues
+async function init(forceCleanStart: boolean = false): Promise<{ opfsAvailable: boolean; corruptionDetected?: boolean; corruptionMessage?: string }> {
+  if (db) return { opfsAvailable };
+
   if (forceCleanStart) {
     console.log('🦆 [Worker] Force clean start requested, clearing OPFS before DuckDB init...');
     await cleanOPFS();
@@ -133,7 +118,6 @@ async function init(forceCleanStart: boolean = false): Promise<{ opfsAvailable: 
     throw new Error('No main worker URL found in bundle');
   }
 
-  // Fetch worker script and create blob URL (required for cross-origin)
   const workerRes = await fetch(bundle.mainWorker);
   const workerScript = await workerRes.text();
   const workerBlob = new Blob([workerScript], { type: 'text/javascript' });
@@ -147,17 +131,13 @@ async function init(forceCleanStart: boolean = false): Promise<{ opfsAvailable: 
 
   URL.revokeObjectURL(workerUrl);
 
-  // Open persistent database from OPFS (or in-memory if disabled)
   opfsAvailable = false;
 
   if (!ENABLE_OPFS) {
     console.log('🦆 [Worker] OPFS disabled (ENABLE_OPFS=false), using in-memory mode');
-    // IMPORTANT: Even in-memory mode needs explicit db.open() call
-    // Without this, DuckDB may not properly initialize and can lose data
     await db.open({ path: ':memory:' });
     console.log('🦆 [Worker] DuckDB opened in :memory: mode');
   } else {
-    // Try OPFS persistence
     try {
       await db.open({
         path: OPFS_DB_PATH,
@@ -166,24 +146,15 @@ async function init(forceCleanStart: boolean = false): Promise<{ opfsAvailable: 
       console.log('🦆 [Worker] DuckDB opened with OPFS persistence:', OPFS_DB_PATH);
       opfsAvailable = true;
     } catch (opfsError: any) {
-      // Check if this is a corrupt file error
       const errorMsg = opfsError.message || '';
       const isCorruption = errorMsg.includes('not a valid DuckDB database file') || errorMsg.includes('corrupt');
 
       if (isCorruption && !forceCleanStart) {
-        // First time seeing corruption - signal it so main thread can respawn with clean start
         console.error('🦆 [Worker] OPFS corruption detected:', errorMsg);
-        return {
-          opfsAvailable: false,
-          corruptionDetected: true,
-          corruptionMessage: errorMsg
-        };
+        return { opfsAvailable: false, corruptionDetected: true, corruptionMessage: errorMsg };
       } else if (isCorruption && forceCleanStart) {
-        // Already tried clean start but OPFS still corrupted
-        // Fall back to in-memory mode instead of infinite loop
         console.warn('🦆 [Worker] OPFS still corrupted after cleanup, falling back to in-memory mode');
       } else {
-        // OPFS may not be available (e.g., in tests or unsupported browsers)
         console.warn('🦆 [Worker] OPFS not available, falling back to in-memory:', errorMsg);
       }
     }
@@ -194,34 +165,31 @@ async function init(forceCleanStart: boolean = false): Promise<{ opfsAvailable: 
   }
 
   conn = await db.connect();
+  adapter = new DuckDBWasmAdapter(conn, db);
   console.log('🦆 [Worker] DuckDB Initialized');
 
-  // Start keepalive to prevent browser from suspending the worker
   startKeepalive();
 
   return { opfsAvailable };
 }
 
-/**
- * Check if persisted data exists in the OPFS database
- */
+// ============================================================================
+// Persistence Operations
+// ============================================================================
+
 async function checkPersistedData(): Promise<{ exists: boolean; schema?: { name: string; type: string }[]; rowCount?: number }> {
   if (!conn) throw new Error('DB not initialized');
 
   try {
-    // Check if the 'main' table exists
     const tableCheck = await conn.query(`
-      SELECT COUNT(*) as cnt 
-      FROM information_schema.tables 
+      SELECT COUNT(*) as cnt
+      FROM information_schema.tables
       WHERE table_name = 'main'
     `);
     const tableExists = Number(tableCheck.toArray()[0]?.cnt) > 0;
 
-    if (!tableExists) {
-      return { exists: false };
-    }
+    if (!tableExists) return { exists: false };
 
-    // Table exists, get schema and row count
     const schema = await getSchema();
     const countResult = await conn.query(`SELECT COUNT(*) as cnt FROM main`);
     const rowCount = Number(countResult.toArray()[0]?.cnt);
@@ -234,15 +202,15 @@ async function checkPersistedData(): Promise<{ exists: boolean; schema?: { name:
   }
 }
 
-/**
- * Clear all persisted data by dropping the main table
- */
 async function clearPersistedData(): Promise<void> {
   if (!conn) throw new Error('DB not initialized');
-
   await conn.query(`DROP TABLE IF EXISTS main`);
   console.log('🦆 [Worker] Persisted data cleared');
 }
+
+// ============================================================================
+// Data Loading
+// ============================================================================
 
 async function loadCSV(fileName: string, content: string): Promise<{ schema: { name: string; type: string }[]; rowCount: number; durationMs: number }> {
   if (!db || !conn) throw new Error('DB not initialized');
@@ -251,10 +219,7 @@ async function loadCSV(fileName: string, content: string): Promise<{ schema: { n
   await db.registerFileText(fileName, content);
   await conn.query(`CREATE OR REPLACE TABLE main AS SELECT * FROM read_csv_auto('${fileName}')`);
 
-  // Get Schema
   const schema = await getSchema();
-
-  // Get Row Count
   const countResult = await conn.query(`SELECT COUNT(*) as cnt FROM main`);
   const rowCount = Number(countResult.toArray()[0]?.cnt);
 
@@ -264,375 +229,38 @@ async function loadCSV(fileName: string, content: string): Promise<{ schema: { n
   return { schema, rowCount, durationMs };
 }
 
-import { inferVariableType } from './dataHeuristics';
-
-/**
- * Generate synthetic variables for a grid VariableSet
- * Creates:
- * 1. Scale variable (representing the rows)
- * 2. Items variable (representing the columns)
- */
-
-
 async function loadSAV(buffer: ArrayBuffer): Promise<{ variables: Variable[]; variableSets: VariableSet[]; rowCount: number; durationMs: number }> {
   if (!db || !conn) throw new Error('DB not initialized');
 
   const start = performance.now();
 
-  // Use the new high-performance ReadStat WASM parser
+  // 1. Parse SAV file (platform-specific: ReadStat-WASM)
   const { parseSavFile } = await import('@velocity/readstat-wasm');
-
-  // Parse the SAV file
   const parsed = await parseSavFile(buffer, (progress) => {
-    // Could emit progress events here if needed
     console.log(`📊 [Worker] Parse progress: ${(progress.progress * 100).toFixed(1)}%`);
   });
 
-  // Convert variables to the format expected by the store
-  const variables: Variable[] = parsed.metadata.variables.map(v => {
-    // 1. Generate ID (using name as unique identifier)
-    const id = v.name;
-
-    // 2. Transform Value Labels first (needed for type detection)
-    let valueLabels: { value: number; label: string }[] = [];
-    if (v.valueLabelSetName && parsed.metadata.valueLabelSets[v.valueLabelSetName]) {
-      valueLabels = parsed.metadata.valueLabelSets[v.valueLabelSetName].map((vl: any) => ({
-        value: vl.value,
-        label: vl.label
-      }));
-    }
-
-    // 3. Map Types using survey-centric type system:
-    //    - text: String variables
-    //    - date: Variables with date formats
-    //    - scale: Likert / Ratings / Intensity scales
-    //    - ordinal: Ordered categories (e.g. Education)
-    //    - nominal: Unordered categories
-    //    - numeric: Continuous numeric
-    let type: 'nominal' | 'ordinal' | 'scale' | 'numeric' | 'text' | 'date';
-
-    if (v.type === 'string') {
-      type = 'text';
-    } else if ((v as any).format && isDateFormat((v as any).format)) {
-      type = 'date';
-    } else if (valueLabels.length > 0) {
-      // Logic for labelled variables:
-      // Distinguish Nominal vs Ordinal vs Scale
-      type = inferVariableType(valueLabels);
-    } else {
-      // Numeric without value labels → 'numeric'
-      type = 'numeric';
-    }
-
-    return {
-      id,
-      name: v.name,
-      label: v.label || v.name,
-      type,
-      valueLabels,
-      missingValues: { discrete: [], range: undefined }
-    };
+  // 2. Process metadata (platform-independent core module)
+  const { variables, variableSets } = processMetadata({
+    metadata: {
+      variables: parsed.metadata.variables,
+      valueLabelSets: parsed.metadata.valueLabelSets,
+      multipleResponseSets: parsed.metadata.multipleResponseSets,
+      rowCount: parsed.metadata.rowCount,
+    },
+    rows: parsed.rows,
   });
 
-  // Build variable name to ID map
-  const varNameToId = new Map<string, string>();
-  for (const v of variables) {
-    varNameToId.set(v.name, v.id);
-  }
-
-  // Gap Filling for Endpoint-Labeled Scales
-  fillEndpointLabelGaps(
-    variables,
-    parsed.rows,
-    (name) => parsed.metadata.variables.findIndex(pv => pv.name === name)
-  );
-
-  // Track which variables are part of MR sets
-  const variablesInMRSets = new Set<string>();
-
-  // Create VariableSets from Multiple Response Sets
-  const variableSets: VariableSet[] = [];
-  const mrSets = parsed.metadata.multipleResponseSets || [];
-
-  for (const mrSet of mrSets) {
-    // Map subvariable names to IDs
-    const variableIds: string[] = [];
-    for (const subvarName of mrSet.subvariables) {
-      const varId = varNameToId.get(subvarName);
-      if (varId) {
-        variableIds.push(varId);
-        variablesInMRSets.add(varId);
-      } else {
-        console.warn(`📊 [Worker] MR set "${mrSet.name}" references unknown variable "${subvarName}"`);
-      }
-    }
-
-    if (variableIds.length > 0) {
-      // Determine structure type: 'C' = category/grid, 'D' = dichotomy/multiple
-      const structure = mrSet.type === 'C' ? 'grid' : 'multiple';
-
-      // Clean up name (MR set names often start with $)
-      const cleanName = mrSet.name.startsWith('$') ? mrSet.name.slice(1) : mrSet.name;
-
-      // Infer variable type from first variable in the set
-      const firstVar = variables.find(v => v.id === variableIds[0]);
-      const setType = firstVar?.type;
-
-      variableSets.push({
-        id: `mrset_${cleanName}`,
-        name: mrSet.label || cleanName,
-        variableIds,
-        structure,
-        type: setType,
-        description: mrSet.type === 'D'
-          ? `Multiple response set (counted value: ${mrSet.countedValue})`
-          : 'Grid/category set'
-      });
-
-      console.log(`📊 [Worker] Created ${structure} VariableSet "${mrSet.label || cleanName}" with ${variableIds.length} variables`);
-    }
-  }
-
-  // ============================================================================
-  // Heuristic Grid Detection
-  // ============================================================================
-
-  // Step 1: Collect ungrouped variables (not in MR sets)
-  const ungroupedVariables = variables.filter(v => !variablesInMRSets.has(v.id));
-
-  // Step 2: Group by shared value label content (hash)
-  const byValueLabelHash = new Map<string, VariableWithIndex[]>();
-
-  for (const v of ungroupedVariables) {
-    const parsedVar = parsed.metadata.variables.find(pv => pv.name === v.id);
-
-    // Group by content, not just name (handles identical scales with different label set names)
-    // For numeric variables without labels, we group them under a special hash
-    let hash = '';
-
-    if (v.valueLabels && v.valueLabels.length > 0) {
-      // Sort and join to create stable hash
-      const sortedLabels = [...v.valueLabels].sort((a, b) => a.value - b.value);
-      hash = sortedLabels.map(vl => `${vl.value}:${vl.label}`).join('|');
-    } else if (v.type === 'numeric' || v.type === 'scale') {
-      // Numeric/Scale variables without labels can be grouped
-      hash = '__numeric_unlabeled__';
-    }
-
-    if (hash) {
-      if (!byValueLabelHash.has(hash)) {
-        byValueLabelHash.set(hash, []);
-      }
-      byValueLabelHash.get(hash)!.push({
-        variable: v,
-        index: parsedVar?.index ?? -1,
-        valueLabelSetName: hash // Use hash as key
-      });
-    }
-  }
-
-  // Step 3: Detect sequential patterns within each group
-  for (const [hash, varsInGroup] of byValueLabelHash.entries()) {
-    if (varsInGroup.length < 3) continue; // Minimum threshold
-
-    let gridCandidatesList: Variable[][] = [];
-
-    // Special handling for implicit numeric grids (unlabeled)
-    // We utilize a stricter detector that checks for Scale Consistency and Label Patterns
-    if (hash === '__numeric_unlabeled__') {
-      gridCandidatesList = detectNumericGrids(varsInGroup, parsed.rows, parsed.metadata.variables, parsed.rows.length);
-    } else {
-      // Standard detection for labeled variables (labels match exactly, so position/name is enough)
-      gridCandidatesList = detectSequentialPattern(varsInGroup);
-    }
-
-    for (const gridCandidates of gridCandidatesList) {
-      // Check if this should be a multi-response set (binary value labels)
-      // IMPORTANT: Check the actual variable labels (which might have been updated/filled)
-      // rather than the raw metadata label set.
-      const firstVar = gridCandidates[0];
-      const valueLabels = firstVar.valueLabels;
-      const isBinary = valueLabels && valueLabels.length === 2;
-
-      let structure: 'grid' | 'multiple' = 'grid';
-      let countedValue: number | undefined;
-
-      // Sort variables by name for consistent ordering
-      // gridCandidates.sort((a, b) => a.name.localeCompare(b.name)); // Don't sort by name here, keep position order!
-
-      const variableIds = gridCandidates.map(v => v.id);
-
-      // Extract common prefix for set name
-      // If straightforward prefix match fails, use the first variable name
-      const prefixMatch = firstVar.name.match(/^([a-zA-Z_]+?)\d+$/);
-      let prefix = prefixMatch?.[1] || firstVar.name.replace(/[0-9]+$/, ''); // Strip trailing numbers
-
-      // If prefix is too short or empty, just use the first variable name
-      if (prefix.length < 2) prefix = firstVar.name;
-
-      // Mark variables as grouped
-      for (const v of gridCandidates) {
-        variablesInMRSets.add(v.id);
-      }
-
-      if (isBinary) {
-        // Default to 'multiple' structure for binary questions
-        structure = 'multiple';
-
-        // Infer positive value (higher value, or match common patterns)
-        countedValue = inferPositiveValue(valueLabels);
-
-        console.log(`📊 [Worker] Detected implicit multi-response "${prefix}" with ${gridCandidates.length} variables (counted value: ${countedValue})`);
-
-        // Generate a deterministic ID based on the variables in the set
-        const setId = `heuristic_${structure}_${variableIds.join('_')}`;
-
-        variableSets.push({
-          id: setId,
-          name: prefix,
-          variableIds,
-          structure,
-          type: firstVar.type,
-          countedValue,
-          description: `Detected multi-response with shared Yes/No scale`
-        });
-      } else {
-        // Normal Grid
-
-        // Refine Numeric Grids: Check if they are implicitly Scales (e.g. 1-10)
-        let isNumericGrid = hash === '__numeric_unlabeled__';
-        let syntheticLabels: Record<number, string> | undefined;
-        let detectedType = firstVar.type;
-
-        if (isNumericGrid) {
-          // Check the first variable's data
-          const firstVarId = gridCandidates[0].id;
-          const parsedVarIndex = parsed.metadata.variables.findIndex(pv => pv.name === firstVarId);
-
-          if (parsedVarIndex !== -1) {
-            const check = detectImplicitScale(parsed.rows, parsedVarIndex, parsed.rows.length);
-
-            if (check.isScale) {
-              console.log(`📊 [Worker] Upgrading numeric grid "${prefix}" to Scale (detected values: ${check.values.join(', ')})`);
-              isNumericGrid = false;
-              detectedType = 'scale';
-
-              // Create synthetic labels for the UI
-              syntheticLabels = {};
-              check.values.forEach(val => {
-                syntheticLabels![val] = String(val);
-              });
-
-              // Update the variables themselves to be 'scale'
-              gridCandidates.forEach(v => {
-                v.type = 'scale';
-                // Add the synthetic labels to the variable so they show up in charts
-                v.valueLabels = check.values.map(val => ({ value: val, label: String(val) }));
-              });
-            }
-          }
-        }
-
-        console.log(`📊 [Worker] Detected implicit grid "${prefix}" with ${gridCandidates.length} variables (${detectedType})`);
-
-        // Generate a deterministic ID
-        const setId = `heuristic_${structure}_${variableIds.join('_')}`;
-
-        const description = isNumericGrid
-          ? `Detected numeric grid (metric set)`
-          : `Detected grid with shared scale`;
-
-        variableSets.push({
-          id: setId,
-          name: prefix,
-          variableIds,
-          structure,
-          type: detectedType,
-          description,
-          // NEW: Explicit grid metadata for refactored architecture
-          gridMetadata: {
-            sharedScale: {
-              valueLabels: syntheticLabels || (isNumericGrid ? {} : firstVar.valueLabels.reduce((acc, vl) => {
-                acc[vl.value] = vl.label;
-                return acc;
-              }, {} as Record<number, string>)),
-              type: isNumericGrid ? 'numeric' : (detectedType as 'ordinal' | 'nominal' | 'scale')
-            },
-            itemLabels: gridCandidates.map(v => v.label || v.name),
-            itemMapping: gridCandidates.reduce((acc, v, idx) => {
-              acc[v.id] = idx;
-              return acc;
-            }, {} as Record<string, number>)
-          }
-        });
-      }
-    }
-  }
-
-  // Create 'single' VariableSets for variables NOT in any MR set or detected grid
-  for (const v of variables) {
-    if (!variablesInMRSets.has(v.id)) {
-      variableSets.push({
-        id: `vs_${v.id}`,
-        name: v.label || v.name,
-        variableIds: [v.id],
-        structure: 'single',
-        type: v.type
-      });
-    }
-  }
-
-  const detectedGrids = variableSets.filter(vs => vs.id.startsWith('heuristic_'));
-  console.log(`📊 [Worker] Created ${variableSets.length} VariableSets (${mrSets.length} MR sets, ${detectedGrids.length} detected grids, ${variableSets.length - mrSets.length - detectedGrids.length} single variables)`);
-
-  // Generate synthetic variables for all grids (both explicit MR and heuristic)
-  const syntheticVariables: Variable[] = [];
-  for (const vs of variableSets) {
-    if (vs.structure === 'grid' && vs.gridMetadata) {
-      syntheticVariables.push(...generateSyntheticGridVariables(vs));
-    }
-  }
-
-  if (syntheticVariables.length > 0) {
-    console.log(`📊 [Worker] Generated ${syntheticVariables.length} synthetic variables for ${syntheticVariables.length / 2} grids`);
-    variables.push(...syntheticVariables);
-
-    // Also generate 'single' VariableSets for these synthetic variables
-    // This allows them to be used in the UI (which relies on VariableSets for everything)
-    for (const sv of syntheticVariables) {
-      variableSets.push({
-        id: sv.id, // Using VariableID as SetID for direct mapping
-        name: sv.label || sv.name, // Use label (e.g. "Q1 (Items)")
-        variableIds: [sv.id],
-        structure: 'single',
-        type: sv.type,
-        synthetic: true, // Tag as synthetic set (if type supports it? VariableSet type check needed)
-        // We might need to extend VariableSet type if 'synthetic' property is strictly typed?
-        // Let's check VariableSet interface in types/index.ts. 
-        // It does NOT have synthetic. But it has 'derived'. Maybe use that?
-        derived: true,
-        sourceGridId: sv.sourceGridId, // If I added sourceGridId to VariableSet? I didn't yet.
-        // Wait, VariableSet does NOT have sourceGridId in my memory of types/index.ts.
-        // Let's use `derived: true` and description.
-        description: `Synthetic variable for grid unpivoting`
-      } as any); // Casting as any to avoid type errors if I missed property updates
-    }
-  }
-
-  // Pivot data from row-major to column-major for Arrow
+  // 3. Load data into DuckDB (platform-specific: Arrow + WASM)
   const numRows = parsed.rows.length;
   const numCols = parsed.metadata.variables.length;
 
-  console.log(`📊 [Worker] DEBUG: parsed.rows.length = ${numRows}, metadata.rowCount = ${parsed.metadata.rowCount}, variables = ${numCols}`);
-
-  // Check if we have actual data
   if (numRows === 0) {
-    console.error(`📊 [Worker] ERROR: No rows parsed! Metadata claims ${parsed.metadata.rowCount} rows but parsed.rows is empty.`);
     throw new Error(`SAV parsing failed: No row data extracted (expected ${parsed.metadata.rowCount} rows)`);
   }
 
+  // Pivot row-major to column-major for Arrow
   const columnsData: any[][] = Array.from({ length: numCols }, () => new Array(numRows));
-
   for (let r = 0; r < numRows; r++) {
     const row = parsed.rows[r];
     for (let c = 0; c < numCols; c++) {
@@ -640,63 +268,44 @@ async function loadSAV(buffer: ArrayBuffer): Promise<{ variables: Variable[]; va
     }
   }
 
-  console.log(`📊 [Worker] DEBUG: First row sample: ${JSON.stringify(parsed.rows[0]?.slice(0, 5))}`);
-
-  // Create Arrow Vectors
+  // Create Arrow table
   const vectors: Record<string, arrow.Vector> = {};
-
   parsed.metadata.variables.forEach((v, i) => {
-    // ReadStat 'numeric' is generally Double, 'string' is UTF8
     const data = columnsData[i];
-
     if (v.type === 'numeric') {
-      // Using Float64 for all numerics from ReadStat to be safe
       vectors[v.name] = arrow.vectorFromArray(data, new arrow.Float64());
     } else {
       vectors[v.name] = arrow.vectorFromArray(data, new arrow.Utf8());
     }
   });
 
-  // Create Arrow Table
   const table = new arrow.Table(vectors);
-  console.log(`📊 [Worker] DEBUG: Arrow table created with ${table.numRows} rows, ${table.numCols} columns`);
 
-  // Bulk load into DuckDB
-  // Drop existing table first to ensure clean state
+  // Insert into DuckDB
   await conn.query(`DROP TABLE IF EXISTS main`);
-  console.log(`📊 [Worker] DEBUG: Inserting Arrow table into DuckDB...`);
 
   try {
-    const insertStart = performance.now();
     await conn.insertArrowTable(table, { name: 'main', create: true });
-    const insertDuration = performance.now() - insertStart;
-    console.log(`📊 [Worker] DEBUG: Arrow table inserted successfully in ${insertDuration.toFixed(2)}ms`);
 
-    // Verify the table was actually created
-    // Note: DuckDB returns BigInt for COUNT(*), so we convert to Number for comparison
     const verifyResult = await conn.query(`SELECT COUNT(*) as cnt FROM main`);
     const count = Number(verifyResult.toArray()[0]?.cnt);
 
     if (count !== numRows) {
       throw new Error(`Arrow insertion verification failed: expected ${numRows} rows, got ${count}`);
     }
-
-    console.log(`📊 [Worker] DEBUG: Verification passed - Table 'main' has ${count} rows`);
   } catch (insertError: any) {
-    // Log detailed error for debugging - Arrow insertion should NOT fail with correct versions
-    console.error(`📊 [Worker] CRITICAL: insertArrowTable failed!`, {
-      error: insertError.message,
-      numRows,
-      numCols,
-    });
     throw new Error(`Arrow insertion failed: ${insertError.message}. Check apache-arrow version compatibility.`);
   }
 
   const durationMs = performance.now() - start;
-  console.log(`🦆 [Worker] Loaded SAV with ReadStat-WASM: ${parsed.metadata.rowCount} rows, ${variables.length} variables in ${durationMs.toFixed(2)}ms`);
+  console.log(`🦆 [Worker] Loaded SAV: ${parsed.metadata.rowCount} rows, ${variables.length} variables in ${durationMs.toFixed(2)}ms`);
 
   return { variables, variableSets, rowCount: parsed.metadata.rowCount, durationMs };
 }
+
+// ============================================================================
+// Query Operations
+// ============================================================================
 
 async function getSchema(): Promise<{ name: string; type: string }[]> {
   if (!conn) throw new Error('DB not initialized');
@@ -715,8 +324,6 @@ async function runQuery(sql: string): Promise<{ data: any[]; durationMs: number 
   const result = await conn.query(sql);
   const durationMs = performance.now() - start;
 
-  console.log(`⏱️ [Worker] Query took ${durationMs.toFixed(2)}ms: ${sql}`);
-
   return {
     data: result.toArray().map((row) => row.toJSON()),
     durationMs,
@@ -730,656 +337,9 @@ async function getUniqueValues(column: string): Promise<string[]> {
   return result.toArray().map((row) => String(row.val));
 }
 
-async function getVariableStats(
-  column: string,
-  variableType?: 'nominal' | 'ordinal' | 'scale' | 'numeric' | 'text' | 'date',
-  binCount: number = 10
-): Promise<VariableStatsResult> {
-  if (!conn) throw new Error('DB not initialized');
-
-  // Get total count
-  const totalResult = await conn.query(`SELECT COUNT(*) as cnt FROM main`);
-  const totalCount = Number(totalResult.toArray()[0]?.cnt);
-
-  // Get missing count (NULL values)
-  const missingResult = await conn.query(`SELECT COUNT(*) as cnt FROM main WHERE "${column}" IS NULL`);
-  const missingCount = Number(missingResult.toArray()[0]?.cnt);
-
-  // Get frequency distribution (top 10 values by count)
-  const freqResult = await conn.query(`
-    SELECT "${column}" as value, COUNT(*) as cnt
-    FROM main
-    WHERE "${column}" IS NOT NULL
-    GROUP BY "${column}"
-    ORDER BY cnt DESC
-    LIMIT 10
-  `);
-
-  const frequencies: VariableStatsFrequency[] = freqResult.toArray().map((row: any) => ({
-    value: row.value,
-    count: Number(row.cnt),
-  }));
-
-  const result: VariableStatsResult = {
-    column,
-    frequencies,
-    missingCount,
-    totalCount,
-  };
-
-  // Compute numeric statistics for numeric/scale variables
-  if (variableType === 'numeric' || variableType === 'scale') {
-    try {
-      // Get summary statistics using DuckDB's built-in functions
-      const statsResult = await conn.query(`
-        SELECT
-          MIN("${column}") as min_val,
-          MAX("${column}") as max_val,
-          AVG("${column}") as mean_val,
-          MEDIAN("${column}") as median_val,
-          STDDEV("${column}") as stddev_val,
-          QUANTILE_CONT("${column}", 0.25) as q1_val,
-          QUANTILE_CONT("${column}", 0.75) as q3_val
-        FROM main
-        WHERE "${column}" IS NOT NULL
-      `);
-
-      const statsRow = statsResult.toArray()[0];
-
-      if (statsRow && statsRow.min_val !== null && statsRow.max_val !== null) {
-        const minVal = Number(statsRow.min_val);
-        const maxVal = Number(statsRow.max_val);
-        const mean = Number(statsRow.mean_val) || 0;
-        const median = Number(statsRow.median_val) || 0;
-        const stdDev = Number(statsRow.stddev_val) || 0;
-        const q1 = Number(statsRow.q1_val) || minVal;
-        const q3 = Number(statsRow.q3_val) || maxVal;
-
-        const iqr = q3 - q1;
-        const lowerFence = q1 - 1.5 * iqr;
-        const upperFence = q3 + 1.5 * iqr;
-
-        // Compute adjacent values (whiskers) - closest values inside fences
-        const fenceResult = await conn.query(`
-          SELECT 
-            MIN("${column}") as whisker_min,
-            MAX("${column}") as whisker_max
-          FROM main
-          WHERE "${column}" >= ${lowerFence} AND "${column}" <= ${upperFence}
-        `);
-        const fenceRow = fenceResult.toArray()[0];
-        const whiskerMin = fenceRow?.whisker_min !== null ? Number(fenceRow.whisker_min) : minVal;
-        const whiskerMax = fenceRow?.whisker_max !== null ? Number(fenceRow.whisker_max) : maxVal;
-
-        // Fetch Outliers (values outside fences) - Limit to 100 to prevent explosion
-        const outliersResult = await conn.query(`
-          SELECT "${column}" as val 
-          FROM main 
-          WHERE ("${column}" < ${lowerFence} OR "${column}" > ${upperFence})
-          LIMIT 100
-        `);
-        const outliers = outliersResult.toArray().map((r: any) => Number(r.val));
-
-        // Compute histogram bins
-        const range = maxVal - minVal;
-        const binWidth = range > 0 ? range / binCount : 1;
-
-        // Compute histogram using FLOOR for bucket assignment
-        // LEAST ensures values at maxVal go into the last bin (bin 10, not 11)
-        const histResult = await conn.query(`
-          SELECT
-            CASE
-              WHEN ${range} = 0 THEN 1
-              ELSE LEAST(FLOOR(("${column}" - ${minVal}) / ${binWidth}) + 1, ${binCount})::INTEGER
-            END as bucket,
-            COUNT(*) as cnt
-          FROM main
-          WHERE "${column}" IS NOT NULL
-          GROUP BY bucket
-          ORDER BY bucket
-        `);
-
-        const histogramBins: HistogramBin[] = [];
-        const bucketCounts = new Map<number, number>();
-
-        for (const row of histResult.toArray()) {
-          bucketCounts.set(Number(row.bucket), Number(row.cnt));
-        }
-
-        // Create bins with proper boundaries
-        for (let i = 1; i <= binCount; i++) {
-          histogramBins.push({
-            x0: minVal + (i - 1) * binWidth,
-            x1: minVal + i * binWidth,
-            count: bucketCounts.get(i) || 0,
-          });
-        }
-
-        result.numeric = {
-          min: minVal,
-          max: maxVal,
-          mean,
-          median,
-          stdDev,
-          q1,
-          q3,
-          histogramBins,
-          iqr,
-          lowerFence,
-          upperFence,
-          whiskerMin,
-          whiskerMax,
-          outliers
-        };
-
-        console.log(`🦆 [Worker] Computed numeric stats for ${column}:`, {
-          min: minVal,
-          max: maxVal,
-          whiskerMax,
-          outliersCount: outliers.length
-        });
-      }
-    } catch (error: any) {
-      console.warn(`🦆 [Worker] Failed to compute numeric stats for ${column}:`, error.message);
-      // Continue without numeric stats - frequencies will still be available
-    }
-  }
-
-  return result;
-}
-
-/**
- * Statistics and Significance Testing Helpers
- */
-
-// Imported from statistics.ts
-
-async function runCrosstab(
-  options: CrosstabQueryOptions & { includeDistributions?: boolean },
-  context: { variables: Record<string, Variable>; variableSets: Record<string, VariableSet> }
-): Promise<any[]> {
-  if (!conn) throw new Error('DB not initialized');
-
-  const modifiedOptions = { ...options };
-
-  // 0. Synthetic Grid Variable Expansion
-  // Check if either the row variable OR column variable is a synthetic grid variable
-  let foundGridVar: Variable | null = null;
-
-  if (modifiedOptions.rowVars.length > 0) {
-    const v = context.variables[modifiedOptions.rowVars[0]];
-    if (v?.synthetic && v.sourceGridId) foundGridVar = v;
-  }
-
-  if (!foundGridVar && modifiedOptions.colVar) {
-    const v = context.variables[modifiedOptions.colVar];
-    // Only treat as grid expansion if it's the "Items" or "Scale" variable of a grid
-    if (v?.synthetic && v.sourceGridId) foundGridVar = v;
-  }
-
-  if (foundGridVar) {
-    const firstRowVar = foundGridVar; // Alias for compatibility with existing logic below
-    const gridSet = context.variableSets[firstRowVar.sourceGridId!];
-
-    if (gridSet && gridSet.structure === 'grid' && gridSet.gridMetadata) {
-      console.log(`🦆 [Worker] Detected synthetic grid breakdown: ${firstRowVar.id} -> ${gridSet.id}`);
-
-      // Populate gridColumns for the query builder
-      modifiedOptions.gridColumns = gridSet.variableIds.map(varId => {
-        const itemVar = context.variables[varId];
-        return {
-          name: varId,
-          label: itemVar?.label || varId
-        };
-      });
-
-      // SANITIZE: Prevent synthetic variables from being used as colVar or in filters
-
-      // 1. Sanitize colVar (remove if it points to the synthetic variables we are breaking down)
-      if (modifiedOptions.colVar) {
-        const v = context.variables[modifiedOptions.colVar];
-        if (v?.synthetic && v.sourceGridId === gridSet.id) {
-          console.log(`🦆 [Worker] Removing synthetic colVar ${modifiedOptions.colVar} for grid query`);
-          modifiedOptions.colVar = null;
-        }
-      }
-
-      // 2. Sanitize Filters
-      if (modifiedOptions.filters) {
-        modifiedOptions.filters = modifiedOptions.filters.map(f => {
-          const v = context.variables[f.variableId];
-          if (v?.synthetic && v.sourceGridId === gridSet.id) {
-            if (f.variableId.endsWith('_items')) {
-              console.log(`🦆 [Worker] Remapping filter ${f.variableId} -> item_index`);
-              return { ...f, variableId: 'item_index' };
-            }
-
-            if (f.variableId.endsWith('_scale')) {
-              console.log(`🦆 [Worker] Remapping filter ${f.variableId} -> _synthetic_value`);
-              return { ...f, variableId: '_synthetic_value' };
-            }
-          }
-          return f;
-        });
-      }
-
-      // Check if this is a Numeric Grid (shared scale is numeric)
-      const isNumericGrid = gridSet.gridMetadata.sharedScale.type === 'numeric';
-
-      if (isNumericGrid) {
-        // For Numeric Grids, we want to aggregate the values (mean, median, etc.)
-        // This enables Box Plots and Trend Analysis of the items
-        modifiedOptions.gridAggregate = true;
-
-        // We still disable standard distributions because the Histogram query 
-        // doesn't support the unpivot CTE structure yet.
-        // However, the aggregate query provides Q1/Q3/Median which is enough for Box Plots.
-        modifiedOptions.includeDistributions = false;
-
-        // We do NOT set measureVar because buildGridQuery handles the aggregation internally
-        modifiedOptions.measureVar = undefined;
-        modifiedOptions.measureLabel = undefined;
-      } else {
-        // Likert/Ordinal Grids: Treat as categorical frequencies (Stacked Bars)
-        modifiedOptions.includeDistributions = false;
-        modifiedOptions.measureVar = undefined;
-        modifiedOptions.measureLabel = undefined;
-      }
-    }
-  }
-
-  // 1. Handle Nested Scale Variables Logic
-  // Check if the last row variable is 'numeric'. If so, treat it as a measure variable.
-  // This supports the "Nested Numeric Summary" requirement.
-
-  // If no measure variable is explicitly defined, check if we can auto-detect one.
-
-  // A. Check Column Variable
-  // If the column variable is numeric, treat it as the measure (resulting in Row Dimensions x Measure Metric)
-  if (!modifiedOptions.measureVar && modifiedOptions.colVar) {
-    const colVarId = modifiedOptions.colVar;
-    const colVar = context.variables[colVarId];
-
-    if (colVar?.type === 'numeric' && !colVar.synthetic) {
-      console.log(`🦆 [Worker] treating column scale variable ${colVarId} as measure variable`);
-      modifiedOptions.measureVar = colVarId;
-      if (!modifiedOptions.measureLabel) {
-        modifiedOptions.measureLabel = colVar.label || colVar.name;
-      }
-      modifiedOptions.colVar = null;
-    }
-  }
-
-  // B. Check Row Variables
-  // If the last row variable is numeric, treat it as the measure (resulting in Measure Metric x Col Dimensions)
-  if (!modifiedOptions.measureVar && modifiedOptions.rowVars.length > 0) {
-    const lastRowVarId = modifiedOptions.rowVars[modifiedOptions.rowVars.length - 1];
-    const lastRowVar = context.variables[lastRowVarId];
-
-    if (lastRowVar?.type === 'numeric' && !lastRowVar.synthetic) { // Don't treat synthetic scale as measure yet
-      console.log(`🦆 [Worker] treating nested scale variable ${lastRowVarId} as measure variable`);
-      // Pop the last variable from rows and use it as measure
-      modifiedOptions.measureVar = lastRowVarId;
-      if (!modifiedOptions.measureLabel) {
-        modifiedOptions.measureLabel = lastRowVar.label || lastRowVar.name;
-      }
-      modifiedOptions.rowVars = modifiedOptions.rowVars.slice(0, -1);
-    }
-  }
-
-  // 2. Generate and Run Main Query
-  const sql = buildCrosstabQuery(modifiedOptions);
-  console.log(`🦆 [Worker] runCrosstab SQL:`, sql);
-
-  const mainResult = await conn.query(sql);
-  const rows = mainResult.toArray().map(r => r.toJSON());
-
-  // 2.5 Grouped Histogram (for Violin/Ridgeline)
-  const shouldComputeHistogram = (modifiedOptions.measureVar || (modifiedOptions.gridColumns && modifiedOptions.gridAggregate)) && modifiedOptions.includeDistributions;
-
-  if (shouldComputeHistogram) {
-    try {
-      const binCount = 20;
-      let histSql = '';
-      let minVal = 0;
-      let maxVal = 0;
-      let binWidth = 1;
-
-      // Scenario A: Numeric Grid (Computed via CTE)
-      if (modifiedOptions.gridColumns && modifiedOptions.gridAggregate) {
-        // Derive global min/max from the main aggregate result to ensure consistent axes across grid items
-        // The main 'rows' result already contains min/max for each item (row)
-        const validRows = rows.filter(r => r.min !== undefined && r.max !== undefined);
-
-        if (validRows.length > 0) {
-          minVal = Math.min(...validRows.map(r => r.min as number));
-          maxVal = Math.max(...validRows.map(r => r.max as number));
-        } else {
-          // Fallback (e.g., 1-5 scale)
-          minVal = 1; maxVal = 5;
-        }
-
-        const range = maxVal - minVal;
-        binWidth = range > 0 ? range / binCount : 1;
-
-        histSql = buildGridHistogramQuery({
-          columns: modifiedOptions.gridColumns,
-          filters: modifiedOptions.filters,
-          colVar: modifiedOptions.colVar,
-          minVal,
-          maxVal,
-          binCount
-        });
-      }
-      // Scenario B: Standard Variable (Computed via WHERE/GROUP BY)
-      else if (modifiedOptions.measureVar) {
-        const measure = modifiedOptions.measureVar;
-        const safeMeasure = `"${escapeIdentifier(measure)}"`;
-
-        let whereSql = '';
-        if (modifiedOptions.filters && modifiedOptions.filters.length > 0) {
-          const clause = buildFilterClause(modifiedOptions.filters);
-          if (clause) whereSql = `WHERE ${clause}`;
-        }
-
-        // 2.5a Get Global Min/Max for consistent binning
-        const rangeSql = `SELECT MIN(${safeMeasure}) as minVal, MAX(${safeMeasure}) as maxVal FROM main ${whereSql}`;
-        const rangeRes = await conn.query(rangeSql);
-        const rangeRow = rangeRes.toArray()[0];
-
-        if (rangeRow && rangeRow.minVal !== null && rangeRow.maxVal !== null) {
-          minVal = Number(rangeRow.minVal);
-          maxVal = Number(rangeRow.maxVal);
-          const range = maxVal - minVal;
-          binWidth = range > 0 ? range / binCount : 1;
-
-          // 2.5b Run Grouped Histogram Query
-          let rowGroups: string[] = [];
-          let groupByCols: string[] = [];
-
-          if (modifiedOptions.rowVars.length === 0 && modifiedOptions.measureLabel) {
-            rowGroups = [`'${escapeString(modifiedOptions.measureLabel)}' as rowKey_0`];
-          } else {
-            rowGroups = modifiedOptions.rowVars.map((r, i) => `"${escapeIdentifier(r)}" as rowKey_${i}`);
-            groupByCols = modifiedOptions.rowVars.map(r => `"${escapeIdentifier(r)}"`);
-          }
-
-          let colGroup = '';
-          if (modifiedOptions.colVar) {
-            colGroup = `"${escapeIdentifier(modifiedOptions.colVar)}" as colKey`;
-          } else if (modifiedOptions.measureLabel && modifiedOptions.rowVars.length > 0) {
-            colGroup = `'${escapeString(modifiedOptions.measureLabel)}' as colKey`;
-          } else {
-            colGroup = `'Total' as colKey`;
-          }
-
-          if (modifiedOptions.colVar) {
-            groupByCols.push(`"${escapeIdentifier(modifiedOptions.colVar)}"`);
-          }
-
-          const groupByClause = groupByCols.length > 0 ? groupByCols.join(', ') + ',' : '';
-
-          const bucketExpr = `
-                  CASE
-                      WHEN ${range} = 0 THEN 1
-                      ELSE LEAST(FLOOR((${safeMeasure} - ${minVal}) / ${binWidth}) + 1, ${binCount})::INTEGER
-                  END
-              `;
-
-          histSql = `
-                  SELECT
-                      ${rowGroups.length > 0 ? rowGroups.join(', ') + ',' : ''}
-                      ${colGroup},
-                      ${bucketExpr} as bucket,
-                      COUNT(*) as cnt
-                  FROM main
-                  ${whereSql}
-                  ${whereSql ? 'AND' : 'WHERE'} ${safeMeasure} IS NOT NULL
-                  GROUP BY ${groupByClause} bucket
-              `;
-        }
-      }
-
-      if (histSql) {
-        const histRes = await conn.query(histSql);
-
-        // 2.5c Map Bins to Rows
-        const binMap = new Map<string, HistogramBin[]>();
-
-        for (const row of histRes.toArray()) {
-          // Construct Composite Key matching the main result rows
-          const keyParts = [];
-          let i = 0;
-          while (row[`rowKey_${i}`] !== undefined) {
-            keyParts.push(String(row[`rowKey_${i}`]));
-            i++;
-          }
-          keyParts.push(String(row.colKey));
-          const key = keyParts.join('|||');
-
-          if (!binMap.has(key)) binMap.set(key, []);
-
-          const b = Number(row.bucket);
-          binMap.get(key)!.push({
-            x0: minVal + (b - 1) * binWidth,
-            x1: minVal + b * binWidth,
-            count: Number(row.cnt)
-          });
-        }
-
-        // Attach bins to Main Rows
-        rows.forEach(r => {
-          const keyParts = [];
-          let i = 0;
-          while (r[`rowKey_${i}`] !== undefined) {
-            keyParts.push(String(r[`rowKey_${i}`]));
-            i++;
-          }
-          keyParts.push(String(r.colKey));
-          const key = keyParts.join('|||');
-
-          const bins = binMap.get(key) || [];
-          bins.sort((a, b) => a.x0 - b.x0);
-
-          r.histogramBins = bins;
-        });
-
-        console.log(`🦆 [Worker] Attached histogram bins:`, {
-          totalRows: rows.length,
-          rowsWithBins: rows.filter(r => r.histogramBins && r.histogramBins.length > 0).length,
-          binMapSize: binMap.size
-        });
-      }
-    } catch (e) {
-      console.warn('🦆 [Worker] Histogram generation failed:', e);
-    }
-  }
-
-  // 3. Significance Testing
-  // We compare each cell against the "Total" for that Row Group (or rather, the Complement "Rest").
-  // We need to fetch Row Totals first to derive the "Rest" component.
-
-  // Construct Totals Query: Same query but remove the Column Variable
-  if (modifiedOptions.colVar) {
-    const totalsOptions = {
-      ...modifiedOptions,
-      colVar: null // Remove column breakdown to get totals
-    };
-    const totalsSql = buildCrosstabQuery(totalsOptions);
-    const totalsResult = await conn.query(totalsSql);
-    const totals = totalsResult.toArray().map(r => r.toJSON());
-
-    // Index totals by Row Key(s)
-    const totalsMap = new Map<string, any>();
-    totals.forEach(t => {
-      // Create a composite key for the row
-      const keyParts = [];
-      let i = 0;
-      while (t[`rowKey_${i}`] !== undefined) {
-        keyParts.push(String(t[`rowKey_${i}`]));
-        i++;
-      }
-      totalsMap.set(keyParts.join('|'), t);
-    });
-
-    // 4. Calculate Column Totals (for Proportions)
-    const colStats = new Map<string, { n: number; ess: number }>();
-    rows.forEach(row => {
-      const colKey = row.colKey || 'Total';
-      // Use weighted count if available, else raw count
-      const n = row.weightedCount ?? row.count;
-      const ess = calculateESS(n, row.sumSqWeights ?? n);
-
-      const current = colStats.get(colKey) || { n: 0, ess: 0 };
-      colStats.set(colKey, { n: current.n + n, ess: current.ess + ess });
-    });
-
-    // 5. Apply Sig Tests (T-Test for Cell vs Rest)
-    rows.forEach(row => {
-      // Reconstruct Row Key
-      const keyParts = [];
-      let i = 0;
-      while (row[`rowKey_${i}`] !== undefined) {
-        keyParts.push(String(row[`rowKey_${i}`]));
-        i++;
-      }
-      const rowKey = keyParts.join('|');
-      const totalRow = totalsMap.get(rowKey);
-
-      if (totalRow) {
-        let tScore = 0;
-        const isMeans = modifiedOptions.measureVar !== undefined;
-
-        // --- CELL COMPONENT (Part) ---
-        const cellN = row.weightedCount ?? row.count;
-        const cellESS = calculateESS(cellN, row.sumSqWeights ?? cellN);
-
-        // --- TOTAL COMPONENT (Whole) ---
-        const totalN = totalRow.weightedCount ?? totalRow.count;
-        const totalESS = calculateESS(totalN, totalRow.sumSqWeights ?? totalN);
-
-        // --- REST COMPONENT (Complement = Whole - Part) ---
-        // Note: For ESS, we subtract. Ideally we'd sum(sqWeights_Rest) but subtraction is a safe approx here if mutually exclusive.
-        const restN = totalN - cellN;
-        const restESS = Math.max(0, totalESS - cellESS);
-
-        if (cellESS > 2 && restESS > 2) {
-          if (isMeans) {
-            // T-Test for Means (Welch's)
-            // Cell Stats
-            const m1 = Number(row.mean);
-            const s1 = Number(row.stdDev); // Standard Deviation
-            const n1 = cellESS;
-
-            // Total Stats (Need to derive Rest Stats)
-            const mT = Number(totalRow.mean);
-            const sT = Number(totalRow.stdDev);
-            const nT = totalESS;
-
-            // Derive Rest Stats (Algebraic decomposition of Mean/Variance)
-            // m_rest = (m_total * n_total - m_cell * n_cell) / n_rest
-            const m2 = (mT * totalN - m1 * cellN) / restN;
-
-            // Pooled Variance Calculation to recover s2 is complex without sumSq.
-            // Approx: Just use Total SD as proxy for Rest SD if rest is large.
-            // Better: If we have sumReqs, we can do it exact. 
-            // For now, let's look at Proportions first which is the primary request.
-            // Taking a safe path: Compare Cell vs Total (Part-Whole) for Means if decomposition is risky,
-            // BUT Displayr uses Part-Rest. 
-            // Let's stick to T-Test of Cell vs Total for Means in this iteration to avoid negative variance bugs,
-            // unless we have exact sumSq for the measure variable.
-            // Actually, let's use the simple T-Test(Cell, Total) for Means for now as a safe upgrade step,
-            // but use Cell, Rest for proportions below.
-
-            tScore = calculateTScore(m1, s1, n1, mT, sT, nT);
-
-          } else {
-            // T-Test for Proportions (Cell vs Rest)
-            // We treat Proportions as Means of 0/1 data.
-
-            // Col Total (Base) for this cell's column
-            const colKey = row.colKey || 'Total';
-            const colBase = colStats.get(colKey);
-            const colN = colBase?.n || 0;
-
-            if (colN > 0) {
-              // Cell Proportion
-              const p1 = cellN / colN;
-              const s1 = Math.sqrt(p1 * (1 - p1)); // SD of binary data
-              const n1 = cellESS;
-
-              // Rest of Population (Row Total - Cell)
-              // "Rest" here is the aggregated "Other Columns".
-              // RowTotal represents (Cell + Rest).
-
-              // Grand Total (Sum of all columns for this row)
-              // Actually, totalRow IS the Row Total.
-              // But we need the Base for the Row Total. 
-              // Usually Row Base = Grand Total of Table.
-              // Let's assume Row Total % is calculated against Grand Total.
-
-              // Wait, Proportions test "Is this column special?".
-              // So we compare Cell % (within Column) vs Rest-of-Row % (within Rest-of-Columns).
-              // Example: "Male" % for Brand A vs "Male" % for (Not Brand A).
-              // Or "Brand A" % for Male vs "Brand A" % for (Not Male).
-              // Usually the latter: Column is the Segment (Male), Row is the Variable (Brand A).
-              // We check if Brand A is higher in Male than in Non-Male.
-
-              // Setup:
-              // Group 1 (Cell): Cell Count / Column Total
-              // Group 2 (Rest): (Row Count - Cell Count) / (Grand Total - Column Total)
-
-              // Grand Total of Table (All Columns)
-              let grandCurrent = 0;
-              for (const v of colStats.values()) grandCurrent += v.n;
-
-              const restCount = totalN - cellN;
-              const restBase = grandCurrent - colN;
-
-              if (restBase > 0) {
-                const p2 = restCount / restBase;
-                const s2 = Math.sqrt(p2 * (1 - p2));
-
-                // We need ESS for the Rest Group.
-                // Approx: TableTotalESS - ColESS ? No, unrelated.
-                // Approx: Scale restBase by weighting factor?
-                // Let's estimate Rest ESS:
-                // Efficiency Factor = ColESS / ColN
-                // Assume similar efficiency for rest?
-                // Better: We really need sumSqWeights for the WHOLE table to do this right.
-                // For now, let's approximate Rest ESS = RestBase * (TotalRowESS / TotalRowN).
-                const eff = totalESS / totalN;
-                const n2 = restBase * eff;
-
-                tScore = calculateTScore(p1, s1, n1, p2, s2, n2);
-              }
-            }
-          }
-        }
-
-        // Apply Thresholds
-        // Strong: 95% CI (Z > 1.96) -> Green/Red
-        // Weak: 80% CI (Z > 1.28) -> Grey
-        const absT = Math.abs(tScore);
-        const pValue = calculatePValue(tScore);
-
-        // Attach detailed stats for tooltip
-        row.stats = {
-          tScore,
-          pValue,
-          effN: cellESS
-        };
-        if (absT > 1.96) {
-          row.sig = tScore > 0 ? 'high_95' : 'low_95';
-        } else if (absT > 1.28) {
-          row.sig = tScore > 0 ? 'high_80' : 'low_80';
-        }
-      }
-    });
-  }
-
-  return rows;
-}
+// ============================================================================
+// Recode Operations
+// ============================================================================
 
 async function recodeVariable(
   sourceCol: string,
@@ -1410,7 +370,6 @@ async function recodeVariable(
     }
   }
 
-  // Single ELSE clause with proper CAST for type safety
   caseSql += `ELSE CAST("${sourceCol}" AS VARCHAR) END`;
 
   await conn.query(`UPDATE main SET "${safeNewCol}" = ${caseSql}`);
@@ -1418,13 +377,16 @@ async function recodeVariable(
   return safeNewCol;
 }
 
-// Message handler
+// ============================================================================
+// Message Handler
+// ============================================================================
+
 self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
   const request = event.data;
 
   try {
     switch (request.type) {
-      case 'init':
+      case 'init': {
         const initResult = await init(request.forceCleanStart);
         if (initResult.corruptionDetected) {
           self.postMessage({
@@ -1438,8 +400,9 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
           } as WorkerResponse);
         }
         break;
+      }
 
-      case 'loadCSV':
+      case 'loadCSV': {
         const csvResult = await loadCSV(request.fileName, request.content);
         self.postMessage({
           type: 'csvLoaded',
@@ -1448,8 +411,9 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
           durationMs: csvResult.durationMs
         } as WorkerResponse);
         break;
+      }
 
-      case 'loadSAV':
+      case 'loadSAV': {
         const savResult = await loadSAV(request.buffer);
         self.postMessage({
           type: 'savLoaded',
@@ -1459,8 +423,9 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
           durationMs: savResult.durationMs,
         } as WorkerResponse);
         break;
+      }
 
-      case 'query':
+      case 'query': {
         const queryResult = await runQuery(request.sql);
         self.postMessage({
           type: 'queryResult',
@@ -1468,10 +433,12 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
           durationMs: queryResult.durationMs,
         } as WorkerResponse);
         break;
+      }
 
-      case 'runCrosstab':
+      case 'runCrosstab': {
+        if (!adapter) throw new Error('DB not initialized');
         const start = performance.now();
-        const crosstabData = await runCrosstab(request.options, request.context);
+        const crosstabData = await coreRunCrosstab(adapter, request.options, request.context);
         const duration = performance.now() - start;
         self.postMessage({
           type: 'queryResult',
@@ -1479,29 +446,34 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
           durationMs: duration
         } as WorkerResponse);
         break;
+      }
 
-      case 'getSchema':
+      case 'getSchema': {
         const schemaResult = await getSchema();
         self.postMessage({ type: 'schema', data: schemaResult } as WorkerResponse);
         break;
+      }
 
-      case 'getUniqueValues':
+      case 'getUniqueValues': {
         const uniqueVals = await getUniqueValues(request.column);
         self.postMessage({ type: 'uniqueValues', data: uniqueVals } as WorkerResponse);
         break;
+      }
 
-      case 'getVariableStats':
-        const stats = await getVariableStats(request.column, request.variableType, request.binCount);
+      case 'getVariableStats': {
+        if (!adapter) throw new Error('DB not initialized');
+        const stats = await coreGetVariableStats(adapter, request.column, request.variableType, request.binCount);
         self.postMessage({ type: 'variableStats', stats } as WorkerResponse);
         break;
+      }
 
-      case 'recodeVariable':
+      case 'recodeVariable': {
         const newCol = await recodeVariable(request.sourceCol, request.newColName, request.config);
         self.postMessage({ type: 'recodeComplete', newColName: newCol } as WorkerResponse);
         break;
+      }
 
-      case 'processData':
-        // 1. Process the raw aggregated data into Tree/Table structure
+      case 'processData': {
         const processed = processAnalysisData({
           data: request.data,
           ...request.options
@@ -1512,7 +484,6 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
           break;
         }
 
-        // 2. If a chart type is requested, apply specific chart transformations
         let finalResult = processed;
         if (request.chartType) {
           const transformed = transformChartData(processed, request.chartType);
@@ -1523,8 +494,9 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
 
         self.postMessage({ type: 'processedData', requestId: request.requestId, result: finalResult } as WorkerResponse);
         break;
+      }
 
-      case 'checkPersistedData':
+      case 'checkPersistedData': {
         const persistedResult = await checkPersistedData();
         if (persistedResult.exists) {
           self.postMessage({
@@ -1536,14 +508,15 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
           self.postMessage({ type: 'noPersistedData' } as WorkerResponse);
         }
         break;
+      }
 
-      case 'clearPersistedData':
+      case 'clearPersistedData': {
         await clearPersistedData();
         self.postMessage({ type: 'persistedDataCleared' } as WorkerResponse);
         break;
+      }
 
-      case 'ping':
-        // Health check - verify database is alive and check if table exists
+      case 'ping': {
         if (!conn) {
           self.postMessage({ type: 'pong', hasData: false } as WorkerResponse);
         } else {
@@ -1567,6 +540,7 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
           }
         }
         break;
+      }
     }
   } catch (error: any) {
     console.error('[Worker] Error:', error);

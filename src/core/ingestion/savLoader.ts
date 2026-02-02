@@ -20,7 +20,7 @@ import { generateSyntheticGridVariables } from '../../services/gridUtils';
 
 export interface ParsedVariableMeta {
   name: string;
-  label: string;
+  label?: string;
   type: 'numeric' | 'string';
   format?: string;
   index: number;
