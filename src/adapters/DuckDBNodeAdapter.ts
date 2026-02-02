@@ -7,12 +7,13 @@
 
 import { DuckDBInstance, DuckDBConnection } from '@duckdb/node-api';
 import { DatabaseAdapter, QueryResult } from '../core/DatabaseAdapter';
+import { Variable, VariableSet } from '../types';
 
 export class DuckDBNodeAdapter implements DatabaseAdapter {
   private constructor(
     private instance: DuckDBInstance,
     private connection: DuckDBConnection
-  ) {}
+  ) { }
 
   static async create(): Promise<DuckDBNodeAdapter> {
     const instance = await DuckDBInstance.create(':memory:');
@@ -65,5 +66,10 @@ export class DuckDBNodeAdapter implements DatabaseAdapter {
     await this.execute(`CREATE OR REPLACE TABLE "${tableName}" AS SELECT * FROM read_csv_auto('${filePath}')`);
     const result = await this.query(`SELECT COUNT(*) as cnt FROM "${tableName}"`);
     return Number(result.rows[0]?.cnt);
+  }
+
+  async loadSav(filePath: string, tableName: string = 'main'): Promise<{ variables: Variable[]; variableSets: VariableSet[]; rowCount: number }> {
+    const { loadSav } = await import('../core/ingestion/savIngestion');
+    return loadSav(this, filePath, tableName);
   }
 }

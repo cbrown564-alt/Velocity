@@ -38,13 +38,24 @@ program
 // load command
 // ============================================================================
 
-program
-  .command('load <file>')
-  .description('Load a CSV file into the analysis engine')
-  .action(async (file: string) => {
-    const db = await ensureAdapter();
+async function loadFile(file: string, db: DuckDBNodeAdapter) {
+  if (file.endsWith('.sav')) {
+    const result = await db.loadSav(file);
+    console.log(`Loaded ${result.rowCount} rows and ${result.variables.length} variables from ${file}`);
+    return result;
+  } else {
     const rowCount = await db.loadCSV(file);
     console.log(`Loaded ${rowCount} rows from ${file}`);
+    return { rowCount };
+  }
+}
+
+program
+  .command('load <file>')
+  .description('Load a file (CSV or SAV) into the analysis engine')
+  .action(async (file: string) => {
+    const db = await ensureAdapter();
+    await loadFile(file, db);
 
     // Show schema
     const result = await db.query(`PRAGMA table_info('main')`);
@@ -62,10 +73,10 @@ program
 
 program
   .command('schema <file>')
-  .description('Show the schema of a CSV file')
+  .description('Show the schema of a file')
   .action(async (file: string) => {
     const db = await ensureAdapter();
-    await db.loadCSV(file);
+    await loadFile(file, db);
 
     const result = await db.query(`PRAGMA table_info('main')`);
     console.log(JSON.stringify(result.rows, null, 2));
@@ -79,14 +90,14 @@ program
 
 program
   .command('query <file>')
-  .description('Run a crosstab query on a CSV file')
+  .description('Run a crosstab query on a file')
   .requiredOption('--rows <vars>', 'Comma-separated row variables')
   .option('--cols <var>', 'Column variable')
   .option('--weight <var>', 'Weight variable')
   .option('--format <fmt>', 'Output format: json or table', 'json')
   .action(async (file: string, opts) => {
     const db = await ensureAdapter();
-    await db.loadCSV(file);
+    const loadResult = await loadFile(file, db);
 
     const rowVars = opts.rows.split(',').map((s: string) => s.trim());
 
@@ -96,8 +107,8 @@ program
       weightVar: opts.weight || null,
       filters: [],
     }, {
-      variables: {},
-      variableSets: {},
+      variables: (loadResult as any).variables?.reduce((acc: any, v: any) => ({ ...acc, [v.id]: v }), {}) || {},
+      variableSets: (loadResult as any).variableSets?.reduce((acc: any, vs: any) => ({ ...acc, [vs.id]: vs }), {}) || {},
     });
 
     if (opts.format === 'table') {
@@ -120,7 +131,7 @@ program
   .option('--bins <n>', 'Number of histogram bins', '10')
   .action(async (file: string, column: string, opts) => {
     const db = await ensureAdapter();
-    await db.loadCSV(file);
+    await loadFile(file, db);
 
     const stats = await getVariableStats(db, column, opts.type, parseInt(opts.bins));
     console.log(JSON.stringify(stats, null, 2));
@@ -134,10 +145,10 @@ program
 
 program
   .command('sql <file> <query>')
-  .description('Run arbitrary SQL on a loaded CSV file')
+  .description('Run arbitrary SQL on a loaded file')
   .action(async (file: string, query: string) => {
     const db = await ensureAdapter();
-    await db.loadCSV(file);
+    await loadFile(file, db);
 
     const result = await db.query(query);
     console.log(JSON.stringify(result.rows, null, 2));
