@@ -1,135 +1,256 @@
 # Headless Core Architecture
 
-## Summary of Work
+The analysis engine is extracted into browser-independent modules under `src/core/`. This allows the same statistical logic to run in the browser (via Web Worker + DuckDB-WASM) and on the command line (via Node.js + native DuckDB).
 
-The analysis engine was extracted from `analysisWorker.ts` (1575 lines) into a browser-independent `src/core/` package. A Node.js CLI and golden test infrastructure were built on top.
-
-### What Changed
-
-| Phase | Deliverable | Key Files |
-|-------|------------|-----------|
-| 1a | Worker types moved to shared location | `src/types/worker.ts` |
-| 1b | Grid detection heuristics extracted | `src/core/gridDetection.ts` |
-| 1c | Scale gap-filling extracted | `src/core/scaleNormalization.ts` |
-| 2 | DatabaseAdapter interface | `src/core/DatabaseAdapter.ts`, `src/adapters/DuckDBWasmAdapter.ts` |
-| 3 | Crosstab + stats runners | `src/core/analysis/crosstabRunner.ts`, `variableStatsRunner.ts` |
-| 4 | SAV ingestion logic | `src/core/ingestion/savLoader.ts` |
-| 5 | Worker wired to core | `src/services/analysisWorker.ts` (549 lines, down from 1575) |
-| 6 | Node adapter + CLI | `src/adapters/DuckDBNodeAdapter.ts`, `cli/velocity.ts` |
-| 7 | Golden tests | `tests/golden/` (4 snapshot tests) |
-
-### Architecture After Extraction
+## 1. Overview
 
 ```
-src/core/                          # Browser-independent, pure logic
-├── DatabaseAdapter.ts             # Interface: query(), execute(), close(), etc.
-├── gridDetection.ts               # Heuristic grid/MR set detection
-├── scaleNormalization.ts          # Endpoint-labeled scale gap filling
-├── analysis/
-│   ├── crosstabRunner.ts          # Crosstab orchestration (sig testing, histograms)
-│   └── variableStatsRunner.ts     # Frequency + numeric stats
-└── ingestion/
-    └── savLoader.ts               # SAV metadata → Variables + VariableSets
+┌──────────────────────────────────────────────────────────────────────┐
+│                          BROWSER                                      │
+│  ┌──────────────┐    ┌────────────┐    ┌──────────────────────────┐  │
+│  │   React UI   │◄──►│  Zustand   │◄──►│   analysisWorker.ts      │  │
+│  │  (Main Thrd) │    │   Store    │    │   (thin shell)           │  │
+│  └──────────────┘    └────────────┘    └───────────┬──────────────┘  │
+│                                                     │                 │
+│                                        ┌────────────▼─────────────┐  │
+│                                        │  DuckDBWasmAdapter       │  │
+│                                        └────────────┬─────────────┘  │
+└─────────────────────────────────────────────────────┼────────────────┘
+                                                      │
+                        ┌─────────────────────────────▼──────────────┐
+                        │              src/core/                      │
+                        │                                             │
+                        │  DatabaseAdapter ◄─── interface             │
+                        │       │                                     │
+                        │  ┌────▼──────────┐   ┌──────────────────┐  │
+                        │  │ crosstabRunner │   │ variableStatsRnr │  │
+                        │  └───────────────┘   └──────────────────┘  │
+                        │                                             │
+                        │  ┌───────────────┐   ┌──────────────────┐  │
+                        │  │ savLoader      │   │ gridDetection    │  │
+                        │  └───────────────┘   └──────────────────┘  │
+                        │                                             │
+                        │  ┌──────────────────┐                      │
+                        │  │ scaleNormalizatn │                      │
+                        │  └──────────────────┘                      │
+                        └─────────────────────────────┬──────────────┘
+                                                      │
+┌─────────────────────────────────────────────────────┼────────────────┐
+│                           NODE.js CLI                                 │
+│                                        ┌────────────▼─────────────┐  │
+│  ┌──────────────┐                      │  DuckDBNodeAdapter       │  │
+│  │ cli/velocity │─────────────────────►│  (@duckdb/node-api)      │  │
+│  └──────────────┘                      └──────────────────────────┘  │
+└──────────────────────────────────────────────────────────────────────┘
+```
 
-src/adapters/
-├── DuckDBWasmAdapter.ts           # Browser: wraps DuckDB-WASM AsyncDuckDBConnection
-└── DuckDBNodeAdapter.ts           # Node: wraps @duckdb/node-api
+The core modules have **zero browser dependencies**. They accept a `DatabaseAdapter` and return plain objects. The adapter pattern is the single seam between platform-specific DuckDB runtimes and portable analysis logic.
 
-cli/velocity.ts                    # CLI entry point (load, schema, query, stats, sql)
+## 2. The DatabaseAdapter Interface
 
-tests/golden/                      # Snapshot regression tests
+All database access flows through this interface, defined in `src/core/DatabaseAdapter.ts`:
+
+```typescript
+interface QueryResult {
+  columns: string[];
+  rows: Record<string, unknown>[];
+  rowCount: number;
+}
+
+interface DatabaseAdapter {
+  query(sql: string): Promise<QueryResult>;
+  execute(sql: string): Promise<void>;
+  insertArrowBuffer(tableName: string, buffer: Uint8Array): Promise<void>;
+  getTableNames(): Promise<string[]>;
+  close(): Promise<void>;
+}
+```
+
+Two implementations exist:
+
+| Adapter | Location | Runtime | Backing |
+|:--------|:---------|:--------|:--------|
+| `DuckDBWasmAdapter` | `src/adapters/DuckDBWasmAdapter.ts` | Browser Worker | `@duckdb/duckdb-wasm` `AsyncDuckDBConnection` |
+| `DuckDBNodeAdapter` | `src/adapters/DuckDBNodeAdapter.ts` | Node.js | `@duckdb/node-api` in-memory instance |
+
+### Adapter-Specific Extensions
+
+- **DuckDBWasmAdapter** adds `insertArrowTable(table, name)` for Arrow IPC ingestion and `getRawConnection()` for WASM-specific operations (OPFS persistence, keepalive).
+- **DuckDBNodeAdapter** adds `loadCSV(filePath, tableName)` which calls `read_csv_auto()` for direct file loading. Created via async factory: `DuckDBNodeAdapter.create()`.
+
+## 3. Analysis Runners
+
+Runners are pure async functions that take an adapter and return results. They contain no platform-specific code.
+
+### 3.1 Crosstab Runner
+
+**Location:** `src/core/analysis/crosstabRunner.ts`
+
+```typescript
+function runCrosstab(
+  adapter: DatabaseAdapter,
+  options: CrosstabQueryOptions & { includeDistributions?: boolean },
+  context: CrosstabContext
+): Promise<any[]>
+```
+
+**`CrosstabContext`** provides variable metadata so the runner can resolve grids, detect scale variables, and apply value labels:
+
+```typescript
+interface CrosstabContext {
+  variables: Record<string, Variable>;
+  variableSets: Record<string, VariableSet>;
+}
+```
+
+**Pipeline:**
+
+1. **Grid expansion** — If a row variable belongs to a `VariableSet` of type `grid`, the runner generates synthetic pivot columns and rewrites the query to UNPIVOT them.
+2. **Scale detection** — Nested numeric variables are treated as measures (mean/stdDev) rather than nominal categories.
+3. **SQL generation** — Delegates to `queryBuilder.ts` via `buildCrosstabQuery()`.
+4. **Histogram computation** — When `includeDistributions` is true, generates 20-bin grouped histograms for violin/ridgeline charts.
+5. **Significance testing** — Computes t-scores, p-values, and effective sample sizes (ESS) per cell. Marks cells as `high_95`, `low_95`, `high_80`, or `low_80`.
+
+### 3.2 Variable Stats Runner
+
+**Location:** `src/core/analysis/variableStatsRunner.ts`
+
+```typescript
+function getVariableStats(
+  adapter: DatabaseAdapter,
+  column: string,
+  variableType?: 'nominal' | 'ordinal' | 'scale' | 'numeric' | 'text' | 'date',
+  binCount?: number
+): Promise<VariableStatsResult>
+```
+
+**Output structure:**
+
+| Field | Type | Description |
+|:------|:-----|:------------|
+| `frequencies` | `{value, label, count}[]` | Top 10 values by count |
+| `missingCount` | `number` | NULL / missing count |
+| `totalCount` | `number` | Total row count |
+| `numeric` | `object` (optional) | Box plot stats, histogram bins, outliers |
+
+The `numeric` block includes min, max, mean, median, stdDev, quartiles (Q1/Q3), IQR fences, whisker bounds, outlier values, and histogram bins.
+
+## 4. Ingestion Pipeline
+
+### 4.1 SAV Loader
+
+**Location:** `src/core/ingestion/savLoader.ts`
+
+Transforms raw SAV parser output into Velocity's canonical `Variable[]` and `VariableSet[]`. The SAV parser itself (ReadStat-WASM) is platform-specific and lives outside core — only the metadata processing is in core.
+
+```typescript
+function processMetadata(data: ParsedSavData): ProcessedSavResult
+```
+
+**Pipeline:**
+
+1. Map raw metadata → `Variable` objects with type inference (value labels → nominal, no labels + numeric → scale).
+2. Fill endpoint-labeled scale gaps via `scaleNormalization.ts`.
+3. Build `VariableSets` from explicit SPSS Multiple Response Set definitions.
+4. Detect implicit grids via `gridDetection.ts` heuristics.
+5. Generate synthetic grid variables for UNPIVOT queries.
+
+### 4.2 Grid Detection Heuristics
+
+**Location:** `src/core/gridDetection.ts`
+
+Detects grid/multi-response variable groups that SPSS did not explicitly declare:
+
+- **By position:** Consecutive variables (index gap ≤ 2) with matching value label sets.
+- **By naming:** Shared prefix with sequential numeric suffixes (e.g., `Q5_1`, `Q5_2`, `Q5_3`).
+- **Numeric grids:** Position proximity + label similarity (Jaccard on word tokens) + shared min/max/cardinality.
+
+Also exports utility functions: `detectImplicitScale()` for distinguishing continuous from categorical numeric data, `inferPositiveValue()` for binary scales, and `isDateFormat()` for SPSS format strings.
+
+### 4.3 Scale Normalization
+
+**Location:** `src/core/scaleNormalization.ts`
+
+Handles the common SPSS pattern where only scale endpoints are labeled (e.g., 1 = "Strongly Disagree", 10 = "Strongly Agree" with 2–9 unlabeled). Scans actual data values to confirm the range, then fills missing labels with numeric strings and sets the variable type to `scale`.
+
+```typescript
+function fillEndpointLabelGaps(
+  variables: Variable[],
+  rows: any[][],
+  findColumnIndex: (variableName: string) => number
+): void
+```
+
+This mutates the `variables` array in-place.
+
+## 5. The Worker (Thin Shell)
+
+After extraction, `src/services/analysisWorker.ts` (~549 lines, down from 1575) contains only:
+
+- **DuckDB-WASM initialization** (bundle fetch, OPFS path configuration)
+- **OPFS persistence** (save/load database to Origin Private File System)
+- **Message handler** (`onmessage`) that dispatches `WorkerRequest` types to core runners
+- **Keepalive** (periodic pings to prevent worker termination)
+
+All business logic — crosstabs, stats, ingestion, grid detection — is imported from `src/core/`.
+
+## 6. CLI
+
+**Location:** `cli/velocity.ts`
+
+A Node.js entry point that wires `DuckDBNodeAdapter` to the same core runners the browser uses.
+
+| Command | Description |
+|:--------|:------------|
+| `load <file>` | Load CSV, display row count and schema |
+| `schema <file>` | Output JSON column schema |
+| `query <file> --rows a,b [--cols c] [--weight w] [--format json\|table]` | Run a crosstab |
+| `stats <file> <column> [--type nominal] [--bins 10]` | Variable frequency/numeric stats |
+| `sql <file> "<SQL>"` | Raw SQL query |
+
+```bash
+npx tsx cli/velocity.ts query data.csv --rows Gender,AgeGroup --cols Region --format table
+```
+
+The CLI currently supports CSV only. SAV support requires a Node-compatible SAV parser (see §8.1).
+
+## 7. Golden Tests
+
+**Location:** `tests/golden/`
+
+Snapshot regression tests that load known fixtures through `DuckDBNodeAdapter` → core runners and compare JSON output against expected baselines. Any drift in statistical output fails the test.
+
+```
+tests/golden/
 ├── fixtures/simple_crosstab.csv
 ├── expected/*.json
 └── golden.test.ts
 ```
 
-The worker (`analysisWorker.ts`) is now a thin shell: DuckDB-WASM init, OPFS persistence, message handler, and keepalive. All business logic lives in `src/core/`.
+Run with `npm run test:run`.
 
-### CLI Usage
+## 8. Future Work
 
-```bash
-npx tsx cli/velocity.ts load <file.csv>
-npx tsx cli/velocity.ts schema <file.csv>
-npx tsx cli/velocity.ts query <file.csv> --rows col1,col2 [--cols col3] [--weight w] [--format json|table]
-npx tsx cli/velocity.ts stats <file.csv> <column> [--type numeric|nominal] [--bins 10]
-npx tsx cli/velocity.ts sql <file.csv> "<SQL>"
-```
+### 8.1 SAV Support in CLI
 
----
+`savLoader.ts` is ready but needs a Node-compatible SAV parser. Options: ReadStat native addon, ReadStat-WASM with Node polyfills, or a pure-JS parser.
 
-## Plan: Building on This Architecture
+### 8.2 Expanded Golden Tests
 
-### Near-term (leverage what exists)
+Add fixtures for: weighted crosstabs with significance, grid expansion, filtered queries, edge cases (empty cells, all-missing columns), and large datasets for performance baselines.
 
-**1. SAV support in CLI**
+### 8.3 Adapter Parity Testing
 
-The CLI currently only loads CSV. The `savLoader.ts` pipeline is ready but needs a Node-compatible SAV parser. Options:
-- Compile ReadStat as a native Node addon
-- Use ReadStat-WASM in Node (needs minor polyfills for `globalThis.performance`, no DOM)
-- Use a pure-JS SAV parser if one exists
+Run identical golden fixtures through both `DuckDBWasmAdapter` (in Node via `@duckdb/duckdb-wasm`) and `DuckDBNodeAdapter` to catch adapter-level divergences.
 
-Once parsing works, the flow is: parse → `processMetadata()` → `adapter.loadCSV/execute` for data insertion.
+### 8.4 Export Pipeline
 
-**2. Expand golden test coverage**
+Move PowerPoint/Excel export into `src/core/export/` for headless report generation.
 
-Current golden tests cover basic crosstabs and stats. Add fixtures for:
-- Weighted crosstabs with significance testing (needs `colVar`)
-- Grid variable expansion (synthetic variables)
-- Filtered queries
-- Edge cases: empty cells, single-row data, all-missing columns
-- Large datasets (1000+ rows) for performance baselines
+### 8.5 Plugin Architecture
 
-**3. CLI batch mode**
+The adapter + runner pattern supports pluggable analysis modules via an `AnalysisRunner<TConfig, TResult>` interface. New analysis types (regression, factor analysis) work in both browser and CLI without modification.
 
-Add a `batch` command that reads a JSON config file specifying multiple queries, runs them all against a single loaded dataset, and outputs results. Useful for automated reporting pipelines.
+### 8.6 Streaming Results
 
-```bash
-npx tsx cli/velocity.ts batch <file.csv> --config queries.json --out results/
-```
-
-### Medium-term (new capabilities)
-
-**4. Headless test harness for browser parity**
-
-Run the same golden test fixtures through `DuckDBWasmAdapter` in a Node environment (DuckDB-WASM works in Node with `@duckdb/duckdb-wasm`). Compare outputs from both adapters to guarantee parity. This catches adapter-level bugs that golden tests alone would miss.
-
-**5. Export pipeline in core**
-
-Move PowerPoint/Excel export logic into `src/core/export/` so it can run headlessly. The CLI could then produce `.pptx` or `.xlsx` files directly:
-
-```bash
-npx tsx cli/velocity.ts export <file.csv> --config analysis.json --format pptx --out report.pptx
-```
-
-**6. Plugin architecture for custom statistics**
-
-The `DatabaseAdapter` + runner pattern naturally supports pluggable analysis modules. Define an `AnalysisRunner` interface:
-
-```typescript
-interface AnalysisRunner<TConfig, TResult> {
-  run(adapter: DatabaseAdapter, config: TConfig, context: CrosstabContext): Promise<TResult>;
-}
-```
-
-New analysis types (regression, factor analysis, cluster analysis) implement this interface and work in both browser and CLI without modification.
-
-**7. Streaming results for large datasets**
-
-`DuckDBNodeAdapter` currently reads all rows into memory. For large result sets, add a `queryStream()` method to `DatabaseAdapter` that yields rows in chunks. The CLI could then pipe output to stdout or a file without buffering the entire result.
-
-### Long-term (ecosystem)
-
-**8. CI integration**
-
-Golden tests run in CI on every push. Add a GitHub Action that:
-- Installs `@duckdb/node-api`
-- Runs `npm run test:run` (includes golden tests)
-- Fails the build if any statistical output drifts
-
-**9. HTTP API wrapper**
-
-Wrap the core in a lightweight HTTP server (Fastify/Express) for use cases where browser-based analysis isn't suitable but a full CLI session is overkill. The `DatabaseAdapter` pattern means the server code is trivial — just route handlers that call runners.
-
-**10. Python/R interop**
-
-Expose the analysis engine as a subprocess that communicates via JSON over stdin/stdout. Python and R scripts can then call Velocity's crosstab engine as a black box, useful for validation against SPSS output or integration into existing research workflows.
+Add `queryStream()` to `DatabaseAdapter` for large result sets that shouldn't be buffered entirely in memory.
