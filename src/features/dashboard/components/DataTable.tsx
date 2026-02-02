@@ -2,7 +2,7 @@ import React, { useMemo, useState, useRef, useCallback } from 'react';
 import { AggregatedRow, Variable } from '../../../types';
 import { motion } from 'framer-motion';
 import { ChevronRight, ChevronDown, ArrowUp, ArrowDown } from 'lucide-react';
-import type { VariableStatsResult } from '../../../services/analysisWorker';
+import type { VariableStatsResult } from '../../../types/worker';
 import { AnalysisChart } from '../../../components/charts/AnalysisChart';
 import { useProcessedAnalysisData } from '../../../hooks/useProcessedAnalysisData';
 import { recommendChart } from '../../../services/chartRecommender';

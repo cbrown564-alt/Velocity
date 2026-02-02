@@ -1,6 +1,6 @@
 import React, { useMemo, useRef } from 'react';
 import type { Variable } from '../../../store/slices/dataSlice';
-import type { VariableStatsResult } from '../../../services/analysisWorker';
+import type { VariableStatsResult } from '../../../types/worker';
 import { HorizontalBarRenderer, HistogramRenderer } from '../../../components/charts/renderers';
 import { useResizeObserver } from '../../../hooks/useResizeObserver';
 import styles from '../VariableInspector.module.css';

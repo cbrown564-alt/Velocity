@@ -1,5 +1,5 @@
 import { AggregatedRow, Variable } from '../types';
-import type { VariableStatsResult } from './analysisWorker';
+import type { VariableStatsResult } from '../types/worker';
 import { ProcessedRow, ProcessedCell } from '../types/processedData';
 
 export type RowPathEntry = { variable: string; value: string };

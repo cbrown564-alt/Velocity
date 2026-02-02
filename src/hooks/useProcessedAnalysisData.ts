@@ -4,7 +4,7 @@ import { useVelocityStore } from '../store';
 import { AggregatedRow, Variable } from '../types';
 import { ProcessedAnalysisData } from '../types/processedData';
 import { ChartType } from '../types/charts';
-import { WorkerRequest, WorkerResponse } from '../services/analysisWorker';
+import type { WorkerRequest, WorkerResponse } from '../types/worker';
 
 // Re-export types for backward compatibility (if any consumers were missed)
 export type { ProcessedAnalysisData, ChartDataPoint, ChartSeries } from '../types/processedData';

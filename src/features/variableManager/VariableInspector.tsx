@@ -10,7 +10,7 @@ import React, { useMemo, useEffect, useState, useCallback } from 'react';
 import { Info } from 'lucide-react';
 import { useVelocityStore } from '../../store';
 import type { Variable } from '../../store/slices/dataSlice';
-import type { VariableStatsResult } from '../../services/analysisWorker';
+import type { VariableStatsResult } from '../../types/worker';
 import type { BarDatum, BinData } from '../../types/charts';
 import { ChartContextMenu } from '../../components/overlays/ChartContextMenu';
 import { InputModal } from '../../components/overlays/InputModal';

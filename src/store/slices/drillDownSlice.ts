@@ -5,7 +5,7 @@
  */
 
 import type { StateCreator } from 'zustand';
-import type { WorkerRequest, WorkerResponse } from '../../services/analysisWorker';
+import type { WorkerRequest, WorkerResponse } from '../../types/worker';
 import type { DataSlice, VariableSet } from './dataSlice';
 import type { AnalysisSlice, Filter } from './analysisSlice';
 

@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { AggregatedRow, Variable } from '../../../types';
-import type { VariableStatsResult } from '../../../services/analysisWorker';
+import type { VariableStatsResult } from '../../../types/worker';
 
 import { buildTree, RowPathEntry, TableRowNode } from '../../../services/treeBuilder';
 export type { RowPathEntry, TableRowNode };

@@ -6,7 +6,7 @@
  */
 
 import type { StateCreator } from 'zustand';
-import type { WorkerRequest, WorkerResponse, VariableStatsResult } from '../../services/analysisWorker';
+import type { WorkerRequest, WorkerResponse, VariableStatsResult } from '../../types/worker';
 import type { RecodeConfig } from '../../types';
 
 // ============================================================================

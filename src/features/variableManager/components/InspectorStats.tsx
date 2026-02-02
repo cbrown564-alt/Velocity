@@ -2,7 +2,7 @@ import React from 'react';
 import { CheckCircle, AlertTriangle } from 'lucide-react';
 import { VariableTypeIcon } from '../../../components/common/VariableTypeIcon';
 import type { Variable } from '../../../store/slices/dataSlice';
-import type { VariableStatsResult } from '../../../services/analysisWorker';
+import type { VariableStatsResult } from '../../../types/worker';
 import styles from '../VariableInspector.module.css';
 
 const getTypeBadgeClass = (type: string) => {

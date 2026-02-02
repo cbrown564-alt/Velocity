@@ -1,7 +1,7 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { useVelocityStore } from '../../store';
-import type { WorkerRequest, WorkerResponse } from '../../services/analysisWorker';
+import type { WorkerRequest, WorkerResponse } from '../../types/worker';
 import { mockDataset, mockNominalVariable } from '../fixtures/variables';
 
 describe('Integration: Store <-> Worker Analysis Flow', () => {

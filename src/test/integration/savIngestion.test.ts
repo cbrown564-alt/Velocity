@@ -1,7 +1,7 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { useVelocityStore } from '../../store';
-import type { WorkerRequest, WorkerResponse } from '../../services/analysisWorker';
+import type { WorkerRequest, WorkerResponse } from '../../types/worker';
 import { mockDataset } from '../fixtures/variables';
 
 // Mock the global Worker if setup.ts hasn't already (it has, but we want to control it closely)

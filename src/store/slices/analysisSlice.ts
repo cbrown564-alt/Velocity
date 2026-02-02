@@ -6,7 +6,7 @@
 
 import type { StateCreator } from 'zustand';
 // buildCrosstabQuery import removed
-import type { WorkerRequest, WorkerResponse, VariableStatsResult } from '../../services/analysisWorker';
+import type { WorkerRequest, WorkerResponse, VariableStatsResult } from '../../types/worker';
 import type { DataSlice, VariableSet } from './dataSlice';
 import type { UISlice } from './uiSlice';
 
