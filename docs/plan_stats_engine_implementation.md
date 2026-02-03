@@ -202,49 +202,46 @@ describe('Weighted Mean Parity', () => {
 
 ---
 
-### Phase 2B: Trust Signals (UX Polish)
+### Phase 2B: Trust Signals (UX Polish) ✅ COMPLETED
 
 **Goal:** Make statistical rigor visible to users
 
-#### Task 2B.1: Add Statistical Method Tooltips
+**Status:** Implemented 2026-02-03
+
+#### Task 2B.1: Add Statistical Method Tooltips ✅
 
 **What:** Hover tooltips explaining the test methodology.
 
-```tsx
-// In DataTable.tsx cell tooltip
-<Tooltip>
-  <p>Welch's T-Test (Cell vs Rest)</p>
-  <p>t = {cell.stats.tScore.toFixed(2)}</p>
-  <p>p = {cell.stats.pValue.toFixed(4)}</p>
-  <p>ESS = {cell.stats.effN.toFixed(1)} (Kish's Approximation)</p>
-  <p className="text-sm text-muted">
-    Significantly {cell.sig?.includes('high') ? 'higher' : 'lower'}
-    than complement at {cell.sig?.includes('95') ? '95%' : '80%'} confidence
-  </p>
-</Tooltip>
-```
+**Implementation:**
+- Created `Tooltip` component (`src/components/common/Tooltip.tsx`)
+- Created `StatisticsTooltip` component (`src/components/common/StatisticsTooltip.tsx`)
+- Shows Welch's T-Test header, t-score, p-value, ESS in a grid
+- Plain English interpretation of significance level
+- 21 tests covering all scenarios
 
-#### Task 2B.2: Add Method Documentation Panel
+#### Task 2B.2: Add Method Documentation Panel ✅
 
 **What:** "How We Calculate" expandable panel in analysis settings.
 
-**Content:**
-- Explanation of Cell-vs-Rest methodology
-- ESS formula with visual example
-- Link to arch_04 documentation
+**Implementation:**
+- Created `MethodologyPanel` component (`src/components/common/MethodologyPanel.tsx`)
+- Tabbed interface with 4 sections:
+  - Cell vs Rest Testing (with visual example)
+  - Welch's T-Test (formula and explanation)
+  - Effective Sample Size (Kish's formula)
+  - Confidence Levels (95% vs 80% interpretation)
+- Expandable/collapsible design
 
-#### Task 2B.3: Significance Legend in Tables
+#### Task 2B.3: Significance Legend in Tables ✅
 
 **What:** Persistent legend explaining arrow meanings.
 
-```
-┌─────────────────────────────────────────┐
-│ ↑ Significantly higher (95% CI)         │
-│ ↓ Significantly lower (95% CI)          │
-│ ↑ Moderately higher (80% CI)            │
-│ ↓ Moderately lower (80% CI)             │
-└─────────────────────────────────────────┘
-```
+**Implementation:**
+- Created `SignificanceLegend` component (`src/components/common/SignificanceLegend.tsx`)
+- Compact mode for inline display below tables
+- Full mode with detailed descriptions
+- "How we calculate" link toggles MethodologyPanel
+- Integrated into DataTable.tsx below crosstab output
 
 ---
 

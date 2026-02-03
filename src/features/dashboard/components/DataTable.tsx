@@ -10,6 +10,10 @@ import { useTableDragMerge, TableDragItem } from '../../../hooks/useTableDragMer
 import { useMergeOrchestration } from '../../../hooks/useMergeOrchestration';
 import { InputModal } from '../../../components/overlays/InputModal';
 import { RowPathEntry, TableRowNode } from '../../../services/treeBuilder';
+import { Tooltip } from '../../../components/common/Tooltip';
+import { StatisticsTooltip } from '../../../components/common/StatisticsTooltip';
+import { SignificanceLegend } from '../../../components/common/SignificanceLegend';
+import { MethodologyPanel } from '../../../components/common/MethodologyPanel';
 import mergeStyles from './DataTable.module.css';
 export type { RowPathEntry, TableRowNode };
 
@@ -52,6 +56,8 @@ export const DataTable: React.FC<DataTableProps> = ({
 }) => {
   // UI State for expanded rows
   const [expandedKeys, setExpandedKeys] = useState<Record<string, boolean>>({});
+  // State for methodology panel visibility
+  const [showMethodology, setShowMethodology] = useState(false);
 
   const toggleRow = (key: string) => {
     setExpandedKeys(prev => ({ ...prev, [key]: !prev[key] }));
@@ -223,6 +229,49 @@ export const DataTable: React.FC<DataTableProps> = ({
 
               const secondaryTextClass = isZero ? 'text-[var(--text-secondary)] opacity-40' : 'text-[var(--text-secondary)]';
 
+              // Determine if we have stats for tooltip
+              const hasStats = cell.stats && typeof cell.stats.effN === 'number';
+              const cellValue = cell.mean !== undefined ? cell.mean : cell.percent;
+
+              const cellContent = (
+                <div className="flex flex-row items-baseline justify-start gap-2 text-left w-full">
+                  {cell.mean !== undefined ? (
+                    // METRIC DISPLAY
+                    <>
+                      <div className="flex items-baseline gap-1">
+                        <span className={`font-bold tabular-nums text-right w-[42px] ${textClass}`}>{cell.mean.toFixed(1)}</span>
+                        {!isZero && <span className={`text-[10px] ${secondaryTextClass} bg-[var(--bg-panel)] px-1 rounded`}>Mean</span>}
+                      </div>
+                      <span className={`text-[10px] ${secondaryTextClass} font-mono tracking-tight group-hover:opacity-100 transition-opacity flex gap-2`}>
+                        {cell.stdDev !== undefined && <span>SD: {cell.stdDev.toFixed(1)}</span>}
+                        <span>n={cell.validCount ?? cell.count}</span>
+                      </span>
+                    </>
+                  ) : (
+                    // FREQUENCY DISPLAY
+                    <>
+                      <div className="flex items-center gap-0.5">
+                        <span className={`font-bold tabular-nums text-right w-[48px] ${textClass}`}>{cell.percent.toFixed(1)}%</span>
+                        {cell.sig === 'high_95' && (
+                          <ArrowUp size={12} className="text-[var(--color-success)]" />
+                        )}
+                        {cell.sig === 'high_80' && (
+                          <ArrowUp size={12} className="text-[var(--text-secondary)]" />
+                        )}
+                        {cell.sig === 'low_95' && (
+                          <ArrowDown size={12} className="text-[var(--color-error)]" />
+                        )}
+                        {cell.sig === 'low_80' && (
+                          <ArrowDown size={12} className="text-[var(--text-secondary)]" />
+                        )}
+
+                      </div>
+                      <span className={`text-[10px] ${secondaryTextClass} font-mono tracking-tight opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap`}>n={cell.count}</span>
+                    </>
+                  )}
+                </div>
+              );
+
               return (
                 <td
                   key={col}
@@ -232,48 +281,27 @@ export const DataTable: React.FC<DataTableProps> = ({
                   onMouseEnter={() => setHoveredCol(col)}
                   onMouseLeave={() => setHoveredCol(null)}
                   onClick={() => onCellClick?.(row.rowPath, colVariable ? col : null)}
-                  title={
-                    cell.stats && typeof cell.stats.effN === 'number'
-                      ? `Significance Test (vs Rest)\nT-Score: ${(cell.stats.tScore ?? 0).toFixed(2)}\np-value: ${(cell.stats.pValue ?? 1).toFixed(4)}\nEff. Sample Size: ${cell.stats.effN.toFixed(1)}\n\nClick to X-Ray`
-                      : "Click to X-Ray"
-                  }
+                  title={!hasStats ? "Click to X-Ray" : undefined}
                 >
-                  <div className="flex flex-row items-baseline justify-start gap-2 text-left w-full">
-                    {cell.mean !== undefined ? (
-                      // METRIC DISPLAY
-                      <>
-                        <div className="flex items-baseline gap-1">
-                          <span className={`font-bold tabular-nums text-right w-[42px] ${textClass}`}>{cell.mean.toFixed(1)}</span>
-                          {!isZero && <span className={`text-[10px] ${secondaryTextClass} bg-[var(--bg-panel)] px-1 rounded`}>Mean</span>}
-                        </div>
-                        <span className={`text-[10px] ${secondaryTextClass} font-mono tracking-tight group-hover:opacity-100 transition-opacity flex gap-2`}>
-                          {cell.stdDev !== undefined && <span>SD: {cell.stdDev.toFixed(1)}</span>}
-                          <span>n={cell.validCount ?? cell.count}</span>
-                        </span>
-                      </>
-                    ) : (
-                      // FREQUENCY DISPLAY
-                      <>
-                        <div className="flex items-center gap-0.5">
-                          <span className={`font-bold tabular-nums text-right w-[48px] ${textClass}`}>{cell.percent.toFixed(1)}%</span>
-                          {cell.sig === 'high_95' && (
-                            <ArrowUp size={12} className="text-[var(--color-success)]" />
-                          )}
-                          {cell.sig === 'high_80' && (
-                            <ArrowUp size={12} className="text-[var(--text-secondary)]" />
-                          )}
-                          {cell.sig === 'low_95' && (
-                            <ArrowDown size={12} className="text-[var(--color-error)]" />
-                          )}
-                          {cell.sig === 'low_80' && (
-                            <ArrowDown size={12} className="text-[var(--text-secondary)]" />
-                          )}
-
-                        </div>
-                        <span className={`text-[10px] ${secondaryTextClass} font-mono tracking-tight opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap`}>n={cell.count}</span>
-                      </>
-                    )}
-                  </div>
+                  {hasStats ? (
+                    <Tooltip
+                      content={
+                        <StatisticsTooltip
+                          stats={cell.stats!}
+                          sig={cell.sig}
+                          value={cellValue}
+                          isMetric={cell.mean !== undefined}
+                        />
+                      }
+                      position="top"
+                      delay={300}
+                      maxWidth={320}
+                    >
+                      {cellContent}
+                    </Tooltip>
+                  ) : (
+                    cellContent
+                  )}
                 </td>
               );
             })}
@@ -405,6 +433,24 @@ export const DataTable: React.FC<DataTableProps> = ({
             </tbody>
           </table>
         </div>
+        {/* Significance Legend (compact, below table) */}
+        {colVariable && (
+          <div className="px-4 py-3 border-t border-[var(--border-grid)] flex justify-between items-center">
+            <SignificanceLegend
+              compact
+              showMethodologyLink
+              onMethodologyClick={() => setShowMethodology(!showMethodology)}
+            />
+          </div>
+        )}
+
+        {/* Methodology Panel (expandable) */}
+        {showMethodology && (
+          <div className="px-4 pb-4">
+            <MethodologyPanel defaultExpanded />
+          </div>
+        )}
+
         {/* Drag ghost */}
         {dragState.isDragging && dragState.draggedItem && (
           <div
