@@ -109,6 +109,21 @@ describe('queryBuilder', () => {
             expect(sql).toContain('_synthetic_value as rowKey_0');
         });
 
+        it('includes sumSqWeights for weighted grid aggregation', () => {
+            const sql = buildCrosstabQuery({
+                rowVars: [],
+                gridColumns: [
+                    { name: 'q1_a', label: 'Product A' },
+                    { name: 'q1_b', label: 'Product B' },
+                ],
+                weightVar: 'weight',
+                gridAggregate: true,
+            });
+
+            expect(sql).toContain('SUM("weight" * "weight")::DOUBLE as sumSqWeights');
+            expect(sql).toContain('item_label as rowKey_0');
+        });
+
         it('includes main table columns in grid CTE for filtering', () => {
             const sql = buildCrosstabQuery({
                 rowVars: [],
