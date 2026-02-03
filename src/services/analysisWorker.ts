@@ -21,6 +21,7 @@ import { runCrosstab as coreRunCrosstab } from '../core/analysis/crosstabRunner'
 import { getVariableStats as coreGetVariableStats } from '../core/analysis/variableStatsRunner';
 import { processMetadata } from '../core/ingestion/savLoader';
 import { escapeString } from './queryBuilder';
+import { analysisRegistry } from '../core/analysis/registry';
 
 // Re-export types from canonical location for backward compatibility
 export type { WorkerRequest, WorkerResponse, VariableStatsResult, VariableStatsFrequency, NumericStats } from '../types/worker';
@@ -309,6 +310,55 @@ async function loadSAV(buffer: ArrayBuffer): Promise<{ variables: Variable[]; va
   return { variables, variableSets, rowCount: parsed.metadata.rowCount, durationMs };
 }
 
+async function loadSAVMetadata(buffer: ArrayBuffer): Promise<{ variables: Variable[]; variableSets: VariableSet[]; rowCount: number; durationMs: number }> {
+  const start = performance.now();
+
+  // Parse SAV metadata only
+  const { parseSavMetadata } = await import('@velocity/readstat-wasm');
+  const parsed = await parseSavMetadata(buffer);
+
+  // Process metadata (no row data available in this mode)
+  const { variables, variableSets } = processMetadata({
+    metadata: {
+      variables: parsed.metadata.variables,
+      valueLabelSets: parsed.metadata.valueLabelSets,
+      multipleResponseSets: parsed.metadata.multipleResponseSets,
+      rowCount: parsed.metadata.rowCount,
+    },
+    rows: [],
+  });
+
+  const durationMs = performance.now() - start;
+  console.log(`🦆 [Worker] Loaded SAV metadata: ${parsed.metadata.rowCount} rows, ${variables.length} variables in ${durationMs.toFixed(2)}ms`);
+
+  return { variables, variableSets, rowCount: parsed.metadata.rowCount, durationMs };
+}
+
+async function loadSAVSample(
+  buffer: ArrayBuffer,
+  rowLimit: number
+): Promise<{ variables: Variable[]; variableSets: VariableSet[]; rowCount: number; sampleRowCount: number; durationMs: number }> {
+  const start = performance.now();
+
+  const { parseSavSample } = await import('@velocity/readstat-wasm');
+  const parsed = await parseSavSample(buffer, rowLimit);
+
+  const { variables, variableSets } = processMetadata({
+    metadata: {
+      variables: parsed.metadata.variables,
+      valueLabelSets: parsed.metadata.valueLabelSets,
+      multipleResponseSets: parsed.metadata.multipleResponseSets,
+      rowCount: parsed.metadata.rowCount,
+    },
+    rows: parsed.rows,
+  });
+
+  const durationMs = performance.now() - start;
+  console.log(`🦆 [Worker] Loaded SAV sample: ${parsed.rows.length}/${parsed.metadata.rowCount} rows, ${variables.length} variables in ${durationMs.toFixed(2)}ms`);
+
+  return { variables, variableSets, rowCount: parsed.metadata.rowCount, sampleRowCount: parsed.rows.length, durationMs };
+}
+
 // ============================================================================
 // Query Operations
 // ============================================================================
@@ -431,6 +481,31 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
         break;
       }
 
+      case 'loadSAVMetadata': {
+        const savResult = await loadSAVMetadata(request.buffer);
+        self.postMessage({
+          type: 'savMetadataLoaded',
+          variables: savResult.variables,
+          variableSets: savResult.variableSets,
+          rowCount: savResult.rowCount,
+          durationMs: savResult.durationMs,
+        } as WorkerResponse);
+        break;
+      }
+
+      case 'loadSAVSample': {
+        const savResult = await loadSAVSample(request.buffer, request.rowLimit);
+        self.postMessage({
+          type: 'savSampleLoaded',
+          variables: savResult.variables,
+          variableSets: savResult.variableSets,
+          rowCount: savResult.rowCount,
+          sampleRowCount: savResult.sampleRowCount,
+          durationMs: savResult.durationMs,
+        } as WorkerResponse);
+        break;
+      }
+
       case 'query': {
         const queryResult = await runQuery(request.sql);
         self.postMessage({
@@ -470,6 +545,26 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
         if (!adapter) throw new Error('DB not initialized');
         const stats = await coreGetVariableStats(adapter, request.column, request.variableType, request.binCount);
         self.postMessage({ type: 'variableStats', stats } as WorkerResponse);
+        break;
+      }
+
+      case 'runAnalysis': {
+        if (!adapter) throw new Error('DB not initialized');
+        const runner = analysisRegistry.get(request.id);
+        if (!runner) {
+          throw new Error(`Analysis runner not found: ${request.id}`);
+        }
+
+        const start = performance.now();
+        const result = await runner.run(adapter, request.config);
+        const duration = performance.now() - start;
+
+        self.postMessage({
+          type: 'analysisResult',
+          id: request.id,
+          result: result,
+          durationMs: duration
+        } as WorkerResponse);
         break;
       }
 

@@ -10,6 +10,43 @@
 import { HistogramBin } from '../../types';
 import { VariableStatsResult, VariableStatsFrequency, NumericStats } from '../../types/worker';
 import { DatabaseAdapter } from '../DatabaseAdapter';
+import { AnalysisRunner } from './AnalysisRunner';
+import { analysisRegistry } from './registry';
+
+export interface VariableStatsConfig {
+  column: string;
+  variableType?: 'nominal' | 'ordinal' | 'scale' | 'numeric' | 'text' | 'date';
+  binCount?: number;
+}
+
+export class VariableStatsRunner implements AnalysisRunner<VariableStatsConfig, VariableStatsResult> {
+  readonly id = 'variableStats';
+  readonly label = 'Variable Statistics';
+  readonly configSchema = {
+    type: 'object',
+    properties: {
+      column: { type: 'string' },
+      variableType: { type: 'string', enum: ['nominal', 'ordinal', 'scale', 'numeric', 'text', 'date'] },
+      binCount: { type: 'number' }
+    },
+    required: ['column']
+  };
+
+  async run(adapter: DatabaseAdapter, config: VariableStatsConfig): Promise<VariableStatsResult> {
+    return getVariableStats(
+      adapter,
+      config.column,
+      config.variableType,
+      config.binCount
+    );
+  }
+}
+
+// Singleton instance
+export const variableStatsRunner = new VariableStatsRunner();
+
+// Register with the central registry
+analysisRegistry.register(variableStatsRunner);
 
 export async function getVariableStats(
   adapter: DatabaseAdapter,

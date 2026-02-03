@@ -19,11 +19,42 @@ import {
   escapeString,
 } from '../../services/queryBuilder';
 import { calculateTScore, calculateESS, calculatePValue } from '../../services/statistics';
+import { AnalysisRunner } from './AnalysisRunner';
+import { analysisRegistry } from './registry';
 
 export interface CrosstabContext {
   variables: Record<string, Variable>;
   variableSets: Record<string, VariableSet>;
 }
+
+export type CrosstabConfig = CrosstabQueryOptions & { includeDistributions?: boolean; context: CrosstabContext };
+export type CrosstabResult = any[];
+
+export class CrosstabRunner implements AnalysisRunner<CrosstabConfig, CrosstabResult> {
+  readonly id = 'crosstab';
+  readonly label = 'Crosstab Analysis';
+  readonly configSchema = {
+    // Basic schema for UI generation
+    type: 'object',
+    properties: {
+      rowVars: { type: 'array', items: { type: 'string' } },
+      colVar: { type: 'string', nullable: true },
+      filters: { type: 'array' },
+      includeDistributions: { type: 'boolean' }
+    }
+  };
+
+  async run(adapter: DatabaseAdapter, config: CrosstabConfig): Promise<CrosstabResult> {
+    const { context, ...options } = config;
+    return runCrosstab(adapter, options, context);
+  }
+}
+
+// Singleton instance
+export const crosstabRunner = new CrosstabRunner();
+
+// Register with the central registry
+analysisRegistry.register(crosstabRunner);
 
 export async function runCrosstab(
   adapter: DatabaseAdapter,

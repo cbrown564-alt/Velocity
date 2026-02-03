@@ -19,6 +19,11 @@ import { runCrosstab } from '../src/core/analysis/crosstabRunner';
 import { getVariableStats } from '../src/core/analysis/variableStatsRunner';
 import { processAnalysisData } from '../src/services/analysisProcessor';
 import { exportPptx, exportXlsx } from '../src/core/export';
+import { analysisRegistry } from '../src/core/analysis/registry';
+
+// Import runners to ensure they register themselves
+import '../src/core/analysis/crosstabRunner';
+import '../src/core/analysis/variableStatsRunner';
 
 const program = new Command();
 
@@ -138,6 +143,76 @@ program
 
     const stats = await getVariableStats(db, column, opts.type, parseInt(opts.bins));
     console.log(JSON.stringify(stats, null, 2));
+
+    await db.close();
+  });
+
+// ============================================================================
+// analyze command (generic plugin runner)
+// ============================================================================
+
+program
+  .command('analyze <file> <id>')
+  .description('Run a specific analysis by ID (e.g., crosstab, variableStats)')
+  .option('--config <json>', 'JSON configuration for the analysis')
+  .option('--format <fmt>', 'Output format: json or table', 'json')
+  .action(async (file: string, id: string, opts) => {
+    const db = await ensureAdapter();
+    const loadResult = await loadFile(file, db);
+
+    const runner = analysisRegistry.get(id);
+    if (!runner) {
+      console.error(`Analysis runner not found: ${id}`);
+      console.log('Available analyses:');
+      analysisRegistry.list().forEach(r => console.log(`  - ${r.id}: ${r.label}`));
+      await db.close();
+      process.exit(1);
+    }
+
+    let config = {};
+    if (opts.config) {
+      try {
+        config = JSON.parse(opts.config);
+      } catch (e: any) {
+        console.error(`Failed to parse config JSON: ${e.message}`);
+        await db.close();
+        process.exit(1);
+      }
+    }
+
+    // Special handling for crosstab context if not provided
+    if (id === 'crosstab' && !(config as any).context) {
+      (config as any).context = {
+        variables: (loadResult as any).variables?.reduce((acc: any, v: any) => ({ ...acc, [v.id]: v }), {}) || {},
+        variableSets: (loadResult as any).variableSets?.reduce((acc: any, vs: any) => ({ ...acc, [vs.id]: vs }), {}) || {},
+      };
+    }
+
+    // Validate config if runner supports it
+    if (runner.validate) {
+      const errors = runner.validate(config);
+      if (errors.length > 0) {
+        console.error('Configuration errors:');
+        errors.forEach(err => console.error(`  - ${err}`));
+        await db.close();
+        process.exit(1);
+      }
+    }
+
+    try {
+      const results = await runner.run(db, config);
+
+      if (opts.format === 'table') {
+        process.stdout.write('\n');
+        console.table(results);
+      } else {
+        process.stdout.write(JSON.stringify(results, null, 2) + '\n');
+      }
+    } catch (error: any) {
+      console.error(`Analysis failed: ${error.message}`);
+      await db.close();
+      process.exit(1);
+    }
 
     await db.close();
   });
