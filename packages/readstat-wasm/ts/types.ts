@@ -48,6 +48,9 @@ export interface SavMetadata {
     multipleResponseSets: SavMultipleResponseSet[];
 }
 
+/** Sampling strategy for partial file parsing */
+export type SampleStrategy = 'sequential' | 'spread';
+
 export interface SavParseResult {
     /** File metadata and variable definitions */
     metadata: SavMetadata;
@@ -55,6 +58,8 @@ export interface SavParseResult {
     rows: (number | string | null)[][];
     /** Time taken to parse in milliseconds */
     durationMs: number;
+    /** Sampling strategy used (only present for sample parsing) */
+    sampleStrategy?: SampleStrategy;
 }
 
 export interface SavMetadataResult {

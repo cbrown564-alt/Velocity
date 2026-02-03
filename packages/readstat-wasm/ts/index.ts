@@ -13,6 +13,7 @@ import type {
     SavParseResult,
     SavMetadataResult,
     ProgressCallback,
+    SampleStrategy,
 } from './types';
 
 // Re-export types
@@ -24,6 +25,7 @@ export type {
     SavParseResult,
     SavMetadataResult,
     ProgressCallback,
+    SampleStrategy,
 };
 
 // Type for the Emscripten module
@@ -32,10 +34,11 @@ interface ReadStatModule {
     _free: (ptr: number) => void;
     _parse_sav: (bufferPtr: number, len: number) => number;
     _parse_sav_metadata?: (bufferPtr: number, len: number) => number;
-    _parse_sav_sample?: (bufferPtr: number, len: number, rowLimit: number) => number;
+    _parse_sav_sample?: (bufferPtr: number, len: number, rowLimit: number, strategy: number) => number;
     _get_variable_count: () => number;
     _get_row_count: () => number;
     _get_parsed_row_count?: () => number;
+    _get_sample_strategy?: () => number;
     _get_value_label_count: () => number;
     _get_variable_name: (index: number) => number;
     _get_variable_type: (index: number) => number;
@@ -377,10 +380,15 @@ export async function parseSavMetadata(
 /**
  * Parse a SAV file and return only the first N rows for sampling.
  * Metadata includes the full row count.
+ *
+ * @param buffer - The SAV file contents as an ArrayBuffer
+ * @param rowLimit - Maximum number of rows to sample
+ * @param strategy - Sampling strategy: 'sequential' (default) for first N rows, 'spread' for evenly distributed rows
  */
 export async function parseSavSample(
     buffer: ArrayBuffer,
-    rowLimit: number
+    rowLimit: number,
+    strategy: SampleStrategy = 'sequential'
 ): Promise<SavParseResult> {
     const startTime = performance.now();
 
@@ -392,8 +400,9 @@ export async function parseSavSample(
     }
 
     const safeLimit = Math.max(0, Math.floor(rowLimit));
+    const strategyCode = strategy === 'spread' ? 1 : 0;
 
-    console.log(`📦 [ReadStat] Parsing SAV sample (${safeLimit} rows): ${(buffer.byteLength / 1024 / 1024).toFixed(2)} MB`);
+    console.log(`📦 [ReadStat] Parsing SAV sample (${safeLimit} rows, ${strategy}): ${(buffer.byteLength / 1024 / 1024).toFixed(2)} MB`);
 
     const data = new Uint8Array(buffer);
     const bufferPtr = mod._malloc(data.length);
@@ -409,7 +418,7 @@ export async function parseSavSample(
     console.log(`📦 [ReadStat] Copied data to WASM memory, calling parse_sav_sample...`);
 
     try {
-        const errorCode = mod._parse_sav_sample(bufferPtr, data.length, safeLimit);
+        const errorCode = mod._parse_sav_sample(bufferPtr, data.length, safeLimit, strategyCode);
 
         // ReadStat returns USER_ABORT when we stop early for sampling.
         if (errorCode !== 0 && errorCode !== 4) {
@@ -422,6 +431,7 @@ export async function parseSavSample(
         const rowCount = mod._get_row_count();
         const parsedRowCount = mod._get_parsed_row_count();
         const valueLabelCount = mod._get_value_label_count();
+        const usedStrategy: SampleStrategy = mod._get_sample_strategy?.() === 1 ? 'spread' : 'sequential';
 
         const variables: SavVariable[] = [];
         for (let i = 0; i < variableCount; i++) {
@@ -507,6 +517,7 @@ export async function parseSavSample(
             },
             rows,
             durationMs,
+            sampleStrategy: usedStrategy,
         };
     } finally {
         mod._free(bufferPtr);

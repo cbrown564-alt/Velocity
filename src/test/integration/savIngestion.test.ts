@@ -63,11 +63,14 @@ describe('Integration: SAV Ingestion Flow', () => {
         // Start the load action
         const loadPromise = useVelocityStore.getState().loadSAV(fileName, buffer);
 
-        // Verify postMessage was called with correct data
-        expect(postMessageSpy).toHaveBeenLastCalledWith({
-            type: 'loadSAV',
-            buffer: buffer
-        });
+        // Verify postMessage was called with correct data (includes transfer list as second arg)
+        expect(postMessageSpy).toHaveBeenLastCalledWith(
+            expect.objectContaining({
+                type: 'loadSAV',
+                buffer: buffer
+            }),
+            [buffer]
+        );
 
         // 3. Simulate Worker Processing & Response
         const variables = mockDataset.variables;

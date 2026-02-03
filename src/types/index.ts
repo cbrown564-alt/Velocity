@@ -55,6 +55,8 @@ export interface Dataset {
   metadataOnly?: boolean;
   /** Number of rows loaded in sample mode (if applicable) */
   sampleRowCount?: number;
+  /** Sampling strategy used: 'sequential' (first N rows) or 'spread' (evenly distributed) */
+  sampleStrategy?: 'sequential' | 'spread';
 }
 
 // ============================================================================

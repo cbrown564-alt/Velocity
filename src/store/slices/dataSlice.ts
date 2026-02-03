@@ -45,6 +45,8 @@ export interface Dataset {
     metadataOnly?: boolean;
     /** Number of rows loaded in sample mode (if applicable) */
     sampleRowCount?: number;
+    /** Sampling strategy used: 'sequential' (first N rows) or 'spread' (evenly distributed) */
+    sampleStrategy?: 'sequential' | 'spread';
 }
 
 export interface VariableSet {
@@ -128,7 +130,7 @@ export interface DataSlice {
     loadCSV: (fileName: string, content: string) => Promise<void>;
     loadSAV: (fileName: string, buffer: ArrayBuffer) => Promise<void>;
     loadSAVMetadata: (fileName: string, buffer: ArrayBuffer) => Promise<void>;
-    loadSAVSample: (fileName: string, buffer: ArrayBuffer, rowLimit: number) => Promise<void>;
+    loadSAVSample: (fileName: string, buffer: ArrayBuffer, rowLimit: number, strategy?: 'sequential' | 'spread') => Promise<void>;
     getUniqueValues: (variableId: string) => Promise<string[]>;
     getVariableStats: (variableId: string) => Promise<VariableStatsResult | null>;
     recodeVariable: (sourceColId: string, newColName: string, config: RecodeConfig) => Promise<string>;
@@ -231,6 +233,12 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
             };
 
             set({ worker, persistenceState: 'checking' });
+            if (get().dataset?.id) {
+                worker.postMessage({
+                    type: 'setPersistenceContext',
+                    datasetId: get().dataset?.id
+                } as WorkerRequest);
+            }
             worker.postMessage({ type: 'init' } as WorkerRequest);
 
             await initPromise;
@@ -323,6 +331,12 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
             });
 
             set({ worker });
+            if (get().dataset?.id) {
+                worker.postMessage({
+                    type: 'setPersistenceContext',
+                    datasetId: get().dataset?.id
+                } as WorkerRequest);
+            }
             worker.postMessage({ type: 'init', forceCleanStart: cleanStart } as WorkerRequest);
 
             await initPromise;
@@ -646,7 +660,7 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
     },
 
     // Load SAV sample rows for metadata heuristics (no data inserted into DuckDB)
-    loadSAVSample: async (fileName: string, buffer: ArrayBuffer, rowLimit: number) => {
+    loadSAVSample: async (fileName: string, buffer: ArrayBuffer, rowLimit: number, strategy: 'sequential' | 'spread' = 'spread') => {
         const { worker } = get();
         if (!worker) throw new Error('Worker not initialized');
 
@@ -666,6 +680,7 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                             source: 'sav',
                             metadataOnly: true,
                             sampleRowCount: response.sampleRowCount,
+                            sampleStrategy: response.sampleStrategy,
                         },
                         variableSets,
                         variableStats: {},
@@ -675,7 +690,7 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                         activeFilters: [],
                     } as any);
 
-                    console.log(`📊 [DataSlice] SAV sample loaded: ${response.sampleRowCount}/${response.rowCount} rows, ${response.variables.length} variables in ${response.durationMs.toFixed(2)}ms`);
+                    console.log(`📊 [DataSlice] SAV sample loaded: ${response.sampleRowCount}/${response.rowCount} rows (${response.sampleStrategy}), ${response.variables.length} variables in ${response.durationMs.toFixed(2)}ms`);
                     worker.removeEventListener('message', handler);
                     resolve(undefined);
                 } else if (response.type === 'error') {
@@ -685,7 +700,7 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
             };
 
             worker.addEventListener('message', handler);
-            worker.postMessage({ type: 'loadSAVSample', buffer, rowLimit } as WorkerRequest, [buffer]);
+            worker.postMessage({ type: 'loadSAVSample', buffer, rowLimit, strategy } as WorkerRequest, [buffer]);
         });
     },
 

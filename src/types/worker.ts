@@ -17,10 +17,11 @@ import { ChartType } from './charts';
 
 export type WorkerRequest =
   | { type: 'init'; forceCleanStart?: boolean }
+  | { type: 'setPersistenceContext'; datasetId?: string; schemaVersion?: number }
   | { type: 'loadCSV'; fileName: string; content: string }
-  | { type: 'loadSAV'; buffer: ArrayBuffer }
+  | { type: 'loadSAV'; buffer: ArrayBuffer; forceChunked?: boolean }
   | { type: 'loadSAVMetadata'; buffer: ArrayBuffer }
-  | { type: 'loadSAVSample'; buffer: ArrayBuffer; rowLimit: number }
+  | { type: 'loadSAVSample'; buffer: ArrayBuffer; rowLimit: number; strategy?: 'sequential' | 'spread' }
   | { type: 'flushPersistedData' }
   | { type: 'query'; sql: string }
   | { type: 'getSchema' }
@@ -94,7 +95,7 @@ export type WorkerResponse =
   | { type: 'csvLoaded'; schema: { name: string; type: string }[]; rowCount: number; durationMs: number }
   | { type: 'savLoaded'; variables: Variable[]; variableSets: VariableSet[]; rowCount: number; durationMs: number }
   | { type: 'savMetadataLoaded'; variables: Variable[]; variableSets: VariableSet[]; rowCount: number; durationMs: number }
-  | { type: 'savSampleLoaded'; variables: Variable[]; variableSets: VariableSet[]; rowCount: number; sampleRowCount: number; durationMs: number }
+  | { type: 'savSampleLoaded'; variables: Variable[]; variableSets: VariableSet[]; rowCount: number; sampleRowCount: number; sampleStrategy: 'sequential' | 'spread'; durationMs: number }
   | { type: 'flushComplete'; ok: boolean; durationMs: number; error?: string }
   | { type: 'queryResult'; data: any[]; durationMs: number }
   | { type: 'uniqueValues'; data: string[] }

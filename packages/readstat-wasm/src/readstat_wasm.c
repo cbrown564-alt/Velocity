@@ -147,6 +147,14 @@ static int handle_metadata(readstat_metadata_t *metadata, void *ctx) {
   g_row_count = g_expected_row_count;
   g_parsed_row_count = 0;
 
+  // Calculate spread sampling interval if in spread mode
+  if (g_sample_strategy == 1 && g_sample_row_limit > 0 && g_expected_row_count > 0) {
+    g_sample_interval = g_expected_row_count / g_sample_row_limit;
+    if (g_sample_interval < 1) {
+      g_sample_interval = 1;
+    }
+  }
+
   // Allocate variables array
   g_variables =
       (variable_info_t *)calloc(g_variable_count, sizeof(variable_info_t));
@@ -327,7 +335,14 @@ static int handle_value(int obs_index, readstat_variable_t *variable,
   }
 
   if (var_index == g_variable_count - 1) {
-    g_parsed_row_count = obs_index + 1;
+    // This is the last variable in the row, so we've completed this row
+    if (g_sample_strategy == 1) {
+      // Spread sampling: track how many rows we've actually collected
+      g_sampled_count++;
+      g_parsed_row_count = g_sampled_count;
+    } else {
+      g_parsed_row_count = obs_index + 1;
+    }
     if (g_sample_row_limit <= 0) {
       g_row_count = obs_index + 1;
     }
@@ -386,6 +401,9 @@ static void cleanup_parse_state(void) {
   g_expected_row_count = 0;
   g_parsed_row_count = 0;
   g_sample_row_limit = -1;
+  g_sample_strategy = 0;
+  g_sample_interval = 1;
+  g_sampled_count = 0;
   g_data_capacity = 0;
   g_data_size = 0;
 }
@@ -454,10 +472,12 @@ int parse_sav_metadata(uint8_t *buffer, size_t len) {
 }
 
 EMSCRIPTEN_KEEPALIVE
-int parse_sav_sample(uint8_t *buffer, size_t len, int row_limit) {
+int parse_sav_sample(uint8_t *buffer, size_t len, int row_limit, int strategy) {
   cleanup_parse_state();
 
   g_sample_row_limit = row_limit;
+  g_sample_strategy = strategy;  // 0 = sequential, 1 = spread
+  g_sampled_count = 0;
 
   mem_io_ctx_t mem_ctx = {.buffer = buffer, .size = len, .position = 0};
 
@@ -492,6 +512,9 @@ int get_row_count(void) { return g_row_count; }
 
 EMSCRIPTEN_KEEPALIVE
 int get_parsed_row_count(void) { return g_parsed_row_count; }
+
+EMSCRIPTEN_KEEPALIVE
+int get_sample_strategy(void) { return g_sample_strategy; }
 
 EMSCRIPTEN_KEEPALIVE
 int get_value_label_count(void) { return g_value_label_count; }

@@ -22,6 +22,7 @@ import { getVariableStats as coreGetVariableStats } from '../core/analysis/varia
 import { processMetadata } from '../core/ingestion/savLoader';
 import { escapeString } from './queryBuilder';
 import { analysisRegistry } from '../core/analysis/registry';
+import { ArrowChunkBuilder } from './arrowChunkBuilder';
 
 // Re-export types from canonical location for backward compatibility
 export type { WorkerRequest, WorkerResponse, VariableStatsResult, VariableStatsFrequency, NumericStats } from '../types/worker';
@@ -30,12 +31,13 @@ import type { WorkerRequest, WorkerResponse, VariableStatsResult } from '../type
 const JSDELIVR_BUNDLES = duckdb.getJsDelivrBundles();
 
 // OPFS database path for persistent storage
-const OPFS_DB_PATH = 'opfs://velocity_data.db';
+const OPFS_BASE_NAME = 'velocity_data';
+const OPFS_SCHEMA_VERSION = 1;
 
 type PersistenceMode = 'opfs' | 'memory' | 'disabled';
 
-// Feature flag: Disable OPFS during development due to corruption loop bug
-const ENABLE_OPFS = false;
+// Feature flag: allow OPFS when the environment supports it
+const ENABLE_OPFS = true;
 
 let db: duckdb.AsyncDuckDB | null = null;
 let conn: duckdb.AsyncDuckDBConnection | null = null;
@@ -43,6 +45,9 @@ let adapter: DuckDBWasmAdapter | null = null;
 let persistenceMode: PersistenceMode = 'memory';
 let persistenceError: string | null = null;
 let activeDbPath = ':memory:';
+let persistenceContext: { datasetId?: string; schemaVersion: number } = {
+  schemaVersion: OPFS_SCHEMA_VERSION,
+};
 
 // ============================================================================
 // OPFS Management
@@ -73,6 +78,29 @@ async function cleanOPFS(): Promise<void> {
   } catch (error: any) {
     console.warn('🦆 [Worker] Failed to clean OPFS:', error.message);
   }
+}
+
+async function detectOpfsSupport(): Promise<{ supported: boolean; error?: string }> {
+  try {
+    if (typeof self !== 'undefined' && !(self as any).isSecureContext) {
+      return { supported: false, error: 'Insecure context (OPFS requires HTTPS or localhost)' };
+    }
+
+    if (!navigator?.storage || typeof navigator.storage.getDirectory !== 'function') {
+      return { supported: false, error: 'OPFS not supported (StorageManager.getDirectory unavailable)' };
+    }
+
+    await navigator.storage.getDirectory();
+    return { supported: true };
+  } catch (error: any) {
+    return { supported: false, error: error?.message || 'OPFS unsupported in this environment' };
+  }
+}
+
+function buildOpfsDbPath(datasetId?: string, schemaVersion: number = persistenceContext.schemaVersion): string {
+  const datasetPart = datasetId ? `_dataset_${datasetId}` : '_default';
+  const versionPart = `_v${schemaVersion}`;
+  return `opfs://${OPFS_BASE_NAME}${versionPart}${datasetPart}.db`;
 }
 
 // ============================================================================
@@ -143,6 +171,10 @@ async function init(forceCleanStart: boolean = false): Promise<{ opfsAvailable: 
   persistenceError = null;
   activeDbPath = ':memory:';
 
+  const opfsSupport = await detectOpfsSupport();
+  const desiredOpfsPath = buildOpfsDbPath(persistenceContext.datasetId);
+  const fallbackOpfsPath = persistenceContext.datasetId ? buildOpfsDbPath() : null;
+
   if (!ENABLE_OPFS) {
     console.log('🦆 [Worker] OPFS disabled (ENABLE_OPFS=false), using in-memory mode');
     await db.open({ path: ':memory:' });
@@ -150,20 +182,45 @@ async function init(forceCleanStart: boolean = false): Promise<{ opfsAvailable: 
     persistenceError = 'OPFS disabled by feature flag';
     activeDbPath = ':memory:';
     console.log('🦆 [Worker] DuckDB opened in :memory: mode');
+  } else if (!opfsSupport.supported) {
+    console.log('🦆 [Worker] OPFS unsupported, using in-memory mode:', opfsSupport.error);
+    await db.open({ path: ':memory:' });
+    persistenceMode = 'disabled';
+    persistenceError = opfsSupport.error || 'OPFS unsupported';
+    activeDbPath = ':memory:';
+    console.log('🦆 [Worker] DuckDB opened in :memory: mode');
   } else {
     try {
       await db.open({
-        path: OPFS_DB_PATH,
+        path: desiredOpfsPath,
         accessMode: duckdb.DuckDBAccessMode.READ_WRITE
       });
-      console.log('🦆 [Worker] DuckDB opened with OPFS persistence:', OPFS_DB_PATH);
+      console.log('🦆 [Worker] DuckDB opened with OPFS persistence:', desiredOpfsPath);
       opfsAvailable = true;
       persistenceMode = 'opfs';
       persistenceError = null;
-      activeDbPath = OPFS_DB_PATH;
+      activeDbPath = desiredOpfsPath;
     } catch (opfsError: any) {
       const errorMsg = opfsError.message || '';
       const isCorruption = errorMsg.includes('not a valid DuckDB database file') || errorMsg.includes('corrupt');
+
+      if (!forceCleanStart && fallbackOpfsPath) {
+        try {
+          console.warn('🦆 [Worker] Failed to open dataset-scoped OPFS path, trying default:', fallbackOpfsPath);
+          await db.open({
+            path: fallbackOpfsPath,
+            accessMode: duckdb.DuckDBAccessMode.READ_WRITE
+          });
+          console.log('🦆 [Worker] DuckDB opened with OPFS fallback path:', fallbackOpfsPath);
+          opfsAvailable = true;
+          persistenceMode = 'opfs';
+          persistenceError = null;
+          activeDbPath = fallbackOpfsPath;
+          break;
+        } catch (fallbackError: any) {
+          console.warn('🦆 [Worker] OPFS fallback path also failed:', fallbackError?.message || fallbackError);
+        }
+      }
 
       if (isCorruption && !forceCleanStart) {
         console.error('🦆 [Worker] OPFS corruption detected:', errorMsg);
@@ -294,8 +351,14 @@ async function loadCSV(fileName: string, content: string): Promise<{ schema: { n
   return { schema, rowCount, durationMs };
 }
 
-async function loadSAV(buffer: ArrayBuffer): Promise<{ variables: Variable[]; variableSets: VariableSet[]; rowCount: number; durationMs: number }> {
+async function loadSAV(buffer: ArrayBuffer, forceChunked?: boolean): Promise<{ variables: Variable[]; variableSets: VariableSet[]; rowCount: number; durationMs: number }> {
   if (!db || !conn) throw new Error('DB not initialized');
+
+  // Auto-route to chunked mode for large files
+  if (forceChunked || buffer.byteLength > CHUNKED_THRESHOLD_BYTES) {
+    console.log(`🦆 [Worker] Auto-routing to chunked mode (${(buffer.byteLength / 1024 / 1024).toFixed(1)} MB > ${CHUNKED_THRESHOLD_BYTES / 1024 / 1024} MB threshold)`);
+    return loadSAVChunked(buffer);
+  }
 
   const start = performance.now();
 
@@ -372,6 +435,102 @@ async function loadSAV(buffer: ArrayBuffer): Promise<{ variables: Variable[]; va
   return { variables, variableSets, rowCount: parsed.metadata.rowCount, durationMs };
 }
 
+// Threshold for auto-routing to chunked mode (50MB)
+const CHUNKED_THRESHOLD_BYTES = 50 * 1024 * 1024;
+const DEFAULT_CHUNK_SIZE = 10000;
+
+async function loadSAVChunked(
+  buffer: ArrayBuffer,
+  chunkSize: number = DEFAULT_CHUNK_SIZE
+): Promise<{ variables: Variable[]; variableSets: VariableSet[]; rowCount: number; durationMs: number }> {
+  if (!db || !conn) throw new Error('DB not initialized');
+
+  const start = performance.now();
+
+  // 1. Parse SAV file
+  const { parseSavFile } = await import('@velocity/readstat-wasm');
+  const parsed = await parseSavFile(buffer, (progress) => {
+    console.log(`📊 [Worker] Chunked parse progress: ${(progress.progress * 100).toFixed(1)}%`);
+  });
+
+  // 2. Process metadata
+  const { variables, variableSets } = processMetadata({
+    metadata: {
+      variables: parsed.metadata.variables,
+      valueLabelSets: parsed.metadata.valueLabelSets,
+      multipleResponseSets: parsed.metadata.multipleResponseSets,
+      rowCount: parsed.metadata.rowCount,
+    },
+    rows: parsed.rows,
+  });
+
+  const numRows = parsed.rows.length;
+  const numCols = parsed.metadata.variables.length;
+
+  if (numRows === 0) {
+    throw new Error(`SAV parsing failed: No row data extracted (expected ${parsed.metadata.rowCount} rows)`);
+  }
+
+  // 3. Prepare chunked insertion
+  const variableMetadata = parsed.metadata.variables.map(v => ({
+    name: v.name,
+    type: v.type as 'numeric' | 'string',
+  }));
+
+  const chunkBuilder = new ArrowChunkBuilder(variableMetadata, chunkSize);
+
+  // Drop existing table
+  await conn.query(`DROP TABLE IF EXISTS main`);
+
+  let isFirstChunk = true;
+  let chunksInserted = 0;
+
+  // 4. Stream rows through chunk builder
+  for (let r = 0; r < numRows; r++) {
+    const row = parsed.rows[r];
+    const batch = chunkBuilder.addRow(row);
+
+    // Null out processed row to free memory eagerly
+    (parsed.rows as any)[r] = null;
+
+    if (batch) {
+      // Insert chunk into DuckDB
+      const table = new arrow.Table(batch);
+      await conn.insertArrowTable(table, { name: 'main', create: isFirstChunk });
+      isFirstChunk = false;
+      chunksInserted++;
+
+      if (chunksInserted % 10 === 0) {
+        console.log(`📊 [Worker] Inserted chunk ${chunksInserted}, ${chunkBuilder.getTotalRowsProcessed()} rows processed`);
+      }
+    }
+  }
+
+  // Drop the rows array reference
+  (parsed as any).rows = [];
+
+  // 5. Flush final partial chunk
+  const finalBatch = chunkBuilder.flush();
+  if (finalBatch) {
+    const table = new arrow.Table(finalBatch);
+    await conn.insertArrowTable(table, { name: 'main', create: isFirstChunk });
+    chunksInserted++;
+  }
+
+  // 6. Verify row count
+  const verifyResult = await conn.query(`SELECT COUNT(*) as cnt FROM main`);
+  const count = Number(verifyResult.toArray()[0]?.cnt);
+
+  if (count !== numRows) {
+    throw new Error(`Chunked insertion verification failed: expected ${numRows} rows, got ${count}`);
+  }
+
+  const durationMs = performance.now() - start;
+  console.log(`🦆 [Worker] Loaded SAV (chunked): ${parsed.metadata.rowCount} rows in ${chunksInserted} chunks, ${variables.length} variables in ${durationMs.toFixed(2)}ms`);
+
+  return { variables, variableSets, rowCount: parsed.metadata.rowCount, durationMs };
+}
+
 async function loadSAVMetadata(buffer: ArrayBuffer): Promise<{ variables: Variable[]; variableSets: VariableSet[]; rowCount: number; durationMs: number }> {
   const start = performance.now();
 
@@ -398,12 +557,13 @@ async function loadSAVMetadata(buffer: ArrayBuffer): Promise<{ variables: Variab
 
 async function loadSAVSample(
   buffer: ArrayBuffer,
-  rowLimit: number
-): Promise<{ variables: Variable[]; variableSets: VariableSet[]; rowCount: number; sampleRowCount: number; durationMs: number }> {
+  rowLimit: number,
+  strategy: 'sequential' | 'spread' = 'sequential'
+): Promise<{ variables: Variable[]; variableSets: VariableSet[]; rowCount: number; sampleRowCount: number; sampleStrategy: 'sequential' | 'spread'; durationMs: number }> {
   const start = performance.now();
 
   const { parseSavSample } = await import('@velocity/readstat-wasm');
-  const parsed = await parseSavSample(buffer, rowLimit);
+  const parsed = await parseSavSample(buffer, rowLimit, strategy);
 
   const { variables, variableSets } = processMetadata({
     metadata: {
@@ -415,10 +575,11 @@ async function loadSAVSample(
     rows: parsed.rows,
   });
 
+  const usedStrategy = parsed.sampleStrategy || strategy;
   const durationMs = performance.now() - start;
-  console.log(`🦆 [Worker] Loaded SAV sample: ${parsed.rows.length}/${parsed.metadata.rowCount} rows, ${variables.length} variables in ${durationMs.toFixed(2)}ms`);
+  console.log(`🦆 [Worker] Loaded SAV sample: ${parsed.rows.length}/${parsed.metadata.rowCount} rows (${usedStrategy}), ${variables.length} variables in ${durationMs.toFixed(2)}ms`);
 
-  return { variables, variableSets, rowCount: parsed.metadata.rowCount, sampleRowCount: parsed.rows.length, durationMs };
+  return { variables, variableSets, rowCount: parsed.metadata.rowCount, sampleRowCount: parsed.rows.length, sampleStrategy: usedStrategy, durationMs };
 }
 
 // ============================================================================
@@ -504,6 +665,19 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
 
   try {
     switch (request.type) {
+      case 'setPersistenceContext': {
+        persistenceContext = {
+          datasetId: request.datasetId,
+          schemaVersion: request.schemaVersion ?? OPFS_SCHEMA_VERSION,
+        };
+        if (!db) {
+          activeDbPath = buildOpfsDbPath();
+        } else {
+          console.warn('🦆 [Worker] Persistence context updated after init; changes apply on next restart');
+        }
+        break;
+      }
+
       case 'init': {
         const initResult = await init(request.forceCleanStart);
         if (initResult.corruptionDetected) {
@@ -536,7 +710,7 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
       }
 
       case 'loadSAV': {
-        const savResult = await loadSAV(request.buffer);
+        const savResult = await loadSAV(request.buffer, request.forceChunked);
         self.postMessage({
           type: 'savLoaded',
           variables: savResult.variables,
@@ -560,13 +734,14 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
       }
 
       case 'loadSAVSample': {
-        const savResult = await loadSAVSample(request.buffer, request.rowLimit);
+        const savResult = await loadSAVSample(request.buffer, request.rowLimit, request.strategy || 'spread');
         self.postMessage({
           type: 'savSampleLoaded',
           variables: savResult.variables,
           variableSets: savResult.variableSets,
           rowCount: savResult.rowCount,
           sampleRowCount: savResult.sampleRowCount,
+          sampleStrategy: savResult.sampleStrategy,
           durationMs: savResult.durationMs,
         } as WorkerResponse);
         break;

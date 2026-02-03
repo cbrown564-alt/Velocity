@@ -21,6 +21,7 @@ import { SortableContext, arrayMove, verticalListSortingStrategy } from '@dnd-ki
 import { VariableCard } from './features/dashboard/components/DraggableVariable';
 import { ContextMenu } from './features/dashboard/components/ContextMenu';
 import { InputModal } from './components/overlays/InputModal';
+import * as opfsFileManager from './services/opfsFileManager';
 
 // Smart Canvas Wrapper
 const SmartCanvas: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className }) => {
@@ -178,10 +179,13 @@ export default function App() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [pendingSavFile, setPendingSavFile] = React.useState<File | null>(null);
   const [pendingSavSizeMb, setPendingSavSizeMb] = React.useState<number | null>(null);
+  const [opfsStorageKey, setOpfsStorageKey] = React.useState<string | null>(null);
+  const [opfsAvailableLocal, setOpfsAvailableLocal] = React.useState<boolean>(false);
 
   const SAV_WARN_MB = 50;
   const SAV_HARD_MB = 200;
   const SAV_SAMPLE_ROWS = 1000;
+  const OPFS_THRESHOLD_MB = 20; // Store files >= 20MB in OPFS
 
   const sensors = useSensors(
     useSensor(MouseSensor, {
@@ -240,6 +244,11 @@ export default function App() {
   useEffect(() => {
     initWorker();
   }, [initWorker]);
+
+  // -- CHECK OPFS AVAILABILITY --
+  useEffect(() => {
+    opfsFileManager.isAvailable().then(setOpfsAvailableLocal);
+  }, []);
 
   // -- PERSISTENCE STATE HANDLING --
   // Track whether we've processed the persistence check
@@ -321,12 +330,32 @@ export default function App() {
           const fileSizeMb = file.size / (1024 * 1024);
           const shouldWarn = fileSizeMb >= SAV_WARN_MB;
           const mustMetadataOnly = fileSizeMb >= SAV_HARD_MB;
+          const shouldStoreInOpfs = fileSizeMb >= OPFS_THRESHOLD_MB && opfsAvailableLocal;
 
           setPendingSavFile(file);
           setPendingSavSizeMb(fileSizeMb);
 
+          // Store large files in OPFS for later "Load Full Data"
+          let storageKey: string | null = null;
+          if (shouldStoreInOpfs) {
+            try {
+              storageKey = opfsFileManager.generateStorageKey(file.name);
+              const buffer = await file.arrayBuffer();
+              await opfsFileManager.storeFile(storageKey, buffer);
+              setOpfsStorageKey(storageKey);
+              console.log(`📁 [App] Stored file in OPFS: ${storageKey}`);
+            } catch (opfsErr) {
+              console.warn('📁 [App] Failed to store in OPFS, will fall back to file reference:', opfsErr);
+              storageKey = null;
+              setOpfsStorageKey(null);
+            }
+          }
+
           if (mustMetadataOnly) {
-            const buffer = await file.arrayBuffer();
+            // Read from OPFS if available, otherwise from file
+            const buffer = storageKey
+              ? await opfsFileManager.readFile(storageKey)
+              : await file.arrayBuffer();
             await loadSAVSample(file.name, buffer, SAV_SAMPLE_ROWS);
             setMode('metadata');
             return;
@@ -337,20 +366,30 @@ export default function App() {
               `This file is ${fileSizeMb.toFixed(1)} MB. Full ingestion may crash the tab. Load full data anyway?`
             );
             if (!proceed) {
-              const buffer = await file.arrayBuffer();
+              const buffer = storageKey
+                ? await opfsFileManager.readFile(storageKey)
+                : await file.arrayBuffer();
               await loadSAVSample(file.name, buffer, SAV_SAMPLE_ROWS);
               setMode('metadata');
               return;
             }
           }
 
-        const buffer = await file.arrayBuffer();
+        const buffer = storageKey
+          ? await opfsFileManager.readFile(storageKey)
+          : await file.arrayBuffer();
         await loadSAV(file.name, buffer);
+        // Clean up OPFS storage on successful full load
+        if (storageKey) {
+          await opfsFileManager.deleteFile(storageKey).catch(() => {});
+          setOpfsStorageKey(null);
+        }
         setPendingSavFile(null);
         setPendingSavSizeMb(null);
       } else {
         setPendingSavFile(null);
         setPendingSavSizeMb(null);
+        setOpfsStorageKey(null);
         // CSV or other text file
         const text = await file.text();
         await loadCSV(file.name, text);
@@ -372,12 +411,32 @@ export default function App() {
   };
 
   const handleMetadataLoadFull = async () => {
-    if (!pendingSavFile) return;
+    if (!pendingSavFile && !opfsStorageKey) return;
     setMode('uploading');
 
     try {
-      const buffer = await pendingSavFile.arrayBuffer();
-      await loadSAV(pendingSavFile.name, buffer);
+      // Read from OPFS if available, otherwise from file reference
+      let buffer: ArrayBuffer;
+      let fileName: string;
+
+      if (opfsStorageKey) {
+        console.log(`📁 [App] Reading from OPFS: ${opfsStorageKey}`);
+        buffer = await opfsFileManager.readFile(opfsStorageKey);
+        fileName = pendingSavFile?.name || 'restored.sav';
+      } else if (pendingSavFile) {
+        buffer = await pendingSavFile.arrayBuffer();
+        fileName = pendingSavFile.name;
+      } else {
+        throw new Error('No file available to load');
+      }
+
+      await loadSAV(fileName, buffer);
+
+      // Clean up OPFS storage on successful full load
+      if (opfsStorageKey) {
+        await opfsFileManager.deleteFile(opfsStorageKey).catch(() => {});
+        setOpfsStorageKey(null);
+      }
       setPendingSavFile(null);
       setPendingSavSizeMb(null);
       setMode('dashboard');
@@ -390,6 +449,11 @@ export default function App() {
 
   const handleMetadataCancel = async () => {
     await discardPersistedData();
+    // Clean up OPFS storage
+    if (opfsStorageKey) {
+      await opfsFileManager.deleteFile(opfsStorageKey).catch(() => {});
+      setOpfsStorageKey(null);
+    }
     setPendingSavFile(null);
     setPendingSavSizeMb(null);
     setMode('splash');
@@ -786,6 +850,7 @@ export default function App() {
                     <p className="text-sm text-[var(--text-secondary)]">
                       {dataset.rowCount.toLocaleString()} rows · {dataset.variables.length.toLocaleString()} variables
                       {dataset.sampleRowCount ? ` · ${dataset.sampleRowCount.toLocaleString()} sampled rows` : ''}
+                      {dataset.sampleStrategy === 'spread' ? ' (spread sampling)' : ''}
                       {pendingSavSizeMb ? ` · ${pendingSavSizeMb.toFixed(1)} MB` : ''}
                     </p>
                   </div>
@@ -892,6 +957,12 @@ export default function App() {
                     <CheckCircle2 size={12} className="text-[var(--color-success)]" />
                     <span>{filename} ({totalRows} rows)</span>
                   </div>
+                  {dataset?.sampleRowCount && (
+                    <div className="flex items-center gap-2 text-xs text-amber-600 px-2 mt-2 bg-amber-50 rounded py-1">
+                      <AlertCircle size={12} />
+                      <span>Heuristics based on {dataset.sampleRowCount.toLocaleString()} sample rows</span>
+                    </div>
+                  )}
                 </div>
               </aside>
 
