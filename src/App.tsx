@@ -39,7 +39,7 @@ const SmartCanvas: React.FC<{ children: React.ReactNode; className?: string }> =
 };
 
 // App Modes
-type AppMode = 'splash' | 'uploading' | 'dashboard' | 'restoring';
+type AppMode = 'splash' | 'uploading' | 'dashboard' | 'restoring' | 'metadata';
 
 // RestorationPrompt Component
 interface RestorationPromptProps {
@@ -139,6 +139,8 @@ export default function App() {
     initWorker,
     loadCSV,
     loadSAV,
+    loadSAVMetadata,
+    loadSAVSample,
     setTableConfig,
     setDraggingId,
     setSearchQuery,
@@ -174,6 +176,12 @@ export default function App() {
   const [weightEnabled, setWeightEnabled] = React.useState(true);
   const [rememberedWeightVar, setRememberedWeightVar] = React.useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [pendingSavFile, setPendingSavFile] = React.useState<File | null>(null);
+  const [pendingSavSizeMb, setPendingSavSizeMb] = React.useState<number | null>(null);
+
+  const SAV_WARN_MB = 50;
+  const SAV_HARD_MB = 200;
+  const SAV_SAMPLE_ROWS = 1000;
 
   const sensors = useSensors(
     useSensor(MouseSensor, {
@@ -309,11 +317,40 @@ export default function App() {
     try {
       const ext = file.name.toLowerCase().split('.').pop();
 
-      if (ext === 'sav') {
-        // SAV file - read as ArrayBuffer
+        if (ext === 'sav') {
+          const fileSizeMb = file.size / (1024 * 1024);
+          const shouldWarn = fileSizeMb >= SAV_WARN_MB;
+          const mustMetadataOnly = fileSizeMb >= SAV_HARD_MB;
+
+          setPendingSavFile(file);
+          setPendingSavSizeMb(fileSizeMb);
+
+          if (mustMetadataOnly) {
+            const buffer = await file.arrayBuffer();
+            await loadSAVSample(file.name, buffer, SAV_SAMPLE_ROWS);
+            setMode('metadata');
+            return;
+          }
+
+          if (shouldWarn) {
+            const proceed = window.confirm(
+              `This file is ${fileSizeMb.toFixed(1)} MB. Full ingestion may crash the tab. Load full data anyway?`
+            );
+            if (!proceed) {
+              const buffer = await file.arrayBuffer();
+              await loadSAVSample(file.name, buffer, SAV_SAMPLE_ROWS);
+              setMode('metadata');
+              return;
+            }
+          }
+
         const buffer = await file.arrayBuffer();
         await loadSAV(file.name, buffer);
+        setPendingSavFile(null);
+        setPendingSavSizeMb(null);
       } else {
+        setPendingSavFile(null);
+        setPendingSavSizeMb(null);
         // CSV or other text file
         const text = await file.text();
         await loadCSV(file.name, text);
@@ -332,6 +369,30 @@ export default function App() {
     setTimeout(() => {
       loadMockData();
     }, 800);
+  };
+
+  const handleMetadataLoadFull = async () => {
+    if (!pendingSavFile) return;
+    setMode('uploading');
+
+    try {
+      const buffer = await pendingSavFile.arrayBuffer();
+      await loadSAV(pendingSavFile.name, buffer);
+      setPendingSavFile(null);
+      setPendingSavSizeMb(null);
+      setMode('dashboard');
+    } catch (err) {
+      console.error(err);
+      alert('Error loading file. Check console.');
+      setMode('splash');
+    }
+  };
+
+  const handleMetadataCancel = async () => {
+    await discardPersistedData();
+    setPendingSavFile(null);
+    setPendingSavSizeMb(null);
+    setMode('splash');
   };
 
   // -- LOGIC: DRAG & DROP --
@@ -695,6 +756,83 @@ export default function App() {
             onRestore={handleRestore}
             onDiscard={handleDiscard}
           />
+        )}
+      </AnimatePresence>
+
+      {/* METADATA-ONLY MODE */}
+      <AnimatePresence>
+        {mode === 'metadata' && dataset && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 flex items-center justify-center bg-[var(--bg-app)] z-40"
+          >
+            <div className="text-center space-y-6 max-w-xl w-full px-6">
+              <div className="space-y-2">
+                <h1 className="text-3xl font-bold tracking-tight text-[var(--text-primary)]">Metadata Loaded</h1>
+                <p className="text-[var(--text-secondary)] text-lg">
+                  We loaded a small row sample to improve heuristics and avoid a memory crash.
+                </p>
+              </div>
+
+              <div className="bg-[var(--bg-surface)] rounded-xl p-6 text-left space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
+                    <AlertCircle className="w-5 h-5 text-amber-600" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-[var(--text-primary)]">{dataset.name}</p>
+                    <p className="text-sm text-[var(--text-secondary)]">
+                      {dataset.rowCount.toLocaleString()} rows · {dataset.variables.length.toLocaleString()} variables
+                      {dataset.sampleRowCount ? ` · ${dataset.sampleRowCount.toLocaleString()} sampled rows` : ''}
+                      {pendingSavSizeMb ? ` · ${pendingSavSizeMb.toFixed(1)} MB` : ''}
+                    </p>
+                  </div>
+                </div>
+                <p className="text-sm text-[var(--text-secondary)]">
+                  Full data is not loaded, so analysis actions are disabled until you continue.
+                </p>
+              </div>
+
+              <div className="bg-[var(--bg-panel)] rounded-xl p-4 text-left">
+                <p className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-2">
+                  Variables Preview
+                </p>
+                <div className="max-h-48 overflow-auto divide-y divide-[var(--border-color-muted)]">
+                  {dataset.variables.slice(0, 20).map((v) => (
+                    <div key={v.id} className="py-2 text-sm text-[var(--text-primary)]">
+                      {v.label || v.name}
+                    </div>
+                  ))}
+                  {dataset.variables.length > 20 && (
+                    <div className="py-2 text-xs text-[var(--text-secondary)]">
+                      + {dataset.variables.length - 20} more
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <motion.button
+                  onClick={handleMetadataLoadFull}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="flex-1 py-3 rounded-lg bg-[var(--color-accent)] text-white font-medium shadow-sm"
+                >
+                  Load Full Data
+                </motion.button>
+                <motion.button
+                  onClick={handleMetadataCancel}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="flex-1 py-3 rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] font-medium border border-[var(--border-color)]"
+                >
+                  Back to Upload
+                </motion.button>
+              </div>
+            </div>
+          </motion.div>
         )}
       </AnimatePresence>
 

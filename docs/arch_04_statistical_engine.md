@@ -1,80 +1,76 @@
 # Architecture 04: The Statistical Engine
 
-**Status:** Phase 1 Implemented
+**Status:** Phase 1 Implemented (with known gaps)
 **Reference:** [Displayr Statistical Methodology](https://www.displayr.com/)
-**Owner:** Analysis Worker (`src/services/analysisWorker.ts`)
+**Owner:** Analysis Engine Core (`src/core/analysis/`)
 
 ## 1. Overview & Philosophy
 
-Velocity's statistical engine is designed to be **Survey-Native**. Unlike general-purpose tools (Excel, Python's `scipy.stats`) which often assume Simple Random Sampling (SRS), Velocity acknowledges the complex nature of survey data:
+Velocity's statistical engine is designed to be **Survey-Native**. Unlike general-purpose tools (Excel, Python's `scipy.stats`) which often assume Simple Random Sampling (SRS), Velocity treats survey data as a non-random distribution where:
 1.  **Weighting represents information density, not just frequency.**
-2.  **Part vs Whole comparisons are biased.**
-3.  **Variances must be corrected for weighting efficiency.**
+2.  **Part vs Whole comparisons are biased** (we use Cell-vs-Rest).
+3.  **Variances must be corrected** for weighting efficiency (ESS).
 
-Our "North Star" for accuracy and methodology is **Displayr (Q)**, the industry standard for market research analysis.
+This philosophy creates a "methodological moat" against generic BI tools, positioning Velocity as a professional-grade research instrument.
 
 ## 2. Methodology
 
 ### 2.1. Significance Testing Strategy
 
-Velocity performs **Column Proportions Tests** and **Means Tests** automatically on cross-tabs.
+Velocity performs **Column Proportions Tests** and **Means Tests** automatically.
 
-| Test Component | General Purpose (Excel/SPSS Default) | Velocity (Survey-Native) | Why? |
+| Test Component | General Purpose (SRS) | Velocity (Survey-Native) | Why? |
 | :--- | :--- | :--- | :--- |
-| **Test Statistic** | Z-Test | **Welch's T-Test** | T-distributions better handle weighted data and smaller sample sizes. Welch's correction handles unequal variances robustly. |
-| **Comparison** | Cell vs Total (Part vs Whole) | **Cell vs Rest (Part vs Complement)** | Comparing a subgroup to a total that *contains* it artificially lowers significance. We mathematically remove the cell from the total before comparing. |
-| **Sample Size** | Weighted Count | **Effective Sample Size (ESS)** | Weighted counts inflate power (Type I errors). ESS penalizes $N$ based on weighting inefficiency ($\sum w^2$). |
+| **Test Statistic** | Z-Test | **Welch's T-Test** | Better handles weighted data and smaller sample sizes. Welch's handles unequal variances. |
+| **Comparison** | Cell vs Total | **Cell vs Rest** | Comparing a subgroup to a total that *contains* it artificially lowers significance. |
+| **Sample Size** | Weighted Count | **Effective N (ESS)** | Weighted counts inflate power (Type I errors). ESS penalizes $N$ based on weighting inefficiency. |
 
 ### 2.2. Effective Sample Size (ESS)
 
-When weighting is applied, the "information content" of the sample is reduced. We use **Kish's Approximation** to calculate the Effective Sample Size ($n_{eff}$) for every cell and total:
+We use **Kish's Approximation** to calculate the Effective Sample Size ($n_{eff}$) for every cell and total:
 
 $$ n_{eff} = \frac{(\sum w)^2}{\sum w^2} $$
 
-*   **Implementation:** Calculated purely in SQL via DuckDB aggregation.
-*   **Usage:** This $n_{eff}$ value replaces the raw count ($n$) in all Standard Error calculations.
+*   **Implementation:** Calculated in SQL via DuckDB aggregation capturing `SUM(w)` and `SUM(w * w)`.
+*   **Usage:** $n_{eff}$ replaces raw count ($n$) in all Standard Error calculations. This is a critical trust signal for researchers.
 
 ### 2.3. The "Exception Test" (Arrows) logic
 
-Visual indicators (Green/Red Arrows) are determined by testing the **Cell** against the **Rest of the Population** (Complement).
+Visual indicators (Green/Red Arrows) are determined by testing the **Cell** against its **Complement** (the "Rest").
 
-1.  **Define Cell:** Mean $m_1$, Standard Deviation $s_1$, Effective Sample Size $n_1$.
-2.  **Define Total:** Mean $m_T$, SD $s_T$, ESS $n_T$.
-3.  **Derive Rest:**
-    *   $n_2 = n_T - n_1$ (Note: For ESS, this is an approximation; ideally $\sum w_{rest}^2$ is calculated directly).
-    *   $m_2 = \frac{m_T n_T - m_1 n_1}{n_2}$ (Algebraic decomposition).
-    *   $s_2 \approx s_T$ (Approximation used in Phase 1; exact pooling planned for Phase 2).
-4.  **Run Welch's T-Test:** $t = \frac{m_1 - m_2}{\sqrt{s_1^2/n_1 + s_2^2/n_2}}$
-5.  **Thresholds**:
+1.  **Thresholds**:
     *   **Strong Sig (95% CI):** $|t| > 1.96$ → Green/Red Arrows.
-    *   **Weak Sig (80% CI):** $|t| > 1.28$ → Grey Arrows (Indicative).
+    *   **Weak Sig (80% CI):** $|t| > 1.28$ → Optional Grey Indicators (Phase 2).
+
+### 2.4. Known Approximations & Limitations
+
+To maintain "Speed > Power," certain complex decompositions use defensible approximations:
+
+*   **Rest ESS (Proportions):** Approximated using the efficiency factor ($ESS/N$) of the total column applied to the rest-base.
+*   **Rest Variance (Means):** Currently approximates $s_{rest} \approx s_{total}$ for large samples. Exact variance decomposition requires tracking `SUM(x²)` per cell, which is deferred to Phase 2.
+*   **Weighted Mean/StdDev:** **[CRITICAL GAP]** The current engine implementation contains a bug where means are calculated unweighted. Fixing this is a Priority 1 task.
 
 ## 3. Implementation Details
 
-### 3.1. Data Architecture
+Velocity's engine has been refactored into a platform-agnostic **Headless Core** under `src/core/analysis/`.
 
-The engine runs entirely within `analysisWorker.ts` to prevent UI blocking.
+1.  **`crosstabRunner.ts`**: High-level orchestration, unpivoting grids, and applying significance logic.
+2.  **`queryBuilder.ts`**: Pure SQL generation (CTEs for weighted stats).
+3.  **`statistics.ts`**: Pure mathematical primitives (Welch's T, ESS, p-value approximations).
 
-1.  **SQL Generation (`queryBuilder.ts`)**:
-    *   Dynamically builds queries to fetch `Count`, `Weighted Count`, and `SumSquaredWeights`.
-2.  **DuckDB Execution**:
-    *   Aggregations are performed in Wasm.
-3.  **Post-Processing (`analysisWorker.ts`)**:
-    *   Iterates through rows.
-    *   Fetches "Row Totals" (Total for the specific row variable category).
-    *   Calculates ESS.
-    *   Derives "Rest" statistics.
-    *   Executes `calculateTScore`.
-    *   Flags significance (`sig: 'high' | 'low'`).
+## 4. Roadmap
 
-### 3.2. Code Structure
+### Phase 2: Correctness & Trust
+*   **Weighted Statistics Fix:** Implement proper weighted mean/stddev via two-pass queries or subqueries.
+*   **Validation Suite:** Continuous Parity Testing (decimal-for-decimal) against SPSS Statistics outputs.
+*   **Exact Rest Variance:** Capture `SUM(x²)` to remove approximations in means testing.
 
-*   **`src/services/statistics.ts`**: Pure mathematical functions (`calculateESS`, `calculateTScore`).
-*   **`src/services/queryBuilder.ts`**: SQL generation.
-*   **`src/services/analysisWorker.ts`**: Orchestration and business logic.
+### Phase 3+: Premium Features
+*   **Pairwise Column Comparisons:** Side-by-side significance (Letters A/B/C) with $O(N^2)$ complexity.
+*   **Multiple Comparison Corrections:** False Discovery Rate (FDR) and Bonferroni.
+*   **Dependent Samples:** Handling overlaps in Multiple Response sets.
 
-## 4. Future Roadmap (Phase 2)
+### Not Planned (Non-Goals)
+*   **Taylor Series Linearization (TSL):** Over-engineering for boutique agency needs.
+*   **Complex Strata/PSU Support:** Velocity targets "flat" panel data, not government stratified samples.
 
-*   **Pairwise Comparisons (Letters):** Full $O(N^2)$ column comparison matrix (A vs B, A vs C, etc.).
-*   **False Discovery Rate (FDR):** Benjamini-Hochberg correction for multiple comparisons.
-*   **Dependent Samples:** Handling overlaps in Multiple Response sets (e.g., "Brand A" vs "Total" where Total includes Brand A users) using dependent T-Tests rather than independent logic.

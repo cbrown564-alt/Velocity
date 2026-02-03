@@ -57,6 +57,13 @@ export interface SavParseResult {
     durationMs: number;
 }
 
+export interface SavMetadataResult {
+    /** File metadata and variable definitions */
+    metadata: SavMetadata;
+    /** Time taken to parse in milliseconds */
+    durationMs: number;
+}
+
 export interface SavParseProgress {
     /** Progress from 0 to 1 */
     progress: number;

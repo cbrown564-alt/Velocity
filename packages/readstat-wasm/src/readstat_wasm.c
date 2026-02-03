@@ -50,6 +50,8 @@ static value_label_t *g_value_labels = NULL;
 static int g_value_label_count = 0;
 static int g_row_count = 0;
 static int g_expected_row_count = 0;
+static int g_parsed_row_count = 0;
+static int g_sample_row_limit = -1;
 
 // Multiple Response Sets state
 static mr_set_info_t *g_mr_sets = NULL;
@@ -139,6 +141,8 @@ static int handle_metadata(readstat_metadata_t *metadata, void *ctx) {
   (void)ctx;
   g_expected_row_count = readstat_get_row_count(metadata);
   g_variable_count = readstat_get_var_count(metadata);
+  g_row_count = g_expected_row_count;
+  g_parsed_row_count = 0;
 
   // Allocate variables array
   g_variables =
@@ -236,6 +240,10 @@ static int handle_value(int obs_index, readstat_variable_t *variable,
                         readstat_value_t value, void *ctx) {
   (void)ctx;
 
+  if (g_sample_row_limit > 0 && obs_index >= g_sample_row_limit) {
+    return READSTAT_HANDLER_ABORT;
+  }
+
   int var_index = readstat_variable_get_index(variable);
   size_t cell_index = (size_t)obs_index * g_variable_count + var_index;
 
@@ -296,7 +304,10 @@ static int handle_value(int obs_index, readstat_variable_t *variable,
   }
 
   if (var_index == g_variable_count - 1) {
-    g_row_count = obs_index + 1;
+    g_parsed_row_count = obs_index + 1;
+    if (g_sample_row_limit <= 0) {
+      g_row_count = obs_index + 1;
+    }
   }
 
   return READSTAT_HANDLER_OK;
@@ -350,6 +361,8 @@ static void cleanup_parse_state(void) {
   g_value_label_count = 0;
   g_row_count = 0;
   g_expected_row_count = 0;
+  g_parsed_row_count = 0;
+  g_sample_row_limit = -1;
   g_data_capacity = 0;
   g_data_size = 0;
 }
@@ -361,6 +374,67 @@ static void cleanup_parse_state(void) {
 EMSCRIPTEN_KEEPALIVE
 int parse_sav(uint8_t *buffer, size_t len) {
   cleanup_parse_state();
+  g_sample_row_limit = -1;
+
+  mem_io_ctx_t mem_ctx = {.buffer = buffer, .size = len, .position = 0};
+
+  readstat_parser_t *parser = readstat_parser_init();
+  if (!parser) {
+    return READSTAT_ERROR_MALLOC;
+  }
+
+  readstat_set_open_handler(parser, mem_open);
+  readstat_set_close_handler(parser, mem_close);
+  readstat_set_seek_handler(parser, mem_seek);
+  readstat_set_read_handler(parser, mem_read);
+  readstat_set_update_handler(parser, mem_update);
+  readstat_set_io_ctx(parser, &mem_ctx);
+
+  readstat_set_metadata_handler(parser, handle_metadata);
+  readstat_set_variable_handler(parser, handle_variable);
+  readstat_set_value_label_handler(parser, handle_value_label);
+  readstat_set_value_handler(parser, handle_value);
+
+  readstat_error_t error = readstat_parse_sav(parser, "", NULL);
+  readstat_parser_free(parser);
+
+  return (int)error;
+}
+
+EMSCRIPTEN_KEEPALIVE
+int parse_sav_metadata(uint8_t *buffer, size_t len) {
+  cleanup_parse_state();
+  g_sample_row_limit = -1;
+
+  mem_io_ctx_t mem_ctx = {.buffer = buffer, .size = len, .position = 0};
+
+  readstat_parser_t *parser = readstat_parser_init();
+  if (!parser) {
+    return READSTAT_ERROR_MALLOC;
+  }
+
+  readstat_set_open_handler(parser, mem_open);
+  readstat_set_close_handler(parser, mem_close);
+  readstat_set_seek_handler(parser, mem_seek);
+  readstat_set_read_handler(parser, mem_read);
+  readstat_set_update_handler(parser, mem_update);
+  readstat_set_io_ctx(parser, &mem_ctx);
+
+  readstat_set_metadata_handler(parser, handle_metadata);
+  readstat_set_variable_handler(parser, handle_variable);
+  readstat_set_value_label_handler(parser, handle_value_label);
+
+  readstat_error_t error = readstat_parse_sav(parser, "", NULL);
+  readstat_parser_free(parser);
+
+  return (int)error;
+}
+
+EMSCRIPTEN_KEEPALIVE
+int parse_sav_sample(uint8_t *buffer, size_t len, int row_limit) {
+  cleanup_parse_state();
+
+  g_sample_row_limit = row_limit;
 
   mem_io_ctx_t mem_ctx = {.buffer = buffer, .size = len, .position = 0};
 
@@ -392,6 +466,9 @@ int get_variable_count(void) { return g_variable_count; }
 
 EMSCRIPTEN_KEEPALIVE
 int get_row_count(void) { return g_row_count; }
+
+EMSCRIPTEN_KEEPALIVE
+int get_parsed_row_count(void) { return g_parsed_row_count; }
 
 EMSCRIPTEN_KEEPALIVE
 int get_value_label_count(void) { return g_value_label_count; }

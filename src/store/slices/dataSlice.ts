@@ -41,6 +41,10 @@ export interface Dataset {
     variables: Variable[];
     weightVariable?: string;
     source: 'sav' | 'csv' | 'arrow';
+    /** True if only metadata was loaded (no rows in DuckDB) */
+    metadataOnly?: boolean;
+    /** Number of rows loaded in sample mode (if applicable) */
+    sampleRowCount?: number;
 }
 
 export interface VariableSet {
@@ -119,6 +123,8 @@ export interface DataSlice {
     discardPersistedData: () => Promise<void>;
     loadCSV: (fileName: string, content: string) => Promise<void>;
     loadSAV: (fileName: string, buffer: ArrayBuffer) => Promise<void>;
+    loadSAVMetadata: (fileName: string, buffer: ArrayBuffer) => Promise<void>;
+    loadSAVSample: (fileName: string, buffer: ArrayBuffer, rowLimit: number) => Promise<void>;
     getUniqueValues: (variableId: string) => Promise<string[]>;
     getVariableStats: (variableId: string) => Promise<VariableStatsResult | null>;
     recodeVariable: (sourceColId: string, newColName: string, config: RecodeConfig) => Promise<string>;
@@ -517,6 +523,7 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                             rowCount: response.rowCount,
                             variables: response.variables,
                             source: 'sav',
+                            metadataOnly: false,
                         },
                         variableSets,
                         // Clear variable stats cache on new dataset load
@@ -538,7 +545,94 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
             };
 
             worker.addEventListener('message', handler);
-            worker.postMessage({ type: 'loadSAV', buffer } as WorkerRequest);
+            worker.postMessage({ type: 'loadSAV', buffer } as WorkerRequest, [buffer]);
+        });
+    },
+
+    // Load SAV metadata only (no data inserted into DuckDB)
+    loadSAVMetadata: async (fileName: string, buffer: ArrayBuffer) => {
+        const { worker } = get();
+        if (!worker) throw new Error('Worker not initialized');
+
+        return new Promise((resolve, reject) => {
+            const handler = (event: MessageEvent<WorkerResponse>) => {
+                const response = event.data;
+
+                if (response.type === 'savMetadataLoaded') {
+                    const variableSets: VariableSet[] = response.variableSets;
+
+                    set({
+                        dataset: {
+                            id: crypto.randomUUID(),
+                            name: fileName,
+                            rowCount: response.rowCount,
+                            variables: response.variables,
+                            source: 'sav',
+                            metadataOnly: true,
+                        },
+                        variableSets,
+                        variableStats: {},
+                        variableStatsLoading: {},
+                        tableConfig: { rowVars: [], colVar: null },
+                        queryResult: [],
+                        activeFilters: [],
+                    } as any);
+
+                    console.log(`📊 [DataSlice] SAV metadata loaded: ${response.rowCount} rows, ${response.variables.length} variables in ${response.durationMs.toFixed(2)}ms`);
+                    worker.removeEventListener('message', handler);
+                    resolve(undefined);
+                } else if (response.type === 'error') {
+                    worker.removeEventListener('message', handler);
+                    reject(new Error(response.message));
+                }
+            };
+
+            worker.addEventListener('message', handler);
+            worker.postMessage({ type: 'loadSAVMetadata', buffer } as WorkerRequest, [buffer]);
+        });
+    },
+
+    // Load SAV sample rows for metadata heuristics (no data inserted into DuckDB)
+    loadSAVSample: async (fileName: string, buffer: ArrayBuffer, rowLimit: number) => {
+        const { worker } = get();
+        if (!worker) throw new Error('Worker not initialized');
+
+        return new Promise((resolve, reject) => {
+            const handler = (event: MessageEvent<WorkerResponse>) => {
+                const response = event.data;
+
+                if (response.type === 'savSampleLoaded') {
+                    const variableSets: VariableSet[] = response.variableSets;
+
+                    set({
+                        dataset: {
+                            id: crypto.randomUUID(),
+                            name: fileName,
+                            rowCount: response.rowCount,
+                            variables: response.variables,
+                            source: 'sav',
+                            metadataOnly: true,
+                            sampleRowCount: response.sampleRowCount,
+                        },
+                        variableSets,
+                        variableStats: {},
+                        variableStatsLoading: {},
+                        tableConfig: { rowVars: [], colVar: null },
+                        queryResult: [],
+                        activeFilters: [],
+                    } as any);
+
+                    console.log(`📊 [DataSlice] SAV sample loaded: ${response.sampleRowCount}/${response.rowCount} rows, ${response.variables.length} variables in ${response.durationMs.toFixed(2)}ms`);
+                    worker.removeEventListener('message', handler);
+                    resolve(undefined);
+                } else if (response.type === 'error') {
+                    worker.removeEventListener('message', handler);
+                    reject(new Error(response.message));
+                }
+            };
+
+            worker.addEventListener('message', handler);
+            worker.postMessage({ type: 'loadSAVSample', buffer, rowLimit } as WorkerRequest, [buffer]);
         });
     },
 
@@ -834,4 +928,3 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
         }));
     },
 });
-

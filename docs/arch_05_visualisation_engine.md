@@ -589,3 +589,39 @@
    - Visual ETL works on charts                                                                                                     
    - Future: Add second slide, switch between them                                                                                  
    - Future: Change slide to Grid mode, add multiple charts 
+---
+
+## 8. Engineering Implications & Transition Plan (from arch_06)
+
+The transition to Path C involves several critical architectural shifts:
+
+### A. State Model Transition
+> [!IMPORTANT]
+> The most significant change is the shift from **Global Analysis State** to **Normalized Slide/Cell State**.
+
+- **Current**: analysisSlice holds one tableConfig and one queryResult.
+- **New**: slidesSlice will store an array of Slide objects. Each slide contains cells.
+- **Implication**: analysisSlice acts as a "View Window". When a slide/cell is activated, its config is loaded into analysisSlice.
+- **Risk**: Synchronization issues between the "Active" view state and the "Persisted" slide state.
+
+### B. Shared Data Transformers
+- **Current**: DataTable.tsx contains buildTree() which transforms flat results into hierarchy.
+- **New**: Chart renderers (Stacked, Grouped, etc.) require similar hierarchical data.
+- **Action**: Extract buildTree logic into src/features/dashboard/utils/dataTransformers.ts.
+- **Benefit**: Ensures "Total" counts match across table and chart views.
+
+### C. Visual ETL Integration
+- **Concept**: Interactive gestures (drag bar to merge, right-click to filter) on charts.
+- **Implication**: AnalysisChart must be "Store Aware", triggering analysisSlice actions (addFilter, openRecodeModal).
+
+### D. Table vs. D3 Decision Record
+**Q: Should we refactor the main table to use D3/SVG?**
+**A: No.**
+
+*   **Rationale**:
+    *   **Text Handling**: HTML/DOM is superior for text wrapping, selection, and accessibility.
+    *   **Complexity**: Re-implementing virtualization and sticky headers in SVG is low ROI.
+    *   **Coherence**: Coherence is achieved via **Shared Data Transformers** and embedding D3 "Micro-charts" (sparklines) *inside* HTML table cells.
+
+### E. Resize and Responsiveness
+- **Mechanism**: AnalysisChart must implement IntersectionObserver or a resize hook to re-render D3 scales when containers change size (e.g., sidebar toggling).

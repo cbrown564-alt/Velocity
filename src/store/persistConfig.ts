@@ -63,11 +63,16 @@ export interface PersistedState {
  * Extracts only the persistable subset of state.
  * Called by Zustand persist middleware before saving.
  */
-export const partialize = (state: VelocityState): PersistedState => ({
-    // DataSlice - persist dataset metadata but NOT worker/loading state
-    dataset: state.dataset,
-    variableSets: state.variableSets,
-    folders: state.folders,
+export const partialize = (state: VelocityState): PersistedState => {
+    const persistDataset = state.dataset?.metadataOnly ? null : state.dataset;
+    const persistVariableSets = state.dataset?.metadataOnly ? [] : state.variableSets;
+    const persistFolders = state.dataset?.metadataOnly ? [] : state.folders;
+
+    return {
+        // DataSlice - persist dataset metadata but NOT worker/loading state
+        dataset: persistDataset,
+        variableSets: persistVariableSets,
+        folders: persistFolders,
 
     // UISlice - persist view preferences but NOT dragging/modal state
     appMode: state.appMode,
@@ -80,16 +85,17 @@ export const partialize = (state: VelocityState): PersistedState => ({
 
     // Data fingerprint - used for OPFS/localStorage reconciliation
     // Only set when dataset exists
-    dataFingerprint: state.dataset
-        ? {
-            rowCount: state.dataset.rowCount,
-            columnCount: state.dataset.variables.length,
-            lastModified: Date.now()
-        }
-        : undefined,
+        dataFingerprint: persistDataset
+            ? {
+                rowCount: persistDataset.rowCount,
+                columnCount: persistDataset.variables.length,
+                lastModified: Date.now()
+            }
+            : undefined,
 
-    // DrillDownSlice - entirely ephemeral, not persisted
-});
+        // DrillDownSlice - entirely ephemeral, not persisted
+    };
+};
 
 // ============================================================================
 // Hydration Handler

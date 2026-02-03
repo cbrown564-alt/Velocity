@@ -51,6 +51,10 @@ export interface Dataset {
   variables: Variable[];
   weightVariable?: string;
   source: 'sav' | 'csv' | 'arrow';
+  /** True if only metadata was loaded (no rows in DuckDB) */
+  metadataOnly?: boolean;
+  /** Number of rows loaded in sample mode (if applicable) */
+  sampleRowCount?: number;
 }
 
 // ============================================================================

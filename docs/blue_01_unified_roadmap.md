@@ -73,7 +73,7 @@ These elements exist in ALL three visions and can be built immediately.
 
 ## 4. Phased Execution Plan
 
-### Phase 1: The "Velocity Core" (Foundational)
+### Phase 1: The "Velocity Core" (Foundational) - COMPLETED
 *Goal: A working local-first .SAV viewer that feels faster than anything else.*
 *   **Architecture:** ReadStat (Wasm) -> Arrow -> DuckDB-Wasm.
 *   **Features:**
@@ -83,15 +83,18 @@ These elements exist in ALL three visions and can be built immediately.
     *   **Engine:** Supports Metadata (Labels), User Missing Values.
     *   **Reference:** `docs/arch_01_system_architecture.md` (Core Components).
 
-### Phase 2: The "Strategic Workbench" (Commercial Viability)
+### Phase 2: The "Strategic Workbench" (Commercial Viability) - IN PROGRESS
 *Goal: Feature parity with minimal Displayr/SPSS needs via a Hybrid Hub-and-Spoke Architecture.*
 *   **Features:**
-    *   **The Hub-and-Spoke UI:** Implement the **Variable Manager** (Visual ETL) as a distinct high-density mode.
-    *   **Navigation Pattern:** **Miller Columns** (Finder-style) for navigating Data Sources > Folders > Sets > Variables.
-    *   **Visual ETL:** **Card Sorting** for organization and **Drag-and-Merge** for recoding on the canvas.
-    *   **Faceted Search:** Filter variables by type, status, and data quality (missingness).
-    *   **Rich Cards:** Variable lists include sparklines and quality indicators.
-    *   **Weighting:** Apply weights to DuckDB queries.
+    *   **The Hub-and-Spoke UI:** **COMPLETED.** (Miller Columns implemented). a distinct high-density mode.
+    *   **Navigation Pattern:** **COMPLETED.** **Miller Columns** (Finder-style) for navigating Data Sources > Folders > Sets > Variables.
+    *   **Visual ETL:** **COMPLETED.** **Card Sorting** for organization and **Drag-and-Merge** for recoding on the canvas.
+    *   **Faceted Search:** **COMPLETED.** Filter variables by type, status, and data quality (missingness).
+    *   **Mission Control Design System:** **COMPLETED.** A high-performance, sci-fi inspired UI theme (Electric Cyan/Dark Mode) to differentiate from corporate tools.
+    *   **Rich Cards:** **COMPLETED.** Variable lists include sparklines and quality indicators.
+    *   **Variable Sets (Grids):** **COMPLETED.** Semantic detection and visual handling of grid questions.
+    *   **Significance Testing:** **MVP COMPLETED.** Auto-testing and gap-filling logic implemented.
+    *   **Weighting:** **IN PROGRESS.** Engine support added (Milestone 2.2), UI pending.
     *   **Smart Export:** Use **PptxGenJS** to export editable slides.
     *   **Reference:** `docs/research_08_UX_patterns_for_surveys.md` (Detailed UX Specs).
 
@@ -113,7 +116,8 @@ These elements exist in ALL three visions and can be built immediately.
 
 ---
 
-## Immediate Next Steps (Phase 1)
-1.  **Scaffold Repository:** Set up React + Vite + TypeScript.
-2.  **Ingestion Layer:** Implement `readstat-wasm` to parse `.SAV` files.
-3.  **Storage Layer:** integrate `duckdb-wasm`.
+## Immediate Next Steps (Phase 2 Focus)
+1.  **Verify Smart Export:** Prototype `PptxGenJS` integration to ensure chart fidelity.
+2.  **Polish Chart Interactions:** Finalize "Violin" and "Ridgeline" chart configurations.
+3.  **App-wide Polish:** Ensure "Mission Control" theme is consistently applied to all new components.
+4.  **Weighting UI:** Build the front-end controls for the implemented Weighting Engine.

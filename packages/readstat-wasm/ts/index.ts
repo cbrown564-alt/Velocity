@@ -11,6 +11,7 @@ import type {
     SavMultipleResponseSet,
     SavMetadata,
     SavParseResult,
+    SavMetadataResult,
     ProgressCallback,
 } from './types';
 
@@ -21,6 +22,7 @@ export type {
     SavMultipleResponseSet,
     SavMetadata,
     SavParseResult,
+    SavMetadataResult,
     ProgressCallback,
 };
 
@@ -29,8 +31,11 @@ interface ReadStatModule {
     _malloc: (size: number) => number;
     _free: (ptr: number) => void;
     _parse_sav: (bufferPtr: number, len: number) => number;
+    _parse_sav_metadata?: (bufferPtr: number, len: number) => number;
+    _parse_sav_sample?: (bufferPtr: number, len: number, rowLimit: number) => number;
     _get_variable_count: () => number;
     _get_row_count: () => number;
+    _get_parsed_row_count?: () => number;
     _get_value_label_count: () => number;
     _get_variable_name: (index: number) => number;
     _get_variable_type: (index: number) => number;
@@ -237,6 +242,273 @@ export async function parseSavFile(
         };
     } finally {
         // Free the input buffer
+        mod._free(bufferPtr);
+    }
+}
+
+/**
+ * Parse SAV metadata only (no row data).
+ *
+ * @param buffer - The SAV file contents as an ArrayBuffer
+ * @returns Parsed metadata without row values
+ */
+export async function parseSavMetadata(
+    buffer: ArrayBuffer
+): Promise<SavMetadataResult> {
+    const startTime = performance.now();
+
+    // Ensure module is initialized
+    await initReadStat();
+    const mod = moduleInstance!;
+
+    if (!mod._parse_sav_metadata) {
+        throw new Error('ReadStat WASM build does not support metadata-only parsing. Rebuild the WASM module.');
+    }
+
+    console.log(`📦 [ReadStat] Parsing SAV metadata: ${(buffer.byteLength / 1024 / 1024).toFixed(2)} MB`);
+
+    // Allocate buffer in WASM memory
+    const data = new Uint8Array(buffer);
+    const bufferPtr = mod._malloc(data.length);
+
+    if (bufferPtr === 0) {
+        throw new Error('Failed to allocate WASM memory for SAV file');
+    }
+
+    console.log(`📦 [ReadStat] Allocated ${data.length} bytes at ptr ${bufferPtr}`);
+
+    // Use writeArrayToMemory - handles memory growth properly
+    mod.writeArrayToMemory(data, bufferPtr);
+
+    console.log(`📦 [ReadStat] Copied data to WASM memory, calling parse_sav_metadata...`);
+
+    try {
+        const errorCode = mod._parse_sav_metadata(bufferPtr, data.length);
+
+        if (errorCode !== 0) {
+            const errorMsgPtr = mod._get_error_message(errorCode);
+            const errorMsg = mod.UTF8ToString(errorMsgPtr);
+            throw new Error(`ReadStat error (${errorCode}): ${errorMsg}`);
+        }
+
+        // Get counts
+        const variableCount = mod._get_variable_count();
+        const rowCount = mod._get_row_count();
+        const valueLabelCount = mod._get_value_label_count();
+
+        // Extract variables
+        const variables: SavVariable[] = [];
+        for (let i = 0; i < variableCount; i++) {
+            const namePtr = mod._get_variable_name(i);
+            const labelPtr = mod._get_variable_label(i);
+            const vlNamePtr = mod._get_variable_value_labels_name(i);
+
+            variables.push({
+                name: mod.UTF8ToString(namePtr),
+                index: i,
+                type: mod._get_variable_type(i) === 0 ? 'numeric' : 'string',
+                label: mod.UTF8ToString(labelPtr) || undefined,
+                valueLabelSetName: mod.UTF8ToString(vlNamePtr) || undefined,
+            });
+        }
+
+        // Extract value labels
+        const valueLabelSets: Record<string, SavValueLabel[]> = {};
+        for (let i = 0; i < valueLabelCount; i++) {
+            const setNamePtr = mod._get_value_label_set_name(i);
+            const labelPtr = mod._get_value_label_label(i);
+            const setName = mod.UTF8ToString(setNamePtr);
+            const value = mod._get_value_label_value(i);
+            const label = mod.UTF8ToString(labelPtr);
+
+            if (setName) {
+                if (!valueLabelSets[setName]) {
+                    valueLabelSets[setName] = [];
+                }
+                valueLabelSets[setName].push({ value, label });
+            }
+        }
+
+        // Extract Multiple Response Sets
+        const mrSetCount = mod._get_mr_set_count();
+        const multipleResponseSets: SavMultipleResponseSet[] = [];
+        for (let i = 0; i < mrSetCount; i++) {
+            const subvarCount = mod._get_mr_set_subvar_count(i);
+            const subvariables: string[] = [];
+            for (let j = 0; j < subvarCount; j++) {
+                const subvarPtr = mod._get_mr_set_subvar(i, j);
+                subvariables.push(mod.UTF8ToString(subvarPtr));
+            }
+
+            const namePtr = mod._get_mr_set_name(i);
+            const labelPtr = mod._get_mr_set_label(i);
+            const typeCode = mod._get_mr_set_type(i);
+
+            multipleResponseSets.push({
+                name: mod.UTF8ToString(namePtr),
+                label: mod.UTF8ToString(labelPtr),
+                type: String.fromCharCode(typeCode) as 'C' | 'D',
+                countedValue: mod._get_mr_set_counted_value(i),
+                subvariables,
+            });
+        }
+
+        const durationMs = performance.now() - startTime;
+
+        // Clean up WASM-side memory
+        mod._free_parse_results();
+
+        return {
+            metadata: {
+                variableCount,
+                rowCount,
+                variables,
+                valueLabelSets,
+                multipleResponseSets,
+            },
+            durationMs,
+        };
+    } finally {
+        // Free the input buffer
+        mod._free(bufferPtr);
+    }
+}
+
+/**
+ * Parse a SAV file and return only the first N rows for sampling.
+ * Metadata includes the full row count.
+ */
+export async function parseSavSample(
+    buffer: ArrayBuffer,
+    rowLimit: number
+): Promise<SavParseResult> {
+    const startTime = performance.now();
+
+    await initReadStat();
+    const mod = moduleInstance!;
+
+    if (!mod._parse_sav_sample || !mod._get_parsed_row_count) {
+        throw new Error('ReadStat WASM build does not support sample parsing. Rebuild the WASM module.');
+    }
+
+    const safeLimit = Math.max(0, Math.floor(rowLimit));
+
+    console.log(`📦 [ReadStat] Parsing SAV sample (${safeLimit} rows): ${(buffer.byteLength / 1024 / 1024).toFixed(2)} MB`);
+
+    const data = new Uint8Array(buffer);
+    const bufferPtr = mod._malloc(data.length);
+
+    if (bufferPtr === 0) {
+        throw new Error('Failed to allocate WASM memory for SAV file');
+    }
+
+    console.log(`📦 [ReadStat] Allocated ${data.length} bytes at ptr ${bufferPtr}`);
+
+    mod.writeArrayToMemory(data, bufferPtr);
+
+    console.log(`📦 [ReadStat] Copied data to WASM memory, calling parse_sav_sample...`);
+
+    try {
+        const errorCode = mod._parse_sav_sample(bufferPtr, data.length, safeLimit);
+
+        // ReadStat returns USER_ABORT when we stop early for sampling.
+        if (errorCode !== 0 && errorCode !== 4) {
+            const errorMsgPtr = mod._get_error_message(errorCode);
+            const errorMsg = mod.UTF8ToString(errorMsgPtr);
+            throw new Error(`ReadStat error (${errorCode}): ${errorMsg}`);
+        }
+
+        const variableCount = mod._get_variable_count();
+        const rowCount = mod._get_row_count();
+        const parsedRowCount = mod._get_parsed_row_count();
+        const valueLabelCount = mod._get_value_label_count();
+
+        const variables: SavVariable[] = [];
+        for (let i = 0; i < variableCount; i++) {
+            const namePtr = mod._get_variable_name(i);
+            const labelPtr = mod._get_variable_label(i);
+            const vlNamePtr = mod._get_variable_value_labels_name(i);
+
+            variables.push({
+                name: mod.UTF8ToString(namePtr),
+                index: i,
+                type: mod._get_variable_type(i) === 0 ? 'numeric' : 'string',
+                label: mod.UTF8ToString(labelPtr) || undefined,
+                valueLabelSetName: mod.UTF8ToString(vlNamePtr) || undefined,
+            });
+        }
+
+        const valueLabelSets: Record<string, SavValueLabel[]> = {};
+        for (let i = 0; i < valueLabelCount; i++) {
+            const setNamePtr = mod._get_value_label_set_name(i);
+            const labelPtr = mod._get_value_label_label(i);
+            const setName = mod.UTF8ToString(setNamePtr);
+            const value = mod._get_value_label_value(i);
+            const label = mod.UTF8ToString(labelPtr);
+
+            if (setName) {
+                if (!valueLabelSets[setName]) {
+                    valueLabelSets[setName] = [];
+                }
+                valueLabelSets[setName].push({ value, label });
+            }
+        }
+
+        const mrSetCount = mod._get_mr_set_count();
+        const multipleResponseSets: SavMultipleResponseSet[] = [];
+        for (let i = 0; i < mrSetCount; i++) {
+            const subvarCount = mod._get_mr_set_subvar_count(i);
+            const subvariables: string[] = [];
+            for (let j = 0; j < subvarCount; j++) {
+                const subvarPtr = mod._get_mr_set_subvar(i, j);
+                subvariables.push(mod.UTF8ToString(subvarPtr));
+            }
+
+            const namePtr = mod._get_mr_set_name(i);
+            const labelPtr = mod._get_mr_set_label(i);
+            const typeCode = mod._get_mr_set_type(i);
+
+            multipleResponseSets.push({
+                name: mod.UTF8ToString(namePtr),
+                label: mod.UTF8ToString(labelPtr),
+                type: String.fromCharCode(typeCode) as 'C' | 'D',
+                countedValue: mod._get_mr_set_counted_value(i),
+                subvariables,
+            });
+        }
+
+        const rows: (number | string | null)[][] = [];
+        for (let r = 0; r < parsedRowCount; r++) {
+            const row: (number | string | null)[] = [];
+            for (let c = 0; c < variableCount; c++) {
+                if (mod._is_cell_missing(r, c)) {
+                    row.push(null);
+                } else if (variables[c].type === 'string') {
+                    const strPtr = mod._get_string_value(r, c);
+                    row.push(mod.UTF8ToString(strPtr));
+                } else {
+                    row.push(mod._get_numeric_value(r, c));
+                }
+            }
+            rows.push(row);
+        }
+
+        const durationMs = performance.now() - startTime;
+
+        mod._free_parse_results();
+
+        return {
+            metadata: {
+                variableCount,
+                rowCount,
+                variables,
+                valueLabelSets,
+                multipleResponseSets,
+            },
+            rows,
+            durationMs,
+        };
+    } finally {
         mod._free(bufferPtr);
     }
 }
