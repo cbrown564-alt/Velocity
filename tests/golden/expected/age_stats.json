@@ -2,15 +2,15 @@
   "column": "age",
   "frequencies": [
     {
+      "value": 27,
+      "count": 2
+    },
+    {
       "value": 28,
       "count": 2
     },
     {
       "value": 29,
-      "count": 2
-    },
-    {
-      "value": 27,
       "count": 2
     },
     {
@@ -22,15 +22,15 @@
       "count": 1
     },
     {
-      "value": 32,
-      "count": 1
-    },
-    {
       "value": 26,
       "count": 1
     },
     {
-      "value": 34,
+      "value": 30,
+      "count": 1
+    },
+    {
+      "value": 32,
       "count": 1
     },
     {
@@ -38,7 +38,7 @@
       "count": 1
     },
     {
-      "value": 30,
+      "value": 34,
       "count": 1
     }
   ],

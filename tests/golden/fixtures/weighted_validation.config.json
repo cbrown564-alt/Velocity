@@ -1,0 +1,36 @@
+{
+  "csvFile": "weighted_validation_simple.csv",
+  "config": {
+    "rowVars": [],
+    "colVar": "group",
+    "measureVar": "value",
+    "measureLabel": "Value",
+    "weightVar": "weight",
+    "filters": []
+  },
+  "context": {
+    "variables": {
+      "group": {
+        "id": "group",
+        "name": "group",
+        "label": "Group",
+        "type": "nominal"
+      },
+      "value": {
+        "id": "value",
+        "name": "value",
+        "label": "Value",
+        "type": "numeric"
+      },
+      "weight": {
+        "id": "weight",
+        "name": "weight",
+        "label": "Weight",
+        "type": "numeric"
+      }
+    },
+    "variableSets": {}
+  },
+  "expectedFile": "weighted_validation.json",
+  "description": "Validates weighted mean, stddev, and significance testing. Reference values calculated mathematically."
+}

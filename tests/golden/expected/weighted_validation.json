@@ -1,0 +1,46 @@
+[
+  {
+    "rowKey_0": "Value",
+    "colKey": "A",
+    "mean": 25,
+    "stdDev": 11.180339887498949,
+    "min": 10,
+    "max": 40,
+    "median": 25,
+    "q1": 17.5,
+    "q3": 32.5,
+    "validCount": 4,
+    "count": 4,
+    "weightedCount": 4,
+    "sumSqWeights": 4,
+    "sumXW": 100,
+    "sumX2W": 3000,
+    "stats": {
+      "tScore": -0.3406044876342549,
+      "pValue": 0.7334012836060837,
+      "effN": 4
+    }
+  },
+  {
+    "rowKey_0": "Value",
+    "colKey": "B",
+    "mean": 28,
+    "stdDev": 11.874342087037917,
+    "min": 15,
+    "max": 45,
+    "median": 30,
+    "q1": 22.5,
+    "q3": 37.5,
+    "validCount": 4,
+    "count": 4,
+    "weightedCount": 5,
+    "sumSqWeights": 7.5,
+    "sumXW": 140,
+    "sumX2W": 4625,
+    "stats": {
+      "tScore": 0.3441430584572774,
+      "pValue": 0.7307386351123935,
+      "effN": 3.3333333333333335
+    }
+  }
+]

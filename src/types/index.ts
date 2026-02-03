@@ -186,6 +186,10 @@ export interface AggregatedRow {
   weightedCount?: number;
   /** Sum of squared weights (for Effective Sample Size calculation) */
   sumSqWeights?: number;
+  /** Weighted sum of values: SUM(x * weight) - for exact variance decomposition */
+  sumXW?: number;
+  /** Weighted sum of squared values: SUM(x^2 * weight) - for exact variance decomposition */
+  sumX2W?: number;
   // Scale variable stats
   mean?: number;
   median?: number;

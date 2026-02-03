@@ -77,7 +77,10 @@ export function buildGridQuery(options: GridQueryOptions): string {
                 QUANTILE_CONT(${val}, 0.75 ORDER BY ${val}) as q3,
                 COUNT(${val})::INTEGER as validCount,
                 COUNT(*)::INTEGER as count,
-                SUM(${w} * ${w})::DOUBLE as sumSqWeights
+                SUM(${w})::DOUBLE as weightedCount,
+                SUM(${w} * ${w})::DOUBLE as sumSqWeights,
+                SUM(${val} * ${w})::DOUBLE as sumXW,
+                SUM(${val} * ${val} * ${w})::DOUBLE as sumX2W
             `
             : `
                 AVG(${val}) as mean,
@@ -360,7 +363,10 @@ export function buildCrosstabQuery(options: CrosstabQueryOptions): string {
                 QUANTILE_CONT(${col}, 0.75 ORDER BY ${col}) as q3,
                 COUNT(${col})::INTEGER as validCount,
                 COUNT(*)::INTEGER as count,
-                SUM(${w} * ${w})::DOUBLE as sumSqWeights
+                SUM(${w})::DOUBLE as weightedCount,
+                SUM(${w} * ${w})::DOUBLE as sumSqWeights,
+                SUM(${col} * ${w})::DOUBLE as sumXW,
+                SUM(${col} * ${col} * ${w})::DOUBLE as sumX2W
             `;
         } else {
             statsExpr = `

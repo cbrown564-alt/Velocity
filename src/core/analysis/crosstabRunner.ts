@@ -367,15 +367,32 @@ export async function runCrosstab(
 
         if (cellESS > 2 && restESS > 2) {
           if (isMeans) {
+            // Cell statistics
             const m1 = Number(row.mean);
             const s1 = Number(row.stdDev);
             const n1 = cellESS;
 
-            const mT = Number(totalRow.mean);
-            const sT = Number(totalRow.stdDev);
-            const nT = totalESS;
+            // Compute exact Rest statistics using sum decomposition
+            // Rest = Total - Cell
+            const cellSumXW = row.sumXW ?? (row.mean ?? 0) * cellN;
+            const cellSumX2W = row.sumX2W ?? ((row.stdDev ?? 0) ** 2 + (row.mean ?? 0) ** 2) * cellN;
+            const totalSumXW = totalRow.sumXW ?? (totalRow.mean ?? 0) * totalN;
+            const totalSumX2W = totalRow.sumX2W ?? ((totalRow.stdDev ?? 0) ** 2 + (totalRow.mean ?? 0) ** 2) * totalN;
 
-            tScore = calculateTScore(m1, s1, n1, mT, sT, nT);
+            const restSumXW = totalSumXW - cellSumXW;
+            const restSumX2W = totalSumX2W - cellSumX2W;
+
+            // Rest mean and variance
+            let m2 = 0;
+            let s2 = 0;
+            if (restN > 0) {
+              m2 = restSumXW / restN;
+              const restVariance = Math.max(0, (restSumX2W / restN) - (m2 * m2));
+              s2 = Math.sqrt(restVariance);
+            }
+            const n2 = restESS;
+
+            tScore = calculateTScore(m1, s1, n1, m2, s2, n2);
           } else {
             const colKey = row.colKey || 'Total';
             const colBase = colStats.get(colKey);

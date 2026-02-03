@@ -35,15 +35,19 @@ function sortRows(rows: any[]): any[] {
 function expectCloseDeep(actual: any, expected: any, tolerance = 1e-10, path = ''): void {
     const p = path ? ` (at ${path})` : '';
 
-    if (typeof expected === 'number' && typeof actual === 'number') {
-        if (isNaN(expected)) {
-            expect(isNaN(actual), `Expected NaN but got ${actual}${p}`).toBe(true);
+    // Handle numeric comparisons (including bigint)
+    const isNumeric = (v: any) => typeof v === 'number' || typeof v === 'bigint';
+    if (isNumeric(expected) && isNumeric(actual)) {
+        const actualNum = Number(actual);
+        const expectedNum = Number(expected);
+        if (isNaN(expectedNum)) {
+            expect(isNaN(actualNum), `Expected NaN but got ${actualNum}${p}`).toBe(true);
         } else {
             const precision = Math.floor(-Math.log10(tolerance));
             try {
-                expect(actual).toBeCloseTo(expected, precision);
+                expect(actualNum).toBeCloseTo(expectedNum, precision);
             } catch (e) {
-                console.error(`Mismatch in number${p}: expected ${expected}, got ${actual}`);
+                console.error(`Mismatch in number${p}: expected ${expectedNum}, got ${actualNum}`);
                 throw e;
             }
         }
