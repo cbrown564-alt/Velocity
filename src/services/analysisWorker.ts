@@ -20,6 +20,7 @@ import { DuckDBWasmAdapter } from '../adapters/DuckDBWasmAdapter';
 import { runCrosstab as coreRunCrosstab } from '../core/analysis/crosstabRunner';
 import { getVariableStats as coreGetVariableStats } from '../core/analysis/variableStatsRunner';
 import { processMetadata } from '../core/ingestion/savLoader';
+import { escapeString } from './queryBuilder';
 
 // Re-export types from canonical location for backward compatibility
 export type { WorkerRequest, WorkerResponse, VariableStatsResult, VariableStatsFrequency, NumericStats } from '../types/worker';
@@ -217,7 +218,8 @@ async function loadCSV(fileName: string, content: string): Promise<{ schema: { n
 
   const start = performance.now();
   await db.registerFileText(fileName, content);
-  await conn.query(`CREATE OR REPLACE TABLE main AS SELECT * FROM read_csv_auto('${fileName}')`);
+  const safeFileName = escapeString(fileName);
+  await conn.query(`CREATE OR REPLACE TABLE main AS SELECT * FROM read_csv_auto('${safeFileName}')`);
 
   const schema = await getSchema();
   const countResult = await conn.query(`SELECT COUNT(*) as cnt FROM main`);
@@ -266,7 +268,11 @@ async function loadSAV(buffer: ArrayBuffer): Promise<{ variables: Variable[]; va
     for (let c = 0; c < numCols; c++) {
       columnsData[c][r] = row[c];
     }
+    // Release row reference early to reduce peak memory usage during conversion.
+    (parsed.rows as any)[r] = null;
   }
+  // Drop the rows array reference once converted.
+  (parsed as any).rows = [];
 
   // Create Arrow table
   const vectors: Record<string, arrow.Vector> = {};

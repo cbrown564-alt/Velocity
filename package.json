@@ -10,7 +10,8 @@
     "test": "vitest",
     "test:run": "vitest run",
     "test:coverage": "vitest run --coverage",
-    "test:ui": "vitest --ui"
+    "test:ui": "vitest --ui",
+    "test:parity": "vitest run tests/parity/runParity.test.ts"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

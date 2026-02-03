@@ -12,6 +12,7 @@ const jsavvy: any = (jsavvyDefault as any).default || jsavvyDefault;
 import { DuckDBNodeAdapter } from '../../adapters/DuckDBNodeAdapter';
 import { processMetadata, ParsedSavMetadata } from './savLoader';
 import { Variable, VariableSet } from '../../types';
+import { escapeString } from '../../services/queryBuilder';
 
 export interface SavLoadResult {
     variables: Variable[];
@@ -32,7 +33,8 @@ export async function loadSav(
     // 1. Try to use DuckDB read_stat for fast data ingest
     try {
         await adapter.execute('INSTALL read_stat; LOAD read_stat;');
-        await adapter.execute(`CREATE OR REPLACE TABLE "${tableName}" AS SELECT * FROM read_sav('${filePath}')`);
+        const safePath = escapeString(filePath);
+        await adapter.execute(`CREATE OR REPLACE TABLE "${tableName}" AS SELECT * FROM read_sav('${safePath}')`);
         hasReadStat = true;
         console.log('🦆 [SAV] Loaded data via DuckDB read_stat');
     } catch (err) {

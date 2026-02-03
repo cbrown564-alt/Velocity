@@ -72,11 +72,12 @@ export function buildGridQuery(options: GridQueryOptions): string {
                 SQRT(ABS((SUM(${w} * ${val} * ${val}) / SUM(${w})) - POWER(SUM(${w} * ${val}) / SUM(${w}), 2)))::DOUBLE as stdDev,
                 MIN(${val}) as min,
                 MAX(${val}) as max,
-                QUANTILE_CONT(${val}, 0.5 ORDER BY ${w}) as median,
-                QUANTILE_CONT(${val}, 0.25 ORDER BY ${w}) as q1,
-                QUANTILE_CONT(${val}, 0.75 ORDER BY ${w}) as q3,
+                QUANTILE_CONT(${val}, 0.5 ORDER BY ${val}) as median,
+                QUANTILE_CONT(${val}, 0.25 ORDER BY ${val}) as q1,
+                QUANTILE_CONT(${val}, 0.75 ORDER BY ${val}) as q3,
                 COUNT(${val})::INTEGER as validCount,
-                COUNT(*)::INTEGER as count
+                COUNT(*)::INTEGER as count,
+                SUM(${w} * ${w})::DOUBLE as sumSqWeights
             `
             : `
                 AVG(${val}) as mean,
@@ -217,10 +218,16 @@ function buildMultipleQuery(options: MultipleQueryOptions): string {
         ? `SUM("${escapeIdentifier(weightVar)}")::DOUBLE`
         : `COUNT(*)::INTEGER`;
 
+    const colSelector = colVar
+        ? `"${escapeIdentifier(colVar)}"`
+        : `'Total'`;
+
+    const groupByClause = colVar ? `GROUP BY ${colSelector}` : '';
+
     // Build UNION ALL query for each column, filtering by countedValue
     const unionParts = columns.map(({ name, label, countedValue }) => {
         const parts = [
-            `SELECT '${escapeString(label)}' as rowKey_0, 'Total' as colKey, ${countExpr} as count`,
+            `SELECT '${escapeString(label)}' as rowKey_0, ${colSelector} as colKey, ${countExpr} as count`,
             `FROM main`,
         ];
 
@@ -232,6 +239,9 @@ function buildMultipleQuery(options: MultipleQueryOptions): string {
         }
 
         parts.push(`WHERE ${conditions.join(' AND ')}`);
+        if (groupByClause) {
+            parts.push(groupByClause);
+        }
 
         return parts.join(' ');
     });
@@ -345,9 +355,9 @@ export function buildCrosstabQuery(options: CrosstabQueryOptions): string {
                 SQRT(ABS((SUM(${w} * ${col} * ${col}) / SUM(${w})) - POWER(SUM(${w} * ${col}) / SUM(${w}), 2)))::DOUBLE as stdDev,
                 MIN(${col}) as min,
                 MAX(${col}) as max,
-                QUANTILE_CONT(${col}, 0.5 ORDER BY ${w}) as median,
-                QUANTILE_CONT(${col}, 0.25 ORDER BY ${w}) as q1,
-                QUANTILE_CONT(${col}, 0.75 ORDER BY ${w}) as q3,
+                QUANTILE_CONT(${col}, 0.5 ORDER BY ${col}) as median,
+                QUANTILE_CONT(${col}, 0.25 ORDER BY ${col}) as q1,
+                QUANTILE_CONT(${col}, 0.75 ORDER BY ${col}) as q3,
                 COUNT(${col})::INTEGER as validCount,
                 COUNT(*)::INTEGER as count,
                 SUM(${w} * ${w})::DOUBLE as sumSqWeights

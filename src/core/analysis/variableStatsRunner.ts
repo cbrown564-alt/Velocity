@@ -31,7 +31,7 @@ export async function getVariableStats(
     FROM main
     WHERE "${column}" IS NOT NULL
     GROUP BY "${column}"
-    ORDER BY cnt DESC
+    ORDER BY cnt DESC, "${column}" ASC
     LIMIT 10
   `);
 

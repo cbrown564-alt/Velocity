@@ -130,7 +130,7 @@ describe('queryBuilder', () => {
 
             expect(sql).toContain('(SUM("Age" * "weight") / SUM("weight"))::DOUBLE as mean');
             expect(sql).toContain('SQRT(ABS((SUM("weight" * "Age" * "Age") / SUM("weight")) - POWER(SUM("weight" * "Age") / SUM("weight"), 2)))::DOUBLE as stdDev');
-            expect(sql).toContain('QUANTILE_CONT("Age", 0.5 ORDER BY "weight") as median');
+            expect(sql).toContain('QUANTILE_CONT("Age", 0.5 ORDER BY "Age") as median');
         });
 
         it('builds an unweighted measure query for scale variables', () => {
@@ -158,6 +158,22 @@ describe('queryBuilder', () => {
             expect(sql).toContain('GROUP BY "Gender"');
             // Should contain aggregation
             expect(sql).toContain('AVG("Age") as mean');
+        });
+
+        it('builds a multiple-response query with column variable', () => {
+            const sql = buildCrosstabQuery({
+                rowVars: [],
+                colVar: 'Region',
+                multipleColumns: [
+                    { name: 'Q1_A', label: 'Option A', countedValue: 1 },
+                    { name: 'Q1_B', label: 'Option B', countedValue: 1 },
+                ],
+            });
+
+            expect(sql).toContain('SELECT \'Option A\' as rowKey_0, "Region" as colKey');
+            expect(sql).toContain('WHERE "Q1_A" = 1');
+            expect(sql).toContain('GROUP BY "Region"');
+            expect(sql).toContain('UNION ALL');
         });
     });
 

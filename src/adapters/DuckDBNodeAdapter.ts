@@ -8,6 +8,7 @@
 import { DuckDBInstance, DuckDBConnection } from '@duckdb/node-api';
 import { DatabaseAdapter, QueryResult } from '../core/DatabaseAdapter';
 import { Variable, VariableSet } from '../types';
+import { escapeString } from '../services/queryBuilder';
 
 export class DuckDBNodeAdapter implements DatabaseAdapter {
   private constructor(
@@ -63,7 +64,8 @@ export class DuckDBNodeAdapter implements DatabaseAdapter {
   }
 
   async loadCSV(filePath: string, tableName: string = 'main'): Promise<number> {
-    await this.execute(`CREATE OR REPLACE TABLE "${tableName}" AS SELECT * FROM read_csv_auto('${filePath}')`);
+    const safePath = escapeString(filePath);
+    await this.execute(`CREATE OR REPLACE TABLE "${tableName}" AS SELECT * FROM read_csv_auto('${safePath}')`);
     const result = await this.query(`SELECT COUNT(*) as cnt FROM "${tableName}"`);
     return Number(result.rows[0]?.cnt);
   }
