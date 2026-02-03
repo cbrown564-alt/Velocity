@@ -52,6 +52,9 @@ static int g_row_count = 0;
 static int g_expected_row_count = 0;
 static int g_parsed_row_count = 0;
 static int g_sample_row_limit = -1;
+static int g_sample_strategy = 0;  // 0 = sequential, 1 = spread
+static int g_sample_interval = 1;  // For spread sampling: interval between sampled rows
+static int g_sampled_count = 0;    // Number of rows actually sampled so far
 
 // Multiple Response Sets state
 static mr_set_info_t *g_mr_sets = NULL;
@@ -240,12 +243,32 @@ static int handle_value(int obs_index, readstat_variable_t *variable,
                         readstat_value_t value, void *ctx) {
   (void)ctx;
 
-  if (g_sample_row_limit > 0 && obs_index >= g_sample_row_limit) {
-    return READSTAT_HANDLER_ABORT;
+  // Check if we should sample this row
+  if (g_sample_row_limit > 0) {
+    if (g_sample_strategy == 1) {
+      // Spread sampling: only include rows at calculated intervals
+      if (obs_index % g_sample_interval != 0) {
+        // Skip this row but continue parsing
+        return READSTAT_HANDLER_OK;
+      }
+      // Check if we've collected enough samples
+      if (g_sampled_count >= g_sample_row_limit) {
+        return READSTAT_HANDLER_ABORT;
+      }
+    } else {
+      // Sequential sampling: abort once we've read enough consecutive rows
+      if (obs_index >= g_sample_row_limit) {
+        return READSTAT_HANDLER_ABORT;
+      }
+    }
   }
 
   int var_index = readstat_variable_get_index(variable);
-  size_t cell_index = (size_t)obs_index * g_variable_count + var_index;
+
+  // For spread sampling, we need to use a logical row index for storage
+  // The sampled_count tracks how many rows we've stored
+  int storage_row = (g_sample_strategy == 1) ? g_sampled_count : obs_index;
+  size_t cell_index = (size_t)storage_row * g_variable_count + var_index;
 
   // Ensure capacity
   if (cell_index >= g_data_capacity) {

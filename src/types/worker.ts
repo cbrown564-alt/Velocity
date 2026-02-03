@@ -21,6 +21,7 @@ export type WorkerRequest =
   | { type: 'loadSAV'; buffer: ArrayBuffer }
   | { type: 'loadSAVMetadata'; buffer: ArrayBuffer }
   | { type: 'loadSAVSample'; buffer: ArrayBuffer; rowLimit: number }
+  | { type: 'flushPersistedData' }
   | { type: 'query'; sql: string }
   | { type: 'getSchema' }
   | { type: 'getUniqueValues'; column: string }
@@ -87,12 +88,14 @@ export interface VariableStatsResult {
 
 export type WorkerResponse =
   | { type: 'ready'; opfsAvailable: boolean }
+  | { type: 'persistenceStatus'; opfsAvailable: boolean; mode: 'opfs' | 'memory' | 'disabled'; dbPath: string; lastError?: string }
   | { type: 'corruptionDetected'; message: string }
   | { type: 'schema'; data: { name: string; type: string }[] }
   | { type: 'csvLoaded'; schema: { name: string; type: string }[]; rowCount: number; durationMs: number }
   | { type: 'savLoaded'; variables: Variable[]; variableSets: VariableSet[]; rowCount: number; durationMs: number }
   | { type: 'savMetadataLoaded'; variables: Variable[]; variableSets: VariableSet[]; rowCount: number; durationMs: number }
   | { type: 'savSampleLoaded'; variables: Variable[]; variableSets: VariableSet[]; rowCount: number; sampleRowCount: number; durationMs: number }
+  | { type: 'flushComplete'; ok: boolean; durationMs: number; error?: string }
   | { type: 'queryResult'; data: any[]; durationMs: number }
   | { type: 'uniqueValues'; data: string[] }
   | { type: 'variableStats'; stats: VariableStatsResult }

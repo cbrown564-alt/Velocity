@@ -110,6 +110,9 @@ export interface DataSlice {
 
     // OPFS Persistence State
     opfsAvailable: boolean;
+    persistenceMode: 'opfs' | 'memory' | 'disabled';
+    persistenceError: string | null;
+    activeDbPath: string | null;
     persistenceState: PersistenceState;
     persistedDataInfo: PersistedDataInfo | null;
 
@@ -119,6 +122,7 @@ export interface DataSlice {
     respawnWorker: (cleanStart?: boolean) => Promise<void>;
     checkPersistedData: () => Promise<void>;
     clearPersistedData: () => Promise<void>;
+    flushPersistedData: () => Promise<void>;
     restoreFromPersistence: () => void;
     discardPersistedData: () => Promise<void>;
     loadCSV: (fileName: string, content: string) => Promise<void>;
@@ -159,6 +163,9 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
 
     // OPFS Persistence State
     opfsAvailable: false,
+    persistenceMode: 'memory',
+    persistenceError: null,
+    activeDbPath: null,
     persistenceState: 'idle',
     persistedDataInfo: null,
 
@@ -181,6 +188,14 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                 const initHandler = (event: MessageEvent<WorkerResponse>) => {
                     const response = event.data;
                     switch (response.type) {
+                        case 'persistenceStatus':
+                            set({
+                                opfsAvailable: response.opfsAvailable,
+                                persistenceMode: response.mode,
+                                persistenceError: response.lastError || null,
+                                activeDbPath: response.dbPath
+                            });
+                            break;
                         case 'ready':
                             worker.removeEventListener('message', initHandler);
                             set({
@@ -267,6 +282,14 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                 const initHandler = (event: MessageEvent<WorkerResponse>) => {
                     const response = event.data;
                     switch (response.type) {
+                        case 'persistenceStatus':
+                            set({
+                                opfsAvailable: response.opfsAvailable,
+                                persistenceMode: response.mode,
+                                persistenceError: response.lastError || null,
+                                activeDbPath: response.dbPath
+                            });
+                            break;
                         case 'ready':
                             worker.removeEventListener('message', initHandler);
                             set({
@@ -377,6 +400,34 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
         });
     },
 
+    // Flush persisted data to OPFS (best-effort)
+    flushPersistedData: async () => {
+        const { worker, opfsAvailable } = get();
+        if (!worker || !opfsAvailable) return;
+
+        return new Promise((resolve) => {
+            const handler = (event: MessageEvent<WorkerResponse>) => {
+                const response = event.data;
+                if (response.type === 'flushComplete') {
+                    worker.removeEventListener('message', handler);
+                    if (!response.ok) {
+                        console.warn('[DataSlice] OPFS flush failed:', response.error);
+                        set({ persistenceError: response.error || 'OPFS flush failed' });
+                    }
+                    resolve(undefined);
+                } else if (response.type === 'error') {
+                    worker.removeEventListener('message', handler);
+                    console.warn('[DataSlice] OPFS flush error:', response.message);
+                    set({ persistenceError: response.message });
+                    resolve(undefined);
+                }
+            };
+
+            worker.addEventListener('message', handler);
+            worker.postMessage({ type: 'flushPersistedData' } as WorkerRequest);
+        });
+    },
+
     // Restore session from persisted data (user chose to restore)
     restoreFromPersistence: () => {
         const { persistedDataInfo, dataset } = get();
@@ -483,6 +534,7 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                         activeFilters: [],
                     } as any);
 
+                    void get().flushPersistedData();
                     worker.removeEventListener('message', handler);
                     resolve(undefined);
                 } else if (response.type === 'error') {
@@ -536,6 +588,7 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                     } as any);
 
                     console.log(`📊 [DataSlice] SAV loaded: ${response.rowCount} rows, ${response.variables.length} variables, ${variableSets.length} variable sets in ${response.durationMs.toFixed(2)}ms`);
+                    void get().flushPersistedData();
                     worker.removeEventListener('message', handler);
                     resolve(undefined);
                 } else if (response.type === 'error') {
@@ -755,6 +808,7 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                             }]
                         }));
                     }
+                    void get().flushPersistedData();
                     worker.removeEventListener('message', handler);
                     resolve(response.newColName);
                 } else if (response.type === 'error') {

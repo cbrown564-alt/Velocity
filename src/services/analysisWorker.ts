@@ -32,12 +32,17 @@ const JSDELIVR_BUNDLES = duckdb.getJsDelivrBundles();
 // OPFS database path for persistent storage
 const OPFS_DB_PATH = 'opfs://velocity_data.db';
 
+type PersistenceMode = 'opfs' | 'memory' | 'disabled';
+
 // Feature flag: Disable OPFS during development due to corruption loop bug
 const ENABLE_OPFS = false;
 
 let db: duckdb.AsyncDuckDB | null = null;
 let conn: duckdb.AsyncDuckDBConnection | null = null;
 let adapter: DuckDBWasmAdapter | null = null;
+let persistenceMode: PersistenceMode = 'memory';
+let persistenceError: string | null = null;
+let activeDbPath = ':memory:';
 
 // ============================================================================
 // OPFS Management
@@ -101,7 +106,7 @@ function stopKeepalive() {
   }
 }
 
-// ============================================================================
+// ============================================================================ 
 // Initialization
 // ============================================================================
 
@@ -134,10 +139,16 @@ async function init(forceCleanStart: boolean = false): Promise<{ opfsAvailable: 
   URL.revokeObjectURL(workerUrl);
 
   opfsAvailable = false;
+  persistenceMode = 'memory';
+  persistenceError = null;
+  activeDbPath = ':memory:';
 
   if (!ENABLE_OPFS) {
     console.log('🦆 [Worker] OPFS disabled (ENABLE_OPFS=false), using in-memory mode');
     await db.open({ path: ':memory:' });
+    persistenceMode = 'disabled';
+    persistenceError = 'OPFS disabled by feature flag';
+    activeDbPath = ':memory:';
     console.log('🦆 [Worker] DuckDB opened in :memory: mode');
   } else {
     try {
@@ -147,18 +158,27 @@ async function init(forceCleanStart: boolean = false): Promise<{ opfsAvailable: 
       });
       console.log('🦆 [Worker] DuckDB opened with OPFS persistence:', OPFS_DB_PATH);
       opfsAvailable = true;
+      persistenceMode = 'opfs';
+      persistenceError = null;
+      activeDbPath = OPFS_DB_PATH;
     } catch (opfsError: any) {
       const errorMsg = opfsError.message || '';
       const isCorruption = errorMsg.includes('not a valid DuckDB database file') || errorMsg.includes('corrupt');
 
       if (isCorruption && !forceCleanStart) {
         console.error('🦆 [Worker] OPFS corruption detected:', errorMsg);
+        persistenceMode = 'memory';
+        persistenceError = errorMsg;
+        activeDbPath = ':memory:';
         return { opfsAvailable: false, corruptionDetected: true, corruptionMessage: errorMsg };
       } else if (isCorruption && forceCleanStart) {
         console.warn('🦆 [Worker] OPFS still corrupted after cleanup, falling back to in-memory mode');
       } else {
         console.warn('🦆 [Worker] OPFS not available, falling back to in-memory:', errorMsg);
       }
+      persistenceMode = 'memory';
+      persistenceError = errorMsg;
+      activeDbPath = ':memory:';
     }
   }
 
@@ -173,6 +193,15 @@ async function init(forceCleanStart: boolean = false): Promise<{ opfsAvailable: 
   startKeepalive();
 
   return { opfsAvailable };
+}
+
+function getPersistenceStatus() {
+  return {
+    opfsAvailable,
+    mode: persistenceMode,
+    dbPath: activeDbPath,
+    lastError: persistenceError || undefined,
+  };
 }
 
 // ============================================================================
@@ -208,6 +237,39 @@ async function clearPersistedData(): Promise<void> {
   if (!conn) throw new Error('DB not initialized');
   await conn.query(`DROP TABLE IF EXISTS main`);
   console.log('🦆 [Worker] Persisted data cleared');
+}
+
+async function flushPersistedData(): Promise<{ ok: boolean; durationMs: number; error?: string }> {
+  if (!db) throw new Error('DB not initialized');
+
+  if (!opfsAvailable) {
+    return { ok: false, durationMs: 0, error: 'OPFS not available' };
+  }
+
+  const start = performance.now();
+
+  try {
+    if (conn) {
+      try {
+        await conn.query('CHECKPOINT');
+      } catch (checkpointError) {
+        console.warn('🦆 [Worker] CHECKPOINT failed, continuing to flush:', checkpointError);
+      }
+    }
+
+    const flushFn = (db as any).flushFiles;
+    if (typeof flushFn === 'function') {
+      await flushFn.call(db);
+    }
+
+    return { ok: true, durationMs: performance.now() - start };
+  } catch (error: any) {
+    return {
+      ok: false,
+      durationMs: performance.now() - start,
+      error: error?.message || 'Failed to flush OPFS',
+    };
+  }
 }
 
 // ============================================================================
@@ -451,6 +513,10 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
           } as WorkerResponse);
         } else {
           self.postMessage({
+            type: 'persistenceStatus',
+            ...getPersistenceStatus()
+          } as WorkerResponse);
+          self.postMessage({
             type: 'ready',
             opfsAvailable: initResult.opfsAvailable
           } as WorkerResponse);
@@ -502,6 +568,17 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
           rowCount: savResult.rowCount,
           sampleRowCount: savResult.sampleRowCount,
           durationMs: savResult.durationMs,
+        } as WorkerResponse);
+        break;
+      }
+
+      case 'flushPersistedData': {
+        const flushResult = await flushPersistedData();
+        self.postMessage({
+          type: 'flushComplete',
+          ok: flushResult.ok,
+          durationMs: flushResult.durationMs,
+          error: flushResult.error
         } as WorkerResponse);
         break;
       }
