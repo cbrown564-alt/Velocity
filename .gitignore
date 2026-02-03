@@ -23,6 +23,11 @@ dist-ssr
 *.sln
 *.sw?
 coverage/
+
+# Playwright
+playwright-report/
+test-results/
+.playwright/
     
 
 tests/golden/perf_log.jsonl

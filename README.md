@@ -47,4 +47,20 @@ npm install
 npm run dev
 ```
 
+**Playwright (E2E tests)**  
+If `npm install @playwright/test` fails due to peer dependency conflicts (React 19 + `react-window`), use:
+
+```bash
+npm install @playwright/test --legacy-peer-deps
+```
+
+To run E2E tests:
+
+```bash
+npx playwright install
+npm run test:e2e
+```
+
+Note: OPFS-backed tests require a secure context (HTTPS or localhost). The OPFS persistence test will auto-skip if OPFS is not available.
+
 velocity is **Local-First software**. No data is ever uploaded to a server.

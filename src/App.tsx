@@ -47,6 +47,8 @@ interface RestorationPromptProps {
   rowCount: number;
   columnCount: number;
   datasetName?: string;
+  lastModified?: number;
+  warning?: string | null;
   onRestore: () => void;
   onDiscard: () => void;
 }
@@ -55,9 +57,13 @@ const RestorationPrompt: React.FC<RestorationPromptProps> = ({
   rowCount,
   columnCount,
   datasetName,
+  lastModified,
+  warning,
   onRestore,
   onDiscard,
 }) => {
+  const lastModifiedLabel = lastModified ? new Date(lastModified).toLocaleString() : null;
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -83,8 +89,18 @@ const RestorationPrompt: React.FC<RestorationPromptProps> = ({
               <p className="text-sm text-[var(--text-secondary)]">
                 {rowCount.toLocaleString()} rows, {columnCount} columns
               </p>
+              {lastModifiedLabel && (
+                <p className="text-xs text-[var(--text-secondary)]">
+                  Last opened: {lastModifiedLabel}
+                </p>
+              )}
             </div>
           </div>
+          {warning && (
+            <div className="text-xs text-amber-700 bg-amber-50 border border-amber-100 rounded-md p-2">
+              {warning}
+            </div>
+          )}
         </div>
 
         <div className="flex gap-3">
@@ -217,6 +233,23 @@ export default function App() {
     ? activeDbPath.replace('opfs://', '')
     : activeDbPath;
 
+  const restoreWarning = React.useMemo(() => {
+    if (!persistedDataInfo?.metadata || !dataset) return null;
+    const meta = persistedDataInfo.metadata;
+    const mismatches: string[] = [];
+    if (meta.datasetId && dataset.id !== meta.datasetId) {
+      mismatches.push('dataset id');
+    }
+    if (dataset.rowCount !== meta.rowCount) {
+      mismatches.push('row count');
+    }
+    if (dataset.variables.length !== meta.columnCount) {
+      mismatches.push('column count');
+    }
+    if (mismatches.length === 0) return null;
+    return `Local data differs from OPFS metadata (${mismatches.join(', ')}). Restoring will use OPFS data.`;
+  }, [persistedDataInfo, dataset]);
+
   // Custom collision detection: distinguish between sidebar drags and reordering
   const customCollisionDetection = (args: any) => {
     const { active } = args;
@@ -315,10 +348,18 @@ export default function App() {
     if (hasProcessedPersistence.current) return;
 
     if (persistenceState === 'found' && persistedDataInfo) {
+      const persistedMeta = persistedDataInfo.metadata;
       // Check if we have matching localStorage dataset metadata
-      const hasMatchingMetadata = dataset &&
-        dataset.rowCount === persistedDataInfo.rowCount &&
-        dataset.variables.length === persistedDataInfo.schema.length;
+      const hasMatchingMetadata = dataset && (persistedMeta
+        ? (
+          dataset.rowCount === persistedMeta.rowCount &&
+          dataset.variables.length === persistedMeta.columnCount &&
+          (persistedMeta.datasetId ? dataset.id === persistedMeta.datasetId : true)
+        )
+        : (
+          dataset.rowCount === persistedDataInfo.rowCount &&
+          dataset.variables.length === persistedDataInfo.schema.length
+        ));
 
       if (hasMatchingMetadata) {
         // Auto-restore: metadata matches, go straight to dashboard
@@ -886,7 +927,9 @@ export default function App() {
           <RestorationPrompt
             rowCount={persistedDataInfo.rowCount}
             columnCount={persistedDataInfo.schema.length}
-            datasetName={dataset?.name}
+            datasetName={persistedDataInfo.metadata?.datasetName || dataset?.name}
+            lastModified={persistedDataInfo.metadata?.lastModified}
+            warning={restoreWarning}
             onRestore={handleRestore}
             onDiscard={handleDiscard}
           />
