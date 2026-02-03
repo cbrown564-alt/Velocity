@@ -18,6 +18,7 @@ import { ChartType } from './charts';
 export type WorkerRequest =
   | { type: 'init'; forceCleanStart?: boolean }
   | { type: 'setPersistenceContext'; datasetId?: string; schemaVersion?: number }
+  | { type: 'updatePersistenceMetadata'; metadata: PersistedMetadata }
   | { type: 'loadCSV'; fileName: string; content: string }
   | { type: 'loadSAV'; buffer: ArrayBuffer; forceChunked?: boolean }
   | { type: 'loadSAVMetadata'; buffer: ArrayBuffer }
@@ -79,6 +80,15 @@ export interface NumericStats {
   histogramBins: HistogramBin[];
 }
 
+export interface PersistedMetadata {
+  datasetId?: string;
+  datasetName?: string;
+  rowCount: number;
+  columnCount: number;
+  schemaVersion: number;
+  lastModified: number;
+}
+
 export interface VariableStatsResult {
   column: string;
   frequencies: VariableStatsFrequency[];
@@ -101,7 +111,7 @@ export type WorkerResponse =
   | { type: 'uniqueValues'; data: string[] }
   | { type: 'variableStats'; stats: VariableStatsResult }
   | { type: 'recodeComplete'; newColName: string }
-  | { type: 'persistedDataFound'; schema: { name: string; type: string }[]; rowCount: number }
+  | { type: 'persistedDataFound'; schema: { name: string; type: string }[]; rowCount: number; metadata?: PersistedMetadata }
   | { type: 'noPersistedData' }
   | { type: 'persistedDataCleared' }
   | { type: 'pong'; hasData: boolean; rowCount?: number }

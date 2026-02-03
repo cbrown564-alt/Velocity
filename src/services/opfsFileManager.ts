@@ -9,6 +9,7 @@
  */
 
 const UPLOADED_DIR = 'uploaded_sav';
+const DB_PREFIX = 'velocity_data';
 
 /**
  * Check if OPFS is available in the current environment.
@@ -164,6 +165,46 @@ export async function clearAll(): Promise<void> {
     console.log(`📁 [OPFS] Cleared all uploaded files`);
   } catch (error: any) {
     // Directory might not exist
+    if (error.name !== 'NotFoundError') {
+      throw error;
+    }
+  }
+}
+
+/**
+ * List DuckDB OPFS files (including quarantined files).
+ */
+export async function listDbFiles(): Promise<{ name: string; size: number; lastModified: number }[]> {
+  const root = await navigator.storage.getDirectory();
+  const files: { name: string; size: number; lastModified: number }[] = [];
+
+  // @ts-expect-error - entries() returns an async iterator
+  for await (const [name, handle] of root.entries()) {
+    if (handle.kind !== 'file') {
+      continue;
+    }
+    if (!name.startsWith(DB_PREFIX)) {
+      continue;
+    }
+    const file = await (handle as FileSystemFileHandle).getFile();
+    files.push({
+      name,
+      size: file.size,
+      lastModified: file.lastModified,
+    });
+  }
+
+  return files;
+}
+
+/**
+ * Delete a DuckDB OPFS file by name.
+ */
+export async function deleteDbFile(name: string): Promise<void> {
+  const root = await navigator.storage.getDirectory();
+  try {
+    await root.removeEntry(name);
+  } catch (error: any) {
     if (error.name !== 'NotFoundError') {
       throw error;
     }

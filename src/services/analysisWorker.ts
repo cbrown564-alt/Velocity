@@ -25,8 +25,8 @@ import { analysisRegistry } from '../core/analysis/registry';
 import { ArrowChunkBuilder } from './arrowChunkBuilder';
 
 // Re-export types from canonical location for backward compatibility
-export type { WorkerRequest, WorkerResponse, VariableStatsResult, VariableStatsFrequency, NumericStats } from '../types/worker';
-import type { WorkerRequest, WorkerResponse, VariableStatsResult } from '../types/worker';
+export type { WorkerRequest, WorkerResponse, VariableStatsResult, VariableStatsFrequency, NumericStats, PersistedMetadata } from '../types/worker';
+import type { WorkerRequest, WorkerResponse, VariableStatsResult, PersistedMetadata } from '../types/worker';
 
 const JSDELIVR_BUNDLES = duckdb.getJsDelivrBundles();
 
@@ -48,6 +48,7 @@ let activeDbPath = ':memory:';
 let persistenceContext: { datasetId?: string; schemaVersion: number } = {
   schemaVersion: OPFS_SCHEMA_VERSION,
 };
+const META_TABLE = 'velocity_meta';
 
 // ============================================================================
 // OPFS Management
@@ -59,11 +60,17 @@ async function cleanOPFS(): Promise<void> {
     const entriesToDelete: string[] = [];
 
     // @ts-expect-error - entries() returns an async iterator
-    for await (const [name] of opfsRoot.entries()) {
-      entriesToDelete.push(name);
+    for await (const [name, handle] of opfsRoot.entries()) {
+      if (handle?.kind !== 'file') {
+        continue;
+      }
+
+      if (name.startsWith(OPFS_BASE_NAME) && name.endsWith('.db')) {
+        entriesToDelete.push(name);
+      }
     }
 
-    console.log('🦆 [Worker] Found OPFS entries to clean:', entriesToDelete);
+    console.log('🦆 [Worker] Found OPFS DB entries to clean:', entriesToDelete);
 
     for (const name of entriesToDelete) {
       try {
@@ -101,6 +108,88 @@ function buildOpfsDbPath(datasetId?: string, schemaVersion: number = persistence
   const datasetPart = datasetId ? `_dataset_${datasetId}` : '_default';
   const versionPart = `_v${schemaVersion}`;
   return `opfs://${OPFS_BASE_NAME}${versionPart}${datasetPart}.db`;
+}
+
+function buildRepairDbPath(): string {
+  const datasetPart = persistenceContext.datasetId ? `_dataset_${persistenceContext.datasetId}` : '_default';
+  const versionPart = `_v${persistenceContext.schemaVersion}`;
+  return `opfs://${OPFS_BASE_NAME}${versionPart}${datasetPart}_repair_${Date.now()}.db`;
+}
+
+async function ensureMetaTable(): Promise<void> {
+  if (!conn) throw new Error('DB not initialized');
+  await conn.query(`
+    CREATE TABLE IF NOT EXISTS ${META_TABLE} (
+      dataset_id VARCHAR,
+      dataset_name VARCHAR,
+      row_count BIGINT,
+      column_count BIGINT,
+      schema_version INTEGER,
+      last_modified BIGINT
+    )
+  `);
+}
+
+async function readMeta(): Promise<PersistedMetadata | null> {
+  if (!conn) throw new Error('DB not initialized');
+  try {
+    const result = await conn.query(`SELECT * FROM ${META_TABLE} LIMIT 1`);
+    const row = result.toArray()[0];
+    if (!row) return null;
+    return {
+      datasetId: row.dataset_id ?? undefined,
+      datasetName: row.dataset_name ?? undefined,
+      rowCount: Number(row.row_count ?? 0),
+      columnCount: Number(row.column_count ?? 0),
+      schemaVersion: Number(row.schema_version ?? OPFS_SCHEMA_VERSION),
+      lastModified: Number(row.last_modified ?? 0),
+    };
+  } catch {
+    return null;
+  }
+}
+
+async function updateMeta(metadata: PersistedMetadata): Promise<void> {
+  if (!conn) throw new Error('DB not initialized');
+  await ensureMetaTable();
+  await conn.query(`DELETE FROM ${META_TABLE}`);
+  const datasetId = metadata.datasetId ? `'${metadata.datasetId.replace(/'/g, "''")}'` : 'NULL';
+  const datasetName = metadata.datasetName ? `'${metadata.datasetName.replace(/'/g, "''")}'` : 'NULL';
+  await conn.query(`
+    INSERT INTO ${META_TABLE} (
+      dataset_id, dataset_name, row_count, column_count, schema_version, last_modified
+    ) VALUES (
+      ${datasetId},
+      ${datasetName},
+      ${metadata.rowCount},
+      ${metadata.columnCount},
+      ${metadata.schemaVersion},
+      ${metadata.lastModified}
+    )
+  `);
+}
+
+async function quarantineCorruptedDb(dbPath: string): Promise<void> {
+  try {
+    if (!dbPath.startsWith('opfs://')) return;
+    const opfsRoot = await navigator.storage.getDirectory();
+    const fileName = dbPath.replace('opfs://', '');
+    const quarantineName = `${fileName}.corrupt_${Date.now()}`;
+    const srcHandle = await opfsRoot.getFileHandle(fileName);
+    const file = await srcHandle.getFile();
+    const buffer = await file.arrayBuffer();
+    const destHandle = await opfsRoot.getFileHandle(quarantineName, { create: true });
+    const writable = await destHandle.createWritable();
+    try {
+      await writable.write(buffer);
+    } finally {
+      await writable.close();
+    }
+    await opfsRoot.removeEntry(fileName);
+    console.warn('🦆 [Worker] Quarantined corrupted OPFS DB:', quarantineName);
+  } catch (error: any) {
+    console.warn('🦆 [Worker] Failed to quarantine corrupted DB:', error?.message || error);
+  }
 }
 
 // ============================================================================
@@ -216,26 +305,44 @@ async function init(forceCleanStart: boolean = false): Promise<{ opfsAvailable: 
           persistenceMode = 'opfs';
           persistenceError = null;
           activeDbPath = fallbackOpfsPath;
-          break;
         } catch (fallbackError: any) {
           console.warn('🦆 [Worker] OPFS fallback path also failed:', fallbackError?.message || fallbackError);
         }
       }
 
-      if (isCorruption && !forceCleanStart) {
-        console.error('🦆 [Worker] OPFS corruption detected:', errorMsg);
-        persistenceMode = 'memory';
-        persistenceError = errorMsg;
-        activeDbPath = ':memory:';
-        return { opfsAvailable: false, corruptionDetected: true, corruptionMessage: errorMsg };
-      } else if (isCorruption && forceCleanStart) {
-        console.warn('🦆 [Worker] OPFS still corrupted after cleanup, falling back to in-memory mode');
-      } else {
-        console.warn('🦆 [Worker] OPFS not available, falling back to in-memory:', errorMsg);
+      if (!opfsAvailable) {
+        if (isCorruption && !forceCleanStart) {
+          console.error('🦆 [Worker] OPFS corruption detected:', errorMsg);
+          await quarantineCorruptedDb(desiredOpfsPath);
+          const repairPath = buildRepairDbPath();
+          try {
+            await db.open({
+              path: repairPath,
+              accessMode: duckdb.DuckDBAccessMode.READ_WRITE
+            });
+            console.log('🦆 [Worker] DuckDB opened with repaired OPFS path:', repairPath);
+            opfsAvailable = true;
+            persistenceMode = 'opfs';
+            persistenceError = null;
+            activeDbPath = repairPath;
+          } catch (repairError: any) {
+            console.warn('🦆 [Worker] OPFS repair open failed, falling back to memory:', repairError?.message || repairError);
+            persistenceMode = 'memory';
+            persistenceError = errorMsg;
+            activeDbPath = ':memory:';
+            return { opfsAvailable: false, corruptionDetected: true, corruptionMessage: errorMsg };
+          }
+        } else if (isCorruption && forceCleanStart) {
+          console.warn('🦆 [Worker] OPFS still corrupted after cleanup, falling back to in-memory mode');
+        } else {
+          console.warn('🦆 [Worker] OPFS not available, falling back to in-memory:', errorMsg);
+        }
+        if (!opfsAvailable) {
+          persistenceMode = 'memory';
+          persistenceError = errorMsg;
+          activeDbPath = ':memory:';
+        }
       }
-      persistenceMode = 'memory';
-      persistenceError = errorMsg;
-      activeDbPath = ':memory:';
     }
   }
 
@@ -261,11 +368,11 @@ function getPersistenceStatus() {
   };
 }
 
-// ============================================================================
-// Persistence Operations
-// ============================================================================
+  // ============================================================================ 
+  // Persistence Operations
+  // ============================================================================
 
-async function checkPersistedData(): Promise<{ exists: boolean; schema?: { name: string; type: string }[]; rowCount?: number }> {
+async function checkPersistedData(): Promise<{ exists: boolean; schema?: { name: string; type: string }[]; rowCount?: number; metadata?: PersistedMetadata | null }> {
   if (!conn) throw new Error('DB not initialized');
 
   try {
@@ -281,9 +388,10 @@ async function checkPersistedData(): Promise<{ exists: boolean; schema?: { name:
     const schema = await getSchema();
     const countResult = await conn.query(`SELECT COUNT(*) as cnt FROM main`);
     const rowCount = Number(countResult.toArray()[0]?.cnt);
+    const metadata = await readMeta();
 
     console.log(`🦆 [Worker] Found persisted data: ${rowCount} rows, ${schema.length} columns`);
-    return { exists: true, schema, rowCount };
+    return { exists: true, schema, rowCount, metadata };
   } catch (error: any) {
     console.warn('🦆 [Worker] Error checking persisted data:', error.message);
     return { exists: false };
@@ -671,10 +779,15 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
           schemaVersion: request.schemaVersion ?? OPFS_SCHEMA_VERSION,
         };
         if (!db) {
-          activeDbPath = buildOpfsDbPath();
+          activeDbPath = buildOpfsDbPath(persistenceContext.datasetId, persistenceContext.schemaVersion);
         } else {
           console.warn('🦆 [Worker] Persistence context updated after init; changes apply on next restart');
         }
+        break;
+      }
+
+      case 'updatePersistenceMetadata': {
+        await updateMeta(request.metadata);
         break;
       }
 
@@ -855,7 +968,8 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
           self.postMessage({
             type: 'persistedDataFound',
             schema: persistedResult.schema!,
-            rowCount: persistedResult.rowCount!
+            rowCount: persistedResult.rowCount!,
+            metadata: persistedResult.metadata || undefined
           } as WorkerResponse);
         } else {
           self.postMessage({ type: 'noPersistedData' } as WorkerResponse);

@@ -135,6 +135,9 @@ export default function App() {
     filterModal,
     // Persistence state
     opfsAvailable,
+    persistenceMode,
+    persistenceError,
+    activeDbPath,
     persistenceState,
     persistedDataInfo,
     initWorker,
@@ -181,6 +184,10 @@ export default function App() {
   const [pendingSavSizeMb, setPendingSavSizeMb] = React.useState<number | null>(null);
   const [opfsStorageKey, setOpfsStorageKey] = React.useState<string | null>(null);
   const [opfsAvailableLocal, setOpfsAvailableLocal] = React.useState<boolean>(false);
+  const [opfsEstimate, setOpfsEstimate] = React.useState<{ usage: number; quota: number } | null>(null);
+  const [opfsDbFiles, setOpfsDbFiles] = React.useState<{ name: string; size: number; lastModified: number }[] | null>(null);
+  const [opfsDbListError, setOpfsDbListError] = React.useState<string | null>(null);
+  const [opfsDbPurgeError, setOpfsDbPurgeError] = React.useState<string | null>(null);
 
   const SAV_WARN_MB = 50;
   const SAV_HARD_MB = 200;
@@ -200,6 +207,15 @@ export default function App() {
       },
     })
   );
+
+  const opfsUsageMb = opfsEstimate ? opfsEstimate.usage / (1024 * 1024) : null;
+  const opfsQuotaMb = opfsEstimate ? opfsEstimate.quota / (1024 * 1024) : null;
+  const opfsUsagePct = opfsEstimate && opfsEstimate.quota > 0
+    ? Math.min(100, Math.round((opfsEstimate.usage / opfsEstimate.quota) * 100))
+    : null;
+  const opfsDbLabel = activeDbPath?.startsWith('opfs://')
+    ? activeDbPath.replace('opfs://', '')
+    : activeDbPath;
 
   // Custom collision detection: distinguish between sidebar drags and reordering
   const customCollisionDetection = (args: any) => {
@@ -249,6 +265,46 @@ export default function App() {
   useEffect(() => {
     opfsFileManager.isAvailable().then(setOpfsAvailableLocal);
   }, []);
+
+  useEffect(() => {
+    let mounted = true;
+    const refreshEstimate = () => {
+      opfsFileManager.getStorageEstimate().then((estimate) => {
+        if (mounted) setOpfsEstimate(estimate);
+      });
+    };
+
+    refreshEstimate();
+    const interval = window.setInterval(refreshEstimate, 30000);
+
+    return () => {
+      mounted = false;
+      window.clearInterval(interval);
+    };
+  }, []);
+
+  const refreshOpfsDbFiles = async () => {
+    try {
+      setOpfsDbListError(null);
+      const files = await opfsFileManager.listDbFiles();
+      setOpfsDbFiles(files);
+    } catch (error: any) {
+      setOpfsDbListError(error?.message || 'Failed to list OPFS DB files');
+      setOpfsDbFiles(null);
+    }
+  };
+
+  const purgeQuarantinedDbs = async () => {
+    try {
+      setOpfsDbPurgeError(null);
+      const files = opfsDbFiles ?? await opfsFileManager.listDbFiles();
+      const quarantined = files.filter((file) => file.name.includes('.corrupt_'));
+      await Promise.all(quarantined.map((file) => opfsFileManager.deleteDbFile(file.name)));
+      await refreshOpfsDbFiles();
+    } catch (error: any) {
+      setOpfsDbPurgeError(error?.message || 'Failed to purge quarantined DBs');
+    }
+  };
 
   // -- PERSISTENCE STATE HANDLING --
   // Track whether we've processed the persistence check
@@ -339,11 +395,25 @@ export default function App() {
           let storageKey: string | null = null;
           if (shouldStoreInOpfs) {
             try {
-              storageKey = opfsFileManager.generateStorageKey(file.name);
-              const buffer = await file.arrayBuffer();
-              await opfsFileManager.storeFile(storageKey, buffer);
-              setOpfsStorageKey(storageKey);
-              console.log(`📁 [App] Stored file in OPFS: ${storageKey}`);
+              let canStore = true;
+              const estimate = await opfsFileManager.getStorageEstimate();
+              if (estimate) {
+                const available = estimate.quota - estimate.usage;
+                const required = Math.ceil(file.size * 1.2);
+                if (available < required) {
+                  canStore = false;
+                  console.warn('📁 [App] Skipping OPFS storage due to low quota');
+                  setOpfsStorageKey(null);
+                }
+              }
+
+              if (canStore) {
+                storageKey = opfsFileManager.generateStorageKey(file.name);
+                const buffer = await file.arrayBuffer();
+                await opfsFileManager.storeFile(storageKey, buffer);
+                setOpfsStorageKey(storageKey);
+                console.log(`📁 [App] Stored file in OPFS: ${storageKey}`);
+              }
             } catch (opfsErr) {
               console.warn('📁 [App] Failed to store in OPFS, will fall back to file reference:', opfsErr);
               storageKey = null;
@@ -963,6 +1033,78 @@ export default function App() {
                       <span>Heuristics based on {dataset.sampleRowCount.toLocaleString()} sample rows</span>
                     </div>
                   )}
+                  <div className="mt-3 px-2 py-2 rounded-md border border-[var(--border-color-muted)] bg-[var(--bg-surface)]">
+                    <div className="text-[11px] font-semibold uppercase tracking-wider text-[var(--text-secondary)]">
+                      OPFS Storage Health
+                    </div>
+                    <div className="mt-2 text-xs text-[var(--text-secondary)] space-y-1">
+                      <div>Mode: <span className="text-[var(--text-primary)]">{persistenceMode}</span></div>
+                      <div>Available: <span className="text-[var(--text-primary)]">{opfsAvailable ? 'Yes' : 'No'}</span></div>
+                      {opfsDbLabel && (
+                        <div>DB: <span className="text-[var(--text-primary)]">{opfsDbLabel}</span></div>
+                      )}
+                      {opfsUsageMb !== null && opfsQuotaMb !== null ? (
+                        <div>
+                          Storage: <span className="text-[var(--text-primary)]">{opfsUsageMb.toFixed(1)} / {opfsQuotaMb.toFixed(1)} MB</span>
+                          {opfsUsagePct !== null ? ` (${opfsUsagePct}%)` : ''}
+                        </div>
+                      ) : (
+                        <div>Storage: <span className="text-[var(--text-primary)]">Unavailable</span></div>
+                      )}
+                      {persistenceError && (
+                        <div className="text-amber-700">Warning: {persistenceError}</div>
+                      )}
+                      <div className="pt-1">
+                        <button
+                          type="button"
+                          onClick={refreshOpfsDbFiles}
+                          className="text-[11px] px-2 py-1 rounded border border-[var(--border-color-muted)] text-[var(--text-primary)] hover:bg-[var(--bg-panel)] transition-colors"
+                        >
+                          List OPFS DBs
+                        </button>
+                        <button
+                          type="button"
+                          onClick={purgeQuarantinedDbs}
+                          className="ml-2 text-[11px] px-2 py-1 rounded border border-[var(--border-color-muted)] text-[var(--text-primary)] hover:bg-[var(--bg-panel)] transition-colors"
+                        >
+                          Purge Quarantined
+                        </button>
+                      </div>
+                      {opfsDbListError && (
+                        <div className="text-amber-700">List error: {opfsDbListError}</div>
+                      )}
+                      {opfsDbPurgeError && (
+                        <div className="text-amber-700">Purge error: {opfsDbPurgeError}</div>
+                      )}
+                      {opfsDbFiles && opfsDbFiles.length > 0 && (
+                        <div className="pt-1 text-[11px] text-[var(--text-secondary)] space-y-1">
+                          {opfsDbFiles.map((file) => (
+                            <div key={file.name}>
+                              <span className="text-[var(--text-primary)]">{file.name}</span>
+                              {' '}({(file.size / (1024 * 1024)).toFixed(1)} MB)
+                              <button
+                                type="button"
+                                onClick={async () => {
+                                  try {
+                                    await opfsFileManager.deleteDbFile(file.name);
+                                    await refreshOpfsDbFiles();
+                                  } catch (error: any) {
+                                    setOpfsDbPurgeError(error?.message || 'Failed to delete OPFS DB file');
+                                  }
+                                }}
+                                className="ml-2 text-[11px] text-amber-700 hover:text-amber-900"
+                              >
+                                Delete
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                      {opfsDbFiles && opfsDbFiles.length === 0 && (
+                        <div className="text-[11px] text-[var(--text-secondary)]">No OPFS DB files found</div>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </aside>
 

@@ -91,6 +91,14 @@ export type PersistenceState =
 export interface PersistedDataInfo {
     schema: { name: string; type: string }[];
     rowCount: number;
+    metadata?: {
+        datasetId?: string;
+        datasetName?: string;
+        rowCount: number;
+        columnCount: number;
+        schemaVersion: number;
+        lastModified: number;
+    };
 }
 
 // ============================================================================
@@ -365,7 +373,8 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                         persistenceState: 'found',
                         persistedDataInfo: {
                             schema: response.schema,
-                            rowCount: response.rowCount
+                            rowCount: response.rowCount,
+                            metadata: response.metadata
                         }
                     });
                     console.log(`[DataSlice] Found persisted data: ${response.rowCount} rows, ${response.schema.length} columns`);
@@ -548,6 +557,21 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                         activeFilters: [],
                     } as any);
 
+                    const datasetId = get().dataset?.id;
+                    if (datasetId) {
+                        worker.postMessage({
+                            type: 'updatePersistenceMetadata',
+                            metadata: {
+                                datasetId,
+                                datasetName: fileName,
+                                rowCount: response.rowCount,
+                                columnCount: variables.length,
+                                schemaVersion: 1,
+                                lastModified: Date.now()
+                            }
+                        } as WorkerRequest);
+                    }
+
                     void get().flushPersistedData();
                     worker.removeEventListener('message', handler);
                     resolve(undefined);
@@ -602,6 +626,20 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                     } as any);
 
                     console.log(`📊 [DataSlice] SAV loaded: ${response.rowCount} rows, ${response.variables.length} variables, ${variableSets.length} variable sets in ${response.durationMs.toFixed(2)}ms`);
+                    const datasetId = get().dataset?.id;
+                    if (datasetId) {
+                        worker.postMessage({
+                            type: 'updatePersistenceMetadata',
+                            metadata: {
+                                datasetId,
+                                datasetName: fileName,
+                                rowCount: response.rowCount,
+                                columnCount: response.variables.length,
+                                schemaVersion: 1,
+                                lastModified: Date.now()
+                            }
+                        } as WorkerRequest);
+                    }
                     void get().flushPersistedData();
                     worker.removeEventListener('message', handler);
                     resolve(undefined);
@@ -806,12 +844,11 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                             valueLabels: [],
                             missingValues: {},
                         };
-                        set({
-                            dataset: {
-                                ...dataset,
-                                variables: [...dataset.variables, newVariable],
-                            },
-                        });
+                        const updatedDataset = {
+                            ...dataset,
+                            variables: [...dataset.variables, newVariable],
+                        };
+                        set({ dataset: updatedDataset });
 
                         set((state) => ({
                             variableSets: [...state.variableSets, {
@@ -822,6 +859,20 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                                 type: 'nominal'
                             }]
                         }));
+
+                        if (worker) {
+                            worker.postMessage({
+                                type: 'updatePersistenceMetadata',
+                                metadata: {
+                                    datasetId: updatedDataset.id,
+                                    datasetName: updatedDataset.name,
+                                    rowCount: updatedDataset.rowCount,
+                                    columnCount: updatedDataset.variables.length,
+                                    schemaVersion: 1,
+                                    lastModified: Date.now()
+                                }
+                            } as WorkerRequest);
+                        }
                     }
                     void get().flushPersistedData();
                     worker.removeEventListener('message', handler);
