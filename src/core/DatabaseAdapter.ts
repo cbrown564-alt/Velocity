@@ -13,9 +13,16 @@ export interface QueryResult {
   rowCount: number;
 }
 
+export interface StreamOptions {
+  chunkSize?: number; // default: 10_000
+}
+
 export interface DatabaseAdapter {
   /** Execute a SQL query and return results */
   query(sql: string): Promise<QueryResult>;
+
+  /** Stream query results as async iterable chunks */
+  queryStream?(sql: string, options?: StreamOptions): AsyncIterable<QueryResult>;
 
   /** Execute a SQL statement with no return value */
   execute(sql: string): Promise<void>;

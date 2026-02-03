@@ -7,7 +7,7 @@
 
 import type * as duckdb from '@duckdb/duckdb-wasm';
 import type * as arrow from 'apache-arrow';
-import { DatabaseAdapter, QueryResult } from '../core/DatabaseAdapter';
+import { DatabaseAdapter, QueryResult, StreamOptions } from '../core/DatabaseAdapter';
 
 export class DuckDBWasmAdapter implements DatabaseAdapter {
   constructor(
@@ -25,6 +25,18 @@ export class DuckDBWasmAdapter implements DatabaseAdapter {
       rows,
       rowCount: rows.length,
     };
+  }
+
+  async *queryStream(sql: string, options?: StreamOptions): AsyncIterable<QueryResult> {
+    const chunkSize = options?.chunkSize ?? 10_000;
+    let offset = 0;
+    while (true) {
+      const result = await this.query(`SELECT * FROM (${sql}) AS _q LIMIT ${chunkSize} OFFSET ${offset}`);
+      if (result.rowCount === 0) break;
+      yield result;
+      if (result.rowCount < chunkSize) break;
+      offset += chunkSize;
+    }
   }
 
   async execute(sql: string): Promise<void> {

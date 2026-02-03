@@ -6,7 +6,7 @@
  */
 
 import { DuckDBInstance, DuckDBConnection } from '@duckdb/node-api';
-import { DatabaseAdapter, QueryResult } from '../core/DatabaseAdapter';
+import { DatabaseAdapter, QueryResult, StreamOptions } from '../core/DatabaseAdapter';
 import { Variable, VariableSet } from '../types';
 import { escapeString } from '../services/queryBuilder';
 
@@ -38,6 +38,24 @@ export class DuckDBNodeAdapter implements DatabaseAdapter {
     }
 
     return { columns, rows, rowCount };
+  }
+
+  async *queryStream(sql: string, options?: StreamOptions): AsyncIterable<QueryResult> {
+    const result = await this.connection.stream(sql);
+    const columns = result.columnNames();
+    for await (const chunk of result) {
+      const rowCount = chunk.rowCount;
+      const rows: Record<string, unknown>[] = [];
+      for (let r = 0; r < rowCount; r++) {
+        const row: Record<string, unknown> = {};
+        for (let c = 0; c < columns.length; c++) {
+          const val = chunk.value(c, r);
+          row[columns[c]] = typeof val === 'bigint' ? Number(val) : val;
+        }
+        rows.push(row);
+      }
+      yield { columns, rows, rowCount };
+    }
   }
 
   async execute(sql: string): Promise<void> {

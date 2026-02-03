@@ -149,12 +149,21 @@ program
 program
   .command('sql <file> <query>')
   .description('Run arbitrary SQL on a loaded file')
-  .action(async (file: string, query: string) => {
+  .option('--stream', 'Stream results as NDJSON')
+  .action(async (file: string, query: string, opts) => {
     const db = await ensureAdapter();
     await loadFile(file, db);
 
-    const result = await db.query(query);
-    console.log(JSON.stringify(result.rows, null, 2));
+    if (opts.stream && db.queryStream) {
+      for await (const chunk of db.queryStream(query)) {
+        for (const row of chunk.rows) {
+          console.log(JSON.stringify(row));
+        }
+      }
+    } else {
+      const result = await db.query(query);
+      console.log(JSON.stringify(result.rows, null, 2));
+    }
 
     await db.close();
   });
