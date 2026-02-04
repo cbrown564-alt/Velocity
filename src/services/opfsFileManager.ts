@@ -9,6 +9,8 @@
  */
 
 const UPLOADED_DIR = 'uploaded_sav';
+import { walkOpfs, resolveOpfsPath } from './opfsTraversal';
+
 const DB_PREFIX = 'velocity_data';
 
 /**
@@ -178,17 +180,12 @@ export async function listDbFiles(): Promise<{ name: string; size: number; lastM
   const root = await navigator.storage.getDirectory();
   const files: { name: string; size: number; lastModified: number }[] = [];
 
-  // @ts-expect-error - entries() returns an async iterator
-  for await (const [name, handle] of root.entries()) {
-    if (handle.kind !== 'file') {
-      continue;
-    }
-    if (!name.startsWith(DB_PREFIX)) {
-      continue;
-    }
-    const file = await (handle as FileSystemFileHandle).getFile();
+  for await (const entry of walkOpfs(root)) {
+    if (entry.handle.kind !== 'file') continue;
+    if (!entry.name.startsWith(DB_PREFIX)) continue;
+    const file = await (entry.handle as FileSystemFileHandle).getFile();
     files.push({
-      name,
+      name: entry.path,
       size: file.size,
       lastModified: file.lastModified,
     });
@@ -202,12 +199,23 @@ export async function listDbFiles(): Promise<{ name: string; size: number; lastM
  */
 export async function deleteDbFile(name: string): Promise<void> {
   const root = await navigator.storage.getDirectory();
-  try {
-    await root.removeEntry(name);
-  } catch (error: any) {
-    if (error.name !== 'NotFoundError') {
-      throw error;
+  const resolved = await resolveOpfsPath(root, name);
+  if (resolved) {
+    try {
+      await resolved.parent.removeEntry(resolved.name);
+      return;
+    } catch (error: any) {
+      if (error.name !== 'NotFoundError') {
+        throw error;
+      }
     }
+  }
+
+  for await (const entry of walkOpfs(root)) {
+    if (entry.handle.kind !== 'file') continue;
+    if (entry.path !== name && entry.name !== name) continue;
+    await entry.parent.removeEntry(entry.name);
+    return;
   }
 }
 

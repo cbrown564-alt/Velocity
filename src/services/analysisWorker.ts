@@ -24,6 +24,8 @@ import { escapeString } from './queryBuilder';
 import { analysisRegistry } from '../core/analysis/registry';
 import { ArrowChunkBuilder } from './arrowChunkBuilder';
 import { getLocalDuckDbBundles, resolveDuckDbBundleUrls } from './duckdbBundles';
+import { initOpfsPersistence } from './opfsPersistence';
+import { walkOpfs, findOpfsFile } from './opfsTraversal';
 
 // Re-export types from canonical location for backward compatibility
 export type { WorkerRequest, WorkerResponse, VariableStatsResult, VariableStatsFrequency, NumericStats, PersistedMetadata } from '../types/worker';
@@ -55,60 +57,43 @@ const META_TABLE = 'velocity_meta';
 // OPFS Management
 // ============================================================================
 
+// OPFS traversal helpers are shared in opfsTraversal.ts
+
 async function cleanOPFS(): Promise<void> {
   try {
     const opfsRoot = await navigator.storage.getDirectory();
     const entriesToDelete: string[] = [];
 
-    // @ts-expect-error - entries() returns an async iterator
-    for await (const [name, handle] of opfsRoot.entries()) {
-      if (handle?.kind !== 'file') {
-        continue;
-      }
-
-      if (name.startsWith(OPFS_BASE_NAME) && name.endsWith('.db')) {
-        entriesToDelete.push(name);
+    for await (const entry of walkOpfs(opfsRoot)) {
+      if (entry.handle.kind !== 'file') continue;
+      if (!entry.name.startsWith(OPFS_BASE_NAME)) continue;
+      entriesToDelete.push(entry.path);
+      try {
+        await entry.parent.removeEntry(entry.name, { recursive: true });
+        console.log(`🦆 [Worker] Removed OPFS entry: ${entry.path}`);
+      } catch (e: any) {
+        console.warn(`🦆 [Worker] Failed to remove ${entry.path}:`, e.message);
       }
     }
 
     console.log('🦆 [Worker] Found OPFS DB entries to clean:', entriesToDelete);
-
-    for (const name of entriesToDelete) {
-      try {
-        await opfsRoot.removeEntry(name, { recursive: true });
-        console.log(`🦆 [Worker] Removed OPFS entry: ${name}`);
-      } catch (e: any) {
-        console.warn(`🦆 [Worker] Failed to remove ${name}:`, e.message);
-      }
-    }
-
     console.log('🦆 [Worker] Cleared all OPFS storage');
   } catch (error: any) {
     console.warn('🦆 [Worker] Failed to clean OPFS:', error.message);
   }
 }
 
-async function listOpfsDbFiles(): Promise<{ name: string; lastModified: number }[]> {
+async function listOpfsDbFiles(): Promise<{ name: string; path: string; lastModified: number }[]> {
   const root = await navigator.storage.getDirectory();
-  const files: { name: string; lastModified: number }[] = [];
+  const files: { name: string; path: string; lastModified: number }[] = [];
 
-  // @ts-expect-error - entries() returns an async iterator
-  for await (const [name, handle] of root.entries()) {
-    if (handle?.kind !== 'file') {
-      continue;
-    }
-    if (!name.startsWith(OPFS_BASE_NAME)) {
-      continue;
-    }
-    if (!name.endsWith('.db')) {
-      continue;
-    }
-    if (name.includes('.corrupt_')) {
-      continue;
-    }
-
-    const file = await (handle as FileSystemFileHandle).getFile();
-    files.push({ name, lastModified: file.lastModified });
+  for await (const entry of walkOpfs(root)) {
+    if (entry.handle.kind !== 'file') continue;
+    if (!entry.name.startsWith(OPFS_BASE_NAME)) continue;
+    if (!entry.name.endsWith('.db')) continue;
+    if (entry.name.includes('.corrupt_')) continue;
+    const file = await (entry.handle as FileSystemFileHandle).getFile();
+    files.push({ name: entry.name, path: entry.path, lastModified: file.lastModified });
   }
 
   files.sort((a, b) => b.lastModified - a.lastModified);
@@ -201,19 +186,23 @@ async function quarantineCorruptedDb(dbPath: string): Promise<void> {
   try {
     if (!dbPath.startsWith('opfs://')) return;
     const opfsRoot = await navigator.storage.getDirectory();
-    const fileName = dbPath.replace('opfs://', '');
-    const quarantineName = `${fileName}.corrupt_${Date.now()}`;
-    const srcHandle = await opfsRoot.getFileHandle(fileName);
-    const file = await srcHandle.getFile();
+    const target = await findOpfsFile(opfsRoot, dbPath);
+    if (!target) {
+      console.warn('🦆 [Worker] Failed to quarantine corrupted DB: The object can not be found here.');
+      return;
+    }
+
+    const quarantineName = `${target.name}.corrupt_${Date.now()}`;
+    const file = await target.handle.getFile();
     const buffer = await file.arrayBuffer();
-    const destHandle = await opfsRoot.getFileHandle(quarantineName, { create: true });
+    const destHandle = await target.parent.getFileHandle(quarantineName, { create: true });
     const writable = await destHandle.createWritable();
     try {
       await writable.write(buffer);
     } finally {
       await writable.close();
     }
-    await opfsRoot.removeEntry(fileName);
+    await target.parent.removeEntry(target.name);
     console.warn('🦆 [Worker] Quarantined corrupted OPFS DB:', quarantineName);
   } catch (error: any) {
     console.warn('🦆 [Worker] Failed to quarantine corrupted DB:', error?.message || error);
@@ -292,87 +281,45 @@ async function init(forceCleanStart: boolean = false): Promise<{ opfsAvailable: 
   const desiredOpfsPath = buildOpfsDbPath(persistenceContext.datasetId);
   const fallbackOpfsPath = persistenceContext.datasetId ? buildOpfsDbPath() : null;
 
-  if (!ENABLE_OPFS) {
-    console.log('🦆 [Worker] OPFS disabled (ENABLE_OPFS=false), using in-memory mode');
-    await db.open({ path: ':memory:' });
-    persistenceMode = 'disabled';
-    persistenceError = 'OPFS disabled by feature flag';
-    activeDbPath = ':memory:';
-    console.log('🦆 [Worker] DuckDB opened in :memory: mode');
-  } else if (!opfsSupport.supported) {
-    console.log('🦆 [Worker] OPFS unsupported, using in-memory mode:', opfsSupport.error);
-    await db.open({ path: ':memory:' });
-    persistenceMode = 'disabled';
-    persistenceError = opfsSupport.error || 'OPFS unsupported';
-    activeDbPath = ':memory:';
-    console.log('🦆 [Worker] DuckDB opened in :memory: mode');
-  } else {
-    const openOpfsPath = async (path: string, label: string): Promise<{ ok: boolean; error?: string }> => {
-      try {
-        await db.open({
-          path,
-          accessMode: duckdb.DuckDBAccessMode.READ_WRITE
-        });
-        console.log(`🦆 [Worker] DuckDB opened with ${label}:`, path);
-        opfsAvailable = true;
-        persistenceMode = 'opfs';
-        persistenceError = null;
-        activeDbPath = path;
-        return { ok: true };
-      } catch (error: any) {
-        const message = error?.message || String(error);
-        console.warn(`🦆 [Worker] ${label} open failed:`, message);
-        return { ok: false, error: message };
-      }
-    };
-
-    const initialOpen = await openOpfsPath(desiredOpfsPath, 'OPFS persistence');
-
-    if (!initialOpen.ok) {
-      const errorMsg = initialOpen.error || '';
-      const isCorruption = errorMsg.includes('not a valid DuckDB database file') || errorMsg.includes('corrupt');
-
-      if (fallbackOpfsPath && !opfsAvailable) {
-        console.warn('🦆 [Worker] Failed to open dataset-scoped OPFS path, trying default:', fallbackOpfsPath);
-        await openOpfsPath(fallbackOpfsPath, 'OPFS fallback path');
-      }
-
-      if (!opfsAvailable && isCorruption) {
-        console.error('🦆 [Worker] OPFS corruption detected:', errorMsg);
-        await quarantineCorruptedDb(desiredOpfsPath);
-      }
-
-      if (!opfsAvailable && isCorruption) {
-        const candidates = await listOpfsDbFiles();
-        for (const candidate of candidates) {
-          const candidatePath = `opfs://${candidate.name}`;
-          if (candidatePath === desiredOpfsPath || candidatePath === fallbackOpfsPath) {
-            continue;
-          }
-          const candidateOpen = await openOpfsPath(candidatePath, 'OPFS candidate DB');
-          if (candidateOpen.ok) {
-            break;
-          }
-        }
-      }
-
-      if (!opfsAvailable && isCorruption) {
-        const repairPath = buildRepairDbPath();
-        const repairOpen = await openOpfsPath(repairPath, 'OPFS repair path');
-        if (!repairOpen.ok) {
-          console.warn('🦆 [Worker] OPFS repair open failed, falling back to memory');
-          persistenceMode = 'memory';
-          persistenceError = errorMsg;
-          activeDbPath = ':memory:';
-          return { opfsAvailable: false, corruptionDetected: true, corruptionMessage: errorMsg };
-        }
-      } else if (!opfsAvailable) {
-        console.warn('🦆 [Worker] OPFS not available, falling back to in-memory:', errorMsg);
-        persistenceMode = 'memory';
-        persistenceError = errorMsg;
-        activeDbPath = ':memory:';
-      }
+  const openOpfsPath = async (path: string, label: string): Promise<{ ok: boolean; error?: string }> => {
+    try {
+      await db.open({
+        path,
+        accessMode: duckdb.DuckDBAccessMode.READ_WRITE
+      });
+      console.log(`🦆 [Worker] DuckDB opened with ${label}:`, path);
+      return { ok: true };
+    } catch (error: any) {
+      const message = error?.message || String(error);
+      console.warn(`🦆 [Worker] ${label} open failed:`, message);
+      return { ok: false, error: message };
     }
+  };
+
+  const initResult = await initOpfsPersistence({
+    enableOpfs: ENABLE_OPFS,
+    opfsSupport,
+    desiredPath: desiredOpfsPath,
+    fallbackPath: fallbackOpfsPath,
+    openPath: openOpfsPath,
+    listCandidates: async () => {
+      const candidates = await listOpfsDbFiles();
+      return candidates.map((candidate) => ({ path: `opfs://${candidate.path}` }));
+    },
+    quarantine: quarantineCorruptedDb,
+    buildRepairPath: buildRepairDbPath,
+    openMemory: async () => {
+      await db.open({ path: ':memory:' });
+    },
+  });
+
+  opfsAvailable = initResult.opfsAvailable;
+  persistenceMode = initResult.mode;
+  persistenceError = initResult.persistenceError ?? null;
+  activeDbPath = initResult.activeDbPath;
+
+  if (initResult.corruptionDetected) {
+    console.error('🦆 [Worker] OPFS corruption detected:', initResult.corruptionMessage);
   }
 
   if (!opfsAvailable) {
@@ -385,7 +332,11 @@ async function init(forceCleanStart: boolean = false): Promise<{ opfsAvailable: 
 
   startKeepalive();
 
-  return { opfsAvailable };
+  return {
+    opfsAvailable,
+    corruptionDetected: initResult.corruptionDetected,
+    corruptionMessage: initResult.corruptionMessage,
+  };
 }
 
 function getPersistenceStatus() {
@@ -846,16 +797,15 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
             type: 'corruptionDetected',
             message: initResult.corruptionMessage || 'OPFS database corruption detected'
           } as WorkerResponse);
-        } else {
-          self.postMessage({
-            type: 'persistenceStatus',
-            ...getPersistenceStatus()
-          } as WorkerResponse);
-          self.postMessage({
-            type: 'ready',
-            opfsAvailable: initResult.opfsAvailable
-          } as WorkerResponse);
         }
+        self.postMessage({
+          type: 'persistenceStatus',
+          ...getPersistenceStatus()
+        } as WorkerResponse);
+        self.postMessage({
+          type: 'ready',
+          opfsAvailable: initResult.opfsAvailable
+        } as WorkerResponse);
         break;
       }
 

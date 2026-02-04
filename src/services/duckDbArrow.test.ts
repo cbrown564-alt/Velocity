@@ -16,6 +16,7 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import * as duckdb from '@duckdb/duckdb-wasm';
 import * as arrow from 'apache-arrow';
+import { getLocalDuckDbBundles, resolveDuckDbBundleUrls } from './duckdbBundles';
 
 // These tests are ALWAYS skipped in vitest because happy-dom's Worker
 // polyfill doesn't support the full Worker API required by DuckDB WASM.
@@ -31,8 +32,7 @@ describeBrowserOnly('DuckDB-WASM Arrow Integration', () => {
 
     beforeAll(async () => {
         // Initialize DuckDB-WASM
-        const JSDELIVR_BUNDLES = duckdb.getJsDelivrBundles();
-        const bundle = await duckdb.selectBundle(JSDELIVR_BUNDLES);
+        const bundle = resolveDuckDbBundleUrls(await duckdb.selectBundle(getLocalDuckDbBundles()));
 
         if (!bundle.mainWorker) {
             throw new Error('No main worker URL found in bundle');

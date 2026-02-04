@@ -15,8 +15,9 @@
  */
 
 import * as duckdb from '@duckdb/duckdb-wasm';
+import { getLocalDuckDbBundles, resolveDuckDbBundleUrls } from './duckdbBundles';
 
-const JSDELIVR_BUNDLES = duckdb.getJsDelivrBundles();
+const DUCKDB_BUNDLES = getLocalDuckDbBundles();
 
 export class DuckDBService {
   private static instance: DuckDBService;
@@ -37,7 +38,7 @@ export class DuckDBService {
     if (this.isInitialized) return;
 
     // Select the best bundle for the browser
-    const bundle = await duckdb.selectBundle(JSDELIVR_BUNDLES);
+    const bundle = resolveDuckDbBundleUrls(await duckdb.selectBundle(DUCKDB_BUNDLES));
     console.log("🦆 DuckDB Bundle Selected:", bundle);
 
     if (!bundle.mainWorker) {

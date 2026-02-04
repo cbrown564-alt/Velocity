@@ -216,12 +216,12 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                             resolve();
                             break;
                         case 'corruptionDetected':
-                            worker.removeEventListener('message', initHandler);
                             console.warn('[DataSlice] OPFS corruption detected:', response.message);
-                            set({ persistenceState: 'corrupt' });
-                            // Respawn worker with clean start
-                            get().respawnWorker(true);
-                            resolve(); // Resolve - respawn will handle the rest
+                            set({
+                                persistenceState: 'corrupt',
+                                persistenceError: response.message || 'OPFS database corruption detected',
+                                opfsAvailable: false
+                            });
                             break;
                         case 'error':
                             worker.removeEventListener('message', initHandler);
@@ -241,13 +241,8 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
             };
 
             set({ worker, persistenceState: 'checking' });
-            if (get().dataset?.id) {
-                worker.postMessage({
-                    type: 'setPersistenceContext',
-                    datasetId: get().dataset?.id
-                } as WorkerRequest);
-            }
-            worker.postMessage({ type: 'init' } as WorkerRequest);
+            const datasetId = get().dataset?.id;
+            worker.postMessage({ type: 'init', datasetId, schemaVersion: 1 } as WorkerRequest);
 
             await initPromise;
 
@@ -317,15 +312,12 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                             resolve();
                             break;
                         case 'corruptionDetected':
-                            // This shouldn't happen with cleanStart, but handle it
-                            worker.removeEventListener('message', initHandler);
-                            console.error('[DataSlice] Corruption still detected after clean start');
+                            console.warn('[DataSlice] OPFS corruption detected during respawn:', response.message);
                             set({
-                                initError: 'Unable to recover from OPFS corruption',
-                                persistenceState: 'error',
+                                persistenceState: 'corrupt',
+                                persistenceError: response.message || 'OPFS database corruption detected',
                                 opfsAvailable: false
                             });
-                            reject(new Error('Unable to recover from corruption'));
                             break;
                         case 'error':
                             worker.removeEventListener('message', initHandler);
@@ -339,13 +331,8 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
             });
 
             set({ worker });
-            if (get().dataset?.id) {
-                worker.postMessage({
-                    type: 'setPersistenceContext',
-                    datasetId: get().dataset?.id
-                } as WorkerRequest);
-            }
-            worker.postMessage({ type: 'init', forceCleanStart: cleanStart } as WorkerRequest);
+            const datasetId = get().dataset?.id;
+            worker.postMessage({ type: 'init', forceCleanStart: cleanStart, datasetId, schemaVersion: 1 } as WorkerRequest);
 
             await initPromise;
         } catch (error: any) {
