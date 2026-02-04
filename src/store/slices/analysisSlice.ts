@@ -21,12 +21,17 @@ export interface TableConfig {
 
 export type ComparisonMethod = 'cell_vs_rest' | 'pairwise';
 export type CorrectionType = 'none' | 'bonferroni' | 'fdr';
+export type AnalysisEngine = 'auto' | 'duckdb' | 'webr';
 
 export interface AnalysisSettings {
     comparisonMethod: ComparisonMethod;
     correctionType: CorrectionType;
     showConfidenceIntervals: boolean;
     significanceLevel: 0.95 | 0.90 | 0.80;
+    /** Analysis engine selection: auto selects WebR for design effects/mixed models */
+    engine: AnalysisEngine;
+    /** Enable design effect calculation (requires WebR) */
+    enableDesignEffects: boolean;
 }
 
 export interface Filter {
@@ -80,6 +85,8 @@ const defaultAnalysisSettings: AnalysisSettings = {
     correctionType: 'none',
     showConfidenceIntervals: false,
     significanceLevel: 0.95,
+    engine: 'auto',
+    enableDesignEffects: false,
 };
 
 export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({

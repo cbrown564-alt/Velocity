@@ -21,7 +21,7 @@ export default defineConfig(({ mode }) => {
       }
     },
     optimizeDeps: {
-      exclude: ['@velocity/readstat-wasm'],
+      exclude: ['@velocity/readstat-wasm', 'webr'],
       include: [
         '@uwdata/vgplot',
         '@uwdata/mosaic-core',

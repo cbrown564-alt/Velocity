@@ -1,0 +1,363 @@
+/**
+ * SurveyWeightingRunner
+ *
+ * Analysis runner for complex survey designs using the R survey package.
+ * Computes design effects (deff), properly weighted estimates, and
+ * correctly accounts for stratification and clustering.
+ *
+ * Requires WebR engine.
+ */
+
+import type { AnalysisRunner } from '../AnalysisRunner';
+import type { DatabaseAdapter } from '../../DatabaseAdapter';
+import type {
+  SurveyDesignConfig,
+  SurveyResult,
+  SurveyStatistic,
+} from '../../../types/webr';
+import { analysisRegistry } from '../registry';
+
+// ============================================================================
+// Configuration Types
+// ============================================================================
+
+export interface SurveyWeightingConfig {
+  /** Variables to analyze (compute means/totals for) */
+  analysisVariables: string[];
+
+  /** Weight variable name */
+  weightVariable?: string;
+
+  /** Cluster/PSU variable for complex designs */
+  clusterVariable?: string;
+
+  /** Strata variable for stratified designs */
+  strataVariable?: string;
+
+  /** Finite population correction (variable name or fixed value) */
+  fpc?: string | number;
+
+  /** Statistics to compute */
+  statistics: SurveyStatistic[];
+
+  /** Grouping variable for subgroup analysis */
+  byVariable?: string;
+
+  /** Table filter SQL WHERE clause (optional) */
+  filterClause?: string;
+}
+
+export interface SurveyWeightingResult {
+  /** Design effect (deff) for each variable */
+  designEffects: Record<string, number>;
+
+  /** Point estimates (means/totals) */
+  estimates: Record<string, number>;
+
+  /** Standard errors accounting for complex design */
+  standardErrors: Record<string, number>;
+
+  /** 95% confidence intervals */
+  confidenceIntervals: Record<string, { lower: number; upper: number }>;
+
+  /** Effective sample size (n / deff) */
+  effectiveSampleSizes: Record<string, number>;
+
+  /** Original sample size */
+  sampleSize: number;
+
+  /** Results by group if byVariable specified */
+  byGroupResults?: Record<string, Omit<SurveyWeightingResult, 'byGroupResults'>>;
+
+  /** Generated R code for reproducibility */
+  rCode: string;
+
+  /** Raw R output */
+  rawOutput?: string;
+
+  /** Execution time */
+  durationMs: number;
+}
+
+// ============================================================================
+// Runner Implementation
+// ============================================================================
+
+export class SurveyWeightingRunner
+  implements AnalysisRunner<SurveyWeightingConfig, SurveyWeightingResult>
+{
+  readonly id = 'surveyWeighting';
+  readonly label = 'Survey Weighting (Design Effects)';
+  readonly configSchema = {
+    type: 'object',
+    properties: {
+      analysisVariables: {
+        type: 'array',
+        items: { type: 'string' },
+        description: 'Variables to compute weighted statistics for',
+      },
+      weightVariable: {
+        type: 'string',
+        description: 'Weight variable name',
+      },
+      clusterVariable: {
+        type: 'string',
+        description: 'Cluster/PSU variable for complex designs',
+      },
+      strataVariable: {
+        type: 'string',
+        description: 'Strata variable for stratified sampling',
+      },
+      fpc: {
+        oneOf: [{ type: 'string' }, { type: 'number' }],
+        description: 'Finite population correction',
+      },
+      statistics: {
+        type: 'array',
+        items: {
+          type: 'string',
+          enum: ['mean', 'total', 'proportion', 'quantile', 'ratio', 'variance'],
+        },
+      },
+      byVariable: {
+        type: 'string',
+        description: 'Grouping variable for subgroup analysis',
+      },
+      filterClause: {
+        type: 'string',
+        description: 'SQL WHERE clause to filter data',
+      },
+    },
+    required: ['analysisVariables', 'statistics'],
+  };
+
+  /**
+   * This runner cannot use DatabaseAdapter directly since it needs WebR.
+   * Instead, it generates R code that should be executed via WebREngine.
+   *
+   * The actual execution happens in the store/UI layer which has access
+   * to both the DatabaseAdapter (for Arrow export) and WebREngine.
+   */
+  async run(
+    adapter: DatabaseAdapter,
+    config: SurveyWeightingConfig
+  ): Promise<SurveyWeightingResult> {
+    // This method is called from the DuckDB worker context, but we need WebR.
+    // For now, generate the R code and return a placeholder result.
+    // The actual WebR execution should be orchestrated at a higher level.
+
+    const rCode = this.generateRCode(config);
+
+    return {
+      designEffects: {},
+      estimates: {},
+      standardErrors: {},
+      confidenceIntervals: {},
+      effectiveSampleSizes: {},
+      sampleSize: 0,
+      rCode,
+      durationMs: 0,
+    };
+  }
+
+  /**
+   * Generate R code for survey analysis
+   */
+  generateRCode(config: SurveyWeightingConfig): string {
+    const lines: string[] = [];
+
+    lines.push('# Survey Analysis - Generated by Velocity');
+    lines.push('library(survey)');
+    lines.push('');
+
+    // Data is expected to be pre-loaded as 'df'
+    lines.push('# Note: Data should be loaded as "df" before running this code');
+    lines.push('');
+
+    // Build survey design
+    lines.push('# Create survey design object');
+    lines.push(this.buildDesignCode(config));
+    lines.push('');
+
+    // Compute statistics
+    for (const stat of config.statistics) {
+      lines.push(`# Compute ${stat}`);
+      lines.push(this.buildStatisticCode(config, stat));
+      lines.push('');
+    }
+
+    // Extract results
+    lines.push('# Extract results');
+    lines.push(this.buildExtractionCode(config));
+
+    return lines.join('\n');
+  }
+
+  /**
+   * Convert config to SurveyDesignConfig for WebR worker
+   */
+  toWebRConfig(config: SurveyWeightingConfig): SurveyDesignConfig {
+    let designType: SurveyDesignConfig['designType'] = 'simple';
+
+    if (config.clusterVariable && config.strataVariable) {
+      designType = 'twostage';
+    } else if (config.clusterVariable) {
+      designType = 'cluster';
+    } else if (config.strataVariable) {
+      designType = 'stratified';
+    }
+
+    return {
+      weightVar: config.weightVariable,
+      clusterVar: config.clusterVariable,
+      strataVar: config.strataVariable,
+      fpc: config.fpc,
+      designType,
+      analysisVars: config.analysisVariables,
+      byVar: config.byVariable,
+      statistics: config.statistics,
+    };
+  }
+
+  validate(config: SurveyWeightingConfig): string[] {
+    const errors: string[] = [];
+
+    if (!config.analysisVariables || config.analysisVariables.length === 0) {
+      errors.push('At least one analysis variable is required');
+    }
+
+    if (!config.statistics || config.statistics.length === 0) {
+      errors.push('At least one statistic type is required');
+    }
+
+    // Warn if no weighting/design specified (results will be same as simple analysis)
+    if (!config.weightVariable && !config.clusterVariable && !config.strataVariable) {
+      errors.push('Warning: No survey design specified. Results will match simple random sample analysis.');
+    }
+
+    return errors;
+  }
+
+  // ============================================================================
+  // Private Helpers
+  // ============================================================================
+
+  private buildDesignCode(config: SurveyWeightingConfig): string {
+    const parts: string[] = ['design <- svydesign('];
+
+    // IDs (clusters)
+    if (config.clusterVariable) {
+      parts.push(`  ids = ~${config.clusterVariable},`);
+    } else {
+      parts.push('  ids = ~1,');
+    }
+
+    // Strata
+    if (config.strataVariable) {
+      parts.push(`  strata = ~${config.strataVariable},`);
+    }
+
+    // Weights
+    if (config.weightVariable) {
+      parts.push(`  weights = ~${config.weightVariable},`);
+    }
+
+    // FPC
+    if (config.fpc !== undefined) {
+      if (typeof config.fpc === 'string') {
+        parts.push(`  fpc = ~${config.fpc},`);
+      } else {
+        parts.push(`  fpc = rep(${config.fpc}, nrow(df)),`);
+      }
+    }
+
+    parts.push('  data = df');
+    parts.push(')');
+
+    return parts.join('\n');
+  }
+
+  private buildStatisticCode(
+    config: SurveyWeightingConfig,
+    statistic: SurveyStatistic
+  ): string {
+    const formula = `~${config.analysisVariables.join(' + ')}`;
+    const resultVar = `result_${statistic}`;
+
+    if (config.byVariable) {
+      switch (statistic) {
+        case 'mean':
+          return `${resultVar} <- svyby(${formula}, ~${config.byVariable}, design, svymean, deff = TRUE, na.rm = TRUE)`;
+        case 'total':
+          return `${resultVar} <- svyby(${formula}, ~${config.byVariable}, design, svytotal, deff = TRUE, na.rm = TRUE)`;
+        case 'proportion':
+          return `${resultVar} <- svyby(${formula}, ~${config.byVariable}, design, svymean, deff = TRUE, na.rm = TRUE)`;
+        case 'variance':
+          return `${resultVar} <- svyby(${formula}, ~${config.byVariable}, design, svyvar, na.rm = TRUE)`;
+        case 'quantile':
+          return `${resultVar} <- svyby(${formula}, ~${config.byVariable}, design, svyquantile, quantiles = c(0.25, 0.5, 0.75), na.rm = TRUE)`;
+        default:
+          return `# Statistic "${statistic}" not supported with by-groups`;
+      }
+    } else {
+      switch (statistic) {
+        case 'mean':
+          return `${resultVar} <- svymean(${formula}, design, deff = TRUE, na.rm = TRUE)`;
+        case 'total':
+          return `${resultVar} <- svytotal(${formula}, design, deff = TRUE, na.rm = TRUE)`;
+        case 'proportion':
+          return `${resultVar} <- svymean(${formula}, design, deff = TRUE, na.rm = TRUE)`;
+        case 'variance':
+          return `${resultVar} <- svyvar(${formula}, design, na.rm = TRUE)`;
+        case 'quantile':
+          return `${resultVar} <- svyquantile(${formula}, design, quantiles = c(0.25, 0.5, 0.75), na.rm = TRUE)`;
+        default:
+          return `# Statistic "${statistic}" not implemented`;
+      }
+    }
+  }
+
+  private buildExtractionCode(config: SurveyWeightingConfig): string {
+    const lines: string[] = [];
+
+    if (config.statistics.includes('mean')) {
+      lines.push('# Estimates');
+      lines.push('estimates <- coef(result_mean)');
+      lines.push('');
+      lines.push('# Standard errors');
+      lines.push('se <- SE(result_mean)');
+      lines.push('');
+      lines.push('# Design effects');
+      lines.push('deff <- deff(result_mean)');
+      lines.push('');
+      lines.push('# Confidence intervals');
+      lines.push('ci <- confint(result_mean)');
+      lines.push('');
+      lines.push('# Effective sample size');
+      lines.push('n <- nrow(df)');
+      lines.push('n_eff <- n / deff');
+    }
+
+    lines.push('');
+    lines.push('# Compile results');
+    lines.push('results <- list(');
+    lines.push('  estimates = estimates,');
+    lines.push('  se = se,');
+    lines.push('  deff = deff,');
+    lines.push('  ci = ci,');
+    lines.push('  n = n,');
+    lines.push('  n_eff = n_eff');
+    lines.push(')');
+
+    return lines.join('\n');
+  }
+}
+
+// ============================================================================
+// Singleton & Registration
+// ============================================================================
+
+export const surveyWeightingRunner = new SurveyWeightingRunner();
+
+// Register with central registry
+analysisRegistry.register(surveyWeightingRunner);

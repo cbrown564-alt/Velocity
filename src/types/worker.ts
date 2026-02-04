@@ -52,6 +52,7 @@ export type WorkerRequest =
     chartType?: ChartType;
   }
   | { type: 'runAnalysis'; id: string; config: any }
+  | { type: 'exportArrow'; sql: string; columns?: string[] }
   | { type: 'ping' };
 
 // ============================================================================
@@ -117,4 +118,5 @@ export type WorkerResponse =
   | { type: 'pong'; hasData: boolean; rowCount?: number }
   | { type: 'processedData'; requestId?: string; result: ProcessedAnalysisData | null }
   | { type: 'analysisResult'; id: string; result: any; durationMs: number }
+  | { type: 'arrowExported'; buffer: ArrayBuffer; rowCount: number; durationMs: number }
   | { type: 'error'; message: string };

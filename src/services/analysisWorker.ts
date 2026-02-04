@@ -938,6 +938,36 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
         break;
       }
 
+      case 'exportArrow': {
+        if (!conn) throw new Error('DB not initialized');
+
+        const start = performance.now();
+
+        // Execute query and get Arrow result
+        const result = await conn.query(request.sql);
+
+        // Convert to Arrow IPC format
+        const arrowTable = result;
+        const ipcBuffer = arrow.tableToIPC(arrowTable);
+
+        const durationMs = performance.now() - start;
+        const rowCount = result.numRows;
+
+        console.log(`🦆 [Worker] Exported Arrow IPC: ${rowCount} rows in ${durationMs.toFixed(2)}ms`);
+
+        // Transfer the buffer (zero-copy)
+        (self as unknown as Worker).postMessage(
+          {
+            type: 'arrowExported',
+            buffer: ipcBuffer.buffer,
+            rowCount,
+            durationMs,
+          } as WorkerResponse,
+          [ipcBuffer.buffer as Transferable]
+        );
+        break;
+      }
+
       case 'processData': {
         const processed = processAnalysisData({
           data: request.data,
