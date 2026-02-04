@@ -6,6 +6,11 @@ interface CellStats {
   effN: number;
 }
 
+interface ConfidenceInterval {
+  lower: number;
+  upper: number;
+}
+
 type SignificanceLevel = 'high_95' | 'high_80' | 'low_95' | 'low_80' | undefined;
 
 interface StatisticsTooltipProps {
@@ -15,6 +20,10 @@ interface StatisticsTooltipProps {
   value: number;
   /** Whether this is a mean (metric) or percent (frequency) */
   isMetric?: boolean;
+  /** 95% Confidence interval */
+  ci95?: ConfidenceInterval;
+  /** 80% Confidence interval */
+  ci80?: ConfidenceInterval;
 }
 
 /**
@@ -29,6 +38,8 @@ export const StatisticsTooltip: React.FC<StatisticsTooltipProps> = ({
   sig,
   value,
   isMetric = false,
+  ci95,
+  ci80,
 }) => {
   const { tScore, pValue, effN } = stats;
 
@@ -115,6 +126,35 @@ export const StatisticsTooltip: React.FC<StatisticsTooltipProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Confidence Intervals */}
+      {ci95 && (
+        <div className="pt-2 border-t border-[var(--border-color)]">
+          <div className="text-[10px] text-[var(--text-secondary)] uppercase tracking-wide mb-1">
+            Confidence Intervals
+          </div>
+          <div className="grid grid-cols-2 gap-2 text-xs">
+            <div>
+              <span className="text-[var(--text-secondary)]">95% CI: </span>
+              <span className="font-mono">
+                {isMetric
+                  ? `${ci95.lower.toFixed(2)} – ${ci95.upper.toFixed(2)}`
+                  : `${(ci95.lower * 100).toFixed(1)}% – ${(ci95.upper * 100).toFixed(1)}%`}
+              </span>
+            </div>
+            {ci80 && (
+              <div>
+                <span className="text-[var(--text-secondary)]">80% CI: </span>
+                <span className="font-mono">
+                  {isMetric
+                    ? `${ci80.lower.toFixed(2)} – ${ci80.upper.toFixed(2)}`
+                    : `${(ci80.lower * 100).toFixed(1)}% – ${(ci80.upper * 100).toFixed(1)}%`}
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Interpretation */}
       <div className="pt-2 border-t border-[var(--border-color)]">

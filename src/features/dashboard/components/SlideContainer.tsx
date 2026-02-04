@@ -30,6 +30,7 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
     const totalCount = useVelocityStore((state) => state.dataset?.rowCount || 0);
     const isWeighted = useVelocityStore((state) => !!state.dataset?.weightVariable);
     const variableStats = useVelocityStore((state) => state.activeVariableStats);
+    const tableStats = useVelocityStore((state) => state.tableStats);
 
     /**
      * Resolve VariableSet IDs to Variable objects.
@@ -101,6 +102,7 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
                             totalCount={totalCount}
                             isWeighted={isWeighted}
                             variableStats={variableStats}
+                            tableStats={tableStats}
                             isMultipleResponse={isMultipleResponse}
                             isGrid={firstVarSet?.structure === 'grid'}
                         />

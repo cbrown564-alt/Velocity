@@ -245,11 +245,13 @@ describe('Weighted Mean Parity', () => {
 
 ---
 
-### Phase 3A: Feature Expansion (Core Statistics)
+### Phase 3A: Feature Expansion (Core Statistics) ✅ COMPLETED
 
 **Goal:** Add frequently-requested statistical features
 
-#### Task 3A.1: Chi-Square Independence Test
+**Status:** Implemented 2026-02-04
+
+#### Task 3A.1: Chi-Square Independence Test ✅
 
 **Use Case:** Test if two categorical variables are independent.
 
@@ -278,7 +280,13 @@ export function calculateChiSquare(
 
 **UI:** Show chi-square result in table footer when both row and column are categorical.
 
-#### Task 3A.2: Confidence Intervals
+**Implementation:**
+- Added `calculateChiSquare()` and `chiSquareCDF()` to `src/services/statistics.ts`
+- Chi-square with Cramér's V effect size
+- Display in table footer with tooltip showing details
+- 16 unit tests
+
+#### Task 3A.2: Confidence Intervals ✅
 
 **Use Case:** Show uncertainty bands, not just point estimates.
 
@@ -297,7 +305,13 @@ const ci95 = {
 - CI columns in table (optional toggle)
 - Hover tooltip showing CI range
 
-#### Task 3A.3: Pairwise Column Comparisons (Letters)
+**Implementation:**
+- Added `calculateMeanCI()` (z-score based) and `calculateProportionCI()` (Wilson score interval)
+- CI computed in `crosstabRunner.ts` alongside significance tests
+- Displayed in StatisticsTooltip component
+- 9 unit tests
+
+#### Task 3A.3: Pairwise Column Comparisons (Letters) ✅
 
 **Use Case:** "Is Brand A significantly different from Brand B?" (not just vs Rest)
 
@@ -330,13 +344,21 @@ for (let i = 0; i < columns.length; i++) {
 
 **Complexity Warning:** O(N²) comparisons. For 10 columns = 45 tests. Consider lazy computation.
 
+**Implementation:**
+- Added `calculatePairwiseComparisons()` to `src/services/statistics.ts`
+- Computes t-tests between all column pairs, assigns letters (A, B, C, ...)
+- Column letters shown in headers, sig letters shown next to cell values
+- 5 unit tests
+
 ---
 
-### Phase 3B: Multiple Comparison Corrections
+### Phase 3B: Multiple Comparison Corrections ✅ COMPLETED
 
 **Goal:** Control false discovery rate when many tests are run
 
-#### Task 3B.1: Bonferroni Correction
+**Status:** Implemented 2026-02-04
+
+#### Task 3B.1: Bonferroni Correction ✅
 
 **Use Case:** Conservative correction for family-wise error rate.
 
@@ -350,7 +372,11 @@ export function bonferroniCorrection(
 }
 ```
 
-#### Task 3B.2: Benjamini-Hochberg FDR
+**Implementation:**
+- Added `bonferroniCorrection()` and `bonferroniAdjustedPValues()` to statistics.ts
+- 3 unit tests
+
+#### Task 3B.2: Benjamini-Hochberg FDR ✅
 
 **Use Case:** Less conservative, controls expected proportion of false discoveries.
 
@@ -382,6 +408,21 @@ export function benjaminiHochbergFDR(
 ```
 
 **UI:** Toggle in analysis settings: "Correction: None | Bonferroni | FDR"
+
+**Implementation:**
+- Added `benjaminiHochbergFDR()` and `benjaminiHochbergAdjustedPValues()` to statistics.ts
+- Added `applyMultipleTestingCorrection()` helper function
+- 9 unit tests
+
+#### Task 3B.3: Analysis Settings UI ✅
+
+**What:** Settings panel for controlling statistical options.
+
+**Implementation:**
+- Created `AnalysisSettingsPanel` component
+- Added `AnalysisSettings` type to analysis slice
+- UI for: comparison method, correction type, CI toggle
+- Integrated into DataTable's methodology panel area
 
 ---
 

@@ -23,12 +23,13 @@ import { processMetadata } from '../core/ingestion/savLoader';
 import { escapeString } from './queryBuilder';
 import { analysisRegistry } from '../core/analysis/registry';
 import { ArrowChunkBuilder } from './arrowChunkBuilder';
+import { getLocalDuckDbBundles, resolveDuckDbBundleUrls } from './duckdbBundles';
 
 // Re-export types from canonical location for backward compatibility
 export type { WorkerRequest, WorkerResponse, VariableStatsResult, VariableStatsFrequency, NumericStats, PersistedMetadata } from '../types/worker';
 import type { WorkerRequest, WorkerResponse, VariableStatsResult, PersistedMetadata } from '../types/worker';
 
-const JSDELIVR_BUNDLES = duckdb.getJsDelivrBundles();
+const DUCKDB_BUNDLES = getLocalDuckDbBundles();
 
 // OPFS database path for persistent storage
 const OPFS_BASE_NAME = 'velocity_data';
@@ -85,6 +86,33 @@ async function cleanOPFS(): Promise<void> {
   } catch (error: any) {
     console.warn('🦆 [Worker] Failed to clean OPFS:', error.message);
   }
+}
+
+async function listOpfsDbFiles(): Promise<{ name: string; lastModified: number }[]> {
+  const root = await navigator.storage.getDirectory();
+  const files: { name: string; lastModified: number }[] = [];
+
+  // @ts-expect-error - entries() returns an async iterator
+  for await (const [name, handle] of root.entries()) {
+    if (handle?.kind !== 'file') {
+      continue;
+    }
+    if (!name.startsWith(OPFS_BASE_NAME)) {
+      continue;
+    }
+    if (!name.endsWith('.db')) {
+      continue;
+    }
+    if (name.includes('.corrupt_')) {
+      continue;
+    }
+
+    const file = await (handle as FileSystemFileHandle).getFile();
+    files.push({ name, lastModified: file.lastModified });
+  }
+
+  files.sort((a, b) => b.lastModified - a.lastModified);
+  return files;
 }
 
 async function detectOpfsSupport(): Promise<{ supported: boolean; error?: string }> {
@@ -235,7 +263,7 @@ async function init(forceCleanStart: boolean = false): Promise<{ opfsAvailable: 
     await cleanOPFS();
   }
 
-  const bundle = await duckdb.selectBundle(JSDELIVR_BUNDLES);
+  const bundle = resolveDuckDbBundleUrls(await duckdb.selectBundle(DUCKDB_BUNDLES));
   console.log('🦆 [Worker] DuckDB Bundle Selected:', bundle);
 
   if (!bundle.mainWorker) {
@@ -279,69 +307,70 @@ async function init(forceCleanStart: boolean = false): Promise<{ opfsAvailable: 
     activeDbPath = ':memory:';
     console.log('🦆 [Worker] DuckDB opened in :memory: mode');
   } else {
-    try {
-      await db.open({
-        path: desiredOpfsPath,
-        accessMode: duckdb.DuckDBAccessMode.READ_WRITE
-      });
-      console.log('🦆 [Worker] DuckDB opened with OPFS persistence:', desiredOpfsPath);
-      opfsAvailable = true;
-      persistenceMode = 'opfs';
-      persistenceError = null;
-      activeDbPath = desiredOpfsPath;
-    } catch (opfsError: any) {
-      const errorMsg = opfsError.message || '';
+    const openOpfsPath = async (path: string, label: string): Promise<{ ok: boolean; error?: string }> => {
+      try {
+        await db.open({
+          path,
+          accessMode: duckdb.DuckDBAccessMode.READ_WRITE
+        });
+        console.log(`🦆 [Worker] DuckDB opened with ${label}:`, path);
+        opfsAvailable = true;
+        persistenceMode = 'opfs';
+        persistenceError = null;
+        activeDbPath = path;
+        return { ok: true };
+      } catch (error: any) {
+        const message = error?.message || String(error);
+        console.warn(`🦆 [Worker] ${label} open failed:`, message);
+        return { ok: false, error: message };
+      }
+    };
+
+    const initialOpen = await openOpfsPath(desiredOpfsPath, 'OPFS persistence');
+
+    if (!initialOpen.ok) {
+      const errorMsg = initialOpen.error || '';
       const isCorruption = errorMsg.includes('not a valid DuckDB database file') || errorMsg.includes('corrupt');
 
-      if (!forceCleanStart && fallbackOpfsPath) {
-        try {
-          console.warn('🦆 [Worker] Failed to open dataset-scoped OPFS path, trying default:', fallbackOpfsPath);
-          await db.open({
-            path: fallbackOpfsPath,
-            accessMode: duckdb.DuckDBAccessMode.READ_WRITE
-          });
-          console.log('🦆 [Worker] DuckDB opened with OPFS fallback path:', fallbackOpfsPath);
-          opfsAvailable = true;
-          persistenceMode = 'opfs';
-          persistenceError = null;
-          activeDbPath = fallbackOpfsPath;
-        } catch (fallbackError: any) {
-          console.warn('🦆 [Worker] OPFS fallback path also failed:', fallbackError?.message || fallbackError);
+      if (fallbackOpfsPath && !opfsAvailable) {
+        console.warn('🦆 [Worker] Failed to open dataset-scoped OPFS path, trying default:', fallbackOpfsPath);
+        await openOpfsPath(fallbackOpfsPath, 'OPFS fallback path');
+      }
+
+      if (!opfsAvailable && isCorruption) {
+        console.error('🦆 [Worker] OPFS corruption detected:', errorMsg);
+        await quarantineCorruptedDb(desiredOpfsPath);
+      }
+
+      if (!opfsAvailable && isCorruption) {
+        const candidates = await listOpfsDbFiles();
+        for (const candidate of candidates) {
+          const candidatePath = `opfs://${candidate.name}`;
+          if (candidatePath === desiredOpfsPath || candidatePath === fallbackOpfsPath) {
+            continue;
+          }
+          const candidateOpen = await openOpfsPath(candidatePath, 'OPFS candidate DB');
+          if (candidateOpen.ok) {
+            break;
+          }
         }
       }
 
-      if (!opfsAvailable) {
-        if (isCorruption && !forceCleanStart) {
-          console.error('🦆 [Worker] OPFS corruption detected:', errorMsg);
-          await quarantineCorruptedDb(desiredOpfsPath);
-          const repairPath = buildRepairDbPath();
-          try {
-            await db.open({
-              path: repairPath,
-              accessMode: duckdb.DuckDBAccessMode.READ_WRITE
-            });
-            console.log('🦆 [Worker] DuckDB opened with repaired OPFS path:', repairPath);
-            opfsAvailable = true;
-            persistenceMode = 'opfs';
-            persistenceError = null;
-            activeDbPath = repairPath;
-          } catch (repairError: any) {
-            console.warn('🦆 [Worker] OPFS repair open failed, falling back to memory:', repairError?.message || repairError);
-            persistenceMode = 'memory';
-            persistenceError = errorMsg;
-            activeDbPath = ':memory:';
-            return { opfsAvailable: false, corruptionDetected: true, corruptionMessage: errorMsg };
-          }
-        } else if (isCorruption && forceCleanStart) {
-          console.warn('🦆 [Worker] OPFS still corrupted after cleanup, falling back to in-memory mode');
-        } else {
-          console.warn('🦆 [Worker] OPFS not available, falling back to in-memory:', errorMsg);
-        }
-        if (!opfsAvailable) {
+      if (!opfsAvailable && isCorruption) {
+        const repairPath = buildRepairDbPath();
+        const repairOpen = await openOpfsPath(repairPath, 'OPFS repair path');
+        if (!repairOpen.ok) {
+          console.warn('🦆 [Worker] OPFS repair open failed, falling back to memory');
           persistenceMode = 'memory';
           persistenceError = errorMsg;
           activeDbPath = ':memory:';
+          return { opfsAvailable: false, corruptionDetected: true, corruptionMessage: errorMsg };
         }
+      } else if (!opfsAvailable) {
+        console.warn('🦆 [Worker] OPFS not available, falling back to in-memory:', errorMsg);
+        persistenceMode = 'memory';
+        persistenceError = errorMsg;
+        activeDbPath = ':memory:';
       }
     }
   }
@@ -401,6 +430,19 @@ async function checkPersistedData(): Promise<{ exists: boolean; schema?: { name:
 async function clearPersistedData(): Promise<void> {
   if (!conn) throw new Error('DB not initialized');
   await conn.query(`DROP TABLE IF EXISTS main`);
+  await conn.query(`DROP TABLE IF EXISTS ${META_TABLE}`);
+  if (activeDbPath.startsWith('opfs://')) {
+    try {
+      const opfsRoot = await navigator.storage.getDirectory();
+      const fileName = activeDbPath.replace('opfs://', '');
+      await opfsRoot.removeEntry(fileName);
+      console.log('🦆 [Worker] Removed OPFS DB file:', fileName);
+    } catch (error: any) {
+      if (error?.name !== 'NotFoundError') {
+        console.warn('🦆 [Worker] Failed to remove OPFS DB file:', error?.message || error);
+      }
+    }
+  }
   console.log('🦆 [Worker] Persisted data cleared');
 }
 
@@ -792,6 +834,12 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
       }
 
       case 'init': {
+        if (request.datasetId || request.schemaVersion) {
+          persistenceContext = {
+            datasetId: request.datasetId,
+            schemaVersion: request.schemaVersion ?? OPFS_SCHEMA_VERSION,
+          };
+        }
         const initResult = await init(request.forceCleanStart);
         if (initResult.corruptionDetected) {
           self.postMessage({
@@ -884,11 +932,12 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
       case 'runCrosstab': {
         if (!adapter) throw new Error('DB not initialized');
         const start = performance.now();
-        const crosstabData = await coreRunCrosstab(adapter, request.options, request.context);
+        const crosstabResult = await coreRunCrosstab(adapter, request.options, request.context);
         const duration = performance.now() - start;
         self.postMessage({
           type: 'queryResult',
-          data: crosstabData,
+          data: crosstabResult.rows,
+          tableStats: crosstabResult.tableStats,
           durationMs: duration
         } as WorkerResponse);
         break;

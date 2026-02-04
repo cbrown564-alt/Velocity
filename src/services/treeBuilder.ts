@@ -138,6 +138,10 @@ export const buildTree = (
                 percent,
                 sig: matchingRows[0]?.sig,
                 stats: matchingRows[0]?.stats,
+                ci95: matchingRows[0]?.ci95,
+                ci80: matchingRows[0]?.ci80,
+                sigLetters: matchingRows[0]?.sigLetters,
+                columnLetter: matchingRows[0]?.columnLetter,
                 // Pass through metric data
                 mean: hasMetric ? metricRow.mean : undefined,
                 median: hasMetric ? metricRow.median : undefined,

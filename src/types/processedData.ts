@@ -5,6 +5,12 @@ import { AggregatedRow, Variable, HistogramBin } from './index';
 // Types
 // ============================================================================
 
+/** Confidence interval */
+export interface ConfidenceInterval {
+    lower: number;
+    upper: number;
+}
+
 /** A processed cell with resolved data */
 export interface ProcessedCell {
     count: number;
@@ -17,6 +23,14 @@ export interface ProcessedCell {
         pValue: number;
         effN: number;
     };
+    /** 95% Confidence interval for mean or proportion */
+    ci95?: ConfidenceInterval;
+    /** 80% Confidence interval for mean or proportion */
+    ci80?: ConfidenceInterval;
+    /** Pairwise comparison letters (e.g., "BC" means significantly higher than columns B and C) */
+    sigLetters?: string;
+    /** Column letter for this cell's column (A, B, C, etc.) */
+    columnLetter?: string;
     /** Scale variable stats */
     mean?: number;
     median?: number;

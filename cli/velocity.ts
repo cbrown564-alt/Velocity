@@ -281,7 +281,7 @@ program
     const colVariable = opts.cols ? varMap[opts.cols] || null : null;
 
     const processed = processAnalysisData({
-      data: crosstabData,
+      data: crosstabData.rows,
       rowVariables,
       colVariable,
       isWeighted: !!opts.weight,

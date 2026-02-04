@@ -18,7 +18,7 @@ import {
   escapeIdentifier,
   escapeString,
 } from '../../services/queryBuilder';
-import { calculateTScore, calculateESS, calculatePValue } from '../../services/statistics';
+import { calculateTScore, calculateESS, calculatePValue, calculateChiSquare, ChiSquareResult, calculateMeanCI, calculateProportionCI, calculatePairwiseComparisons, ColumnStats } from '../../services/statistics';
 import { AnalysisRunner } from './AnalysisRunner';
 import { analysisRegistry } from './registry';
 
@@ -28,7 +28,14 @@ export interface CrosstabContext {
 }
 
 export type CrosstabConfig = CrosstabQueryOptions & { includeDistributions?: boolean; context: CrosstabContext };
-export type CrosstabResult = any[];
+export interface CrosstabResultData {
+  rows: any[];
+  tableStats?: {
+    chiSquare?: ChiSquareResult;
+  };
+}
+
+export type CrosstabResult = CrosstabResultData;
 
 export class CrosstabRunner implements AnalysisRunner<CrosstabConfig, CrosstabResult> {
   readonly id = 'crosstab';
@@ -46,7 +53,8 @@ export class CrosstabRunner implements AnalysisRunner<CrosstabConfig, CrosstabRe
 
   async run(adapter: DatabaseAdapter, config: CrosstabConfig): Promise<CrosstabResult> {
     const { context, ...options } = config;
-    return runCrosstab(adapter, options, context);
+    const result = await runCrosstab(adapter, options, context);
+    return result;
   }
 }
 
@@ -60,7 +68,7 @@ export async function runCrosstab(
   adapter: DatabaseAdapter,
   options: CrosstabQueryOptions & { includeDistributions?: boolean },
   context: CrosstabContext
-): Promise<any[]> {
+): Promise<CrosstabResultData> {
   const modifiedOptions = { ...options };
 
   // 0. Synthetic Grid Variable Expansion
@@ -435,9 +443,125 @@ export async function runCrosstab(
         } else if (absT > 1.28) {
           row.sig = tScore > 0 ? 'high_80' : 'low_80';
         }
+
+        // Compute confidence intervals
+        if (isMeans && row.mean !== undefined && row.stdDev !== undefined) {
+          // CI for mean
+          row.ci95 = calculateMeanCI(Number(row.mean), Number(row.stdDev), cellESS, 0.95);
+          row.ci80 = calculateMeanCI(Number(row.mean), Number(row.stdDev), cellESS, 0.80);
+        } else if (!isMeans) {
+          // CI for proportion
+          const colKey = row.colKey || 'Total';
+          const colBase = colStats.get(colKey);
+          const colN = colBase?.n || 0;
+          if (colN > 0) {
+            const proportion = cellN / colN;
+            row.ci95 = calculateProportionCI(proportion, cellESS, 0.95);
+            row.ci80 = calculateProportionCI(proportion, cellESS, 0.80);
+          }
+        }
       }
+    });
+
+    // 3b. Pairwise Column Comparisons (Letter Codes)
+    // Group rows by their row key path for pairwise comparisons
+    const rowKeyGroups = new Map<string, any[]>();
+    rows.forEach(row => {
+      const keyParts = [];
+      let i = 0;
+      while (row[`rowKey_${i}`] !== undefined) {
+        keyParts.push(String(row[`rowKey_${i}`]));
+        i++;
+      }
+      const rowKey = keyParts.join('|');
+      if (!rowKeyGroups.has(rowKey)) {
+        rowKeyGroups.set(rowKey, []);
+      }
+      rowKeyGroups.get(rowKey)!.push(row);
+    });
+
+    // For each row category, perform pairwise comparisons across columns
+    const isMeans = modifiedOptions.measureVar !== undefined;
+    rowKeyGroups.forEach((rowCells, rowKey) => {
+      if (rowCells.length < 2) return; // Need at least 2 columns to compare
+
+      // Build column stats for this row
+      const columnStatsArray: ColumnStats[] = rowCells.map(cell => {
+        const cellN = cell.weightedCount ?? cell.count;
+        const cellESS = calculateESS(cellN, cell.sumSqWeights ?? cellN);
+        const colKey = cell.colKey || 'Total';
+        const colBase = colStats.get(colKey);
+        const colN = colBase?.n || 0;
+
+        return {
+          key: cell.colKey,
+          mean: isMeans ? Number(cell.mean) : undefined,
+          stdDev: isMeans ? Number(cell.stdDev) : undefined,
+          proportion: !isMeans && colN > 0 ? cellN / colN : undefined,
+          ess: cellESS,
+        };
+      });
+
+      // Calculate pairwise comparisons
+      const pairwiseResults = calculatePairwiseComparisons(columnStatsArray, isMeans, 0.05);
+
+      // Apply results back to rows
+      rowCells.forEach(cell => {
+        const result = pairwiseResults.get(cell.colKey);
+        if (result) {
+          cell.sigLetters = result.sigLetters;
+          cell.columnLetter = result.columnLetter;
+        }
+      });
     });
   }
 
-  return rows;
+  // 4. Chi-Square Test for Categorical Independence
+  let tableStats: { chiSquare?: ChiSquareResult } | undefined;
+
+  if (modifiedOptions.colVar && !modifiedOptions.measureVar && !modifiedOptions.gridAggregate) {
+    // Only compute chi-square for categorical (non-metric) crosstabs
+    try {
+      // Build contingency table from rows
+      const rowLabels = [...new Set(rows.map(r => {
+        const keyParts = [];
+        let i = 0;
+        while (r[`rowKey_${i}`] !== undefined) {
+          keyParts.push(String(r[`rowKey_${i}`]));
+          i++;
+        }
+        return keyParts.join('|');
+      }))];
+      const colLabels = [...new Set(rows.map(r => r.colKey).filter(k => k !== 'Total'))];
+
+      if (rowLabels.length > 1 && colLabels.length > 1) {
+        const contingencyTable: number[][] = [];
+
+        for (const rowLabel of rowLabels) {
+          const tableRow: number[] = [];
+          for (const colLabel of colLabels) {
+            const cell = rows.find(r => {
+              const keyParts = [];
+              let i = 0;
+              while (r[`rowKey_${i}`] !== undefined) {
+                keyParts.push(String(r[`rowKey_${i}`]));
+                i++;
+              }
+              return keyParts.join('|') === rowLabel && r.colKey === colLabel;
+            });
+            const count = cell ? (cell.weightedCount ?? cell.count ?? 0) : 0;
+            tableRow.push(count);
+          }
+          contingencyTable.push(tableRow);
+        }
+
+        const chiSquareResult = calculateChiSquare(contingencyTable);
+        tableStats = { chiSquare: chiSquareResult };
+      }
+    } catch (e) {
+      console.warn('Chi-square calculation failed:', e);
+    }
+  }
+
+  return { rows, tableStats };
 }

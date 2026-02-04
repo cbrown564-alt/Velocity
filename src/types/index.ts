@@ -209,6 +209,27 @@ export interface AggregatedRow {
     pValue: number;
     effN: number;
   };
+  /** 95% Confidence interval for mean or proportion */
+  ci95?: { lower: number; upper: number };
+  /** 80% Confidence interval for mean or proportion */
+  ci80?: { lower: number; upper: number };
+  /** Pairwise comparison letters (e.g., "BC" means significantly higher than columns B and C) */
+  sigLetters?: string;
+  /** Column letter for this cell's column (A, B, C, etc.) */
+  columnLetter?: string;
+}
+
+/** Chi-square test result for categorical independence */
+export interface ChiSquareResult {
+  chiSquare: number;
+  df: number;
+  pValue: number;
+  cramersV: number;
+}
+
+/** Table-level statistics (chi-square, etc.) */
+export interface TableStats {
+  chiSquare?: ChiSquareResult;
 }
 
 export interface TableConfig {

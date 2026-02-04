@@ -19,6 +19,16 @@ export interface TableConfig {
     colVar: string | null;
 }
 
+export type ComparisonMethod = 'cell_vs_rest' | 'pairwise';
+export type CorrectionType = 'none' | 'bonferroni' | 'fdr';
+
+export interface AnalysisSettings {
+    comparisonMethod: ComparisonMethod;
+    correctionType: CorrectionType;
+    showConfidenceIntervals: boolean;
+    significanceLevel: 0.95 | 0.90 | 0.80;
+}
+
 export interface Filter {
     id: string;
     variableId: string;
@@ -26,7 +36,7 @@ export interface Filter {
     value: number | string | (number | string)[];
 }
 
-import { AggregatedRow } from '../../types';
+import { AggregatedRow, TableStats } from '../../types';
 import { CrosstabQueryOptions } from '../../services/queryBuilder';
 
 // ============================================================================
@@ -37,9 +47,11 @@ export interface AnalysisSlice {
     // State
     tableConfig: TableConfig;
     queryResult: AggregatedRow[];
+    tableStats: TableStats | null;
     isQuerying: boolean;
     activeFilters: Filter[];
     activeVariableStats: VariableStatsResult | null;
+    analysisSettings: AnalysisSettings;
 
     // Actions
     setTableConfig: (config: Partial<TableConfig>) => void;
@@ -51,6 +63,7 @@ export interface AnalysisSlice {
     fetchVariableStats: (variableId: string, variableType?: 'nominal' | 'ordinal' | 'scale' | 'numeric' | 'text' | 'date', binCount?: number) => Promise<void>;
     swapAxes: () => void;
     clearConfiguration: () => void;
+    updateAnalysisSettings: (settings: Partial<AnalysisSettings>) => void;
     reset: () => void;
 }
 
@@ -62,13 +75,22 @@ type AnalysisSliceCreator = StateCreator<
     AnalysisSlice
 >;
 
+const defaultAnalysisSettings: AnalysisSettings = {
+    comparisonMethod: 'cell_vs_rest',
+    correctionType: 'none',
+    showConfidenceIntervals: false,
+    significanceLevel: 0.95,
+};
+
 export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
     // Initial state
     tableConfig: { rowVars: [], colVar: null },
     queryResult: [],
+    tableStats: null,
     isQuerying: false,
     activeFilters: [],
     activeVariableStats: null,
+    analysisSettings: defaultAnalysisSettings,
 
     // Actions
     setTableConfig: (config) => {
@@ -83,7 +105,7 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
     runAnalysis: async () => {
         const { worker, tableConfig, dataset, variableSets, activeFilters } = get();
         if (!worker || tableConfig.rowVars.length === 0) {
-            set({ queryResult: [] });
+            set({ queryResult: [], tableStats: null });
             return;
         }
 
@@ -227,11 +249,16 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
                             histogramBins: row.histogramBins, // Bins for violin/ridgeline
                             sig: row.sig, // Signficance flag from worker
                             stats: row.stats, // Detailed stats for tooltip
+                            ci95: row.ci95, // 95% confidence interval
+                            ci80: row.ci80, // 80% confidence interval
+                            sigLetters: row.sigLetters, // Pairwise comparison letters
+                            columnLetter: row.columnLetter, // Column letter (A, B, C...)
                         };
                     });
 
                     set({
                         queryResult: mappedData,
+                        tableStats: response.tableStats || null,
                         isQuerying: false,
                     });
                     worker.removeEventListener('message', handler);
@@ -339,14 +366,25 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
         set((state) => ({
             tableConfig: { rowVars: [], colVar: null },
             queryResult: [],
+            tableStats: null,
         }));
+    },
+
+    updateAnalysisSettings: (settings) => {
+        set((state) => ({
+            analysisSettings: { ...state.analysisSettings, ...settings },
+        }));
+        // Re-run analysis to apply new settings
+        get().runAnalysis();
     },
 
     reset: () => {
         set({
             tableConfig: { rowVars: [], colVar: null },
             queryResult: [],
+            tableStats: null,
             activeFilters: [],
+            analysisSettings: defaultAnalysisSettings,
         });
     },
 });

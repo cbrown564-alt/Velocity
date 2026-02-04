@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useRef, useCallback } from 'react';
-import { AggregatedRow, Variable } from '../../../types';
+import { AggregatedRow, Variable, TableStats } from '../../../types';
 import { motion } from 'framer-motion';
 import { ChevronRight, ChevronDown, ArrowUp, ArrowDown } from 'lucide-react';
 import type { VariableStatsResult } from '../../../types/worker';
@@ -14,6 +14,7 @@ import { Tooltip } from '../../../components/common/Tooltip';
 import { StatisticsTooltip } from '../../../components/common/StatisticsTooltip';
 import { SignificanceLegend } from '../../../components/common/SignificanceLegend';
 import { MethodologyPanel } from '../../../components/common/MethodologyPanel';
+import { AnalysisSettingsPanel } from '../../../components/common/AnalysisSettingsPanel';
 import mergeStyles from './DataTable.module.css';
 export type { RowPathEntry, TableRowNode };
 
@@ -40,6 +41,8 @@ interface DataTableProps {
   isMultipleResponse?: boolean;
   /** Whether the variables form a grid structure */
   isGrid?: boolean;
+  /** Table-level statistics (chi-square, etc.) */
+  tableStats?: TableStats | null;
 }
 
 export const DataTable: React.FC<DataTableProps> = ({
@@ -53,6 +56,7 @@ export const DataTable: React.FC<DataTableProps> = ({
   variableStats,
   isMultipleResponse = false,
   isGrid = false,
+  tableStats,
 }) => {
   // UI State for expanded rows
   const [expandedKeys, setExpandedKeys] = useState<Record<string, boolean>>({});
@@ -141,9 +145,21 @@ export const DataTable: React.FC<DataTableProps> = ({
       return acc;
     }, {} as Record<string, number>);
 
+    // Extract column letters from first row's cells (for pairwise comparison display)
+    const colLetters: Record<string, string> = {};
+    if (processedData.rows.length > 0) {
+      const firstRow = processedData.rows[0];
+      Object.entries(firstRow.cells).forEach(([key, cell]) => {
+        if (cell.columnLetter) {
+          colLetters[key] = cell.columnLetter;
+        }
+      });
+    }
+
     return {
       colKeys,
       colLabels,
+      colLetters,
       rows: processedData.rows,
       colTotals,
       grandTotal: processedData.grandTotal
@@ -240,7 +256,10 @@ export const DataTable: React.FC<DataTableProps> = ({
                     <>
                       <div className="flex items-baseline gap-1">
                         <span className={`font-bold tabular-nums text-right w-[42px] ${textClass}`}>{cell.mean.toFixed(1)}</span>
-                        {!isZero && <span className={`text-[10px] ${secondaryTextClass} bg-[var(--bg-panel)] px-1 rounded`}>Mean</span>}
+                        {cell.sigLetters && (
+                          <span className="text-[10px] font-mono font-semibold text-[var(--color-success)]">{cell.sigLetters}</span>
+                        )}
+                        {!isZero && !cell.sigLetters && <span className={`text-[10px] ${secondaryTextClass} bg-[var(--bg-panel)] px-1 rounded`}>Mean</span>}
                       </div>
                       <span className={`text-[10px] ${secondaryTextClass} font-mono tracking-tight group-hover:opacity-100 transition-opacity flex gap-2`}>
                         {cell.stdDev !== undefined && <span>SD: {cell.stdDev.toFixed(1)}</span>}
@@ -252,19 +271,24 @@ export const DataTable: React.FC<DataTableProps> = ({
                     <>
                       <div className="flex items-center gap-0.5">
                         <span className={`font-bold tabular-nums text-right w-[48px] ${textClass}`}>{cell.percent.toFixed(1)}%</span>
-                        {cell.sig === 'high_95' && (
-                          <ArrowUp size={12} className="text-[var(--color-success)]" />
+                        {cell.sigLetters ? (
+                          <span className="text-[10px] font-mono font-semibold text-[var(--color-success)]">{cell.sigLetters}</span>
+                        ) : (
+                          <>
+                            {cell.sig === 'high_95' && (
+                              <ArrowUp size={12} className="text-[var(--color-success)]" />
+                            )}
+                            {cell.sig === 'high_80' && (
+                              <ArrowUp size={12} className="text-[var(--text-secondary)]" />
+                            )}
+                            {cell.sig === 'low_95' && (
+                              <ArrowDown size={12} className="text-[var(--color-error)]" />
+                            )}
+                            {cell.sig === 'low_80' && (
+                              <ArrowDown size={12} className="text-[var(--text-secondary)]" />
+                            )}
+                          </>
                         )}
-                        {cell.sig === 'high_80' && (
-                          <ArrowUp size={12} className="text-[var(--text-secondary)]" />
-                        )}
-                        {cell.sig === 'low_95' && (
-                          <ArrowDown size={12} className="text-[var(--color-error)]" />
-                        )}
-                        {cell.sig === 'low_80' && (
-                          <ArrowDown size={12} className="text-[var(--text-secondary)]" />
-                        )}
-
                       </div>
                       <span className={`text-[10px] ${secondaryTextClass} font-mono tracking-tight opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap`}>n={cell.count}</span>
                     </>
@@ -291,6 +315,8 @@ export const DataTable: React.FC<DataTableProps> = ({
                           sig={cell.sig}
                           value={cellValue}
                           isMetric={cell.mean !== undefined}
+                          ci95={cell.ci95}
+                          ci80={cell.ci80}
                         />
                       }
                       position="top"
@@ -401,7 +427,12 @@ export const DataTable: React.FC<DataTableProps> = ({
                         }
                       }}
                     >
-                      <div className="flex flex-col gap-1 items-start">
+                      <div className="flex flex-col gap-0.5 items-start">
+                        {tableData.colLetters[col] && (
+                          <span className="text-[10px] font-mono text-[var(--text-secondary)] bg-[var(--bg-surface)] px-1 rounded">
+                            {tableData.colLetters[col]}
+                          </span>
+                        )}
                         <span>{tableData.colLabels[col]}</span>
                       </div>
                     </th>
@@ -433,7 +464,7 @@ export const DataTable: React.FC<DataTableProps> = ({
             </tbody>
           </table>
         </div>
-        {/* Significance Legend (compact, below table) */}
+        {/* Significance Legend and Chi-Square (compact, below table) */}
         {colVariable && (
           <div className="px-4 py-3 border-t border-[var(--border-grid)] flex justify-between items-center">
             <SignificanceLegend
@@ -441,13 +472,49 @@ export const DataTable: React.FC<DataTableProps> = ({
               showMethodologyLink
               onMethodologyClick={() => setShowMethodology(!showMethodology)}
             />
+            {tableStats?.chiSquare && (
+              <Tooltip
+                content={
+                  <div className="text-xs space-y-1">
+                    <div className="font-semibold">Chi-Square Test of Independence</div>
+                    <div className="grid grid-cols-2 gap-x-3 gap-y-0.5">
+                      <span className="text-[var(--text-secondary)]">Chi-Square (χ²):</span>
+                      <span className="font-mono">{tableStats.chiSquare.chiSquare.toFixed(2)}</span>
+                      <span className="text-[var(--text-secondary)]">Degrees of Freedom:</span>
+                      <span className="font-mono">{tableStats.chiSquare.df}</span>
+                      <span className="text-[var(--text-secondary)]">p-value:</span>
+                      <span className="font-mono">{tableStats.chiSquare.pValue < 0.001 ? '<0.001' : tableStats.chiSquare.pValue.toFixed(3)}</span>
+                      <span className="text-[var(--text-secondary)]">Cramér's V:</span>
+                      <span className="font-mono">{tableStats.chiSquare.cramersV.toFixed(3)}</span>
+                    </div>
+                    <div className="pt-1 text-[var(--text-secondary)] text-[10px]">
+                      {tableStats.chiSquare.pValue < 0.05
+                        ? 'Variables are significantly associated (p < 0.05)'
+                        : 'No significant association found (p ≥ 0.05)'}
+                    </div>
+                  </div>
+                }
+                position="top"
+                delay={200}
+                maxWidth={280}
+              >
+                <div className={`text-xs font-mono px-2 py-1 rounded ${tableStats.chiSquare.pValue < 0.05 ? 'bg-[var(--color-success)]/10 text-[var(--color-success)]' : 'bg-[var(--bg-surface)] text-[var(--text-secondary)]'}`}>
+                  χ² = {tableStats.chiSquare.chiSquare.toFixed(1)}, p {tableStats.chiSquare.pValue < 0.001 ? '< .001' : `= ${tableStats.chiSquare.pValue.toFixed(3)}`}
+                </div>
+              </Tooltip>
+            )}
           </div>
         )}
 
-        {/* Methodology Panel (expandable) */}
+        {/* Methodology Panel and Settings (expandable) */}
         {showMethodology && (
-          <div className="px-4 pb-4">
-            <MethodologyPanel defaultExpanded />
+          <div className="px-4 pb-4 flex gap-4 flex-wrap">
+            <div className="flex-1 min-w-[300px]">
+              <MethodologyPanel defaultExpanded />
+            </div>
+            <div className="w-64">
+              <AnalysisSettingsPanel />
+            </div>
           </div>
         )}
 

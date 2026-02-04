@@ -6,7 +6,7 @@
  * and future headless/CLI usage.
  */
 
-import { RecodeConfig, VariableSet, Variable, Filter, HistogramBin, AggregatedRow } from './index';
+import { RecodeConfig, VariableSet, Variable, Filter, HistogramBin, AggregatedRow, ChiSquareResult, TableStats } from './index';
 import { CrosstabQueryOptions } from '../services/queryBuilder';
 import { ProcessedAnalysisData } from './processedData';
 import { ChartType } from './charts';
@@ -16,7 +16,7 @@ import { ChartType } from './charts';
 // ============================================================================
 
 export type WorkerRequest =
-  | { type: 'init'; forceCleanStart?: boolean }
+  | { type: 'init'; forceCleanStart?: boolean; datasetId?: string; schemaVersion?: number }
   | { type: 'setPersistenceContext'; datasetId?: string; schemaVersion?: number }
   | { type: 'updatePersistenceMetadata'; metadata: PersistedMetadata }
   | { type: 'loadCSV'; fileName: string; content: string }
@@ -107,7 +107,7 @@ export type WorkerResponse =
   | { type: 'savMetadataLoaded'; variables: Variable[]; variableSets: VariableSet[]; rowCount: number; durationMs: number }
   | { type: 'savSampleLoaded'; variables: Variable[]; variableSets: VariableSet[]; rowCount: number; sampleRowCount: number; sampleStrategy: 'sequential' | 'spread'; durationMs: number }
   | { type: 'flushComplete'; ok: boolean; durationMs: number; error?: string }
-  | { type: 'queryResult'; data: any[]; durationMs: number }
+  | { type: 'queryResult'; data: any[]; durationMs: number; tableStats?: TableStats }
   | { type: 'uniqueValues'; data: string[] }
   | { type: 'variableStats'; stats: VariableStatsResult }
   | { type: 'recodeComplete'; newColName: string }
