@@ -23,7 +23,7 @@ import { VariableCard } from './features/dashboard/components/DraggableVariable'
 import { ContextMenu } from './features/dashboard/components/ContextMenu';
 import { InputModal } from './components/overlays/InputModal';
 import * as opfsFileManager from './services/opfsFileManager';
-import { WorkspaceView, type StoredDataset } from './features/workspace';
+import { WorkspaceView, ProjectLinkModal, type StoredDataset, type Project } from './features/workspace';
 
 // Smart Canvas Wrapper
 const SmartCanvas: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className }) => {
@@ -200,6 +200,12 @@ export default function App() {
     updateDatasetAccess,
     saveDatasetSession,
     updateStorageQuota,
+    // Project management
+    createProject,
+    addDatasetsToProject,
+    removeDatasetsFromProject,
+    setDatasetWave,
+    setDatasetRespondentKey,
   } = useVelocityStore();
 
   const [mode, setMode] = React.useState<AppMode>('splash');
@@ -221,6 +227,10 @@ export default function App() {
   const [opfsDbListError, setOpfsDbListError] = React.useState<string | null>(null);
   const [opfsDbPurgeError, setOpfsDbPurgeError] = React.useState<string | null>(null);
   const [opfsRehydrateError, setOpfsRehydrateError] = React.useState<string | null>(null);
+
+  // Project modal state
+  const [showProjectModal, setShowProjectModal] = React.useState(false);
+  const [projectModalDatasetIds, setProjectModalDatasetIds] = React.useState<string[]>([]);
 
   const SAV_WARN_MB = 50;
   const SAV_HARD_MB = 200;
@@ -731,6 +741,41 @@ export default function App() {
     setMode('splash');
   }, [dataset, activeDatasetId, tableConfig, activeFilters, saveDatasetSession, setWorkspaceMode]);
 
+  // Open project creation modal
+  const handleOpenProjectModal = useCallback((datasetIds: string[]) => {
+    setProjectModalDatasetIds(datasetIds);
+    setShowProjectModal(true);
+  }, []);
+
+  // Create a new project
+  const handleCreateProject = useCallback((project: Omit<Project, 'id' | 'createdAt'>) => {
+    createProject(project);
+    setShowProjectModal(false);
+    setProjectModalDatasetIds([]);
+  }, [createProject]);
+
+  // Add datasets to existing project
+  const handleAddToProject = useCallback((datasetIds: string[], projectId: string) => {
+    addDatasetsToProject(datasetIds, projectId);
+    setShowProjectModal(false);
+    setProjectModalDatasetIds([]);
+  }, [addDatasetsToProject]);
+
+  // Update wave number for a dataset
+  const handleUpdateWaveNumber = useCallback((datasetId: string, waveNumber: number) => {
+    setDatasetWave(datasetId, waveNumber);
+  }, [setDatasetWave]);
+
+  // Set respondent key for a dataset
+  const handleSetRespondentKey = useCallback((datasetId: string, variableName: string) => {
+    setDatasetRespondentKey(datasetId, variableName);
+  }, [setDatasetRespondentKey]);
+
+  // Unlink dataset from project
+  const handleUnlinkDataset = useCallback((datasetId: string) => {
+    removeDatasetsFromProject([datasetId]);
+  }, [removeDatasetsFromProject]);
+
   // Register dataset when it changes
   // Note: We intentionally exclude registerDatasetInWorkspace from deps
   // to avoid infinite loops. The ref-based tracking handles deduplication.
@@ -1033,6 +1078,21 @@ export default function App() {
         submitLabel="Create"
       />
 
+      <ProjectLinkModal
+        isOpen={showProjectModal}
+        onClose={() => {
+          setShowProjectModal(false);
+          setProjectModalDatasetIds([]);
+        }}
+        datasets={workspace.datasets}
+        projects={workspace.projects}
+        selectedDatasetIds={projectModalDatasetIds}
+        onCreateProject={handleCreateProject}
+        onLinkToProject={handleAddToProject}
+        onUpdateWaveNumber={handleUpdateWaveNumber}
+        onSetRespondentKey={handleSetRespondentKey}
+      />
+
       {contextMenu && contextMenu.visible && (
         <ContextMenu
           x={contextMenu.x}
@@ -1120,20 +1180,11 @@ export default function App() {
                 onOpenDataset={handleOpenDataset}
                 onUploadFile={() => fileInputRef.current?.click()}
                 onLoadExample={handleDemoClick}
-                onCreateProject={() => {
-                  // TODO: Implement project creation modal
-                  console.log('Create project');
-                }}
+                onCreateProject={handleOpenProjectModal}
                 onDeleteDataset={handleDeleteDataset}
                 onToggleStar={handleToggleDatasetStar}
-                onLinkDatasets={(datasetIds, projectId) => {
-                  // TODO: Implement dataset linking
-                  console.log('Link datasets', datasetIds, projectId);
-                }}
-                onUnlinkDataset={(datasetId) => {
-                  // TODO: Implement dataset unlinking
-                  console.log('Unlink dataset', datasetId);
-                }}
+                onLinkDatasets={handleAddToProject}
+                onUnlinkDataset={handleUnlinkDataset}
               />
             )}
 

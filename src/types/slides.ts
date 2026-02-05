@@ -27,6 +27,18 @@ export interface Slide {
     title: string;
     layoutMode: LayoutMode;
     cells: SlideCell[];
+    /** Optional section this slide belongs to */
+    sectionId?: string;
+}
+
+/**
+ * Section divider for grouping slides into narrative chunks.
+ */
+export interface SlideSection {
+    id: string;
+    title: string;
+    /** Optional color accent for visual distinction */
+    color?: string;
 }
 
 /**

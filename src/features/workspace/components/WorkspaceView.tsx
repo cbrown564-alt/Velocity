@@ -88,7 +88,7 @@ interface WorkspaceViewProps {
   onOpenDataset: (dataset: StoredDataset) => void;
   onUploadFile: () => void;
   onLoadExample: () => void;
-  onCreateProject: () => void;
+  onCreateProject: (selectedDatasetIds: string[]) => void;
   onDeleteDataset: (id: string) => void;
   onToggleStar: (id: string) => void;
   onLinkDatasets: (datasetIds: string[], projectId: string) => void;
@@ -689,7 +689,7 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
               exit={{ opacity: 0, x: 20 }}
             >
               <span>{selectedIds.size} selected</span>
-              <button onClick={onCreateProject}>
+              <button onClick={() => onCreateProject(Array.from(selectedIds))}>
                 <Link2 size={14} />
                 Link as Project
               </button>
@@ -717,7 +717,7 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
               <section className={styles.projectsSection}>
                 <div className={styles.sectionHeader}>
                   <h2>Projects</h2>
-                  <button onClick={onCreateProject}>
+                  <button onClick={() => onCreateProject([])}>
                     <Plus size={14} />
                     New Project
                   </button>
@@ -836,8 +836,7 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
                 </button>
               ) : (
                 <button onClick={() => {
-                  setSelectedIds(new Set([contextMenuTarget.dataset.id]));
-                  onCreateProject();
+                  onCreateProject([contextMenuTarget.dataset.id]);
                   closeContextMenu();
                 }}>
                   <Link2 size={14} />

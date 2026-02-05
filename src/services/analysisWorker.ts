@@ -162,9 +162,21 @@ async function ensureMetaTable(): Promise<void> {
   `);
 }
 
+async function tableExists(tableName: string): Promise<boolean> {
+  if (!conn) throw new Error('DB not initialized');
+  const result = await conn.query(`
+    SELECT COUNT(*) AS cnt
+    FROM information_schema.tables
+    WHERE table_schema = 'main'
+      AND table_name = '${tableName.replace(/'/g, "''")}'
+  `);
+  return Number(result.toArray()[0]?.cnt ?? 0) > 0;
+}
+
 async function readMeta(): Promise<PersistedMetadata | null> {
   if (!conn) throw new Error('DB not initialized');
   try {
+    if (!(await tableExists(META_TABLE))) return null;
     const result = await conn.query(`SELECT * FROM ${META_TABLE} LIMIT 1`);
     const row = result.toArray()[0];
     if (!row) return null;

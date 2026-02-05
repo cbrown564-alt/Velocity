@@ -415,3 +415,128 @@ h3 {
 .chart-bar-rect {
   filter: none;
 }
+
+/* ============================================================================
+   12. Timeline Dock (Deck Navigation)
+   ============================================================================ */
+
+.timeline-dock {
+  position: fixed;
+  bottom: var(--space-6);
+  left: 50%;
+  transform: translateX(-50%);
+
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+
+  background: var(--mat-panel-bg, var(--bg-panel));
+  backdrop-filter: var(--mat-panel-filter, none);
+  -webkit-backdrop-filter: var(--mat-panel-filter, none);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-lg);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
+
+  z-index: 100;
+}
+
+.timeline-nav-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--border-radius-sm);
+  color: var(--text-secondary);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 150ms var(--ease-standard);
+}
+
+.timeline-nav-btn:hover:not(:disabled) {
+  background: var(--bg-active);
+  color: var(--color-accent);
+}
+
+.timeline-nav-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.timeline-add-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--border-radius-sm);
+  color: var(--text-inverse);
+  background: var(--color-accent);
+  border: none;
+  cursor: pointer;
+  transition: all 150ms var(--ease-standard);
+}
+
+.timeline-add-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Hide scrollbar in timeline */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Theme-specific Timeline Dock */
+
+/* Mission Control: Glowing cyan accents */
+[data-theme="mission-control"] .timeline-dock {
+  background: rgba(26, 29, 33, 0.9);
+  border: 1px solid rgba(0, 212, 255, 0.15);
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(0, 212, 255, 0.1);
+}
+
+[data-theme="mission-control"] .timeline-active-glow {
+  box-shadow:
+    0 0 12px rgba(0, 212, 255, 0.4),
+    0 0 24px rgba(0, 212, 255, 0.2),
+    inset 0 0 8px rgba(0, 212, 255, 0.1);
+}
+
+/* Soft Machine: Warm with coral accent */
+[data-theme="soft-machine"] .timeline-dock,
+:root:not([data-theme]) .timeline-dock {
+  background: var(--bg-panel);
+  box-shadow: 0 4px 16px rgba(45, 74, 62, 0.08);
+}
+
+[data-theme="soft-machine"] .timeline-active-glow,
+:root:not([data-theme]) .timeline-active-glow {
+  box-shadow: -2px 0 0 0 var(--color-accent);
+}
+
+/* Liquid Glass: Frosted translucency */
+[data-theme="liquid-glass"] .timeline-dock {
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(25px) saturate(180%);
+  -webkit-backdrop-filter: blur(25px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+[data-theme="liquid-glass"] .timeline-active-glow {
+  box-shadow:
+    0 0 0 2px rgba(0, 122, 255, 0.3),
+    0 4px 12px rgba(0, 122, 255, 0.2);
+}
