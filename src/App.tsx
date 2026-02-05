@@ -8,6 +8,7 @@ import { DraggableVariable } from './features/dashboard/components/DraggableVari
 import { VirtualizedVariableList } from './features/dashboard/components/VirtualizedVariableList';
 import { DropZone } from './components/common/DropZone';
 import { SlideContainer } from './features/dashboard/components/SlideContainer';
+import { TimelineDock } from './features/dashboard/components/TimelineDock';
 // import { DataTable } from './features/dashboard/components/DataTable'; // Keeping import for now if needed by other components, but effectively replaced
 
 import { DataDrawer } from './components/overlays/DataDrawer';
@@ -509,7 +510,7 @@ export default function App() {
           try {
             if (dataset?.opfsFileKey) {
               // App is currently single-dataset. Clean up the previous source file to avoid unbounded OPFS growth.
-              await opfsFileManager.deleteFile(dataset.opfsFileKey).catch(() => {});
+              await opfsFileManager.deleteFile(dataset.opfsFileKey).catch(() => { });
             }
 
             let canStore = true;
@@ -623,7 +624,7 @@ export default function App() {
     await discardPersistedData();
     // Clean up OPFS storage
     if (opfsStorageKey) {
-      await opfsFileManager.deleteFile(opfsStorageKey).catch(() => {});
+      await opfsFileManager.deleteFile(opfsStorageKey).catch(() => { });
       setOpfsStorageKey(null);
     }
     setPendingSavFile(null);
@@ -633,18 +634,24 @@ export default function App() {
 
   // -- WORKSPACE HANDLERS --
 
+  // Track which datasets we've registered to avoid infinite loops
+  const registeredDatasetIds = useRef<Set<string>>(new Set());
+
   // Register current dataset in workspace when loaded
+  // Note: We use a ref to track registration to avoid dependency on workspace.datasets
+  // which would cause infinite re-renders when we modify workspace state
   const registerDatasetInWorkspace = useCallback(() => {
     if (!dataset) return;
 
-    // Check if already registered
-    const existing = workspace.datasets.find(d => d.id === dataset.id);
-    if (existing) {
-      updateDatasetAccess(dataset.id);
+    // Skip if already registered this session
+    if (registeredDatasetIds.current.has(dataset.id)) {
       return;
     }
 
-    // Register new dataset
+    // Mark as registered immediately to prevent re-entry
+    registeredDatasetIds.current.add(dataset.id);
+
+    // Register new dataset (the store will handle deduplication)
     addStoredDataset({
       name: dataset.name,
       fileName: dataset.name,
@@ -662,11 +669,11 @@ export default function App() {
             updateStoredDataset(dataset.id, { fileSize: size });
           }
         })
-        .catch(() => {});
+        .catch(() => { });
     }
 
     setActiveDataset(dataset.id);
-  }, [dataset, workspace.datasets, addStoredDataset, updateStoredDataset, updateDatasetAccess, setActiveDataset]);
+  }, [dataset, addStoredDataset, updateStoredDataset, setActiveDataset]);
 
   // Open dataset from workspace
   const handleOpenDataset = useCallback(async (storedDataset: StoredDataset) => {
@@ -724,27 +731,31 @@ export default function App() {
     setMode('splash');
   }, [dataset, activeDatasetId, tableConfig, activeFilters, saveDatasetSession, setWorkspaceMode]);
 
-  // Refresh storage quota
-  const refreshStorageQuota = useCallback(async () => {
-    const estimate = await opfsFileManager.getStorageEstimate();
-    if (estimate) {
-      updateStorageQuota(estimate.usage, estimate.quota);
-    }
-  }, [updateStorageQuota]);
-
   // Register dataset when it changes
+  // Note: We intentionally exclude registerDatasetInWorkspace from deps
+  // to avoid infinite loops. The ref-based tracking handles deduplication.
   useEffect(() => {
     if (dataset && mode === 'dashboard') {
       registerDatasetInWorkspace();
     }
-  }, [dataset?.id, mode, registerDatasetInWorkspace]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dataset?.id, mode]);
 
   // Refresh storage quota periodically
+  // Note: Run once on mount and periodically thereafter
   useEffect(() => {
-    refreshStorageQuota();
-    const interval = setInterval(refreshStorageQuota, 30000);
+    const refresh = async () => {
+      const estimate = await opfsFileManager.getStorageEstimate();
+      if (estimate) {
+        updateStorageQuota(estimate.usage, estimate.quota);
+      }
+    };
+
+    refresh();
+    const interval = setInterval(refresh, 30000);
     return () => clearInterval(interval);
-  }, [refreshStorageQuota]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // -- LOGIC: DRAG & DROP --
   const handleDragStart = (event: DragStartEvent) => {
@@ -1554,6 +1565,7 @@ export default function App() {
                           <div className="flex-1 min-h-0">
                             <SlideContainer className="h-full w-full" />
                           </div>
+                          <TimelineDock />
                         </div>
                       ) : (
                         <div className="flex-1 border-2 border-dashed border-[var(--border-color-muted)] rounded-xl flex flex-col items-center justify-center text-[var(--text-secondary)] gap-4 bg-[var(--bg-panel)]/50">
