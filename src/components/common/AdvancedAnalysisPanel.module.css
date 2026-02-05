@@ -1,8 +1,8 @@
 /**
  * AdvancedAnalysisPanel Styles
  *
- * Editorial "Research Desk" aesthetic with warm tones
- * and refined scholarly typography.
+ * Dynamic panel that adapts to the current theme (Soft Machine, 
+ * Mission Control, or Liquid Glass).
  */
 
 .panel {
@@ -441,6 +441,7 @@
     opacity: 0;
     transform: translateY(8px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -451,6 +452,7 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }

@@ -115,7 +115,8 @@ t.test(
 /**
  * RCodeEditor
  *
- * A collapsible Monaco-based R code editor for power users.
+ * A collapsible Monaco-based R code editor.
+ * Leverages Velocity's dynamic theme system and semantic tokens.
  * Allows writing and executing custom R code via WebR.
  */
 export const RCodeEditor: React.FC<RCodeEditorProps> = ({

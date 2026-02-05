@@ -1,8 +1,8 @@
 /**
  * RCodeEditor Styles
  *
- * Lab notebook aesthetic with scholarly refinement.
- * Dark editor area contrasts with warm panel chrome.
+ * Theme-aware editor container that supports both dark 
+ * and light modes via semantic tokens.
  */
 
 .editor {
@@ -356,6 +356,7 @@
     opacity: 0;
     transform: translateY(-4px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -366,15 +367,19 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
 }
 
 @keyframes pulse {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 1;
   }
+
   50% {
     opacity: 0.5;
   }

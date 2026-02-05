@@ -1,32 +1,134 @@
-# Design System: "The Research Desk"
+# Velocity Design System
 
 ## 1. Design Philosophy
 
-Velocity's interface evokes a **researcher's well-organized desk**: warm lighting, typeset reports, and tools that snap into place with precision. Data is presented as **narrative**, not spreadsheet.
+Velocity's interface is built on a **dynamic theme system** that allows users to choose the aesthetic that best suits their workflow and preferences. Rather than a single fixed design language, Velocity offers three distinct visual directions—each optimized for different use cases while maintaining consistency through a shared semantic token architecture.
 
-**The Unforgettable Detail:** Tables look like beautifully typeset book pages. Significance markers feel like hand-drawn annotations in terracotta ink.
+**Core Principle:** Design tokens are injected dynamically at runtime, allowing themes to define not just colors, but complete visual materials including translucency, blur effects, and typography systems.
 
 ---
 
-## 2. Typography
+## 2. Architecture Overview
 
-### Display Font: Newsreader
-*   **Usage:** Page titles, section headers, modal titles.
-*   **Weights:** 600 (Semibold) for headers, 400 (Regular) for large body text.
-*   **Why:** Editorial confidence. Evokes research journals and reports. Distinctive without being ostentatious.
-*   **CDN:** `@import url('https://fonts.googleapis.com/css2?family=Newsreader:wght@400;600&display=swap');`
+### Theme System Structure
 
-### Body Font: Atkinson Hyperlegible
-*   **Usage:** All UI text, table cells, labels, buttons.
-*   **Weights:** 400 (Regular), 700 (Bold).
-*   **Why:** Designed for accessibility (low-vision users), but refined for everyone. Excellent readability at small sizes (critical for data tables).
-*   **CDN:** `@import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap');`
+Velocity uses a **token-based architecture** with three layers:
 
-### Type Scale
+1. **Theme Definitions** (`src/theme/themes.ts`)
+   - Each theme defines colors, typography, materials, radius, and shadows
+   - Themes can optionally define "materials" for advanced visual effects (blur, translucency)
+
+2. **Theme Context** (`src/context/ThemeContext.tsx`)
+   - Dynamically injects CSS custom properties at runtime
+   - Manages theme switching and persistence
+   - Converts theme objects into CSS variables
+
+3. **Semantic Token Layer** (`src/index.css`)
+   - Maps theme-agnostic semantic tokens to theme-specific values
+   - Provides stable API for components (e.g., `--bg-panel`, `--text-primary`)
+   - Ensures components work across all themes without modification
+
+### Material-Based Tokens
+
+For advanced themes (like Liquid Glass), Velocity supports **composite material tokens** that go beyond simple colors:
+
+```typescript
+interface ThemeMaterial {
+  background: string;       // Color + Opacity
+  backdropFilter?: string;  // Blur + Saturation
+  border?: string;          // Border color/style
+  noiseOpacity?: number;    // Optional texture
+}
+```
+
+These are injected as `--mat-{surface}-{property}` variables and consumed by utility classes.
+
+---
+
+## 3. Available Themes
+
+### Soft Machine (Default)
+**Philosophy:** Warm, organic, human-centric interface inspired by Dieter Rams and 1970s computing.
+
+**Visual Language:**
+- **Background:** Warm light gray (#F0EDE8) with cream panels (#FAF8F5)
+- **Typography:** 
+  - Display: Fraunces (variable optical sizing, soft serifs)
+  - UI/Data: Plus Jakarta Sans (friendly geometric)
+  - Mono: JetBrains Mono
+- **Color System:**
+  - Primary: Deep forest green (#2D4A3E)
+  - Accent: Coral (#E07860)
+  - Muted earth tones and warm sand spectrum
+- **Radius:** Large (lg) - 8-12px rounded corners
+- **Interaction:** Left accent bar on hover (coral vertical stripe)
+
+**Best For:** Extended analysis sessions, reduced eye strain, approachable aesthetic
+
+---
+
+### Mission Control
+**Philosophy:** High-contrast dark interface inspired by NASA mission control, Bloomberg terminals, and flight decks.
+
+**Visual Language:**
+- **Background:** Deep charcoal (#141414) with subtle blue undertones
+- **Typography:**
+  - Display/UI: DM Sans (geometric sans)
+  - Mono: JetBrains Mono (for data)
+- **Color System:**
+  - Primary: Electric cyan (#00D4FF) for active states and significance
+  - Warning: Amber (#FFB800)
+  - Success: Mint (#00E5A0)
+  - Muted blue-gray borders (#2A2D35)
+- **Radius:** Small (sm) - tight 4px corners
+- **Interaction:** Radar sweep scanline on hover (cyan line animates across row)
+
+**Best For:** Data-intensive work, power users, extended dark mode sessions
+
+**Signature Detail:** When hovering over data rows, a thin cyan scan-line animates across—like a radar sweep confirming selection.
+
+---
+
+### Liquid Glass
+**Philosophy:** Translucent, biomorphic interface inspired by Apple's visionOS and spatial computing.
+
+**Visual Language:**
+- **Background:** Soft gradient mesh with radial gradients in pastel hues
+- **Typography:**
+  - System fonts: -apple-system, SF Pro Display/Text
+  - Mono: SF Mono, Menlo
+- **Color System:**
+  - Primary: System Blue (#007AFF)
+  - Apple's standard palette (greens, oranges, pinks, purples)
+  - Semi-transparent surfaces with backdrop blur
+- **Materials:**
+  - Panel: `rgba(255, 255, 255, 0.3)` with `blur(25px) saturate(180%)`
+  - Overlay: `rgba(255, 255, 255, 0.4)` with `blur(40px) saturate(200%)`
+  - Specular borders: `rgba(255, 255, 255, 0.3)`
+- **Radius:** Extra large (2xl) - 16px rounded corners
+- **Shadow:** Deep, soft shadows with color
+
+**Best For:** Presentation mode, client-facing work, visual appeal
+
+**Signature Detail:** Frosted glass panels with live background blur and subtle gradient mesh background.
+
+---
+
+## 4. Typography System
+
+### Font Loading
+All theme fonts are loaded via Google Fonts CDN in `index.css`:
+
 ```css
---font-display: 'Newsreader', Georgia, serif;
---font-body: 'Atkinson Hyperlegible', -apple-system, sans-serif;
+@import url('https://fonts.googleapis.com/css2?family=Newsreader:wght@400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=JetBrains+Mono&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+```
 
+### Type Scale (Theme-Agnostic)
+```css
+--text-xxs: 0.625rem;  /* 10px */
 --text-xs: 0.75rem;    /* 12px - Table footnotes */
 --text-sm: 0.875rem;   /* 14px - Table cells */
 --text-base: 1rem;     /* 16px - Body text */
@@ -35,44 +137,69 @@ Velocity's interface evokes a **researcher's well-organized desk**: warm lightin
 --text-2xl: 2rem;      /* 32px - Page titles */
 ```
 
----
-
-## 3. Color System: "Ink & Paper"
-
-### Primary Palette
-```css
---color-ink: #1C1C1C;           /* Rich black - Primary text */
---color-paper: #F5F3EF;         /* Warm off-white - Background */
---color-terracotta: #E07A5F;    /* Accent - Sig markers, CTAs */
---color-charcoal: #3D3835;      /* Dark gray - Secondary text */
---color-parchment: #FDFCFA;     /* Lighter warm white - Cards */
-```
-
-### Functional Colors
-```css
---color-success: #52796F;       /* Muted teal */
---color-warning: #F4A261;       /* Warm amber */
---color-error: #C1666B;         /* Muted red */
---color-info: #84A59D;          /* Sage green */
-```
-
-### Neutrals (Warm Grays)
-```css
---gray-50: #FAFAF9;
---gray-100: #F5F3EF;
---gray-200: #E8E5E0;
---gray-300: #D4CFC7;
---gray-400: #A8A29E;
---gray-500: #78716C;
---gray-600: #57534E;
---gray-700: #3D3835;
---gray-800: #292524;
---gray-900: #1C1C1C;
-```
+### Font Variables (Theme-Specific)
+Each theme defines:
+- `--font-body`: UI text, table cells, labels, buttons
+- `--font-display`: Page titles, section headers, modal titles
+- `--font-mono`: Data cells, code, statistics (tabular figures)
 
 ---
 
-## 4. Spacing & Layout
+## 5. Color System
+
+### Semantic Token Architecture
+
+Rather than using theme colors directly, components consume **semantic tokens** that map to theme-specific values:
+
+#### Surface & Backgrounds
+```css
+--bg-app: var(--background);        /* Main application background */
+--bg-panel: var(--card);            /* Cards, modals, panels */
+--bg-surface: var(--popover);       /* Popovers, dropdowns */
+--bg-active: var(--secondary);      /* Active/selected states */
+```
+
+#### Typography
+```css
+--text-primary: var(--foreground);          /* Primary text */
+--text-secondary: var(--muted-foreground);  /* Secondary text */
+--text-accent: var(--accent);               /* Accent text */
+--text-inverse: var(--primary-foreground);  /* Text on colored backgrounds */
+```
+
+#### Borders & Dividers
+```css
+--border-color: var(--border);              /* Standard borders */
+--border-color-muted: var(--input);         /* Subtle borders */
+--border-color-active: var(--ring);         /* Focus/active borders */
+--border-grid: var(--viz-grid);             /* Data grid lines */
+```
+
+#### Data Visualization
+```css
+--viz-fill-primary: var(--viz-primary);     /* Main bars/marks */
+--viz-fill-secondary: var(--viz-secondary); /* Comparison/highlight */
+--viz-stroke-main: var(--viz-stroke);       /* Axis lines */
+--viz-grid-line: var(--viz-grid);           /* Chart grid */
+--viz-text-value: var(--viz-text-value);    /* Text on bars */
+--viz-text-axis: var(--viz-text-axis);      /* Axis labels */
+```
+
+#### Categorical Palettes
+Each theme defines 6 categorical colors (`--viz-palette-1` through `--viz-palette-6`) and a 10-point diverging scale (`--viz-scale-1` through `--viz-scale-10`).
+
+#### Variable Type Tags
+```css
+--tag-nominal-bg/text   /* Nominal variables */
+--tag-ordinal-bg/text   /* Ordinal variables */
+--tag-scale-bg/text     /* Scale/numeric variables */
+--tag-text-bg/text      /* Text variables */
+--tag-date-bg/text      /* Date/time variables */
+```
+
+---
+
+## 6. Spacing & Layout
 
 ### Spacing Scale (8px base)
 ```css
@@ -87,50 +214,50 @@ Velocity's interface evokes a **researcher's well-organized desk**: warm lightin
 ```
 
 ### Layout Grid
-*   **Sidebar (Pantry):** Fixed `280px` width.
-*   **Canvas:** Fluid, max-width `1400px`, centered.
-*   **Gutter:** `--space-8` (32px) between major sections.
+- **Sidebar (Variable Manager):** Fixed width, scrollable
+- **Canvas (Dashboard):** Fluid, responsive
+- **Gutter:** `--space-8` (32px) between major sections
 
 ---
 
-## 5. Component Styles
+## 7. Component Styles
 
 ### Borders & Corners
 ```css
 --border-width: 1px;
---border-color: var(--gray-200);
---border-radius-sm: 4px;   /* Buttons, inputs */
---border-radius-md: 8px;   /* Cards, modals */
---border-radius-lg: 12px;  /* Large panels */
+--border-radius-sm: var(--radius);              /* Theme-defined */
+--border-radius-md: calc(var(--radius) + 2px);
+--border-radius-lg: calc(var(--radius) + 4px);
 ```
+
+Each theme defines its own `radius` preference:
+- Soft Machine: `lg` (8px)
+- Mission Control: `sm` (2px)
+- Liquid Glass: `2xl` (16px)
 
 ### Shadows
+Themes define a `shadow` level (none, sm, md, lg, xl, 2xl, glow) which is mapped to CSS box-shadow values. Mission Control uses deeper shadows; Soft Machine uses subtle shadows.
+
+### Material Surfaces (Liquid Glass)
+For themes with `materials` defined, special utility classes consume material tokens:
+
 ```css
-/* Inset panels (sidebars, modals) */
---shadow-inset: inset 0 1px 2px rgba(28, 28, 28, 0.05);
-
-/* Floating elements (tooltips, dropdowns) */
---shadow-float: 0 4px 12px rgba(28, 28, 28, 0.08);
-
-/* Dragging state */
---shadow-drag: 0 8px 24px rgba(28, 28, 28, 0.15);
+.surface-panel {
+  background: var(--mat-panel-bg, var(--bg-panel));
+  backdrop-filter: var(--mat-panel-filter, none);
+  border: 1px solid var(--mat-panel-border, transparent);
+}
 ```
 
-### Tables (Editorial Style)
-*   **No outer borders.** Only `border-bottom` on rows.
-*   **Header:** Bold Atkinson, `--color-charcoal`, `border-bottom: 2px solid var(--gray-300)`.
-*   **Cells:** `--text-sm`, `padding: var(--space-3) var(--space-4)`.
-*   **Hover:** Subtle background `var(--gray-50)`.
-*   **Significance Markers:** Superscript letters in `--color-terracotta`, bold.
+This allows Liquid Glass to apply blur and translucency while other themes fall back to solid colors.
 
 ---
 
-## 6. Motion & Interaction
+## 8. Motion & Interaction
 
 ### Timing Functions
 ```css
 --ease-standard: cubic-bezier(0.4, 0.0, 0.2, 1);  /* Material standard */
---ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1); /* Elastic snap */
 ```
 
 ### Transitions
@@ -140,36 +267,182 @@ Velocity's interface evokes a **researcher's well-organized desk**: warm lightin
 --transition-slow: 400ms var(--ease-standard);
 ```
 
-### Animations
-*   **Table Row Reveal:** Staggered fade-in on load.
-    ```css
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(8px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    /* Apply with animation-delay: calc(var(--index) * 30ms); */
-    ```
-*   **Drag Ghost:** Scale up slightly (`transform: scale(1.02)`), apply `--shadow-drag`.
-*   **Button Hover:** Subtle lift (`transform: translateY(-1px)`), transition `150ms`.
+### Theme-Specific Interactions
+
+#### Mission Control: Radar Sweep
+Data rows have a cyan scanline that sweeps across on hover:
+```css
+[data-theme="mission-control"] .data-row-interactive::after {
+  /* Animated cyan line */
+  width: 0%;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+[data-theme="mission-control"] .data-row-interactive:hover::after {
+  width: 100%;
+}
+```
+
+#### Soft Machine: Left Accent Bar
+Data rows show a coral vertical bar on the left edge on hover:
+```css
+[data-theme="soft-machine"] .data-row-interactive td:first-child::before {
+  /* 3px coral bar */
+  transform: scaleY(0);
+  transition: transform 0.2s;
+}
+[data-theme="soft-machine"] .data-row-interactive:hover td:first-child::before {
+  transform: scaleY(1);
+}
+```
 
 ---
 
-## 7. Accessibility
+## 9. Accessibility
 
-*   **Contrast Ratios:** All text meets WCAG AA (4.5:1 minimum).
-*   **Focus States:** `outline: 2px solid var(--color-terracotta)`, `outline-offset: 2px`.
-*   **Keyboard Navigation:** All interactive elements must be reachable via Tab.
-*   **Screen Readers:** Use semantic HTML (`<table>`, `<button>`, ARIA labels where needed).
+- **Contrast Ratios:** All text meets WCAG AA (4.5:1 minimum)
+- **Focus States:** `outline: 2px solid var(--color-accent)`, `outline-offset: 2px`
+- **Keyboard Navigation:** All interactive elements reachable via Tab
+- **Screen Readers:** Semantic HTML (`<table>`, `<button>`, ARIA labels)
+- **Font Choice:** Atkinson Hyperlegible (used in Soft Machine) designed for low-vision users
 
 ---
 
-## 8. Implementation Notes
+## 10. Implementation Guide
 
-### CSS Architecture
-*   Use **CSS Custom Properties** for all tokens.
-*   Organize styles by component in `/src/styles/components/`.
-*   Global tokens in `/src/styles/tokens.css`.
+### Adding a New Theme
 
-### Dark Mode (Future)
-*   Invert palette: `--color-paper` becomes `#1C1C1C`, `--color-ink` becomes `#F5F3EF`.
-*   Reduce shadow opacity by 50%.
+1. **Define the theme** in `src/theme/themes.ts`:
+   ```typescript
+   export const myTheme: Theme = {
+     id: 'my-theme',
+     name: 'My Theme',
+     description: 'Description here',
+     mode: 'light', // or 'dark'
+     colors: { /* ... */ },
+     radius: 'md',
+     shadow: 'md',
+     typography: { /* ... */ },
+     materials: { /* optional */ }
+   };
+   ```
+
+2. **Add to themes array**:
+   ```typescript
+   export const themes = [softMachine, missionControl, liquidGlass, myTheme];
+   ```
+
+3. **Add theme-specific overrides** in `index.css` (if needed):
+   ```css
+   [data-theme="my-theme"] {
+     /* Custom shadows, animations, etc. */
+   }
+   ```
+
+### Using Semantic Tokens in Components
+
+**Always use semantic tokens, never theme colors directly:**
+
+✅ Good:
+```tsx
+<div className="bg-[var(--bg-panel)] text-[var(--text-primary)]">
+```
+
+❌ Bad:
+```tsx
+<div className="bg-[#FAF8F5] text-[#2D4A3E]">
+```
+
+### Material Surfaces
+
+For panels that should support Liquid Glass blur effects:
+
+```tsx
+<div className="surface-panel">
+  {/* Content */}
+</div>
+```
+
+Or use the Tailwind escape hatch with fallback:
+```tsx
+<div className="bg-[var(--bg-panel)]">
+  {/* Liquid Glass theme will automatically apply materials */}
+</div>
+```
+
+### Theme Context Usage
+
+```typescript
+import { useTheme } from '@/context/ThemeContext';
+
+function ThemeSwitcher() {
+  const { theme, setTheme, availableThemes } = useTheme();
+  
+  return (
+    <select value={theme.id} onChange={(e) => setTheme(e.target.value)}>
+      {availableThemes.map(t => (
+        <option key={t.id} value={t.id}>{t.name}</option>
+      ))}
+    </select>
+  );
+}
+```
+
+---
+
+## 11. Design Rationale
+
+### Why Multiple Themes?
+
+Different users have different needs:
+
+- **Researchers doing long analysis sessions** benefit from Soft Machine's warm, low-strain aesthetic
+- **Power users working with dense data** prefer Mission Control's high-contrast, information-dense approach
+- **Consultants presenting to clients** want Liquid Glass's polished, modern appearance
+
+### Why Token-Based Architecture?
+
+1. **Consistency:** Components automatically adapt to theme changes
+2. **Maintainability:** Change a theme's color once, update everywhere
+3. **Extensibility:** New themes can be added without touching component code
+4. **Advanced Effects:** Material tokens enable blur, translucency, and other CSS effects
+
+### Why Semantic Tokens?
+
+Direct theme tokens (like `--viz-palette-1`) are too specific. Semantic tokens (like `--viz-fill-primary`) describe *purpose*, allowing themes to map different colors to the same purpose.
+
+---
+
+## 12. Future Considerations
+
+### Dark Mode Variants
+Currently Mission Control is the only dark theme. Future work could include:
+- Dark variants of Soft Machine and Liquid Glass
+- Automatic dark mode switching based on system preferences
+
+### User-Defined Themes
+The architecture supports user-created themes. Future UI could allow:
+- Custom color picker for all tokens
+- Import/export theme JSON
+- Theme marketplace/sharing
+
+### Accessibility Themes
+Potential high-contrast themes optimized for:
+- Low vision users
+- Color blindness (deuteranopia, protanopia, tritanopia)
+- Reduced motion preferences
+
+---
+
+## 13. Migration Notes
+
+### From Research Desk (Legacy)
+
+The original "Research Desk" concept has been **deprecated** in favor of the theme system. Key changes:
+
+- **Before:** Single fixed aesthetic (warm paper tones, Newsreader/Atkinson fonts)
+- **After:** Three themes with distinct aesthetics
+- **Typography:** Research Desk fonts (Newsreader, Atkinson) are still loaded but only used as fallbacks
+- **Colors:** "Ink & Paper" palette replaced with theme-specific palettes
+- **Implementation:** Static CSS replaced with dynamic token injection
+
+**Migration Path:** Components using old Research Desk tokens should be updated to use semantic tokens from the new system.
