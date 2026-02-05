@@ -10,6 +10,8 @@ interface ResolvedVariables {
     firstRowVarSet: VariableSet | undefined;
 }
 
+const EMPTY_VARIABLES: Variable[] = [];
+
 /**
  * Hook to resolve VariableSet IDs from the table configuration into 
  * actual Variable objects for use in charts and tables.
@@ -21,7 +23,7 @@ export const useResolvedVariables = (): ResolvedVariables => {
     // Selectors
     const tableConfig = useVelocityStore((state) => state.tableConfig);
     const variableSets = useVelocityStore((state) => state.variableSets);
-    const allVariables = useVelocityStore((state) => state.dataset?.variables || []);
+    const allVariables = useVelocityStore((state) => state.dataset?.variables ?? EMPTY_VARIABLES);
 
     return useMemo(() => {
         const resolveVarSetToVariable = (varSetId: string): Variable | null => {

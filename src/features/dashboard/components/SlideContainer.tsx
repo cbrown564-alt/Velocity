@@ -15,6 +15,8 @@ interface SlideContainerProps {
     className?: string;
 }
 
+const EMPTY_VARIABLES: Variable[] = [];
+
 /**
  * Renders the active slide's layout and content.
  * For Phase 2.5, this primarily supports 'focus' mode (single cell).
@@ -29,7 +31,7 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
     const tableConfig = useVelocityStore((state) => state.tableConfig);
     const variableSets = useVelocityStore((state) => state.variableSets);
     const viewMode = useVelocityStore((state) => state.viewMode);
-    const allVariables = useVelocityStore((state) => state.dataset?.variables || []);
+    const allVariables = useVelocityStore((state) => state.dataset?.variables ?? EMPTY_VARIABLES);
     const totalCount = useVelocityStore((state) => state.dataset?.rowCount || 0);
     const isWeighted = useVelocityStore((state) => !!state.dataset?.weightVariable);
     const variableStats = useVelocityStore((state) => state.activeVariableStats);
