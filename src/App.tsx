@@ -23,7 +23,7 @@ import { VariableCard } from './features/dashboard/components/DraggableVariable'
 import { ContextMenu } from './features/dashboard/components/ContextMenu';
 import { InputModal } from './components/overlays/InputModal';
 import * as opfsFileManager from './services/opfsFileManager';
-import { WorkspaceView, ProjectLinkModal, CrossWavePanel, type StoredDataset, type Project } from './features/workspace';
+import { WorkspaceView, ProjectLinkModal, CrossWavePanel, ExportImportModal, type StoredDataset, type Project, type WorkspaceExport } from './features/workspace';
 
 // Smart Canvas Wrapper
 const SmartCanvas: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className }) => {
@@ -237,6 +237,10 @@ export default function App() {
   const [crossWaveProject, setCrossWaveProject] = React.useState<Project | null>(null);
   const [crossWaveDatasets, setCrossWaveDatasets] = React.useState<StoredDataset[]>([]);
   const [selectedWaves, setSelectedWaves] = React.useState<[StoredDataset, StoredDataset] | undefined>(undefined);
+
+  // Export/Import modal state
+  const [showExportModal, setShowExportModal] = React.useState(false);
+  const [exportSelectedIds, setExportSelectedIds] = React.useState<string[]>([]);
 
   const SAV_WARN_MB = 50;
   const SAV_HARD_MB = 200;
@@ -799,6 +803,86 @@ export default function App() {
     setSelectedWaves(undefined);
   }, []);
 
+  // Open export modal
+  const handleOpenExportModal = useCallback((selectedIds: string[]) => {
+    setExportSelectedIds(selectedIds);
+    setShowExportModal(true);
+  }, []);
+
+  // Close export modal
+  const handleCloseExportModal = useCallback(() => {
+    setShowExportModal(false);
+    setExportSelectedIds([]);
+  }, []);
+
+  // Handle workspace import
+  const handleWorkspaceImport = useCallback((data: WorkspaceExport) => {
+    // Import datasets
+    data.workspace.datasets.forEach(importedDataset => {
+      const existing = workspace.datasets.find(d => d.id === importedDataset.id);
+      if (existing) {
+        // Update existing dataset
+        updateStoredDataset(importedDataset.id, importedDataset);
+      } else {
+        // Add new dataset
+        addStoredDataset({
+          name: importedDataset.name,
+          fileName: importedDataset.fileName,
+          rowCount: importedDataset.rowCount,
+          columnCount: importedDataset.columnCount,
+          fileSize: importedDataset.fileSize,
+          source: importedDataset.source,
+        });
+      }
+    });
+
+    // Import projects
+    data.workspace.projects.forEach(importedProject => {
+      const existing = workspace.projects.find(p => p.id === importedProject.id);
+      if (!existing) {
+        createProject({
+          name: importedProject.name,
+          color: importedProject.color,
+          description: importedProject.description,
+          datasetIds: importedProject.datasetIds,
+          isLongitudinal: importedProject.isLongitudinal,
+          respondentKeyVariable: importedProject.respondentKeyVariable,
+        });
+      }
+    });
+
+    console.log('[App] Imported workspace:', data.metadata);
+  }, [workspace.datasets, workspace.projects, updateStoredDataset, addStoredDataset, createProject]);
+
+  // Batch star datasets
+  const handleBatchStar = useCallback((ids: string[], starred: boolean) => {
+    ids.forEach(id => {
+      if (starred) {
+        // If not already starred, toggle
+        const dataset = workspace.datasets.find(d => d.id === id);
+        if (dataset && !dataset.starred) {
+          toggleDatasetStar(id);
+        }
+      } else {
+        // If already starred, toggle
+        const dataset = workspace.datasets.find(d => d.id === id);
+        if (dataset && dataset.starred) {
+          toggleDatasetStar(id);
+        }
+      }
+    });
+  }, [workspace.datasets, toggleDatasetStar]);
+
+  // Batch delete datasets
+  const handleBatchDelete = useCallback((ids: string[]) => {
+    if (window.confirm(`Delete ${ids.length} datasets from your workspace? The original files will not be affected.`)) {
+      ids.forEach(id => removeStoredDataset(id));
+      if (activeDatasetId && ids.includes(activeDatasetId)) {
+        setActiveDataset(null);
+      }
+    }
+  }, [removeStoredDataset, activeDatasetId, setActiveDataset]);
+
   // Register dataset when it changes
   // Note: We intentionally exclude registerDatasetInWorkspace from deps
   // to avoid infinite loops. The ref-based tracking handles deduplication.
@@ -1127,6 +1211,14 @@ export default function App() {
         />
       )}
 
+      <ExportImportModal
+        isOpen={showExportModal}
+        onClose={handleCloseExportModal}
+        workspaceState={workspace}
+        selectedDatasetIds={exportSelectedIds}
+        onImport={handleWorkspaceImport}
+      />
+
       {contextMenu && contextMenu.visible && (
         <ContextMenu
           x={contextMenu.x}
@@ -1220,6 +1312,9 @@ export default function App() {
                 onLinkDatasets={handleAddToProject}
                 onUnlinkDataset={handleUnlinkDataset}
                 onCompareWaves={handleOpenCrossWavePanel}
+                onBatchStar={handleBatchStar}
+                onBatchDelete={handleBatchDelete}
+                onExport={handleOpenExportModal}
               />
             )}
 

@@ -31,9 +31,11 @@ import {
   AlertCircle,
   Sparkles,
   TrendingUp,
+  Download,
 } from 'lucide-react';
 import styles from './WorkspaceView.module.css';
 import { WaveTimeline } from './WaveTimeline';
+import { BatchOperationsBar } from './BatchOperationsBar';
 
 // ============================================================================
 // Types
@@ -97,6 +99,12 @@ interface WorkspaceViewProps {
   onUnlinkDataset: (datasetId: string) => void;
   /** Callback when user wants to compare waves */
   onCompareWaves?: (project: Project, wave1: StoredDataset, wave2: StoredDataset) => void;
+  /** Callback for batch star operation */
+  onBatchStar?: (ids: string[], starred: boolean) => void;
+  /** Callback for batch delete operation */
+  onBatchDelete?: (ids: string[]) => void;
+  /** Callback to open export modal */
+  onExport?: (selectedIds: string[]) => void;
 }
 
 // ============================================================================
@@ -527,6 +535,9 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
   onLinkDatasets,
   onUnlinkDataset,
   onCompareWaves,
+  onBatchStar,
+  onBatchDelete,
+  onExport,
 }) => {
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
   const [filterMode, setFilterMode] = useState<FilterMode>('recent');
@@ -653,6 +664,17 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
           </div>
 
           {/* Actions */}
+          {onExport && datasets.length > 0 && (
+            <motion.button
+              className={styles.exportButton}
+              onClick={() => onExport([])}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              title="Export workspace"
+            >
+              <Download size={16} />
+            </motion.button>
+          )}
           <motion.button
             className={styles.uploadButton}
             onClick={onUploadFile}
@@ -881,6 +903,51 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
               </button>
             </motion.div>
           </>
+        )}
+      </AnimatePresence>
+
+      {/* Batch operations bar */}
+      <AnimatePresence>
+        {selectedIds.size > 0 && (
+          <BatchOperationsBar
+            selectedDatasets={datasets.filter(d => selectedIds.has(d.id))}
+            allDatasets={filteredDatasets}
+            projects={projects}
+            onClearSelection={() => setSelectedIds(new Set())}
+            onSelectAll={() => setSelectedIds(new Set(filteredDatasets.map(d => d.id)))}
+            onStarAll={() => {
+              if (onBatchStar) {
+                onBatchStar(Array.from(selectedIds), true);
+              } else {
+                selectedIds.forEach(id => onToggleStar(id));
+              }
+            }}
+            onUnstarAll={() => {
+              if (onBatchStar) {
+                onBatchStar(Array.from(selectedIds), false);
+              } else {
+                selectedIds.forEach(id => onToggleStar(id));
+              }
+            }}
+            onDeleteAll={() => {
+              if (onBatchDelete) {
+                onBatchDelete(Array.from(selectedIds));
+              } else {
+                selectedIds.forEach(id => onDeleteDataset(id));
+              }
+              setSelectedIds(new Set());
+            }}
+            onCreateProject={() => onCreateProject(Array.from(selectedIds))}
+            onAddToProject={(projectId) => {
+              onLinkDatasets(Array.from(selectedIds), projectId);
+              setSelectedIds(new Set());
+            }}
+            onExportSelected={() => {
+              if (onExport) {
+                onExport(Array.from(selectedIds));
+              }
+            }}
+          />
         )}
       </AnimatePresence>
     </div>
