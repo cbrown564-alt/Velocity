@@ -9,6 +9,7 @@ import { VirtualizedVariableList } from './features/dashboard/components/Virtual
 import { DropZone } from './components/common/DropZone';
 import { SlideContainer } from './features/dashboard/components/SlideContainer';
 import { TimelineDock } from './features/dashboard/components/TimelineDock';
+import { PersistenceStatus } from './features/dashboard/components/PersistenceStatus';
 // import { DataTable } from './features/dashboard/components/DataTable'; // Keeping import for now if needed by other components, but effectively replaced
 
 import { DataDrawer } from './components/overlays/DataDrawer';
@@ -1554,94 +1555,24 @@ export default function App() {
                       <span>Heuristics based on {dataset.sampleRowCount.toLocaleString()} sample rows</span>
                     </div>
                   )}
-                  <div className="mt-3 px-2 py-2 rounded-md border border-[var(--border-color-muted)] bg-[var(--bg-surface)]">
-                    <div className="text-[11px] font-semibold uppercase tracking-wider text-[var(--text-secondary)]">
-                      OPFS Storage Health
-                    </div>
-                    <div className="mt-2 text-xs text-[var(--text-secondary)] space-y-1">
-                      <div>Mode: <span className="text-[var(--text-primary)]">{persistenceMode}</span></div>
-                      <div>Available: <span className="text-[var(--text-primary)]">{opfsAvailable ? 'Yes' : 'No'}</span></div>
-                      {opfsDbLabel && (
-                        <div>DB: <span className="text-[var(--text-primary)]">{opfsDbLabel}</span></div>
-                      )}
-                      {opfsUsageMb !== null && opfsQuotaMb !== null ? (
-                        <div>
-                          Storage: <span className="text-[var(--text-primary)]">{opfsUsageMb.toFixed(1)} / {opfsQuotaMb.toFixed(1)} MB</span>
-                          {opfsUsagePct !== null ? ` (${opfsUsagePct}%)` : ''}
-                        </div>
-                      ) : (
-                        <div>Storage: <span className="text-[var(--text-primary)]">Unavailable</span></div>
-                      )}
-                      {persistenceError && (
-                        <div className="text-amber-700">Warning: {persistenceError}</div>
-                      )}
-                      {opfsErrorHint && (
-                        <div className="text-[11px] text-amber-700">{opfsErrorHint}</div>
-                      )}
-                      {opfsRehydrateError && (
-                        <div className="text-amber-700">Restore error: {opfsRehydrateError}</div>
-                      )}
-                      <div className="pt-1">
-                        <button
-                          type="button"
-                          onClick={refreshOpfsDbFiles}
-                          className="text-[11px] px-2 py-1 rounded border border-[var(--border-color-muted)] text-[var(--text-primary)] hover:bg-[var(--bg-panel)] transition-colors"
-                        >
-                          List OPFS DBs
-                        </button>
-                        <button
-                          type="button"
-                          onClick={purgeQuarantinedDbs}
-                          className="ml-2 text-[11px] px-2 py-1 rounded border border-[var(--border-color-muted)] text-[var(--text-primary)] hover:bg-[var(--bg-panel)] transition-colors"
-                        >
-                          Purge Quarantined
-                        </button>
-                        {dataset?.opfsFileKey && (
-                          <button
-                            type="button"
-                            onClick={() => void rebuildFromOpfsSource('dashboard')}
-                            className="ml-2 text-[11px] px-2 py-1 rounded border border-[var(--border-color-muted)] text-[var(--text-primary)] hover:bg-[var(--bg-panel)] transition-colors"
-                            title="Rebuild DuckDB from the persisted source file (slow but reliable fallback)"
-                          >
-                            Rebuild from OPFS File
-                          </button>
-                        )}
-                      </div>
-                      {opfsDbListError && (
-                        <div className="text-amber-700">List error: {opfsDbListError}</div>
-                      )}
-                      {opfsDbPurgeError && (
-                        <div className="text-amber-700">Purge error: {opfsDbPurgeError}</div>
-                      )}
-                      {opfsDbFiles && opfsDbFiles.length > 0 && (
-                        <div className="pt-1 text-[11px] text-[var(--text-secondary)] space-y-1">
-                          {opfsDbFiles.map((file) => (
-                            <div key={file.name}>
-                              <span className="text-[var(--text-primary)]">{file.name}</span>
-                              {' '}({(file.size / (1024 * 1024)).toFixed(1)} MB)
-                              <button
-                                type="button"
-                                onClick={async () => {
-                                  try {
-                                    await opfsFileManager.deleteDbFile(file.name);
-                                    await refreshOpfsDbFiles();
-                                  } catch (error: any) {
-                                    setOpfsDbPurgeError(error?.message || 'Failed to delete OPFS DB file');
-                                  }
-                                }}
-                                className="ml-2 text-[11px] text-amber-700 hover:text-amber-900"
-                              >
-                                Delete
-                              </button>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                      {opfsDbFiles && opfsDbFiles.length === 0 && (
-                        <div className="text-[11px] text-[var(--text-secondary)]">No OPFS DB files found</div>
-                      )}
-                    </div>
+                  <div className="mt-auto">
+                    <PersistenceStatus
+                      mode={persistenceMode}
+                      opfsAvailable={opfsAvailable}
+                      dbLabel={opfsDbLabel}
+                      usageMb={opfsUsageMb}
+                      quotaMb={opfsQuotaMb}
+                      usagePct={opfsUsagePct}
+                      error={persistenceError}
+                      errorHint={opfsErrorHint}
+                      rehydrateError={opfsRehydrateError}
+                      opfsFileKey={dataset?.opfsFileKey}
+                      onRefresh={refreshOpfsDbFiles}
+                      onPurge={purgeQuarantinedDbs}
+                      onRebuild={() => void rebuildFromOpfsSource('dashboard')}
+                    />
                   </div>
+
                 </div>
               </aside>
 
@@ -1802,7 +1733,7 @@ export default function App() {
                   </SmartCanvas>
                 </div>
               </main>
-            </motion.div>
+            </motion.div >
 
             <DragOverlay dropAnimation={null}>
               {activeDragSet ? (
@@ -1812,7 +1743,7 @@ export default function App() {
                 />
               ) : null}
             </DragOverlay>
-          </DndContext>
+          </DndContext >
         </AppShell >
       )
       }
