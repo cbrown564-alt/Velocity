@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useRef, useCallback } from 'react';
 import { AggregatedRow, Variable, TableStats } from '../../../types';
 import { motion } from 'framer-motion';
-import { ChevronRight, ChevronDown, ArrowUp, ArrowDown, FileDown } from 'lucide-react';
+import { ChevronRight, ChevronDown, ArrowUp, ArrowDown } from 'lucide-react';
 import type { VariableStatsResult } from '../../../types/worker';
 import { AnalysisChart } from '../../../components/charts/AnalysisChart';
 import { useProcessedAnalysisData } from '../../../hooks/useProcessedAnalysisData';
@@ -9,14 +9,12 @@ import { recommendChart } from '../../../services/chartRecommender';
 import { useTableDragMerge, TableDragItem } from '../../../hooks/useTableDragMerge';
 import { useMergeOrchestration } from '../../../hooks/useMergeOrchestration';
 import { InputModal } from '../../../components/overlays/InputModal';
-import { ExportModal } from '../../../components/overlays/ExportModal';
 import { RowPathEntry, TableRowNode } from '../../../services/treeBuilder';
 import { Tooltip } from '../../../components/common/Tooltip';
 import { StatisticsTooltip } from '../../../components/common/StatisticsTooltip';
 import { SignificanceLegend } from '../../../components/common/SignificanceLegend';
 import { MethodologyPanel } from '../../../components/common/MethodologyPanel';
 import { AnalysisSettingsPanel } from '../../../components/common/AnalysisSettingsPanel';
-import { ExportConfig } from '../../../core/export/types';
 import mergeStyles from './DataTable.module.css';
 export type { RowPathEntry, TableRowNode };
 
@@ -64,8 +62,6 @@ export const DataTable: React.FC<DataTableProps> = ({
   const [expandedKeys, setExpandedKeys] = useState<Record<string, boolean>>({});
   // State for methodology panel visibility
   const [showMethodology, setShowMethodology] = useState(false);
-  // State for export modal
-  const [showExportModal, setShowExportModal] = useState(false);
 
   const toggleRow = (key: string) => {
     setExpandedKeys(prev => ({ ...prev, [key]: !prev[key] }));
@@ -169,36 +165,6 @@ export const DataTable: React.FC<DataTableProps> = ({
       grandTotal: processedData.grandTotal
     };
   }, [processedData]);
-
-  // Prepare export configuration
-  const exportConfig: ExportConfig = useMemo(() => {
-    if (!processedData) {
-      return {
-        title: 'Analysis Report',
-        analyses: [],
-      };
-    }
-
-    // Build table label from variables
-    const rowVarLabels = rowVariables.map(v => v.label).join(' × ');
-    const colVarLabel = colVariable ? ` by ${colVariable.label}` : '';
-    const tableLabel = `${rowVarLabels}${colVarLabel}`;
-
-    return {
-      title: 'Analysis Report',
-      analyses: [
-        {
-          label: tableLabel,
-          result: processedData,
-          options: {
-            showSignificance: true,
-            showPercents: true,
-            showCounts: false,
-          },
-        },
-      ],
-    };
-  }, [processedData, rowVariables, colVariable]);
 
   if (!tableData) return null;
 
@@ -511,7 +477,7 @@ export const DataTable: React.FC<DataTableProps> = ({
             )}
           </div>
 
-          {/* Right side: Chi-square stats and Export button */}
+          {/* Right side: Chi-square stats */}
           <div className="flex items-center gap-3">
             {colVariable && tableStats?.chiSquare && (
               <Tooltip
@@ -544,20 +510,6 @@ export const DataTable: React.FC<DataTableProps> = ({
                 </div>
               </Tooltip>
             )}
-            <Tooltip
-              content="Export to PowerPoint or Excel"
-              position="top"
-              delay={200}
-            >
-              <button
-                onClick={() => setShowExportModal(true)}
-                className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-[var(--text-primary)] bg-[var(--bg-surface)] hover:bg-[var(--color-accent)] hover:text-[var(--text-inverse)] border border-[var(--border-color)] rounded transition-all"
-                aria-label="Export table"
-              >
-                <FileDown size={16} />
-                Export
-              </button>
-            </Tooltip>
           </div>
         </div>
 
@@ -599,12 +551,6 @@ export const DataTable: React.FC<DataTableProps> = ({
           submitLabel="Create Group"
         />
 
-        {/* Export Modal */}
-        <ExportModal
-          isOpen={showExportModal}
-          onClose={() => setShowExportModal(false)}
-          config={exportConfig}
-        />
       </motion.div>
     );
   }

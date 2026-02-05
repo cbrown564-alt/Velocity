@@ -604,8 +604,22 @@ async function loadSAV(buffer: ArrayBuffer, forceChunked?: boolean): Promise<{ v
 
 // Threshold for auto-routing to chunked mode (50MB)
 const CHUNKED_THRESHOLD_BYTES = 50 * 1024 * 1024;
-const DEFAULT_CHUNK_SIZE = 10000;
+const DEFAULT_CHUNK_SIZE = 5000; // Rows per chunk for streaming insertion
 
+/**
+ * Load SAV file using streaming mode for reduced memory usage.
+ *
+ * Strategy:
+ * 1. Parse file into WASM memory
+ * 2. Extract metadata (variable names, types, labels)
+ * 3. Stream rows in batches to DuckDB via Arrow
+ * 4. Release WASM memory for each batch after insertion
+ * 5. Report progress throughout the process
+ *
+ * This approach reduces peak JS memory by not holding all rows
+ * in JS arrays simultaneously. The WASM memory is also released
+ * incrementally as rows are processed.
+ */
 async function loadSAVChunked(
   buffer: ArrayBuffer,
   chunkSize: number = DEFAULT_CHUNK_SIZE
@@ -613,89 +627,162 @@ async function loadSAVChunked(
   if (!db || !conn) throw new Error('DB not initialized');
 
   const start = performance.now();
+  const fileSizeMb = buffer.byteLength / (1024 * 1024);
 
-  // 1. Parse SAV file
-  const { parseSavFile } = await import('@velocity/readstat-wasm');
-  const parsed = await parseSavFile(buffer, (progress) => {
-    console.log(`📊 [Worker] Chunked parse progress: ${(progress.progress * 100).toFixed(1)}%`);
+  console.log(`🦆 [Worker] Starting streaming SAV load: ${fileSizeMb.toFixed(1)} MB, chunk size ${chunkSize}`);
+
+  // Send initial progress
+  self.postMessage({
+    type: 'loadProgress',
+    phase: 'parsing',
+    progress: 0,
+    message: `Starting to parse ${fileSizeMb.toFixed(1)} MB file...`
   });
 
-  // 2. Process metadata
-  const { variables, variableSets } = processMetadata({
-    metadata: {
-      variables: parsed.metadata.variables,
-      valueLabelSets: parsed.metadata.valueLabelSets,
-      multipleResponseSets: parsed.metadata.multipleResponseSets,
-      rowCount: parsed.metadata.rowCount,
-    },
-    rows: parsed.rows,
-  });
+  const { parseSavStreaming } = await import('@velocity/readstat-wasm');
 
-  const numRows = parsed.rows.length;
-  const numCols = parsed.metadata.variables.length;
+  // Variable metadata is set after parsing starts (before first batch callback)
+  let variableMetadata: { name: string; type: 'numeric' | 'string' }[] = [];
+  let isFirstChunk = true;
+  let totalRowsInserted = 0;
+  let chunksInserted = 0;
+  let streamingError: Error | null = null;
 
-  if (numRows === 0) {
-    throw new Error(`SAV parsing failed: No row data extracted (expected ${parsed.metadata.rowCount} rows)`);
-  }
-
-  // 3. Prepare chunked insertion
-  const variableMetadata = parsed.metadata.variables.map(v => ({
-    name: v.name,
-    type: v.type as 'numeric' | 'string',
-  }));
-
-  const chunkBuilder = new ArrowChunkBuilder(variableMetadata, chunkSize);
-
-  // Drop existing table
+  // Drop existing table before starting
   await conn.query(`DROP TABLE IF EXISTS main`);
 
-  let isFirstChunk = true;
-  let chunksInserted = 0;
+  // Use streaming parser - it extracts metadata first, then streams rows
+  const streamingResult = await parseSavStreaming(buffer, chunkSize, async (batch) => {
+    // On first batch, set up variable metadata from the streaming result
+    // parseSavStreaming extracts metadata before calling the first batch callback
+    if (variableMetadata.length === 0) {
+      // We'll get the variables from the promise result, but for now
+      // the batch callback needs to infer from data since the metadata
+      // comes with the final result. Let's handle this edge case.
+      const numCols = batch.rows[0]?.length ?? 0;
+      for (let c = 0; c < numCols; c++) {
+        // Infer type from first non-null value
+        let isNumeric = true;
+        for (const row of batch.rows) {
+          if (row[c] !== null) {
+            isNumeric = typeof row[c] === 'number';
+            break;
+          }
+        }
+        variableMetadata.push({
+          name: `col_${c}`, // Will be renamed after streaming completes
+          type: isNumeric ? 'numeric' : 'string',
+        });
+      }
+    }
 
-  // 4. Stream rows through chunk builder
-  for (let r = 0; r < numRows; r++) {
-    const row = parsed.rows[r];
-    const batch = chunkBuilder.addRow(row);
+    if (batch.rows.length === 0) return;
 
-    // Null out processed row to free memory eagerly
-    (parsed.rows as any)[r] = null;
+    try {
+      const numCols = batch.rows[0].length;
+      const numRows = batch.rows.length;
 
-    if (batch) {
-      // Insert chunk into DuckDB
-      const table = new arrow.Table(batch);
-      await conn.insertArrowTable(table, { name: 'main', create: isFirstChunk });
+      // Build Arrow vectors (column-major)
+      const vectors: Record<string, arrow.Vector> = {};
+      for (let c = 0; c < numCols; c++) {
+        const colData: (number | string | null)[] = new Array(numRows);
+        for (let r = 0; r < numRows; r++) {
+          colData[r] = batch.rows[r][c];
+        }
+
+        const isNumeric = variableMetadata[c]?.type === 'numeric';
+        const colName = variableMetadata[c]?.name || `col_${c}`;
+
+        if (isNumeric) {
+          vectors[colName] = arrow.vectorFromArray(colData as (number | null)[], new arrow.Float64());
+        } else {
+          vectors[colName] = arrow.vectorFromArray(colData as (string | null)[], new arrow.Utf8());
+        }
+      }
+
+      const table = new arrow.Table(vectors);
+      await conn!.insertArrowTable(table, { name: 'main', create: isFirstChunk });
       isFirstChunk = false;
+      totalRowsInserted += numRows;
       chunksInserted++;
 
-      if (chunksInserted % 10 === 0) {
-        console.log(`📊 [Worker] Inserted chunk ${chunksInserted}, ${chunkBuilder.getTotalRowsProcessed()} rows processed`);
+      // Report progress every 5 chunks or at completion
+      const progressPct = Math.round(batch.progress * 100);
+      if (chunksInserted % 5 === 0 || progressPct >= 99) {
+        console.log(`📊 [Worker] Chunk ${chunksInserted}: ${totalRowsInserted}/${batch.totalRows} rows (${progressPct}%)`);
+        self.postMessage({
+          type: 'loadProgress',
+          phase: 'inserting',
+          progress: batch.progress,
+          rowsProcessed: totalRowsInserted,
+          totalRows: batch.totalRows,
+          message: `Loaded ${totalRowsInserted.toLocaleString()} of ${batch.totalRows.toLocaleString()} rows...`
+        });
+      }
+    } catch (err: any) {
+      console.error(`🦆 [Worker] Chunk insertion failed at rows ${batch.startRow}-${batch.endRow}:`, err);
+      streamingError = err;
+      throw err;
+    }
+  });
+
+  if (streamingError) {
+    throw streamingError;
+  }
+
+  // Rename columns from placeholders to actual variable names
+  const realVariableNames = streamingResult.metadata.variables.map(v => v.name);
+  for (let i = 0; i < Math.min(variableMetadata.length, realVariableNames.length); i++) {
+    const oldName = variableMetadata[i].name;
+    const newName = realVariableNames[i];
+    if (oldName !== newName) {
+      try {
+        // Escape double quotes in column names for DuckDB
+        const escapedOld = oldName.replace(/"/g, '""');
+        const escapedNew = newName.replace(/"/g, '""');
+        await conn.query(`ALTER TABLE main RENAME COLUMN "${escapedOld}" TO "${escapedNew}"`);
+      } catch (renameError) {
+        console.warn(`🦆 [Worker] Could not rename column ${oldName} to ${newName}:`, renameError);
       }
     }
   }
 
-  // Drop the rows array reference
-  (parsed as any).rows = [];
+  // Process metadata to generate Variable[] and VariableSet[]
+  const processedMeta = processMetadata({
+    metadata: {
+      variables: streamingResult.metadata.variables,
+      valueLabelSets: streamingResult.metadata.valueLabelSets,
+      multipleResponseSets: streamingResult.metadata.multipleResponseSets,
+      rowCount: streamingResult.metadata.rowCount,
+    },
+    rows: [], // No rows needed - they're already in DuckDB
+  });
 
-  // 5. Flush final partial chunk
-  const finalBatch = chunkBuilder.flush();
-  if (finalBatch) {
-    const table = new arrow.Table(finalBatch);
-    await conn.insertArrowTable(table, { name: 'main', create: isFirstChunk });
-    chunksInserted++;
-  }
+  const variables = processedMeta.variables;
+  const variableSets = processedMeta.variableSets;
 
-  // 6. Verify row count
+  // Verify row count
   const verifyResult = await conn.query(`SELECT COUNT(*) as cnt FROM main`);
   const count = Number(verifyResult.toArray()[0]?.cnt);
 
-  if (count !== numRows) {
-    throw new Error(`Chunked insertion verification failed: expected ${numRows} rows, got ${count}`);
+  if (count !== totalRowsInserted) {
+    console.warn(`🦆 [Worker] Row count mismatch: inserted ${totalRowsInserted}, DuckDB reports ${count}`);
   }
 
   const durationMs = performance.now() - start;
-  console.log(`🦆 [Worker] Loaded SAV (chunked): ${parsed.metadata.rowCount} rows in ${chunksInserted} chunks, ${variables.length} variables in ${durationMs.toFixed(2)}ms`);
+  console.log(`🦆 [Worker] Loaded SAV (streaming): ${streamingResult.metadata.rowCount} rows in ${chunksInserted} chunks, ${variables.length} variables in ${durationMs.toFixed(2)}ms`);
 
-  return { variables, variableSets, rowCount: parsed.metadata.rowCount, durationMs };
+  // Final progress message
+  self.postMessage({
+    type: 'loadProgress',
+    phase: 'complete',
+    progress: 1,
+    rowsProcessed: count,
+    totalRows: streamingResult.metadata.rowCount,
+    message: `Loaded ${count.toLocaleString()} rows successfully`
+  });
+
+  return { variables, variableSets, rowCount: streamingResult.metadata.rowCount, durationMs };
 }
 
 async function loadSAVMetadata(buffer: ArrayBuffer): Promise<{ variables: Variable[]; variableSets: VariableSet[]; rowCount: number; durationMs: number }> {

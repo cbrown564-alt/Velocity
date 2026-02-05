@@ -107,6 +107,7 @@ export type WorkerResponse =
   | { type: 'savLoaded'; variables: Variable[]; variableSets: VariableSet[]; rowCount: number; durationMs: number }
   | { type: 'savMetadataLoaded'; variables: Variable[]; variableSets: VariableSet[]; rowCount: number; durationMs: number }
   | { type: 'savSampleLoaded'; variables: Variable[]; variableSets: VariableSet[]; rowCount: number; sampleRowCount: number; sampleStrategy: 'sequential' | 'spread'; durationMs: number }
+  | { type: 'loadProgress'; phase: 'parsing' | 'inserting' | 'complete'; progress: number; rowsProcessed?: number; totalRows?: number; message: string }
   | { type: 'flushComplete'; ok: boolean; durationMs: number; error?: string }
   | { type: 'queryResult'; data: any[]; durationMs: number; tableStats?: TableStats }
   | { type: 'uniqueValues'; data: string[] }

@@ -7,7 +7,7 @@
 import type { StateCreator } from 'zustand';
 // buildCrosstabQuery import removed
 import type { WorkerRequest, WorkerResponse, VariableStatsResult } from '../../types/worker';
-import type { DataSlice, VariableSet } from './dataSlice';
+import type { DataSlice } from './dataSlice';
 import type { UISlice } from './uiSlice';
 
 // ============================================================================
@@ -42,7 +42,8 @@ export interface Filter {
 }
 
 import { AggregatedRow, TableStats } from '../../types';
-import { CrosstabQueryOptions } from '../../services/queryBuilder';
+import { buildCrosstabRequest } from '../../core/analysis/buildCrosstabRequest';
+import { mapCrosstabRows } from '../../core/analysis/mapCrosstabRows';
 
 // ============================================================================
 // Slice State & Actions
@@ -111,122 +112,25 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
 
     runAnalysis: async () => {
         const { worker, tableConfig, dataset, variableSets, activeFilters } = get();
-        if (!worker || tableConfig.rowVars.length === 0) {
+        if (!worker || !dataset || tableConfig.rowVars.length === 0) {
             set({ queryResult: [], tableStats: null });
             return;
         }
 
         set({ isQuerying: true });
 
-        const firstRowVarSet = variableSets.find((s: VariableSet) => s.id === tableConfig.rowVars[0]);
-
-        const options: CrosstabQueryOptions = {
-            rowVars: [],
+        const request = buildCrosstabRequest({
+            dataset,
+            variableSets,
+            rowVars: tableConfig.rowVars,
             colVar: tableConfig.colVar,
             filters: activeFilters,
-            weightVar: dataset?.weightVariable
-        };
-
-        // Context for worker to resolve synthetic variables and grid definitions
-        const contextVariables: Record<string, any> = {};
-        const contextVariableSets: Record<string, any> = {};
-
-        // Helper to add context
-        const addToContext = (varId: string) => {
-            const variable = dataset?.variables.find(v => v.id === varId);
-            if (variable) contextVariables[varId] = variable;
-        };
-
-        // For synthetic variables, we need to look up source sets
-        const resolveSourceSet = (variableId: string) => {
-            const variable = dataset?.variables.find(v => v.id === variableId);
-            if (variable?.synthetic && variable.sourceGridId) {
-                const sourceSet = variableSets.find((s: VariableSet) => s.id === variable.sourceGridId);
-                if (sourceSet) {
-                    contextVariableSets[sourceSet.id] = sourceSet;
-                    // Add all related variables from the set to context
-                    sourceSet.variableIds.forEach(vid => {
-                        addToContext(vid);
-                    });
-                }
-            }
-        };
-
-        // Add row/col vars to context
-        tableConfig.rowVars.forEach(vid => {
-            addToContext(vid);
-            resolveSourceSet(vid);
+            weightVar: dataset?.weightVariable ?? null,
         });
-        if (tableConfig.colVar) {
-            addToContext(tableConfig.colVar);
-            resolveSourceSet(tableConfig.colVar);
+
+        if (request.measureVarId) {
+            get().fetchVariableStats(request.measureVarId, 'numeric');
         }
-
-        if (firstRowVarSet?.structure === 'multiple') {
-            // Multiple structure - Keeping legacy handling for now
-            options.multipleColumns = firstRowVarSet.variableIds.map(varId => {
-                const variable = dataset?.variables.find(v => v.id === varId);
-                return {
-                    name: varId,
-                    label: variable?.label || varId,
-                    countedValue: firstRowVarSet.countedValue ?? 1,
-                };
-            });
-        } else if (firstRowVarSet?.type === 'numeric' || (tableConfig.colVar && variableSets.find((s: VariableSet) => s.id === tableConfig.colVar)?.type === 'numeric')) {
-            // Numeric Variable Analysis (Metric)
-            const colVarSet = tableConfig.colVar ? variableSets.find((s: VariableSet) => s.id === tableConfig.colVar) : null;
-            const isRowScale = firstRowVarSet?.type === 'numeric';
-
-            // Determine Measure Variable
-            const measureVarSet = isRowScale ? firstRowVarSet! : colVarSet!;
-            const measureVarId = measureVarSet.variableIds[0];
-
-            get().fetchVariableStats(measureVarId, 'numeric');
-
-            options.measureVar = measureVarId;
-            options.measureLabel = measureVarSet.name;
-            options.includeDistributions = true;
-
-            // Add measure var to context
-            addToContext(measureVarId);
-
-            if (isRowScale) {
-                const col = tableConfig.colVar
-                    ? (colVarSet?.variableIds[0] || tableConfig.colVar)
-                    : null;
-                options.colVar = col;
-            } else {
-                // Grouped Box Plot logic
-                const resolveToCol = (id: string): string => {
-                    const varSet = variableSets.find((s: VariableSet) => s.id === id);
-                    if (varSet && varSet.variableIds.length > 0) {
-                        return varSet.variableIds[0];
-                    }
-                    return id;
-                };
-                options.rowVars = tableConfig.rowVars.map(resolveToCol);
-                options.colVar = null;
-            }
-        } else {
-            // Standard / Nested / (Implicit Grid via Synthetic Vars)
-            const resolveToCol = (id: string): string => {
-                // If the ID matches a synthetic variable, use it directly
-                const variable = dataset?.variables.find(v => v.id === id);
-                if (variable) return id;
-
-                // Else check if it's a VariableSet and take first var (legacy single var set)
-                const varSet = variableSets.find((s: VariableSet) => s.id === id);
-                if (varSet && varSet.variableIds.length > 0) {
-                    return varSet.variableIds[0];
-                }
-                return id;
-            };
-
-            options.rowVars = tableConfig.rowVars.map(resolveToCol);
-            options.colVar = tableConfig.colVar ? resolveToCol(tableConfig.colVar) : null;
-        }
-
-        const isWeighted = !!dataset?.weightVariable;
 
         return new Promise<void>((resolve) => {
             const handler = (event: MessageEvent<WorkerResponse>) => {
@@ -234,34 +138,7 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
 
                 if (response.type === 'queryResult') {
                     const rawData = response.data as any[];
-                    const mappedData: AggregatedRow[] = rawData.map(row => {
-                        const rowKeys = Object.keys(row)
-                            .filter(k => k.startsWith('rowKey_'))
-                            .sort()
-                            .map(k => row[k]);
-
-                        return {
-                            rowKeys,
-                            colKey: row.colKey,
-                            count: isWeighted ? 0 : Number(row.count ?? row.validCount ?? 0),
-                            weightedCount: isWeighted ? Number(row.count) : undefined,
-                            mean: row.mean,
-                            median: row.median,
-                            stdDev: row.stdDev,
-                            min: row.min,
-                            max: row.max,
-                            q1: row.q1,
-                            q3: row.q3,
-                            validCount: row.validCount !== undefined ? Number(row.validCount) : undefined,
-                            histogramBins: row.histogramBins, // Bins for violin/ridgeline
-                            sig: row.sig, // Signficance flag from worker
-                            stats: row.stats, // Detailed stats for tooltip
-                            ci95: row.ci95, // 95% confidence interval
-                            ci80: row.ci80, // 80% confidence interval
-                            sigLetters: row.sigLetters, // Pairwise comparison letters
-                            columnLetter: row.columnLetter, // Column letter (A, B, C...)
-                        };
-                    });
+                    const mappedData: AggregatedRow[] = mapCrosstabRows(rawData, request.isWeighted);
 
                     set({
                         queryResult: mappedData,
@@ -281,11 +158,8 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
             worker.addEventListener('message', handler);
             worker.postMessage({
                 type: 'runCrosstab',
-                options,
-                context: {
-                    variables: contextVariables,
-                    variableSets: contextVariableSets
-                }
+                options: request.options,
+                context: request.context
             } as WorkerRequest);
         });
     },

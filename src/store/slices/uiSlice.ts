@@ -8,6 +8,7 @@
 import type { StateCreator } from 'zustand';
 import type { VariableType } from './dataSlice';
 import type { Variable } from './dataSlice';
+import type { ExportConfig } from '../../core/export/types';
 
 // ============================================================================
 // Types
@@ -38,6 +39,11 @@ export interface FilterModalState {
     isOpen: boolean;
 }
 
+export interface AnalysisExportModalState {
+    isOpen: boolean;
+    config: ExportConfig | null;
+}
+
 // ============================================================================
 // Slice State & Actions
 // ============================================================================
@@ -50,6 +56,7 @@ export interface UISlice {
     viewMode: ViewMode;
     recodeModal: RecodeModalState;
     filterModal: FilterModalState;
+    analysisExportModal: AnalysisExportModalState;
     /** Selected variable set IDs in Variable Manager (for bulk operations) */
     selectedVariableSetIds: string[];
     /** Last selected ID for shift-click range selection */
@@ -79,6 +86,8 @@ export interface UISlice {
     closeRecodeModal: () => void;
     openFilterModal: () => void;
     closeFilterModal: () => void;
+    openAnalysisExportModal: (config: ExportConfig) => void;
+    closeAnalysisExportModal: () => void;
     /** Toggle selection of a variable set (multi = Cmd/Ctrl held) */
     toggleVariableSetSelection: (id: string, multi?: boolean) => void;
     /** Select a range from lastSelectedId to id (for Shift+click) */
@@ -111,6 +120,7 @@ export const createUISlice: StateCreator<UISlice, [], [], UISlice> = (set) => ({
     viewMode: 'table',
     recodeModal: { isOpen: false, variable: null },
     filterModal: { isOpen: false },
+    analysisExportModal: { isOpen: false, config: null },
     selectedVariableSetIds: [],
     lastSelectedId: null,
     activeFolderId: null,
@@ -148,6 +158,9 @@ export const createUISlice: StateCreator<UISlice, [], [], UISlice> = (set) => ({
 
     openFilterModal: () => set({ filterModal: { isOpen: true } }),
     closeFilterModal: () => set({ filterModal: { isOpen: false } }),
+
+    openAnalysisExportModal: (config) => set({ analysisExportModal: { isOpen: true, config } }),
+    closeAnalysisExportModal: () => set({ analysisExportModal: { isOpen: false, config: null } }),
 
     toggleVariableSetSelection: (id, multi = false) => set((state) => {
         const isSelected = state.selectedVariableSetIds.includes(id);

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FileUp, Table, RotateCcw, X, CheckCircle2, Search, BarChart3, LayoutGrid, Loader2, AlertCircle, Moon, Sun, Home } from 'lucide-react';
+import { FileUp, Table, RotateCcw, X, CheckCircle2, Search, BarChart3, LayoutGrid, Loader2, AlertCircle, Moon, Sun, Home, FileDown } from 'lucide-react';
 import { useTheme } from './context/ThemeContext';
 
 import { MOCK_DATASET } from './constants';
@@ -14,9 +14,12 @@ import { TimelineDock } from './features/dashboard/components/TimelineDock';
 import { DataDrawer } from './components/overlays/DataDrawer';
 import { RecodeModal } from './components/overlays/RecodeModal';
 import { FilterModal } from './components/overlays/FilterModal';
+import { ExportModal } from './components/overlays/ExportModal';
 import { FilterBar } from './components/common/FilterBar';
 import { AppShell, ModeToggleButton } from './components/layout/AppShell';
 import { useVelocityStore, Variable, VariableSet, PersistenceState } from './store';
+import { useResolvedVariables } from './features/dashboard/hooks/useResolvedVariables';
+import { buildExportConfig } from './core/export/buildExportConfig';
 import { DndContext, DragOverlay, useSensor, useSensors, MouseSensor, TouchSensor, DragEndEvent, DragStartEvent, useDroppable, closestCenter, pointerWithin, rectIntersection } from '@dnd-kit/core';
 import { SortableContext, arrayMove, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { VariableCard } from './features/dashboard/components/DraggableVariable';
@@ -178,6 +181,9 @@ export default function App() {
     removeFilter,
     openFilterModal,
     closeFilterModal,
+    analysisExportModal,
+    closeAnalysisExportModal,
+    openAnalysisExportModal,
     reorderRowVars,
     setWeightVariable,
     // Persistence actions
@@ -187,6 +193,8 @@ export default function App() {
     // Context awareness: bi-directional focus between Analysis and Variable Manager
     selectedVariableSetId,
     setSelectedVariableSetId,
+    slides,
+    activeSlideId,
     // Workspace state
     workspace,
     isWorkspaceMode,
@@ -207,6 +215,26 @@ export default function App() {
     setDatasetWave,
     setDatasetRespondentKey,
   } = useVelocityStore();
+
+  const { resolvedRowVars, resolvedColVar, firstRowVarSet } = useResolvedVariables();
+  const isMultipleResponse = firstRowVarSet?.structure === 'multiple';
+  const isWeighted = !!dataset?.weightVariable;
+  const activeSlide = React.useMemo(
+    () => slides.find((s) => s.id === activeSlideId) || null,
+    [slides, activeSlideId]
+  );
+  const canOpenExport = !!dataset;
+  const buildCurrentExportConfig = React.useCallback(() => {
+    const title = activeSlide?.title || dataset?.name || 'Analysis Report';
+    return buildExportConfig({
+      title,
+      data: queryResult,
+      rowVariables: resolvedRowVars,
+      colVariable: resolvedColVar,
+      isWeighted,
+      isMultipleResponse,
+    });
+  }, [activeSlide?.title, dataset?.name, queryResult, resolvedRowVars, resolvedColVar, isWeighted, isMultipleResponse]);
 
   const [mode, setMode] = React.useState<AppMode>('splash');
   const [selectedSetIds, setSelectedSetIds] = React.useState<Set<string>>(new Set());
@@ -1219,6 +1247,12 @@ export default function App() {
         onImport={handleWorkspaceImport}
       />
 
+      <ExportModal
+        isOpen={analysisExportModal.isOpen}
+        onClose={closeAnalysisExportModal}
+        config={analysisExportModal.config ?? { title: 'Analysis Report', analyses: [] }}
+      />
+
       {contextMenu && contextMenu.visible && (
         <ContextMenu
           x={contextMenu.x}
@@ -1643,6 +1677,16 @@ export default function App() {
                         <BarChart3 size={16} />
                       </button>
                     </div>
+
+                    <button
+                      onClick={() => openAnalysisExportModal(buildCurrentExportConfig())}
+                      disabled={!canOpenExport}
+                      className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--color-accent)] rounded-md hover:bg-[var(--bg-surface)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      title="Export current slide"
+                    >
+                      <FileDown size={14} />
+                      Export
+                    </button>
 
                     <button
                       onClick={toggleTheme}

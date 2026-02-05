@@ -28,6 +28,8 @@ export type {
     SampleStrategy,
 };
 
+// Streaming types are defined and exported inline below
+
 // Type for the Emscripten module
 interface ReadStatModule {
     _malloc: (size: number) => number;
@@ -62,8 +64,18 @@ interface ReadStatModule {
     _get_mr_set_subvar_count: (index: number) => number;
     _get_mr_set_subvar: (setIndex: number, subvarIndex: number) => number;
 
+    // Streaming row extraction API
+    _get_total_row_count?: () => number;
+    _get_available_row_count?: () => number;
+    _get_released_row_count?: () => number;
+    _release_rows_up_to?: (endRow: number) => void;
+    _get_row_batch_numeric?: (startRow: number, endRow: number, outBuffer: number, bufferSize: number) => number;
+    _get_row_batch_missing?: (startRow: number, endRow: number, outBuffer: number, bufferSize: number) => number;
+
     // Runtime methods
     HEAPU8: Uint8Array;
+    HEAPF64: Float64Array;
+    HEAP32: Int32Array;
     UTF8ToString: (ptr: number) => string;
     writeArrayToMemory: (array: ArrayLike<number>, buffer: number) => void;
 }
@@ -536,4 +548,206 @@ export function isSavFile(buffer: ArrayBuffer): boolean {
         view[2] === 0x4C && // L
         (view[3] === 0x32 || view[3] === 0x33) // 2 or 3
     );
+}
+
+/**
+ * Streaming row batch result
+ */
+export interface RowBatch {
+    rows: (number | string | null)[][];
+    startRow: number;
+    endRow: number;
+    totalRows: number;
+    progress: number;
+}
+
+/**
+ * Streaming progress callback
+ */
+export type StreamingProgressCallback = (batch: RowBatch) => Promise<void> | void;
+
+/**
+ * Streaming parse result with metadata available upfront
+ */
+export interface StreamingParseResult extends SavMetadataResult {
+    /** Variables with type information, available before rows are streamed */
+    variables: SavVariable[];
+}
+
+/**
+ * Parse a SAV file in streaming mode, processing rows in batches.
+ * This reduces peak JS memory by allowing the caller to process and discard
+ * each batch before the next one is loaded.
+ *
+ * The function returns metadata immediately (via the returned promise),
+ * and delivers rows via the onBatch callback. This allows the caller
+ * to know column names and types before receiving data.
+ *
+ * @param buffer - The SAV file contents as an ArrayBuffer
+ * @param batchSize - Number of rows per batch (default 5000)
+ * @param onBatch - Callback called for each batch of rows
+ * @returns Parsed metadata (rows are delivered via callback)
+ */
+export async function parseSavStreaming(
+    buffer: ArrayBuffer,
+    batchSize: number = 5000,
+    onBatch: StreamingProgressCallback
+): Promise<StreamingParseResult> {
+    const startTime = performance.now();
+
+    await initReadStat();
+    const mod = moduleInstance!;
+
+    const fileSizeMb = (buffer.byteLength / 1024 / 1024).toFixed(2);
+    console.log(`📦 [ReadStat] Streaming parse SAV: ${fileSizeMb} MB, batch size ${batchSize}`);
+
+    // Allocate buffer in WASM memory
+    const data = new Uint8Array(buffer);
+    const bufferPtr = mod._malloc(data.length);
+
+    if (bufferPtr === 0) {
+        throw new Error('Failed to allocate WASM memory for SAV file');
+    }
+
+    mod.writeArrayToMemory(data, bufferPtr);
+
+    try {
+        // Parse the entire file into WASM memory
+        // Note: This still loads all rows into WASM, but we extract them in batches
+        // to reduce peak JS memory usage
+        const errorCode = mod._parse_sav(bufferPtr, data.length);
+
+        if (errorCode !== 0) {
+            const errorMsgPtr = mod._get_error_message(errorCode);
+            const errorMsg = mod.UTF8ToString(errorMsgPtr);
+            throw new Error(`ReadStat error (${errorCode}): ${errorMsg}`);
+        }
+
+        // Extract metadata first (before streaming rows)
+        const variableCount = mod._get_variable_count();
+        const rowCount = mod._get_row_count();
+        const valueLabelCount = mod._get_value_label_count();
+
+        // Extract variables with full metadata
+        const variables: SavVariable[] = [];
+        for (let i = 0; i < variableCount; i++) {
+            const namePtr = mod._get_variable_name(i);
+            const labelPtr = mod._get_variable_label(i);
+            const vlNamePtr = mod._get_variable_value_labels_name(i);
+
+            variables.push({
+                name: mod.UTF8ToString(namePtr),
+                index: i,
+                type: mod._get_variable_type(i) === 0 ? 'numeric' : 'string',
+                label: mod.UTF8ToString(labelPtr) || undefined,
+                valueLabelSetName: mod.UTF8ToString(vlNamePtr) || undefined,
+            });
+        }
+
+        // Extract value labels
+        const valueLabelSets: Record<string, SavValueLabel[]> = {};
+        for (let i = 0; i < valueLabelCount; i++) {
+            const setNamePtr = mod._get_value_label_set_name(i);
+            const labelPtr = mod._get_value_label_label(i);
+            const setName = mod.UTF8ToString(setNamePtr);
+            const value = mod._get_value_label_value(i);
+            const label = mod.UTF8ToString(labelPtr);
+
+            if (setName) {
+                if (!valueLabelSets[setName]) {
+                    valueLabelSets[setName] = [];
+                }
+                valueLabelSets[setName].push({ value, label });
+            }
+        }
+
+        // Extract Multiple Response Sets
+        const mrSetCount = mod._get_mr_set_count();
+        const multipleResponseSets: SavMultipleResponseSet[] = [];
+        for (let i = 0; i < mrSetCount; i++) {
+            const subvarCount = mod._get_mr_set_subvar_count(i);
+            const subvariables: string[] = [];
+            for (let j = 0; j < subvarCount; j++) {
+                const subvarPtr = mod._get_mr_set_subvar(i, j);
+                subvariables.push(mod.UTF8ToString(subvarPtr));
+            }
+
+            const namePtr = mod._get_mr_set_name(i);
+            const labelPtr = mod._get_mr_set_label(i);
+            const typeCode = mod._get_mr_set_type(i);
+
+            multipleResponseSets.push({
+                name: mod.UTF8ToString(namePtr),
+                label: mod.UTF8ToString(labelPtr),
+                type: String.fromCharCode(typeCode) as 'C' | 'D',
+                countedValue: mod._get_mr_set_counted_value(i),
+                subvariables,
+            });
+        }
+
+        console.log(`📦 [ReadStat] Metadata extracted: ${variableCount} variables, ${rowCount} rows. Streaming...`);
+
+        // Stream rows in batches
+        let processedRows = 0;
+        let batchCount = 0;
+        while (processedRows < rowCount) {
+            const batchEnd = Math.min(processedRows + batchSize, rowCount);
+            const rows: (number | string | null)[][] = [];
+
+            // Extract this batch of rows
+            for (let r = processedRows; r < batchEnd; r++) {
+                const row: (number | string | null)[] = [];
+                for (let c = 0; c < variableCount; c++) {
+                    if (mod._is_cell_missing(r, c)) {
+                        row.push(null);
+                    } else if (variables[c].type === 'string') {
+                        const strPtr = mod._get_string_value(r, c);
+                        row.push(mod.UTF8ToString(strPtr));
+                    } else {
+                        row.push(mod._get_numeric_value(r, c));
+                    }
+                }
+                rows.push(row);
+            }
+
+            batchCount++;
+
+            // Call the batch callback (await allows for async processing)
+            await onBatch({
+                rows,
+                startRow: processedRows,
+                endRow: batchEnd,
+                totalRows: rowCount,
+                progress: batchEnd / rowCount,
+            });
+
+            // Release WASM memory for processed rows (reduces WASM heap usage)
+            if (mod._release_rows_up_to) {
+                mod._release_rows_up_to(batchEnd);
+            }
+
+            processedRows = batchEnd;
+        }
+
+        const durationMs = performance.now() - startTime;
+        console.log(`📦 [ReadStat] Streaming complete: ${rowCount} rows in ${batchCount} batches, ${durationMs.toFixed(0)}ms`);
+
+        // Clean up WASM-side memory
+        mod._free_parse_results();
+
+        return {
+            metadata: {
+                variableCount,
+                rowCount,
+                variables,
+                valueLabelSets,
+                multipleResponseSets,
+            },
+            variables,
+            durationMs,
+        };
+    } finally {
+        // Free the input buffer
+        mod._free(bufferPtr);
+    }
 }

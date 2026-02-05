@@ -5,13 +5,18 @@
  * Calls the export pipeline from src/core/export/*.
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, FileDown, FileSpreadsheet, Presentation, Download, CheckCircle2 } from 'lucide-react';
 import styles from './ExportModal.module.css';
 import { exportPptx } from '../../core/export/pptxExporter';
 import { exportXlsx } from '../../core/export/xlsxExporter';
 import { ExportConfig } from '../../core/export/types';
+import { useVelocityStore } from '../../store';
+import { buildExportConfig } from '../../core/export/buildExportConfig';
+import { resolveAnalysisVariables } from '../../core/export/resolveAnalysisVariables';
+import { runCrosstabForExport } from '../../core/export/runCrosstabForExport';
+import type { SlideAnalysisState } from '../../types/slides';
 
 interface ExportModalProps {
     isOpen: boolean;
@@ -21,6 +26,7 @@ interface ExportModalProps {
 }
 
 type ExportFormat = 'pptx' | 'xlsx';
+type ExportScope = 'current' | 'all' | 'selected';
 
 export const ExportModal: React.FC<ExportModalProps> = ({
     isOpen,
@@ -34,6 +40,30 @@ export const ExportModal: React.FC<ExportModalProps> = ({
     const [showCounts, setShowCounts] = useState(false);
     const [isExporting, setIsExporting] = useState(false);
     const [exportSuccess, setExportSuccess] = useState(false);
+    const [scope, setScope] = useState<ExportScope>('current');
+    const [selectedSlideIds, setSelectedSlideIds] = useState<string[]>([]);
+
+    const slides = useVelocityStore((state) => state.slides);
+    const activeSlideId = useVelocityStore((state) => state.activeSlideId);
+    const tableConfig = useVelocityStore((state) => state.tableConfig);
+    const activeFilters = useVelocityStore((state) => state.activeFilters);
+    const dataset = useVelocityStore((state) => state.dataset);
+    const variableSets = useVelocityStore((state) => state.variableSets);
+    const worker = useVelocityStore((state) => state.worker);
+    const isQuerying = useVelocityStore((state) => state.isQuerying);
+
+    const activeSlideTitle = useMemo(() => {
+        if (!activeSlideId) return null;
+        return slides.find((slide) => slide.id === activeSlideId)?.title || null;
+    }, [slides, activeSlideId]);
+
+    useEffect(() => {
+        if (!isOpen) return;
+        setTitle(initialConfig.title);
+        setExportSuccess(false);
+        setScope('current');
+        setSelectedSlideIds(activeSlideId ? [activeSlideId] : []);
+    }, [isOpen, initialConfig.title, activeSlideId]);
 
     const handleKeyDown = (e: React.KeyboardEvent) => {
         if (e.key === 'Escape') {
@@ -41,15 +71,108 @@ export const ExportModal: React.FC<ExportModalProps> = ({
         }
     };
 
+    const slideIdsForScope = useMemo(() => {
+        if (scope === 'current') {
+            return activeSlideId ? [activeSlideId] : [];
+        }
+        if (scope === 'all') {
+            return slides.map((slide) => slide.id);
+        }
+        return selectedSlideIds;
+    }, [scope, activeSlideId, slides, selectedSlideIds]);
+
+    const handleToggleSelectedSlide = (slideId: string) => {
+        setSelectedSlideIds((prev) => {
+            if (prev.includes(slideId)) {
+                return prev.filter((id) => id !== slideId);
+            }
+            return [...prev, slideId];
+        });
+    };
+
+    const handleSelectAllSlides = () => {
+        setSelectedSlideIds(slides.map((slide) => slide.id));
+    };
+
+    const handleClearSelectedSlides = () => {
+        setSelectedSlideIds([]);
+    };
+
+    const isExportDisabled = isExporting || !title.trim() || slideIdsForScope.length === 0 || isQuerying || !dataset || !worker;
+
     const handleExport = async () => {
+        if (!worker || !dataset) {
+            alert('Export is unavailable until a dataset is loaded.');
+            return;
+        }
+        if (isQuerying) {
+            alert('Please wait for analysis to finish, then try exporting again.');
+            return;
+        }
+        if (slideIdsForScope.length === 0) {
+            alert('Select at least one slide to export.');
+            return;
+        }
+
         setIsExporting(true);
         setExportSuccess(false);
 
         try {
+            const analyses: ExportConfig['analyses'] = [];
+
+            for (const slideId of slideIdsForScope) {
+                const slide = slides.find((s) => s.id === slideId);
+                if (!slide) continue;
+
+                const analysisState: SlideAnalysisState = slideId === activeSlideId
+                    ? {
+                        rowVars: tableConfig.rowVars,
+                        colVar: tableConfig.colVar,
+                        filters: activeFilters,
+                        weightVar: dataset.weightVariable ?? null,
+                    }
+                    : slide.analysisState;
+
+                const weightVar = analysisState.weightVar ?? dataset.weightVariable ?? null;
+                const { rowVariables, colVariable, firstRowVarSet } = resolveAnalysisVariables(
+                    analysisState,
+                    variableSets,
+                    dataset.variables
+                );
+
+                const isMultipleResponse = firstRowVarSet?.structure === 'multiple';
+                const crosstab = await runCrosstabForExport({
+                    worker,
+                    dataset,
+                    variableSets,
+                    rowVars: analysisState.rowVars,
+                    colVar: analysisState.colVar,
+                    filters: analysisState.filters,
+                    weightVar,
+                });
+
+                const slideConfig = buildExportConfig({
+                    title,
+                    label: slide.title,
+                    data: crosstab.data,
+                    rowVariables,
+                    colVariable,
+                    isWeighted: !!weightVar,
+                    isMultipleResponse: !!isMultipleResponse,
+                });
+
+                analyses.push(...slideConfig.analyses);
+            }
+
+            if (analyses.length === 0) {
+                alert('No exportable analyses were found for the selected slides.');
+                return;
+            }
+
             // Build export config with user options
             const exportConfig: ExportConfig = {
                 title,
-                analyses: initialConfig.analyses.map(analysis => ({
+                analyses: analyses.map((analysis) => ({
                     ...analysis,
                     options: {
                         showSignificance,
@@ -138,6 +261,98 @@ export const ExportModal: React.FC<ExportModalProps> = ({
 
                             {/* Content */}
                             <div className={styles.content}>
+                                {/* Export Scope */}
+                                <div className={styles.section}>
+                                    <div className={styles.sectionLabel}>Export Scope</div>
+                                    <div className={styles.scopeGroup}>
+                                        <label
+                                            className={`${styles.scopeOption} ${scope === 'current' ? styles.selected : ''}`}
+                                        >
+                                            <input
+                                                type="radio"
+                                                name="export-scope"
+                                                checked={scope === 'current'}
+                                                onChange={() => setScope('current')}
+                                            />
+                                            <div className={styles.scopeRadio} />
+                                            <div>
+                                                <div className={styles.scopeLabel}>
+                                                    Current Slide{activeSlideTitle ? ` (${activeSlideTitle})` : ''}
+                                                </div>
+                                                <div className={styles.scopeDescription}>Export the slide you are viewing now</div>
+                                            </div>
+                                        </label>
+                                        <label
+                                            className={`${styles.scopeOption} ${scope === 'all' ? styles.selected : ''}`}
+                                        >
+                                            <input
+                                                type="radio"
+                                                name="export-scope"
+                                                checked={scope === 'all'}
+                                                onChange={() => setScope('all')}
+                                            />
+                                            <div className={styles.scopeRadio} />
+                                            <div>
+                                                <div className={styles.scopeLabel}>All Slides ({slides.length})</div>
+                                                <div className={styles.scopeDescription}>Export every slide in the deck</div>
+                                            </div>
+                                        </label>
+                                        <label
+                                            className={`${styles.scopeOption} ${scope === 'selected' ? styles.selected : ''}`}
+                                        >
+                                            <input
+                                                type="radio"
+                                                name="export-scope"
+                                                checked={scope === 'selected'}
+                                                onChange={() => setScope('selected')}
+                                            />
+                                            <div className={styles.scopeRadio} />
+                                            <div>
+                                                <div className={styles.scopeLabel}>Selected Slides</div>
+                                                <div className={styles.scopeDescription}>Pick specific slides to export</div>
+                                            </div>
+                                        </label>
+                                    </div>
+
+                                    {scope === 'selected' && (
+                                        <div className={styles.scopeList}>
+                                            <div className={styles.scopeListActions}>
+                                                <div className={styles.scopeActionGroup}>
+                                                    <button
+                                                        type="button"
+                                                        onClick={handleSelectAllSlides}
+                                                        className={styles.scopeActionButton}
+                                                    >
+                                                        Select all
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        onClick={handleClearSelectedSlides}
+                                                        className={styles.scopeActionButton}
+                                                    >
+                                                        Clear
+                                                    </button>
+                                                </div>
+                                                <div className={styles.scopeCount}>
+                                                    {selectedSlideIds.length} of {slides.length} selected
+                                                </div>
+                                            </div>
+                                            {slides.map((slide, index) => (
+                                                <label key={slide.id} className={styles.scopeListItem}>
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={selectedSlideIds.includes(slide.id)}
+                                                        onChange={() => handleToggleSelectedSlide(slide.id)}
+                                                    />
+                                                    <div className={styles.scopeCheckbox} />
+                                                    <span className={styles.scopeItemIndex}>{index + 1}.</span>
+                                                    <span className={styles.scopeItemLabel}>{slide.title || 'Untitled Slide'}</span>
+                                                </label>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+
                                 {/* Format Selection */}
                                 <div className={styles.section}>
                                     <div className={styles.sectionLabel}>Export Format</div>
@@ -255,9 +470,9 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                             {/* Footer */}
                             <div className={styles.footer}>
                                 <div className={styles.footerInfo}>
-                                    {initialConfig.analyses.length === 1
-                                        ? '1 table'
-                                        : `${initialConfig.analyses.length} tables`}
+                                    {scope === 'current' && 'Current slide'}
+                                    {scope === 'all' && `${slides.length} slides`}
+                                    {scope === 'selected' && `${selectedSlideIds.length} slides selected`}
                                 </div>
                                 <div className={styles.footerActions}>
                                     <button
@@ -272,7 +487,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                                         type="button"
                                         onClick={handleExport}
                                         className={`${styles.button} ${styles.buttonPrimary}`}
-                                        disabled={isExporting || !title.trim()}
+                                        disabled={isExportDisabled}
                                     >
                                         {isExporting ? (
                                             <>

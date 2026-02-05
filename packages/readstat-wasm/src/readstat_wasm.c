@@ -653,3 +653,103 @@ const char *get_mr_set_subvar(int set_index, int subvar_index) {
     return "";
   return g_mr_sets[set_index].subvariables[subvar_index];
 }
+
+// ============================================================================
+// Streaming Row Extraction API
+// ============================================================================
+// These functions allow extracting rows in batches and releasing their memory
+// incrementally to reduce peak memory usage during large file processing.
+
+// Track which rows have been released (their string memory freed)
+static int g_released_up_to_row = -1;
+
+EMSCRIPTEN_KEEPALIVE
+int get_total_row_count(void) {
+  // Returns the expected total row count from metadata
+  return g_expected_row_count;
+}
+
+EMSCRIPTEN_KEEPALIVE
+int get_available_row_count(void) {
+  // Returns how many rows are currently available (parsed but not yet released)
+  int parsed = g_parsed_row_count > 0 ? g_parsed_row_count : g_row_count;
+  return parsed;
+}
+
+EMSCRIPTEN_KEEPALIVE
+int get_released_row_count(void) {
+  // Returns how many rows have been released (memory freed)
+  return g_released_up_to_row + 1;
+}
+
+EMSCRIPTEN_KEEPALIVE
+void release_rows_up_to(int end_row) {
+  // Free string memory for rows [g_released_up_to_row+1, end_row)
+  // This allows incremental memory reclamation during batch processing
+  if (!g_string_data || end_row <= g_released_up_to_row)
+    return;
+
+  int start = g_released_up_to_row + 1;
+  for (int row = start; row < end_row && row < g_parsed_row_count; row++) {
+    for (int col = 0; col < g_variable_count; col++) {
+      size_t index = (size_t)row * g_variable_count + col;
+      if (index < g_data_capacity && g_string_data[index]) {
+        free(g_string_data[index]);
+        g_string_data[index] = NULL;
+      }
+    }
+  }
+  g_released_up_to_row = end_row - 1;
+}
+
+EMSCRIPTEN_KEEPALIVE
+int get_row_batch_numeric(int start_row, int end_row, double *out_buffer, int buffer_size) {
+  // Copy numeric values for rows [start_row, end_row) into out_buffer
+  // Returns number of values written, or -1 on error
+  if (!g_numeric_data || start_row < 0 || end_row > g_parsed_row_count)
+    return -1;
+
+  int num_rows = end_row - start_row;
+  int expected_size = num_rows * g_variable_count;
+  if (buffer_size < expected_size)
+    return -1;
+
+  int written = 0;
+  for (int row = start_row; row < end_row; row++) {
+    for (int col = 0; col < g_variable_count; col++) {
+      size_t index = (size_t)row * g_variable_count + col;
+      if (index < g_data_size) {
+        out_buffer[written++] = g_numeric_data[index];
+      } else {
+        out_buffer[written++] = 0.0;
+      }
+    }
+  }
+  return written;
+}
+
+EMSCRIPTEN_KEEPALIVE
+int get_row_batch_missing(int start_row, int end_row, int *out_buffer, int buffer_size) {
+  // Copy missing flags for rows [start_row, end_row) into out_buffer
+  // Returns number of values written, or -1 on error
+  if (!g_is_missing || start_row < 0 || end_row > g_parsed_row_count)
+    return -1;
+
+  int num_rows = end_row - start_row;
+  int expected_size = num_rows * g_variable_count;
+  if (buffer_size < expected_size)
+    return -1;
+
+  int written = 0;
+  for (int row = start_row; row < end_row; row++) {
+    for (int col = 0; col < g_variable_count; col++) {
+      size_t index = (size_t)row * g_variable_count + col;
+      if (index < g_data_size) {
+        out_buffer[written++] = g_is_missing[index];
+      } else {
+        out_buffer[written++] = 1;  // Treat out-of-bounds as missing
+      }
+    }
+  }
+  return written;
+}

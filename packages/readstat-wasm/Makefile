@@ -65,9 +65,14 @@ $(DIST_DIR):
 	mkdir -p $(DIST_DIR)
 
 # Main build target
+# Exported functions include:
+# - Core parsing: parse_sav, parse_sav_metadata, parse_sav_sample
+# - Metadata accessors: get_variable_count, get_row_count, etc.
+# - Value accessors: is_cell_missing, get_numeric_value, get_string_value
+# - Streaming API: get_total_row_count, release_rows_up_to, etc.
 $(DIST_DIR)/readstat.js: $(SRC_DIR)/readstat_wasm.c $(READSTAT_SOURCES) | $(DIST_DIR)
 	$(EMCC) $(CFLAGS) $(WASM_FLAGS) $(INCLUDES) \
-		-s EXPORTED_FUNCTIONS='["_malloc","_free","_parse_sav","_parse_sav_metadata","_parse_sav_sample","_get_variable_count","_get_row_count","_get_parsed_row_count","_get_sample_strategy","_get_value_label_count","_get_variable_name","_get_variable_type","_get_variable_label","_get_variable_value_labels_name","_get_value_label_set_name","_get_value_label_value","_get_value_label_label","_is_cell_missing","_get_numeric_value","_get_string_value","_free_parse_results","_get_error_message","_get_mr_set_count","_get_mr_set_name","_get_mr_set_label","_get_mr_set_type","_get_mr_set_counted_value","_get_mr_set_subvar_count","_get_mr_set_subvar"]' \
+		-s EXPORTED_FUNCTIONS='["_malloc","_free","_parse_sav","_parse_sav_metadata","_parse_sav_sample","_get_variable_count","_get_row_count","_get_parsed_row_count","_get_sample_strategy","_get_value_label_count","_get_variable_name","_get_variable_type","_get_variable_label","_get_variable_value_labels_name","_get_value_label_set_name","_get_value_label_value","_get_value_label_label","_is_cell_missing","_get_numeric_value","_get_string_value","_free_parse_results","_get_error_message","_get_mr_set_count","_get_mr_set_name","_get_mr_set_label","_get_mr_set_type","_get_mr_set_counted_value","_get_mr_set_subvar_count","_get_mr_set_subvar","_get_total_row_count","_get_available_row_count","_get_released_row_count","_release_rows_up_to","_get_row_batch_numeric","_get_row_batch_missing"]' \
 		-o $@ \
 		$(SRC_DIR)/readstat_wasm.c \
 		$(READSTAT_SOURCES)
