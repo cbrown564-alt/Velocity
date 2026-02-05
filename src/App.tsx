@@ -205,6 +205,7 @@ export default function App() {
   const [opfsDbFiles, setOpfsDbFiles] = React.useState<{ name: string; size: number; lastModified: number }[] | null>(null);
   const [opfsDbListError, setOpfsDbListError] = React.useState<string | null>(null);
   const [opfsDbPurgeError, setOpfsDbPurgeError] = React.useState<string | null>(null);
+  const [opfsRehydrateError, setOpfsRehydrateError] = React.useState<string | null>(null);
 
   const SAV_WARN_MB = 50;
   const SAV_HARD_MB = 200;
@@ -249,6 +250,51 @@ export default function App() {
     if (mismatches.length === 0) return null;
     return `Local data differs from OPFS metadata (${mismatches.join(', ')}). Restoring will use OPFS data.`;
   }, [persistedDataInfo, dataset]);
+
+  const opfsErrorHint = React.useMemo(() => {
+    if (!persistenceError) return null;
+    const normalized = persistenceError.toLowerCase();
+
+    if (normalized.includes('opfs disabled by feature flag') || normalized.includes('does not support opfs db persistence')) {
+      return 'DuckDB OPFS database-file persistence is disabled on this build. Velocity will use in-memory DuckDB and restore from the OPFS source file when available.';
+    }
+
+    if (
+      normalized.includes('access handle') ||
+      normalized.includes('writable stream') ||
+      normalized.includes('another open access handle')
+    ) {
+      return 'OPFS database is locked (often another tab is using it). Close other Velocity tabs and reload to re-enable fast OPFS DB restore.';
+    }
+
+    if (normalized.includes('not a valid duckdb database file') || normalized.includes('corrupt')) {
+      return 'OPFS database looks corrupted or partially written. Velocity will fall back to rebuilding from the OPFS source file when possible. You can also purge quarantined DBs.';
+    }
+
+    if (normalized.includes('insecure context')) {
+      return 'OPFS requires a secure context (HTTPS or localhost).';
+    }
+
+    if (normalized.includes('unsupported') || normalized.includes('getdirectory')) {
+      return 'OPFS is not supported in this browser/environment (private browsing can also disable it).';
+    }
+
+    return null;
+  }, [persistenceError]);
+
+  const rebuildFromOpfsSource = React.useCallback(async (fallbackMode: AppMode) => {
+    if (!dataset?.opfsFileKey) return;
+    setOpfsRehydrateError(null);
+    setMode('uploading');
+    try {
+      await rehydrateDatasetFromOpfs();
+      setMode('dashboard');
+    } catch (error: any) {
+      const message = error?.message || String(error) || 'Failed to restore from OPFS source file';
+      setOpfsRehydrateError(message);
+      setMode(fallbackMode);
+    }
+  }, [dataset?.opfsFileKey, rehydrateDatasetFromOpfs]);
 
   // Custom collision detection: distinguish between sidebar drags and reordering
   const customCollisionDetection = (args: any) => {
@@ -384,31 +430,24 @@ export default function App() {
       if (dataset?.opfsFileKey) {
         console.log('[App] Rehydrating DuckDB from OPFS source file');
         hasProcessedPersistence.current = true;
-        setMode('uploading');
-        (async () => {
-          try {
-            await rehydrateDatasetFromOpfs();
-            setMode('dashboard');
-          } catch (error) {
-            console.warn('[App] Failed to rehydrate from OPFS source file:', error);
-            setMode('splash');
-          }
-        })();
+        void rebuildFromOpfsSource('splash');
       } else {
         // Normal startup with no persisted data
         hasProcessedPersistence.current = true;
       }
     }
-  }, [persistenceState, persistedDataInfo, dataset, mode, restoreFromPersistence, rehydrateDatasetFromOpfs]);
+  }, [persistenceState, persistedDataInfo, dataset, mode, restoreFromPersistence, rebuildFromOpfsSource]);
 
   // -- HANDLE RESTORE/DISCARD ACTIONS --
   const handleRestore = () => {
+    setOpfsRehydrateError(null);
     restoreFromPersistence();
     setMode('dashboard');
     hasProcessedPersistence.current = true;
   };
 
   const handleDiscard = async () => {
+    setOpfsRehydrateError(null);
     await discardPersistedData();
     setMode('splash');
     hasProcessedPersistence.current = true;
@@ -433,6 +472,7 @@ export default function App() {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    setOpfsRehydrateError(null);
     setMode('uploading');
 
     try {
@@ -925,6 +965,47 @@ export default function App() {
                 ) : (
                   !isDbReady && <p className="text-xs text-indigo-500 animate-pulse">Initializing Analysis Engine...</p>
                 )}
+
+                {dataset && (opfsRehydrateError || persistenceError) && (
+                  <div className="mt-3 text-left text-amber-800 bg-amber-50 border border-amber-100 rounded-md p-3 space-y-2">
+                    <div className="flex items-start gap-2">
+                      <AlertCircle size={16} className="mt-0.5" />
+                      <div className="space-y-1">
+                        {opfsRehydrateError && (
+                          <div className="text-sm font-medium">Couldn’t restore data from OPFS source file.</div>
+                        )}
+                        {opfsRehydrateError && (
+                          <div className="text-xs break-words">{opfsRehydrateError}</div>
+                        )}
+                        {!opfsRehydrateError && persistenceError && (
+                          <div className="text-xs break-words">OPFS: {persistenceError}</div>
+                        )}
+                        {opfsErrorHint && (
+                          <div className="text-xs">{opfsErrorHint}</div>
+                        )}
+                      </div>
+                    </div>
+
+                    {dataset.opfsFileKey && (
+                      <div className="flex gap-2">
+                        <button
+                          type="button"
+                          onClick={() => void rebuildFromOpfsSource('splash')}
+                          className="px-3 py-1.5 rounded bg-[var(--color-accent)] text-[var(--text-inverse)] text-xs font-medium hover:opacity-90 transition-opacity"
+                        >
+                          Retry Restore
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handleDiscard}
+                          className="px-3 py-1.5 rounded bg-white border border-amber-200 text-amber-900 text-xs font-medium hover:bg-amber-100 transition-colors"
+                        >
+                          Start Fresh
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
 
               <motion.button
@@ -1128,6 +1209,12 @@ export default function App() {
                       {persistenceError && (
                         <div className="text-amber-700">Warning: {persistenceError}</div>
                       )}
+                      {opfsErrorHint && (
+                        <div className="text-[11px] text-amber-700">{opfsErrorHint}</div>
+                      )}
+                      {opfsRehydrateError && (
+                        <div className="text-amber-700">Restore error: {opfsRehydrateError}</div>
+                      )}
                       <div className="pt-1">
                         <button
                           type="button"
@@ -1143,6 +1230,16 @@ export default function App() {
                         >
                           Purge Quarantined
                         </button>
+                        {dataset?.opfsFileKey && (
+                          <button
+                            type="button"
+                            onClick={() => void rebuildFromOpfsSource('dashboard')}
+                            className="ml-2 text-[11px] px-2 py-1 rounded border border-[var(--border-color-muted)] text-[var(--text-primary)] hover:bg-[var(--bg-panel)] transition-colors"
+                            title="Rebuild DuckDB from the persisted source file (slow but reliable fallback)"
+                          >
+                            Rebuild from OPFS File
+                          </button>
+                        )}
                       </div>
                       {opfsDbListError && (
                         <div className="text-amber-700">List error: {opfsDbListError}</div>

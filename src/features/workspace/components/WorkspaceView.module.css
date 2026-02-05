@@ -1,0 +1,993 @@
+/**
+ * WorkspaceView Styles
+ *
+ * Theme-agnostic styles using Velocity's semantic token system.
+ * Works across Soft Machine, Mission Control, and Liquid Glass themes.
+ */
+
+/* ============================================================================
+   Layout
+   ============================================================================ */
+
+.workspace {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--bg-app);
+  color: var(--text-primary);
+}
+
+/* ============================================================================
+   Header
+   ============================================================================ */
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-6) var(--space-8);
+  border-bottom: 1px solid var(--border-color);
+  background: var(--bg-panel);
+  backdrop-filter: var(--mat-panel-filter, none);
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.title svg {
+  color: var(--color-accent);
+}
+
+/* ============================================================================
+   Storage Indicator
+   ============================================================================ */
+
+.storageIndicator {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 200px;
+}
+
+.storageHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+}
+
+.storageValues {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: var(--text-xxs);
+}
+
+.storageBar {
+  height: 4px;
+  background: var(--bg-active);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.storageFill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.6s ease-out;
+}
+
+.storageFill.healthy {
+  background: var(--color-accent);
+}
+
+.storageFill.warning {
+  background: var(--viz-palette-2, #FFB800);
+}
+
+.storageFill.critical {
+  background: var(--destructive, #E74C3C);
+}
+
+.storageWarning {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--text-xxs);
+  margin: 0;
+}
+
+.storageWarning.warning {
+  color: var(--viz-palette-2, #FFB800);
+}
+
+.storageWarning.critical {
+  color: var(--destructive, #E74C3C);
+}
+
+/* ============================================================================
+   Search
+   ============================================================================ */
+
+.searchBox {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  min-width: 240px;
+}
+
+.searchBox svg {
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.searchBox input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+  outline: none;
+}
+
+.searchBox input::placeholder {
+  color: var(--text-secondary);
+}
+
+/* ============================================================================
+   View Toggle
+   ============================================================================ */
+
+.viewToggle {
+  display: flex;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  overflow: hidden;
+}
+
+.viewToggle button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-2);
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.viewToggle button:hover {
+  color: var(--text-primary);
+  background: var(--bg-active);
+}
+
+.viewToggle button.active {
+  color: var(--color-accent);
+  background: var(--bg-active);
+}
+
+/* ============================================================================
+   Upload Button
+   ============================================================================ */
+
+.uploadButton {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border: none;
+  border-radius: var(--border-radius-md);
+  background: var(--color-accent);
+  color: var(--text-inverse);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.uploadButton:hover {
+  opacity: 0.9;
+}
+
+/* ============================================================================
+   Filter Tabs
+   ============================================================================ */
+
+.filterTabs {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-3) var(--space-8);
+  border-bottom: 1px solid var(--border-color);
+  background: var(--bg-panel);
+}
+
+.filterTabs button {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border: none;
+  border-radius: var(--border-radius-md);
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.filterTabs button:hover {
+  color: var(--text-primary);
+  background: var(--bg-active);
+}
+
+.filterTabs button.active {
+  color: var(--color-accent);
+  background: var(--bg-active);
+}
+
+.tabSpacer {
+  flex: 1;
+}
+
+.selectionActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  background: var(--bg-active);
+  border-radius: var(--border-radius-md);
+  font-size: var(--text-sm);
+}
+
+.selectionActions span {
+  color: var(--text-secondary);
+}
+
+.selectionActions button {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  border: none;
+  border-radius: var(--border-radius-sm);
+  background: var(--bg-panel);
+  color: var(--text-primary);
+  font-size: var(--text-xs);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.selectionActions button:hover {
+  background: var(--color-accent);
+  color: var(--text-inverse);
+}
+
+/* ============================================================================
+   Main Content
+   ============================================================================ */
+
+.content {
+  flex: 1;
+  padding: var(--space-8);
+  overflow-y: auto;
+}
+
+/* ============================================================================
+   Sections
+   ============================================================================ */
+
+.projectsSection,
+.datasetsSection {
+  margin-bottom: var(--space-8);
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-4);
+}
+
+.sectionHeader h2 {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.sectionHeader button {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.sectionHeader button:hover {
+  color: var(--text-primary);
+  border-color: var(--color-accent);
+}
+
+.count {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+/* ============================================================================
+   Projects Grid
+   ============================================================================ */
+
+.projectsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-4);
+}
+
+.projectCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: var(--bg-panel);
+  border: 1px solid var(--border-color);
+  border-left: 3px solid var(--project-color);
+  border-radius: var(--border-radius-lg);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.projectCard:hover {
+  border-color: var(--project-color);
+  box-shadow: var(--shadow-md);
+}
+
+.projectHeader {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+
+.projectIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: color-mix(in srgb, var(--project-color) 15%, transparent);
+  color: var(--project-color);
+  border-radius: var(--border-radius-md);
+}
+
+.projectInfo h3 {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 var(--space-1) 0;
+}
+
+.projectInfo p {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.waveTimeline {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-2) 0;
+}
+
+.waveNode {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: var(--bg-active);
+  border-radius: 50%;
+}
+
+.waveLabel {
+  font-family: var(--font-mono);
+  font-size: var(--text-xxs);
+  color: var(--text-secondary);
+}
+
+.waveLine {
+  flex: 1;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    var(--project-color) 0%,
+    var(--border-color) 100%
+  );
+  min-width: 20px;
+}
+
+.projectMeta {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+}
+
+/* ============================================================================
+   Datasets Grid
+   ============================================================================ */
+
+.datasetsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: var(--space-4);
+}
+
+/* ============================================================================
+   Dataset Card
+   ============================================================================ */
+
+.datasetCard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-4);
+  background: var(--bg-panel);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-lg);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.datasetCard:hover {
+  border-color: var(--color-accent);
+  box-shadow: var(--shadow-md);
+}
+
+.datasetCard.selected {
+  border-color: var(--color-accent);
+  background: color-mix(in srgb, var(--color-accent) 5%, var(--bg-panel));
+}
+
+/* Selection ring */
+.selectionRing {
+  position: absolute;
+  top: var(--space-3);
+  left: var(--space-3);
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--border-color);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.datasetCard:hover .selectionRing,
+.datasetCard.selected .selectionRing {
+  border-color: var(--color-accent);
+}
+
+.checkmark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background: var(--color-accent);
+  color: var(--text-inverse);
+  border-radius: 50%;
+}
+
+/* Star button */
+.starButton {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  opacity: 0;
+  transition: all 0.15s ease;
+}
+
+.datasetCard:hover .starButton,
+.starButton.starred {
+  opacity: 1;
+}
+
+.starButton:hover {
+  background: var(--bg-active);
+}
+
+.starButton.starred {
+  color: var(--viz-palette-2, #FFB800);
+}
+
+.starButton.starred svg {
+  fill: currentColor;
+}
+
+/* Card content */
+.cardContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-top: var(--space-6);
+}
+
+.fileIcon {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--text-secondary);
+}
+
+.fileType {
+  font-family: var(--font-mono);
+  font-size: var(--text-xxs);
+  text-transform: uppercase;
+  padding: var(--space-1) var(--space-2);
+  background: var(--bg-active);
+  border-radius: var(--border-radius-sm);
+}
+
+.fileName {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.metaRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+}
+
+.metaDot {
+  opacity: 0.5;
+}
+
+.sparkline {
+  margin: var(--space-2) 0;
+}
+
+/* Badges */
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.projectBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  background: color-mix(in srgb, var(--project-color) 15%, transparent);
+  color: var(--project-color);
+  border-radius: var(--border-radius-sm);
+  font-size: var(--text-xxs);
+  font-weight: 500;
+}
+
+.projectBadge.compact {
+  padding: 2px var(--space-1);
+  font-size: 9px;
+}
+
+.waveBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  background: var(--bg-active);
+  color: var(--text-secondary);
+  border-radius: var(--border-radius-sm);
+  font-size: var(--text-xxs);
+}
+
+.lastOpened {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  margin-top: auto;
+  padding-top: var(--space-2);
+}
+
+.sessionIndicator {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin-left: auto;
+  color: var(--color-accent);
+}
+
+/* Card actions */
+.cardActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding-top: var(--space-3);
+  margin-top: var(--space-3);
+  border-top: 1px solid var(--border-color);
+  opacity: 0;
+  transform: translateY(4px);
+  transition: all 0.15s ease;
+}
+
+.datasetCard:hover .cardActions {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.actionButton {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  flex: 1;
+  padding: var(--space-2);
+  border: none;
+  border-radius: var(--border-radius-md);
+  background: var(--color-accent);
+  color: var(--text-inverse);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  cursor: pointer;
+  justify-content: center;
+  transition: opacity 0.15s ease;
+}
+
+.actionButton:hover {
+  opacity: 0.9;
+}
+
+.iconButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.iconButton:hover {
+  border-color: var(--color-accent);
+  color: var(--text-primary);
+}
+
+/* ============================================================================
+   Dataset List View
+   ============================================================================ */
+
+.datasetsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.datasetListItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--bg-panel);
+  border: 1px solid transparent;
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.datasetListItem:hover {
+  background: var(--bg-surface);
+  border-color: var(--border-color);
+}
+
+.datasetListItem.selected {
+  border-color: var(--color-accent);
+  background: color-mix(in srgb, var(--color-accent) 5%, var(--bg-panel));
+}
+
+.datasetListItem .starButton {
+  position: static;
+  opacity: 0.5;
+}
+
+.datasetListItem:hover .starButton {
+  opacity: 1;
+}
+
+.listFileIcon {
+  color: var(--text-secondary);
+}
+
+.listContent {
+  flex: 1;
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.listFileName {
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.listMeta {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.sessionDot {
+  color: var(--color-accent);
+}
+
+.listTime {
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.listArrow {
+  color: var(--text-secondary);
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.datasetListItem:hover .listArrow {
+  opacity: 1;
+}
+
+/* ============================================================================
+   Empty State
+   ============================================================================ */
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--space-16) var(--space-8);
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.emptyIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 96px;
+  height: 96px;
+  background: var(--bg-surface);
+  border-radius: 50%;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-6);
+}
+
+.emptyState h2 {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 var(--space-3) 0;
+}
+
+.emptyState p {
+  font-size: var(--text-base);
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 0 0 var(--space-6) 0;
+}
+
+.emptyActions {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.primaryButton {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-6);
+  border: none;
+  border-radius: var(--border-radius-md);
+  background: var(--color-accent);
+  color: var(--text-inverse);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.secondaryButton {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-6);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  background: var(--bg-panel);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.secondaryButton:hover {
+  border-color: var(--color-accent);
+}
+
+/* ============================================================================
+   Context Menu
+   ============================================================================ */
+
+.contextBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+}
+
+.contextMenu {
+  position: fixed;
+  z-index: 101;
+  min-width: 180px;
+  padding: var(--space-2);
+  background: var(--bg-panel);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-lg);
+}
+
+.contextMenu button {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  border: none;
+  border-radius: var(--border-radius-md);
+  background: transparent;
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.1s ease;
+}
+
+.contextMenu button:hover {
+  background: var(--bg-active);
+}
+
+.contextMenu button.destructive {
+  color: var(--destructive, #E74C3C);
+}
+
+.contextMenu button.destructive:hover {
+  background: color-mix(in srgb, var(--destructive, #E74C3C) 10%, transparent);
+}
+
+.contextDivider {
+  height: 1px;
+  background: var(--border-color);
+  margin: var(--space-2) 0;
+}
+
+/* ============================================================================
+   Theme-Specific Overrides
+   ============================================================================ */
+
+/* Mission Control: Radar sweep on hover */
+[data-theme="mission-control"] .datasetCard::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    color-mix(in srgb, var(--color-accent) 10%, transparent) 50%,
+    transparent 100%
+  );
+  pointer-events: none;
+  transition: width 0.3s ease;
+}
+
+[data-theme="mission-control"] .datasetCard:hover::after {
+  width: 100%;
+}
+
+/* Soft Machine: Left accent bar */
+[data-theme="soft-machine"] .datasetCard {
+  border-left: 3px solid transparent;
+}
+
+[data-theme="soft-machine"] .datasetCard:hover {
+  border-left-color: var(--color-accent);
+}
+
+/* Liquid Glass: Enhanced blur */
+[data-theme="liquid-glass"] .header,
+[data-theme="liquid-glass"] .filterTabs {
+  background: var(--mat-panel-bg, var(--bg-panel));
+  backdrop-filter: var(--mat-panel-filter, blur(25px) saturate(180%));
+}
+
+[data-theme="liquid-glass"] .datasetCard,
+[data-theme="liquid-glass"] .projectCard {
+  background: var(--mat-panel-bg, var(--bg-panel));
+  backdrop-filter: var(--mat-panel-filter, blur(15px) saturate(150%));
+}
+
+[data-theme="liquid-glass"] .contextMenu {
+  background: var(--mat-overlay-bg, var(--bg-panel));
+  backdrop-filter: var(--mat-overlay-filter, blur(40px) saturate(200%));
+}

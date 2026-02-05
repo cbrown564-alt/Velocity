@@ -484,11 +484,32 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
         const status = await ping();
         if (status.hasData) {
             // If the DB already has data, don't clobber it.
+            const runAnalysis = (get() as any).runAnalysis as undefined | (() => Promise<void>);
+            if (typeof runAnalysis === 'function') {
+                void runAnalysis();
+            }
             return;
         }
 
         console.log(`[DataSlice] Rehydrating DuckDB from OPFS source: ${dataset.opfsFileKey}`);
-        const buffer = await opfsFileManager.readFile(dataset.opfsFileKey);
+        const opfsOk = await opfsFileManager.isAvailable().catch(() => false);
+        if (!opfsOk) {
+            throw new Error('OPFS is unavailable in this browser/session (private browsing can disable it)');
+        }
+
+        const sourceKey = dataset.opfsFileKey;
+        const exists = await opfsFileManager.fileExists(sourceKey).catch(() => false);
+        if (!exists) {
+            throw new Error(`OPFS source file not found: ${sourceKey}`);
+        }
+
+        let buffer: ArrayBuffer;
+        try {
+            buffer = await opfsFileManager.readFile(sourceKey);
+        } catch (error: any) {
+            const message = error?.message || String(error) || 'Unknown read error';
+            throw new Error(`Failed to read OPFS source file (${sourceKey}): ${message}`);
+        }
 
         await new Promise<void>((resolve, reject) => {
             const handler = (event: MessageEvent<WorkerResponse>) => {
@@ -536,6 +557,13 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
             });
         }
 
+        // If the user had an analysis in view (tableConfig persisted), rerun it now that
+        // DuckDB has been repopulated. Query results are intentionally not persisted.
+        const runAnalysis = (get() as any).runAnalysis as undefined | (() => Promise<void>);
+        if (typeof runAnalysis === 'function') {
+            await runAnalysis();
+        }
+
         void get().flushPersistedData();
     },
 
@@ -554,6 +582,10 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
         if (dataset) {
             console.log('[DataSlice] Restoring with existing dataset metadata');
             set({ persistenceState: 'ready' });
+            const runAnalysis = (get() as any).runAnalysis as undefined | (() => Promise<void>);
+            if (typeof runAnalysis === 'function') {
+                void runAnalysis();
+            }
         } else {
             // Reconstruct minimal dataset from OPFS schema
             console.log('[DataSlice] Reconstructing dataset from OPFS schema');
@@ -585,6 +617,10 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                 variableSets,
                 persistenceState: 'ready'
             });
+            const runAnalysis = (get() as any).runAnalysis as undefined | (() => Promise<void>);
+            if (typeof runAnalysis === 'function') {
+                void runAnalysis();
+            }
         }
     },
 

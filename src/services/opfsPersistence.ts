@@ -15,6 +15,7 @@ export type ResetBetweenAttempts = () => Promise<void>;
 
 export type PersistenceInitDeps = {
   enableOpfs: boolean;
+  disabledReason?: string;
   opfsSupport: OpfsSupport;
   desiredPath: string;
   fallbackPath: string | null;
@@ -39,6 +40,7 @@ export type PersistenceInitResult = {
 export async function initOpfsPersistence(deps: PersistenceInitDeps): Promise<PersistenceInitResult> {
   const {
     enableOpfs,
+    disabledReason,
     opfsSupport,
     desiredPath,
     fallbackPath,
@@ -69,7 +71,7 @@ export async function initOpfsPersistence(deps: PersistenceInitDeps): Promise<Pe
       opfsAvailable: false,
       mode: 'disabled',
       activeDbPath: ':memory:',
-      persistenceError: 'OPFS disabled by feature flag',
+      persistenceError: disabledReason || 'OPFS disabled',
     };
   }
 
