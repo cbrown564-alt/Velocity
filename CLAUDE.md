@@ -98,29 +98,53 @@ See `docs/arch_02_data_model.md` and `src/types/index.ts` for canonical schemas:
 
 - **Global tokens:** `src/index.css` (based on `docs/design_01_system.md`)
 - **Component styles:** Use `*.module.css` for scoped styles
-- **Design philosophy:** "The Research Desk" - warm, editorial, typeset feel
+- **Design philosophy:** Dynamic theme system with three themes:
+  - **Soft Machine** (default): Warm, organic, Dieter Rams-inspired
+  - **Mission Control**: Dark, high-contrast, NASA/Bloomberg-inspired
+  - **Liquid Glass**: Translucent, visionOS-inspired with frosted glass effects
 
-### Design Tokens
+### Semantic Tokens (Theme-Agnostic)
+
+**CRITICAL:** Always use semantic tokens, never theme-specific colors or hardcoded values.
 
 ```css
-/* Typography */
---font-display: 'Newsreader', Georgia, serif;        /* Headers, titles */
---font-body: 'Atkinson Hyperlegible', sans-serif;    /* UI text, tables */
+/* Surfaces & Backgrounds */
+--bg-app: var(--background);        /* Main application background */
+--bg-panel: var(--card);            /* Cards, modals, panels */
+--bg-surface: var(--popover);       /* Popovers, dropdowns */
+--bg-active: var(--secondary);      /* Active/selected states */
 
-/* Colors - "Ink & Paper" palette */
---color-ink: #1C1C1C;           /* Primary text */
---color-paper: #F5F3EF;         /* Background */
---color-terracotta: #E07A5F;    /* Accents, significance markers */
---color-charcoal: #3D3835;      /* Secondary text */
+/* Typography */
+--text-primary: var(--foreground);          /* Primary text */
+--text-secondary: var(--muted-foreground);  /* Secondary text */
+--text-accent: var(--accent);               /* Accent text */
+--text-inverse: var(--primary-foreground);  /* Text on colored backgrounds */
+
+/* Font Variables (theme-specific, dynamically injected) */
+--font-body:    /* UI text, labels, buttons */
+--font-display: /* Headers, modal titles */
+--font-mono:    /* Data, statistics */
+
+/* Borders */
+--border-color: var(--border);
+--border-color-muted: var(--input);
+--border-color-active: var(--ring);
 
 /* Spacing (8px base) */
 --space-1: 0.25rem;  /* 4px */
 --space-2: 0.5rem;   /* 8px */
 --space-4: 1rem;     /* 16px */
 --space-8: 2rem;     /* 32px */
+
+/* Accent */
+--color-accent: var(--accent);
 ```
 
-**Rule:** Always use CSS variables from `index.css`. Never hardcode hex values or use inline styles.
+**Rule:** Always use semantic tokens. Never hardcode hex values. Components must work across all three themes without modification.
+
+### Legacy Note
+
+"The Research Desk" design language (Newsreader/Atkinson fonts, Ink & Paper palette) has been **deprecated** and replaced with the dynamic theme system. Legacy fonts are still loaded as fallbacks.
 
 ## File Organization
 
