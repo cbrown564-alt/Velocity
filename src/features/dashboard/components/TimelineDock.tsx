@@ -31,7 +31,38 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import { Plus, ChevronLeft, ChevronRight, BarChart3, Table2 } from 'lucide-react';
 import { useVelocityStore } from '../../../store';
-import { Slide, SlideSection } from '../../../types/slides';
+import { Slide, SlideSection, SlideAnalysisState } from '../../../types/slides';
+
+// ============================================================================
+// Helper: Compare analysis states for unsaved detection
+// ============================================================================
+
+function isAnalysisStateEqual(
+    current: SlideAnalysisState,
+    saved: SlideAnalysisState
+): boolean {
+    // Compare rowVars arrays
+    if (current.rowVars.length !== saved.rowVars.length) return false;
+    if (!current.rowVars.every((v, i) => v === saved.rowVars[i])) return false;
+
+    // Compare colVar
+    if (current.colVar !== saved.colVar) return false;
+
+    // Compare weightVar
+    if (current.weightVar !== saved.weightVar) return false;
+
+    // Compare filters (by variableId, operator, value)
+    if (current.filters.length !== saved.filters.length) return false;
+    const filtersMatch = current.filters.every((f, i) => {
+        const sf = saved.filters[i];
+        return f.variableId === sf.variableId &&
+            f.operator === sf.operator &&
+            JSON.stringify(f.value) === JSON.stringify(sf.value);
+    });
+    if (!filtersMatch) return false;
+
+    return true;
+}
 
 // ============================================================================
 // SlideThumb - Individual sortable slide thumbnail
@@ -41,11 +72,12 @@ interface SlideThumbProps {
     slide: Slide;
     index: number;
     isActive: boolean;
+    hasUnsavedChanges?: boolean;
     section?: SlideSection;
     onClick: () => void;
 }
 
-const SlideThumb: React.FC<SlideThumbProps> = ({ slide, index, isActive, section, onClick }) => {
+const SlideThumb: React.FC<SlideThumbProps> = ({ slide, index, isActive, hasUnsavedChanges, section, onClick }) => {
     const {
         attributes,
         listeners,
@@ -128,6 +160,14 @@ const SlideThumb: React.FC<SlideThumbProps> = ({ slide, index, isActive, section
                 {index + 1}
             </div>
 
+            {/* Unsaved changes indicator */}
+            {hasUnsavedChanges && (
+                <div
+                    className="absolute -top-1 -left-1 w-2 h-2 rounded-full bg-amber-500 animate-pulse"
+                    title="Unsaved changes"
+                />
+            )}
+
             {/* Active glow effect (theme-specific) */}
             {isActive && (
                 <div className="absolute inset-0 rounded-lg pointer-events-none timeline-active-glow" />
@@ -168,6 +208,26 @@ export const TimelineDock: React.FC = () => {
     const addSlide = useVelocityStore((state) => state.addSlide);
     const reorderSlides = useVelocityStore((state) => state.reorderSlides);
     const navigateSlide = useVelocityStore((state) => state.navigateSlide);
+
+    // State for unsaved changes detection
+    const tableConfig = useVelocityStore((state) => state.tableConfig);
+    const activeFilters = useVelocityStore((state) => state.activeFilters);
+    const dataset = useVelocityStore((state) => state.dataset);
+
+    // Compute if active slide has unsaved changes
+    const activeSlideHasUnsavedChanges = useMemo(() => {
+        const activeSlide = slides.find(s => s.id === activeSlideId);
+        if (!activeSlide) return false;
+
+        const currentState: SlideAnalysisState = {
+            rowVars: tableConfig?.rowVars ?? [],
+            colVar: tableConfig?.colVar ?? null,
+            filters: activeFilters ?? [],
+            weightVar: dataset?.weightVariable ?? null,
+        };
+
+        return !isAnalysisStateEqual(currentState, activeSlide.analysisState);
+    }, [slides, activeSlideId, tableConfig, activeFilters, dataset]);
 
     // DnD sensors
     const sensors = useSensors(
@@ -284,12 +344,14 @@ export const TimelineDock: React.FC = () => {
                                     );
                                 }
                                 if (item.type === 'slide' && item.slide) {
+                                    const isActive = item.slide.id === activeSlideId;
                                     return (
                                         <SlideThumb
                                             key={item.slide.id}
                                             slide={item.slide}
                                             index={item.index!}
-                                            isActive={item.slide.id === activeSlideId}
+                                            isActive={isActive}
+                                            hasUnsavedChanges={isActive && activeSlideHasUnsavedChanges}
                                             section={item.section}
                                             onClick={() => setActiveSlide(item.slide!.id)}
                                         />

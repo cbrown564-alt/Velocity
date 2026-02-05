@@ -265,16 +265,16 @@ sequenceDiagram
 
 ### 🔲 Immediate (This Sprint)
 
-- [ ] **Add `SlideAnalysisState` to Slide type** — Capture rowVars, colVar, filters, weightVar
-- [ ] **Add `visualizationType` and `chartType` to Slide** — Capture table vs chart choice
-- [ ] **Implement slide snapshot logic** — Save current analysis state when switching slides
-- [ ] **Implement slide restore logic** — Load analysis state when activating a slide
-- [ ] **Add `title` editability in Slide** — Make title editable, default from analysis
-- [ ] **Add `subtitle` to Slide** — Editable, defaults from filter/weight info
-- [ ] **Create `SlideHeader.tsx`** — Inline-editable title and subtitle component
-- [ ] **Integrate SlideHeader into SlideContainer** — Replace static title rendering
-- [ ] **Show slide title in TimelineDock thumbnails** — Already shows; ensure sync
-- [ ] **Add unsaved indicator** — Visual feedback in dock for modified slides
+- [x] **Add `SlideAnalysisState` to Slide type** — Capture rowVars, colVar, filters, weightVar
+- [x] **Add `visualizationType` and `chartType` to Slide** — Capture table vs chart choice
+- [x] **Implement slide snapshot logic** — Save current analysis state when switching slides
+- [x] **Implement slide restore logic** — Load analysis state when activating a slide
+- [x] **Add `title` editability in Slide** — Make title editable, default from analysis
+- [x] **Add `subtitle` to Slide** — Editable, defaults from filter/weight info
+- [x] **Create `SlideHeader.tsx`** — Inline-editable title and subtitle component
+- [x] **Integrate SlideHeader into SlideContainer** — Replace static title rendering
+- [x] **Show slide title in TimelineDock thumbnails** — Already shows; ensure sync
+- [x] **Add unsaved indicator** — Visual feedback in dock for modified slides
 
 ### 🔮 Future (Next Sprint)
 

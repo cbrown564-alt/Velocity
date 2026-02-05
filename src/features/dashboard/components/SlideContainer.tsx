@@ -2,11 +2,14 @@ import React, { useMemo } from 'react';
 import { useVelocityStore } from '../../../store';
 import { AnalysisChart } from '../../../components/charts/AnalysisChart';
 import { DataTable } from './DataTable';
+import { SlideHeader } from './SlideHeader';
 import { AnalysisChartConfig } from '../../../types/charts';
 import { Variable } from '../../../types';
 
 import { recommendChart } from '../../../services/chartRecommender';
 import { useResolvedVariables } from '../hooks/useResolvedVariables';
+
+import './SlideHeader.css';
 
 interface SlideContainerProps {
     className?: string;
@@ -115,7 +118,10 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
 
     return (
         <div className={`flex-1 flex flex-col h-full bg-glass-app ${className}`}>
-            {/* Slide Header (Title) could go here */}
+            {/* Slide Header with editable title/subtitle */}
+            <div className="px-4 pt-4">
+                <SlideHeader />
+            </div>
             <div className="flex-1 overflow-hidden p-4">
                 {renderCellContent()}
             </div>
