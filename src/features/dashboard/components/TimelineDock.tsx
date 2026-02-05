@@ -1,9 +1,11 @@
 /**
  * TimelineDock Component
- * 
- * A floating horizontal dock for navigating between slides in the analysis deck.
+ *
+ * An inline film-strip rail for navigating between slides in the analysis deck.
+ * Sits as a fixed footer below the analysis content — never floats or overlaps.
+ *
  * Features:
- * - Slide thumbnails with titles
+ * - Compact slide capsules with number + icon
  * - Drag-to-reorder via dnd-kit
  * - Section dividers
  * - Keyboard navigation (←/→, N for new)
@@ -29,7 +31,7 @@ import {
     useSortable,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Plus, ChevronLeft, ChevronRight, BarChart3, Table2, Copy, Trash2 } from 'lucide-react';
+import { Plus, BarChart3, Table2, Copy, Trash2 } from 'lucide-react';
 import { useVelocityStore } from '../../../store';
 import { Slide, SlideSection, SlideAnalysisState } from '../../../types/slides';
 import { ConfirmModal } from '../../../components/overlays/ConfirmModal';
@@ -42,17 +44,10 @@ function isAnalysisStateEqual(
     current: SlideAnalysisState,
     saved: SlideAnalysisState
 ): boolean {
-    // Compare rowVars arrays
     if (current.rowVars.length !== saved.rowVars.length) return false;
     if (!current.rowVars.every((v, i) => v === saved.rowVars[i])) return false;
-
-    // Compare colVar
     if (current.colVar !== saved.colVar) return false;
-
-    // Compare weightVar
     if (current.weightVar !== saved.weightVar) return false;
-
-    // Compare filters (by variableId, operator, value)
     if (current.filters.length !== saved.filters.length) return false;
     const filtersMatch = current.filters.every((f, i) => {
         const sf = saved.filters[i];
@@ -66,7 +61,7 @@ function isAnalysisStateEqual(
 }
 
 // ============================================================================
-// SlideThumb - Individual sortable slide thumbnail
+// SlideThumb - Compact sortable slide capsule
 // ============================================================================
 
 interface SlideThumbProps {
@@ -100,11 +95,9 @@ const SlideThumb: React.FC<SlideThumbProps> = ({ slide, index, isActive, hasUnsa
         transition,
     };
 
-    // Determine icon based on first cell content
     const firstCellType = slide.cells[0]?.content.type;
     const Icon = firstCellType === 'chart' ? BarChart3 : Table2;
 
-    // Handle right-click context menu
     const handleContextMenu = (e: React.MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
@@ -112,7 +105,6 @@ const SlideThumb: React.FC<SlideThumbProps> = ({ slide, index, isActive, hasUnsa
         setContextMenuOpen(true);
     };
 
-    // Close menu on outside click
     useEffect(() => {
         if (!contextMenuOpen) return;
         const handleClickOutside = (e: MouseEvent) => {
@@ -126,83 +118,86 @@ const SlideThumb: React.FC<SlideThumbProps> = ({ slide, index, isActive, hasUnsa
 
     return (
         <>
-            <motion.button
+            <div
                 ref={setNodeRef}
                 style={style}
                 {...attributes}
                 {...listeners}
-                onClick={onClick}
-                onContextMenu={handleContextMenu}
-                whileHover={{ scale: 1.08 }}
-                whileTap={{ scale: 0.95 }}
-                className={`
-                    relative flex flex-col items-center gap-1
-                    min-w-[72px] p-2
-                    rounded-lg
-                    cursor-pointer select-none
-                    transition-all duration-150
-                    ${isDragging ? 'opacity-50 z-50' : ''}
-                    ${isActive
-                        ? 'bg-[var(--bg-active)] border-2 border-[var(--color-accent)] shadow-lg'
-                        : 'bg-[var(--bg-panel)] border border-[var(--border-color)] hover:border-[var(--color-accent)]'
-                    }
-                `}
-                title={slide.title}
+                className={`relative group ${isDragging ? 'z-50' : ''}`}
             >
-                {/* Section indicator */}
-                {section && (
-                    <div
-                        className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-3 h-1 rounded-full"
-                        style={{ backgroundColor: section.color || 'var(--color-accent)' }}
-                    />
-                )}
+                <motion.button
+                    onClick={onClick}
+                    onContextMenu={handleContextMenu}
+                    whileHover={{ y: -1 }}
+                    whileTap={{ scale: 0.97 }}
+                    transition={{ duration: 0.15 }}
+                    className={`
+                        relative flex items-center gap-1.5
+                        h-7 px-2.5 rounded-md
+                        text-[11px] font-medium
+                        transition-all duration-150
+                        cursor-pointer select-none
+                        border
+                        ${isActive
+                            ? 'bg-[var(--color-accent)]/10 border-[var(--color-accent)]/25 text-[var(--color-accent)]'
+                            : 'bg-transparent border-transparent text-[var(--text-secondary)] hover:bg-[var(--bg-active)] hover:text-[var(--text-primary)]'
+                        }
+                        ${isDragging ? 'opacity-40' : ''}
+                    `}
+                    style={{
+                        fontFamily: 'var(--font-mono, monospace)',
+                    }}
+                >
+                    {/* Section color pip */}
+                    {section && (
+                        <span
+                            className="w-1 h-1 rounded-full shrink-0"
+                            style={{ backgroundColor: section.color || 'var(--color-accent)' }}
+                        />
+                    )}
 
-                {/* Thumbnail preview area */}
-                <div className={`
-                    w-14 h-9 rounded
-                    flex items-center justify-center
-                    ${isActive ? 'bg-[var(--color-accent)]/10' : 'bg-[var(--bg-app)]'}
-                `}>
+                    {/* Icon */}
                     <Icon
-                        size={18}
-                        className={isActive ? 'text-[var(--color-accent)]' : 'text-[var(--text-secondary)]'}
+                        size={12}
+                        strokeWidth={isActive ? 2 : 1.5}
+                        className="shrink-0"
                     />
-                </div>
 
-                {/* Slide title (truncated) */}
-                <span className={`
-                    text-[10px] font-medium truncate max-w-[64px]
-                    ${isActive ? 'text-[var(--color-accent)]' : 'text-[var(--text-secondary)]'}
-                `}>
-                    {slide.title}
-                </span>
+                    {/* Number */}
+                    <span className="tabular-nums">{index + 1}</span>
 
-                {/* Slide number badge */}
-                <div className={`
-                    absolute -top-1 -right-1 
-                    w-4 h-4 rounded-full text-[9px] font-bold
-                    flex items-center justify-center
-                    ${isActive
-                        ? 'bg-[var(--color-accent)] text-[var(--text-inverse)]'
-                        : 'bg-[var(--border-color)] text-[var(--text-secondary)]'
-                    }
-                `}>
-                    {index + 1}
-                </div>
+                    {/* Truncated title (only show on active or hover) */}
+                    <span className={`
+                        max-w-[60px] truncate transition-all duration-150
+                        ${isActive ? 'opacity-100' : 'max-w-0 opacity-0 group-hover:max-w-[60px] group-hover:opacity-70'}
+                    `}
+                        style={{ fontFamily: 'var(--font-body, sans-serif)', fontWeight: 400 }}
+                    >
+                        {slide.title}
+                    </span>
 
-                {/* Unsaved changes indicator */}
-                {hasUnsavedChanges && (
-                    <div
-                        className="absolute -top-1 -left-1 w-2 h-2 rounded-full bg-amber-500 animate-pulse"
-                        title="Unsaved changes"
-                    />
+                    {/* Unsaved indicator */}
+                    {hasUnsavedChanges && (
+                        <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
+                    )}
+                </motion.button>
+
+                {/* Tooltip — shows full title on hover for inactive slides */}
+                {!isActive && (
+                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
+                        <div
+                            className="text-[10px] py-0.5 px-2 rounded shadow-lg"
+                            style={{
+                                background: 'var(--bg-surface)',
+                                color: 'var(--text-primary)',
+                                border: '1px solid var(--border-color)',
+                            }}
+                        >
+                            {slide.title}
+                        </div>
+                    </div>
                 )}
-
-                {/* Active glow effect (theme-specific) */}
-                {isActive && (
-                    <div className="absolute inset-0 rounded-lg pointer-events-none timeline-active-glow" />
-                )}
-            </motion.button>
+            </div>
 
             {/* Context Menu */}
             <AnimatePresence>
@@ -214,16 +209,16 @@ const SlideThumb: React.FC<SlideThumbProps> = ({ slide, index, isActive, hasUnsa
                         exit={{ opacity: 0, scale: 0.95 }}
                         transition={{ duration: 0.1 }}
                         className="fixed z-[100] bg-[var(--bg-panel)] border border-[var(--border-color)] rounded-lg shadow-xl py-1 min-w-[140px]"
-                        style={{ left: menuPosition.x, top: menuPosition.y }}
+                        style={{ left: menuPosition.x, top: menuPosition.y - 80 }}
                     >
                         <button
                             onClick={() => {
                                 onDuplicate();
                                 setContextMenuOpen(false);
                             }}
-                            className="w-full flex items-center gap-2 px-3 py-2 text-sm text-[var(--text-primary)] hover:bg-[var(--bg-active)] transition-colors"
+                            className="w-full flex items-center gap-2 px-3 py-1.5 text-xs text-[var(--text-primary)] hover:bg-[var(--bg-active)] transition-colors"
                         >
-                            <Copy size={14} />
+                            <Copy size={12} />
                             Duplicate
                         </button>
                         <button
@@ -232,12 +227,12 @@ const SlideThumb: React.FC<SlideThumbProps> = ({ slide, index, isActive, hasUnsa
                                 setContextMenuOpen(false);
                             }}
                             disabled={!canDelete}
-                            className={`w-full flex items-center gap-2 px-3 py-2 text-sm transition-colors ${canDelete
+                            className={`w-full flex items-center gap-2 px-3 py-1.5 text-xs transition-colors ${canDelete
                                 ? 'text-red-500 hover:bg-red-500/10'
                                 : 'text-[var(--text-secondary)] opacity-50 cursor-not-allowed'
                                 }`}
                         >
-                            <Trash2 size={14} />
+                            <Trash2 size={12} />
                             Delete
                         </button>
                     </motion.div>
@@ -248,27 +243,32 @@ const SlideThumb: React.FC<SlideThumbProps> = ({ slide, index, isActive, hasUnsa
 };
 
 // ============================================================================
-// SectionDivider - Visual separator between slide sections
+// SectionDivider - Compact vertical tick
 // ============================================================================
 
-interface SectionDividerProps {
-    section: SlideSection;
-}
-
-const SectionDivider: React.FC<SectionDividerProps> = ({ section }) => (
-    <div className="flex flex-col items-center justify-center px-2 py-1">
+const SectionDivider: React.FC<{ section: SlideSection }> = ({ section }) => (
+    <div className="flex items-center justify-center mx-0.5 group relative self-stretch">
         <div
-            className="w-[2px] h-8 rounded-full"
+            className="w-px h-3.5 rounded-full"
             style={{ backgroundColor: section.color || 'var(--border-color)' }}
         />
-        <span className="text-[8px] font-semibold uppercase tracking-wider text-[var(--text-secondary)] mt-1 writing-mode-vertical">
-            {section.title}
-        </span>
+        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
+            <div
+                className="text-[9px] py-0.5 px-1.5 rounded shadow-lg uppercase tracking-wider font-medium"
+                style={{
+                    background: 'var(--bg-surface)',
+                    color: 'var(--text-secondary)',
+                    border: '1px solid var(--border-color)',
+                }}
+            >
+                {section.title}
+            </div>
+        </div>
     </div>
 );
 
 // ============================================================================
-// TimelineDock - Main component
+// TimelineDock - Inline film-strip rail
 // ============================================================================
 
 export const TimelineDock: React.FC = () => {
@@ -282,16 +282,13 @@ export const TimelineDock: React.FC = () => {
     const reorderSlides = useVelocityStore((state) => state.reorderSlides);
     const navigateSlide = useVelocityStore((state) => state.navigateSlide);
 
-    // Delete confirmation modal state
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
     const [slideToDelete, setSlideToDelete] = useState<string | null>(null);
 
-    // State for unsaved changes detection
     const tableConfig = useVelocityStore((state) => state.tableConfig);
     const activeFilters = useVelocityStore((state) => state.activeFilters);
     const dataset = useVelocityStore((state) => state.dataset);
 
-    // Compute if active slide has unsaved changes
     const activeSlideHasUnsavedChanges = useMemo(() => {
         const activeSlide = slides.find(s => s.id === activeSlideId);
         if (!activeSlide) return false;
@@ -306,7 +303,6 @@ export const TimelineDock: React.FC = () => {
         return !isAnalysisStateEqual(currentState, activeSlide.analysisState);
     }, [slides, activeSlideId, tableConfig, activeFilters, dataset]);
 
-    // DnD sensors
     const sensors = useSensors(
         useSensor(PointerSensor, {
             activationConstraint: { distance: 5 },
@@ -316,7 +312,6 @@ export const TimelineDock: React.FC = () => {
         })
     );
 
-    // Handle drag end for reordering
     const handleDragEnd = useCallback((event: DragEndEvent) => {
         const { active, over } = event;
         if (over && active.id !== over.id) {
@@ -326,46 +321,19 @@ export const TimelineDock: React.FC = () => {
         }
     }, [slides, reorderSlides]);
 
-    // Keyboard navigation
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
-            // Ignore if typing in input
             const target = e.target as HTMLElement;
             if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
                 return;
             }
 
             switch (e.key) {
-                case 'ArrowLeft':
-                    e.preventDefault();
-                    navigateSlide('prev');
-                    break;
-                case 'ArrowRight':
-                    e.preventDefault();
-                    navigateSlide('next');
-                    break;
-                case 'n':
-                case 'N':
-                    if (!e.metaKey && !e.ctrlKey) {
-                        e.preventDefault();
-                        addSlide();
-                    }
-                    break;
-                case 'd':
-                case 'D':
-                    if (!e.metaKey && !e.ctrlKey && activeSlideId) {
-                        e.preventDefault();
-                        duplicateSlide(activeSlideId);
-                    }
-                    break;
-                case 'Delete':
-                case 'Backspace':
-                    if (!e.metaKey && !e.ctrlKey && activeSlideId && slides.length > 1) {
-                        e.preventDefault();
-                        setSlideToDelete(activeSlideId);
-                        setDeleteModalOpen(true);
-                    }
-                    break;
+                case 'ArrowLeft': e.preventDefault(); navigateSlide('prev'); break;
+                case 'ArrowRight': e.preventDefault(); navigateSlide('next'); break;
+                case 'n': case 'N': if (!e.metaKey && !e.ctrlKey) { e.preventDefault(); addSlide(); } break;
+                case 'd': case 'D': if (!e.metaKey && !e.ctrlKey && activeSlideId) { e.preventDefault(); duplicateSlide(activeSlideId); } break;
+                case 'Delete': case 'Backspace': if (!e.metaKey && !e.ctrlKey && activeSlideId && slides.length > 1) { e.preventDefault(); setSlideToDelete(activeSlideId); setDeleteModalOpen(true); } break;
             }
         };
 
@@ -373,21 +341,16 @@ export const TimelineDock: React.FC = () => {
         return () => document.removeEventListener('keydown', handleKeyDown);
     }, [navigateSlide, addSlide, duplicateSlide, activeSlideId, slides.length]);
 
-    // Build slide list with section dividers
     const itemsWithDividers = useMemo(() => {
         const result: Array<{ type: 'slide' | 'divider'; slide?: Slide; section?: SlideSection; index?: number }> = [];
         let lastSectionId: string | undefined = undefined;
 
         slides.forEach((slide, index) => {
-            // Check if we're entering a new section
             if (slide.sectionId && slide.sectionId !== lastSectionId) {
                 const section = sections.find(s => s.id === slide.sectionId);
-                if (section) {
-                    result.push({ type: 'divider', section });
-                }
+                if (section) result.push({ type: 'divider', section });
             }
             lastSectionId = slide.sectionId;
-
             const section = sections.find(s => s.id === slide.sectionId);
             result.push({ type: 'slide', slide, section, index });
         });
@@ -395,46 +358,37 @@ export const TimelineDock: React.FC = () => {
         return result;
     }, [slides, sections]);
 
-    // Don't render if no dataset loaded (no slides to show meaningfully)
+    const activeIndex = slides.findIndex(s => s.id === activeSlideId);
+
     if (slides.length === 0) return null;
 
     return (
         <>
-            <motion.div
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                className="timeline-dock"
+            {/* Film-strip rail — sits in document flow as flex child */}
+            <div
+                className="shrink-0 border-t border-[var(--border-color)]"
+                style={{ background: 'var(--bg-app)' }}
             >
-                {/* Navigation: Previous */}
-                <button
-                    onClick={() => navigateSlide('prev')}
-                    disabled={slides.findIndex(s => s.id === activeSlideId) === 0}
-                    className="timeline-nav-btn"
-                    title="Previous slide (←)"
-                >
-                    <ChevronLeft size={16} />
-                </button>
-
-                {/* Slides container with DnD */}
-                <DndContext
-                    sensors={sensors}
-                    collisionDetection={closestCenter}
-                    onDragEnd={handleDragEnd}
-                >
-                    <SortableContext
-                        items={slides.map(s => s.id)}
-                        strategy={horizontalListSortingStrategy}
+                <div className="flex items-center h-10 px-3 gap-1">
+                    {/* Slide counter label */}
+                    <span
+                        className="text-[10px] uppercase tracking-wider mr-2 shrink-0 select-none"
+                        style={{
+                            color: 'var(--text-secondary)',
+                            fontFamily: 'var(--font-mono, monospace)',
+                            opacity: 0.6,
+                        }}
                     >
-                        <div className="flex items-center gap-2 px-2 overflow-x-auto max-w-[calc(100vw-300px)] scrollbar-none">
-                            <AnimatePresence>
+                        {activeIndex + 1}/{slides.length}
+                    </span>
+
+                    {/* Slide capsules */}
+                    <div className="flex items-center gap-0.5 flex-1 min-w-0 overflow-x-auto scrollbar-none">
+                        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                            <SortableContext items={slides.map(s => s.id)} strategy={horizontalListSortingStrategy}>
                                 {itemsWithDividers.map((item, i) => {
                                     if (item.type === 'divider' && item.section) {
-                                        return (
-                                            <SectionDivider
-                                                key={`divider-${item.section.id}`}
-                                                section={item.section}
-                                            />
-                                        );
+                                        return <SectionDivider key={`divider-${item.section.id}`} section={item.section} />;
                                     }
                                     if (item.type === 'slide' && item.slide) {
                                         const isActive = item.slide.id === activeSlideId;
@@ -449,52 +403,38 @@ export const TimelineDock: React.FC = () => {
                                                 section={item.section}
                                                 onClick={() => setActiveSlide(item.slide!.id)}
                                                 onDuplicate={() => duplicateSlide(item.slide!.id)}
-                                                onDelete={() => {
-                                                    setSlideToDelete(item.slide!.id);
-                                                    setDeleteModalOpen(true);
-                                                }}
+                                                onDelete={() => { setSlideToDelete(item.slide!.id); setDeleteModalOpen(true); }}
                                             />
                                         );
                                     }
                                     return null;
                                 })}
-                            </AnimatePresence>
-                        </div>
-                    </SortableContext>
-                </DndContext>
+                            </SortableContext>
+                        </DndContext>
+                    </div>
 
-                {/* Navigation: Next */}
-                <button
-                    onClick={() => navigateSlide('next')}
-                    disabled={slides.findIndex(s => s.id === activeSlideId) === slides.length - 1}
-                    className="timeline-nav-btn"
-                    title="Next slide (→)"
-                >
-                    <ChevronRight size={16} />
-                </button>
+                    {/* Add slide button */}
+                    <button
+                        onClick={() => addSlide()}
+                        className="
+                            ml-1 shrink-0
+                            w-6 h-6 rounded-md
+                            flex items-center justify-center
+                            transition-colors duration-150
+                            hover:bg-[var(--bg-active)]
+                        "
+                        style={{ color: 'var(--text-secondary)' }}
+                        title="New Slide (N)"
+                    >
+                        <Plus size={14} strokeWidth={2} />
+                    </button>
+                </div>
+            </div>
 
-                {/* Add slide button */}
-                <button
-                    onClick={() => addSlide()}
-                    className="timeline-add-btn"
-                    title="New slide (N)"
-                >
-                    <Plus size={16} />
-                </button>
-            </motion.div>
-
-            {/* Delete Confirmation Modal */}
             <ConfirmModal
                 isOpen={deleteModalOpen}
-                onClose={() => {
-                    setDeleteModalOpen(false);
-                    setSlideToDelete(null);
-                }}
-                onConfirm={() => {
-                    if (slideToDelete) {
-                        removeSlide(slideToDelete);
-                    }
-                }}
+                onClose={() => { setDeleteModalOpen(false); setSlideToDelete(null); }}
+                onConfirm={() => { if (slideToDelete) removeSlide(slideToDelete); }}
                 title="Delete Slide"
                 message="Are you sure you want to delete this slide? This action cannot be undone."
                 confirmLabel="Delete"
