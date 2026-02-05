@@ -90,7 +90,7 @@ Velocity can parse SPSS `.sav` files in the browser using `@velocity/readstat-wa
 
 ## Clear Implementation Plan
 
-### Phase 1 — Stabilize UI Guardrails (1–2 days)
+### Phase 1 — Stabilize UI Guardrails ✅ COMPLETE
 1. **Confirm WASM rebuild instructions**
    - Add a brief note in docs or release checklist that `packages/readstat-wasm` must be rebuilt after C changes.
 2. **Add sample-size control (optional)**
@@ -98,26 +98,32 @@ Velocity can parse SPSS `.sav` files in the browser using `@velocity/readstat-wa
 3. **Log sample stats**
    - In metadata mode, show the actual sample row count and any heuristic warnings.
 
-### Phase 2 — Improve Heuristic Reliability (2–4 days)
+### Phase 2 — Improve Heuristic Reliability ✅ COMPLETE
 1. **Sampling strategy**
-   - Switch from “first N rows” to “spread sample” (e.g., every k-th row) to reduce skew.
+   - Switch from "first N rows" to "spread sample" (e.g., every k-th row) to reduce skew.
 2. **Heuristic confidence indicator**
-   - Show a small “heuristics based on sample” badge in the UI.
+   - Show a small "heuristics based on sample" badge in the UI.
 
-### Phase 3 — Chunked Ingestion Spike (1–2 weeks)
-1. **Proof-of-concept**
-   - Build Arrow record batches from sample-sized chunks.
-   - Insert via `insertArrowFromIPCStream` or iterative `insertArrowTable` if possible.
-2. **Measure memory usage**
-   - Compare peak memory between full-load and chunked-load on WVS.
-3. **Add threshold-based fallback**
-   - Auto-switch to chunked mode above a size threshold.
+### Phase 3 — Chunked Ingestion ✅ COMPLETE (Feb 2026)
+1. **Streaming row extraction API**
+   - Added C functions to WASM module: `release_rows_up_to`, `get_total_row_count`, etc.
+   - Allows releasing WASM memory incrementally as rows are processed.
+2. **TypeScript streaming parser**
+   - `parseSavStreaming()` function processes rows in batches via callback.
+   - Each batch is extracted, converted to Arrow, inserted into DuckDB, then discarded.
+3. **Chunked DuckDB insertion**
+   - `loadSAVChunked()` uses streaming parser with 5000-row batches.
+   - Auto-routes files >50MB to chunked mode.
+   - Progress reporting via `loadProgress` worker messages.
+4. **Memory benefits**
+   - Reduces peak JS memory by not holding all rows simultaneously.
+   - WASM string memory freed incrementally via `release_rows_up_to()`.
 
-### Phase 4 — OPFS + Persistent Files (1–2 weeks)
+### Phase 4 — OPFS + Persistent Files ✅ PARTIAL
 1. **Write file to OPFS on upload**
-   - Avoid holding entire file in RAM.
+   - Files are stored in OPFS for local-first restore.
 2. **Parser integration**
-   - Replace buffer-based parsing with read handle streaming when feasible.
+   - Future: Replace buffer-based parsing with read handle streaming when feasible.
 
 ---
 
