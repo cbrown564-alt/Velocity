@@ -28,6 +28,8 @@ coverage/
 playwright-report/
 test-results/
 .playwright/
-    
+
+# Demo data
+*.sav
 
 tests/golden/perf_log.jsonl
