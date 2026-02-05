@@ -181,6 +181,7 @@ export default function App() {
     // Persistence actions
     restoreFromPersistence,
     discardPersistedData,
+    rehydrateDatasetFromOpfs,
     // Context awareness: bi-directional focus between Analysis and Variable Manager
     selectedVariableSetId,
     setSelectedVariableSetId,
@@ -208,7 +209,6 @@ export default function App() {
   const SAV_WARN_MB = 50;
   const SAV_HARD_MB = 200;
   const SAV_SAMPLE_ROWS = 1000;
-  const OPFS_THRESHOLD_MB = 20; // Store files >= 20MB in OPFS
 
   const sensors = useSensors(
     useSensor(MouseSensor, {
@@ -381,10 +381,25 @@ export default function App() {
         setMode('splash');
       }
     } else if (persistenceState === 'ready' && mode === 'splash') {
-      // Normal startup with no persisted data
-      hasProcessedPersistence.current = true;
+      if (dataset?.opfsFileKey) {
+        console.log('[App] Rehydrating DuckDB from OPFS source file');
+        hasProcessedPersistence.current = true;
+        setMode('uploading');
+        (async () => {
+          try {
+            await rehydrateDatasetFromOpfs();
+            setMode('dashboard');
+          } catch (error) {
+            console.warn('[App] Failed to rehydrate from OPFS source file:', error);
+            setMode('splash');
+          }
+        })();
+      } else {
+        // Normal startup with no persisted data
+        hasProcessedPersistence.current = true;
+      }
     }
-  }, [persistenceState, persistedDataInfo, dataset, mode, restoreFromPersistence]);
+  }, [persistenceState, persistedDataInfo, dataset, mode, restoreFromPersistence, rehydrateDatasetFromOpfs]);
 
   // -- HANDLE RESTORE/DISCARD ACTIONS --
   const handleRestore = () => {
@@ -423,78 +438,74 @@ export default function App() {
     try {
       const ext = file.name.toLowerCase().split('.').pop();
 
-        if (ext === 'sav') {
-          const fileSizeMb = file.size / (1024 * 1024);
-          const shouldWarn = fileSizeMb >= SAV_WARN_MB;
-          const mustMetadataOnly = fileSizeMb >= SAV_HARD_MB;
-          const shouldStoreInOpfs = fileSizeMb >= OPFS_THRESHOLD_MB && opfsAvailableLocal;
+      if (ext === 'sav') {
+        const datasetId = crypto.randomUUID();
+        const fileSizeMb = file.size / (1024 * 1024);
+        const shouldWarn = fileSizeMb >= SAV_WARN_MB;
+        const mustMetadataOnly = fileSizeMb >= SAV_HARD_MB;
 
-          setPendingSavFile(file);
-          setPendingSavSizeMb(fileSizeMb);
+        setPendingSavFile(file);
+        setPendingSavSizeMb(fileSizeMb);
 
-          // Store large files in OPFS for later "Load Full Data"
-          let storageKey: string | null = null;
-          if (shouldStoreInOpfs) {
-            try {
-              let canStore = true;
-              const estimate = await opfsFileManager.getStorageEstimate();
-              if (estimate) {
-                const available = estimate.quota - estimate.usage;
-                const required = Math.ceil(file.size * 1.2);
-                if (available < required) {
-                  canStore = false;
-                  console.warn('📁 [App] Skipping OPFS storage due to low quota');
-                  setOpfsStorageKey(null);
-                }
-              }
+        let buffer: ArrayBuffer | null = null;
+        let storageKey: string | null = null;
 
-              if (canStore) {
-                storageKey = opfsFileManager.generateStorageKey(file.name);
-                const buffer = await file.arrayBuffer();
-                await opfsFileManager.storeFile(storageKey, buffer);
-                setOpfsStorageKey(storageKey);
-                console.log(`📁 [App] Stored file in OPFS: ${storageKey}`);
-              }
-            } catch (opfsErr) {
-              console.warn('📁 [App] Failed to store in OPFS, will fall back to file reference:', opfsErr);
-              storageKey = null;
-              setOpfsStorageKey(null);
+        // Store in OPFS for local-first restore (best-effort).
+        if (opfsAvailableLocal) {
+          try {
+            if (dataset?.opfsFileKey) {
+              // App is currently single-dataset. Clean up the previous source file to avoid unbounded OPFS growth.
+              await opfsFileManager.deleteFile(dataset.opfsFileKey).catch(() => {});
             }
-          }
 
-          if (mustMetadataOnly) {
-            // Read from OPFS if available, otherwise from file
-            const buffer = storageKey
-              ? await opfsFileManager.readFile(storageKey)
-              : await file.arrayBuffer();
+            let canStore = true;
+            const estimate = await opfsFileManager.getStorageEstimate();
+            if (estimate) {
+              const available = estimate.quota - estimate.usage;
+              const required = Math.ceil(file.size * 1.2);
+              if (available < required) {
+                canStore = false;
+                console.warn('📁 [App] Skipping OPFS storage due to low quota');
+              }
+            }
+
+            if (canStore) {
+              storageKey = opfsFileManager.generateStorageKey(file.name);
+              buffer = await file.arrayBuffer();
+              await opfsFileManager.storeFile(storageKey, buffer);
+              setOpfsStorageKey(storageKey);
+              console.log(`📁 [App] Stored file in OPFS: ${storageKey}`);
+            }
+          } catch (opfsErr) {
+            console.warn('📁 [App] Failed to store in OPFS, will fall back to file reference:', opfsErr);
+            storageKey = null;
+            setOpfsStorageKey(null);
+          }
+        }
+
+        if (!buffer) {
+          buffer = await file.arrayBuffer();
+        }
+
+        if (mustMetadataOnly) {
+          await loadSAVSample(file.name, buffer, SAV_SAMPLE_ROWS);
+          setMode('metadata');
+          return;
+        }
+
+        if (shouldWarn) {
+          const proceed = window.confirm(
+            `This file is ${fileSizeMb.toFixed(1)} MB. Full ingestion may crash the tab. Load full data anyway?`
+          );
+          if (!proceed) {
             await loadSAVSample(file.name, buffer, SAV_SAMPLE_ROWS);
             setMode('metadata');
             return;
           }
-
-          if (shouldWarn) {
-            const proceed = window.confirm(
-              `This file is ${fileSizeMb.toFixed(1)} MB. Full ingestion may crash the tab. Load full data anyway?`
-            );
-            if (!proceed) {
-              const buffer = storageKey
-                ? await opfsFileManager.readFile(storageKey)
-                : await file.arrayBuffer();
-              await loadSAVSample(file.name, buffer, SAV_SAMPLE_ROWS);
-              setMode('metadata');
-              return;
-            }
-          }
-
-        const buffer = storageKey
-          ? await opfsFileManager.readFile(storageKey)
-          : await file.arrayBuffer();
-        await loadSAV(file.name, buffer);
-        // Clean up OPFS storage on successful full load
-        if (storageKey) {
-          await opfsFileManager.deleteFile(storageKey).catch(() => {});
-          setOpfsStorageKey(null);
         }
+
+        await loadSAV(file.name, buffer, { datasetId, opfsFileKey: storageKey || undefined });
+        setOpfsStorageKey(null);
         setPendingSavFile(null);
         setPendingSavSizeMb(null);
       } else {
@@ -541,13 +552,9 @@ export default function App() {
         throw new Error('No file available to load');
       }
 
-      await loadSAV(fileName, buffer);
-
-      // Clean up OPFS storage on successful full load
-      if (opfsStorageKey) {
-        await opfsFileManager.deleteFile(opfsStorageKey).catch(() => {});
-        setOpfsStorageKey(null);
-      }
+      await loadSAV(fileName, buffer, { opfsFileKey: opfsStorageKey || undefined });
+      // Keep OPFS source file for local-first restore.
+      setOpfsStorageKey(null);
       setPendingSavFile(null);
       setPendingSavSizeMb(null);
       setMode('dashboard');
@@ -871,6 +878,30 @@ export default function App() {
             transition={{ duration: 1.2, ease: 'easeInOut' }}
             className="fixed top-0 left-0 h-1 bg-[var(--color-accent)] z-50 shadow-[0_0_10px_var(--color-accent)]"
           />
+        )}
+      </AnimatePresence>
+
+      {/* UPLOADING / RESTORING OVERLAY */}
+      <AnimatePresence>
+        {mode === 'uploading' && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 flex items-center justify-center bg-[var(--bg-app)] z-40"
+          >
+            <div className="text-center space-y-4 max-w-md w-full px-6">
+              <div className="mx-auto w-14 h-14 rounded-full bg-[var(--bg-panel)] border border-[var(--border-color)] flex items-center justify-center">
+                <Loader2 className="w-7 h-7 text-[var(--color-accent)] animate-spin" />
+              </div>
+              <div className="space-y-1">
+                <p className="font-medium text-[var(--text-primary)]">Loading dataset…</p>
+                <p className="text-sm text-[var(--text-secondary)]">
+                  {pendingSavFile?.name || dataset?.name || 'Preparing analysis engine'}
+                </p>
+              </div>
+            </div>
+          </motion.div>
         )}
       </AnimatePresence>
 

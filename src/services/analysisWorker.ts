@@ -39,8 +39,13 @@ const OPFS_SCHEMA_VERSION = 1;
 
 type PersistenceMode = 'opfs' | 'memory' | 'disabled';
 
-// Feature flag: allow OPFS when the environment supports it
-const ENABLE_OPFS = true;
+// Feature flag: enable DuckDB OPFS-backed *database file* persistence.
+//
+// Note: DuckDB-WASM OPFS DB persistence was added in `@duckdb/duckdb-wasm@1.30.0`
+// (DuckDB v1.3.2). With older builds, `db.open({ path: 'opfs://...' })` can fail
+// with misleading corruption errors. We keep this as a guarded feature.
+const ENABLE_DUCKDB_OPFS_PERSISTENCE = true;
+const MIN_DUCKDB_VERSION_FOR_OPFS_PERSISTENCE: [number, number, number] = [1, 3, 2];
 
 let db: duckdb.AsyncDuckDB | null = null;
 let conn: duckdb.AsyncDuckDBConnection | null = null;
@@ -115,6 +120,20 @@ async function detectOpfsSupport(): Promise<{ supported: boolean; error?: string
   } catch (error: any) {
     return { supported: false, error: error?.message || 'OPFS unsupported in this environment' };
   }
+}
+
+function parseDuckDbVersion(version: string): [number, number, number] | null {
+  const match = version.match(/(\d+)\.(\d+)\.(\d+)/);
+  if (!match) return null;
+  return [Number(match[1]), Number(match[2]), Number(match[3])];
+}
+
+function isVersionAtLeast(version: [number, number, number], minimum: [number, number, number]): boolean {
+  for (let i = 0; i < 3; i++) {
+    if (version[i] > minimum[i]) return true;
+    if (version[i] < minimum[i]) return false;
+  }
+  return true;
 }
 
 function buildOpfsDbPath(datasetId?: string, schemaVersion: number = persistenceContext.schemaVersion): string {
@@ -259,23 +278,28 @@ async function init(forceCleanStart: boolean = false): Promise<{ opfsAvailable: 
     throw new Error('No main worker URL found in bundle');
   }
 
-  const workerRes = await fetch(bundle.mainWorker);
-  const workerScript = await workerRes.text();
-  const workerBlob = new Blob([workerScript], { type: 'text/javascript' });
-  const workerUrl = URL.createObjectURL(workerBlob);
-
-  const worker = new Worker(workerUrl);
+  const worker = new Worker(bundle.mainWorker);
   const logger = new duckdb.ConsoleLogger();
 
   db = new duckdb.AsyncDuckDB(logger, worker);
   await db.instantiate(bundle.mainModule, bundle.pthreadWorker);
 
-  URL.revokeObjectURL(workerUrl);
-
   opfsAvailable = false;
   persistenceMode = 'memory';
   persistenceError = null;
   activeDbPath = ':memory:';
+
+  const duckDbVersion = await db.getVersion().catch(() => '');
+  const parsedVersion = duckDbVersion ? parseDuckDbVersion(duckDbVersion) : null;
+  const duckDbOpfsSupported = parsedVersion ? isVersionAtLeast(parsedVersion, MIN_DUCKDB_VERSION_FOR_OPFS_PERSISTENCE) : true;
+  const enableDuckDbOpfsPersistence = ENABLE_DUCKDB_OPFS_PERSISTENCE && duckDbOpfsSupported;
+
+  if (duckDbVersion) {
+    console.log('🦆 [Worker] DuckDB Version:', duckDbVersion);
+  }
+  if (!duckDbOpfsSupported) {
+    console.warn(`🦆 [Worker] Disabling DuckDB OPFS DB persistence: DuckDB ${duckDbVersion} < ${MIN_DUCKDB_VERSION_FOR_OPFS_PERSISTENCE.join('.')}`);
+  }
 
   const opfsSupport = await detectOpfsSupport();
   const desiredOpfsPath = buildOpfsDbPath(persistenceContext.datasetId);
@@ -297,11 +321,35 @@ async function init(forceCleanStart: boolean = false): Promise<{ opfsAvailable: 
   };
 
   const initResult = await initOpfsPersistence({
-    enableOpfs: ENABLE_OPFS,
+    enableOpfs: enableDuckDbOpfsPersistence,
     opfsSupport,
     desiredPath: desiredOpfsPath,
     fallbackPath: fallbackOpfsPath,
     openPath: openOpfsPath,
+    validateOpenedPath: async () => {
+      try {
+        const probeConn = await db.connect();
+        try {
+          const tableCheck = await probeConn.query(`
+            SELECT COUNT(*) as cnt
+            FROM information_schema.tables
+            WHERE table_schema = 'main' AND table_name = 'main'
+          `);
+          return Number(tableCheck.toArray()[0]?.cnt) > 0;
+        } finally {
+          await probeConn.close();
+        }
+      } catch {
+        return false;
+      }
+    },
+    resetBetweenAttempts: async () => {
+      try {
+        await db.reset();
+      } catch {
+        // ignore reset errors; we'll fall back to memory if needed
+      }
+    },
     listCandidates: async () => {
       const candidates = await listOpfsDbFiles();
       return candidates.map((candidate) => ({ path: `opfs://${candidate.path}` }));

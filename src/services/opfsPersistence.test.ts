@@ -45,7 +45,7 @@ describe('initOpfsPersistence', () => {
       desiredPath: 'opfs://bad.db',
       fallbackPath: 'opfs://default.db',
       openPath,
-      listCandidates: async () => [{ path: 'opfs://candidate.db' }],
+      listCandidates: async () => [{ path: 'opfs://bad.db' }, { path: 'opfs://candidate.db' }],
       quarantine: vi.fn(async () => undefined),
       buildRepairPath: () => 'opfs://repair.db',
       openMemory,
@@ -56,6 +56,52 @@ describe('initOpfsPersistence', () => {
     expect(result.activeDbPath).toBe('opfs://candidate.db');
     expect(result.corruptionDetected).toBe(true);
     expect(openMemory).not.toHaveBeenCalled();
+  });
+
+  it('prefers existing fallback DB when desired DB does not exist', async () => {
+    const openPath = vi.fn(async (path: string) => {
+      if (path === 'opfs://default.db') return { ok: true };
+      return { ok: true };
+    });
+
+    const result = await initOpfsPersistence({
+      enableOpfs: true,
+      opfsSupport: { supported: true },
+      desiredPath: 'opfs://dataset.db',
+      fallbackPath: 'opfs://default.db',
+      openPath,
+      listCandidates: async () => [{ path: 'opfs://default.db' }],
+      quarantine: vi.fn(async () => undefined),
+      buildRepairPath: () => 'opfs://repair.db',
+      openMemory: vi.fn(async () => undefined),
+      validateOpenedPath: async (path) => path === 'opfs://default.db',
+    });
+
+    expect(result.opfsAvailable).toBe(true);
+    expect(result.activeDbPath).toBe('opfs://default.db');
+    expect(openPath).toHaveBeenCalledWith('opfs://default.db', expect.any(String));
+    expect(openPath).not.toHaveBeenCalledWith('opfs://dataset.db', expect.any(String));
+  });
+
+  it('skips empty desired DB when another candidate has persisted data', async () => {
+    const openPath = vi.fn(async () => ({ ok: true }));
+
+    const result = await initOpfsPersistence({
+      enableOpfs: true,
+      opfsSupport: { supported: true },
+      desiredPath: 'opfs://desired.db',
+      fallbackPath: 'opfs://fallback.db',
+      openPath,
+      listCandidates: async () => [{ path: 'opfs://desired.db' }, { path: 'opfs://fallback.db' }],
+      quarantine: vi.fn(async () => undefined),
+      buildRepairPath: () => 'opfs://repair.db',
+      openMemory: vi.fn(async () => undefined),
+      validateOpenedPath: async (path) => path === 'opfs://fallback.db',
+      resetBetweenAttempts: vi.fn(async () => undefined),
+    });
+
+    expect(result.opfsAvailable).toBe(true);
+    expect(result.activeDbPath).toBe('opfs://fallback.db');
   });
 
   it('falls back to memory on non-corruption errors', async () => {

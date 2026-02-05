@@ -1,12 +1,20 @@
 # Bug: OPFS Corruption Loop in DuckDB-WASM
 
-**Status:** Deferred
-**Priority:** Medium
+**Status:** Active
+**Priority:** Critical
 **Created:** 2026-01-21
+**Updated:** 2026-02-05
 
 ## Summary
 
-DuckDB-WASM's OPFS persistence encounters a corruption state that cannot be recovered from, even after cleaning all OPFS entries. The worker respawns with `forceCleanStart` but still reports "not a valid DuckDB database file" error.
+DuckDB-WASM OPFS-backed **database file** persistence (`db.open({ path: "opfs://..." })`) can enter a failure loop where every startup hits:
+
+- `exists, but it is not a valid DuckDB database file!`
+- `Buffering missing file: opfs://...`
+
+and recovery (cleaning/quarantine/repair path) does not help.
+
+This blocks the **local-first** promise because the app falls back to `:memory:` and the user must re-upload.
 
 ## Reproduction
 
@@ -40,6 +48,12 @@ DuckDB-WASM may be caching OPFS file system state internally, beyond what we can
 - Cleaning OPFS filesystem
 - Creating a new worker instance
 
+### New finding (2026-02-05)
+
+We were pinned to `@duckdb/duckdb-wasm@1.29.0`. Official DuckDB-WASM OPFS DB persistence landed in `@duckdb/duckdb-wasm@1.30.0` (DuckDB v1.3.2). With older builds, `db.open({ path: "opfs://..." })` can fail with the same “not a valid DuckDB database file” error even on a brand-new path, which looks like corruption but is really **unsupported/buggy OPFS DB behavior**.
+
+We now gate DuckDB OPFS DB persistence on DuckDB version >= `1.3.2` in `src/services/analysisWorker.ts`. This avoids spamming “corruption detected” logs on old builds.
+
 ### Browser Caching
 
 The "Buffering missing file" warnings suggest DuckDB-WASM has its own buffering layer:
@@ -51,7 +65,7 @@ This buffer may survive worker termination.
 
 ## Current Workaround
 
-OPFS is disabled in development (`ENABLE_OPFS = false` in `analysisWorker.ts`). App runs in in-memory mode only.
+DuckDB OPFS DB persistence is treated as **best-effort**. If it fails or is disabled, the app runs in in-memory mode — but crucially we persist the **source dataset file** in OPFS and automatically re-import it on boot so the user does *not* have to re-upload.
 
 ## Potential Solutions (for later)
 
@@ -72,8 +86,9 @@ OPFS is disabled in development (`ENABLE_OPFS = false` in `analysisWorker.ts`). 
    - Con: More complex implementation
 
 4. **Upgrade DuckDB-WASM**
-   - Check if newer versions have better OPFS error recovery
-   - Current: `@duckdb/duckdb-wasm@1.29.0`
+    - Check if newer versions have better OPFS error recovery
+    - Current: `@duckdb/duckdb-wasm@1.29.0` (does not include the OPFS DB persistence feature)
+    - Target: upgrade to the latest stable (as of 2026-02-05, `@duckdb/duckdb-wasm@1.34.0`)
 
 5. **Alternative: IndexedDB via DuckDB**
    - DuckDB-WASM supports IndexedDB backend

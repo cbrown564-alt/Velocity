@@ -41,6 +41,7 @@ export interface PersistedState {
     dataset: VelocityState['dataset'];
     variableSets: VelocityState['variableSets'];
     folders: VelocityState['folders'];
+    transformLog: VelocityState['transformLog'];
 
     // From UISlice
     appMode: VelocityState['appMode'];
@@ -67,12 +68,14 @@ export const partialize = (state: VelocityState): PersistedState => {
     const persistDataset = state.dataset?.metadataOnly ? null : state.dataset;
     const persistVariableSets = state.dataset?.metadataOnly ? [] : state.variableSets;
     const persistFolders = state.dataset?.metadataOnly ? [] : state.folders;
+    const persistTransformLog = state.dataset?.metadataOnly ? [] : state.transformLog;
 
     return {
         // DataSlice - persist dataset metadata but NOT worker/loading state
         dataset: persistDataset,
         variableSets: persistVariableSets,
         folders: persistFolders,
+        transformLog: persistTransformLog,
 
     // UISlice - persist view preferences but NOT dragging/modal state
     appMode: state.appMode,
@@ -110,7 +113,12 @@ export const onRehydrateStorage = (state: VelocityState | undefined) => {
         console.log('🔄 [Persist] State rehydrated from localStorage');
         if (state.dataset) {
             console.log(`📊 [Persist] Restored dataset: ${state.dataset.name} (${state.dataset.variables.length} variables)`);
-            console.log('⚠️ [Persist] Note: Data must be re-imported to DuckDB');
+            if (state.dataset.opfsFileKey) {
+                console.log(`📁 [Persist] Found OPFS source file: ${state.dataset.opfsFileKey}`);
+                console.log('🔁 [Persist] Note: Data will be re-imported to DuckDB from OPFS (if available)');
+            } else {
+                console.log('⚠️ [Persist] Note: Data must be re-imported to DuckDB');
+            }
         }
     }
 };

@@ -5,6 +5,7 @@ const savFixture = path.resolve(process.cwd(), 'test_small.sav');
 
 test('OPFS persists dataset across reloads', async ({ page }) => {
   await page.goto('/');
+  page.on('dialog', (dialog) => dialog.dismiss());
 
   const opfsSupported = await page.evaluate(async () => {
     try {
@@ -19,9 +20,25 @@ test('OPFS persists dataset across reloads', async ({ page }) => {
 
   test.skip(!opfsSupported, 'OPFS not supported in this environment');
 
+  const uploadButton = page.getByRole('button', { name: /Drop \.SAV or \.CSV file to analyze/i });
+  await expect(uploadButton).toBeEnabled({ timeout: 60000 });
+
   await page.setInputFiles('input[type="file"]', savFixture);
 
-  await expect(page.getByText('Survey Questions')).toBeVisible({ timeout: 120000 });
+  const surveyQuestions = page.getByText(/Survey Questions/);
+  const metadataLoaded = page.getByText('Metadata Loaded');
+
+  await expect.poll(async () => {
+    if (await surveyQuestions.isVisible().catch(() => false)) return 'dashboard';
+    if (await metadataLoaded.isVisible().catch(() => false)) return 'metadata';
+    return 'pending';
+  }, { timeout: 120000 }).not.toBe('pending');
+
+  if (await metadataLoaded.isVisible().catch(() => false)) {
+    const loadFull = page.getByRole('button', { name: 'Load Full Data' });
+    await loadFull.click();
+    await expect(surveyQuestions).toBeVisible({ timeout: 120000 });
+  }
 
   await page.reload();
 
@@ -31,4 +48,34 @@ test('OPFS persists dataset across reloads', async ({ page }) => {
   }
 
   await expect(page.getByText('Survey Questions')).toBeVisible({ timeout: 120000 });
+});
+
+test('Reload smoke: app boots after reload', async ({ page }) => {
+  await page.goto('/');
+
+  await page.evaluate(async () => {
+    try {
+      localStorage.clear();
+    } catch {}
+
+    try {
+      if (navigator.storage?.getDirectory) {
+        const root = await navigator.storage.getDirectory();
+        // @ts-expect-error - entries() returns an async iterator
+        for await (const [name] of root.entries()) {
+          try {
+            await root.removeEntry(name, { recursive: true });
+          } catch {
+            // Ignore delete errors
+          }
+        }
+      }
+    } catch {
+      // Ignore OPFS cleanup failures
+    }
+  });
+
+  await page.reload();
+
+  await expect(page.getByText('Velocity.')).toBeVisible({ timeout: 30000 });
 });

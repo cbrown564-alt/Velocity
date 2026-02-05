@@ -8,6 +8,7 @@
 import type { StateCreator } from 'zustand';
 import type { WorkerRequest, WorkerResponse, VariableStatsResult } from '../../types/worker';
 import type { RecodeConfig } from '../../types';
+import * as opfsFileManager from '../../services/opfsFileManager';
 
 // ============================================================================
 // Types
@@ -41,6 +42,8 @@ export interface Dataset {
     variables: Variable[];
     weightVariable?: string;
     source: 'sav' | 'csv' | 'arrow';
+    /** OPFS key for the original uploaded file (used for local-first restore). */
+    opfsFileKey?: string;
     /** True if only metadata was loaded (no rows in DuckDB) */
     metadataOnly?: boolean;
     /** Number of rows loaded in sample mode (if applicable) */
@@ -74,6 +77,20 @@ export interface Folder {
     name: string;
     order: number;
 }
+
+// ============================================================================
+// Transform Log (Local-First Rebuild)
+// ============================================================================
+
+export type DataTransform =
+    | {
+        type: 'recode';
+        sourceColId: string;
+        newColId: string;
+        label: string;
+        config: RecodeConfig;
+        createdAt: number;
+    };
 
 // ============================================================================
 // Persistence Types
@@ -113,6 +130,7 @@ export interface DataSlice {
     dataset: Dataset | null;
     variableSets: VariableSet[];
     folders: Folder[];
+    transformLog: DataTransform[];
 
     // Variable stats cache (keyed by variable ID)
     variableStats: Record<string, VariableStatsResult>;
@@ -135,8 +153,9 @@ export interface DataSlice {
     flushPersistedData: () => Promise<void>;
     restoreFromPersistence: () => void;
     discardPersistedData: () => Promise<void>;
+    rehydrateDatasetFromOpfs: () => Promise<void>;
     loadCSV: (fileName: string, content: string) => Promise<void>;
-    loadSAV: (fileName: string, buffer: ArrayBuffer) => Promise<void>;
+    loadSAV: (fileName: string, buffer: ArrayBuffer, options?: { datasetId?: string; opfsFileKey?: string }) => Promise<void>;
     loadSAVMetadata: (fileName: string, buffer: ArrayBuffer) => Promise<void>;
     loadSAVSample: (fileName: string, buffer: ArrayBuffer, rowLimit: number, strategy?: 'sequential' | 'spread') => Promise<void>;
     getUniqueValues: (variableId: string) => Promise<string[]>;
@@ -166,6 +185,7 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
     dataset: null,
     variableSets: [],
     folders: [],
+    transformLog: [],
 
     // Variable stats cache
     variableStats: {},
@@ -438,6 +458,87 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
         });
     },
 
+    // Rehydrate DuckDB data from persisted source file in OPFS (best-effort).
+    // This is the local-first fallback when DuckDB OPFS DB persistence is unavailable/corrupt.
+    rehydrateDatasetFromOpfs: async () => {
+        const { worker, dataset } = get();
+        if (!worker) throw new Error('Worker not initialized');
+        if (!dataset?.opfsFileKey) throw new Error('Dataset has no OPFS source key');
+
+        const ping = () =>
+            new Promise<{ hasData: boolean; rowCount?: number }>((resolve) => {
+                const handler = (event: MessageEvent<WorkerResponse>) => {
+                    const response = event.data;
+                    if (response.type === 'pong') {
+                        worker.removeEventListener('message', handler);
+                        resolve({ hasData: response.hasData, rowCount: response.rowCount });
+                    } else if (response.type === 'error') {
+                        worker.removeEventListener('message', handler);
+                        resolve({ hasData: false });
+                    }
+                };
+                worker.addEventListener('message', handler);
+                worker.postMessage({ type: 'ping' } as WorkerRequest);
+            });
+
+        const status = await ping();
+        if (status.hasData) {
+            // If the DB already has data, don't clobber it.
+            return;
+        }
+
+        console.log(`[DataSlice] Rehydrating DuckDB from OPFS source: ${dataset.opfsFileKey}`);
+        const buffer = await opfsFileManager.readFile(dataset.opfsFileKey);
+
+        await new Promise<void>((resolve, reject) => {
+            const handler = (event: MessageEvent<WorkerResponse>) => {
+                const response = event.data;
+                if (response.type === 'savLoaded') {
+                    worker.removeEventListener('message', handler);
+                    resolve();
+                } else if (response.type === 'error') {
+                    worker.removeEventListener('message', handler);
+                    reject(new Error(response.message));
+                }
+            };
+            worker.addEventListener('message', handler);
+            worker.postMessage({ type: 'loadSAV', buffer } as WorkerRequest, [buffer]);
+        });
+
+        const transforms = get().transformLog;
+        if (transforms.length > 0) {
+            console.log(`[DataSlice] Replaying ${transforms.length} transforms`);
+        }
+
+        for (const transform of transforms) {
+            if (transform.type !== 'recode') continue;
+
+            await new Promise<void>((resolve) => {
+                const handler = (event: MessageEvent<WorkerResponse>) => {
+                    const response = event.data;
+                    if (response.type === 'recodeComplete') {
+                        worker.removeEventListener('message', handler);
+                        resolve();
+                    } else if (response.type === 'error') {
+                        worker.removeEventListener('message', handler);
+                        console.warn('[DataSlice] Transform replay failed:', response.message);
+                        resolve();
+                    }
+                };
+
+                worker.addEventListener('message', handler);
+                worker.postMessage({
+                    type: 'recodeVariable',
+                    sourceCol: transform.sourceColId,
+                    newColName: transform.newColId,
+                    config: transform.config
+                } as WorkerRequest);
+            });
+        }
+
+        void get().flushPersistedData();
+    },
+
     // Restore session from persisted data (user chose to restore)
     restoreFromPersistence: () => {
         const { persistedDataInfo, dataset } = get();
@@ -489,13 +590,18 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
 
     // Discard persisted data and start fresh
     discardPersistedData: async () => {
+        const opfsKey = get().dataset?.opfsFileKey;
         await get().clearPersistedData();
+        if (opfsKey) {
+            await opfsFileManager.deleteFile(opfsKey).catch(() => {});
+        }
         set({
             persistenceState: 'ready',
             persistedDataInfo: null,
             dataset: null,
             variableSets: [],
-            folders: []
+            folders: [],
+            transformLog: [],
         });
     },
 
@@ -535,6 +641,7 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                             source: 'csv',
                         },
                         variableSets,
+                        transformLog: [],
                         // Clear variable stats cache on new dataset load
                         variableStats: {},
                         variableStatsLoading: {},
@@ -574,7 +681,7 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
     },
 
     // Load SAV file
-    loadSAV: async (fileName: string, buffer: ArrayBuffer) => {
+    loadSAV: async (fileName: string, buffer: ArrayBuffer, options?: { datasetId?: string; opfsFileKey?: string }) => {
         const { worker } = get();
         if (!worker) throw new Error('Worker not initialized');
 
@@ -583,6 +690,7 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                 const response = event.data;
 
                 if (response.type === 'savLoaded') {
+                    const datasetId = options?.datasetId || crypto.randomUUID();
                     // Use pre-built variableSets from worker (includes MR sets as grid/multiple)
                     const variableSets: VariableSet[] = response.variableSets;
 
@@ -595,14 +703,16 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
 
                     set({
                         dataset: {
-                            id: crypto.randomUUID(),
+                            id: datasetId,
                             name: fileName,
                             rowCount: response.rowCount,
                             variables: response.variables,
                             source: 'sav',
+                            opfsFileKey: options?.opfsFileKey,
                             metadataOnly: false,
                         },
                         variableSets,
+                        transformLog: [],
                         // Clear variable stats cache on new dataset load
                         variableStats: {},
                         variableStatsLoading: {},
@@ -613,7 +723,6 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                     } as any);
 
                     console.log(`📊 [DataSlice] SAV loaded: ${response.rowCount} rows, ${response.variables.length} variables, ${variableSets.length} variable sets in ${response.durationMs.toFixed(2)}ms`);
-                    const datasetId = get().dataset?.id;
                     if (datasetId) {
                         worker.postMessage({
                             type: 'updatePersistenceMetadata',
@@ -823,6 +932,7 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                 const response = event.data;
                 if (response.type === 'recodeComplete') {
                     if (dataset) {
+                        const createdAt = Date.now();
                         const newVariable: Variable = {
                             id: response.newColName,
                             name: response.newColName,
@@ -835,16 +945,26 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                             ...dataset,
                             variables: [...dataset.variables, newVariable],
                         };
-                        set({ dataset: updatedDataset });
-
                         set((state) => ({
+                            dataset: updatedDataset,
                             variableSets: [...state.variableSets, {
                                 id: crypto.randomUUID(),
                                 name: newColName,
                                 variableIds: [response.newColName],
                                 structure: 'single',
                                 type: 'nominal'
-                            }]
+                            }],
+                            transformLog: [
+                                ...state.transformLog,
+                                {
+                                    type: 'recode',
+                                    sourceColId,
+                                    newColId: response.newColName,
+                                    label: newColName,
+                                    config,
+                                    createdAt,
+                                }
+                            ]
                         }));
 
                         if (worker) {
@@ -856,7 +976,7 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                                     rowCount: updatedDataset.rowCount,
                                     columnCount: updatedDataset.variables.length,
                                     schemaVersion: 1,
-                                    lastModified: Date.now()
+                                    lastModified: createdAt
                                 }
                             } as WorkerRequest);
                         }
