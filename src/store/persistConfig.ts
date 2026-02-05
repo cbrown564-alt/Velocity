@@ -52,6 +52,11 @@ export interface PersistedState {
     tableConfig: VelocityState['tableConfig'];
     activeFilters: VelocityState['activeFilters'];
 
+    // From WorkspaceSlice
+    workspace: VelocityState['workspace'];
+    activeDatasetId: VelocityState['activeDatasetId'];
+    isWorkspaceMode: VelocityState['isWorkspaceMode'];
+
     // Data fingerprint for OPFS/localStorage reconciliation
     dataFingerprint?: DataFingerprint;
 }
@@ -85,6 +90,11 @@ export const partialize = (state: VelocityState): PersistedState => {
     // AnalysisSlice - persist configuration but NOT query results
     tableConfig: state.tableConfig,
     activeFilters: state.activeFilters,
+
+    // WorkspaceSlice - persist workspace state for multi-file management
+    workspace: state.workspace,
+    activeDatasetId: state.activeDatasetId,
+    isWorkspaceMode: state.isWorkspaceMode,
 
     // Data fingerprint - used for OPFS/localStorage reconciliation
     // Only set when dataset exists

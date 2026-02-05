@@ -9,3 +9,5 @@ export type { StoredDataset, Project, WorkspaceState } from './components/Worksp
 
 export { DatasetSidebar } from './components/DatasetSidebar';
 export { ProjectLinkModal } from './components/ProjectLinkModal';
+
+export { useWorkspace } from './hooks/useWorkspace';

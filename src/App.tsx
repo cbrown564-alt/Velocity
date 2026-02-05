@@ -1,6 +1,6 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FileUp, Table, RotateCcw, X, CheckCircle2, Search, BarChart3, LayoutGrid, Loader2, AlertCircle, Moon, Sun } from 'lucide-react';
+import { FileUp, Table, RotateCcw, X, CheckCircle2, Search, BarChart3, LayoutGrid, Loader2, AlertCircle, Moon, Sun, Home } from 'lucide-react';
 import { useTheme } from './context/ThemeContext';
 
 import { MOCK_DATASET } from './constants';
@@ -22,6 +22,7 @@ import { VariableCard } from './features/dashboard/components/DraggableVariable'
 import { ContextMenu } from './features/dashboard/components/ContextMenu';
 import { InputModal } from './components/overlays/InputModal';
 import * as opfsFileManager from './services/opfsFileManager';
+import { WorkspaceView, type StoredDataset } from './features/workspace';
 
 // Smart Canvas Wrapper
 const SmartCanvas: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className }) => {
@@ -185,6 +186,19 @@ export default function App() {
     // Context awareness: bi-directional focus between Analysis and Variable Manager
     selectedVariableSetId,
     setSelectedVariableSetId,
+    // Workspace state
+    workspace,
+    isWorkspaceMode,
+    setWorkspaceMode,
+    activeDatasetId,
+    setActiveDataset,
+    addStoredDataset,
+    updateStoredDataset,
+    toggleDatasetStar,
+    removeStoredDataset,
+    updateDatasetAccess,
+    saveDatasetSession,
+    updateStorageQuota,
   } = useVelocityStore();
 
   const [mode, setMode] = React.useState<AppMode>('splash');
@@ -617,6 +631,121 @@ export default function App() {
     setMode('splash');
   };
 
+  // -- WORKSPACE HANDLERS --
+
+  // Register current dataset in workspace when loaded
+  const registerDatasetInWorkspace = useCallback(() => {
+    if (!dataset) return;
+
+    // Check if already registered
+    const existing = workspace.datasets.find(d => d.id === dataset.id);
+    if (existing) {
+      updateDatasetAccess(dataset.id);
+      return;
+    }
+
+    // Register new dataset
+    addStoredDataset({
+      name: dataset.name,
+      fileName: dataset.name,
+      rowCount: dataset.rowCount,
+      columnCount: dataset.variables.length,
+      fileSize: 0, // Will be updated from OPFS if available
+      source: dataset.source,
+    });
+
+    // Try to get file size from OPFS
+    if (dataset.opfsFileKey) {
+      opfsFileManager.getFileSize(dataset.opfsFileKey)
+        .then(size => {
+          if (size > 0) {
+            updateStoredDataset(dataset.id, { fileSize: size });
+          }
+        })
+        .catch(() => {});
+    }
+
+    setActiveDataset(dataset.id);
+  }, [dataset, workspace.datasets, addStoredDataset, updateStoredDataset, updateDatasetAccess, setActiveDataset]);
+
+  // Open dataset from workspace
+  const handleOpenDataset = useCallback(async (storedDataset: StoredDataset) => {
+    // Save current session before switching
+    if (dataset && activeDatasetId) {
+      saveDatasetSession(activeDatasetId, {
+        tableConfig,
+        activeFilters,
+        transformLog: [],
+      });
+    }
+
+    updateDatasetAccess(storedDataset.id);
+    setActiveDataset(storedDataset.id);
+    setWorkspaceMode(false);
+
+    // If this is the currently loaded dataset, just switch modes
+    if (dataset?.id === storedDataset.id) {
+      setMode('dashboard');
+      return;
+    }
+
+    // Otherwise, we need to load the dataset
+    // For now, show a message that user needs to re-upload
+    // TODO: Implement proper dataset switching with OPFS lookup
+    setMode('dashboard');
+  }, [dataset, activeDatasetId, tableConfig, activeFilters, saveDatasetSession, updateDatasetAccess, setActiveDataset, setWorkspaceMode]);
+
+  // Delete dataset from workspace
+  const handleDeleteDataset = useCallback(async (id: string) => {
+    if (window.confirm('Delete this dataset from your workspace? The original file will not be affected.')) {
+      removeStoredDataset(id);
+      if (activeDatasetId === id) {
+        setActiveDataset(null);
+      }
+    }
+  }, [removeStoredDataset, activeDatasetId, setActiveDataset]);
+
+  // Toggle dataset star
+  const handleToggleDatasetStar = useCallback((id: string) => {
+    toggleDatasetStar(id);
+  }, [toggleDatasetStar]);
+
+  // Return to workspace
+  const handleReturnToWorkspace = useCallback(() => {
+    // Save current session
+    if (dataset && activeDatasetId) {
+      saveDatasetSession(activeDatasetId, {
+        tableConfig,
+        activeFilters,
+        transformLog: [],
+      });
+    }
+    setWorkspaceMode(true);
+    setMode('splash');
+  }, [dataset, activeDatasetId, tableConfig, activeFilters, saveDatasetSession, setWorkspaceMode]);
+
+  // Refresh storage quota
+  const refreshStorageQuota = useCallback(async () => {
+    const estimate = await opfsFileManager.getStorageEstimate();
+    if (estimate) {
+      updateStorageQuota(estimate.usage, estimate.quota);
+    }
+  }, [updateStorageQuota]);
+
+  // Register dataset when it changes
+  useEffect(() => {
+    if (dataset && mode === 'dashboard') {
+      registerDatasetInWorkspace();
+    }
+  }, [dataset?.id, mode, registerDatasetInWorkspace]);
+
+  // Refresh storage quota periodically
+  useEffect(() => {
+    refreshStorageQuota();
+    const interval = setInterval(refreshStorageQuota, 30000);
+    return () => clearInterval(interval);
+  }, [refreshStorageQuota]);
+
   // -- LOGIC: DRAG & DROP --
   const handleDragStart = (event: DragStartEvent) => {
     const { active } = event;
@@ -945,90 +1074,101 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      {/* SPLASH SCREEN */}
+      {/* WORKSPACE / SPLASH SCREEN */}
       <AnimatePresence>
         {mode === 'splash' && (
           <motion.div
             exit={{ opacity: 0, y: -20, pointerEvents: 'none' }}
-            className="fixed inset-0 flex items-center justify-center bg-[var(--bg-app)] z-40"
+            className="fixed inset-0 bg-[var(--bg-app)] z-40"
           >
-            <div className="text-center space-y-8 max-w-md w-full px-6">
-              <div className="space-y-2">
-                <h1 className="text-4xl font-bold tracking-tight text-[var(--text-primary)]">Velocity.</h1>
-                <p className="text-[var(--text-secondary)] text-lg">The zero-latency research dashboard.</p>
-
-                {initError ? (
-                  <div className="flex items-center justify-center gap-2 text-red-500 text-sm font-medium bg-red-50 p-2 rounded-md">
-                    <AlertCircle size={16} />
-                    <span>{initError}</span>
-                  </div>
-                ) : (
-                  !isDbReady && <p className="text-xs text-indigo-500 animate-pulse">Initializing Analysis Engine...</p>
-                )}
-
-                {dataset && (opfsRehydrateError || persistenceError) && (
-                  <div className="mt-3 text-left text-amber-800 bg-amber-50 border border-amber-100 rounded-md p-3 space-y-2">
-                    <div className="flex items-start gap-2">
-                      <AlertCircle size={16} className="mt-0.5" />
-                      <div className="space-y-1">
-                        {opfsRehydrateError && (
-                          <div className="text-sm font-medium">Couldn’t restore data from OPFS source file.</div>
-                        )}
-                        {opfsRehydrateError && (
-                          <div className="text-xs break-words">{opfsRehydrateError}</div>
-                        )}
-                        {!opfsRehydrateError && persistenceError && (
-                          <div className="text-xs break-words">OPFS: {persistenceError}</div>
-                        )}
-                        {opfsErrorHint && (
-                          <div className="text-xs">{opfsErrorHint}</div>
-                        )}
-                      </div>
+            {/* Show initialization status if not ready */}
+            {(!isDbReady || initError) && (
+              <div className="absolute inset-0 flex items-center justify-center bg-[var(--bg-app)] z-50">
+                <div className="text-center space-y-4 max-w-md w-full px-6">
+                  <h1 className="text-4xl font-bold tracking-tight text-[var(--text-primary)]">Velocity.</h1>
+                  <p className="text-[var(--text-secondary)] text-lg">The zero-latency research dashboard.</p>
+                  {initError ? (
+                    <div className="flex items-center justify-center gap-2 text-red-500 text-sm font-medium bg-red-50 p-2 rounded-md">
+                      <AlertCircle size={16} />
+                      <span>{initError}</span>
                     </div>
-
-                    {dataset.opfsFileKey && (
-                      <div className="flex gap-2">
-                        <button
-                          type="button"
-                          onClick={() => void rebuildFromOpfsSource('splash')}
-                          className="px-3 py-1.5 rounded bg-[var(--color-accent)] text-[var(--text-inverse)] text-xs font-medium hover:opacity-90 transition-opacity"
-                        >
-                          Retry Restore
-                        </button>
-                        <button
-                          type="button"
-                          onClick={handleDiscard}
-                          className="px-3 py-1.5 rounded bg-white border border-amber-200 text-amber-900 text-xs font-medium hover:bg-amber-100 transition-colors"
-                        >
-                          Start Fresh
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                )}
+                  ) : (
+                    <div className="flex items-center justify-center gap-2">
+                      <Loader2 className="w-5 h-5 text-[var(--color-accent)] animate-spin" />
+                      <p className="text-sm text-[var(--color-accent)]">Initializing Analysis Engine...</p>
+                    </div>
+                  )}
+                </div>
               </div>
+            )}
 
-              <motion.button
-                onClick={() => isDbReady && fileInputRef.current?.click()}
-                disabled={!isDbReady}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className={`w-full h-48 border-2 border-dashed rounded-2xl flex flex-col items-center justify-center gap-4 group transition-all cursor-pointer bg-[var(--bg-panel)]
-                  ${isDbReady ? 'border-[var(--border-color)]' : 'border-[var(--border-color-muted)] opacity-50 cursor-not-allowed'}`}
-              >
-                <div className="p-4 bg-white rounded-full shadow-sm group-hover:shadow-md transition-shadow">
-                  {isDbReady ? <FileUp className="w-8 h-8 text-indigo-500" /> : <Loader2 className="w-8 h-8 text-gray-400 animate-spin" />}
+            {/* Show WorkspaceView when ready */}
+            {isDbReady && !initError && (
+              <WorkspaceView
+                workspaceState={workspace}
+                onOpenDataset={handleOpenDataset}
+                onUploadFile={() => fileInputRef.current?.click()}
+                onLoadExample={handleDemoClick}
+                onCreateProject={() => {
+                  // TODO: Implement project creation modal
+                  console.log('Create project');
+                }}
+                onDeleteDataset={handleDeleteDataset}
+                onToggleStar={handleToggleDatasetStar}
+                onLinkDatasets={(datasetIds, projectId) => {
+                  // TODO: Implement dataset linking
+                  console.log('Link datasets', datasetIds, projectId);
+                }}
+                onUnlinkDataset={(datasetId) => {
+                  // TODO: Implement dataset unlinking
+                  console.log('Unlink dataset', datasetId);
+                }}
+              />
+            )}
+
+            {/* Error overlay for OPFS issues */}
+            {dataset && (opfsRehydrateError || persistenceError) && (
+              <div className="absolute bottom-6 left-6 right-6 max-w-lg mx-auto">
+                <div className="text-left text-amber-800 bg-amber-50 border border-amber-100 rounded-lg p-4 shadow-lg space-y-2">
+                  <div className="flex items-start gap-2">
+                    <AlertCircle size={16} className="mt-0.5 shrink-0" />
+                    <div className="space-y-1">
+                      {opfsRehydrateError && (
+                        <div className="text-sm font-medium">Couldn't restore data from OPFS source file.</div>
+                      )}
+                      {opfsRehydrateError && (
+                        <div className="text-xs break-words">{opfsRehydrateError}</div>
+                      )}
+                      {!opfsRehydrateError && persistenceError && (
+                        <div className="text-xs break-words">OPFS: {persistenceError}</div>
+                      )}
+                      {opfsErrorHint && (
+                        <div className="text-xs">{opfsErrorHint}</div>
+                      )}
+                    </div>
+                  </div>
+
+                  {dataset.opfsFileKey && (
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={() => void rebuildFromOpfsSource('splash')}
+                        className="px-3 py-1.5 rounded bg-[var(--color-accent)] text-[var(--text-inverse)] text-xs font-medium hover:opacity-90 transition-opacity"
+                      >
+                        Retry Restore
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleDiscard}
+                        className="px-3 py-1.5 rounded bg-white border border-amber-200 text-amber-900 text-xs font-medium hover:bg-amber-100 transition-colors"
+                      >
+                        Start Fresh
+                      </button>
+                    </div>
+                  )}
                 </div>
-                <div className="space-y-1">
-                  <p className="font-medium text-[var(--text-primary)]">Drop .SAV or .CSV file to analyze</p>
-                  <p className="text-sm text-[var(--text-secondary)]">
-                    <span className="hover:text-[var(--color-accent)] hover:underline z-50 relative" onClick={(e) => { e.stopPropagation(); handleDemoClick(); }}>
-                      or use example data
-                    </span>
-                  </p>
-                </div>
-              </motion.button>
-            </div>
+              </div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
@@ -1283,10 +1423,16 @@ export default function App() {
               <main className="flex-1 flex flex-col bg-[var(--bg-app)] relative overflow-hidden z-0">
                 {/* HEADER */}
                 <header className="h-14 border-b border-[var(--border-color-muted)] flex items-center justify-between px-6 bg-[var(--bg-app)] shrink-0 z-10">
-                  <div className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
-                    <span>Analysis</span>
-                    <span>/</span>
-                    <span className="text-[var(--text-primary)] font-medium">Untitled Crosstab</span>
+                  <div className="flex items-center gap-4 text-sm text-[var(--text-secondary)]">
+                    <button
+                      onClick={handleReturnToWorkspace}
+                      className="flex items-center gap-1.5 px-2 py-1.5 rounded-md hover:bg-[var(--bg-surface)] text-[var(--text-secondary)] hover:text-[var(--color-accent)] transition-colors"
+                      title="Return to Workspace"
+                    >
+                      <Home size={16} />
+                    </button>
+                    <span className="text-[var(--border-color)]">/</span>
+                    <span className="text-[var(--text-primary)] font-medium">{dataset?.name || 'Untitled'}</span>
                   </div>
 
                   <div className="flex items-center gap-6">

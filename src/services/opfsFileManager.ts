@@ -139,6 +139,25 @@ export async function fileExists(name: string): Promise<boolean> {
 }
 
 /**
+ * Get the size of a file in OPFS.
+ *
+ * @param name - Name of the file
+ * @returns File size in bytes, or 0 if not found
+ */
+export async function getFileSize(name: string): Promise<number> {
+  const dir = await getUploadedDir();
+  const safeName = sanitizeFileName(name);
+
+  try {
+    const fileHandle = await dir.getFileHandle(safeName);
+    const file = await fileHandle.getFile();
+    return file.size;
+  } catch {
+    return 0;
+  }
+}
+
+/**
  * Get storage estimate for quota info.
  */
 export async function getStorageEstimate(): Promise<{ usage: number; quota: number } | null> {

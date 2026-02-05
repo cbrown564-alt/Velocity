@@ -22,6 +22,8 @@ import {
     type SlidesSlice,
     createWebRSlice,
     type WebRSlice,
+    createWorkspaceSlice,
+    type WorkspaceSlice,
 } from './slices';
 import {
     STORAGE_KEY,
@@ -37,7 +39,7 @@ export type { DataFingerprint };
 // Combined Store Type
 // ============================================================================
 
-export type VelocityState = DataSlice & UISlice & AnalysisSlice & DrillDownSlice & SlidesSlice & WebRSlice;
+export type VelocityState = DataSlice & UISlice & AnalysisSlice & DrillDownSlice & SlidesSlice & WebRSlice & WorkspaceSlice;
 
 // ============================================================================
 // Store Implementation
@@ -52,6 +54,7 @@ export const useVelocityStore = create<VelocityState>()(
             ...createDrillDownSlice(...args),
             ...createSlidesSlice(...args),
             ...createWebRSlice(...args),
+            ...createWorkspaceSlice(...args),
         }),
         {
             name: STORAGE_KEY,
