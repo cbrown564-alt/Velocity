@@ -6,8 +6,8 @@
  * to avoid react-virtualized-auto-sizer import issues.
  */
 
-import React, { useCallback } from 'react';
-import { List, type RowComponentProps } from 'react-window';
+import React, { useRef, useState, useLayoutEffect, useCallback } from 'react';
+import { FixedSizeList as List, type ListChildComponentProps } from 'react-window';
 import { DraggableVariable } from './DraggableVariable';
 import { Variable, VariableSet } from '../../../types';
 
@@ -26,7 +26,7 @@ const ITEM_HEIGHT = 40;
 // Number of items to render outside visible area for smoother scrolling
 const OVERSCAN_COUNT = 5;
 
-type RowProps = {
+type RowData = {
     variableSets: VariableSet[];
     selectedIds: Set<string>;
     focusedId?: string | null;
@@ -34,6 +34,38 @@ type RowProps = {
     onClick: (variable: VariableSet, e: React.MouseEvent) => void;
     onContextMenu: (variable: VariableSet, e: React.MouseEvent) => void;
 };
+
+/**
+ * Custom hook to measure container dimensions using ResizeObserver.
+ * This replaces react-virtualized-auto-sizer to avoid import issues.
+ */
+function useContainerSize(): [React.RefObject<HTMLDivElement | null>, { width: number; height: number }] {
+    const ref = useRef<HTMLDivElement>(null);
+    const [size, setSize] = useState({ width: 0, height: 0 });
+
+    useLayoutEffect(() => {
+        const element = ref.current;
+        if (!element) return;
+
+        const updateSize = () => {
+            const { clientWidth, clientHeight } = element;
+            setSize({ width: clientWidth, height: clientHeight });
+        };
+
+        // Initial measurement
+        updateSize();
+
+        // Observe resize
+        const resizeObserver = new ResizeObserver(updateSize);
+        resizeObserver.observe(element);
+
+        return () => {
+            resizeObserver.disconnect();
+        };
+    }, []);
+
+    return [ref, size];
+}
 
 export const VirtualizedVariableList: React.FC<VirtualizedVariableListProps> = ({
     variableSets,
@@ -43,18 +75,23 @@ export const VirtualizedVariableList: React.FC<VirtualizedVariableListProps> = (
     onClick,
     onContextMenu,
 }) => {
+    const [containerRef, { width, height }] = useContainerSize();
+
     // Row renderer for react-window
     const Row = useCallback(
         ({
             index,
             style,
-            variableSets,
-            selectedIds,
-            focusedId,
-            onRecode,
-            onClick,
-            onContextMenu,
-        }: RowComponentProps<RowProps>) => {
+            data,
+        }: ListChildComponentProps<RowData>) => {
+            const {
+                variableSets,
+                selectedIds,
+                focusedId,
+                onRecode,
+                onClick,
+                onContextMenu,
+            } = data;
             const set = variableSets[index];
 
             return (
@@ -82,22 +119,26 @@ export const VirtualizedVariableList: React.FC<VirtualizedVariableListProps> = (
     }
 
     return (
-        <div style={{ height: '100%', width: '100%' }}>
-            <List
-                style={{ height: '100%', width: '100%' }}
-                rowCount={variableSets.length}
-                rowHeight={ITEM_HEIGHT}
-                overscanCount={OVERSCAN_COUNT}
-                rowComponent={Row}
-                rowProps={{
-                    variableSets,
-                    selectedIds,
-                    focusedId,
-                    onRecode,
-                    onClick,
-                    onContextMenu,
-                }}
-            />
+        <div ref={containerRef} style={{ height: '100%', width: '100%' }}>
+            {height > 0 && width > 0 && (
+                <List
+                    height={height}
+                    width={width}
+                    itemCount={variableSets.length}
+                    itemSize={ITEM_HEIGHT}
+                    overscanCount={OVERSCAN_COUNT}
+                    itemData={{
+                        variableSets,
+                        selectedIds,
+                        focusedId,
+                        onRecode,
+                        onClick,
+                        onContextMenu,
+                    }}
+                >
+                    {Row}
+                </List>
+            )}
         </div>
     );
 };
