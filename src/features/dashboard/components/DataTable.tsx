@@ -170,8 +170,6 @@ export const DataTable: React.FC<DataTableProps> = ({
     };
   }, [processedData]);
 
-  if (!tableData) return null;
-
   // Prepare export configuration
   const exportConfig: ExportConfig = useMemo(() => {
     if (!processedData) {
@@ -201,6 +199,8 @@ export const DataTable: React.FC<DataTableProps> = ({
       ],
     };
   }, [processedData, rowVariables, colVariable]);
+
+  if (!tableData) return null;
 
 
 
@@ -498,63 +498,68 @@ export const DataTable: React.FC<DataTableProps> = ({
             </tbody>
           </table>
         </div>
-        {/* Significance Legend and Chi-Square (compact, below table) */}
-        {colVariable && (
-          <div className="px-4 py-3 border-t border-[var(--border-grid)] flex justify-between items-center">
-            <SignificanceLegend
-              compact
-              showMethodologyLink
-              onMethodologyClick={() => setShowMethodology(!showMethodology)}
-            />
-            <div className="flex items-center gap-3">
-              {tableStats?.chiSquare && (
-                <Tooltip
-                  content={
-                    <div className="text-xs space-y-1">
-                      <div className="font-semibold">Chi-Square Test of Independence</div>
-                      <div className="grid grid-cols-2 gap-x-3 gap-y-0.5">
-                        <span className="text-[var(--text-secondary)]">Chi-Square (χ²):</span>
-                        <span className="font-mono">{tableStats.chiSquare.chiSquare.toFixed(2)}</span>
-                        <span className="text-[var(--text-secondary)]">Degrees of Freedom:</span>
-                        <span className="font-mono">{tableStats.chiSquare.df}</span>
-                        <span className="text-[var(--text-secondary)]">p-value:</span>
-                        <span className="font-mono">{tableStats.chiSquare.pValue < 0.001 ? '<0.001' : tableStats.chiSquare.pValue.toFixed(3)}</span>
-                        <span className="text-[var(--text-secondary)]">Cramér's V:</span>
-                        <span className="font-mono">{tableStats.chiSquare.cramersV.toFixed(3)}</span>
-                      </div>
-                      <div className="pt-1 text-[var(--text-secondary)] text-[10px]">
-                        {tableStats.chiSquare.pValue < 0.05
-                          ? 'Variables are significantly associated (p < 0.05)'
-                          : 'No significant association found (p ≥ 0.05)'}
-                      </div>
-                    </div>
-                  }
-                  position="top"
-                  delay={200}
-                  maxWidth={280}
-                >
-                  <div className={`text-xs font-mono px-2 py-1 rounded ${tableStats.chiSquare.pValue < 0.05 ? 'bg-[var(--color-success)]/10 text-[var(--color-success)]' : 'bg-[var(--bg-surface)] text-[var(--text-secondary)]'}`}>
-                    χ² = {tableStats.chiSquare.chiSquare.toFixed(1)}, p {tableStats.chiSquare.pValue < 0.001 ? '< .001' : `= ${tableStats.chiSquare.pValue.toFixed(3)}`}
-                  </div>
-                </Tooltip>
-              )}
+        {/* Table Footer: Significance Legend, Chi-Square, and Export */}
+        <div className="px-4 py-3 border-t border-[var(--border-grid)] flex justify-between items-center">
+          {/* Left side: Significance legend (only for crosstabs) */}
+          <div>
+            {colVariable && (
+              <SignificanceLegend
+                compact
+                showMethodologyLink
+                onMethodologyClick={() => setShowMethodology(!showMethodology)}
+              />
+            )}
+          </div>
+
+          {/* Right side: Chi-square stats and Export button */}
+          <div className="flex items-center gap-3">
+            {colVariable && tableStats?.chiSquare && (
               <Tooltip
-                content="Export to PowerPoint or Excel"
+                content={
+                  <div className="text-xs space-y-1">
+                    <div className="font-semibold">Chi-Square Test of Independence</div>
+                    <div className="grid grid-cols-2 gap-x-3 gap-y-0.5">
+                      <span className="text-[var(--text-secondary)]">Chi-Square (χ²):</span>
+                      <span className="font-mono">{tableStats.chiSquare.chiSquare.toFixed(2)}</span>
+                      <span className="text-[var(--text-secondary)]">Degrees of Freedom:</span>
+                      <span className="font-mono">{tableStats.chiSquare.df}</span>
+                      <span className="text-[var(--text-secondary)]">p-value:</span>
+                      <span className="font-mono">{tableStats.chiSquare.pValue < 0.001 ? '<0.001' : tableStats.chiSquare.pValue.toFixed(3)}</span>
+                      <span className="text-[var(--text-secondary)]">Cramér's V:</span>
+                      <span className="font-mono">{tableStats.chiSquare.cramersV.toFixed(3)}</span>
+                    </div>
+                    <div className="pt-1 text-[var(--text-secondary)] text-[10px]">
+                      {tableStats.chiSquare.pValue < 0.05
+                        ? 'Variables are significantly associated (p < 0.05)'
+                        : 'No significant association found (p ≥ 0.05)'}
+                    </div>
+                  </div>
+                }
                 position="top"
                 delay={200}
+                maxWidth={280}
               >
-                <button
-                  onClick={() => setShowExportModal(true)}
-                  className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-[var(--text-primary)] bg-[var(--bg-surface)] hover:bg-[var(--color-accent)] hover:text-[var(--text-inverse)] border border-[var(--border-color)] rounded transition-all"
-                  aria-label="Export table"
-                >
-                  <FileDown size={16} />
-                  Export
-                </button>
+                <div className={`text-xs font-mono px-2 py-1 rounded ${tableStats.chiSquare.pValue < 0.05 ? 'bg-[var(--color-success)]/10 text-[var(--color-success)]' : 'bg-[var(--bg-surface)] text-[var(--text-secondary)]'}`}>
+                  χ² = {tableStats.chiSquare.chiSquare.toFixed(1)}, p {tableStats.chiSquare.pValue < 0.001 ? '< .001' : `= ${tableStats.chiSquare.pValue.toFixed(3)}`}
+                </div>
               </Tooltip>
-            </div>
+            )}
+            <Tooltip
+              content="Export to PowerPoint or Excel"
+              position="top"
+              delay={200}
+            >
+              <button
+                onClick={() => setShowExportModal(true)}
+                className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-[var(--text-primary)] bg-[var(--bg-surface)] hover:bg-[var(--color-accent)] hover:text-[var(--text-inverse)] border border-[var(--border-color)] rounded transition-all"
+                aria-label="Export table"
+              >
+                <FileDown size={16} />
+                Export
+              </button>
+            </Tooltip>
           </div>
-        )}
+        </div>
 
         {/* Methodology Panel and Settings (expandable) */}
         {showMethodology && (
