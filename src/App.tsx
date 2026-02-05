@@ -1088,7 +1088,7 @@ export default function App() {
         projects={workspace.projects}
         selectedDatasetIds={projectModalDatasetIds}
         onCreateProject={handleCreateProject}
-        onLinkToProject={handleAddToProject}
+        onAddToProject={handleAddToProject}
         onUpdateWaveNumber={handleUpdateWaveNumber}
         onSetRespondentKey={handleSetRespondentKey}
       />
