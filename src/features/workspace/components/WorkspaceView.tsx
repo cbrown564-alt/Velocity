@@ -30,8 +30,10 @@ import {
   Check,
   AlertCircle,
   Sparkles,
+  TrendingUp,
 } from 'lucide-react';
 import styles from './WorkspaceView.module.css';
+import { WaveTimeline } from './WaveTimeline';
 
 // ============================================================================
 // Types
@@ -93,6 +95,8 @@ interface WorkspaceViewProps {
   onToggleStar: (id: string) => void;
   onLinkDatasets: (datasetIds: string[], projectId: string) => void;
   onUnlinkDataset: (datasetId: string) => void;
+  /** Callback when user wants to compare waves */
+  onCompareWaves?: (project: Project, wave1: StoredDataset, wave2: StoredDataset) => void;
 }
 
 // ============================================================================
@@ -410,46 +414,60 @@ const ProjectCard: React.FC<{
   project: Project;
   datasets: StoredDataset[];
   onOpenProject: () => void;
-}> = ({ project, datasets, onOpenProject }) => (
-  <motion.div
-    className={styles.projectCard}
-    style={{ '--project-color': project.color } as React.CSSProperties}
-    onClick={onOpenProject}
-    whileHover={{ scale: 1.02 }}
-    whileTap={{ scale: 0.98 }}
-  >
-    <div className={styles.projectHeader}>
-      <div className={styles.projectIcon}>
-        {project.isLongitudinal ? <Link2 size={18} /> : <FolderOpen size={18} />}
-      </div>
-      <div className={styles.projectInfo}>
-        <h3>{project.name}</h3>
-        <p>{project.description || `${datasets.length} datasets`}</p>
-      </div>
-    </div>
+  onOpenDataset?: (dataset: StoredDataset) => void;
+  onCompareWaves?: (wave1: StoredDataset, wave2: StoredDataset) => void;
+}> = ({ project, datasets, onOpenProject, onOpenDataset, onCompareWaves }) => {
+  const [showDetails, setShowDetails] = useState(false);
 
-    {project.isLongitudinal && (
-      <div className={styles.waveTimeline}>
-        {datasets
-          .filter(d => d.waveNumber)
-          .sort((a, b) => (a.waveNumber || 0) - (b.waveNumber || 0))
-          .map((d, i) => (
-            <React.Fragment key={d.id}>
-              <div className={styles.waveNode}>
-                <span className={styles.waveLabel}>W{d.waveNumber}</span>
-              </div>
-              {i < datasets.length - 1 && <div className={styles.waveLine} />}
-            </React.Fragment>
-          ))}
+  return (
+    <motion.div
+      className={`${styles.projectCard} ${showDetails ? styles.expanded : ''}`}
+      style={{ '--project-color': project.color } as React.CSSProperties}
+      layout
+    >
+      <div className={styles.projectHeader} onClick={onOpenProject}>
+        <div className={styles.projectIcon}>
+          {project.isLongitudinal ? <Link2 size={18} /> : <FolderOpen size={18} />}
+        </div>
+        <div className={styles.projectInfo}>
+          <h3>{project.name}</h3>
+          <p>{project.description || `${datasets.length} datasets`}</p>
+        </div>
+        {project.isLongitudinal && datasets.length > 1 && (
+          <motion.button
+            className={styles.expandButton}
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowDetails(!showDetails);
+            }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            title="Show wave details"
+          >
+            <TrendingUp size={14} />
+          </motion.button>
+        )}
       </div>
-    )}
 
-    <div className={styles.projectMeta}>
-      <span>{datasets.reduce((sum, d) => sum + d.rowCount, 0).toLocaleString()} total rows</span>
-      <span>{formatRelativeTime(Math.max(...datasets.map(d => d.lastOpenedAt)))}</span>
-    </div>
-  </motion.div>
-);
+      {project.isLongitudinal && (
+        <div className={styles.waveTimelineWrapper}>
+          <WaveTimeline
+            project={project}
+            datasets={datasets}
+            detailed={showDetails}
+            onWaveClick={onOpenDataset}
+            onCompareWaves={onCompareWaves}
+          />
+        </div>
+      )}
+
+      <div className={styles.projectMeta}>
+        <span>{datasets.reduce((sum, d) => sum + d.rowCount, 0).toLocaleString()} total rows</span>
+        <span>{formatRelativeTime(Math.max(...datasets.map(d => d.lastOpenedAt), 0))}</span>
+      </div>
+    </motion.div>
+  );
+};
 
 const EmptyState: React.FC<{
   onUpload: () => void;
@@ -508,6 +526,7 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
   onToggleStar,
   onLinkDatasets,
   onUnlinkDataset,
+  onCompareWaves,
 }) => {
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
   const [filterMode, setFilterMode] = useState<FilterMode>('recent');
@@ -734,6 +753,12 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
                           onOpenDataset(pDatasets[0]);
                         }
                       }}
+                      onOpenDataset={onOpenDataset}
+                      onCompareWaves={
+                        onCompareWaves
+                          ? (w1, w2) => onCompareWaves(project, w1, w2)
+                          : undefined
+                      }
                     />
                   ))}
                 </div>

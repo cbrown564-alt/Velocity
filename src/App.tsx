@@ -23,7 +23,7 @@ import { VariableCard } from './features/dashboard/components/DraggableVariable'
 import { ContextMenu } from './features/dashboard/components/ContextMenu';
 import { InputModal } from './components/overlays/InputModal';
 import * as opfsFileManager from './services/opfsFileManager';
-import { WorkspaceView, ProjectLinkModal, type StoredDataset, type Project } from './features/workspace';
+import { WorkspaceView, ProjectLinkModal, CrossWavePanel, type StoredDataset, type Project } from './features/workspace';
 
 // Smart Canvas Wrapper
 const SmartCanvas: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className }) => {
@@ -231,6 +231,12 @@ export default function App() {
   // Project modal state
   const [showProjectModal, setShowProjectModal] = React.useState(false);
   const [projectModalDatasetIds, setProjectModalDatasetIds] = React.useState<string[]>([]);
+
+  // Cross-wave panel state
+  const [showCrossWavePanel, setShowCrossWavePanel] = React.useState(false);
+  const [crossWaveProject, setCrossWaveProject] = React.useState<Project | null>(null);
+  const [crossWaveDatasets, setCrossWaveDatasets] = React.useState<StoredDataset[]>([]);
+  const [selectedWaves, setSelectedWaves] = React.useState<[StoredDataset, StoredDataset] | undefined>(undefined);
 
   const SAV_WARN_MB = 50;
   const SAV_HARD_MB = 200;
@@ -776,6 +782,23 @@ export default function App() {
     removeDatasetsFromProject([datasetId]);
   }, [removeDatasetsFromProject]);
 
+  // Open cross-wave comparison panel
+  const handleOpenCrossWavePanel = useCallback((project: Project, wave1: StoredDataset, wave2: StoredDataset) => {
+    const projectDatasets = workspace.datasets.filter(d => d.projectId === project.id);
+    setCrossWaveProject(project);
+    setCrossWaveDatasets(projectDatasets);
+    setSelectedWaves([wave1, wave2]);
+    setShowCrossWavePanel(true);
+  }, [workspace.datasets]);
+
+  // Close cross-wave panel
+  const handleCloseCrossWavePanel = useCallback(() => {
+    setShowCrossWavePanel(false);
+    setCrossWaveProject(null);
+    setCrossWaveDatasets([]);
+    setSelectedWaves(undefined);
+  }, []);
+
   // Register dataset when it changes
   // Note: We intentionally exclude registerDatasetInWorkspace from deps
   // to avoid infinite loops. The ref-based tracking handles deduplication.
@@ -1093,6 +1116,17 @@ export default function App() {
         onSetRespondentKey={handleSetRespondentKey}
       />
 
+      {crossWaveProject && (
+        <CrossWavePanel
+          isOpen={showCrossWavePanel}
+          onClose={handleCloseCrossWavePanel}
+          project={crossWaveProject}
+          datasets={crossWaveDatasets}
+          selectedWaves={selectedWaves}
+          onOpenDataset={handleOpenDataset}
+        />
+      )}
+
       {contextMenu && contextMenu.visible && (
         <ContextMenu
           x={contextMenu.x}
@@ -1185,6 +1219,7 @@ export default function App() {
                 onToggleStar={handleToggleDatasetStar}
                 onLinkDatasets={handleAddToProject}
                 onUnlinkDataset={handleUnlinkDataset}
+                onCompareWaves={handleOpenCrossWavePanel}
               />
             )}
 

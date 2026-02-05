@@ -9,5 +9,7 @@ export type { StoredDataset, Project, WorkspaceState } from './components/Worksp
 
 export { DatasetSidebar } from './components/DatasetSidebar';
 export { ProjectLinkModal } from './components/ProjectLinkModal';
+export { WaveTimeline } from './components/WaveTimeline';
+export { CrossWavePanel } from './components/CrossWavePanel';
 
 export { useWorkspace } from './hooks/useWorkspace';

@@ -377,10 +377,45 @@
   box-shadow: var(--shadow-md);
 }
 
+.projectCard.expanded {
+  grid-column: span 2;
+}
+
+@media (max-width: 768px) {
+  .projectCard.expanded {
+    grid-column: span 1;
+  }
+}
+
 .projectHeader {
   display: flex;
   align-items: flex-start;
   gap: var(--space-3);
+}
+
+.expandButton {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-md);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.expandButton:hover {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: white;
+}
+
+.waveTimelineWrapper {
+  padding: var(--space-2) 0;
 }
 
 .projectIcon {
