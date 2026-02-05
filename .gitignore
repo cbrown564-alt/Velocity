@@ -31,5 +31,7 @@ test-results/
 
 # Demo data
 *.sav
+public/demo/wvs.csv
+public/demo/*.csv
 
 tests/golden/perf_log.jsonl
