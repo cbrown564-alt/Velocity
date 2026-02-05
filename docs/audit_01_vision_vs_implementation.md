@@ -1,9 +1,31 @@
 # Vision vs. Implementation Audit
 
 **Project:** Velocity
-**Date:** February 3, 2026
+**Date:** February 3, 2026 (Updated: February 5, 2026)
 **Scope:** Full review of `/docs` (including `/docs/archive`) and comparison to current codebase state
 **Goal:** Build a rich understanding of the original vision, compare to current implementation, and identify gaps, over-deliveries, and new directions unlocked.
+
+---
+
+## 🆕 Update Log (February 5, 2026)
+
+**Major Progress Since Initial Audit:**
+
+✅ **CLOSED GAPS:**
+- **Weight Creation** - WebR integration with survey package enables raking (commit d392363)
+- **Advanced Statistics** - Full Phase 3 implementation: chi-square, CIs, pairwise comparisons, FDR/Bonferroni (commit 94b9eb4)
+
+🚀 **MAJOR OVER-DELIVERIES:**
+- **Multi-File Workspace** - Complete 4-phase implementation: dataset browser, projects, longitudinal support, batch operations (commits ef40689, f78bc0f, 0f3b45c)
+- **WebR Statistical Runtime** - Academic-grade R integration with lme4 for mixed models (commit d392363)
+- **Analysis State Capture** - Session persistence with editable headers and unsaved indicators (commit f6b2eb7)
+
+⚠️ **REMAINING HIGH-PRIORITY GAPS:**
+1. Export UI Integration (EASIEST WIN - core complete, needs UI buttons)
+2. OPFS Persistence Reliability (architectural decision needed)
+3. Chunked Ingestion (performance/enterprise enabler)
+
+**Recommended Next Action:** Export UI Integration (2-4 hour task, highest ROI)
 
 ---
 
@@ -112,45 +134,51 @@ This audit presents:
 ### 3.4 Analysis Canvas Layout
 **Vision:** Slide‑deck metaphor, multi‑visualization layouts, grid/dashboard mode.
 
-**Current:** Focus mode only; slides slice exists but only first cell used.
+**Current:** ✅ **IMPROVED** - Analysis state capture with editable headers and unsaved indicators (commit f6b2eb7). Focus mode enhanced with session persistence. Multi-slide infrastructure exists but not exposed in UI.
 
-**Gap:** Multi‑slide and grid layout not implemented.
+**Gap:** PARTIAL - Multi-slide and grid layout UI not exposed; single-focus mode remains primary.
 
 ---
 
 ### 3.5 Weight Creation
 **Vision:** Weight creation (raking) via WASM or WebR in later phases.
 
-**Current:** Only applying existing weights is supported.
+**Current:** ✅ **COMPLETED** - WebR integration with survey package (commit d392363). SurveyWeightingRunner implements raking with design effects.
 
-**Gap:** Weight creation not implemented.
+**Gap:** CLOSED - Weight creation fully implemented via WebR.
 
 ---
 
 ### 3.6 Advanced Stats
 **Vision:** Pairwise letters (A/B/C), FDR/Bonferroni, dependent samples.
 
-**Current:** Not implemented; survey‑native base exists.
+**Current:** ✅ **COMPLETED** - Full Phase 3 stats implementation (commit 94b9eb4):
+- Chi-square with Cramér's V
+- Confidence intervals (mean & proportion)
+- Pairwise column comparisons with letters
+- Bonferroni and Benjamini-Hochberg FDR corrections
+- AnalysisSettingsPanel UI
+- MixedEffectsRunner for dependent samples via lme4
 
-**Gap:** Advanced stats remain roadmap items.
+**Gap:** CLOSED - Advanced stats fully implemented.
 
 ---
 
 ### 3.7 Export UX
 **Vision:** User‑facing PPTX export in UI.
 
-**Current:** Export pipeline exists in core + CLI; no visible UI workflow.
+**Current:** ⚠️ **PARTIAL** - Export pipeline fully implemented in core + CLI (commit b81a30e). Workspace export/import modal added (commit 0f3b45c). Missing: In-analysis PPTX/XLSX export UI buttons.
 
-**Gap:** UI export flow missing.
+**Gap:** PARTIAL - Core export complete; needs UI integration in analysis canvas.
 
 ---
 
 ### 3.8 AI / Cognitive Engine
 **Vision:** Glass‑box AI, text‑to‑SQL, semantic insights.
 
-**Current:** Not implemented.
+**Current:** 🔜 **FOUNDATION READY** - WebR integration (commit d392363) provides R runtime with Monaco editor and RCodeEditor component. Infrastructure exists for advanced AI features.
 
-**Gap:** Full Phase‑4 scope remains future work.
+**Gap:** Glass-box AI and semantic layer remain Phase 4 future work.
 
 ---
 
@@ -170,6 +198,29 @@ Theme system includes multiple design directions and material‑based tokens.
 
 ### 4.5 Worker‑Side Data Processing
 Heavy transforms moved into the worker via `processData`, reducing UI jank.
+
+### 4.6 🆕 Multi-File Workspace System
+**Exceeds original vision** - Full 4-phase workspace implementation (commits ef40689, f78bc0f, 0f3b45c):
+- Phase 1: Dataset browser with rich metadata, storage quota tracking, session persistence
+- Phase 2: Project linking and organization
+- Phase 3: Longitudinal support with WaveTimeline and CrossWavePanel for panel attrition analysis
+- Phase 4: Batch operations, workspace export/import for backup and sharing
+
+### 4.7 🆕 WebR Statistical Runtime
+**Exceeds original vision** - Full WebR integration (commit d392363):
+- Lazy-loaded R runtime with survey and lme4 packages
+- SurveyWeightingRunner for raking/design effects
+- MixedEffectsRunner for hierarchical models
+- Monaco-based R code editor with templates
+- Arrow IPC bridge for DuckDB ↔ WebR data transfer
+
+### 4.8 🆕 Advanced Statistical Features
+**Exceeds Phase 2 scope** - Phase 3 statistics fully implemented (commit 94b9eb4):
+- Chi-square independence tests with Cramér's V
+- Confidence intervals (95% & 80%) for means and proportions
+- Pairwise column comparisons with significance letters (A/B/C)
+- Multiple testing corrections (Bonferroni, FDR)
+- AnalysisSettingsPanel for methodology controls
 
 ---
 
@@ -198,32 +249,86 @@ Heavy transforms moved into the worker via `processData`, reducing UI jank.
    - Bigger datasets
    - Future AI‑assisted chart generation without main‑thread costs
 
+6. 🆕 **Multi-File Workspace** enables:
+   - Research portfolio management
+   - Cross-study insights
+   - Panel study workflows
+   - Team collaboration prep (sync architecture ready)
+
+7. 🆕 **WebR Integration** enables:
+   - Academic-grade statistical methods
+   - Custom R analysis scripts
+   - Integration with existing R workflows
+   - Advanced mixed models and survey methods
+
+8. 🆕 **Advanced Stats + Workspace** enables:
+   - Comparative analysis across projects
+   - Longitudinal statistical tracking
+   - Wave-over-wave significance testing
+   - Research quality benchmarking
+
 ---
 
 ## 6. Risk & Priority Highlights
 
-### High Priority
-- OPFS persistence reliability
-- Large‑file ingestion beyond sample/metadata mode
-- UI‑level export workflow
+### High Priority (UPDATED)
+- 🔴 **OPFS persistence reliability** - Still disabled due to corruption loops (commit 755a363 investigated)
+- 🔴 **Large‑file ingestion beyond sample/metadata mode** - Chunked ingestion not implemented
+- 🟡 **UI‑level export workflow** - PARTIAL: Core complete, needs in-analysis UI buttons
 
-### Medium Priority
-- Slide / multi‑viz layout
-- Weight creation engine
-- Advanced stats (pairwise letters, FDR)
+### Medium Priority (UPDATED)
+- 🟡 **Slide / multi‑viz layout** - Infrastructure exists, not exposed in UI
+- ✅ **Weight creation engine** - COMPLETED via WebR
+- ✅ **Advanced stats (pairwise letters, FDR)** - COMPLETED
 
-### Strategic Future
-- AI/semantic layer
-- Direct imports (Qualtrics/Decipher)
+### Strategic Future (UPDATED)
+- 🟢 **AI/semantic layer** - Foundation ready with WebR + Monaco editor
+- 🔴 **Direct imports (Qualtrics/Decipher)** - Remains future work
 
 ---
 
-## 7. Suggested Next Steps (If Prioritizing Gaps)
+## 7. Suggested Next Steps (Updated Based on Recent Progress)
 
-1. **Decide persistence strategy**: fix OPFS or commit to in‑memory + explicit save/restore.
-2. **Implement chunked ingestion**: reduce OOM risk and unblock large SAV support.
-3. **Add UI export flow**: surface PPTX/XLSX pipeline in the app.
-4. **Choose canvas evolution**: grid‑layout vs multi‑slide vs continue focus‑mode.
+### 🔴 Critical Path (Addressing Remaining Gaps)
+
+1. **Finish Export UI Integration** (EASIEST WIN)
+   - Add export buttons to analysis canvas (DataTable/SlideContainer)
+   - Wire PPTX/XLSX exporters from core into UI
+   - Estimated: 2-4 hours
+   - **Priority: HIGH** - Core is done, just needs UI surface
+
+2. **Decide OPFS Persistence Strategy** (ARCHITECTURAL)
+   - Option A: Fix corruption loops (investigate commit 755a363 findings)
+   - Option B: Commit to in-memory + explicit save/restore via workspace export
+   - Option C: Hybrid: OPFS for raw data, localStorage for session state only
+   - **Priority: HIGH** - Blocks production reliability
+
+3. **Implement Chunked Ingestion** (PERFORMANCE)
+   - Reduce OOM risk for large SAV files
+   - Unblock enterprise use cases (50MB+ files)
+   - **Priority: MEDIUM-HIGH** - Guardrails exist but not complete
+
+### 🟢 Enhancement Path (Leveraging New Capabilities)
+
+4. **Expose Multi-Slide Layout** (UX)
+   - Infrastructure exists, needs UI controls
+   - Enable grid/dashboard mode for presentations
+   - **Priority: MEDIUM** - Nice-to-have, not blocking
+
+5. **Cross-Wave Analysis Tools** (RESEARCH VALUE)
+   - Leverage WaveTimeline + CrossWavePanel foundations
+   - Add comparative crosstabs across waves
+   - Panel attrition significance testing
+   - **Priority: MEDIUM** - Unlocks longitudinal value proposition
+
+6. **WebR Analysis Templates** (ACADEMIC USERS)
+   - Pre-built R scripts for common tasks
+   - Integration with workspace projects
+   - **Priority: LOW-MEDIUM** - Infrastructure complete, needs content
+
+### 🎯 Recommended Next Action
+
+**Export UI Integration** - Highest ROI, smallest effort. Complete the PPTX/XLSX feature that's 90% done.
 
 ---
 
