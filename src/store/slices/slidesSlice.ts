@@ -18,6 +18,7 @@ export interface SlidesSlice {
     // Navigation Actions
     addSlide: (title?: string, sectionId?: string) => void;
     removeSlide: (slideId: string) => void;
+    duplicateSlide: (slideId: string) => void;
     setActiveSlide: (id: string) => void;
     setSlideLayoutMode: (slideId: string, mode: LayoutMode) => void;
     updateSlideTitle: (slideId: string, title: string) => void;
@@ -152,17 +153,65 @@ export const createSlidesSlice: SlidesSliceCreator = (set, get) => ({
     },
 
     removeSlide: (slideId) => set((state) => {
+        // Prevent deletion of last slide
+        if (state.slides.length <= 1) return state;
+
+        const slideIndex = state.slides.findIndex(s => s.id === slideId);
         const newSlides = state.slides.filter(s => s.id !== slideId);
-        // If we removed the active slide, activate the first remaining
-        const newActiveId = state.activeSlideId === slideId
-            ? (newSlides[0]?.id ?? null)
-            : state.activeSlideId;
+
+        // If we removed the active slide, activate the adjacent one
+        let newActiveId = state.activeSlideId;
+        if (state.activeSlideId === slideId) {
+            // Prefer next slide, fall back to previous
+            const nextIndex = Math.min(slideIndex, newSlides.length - 1);
+            newActiveId = newSlides[nextIndex]?.id ?? null;
+        }
+
         return {
             slides: newSlides,
             activeSlideId: newActiveId,
             activeCellId: newSlides.find(s => s.id === newActiveId)?.cells[0]?.id ?? null
         };
     }),
+
+    duplicateSlide: (slideId) => {
+        const state = get();
+        const sourceSlide = state.slides.find(s => s.id === slideId);
+        if (!sourceSlide) return;
+
+        const now = Date.now();
+        const newSlideId = `slide-${now}`;
+
+        // Deep clone the slide with new IDs
+        const duplicatedSlide: Slide = {
+            ...sourceSlide,
+            id: newSlideId,
+            title: `${sourceSlide.title} (Copy)`,
+            analysisState: {
+                ...sourceSlide.analysisState,
+                rowVars: [...sourceSlide.analysisState.rowVars],
+                filters: sourceSlide.analysisState.filters.map(f => ({ ...f })),
+            },
+            cells: sourceSlide.cells.map((cell, i) => ({
+                ...cell,
+                id: `cell-${now}-${i}`,
+                content: { ...cell.content },
+            })),
+            createdAt: now,
+            updatedAt: now,
+        };
+
+        // Insert after the source slide
+        const sourceIndex = state.slides.findIndex(s => s.id === slideId);
+        const newSlides = [...state.slides];
+        newSlides.splice(sourceIndex + 1, 0, duplicatedSlide);
+
+        set({
+            slides: newSlides,
+            activeSlideId: newSlideId,
+            activeCellId: duplicatedSlide.cells[0]?.id ?? null,
+        });
+    },
 
     setActiveSlide: (id) => {
         const state = get();
