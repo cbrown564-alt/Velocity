@@ -43,7 +43,21 @@ export const runCrosstabForExport = async ({
   const reqId = crypto.randomUUID();
   const TIMEOUT_MS = 30_000;
 
+  let timeoutId: ReturnType<typeof setTimeout> | undefined;
+
   const queryPromise = new Promise<RunCrosstabResult>((resolve) => {
+    let isSettled = false;
+
+    const cleanup = () => {
+      if (isSettled) return;
+      isSettled = true;
+      worker.removeEventListener('message', handler);
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+        timeoutId = undefined;
+      }
+    };
+
     const handler = (event: MessageEvent<WorkerResponse>) => {
       const response = event.data;
       if (response.requestId !== reqId) return;
@@ -51,17 +65,23 @@ export const runCrosstabForExport = async ({
       if (response.type === 'queryResult') {
         const rawData = response.data as any[];
         const mappedData: AggregatedRow[] = mapCrosstabRows(rawData, request.isWeighted);
-
-        worker.removeEventListener('message', handler);
+        cleanup();
         resolve({ data: mappedData, tableStats: response.tableStats || null });
       } else if (response.type === 'error') {
         console.error('[Export] Crosstab query error:', response.message);
-        worker.removeEventListener('message', handler);
+        cleanup();
         resolve({ data: [], tableStats: null });
       }
     };
 
     worker.addEventListener('message', handler);
+
+    timeoutId = setTimeout(() => {
+      console.warn(`[Export] Crosstab query timed out after ${TIMEOUT_MS}ms`);
+      cleanup();
+      resolve({ data: [], tableStats: null });
+    }, TIMEOUT_MS);
+
     worker.postMessage({
       type: 'runCrosstab',
       requestId: reqId,
@@ -70,12 +90,5 @@ export const runCrosstabForExport = async ({
     } as WorkerRequest);
   });
 
-  const timeoutPromise = new Promise<RunCrosstabResult>((resolve) => {
-    setTimeout(() => {
-      console.warn(`[Export] Crosstab query timed out after ${TIMEOUT_MS}ms`);
-      resolve({ data: [], tableStats: null });
-    }, TIMEOUT_MS);
-  });
-
-  return Promise.race([queryPromise, timeoutPromise]);
+  return queryPromise;
 };

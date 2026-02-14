@@ -212,6 +212,19 @@ describe('canExportAsChart', () => {
   it('returns false for undefined', () => {
     expect(canExportAsChart(undefined)).toBe(false);
   });
+
+  it('returns false for unknown chart type values', () => {
+    expect(canExportAsChart('unknown-chart' as ChartType)).toBe(false);
+  });
+
+});
+
+
+
+describe('mapChartType', () => {
+  it('throws for unknown chart types', () => {
+    expect(() => _mapChartType('unknown-chart' as ChartType)).toThrow('Unsupported chart type');
+  });
 });
 
 describe('transformSeriesData', () => {
