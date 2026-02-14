@@ -49,7 +49,10 @@ export class DuckDBNodeAdapter implements DatabaseAdapter {
       for (let r = 0; r < rowCount; r++) {
         const row: Record<string, unknown> = {};
         for (let c = 0; c < columns.length; c++) {
-          const val = chunk.value(c, r);
+          const chunkWithOptionalValue = chunk as unknown as { value?: (columnIndex: number, rowIndex: number) => unknown };
+          const val = typeof chunkWithOptionalValue.value === 'function'
+            ? chunkWithOptionalValue.value(c, r)
+            : chunk.getRowValues(r)[c];
           row[columns[c]] = typeof val === 'bigint' ? Number(val) : val;
         }
         rows.push(row);
