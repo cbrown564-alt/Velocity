@@ -84,11 +84,14 @@ describe('Variable Logic', () => {
             rules: [{ min: 0, max: 10, label: 'Low' }]
         });
 
-        // Simulate worker response
+        // Simulate worker response with matching requestId so recode promise resolves
+        const recodeMessage = mockPostMessage.mock.calls.find(c => c[0].type === 'recodeVariable');
+        const requestId = recodeMessage?.[0]?.requestId;
+
         // Get the last added event listener (since initWorker added one too, and maybe checkPersistedData)
         const listenerCalls = mockAddEventListener.mock.calls.filter(call => call[0] === 'message');
         const handler = listenerCalls[listenerCalls.length - 1][1];
-        handler({ data: { type: 'recodeComplete', newColName: 'v3_binned' } });
+        handler({ data: { type: 'recodeComplete', requestId, newColName: 'v3_binned' } });
 
         await promise;
 

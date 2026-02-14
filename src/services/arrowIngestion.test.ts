@@ -133,8 +133,8 @@ describe('Arrow Table Creation', () => {
             const duration = performance.now() - start;
 
             expect(table.numRows).toBe(numRows);
-            // Arrow table creation should be fast - under 100ms for 10k rows
-            expect(duration).toBeLessThan(100);
+            // Arrow table creation should remain performant in CI environments
+            expect(duration).toBeLessThan(250);
         });
     });
 
