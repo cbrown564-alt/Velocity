@@ -22,12 +22,31 @@ const UNSUPPORTED_CHART_TYPES: ChartType[] = [
   'hexbin',
 ];
 
+/** Chart types that can be exported as native PPTX charts. */
+const SUPPORTED_CHART_TYPES: ChartType[] = [
+  'horizontal-bar',
+  'vertical-bar',
+  'grouped-bar',
+  'grouped-column',
+  'stacked-bar',
+  'diverging-bar',
+  'donut',
+  'histogram',
+  'lollipop',
+  'scatter',
+];
+
 /**
  * Whether a Velocity chart type can be exported as a native PPTX chart.
  */
 export function canExportAsChart(chartType: ChartType | undefined): boolean {
   if (!chartType) return false;
-  return !UNSUPPORTED_CHART_TYPES.includes(chartType);
+
+  if (UNSUPPORTED_CHART_TYPES.includes(chartType)) {
+    return false;
+  }
+
+  return SUPPORTED_CHART_TYPES.includes(chartType);
 }
 
 interface PptxChartMapping {
@@ -61,8 +80,7 @@ function mapChartType(velocityType: ChartType): PptxChartMapping {
     case 'scatter':
       return { type: 'scatter' as PptxGenJS.CHART_NAME, options: {} };
     default:
-      // Fallback to bar chart
-      return { type: 'bar' as PptxGenJS.CHART_NAME, options: { barDir: 'col' } };
+      throw new Error(`Unsupported chart type for PPTX export: ${String(velocityType)}`);
   }
 }
 
