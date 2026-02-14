@@ -45,7 +45,7 @@ describe('SPSS Parity: Weighted Statistics', () => {
         filters: [],
       }, { variables: {}, variableSets: {} });
 
-      const groupA = results.find((r: any) => r.colKey === 'A');
+      const groupA = results.rows.find((r: any) => r.colKey === 'A');
       expect(groupA.mean).toBeCloseTo(25.0, 6);
     });
 
@@ -63,7 +63,7 @@ describe('SPSS Parity: Weighted Statistics', () => {
         filters: [],
       }, { variables: {}, variableSets: {} });
 
-      const groupB = results.find((r: any) => r.colKey === 'B');
+      const groupB = results.rows.find((r: any) => r.colKey === 'B');
       expect(groupB.mean).toBeCloseTo(28.0, 6);
     });
   });
@@ -81,7 +81,7 @@ describe('SPSS Parity: Weighted Statistics', () => {
         filters: [],
       }, { variables: {}, variableSets: {} });
 
-      const groupA = results.find((r: any) => r.colKey === 'A');
+      const groupA = results.rows.find((r: any) => r.colKey === 'A');
       expect(groupA.stdDev).toBeCloseTo(11.180339887498949, 6);
     });
 
@@ -98,7 +98,7 @@ describe('SPSS Parity: Weighted Statistics', () => {
         filters: [],
       }, { variables: {}, variableSets: {} });
 
-      const groupB = results.find((r: any) => r.colKey === 'B');
+      const groupB = results.rows.find((r: any) => r.colKey === 'B');
       expect(groupB.stdDev).toBeCloseTo(11.874342087037917, 6);
     });
   });
@@ -115,7 +115,7 @@ describe('SPSS Parity: Weighted Statistics', () => {
         filters: [],
       }, { variables: {}, variableSets: {} });
 
-      const groupA = results.find((r: any) => r.colKey === 'A');
+      const groupA = results.rows.find((r: any) => r.colKey === 'A');
       expect(groupA.stats.effN).toBeCloseTo(4.0, 6);
     });
 
@@ -132,7 +132,7 @@ describe('SPSS Parity: Weighted Statistics', () => {
         filters: [],
       }, { variables: {}, variableSets: {} });
 
-      const groupB = results.find((r: any) => r.colKey === 'B');
+      const groupB = results.rows.find((r: any) => r.colKey === 'B');
       expect(groupB.stats.effN).toBeCloseTo(3.333333333, 6);
     });
   });
@@ -148,8 +148,8 @@ describe('SPSS Parity: Weighted Statistics', () => {
         filters: [],
       }, { variables: {}, variableSets: {} });
 
-      const groupA = results.find((r: any) => r.colKey === 'A');
-      const groupB = results.find((r: any) => r.colKey === 'B');
+      const groupA = results.rows.find((r: any) => r.colKey === 'A');
+      const groupB = results.rows.find((r: any) => r.colKey === 'B');
 
       expect(groupA.sumXW).toBeCloseTo(100, 6);
       expect(groupB.sumXW).toBeCloseTo(140, 6);
@@ -165,8 +165,8 @@ describe('SPSS Parity: Weighted Statistics', () => {
         filters: [],
       }, { variables: {}, variableSets: {} });
 
-      const groupA = results.find((r: any) => r.colKey === 'A');
-      const groupB = results.find((r: any) => r.colKey === 'B');
+      const groupA = results.rows.find((r: any) => r.colKey === 'A');
+      const groupB = results.rows.find((r: any) => r.colKey === 'B');
 
       expect(groupA.sumX2W).toBeCloseTo(3000, 6);
       expect(groupB.sumX2W).toBeCloseTo(4625, 6);
@@ -197,7 +197,7 @@ describe('SPSS Parity: Cell-vs-Rest Significance', () => {
 
     await db.close();
 
-    const groupA = results.find((r: any) => r.colKey === 'A');
+    const groupA = results.rows.find((r: any) => r.colKey === 'A');
 
     // Verify the t-score matches expected Cell-vs-Rest calculation
     // Cell A vs Rest B: t = (25 - 28) / sqrt(125/4 + 141/3.33) = -3 / 8.58 ≈ -0.35

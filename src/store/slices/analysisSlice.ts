@@ -132,9 +132,11 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
             get().fetchVariableStats(request.measureVarId, 'numeric');
         }
 
+        const reqId = crypto.randomUUID();
         return new Promise<void>((resolve) => {
             const handler = (event: MessageEvent<WorkerResponse>) => {
                 const response = event.data;
+                if (response.requestId !== reqId) return;
 
                 if (response.type === 'queryResult') {
                     const rawData = response.data as any[];
@@ -158,6 +160,7 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
             worker.addEventListener('message', handler);
             worker.postMessage({
                 type: 'runCrosstab',
+                requestId: reqId,
                 options: request.options,
                 context: request.context
             } as WorkerRequest);
@@ -198,17 +201,19 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
         const { worker } = get();
         if (!worker) return;
 
+        const reqId = crypto.randomUUID();
         return new Promise<void>((resolve) => {
             const handler = (event: MessageEvent<WorkerResponse>) => {
                 const response = event.data;
-                if (response.type === 'variableStats' && response.stats.column === variableId) {
+                if (response.requestId !== reqId) return;
+                if (response.type === 'variableStats') {
                     set({ activeVariableStats: response.stats });
                     worker.removeEventListener('message', handler);
                     resolve();
                 }
             };
             worker.addEventListener('message', handler);
-            worker.postMessage({ type: 'getVariableStats', column: variableId, variableType, binCount } as WorkerRequest);
+            worker.postMessage({ type: 'getVariableStats', requestId: reqId, column: variableId, variableType, binCount } as WorkerRequest);
         });
     },
 

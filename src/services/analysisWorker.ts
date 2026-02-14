@@ -916,6 +916,7 @@ async function recodeVariable(
 
 self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
   const request = event.data;
+  const requestId = request.requestId;
 
   try {
     switch (request.type) {
@@ -1026,6 +1027,7 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
         const queryResult = await runQuery(request.sql);
         self.postMessage({
           type: 'queryResult',
+          requestId,
           data: queryResult.data,
           durationMs: queryResult.durationMs,
         } as WorkerResponse);
@@ -1039,6 +1041,7 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
         const duration = performance.now() - start;
         self.postMessage({
           type: 'queryResult',
+          requestId,
           data: crosstabResult.rows,
           tableStats: crosstabResult.tableStats,
           durationMs: duration
@@ -1054,14 +1057,14 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
 
       case 'getUniqueValues': {
         const uniqueVals = await getUniqueValues(request.column);
-        self.postMessage({ type: 'uniqueValues', data: uniqueVals } as WorkerResponse);
+        self.postMessage({ type: 'uniqueValues', requestId, data: uniqueVals } as WorkerResponse);
         break;
       }
 
       case 'getVariableStats': {
         if (!adapter) throw new Error('DB not initialized');
         const stats = await coreGetVariableStats(adapter, request.column, request.variableType, request.binCount);
-        self.postMessage({ type: 'variableStats', stats } as WorkerResponse);
+        self.postMessage({ type: 'variableStats', requestId, stats } as WorkerResponse);
         break;
       }
 
@@ -1087,7 +1090,7 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
 
       case 'recodeVariable': {
         const newCol = await recodeVariable(request.sourceCol, request.newColName, request.config);
-        self.postMessage({ type: 'recodeComplete', newColName: newCol } as WorkerResponse);
+        self.postMessage({ type: 'recodeComplete', requestId, newColName: newCol } as WorkerResponse);
         break;
       }
 
@@ -1193,6 +1196,6 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
     }
   } catch (error: any) {
     console.error('[Worker] Error:', error);
-    self.postMessage({ type: 'error', message: error.message || 'Unknown error' } as WorkerResponse);
+    self.postMessage({ type: 'error', requestId, message: error.message || 'Unknown error' } as WorkerResponse);
   }
 };

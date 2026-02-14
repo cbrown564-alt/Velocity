@@ -23,7 +23,7 @@ const INITIAL_STATE: MergeModalState = {
 export const useMergeOrchestration = (fallbackVariableId?: string) => {
     const [mergeModal, setMergeModal] = useState<MergeModalState>(INITIAL_STATE);
     const recodeVariable = useVelocityStore(state => state.recodeVariable);
-    const variables = useVelocityStore(state => state.variables);
+    const variables = useVelocityStore(state => state.dataset?.variables ?? []);
 
     const openMerge = useCallback((event: MergeEvent) => {
         setMergeModal({

@@ -15,33 +15,37 @@ import { ChartType } from './charts';
 // Worker Request Types
 // ============================================================================
 
+/** Base fields shared by all worker requests */
+interface WorkerRequestBase {
+  requestId?: string;
+}
+
 export type WorkerRequest =
-  | { type: 'init'; forceCleanStart?: boolean; datasetId?: string; schemaVersion?: number }
-  | { type: 'setPersistenceContext'; datasetId?: string; schemaVersion?: number }
-  | { type: 'updatePersistenceMetadata'; metadata: PersistedMetadata }
-  | { type: 'loadCSV'; fileName: string; content: string }
-  | { type: 'loadSAV'; buffer: ArrayBuffer; forceChunked?: boolean }
-  | { type: 'loadSAVMetadata'; buffer: ArrayBuffer }
-  | { type: 'loadSAVSample'; buffer: ArrayBuffer; rowLimit: number; strategy?: 'sequential' | 'spread' }
-  | { type: 'flushPersistedData' }
-  | { type: 'query'; sql: string }
-  | { type: 'getSchema' }
-  | { type: 'getUniqueValues'; column: string }
-  | { type: 'getVariableStats'; column: string; variableType?: 'nominal' | 'ordinal' | 'scale' | 'numeric' | 'text' | 'date'; binCount?: number }
-  | { type: 'recodeVariable'; sourceCol: string; newColName: string; config: RecodeConfig }
-  | { type: 'checkPersistedData' }
-  | { type: 'clearPersistedData' }
-  | {
+  | (WorkerRequestBase & { type: 'init'; forceCleanStart?: boolean; datasetId?: string; schemaVersion?: number })
+  | (WorkerRequestBase & { type: 'setPersistenceContext'; datasetId?: string; schemaVersion?: number })
+  | (WorkerRequestBase & { type: 'updatePersistenceMetadata'; metadata: PersistedMetadata })
+  | (WorkerRequestBase & { type: 'loadCSV'; fileName: string; content: string })
+  | (WorkerRequestBase & { type: 'loadSAV'; buffer: ArrayBuffer; forceChunked?: boolean })
+  | (WorkerRequestBase & { type: 'loadSAVMetadata'; buffer: ArrayBuffer })
+  | (WorkerRequestBase & { type: 'loadSAVSample'; buffer: ArrayBuffer; rowLimit: number; strategy?: 'sequential' | 'spread' })
+  | (WorkerRequestBase & { type: 'flushPersistedData' })
+  | (WorkerRequestBase & { type: 'query'; sql: string })
+  | (WorkerRequestBase & { type: 'getSchema' })
+  | (WorkerRequestBase & { type: 'getUniqueValues'; column: string })
+  | (WorkerRequestBase & { type: 'getVariableStats'; column: string; variableType?: 'nominal' | 'ordinal' | 'scale' | 'numeric' | 'text' | 'date'; binCount?: number })
+  | (WorkerRequestBase & { type: 'recodeVariable'; sourceCol: string; newColName: string; config: RecodeConfig })
+  | (WorkerRequestBase & { type: 'checkPersistedData' })
+  | (WorkerRequestBase & { type: 'clearPersistedData' })
+  | (WorkerRequestBase & {
     type: 'runCrosstab';
     options: CrosstabQueryOptions & { includeDistributions?: boolean };
     context: {
       variables: Record<string, Variable>;
       variableSets: Record<string, VariableSet>;
     }
-  }
-  | {
+  })
+  | (WorkerRequestBase & {
     type: 'processData';
-    requestId?: string;
     data: AggregatedRow[];
     options: {
       rowVariables: Variable[];
@@ -50,10 +54,10 @@ export type WorkerRequest =
       isMultipleResponse?: boolean;
     };
     chartType?: ChartType;
-  }
-  | { type: 'runAnalysis'; id: string; config: any }
-  | { type: 'exportArrow'; sql: string; columns?: string[] }
-  | { type: 'ping' };
+  })
+  | (WorkerRequestBase & { type: 'runAnalysis'; id: string; config: any })
+  | (WorkerRequestBase & { type: 'exportArrow'; sql: string; columns?: string[] })
+  | (WorkerRequestBase & { type: 'ping' });
 
 // ============================================================================
 // Worker Response Types
@@ -98,26 +102,31 @@ export interface VariableStatsResult {
   numeric?: NumericStats;
 }
 
+/** Base fields shared by all worker responses */
+interface WorkerResponseBase {
+  requestId?: string;
+}
+
 export type WorkerResponse =
-  | { type: 'ready'; opfsAvailable: boolean }
-  | { type: 'persistenceStatus'; opfsAvailable: boolean; mode: 'opfs' | 'memory' | 'disabled'; dbPath: string; lastError?: string }
-  | { type: 'corruptionDetected'; message: string }
-  | { type: 'schema'; data: { name: string; type: string }[] }
-  | { type: 'csvLoaded'; schema: { name: string; type: string }[]; rowCount: number; durationMs: number }
-  | { type: 'savLoaded'; variables: Variable[]; variableSets: VariableSet[]; rowCount: number; durationMs: number }
-  | { type: 'savMetadataLoaded'; variables: Variable[]; variableSets: VariableSet[]; rowCount: number; durationMs: number }
-  | { type: 'savSampleLoaded'; variables: Variable[]; variableSets: VariableSet[]; rowCount: number; sampleRowCount: number; sampleStrategy: 'sequential' | 'spread'; durationMs: number }
-  | { type: 'loadProgress'; phase: 'parsing' | 'inserting' | 'complete'; progress: number; rowsProcessed?: number; totalRows?: number; message: string }
-  | { type: 'flushComplete'; ok: boolean; durationMs: number; error?: string }
-  | { type: 'queryResult'; data: any[]; durationMs: number; tableStats?: TableStats }
-  | { type: 'uniqueValues'; data: string[] }
-  | { type: 'variableStats'; stats: VariableStatsResult }
-  | { type: 'recodeComplete'; newColName: string }
-  | { type: 'persistedDataFound'; schema: { name: string; type: string }[]; rowCount: number; metadata?: PersistedMetadata }
-  | { type: 'noPersistedData' }
-  | { type: 'persistedDataCleared' }
-  | { type: 'pong'; hasData: boolean; rowCount?: number }
-  | { type: 'processedData'; requestId?: string; result: ProcessedAnalysisData | null }
-  | { type: 'analysisResult'; id: string; result: any; durationMs: number }
-  | { type: 'arrowExported'; buffer: ArrayBuffer; rowCount: number; durationMs: number }
-  | { type: 'error'; message: string };
+  | (WorkerResponseBase & { type: 'ready'; opfsAvailable: boolean })
+  | (WorkerResponseBase & { type: 'persistenceStatus'; opfsAvailable: boolean; mode: 'opfs' | 'memory' | 'disabled'; dbPath: string; lastError?: string })
+  | (WorkerResponseBase & { type: 'corruptionDetected'; message: string })
+  | (WorkerResponseBase & { type: 'schema'; data: { name: string; type: string }[] })
+  | (WorkerResponseBase & { type: 'csvLoaded'; schema: { name: string; type: string }[]; rowCount: number; durationMs: number })
+  | (WorkerResponseBase & { type: 'savLoaded'; variables: Variable[]; variableSets: VariableSet[]; rowCount: number; durationMs: number })
+  | (WorkerResponseBase & { type: 'savMetadataLoaded'; variables: Variable[]; variableSets: VariableSet[]; rowCount: number; durationMs: number })
+  | (WorkerResponseBase & { type: 'savSampleLoaded'; variables: Variable[]; variableSets: VariableSet[]; rowCount: number; sampleRowCount: number; sampleStrategy: 'sequential' | 'spread'; durationMs: number })
+  | (WorkerResponseBase & { type: 'loadProgress'; phase: 'parsing' | 'inserting' | 'complete'; progress: number; rowsProcessed?: number; totalRows?: number; message: string })
+  | (WorkerResponseBase & { type: 'flushComplete'; ok: boolean; durationMs: number; error?: string })
+  | (WorkerResponseBase & { type: 'queryResult'; data: any[]; durationMs: number; tableStats?: TableStats })
+  | (WorkerResponseBase & { type: 'uniqueValues'; data: string[] })
+  | (WorkerResponseBase & { type: 'variableStats'; stats: VariableStatsResult })
+  | (WorkerResponseBase & { type: 'recodeComplete'; newColName: string })
+  | (WorkerResponseBase & { type: 'persistedDataFound'; schema: { name: string; type: string }[]; rowCount: number; metadata?: PersistedMetadata })
+  | (WorkerResponseBase & { type: 'noPersistedData' })
+  | (WorkerResponseBase & { type: 'persistedDataCleared' })
+  | (WorkerResponseBase & { type: 'pong'; hasData: boolean; rowCount?: number })
+  | (WorkerResponseBase & { type: 'processedData'; result: ProcessedAnalysisData | null })
+  | (WorkerResponseBase & { type: 'analysisResult'; id: string; result: any; durationMs: number })
+  | (WorkerResponseBase & { type: 'arrowExported'; buffer: ArrayBuffer; rowCount: number; durationMs: number })
+  | (WorkerResponseBase & { type: 'error'; message: string });

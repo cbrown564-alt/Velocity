@@ -40,9 +40,11 @@ export const runCrosstabForExport = async ({
     weightVar,
   });
 
+  const reqId = crypto.randomUUID();
   return new Promise<RunCrosstabResult>((resolve) => {
     const handler = (event: MessageEvent<WorkerResponse>) => {
       const response = event.data;
+      if (response.requestId !== reqId) return;
 
       if (response.type === 'queryResult') {
         const rawData = response.data as any[];
@@ -60,6 +62,7 @@ export const runCrosstabForExport = async ({
     worker.addEventListener('message', handler);
     worker.postMessage({
       type: 'runCrosstab',
+      requestId: reqId,
       options: request.options,
       context: request.context,
     } as WorkerRequest);

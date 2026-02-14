@@ -125,6 +125,9 @@ export const createDrillDownSlice: DrillDownSliceCreator = (set, get) => ({
         const dataSql = buildDrillDownQuery(queryOptions);
         const countSql = buildDrillDownCountQuery(queryOptions);
 
+        const dataReqId = crypto.randomUUID();
+        const countReqId = crypto.randomUUID();
+
         return new Promise<void>((resolve) => {
             let dataResult: any[] | null = null;
             let totalCount: number | null = null;
@@ -146,6 +149,7 @@ export const createDrillDownSlice: DrillDownSliceCreator = (set, get) => ({
 
             const dataHandler = (event: MessageEvent<WorkerResponse>) => {
                 const response = event.data;
+                if (response.requestId !== dataReqId) return;
                 if (response.type === 'queryResult') {
                     dataResult = response.data;
                     responseCount++;
@@ -162,6 +166,7 @@ export const createDrillDownSlice: DrillDownSliceCreator = (set, get) => ({
 
             const countHandler = (event: MessageEvent<WorkerResponse>) => {
                 const response = event.data;
+                if (response.requestId !== countReqId) return;
                 if (response.type === 'queryResult') {
                     totalCount = response.data[0]?.total ?? 0;
                     responseCount++;
@@ -177,12 +182,9 @@ export const createDrillDownSlice: DrillDownSliceCreator = (set, get) => ({
             };
 
             worker.addEventListener('message', dataHandler);
-            worker.postMessage({ type: 'query', sql: dataSql } as WorkerRequest);
-
-            setTimeout(() => {
-                worker.addEventListener('message', countHandler);
-                worker.postMessage({ type: 'query', sql: countSql } as WorkerRequest);
-            }, 10);
+            worker.addEventListener('message', countHandler);
+            worker.postMessage({ type: 'query', requestId: dataReqId, sql: dataSql } as WorkerRequest);
+            worker.postMessage({ type: 'query', requestId: countReqId, sql: countSql } as WorkerRequest);
         });
     },
 
@@ -210,10 +212,12 @@ export const createDrillDownSlice: DrillDownSliceCreator = (set, get) => ({
         };
 
         const sql = buildDrillDownQuery(queryOptions);
+        const reqId = crypto.randomUUID();
 
         return new Promise<void>((resolve) => {
             const handler = (event: MessageEvent<WorkerResponse>) => {
                 const response = event.data;
+                if (response.requestId !== reqId) return;
                 if (response.type === 'queryResult') {
                     set((state) => ({
                         drillDown: {
@@ -236,7 +240,7 @@ export const createDrillDownSlice: DrillDownSliceCreator = (set, get) => ({
             };
 
             worker.addEventListener('message', handler);
-            worker.postMessage({ type: 'query', sql } as WorkerRequest);
+            worker.postMessage({ type: 'query', requestId: reqId, sql } as WorkerRequest);
         });
     },
 

@@ -135,7 +135,7 @@ describe('Adapter Parity: WASM vs Node', () => {
             const nodeResults = await runCrosstab(nodeAdapter, testConfig.config, testConfig.context);
 
             // 3. Compare crosstab results
-            expectCloseDeep(sortRows(wasmResults), sortRows(nodeResults));
+            expectCloseDeep(sortRows(wasmResults.rows), sortRows(nodeResults.rows));
 
             const rowVar = testConfig.config.rowVars[0];
             const isSynthetic = testConfig.context.variables[rowVar]?.synthetic;
@@ -169,6 +169,6 @@ describe('Adapter Parity: WASM vs Node', () => {
         const wasmResults = await runCrosstab(wasmAdapter, config, context);
         const nodeResults = await runCrosstab(nodeAdapter, config, context);
 
-        expectCloseDeep(sortRows(wasmResults), sortRows(nodeResults));
+        expectCloseDeep(sortRows(wasmResults.rows), sortRows(nodeResults.rows));
     });
 });

@@ -24,7 +24,7 @@ export interface WorkspaceSlice {
   setActiveDataset: (id: string | null) => void;
 
   // Dataset CRUD
-  addStoredDataset: (dataset: Omit<StoredDataset, 'id' | 'createdAt' | 'lastOpenedAt' | 'lastModifiedAt' | 'starred'>) => string;
+  addStoredDataset: (dataset: Omit<StoredDataset, 'id' | 'createdAt' | 'lastOpenedAt' | 'lastModifiedAt' | 'starred'> & { id?: string }) => string;
   updateStoredDataset: (id: string, updates: Partial<StoredDataset>) => void;
   removeStoredDataset: (id: string) => void;
   toggleDatasetStar: (id: string) => void;
@@ -76,7 +76,7 @@ export const createWorkspaceSlice: StateCreator<WorkspaceSlice> = (set, get) => 
 
   // Dataset CRUD
   addStoredDataset: (dataset) => {
-    const id = uuidv4();
+    const id = dataset.id || uuidv4();
     const now = Date.now();
     const newDataset: StoredDataset = {
       ...dataset,

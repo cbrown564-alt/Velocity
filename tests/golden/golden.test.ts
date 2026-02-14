@@ -82,7 +82,7 @@ describe('Golden Tests (Legacy)', () => {
       filters: [],
     }, { variables: {}, variableSets: {} });
 
-    expectCloseDeepWithBootstrap(sortRows(results), 'gender_counts.json');
+    expectCloseDeepWithBootstrap(sortRows(results.rows), 'gender_counts.json');
   });
 
   it('region by gender crosstab', async () => {
@@ -93,7 +93,7 @@ describe('Golden Tests (Legacy)', () => {
       filters: [],
     }, { variables: {}, variableSets: {} });
 
-    expectCloseDeepWithBootstrap(sortRows(results), 'region_by_gender.json');
+    expectCloseDeepWithBootstrap(sortRows(results.rows), 'region_by_gender.json');
   });
 
   it('weighted gender counts', async () => {
@@ -104,7 +104,7 @@ describe('Golden Tests (Legacy)', () => {
       filters: [],
     }, { variables: {}, variableSets: {} });
 
-    expectCloseDeepWithBootstrap(sortRows(results), 'gender_weighted.json');
+    expectCloseDeepWithBootstrap(sortRows(results.rows), 'gender_weighted.json');
   });
 
   it('age variable stats', async () => {
@@ -140,7 +140,7 @@ describe('Dynamic Golden Tests', () => {
           appendFileSync(PERF_LOG, JSON.stringify(logEntry) + '\n');
         }
 
-        expectCloseDeepWithBootstrap(sortRows(results), testConfig.expectedFile);
+        expectCloseDeepWithBootstrap(sortRows(results.rows), testConfig.expectedFile);
       } finally {
         await db.close();
       }
