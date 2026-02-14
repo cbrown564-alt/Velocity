@@ -84,6 +84,8 @@ interface ReadStatModule {
 let moduleInstance: ReadStatModule | null = null;
 let modulePromise: Promise<ReadStatModule> | null = null;
 
+const READSTAT_MODULE_URL = '/readstat/readstat.js';
+
 /**
  * Initialize the WASM module. Called automatically on first parse.
  */
@@ -95,8 +97,12 @@ export async function initReadStat(): Promise<void> {
     }
 
     modulePromise = (async () => {
-        // Dynamic import of the Emscripten glue code
-        const moduleFactory = (await import('../dist/readstat.js')).default as () => Promise<ReadStatModule>;
+        // Dynamic import of the Emscripten glue code.
+        //
+        // NOTE: Using a Vite-ignored absolute URL avoids build-time resolution
+        // errors in environments (e.g. Vercel) where packages/readstat-wasm/dist
+        // is not present in source checkout.
+        const moduleFactory = (await import(/* @vite-ignore */ READSTAT_MODULE_URL)).default as () => Promise<ReadStatModule>;
         const instance = await moduleFactory();
         moduleInstance = instance;
         console.log('📦 [ReadStat] WASM module initialized');
