@@ -15,6 +15,7 @@ import type {
     ProgressCallback,
     SampleStrategy,
 } from './types';
+import jsavvyDefault from 'jsavvy';
 
 // Re-export types
 export type {
@@ -84,6 +85,99 @@ interface ReadStatModule {
 let moduleInstance: ReadStatModule | null = null;
 let modulePromise: Promise<ReadStatModule> | null = null;
 
+const READSTAT_MODULE_URL = '/readstat/readstat.js';
+
+
+const jsavvy: any = (jsavvyDefault as any).default || jsavvyDefault;
+
+interface JsavvyParsedData {
+    metadata: SavMetadata;
+    rows: (number | string | null)[][];
+}
+
+async function parseWithJsavvy(buffer: ArrayBuffer, includeRows: boolean): Promise<JsavvyParsedData> {
+    const parser = new jsavvy.SavParser();
+    const feeder = new jsavvy.Feeder(buffer);
+
+    if (!includeRows) {
+        const schema = await parser.schema(feeder);
+        const valueLabelSets: Record<string, SavValueLabel[]> = {};
+
+        schema.internal.levels.forEach((level: any, idx: number) => {
+            const setName = `set_${idx}`;
+            valueLabelSets[setName] = Array.from(level.map.entries()).map(([value, label]) => ({
+                value: Number(value),
+                label: String(label),
+            }));
+        });
+
+        const variables: SavVariable[] = schema.headers.map((header: any, i: number) => {
+            const levelIdx = schema.internal.levels.findIndex((level: any) => level.indices.has(i + 1));
+            return {
+                name: header.name,
+                index: i,
+                type: header.code === 0 ? 'numeric' : 'string',
+                label: header.label || undefined,
+                valueLabelSetName: levelIdx !== -1 ? `set_${levelIdx}` : undefined,
+            };
+        });
+
+        return {
+            metadata: {
+                variableCount: variables.length,
+                rowCount: schema.meta.cases,
+                variables,
+                valueLabelSets,
+                multipleResponseSets: [],
+            },
+            rows: [],
+        };
+    }
+
+    const all = await parser.all(feeder);
+    const dataset = new jsavvy.Savvy(all);
+    const valueLabelSets: Record<string, SavValueLabel[]> = {};
+
+    all.internal.levels.forEach((level: any, idx: number) => {
+        const setName = `set_${idx}`;
+        valueLabelSets[setName] = Array.from(level.map.entries()).map(([value, label]) => ({
+            value: Number(value),
+            label: String(label),
+        }));
+    });
+
+    const variables: SavVariable[] = all.headers.map((header: any, i: number) => {
+        const levelIdx = all.internal.levels.findIndex((level: any) => level.indices.has(i + 1));
+        return {
+            name: header.name,
+            index: i,
+            type: header.code === 0 ? 'numeric' : 'string',
+            label: header.label || undefined,
+            valueLabelSetName: levelIdx !== -1 ? `set_${levelIdx}` : undefined,
+        };
+    });
+
+    const rows: (number | string | null)[][] = [];
+    for (let r = 0; r < all.meta.cases; r++) {
+        const row = dataset.row(r);
+        rows.push(all.headers.map((header: any) => {
+            const value = row.get(header.name);
+            return value === undefined ? null : value;
+        }));
+    }
+
+    return {
+        metadata: {
+            variableCount: variables.length,
+            rowCount: all.meta.cases,
+            variables,
+            valueLabelSets,
+            multipleResponseSets: [],
+        },
+        rows,
+    };
+}
+
 /**
  * Initialize the WASM module. Called automatically on first parse.
  */
@@ -95,12 +189,21 @@ export async function initReadStat(): Promise<void> {
     }
 
     modulePromise = (async () => {
-        // Dynamic import of the Emscripten glue code
-        const moduleFactory = (await import('../dist/readstat.js')).default as () => Promise<ReadStatModule>;
-        const instance = await moduleFactory();
-        moduleInstance = instance;
-        console.log('📦 [ReadStat] WASM module initialized');
-        return instance;
+        // Dynamic import of the Emscripten glue code.
+        //
+        // NOTE: Using a Vite-ignored absolute URL avoids build-time resolution
+        // errors in environments (e.g. Vercel) where packages/readstat-wasm/dist
+        // is not present in source checkout.
+        try {
+            const moduleFactory = (await import(/* @vite-ignore */ READSTAT_MODULE_URL)).default as () => Promise<ReadStatModule>;
+            const instance = await moduleFactory();
+            moduleInstance = instance;
+            console.log('📦 [ReadStat] WASM module initialized');
+            return instance;
+        } catch (error) {
+            console.warn('⚠️ [ReadStat] WASM artifacts unavailable; falling back to jsavvy parser.', error);
+            throw error;
+        }
     })();
 
     await modulePromise;
@@ -120,8 +223,29 @@ export async function parseSavFile(
     const startTime = performance.now();
 
     // Ensure module is initialized
-    await initReadStat();
-    const mod = moduleInstance!;
+    try {
+        await initReadStat();
+    } catch {
+        const fallback = await parseWithJsavvy(buffer, true);
+        if (onProgress) onProgress({ progress: 1 });
+        return {
+            metadata: fallback.metadata,
+            rows: fallback.rows,
+            durationMs: performance.now() - startTime,
+        };
+    }
+
+    if (!moduleInstance) {
+        const fallback = await parseWithJsavvy(buffer, true);
+        if (onProgress) onProgress({ progress: 1 });
+        return {
+            metadata: fallback.metadata,
+            rows: fallback.rows,
+            durationMs: performance.now() - startTime,
+        };
+    }
+
+    const mod = moduleInstance;
 
     console.log(`📦 [ReadStat] Parsing SAV file: ${(buffer.byteLength / 1024 / 1024).toFixed(2)} MB`);
 
@@ -273,8 +397,25 @@ export async function parseSavMetadata(
     const startTime = performance.now();
 
     // Ensure module is initialized
-    await initReadStat();
-    const mod = moduleInstance!;
+    try {
+        await initReadStat();
+    } catch {
+        const fallback = await parseWithJsavvy(buffer, false);
+        return {
+            metadata: fallback.metadata,
+            durationMs: performance.now() - startTime,
+        };
+    }
+
+    if (!moduleInstance) {
+        const fallback = await parseWithJsavvy(buffer, false);
+        return {
+            metadata: fallback.metadata,
+            durationMs: performance.now() - startTime,
+        };
+    }
+
+    const mod = moduleInstance;
 
     if (!mod._parse_sav_metadata) {
         throw new Error('ReadStat WASM build does not support metadata-only parsing. Rebuild the WASM module.');
@@ -404,8 +545,41 @@ export async function parseSavSample(
 ): Promise<SavParseResult> {
     const startTime = performance.now();
 
-    await initReadStat();
-    const mod = moduleInstance!;
+    try {
+        await initReadStat();
+    } catch {
+        const fallback = await parseWithJsavvy(buffer, true);
+        const fullRows = fallback.rows;
+        const safeLimit = Math.max(0, Math.floor(rowLimit));
+        const rows = strategy === 'spread' && safeLimit < fullRows.length
+            ? Array.from({ length: safeLimit }, (_, i) => fullRows[Math.floor(i * fullRows.length / safeLimit)] ?? fullRows[fullRows.length - 1]).filter(Boolean) as (number | string | null)[][]
+            : fullRows.slice(0, safeLimit);
+
+        return {
+            metadata: fallback.metadata,
+            rows,
+            durationMs: performance.now() - startTime,
+            sampleStrategy: strategy,
+        };
+    }
+
+    if (!moduleInstance) {
+        const fallback = await parseWithJsavvy(buffer, true);
+        const fullRows = fallback.rows;
+        const safeLimit = Math.max(0, Math.floor(rowLimit));
+        const rows = strategy === 'spread' && safeLimit < fullRows.length
+            ? Array.from({ length: safeLimit }, (_, i) => fullRows[Math.floor(i * fullRows.length / safeLimit)] ?? fullRows[fullRows.length - 1]).filter(Boolean) as (number | string | null)[][]
+            : fullRows.slice(0, safeLimit);
+
+        return {
+            metadata: fallback.metadata,
+            rows,
+            durationMs: performance.now() - startTime,
+            sampleStrategy: strategy,
+        };
+    }
+
+    const mod = moduleInstance;
 
     if (!mod._parse_sav_sample || !mod._get_parsed_row_count) {
         throw new Error('ReadStat WASM build does not support sample parsing. Rebuild the WASM module.');
@@ -595,8 +769,51 @@ export async function parseSavStreaming(
 ): Promise<StreamingParseResult> {
     const startTime = performance.now();
 
-    await initReadStat();
-    const mod = moduleInstance!;
+    try {
+        await initReadStat();
+    } catch {
+        const fallback = await parseWithJsavvy(buffer, true);
+        const totalRows = fallback.metadata.rowCount;
+        for (let startRow = 0; startRow < totalRows; startRow += batchSize) {
+            const endRow = Math.min(startRow + batchSize, totalRows);
+            await onBatch({
+                rows: fallback.rows.slice(startRow, endRow),
+                startRow,
+                endRow,
+                totalRows,
+                progress: endRow / totalRows,
+            });
+        }
+
+        return {
+            metadata: fallback.metadata,
+            variables: fallback.metadata.variables,
+            durationMs: performance.now() - startTime,
+        };
+    }
+
+    if (!moduleInstance) {
+        const fallback = await parseWithJsavvy(buffer, true);
+        const totalRows = fallback.metadata.rowCount;
+        for (let startRow = 0; startRow < totalRows; startRow += batchSize) {
+            const endRow = Math.min(startRow + batchSize, totalRows);
+            await onBatch({
+                rows: fallback.rows.slice(startRow, endRow),
+                startRow,
+                endRow,
+                totalRows,
+                progress: endRow / totalRows,
+            });
+        }
+
+        return {
+            metadata: fallback.metadata,
+            variables: fallback.metadata.variables,
+            durationMs: performance.now() - startTime,
+        };
+    }
+
+    const mod = moduleInstance;
 
     const fileSizeMb = (buffer.byteLength / 1024 / 1024).toFixed(2);
     console.log(`📦 [ReadStat] Streaming parse SAV: ${fileSizeMb} MB, batch size ${batchSize}`);
