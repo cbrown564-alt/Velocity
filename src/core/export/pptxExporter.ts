@@ -35,12 +35,44 @@ function formatCell(cell: ProcessedCell | undefined, showSig: boolean): string {
   return `${pct}${sig}`;
 }
 
+function normalizeColor(color: string): string {
+  if (!color) return color;
+  if (color.startsWith('#')) {
+    return color.slice(1);
+  }
+  const rgbaMatch = color.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/i);
+  if (rgbaMatch) {
+    const r = parseInt(rgbaMatch[1], 10).toString(16).padStart(2, '0');
+    const g = parseInt(rgbaMatch[2], 10).toString(16).padStart(2, '0');
+    const b = parseInt(rgbaMatch[3], 10).toString(16).padStart(2, '0');
+    return `${r}${g}${b}`;
+  }
+  return color;
+}
+
+function formatCellValue(
+  cell: ProcessedCell | undefined,
+  opts: { showSig: boolean; showPercents: boolean; showCounts: boolean }
+): string {
+  if (!cell) return '';
+  const percentText = formatCell(cell, opts.showSig);
+  const countText = `${cell.count}`;
+
+  if (opts.showPercents && opts.showCounts) return `${countText} (${percentText})`;
+  if (opts.showCounts) return countText;
+  if (opts.showPercents) return percentText;
+  return '';
+}
+
 function buildSlideTable(
   item: AnalysisExportItem,
   columns: ProcessedColumn[],
   branding: typeof DEFAULTS
 ): PptxGenJS.TableRow[] {
   const showSig = item.options?.showSignificance !== false;
+  const showPercents = item.options?.showPercents !== false;
+  const showCounts = item.options?.showCounts === true;
+  const includeTotal = showCounts;
   const headerStyle: PptxGenJS.TableCellProps = {
     fill: { color: branding.headerColor },
     color: 'FFFFFF',
@@ -64,7 +96,7 @@ function buildSlideTable(
   const headerRow: PptxGenJS.TableCell[] = [
     { text: '', options: headerStyle },
     ...columns.map(col => ({ text: col.label, options: headerStyle })),
-    { text: 'Total', options: headerStyle },
+    ...(includeTotal ? [{ text: 'Total', options: headerStyle }] : []),
   ];
   tableRows.push(headerRow);
 
@@ -80,10 +112,12 @@ function buildSlideTable(
     const dataRow: PptxGenJS.TableCell[] = [
       { text: `${indent}${row.label}`, options: labelStyle },
       ...columns.map(col => ({
-        text: formatCell(row.cells[col.key], showSig),
+        text: formatCellValue(row.cells[col.key], { showSig, showPercents, showCounts }),
         options: { ...cellStyle, align: 'right' as const },
       })),
-      { text: row.total.toString(), options: { ...cellStyle, align: 'right' as const, bold: true } },
+      ...(includeTotal
+        ? [{ text: row.total.toString(), options: { ...cellStyle, align: 'right' as const, bold: true } }]
+        : []),
     ];
     tableRows.push(dataRow);
   }
@@ -102,14 +136,14 @@ export async function exportPptx(config: ExportConfig): Promise<Uint8Array> {
 
     const branding = {
       ...DEFAULTS,
-      ...(config.branding?.primaryColor && { primaryColor: config.branding.primaryColor.replace('#', '') }),
-      ...(config.branding?.headerColor && { headerColor: config.branding.headerColor.replace('#', '') }),
+      ...(config.branding?.primaryColor && { primaryColor: normalizeColor(config.branding.primaryColor) }),
+      ...(config.branding?.headerColor && { headerColor: normalizeColor(config.branding.headerColor) }),
       ...(config.branding?.fontFamily && { fontFamily: config.branding.fontFamily }),
     };
 
     const chartBranding = {
       ...branding,
-      chartColors: config.branding?.chartColors ?? [],
+      chartColors: (config.branding?.chartColors ?? []).map(normalizeColor),
     };
 
     // Title slide
@@ -165,7 +199,7 @@ export async function exportPptx(config: ExportConfig): Promise<Uint8Array> {
       }
 
       const tableRows = buildSlideTable(item, item.result.columns, branding);
-      const colCount = item.result.columns.length + 2; // label + cols + total
+      const colCount = tableRows[0]?.length ?? item.result.columns.length + 1;
 
       slide.addTable(tableRows, {
         x: 0.5,
