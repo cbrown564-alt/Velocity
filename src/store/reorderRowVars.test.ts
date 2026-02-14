@@ -41,6 +41,16 @@ describe('Store: reorderRowVars', () => {
         act(() => {
             result.current.worker = mockWorker;
             result.current.isDbReady = true;
+            result.current.dataset = {
+                id: 'test-dataset',
+                name: 'test.sav',
+                rowCount: 2,
+                variables: [
+                    { id: 'var1', name: 'var1', label: 'Variable 1', type: 'nominal', valueLabels: [], missingValues: {} },
+                    { id: 'var2', name: 'var2', label: 'Variable 2', type: 'nominal', valueLabels: [], missingValues: {} }
+                ],
+                source: 'sav'
+            } as any;
         });
 
         // Set initial row vars
