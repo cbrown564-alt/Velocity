@@ -610,3 +610,48 @@
         transform: translateY(0);
     }
 }
+
+/* Error State */
+.errorMessage {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+    background: color-mix(in srgb, var(--destructive-foreground) 10%, transparent);
+    border: 1px solid var(--destructive-foreground);
+    border-radius: var(--radius);
+    color: var(--destructive-foreground);
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    animation: slideIn 300ms var(--ease-standard);
+}
+
+/* Progress bar */
+.progressBar {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    background: color-mix(in srgb, var(--color-accent) 8%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-accent) 30%, transparent);
+    border-radius: var(--radius);
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+}
+
+.progressTrack {
+    flex: 1;
+    height: 4px;
+    background: var(--bg-active);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.progressFill {
+    height: 100%;
+    background: var(--color-accent);
+    border-radius: 2px;
+    transition: width 300ms var(--ease-standard);
+}

@@ -7,15 +7,17 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, FileDown, FileSpreadsheet, Presentation, Download, CheckCircle2 } from 'lucide-react';
+import { X, FileDown, FileSpreadsheet, Presentation, Download, CheckCircle2, AlertCircle } from 'lucide-react';
 import styles from './ExportModal.module.css';
 import { exportPptx } from '../../core/export/pptxExporter';
 import { exportXlsx } from '../../core/export/xlsxExporter';
-import { ExportConfig } from '../../core/export/types';
+import { ExportConfig, ExportError } from '../../core/export/types';
 import { useVelocityStore } from '../../store';
 import { buildExportConfig } from '../../core/export/buildExportConfig';
 import { resolveAnalysisVariables } from '../../core/export/resolveAnalysisVariables';
 import { runCrosstabForExport } from '../../core/export/runCrosstabForExport';
+import { resolveExportBranding } from '../../core/export/resolveThemeColors';
+import { useTheme } from '../../context/ThemeContext';
 import type { SlideAnalysisState } from '../../types/slides';
 
 interface ExportModalProps {
@@ -40,9 +42,12 @@ export const ExportModal: React.FC<ExportModalProps> = ({
     const [showCounts, setShowCounts] = useState(false);
     const [isExporting, setIsExporting] = useState(false);
     const [exportSuccess, setExportSuccess] = useState(false);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [exportProgress, setExportProgress] = useState<{ current: number; total: number } | null>(null);
     const [scope, setScope] = useState<ExportScope>('current');
     const [selectedSlideIds, setSelectedSlideIds] = useState<string[]>([]);
 
+    const { theme } = useTheme();
     const slides = useVelocityStore((state) => state.slides);
     const activeSlideId = useVelocityStore((state) => state.activeSlideId);
     const tableConfig = useVelocityStore((state) => state.tableConfig);
@@ -61,6 +66,8 @@ export const ExportModal: React.FC<ExportModalProps> = ({
         if (!isOpen) return;
         setTitle(initialConfig.title);
         setExportSuccess(false);
+        setErrorMessage(null);
+        setExportProgress(null);
         setScope('current');
         setSelectedSlideIds(activeSlideId ? [activeSlideId] : []);
     }, [isOpen, initialConfig.title, activeSlideId]);
@@ -102,25 +109,30 @@ export const ExportModal: React.FC<ExportModalProps> = ({
 
     const handleExport = async () => {
         if (!worker || !dataset) {
-            alert('Export is unavailable until a dataset is loaded.');
+            setErrorMessage('Export is unavailable until a dataset is loaded.');
             return;
         }
         if (isQuerying) {
-            alert('Please wait for analysis to finish, then try exporting again.');
+            setErrorMessage('Please wait for analysis to finish, then try exporting again.');
             return;
         }
         if (slideIdsForScope.length === 0) {
-            alert('Select at least one slide to export.');
+            setErrorMessage('Select at least one slide to export.');
             return;
         }
 
         setIsExporting(true);
         setExportSuccess(false);
+        setErrorMessage(null);
+        setExportProgress({ current: 0, total: slideIdsForScope.length });
 
         try {
             const analyses: ExportConfig['analyses'] = [];
 
-            for (const slideId of slideIdsForScope) {
+            for (let i = 0; i < slideIdsForScope.length; i++) {
+                const slideId = slideIdsForScope[i];
+                setExportProgress({ current: i + 1, total: slideIdsForScope.length });
+
                 const slide = slides.find((s) => s.id === slideId);
                 if (!slide) continue;
 
@@ -151,6 +163,8 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                     weightVar,
                 });
 
+                if (!crosstab.data || crosstab.data.length === 0) continue;
+
                 const slideConfig = buildExportConfig({
                     title,
                     label: slide.title,
@@ -159,15 +173,20 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                     colVariable,
                     isWeighted: !!weightVar,
                     isMultipleResponse: !!isMultipleResponse,
+                    visualizationType: slide.visualizationType,
+                    chartType: slide.chartType,
                 });
 
                 analyses.push(...slideConfig.analyses);
             }
 
             if (analyses.length === 0) {
-                alert('No exportable analyses were found for the selected slides.');
+                setErrorMessage('No exportable analyses were found for the selected slides.');
                 return;
             }
+
+            // Resolve theme branding
+            const branding = resolveExportBranding(theme);
 
             // Build export config with user options
             const exportConfig: ExportConfig = {
@@ -180,7 +199,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                         showCounts,
                     },
                 })),
-                branding: initialConfig.branding,
+                branding,
             };
 
             // Call appropriate exporter
@@ -204,12 +223,17 @@ export const ExportModal: React.FC<ExportModalProps> = ({
             URL.revokeObjectURL(url);
 
             setExportSuccess(true);
+            setExportProgress(null);
             setTimeout(() => {
                 onClose();
             }, 1500);
         } catch (error) {
             console.error('Export failed:', error);
-            alert('Export failed. Please try again.');
+            if (error instanceof ExportError) {
+                setErrorMessage(`Export failed: ${error.message}`);
+            } else {
+                setErrorMessage('Export failed. Please try again.');
+            }
         } finally {
             setIsExporting(false);
         }
@@ -366,7 +390,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                                             </div>
                                             <div className={styles.formatName}>PowerPoint</div>
                                             <div className={styles.formatDescription}>
-                                                Editable slides with tables
+                                                Editable slides with tables and charts
                                             </div>
                                         </div>
                                         <div
@@ -417,7 +441,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                                                     Significance Markers
                                                 </div>
                                                 <div className={styles.checkboxDescription}>
-                                                    ▲▼ arrows for statistical significance
+                                                    arrows for statistical significance
                                                 </div>
                                             </div>
                                         </label>
@@ -457,6 +481,27 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                                         </label>
                                     </div>
                                 </div>
+
+                                {/* Progress */}
+                                {exportProgress && isExporting && (
+                                    <div className={styles.progressBar}>
+                                        <span>Exporting slide {exportProgress.current} of {exportProgress.total}...</span>
+                                        <div className={styles.progressTrack}>
+                                            <div
+                                                className={styles.progressFill}
+                                                style={{ width: `${(exportProgress.current / exportProgress.total) * 100}%` }}
+                                            />
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Error Message */}
+                                {errorMessage && (
+                                    <div className={styles.errorMessage}>
+                                        <AlertCircle size={16} />
+                                        {errorMessage}
+                                    </div>
+                                )}
 
                                 {/* Success Message */}
                                 {exportSuccess && (

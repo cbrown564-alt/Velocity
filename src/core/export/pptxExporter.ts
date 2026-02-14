@@ -1,6 +1,7 @@
 import PptxGenJS from 'pptxgenjs';
-import { ExportConfig, AnalysisExportItem } from './types';
+import { ExportConfig, AnalysisExportItem, ExportError } from './types';
 import { ProcessedRow, ProcessedColumn, ProcessedCell } from '../../types/processedData';
+import { buildChartSlide, canExportAsChart } from './pptxChartBuilder';
 
 const SIG_LETTERS: Record<string, string> = {
   high_95: '▲',
@@ -91,56 +92,99 @@ function buildSlideTable(
 }
 
 export async function exportPptx(config: ExportConfig): Promise<Uint8Array> {
-  const pptx = new PptxGenJS();
-  pptx.layout = 'LAYOUT_WIDE';
+  if (!config.analyses || config.analyses.length === 0) {
+    throw new ExportError('No analyses to export.', 'EMPTY_DATA');
+  }
 
-  const branding = {
-    ...DEFAULTS,
-    ...(config.branding?.primaryColor && { primaryColor: config.branding.primaryColor.replace('#', '') }),
-    ...(config.branding?.headerColor && { headerColor: config.branding.headerColor.replace('#', '') }),
-    ...(config.branding?.fontFamily && { fontFamily: config.branding.fontFamily }),
-  };
+  try {
+    const pptx = new PptxGenJS();
+    pptx.layout = 'LAYOUT_WIDE';
 
-  // Title slide
-  const titleSlide = pptx.addSlide();
-  titleSlide.addText(config.title, {
-    x: 0.5,
-    y: '40%',
-    w: '90%',
-    fontSize: 28,
-    fontFace: branding.fontFamily,
-    color: branding.primaryColor,
-    bold: true,
-  });
+    const branding = {
+      ...DEFAULTS,
+      ...(config.branding?.primaryColor && { primaryColor: config.branding.primaryColor.replace('#', '') }),
+      ...(config.branding?.headerColor && { headerColor: config.branding.headerColor.replace('#', '') }),
+      ...(config.branding?.fontFamily && { fontFamily: config.branding.fontFamily }),
+    };
 
-  // One slide per analysis
-  for (const item of config.analyses) {
-    const slide = pptx.addSlide();
+    const chartBranding = {
+      ...branding,
+      chartColors: config.branding?.chartColors ?? [],
+    };
 
-    slide.addText(item.label, {
+    // Title slide
+    const titleSlide = pptx.addSlide();
+    titleSlide.addText(config.title, {
       x: 0.5,
-      y: 0.3,
+      y: '40%',
       w: '90%',
-      fontSize: 18,
+      fontSize: 28,
       fontFace: branding.fontFamily,
       color: branding.primaryColor,
       bold: true,
     });
 
-    const tableRows = buildSlideTable(item, item.result.columns, branding);
-    const colCount = item.result.columns.length + 2; // label + cols + total
+    // One slide per analysis
+    for (const item of config.analyses) {
+      const slide = pptx.addSlide();
+      const isChartSlide =
+        item.visualizationType === 'chart' &&
+        canExportAsChart(item.chartType);
 
-    slide.addTable(tableRows, {
-      x: 0.5,
-      y: 1.0,
-      w: 12.3,
-      colW: Array(colCount).fill(12.3 / colCount),
-      rowH: 0.35,
-      autoPage: true,
-      autoPageRepeatHeader: true,
-    });
+      if (isChartSlide) {
+        const chartAdded = buildChartSlide(slide, item, chartBranding);
+        if (chartAdded) continue;
+        // If chart build failed, fall through to table
+      }
+
+      // Table export (default path, or fallback for unsupported chart types)
+      slide.addText(item.label, {
+        x: 0.5,
+        y: 0.3,
+        w: '90%',
+        fontSize: 18,
+        fontFace: branding.fontFamily,
+        color: branding.primaryColor,
+        bold: true,
+      });
+
+      // Add fallback footnote for unsupported chart types
+      if (item.visualizationType === 'chart' && !canExportAsChart(item.chartType)) {
+        slide.addText(
+          `Note: ${item.chartType} charts are not supported in PowerPoint — exported as table.`,
+          {
+            x: 0.5,
+            y: 6.8,
+            w: '90%',
+            fontSize: 7,
+            fontFace: branding.fontFamily,
+            color: '999999',
+            italic: true,
+          }
+        );
+      }
+
+      const tableRows = buildSlideTable(item, item.result.columns, branding);
+      const colCount = item.result.columns.length + 2; // label + cols + total
+
+      slide.addTable(tableRows, {
+        x: 0.5,
+        y: 1.0,
+        w: 12.3,
+        colW: Array(colCount).fill(12.3 / colCount),
+        rowH: 0.35,
+        autoPage: true,
+        autoPageRepeatHeader: true,
+      });
+    }
+
+    const output = await pptx.write({ outputType: 'uint8array' });
+    return output as Uint8Array;
+  } catch (error) {
+    if (error instanceof ExportError) throw error;
+    throw new ExportError(
+      `PowerPoint generation failed: ${error instanceof Error ? error.message : String(error)}`,
+      'GENERATION_FAILED'
+    );
   }
-
-  const output = await pptx.write({ outputType: 'uint8array' });
-  return output as Uint8Array;
 }

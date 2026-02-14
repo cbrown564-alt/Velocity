@@ -41,7 +41,9 @@ export const runCrosstabForExport = async ({
   });
 
   const reqId = crypto.randomUUID();
-  return new Promise<RunCrosstabResult>((resolve) => {
+  const TIMEOUT_MS = 30_000;
+
+  const queryPromise = new Promise<RunCrosstabResult>((resolve) => {
     const handler = (event: MessageEvent<WorkerResponse>) => {
       const response = event.data;
       if (response.requestId !== reqId) return;
@@ -67,4 +69,13 @@ export const runCrosstabForExport = async ({
       context: request.context,
     } as WorkerRequest);
   });
+
+  const timeoutPromise = new Promise<RunCrosstabResult>((resolve) => {
+    setTimeout(() => {
+      console.warn(`[Export] Crosstab query timed out after ${TIMEOUT_MS}ms`);
+      resolve({ data: [], tableStats: null });
+    }, TIMEOUT_MS);
+  });
+
+  return Promise.race([queryPromise, timeoutPromise]);
 };

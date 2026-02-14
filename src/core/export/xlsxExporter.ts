@@ -1,5 +1,5 @@
 import ExcelJS from 'exceljs';
-import { ExportConfig, AnalysisExportItem } from './types';
+import { ExportConfig, AnalysisExportItem, ExportError } from './types';
 import { ProcessedRow, ProcessedColumn, ProcessedCell } from '../../types/processedData';
 
 const SIG_LETTERS: Record<string, string> = {
@@ -22,7 +22,9 @@ function flattenRows(rows: ProcessedRow[], result: ProcessedRow[] = []): Process
 function addAnalysisSheet(
   workbook: ExcelJS.Workbook,
   item: AnalysisExportItem,
-  index: number
+  index: number,
+  headerColorArgb: string,
+  headerTextArgb: string
 ): void {
   const showSig = item.options?.showSignificance !== false;
   const sheetName = item.label.slice(0, 31).replace(/[\\/*?[\]:]/g, '_');
@@ -37,9 +39,9 @@ function addAnalysisSheet(
     cell.fill = {
       type: 'pattern',
       pattern: 'solid',
-      fgColor: { argb: 'FFE07A5F' },
+      fgColor: { argb: headerColorArgb },
     };
-    cell.font = { bold: true, color: { argb: 'FFFFFFFF' }, size: 10 };
+    cell.font = { bold: true, color: { argb: headerTextArgb }, size: 10 };
     cell.alignment = { horizontal: 'center', vertical: 'middle' };
     cell.border = {
       top: { style: 'thin' },
@@ -109,14 +111,31 @@ function addAnalysisSheet(
 }
 
 export async function exportXlsx(config: ExportConfig): Promise<Uint8Array> {
-  const workbook = new ExcelJS.Workbook();
-  workbook.creator = 'Velocity';
-  workbook.created = new Date();
+  if (!config.analyses || config.analyses.length === 0) {
+    throw new ExportError('No analyses to export.', 'EMPTY_DATA');
+  }
 
-  config.analyses.forEach((item, index) => {
-    addAnalysisSheet(workbook, item, index);
-  });
+  try {
+    const workbook = new ExcelJS.Workbook();
+    workbook.creator = 'Velocity';
+    workbook.created = new Date();
 
-  const buffer = await workbook.xlsx.writeBuffer();
-  return new Uint8Array(buffer);
+    // Resolve theme-aware colors for headers
+    const headerHex = config.branding?.headerColor?.replace('#', '') ?? 'E07A5F';
+    const headerColorArgb = `FF${headerHex}`;
+    const headerTextArgb = 'FFFFFFFF';
+
+    config.analyses.forEach((item, index) => {
+      addAnalysisSheet(workbook, item, index, headerColorArgb, headerTextArgb);
+    });
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    return new Uint8Array(buffer);
+  } catch (error) {
+    if (error instanceof ExportError) throw error;
+    throw new ExportError(
+      `Excel generation failed: ${error instanceof Error ? error.message : String(error)}`,
+      'GENERATION_FAILED'
+    );
+  }
 }
