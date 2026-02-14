@@ -30,7 +30,7 @@ export const FilterModal: React.FC<FilterModalProps> = ({
     const [step, setStep] = useState<Step>('variable');
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedVariable, setSelectedVariable] = useState<Variable | null>(null);
-    const [selectedValues, setSelectedValues] = useState<number[] | string[]>([]);
+    const [selectedValues, setSelectedValues] = useState<Array<number | string>>([]);
 
     // New state for async values
     const [availableValues, setAvailableValues] = useState<{ value: string | number; label: string }[]>([]);
@@ -94,9 +94,9 @@ export const FilterModal: React.FC<FilterModalProps> = ({
 
     const handleValueToggle = (value: number | string) => {
         setSelectedValues(prev =>
-            prev.includes(value as any)
+            prev.includes(value)
                 ? prev.filter(v => v !== value)
-                : [...prev, value] as any
+                : [...prev, value]
         );
     };
 
@@ -255,7 +255,7 @@ export const FilterModal: React.FC<FilterModalProps> = ({
                                         </p>
                                     ) : (
                                         availableValues.map(vl => {
-                                            const isSelected = selectedValues.includes(vl.value as any);
+                                            const isSelected = selectedValues.includes(vl.value);
                                             return (
                                                 <button
                                                     key={vl.value}

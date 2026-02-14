@@ -139,7 +139,6 @@ describe('opfsFileManager', () => {
 
   afterEach(() => {
     if (originalStorage === undefined) {
-      // @ts-expect-error allow delete
       delete (navigator as any).storage;
     } else {
       Object.defineProperty(navigator, 'storage', {
@@ -152,7 +151,6 @@ describe('opfsFileManager', () => {
 
   it('isAvailable returns false when OPFS is missing or throws', async () => {
     // No storage
-    // @ts-expect-error allow delete
     delete (navigator as any).storage;
     await expect(opfs.isAvailable()).resolves.toBe(false);
 
