@@ -77,6 +77,7 @@ export const buildCrosstabRequest = ({
   }
 
   const firstRowVarSet = variableSets.find((s) => s.id === rowVars[0]);
+  const colVarSet = colVar ? variableSets.find((s) => s.id === colVar) : null;
   let measureVarId: string | undefined;
 
   if (firstRowVarSet?.structure === 'multiple') {
@@ -88,6 +89,28 @@ export const buildCrosstabRequest = ({
         countedValue: firstRowVarSet.countedValue ?? 1,
       };
     });
+  } else if (colVarSet?.structure === 'multiple') {
+    const resolveToCol = (id: string): string => {
+      const variable = dataset.variables.find((v) => v.id === id);
+      if (variable) return id;
+      const varSet = variableSets.find((s) => s.id === id);
+      if (varSet && varSet.variableIds.length > 0) {
+        return varSet.variableIds[0];
+      }
+      return id;
+    };
+
+    options.rowVars = rowVars.map(resolveToCol);
+    options.colVar = null;
+    options.columnMultipleColumns = colVarSet.variableIds.map((varId) => {
+      const variable = dataset.variables.find((v) => v.id === varId);
+      return {
+        name: varId,
+        label: variable?.label || varId,
+        countedValue: colVarSet.countedValue ?? 1,
+      };
+    });
+    colVarSet.variableIds.forEach((varId) => addToContext(varId));
   } else if (
     firstRowVarSet?.type === 'numeric' ||
     (colVar && variableSets.find((s) => s.id === colVar)?.type === 'numeric')

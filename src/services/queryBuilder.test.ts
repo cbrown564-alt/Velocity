@@ -7,6 +7,7 @@
 import { describe, it, expect } from 'vitest';
 import {
     buildCrosstabQuery,
+    buildOverlapQuery,
     buildDrillDownQuery,
     buildDrillDownCountQuery,
     buildFilterClause,
@@ -189,6 +190,55 @@ describe('queryBuilder', () => {
             expect(sql).toContain('WHERE "Q1_A" = 1');
             expect(sql).toContain('GROUP BY "Region"');
             expect(sql).toContain('UNION ALL');
+        });
+
+        it('builds a multiple-response column-banner query', () => {
+            const sql = buildCrosstabQuery({
+                rowVars: ['Gender'],
+                colVar: null,
+                columnMultipleColumns: [
+                    { name: 'Q5_1', label: 'Coke', countedValue: 1 },
+                    { name: 'Q5_2', label: 'Pepsi', countedValue: 1 },
+                ],
+            });
+
+            expect(sql).toContain(`SELECT "Gender" as rowKey_0, 'Coke' as colKey`);
+            expect(sql).toContain('WHERE "Q5_1" = 1');
+            expect(sql).toContain('GROUP BY "Gender"');
+            expect(sql).toContain('UNION ALL');
+        });
+    });
+
+    describe('buildOverlapQuery', () => {
+        it('builds overlap SQL for a 3-item MR set', () => {
+            const sql = buildOverlapQuery({
+                rowVars: ['Gender'],
+                columns: [
+                    { name: 'Q5_1', label: 'Coke', countedValue: 1 },
+                    { name: 'Q5_2', label: 'Pepsi', countedValue: 1 },
+                    { name: 'Q5_3', label: 'Fanta', countedValue: 1 },
+                ],
+            });
+
+            expect(sql).toContain(`'Coke' as colKeyA`);
+            expect(sql).toContain(`'Pepsi' as colKeyB`);
+            expect(sql).toContain(`COUNT(*) FILTER (WHERE "Q5_1" = 1 AND "Q5_2" = 1)::INTEGER as overlapCount`);
+            expect(sql).toContain('GROUP BY "Gender"');
+            expect(sql).toContain('UNION ALL');
+        });
+
+        it('builds weighted overlap SQL with overlapSumSqWeights', () => {
+            const sql = buildOverlapQuery({
+                rowVars: ['Region'],
+                columns: [
+                    { name: 'Q5_1', label: 'Coke', countedValue: 1 },
+                    { name: 'Q5_2', label: 'Pepsi', countedValue: 1 },
+                ],
+                weightVar: 'weight',
+            });
+
+            expect(sql).toContain('SUM("weight") FILTER (WHERE "Q5_1" = 1 AND "Q5_2" = 1)::DOUBLE as overlapCount');
+            expect(sql).toContain('SUM("weight" * "weight") FILTER (WHERE "Q5_1" = 1 AND "Q5_2" = 1)::DOUBLE as overlapSumSqWeights');
         });
     });
 

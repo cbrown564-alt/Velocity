@@ -8,6 +8,8 @@ interface SignificanceLegendProps {
   comparisonMethod?: 'cell_vs_rest' | 'pairwise';
   /** Active multiple-testing correction */
   correctionType?: 'none' | 'bonferroni' | 'fdr';
+  /** Whether dependent-sample overlap correction is active */
+  overlapCorrected?: boolean;
   /** Show methodology link */
   showMethodologyLink?: boolean;
   /** Callback when methodology link is clicked */
@@ -24,6 +26,7 @@ export const SignificanceLegend: React.FC<SignificanceLegendProps> = ({
   compact = false,
   comparisonMethod = 'cell_vs_rest',
   correctionType = 'none',
+  overlapCorrected = false,
   showMethodologyLink = true,
   onMethodologyClick,
 }) => {
@@ -127,6 +130,7 @@ export const SignificanceLegend: React.FC<SignificanceLegendProps> = ({
 
       <div className="mt-3 pt-2 border-t border-[var(--border-color)] text-[10px] text-[var(--text-secondary)]">
         {methodText} Multiple-testing correction: {correctionLabel}.
+        {overlapCorrected && ' Dependent-sample overlap correction is active.'}
       </div>
     </div>
   );

@@ -4,6 +4,7 @@ import {
     calculateZScore, calculateTScore, calculateESS,
     calculateChiSquare, chiSquareCDF,
     calculateMeanCI, calculateProportionCI,
+    calculateDependentProportionsTest,
     calculatePairwiseComparisons, ColumnStats,
     bonferroniCorrection, bonferroniAdjustedPValues,
     benjaminiHochbergFDR, benjaminiHochbergAdjustedPValues,
@@ -379,6 +380,26 @@ describe('Statistics', () => {
 
             expect(alpha05.get('A')?.sigLetters).toBe('');
             expect(alpha20.get('A')?.sigLetters).toBe('B');
+        });
+    });
+
+    describe('calculateDependentProportionsTest', () => {
+        it('returns near-zero difference when both proportions are identical with full overlap', () => {
+            const result = calculateDependentProportionsTest(0.50, 0.50, 0.50, 200);
+            expect(result.tScore).toBeCloseTo(0, 6);
+            expect(result.pValue).toBeCloseTo(1, 6);
+        });
+
+        it('detects significance for large dependent proportion differences', () => {
+            const result = calculateDependentProportionsTest(0.60, 0.30, 0.20, 300);
+            expect(Math.abs(result.tScore)).toBeGreaterThan(1.96);
+            expect(result.pValue).toBeLessThan(0.05);
+        });
+
+        it('handles non-positive variance safely', () => {
+            const result = calculateDependentProportionsTest(1, 1, 1, 100);
+            expect(result.tScore).toBe(0);
+            expect(result.pValue).toBe(1);
         });
     });
 

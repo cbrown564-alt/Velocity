@@ -138,4 +138,19 @@ describe('StatisticsTooltip', () => {
     expect(screen.getByText('Bonferroni')).toBeInTheDocument();
     expect(screen.getByText('0.031')).toBeInTheDocument();
   });
+
+  it('shows overlap-corrected note for dependent samples', () => {
+    render(
+      <StatisticsTooltip
+        stats={{
+          ...mockStats,
+          isOverlapCorrected: true,
+        }}
+        sig="high_95"
+        value={45.2}
+      />
+    );
+
+    expect(screen.getByText('Dependent samples (overlap-corrected)')).toBeInTheDocument();
+  });
 });

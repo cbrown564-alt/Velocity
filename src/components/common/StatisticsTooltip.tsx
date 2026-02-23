@@ -5,6 +5,7 @@ interface CellStats {
   pValue: number;
   adjustedPValue?: number;
   correctionMethod?: 'none' | 'bonferroni' | 'fdr';
+  isOverlapCorrected?: boolean;
   effN: number;
 }
 
@@ -43,7 +44,7 @@ export const StatisticsTooltip: React.FC<StatisticsTooltipProps> = ({
   ci95,
   ci80,
 }) => {
-  const { tScore, pValue, adjustedPValue, correctionMethod, effN } = stats;
+  const { tScore, pValue, adjustedPValue, correctionMethod, isOverlapCorrected, effN } = stats;
   const hasCorrection = correctionMethod && correctionMethod !== 'none' && adjustedPValue !== undefined;
 
   const correctionLabel =
@@ -107,6 +108,11 @@ export const StatisticsTooltip: React.FC<StatisticsTooltipProps> = ({
         <div className="text-[10px] text-[var(--text-secondary)]">
           Cell vs Rest Comparison
         </div>
+        {isOverlapCorrected && (
+          <div className="text-[10px] text-[var(--text-secondary)]">
+            Dependent samples (overlap-corrected)
+          </div>
+        )}
       </div>
 
       {/* Statistics Grid */}

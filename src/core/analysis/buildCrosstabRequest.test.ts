@@ -36,4 +36,38 @@ describe('buildCrosstabRequest', () => {
 
     expect(request.analysisSettings).toBeUndefined();
   });
+
+  it('maps a multiple-response column set to columnMultipleColumns', () => {
+    const dataset = {
+      ...mockDataset,
+      variables: [
+        ...mockDataset.variables,
+        { id: 'mr_1', name: 'mr_1', label: 'Coke', type: 'nominal', valueLabels: [], missingValues: {} },
+        { id: 'mr_2', name: 'mr_2', label: 'Pepsi', type: 'nominal', valueLabels: [], missingValues: {} },
+      ],
+    };
+
+    const multipleColSet = {
+      id: 'set_mr_col',
+      name: 'Brands',
+      variableIds: ['mr_1', 'mr_2'],
+      structure: 'multiple' as const,
+      countedValue: 1,
+    };
+
+    const request = buildCrosstabRequest({
+      dataset,
+      variableSets: [mockNominalSet, multipleColSet],
+      rowVars: [mockNominalSet.id],
+      colVar: multipleColSet.id,
+      filters: [],
+    });
+
+    expect(request.options.rowVars).toEqual([mockNominalVariable.id]);
+    expect(request.options.colVar).toBeNull();
+    expect(request.options.columnMultipleColumns).toEqual([
+      { name: 'mr_1', label: 'Coke', countedValue: 1 },
+      { name: 'mr_2', label: 'Pepsi', countedValue: 1 },
+    ]);
+  });
 });

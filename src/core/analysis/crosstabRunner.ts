@@ -13,6 +13,7 @@ import { DatabaseAdapter } from '../DatabaseAdapter';
 import {
   buildCrosstabQuery,
   buildGridHistogramQuery,
+  buildOverlapQuery,
   CrosstabQueryOptions,
   buildFilterClause,
   escapeIdentifier,
@@ -30,6 +31,7 @@ import {
   applyMultipleTestingCorrection,
   bonferroniAdjustedPValues,
   benjaminiHochbergAdjustedPValues,
+  calculateDependentProportionsTest,
 } from '../../services/statistics';
 import { AnalysisRunner } from './AnalysisRunner';
 import { analysisRegistry } from './registry';
@@ -361,17 +363,20 @@ export async function runCrosstab(
   }
 
   // 3. Significance Testing
-  if (modifiedOptions.colVar) {
+  if (modifiedOptions.colVar || (modifiedOptions.columnMultipleColumns && modifiedOptions.columnMultipleColumns.length > 0)) {
     const significanceOptions = {
       ...DEFAULT_SIGNIFICANCE_OPTIONS,
       ...modifiedOptions.significanceOptions,
     };
     const alpha = significanceLevelToAlpha(significanceOptions.significanceLevel);
     const pairwiseMode = significanceOptions.comparisonMethod === 'pairwise';
+    const isMeans = modifiedOptions.measureVar !== undefined;
+    const isColumnMultipleResponse = !!(modifiedOptions.columnMultipleColumns && modifiedOptions.columnMultipleColumns.length > 0);
 
     const totalsOptions = {
       ...modifiedOptions,
       colVar: null,
+      columnMultipleColumns: undefined,
     };
     const totalsSql = buildCrosstabQuery(totalsOptions);
     const totalsResult = await adapter.query(totalsSql);
@@ -414,7 +419,6 @@ export async function runCrosstab(
 
       if (totalRow) {
         let tScore = 0;
-        const isMeans = modifiedOptions.measureVar !== undefined;
 
         const cellN = row.weightedCount ?? row.count;
         const cellESS = calculateESS(cellN, row.sumSqWeights ?? cellN);
@@ -583,9 +587,42 @@ export async function runCrosstab(
       }>>();
 
       const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-      const isMeans = modifiedOptions.measureVar !== undefined;
+      const overlapMap = new Map<string, { overlapN: number }>();
+      const pairKey = (rowKey: string, a: string, b: string) => {
+        const [left, right] = a < b ? [a, b] : [b, a];
+        return `${rowKey}|||${left}|||${right}`;
+      };
+
+      if (isColumnMultipleResponse && !isMeans && modifiedOptions.columnMultipleColumns && modifiedOptions.columnMultipleColumns.length > 1) {
+        const overlapSql = buildOverlapQuery({
+          rowVars: modifiedOptions.rowVars,
+          columns: modifiedOptions.columnMultipleColumns,
+          filters: modifiedOptions.filters,
+          weightVar: modifiedOptions.weightVar,
+        });
+        const overlapResult = await adapter.query(overlapSql);
+        (overlapResult.rows as any[]).forEach(overlapRow => {
+          const keyParts = [];
+          let idx = 0;
+          while (overlapRow[`rowKey_${idx}`] !== undefined) {
+            keyParts.push(String(overlapRow[`rowKey_${idx}`]));
+            idx++;
+          }
+          const rowKey = keyParts.join('|');
+          const overlapN = Number(overlapRow.overlapCount ?? 0);
+          overlapMap.set(
+            pairKey(rowKey, String(overlapRow.colKeyA), String(overlapRow.colKeyB)),
+            { overlapN }
+          );
+        });
+      }
 
       rowKeyGroups.forEach((rowCells, rowKey) => {
+        const totalRow = totalsMap.get(rowKey);
+        const totalN = Number(totalRow?.weightedCount ?? totalRow?.count ?? 0);
+        const totalESS = calculateESS(totalN, Number(totalRow?.sumSqWeights ?? totalN));
+        const baseNForDependentTest = modifiedOptions.weightVar ? totalESS : totalN;
+
         const columnStatsArray: ColumnStats[] = rowCells.map(cell => {
           const cellN = cell.weightedCount ?? cell.count;
           const cellESS = calculateESS(cellN, cell.sumSqWeights ?? cellN);
@@ -600,6 +637,12 @@ export async function runCrosstab(
             proportion: !isMeans && colN > 0 ? cellN / colN : undefined,
             ess: cellESS,
           };
+        });
+        const cellNByColKey = new Map<string, number>();
+        rowCells.forEach(cell => {
+          const key = String(cell.colKey);
+          const n = Number(cell.weightedCount ?? cell.count);
+          cellNByColKey.set(key, n);
         });
 
         const columnLetters = new Map<string, string>();
@@ -624,6 +667,7 @@ export async function runCrosstab(
             if (colA.ess < 2 || colB.ess < 2) continue;
 
             let tScore = 0;
+            let pValue = 1;
             if (isMeans) {
               if (
                 colA.mean !== undefined && colB.mean !== undefined &&
@@ -633,15 +677,30 @@ export async function runCrosstab(
                   colA.mean, colA.stdDev, colA.ess,
                   colB.mean, colB.stdDev, colB.ess
                 );
+                pValue = calculatePValue(tScore);
               }
             } else {
-              if (colA.proportion !== undefined && colB.proportion !== undefined) {
+              const overlapCorrected = isColumnMultipleResponse && baseNForDependentTest > 2;
+              if (overlapCorrected) {
+                const nA = Number(cellNByColKey.get(colA.key) ?? 0);
+                const nB = Number(cellNByColKey.get(colB.key) ?? 0);
+                if (totalN > 0) {
+                  const pA = nA / totalN;
+                  const pB = nB / totalN;
+                  const overlap = overlapMap.get(pairKey(rowKey, colA.key, colB.key));
+                  const pAB = Number(overlap?.overlapN ?? 0) / totalN;
+                  const dependentResult = calculateDependentProportionsTest(pA, pB, pAB, baseNForDependentTest);
+                  tScore = dependentResult.tScore;
+                  pValue = dependentResult.pValue;
+                }
+              } else if (colA.proportion !== undefined && colB.proportion !== undefined) {
                 const s1 = Math.sqrt(colA.proportion * (1 - colA.proportion));
                 const s2 = Math.sqrt(colB.proportion * (1 - colB.proportion));
                 tScore = calculateTScore(
                   colA.proportion, s1, colA.ess,
                   colB.proportion, s2, colB.ess
                 );
+                pValue = calculatePValue(tScore);
               }
             }
 
@@ -652,7 +711,7 @@ export async function runCrosstab(
               letterA: columnLetters.get(colA.key)!,
               letterB: columnLetters.get(colB.key)!,
               tScore,
-              pValue: calculatePValue(tScore),
+              pValue,
             });
           }
         }
@@ -681,12 +740,16 @@ export async function runCrosstab(
 
       rowKeyGroups.forEach((rowCells, rowKey) => {
         const rowResults = groupResults.get(rowKey);
+        const overlapCorrected = isColumnMultipleResponse && !isMeans;
         rowCells.forEach(cell => {
           const result = rowResults?.get(cell.colKey);
           if (!result) return;
           result.higherThan.sort();
           cell.sigLetters = result.higherThan.join('');
           cell.columnLetter = result.columnLetter;
+          if (overlapCorrected && cell.stats) {
+            cell.stats.isOverlapCorrected = true;
+          }
         });
       });
     } else {

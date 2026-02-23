@@ -252,6 +252,116 @@ function buildMultipleQuery(options: MultipleQueryOptions): string {
     return unionParts.join(' UNION ALL ');
 }
 
+/**
+ * Builds a query for multiple-response structure used as COLUMNS.
+ *
+ * Example:
+ * Row variable = Gender, Column variable = Brand awareness MR set.
+ * Output columns become MR items (Coke, Pepsi, ...), rows remain Gender categories.
+ */
+interface ColumnMultipleQueryOptions {
+    rowVars: string[];
+    columns: Array<{ name: string; label: string; countedValue: number }>;
+    filters?: Filter[];
+    weightVar?: string;
+}
+
+function buildColumnMultipleQuery(options: ColumnMultipleQueryOptions): string {
+    const { rowVars, columns, filters, weightVar } = options;
+    const whereClause = buildFilterClause(filters);
+
+    const rowSelectors = rowVars.length > 0
+        ? rowVars.map((r, i) => `"${escapeIdentifier(r)}" as rowKey_${i}`).join(', ')
+        : `'Total' as rowKey_0`;
+
+    const groupByCols = rowVars.map(r => `"${escapeIdentifier(r)}"`).join(', ');
+    const groupByClause = groupByCols ? `GROUP BY ${groupByCols}` : '';
+
+    const statsExpr = weightVar
+        ? `SUM("${escapeIdentifier(weightVar)}")::DOUBLE as count, SUM("${escapeIdentifier(weightVar)}" * "${escapeIdentifier(weightVar)}")::DOUBLE as sumSqWeights`
+        : `COUNT(*)::INTEGER as count`;
+
+    const unionParts = columns.map(({ name, label, countedValue }) => {
+        const parts = [
+            `SELECT ${rowSelectors}, '${escapeString(label)}' as colKey, ${statsExpr}`,
+            `FROM main`,
+        ];
+
+        const conditions: string[] = [`"${escapeIdentifier(name)}" = ${countedValue}`];
+        if (whereClause) {
+            conditions.push(whereClause);
+        }
+
+        parts.push(`WHERE ${conditions.join(' AND ')}`);
+        if (groupByClause) {
+            parts.push(groupByClause);
+        }
+
+        return parts.join(' ');
+    });
+
+    return unionParts.join(' UNION ALL ');
+}
+
+export interface OverlapQueryOptions {
+    rowVars: string[];
+    columns: Array<{ name: string; label: string; countedValue: number }>;
+    filters?: Filter[];
+    weightVar?: string;
+}
+
+/**
+ * Builds pairwise overlap query for dependent-sample significance tests.
+ *
+ * Returns one row per (row group, column pair), with overlap counts for respondents
+ * who selected both columns in a multi-response set.
+ */
+export function buildOverlapQuery(options: OverlapQueryOptions): string {
+    const { rowVars, columns, filters, weightVar } = options;
+    if (columns.length < 2) {
+        return `SELECT 'Total' as rowKey_0, '' as colKeyA, '' as colKeyB, 0 as overlapCount WHERE 1 = 0`;
+    }
+
+    const whereClause = buildFilterClause(filters);
+    const rowSelectors = rowVars.length > 0
+        ? rowVars.map((r, i) => `"${escapeIdentifier(r)}" as rowKey_${i}`).join(', ')
+        : `'Total' as rowKey_0`;
+
+    const groupByCols = rowVars.map(r => `"${escapeIdentifier(r)}"`).join(', ');
+    const groupByClause = groupByCols ? `GROUP BY ${groupByCols}` : '';
+
+    const unionParts: string[] = [];
+
+    for (let i = 0; i < columns.length; i++) {
+        for (let j = i + 1; j < columns.length; j++) {
+            const colA = columns[i];
+            const colB = columns[j];
+            const overlapCondition = `"${escapeIdentifier(colA.name)}" = ${colA.countedValue} AND "${escapeIdentifier(colB.name)}" = ${colB.countedValue}`;
+
+            const overlapExpr = weightVar
+                ? `SUM("${escapeIdentifier(weightVar)}") FILTER (WHERE ${overlapCondition})::DOUBLE as overlapCount,
+                   SUM("${escapeIdentifier(weightVar)}" * "${escapeIdentifier(weightVar)}") FILTER (WHERE ${overlapCondition})::DOUBLE as overlapSumSqWeights`
+                : `COUNT(*) FILTER (WHERE ${overlapCondition})::INTEGER as overlapCount`;
+
+            const parts = [
+                `SELECT ${rowSelectors}, '${escapeString(colA.label)}' as colKeyA, '${escapeString(colB.label)}' as colKeyB, ${overlapExpr}`,
+                `FROM main`,
+            ];
+
+            if (whereClause) {
+                parts.push(`WHERE ${whereClause}`);
+            }
+            if (groupByClause) {
+                parts.push(groupByClause);
+            }
+
+            unionParts.push(parts.join(' '));
+        }
+    }
+
+    return unionParts.join(' UNION ALL ');
+}
+
 export interface CrosstabQueryOptions {
     rowVars: string[];
     colVar?: string | null;
@@ -261,6 +371,8 @@ export interface CrosstabQueryOptions {
     gridColumns?: Array<{ name: string; label: string }>;
     /** For multiple structure: column names, labels, and their counted value */
     multipleColumns?: Array<{ name: string; label: string; countedValue: number }>;
+    /** For multiple structure used as column banner: MR columns become crosstab columns */
+    columnMultipleColumns?: Array<{ name: string; label: string; countedValue: number }>;
     /** For scale variables: the variable to aggregate (Mean, Median, etc.) */
     measureVar?: string;
     /** Label to use for the measure row (e.g. "Age") */
@@ -290,6 +402,7 @@ export function buildCrosstabQuery(options: CrosstabQueryOptions): string {
         weightVar,
         gridColumns,
         multipleColumns,
+        columnMultipleColumns,
         measureVar,
         measureLabel,
         gridAggregate
@@ -300,13 +413,18 @@ export function buildCrosstabQuery(options: CrosstabQueryOptions): string {
         return buildGridQuery({ columns: gridColumns, filters, weightVar, colVar, aggregate: gridAggregate });
     }
 
+    // Special case: Multiple structure used as columns (column banner)
+    if (columnMultipleColumns && columnMultipleColumns.length > 0) {
+        return buildColumnMultipleQuery({ rowVars, columns: columnMultipleColumns, filters, weightVar });
+    }
+
     // Special case: Multiple structure (filtered by counted value)
     if (multipleColumns && multipleColumns.length > 0) {
         return buildMultipleQuery({ columns: multipleColumns, filters, weightVar, colVar });
     }
 
     // Validation
-    if (rowVars.length === 0 && !measureVar) {
+    if (rowVars.length === 0 && !measureVar && !(columnMultipleColumns && columnMultipleColumns.length > 0)) {
         throw new Error('At least one row variable or a measure variable is required');
     }
 

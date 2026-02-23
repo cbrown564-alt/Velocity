@@ -332,6 +332,37 @@ export interface ColumnStats {
 }
 
 /**
+ * Correlated Proportions Test (dependent/overlapping samples).
+ *
+ * Used for pairwise comparisons when the same respondents can appear
+ * in multiple columns (e.g., multi-response column banners).
+ */
+export function calculateDependentProportionsTest(
+    pA: number,
+    pB: number,
+    pAB: number,
+    n: number
+): { tScore: number; pValue: number } {
+    if (n <= 1) {
+        return { tScore: 0, pValue: 1 };
+    }
+
+    // Clamp proportions to stable bounds
+    const a = Math.min(1, Math.max(0, pA));
+    const b = Math.min(1, Math.max(0, pB));
+    const ab = Math.min(1, Math.max(0, pAB));
+
+    const variance = (a * (1 - a) + b * (1 - b) - 2 * (ab - a * b)) / n;
+    if (!Number.isFinite(variance) || variance <= 0) {
+        return { tScore: 0, pValue: 1 };
+    }
+
+    const tScore = (a - b) / Math.sqrt(variance);
+    const pValue = calculatePValue(tScore);
+    return { tScore, pValue };
+}
+
+/**
  * Calculate Pairwise Column Comparisons
  *
  * Performs O(N²) pairwise t-tests between all columns and returns

@@ -209,6 +209,7 @@ export interface AggregatedRow {
     pValue: number;
     adjustedPValue?: number;
     correctionMethod?: 'none' | 'bonferroni' | 'fdr';
+    isOverlapCorrected?: boolean;
     effN: number;
   };
   /** 95% Confidence interval for mean or proportion */

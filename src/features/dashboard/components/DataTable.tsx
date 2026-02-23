@@ -60,6 +60,10 @@ export const DataTable: React.FC<DataTableProps> = ({
   tableStats,
 }) => {
   const analysisSettings = useVelocityStore((state) => state.analysisSettings);
+  const overlapCorrected = useMemo(
+    () => data.some((row) => row.stats?.isOverlapCorrected),
+    [data]
+  );
 
   // UI State for expanded rows
   const [expandedKeys, setExpandedKeys] = useState<Record<string, boolean>>({});
@@ -476,6 +480,7 @@ export const DataTable: React.FC<DataTableProps> = ({
                 compact
                 comparisonMethod={analysisSettings.comparisonMethod}
                 correctionType={analysisSettings.correctionType}
+                overlapCorrected={overlapCorrected}
                 showMethodologyLink
                 onMethodologyClick={() => setShowMethodology(!showMethodology)}
               />

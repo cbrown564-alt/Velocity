@@ -68,6 +68,11 @@ describe('SignificanceLegend', () => {
       expect(screen.getByText(/Multiple-testing correction: Bonferroni/)).toBeInTheDocument();
     });
 
+    it('shows overlap correction note when enabled', () => {
+      render(<SignificanceLegend overlapCorrected />);
+      expect(screen.getByText(/Dependent-sample overlap correction is active/)).toBeInTheDocument();
+    });
+
     it('renders header with title', () => {
       render(<SignificanceLegend />);
 
