@@ -345,9 +345,11 @@ export interface ColumnStats {
 export function calculatePairwiseComparisons(
     columns: ColumnStats[],
     isMetric: boolean,
-    alpha: number = 0.05
+    alpha: number = 0.05,
+    correction: 'none' | 'bonferroni' | 'fdr' = 'none'
 ): Map<string, PairwiseResult> {
     const results = new Map<string, PairwiseResult>();
+    const comparisons: Array<{ colA: string; colB: string; tScore: number; pValue: number }> = [];
 
     // Assign letters A, B, C, ... to columns
     const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -365,9 +367,6 @@ export function calculatePairwiseComparisons(
             sigLetters: '',
         });
     });
-
-    // Critical t-value for given alpha (two-tailed)
-    const tCritical = alpha === 0.05 ? 1.96 : (alpha === 0.20 ? 1.28 : 1.96);
 
     // Perform pairwise comparisons
     for (let i = 0; i < columns.length; i++) {
@@ -401,23 +400,38 @@ export function calculatePairwiseComparisons(
                 }
             }
 
-            // Check significance
-            if (Math.abs(tScore) > tCritical) {
-                const letterA = columnLetters.get(colA.key)!;
-                const letterB = columnLetters.get(colB.key)!;
-
-                if (tScore > 0) {
-                    // A is significantly higher than B
-                    results.get(colA.key)!.higherThan.push(letterB);
-                    results.get(colB.key)!.lowerThan.push(letterA);
-                } else {
-                    // B is significantly higher than A
-                    results.get(colB.key)!.higherThan.push(letterA);
-                    results.get(colA.key)!.lowerThan.push(letterB);
-                }
-            }
+            comparisons.push({
+                colA: colA.key,
+                colB: colB.key,
+                tScore,
+                pValue: calculatePValue(tScore),
+            });
         }
     }
+
+    if (comparisons.length === 0) {
+        return results;
+    }
+
+    const pValues = comparisons.map(c => c.pValue);
+    const isSignificant = applyMultipleTestingCorrection(pValues, correction, alpha);
+
+    comparisons.forEach((comparison, index) => {
+        if (!isSignificant[index]) return;
+
+        const letterA = columnLetters.get(comparison.colA)!;
+        const letterB = columnLetters.get(comparison.colB)!;
+
+        if (comparison.tScore > 0) {
+            // A is significantly higher than B
+            results.get(comparison.colA)!.higherThan.push(letterB);
+            results.get(comparison.colB)!.lowerThan.push(letterA);
+        } else if (comparison.tScore < 0) {
+            // B is significantly higher than A
+            results.get(comparison.colB)!.higherThan.push(letterA);
+            results.get(comparison.colA)!.lowerThan.push(letterB);
+        }
+    });
 
     // Build sigLetters string for each column
     results.forEach((result, key) => {

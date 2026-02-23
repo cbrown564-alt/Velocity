@@ -1,205 +1,119 @@
-# Velocity Implementation Tracker
+# Velocity Implementation Tracker (Execution DAG)
 
-**Current Phase:** Phase 2 (The Strategic Workbench)
-**Key Goal:** Feature Parity with Displayr.
+This tracker is the operational delivery board. It is dependency-first and optimized for multi-agent orchestration.
 
-## Phase 1: The Core (Foundation)
+Use with:
+- Strategic roadmap: `docs/roadmap_00_strategic_guide.md`
+- Scope gates: `docs/blue_02_feature_matrix.md`
+- Agent rules: `docs/AGENTS.md`
+- Handoff template: `docs/agent_handoff_template.md`
 
-### Milestone 1.1: The Ingestion Engine (Week 1)
-*Goal: Parse .SAV files in browser -> DuckDB*
-- [x] Initialize Repository (Vite/React/TS)
-- [x] Configure `duckdb-wasm`
-- [x] Create Web Worker for DuckDB (`services/analysisWorker.ts`)
-- [x] Implement `readstat-wasm` (or `apache-arrow` ingestion)
-- [x] **Verify:** User can drop a 10MB .SAV file and see it logged to console in < 2s.
+## 1. Status Model
 
-### Milestone 1.2: The Pantry (Variable List) (Week 2)
-*Goal: Display 500+ variables without lag*
-- [x] Create `VariableStore` (Zustand) backed by DuckDB (`store/index.ts`)
-- [x] Build Variable List Component (`DraggableVariable.tsx`)
-- [x] Implement "Smart Icon" detection (Nominal/Ordinal/Scale)
-- [x] Virtualized List Component (React-Window) for 500+ variables
+- `Not started`: work item has not begun
+- `In progress`: active implementation
+- `Blocked`: waiting on dependency or decision
+- `In review`: implementation complete, awaiting review gates
+- `Done`: merged with required evidence
 
-### Milestone 1.3: The Canvas (Crosstabs) (Week 3)
-*Goal: Drag-and-drop analysis*
-- [x] Implement Drag-and-Drop system (@dnd-kit)
-- [x] Create `CrosstabEngine` (DuckDB SQL Generation)
-- [x] Render HTML Table with Significance Testing placeholders
-- [x] **Implement Global Filter Bar UI & Logic** (Currently hardcoded in App.tsx)
+## 2. Gate Legend
 
-### Milestone 1.4: Architecture & Design System
-*Added based on arch docs*
-- [x] Data model aligned with `arch_02_data_model.md` (`types/index.ts`)
-- [x] Design tokens from `design_01_system.md` (`index.css`)
-- [x] Newsreader + Atkinson Hyperlegible typography
+- `T`: Typecheck
+- `L`: Lint
+- `U`: Targeted unit tests
+- `I`: Integration tests
+- `G`: Golden tests (for statistical/chart parity)
+- `A`: Architecture/invariant checks (`src/core` seam, Worker compute, dual-state integrity)
 
-### Milestone 1.5: Refactor Legacy UI (Prototype Debt)
-*Goal: Bring early prototype components up to architectural standards*
-> [!WARNING]
-> These components were built before the core architecture and design system. They function but need refactoring to match the new standards.
+Default owner flow for all items: `Architect -> Implementer -> Reviewer`
+Handoff required for every owner transition using `docs/agent_handoff_template.md`.
 
-- [x] Refactor `features/dashboard/components/DataTable.tsx`
-- [x] Refactor `features/dashboard/components/DraggableVariable.tsx`
-- [x] Refactor `components/common/DropZone.tsx`
-- [x] Refactor `components/overlays/DataDrawer.tsx` (UI Only)
-- [x] Refactor `components/overlays/RecodeModal.tsx`
-- [x] **Support Nested Rows** (Refactor Data Model & Table)
+## 3. Dependency Graph (Open Work)
 
-### Milestone 1.6: Testing Infrastructure
-*Goal: Comprehensive testing apparatus for current and future development*
-- [x] Configure Vitest with React Testing Library
-- [x] GitHub Actions CI/CD workflow (`.github/workflows/test.yml`)
-- [x] Extract `queryBuilder.ts` for pure SQL generation testing
-- [x] Unit tests: 25 tests for SQL generation logic
-- [x] Component tests: 25 tests for DropZone & DraggableVariable
-- [x] Test fixtures aligned with `arch_02_data_model.md`
-- [x] Architecture doc: `docs/arch_03_testing.md`
+```mermaid
+graph TD
+  S2STAT1["S2-STAT-1 Pairwise Comparisons"] --> S2STAT2["S2-STAT-2 Multiple Comparison Corrections"]
+  S2STAT1 --> S2STAT3["S2-STAT-3 Overlap Handling"]
+  S2STAT2 --> S2STAT4["S2-STAT-4 TSL Evaluation"]
+  S2STAT3 --> S2STAT4
 
-### Milestone 1.7: Data Ingestion Bug Fixes
-*Goal: Fix issues discovered during real-world SAV testing*
-> [!CAUTION]
-> Critical bugs found: Dual DuckDB instances cause data to be unavailable to some components.
+  S2EXP1["S2-EXP-1 PPTX Export Engine"] --> S2EXP2["S2-EXP-2 Editable Chart Fidelity"]
 
-- [x] **Fix Dual DuckDB Architecture** - `RecodeModal` uses main-thread `duckDb.ts` but data is in Worker
-- [x] **Fix Variable Type Detection** - SAV variables with value labels should be `nominal`, not `scale`
-- [x] **Unify Data Access** - All components must query via store/worker, deprecate `duckDb.ts`
-- [x] **Test with `test_data/sleep.sav`** - Verify filter, recode, and table all show correct data
+  S2STAT4 --> S3HARM1["S3-HARM-1 Harmonization Workspace"]
+  S2EXP2 --> S3HARM1
 
----
+  S3HARM1 --> S3R1["S3-R-1 WebR Bridge"]
+  S3R1 --> S3STATS1["S3-STATS-1 Advanced Models"]
+  S3R1 --> S3PREP1["S3-PREP-1 Recipe Manager + Time Travel"]
 
-## Phase 2: The Strategic Workbench (Commercial)
-*Goal: Reporting Parity with Displayr (Complementing SPSS for Data Prep)*
+  S3PREP1 --> S4AI1["S4-AI-1 Semantic Reasoning"]
+  S4AI1 --> S4AI2["S4-AI-2 Natural Language Querying"]
+  S4AI2 --> S4AI3["S4-AI-3 Action Hub"]
 
-> [!NOTE]
-> **Strategy Shift:** Phase 2 transforms Velocity from a single-screen prototype into a **Multi-Mode Application**. It introduces Visual Data Engineering (Card Sorting) and a robust Statistical Foundation (Summary Stats) before tackling advanced features.
+  S4AI3 --> S5CLOUD1["S5-CLOUD-1 Realtime Collaboration"]
+  S5CLOUD1 --> S5CLOUD2["S5-CLOUD-2 Direct Data Imports"]
+```
 
-### Milestone 2.1: The Hybrid Hub-and-Spoke Architecture
-*Goal: Separate "Data Management" from "Analysis" workflows as per `research_08_UX_patterns_for_surveys.md`.*
-- [x] **Design Task:** Define "Variable Manager" (Card Sorting) vs "Analysis Canvas" (Tables) modes.
-- [x] Implement App Shell & Navigation (Sidebar/Tabs for Modes).
-- [x] Refactor State Manager for Multi-Mode support.
-- [x] **Refactor Store:** Slice `src/store/index.ts` (currently 700+ lines) into modular slices (e.g., `createDataSlice`, `createUISlice`).
-- [x] **Theming Infrastructure:** Refactored theme system to a dynamic token-based architecture supporting multiple themes (e.g., Mission Control, Liquid Glass).
-- [x] **Local-First State:** Persistent state across modes without reloading [ref](research_08_UX_patterns_for_surveys.md#L385).
+## 4. Execution Board
 
-### Milestone 2.2: Data Management (Visual ETL)
-> [!TIP]
-> **Paradigm Shift:** Moving from "Legacy List View" to "Visual Construct Builder" (Card Sorting).
+### 4.1 Critical Path (Now)
 
-- [x] Refactor Row Shelf to `@dnd-kit/sortable`
-- [x] **Connect DataDrawer to Worker** (View-only drill-down)
-- [x] Basic Recoding UI (Modal-based)
-- [x] **Variable Card Sorting** (The "Variable Manager" Screen).
-- [x] **Miller Column Navigation:** Hierarchy: Data Sources > Folders > Sets > Variables > Inspector [ref](research_08_UX_patterns_for_surveys.md#L149).
-- [x] **Rich Variable Cards:** Sparklines (Mini-histograms) and Quality Indicators (Missingness %) [ref](research_08_UX_patterns_for_surveys.md#L177).
-- [x] **Context Awareness:** Bi-directional focus (Selecting variable in Analysis opens it in Manager) [ref](research_08_UX_patterns_for_surveys.md#L131).
-- [x] **Faceted Search:** Filter variable list by Type, Status, and Quality [ref](research_08_UX_patterns_for_surveys.md#L168).
-- [x] **Visual ETL (Charts):** Click-to-filter and Click-to-exclude context menus [ref](research_08_UX_patterns_for_surveys.md#L252).
-- [x] **Semantic Variable Sets** (Grids represented as Card Clusters).
-    - [x] **Refinement:** Significantly improved discovery heuristics for fragmented and multi-scale Numeric Grids.
-- [x] **Verify Multi-Response Interaction:** Ensure `VariableSet` works for multiple response data.
+| ID | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| S2-STAT-1 | Stats | Pairwise column proportions tests (A/B/C) | Milestone 2.3 complete | Not started | Yes | T,L,U,G,A | - |
+| S2-STAT-2 | Stats | FDR + Bonferroni corrections | S2-STAT-1 | Not started | Yes | T,L,U,G,A | - |
+| S2-STAT-3 | Stats | Dependent-sample overlap handling (multi-response) | S2-STAT-1 | Not started | Yes | T,L,U,G,A | - |
+| S2-STAT-4 | Stats | TSL variance estimation evaluation + go/no-go decision | S2-STAT-2, S2-STAT-3 | Not started | Yes/TBD | T,L,U,I,G,A | - |
+| S2-EXP-1 | Export | Browser-side PPTX export using `PptxGenJS` | Milestone 2.4 complete | In review | Yes | T,L,U,I,A | 3d80d06, cab233a, e840767 |
+| S2-EXP-2 | Export | Editable chart fidelity verification in PowerPoint | S2-EXP-1 | In progress | No | U,I,A | cab233a |
 
-### Milestone 2.3: Statistical Foundation
-*Goal: "Contextually Relevant Statistics" (Beyond simple counts)*
-- [x] **Numeric Summaries:** Mean, Median, StdDev, Min/Max for Scale variables.
-- [x] **Smart Table Stats:** Auto-toggle between Counts (Nominal) and Averages (Scale).
-- [x] **Significance Testing (Phase 1):** Displayr-Parity Implementation
-    - [x] **Effective Sample Size (ESS):** Used for all tests ($\sum w^2 / \sum w^2$).
-    - [x] **T-Tests:** Welch's T-Test for Means and Proportions.
-    - [x] **Cell vs Complement:** Testing Part vs Rest (instead of Part vs Whole).
-    - [x] **Sig-Dots & Arrows:** Green/Red arrows for significant differences.
-    - [x] **Hover-to-Explain:** Tooltip showing p-value and reference.
-    - *See [arch_04_statistical_engine.md](arch_04_statistical_engine.md) for full architecture details.*
+### 4.2 Next (Phase 3)
 
-### Milestone 2.7: Statistical Engine Phase 2 (Advanced)
-*Goal: Full Displayr Parity for Complex Tables*
-- [ ] **Pairwise Comparisons:** Column Proportions Tests (Letters A/B/C) with $O(N^2)$ complexity.
-- [ ] **Multiple Comparison Corrections:** False Discovery Rate (FDR) and Bonferroni.
-- [ ] **Overlap Handling:** Dependent Samples T-Tests for Multiple Response sets.
-- [ ] **Taylor Series Linearization (TSL):** Advanced variance estimation if ESS approximation proves insufficient.
+| ID | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| S3-HARM-1 | Harmonization | Lasso + Sankey + mapping workflow baseline | S2-STAT-4, S2-EXP-2 | Not started | Yes | T,L,U,I,A | - |
+| S3-R-1 | Runtime | WebR Worker + Arrow-to-R marshalling | S3-HARM-1 | Not started | Yes | T,L,U,I,A | - |
+| S3-STATS-1 | Stats | Advanced models (`lme4`) + raking path integration | S3-R-1 | Not started | Yes | T,L,U,I,G,A | - |
+| S3-PREP-1 | Data Prep | Recipe manager + time travel | S3-R-1 (if R-backed steps), else S3-HARM-1 | Not started | Yes | T,L,U,I,A | - |
+| S3-PREP-2 | Data Prep | Block formula builder + programming-by-example | S3-PREP-1 | Not started | Yes | T,L,U,I,A | - |
 
-### Milestone 2.4: Major Charting Refactor (D3.js)
-*Goal: Consolidate visualization logic and implement Analysis Charts.*
-- [x] **Refactor Sparklines and Distributions to use D3.js core** (Unified renderers).
-- [x] **Performance Optimization:** Moved complex tree building and chart transformations to the Worker thread to ensure UI responsiveness.
-- [x] **Implement Chart View:** In-app visualization on the Analysis Canvas.
-    - [x] Horizontal Bar, Stacked Bar, Grouped Bar
-    - [x] Diverging Bar (Likert), Donut, Histogram Adapter
-- [x] **Universal Context Menus:** Unified `ChartContextMenu` for all visualizations.
-- [x] **Shared Interaction Hooks:** Drag-to-select and right-click preparation for both Manager and Canvas.
-- [/] **Visual Recoding** (Drag-to-Merge) - *Implemented for Bar/Column charts. Histogram bucketing (resizing) deferred. Note: Drag-to-merge excluded from Grouped Bar charts by design.*
+### 4.3 Later (Phase 4-5)
 
+| ID | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| S4-AI-1 | AI | Semantic reasoning + auto-code for text | S3-PREP-1 | Not started | Yes | T,L,U,I,A | - |
+| S4-AI-2 | AI | Text-to-SQL/Text-to-state interpreter | S4-AI-1 | Not started | Yes | T,L,U,I,A | - |
+| S4-AI-3 | AI | Action hub (Linear/Jira export workflows) | S4-AI-2 | Not started | Yes | T,L,U,I,A | - |
+| S5-CLOUD-1 | Cloud | Realtime collaboration backend + UI integration | S4-AI-3 | Not started | Yes | T,L,U,I,A | - |
+| S5-CLOUD-2 | Cloud | Direct survey platform imports via backend proxy | S5-CLOUD-1 | Not started | Yes | T,L,U,I,A | - |
 
-### Milestone 2.5: The Weighting Engine
-*Scope: Application Only (No Weight Creation)*
-- [x] Apply Weight Variable to DuckDB Queries
-- [x] Display Weighted N vs Unweighted N
-- [x] **Implement Weighting UI Controls:** Global Weight Dropzone and Toggle.
+### 4.4 Recent Delivered (Last 20 Commits Snapshot)
 
-### Milestone 2.6: PowerPoint Export
-*Goal: Presentation Parity*
-- [ ] Implement `PptxGenJS` Export
-- [ ] Verify Editable Charts in PowerPoint
+Snapshot reference window: commits on February 5, 2026 through February 23, 2026.
 
-### Reference
-*   **Source:** `docs/research_08_UX_patterns_for_surveys.md` - Validates the Hub-and-Spoke model and Visual ETL patterns.
-*   **Expansion:** `docs/research_11_UX_data_analysis.md` - Defines "Magnetic Canvas" and "Just-in-Time" variable access.
-*   **Strategy:** `docs/research_12_pathways_and_recommendations.md` - Strategic roadmap for Spotlight Search and Grid Layouts.
+| ID | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| S2-DECK-1 | Analysis Deck | Analysis state capture, editable headers, unsaved indicator | Hub-and-spoke baseline | Done | Yes | T,L,U,A | a3679f7 |
+| S2-DECK-2 | Analysis Deck | Duplicate/delete slide actions + inline film-strip timeline dock | S2-DECK-1 | Done | Yes | T,L,U,A | b97658f, 14adb12 |
+| S2-DECK-3 | Analysis Deck | Empty-variable fallback for slide rendering robustness | S2-DECK-2 | Done | No | U,A | 26e0d6f |
+| S3-WS-1 | Workspace | Longitudinal workspace support (WaveTimeline, CrossWavePanel) | Workspace baseline | Done | Yes | T,L,U,I,A | 947f2fd |
+| S3-WS-2 | Workspace | Batch operations + workspace export/import modal | S3-WS-1 | Done | Yes | T,L,U,I,A | 11bfd89 |
 
----
+## 5. Completed Foundations (Summary)
 
-## Phase 3: Project Aletheia (Academic)
-*Goal: Advanced Statistics & Deep Harmonization*
+Completed work remains documented in git history and prior tracker revisions. Current completed anchors that open work depends on:
+- Phase 1 core ingestion, canvas, design system, testing baseline, and worker unification
+- Phase 2 hub-and-spoke architecture and visual ETL foundation
+- Phase 2 statistical foundation (Phase 1 significance)
+- Phase 2 charting refactor and weighting application
+- Export UI integration and worker-backed export plumbing (pending final fidelity sign-off)
+- Analysis deck interaction foundation (state capture, timeline actions, timeline rail redesign)
+- Workspace expansion: longitudinal support plus batch operations/export-import workflows
 
-### Milestone 3.0: The Harmonization Workspace
-- [ ] **Lasso Selection:** Spatial grouping/recoding on scatterplots [ref](research_08_UX_patterns_for_surveys.md#L353).
-- [ ] **Sankey Mapper:** Visualizing wave-over-wave changes.
-- [ ] **Harmonization Logic:** Generating mapping scripts.
-*Goal: Advanced Statistics*
+## 6. Update Rules
 
-### Milestone 3.1: The WebR Bridge
-- [ ] Configure WebR Worker
-- [ ] Implement Data marshalling (Arrow -> R)
-
-### Milestone 3.2: Advanced Stats
-- [ ] Implement `lme4` (Mixed Models)
-- [ ] **Implement Weight Creation (Raking):**
-    - [ ] Port C++ Raking library to Wasm (Replacing original WebR plan)
-    - [ ] UI for Target Definition (Rim Weighting)
-
-### Milestone 3.3: Advanced Data Preparation
-*Goal: Reproducibility and Complex Logic*
-- [ ] **Recipe Manager:** Non-destructive step history (Import -> Rename -> Recode) [ref](research_08_UX_patterns_for_surveys.md#L226).
-- [ ] **Time Travel:** Edit/Revert any step in the recipe stack.
-- [ ] **Block-based Formula Builder:** Visual logic construction [ref](research_08_UX_patterns_for_surveys.md#L244).
-- [ ] **Programming by Example:** Smart text cleaning (Flash Fill style) [ref](research_08_UX_patterns_for_surveys.md#L199).
-
-
----
-
-## Phase 4: The Cognitive Engine (AI-Native)
-*Goal: Additive AI capabilities that leverage the local-first architecture for privacy-preserving intelligence.*
-
-### Milestone 4.1: Semantic Reasoning ("Glass Box")
-- [ ] Implement WebGPU-based Local LLM (e.g., Llama via Wasm/WebLLM)
-- [ ] Build "Auto-Code" interface for Text Variables
-- [ ] Implement "Semantic Cross-Tabs" (Correlating themes with quant data)
-
-### Milestone 4.2: Natural Language Querying
-- [ ] Implement Text-to-SQL / Text-to-State interpreter
-- [ ] Build Chat Interface compatible with `queryBuilder`
-
-### Milestone 4.3: The Action Hub
-- [ ] Implement OAuth Connectors for Linear/Jira
-- [ ] Create "Export to Issue Tracker" flow
-
-## Phase 5: Cloud Extensions (Future)
-*Goal: Features that strictly require a backend.*
-
-### Milestone 5.1: Real-time Collaboration
-- [ ] Backend: WebSocket / Firebase Sync Service
-- [ ] Refactor `CollaboratorCursor.tsx` (Currently mock-only)
-- [ ] Refactor `AvatarGroup.tsx` (Currently mock-only)
-
-### Milestone 5.2: Direct Data Imports
-- [ ] **Serverless Connection Manager:** Backend proxy for Qualtrics/Decipher API auth & CORS. (Option A from research)
+When updating this file:
+1. Never add a work item without an `ID` and `Depends on` field.
+2. If `Contract change` is `Yes`, link evidence in PR description using `.github/pull_request_template.md`.
+3. Move items only by status transitions (`Not started` -> `In progress` -> `In review` -> `Done`).
+4. Keep dependency graph and tables in sync in the same commit.

@@ -51,6 +51,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
     const variableSets = useVelocityStore((state) => state.variableSets);
     const worker = useVelocityStore((state) => state.worker);
     const isQuerying = useVelocityStore((state) => state.isQuerying);
+    const analysisSettings = useVelocityStore((state) => state.analysisSettings);
 
     const activeSlideTitle = useMemo(() => {
         if (!activeSlideId) return null;
@@ -149,6 +150,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                     colVar: analysisState.colVar,
                     filters: analysisState.filters,
                     weightVar,
+                    analysisSettings,
                 });
 
                 const slideConfig = buildExportConfig({

@@ -59,7 +59,12 @@ describe('Integration: Store <-> Worker Analysis Flow', () => {
             type: 'runCrosstab',
             options: expect.objectContaining({
                 rowVars: [mockNominalVariable.id]
-            })
+            }),
+            analysisSettings: expect.objectContaining({
+                comparisonMethod: 'cell_vs_rest',
+                correctionType: 'none',
+                significanceLevel: 0.95,
+            }),
         }));
 
         // 4. Simulate Response

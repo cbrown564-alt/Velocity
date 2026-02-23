@@ -1035,7 +1035,14 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
       case 'runCrosstab': {
         if (!adapter) throw new Error('DB not initialized');
         const start = performance.now();
-        const crosstabResult = await coreRunCrosstab(adapter, request.options, request.context);
+        const crosstabResult = await coreRunCrosstab(
+          adapter,
+          {
+            ...request.options,
+            significanceOptions: request.analysisSettings,
+          },
+          request.context
+        );
         const duration = performance.now() - start;
         self.postMessage({
           type: 'queryResult',

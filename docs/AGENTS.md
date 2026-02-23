@@ -13,7 +13,7 @@ Before modifying code, agents must read the relevant documentation based on the 
 | `src/core/*` or `adapters/*` | `arch_03_headless_core.md` | To maintain the platform-independent seam and dependency direction. |
 | Statistical calcs, weights, or significance | `arch_04_statistical_engine.md` | To adhere to survey-native methodology and known correctness standards. |
 | Charts, D3 renderers, or canvas layout | `arch_05_visualisation_engine.md` | To follow the phased chart system architecture. |
-| The `docs/` folder or prioritizing work | `blue_01_unified_roadmap.md` & `blue_02_feature_matrix.md` | To enforce scope gates (Keep/Delay/Reject limits). |
+| The `docs/` folder or prioritizing work | `roadmap_00_strategic_guide.md`, `blue_02_feature_matrix.md` (and `blue_01_unified_roadmap.md` for full context) | To enforce scope gates and keep sequencing aligned to the current strategic plan. |
 | React UI, CSS, or Theme tokens | `design_01_system.md` & `design_02_ux_modes.md` | To respect strict mode separation (Manager vs Canvas) and tokens. |
 
 ---

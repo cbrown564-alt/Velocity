@@ -120,4 +120,22 @@ describe('StatisticsTooltip', () => {
 
     expect(screen.getByText(/Kish's Approximation/)).toBeInTheDocument();
   });
+
+  it('shows adjusted p-value and correction metadata when available', () => {
+    render(
+      <StatisticsTooltip
+        stats={{
+          ...mockStats,
+          adjustedPValue: 0.031,
+          correctionMethod: 'bonferroni',
+        }}
+        sig="high_95"
+        value={45.2}
+      />
+    );
+
+    expect(screen.getByText('Multiple Testing Correction')).toBeInTheDocument();
+    expect(screen.getByText('Bonferroni')).toBeInTheDocument();
+    expect(screen.getByText('0.031')).toBeInTheDocument();
+  });
 });

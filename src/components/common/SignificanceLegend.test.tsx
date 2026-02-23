@@ -32,6 +32,11 @@ describe('SignificanceLegend', () => {
 
       expect(screen.queryByText('How we calculate')).not.toBeInTheDocument();
     });
+
+    it('shows correction badge when correction is active', () => {
+      render(<SignificanceLegend compact correctionType="fdr" />);
+      expect(screen.getByText('Benjamini-Hochberg (FDR)')).toBeInTheDocument();
+    });
   });
 
   describe('full mode', () => {
@@ -56,6 +61,11 @@ describe('SignificanceLegend', () => {
 
       expect(screen.getByText(/Welch's T-Test/)).toBeInTheDocument();
       expect(screen.getByText(/Cell vs Rest/)).toBeInTheDocument();
+    });
+
+    it('shows selected correction method in footer', () => {
+      render(<SignificanceLegend correctionType="bonferroni" />);
+      expect(screen.getByText(/Multiple-testing correction: Bonferroni/)).toBeInTheDocument();
     });
 
     it('renders header with title', () => {

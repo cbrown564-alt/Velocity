@@ -111,7 +111,7 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
     },
 
     runAnalysis: async () => {
-        const { worker, tableConfig, dataset, variableSets, activeFilters } = get();
+        const { worker, tableConfig, dataset, variableSets, activeFilters, analysisSettings } = get();
         if (!worker || !dataset || tableConfig.rowVars.length === 0) {
             set({ queryResult: [], tableStats: null });
             return;
@@ -126,6 +126,7 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
             colVar: tableConfig.colVar,
             filters: activeFilters,
             weightVar: dataset?.weightVariable ?? null,
+            analysisSettings,
         });
 
         if (request.measureVarId) {
@@ -159,7 +160,8 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
             worker.postMessage({
                 type: 'runCrosstab',
                 options: request.options,
-                context: request.context
+                context: request.context,
+                analysisSettings: request.analysisSettings,
             } as WorkerRequest);
         });
     },

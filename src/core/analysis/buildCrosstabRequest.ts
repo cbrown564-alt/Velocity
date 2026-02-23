@@ -1,6 +1,12 @@
 import type { CrosstabQueryOptions } from '../../services/queryBuilder';
 import type { Dataset, Filter, Variable, VariableSet } from '../../types';
 
+interface AnalysisSignificanceSettings {
+  comparisonMethod: 'cell_vs_rest' | 'pairwise';
+  correctionType: 'none' | 'bonferroni' | 'fdr';
+  significanceLevel: 0.95 | 0.90 | 0.80;
+}
+
 interface BuildCrosstabRequestParams {
   dataset: Dataset;
   variableSets: VariableSet[];
@@ -8,6 +14,7 @@ interface BuildCrosstabRequestParams {
   colVar: string | null;
   filters: Filter[];
   weightVar?: string | null;
+  analysisSettings?: AnalysisSignificanceSettings;
 }
 
 interface CrosstabContext {
@@ -18,6 +25,7 @@ interface CrosstabContext {
 interface BuildCrosstabRequestResult {
   options: CrosstabQueryOptions & { includeDistributions?: boolean };
   context: CrosstabContext;
+  analysisSettings?: AnalysisSignificanceSettings;
   isWeighted: boolean;
   measureVarId?: string;
 }
@@ -29,6 +37,7 @@ export const buildCrosstabRequest = ({
   colVar,
   filters,
   weightVar,
+  analysisSettings,
 }: BuildCrosstabRequestParams): BuildCrosstabRequestResult => {
   const resolvedWeightVar = weightVar ?? dataset.weightVariable ?? null;
 
@@ -130,6 +139,13 @@ export const buildCrosstabRequest = ({
       variables: contextVariables,
       variableSets: contextVariableSets,
     },
+    analysisSettings: analysisSettings
+      ? {
+        comparisonMethod: analysisSettings.comparisonMethod,
+        correctionType: analysisSettings.correctionType,
+        significanceLevel: analysisSettings.significanceLevel,
+      }
+      : undefined,
     isWeighted: !!resolvedWeightVar,
     measureVarId,
   };

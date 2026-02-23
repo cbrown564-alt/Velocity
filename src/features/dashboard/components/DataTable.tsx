@@ -15,6 +15,7 @@ import { StatisticsTooltip } from '../../../components/common/StatisticsTooltip'
 import { SignificanceLegend } from '../../../components/common/SignificanceLegend';
 import { MethodologyPanel } from '../../../components/common/MethodologyPanel';
 import { AnalysisSettingsPanel } from '../../../components/common/AnalysisSettingsPanel';
+import { useVelocityStore } from '../../../store';
 import mergeStyles from './DataTable.module.css';
 export type { RowPathEntry, TableRowNode };
 
@@ -58,6 +59,8 @@ export const DataTable: React.FC<DataTableProps> = ({
   isGrid = false,
   tableStats,
 }) => {
+  const analysisSettings = useVelocityStore((state) => state.analysisSettings);
+
   // UI State for expanded rows
   const [expandedKeys, setExpandedKeys] = useState<Record<string, boolean>>({});
   // State for methodology panel visibility
@@ -238,7 +241,7 @@ export const DataTable: React.FC<DataTableProps> = ({
                 ? (Math.abs(cell.mean) === 0)
                 : (cell.percent === 0);
 
-              const isSignificant = cell.stats?.pValue !== undefined && cell.stats.pValue < 0.05;
+              const isSignificant = Boolean(cell.sig) || Boolean(cell.sigLetters && cell.sigLetters.length > 0);
               const textClass = isZero
                 ? 'text-[var(--text-secondary)] opacity-50'
                 : (isSignificant ? 'stat-significant' : 'text-[var(--text-primary)]');
@@ -471,6 +474,8 @@ export const DataTable: React.FC<DataTableProps> = ({
             {colVariable && (
               <SignificanceLegend
                 compact
+                comparisonMethod={analysisSettings.comparisonMethod}
+                correctionType={analysisSettings.correctionType}
                 showMethodologyLink
                 onMethodologyClick={() => setShowMethodology(!showMethodology)}
               />

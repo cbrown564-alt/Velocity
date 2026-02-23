@@ -3,6 +3,8 @@ import React from 'react';
 interface CellStats {
   tScore: number;
   pValue: number;
+  adjustedPValue?: number;
+  correctionMethod?: 'none' | 'bonferroni' | 'fdr';
   effN: number;
 }
 
@@ -41,7 +43,15 @@ export const StatisticsTooltip: React.FC<StatisticsTooltipProps> = ({
   ci95,
   ci80,
 }) => {
-  const { tScore, pValue, effN } = stats;
+  const { tScore, pValue, adjustedPValue, correctionMethod, effN } = stats;
+  const hasCorrection = correctionMethod && correctionMethod !== 'none' && adjustedPValue !== undefined;
+
+  const correctionLabel =
+    correctionMethod === 'bonferroni'
+      ? 'Bonferroni'
+      : correctionMethod === 'fdr'
+        ? 'Benjamini-Hochberg (FDR)'
+        : null;
 
   // Determine significance interpretation
   const getInterpretation = () => {
@@ -126,6 +136,24 @@ export const StatisticsTooltip: React.FC<StatisticsTooltipProps> = ({
           </div>
         </div>
       </div>
+
+      {hasCorrection && correctionLabel && (
+        <div className="pt-2 border-t border-[var(--border-color)]">
+          <div className="text-[10px] text-[var(--text-secondary)] uppercase tracking-wide mb-1">
+            Multiple Testing Correction
+          </div>
+          <div className="text-xs">
+            <span className="text-[var(--text-secondary)]">Method: </span>
+            <span className="font-medium">{correctionLabel}</span>
+          </div>
+          <div className="text-xs">
+            <span className="text-[var(--text-secondary)]">Adjusted p-value: </span>
+            <span className="font-mono">
+              {adjustedPValue < 0.001 ? '<0.001' : adjustedPValue.toFixed(3)}
+            </span>
+          </div>
+        </div>
+      )}
 
       {/* Confidence Intervals */}
       {ci95 && (

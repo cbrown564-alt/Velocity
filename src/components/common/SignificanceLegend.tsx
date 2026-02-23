@@ -4,6 +4,10 @@ import { ArrowUp, ArrowDown, Info } from 'lucide-react';
 interface SignificanceLegendProps {
   /** Show compact inline version */
   compact?: boolean;
+  /** Active comparison method */
+  comparisonMethod?: 'cell_vs_rest' | 'pairwise';
+  /** Active multiple-testing correction */
+  correctionType?: 'none' | 'bonferroni' | 'fdr';
   /** Show methodology link */
   showMethodologyLink?: boolean;
   /** Callback when methodology link is clicked */
@@ -18,9 +22,23 @@ interface SignificanceLegendProps {
  */
 export const SignificanceLegend: React.FC<SignificanceLegendProps> = ({
   compact = false,
+  comparisonMethod = 'cell_vs_rest',
+  correctionType = 'none',
   showMethodologyLink = true,
   onMethodologyClick,
 }) => {
+  const correctionLabel =
+    correctionType === 'bonferroni'
+      ? 'Bonferroni'
+      : correctionType === 'fdr'
+        ? 'Benjamini-Hochberg (FDR)'
+        : 'None';
+
+  const methodText =
+    comparisonMethod === 'pairwise'
+      ? 'Pairwise Welch\'s T-Test with column letter coding.'
+      : 'Welch\'s T-Test (Cell vs Rest) with Effective Sample Size adjustment for weighted data.';
+
   if (compact) {
     return (
       <div className="flex items-center gap-4 text-[10px] text-[var(--text-secondary)]">
@@ -42,6 +60,11 @@ export const SignificanceLegend: React.FC<SignificanceLegendProps> = ({
             <Info size={10} />
             <span>How we calculate</span>
           </button>
+        )}
+        {correctionType !== 'none' && (
+          <span className="text-[10px] px-1 py-0.5 rounded bg-[var(--bg-panel)] text-[var(--text-secondary)]">
+            {correctionLabel}
+          </span>
         )}
       </div>
     );
@@ -103,7 +126,7 @@ export const SignificanceLegend: React.FC<SignificanceLegendProps> = ({
       </div>
 
       <div className="mt-3 pt-2 border-t border-[var(--border-color)] text-[10px] text-[var(--text-secondary)]">
-        Comparisons use Welch's T-Test (Cell vs Rest) with Effective Sample Size adjustment for weighted data.
+        {methodText} Multiple-testing correction: {correctionLabel}.
       </div>
     </div>
   );

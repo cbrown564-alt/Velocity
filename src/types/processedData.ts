@@ -21,6 +21,8 @@ export interface ProcessedCell {
     stats?: {
         tScore: number;
         pValue: number;
+        adjustedPValue?: number;
+        correctionMethod?: 'none' | 'bonferroni' | 'fdr';
         effN: number;
     };
     /** 95% Confidence interval for mean or proportion */

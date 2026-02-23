@@ -34,6 +34,11 @@ export type WorkerRequest =
   | {
     type: 'runCrosstab';
     options: CrosstabQueryOptions & { includeDistributions?: boolean };
+    analysisSettings?: {
+      comparisonMethod: 'cell_vs_rest' | 'pairwise';
+      correctionType: 'none' | 'bonferroni' | 'fdr';
+      significanceLevel: 0.95 | 0.90 | 0.80;
+    };
     context: {
       variables: Record<string, Variable>;
       variableSets: Record<string, VariableSet>;

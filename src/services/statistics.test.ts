@@ -351,6 +351,35 @@ describe('Statistics', () => {
             expect(results.get('A')?.sigLetters).toBe('');
             expect(results.get('B')?.sigLetters).toBe('');
         });
+
+        it('applies Bonferroni correction to pairwise comparisons', () => {
+            const columns: ColumnStats[] = [
+                { key: 'A', mean: 5.0, stdDev: 1.0, ess: 25 },
+                { key: 'B', mean: 4.38, stdDev: 1.0, ess: 25 },
+                { key: 'C', mean: 4.35, stdDev: 1.0, ess: 25 },
+            ];
+
+            const uncorrected = calculatePairwiseComparisons(columns, true, 0.05, 'none');
+            const corrected = calculatePairwiseComparisons(columns, true, 0.05, 'bonferroni');
+
+            expect(uncorrected.get('A')?.sigLetters.length).toBeGreaterThan(0);
+            expect(corrected.get('A')?.sigLetters).toBe('');
+            expect(corrected.get('B')?.sigLetters).toBe('');
+            expect(corrected.get('C')?.sigLetters).toBe('');
+        });
+
+        it('respects significance alpha in pairwise comparisons', () => {
+            const columns: ColumnStats[] = [
+                { key: 'A', mean: 5.0, stdDev: 1.0, ess: 25 },
+                { key: 'B', mean: 4.55, stdDev: 1.0, ess: 25 },
+            ];
+
+            const alpha05 = calculatePairwiseComparisons(columns, true, 0.05);
+            const alpha20 = calculatePairwiseComparisons(columns, true, 0.20);
+
+            expect(alpha05.get('A')?.sigLetters).toBe('');
+            expect(alpha20.get('A')?.sigLetters).toBe('B');
+        });
     });
 
     describe('bonferroniCorrection', () => {
