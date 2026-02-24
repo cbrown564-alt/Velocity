@@ -23,8 +23,6 @@ interface StatisticsStatusBarProps {
   overlapCorrected: boolean;
   /** Callback to open methodology drawer */
   onMethodologyClick: () => void;
-  /** Whether any cells have significance markers */
-  hasSignificance: boolean;
 }
 
 /**
@@ -39,14 +37,15 @@ export const StatisticsStatusBar: React.FC<StatisticsStatusBarProps> = ({
   colVariable,
   overlapCorrected,
   onMethodologyClick,
-  hasSignificance,
 }) => {
   const [showSettings, setShowSettings] = useState(false);
 
-  // Determine if this is a cat x cat table (has significance testing)
-  const isCatCrossTab = colVariable !== null && hasSignificance;
-  // Cat x Numeric: colVariable exists but no significance markers (means display)
-  const isCatNumeric = colVariable !== null && !hasSignificance;
+  // Determine table type based on column variable's measurement level, not on
+  // whether any cells happen to be significant (which gives false negatives when
+  // no cells cross the threshold).
+  const isCatCrossTab = colVariable !== null && colVariable.type !== 'scale';
+  // Cat x Numeric: scale column variable (means/SD display, no Welch's T)
+  const isCatNumeric = colVariable !== null && colVariable.type === 'scale';
   // No column variable at all
   const noCol = colVariable === null;
 

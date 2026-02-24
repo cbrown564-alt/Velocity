@@ -468,7 +468,6 @@ export const DataTable: React.FC<DataTableProps> = ({
           colVariable={colVariable}
           overlapCorrected={overlapCorrected}
           onMethodologyClick={() => setShowMethodology(!showMethodology)}
-          hasSignificance={data.some(row => row.sig || (row.sigLetters && row.sigLetters.length > 0))}
         />
 
         {/* Methodology Drawer */}
