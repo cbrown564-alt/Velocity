@@ -50,6 +50,9 @@ export interface ThemeColors {
     vizScale8?: string
     vizScale9?: string
     vizScale10?: string
+    // Significance markers (explicitly chosen per theme for legibility at small sizes)
+    sigHigher?: string   // "significantly higher" arrow — green/positive per theme
+    sigLower?: string    // "significantly lower" arrow — red/negative per theme
 }
 
 export type ThemeRadius = 'none' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';

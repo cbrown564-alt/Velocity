@@ -57,6 +57,9 @@ export const softMachine: Theme = {
         vizScale8: '#476A5E',
         vizScale9: '#3A5A4E',
         vizScale10: '#2D4A3E', // Most Positive (Dark Green)
+        // Significance markers — chosen for contrast on Soft Machine's warm cream bg
+        sigHigher: '#547A6E', // mid sage-teal: reads clearly as green at small sizes
+        sigLower:  '#D32F2F', // same as destructiveForeground: clear red
     },
     radius: 'lg',
     shadow: 'sm',
@@ -124,6 +127,9 @@ export const missionControl: Theme = {
         vizScale8: '#BF4050',
         vizScale9: '#DF3848',
         vizScale10: '#FF5252', // Red
+        // Significance markers — chosen for contrast on Mission Control's dark bg
+        sigHigher: '#00E5A0', // bright teal-green: pops on dark background
+        sigLower:  '#FF5252', // same as vizDiverging6: bright red
     },
     radius: 'sm',
     shadow: 'lg',
@@ -191,6 +197,9 @@ export const liquidGlass: Theme = {
         vizScale8: '#FF5E54',
         vizScale9: '#FF3F33',
         vizScale10: '#FF3B30', // Red
+        // Significance markers — iOS system semantic colors
+        sigHigher: '#34C759', // iOS system green
+        sigLower:  '#FF2D55', // iOS system red/pink
     },
     radius: '2xl',
     shadow: 'xl', // We will augment this with CSS
