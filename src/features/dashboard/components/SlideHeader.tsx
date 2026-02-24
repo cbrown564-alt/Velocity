@@ -19,21 +19,21 @@ interface SlideHeaderProps {
 function generateDefaultTitle(
     rowVars: string[],
     colVar: string | null,
-    variables: Array<{ id: string; label: string }>
+    variableSets: Array<{ id: string; name: string }>
 ): string {
-    if (rowVars.length === 0) return 'New Analysis';
+    if (rowVars.length === 0) return 'New Slide';
 
     const rowLabels = rowVars.map(id =>
-        variables.find(v => v.id === id)?.label || id
+        variableSets.find(v => v.id === id)?.name || id
     );
     const colLabel = colVar
-        ? variables.find(v => v.id === colVar)?.label
+        ? variableSets.find(v => v.id === colVar)?.name
         : null;
 
     if (colLabel) {
         return `${rowLabels.join(' > ')} by ${colLabel}`;
     }
-    return `${rowLabels[0]} Frequency`;
+    return `${rowLabels[0]}`;
 }
 
 /**
@@ -69,6 +69,7 @@ export const SlideHeader: React.FC<SlideHeaderProps> = ({ className = '' }) => {
     const tableConfig = useVelocityStore(s => s.tableConfig);
     const activeFilters = useVelocityStore(s => s.activeFilters);
     const dataset = useVelocityStore(s => s.dataset);
+    const variableSets = useVelocityStore(s => s.variableSets);
 
     const activeSlide = slides.find(s => s.id === activeSlideId);
 
@@ -129,11 +130,19 @@ export const SlideHeader: React.FC<SlideHeaderProps> = ({ className = '' }) => {
         ? variables.find(v => v.id === dataset.weightVariable)?.label || null
         : null;
 
-    const displayTitle = activeSlide.title || generateDefaultTitle(
-        tableConfig.rowVars,
-        tableConfig.colVar,
-        variables
-    );
+    // Dynamic title logic: If the slide's saved title is simply the default "New Slide", 
+    // it means the user hasn't explicitly renamed it yet. If they've dropped variables
+    // into the workspace, we should auto-generate a descriptive title on the fly.
+    const isDefaultTitleUnedited = activeSlide.title === 'New Slide';
+    const hasVariablesInCanvas = tableConfig.rowVars.length > 0;
+
+    let displayTitle = activeSlide.title;
+    if (isDefaultTitleUnedited && hasVariablesInCanvas) {
+        displayTitle = generateDefaultTitle(tableConfig.rowVars, tableConfig.colVar, variableSets);
+    } else if (!activeSlide.title) {
+        // Fallback for complete empty state if needed
+        displayTitle = generateDefaultTitle(tableConfig.rowVars, tableConfig.colVar, variableSets);
+    }
 
     const displaySubtitle = activeSlide.subtitle || generateDefaultSubtitle(
         activeFilters?.length || 0,

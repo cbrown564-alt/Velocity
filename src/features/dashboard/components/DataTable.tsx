@@ -13,7 +13,7 @@ import { RowPathEntry, TableRowNode } from '../../../services/treeBuilder';
 import { Tooltip } from '../../../components/common/Tooltip';
 import { StatisticsTooltip } from '../../../components/common/StatisticsTooltip';
 import { SignificanceLegend } from '../../../components/common/SignificanceLegend';
-import { MethodologyPanel } from '../../../components/common/MethodologyPanel';
+import { MethodologyDrawer } from '../../../components/common/MethodologyPanel';
 import { AnalysisSettingsPanel } from '../../../components/common/AnalysisSettingsPanel';
 import { useVelocityStore } from '../../../store';
 import mergeStyles from './DataTable.module.css';
@@ -380,15 +380,6 @@ export const DataTable: React.FC<DataTableProps> = ({
         animate={{ opacity: 1, y: 0 }}
         className="w-full overflow-hidden bg-transparent border-none rounded-lg shadow-sm"
       >
-        <div className="p-4 border-b border-[var(--border-grid)] flex justify-between items-end">
-          <div>
-            <h3 className="text-lg font-semibold text-[var(--text-primary)] font-display">
-              {colVariable ? `${rowVariables.map(v => v.label).join(' > ')} by ${colVariable.label}` : `${rowVariables[0].label} Frequency`}
-            </h3>
-            <p className="text-xs text-[var(--text-secondary)] mt-1 font-body">N = {totalCount} Respondents</p>
-          </div>
-        </div>
-
         <div ref={tableContainerRef} className="overflow-x-auto overflow-y-auto max-h-[60vh] custom-scrollbar" style={{ position: 'relative' }}>
           <table className="w-full text-sm text-left border-collapse">
             <thead className="text-xs uppercase bg-[var(--bg-panel)] border-b border-[var(--border-grid)] data-[theme=liquid-glass]:bg-[var(--mat-panel-bg)] data-[theme=liquid-glass]:backdrop-blur-md">
@@ -524,16 +515,12 @@ export const DataTable: React.FC<DataTableProps> = ({
         </div>
 
         {/* Methodology Panel and Settings (expandable) */}
-        {showMethodology && (
-          <div className="px-4 pb-4 flex gap-4 flex-wrap">
-            <div className="flex-1 min-w-[300px]">
-              <MethodologyPanel defaultExpanded />
-            </div>
-            <div className="w-64">
-              <AnalysisSettingsPanel />
-            </div>
-          </div>
-        )}
+        <MethodologyDrawer
+          isOpen={showMethodology}
+          onClose={() => setShowMethodology(false)}
+        />
+
+        {/* We need to extract AnalysisSettingsPanel to its own trigger later, or leave it hidden for now */}
 
         {/* Drag ghost */}
         {dragState.isDragging && dragState.draggedItem && (

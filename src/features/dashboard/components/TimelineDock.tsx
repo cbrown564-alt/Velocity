@@ -71,12 +71,13 @@ interface SlideThumbProps {
     hasUnsavedChanges?: boolean;
     canDelete: boolean;
     section?: SlideSection;
+    variableSets?: Array<{ id: string; name: string }>;
     onClick: () => void;
     onDuplicate: () => void;
     onDelete: () => void;
 }
 
-const SlideThumb: React.FC<SlideThumbProps> = ({ slide, index, isActive, hasUnsavedChanges, canDelete, section, onClick, onDuplicate, onDelete }) => {
+const SlideThumb: React.FC<SlideThumbProps> = ({ slide, index, isActive, hasUnsavedChanges, canDelete, section, variableSets = [], onClick, onDuplicate, onDelete }) => {
     const [contextMenuOpen, setContextMenuOpen] = useState(false);
     const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
     const menuRef = useRef<HTMLDivElement>(null);
@@ -115,6 +116,21 @@ const SlideThumb: React.FC<SlideThumbProps> = ({ slide, index, isActive, hasUnsa
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, [contextMenuOpen]);
+
+    // Generate a short desc based on data state
+    const displayLabel = useMemo(() => {
+        const { rowVars, colVar } = slide.analysisState;
+        if (rowVars.length === 0) return 'New Slide';
+
+        const r1 = rowVars[0];
+        const r1Name = variableSets.find(v => v.id === r1)?.name || r1;
+
+        if (colVar) {
+            const cName = variableSets.find(v => v.id === colVar)?.name || colVar;
+            return `${r1Name} x ${cName}`;
+        }
+        return r1Name;
+    }, [slide.analysisState, variableSets]);
 
     return (
         <>
@@ -166,14 +182,14 @@ const SlideThumb: React.FC<SlideThumbProps> = ({ slide, index, isActive, hasUnsa
                     {/* Number */}
                     <span className="tabular-nums">{index + 1}</span>
 
-                    {/* Truncated title (only show on active or hover) */}
+                    {/* Truncated auto-title (only show on active or hover) */}
                     <span className={`
-                        max-w-[60px] truncate transition-all duration-150
-                        ${isActive ? 'opacity-100' : 'max-w-0 opacity-0 group-hover:max-w-[60px] group-hover:opacity-70'}
+                        max-w-[70px] truncate transition-all duration-150
+                        ${isActive ? 'opacity-100' : 'max-w-0 opacity-0 group-hover:max-w-[70px] group-hover:opacity-70'}
                     `}
                         style={{ fontFamily: 'var(--font-body, sans-serif)', fontWeight: 400 }}
                     >
-                        {slide.title}
+                        {displayLabel}
                     </span>
 
                     {/* Unsaved indicator */}
@@ -193,7 +209,7 @@ const SlideThumb: React.FC<SlideThumbProps> = ({ slide, index, isActive, hasUnsa
                                 border: '1px solid var(--border-color)',
                             }}
                         >
-                            {slide.title}
+                            {displayLabel}
                         </div>
                     </div>
                 )}
@@ -288,6 +304,7 @@ export const TimelineDock: React.FC = () => {
     const tableConfig = useVelocityStore((state) => state.tableConfig);
     const activeFilters = useVelocityStore((state) => state.activeFilters);
     const dataset = useVelocityStore((state) => state.dataset);
+    const variableSets = useVelocityStore((state) => state.variableSets);
 
     const activeSlideHasUnsavedChanges = useMemo(() => {
         const activeSlide = slides.find(s => s.id === activeSlideId);
@@ -366,24 +383,23 @@ export const TimelineDock: React.FC = () => {
         <>
             {/* Film-strip rail — sits in document flow as flex child */}
             <div
-                className="shrink-0 border-t border-[var(--border-color)]"
-                style={{ background: 'var(--bg-app)' }}
+                className="shrink-0 border-t border-[var(--border-color)] shadow-[0_-4px_20px_rgba(0,0,0,0.02)]"
+                style={{ background: 'var(--bg-panel)' }}
             >
-                <div className="flex items-center h-10 px-3 gap-1">
+                <div className="flex items-center h-14 px-4 gap-3 max-w-[1400px] mx-auto">
                     {/* Slide counter label */}
                     <span
-                        className="text-[10px] uppercase tracking-wider mr-2 shrink-0 select-none"
+                        className="text-xs font-semibold uppercase tracking-wider shrink-0 select-none bg-[var(--bg-active)] px-2 py-1 rounded"
                         style={{
                             color: 'var(--text-secondary)',
                             fontFamily: 'var(--font-mono, monospace)',
-                            opacity: 0.6,
                         }}
                     >
-                        {activeIndex + 1}/{slides.length}
+                        {activeIndex + 1} / {slides.length}
                     </span>
 
                     {/* Slide capsules */}
-                    <div className="flex items-center gap-0.5 flex-1 min-w-0 overflow-x-auto scrollbar-none">
+                    <div className="flex items-center gap-1.5 flex-1 min-w-0 overflow-x-auto scrollbar-none py-1">
                         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
                             <SortableContext items={slides.map(s => s.id)} strategy={horizontalListSortingStrategy}>
                                 {itemsWithDividers.map((item, i) => {
@@ -401,6 +417,7 @@ export const TimelineDock: React.FC = () => {
                                                 hasUnsavedChanges={isActive && activeSlideHasUnsavedChanges}
                                                 canDelete={slides.length > 1}
                                                 section={item.section}
+                                                variableSets={variableSets}
                                                 onClick={() => setActiveSlide(item.slide!.id)}
                                                 onDuplicate={() => duplicateSlide(item.slide!.id)}
                                                 onDelete={() => { setSlideToDelete(item.slide!.id); setDeleteModalOpen(true); }}
@@ -414,20 +431,20 @@ export const TimelineDock: React.FC = () => {
                     </div>
 
                     {/* Add slide button */}
-                    <button
-                        onClick={() => addSlide()}
-                        className="
-                            ml-1 shrink-0
-                            w-6 h-6 rounded-md
-                            flex items-center justify-center
-                            transition-colors duration-150
-                            hover:bg-[var(--bg-active)]
-                        "
-                        style={{ color: 'var(--text-secondary)' }}
-                        title="New Slide (N)"
-                    >
-                        <Plus size={14} strokeWidth={2} />
-                    </button>
+                    <div className="pl-2 border-l border-[var(--border-color)] shrink-0">
+                        <button
+                            onClick={() => addSlide()}
+                            className="
+                              flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium
+                              bg-[var(--color-accent)] text-white shadow-sm hover:shadow 
+                              transition-all duration-150 hover:bg-opacity-90 active:scale-95
+                          "
+                            title="New Slide (N)"
+                        >
+                            <Plus size={14} strokeWidth={2.5} />
+                            <span className="hidden sm:inline">New Slide</span>
+                        </button>
+                    </div>
                 </div>
             </div>
 

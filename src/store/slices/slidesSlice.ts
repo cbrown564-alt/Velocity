@@ -109,23 +109,16 @@ export const createSlidesSlice: SlidesSliceCreator = (set, get) => ({
     // Navigation Actions
     // ========================================================================
 
-    addSlide: (title = 'New Analysis', sectionId) => {
+    addSlide: (title = 'New Slide', sectionId) => {
         const state = get();
         const now = Date.now();
         const newId = `slide-${now}`;
 
-        // Capture current analysis state
-        const analysisState: SlideAnalysisState = {
-            rowVars: state.tableConfig?.rowVars ?? [],
-            colVar: state.tableConfig?.colVar ?? null,
-            filters: state.activeFilters ?? [],
-            weightVar: state.dataset?.weightVariable ?? null,
-        };
-
-        // Determine visualization from active slide or fallback
-        const activeSlide = state.slides.find((s) => s.id === state.activeSlideId);
-        const visualizationType = activeSlide?.visualizationType || 'table';
-        const chartType = activeSlide?.chartType;
+        // Feature: Blank Canvas for new slides.
+        // We do *not* inherit the current slide's state.
+        const analysisState = createDefaultAnalysisState();
+        const visualizationType = 'table';
+        const chartType = undefined;
 
         const newSlide: Slide = {
             id: newId,
@@ -139,7 +132,7 @@ export const createSlidesSlice: SlidesSliceCreator = (set, get) => ({
                 id: `cell-${now}`,
                 content: {
                     type: visualizationType,
-                    chartType: visualizationType === 'chart' ? chartType : undefined,
+                    chartType: undefined,
                 }
             }],
             sectionId,
@@ -152,6 +145,16 @@ export const createSlidesSlice: SlidesSliceCreator = (set, get) => ({
             activeSlideId: newId,
             activeCellId: `cell-${now}`,
         });
+
+        // After adding, we must clear the active analysis store state 
+        // so the UI (shelves, charts) instantly reflects the empty canvas.
+        const updatedState = get();
+        if (updatedState.setTableConfig) {
+            updatedState.setTableConfig({ rowVars: [], colVar: null });
+        }
+        if (updatedState.clearFilters) {
+            updatedState.clearFilters();
+        }
     },
 
     removeSlide: (slideId) => set((state) => {

@@ -1,23 +1,24 @@
 import React, { useState } from 'react';
-import { ChevronDown, ChevronRight, BookOpen, Calculator, Scale, Info } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { X, BookOpen, Calculator, Scale, Info } from 'lucide-react';
 
-interface MethodologyPanelProps {
-  /** Start expanded */
-  defaultExpanded?: boolean;
+interface MethodologyDrawerProps {
+  isOpen: boolean;
+  onClose: () => void;
 }
 
 /**
- * MethodologyPanel
+ * MethodologyDrawer
  *
- * An expandable panel explaining the statistical methodology used
+ * A slide-out panel explaining the statistical methodology used
  * in Velocity's analysis. Covers Cell-vs-Rest testing, ESS calculation,
  * and confidence level interpretation.
  */
-export const MethodologyPanel: React.FC<MethodologyPanelProps> = ({
-  defaultExpanded = false,
+export const MethodologyDrawer: React.FC<MethodologyDrawerProps> = ({
+  isOpen,
+  onClose,
 }) => {
-  const [isExpanded, setIsExpanded] = useState(defaultExpanded);
-  const [activeSection, setActiveSection] = useState<string | null>(null);
+  const [activeSection, setActiveSection] = useState<string>('cell-vs-rest');
 
   const sections = [
     {
@@ -25,23 +26,25 @@ export const MethodologyPanel: React.FC<MethodologyPanelProps> = ({
       icon: Calculator,
       title: 'Cell vs Rest Testing',
       content: (
-        <div className="space-y-3 text-[var(--text-secondary)]">
+        <div className="space-y-4 text-[var(--text-secondary)] text-sm">
           <p>
             Velocity uses a <strong className="text-[var(--text-primary)]">Cell vs Rest</strong> comparison
             methodology. For each cell in your crosstab, we compare its value against the complement
             (all other cells combined).
           </p>
-          <div className="bg-[var(--bg-active)] rounded p-3 font-mono text-xs">
-            <div className="text-[var(--text-primary)] mb-2">Example:</div>
-            <div>Cell: Brand A, Age 25-34 = 45%</div>
-            <div>Rest: All other Age groups for Brand A = 38%</div>
-            <div className="mt-2 text-[var(--color-success)]">
+          <div className="bg-[var(--bg-active)] rounded p-4 font-mono text-xs border border-[var(--border-color)]">
+            <div className="text-[var(--text-primary)] mb-2 font-semibold">Example:</div>
+            <div className="space-y-1">
+              <div>Cell: Brand A, Age 25-34 = 45%</div>
+              <div>Rest: All other Age groups for Brand A = 38%</div>
+            </div>
+            <div className="mt-3 text-[var(--color-success)] font-semibold">
               Result: Brand A over-indexes with 25-34 year olds
             </div>
           </div>
           <p>
             This approach answers: <em>"Is this cell unusually high or low compared to
-            everything else?"</em> It's ideal for quickly spotting patterns in survey data.
+              everything else?"</em> It's ideal for quickly spotting patterns in survey data.
           </p>
         </div>
       ),
@@ -51,16 +54,16 @@ export const MethodologyPanel: React.FC<MethodologyPanelProps> = ({
       icon: Scale,
       title: "Welch's T-Test",
       content: (
-        <div className="space-y-3 text-[var(--text-secondary)]">
+        <div className="space-y-4 text-[var(--text-secondary)] text-sm">
           <p>
             We use <strong className="text-[var(--text-primary)]">Welch's T-Test</strong> rather
             than Student's T-Test because it doesn't assume equal variances between groups.
             This is more appropriate for survey data where group sizes often differ.
           </p>
-          <div className="bg-[var(--bg-active)] rounded p-3 font-mono text-xs">
-            <div className="text-[var(--text-primary)] mb-2">Formula:</div>
+          <div className="bg-[var(--bg-active)] rounded p-4 font-mono text-xs border border-[var(--border-color)]">
+            <div className="text-[var(--text-primary)] mb-2 font-semibold">Formula:</div>
             <div>t = (x̄₁ - x̄₂) / √(s₁²/n₁ + s₂²/n₂)</div>
-            <div className="mt-2 text-[10px] text-[var(--text-secondary)]">
+            <div className="mt-3 text-[10px] text-[var(--text-tertiary)] bg-[var(--bg-panel)] p-2 rounded">
               Where x̄ = mean, s² = variance, n = sample size
             </div>
           </div>
@@ -76,16 +79,16 @@ export const MethodologyPanel: React.FC<MethodologyPanelProps> = ({
       icon: Info,
       title: 'Effective Sample Size (ESS)',
       content: (
-        <div className="space-y-3 text-[var(--text-secondary)]">
+        <div className="space-y-4 text-[var(--text-secondary)] text-sm">
           <p>
             When weighting is applied, the raw sample count doesn't reflect the true
             statistical power. <strong className="text-[var(--text-primary)]">Effective Sample Size</strong> adjusts
             for the impact of weights using Kish's approximation.
           </p>
-          <div className="bg-[var(--bg-active)] rounded p-3 font-mono text-xs">
-            <div className="text-[var(--text-primary)] mb-2">Kish's Formula:</div>
+          <div className="bg-[var(--bg-active)] rounded p-4 font-mono text-xs border border-[var(--border-color)]">
+            <div className="text-[var(--text-primary)] mb-2 font-semibold">Kish's Formula:</div>
             <div>ESS = (Σwᵢ)² / Σwᵢ²</div>
-            <div className="mt-2 text-[10px] text-[var(--text-secondary)]">
+            <div className="mt-3 text-[10px] text-[var(--text-tertiary)] bg-[var(--bg-panel)] p-2 rounded">
               Where wᵢ = weight for respondent i
             </div>
           </div>
@@ -94,12 +97,14 @@ export const MethodologyPanel: React.FC<MethodologyPanelProps> = ({
             the ESS will be lower than the raw count. This means fewer "effective" respondents
             and wider confidence intervals.
           </p>
-          <div className="bg-[var(--bg-active)] rounded p-3 text-xs">
-            <div className="text-[var(--text-primary)] mb-1">Example:</div>
-            <div>Raw n = 100 respondents</div>
-            <div>With uneven weights: ESS = 72</div>
-            <div className="mt-1 text-[10px]">
-              The statistical test treats this as 72 respondents, not 100
+          <div className="bg-[var(--bg-panel)] rounded p-4 border border-[var(--border-color)]">
+            <div className="text-[var(--text-primary)] mb-2 font-semibold text-xs">Practical Example:</div>
+            <div className="space-y-1 text-sm">
+              <div className="flex justify-between"><span>Raw n:</span> <span className="font-mono">100 respondents</span></div>
+              <div className="flex justify-between text-[var(--color-error)]"><span>With uneven weights ESS:</span> <span className="font-mono font-bold">72</span></div>
+            </div>
+            <div className="mt-2 text-xs italic text-[var(--text-tertiary)] border-t border-[var(--border-color)] pt-2">
+              The statistical test treats this as 72 respondents, not 100, making it harder to reach significance.
             </div>
           </div>
         </div>
@@ -110,101 +115,124 @@ export const MethodologyPanel: React.FC<MethodologyPanelProps> = ({
       icon: BookOpen,
       title: 'Confidence Levels',
       content: (
-        <div className="space-y-3 text-[var(--text-secondary)]">
+        <div className="space-y-4 text-[var(--text-secondary)] text-sm">
           <p>
             Velocity shows significance at two levels to help distinguish strong
             findings from directional indicators.
           </p>
-          <div className="space-y-2">
-            <div className="flex items-start gap-3 p-2 bg-[var(--bg-active)] rounded">
-              <div className="w-16 text-[var(--color-success)] font-semibold">95% CI</div>
-              <div>
-                <strong className="text-[var(--text-primary)]">Strong evidence.</strong>{' '}
-                Less than 5% chance this difference is due to random variation.
-                Standard threshold for publication-quality findings.
+          <div className="space-y-3">
+            <div className="p-4 bg-[var(--bg-active)] rounded border border-[var(--border-color)]">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-[var(--color-success)] font-bold text-lg">↑</span>
+                <span className="text-[var(--color-success)] font-semibold">95% Confidence</span>
               </div>
+              <p className="text-[var(--text-primary)] font-medium mb-1">Strong evidence</p>
+              <p>Less than 5% chance this difference is due to random variation. The standard threshold for publication-quality findings.</p>
             </div>
-            <div className="flex items-start gap-3 p-2 bg-[var(--bg-active)] rounded">
-              <div className="w-16 text-[var(--text-secondary)] font-semibold">80% CI</div>
-              <div>
-                <strong className="text-[var(--text-primary)]">Directional indicator.</strong>{' '}
-                About 20% chance of false positive. Useful for exploratory analysis
-                or when sample sizes are small.
+
+            <div className="p-4 bg-[var(--bg-active)] rounded border border-[var(--border-color)]">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-[var(--text-secondary)] font-bold text-lg">↑</span>
+                <span className="text-[var(--text-primary)] font-semibold">80% Confidence</span>
               </div>
+              <p className="text-[var(--text-primary)] font-medium mb-1">Directional indicator</p>
+              <p>About 20% chance of a false positive. Useful for exploratory analysis or when sample sizes are small.</p>
             </div>
           </div>
-          <p className="text-[11px] italic">
-            Tip: Use 95% for reporting and decisions. Use 80% to spot patterns worth
-            investigating with larger samples.
-          </p>
+          <div className="bg-[var(--color-accent)]/10 text-[var(--color-accent)] p-3 rounded text-xs font-medium border border-[var(--color-accent)]/20">
+            Tip: Use 95% for reporting and decisions. Use 80% to spot patterns worth investigating with larger samples.
+          </div>
         </div>
       ),
     },
   ];
 
   return (
-    <div className="bg-[var(--bg-panel)] border border-[var(--border-color)] rounded-lg overflow-hidden">
-      {/* Header - Always visible */}
-      <button
-        onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full px-4 py-3 flex items-center justify-between hover:bg-[var(--bg-active)] transition-colors"
-      >
-        <div className="flex items-center gap-2">
-          <BookOpen size={16} className="text-[var(--color-accent)]" />
-          <span className="font-semibold text-[var(--text-primary)]">
-            How We Calculate
-          </span>
-        </div>
-        {isExpanded ? (
-          <ChevronDown size={16} className="text-[var(--text-secondary)]" />
-        ) : (
-          <ChevronRight size={16} className="text-[var(--text-secondary)]" />
-        )}
-      </button>
+    <AnimatePresence>
+      {isOpen && (
+        <>
+          {/* Backdrop */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onClose}
+            className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40"
+          />
 
-      {/* Content - Expandable */}
-      {isExpanded && (
-        <div className="border-t border-[var(--border-color)]">
-          {/* Section Navigation */}
-          <div className="flex border-b border-[var(--border-color)] bg-[var(--bg-surface)]">
-            {sections.map((section) => {
-              const Icon = section.icon;
-              const isActive = activeSection === section.id;
-              return (
-                <button
-                  key={section.id}
-                  onClick={() => setActiveSection(isActive ? null : section.id)}
-                  className={`
-                    flex-1 px-3 py-2 text-xs font-medium transition-colors
-                    flex items-center justify-center gap-1.5
-                    ${isActive
-                      ? 'text-[var(--color-accent)] bg-[var(--bg-panel)] border-b-2 border-[var(--color-accent)]'
-                      : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-active)]'
-                    }
-                  `}
+          {/* Drawer */}
+          <motion.div
+            initial={{ x: '100%', opacity: 0.5 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: '100%', opacity: 0.5 }}
+            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+            className="fixed top-0 bottom-0 right-0 w-[400px] bg-[var(--bg-panel)] border-l border-[var(--border-color)] shadow-2xl z-50 flex flex-col"
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between p-6 border-b border-[var(--border-color)] shrink-0">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-[var(--color-accent)]/10 rounded-lg">
+                  <BookOpen size={20} className="text-[var(--color-accent)]" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-semibold text-[var(--text-primary)] font-display">How We Calculate</h2>
+                  <p className="text-xs text-[var(--text-secondary)]">Statistical Methodology</p>
+                </div>
+              </div>
+              <button
+                onClick={onClose}
+                className="p-2 rounded-full hover:bg-[var(--bg-active)] text-[var(--text-secondary)] transition-colors"
+                title="Close sidebar"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Navigation Tabs */}
+            <div className="flex flex-col border-b border-[var(--border-color)] shrink-0 bg-[var(--bg-surface)] p-2 gap-1">
+              {sections.map((section) => {
+                const Icon = section.icon;
+                const isActive = activeSection === section.id;
+                return (
+                  <button
+                    key={section.id}
+                    onClick={() => setActiveSection(section.id)}
+                    className={`
+                      px-4 py-2.5 rounded-md text-sm font-medium transition-all
+                      flex items-center gap-3 text-left
+                      ${isActive
+                        ? 'bg-[var(--bg-panel)] text-[var(--color-accent)] shadow-sm border border-[var(--border-color)]'
+                        : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-active)] border border-transparent'
+                      }
+                    `}
+                  >
+                    <Icon size={16} strokeWidth={isActive ? 2.5 : 2} />
+                    {section.title}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Content Area */}
+            <div className="flex-1 overflow-y-auto p-6 bg-[var(--bg-app)]">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeSection}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2 }}
                 >
-                  <Icon size={12} />
-                  <span className="hidden sm:inline">{section.title}</span>
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Active Section Content */}
-          {activeSection && (
-            <div className="p-4 text-sm leading-relaxed animate-[fadeInUp_0.15s_ease-out]">
-              {sections.find(s => s.id === activeSection)?.content}
+                  {sections.find(s => s.id === activeSection)?.content}
+                </motion.div>
+              </AnimatePresence>
             </div>
-          )}
 
-          {/* Default message when no section selected */}
-          {!activeSection && (
-            <div className="p-4 text-sm text-[var(--text-secondary)] text-center">
-              Select a topic above to learn about our statistical methodology.
-            </div>
-          )}
-        </div>
+          </motion.div>
+        </>
       )}
-    </div>
+    </AnimatePresence>
   );
 };
+
+export default MethodologyDrawer;

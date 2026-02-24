@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { LayoutGrid } from 'lucide-react';
 import { useVelocityStore } from '../../../store';
 import { AnalysisChart } from '../../../components/charts/AnalysisChart';
 import { DataTable } from './DataTable';
@@ -70,6 +71,15 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
     }
 
     const renderCellContent = () => {
+        if (resolvedRowVars.length === 0) {
+            return (
+                <div className="w-full h-full border-2 border-dashed border-[var(--border-color-muted)] rounded-xl flex flex-col items-center justify-center text-[var(--text-secondary)] gap-4 bg-[var(--bg-panel)]/50">
+                    <LayoutGrid size={48} className="opacity-20" />
+                    <p className="text-sm font-medium">Drag variables to the shelves above to start analysis</p>
+                </div>
+            );
+        }
+
         // Use true slide state
         const contentType = activeSlide.visualizationType;
 
@@ -82,7 +92,7 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
                     enableVisualETL: true
                 };
                 return (
-                    <div className="w-full h-full min-h-[400px] p-4 bg-[var(--mat-panel-bg,var(--bg-panel))] backdrop-blur-[var(--mat-panel-filter,0)] rounded-lg shadow-sm border border-[var(--border-color)]">
+                    <div className="w-full h-full p-4 flex flex-col">
                         <AnalysisChart
                             data={chartData}
                             config={config}
@@ -98,7 +108,7 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
                 // Render legacy table - assuming it handles its own data fetching for now
                 // In future, we pass props
                 return (
-                    <div className="w-full h-full bg-[var(--mat-panel-bg,var(--bg-panel))] backdrop-blur-[var(--mat-panel-filter,0)] rounded-lg shadow-sm border border-[var(--border-color)] overflow-hidden">
+                    <div className="w-full h-full overflow-hidden flex flex-col">
                         <DataTable
                             data={chartData}
                             rowVariables={resolvedRowVars}
@@ -118,13 +128,21 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
     };
 
     return (
-        <div className={`flex-1 flex flex-col h-full bg-glass-app ${className}`}>
-            {/* Slide Header with editable title/subtitle */}
-            <div className="px-4 pt-4">
-                <SlideHeader />
-            </div>
-            <div className="flex-1 overflow-hidden p-4">
-                {renderCellContent()}
+        <div className={`flex-1 flex flex-col items-center justify-center p-8 bg-glass-app overflow-y-auto ${className}`}>
+            {/* 16:9 Presentation Canvas Container */}
+            <div
+                className="w-full max-w-[1200px] bg-white rounded-xl shadow-md border border-[var(--border-color)] overflow-hidden flex flex-col"
+                style={{ aspectRatio: '16/9', minHeight: '600px' }}
+            >
+                {/* Slide Header inside the Canvas */}
+                <div className="px-8 pt-8">
+                    <SlideHeader />
+                </div>
+
+                {/* Chart/Table Content */}
+                <div className="flex-1 overflow-hidden px-4 pb-4">
+                    {renderCellContent()}
+                </div>
             </div>
         </div>
     );

@@ -1732,24 +1732,17 @@ export default function App() {
                   {/* MAIN CANVAS AREA */}
                   <SmartCanvas className="flex-1 relative overflow-hidden p-6 flex flex-col">
                     <div className="flex-1 w-full h-full flex flex-col min-h-0">
-                      {tableConfig.rowVars.length > 0 ? (
-                        <div className="flex-1 relative bg-[var(--bg-panel)] rounded-xl border border-[var(--border-color)] shadow-sm overflow-hidden flex flex-col">
-                          {isQuerying && (
-                            <div className="absolute inset-0 bg-[var(--bg-panel)]/50 z-20 flex items-center justify-center backdrop-blur-sm">
-                              <Loader2 className="animate-spin text-[var(--color-accent)]" size={32} />
-                            </div>
-                          )}
-                          <div className="flex-1 min-h-0">
-                            <SlideContainer className="h-full w-full" />
+                      <div className="flex-1 relative bg-[var(--bg-panel)] rounded-xl border border-[var(--border-color)] shadow-sm overflow-hidden flex flex-col">
+                        {isQuerying && (
+                          <div className="absolute inset-0 bg-[var(--bg-panel)]/50 z-20 flex items-center justify-center backdrop-blur-sm">
+                            <Loader2 className="animate-spin text-[var(--color-accent)]" size={32} />
                           </div>
-                          <TimelineDock />
+                        )}
+                        <div className="flex-1 min-h-0">
+                          <SlideContainer className="h-full w-full" />
                         </div>
-                      ) : (
-                        <div className="flex-1 border-2 border-dashed border-[var(--border-color-muted)] rounded-xl flex flex-col items-center justify-center text-[var(--text-secondary)] gap-4 bg-[var(--bg-panel)]/50">
-                          <LayoutGrid size={48} className="opacity-20" />
-                          <p className="text-sm font-medium">Drag variables to the shelves above to start analysis</p>
-                        </div>
-                      )}
+                        <TimelineDock />
+                      </div>
                     </div>
                   </SmartCanvas>
                 </div>
