@@ -66,3 +66,29 @@ Configure your system prompt or task instructions according to your current role
   * [ ] Does this calculate statistics according to survey-native invariants?
   * [ ] Are UX modes and design theme tokens respected?
 * **Outputs expected:** A concise review containing 5-10 bullet points with at least 2 concrete "checked X, found Y" observations.
+
+---
+
+## 5. Operational Playbooks ("Skills")
+
+For common execution tasks that require a repeatable workflow, agents MUST consult the relevant playbook **before making changes**.
+
+These playbooks define execution-safe procedures designed to prevent architectural drift, statistical regressions, UI mode leakage, and main-thread performance violations.
+
+| If you are attempting to... | You MUST read... |
+|-----------------------------|------------------|
+Refactor or reorganize existing logic | `docs/playbooks/refactor_safely.md` |
+Implement new functionality or change behavior | `docs/playbooks/add_tests_first.md` |
+Modify statistical calculations, weights, or denominators | `docs/playbooks/stats_integrity.md` |
+Perform performance optimization or query changes | `docs/playbooks/performance_pass.md`|
+Triaging runtime issues or debugging failures | `docs/playbooks/log_triage.md`  |
+Change UI layout, interaction, or UX mode responsibilities | `docs/playbooks/ui_mode_change.md` |
+
+### Enforcement Rule
+Failure to follow the relevant playbook may result in:
+- silent regression of survey-native statistical correctness
+- violation of `src/core/` portability constraints
+- main-thread performance degradation
+- UX mode responsibility leakage (Manager ↔ Canvas)
+
+Playbooks are mandatory for execution-style tasks and should be treated as procedural constraints in addition to architectural invariants.

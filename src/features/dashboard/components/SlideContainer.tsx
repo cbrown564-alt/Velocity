@@ -131,7 +131,7 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
         <div className={`flex-1 flex flex-col items-center justify-center p-8 bg-glass-app overflow-y-auto ${className}`}>
             {/* 16:9 Presentation Canvas Container */}
             <div
-                className="w-full max-w-[1200px] bg-white rounded-xl shadow-md border border-[var(--border-color)] overflow-hidden flex flex-col"
+                className="w-full max-w-[1200px] bg-[var(--mat-panel-bg,var(--bg-panel))] backdrop-blur-[var(--mat-panel-filter,0)] rounded-xl shadow-md border border-[var(--border-color)] overflow-hidden flex flex-col"
                 style={{ aspectRatio: '16/9', minHeight: '600px' }}
             >
                 {/* Slide Header inside the Canvas */}

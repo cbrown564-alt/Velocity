@@ -72,12 +72,33 @@ interface SlideThumbProps {
     canDelete: boolean;
     section?: SlideSection;
     variableSets?: Array<{ id: string; name: string }>;
+    currentTableConfig?: { rowVars: string[]; colVar: string | null };
     onClick: () => void;
     onDuplicate: () => void;
     onDelete: () => void;
 }
 
-const SlideThumb: React.FC<SlideThumbProps> = ({ slide, index, isActive, hasUnsavedChanges, canDelete, section, variableSets = [], onClick, onDuplicate, onDelete }) => {
+export function getSlideDisplayLabel(
+    slide: Slide,
+    variableSets: Array<{ id: string; name: string }> = [],
+    currentTableConfig?: { rowVars: string[]; colVar: string | null }
+): string {
+    const sourceState = currentTableConfig ?? slide.analysisState;
+    const { rowVars, colVar } = sourceState;
+
+    if (rowVars.length === 0) return 'New Slide';
+
+    const r1 = rowVars[0];
+    const r1Name = variableSets.find(v => v.id === r1)?.name || r1;
+
+    if (colVar) {
+        const cName = variableSets.find(v => v.id === colVar)?.name || colVar;
+        return `${r1Name} x ${cName}`;
+    }
+    return r1Name;
+}
+
+const SlideThumb: React.FC<SlideThumbProps> = ({ slide, index, isActive, hasUnsavedChanges, canDelete, section, variableSets = [], currentTableConfig, onClick, onDuplicate, onDelete }) => {
     const [contextMenuOpen, setContextMenuOpen] = useState(false);
     const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
     const menuRef = useRef<HTMLDivElement>(null);
@@ -119,18 +140,8 @@ const SlideThumb: React.FC<SlideThumbProps> = ({ slide, index, isActive, hasUnsa
 
     // Generate a short desc based on data state
     const displayLabel = useMemo(() => {
-        const { rowVars, colVar } = slide.analysisState;
-        if (rowVars.length === 0) return 'New Slide';
-
-        const r1 = rowVars[0];
-        const r1Name = variableSets.find(v => v.id === r1)?.name || r1;
-
-        if (colVar) {
-            const cName = variableSets.find(v => v.id === colVar)?.name || colVar;
-            return `${r1Name} x ${cName}`;
-        }
-        return r1Name;
-    }, [slide.analysisState, variableSets]);
+        return getSlideDisplayLabel(slide, variableSets, currentTableConfig);
+    }, [slide, variableSets, currentTableConfig]);
 
     return (
         <>
@@ -418,6 +429,12 @@ export const TimelineDock: React.FC = () => {
                                                 canDelete={slides.length > 1}
                                                 section={item.section}
                                                 variableSets={variableSets}
+                                                currentTableConfig={isActive
+                                                    ? {
+                                                        rowVars: tableConfig?.rowVars ?? [],
+                                                        colVar: tableConfig?.colVar ?? null,
+                                                    }
+                                                    : undefined}
                                                 onClick={() => setActiveSlide(item.slide!.id)}
                                                 onDuplicate={() => duplicateSlide(item.slide!.id)}
                                                 onDelete={() => { setSlideToDelete(item.slide!.id); setDeleteModalOpen(true); }}
