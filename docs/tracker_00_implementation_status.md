@@ -46,7 +46,7 @@ graph TD
   S5CLOUD1 --> S5CLOUD2["S5-CLOUD-2 Direct Data Imports"]
 ```
 
-S2-STAT-1 through S2-STAT-4 are resolved. S2-EXP-1 is in review. The statistical engine dependency on S3-HARM-1 is cleared; only S2-EXP-2 (chart fidelity sign-off) remains on the critical path to Phase 3.
+S2-STAT-1 through S2-STAT-4 are resolved. S2-EXP-1 is done. The statistical engine dependency on S3-HARM-1 is cleared; only S2-EXP-2 (chart fidelity sign-off) remains on the critical path to Phase 3.
 
 ## 4. Execution Board
 
@@ -54,7 +54,6 @@ S2-STAT-1 through S2-STAT-4 are resolved. S2-EXP-1 is in review. The statistical
 
 | ID | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| S2-EXP-1 | Export | Browser-side PPTX export using `PptxGenJS` | Milestone 2.4 complete | In review | Yes | T,L,U,I,A | 3d80d06, cab233a, e840767 |
 | S2-EXP-2 | Export | Editable chart fidelity verification in PowerPoint | S2-EXP-1 | In progress | No | U,I,A | cab233a, bf7e58a |
 
 ### 4.2 Next (Phase 3)
@@ -83,6 +82,7 @@ Snapshot reference window: commits on February 5, 2026 through February 24, 2026
 
 | ID | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| S2-EXP-1 | Export | Browser-side PPTX export using `PptxGenJS` | Milestone 2.4 complete | Done | Yes | T,L,U,I,A | 3d80d06, cab233a, e840767, c9cc564 |
 | S2-DECK-1 | Analysis Deck | Analysis state capture, editable headers, unsaved indicator | Hub-and-spoke baseline | Done | Yes | T,L,U,A | a3679f7 |
 | S2-DECK-2 | Analysis Deck | Duplicate/delete slide actions + inline film-strip timeline dock | S2-DECK-1 | Done | Yes | T,L,U,A | b97658f, 14adb12 |
 | S2-DECK-3 | Analysis Deck | Empty-variable fallback for slide rendering robustness | S2-DECK-2 | Done | No | U,A | 26e0d6f |
@@ -100,7 +100,7 @@ Completed work remains documented in git history and prior tracker revisions. Cu
 - Phase 2 hub-and-spoke architecture and visual ETL foundation
 - Phase 2 statistical foundation (Phase 1 significance)
 - Phase 2 charting refactor and weighting application
-- Export UI integration and worker-backed export plumbing (pending final fidelity sign-off)
+- **Export engine closure (S2-EXP-1):** Browser-side PPTX/XLSX export via PptxGenJS, slide-deck-level modal, multi-slide scope selection. All critical and medium bugs resolved; 22 tests passing.
 - Analysis deck interaction foundation (state capture, timeline actions, timeline rail redesign)
 - Workspace expansion: longitudinal support plus batch operations/export-import workflows
 - **Statistical engine closure (S2-STAT-1–4):** Pairwise comparisons, FDR/Bonferroni correction pipeline, dependent-sample overlap handling for multi-response, TSL NO-GO decision. Phase 3 statistical dependency is cleared.
