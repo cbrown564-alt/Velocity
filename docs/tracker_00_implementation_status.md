@@ -54,7 +54,7 @@ S2-STAT-1 through S2-STAT-4 are resolved. S2-EXP-1 is done. The statistical engi
 
 | ID | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| S2-EXP-2 | Export | Editable chart fidelity verification in PowerPoint | S2-EXP-1 | In progress | No | U,I,A | cab233a, bf7e58a |
+| S2-EXP-2 | Export | Editable chart fidelity verification in PowerPoint | S2-EXP-1 | In review | No | U,I,A | cab233a, bf7e58a, 488a436 |
 
 ### 4.2 Next (Phase 3)
 
