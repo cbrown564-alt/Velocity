@@ -282,16 +282,16 @@ export const DataTable: React.FC<DataTableProps> = ({
                         ) : (
                           <>
                             {cell.sig === 'high_95' && (
-                              <ArrowUp size={12} className="text-[var(--color-success)]" />
+                              <ArrowUp size={12} style={{ color: 'var(--color-success)' }} />
                             )}
                             {cell.sig === 'high_80' && (
-                              <ArrowUp size={12} className="text-[var(--text-secondary)]" />
+                              <ArrowUp size={12} style={{ color: 'var(--color-success)', opacity: 0.45 }} />
                             )}
                             {cell.sig === 'low_95' && (
-                              <ArrowDown size={12} className="text-[var(--color-error)]" />
+                              <ArrowDown size={12} style={{ color: 'var(--color-error)' }} />
                             )}
                             {cell.sig === 'low_80' && (
-                              <ArrowDown size={12} className="text-[var(--text-secondary)]" />
+                              <ArrowDown size={12} style={{ color: 'var(--color-error)', opacity: 0.45 }} />
                             )}
                           </>
                         )}

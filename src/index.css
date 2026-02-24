@@ -95,6 +95,11 @@
   --viz-scale-neutral: var(--viz-muted);
   --viz-scale-positive: var(--viz-secondary);
 
+  /* Functional semantic colors — mapped to diverging scale endpoints so they work
+     across all three themes with appropriate contrast (not just Soft Machine) */
+  --color-success: var(--viz-diverging-1);  /* positive/higher: dark green (SM) · cyan (MC) · blue (LG) */
+  --color-error:   var(--viz-diverging-6);  /* negative/lower:  dark red  (SM) · red  (MC) · iOS red (LG) */
+
   /* Legacy Functional (Deprecating slowly or remapping) */
   --color-accent: var(--accent);
   --color-accent-hover: var(--ring);
