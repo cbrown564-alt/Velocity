@@ -35,10 +35,11 @@ const mockData: ProcessedAnalysisData = {
   ],
   series: [
     {
+      key: '1',
       label: 'Agree',
       data: [
-        { label: 'Male', value: 30, percent: 60.0 },
-        { label: 'Female', value: 25, percent: 50.0 },
+        { label: 'Male', rawValue: '1', value: 30, percent: 60.0 },
+        { label: 'Female', rawValue: '2', value: 25, percent: 50.0 },
       ],
     },
   ],
@@ -47,6 +48,68 @@ const mockData: ProcessedAnalysisData = {
     { key: '2', label: 'Disagree', total: 45 },
   ],
   grandTotal: 100,
+  isMetric: false,
+  isGrid: false,
+  rowVariables: [],
+  colVariable: null,
+  isMultipleResponse: false,
+};
+
+/** Multi-series fixture — mirrors a real crosstab with 2 column-banner values */
+const multiSeriesData: ProcessedAnalysisData = {
+  rows: mockData.rows,
+  series: [
+    {
+      key: '1',
+      label: 'Agree',
+      data: [
+        { label: 'Male', rawValue: '1', value: 30, percent: 60.0 },
+        { label: 'Female', rawValue: '2', value: 25, percent: 50.0 },
+      ],
+    },
+    {
+      key: '2',
+      label: 'Disagree',
+      data: [
+        { label: 'Male', rawValue: '1', value: 20, percent: 40.0 },
+        { label: 'Female', rawValue: '2', value: 25, percent: 50.0 },
+      ],
+    },
+  ],
+  columns: mockData.columns,
+  grandTotal: 100,
+  isMetric: false,
+  isGrid: false,
+  rowVariables: [],
+  colVariable: null,
+  isMultipleResponse: false,
+};
+
+/** Single data point edge case */
+const singlePointData: ProcessedAnalysisData = {
+  rows: [mockData.rows[0]],
+  series: [
+    {
+      key: '1',
+      label: 'Only',
+      data: [{ label: 'Male', rawValue: '1', value: 30, percent: 100.0 }],
+    },
+  ],
+  columns: [{ key: '1', label: 'Only', total: 30 }],
+  grandTotal: 30,
+  isMetric: false,
+  isGrid: false,
+  rowVariables: [],
+  colVariable: null,
+  isMultipleResponse: false,
+};
+
+/** Empty series edge case */
+const emptySeriesData: ProcessedAnalysisData = {
+  rows: [],
+  series: [],
+  columns: [],
+  grandTotal: 0,
   isMetric: false,
   isGrid: false,
   rowVariables: [],
@@ -213,6 +276,130 @@ describe('exportPptx', () => {
     });
     expect(branded).toBeInstanceOf(Uint8Array);
     expect(branded.length).toBeGreaterThan(1000);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Chart type mapping tests (S2-EXP-2: editable chart fidelity)
+// ---------------------------------------------------------------------------
+
+describe('exportPptx chart type fidelity', () => {
+  /** Helper: build a chart export config for a given chart type */
+  function chartConfig(chartType: string, data = multiSeriesData): ExportConfig {
+    return {
+      title: `${chartType} Report`,
+      analyses: [{
+        label: `${chartType} chart`,
+        result: data,
+        viewType: 'chart' as const,
+        chartType: chartType as any,
+      }],
+    };
+  }
+
+  // --- Natively-supported chart types ---
+
+  it.each([
+    'horizontal-bar',
+    'vertical-bar',
+    'grouped-bar',
+    'grouped-column',
+    'stacked-bar',
+    'diverging-bar',
+    'lollipop',
+    'donut',
+    'scatter',
+  ] as const)('produces valid PPTX for %s chart', async (chartType) => {
+    const bytes = await exportPptx(chartConfig(chartType));
+    expect(bytes).toBeInstanceOf(Uint8Array);
+    expect(bytes.length).toBeGreaterThan(1000);
+    // ZIP magic number
+    expect(bytes[0]).toBe(0x50);
+    expect(bytes[1]).toBe(0x4B);
+  });
+
+  // --- Unsupported types fall back to clustered column ---
+
+  it.each([
+    'histogram',
+    'box-plot',
+    'violin',
+    'ridgeline',
+    'hexbin',
+    'grouped-box-plot',
+  ] as const)('falls back to bar chart for unsupported %s type', async (chartType) => {
+    const bytes = await exportPptx(chartConfig(chartType));
+    expect(bytes).toBeInstanceOf(Uint8Array);
+    expect(bytes.length).toBeGreaterThan(1000);
+  });
+
+  // --- Multi-series handling ---
+
+  it('renders multi-series data for bar charts', async () => {
+    const bytes = await exportPptx(chartConfig('vertical-bar', multiSeriesData));
+    expect(bytes).toBeInstanceOf(Uint8Array);
+    expect(bytes.length).toBeGreaterThan(1000);
+  });
+
+  it('renders multi-series data for stacked-bar', async () => {
+    const bytes = await exportPptx(chartConfig('stacked-bar', multiSeriesData));
+    expect(bytes).toBeInstanceOf(Uint8Array);
+    expect(bytes.length).toBeGreaterThan(1000);
+  });
+
+  it('donut uses only first series when multi-series data is provided', async () => {
+    // Donut is single-series. With 2 series, only the first should be used.
+    // The file should still be valid (not garbled).
+    const bytes = await exportPptx(chartConfig('donut', multiSeriesData));
+    expect(bytes).toBeInstanceOf(Uint8Array);
+    expect(bytes.length).toBeGreaterThan(1000);
+  });
+
+  // --- Edge cases ---
+
+  it('handles single data point without throwing', async () => {
+    const bytes = await exportPptx(chartConfig('vertical-bar', singlePointData));
+    expect(bytes).toBeInstanceOf(Uint8Array);
+    expect(bytes.length).toBeGreaterThan(1000);
+  });
+
+  it('handles empty series array without throwing', async () => {
+    const bytes = await exportPptx(chartConfig('vertical-bar', emptySeriesData));
+    expect(bytes).toBeInstanceOf(Uint8Array);
+  });
+
+  // --- showCounts for charts ---
+
+  it('renders chart with showCounts option', async () => {
+    const cfg: ExportConfig = {
+      title: 'Counts Chart',
+      analyses: [{
+        label: 'Counts',
+        result: multiSeriesData,
+        viewType: 'chart',
+        chartType: 'vertical-bar',
+        options: { showPercents: false, showCounts: true },
+      }],
+    };
+    const bytes = await exportPptx(cfg);
+    expect(bytes).toBeInstanceOf(Uint8Array);
+    expect(bytes.length).toBeGreaterThan(1000);
+  });
+
+  it('renders chart with both showPercents and showCounts', async () => {
+    const cfg: ExportConfig = {
+      title: 'Both',
+      analyses: [{
+        label: 'Both',
+        result: multiSeriesData,
+        viewType: 'chart',
+        chartType: 'horizontal-bar',
+        options: { showPercents: true, showCounts: true },
+      }],
+    };
+    const bytes = await exportPptx(cfg);
+    expect(bytes).toBeInstanceOf(Uint8Array);
+    expect(bytes.length).toBeGreaterThan(1000);
   });
 });
 

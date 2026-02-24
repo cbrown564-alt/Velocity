@@ -118,13 +118,18 @@ function buildSlideChart(
   item: AnalysisExportItem,
   branding: typeof DEFAULTS,
 ) {
+  // Guard: PptxGenJS crashes on empty series data (data[0].labels is undefined).
+  // Fall back to an empty slide when there's nothing to chart.
+  if (!item.result.series.length) return;
+
   const chartTypeKey = item.chartType || 'vertical-bar';
   const showPercents = item.options?.showPercents !== false;
+  const showCounts = item.options?.showCounts === true;
 
   // Mapping Velocity ChartType to PPTX chart types.
   // PptxGenJS.ChartType is an instance property, so we use string literals directly.
   // Exotic types that have no direct PPTX equivalent fall back to clustered column.
-  let pptxChartType: string = 'bar';
+  let pptxChartType: PptxGenJS.CHART_NAME = 'bar';
   let barDir: 'bar' | 'col' = 'col';
   let barGrouping: 'clustered' | 'stacked' | 'percentStacked' = 'clustered';
   let isBarChart = true;
@@ -184,13 +189,17 @@ function buildSlideChart(
 
   // Bar-specific options must not be applied to donut or scatter
   if (isBarChart) {
+    // Data label format: percent takes precedence, then raw count
+    const labelFmt = showPercents ? '0.0"%"' : '0';
+    const axisFmt = showPercents ? '0"%"' : '0';
     Object.assign(baseChartOpts, {
       barDir,
       barGrouping,
-      dataLabelFormatCode: showPercents ? '0.0"%"' : '0',
+      dataLabelFormatCode: labelFmt,
       dataBorder: { pt: 1, color: 'FFFFFF' },
       dataLabelColor: '333333',
-      valAxisLabelFormatCode: showPercents ? '0"%"' : '0',
+      valAxisLabelFormatCode: axisFmt,
+      showValue: showPercents || showCounts,
     });
   }
 
@@ -207,10 +216,23 @@ function buildSlideChart(
     return;
   }
 
-  const seriesData = item.result.series.map(series => ({
+  // Donut/doughnut is inherently single-series in PPTX. When the analysis
+  // has multiple column-banner series we flatten all data points from the
+  // first series into the ring. Using only the first series keeps the chart
+  // readable and avoids garbled multi-ring output from PptxGenJS.
+  const seriesToRender =
+    pptxChartType === 'doughnut'
+      ? item.result.series.slice(0, 1)
+      : item.result.series;
+
+  // Choose value source: percent when showing percentages, raw count otherwise
+  const getValue = (d: { percent: number; value: number }) =>
+    showPercents ? d.percent : d.value;
+
+  const seriesData = seriesToRender.map(series => ({
     name: series.label || 'Series 1',
     labels: series.data.map(d => d.label),
-    values: series.data.map(d => (showPercents ? d.percent : d.value)),
+    values: series.data.map(d => getValue(d)),
   }));
 
   slide.addChart(pptxChartType, seriesData, baseChartOpts);
