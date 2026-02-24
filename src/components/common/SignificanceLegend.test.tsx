@@ -4,33 +4,13 @@ import { SignificanceLegend } from './SignificanceLegend';
 
 describe('SignificanceLegend', () => {
   describe('compact mode', () => {
-    it('renders compact legend with CI labels', () => {
-      render(<SignificanceLegend compact />);
+    it('renders compact legend with plain-English labels', () => {
+      const { container } = render(<SignificanceLegend compact />);
 
-      expect(screen.getByText('95% CI')).toBeInTheDocument();
-      expect(screen.getByText('80% CI')).toBeInTheDocument();
-    });
-
-    it('shows methodology link when enabled', () => {
-      render(<SignificanceLegend compact showMethodologyLink />);
-
-      expect(screen.getByText('How we calculate')).toBeInTheDocument();
-    });
-
-    it('calls onMethodologyClick when link is clicked', () => {
-      const handleClick = vi.fn();
-      render(
-        <SignificanceLegend compact showMethodologyLink onMethodologyClick={handleClick} />
-      );
-
-      fireEvent.click(screen.getByText('How we calculate'));
-      expect(handleClick).toHaveBeenCalledTimes(1);
-    });
-
-    it('hides methodology link when disabled', () => {
-      render(<SignificanceLegend compact showMethodologyLink={false} />);
-
-      expect(screen.queryByText('How we calculate')).not.toBeInTheDocument();
+      expect(container.textContent).toContain('Higher');
+      expect(container.textContent).toContain('Lower');
+      expect(container.textContent).toContain('(95%)');
+      expect(screen.getByText('Directional (80%)')).toBeInTheDocument();
     });
 
     it('shows correction badge when correction is active', () => {
@@ -54,6 +34,21 @@ describe('SignificanceLegend', () => {
       expect(screen.getByText('Significantly lower than rest')).toBeInTheDocument();
       expect(screen.getByText('Moderately higher than rest')).toBeInTheDocument();
       expect(screen.getByText('Moderately lower than rest')).toBeInTheDocument();
+    });
+
+    it('shows methodology link when enabled', () => {
+      render(<SignificanceLegend showMethodologyLink />);
+      expect(screen.getByText('How we calculate')).toBeInTheDocument();
+    });
+
+    it('calls onMethodologyClick when link is clicked', () => {
+      const handleClick = vi.fn();
+      render(
+        <SignificanceLegend showMethodologyLink onMethodologyClick={handleClick} />
+      );
+
+      fireEvent.click(screen.getByText('How we calculate'));
+      expect(handleClick).toHaveBeenCalledTimes(1);
     });
 
     it('shows methodology footer', () => {

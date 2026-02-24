@@ -4,6 +4,8 @@ import type { ComparisonMethod, CorrectionType } from '../../store/slices/analys
 
 interface AnalysisSettingsPanelProps {
   className?: string;
+  /** 'standalone' renders with border/bg/header; 'inline' renders flat for embedding in a tray */
+  variant?: 'standalone' | 'inline';
 }
 
 /**
@@ -14,6 +16,7 @@ interface AnalysisSettingsPanelProps {
  */
 export const AnalysisSettingsPanel: React.FC<AnalysisSettingsPanelProps> = ({
   className = '',
+  variant = 'standalone',
 }) => {
   const analysisSettings = useVelocityStore((state) => state.analysisSettings);
   const updateAnalysisSettings = useVelocityStore((state) => state.updateAnalysisSettings);
@@ -30,35 +33,43 @@ export const AnalysisSettingsPanel: React.FC<AnalysisSettingsPanelProps> = ({
     updateAnalysisSettings({ showConfidenceIntervals: !analysisSettings.showConfidenceIntervals });
   };
 
+  const isInline = variant === 'inline';
+
+  const wrapperClass = isInline
+    ? `flex flex-wrap items-center gap-4 ${className}`
+    : `bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-lg p-3 ${className}`;
+
   return (
-    <div className={`bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-lg p-3 ${className}`}>
-      <div className="text-xs font-semibold text-[var(--text-accent)] uppercase tracking-wide mb-3">
-        Statistical Settings
-      </div>
+    <div className={wrapperClass}>
+      {!isInline && (
+        <div className="text-xs font-semibold text-[var(--text-accent)] uppercase tracking-wide mb-3">
+          Statistical Settings
+        </div>
+      )}
 
       {/* Comparison Method */}
-      <div className="mb-3">
-        <label className="text-xs text-[var(--text-secondary)] block mb-1">
-          Comparison Method
+      <div className={isInline ? 'flex items-center gap-2' : 'mb-3'}>
+        <label className="text-xs text-[var(--text-secondary)] shrink-0">
+          {isInline ? 'Compare:' : 'Comparison Method'}
         </label>
         <div className="flex gap-1">
           <button
             onClick={() => handleComparisonMethodChange('cell_vs_rest')}
-            className={`flex-1 px-2 py-1 text-xs rounded transition-colors ${
+            className={`px-2 py-1 text-xs rounded transition-colors ${
               analysisSettings.comparisonMethod === 'cell_vs_rest'
                 ? 'bg-[var(--color-accent)] text-white'
                 : 'bg-[var(--bg-panel)] text-[var(--text-primary)] hover:bg-[var(--bg-active)]'
-            }`}
+            } ${isInline ? '' : 'flex-1'}`}
           >
             Cell vs Rest
           </button>
           <button
             onClick={() => handleComparisonMethodChange('pairwise')}
-            className={`flex-1 px-2 py-1 text-xs rounded transition-colors ${
+            className={`px-2 py-1 text-xs rounded transition-colors ${
               analysisSettings.comparisonMethod === 'pairwise'
                 ? 'bg-[var(--color-accent)] text-white'
                 : 'bg-[var(--bg-panel)] text-[var(--text-primary)] hover:bg-[var(--bg-active)]'
-            }`}
+            } ${isInline ? '' : 'flex-1'}`}
           >
             Pairwise (A/B/C)
           </button>
@@ -66,14 +77,14 @@ export const AnalysisSettingsPanel: React.FC<AnalysisSettingsPanelProps> = ({
       </div>
 
       {/* Correction Method */}
-      <div className="mb-3">
-        <label className="text-xs text-[var(--text-secondary)] block mb-1">
-          Multiple Testing Correction
+      <div className={isInline ? 'flex items-center gap-2' : 'mb-3'}>
+        <label className="text-xs text-[var(--text-secondary)] shrink-0">
+          {isInline ? 'Correct:' : 'Multiple Testing Correction'}
         </label>
         <select
           value={analysisSettings.correctionType}
           onChange={(e) => handleCorrectionChange(e.target.value as CorrectionType)}
-          className="w-full px-2 py-1 text-xs bg-[var(--bg-panel)] border border-[var(--border-color)] rounded text-[var(--text-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-accent)]"
+          className={`px-2 py-1 text-xs bg-[var(--bg-panel)] border border-[var(--border-color)] rounded text-[var(--text-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-accent)] ${isInline ? '' : 'w-full'}`}
         >
           <option value="none">None</option>
           <option value="bonferroni">Bonferroni (FWER)</option>
@@ -82,9 +93,9 @@ export const AnalysisSettingsPanel: React.FC<AnalysisSettingsPanelProps> = ({
       </div>
 
       {/* Confidence Intervals Toggle */}
-      <div className="flex items-center justify-between">
-        <label className="text-xs text-[var(--text-secondary)]">
-          Show Confidence Intervals
+      <div className="flex items-center gap-2">
+        <label className="text-xs text-[var(--text-secondary)] shrink-0">
+          {isInline ? 'Intervals:' : 'Show Confidence Intervals'}
         </label>
         <button
           onClick={handleCIToggle}
@@ -103,11 +114,14 @@ export const AnalysisSettingsPanel: React.FC<AnalysisSettingsPanelProps> = ({
       </div>
 
       {/* Info Text */}
-      <div className="mt-3 pt-3 border-t border-[var(--border-color)] text-[10px] text-[var(--text-secondary)]">
+      <div className={isInline
+        ? 'w-full text-[10px] text-[var(--text-secondary)] pt-2 border-t border-[var(--border-color)]'
+        : 'mt-3 pt-3 border-t border-[var(--border-color)] text-[10px] text-[var(--text-secondary)]'
+      }>
         {analysisSettings.comparisonMethod === 'cell_vs_rest' ? (
-          <span>Compares each cell to the rest of the sample (arrows)</span>
+          <span>Cell vs Rest compares each cell to the remaining sample (↑↓ arrows)</span>
         ) : (
-          <span>Compares columns pairwise, showing letters for significant differences</span>
+          <span>Pairwise compares columns to each other, showing letters for significant differences</span>
         )}
       </div>
     </div>

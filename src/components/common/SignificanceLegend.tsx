@@ -47,23 +47,16 @@ export const SignificanceLegend: React.FC<SignificanceLegendProps> = ({
       <div className="flex items-center gap-4 text-[10px] text-[var(--text-secondary)]">
         <span className="flex items-center gap-1">
           <ArrowUp size={10} className="text-[var(--color-success)]" />
+          Higher
           <ArrowDown size={10} className="text-[var(--color-error)]" />
-          <span>95% CI</span>
+          Lower
+          <span className="opacity-70">(95%)</span>
         </span>
         <span className="flex items-center gap-1">
           <ArrowUp size={10} className="text-[var(--text-secondary)]" />
           <ArrowDown size={10} className="text-[var(--text-secondary)]" />
-          <span>80% CI</span>
+          <span>Directional (80%)</span>
         </span>
-        {showMethodologyLink && (
-          <button
-            onClick={onMethodologyClick}
-            className="flex items-center gap-1 hover:text-[var(--color-accent)] transition-colors"
-          >
-            <Info size={10} />
-            <span>How we calculate</span>
-          </button>
-        )}
         {correctionType !== 'none' && (
           <span className="text-[10px] px-1 py-0.5 rounded bg-[var(--bg-panel)] text-[var(--text-secondary)]">
             {correctionLabel}

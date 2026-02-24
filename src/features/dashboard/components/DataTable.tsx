@@ -12,9 +12,8 @@ import { InputModal } from '../../../components/overlays/InputModal';
 import { RowPathEntry, TableRowNode } from '../../../services/treeBuilder';
 import { Tooltip } from '../../../components/common/Tooltip';
 import { StatisticsTooltip } from '../../../components/common/StatisticsTooltip';
-import { SignificanceLegend } from '../../../components/common/SignificanceLegend';
 import { MethodologyDrawer } from '../../../components/common/MethodologyPanel';
-import { AnalysisSettingsPanel } from '../../../components/common/AnalysisSettingsPanel';
+import { StatisticsStatusBar } from '../../../components/common/StatisticsStatusBar';
 import { useVelocityStore } from '../../../store';
 import mergeStyles from './DataTable.module.css';
 export type { RowPathEntry, TableRowNode };
@@ -462,65 +461,21 @@ export const DataTable: React.FC<DataTableProps> = ({
             </tbody>
           </table>
         </div>
-        {/* Table Footer: Significance Legend, Chi-Square, and Export */}
-        <div className="px-4 py-3 border-t border-[var(--border-grid)] flex justify-between items-center">
-          {/* Left side: Significance legend (only for crosstabs) */}
-          <div>
-            {colVariable && (
-              <SignificanceLegend
-                compact
-                comparisonMethod={analysisSettings.comparisonMethod}
-                correctionType={analysisSettings.correctionType}
-                overlapCorrected={overlapCorrected}
-                showMethodologyLink
-                onMethodologyClick={() => setShowMethodology(!showMethodology)}
-              />
-            )}
-          </div>
+        {/* Statistics Status Bar */}
+        <StatisticsStatusBar
+          analysisSettings={analysisSettings}
+          tableStats={tableStats}
+          colVariable={colVariable}
+          overlapCorrected={overlapCorrected}
+          onMethodologyClick={() => setShowMethodology(!showMethodology)}
+          hasSignificance={data.some(row => row.sig || (row.sigLetters && row.sigLetters.length > 0))}
+        />
 
-          {/* Right side: Chi-square stats */}
-          <div className="flex items-center gap-3">
-            {colVariable && tableStats?.chiSquare && (
-              <Tooltip
-                content={
-                  <div className="text-xs space-y-1">
-                    <div className="font-semibold">Chi-Square Test of Independence</div>
-                    <div className="grid grid-cols-2 gap-x-3 gap-y-0.5">
-                      <span className="text-[var(--text-secondary)]">Chi-Square (χ²):</span>
-                      <span className="font-mono">{tableStats.chiSquare.chiSquare.toFixed(2)}</span>
-                      <span className="text-[var(--text-secondary)]">Degrees of Freedom:</span>
-                      <span className="font-mono">{tableStats.chiSquare.df}</span>
-                      <span className="text-[var(--text-secondary)]">p-value:</span>
-                      <span className="font-mono">{tableStats.chiSquare.pValue < 0.001 ? '<0.001' : tableStats.chiSquare.pValue.toFixed(3)}</span>
-                      <span className="text-[var(--text-secondary)]">Cramér's V:</span>
-                      <span className="font-mono">{tableStats.chiSquare.cramersV.toFixed(3)}</span>
-                    </div>
-                    <div className="pt-1 text-[var(--text-secondary)] text-[10px]">
-                      {tableStats.chiSquare.pValue < 0.05
-                        ? 'Variables are significantly associated (p < 0.05)'
-                        : 'No significant association found (p ≥ 0.05)'}
-                    </div>
-                  </div>
-                }
-                position="top"
-                delay={200}
-                maxWidth={280}
-              >
-                <div className={`text-xs font-mono px-2 py-1 rounded ${tableStats.chiSquare.pValue < 0.05 ? 'bg-[var(--color-success)]/10 text-[var(--color-success)]' : 'bg-[var(--bg-surface)] text-[var(--text-secondary)]'}`}>
-                  χ² = {tableStats.chiSquare.chiSquare.toFixed(1)}, p {tableStats.chiSquare.pValue < 0.001 ? '< .001' : `= ${tableStats.chiSquare.pValue.toFixed(3)}`}
-                </div>
-              </Tooltip>
-            )}
-          </div>
-        </div>
-
-        {/* Methodology Panel and Settings (expandable) */}
+        {/* Methodology Drawer */}
         <MethodologyDrawer
           isOpen={showMethodology}
           onClose={() => setShowMethodology(false)}
         />
-
-        {/* We need to extract AnalysisSettingsPanel to its own trigger later, or leave it hidden for now */}
 
         {/* Drag ghost */}
         {dragState.isDragging && dragState.draggedItem && (
