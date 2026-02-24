@@ -32,15 +32,7 @@ Handoff required for every owner transition using `docs/agent_handoff_template.m
 
 ```mermaid
 graph TD
-  S2STAT1["S2-STAT-1 Pairwise Comparisons"] --> S2STAT2["S2-STAT-2 Multiple Comparison Corrections"]
-  S2STAT1 --> S2STAT3["S2-STAT-3 Overlap Handling"]
-  S2STAT2 --> S2STAT4["S2-STAT-4 TSL Evaluation"]
-  S2STAT3 --> S2STAT4
-
-  S2EXP1["S2-EXP-1 PPTX Export Engine"] --> S2EXP2["S2-EXP-2 Editable Chart Fidelity"]
-
-  S2STAT4 --> S3HARM1["S3-HARM-1 Harmonization Workspace"]
-  S2EXP2 --> S3HARM1
+  S2EXP2["S2-EXP-2 Editable Chart Fidelity"] --> S3HARM1["S3-HARM-1 Harmonization Workspace"]
 
   S3HARM1 --> S3R1["S3-R-1 WebR Bridge"]
   S3R1 --> S3STATS1["S3-STATS-1 Advanced Models"]
@@ -54,18 +46,16 @@ graph TD
   S5CLOUD1 --> S5CLOUD2["S5-CLOUD-2 Direct Data Imports"]
 ```
 
+S2-STAT-1 through S2-STAT-4 are resolved. S2-EXP-1 is in review. The statistical engine dependency on S3-HARM-1 is cleared; only S2-EXP-2 (chart fidelity sign-off) remains on the critical path to Phase 3.
+
 ## 4. Execution Board
 
 ### 4.1 Critical Path (Now)
 
 | ID | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| S2-STAT-1 | Stats | Pairwise column proportions tests (A/B/C) | Milestone 2.3 complete | Not started | Yes | T,L,U,G,A | - |
-| S2-STAT-2 | Stats | FDR + Bonferroni corrections | S2-STAT-1 | Not started | Yes | T,L,U,G,A | - |
-| S2-STAT-3 | Stats | Dependent-sample overlap handling (multi-response) | S2-STAT-1 | Not started | Yes | T,L,U,G,A | - |
-| S2-STAT-4 | Stats | TSL variance estimation evaluation + go/no-go decision | S2-STAT-2, S2-STAT-3 | Not started | Yes/TBD | T,L,U,I,G,A | - |
 | S2-EXP-1 | Export | Browser-side PPTX export using `PptxGenJS` | Milestone 2.4 complete | In review | Yes | T,L,U,I,A | 3d80d06, cab233a, e840767 |
-| S2-EXP-2 | Export | Editable chart fidelity verification in PowerPoint | S2-EXP-1 | In progress | No | U,I,A | cab233a |
+| S2-EXP-2 | Export | Editable chart fidelity verification in PowerPoint | S2-EXP-1 | In progress | No | U,I,A | cab233a, bf7e58a |
 
 ### 4.2 Next (Phase 3)
 
@@ -89,7 +79,7 @@ graph TD
 
 ### 4.4 Recent Delivered (Last 20 Commits Snapshot)
 
-Snapshot reference window: commits on February 5, 2026 through February 23, 2026.
+Snapshot reference window: commits on February 5, 2026 through February 24, 2026.
 
 | ID | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -98,6 +88,10 @@ Snapshot reference window: commits on February 5, 2026 through February 23, 2026
 | S2-DECK-3 | Analysis Deck | Empty-variable fallback for slide rendering robustness | S2-DECK-2 | Done | No | U,A | 26e0d6f |
 | S3-WS-1 | Workspace | Longitudinal workspace support (WaveTimeline, CrossWavePanel) | Workspace baseline | Done | Yes | T,L,U,I,A | 947f2fd |
 | S3-WS-2 | Workspace | Batch operations + workspace export/import modal | S3-WS-1 | Done | Yes | T,L,U,I,A | 11bfd89 |
+| S2-STAT-1 | Stats | Pairwise column proportions tests (A/B/C letters) | Milestone 2.3 complete | Done | Yes | T,L,U,G,A | 3a9f2a1 (audit confirms pre-existing) |
+| S2-STAT-2 | Stats | FDR + Bonferroni corrections wired into crosstab pipeline | S2-STAT-1 | Done | Yes (additive: `adjustedPValue`, `correctionMethod` on stats; `SignificanceOptions` on runner) | T,L,U,G,A | 8d1b585, bf7e58a |
+| S2-STAT-3 | Stats | Dependent-sample overlap handling for multi-response column banners | S2-STAT-1 | Done | Yes (additive: `isOverlapCorrected` on stats; `buildOverlapQuery` in queryBuilder) | T,L,U,G,A | 8d1b585, a8b63e8, bf7e58a |
+| S2-STAT-4 | Stats | TSL variance estimation go/no-go decision | S2-STAT-2, S2-STAT-3 | Done | No (decision only: NO-GO — deferred to Phase 3+ via WebR) | A | 3a9f2a1 |
 
 ## 5. Completed Foundations (Summary)
 
@@ -109,6 +103,7 @@ Completed work remains documented in git history and prior tracker revisions. Cu
 - Export UI integration and worker-backed export plumbing (pending final fidelity sign-off)
 - Analysis deck interaction foundation (state capture, timeline actions, timeline rail redesign)
 - Workspace expansion: longitudinal support plus batch operations/export-import workflows
+- **Statistical engine closure (S2-STAT-1–4):** Pairwise comparisons, FDR/Bonferroni correction pipeline, dependent-sample overlap handling for multi-response, TSL NO-GO decision. Phase 3 statistical dependency is cleared.
 
 ## 6. Update Rules
 
