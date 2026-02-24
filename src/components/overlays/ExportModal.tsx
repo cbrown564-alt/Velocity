@@ -161,6 +161,8 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                     colVariable,
                     isWeighted: !!weightVar,
                     isMultipleResponse: !!isMultipleResponse,
+                    viewType: slide.visualizationType,
+                    chartType: slide.chartType,
                 });
 
                 analyses.push(...slideConfig.analyses);
@@ -191,7 +193,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                 : await exportXlsx(exportConfig);
 
             // Trigger download
-            const blob = new Blob([data], {
+            const blob = new Blob([data as unknown as BlobPart], {
                 type: format === 'pptx'
                     ? 'application/vnd.openxmlformats-officedocument.presentationml.presentation'
                     : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',

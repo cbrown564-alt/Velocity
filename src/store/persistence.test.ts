@@ -80,7 +80,6 @@ describe('Store: Persistence', () => {
             expect(persisted.variableSets).toHaveLength(1);
             expect(persisted.folders).toHaveLength(1);
             expect(persisted.appMode).toBe('analysis');
-            expect(persisted.viewMode).toBe('table');
             expect(persisted.activeFolderId).toBe('f1');
             expect(persisted.tableConfig).toEqual({ rowVars: ['v1'], colVar: 'v2' });
             expect(persisted.activeFilters).toHaveLength(1);

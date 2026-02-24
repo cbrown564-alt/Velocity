@@ -18,7 +18,7 @@ import { FilterModal } from './components/overlays/FilterModal';
 import { ExportModal } from './components/overlays/ExportModal';
 import { FilterBar } from './components/common/FilterBar';
 import { AppShell, ModeToggleButton } from './components/layout/AppShell';
-import { useVelocityStore, Variable, VariableSet, PersistenceState } from './store';
+import { useVelocityStore, Variable, VariableSet, PersistenceState, Filter } from './store';
 import { useResolvedVariables } from './features/dashboard/hooks/useResolvedVariables';
 import { buildExportConfig } from './core/export/buildExportConfig';
 import { DndContext, DragOverlay, useSensor, useSensors, MouseSensor, TouchSensor, DragEndEvent, DragStartEvent, useDroppable, closestCenter, pointerWithin, rectIntersection } from '@dnd-kit/core';
@@ -149,7 +149,6 @@ export default function App() {
     isQuerying,
     draggingId,
     searchQuery,
-    viewMode,
     recodeModal,
     drillDown,
     activeFilters,
@@ -170,7 +169,6 @@ export default function App() {
     setTableConfig,
     setDraggingId,
     setSearchQuery,
-    setViewMode,
     reset,
     createVariableSet,
     openRecodeModal,
@@ -182,6 +180,7 @@ export default function App() {
     removeFilter,
     openFilterModal,
     closeFilterModal,
+    addFilterToSlides,
     analysisExportModal,
     closeAnalysisExportModal,
     openAnalysisExportModal,
@@ -234,8 +233,22 @@ export default function App() {
       colVariable: resolvedColVar,
       isWeighted,
       isMultipleResponse,
+      viewType: activeSlide?.visualizationType,
+      chartType: activeSlide?.chartType,
     });
-  }, [activeSlide?.title, dataset?.name, queryResult, resolvedRowVars, resolvedColVar, isWeighted, isMultipleResponse]);
+  }, [activeSlide?.title, activeSlide?.visualizationType, activeSlide?.chartType, dataset?.name, queryResult, resolvedRowVars, resolvedColVar, isWeighted, isMultipleResponse]);
+
+  const handleSaveFilter = React.useCallback((filter: Omit<Filter, 'id'>, applyToAll: boolean) => {
+    // Always add to current analysis
+    addFilter(filter);
+
+    if (applyToAll) {
+      // Create a filter object with an ID for the slide state copies
+      const filterWithId = { ...filter, id: crypto.randomUUID() };
+      const slideIds = slides.map(s => s.id);
+      addFilterToSlides(slideIds, filterWithId);
+    }
+  }, [addFilter, addFilterToSlides, slides]);
 
   const [mode, setMode] = React.useState<AppMode>('splash');
   const [selectedSetIds, setSelectedSetIds] = React.useState<Set<string>>(new Set());
@@ -1202,7 +1215,7 @@ export default function App() {
         isOpen={filterModal.isOpen}
         onClose={closeFilterModal}
         variables={variables}
-        onSave={addFilter}
+        onSave={handleSaveFilter}
       />
 
       <InputModal
@@ -1596,14 +1609,22 @@ export default function App() {
 
                     <div className="flex items-center bg-[var(--bg-surface)] p-1 rounded-lg">
                       <button
-                        onClick={() => setViewMode('table')}
-                        className={`p-1.5 rounded-md transition-all ${viewMode === 'table' ? 'bg-[var(--bg-panel)] text-[var(--color-accent)] shadow-sm' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}
+                        onClick={() => {
+                          if (activeSlideId) {
+                            useVelocityStore.getState().setSlideVisualizationType(activeSlideId, 'table');
+                          }
+                        }}
+                        className={`p-1.5 rounded-md transition-all ${activeSlide?.visualizationType === 'table' ? 'bg-[var(--bg-panel)] text-[var(--color-accent)] shadow-sm' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}
                       >
                         <Table size={16} />
                       </button>
                       <button
-                        onClick={() => setViewMode('chart')}
-                        className={`p-1.5 rounded-md transition-all ${viewMode === 'chart' ? 'bg-[var(--bg-panel)] text-[var(--color-accent)] shadow-sm' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}
+                        onClick={() => {
+                          if (activeSlideId) {
+                            useVelocityStore.getState().setSlideVisualizationType(activeSlideId, 'chart');
+                          }
+                        }}
+                        className={`p-1.5 rounded-md transition-all ${activeSlide?.visualizationType === 'chart' ? 'bg-[var(--bg-panel)] text-[var(--color-accent)] shadow-sm' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}
                       >
                         <BarChart3 size={16} />
                       </button>

@@ -1,6 +1,7 @@
 import { processAnalysisData } from '../../services/analysisProcessor';
 import type { AggregatedRow, Variable } from '../../types';
 import type { ExportConfig } from './types';
+import type { ChartType } from '../../types/charts';
 
 interface BuildExportConfigOptions {
   title: string;
@@ -10,6 +11,8 @@ interface BuildExportConfigOptions {
   colVariable: Variable | null;
   isWeighted: boolean;
   isMultipleResponse: boolean;
+  viewType?: 'table' | 'chart';
+  chartType?: ChartType;
 }
 
 export const buildExportConfig = ({
@@ -20,6 +23,8 @@ export const buildExportConfig = ({
   colVariable,
   isWeighted,
   isMultipleResponse,
+  viewType,
+  chartType,
 }: BuildExportConfigOptions): ExportConfig => {
   if (!data || data.length === 0 || rowVariables.length === 0) {
     return { title, analyses: [] };
@@ -48,6 +53,8 @@ export const buildExportConfig = ({
       {
         label: analysisLabel,
         result: processedData,
+        viewType,
+        chartType,
         options: {
           showSignificance: true,
           showPercents: true,

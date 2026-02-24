@@ -45,7 +45,6 @@ export interface PersistedState {
 
     // From UISlice
     appMode: VelocityState['appMode'];
-    viewMode: VelocityState['viewMode'];
     activeFolderId: VelocityState['activeFolderId'];
 
     // From AnalysisSlice
@@ -82,22 +81,21 @@ export const partialize = (state: VelocityState): PersistedState => {
         folders: persistFolders,
         transformLog: persistTransformLog,
 
-    // UISlice - persist view preferences but NOT dragging/modal state
-    appMode: state.appMode,
-    viewMode: state.viewMode,
-    activeFolderId: state.activeFolderId,
+        // UISlice - persist view preferences but NOT dragging/modal state
+        appMode: state.appMode,
+        activeFolderId: state.activeFolderId,
 
-    // AnalysisSlice - persist configuration but NOT query results
-    tableConfig: state.tableConfig,
-    activeFilters: state.activeFilters,
+        // AnalysisSlice - persist configuration but NOT query results
+        tableConfig: state.tableConfig,
+        activeFilters: state.activeFilters,
 
-    // WorkspaceSlice - persist workspace state for multi-file management
-    workspace: state.workspace,
-    activeDatasetId: state.activeDatasetId,
-    isWorkspaceMode: state.isWorkspaceMode,
+        // WorkspaceSlice - persist workspace state for multi-file management
+        workspace: state.workspace,
+        activeDatasetId: state.activeDatasetId,
+        isWorkspaceMode: state.isWorkspaceMode,
 
-    // Data fingerprint - used for OPFS/localStorage reconciliation
-    // Only set when dataset exists
+        // Data fingerprint - used for OPFS/localStorage reconciliation
+        // Only set when dataset exists
         dataFingerprint: persistDataset
             ? {
                 rowCount: persistDataset.rowCount,

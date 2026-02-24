@@ -30,7 +30,6 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
     const chartData = useVelocityStore((state) => state.queryResult);
     const tableConfig = useVelocityStore((state) => state.tableConfig);
     const variableSets = useVelocityStore((state) => state.variableSets);
-    const viewMode = useVelocityStore((state) => state.viewMode);
     const allVariables = useVelocityStore((state) => state.dataset?.variables ?? EMPTY_VARIABLES);
     const totalCount = useVelocityStore((state) => state.dataset?.rowCount || 0);
     const isWeighted = useVelocityStore((state) => !!state.dataset?.weightVariable);
@@ -71,8 +70,8 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
     }
 
     const renderCellContent = () => {
-        // Use global viewMode for MVP backward compatibility, falling back to cell type
-        const contentType = viewMode || cell.content.type;
+        // Use true slide state
+        const contentType = activeSlide.visualizationType;
 
         switch (contentType) {
             case 'chart':

@@ -16,7 +16,7 @@ interface FilterModalProps {
     isOpen: boolean;
     onClose: () => void;
     variables: Variable[];
-    onSave: (filter: Omit<Filter, 'id'>) => void;
+    onSave: (filter: Omit<Filter, 'id'>, applyToAll: boolean) => void;
 }
 
 type Step = 'variable' | 'values';
@@ -35,6 +35,7 @@ export const FilterModal: React.FC<FilterModalProps> = ({
     // New state for async values
     const [availableValues, setAvailableValues] = useState<{ value: string | number; label: string }[]>([]);
     const [loadingValues, setLoadingValues] = useState(false);
+    const [applyToAll, setApplyToAll] = useState(false);
 
     const getUniqueValues = useVelocityStore(state => state.getUniqueValues);
 
@@ -94,7 +95,7 @@ export const FilterModal: React.FC<FilterModalProps> = ({
 
     const handleValueToggle = (value: number | string) => {
         setSelectedValues(prev =>
-            prev.includes(value as any)
+            (prev as any[]).includes(value)
                 ? prev.filter(v => v !== value)
                 : [...prev, value] as any
         );
@@ -107,7 +108,7 @@ export const FilterModal: React.FC<FilterModalProps> = ({
             variableId: selectedVariable.id,
             operator: selectedValues.length === 1 ? 'eq' : 'in',
             value: (selectedValues.length === 1 ? selectedValues[0] : selectedValues) as any,
-        });
+        }, applyToAll);
 
         handleClose();
     };
@@ -255,7 +256,7 @@ export const FilterModal: React.FC<FilterModalProps> = ({
                                         </p>
                                     ) : (
                                         availableValues.map(vl => {
-                                            const isSelected = selectedValues.includes(vl.value as any);
+                                            const isSelected = (selectedValues as any[]).includes(vl.value);
                                             return (
                                                 <button
                                                     key={vl.value}
@@ -309,6 +310,24 @@ export const FilterModal: React.FC<FilterModalProps> = ({
                                     >
                                         Apply Filter ({selectedValues.length} selected)
                                     </button>
+                                </div>
+
+                                {/* Apply to All Slides Toggle */}
+                                <div className="mt-4 flex items-center gap-2 px-1 pb-2">
+                                    <input
+                                        type="checkbox"
+                                        id="applyAll"
+                                        checked={applyToAll}
+                                        onChange={(e) => setApplyToAll(e.target.checked)}
+                                        className="w-4 h-4 rounded appearance-none border-2 checked:bg-[var(--color-accent)] checked:border-[var(--color-accent)] transition-colors cursor-pointer relative"
+                                        style={{
+                                            borderColor: applyToAll ? 'var(--color-accent)' : 'var(--border-color)',
+                                            backgroundColor: applyToAll ? 'var(--color-accent)' : 'transparent',
+                                        }}
+                                    />
+                                    <label htmlFor="applyAll" className="text-sm font-medium select-none cursor-pointer" style={{ color: 'var(--text-secondary)' }}>
+                                        Apply to all slides in deck
+                                    </label>
                                 </div>
                             </>
                         )}

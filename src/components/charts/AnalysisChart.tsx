@@ -80,8 +80,12 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
     // Label Mode State
     const [labelMode, setLabelMode] = useState<'count' | 'percent' | 'none'>('count');
 
-    // Get user-selected chart type from store
-    const selectedChartType = useVelocityStore(state => state.selectedChartType);
+    // Get active slide to read visual state
+    const activeSlideId = useVelocityStore(state => state.activeSlideId);
+    const activeSlide = useVelocityStore(state => state.slides.find(s => s.id === activeSlideId));
+
+    // Get user-selected chart type from active slide instead of global state
+    const selectedChartType = activeSlide?.chartType;
     const addFilter = useVelocityStore(state => state.addFilter);
 
     // Check if Visual ETL is enabled
@@ -318,7 +322,11 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
                     <ChartSelector
                         currentType={activeChartType}
                         availableTypes={recommendation?.alternatives ? [recommendation.default, ...recommendation.alternatives] : undefined}
-                        onSelect={(type) => useVelocityStore.getState().setSelectedChartType(type)}
+                        onSelect={(type) => {
+                            if (activeSlideId) {
+                                useVelocityStore.getState().setSlideVisualizationType(activeSlideId, 'chart', type);
+                            }
+                        }}
                     />
 
                     {/* Bin Count Slider (Histogram Only) */}

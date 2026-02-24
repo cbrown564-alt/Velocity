@@ -15,14 +15,10 @@ import type { ExportConfig } from '../../core/export/types';
 // ============================================================================
 
 export type AppMode = 'analysis' | 'variables';
-export type ViewMode = 'table' | 'chart';
 
-// Faceted Search Types
 export type TypeFacet = VariableType;
 export type StatusFacet = 'visible' | 'hidden' | 'derived';
 export type QualityFacet = 'complete' | 'incomplete';
-// Chart Types
-import type { ChartType } from '../../types/charts';
 
 export interface FacetFilters {
     types: TypeFacet[];
@@ -53,7 +49,6 @@ export interface UISlice {
     appMode: AppMode;
     draggingId: string | null;
     searchQuery: string;
-    viewMode: ViewMode;
     recodeModal: RecodeModalState;
     filterModal: FilterModalState;
     analysisExportModal: AnalysisExportModalState;
@@ -72,16 +67,11 @@ export interface UISlice {
     /** Single variable selection for Miller column navigation */
     selectedVariableId: string | null;
 
-    // Chart State
-    /** User-selected chart type override (null = auto) */
-    selectedChartType: ChartType | null;
-
     // Actions
     setAppMode: (mode: AppMode) => void;
     toggleAppMode: () => void;
     setDraggingId: (id: string | null) => void;
     setSearchQuery: (query: string) => void;
-    setViewMode: (mode: ViewMode) => void;
     openRecodeModal: (variable: Variable) => void;
     closeRecodeModal: () => void;
     openFilterModal: () => void;
@@ -103,9 +93,6 @@ export interface UISlice {
     setSelectedVariableSetId: (id: string | null) => void;
     setSelectedVariableId: (id: string | null) => void;
 
-    // Chart Actions
-    setSelectedChartType: (type: ChartType | null) => void;
-
     // Faceted Search
     facetFilters: FacetFilters;
     setFacetFilters: (filters: Partial<FacetFilters>) => void;
@@ -117,7 +104,6 @@ export const createUISlice: StateCreator<UISlice, [], [], UISlice> = (set) => ({
     appMode: 'analysis',
     draggingId: null,
     searchQuery: '',
-    viewMode: 'table',
     recodeModal: { isOpen: false, variable: null },
     filterModal: { isOpen: false },
     analysisExportModal: { isOpen: false, config: null },
@@ -129,9 +115,6 @@ export const createUISlice: StateCreator<UISlice, [], [], UISlice> = (set) => ({
     selectedDataSourceId: null,
     selectedVariableSetId: null,
     selectedVariableId: null,
-
-    // Chart State
-    selectedChartType: null,
 
     // Faceted Search State
     facetFilters: { types: [], statuses: [], qualities: [] },
@@ -151,7 +134,6 @@ export const createUISlice: StateCreator<UISlice, [], [], UISlice> = (set) => ({
 
     setDraggingId: (id) => set({ draggingId: id }),
     setSearchQuery: (query) => set({ searchQuery: query }),
-    setViewMode: (mode) => set({ viewMode: mode }),
 
     openRecodeModal: (variable) => set({ recodeModal: { isOpen: true, variable } }),
     closeRecodeModal: () => set({ recodeModal: { isOpen: false, variable: null } }),
@@ -231,8 +213,6 @@ export const createUISlice: StateCreator<UISlice, [], [], UISlice> = (set) => ({
     }),
 
     setSelectedVariableId: (id) => set({ selectedVariableId: id }),
-
-    setSelectedChartType: (type) => set({ selectedChartType: type }),
 
     // Faceted Search Actions
     setFacetFilters: (filters) => set((state) => ({

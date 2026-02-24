@@ -90,6 +90,84 @@ function buildSlideTable(
   return tableRows;
 }
 
+function buildSlideChart(
+  pptx: PptxGenJS,
+  slide: any, // PptxGenJS.Slide type might not be fully exported, use any for now
+  item: AnalysisExportItem,
+  branding: typeof DEFAULTS
+) {
+  const chartTypeKey = item.chartType || 'vertical-bar';
+
+  // Mapping Velocity ChartType to PPTX ChartTypes
+  let pptxChartType: any = PptxGenJS.ChartType.bar;
+  let barDir: 'bar' | 'col' = 'col';
+  let barGrouping: 'standard' | 'stacked' | 'clustered' = 'standard';
+
+  switch (chartTypeKey) {
+    case 'horizontal-bar':
+      barDir = 'bar';
+      break;
+    case 'vertical-bar':
+      barDir = 'col';
+      break;
+    case 'grouped-bar':
+      barDir = 'bar';
+      barGrouping = 'clustered';
+      break;
+    case 'grouped-column':
+      barDir = 'col';
+      barGrouping = 'clustered';
+      break;
+    case 'stacked-bar':
+      barDir = 'bar';
+      barGrouping = 'stacked';
+      break;
+    case 'donut':
+      pptxChartType = PptxGenJS.ChartType.doughnut;
+      break;
+    case 'scatter':
+      pptxChartType = PptxGenJS.ChartType.scatter;
+      break;
+    default:
+      // Fallback (e.g. histogram, box-plot)
+      barDir = 'col';
+  }
+
+  const showPercents = item.options?.showPercents !== false;
+
+  const seriesData = item.result.series.map(series => {
+    return {
+      name: series.label || 'Series 1',
+      labels: series.data.map(d => d.label),
+      values: series.data.map(d => showPercents ? d.percent : d.value)
+    };
+  });
+
+  const chartOpts: any = {
+    x: 0.5,
+    y: 1.0,
+    w: 12.3,
+    h: 5.5,
+    showTitle: false,
+    showLegend: item.result.series.length > 1,
+    legendPos: 'b',
+    barDir,
+    barGrouping,
+    // Use branding colors + a fallback categorical palette
+    chartColors: [branding.headerColor, branding.primaryColor, '4F46E5', '10B981', 'F59E0B'],
+    dataLabelFormatCode: showPercents ? '0.0"%"' : '0',
+    showValue: true,
+    dataBorder: { pt: 1, color: 'FFFFFF' },
+    dataLabelColor: '333333',
+    dataLabelFontFace: branding.fontFamily,
+    dataLabelFontSize: 10,
+    // Provide general styling logic
+    valAxisLabelFormatCode: showPercents ? '0"%"' : '0',
+  };
+
+  slide.addChart(pptxChartType, seriesData, chartOpts);
+}
+
 export async function exportPptx(config: ExportConfig): Promise<Uint8Array> {
   const pptx = new PptxGenJS();
   pptx.layout = 'LAYOUT_WIDE';
@@ -127,18 +205,22 @@ export async function exportPptx(config: ExportConfig): Promise<Uint8Array> {
       bold: true,
     });
 
-    const tableRows = buildSlideTable(item, item.result.columns, branding);
-    const colCount = item.result.columns.length + 2; // label + cols + total
+    if (item.viewType === 'chart') {
+      buildSlideChart(pptx, slide, item, branding);
+    } else {
+      const tableRows = buildSlideTable(item, item.result.columns, branding);
+      const colCount = item.result.columns.length + 2; // label + cols + total
 
-    slide.addTable(tableRows, {
-      x: 0.5,
-      y: 1.0,
-      w: 12.3,
-      colW: Array(colCount).fill(12.3 / colCount),
-      rowH: 0.35,
-      autoPage: true,
-      autoPageRepeatHeader: true,
-    });
+      slide.addTable(tableRows, {
+        x: 0.5,
+        y: 1.0,
+        w: 12.3,
+        colW: Array(colCount).fill(12.3 / colCount),
+        rowH: 0.35,
+        autoPage: true,
+        autoPageRepeatHeader: true,
+      });
+    }
   }
 
   const output = await pptx.write({ outputType: 'uint8array' });

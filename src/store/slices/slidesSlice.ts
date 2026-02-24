@@ -41,6 +41,7 @@ export interface SlidesSlice {
     // Analysis State Actions
     snapshotCurrentSlide: () => void;
     setSlideVisualizationType: (slideId: string, type: 'table' | 'chart', chartType?: ChartType) => void;
+    addFilterToSlides: (slideIds: string[], filter: any) => void;
 }
 
 // ============================================================================
@@ -121,9 +122,10 @@ export const createSlidesSlice: SlidesSliceCreator = (set, get) => ({
             weightVar: state.dataset?.weightVariable ?? null,
         };
 
-        // Determine visualization from current viewMode
-        const visualizationType = state.viewMode === 'chart' ? 'chart' : 'table';
-        const chartType = state.selectedChartType ?? undefined;
+        // Determine visualization from active slide or fallback
+        const activeSlide = state.slides.find((s) => s.id === state.activeSlideId);
+        const visualizationType = activeSlide?.visualizationType || 'table';
+        const chartType = activeSlide?.chartType;
 
         const newSlide: Slide = {
             id: newId,
@@ -229,8 +231,8 @@ export const createSlidesSlice: SlidesSliceCreator = (set, get) => ({
             filters: state.activeFilters ?? [],
             weightVar: state.dataset?.weightVariable ?? null,
         };
-        const currentVisualizationType = state.viewMode === 'chart' ? 'chart' : 'table';
-        const currentChartType = state.selectedChartType ?? undefined;
+        const currentVisualizationType = outgoingSlide?.visualizationType || 'table';
+        const currentChartType = outgoingSlide?.chartType;
 
         // Update slides with snapshotted outgoing and activate incoming
         set({
@@ -253,20 +255,12 @@ export const createSlidesSlice: SlidesSliceCreator = (set, get) => ({
         // Restore incoming slide's state via AnalysisSlice and UISlice actions
         // Note: These actions are available since we're in combined store
         const restored = state.slides.find(s => s.id === id);
-        if (restored && state.setTableConfig && state.setViewMode) {
+        if (restored && state.setTableConfig) {
             // Restore table config
             state.setTableConfig({
                 rowVars: restored.analysisState.rowVars,
                 colVar: restored.analysisState.colVar,
             });
-
-            // Restore view mode
-            state.setViewMode(restored.visualizationType);
-
-            // Restore chart type if applicable
-            if (restored.visualizationType === 'chart' && restored.chartType && state.setSelectedChartType) {
-                state.setSelectedChartType(restored.chartType);
-            }
 
             // Filters need separate handling - clear and re-add
             if (state.clearFilters && state.addFilter) {
@@ -422,8 +416,9 @@ export const createSlidesSlice: SlidesSliceCreator = (set, get) => ({
             filters: state.activeFilters ?? [],
             weightVar: state.dataset?.weightVariable ?? null,
         };
-        const visualizationType = state.viewMode === 'chart' ? 'chart' : 'table';
-        const chartType = state.selectedChartType ?? undefined;
+        const activeSlide = state.slides.find(s => s.id === state.activeSlideId);
+        const visualizationType = activeSlide?.visualizationType || 'table';
+        const chartType = activeSlide?.chartType;
 
         set({
             slides: state.slides.map(s =>
@@ -447,4 +442,29 @@ export const createSlidesSlice: SlidesSliceCreator = (set, get) => ({
                 : s
         )
     })),
+
+    addFilterToSlides: (slideIds, filter) => {
+        set((state) => ({
+            slides: state.slides.map((slide) => {
+                if (slideIds.includes(slide.id)) {
+                    const existingIndex = slide.analysisState.filters.findIndex(f => f.variableId === filter.variableId);
+                    const newFilters = [...slide.analysisState.filters];
+                    if (existingIndex >= 0) {
+                        newFilters[existingIndex] = filter as any;
+                    } else {
+                        newFilters.push(filter as any);
+                    }
+                    return {
+                        ...slide,
+                        analysisState: {
+                            ...slide.analysisState,
+                            filters: newFilters,
+                        },
+                        updatedAt: Date.now(),
+                    };
+                }
+                return slide;
+            }),
+        }));
+    },
 });
