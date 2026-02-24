@@ -51,7 +51,7 @@ export const SignificanceLegend: React.FC<SignificanceLegendProps> = ({
           <span style={{ color: 'var(--color-success)' }}>Higher</span>
           <ArrowDown size={10} style={{ color: 'var(--color-error)' }} />
           <span style={{ color: 'var(--color-error)' }}>Lower</span>
-          <span className="opacity-60">(95%)</span>
+          <span>(95%)</span>
         </span>
         {/* 80% — neutral grey: categorically distinct from 95% colored arrows */}
         <span className="flex items-center gap-1" style={{ color: 'var(--text-secondary)' }}>
