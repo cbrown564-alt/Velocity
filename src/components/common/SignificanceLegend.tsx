@@ -53,10 +53,10 @@ export const SignificanceLegend: React.FC<SignificanceLegendProps> = ({
           <span style={{ color: 'var(--color-error)' }}>Lower</span>
           <span className="opacity-60">(95%)</span>
         </span>
-        {/* 80% — same hues at 45% opacity to encode "weaker signal" */}
-        <span className="flex items-center gap-1 opacity-50">
-          <ArrowUp size={10} style={{ color: 'var(--color-success)' }} />
-          <ArrowDown size={10} style={{ color: 'var(--color-error)' }} />
+        {/* 80% — neutral grey: categorically distinct from 95% colored arrows */}
+        <span className="flex items-center gap-1" style={{ color: 'var(--text-secondary)' }}>
+          <ArrowUp size={10} />
+          <ArrowDown size={10} />
           <span>Directional (80%)</span>
         </span>
         {correctionType !== 'none' && (
@@ -104,18 +104,18 @@ export const SignificanceLegend: React.FC<SignificanceLegendProps> = ({
         </div>
 
         {/* 80% Confidence */}
-        <div className="space-y-1 opacity-60">
+        <div className="space-y-1">
           <div className="text-[10px] uppercase tracking-wide text-[var(--text-secondary)] font-semibold">
             80% Confidence
           </div>
           <div className="flex items-center gap-2">
-            <ArrowUp size={14} style={{ color: 'var(--color-success)' }} />
+            <ArrowUp size={14} style={{ color: 'var(--text-secondary)' }} />
             <span className="text-[var(--text-primary)]">
               Moderately higher than rest
             </span>
           </div>
           <div className="flex items-center gap-2">
-            <ArrowDown size={14} style={{ color: 'var(--color-error)' }} />
+            <ArrowDown size={14} style={{ color: 'var(--text-secondary)' }} />
             <span className="text-[var(--text-primary)]">
               Moderately lower than rest
             </span>
