@@ -46,7 +46,7 @@ graph TD
   S5CLOUD1 --> S5CLOUD2["S5-CLOUD-2 Direct Data Imports"]
 ```
 
-S2-STAT-1 through S2-STAT-4 are resolved. S2-EXP-1 is done. The statistical engine dependency on S3-HARM-1 is cleared; only S2-EXP-2 (chart fidelity sign-off) remains on the critical path to Phase 3.
+S2-STAT-1 through S2-STAT-4 are resolved. S2-EXP-1 and S2-EXP-2 are done. Phase 2 critical path blockers are cleared for Phase 3 start.
 
 ## 4. Execution Board
 
@@ -54,7 +54,7 @@ S2-STAT-1 through S2-STAT-4 are resolved. S2-EXP-1 is done. The statistical engi
 
 | ID | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| S2-EXP-2 | Export | Editable chart fidelity verification in PowerPoint | S2-EXP-1 | In review | No | U,I,A | cab233a, bf7e58a, 488a436 |
+| S2-EXP-2 | Export | Editable chart fidelity verification in PowerPoint | S2-EXP-1 | Done | No | U,I,A | cab233a, bf7e58a, 488a436, 57bcf66 |
 
 ### 4.2 Next (Phase 3)
 
