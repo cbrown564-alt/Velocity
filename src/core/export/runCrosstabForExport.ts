@@ -3,6 +3,8 @@ import type { WorkerRequest, WorkerResponse } from '../../types/worker';
 import { buildCrosstabRequest } from '../analysis/buildCrosstabRequest';
 import { mapCrosstabRows } from '../analysis/mapCrosstabRows';
 
+const EXPORT_TIMEOUT_MS = 30_000;
+
 interface AnalysisSignificanceSettings {
   comparisonMethod: 'cell_vs_rest' | 'pairwise';
   correctionType: 'none' | 'bonferroni' | 'fdr';
@@ -49,29 +51,42 @@ export const runCrosstabForExport = async ({
     analysisSettings,
   });
 
-  return new Promise<RunCrosstabResult>((resolve) => {
+  return new Promise<RunCrosstabResult>((resolve, reject) => {
+    let timeoutId: ReturnType<typeof setTimeout>;
+
     const handler = (event: MessageEvent<WorkerResponse>) => {
       const response = event.data;
 
       if (response.type === 'queryResult') {
+        clearTimeout(timeoutId);
         const rawData = response.data as any[];
         const mappedData: AggregatedRow[] = mapCrosstabRows(rawData, request.isWeighted);
-
         worker.removeEventListener('message', handler);
         resolve({ data: mappedData, tableStats: response.tableStats || null });
       } else if (response.type === 'error') {
+        clearTimeout(timeoutId);
         console.error('[Export] Crosstab query error:', response.message);
         worker.removeEventListener('message', handler);
         resolve({ data: [], tableStats: null });
       }
     };
 
-    worker.addEventListener('message', handler);
+    // Post the message before registering the listener. Because JS is
+    // single-threaded, no worker response can be processed between postMessage
+    // and addEventListener — any prior stale messages in the queue will have
+    // already fired before this task started.
     worker.postMessage({
       type: 'runCrosstab',
       options: request.options,
       context: request.context,
       analysisSettings: request.analysisSettings,
     } as WorkerRequest);
+
+    worker.addEventListener('message', handler);
+
+    timeoutId = setTimeout(() => {
+      worker.removeEventListener('message', handler);
+      reject(new Error('[Export] Worker did not respond within 30 seconds. Export aborted.'));
+    }, EXPORT_TIMEOUT_MS);
   });
 };

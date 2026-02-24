@@ -610,3 +610,16 @@
         transform: translateY(0);
     }
 }
+
+/* Error State */
+.errorMessage {
+    padding: var(--space-3) var(--space-4);
+    background: color-mix(in srgb, var(--color-error, #dc2626) 12%, transparent);
+    border: 1px solid var(--color-error, #dc2626);
+    border-radius: var(--radius);
+    color: var(--color-error, #dc2626);
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    animation: slideIn 300ms var(--ease-standard);
+}

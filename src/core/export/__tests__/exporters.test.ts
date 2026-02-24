@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { exportPptx } from '../pptxExporter';
+import { exportPptx, formatCell } from '../pptxExporter';
 import { exportXlsx } from '../xlsxExporter';
 import { ExportConfig } from '../types';
 import { ProcessedAnalysisData } from '../../../types/processedData';
@@ -33,7 +33,15 @@ const mockData: ProcessedAnalysisData = {
       rowPath: [{ variable: 'gender', value: '2' }],
     },
   ],
-  series: [],
+  series: [
+    {
+      label: 'Agree',
+      data: [
+        { label: 'Male', value: 30, percent: 60.0 },
+        { label: 'Female', value: 25, percent: 50.0 },
+      ],
+    },
+  ],
   columns: [
     { key: '1', label: 'Agree', total: 55 },
     { key: '2', label: 'Disagree', total: 45 },
@@ -52,6 +60,68 @@ const config: ExportConfig = {
     { label: 'Gender by Agreement', result: mockData },
   ],
 };
+
+// ---------------------------------------------------------------------------
+// formatCell unit tests
+// ---------------------------------------------------------------------------
+
+describe('formatCell', () => {
+  const cell = { count: 30, percent: 60.0, sig: 'high_95' as const, stats: { tScore: 2.5, pValue: 0.01, effN: 50 } };
+  const noSigCell = { count: 20, percent: 40.0 };
+
+  it('shows percent only by default', () => {
+    expect(formatCell(cell, false, true, false)).toBe('60.0%');
+  });
+
+  it('appends significance arrow when showSig is true', () => {
+    expect(formatCell(cell, true, true, false)).toBe('60.0% ▲');
+  });
+
+  it('shows count in parentheses when showCounts is true', () => {
+    expect(formatCell(cell, false, true, true)).toBe('60.0% (30)');
+  });
+
+  it('shows count with sig arrow when both are enabled', () => {
+    expect(formatCell(cell, true, true, true)).toBe('60.0% (30) ▲');
+  });
+
+  it('shows only count when showPercents is false and showCounts is true', () => {
+    expect(formatCell(cell, false, false, true)).toBe('(30)');
+  });
+
+  it('returns empty string when both display flags are false', () => {
+    expect(formatCell(cell, true, false, false)).toBe('');
+  });
+
+  it('returns empty string for undefined cell', () => {
+    expect(formatCell(undefined, true, true, true)).toBe('');
+  });
+
+  it('handles low_95 significance arrow', () => {
+    const lowCell = { count: 25, percent: 50.0, sig: 'low_95' as const };
+    expect(formatCell(lowCell, true, true, false)).toBe('50.0% ▼');
+  });
+
+  it('handles 80% significance hollow arrows', () => {
+    const hi80 = { count: 10, percent: 20.0, sig: 'high_80' as const };
+    const lo80 = { count: 10, percent: 20.0, sig: 'low_80' as const };
+    expect(formatCell(hi80, true, true, false)).toBe('20.0% △');
+    expect(formatCell(lo80, true, true, false)).toBe('20.0% ▽');
+  });
+
+  it('does not append arrow for unknown sig value', () => {
+    const unknownCell = { count: 5, percent: 10.0, sig: 'unknown_sig' as any };
+    expect(formatCell(unknownCell, true, true, false)).toBe('10.0% ');
+  });
+
+  it('handles cell with no sig field', () => {
+    expect(formatCell(noSigCell, true, true, false)).toBe('40.0%');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// exportPptx integration tests
+// ---------------------------------------------------------------------------
 
 describe('exportPptx', () => {
   it('produces a valid PPTX (ZIP) file', async () => {
@@ -76,7 +146,79 @@ describe('exportPptx', () => {
     const bytes = await exportPptx(multiConfig);
     expect(bytes.length).toBeGreaterThan(1000);
   });
+
+  it('handles empty analyses array (title slide only)', async () => {
+    const emptyConfig: ExportConfig = { title: 'Empty Report', analyses: [] };
+    const bytes = await exportPptx(emptyConfig);
+    expect(bytes).toBeInstanceOf(Uint8Array);
+    expect(bytes.length).toBeGreaterThan(100);
+    expect(bytes[0]).toBe(0x50);
+    expect(bytes[1]).toBe(0x4B);
+  });
+
+  it('handles chart view type without throwing', async () => {
+    const chartConfig: ExportConfig = {
+      title: 'Chart Report',
+      analyses: [
+        {
+          label: 'Bar Chart',
+          result: mockData,
+          viewType: 'chart',
+          chartType: 'vertical-bar',
+        },
+      ],
+    };
+    const bytes = await exportPptx(chartConfig);
+    expect(bytes).toBeInstanceOf(Uint8Array);
+    expect(bytes.length).toBeGreaterThan(1000);
+  });
+
+  it('handles donut chart type without throwing', async () => {
+    const donutConfig: ExportConfig = {
+      title: 'Donut Report',
+      analyses: [{ label: 'Donut', result: mockData, viewType: 'chart', chartType: 'donut' }],
+    };
+    const bytes = await exportPptx(donutConfig);
+    expect(bytes).toBeInstanceOf(Uint8Array);
+    expect(bytes.length).toBeGreaterThan(1000);
+  });
+
+  it('handles scatter chart type without throwing', async () => {
+    const scatterConfig: ExportConfig = {
+      title: 'Scatter Report',
+      analyses: [{ label: 'Scatter', result: mockData, viewType: 'chart', chartType: 'scatter' }],
+    };
+    const bytes = await exportPptx(scatterConfig);
+    expect(bytes).toBeInstanceOf(Uint8Array);
+    expect(bytes.length).toBeGreaterThan(1000);
+  });
+
+  it('produces a larger file when showCounts is enabled', async () => {
+    const withCounts = await exportPptx({
+      title: 'Counts',
+      analyses: [{ label: 'A', result: mockData, options: { showPercents: true, showCounts: true, showSignificance: false } }],
+    });
+    const withoutCounts = await exportPptx({
+      title: 'No Counts',
+      analyses: [{ label: 'A', result: mockData, options: { showPercents: true, showCounts: false, showSignificance: false } }],
+    });
+    // More content in cells means a larger compressed file
+    expect(withCounts.length).toBeGreaterThan(withoutCounts.length);
+  });
+
+  it('applies branding overrides without throwing', async () => {
+    const branded = await exportPptx({
+      ...config,
+      branding: { primaryColor: '#003366', headerColor: '#FF6600', fontFamily: 'Arial' },
+    });
+    expect(branded).toBeInstanceOf(Uint8Array);
+    expect(branded.length).toBeGreaterThan(1000);
+  });
 });
+
+// ---------------------------------------------------------------------------
+// exportXlsx integration tests
+// ---------------------------------------------------------------------------
 
 describe('exportXlsx', () => {
   it('produces a valid XLSX (ZIP) file', async () => {
@@ -100,5 +242,11 @@ describe('exportXlsx', () => {
     };
     const bytes = await exportXlsx(multiConfig);
     expect(bytes.length).toBeGreaterThan(1000);
+  });
+
+  it('handles empty analyses array without throwing', async () => {
+    const emptyConfig: ExportConfig = { title: 'Empty', analyses: [] };
+    const bytes = await exportXlsx(emptyConfig);
+    expect(bytes).toBeInstanceOf(Uint8Array);
   });
 });

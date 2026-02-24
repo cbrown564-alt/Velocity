@@ -40,6 +40,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
     const [showCounts, setShowCounts] = useState(false);
     const [isExporting, setIsExporting] = useState(false);
     const [exportSuccess, setExportSuccess] = useState(false);
+    const [exportError, setExportError] = useState<string | null>(null);
     const [scope, setScope] = useState<ExportScope>('current');
     const [selectedSlideIds, setSelectedSlideIds] = useState<string[]>([]);
 
@@ -62,6 +63,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
         if (!isOpen) return;
         setTitle(initialConfig.title);
         setExportSuccess(false);
+        setExportError(null);
         setScope('current');
         setSelectedSlideIds(activeSlideId ? [activeSlideId] : []);
     }, [isOpen, initialConfig.title, activeSlideId]);
@@ -103,20 +105,21 @@ export const ExportModal: React.FC<ExportModalProps> = ({
 
     const handleExport = async () => {
         if (!worker || !dataset) {
-            alert('Export is unavailable until a dataset is loaded.');
+            setExportError('Export is unavailable until a dataset is loaded.');
             return;
         }
         if (isQuerying) {
-            alert('Please wait for analysis to finish, then try exporting again.');
+            setExportError('Please wait for the current analysis to finish, then try again.');
             return;
         }
         if (slideIdsForScope.length === 0) {
-            alert('Select at least one slide to export.');
+            setExportError('Select at least one slide to export.');
             return;
         }
 
         setIsExporting(true);
         setExportSuccess(false);
+        setExportError(null);
 
         try {
             const analyses: ExportConfig['analyses'] = [];
@@ -169,7 +172,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
             }
 
             if (analyses.length === 0) {
-                alert('No exportable analyses were found for the selected slides.');
+                setExportError('No exportable analyses were found for the selected slides.');
                 return;
             }
 
@@ -213,7 +216,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
             }, 1500);
         } catch (error) {
             console.error('Export failed:', error);
-            alert('Export failed. Please try again.');
+            setExportError(error instanceof Error ? error.message : 'Export failed. Please try again.');
         } finally {
             setIsExporting(false);
         }
@@ -462,11 +465,16 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                                     </div>
                                 </div>
 
-                                {/* Success Message */}
+                                {/* Status Messages */}
                                 {exportSuccess && (
                                     <div className={styles.successMessage}>
                                         <CheckCircle2 size={16} />
                                         Export successful! File downloaded.
+                                    </div>
+                                )}
+                                {exportError && (
+                                    <div className={styles.errorMessage}>
+                                        {exportError}
                                     </div>
                                 )}
                             </div>

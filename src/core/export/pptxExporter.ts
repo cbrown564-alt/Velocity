@@ -17,6 +17,11 @@ const DEFAULTS = {
   headerFontSize: 10,
 };
 
+// Width (inches) reserved for the row-label column.
+// Remaining space is split equally among data columns + Base column.
+const LABEL_COL_WIDTH = 3.0;
+const SLIDE_TABLE_WIDTH = 12.3;
+
 function flattenRows(rows: ProcessedRow[], result: ProcessedRow[] = []): ProcessedRow[] {
   for (const row of rows) {
     result.push(row);
@@ -27,19 +32,35 @@ function flattenRows(rows: ProcessedRow[], result: ProcessedRow[] = []): Process
   return result;
 }
 
-function formatCell(cell: ProcessedCell | undefined, showSig: boolean): string {
+/**
+ * Format a single data cell for PPTX output.
+ * Exported for unit testing.
+ */
+export function formatCell(
+  cell: ProcessedCell | undefined,
+  showSig: boolean,
+  showPercents: boolean,
+  showCounts: boolean,
+): string {
   if (!cell) return '';
-  const pct = `${cell.percent.toFixed(1)}%`;
+  const parts: string[] = [];
+  if (showPercents) parts.push(`${cell.percent.toFixed(1)}%`);
+  if (showCounts) parts.push(`(${cell.count})`);
+  const text = parts.join(' ');
+  if (!text) return '';
   const sig = showSig && cell.sig ? ` ${SIG_LETTERS[cell.sig] || ''}` : '';
-  return `${pct}${sig}`;
+  return `${text}${sig}`;
 }
 
 function buildSlideTable(
   item: AnalysisExportItem,
   columns: ProcessedColumn[],
-  branding: typeof DEFAULTS
+  branding: typeof DEFAULTS,
 ): PptxGenJS.TableRow[] {
   const showSig = item.options?.showSignificance !== false;
+  const showPercents = item.options?.showPercents !== false;
+  const showCounts = item.options?.showCounts === true;
+
   const headerStyle: PptxGenJS.TableCellProps = {
     fill: { color: branding.headerColor },
     color: 'FFFFFF',
@@ -59,11 +80,11 @@ function buildSlideTable(
 
   const tableRows: PptxGenJS.TableRow[] = [];
 
-  // Header row
+  // Header row — "Base" replaces "Total" to make clear the last column is always the base n
   const headerRow: PptxGenJS.TableCell[] = [
     { text: '', options: headerStyle },
     ...columns.map(col => ({ text: col.label, options: headerStyle })),
-    { text: 'Total', options: headerStyle },
+    { text: 'Base', options: headerStyle },
   ];
   tableRows.push(headerRow);
 
@@ -79,10 +100,11 @@ function buildSlideTable(
     const dataRow: PptxGenJS.TableCell[] = [
       { text: `${indent}${row.label}`, options: labelStyle },
       ...columns.map(col => ({
-        text: formatCell(row.cells[col.key], showSig),
+        text: formatCell(row.cells[col.key], showSig, showPercents, showCounts),
         options: { ...cellStyle, align: 'right' as const },
       })),
-      { text: row.total.toString(), options: { ...cellStyle, align: 'right' as const, bold: true } },
+      // Base column always shows the respondent count (standard survey research convention)
+      { text: String(row.total), options: { ...cellStyle, align: 'right' as const, bold: true } },
     ];
     tableRows.push(dataRow);
   }
@@ -92,23 +114,31 @@ function buildSlideTable(
 
 function buildSlideChart(
   pptx: PptxGenJS,
-  slide: any, // PptxGenJS.Slide type might not be fully exported, use any for now
+  slide: ReturnType<PptxGenJS['addSlide']>,
   item: AnalysisExportItem,
-  branding: typeof DEFAULTS
+  branding: typeof DEFAULTS,
 ) {
   const chartTypeKey = item.chartType || 'vertical-bar';
+  const showPercents = item.options?.showPercents !== false;
 
-  // Mapping Velocity ChartType to PPTX ChartTypes
-  let pptxChartType: any = PptxGenJS.ChartType.bar;
+  // Mapping Velocity ChartType to PPTX chart types.
+  // PptxGenJS.ChartType is an instance property, so we use string literals directly.
+  // Exotic types that have no direct PPTX equivalent fall back to clustered column.
+  let pptxChartType: string = 'bar';
   let barDir: 'bar' | 'col' = 'col';
-  let barGrouping: 'standard' | 'stacked' | 'clustered' = 'standard';
+  let barGrouping: 'clustered' | 'stacked' | 'percentStacked' = 'clustered';
+  let isBarChart = true;
 
   switch (chartTypeKey) {
     case 'horizontal-bar':
+    case 'diverging-bar':
       barDir = 'bar';
+      barGrouping = 'clustered';
       break;
     case 'vertical-bar':
+    case 'lollipop': // no native lollipop in PPTX; render as clustered column
       barDir = 'col';
+      barGrouping = 'clustered';
       break;
     case 'grouped-bar':
       barDir = 'bar';
@@ -123,27 +153,22 @@ function buildSlideChart(
       barGrouping = 'stacked';
       break;
     case 'donut':
-      pptxChartType = PptxGenJS.ChartType.doughnut;
+      pptxChartType = 'doughnut';
+      isBarChart = false;
       break;
     case 'scatter':
-      pptxChartType = PptxGenJS.ChartType.scatter;
+      pptxChartType = 'scatter';
+      isBarChart = false;
       break;
     default:
-      // Fallback (e.g. histogram, box-plot)
+      // histogram, box-plot, violin, ridgeline, hexbin, grouped-box-plot:
+      // no native PPTX equivalent; fall back to clustered column
       barDir = 'col';
+      barGrouping = 'clustered';
+      break;
   }
 
-  const showPercents = item.options?.showPercents !== false;
-
-  const seriesData = item.result.series.map(series => {
-    return {
-      name: series.label || 'Series 1',
-      labels: series.data.map(d => d.label),
-      values: series.data.map(d => showPercents ? d.percent : d.value)
-    };
-  });
-
-  const chartOpts: any = {
+  const baseChartOpts: any = {
     x: 0.5,
     y: 1.0,
     w: 12.3,
@@ -151,21 +176,44 @@ function buildSlideChart(
     showTitle: false,
     showLegend: item.result.series.length > 1,
     legendPos: 'b',
-    barDir,
-    barGrouping,
-    // Use branding colors + a fallback categorical palette
     chartColors: [branding.headerColor, branding.primaryColor, '4F46E5', '10B981', 'F59E0B'],
-    dataLabelFormatCode: showPercents ? '0.0"%"' : '0',
-    showValue: true,
-    dataBorder: { pt: 1, color: 'FFFFFF' },
-    dataLabelColor: '333333',
     dataLabelFontFace: branding.fontFamily,
     dataLabelFontSize: 10,
-    // Provide general styling logic
-    valAxisLabelFormatCode: showPercents ? '0"%"' : '0',
+    showValue: true,
   };
 
-  slide.addChart(pptxChartType, seriesData, chartOpts);
+  // Bar-specific options must not be applied to donut or scatter
+  if (isBarChart) {
+    Object.assign(baseChartOpts, {
+      barDir,
+      barGrouping,
+      dataLabelFormatCode: showPercents ? '0.0"%"' : '0',
+      dataBorder: { pt: 1, color: 'FFFFFF' },
+      dataLabelColor: '333333',
+      valAxisLabelFormatCode: showPercents ? '0"%"' : '0',
+    });
+  }
+
+  if (pptxChartType === 'scatter') {
+    // PptxGenJS scatter requires { name, values: y[], xData: x[] }.
+    // Our data model has no dedicated x-axis variable, so we use the
+    // categorical index (1-based) as x and value/percent as y.
+    const scatterData = item.result.series.map(series => ({
+      name: series.label || 'Series 1',
+      values: series.data.map(d => (showPercents ? d.percent : d.value)),
+      xData: series.data.map((_, i) => i + 1),
+    }));
+    slide.addChart(pptxChartType, scatterData, baseChartOpts);
+    return;
+  }
+
+  const seriesData = item.result.series.map(series => ({
+    name: series.label || 'Series 1',
+    labels: series.data.map(d => d.label),
+    values: series.data.map(d => (showPercents ? d.percent : d.value)),
+  }));
+
+  slide.addChart(pptxChartType, seriesData, baseChartOpts);
 }
 
 export async function exportPptx(config: ExportConfig): Promise<Uint8Array> {
@@ -209,13 +257,16 @@ export async function exportPptx(config: ExportConfig): Promise<Uint8Array> {
       buildSlideChart(pptx, slide, item, branding);
     } else {
       const tableRows = buildSlideTable(item, item.result.columns, branding);
-      const colCount = item.result.columns.length + 2; // label + cols + total
+      // label column gets a fixed width; remaining width split among data cols + Base col
+      const dataColCount = item.result.columns.length + 1; // data cols + Base
+      const dataColWidth = (SLIDE_TABLE_WIDTH - LABEL_COL_WIDTH) / dataColCount;
+      const colW = [LABEL_COL_WIDTH, ...Array(dataColCount).fill(dataColWidth)];
 
       slide.addTable(tableRows, {
         x: 0.5,
         y: 1.0,
-        w: 12.3,
-        colW: Array(colCount).fill(12.3 / colCount),
+        w: SLIDE_TABLE_WIDTH,
+        colW,
         rowH: 0.35,
         autoPage: true,
         autoPageRepeatHeader: true,
