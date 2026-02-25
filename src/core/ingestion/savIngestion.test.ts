@@ -1,41 +1,67 @@
-import { describe, it, expect, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import * as fs from 'node:fs/promises';
+import * as os from 'node:os';
+import * as path from 'node:path';
 import { loadSav } from './savIngestion';
 
-vi.mock('fs', () => ({
-  promises: {
-    readFile: vi.fn(async () => Buffer.from([0x00, 0x01, 0x02])),
-  },
-}));
-
-vi.mock('jsavvy', () => {
-  class Feeder {
-    constructor(_buffer: ArrayBuffer) {}
-  }
-
-  class SavParser {
-    async schema(_feeder: any) {
-      return {
-        headers: [{ name: 'Q1', label: 'Q1', code: 0 }],
-        internal: { levels: [] },
-        meta: { cases: 1 },
-      };
-    }
-  }
-
-  return {
-    default: { SavParser, Feeder },
-  };
-});
-
 describe('savIngestion loadSav', () => {
+  let tempDir = '';
+  let tempSavPath = '';
+  const sourceSavPath = path.resolve(process.cwd(), 'test_data/sleep.sav');
+
+  beforeEach(async () => {
+    tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'velocity-sav-'));
+    tempSavPath = path.join(tempDir, "te'st.sav");
+    await fs.copyFile(sourceSavPath, tempSavPath);
+  });
+
+  afterEach(async () => {
+    if (tempDir) {
+      await fs.rm(tempDir, { recursive: true, force: true });
+    }
+  });
+
   it('escapes single quotes in SAV file paths', async () => {
     const execute = vi.fn(async (_sql: string) => undefined);
-    const adapter = { execute } as any;
+    const adapter = { execute, query: vi.fn() } as any;
 
-    const filePath = "/tmp/te'st.sav";
-    await loadSav(adapter, filePath, 'main');
+    const result = await loadSav(adapter, tempSavPath, 'main');
 
     const createSql = execute.mock.calls.find((call) => String(call[0]).includes('read_sav'))?.[0] as string;
-    expect(createSql).toContain("read_sav('/tmp/te''st.sav')");
+    expect(createSql).toContain("read_sav('");
+    expect(createSql).toContain("te''st.sav");
+    expect(result.rowCount).toBe(271);
+  });
+
+  it('falls back to ReadStat appender flow when read_stat is unavailable', async () => {
+    const execute = vi.fn(async (sql: string) => {
+      if (sql.includes('INSTALL read_stat; LOAD read_stat;')) {
+        throw new Error('read_stat extension unavailable');
+      }
+    });
+
+    const appender = {
+      appendNull: vi.fn(),
+      appendVarchar: vi.fn(),
+      appendDouble: vi.fn(),
+      endRow: vi.fn(),
+      flushSync: vi.fn(),
+      closeSync: vi.fn(),
+    };
+
+    const createAppender = vi.fn(async () => appender);
+
+    const adapter = {
+      execute,
+      query: vi.fn(),
+      connection: { createAppender },
+    } as any;
+
+    const result = await loadSav(adapter, tempSavPath, 'main');
+
+    expect(createAppender).toHaveBeenCalledWith('main');
+    expect(appender.endRow).toHaveBeenCalledTimes(271);
+    expect(result.rowCount).toBe(271);
+    expect(result.variables.length).toBeGreaterThan(0);
   });
 });

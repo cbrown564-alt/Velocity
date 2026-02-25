@@ -289,6 +289,8 @@ export default function App() {
   const SAV_WARN_MB = 50;
   const SAV_HARD_MB = 200;
   const SAV_SAMPLE_ROWS = 1000;
+  const SAV_ELEVATED_RISK_CELLS = 20_000_000;
+  const SAV_HIGH_RISK_CELLS = 40_000_000;
 
   const sensors = useSensors(
     useSensor(MouseSensor, {
@@ -606,20 +608,32 @@ export default function App() {
           buffer = await file.arrayBuffer();
         }
 
-        if (mustMetadataOnly) {
+        if (mustMetadataOnly || shouldWarn) {
           await loadSAVSample(file.name, buffer, SAV_SAMPLE_ROWS);
-          setMode('metadata');
-          return;
-        }
 
-        if (shouldWarn) {
-          const proceed = window.confirm(
-            `This file is ${fileSizeMb.toFixed(1)} MB. Full ingestion may crash the tab. Load full data anyway?`
-          );
-          if (!proceed) {
-            await loadSAVSample(file.name, buffer, SAV_SAMPLE_ROWS);
+          const sampledDataset = useVelocityStore.getState().dataset;
+          const sampledRows = sampledDataset?.rowCount ?? 0;
+          const sampledVars = sampledDataset?.variables.length ?? 0;
+          const estimatedCells = sampledRows * sampledVars;
+          const isHighCellRisk = estimatedCells >= SAV_HIGH_RISK_CELLS;
+          const isElevatedCellRisk = estimatedCells >= SAV_ELEVATED_RISK_CELLS;
+
+          if (mustMetadataOnly || isHighCellRisk) {
             setMode('metadata');
             return;
+          }
+
+          if (shouldWarn || isElevatedCellRisk) {
+            const riskSummary = sampledRows > 0 && sampledVars > 0
+              ? `${sampledRows.toLocaleString()} rows × ${sampledVars.toLocaleString()} variables (${estimatedCells.toLocaleString()} cells).`
+              : `${fileSizeMb.toFixed(1)} MB file.`;
+            const proceed = window.confirm(
+              `This SAV file is high-risk for browser memory pressure.\n\n${riskSummary}\n\nLoad full data anyway?`
+            );
+            if (!proceed) {
+              setMode('metadata');
+              return;
+            }
           }
         }
 

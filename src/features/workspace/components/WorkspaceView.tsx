@@ -243,7 +243,7 @@ const DatasetCard: React.FC<{
   dataset: StoredDataset;
   project?: Project;
   isSelected: boolean;
-  onSelect: () => void;
+  onSelect: (e: React.MouseEvent) => void;
   onOpen: () => void;
   onToggleStar: () => void;
   onDelete: () => void;
@@ -368,7 +368,7 @@ const DatasetListItem: React.FC<{
   dataset: StoredDataset;
   project?: Project;
   isSelected: boolean;
-  onSelect: () => void;
+  onSelect: (e: React.MouseEvent) => void;
   onOpen: () => void;
   onToggleStar: () => void;
 }> = ({ dataset, project, isSelected, onSelect, onOpen, onToggleStar }) => {
@@ -544,6 +544,7 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
   const [filterMode, setFilterMode] = useState<FilterMode>('recent');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [lastSelectedId, setLastSelectedId] = useState<string | null>(null);
   const [contextMenuTarget, setContextMenuTarget] = useState<{
     dataset: StoredDataset;
     x: number;
@@ -599,16 +600,38 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
     }));
   }, [projects, datasets]);
 
-  const handleSelectDataset = (id: string) => {
+  const handleSelectDataset = (id: string, shiftKey: boolean = false) => {
     setSelectedIds(prev => {
       const next = new Set(prev);
-      if (next.has(id)) {
-        next.delete(id);
+
+      if (shiftKey && lastSelectedId) {
+        const currentIndex = filteredDatasets.findIndex(d => d.id === id);
+        const lastIndex = filteredDatasets.findIndex(d => d.id === lastSelectedId);
+
+        if (currentIndex !== -1 && lastIndex !== -1) {
+          const start = Math.min(currentIndex, lastIndex);
+          const end = Math.max(currentIndex, lastIndex);
+          for (let i = start; i <= end; i++) {
+            next.add(filteredDatasets[i].id);
+          }
+        } else {
+          // Fallback if index not found
+          if (next.has(id)) {
+            next.delete(id);
+          } else {
+            next.add(id);
+          }
+        }
       } else {
-        next.add(id);
+        if (next.has(id)) {
+          next.delete(id);
+        } else {
+          next.add(id);
+        }
       }
       return next;
     });
+    setLastSelectedId(id);
   };
 
   const handleContextMenu = (dataset: StoredDataset, e: React.MouseEvent) => {
@@ -792,11 +815,26 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
             <section className={styles.datasetsSection}>
               {filterMode !== 'projects' && (
                 <div className={styles.sectionHeader}>
-                  <h2>
-                    {filterMode === 'recent' && 'Recent Datasets'}
-                    {filterMode === 'starred' && 'Starred Datasets'}
-                    {filterMode === 'all' && 'All Datasets'}
-                  </h2>
+                  <div className={styles.headerLeftGroups}>
+                    <input
+                      type="checkbox"
+                      className={styles.selectAllCheckbox}
+                      checked={filteredDatasets.length > 0 && selectedIds.size === filteredDatasets.length}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setSelectedIds(new Set(filteredDatasets.map(d => d.id)));
+                        } else {
+                          setSelectedIds(new Set());
+                        }
+                      }}
+                      title="Select All"
+                    />
+                    <h2>
+                      {filterMode === 'recent' && 'Recent Datasets'}
+                      {filterMode === 'starred' && 'Starred Datasets'}
+                      {filterMode === 'all' && 'All Datasets'}
+                    </h2>
+                  </div>
                   <span className={styles.count}>{filteredDatasets.length} datasets</span>
                 </div>
               )}
@@ -810,7 +848,7 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
                         dataset={dataset}
                         project={dataset.projectId ? projectMap.get(dataset.projectId) : undefined}
                         isSelected={selectedIds.has(dataset.id)}
-                        onSelect={() => handleSelectDataset(dataset.id)}
+                        onSelect={(e) => handleSelectDataset(dataset.id, e.shiftKey)}
                         onOpen={() => onOpenDataset(dataset)}
                         onToggleStar={() => onToggleStar(dataset.id)}
                         onDelete={() => onDeleteDataset(dataset.id)}
@@ -828,7 +866,7 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
                         dataset={dataset}
                         project={dataset.projectId ? projectMap.get(dataset.projectId) : undefined}
                         isSelected={selectedIds.has(dataset.id)}
-                        onSelect={() => handleSelectDataset(dataset.id)}
+                        onSelect={(e) => handleSelectDataset(dataset.id, e.shiftKey)}
                         onOpen={() => onOpenDataset(dataset)}
                         onToggleStar={() => onToggleStar(dataset.id)}
                       />
