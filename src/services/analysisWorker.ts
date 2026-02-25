@@ -1454,6 +1454,74 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
         break;
       }
 
+      case 'getValueFrequencies': {
+        if (!conn) throw new Error('DuckDB not initialized');
+        const { buildValueFrequencyQuery } = await import('../core/harmonization/harmonizationQueries');
+        const sql = buildValueFrequencyQuery(request.tableName, request.columnName);
+        const result = await conn.query(sql);
+        const rows = result.toArray().map((r: any) => ({
+          value: r.col_value,
+          count: Number(r.count),
+        }));
+        self.postMessage({
+          type: 'valueFrequencies',
+          column: request.columnName,
+          frequencies: rows,
+        } as WorkerResponse);
+        break;
+      }
+
+      case 'buildHarmonizedTable': {
+        if (!conn) throw new Error('DuckDB not initialized');
+        const t0 = performance.now();
+        const { buildHarmonizedTableQuery } = await import('../core/harmonization/harmonizationQueries');
+
+        // Build variable name lookups from the mappings
+        const sourceVarNames: Record<string, string> = {};
+        const targetVarNames: Record<string, string> = {};
+        for (const m of request.mappings) {
+          if (m.sourceVariableId) sourceVarNames[m.sourceVariableId] = m.sourceVariableId;
+          if (m.targetVariableId) targetVarNames[m.targetVariableId] = m.targetVariableId;
+        }
+
+        const sql = buildHarmonizedTableQuery(
+          request.sourceTable,
+          request.targetTable,
+          request.mappings,
+          sourceVarNames,
+          targetVarNames
+        );
+        await conn.query(`CREATE OR REPLACE TABLE "${request.outputTableName}" AS (${sql})`);
+        const countResult = await conn.query(`SELECT COUNT(*) as cnt FROM "${request.outputTableName}"`);
+        const rowCount = Number(countResult.toArray()[0]?.cnt ?? 0);
+        self.postMessage({
+          type: 'harmonizedTableCreated',
+          tableName: request.outputTableName,
+          rowCount,
+          durationMs: performance.now() - t0,
+        } as WorkerResponse);
+        break;
+      }
+
+      case 'getRespondentOverlap': {
+        if (!conn) throw new Error('DuckDB not initialized');
+        const { buildRespondentOverlapQuery } = await import('../core/harmonization/harmonizationQueries');
+        const sql = buildRespondentOverlapQuery(
+          request.sourceTable,
+          request.targetTable,
+          request.keyColumn
+        );
+        const result = await conn.query(sql);
+        const row = result.toArray()[0] as any;
+        self.postMessage({
+          type: 'respondentOverlap',
+          totalSource: Number(row?.total_source ?? 0),
+          totalTarget: Number(row?.total_target ?? 0),
+          overlap: Number(row?.overlap ?? 0),
+        } as WorkerResponse);
+        break;
+      }
+
       case 'ping': {
         if (!conn) {
           self.postMessage({ type: 'pong', hasData: false } as WorkerResponse);

@@ -1,0 +1,223 @@
+/**
+ * MappingTable Styles
+ */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.toolbar {
+  display: flex;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--border-color);
+  background: var(--bg-panel);
+}
+
+.searchWrapper {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  flex: 1;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 0 var(--space-2);
+}
+
+.searchIcon {
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.searchInput {
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 12px;
+  color: var(--text-primary);
+  width: 100%;
+  padding: 5px 0;
+}
+
+.filterSelect {
+  font-size: 12px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
+/* Table header */
+.tableHeader {
+  display: grid;
+  grid-template-columns: 24px 1fr 24px 1fr 48px 56px;
+  align-items: center;
+  padding: var(--space-1) var(--space-3);
+  background: var(--bg-active);
+  border-bottom: 1px solid var(--border-color);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.headerStatus { text-align: center; }
+.headerArrow { text-align: center; }
+.headerScore { text-align: center; }
+.headerActions { text-align: center; }
+
+/* Row */
+.listWrapper {
+  flex: 1;
+  overflow: hidden;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 24px 1fr 24px 1fr 48px 56px;
+  align-items: center;
+  padding: 0 var(--space-3);
+  border-bottom: 1px solid var(--border-color);
+  cursor: pointer;
+  transition: background 0.1s ease;
+  position: relative;
+}
+
+.row:hover {
+  background: var(--bg-active);
+}
+
+.rowSelected {
+  background: color-mix(in srgb, var(--color-accent) 8%, transparent) !important;
+}
+
+/* Status colors */
+.confirmed .rowStatus { color: var(--green-500, #22c55e); }
+.autoMatched .rowStatus { color: var(--amber-500, #f59e0b); }
+.unmapped .rowStatus { color: var(--destructive, #ef4444); }
+.excluded .rowStatus { color: var(--text-secondary); }
+
+.rowStatus {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rowSource, .rowTarget {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  overflow: hidden;
+  padding: var(--space-1) 0;
+}
+
+.rowArrow {
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.varName {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: var(--font-mono);
+}
+
+.varLabel {
+  font-size: 10px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.unmappedText {
+  font-size: 11px;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.rowScore {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.scoreBadge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 10px;
+  background: var(--bg-active);
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+}
+
+.rowActions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+}
+
+.actionBtn, .actionBtnDanger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background 0.1s ease;
+}
+
+.actionBtn {
+  background: transparent;
+  color: var(--text-secondary);
+}
+
+.actionBtn:hover {
+  background: var(--bg-active);
+  color: var(--green-500, #22c55e);
+}
+
+.actionBtnDanger {
+  background: transparent;
+  color: var(--text-secondary);
+}
+
+.actionBtnDanger:hover {
+  background: color-mix(in srgb, var(--destructive, #ef4444) 10%, transparent);
+  color: var(--destructive, #ef4444);
+}
+
+.warningDot {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--amber-500, #f59e0b);
+}
+
+.empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 120px;
+  color: var(--text-secondary);
+  font-size: 13px;
+}

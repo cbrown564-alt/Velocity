@@ -1,0 +1,31 @@
+/**
+ * LassoSelector Styles
+ */
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  cursor: default;
+}
+
+.overlay.active {
+  pointer-events: all;
+  cursor: crosshair;
+}
+
+.lasso {
+  fill: color-mix(in srgb, var(--color-accent) 12%, transparent);
+  stroke: var(--color-accent);
+  stroke-width: 1.5;
+  stroke-dasharray: 6 3;
+  stroke-linejoin: round;
+}
+
+.hint {
+  font-size: 10px;
+  fill: var(--text-secondary);
+  font-family: var(--font-body);
+  pointer-events: none;
+}

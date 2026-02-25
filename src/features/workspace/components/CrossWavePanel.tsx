@@ -38,6 +38,8 @@ interface CrossWavePanelProps {
   selectedWaves?: [StoredDataset, StoredDataset];
   /** Callback to open a specific dataset */
   onOpenDataset?: (dataset: StoredDataset) => void;
+  /** Callback to open Harmonization Workspace for two waves */
+  onOpenHarmonization?: (wave1: StoredDataset, wave2: StoredDataset) => void;
 }
 
 type ComparisonMetric = 'respondents' | 'attrition' | 'variables';
@@ -74,6 +76,7 @@ export const CrossWavePanel: React.FC<CrossWavePanelProps> = ({
   datasets,
   selectedWaves,
   onOpenDataset,
+  onOpenHarmonization,
 }) => {
   const [wave1Id, setWave1Id] = useState<string | null>(
     selectedWaves?.[0]?.id || null
@@ -339,24 +342,25 @@ export const CrossWavePanel: React.FC<CrossWavePanelProps> = ({
             </div>
           )}
 
-          {/* Placeholder for future features */}
-          <div className={styles.futureFeatures}>
-            <h4>Coming Soon</h4>
-            <ul>
-              <li>
-                <CheckCircle2 size={14} />
-                Variable harmonization across waves
-              </li>
-              <li>
-                <CheckCircle2 size={14} />
-                Respondent journey tracking
-              </li>
-              <li>
-                <CheckCircle2 size={14} />
-                Wave-over-wave trend charts
-              </li>
-            </ul>
-          </div>
+          {/* Variable Harmonization */}
+          {comparison && (
+            <div className={styles.harmonizeSection}>
+              <h3>
+                <ArrowLeftRight size={16} />
+                Variable Harmonization
+              </h3>
+              <p className={styles.harmonizeDesc}>
+                Map variables across waves to track how questions, scales, and coding have drifted over time.
+              </p>
+              <button
+                className={styles.harmonizeButton}
+                onClick={() => onOpenHarmonization?.(comparison.wave1, comparison.wave2)}
+              >
+                <ArrowLeftRight size={14} />
+                Open Harmonization Workspace
+              </button>
+            </div>
+          )}
         </motion.div>
       </motion.div>
     </AnimatePresence>

@@ -44,6 +44,14 @@ export interface AnalysisExportModalState {
 // Slice State & Actions
 // ============================================================================
 
+export interface WaveDetectionBannerState {
+    isVisible: boolean;
+    matchedDatasetId: string | null;
+    matchedDatasetName: string;
+    confidence: number;
+    reason: string;
+}
+
 export interface UISlice {
     // State
     appMode: AppMode;
@@ -52,6 +60,8 @@ export interface UISlice {
     recodeModal: RecodeModalState;
     filterModal: FilterModalState;
     analysisExportModal: AnalysisExportModalState;
+    /** Wave detection banner shown after SAV import */
+    waveDetectionBanner: WaveDetectionBannerState;
     /** Selected variable set IDs in Variable Manager (for bulk operations) */
     selectedVariableSetIds: string[];
     /** Last selected ID for shift-click range selection */
@@ -97,7 +107,19 @@ export interface UISlice {
     facetFilters: FacetFilters;
     setFacetFilters: (filters: Partial<FacetFilters>) => void;
     clearFacetFilters: () => void;
+
+    // Wave Detection Banner
+    showWaveDetectionBanner: (state: Omit<WaveDetectionBannerState, 'isVisible'>) => void;
+    dismissWaveDetectionBanner: () => void;
 }
+
+const DEFAULT_WAVE_BANNER: WaveDetectionBannerState = {
+    isVisible: false,
+    matchedDatasetId: null,
+    matchedDatasetName: '',
+    confidence: 0,
+    reason: '',
+};
 
 export const createUISlice: StateCreator<UISlice, [], [], UISlice> = (set) => ({
     // Initial state
@@ -107,6 +129,7 @@ export const createUISlice: StateCreator<UISlice, [], [], UISlice> = (set) => ({
     recodeModal: { isOpen: false, variable: null },
     filterModal: { isOpen: false },
     analysisExportModal: { isOpen: false, config: null },
+    waveDetectionBanner: { ...DEFAULT_WAVE_BANNER },
     selectedVariableSetIds: [],
     lastSelectedId: null,
     activeFolderId: null,
@@ -221,5 +244,14 @@ export const createUISlice: StateCreator<UISlice, [], [], UISlice> = (set) => ({
 
     clearFacetFilters: () => set({
         facetFilters: { types: [], statuses: [], qualities: [] },
+    }),
+
+    // Wave Detection Banner Actions
+    showWaveDetectionBanner: (bannerState) => set({
+        waveDetectionBanner: { ...bannerState, isVisible: true },
+    }),
+
+    dismissWaveDetectionBanner: () => set({
+        waveDetectionBanner: { ...DEFAULT_WAVE_BANNER },
     }),
 });

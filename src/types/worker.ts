@@ -10,6 +10,7 @@ import { RecodeConfig, VariableSet, Variable, Filter, HistogramBin, AggregatedRo
 import { CrosstabQueryOptions } from '../services/queryBuilder';
 import { ProcessedAnalysisData } from './processedData';
 import { ChartType } from './charts';
+import type { VariableMapping } from './harmonization';
 
 export interface WorkerAnalysisSettings {
   comparisonMethod: 'cell_vs_rest' | 'pairwise';
@@ -100,6 +101,9 @@ export type WorkerRequest =
   | KnownRunAnalysisRequest
   | UnknownRunAnalysisRequest
   | { type: 'exportArrow'; sql: string; columns?: string[] }
+  | { type: 'getValueFrequencies'; tableName: string; columnName: string }
+  | { type: 'buildHarmonizedTable'; sourceTable: string; targetTable: string; mappings: VariableMapping[]; outputTableName: string }
+  | { type: 'getRespondentOverlap'; sourceTable: string; targetTable: string; keyColumn: string }
   | { type: 'ping' };
 
 // ============================================================================
@@ -168,4 +172,7 @@ export type WorkerResponse =
   | KnownAnalysisResultResponse
   | UnknownAnalysisResultResponse
   | { type: 'arrowExported'; buffer: ArrayBuffer; rowCount: number; durationMs: number }
+  | { type: 'valueFrequencies'; column: string; frequencies: Array<{ value: number; count: number }> }
+  | { type: 'harmonizedTableCreated'; tableName: string; rowCount: number; durationMs: number }
+  | { type: 'respondentOverlap'; totalSource: number; totalTarget: number; overlap: number }
   | { type: 'error'; message: string };
