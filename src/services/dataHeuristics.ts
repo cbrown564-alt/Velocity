@@ -27,7 +27,85 @@ export interface InferredVariableTyping {
     orderedScoring?: OrderedScoring;
 }
 
-export function inferVariableTyping(valueLabels: { value: number; label: string }[]): InferredVariableTyping {
+interface InferTypingOptions {
+    useCuratedOrderedDictionaries?: boolean;
+}
+
+const ORDERED_SEQUENCE_DICTIONARIES: string[][] = [
+    [
+        'no formal education',
+        'did not complete high school',
+        'high school graduate',
+        'primary school',
+        'secondary school',
+        'high school',
+        'some college',
+        'college graduate',
+        'post graduate',
+        'masters',
+        'doctorate',
+        'phd',
+    ],
+    [
+        'strongly oppose',
+        'oppose',
+        'neutral',
+        'support',
+        'strongly support',
+    ],
+];
+
+function normalizeForDictionary(value: string): string {
+    return value
+        .toLowerCase()
+        .replace(/[_-]+/g, ' ')
+        .replace(/[^\w\s]/g, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+}
+
+function isAgeBandLabel(label: string): boolean {
+    const cleaned = normalizeForDictionary(label);
+    return /^\d{1,3}\s*(to|)\s*\d{1,3}$/.test(cleaned) ||
+        /^\d{1,3}\s*\+\s*$/.test(cleaned) ||
+        /^(under|less than)\s*\d{1,3}$/.test(cleaned);
+}
+
+function isCuratedOrderedSequence(labels: string[]): boolean {
+    if (labels.length < 3) return false;
+
+    // Age band patterns (e.g. "18-24", "25-34", "55+")
+    if (labels.every(isAgeBandLabel)) {
+        return true;
+    }
+
+    const normalized = labels.map(normalizeForDictionary);
+    for (const dictionary of ORDERED_SEQUENCE_DICTIONARIES) {
+        const positions: number[] = [];
+        let allMatched = true;
+
+        for (const label of normalized) {
+            const idx = dictionary.findIndex(entry => label.includes(entry) || entry.includes(label));
+            if (idx === -1) {
+                allMatched = false;
+                break;
+            }
+            positions.push(idx);
+        }
+
+        if (allMatched && new Set(positions).size === positions.length) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+export function inferVariableTyping(
+    valueLabels: { value: number; label: string }[],
+    options: InferTypingOptions = {}
+): InferredVariableTyping {
+    const { useCuratedOrderedDictionaries = true } = options;
     if (!valueLabels || valueLabels.length < 2) return { type: 'categorical' };
 
     // Normalize labels
@@ -75,20 +153,16 @@ export function inferVariableTyping(valueLabels: { value: number; label: string 
     const hasPureNumericLabels = valueLabels.some(vl => vl.label.trim() === vl.value.toString());
     if (hasPureNumericLabels && valueLabels.length >= 3) return { type: 'ordered', orderedStyle: 'rating', orderedScoring: 'allow_numeric_stats' };
 
-    // 2. Check for Ordinal (Ordered Categories)
-    // ------------------------------------------
+    // Binary categoricals (e.g., sex, region recodes, yes/no flags) should default to unordered
+    // unless they were already identified as rating-like above.
+    if (valueLabels.length === 2) {
+        return { type: 'categorical' };
+    }
 
-    // Sequential integers check (Likert-like structure but with text labels)
-    if (valueLabels.length >= 2 && valueLabels.length <= 15) {
-        const values = valueLabels.map(vl => vl.value).sort((a, b) => a - b);
-        const isSequential = values.every((v, i) => i === 0 || v - values[i - 1] === 1);
-
-        if (isSequential) {
-            // It has Sequential Values. 
-            // If labels are things like "Primary", "Secondary", "Tertiary" -> Ordinal
-            // If labels are "Never", "Rarely" -> Scale (caught by Likert patterns usually)
-
-            // Default sequential categoricals to Ordinal if they weren't caught as Scales
+    // 2. Optional curated dictionaries for ordered sequences
+    if (useCuratedOrderedDictionaries) {
+        const labels = valueLabels.map(vl => vl.label);
+        if (isCuratedOrderedSequence(labels)) {
             return { type: 'ordered', orderedStyle: 'sequence', orderedScoring: 'categorical_only' };
         }
     }

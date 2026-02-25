@@ -1,6 +1,6 @@
 
 import { describe, it, expect } from 'vitest';
-import { inferVariableType } from './dataHeuristics';
+import { inferVariableType, inferVariableTyping } from './dataHeuristics';
 
 describe('inferVariableType', () => {
     it('should identify Likert scales as ordered', () => {
@@ -47,7 +47,7 @@ describe('inferVariableType', () => {
         expect(inferVariableType(mixed)).toBe('ordered');
     });
 
-    it('should identify Education as ordered', () => {
+    it('should identify Education as ordered (curated sequence dictionary)', () => {
         const education = [
             { value: 1, label: 'Did not complete high school' },
             { value: 2, label: 'High school graduate' },
@@ -58,29 +58,16 @@ describe('inferVariableType', () => {
         expect(inferVariableType(education)).toBe('ordered');
     });
 
-    it('should identify non-sequential categories as categorical', () => {
+    it('should identify sequential-coded demographic categories as categorical', () => {
         const gender = [
             { value: 1, label: 'Male' },
             { value: 2, label: 'Female' },
             { value: 3, label: 'Non-binary' }
         ];
-        // Note: Gender is technically nominal but if coded 1,2,3 sequential it MIGHT be caught as ordinal by the sequential check?
-        // Let's see. It has no Likert keywords. It is sequential. 
-        // The sequential check: `if (valueLabels.length >= 2 && valueLabels.length <= 15)` -> True.
-        // `isSequential` -> True.
-        // Returns 'ordinal'.
-        // Is this desired? "Male, Female, Non-binary" -> Ordinal?
-        // Ideally no. But current heuristic defaults sequential integers to ordinal if not scale.
-        // This is a known trade-off of "Ordinal by default for sequential integers".
-        // Let's expect 'ordinal' for now based on current code, or 'nominal' if I want to be stricter.
-        // Actually, for simple Nominal like categorical usage, usually user can change it.
-        // But let's check what the code does.
+        expect(inferVariableType(gender)).toBe('categorical');
+    });
 
-        // Wait, for 2 items (Male, Female), length=2.
-        // The code says: `if (valueLabels.length >= 2 ...)`
-        // If I want strict nominal, I might get 'ordinal'.
-
-        // If I want to test Nominal, use non-sequential values:
+    it('should identify non-sequential categories as categorical', () => {
         const nonSeq = [
             { value: 1, label: 'Apple' },
             { value: 10, label: 'Banana' },
@@ -97,5 +84,27 @@ describe('inferVariableType', () => {
         health[9].label = "10 - Excellent";
 
         expect(inferVariableType(health)).toBe('ordered');
+    });
+
+    it('should identify age bands as ordered via curated dictionaries', () => {
+        const ageBands = [
+            { value: 1, label: '18-24' },
+            { value: 2, label: '25-34' },
+            { value: 3, label: '35-44' },
+            { value: 4, label: '45-54' },
+            { value: 5, label: '55+' }
+        ];
+        expect(inferVariableType(ageBands)).toBe('ordered');
+    });
+
+    it('should allow disabling curated ordered dictionaries', () => {
+        const education = [
+            { value: 1, label: 'Did not complete high school' },
+            { value: 2, label: 'High school graduate' },
+            { value: 3, label: 'Some college' },
+            { value: 4, label: 'College graduate' },
+            { value: 5, label: 'Post-graduate' }
+        ];
+        expect(inferVariableTyping(education, { useCuratedOrderedDictionaries: false }).type).toBe('categorical');
     });
 });

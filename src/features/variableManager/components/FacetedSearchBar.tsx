@@ -18,7 +18,7 @@ import styles from './FacetedSearchBar.module.css';
 // Facet option definitions
 const TYPE_OPTIONS: { value: TypeFacet; label: string }[] = [
     { value: 'categorical', label: 'Category' },
-    { value: 'ordered', label: 'Scale / Ordered' },
+    { value: 'ordered', label: 'Scale' },
     { value: 'numeric', label: 'Numeric' },
     { value: 'date', label: 'Date' },
     { value: 'text', label: 'Text' },
@@ -38,10 +38,10 @@ const QUALITY_OPTIONS: { value: QualityFacet; label: string }[] = [
 // Chip label mapping
 const FACET_LABELS: Record<string, string> = {
     categorical: 'Category',
-    ordered: 'Scale / Ordered',
+    ordered: 'Scale',
     nominal: 'Category',
-    ordinal: 'Scale / Ordered',
-    scale: 'Scale / Ordered',
+    ordinal: 'Scale',
+    scale: 'Scale',
     numeric: 'Numeric',
     date: 'Date',
     text: 'Text',

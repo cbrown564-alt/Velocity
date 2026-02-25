@@ -123,7 +123,7 @@ export const BulkActionBar: React.FC<BulkActionBarProps> = ({
                                                 className="w-full flex items-center gap-2 px-3 py-2 hover:bg-[var(--bg-surface)] text-left text-sm font-body text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                                             >
                                                 <Layers size={14} className="text-[var(--viz-palette-4)]" />
-                                                Scale / Ordered
+                                                Scale
                                             </button>
                                             <button
                                                 onClick={() => handleSetType('numeric')}

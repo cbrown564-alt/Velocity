@@ -99,10 +99,12 @@ export const InspectorDistribution: React.FC<InspectorDistributionProps> = ({
             <h3 className={styles.sectionTitle}>
                 Distribution
                 <span style={{
-                    fontSize: 'var(--text-xs)',
-                    color: 'var(--gray-400)',
+                    fontSize: '10px',
+                    color: 'var(--text-tertiary, #888)',
                     fontWeight: 400,
                     marginLeft: 'var(--space-2)',
+                    textTransform: 'none',
+                    letterSpacing: 'normal'
                 }}>
                     (drag to select, right-click to group)
                 </span>

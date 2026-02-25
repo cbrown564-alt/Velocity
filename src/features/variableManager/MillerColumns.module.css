@@ -45,7 +45,7 @@
 .column {
   display: flex;
   flex-direction: column;
-  border-right: 1px solid var(--border-color);
+  border-right: 1px solid var(--border-color-muted);
   background-color: var(--mat-panel-bg, var(--bg-panel));
   backdrop-filter: var(--mat-panel-filter, none);
   overflow: hidden;
@@ -191,8 +191,7 @@
 .itemActive {
   background-color: var(--bg-active);
   color: var(--color-accent);
-  box-shadow: 0 0 8px var(--color-accent);
-  /* Remove legacy border */
+  /* Left accent bar for Soft Machine theme */
   border-left: none;
   padding-left: var(--space-3);
   z-index: 10;
@@ -201,6 +200,35 @@
 
 .itemActive:hover {
   background-color: var(--bg-active);
+}
+
+/* Soft Machine: Left Accent Bar
+   Applied via theme attribute selector */
+[data-theme="soft-machine"] .item {
+  position: relative;
+}
+
+[data-theme="soft-machine"] .item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background-color: var(--color-accent);
+  transform: scaleY(0);
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: center;
+  border-radius: 0 2px 2px 0;
+}
+
+[data-theme="soft-machine"] .item:hover::before,
+[data-theme="soft-machine"] .itemActive::before {
+  transform: scaleY(0.7);
+}
+
+[data-theme="soft-machine"] .itemActive::before {
+  transform: scaleY(1);
 }
 
 .itemContent {
@@ -308,8 +336,8 @@
 }
 
 .typeBadgeScale {
-  background-color: var(--bg-surface);
-  color: var(--text-secondary);
+  background-color: var(--tag-scale-bg);
+  color: var(--tag-scale-text);
 }
 
 /* ============================================================================

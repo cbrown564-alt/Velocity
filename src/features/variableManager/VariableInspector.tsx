@@ -226,14 +226,10 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
             {/* Header */}
             <InspectorHeader variable={variable} />
 
-            {/* Content */}
+            {/* Content feed: Chart -> Dictionary */}
             <div className={styles.content}>
-                <InspectorStats
-                    variable={variable}
-                    stats={stats}
-                    isLoadingStats={isLoadingStats}
-                />
 
+                {/* 1. Visual Shape (Chart) first for quick scanning */}
                 <InspectorDistribution
                     variable={variable}
                     stats={stats}
@@ -241,6 +237,13 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
                     selectedKeys={selectedKeys}
                     setSelectedKeys={setSelectedKeys}
                     onContextMenu={handleContextMenu}
+                />
+
+                {/* 2. Simplified Stats and Dictionary */}
+                <InspectorStats
+                    variable={variable}
+                    stats={stats}
+                    isLoadingStats={isLoadingStats}
                 />
             </div>
 

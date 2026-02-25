@@ -22,7 +22,7 @@ import {
     useSensors,
     DragEndEvent,
 } from '@dnd-kit/core';
-import { X, Search, Grid3X3, Tag, BarChart2 } from 'lucide-react';
+import { X, Search, Grid3X3, Tag, BarChart2, SlidersHorizontal, Calendar, Type } from 'lucide-react';
 import { useVelocityStore } from '../../store';
 import { isCategoricalType, normalizeVariableType } from '../../types';
 import { BulkActionBar } from './BulkActionBar';
@@ -121,13 +121,19 @@ export const VariableManager: React.FC<VariableManagerProps> = ({ onClose }) => 
 
     // Group variables by type for quick stats
     const typeStats = useMemo(() => {
-        const stats = { categorical: 0, numeric: 0 };
+        const stats = { categorical: 0, scale: 0, numeric: 0, date: 0, text: 0 };
         variableSets.forEach(vs => {
             const type = normalizeVariableType(vs.type || 'categorical');
-            if (isCategoricalType(type) || type === 'text') {
+            if (isCategoricalType(type)) {
                 stats.categorical++;
-            } else if (['numeric', 'ordered', 'date'].includes(type)) {
+            } else if (type === 'ordered') {
+                stats.scale++;
+            } else if (type === 'numeric') {
                 stats.numeric++;
+            } else if (type === 'date') {
+                stats.date++;
+            } else if (type === 'text') {
+                stats.text++;
             }
         });
         return stats;
@@ -214,11 +220,23 @@ export const VariableManager: React.FC<VariableManagerProps> = ({ onClose }) => 
                         <div className="flex items-center gap-3 text-xs text-[var(--text-secondary)] ml-4">
                             <span className="flex items-center gap-1">
                                 <Tag size={12} className="text-[var(--color-accent)]" />
-                                {typeStats.categorical} Categorical
+                                {typeStats.categorical} Category
+                            </span>
+                            <span className="flex items-center gap-1">
+                                <SlidersHorizontal size={12} className="text-[var(--text-accent)]" />
+                                {typeStats.scale} Scale
                             </span>
                             <span className="flex items-center gap-1">
                                 <BarChart2 size={12} className="text-[var(--text-accent)]" />
                                 {typeStats.numeric} Numeric
+                            </span>
+                            <span className="flex items-center gap-1">
+                                <Calendar size={12} className="text-[var(--text-accent)]" />
+                                {typeStats.date} Date
+                            </span>
+                            <span className="flex items-center gap-1">
+                                <Type size={12} className="text-[var(--text-accent)]" />
+                                {typeStats.text} Text
                             </span>
                             <span className="text-[var(--border-color-active)]">|</span>
                             <span>{variableSets.length} total</span>
