@@ -25,6 +25,8 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
     onContextMenu,
     onMerge,
     labelMode = 'count',
+    hoveredKey,
+    onHoverChange,
 }) => {
     const brushRef = useRef<SVGGElement>(null);
     const svgRef = useRef<SVGSVGElement>(null);
@@ -258,6 +260,8 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
                                     }
                                 }}
                                 onContextMenu={(e) => handleBarContextMenu(d, e)}
+                                onMouseEnter={() => onHoverChange && onHoverChange(d.label)}
+                                onMouseLeave={() => onHoverChange && onHoverChange(null)}
                                 onMouseDown={(e) => {
                                     // Only start drag with left button
                                     if (e.button === 0 && onMerge) {
@@ -291,10 +295,11 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
                                     height={yScale.bandwidth()}
                                     width={barWidth}
                                     // Use palette colors if available, otherwise fall back to primary
-                                    fill={isDropTarget ? 'var(--status-success-bg)' : (colors ? colors[0] : 'var(--viz-fill-secondary)')}
-                                    fillOpacity={0.8}
-                                    stroke={isSelected ? 'var(--text-accent)' : 'none'} // Remove stroke unless selected
-                                    strokeWidth={isSelected ? 2 : 0}
+                                    fill={isDropTarget ? 'var(--status-success-bg)' : (d.isMissing ? 'var(--bg-active)' : (colors ? colors[0] : 'var(--viz-fill-secondary)'))}
+                                    fillOpacity={hoveredKey === d.label ? 1 : (hoveredKey ? 0.3 : (d.isMissing ? 0.3 : 0.8))}
+                                    stroke={isSelected ? 'var(--text-accent)' : (hoveredKey === d.label ? 'var(--viz-fill-primary)' : (d.isMissing ? 'var(--text-tertiary)' : 'none'))}
+                                    strokeWidth={isSelected || hoveredKey === d.label || d.isMissing ? 2 : 0}
+                                    strokeDasharray={d.isMissing ? "4,2" : "none"}
                                     rx={1} // Slight rounding looks more "UI" than "Data"
                                     style={{
                                         transition: dragState.isDragging ? 'none' : 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)',

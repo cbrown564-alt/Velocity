@@ -65,6 +65,9 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
     // State for chart selection
     const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set());
 
+    // State for cross-highlighting
+    const [hoveredKey, setHoveredKey] = useState<string | null>(null);
+
     // Get the selected variable
     const variable = useMemo((): Variable | null => {
         if (!selectedVariableId || !dataset) return null;
@@ -237,6 +240,8 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
                     selectedKeys={selectedKeys}
                     setSelectedKeys={setSelectedKeys}
                     onContextMenu={handleContextMenu}
+                    hoveredKey={hoveredKey}
+                    onHoverChange={setHoveredKey}
                 />
 
                 {/* 2. Simplified Stats and Dictionary */}
@@ -244,6 +249,8 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
                     variable={variable}
                     stats={stats}
                     isLoadingStats={isLoadingStats}
+                    hoveredKey={hoveredKey}
+                    onHoverChange={setHoveredKey}
                 />
             </div>
 

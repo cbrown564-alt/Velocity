@@ -58,13 +58,38 @@
   flex-wrap: wrap;
 }
 
-.variableName {
+.editableTitleContainer {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  cursor: pointer;
+  border-bottom: 1px dashed transparent;
+  transition: border-bottom-color var(--transition-fast);
+  padding-bottom: 2px;
+}
+
+.editableTitleContainer:hover {
+  border-bottom-color: var(--border-color-muted);
+}
+
+.variablePrimaryTitle {
   font-family: var(--font-display);
   font-size: var(--text-xl);
   font-weight: 600;
   color: var(--text-primary);
   margin: 0;
   line-height: 1.2;
+}
+
+.editIcon {
+  color: var(--text-tertiary, #888);
+  opacity: 0;
+  transition: opacity var(--transition-fast), color var(--transition-fast);
+}
+
+.editableTitleContainer:hover .editIcon {
+  opacity: 1;
+  color: var(--text-secondary);
 }
 
 .headerBadges {
@@ -83,11 +108,35 @@
   font-weight: 500;
 }
 
-.variableLabel {
-  font-family: var(--font-body);
-  font-size: var(--text-sm);
-  color: var(--text-secondary);
-  margin: 0 0 var(--space-4) 0;
+.headerSubtitleRow {
+  display: flex;
+  align-items: center;
+  margin-bottom: var(--space-4);
+  gap: var(--space-2);
+}
+
+.editableSubtitleContainer {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  cursor: pointer;
+  border-bottom: 1px dashed transparent;
+  transition: border-bottom-color var(--transition-fast);
+  padding-bottom: 1px;
+}
+
+.editableSubtitleContainer:hover {
+  border-bottom-color: var(--border-color-muted);
+}
+
+.editIconSmall {
+  color: var(--text-tertiary, #888);
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.editableSubtitleContainer:hover .editIconSmall {
+  opacity: 1;
 }
 
 /* ============================================================================
@@ -247,12 +296,93 @@
   font-variant-numeric: tabular-nums;
 }
 
+.valueLabelContainer {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
 .valueLabel {
   color: var(--text-primary);
+  border-bottom: 1px dashed transparent;
+  transition: border-bottom-color var(--transition-fast), color var(--transition-fast);
+  cursor: pointer;
+}
+
+.mappingRow:hover .valueLabel {
+  border-bottom-color: var(--border-color-muted);
+}
+
+.labelMissing {
+  color: var(--text-tertiary, #888);
+  text-decoration: line-through;
+}
+
+.mappingEditIcon {
+  color: var(--text-tertiary, #888);
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+  cursor: pointer;
+}
+
+.mappingRow:hover .mappingEditIcon {
+  opacity: 1;
+}
+
+.missingBadgeInline {
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  background-color: var(--status-warning-bg);
+  color: var(--status-warning-text);
+  padding: 1px 4px;
+  border-radius: 2px;
+}
+
+.dataCell {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.actionCell {
+  text-align: right;
+  padding: 0 !important;
+}
+
+.tableActionButton {
+  background: none;
+  border: none;
+  padding: 4px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity var(--transition-fast), background-color var(--transition-fast);
+}
+
+.mappingRow:hover .tableActionButton {
+  opacity: 1;
+}
+
+.tableActionButton:hover {
+  background-color: var(--bg-hover);
+}
+
+.successIcon {
+  color: var(--status-success-text, #10b981);
+}
+
+.warningIcon {
+  color: var(--status-warning-text, #f59e0b);
 }
 
 .valueLabelsScroll {
-  max-height: 200px;
+  max-height: 250px;
   overflow-y: auto;
   border-bottom: 1px solid var(--border-color-muted);
 }

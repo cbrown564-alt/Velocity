@@ -24,6 +24,8 @@ export const HistogramRenderer: React.FC<BaseChartRendererProps> = ({
     variableStats,
     onContextMenu,
     labelMode = 'count',
+    hoveredKey,
+    onHoverChange,
 }) => {
     const { rows } = processedData;
     const svgRef = useRef<SVGSVGElement>(null);
@@ -176,11 +178,41 @@ export const HistogramRenderer: React.FC<BaseChartRendererProps> = ({
             .attr('y', d => yScale(d.count))
             .attr('width', d => Math.max(0, xScale(d.x1) - xScale(d.x0)))
             .attr('height', d => innerHeight - yScale(d.count))
-            .attr('fill', (d, i) => d.selected ? selectedBarColor : barColor)
-            .attr('stroke', 'var(--viz-stroke-bar)')
-            .attr('stroke-width', 1)
+            .attr('fill', (d) => {
+                if (d.selected) return selectedBarColor;
+                const label = `${d.x0} - ${d.x1}`;
+                const isMissing = d.originalBin?.isMissing;
+                if (hoveredKey === label) return isMissing ? 'var(--bg-active)' : barColor;
+                if (hoveredKey) return 'rgba(0, 0, 0, 0.2)';
+                return isMissing ? 'var(--bg-active)' : barColor;
+            })
+            .attr('fill-opacity', (d) => {
+                const label = `${d.x0} - ${d.x1}`;
+                const isMissing = d.originalBin?.isMissing;
+                if (d.selected) return 1;
+                if (hoveredKey === label) return 1;
+                if (hoveredKey) return 0.4;
+                return isMissing ? 0.3 : 0.8;
+            })
+            .attr('stroke', (d) => {
+                const label = `${d.x0} - ${d.x1}`;
+                const isMissing = d.originalBin?.isMissing;
+                return hoveredKey === label ? barColor : (isMissing ? 'var(--text-tertiary)' : 'var(--viz-stroke-bar)');
+            })
+            .attr('stroke-dasharray', (d) => d.originalBin?.isMissing ? '4,2' : 'none')
+            .attr('stroke-width', (d) => {
+                const label = `${d.x0} - ${d.x1}`;
+                const isMissing = d.originalBin?.isMissing;
+                return hoveredKey === label || isMissing ? 2 : 1;
+            })
             .attr('rx', 1)
-            .style('cursor', interactive ? 'pointer' : 'default');
+            .style('cursor', interactive ? 'pointer' : 'default')
+            .on('mouseenter', (event, d) => {
+                if (onHoverChange) onHoverChange(`${d.x0} - ${d.x1}`);
+            })
+            .on('mouseleave', (event, d) => {
+                if (onHoverChange) onHoverChange(null);
+            });
 
         if (interactive) {
             bars.on('click', function (event, d) {
@@ -222,7 +254,7 @@ export const HistogramRenderer: React.FC<BaseChartRendererProps> = ({
         }
 
 
-    }, [bins, width, height, innerWidth, innerHeight, margin, dataExtent, barColor, selectedBarColor, interactive, labelMode, handleBinClick, handleContextMenuInteraction]);
+    }, [bins, width, height, innerWidth, innerHeight, margin, dataExtent, barColor, selectedBarColor, interactive, labelMode, handleBinClick, handleContextMenuInteraction, hoveredKey, onHoverChange]);
 
     return (
         <svg

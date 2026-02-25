@@ -13,6 +13,8 @@ interface InspectorDistributionProps {
     selectedKeys: Set<string>;
     setSelectedKeys: (keys: Set<string>) => void;
     onContextMenu: (event: { selected: any[]; position: { x: number; y: number } }) => void;
+    hoveredKey?: string | null;
+    onHoverChange?: (key: string | null) => void;
 }
 
 export const InspectorDistribution: React.FC<InspectorDistributionProps> = ({
@@ -21,7 +23,9 @@ export const InspectorDistribution: React.FC<InspectorDistributionProps> = ({
     isNumericVariable,
     selectedKeys,
     setSelectedKeys,
-    onContextMenu
+    onContextMenu,
+    hoveredKey,
+    onHoverChange
 }) => {
     // Responsive chart width
     const containerRef = useRef<HTMLDivElement>(null);
@@ -56,6 +60,7 @@ export const InspectorDistribution: React.FC<InspectorDistributionProps> = ({
                 value: freq.count,
                 percent: (freq.count / stats.totalCount) * 100,
                 code: freq.value,
+                isMissing: variable.missingValues?.discrete?.includes(freq.value as any) ?? false,
             };
         });
 
@@ -73,13 +78,27 @@ export const InspectorDistribution: React.FC<InspectorDistributionProps> = ({
         const numericStats = stats?.numeric;
         if (!numericStats || !variable || !isNumericVariable) return null;
 
-        const data = numericStats.histogramBins.map(bin => ({
-            label: `${bin.x0} - ${bin.x1}`,
-            value: bin.count,
-            percent: (bin.count / (stats?.totalCount || 1)) * 100,
-            rawValue: String(bin.x0),
-            originalBin: bin
-        }));
+        const data = numericStats.histogramBins.map(bin => {
+            let isMissing = false;
+            if (variable.missingValues) {
+                if (variable.missingValues.discrete?.some(v => v >= bin.x0 && v <= bin.x1)) {
+                    isMissing = true;
+                } else if (variable.missingValues.range) {
+                    if (bin.x0 >= variable.missingValues.range.low && bin.x1 <= variable.missingValues.range.high) {
+                        isMissing = true;
+                    }
+                }
+            }
+
+            return {
+                label: `${bin.x0} - ${bin.x1}`,
+                value: bin.count,
+                percent: (bin.count / (stats?.totalCount || 1)) * 100,
+                rawValue: String(bin.x0),
+                originalBin: bin,
+                isMissing
+            };
+        });
 
         return {
             rows: data,
@@ -119,6 +138,8 @@ export const InspectorDistribution: React.FC<InspectorDistributionProps> = ({
                         interactive={true}
                         variableStats={stats} // Pass stats for optimized bin rendering
                         onContextMenu={onContextMenu}
+                        hoveredKey={hoveredKey}
+                        onHoverChange={onHoverChange}
                     />
                 </div>
             ) : nominalChartData ? (
@@ -131,6 +152,8 @@ export const InspectorDistribution: React.FC<InspectorDistributionProps> = ({
                         selectedKeys={selectedKeys}
                         onSelectionChange={setSelectedKeys}
                         onContextMenu={onContextMenu}
+                        hoveredKey={hoveredKey}
+                        onHoverChange={onHoverChange}
                     />
                 </div>
             ) : null}

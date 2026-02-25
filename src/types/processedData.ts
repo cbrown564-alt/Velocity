@@ -93,6 +93,10 @@ export interface ChartDataPoint {
     percent: number;
     /** Significance marker */
     sig?: string;
+    /** Whether this point represents missing data */
+    isMissing?: boolean;
+    /** The original data code (if applicable) */
+    code?: number | string;
     // For Box Plot / Distribution
     stats?: {
         min?: number;

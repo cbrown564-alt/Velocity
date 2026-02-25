@@ -73,6 +73,10 @@ export interface BaseChartRendererProps {
     variableStats?: any; // typed as VariableStatsResult in implementation
     /** Mode for data labels */
     labelMode?: 'count' | 'percent' | 'none';
+    /** Key of the currently hovered element for cross-highlighting */
+    hoveredKey?: string | null;
+    /** Callback when hover state changes */
+    onHoverChange?: (key: string | null) => void;
 }
 
 /**
@@ -97,6 +101,7 @@ export interface BarDatum {
     value: number;
     code?: number | string;
     percent?: number;
+    isMissing?: boolean;
 }
 
 export interface BinData {
