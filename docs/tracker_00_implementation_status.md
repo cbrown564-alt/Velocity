@@ -78,10 +78,11 @@ S2-STAT-1 through S2-STAT-4 are resolved. S2-EXP-1 and S2-EXP-2 are done. Phase 
 
 ### 4.4 Recent Delivered (Last 20 Commits Snapshot)
 
-Snapshot reference window: commits on February 5, 2026 through February 24, 2026.
+Snapshot reference window: commits on February 5, 2026 through February 25, 2026.
 
 | ID | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| S2-VAL-1 | Validation | R parity test suite (12 tests vs R reference on real SAV files); fixes `regularizedGammaP` CF bug (chi-square p-values) and `STDDEV→STDDEV_POP` formula consistency | S2-STAT-1–4 | Done | No | G,A | 56a2241 |
 | S2-EXP-1 | Export | Browser-side PPTX export using `PptxGenJS` | Milestone 2.4 complete | Done | Yes | T,L,U,I,A | 3d80d06, cab233a, e840767, c9cc564 |
 | S2-DECK-1 | Analysis Deck | Analysis state capture, editable headers, unsaved indicator | Hub-and-spoke baseline | Done | Yes | T,L,U,A | a3679f7 |
 | S2-DECK-2 | Analysis Deck | Duplicate/delete slide actions + inline film-strip timeline dock | S2-DECK-1 | Done | Yes | T,L,U,A | b97658f, 14adb12 |
@@ -104,6 +105,7 @@ Completed work remains documented in git history and prior tracker revisions. Cu
 - Analysis deck interaction foundation (state capture, timeline actions, timeline rail redesign)
 - Workspace expansion: longitudinal support plus batch operations/export-import workflows
 - **Statistical engine closure (S2-STAT-1–4):** Pairwise comparisons, FDR/Bonferroni correction pipeline, dependent-sample overlap handling for multi-response, TSL NO-GO decision. Phase 3 statistical dependency is cleared.
+- **R parity validation (S2-VAL-1):** 12 Vitest tests comparing Velocity's crosstab engine against R (`haven` + `survey`) on `sleep.sav` and `bsa93.sav`. Fixtures pre-committed; CI has no R dependency. Two engine bugs found and fixed: `regularizedGammaP` continued fraction (correct chi-square p-values) and `STDDEV→STDDEV_POP` (population formula consistency across weighted/unweighted paths). Three WVS Wave 7 tests remain `.todo` pending a ReadStat-WASM parsing fix.
 
 ## 6. Update Rules
 
