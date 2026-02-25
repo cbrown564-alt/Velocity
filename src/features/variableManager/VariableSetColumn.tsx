@@ -5,19 +5,29 @@
  * Displays variable sets filtered by the active folder.
  * Supports single-click navigation and multi-select for bulk operations.
  * Includes sparklines and missingness indicators.
+ *
+ * Uses react-window for virtualization to handle 500+ variable sets smoothly.
  */
 
-import React, { useMemo, useEffect, useCallback, useRef } from 'react';
+import React, { useMemo, useEffect, useCallback } from 'react';
 import { useDraggable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
-import { Hash, Grid3X3, SquareCheck, ChevronRight, EyeOff, Type, Calendar, CheckCircle, SlidersHorizontal } from 'lucide-react';
+import { ChevronRight, EyeOff, CheckCircle } from 'lucide-react';
+import { List, useListRef, type RowComponentProps } from 'react-window';
 import { useVelocityStore } from '../../store';
 import type { VariableSet, Dataset } from '../../store/slices/dataSlice';
 import { isCategoricalType, normalizeVariableType } from '../../types';
 import { Sparkline, MissingnessBadge } from './Sparkline';
 import { VariableTypeIcon } from '../../components/common/VariableTypeIcon';
-import { useLazyObserver } from '../../hooks/useLazyObserver';
 import styles from './MillerColumns.module.css';
+
+// Height of each row in the virtual list (8px top + ~20px content + 8px bottom + 4px margin)
+const ITEM_HEIGHT = 40;
+const OVERSCAN_COUNT = 5;
+
+// ============================================================================
+// VariableSetItem
+// ============================================================================
 
 interface VariableSetItemProps {
     variableSet: VariableSet;
@@ -31,10 +41,7 @@ interface VariableSetItemProps {
     histogramBins?: any[]; // HistogramBin[] from worker
     topCategory?: { label: string; percent: number; count: number }; // For Nominal Leaderboard
     missingPercent?: number;
-    itemRef?: (el: HTMLDivElement | null) => void;
 }
-
-
 
 const getStructureLabel = (structure: string, count: number) => {
     if (structure === 'single' || count === 1) return null;
@@ -45,7 +52,6 @@ const getStructureLabel = (structure: string, count: number) => {
 
 const VariableSetItem: React.FC<VariableSetItemProps> = ({
     variableSet,
-    dataset,
     isActive,
     isSelected,
     onClick,
@@ -55,7 +61,6 @@ const VariableSetItem: React.FC<VariableSetItemProps> = ({
     histogramBins,
     topCategory,
     missingPercent,
-    itemRef,
 }) => {
     const varCount = variableSet.variableIds.length;
     const structureLabel = getStructureLabel(variableSet.structure, varCount);
@@ -68,20 +73,13 @@ const VariableSetItem: React.FC<VariableSetItemProps> = ({
         transform: CSS.Transform.toString(transform),
         opacity: isDragging ? 0.5 : 1,
         zIndex: isDragging ? 1000 : undefined,
-        // Use theme-aware background for selection
         backgroundColor: isSelected && !isActive ? 'var(--bg-active)' : undefined,
-        userSelect: 'none' as const, // Prevent text selection during drag/multi-select
+        userSelect: 'none' as const,
     };
-
-    // Combine the dnd ref with the itemRef passed from parent
-    const setRefs = useCallback((node: HTMLDivElement | null) => {
-        setNodeRef(node);
-        if (itemRef) itemRef(node);
-    }, [setNodeRef, itemRef]);
 
     return (
         <div
-            ref={setRefs}
+            ref={setNodeRef}
             style={style}
             {...listeners}
             {...attributes}
@@ -91,9 +89,7 @@ const VariableSetItem: React.FC<VariableSetItemProps> = ({
             onContextMenu={onContextMenu}
             className={`${styles.item} ${isActive ? styles.itemActive : ''}`}
         >
-            <div
-                className={styles.itemContent}
-            >
+            <div className={styles.itemContent}>
                 <span className={styles.itemIcon} style={
                     variableSet.structure === 'grid' || variableSet.structure === 'multiple'
                         ? { color: 'var(--text-secondary)' }
@@ -120,7 +116,6 @@ const VariableSetItem: React.FC<VariableSetItemProps> = ({
                 </span>
             </div>
             <div className={styles.itemMeta}>
-                {/* Show sparkline for single-variable sets */}
                 {(frequencies || histogramBins || topCategory) && (
                     <Sparkline
                         type={variableSet.type as any}
@@ -132,11 +127,10 @@ const VariableSetItem: React.FC<VariableSetItemProps> = ({
                         maxBars={5}
                     />
                 )}
-                {/* Show missingness badge if significant */}
                 {missingPercent !== undefined && (
                     <MissingnessBadge
                         missingPercent={missingPercent}
-                        threshold={1} // Show distinct dot even for small missingness
+                        threshold={1}
                     />
                 )}
                 {structureLabel && (
@@ -147,6 +141,66 @@ const VariableSetItem: React.FC<VariableSetItemProps> = ({
         </div>
     );
 };
+
+// ============================================================================
+// VariableSetRow — react-window row renderer (module-level to avoid recreation)
+// ============================================================================
+
+type VariableSetRowProps = {
+    filteredSets: VariableSet[];
+    dataset: Dataset | null;
+    selectedVariableSetId: string | null | undefined;
+    selectedVariableSetIds: string[];
+    getStatsForSet: (vs: VariableSet) => {
+        frequencies: number[] | undefined;
+        missingPercent: number | undefined;
+        histogramBins: any[] | undefined;
+        topCategory: { label: string; percent: number; count: number } | undefined;
+    };
+    onClickSet: (vs: VariableSet, e: React.MouseEvent) => void;
+    onHoverSet: (vs: VariableSet) => void;
+    onContextMenuSet: (vs: VariableSet, e: React.MouseEvent) => void;
+};
+
+const VariableSetRow = ({
+    index,
+    style,
+    filteredSets,
+    dataset,
+    selectedVariableSetId,
+    selectedVariableSetIds,
+    getStatsForSet,
+    onClickSet,
+    onHoverSet,
+    onContextMenuSet,
+}: RowComponentProps<VariableSetRowProps>): React.ReactElement => {
+    const vs = filteredSets[index];
+    if (!vs) return <></>;
+
+    const { frequencies, missingPercent, histogramBins, topCategory } = getStatsForSet(vs);
+
+    return (
+        <div style={style}>
+            <VariableSetItem
+                variableSet={vs}
+                dataset={dataset}
+                isActive={selectedVariableSetId === vs.id}
+                isSelected={selectedVariableSetIds.includes(vs.id)}
+                onClick={(e) => onClickSet(vs, e)}
+                onHover={() => onHoverSet(vs)}
+                onContextMenu={(e) => onContextMenuSet(vs, e)}
+                frequencies={frequencies}
+                histogramBins={histogramBins}
+                topCategory={topCategory}
+                missingPercent={missingPercent}
+            />
+        </div>
+    );
+};
+
+// ============================================================================
+// VariableSetColumn
+// ============================================================================
 
 export const VariableSetColumn: React.FC = () => {
     const {
@@ -168,30 +222,7 @@ export const VariableSetColumn: React.FC = () => {
         convertMultipleToGrid,
     } = useVelocityStore();
 
-    // Ref for the column content container (for scroll-into-view)
-    const contentRef = useRef<HTMLDivElement>(null);
-    // Track refs for each item
-    const itemRefs = useRef<Map<string, HTMLDivElement>>(new Map());
-
-    // Intersection Observer for auto-loading stats
-    // Lazy-load stats using shared hook
-    useLazyObserver(
-        contentRef,
-        itemRefs,
-        useCallback((id) => {
-            const variableSet = variableSets.find(vs => vs.id === id);
-            // Only load for single-variable sets
-            if (variableSet && variableSet.variableIds.length === 1) {
-                const variableId = variableSet.variableIds[0];
-                // Check if already loaded or loading to avoid spamming
-                if (!variableStats[variableId]) {
-                    getVariableStats(variableId).catch(() => { });
-                }
-            }
-        }, [variableSets, variableStats, getVariableStats]),
-        'data-variable-set-id',
-        [variableSets, variableStats, activeFolderId, searchQuery, facetFilters]
-    );
+    const listRef = useListRef(null);
 
     // Filter variable sets by folder, search, and facets
     const filteredSets = useMemo(() => {
@@ -230,7 +261,6 @@ export const VariableSetColumn: React.FC = () => {
         // Quality facet filter (uses variableStats)
         if (facetFilters.qualities.length > 0) {
             sets = sets.filter(vs => {
-                // For single-variable sets, check the variable's stats
                 if (vs.variableIds.length === 1) {
                     const stats = variableStats[vs.variableIds[0]];
                     if (!stats) return true; // Include if stats not loaded yet
@@ -241,7 +271,6 @@ export const VariableSetColumn: React.FC = () => {
                     return (facetFilters.qualities.includes('complete') && isComplete) ||
                         (facetFilters.qualities.includes('incomplete') && !isComplete);
                 }
-                // For multi-variable sets, include by default (no quality filter)
                 return true;
             });
         }
@@ -252,47 +281,37 @@ export const VariableSetColumn: React.FC = () => {
     const filteredIds = useMemo(() => filteredSets.map(vs => vs.id), [filteredSets]);
 
     // Bi-directional focus: scroll to selected variable set when it changes
-    // This enables context awareness between Analysis Canvas and Variable Manager
     useEffect(() => {
         if (!selectedVariableSetId || !dataset) return;
 
-        // Find the selected variable set
         const targetSet = variableSets.find(vs => vs.id === selectedVariableSetId);
         if (!targetSet) return;
 
-        // Check if we need to switch folders to show the selected variable
+        // Switch folders if necessary
         const targetFolderId = targetSet.folderId || 'ungrouped';
         const isInCurrentFolder =
-            activeFolderId === null || // "All" folder shows everything
+            activeFolderId === null ||
             activeFolderId === targetFolderId ||
             (activeFolderId === 'ungrouped' && !targetSet.folderId);
 
         if (!isInCurrentFolder) {
-            // Switch to the folder containing the selected variable
-            // Use null for ungrouped items to show "All" view, or the specific folder
             setActiveFolderId(targetSet.folderId || null);
         }
 
-        // Scroll to the item after a short delay (allow folder switch to render)
-        const scrollToItem = () => {
-            const itemElement = itemRefs.current.get(selectedVariableSetId);
-            if (itemElement) {
-                itemElement.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'nearest',
-                });
-            }
-        };
-
-        // Use requestAnimationFrame to ensure DOM has updated
+        // Use the list's imperative API to scroll to the item by index.
+        // Double rAF allows a folder switch to flush before we query filteredSets.
         requestAnimationFrame(() => {
-            requestAnimationFrame(scrollToItem);
+            requestAnimationFrame(() => {
+                const index = filteredSets.findIndex(vs => vs.id === selectedVariableSetId);
+                if (index >= 0) {
+                    listRef.current?.scrollToRow({ index, align: 'auto', behavior: 'smooth' });
+                }
+            });
         });
-    }, [selectedVariableSetId, dataset, variableSets, activeFolderId, setActiveFolderId]);
+    }, [selectedVariableSetId, dataset, variableSets, activeFolderId, setActiveFolderId, filteredSets, listRef]);
 
     // Helper to get stats for a variable set (uses first variable for single sets)
     const getStatsForSet = useCallback((variableSet: VariableSet) => {
-        // Only show sparklines for single-variable sets to keep UI clean
         if (variableSet.variableIds.length !== 1) {
             return { frequencies: undefined, missingPercent: undefined, histogramBins: undefined, topCategory: undefined };
         }
@@ -305,24 +324,19 @@ export const VariableSetColumn: React.FC = () => {
         }
 
         const frequencies = stats.frequencies.map(f => f.count);
-        const histogramBins = stats.numeric?.histogramBins; // Get histogram bins if available
+        const histogramBins = stats.numeric?.histogramBins;
 
         const missingPercent = stats.totalCount > 0
             ? (stats.missingCount / stats.totalCount) * 100
             : 0;
 
-        // Calculate Top Category for Nominal/Ordinal variables
         let topCategory: { label: string; percent: number; count: number } | undefined;
 
         if (isCategoricalType(variableSet.type) || variableSet.type === 'text') {
-            // Find max frequency item
-            // Note: We need to match back to value label using the original stats data
             if (stats.frequencies && stats.frequencies.length > 0) {
-                // Sort by count descending
                 const sorted = [...stats.frequencies].sort((a, b) => b.count - a.count);
                 const topItem = sorted[0];
 
-                // Get label from dataset metadata
                 let label = String(topItem.value);
                 if (dataset) {
                     const variable = dataset.variables.find(v => v.id === variableId);
@@ -340,22 +354,35 @@ export const VariableSetColumn: React.FC = () => {
         }
 
         return { frequencies, missingPercent, histogramBins, topCategory };
-    }, [variableStats, dataset]); // Added dataset dependency
+    }, [variableStats, dataset]);
 
-    // Lazy-load stats on hover (fallback for intersection observer)
+    // Load stats on hover (immediate trigger for the hovered item)
     const handleHover = useCallback((variableSet: VariableSet) => {
-        // Only fetch for single-variable sets
         if (variableSet.variableIds.length === 1) {
             const variableId = variableSet.variableIds[0];
-            // getVariableStats handles caching internally
             getVariableStats(variableId).catch(err => {
                 console.warn('[VariableSetColumn] Failed to fetch stats:', err);
             });
         }
     }, [getVariableStats]);
 
-    const handleClick = (variableSet: VariableSet, e: React.MouseEvent) => {
-        // Handle bulk selection with modifier keys
+    // Load stats for all rows as they scroll into view
+    const handleRowsRendered = useCallback(
+        ({ startIndex, stopIndex }: { startIndex: number; stopIndex: number }) => {
+            for (let i = startIndex; i <= stopIndex; i++) {
+                const vs = filteredSets[i];
+                if (vs && vs.variableIds.length === 1) {
+                    const variableId = vs.variableIds[0];
+                    if (!variableStats[variableId]) {
+                        getVariableStats(variableId).catch(() => { });
+                    }
+                }
+            }
+        },
+        [filteredSets, variableStats, getVariableStats]
+    );
+
+    const handleClick = useCallback((variableSet: VariableSet, e: React.MouseEvent) => {
         if (e.shiftKey) {
             selectVariableSetRange(variableSet.id, filteredIds);
             return;
@@ -366,22 +393,17 @@ export const VariableSetColumn: React.FC = () => {
             return;
         }
 
-        // Single click - Miller column navigation
         setSelectedVariableSetId(variableSet.id);
-
-        // Single click - Exclusive selection
         selectSingleVariableSet(variableSet.id);
 
-        // Smart column skip: if single-variable set, auto-select the variable
         if (variableSet.variableIds.length === 1) {
             setSelectedVariableId(variableSet.variableIds[0]);
         }
-    };
+    }, [selectVariableSetRange, filteredIds, toggleVariableSetSelection, setSelectedVariableSetId, selectSingleVariableSet, setSelectedVariableId]);
 
-    const handleContextMenu = (variableSet: VariableSet, e: React.MouseEvent) => {
+    const handleContextMenu = useCallback((variableSet: VariableSet, e: React.MouseEvent) => {
         e.preventDefault();
 
-        // Only show context menu for multiple-response sets
         if (variableSet.structure === 'multiple') {
             const confirmed = window.confirm(
                 `Convert "${variableSet.name}" to a grid to show all response values?\n\n` +
@@ -391,7 +413,18 @@ export const VariableSetColumn: React.FC = () => {
                 convertMultipleToGrid(variableSet.id);
             }
         }
-    };
+    }, [convertMultipleToGrid]);
+
+    const rowProps = useMemo<VariableSetRowProps>(() => ({
+        filteredSets,
+        dataset,
+        selectedVariableSetId: selectedVariableSetId ?? null,
+        selectedVariableSetIds,
+        getStatsForSet,
+        onClickSet: handleClick,
+        onHoverSet: handleHover,
+        onContextMenuSet: handleContextMenu,
+    }), [filteredSets, dataset, selectedVariableSetId, selectedVariableSetIds, getStatsForSet, handleClick, handleHover, handleContextMenu]);
 
     if (!dataset) {
         return (
@@ -416,43 +449,27 @@ export const VariableSetColumn: React.FC = () => {
                 </span>
             </div>
 
-            <div className={styles.columnContent} ref={contentRef}>
-                {filteredSets.length > 0 ? (
-                    filteredSets.map(vs => {
-                        const { frequencies, missingPercent, histogramBins, topCategory } = getStatsForSet(vs);
-                        return (
-                            <VariableSetItem
-                                key={vs.id}
-                                variableSet={vs}
-                                dataset={dataset}
-                                isActive={selectedVariableSetId === vs.id}
-                                isSelected={selectedVariableSetIds.includes(vs.id)}
-                                onClick={(e) => handleClick(vs, e)}
-                                onHover={() => handleHover(vs)}
-                                onContextMenu={(e) => handleContextMenu(vs, e)}
-                                frequencies={frequencies}
-                                histogramBins={histogramBins}
-                                topCategory={topCategory}
-                                missingPercent={missingPercent}
-                                itemRef={(el) => {
-                                    if (el) {
-                                        itemRefs.current.set(vs.id, el);
-                                    } else {
-                                        itemRefs.current.delete(vs.id);
-                                    }
-                                }}
-                            />
-                        );
-                    })
-                ) : (
-                    <div className={styles.emptyState}>
-                        <CheckCircle className={styles.emptyIcon} />
-                        <span className={styles.emptyText}>
-                            {searchQuery ? 'No matching variables' : 'No variables in folder'}
-                        </span>
-                    </div>
-                )}
-            </div>
+            {filteredSets.length === 0 ? (
+                <div className={styles.emptyState}>
+                    <CheckCircle className={styles.emptyIcon} />
+                    <span className={styles.emptyText}>
+                        {searchQuery ? 'No matching variables' : 'No variables in folder'}
+                    </span>
+                </div>
+            ) : (
+                <div style={{ flex: 1, overflow: 'hidden' }}>
+                    <List
+                        listRef={listRef}
+                        rowCount={filteredSets.length}
+                        rowHeight={ITEM_HEIGHT}
+                        overscanCount={OVERSCAN_COUNT}
+                        onRowsRendered={handleRowsRendered}
+                        rowComponent={VariableSetRow}
+                        rowProps={rowProps}
+                        style={{ padding: 'var(--space-2)' }}
+                    />
+                </div>
+            )}
         </div>
     );
 };
