@@ -13,7 +13,7 @@ import { CSS } from '@dnd-kit/utilities';
 import { Hash, Grid3X3, SquareCheck, ChevronRight, EyeOff, Type, Calendar, CheckCircle, SlidersHorizontal } from 'lucide-react';
 import { useVelocityStore } from '../../store';
 import type { VariableSet, Dataset } from '../../store/slices/dataSlice';
-import { isCategoricalType } from '../../types';
+import { isCategoricalType, normalizeVariableType } from '../../types';
 import { Sparkline, MissingnessBadge } from './Sparkline';
 import { VariableTypeIcon } from '../../components/common/VariableTypeIcon';
 import { useLazyObserver } from '../../hooks/useLazyObserver';
@@ -213,7 +213,7 @@ export const VariableSetColumn: React.FC = () => {
         // Type facet filter
         if (facetFilters.types.length > 0) {
             sets = sets.filter(vs => {
-                return vs.type && facetFilters.types.includes(vs.type);
+                return vs.type && facetFilters.types.includes(normalizeVariableType(vs.type));
             });
         }
 

@@ -381,7 +381,7 @@
    ============================================================================ */
 
 .dropTarget {
-  outline: 2px dashed var(--color-terracotta);
+  outline: 2px dashed var(--color-accent);
   outline-offset: -2px;
-  background-color: rgba(224, 122, 95, 0.05);
+  background-color: var(--bg-active);
 }

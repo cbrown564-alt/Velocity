@@ -43,7 +43,7 @@ export const InspectorStats: React.FC<InspectorStatsProps> = ({ variable, stats,
                                     </thead>
                                     <tbody>
                                         {variable.valueLabels.map((vl) => (
-                                            <tr key={vl.value} className="mission-control-row">
+                                            <tr key={vl.value}>
                                                 <td>
                                                     <span className={styles.valueCode}>{vl.value}</span>
                                                 </td>

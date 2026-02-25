@@ -197,7 +197,7 @@ export const FolderColumn: React.FC<FolderColumnProps> = ({ className }) => {
                                 width: '100%',
                                 padding: '6px 8px',
                                 fontSize: 'var(--text-sm)',
-                                border: '1px solid var(--color-terracotta)',
+                                border: '1px solid var(--border-color-active)',
                                 borderRadius: 'var(--border-radius-sm)',
                                 outline: 'none',
                                 fontFamily: 'var(--font-body)',

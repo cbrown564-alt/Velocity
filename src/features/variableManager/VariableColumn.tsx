@@ -7,7 +7,7 @@
  */
 
 import React, { useMemo, useEffect, useCallback, useRef } from 'react';
-import { Hash, CheckCircle, ChevronRight, Type, Calendar, SlidersHorizontal } from 'lucide-react';
+import { CheckCircle, ChevronRight } from 'lucide-react';
 import { useVelocityStore } from '../../store';
 import type { Variable, Dataset } from '../../store/slices/dataSlice';
 import { isCategoricalType } from '../../types';

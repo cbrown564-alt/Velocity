@@ -225,7 +225,6 @@
 
 
 
-/* Remove local hover so mission-control-row works */
 .valueLabelsTable tbody tr:hover {
   background-color: transparent;
 }

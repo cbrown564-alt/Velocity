@@ -102,7 +102,7 @@ export const Sparkline: React.FC<SparklineProps> = ({
                 <div style={{
                     fontSize: '10px',
                     fontWeight: 500,
-                    color: 'var(--color-ink)',
+                    color: 'var(--text-primary)',
                     whiteSpace: 'nowrap',
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
