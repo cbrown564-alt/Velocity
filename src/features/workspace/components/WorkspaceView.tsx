@@ -36,7 +36,6 @@ import {
 import { Logo } from '../../../components/common/Logo';
 import styles from './WorkspaceView.module.css';
 import { WaveTimeline } from './WaveTimeline';
-import { BatchOperationsBar } from './BatchOperationsBar';
 
 // ============================================================================
 // Types
@@ -754,17 +753,70 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
               exit={{ opacity: 0, x: 20 }}
             >
               <span>{selectedIds.size} selected</span>
-              <button onClick={() => onCreateProject(Array.from(selectedIds))}>
-                <Link2 size={14} />
-                Link as Project
-              </button>
+
+              {/* Star All */}
               <button
                 onClick={() => {
-                  selectedIds.forEach(id => onDeleteDataset(id));
+                  const allStarred = Array.from(selectedIds).every(id => {
+                    const dataset = datasets.find(d => d.id === id);
+                    return dataset?.starred;
+                  });
+                  if (onBatchStar) {
+                    onBatchStar(Array.from(selectedIds), !allStarred);
+                  } else {
+                    selectedIds.forEach(id => onToggleStar(id));
+                  }
+                }}
+                title="Toggle Star"
+              >
+                {Array.from(selectedIds).every(
+                  id => datasets.find(d => d.id === id)?.starred
+                ) ? (
+                  <StarOff size={14} />
+                ) : (
+                  <Star size={14} />
+                )}
+                Star
+              </button>
+
+              {/* Add to Project */}
+              <button onClick={() => onCreateProject(Array.from(selectedIds))}>
+                <Link2 size={14} />
+                Add to Project
+              </button>
+
+              {/* Export */}
+              {onExport && (
+                <button
+                  onClick={() => {
+                    if (onExport) {
+                      onExport(Array.from(selectedIds));
+                    }
+                  }}
+                  title="Export selected"
+                >
+                  <Download size={14} />
+                  Export
+                </button>
+              )}
+
+              <div className={styles.actionDivider} />
+
+              {/* Delete */}
+              <button
+                className={styles.destructiveButton}
+                onClick={() => {
+                  if (onBatchDelete) {
+                    onBatchDelete(Array.from(selectedIds));
+                  } else {
+                    selectedIds.forEach(id => onDeleteDataset(id));
+                  }
                   setSelectedIds(new Set());
                 }}
+                title="Delete selected"
               >
                 <Trash2 size={14} />
+                Delete
               </button>
             </motion.div>
           )}
@@ -942,51 +994,6 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
               </button>
             </motion.div>
           </>
-        )}
-      </AnimatePresence>
-
-      {/* Batch operations bar */}
-      <AnimatePresence>
-        {selectedIds.size > 0 && (
-          <BatchOperationsBar
-            selectedDatasets={datasets.filter(d => selectedIds.has(d.id))}
-            allDatasets={filteredDatasets}
-            projects={projects}
-            onClearSelection={() => setSelectedIds(new Set())}
-            onSelectAll={() => setSelectedIds(new Set(filteredDatasets.map(d => d.id)))}
-            onStarAll={() => {
-              if (onBatchStar) {
-                onBatchStar(Array.from(selectedIds), true);
-              } else {
-                selectedIds.forEach(id => onToggleStar(id));
-              }
-            }}
-            onUnstarAll={() => {
-              if (onBatchStar) {
-                onBatchStar(Array.from(selectedIds), false);
-              } else {
-                selectedIds.forEach(id => onToggleStar(id));
-              }
-            }}
-            onDeleteAll={() => {
-              if (onBatchDelete) {
-                onBatchDelete(Array.from(selectedIds));
-              } else {
-                selectedIds.forEach(id => onDeleteDataset(id));
-              }
-              setSelectedIds(new Set());
-            }}
-            onCreateProject={() => onCreateProject(Array.from(selectedIds))}
-            onAddToProject={(projectId) => {
-              onLinkDatasets(Array.from(selectedIds), projectId);
-              setSelectedIds(new Set());
-            }}
-            onExportSelected={() => {
-              if (onExport) {
-                onExport(Array.from(selectedIds));
-              }
-            }}
-          />
         )}
       </AnimatePresence>
     </div>

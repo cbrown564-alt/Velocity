@@ -27,6 +27,7 @@ export interface WorkspaceSlice {
   addStoredDataset: (dataset: Omit<StoredDataset, 'id' | 'createdAt' | 'lastOpenedAt' | 'lastModifiedAt' | 'starred'>) => string;
   updateStoredDataset: (id: string, updates: Partial<StoredDataset>) => void;
   removeStoredDataset: (id: string) => void;
+  removeStoredDatasets: (ids: string[]) => void;
   toggleDatasetStar: (id: string) => void;
   updateDatasetAccess: (id: string) => void;
 
@@ -121,6 +122,26 @@ export const createWorkspaceSlice: StateCreator<WorkspaceSlice> = (set, get) => 
       },
       // Clear active if removed
       activeDatasetId: state.activeDatasetId === id ? null : state.activeDatasetId,
+    }));
+  },
+
+  removeStoredDatasets: (ids) => {
+    const idSet = new Set(ids);
+    set((state) => ({
+      workspace: {
+        ...state.workspace,
+        datasets: state.workspace.datasets.filter((d) => !idSet.has(d.id)),
+        // Also remove from any projects
+        projects: state.workspace.projects.map((p) => ({
+          ...p,
+          datasetIds: p.datasetIds.filter((did) => !idSet.has(did)),
+        })),
+      },
+      // Clear active if removed
+      activeDatasetId:
+        state.activeDatasetId && idSet.has(state.activeDatasetId)
+          ? null
+          : state.activeDatasetId,
     }));
   },
 

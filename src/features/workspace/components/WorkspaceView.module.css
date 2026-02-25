@@ -12,7 +12,8 @@
 .workspace {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
   background: var(--bg-app);
   color: var(--text-primary);
 }
@@ -245,6 +246,9 @@
    ============================================================================ */
 
 .filterTabs {
+  position: sticky;
+  top: 0;
+  z-index: 10;
   display: flex;
   align-items: center;
   gap: var(--space-1);
@@ -285,34 +289,60 @@
 .selectionActions {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-2) var(--space-3);
-  background: var(--bg-active);
-  border-radius: var(--border-radius-md);
-  font-size: var(--text-sm);
+  gap: var(--space-1);
+  padding: 4px var(--space-4);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-full, 999px);
+  box-shadow: var(--shadow-sm);
+  margin-left: var(--space-6);
 }
 
 .selectionActions span {
-  color: var(--text-secondary);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--color-accent);
+  margin-right: var(--space-2);
 }
 
 .selectionActions button {
   display: flex;
   align-items: center;
-  gap: var(--space-1);
-  padding: var(--space-1) var(--space-2);
-  border: none;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid transparent;
   border-radius: var(--border-radius-sm);
-  background: var(--bg-panel);
+  background: transparent;
   color: var(--text-primary);
-  font-size: var(--text-xs);
+  font-size: var(--text-sm);
+  font-weight: 500;
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
 .selectionActions button:hover {
-  background: var(--color-accent);
-  color: var(--text-inverse);
+  background: var(--bg-surface);
+  border-color: var(--border-color);
+  color: var(--color-accent);
+}
+
+.selectionActions .destructiveButton {
+  color: #E11D48 !important;
+  /* Vibrant Rose-Red */
+  font-weight: 600;
+}
+
+.selectionActions .destructiveButton:hover {
+  background: #FFF1F2;
+  border-color: #FECDD3;
+  color: #E11D48 !important;
+}
+
+.actionDivider {
+  width: 1px;
+  height: 20px;
+  background: var(--border-color);
+  margin: 0 var(--space-2);
 }
 
 /* ============================================================================
@@ -339,6 +369,46 @@
   align-items: center;
   justify-content: space-between;
   margin-bottom: var(--space-4);
+}
+
+.headerLeftGroups {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.selectAllCheckbox {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 1px solid var(--text-secondary);
+  border-radius: 4px;
+  background: var(--bg-panel);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.selectAllCheckbox:hover {
+  border-color: var(--color-accent);
+}
+
+.selectAllCheckbox:checked {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.selectAllCheckbox:checked::after {
+  content: "";
+  display: block;
+  width: 5px;
+  height: 10px;
+  border: solid var(--text-inverse);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+  margin-bottom: 2px;
 }
 
 .sectionHeader h2 {

@@ -21,6 +21,7 @@ interface UseWorkspaceReturn {
   registerCurrentDataset: () => void;
   deleteDataset: (id: string) => Promise<void>;
   toggleStar: (id: string) => void;
+  deleteDatasets: (ids: string[]) => Promise<void>;
   returnToWorkspace: () => void;
 
   // Storage
@@ -41,6 +42,7 @@ export function useWorkspace(): UseWorkspaceReturn {
     addStoredDataset,
     updateStoredDataset,
     removeStoredDataset,
+    removeStoredDatasets,
     toggleDatasetStar,
     updateDatasetAccess,
     saveDatasetSession,
@@ -123,7 +125,7 @@ export function useWorkspace(): UseWorkspaceReturn {
               updateStoredDataset(dataset.id, { fileSize: size });
             }
           })
-          .catch(() => {});
+          .catch(() => { });
       }
 
       // Add to workspace with the dataset's ID
@@ -229,21 +231,21 @@ export function useWorkspace(): UseWorkspaceReturn {
    */
   const deleteDataset = useCallback(async (id: string): Promise<void> => {
     const storedDataset = workspace.datasets.find(d => d.id === id);
-
     if (storedDataset) {
       // TODO: Clean up OPFS files associated with this dataset
-
-      // Remove from workspace
-      removeStoredDataset(id);
-
-      // If this was the active dataset, clear it
-      if (activeDatasetId === id) {
-        setActiveDataset(null);
-      }
+      removeStoredDatasets([id]);
     }
 
     await refreshStorageQuota();
-  }, [workspace.datasets, activeDatasetId, removeStoredDataset, setActiveDataset, refreshStorageQuota]);
+  }, [workspace.datasets, removeStoredDatasets, refreshStorageQuota]);
+
+  /**
+   * Delete multiple datasets from the workspace.
+   */
+  const deleteDatasets = useCallback(async (ids: string[]): Promise<void> => {
+    removeStoredDatasets(ids);
+    await refreshStorageQuota();
+  }, [removeStoredDatasets, refreshStorageQuota]);
 
   /**
    * Toggle star status for a dataset.
@@ -268,6 +270,7 @@ export function useWorkspace(): UseWorkspaceReturn {
     openDataset,
     registerCurrentDataset,
     deleteDataset,
+    deleteDatasets,
     toggleStar,
     returnToWorkspace,
     refreshStorageQuota,

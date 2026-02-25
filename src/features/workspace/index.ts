@@ -11,7 +11,7 @@ export { DatasetSidebar } from './components/DatasetSidebar';
 export { ProjectLinkModal } from './components/ProjectLinkModal';
 export { WaveTimeline } from './components/WaveTimeline';
 export { CrossWavePanel } from './components/CrossWavePanel';
-export { BatchOperationsBar } from './components/BatchOperationsBar';
+
 export { ExportImportModal, type WorkspaceExport } from './components/ExportImportModal';
 
 export { useWorkspace } from './hooks/useWorkspace';

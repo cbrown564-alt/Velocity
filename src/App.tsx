@@ -210,6 +210,7 @@ export default function App() {
     updateDatasetAccess,
     saveDatasetSession,
     updateStorageQuota,
+    removeStoredDatasets,
     // Project management
     createProject,
     addDatasetsToProject,
@@ -934,12 +935,9 @@ export default function App() {
   // Batch delete datasets
   const handleBatchDelete = useCallback((ids: string[]) => {
     if (window.confirm(`Delete ${ids.length} datasets from your workspace? The original files will not be affected.`)) {
-      ids.forEach(id => removeStoredDataset(id));
-      if (activeDatasetId && ids.includes(activeDatasetId)) {
-        setActiveDataset(null);
-      }
+      removeStoredDatasets(ids);
     }
-  }, [removeStoredDataset, activeDatasetId, setActiveDataset]);
+  }, [removeStoredDatasets]);
 
   // Register dataset when it changes
   // Note: We intentionally exclude registerDatasetInWorkspace from deps
