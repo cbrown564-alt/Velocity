@@ -71,11 +71,16 @@ export function buildHarmonizedTableQuery(
       `${sourceCaseExpr} AS _value FROM ${escapedSourceTable}`
     );
 
-    const targetCaseExpr = buildValueRemapCase(escapedTargetCol, mapping.valueMappings, 'target');
+    // Target wave values are already in canonical (target) coding.
+    const targetCaseExpr = escapedTargetCol;
     unionParts.push(
       `SELECT 2 AS _wave, '${harmonizedName.replace(/'/g, "''")}' AS _variable_name, ` +
       `${targetCaseExpr} AS _value FROM ${escapedTargetTable}`
     );
+  }
+
+  if (unionParts.length === 0) {
+    return `SELECT 1 AS _wave, NULL AS _variable_name, NULL AS _value, NULL AS _label WHERE 1=0`;
   }
 
   return unionParts.join('\nUNION ALL\n');
@@ -84,22 +89,16 @@ export function buildHarmonizedTableQuery(
 function buildValueRemapCase(
   column: string,
   valueMappings: ValueMapping[],
-  direction: 'source' | 'target'
+  direction: 'source'
 ): string {
   const relevantMappings = valueMappings.filter(
-    m => direction === 'source'
-      ? m.sourceValue !== null && m.targetValue !== null
-      : m.targetValue !== null
+    m => m.sourceValue !== null && m.targetValue !== null
   );
 
   if (relevantMappings.length === 0) return column;
 
   const whenClauses = relevantMappings.map(m => {
-    if (direction === 'source') {
-      return `WHEN ${column} = ${m.sourceValue} THEN ${m.targetValue}`;
-    } else {
-      return `WHEN ${column} = ${m.targetValue} THEN ${m.sourceValue ?? 'NULL'}`;
-    }
+    return `WHEN ${column} = ${m.sourceValue} THEN ${m.targetValue}`;
   });
 
   return `CASE ${whenClauses.join(' ')} ELSE ${column} END`;

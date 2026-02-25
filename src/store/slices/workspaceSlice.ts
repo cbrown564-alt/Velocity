@@ -24,7 +24,7 @@ export interface WorkspaceSlice {
   setActiveDataset: (id: string | null) => void;
 
   // Dataset CRUD
-  addStoredDataset: (dataset: Omit<StoredDataset, 'id' | 'createdAt' | 'lastOpenedAt' | 'lastModifiedAt' | 'starred'>) => string;
+  addStoredDataset: (dataset: Omit<StoredDataset, 'createdAt' | 'lastOpenedAt' | 'lastModifiedAt' | 'starred'> & { id?: string }) => string;
   updateStoredDataset: (id: string, updates: Partial<StoredDataset>) => void;
   removeStoredDataset: (id: string) => void;
   removeStoredDatasets: (ids: string[]) => void;
@@ -77,23 +77,44 @@ export const createWorkspaceSlice: StateCreator<WorkspaceSlice> = (set, get) => 
 
   // Dataset CRUD
   addStoredDataset: (dataset) => {
-    const id = uuidv4();
+    const id = dataset.id ?? uuidv4();
     const now = Date.now();
-    const newDataset: StoredDataset = {
-      ...dataset,
-      id,
-      createdAt: now,
-      lastOpenedAt: now,
-      lastModifiedAt: now,
-      starred: false,
-    };
+    set((state) => {
+      const existingIndex = state.workspace.datasets.findIndex(d => d.id === id);
+      if (existingIndex >= 0) {
+        const existing = state.workspace.datasets[existingIndex];
+        const updated: StoredDataset = {
+          ...existing,
+          ...dataset,
+          id,
+          lastModifiedAt: now,
+        };
+        const datasets = [...state.workspace.datasets];
+        datasets[existingIndex] = updated;
+        return {
+          workspace: {
+            ...state.workspace,
+            datasets,
+          },
+        };
+      }
 
-    set((state) => ({
-      workspace: {
-        ...state.workspace,
-        datasets: [...state.workspace.datasets, newDataset],
-      },
-    }));
+      const newDataset: StoredDataset = {
+        ...dataset,
+        id,
+        createdAt: now,
+        lastOpenedAt: now,
+        lastModifiedAt: now,
+        starred: false,
+      };
+
+      return {
+        workspace: {
+          ...state.workspace,
+          datasets: [...state.workspace.datasets, newDataset],
+        },
+      };
+    });
 
     return id;
   },

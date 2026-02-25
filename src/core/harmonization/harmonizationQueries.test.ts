@@ -78,6 +78,41 @@ describe('buildHarmonizedTableQuery', () => {
     const sql = buildHarmonizedTableQuery('w1', 'w2', unmapped, sourceVarNames, targetVarNames);
     expect(sql).toContain('WHERE 1=0');
   });
+
+  it('keeps target wave coding in target rows (no reverse remap)', () => {
+    const remapped: VariableMapping[] = [
+      {
+        ...mappings[0],
+        valueMappings: [
+          { sourceValue: 1, sourceLabel: 'Old Low', targetValue: 10, targetLabel: 'New Low' },
+          { sourceValue: 2, sourceLabel: 'Old High', targetValue: 20, targetLabel: 'New High' },
+        ],
+      },
+    ];
+    const sql = buildHarmonizedTableQuery(
+      'wave1_data',
+      'wave2_data',
+      remapped,
+      { w1_q1: 'Q_OLD' },
+      { w2_q1: 'Q_NEW' }
+    );
+
+    // Source rows are remapped to target coding.
+    expect(sql).toContain('WHEN "Q_OLD" = 1 THEN 10');
+    // Target rows should remain in target coding, not reverse-map back to source.
+    expect(sql).not.toContain('WHEN "Q_NEW" = 10 THEN 1');
+  });
+
+  it('returns empty-result query when mappings resolve to missing variable names', () => {
+    const sql = buildHarmonizedTableQuery(
+      'wave1_data',
+      'wave2_data',
+      mappings,
+      {}, // missing source lookup
+      {}  // missing target lookup
+    );
+    expect(sql).toContain('WHERE 1=0');
+  });
 });
 
 describe('buildRespondentOverlapQuery', () => {

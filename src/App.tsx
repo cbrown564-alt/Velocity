@@ -30,6 +30,7 @@ import { ContextMenu } from './features/dashboard/components/ContextMenu';
 import { InputModal } from './components/overlays/InputModal';
 import * as opfsFileManager from './services/opfsFileManager';
 import { WorkspaceView, ProjectLinkModal, CrossWavePanel, ExportImportModal, type StoredDataset, type Project, type WorkspaceExport } from './features/workspace';
+import { HarmonizationWorkspace } from './features/harmonization';
 
 // Smart Canvas Wrapper
 const SmartCanvas: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className }) => {
@@ -49,6 +50,10 @@ const SmartCanvas: React.FC<{ children: React.ReactNode; className?: string }> =
 
 // App Modes
 type AppMode = 'splash' | 'uploading' | 'dashboard' | 'restoring' | 'metadata';
+
+function datasetTableName(datasetId: string): string {
+  return `dataset_${datasetId.replace(/[^a-zA-Z0-9_]/g, '_')}`;
+}
 
 // RestorationPrompt Component
 interface RestorationPromptProps {
@@ -161,6 +166,7 @@ export default function App() {
     persistenceMode,
     persistenceError,
     activeDbPath,
+    worker,
     persistenceState,
     persistedDataInfo,
     initWorker,
@@ -217,6 +223,9 @@ export default function App() {
     removeDatasetsFromProject,
     setDatasetWave,
     setDatasetRespondentKey,
+    harmonization,
+    openHarmonization,
+    closeHarmonization,
   } = useVelocityStore();
 
   const { resolvedRowVars, resolvedColVar, firstRowVarSet } = useResolvedVariables();
@@ -715,6 +724,18 @@ export default function App() {
 
   // Track which datasets we've registered to avoid infinite loops
   const registeredDatasetIds = useRef<Set<string>>(new Set());
+  const materializedDatasetTables = useRef<Set<string>>(new Set());
+
+  const materializeDatasetTable = useCallback((datasetId: string) => {
+    if (!worker) return;
+    const tableName = datasetTableName(datasetId);
+    if (materializedDatasetTables.current.has(tableName)) return;
+    materializedDatasetTables.current.add(tableName);
+    worker.postMessage({
+      type: 'query',
+      sql: `CREATE OR REPLACE TABLE "${tableName}" AS SELECT * FROM main`,
+    });
+  }, [worker]);
 
   // Register current dataset in workspace when loaded
   // Note: We use a ref to track registration to avoid dependency on workspace.datasets
@@ -732,13 +753,18 @@ export default function App() {
 
     // Register new dataset (the store will handle deduplication)
     addStoredDataset({
+      id: dataset.id,
       name: dataset.name,
       fileName: dataset.name,
       rowCount: dataset.rowCount,
       columnCount: dataset.variables.length,
       fileSize: 0, // Will be updated from OPFS if available
       source: dataset.source,
+      variables: dataset.variables,
+      opfsFileKey: dataset.opfsFileKey,
+      tableName: datasetTableName(dataset.id),
     });
+    materializeDatasetTable(dataset.id);
 
     // Try to get file size from OPFS
     if (dataset.opfsFileKey) {
@@ -752,7 +778,7 @@ export default function App() {
     }
 
     setActiveDataset(dataset.id);
-  }, [dataset, addStoredDataset, updateStoredDataset, setActiveDataset]);
+  }, [dataset, addStoredDataset, updateStoredDataset, setActiveDataset, materializeDatasetTable]);
 
   // Open dataset from workspace
   const handleOpenDataset = useCallback(async (storedDataset: StoredDataset) => {
@@ -862,6 +888,52 @@ export default function App() {
     setSelectedWaves(undefined);
   }, []);
 
+  const resolveWorkspaceVariables = useCallback((stored: StoredDataset): Variable[] | null => {
+    if (stored.variables && stored.variables.length > 0) return stored.variables as Variable[];
+    if (dataset?.id === stored.id) return dataset.variables as Variable[];
+    return null;
+  }, [dataset]);
+
+  const handleOpenHarmonization = useCallback((wave1: StoredDataset, wave2: StoredDataset) => {
+    const sourceVars = resolveWorkspaceVariables(wave1);
+    const targetVars = resolveWorkspaceVariables(wave2);
+    if (!sourceVars || !targetVars) {
+      alert('Harmonization needs variable metadata for both waves. Open each dataset at least once to cache metadata.');
+      return;
+    }
+
+    openHarmonization(wave1.id, wave2.id);
+    setShowCrossWavePanel(false);
+  }, [openHarmonization, resolveWorkspaceVariables]);
+
+  const harmonizationSession = harmonization.session;
+  const harmonizationSourceDataset = React.useMemo(
+    () => harmonizationSession
+      ? workspace.datasets.find(d => d.id === harmonizationSession.sourceDatasetId) ?? null
+      : null,
+    [harmonizationSession, workspace.datasets]
+  );
+  const harmonizationTargetDataset = React.useMemo(
+    () => harmonizationSession
+      ? workspace.datasets.find(d => d.id === harmonizationSession.targetDatasetId) ?? null
+      : null,
+    [harmonizationSession, workspace.datasets]
+  );
+  const harmonizationSourceVars = React.useMemo(
+    () => harmonizationSourceDataset ? resolveWorkspaceVariables(harmonizationSourceDataset) : null,
+    [harmonizationSourceDataset, resolveWorkspaceVariables]
+  );
+  const harmonizationTargetVars = React.useMemo(
+    () => harmonizationTargetDataset ? resolveWorkspaceVariables(harmonizationTargetDataset) : null,
+    [harmonizationTargetDataset, resolveWorkspaceVariables]
+  );
+
+  useEffect(() => {
+    if (!harmonization.isOpen) return;
+    if (harmonizationSourceVars && harmonizationTargetVars) return;
+    closeHarmonization();
+  }, [harmonization.isOpen, harmonizationSourceVars, harmonizationTargetVars, closeHarmonization]);
+
   // Open export modal
   const handleOpenExportModal = useCallback((selectedIds: string[]) => {
     setExportSelectedIds(selectedIds);
@@ -885,12 +957,16 @@ export default function App() {
       } else {
         // Add new dataset
         addStoredDataset({
+          id: importedDataset.id,
           name: importedDataset.name,
           fileName: importedDataset.fileName,
           rowCount: importedDataset.rowCount,
           columnCount: importedDataset.columnCount,
           fileSize: importedDataset.fileSize,
           source: importedDataset.source,
+          variables: importedDataset.variables,
+          opfsFileKey: importedDataset.opfsFileKey,
+          tableName: importedDataset.tableName,
         });
       }
     });
@@ -1271,6 +1347,18 @@ export default function App() {
           datasets={crossWaveDatasets}
           selectedWaves={selectedWaves}
           onOpenDataset={handleOpenDataset}
+          onOpenHarmonization={handleOpenHarmonization}
+        />
+      )}
+
+      {harmonization.isOpen && harmonizationSourceDataset && harmonizationTargetDataset && harmonizationSourceVars && harmonizationTargetVars && (
+        <HarmonizationWorkspace
+          sourceVars={harmonizationSourceVars}
+          targetVars={harmonizationTargetVars}
+          sourceDatasetName={harmonizationSourceDataset.name}
+          targetDatasetName={harmonizationTargetDataset.name}
+          sourceTableName={harmonizationSourceDataset.tableName ?? datasetTableName(harmonizationSourceDataset.id)}
+          targetTableName={harmonizationTargetDataset.tableName ?? datasetTableName(harmonizationTargetDataset.id)}
         />
       )}
 

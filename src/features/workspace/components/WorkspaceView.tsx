@@ -34,6 +34,7 @@ import {
   Download,
 } from 'lucide-react';
 import { Logo } from '../../../components/common/Logo';
+import type { Variable } from '../../../types';
 import styles from './WorkspaceView.module.css';
 import { WaveTimeline } from './WaveTimeline';
 
@@ -66,6 +67,12 @@ export interface StoredDataset {
     activeFilters: unknown[];
     transformLog: unknown[];
   };
+  /** Optional variable metadata for cross-wave harmonization */
+  variables?: Variable[];
+  /** OPFS key for restoring this dataset's source file */
+  opfsFileKey?: string;
+  /** DuckDB table containing this dataset's rows */
+  tableName?: string;
 }
 
 export interface Project {

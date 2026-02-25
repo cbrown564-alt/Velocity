@@ -102,7 +102,15 @@ export type WorkerRequest =
   | UnknownRunAnalysisRequest
   | { type: 'exportArrow'; sql: string; columns?: string[] }
   | { type: 'getValueFrequencies'; tableName: string; columnName: string }
-  | { type: 'buildHarmonizedTable'; sourceTable: string; targetTable: string; mappings: VariableMapping[]; outputTableName: string }
+  | {
+    type: 'buildHarmonizedTable';
+    sourceTable: string;
+    targetTable: string;
+    mappings: VariableMapping[];
+    outputTableName: string;
+    sourceVarNames?: Record<string, string>;
+    targetVarNames?: Record<string, string>;
+  }
   | { type: 'getRespondentOverlap'; sourceTable: string; targetTable: string; keyColumn: string }
   | { type: 'ping' };
 

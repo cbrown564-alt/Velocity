@@ -6,12 +6,11 @@
  *         With Value Remap panel below Sankey when a mapping is selected.
  */
 
-import React, { useCallback, useMemo, useRef, useEffect, useState } from 'react';
+import React, { useCallback, useMemo, useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Play, Check, CheckCheck, Crosshair, ArrowRight, Layers } from 'lucide-react';
 import { useVelocityStore } from '../../store';
 import type { Variable } from '../../types/index';
-import type { SankeyNode } from '../../types/harmonization';
 import { MappingTable } from './components/MappingTable';
 import { SankeyDiagram } from './components/SankeyDiagram';
 import { ValueRemapPanel } from './components/ValueRemapPanel';
@@ -26,6 +25,10 @@ interface HarmonizationWorkspaceProps {
   /** Display names for the waves */
   sourceDatasetName?: string;
   targetDatasetName?: string;
+  /** DuckDB source table name for wave 1 */
+  sourceTableName: string;
+  /** DuckDB source table name for wave 2 */
+  targetTableName: string;
 }
 
 const SANKEY_W = 580;
@@ -36,6 +39,8 @@ export const HarmonizationWorkspace: React.FC<HarmonizationWorkspaceProps> = ({
   targetVars,
   sourceDatasetName = 'Wave 1',
   targetDatasetName = 'Wave 2',
+  sourceTableName,
+  targetTableName,
 }) => {
   const {
     harmonization,
@@ -47,11 +52,15 @@ export const HarmonizationWorkspace: React.FC<HarmonizationWorkspaceProps> = ({
     updateValueMapping,
     updateMapping,
     refreshSankeyData,
+    applyHarmonization,
   } = useVelocityStore();
 
   const { isOpen, session, matchingInProgress, sankeyData, selectedMappingId } = harmonization;
 
   const [lassoActive, setLassoActive] = useState(false);
+  const [nodeCenters, setNodeCenters] = useState<Map<string, { x: number; y: number }>>(new Map());
+  const [applyInProgress, setApplyInProgress] = useState(false);
+  const [applyError, setApplyError] = useState<string | null>(null);
 
   // Rebuild Sankey when mappings change (stub counts — real counts come from worker)
   const stubCounts = useMemo(() => {
@@ -120,6 +129,33 @@ export const HarmonizationWorkspace: React.FC<HarmonizationWorkspaceProps> = ({
     [session?.mappings, selectMapping]
   );
 
+  const handleApply = useCallback(async () => {
+    if (!session) return;
+    setApplyError(null);
+    setApplyInProgress(true);
+    try {
+      await applyHarmonization({
+        sourceTable: sourceTableName,
+        targetTable: targetTableName,
+        sourceVars,
+        targetVars,
+      });
+      closeHarmonization();
+    } catch (error: any) {
+      setApplyError(error?.message || 'Failed to apply harmonization');
+    } finally {
+      setApplyInProgress(false);
+    }
+  }, [
+    session,
+    applyHarmonization,
+    sourceTableName,
+    targetTableName,
+    sourceVars,
+    targetVars,
+    closeHarmonization,
+  ]);
+
   if (!isOpen) return null;
 
   return (
@@ -186,14 +222,11 @@ export const HarmonizationWorkspace: React.FC<HarmonizationWorkspaceProps> = ({
 
               <button
                 className={styles.btnPrimary}
-                disabled={counts.confirmed === 0}
-                onClick={() => {
-                  // Apply harmonization — placeholder
-                  closeHarmonization();
-                }}
+                disabled={counts.confirmed === 0 || applyInProgress}
+                onClick={handleApply}
               >
                 <Check size={12} />
-                Apply ({counts.confirmed})
+                {applyInProgress ? 'Applying…' : `Apply (${counts.confirmed})`}
               </button>
 
               <button className={styles.btnClose} onClick={closeHarmonization}>
@@ -228,6 +261,11 @@ export const HarmonizationWorkspace: React.FC<HarmonizationWorkspaceProps> = ({
                 <Crosshair size={11} />
                 Lasso
               </button>
+            </div>
+          )}
+          {applyError && (
+            <div className={styles.statusBar}>
+              <div className={styles.statusStat}>{applyError}</div>
             </div>
           )}
 
@@ -270,12 +308,13 @@ export const HarmonizationWorkspace: React.FC<HarmonizationWorkspaceProps> = ({
                       }}
                       width={SANKEY_W}
                       height={SANKEY_H}
+                      onNodeCentersChange={setNodeCenters}
                     />
                     <LassoSelector
                       nodes={sankeyData.nodes}
                       width={SANKEY_W}
                       height={SANKEY_H}
-                      nodeCenters={new Map()} // populated in real impl via ref
+                      nodeCenters={nodeCenters}
                       onSelectionCommit={handleLassoSelection}
                       isActive={lassoActive}
                       onActiveChange={setLassoActive}

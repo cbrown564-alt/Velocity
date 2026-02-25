@@ -1477,11 +1477,15 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
         const { buildHarmonizedTableQuery } = await import('../core/harmonization/harmonizationQueries');
 
         // Build variable name lookups from the mappings
-        const sourceVarNames: Record<string, string> = {};
-        const targetVarNames: Record<string, string> = {};
+        const sourceVarNames: Record<string, string> = { ...(request.sourceVarNames ?? {}) };
+        const targetVarNames: Record<string, string> = { ...(request.targetVarNames ?? {}) };
         for (const m of request.mappings) {
-          if (m.sourceVariableId) sourceVarNames[m.sourceVariableId] = m.sourceVariableId;
-          if (m.targetVariableId) targetVarNames[m.targetVariableId] = m.targetVariableId;
+          if (m.sourceVariableId && !sourceVarNames[m.sourceVariableId]) {
+            sourceVarNames[m.sourceVariableId] = m.sourceVariableId;
+          }
+          if (m.targetVariableId && !targetVarNames[m.targetVariableId]) {
+            targetVarNames[m.targetVariableId] = m.targetVariableId;
+          }
         }
 
         const sql = buildHarmonizedTableQuery(

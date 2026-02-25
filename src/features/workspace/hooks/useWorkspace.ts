@@ -108,13 +108,17 @@ export function useWorkspace(): UseWorkspaceReturn {
     } else {
       // Add new entry
       // Note: We use the dataset's existing ID to maintain consistency
-      const storedDataset: Omit<StoredDataset, 'id' | 'createdAt' | 'lastOpenedAt' | 'lastModifiedAt' | 'starred'> = {
+      const storedDataset: Omit<StoredDataset, 'createdAt' | 'lastOpenedAt' | 'lastModifiedAt' | 'starred'> = {
+        id: dataset.id,
         name: dataset.name,
         fileName: dataset.name,
         rowCount: dataset.rowCount,
         columnCount: dataset.variables.length,
         fileSize: 0, // Will be updated if we have OPFS info
         source: dataset.source,
+        variables: dataset.variables,
+        opfsFileKey: dataset.opfsFileKey,
+        tableName: `dataset_${dataset.id.replace(/[^a-zA-Z0-9_]/g, '_')}`,
       };
 
       // If we have an OPFS file key, try to get the file size
@@ -130,11 +134,8 @@ export function useWorkspace(): UseWorkspaceReturn {
 
       // Add to workspace with the dataset's ID
       const id = addStoredDataset(storedDataset);
-
-      // If the generated ID differs, update the mapping
-      // This ensures consistency between workspace and data store
       if (id !== dataset.id) {
-        console.log(`[useWorkspace] Registered dataset with new ID: ${id}`);
+        console.warn(`[useWorkspace] Dataset ID mismatch during registration: ${dataset.id} -> ${id}`);
       }
     }
 

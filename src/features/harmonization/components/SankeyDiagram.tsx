@@ -9,7 +9,7 @@
 import React, { useRef, useEffect, useCallback } from 'react';
 import { select } from 'd3-selection';
 import { linkHorizontal } from 'd3-shape';
-import type { SankeyData, SankeyNode, SankeyLink } from '../../../types/harmonization';
+import type { SankeyData, SankeyNode } from '../../../types/harmonization';
 import { computeNodePositions } from '../../../core/harmonization/sankeyBuilder';
 import styles from './SankeyDiagram.module.css';
 
@@ -17,6 +17,7 @@ interface SankeyDiagramProps {
   data: SankeyData;
   selectedMappingId?: string | null;
   onSelectMapping?: (sourceId: string | null) => void;
+  onNodeCentersChange?: (centers: Map<string, { x: number; y: number }>) => void;
   width?: number;
   height?: number;
 }
@@ -29,6 +30,7 @@ export const SankeyDiagram: React.FC<SankeyDiagramProps> = ({
   data,
   selectedMappingId,
   onSelectMapping,
+  onNodeCentersChange,
   width = 600,
   height = 400,
 }) => {
@@ -61,6 +63,7 @@ export const SankeyDiagram: React.FC<SankeyDiagramProps> = ({
 
     const sourceX = PADDING_X;
     const targetX = PADDING_X + innerWidth;
+    const nodeCenters = new Map<string, { x: number; y: number }>();
 
     // Column headers
     const headerG = svg.append('g');
@@ -121,6 +124,7 @@ export const SankeyDiagram: React.FC<SankeyDiagramProps> = ({
         const y0 = toPixelY0(pos.y0);
         const h = toPixelH(pos.y0, pos.y1);
         const isSelected = selectedMappingId === node.id.replace('source::', '').replace('target::', '');
+        nodeCenters.set(node.id, { x: x + NODE_WIDTH / 2, y: y0 + h / 2 });
 
         const g = svg.append('g')
           .attr('class', styles.node)
@@ -158,7 +162,8 @@ export const SankeyDiagram: React.FC<SankeyDiagramProps> = ({
 
     drawNodes(sourceNodes, sourcePosMap, sourceX, true);
     drawNodes(targetNodes, targetPosMap, targetX, false);
-  }, [data, selectedMappingId, onSelectMapping, width, height]);
+    onNodeCentersChange?.(nodeCenters);
+  }, [data, selectedMappingId, onSelectMapping, onNodeCentersChange, width, height]);
 
   useEffect(() => {
     draw();

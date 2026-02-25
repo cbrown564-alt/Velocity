@@ -13,8 +13,10 @@ import type {
   MatchingWeights,
 } from '../../types/harmonization';
 import type { Variable } from '../../types/index';
-import { autoMatchVariables, generateValueMappings } from '../../core/harmonization/matchEngine';
+import type { WorkerRequest, WorkerResponse } from '../../types/worker';
+import { autoMatchVariables } from '../../core/harmonization/matchEngine';
 import { buildSankeyData } from '../../core/harmonization/sankeyBuilder';
+import type { DataSlice } from './dataSlice';
 
 // ============================================================================
 // Slice Interface
@@ -42,6 +44,14 @@ export interface HarmonizationSlice {
     sourceCounts: Record<string, number>,
     targetCounts: Record<string, number>
   ) => void;
+  applyHarmonization: (params: {
+    sourceTable: string;
+    targetTable: string;
+    sourceVars: Variable[];
+    targetVars: Variable[];
+    outputTableName?: string;
+    onlyConfirmed?: boolean;
+  }) => Promise<{ tableName: string; rowCount: number; durationMs: number } | null>;
   resetHarmonizationSession: () => void;
 }
 
@@ -62,7 +72,7 @@ const initialHarmonizationState = {
 // ============================================================================
 
 export const createHarmonizationSlice: StateCreator<
-  HarmonizationSlice,
+  HarmonizationSlice & Pick<DataSlice, 'worker'>,
   [],
   [],
   HarmonizationSlice
@@ -205,6 +215,75 @@ export const createHarmonizationSlice: StateCreator<
     set(state => ({
       harmonization: { ...state.harmonization, sankeyData },
     }));
+  },
+
+  applyHarmonization: async ({
+    sourceTable,
+    targetTable,
+    sourceVars,
+    targetVars,
+    outputTableName,
+    onlyConfirmed = true,
+  }) => {
+    const worker = get().worker;
+    if (!worker) throw new Error('Worker not initialized');
+
+    const session = get().harmonization.session;
+    if (!session) return null;
+
+    const eligibleMappings = session.mappings.filter(m => {
+      if (m.targetVariableId === null || m.status === 'excluded') return false;
+      if (onlyConfirmed) return m.confirmed;
+      return true;
+    });
+
+    if (eligibleMappings.length === 0) {
+      throw new Error('No eligible mappings to apply');
+    }
+
+    const sourceVarNames = Object.fromEntries(sourceVars.map(v => [v.id, v.name]));
+    const targetVarNames = Object.fromEntries(targetVars.map(v => [v.id, v.name]));
+    const resolvedOutputTable = outputTableName ?? `harmonized_${session.id.replace(/[^a-zA-Z0-9_]/g, '_')}`;
+
+    return new Promise((resolve, reject) => {
+      const handler = (event: MessageEvent<WorkerResponse>) => {
+        const response = event.data;
+        if (response.type === 'harmonizedTableCreated') {
+          worker.removeEventListener('message', handler);
+          set(state => ({
+            harmonization: {
+              ...state.harmonization,
+              session: state.harmonization.session
+                ? {
+                  ...state.harmonization.session,
+                  outputTableName: response.tableName,
+                  updatedAt: Date.now(),
+                }
+                : null,
+            },
+          }));
+          resolve({
+            tableName: response.tableName,
+            rowCount: response.rowCount,
+            durationMs: response.durationMs,
+          });
+        } else if (response.type === 'error') {
+          worker.removeEventListener('message', handler);
+          reject(new Error(response.message));
+        }
+      };
+
+      worker.addEventListener('message', handler);
+      worker.postMessage({
+        type: 'buildHarmonizedTable',
+        sourceTable,
+        targetTable,
+        mappings: eligibleMappings,
+        outputTableName: resolvedOutputTable,
+        sourceVarNames,
+        targetVarNames,
+      } as WorkerRequest);
+    });
   },
 
   resetHarmonizationSession: () => {
