@@ -1,0 +1,42 @@
+[
+  {
+    "rowKey_0": 1,
+    "colKey": 0,
+    "count": 27
+  },
+  {
+    "rowKey_0": 1,
+    "colKey": 1,
+    "count": 27
+  },
+  {
+    "rowKey_0": 2,
+    "colKey": 0,
+    "count": 101
+  },
+  {
+    "rowKey_0": 2,
+    "colKey": 1,
+    "count": 87
+  },
+  {
+    "rowKey_0": 3,
+    "colKey": 0,
+    "count": 15
+  },
+  {
+    "rowKey_0": 3,
+    "colKey": 1,
+    "count": 6
+  },
+  {
+    "rowKey_0": 4,
+    "colKey": 0,
+    "count": 7
+  },
+  {
+    "rowKey_0": 4,
+    "colKey": 1,
+    "count": 1
+  }
+]

@@ -1,0 +1,16 @@
+[
+  {
+    "rowKey_0": 1,
+    "colKey": "Total",
+    "count": 1484,
+    "weightedCount": 1493.0398,
+    "sumSqWeights": 1766.51507374
+  },
+  {
+    "rowKey_0": 2,
+    "colKey": "Total",
+    "count": 1461,
+    "weightedCount": 1451.8047,
+    "sumSqWeights": 1688.52765291
+  }
+]

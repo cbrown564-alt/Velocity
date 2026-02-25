@@ -202,26 +202,28 @@ function regularizedGammaP(a: number, x: number): number {
         return sum * Math.exp(-x + a * Math.log(x) - lnGammaA);
     }
 
-    // Use continued fraction for x >= a + 1
-    let f = 1e-30;
-    let c = 1e-30;
-    let d = 0;
+    // Use continued fraction for x >= a + 1 (Numerical Recipes gcf algorithm)
+    const FPMIN = 1e-30;
+    let b = x + 1 - a;
+    let c = 1 / FPMIN;
+    let d = Math.abs(b) < FPMIN ? 1 / FPMIN : 1 / b;
+    let h = d;
 
     for (let n = 1; n <= MAX_ITERATIONS; n++) {
-        const an = n * (a - n);
-        const bn = (2 * n - 1) - a + x;
-        d = bn + an * d;
-        if (Math.abs(d) < 1e-30) d = 1e-30;
-        c = bn + an / c;
-        if (Math.abs(c) < 1e-30) c = 1e-30;
+        const an = n * (a - n);  // = -n*(n-a)
+        b += 2;
+        d = an * d + b;
+        if (Math.abs(d) < FPMIN) d = FPMIN;
+        c = b + an / c;
+        if (Math.abs(c) < FPMIN) c = FPMIN;
         d = 1 / d;
-        const delta = c * d;
-        f *= delta;
+        const delta = d * c;
+        h *= delta;
         if (Math.abs(delta - 1) < EPSILON) break;
     }
 
     // Q(a, x) = 1 - P(a, x)
-    const Q = Math.exp(-x + a * Math.log(x) - lnGammaA) * f;
+    const Q = Math.exp(-x + a * Math.log(x) - lnGammaA) * h;
     return 1 - Q;
 }
 

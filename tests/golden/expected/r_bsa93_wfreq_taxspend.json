@@ -1,0 +1,44 @@
+[
+  {
+    "rowKey_0": 1,
+    "colKey": "Total",
+    "count": 133,
+    "weightedCount": 130.7197,
+    "sumSqWeights": 160.16480525
+  },
+  {
+    "rowKey_0": 2,
+    "colKey": "Total",
+    "count": 837,
+    "weightedCount": 838.3888,
+    "sumSqWeights": 982.37311012
+  },
+  {
+    "rowKey_0": 3,
+    "colKey": "Total",
+    "count": 1848,
+    "weightedCount": 1859.4456,
+    "sumSqWeights": 2179.23102988
+  },
+  {
+    "rowKey_0": 4,
+    "colKey": "Total",
+    "count": 54,
+    "weightedCount": 53.3529,
+    "sumSqWeights": 65.78648817
+  },
+  {
+    "rowKey_0": 8,
+    "colKey": "Total",
+    "count": 69,
+    "weightedCount": 59.2102,
+    "sumSqWeights": 62.10057644
+  },
+  {
+    "rowKey_0": 9,
+    "colKey": "Total",
+    "count": 4,
+    "weightedCount": 3.7273,
+    "sumSqWeights": 5.38671679
+  }
+]

@@ -1,0 +1,58 @@
+[
+  {
+    "rowKey_0": 1,
+    "colKey": 1,
+    "count": 40798,
+    "weightedCount": 41662.2260731675,
+    "sumSqWeights": 50257.2998059772
+  },
+  {
+    "rowKey_0": 1,
+    "colKey": 2,
+    "count": 46574,
+    "weightedCount": 45829.2749895261,
+    "sumSqWeights": 53417.4305552051
+  },
+  {
+    "rowKey_0": 2,
+    "colKey": 1,
+    "count": 4439,
+    "weightedCount": 4518.276522487,
+    "sumSqWeights": 5477.4279026803
+  },
+  {
+    "rowKey_0": 2,
+    "colKey": 2,
+    "count": 4021,
+    "weightedCount": 3868.462640363,
+    "sumSqWeights": 4266.532173274
+  },
+  {
+    "rowKey_0": 3,
+    "colKey": 1,
+    "count": 551,
+    "weightedCount": 547.49153704,
+    "sumSqWeights": 660.960794166
+  },
+  {
+    "rowKey_0": 3,
+    "colKey": 2,
+    "count": 366,
+    "weightedCount": 337.025710641,
+    "sumSqWeights": 362.296407953
+  },
+  {
+    "rowKey_0": 4,
+    "colKey": 1,
+    "count": 131,
+    "weightedCount": 129.740056076,
+    "sumSqWeights": 163.6427269205
+  },
+  {
+    "rowKey_0": 4,
+    "colKey": 2,
+    "count": 93,
+    "weightedCount": 89.799587366,
+    "sumSqWeights": 108.8692012315
+  }
+]

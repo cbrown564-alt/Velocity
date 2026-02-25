@@ -172,7 +172,7 @@ describe('queryBuilder', () => {
                 measureLabel: 'Age'
             });
 
-            expect(sql).toContain('STDDEV("Age") as stdDev');
+            expect(sql).toContain('STDDEV_POP("Age") as stdDev');
         });
 
         it('builds a profile grid query (Row Dim + Measure Metric in Col)', () => {

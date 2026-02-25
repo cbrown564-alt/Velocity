@@ -1,0 +1,30 @@
+[
+  {
+    "rowKey_0": 1,
+    "colKey": "Total",
+    "count": 30093,
+    "weightedCount": 30144.4942872483,
+    "sumSqWeights": 35523.7010350109
+  },
+  {
+    "rowKey_0": 2,
+    "colKey": "Total",
+    "count": 52581,
+    "weightedCount": 52508.6194150333,
+    "sumSqWeights": 62320.681548696
+  },
+  {
+    "rowKey_0": 3,
+    "colKey": "Total",
+    "count": 11791,
+    "weightedCount": 11808.2289376981,
+    "sumSqWeights": 14064.5961008051
+  },
+  {
+    "rowKey_0": 4,
+    "colKey": "Total",
+    "count": 2104,
+    "weightedCount": 2120.749270324,
+    "sumSqWeights": 2395.8799637341
+  }
+]

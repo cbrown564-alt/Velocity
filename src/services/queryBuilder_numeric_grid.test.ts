@@ -17,7 +17,7 @@ describe('Query Builder: Numeric Grids', () => {
 
         // Should select stats (mean, etc.)
         expect(sql).toContain('AVG(_synthetic_value) as mean');
-        expect(sql).toContain('STDDEV(_synthetic_value) as stdDev');
+        expect(sql).toContain('STDDEV_POP(_synthetic_value) as stdDev');
 
         // Should group by Item and ColVar
         expect(sql).toContain('GROUP BY item_label, "Gender"');

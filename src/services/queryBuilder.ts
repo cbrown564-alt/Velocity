@@ -84,7 +84,7 @@ export function buildGridQuery(options: GridQueryOptions): string {
             `
             : `
                 AVG(${val}) as mean,
-                STDDEV(${val}) as stdDev,
+                STDDEV_POP(${val}) as stdDev,
                 MIN(${val}) as min,
                 MAX(${val}) as max,
                 MEDIAN(${val}) as median,
@@ -501,7 +501,7 @@ export function buildCrosstabQuery(options: CrosstabQueryOptions): string {
         } else {
             statsExpr = `
                 AVG(${col}) as mean,
-                STDDEV(${col}) as stdDev,
+                STDDEV_POP(${col}) as stdDev,
                 MIN(${col}) as min,
                 MAX(${col}) as max,
                 MEDIAN(${col}) as median,

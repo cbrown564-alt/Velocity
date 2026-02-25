@@ -1,0 +1,26 @@
+[
+  {
+    "rowKey_0": "age",
+    "colKey": 1,
+    "mean": 31.5625,
+    "stdDev": 9.6174889524
+  },
+  {
+    "rowKey_0": "age",
+    "colKey": 2,
+    "mean": 46.261627907,
+    "stdDev": 11.0261915309
+  },
+  {
+    "rowKey_0": "age",
+    "colKey": 3,
+    "mean": 47.65,
+    "stdDev": 10.0711220825
+  },
+  {
+    "rowKey_0": "age",
+    "colKey": 4,
+    "mean": 56.875,
+    "stdDev": 17.5530446077
+  }
+]

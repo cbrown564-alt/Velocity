@@ -1,0 +1,65 @@
+[
+  {
+    "rowKey_0": 1,
+    "colKey": "Total",
+    "count": 1611,
+    "weightedCount": 1623.1209,
+    "sumSqWeights": 1904.26800345
+  },
+  {
+    "rowKey_0": 2,
+    "colKey": "Total",
+    "count": 694,
+    "weightedCount": 694.1273,
+    "sumSqWeights": 813.26741907
+  },
+  {
+    "rowKey_0": 3,
+    "colKey": "Total",
+    "count": 325,
+    "weightedCount": 328.9287,
+    "sumSqWeights": 399.41635013
+  },
+  {
+    "rowKey_0": 4,
+    "colKey": "Total",
+    "count": 4,
+    "weightedCount": 5.857,
+    "sumSqWeights": 9.35575882
+  },
+  {
+    "rowKey_0": 5,
+    "colKey": "Total",
+    "count": 35,
+    "weightedCount": 38.337,
+    "sumSqWeights": 45.3618648
+  },
+  {
+    "rowKey_0": 6,
+    "colKey": "Total",
+    "count": 12,
+    "weightedCount": 11.1818,
+    "sumSqWeights": 13.32512034
+  },
+  {
+    "rowKey_0": 7,
+    "colKey": "Total",
+    "count": 85,
+    "weightedCount": 86.2588,
+    "sumSqWeights": 104.89930572
+  },
+  {
+    "rowKey_0": 8,
+    "colKey": "Total",
+    "count": 170,
+    "weightedCount": 149.046,
+    "sumSqWeights": 156.92694452
+  },
+  {
+    "rowKey_0": 9,
+    "colKey": "Total",
+    "count": 9,
+    "weightedCount": 7.987,
+    "sumSqWeights": 8.2219598
+  }
+]

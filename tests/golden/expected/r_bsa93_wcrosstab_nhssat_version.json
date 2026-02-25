@@ -1,0 +1,100 @@
+[
+  {
+    "rowKey_0": 1,
+    "colKey": 1,
+    "count": 142,
+    "weightedCount": 126.5474,
+    "sumSqWeights": 131.29784476
+  },
+  {
+    "rowKey_0": 1,
+    "colKey": 2,
+    "count": 156,
+    "weightedCount": 139.607,
+    "sumSqWeights": 147.9496105
+  },
+  {
+    "rowKey_0": 2,
+    "colKey": 1,
+    "count": 502,
+    "weightedCount": 498.1888,
+    "sumSqWeights": 568.33303846
+  },
+  {
+    "rowKey_0": 2,
+    "colKey": 2,
+    "count": 522,
+    "weightedCount": 520.4718,
+    "sumSqWeights": 613.41701026
+  },
+  {
+    "rowKey_0": 3,
+    "colKey": 1,
+    "count": 262,
+    "weightedCount": 267.5064,
+    "sumSqWeights": 329.16856266
+  },
+  {
+    "rowKey_0": 3,
+    "colKey": 2,
+    "count": 252,
+    "weightedCount": 260.4895,
+    "sumSqWeights": 318.79364853
+  },
+  {
+    "rowKey_0": 4,
+    "colKey": 1,
+    "count": 336,
+    "weightedCount": 362.3877,
+    "sumSqWeights": 462.83341823
+  },
+  {
+    "rowKey_0": 4,
+    "colKey": 2,
+    "count": 306,
+    "weightedCount": 309.8913,
+    "sumSqWeights": 356.51431717
+  },
+  {
+    "rowKey_0": 5,
+    "colKey": 1,
+    "count": 235,
+    "weightedCount": 232.0199,
+    "sumSqWeights": 268.07781809
+  },
+  {
+    "rowKey_0": 5,
+    "colKey": 2,
+    "count": 219,
+    "weightedCount": 216.0204,
+    "sumSqWeights": 246.18268692
+  },
+  {
+    "rowKey_0": 8,
+    "colKey": 1,
+    "count": 3,
+    "weightedCount": 2.6623,
+    "sumSqWeights": 2.55158027
+  },
+  {
+    "rowKey_0": 8,
+    "colKey": 2,
+    "count": 5,
+    "weightedCount": 4.7922,
+    "sumSqWeights": 5.38682328
+  },
+  {
+    "rowKey_0": 9,
+    "colKey": 1,
+    "count": 4,
+    "weightedCount": 3.7273,
+    "sumSqWeights": 4.25281127
+  },
+  {
+    "rowKey_0": 9,
+    "colKey": 2,
+    "count": 1,
+    "weightedCount": 0.5325,
+    "sumSqWeights": 0.28355625
+  }
+]
