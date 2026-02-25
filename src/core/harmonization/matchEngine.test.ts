@@ -87,19 +87,19 @@ describe('valueLabelOverlap', () => {
 
 describe('typeCompatibility', () => {
   it('returns 1.0 for same types', () => {
-    expect(typeCompatibility('nominal', 'nominal')).toBe(1.0);
-    expect(typeCompatibility('scale', 'scale')).toBe(1.0);
+    expect(typeCompatibility('categorical', 'categorical')).toBe(1.0);
+    expect(typeCompatibility('ordered', 'ordered')).toBe(1.0);
   });
 
   it('returns 0.5 for compatible types', () => {
-    expect(typeCompatibility('ordinal', 'scale')).toBe(0.5);
-    expect(typeCompatibility('scale', 'numeric')).toBe(0.5);
-    expect(typeCompatibility('nominal', 'ordinal')).toBe(0.5);
+    expect(typeCompatibility('ordered', 'numeric')).toBe(0.5);
+    expect(typeCompatibility('categorical', 'ordered')).toBe(0.5);
+    expect(typeCompatibility('nominal', 'ordered')).toBe(0.5); // legacy alias compatibility
   });
 
   it('returns 0.0 for incompatible types', () => {
-    expect(typeCompatibility('nominal', 'numeric')).toBe(0.0);
-    expect(typeCompatibility('text', 'scale')).toBe(0.0);
+    expect(typeCompatibility('categorical', 'numeric')).toBe(0.0);
+    expect(typeCompatibility('text', 'ordered')).toBe(0.0);
   });
 });
 

@@ -1349,7 +1349,13 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
 
       case 'getVariableStats': {
         if (!adapter) throw new Error('DB not initialized');
-        const stats = await coreGetVariableStats(adapter, request.column, request.variableType, request.binCount);
+        const stats = await coreGetVariableStats(
+          adapter,
+          request.column,
+          request.variableType,
+          request.orderedScoring,
+          request.binCount
+        );
         self.postMessage({ type: 'variableStats', stats } as WorkerResponse);
         break;
       }

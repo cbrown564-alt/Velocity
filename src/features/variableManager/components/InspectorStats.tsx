@@ -3,15 +3,15 @@ import { CheckCircle, AlertTriangle } from 'lucide-react';
 import { VariableTypeIcon } from '../../../components/common/VariableTypeIcon';
 import type { Variable } from '../../../store/slices/dataSlice';
 import type { VariableStatsResult } from '../../../types/worker';
+import { allowsNumericStats, normalizeVariableType } from '../../../types';
 import styles from '../VariableInspector.module.css';
 
 const getTypeBadgeClass = (type: string) => {
-    switch (type) {
-        case 'nominal':
+    switch (normalizeVariableType(type as any)) {
+        case 'categorical':
             return styles.typeBadgeNominal;
-        case 'ordinal':
+        case 'ordered':
             return styles.typeBadgeOrdinal;
-        case 'scale':
         case 'numeric':
             return styles.typeBadgeScale;
         case 'text':
@@ -24,13 +24,11 @@ const getTypeBadgeClass = (type: string) => {
 };
 
 const getTypeLabel = (type: string) => {
-    switch (type) {
-        case 'nominal':
-            return 'Categorical';
-        case 'ordinal':
-            return 'Ordinal';
-        case 'scale':
-            return 'Scale';
+    switch (normalizeVariableType(type as any)) {
+        case 'categorical':
+            return 'Category';
+        case 'ordered':
+            return 'Scale / Ordered';
         case 'numeric':
             return 'Numeric';
         case 'text':
@@ -62,7 +60,7 @@ export const InspectorStats: React.FC<InspectorStatsProps> = ({ variable, stats,
         ? (stats.missingCount / stats.totalCount) * 100
         : null;
 
-    const isNumericVariable = variable?.type === 'numeric' || variable?.type === 'scale';
+    const isNumericVariable = allowsNumericStats(variable?.type, variable?.orderedScoring);
     const numericStats = stats?.numeric;
 
     return (

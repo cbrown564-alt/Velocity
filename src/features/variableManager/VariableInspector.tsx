@@ -12,6 +12,7 @@ import { useVelocityStore } from '../../store';
 import type { Variable } from '../../store/slices/dataSlice';
 import type { VariableStatsResult } from '../../types/worker';
 import type { BarDatum, BinData } from '../../types/charts';
+import { allowsNumericStats } from '../../types';
 import { ChartContextMenu } from '../../components/overlays/ChartContextMenu';
 import { InputModal } from '../../components/overlays/InputModal';
 import styles from './VariableInspector.module.css';
@@ -88,17 +89,17 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
         if (!selectedVariableId || isLoadingStats) return;
 
         const needsStats = !stats;
-        const needsNumericStats = (variable?.type === 'numeric' || variable?.type === 'scale') && stats && !stats.numeric;
+        const needsNumericStats = allowsNumericStats(variable?.type, variable?.orderedScoring) && stats && !stats.numeric;
 
         if (needsStats || needsNumericStats) {
             getVariableStats(selectedVariableId).catch(err => {
                 console.warn('[VariableInspector] Failed to fetch stats:', err);
             });
         }
-    }, [selectedVariableId, stats, isLoadingStats, getVariableStats, variable?.type]);
+    }, [selectedVariableId, stats, isLoadingStats, getVariableStats, variable?.type, variable?.orderedScoring]);
 
     // Check if variable is numeric/numeric type
-    const isNumericVariable = variable?.type === 'numeric' || variable?.type === 'scale';
+    const isNumericVariable = allowsNumericStats(variable?.type, variable?.orderedScoring);
 
     // Handle generic chart context menu
     const handleContextMenu = useCallback((event: { selected: any[]; position: { x: number; y: number } }) => {

@@ -12,10 +12,13 @@ import { VariableStatsResult, VariableStatsFrequency, NumericStats } from '../..
 import { DatabaseAdapter } from '../DatabaseAdapter';
 import { AnalysisRunner } from './AnalysisRunner';
 import { analysisRegistry } from './registry';
+import type { VariableType } from '../../types';
+import { allowsNumericStats } from '../../types';
 
 export interface VariableStatsConfig {
   column: string;
-  variableType?: 'nominal' | 'ordinal' | 'scale' | 'numeric' | 'text' | 'date';
+  variableType?: VariableType;
+  orderedScoring?: 'categorical_only' | 'allow_numeric_stats';
   binCount?: number;
 }
 
@@ -26,7 +29,7 @@ export class VariableStatsRunner implements AnalysisRunner<VariableStatsConfig, 
     type: 'object',
     properties: {
       column: { type: 'string' },
-      variableType: { type: 'string', enum: ['nominal', 'ordinal', 'scale', 'numeric', 'text', 'date'] },
+      variableType: { type: 'string', enum: ['categorical', 'ordered', 'numeric', 'text', 'date', 'nominal', 'ordinal', 'scale'] },
       binCount: { type: 'number' }
     },
     required: ['column']
@@ -37,6 +40,7 @@ export class VariableStatsRunner implements AnalysisRunner<VariableStatsConfig, 
       adapter,
       config.column,
       config.variableType,
+      config.orderedScoring,
       config.binCount
     );
   }
@@ -51,7 +55,8 @@ analysisRegistry.register(variableStatsRunner);
 export async function getVariableStats(
   adapter: DatabaseAdapter,
   column: string,
-  variableType?: 'nominal' | 'ordinal' | 'scale' | 'numeric' | 'text' | 'date',
+  variableType?: VariableType,
+  orderedScoring?: 'categorical_only' | 'allow_numeric_stats',
   binCount: number = 10
 ): Promise<VariableStatsResult> {
   // Get total count
@@ -85,7 +90,7 @@ export async function getVariableStats(
   };
 
   // Compute numeric statistics for numeric/scale variables
-  if (variableType === 'numeric' || variableType === 'scale') {
+  if (allowsNumericStats(variableType, orderedScoring)) {
     try {
       const statsRes = await adapter.query(`
         SELECT

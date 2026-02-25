@@ -10,15 +10,9 @@
 // Core Data Model (from arch_02_data_model.md)
 // ============================================================================
 
-// Core types from arch_02_data_model.md
-// Survey-centric type system:
-// - nominal: Unordered categories (e.g. Gender, City)
-// - ordinal: Ordered categories (e.g. Education, Frequency)
-// - scale: Likert items / Ratings (e.g. 1-10 Satisfaction, Agree-Disagree)
-// - numeric: Continuous variables (e.g. Age, Income)
-// - text: Open-ended string
-// - date: Temporal
-export type VariableType = 'nominal' | 'ordinal' | 'scale' | 'numeric' | 'text' | 'date';
+import type { OrderedScoring, OrderedStyle, VariableType } from './variableType';
+export type { CanonicalVariableType, LegacyVariableType, OrderedScoring, OrderedStyle, VariableType } from './variableType';
+export { allowsNumericStats, isCategoricalType, isOrderedType, normalizeVariableType } from './variableType';
 
 export interface ValueLabel {
   value: number;
@@ -35,6 +29,10 @@ export interface Variable {
   name: string;
   label: string;
   type: VariableType;
+  /** For ordered variables: "rating" (Likert-like) or "sequence" (rank/education progression). */
+  orderedStyle?: OrderedStyle;
+  /** For ordered variables: allow numeric summaries (mean/std/histogram) or treat as purely categorical. */
+  orderedScoring?: OrderedScoring;
   semanticType?: 'text' | 'entity' | 'sentiment' | 'location' | 'temporal';
   valueLabels: ValueLabel[];
   missingValues: MissingValueDef;
@@ -129,6 +127,10 @@ export interface VariableSet {
   structure: 'single' | 'multiple' | 'grid';
   /** Inferred or explicit variable type for the set */
   type?: VariableType;
+  /** For ordered sets: "rating" (Likert-like) or "sequence" (rank/education progression). */
+  orderedStyle?: OrderedStyle;
+  /** For ordered sets: allow numeric summaries (mean/std/histogram) or treat as purely categorical. */
+  orderedScoring?: OrderedScoring;
   /** Optional description */
   description?: string;
   /** Whether to hide from Analysis Canvas (Data Gardening only) */
@@ -148,7 +150,9 @@ export interface VariableSet {
     /** The shared scale used by all items in the grid (rows) */
     sharedScale: {
       valueLabels: Record<number, string>;
-      type: 'ordinal' | 'nominal' | 'scale' | 'numeric';
+      type: VariableType;
+      orderedStyle?: OrderedStyle;
+      orderedScoring?: OrderedScoring;
     };
     /** Labels for the items being rated (columns) */
     itemLabels: string[];

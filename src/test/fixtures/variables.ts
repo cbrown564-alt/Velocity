@@ -33,7 +33,7 @@ export const mockNominalVariable: Variable = {
     id: 'var_gender',
     name: 'Q1_Gender',
     label: 'Gender',
-    type: 'nominal',
+    type: 'categorical',
     valueLabels: genderValueLabels,
     missingValues: { discrete: [-1, -99] },
 };
@@ -42,7 +42,9 @@ export const mockOrdinalVariable: Variable = {
     id: 'var_satisfaction',
     name: 'Q2_Satisfaction',
     label: 'Overall Satisfaction',
-    type: 'ordinal',
+    type: 'ordered',
+    orderedStyle: 'sequence',
+    orderedScoring: 'categorical_only',
     valueLabels: satisfactionValueLabels,
     missingValues: { discrete: [-1] },
 };
@@ -124,7 +126,7 @@ export const mockNominalSet: VariableSet = {
     name: 'Gender',
     variableIds: ['var_gender'],
     structure: 'single',
-    type: 'nominal',
+    type: 'categorical',
 };
 
 export const mockOrdinalSet: VariableSet = {
@@ -132,7 +134,9 @@ export const mockOrdinalSet: VariableSet = {
     name: 'Overall Satisfaction',
     variableIds: ['var_satisfaction'],
     structure: 'single',
-    type: 'ordinal',
+    type: 'ordered',
+    orderedStyle: 'sequence',
+    orderedScoring: 'categorical_only',
 };
 
 export const mockScaleSet: VariableSet = {

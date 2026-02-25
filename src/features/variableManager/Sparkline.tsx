@@ -10,10 +10,11 @@
 
 import React from 'react';
 import type { HistogramBin } from '../../types';
+import { isCategoricalType, isOrderedType, normalizeVariableType } from '../../types';
 
 export interface SparklineProps {
     /** Type determines the visualization style */
-    type?: 'nominal' | 'ordinal' | 'scale' | 'numeric' | 'text' | 'date';
+    type?: 'categorical' | 'ordered' | 'numeric' | 'text' | 'date' | 'nominal' | 'ordinal' | 'scale';
     /** Array of frequency counts (for categorical) */
     frequencies?: number[];
     /** Array of histogram bins (for numeric/scale) */
@@ -31,7 +32,7 @@ export interface SparklineProps {
 }
 
 export const Sparkline: React.FC<SparklineProps> = ({
-    type = 'nominal',
+    type = 'categorical',
     frequencies = [],
     histogramBins = [],
     topCategory,
@@ -41,7 +42,9 @@ export const Sparkline: React.FC<SparklineProps> = ({
     className,
 }) => {
     // 1. SCALAR / DATE VISUALIZATION (Histogram)
-    if (type === 'numeric' || type === 'scale' || type === 'date') {
+    const normalizedType = normalizeVariableType(type);
+
+    if (normalizedType === 'numeric' || normalizedType === 'date') {
         if (!histogramBins || histogramBins.length === 0) return null;
 
         // Determine Y scale
@@ -83,7 +86,7 @@ export const Sparkline: React.FC<SparklineProps> = ({
 
     // 2. NOMINAL / TEXT VISUALIZATION (Leaderboard)
     // Show the most frequent category and its percentage
-    if ((type === 'nominal' || type === 'text') && topCategory) {
+    if ((isCategoricalType(normalizedType) || normalizedType === 'text') && topCategory) {
         return (
             <div
                 className={className}
@@ -123,7 +126,7 @@ export const Sparkline: React.FC<SparklineProps> = ({
 
     // 3. ORDINAL VISUALIZATION (Distribution Strip)
     // 100% Stacked Bar to show skew/balance
-    if (type === 'ordinal') {
+    if (isOrderedType(normalizedType)) {
         const data = frequencies.slice(0, maxBars);
         if (data.length === 0) return null;
 

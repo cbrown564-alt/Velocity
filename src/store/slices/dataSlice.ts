@@ -7,14 +7,15 @@
 
 import type { StateCreator } from 'zustand';
 import type { WorkerRequest, WorkerResponse, VariableStatsResult } from '../../types/worker';
-import type { RecodeConfig } from '../../types';
+import type { OrderedScoring, OrderedStyle, RecodeConfig, VariableType } from '../../types';
+import { allowsNumericStats, normalizeVariableType } from '../../types';
 import * as opfsFileManager from '../../services/opfsFileManager';
+
+export type { VariableType } from '../../types';
 
 // ============================================================================
 // Types
 // ============================================================================
-
-export type VariableType = 'nominal' | 'ordinal' | 'scale' | 'numeric' | 'text' | 'date';
 
 export interface ValueLabel {
     value: number;
@@ -31,6 +32,8 @@ export interface Variable {
     name: string;
     label: string;
     type: VariableType;
+    orderedStyle?: OrderedStyle;
+    orderedScoring?: OrderedScoring;
     valueLabels: ValueLabel[];
     missingValues: MissingValueDef;
 }
@@ -58,6 +61,8 @@ export interface VariableSet {
     variableIds: string[];
     structure: 'single' | 'multiple' | 'grid';
     type?: VariableType;
+    orderedStyle?: OrderedStyle;
+    orderedScoring?: OrderedScoring;
     /** Hidden from Analysis Canvas (Data Gardening only) */
     hidden?: boolean;
     /** Folder this set belongs to (null = ungrouped) */
@@ -76,6 +81,51 @@ export interface Folder {
     id: string;
     name: string;
     order: number;
+}
+
+function normalizeVariable(variable: Variable): Variable {
+    const normalizedType = normalizeVariableType(variable.type);
+    const next: Variable = {
+        ...variable,
+        type: normalizedType,
+    };
+
+    if (normalizedType !== 'ordered') {
+        delete next.orderedStyle;
+        delete next.orderedScoring;
+        return next;
+    }
+
+    if (!next.orderedStyle) {
+        next.orderedStyle = variable.type === 'scale' ? 'rating' : 'sequence';
+    }
+    if (!next.orderedScoring) {
+        next.orderedScoring = variable.type === 'scale' ? 'allow_numeric_stats' : 'categorical_only';
+    }
+    return next;
+}
+
+function normalizeVariableSet(variableSet: VariableSet): VariableSet {
+    if (!variableSet.type) return variableSet;
+    const normalizedType = normalizeVariableType(variableSet.type);
+    const next: VariableSet = {
+        ...variableSet,
+        type: normalizedType,
+    };
+
+    if (normalizedType !== 'ordered') {
+        delete next.orderedStyle;
+        delete next.orderedScoring;
+        return next;
+    }
+
+    if (!next.orderedStyle) {
+        next.orderedStyle = variableSet.type === 'scale' ? 'rating' : 'sequence';
+    }
+    if (!next.orderedScoring) {
+        next.orderedScoring = variableSet.type === 'scale' ? 'allow_numeric_stats' : 'categorical_only';
+    }
+    return next;
 }
 
 // ============================================================================
@@ -593,7 +643,7 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                 id: col.name,
                 name: col.name,
                 label: col.name.replace(/_/g, ' '),
-                type: col.type.includes('VARCHAR') || col.type.includes('UTF') ? 'nominal' : 'numeric',
+                type: col.type.includes('VARCHAR') || col.type.includes('UTF') ? 'categorical' : 'numeric',
                 valueLabels: [],
                 missingValues: {}
             }));
@@ -655,7 +705,7 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                         id: col.name,
                         name: col.name,
                         label: col.name.replace(/_/g, ' '),
-                        type: col.type === 'VARCHAR' ? 'nominal' : 'numeric',
+                        type: col.type === 'VARCHAR' ? 'categorical' : 'numeric',
                         valueLabels: [],
                         missingValues: {},
                     }));
@@ -728,7 +778,8 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                 if (response.type === 'savLoaded') {
                     const datasetId = options?.datasetId || crypto.randomUUID();
                     // Use pre-built variableSets from worker (includes MR sets as grid/multiple)
-                    const variableSets: VariableSet[] = response.variableSets;
+                    const variableSets: VariableSet[] = response.variableSets.map(normalizeVariableSet);
+                    const variables: Variable[] = response.variables.map(normalizeVariable);
 
                     // Log MR set detection results
                     const gridSets = variableSets.filter(vs => vs.structure === 'grid');
@@ -742,7 +793,7 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                             id: datasetId,
                             name: fileName,
                             rowCount: response.rowCount,
-                            variables: response.variables,
+                            variables,
                             source: 'sav',
                             opfsFileKey: options?.opfsFileKey,
                             metadataOnly: false,
@@ -758,7 +809,7 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                         activeFilters: [],
                     } as any);
 
-                    console.log(`📊 [DataSlice] SAV loaded: ${response.rowCount} rows, ${response.variables.length} variables, ${variableSets.length} variable sets in ${response.durationMs.toFixed(2)}ms`);
+                    console.log(`📊 [DataSlice] SAV loaded: ${response.rowCount} rows, ${variables.length} variables, ${variableSets.length} variable sets in ${response.durationMs.toFixed(2)}ms`);
                     if (datasetId) {
                         worker.postMessage({
                             type: 'updatePersistenceMetadata',
@@ -766,7 +817,7 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                                 datasetId,
                                 datasetName: fileName,
                                 rowCount: response.rowCount,
-                                columnCount: response.variables.length,
+                                columnCount: variables.length,
                                 schemaVersion: 1,
                                 lastModified: Date.now()
                             }
@@ -796,14 +847,15 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                 const response = event.data;
 
                 if (response.type === 'savMetadataLoaded') {
-                    const variableSets: VariableSet[] = response.variableSets;
+                    const variableSets: VariableSet[] = response.variableSets.map(normalizeVariableSet);
+                    const variables: Variable[] = response.variables.map(normalizeVariable);
 
                     set({
                         dataset: {
                             id: crypto.randomUUID(),
                             name: fileName,
                             rowCount: response.rowCount,
-                            variables: response.variables,
+                            variables,
                             source: 'sav',
                             metadataOnly: true,
                         },
@@ -815,7 +867,7 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                         activeFilters: [],
                     } as any);
 
-                    console.log(`📊 [DataSlice] SAV metadata loaded: ${response.rowCount} rows, ${response.variables.length} variables in ${response.durationMs.toFixed(2)}ms`);
+                    console.log(`📊 [DataSlice] SAV metadata loaded: ${response.rowCount} rows, ${variables.length} variables in ${response.durationMs.toFixed(2)}ms`);
                     worker.removeEventListener('message', handler);
                     resolve(undefined);
                 } else if (response.type === 'error') {
@@ -839,14 +891,15 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                 const response = event.data;
 
                 if (response.type === 'savSampleLoaded') {
-                    const variableSets: VariableSet[] = response.variableSets;
+                    const variableSets: VariableSet[] = response.variableSets.map(normalizeVariableSet);
+                    const variables: Variable[] = response.variables.map(normalizeVariable);
 
                     set({
                         dataset: {
                             id: crypto.randomUUID(),
                             name: fileName,
                             rowCount: response.rowCount,
-                            variables: response.variables,
+                            variables,
                             source: 'sav',
                             metadataOnly: true,
                             sampleRowCount: response.sampleRowCount,
@@ -860,7 +913,7 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                         activeFilters: [],
                     } as any);
 
-                    console.log(`📊 [DataSlice] SAV sample loaded: ${response.sampleRowCount}/${response.rowCount} rows (${response.sampleStrategy}), ${response.variables.length} variables in ${response.durationMs.toFixed(2)}ms`);
+                    console.log(`📊 [DataSlice] SAV sample loaded: ${response.sampleRowCount}/${response.rowCount} rows (${response.sampleStrategy}), ${variables.length} variables in ${response.durationMs.toFixed(2)}ms`);
                     worker.removeEventListener('message', handler);
                     resolve(undefined);
                 } else if (response.type === 'error') {
@@ -913,7 +966,7 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
         const cachedStats = variableStats[variableId];
         if (cachedStats) {
             // For scale variables, ensure we have numeric stats (may need re-fetch if cached before feature was added)
-            const needsNumericStats = variableType === 'numeric' && !cachedStats.numeric;
+            const needsNumericStats = allowsNumericStats(variableType, variable?.orderedScoring) && !cachedStats.numeric;
             if (!needsNumericStats) {
                 return cachedStats;
             }
@@ -953,7 +1006,8 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
             worker.postMessage({
                 type: 'getVariableStats',
                 column: variableId,
-                variableType
+                variableType,
+                orderedScoring: variable?.orderedScoring,
             } as WorkerRequest);
         });
     },
@@ -973,7 +1027,7 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                             id: response.newColName,
                             name: response.newColName,
                             label: newColName,
-                            type: 'nominal',
+                            type: 'categorical',
                             valueLabels: [],
                             missingValues: {},
                         };
@@ -988,7 +1042,7 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                                 name: newColName,
                                 variableIds: [response.newColName],
                                 structure: 'single',
-                                type: 'nominal'
+                                type: 'categorical'
                             }],
                             transformLog: [
                                 ...state.transformLog,
@@ -1162,9 +1216,17 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
     },
 
     bulkSetType: (variableSetIds, type) => {
+        const normalized = normalizeVariableType(type);
         set((state) => ({
             variableSets: state.variableSets.map(vs =>
-                variableSetIds.includes(vs.id) ? { ...vs, type } : vs
+                variableSetIds.includes(vs.id)
+                    ? {
+                        ...vs,
+                        type: normalized,
+                        orderedStyle: normalized === 'ordered' ? (vs.orderedStyle ?? 'sequence') : undefined,
+                        orderedScoring: normalized === 'ordered' ? (vs.orderedScoring ?? 'categorical_only') : undefined,
+                    }
+                    : vs
             ),
         }));
     },

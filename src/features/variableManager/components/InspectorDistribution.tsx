@@ -1,6 +1,7 @@
 import React, { useMemo, useRef } from 'react';
 import type { Variable } from '../../../store/slices/dataSlice';
 import type { VariableStatsResult } from '../../../types/worker';
+import { isOrderedType } from '../../../types';
 import { HorizontalBarRenderer, HistogramRenderer } from '../../../components/charts/renderers';
 import { useResizeObserver } from '../../../hooks/useResizeObserver';
 import styles from '../VariableInspector.module.css';
@@ -34,7 +35,7 @@ export const InspectorDistribution: React.FC<InspectorDistributionProps> = ({
 
         // Sort data based on variable type
         const sortedFrequencies = [...stats.frequencies];
-        if (variable.type === 'ordinal' || variable.type === 'scale') {
+        if (isOrderedType(variable.type)) {
             // For ordinal/scale, sort by value (code) to preserve natural order
             sortedFrequencies.sort((a, b) => {
                 if (typeof a.value === 'number' && typeof b.value === 'number') return a.value - b.value;

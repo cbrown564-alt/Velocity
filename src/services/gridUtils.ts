@@ -1,4 +1,5 @@
 import { Variable, VariableSet } from '../types';
+import { normalizeVariableType } from '../types';
 
 /**
  * Generate synthetic variables for a grid VariableSet
@@ -18,7 +19,9 @@ export function generateSyntheticGridVariables(variableSet: VariableSet): Variab
         id: `${id}_scale`,
         name: `${name}_scale`, // Suffix for unique naming
         label: name,
-        type: sharedScale.type === 'ordinal' || sharedScale.type === 'scale' || sharedScale.type === 'numeric' ? sharedScale.type : 'nominal',
+        type: normalizeVariableType(sharedScale.type),
+        orderedStyle: sharedScale.orderedStyle,
+        orderedScoring: sharedScale.orderedScoring,
         // Restore value labels so table rows show text (e.g. "Not at all")
         // Sorting logic in DataTable will handle numeric sorting based on these values
         valueLabels: Object.entries(sharedScale.valueLabels).map(([val, label]) => ({
@@ -36,7 +39,7 @@ export function generateSyntheticGridVariables(variableSet: VariableSet): Variab
         id: `${id}_items`,
         name: `${id}_items`, // ID-based name to avoid collisions
         label: name,
-        type: 'nominal', // Items are always nominal categories
+        type: 'categorical', // Items are always unordered categories
         valueLabels: itemLabels.map((label, index) => ({
             value: index,
             label

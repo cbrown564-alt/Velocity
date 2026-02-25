@@ -10,6 +10,7 @@ import React, { useMemo, useEffect, useCallback, useRef } from 'react';
 import { Hash, CheckCircle, ChevronRight, Type, Calendar, SlidersHorizontal } from 'lucide-react';
 import { useVelocityStore } from '../../store';
 import type { Variable, Dataset } from '../../store/slices/dataSlice';
+import { isCategoricalType } from '../../types';
 import { Sparkline, MissingnessBadge } from './Sparkline';
 import { VariableTypeIcon } from '../../components/common/VariableTypeIcon';
 import { useLazyObserver } from '../../hooks/useLazyObserver';
@@ -159,7 +160,7 @@ export const VariableColumn: React.FC = () => {
 
         let topCategory: { label: string; percent: number; count: number } | undefined;
 
-        if (variable.type === 'nominal' || variable.type === 'text') {
+        if (isCategoricalType(variable.type) || variable.type === 'text') {
             if (stats.frequencies && stats.frequencies.length > 0) {
                 const sorted = [...stats.frequencies].sort((a, b) => b.count - a.count);
                 const topItem = sorted[0];

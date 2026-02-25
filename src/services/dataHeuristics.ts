@@ -1,4 +1,6 @@
 
+import type { OrderedScoring, OrderedStyle } from '../types';
+
 // Common ordinal scale keywords for detecting Likert-type scales.
 const ORDINAL_PATTERNS = {
     agreement: ['strongly disagree', 'disagree', 'neutral', 'agree', 'strongly agree'],
@@ -16,12 +18,17 @@ const ORDINAL_KEYWORDS = ['more', 'less', 'better', 'worse', 'higher', 'lower', 
 /**
  * Infer the variable type based on value labels and patterns.
  * Distinguishes between:
- * - nominal: Unordered categories
- * - ordinal: Ordered categories (e.g., Education)
- * - scale: Ratings / Likert scales (e.g., 1-10, Agree/Disagree)
+ * - categorical: Unordered categories
+ * - ordered: Ordered categories
  */
-export function inferVariableType(valueLabels: { value: number; label: string }[]): 'nominal' | 'ordinal' | 'scale' {
-    if (!valueLabels || valueLabels.length < 2) return 'nominal';
+export interface InferredVariableTyping {
+    type: 'categorical' | 'ordered';
+    orderedStyle?: OrderedStyle;
+    orderedScoring?: OrderedScoring;
+}
+
+export function inferVariableTyping(valueLabels: { value: number; label: string }[]): InferredVariableTyping {
+    if (!valueLabels || valueLabels.length < 2) return { type: 'categorical' };
 
     // Normalize labels
     const labels = valueLabels.map(vl => vl.label.toLowerCase().trim());
@@ -38,7 +45,7 @@ export function inferVariableType(valueLabels: { value: number; label: string }[
             }
         }
         // If we match enough standard Likert terms, it's a Scale
-        if (matchCount >= 2) return 'scale';
+        if (matchCount >= 2) return { type: 'ordered', orderedStyle: 'rating', orderedScoring: 'allow_numeric_stats' };
     }
 
     // Pattern B: Ordinal Keywords that suggest intensity/rating (Scale)
@@ -49,7 +56,7 @@ export function inferVariableType(valueLabels: { value: number; label: string }[
             intensityMatches++;
         }
     }
-    if (intensityMatches >= 2) return 'scale';
+    if (intensityMatches >= 2) return { type: 'ordered', orderedStyle: 'rating', orderedScoring: 'allow_numeric_stats' };
 
     // Pattern C: Numeric Labels (e.g. 1="1", 2="2", or 1="1 - Low")
     // If the label *is* the number, or starts with the number, it's likely a Scale
@@ -62,11 +69,11 @@ export function inferVariableType(valueLabels: { value: number; label: string }[
     }).length;
 
     // If most labels are numeric-ish, it's a Scale
-    if (numericLabelCount === valueLabels.length) return 'scale';
+    if (numericLabelCount === valueLabels.length) return { type: 'ordered', orderedStyle: 'rating', orderedScoring: 'allow_numeric_stats' };
 
     // Mixed numeric/text: often checking if endpoints are labeled (1="Low", 10="High") and others are missing/numeric
     const hasPureNumericLabels = valueLabels.some(vl => vl.label.trim() === vl.value.toString());
-    if (hasPureNumericLabels && valueLabels.length >= 3) return 'scale';
+    if (hasPureNumericLabels && valueLabels.length >= 3) return { type: 'ordered', orderedStyle: 'rating', orderedScoring: 'allow_numeric_stats' };
 
     // 2. Check for Ordinal (Ordered Categories)
     // ------------------------------------------
@@ -82,10 +89,14 @@ export function inferVariableType(valueLabels: { value: number; label: string }[
             // If labels are "Never", "Rarely" -> Scale (caught by Likert patterns usually)
 
             // Default sequential categoricals to Ordinal if they weren't caught as Scales
-            return 'ordinal';
+            return { type: 'ordered', orderedStyle: 'sequence', orderedScoring: 'categorical_only' };
         }
     }
 
     // Default to Nominal if no order/scale detected
-    return 'nominal';
+    return { type: 'categorical' };
+}
+
+export function inferVariableType(valueLabels: { value: number; label: string }[]): InferredVariableTyping['type'] {
+    return inferVariableTyping(valueLabels).type;
 }

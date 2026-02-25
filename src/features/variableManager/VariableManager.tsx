@@ -24,6 +24,7 @@ import {
 } from '@dnd-kit/core';
 import { X, Search, Grid3X3, Tag, BarChart2 } from 'lucide-react';
 import { useVelocityStore } from '../../store';
+import { isCategoricalType, normalizeVariableType } from '../../types';
 import { BulkActionBar } from './BulkActionBar';
 import { DataSourceColumn } from './DataSourceColumn';
 import { FolderColumn } from './FolderColumn';
@@ -82,7 +83,7 @@ export const VariableManager: React.FC<VariableManagerProps> = ({ onClose }) => 
         // Type facet filter
         if (facetFilters.types.length > 0) {
             sets = sets.filter(vs => {
-                return vs.type && facetFilters.types.includes(vs.type);
+                return vs.type && facetFilters.types.includes(normalizeVariableType(vs.type));
             });
         }
 
@@ -122,10 +123,10 @@ export const VariableManager: React.FC<VariableManagerProps> = ({ onClose }) => 
     const typeStats = useMemo(() => {
         const stats = { categorical: 0, numeric: 0 };
         variableSets.forEach(vs => {
-            const type = vs.type || '';
-            if (['nominal', 'ordinal', 'text'].includes(type)) {
+            const type = normalizeVariableType(vs.type || 'categorical');
+            if (isCategoricalType(type) || type === 'text') {
                 stats.categorical++;
-            } else if (['numeric', 'scale', 'date'].includes(type)) {
+            } else if (['numeric', 'ordered', 'date'].includes(type)) {
                 stats.numeric++;
             }
         });

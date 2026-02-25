@@ -15,6 +15,7 @@ import type {
 } from '../../types/harmonization';
 import { DEFAULT_MATCHING_WEIGHTS } from '../../types/harmonization';
 import type { Variable, ValueLabel, VariableType } from '../../types/index';
+import { normalizeVariableType } from '../../types/index';
 
 // ============================================================================
 // String Similarity
@@ -107,19 +108,19 @@ export function valueLabelOverlap(a: ValueLabel[], b: ValueLabel[]): number {
  * 1.0 = same type, 0.5 = compatible, 0.0 = incompatible
  */
 export function typeCompatibility(a: VariableType, b: VariableType): number {
-  if (a === b) return 1.0;
+  const normalizedA = normalizeVariableType(a);
+  const normalizedB = normalizeVariableType(b);
+  if (normalizedA === normalizedB) return 1.0;
 
-  const compatiblePairs: Array<[VariableType, VariableType]> = [
-    ['nominal', 'ordinal'],
-    ['ordinal', 'nominal'],
-    ['ordinal', 'scale'],
-    ['scale', 'ordinal'],
-    ['scale', 'numeric'],
-    ['numeric', 'scale'],
+  const compatiblePairs: Array<[typeof normalizedA, typeof normalizedB]> = [
+    ['categorical', 'ordered'],
+    ['ordered', 'categorical'],
+    ['ordered', 'numeric'],
+    ['numeric', 'ordered'],
   ];
 
   for (const [x, y] of compatiblePairs) {
-    if (a === x && b === y) return 0.5;
+    if (normalizedA === x && normalizedB === y) return 0.5;
   }
 
   return 0.0;

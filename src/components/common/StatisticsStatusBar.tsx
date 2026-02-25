@@ -5,6 +5,7 @@ import { SignificanceLegend } from './SignificanceLegend';
 import { AnalysisSettingsPanel } from './AnalysisSettingsPanel';
 import { Tooltip } from './Tooltip';
 import type { Variable, TableStats } from '../../types';
+import { allowsNumericStats } from '../../types';
 import type { ComparisonMethod, CorrectionType } from '../../store/slices/analysisSlice';
 import styles from './StatisticsStatusBar.module.css';
 
@@ -43,9 +44,8 @@ export const StatisticsStatusBar: React.FC<StatisticsStatusBarProps> = ({
   // Determine table type based on column variable's measurement level, not on
   // whether any cells happen to be significant (which gives false negatives when
   // no cells cross the threshold).
-  const isCatCrossTab = colVariable !== null && colVariable.type !== 'scale';
-  // Cat x Numeric: scale column variable (means/SD display, no Welch's T)
-  const isCatNumeric = colVariable !== null && colVariable.type === 'scale';
+  const isCatNumeric = colVariable !== null && allowsNumericStats(colVariable.type, colVariable.orderedScoring);
+  const isCatCrossTab = colVariable !== null && !isCatNumeric;
   // No column variable at all
   const noCol = colVariable === null;
 

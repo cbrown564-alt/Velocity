@@ -36,10 +36,13 @@ export const VariableTypeIcon: React.FC<VariableTypeIconProps> = ({
 
     // Handle type-based icons
     switch (type) {
+        case 'categorical':
+            return <CheckCircle size={size} className={className} style={style} />;
+        case 'ordered':
+            return <SlidersHorizontal size={size} className={className} style={style} />;
         case 'nominal':
             return <CheckCircle size={size} className={className} style={style} />;
         case 'ordinal':
-            return <CheckCircle size={size} className={className} style={style} />;
         case 'scale':
             return <SlidersHorizontal size={size} className={className} style={style} />;
         case 'numeric':

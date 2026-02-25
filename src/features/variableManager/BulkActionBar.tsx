@@ -112,18 +112,18 @@ export const BulkActionBar: React.FC<BulkActionBarProps> = ({
                                     {showTypeMenu && (
                                         <div className="absolute bottom-full left-0 mb-2 bg-[var(--mat-overlay-bg,var(--bg-panel))] backdrop-blur-md border border-[var(--border-color)] rounded-lg shadow-float py-1 min-w-32 z-50 overflow-hidden">
                                             <button
-                                                onClick={() => handleSetType('nominal')}
+                                                onClick={() => handleSetType('categorical')}
                                                 className="w-full flex items-center gap-2 px-3 py-2 hover:bg-[var(--bg-surface)] text-left text-sm font-body text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                                             >
                                                 <Tag size={14} className="text-[var(--viz-palette-2)]" />
-                                                Nominal
+                                                Category
                                             </button>
                                             <button
-                                                onClick={() => handleSetType('ordinal')}
+                                                onClick={() => handleSetType('ordered')}
                                                 className="w-full flex items-center gap-2 px-3 py-2 hover:bg-[var(--bg-surface)] text-left text-sm font-body text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                                             >
                                                 <Layers size={14} className="text-[var(--viz-palette-4)]" />
-                                                Ordinal
+                                                Scale / Ordered
                                             </button>
                                             <button
                                                 onClick={() => handleSetType('numeric')}

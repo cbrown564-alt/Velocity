@@ -144,8 +144,8 @@ describe('Adapter Parity: WASM vs Node', () => {
                 // Try to guess variable type from context or assume categorical
                 const varType = testConfig.context.variables[rowVar]?.type || 'categorical';
 
-                const wasmStats = await getVariableStats(wasmAdapter, rowVar, varType as any, 10);
-                const nodeStats = await getVariableStats(nodeAdapter, rowVar, varType as any, 10);
+                const wasmStats = await getVariableStats(wasmAdapter, rowVar, varType as any, undefined, 10);
+                const nodeStats = await getVariableStats(nodeAdapter, rowVar, varType as any, undefined, 10);
 
                 expectCloseDeep(wasmStats, nodeStats);
             }

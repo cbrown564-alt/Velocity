@@ -8,8 +8,8 @@
  * Extracted from analysisWorker.ts for reuse in CLI and testing contexts.
  */
 
-import { Variable, VariableType } from '../types';
-import { inferVariableType } from '../services/dataHeuristics';
+import { Variable } from '../types';
+import { inferVariableTyping } from '../services/dataHeuristics';
 
 export interface ColumnLookup {
   findColumnIndex(variableName: string): number;
@@ -65,12 +65,14 @@ export function fillEndpointLabelGaps(
             }
 
             v.valueLabels = newLabels.sort((a, b) => a.value - b.value);
-            v.type = 'scale';
+            v.type = 'ordered';
+            v.orderedStyle = 'rating';
+            v.orderedScoring = 'allow_numeric_stats';
 
-            const inferred = inferVariableType(v.valueLabels);
-            if (inferred !== 'nominal') {
-              v.type = inferred;
-            }
+            const inferred = inferVariableTyping(v.valueLabels);
+            v.type = inferred.type;
+            v.orderedStyle = inferred.orderedStyle;
+            v.orderedScoring = inferred.orderedScoring;
           }
         }
       }

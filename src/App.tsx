@@ -31,6 +31,7 @@ import { InputModal } from './components/overlays/InputModal';
 import * as opfsFileManager from './services/opfsFileManager';
 import { WorkspaceView, ProjectLinkModal, CrossWavePanel, ExportImportModal, type StoredDataset, type Project, type WorkspaceExport } from './features/workspace';
 import { HarmonizationWorkspace } from './features/harmonization';
+import { allowsNumericStats } from './types';
 
 // Smart Canvas Wrapper
 const SmartCanvas: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className }) => {
@@ -1119,7 +1120,7 @@ export default function App() {
       if (zoneId === 'drop-zone-weight') {
         // Only accept numeric (scale) variables as weights
         const variable = dataset?.variables.find(v => v.id === variableSet.variableIds[0]);
-        if (variable && (variable.type === 'numeric' || variable.type === 'scale')) {
+        if (variable && allowsNumericStats(variable.type, variable.orderedScoring)) {
           const varId = variableSet.variableIds[0];
           setWeightVariable(varId);
           setRememberedWeightVar(varId);

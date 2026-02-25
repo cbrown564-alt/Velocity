@@ -1,4 +1,5 @@
 import { Variable } from '../types';
+import { isCategoricalType, isOrderedType, normalizeVariableType } from '../types';
 import { ChartRecommendation, ChartType } from '../types/charts';
 
 interface RecommenderContext {
@@ -61,8 +62,8 @@ export function recommendChart(context: RecommenderContext): ChartRecommendation
     // Symmetric: Numeric in Rows OR Numeric in Column
     if (colVar) {
         const hasNumeric = primaryRowVar?.type === 'numeric' || colVar.type === 'numeric';
-        const hasCategorical = (primaryRowVar?.type === 'nominal' || primaryRowVar?.type === 'ordinal' || primaryRowVar?.type === 'scale') ||
-            (colVar.type === 'nominal' || colVar.type === 'ordinal' || colVar.type === 'scale');
+        const hasCategorical = (primaryRowVar ? (isCategoricalType(primaryRowVar.type) || isOrderedType(primaryRowVar.type)) : false) ||
+            (isCategoricalType(colVar.type) || isOrderedType(colVar.type));
 
         if (hasNumeric && hasCategorical) {
             return {
@@ -76,43 +77,43 @@ export function recommendChart(context: RecommenderContext): ChartRecommendation
     // 5. Categorical vs Categorical (Cross-Tab)
     if (colVar) {
         // If we have a column variable, we are comparing groups
-        if (primaryRowVar?.type === 'nominal' || primaryRowVar?.type === 'ordinal') {
+        if (primaryRowVar && (isCategoricalType(primaryRowVar.type) || isOrderedType(primaryRowVar.type))) {
+            if (isOrderedType(primaryRowVar.type) && primaryRowVar.orderedStyle === 'rating') {
+                return {
+                    default: 'diverging-bar',
+                    alternatives: ['stacked-bar', 'grouped-bar', 'grouped-column'],
+                    reason: 'Comparing rating-scale groups across columns.',
+                };
+            }
             return {
                 default: 'grouped-bar',
                 alternatives: ['grouped-column', 'stacked-bar', 'diverging-bar'],
-                reason: 'Comparing nominal/ordinal groups across columns.',
-            };
-        }
-
-        if (primaryRowVar?.type === 'scale') {
-            return {
-                default: 'diverging-bar',
-                alternatives: ['stacked-bar', 'grouped-bar', 'grouped-column'],
-                reason: 'Comparing scale groups across columns.',
+                reason: 'Comparing categorical/ordered groups across columns.',
             };
         }
     }
 
     // 5. Single Variable Analysis
     if (primaryRowVar) {
-        switch (primaryRowVar.type) {
-            case 'nominal':
+        switch (normalizeVariableType(primaryRowVar.type)) {
+            case 'categorical':
                 return {
                     default: 'horizontal-bar',
                     alternatives: ['vertical-bar', 'donut'],
-                    reason: 'Nominal data is best viewed as a ranked list.',
+                    reason: 'Categorical data is best viewed as a ranked list.',
                 };
-            case 'ordinal':
-                return {
-                    default: 'horizontal-bar',
-                    alternatives: ['stacked-bar', 'vertical-bar', 'donut'], // Diverging bar removed for single ordinal
-                    reason: 'Ordinal data can be viewed as bars or distributions.',
-                };
-            case 'scale':
+            case 'ordered':
+                if (primaryRowVar.orderedStyle === 'sequence') {
+                    return {
+                        default: 'horizontal-bar',
+                        alternatives: ['stacked-bar', 'vertical-bar', 'donut'],
+                        reason: 'Ordered sequence data is best viewed as ranked bars.',
+                    };
+                }
                 return {
                     default: 'diverging-bar',
                     alternatives: ['stacked-bar', 'vertical-bar', 'horizontal-bar'],
-                    reason: 'Scale data (Likert/Ratings) is best viewed as diverging bars.',
+                    reason: 'Ordered data (e.g. scales) is best viewed as diverging bars.',
                 };
             case 'numeric':
                 return {

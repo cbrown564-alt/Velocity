@@ -17,7 +17,7 @@ describe('SAV Ingestion Golden Test (CLI Path)', () => {
         const sexVar = result.variables.find(v => v.id.toLowerCase() === 'sex');
         expect(sexVar).toBeDefined();
         expect(sexVar?.label).toBe('sex');
-        expect(['nominal', 'ordinal']).toContain(sexVar?.type);
+        expect(['categorical', 'ordered']).toContain(sexVar?.type as any);
         expect(sexVar?.valueLabels).toEqual([
             { value: 0, label: 'female' },
             { value: 1, label: 'male' }

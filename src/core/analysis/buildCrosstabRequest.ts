@@ -1,5 +1,6 @@
 import type { CrosstabQueryOptions } from '../../services/queryBuilder';
 import type { Dataset, Filter, Variable, VariableSet } from '../../types';
+import { allowsNumericStats } from '../../types';
 
 interface AnalysisSignificanceSettings {
   comparisonMethod: 'cell_vs_rest' | 'pairwise';
@@ -112,11 +113,11 @@ export const buildCrosstabRequest = ({
     });
     colVarSet.variableIds.forEach((varId) => addToContext(varId));
   } else if (
-    firstRowVarSet?.type === 'numeric' ||
-    (colVar && variableSets.find((s) => s.id === colVar)?.type === 'numeric')
+    allowsNumericStats(firstRowVarSet?.type, firstRowVarSet?.orderedScoring) ||
+    (colVar && allowsNumericStats(variableSets.find((s) => s.id === colVar)?.type, variableSets.find((s) => s.id === colVar)?.orderedScoring))
   ) {
     const colVarSet = colVar ? variableSets.find((s) => s.id === colVar) : null;
-    const isRowScale = firstRowVarSet?.type === 'numeric';
+    const isRowScale = allowsNumericStats(firstRowVarSet?.type, firstRowVarSet?.orderedScoring);
 
     const measureVarSet = isRowScale ? firstRowVarSet! : colVarSet!;
     measureVarId = measureVarSet.variableIds[0];

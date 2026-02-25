@@ -37,7 +37,7 @@ describe('VariableCard', () => {
                 <VariableCard variableSet={mockNominalSet} />
             );
 
-            expect(screen.getByTitle('nominal')).toBeInTheDocument();
+            expect(screen.getByTitle('categorical')).toBeInTheDocument();
         });
 
         it('displays ordinal type', () => {
@@ -45,7 +45,7 @@ describe('VariableCard', () => {
                 <VariableCard variableSet={mockOrdinalSet} />
             );
 
-            expect(screen.getByTitle('ordinal')).toBeInTheDocument();
+            expect(screen.getByTitle('ordered')).toBeInTheDocument();
         });
 
         it('displays numeric type', () => {

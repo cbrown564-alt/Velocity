@@ -11,7 +11,7 @@
 import { Variable, VariableSet, VariableType } from '../../types';
 import { isDateFormat, inferPositiveValue, detectImplicitScale, detectSequentialPattern, detectNumericGrids, VariableWithIndex } from '../gridDetection';
 import { fillEndpointLabelGaps } from '../scaleNormalization';
-import { inferVariableType } from '../../services/dataHeuristics';
+import { inferVariableTyping } from '../../services/dataHeuristics';
 import { generateSyntheticGridVariables } from '../../services/gridUtils';
 
 // ============================================================================
@@ -86,13 +86,18 @@ export function processMetadata(data: ParsedSavData): ProcessedSavResult {
     }
 
     let type: VariableType;
+    let orderedStyle: 'rating' | 'sequence' | undefined;
+    let orderedScoring: 'categorical_only' | 'allow_numeric_stats' | undefined;
 
     if (v.type === 'string') {
       type = 'text';
     } else if (v.format && isDateFormat(v.format)) {
       type = 'date';
     } else if (valueLabels.length > 0) {
-      type = inferVariableType(valueLabels);
+      const inferred = inferVariableTyping(valueLabels);
+      type = inferred.type;
+      orderedStyle = inferred.orderedStyle;
+      orderedScoring = inferred.orderedScoring;
     } else {
       type = 'numeric';
     }
@@ -102,6 +107,8 @@ export function processMetadata(data: ParsedSavData): ProcessedSavResult {
       name: v.name,
       label: v.label || v.name,
       type,
+      orderedStyle,
+      orderedScoring,
       valueLabels,
       missingValues: { discrete: [], range: undefined }
     };
@@ -166,7 +173,7 @@ export function processMetadata(data: ParsedSavData): ProcessedSavResult {
     if (v.valueLabels && v.valueLabels.length > 0) {
       const sortedLabels = [...v.valueLabels].sort((a, b) => a.value - b.value);
       hash = sortedLabels.map(vl => `${vl.value}:${vl.label}`).join('|');
-    } else if (v.type === 'numeric' || v.type === 'scale') {
+    } else if (v.type === 'numeric') {
       hash = '__numeric_unlabeled__';
     }
 
@@ -240,7 +247,7 @@ export function processMetadata(data: ParsedSavData): ProcessedSavResult {
 
             if (check.isScale) {
               isNumericGrid = false;
-              detectedType = 'scale';
+              detectedType = 'ordered';
 
               syntheticLabels = {};
               check.values.forEach(val => {
@@ -248,7 +255,9 @@ export function processMetadata(data: ParsedSavData): ProcessedSavResult {
               });
 
               gridCandidates.forEach(v => {
-                v.type = 'scale';
+                v.type = 'ordered';
+                v.orderedStyle = 'rating';
+                v.orderedScoring = 'allow_numeric_stats';
                 v.valueLabels = check.values.map(val => ({ value: val, label: String(val) }));
               });
             }
@@ -274,7 +283,9 @@ export function processMetadata(data: ParsedSavData): ProcessedSavResult {
                 acc[vl.value] = vl.label;
                 return acc;
               }, {} as Record<number, string>)),
-              type: isNumericGrid ? 'numeric' : (detectedType as 'ordinal' | 'nominal' | 'scale')
+              type: isNumericGrid ? 'numeric' : detectedType,
+              orderedStyle: isNumericGrid ? undefined : firstVar.orderedStyle,
+              orderedScoring: isNumericGrid ? undefined : firstVar.orderedScoring,
             },
             itemLabels: gridCandidates.map(v => v.label || v.name),
             itemMapping: gridCandidates.reduce((acc, v, idx) => {

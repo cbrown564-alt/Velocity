@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ArrowRight, Wand2, Save, Layers, ListFilter, Plus, Trash2 } from 'lucide-react';
 import { Variable, RecodeMode, RecodeRule } from '../../types';
+import { allowsNumericStats } from '../../types';
 import { useVelocityStore } from '../../store';
 
 interface RecodeModalProps {
@@ -40,7 +41,7 @@ export const RecodeModal: React.FC<RecodeModalProps> = ({ isOpen, onClose, varia
           setMappings(initialMap);
 
           // Determine default mode - numeric and date are numeric types
-          const defaultMode = (variable.type === 'numeric' || variable.type === 'date') ? 'binning' : 'categorical';
+          const defaultMode = (allowsNumericStats(variable.type, variable.orderedScoring) || variable.type === 'date') ? 'binning' : 'categorical';
           setMode(defaultMode);
 
           if (defaultMode === 'binning') {
@@ -131,7 +132,7 @@ export const RecodeModal: React.FC<RecodeModalProps> = ({ isOpen, onClose, varia
                 </div>
 
                 {/* Mode Switcher (Only for numeric types: numeric and date) */}
-                {(variable?.type === 'numeric' || variable?.type === 'date') && (
+                {(variable && (allowsNumericStats(variable.type, variable.orderedScoring) || variable.type === 'date')) && (
                   <div className="flex gap-2 mb-6 bg-[var(--bg-panel)] p-1 rounded-lg border border-[var(--border-color)] w-fit">
                     <button
                       onClick={() => setMode('categorical')}

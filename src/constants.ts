@@ -9,7 +9,7 @@ export const VARIABLES: Variable[] = [
     id: 'gender',
     name: 'gender',
     label: 'Gender',
-    type: 'nominal',
+    type: 'categorical',
     valueLabels: [
       { value: 1, label: 'Female' },
       { value: 2, label: 'Male' }
@@ -20,7 +20,9 @@ export const VARIABLES: Variable[] = [
     id: 'age_group',
     name: 'age_group',
     label: 'Age Group',
-    type: 'ordinal',
+    type: 'ordered',
+    orderedStyle: 'sequence',
+    orderedScoring: 'categorical_only',
     valueLabels: [
       { value: 1, label: '18-24' },
       { value: 2, label: '25-34' },
@@ -34,7 +36,7 @@ export const VARIABLES: Variable[] = [
     id: 'region',
     name: 'region',
     label: 'Region',
-    type: 'nominal',
+    type: 'categorical',
     valueLabels: [
       { value: 1, label: 'North' },
       { value: 2, label: 'South' },
@@ -48,7 +50,9 @@ export const VARIABLES: Variable[] = [
     id: 'nps_segment',
     name: 'nps_segment',
     label: 'NPS Segment',
-    type: 'ordinal',
+    type: 'ordered',
+    orderedStyle: 'sequence',
+    orderedScoring: 'categorical_only',
     valueLabels: [
       { value: 1, label: 'Detractor' },
       { value: 2, label: 'Passive' },
@@ -60,7 +64,9 @@ export const VARIABLES: Variable[] = [
     id: 'intent_to_buy',
     name: 'intent_to_buy',
     label: 'Intent to Buy',
-    type: 'ordinal',
+    type: 'ordered',
+    orderedStyle: 'rating',
+    orderedScoring: 'allow_numeric_stats',
     valueLabels: [
       { value: 1, label: 'Very Unlikely' },
       { value: 2, label: 'Unlikely' },

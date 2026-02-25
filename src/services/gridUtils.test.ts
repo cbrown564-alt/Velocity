@@ -33,7 +33,7 @@ describe('generateSyntheticGridVariables', () => {
 
         // Check Scale Variable
         expect(scaleVar.id).toBe('grid_test_scale');
-        expect(scaleVar.type).toBe('scale');
+        expect(scaleVar.type).toBe('ordered');
         expect(scaleVar.synthetic).toBe(true);
 
         // Verify Value Labels are populated (KEY FIX)
@@ -43,7 +43,7 @@ describe('generateSyntheticGridVariables', () => {
 
         // Check Items Variable (should remain nominal with item labels)
         expect(itemsVar.id).toBe('grid_test_items');
-        expect(itemsVar.type).toBe('nominal');
+        expect(itemsVar.type).toBe('categorical');
         expect(itemsVar.valueLabels).toHaveLength(2);
         expect(itemsVar.valueLabels[0].label).toBe('Item A');
     });
@@ -65,6 +65,6 @@ describe('generateSyntheticGridVariables', () => {
         };
 
         const variables = generateSyntheticGridVariables(mockVariableSet);
-        expect(variables[0].type).toBe('ordinal');
+        expect(variables[0].type).toBe('ordered');
     });
 });

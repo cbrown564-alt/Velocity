@@ -3,7 +3,7 @@ import { describe, it, expect } from 'vitest';
 import { inferVariableType } from './dataHeuristics';
 
 describe('inferVariableType', () => {
-    it('should identify Likert scales as scale', () => {
+    it('should identify Likert scales as ordered', () => {
         const likert = [
             { value: 1, label: 'Strongly Disagree' },
             { value: 2, label: 'Disagree' },
@@ -11,10 +11,10 @@ describe('inferVariableType', () => {
             { value: 4, label: 'Agree' },
             { value: 5, label: 'Strongly Agree' }
         ];
-        expect(inferVariableType(likert)).toBe('scale');
+        expect(inferVariableType(likert)).toBe('ordered');
     });
 
-    it('should identify intensity scales as scale', () => {
+    it('should identify intensity scales as ordered', () => {
         const intensity = [
             { value: 1, label: 'Very Low' },
             { value: 2, label: 'Low' },
@@ -22,10 +22,10 @@ describe('inferVariableType', () => {
             { value: 4, label: 'High' },
             { value: 5, label: 'Very High' }
         ];
-        expect(inferVariableType(intensity)).toBe('scale');
+        expect(inferVariableType(intensity)).toBe('ordered');
     });
 
-    it('should identify numeric-only labels as scale', () => {
+    it('should identify numeric-only labels as ordered', () => {
         const numeric = [
             { value: 1, label: '1' },
             { value: 2, label: '2' },
@@ -33,10 +33,10 @@ describe('inferVariableType', () => {
             { value: 4, label: '4' },
             { value: 5, label: '5' }
         ];
-        expect(inferVariableType(numeric)).toBe('scale');
+        expect(inferVariableType(numeric)).toBe('ordered');
     });
 
-    it('should identify mixed labels (numeric prefix) as scale', () => {
+    it('should identify mixed labels (numeric prefix) as ordered', () => {
         const mixed = [
             { value: 1, label: '1 - Poor' },
             { value: 2, label: '2' },
@@ -44,10 +44,10 @@ describe('inferVariableType', () => {
             { value: 4, label: '4' },
             { value: 5, label: '5 - Excellent' }
         ];
-        expect(inferVariableType(mixed)).toBe('scale');
+        expect(inferVariableType(mixed)).toBe('ordered');
     });
 
-    it('should identify Education as ordinal', () => {
+    it('should identify Education as ordered', () => {
         const education = [
             { value: 1, label: 'Did not complete high school' },
             { value: 2, label: 'High school graduate' },
@@ -55,10 +55,10 @@ describe('inferVariableType', () => {
             { value: 4, label: 'College graduate' },
             { value: 5, label: 'Post-graduate' }
         ];
-        expect(inferVariableType(education)).toBe('ordinal');
+        expect(inferVariableType(education)).toBe('ordered');
     });
 
-    it('should identify Gender as nominal', () => {
+    it('should identify non-sequential categories as categorical', () => {
         const gender = [
             { value: 1, label: 'Male' },
             { value: 2, label: 'Female' },
@@ -86,16 +86,16 @@ describe('inferVariableType', () => {
             { value: 10, label: 'Banana' },
             { value: 50, label: 'Cherry' }
         ];
-        expect(inferVariableType(nonSeq)).toBe('nominal');
+        expect(inferVariableType(nonSeq)).toBe('categorical');
     });
 
-    it('should identify General Health (1-10) as scale', () => {
+    it('should identify General Health (1-10) as ordered', () => {
         // This assumes gap filling has happened or labels are explicit
         const health = Array.from({ length: 10 }, (_, i) => ({ value: i + 1, label: String(i + 1) }));
         // Add text to endpoints to mimic real data
         health[0].label = "1 - Poor";
         health[9].label = "10 - Excellent";
 
-        expect(inferVariableType(health)).toBe('scale');
+        expect(inferVariableType(health)).toBe('ordered');
     });
 });

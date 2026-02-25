@@ -1,4 +1,5 @@
 import { AggregatedRow, Variable } from '../types';
+import { isCategoricalType, isOrderedType, normalizeVariableType } from '../types';
 import type { VariableStatsResult } from '../types/worker';
 import { ProcessedRow, ProcessedCell } from '../types/processedData';
 
@@ -49,7 +50,7 @@ export const buildTree = (
 
         // 4b. GAP FILLING (for Ordinal/Scale)
         // Ensure we don't show "1, 3, 4" skipping "2" if it's a numeric scale
-        if (variable && (variable.type === 'ordinal' || variable.type === 'numeric' || variable.type === 'scale')) {
+        if (variable && (isOrderedType(variable.type) || variable.type === 'numeric')) {
             const numericKeys = Array.from(allKeys)
                 .map(k => parseFloat(k))
                 .filter(n => !isNaN(n) && Number.isInteger(n));
@@ -203,9 +204,9 @@ export const buildTree = (
             return a.label.localeCompare(b.label);
         }
 
-        const type = variable?.type || 'nominal';
+        const type = normalizeVariableType(variable?.type);
 
-        if (type === 'ordinal' || type === 'numeric' || type === 'scale') {
+        if (type === 'ordered' || type === 'numeric') {
             const valA = a.sortValue;
             const valB = b.sortValue;
 
@@ -219,7 +220,7 @@ export const buildTree = (
             return a.rawValue.localeCompare(b.rawValue, undefined, { numeric: true });
         }
 
-        if (type === 'nominal') {
+        if (isCategoricalType(type)) {
             // Sort by Frequency (Total Count) - Descending
             if (b.total !== a.total) {
                 return b.total - a.total;

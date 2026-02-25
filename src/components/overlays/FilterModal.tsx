@@ -11,6 +11,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Search, ChevronLeft, Check } from 'lucide-react';
 import { useVelocityStore, type Variable, type Filter } from '../../store';
 import { Loader2 } from 'lucide-react';
+import { isCategoricalType, isOrderedType } from '../../types';
 
 interface FilterModalProps {
     isOpen: boolean;
@@ -42,7 +43,7 @@ export const FilterModal: React.FC<FilterModalProps> = ({
     // Filter variables based on search (only show categoricals with value labels)
     const filteredVariables = useMemo(() => {
         const categoricalVars = variables.filter(v =>
-            v.type === 'nominal' || v.type === 'ordinal' || v.valueLabels.length > 0
+            isCategoricalType(v.type) || isOrderedType(v.type) || v.valueLabels.length > 0
         );
 
         if (!searchQuery.trim()) return categoricalVars;

@@ -13,6 +13,7 @@ import { CSS } from '@dnd-kit/utilities';
 import { Hash, Grid3X3, SquareCheck, ChevronRight, EyeOff, Type, Calendar, CheckCircle, SlidersHorizontal } from 'lucide-react';
 import { useVelocityStore } from '../../store';
 import type { VariableSet, Dataset } from '../../store/slices/dataSlice';
+import { isCategoricalType } from '../../types';
 import { Sparkline, MissingnessBadge } from './Sparkline';
 import { VariableTypeIcon } from '../../components/common/VariableTypeIcon';
 import { useLazyObserver } from '../../hooks/useLazyObserver';
@@ -313,7 +314,7 @@ export const VariableSetColumn: React.FC = () => {
         // Calculate Top Category for Nominal/Ordinal variables
         let topCategory: { label: string; percent: number; count: number } | undefined;
 
-        if (variableSet.type === 'nominal' || variableSet.type === 'text') {
+        if (isCategoricalType(variableSet.type) || variableSet.type === 'text') {
             // Find max frequency item
             // Note: We need to match back to value label using the original stats data
             if (stats.frequencies && stats.frequencies.length > 0) {

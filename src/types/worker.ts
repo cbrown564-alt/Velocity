@@ -7,6 +7,7 @@
  */
 
 import { RecodeConfig, VariableSet, Variable, Filter, HistogramBin, AggregatedRow, ChiSquareResult, TableStats } from './index';
+import type { OrderedScoring, VariableType } from './index';
 import { CrosstabQueryOptions } from '../services/queryBuilder';
 import { ProcessedAnalysisData } from './processedData';
 import { ChartType } from './charts';
@@ -76,7 +77,7 @@ export type WorkerRequest =
   | { type: 'query'; sql: string }
   | { type: 'getSchema' }
   | { type: 'getUniqueValues'; column: string }
-  | { type: 'getVariableStats'; column: string; variableType?: 'nominal' | 'ordinal' | 'scale' | 'numeric' | 'text' | 'date'; binCount?: number }
+  | { type: 'getVariableStats'; column: string; variableType?: VariableType; orderedScoring?: OrderedScoring; binCount?: number }
   | { type: 'recodeVariable'; sourceCol: string; newColName: string; config: RecodeConfig }
   | { type: 'checkPersistedData' }
   | { type: 'clearPersistedData' }

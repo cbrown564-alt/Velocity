@@ -135,13 +135,13 @@ program
 program
   .command('stats <file> <column>')
   .description('Get variable statistics for a column')
-  .option('--type <type>', 'Variable type: nominal, ordinal, scale, numeric', 'numeric')
+  .option('--type <type>', 'Variable type: categorical, ordered, numeric (legacy aliases still accepted)', 'numeric')
   .option('--bins <n>', 'Number of histogram bins', '10')
   .action(async (file: string, column: string, opts) => {
     const db = await ensureAdapter();
     await loadFile(file, db);
 
-    const stats = await getVariableStats(db, column, opts.type, parseInt(opts.bins));
+    const stats = await getVariableStats(db, column, opts.type, undefined, parseInt(opts.bins));
     console.log(JSON.stringify(stats, null, 2));
 
     await db.close();

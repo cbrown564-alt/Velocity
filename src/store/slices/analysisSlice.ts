@@ -42,6 +42,7 @@ export interface Filter {
 }
 
 import { AggregatedRow, TableStats } from '../../types';
+import type { VariableType } from '../../types';
 import { buildCrosstabRequest } from '../../core/analysis/buildCrosstabRequest';
 import { mapCrosstabRows } from '../../core/analysis/mapCrosstabRows';
 
@@ -66,7 +67,7 @@ export interface AnalysisSlice {
     addFilter: (filter: Omit<Filter, 'id'>) => void;
     removeFilter: (filterId: string) => void;
     clearFilters: () => void;
-    fetchVariableStats: (variableId: string, variableType?: 'nominal' | 'ordinal' | 'scale' | 'numeric' | 'text' | 'date', binCount?: number) => Promise<void>;
+    fetchVariableStats: (variableId: string, variableType?: VariableType, binCount?: number) => Promise<void>;
     swapAxes: () => void;
     clearConfiguration: () => void;
     updateAnalysisSettings: (settings: Partial<AnalysisSettings>) => void;
@@ -196,7 +197,7 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
         get().runAnalysis();
     },
 
-    fetchVariableStats: async (variableId: string, variableType?: 'nominal' | 'ordinal' | 'scale' | 'numeric' | 'text' | 'date', binCount?: number) => {
+    fetchVariableStats: async (variableId: string, variableType?: VariableType, binCount?: number) => {
         const { worker } = get();
         if (!worker) return;
 

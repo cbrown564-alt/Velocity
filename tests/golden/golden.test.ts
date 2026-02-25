@@ -108,7 +108,7 @@ describe('Golden Tests (Legacy)', () => {
   });
 
   it('age variable stats', async () => {
-    const results = await getVariableStats(db, 'age', 'numeric', 10);
+    const results = await getVariableStats(db, 'age', 'numeric', undefined, 10);
     expectCloseDeepWithBootstrap(results, 'age_stats.json');
   });
 });
