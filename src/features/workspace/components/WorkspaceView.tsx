@@ -33,6 +33,7 @@ import {
   TrendingUp,
   Download,
 } from 'lucide-react';
+import { Logo } from '../../../components/common/Logo';
 import styles from './WorkspaceView.module.css';
 import { WaveTimeline } from './WaveTimeline';
 import { BatchOperationsBar } from './BatchOperationsBar';
@@ -257,111 +258,111 @@ const DatasetCard: React.FC<{
   onDelete,
   onContextMenu,
 }) => {
-  const hasSession = Boolean(dataset.sessionState);
+    const hasSession = Boolean(dataset.sessionState);
 
-  return (
-    <motion.div
-      className={`${styles.datasetCard} ${isSelected ? styles.selected : ''}`}
-      onClick={onSelect}
-      onDoubleClick={onOpen}
-      onContextMenu={onContextMenu}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.95 }}
-      whileHover={{ y: -2 }}
-      layout
-    >
-      {/* Selection indicator */}
-      <div className={styles.selectionRing}>
-        {isSelected && (
-          <motion.div
-            className={styles.checkmark}
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-          >
-            <Check size={12} />
-          </motion.div>
-        )}
-      </div>
-
-      {/* Star button */}
-      <button
-        className={`${styles.starButton} ${dataset.starred ? styles.starred : ''}`}
-        onClick={(e) => {
-          e.stopPropagation();
-          onToggleStar();
-        }}
+    return (
+      <motion.div
+        className={`${styles.datasetCard} ${isSelected ? styles.selected : ''}`}
+        onClick={onSelect}
+        onDoubleClick={onOpen}
+        onContextMenu={onContextMenu}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95 }}
+        whileHover={{ y: -2 }}
+        layout
       >
-        {dataset.starred ? <Star size={14} /> : <StarOff size={14} />}
-      </button>
-
-      {/* Card content */}
-      <div className={styles.cardContent}>
-        {/* File icon and type */}
-        <div className={styles.fileIcon}>
-          <Database size={20} />
-          <span className={styles.fileType}>.{dataset.source}</span>
-        </div>
-
-        {/* File name */}
-        <h3 className={styles.fileName}>{dataset.name}</h3>
-
-        {/* Metadata row */}
-        <div className={styles.metaRow}>
-          <span>{dataset.rowCount.toLocaleString()} rows</span>
-          <span className={styles.metaDot}>·</span>
-          <span>{dataset.columnCount} cols</span>
-          <span className={styles.metaDot}>·</span>
-          <span>{formatFileSize(dataset.fileSize)}</span>
-        </div>
-
-        {/* Sparkline preview */}
-        <MiniSparkline data={dataset.thumbnail} />
-
-        {/* Project and wave badges */}
-        <div className={styles.badges}>
-          {project && <ProjectBadge project={project} compact />}
-          {dataset.waveNumber && <WaveBadge waveNumber={dataset.waveNumber} />}
-        </div>
-
-        {/* Last opened */}
-        <div className={styles.lastOpened}>
-          <Clock size={12} />
-          <span>{formatRelativeTime(dataset.lastOpenedAt)}</span>
-          {hasSession && (
-            <span className={styles.sessionIndicator}>
-              <Sparkles size={10} />
-              Session saved
-            </span>
+        {/* Selection indicator */}
+        <div className={styles.selectionRing}>
+          {isSelected && (
+            <motion.div
+              className={styles.checkmark}
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+            >
+              <Check size={12} />
+            </motion.div>
           )}
         </div>
-      </div>
 
-      {/* Quick actions */}
-      <div className={styles.cardActions}>
+        {/* Star button */}
         <button
-          className={styles.actionButton}
+          className={`${styles.starButton} ${dataset.starred ? styles.starred : ''}`}
           onClick={(e) => {
             e.stopPropagation();
-            onOpen();
+            onToggleStar();
           }}
         >
-          <ArrowUpRight size={14} />
-          Open
+          {dataset.starred ? <Star size={14} /> : <StarOff size={14} />}
         </button>
-        <button
-          className={styles.iconButton}
-          onClick={(e) => {
-            e.stopPropagation();
-            onContextMenu(e);
-          }}
-        >
-          <MoreHorizontal size={14} />
-        </button>
-      </div>
-    </motion.div>
-  );
-};
+
+        {/* Card content */}
+        <div className={styles.cardContent}>
+          {/* File icon and type */}
+          <div className={styles.fileIcon}>
+            <Database size={20} />
+            <span className={styles.fileType}>.{dataset.source}</span>
+          </div>
+
+          {/* File name */}
+          <h3 className={styles.fileName}>{dataset.name}</h3>
+
+          {/* Metadata row */}
+          <div className={styles.metaRow}>
+            <span>{dataset.rowCount.toLocaleString()} rows</span>
+            <span className={styles.metaDot}>·</span>
+            <span>{dataset.columnCount} cols</span>
+            <span className={styles.metaDot}>·</span>
+            <span>{formatFileSize(dataset.fileSize)}</span>
+          </div>
+
+          {/* Sparkline preview */}
+          <MiniSparkline data={dataset.thumbnail} />
+
+          {/* Project and wave badges */}
+          <div className={styles.badges}>
+            {project && <ProjectBadge project={project} compact />}
+            {dataset.waveNumber && <WaveBadge waveNumber={dataset.waveNumber} />}
+          </div>
+
+          {/* Last opened */}
+          <div className={styles.lastOpened}>
+            <Clock size={12} />
+            <span>{formatRelativeTime(dataset.lastOpenedAt)}</span>
+            {hasSession && (
+              <span className={styles.sessionIndicator}>
+                <Sparkles size={10} />
+                Session saved
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* Quick actions */}
+        <div className={styles.cardActions}>
+          <button
+            className={styles.actionButton}
+            onClick={(e) => {
+              e.stopPropagation();
+              onOpen();
+            }}
+          >
+            <ArrowUpRight size={14} />
+            Open
+          </button>
+          <button
+            className={styles.iconButton}
+            onClick={(e) => {
+              e.stopPropagation();
+              onContextMenu(e);
+            }}
+          >
+            <MoreHorizontal size={14} />
+          </button>
+        </div>
+      </motion.div>
+    );
+  };
 
 const DatasetListItem: React.FC<{
   dataset: StoredDataset;
@@ -483,35 +484,35 @@ const EmptyState: React.FC<{
 }> = ({ onUpload, onLoadExample }) => (
   <motion.div
     className={styles.emptyState}
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
+    initial={{ opacity: 0, scale: 0.98, y: 10 }}
+    animate={{ opacity: 1, scale: 1, y: 0 }}
+    transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
   >
-    <div className={styles.emptyIcon}>
-      <Database size={48} strokeWidth={1} />
-    </div>
-    <h2>Your Research Library</h2>
+    <Logo size={48} className={styles.emptyLogo} />
+    <h2>Welcome to Velocity</h2>
     <p>
-      Upload your first dataset to begin analysis. Your data stays on your device—
-      nothing is ever uploaded to a server.
+      Upload your first dataset to begin analysis. Your data stays securely on your device—nothing is ever uploaded to a server.
     </p>
     <div className={styles.emptyActions}>
       <motion.button
-        className={styles.primaryButton}
+        className={styles.uploadCard}
         onClick={onUpload}
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
       >
-        <FileUp size={18} />
-        Upload Dataset
+        <div className={styles.cardIconWrapper}>
+          <FileUp size={24} />
+        </div>
+        <span className={styles.cardTitle}>Upload Dataset</span>
+        <span className={styles.cardDesc}>.SAV, .CSV, or .Arrow</span>
       </motion.button>
       <motion.button
-        className={styles.secondaryButton}
+        className={styles.exampleCard}
         onClick={onLoadExample}
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
       >
-        <Sparkles size={18} />
-        Load Example Data
+        <div className={styles.cardIconWrapper}>
+          <Sparkles size={24} />
+        </div>
+        <span className={styles.cardTitle}>Load Example</span>
+        <span className={styles.cardDesc}>Explore features instantly</span>
       </motion.button>
     </div>
   </motion.div>
@@ -628,10 +629,10 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
       {/* Header */}
       <header className={styles.header}>
         <div className={styles.headerLeft}>
-          <h1 className={styles.title}>
-            <Database size={24} />
-            Workspace
-          </h1>
+          <div className={styles.title}>
+            <Logo size={32} />
+            Velocity Workspace
+          </div>
           <StorageIndicator used={storageUsed} quota={storageQuota} />
         </div>
 

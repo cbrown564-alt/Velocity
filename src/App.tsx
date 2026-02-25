@@ -12,6 +12,8 @@ import { TimelineDock } from './features/dashboard/components/TimelineDock';
 import { PersistenceStatus } from './features/dashboard/components/PersistenceStatus';
 // import { DataTable } from './features/dashboard/components/DataTable'; // Keeping import for now if needed by other components, but effectively replaced
 
+import { StatisticsTooltip } from './components/common/StatisticsTooltip';
+import { Logo } from './components/common/Logo';
 import { DataDrawer } from './components/overlays/DataDrawer';
 import { RecodeModal } from './components/overlays/RecodeModal';
 import { FilterModal } from './components/overlays/FilterModal';
@@ -1531,9 +1533,7 @@ export default function App() {
               <aside className="w-72 bg-[var(--bg-panel)] border-r border-[var(--border-color)] flex flex-col shrink-0 z-30 relative">
                 <div className="p-4 border-b border-[var(--border-color-muted)] bg-[var(--bg-app)]">
                   <div className="flex items-center gap-2 mb-4">
-                    <div className="w-6 h-6 bg-[var(--color-accent)] rounded flex items-center justify-center">
-                      <span className="text-[var(--text-inverse)] font-bold text-xs">V</span>
-                    </div>
+                    <Logo size={24} />
                     <span className="font-semibold text-[var(--text-primary)] tracking-tight">Velocity</span>
                   </div>
                   <div className="relative">

@@ -73,9 +73,16 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
     const renderCellContent = () => {
         if (resolvedRowVars.length === 0) {
             return (
-                <div className="w-full h-full border-2 border-dashed border-[var(--border-color-muted)] rounded-xl flex flex-col items-center justify-center text-[var(--text-secondary)] gap-4 bg-[var(--bg-panel)]/50">
-                    <LayoutGrid size={48} className="opacity-20" />
-                    <p className="text-sm font-medium">Drag variables to the shelves above to start analysis</p>
+                <div className="w-full h-full rounded-xl flex flex-col items-center justify-center text-[var(--text-secondary)] gap-5 bg-gradient-to-b from-[var(--bg-panel)] to-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[inset_0_2px_10px_rgba(0,0,0,0.05)] relative overflow-hidden">
+                    {/* Decorative background elements */}
+                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[var(--color-accent)] to-transparent opacity-20" />
+                    <div className="relative flex items-center justify-center w-20 h-20 rounded-2xl bg-[var(--bg-active)] border border-[var(--border-color)] shadow-sm">
+                        <LayoutGrid size={32} className="text-[var(--color-accent)] opacity-80" />
+                    </div>
+                    <div className="flex flex-col items-center gap-1">
+                        <p className="text-base font-medium text-[var(--text-primary)]">Ready for Analysis</p>
+                        <p className="text-sm">Drag or click variables to start building your view.</p>
+                    </div>
                 </div>
             );
         }

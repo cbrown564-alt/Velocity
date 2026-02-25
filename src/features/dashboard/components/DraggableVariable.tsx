@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useDraggable } from '@dnd-kit/core';
-import { GripVertical } from 'lucide-react';
+import { GripVertical, Plus } from 'lucide-react';
 import { VariableTypeIcon } from '../../../components/common/VariableTypeIcon';
 import { VariableSet, VariableType } from '../../../types';
 
@@ -81,6 +81,9 @@ export const VariableCard: React.FC<VariableCardProps> = ({
         <span className={`text-sm font-medium truncate font-body leading-none ${isSelected ? 'text-[var(--text-primary)]' : 'text-[var(--text-secondary)] group-hover:text-[var(--text-primary)]'}`}>{variableSet.name}</span>
       </div>
 
+      <div className="absolute right-2 text-[var(--text-secondary)] group-hover:text-[var(--color-accent)] transition-colors shrink-0 opacity-0 group-hover:opacity-100 flex items-center justify-center w-5 h-5 rounded hover:bg-[var(--bg-active)]" title="Click to assign">
+        <Plus size={14} />
+      </div>
 
     </Component>
   );
