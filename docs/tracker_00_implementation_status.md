@@ -46,7 +46,7 @@ graph TD
   S5CLOUD1 --> S5CLOUD2["S5-CLOUD-2 Direct Data Imports"]
 ```
 
-S2-STAT-1 through S2-STAT-4 are resolved. S2-EXP-1 and S2-EXP-2 are done. Phase 2 critical path blockers are cleared for Phase 3 start.
+S2-STAT-1 through S2-STAT-4 are resolved. S2-EXP-1 and S2-EXP-2 are done. Phase 2 critical path blockers are cleared for Phase 3 start. S3-HARM-1 is done; S3-R-1 is now unblocked.
 
 ## 4. Execution Board
 
@@ -54,13 +54,13 @@ S2-STAT-1 through S2-STAT-4 are resolved. S2-EXP-1 and S2-EXP-2 are done. Phase 
 
 | ID | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| S2-EXP-2 | Export | Editable chart fidelity verification in PowerPoint | S2-EXP-1 | Done | No | U,I,A | cab233a, bf7e58a, 488a436, 57bcf66 |
+| S3-R-1 | Runtime | WebR Worker + Arrow-to-R marshalling | S3-HARM-1 | Not started | Yes | T,L,U,I,A | - |
 
 ### 4.2 Next (Phase 3)
 
 | ID | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| S3-HARM-1 | Harmonization | Lasso + Sankey + mapping workflow baseline | S2-STAT-4, S2-EXP-2 | Not started | Yes | T,L,U,I,A | - |
+| S3-HARM-1 | Harmonization | Lasso + Sankey + mapping workflow baseline | S2-STAT-4, S2-EXP-2 | Done | Yes | T,U,I,A | 3bd2bf1 |
 | S3-R-1 | Runtime | WebR Worker + Arrow-to-R marshalling | S3-HARM-1 | Not started | Yes | T,L,U,I,A | - |
 | S3-STATS-1 | Stats | Advanced models (`lme4`) + raking path integration | S3-R-1 | Not started | Yes | T,L,U,I,G,A | - |
 | S3-PREP-1 | Data Prep | Recipe manager + time travel | S3-R-1 (if R-backed steps), else S3-HARM-1 | Not started | Yes | T,L,U,I,A | - |
@@ -82,6 +82,7 @@ Snapshot reference window: commits on February 5, 2026 through February 25, 2026
 
 | ID | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| S3-HARM-1 | Harmonization | Lasso + Sankey + mapping workflow: auto-match engine (Jaro-Winkler + Jaccard + type compat + scale inversion), D3 Sankey diagram, virtualized MappingTable, ValueRemapPanel, LassoSelector, WaveDetectionBanner, HarmonizationWorkspace overlay, import-time wave detection, CrossWavePanel Harmonize entry point | S2-STAT-4, S2-EXP-2 | Done | Yes (new `harmonization` store slice; 6 worker message types; `waveDetectionBanner` in UISlice) | T,U,I,A | 3bd2bf1 |
 | S2-VAL-1 | Validation | R parity test suite (12 tests vs R reference on real SAV files); fixes `regularizedGammaP` CF bug (chi-square p-values) and `STDDEV→STDDEV_POP` formula consistency | S2-STAT-1–4 | Done | No | G,A | 56a2241 |
 | S2-EXP-1 | Export | Browser-side PPTX export using `PptxGenJS` | Milestone 2.4 complete | Done | Yes | T,L,U,I,A | 3d80d06, cab233a, e840767, c9cc564 |
 | S2-DECK-1 | Analysis Deck | Analysis state capture, editable headers, unsaved indicator | Hub-and-spoke baseline | Done | Yes | T,L,U,A | a3679f7 |
@@ -106,6 +107,7 @@ Completed work remains documented in git history and prior tracker revisions. Cu
 - Workspace expansion: longitudinal support plus batch operations/export-import workflows
 - **Statistical engine closure (S2-STAT-1–4):** Pairwise comparisons, FDR/Bonferroni correction pipeline, dependent-sample overlap handling for multi-response, TSL NO-GO decision. Phase 3 statistical dependency is cleared.
 - **R parity validation (S2-VAL-1):** 12 Vitest tests comparing Velocity's crosstab engine against R (`haven` + `survey`) on `sleep.sav` and `bsa93.sav`. Fixtures pre-committed; CI has no R dependency. Two engine bugs found and fixed: `regularizedGammaP` continued fraction (correct chi-square p-values) and `STDDEV→STDDEV_POP` (population formula consistency across weighted/unweighted paths). Three WVS Wave 7 tests remain `.todo` pending a ReadStat-WASM parsing fix.
+- **Harmonization workspace (S3-HARM-1):** Full cross-wave variable harmonization. Core pure-TS engine: Jaro-Winkler similarity, Jaccard value-label overlap, type compatibility, scale inversion detection, auto-match greedy assignment, SQL generators (value frequencies, UNION-based harmonized table, respondent overlap). Zustand harmonization slice with persist. Worker message handling. D3 Sankey diagram, react-window MappingTable, ValueRemapPanel, LassoSelector (pointer capture + polygon containment), WaveDetectionBanner, HarmonizationWorkspace full-screen overlay. Import-time wave detection heuristics. CrossWavePanel wired to real Harmonize entry point. 410 tests passing, TypeScript clean, architecture invariant (zero browser deps in `src/core/harmonization/`) confirmed.
 
 ## 6. Update Rules
 
