@@ -13,6 +13,7 @@
     "check:worker-boundary": "node scripts/check-worker-boundary.mjs",
     "check:querybuilder-pure": "node scripts/check-querybuilder-pure.mjs",
     "benchmark:sav": "npx tsx scripts/benchmark-sav-ingestion.ts",
+    "benchmark:sav:v2v3": "npx tsx scripts/benchmark-sav-v2-v3.ts",
     "test": "vitest",
     "test:run": "vitest run",
     "test:coverage": "vitest run --coverage",

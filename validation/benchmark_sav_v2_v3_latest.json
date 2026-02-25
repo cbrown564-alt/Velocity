@@ -1,0 +1,343 @@
+{
+  "generatedAt": "2026-02-25T14:31:30.038Z",
+  "config": {
+    "iterations": 2,
+    "batchSize": 5000,
+    "v3InitialCredits": 2,
+    "v3MaxCredits": 4
+  },
+  "datasets": [
+    {
+      "key": "sleep",
+      "filePath": "/Users/cobro/Code/Velocity/test_data/sleep.sav",
+      "fileSizeBytes": 26781,
+      "batchSize": 5000,
+      "iterations": 2,
+      "scenarios": {
+        "v2_parse_only": {
+          "runs": [
+            {
+              "result": {
+                "rows": 271,
+                "batches": 1,
+                "metadataRowCount": 271
+              },
+              "durationMs": 31.634041000000025,
+              "peakRssBytes": 154320896,
+              "startRssBytes": 109625344,
+              "endRssBytes": 154320896
+            },
+            {
+              "result": {
+                "rows": 271,
+                "batches": 1,
+                "metadataRowCount": 271
+              },
+              "durationMs": 6.760166999999967,
+              "peakRssBytes": 155451392,
+              "startRssBytes": 154353664,
+              "endRssBytes": 155451392
+            }
+          ],
+          "avgDurationMs": 19.197103999999996,
+          "minDurationMs": 6.760166999999967,
+          "maxDurationMs": 31.634041000000025,
+          "avgPeakRssBytes": 154886144,
+          "allRunsRowParity": true,
+          "allRunsBatchParity": true
+        },
+        "v3_parse_only": {
+          "runs": [
+            {
+              "result": {
+                "rows": 271,
+                "batches": 1,
+                "metadataRowCount": 271,
+                "queueMaxDepth": 1,
+                "producedBatches": 1,
+                "consumedBatches": 1
+              },
+              "durationMs": 6.4420410000000174,
+              "peakRssBytes": 155533312,
+              "startRssBytes": 155467776,
+              "endRssBytes": 155533312
+            },
+            {
+              "result": {
+                "rows": 271,
+                "batches": 1,
+                "metadataRowCount": 271,
+                "queueMaxDepth": 1,
+                "producedBatches": 1,
+                "consumedBatches": 1
+              },
+              "durationMs": 3.891458,
+              "peakRssBytes": 155598848,
+              "startRssBytes": 155533312,
+              "endRssBytes": 155598848
+            }
+          ],
+          "avgDurationMs": 5.166749500000009,
+          "minDurationMs": 3.891458,
+          "maxDurationMs": 6.4420410000000174,
+          "avgPeakRssBytes": 155566080,
+          "allRunsRowParity": true,
+          "allRunsBatchParity": true,
+          "bridgeMetrics": {
+            "maxQueueDepthObserved": 1,
+            "producedBatchesAvg": 1,
+            "consumedBatchesAvg": 1
+          }
+        },
+        "v2_vectorize": {
+          "runs": [
+            {
+              "result": {
+                "rows": 271,
+                "batches": 1,
+                "metadataRowCount": 271
+              },
+              "durationMs": 16.78558300000003,
+              "peakRssBytes": 163364864,
+              "startRssBytes": 155598848,
+              "endRssBytes": 163364864
+            },
+            {
+              "result": {
+                "rows": 271,
+                "batches": 1,
+                "metadataRowCount": 271
+              },
+              "durationMs": 9.102624999999989,
+              "peakRssBytes": 164282368,
+              "startRssBytes": 163364864,
+              "endRssBytes": 164282368
+            }
+          ],
+          "avgDurationMs": 12.94410400000001,
+          "minDurationMs": 9.102624999999989,
+          "maxDurationMs": 16.78558300000003,
+          "avgPeakRssBytes": 163823616,
+          "allRunsRowParity": true,
+          "allRunsBatchParity": true
+        },
+        "v3_vectorize": {
+          "runs": [
+            {
+              "result": {
+                "rows": 271,
+                "batches": 1,
+                "metadataRowCount": 271,
+                "queueMaxDepth": 1,
+                "producedBatches": 1,
+                "consumedBatches": 1
+              },
+              "durationMs": 5.881124999999997,
+              "peakRssBytes": 166395904,
+              "startRssBytes": 164282368,
+              "endRssBytes": 166395904
+            },
+            {
+              "result": {
+                "rows": 271,
+                "batches": 1,
+                "metadataRowCount": 271,
+                "queueMaxDepth": 1,
+                "producedBatches": 1,
+                "consumedBatches": 1
+              },
+              "durationMs": 4.669208000000026,
+              "peakRssBytes": 168640512,
+              "startRssBytes": 166412288,
+              "endRssBytes": 168640512
+            }
+          ],
+          "avgDurationMs": 5.275166500000012,
+          "minDurationMs": 4.669208000000026,
+          "maxDurationMs": 5.881124999999997,
+          "avgPeakRssBytes": 167518208,
+          "allRunsRowParity": true,
+          "allRunsBatchParity": true,
+          "bridgeMetrics": {
+            "maxQueueDepthObserved": 1,
+            "producedBatchesAvg": 1,
+            "consumedBatchesAvg": 1
+          }
+        }
+      },
+      "winners": {
+        "parseOnlyByAvgDuration": "v3",
+        "vectorizeByAvgDuration": "v3",
+        "parseOnlyByAvgPeakRss": "v2",
+        "vectorizeByAvgPeakRss": "v2"
+      }
+    },
+    {
+      "key": "wvs7",
+      "filePath": "/Users/cobro/Code/Velocity/test_data/WVS/WVS_Cross-National_Wave_7_spss_v6_0.sav",
+      "fileSizeBytes": 185163494,
+      "batchSize": 5000,
+      "iterations": 2,
+      "scenarios": {
+        "v2_parse_only": {
+          "runs": [
+            {
+              "result": {
+                "rows": 97220,
+                "batches": 20,
+                "metadataRowCount": 97220
+              },
+              "durationMs": 4380.96975,
+              "peakRssBytes": 1165377536,
+              "startRssBytes": 539246592,
+              "endRssBytes": 1165377536
+            },
+            {
+              "result": {
+                "rows": 97220,
+                "batches": 20,
+                "metadataRowCount": 97220
+              },
+              "durationMs": 4082.278083,
+              "peakRssBytes": 1208958976,
+              "startRssBytes": 1165393920,
+              "endRssBytes": 1208958976
+            }
+          ],
+          "avgDurationMs": 4231.623916500001,
+          "minDurationMs": 4082.278083,
+          "maxDurationMs": 4380.96975,
+          "avgPeakRssBytes": 1187168256,
+          "allRunsRowParity": true,
+          "allRunsBatchParity": true
+        },
+        "v3_parse_only": {
+          "runs": [
+            {
+              "result": {
+                "rows": 97220,
+                "batches": 20,
+                "metadataRowCount": 97220,
+                "queueMaxDepth": 2,
+                "producedBatches": 20,
+                "consumedBatches": 20
+              },
+              "durationMs": 3259.0977079999993,
+              "peakRssBytes": 2891186176,
+              "startRssBytes": 1208958976,
+              "endRssBytes": 2891186176
+            },
+            {
+              "result": {
+                "rows": 97220,
+                "batches": 20,
+                "metadataRowCount": 97220,
+                "queueMaxDepth": 2,
+                "producedBatches": 20,
+                "consumedBatches": 20
+              },
+              "durationMs": 2748.256125,
+              "peakRssBytes": 2960539648,
+              "startRssBytes": 2891186176,
+              "endRssBytes": 2960539648
+            }
+          ],
+          "avgDurationMs": 3003.6769164999996,
+          "minDurationMs": 2748.256125,
+          "maxDurationMs": 3259.0977079999993,
+          "avgPeakRssBytes": 2925862912,
+          "allRunsRowParity": true,
+          "allRunsBatchParity": true,
+          "bridgeMetrics": {
+            "maxQueueDepthObserved": 2,
+            "producedBatchesAvg": 20,
+            "consumedBatchesAvg": 20
+          }
+        },
+        "v2_vectorize": {
+          "runs": [
+            {
+              "result": {
+                "rows": 97220,
+                "batches": 20,
+                "metadataRowCount": 97220
+              },
+              "durationMs": 7245.9995,
+              "peakRssBytes": 3085959168,
+              "startRssBytes": 2960539648,
+              "endRssBytes": 3085959168
+            },
+            {
+              "result": {
+                "rows": 97220,
+                "batches": 20,
+                "metadataRowCount": 97220
+              },
+              "durationMs": 7467.077083,
+              "peakRssBytes": 3085959168,
+              "startRssBytes": 3085959168,
+              "endRssBytes": 3080372224
+            }
+          ],
+          "avgDurationMs": 7356.5382915,
+          "minDurationMs": 7245.9995,
+          "maxDurationMs": 7467.077083,
+          "avgPeakRssBytes": 3085959168,
+          "allRunsRowParity": true,
+          "allRunsBatchParity": true
+        },
+        "v3_vectorize": {
+          "runs": [
+            {
+              "result": {
+                "rows": 97220,
+                "batches": 20,
+                "metadataRowCount": 97220,
+                "queueMaxDepth": 2,
+                "producedBatches": 20,
+                "consumedBatches": 20
+              },
+              "durationMs": 6275.129582999998,
+              "peakRssBytes": 3080372224,
+              "startRssBytes": 3080372224,
+              "endRssBytes": 2890022912
+            },
+            {
+              "result": {
+                "rows": 97220,
+                "batches": 20,
+                "metadataRowCount": 97220,
+                "queueMaxDepth": 2,
+                "producedBatches": 20,
+                "consumedBatches": 20
+              },
+              "durationMs": 6177.690917,
+              "peakRssBytes": 2890711040,
+              "startRssBytes": 2890022912,
+              "endRssBytes": 2890711040
+            }
+          ],
+          "avgDurationMs": 6226.410249999999,
+          "minDurationMs": 6177.690917,
+          "maxDurationMs": 6275.129582999998,
+          "avgPeakRssBytes": 2985541632,
+          "allRunsRowParity": true,
+          "allRunsBatchParity": true,
+          "bridgeMetrics": {
+            "maxQueueDepthObserved": 2,
+            "producedBatchesAvg": 20,
+            "consumedBatchesAvg": 20
+          }
+        }
+      },
+      "winners": {
+        "parseOnlyByAvgDuration": "v3",
+        "vectorizeByAvgDuration": "v3",
+        "parseOnlyByAvgPeakRss": "v2",
+        "vectorizeByAvgPeakRss": "v3"
+      }
+    }
+  ],
+  "skipped": [],
+  "failures": []
+}

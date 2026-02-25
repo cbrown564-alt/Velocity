@@ -678,6 +678,28 @@ export interface StreamingParseResult extends SavMetadataResult {
 }
 
 /**
+ * Single-pass streaming bridge options.
+ * Credits bound how many row batches can be queued ahead of consumption.
+ */
+export interface SinglePassBridgeOptions {
+    batchSize?: number;
+    initialCredits?: number;
+    maxCredits?: number;
+}
+
+export interface SinglePassBridgeMetrics {
+    initialCredits: number;
+    maxCredits: number;
+    maxQueueDepth: number;
+    producedBatches: number;
+    consumedBatches: number;
+}
+
+export interface SinglePassBridgeResult extends StreamingParseResult {
+    bridge: SinglePassBridgeMetrics;
+}
+
+/**
  * Windowed parse result for row-offset + row-limit extraction.
  */
 export interface WindowParseResult extends SavParseResult {
@@ -968,10 +990,11 @@ export async function parseSavStreaming(
         console.log(`📦 [ReadStat] Metadata extracted: ${variableCount} variables, ${rowCount} rows. Streaming...`);
 
         // Stream rows in batches
+        let activeBatchSize = Math.max(1, Math.floor(batchSize));
         let processedRows = 0;
         let batchCount = 0;
         while (processedRows < rowCount) {
-            const batchEnd = Math.min(processedRows + batchSize, rowCount);
+            const batchEnd = Math.min(processedRows + activeBatchSize, rowCount);
             const rows: (number | string | null)[][] = [];
 
             // Extract this batch of rows
@@ -993,13 +1016,22 @@ export async function parseSavStreaming(
             batchCount++;
 
             // Call the batch callback (await allows for async processing)
-            await onBatch({
+            const suggestedBatchSize = await onBatch({
                 rows,
                 startRow: processedRows,
                 endRow: batchEnd,
                 totalRows: rowCount,
                 progress: batchEnd / rowCount,
+                variables: batchCount === 1 ? variables : undefined,
             });
+
+            if (
+                typeof suggestedBatchSize === 'number' &&
+                Number.isFinite(suggestedBatchSize) &&
+                suggestedBatchSize >= 1
+            ) {
+                activeBatchSize = Math.max(1, Math.floor(suggestedBatchSize));
+            }
 
             // Release WASM memory for processed rows (reduces WASM heap usage)
             if (mod._release_rows_up_to) {
@@ -1030,4 +1062,142 @@ export async function parseSavStreaming(
         // Free the input buffer
         mod._free(bufferPtr);
     }
+}
+
+/**
+ * Stage-2 single-pass bridge (R&D):
+ * producer = parseSavStreaming row extraction, consumer = onBatch ingestion.
+ *
+ * Bounded credits create explicit backpressure and cap queued JS row batches.
+ * This path remains opt-in and should be feature-flagged by callers.
+ */
+export async function parseSavStreamingSinglePassBridge(
+    buffer: ArrayBuffer,
+    options: SinglePassBridgeOptions = {},
+    onBatch: StreamingProgressCallback
+): Promise<SinglePassBridgeResult> {
+    const initialCredits = Math.max(1, Math.floor(options.initialCredits ?? 2));
+    const maxCredits = Math.max(initialCredits, Math.floor(options.maxCredits ?? 4));
+    const initialBatchSize = Math.max(1, Math.floor(options.batchSize ?? 5000));
+
+    let credits = initialCredits;
+    let currentBatchSize = initialBatchSize;
+    const queue: RowBatch[] = [];
+    const creditWaiters: Array<() => void> = [];
+    const queueWaiters: Array<() => void> = [];
+    let parserDone = false;
+    let parserError: Error | null = null;
+    let consumerError: Error | null = null;
+
+    let producedBatches = 0;
+    let consumedBatches = 0;
+    let maxQueueDepth = 0;
+
+    const signalWaiters = (waiters: Array<() => void>): void => {
+        const toNotify = waiters.splice(0, waiters.length);
+        for (const notify of toNotify) notify();
+    };
+
+    const waitForCredit = async (): Promise<void> => {
+        if (credits > 0 || consumerError) return;
+        await new Promise<void>((resolve) => creditWaiters.push(resolve));
+    };
+
+    const waitForQueueItem = async (): Promise<void> => {
+        if (queue.length > 0 || parserDone) return;
+        await new Promise<void>((resolve) => queueWaiters.push(resolve));
+    };
+
+    const consumePromise = (async () => {
+        while (!parserDone || queue.length > 0) {
+            if (consumerError) {
+                break;
+            }
+            if (queue.length === 0) {
+                await waitForQueueItem();
+                continue;
+            }
+
+            const batch = queue.shift()!;
+            try {
+                const suggestedBatchSize = await onBatch(batch);
+                consumedBatches += 1;
+
+                if (
+                    typeof suggestedBatchSize === 'number' &&
+                    Number.isFinite(suggestedBatchSize) &&
+                    suggestedBatchSize >= 1
+                ) {
+                    currentBatchSize = Math.max(1, Math.floor(suggestedBatchSize));
+                }
+            } catch (error: any) {
+                consumerError = error instanceof Error ? error : new Error(String(error));
+                break;
+            } finally {
+                credits = Math.min(maxCredits, credits + 1);
+                signalWaiters(creditWaiters);
+            }
+        }
+    })();
+
+    let parseResult: StreamingParseResult | null = null;
+    try {
+        parseResult = await parseSavStreaming(
+            buffer,
+            initialBatchSize,
+            async (batch) => {
+                while (credits <= 0) {
+                    if (consumerError) {
+                        throw consumerError;
+                    }
+                    await waitForCredit();
+                }
+
+                if (consumerError) {
+                    throw consumerError;
+                }
+
+                credits -= 1;
+                queue.push(batch);
+                producedBatches += 1;
+                if (queue.length > maxQueueDepth) {
+                    maxQueueDepth = queue.length;
+                }
+                signalWaiters(queueWaiters);
+
+                return currentBatchSize;
+            }
+        );
+    } catch (error: any) {
+        parserError = error instanceof Error ? error : new Error(String(error));
+    } finally {
+        parserDone = true;
+        signalWaiters(queueWaiters);
+        signalWaiters(creditWaiters);
+    }
+
+    await consumePromise;
+
+    if (consumerError) {
+        throw consumerError;
+    }
+
+    if (parserError) {
+        throw parserError;
+    }
+
+    if (!parseResult) {
+        throw new Error('Single-pass bridge parse did not return a result');
+    }
+
+    return {
+        ...parseResult,
+        bridge: {
+            initialCredits,
+            maxCredits,
+            maxQueueDepth,
+            producedBatches,
+            consumedBatches,
+        },
+    };
 }

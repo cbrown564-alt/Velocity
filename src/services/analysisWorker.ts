@@ -614,8 +614,13 @@ const CHUNK_UPSHIFT_FACTOR = 1.2;
 
 // Streaming feature flags
 const ENABLE_SAV_STREAMING_V2 = true;
-const ENABLE_SAV_STREAMING_V3_SINGLE_PASS = false; // Stage 2 scaffold (R&D)
+const ENABLE_SAV_STREAMING_V3_SINGLE_PASS = true; // Stage 2 default-on; v2 remains fallback
 const STREAMING_V2_HIGH_RISK_BYTES = CHUNKED_THRESHOLD_BYTES;
+const STREAMING_V3_HIGH_RISK_BYTES = CHUNKED_THRESHOLD_BYTES;
+const V3_INITIAL_CREDITS = 2;
+const V3_MAX_CREDITS = 4;
+
+type SavColumnMetadata = { name: string; type: 'numeric' | 'string' };
 
 function clampChunkSize(size: number): number {
   const rounded = Math.floor(size);
@@ -623,7 +628,7 @@ function clampChunkSize(size: number): number {
 }
 
 function buildEmptyVectorsFromMetadata(
-  variables: Array<{ name: string; type: 'numeric' | 'string' }>
+  variables: SavColumnMetadata[]
 ): Record<string, arrow.Vector> {
   const vectors: Record<string, arrow.Vector> = {};
   for (const variable of variables) {
@@ -634,13 +639,45 @@ function buildEmptyVectorsFromMetadata(
   return vectors;
 }
 
+function buildVectorsFromBatch(
+  rows: (number | string | null)[][],
+  variables: SavColumnMetadata[]
+): Record<string, arrow.Vector> {
+  const numRows = rows.length;
+  const numCols = rows[0]?.length ?? 0;
+  const vectors: Record<string, arrow.Vector> = {};
+
+  for (let c = 0; c < numCols; c++) {
+    const colData: (number | string | null)[] = new Array(numRows);
+    for (let r = 0; r < numRows; r++) {
+      colData[r] = rows[r][c];
+    }
+
+    const colMeta = variables[c];
+    const colName = colMeta?.name || `col_${c}`;
+    const isNumeric = colMeta?.type === 'numeric';
+
+    vectors[colName] = isNumeric
+      ? arrow.vectorFromArray(colData as (number | null)[], new arrow.Float64())
+      : arrow.vectorFromArray(colData as (string | null)[], new arrow.Utf8());
+  }
+
+  return vectors;
+}
+
 async function loadSAVChunked(
   buffer: ArrayBuffer,
   chunkSize: number = DEFAULT_CHUNK_SIZE
 ): Promise<{ variables: Variable[]; variableSets: VariableSet[]; rowCount: number; durationMs: number }> {
+  const useV3 = ENABLE_SAV_STREAMING_V3_SINGLE_PASS && buffer.byteLength >= STREAMING_V3_HIGH_RISK_BYTES;
   const useV2 = ENABLE_SAV_STREAMING_V2 && buffer.byteLength >= STREAMING_V2_HIGH_RISK_BYTES;
-  if (ENABLE_SAV_STREAMING_V3_SINGLE_PASS) {
-    console.warn('🦆 [Worker] Single-pass streaming v3 is not enabled in this build; using v2 path');
+
+  if (useV3) {
+    try {
+      return await loadSAVChunkedV3SinglePass(buffer, chunkSize);
+    } catch (error: any) {
+      console.warn(`🦆 [Worker] V3 single-pass load failed (${error?.message || error}); falling back to v2 path`);
+    }
   }
 
   if (useV2) {
@@ -652,6 +689,128 @@ async function loadSAVChunked(
   }
 
   return loadSAVChunkedLegacy(buffer, chunkSize);
+}
+
+async function loadSAVChunkedV3SinglePass(
+  buffer: ArrayBuffer,
+  chunkSize: number = DEFAULT_CHUNK_SIZE
+): Promise<{ variables: Variable[]; variableSets: VariableSet[]; rowCount: number; durationMs: number }> {
+  if (!db || !conn) throw new Error('DB not initialized');
+
+  const start = performance.now();
+  const fileSizeMb = buffer.byteLength / (1024 * 1024);
+  let activeChunkSize = clampChunkSize(chunkSize);
+  let rowsInserted = 0;
+  let chunksInserted = 0;
+
+  console.log(`🦆 [Worker] Starting single-pass SAV load v3: ${fileSizeMb.toFixed(1)} MB, chunk size ${activeChunkSize}, credits ${V3_INITIAL_CREDITS}/${V3_MAX_CREDITS}`);
+  self.postMessage({
+    type: 'loadProgress',
+    phase: 'parsing',
+    progress: 0,
+    message: `Starting single-pass parse bridge for ${fileSizeMb.toFixed(1)} MB file...`
+  });
+
+  const { parseSavStreamingSinglePassBridge } = await import('@velocity/readstat-wasm');
+  let variableMetadata: SavColumnMetadata[] | null = null;
+
+  await conn.query(`DROP TABLE IF EXISTS main`);
+
+  const streamingResult = await parseSavStreamingSinglePassBridge(
+    buffer,
+    {
+      batchSize: activeChunkSize,
+      initialCredits: V3_INITIAL_CREDITS,
+      maxCredits: V3_MAX_CREDITS,
+    },
+    async (batch) => {
+      if (!variableMetadata) {
+        const vars = batch.variables || [];
+        if (vars.length === 0) {
+          throw new Error('Streaming v3 did not provide variable metadata in the first batch');
+        }
+        variableMetadata = vars.map(v => ({ name: v.name, type: v.type }));
+      }
+
+      if (batch.rows.length === 0) {
+        return activeChunkSize;
+      }
+
+      const insertStart = performance.now();
+      const table = new arrow.Table(buildVectorsFromBatch(batch.rows, variableMetadata));
+      await conn.insertArrowTable(table, { name: 'main', create: chunksInserted === 0 });
+      chunksInserted++;
+      rowsInserted += batch.rows.length;
+
+      const batchMs = performance.now() - insertStart;
+      const progressPct = Math.round(batch.progress * 100);
+      if (chunksInserted % 5 === 0 || progressPct >= 99) {
+        console.log(`📊 [Worker] V3 chunk ${chunksInserted}: ${rowsInserted}/${batch.totalRows} rows (${progressPct}%), ${batchMs.toFixed(0)}ms`);
+        self.postMessage({
+          type: 'loadProgress',
+          phase: 'inserting',
+          progress: batch.progress,
+          rowsProcessed: rowsInserted,
+          totalRows: batch.totalRows,
+          message: `Loaded ${rowsInserted.toLocaleString()} of ${batch.totalRows.toLocaleString()} rows...`
+        });
+      }
+
+      if (batchMs > SLOW_BATCH_MS && activeChunkSize > MIN_CHUNK_SIZE) {
+        activeChunkSize = clampChunkSize(activeChunkSize * CHUNK_DOWNSHIFT_FACTOR);
+      } else if (batchMs < FAST_BATCH_MS && activeChunkSize < MAX_CHUNK_SIZE) {
+        activeChunkSize = clampChunkSize(activeChunkSize * CHUNK_UPSHIFT_FACTOR);
+      }
+
+      return activeChunkSize;
+    }
+  );
+
+  if (rowsInserted === 0) {
+    const emptyVectors = buildEmptyVectorsFromMetadata(
+      streamingResult.metadata.variables.map(v => ({ name: v.name, type: v.type }))
+    );
+    const emptyTable = new arrow.Table(emptyVectors);
+    await conn.insertArrowTable(emptyTable, { name: 'main', create: true });
+  }
+
+  const processedMeta = processMetadata({
+    metadata: {
+      variables: streamingResult.metadata.variables,
+      valueLabelSets: streamingResult.metadata.valueLabelSets,
+      multipleResponseSets: streamingResult.metadata.multipleResponseSets,
+      rowCount: streamingResult.metadata.rowCount,
+    },
+    rows: [],
+  });
+
+  const verifyResult = await conn.query(`SELECT COUNT(*) as cnt FROM main`);
+  const count = Number(verifyResult.toArray()[0]?.cnt);
+  if (count !== rowsInserted) {
+    throw new Error(`Streaming v3 row mismatch: inserted ${rowsInserted}, DuckDB reports ${count}`);
+  }
+
+  const durationMs = performance.now() - start;
+  console.log(
+    `🦆 [Worker] Loaded SAV (single-pass v3): ${count} rows in ${chunksInserted} chunks, ` +
+    `${processedMeta.variables.length} variables in ${durationMs.toFixed(2)}ms ` +
+    `(bridge queue max ${streamingResult.bridge.maxQueueDepth}, produced ${streamingResult.bridge.producedBatches}, consumed ${streamingResult.bridge.consumedBatches})`
+  );
+  self.postMessage({
+    type: 'loadProgress',
+    phase: 'complete',
+    progress: 1,
+    rowsProcessed: count,
+    totalRows: streamingResult.metadata.rowCount,
+    message: `Loaded ${count.toLocaleString()} rows successfully`
+  });
+
+  return {
+    variables: processedMeta.variables,
+    variableSets: processedMeta.variableSets,
+    rowCount: streamingResult.metadata.rowCount,
+    durationMs,
+  };
 }
 
 async function loadSAVChunkedV2(
@@ -675,7 +834,7 @@ async function loadSAVChunkedV2(
   });
 
   const { parseSavStreamingV2 } = await import('@velocity/readstat-wasm');
-  let variableMetadata: { name: string; type: 'numeric' | 'string' }[] | null = null;
+  let variableMetadata: SavColumnMetadata[] | null = null;
 
   await conn.query(`DROP TABLE IF EXISTS main`);
 
@@ -694,25 +853,7 @@ async function loadSAVChunkedV2(
 
     const insertStart = performance.now();
     const numRows = batch.rows.length;
-    const numCols = batch.rows[0].length;
-
-    const vectors: Record<string, arrow.Vector> = {};
-    for (let c = 0; c < numCols; c++) {
-      const colData: (number | string | null)[] = new Array(numRows);
-      for (let r = 0; r < numRows; r++) {
-        colData[r] = batch.rows[r][c];
-      }
-
-      const colMeta = variableMetadata[c];
-      const colName = colMeta?.name || `col_${c}`;
-      const isNumeric = colMeta?.type === 'numeric';
-
-      vectors[colName] = isNumeric
-        ? arrow.vectorFromArray(colData as (number | null)[], new arrow.Float64())
-        : arrow.vectorFromArray(colData as (string | null)[], new arrow.Utf8());
-    }
-
-    const table = new arrow.Table(vectors);
+    const table = new arrow.Table(buildVectorsFromBatch(batch.rows, variableMetadata));
     await conn.insertArrowTable(table, { name: 'main', create: chunksInserted === 0 });
     chunksInserted++;
     rowsInserted += numRows;
@@ -807,7 +948,7 @@ async function loadSAVChunkedLegacy(
 
   const { parseSavStreaming } = await import('@velocity/readstat-wasm');
 
-  let variableMetadata: { name: string; type: 'numeric' | 'string' }[] = [];
+  let variableMetadata: SavColumnMetadata[] = [];
   let isFirstChunk = true;
   let totalRowsInserted = 0;
   let chunksInserted = 0;
@@ -817,46 +958,33 @@ async function loadSAVChunkedLegacy(
 
   const streamingResult = await parseSavStreaming(buffer, chunkSize, async (batch) => {
     if (variableMetadata.length === 0) {
-      const numCols = batch.rows[0]?.length ?? 0;
-      for (let c = 0; c < numCols; c++) {
-        let isNumeric = true;
-        for (const row of batch.rows) {
-          if (row[c] !== null) {
-            isNumeric = typeof row[c] === 'number';
-            break;
+      const vars = batch.variables || [];
+      if (vars.length > 0) {
+        variableMetadata = vars.map(v => ({ name: v.name, type: v.type }));
+      } else {
+        const numCols = batch.rows[0]?.length ?? 0;
+        for (let c = 0; c < numCols; c++) {
+          let isNumeric = true;
+          for (const row of batch.rows) {
+            if (row[c] !== null) {
+              isNumeric = typeof row[c] === 'number';
+              break;
+            }
           }
+          variableMetadata.push({
+            name: `col_${c}`,
+            type: isNumeric ? 'numeric' : 'string',
+          });
         }
-        variableMetadata.push({
-          name: `col_${c}`,
-          type: isNumeric ? 'numeric' : 'string',
-        });
       }
     }
 
     if (batch.rows.length === 0) return;
 
     try {
-      const numCols = batch.rows[0].length;
       const numRows = batch.rows.length;
 
-      const vectors: Record<string, arrow.Vector> = {};
-      for (let c = 0; c < numCols; c++) {
-        const colData: (number | string | null)[] = new Array(numRows);
-        for (let r = 0; r < numRows; r++) {
-          colData[r] = batch.rows[r][c];
-        }
-
-        const isNumeric = variableMetadata[c]?.type === 'numeric';
-        const colName = variableMetadata[c]?.name || `col_${c}`;
-
-        if (isNumeric) {
-          vectors[colName] = arrow.vectorFromArray(colData as (number | null)[], new arrow.Float64());
-        } else {
-          vectors[colName] = arrow.vectorFromArray(colData as (string | null)[], new arrow.Utf8());
-        }
-      }
-
-      const table = new arrow.Table(vectors);
+      const table = new arrow.Table(buildVectorsFromBatch(batch.rows, variableMetadata));
       await conn.insertArrowTable(table, { name: 'main', create: isFirstChunk });
       isFirstChunk = false;
       totalRowsInserted += numRows;
