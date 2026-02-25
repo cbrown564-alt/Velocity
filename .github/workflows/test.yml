@@ -37,7 +37,13 @@ jobs:
         run: npx playwright install --with-deps
 
       - name: Type check
-        run: npx tsc --noEmit
+        run: npm run typecheck:all
+
+      - name: Enforce worker boundary
+        run: npm run check:worker-boundary
+
+      - name: Enforce queryBuilder purity
+        run: npm run check:querybuilder-pure
 
       - name: Run tests with coverage
         run: npm run test:run -- --coverage

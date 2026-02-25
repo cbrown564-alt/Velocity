@@ -1,0 +1,64 @@
+SN:3921  British Social Attitudes Survey, 1996
+
+The variables LIBAUTHB and LFTRIGHB have been updated in the por files for 
+this study.  A memo from Katarina Thomson of the National Centre for Social 
+Research (below) details an error they had found with the two variables
+affected.  They supplied syntax to correct the error and the files have now 
+been corrected.
+
+'The fault is that respondents who did not complete the self-completion
+(where these questions were asked) have not been given a skip code, but
+appear to have scale scores.
+
+Before running this code, there are no -1 values for these variables.
+After running the code, there should be the following number of -1 values:
+
+g921a        535 cases
+g921b        8 cases'
+
+
+The files were corrected and frequencies were run, they matched the expected
+cases listed by the depositor for -1.
+
+The updated g921a.por and g921b.por are now named g921au.por and g921bu.por
+respectively.
+
+13/12/99
+---------------------------------------------------------------------------
+Data Filename Changes:
+
+The following POR files have had their names changed:
+bsa96.por to g921a.por	bsa96_17.por to g921b.por
+
+
+Documentation Filename changes:
+
+Filenames for user documentation are changed by the Data Archive
+for file management purposes.  It is possible that original 
+filenames have been referred to in the body of the documents.
+We provide below a table showing any filename changes that have
+occurred.
+
+
+ |  Filename    |  Description     | PDF Filename |
+ |--------------|------------------|--------------|
+ | bsa96b14.doc }Questionnaire FtoF}              |
+ |--------------|------------------}		  |
+ | sc-a.doc     }Questionnaire A   }              |
+ |--------------|------------------}		  |
+ | sc-b.doc	}Questionnaire B   }              |
+ |--------------|------------------}		  |
+ | sc-c.doc     }Questionnaire C   } a3921uab.pdf | 
+ |--------------|------------------}		  |
+ | cardsa.doc   }Show Cards A      }              |
+ |--------------|------------------}		  |
+ | cardsb.doc	}Show Cards B      }              |
+ |--------------|------------------}		  |
+ | cardsc.doc   }Show Cards C      }              | 
+ |--------------|------------------|--------------| 
+
+
+11.9.01.
+
+Please note that following permission from the Depositor, the Technical 
+Report for this study is now included in the PDF  documentation.  

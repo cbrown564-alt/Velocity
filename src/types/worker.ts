@@ -11,6 +11,54 @@ import { CrosstabQueryOptions } from '../services/queryBuilder';
 import { ProcessedAnalysisData } from './processedData';
 import { ChartType } from './charts';
 
+export interface WorkerAnalysisSettings {
+  comparisonMethod: 'cell_vs_rest' | 'pairwise';
+  correctionType: 'none' | 'bonferroni' | 'fdr';
+  significanceLevel: 0.95 | 0.90 | 0.80;
+}
+
+export interface WorkerAnalysisContext {
+  variables: Record<string, Variable>;
+  variableSets: Record<string, VariableSet>;
+}
+
+export interface RunCrosstabRequestPayload {
+  options: CrosstabQueryOptions & { includeDistributions?: boolean };
+  analysisSettings?: WorkerAnalysisSettings;
+  context: WorkerAnalysisContext;
+}
+
+export interface AnalysisConfigById {
+  crosstab: RunCrosstabRequestPayload;
+}
+
+export interface AnalysisResultById {
+  crosstab: { rows: AggregatedRow[]; tableStats?: TableStats };
+}
+
+type KnownRunAnalysisRequest = {
+  [K in keyof AnalysisConfigById]: { type: 'runAnalysis'; id: K; config: AnalysisConfigById[K] };
+}[keyof AnalysisConfigById];
+
+type UnknownRunAnalysisRequest = {
+  type: 'runAnalysis';
+  id: Exclude<string, keyof AnalysisConfigById>;
+  config: Record<string, unknown>;
+};
+
+type KnownAnalysisResultResponse = {
+  [K in keyof AnalysisResultById]: { type: 'analysisResult'; id: K; result: AnalysisResultById[K]; durationMs: number };
+}[keyof AnalysisResultById];
+
+type UnknownAnalysisResultResponse = {
+  type: 'analysisResult';
+  id: Exclude<string, keyof AnalysisResultById>;
+  result: Record<string, unknown> | null;
+  durationMs: number;
+};
+
+export type WorkerQueryRow = AggregatedRow | Record<string, unknown>;
+
 // ============================================================================
 // Worker Request Types
 // ============================================================================
@@ -33,16 +81,9 @@ export type WorkerRequest =
   | { type: 'clearPersistedData' }
   | {
     type: 'runCrosstab';
-    options: CrosstabQueryOptions & { includeDistributions?: boolean };
-    analysisSettings?: {
-      comparisonMethod: 'cell_vs_rest' | 'pairwise';
-      correctionType: 'none' | 'bonferroni' | 'fdr';
-      significanceLevel: 0.95 | 0.90 | 0.80;
-    };
-    context: {
-      variables: Record<string, Variable>;
-      variableSets: Record<string, VariableSet>;
-    }
+    options: RunCrosstabRequestPayload['options'];
+    analysisSettings?: WorkerAnalysisSettings;
+    context: WorkerAnalysisContext;
   }
   | {
     type: 'processData';
@@ -56,7 +97,8 @@ export type WorkerRequest =
     };
     chartType?: ChartType;
   }
-  | { type: 'runAnalysis'; id: string; config: any }
+  | KnownRunAnalysisRequest
+  | UnknownRunAnalysisRequest
   | { type: 'exportArrow'; sql: string; columns?: string[] }
   | { type: 'ping' };
 
@@ -114,7 +156,7 @@ export type WorkerResponse =
   | { type: 'savSampleLoaded'; variables: Variable[]; variableSets: VariableSet[]; rowCount: number; sampleRowCount: number; sampleStrategy: 'sequential' | 'spread'; durationMs: number }
   | { type: 'loadProgress'; phase: 'parsing' | 'inserting' | 'complete'; progress: number; rowsProcessed?: number; totalRows?: number; message: string }
   | { type: 'flushComplete'; ok: boolean; durationMs: number; error?: string }
-  | { type: 'queryResult'; data: any[]; durationMs: number; tableStats?: TableStats }
+  | { type: 'queryResult'; data: WorkerQueryRow[]; durationMs: number; tableStats?: TableStats }
   | { type: 'uniqueValues'; data: string[] }
   | { type: 'variableStats'; stats: VariableStatsResult }
   | { type: 'recodeComplete'; newColName: string }
@@ -123,6 +165,7 @@ export type WorkerResponse =
   | { type: 'persistedDataCleared' }
   | { type: 'pong'; hasData: boolean; rowCount?: number }
   | { type: 'processedData'; requestId?: string; result: ProcessedAnalysisData | null }
-  | { type: 'analysisResult'; id: string; result: any; durationMs: number }
+  | KnownAnalysisResultResponse
+  | UnknownAnalysisResultResponse
   | { type: 'arrowExported'; buffer: ArrayBuffer; rowCount: number; durationMs: number }
   | { type: 'error'; message: string };

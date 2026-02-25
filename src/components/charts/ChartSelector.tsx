@@ -14,7 +14,6 @@ import {
     MoveHorizontal
 } from 'lucide-react';
 import { ChartType } from '../../types/charts';
-import { useVelocityStore } from '../../store';
 import styles from './ChartSelector.module.css';
 
 interface ChartSelectorProps {
@@ -66,8 +65,6 @@ export const ChartSelector: React.FC<ChartSelectorProps> = ({
     onSelect,
     className = '',
 }) => {
-    const setSelectedChartType = useVelocityStore((state) => state.setSelectedChartType);
-
     // Default to a common set if not provided
     const typesToShow: ChartType[] = availableTypes || [
         'horizontal-bar',
@@ -78,12 +75,7 @@ export const ChartSelector: React.FC<ChartSelectorProps> = ({
     ];
 
     const handleSelect = (type: ChartType) => {
-        if (onSelect) {
-            onSelect(type);
-        } else {
-            // Default behavior: update global store
-            setSelectedChartType(type);
-        }
+        onSelect?.(type);
     };
 
     return (

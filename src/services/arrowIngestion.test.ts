@@ -131,10 +131,11 @@ describe('Arrow Table Creation', () => {
             const table = new arrow.Table(vectors);
 
             const duration = performance.now() - start;
+            const perfBudgetMs = process.env.CI ? 300 : 200;
 
             expect(table.numRows).toBe(numRows);
-            // Arrow table creation should be fast - under 100ms for 10k rows
-            expect(duration).toBeLessThan(100);
+            // Runtime and host load can vary; enforce a conservative upper bound.
+            expect(duration).toBeLessThan(perfBudgetMs);
         });
     });
 

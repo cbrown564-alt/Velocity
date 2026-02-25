@@ -6,12 +6,20 @@ export const mapCrosstabRows = (rows: any[], isWeighted: boolean): AggregatedRow
       .filter((k) => k.startsWith('rowKey_'))
       .sort()
       .map((k) => row[k]);
+    const count = Number(row.count ?? row.validCount ?? 0);
+    const weightedCount =
+      row.weightedCount !== undefined
+        ? Number(row.weightedCount)
+        : (isWeighted ? Number(row.count ?? 0) : undefined);
 
     return {
       rowKeys,
       colKey: row.colKey,
-      count: isWeighted ? 0 : Number(row.count ?? row.validCount ?? 0),
-      weightedCount: isWeighted ? Number(row.count) : undefined,
+      count,
+      weightedCount,
+      sumSqWeights: row.sumSqWeights !== undefined ? Number(row.sumSqWeights) : undefined,
+      sumXW: row.sumXW !== undefined ? Number(row.sumXW) : undefined,
+      sumX2W: row.sumX2W !== undefined ? Number(row.sumX2W) : undefined,
       mean: row.mean,
       median: row.median,
       stdDev: row.stdDev,

@@ -2,13 +2,15 @@
   {
     "rowKey_0": "Female",
     "colKey": "Total",
-    "count": 3,
+    "count": 2,
+    "weightedCount": 3,
     "sumSqWeights": 4.5
   },
   {
     "rowKey_0": "Male",
     "colKey": "Total",
-    "count": 2,
+    "count": 3,
+    "weightedCount": 2,
     "sumSqWeights": 1.5
   }
 ]

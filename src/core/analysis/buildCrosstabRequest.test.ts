@@ -42,8 +42,8 @@ describe('buildCrosstabRequest', () => {
       ...mockDataset,
       variables: [
         ...mockDataset.variables,
-        { id: 'mr_1', name: 'mr_1', label: 'Coke', type: 'nominal', valueLabels: [], missingValues: {} },
-        { id: 'mr_2', name: 'mr_2', label: 'Pepsi', type: 'nominal', valueLabels: [], missingValues: {} },
+        { id: 'mr_1', name: 'mr_1', label: 'Coke', type: 'nominal' as const, valueLabels: [], missingValues: {} },
+        { id: 'mr_2', name: 'mr_2', label: 'Pepsi', type: 'nominal' as const, valueLabels: [], missingValues: {} },
       ],
     };
 

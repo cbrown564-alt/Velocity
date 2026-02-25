@@ -1186,7 +1186,14 @@ export default function App() {
   return (
     <div className={`min-h-screen bg-[var(--bg-app)] text-[var(--text-primary)] antialiased overflow-hidden flex flex-col ${draggingId ? 'select-none cursor-grabbing' : ''}`}>
 
-      <input type="file" ref={fileInputRef} onChange={handleFileUpload} className="hidden" accept=".csv,.sav" />
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={handleFileUpload}
+        className="hidden"
+        accept=".csv,.sav"
+        data-testid="dataset-upload-input"
+      />
 
       {/* MODALS */}
       <DataDrawer

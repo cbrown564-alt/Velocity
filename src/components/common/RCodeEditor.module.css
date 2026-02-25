@@ -238,7 +238,7 @@
 }
 
 .editorContainer :global(.monaco-editor .margin) {
-  background: #1e1e1e !important;
+  background: var(--bg-panel) !important;
 }
 
 /* Results Area */

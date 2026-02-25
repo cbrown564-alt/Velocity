@@ -10,6 +10,10 @@ import { DatabaseAdapter, QueryResult, StreamOptions } from '../core/DatabaseAda
 import { Variable, VariableSet } from '../types';
 import { escapeString } from '../services/queryBuilder';
 
+type LegacyDuckDBChunk = {
+  value: (columnIndex: number, rowIndex: number) => unknown;
+};
+
 export class DuckDBNodeAdapter implements DatabaseAdapter {
   private constructor(
     private instance: DuckDBInstance,
@@ -46,13 +50,26 @@ export class DuckDBNodeAdapter implements DatabaseAdapter {
     for await (const chunk of result) {
       const rowCount = chunk.rowCount;
       const rows: Record<string, unknown>[] = [];
-      for (let r = 0; r < rowCount; r++) {
-        const row: Record<string, unknown> = {};
-        for (let c = 0; c < columns.length; c++) {
-          const val = chunk.value(c, r);
-          row[columns[c]] = typeof val === 'bigint' ? Number(val) : val;
+      if (typeof chunk.getRows === 'function') {
+        const chunkRows = chunk.getRows();
+        for (let r = 0; r < rowCount; r++) {
+          const row: Record<string, unknown> = {};
+          for (let c = 0; c < columns.length; c++) {
+            const val = chunkRows[r]?.[c];
+            row[columns[c]] = typeof val === 'bigint' ? Number(val) : val;
+          }
+          rows.push(row);
         }
-        rows.push(row);
+      } else {
+        const legacyChunk = chunk as unknown as LegacyDuckDBChunk;
+        for (let r = 0; r < rowCount; r++) {
+          const row: Record<string, unknown> = {};
+          for (let c = 0; c < columns.length; c++) {
+            const val = legacyChunk.value(c, r);
+            row[columns[c]] = typeof val === 'bigint' ? Number(val) : val;
+          }
+          rows.push(row);
+        }
       }
       yield { columns, rows, rowCount };
     }

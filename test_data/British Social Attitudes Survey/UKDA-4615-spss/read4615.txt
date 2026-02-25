@@ -1,0 +1,49 @@
+
+UK DATA ARCHIVE DOCUMENTATION
+
+
+SN: 4615 British Social Attitudes Survey, 2001 
+
+
+Data Archive processing standards
+---------------------------------
+The data were processed to the UK Data Archive's ‘A*’ standard. This is 
+the Archive's highest standard, and means that an extremely rigorous and 
+comprehensive series of checks was carried out to ensure the quality of 
+the data and documentation. Briefly, the most important procedures were 
+as follows. Firstly, checks were made that the number of cases and 
+variables matched the depositor's records. Secondly, checks were made 
+that all variables had comprehensible variable labels and all nominal 
+(categorical) variables had comprehensible value labels. Where possible, 
+either with reference to the documentation and/or in communication with 
+the depositor, labels were accordingly edited or created. Thirdly, 
+logical checks were performed to ensure that nominal (categorical) 
+variables had values within the range defined (either by value labels or 
+in the depositor's documentation). Lastly, any data or documentation 
+that breached confidentiality rules were altered or suppressed to 
+preserve anonymity.
+
+All notable and/or outstanding problems discovered are detailed under 
+the ‘Data and documentation problems’ heading below.
+
+
+Conversion of data and documentation formats
+--------------------------------------------
+Data have been converted to tab-delimited and STATA format.
+
+All documentation supplied to the Archive has been assembled as a fully 
+bookmarked Adobe PDF user guide. Rich Text Format versions of data 
+dictionary files have been made available.
+
+
+Data and documentation problems
+-------------------------------
+
+
+New edition information
+-----------------------
+
+
+Notes from data delivery and post-order corrections
+---------------------------------------------------
+

@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+import JSZip from 'jszip';
 import { exportPptx, formatCell } from '../pptxExporter';
 import { exportXlsx } from '../xlsxExporter';
 import { ExportConfig } from '../types';
@@ -124,6 +125,10 @@ const config: ExportConfig = {
   ],
 };
 
+async function loadZip(bytes: Uint8Array): Promise<JSZip> {
+  return JSZip.loadAsync(bytes);
+}
+
 // ---------------------------------------------------------------------------
 // formatCell unit tests
 // ---------------------------------------------------------------------------
@@ -198,6 +203,25 @@ describe('exportPptx', () => {
     expect(bytes[3]).toBe(0x04);
   });
 
+  it('includes analysis slide XML content for exported table data', async () => {
+    const bytes = await exportPptx(config);
+    const zip = await loadZip(bytes);
+
+    const slidePaths = Object.keys(zip.files).filter((name) =>
+      /^ppt\/slides\/slide\d+\.xml$/.test(name)
+    );
+    expect(slidePaths.length).toBeGreaterThan(0);
+
+    const slideXml = await Promise.all(
+      slidePaths.map((path) => zip.file(path)!.async('string'))
+    );
+    const combined = slideXml.join('\n');
+
+    expect(combined).toContain('Male');
+    expect(combined).toContain('Female');
+    expect(combined).toContain('Gender by Agreement');
+  });
+
   it('handles multiple analyses', async () => {
     const multiConfig: ExportConfig = {
       title: 'Multi Report',
@@ -234,6 +258,12 @@ describe('exportPptx', () => {
     const bytes = await exportPptx(chartConfig);
     expect(bytes).toBeInstanceOf(Uint8Array);
     expect(bytes.length).toBeGreaterThan(1000);
+
+    const zip = await loadZip(bytes);
+    const chartXmlEntry = zip.file('ppt/charts/chart1.xml');
+    expect(chartXmlEntry).toBeDefined();
+    const chartXml = await chartXmlEntry!.async('string');
+    expect(chartXml).toContain('<c:barChart');
   });
 
   it('handles donut chart type without throwing', async () => {

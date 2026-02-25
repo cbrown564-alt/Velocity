@@ -1,0 +1,66 @@
+Lookup table for users of SPSS 11 and previous
+Short and full variable names for file: trust
+
+Abbreviated  Extended
+Name         Name
+
+activiti     activities
+amountpa     amountpay
+attend_r     attend_reli
+birthyea     birthyear_c2
+concentr     concentrate
+confiden     confidence
+cooperat     cooperation
+difficul     difficulties
+dur_hous     dur_house
+easy_und     easy_under
+employ_1     employed_c2
+exp_upwa     exp_upward
+firmsi_1     firmsize2
+firmsi_2     firmsize3
+firmsize     firmsize1
+good_coo     good_coop
+good_hea     good_health
+hh_membe     hh_member_c2
+hhinc_11     hhinc_1150
+hhinc_25     hhinc_250
+hhinc_45     hhinc_450
+hhinc_65     hhinc_650
+imaginat     imagination
+inf_expe     inf_experiment
+interest     interest_pol
+interv_1     interview_month
+interv_2     interview_year
+interv_3     interview_outcome
+intervie     interview_day
+last_int     last_interview
+lostslee     lostsleep
+mlstat_c     mlstat_c2
+never_ma     never_mar
+nr_activ     nr_active
+nr_membe     nr_member
+nrcalls_     nrcalls_new
+other_pe     other_people
+otheradd     otheraddress
+partnr_c     partnr_c2
+qualif_1     qualification_b
+qualific     qualification_a
+stage1de     stage1dec
+stage2de     stage2dec
+trust__1     trust_2550
+trust__2     trust_inc2
+trust__3     trust_inc3
+trust_in     trust_inc1
+trust_ma     trust_man
+trust_no     trust_noreli
+C
+
+
+
+trust_pe     trust_people
+trust_re     trust_reli
+trust_wo     trust_woman
+understa     understand
+upward_m     upward_mob
+worthles     worthless
+

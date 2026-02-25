@@ -20,10 +20,11 @@ test('OPFS persists dataset across reloads', async ({ page }) => {
 
   test.skip(!opfsSupported, 'OPFS not supported in this environment');
 
-  const uploadButton = page.getByRole('button', { name: /Drop \.SAV or \.CSV file to analyze/i });
-  await expect(uploadButton).toBeEnabled({ timeout: 60000 });
+  await expect(page.getByRole('button', { name: /Upload/i }).first()).toBeVisible({ timeout: 60000 });
 
-  await page.setInputFiles('input[type="file"]', savFixture);
+  const fileInput = page.getByTestId('dataset-upload-input');
+  await expect(fileInput).toBeAttached({ timeout: 60000 });
+  await fileInput.setInputFiles(savFixture);
 
   const surveyQuestions = page.getByText(/Survey Questions/);
   const metadataLoaded = page.getByText('Metadata Loaded');
@@ -39,6 +40,15 @@ test('OPFS persists dataset across reloads', async ({ page }) => {
     await loadFull.click();
     await expect(surveyQuestions).toBeVisible({ timeout: 120000 });
   }
+
+  // Hub-and-spoke mode transition should preserve loaded state.
+  const modeToggle = page.locator('button[title="Toggle Variable Manager (D)"]');
+  await expect(modeToggle).toBeVisible({ timeout: 30000 });
+  await modeToggle.click();
+  await expect(page.getByText('Variable Manager')).toBeVisible({ timeout: 30000 });
+  await page.keyboard.press('d');
+  await expect(page.getByText('Variable Manager')).toBeHidden({ timeout: 30000 });
+  await expect(surveyQuestions).toBeVisible({ timeout: 30000 });
 
   await page.reload();
 

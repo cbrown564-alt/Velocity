@@ -31,6 +31,37 @@ export default defineConfig(({ mode }) => {
     },
     worker: {
       format: 'es'
-    }
+    },
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (!id.includes('node_modules')) return;
+
+            if (id.includes('@duckdb/') || id.includes('apache-arrow')) {
+              return 'duckdb-vendor';
+            }
+            if (id.includes('pptxgenjs') || id.includes('exceljs')) {
+              return 'export-vendor';
+            }
+            if (id.includes('framer-motion')) {
+              return 'motion-vendor';
+            }
+            if (id.includes('@dnd-kit/')) {
+              return 'dnd-vendor';
+            }
+            if (id.includes('d3-')) {
+              return 'd3-vendor';
+            }
+            if (id.includes('webr')) {
+              return 'webr-vendor';
+            }
+            if (id.includes('react') || id.includes('zustand') || id.includes('lucide-react')) {
+              return 'ui-vendor';
+            }
+          },
+        },
+      },
+    },
   };
 });

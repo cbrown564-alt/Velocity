@@ -174,6 +174,67 @@ describe('SPSS Parity: Weighted Statistics', () => {
   });
 });
 
+describe('SPSS Parity: Weighted Denominator Integrity', () => {
+  it('excludes NULL measure rows from weighted denominators', async () => {
+    const db = await DuckDBNodeAdapter.create();
+    await db.execute(`
+      CREATE OR REPLACE TABLE main AS
+      SELECT * FROM (VALUES
+        ('A', 10.0, 1.0),
+        ('A', NULL, 100.0),
+        ('A', 20.0, 1.0)
+      ) AS t("group", "value", "weight")
+    `);
+
+    const results = await runCrosstab(db, {
+      rowVars: [],
+      colVar: 'group',
+      measureVar: 'value',
+      measureLabel: 'Value',
+      weightVar: 'weight',
+      filters: [],
+    }, { variables: {}, variableSets: {} });
+
+    await db.close();
+
+    const groupA = results.rows.find((r: any) => r.colKey === 'A');
+    expect(groupA.mean).toBeCloseTo(15.0, 6);
+    expect(groupA.validCount).toBe(2);
+    expect(groupA.count).toBe(3);
+    expect(groupA.weightedCount).toBeCloseTo(2.0, 6);
+  });
+
+  it('preserves unweighted and weighted bases for weighted frequency queries', async () => {
+    const db = await DuckDBNodeAdapter.create();
+    await db.execute(`
+      CREATE OR REPLACE TABLE main AS
+      SELECT * FROM (VALUES
+        ('A', 1.0),
+        ('A', 100.0),
+        ('A', 1.0),
+        ('B', 0.5)
+      ) AS t("group", "weight")
+    `);
+
+    const results = await runCrosstab(db, {
+      rowVars: ['group'],
+      colVar: null,
+      weightVar: 'weight',
+      filters: [],
+    }, { variables: {}, variableSets: {} });
+
+    await db.close();
+
+    const groupA = results.rows.find((r: any) => r.rowKey_0 === 'A');
+    const groupB = results.rows.find((r: any) => r.rowKey_0 === 'B');
+
+    expect(groupA.count).toBe(3);
+    expect(groupA.weightedCount).toBeCloseTo(102.0, 6);
+    expect(groupB.count).toBe(1);
+    expect(groupB.weightedCount).toBeCloseTo(0.5, 6);
+  });
+});
+
 describe('SPSS Parity: Cell-vs-Rest Significance', () => {
   it('uses exact rest mean (not total mean) for t-test', async () => {
     // When comparing Cell A vs Rest:

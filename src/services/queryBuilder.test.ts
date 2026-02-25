@@ -54,8 +54,9 @@ describe('queryBuilder', () => {
                 weightVar: 'weight',
             });
 
-            expect(sql).toContain('SUM("weight")::DOUBLE as count');
-            expect(sql).not.toContain('COUNT(*)');
+            expect(sql).toContain('COUNT(*)::INTEGER as count');
+            expect(sql).toContain('SUM("weight")::DOUBLE as weightedCount');
+            expect(sql).toContain('SUM("weight" * "weight")::DOUBLE as sumSqWeights');
         });
 
         it('throws error when no row variables provided', () => {
@@ -121,7 +122,7 @@ describe('queryBuilder', () => {
                 gridAggregate: true,
             });
 
-            expect(sql).toContain('SUM("weight" * "weight")::DOUBLE as sumSqWeights');
+            expect(sql).toContain('SUM(CASE WHEN _synthetic_value IS NOT NULL THEN "weight" * "weight" ELSE 0 END)::DOUBLE as sumSqWeights');
             expect(sql).toContain('item_label as rowKey_0');
         });
 
@@ -144,9 +145,24 @@ describe('queryBuilder', () => {
                 weightVar: 'weight'
             });
 
-            expect(sql).toContain('(SUM("Age" * "weight") / SUM("weight"))::DOUBLE as mean');
-            expect(sql).toContain('SQRT(ABS((SUM("weight" * "Age" * "Age") / SUM("weight")) - POWER(SUM("weight" * "Age") / SUM("weight"), 2)))::DOUBLE as stdDev');
+            expect(sql).toContain('(SUM(CASE WHEN "Age" IS NOT NULL THEN "Age" * "weight" ELSE 0 END) / NULLIF(SUM(CASE WHEN "Age" IS NOT NULL THEN "weight" ELSE 0 END), 0))::DOUBLE as mean');
+            expect(sql).toContain('SQRT(ABS((SUM(CASE WHEN "Age" IS NOT NULL THEN "Age" * "Age" * "weight" ELSE 0 END) / NULLIF(SUM(CASE WHEN "Age" IS NOT NULL THEN "weight" ELSE 0 END), 0)) - POWER(SUM(CASE WHEN "Age" IS NOT NULL THEN "Age" * "weight" ELSE 0 END) / NULLIF(SUM(CASE WHEN "Age" IS NOT NULL THEN "weight" ELSE 0 END), 0), 2)))::DOUBLE as stdDev');
+            expect(sql).toContain('SUM(CASE WHEN "Age" IS NOT NULL THEN "weight" ELSE 0 END)::DOUBLE as weightedCount');
             expect(sql).toContain('QUANTILE_CONT("Age", 0.5 ORDER BY "Age") as median');
+        });
+
+        it('uses valid-only weighted denominators for measure variables', () => {
+            const sql = buildCrosstabQuery({
+                rowVars: ['Gender'],
+                colVar: 'Region',
+                measureVar: 'Age',
+                measureLabel: 'Age',
+                weightVar: 'weight',
+            });
+
+            expect(sql).toContain('SUM(CASE WHEN "Age" IS NOT NULL THEN "weight" ELSE 0 END)');
+            expect(sql).toContain('SUM(CASE WHEN "Age" IS NOT NULL THEN "Age" * "weight" ELSE 0 END)');
+            expect(sql).toContain('SUM(CASE WHEN "Age" IS NOT NULL THEN "Age" * "Age" * "weight" ELSE 0 END)');
         });
 
         it('builds an unweighted measure query for scale variables', () => {

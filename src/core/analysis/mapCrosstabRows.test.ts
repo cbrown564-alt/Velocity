@@ -32,7 +32,9 @@ describe('mapCrosstabRows', () => {
       {
         rowKey_0: 1,
         colKey: 'X',
-        count: 42.5,
+        count: 40,
+        weightedCount: 42.5,
+        sumSqWeights: 45.25,
         validCount: 40,
       },
     ];
@@ -42,8 +44,9 @@ describe('mapCrosstabRows', () => {
     expect(result).toHaveLength(1);
     expect(result[0].rowKeys).toEqual([1]);
     expect(result[0].colKey).toBe('X');
-    expect(result[0].count).toBe(0);
+    expect(result[0].count).toBe(40);
     expect(result[0].weightedCount).toBe(42.5);
+    expect(result[0].sumSqWeights).toBe(45.25);
     expect(result[0].validCount).toBe(40);
   });
 });

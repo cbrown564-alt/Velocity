@@ -23,7 +23,7 @@ const INITIAL_STATE: MergeModalState = {
 export const useMergeOrchestration = (fallbackVariableId?: string) => {
     const [mergeModal, setMergeModal] = useState<MergeModalState>(INITIAL_STATE);
     const recodeVariable = useVelocityStore(state => state.recodeVariable);
-    const variables = useVelocityStore(state => state.variables);
+    const dataset = useVelocityStore(state => state.dataset);
 
     const openMerge = useCallback((event: MergeEvent) => {
         setMergeModal({
@@ -47,7 +47,7 @@ export const useMergeOrchestration = (fallbackVariableId?: string) => {
         });
         mappings[mergeModal.targetItem.rawValue] = groupName;
 
-        const variable = variables.find(v => v.id === mergeModal.variableId);
+        const variable = dataset?.variables.find(v => v.id === mergeModal.variableId);
         const label = variable?.label ?? mergeModal.variableId;
 
         try {
@@ -61,7 +61,7 @@ export const useMergeOrchestration = (fallbackVariableId?: string) => {
         }
 
         setMergeModal(INITIAL_STATE);
-    }, [mergeModal, recodeVariable, variables]);
+    }, [dataset, mergeModal, recodeVariable]);
 
     return {
         mergeModal,

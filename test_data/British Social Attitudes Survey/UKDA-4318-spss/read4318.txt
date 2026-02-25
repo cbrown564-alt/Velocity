@@ -1,0 +1,58 @@
+ARCHIVE DOCUMENTATION
+
+STUDY NO: 4318
+
+STUDY TITLE: British Social Attitudes, 1999
+
+
+Validation and conversion:
+--------------------------
+  Data and documentation received in SPSS portable file/ MS Word format
+  from National Centre for Social Research (Natcen), December 2000.
+
+
+Conversion process:
+-------------------
+  Data file checked and processed to Archive standard. Documentation
+  converted to PDF (portable document format) User Guide using Adobe
+  Acrobat Exchange. Bookmarks added to PDF User Guide to aid navigation.
+
+
+Summary of value-added outputs:
+------------------------------- 
+  See above.
+
+
+Constraints on the reliability and/or usability of the data:
+------------------------------------------------------------
+  During the preparation of the User Guide, it was noted that Address
+  Record Form A (file arf-av1.doc) would not translate well from the
+  MS Word original - some text would not display properly. Therefore
+  the document was scanned from the paper copy sent by the depositor.
+  Paper copies of the Address Record Forms B and C also sent by
+  the depositor are identical to A, so not included in the User Guide,
+  though the Technical Report may make reference to them.
+
+  No copy of the Technical Report was sent to the Data Archive by the
+  depositor with the dataset - it is due for publication during Spring
+  2001 (see also note below).
+
+  Some variable names in the SPSS file differ from those in the
+  documentation; these are noted in the footnotes at the bottom of the
+  pages in the Blaise questionnaire documentation in the User Guide.
+  All variables on the SPSS file are identifiable from the documentation,
+  as the question number is included in the variable label.
+  
+
+Any outstanding problems or queries:
+------------------------------------ 
+  None noted.
+
+   
+Technical report recommended/essential:
+---------------------------------------
+  The technical report associated with this study is due for publication
+  during Spring 2001 by Natcen. It is recommended that users purchase this
+  report once it is available. Bibliographic details will be added to this
+  note once the report has been published.
+

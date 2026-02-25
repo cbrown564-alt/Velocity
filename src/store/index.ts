@@ -32,6 +32,7 @@ import {
     onRehydrateStorage,
     type DataFingerprint,
 } from './persistConfig';
+import { getSafeLocalStorage } from './safeStorage';
 
 export type { DataFingerprint };
 
@@ -59,9 +60,9 @@ export const useVelocityStore = create<VelocityState>()(
         {
             name: STORAGE_KEY,
             version: STORAGE_VERSION,
-            storage: createJSONStorage(() => localStorage),
+            storage: createJSONStorage(getSafeLocalStorage),
             partialize,
-            onRehydrateStorage: () => onRehydrateStorage,
+            onRehydrateStorage,
         }
     )
 );
@@ -85,7 +86,6 @@ export type {
 // UI types
 export type {
     AppMode,
-    ViewMode,
     RecodeModalState,
     FilterModalState,
 } from './slices/uiSlice';

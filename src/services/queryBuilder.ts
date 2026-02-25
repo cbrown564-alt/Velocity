@@ -47,10 +47,6 @@ export function buildGridQuery(options: GridQueryOptions): string {
         whereConditions.push(filterClause);
     }
 
-    const countExpr = weightVar
-        ? `SUM("${escapeIdentifier(weightVar)}")::DOUBLE`
-        : `COUNT(*)::INTEGER`;
-
     // 4. Metric Aggregation vs Frequency
     let selectClause = '';
     let groupByClause = '';
@@ -65,11 +61,15 @@ export function buildGridQuery(options: GridQueryOptions): string {
 
         const w = weightVar ? `"${escapeIdentifier(weightVar)}"` : null;
         const val = `_synthetic_value`; // No cast needed if underlying is numeric
+        const weightedDenom = w ? `SUM(CASE WHEN ${val} IS NOT NULL THEN ${w} ELSE 0 END)` : null;
+        const weightedSumXW = w ? `SUM(CASE WHEN ${val} IS NOT NULL THEN ${val} * ${w} ELSE 0 END)` : null;
+        const weightedSumX2W = w ? `SUM(CASE WHEN ${val} IS NOT NULL THEN ${val} * ${val} * ${w} ELSE 0 END)` : null;
+        const weightedSumW2 = w ? `SUM(CASE WHEN ${val} IS NOT NULL THEN ${w} * ${w} ELSE 0 END)` : null;
 
         const statsExpr = w
             ? `
-                (SUM(${val} * ${w}) / SUM(${w}))::DOUBLE as mean,
-                SQRT(ABS((SUM(${w} * ${val} * ${val}) / SUM(${w})) - POWER(SUM(${w} * ${val}) / SUM(${w}), 2)))::DOUBLE as stdDev,
+                (${weightedSumXW} / NULLIF(${weightedDenom}, 0))::DOUBLE as mean,
+                SQRT(ABS((${weightedSumX2W} / NULLIF(${weightedDenom}, 0)) - POWER(${weightedSumXW} / NULLIF(${weightedDenom}, 0), 2)))::DOUBLE as stdDev,
                 MIN(${val}) as min,
                 MAX(${val}) as max,
                 QUANTILE_CONT(${val}, 0.5 ORDER BY ${val}) as median,
@@ -77,10 +77,10 @@ export function buildGridQuery(options: GridQueryOptions): string {
                 QUANTILE_CONT(${val}, 0.75 ORDER BY ${val}) as q3,
                 COUNT(${val})::INTEGER as validCount,
                 COUNT(*)::INTEGER as count,
-                SUM(${w})::DOUBLE as weightedCount,
-                SUM(${w} * ${w})::DOUBLE as sumSqWeights,
-                SUM(${val} * ${w})::DOUBLE as sumXW,
-                SUM(${val} * ${val} * ${w})::DOUBLE as sumX2W
+                ${weightedDenom}::DOUBLE as weightedCount,
+                ${weightedSumW2}::DOUBLE as sumSqWeights,
+                ${weightedSumXW}::DOUBLE as sumXW,
+                ${weightedSumX2W}::DOUBLE as sumX2W
             `
             : `
                 AVG(${val}) as mean,
@@ -112,10 +112,18 @@ export function buildGridQuery(options: GridQueryOptions): string {
         // The original code did: _synthetic_value as rowKey_0 (Value is Row), item_label as colKey (Item is Column)
         // This produces columns of questions, with rows being "1", "2", "3".
 
+        const weightedStatsExpr = weightVar
+            ? `
+            COUNT(*)::INTEGER as count,
+            SUM("${escapeIdentifier(weightVar)}")::DOUBLE as weightedCount,
+            SUM("${escapeIdentifier(weightVar)}" * "${escapeIdentifier(weightVar)}")::DOUBLE as sumSqWeights
+        `
+            : `COUNT(*)::INTEGER as count`;
+
         selectClause = `
             _synthetic_value as rowKey_0,
             item_label as colKey,
-            ${countExpr} as count
+            ${weightedStatsExpr}
         `;
         groupByClause = `GROUP BY _synthetic_value, item_label`;
     }
@@ -217,9 +225,9 @@ function buildMultipleQuery(options: MultipleQueryOptions): string {
     const { columns, filters, weightVar, colVar } = options;
 
     const whereClause = buildFilterClause(filters);
-    const countExpr = weightVar
-        ? `SUM("${escapeIdentifier(weightVar)}")::DOUBLE`
-        : `COUNT(*)::INTEGER`;
+    const statsExpr = weightVar
+        ? `COUNT(*)::INTEGER as count, SUM("${escapeIdentifier(weightVar)}")::DOUBLE as weightedCount, SUM("${escapeIdentifier(weightVar)}" * "${escapeIdentifier(weightVar)}")::DOUBLE as sumSqWeights`
+        : `COUNT(*)::INTEGER as count`;
 
     const colSelector = colVar
         ? `"${escapeIdentifier(colVar)}"`
@@ -230,7 +238,7 @@ function buildMultipleQuery(options: MultipleQueryOptions): string {
     // Build UNION ALL query for each column, filtering by countedValue
     const unionParts = columns.map(({ name, label, countedValue }) => {
         const parts = [
-            `SELECT '${escapeString(label)}' as rowKey_0, ${colSelector} as colKey, ${countExpr} as count`,
+            `SELECT '${escapeString(label)}' as rowKey_0, ${colSelector} as colKey, ${statsExpr}`,
             `FROM main`,
         ];
 
@@ -278,7 +286,7 @@ function buildColumnMultipleQuery(options: ColumnMultipleQueryOptions): string {
     const groupByClause = groupByCols ? `GROUP BY ${groupByCols}` : '';
 
     const statsExpr = weightVar
-        ? `SUM("${escapeIdentifier(weightVar)}")::DOUBLE as count, SUM("${escapeIdentifier(weightVar)}" * "${escapeIdentifier(weightVar)}")::DOUBLE as sumSqWeights`
+        ? `COUNT(*)::INTEGER as count, SUM("${escapeIdentifier(weightVar)}")::DOUBLE as weightedCount, SUM("${escapeIdentifier(weightVar)}" * "${escapeIdentifier(weightVar)}")::DOUBLE as sumSqWeights`
         : `COUNT(*)::INTEGER as count`;
 
     const unionParts = columns.map(({ name, label, countedValue }) => {
@@ -467,13 +475,17 @@ export function buildCrosstabQuery(options: CrosstabQueryOptions): string {
 
         if (weightVar) {
             const w = `"${escapeIdentifier(weightVar)}"`;
+            const weightedDenom = `SUM(CASE WHEN ${col} IS NOT NULL THEN ${w} ELSE 0 END)`;
+            const weightedSumXW = `SUM(CASE WHEN ${col} IS NOT NULL THEN ${col} * ${w} ELSE 0 END)`;
+            const weightedSumX2W = `SUM(CASE WHEN ${col} IS NOT NULL THEN ${col} * ${col} * ${w} ELSE 0 END)`;
+            const weightedSumW2 = `SUM(CASE WHEN ${col} IS NOT NULL THEN ${w} * ${w} ELSE 0 END)`;
             // Weighted Mean: SUM(x * w) / SUM(w)
             // Weighted Variance: (SUM(w * x^2) / SUM(w)) - (SUM(w * x) / SUM(w))^2
             // Note: This is the biased weighted variance, suitable for large samples or when weights are relative.
 
             statsExpr = `
-                (SUM(${col} * ${w}) / SUM(${w}))::DOUBLE as mean,
-                SQRT(ABS((SUM(${w} * ${col} * ${col}) / SUM(${w})) - POWER(SUM(${w} * ${col}) / SUM(${w}), 2)))::DOUBLE as stdDev,
+                (${weightedSumXW} / NULLIF(${weightedDenom}, 0))::DOUBLE as mean,
+                SQRT(ABS((${weightedSumX2W} / NULLIF(${weightedDenom}, 0)) - POWER(${weightedSumXW} / NULLIF(${weightedDenom}, 0), 2)))::DOUBLE as stdDev,
                 MIN(${col}) as min,
                 MAX(${col}) as max,
                 QUANTILE_CONT(${col}, 0.5 ORDER BY ${col}) as median,
@@ -481,10 +493,10 @@ export function buildCrosstabQuery(options: CrosstabQueryOptions): string {
                 QUANTILE_CONT(${col}, 0.75 ORDER BY ${col}) as q3,
                 COUNT(${col})::INTEGER as validCount,
                 COUNT(*)::INTEGER as count,
-                SUM(${w})::DOUBLE as weightedCount,
-                SUM(${w} * ${w})::DOUBLE as sumSqWeights,
-                SUM(${col} * ${w})::DOUBLE as sumXW,
-                SUM(${col} * ${col} * ${w})::DOUBLE as sumX2W
+                ${weightedDenom}::DOUBLE as weightedCount,
+                ${weightedSumW2}::DOUBLE as sumSqWeights,
+                ${weightedSumXW}::DOUBLE as sumXW,
+                ${weightedSumX2W}::DOUBLE as sumX2W
             `;
         } else {
             statsExpr = `
@@ -504,7 +516,8 @@ export function buildCrosstabQuery(options: CrosstabQueryOptions): string {
         if (weightVar) {
             const w = `"${escapeIdentifier(weightVar)}"`;
             statsExpr = `
-                SUM(${w})::DOUBLE as count, 
+                COUNT(*)::INTEGER as count,
+                SUM(${w})::DOUBLE as weightedCount, 
                 SUM(${w} * ${w})::DOUBLE as sumSqWeights
             `;
         } else {

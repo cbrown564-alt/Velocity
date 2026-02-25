@@ -6,17 +6,18 @@
 
 import type { StateCreator } from 'zustand';
 import type { WorkerRequest, WorkerResponse } from '../../types/worker';
-import type { DataSlice, VariableSet } from './dataSlice';
-import type { AnalysisSlice, Filter } from './analysisSlice';
+import type { DataSlice } from './dataSlice';
+import type { AnalysisSlice } from './analysisSlice';
+import {
+    buildDrillDownQueryOptions,
+    resolveDrillDownContext,
+    type DrillDownFilter,
+} from '../../services/drillDown';
+export type { DrillDownFilter } from '../../services/drillDown';
 
 // ============================================================================
 // Types
 // ============================================================================
-
-export interface DrillDownFilter {
-    variable: string;
-    value: string;
-}
 
 export interface DrillDownState {
     isOpen: boolean;
@@ -68,34 +69,13 @@ export const createDrillDownSlice: DrillDownSliceCreator = (set, get) => ({
         if (!worker || rowPath.length === 0) return;
 
         const pageSize = 50;
-
-        const resolveToCol = (id: string): string => {
-            const varSet = variableSets.find((s: VariableSet) => s.id === id);
-            if (varSet && varSet.variableIds.length > 0) {
-                return varSet.variableIds[0];
-            }
-            return id;
-        };
-
-        const resolvedColVar = tableConfig.colVar ? resolveToCol(tableConfig.colVar) : null;
-
-        const rowFilters: DrillDownFilter[] = rowPath.map(p => ({
-            variable: p.variable,
-            value: p.value,
-        }));
-        const colFilter: DrillDownFilter | null = resolvedColVar && colValue
-            ? { variable: resolvedColVar, value: colValue }
-            : null;
-
-        const titleParts: string[] = rowPath.map(p => {
-            const varLabel = dataset?.variables.find(v => v.id === p.variable)?.label || p.variable;
-            return `${varLabel}: ${p.value}`;
+        const { rowFilters, colFilter, title } = resolveDrillDownContext({
+            rowPath,
+            colValue,
+            colVarId: tableConfig.colVar,
+            variableSets,
+            variables: dataset?.variables ?? [],
         });
-        if (colFilter) {
-            const colVarLabel = dataset?.variables.find(v => v.id === colFilter.variable)?.label || colFilter.variable;
-            titleParts.push(`${colVarLabel}: ${colFilter.value}`);
-        }
-        const title = titleParts.join(' • ');
 
         set({
             drillDown: {
@@ -113,14 +93,13 @@ export const createDrillDownSlice: DrillDownSliceCreator = (set, get) => ({
 
         const { buildDrillDownQuery, buildDrillDownCountQuery } = await import('../../services/queryBuilder');
 
-        const queryOptions = {
-            rowVars: rowPath,
-            colVar: colFilter?.variable || null,
-            colValue: colFilter?.value || null,
+        const queryOptions = buildDrillDownQueryOptions({
+            rowFilters,
+            colFilter,
             filters: activeFilters,
             limit: pageSize,
             offset: 0,
-        };
+        });
 
         const dataSql = buildDrillDownQuery(queryOptions);
         const countSql = buildDrillDownCountQuery(queryOptions);
@@ -163,7 +142,8 @@ export const createDrillDownSlice: DrillDownSliceCreator = (set, get) => ({
             const countHandler = (event: MessageEvent<WorkerResponse>) => {
                 const response = event.data;
                 if (response.type === 'queryResult') {
-                    totalCount = response.data[0]?.total ?? 0;
+                    const firstRow = response.data[0] as Record<string, unknown> | undefined;
+                    totalCount = Number(firstRow?.total ?? 0);
                     responseCount++;
                     worker.removeEventListener('message', countHandler);
                     checkComplete();
@@ -200,14 +180,13 @@ export const createDrillDownSlice: DrillDownSliceCreator = (set, get) => ({
 
         const { buildDrillDownQuery } = await import('../../services/queryBuilder');
 
-        const queryOptions = {
-            rowVars: rowFilters,
-            colVar: colFilter?.variable || null,
-            colValue: colFilter?.value || null,
+        const queryOptions = buildDrillDownQueryOptions({
+            rowFilters,
+            colFilter,
             filters: activeFilters,
             limit: pageSize,
             offset,
-        };
+        });
 
         const sql = buildDrillDownQuery(queryOptions);
 

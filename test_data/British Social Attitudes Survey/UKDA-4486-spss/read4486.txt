@@ -1,0 +1,50 @@
+UK DATA ARCHIVE DOCUMENTATION
+
+
+4486 - British Social Attitudes, 2000
+
+
+Data Archive processing standards
+---------------------------------
+The data were processed to the UK Data Archive's 'A*' standard. This is 
+the Archive's highest standard, and means that an extremely rigorous and 
+comprehensive series of checks was carried out to ensure the quality of 
+the data and documentation. Briefly, the most important procedures were 
+as follows. Firstly, checks were made that the number of cases and 
+variables matched the depositor's records. Secondly, checks were made 
+that all variables had comprehensible variable labels and all nominal 
+(categorical) variables had comprehensible value labels. Where possible, 
+either with reference to the documentation and/or in communication with 
+the depositor, labels were accordingly edited or created. Thirdly, 
+logical checks were performed to ensure that nominal (categorical) 
+variables had values within the range defined (either by value labels or 
+in the depositor's documentation). Lastly, any data or documentation 
+that breached confidentiality rules were altered or suppressed to 
+preserve anonymity.
+
+Conversion of data and documentation formats
+--------------------------------------------
+DATA
+No file conversion necessary - data in SPSS portable format.
+
+DOCUMENTATION
+Word files supplied by the depositor were converted to Adobe PDF format 
+using Adobe Acrobat 5.0, and combined into a one-volume user guide. 
+Bookmarks were created to aid navigation.
+
+All files were checked thoroughly for accuracy and completeness.
+ 
+
+Data and documentation problems
+-------------------------------
+Many variables in the dataset have several minus values - within these 
+variables, some minus values are set as missing, and some not. All 
+values are labelled, however, so it is easy to assess what the values
+denote.
+
+The variable ACORN has been removed from the dataset due to copyright
+restrictions.
+
+
+Notes from data delivery and post-order corrections
+---------------------------------------------------

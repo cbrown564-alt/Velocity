@@ -1,0 +1,14 @@
+SN:3572  British Social Attitudes Survey, 1994
+
+Documentation
+
+It is recommended that users obtain a copy of the Technical Report as no
+other documentation is available for this study. 
+This can be purchased from SCPR, 35 Northampton Square, London EC1V 0AX.
+Telephone: 0171 250 1866.
+
+10.10.01
+
+Please note that following permission from the Depositor the Technical
+Report referred to above has now been converted to PDF format and is
+available from the UK Data Archive.
