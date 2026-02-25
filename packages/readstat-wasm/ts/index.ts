@@ -37,10 +37,12 @@ interface ReadStatModule {
     _parse_sav: (bufferPtr: number, len: number) => number;
     _parse_sav_metadata?: (bufferPtr: number, len: number) => number;
     _parse_sav_sample?: (bufferPtr: number, len: number, rowLimit: number, strategy: number) => number;
+    _parse_sav_window?: (bufferPtr: number, len: number, rowOffset: number, rowLimit: number) => number;
     _get_variable_count: () => number;
     _get_row_count: () => number;
     _get_parsed_row_count?: () => number;
     _get_sample_strategy?: () => number;
+    _get_window_row_count?: () => number;
     _get_value_label_count: () => number;
     _get_variable_name: (index: number) => number;
     _get_variable_type: (index: number) => number;
@@ -104,6 +106,103 @@ export async function initReadStat(): Promise<void> {
     })();
 
     await modulePromise;
+}
+
+function throwOnReadStatError(mod: ReadStatModule, errorCode: number): void {
+    if (errorCode === 0) return;
+    const errorMsgPtr = mod._get_error_message(errorCode);
+    const errorMsg = mod.UTF8ToString(errorMsgPtr);
+    throw new Error(`ReadStat error (${errorCode}): ${errorMsg}`);
+}
+
+function extractMetadataFromModule(mod: ReadStatModule): SavMetadata {
+    const variableCount = mod._get_variable_count();
+    const rowCount = mod._get_row_count();
+    const valueLabelCount = mod._get_value_label_count();
+
+    const variables: SavVariable[] = [];
+    for (let i = 0; i < variableCount; i++) {
+        const namePtr = mod._get_variable_name(i);
+        const labelPtr = mod._get_variable_label(i);
+        const vlNamePtr = mod._get_variable_value_labels_name(i);
+
+        variables.push({
+            name: mod.UTF8ToString(namePtr),
+            index: i,
+            type: mod._get_variable_type(i) === 0 ? 'numeric' : 'string',
+            label: mod.UTF8ToString(labelPtr) || undefined,
+            valueLabelSetName: mod.UTF8ToString(vlNamePtr) || undefined,
+        });
+    }
+
+    const valueLabelSets: Record<string, SavValueLabel[]> = {};
+    for (let i = 0; i < valueLabelCount; i++) {
+        const setNamePtr = mod._get_value_label_set_name(i);
+        const labelPtr = mod._get_value_label_label(i);
+        const setName = mod.UTF8ToString(setNamePtr);
+        const value = mod._get_value_label_value(i);
+        const label = mod.UTF8ToString(labelPtr);
+
+        if (setName) {
+            if (!valueLabelSets[setName]) {
+                valueLabelSets[setName] = [];
+            }
+            valueLabelSets[setName].push({ value, label });
+        }
+    }
+
+    const mrSetCount = mod._get_mr_set_count();
+    const multipleResponseSets: SavMultipleResponseSet[] = [];
+    for (let i = 0; i < mrSetCount; i++) {
+        const subvarCount = mod._get_mr_set_subvar_count(i);
+        const subvariables: string[] = [];
+        for (let j = 0; j < subvarCount; j++) {
+            const subvarPtr = mod._get_mr_set_subvar(i, j);
+            subvariables.push(mod.UTF8ToString(subvarPtr));
+        }
+
+        const namePtr = mod._get_mr_set_name(i);
+        const labelPtr = mod._get_mr_set_label(i);
+        const typeCode = mod._get_mr_set_type(i);
+
+        multipleResponseSets.push({
+            name: mod.UTF8ToString(namePtr),
+            label: mod.UTF8ToString(labelPtr),
+            type: String.fromCharCode(typeCode) as 'C' | 'D',
+            countedValue: mod._get_mr_set_counted_value(i),
+            subvariables,
+        });
+    }
+
+    return {
+        variableCount,
+        rowCount,
+        variables,
+        valueLabelSets,
+        multipleResponseSets,
+    };
+}
+
+function extractRowsFromModule(mod: ReadStatModule, variables: SavVariable[], rowCount: number): (number | string | null)[][] {
+    const variableCount = variables.length;
+    const rows: (number | string | null)[][] = [];
+
+    for (let r = 0; r < rowCount; r++) {
+        const row: (number | string | null)[] = [];
+        for (let c = 0; c < variableCount; c++) {
+            if (mod._is_cell_missing(r, c)) {
+                row.push(null);
+            } else if (variables[c].type === 'string') {
+                const strPtr = mod._get_string_value(r, c);
+                row.push(mod.UTF8ToString(strPtr));
+            } else {
+                row.push(mod._get_numeric_value(r, c));
+            }
+        }
+        rows.push(row);
+    }
+
+    return rows;
 }
 
 /**
@@ -559,12 +658,16 @@ export interface RowBatch {
     endRow: number;
     totalRows: number;
     progress: number;
+    /** Variable metadata, provided on the first batch for streaming v2 */
+    variables?: SavVariable[];
 }
 
 /**
  * Streaming progress callback
  */
-export type StreamingProgressCallback = (batch: RowBatch) => Promise<void> | void;
+export type StreamingProgressCallback = (
+    batch: RowBatch
+) => Promise<void | number> | void | number;
 
 /**
  * Streaming parse result with metadata available upfront
@@ -572,6 +675,183 @@ export type StreamingProgressCallback = (batch: RowBatch) => Promise<void> | voi
 export interface StreamingParseResult extends SavMetadataResult {
     /** Variables with type information, available before rows are streamed */
     variables: SavVariable[];
+}
+
+/**
+ * Windowed parse result for row-offset + row-limit extraction.
+ */
+export interface WindowParseResult extends SavParseResult {
+    /** Number of rows actually parsed for this window */
+    windowRowCount: number;
+    /** Requested row offset used for this parse */
+    rowOffset: number;
+}
+
+/**
+ * Parse a SAV file window using ReadStat row offset/row limit.
+ *
+ * @param buffer - SAV file contents
+ * @param rowOffset - 0-based starting row offset
+ * @param rowLimit - maximum rows to parse in this window
+ */
+export async function parseSavWindow(
+    buffer: ArrayBuffer,
+    rowOffset: number,
+    rowLimit: number
+): Promise<WindowParseResult> {
+    const startTime = performance.now();
+
+    await initReadStat();
+    const mod = moduleInstance!;
+
+    if (!mod._parse_sav_window) {
+        throw new Error('ReadStat WASM build does not support window parsing. Rebuild the WASM module.');
+    }
+
+    const safeOffset = Math.max(0, Math.floor(rowOffset));
+    const safeLimit = Math.max(1, Math.floor(rowLimit));
+    const data = new Uint8Array(buffer);
+    const bufferPtr = mod._malloc(data.length);
+
+    if (bufferPtr === 0) {
+        throw new Error('Failed to allocate WASM memory for SAV window parse');
+    }
+
+    mod.writeArrayToMemory(data, bufferPtr);
+
+    try {
+        const errorCode = mod._parse_sav_window(bufferPtr, data.length, safeOffset, safeLimit);
+        throwOnReadStatError(mod, errorCode);
+
+        const metadata = extractMetadataFromModule(mod);
+        const windowRowCount = mod._get_window_row_count?.()
+            ?? mod._get_parsed_row_count?.()
+            ?? metadata.rowCount;
+        const totalRows = mod._get_total_row_count?.() ?? metadata.rowCount;
+
+        const rows = extractRowsFromModule(mod, metadata.variables, windowRowCount);
+        const durationMs = performance.now() - startTime;
+
+        mod._free_parse_results();
+
+        return {
+            metadata: {
+                ...metadata,
+                rowCount: totalRows,
+            },
+            rows,
+            durationMs,
+            windowRowCount,
+            rowOffset: safeOffset,
+        };
+    } finally {
+        mod._free(bufferPtr);
+    }
+}
+
+/**
+ * Streaming parser v2: metadata-first + windowed row parsing.
+ *
+ * Compared to parseSavStreaming(), this avoids full-matrix accumulation by
+ * reparsing bounded row windows and emitting each window immediately.
+ */
+export async function parseSavStreamingV2(
+    buffer: ArrayBuffer,
+    batchSize: number = 5000,
+    onBatch: StreamingProgressCallback
+): Promise<StreamingParseResult> {
+    const startTime = performance.now();
+
+    await initReadStat();
+    const mod = moduleInstance!;
+
+    if (!mod._parse_sav_metadata || !mod._parse_sav_window) {
+        throw new Error('ReadStat WASM build does not support streaming v2 window parsing. Rebuild the WASM module.');
+    }
+
+    const safeBatchSize = Math.max(1, Math.floor(batchSize));
+    const data = new Uint8Array(buffer);
+    const bufferPtr = mod._malloc(data.length);
+
+    if (bufferPtr === 0) {
+        throw new Error('Failed to allocate WASM memory for SAV streaming parse');
+    }
+
+    mod.writeArrayToMemory(data, bufferPtr);
+
+    try {
+        const metadataError = mod._parse_sav_metadata(bufferPtr, data.length);
+        throwOnReadStatError(mod, metadataError);
+
+        const metadata = extractMetadataFromModule(mod);
+        const totalRows = metadata.rowCount;
+
+        mod._free_parse_results();
+
+        if (totalRows < 0) {
+            throw new Error('ReadStat metadata returned unknown row count; streaming v2 requires deterministic row counts.');
+        }
+
+        let processedRows = 0;
+        let activeBatchSize = safeBatchSize;
+        let firstBatch = true;
+
+        while (processedRows < totalRows) {
+            const remainingRows = totalRows - processedRows;
+            const requestedRows = Math.min(activeBatchSize, remainingRows);
+
+            let shouldFreeResults = false;
+            try {
+                const errorCode = mod._parse_sav_window(bufferPtr, data.length, processedRows, requestedRows);
+                throwOnReadStatError(mod, errorCode);
+                shouldFreeResults = true;
+
+                const windowRows = mod._get_window_row_count?.()
+                    ?? mod._get_parsed_row_count?.()
+                    ?? mod._get_row_count();
+
+                if (windowRows <= 0) {
+                    throw new Error(`Window parse returned zero rows at offset ${processedRows}`);
+                }
+
+                const rows = extractRowsFromModule(mod, metadata.variables, windowRows);
+                const endRow = Math.min(totalRows, processedRows + windowRows);
+
+                const suggestedBatchSize = await onBatch({
+                    rows,
+                    startRow: processedRows,
+                    endRow,
+                    totalRows,
+                    progress: endRow / totalRows,
+                    variables: firstBatch ? metadata.variables : undefined,
+                });
+
+                if (
+                    typeof suggestedBatchSize === 'number' &&
+                    Number.isFinite(suggestedBatchSize) &&
+                    suggestedBatchSize >= 1
+                ) {
+                    activeBatchSize = Math.max(1, Math.floor(suggestedBatchSize));
+                }
+
+                firstBatch = false;
+                processedRows = endRow;
+            } finally {
+                if (shouldFreeResults) {
+                    mod._free_parse_results();
+                }
+            }
+        }
+
+        const durationMs = performance.now() - startTime;
+        return {
+            metadata,
+            variables: metadata.variables,
+            durationMs,
+        };
+    } finally {
+        mod._free(bufferPtr);
+    }
 }
 
 /**

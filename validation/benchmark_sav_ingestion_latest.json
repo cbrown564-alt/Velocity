@@ -1,0 +1,65 @@
+{
+  "generatedAt": "2026-02-25T14:14:52.941Z",
+  "datasets": [
+    {
+      "key": "sleep",
+      "filePath": "/Users/cobro/Code/Velocity/test_data/sleep.sav",
+      "fileSizeBytes": 26781,
+      "metadataParse": {
+        "result": {
+          "rowCount": 271,
+          "variableCount": 55
+        },
+        "durationMs": 7.553334000000007,
+        "peakRssBytes": 164577280,
+        "startRssBytes": 124747776,
+        "endRssBytes": 164577280
+      },
+      "fullParse": {
+        "result": {
+          "rowCount": 271,
+          "variableCount": 55
+        },
+        "durationMs": 4.327875000000006,
+        "peakRssBytes": 165036032,
+        "startRssBytes": 164577280,
+        "endRssBytes": 165036032
+      },
+      "windowParse": {
+        "result": {
+          "rowCount": 271,
+          "variableCount": 55,
+          "chunkSize": 5000,
+          "windows": 1
+        },
+        "durationMs": 7.475458000000003,
+        "peakRssBytes": 165445632,
+        "startRssBytes": 165036032,
+        "endRssBytes": 165445632
+      },
+      "nodeIngestion": {
+        "result": {
+          "rowCount": 271,
+          "variableCount": 59
+        },
+        "durationMs": 206.454584,
+        "peakRssBytes": 228376576,
+        "startRssBytes": 165445632,
+        "endRssBytes": 228376576
+      },
+      "parity": {
+        "metadataVsFullRows": true,
+        "metadataVsWindowRows": true,
+        "metadataVsNodeRows": true
+      }
+    }
+  ],
+  "skipped": [],
+  "failures": [
+    {
+      "key": "wvs7",
+      "filePath": "/Users/cobro/Code/Velocity/test_data/WVS/WVS_Cross-National_Wave_7_spss_v6_0.sav",
+      "reason": "[SAV] read_stat unavailable and fallback parse would materialize 59,595,860 cells (97,220 rows × 613 variables). This is likely to exceed memory limits. Use an environment with DuckDB read_stat support for this file."
+    }
+  ]
+}

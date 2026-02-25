@@ -12,6 +12,7 @@
     "typecheck:all": "npm run typecheck && npm run typecheck:test",
     "check:worker-boundary": "node scripts/check-worker-boundary.mjs",
     "check:querybuilder-pure": "node scripts/check-querybuilder-pure.mjs",
+    "benchmark:sav": "npx tsx scripts/benchmark-sav-ingestion.ts",
     "test": "vitest",
     "test:run": "vitest run",
     "test:coverage": "vitest run --coverage",

@@ -55,6 +55,7 @@ static int g_sample_row_limit = -1;
 static int g_sample_strategy = 0;  // 0 = sequential, 1 = spread
 static int g_sample_interval = 1;  // For spread sampling: interval between sampled rows
 static int g_sampled_count = 0;    // Number of rows actually sampled so far
+static int g_window_row_count = 0; // Number of rows parsed in current window parse
 
 // Multiple Response Sets state
 static mr_set_info_t *g_mr_sets = NULL;
@@ -66,6 +67,7 @@ static char **g_string_data = NULL;
 static int *g_is_missing = NULL;
 static size_t g_data_capacity = 0;
 static size_t g_data_size = 0;
+static int g_released_up_to_row = -1;
 
 // ============================================================================
 // Memory Buffer I/O Context
@@ -404,8 +406,10 @@ static void cleanup_parse_state(void) {
   g_sample_strategy = 0;
   g_sample_interval = 1;
   g_sampled_count = 0;
+  g_window_row_count = 0;
   g_data_capacity = 0;
   g_data_size = 0;
+  g_released_up_to_row = -1;
 }
 
 // ============================================================================
@@ -438,6 +442,10 @@ int parse_sav(uint8_t *buffer, size_t len) {
 
   readstat_error_t error = readstat_parse_sav(parser, "", NULL);
   readstat_parser_free(parser);
+
+  if (error == READSTAT_OK) {
+    g_window_row_count = g_parsed_row_count > 0 ? g_parsed_row_count : g_row_count;
+  }
 
   return (int)error;
 }
@@ -501,6 +509,52 @@ int parse_sav_sample(uint8_t *buffer, size_t len, int row_limit, int strategy) {
   readstat_error_t error = readstat_parse_sav(parser, "", NULL);
   readstat_parser_free(parser);
 
+  if (error == READSTAT_OK) {
+    g_window_row_count = g_parsed_row_count > 0 ? g_parsed_row_count : g_row_count;
+  }
+
+  return (int)error;
+}
+
+EMSCRIPTEN_KEEPALIVE
+int parse_sav_window(uint8_t *buffer, size_t len, int row_offset, int row_limit) {
+  cleanup_parse_state();
+  g_sample_row_limit = -1;
+  g_sample_strategy = 0;
+
+  if (row_offset < 0) row_offset = 0;
+  if (row_limit < 0) row_limit = 0;
+
+  mem_io_ctx_t mem_ctx = {.buffer = buffer, .size = len, .position = 0};
+
+  readstat_parser_t *parser = readstat_parser_init();
+  if (!parser) {
+    return READSTAT_ERROR_MALLOC;
+  }
+
+  readstat_set_open_handler(parser, mem_open);
+  readstat_set_close_handler(parser, mem_close);
+  readstat_set_seek_handler(parser, mem_seek);
+  readstat_set_read_handler(parser, mem_read);
+  readstat_set_update_handler(parser, mem_update);
+  readstat_set_io_ctx(parser, &mem_ctx);
+  readstat_set_row_offset(parser, (long)row_offset);
+  if (row_limit > 0) {
+    readstat_set_row_limit(parser, (long)row_limit);
+  }
+
+  readstat_set_metadata_handler(parser, handle_metadata);
+  readstat_set_variable_handler(parser, handle_variable);
+  readstat_set_value_label_handler(parser, handle_value_label);
+  readstat_set_value_handler(parser, handle_value);
+
+  readstat_error_t error = readstat_parse_sav(parser, "", NULL);
+  readstat_parser_free(parser);
+
+  if (error == READSTAT_OK) {
+    g_window_row_count = g_parsed_row_count > 0 ? g_parsed_row_count : g_row_count;
+  }
+
   return (int)error;
 }
 
@@ -515,6 +569,9 @@ int get_parsed_row_count(void) { return g_parsed_row_count; }
 
 EMSCRIPTEN_KEEPALIVE
 int get_sample_strategy(void) { return g_sample_strategy; }
+
+EMSCRIPTEN_KEEPALIVE
+int get_window_row_count(void) { return g_window_row_count; }
 
 EMSCRIPTEN_KEEPALIVE
 int get_value_label_count(void) { return g_value_label_count; }
@@ -659,9 +716,6 @@ const char *get_mr_set_subvar(int set_index, int subvar_index) {
 // ============================================================================
 // These functions allow extracting rows in batches and releasing their memory
 // incrementally to reduce peak memory usage during large file processing.
-
-// Track which rows have been released (their string memory freed)
-static int g_released_up_to_row = -1;
 
 EMSCRIPTEN_KEEPALIVE
 int get_total_row_count(void) {
