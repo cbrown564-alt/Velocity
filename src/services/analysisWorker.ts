@@ -414,6 +414,61 @@ function getPersistenceStatus() {
   };
 }
 
+function isWriteModeCommitError(error: unknown): boolean {
+  const message = String((error as any)?.message || error || '').toLowerCase();
+  return message.includes('file is not opened in write mode')
+    || (message.includes('failed to commit') && message.includes('write mode'));
+}
+
+async function reopenWritableDatabase(): Promise<void> {
+  if (!db) throw new Error('DB not initialized');
+
+  try {
+    if (conn) {
+      await conn.close();
+    }
+  } catch {
+    // Ignore close failures during recovery.
+  }
+
+  conn = null;
+  adapter = null;
+
+  try {
+    await db.reset();
+  } catch {
+    // Continue recovery even if reset fails.
+  }
+
+  if (opfsAvailable) {
+    const repairPath = buildRepairDbPath();
+    try {
+      await db.open({
+        path: repairPath,
+        accessMode: duckdb.DuckDBAccessMode.READ_WRITE,
+      });
+      activeDbPath = repairPath;
+      persistenceMode = 'opfs';
+      persistenceError = null;
+      conn = await db.connect();
+      adapter = new DuckDBWasmAdapter(conn, db);
+      console.warn('🦆 [Worker] Reopened DuckDB on writable OPFS repair path:', repairPath);
+      return;
+    } catch (error: any) {
+      persistenceError = error?.message || String(error);
+      console.warn('🦆 [Worker] Failed to reopen writable OPFS database, falling back to memory:', persistenceError);
+    }
+  }
+
+  await db.open({ path: ':memory:' });
+  activeDbPath = ':memory:';
+  persistenceMode = 'memory';
+  opfsAvailable = false;
+  conn = await db.connect();
+  adapter = new DuckDBWasmAdapter(conn, db);
+  console.warn('🦆 [Worker] Reopened DuckDB in memory mode after write-mode commit failure');
+}
+
   // ============================================================================ 
   // Persistence Operations
   // ============================================================================
@@ -1267,7 +1322,17 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
       }
 
       case 'loadSAV': {
-        const savResult = await loadSAV(request.buffer, request.forceChunked);
+        let savResult;
+        try {
+          savResult = await loadSAV(request.buffer, request.forceChunked);
+        } catch (error: any) {
+          if (!isWriteModeCommitError(error)) throw error;
+
+          console.warn('🦆 [Worker] Detected OPFS write-mode commit failure during SAV load; attempting DB recovery and retry');
+          await reopenWritableDatabase();
+          savResult = await loadSAV(request.buffer, request.forceChunked);
+        }
+
         self.postMessage({
           type: 'savLoaded',
           variables: savResult.variables,

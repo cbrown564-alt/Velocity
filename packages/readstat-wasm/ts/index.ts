@@ -15,7 +15,6 @@ import type {
     ProgressCallback,
     SampleStrategy,
 } from './types';
-import jsavvyDefault from 'jsavvy';
 
 // Re-export types
 export type {
@@ -124,8 +123,28 @@ let modulePromise: Promise<ReadStatModule> | null = null;
 
 const READSTAT_MODULE_URL = '/readstat/readstat.js';
 
+let jsavvyModule: any = null;
+let jsavvyModulePromise: Promise<any> | null = null;
 
-const jsavvy: any = (jsavvyDefault as any).default || jsavvyDefault;
+async function getJsavvyModule(): Promise<any> {
+    if (jsavvyModule) return jsavvyModule;
+    if (jsavvyModulePromise) return jsavvyModulePromise;
+
+    jsavvyModulePromise = (async () => {
+        // jsavvy is published as a UMD bundle that expects `global`.
+        // Safari/WebKit workers do not expose it by default.
+        const root = globalThis as unknown as { global?: unknown };
+        if (typeof root.global === 'undefined') {
+            root.global = root;
+        }
+
+        const imported = await import('jsavvy');
+        jsavvyModule = (imported as any).default || imported;
+        return jsavvyModule;
+    })();
+
+    return jsavvyModulePromise;
+}
 
 interface JsavvyParsedData {
     metadata: SavMetadata;
@@ -133,6 +152,7 @@ interface JsavvyParsedData {
 }
 
 async function parseWithJsavvy(buffer: ArrayBuffer, includeRows: boolean): Promise<JsavvyParsedData> {
+    const jsavvy = await getJsavvyModule();
     const parser = new jsavvy.SavParser();
     const feeder = new jsavvy.Feeder(buffer);
 

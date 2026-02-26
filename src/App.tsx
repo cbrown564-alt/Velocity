@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FileUp, Table, RotateCcw, X, CheckCircle2, Search, BarChart3, LayoutGrid, Loader2, AlertCircle, Moon, Sun, Home, FileDown } from 'lucide-react';
+import { FileUp, Table, RotateCcw, X, CheckCircle2, Search, BarChart3, LayoutGrid, Loader2, AlertCircle, Moon, Sun, Home, FileDown, Download } from 'lucide-react';
 import { useTheme } from './context/ThemeContext';
 
 import { MOCK_DATASET } from './constants';
@@ -19,10 +19,12 @@ import { RecodeModal } from './components/overlays/RecodeModal';
 import { FilterModal } from './components/overlays/FilterModal';
 import { ExportModal } from './components/overlays/ExportModal';
 import { FilterBar } from './components/common/FilterBar';
+import { StorageStatusIndicator } from './components/common/StorageStatusIndicator';
 import { AppShell, ModeToggleButton } from './components/layout/AppShell';
 import { useVelocityStore, Variable, VariableSet, PersistenceState, Filter } from './store';
 import { useResolvedVariables } from './features/dashboard/hooks/useResolvedVariables';
 import { buildExportConfig } from './core/export/buildExportConfig';
+import { SESSION_FILE_EXTENSION, exportSession, serializeSessionFile } from './core/session';
 import { DndContext, DragOverlay, useSensor, useSensors, MouseSensor, TouchSensor, DragEndEvent, DragStartEvent, useDroppable, closestCenter, pointerWithin, rectIntersection } from '@dnd-kit/core';
 import { SortableContext, arrayMove, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { VariableCard } from './features/dashboard/components/DraggableVariable';
@@ -52,6 +54,29 @@ const SmartCanvas: React.FC<{ children: React.ReactNode; className?: string }> =
 
 // App Modes
 type AppMode = 'splash' | 'uploading' | 'dashboard' | 'restoring' | 'metadata';
+const STORAGE_TOAST_SEEN_KEY = 'velocity-storage-backup-toast-seen-v1';
+
+function hasSeenStorageToast(): boolean {
+  try {
+    return window.localStorage.getItem(STORAGE_TOAST_SEEN_KEY) === '1';
+  } catch {
+    return false;
+  }
+}
+
+function markStorageToastSeen(): void {
+  try {
+    window.localStorage.setItem(STORAGE_TOAST_SEEN_KEY, '1');
+  } catch {
+    // Ignore localStorage failures (private mode / quota).
+  }
+}
+
+function getSessionFilename(datasetName: string): string {
+  const name = datasetName.replace(/\.[^.]+$/, '');
+  const date = new Date().toISOString().slice(0, 10);
+  return `${name}-${date}${SESSION_FILE_EXTENSION}`;
+}
 
 function datasetTableName(datasetId: string): string {
   return `dataset_${datasetId.replace(/[^a-zA-Z0-9_]/g, '_')}`;
@@ -212,6 +237,8 @@ export default function App() {
     initError,
     dataset,
     variableSets,
+    folders,
+    transformLog,
     tableConfig,
     queryResult,
     isQuerying,
@@ -220,6 +247,7 @@ export default function App() {
     recodeModal,
     drillDown,
     activeFilters,
+    analysisSettings,
     activeVariableStats,
     filterModal,
     // Persistence state
@@ -263,6 +291,7 @@ export default function App() {
     selectedVariableSetId,
     setSelectedVariableSetId,
     slides,
+    sections,
     activeSlideId,
     // Workspace state
     workspace,
@@ -310,6 +339,69 @@ export default function App() {
       chartType: activeSlide?.chartType,
     });
   }, [activeSlide?.title, activeSlide?.visualizationType, activeSlide?.chartType, dataset?.name, queryResult, resolvedRowVars, resolvedColVar, isWeighted, isMultipleResponse]);
+
+  const handleExportSession = React.useCallback(() => {
+    if (!dataset) return;
+
+    const sessionFile = exportSession({
+      dataset,
+      variableSets,
+      folders,
+      transformLog,
+      tableConfig,
+      activeFilters,
+      analysisSettings,
+      slides,
+      sections,
+      workspace: {
+        datasets: workspace.datasets.map((stored) => ({
+          id: stored.id,
+          name: stored.fileName || stored.name,
+          rowCount: stored.rowCount,
+          waveNumber: stored.waveNumber,
+        })),
+        projects: workspace.projects.map((project) => ({
+          id: project.id,
+          name: project.name,
+          color: project.color,
+          description: project.description,
+          createdAt: project.createdAt,
+          datasetIds: project.datasetIds,
+          isLongitudinal: project.isLongitudinal,
+          respondentKeyVariable: project.respondentKeyVariable,
+        })),
+      },
+      activeDatasetId,
+      harmonizationSession: harmonization.session,
+      velocityVersion: import.meta.env.VITE_APP_VERSION ?? 'dev',
+    });
+
+    const blob = new Blob([serializeSessionFile(sessionFile)], {
+      type: 'application/json',
+    });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = getSessionFilename(dataset.name);
+    document.body.appendChild(anchor);
+    anchor.click();
+    document.body.removeChild(anchor);
+    URL.revokeObjectURL(url);
+  }, [
+    dataset,
+    variableSets,
+    folders,
+    transformLog,
+    tableConfig,
+    activeFilters,
+    analysisSettings,
+    slides,
+    sections,
+    workspace.datasets,
+    workspace.projects,
+    activeDatasetId,
+    harmonization.session,
+  ]);
 
   const handleSaveFilter = React.useCallback((filter: Omit<Filter, 'id'>, applyToAll: boolean) => {
     // Always add to current analysis
@@ -359,6 +451,10 @@ export default function App() {
   // Export/Import modal state
   const [showExportModal, setShowExportModal] = React.useState(false);
   const [exportSelectedIds, setExportSelectedIds] = React.useState<string[]>([]);
+  const [persistentStorageGranted, setPersistentStorageGranted] = React.useState<boolean | null>(null);
+  const [showStorageReminderToast, setShowStorageReminderToast] = React.useState(false);
+  const hasRequestedPersistentStorage = useRef(false);
+  const hasShownStorageToast = useRef(false);
 
   const SAV_WARN_MB = 50;
   const SAV_HARD_MB = 200;
@@ -542,6 +638,24 @@ export default function App() {
     setShowPartialLoadNotice(true);
   }, [dataset?.id, partialLoadMessage, mode]);
 
+  useEffect(() => {
+    if (!dataset?.id || hasShownStorageToast.current) return;
+    if (hasSeenStorageToast()) {
+      hasShownStorageToast.current = true;
+      return;
+    }
+
+    hasShownStorageToast.current = true;
+    markStorageToastSeen();
+    setShowStorageReminderToast(true);
+  }, [dataset?.id]);
+
+  useEffect(() => {
+    if (!showStorageReminderToast) return;
+    const timer = window.setTimeout(() => setShowStorageReminderToast(false), 10000);
+    return () => window.clearTimeout(timer);
+  }, [showStorageReminderToast]);
+
   const handleDismissPartialLoadNotice = React.useCallback(() => {
     if (dataset?.id) {
       partialNoticeDismissedByDataset.current.add(dataset.id);
@@ -592,6 +706,35 @@ export default function App() {
   useEffect(() => {
     initWorker();
   }, [initWorker]);
+
+  useEffect(() => {
+    if (!isDbReady || hasRequestedPersistentStorage.current) return;
+    hasRequestedPersistentStorage.current = true;
+
+    if (!navigator.storage?.persist) {
+      setPersistentStorageGranted(null);
+      return;
+    }
+
+    let cancelled = false;
+
+    navigator.storage
+      .persist()
+      .then((granted) => {
+        if (cancelled) return;
+        setPersistentStorageGranted(granted);
+        console.log(`[Storage] Persistent storage ${granted ? 'granted' : 'denied'}`);
+      })
+      .catch((error) => {
+        if (cancelled) return;
+        console.warn('[Storage] Failed to request persistent storage:', error);
+        setPersistentStorageGranted(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isDbReady]);
 
   // -- CHECK OPFS AVAILABILITY --
   useEffect(() => {
@@ -1721,6 +1864,41 @@ export default function App() {
         )}
       </AnimatePresence>
 
+      <AnimatePresence>
+        {showStorageReminderToast && dataset && (
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 12 }}
+            className="fixed bottom-6 right-6 z-[120] w-full max-w-sm rounded-lg border border-[var(--border-color)] bg-[var(--bg-surface)] shadow-xl p-4"
+          >
+            <div className="flex items-start gap-3">
+              <AlertCircle size={16} className="mt-0.5 text-[var(--color-accent)] shrink-0" />
+              <div className="flex-1 space-y-2">
+                <p className="text-sm text-[var(--text-primary)]">
+                  Your data is stored locally in this browser only. Use <strong>Export Session</strong> to save a portable backup.
+                </p>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={handleExportSession}
+                    className="px-3 py-1.5 text-xs rounded-md bg-[var(--color-accent)] text-[var(--text-inverse)] hover:opacity-90 transition-opacity"
+                  >
+                    Export Session
+                  </button>
+                  <button
+                    onClick={() => setShowStorageReminderToast(false)}
+                    className="p-1.5 rounded-md text-[var(--text-secondary)] hover:bg-[var(--bg-active)]"
+                    aria-label="Dismiss"
+                  >
+                    <X size={14} />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* METADATA-ONLY MODE */}
       <AnimatePresence>
         {mode === 'metadata' && dataset && (
@@ -1859,6 +2037,11 @@ export default function App() {
                       <span>Heuristics based on {dataset.sampleRowCount.toLocaleString()} sample rows</span>
                     </div>
                   )}
+                  <StorageStatusIndicator
+                    hasDataset={Boolean(dataset)}
+                    persistentStorageGranted={persistentStorageGranted}
+                    opfsAvailable={opfsAvailable}
+                  />
                   <div className="mt-auto">
                     <PersistenceStatus
                       mode={persistenceMode}
@@ -1928,6 +2111,16 @@ export default function App() {
                         <BarChart3 size={16} />
                       </button>
                     </div>
+
+                    <button
+                      onClick={handleExportSession}
+                      disabled={!dataset}
+                      className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--color-accent)] rounded-md hover:bg-[var(--bg-surface)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      title="Export portable session"
+                    >
+                      <Download size={14} />
+                      Export Session
+                    </button>
 
                     <button
                       onClick={() => openAnalysisExportModal(buildCurrentExportConfig())}
