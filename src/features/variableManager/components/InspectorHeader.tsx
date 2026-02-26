@@ -53,9 +53,9 @@ export const InspectorHeader: React.FC<InspectorHeaderProps> = ({ variable, stat
 
     const displayName = variable.label && variable.label.trim() !== '' ? variable.label : variable.name;
 
-    const validCount = stats?.totalCount || 0;
+    const totalObservations = stats?.totalCount || 0;
     const missingCount = stats?.missingCount || 0;
-    const totalObservations = validCount + missingCount;
+    const validCount = Math.max(0, totalObservations - missingCount);
     const percentMissing = totalObservations > 0 ? (missingCount / totalObservations) * 100 : 0;
 
     const isNumeric = allowsNumericStats(variable.type, variable.orderedScoring);

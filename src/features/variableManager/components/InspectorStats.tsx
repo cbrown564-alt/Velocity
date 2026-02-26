@@ -22,9 +22,9 @@ export const InspectorStats: React.FC<InspectorStatsProps> = ({ variable, stats,
         (variable.missingValues.discrete && variable.missingValues.discrete.length > 0) ||
         variable.missingValues.range;
 
-    const validCount = stats?.totalCount || 0;
+    const totalObservations = stats?.totalCount || 0;
     const missingCount = stats?.missingCount || 0;
-    const totalObservations = validCount + missingCount;
+    const validCount = Math.max(0, totalObservations - missingCount);
     const percentMissing = totalObservations > 0 ? (missingCount / totalObservations) * 100 : 0;
     const isNumericVariable = allowsNumericStats(variable?.type, variable?.orderedScoring);
 
