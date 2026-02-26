@@ -139,6 +139,34 @@
   opacity: 1;
 }
 
+.inlineEditInput {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 600;
+  color: var(--text-primary);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid var(--border-color-active);
+  outline: none;
+  padding: 0 0 2px 0;
+  margin: 0;
+  width: 100%;
+  line-height: 1.2;
+}
+
+.inlineEditInputSmall {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border-color-active);
+  outline: none;
+  padding: 0 0 1px 0;
+  margin: 0;
+  line-height: 1.4;
+}
+
 /* ============================================================================
    Content Sections
    ============================================================================ */
@@ -327,6 +355,20 @@
 
 .mappingRow:hover .mappingEditIcon {
   opacity: 1;
+}
+
+.inlineEditInputCell {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border-color-active);
+  outline: none;
+  padding: 0 0 1px 0;
+  margin: 0;
+  width: 100%;
+  line-height: 1.4;
 }
 
 .missingBadgeInline {

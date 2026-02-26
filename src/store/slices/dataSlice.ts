@@ -225,6 +225,10 @@ export interface DataSlice {
     bulkHide: (variableSetIds: string[], hidden: boolean) => void;
     // Structure conversion
     convertMultipleToGrid: (setId: string) => void;
+    // Variable metadata editing
+    updateVariableMetadata: (variableId: string, updates: { label?: string; name?: string }) => void;
+    updateValueLabel: (variableId: string, valueCode: number | string, newLabel: string) => void;
+    toggleDiscreteMissingValue: (variableId: string, valueCode: number | string, isMissing: boolean) => void;
 }
 
 export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set, get) => ({
@@ -1251,5 +1255,68 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                     : vs
             ),
         }));
+    },
+
+    updateVariableMetadata: (variableId, updates) => {
+        set((state) => {
+            if (!state.dataset) return state;
+            return {
+                dataset: {
+                    ...state.dataset,
+                    variables: state.dataset.variables.map(v =>
+                        v.id === variableId ? { ...v, ...updates } : v
+                    ),
+                },
+            };
+        });
+    },
+
+    updateValueLabel: (variableId, valueCode, newLabel) => {
+        set((state) => {
+            if (!state.dataset) return state;
+            return {
+                dataset: {
+                    ...state.dataset,
+                    variables: state.dataset.variables.map(v => {
+                        if (v.id !== variableId) return v;
+                        const numCode = typeof valueCode === 'string' ? parseFloat(valueCode) : valueCode;
+                        const exists = v.valueLabels.some(vl => vl.value === numCode);
+                        if (exists) {
+                            return {
+                                ...v,
+                                valueLabels: v.valueLabels.map(vl =>
+                                    vl.value === numCode ? { ...vl, label: newLabel } : vl
+                                ),
+                            };
+                        }
+                        // Brand-new value label (value existed in data but had no label)
+                        return {
+                            ...v,
+                            valueLabels: [...v.valueLabels, { value: numCode, label: newLabel }],
+                        };
+                    }),
+                },
+            };
+        });
+    },
+
+    toggleDiscreteMissingValue: (variableId, valueCode, isMissing) => {
+        set((state) => {
+            if (!state.dataset) return state;
+            return {
+                dataset: {
+                    ...state.dataset,
+                    variables: state.dataset.variables.map(v => {
+                        if (v.id !== variableId) return v;
+                        const numCode = typeof valueCode === 'string' ? parseFloat(valueCode) : valueCode as number;
+                        const current = v.missingValues.discrete || [];
+                        const discrete = isMissing
+                            ? [...current.filter(c => c !== numCode), numCode]
+                            : current.filter(c => c !== numCode);
+                        return { ...v, missingValues: { ...v.missingValues, discrete } };
+                    }),
+                },
+            };
+        });
     },
 });

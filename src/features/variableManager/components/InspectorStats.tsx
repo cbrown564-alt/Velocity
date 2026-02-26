@@ -1,8 +1,9 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useRef, useCallback } from 'react';
 import { CheckCircle, AlertTriangle, Edit2 } from 'lucide-react';
 import type { Variable } from '../../../store/slices/dataSlice';
 import type { VariableStatsResult } from '../../../types/worker';
 import { allowsNumericStats } from '../../../types';
+import { useVelocityStore } from '../../../store';
 import styles from '../VariableInspector.module.css';
 
 interface InspectorStatsProps {
@@ -14,6 +15,8 @@ interface InspectorStatsProps {
 }
 
 export const InspectorStats: React.FC<InspectorStatsProps> = ({ variable, stats, isLoadingStats, hoveredKey, onHoverChange }) => {
+    const { updateValueLabel, toggleDiscreteMissingValue } = useVelocityStore();
+
     const hasValueLabels = variable.valueLabels && variable.valueLabels.length > 0;
     const hasMissingValues =
         (variable.missingValues.discrete && variable.missingValues.discrete.length > 0) ||
@@ -24,6 +27,31 @@ export const InspectorStats: React.FC<InspectorStatsProps> = ({ variable, stats,
     const totalObservations = validCount + missingCount;
     const percentMissing = totalObservations > 0 ? (missingCount / totalObservations) * 100 : 0;
     const isNumericVariable = allowsNumericStats(variable?.type, variable?.orderedScoring);
+
+    // Inline editing state
+    const [editingCode, setEditingCode] = useState<string | null>(null);
+    const [labelDraft, setLabelDraft] = useState('');
+    const editInputRef = useRef<HTMLInputElement>(null);
+
+    const startEdit = useCallback((codeStr: string, currentLabel: string) => {
+        setEditingCode(codeStr);
+        setLabelDraft(currentLabel);
+        setTimeout(() => editInputRef.current?.select(), 0);
+    }, []);
+
+    const commitEdit = useCallback(() => {
+        if (editingCode === null) return;
+        const trimmed = labelDraft.trim();
+        if (trimmed) {
+            updateValueLabel(variable.id, editingCode, trimmed);
+        }
+        setEditingCode(null);
+    }, [editingCode, labelDraft, variable.id, updateValueLabel]);
+
+    const handleEditKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter') commitEdit();
+        if (e.key === 'Escape') setEditingCode(null);
+    };
 
     const mergedValues = useMemo(() => {
         const map = new Map<string, any>();
@@ -89,7 +117,8 @@ export const InspectorStats: React.FC<InspectorStatsProps> = ({ variable, stats,
                                     <tbody>
                                         {mergedValues.map((item) => {
                                             const codeStr = String(item.code);
-                                            const isHovered = hoveredKey === item.label || hoveredKey === codeStr;
+                                            const isHovered = hoveredKey === codeStr;
+                                            const isEditing = editingCode === codeStr;
                                             return (
                                                 <tr
                                                     key={codeStr}
@@ -102,12 +131,33 @@ export const InspectorStats: React.FC<InspectorStatsProps> = ({ variable, stats,
                                                         <span className={styles.valueCode}>{item.code}</span>
                                                     </td>
                                                     <td className={styles.valueLabelContainer}>
-                                                        <span className={`${styles.valueLabel} ${item.isMissing ? styles.labelMissing : ''}`}>
-                                                            {item.label}
-                                                        </span>
-                                                        <Edit2 size={12} className={styles.mappingEditIcon} />
-                                                        {item.isMissing && (
-                                                            <span className={styles.missingBadgeInline}>Missing</span>
+                                                        {isEditing ? (
+                                                            <input
+                                                                ref={editInputRef}
+                                                                className={styles.inlineEditInputCell}
+                                                                value={labelDraft}
+                                                                onChange={e => setLabelDraft(e.target.value)}
+                                                                onBlur={commitEdit}
+                                                                onKeyDown={handleEditKeyDown}
+                                                                autoFocus
+                                                            />
+                                                        ) : (
+                                                            <>
+                                                                <span
+                                                                    className={`${styles.valueLabel} ${item.isMissing ? styles.labelMissing : ''}`}
+                                                                    onClick={() => startEdit(codeStr, item.label)}
+                                                                >
+                                                                    {item.label}
+                                                                </span>
+                                                                <Edit2
+                                                                    size={12}
+                                                                    className={styles.mappingEditIcon}
+                                                                    onClick={() => startEdit(codeStr, item.label)}
+                                                                />
+                                                                {item.isMissing && (
+                                                                    <span className={styles.missingBadgeInline}>Missing</span>
+                                                                )}
+                                                            </>
                                                         )}
                                                     </td>
                                                     <td style={{ textAlign: 'right' }} className={styles.dataCell}>
@@ -120,6 +170,7 @@ export const InspectorStats: React.FC<InspectorStatsProps> = ({ variable, stats,
                                                         <button
                                                             className={styles.tableActionButton}
                                                             title={item.isMissing ? "Include value" : "Set as Missing"}
+                                                            onClick={() => item.code != null && toggleDiscreteMissingValue(variable.id, item.code, !item.isMissing)}
                                                         >
                                                             {item.isMissing ? <CheckCircle size={14} className={styles.successIcon} /> : <AlertTriangle size={14} className={styles.warningIcon} />}
                                                         </button>
