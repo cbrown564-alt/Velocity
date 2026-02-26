@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FileUp, Table, RotateCcw, X, CheckCircle2, Search, BarChart3, LayoutGrid, Loader2, AlertCircle, Moon, Sun, Home, FileDown, Download } from 'lucide-react';
+import { FileUp, Table, RotateCcw, X, CheckCircle2, Search, BarChart3, LayoutGrid, Loader2, AlertCircle, Moon, Sun, Home, FileDown, Download, Upload } from 'lucide-react';
 import { useTheme } from './context/ThemeContext';
 
 import { MOCK_DATASET } from './constants';
@@ -18,13 +18,14 @@ import { DataDrawer } from './components/overlays/DataDrawer';
 import { RecodeModal } from './components/overlays/RecodeModal';
 import { FilterModal } from './components/overlays/FilterModal';
 import { ExportModal } from './components/overlays/ExportModal';
+import { SessionImportModal, type SessionImportPayload } from './components/overlays/SessionImportModal';
 import { FilterBar } from './components/common/FilterBar';
 import { StorageStatusIndicator } from './components/common/StorageStatusIndicator';
 import { AppShell, ModeToggleButton } from './components/layout/AppShell';
 import { useVelocityStore, Variable, VariableSet, PersistenceState, Filter } from './store';
 import { useResolvedVariables } from './features/dashboard/hooks/useResolvedVariables';
 import { buildExportConfig } from './core/export/buildExportConfig';
-import { SESSION_FILE_EXTENSION, exportSession, serializeSessionFile } from './core/session';
+import { SESSION_FILE_EXTENSION, exportSession, importSession, serializeSessionFile } from './core/session';
 import { DndContext, DragOverlay, useSensor, useSensors, MouseSensor, TouchSensor, DragEndEvent, DragStartEvent, useDroppable, closestCenter, pointerWithin, rectIntersection } from '@dnd-kit/core';
 import { SortableContext, arrayMove, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { VariableCard } from './features/dashboard/components/DraggableVariable';
@@ -283,6 +284,7 @@ export default function App() {
     openAnalysisExportModal,
     reorderRowVars,
     setWeightVariable,
+    recodeVariable,
     // Persistence actions
     restoreFromPersistence,
     discardPersistedData,
@@ -451,6 +453,7 @@ export default function App() {
   // Export/Import modal state
   const [showExportModal, setShowExportModal] = React.useState(false);
   const [exportSelectedIds, setExportSelectedIds] = React.useState<string[]>([]);
+  const [showSessionImportModal, setShowSessionImportModal] = React.useState(false);
   const [persistentStorageGranted, setPersistentStorageGranted] = React.useState<boolean | null>(null);
   const [showStorageReminderToast, setShowStorageReminderToast] = React.useState(false);
   const hasRequestedPersistentStorage = useRef(false);
@@ -1252,6 +1255,76 @@ export default function App() {
     setExportSelectedIds([]);
   }, []);
 
+  const handleOpenSessionImportModal = React.useCallback(() => {
+    setShowSessionImportModal(true);
+  }, []);
+
+  const handleCloseSessionImportModal = React.useCallback(() => {
+    setShowSessionImportModal(false);
+  }, []);
+
+  const handleSessionImport = React.useCallback(async (payload: SessionImportPayload) => {
+    const previousMode = mode;
+    setMode('uploading');
+
+    try {
+      await loadSAV(payload.savFileName, payload.savBuffer, { datasetId: crypto.randomUUID() });
+
+      const replayableTransforms = payload.sessionFile.transformLog.filter((transform) => transform.type === 'recode');
+      for (const transform of replayableTransforms) {
+        await recodeVariable(transform.sourceColId, transform.newColId, transform.config);
+      }
+
+      const importedDataset = useVelocityStore.getState().dataset;
+      if (!importedDataset) {
+        throw new Error('Imported dataset is unavailable after SAV load');
+      }
+
+      const imported = importSession(payload.sessionFile, importedDataset);
+      const activeSlide = imported.patch.slides.find((slide) => slide.id === imported.patch.activeSlideId) ?? imported.patch.slides[0];
+      const nextActiveCellId = activeSlide?.cells[0]?.id ?? null;
+
+      useVelocityStore.setState((state) => ({
+        dataset: imported.patch.dataset,
+        variableSets: imported.patch.variableSets,
+        folders: imported.patch.folders,
+        transformLog: imported.patch.transformLog,
+        tableConfig: imported.patch.tableConfig,
+        activeFilters: imported.patch.activeFilters,
+        analysisSettings: {
+          ...state.analysisSettings,
+          ...(imported.patch.analysisSettings ?? {}),
+        },
+        slides: imported.patch.slides,
+        sections: imported.patch.sections,
+        activeSlideId: imported.patch.activeSlideId,
+        activeCellId: nextActiveCellId,
+        queryResult: [],
+        tableStats: null,
+        activeVariableStats: null,
+        harmonization: {
+          ...state.harmonization,
+          isOpen: false,
+          session: imported.patch.harmonizationSession,
+          matchingInProgress: false,
+          sankeyData: null,
+          selectedMappingId: null,
+        },
+      }));
+
+      await useVelocityStore.getState().runAnalysis();
+      setMode('dashboard');
+      setShowSessionImportModal(false);
+
+      if (imported.diagnostics.missingVariableIds.length > 0) {
+        console.warn('[Session Import] Completed with diagnostics:', imported.diagnostics);
+      }
+    } catch (importError: any) {
+      setMode(previousMode);
+      throw new Error(importError?.message || 'Session import failed');
+    }
+  }, [mode, loadSAV, recodeVariable]);
+
   // Handle workspace import
   const handleWorkspaceImport = useCallback((data: WorkspaceExport) => {
     // Import datasets
@@ -1682,6 +1755,12 @@ export default function App() {
         config={analysisExportModal.config ?? { title: 'Analysis Report', analyses: [] }}
       />
 
+      <SessionImportModal
+        isOpen={showSessionImportModal}
+        onClose={handleCloseSessionImportModal}
+        onImport={handleSessionImport}
+      />
+
       {contextMenu && contextMenu.visible && (
         <ContextMenu
           x={contextMenu.x}
@@ -1741,6 +1820,18 @@ export default function App() {
             exit={{ opacity: 0, y: -20, pointerEvents: 'none' }}
             className="fixed inset-0 bg-[var(--bg-app)] z-40"
           >
+            {isDbReady && !initError && (
+              <div className="absolute right-6 top-6 z-50">
+                <button
+                  onClick={handleOpenSessionImportModal}
+                  className="flex items-center gap-2 rounded-md border border-[var(--border-color)] bg-[var(--bg-surface)] px-3 py-1.5 text-xs font-medium text-[var(--text-primary)] hover:bg-[var(--bg-active)]"
+                >
+                  <Upload size={14} />
+                  Import Session
+                </button>
+              </div>
+            )}
+
             {/* Show initialization status if not ready */}
             {(!isDbReady || initError) && (
               <div className="absolute inset-0 flex items-center justify-center bg-[var(--bg-app)] z-50">
@@ -2111,6 +2202,15 @@ export default function App() {
                         <BarChart3 size={16} />
                       </button>
                     </div>
+
+                    <button
+                      onClick={handleOpenSessionImportModal}
+                      className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--color-accent)] rounded-md hover:bg-[var(--bg-surface)] transition-colors"
+                      title="Import portable session"
+                    >
+                      <Upload size={14} />
+                      Import Session
+                    </button>
 
                     <button
                       onClick={handleExportSession}
