@@ -4,6 +4,7 @@ import type { Variable } from '../../../store/slices/dataSlice';
 import type { VariableStatsResult } from '../../../types/worker';
 import { allowsNumericStats } from '../../../types';
 import { useVelocityStore } from '../../../store';
+import { ConvertSystemMissingModal } from '../../../components/overlays/ConvertSystemMissingModal';
 import styles from '../VariableInspector.module.css';
 
 interface InspectorStatsProps {
@@ -15,7 +16,7 @@ interface InspectorStatsProps {
 }
 
 export const InspectorStats: React.FC<InspectorStatsProps> = ({ variable, stats, isLoadingStats, hoveredKey, onHoverChange }) => {
-    const { updateValueLabel, toggleDiscreteMissingValue } = useVelocityStore();
+    const { updateValueLabel, toggleDiscreteMissingValue, fillSystemMissing } = useVelocityStore();
 
     const hasValueLabels = variable.valueLabels && variable.valueLabels.length > 0;
     const hasMissingValues =
@@ -31,6 +32,7 @@ export const InspectorStats: React.FC<InspectorStatsProps> = ({ variable, stats,
     // Inline editing state
     const [editingCode, setEditingCode] = useState<string | null>(null);
     const [labelDraft, setLabelDraft] = useState('');
+    const [showConvertSystemMissingModal, setShowConvertSystemMissingModal] = useState(false);
     const editInputRef = useRef<HTMLInputElement>(null);
 
     const startEdit = useCallback((codeStr: string, currentLabel: string) => {
@@ -53,8 +55,13 @@ export const InspectorStats: React.FC<InspectorStatsProps> = ({ variable, stats,
         if (e.key === 'Escape') setEditingCode(null);
     };
 
+    const handleConvertSystemMissing = useCallback(async (payload: { code: number; label: string }) => {
+        await fillSystemMissing(variable.id, payload.code, payload.label);
+    }, [fillSystemMissing, variable.id]);
+
     const mergedValues = useMemo(() => {
         const map = new Map<string, any>();
+        const validBase = Math.max(0, (stats?.totalCount || 0) - (stats?.missingCount || 0));
 
         // 1. Initialize from value labels (preserves order of labels)
         if (variable.valueLabels) {
@@ -74,27 +81,46 @@ export const InspectorStats: React.FC<InspectorStatsProps> = ({ variable, stats,
         if (stats?.frequencies) {
             stats.frequencies.forEach(f => {
                 const key = String(f.value);
+                const isSystemMissing = f.value === null;
                 if (map.has(key)) {
                     const item = map.get(key);
                     item.count = f.count;
-                    item.percent = (f.count / total) * 100;
+                    item.percent = item.isMissing || validBase === 0 ? 0 : (f.count / validBase) * 100;
+                    item.isMissing = item.isMissing || isSystemMissing;
                 } else {
+                    const isMissing = isSystemMissing || (variable.missingValues.discrete?.includes(f.value as any) ?? false);
                     map.set(key, {
                         code: f.value,
-                        label: String(f.value),
+                        label: isSystemMissing ? 'System missing' : String(f.value),
                         count: f.count,
-                        percent: (f.count / total) * 100,
-                        isMissing: variable.missingValues.discrete?.includes(f.value as any) ?? false,
+                        percent: isMissing || validBase === 0 ? 0 : (f.count / validBase) * 100,
+                        isMissing,
                     });
                 }
             });
         }
 
-        return Array.from(map.values());
+        const values = Array.from(map.values());
+        const userMissingCountInRows = values
+            .filter((item) => item.isMissing && item.code !== null)
+            .reduce((sum, item) => sum + (item.count || 0), 0);
+        const systemMissingCount = Math.max(0, (stats?.missingCount || 0) - userMissingCountInRows);
+        if (systemMissingCount > 0 && !map.has('null')) {
+            values.unshift({
+                code: null,
+                label: 'System missing',
+                count: systemMissingCount,
+                percent: 0,
+                isMissing: true,
+            });
+        }
+
+        return values;
     }, [variable.valueLabels, variable.missingValues, stats]);
 
     return (
-        <div className={styles.statsContainer}>
+        <>
+            <div className={styles.statsContainer}>
 
             {/* Dictionary (Value Labels & Missing Values) */}
             {(mergedValues.length > 0 || hasMissingValues) && (
@@ -164,15 +190,23 @@ export const InspectorStats: React.FC<InspectorStatsProps> = ({ variable, stats,
                                                         {item.count.toLocaleString()}
                                                     </td>
                                                     <td style={{ textAlign: 'right' }} className={styles.dataCell}>
-                                                        {item.count > 0 ? `${item.percent.toFixed(1)}%` : '-'}
+                                                        {item.isMissing ? '-' : (item.count > 0 ? `${item.percent.toFixed(1)}%` : '-')}
                                                     </td>
                                                     <td className={styles.actionCell}>
                                                         <button
                                                             className={styles.tableActionButton}
-                                                            title={item.isMissing ? "Include value" : "Set as Missing"}
-                                                            onClick={() => item.code != null && toggleDiscreteMissingValue(variable.id, item.code, !item.isMissing)}
+                                                            title={item.code === null ? 'Convert system missing values' : (item.isMissing ? "Include value" : "Set as Missing")}
+                                                            onClick={() => {
+                                                                if (item.code === null) {
+                                                                    setShowConvertSystemMissingModal(true);
+                                                                    return;
+                                                                }
+                                                                toggleDiscreteMissingValue(variable.id, item.code, !item.isMissing);
+                                                            }}
                                                         >
-                                                            {item.isMissing ? <CheckCircle size={14} className={styles.successIcon} /> : <AlertTriangle size={14} className={styles.warningIcon} />}
+                                                            {item.code === null
+                                                                ? <Edit2 size={14} className={styles.warningIcon} />
+                                                                : (item.isMissing ? <CheckCircle size={14} className={styles.successIcon} /> : <AlertTriangle size={14} className={styles.warningIcon} />)}
                                                         </button>
                                                     </td>
                                                 </tr>
@@ -213,6 +247,12 @@ export const InspectorStats: React.FC<InspectorStatsProps> = ({ variable, stats,
                 </>
             )}
 
-        </div>
+            </div>
+            <ConvertSystemMissingModal
+                isOpen={showConvertSystemMissingModal}
+                onClose={() => setShowConvertSystemMissingModal(false)}
+                onSubmit={handleConvertSystemMissing}
+            />
+        </>
     );
 };

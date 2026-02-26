@@ -13,6 +13,11 @@ export interface SavVariable {
     label?: string;
     /** Name of the value label set, if any */
     valueLabelSetName?: string;
+    /** User-defined missing values/range from source metadata (if available) */
+    missingValues?: {
+        discrete?: number[];
+        range?: { low: number; high: number };
+    };
 }
 
 export interface SavValueLabel {

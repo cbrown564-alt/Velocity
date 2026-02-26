@@ -215,6 +215,7 @@ export interface DataSlice {
     getUniqueValues: (variableId: string) => Promise<string[]>;
     getVariableStats: (variableId: string) => Promise<VariableStatsResult | null>;
     recodeVariable: (sourceColId: string, newColName: string, config: RecodeConfig) => Promise<string>;
+    fillSystemMissing: (variableId: string, replacementCode: number, replacementLabel: string) => Promise<void>;
     createVariableSet: (name: string, variableIds: string[]) => void;
     splitVariableSet: (setId: string) => void;
     setWeightVariable: (variableId: string | null) => void;
@@ -1016,6 +1017,7 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                 column: variableId,
                 variableType,
                 orderedScoring: variable?.orderedScoring,
+                missingValues: variable?.missingValues,
             } as WorkerRequest);
         });
     },
@@ -1094,6 +1096,65 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                 newColName,
                 config
             } as WorkerRequest);
+        });
+    },
+
+    fillSystemMissing: async (variableId: string, replacementCode: number, replacementLabel: string): Promise<void> => {
+        const { worker, dataset } = get();
+        if (!worker) throw new Error('Worker not initialized');
+        if (!dataset) throw new Error('No dataset loaded');
+
+        const variable = dataset.variables.find(v => v.id === variableId);
+        if (!variable) throw new Error(`Variable not found: ${variableId}`);
+
+        if (variable.missingValues.range) {
+            const low = Math.min(variable.missingValues.range.low, variable.missingValues.range.high);
+            const high = Math.max(variable.missingValues.range.low, variable.missingValues.range.high);
+            if (replacementCode >= low && replacementCode <= high) {
+                throw new Error(`Replacement code ${replacementCode} falls within missing range ${low}-${high}`);
+            }
+        }
+
+        return new Promise((resolve, reject) => {
+            const handler = (event: MessageEvent<WorkerResponse>) => {
+                const response = event.data;
+                if (response.type === 'fillSystemMissingComplete' && response.column === variableId) {
+                    worker.removeEventListener('message', handler);
+
+                    set((state) => {
+                        if (!state.dataset) return state;
+                        return {
+                            dataset: {
+                                ...state.dataset,
+                                variables: state.dataset.variables.map(v => {
+                                    if (v.id !== variableId) return v;
+                                    const existingLabel = v.valueLabels.find(vl => vl.value === replacementCode);
+                                    const valueLabels = existingLabel
+                                        ? v.valueLabels.map(vl => vl.value === replacementCode ? { ...vl, label: replacementLabel } : vl)
+                                        : [...v.valueLabels, { value: replacementCode, label: replacementLabel }];
+                                    const discrete = (v.missingValues.discrete || []).filter(code => code !== replacementCode);
+                                    return { ...v, valueLabels, missingValues: { ...v.missingValues, discrete } };
+                                }),
+                            },
+                            variableStats: Object.fromEntries(
+                                Object.entries(state.variableStats).filter(([key]) => key !== variableId)
+                            ),
+                            variableStatsLoading: { ...state.variableStatsLoading, [variableId]: false },
+                        };
+                    });
+
+                    void get().getVariableStats(variableId);
+                    resolve();
+                    return;
+                }
+                if (response.type === 'error') {
+                    worker.removeEventListener('message', handler);
+                    reject(new Error(response.message));
+                    return;
+                }
+            };
+            worker.addEventListener('message', handler);
+            worker.postMessage({ type: 'fillSystemMissing', column: variableId, value: replacementCode } as WorkerRequest);
         });
     },
 

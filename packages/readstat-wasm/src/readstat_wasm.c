@@ -19,12 +19,16 @@
 #define MAX_VALUE_LABELS 100000
 #define MAX_LABEL_LENGTH 256
 #define MAX_NAME_LENGTH 128
+#define MAX_MISSING_RANGES 32
 
 typedef struct {
   char name[MAX_NAME_LENGTH];
   int type; // 0 = numeric, 1 = string
   char label[MAX_LABEL_LENGTH];
   char value_labels_name[MAX_NAME_LENGTH];
+  int missing_count;
+  double missing_lo[MAX_MISSING_RANGES];
+  double missing_hi[MAX_MISSING_RANGES];
 } variable_info_t;
 
 typedef struct {
@@ -65,6 +69,7 @@ static int g_mr_set_count = 0;
 static double *g_numeric_data = NULL;
 static char **g_string_data = NULL;
 static int *g_is_missing = NULL;
+static int *g_is_system_missing = NULL;
 static size_t g_data_capacity = 0;
 static size_t g_data_size = 0;
 static int g_released_up_to_row = -1;
@@ -218,6 +223,23 @@ static int handle_variable(int index, readstat_variable_t *variable,
     strncpy(g_variables[index].value_labels_name, val_labels,
             MAX_NAME_LENGTH - 1);
   g_variables[index].type = (type_class == READSTAT_TYPE_CLASS_STRING) ? 1 : 0;
+  g_variables[index].missing_count = 0;
+
+  int missing_count = readstat_variable_get_missing_ranges_count(variable);
+  if (missing_count > MAX_MISSING_RANGES) {
+    missing_count = MAX_MISSING_RANGES;
+  }
+  for (int i = 0; i < missing_count; i++) {
+    readstat_value_t lo = readstat_variable_get_missing_range_lo(variable, i);
+    readstat_value_t hi = readstat_variable_get_missing_range_hi(variable, i);
+    if (readstat_value_type_class(lo) != READSTAT_TYPE_CLASS_NUMERIC ||
+        readstat_value_type_class(hi) != READSTAT_TYPE_CLASS_NUMERIC) {
+      continue;
+    }
+    int out_index = g_variables[index].missing_count++;
+    g_variables[index].missing_lo[out_index] = readstat_double_value(lo);
+    g_variables[index].missing_hi[out_index] = readstat_double_value(hi);
+  }
 
   return READSTAT_HANDLER_OK;
 }
@@ -288,12 +310,15 @@ static int handle_value(int obs_index, readstat_variable_t *variable,
     g_string_data =
         (char **)realloc(g_string_data, new_capacity * sizeof(char *));
     g_is_missing = (int *)realloc(g_is_missing, new_capacity * sizeof(int));
+    g_is_system_missing =
+        (int *)realloc(g_is_system_missing, new_capacity * sizeof(int));
 
     // Initialize new memory
     for (size_t i = g_data_capacity; i < new_capacity; i++) {
       g_numeric_data[i] = 0;
       g_string_data[i] = NULL;
       g_is_missing[i] = 1;
+      g_is_system_missing[i] = 1;
     }
     g_data_capacity = new_capacity;
   }
@@ -303,9 +328,32 @@ static int handle_value(int obs_index, readstat_variable_t *variable,
   }
 
   int is_missing = readstat_value_is_missing(value, variable);
+  int is_system_missing =
+      readstat_value_is_system_missing(value) ||
+      readstat_value_is_tagged_missing(value);
   g_is_missing[cell_index] = is_missing;
+  g_is_system_missing[cell_index] = is_system_missing;
 
-  if (!is_missing) {
+  if (is_missing && !is_system_missing &&
+      readstat_value_type_class(value) == READSTAT_TYPE_CLASS_NUMERIC &&
+      var_index >= 0 && var_index < g_variable_count) {
+    double missing_value = readstat_double_value(value);
+    int exists = 0;
+    for (int i = 0; i < g_variables[var_index].missing_count; i++) {
+      if (g_variables[var_index].missing_lo[i] == missing_value &&
+          g_variables[var_index].missing_hi[i] == missing_value) {
+        exists = 1;
+        break;
+      }
+    }
+    if (!exists && g_variables[var_index].missing_count < MAX_MISSING_RANGES) {
+      int out_index = g_variables[var_index].missing_count++;
+      g_variables[var_index].missing_lo[out_index] = missing_value;
+      g_variables[var_index].missing_hi[out_index] = missing_value;
+    }
+  }
+
+  if (!is_system_missing) {
     readstat_type_class_t type_class = readstat_value_type_class(value);
     if (type_class == READSTAT_TYPE_CLASS_NUMERIC) {
       readstat_type_t type = readstat_value_type(value);
@@ -381,6 +429,10 @@ static void cleanup_parse_state(void) {
   if (g_is_missing) {
     free(g_is_missing);
     g_is_missing = NULL;
+  }
+  if (g_is_system_missing) {
+    free(g_is_system_missing);
+    g_is_system_missing = NULL;
   }
   // Free MR sets
   if (g_mr_sets) {
@@ -605,6 +657,31 @@ const char *get_variable_value_labels_name(int index) {
 }
 
 EMSCRIPTEN_KEEPALIVE
+int get_variable_missing_count(int index) {
+  if (index < 0 || index >= g_variable_count)
+    return 0;
+  return g_variables[index].missing_count;
+}
+
+EMSCRIPTEN_KEEPALIVE
+double get_variable_missing_lo(int var_index, int missing_index) {
+  if (var_index < 0 || var_index >= g_variable_count)
+    return 0;
+  if (missing_index < 0 || missing_index >= g_variables[var_index].missing_count)
+    return 0;
+  return g_variables[var_index].missing_lo[missing_index];
+}
+
+EMSCRIPTEN_KEEPALIVE
+double get_variable_missing_hi(int var_index, int missing_index) {
+  if (var_index < 0 || var_index >= g_variable_count)
+    return 0;
+  if (missing_index < 0 || missing_index >= g_variables[var_index].missing_count)
+    return 0;
+  return g_variables[var_index].missing_hi[missing_index];
+}
+
+EMSCRIPTEN_KEEPALIVE
 const char *get_value_label_set_name(int index) {
   if (index < 0 || index >= g_value_label_count)
     return "";
@@ -631,6 +708,14 @@ int is_cell_missing(int row, int col) {
   if (index >= g_data_size)
     return 1;
   return g_is_missing[index];
+}
+
+EMSCRIPTEN_KEEPALIVE
+int is_cell_system_missing(int row, int col) {
+  size_t index = (size_t)row * g_variable_count + col;
+  if (index >= g_data_size)
+    return 1;
+  return g_is_system_missing ? g_is_system_missing[index] : g_is_missing[index];
 }
 
 EMSCRIPTEN_KEEPALIVE

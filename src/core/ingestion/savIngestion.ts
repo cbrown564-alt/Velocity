@@ -32,10 +32,14 @@ interface ReadStatModule {
     _get_variable_type: (index: number) => number;
     _get_variable_label: (index: number) => number;
     _get_variable_value_labels_name: (index: number) => number;
+    _get_variable_missing_count?: (index: number) => number;
+    _get_variable_missing_lo?: (variableIndex: number, missingIndex: number) => number;
+    _get_variable_missing_hi?: (variableIndex: number, missingIndex: number) => number;
     _get_value_label_set_name: (index: number) => number;
     _get_value_label_value: (index: number) => number;
     _get_value_label_label: (index: number) => number;
     _is_cell_missing: (row: number, col: number) => number;
+    _is_cell_system_missing?: (row: number, col: number) => number;
     _get_numeric_value: (row: number, col: number) => number;
     _get_string_value: (row: number, col: number) => number;
     _free_parse_results: () => void;
@@ -77,6 +81,36 @@ function freeParseResultsSafe(mod: ReadStatModule): void {
     }
 }
 
+function extractVariableMissingValues(mod: ReadStatModule, variableIndex: number): { discrete?: number[]; range?: { low: number; high: number } } | undefined {
+    if (!mod._get_variable_missing_count || !mod._get_variable_missing_lo || !mod._get_variable_missing_hi) {
+        return undefined;
+    }
+    const count = mod._get_variable_missing_count(variableIndex);
+    if (!Number.isFinite(count) || count <= 0) return undefined;
+
+    const discrete: number[] = [];
+    let range: { low: number; high: number } | undefined;
+    for (let i = 0; i < count; i++) {
+        const lo = mod._get_variable_missing_lo(variableIndex, i);
+        const hi = mod._get_variable_missing_hi(variableIndex, i);
+        if (!Number.isFinite(lo) || !Number.isFinite(hi)) continue;
+        if (lo === hi) {
+            discrete.push(lo);
+        } else if (!range) {
+            range = lo <= hi ? { low: lo, high: hi } : { low: hi, high: lo };
+        }
+    }
+    if (discrete.length === 0 && !range) return undefined;
+    return { discrete: discrete.length > 0 ? discrete : undefined, range };
+}
+
+function isCellSystemMissing(mod: ReadStatModule, rowIndex: number, colIndex: number): boolean {
+    if (mod._is_cell_system_missing) {
+        return !!mod._is_cell_system_missing(rowIndex, colIndex);
+    }
+    return !!mod._is_cell_missing(rowIndex, colIndex);
+}
+
 function assertReadStatSuccess(mod: ReadStatModule, errorCode: number, operation: string): void {
     if (errorCode === 0) return;
     const errorMsgPtr = mod._get_error_message(errorCode);
@@ -112,6 +146,7 @@ function extractMetadata(mod: ReadStatModule): ParsedSavMetadata {
             type: mod._get_variable_type(i) === 0 ? 'numeric' : 'string',
             label: mod.UTF8ToString(labelPtr) || undefined,
             valueLabelSetName: mod.UTF8ToString(vlNamePtr) || undefined,
+            missingValues: extractVariableMissingValues(mod, i),
         });
     }
 
@@ -216,7 +251,7 @@ async function loadDataViaAppenderFromReadStat(
     tableName: string,
     metadata: ParsedSavMetadata,
     fileBuffer: Buffer
-): Promise<{ sampleRows: any[][]; parsedRowCount: number }> {
+): Promise<{ sampleRows: any[][]; parsedRowCount: number; parsedMetadata: ParsedSavMetadata }> {
     const mod = await getReadStatModule();
     const input = toUint8Array(fileBuffer);
     const bufferPtr = mod._malloc(input.length);
@@ -232,6 +267,7 @@ async function loadDataViaAppenderFromReadStat(
         assertReadStatSuccess(mod, errorCode, 'full parse');
 
         const parsedRowCount = mod._get_row_count();
+        const parsedMetadata = extractMetadata(mod);
         const expectedColumns = metadata.variables.length;
         const sampleRows: any[][] = [];
 
@@ -248,7 +284,7 @@ async function loadDataViaAppenderFromReadStat(
                 const sampleRow = rowIndex < FALLBACK_SAMPLE_ROWS ? new Array(expectedColumns) : null;
 
                 for (let colIndex = 0; colIndex < expectedColumns; colIndex++) {
-                    if (mod._is_cell_missing(rowIndex, colIndex)) {
+                    if (isCellSystemMissing(mod, rowIndex, colIndex)) {
                         appender.appendNull();
                         if (sampleRow) sampleRow[colIndex] = null;
                         continue;
@@ -276,7 +312,7 @@ async function loadDataViaAppenderFromReadStat(
             appender.closeSync();
         }
 
-        return { sampleRows, parsedRowCount };
+        return { sampleRows, parsedRowCount, parsedMetadata };
     } finally {
         freeParseResultsSafe(mod);
         mod._free(bufferPtr);
@@ -331,6 +367,7 @@ export async function loadSav(
 
         const fallbackLoad = await loadDataViaAppenderFromReadStat(adapter, tableName, metadata, buffer);
         rows = fallbackLoad.sampleRows;
+        metadata = fallbackLoad.parsedMetadata;
 
         if (fallbackLoad.parsedRowCount !== metadata.rowCount) {
             console.warn(

@@ -25,6 +25,10 @@ export interface ParsedVariableMeta {
   format?: string;
   index: number;
   valueLabelSetName?: string;
+  missingValues?: {
+    discrete?: number[];
+    range?: { low: number; high: number };
+  };
 }
 
 export interface MultipleResponseSet {
@@ -114,7 +118,12 @@ export function processMetadata(data: ParsedSavData): ProcessedSavResult {
       orderedStyle,
       orderedScoring,
       valueLabels,
-      missingValues: { discrete: [], range: undefined }
+      missingValues: {
+        discrete: v.missingValues?.discrete ? [...v.missingValues.discrete] : [],
+        range: v.missingValues?.range
+          ? { low: v.missingValues.range.low, high: v.missingValues.range.high }
+          : undefined
+      }
     };
   });
 

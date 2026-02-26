@@ -48,10 +48,14 @@ interface ReadStatModule {
     _get_variable_type: (index: number) => number;
     _get_variable_label: (index: number) => number;
     _get_variable_value_labels_name: (index: number) => number;
+    _get_variable_missing_count?: (index: number) => number;
+    _get_variable_missing_lo?: (variableIndex: number, missingIndex: number) => number;
+    _get_variable_missing_hi?: (variableIndex: number, missingIndex: number) => number;
     _get_value_label_set_name: (index: number) => number;
     _get_value_label_value: (index: number) => number;
     _get_value_label_label: (index: number) => number;
     _is_cell_missing: (row: number, col: number) => number;
+    _is_cell_system_missing?: (row: number, col: number) => number;
     _get_numeric_value: (row: number, col: number) => number;
     _get_string_value: (row: number, col: number) => number;
     _free_parse_results: () => void;
@@ -80,6 +84,37 @@ interface ReadStatModule {
     HEAP32: Int32Array;
     UTF8ToString: (ptr: number) => string;
     writeArrayToMemory: (array: ArrayLike<number>, buffer: number) => void;
+}
+
+function extractVariableMissingValues(mod: ReadStatModule, variableIndex: number): SavVariable['missingValues'] | undefined {
+    if (!mod._get_variable_missing_count || !mod._get_variable_missing_lo || !mod._get_variable_missing_hi) {
+        return undefined;
+    }
+    const count = mod._get_variable_missing_count(variableIndex);
+    if (!Number.isFinite(count) || count <= 0) return undefined;
+
+    const discrete: number[] = [];
+    let range: { low: number; high: number } | undefined;
+    for (let i = 0; i < count; i++) {
+        const lo = mod._get_variable_missing_lo(variableIndex, i);
+        const hi = mod._get_variable_missing_hi(variableIndex, i);
+        if (!Number.isFinite(lo) || !Number.isFinite(hi)) continue;
+        if (lo === hi) {
+            discrete.push(lo);
+        } else if (!range) {
+            range = lo <= hi ? { low: lo, high: hi } : { low: hi, high: lo };
+        }
+    }
+
+    if (discrete.length === 0 && !range) return undefined;
+    return { discrete: discrete.length > 0 ? discrete : undefined, range };
+}
+
+function isCellSystemMissing(mod: ReadStatModule, row: number, col: number): boolean {
+    if (mod._is_cell_system_missing) {
+        return !!mod._is_cell_system_missing(row, col);
+    }
+    return !!mod._is_cell_missing(row, col);
 }
 
 // Module instance (lazy-loaded)
@@ -132,6 +167,7 @@ function extractMetadataFromModule(mod: ReadStatModule): SavMetadata {
             type: mod._get_variable_type(i) === 0 ? 'numeric' : 'string',
             label: mod.UTF8ToString(labelPtr) || undefined,
             valueLabelSetName: mod.UTF8ToString(vlNamePtr) || undefined,
+            missingValues: extractVariableMissingValues(mod, i),
         });
     }
 
@@ -190,7 +226,7 @@ function extractRowsFromModule(mod: ReadStatModule, variables: SavVariable[], ro
     for (let r = 0; r < rowCount; r++) {
         const row: (number | string | null)[] = [];
         for (let c = 0; c < variableCount; c++) {
-            if (mod._is_cell_missing(r, c)) {
+            if (isCellSystemMissing(mod, r, c)) {
                 row.push(null);
             } else if (variables[c].type === 'string') {
                 const strPtr = mod._get_string_value(r, c);
@@ -268,6 +304,7 @@ export async function parseSavFile(
                 type: mod._get_variable_type(i) === 0 ? 'numeric' : 'string',
                 label: mod.UTF8ToString(labelPtr) || undefined,
                 valueLabelSetName: mod.UTF8ToString(vlNamePtr) || undefined,
+                missingValues: extractVariableMissingValues(mod, i),
             });
         }
 
@@ -321,10 +358,10 @@ export async function parseSavFile(
         for (let r = 0; r < rowCount; r++) {
             const row: (number | string | null)[] = [];
             for (let c = 0; c < variableCount; c++) {
-                if (mod._is_cell_missing(r, c)) {
-                    row.push(null);
-                } else if (variables[c].type === 'string') {
-                    const strPtr = mod._get_string_value(r, c);
+            if (isCellSystemMissing(mod, r, c)) {
+                row.push(null);
+            } else if (variables[c].type === 'string') {
+                const strPtr = mod._get_string_value(r, c);
                     row.push(mod.UTF8ToString(strPtr));
                 } else {
                     row.push(mod._get_numeric_value(r, c));
@@ -423,6 +460,7 @@ export async function parseSavMetadata(
                 type: mod._get_variable_type(i) === 0 ? 'numeric' : 'string',
                 label: mod.UTF8ToString(labelPtr) || undefined,
                 valueLabelSetName: mod.UTF8ToString(vlNamePtr) || undefined,
+                missingValues: extractVariableMissingValues(mod, i),
             });
         }
 
@@ -556,6 +594,7 @@ export async function parseSavSample(
                 type: mod._get_variable_type(i) === 0 ? 'numeric' : 'string',
                 label: mod.UTF8ToString(labelPtr) || undefined,
                 valueLabelSetName: mod.UTF8ToString(vlNamePtr) || undefined,
+                missingValues: extractVariableMissingValues(mod, i),
             });
         }
 
@@ -602,7 +641,7 @@ export async function parseSavSample(
         for (let r = 0; r < parsedRowCount; r++) {
             const row: (number | string | null)[] = [];
             for (let c = 0; c < variableCount; c++) {
-                if (mod._is_cell_missing(r, c)) {
+                if (isCellSystemMissing(mod, r, c)) {
                     row.push(null);
                 } else if (variables[c].type === 'string') {
                     const strPtr = mod._get_string_value(r, c);
@@ -937,14 +976,15 @@ export async function parseSavStreaming(
             const labelPtr = mod._get_variable_label(i);
             const vlNamePtr = mod._get_variable_value_labels_name(i);
 
-            variables.push({
-                name: mod.UTF8ToString(namePtr),
-                index: i,
-                type: mod._get_variable_type(i) === 0 ? 'numeric' : 'string',
-                label: mod.UTF8ToString(labelPtr) || undefined,
-                valueLabelSetName: mod.UTF8ToString(vlNamePtr) || undefined,
-            });
-        }
+                    variables.push({
+                        name: mod.UTF8ToString(namePtr),
+                        index: i,
+                        type: mod._get_variable_type(i) === 0 ? 'numeric' : 'string',
+                        label: mod.UTF8ToString(labelPtr) || undefined,
+                        valueLabelSetName: mod.UTF8ToString(vlNamePtr) || undefined,
+                        missingValues: extractVariableMissingValues(mod, i),
+                    });
+                }
 
         // Extract value labels
         const valueLabelSets: Record<string, SavValueLabel[]> = {};
@@ -1001,7 +1041,7 @@ export async function parseSavStreaming(
             for (let r = processedRows; r < batchEnd; r++) {
                 const row: (number | string | null)[] = [];
                 for (let c = 0; c < variableCount; c++) {
-                    if (mod._is_cell_missing(r, c)) {
+                    if (isCellSystemMissing(mod, r, c)) {
                         row.push(null);
                     } else if (variables[c].type === 'string') {
                         const strPtr = mod._get_string_value(r, c);

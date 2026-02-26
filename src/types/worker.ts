@@ -6,7 +6,7 @@
  * and future headless/CLI usage.
  */
 
-import { RecodeConfig, VariableSet, Variable, Filter, HistogramBin, AggregatedRow, ChiSquareResult, TableStats } from './index';
+import { RecodeConfig, VariableSet, Variable, Filter, HistogramBin, AggregatedRow, ChiSquareResult, TableStats, MissingValueDef } from './index';
 import type { OrderedScoring, VariableType } from './index';
 import { CrosstabQueryOptions } from '../services/queryBuilder';
 import { ProcessedAnalysisData } from './processedData';
@@ -77,8 +77,9 @@ export type WorkerRequest =
   | { type: 'query'; sql: string }
   | { type: 'getSchema' }
   | { type: 'getUniqueValues'; column: string }
-  | { type: 'getVariableStats'; column: string; variableType?: VariableType; orderedScoring?: OrderedScoring; binCount?: number }
+  | { type: 'getVariableStats'; column: string; variableType?: VariableType; orderedScoring?: OrderedScoring; binCount?: number; missingValues?: MissingValueDef }
   | { type: 'recodeVariable'; sourceCol: string; newColName: string; config: RecodeConfig }
+  | { type: 'fillSystemMissing'; column: string; value: number | string }
   | { type: 'checkPersistedData' }
   | { type: 'clearPersistedData' }
   | {
@@ -182,6 +183,7 @@ export type WorkerResponse =
   | UnknownAnalysisResultResponse
   | { type: 'arrowExported'; buffer: ArrayBuffer; rowCount: number; durationMs: number }
   | { type: 'valueFrequencies'; column: string; frequencies: Array<{ value: number; count: number }> }
+  | { type: 'fillSystemMissingComplete'; column: string }
   | { type: 'harmonizedTableCreated'; tableName: string; rowCount: number; durationMs: number }
   | { type: 'respondentOverlap'; totalSource: number; totalTarget: number; overlap: number }
   | { type: 'error'; message: string };

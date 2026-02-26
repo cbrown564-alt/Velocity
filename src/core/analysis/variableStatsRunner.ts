@@ -12,7 +12,7 @@ import { VariableStatsResult, VariableStatsFrequency, NumericStats } from '../..
 import { DatabaseAdapter } from '../DatabaseAdapter';
 import { AnalysisRunner } from './AnalysisRunner';
 import { analysisRegistry } from './registry';
-import type { VariableType } from '../../types';
+import type { MissingValueDef, VariableType } from '../../types';
 import { allowsNumericStats } from '../../types';
 
 export interface VariableStatsConfig {
@@ -20,6 +20,7 @@ export interface VariableStatsConfig {
   variableType?: VariableType;
   orderedScoring?: 'categorical_only' | 'allow_numeric_stats';
   binCount?: number;
+  missingValues?: MissingValueDef;
 }
 
 export class VariableStatsRunner implements AnalysisRunner<VariableStatsConfig, VariableStatsResult> {
@@ -41,7 +42,8 @@ export class VariableStatsRunner implements AnalysisRunner<VariableStatsConfig, 
       config.column,
       config.variableType,
       config.orderedScoring,
-      config.binCount
+      config.binCount,
+      config.missingValues
     );
   }
 }
@@ -57,30 +59,83 @@ export async function getVariableStats(
   column: string,
   variableType?: VariableType,
   orderedScoring?: 'categorical_only' | 'allow_numeric_stats',
-  binCount: number = 10
+  binCount: number = 10,
+  missingValues?: MissingValueDef
 ): Promise<VariableStatsResult> {
+  const escapedColumn = column.replace(/"/g, '""');
+  const userMissingConditions: string[] = [];
+  const missingConditions: string[] = [`"${escapedColumn}" IS NULL`];
+
+  const discrete = missingValues?.discrete?.filter((v): v is number => Number.isFinite(v));
+  if (discrete && discrete.length > 0) {
+    const condition = `"${escapedColumn}" IN (${discrete.join(', ')})`;
+    userMissingConditions.push(condition);
+    missingConditions.push(condition);
+  }
+  const range = missingValues?.range;
+  if (range && Number.isFinite(range.low) && Number.isFinite(range.high)) {
+    const low = Math.min(range.low, range.high);
+    const high = Math.max(range.low, range.high);
+    const condition = `("${escapedColumn}" >= ${low} AND "${escapedColumn}" <= ${high})`;
+    userMissingConditions.push(condition);
+    missingConditions.push(condition);
+  }
+  const missingConditionSql = missingConditions.join(' OR ');
+
   // Get total count
   const totalRes = await adapter.query(`SELECT COUNT(*) as cnt FROM main`);
   const totalCount = Number(totalRes.rows[0]?.cnt);
 
-  // Get missing count (NULL values)
-  const missingRes = await adapter.query(`SELECT COUNT(*) as cnt FROM main WHERE "${column}" IS NULL`);
+  // Get missing count (system missing + user-defined missing).
+  const missingRes = await adapter.query(`SELECT COUNT(*) as cnt FROM main WHERE ${missingConditionSql}`);
   const missingCount = Number(missingRes.rows[0]?.cnt);
 
   // Get frequency distribution (top 10 values by count)
   const freqRes = await adapter.query(`
-    SELECT "${column}" as value, COUNT(*) as cnt
+    SELECT "${escapedColumn}" as value, COUNT(*) as cnt
     FROM main
-    WHERE "${column}" IS NOT NULL
-    GROUP BY "${column}"
-    ORDER BY cnt DESC, "${column}" ASC
+    WHERE "${escapedColumn}" IS NOT NULL
+    GROUP BY "${escapedColumn}"
+    ORDER BY cnt DESC, "${escapedColumn}" ASC
     LIMIT 10
   `);
 
-  const frequencies: VariableStatsFrequency[] = freqRes.rows.map((row: any) => ({
-    value: row.value,
-    count: Number(row.cnt),
-  }));
+  const frequencyMap = new Map<string, VariableStatsFrequency>();
+  for (const row of freqRes.rows) {
+    const value = row.value as number | string | null;
+    const entry: VariableStatsFrequency = { value, count: Number(row.cnt) };
+    frequencyMap.set(String(value), entry);
+  }
+
+  // Ensure user-missing coded values appear in the mapping even if not in top-10.
+  if (userMissingConditions.length > 0) {
+    const userMissingFreqRes = await adapter.query(`
+      SELECT "${escapedColumn}" as value, COUNT(*) as cnt
+      FROM main
+      WHERE "${escapedColumn}" IS NOT NULL AND (${userMissingConditions.join(' OR ')})
+      GROUP BY "${escapedColumn}"
+    `);
+    for (const row of userMissingFreqRes.rows) {
+      const value = row.value as number | string | null;
+      const key = String(value);
+      const count = Number(row.cnt);
+      const existing = frequencyMap.get(key);
+      if (existing) {
+        existing.count = count;
+      } else {
+        frequencyMap.set(key, { value, count });
+      }
+    }
+  }
+
+  const frequencies: VariableStatsFrequency[] = Array.from(frequencyMap.values())
+    .sort((a, b) => {
+      if (b.count !== a.count) return b.count - a.count;
+      const av = a.value;
+      const bv = b.value;
+      if (typeof av === 'number' && typeof bv === 'number') return av - bv;
+      return String(av).localeCompare(String(bv));
+    });
 
   const result: VariableStatsResult = {
     column,
@@ -102,7 +157,7 @@ export async function getVariableStats(
           QUANTILE_CONT("${column}", 0.25) as q1_val,
           QUANTILE_CONT("${column}", 0.75) as q3_val
         FROM main
-        WHERE "${column}" IS NOT NULL
+        WHERE "${escapedColumn}" IS NOT NULL
       `);
 
       const statsRow = statsRes.rows[0] as any;
@@ -123,10 +178,10 @@ export async function getVariableStats(
         // Compute adjacent values (whiskers)
         const fenceRes = await adapter.query(`
           SELECT
-            MIN("${column}") as whisker_min,
-            MAX("${column}") as whisker_max
+            MIN("${escapedColumn}") as whisker_min,
+            MAX("${escapedColumn}") as whisker_max
           FROM main
-          WHERE "${column}" >= ${lowerFence} AND "${column}" <= ${upperFence}
+          WHERE "${escapedColumn}" >= ${lowerFence} AND "${escapedColumn}" <= ${upperFence}
         `);
         const fenceRow = fenceRes.rows[0] as any;
         const whiskerMin = fenceRow?.whisker_min !== null ? Number(fenceRow.whisker_min) : minVal;
@@ -134,9 +189,9 @@ export async function getVariableStats(
 
         // Fetch Outliers
         const outliersRes = await adapter.query(`
-          SELECT "${column}" as val
+          SELECT "${escapedColumn}" as val
           FROM main
-          WHERE ("${column}" < ${lowerFence} OR "${column}" > ${upperFence})
+          WHERE ("${escapedColumn}" < ${lowerFence} OR "${escapedColumn}" > ${upperFence})
           LIMIT 100
         `);
         const outliers = outliersRes.rows.map((r: any) => Number(r.val));
@@ -149,11 +204,11 @@ export async function getVariableStats(
           SELECT
             CASE
               WHEN ${range} = 0 THEN 1
-              ELSE LEAST(FLOOR(("${column}" - ${minVal}) / ${binWidth}) + 1, ${binCount})::INTEGER
+              ELSE LEAST(FLOOR(("${escapedColumn}" - ${minVal}) / ${binWidth}) + 1, ${binCount})::INTEGER
             END as bucket,
             COUNT(*) as cnt
           FROM main
-          WHERE "${column}" IS NOT NULL
+          WHERE "${escapedColumn}" IS NOT NULL
           GROUP BY bucket
           ORDER BY bucket
         `);

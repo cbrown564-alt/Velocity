@@ -1192,6 +1192,15 @@ async function recodeVariable(
   return safeNewCol;
 }
 
+async function fillSystemMissing(column: string, value: number | string): Promise<void> {
+  if (!conn) throw new Error('DB not initialized');
+  const escapedCol = column.replace(/"/g, '""');
+  const valueSql = typeof value === 'number'
+    ? `${value}`
+    : `'${String(value).replace(/'/g, "''")}'`;
+  await conn.query(`UPDATE main SET "${escapedCol}" = ${valueSql} WHERE "${escapedCol}" IS NULL`);
+}
+
 // ============================================================================
 // Message Handler
 // ============================================================================
@@ -1354,7 +1363,8 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
           request.column,
           request.variableType,
           request.orderedScoring,
-          request.binCount
+          request.binCount,
+          request.missingValues
         );
         self.postMessage({ type: 'variableStats', stats } as WorkerResponse);
         break;
@@ -1383,6 +1393,12 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
       case 'recodeVariable': {
         const newCol = await recodeVariable(request.sourceCol, request.newColName, request.config);
         self.postMessage({ type: 'recodeComplete', newColName: newCol } as WorkerResponse);
+        break;
+      }
+
+      case 'fillSystemMissing': {
+        await fillSystemMissing(request.column, request.value);
+        self.postMessage({ type: 'fillSystemMissingComplete', column: request.column } as WorkerResponse);
         break;
       }
 
