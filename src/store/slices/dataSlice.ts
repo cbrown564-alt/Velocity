@@ -974,9 +974,11 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
             return variable.valueLabels.map(vl => String(vl.value));
         }
 
+        const reqId = crypto.randomUUID();
         return new Promise((resolve, reject) => {
             const handler = (event: MessageEvent<WorkerResponse>) => {
                 const response = event.data;
+                if (response.requestId !== reqId) return;
                 if (response.type === 'uniqueValues') {
                     worker.removeEventListener('message', handler);
                     resolve(response.data);
@@ -986,7 +988,7 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                 }
             };
             worker.addEventListener('message', handler);
-            worker.postMessage({ type: 'getUniqueValues', column: variableId } as WorkerRequest);
+            worker.postMessage({ type: 'getUniqueValues', requestId: reqId, column: variableId } as WorkerRequest);
         });
     },
 
@@ -1020,10 +1022,12 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
             variableStatsLoading: { ...state.variableStatsLoading, [variableId]: true }
         }));
 
+        const reqId = crypto.randomUUID();
         return new Promise((resolve, reject) => {
             const handler = (event: MessageEvent<WorkerResponse>) => {
                 const response = event.data;
-                if (response.type === 'variableStats' && response.stats.column === variableId) {
+                if (response.requestId !== reqId) return;
+                if (response.type === 'variableStats') {
                     worker.removeEventListener('message', handler);
                     // Cache the result
                     set((state) => ({
@@ -1042,6 +1046,7 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
             worker.addEventListener('message', handler);
             worker.postMessage({
                 type: 'getVariableStats',
+                requestId: reqId,
                 column: variableId,
                 variableType,
                 orderedScoring: variable?.orderedScoring,
@@ -1055,9 +1060,11 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
         const { worker, dataset } = get();
         if (!worker) throw new Error('Worker not initialized');
 
+        const reqId = crypto.randomUUID();
         return new Promise((resolve, reject) => {
             const handler = (event: MessageEvent<WorkerResponse>) => {
                 const response = event.data;
+                if (response.requestId !== reqId) return;
                 if (response.type === 'recodeComplete') {
                     if (dataset) {
                         const createdAt = Date.now();
@@ -1120,6 +1127,7 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
             worker.addEventListener('message', handler);
             worker.postMessage({
                 type: 'recodeVariable',
+                requestId: reqId,
                 sourceCol: sourceColId,
                 newColName,
                 config

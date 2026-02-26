@@ -65,7 +65,11 @@ export type WorkerQueryRow = AggregatedRow | Record<string, unknown>;
 // Worker Request Types
 // ============================================================================
 
-export type WorkerRequest =
+interface WorkerRequestBase {
+  requestId?: string;
+}
+
+export type WorkerRequest = WorkerRequestBase & (
   | { type: 'init'; forceCleanStart?: boolean; datasetId?: string; schemaVersion?: number }
   | { type: 'setPersistenceContext'; datasetId?: string; schemaVersion?: number }
   | { type: 'updatePersistenceMetadata'; metadata: PersistedMetadata }
@@ -83,38 +87,38 @@ export type WorkerRequest =
   | { type: 'checkPersistedData' }
   | { type: 'clearPersistedData' }
   | {
-    type: 'runCrosstab';
-    options: RunCrosstabRequestPayload['options'];
-    analysisSettings?: WorkerAnalysisSettings;
-    context: WorkerAnalysisContext;
-  }
+      type: 'runCrosstab';
+      options: RunCrosstabRequestPayload['options'];
+      analysisSettings?: WorkerAnalysisSettings;
+      context: WorkerAnalysisContext;
+    }
   | {
-    type: 'processData';
-    requestId?: string;
-    data: AggregatedRow[];
-    options: {
-      rowVariables: Variable[];
-      colVariable: Variable | null;
-      isWeighted?: boolean;
-      isMultipleResponse?: boolean;
-    };
-    chartType?: ChartType;
-  }
+      type: 'processData';
+      data: AggregatedRow[];
+      options: {
+        rowVariables: Variable[];
+        colVariable: Variable | null;
+        isWeighted?: boolean;
+        isMultipleResponse?: boolean;
+      };
+      chartType?: ChartType;
+    }
   | KnownRunAnalysisRequest
   | UnknownRunAnalysisRequest
   | { type: 'exportArrow'; sql: string; columns?: string[] }
   | { type: 'getValueFrequencies'; tableName: string; columnName: string }
   | {
-    type: 'buildHarmonizedTable';
-    sourceTable: string;
-    targetTable: string;
-    mappings: VariableMapping[];
-    outputTableName: string;
-    sourceVarNames?: Record<string, string>;
-    targetVarNames?: Record<string, string>;
-  }
+      type: 'buildHarmonizedTable';
+      sourceTable: string;
+      targetTable: string;
+      mappings: VariableMapping[];
+      outputTableName: string;
+      sourceVarNames?: Record<string, string>;
+      targetVarNames?: Record<string, string>;
+    }
   | { type: 'getRespondentOverlap'; sourceTable: string; targetTable: string; keyColumn: string }
-  | { type: 'ping' };
+  | { type: 'ping' }
+);
 
 // ============================================================================
 // Worker Response Types
@@ -159,7 +163,11 @@ export interface VariableStatsResult {
   numeric?: NumericStats;
 }
 
-export type WorkerResponse =
+interface WorkerResponseBase {
+  requestId?: string;
+}
+
+export type WorkerResponse = WorkerResponseBase & (
   | { type: 'ready'; opfsAvailable: boolean }
   | { type: 'persistenceStatus'; opfsAvailable: boolean; mode: 'opfs' | 'memory' | 'disabled'; dbPath: string; lastError?: string }
   | { type: 'corruptionDetected'; message: string }
@@ -178,7 +186,7 @@ export type WorkerResponse =
   | { type: 'noPersistedData' }
   | { type: 'persistedDataCleared' }
   | { type: 'pong'; hasData: boolean; rowCount?: number }
-  | { type: 'processedData'; requestId?: string; result: ProcessedAnalysisData | null }
+  | { type: 'processedData'; result: ProcessedAnalysisData | null }
   | KnownAnalysisResultResponse
   | UnknownAnalysisResultResponse
   | { type: 'arrowExported'; buffer: ArrayBuffer; rowCount: number; durationMs: number }
@@ -186,4 +194,5 @@ export type WorkerResponse =
   | { type: 'fillSystemMissingComplete'; column: string }
   | { type: 'harmonizedTableCreated'; tableName: string; rowCount: number; durationMs: number }
   | { type: 'respondentOverlap'; totalSource: number; totalTarget: number; overlap: number }
-  | { type: 'error'; message: string };
+  | { type: 'error'; message: string }
+);

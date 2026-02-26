@@ -20,8 +20,6 @@ describe('Integration: Store <-> Worker Analysis Flow', () => {
     });
 
     it('should trigger runCrosstab and update results when TableConfig changes', async () => {
-        const store = useVelocityStore.getState();
-
         // 1. Setup: Init Worker and Load Fake Data
         // We'll skip the real init handshake and just set the worker directly 
         // because we are testing the Analysis flow, not Init again.
@@ -88,6 +86,7 @@ describe('Integration: Store <-> Worker Analysis Flow', () => {
         const responseEvent = new MessageEvent('message', {
             data: {
                 type: 'queryResult',
+                requestId: postMessageSpy.mock.calls[postMessageSpy.mock.calls.length - 1][0].requestId,
                 data: mockResult,
                 durationMs: 50
             } as WorkerResponse
