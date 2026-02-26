@@ -38,3 +38,18 @@ The "Set as Missing" / "Include value" buttons in the action column of the Value
     *   The reducer should safely add or remove the `valueCode` from the `variable.missingValues.discrete` array without mutating state directly.
 *   **File:** `src/features/variableManager/components/InspectorStats.tsx`
 *   **Dependencies:** Action creators in `src/store/slices/dataSlice.ts`.
+
+### 4. Cross-Highlighting Bugs
+There are existing bugs with the cross-highlighting functionality between the distribution charts and the Value Mapping table that need to be resolved.
+
+*   **Bugs:**
+    1.  Hovering over a bar in the chart highlights the bar, but it does *not* highlight the corresponding row in the table.
+    2.  Hovering over a row in the table greys out all bars in the chart instead of highlighting the corresponding value's bar.
+*   **Implementation:**
+    *   Investigate the `hoveredKey` state in `VariableInspector.tsx` and how it's being passed to and interpreted by `HorizontalBarRenderer.tsx`, `HistogramRenderer.tsx`, and `InspectorStats.tsx`.
+    *   Ensure that the key being emitted by `onHoverChange` (whether it's `d.label`, `d.code`, or another identifier) matches the key being checked when applying the hover styles in the counterparts.
+*   **Files:**
+    *   `src/features/variableManager/VariableInspector.tsx`
+    *   `src/features/variableManager/components/InspectorStats.tsx`
+    *   `src/components/charts/renderers/HorizontalBarRenderer.tsx`
+    *   `src/components/charts/renderers/HistogramRenderer.tsx`
