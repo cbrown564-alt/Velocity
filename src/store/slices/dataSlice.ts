@@ -1260,6 +1260,21 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
     updateVariableMetadata: (variableId, updates) => {
         set((state) => {
             if (!state.dataset) return state;
+            const variable = state.dataset.variables.find(v => v.id === variableId);
+            if (!variable) return state;
+
+            // Propagate name change to single-variable sets whose name is still
+            // in sync with the variable's current name (not manually renamed).
+            const variableSets = updates.name
+                ? state.variableSets.map(vs =>
+                    vs.structure === 'single' &&
+                    vs.variableIds[0] === variableId &&
+                    vs.name === variable.name
+                        ? { ...vs, name: updates.name! }
+                        : vs
+                )
+                : state.variableSets;
+
             return {
                 dataset: {
                     ...state.dataset,
@@ -1267,6 +1282,7 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                         v.id === variableId ? { ...v, ...updates } : v
                     ),
                 },
+                variableSets,
             };
         });
     },
