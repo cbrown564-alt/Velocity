@@ -31,6 +31,13 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
     const brushRef = useRef<SVGGElement>(null);
     const svgRef = useRef<SVGSVGElement>(null);
 
+    // Keep a ref to selectedKeys so the D3 brush contextmenu handler can read
+    // the current selection without needing it in the brush effect's dep array.
+    const selectedKeysRef = useRef(selectedKeys);
+    useEffect(() => {
+        selectedKeysRef.current = selectedKeys;
+    }, [selectedKeys]);
+
     // Use the first series (single column analysis) or "Total" column
     const series = processedData.series[0];
     const chartData = series?.data || [];
@@ -165,7 +172,7 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
         brushGroup.call(brush as any);
 
         // The brush overlay captures all pointer events, so React's onMouseEnter
-        // on bars never fires. Track hover here via the brush group's mousemove.
+        // on bars never fires. Track hover and right-click here via the brush group.
         brushGroup
             .on('mousemove.hover', (event) => {
                 if (!onHoverChange) return;
@@ -182,13 +189,36 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
             })
             .on('mouseleave.hover', () => {
                 if (onHoverChange) onHoverChange(null);
+            })
+            .on('contextmenu.context', (event) => {
+                if (!onContextMenu) return;
+                event.preventDefault();
+                const [, mouseY] = pointer(event);
+                const hovered = chartData.find(d => {
+                    const y = yScale(d.label) || 0;
+                    return mouseY >= y && mouseY < y + yScale.bandwidth();
+                });
+                // If right-clicking on a selected bar, include all selected items.
+                // Otherwise use just the bar under cursor.
+                const currentSelection = selectedKeysRef.current;
+                const selectedItems = hovered && currentSelection?.has(hovered.label)
+                    ? chartData.filter(item => currentSelection?.has(item.label))
+                    : hovered
+                        ? [hovered]
+                        : chartData.filter(item => currentSelection?.has(item.label));
+                if (selectedItems.length === 0) return;
+                onContextMenu({
+                    selected: selectedItems,
+                    position: { x: event.clientX, y: event.clientY },
+                });
             });
 
         return () => {
             brushGroup.on('.brush', null);
             brushGroup.on('.hover', null);
+            brushGroup.on('.context', null);
         };
-    }, [innerWidth, actualHeight, interactive, onSelectionChange, chartData, yScale, onHoverChange]);
+    }, [innerWidth, actualHeight, interactive, onSelectionChange, chartData, yScale, onHoverChange, onContextMenu]);
 
 
     // X-axis ticks

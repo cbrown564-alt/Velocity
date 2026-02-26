@@ -12,7 +12,7 @@ import { useVelocityStore } from '../../store';
 import type { Variable } from '../../store/slices/dataSlice';
 import type { VariableStatsResult } from '../../types/worker';
 import type { BarDatum, BinData } from '../../types/charts';
-import { allowsNumericStats } from '../../types';
+import { allowsNumericStats, normalizeVariableType } from '../../types';
 import { ChartContextMenu } from '../../components/overlays/ChartContextMenu';
 import { InputModal } from '../../components/overlays/InputModal';
 import styles from './VariableInspector.module.css';
@@ -101,8 +101,8 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
         }
     }, [selectedVariableId, stats, isLoadingStats, getVariableStats, variable?.type, variable?.orderedScoring]);
 
-    // Check if variable is numeric/numeric type
-    const isNumericVariable = allowsNumericStats(variable?.type, variable?.orderedScoring);
+    // Histogram rendering should be reserved for true numeric variables only.
+    const isNumericVariable = normalizeVariableType(variable?.type) === 'numeric';
 
     // Handle generic chart context menu
     const handleContextMenu = useCallback((event: { selected: any[]; position: { x: number; y: number } }) => {
@@ -182,7 +182,11 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
                     if (selectedCodes.has(String(val))) {
                         mappings[val] = groupName;
                     } else {
-                        mappings[val] = val;
+                        // Preserve existing label so unmapped values don't revert to raw codes
+                        const existingLabel = variable.valueLabels?.find(
+                            vl => String(vl.value) === String(val)
+                        )?.label;
+                        mappings[val] = existingLabel ?? String(val);
                     }
                 }
 
@@ -227,7 +231,7 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
     return (
         <div className={`${styles.inspector} ${className || ''}`}>
             {/* Header */}
-            <InspectorHeader variable={variable} />
+            <InspectorHeader variable={variable} stats={stats} isLoadingStats={isLoadingStats} />
 
             {/* Content feed: Chart -> Dictionary */}
             <div className={styles.content}>
