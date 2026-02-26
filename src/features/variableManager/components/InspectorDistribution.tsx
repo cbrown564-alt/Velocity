@@ -30,7 +30,7 @@ export const InspectorDistribution: React.FC<InspectorDistributionProps> = ({
     // Responsive chart width
     const containerRef = useRef<HTMLDivElement>(null);
     const { width: containerWidth } = useResizeObserver(containerRef);
-    const chartWidth = Math.max(280, containerWidth - 32); // Subtract padding
+    const chartWidth = Math.max(280, containerWidth); // section has no horizontal padding
 
     // Prepare data for Nominal/Ordinal Charts (HorizontalBarRenderer)
     const nominalChartData = useMemo(() => {
@@ -114,14 +114,13 @@ export const InspectorDistribution: React.FC<InspectorDistributionProps> = ({
     if ((!nominalChartData && !histogramData) || !variable) return null;
 
     return (
-        <div className={styles.section} ref={containerRef}>
-            <h3 className={styles.sectionTitle}>
+        <div className={styles.chartSection} ref={containerRef}>
+            <h3 className={styles.chartSectionTitle}>
                 Distribution
                 <span style={{
                     fontSize: '10px',
                     color: 'var(--text-tertiary, #888)',
                     fontWeight: 400,
-                    marginLeft: 'var(--space-2)',
                     textTransform: 'none',
                     letterSpacing: 'normal'
                 }}>
