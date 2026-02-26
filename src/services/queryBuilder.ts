@@ -17,13 +17,14 @@ import type { Filter } from '../types';
 export interface GridQueryOptions {
     columns: Array<{ name: string; label: string }>;
     filters?: Filter[];
+    additionalWhere?: string;
     weightVar?: string;
     colVar?: string | null;
     aggregate?: boolean;
 }
 
 export function buildGridQuery(options: GridQueryOptions): string {
-    const { columns, filters, weightVar, colVar, aggregate } = options;
+    const { columns, filters, additionalWhere, weightVar, colVar, aggregate } = options;
 
     // Use a CTE to unpivot the data once, instead of UNION ALL
     // This allows access to all other columns for filtering/grouping
@@ -45,6 +46,9 @@ export function buildGridQuery(options: GridQueryOptions): string {
     const whereConditions = ['_synthetic_value IS NOT NULL']; // Filter NULLs from unpivoted CTE
     if (filterClause) {
         whereConditions.push(filterClause);
+    }
+    if (additionalWhere) {
+        whereConditions.push(additionalWhere);
     }
 
     // 4. Metric Aggregation vs Frequency
@@ -149,6 +153,7 @@ export function buildGridQuery(options: GridQueryOptions): string {
 export interface GridHistogramQueryOptions {
     columns: Array<{ name: string; label: string }>;
     filters?: Filter[];
+    additionalWhere?: string;
     colVar?: string | null;
     minVal: number;
     maxVal: number;
@@ -156,7 +161,7 @@ export interface GridHistogramQueryOptions {
 }
 
 export function buildGridHistogramQuery(options: GridHistogramQueryOptions): string {
-    const { columns, filters, colVar, minVal, maxVal, binCount } = options;
+    const { columns, filters, additionalWhere, colVar, minVal, maxVal, binCount } = options;
     const range = maxVal - minVal;
     const binWidth = range > 0 ? range / binCount : 1;
 
@@ -174,6 +179,9 @@ export function buildGridHistogramQuery(options: GridHistogramQueryOptions): str
     const whereConditions = ['_synthetic_value IS NOT NULL'];
     if (filterClause) {
         whereConditions.push(filterClause);
+    }
+    if (additionalWhere) {
+        whereConditions.push(additionalWhere);
     }
 
     const bucketExpr = `
@@ -217,12 +225,13 @@ export function buildGridHistogramQuery(options: GridHistogramQueryOptions): str
 interface MultipleQueryOptions {
     columns: Array<{ name: string; label: string; countedValue: number }>;
     filters?: Filter[];
+    additionalWhere?: string;
     weightVar?: string;
     colVar?: string | null;
 }
 
 function buildMultipleQuery(options: MultipleQueryOptions): string {
-    const { columns, filters, weightVar, colVar } = options;
+    const { columns, filters, additionalWhere, weightVar, colVar } = options;
 
     const whereClause = buildFilterClause(filters);
     const statsExpr = weightVar
@@ -248,6 +257,9 @@ function buildMultipleQuery(options: MultipleQueryOptions): string {
         if (whereClause) {
             conditions.push(whereClause);
         }
+        if (additionalWhere) {
+            conditions.push(additionalWhere);
+        }
 
         parts.push(`WHERE ${conditions.join(' AND ')}`);
         if (groupByClause) {
@@ -271,11 +283,12 @@ interface ColumnMultipleQueryOptions {
     rowVars: string[];
     columns: Array<{ name: string; label: string; countedValue: number }>;
     filters?: Filter[];
+    additionalWhere?: string;
     weightVar?: string;
 }
 
 function buildColumnMultipleQuery(options: ColumnMultipleQueryOptions): string {
-    const { rowVars, columns, filters, weightVar } = options;
+    const { rowVars, columns, filters, additionalWhere, weightVar } = options;
     const whereClause = buildFilterClause(filters);
 
     const rowSelectors = rowVars.length > 0
@@ -299,6 +312,9 @@ function buildColumnMultipleQuery(options: ColumnMultipleQueryOptions): string {
         if (whereClause) {
             conditions.push(whereClause);
         }
+        if (additionalWhere) {
+            conditions.push(additionalWhere);
+        }
 
         parts.push(`WHERE ${conditions.join(' AND ')}`);
         if (groupByClause) {
@@ -315,6 +331,7 @@ export interface OverlapQueryOptions {
     rowVars: string[];
     columns: Array<{ name: string; label: string; countedValue: number }>;
     filters?: Filter[];
+    additionalWhere?: string;
     weightVar?: string;
 }
 
@@ -325,7 +342,7 @@ export interface OverlapQueryOptions {
  * who selected both columns in a multi-response set.
  */
 export function buildOverlapQuery(options: OverlapQueryOptions): string {
-    const { rowVars, columns, filters, weightVar } = options;
+    const { rowVars, columns, filters, additionalWhere, weightVar } = options;
     if (columns.length < 2) {
         return `SELECT 'Total' as rowKey_0, '' as colKeyA, '' as colKeyB, 0 as overlapCount WHERE 1 = 0`;
     }
@@ -356,8 +373,9 @@ export function buildOverlapQuery(options: OverlapQueryOptions): string {
                 `FROM main`,
             ];
 
-            if (whereClause) {
-                parts.push(`WHERE ${whereClause}`);
+            const whereParts = [whereClause, additionalWhere].filter(Boolean);
+            if (whereParts.length > 0) {
+                parts.push(`WHERE ${whereParts.join(' AND ')}`);
             }
             if (groupByClause) {
                 parts.push(groupByClause);
@@ -374,6 +392,7 @@ export interface CrosstabQueryOptions {
     rowVars: string[];
     colVar?: string | null;
     filters?: Filter[];
+    additionalWhere?: string;
     weightVar?: string;
     /** For grid structure: array of columns with names and labels to unpivot */
     gridColumns?: Array<{ name: string; label: string }>;
@@ -407,6 +426,7 @@ export function buildCrosstabQuery(options: CrosstabQueryOptions): string {
         rowVars,
         colVar,
         filters,
+        additionalWhere,
         weightVar,
         gridColumns,
         multipleColumns,
@@ -418,17 +438,17 @@ export function buildCrosstabQuery(options: CrosstabQueryOptions): string {
 
     // Special case: Grid structure (unpivot multiple columns)
     if (gridColumns && gridColumns.length > 0) {
-        return buildGridQuery({ columns: gridColumns, filters, weightVar, colVar, aggregate: gridAggregate });
+        return buildGridQuery({ columns: gridColumns, filters, additionalWhere, weightVar, colVar, aggregate: gridAggregate });
     }
 
     // Special case: Multiple structure used as columns (column banner)
     if (columnMultipleColumns && columnMultipleColumns.length > 0) {
-        return buildColumnMultipleQuery({ rowVars, columns: columnMultipleColumns, filters, weightVar });
+        return buildColumnMultipleQuery({ rowVars, columns: columnMultipleColumns, filters, additionalWhere, weightVar });
     }
 
     // Special case: Multiple structure (filtered by counted value)
     if (multipleColumns && multipleColumns.length > 0) {
-        return buildMultipleQuery({ columns: multipleColumns, filters, weightVar, colVar });
+        return buildMultipleQuery({ columns: multipleColumns, filters, additionalWhere, weightVar, colVar });
     }
 
     // Validation
@@ -545,14 +565,15 @@ export function buildCrosstabQuery(options: CrosstabQueryOptions): string {
 
     // Build WHERE clause if filters exist
     const whereClause = buildFilterClause(filters);
+    const whereParts = [whereClause, additionalWhere].filter(Boolean);
 
     const parts = [
         `SELECT ${rowSelectors}, ${colSelector}, ${statsExpr}`,
         `FROM main`,
     ];
 
-    if (whereClause) {
-        parts.push(`WHERE ${whereClause}`);
+    if (whereParts.length > 0) {
+        parts.push(`WHERE ${whereParts.join(' AND ')}`);
     }
 
     if (groupBy) {

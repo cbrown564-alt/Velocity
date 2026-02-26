@@ -32,13 +32,29 @@ export const InspectorDistribution: React.FC<InspectorDistributionProps> = ({
     const { width: containerWidth } = useResizeObserver(containerRef);
     const chartWidth = Math.max(280, containerWidth); // section has no horizontal padding
 
+    const isMissingValue = (value: number | string | null): boolean => {
+        if (value === null) return true;
+        if (!variable?.missingValues) return false;
+        const numericValue = typeof value === 'number' ? value : Number(value);
+        if (Number.isFinite(numericValue)) {
+            if (variable.missingValues.discrete?.includes(numericValue)) return true;
+            if (variable.missingValues.range) {
+                const low = Math.min(variable.missingValues.range.low, variable.missingValues.range.high);
+                const high = Math.max(variable.missingValues.range.low, variable.missingValues.range.high);
+                if (numericValue >= low && numericValue <= high) return true;
+            }
+        }
+        return false;
+    };
+
     // Prepare data for Nominal/Ordinal Charts (HorizontalBarRenderer)
     const nominalChartData = useMemo(() => {
         if (!stats || !variable || isNumericVariable) return null;
         const hasValueLabels = variable.valueLabels && variable.valueLabels.length > 0;
+        const validBase = Math.max(0, (stats.totalCount || 0) - (stats.missingCount || 0));
 
         // Sort data based on variable type
-        const sortedFrequencies = [...stats.frequencies];
+        const sortedFrequencies = stats.frequencies.filter((freq) => !isMissingValue(freq.value));
         if (isOrderedType(variable.type) || normalizeVariableType(variable.type as any) === 'numeric') {
             // For ordinal/scale, sort by value (code) to preserve natural order
             sortedFrequencies.sort((a, b) => {
@@ -58,9 +74,9 @@ export const InspectorDistribution: React.FC<InspectorDistributionProps> = ({
             return {
                 label,
                 value: freq.count,
-                percent: (freq.count / stats.totalCount) * 100,
+                percent: validBase > 0 ? (freq.count / validBase) * 100 : 0,
                 code: freq.value,
-                isMissing: variable.missingValues?.discrete?.includes(freq.value as any) ?? false,
+                isMissing: false,
             };
         });
 
@@ -80,26 +96,16 @@ export const InspectorDistribution: React.FC<InspectorDistributionProps> = ({
     const histogramData = useMemo(() => {
         const numericStats = stats?.numeric;
         if (!numericStats || !variable || !isNumericVariable) return null;
+        const validBase = Math.max(0, (stats?.totalCount || 0) - (stats?.missingCount || 0));
 
         const data = numericStats.histogramBins.map(bin => {
-            let isMissing = false;
-            if (variable.missingValues) {
-                if (variable.missingValues.discrete?.some(v => v >= bin.x0 && v <= bin.x1)) {
-                    isMissing = true;
-                } else if (variable.missingValues.range) {
-                    if (bin.x0 >= variable.missingValues.range.low && bin.x1 <= variable.missingValues.range.high) {
-                        isMissing = true;
-                    }
-                }
-            }
-
             return {
                 label: `${bin.x0} - ${bin.x1}`,
                 value: bin.count,
-                percent: (bin.count / (stats?.totalCount || 1)) * 100,
+                percent: validBase > 0 ? (bin.count / validBase) * 100 : 0,
                 rawValue: String(bin.x0),
                 originalBin: bin,
-                isMissing
+                isMissing: false
             };
         });
 

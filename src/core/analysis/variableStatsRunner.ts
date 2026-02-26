@@ -81,6 +81,7 @@ export async function getVariableStats(
     missingConditions.push(condition);
   }
   const missingConditionSql = missingConditions.join(' OR ');
+  const validConditionSql = `NOT (${missingConditionSql})`;
 
   // Get total count
   const totalRes = await adapter.query(`SELECT COUNT(*) as cnt FROM main`);
@@ -94,7 +95,7 @@ export async function getVariableStats(
   const freqRes = await adapter.query(`
     SELECT "${escapedColumn}" as value, COUNT(*) as cnt
     FROM main
-    WHERE "${escapedColumn}" IS NOT NULL
+    WHERE ${validConditionSql}
     GROUP BY "${escapedColumn}"
     ORDER BY cnt DESC, "${escapedColumn}" ASC
     LIMIT 10
@@ -157,7 +158,7 @@ export async function getVariableStats(
           QUANTILE_CONT("${column}", 0.25) as q1_val,
           QUANTILE_CONT("${column}", 0.75) as q3_val
         FROM main
-        WHERE "${escapedColumn}" IS NOT NULL
+        WHERE ${validConditionSql}
       `);
 
       const statsRow = statsRes.rows[0] as any;
@@ -181,7 +182,9 @@ export async function getVariableStats(
             MIN("${escapedColumn}") as whisker_min,
             MAX("${escapedColumn}") as whisker_max
           FROM main
-          WHERE "${escapedColumn}" >= ${lowerFence} AND "${escapedColumn}" <= ${upperFence}
+          WHERE ${validConditionSql}
+            AND "${escapedColumn}" >= ${lowerFence}
+            AND "${escapedColumn}" <= ${upperFence}
         `);
         const fenceRow = fenceRes.rows[0] as any;
         const whiskerMin = fenceRow?.whisker_min !== null ? Number(fenceRow.whisker_min) : minVal;
@@ -191,7 +194,8 @@ export async function getVariableStats(
         const outliersRes = await adapter.query(`
           SELECT "${escapedColumn}" as val
           FROM main
-          WHERE ("${escapedColumn}" < ${lowerFence} OR "${escapedColumn}" > ${upperFence})
+          WHERE ${validConditionSql}
+            AND ("${escapedColumn}" < ${lowerFence} OR "${escapedColumn}" > ${upperFence})
           LIMIT 100
         `);
         const outliers = outliersRes.rows.map((r: any) => Number(r.val));
@@ -208,7 +212,7 @@ export async function getVariableStats(
             END as bucket,
             COUNT(*) as cnt
           FROM main
-          WHERE "${escapedColumn}" IS NOT NULL
+          WHERE ${validConditionSql}
           GROUP BY bucket
           ORDER BY bucket
         `);

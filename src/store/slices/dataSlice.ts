@@ -1414,7 +1414,16 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                         return { ...v, missingValues: { ...v.missingValues, discrete } };
                     }),
                 },
+                variableStats: Object.fromEntries(
+                    Object.entries(state.variableStats).filter(([key]) => key !== variableId)
+                ),
+                variableStatsLoading: { ...state.variableStatsLoading, [variableId]: false },
             };
         });
+
+        const runAnalysis = (get() as unknown as { runAnalysis?: () => Promise<void> }).runAnalysis;
+        if (typeof runAnalysis === 'function') {
+            void runAnalysis();
+        }
     },
 });

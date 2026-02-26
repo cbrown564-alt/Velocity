@@ -4,6 +4,7 @@ import type { DatabaseAdapter, QueryResult } from '../DatabaseAdapter';
 
 class MockAdapter implements DatabaseAdapter {
   private queryCount = 0;
+  public readonly queries: string[] = [];
 
   constructor(
     private readonly mainRows: Record<string, unknown>[],
@@ -11,7 +12,8 @@ class MockAdapter implements DatabaseAdapter {
     private readonly overlapRows: Record<string, unknown>[] = []
   ) { }
 
-  async query(_sql: string): Promise<QueryResult> {
+  async query(sql: string): Promise<QueryResult> {
+    this.queries.push(sql);
     this.queryCount += 1;
     const rows = this.queryCount === 1
       ? this.mainRows
@@ -49,6 +51,33 @@ const overlapRows = [
 ];
 
 describe('crosstabRunner significance integration', () => {
+  it('injects missing-value exclusions into analysis SQL', async () => {
+    const adapter = new MockAdapter([], []);
+    await runCrosstab(
+      adapter,
+      {
+        rowVars: ['q1'],
+        colVar: null,
+        filters: [],
+      },
+      {
+        variables: {
+          q1: {
+            id: 'q1',
+            name: 'q1',
+            label: 'Q1',
+            type: 'categorical',
+            valueLabels: [],
+            missingValues: { discrete: [999], range: { low: 98, high: 99 } },
+          },
+        },
+        variableSets: {},
+      }
+    );
+
+    expect(adapter.queries[0]).toContain('WHERE NOT ("q1" IS NULL OR "q1" IN (999) OR ("q1" >= 98 AND "q1" <= 99))');
+  });
+
   it('stores adjusted p-values and correction method for cell-vs-rest tests', async () => {
     const adapter = new MockAdapter(mainRows, totalRows);
     const result = await runCrosstab(

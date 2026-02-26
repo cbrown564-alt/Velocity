@@ -75,6 +75,20 @@ describe('queryBuilder', () => {
             expect(sql).toContain('WHERE "Age" > 18');
         });
 
+        it('combines filters with additional WHERE conditions', () => {
+            const filters: Filter[] = [
+                { id: 'f1', variableId: 'Age', operator: 'gt', value: 18 },
+            ];
+
+            const sql = buildCrosstabQuery({
+                rowVars: ['Gender'],
+                filters,
+                additionalWhere: 'NOT ("Gender" IS NULL)',
+            });
+
+            expect(sql).toContain('WHERE "Age" > 18 AND NOT ("Gender" IS NULL)');
+        });
+
         it('escapes identifiers with special characters', () => {
             const sql = buildCrosstabQuery({ rowVars: ['Q1"a'] });
 

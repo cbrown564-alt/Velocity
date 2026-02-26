@@ -8,7 +8,7 @@
  * Extracted from analysisWorker.ts for reuse in CLI and testing contexts.
  */
 
-import { Variable, VariableSet, HistogramBin } from '../../types';
+import { MissingValueDef, Variable, VariableSet, HistogramBin } from '../../types';
 import { DatabaseAdapter } from '../DatabaseAdapter';
 import {
   buildCrosstabQuery,
@@ -52,6 +52,45 @@ const DEFAULT_SIGNIFICANCE_OPTIONS: Required<SignificanceOptions> = {
   correctionType: 'none',
   significanceLevel: 0.95,
 };
+
+function buildVariableMissingConditionSql(columnName: string, missingValues?: MissingValueDef): string {
+  const escapedColumn = escapeIdentifier(columnName);
+  const conditions: string[] = [`"${escapedColumn}" IS NULL`];
+
+  const discrete = missingValues?.discrete?.filter((v): v is number => Number.isFinite(v));
+  if (discrete && discrete.length > 0) {
+    conditions.push(`"${escapedColumn}" IN (${discrete.join(', ')})`);
+  }
+
+  const range = missingValues?.range;
+  if (range && Number.isFinite(range.low) && Number.isFinite(range.high)) {
+    const low = Math.min(range.low, range.high);
+    const high = Math.max(range.low, range.high);
+    conditions.push(`("${escapedColumn}" >= ${low} AND "${escapedColumn}" <= ${high})`);
+  }
+
+  return conditions.join(' OR ');
+}
+
+function buildMissingExclusionSql(
+  options: CrosstabQueryOptions,
+  context: CrosstabContext
+): string | undefined {
+  const involvedVariableIds = new Set<string>();
+
+  options.rowVars.forEach((id) => involvedVariableIds.add(id));
+  if (options.colVar) involvedVariableIds.add(options.colVar);
+  if (options.measureVar) involvedVariableIds.add(options.measureVar);
+
+  const exclusions: string[] = [];
+  involvedVariableIds.forEach((variableId) => {
+    const variable = context.variables[variableId];
+    if (!variable) return;
+    exclusions.push(`NOT (${buildVariableMissingConditionSql(variableId, variable.missingValues)})`);
+  });
+
+  return exclusions.length > 0 ? exclusions.join(' AND ') : undefined;
+}
 
 function significanceLevelToAlpha(level: 0.95 | 0.90 | 0.80): number {
   // Significance level is confidence (e.g. 0.95), alpha is Type I error (e.g. 0.05)
@@ -208,6 +247,8 @@ export async function runCrosstab(
     }
   }
 
+  modifiedOptions.additionalWhere = buildMissingExclusionSql(modifiedOptions, context);
+
   // 2. Generate and Run Main Query
   const sql = buildCrosstabQuery(modifiedOptions);
   const mainResult = await adapter.query(sql);
@@ -243,6 +284,7 @@ export async function runCrosstab(
         histSql = buildGridHistogramQuery({
           columns: modifiedOptions.gridColumns,
           filters: modifiedOptions.filters,
+          additionalWhere: modifiedOptions.additionalWhere,
           colVar: modifiedOptions.colVar,
           minVal,
           maxVal,
@@ -254,11 +296,17 @@ export async function runCrosstab(
         const measure = modifiedOptions.measureVar;
         const safeMeasure = `"${escapeIdentifier(measure)}"`;
 
-        let whereSql = '';
+        const whereConditions: string[] = [];
         if (modifiedOptions.filters && modifiedOptions.filters.length > 0) {
           const clause = buildFilterClause(modifiedOptions.filters);
-          if (clause) whereSql = `WHERE ${clause}`;
+          if (clause) whereConditions.push(clause);
         }
+        if (modifiedOptions.additionalWhere) {
+          whereConditions.push(modifiedOptions.additionalWhere);
+        }
+        const whereSql = whereConditions.length > 0
+          ? `WHERE ${whereConditions.join(' AND ')}`
+          : '';
 
         const rangeSql = `SELECT MIN(${safeMeasure}) as minVal, MAX(${safeMeasure}) as maxVal FROM main ${whereSql}`;
         const rangeRes = await adapter.query(rangeSql);
@@ -598,6 +646,7 @@ export async function runCrosstab(
           rowVars: modifiedOptions.rowVars,
           columns: modifiedOptions.columnMultipleColumns,
           filters: modifiedOptions.filters,
+          additionalWhere: modifiedOptions.additionalWhere,
           weightVar: modifiedOptions.weightVar,
         });
         const overlapResult = await adapter.query(overlapSql);
