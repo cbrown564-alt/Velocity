@@ -1,8 +1,8 @@
 import React, { useMemo, useRef } from 'react';
 import type { Variable } from '../../../store/slices/dataSlice';
 import type { VariableStatsResult } from '../../../types/worker';
-import { isOrderedType } from '../../../types';
-import { HorizontalBarRenderer, HistogramRenderer } from '../../../components/charts/renderers';
+import { isOrderedType, normalizeVariableType } from '../../../types';
+import { HorizontalBarRenderer, HistogramRenderer, VerticalBarRenderer } from '../../../components/charts/renderers';
 import { useResizeObserver } from '../../../hooks/useResizeObserver';
 import styles from '../VariableInspector.module.css';
 
@@ -39,7 +39,7 @@ export const InspectorDistribution: React.FC<InspectorDistributionProps> = ({
 
         // Sort data based on variable type
         const sortedFrequencies = [...stats.frequencies];
-        if (isOrderedType(variable.type)) {
+        if (isOrderedType(variable.type) || normalizeVariableType(variable.type as any) === 'numeric') {
             // For ordinal/scale, sort by value (code) to preserve natural order
             sortedFrequencies.sort((a, b) => {
                 if (typeof a.value === 'number' && typeof b.value === 'number') return a.value - b.value;
@@ -72,6 +72,9 @@ export const InspectorDistribution: React.FC<InspectorDistributionProps> = ({
             }],
         } as any;
     }, [stats, variable, isNumericVariable]);
+
+    const nominalItemCount = nominalChartData?.series?.[0]?.data?.length ?? 0;
+    const useColumnChart = !isNumericVariable && nominalItemCount > 5;
 
     // Prepare data for Histogram (HistogramRenderer)
     const histogramData = useMemo(() => {
@@ -117,15 +120,18 @@ export const InspectorDistribution: React.FC<InspectorDistributionProps> = ({
         <div className={styles.chartSection} ref={containerRef}>
             <h3 className={styles.chartSectionTitle}>
                 Distribution
-                <span style={{
-                    fontSize: '10px',
-                    color: 'var(--text-tertiary, #888)',
-                    fontWeight: 400,
-                    textTransform: 'none',
-                    letterSpacing: 'normal'
-                }}>
-                    (drag to select, right-click to group)
-                </span>
+                {!isNumericVariable && (
+                    <span style={{
+                        fontSize: '10px',
+                        color: 'var(--text-tertiary, #9ca3af)', /* Subtler slate gray */
+                        fontWeight: 400,
+                        textTransform: 'none',
+                        letterSpacing: 'normal',
+                        fontStyle: 'italic'
+                    }}>
+                        (drag to select, right-click to group)
+                    </span>
+                )}
             </h3>
             {/* Rendering logic */}
             {isNumericVariable && histogramData ? (
@@ -143,17 +149,29 @@ export const InspectorDistribution: React.FC<InspectorDistributionProps> = ({
                 </div>
             ) : nominalChartData ? (
                 <div style={{ width: '100%' }}>
-                    <HorizontalBarRenderer
-                        width={chartWidth}
-                        height={Math.max(180, nominalChartData.series[0].data.length * 28)}
-                        processedData={nominalChartData}
-                        interactive={true}
-                        selectedKeys={selectedKeys}
-                        onSelectionChange={setSelectedKeys}
-                        onContextMenu={onContextMenu}
-                        hoveredKey={hoveredKey}
-                        onHoverChange={onHoverChange}
-                    />
+                    {useColumnChart ? (
+                        <VerticalBarRenderer
+                            width={chartWidth}
+                            height={220}
+                            processedData={nominalChartData}
+                            interactive={true}
+                            selectedKeys={selectedKeys}
+                            onSelectionChange={setSelectedKeys}
+                            onContextMenu={onContextMenu}
+                        />
+                    ) : (
+                        <HorizontalBarRenderer
+                            width={chartWidth}
+                            height={Math.max(180, nominalChartData.series[0].data.length * 28)}
+                            processedData={nominalChartData}
+                            interactive={true}
+                            selectedKeys={selectedKeys}
+                            onSelectionChange={setSelectedKeys}
+                            onContextMenu={onContextMenu}
+                            hoveredKey={hoveredKey}
+                            onHoverChange={onHoverChange}
+                        />
+                    )}
                 </div>
             ) : null}
         </div>

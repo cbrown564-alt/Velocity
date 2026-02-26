@@ -45,7 +45,7 @@
 .column {
   display: flex;
   flex-direction: column;
-  border-right: 1px solid var(--border-color-muted);
+  border-right: 1px solid var(--border-subtle);
   background-color: var(--mat-panel-bg, var(--bg-panel));
   backdrop-filter: var(--mat-panel-filter, none);
   overflow: hidden;

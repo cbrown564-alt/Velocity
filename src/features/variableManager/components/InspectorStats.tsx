@@ -213,29 +213,6 @@ export const InspectorStats: React.FC<InspectorStatsProps> = ({ variable, stats,
                 </>
             )}
 
-            {/* Data Quality Footer */}
-            <div className={styles.statsSummary}>
-                {isLoadingStats ? (
-                    <div className="animate-pulse flex space-x-4">
-                        <div className="h-4 bg-gray-200 rounded w-24"></div>
-                    </div>
-                ) : (
-                    <>
-                        <div className={styles.statItem}>
-                            <span className={styles.statLabel}>Valid</span>
-                            <span className={styles.statValue}>{validCount.toLocaleString()}</span>
-                        </div>
-                        {missingCount > 0 && (
-                            <div className={styles.statItem}>
-                                <span className={styles.statLabel}>Missing</span>
-                                <span className={`${styles.statValue} ${styles.statValueWarning}`}>
-                                    {missingCount.toLocaleString()} ({Math.round(percentMissing)}%)
-                                </span>
-                            </div>
-                        )}
-                    </>
-                )}
-            </div>
-        </div >
+        </div>
     );
 };

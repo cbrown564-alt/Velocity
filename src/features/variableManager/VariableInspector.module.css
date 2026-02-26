@@ -17,7 +17,7 @@
   background-color: var(--mat-panel-bg, var(--bg-panel));
   backdrop-filter: var(--mat-panel-filter, none);
   -webkit-backdrop-filter: var(--mat-panel-filter, none);
-  border-left: 1px solid var(--border-color);
+  border-left: 1px solid var(--border-subtle);
   overflow: hidden;
   animation: slideIn var(--transition-base);
 }
