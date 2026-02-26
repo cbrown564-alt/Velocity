@@ -1,6 +1,6 @@
 import React, { useMemo, useEffect, useRef, useCallback, useState } from 'react';
 import * as d3 from 'd3-scale';
-import { select } from 'd3-selection';
+import { select, pointer } from 'd3-selection';
 import { brushY } from 'd3-brush';
 import { max } from 'd3-array';
 import { BaseChartRendererProps } from '../../../types/charts';
@@ -164,10 +164,31 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
         const brushGroup = select(brushRef.current);
         brushGroup.call(brush as any);
 
+        // The brush overlay captures all pointer events, so React's onMouseEnter
+        // on bars never fires. Track hover here via the brush group's mousemove.
+        brushGroup
+            .on('mousemove.hover', (event) => {
+                if (!onHoverChange) return;
+                const [, mouseY] = pointer(event);
+                const hovered = chartData.find(d => {
+                    const y = yScale(d.label) || 0;
+                    return mouseY >= y && mouseY < y + yScale.bandwidth();
+                });
+                onHoverChange(
+                    hovered
+                        ? (hovered.code !== undefined ? String(hovered.code) : hovered.label)
+                        : null
+                );
+            })
+            .on('mouseleave.hover', () => {
+                if (onHoverChange) onHoverChange(null);
+            });
+
         return () => {
             brushGroup.on('.brush', null);
+            brushGroup.on('.hover', null);
         };
-    }, [innerWidth, actualHeight, interactive, onSelectionChange, chartData, yScale]);
+    }, [innerWidth, actualHeight, interactive, onSelectionChange, chartData, yScale, onHoverChange]);
 
 
     // X-axis ticks

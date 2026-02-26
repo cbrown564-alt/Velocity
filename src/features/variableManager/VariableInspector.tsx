@@ -245,12 +245,16 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
                 />
 
                 {/* 2. Simplified Stats and Dictionary */}
+                {/* Cross-highlighting is only meaningful for categorical variables
+                    (bar chart ↔ table). For numeric variables the histogram uses
+                    bin-range keys that never match the table's integer code keys,
+                    which would cause all histogram bars to dim on table hover. */}
                 <InspectorStats
                     variable={variable}
                     stats={stats}
                     isLoadingStats={isLoadingStats}
-                    hoveredKey={hoveredKey}
-                    onHoverChange={setHoveredKey}
+                    hoveredKey={isNumericVariable ? undefined : hoveredKey}
+                    onHoverChange={isNumericVariable ? undefined : setHoveredKey}
                 />
             </div>
 
