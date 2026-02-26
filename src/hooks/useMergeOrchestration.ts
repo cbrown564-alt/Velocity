@@ -24,7 +24,6 @@ export const useMergeOrchestration = (fallbackVariableId?: string) => {
     const [mergeModal, setMergeModal] = useState<MergeModalState>(INITIAL_STATE);
     const recodeVariable = useVelocityStore(state => state.recodeVariable);
     const dataset = useVelocityStore(state => state.dataset);
-    const tableConfig = useVelocityStore(state => state.tableConfig);
     const setTableConfig = useVelocityStore(state => state.setTableConfig);
 
     const openMerge = useCallback((event: MergeEvent) => {
@@ -66,6 +65,23 @@ export const useMergeOrchestration = (fallbackVariableId?: string) => {
             }
         }
 
+        // Snapshot state BEFORE the recode so we can find the source entry in rowVars.
+        // tableConfig.rowVars stores VariableSet UUIDs, not variable IDs directly, so we
+        // search by which variableSet contains the variable being merged.
+        const priorState = useVelocityStore.getState();
+        const sourceEntry = priorState.tableConfig.rowVars.find(id => {
+            const vs = priorState.variableSets.find(s => s.id === id);
+            return vs ? vs.variableIds.includes(mergeModal.variableId!) : id === mergeModal.variableId;
+        });
+        const sourceColEntry = priorState.tableConfig.colVar !== null
+            && (() => {
+                const colId = priorState.tableConfig.colVar!;
+                const vs = priorState.variableSets.find(s => s.id === colId);
+                return vs ? vs.variableIds.includes(mergeModal.variableId!) : colId === mergeModal.variableId;
+            })()
+            ? priorState.tableConfig.colVar
+            : null;
+
         try {
             const newVarId = await recodeVariable(
                 mergeModal.variableId,
@@ -73,20 +89,26 @@ export const useMergeOrchestration = (fallbackVariableId?: string) => {
                 { mode: 'categorical', mappings }
             );
 
-            // Swap the original variable for the new grouped one in the active analysis
-            const newRowVars = tableConfig.rowVars.map(id =>
-                id === mergeModal.variableId ? newVarId : id
-            );
-            const newColVar = tableConfig.colVar === mergeModal.variableId
-                ? newVarId
-                : tableConfig.colVar;
-            setTableConfig({ rowVars: newRowVars, colVar: newColVar });
+            // Snapshot state AFTER the recode — dataSlice has now added the new variable
+            // and a new VariableSet for it.
+            const postState = useVelocityStore.getState();
+            const newVarSet = postState.variableSets.find(vs => vs.variableIds.includes(newVarId));
+            const newEntry = newVarSet?.id ?? newVarId;
+
+            // Swap the old entry for the new one in the active analysis config
+            if (sourceEntry || sourceColEntry) {
+                const newRowVars = postState.tableConfig.rowVars.map(id =>
+                    id === sourceEntry ? newEntry : id
+                );
+                const newColVar = sourceColEntry ? newEntry : postState.tableConfig.colVar;
+                setTableConfig({ rowVars: newRowVars, colVar: newColVar });
+            }
         } catch (e) {
             console.error('Failed to create merged group:', e);
         }
 
         setMergeModal(INITIAL_STATE);
-    }, [dataset, mergeModal, recodeVariable, tableConfig, setTableConfig]);
+    }, [dataset, mergeModal, recodeVariable, setTableConfig]);
 
     return {
         mergeModal,

@@ -42,6 +42,7 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
         variableStatsLoading,
         recodeVariable,
         getUniqueValues,
+        setSelectedVariableId,
     } = useVelocityStore();
 
     // Context menu state for chart interactions
@@ -144,6 +145,8 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
 
         setIsCreatingRecode(true);
         try {
+            let newVarId: string | null = null;
+
             if (isBinning) {
                 // Create binning recode from histogram bins
                 // Sort bins by x0 to ensure proper ordering
@@ -158,16 +161,9 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
                 }];
 
                 const newVarName = `${variable.name}_binned`;
-                await recodeVariable(variable.id, newVarName, {
+                newVarId = await recodeVariable(variable.id, newVarName, {
                     mode: 'binning',
                     rules,
-                });
-
-                console.log('[VariableInspector] Created binning recode:', {
-                    source: variable.name,
-                    newVar: newVarName,
-                    groupName,
-                    range: `${minVal} - ${maxVal}`,
                 });
 
                 setPendingBinSelection([]);
@@ -191,26 +187,25 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
                 }
 
                 const newVarName = `${variable.name}_grouped`;
-                await recodeVariable(variable.id, newVarName, {
+                newVarId = await recodeVariable(variable.id, newVarName, {
                     mode: 'categorical',
                     mappings,
                 });
 
-                console.log('[VariableInspector] Created categorical recode:', {
-                    source: variable.name,
-                    newVar: newVarName,
-                    groupName,
-                    groupedValues: pendingGroupSelection.map(d => d.label),
-                });
-
                 setPendingGroupSelection([]);
+            }
+
+            // Switch the inspector to the newly created variable so the user
+            // can immediately see it without having to hunt for it in the list.
+            if (newVarId) {
+                setSelectedVariableId(newVarId);
             }
         } catch (error) {
             console.error('[VariableInspector] Failed to create recode:', error);
         } finally {
             setIsCreatingRecode(false);
         }
-    }, [variable, pendingGroupSelection, pendingBinSelection, getUniqueValues, recodeVariable]);
+    }, [variable, pendingGroupSelection, pendingBinSelection, getUniqueValues, recodeVariable, setSelectedVariableId]);
 
 
     // If no variable selected, show empty state
