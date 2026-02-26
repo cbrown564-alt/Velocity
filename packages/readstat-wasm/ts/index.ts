@@ -121,7 +121,19 @@ function isCellSystemMissing(mod: ReadStatModule, row: number, col: number): boo
 let moduleInstance: ReadStatModule | null = null;
 let modulePromise: Promise<ReadStatModule> | null = null;
 
-const READSTAT_MODULE_URL = '/readstat/readstat.js';
+const READSTAT_PUBLIC_MODULE_URL = '/readstat/readstat.js';
+const READSTAT_DIST_MODULE_URL = new URL('../dist/readstat.js', import.meta.url).toString();
+
+function isNodeRuntime(): boolean {
+    return typeof process !== 'undefined' && !!process.versions?.node;
+}
+
+function getReadStatModuleCandidates(): string[] {
+    // Prefer colocated dist artifact first (works in local dev and Node tooling),
+    // then fall back to public /readstat path when deployed that way.
+    const candidates = [READSTAT_DIST_MODULE_URL, READSTAT_PUBLIC_MODULE_URL];
+    return [...new Set(candidates)];
+}
 
 let jsavvyModule: any = null;
 let jsavvyModulePromise: Promise<any> | null = null;
@@ -246,21 +258,39 @@ export async function initReadStat(): Promise<void> {
     }
 
     modulePromise = (async () => {
-        // Dynamic import of the Emscripten glue code.
-        //
-        // NOTE: Using a Vite-ignored absolute URL avoids build-time resolution
-        // errors in environments (e.g. Vercel) where packages/readstat-wasm/dist
-        // is not present in source checkout.
-        try {
-            const moduleFactory = (await import(/* @vite-ignore */ READSTAT_MODULE_URL)).default as () => Promise<ReadStatModule>;
-            const instance = await moduleFactory();
-            moduleInstance = instance;
-            console.log('📦 [ReadStat] WASM module initialized');
-            return instance;
-        } catch (error) {
-            console.warn('⚠️ [ReadStat] WASM artifacts unavailable; falling back to jsavvy parser.', error);
-            throw error;
+        if (isNodeRuntime()) {
+            try {
+                const imported = await import('../dist/readstat.js');
+                const moduleFactory = (imported as { default: () => Promise<ReadStatModule> }).default;
+                const instance = await moduleFactory();
+                moduleInstance = instance;
+                console.log('📦 [ReadStat] WASM module initialized');
+                return instance;
+            } catch (error) {
+                console.warn('⚠️ [ReadStat] Failed to load WASM module from ../dist/readstat.js', error);
+                console.warn('⚠️ [ReadStat] WASM artifacts unavailable; falling back to jsavvy parser.', error);
+                throw error;
+            }
         }
+
+        let lastError: unknown = null;
+
+        for (const moduleUrl of getReadStatModuleCandidates()) {
+            try {
+                const imported = await import(/* @vite-ignore */ moduleUrl);
+                const moduleFactory = (imported as { default: () => Promise<ReadStatModule> }).default;
+                const instance = await moduleFactory();
+                moduleInstance = instance;
+                console.log('📦 [ReadStat] WASM module initialized');
+                return instance;
+            } catch (error) {
+                lastError = error;
+                console.warn(`⚠️ [ReadStat] Failed to load WASM module from ${moduleUrl}`, error);
+            }
+        }
+
+        console.warn('⚠️ [ReadStat] WASM artifacts unavailable; falling back to jsavvy parser.', lastError);
+        throw (lastError ?? new Error('ReadStat WASM module unavailable'));
     })();
 
     await modulePromise;

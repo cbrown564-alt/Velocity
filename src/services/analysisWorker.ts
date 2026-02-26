@@ -469,6 +469,35 @@ async function reopenWritableDatabase(): Promise<void> {
   console.warn('🦆 [Worker] Reopened DuckDB in memory mode after write-mode commit failure');
 }
 
+async function reopenInMemoryDatabase(): Promise<void> {
+  if (!db) throw new Error('DB not initialized');
+
+  try {
+    if (conn) {
+      await conn.close();
+    }
+  } catch {
+    // Ignore close failures during recovery.
+  }
+
+  conn = null;
+  adapter = null;
+
+  try {
+    await db.reset();
+  } catch {
+    // Continue recovery even if reset fails.
+  }
+
+  await db.open({ path: ':memory:' });
+  activeDbPath = ':memory:';
+  persistenceMode = 'memory';
+  opfsAvailable = false;
+  conn = await db.connect();
+  adapter = new DuckDBWasmAdapter(conn, db);
+  console.warn('🦆 [Worker] Reopened DuckDB in forced memory mode');
+}
+
   // ============================================================================ 
   // Persistence Operations
   // ============================================================================
@@ -731,6 +760,7 @@ async function loadSAVChunked(
     try {
       return await loadSAVChunkedV3SinglePass(buffer, chunkSize);
     } catch (error: any) {
+      if (isWriteModeCommitError(error)) throw error;
       console.warn(`🦆 [Worker] V3 single-pass load failed (${error?.message || error}); falling back to v2 path`);
     }
   }
@@ -739,6 +769,7 @@ async function loadSAVChunked(
     try {
       return await loadSAVChunkedV2(buffer, chunkSize);
     } catch (error: any) {
+      if (isWriteModeCommitError(error)) throw error;
       console.warn(`🦆 [Worker] V2 chunked load failed (${error?.message || error}); falling back to legacy chunked path`);
     }
   }
@@ -1330,7 +1361,15 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
 
           console.warn('🦆 [Worker] Detected OPFS write-mode commit failure during SAV load; attempting DB recovery and retry');
           await reopenWritableDatabase();
-          savResult = await loadSAV(request.buffer, request.forceChunked);
+          try {
+            savResult = await loadSAV(request.buffer.slice(0), request.forceChunked);
+          } catch (retryError: any) {
+            if (!isWriteModeCommitError(retryError)) throw retryError;
+
+            console.warn('🦆 [Worker] Retry after OPFS recovery still failed with write-mode commit error; forcing in-memory retry');
+            await reopenInMemoryDatabase();
+            savResult = await loadSAV(request.buffer.slice(0), request.forceChunked);
+          }
         }
 
         self.postMessage({

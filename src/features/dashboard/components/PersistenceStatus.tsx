@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Database, HardDrive, AlertCircle, RefreshCw, Trash2, CheckCircle2, TriangleAlert, Activity } from 'lucide-react';
+import { Database, HardDrive, AlertCircle, RefreshCw, Trash2, CheckCircle2, TriangleAlert, Activity, FileUp } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface PersistenceStatusProps {
@@ -233,29 +233,38 @@ export const PersistenceStatus: React.FC<PersistenceStatusProps> = ({
 
                                 {/* Actions */}
                                 <div className="pt-2 flex flex-col gap-3">
-                                    <div className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">Troubleshooting</div>
-                                    <div className="flex gap-3">
-                                        <button
-                                            onClick={onRefresh}
-                                            className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-[var(--bg-element)] hover:bg-[var(--bg-hover)] text-sm font-medium transition-colors border border-[var(--border-color)] text-[var(--text-primary)]"
-                                        >
-                                            <RefreshCw size={16} /> Refresh
-                                        </button>
-                                        <button
-                                            onClick={onPurge}
-                                            className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-red-50 text-red-700 border border-red-200 hover:bg-red-100 hover:border-red-300 text-sm font-medium transition-colors"
-                                        >
-                                            <Trash2 size={16} /> Purge Corruption
-                                        </button>
-                                    </div>
+                                    {(hasError || errorHint || partialLoadMessage) && (
+                                        <>
+                                            <div className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">Troubleshooting</div>
+                                            <div className="flex gap-3">
+                                                <button
+                                                    onClick={onRefresh}
+                                                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-[var(--bg-element)] hover:bg-[var(--bg-hover)] text-sm font-medium transition-colors border border-[var(--border-color)] text-[var(--text-primary)]"
+                                                >
+                                                    <RefreshCw size={16} /> Refresh
+                                                </button>
+                                                <button
+                                                    onClick={onPurge}
+                                                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-red-50 text-red-700 border border-red-200 hover:bg-red-100 hover:border-red-300 text-sm font-medium transition-colors"
+                                                >
+                                                    <Trash2 size={16} /> Purge Corruption
+                                                </button>
+                                            </div>
+                                        </>
+                                    )}
 
                                     {opfsFileKey && (
-                                        <button
-                                            onClick={onRebuild}
-                                            className="w-full mt-2 flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-[var(--color-accent)] text-white hover:opacity-90 text-sm font-medium transition-opacity shadow-sm"
-                                        >
-                                            <Database size={14} /> Rebuild DB from Source
-                                        </button>
+                                        <>
+                                            {!(hasError || errorHint || partialLoadMessage) && (
+                                                <div className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">Storage Actions</div>
+                                            )}
+                                            <button
+                                                onClick={onRebuild}
+                                                className={`w-full ${hasError || errorHint || partialLoadMessage ? 'mt-2' : ''} flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg bg-[var(--color-accent)] text-white hover:opacity-90 text-sm font-medium transition-opacity shadow-sm`}
+                                            >
+                                                <FileUp size={16} /> Re-import Original File
+                                            </button>
+                                        </>
                                     )}
                                 </div>
 
