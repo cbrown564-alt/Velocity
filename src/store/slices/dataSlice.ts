@@ -1263,17 +1263,21 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
             const variable = state.dataset.variables.find(v => v.id === variableId);
             if (!variable) return state;
 
-            // Propagate name change to single-variable sets whose name is still
-            // in sync with the variable's current name (not manually renamed).
-            const variableSets = updates.name
-                ? state.variableSets.map(vs =>
-                    vs.structure === 'single' &&
-                    vs.variableIds[0] === variableId &&
-                    vs.name === variable.name
-                        ? { ...vs, name: updates.name! }
-                        : vs
-                )
-                : state.variableSets;
+            // Variable sets are created with `label || name` as their natural name.
+            // Propagate any label/name change to single-variable sets that are still
+            // in sync with that derived name (i.e., not manually renamed).
+            const currentDerivedName = variable.label || variable.name;
+            const newLabel = updates.label !== undefined ? updates.label : variable.label;
+            const newName = updates.name !== undefined ? updates.name : variable.name;
+            const newDerivedName = newLabel || newName;
+
+            const variableSets = state.variableSets.map(vs =>
+                vs.structure === 'single' &&
+                vs.variableIds[0] === variableId &&
+                vs.name === currentDerivedName
+                    ? { ...vs, name: newDerivedName }
+                    : vs
+            );
 
             return {
                 dataset: {
