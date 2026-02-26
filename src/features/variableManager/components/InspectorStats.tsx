@@ -93,7 +93,7 @@ export const InspectorStats: React.FC<InspectorStatsProps> = ({ variable, stats,
                                             return (
                                                 <tr
                                                     key={codeStr}
-                                                    onMouseEnter={() => onHoverChange && onHoverChange(item.label || codeStr)}
+                                                    onMouseEnter={() => onHoverChange && onHoverChange(codeStr)}
                                                     onMouseLeave={() => onHoverChange && onHoverChange(null)}
                                                     className={styles.mappingRow}
                                                     style={{ backgroundColor: isHovered ? 'var(--bg-active)' : 'transparent', transition: 'background-color var(--transition-fast)' }}
