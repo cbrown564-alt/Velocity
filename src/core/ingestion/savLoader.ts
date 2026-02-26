@@ -72,6 +72,10 @@ export interface ProcessedSavResult {
  */
 export function processMetadata(data: ParsedSavData): ProcessedSavResult {
   const { metadata, rows } = data;
+  const variableIndexById = new Map<string, number>();
+  for (const parsed of metadata.variables) {
+    variableIndexById.set(parsed.name, parsed.index);
+  }
 
   // Step 1: Convert variables
   const variables: Variable[] = metadata.variables.map(v => {
@@ -335,5 +339,26 @@ export function processMetadata(data: ParsedSavData): ProcessedSavResult {
     }
   }
 
-  return { variables, variableSets };
+  // Preserve source-order semantics for UI lists by sorting sets by the
+  // earliest underlying variable index in the survey definition.
+  const orderedVariableSets = variableSets
+    .map((vs, insertionIndex) => {
+      let minIndex = Number.POSITIVE_INFINITY;
+      for (const variableId of vs.variableIds) {
+        const idx = variableIndexById.get(variableId);
+        if (idx !== undefined && idx < minIndex) {
+          minIndex = idx;
+        }
+      }
+      return { vs, insertionIndex, orderIndex: minIndex };
+    })
+    .sort((a, b) => {
+      if (a.orderIndex === b.orderIndex) return a.insertionIndex - b.insertionIndex;
+      if (!Number.isFinite(a.orderIndex)) return 1;
+      if (!Number.isFinite(b.orderIndex)) return -1;
+      return a.orderIndex - b.orderIndex;
+    })
+    .map(entry => entry.vs);
+
+  return { variables, variableSets: orderedVariableSets };
 }

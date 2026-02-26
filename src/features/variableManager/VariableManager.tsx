@@ -32,6 +32,7 @@ import { VariableSetColumn } from './VariableSetColumn';
 import { VariableColumn } from './VariableColumn';
 import { VariableInspector } from './VariableInspector';
 import { FacetedSearchBar } from './components/FacetedSearchBar';
+import { filterSyntheticGridShellSets } from './variableSetFilters';
 import millerStyles from './MillerColumns.module.css';
 
 interface VariableManagerProps {
@@ -63,9 +64,14 @@ export const VariableManager: React.FC<VariableManagerProps> = ({ onClose }) => 
         useSensor(KeyboardSensor)
     );
 
+    const visibleVariableSets = useMemo(
+        () => filterSyntheticGridShellSets(variableSets, dataset),
+        [variableSets, dataset]
+    );
+
     // Filter variable sets by search, folder, and facets for keyboard shortcuts
     const filteredSets = useMemo(() => {
-        let sets = variableSets;
+        let sets = visibleVariableSets;
 
         // Filter by folder
         if (activeFolderId === 'ungrouped') {
@@ -115,14 +121,14 @@ export const VariableManager: React.FC<VariableManagerProps> = ({ onClose }) => 
         }
 
         return sets;
-    }, [variableSets, searchQuery, activeFolderId, facetFilters, variableStats]);
+    }, [visibleVariableSets, searchQuery, activeFolderId, facetFilters, variableStats]);
 
     const filteredIds = useMemo(() => filteredSets.map(vs => vs.id), [filteredSets]);
 
     // Group variables by type for quick stats
     const typeStats = useMemo(() => {
         const stats = { categorical: 0, scale: 0, numeric: 0, date: 0, text: 0 };
-        variableSets.forEach(vs => {
+        visibleVariableSets.forEach(vs => {
             const type = normalizeVariableType(vs.type || 'categorical');
             if (isCategoricalType(type)) {
                 stats.categorical++;
@@ -137,7 +143,7 @@ export const VariableManager: React.FC<VariableManagerProps> = ({ onClose }) => 
             }
         });
         return stats;
-    }, [variableSets]);
+    }, [visibleVariableSets]);
 
     // Handle drag end for folder drops
     const handleDragEnd = (event: DragEndEvent) => {
@@ -239,7 +245,7 @@ export const VariableManager: React.FC<VariableManagerProps> = ({ onClose }) => 
                                 {typeStats.text} Text
                             </span>
                             <span className="text-[var(--border-color-active)]">|</span>
-                            <span>{variableSets.length} total</span>
+                            <span>{visibleVariableSets.length} total</span>
                         </div>
                     </div>
 

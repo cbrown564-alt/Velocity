@@ -10,6 +10,7 @@ import React, { useState, useMemo } from 'react';
 import { Folder, FolderPlus, Layers, ChevronRight, Trash2 } from 'lucide-react';
 import { useDroppable } from '@dnd-kit/core';
 import { useVelocityStore } from '../../store';
+import { filterSyntheticGridShellSets } from './variableSetFilters';
 import styles from './MillerColumns.module.css';
 
 interface FolderItemProps {
@@ -69,6 +70,7 @@ interface FolderColumnProps {
 
 export const FolderColumn: React.FC<FolderColumnProps> = ({ className }) => {
     const {
+        dataset,
         folders,
         variableSets,
         activeFolderId,
@@ -79,13 +81,17 @@ export const FolderColumn: React.FC<FolderColumnProps> = ({ className }) => {
 
     const [isCreating, setIsCreating] = useState(false);
     const [newFolderName, setNewFolderName] = useState('');
+    const visibleVariableSets = useMemo(
+        () => filterSyntheticGridShellSets(variableSets, dataset),
+        [variableSets, dataset]
+    );
 
     // Count variables per folder
     const folderCounts = useMemo(() => {
         const counts: Record<string, number> = { ungrouped: 0 };
         folders.forEach(f => counts[f.id] = 0);
 
-        variableSets.forEach(vs => {
+        visibleVariableSets.forEach(vs => {
             if (vs.folderId && counts[vs.folderId] !== undefined) {
                 counts[vs.folderId]++;
             } else {
@@ -94,7 +100,7 @@ export const FolderColumn: React.FC<FolderColumnProps> = ({ className }) => {
         });
 
         return counts;
-    }, [folders, variableSets]);
+    }, [folders, visibleVariableSets]);
 
     const handleCreateFolder = () => {
         if (newFolderName.trim()) {
@@ -142,7 +148,7 @@ export const FolderColumn: React.FC<FolderColumnProps> = ({ className }) => {
                         <span className={styles.itemLabel}>All Variables</span>
                     </div>
                     <div className={styles.itemMeta}>
-                        <span className={styles.itemCount}>{variableSets.length}</span>
+                        <span className={styles.itemCount}>{visibleVariableSets.length}</span>
                         <ChevronRight className={styles.itemChevron} size={14} />
                     </div>
                 </div>

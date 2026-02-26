@@ -19,6 +19,7 @@ import type { VariableSet, Dataset } from '../../store/slices/dataSlice';
 import { isCategoricalType, normalizeVariableType } from '../../types';
 import { Sparkline, MissingnessBadge } from './Sparkline';
 import { VariableTypeIcon } from '../../components/common/VariableTypeIcon';
+import { filterSyntheticGridShellSets } from './variableSetFilters';
 import styles from './MillerColumns.module.css';
 
 // Height of each row in the virtual list (8px top + ~20px content + 8px bottom + 4px margin)
@@ -223,10 +224,14 @@ export const VariableSetColumn: React.FC = () => {
     } = useVelocityStore();
 
     const listRef = useListRef(null);
+    const visibleVariableSets = useMemo(
+        () => filterSyntheticGridShellSets(variableSets, dataset),
+        [variableSets, dataset]
+    );
 
     // Filter variable sets by folder, search, and facets
     const filteredSets = useMemo(() => {
-        let sets = variableSets;
+        let sets = visibleVariableSets;
 
         // Filter by folder
         if (activeFolderId === 'ungrouped') {
@@ -276,7 +281,7 @@ export const VariableSetColumn: React.FC = () => {
         }
 
         return sets;
-    }, [variableSets, activeFolderId, searchQuery, facetFilters, variableStats]);
+    }, [visibleVariableSets, activeFolderId, searchQuery, facetFilters, variableStats]);
 
     const filteredIds = useMemo(() => filteredSets.map(vs => vs.id), [filteredSets]);
 

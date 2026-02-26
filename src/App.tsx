@@ -31,6 +31,7 @@ import { InputModal } from './components/overlays/InputModal';
 import * as opfsFileManager from './services/opfsFileManager';
 import { WorkspaceView, ProjectLinkModal, CrossWavePanel, ExportImportModal, type StoredDataset, type Project, type WorkspaceExport } from './features/workspace';
 import { HarmonizationWorkspace } from './features/harmonization';
+import { filterSyntheticGridShellSets } from './features/variableManager/variableSetFilters';
 import { allowsNumericStats } from './types';
 
 // Smart Canvas Wrapper
@@ -1243,7 +1244,7 @@ export default function App() {
   const filename = dataset?.name || '';
   const totalRows = dataset?.rowCount || queryResult.reduce((sum, r) => sum + r.count, 0);
 
-  const displaySets = variableSets || [];
+  const displaySets = filterSyntheticGridShellSets(variableSets || [], dataset);
 
   // Get IDs of variables currently in use on the canvas
   const inUseIds = new Set([

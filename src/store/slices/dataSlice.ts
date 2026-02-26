@@ -36,6 +36,10 @@ export interface Variable {
     orderedScoring?: OrderedScoring;
     valueLabels: ValueLabel[];
     missingValues: MissingValueDef;
+    /** True if this variable was generated automatically (e.g. grid helpers). */
+    synthetic?: boolean;
+    /** ID of the grid VariableSet that generated this synthetic variable. */
+    sourceGridId?: string;
 }
 
 export interface Dataset {
