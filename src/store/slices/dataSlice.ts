@@ -1294,26 +1294,39 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
     updateValueLabel: (variableId, valueCode, newLabel) => {
         set((state) => {
             if (!state.dataset) return state;
+            const numCode = typeof valueCode === 'string' ? parseFloat(valueCode) : valueCode;
+
+            // Collect IDs of all grid siblings (other vars in the same grid set)
+            const gridSiblingIds = new Set<string>();
+            state.variableSets.forEach(vs => {
+                if (vs.structure === 'grid' && vs.variableIds.includes(variableId)) {
+                    vs.variableIds.forEach(id => { if (id !== variableId) gridSiblingIds.add(id); });
+                }
+            });
+
+            const applyUpdate = (v: Variable) => {
+                const exists = v.valueLabels.some(vl => vl.value === numCode);
+                if (exists) {
+                    return {
+                        ...v,
+                        valueLabels: v.valueLabels.map(vl =>
+                            vl.value === numCode ? { ...vl, label: newLabel } : vl
+                        ),
+                    };
+                }
+                // Brand-new value label (value existed in data but had no label)
+                return {
+                    ...v,
+                    valueLabels: [...v.valueLabels, { value: numCode, label: newLabel }],
+                };
+            };
+
             return {
                 dataset: {
                     ...state.dataset,
                     variables: state.dataset.variables.map(v => {
-                        if (v.id !== variableId) return v;
-                        const numCode = typeof valueCode === 'string' ? parseFloat(valueCode) : valueCode;
-                        const exists = v.valueLabels.some(vl => vl.value === numCode);
-                        if (exists) {
-                            return {
-                                ...v,
-                                valueLabels: v.valueLabels.map(vl =>
-                                    vl.value === numCode ? { ...vl, label: newLabel } : vl
-                                ),
-                            };
-                        }
-                        // Brand-new value label (value existed in data but had no label)
-                        return {
-                            ...v,
-                            valueLabels: [...v.valueLabels, { value: numCode, label: newLabel }],
-                        };
+                        if (v.id === variableId || gridSiblingIds.has(v.id)) return applyUpdate(v);
+                        return v;
                     }),
                 },
             };
