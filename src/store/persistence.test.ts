@@ -33,6 +33,65 @@ describe('Store: Persistence', () => {
     });
 
     describe('partialize function', () => {
+        it('preserves active dataset value labels while compacting workspace copies', () => {
+            const mockState = {
+                dataset: {
+                    id: 'ds1',
+                    name: 'test.sav',
+                    rowCount: 100,
+                    source: 'sav' as const,
+                    variables: [{
+                        id: 'v1',
+                        name: 'v1',
+                        label: 'Var 1',
+                        type: 'categorical',
+                        valueLabels: [{ value: 1, label: 'Yes' }],
+                        missingValues: {},
+                    }],
+                },
+                workspace: {
+                    datasets: [{
+                        id: 'ds1',
+                        name: 'test.sav',
+                        fileName: 'test.sav',
+                        rowCount: 100,
+                        columnCount: 1,
+                        fileSize: 1,
+                        source: 'sav' as const,
+                        createdAt: Date.now(),
+                        lastOpenedAt: Date.now(),
+                        lastModifiedAt: Date.now(),
+                        starred: false,
+                        variables: [{
+                            id: 'v1',
+                            name: 'v1',
+                            label: 'Var 1',
+                            type: 'categorical',
+                            valueLabels: [{ value: 1, label: 'Yes' }],
+                            missingValues: {},
+                        }],
+                    }],
+                    projects: [],
+                    storageUsed: 0,
+                    storageQuota: 0,
+                },
+                variableSets: [],
+                folders: [],
+                transformLog: [],
+                appMode: 'analysis' as const,
+                activeFolderId: null,
+                tableConfig: { rowVars: [], colVar: null },
+                activeFilters: [],
+                activeDatasetId: null,
+                isWorkspaceMode: true,
+                harmonization: { session: null },
+            } as unknown as VelocityState;
+
+            const persisted = partialize(mockState);
+            expect(persisted.dataset?.variables[0].valueLabels).toHaveLength(1);
+            expect(persisted.workspace.datasets[0].variables?.[0].valueLabels).toEqual([]);
+        });
+
         it('should include persistable state fields', () => {
             const mockState = {
                 // DataSlice

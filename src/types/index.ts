@@ -55,6 +55,15 @@ export interface Dataset {
   sampleRowCount?: number;
   /** Sampling strategy used: 'sequential' (first N rows) or 'spread' (evenly distributed) */
   sampleStrategy?: 'sequential' | 'spread';
+  /** Non-fatal ingestion/degradation diagnostics surfaced to the UI. */
+  loadDiagnostics?: {
+    isPartial: boolean;
+    reason: 'storage_quota' | 'sampling' | 'metadata_only' | 'unknown';
+    message: string;
+    valueLabelsDropped?: number;
+    valueLabelsRetained?: number;
+    createdAt: number;
+  };
 }
 
 // ============================================================================

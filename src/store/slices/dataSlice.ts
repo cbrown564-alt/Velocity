@@ -57,6 +57,15 @@ export interface Dataset {
     sampleRowCount?: number;
     /** Sampling strategy used: 'sequential' (first N rows) or 'spread' (evenly distributed) */
     sampleStrategy?: 'sequential' | 'spread';
+    /** Non-fatal ingestion/degradation diagnostics surfaced to the UI. */
+    loadDiagnostics?: {
+        isPartial: boolean;
+        reason: 'storage_quota' | 'sampling' | 'metadata_only' | 'unknown';
+        message: string;
+        valueLabelsDropped?: number;
+        valueLabelsRetained?: number;
+        createdAt: number;
+    };
 }
 
 export interface VariableSet {
@@ -671,7 +680,13 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                     name: 'Restored Session',
                     rowCount: persistedDataInfo.rowCount,
                     variables,
-                    source: 'sav' // Assume SAV since that's what we persist
+                    source: 'sav', // Assume SAV since that's what we persist
+                    loadDiagnostics: {
+                        isPartial: true,
+                        reason: 'unknown',
+                        message: 'Session restored from schema metadata only. Value labels are unavailable until you rebuild from source.',
+                        createdAt: Date.now(),
+                    },
                 },
                 variableSets,
                 persistenceState: 'ready'
@@ -806,6 +821,7 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                             source: 'sav',
                             opfsFileKey: options?.opfsFileKey,
                             metadataOnly: false,
+                            loadDiagnostics: undefined,
                         },
                         variableSets,
                         transformLog: [],
@@ -867,6 +883,12 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                             variables,
                             source: 'sav',
                             metadataOnly: true,
+                            loadDiagnostics: {
+                                isPartial: true,
+                                reason: 'metadata_only',
+                                message: 'Loaded metadata only. Full row data is not available until you load from source.',
+                                createdAt: Date.now(),
+                            },
                         },
                         variableSets,
                         variableStats: {},
@@ -913,6 +935,12 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                             metadataOnly: true,
                             sampleRowCount: response.sampleRowCount,
                             sampleStrategy: response.sampleStrategy,
+                            loadDiagnostics: {
+                                isPartial: true,
+                                reason: 'sampling',
+                                message: 'Loaded using sampled metadata to reduce memory risk. Value labels may be incomplete until full load.',
+                                createdAt: Date.now(),
+                            },
                         },
                         variableSets,
                         variableStats: {},

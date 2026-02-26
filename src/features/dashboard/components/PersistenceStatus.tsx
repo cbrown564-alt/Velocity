@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Database, HardDrive, AlertCircle, RefreshCw, Trash2, CheckCircle2 } from 'lucide-react';
+import { Database, HardDrive, AlertCircle, RefreshCw, Trash2, CheckCircle2, TriangleAlert, Activity } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface PersistenceStatusProps {
@@ -12,6 +12,14 @@ interface PersistenceStatusProps {
     error: string | null;
     errorHint: string | null;
     rehydrateError: string | null;
+    datasetRows?: number | null;
+    datasetColumns?: number | null;
+    estimatedCells?: number | null;
+    labeledVariableCount?: number | null;
+    totalVariableCount?: number | null;
+    totalValueLabelCount?: number | null;
+    memoryRisk?: 'normal' | 'elevated' | 'critical';
+    partialLoadMessage?: string | null;
     opfsFileKey?: string;
     onRefresh: () => void;
     onPurge: () => void;
@@ -28,6 +36,14 @@ export const PersistenceStatus: React.FC<PersistenceStatusProps> = ({
     error,
     errorHint,
     rehydrateError,
+    datasetRows,
+    datasetColumns,
+    estimatedCells,
+    labeledVariableCount,
+    totalVariableCount,
+    totalValueLabelCount,
+    memoryRisk = 'normal',
+    partialLoadMessage,
     opfsFileKey,
     onRefresh,
     onPurge,
@@ -37,7 +53,29 @@ export const PersistenceStatus: React.FC<PersistenceStatusProps> = ({
 
     // Determine status color/icon
     const hasError = !!error || !!rehydrateError;
-    const isHealthy = opfsAvailable && !hasError;
+    const hasPartialLoad = !!partialLoadMessage;
+    const statusTone = hasError || hasPartialLoad
+        ? 'issue'
+        : memoryRisk === 'critical'
+            ? 'issue'
+            : memoryRisk === 'elevated'
+                ? 'warn'
+                : 'ok';
+    const statusLabel = hasError
+        ? 'Storage Issue'
+        : hasPartialLoad
+            ? 'Partial Metadata'
+            : memoryRisk === 'critical'
+                ? 'High Memory Risk'
+                : memoryRisk === 'elevated'
+                    ? 'Memory Risk'
+                    : 'Local Storage';
+    const labelCoveragePct =
+        typeof labeledVariableCount === 'number' &&
+            typeof totalVariableCount === 'number' &&
+            totalVariableCount > 0
+            ? Math.round((labeledVariableCount / totalVariableCount) * 100)
+            : null;
 
     return (
         <>
@@ -47,24 +85,28 @@ export const PersistenceStatus: React.FC<PersistenceStatusProps> = ({
           w-full mt-auto p-3 border-t border-[var(--border-color)] bg-[var(--bg-app)] 
           hover:bg-[var(--bg-surface)] transition-colors text-left flex items-center gap-3
           group
-        `}
+                `}
             >
                 <div className={`
           w-8 h-8 rounded-full flex items-center justify-center shrink-0
-          ${hasError
+          ${statusTone === 'issue'
                         ? 'bg-red-100 text-red-600'
+                        : statusTone === 'warn'
+                            ? 'bg-amber-100 text-amber-700'
                         : 'bg-emerald-100 text-emerald-600'
                     }
         `}>
-                    {hasError ? <AlertCircle size={16} /> : <Database size={16} />}
+                    {statusTone === 'issue' ? <AlertCircle size={16} /> : statusTone === 'warn' ? <TriangleAlert size={16} /> : <Database size={16} />}
                 </div>
 
                 <div className="flex-1 min-w-0">
                     <div className="text-xs font-medium text-[var(--text-primary)] truncate">
-                        {hasError ? 'Storage Issue' : 'Local Storage'}
+                        {statusLabel}
                     </div>
                     <div className="text-[10px] text-[var(--text-secondary)] truncate">
-                        {usageMb ? `${usageMb.toFixed(1)} MB used` : 'Ready'}
+                        {hasPartialLoad
+                            ? 'Value labels were partially dropped'
+                            : usageMb ? `${usageMb.toFixed(1)} MB used` : 'Ready'}
                     </div>
                 </div>
             </button>
@@ -133,11 +175,48 @@ export const PersistenceStatus: React.FC<PersistenceStatusProps> = ({
                                     </div>
                                 </div>
 
+                                {/* Dataset Diagnostics */}
+                                {(datasetRows !== null || datasetColumns !== null || estimatedCells !== null) && (
+                                    <div className="p-3 rounded-lg bg-[var(--bg-app)] border border-[var(--border-color-muted)] space-y-2">
+                                        <div className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider flex items-center gap-2">
+                                            <Activity size={12} />
+                                            Runtime Diagnostics
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-2 text-xs">
+                                            <div className="text-[var(--text-secondary)]">Rows</div>
+                                            <div className="text-right font-medium">{datasetRows !== null && datasetRows !== undefined ? datasetRows.toLocaleString() : '--'}</div>
+                                            <div className="text-[var(--text-secondary)]">Columns</div>
+                                            <div className="text-right font-medium">{datasetColumns !== null && datasetColumns !== undefined ? datasetColumns.toLocaleString() : '--'}</div>
+                                            <div className="text-[var(--text-secondary)]">Estimated Cells</div>
+                                            <div className="text-right font-medium">{estimatedCells !== null && estimatedCells !== undefined ? estimatedCells.toLocaleString() : '--'}</div>
+                                            <div className="text-[var(--text-secondary)]">Label Coverage</div>
+                                            <div className="text-right font-medium">
+                                                {labelCoveragePct !== null ? `${labelCoveragePct}%` : '--'}
+                                                {typeof totalValueLabelCount === 'number' && (
+                                                    <span className="text-[var(--text-secondary)] ml-1">({totalValueLabelCount.toLocaleString()} labels)</span>
+                                                )}
+                                            </div>
+                                            <div className="text-[var(--text-secondary)]">Memory Risk</div>
+                                            <div className={`text-right font-medium ${memoryRisk === 'critical'
+                                                ? 'text-red-600'
+                                                : memoryRisk === 'elevated'
+                                                    ? 'text-amber-700'
+                                                    : ''}`}>
+                                                {memoryRisk === 'critical' ? 'Critical' : memoryRisk === 'elevated' ? 'Elevated' : 'Normal'}
+                                            </div>
+                                        </div>
+                                        <div className="text-[11px] text-[var(--text-secondary)]">
+                                            Browser limits are based on total process memory, not only OPFS disk quota.
+                                        </div>
+                                    </div>
+                                )}
+
                                 {/* Error Section */}
-                                {(hasError || errorHint) && (
+                                {(hasError || errorHint || partialLoadMessage) && (
                                     <div className="p-3 rounded-lg bg-amber-50 border border-amber-100 text-amber-900 text-sm space-y-2">
                                         {error && <div className="font-medium flex items-center gap-2"><AlertCircle size={14} /> {error}</div>}
                                         {rehydrateError && <div className="font-medium flex items-center gap-2"><AlertCircle size={14} /> {rehydrateError}</div>}
+                                        {partialLoadMessage && <div className="font-medium flex items-center gap-2"><TriangleAlert size={14} /> {partialLoadMessage}</div>}
                                         {errorHint && <div className="text-xs opacity-90">{errorHint}</div>}
                                     </div>
                                 )}

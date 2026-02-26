@@ -63,6 +63,24 @@ export interface PersistedState {
     dataFingerprint?: DataFingerprint;
 }
 
+function compactVariablesForWorkspacePersistence<T>(variables: T[]): T[] {
+    return variables.map((variable) => {
+        if (!variable || typeof variable !== 'object') return variable;
+        const candidate = variable as Record<string, unknown>;
+        const hasLabels = Array.isArray(candidate.valueLabels) && candidate.valueLabels.length > 0;
+        const missingValues = candidate.missingValues;
+        const hasMissing = !!missingValues && typeof missingValues === 'object' && Object.keys(missingValues as Record<string, unknown>).length > 0;
+
+        if (!hasLabels && !hasMissing) return variable;
+
+        return {
+            ...candidate,
+            valueLabels: [],
+            missingValues: {},
+        } as T;
+    });
+}
+
 // ============================================================================
 // Partialize Function
 // ============================================================================
@@ -76,6 +94,26 @@ export const partialize = (state: VelocityState): PersistedState => {
     const persistVariableSets = state.dataset?.metadataOnly ? [] : state.variableSets;
     const persistFolders = state.dataset?.metadataOnly ? [] : state.folders;
     const persistTransformLog = state.dataset?.metadataOnly ? [] : state.transformLog;
+    const sourceWorkspace = state.workspace ?? {
+        datasets: [],
+        projects: [],
+        storageUsed: 0,
+        storageQuota: 0,
+    };
+    const persistWorkspace = {
+        ...sourceWorkspace,
+        datasets: sourceWorkspace.datasets.map((dataset) => ({
+            ...dataset,
+            // Keep variable identifiers for harmonization matching, but drop heavy label maps.
+            variables: dataset.variables ? compactVariablesForWorkspacePersistence(dataset.variables) : dataset.variables,
+            sessionState: dataset.sessionState
+                ? {
+                    ...dataset.sessionState,
+                    transformLog: [],
+                }
+                : dataset.sessionState,
+        })),
+    };
 
     return {
         // DataSlice - persist dataset metadata but NOT worker/loading state
@@ -93,7 +131,7 @@ export const partialize = (state: VelocityState): PersistedState => {
         activeFilters: state.activeFilters,
 
         // WorkspaceSlice - persist workspace state for multi-file management
-        workspace: state.workspace,
+        workspace: persistWorkspace,
         activeDatasetId: state.activeDatasetId,
         isWorkspaceMode: state.isWorkspaceMode,
 

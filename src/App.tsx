@@ -68,6 +68,15 @@ interface RestorationPromptProps {
   onDiscard: () => void;
 }
 
+interface PartialLoadNoticeProps {
+  title: string;
+  message: string;
+  details?: string;
+  canRebuild: boolean;
+  onRebuild: () => void;
+  onDismiss: () => void;
+}
+
 const RestorationPrompt: React.FC<RestorationPromptProps> = ({
   rowCount,
   columnCount,
@@ -144,6 +153,56 @@ const RestorationPrompt: React.FC<RestorationPromptProps> = ({
     </motion.div>
   );
 };
+
+const PartialLoadNotice: React.FC<PartialLoadNoticeProps> = ({
+  title,
+  message,
+  details,
+  canRebuild,
+  onRebuild,
+  onDismiss,
+}) => (
+  <motion.div
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    exit={{ opacity: 0 }}
+    className="fixed inset-0 flex items-center justify-center bg-black/30 z-[110] px-4"
+  >
+    <motion.div
+      initial={{ opacity: 0, y: 16, scale: 0.98 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, y: 16, scale: 0.98 }}
+      className="w-full max-w-lg rounded-xl border border-amber-200 bg-white shadow-2xl p-6 space-y-4"
+    >
+      <div className="space-y-2">
+        <h2 className="text-xl font-semibold text-amber-900">{title}</h2>
+        <p className="text-sm text-amber-900/90">{message}</p>
+        {details && (
+          <p className="text-xs text-amber-800/90 bg-amber-50 border border-amber-100 rounded-md p-2">
+            {details}
+          </p>
+        )}
+      </div>
+
+      <div className="flex gap-3">
+        {canRebuild && (
+          <button
+            onClick={onRebuild}
+            className="flex-1 px-4 py-2 rounded-lg bg-[var(--color-accent)] text-[var(--text-inverse)] text-sm font-medium hover:opacity-90 transition-opacity"
+          >
+            Rebuild From Source
+          </button>
+        )}
+        <button
+          onClick={onDismiss}
+          className="flex-1 px-4 py-2 rounded-lg border border-amber-200 bg-white text-amber-900 text-sm font-medium hover:bg-amber-50 transition-colors"
+        >
+          Continue
+        </button>
+      </div>
+    </motion.div>
+  </motion.div>
+);
 
 export default function App() {
   const { theme, toggleTheme } = useTheme();
@@ -283,6 +342,9 @@ export default function App() {
   const [opfsDbListError, setOpfsDbListError] = React.useState<string | null>(null);
   const [opfsDbPurgeError, setOpfsDbPurgeError] = React.useState<string | null>(null);
   const [opfsRehydrateError, setOpfsRehydrateError] = React.useState<string | null>(null);
+  const [restoreActionError, setRestoreActionError] = React.useState<string | null>(null);
+  const [showPartialLoadNotice, setShowPartialLoadNotice] = React.useState(false);
+  const partialNoticeDismissedByDataset = useRef<Set<string>>(new Set());
 
   // Project modal state
   const [showProjectModal, setShowProjectModal] = React.useState(false);
@@ -303,6 +365,60 @@ export default function App() {
   const SAV_SAMPLE_ROWS = 1000;
   const SAV_ELEVATED_RISK_CELLS = 20_000_000;
   const SAV_HIGH_RISK_CELLS = 40_000_000;
+
+  const datasetVariableCount = React.useMemo(() => {
+    if (!dataset?.variables) return null;
+    return dataset.variables.filter(v => !v.synthetic).length;
+  }, [dataset?.variables]);
+
+  const labeledVariableCount = React.useMemo(() => {
+    if (!dataset?.variables) return null;
+    return dataset.variables.filter(v => !v.synthetic && v.valueLabels.length > 0).length;
+  }, [dataset?.variables]);
+
+  const totalValueLabelCount = React.useMemo(() => {
+    if (!dataset?.variables) return null;
+    return dataset.variables
+      .filter(v => !v.synthetic)
+      .reduce((sum, v) => sum + v.valueLabels.length, 0);
+  }, [dataset?.variables]);
+
+  const estimatedCells = React.useMemo(() => {
+    if (!dataset || datasetVariableCount === null) return null;
+    return dataset.rowCount * datasetVariableCount;
+  }, [dataset, datasetVariableCount]);
+
+  const memoryRisk = React.useMemo<'normal' | 'elevated' | 'critical'>(() => {
+    if (estimatedCells === null) return 'normal';
+    if (estimatedCells >= SAV_HIGH_RISK_CELLS) return 'critical';
+    if (estimatedCells >= SAV_ELEVATED_RISK_CELLS) return 'elevated';
+    return 'normal';
+  }, [estimatedCells, SAV_ELEVATED_RISK_CELLS, SAV_HIGH_RISK_CELLS]);
+
+  const categoricalOrOrderedCount = React.useMemo(() => {
+    if (!dataset?.variables) return 0;
+    return dataset.variables.filter(v => !v.synthetic && (v.type === 'categorical' || v.type === 'ordered')).length;
+  }, [dataset?.variables]);
+
+  const likelyMissingValueLabels = React.useMemo(() => {
+    if (!dataset || dataset.metadataOnly || dataset.source !== 'sav') return false;
+    if (dataset.loadDiagnostics?.isPartial) return true;
+    if (categoricalOrOrderedCount < 10) return false;
+    if ((totalValueLabelCount ?? 0) === 0) return true;
+    if (labeledVariableCount !== null && categoricalOrOrderedCount >= 20) {
+      const labeledShare = labeledVariableCount / categoricalOrOrderedCount;
+      return labeledShare < 0.1;
+    }
+    return false;
+  }, [dataset, categoricalOrOrderedCount, totalValueLabelCount, labeledVariableCount]);
+
+  const partialLoadMessage = React.useMemo(() => {
+    if (dataset?.loadDiagnostics?.isPartial) return dataset.loadDiagnostics.message;
+    if (likelyMissingValueLabels) {
+      return 'This restored session appears to be missing SAV value labels. Codes may be shown instead of text labels.';
+    }
+    return null;
+  }, [dataset?.loadDiagnostics?.isPartial, dataset?.loadDiagnostics?.message, likelyMissingValueLabels]);
 
   const sensors = useSensors(
     useSensor(MouseSensor, {
@@ -343,6 +459,12 @@ export default function App() {
     if (mismatches.length === 0) return null;
     return `Local data differs from OPFS metadata (${mismatches.join(', ')}). Restoring will use OPFS data.`;
   }, [persistedDataInfo, dataset]);
+
+  const restorationPromptWarning = React.useMemo(() => {
+    if (!restoreActionError) return restoreWarning;
+    if (!restoreWarning) return restoreActionError;
+    return `${restoreWarning} ${restoreActionError}`;
+  }, [restoreWarning, restoreActionError]);
 
   const opfsErrorHint = React.useMemo(() => {
     if (!persistenceError) return null;
@@ -388,6 +510,44 @@ export default function App() {
       setMode(fallbackMode);
     }
   }, [dataset?.opfsFileKey, rehydrateDatasetFromOpfs]);
+
+  const attemptRestoreFromPersistence = React.useCallback((): boolean => {
+    try {
+      setRestoreActionError(null);
+      restoreFromPersistence();
+      return true;
+    } catch (error: any) {
+      const message = error?.message || String(error) || 'Failed to restore session';
+      const normalized = message.toLowerCase();
+      if (normalized.includes('quota')) {
+        setRestoreActionError('Browser localStorage quota was exceeded while restoring cached metadata. Click Start Fresh to recover.');
+      } else {
+        setRestoreActionError(`Restore failed: ${message}`);
+      }
+      console.error('[App] Restore from persistence failed:', error);
+      return false;
+    }
+  }, [restoreFromPersistence]);
+
+  useEffect(() => {
+    if (!dataset?.id || !partialLoadMessage) {
+      setShowPartialLoadNotice(false);
+      return;
+    }
+    if (mode !== 'dashboard') {
+      setShowPartialLoadNotice(false);
+      return;
+    }
+    if (partialNoticeDismissedByDataset.current.has(dataset.id)) return;
+    setShowPartialLoadNotice(true);
+  }, [dataset?.id, partialLoadMessage, mode]);
+
+  const handleDismissPartialLoadNotice = React.useCallback(() => {
+    if (dataset?.id) {
+      partialNoticeDismissedByDataset.current.add(dataset.id);
+    }
+    setShowPartialLoadNotice(false);
+  }, [dataset?.id]);
 
   // Custom collision detection: distinguish between sidebar drags and reordering
   const customCollisionDetection = (args: any) => {
@@ -504,8 +664,8 @@ export default function App() {
         // Auto-restore: metadata matches, go straight to dashboard
         console.log('[App] Auto-restoring: localStorage metadata matches OPFS data');
         hasProcessedPersistence.current = true;
-        restoreFromPersistence();
-        setMode('dashboard');
+        const restored = attemptRestoreFromPersistence();
+        setMode(restored ? 'dashboard' : 'restoring');
       } else {
         // Show restoration prompt
         console.log('[App] Showing restoration prompt: metadata mismatch or missing');
@@ -529,18 +689,19 @@ export default function App() {
         hasProcessedPersistence.current = true;
       }
     }
-  }, [persistenceState, persistedDataInfo, dataset, mode, restoreFromPersistence, rebuildFromOpfsSource]);
+  }, [persistenceState, persistedDataInfo, dataset, mode, attemptRestoreFromPersistence, rebuildFromOpfsSource]);
 
   // -- HANDLE RESTORE/DISCARD ACTIONS --
   const handleRestore = () => {
     setOpfsRehydrateError(null);
-    restoreFromPersistence();
-    setMode('dashboard');
+    const restored = attemptRestoreFromPersistence();
+    setMode(restored ? 'dashboard' : 'restoring');
     hasProcessedPersistence.current = true;
   };
 
   const handleDiscard = async () => {
     setOpfsRehydrateError(null);
+    setRestoreActionError(null);
     await discardPersistedData();
     setMode('splash');
     hasProcessedPersistence.current = true;
@@ -1532,9 +1693,30 @@ export default function App() {
             columnCount={persistedDataInfo.schema.length}
             datasetName={persistedDataInfo.metadata?.datasetName || dataset?.name}
             lastModified={persistedDataInfo.metadata?.lastModified}
-            warning={restoreWarning}
+            warning={restorationPromptWarning}
             onRestore={handleRestore}
             onDiscard={handleDiscard}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* PARTIAL LOAD NOTICE */}
+      <AnimatePresence>
+        {showPartialLoadNotice && dataset && (
+          <PartialLoadNotice
+            title="Dataset Loaded With Partial Metadata"
+            message={partialLoadMessage || 'This dataset may have loaded with partial metadata.'}
+            details={
+              dataset.loadDiagnostics?.valueLabelsDropped
+                ? `${dataset.loadDiagnostics.valueLabelsDropped.toLocaleString()} value labels were removed from cached metadata to keep the app within browser storage limits.`
+                : undefined
+            }
+            canRebuild={Boolean(dataset.opfsFileKey)}
+            onRebuild={() => {
+              setShowPartialLoadNotice(false);
+              void rebuildFromOpfsSource('dashboard');
+            }}
+            onDismiss={handleDismissPartialLoadNotice}
           />
         )}
       </AnimatePresence>
@@ -1688,6 +1870,14 @@ export default function App() {
                       error={persistenceError}
                       errorHint={opfsErrorHint}
                       rehydrateError={opfsRehydrateError}
+                      datasetRows={dataset?.rowCount ?? null}
+                      datasetColumns={datasetVariableCount}
+                      estimatedCells={estimatedCells}
+                      labeledVariableCount={labeledVariableCount}
+                      totalVariableCount={datasetVariableCount}
+                      totalValueLabelCount={totalValueLabelCount}
+                      memoryRisk={memoryRisk}
+                      partialLoadMessage={partialLoadMessage}
                       opfsFileKey={dataset?.opfsFileKey}
                       onRefresh={refreshOpfsDbFiles}
                       onPurge={purgeQuarantinedDbs}
