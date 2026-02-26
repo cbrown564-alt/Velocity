@@ -93,7 +93,7 @@ export const PersistenceStatus: React.FC<PersistenceStatusProps> = ({
                         ? 'bg-red-100 text-red-600'
                         : statusTone === 'warn'
                             ? 'bg-amber-100 text-amber-700'
-                        : 'bg-emerald-100 text-emerald-600'
+                            : 'bg-emerald-100 text-emerald-600'
                     }
         `}>
                     {statusTone === 'issue' ? <AlertCircle size={16} /> : statusTone === 'warn' ? <TriangleAlert size={16} /> : <Database size={16} />}
@@ -136,7 +136,7 @@ export const PersistenceStatus: React.FC<PersistenceStatusProps> = ({
                                 </h3>
                                 <button
                                     onClick={() => setShowDetails(false)}
-                                    className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] p-1 rounded-md hover:bg-[var(--bg-active)]"
+                                    className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] p-1.5 rounded-md hover:bg-[var(--bg-active)] transition-colors"
                                 >
                                     <span className="sr-only">Close</span>
                                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
@@ -177,36 +177,46 @@ export const PersistenceStatus: React.FC<PersistenceStatusProps> = ({
 
                                 {/* Dataset Diagnostics */}
                                 {(datasetRows !== null || datasetColumns !== null || estimatedCells !== null) && (
-                                    <div className="p-3 rounded-lg bg-[var(--bg-app)] border border-[var(--border-color-muted)] space-y-2">
-                                        <div className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider flex items-center gap-2">
-                                            <Activity size={12} />
+                                    <div className="p-4 rounded-lg bg-[var(--bg-app)] border border-[var(--border-color-muted)] space-y-3">
+                                        <div className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider flex items-center gap-2 mb-2">
+                                            <Activity size={14} />
                                             Runtime Diagnostics
                                         </div>
-                                        <div className="grid grid-cols-2 gap-2 text-xs">
+                                        <div className="grid grid-cols-[1fr,auto] gap-y-2.5 gap-x-4 text-sm">
                                             <div className="text-[var(--text-secondary)]">Rows</div>
-                                            <div className="text-right font-medium">{datasetRows !== null && datasetRows !== undefined ? datasetRows.toLocaleString() : '--'}</div>
+                                            <div className="text-right font-medium text-[var(--text-primary)]">{datasetRows !== null && datasetRows !== undefined ? datasetRows.toLocaleString() : '--'}</div>
+
                                             <div className="text-[var(--text-secondary)]">Columns</div>
-                                            <div className="text-right font-medium">{datasetColumns !== null && datasetColumns !== undefined ? datasetColumns.toLocaleString() : '--'}</div>
-                                            <div className="text-[var(--text-secondary)]">Estimated Cells</div>
-                                            <div className="text-right font-medium">{estimatedCells !== null && estimatedCells !== undefined ? estimatedCells.toLocaleString() : '--'}</div>
+                                            <div className="text-right font-medium text-[var(--text-primary)]">{datasetColumns !== null && datasetColumns !== undefined ? datasetColumns.toLocaleString() : '--'}</div>
+
+                                            <div className="text-[var(--text-secondary)] flex items-center gap-1.5">
+                                                Estimated Cells
+                                            </div>
+                                            <div className="text-right font-medium text-[var(--text-primary)]">{estimatedCells !== null && estimatedCells !== undefined ? estimatedCells.toLocaleString() : '--'}</div>
+
                                             <div className="text-[var(--text-secondary)]">Label Coverage</div>
-                                            <div className="text-right font-medium">
+                                            <div className="text-right font-medium text-[var(--text-primary)]">
                                                 {labelCoveragePct !== null ? `${labelCoveragePct}%` : '--'}
                                                 {typeof totalValueLabelCount === 'number' && (
-                                                    <span className="text-[var(--text-secondary)] ml-1">({totalValueLabelCount.toLocaleString()} labels)</span>
+                                                    <span className="text-[var(--text-secondary)] ml-1.5 text-xs font-normal">({totalValueLabelCount.toLocaleString()} labels)</span>
                                                 )}
                                             </div>
+
                                             <div className="text-[var(--text-secondary)]">Memory Risk</div>
-                                            <div className={`text-right font-medium ${memoryRisk === 'critical'
+                                            <div className={`text-right font-medium flex items-center justify-end gap-1.5 ${memoryRisk === 'critical'
                                                 ? 'text-red-600'
                                                 : memoryRisk === 'elevated'
-                                                    ? 'text-amber-700'
-                                                    : ''}`}>
+                                                    ? 'text-amber-600'
+                                                    : 'text-emerald-600'}`}>
                                                 {memoryRisk === 'critical' ? 'Critical' : memoryRisk === 'elevated' ? 'Elevated' : 'Normal'}
+                                                {memoryRisk !== 'normal' && <AlertCircle size={14} />}
                                             </div>
                                         </div>
-                                        <div className="text-[11px] text-[var(--text-secondary)]">
-                                            Browser limits are based on total process memory, not only OPFS disk quota.
+                                        <div className="mt-3 pt-3 border-t border-[var(--border-color-muted)] flex items-start gap-2 text-amber-700 bg-amber-50/50 p-2.5 rounded-md">
+                                            <AlertCircle size={14} className="shrink-0 mt-0.5" />
+                                            <div className="text-xs leading-relaxed">
+                                                Browser limits are based on total process memory, not only OPFS disk quota. High memory risk may cause the tab to crash.
+                                            </div>
                                         </div>
                                     </div>
                                 )}
@@ -222,20 +232,20 @@ export const PersistenceStatus: React.FC<PersistenceStatusProps> = ({
                                 )}
 
                                 {/* Actions */}
-                                <div className="pt-2 flex flex-col gap-2">
-                                    <div className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-1">Troubleshooting</div>
-                                    <div className="flex gap-2">
+                                <div className="pt-2 flex flex-col gap-3">
+                                    <div className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">Troubleshooting</div>
+                                    <div className="flex gap-3">
                                         <button
                                             onClick={onRefresh}
-                                            className="flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-[var(--bg-element)] hover:bg-[var(--bg-hover)] text-sm font-medium transition-colors border border-[var(--border-color)]"
+                                            className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-[var(--bg-element)] hover:bg-[var(--bg-hover)] text-sm font-medium transition-colors border border-[var(--border-color)] text-[var(--text-primary)]"
                                         >
-                                            <RefreshCw size={14} /> Refresh
+                                            <RefreshCw size={16} /> Refresh
                                         </button>
                                         <button
                                             onClick={onPurge}
-                                            className="flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-[var(--bg-element)] hover:bg-red-50 hover:text-red-600 hover:border-red-200 text-sm font-medium transition-colors border border-[var(--border-color)]"
+                                            className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-red-50 text-red-700 border border-red-200 hover:bg-red-100 hover:border-red-300 text-sm font-medium transition-colors"
                                         >
-                                            <Trash2 size={14} /> Purge Corruption
+                                            <Trash2 size={16} /> Purge Corruption
                                         </button>
                                     </div>
 
