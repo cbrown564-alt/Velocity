@@ -41,8 +41,11 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
         variableStats,
         variableStatsLoading,
         recodeVariable,
+        deleteGroupedVariable,
+        splitGroupValue,
         getUniqueValues,
         setSelectedVariableId,
+        transformLog,
     } = useVelocityStore();
 
     // Context menu state for chart interactions
@@ -208,6 +211,39 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
     }, [variable, pendingGroupSelection, pendingBinSelection, getUniqueValues, recodeVariable, setSelectedVariableId]);
 
 
+    // Detect whether the currently-selected variable is a grouped (derived) variable
+    const activeTransform = useMemo(
+        () => (variable ? transformLog.find(t => t.newColId === variable.id) : undefined),
+        [variable, transformLog]
+    );
+    const isGroupedVariable = Boolean(activeTransform);
+
+    // Returns true if a label maps to more than one source code (i.e. is genuinely grouped)
+    const isGroupedValue = useCallback((label: string): boolean => {
+        if (!activeTransform?.config.mappings) return false;
+        return Object.values(activeTransform.config.mappings).filter(v => v === label).length > 1;
+    }, [activeTransform]);
+
+    const handleDeleteGroup = useCallback(async () => {
+        if (!variable || !activeTransform) return;
+        closeContextMenu();
+        try {
+            await deleteGroupedVariable(variable.id);
+        } catch (err) {
+            console.error('[VariableInspector] Failed to delete grouped variable:', err);
+        }
+    }, [variable, activeTransform, deleteGroupedVariable, closeContextMenu]);
+
+    const handleSplitGroup = useCallback(async (groupValue: string) => {
+        if (!variable || !activeTransform) return;
+        closeContextMenu();
+        try {
+            await splitGroupValue(variable.id, groupValue);
+        } catch (err) {
+            console.error('[VariableInspector] Failed to split group value:', err);
+        }
+    }, [variable, activeTransform, splitGroupValue, closeContextMenu]);
+
     // If no variable selected, show empty state
     if (!variable) {
         return (
@@ -269,7 +305,16 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
                     {
                         label: contextMenu.selected.length > 1 ? 'Group these values' : 'Create group from this value',
                         onClick: handleCreateGroup,
-                    }
+                    },
+                    ...(isGroupedVariable ? [{
+                        label: 'Delete group variable',
+                        onClick: handleDeleteGroup,
+                        danger: true as const,
+                    }] : []),
+                    ...(isGroupedVariable && contextMenu.selected.length === 1 && isGroupedValue(contextMenu.selected[0]?.label) ? [{
+                        label: `Split "${contextMenu.selected[0].label}" back to original values`,
+                        onClick: () => handleSplitGroup(contextMenu.selected[0].label),
+                    }] : []),
                 ]}
                 onClose={closeContextMenu}
             />

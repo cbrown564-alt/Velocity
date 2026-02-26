@@ -224,6 +224,8 @@ export interface DataSlice {
     getUniqueValues: (variableId: string) => Promise<string[]>;
     getVariableStats: (variableId: string) => Promise<VariableStatsResult | null>;
     recodeVariable: (sourceColId: string, newColName: string, config: RecodeConfig) => Promise<string>;
+    deleteGroupedVariable: (varId: string) => Promise<void>;
+    splitGroupValue: (varId: string, groupValue: string) => Promise<void>;
     fillSystemMissing: (variableId: string, replacementCode: number, replacementLabel: string) => Promise<void>;
     createVariableSet: (name: string, variableIds: string[]) => void;
     splitVariableSet: (setId: string) => void;
@@ -1457,6 +1459,145 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
             };
         });
 
+        const runAnalysis = (get() as unknown as { runAnalysis?: () => Promise<void> }).runAnalysis;
+        if (typeof runAnalysis === 'function') {
+            void runAnalysis();
+        }
+    },
+
+    deleteGroupedVariable: async (varId: string): Promise<void> => {
+        const { worker, dataset, variableSets, transformLog } = get();
+        if (!worker || !dataset) return;
+
+        const transform = transformLog.find(t => t.newColId === varId);
+        if (!transform) return;
+
+        const reqId = crypto.randomUUID();
+        await new Promise<void>((resolve, reject) => {
+            const handler = (event: MessageEvent<WorkerResponse>) => {
+                const response = event.data;
+                if (response.requestId !== reqId) return;
+                if (response.type === 'columnDropped') {
+                    worker.removeEventListener('message', handler);
+                    resolve();
+                } else if (response.type === 'error') {
+                    worker.removeEventListener('message', handler);
+                    reject(new Error(response.message));
+                }
+            };
+            worker.addEventListener('message', handler);
+            worker.postMessage({ type: 'dropColumn', requestId: reqId, column: varId } as WorkerRequest);
+        });
+
+        // Update state: remove variable, variable set, transform log entry
+        set((state) => {
+            const newVariables = state.dataset
+                ? state.dataset.variables.filter(v => v.id !== varId)
+                : (state.dataset?.variables ?? []);
+            const newVariableSets = state.variableSets.filter(
+                vs => !vs.variableIds.includes(varId)
+            );
+            const newTransformLog = state.transformLog.filter(t => t.newColId !== varId);
+
+            // Swap varId with sourceColId in tableConfig
+            const storeAny = get() as any;
+            const tableConfig = storeAny.tableConfig as { rowVars: string[]; colVar: string | null } | undefined;
+            const sourceColId = transform.sourceColId;
+
+            const newRowVars = tableConfig?.rowVars.map(id => id === varId ? sourceColId : id) ?? [];
+            const newColVar = tableConfig?.colVar === varId ? sourceColId : (tableConfig?.colVar ?? null);
+
+            return {
+                dataset: state.dataset ? { ...state.dataset, variables: newVariables } : state.dataset,
+                variableSets: newVariableSets,
+                transformLog: newTransformLog,
+                variableStats: Object.fromEntries(
+                    Object.entries(state.variableStats).filter(([key]) => key !== varId)
+                ),
+            };
+        });
+
+        // Swap varId in tableConfig via setTableConfig (triggers runAnalysis)
+        const storeAny = get() as any;
+        const tableConfig = storeAny.tableConfig as { rowVars: string[]; colVar: string | null } | undefined;
+        if (tableConfig) {
+            const newRowVars = tableConfig.rowVars.map(id => id === varId ? transform.sourceColId : id);
+            const newColVar = tableConfig.colVar === varId ? transform.sourceColId : tableConfig.colVar;
+            const setTableConfig = storeAny.setTableConfig as ((c: { rowVars: string[]; colVar: string | null }) => void) | undefined;
+            if (typeof setTableConfig === 'function') {
+                setTableConfig({ rowVars: newRowVars, colVar: newColVar });
+            }
+        }
+
+        // Navigate inspector back to source variable
+        const setSelectedVariableId = (get() as any).setSelectedVariableId as ((id: string) => void) | undefined;
+        if (typeof setSelectedVariableId === 'function') {
+            setSelectedVariableId(transform.sourceColId);
+        }
+
+        void get().flushPersistedData();
+    },
+
+    splitGroupValue: async (varId: string, groupValue: string): Promise<void> => {
+        const { worker, dataset, transformLog } = get();
+        if (!worker || !dataset) return;
+
+        const transform = transformLog.find(t => t.newColId === varId);
+        if (!transform || transform.config.mode !== 'categorical' || !transform.config.mappings) return;
+
+        const sourceVar = dataset.variables.find(v => v.id === transform.sourceColId);
+
+        // Build new mappings: un-merge entries that map to groupValue
+        const newMappings: Record<string, string> = {};
+        for (const [key, val] of Object.entries(transform.config.mappings)) {
+            if (val === groupValue) {
+                const originalLabel = sourceVar?.valueLabels.find(
+                    vl => String(vl.value) === key
+                )?.label ?? key;
+                newMappings[key] = originalLabel;
+            } else {
+                newMappings[key] = val;
+            }
+        }
+
+        const newConfig: RecodeConfig = { ...transform.config, mappings: newMappings };
+
+        const reqId = crypto.randomUUID();
+        await new Promise<void>((resolve, reject) => {
+            const handler = (event: MessageEvent<WorkerResponse>) => {
+                const response = event.data;
+                if (response.requestId !== reqId) return;
+                if (response.type === 'columnUpdated') {
+                    worker.removeEventListener('message', handler);
+                    resolve();
+                } else if (response.type === 'error') {
+                    worker.removeEventListener('message', handler);
+                    reject(new Error(response.message));
+                }
+            };
+            worker.addEventListener('message', handler);
+            worker.postMessage({
+                type: 'updateColumn',
+                requestId: reqId,
+                sourceCol: transform.sourceColId,
+                targetCol: varId,
+                config: newConfig,
+            } as WorkerRequest);
+        });
+
+        // Update transformLog and invalidate cached stats
+        set((state) => ({
+            transformLog: state.transformLog.map(t =>
+                t.newColId === varId ? { ...t, config: newConfig } : t
+            ),
+            variableStats: Object.fromEntries(
+                Object.entries(state.variableStats).filter(([key]) => key !== varId)
+            ),
+            variableStatsLoading: { ...state.variableStatsLoading, [varId]: false },
+        }));
+
+        // Re-fetch stats and re-run analysis
+        void get().getVariableStats(varId);
         const runAnalysis = (get() as unknown as { runAnalysis?: () => Promise<void> }).runAnalysis;
         if (typeof runAnalysis === 'function') {
             void runAnalysis();

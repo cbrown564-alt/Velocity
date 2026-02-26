@@ -9,6 +9,7 @@ import { recommendChart } from '../../../services/chartRecommender';
 import { useTableDragMerge, TableDragItem } from '../../../hooks/useTableDragMerge';
 import { useMergeOrchestration } from '../../../hooks/useMergeOrchestration';
 import { InputModal } from '../../../components/overlays/InputModal';
+import { ChartContextMenu } from '../../../components/overlays/ChartContextMenu';
 import { RowPathEntry, TableRowNode } from '../../../services/treeBuilder';
 import { Tooltip } from '../../../components/common/Tooltip';
 import { StatisticsTooltip } from '../../../components/common/StatisticsTooltip';
@@ -59,6 +60,9 @@ export const DataTable: React.FC<DataTableProps> = ({
   tableStats,
 }) => {
   const analysisSettings = useVelocityStore((state) => state.analysisSettings);
+  const transformLog = useVelocityStore((state) => state.transformLog);
+  const deleteGroupedVariable = useVelocityStore((state) => state.deleteGroupedVariable);
+  const splitGroupValue = useVelocityStore((state) => state.splitGroupValue);
   const overlapCorrected = useMemo(
     () => data.some((row) => row.stats?.isOverlapCorrected),
     [data]
@@ -68,6 +72,14 @@ export const DataTable: React.FC<DataTableProps> = ({
   const [expandedKeys, setExpandedKeys] = useState<Record<string, boolean>>({});
   // State for methodology panel visibility
   const [showMethodology, setShowMethodology] = useState(false);
+
+  // Row context menu state (for ungroup/split on derived variables)
+  const [rowContextMenu, setRowContextMenu] = useState<{
+    isOpen: boolean;
+    position: { x: number; y: number };
+    variableId: string;
+    rowLabel: string;
+  } | null>(null);
 
   const toggleRow = (key: string) => {
     setExpandedKeys(prev => ({ ...prev, [key]: !prev[key] }));
@@ -222,6 +234,17 @@ export const DataTable: React.FC<DataTableProps> = ({
                 if (!dragState.isDragging && !(e.target as HTMLElement).closest('button')) {
                   toggleRowSelection(row.rawValue);
                 }
+              }}
+              onContextMenu={(e) => {
+                const transform = transformLog.find(t => t.newColId === rowVarId);
+                if (!transform) return;
+                e.preventDefault();
+                setRowContextMenu({
+                  isOpen: true,
+                  position: { x: e.clientX, y: e.clientY },
+                  variableId: rowVarId,
+                  rowLabel: row.label,
+                });
               }}
             >
               <div className="flex items-center gap-2">
@@ -501,6 +524,39 @@ export const DataTable: React.FC<DataTableProps> = ({
           initialValue={mergeModal.targetItem?.label || ''}
           submitLabel="Create Group"
         />
+
+        {/* Row context menu for grouped/derived variables */}
+        {rowContextMenu && (() => {
+          const transform = transformLog.find(t => t.newColId === rowContextMenu.variableId);
+          const isGrouped = transform?.config.mode === 'categorical' && transform.config.mappings &&
+            Object.values(transform.config.mappings).filter(v => v === rowContextMenu.rowLabel).length > 1;
+          const options = [
+            {
+              label: 'Delete group variable',
+              onClick: async () => {
+                setRowContextMenu(null);
+                await deleteGroupedVariable(rowContextMenu.variableId);
+              },
+              danger: true as const,
+            },
+            ...(isGrouped ? [{
+              label: `Split "${rowContextMenu.rowLabel}" back to original values`,
+              onClick: async () => {
+                setRowContextMenu(null);
+                await splitGroupValue(rowContextMenu.variableId, rowContextMenu.rowLabel);
+              },
+            }] : []),
+          ];
+          return (
+            <ChartContextMenu
+              isOpen={rowContextMenu.isOpen}
+              position={rowContextMenu.position}
+              title={rowContextMenu.rowLabel}
+              options={options}
+              onClose={() => setRowContextMenu(null)}
+            />
+          );
+        })()}
 
       </motion.div>
     );

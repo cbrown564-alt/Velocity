@@ -1156,17 +1156,7 @@ async function getUniqueValues(column: string): Promise<string[]> {
 // Recode Operations
 // ============================================================================
 
-async function recodeVariable(
-  sourceCol: string,
-  newColName: string,
-  config: RecodeConfig
-): Promise<string> {
-  if (!conn) throw new Error('DB not initialized');
-
-  const safeNewCol = newColName.replace(/[^a-zA-Z0-9_]/g, '_');
-
-  await conn.query(`ALTER TABLE main ADD COLUMN "${safeNewCol}" VARCHAR`);
-
+function buildCaseSql(sourceCol: string, config: RecodeConfig): string {
   let caseSql = `CASE `;
 
   if (config.mode === 'categorical' && config.mappings) {
@@ -1186,8 +1176,20 @@ async function recodeVariable(
   }
 
   caseSql += `ELSE CAST("${sourceCol}" AS VARCHAR) END`;
+  return caseSql;
+}
 
-  await conn.query(`UPDATE main SET "${safeNewCol}" = ${caseSql}`);
+async function recodeVariable(
+  sourceCol: string,
+  newColName: string,
+  config: RecodeConfig
+): Promise<string> {
+  if (!conn) throw new Error('DB not initialized');
+
+  const safeNewCol = newColName.replace(/[^a-zA-Z0-9_]/g, '_');
+
+  await conn.query(`ALTER TABLE main ADD COLUMN "${safeNewCol}" VARCHAR`);
+  await conn.query(`UPDATE main SET "${safeNewCol}" = ${buildCaseSql(sourceCol, config)}`);
 
   return safeNewCol;
 }
@@ -1392,7 +1394,21 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
 
       case 'recodeVariable': {
         const newCol = await recodeVariable(request.sourceCol, request.newColName, request.config);
-        self.postMessage({ type: 'recodeComplete', newColName: newCol } as WorkerResponse);
+        self.postMessage({ type: 'recodeComplete', newColName: newCol, requestId: request.requestId } as WorkerResponse);
+        break;
+      }
+
+      case 'dropColumn': {
+        if (!conn) throw new Error('DB not initialized');
+        await conn.query(`ALTER TABLE main DROP COLUMN "${request.column}"`);
+        self.postMessage({ type: 'columnDropped', column: request.column, requestId: request.requestId } as WorkerResponse);
+        break;
+      }
+
+      case 'updateColumn': {
+        if (!conn) throw new Error('DB not initialized');
+        await conn.query(`UPDATE main SET "${request.targetCol}" = ${buildCaseSql(request.sourceCol, request.config)}`);
+        self.postMessage({ type: 'columnUpdated', column: request.targetCol, requestId: request.requestId } as WorkerResponse);
         break;
       }
 

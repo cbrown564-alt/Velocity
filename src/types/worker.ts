@@ -83,6 +83,8 @@ export type WorkerRequest = WorkerRequestBase & (
   | { type: 'getUniqueValues'; column: string }
   | { type: 'getVariableStats'; column: string; variableType?: VariableType; orderedScoring?: OrderedScoring; binCount?: number; missingValues?: MissingValueDef }
   | { type: 'recodeVariable'; sourceCol: string; newColName: string; config: RecodeConfig }
+  | { type: 'dropColumn'; column: string }
+  | { type: 'updateColumn'; sourceCol: string; targetCol: string; config: RecodeConfig }
   | { type: 'fillSystemMissing'; column: string; value: number | string }
   | { type: 'checkPersistedData' }
   | { type: 'clearPersistedData' }
@@ -182,6 +184,8 @@ export type WorkerResponse = WorkerResponseBase & (
   | { type: 'uniqueValues'; data: string[] }
   | { type: 'variableStats'; stats: VariableStatsResult }
   | { type: 'recodeComplete'; newColName: string }
+  | { type: 'columnDropped'; column: string }
+  | { type: 'columnUpdated'; column: string }
   | { type: 'persistedDataFound'; schema: { name: string; type: string }[]; rowCount: number; metadata?: PersistedMetadata }
   | { type: 'noPersistedData' }
   | { type: 'persistedDataCleared' }
