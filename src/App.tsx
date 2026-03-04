@@ -19,6 +19,7 @@ import { RecodeModal } from './components/overlays/RecodeModal';
 import { FilterModal } from './components/overlays/FilterModal';
 import { ExportModal } from './components/overlays/ExportModal';
 import { SessionImportModal, type SessionImportPayload } from './components/overlays/SessionImportModal';
+import { SessionExportModal, type SessionExportSummary } from './components/overlays/SessionExportModal';
 import { FilterBar } from './components/common/FilterBar';
 import { StorageStatusIndicator } from './components/common/StorageStatusIndicator';
 import { AppShell, ModeToggleButton } from './components/layout/AppShell';
@@ -352,7 +353,7 @@ export default function App() {
     });
   }, [activeSlide?.title, activeSlide?.visualizationType, activeSlide?.chartType, dataset?.name, queryResult, resolvedRowVars, resolvedColVar, isWeighted, isMultipleResponse]);
 
-  const handleExportSession = React.useCallback(async () => {
+  const doExportSessionDownload = React.useCallback(async () => {
     if (!dataset) return;
 
     const sessionFile = exportSession({
@@ -417,6 +418,11 @@ export default function App() {
     harmonization.session,
   ]);
 
+  const handleExportSession = React.useCallback(() => {
+    if (!dataset) return;
+    setShowSessionExportModal(true);
+  }, [dataset]);
+
   const handleSaveFilter = React.useCallback((filter: Omit<Filter, 'id'>, applyToAll: boolean) => {
     // Always add to current analysis
     addFilter(filter);
@@ -466,6 +472,7 @@ export default function App() {
   const [showExportModal, setShowExportModal] = React.useState(false);
   const [exportSelectedIds, setExportSelectedIds] = React.useState<string[]>([]);
   const [showSessionImportModal, setShowSessionImportModal] = React.useState(false);
+  const [showSessionExportModal, setShowSessionExportModal] = React.useState(false);
   const [sessionImportDiagnostics, setSessionImportDiagnostics] = React.useState<SessionImportDiagnosticsSummary | null>(null);
   const [persistentStorageGranted, setPersistentStorageGranted] = React.useState<boolean | null>(null);
   const [showStorageReminderToast, setShowStorageReminderToast] = React.useState(false);
@@ -1779,6 +1786,23 @@ export default function App() {
         onClose={handleCloseSessionImportModal}
         onImport={handleSessionImport}
       />
+
+      {dataset && (
+        <SessionExportModal
+          isOpen={showSessionExportModal}
+          onClose={() => setShowSessionExportModal(false)}
+          onExport={doExportSessionDownload}
+          summary={{
+            datasetName: dataset.name,
+            rowCount: dataset.rowCount,
+            columnCount: dataset.variables.filter((v) => !transformLog.some((t) => t.type === 'recode' && t.newColId === v.id)).length,
+            recodeCount: transformLog.filter((t) => t.type === 'recode').length,
+            slideCount: slides.length,
+            filterCount: activeFilters.length,
+            sectionCount: sections.length,
+          } satisfies SessionExportSummary}
+        />
+      )}
 
       {contextMenu && contextMenu.visible && (
         <ContextMenu
