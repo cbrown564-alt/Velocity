@@ -5,6 +5,19 @@ import type {
   VelocitySessionFile,
 } from './sessionTypes';
 
+function getFingerprintColumnNames(input: ExportSessionInput): string[] {
+  const derivedIds = new Set<string>();
+  for (const transform of input.transformLog) {
+    if (transform.type === 'recode') {
+      derivedIds.add(transform.newColId);
+    }
+  }
+
+  return input.dataset.variables
+    .map((variable) => variable.id)
+    .filter((id) => !derivedIds.has(id));
+}
+
 function shouldIncludeWorkspace(input?: ExportSessionInput['workspace']): input is NonNullable<ExportSessionInput['workspace']> {
   if (!input) return false;
   return input.projects.length > 0 || input.datasets.length > 1;
@@ -30,6 +43,8 @@ function buildWorkspaceSnapshot(input: ExportSessionInput): SessionWorkspaceSnap
 }
 
 export function exportSession(input: ExportSessionInput): VelocitySessionFile {
+  const fingerprintColumnNames = getFingerprintColumnNames(input);
+
   const analysisSettings =
     input.analysisSettings && Object.keys(input.analysisSettings).length > 0
       ? { ...input.analysisSettings }
@@ -44,8 +59,8 @@ export function exportSession(input: ExportSessionInput): VelocitySessionFile {
       rowCount: input.dataset.rowCount,
       source: input.dataset.source,
       fingerprint: {
-        columnCount: input.dataset.variables.length,
-        columnNames: input.dataset.variables.map((variable) => variable.id),
+        columnCount: fingerprintColumnNames.length,
+        columnNames: fingerprintColumnNames,
         checksum: input.checksum,
       },
     },

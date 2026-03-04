@@ -15,6 +15,7 @@ const DEFAULTS = {
   fontFamily: 'Atkinson Hyperlegible',
   fontSize: 9,
   headerFontSize: 10,
+  chartColors: ['E07A5F', '1C1C1C', '4F46E5', '10B981', 'F59E0B'],
 };
 
 // Width (inches) reserved for the row-label column.
@@ -265,7 +266,7 @@ export async function exportPptx(config: ExportConfig): Promise<Uint8Array> {
     ...(config.branding?.primaryColor && { primaryColor: normalizeColor(config.branding.primaryColor) }),
     ...(config.branding?.headerColor && { headerColor: normalizeColor(config.branding.headerColor) }),
     ...(config.branding?.fontFamily && { fontFamily: config.branding.fontFamily }),
-    chartColors: config.branding?.chartColors?.map(normalizeColor),
+    ...(config.branding?.chartColors && { chartColors: config.branding.chartColors.map(normalizeColor) }),
   };
 
   // Title slide

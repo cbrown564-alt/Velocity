@@ -170,4 +170,60 @@ describe('exportSession', () => {
     expect(serialized).toContain('\n');
     expect(serialized).toContain('"formatVersion": 1');
   });
+
+  it('excludes transform-generated columns from dataset fingerprint', () => {
+    const session = exportSession({
+      dataset: {
+        ...datasetFixture,
+        variables: [
+          ...datasetFixture.variables,
+          {
+            id: 'q2_top2',
+            name: 'Q2_TOP2',
+            label: 'Top-2 Box',
+            type: 'categorical',
+            valueLabels: [],
+            missingValues: {},
+          },
+        ],
+      },
+      variableSets: [
+        ...variableSetsFixture,
+        {
+          id: 'set-q2-top2',
+          name: 'Top-2 Box',
+          variableIds: ['q2_top2'],
+          structure: 'single',
+          type: 'categorical',
+        },
+      ],
+      folders: foldersFixture,
+      transformLog: [
+        {
+          type: 'recode',
+          sourceColId: 'q2',
+          newColId: 'q2_top2',
+          label: 'Top-2 Box',
+          config: {
+            rules: [{ from: [4, 5], to: 1 }],
+            elseValue: 0,
+            valueLabels: [],
+            preserveMissing: true,
+          },
+          createdAt: 1,
+        },
+      ],
+      tableConfig: tableConfigFixture,
+      activeFilters: [],
+      slides: slidesFixture,
+      sections: [],
+    });
+
+    expect(session.dataset.fingerprint).toEqual({
+      columnCount: 2,
+      columnNames: ['q1', 'q2'],
+      checksum: undefined,
+    });
+    expect(session.variables.map((variable) => variable.id)).toContain('q2_top2');
+  });
 });

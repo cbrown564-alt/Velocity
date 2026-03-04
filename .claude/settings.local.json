@@ -10,7 +10,8 @@
       "WebFetch(domain:raw.githubusercontent.com)",
       "Bash(npx vitest run:*)",
       "WebSearch",
-      "WebFetch(domain:www.inkandswitch.com)"
+      "WebFetch(domain:www.inkandswitch.com)",
+      "Bash(npm run:*)"
     ]
   }
 }

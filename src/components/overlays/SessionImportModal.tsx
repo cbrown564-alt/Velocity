@@ -4,6 +4,7 @@ import { AlertCircle, CheckCircle2, FileUp, Upload, X } from 'lucide-react';
 import { parseSavMetadata } from '@velocity/readstat-wasm';
 import type { DatasetMatchResult, VelocitySessionFile } from '../../core/session';
 import { parseSessionFile, validateDatasetMatch } from '../../core/session';
+import { decodeSessionFile } from '../../services/sessionFileCodec';
 
 export interface SessionImportPayload {
   sessionFile: VelocitySessionFile;
@@ -72,7 +73,8 @@ export const SessionImportModal: React.FC<SessionImportModalProps> = ({
     setMatchResult(null);
 
     try {
-      const raw = await file.text();
+      const buffer = await file.arrayBuffer();
+      const raw = await decodeSessionFile(buffer, file.name);
       const parsed = parseSessionFile(raw);
       setSessionFile(parsed);
       setSessionFileName(file.name);
@@ -176,7 +178,7 @@ export const SessionImportModal: React.FC<SessionImportModalProps> = ({
             <input
               ref={sessionInputRef}
               type="file"
-              accept=".velocity,.json"
+              accept=".velocity,.json,.gz,.velocity.gz"
               className="hidden"
               onChange={handleSessionSelect}
             />

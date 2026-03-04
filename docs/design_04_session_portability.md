@@ -2,7 +2,7 @@
 
 **Author:** Architect (Claude Opus)
 **Created:** 2026-02-26
-**Status:** Proposal — awaiting approval
+**Status:** In Progress (implementation started 2026-03-04)
 **Scope:** Session export/import, storage persistence hardening, user storage communication
 **Phase:** Late Phase 2 / Early Phase 3 (cross-cutting local-first infrastructure)
 
@@ -347,3 +347,15 @@ Session logic lives in `src/core/session/` — it has **zero browser dependencie
 - `src/store/slices/analysisSlice.ts` — `TableConfig`, `Filter`, `AnalysisSettings` types
 - `docs/blue_02_feature_matrix.md` — Scope governance (Keep/Delay/Reject)
 - `docs/roadmap_00_strategic_guide.md` — Strategic sequencing
+
+---
+
+## 11. Implementation Log
+
+### 2026-03-04
+
+- Completed: Corrected dataset fingerprint export logic to exclude transform-generated columns (for example, recode outputs), so import matching validates against the original source schema rather than derived runtime columns.
+- Completed: Added regression coverage in `src/core/session/sessionExporter.test.ts` to protect this behavior.
+- Verified: `vitest run src/core/session` passes after the change.
+- Completed: Added optional gzip codec support for session files. Export now auto-compresses larger payloads when `CompressionStream` is available, producing `.velocity.gz`. Import auto-detects gzip files (extension or magic header) and decompresses via `DecompressionStream`.
+- Open: Surface session import diagnostics to end users (currently logged to console).

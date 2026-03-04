@@ -36,6 +36,7 @@ import { WorkspaceView, ProjectLinkModal, CrossWavePanel, ExportImportModal, typ
 import { HarmonizationWorkspace } from './features/harmonization';
 import { filterSyntheticGridShellSets } from './features/variableManager/variableSetFilters';
 import { allowsNumericStats } from './types';
+import { encodeSessionFile } from './services/sessionFileCodec';
 
 // Smart Canvas Wrapper
 const SmartCanvas: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className }) => {
@@ -73,10 +74,11 @@ function markStorageToastSeen(): void {
   }
 }
 
-function getSessionFilename(datasetName: string): string {
+function getSessionFilename(datasetName: string, compressed: boolean): string {
   const name = datasetName.replace(/\.[^.]+$/, '');
   const date = new Date().toISOString().slice(0, 10);
-  return `${name}-${date}${SESSION_FILE_EXTENSION}`;
+  const extension = compressed ? `${SESSION_FILE_EXTENSION}.gz` : SESSION_FILE_EXTENSION;
+  return `${name}-${date}${extension}`;
 }
 
 function datasetTableName(datasetId: string): string {
@@ -342,7 +344,7 @@ export default function App() {
     });
   }, [activeSlide?.title, activeSlide?.visualizationType, activeSlide?.chartType, dataset?.name, queryResult, resolvedRowVars, resolvedColVar, isWeighted, isMultipleResponse]);
 
-  const handleExportSession = React.useCallback(() => {
+  const handleExportSession = React.useCallback(async () => {
     if (!dataset) return;
 
     const sessionFile = exportSession({
@@ -378,13 +380,15 @@ export default function App() {
       velocityVersion: import.meta.env.VITE_APP_VERSION ?? 'dev',
     });
 
-    const blob = new Blob([serializeSessionFile(sessionFile)], {
-      type: 'application/json',
+    const sessionJson = serializeSessionFile(sessionFile);
+    const { blob, compressed } = await encodeSessionFile(sessionJson, {
+      preferGzip: true,
+      gzipThresholdBytes: 32 * 1024,
     });
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement('a');
     anchor.href = url;
-    anchor.download = getSessionFilename(dataset.name);
+    anchor.download = getSessionFilename(dataset.name, compressed);
     document.body.appendChild(anchor);
     anchor.click();
     document.body.removeChild(anchor);
