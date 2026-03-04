@@ -86,7 +86,8 @@ export const runCrosstabForExport = async ({
 
     timeoutId = setTimeout(() => {
       worker.removeEventListener('message', handler);
-      reject(new Error('[Export] Worker did not respond within 30 seconds. Export aborted.'));
+      console.error('[Export] Worker did not respond within 30 seconds. Export aborted.');
+      resolve({ data: [], tableStats: null });
     }, EXPORT_TIMEOUT_MS);
   });
 };

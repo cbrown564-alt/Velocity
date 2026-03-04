@@ -146,15 +146,15 @@ describe('formatCell', () => {
   });
 
   it('shows count in parentheses when showCounts is true', () => {
-    expect(formatCell(cell, false, true, true)).toBe('60.0% (30)');
+    expect(formatCell(cell, false, true, true)).toBe('30 (60.0%)');
   });
 
   it('shows count with sig arrow when both are enabled', () => {
-    expect(formatCell(cell, true, true, true)).toBe('60.0% (30) ▲');
+    expect(formatCell(cell, true, true, true)).toBe('30 (60.0% ▲)');
   });
 
   it('shows only count when showPercents is false and showCounts is true', () => {
-    expect(formatCell(cell, false, false, true)).toBe('(30)');
+    expect(formatCell(cell, false, false, true)).toBe('30');
   });
 
   it('returns empty string when both display flags are false', () => {

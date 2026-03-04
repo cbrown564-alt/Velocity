@@ -86,6 +86,9 @@ function buildMissingExclusionSql(
   involvedVariableIds.forEach((variableId) => {
     const variable = context.variables[variableId];
     if (!variable) return;
+    // Synthetic grid variables have no direct column in the DB (they are unpivoted into
+    // _synthetic_value by the CTE), so skip them — the CTE already filters NULLs.
+    if (variable.synthetic) return;
     exclusions.push(`NOT (${buildVariableMissingConditionSql(variableId, variable.missingValues)})`);
   });
 

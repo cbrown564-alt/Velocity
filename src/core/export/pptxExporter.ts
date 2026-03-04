@@ -43,13 +43,19 @@ export function formatCell(
   showCounts: boolean,
 ): string {
   if (!cell) return '';
-  const parts: string[] = [];
-  if (showPercents) parts.push(`${cell.percent.toFixed(1)}%`);
-  if (showCounts) parts.push(`(${cell.count})`);
-  const text = parts.join(' ');
-  if (!text) return '';
-  const sig = showSig && cell.sig ? ` ${SIG_LETTERS[cell.sig] || ''}` : '';
-  return `${text}${sig}`;
+  // Significance markers are only meaningful on proportions, not raw counts
+  const sig = showSig && showPercents && cell.sig ? ` ${SIG_LETTERS[cell.sig] || ''}` : '';
+  if (showCounts && showPercents) {
+    // count (percent sig) — count-first for readability in combined mode
+    return `${cell.count} (${cell.percent.toFixed(1)}%${sig})`;
+  }
+  if (showPercents) {
+    return `${cell.percent.toFixed(1)}%${sig}`;
+  }
+  if (showCounts) {
+    return `${cell.count}`;
+  }
+  return '';
 }
 
 function buildSlideTable(
@@ -80,11 +86,11 @@ function buildSlideTable(
 
   const tableRows: PptxGenJS.TableRow[] = [];
 
-  // Header row — "Base" replaces "Total" to make clear the last column is always the base n
+  // Header row — "Total" column only shown when showCounts is enabled
   const headerRow: PptxGenJS.TableCell[] = [
     { text: '', options: headerStyle },
     ...columns.map(col => ({ text: col.label, options: headerStyle })),
-    { text: 'Base', options: headerStyle },
+    ...(showCounts ? [{ text: 'Total', options: headerStyle }] : []),
   ];
   tableRows.push(headerRow);
 
@@ -103,8 +109,7 @@ function buildSlideTable(
         text: formatCell(row.cells[col.key], showSig, showPercents, showCounts),
         options: { ...cellStyle, align: 'right' as const },
       })),
-      // Base column always shows the respondent count (standard survey research convention)
-      { text: String(row.total), options: { ...cellStyle, align: 'right' as const, bold: true } },
+      ...(showCounts ? [{ text: String(row.total), options: { ...cellStyle, align: 'right' as const, bold: true } }] : []),
     ];
     tableRows.push(dataRow);
   }
@@ -181,7 +186,7 @@ function buildSlideChart(
     showTitle: false,
     showLegend: item.result.series.length > 1,
     legendPos: 'b',
-    chartColors: [branding.headerColor, branding.primaryColor, '4F46E5', '10B981', 'F59E0B'],
+    chartColors: branding.chartColors ?? [branding.headerColor, branding.primaryColor, '4F46E5', '10B981', 'F59E0B'],
     dataLabelFontFace: branding.fontFamily,
     dataLabelFontSize: 10,
     showValue: true,
@@ -238,15 +243,29 @@ function buildSlideChart(
   slide.addChart(pptxChartType, seriesData, baseChartOpts);
 }
 
+/** Convert any CSS color string to a bare 6-char hex string for PptxGenJS. */
+function normalizeColor(color: string): string {
+  const hex = color.trim();
+  if (hex.startsWith('#')) return hex.slice(1);
+  const rgba = hex.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+  if (rgba) {
+    return [rgba[1], rgba[2], rgba[3]]
+      .map(n => parseInt(n, 10).toString(16).padStart(2, '0'))
+      .join('');
+  }
+  return hex;
+}
+
 export async function exportPptx(config: ExportConfig): Promise<Uint8Array> {
   const pptx = new PptxGenJS();
   pptx.layout = 'LAYOUT_WIDE';
 
   const branding = {
     ...DEFAULTS,
-    ...(config.branding?.primaryColor && { primaryColor: config.branding.primaryColor.replace('#', '') }),
-    ...(config.branding?.headerColor && { headerColor: config.branding.headerColor.replace('#', '') }),
+    ...(config.branding?.primaryColor && { primaryColor: normalizeColor(config.branding.primaryColor) }),
+    ...(config.branding?.headerColor && { headerColor: normalizeColor(config.branding.headerColor) }),
     ...(config.branding?.fontFamily && { fontFamily: config.branding.fontFamily }),
+    chartColors: config.branding?.chartColors?.map(normalizeColor),
   };
 
   // Title slide
@@ -275,12 +294,13 @@ export async function exportPptx(config: ExportConfig): Promise<Uint8Array> {
       bold: true,
     });
 
-    if (item.viewType === 'chart') {
+    if (item.viewType === 'chart' || item.visualizationType === 'chart') {
       buildSlideChart(pptx, slide, item, branding);
     } else {
+      const showCounts = item.options?.showCounts === true;
       const tableRows = buildSlideTable(item, item.result.columns, branding);
-      // label column gets a fixed width; remaining width split among data cols + Base col
-      const dataColCount = item.result.columns.length + 1; // data cols + Base
+      // label column gets a fixed width; remaining width split among data cols (+ Total col when showCounts)
+      const dataColCount = item.result.columns.length + (showCounts ? 1 : 0);
       const dataColWidth = (SLIDE_TABLE_WIDTH - LABEL_COL_WIDTH) / dataColCount;
       const colW = [LABEL_COL_WIDTH, ...Array(dataColCount).fill(dataColWidth)];
 

@@ -111,10 +111,6 @@ function addAnalysisSheet(
 }
 
 export async function exportXlsx(config: ExportConfig): Promise<Uint8Array> {
-  if (!config.analyses || config.analyses.length === 0) {
-    throw new ExportError('No analyses to export.', 'EMPTY_DATA');
-  }
-
   try {
     const workbook = new ExcelJS.Workbook();
     workbook.creator = 'Velocity';
