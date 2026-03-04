@@ -196,19 +196,21 @@ export interface SessionImportDiagnostics {
   fallbackVariableSetsGenerated: boolean;
 }
 
+export interface SessionImportDiagnosticsSummary {
+  missingVariableIds: string[];
+  droppedVariableSetIds: string[];
+  droppedFilterIds: string[];
+  droppedRowVarIds: string[];
+  droppedColVarIds: string[];
+  missingSectionIds: string[];
+  skippedTransforms: number;
+  fallbackVariableSetsGenerated: boolean;
+}
+
 export interface SessionImportResult {
   patch: SessionStatePatch;
   workspaceSnapshot?: SessionWorkspaceSnapshot;
-  diagnostics: {
-    missingVariableIds: string[];
-    droppedVariableSetIds: string[];
-    droppedFilterIds: string[];
-    droppedRowVarIds: string[];
-    droppedColVarIds: string[];
-    missingSectionIds: string[];
-    skippedTransforms: number;
-    fallbackVariableSetsGenerated: boolean;
-  };
+  diagnostics: SessionImportDiagnosticsSummary;
 }
 
 export function importSession(sessionFile: VelocitySessionFile, dataset: Dataset): SessionImportResult {

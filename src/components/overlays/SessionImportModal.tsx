@@ -25,6 +25,17 @@ function formatStatus(status: DatasetMatchResult['status']): string {
   return 'Dataset mismatch';
 }
 
+function formatCount(value: number): string {
+  return value.toLocaleString();
+}
+
+function previewColumnList(columns: string[], max = 6): string {
+  if (columns.length === 0) return '';
+  if (columns.length <= max) return columns.join(', ');
+  const preview = columns.slice(0, max).join(', ');
+  return `${preview}, +${columns.length - max} more`;
+}
+
 export const SessionImportModal: React.FC<SessionImportModalProps> = ({
   isOpen,
   onClose,
@@ -34,6 +45,8 @@ export const SessionImportModal: React.FC<SessionImportModalProps> = ({
   const [sessionFile, setSessionFile] = React.useState<VelocitySessionFile | null>(null);
   const [savFileName, setSavFileName] = React.useState<string | null>(null);
   const [savBuffer, setSavBuffer] = React.useState<ArrayBuffer | null>(null);
+  const [savRowCount, setSavRowCount] = React.useState<number | null>(null);
+  const [savColumnCount, setSavColumnCount] = React.useState<number | null>(null);
   const [matchResult, setMatchResult] = React.useState<DatasetMatchResult | null>(null);
   const [isValidatingSav, setIsValidatingSav] = React.useState(false);
   const [isImporting, setIsImporting] = React.useState(false);
@@ -47,6 +60,8 @@ export const SessionImportModal: React.FC<SessionImportModalProps> = ({
     setSessionFile(null);
     setSavFileName(null);
     setSavBuffer(null);
+    setSavRowCount(null);
+    setSavColumnCount(null);
     setMatchResult(null);
     setIsValidatingSav(false);
     setIsImporting(false);
@@ -70,6 +85,8 @@ export const SessionImportModal: React.FC<SessionImportModalProps> = ({
     setError(null);
     setSavFileName(null);
     setSavBuffer(null);
+    setSavRowCount(null);
+    setSavColumnCount(null);
     setMatchResult(null);
 
     try {
@@ -98,6 +115,8 @@ export const SessionImportModal: React.FC<SessionImportModalProps> = ({
     try {
       const buffer = await file.arrayBuffer();
       const metadata = await parseSavMetadata(buffer);
+      setSavRowCount(metadata.metadata.rowCount);
+      setSavColumnCount(metadata.metadata.variables.length);
       const result = validateDatasetMatch(sessionFile.dataset, {
         rowCount: metadata.metadata.rowCount,
         columnNames: metadata.metadata.variables.map((variable) => variable.name),
@@ -143,6 +162,11 @@ export const SessionImportModal: React.FC<SessionImportModalProps> = ({
   const datasetLabel = sessionFile?.dataset
     ? `${sessionFile.dataset.originalFilename} (${sessionFile.dataset.rowCount.toLocaleString()} rows x ${sessionFile.dataset.fingerprint.columnCount} cols)`
     : null;
+  const matchTone = matchResult?.status === 'strict_match'
+    ? 'success'
+    : matchResult?.status === 'partial_match'
+      ? 'warning'
+      : 'danger';
 
   return (
     <AnimatePresence>
@@ -224,16 +248,65 @@ export const SessionImportModal: React.FC<SessionImportModalProps> = ({
               </button>
 
               {matchResult && (
-                <div className={`mt-3 rounded-md border px-3 py-2 text-xs ${matchResult.canProceed ? 'border-emerald-200 bg-emerald-50 text-emerald-900' : 'border-red-200 bg-red-50 text-red-900'}`}>
+                <div
+                  className={`mt-3 rounded-md border px-3 py-2 text-xs ${
+                    matchTone === 'success'
+                      ? 'border-emerald-200 bg-emerald-50 text-emerald-900'
+                      : matchTone === 'warning'
+                        ? 'border-amber-200 bg-amber-50 text-amber-900'
+                        : 'border-red-200 bg-red-50 text-red-900'
+                  }`}
+                >
                   <div className="flex items-center gap-1.5 font-medium">
                     {matchResult.canProceed ? <CheckCircle2 size={13} /> : <AlertCircle size={13} />}
                     {formatStatus(matchResult.status)}
                   </div>
-                  {!matchResult.canProceed && matchResult.issues.length > 0 && (
-                    <div className="mt-1">{matchResult.issues[0]}</div>
+                  <div className="mt-2 grid grid-cols-1 gap-1 sm:grid-cols-2">
+                    <div>
+                      Rows: {matchResult.rowCountMatches ? 'match' : 'differ'} ({formatCount(sessionFile?.dataset.rowCount ?? 0)} expected, {formatCount(savRowCount ?? 0)} uploaded)
+                    </div>
+                    <div>
+                      Columns: {formatCount(matchResult.matchingColumnCount)}/{formatCount(sessionFile?.dataset.fingerprint.columnCount ?? 0)} matched ({(matchResult.overlapRatio * 100).toFixed(1)}%)
+                    </div>
+                  </div>
+
+                  {!matchResult.rowCountMatches && (
+                    <div className="mt-1">
+                      Row count differs (expected {formatCount(sessionFile?.dataset.rowCount ?? 0)}, got {formatCount(savRowCount ?? 0)}).
+                    </div>
                   )}
-                  {matchResult.canProceed && matchResult.warnings.length > 0 && (
-                    <div className="mt-1">{matchResult.warnings[0]}</div>
+
+                  {savColumnCount !== null && savColumnCount !== (sessionFile?.dataset.fingerprint.columnCount ?? 0) && (
+                    <div className="mt-1">
+                      Column count differs (expected {formatCount(sessionFile?.dataset.fingerprint.columnCount ?? 0)}, got {formatCount(savColumnCount)}).
+                    </div>
+                  )}
+
+                  {matchResult.issues.length > 0 && (
+                    <ul className="mt-2 list-disc pl-4 space-y-1">
+                      {matchResult.issues.map((issue, index) => (
+                        <li key={`issue-${index}`}>{issue}</li>
+                      ))}
+                    </ul>
+                  )}
+
+                  {matchResult.warnings.length > 0 && (
+                    <ul className="mt-2 list-disc pl-4 space-y-1">
+                      {matchResult.warnings.map((warning, index) => (
+                        <li key={`warning-${index}`}>{warning}</li>
+                      ))}
+                    </ul>
+                  )}
+
+                  {matchResult.missingColumns.length > 0 && (
+                    <div className="mt-2">
+                      Missing columns: {previewColumnList(matchResult.missingColumns)}
+                    </div>
+                  )}
+                  {matchResult.extraColumns.length > 0 && (
+                    <div className="mt-1">
+                      Extra columns: {previewColumnList(matchResult.extraColumns)}
+                    </div>
                   )}
                 </div>
               )}

@@ -25,7 +25,15 @@ import { AppShell, ModeToggleButton } from './components/layout/AppShell';
 import { useVelocityStore, Variable, VariableSet, PersistenceState, Filter } from './store';
 import { useResolvedVariables } from './features/dashboard/hooks/useResolvedVariables';
 import { buildExportConfig } from './core/export/buildExportConfig';
-import { SESSION_FILE_EXTENSION, exportSession, importSession, serializeSessionFile } from './core/session';
+import {
+  SESSION_FILE_EXTENSION,
+  exportSession,
+  hasSessionImportDiagnostics,
+  importSession,
+  listSessionImportDiagnostics,
+  serializeSessionFile,
+  type SessionImportDiagnosticsSummary,
+} from './core/session';
 import { DndContext, DragOverlay, useSensor, useSensors, MouseSensor, TouchSensor, DragEndEvent, DragStartEvent, useDroppable, closestCenter, pointerWithin, rectIntersection } from '@dnd-kit/core';
 import { SortableContext, arrayMove, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { VariableCard } from './features/dashboard/components/DraggableVariable';
@@ -458,6 +466,7 @@ export default function App() {
   const [showExportModal, setShowExportModal] = React.useState(false);
   const [exportSelectedIds, setExportSelectedIds] = React.useState<string[]>([]);
   const [showSessionImportModal, setShowSessionImportModal] = React.useState(false);
+  const [sessionImportDiagnostics, setSessionImportDiagnostics] = React.useState<SessionImportDiagnosticsSummary | null>(null);
   const [persistentStorageGranted, setPersistentStorageGranted] = React.useState<boolean | null>(null);
   const [showStorageReminderToast, setShowStorageReminderToast] = React.useState(false);
   const hasRequestedPersistentStorage = useRef(false);
@@ -522,6 +531,11 @@ export default function App() {
     }
     return null;
   }, [dataset?.loadDiagnostics?.isPartial, dataset?.loadDiagnostics?.message, likelyMissingValueLabels]);
+
+  const sessionImportMessages = React.useMemo(
+    () => (sessionImportDiagnostics ? listSessionImportDiagnostics(sessionImportDiagnostics) : []),
+    [sessionImportDiagnostics]
+  );
 
   const sensors = useSensors(
     useSensor(MouseSensor, {
@@ -1260,6 +1274,7 @@ export default function App() {
   }, []);
 
   const handleOpenSessionImportModal = React.useCallback(() => {
+    setSessionImportDiagnostics(null);
     setShowSessionImportModal(true);
   }, []);
 
@@ -1269,6 +1284,7 @@ export default function App() {
 
   const handleSessionImport = React.useCallback(async (payload: SessionImportPayload) => {
     const previousMode = mode;
+    setSessionImportDiagnostics(null);
     setMode('uploading');
 
     try {
@@ -1319,9 +1335,8 @@ export default function App() {
       await useVelocityStore.getState().runAnalysis();
       setMode('dashboard');
       setShowSessionImportModal(false);
-
-      if (imported.diagnostics.missingVariableIds.length > 0) {
-        console.warn('[Session Import] Completed with diagnostics:', imported.diagnostics);
+      if (hasSessionImportDiagnostics(imported.diagnostics)) {
+        setSessionImportDiagnostics(imported.diagnostics);
       }
     } catch (importError: any) {
       setMode(previousMode);
@@ -1989,6 +2004,41 @@ export default function App() {
                   </button>
                 </div>
               </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {sessionImportDiagnostics && dataset && sessionImportMessages.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 12 }}
+            className={`fixed right-6 z-[121] w-full max-w-sm rounded-lg border border-amber-200 bg-amber-50 shadow-xl p-4 ${showStorageReminderToast ? 'bottom-36' : 'bottom-6'}`}
+          >
+            <div className="flex items-start gap-3">
+              <AlertCircle size={16} className="mt-0.5 text-amber-700 shrink-0" />
+              <div className="flex-1 space-y-2">
+                <div className="space-y-1">
+                  <p className="text-sm font-semibold text-amber-900">Session imported with adjustments</p>
+                  <p className="text-xs text-amber-900/90">
+                    Some saved references did not match the uploaded dataset.
+                  </p>
+                </div>
+                <ul className="list-disc pl-4 space-y-1 text-xs text-amber-900/90">
+                  {sessionImportMessages.map((item) => (
+                    <li key={item.id}>{item.message}</li>
+                  ))}
+                </ul>
+              </div>
+              <button
+                onClick={() => setSessionImportDiagnostics(null)}
+                className="p-1.5 rounded-md text-amber-700 hover:bg-amber-100"
+                aria-label="Dismiss session import diagnostics"
+              >
+                <X size={14} />
+              </button>
             </div>
           </motion.div>
         )}

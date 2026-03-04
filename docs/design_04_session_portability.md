@@ -358,4 +358,5 @@ Session logic lives in `src/core/session/` — it has **zero browser dependencie
 - Completed: Added regression coverage in `src/core/session/sessionExporter.test.ts` to protect this behavior.
 - Verified: `vitest run src/core/session` passes after the change.
 - Completed: Added optional gzip codec support for session files. Export now auto-compresses larger payloads when `CompressionStream` is available, producing `.velocity.gz`. Import auto-detects gzip files (extension or magic header) and decompresses via `DecompressionStream`.
-- Open: Surface session import diagnostics to end users (currently logged to console).
+- Completed: Session import diagnostics are now surfaced to end users in-app via a dismissible "import adjustments" notice instead of console-only logging.
+- Completed: Session import match verification now surfaces richer diagnostics in the modal (row/column counts, overlap %, and previews of missing/extra columns) instead of a single warning line.

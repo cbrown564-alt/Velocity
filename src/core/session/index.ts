@@ -17,9 +17,14 @@ export { exportSession, serializeSessionFile } from './sessionExporter';
 export { importSession } from './sessionImporter';
 export type {
   SessionImportDiagnostics,
+  SessionImportDiagnosticsSummary,
   SessionImportResult,
   SessionStatePatch,
 } from './sessionImporter';
+export {
+  hasSessionImportDiagnostics,
+  listSessionImportDiagnostics,
+} from './sessionImportDiagnostics';
 export {
   parseSessionFile,
   validateDatasetMatch,
