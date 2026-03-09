@@ -2,7 +2,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import type { AnalysisRunner } from '../core/analysis/AnalysisRunner';
 import { analysisRegistry } from '../core/analysis/registry';
 import type { DatabaseAdapter, QueryResult } from '../core/DatabaseAdapter';
-import type { Filter } from '../types';
+import type { Filter, Variable, VariableSet } from '../types';
 import { VelocityEngine, VelocityError } from './VelocityEngine';
 
 class MockAdapter implements DatabaseAdapter {
@@ -74,6 +74,52 @@ class MockAdapter implements DatabaseAdapter {
   async loadCSV(filePath: string): Promise<number> {
     this.loadCsvCalls.push(filePath);
     return 4;
+  }
+
+  async loadSav(filePath: string): Promise<{ variables: Variable[]; variableSets: VariableSet[]; rowCount: number }> {
+    return {
+      rowCount: 1200,
+      variables: [
+        {
+          id: 'Q1',
+          name: 'Q1',
+          label: 'Overall Satisfaction',
+          type: 'ordinal',
+          valueLabels: [
+            { value: 1, label: 'Very Dissatisfied' },
+            { value: 2, label: 'Dissatisfied' },
+            { value: 3, label: 'Neutral' },
+            { value: 4, label: 'Satisfied' },
+            { value: 5, label: 'Very Satisfied' },
+          ],
+          missingValues: { type: 'discrete', values: [99] },
+        },
+        {
+          id: 'GENDER',
+          name: 'GENDER',
+          label: 'Respondent Gender',
+          type: 'nominal',
+          valueLabels: [
+            { value: 1, label: 'Male' },
+            { value: 2, label: 'Female' },
+          ],
+          missingValues: {},
+        },
+        {
+          id: 'WEIGHT',
+          name: 'WEIGHT',
+          label: 'Population Weight',
+          type: 'scale',
+          valueLabels: [],
+          missingValues: {},
+        },
+      ],
+      variableSets: [
+        { id: 'Q1', name: 'Overall Satisfaction', variableIds: ['Q1'], structure: 'single', type: 'ordinal' },
+        { id: 'GENDER', name: 'Respondent Gender', variableIds: ['GENDER'], structure: 'single', type: 'nominal' },
+        { id: 'WEIGHT', name: 'Population Weight', variableIds: ['WEIGHT'], structure: 'single', type: 'scale' },
+      ],
+    };
   }
 }
 
@@ -177,5 +223,77 @@ describe('VelocityEngine', () => {
     await expect(engine.query('SELECT 1 as one')).rejects.toMatchObject<Partial<VelocityError>>({
       code: 'NO_DATASET_LOADED',
     });
+  });
+
+  it('preserves SAV metadata: value labels, missing values, human-readable label, and type', async () => {
+    const adapter = new MockAdapter();
+    const engine = await VelocityEngine.create({ runtime: 'node', adapter });
+
+    const envelope = await engine.loadFile('/data/brand_tracker.sav');
+    expect(envelope.data).toMatchObject({
+      datasetName: 'brand_tracker.sav',
+      rowCount: 1200,
+      variableCount: 3,
+      source: 'sav',
+    });
+
+    const description = engine.describe();
+    const variables = description.dataset?.variables ?? [];
+
+    // Variable labels (human-readable question text) must be preserved
+    expect(variables.find(v => v.id === 'Q1')?.label).toBe('Overall Satisfaction');
+    expect(variables.find(v => v.id === 'GENDER')?.label).toBe('Respondent Gender');
+
+    // Value labels (the integer→string mapping) must survive the load
+    const q1 = variables.find(v => v.id === 'Q1');
+    expect(q1?.valueLabels).toHaveLength(5);
+    expect(q1?.valueLabels[0]).toEqual({ value: 1, label: 'Very Dissatisfied' });
+    expect(q1?.valueLabels[4]).toEqual({ value: 5, label: 'Very Satisfied' });
+
+    // Missing value definitions must survive
+    expect(q1?.missingValues).toEqual({ type: 'discrete', values: [99] });
+
+    // Types must not be re-inferred from SQL schema — they come from the SAV metadata
+    expect(variables.find(v => v.id === 'Q1')?.type).toBe('ordinal');
+    expect(variables.find(v => v.id === 'GENDER')?.type).toBe('nominal');
+    expect(variables.find(v => v.id === 'WEIGHT')?.type).toBe('scale');
+
+    // VariableSets must reflect SAV structure
+    expect(description.variableSets).toHaveLength(3);
+    expect(description.variableSets.find(vs => vs.id === 'Q1')?.name).toBe('Overall Satisfaction');
+  });
+
+  it('unwraps a ResultEnvelope returned by a registry runner rather than double-wrapping', async () => {
+    const WRAPPING_RUNNER_ID = 'engine-test-wrapping';
+
+    class WrappingRunner implements AnalysisRunner<Record<string, unknown>, Record<string, unknown>> {
+      readonly id = WRAPPING_RUNNER_ID;
+      readonly label = 'Wrapping Runner';
+      readonly configSchema = {};
+
+      async run(_adapter: DatabaseAdapter) {
+        // Simulates a runner that mistakenly returns a ResultEnvelope
+        return {
+          data: { innerResult: true },
+          operation: 'inner',
+          inputs: {},
+          durationMs: 1,
+          warnings: [],
+          metadata: { datasetName: 'x', rowCount: 0, filtersApplied: 0, isWeighted: false, engineVersion: 'test' },
+        };
+      }
+    }
+
+    analysisRegistry.register(new WrappingRunner());
+
+    const adapter = new MockAdapter();
+    const engine = await VelocityEngine.create({ runtime: 'node', adapter });
+    await engine.loadFile('/data/brand_tracker.sav');
+
+    const envelope = await engine.runAnalysis(WRAPPING_RUNNER_ID, {});
+
+    // The outer envelope's data should be the inner result, not the inner envelope itself
+    expect(envelope.data).toEqual({ innerResult: true });
+    expect((envelope.data as Record<string, unknown>).operation).toBeUndefined();
   });
 });

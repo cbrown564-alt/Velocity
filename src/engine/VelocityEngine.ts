@@ -129,6 +129,12 @@ function buildDefaultVariableSets(variables: Variable[]): VariableSet[] {
   }));
 }
 
+function isResultEnvelope(value: unknown): boolean {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
+  const obj = value as Record<string, unknown>;
+  return 'data' in obj && 'operation' in obj && 'durationMs' in obj && 'warnings' in obj && 'metadata' in obj;
+}
+
 function isCompleteAnalysisSettings(
   value: Partial<EngineAnalysisSettings> | undefined
 ): value is EngineAnalysisSettings {
@@ -387,7 +393,10 @@ export class VelocityEngine {
           }
         }
 
-        return await runner.run(this.adapter, config as never);
+        const raw = await runner.run(this.adapter, config as never);
+        // Guard: if a runner wraps its own result in a ResultEnvelope, unwrap it so
+        // the outer wrap() call doesn't produce a nested envelope.
+        return isResultEnvelope(raw) ? (raw as ResultEnvelope<unknown>).data : raw;
       } catch (error) {
         if (error instanceof VelocityError) throw error;
         throw new VelocityError('ANALYSIS_FAILED', `Analysis failed: ${id}`, error);

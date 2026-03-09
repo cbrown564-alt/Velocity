@@ -121,11 +121,15 @@ export const SlideHeader: React.FC<SlideHeaderProps> = ({ className = '' }) => {
         );
     }
 
+    const variableLabels = Object.fromEntries(
+        (dataset?.variables ?? []).map(v => [v.id, v.label || v.name])
+    );
     const displaySubtitle = activeSlide.subtitle || resolveSlideSubtitle(
         activeFilters || [],
         weightVarLabel ? { id: dataset?.weightVariable || 'weight', name: weightVarLabel, label: weightVarLabel } : null,
         dataset?.rowCount || 0,
-        !!dataset?.weightVariable
+        !!dataset?.weightVariable,
+        variableLabels
     );
 
     return (

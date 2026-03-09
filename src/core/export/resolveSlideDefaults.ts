@@ -6,6 +6,21 @@ function getDisplayLabel(value: LabeledValue): string {
   return value.label || value.name || value.id;
 }
 
+const OPERATOR_LABELS: Record<Filter['operator'], string> = {
+  eq: '=',
+  neq: '≠',
+  in: 'in',
+  gt: '>',
+  lt: '<',
+};
+
+function renderFilter(filter: Filter, variableLabels?: Record<string, string>): string {
+  const varLabel = variableLabels?.[filter.variableId] ?? filter.variableId;
+  const op = OPERATOR_LABELS[filter.operator];
+  const val = Array.isArray(filter.value) ? filter.value.join(', ') : String(filter.value);
+  return `${varLabel} ${op} ${val}`;
+}
+
 export function resolveSlideTitle(
   rowVars: LabeledValue[],
   colVar: LabeledValue | null
@@ -24,12 +39,17 @@ export function resolveSlideSubtitle(
   filters: Filter[],
   weightVar: LabeledValue | null,
   rowCount: number,
-  isWeighted: boolean
+  isWeighted: boolean,
+  variableLabels?: Record<string, string>
 ): string {
   const parts: string[] = [];
 
   if (filters.length > 0) {
-    parts.push(`Filtered: ${filters.length} active`);
+    const MAX_INLINE = 2;
+    const inline = filters.slice(0, MAX_INLINE).map((f) => renderFilter(f, variableLabels));
+    const overflow = filters.length - MAX_INLINE;
+    const filterStr = overflow > 0 ? `${inline.join(', ')} +${overflow} more` : inline.join(', ');
+    parts.push(`Filtered: ${filterStr}`);
   }
 
   if (isWeighted && weightVar) {
