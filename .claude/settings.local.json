@@ -11,7 +11,9 @@
       "Bash(npx vitest run:*)",
       "WebSearch",
       "WebFetch(domain:www.inkandswitch.com)",
-      "Bash(npm run:*)"
+      "Bash(npm run:*)",
+      "Bash(grep:*)",
+      "Bash(python3:*)"
     ]
   }
 }

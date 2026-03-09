@@ -9,6 +9,7 @@ interface RecordedSlide {
   texts: Array<{ text: string }>;
   tables: Array<{ rows: TableRow[]; opts: any }>;
   charts: Array<{ type: string; data: any; opts: any }>;
+  notes: string[];
 }
 
 const mockDecks: Array<{ slides: RecordedSlide[] }> = [];
@@ -32,6 +33,10 @@ vi.mock('pptxgenjs', () => {
     addChart(type: string, data: any, opts: any) {
       this.record.charts.push({ type, data, opts });
     }
+
+    addNotes(text: string) {
+      this.record.notes.push(text);
+    }
   }
 
   class MockPptxGenJS {
@@ -43,7 +48,7 @@ vi.mock('pptxgenjs', () => {
     }
 
     addSlide() {
-      const slide: RecordedSlide = { texts: [], tables: [], charts: [] };
+      const slide: RecordedSlide = { texts: [], tables: [], charts: [], notes: [] };
       this.slides.push(slide);
       return new MockSlide(slide);
     }
@@ -174,5 +179,31 @@ describe('exportPptx semantics', () => {
     const chart = analysisSlide.charts[0];
 
     expect(chart.opts.chartColors).toEqual(['2D4A3E', 'e07860']);
+  });
+
+  it('renders subtitles, notes, and section divider slides when present', async () => {
+    const config: ExportConfig = {
+      title: 'Narrative Report',
+      sections: [{ id: 'sec-1', title: 'Executive Summary' }],
+      analyses: [
+        {
+          label: 'Gender by Agreement',
+          subtitle: 'Adults 18+',
+          notes: 'Lead with the gender split on slide delivery.',
+          sectionId: 'sec-1',
+          result: mockData,
+        },
+      ],
+    };
+
+    await exportPptx(config);
+
+    const deck = lastDeck();
+    expect(deck.slides).toHaveLength(3);
+    expect(deck.slides[1].texts.map((entry) => entry.text)).toContain('Executive Summary');
+    expect(deck.slides[2].texts.map((entry) => entry.text)).toEqual(
+      expect.arrayContaining(['Gender by Agreement', 'Adults 18+'])
+    );
+    expect(deck.slides[2].notes).toEqual(['Lead with the gender split on slide delivery.']);
   });
 });

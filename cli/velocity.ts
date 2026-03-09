@@ -1,40 +1,56 @@
 #!/usr/bin/env npx tsx
-/**
- * Velocity CLI
- *
- * Headless command-line interface for the Velocity analysis engine.
- * Uses the same core modules as the browser app but with DuckDB native bindings.
- *
- * Usage:
- *   npx tsx cli/velocity.ts load <file.csv>
- *   npx tsx cli/velocity.ts query --rows col1,col2 --cols col3 --format json
- *   npx tsx cli/velocity.ts schema
- *   npx tsx cli/velocity.ts stats <column>
- */
 
 import { Command } from 'commander';
 import { writeFileSync } from 'fs';
-import { DuckDBNodeAdapter } from '../src/adapters/DuckDBNodeAdapter';
-import { runCrosstab } from '../src/core/analysis/crosstabRunner';
-import { getVariableStats } from '../src/core/analysis/variableStatsRunner';
-import { processAnalysisData } from '../src/services/analysisProcessor';
+import { createInterface } from 'node:readline/promises';
+import { stdin as input, stdout as output } from 'node:process';
 import { exportPptx, exportXlsx } from '../src/core/export';
-import { analysisRegistry } from '../src/core/analysis/registry';
-
-// Import runners to ensure they register themselves
-import '../src/core/analysis/crosstabRunner';
-import '../src/core/analysis/variableStatsRunner';
+import { VelocityEngine, VelocityError } from '../src/engine';
+import { processAnalysisData } from '../src/services/analysisProcessor';
 
 const program = new Command();
 
-// Shared state
-let adapter: DuckDBNodeAdapter | null = null;
+type JsonLike = Record<string, unknown>;
 
-async function ensureAdapter(): Promise<DuckDBNodeAdapter> {
-  if (!adapter) {
-    adapter = await DuckDBNodeAdapter.create();
+function parseJsonConfig(raw?: string): JsonLike {
+  if (!raw) return {};
+  try {
+    return JSON.parse(raw) as JsonLike;
+  } catch (error: any) {
+    throw new Error(`Failed to parse config JSON: ${error.message}`);
   }
-  return adapter;
+}
+
+async function withEngine<T>(fn: (engine: VelocityEngine) => Promise<T>): Promise<T> {
+  const engine = await VelocityEngine.create({ runtime: 'node' });
+  try {
+    return await fn(engine);
+  } finally {
+    await engine.close();
+  }
+}
+
+async function loadEngineFile(engine: VelocityEngine, file: string) {
+  const envelope = await engine.loadFile(file);
+  return envelope.data;
+}
+
+function printJson(data: unknown) {
+  process.stdout.write(`${JSON.stringify(data, null, 2)}\n`);
+}
+
+function printKnownError(error: unknown): never {
+  if (error instanceof VelocityError) {
+    console.error(`${error.code}: ${error.message}`);
+    if (error.details) {
+      printJson(error.details);
+    }
+    process.exit(1);
+  }
+
+  const message = error instanceof Error ? error.message : String(error);
+  console.error(message);
+  process.exit(1);
 }
 
 program
@@ -42,59 +58,45 @@ program
   .description('Velocity statistical analysis CLI')
   .version('0.1.0');
 
-// ============================================================================
-// load command
-// ============================================================================
-
-async function loadFile(file: string, db: DuckDBNodeAdapter) {
-  if (file.endsWith('.sav')) {
-    const result = await db.loadSav(file);
-    console.log(`Loaded ${result.rowCount} rows and ${result.variables.length} variables from ${file}`);
-    return result;
-  } else {
-    const rowCount = await db.loadCSV(file);
-    console.log(`Loaded ${rowCount} rows from ${file}`);
-    return { rowCount };
-  }
-}
-
 program
   .command('load <file>')
   .description('Load a file (CSV or SAV) into the analysis engine')
   .action(async (file: string) => {
-    const db = await ensureAdapter();
-    await loadFile(file, db);
+    try {
+      await withEngine(async (engine) => {
+        const summary = await loadEngineFile(engine, file);
+        console.log(`Loaded ${summary.rowCount} rows from ${summary.datasetName}`);
 
-    // Show schema
-    const result = await db.query(`PRAGMA table_info('main')`);
-    console.log(`\nSchema (${result.rowCount} columns):`);
-    for (const row of result.rows) {
-      console.log(`  ${row.name}: ${row.type}`);
+        const description = engine.describe();
+        const variables = description.dataset?.variables ?? [];
+        console.log(`\nSchema (${variables.length} columns):`);
+        variables.forEach((variable) => {
+          console.log(`  ${variable.id}: ${variable.type}`);
+        });
+      });
+    } catch (error) {
+      printKnownError(error);
     }
-
-    await db.close();
   });
-
-// ============================================================================
-// schema command
-// ============================================================================
 
 program
   .command('schema <file>')
   .description('Show the schema of a file')
   .action(async (file: string) => {
-    const db = await ensureAdapter();
-    await loadFile(file, db);
-
-    const result = await db.query(`PRAGMA table_info('main')`);
-    console.log(JSON.stringify(result.rows, null, 2));
-
-    await db.close();
+    try {
+      await withEngine(async (engine) => {
+        await loadEngineFile(engine, file);
+        const variables = engine.describe().dataset?.variables ?? [];
+        printJson(variables.map((variable) => ({
+          name: variable.id,
+          label: variable.label,
+          type: variable.type,
+        })));
+      });
+    } catch (error) {
+      printKnownError(error);
+    }
   });
-
-// ============================================================================
-// query command
-// ============================================================================
 
 program
   .command('query <file>')
@@ -104,52 +106,52 @@ program
   .option('--weight <var>', 'Weight variable')
   .option('--format <fmt>', 'Output format: json or table', 'json')
   .action(async (file: string, opts) => {
-    const db = await ensureAdapter();
-    const loadResult = await loadFile(file, db);
+    try {
+      await withEngine(async (engine) => {
+        await loadEngineFile(engine, file);
+        const rowVars = opts.rows.split(',').map((value: string) => value.trim()).filter(Boolean);
 
-    const rowVars = opts.rows.split(',').map((s: string) => s.trim());
+        if (opts.weight) {
+          engine.setWeight(opts.weight);
+        }
 
-    const results = await runCrosstab(db, {
-      rowVars,
-      colVar: opts.cols || null,
-      weightVar: opts.weight || null,
-      filters: [],
-    }, {
-      variables: (loadResult as any).variables?.reduce((acc: any, v: any) => ({ ...acc, [v.id]: v }), {}) || {},
-      variableSets: (loadResult as any).variableSets?.reduce((acc: any, vs: any) => ({ ...acc, [vs.id]: vs }), {}) || {},
-    });
+        const envelope = await engine.runAnalysis('crosstab', {
+          rowVars,
+          colVar: opts.cols || null,
+        });
+        const result = envelope.data as { rows?: unknown[] };
 
-    if (opts.format === 'table') {
-      console.table(results);
-    } else {
-      console.log(JSON.stringify(results, null, 2));
+        if (opts.format === 'table') {
+          console.table(result.rows ?? []);
+        } else {
+          printJson(result);
+        }
+      });
+    } catch (error) {
+      printKnownError(error);
     }
-
-    await db.close();
   });
-
-// ============================================================================
-// stats command
-// ============================================================================
 
 program
   .command('stats <file> <column>')
   .description('Get variable statistics for a column')
-  .option('--type <type>', 'Variable type: categorical, ordered, numeric (legacy aliases still accepted)', 'numeric')
+  .option('--type <type>', 'Variable type override', undefined)
   .option('--bins <n>', 'Number of histogram bins', '10')
   .action(async (file: string, column: string, opts) => {
-    const db = await ensureAdapter();
-    await loadFile(file, db);
-
-    const stats = await getVariableStats(db, column, opts.type, undefined, parseInt(opts.bins));
-    console.log(JSON.stringify(stats, null, 2));
-
-    await db.close();
+    try {
+      await withEngine(async (engine) => {
+        await loadEngineFile(engine, file);
+        const envelope = await engine.runAnalysis('variableStats', {
+          column,
+          variableType: opts.type,
+          binCount: parseInt(opts.bins, 10),
+        });
+        printJson(envelope.data);
+      });
+    } catch (error) {
+      printKnownError(error);
+    }
   });
-
-// ============================================================================
-// analyze command (generic plugin runner)
-// ============================================================================
 
 program
   .command('analyze <file> <id>')
@@ -157,95 +159,37 @@ program
   .option('--config <json>', 'JSON configuration for the analysis')
   .option('--format <fmt>', 'Output format: json or table', 'json')
   .action(async (file: string, id: string, opts) => {
-    const db = await ensureAdapter();
-    const loadResult = await loadFile(file, db);
-
-    const runner = analysisRegistry.get(id);
-    if (!runner) {
-      console.error(`Analysis runner not found: ${id}`);
-      console.log('Available analyses:');
-      analysisRegistry.list().forEach(r => console.log(`  - ${r.id}: ${r.label}`));
-      await db.close();
-      process.exit(1);
-    }
-
-    let config = {};
-    if (opts.config) {
-      try {
-        config = JSON.parse(opts.config);
-      } catch (e: any) {
-        console.error(`Failed to parse config JSON: ${e.message}`);
-        await db.close();
-        process.exit(1);
-      }
-    }
-
-    // Special handling for crosstab context if not provided
-    if (id === 'crosstab' && !(config as any).context) {
-      (config as any).context = {
-        variables: (loadResult as any).variables?.reduce((acc: any, v: any) => ({ ...acc, [v.id]: v }), {}) || {},
-        variableSets: (loadResult as any).variableSets?.reduce((acc: any, vs: any) => ({ ...acc, [vs.id]: vs }), {}) || {},
-      };
-    }
-
-    // Validate config if runner supports it
-    if (runner.validate) {
-      const errors = runner.validate(config);
-      if (errors.length > 0) {
-        console.error('Configuration errors:');
-        errors.forEach(err => console.error(`  - ${err}`));
-        await db.close();
-        process.exit(1);
-      }
-    }
-
     try {
-      const results = await runner.run(db, config);
+      await withEngine(async (engine) => {
+        await loadEngineFile(engine, file);
+        const config = parseJsonConfig(opts.config);
+        const envelope = await engine.runAnalysis(id, config);
 
-      if (opts.format === 'table') {
-        process.stdout.write('\n');
-        console.table(results);
-      } else {
-        process.stdout.write(JSON.stringify(results, null, 2) + '\n');
-      }
-    } catch (error: any) {
-      console.error(`Analysis failed: ${error.message}`);
-      await db.close();
-      process.exit(1);
+        if (opts.format === 'table' && Array.isArray((envelope.data as any)?.rows)) {
+          console.table((envelope.data as any).rows);
+        } else {
+          printJson(envelope.data);
+        }
+      });
+    } catch (error) {
+      printKnownError(error);
     }
-
-    await db.close();
   });
-
-// ============================================================================
-// sql command (escape hatch)
-// ============================================================================
 
 program
   .command('sql <file> <query>')
   .description('Run arbitrary SQL on a loaded file')
-  .option('--stream', 'Stream results as NDJSON')
-  .action(async (file: string, query: string, opts) => {
-    const db = await ensureAdapter();
-    await loadFile(file, db);
-
-    if (opts.stream && db.queryStream) {
-      for await (const chunk of db.queryStream(query)) {
-        for (const row of chunk.rows) {
-          console.log(JSON.stringify(row));
-        }
-      }
-    } else {
-      const result = await db.query(query);
-      console.log(JSON.stringify(result.rows, null, 2));
+  .action(async (file: string, query: string) => {
+    try {
+      await withEngine(async (engine) => {
+        await loadEngineFile(engine, file);
+        const envelope = await engine.query(query);
+        printJson(envelope.data.rows);
+      });
+    } catch (error) {
+      printKnownError(error);
     }
-
-    await db.close();
   });
-
-// ============================================================================
-// export command
-// ============================================================================
 
 program
   .command('export <file>')
@@ -257,59 +201,140 @@ program
   .option('--output <path>', 'Output file path')
   .option('--title <title>', 'Report title', 'Velocity Report')
   .action(async (file: string, opts) => {
-    const db = await ensureAdapter();
-    const loadResult = await loadFile(file, db);
+    try {
+      await withEngine(async (engine) => {
+        await loadEngineFile(engine, file);
+        const rowVars = opts.rows.split(',').map((value: string) => value.trim()).filter(Boolean);
 
-    const variables = (loadResult as any).variables || [];
-    const variableSets = (loadResult as any).variableSets || [];
-    const varMap = variables.reduce((acc: any, v: any) => ({ ...acc, [v.id]: v }), {});
-    const vsMap = variableSets.reduce((acc: any, vs: any) => ({ ...acc, [vs.id]: vs }), {});
+        if (opts.weight) {
+          engine.setWeight(opts.weight);
+        }
 
-    const rowVars = opts.rows.split(',').map((s: string) => s.trim());
+        const envelope = await engine.runAnalysis('crosstab', {
+          rowVars,
+          colVar: opts.cols || null,
+        });
+        const description = engine.describe();
+        const variablesById = new Map((description.dataset?.variables ?? []).map((variable) => [variable.id, variable]));
+        const rowVariables = rowVars.map((id: string) => variablesById.get(id)).filter(Boolean);
+        const colVariable = opts.cols ? variablesById.get(opts.cols) ?? null : null;
 
-    const crosstabData = await runCrosstab(db, {
-      rowVars,
-      colVar: opts.cols || null,
-      weightVar: opts.weight || null,
-      filters: [],
-    }, {
-      variables: varMap,
-      variableSets: vsMap,
-    });
+        const processed = processAnalysisData({
+          data: (envelope.data as any).rows ?? [],
+          rowVariables,
+          colVariable,
+          isWeighted: !!description.dataset?.weightVariable,
+        });
 
-    const rowVariables = rowVars.map((id: string) => varMap[id]).filter(Boolean);
-    const colVariable = opts.cols ? varMap[opts.cols] || null : null;
+        if (!processed) {
+          throw new Error('No data to export');
+        }
 
-    const processed = processAnalysisData({
-      data: crosstabData.rows,
-      rowVariables,
-      colVariable,
-      isWeighted: !!opts.weight,
-    });
+        const config = {
+          title: opts.title,
+          analyses: [{
+            label: rowVars.join(' × ') + (opts.cols ? ` by ${opts.cols}` : ''),
+            result: processed,
+          }],
+        };
 
-    if (!processed) {
-      console.error('No data to export');
-      await db.close();
-      process.exit(1);
+        const fmt = opts.format.toLowerCase();
+        const ext = fmt === 'xlsx' ? 'xlsx' : 'pptx';
+        const outputPath = opts.output || `report.${ext}`;
+        const bytes = fmt === 'xlsx'
+          ? await exportXlsx(config)
+          : await exportPptx(config);
+
+        writeFileSync(outputPath, bytes);
+        console.log(`Exported to ${outputPath} (${(bytes.length / 1024).toFixed(1)} KB)`);
+      });
+    } catch (error) {
+      printKnownError(error);
     }
+  });
 
-    const config = {
-      title: opts.title,
-      analyses: [{ label: rowVars.join(' × ') + (opts.cols ? ` by ${opts.cols}` : ''), result: processed }],
-    };
+program
+  .command('repl [file]')
+  .description('Open an interactive VelocityEngine REPL')
+  .action(async (file?: string) => {
+    const engine = await VelocityEngine.create({ runtime: 'node' });
+    const rl = createInterface({ input, output });
 
-    const fmt = opts.format.toLowerCase();
-    const ext = fmt === 'xlsx' ? 'xlsx' : 'pptx';
-    const outputPath = opts.output || `report.${ext}`;
+    try {
+      if (file) {
+        const summary = await loadEngineFile(engine, file);
+        console.log(`Loaded ${summary.datasetName} (${summary.rowCount} rows)`);
+      }
 
-    const bytes = fmt === 'xlsx'
-      ? await exportXlsx(config)
-      : await exportPptx(config);
+      console.log('Commands: load <file>, describe, analyses, query <sql>, run <id> <json>, weight <var|clear>, clear-filters, exit');
 
-    writeFileSync(outputPath, bytes);
-    console.log(`Exported to ${outputPath} (${(bytes.length / 1024).toFixed(1)} KB)`);
+      while (true) {
+        const line = (await rl.question('velocity> ')).trim();
+        if (!line) continue;
+        if (line === 'exit' || line === 'quit') break;
 
-    await db.close();
+        const [command, ...rest] = line.split(' ');
+
+        try {
+          if (command === 'load') {
+            const target = rest.join(' ').trim();
+            const summary = await loadEngineFile(engine, target);
+            console.log(`Loaded ${summary.datasetName} (${summary.rowCount} rows)`);
+            continue;
+          }
+
+          if (command === 'describe') {
+            printJson(engine.describe());
+            continue;
+          }
+
+          if (command === 'analyses') {
+            printJson(engine.listAnalyses());
+            continue;
+          }
+
+          if (command === 'query') {
+            const sql = rest.join(' ');
+            const result = await engine.query(sql);
+            printJson(result.data.rows);
+            continue;
+          }
+
+          if (command === 'run') {
+            const analysisId = rest.shift();
+            if (!analysisId) throw new Error('Usage: run <id> <json>');
+            const config = parseJsonConfig(rest.join(' '));
+            const result = await engine.runAnalysis(analysisId, config);
+            printJson(result.data);
+            continue;
+          }
+
+          if (command === 'weight') {
+            const variableId = rest.join(' ').trim();
+            engine.setWeight(variableId === 'clear' ? null : variableId);
+            console.log(variableId === 'clear' ? 'Weight cleared' : `Weight set to ${variableId}`);
+            continue;
+          }
+
+          if (command === 'clear-filters') {
+            engine.clearFilters();
+            console.log('Filters cleared');
+            continue;
+          }
+
+          console.log(`Unknown command: ${command}`);
+        } catch (error) {
+          if (error instanceof VelocityError) {
+            console.error(`${error.code}: ${error.message}`);
+          } else {
+            console.error(error instanceof Error ? error.message : String(error));
+          }
+        }
+      }
+    } finally {
+      rl.close();
+      await engine.close();
+    }
   });
 
 program.parse();

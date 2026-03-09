@@ -1,5 +1,6 @@
 import { ProcessedAnalysisData } from '../../types/processedData';
 import type { ChartType } from '../../types/charts';
+import type { SlideSection } from '../../types/slides';
 
 export interface ExportBranding {
   primaryColor?: string;
@@ -10,6 +11,9 @@ export interface ExportBranding {
 
 export interface AnalysisExportItem {
   label: string;
+  subtitle?: string;
+  notes?: string;
+  sectionId?: string;
   result: ProcessedAnalysisData;
   viewType?: 'table' | 'chart';
   visualizationType?: 'table' | 'chart';
@@ -24,6 +28,7 @@ export interface AnalysisExportItem {
 export interface ExportConfig {
   title: string;
   analyses: AnalysisExportItem[];
+  sections?: SlideSection[];
   branding?: ExportBranding;
 }
 

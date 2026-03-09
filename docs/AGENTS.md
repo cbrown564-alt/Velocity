@@ -11,8 +11,13 @@ Before modifying code, agents must read the relevant documentation based on the 
 | Any new feature or major refactor | `arch_01_system_architecture.md` | To understand the "Map of the World" (main thread vs worker vs core). |
 | Data structures, ingestion, or types | `arch_02_data_model.md` | To strictly preserve the "Dual-State" principle (Raw vs Labeled). |
 | `src/core/*` or `adapters/*` | `arch_03_headless_core.md` | To maintain the platform-independent seam and dependency direction. |
+| `src/engine/*` or `VelocityEngine` | `arch_07_agent_architecture.md` & `design_phase1_engine_provenance.md` | To respect the engine boundary (stateful orchestration over pure core), ResultEnvelope provenance, and the consumer contract. |
+| `mcp-server/*` or MCP tools | `arch_07_agent_architecture.md` §6 & `design_phase2_mcp_deck_builder.md` | To keep MCP as a thin transport adapter. Zero business logic in tool handlers. |
+| `src/core/semantic/*` or annotations/concepts | `design_phase4_semantic_layer.md` | To follow the tiered semantic design (annotations → concepts → suggestions) and confidence scoring rules. |
+| Session format or `.velocity` files | `design_04_session_portability.md` & `arch_07_agent_architecture.md` §5 | To maintain session format backward compatibility and provide migration paths for version changes. |
 | Statistical calcs, weights, or significance | `arch_04_statistical_engine.md` | To adhere to survey-native methodology and known correctness standards. |
 | Charts, D3 renderers, or canvas layout | `arch_05_visualisation_engine.md` | To follow the phased chart system architecture. |
+| Worker protocol or `EngineProxy` | `design_phase3_browser_convergence.md` | To follow the request-ID protocol and slice-by-slice migration order. |
 | The `docs/` folder or prioritizing work | `roadmap_00_strategic_guide.md`, `blue_02_feature_matrix.md` (and `blue_01_unified_roadmap.md` for full context) | To enforce scope gates and keep sequencing aligned to the current strategic plan. |
 | React UI, CSS, or Theme tokens | `design_01_system.md` & `design_02_ux_modes.md` | To respect strict mode separation (Manager vs Canvas) and tokens. |
 
@@ -20,10 +25,13 @@ Before modifying code, agents must read the relevant documentation based on the 
 
 ## 2. Global Invariants & Constraints
 
-1. **Dependency Direction:** Code in `src/core/` MUST NOT depend on React, DOM APIs, or the browser (`window`, `localStorage`). All platform-specific logic must be injected via `DatabaseAdapter` or run in `adapters/`.
+1. **Dependency Direction:** Code in `src/core/` MUST NOT depend on React, DOM APIs, or the browser (`window`, `localStorage`). All platform-specific logic must be injected via `DatabaseAdapter` or run in `adapters/`. Code in `src/engine/` follows the same rule — no browser dependencies.
 2. **Main Thread Compute:** Heavy data processing, Arrow table manipulation, and DuckDB queries MUST run in the Web Worker. The main thread is for UI rendering and state management only.
 3. **Data Model Integrity:** Never break the dual-state survey model. Categorical data must retain both its underlying integer codes and its string labels.
 4. **Docs-to-Code Sync:** DO NOT proactively create new documentation files unless explicitly requested. ONLY update existing documentation if a PR actively changes an established contract or invariant.
+5. **Engine Boundary:** `src/core/` contains pure functions with no state. `src/engine/` contains stateful orchestration that delegates to `src/core/`. Business logic MUST NOT live in transport adapters (`mcp-server/`, CLI handlers, `EngineProxy`). These are thin wiring layers only.
+6. **Provenance:** Every `VelocityEngine` method that returns data MUST wrap its output in a `ResultEnvelope` containing inputs, duration, warnings, and dataset metadata. Skipping the envelope breaks agent auditability.
+7. **Session Format Stability:** Changes to `VelocitySessionFile` MUST bump the version number and include a migration function from the previous version. No field removals — only additions (optional fields). Old sessions must import without data loss.
 
 ---
 
@@ -65,6 +73,10 @@ Configure your system prompt or task instructions according to your current role
   * [ ] Is portable logic strictly kept in `src/core/`?
   * [ ] Does this calculate statistics according to survey-native invariants?
   * [ ] Are UX modes and design theme tokens respected?
+  * [ ] Is the engine boundary respected? (pure logic in `core/`, orchestration in `engine/`, zero logic in transport layers)
+  * [ ] Do new engine methods return `ResultEnvelope`?
+  * [ ] Are MCP tool handlers free of business logic? (dispatch to engine only)
+  * [ ] If session format changed: version bumped + migration function + backward-compat test?
 * **Outputs expected:** A concise review containing 5-10 bullet points with at least 2 concrete "checked X, found Y" observations.
 
 ---
@@ -83,6 +95,8 @@ Modify statistical calculations, weights, or denominators | `docs/playbooks/stat
 Perform performance optimization or query changes | `docs/playbooks/performance_pass.md`|
 Triaging runtime issues or debugging failures | `docs/playbooks/log_triage.md`  |
 Change UI layout, interaction, or UX mode responsibilities | `docs/playbooks/ui_mode_change.md` |
+Add or change VelocityEngine public methods | `docs/playbooks/engine_api_change.md` |
+Migrate a store slice from worker to EngineProxy (Phase 3) | `docs/playbooks/worker_migration.md` |
 
 ### Enforcement Rule
 Failure to follow the relevant playbook may result in:
@@ -90,5 +104,8 @@ Failure to follow the relevant playbook may result in:
 - violation of `src/core/` portability constraints
 - main-thread performance degradation
 - UX mode responsibility leakage (Manager ↔ Canvas)
+- engine API divergence across consumers (CLI, MCP, browser)
+- broken provenance chain (missing ResultEnvelope on engine outputs)
+- session format backward-compatibility breakage
 
 Playbooks are mandatory for execution-style tasks and should be treated as procedural constraints in addition to architectural invariants.

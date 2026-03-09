@@ -1,6 +1,7 @@
 import PptxGenJS from 'pptxgenjs';
 import { ExportConfig, AnalysisExportItem } from './types';
 import { ProcessedRow, ProcessedColumn, ProcessedCell } from '../../types/processedData';
+import type { SlideSection } from '../../types/slides';
 
 const SIG_LETTERS: Record<string, string> = {
   high_95: '▲',
@@ -123,6 +124,7 @@ function buildSlideChart(
   slide: ReturnType<PptxGenJS['addSlide']>,
   item: AnalysisExportItem,
   branding: typeof DEFAULTS,
+  contentY: number,
 ) {
   // Guard: PptxGenJS crashes on empty series data (data[0].labels is undefined).
   // Fall back to an empty slide when there's nothing to chart.
@@ -181,9 +183,9 @@ function buildSlideChart(
 
   const baseChartOpts: any = {
     x: 0.5,
-    y: 1.0,
+    y: contentY,
     w: 12.3,
-    h: 5.5,
+    h: 6.0 - Math.max(0, contentY - 1.0),
     showTitle: false,
     showLegend: item.result.series.length > 1,
     legendPos: 'b',
@@ -244,6 +246,38 @@ function buildSlideChart(
   slide.addChart(pptxChartType, seriesData, baseChartOpts);
 }
 
+function addSectionDividerSlide(
+  pptx: PptxGenJS,
+  section: SlideSection,
+  branding: typeof DEFAULTS
+) {
+  const slide = pptx.addSlide();
+  const accent = section.color ? normalizeColor(section.color) : branding.headerColor;
+
+  slide.addText(section.title, {
+    x: 0.6,
+    y: 2.2,
+    w: 11.8,
+    h: 1.2,
+    fontSize: 28,
+    fontFace: branding.fontFamily,
+    color: accent,
+    bold: true,
+    align: 'center',
+    valign: 'middle',
+  });
+
+  slide.addText('Section Divider', {
+    x: 0.6,
+    y: 3.55,
+    w: 11.8,
+    fontSize: 11,
+    fontFace: branding.fontFamily,
+    color: branding.primaryColor,
+    align: 'center',
+  });
+}
+
 /** Convert any CSS color string to a bare 6-char hex string for PptxGenJS. */
 function normalizeColor(color: string): string {
   const hex = color.trim();
@@ -282,8 +316,18 @@ export async function exportPptx(config: ExportConfig): Promise<Uint8Array> {
   });
 
   // One slide per analysis
+  let lastSectionId: string | undefined;
   for (const item of config.analyses) {
+    if (item.sectionId && item.sectionId !== lastSectionId) {
+      const section = config.sections?.find((entry) => entry.id === item.sectionId);
+      if (section) {
+        addSectionDividerSlide(pptx, section, branding);
+      }
+    }
+    lastSectionId = item.sectionId;
+
     const slide = pptx.addSlide();
+    const contentY = item.subtitle ? 1.3 : 1.0;
 
     slide.addText(item.label, {
       x: 0.5,
@@ -295,8 +339,23 @@ export async function exportPptx(config: ExportConfig): Promise<Uint8Array> {
       bold: true,
     });
 
+    if (item.subtitle) {
+      slide.addText(item.subtitle, {
+        x: 0.5,
+        y: 0.68,
+        w: '90%',
+        fontSize: 10,
+        fontFace: branding.fontFamily,
+        color: '666666',
+      });
+    }
+
+    if (item.notes && typeof (slide as any).addNotes === 'function') {
+      (slide as any).addNotes(item.notes);
+    }
+
     if (item.viewType === 'chart' || item.visualizationType === 'chart') {
-      buildSlideChart(pptx, slide, item, branding);
+      buildSlideChart(pptx, slide, item, branding, contentY);
     } else {
       const showCounts = item.options?.showCounts === true;
       const tableRows = buildSlideTable(item, item.result.columns, branding);
@@ -307,7 +366,7 @@ export async function exportPptx(config: ExportConfig): Promise<Uint8Array> {
 
       slide.addTable(tableRows, {
         x: 0.5,
-        y: 1.0,
+        y: contentY,
         w: SLIDE_TABLE_WIDTH,
         colW,
         rowH: 0.35,

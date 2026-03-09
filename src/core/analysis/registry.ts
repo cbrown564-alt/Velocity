@@ -28,10 +28,11 @@ class AnalysisRegistry {
     /**
      * List all registered runners
      */
-    list(): Array<{ id: string; label: string }> {
+    list(): Array<{ id: string; label: string; configSchema: Record<string, unknown> }> {
         return Array.from(this.runners.values()).map(r => ({
             id: r.id,
             label: r.label,
+            configSchema: r.configSchema,
         }));
     }
 }

@@ -45,6 +45,8 @@ export interface Slide {
     title: string;
     /** Editable subtitle, defaults from filter/weight info */
     subtitle: string;
+    /** Optional speaker notes for exports/presenter view */
+    notes?: string;
 
     // Analysis state (the "saved view")
     analysisState: SlideAnalysisState;

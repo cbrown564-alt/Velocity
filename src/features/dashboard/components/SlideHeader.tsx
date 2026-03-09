@@ -7,58 +7,11 @@
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Pencil } from 'lucide-react';
+import { resolveSlideSubtitle, resolveSlideTitle } from '../../../core/export/resolveSlideDefaults';
 import { useVelocityStore } from '../../../store';
 
 interface SlideHeaderProps {
     className?: string;
-}
-
-/**
- * Generate a default title from the analysis state.
- */
-function generateDefaultTitle(
-    rowVars: string[],
-    colVar: string | null,
-    variableSets: Array<{ id: string; name: string }>
-): string {
-    if (rowVars.length === 0) return 'New Slide';
-
-    const rowLabels = rowVars.map(id =>
-        variableSets.find(v => v.id === id)?.name || id
-    );
-    const colLabel = colVar
-        ? variableSets.find(v => v.id === colVar)?.name
-        : null;
-
-    if (colLabel) {
-        return `${rowLabels.join(' > ')} by ${colLabel}`;
-    }
-    return `${rowLabels[0]}`;
-}
-
-/**
- * Generate a default subtitle from filters and weight.
- */
-function generateDefaultSubtitle(
-    filterCount: number,
-    weightVarLabel: string | null,
-    totalCount: number
-): string {
-    const parts: string[] = [];
-
-    if (filterCount > 0) {
-        parts.push(`Filtered: ${filterCount} active`);
-    }
-    if (weightVarLabel) {
-        parts.push(`Weighted by ${weightVarLabel}`);
-    }
-
-    const nValue = `N = ${totalCount.toLocaleString()} Respondents`;
-
-    if (parts.length > 0) {
-        return `${parts.join(' · ')} · ${nValue}`;
-    }
-    return nValue;
 }
 
 export const SlideHeader: React.FC<SlideHeaderProps> = ({ className = '' }) => {
@@ -138,16 +91,41 @@ export const SlideHeader: React.FC<SlideHeaderProps> = ({ className = '' }) => {
 
     let displayTitle = activeSlide.title;
     if (isDefaultTitleUnedited && hasVariablesInCanvas) {
-        displayTitle = generateDefaultTitle(tableConfig.rowVars, tableConfig.colVar, variableSets);
+        displayTitle = resolveSlideTitle(
+            tableConfig.rowVars.map(id => variableSets.find(v => v.id === id)).filter(Boolean).map(v => ({
+                id: v!.id,
+                name: v!.name,
+                label: v!.name,
+            })),
+            tableConfig.colVar
+                ? (() => {
+                    const variableSet = variableSets.find(v => v.id === tableConfig.colVar);
+                    return variableSet ? { id: variableSet.id, name: variableSet.name, label: variableSet.name } : null;
+                })()
+                : null
+        );
     } else if (!activeSlide.title) {
         // Fallback for complete empty state if needed
-        displayTitle = generateDefaultTitle(tableConfig.rowVars, tableConfig.colVar, variableSets);
+        displayTitle = resolveSlideTitle(
+            tableConfig.rowVars.map(id => variableSets.find(v => v.id === id)).filter(Boolean).map(v => ({
+                id: v!.id,
+                name: v!.name,
+                label: v!.name,
+            })),
+            tableConfig.colVar
+                ? (() => {
+                    const variableSet = variableSets.find(v => v.id === tableConfig.colVar);
+                    return variableSet ? { id: variableSet.id, name: variableSet.name, label: variableSet.name } : null;
+                })()
+                : null
+        );
     }
 
-    const displaySubtitle = activeSlide.subtitle || generateDefaultSubtitle(
-        activeFilters?.length || 0,
-        weightVarLabel,
-        dataset?.rowCount || 0
+    const displaySubtitle = activeSlide.subtitle || resolveSlideSubtitle(
+        activeFilters || [],
+        weightVarLabel ? { id: dataset?.weightVariable || 'weight', name: weightVarLabel, label: weightVarLabel } : null,
+        dataset?.rowCount || 0,
+        !!dataset?.weightVariable
     );
 
     return (
