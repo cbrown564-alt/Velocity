@@ -50,15 +50,15 @@ Configure your system prompt or task instructions according to your current role
 
 ### 🏛️ Architect (Gemini Pro / Claude Opus)
 *Role: System design, risk assessment, and sequencing.*
-* **Inputs needed:** System architecture (`arch_01`), headless core seam (`arch_03`), and Roadmap/Feature Matrix for scope boundaries.
+* **Inputs needed:** System architecture (`arch_01`), headless core seam (`arch_03`), agent architecture (`arch_07`), relevant phase design brief (`design_phase{1-4}_*.md`), and Roadmap/Feature Matrix for scope boundaries.
 * **Outputs expected:** A 1-2 page Design Brief containing approach, risks, invariants touched, test strategy, and performance expectations.
-* **Definition of Done:** Proposal respects the adapter seam, dual-state data model, and explicitly defers out-of-scope features.
+* **Definition of Done:** Proposal respects the adapter seam, engine boundary (core vs engine vs transport), dual-state data model, ResultEnvelope provenance, session format stability, and explicitly defers out-of-scope features.
 
 ### 🛠️ Implementer (Codex / Specific Coding Models)
 *Role: Code generation and test passing.*
-* **Inputs needed:** Data model (`arch_02`), Headless core interface (`arch_03`), plus specific domain docs (e.g., Stats Engine or Visualisation Engine) based on the task.
+* **Inputs needed:** Data model (`arch_02`), Headless core interface (`arch_03`), agent architecture (`arch_07` if touching engine/MCP/semantic layer), plus specific domain docs (e.g., Stats Engine or Visualisation Engine) based on the task.
 * **Outputs expected:** Working code, companion unit/golden tests, and minimal doc updates ONLY if a contract was changed.
-* **Definition of Done:** Code compiles, tests pass, no heavy compute on the main thread, and no schema drift.
+* **Definition of Done:** Code compiles, tests pass, no heavy compute on the main thread, no schema drift, engine methods return `ResultEnvelope`, and transport handlers contain no business logic.
 
 ### 🧹 Maintainer (Claude Sonnet)
 *Role: Refactoring, cleanup, and technical debt reduction.*
