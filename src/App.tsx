@@ -418,6 +418,20 @@ export default function App() {
     harmonization.session,
   ]);
 
+  const sessionExportSummary = React.useMemo((): SessionExportSummary | null => {
+    if (!dataset) return null;
+    const recodes = transformLog.filter((t) => t.type === 'recode');
+    return {
+      datasetName: dataset.name,
+      rowCount: dataset.rowCount,
+      columnCount: dataset.variables.filter((v) => !recodes.some((t) => t.newColId === v.id)).length,
+      recodeCount: recodes.length,
+      slideCount: slides.length,
+      filterCount: activeFilters.length,
+      sectionCount: sections.length,
+    };
+  }, [dataset, transformLog, slides.length, activeFilters.length, sections.length]);
+
   const handleExportSession = React.useCallback(() => {
     if (!dataset) return;
     setShowSessionExportModal(true);
@@ -1787,20 +1801,12 @@ export default function App() {
         onImport={handleSessionImport}
       />
 
-      {dataset && (
+      {dataset && sessionExportSummary && (
         <SessionExportModal
           isOpen={showSessionExportModal}
           onClose={() => setShowSessionExportModal(false)}
           onExport={doExportSessionDownload}
-          summary={{
-            datasetName: dataset.name,
-            rowCount: dataset.rowCount,
-            columnCount: dataset.variables.filter((v) => !transformLog.some((t) => t.type === 'recode' && t.newColId === v.id)).length,
-            recodeCount: transformLog.filter((t) => t.type === 'recode').length,
-            slideCount: slides.length,
-            filterCount: activeFilters.length,
-            sectionCount: sections.length,
-          } satisfies SessionExportSummary}
+          summary={sessionExportSummary}
         />
       )}
 
