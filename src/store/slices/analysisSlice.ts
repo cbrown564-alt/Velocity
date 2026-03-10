@@ -5,8 +5,7 @@
  */
 
 import type { StateCreator } from 'zustand';
-// buildCrosstabQuery import removed
-import type { WorkerRequest, WorkerResponse, VariableStatsResult } from '../../types/worker';
+import type { VariableStatsResult } from '../../types/worker';
 import type { DataSlice } from './dataSlice';
 import type { UISlice } from './uiSlice';
 
@@ -112,8 +111,8 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
     },
 
     runAnalysis: async () => {
-        const { worker, tableConfig, dataset, variableSets, activeFilters, analysisSettings } = get();
-        if (!worker || !dataset || tableConfig.rowVars.length === 0) {
+        const { engineProxy, tableConfig, dataset, variableSets, activeFilters, analysisSettings } = get();
+        if (!engineProxy || !dataset || tableConfig.rowVars.length === 0) {
             set({ queryResult: [], tableStats: null });
             return;
         }
@@ -134,40 +133,24 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
             get().fetchVariableStats(request.measureVarId, 'numeric');
         }
 
-        const reqId = crypto.randomUUID();
-        return new Promise<void>((resolve) => {
-            const handler = (event: MessageEvent<WorkerResponse>) => {
-                const response = event.data;
-                if (response.requestId !== reqId) return;
+        try {
+            const response = await engineProxy.runCrosstab(
+                request.options,
+                request.context,
+                request.analysisSettings,
+            );
+            const rawData = response.data as any[];
+            const mappedData: AggregatedRow[] = mapCrosstabRows(rawData, request.isWeighted);
 
-                if (response.type === 'queryResult') {
-                    const rawData = response.data as any[];
-                    const mappedData: AggregatedRow[] = mapCrosstabRows(rawData, request.isWeighted);
-
-                    set({
-                        queryResult: mappedData,
-                        tableStats: response.tableStats || null,
-                        isQuerying: false,
-                    });
-                    worker.removeEventListener('message', handler);
-                    resolve();
-                } else if (response.type === 'error') {
-                    console.error('[AnalysisSlice] Query error:', response.message);
-                    set({ isQuerying: false });
-                    worker.removeEventListener('message', handler);
-                    resolve();
-                }
-            };
-
-            worker.addEventListener('message', handler);
-            worker.postMessage({
-                type: 'runCrosstab',
-                requestId: reqId,
-                options: request.options,
-                context: request.context,
-                analysisSettings: request.analysisSettings,
-            } as WorkerRequest);
-        });
+            set({
+                queryResult: mappedData,
+                tableStats: response.tableStats || null,
+                isQuerying: false,
+            });
+        } catch (error: any) {
+            console.error('[AnalysisSlice] Query error:', error.message);
+            set({ isQuerying: false });
+        }
     },
 
     reorderRowVars: (newOrder) => {
@@ -201,23 +184,15 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
     },
 
     fetchVariableStats: async (variableId: string, variableType?: VariableType, binCount?: number) => {
-        const { worker } = get();
-        if (!worker) return;
+        const { engineProxy } = get();
+        if (!engineProxy) return;
 
-        const reqId = crypto.randomUUID();
-        return new Promise<void>((resolve) => {
-            const handler = (event: MessageEvent<WorkerResponse>) => {
-                const response = event.data;
-                if (response.requestId !== reqId) return;
-                if (response.type === 'variableStats') {
-                    set({ activeVariableStats: response.stats });
-                    worker.removeEventListener('message', handler);
-                    resolve();
-                }
-            };
-            worker.addEventListener('message', handler);
-            worker.postMessage({ type: 'getVariableStats', requestId: reqId, column: variableId, variableType, binCount } as WorkerRequest);
-        });
+        try {
+            const response = await engineProxy.getVariableStats(variableId, variableType, undefined, binCount);
+            set({ activeVariableStats: response.stats });
+        } catch (error: any) {
+            console.error('[AnalysisSlice] Variable stats error:', error.message);
+        }
     },
 
     swapAxes: () => {

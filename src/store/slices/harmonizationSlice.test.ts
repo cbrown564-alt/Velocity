@@ -8,9 +8,10 @@ import { createHarmonizationSlice, type HarmonizationSlice } from './harmonizati
 import { wave1Variables, wave2Variables } from '../../test/fixtures/harmonization';
 
 function createTestStore() {
-  return create<HarmonizationSlice & { worker: Worker | null }>()((...args) => ({
+  return create<HarmonizationSlice & { worker: Worker | null; engineProxy: any }>()((...args) => ({
     ...createHarmonizationSlice(...args),
     worker: null,
+    engineProxy: null,
   }));
 }
 
@@ -156,52 +157,50 @@ describe('harmonizationSlice', () => {
   });
 
   describe('applyHarmonization', () => {
-    it('posts buildHarmonizedTable with id->name lookups and stores output table name', async () => {
-      const posted: any[] = [];
-      let handler: ((event: MessageEvent<any>) => void) | null = null;
-      const worker = {
-        postMessage: vi.fn((msg: any) => {
-          posted.push(msg);
-        }),
-        addEventListener: vi.fn((event: string, fn: (event: MessageEvent<any>) => void) => {
-          if (event === 'message') handler = fn;
-        }),
-        removeEventListener: vi.fn(),
-      } as unknown as Worker;
+    it('calls engineProxy.buildHarmonizedTable with id->name lookups and stores output table name', async () => {
+      const mockBuildHarmonizedTable = vi.fn().mockResolvedValue({
+        tableName: 'harm_test_table',
+        rowCount: 42,
+        durationMs: 12,
+      });
+
+      const mockEngineProxy = {
+        buildHarmonizedTable: mockBuildHarmonizedTable,
+      } as any;
 
       const store = createTestStore();
-      store.setState({ worker });
+      store.setState({ engineProxy: mockEngineProxy });
       store.getState().openHarmonization('wave1', 'wave2');
       store.getState().runAutoMatch(wave1Variables, wave2Variables);
       store.getState().confirmAllMappings();
 
-      const applyPromise = store.getState().applyHarmonization({
+      const result = await store.getState().applyHarmonization({
         sourceTable: 'wave1_table',
         targetTable: 'wave2_table',
         sourceVars: wave1Variables,
         targetVars: wave2Variables,
       });
 
-      const request = posted.find(msg => msg.type === 'buildHarmonizedTable');
-      expect(request).toBeDefined();
-      expect(request.sourceVarNames).toBeDefined();
-      expect(request.targetVarNames).toBeDefined();
+      // Verify buildHarmonizedTable was called with correct args
+      expect(mockBuildHarmonizedTable).toHaveBeenCalledTimes(1);
+      const callArgs = mockBuildHarmonizedTable.mock.calls[0];
+      const [sourceTable, targetTable, mappings, outputTableName, sourceVarNames, targetVarNames] = callArgs;
 
+      expect(sourceTable).toBe('wave1_table');
+      expect(targetTable).toBe('wave2_table');
+      expect(sourceVarNames).toBeDefined();
+      expect(targetVarNames).toBeDefined();
+
+      // Verify name lookups
       const sample = store.getState().harmonization.session?.mappings.find(m => m.targetVariableId !== null);
       expect(sample).toBeDefined();
       if (sample?.targetVariableId) {
         const srcVar = wave1Variables.find(v => v.id === sample.sourceVariableId)!;
         const tgtVar = wave2Variables.find(v => v.id === sample.targetVariableId)!;
-        expect(request.sourceVarNames[sample.sourceVariableId]).toBe(srcVar.name);
-        expect(request.targetVarNames[sample.targetVariableId]).toBe(tgtVar.name);
+        expect(sourceVarNames[sample.sourceVariableId]).toBe(srcVar.name);
+        expect(targetVarNames[sample.targetVariableId]).toBe(tgtVar.name);
       }
 
-      expect(handler).not.toBeNull();
-      handler?.({
-        data: { type: 'harmonizedTableCreated', tableName: 'harm_test_table', rowCount: 42, durationMs: 12 },
-      } as MessageEvent<any>);
-
-      const result = await applyPromise;
       expect(result?.tableName).toBe('harm_test_table');
       expect(store.getState().harmonization.session?.outputTableName).toBe('harm_test_table');
     });

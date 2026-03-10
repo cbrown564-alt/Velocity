@@ -10,6 +10,8 @@ import type { WorkerRequest, WorkerResponse, VariableStatsResult } from '../../t
 import type { OrderedScoring, OrderedStyle, RecodeConfig, VariableType } from '../../types';
 import { allowsNumericStats, normalizeVariableType } from '../../types';
 import * as opfsFileManager from '../../services/opfsFileManager';
+import { EngineProxy } from '../../services/EngineProxy';
+import type { EngineResponseByType } from '../../types/engineWorker';
 
 export type { VariableType } from '../../types';
 
@@ -188,6 +190,7 @@ export interface PersistedDataInfo {
 export interface DataSlice {
     // State
     worker: Worker | null;
+    engineProxy: EngineProxy | null;
     isDbReady: boolean;
     initError: string | null;
     dataset: Dataset | null;
@@ -250,6 +253,7 @@ export interface DataSlice {
 export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set, get) => ({
     // Initial state
     worker: null,
+    engineProxy: null,
     isDbReady: false,
     initError: null,
     dataset: null,
@@ -269,11 +273,11 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
     persistenceState: 'idle',
     persistedDataInfo: null,
 
-    // Initialize Web Worker
+    // Initialize Web Worker with EngineProxy
     initWorker: async () => {
-        const currentWorker = get().worker;
-        if (currentWorker) {
-            console.log('[DataSlice] Worker already initialized, skipping duplicate init');
+        const currentProxy = get().engineProxy;
+        if (currentProxy) {
+            console.log('[DataSlice] Engine already initialized, skipping duplicate init');
             return;
         }
 
@@ -283,58 +287,41 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                 { type: 'module' }
             );
 
-            // Create promise to handle init response
-            const initPromise = new Promise<void>((resolve, reject) => {
-                const initHandler = (event: MessageEvent<WorkerResponse>) => {
-                    const response = event.data;
-                    switch (response.type) {
-                        case 'persistenceStatus':
-                            set({
-                                opfsAvailable: response.opfsAvailable,
-                                persistenceMode: response.mode,
-                                persistenceError: response.lastError || null,
-                                activeDbPath: response.dbPath
-                            });
-                            break;
-                        case 'ready':
-                            worker.removeEventListener('message', initHandler);
-                            set({
-                                isDbReady: true,
-                                opfsAvailable: response.opfsAvailable
-                            });
-                            console.log(`[DataSlice] Worker ready, OPFS available: ${response.opfsAvailable}`);
-                            resolve();
-                            break;
-                        case 'corruptionDetected':
-                            console.warn('[DataSlice] OPFS corruption detected:', response.message);
-                            set({
-                                persistenceState: 'corrupt',
-                                persistenceError: response.message || 'OPFS database corruption detected',
-                                opfsAvailable: false
-                            });
-                            break;
-                        case 'error':
-                            worker.removeEventListener('message', initHandler);
-                            console.error('[DataSlice] Worker error:', response.message);
-                            set({ initError: response.message, persistenceState: 'error' });
-                            reject(new Error(response.message));
-                            break;
-                    }
-                };
-                worker.addEventListener('message', initHandler);
-            });
-
             // Set up general error handler for runtime errors
             worker.onerror = (error) => {
                 console.error('[DataSlice] Worker runtime error:', error);
                 set({ initError: error.message || 'Worker runtime error' });
             };
 
-            set({ worker, persistenceState: 'checking' });
-            const datasetId = get().dataset?.id;
-            worker.postMessage({ type: 'init', datasetId, schemaVersion: 1 } as WorkerRequest);
+            const proxy = new EngineProxy(worker, {
+                onPersistenceStatus: (msg) => {
+                    set({
+                        opfsAvailable: msg.opfsAvailable,
+                        persistenceMode: msg.mode,
+                        persistenceError: msg.lastError ?? null,
+                        activeDbPath: msg.dbPath,
+                    });
+                },
+                onCorruption: (msg) => {
+                    console.warn('[DataSlice] OPFS corruption detected:', msg.message);
+                    set({
+                        persistenceState: 'corrupt',
+                        persistenceError: msg.message || 'OPFS database corruption detected',
+                        opfsAvailable: false,
+                    });
+                },
+            });
 
-            await initPromise;
+            set({ worker, engineProxy: proxy, persistenceState: 'checking' });
+
+            const datasetId = get().dataset?.id;
+            const result = await proxy.init({ datasetId, schemaVersion: 1 });
+
+            set({
+                isDbReady: true,
+                opfsAvailable: result.opfsAvailable,
+            });
+            console.log(`[DataSlice] Engine ready, OPFS available: ${result.opfsAvailable}`);
 
             // If OPFS is available, check for persisted data
             if (get().opfsAvailable && get().persistenceState !== 'corrupt') {
@@ -343,9 +330,9 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                 set({ persistenceState: 'ready' });
             }
         } catch (error: any) {
-            console.error('[DataSlice] Failed to init worker:', error);
+            console.error('[DataSlice] Failed to init engine:', error);
             set({
-                initError: error.message || 'Failed to initialize worker',
+                initError: error.message || 'Failed to initialize engine',
                 persistenceState: 'error'
             });
         }
@@ -353,13 +340,14 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
 
     // Terminate the current worker
     terminateWorker: () => {
-        const { worker } = get();
-        if (worker) {
-            worker.terminate();
-            console.log('[DataSlice] Worker terminated');
+        const { engineProxy } = get();
+        if (engineProxy) {
+            engineProxy.terminate();
+            console.log('[DataSlice] Engine terminated');
         }
         set({
             worker: null,
+            engineProxy: null,
             isDbReady: false,
             initError: null
         });
@@ -367,7 +355,7 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
 
     // Respawn worker (terminates existing and creates fresh)
     respawnWorker: async (cleanStart: boolean = false) => {
-        console.log(`[DataSlice] Respawning worker (cleanStart: ${cleanStart})`);
+        console.log(`[DataSlice] Respawning engine (cleanStart: ${cleanStart})`);
         get().terminateWorker();
 
         // Small delay to ensure clean termination
@@ -379,56 +367,44 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                 { type: 'module' }
             );
 
-            const initPromise = new Promise<void>((resolve, reject) => {
-                const initHandler = (event: MessageEvent<WorkerResponse>) => {
-                    const response = event.data;
-                    switch (response.type) {
-                        case 'persistenceStatus':
-                            set({
-                                opfsAvailable: response.opfsAvailable,
-                                persistenceMode: response.mode,
-                                persistenceError: response.lastError || null,
-                                activeDbPath: response.dbPath
-                            });
-                            break;
-                        case 'ready':
-                            worker.removeEventListener('message', initHandler);
-                            set({
-                                isDbReady: true,
-                                opfsAvailable: response.opfsAvailable,
-                                persistenceState: 'ready'
-                            });
-                            console.log(`[DataSlice] Worker respawned, OPFS available: ${response.opfsAvailable}`);
-                            resolve();
-                            break;
-                        case 'corruptionDetected':
-                            console.warn('[DataSlice] OPFS corruption detected during respawn:', response.message);
-                            set({
-                                persistenceState: 'corrupt',
-                                persistenceError: response.message || 'OPFS database corruption detected',
-                                opfsAvailable: false
-                            });
-                            break;
-                        case 'error':
-                            worker.removeEventListener('message', initHandler);
-                            console.error('[DataSlice] Worker error during respawn:', response.message);
-                            set({ initError: response.message, persistenceState: 'error' });
-                            reject(new Error(response.message));
-                            break;
-                    }
-                };
-                worker.addEventListener('message', initHandler);
+            const proxy = new EngineProxy(worker, {
+                onPersistenceStatus: (msg) => {
+                    set({
+                        opfsAvailable: msg.opfsAvailable,
+                        persistenceMode: msg.mode,
+                        persistenceError: msg.lastError ?? null,
+                        activeDbPath: msg.dbPath,
+                    });
+                },
+                onCorruption: (msg) => {
+                    console.warn('[DataSlice] OPFS corruption detected during respawn:', msg.message);
+                    set({
+                        persistenceState: 'corrupt',
+                        persistenceError: msg.message || 'OPFS database corruption detected',
+                        opfsAvailable: false,
+                    });
+                },
             });
 
-            set({ worker });
-            const datasetId = get().dataset?.id;
-            worker.postMessage({ type: 'init', forceCleanStart: cleanStart, datasetId, schemaVersion: 1 } as WorkerRequest);
+            set({ worker, engineProxy: proxy });
 
-            await initPromise;
-        } catch (error: any) {
-            console.error('[DataSlice] Failed to respawn worker:', error);
+            const datasetId = get().dataset?.id;
+            const result = await proxy.init({
+                forceCleanStart: cleanStart,
+                datasetId,
+                schemaVersion: 1,
+            });
+
             set({
-                initError: error.message || 'Failed to respawn worker',
+                isDbReady: true,
+                opfsAvailable: result.opfsAvailable,
+                persistenceState: 'ready',
+            });
+            console.log(`[DataSlice] Engine respawned, OPFS available: ${result.opfsAvailable}`);
+        } catch (error: any) {
+            console.error('[DataSlice] Failed to respawn engine:', error);
+            set({
+                initError: error.message || 'Failed to respawn engine',
                 persistenceState: 'error'
             });
         }
@@ -436,129 +412,78 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
 
     // Check for persisted data in OPFS
     checkPersistedData: async () => {
-        const { worker } = get();
-        if (!worker) throw new Error('Worker not initialized');
+        const { engineProxy } = get();
+        if (!engineProxy) throw new Error('Engine not initialized');
 
         set({ persistenceState: 'checking' });
 
-        return new Promise((resolve, reject) => {
-            const handler = (event: MessageEvent<WorkerResponse>) => {
-                const response = event.data;
-                if (response.type === 'persistedDataFound') {
-                    worker.removeEventListener('message', handler);
-                    set({
-                        persistenceState: 'found',
-                        persistedDataInfo: {
-                            schema: response.schema,
-                            rowCount: response.rowCount,
-                            metadata: response.metadata
-                        }
-                    });
-                    console.log(`[DataSlice] Found persisted data: ${response.rowCount} rows, ${response.schema.length} columns`);
-                    resolve(undefined);
-                } else if (response.type === 'noPersistedData') {
-                    worker.removeEventListener('message', handler);
-                    set({
-                        persistenceState: 'ready',
-                        persistedDataInfo: null
-                    });
-                    console.log('[DataSlice] No persisted data found');
-                    resolve(undefined);
-                } else if (response.type === 'error') {
-                    worker.removeEventListener('message', handler);
-                    set({ persistenceState: 'ready' });
-                    reject(new Error(response.message));
-                }
-            };
-
-            worker.addEventListener('message', handler);
-            worker.postMessage({ type: 'checkPersistedData' } as WorkerRequest);
-        });
+        try {
+            const response = await engineProxy.checkPersistedData();
+            if (response.type === 'engine.persistedDataFound') {
+                set({
+                    persistenceState: 'found',
+                    persistedDataInfo: {
+                        schema: response.schema,
+                        rowCount: response.rowCount,
+                        metadata: response.metadata,
+                    },
+                });
+                console.log(`[DataSlice] Found persisted data: ${response.rowCount} rows, ${response.schema.length} columns`);
+            } else {
+                set({ persistenceState: 'ready', persistedDataInfo: null });
+                console.log('[DataSlice] No persisted data found');
+            }
+        } catch (error: any) {
+            set({ persistenceState: 'ready' });
+            throw error;
+        }
     },
 
     // Clear persisted data from OPFS
     clearPersistedData: async () => {
-        const { worker } = get();
-        if (!worker) throw new Error('Worker not initialized');
+        const { engineProxy } = get();
+        if (!engineProxy) throw new Error('Engine not initialized');
 
-        return new Promise((resolve, reject) => {
-            const handler = (event: MessageEvent<WorkerResponse>) => {
-                const response = event.data;
-                if (response.type === 'persistedDataCleared') {
-                    worker.removeEventListener('message', handler);
-                    set({ persistedDataInfo: null });
-                    console.log('[DataSlice] Persisted data cleared');
-                    resolve(undefined);
-                } else if (response.type === 'error') {
-                    worker.removeEventListener('message', handler);
-                    reject(new Error(response.message));
-                }
-            };
-
-            worker.addEventListener('message', handler);
-            worker.postMessage({ type: 'clearPersistedData' } as WorkerRequest);
-        });
+        await engineProxy.clearPersistedData();
+        set({ persistedDataInfo: null });
+        console.log('[DataSlice] Persisted data cleared');
     },
 
     // Flush persisted data to OPFS (best-effort)
     flushPersistedData: async () => {
-        const { worker, opfsAvailable } = get();
-        if (!worker || !opfsAvailable) return;
+        const { engineProxy, opfsAvailable } = get();
+        if (!engineProxy || !opfsAvailable) return;
 
-        return new Promise((resolve) => {
-            const handler = (event: MessageEvent<WorkerResponse>) => {
-                const response = event.data;
-                if (response.type === 'flushComplete') {
-                    worker.removeEventListener('message', handler);
-                    if (!response.ok) {
-                        console.warn('[DataSlice] OPFS flush failed:', response.error);
-                        set({ persistenceError: response.error || 'OPFS flush failed' });
-                    }
-                    resolve(undefined);
-                } else if (response.type === 'error') {
-                    worker.removeEventListener('message', handler);
-                    console.warn('[DataSlice] OPFS flush error:', response.message);
-                    set({ persistenceError: response.message });
-                    resolve(undefined);
-                }
-            };
-
-            worker.addEventListener('message', handler);
-            worker.postMessage({ type: 'flushPersistedData' } as WorkerRequest);
-        });
+        try {
+            const response = await engineProxy.flushPersistedData();
+            if (!response.ok) {
+                console.warn('[DataSlice] OPFS flush failed:', response.error);
+                set({ persistenceError: response.error || 'OPFS flush failed' });
+            }
+        } catch (error: any) {
+            console.warn('[DataSlice] OPFS flush error:', error.message);
+            set({ persistenceError: error.message });
+        }
     },
 
     // Rehydrate DuckDB data from persisted source file in OPFS (best-effort).
     // This is the local-first fallback when DuckDB OPFS DB persistence is unavailable/corrupt.
     rehydrateDatasetFromOpfs: async () => {
-        const { worker, dataset } = get();
-        if (!worker) throw new Error('Worker not initialized');
+        const { engineProxy, dataset } = get();
+        if (!engineProxy) throw new Error('Engine not initialized');
         if (!dataset?.opfsFileKey) throw new Error('Dataset has no OPFS source key');
 
-        const ping = () =>
-            new Promise<{ hasData: boolean; rowCount?: number }>((resolve) => {
-                const handler = (event: MessageEvent<WorkerResponse>) => {
-                    const response = event.data;
-                    if (response.type === 'pong') {
-                        worker.removeEventListener('message', handler);
-                        resolve({ hasData: response.hasData, rowCount: response.rowCount });
-                    } else if (response.type === 'error') {
-                        worker.removeEventListener('message', handler);
-                        resolve({ hasData: false });
-                    }
-                };
-                worker.addEventListener('message', handler);
-                worker.postMessage({ type: 'ping' } as WorkerRequest);
-            });
-
-        const status = await ping();
-        if (status.hasData) {
-            // If the DB already has data, don't clobber it.
-            const runAnalysis = (get() as any).runAnalysis as undefined | (() => Promise<void>);
-            if (typeof runAnalysis === 'function') {
-                void runAnalysis();
+        try {
+            const status = await engineProxy.ping();
+            if (status.hasData) {
+                const runAnalysis = (get() as any).runAnalysis as undefined | (() => Promise<void>);
+                if (typeof runAnalysis === 'function') {
+                    void runAnalysis();
+                }
+                return;
             }
-            return;
+        } catch {
+            // Ping failed, proceed with rehydration
         }
 
         console.log(`[DataSlice] Rehydrating DuckDB from OPFS source: ${dataset.opfsFileKey}`);
@@ -581,20 +506,7 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
             throw new Error(`Failed to read OPFS source file (${sourceKey}): ${message}`);
         }
 
-        await new Promise<void>((resolve, reject) => {
-            const handler = (event: MessageEvent<WorkerResponse>) => {
-                const response = event.data;
-                if (response.type === 'savLoaded') {
-                    worker.removeEventListener('message', handler);
-                    resolve();
-                } else if (response.type === 'error') {
-                    worker.removeEventListener('message', handler);
-                    reject(new Error(response.message));
-                }
-            };
-            worker.addEventListener('message', handler);
-            worker.postMessage({ type: 'loadSAV', buffer } as WorkerRequest, [buffer]);
-        });
+        await engineProxy.loadSAV(buffer);
 
         const transforms = get().transformLog;
         if (transforms.length > 0) {
@@ -603,32 +515,14 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
 
         for (const transform of transforms) {
             if (transform.type !== 'recode') continue;
-
-            await new Promise<void>((resolve) => {
-                const handler = (event: MessageEvent<WorkerResponse>) => {
-                    const response = event.data;
-                    if (response.type === 'recodeComplete') {
-                        worker.removeEventListener('message', handler);
-                        resolve();
-                    } else if (response.type === 'error') {
-                        worker.removeEventListener('message', handler);
-                        console.warn('[DataSlice] Transform replay failed:', response.message);
-                        resolve();
-                    }
-                };
-
-                worker.addEventListener('message', handler);
-                worker.postMessage({
-                    type: 'recodeVariable',
-                    sourceCol: transform.sourceColId,
-                    newColName: transform.newColId,
-                    config: transform.config
-                } as WorkerRequest);
-            });
+            try {
+                await engineProxy.recodeVariable(transform.sourceColId, transform.newColId, transform.config);
+            } catch (error: any) {
+                console.warn('[DataSlice] Transform replay failed:', error.message);
+            }
         }
 
-        // If the user had an analysis in view (tableConfig persisted), rerun it now that
-        // DuckDB has been repopulated. Query results are intentionally not persisted.
+        // If the user had an analysis in view (tableConfig persisted), rerun it now
         const runAnalysis = (get() as any).runAnalysis as undefined | (() => Promise<void>);
         if (typeof runAnalysis === 'function') {
             await runAnalysis();
@@ -719,427 +613,297 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
 
     // Load CSV file
     loadCSV: async (fileName: string, content: string) => {
-        const { worker } = get();
-        if (!worker) throw new Error('Worker not initialized');
+        const { engineProxy } = get();
+        if (!engineProxy) throw new Error('Engine not initialized');
 
-        return new Promise((resolve, reject) => {
-            const handler = (event: MessageEvent<WorkerResponse>) => {
-                const response = event.data;
+        const response = await engineProxy.loadCSV(fileName, content);
 
-                if (response.type === 'csvLoaded') {
-                    const variables: Variable[] = response.schema.map((col) => ({
-                        id: col.name,
-                        name: col.name,
-                        label: col.name.replace(/_/g, ' '),
-                        type: col.type === 'VARCHAR' ? 'categorical' : 'numeric',
-                        valueLabels: [],
-                        missingValues: {},
-                    }));
+        const variables: Variable[] = response.schema.map((col) => ({
+            id: col.name,
+            name: col.name,
+            label: col.name.replace(/_/g, ' '),
+            type: col.type === 'VARCHAR' ? 'categorical' : 'numeric',
+            valueLabels: [],
+            missingValues: {},
+        }));
 
-                    const variableSets: VariableSet[] = variables.map(v => ({
-                        id: crypto.randomUUID(),
-                        name: v.label || v.name,
-                        variableIds: [v.id],
-                        structure: 'single',
-                        type: v.type,
-                    }));
+        const variableSets: VariableSet[] = variables.map(v => ({
+            id: crypto.randomUUID(),
+            name: v.label || v.name,
+            variableIds: [v.id],
+            structure: 'single',
+            type: v.type,
+        }));
 
-                    set({
-                        dataset: {
-                            id: crypto.randomUUID(),
-                            name: fileName,
-                            rowCount: response.rowCount,
-                            variables,
-                            source: 'csv',
-                        },
-                        variableSets,
-                        transformLog: [],
-                        // Clear variable stats cache on new dataset load
-                        variableStats: {},
-                        variableStatsLoading: {},
-                        // Reset analysis state - old UUIDs won't match new variableSets
-                        tableConfig: { rowVars: [], colVar: null },
-                        queryResult: [],
-                        activeFilters: [],
-                    } as any);
+        set({
+            dataset: {
+                id: crypto.randomUUID(),
+                name: fileName,
+                rowCount: response.rowCount,
+                variables,
+                source: 'csv',
+            },
+            variableSets,
+            transformLog: [],
+            variableStats: {},
+            variableStatsLoading: {},
+            tableConfig: { rowVars: [], colVar: null },
+            queryResult: [],
+            activeFilters: [],
+        } as any);
 
-                    const datasetId = get().dataset?.id;
-                    if (datasetId) {
-                        worker.postMessage({
-                            type: 'updatePersistenceMetadata',
-                            metadata: {
-                                datasetId,
-                                datasetName: fileName,
-                                rowCount: response.rowCount,
-                                columnCount: variables.length,
-                                schemaVersion: 1,
-                                lastModified: Date.now()
-                            }
-                        } as WorkerRequest);
-                    }
+        const datasetId = get().dataset?.id;
+        if (datasetId) {
+            void engineProxy.updatePersistenceMetadata({
+                datasetId,
+                datasetName: fileName,
+                rowCount: response.rowCount,
+                columnCount: variables.length,
+                schemaVersion: 1,
+                lastModified: Date.now(),
+            });
+        }
 
-                    void get().flushPersistedData();
-                    worker.removeEventListener('message', handler);
-                    resolve(undefined);
-                } else if (response.type === 'error') {
-                    worker.removeEventListener('message', handler);
-                    reject(new Error(response.message));
-                }
-            };
-
-            worker.addEventListener('message', handler);
-            worker.postMessage({ type: 'loadCSV', fileName, content } as WorkerRequest);
-        });
+        void get().flushPersistedData();
     },
 
     // Load SAV file
     loadSAV: async (fileName: string, buffer: ArrayBuffer, options?: { datasetId?: string; opfsFileKey?: string }) => {
-        const { worker } = get();
-        if (!worker) throw new Error('Worker not initialized');
+        const { engineProxy } = get();
+        if (!engineProxy) throw new Error('Engine not initialized');
 
-        return new Promise((resolve, reject) => {
-            const handler = (event: MessageEvent<WorkerResponse>) => {
-                const response = event.data;
+        const response = await engineProxy.loadSAV(buffer);
 
-                if (response.type === 'savLoaded') {
-                    const datasetId = options?.datasetId || crypto.randomUUID();
-                    // Use pre-built variableSets from worker (includes MR sets as grid/multiple)
-                    const variableSets: VariableSet[] = response.variableSets.map(normalizeVariableSet);
-                    const variables: Variable[] = response.variables.map(normalizeVariable);
+        const datasetId = options?.datasetId || crypto.randomUUID();
+        const variableSets: VariableSet[] = response.variableSets.map(normalizeVariableSet);
+        const variables: Variable[] = response.variables.map(normalizeVariable);
 
-                    // Log MR set detection results
-                    const gridSets = variableSets.filter(vs => vs.structure === 'grid');
-                    const multipleSets = variableSets.filter(vs => vs.structure === 'multiple');
-                    if (gridSets.length > 0 || multipleSets.length > 0) {
-                        console.log(`📊 [DataSlice] Detected ${gridSets.length} grid sets, ${multipleSets.length} multi-response sets`);
-                    }
+        const gridSets = variableSets.filter(vs => vs.structure === 'grid');
+        const multipleSets = variableSets.filter(vs => vs.structure === 'multiple');
+        if (gridSets.length > 0 || multipleSets.length > 0) {
+            console.log(`📊 [DataSlice] Detected ${gridSets.length} grid sets, ${multipleSets.length} multi-response sets`);
+        }
 
-                    set({
-                        dataset: {
-                            id: datasetId,
-                            name: fileName,
-                            rowCount: response.rowCount,
-                            variables,
-                            source: 'sav',
-                            opfsFileKey: options?.opfsFileKey,
-                            metadataOnly: false,
-                            loadDiagnostics: undefined,
-                        },
-                        variableSets,
-                        transformLog: [],
-                        // Clear variable stats cache on new dataset load
-                        variableStats: {},
-                        variableStatsLoading: {},
-                        // Reset analysis state - old UUIDs won't match new variableSets
-                        tableConfig: { rowVars: [], colVar: null },
-                        queryResult: [],
-                        activeFilters: [],
-                    } as any);
+        set({
+            dataset: {
+                id: datasetId,
+                name: fileName,
+                rowCount: response.rowCount,
+                variables,
+                source: 'sav',
+                opfsFileKey: options?.opfsFileKey,
+                metadataOnly: false,
+                loadDiagnostics: undefined,
+            },
+            variableSets,
+            transformLog: [],
+            variableStats: {},
+            variableStatsLoading: {},
+            tableConfig: { rowVars: [], colVar: null },
+            queryResult: [],
+            activeFilters: [],
+        } as any);
 
-                    console.log(`📊 [DataSlice] SAV loaded: ${response.rowCount} rows, ${variables.length} variables, ${variableSets.length} variable sets in ${response.durationMs.toFixed(2)}ms`);
-                    if (datasetId) {
-                        worker.postMessage({
-                            type: 'updatePersistenceMetadata',
-                            metadata: {
-                                datasetId,
-                                datasetName: fileName,
-                                rowCount: response.rowCount,
-                                columnCount: variables.length,
-                                schemaVersion: 1,
-                                lastModified: Date.now()
-                            }
-                        } as WorkerRequest);
-                    }
-                    void get().flushPersistedData();
-                    worker.removeEventListener('message', handler);
-                    resolve(undefined);
-                } else if (response.type === 'error') {
-                    worker.removeEventListener('message', handler);
-                    reject(new Error(response.message));
-                }
-            };
-
-            worker.addEventListener('message', handler);
-            worker.postMessage({ type: 'loadSAV', buffer } as WorkerRequest, [buffer]);
-        });
+        console.log(`📊 [DataSlice] SAV loaded: ${response.rowCount} rows, ${variables.length} variables, ${variableSets.length} variable sets in ${response.durationMs.toFixed(2)}ms`);
+        if (datasetId) {
+            void engineProxy.updatePersistenceMetadata({
+                datasetId,
+                datasetName: fileName,
+                rowCount: response.rowCount,
+                columnCount: variables.length,
+                schemaVersion: 1,
+                lastModified: Date.now(),
+            });
+        }
+        void get().flushPersistedData();
     },
 
     // Load SAV metadata only (no data inserted into DuckDB)
     loadSAVMetadata: async (fileName: string, buffer: ArrayBuffer) => {
-        const { worker } = get();
-        if (!worker) throw new Error('Worker not initialized');
+        const { engineProxy } = get();
+        if (!engineProxy) throw new Error('Engine not initialized');
 
-        return new Promise((resolve, reject) => {
-            const handler = (event: MessageEvent<WorkerResponse>) => {
-                const response = event.data;
+        const response = await engineProxy.loadSAVMetadata(buffer);
+        const variableSets: VariableSet[] = response.variableSets.map(normalizeVariableSet);
+        const variables: Variable[] = response.variables.map(normalizeVariable);
 
-                if (response.type === 'savMetadataLoaded') {
-                    const variableSets: VariableSet[] = response.variableSets.map(normalizeVariableSet);
-                    const variables: Variable[] = response.variables.map(normalizeVariable);
+        set({
+            dataset: {
+                id: crypto.randomUUID(),
+                name: fileName,
+                rowCount: response.rowCount,
+                variables,
+                source: 'sav',
+                metadataOnly: true,
+                loadDiagnostics: {
+                    isPartial: true,
+                    reason: 'metadata_only',
+                    message: 'Loaded metadata only. Full row data is not available until you load from source.',
+                    createdAt: Date.now(),
+                },
+            },
+            variableSets,
+            variableStats: {},
+            variableStatsLoading: {},
+            tableConfig: { rowVars: [], colVar: null },
+            queryResult: [],
+            activeFilters: [],
+        } as any);
 
-                    set({
-                        dataset: {
-                            id: crypto.randomUUID(),
-                            name: fileName,
-                            rowCount: response.rowCount,
-                            variables,
-                            source: 'sav',
-                            metadataOnly: true,
-                            loadDiagnostics: {
-                                isPartial: true,
-                                reason: 'metadata_only',
-                                message: 'Loaded metadata only. Full row data is not available until you load from source.',
-                                createdAt: Date.now(),
-                            },
-                        },
-                        variableSets,
-                        variableStats: {},
-                        variableStatsLoading: {},
-                        tableConfig: { rowVars: [], colVar: null },
-                        queryResult: [],
-                        activeFilters: [],
-                    } as any);
-
-                    console.log(`📊 [DataSlice] SAV metadata loaded: ${response.rowCount} rows, ${variables.length} variables in ${response.durationMs.toFixed(2)}ms`);
-                    worker.removeEventListener('message', handler);
-                    resolve(undefined);
-                } else if (response.type === 'error') {
-                    worker.removeEventListener('message', handler);
-                    reject(new Error(response.message));
-                }
-            };
-
-            worker.addEventListener('message', handler);
-            worker.postMessage({ type: 'loadSAVMetadata', buffer } as WorkerRequest, [buffer]);
-        });
+        console.log(`📊 [DataSlice] SAV metadata loaded: ${response.rowCount} rows, ${variables.length} variables in ${response.durationMs.toFixed(2)}ms`);
     },
 
     // Load SAV sample rows for metadata heuristics (no data inserted into DuckDB)
     loadSAVSample: async (fileName: string, buffer: ArrayBuffer, rowLimit: number, strategy: 'sequential' | 'spread' = 'spread') => {
-        const { worker } = get();
-        if (!worker) throw new Error('Worker not initialized');
+        const { engineProxy } = get();
+        if (!engineProxy) throw new Error('Engine not initialized');
 
-        return new Promise((resolve, reject) => {
-            const handler = (event: MessageEvent<WorkerResponse>) => {
-                const response = event.data;
+        const response = await engineProxy.loadSAVSample(buffer, rowLimit, strategy);
+        const variableSets: VariableSet[] = response.variableSets.map(normalizeVariableSet);
+        const variables: Variable[] = response.variables.map(normalizeVariable);
 
-                if (response.type === 'savSampleLoaded') {
-                    const variableSets: VariableSet[] = response.variableSets.map(normalizeVariableSet);
-                    const variables: Variable[] = response.variables.map(normalizeVariable);
+        set({
+            dataset: {
+                id: crypto.randomUUID(),
+                name: fileName,
+                rowCount: response.rowCount,
+                variables,
+                source: 'sav',
+                metadataOnly: true,
+                sampleRowCount: response.sampleRowCount,
+                sampleStrategy: response.sampleStrategy,
+                loadDiagnostics: {
+                    isPartial: true,
+                    reason: 'sampling',
+                    message: 'Loaded using sampled metadata to reduce memory risk. Value labels may be incomplete until full load.',
+                    createdAt: Date.now(),
+                },
+            },
+            variableSets,
+            variableStats: {},
+            variableStatsLoading: {},
+            tableConfig: { rowVars: [], colVar: null },
+            queryResult: [],
+            activeFilters: [],
+        } as any);
 
-                    set({
-                        dataset: {
-                            id: crypto.randomUUID(),
-                            name: fileName,
-                            rowCount: response.rowCount,
-                            variables,
-                            source: 'sav',
-                            metadataOnly: true,
-                            sampleRowCount: response.sampleRowCount,
-                            sampleStrategy: response.sampleStrategy,
-                            loadDiagnostics: {
-                                isPartial: true,
-                                reason: 'sampling',
-                                message: 'Loaded using sampled metadata to reduce memory risk. Value labels may be incomplete until full load.',
-                                createdAt: Date.now(),
-                            },
-                        },
-                        variableSets,
-                        variableStats: {},
-                        variableStatsLoading: {},
-                        tableConfig: { rowVars: [], colVar: null },
-                        queryResult: [],
-                        activeFilters: [],
-                    } as any);
-
-                    console.log(`📊 [DataSlice] SAV sample loaded: ${response.sampleRowCount}/${response.rowCount} rows (${response.sampleStrategy}), ${variables.length} variables in ${response.durationMs.toFixed(2)}ms`);
-                    worker.removeEventListener('message', handler);
-                    resolve(undefined);
-                } else if (response.type === 'error') {
-                    worker.removeEventListener('message', handler);
-                    reject(new Error(response.message));
-                }
-            };
-
-            worker.addEventListener('message', handler);
-            worker.postMessage({ type: 'loadSAVSample', buffer, rowLimit, strategy } as WorkerRequest, [buffer]);
-        });
+        console.log(`📊 [DataSlice] SAV sample loaded: ${response.sampleRowCount}/${response.rowCount} rows (${response.sampleStrategy}), ${variables.length} variables in ${response.durationMs.toFixed(2)}ms`);
     },
 
     // Get unique values for a variable
     getUniqueValues: async (variableId: string): Promise<string[]> => {
-        const { worker, dataset } = get();
-        if (!worker) throw new Error('Worker not initialized');
+        const { engineProxy, dataset } = get();
+        if (!engineProxy) throw new Error('Engine not initialized');
 
         const variable = dataset?.variables.find(v => v.id === variableId);
         if (variable?.valueLabels && variable.valueLabels.length > 0) {
             return variable.valueLabels.map(vl => String(vl.value));
         }
 
-        const reqId = crypto.randomUUID();
-        return new Promise((resolve, reject) => {
-            const handler = (event: MessageEvent<WorkerResponse>) => {
-                const response = event.data;
-                if (response.requestId !== reqId) return;
-                if (response.type === 'uniqueValues') {
-                    worker.removeEventListener('message', handler);
-                    resolve(response.data);
-                } else if (response.type === 'error') {
-                    worker.removeEventListener('message', handler);
-                    reject(new Error(response.message));
-                }
-            };
-            worker.addEventListener('message', handler);
-            worker.postMessage({ type: 'getUniqueValues', requestId: reqId, column: variableId } as WorkerRequest);
-        });
+        const response = await engineProxy.getUniqueValues(variableId);
+        return response.data;
     },
 
     // Get variable statistics (frequencies, missing count, and numeric stats for scale variables)
     getVariableStats: async (variableId: string): Promise<VariableStatsResult | null> => {
-        const { worker, variableStats, variableStatsLoading, dataset } = get();
-        if (!worker) return null;
+        const { engineProxy, variableStats, variableStatsLoading, dataset } = get();
+        if (!engineProxy) return null;
 
-        // Look up the variable type from the dataset
         const variable = dataset?.variables.find(v => v.id === variableId);
         const variableType = variable?.type;
 
-        // Check if we have cached stats
         const cachedStats = variableStats[variableId];
         if (cachedStats) {
-            // For scale variables, ensure we have numeric stats (may need re-fetch if cached before feature was added)
             const needsNumericStats = allowsNumericStats(variableType, variable?.orderedScoring) && !cachedStats.numeric;
-            if (!needsNumericStats) {
-                return cachedStats;
-            }
-            // Fall through to re-fetch with numeric stats
+            if (!needsNumericStats) return cachedStats;
         }
 
-        // Don't request if already loading
-        if (variableStatsLoading[variableId]) {
-            return null;
-        }
+        if (variableStatsLoading[variableId]) return null;
 
-        // Mark as loading
         set((state) => ({
             variableStatsLoading: { ...state.variableStatsLoading, [variableId]: true }
         }));
 
-        const reqId = crypto.randomUUID();
-        return new Promise((resolve, reject) => {
-            const handler = (event: MessageEvent<WorkerResponse>) => {
-                const response = event.data;
-                if (response.requestId !== reqId) return;
-                if (response.type === 'variableStats') {
-                    worker.removeEventListener('message', handler);
-                    // Cache the result
-                    set((state) => ({
-                        variableStats: { ...state.variableStats, [variableId]: response.stats },
-                        variableStatsLoading: { ...state.variableStatsLoading, [variableId]: false }
-                    }));
-                    resolve(response.stats);
-                } else if (response.type === 'error') {
-                    worker.removeEventListener('message', handler);
-                    set((state) => ({
-                        variableStatsLoading: { ...state.variableStatsLoading, [variableId]: false }
-                    }));
-                    reject(new Error(response.message));
-                }
-            };
-            worker.addEventListener('message', handler);
-            worker.postMessage({
-                type: 'getVariableStats',
-                requestId: reqId,
-                column: variableId,
+        try {
+            const response = await engineProxy.getVariableStats(
+                variableId,
                 variableType,
-                orderedScoring: variable?.orderedScoring,
-                missingValues: variable?.missingValues,
-            } as WorkerRequest);
-        });
+                variable?.orderedScoring,
+                undefined,
+                variable?.missingValues,
+            );
+            set((state) => ({
+                variableStats: { ...state.variableStats, [variableId]: response.stats },
+                variableStatsLoading: { ...state.variableStatsLoading, [variableId]: false }
+            }));
+            return response.stats;
+        } catch (error: any) {
+            set((state) => ({
+                variableStatsLoading: { ...state.variableStatsLoading, [variableId]: false }
+            }));
+            throw error;
+        }
     },
 
     // Recode variable
     recodeVariable: async (sourceColId: string, newColName: string, config: RecodeConfig): Promise<string> => {
-        const { worker, dataset } = get();
-        if (!worker) throw new Error('Worker not initialized');
+        const { engineProxy, dataset } = get();
+        if (!engineProxy) throw new Error('Engine not initialized');
 
-        const reqId = crypto.randomUUID();
-        return new Promise((resolve, reject) => {
-            const handler = (event: MessageEvent<WorkerResponse>) => {
-                const response = event.data;
-                if (response.requestId !== reqId) return;
-                if (response.type === 'recodeComplete') {
-                    if (dataset) {
-                        const createdAt = Date.now();
-                        const newVariable: Variable = {
-                            id: response.newColName,
-                            name: response.newColName,
-                            label: newColName,
-                            type: 'categorical',
-                            valueLabels: [],
-                            missingValues: {},
-                        };
-                        const updatedDataset = {
-                            ...dataset,
-                            variables: [...dataset.variables, newVariable],
-                        };
-                        set((state) => ({
-                            dataset: updatedDataset,
-                            variableSets: [...state.variableSets, {
-                                id: crypto.randomUUID(),
-                                name: newColName,
-                                variableIds: [response.newColName],
-                                structure: 'single',
-                                type: 'categorical'
-                            }],
-                            transformLog: [
-                                ...state.transformLog,
-                                {
-                                    type: 'recode',
-                                    sourceColId,
-                                    newColId: response.newColName,
-                                    label: newColName,
-                                    config,
-                                    createdAt,
-                                }
-                            ]
-                        }));
+        const response = await engineProxy.recodeVariable(sourceColId, newColName, config);
 
-                        if (worker) {
-                            worker.postMessage({
-                                type: 'updatePersistenceMetadata',
-                                metadata: {
-                                    datasetId: updatedDataset.id,
-                                    datasetName: updatedDataset.name,
-                                    rowCount: updatedDataset.rowCount,
-                                    columnCount: updatedDataset.variables.length,
-                                    schemaVersion: 1,
-                                    lastModified: createdAt
-                                }
-                            } as WorkerRequest);
-                        }
-                    }
-                    void get().flushPersistedData();
-                    worker.removeEventListener('message', handler);
-                    resolve(response.newColName);
-                } else if (response.type === 'error') {
-                    worker.removeEventListener('message', handler);
-                    reject(new Error(response.message));
-                }
+        if (dataset) {
+            const createdAt = Date.now();
+            const newVariable: Variable = {
+                id: response.newColName,
+                name: response.newColName,
+                label: newColName,
+                type: 'categorical',
+                valueLabels: [],
+                missingValues: {},
             };
-            worker.addEventListener('message', handler);
-            worker.postMessage({
-                type: 'recodeVariable',
-                requestId: reqId,
-                sourceCol: sourceColId,
-                newColName,
-                config
-            } as WorkerRequest);
-        });
+            const updatedDataset = {
+                ...dataset,
+                variables: [...dataset.variables, newVariable],
+            };
+            set((state) => ({
+                dataset: updatedDataset,
+                variableSets: [...state.variableSets, {
+                    id: crypto.randomUUID(),
+                    name: newColName,
+                    variableIds: [response.newColName],
+                    structure: 'single',
+                    type: 'categorical'
+                }],
+                transformLog: [
+                    ...state.transformLog,
+                    {
+                        type: 'recode',
+                        sourceColId,
+                        newColId: response.newColName,
+                        label: newColName,
+                        config,
+                        createdAt,
+                    }
+                ]
+            }));
+
+            void engineProxy.updatePersistenceMetadata({
+                datasetId: updatedDataset.id,
+                datasetName: updatedDataset.name,
+                rowCount: updatedDataset.rowCount,
+                columnCount: updatedDataset.variables.length,
+                schemaVersion: 1,
+                lastModified: createdAt,
+            });
+        }
+        void get().flushPersistedData();
+        return response.newColName;
     },
 
     fillSystemMissing: async (variableId: string, replacementCode: number, replacementLabel: string): Promise<void> => {
-        const { worker, dataset } = get();
-        if (!worker) throw new Error('Worker not initialized');
+        const { engineProxy, dataset } = get();
+        if (!engineProxy) throw new Error('Engine not initialized');
         if (!dataset) throw new Error('No dataset loaded');
 
         const variable = dataset.variables.find(v => v.id === variableId);
@@ -1153,47 +917,31 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
             }
         }
 
-        return new Promise((resolve, reject) => {
-            const handler = (event: MessageEvent<WorkerResponse>) => {
-                const response = event.data;
-                if (response.type === 'fillSystemMissingComplete' && response.column === variableId) {
-                    worker.removeEventListener('message', handler);
+        await engineProxy.fillSystemMissing(variableId, replacementCode);
 
-                    set((state) => {
-                        if (!state.dataset) return state;
-                        return {
-                            dataset: {
-                                ...state.dataset,
-                                variables: state.dataset.variables.map(v => {
-                                    if (v.id !== variableId) return v;
-                                    const existingLabel = v.valueLabels.find(vl => vl.value === replacementCode);
-                                    const valueLabels = existingLabel
-                                        ? v.valueLabels.map(vl => vl.value === replacementCode ? { ...vl, label: replacementLabel } : vl)
-                                        : [...v.valueLabels, { value: replacementCode, label: replacementLabel }];
-                                    const discrete = (v.missingValues.discrete || []).filter(code => code !== replacementCode);
-                                    return { ...v, valueLabels, missingValues: { ...v.missingValues, discrete } };
-                                }),
-                            },
-                            variableStats: Object.fromEntries(
-                                Object.entries(state.variableStats).filter(([key]) => key !== variableId)
-                            ),
-                            variableStatsLoading: { ...state.variableStatsLoading, [variableId]: false },
-                        };
-                    });
-
-                    void get().getVariableStats(variableId);
-                    resolve();
-                    return;
-                }
-                if (response.type === 'error') {
-                    worker.removeEventListener('message', handler);
-                    reject(new Error(response.message));
-                    return;
-                }
+        set((state) => {
+            if (!state.dataset) return state;
+            return {
+                dataset: {
+                    ...state.dataset,
+                    variables: state.dataset.variables.map(v => {
+                        if (v.id !== variableId) return v;
+                        const existingLabel = v.valueLabels.find(vl => vl.value === replacementCode);
+                        const valueLabels = existingLabel
+                            ? v.valueLabels.map(vl => vl.value === replacementCode ? { ...vl, label: replacementLabel } : vl)
+                            : [...v.valueLabels, { value: replacementCode, label: replacementLabel }];
+                        const discrete = (v.missingValues.discrete || []).filter(code => code !== replacementCode);
+                        return { ...v, valueLabels, missingValues: { ...v.missingValues, discrete } };
+                    }),
+                },
+                variableStats: Object.fromEntries(
+                    Object.entries(state.variableStats).filter(([key]) => key !== variableId)
+                ),
+                variableStatsLoading: { ...state.variableStatsLoading, [variableId]: false },
             };
-            worker.addEventListener('message', handler);
-            worker.postMessage({ type: 'fillSystemMissing', column: variableId, value: replacementCode } as WorkerRequest);
         });
+
+        void get().getVariableStats(variableId);
     },
 
     // Create variable set
@@ -1466,28 +1214,13 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
     },
 
     deleteGroupedVariable: async (varId: string): Promise<void> => {
-        const { worker, dataset, variableSets, transformLog } = get();
-        if (!worker || !dataset) return;
+        const { engineProxy, dataset, variableSets, transformLog } = get();
+        if (!engineProxy || !dataset) return;
 
         const transform = transformLog.find(t => t.newColId === varId);
         if (!transform) return;
 
-        const reqId = crypto.randomUUID();
-        await new Promise<void>((resolve, reject) => {
-            const handler = (event: MessageEvent<WorkerResponse>) => {
-                const response = event.data;
-                if (response.requestId !== reqId) return;
-                if (response.type === 'columnDropped') {
-                    worker.removeEventListener('message', handler);
-                    resolve();
-                } else if (response.type === 'error') {
-                    worker.removeEventListener('message', handler);
-                    reject(new Error(response.message));
-                }
-            };
-            worker.addEventListener('message', handler);
-            worker.postMessage({ type: 'dropColumn', requestId: reqId, column: varId } as WorkerRequest);
-        });
+        await engineProxy.dropColumn(varId);
 
         // Update state: remove variable, variable set, transform log entry
         set((state) => {
@@ -1539,8 +1272,8 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
     },
 
     splitGroupValue: async (varId: string, groupValue: string): Promise<void> => {
-        const { worker, dataset, transformLog } = get();
-        if (!worker || !dataset) return;
+        const { engineProxy, dataset, transformLog } = get();
+        if (!engineProxy || !dataset) return;
 
         const transform = transformLog.find(t => t.newColId === varId);
         if (!transform || transform.config.mode !== 'categorical' || !transform.config.mappings) return;
@@ -1562,28 +1295,7 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
 
         const newConfig: RecodeConfig = { ...transform.config, mappings: newMappings };
 
-        const reqId = crypto.randomUUID();
-        await new Promise<void>((resolve, reject) => {
-            const handler = (event: MessageEvent<WorkerResponse>) => {
-                const response = event.data;
-                if (response.requestId !== reqId) return;
-                if (response.type === 'columnUpdated') {
-                    worker.removeEventListener('message', handler);
-                    resolve();
-                } else if (response.type === 'error') {
-                    worker.removeEventListener('message', handler);
-                    reject(new Error(response.message));
-                }
-            };
-            worker.addEventListener('message', handler);
-            worker.postMessage({
-                type: 'updateColumn',
-                requestId: reqId,
-                sourceCol: transform.sourceColId,
-                targetCol: varId,
-                config: newConfig,
-            } as WorkerRequest);
-        });
+        await engineProxy.updateColumn(transform.sourceColId, varId, newConfig);
 
         // Update transformLog and invalidate cached stats
         set((state) => ({

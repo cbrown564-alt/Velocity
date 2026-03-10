@@ -13,7 +13,7 @@ import type {
   MatchingWeights,
 } from '../../types/harmonization';
 import type { Variable } from '../../types/index';
-import type { WorkerRequest, WorkerResponse } from '../../types/worker';
+// WorkerRequest/WorkerResponse no longer used — migrated to EngineProxy
 import { autoMatchVariables } from '../../core/harmonization/matchEngine';
 import { buildSankeyData } from '../../core/harmonization/sankeyBuilder';
 import type { DataSlice } from './dataSlice';
@@ -72,7 +72,7 @@ const initialHarmonizationState = {
 // ============================================================================
 
 export const createHarmonizationSlice: StateCreator<
-  HarmonizationSlice & Pick<DataSlice, 'worker'>,
+  HarmonizationSlice & Pick<DataSlice, 'worker' | 'engineProxy'>,
   [],
   [],
   HarmonizationSlice
@@ -225,8 +225,8 @@ export const createHarmonizationSlice: StateCreator<
     outputTableName,
     onlyConfirmed = true,
   }) => {
-    const worker = get().worker;
-    if (!worker) throw new Error('Worker not initialized');
+    const engineProxy = get().engineProxy;
+    if (!engineProxy) throw new Error('Engine not initialized');
 
     const session = get().harmonization.session;
     if (!session) return null;
@@ -245,45 +245,33 @@ export const createHarmonizationSlice: StateCreator<
     const targetVarNames = Object.fromEntries(targetVars.map(v => [v.id, v.name]));
     const resolvedOutputTable = outputTableName ?? `harmonized_${session.id.replace(/[^a-zA-Z0-9_]/g, '_')}`;
 
-    return new Promise((resolve, reject) => {
-      const handler = (event: MessageEvent<WorkerResponse>) => {
-        const response = event.data;
-        if (response.type === 'harmonizedTableCreated') {
-          worker.removeEventListener('message', handler);
-          set(state => ({
-            harmonization: {
-              ...state.harmonization,
-              session: state.harmonization.session
-                ? {
-                  ...state.harmonization.session,
-                  outputTableName: response.tableName,
-                  updatedAt: Date.now(),
-                }
-                : null,
-            },
-          }));
-          resolve({
-            tableName: response.tableName,
-            rowCount: response.rowCount,
-            durationMs: response.durationMs,
-          });
-        } else if (response.type === 'error') {
-          worker.removeEventListener('message', handler);
-          reject(new Error(response.message));
-        }
-      };
+    const response = await engineProxy.buildHarmonizedTable(
+      sourceTable,
+      targetTable,
+      eligibleMappings,
+      resolvedOutputTable,
+      sourceVarNames,
+      targetVarNames,
+    );
 
-      worker.addEventListener('message', handler);
-      worker.postMessage({
-        type: 'buildHarmonizedTable',
-        sourceTable,
-        targetTable,
-        mappings: eligibleMappings,
-        outputTableName: resolvedOutputTable,
-        sourceVarNames,
-        targetVarNames,
-      } as WorkerRequest);
-    });
+    set(state => ({
+      harmonization: {
+        ...state.harmonization,
+        session: state.harmonization.session
+          ? {
+            ...state.harmonization.session,
+            outputTableName: response.tableName,
+            updatedAt: Date.now(),
+          }
+          : null,
+      },
+    }));
+
+    return {
+      tableName: response.tableName,
+      rowCount: response.rowCount,
+      durationMs: response.durationMs,
+    };
   },
 
   resetHarmonizationSession: () => {

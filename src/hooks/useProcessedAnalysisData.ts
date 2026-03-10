@@ -4,7 +4,6 @@ import { useVelocityStore } from '../store';
 import { AggregatedRow, Variable } from '../types';
 import { ProcessedAnalysisData } from '../types/processedData';
 import { ChartType } from '../types/charts';
-import type { WorkerRequest, WorkerResponse } from '../types/worker';
 
 // Re-export types for backward compatibility (if any consumers were missed)
 export type { ProcessedAnalysisData, ChartDataPoint, ChartSeries } from '../types/processedData';
@@ -20,8 +19,8 @@ interface UseProcessedAnalysisDataOptions {
 }
 
 /**
- * Async hook to process analysis data using the Web Worker.
- * 
+ * Async hook to process analysis data using the EngineProxy.
+ *
  * Offloads:
  * 1. Tree Building (Hierarchical structure)
  * 2. Chart Data Transformation (Pivoting, Scaling)
@@ -34,52 +33,33 @@ export function useProcessedAnalysisData({
     isMultipleResponse = false,
     chartType
 }: UseProcessedAnalysisDataOptions): ProcessedAnalysisData | null {
-    const worker = useVelocityStore(state => state.worker);
+    const engineProxy = useVelocityStore(state => state.engineProxy);
     const [result, setResult] = useState<ProcessedAnalysisData | null>(null);
 
     useEffect(() => {
-        if (!worker || !data || data.length === 0 || rowVariables.length === 0) {
+        if (!engineProxy || !data || data.length === 0 || rowVariables.length === 0) {
             setResult(null);
             return;
         }
 
-        const requestId = Math.random().toString(36).substring(7);
         let isMounted = true;
 
-        const handler = (event: MessageEvent<WorkerResponse>) => {
-            if (!isMounted) return;
-            const response = event.data;
-            if (response.type === 'processedData' && response.requestId === requestId) {
-                setResult(response.result);
-                // We got what we wanted, clean up this specific listener
-                worker.removeEventListener('message', handler);
-            } else if (response.type === 'error') {
-                console.error('Worker error:', response.message);
-                // Don't remove listener on error, logic might retry or wait for correct response? 
-                // Actually, if it's a fatal error for this request, we should probably stop?
-                // But let's be safe and let the cleanup handle removal if needed.
-            }
-        };
-
-        worker.addEventListener('message', handler);
-        worker.postMessage({
-            type: 'processData',
-            requestId,
+        engineProxy.processData(
             data,
-            options: {
-                rowVariables,
-                colVariable,
-                isWeighted,
-                isMultipleResponse
-            },
-            chartType
-        } as WorkerRequest);
+            { rowVariables, colVariable, isWeighted, isMultipleResponse },
+            chartType,
+        ).then((response) => {
+            if (isMounted) {
+                setResult(response.result);
+            }
+        }).catch((err) => {
+            console.error('Engine processData error:', err.message);
+        });
 
         return () => {
             isMounted = false;
-            worker.removeEventListener('message', handler);
         };
-    }, [worker, data, rowVariables, colVariable, isWeighted, isMultipleResponse, chartType]);
+    }, [engineProxy, data, rowVariables, colVariable, isWeighted, isMultipleResponse, chartType]);
 
     return result;
 }

@@ -31,15 +31,15 @@ describe('Store: reorderRowVars', () => {
     it('should trigger runAnalysis after reordering', async () => {
         const { result } = renderHook(() => useVelocityStore());
 
-        // Mock worker to avoid actual query execution
-        const mockWorker = {
-            postMessage: vi.fn(),
-            addEventListener: vi.fn(),
-            removeEventListener: vi.fn(),
+        // Mock engineProxy to avoid actual query execution
+        const mockRunCrosstab = vi.fn().mockResolvedValue({ data: [], tableStats: null });
+        const mockEngineProxy = {
+            runCrosstab: mockRunCrosstab,
+            getVariableStats: vi.fn().mockResolvedValue({ stats: {} }),
         } as any;
 
         act(() => {
-            result.current.worker = mockWorker;
+            result.current.engineProxy = mockEngineProxy;
             result.current.isDbReady = true;
             result.current.dataset = {
                 id: 'ds1',
@@ -55,18 +55,16 @@ describe('Store: reorderRowVars', () => {
             result.current.setTableConfig({ rowVars: ['var1', 'var2'] });
         });
 
-        // Clear previous postMessage calls
-        mockWorker.postMessage.mockClear();
+        // Clear previous calls
+        mockRunCrosstab.mockClear();
 
         // Reorder
         act(() => {
             result.current.reorderRowVars(['var2', 'var1']);
         });
 
-        // Verify that a query was posted (runAnalysis was called)
-        expect(mockWorker.postMessage).toHaveBeenCalled();
-        const lastCall = mockWorker.postMessage.mock.calls[mockWorker.postMessage.mock.calls.length - 1];
-        expect(lastCall[0].type).toBe('runCrosstab');
+        // Verify that runCrosstab was called (runAnalysis was triggered)
+        expect(mockRunCrosstab).toHaveBeenCalled();
     });
 
     it('should preserve column variable when reordering rows', () => {

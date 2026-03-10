@@ -50,7 +50,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
     const activeFilters = useVelocityStore((state) => state.activeFilters);
     const dataset = useVelocityStore((state) => state.dataset);
     const variableSets = useVelocityStore((state) => state.variableSets);
-    const worker = useVelocityStore((state) => state.worker);
+    const engineProxy = useVelocityStore((state) => state.engineProxy);
     const isQuerying = useVelocityStore((state) => state.isQuerying);
     const analysisSettings = useVelocityStore((state) => state.analysisSettings);
 
@@ -101,10 +101,10 @@ export const ExportModal: React.FC<ExportModalProps> = ({
         setSelectedSlideIds([]);
     };
 
-    const isExportDisabled = isExporting || !title.trim() || slideIdsForScope.length === 0 || isQuerying || !dataset || !worker;
+    const isExportDisabled = isExporting || !title.trim() || slideIdsForScope.length === 0 || isQuerying || !dataset || !engineProxy;
 
     const handleExport = async () => {
-        if (!worker || !dataset) {
+        if (!engineProxy || !dataset) {
             setExportError('Export is unavailable until a dataset is loaded.');
             return;
         }
@@ -146,7 +146,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
 
                 const isMultipleResponse = firstRowVarSet?.structure === 'multiple';
                 const crosstab = await runCrosstabForExport({
-                    worker,
+                    engineProxy,
                     dataset,
                     variableSets,
                     rowVars: analysisState.rowVars,

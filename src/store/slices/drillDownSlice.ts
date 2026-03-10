@@ -5,7 +5,6 @@
  */
 
 import type { StateCreator } from 'zustand';
-import type { WorkerRequest, WorkerResponse } from '../../types/worker';
 import type { DataSlice } from './dataSlice';
 import type { AnalysisSlice } from './analysisSlice';
 import {
@@ -65,8 +64,8 @@ export const createDrillDownSlice: DrillDownSliceCreator = (set, get) => ({
     drillDown: initialDrillDown,
 
     openDrillDown: async (rowPath, colValue) => {
-        const { worker, tableConfig, dataset, activeFilters, variableSets } = get();
-        if (!worker || rowPath.length === 0) return;
+        const { engineProxy, tableConfig, dataset, activeFilters, variableSets } = get();
+        if (!engineProxy || rowPath.length === 0) return;
 
         const pageSize = 50;
         const { rowFilters, colFilter, title } = resolveDrillDownContext({
@@ -104,73 +103,35 @@ export const createDrillDownSlice: DrillDownSliceCreator = (set, get) => ({
         const dataSql = buildDrillDownQuery(queryOptions);
         const countSql = buildDrillDownCountQuery(queryOptions);
 
-        const dataReqId = crypto.randomUUID();
-        const countReqId = crypto.randomUUID();
+        // Run both queries concurrently via EngineProxy
+        const [dataResponse, countResponse] = await Promise.all([
+            engineProxy.query(dataSql).catch((err) => {
+                console.error('[DrillDownSlice] Data query error:', err.message);
+                return { data: [] as any[], durationMs: 0 };
+            }),
+            engineProxy.query(countSql).catch((err) => {
+                console.error('[DrillDownSlice] Count query error:', err.message);
+                return { data: [{ total: 0 }] as any[], durationMs: 0 };
+            }),
+        ]);
 
-        return new Promise<void>((resolve) => {
-            let dataResult: any[] | null = null;
-            let totalCount: number | null = null;
-            let responseCount = 0;
+        const firstRow = dataResponse.data?.length ? dataResponse.data : [];
+        const countRow = countResponse.data?.[0] as Record<string, unknown> | undefined;
+        const totalCount = Number(countRow?.total ?? 0);
 
-            const checkComplete = () => {
-                if (responseCount === 2) {
-                    set((state) => ({
-                        drillDown: {
-                            ...state.drillDown,
-                            data: dataResult || [],
-                            totalCount: totalCount || 0,
-                            loading: false,
-                        },
-                    }));
-                    resolve();
-                }
-            };
-
-            const dataHandler = (event: MessageEvent<WorkerResponse>) => {
-                const response = event.data;
-                if (response.requestId !== dataReqId) return;
-                if (response.type === 'queryResult') {
-                    dataResult = response.data;
-                    responseCount++;
-                    worker.removeEventListener('message', dataHandler);
-                    checkComplete();
-                } else if (response.type === 'error') {
-                    console.error('[DrillDownSlice] Data query error:', response.message);
-                    dataResult = [];
-                    responseCount++;
-                    worker.removeEventListener('message', dataHandler);
-                    checkComplete();
-                }
-            };
-
-            const countHandler = (event: MessageEvent<WorkerResponse>) => {
-                const response = event.data;
-                if (response.requestId !== countReqId) return;
-                if (response.type === 'queryResult') {
-                    const firstRow = response.data[0] as Record<string, unknown> | undefined;
-                    totalCount = Number(firstRow?.total ?? 0);
-                    responseCount++;
-                    worker.removeEventListener('message', countHandler);
-                    checkComplete();
-                } else if (response.type === 'error') {
-                    console.error('[DrillDownSlice] Count query error:', response.message);
-                    totalCount = 0;
-                    responseCount++;
-                    worker.removeEventListener('message', countHandler);
-                    checkComplete();
-                }
-            };
-
-            worker.addEventListener('message', dataHandler);
-            worker.addEventListener('message', countHandler);
-            worker.postMessage({ type: 'query', requestId: dataReqId, sql: dataSql } as WorkerRequest);
-            worker.postMessage({ type: 'query', requestId: countReqId, sql: countSql } as WorkerRequest);
-        });
+        set((state) => ({
+            drillDown: {
+                ...state.drillDown,
+                data: firstRow,
+                totalCount,
+                loading: false,
+            },
+        }));
     },
 
     loadMoreDrillDown: async () => {
-        const { worker, drillDown, activeFilters } = get();
-        if (!worker || drillDown.loading) return;
+        const { engineProxy, drillDown, activeFilters } = get();
+        if (!engineProxy || drillDown.loading) return;
 
         const { rowFilters, colFilter, currentPage, pageSize, data } = drillDown;
         const nextPage = currentPage + 1;
@@ -191,36 +152,23 @@ export const createDrillDownSlice: DrillDownSliceCreator = (set, get) => ({
         });
 
         const sql = buildDrillDownQuery(queryOptions);
-        const reqId = crypto.randomUUID();
 
-        return new Promise<void>((resolve) => {
-            const handler = (event: MessageEvent<WorkerResponse>) => {
-                const response = event.data;
-                if (response.requestId !== reqId) return;
-                if (response.type === 'queryResult') {
-                    set((state) => ({
-                        drillDown: {
-                            ...state.drillDown,
-                            data: [...data, ...response.data],
-                            currentPage: nextPage,
-                            loading: false,
-                        },
-                    }));
-                    worker.removeEventListener('message', handler);
-                    resolve();
-                } else if (response.type === 'error') {
-                    console.error('[DrillDownSlice] Load more error:', response.message);
-                    set((state) => ({
-                        drillDown: { ...state.drillDown, loading: false },
-                    }));
-                    worker.removeEventListener('message', handler);
-                    resolve();
-                }
-            };
-
-            worker.addEventListener('message', handler);
-            worker.postMessage({ type: 'query', requestId: reqId, sql } as WorkerRequest);
-        });
+        try {
+            const response = await engineProxy.query(sql);
+            set((state) => ({
+                drillDown: {
+                    ...state.drillDown,
+                    data: [...data, ...response.data],
+                    currentPage: nextPage,
+                    loading: false,
+                },
+            }));
+        } catch (error: any) {
+            console.error('[DrillDownSlice] Load more error:', error.message);
+            set((state) => ({
+                drillDown: { ...state.drillDown, loading: false },
+            }));
+        }
     },
 
     closeDrillDown: () => set({ drillDown: initialDrillDown }),

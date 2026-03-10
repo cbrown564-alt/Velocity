@@ -1,31 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { useVelocityStore } from './index';
 
-// Mock the worker since we are testing store logic
-vi.mock('../services/analysisWorker', () => ({
-    default: class MockWorker {
-        postMessage() { }
-        addEventListener() { }
-        removeEventListener() { }
-    }
-}));
-
-// Mock worker in store
-const mockPostMessage = vi.fn();
-const mockAddEventListener = vi.fn();
-const mockRemoveEventListener = vi.fn();
-
-global.Worker = class MockWorker {
-    postMessage = mockPostMessage;
-    addEventListener = mockAddEventListener;
-    removeEventListener = mockRemoveEventListener;
-    terminate() { }
-    onmessage = null;
-    onerror = null;
-    dispatchEvent() { return true; }
-} as any;
-
-
 describe('Variable Logic', () => {
     beforeEach(() => {
         useVelocityStore.getState().reset();
@@ -66,41 +41,35 @@ describe('Variable Logic', () => {
     });
 
     it('should dispatch recodeVariable action correctly for binning', async () => {
-        // Start initWorker but don't await yet
-        const initPromise = useVelocityStore.getState().initWorker();
+        // Mock engineProxy
+        const mockRecodeVariable = vi.fn().mockResolvedValue({ newColName: 'v3_binned' });
+        const mockEngineProxy = {
+            recodeVariable: mockRecodeVariable,
+            init: vi.fn().mockResolvedValue({ opfsAvailable: false }),
+            checkPersistedData: vi.fn().mockResolvedValue({ type: 'engine.noPersistedData' }),
+            updatePersistenceMetadata: vi.fn(),
+        } as any;
 
-        // Find the init handler and trigger ready
-        const initCalls = mockAddEventListener.mock.calls.filter(call => call[0] === 'message');
-        const initHandler = initCalls[initCalls.length - 1][1];
-        initHandler({ data: { type: 'ready', opfsAvailable: false } });
-
-        await initPromise;
+        useVelocityStore.setState({
+            engineProxy: mockEngineProxy,
+            isDbReady: true,
+        });
 
         const { recodeVariable } = useVelocityStore.getState();
 
-        // Determine the promise we want to intercept
-        const promise = recodeVariable('v3', 'v3_binned', {
+        await recodeVariable('v3', 'v3_binned', {
             mode: 'binning',
             rules: [{ min: 0, max: 10, label: 'Low' }]
         });
 
-        // Simulate worker response with matching requestId so recode promise resolves
-        const recodeMessage = mockPostMessage.mock.calls.find(c => c[0].type === 'recodeVariable');
-        const requestId = recodeMessage?.[0]?.requestId;
-
-        // Get the last added event listener (since initWorker added one too, and maybe checkPersistedData)
-        const listenerCalls = mockAddEventListener.mock.calls.filter(call => call[0] === 'message');
-        const handler = listenerCalls[listenerCalls.length - 1][1];
-        handler({ data: { type: 'recodeComplete', requestId, newColName: 'v3_binned' } });
-
-        await promise;
-
-        // Check postMessage calls
-        // 1st was init, 2nd should be recode
-        const calls = mockPostMessage.mock.calls;
-        const recodeCall = calls.find(c => c[0].type === 'recodeVariable');
-        expect(recodeCall).toBeDefined();
-        expect(recodeCall[0].config.mode).toBe('binning');
-        expect(recodeCall[0].config.rules[0].label).toBe('Low');
+        // Check that engineProxy.recodeVariable was called with correct args
+        expect(mockRecodeVariable).toHaveBeenCalledWith(
+            'v3',
+            'v3_binned',
+            expect.objectContaining({
+                mode: 'binning',
+                rules: [{ min: 0, max: 10, label: 'Low' }],
+            })
+        );
     });
 });
