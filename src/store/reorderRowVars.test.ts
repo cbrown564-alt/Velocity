@@ -32,10 +32,19 @@ describe('Store: reorderRowVars', () => {
         const { result } = renderHook(() => useVelocityStore());
 
         // Mock engineProxy to avoid actual query execution
-        const mockRunCrosstab = vi.fn().mockResolvedValue({ data: [], tableStats: null });
+        const mockEnvelope = (data: unknown) => ({
+            data,
+            operation: 'test',
+            inputs: {},
+            durationMs: 10,
+            warnings: [],
+            metadata: { datasetName: 'test.sav', rowCount: 0, filtersApplied: 0, isWeighted: false, engineVersion: 'browser-wasm' },
+        });
+
+        const mockRunCrosstab = vi.fn().mockResolvedValue(mockEnvelope({ rows: [], tableStats: null }));
         const mockEngineProxy = {
             runCrosstab: mockRunCrosstab,
-            getVariableStats: vi.fn().mockResolvedValue({ stats: {} }),
+            getVariableStats: vi.fn().mockResolvedValue(mockEnvelope({})),
         } as any;
 
         act(() => {

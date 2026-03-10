@@ -36,15 +36,22 @@ describe('Integration: Store <-> EngineProxy Analysis Flow', () => {
             }
         ];
 
-        const mockRunCrosstab = vi.fn().mockResolvedValue({
-            data: mockResult,
-            tableStats: null,
+        const mockEnvelope = (data: unknown) => ({
+            data,
+            operation: 'test',
+            inputs: {},
             durationMs: 50,
+            warnings: [],
+            metadata: { datasetName: 'test.sav', rowCount: 100, filtersApplied: 0, isWeighted: false, engineVersion: 'browser-wasm' },
         });
+
+        const mockRunCrosstab = vi.fn().mockResolvedValue(
+            mockEnvelope({ rows: mockResult, tableStats: null })
+        );
 
         const mockEngineProxy = {
             runCrosstab: mockRunCrosstab,
-            getVariableStats: vi.fn().mockResolvedValue({ stats: {} }),
+            getVariableStats: vi.fn().mockResolvedValue(mockEnvelope({})),
         } as any;
 
         useVelocityStore.setState({

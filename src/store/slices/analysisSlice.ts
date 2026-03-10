@@ -139,12 +139,12 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
                 request.context,
                 request.analysisSettings,
             );
-            const rawData = response.data as any[];
+            const rawData = response.data.rows as any[];
             const mappedData: AggregatedRow[] = mapCrosstabRows(rawData, request.isWeighted);
 
             set({
                 queryResult: mappedData,
-                tableStats: response.tableStats || null,
+                tableStats: response.data.tableStats,
                 isQuerying: false,
             });
         } catch (error: any) {
@@ -189,7 +189,7 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
 
         try {
             const response = await engineProxy.getVariableStats(variableId, variableType, undefined, binCount);
-            set({ activeVariableStats: response.stats });
+            set({ activeVariableStats: response.data });
         } catch (error: any) {
             console.error('[AnalysisSlice] Variable stats error:', error.message);
         }

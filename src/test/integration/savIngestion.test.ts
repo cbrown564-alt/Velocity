@@ -37,6 +37,7 @@ describe('Integration: SAV Ingestion Flow', () => {
             checkPersistedData: vi.fn().mockResolvedValue({ type: 'engine.noPersistedData' }),
             init: vi.fn().mockResolvedValue({ opfsAvailable: false }),
             updatePersistenceMetadata: vi.fn(),
+            setDatasetContext: vi.fn(),
         } as any;
 
         useVelocityStore.setState({

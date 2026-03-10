@@ -55,9 +55,9 @@ export const runCrosstabForExport = async ({
       request.context,
       request.analysisSettings,
     );
-    const rawData = response.data as any[];
+    const rawData = response.data.rows as any[];
     const mappedData: AggregatedRow[] = mapCrosstabRows(rawData, request.isWeighted);
-    return { data: mappedData, tableStats: response.tableStats || null };
+    return { data: mappedData, tableStats: response.data.tableStats };
   } catch (error: any) {
     console.error('[Export] Crosstab query error:', error.message);
     return { data: [], tableStats: null };

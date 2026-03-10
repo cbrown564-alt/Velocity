@@ -14,9 +14,20 @@ vi.mock('../../analysis/mapCrosstabRows', () => ({
   mapCrosstabRows: (rows: any[]) => rows,
 }));
 
+function makeEnvelope(data: unknown) {
+  return {
+    data,
+    operation: 'runCrosstab',
+    inputs: {},
+    durationMs: 10,
+    warnings: [],
+    metadata: { datasetName: 'test', rowCount: 0, filtersApplied: 0, isWeighted: false, engineVersion: 'browser-wasm' },
+  };
+}
+
 function createMockEngineProxy(overrides: Partial<EngineProxy> = {}): EngineProxy {
   return {
-    runCrosstab: vi.fn().mockResolvedValue({ data: [], tableStats: null }),
+    runCrosstab: vi.fn().mockResolvedValue(makeEnvelope({ rows: [], tableStats: null })),
     ...overrides,
   } as unknown as EngineProxy;
 }
@@ -24,10 +35,7 @@ function createMockEngineProxy(overrides: Partial<EngineProxy> = {}): EngineProx
 describe('runCrosstabForExport', () => {
   it('returns mapped data on successful response', async () => {
     const engineProxy = createMockEngineProxy({
-      runCrosstab: vi.fn().mockResolvedValue({
-        data: [{ foo: 'bar' }],
-        tableStats: null,
-      }),
+      runCrosstab: vi.fn().mockResolvedValue(makeEnvelope({ rows: [{ foo: 'bar' }], tableStats: null })),
     });
 
     const result = await runCrosstabForExport({

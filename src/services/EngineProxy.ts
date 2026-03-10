@@ -19,6 +19,7 @@ import type {
   PersistedMetadata,
   VariableStatsResult,
 } from '../types/engineWorker';
+import type { ResultEnvelope } from '../engine/types';
 import { isEngineMessage } from '../types/engineWorker';
 import type { Variable, VariableSet, AggregatedRow, TableStats, RecodeConfig, MissingValueDef } from '../types';
 import type { OrderedScoring, VariableType } from '../types';
@@ -71,6 +72,7 @@ export class EngineProxy {
   private onPersistenceStatus?: PersistenceStatusCallback;
   private onCorruption?: CorruptionCallback;
   private disposed = false;
+  private datasetContext = { datasetName: 'unloaded', rowCount: 0 };
 
   constructor(worker: Worker, options: EngineProxyOptions = {}) {
     this.worker = worker;
@@ -199,11 +201,18 @@ export class EngineProxy {
     orderedScoring?: OrderedScoring,
     binCount?: number,
     missingValues?: MissingValueDef,
-  ): Promise<EngineResponseByType<'engine.variableStats'>> {
-    return this.send(
+  ): Promise<ResultEnvelope<VariableStatsResult>> {
+    const t0 = performance.now();
+    const raw = await this.send(
       { type: 'engine.getVariableStats', column, variableType, orderedScoring, binCount, missingValues },
-      'engine.variableStats'
-    ) as Promise<EngineResponseByType<'engine.variableStats'>>;
+      'engine.variableStats',
+    ) as EngineResponseByType<'engine.variableStats'>;
+    return this.wrapResult(
+      'getVariableStats',
+      { column, variableType: variableType ?? null },
+      raw.stats,
+      performance.now() - t0,
+    );
   }
 
   // ==========================================================================
@@ -214,11 +223,19 @@ export class EngineProxy {
     options: CrosstabQueryOptions & { includeDistributions?: boolean },
     context: WorkerAnalysisContext,
     analysisSettings?: WorkerAnalysisSettings,
-  ): Promise<EngineResponseByType<'engine.queryResult'>> {
-    return this.send(
+  ): Promise<ResultEnvelope<{ rows: AggregatedRow[]; tableStats: TableStats | null }>> {
+    const raw = await this.send(
       { type: 'engine.runCrosstab', options, context, analysisSettings },
-      'engine.queryResult'
-    ) as Promise<EngineResponseByType<'engine.queryResult'>>;
+      'engine.queryResult',
+    ) as EngineResponseByType<'engine.queryResult'>;
+    return this.wrapResult(
+      'runCrosstab',
+      { rowVars: options.rowVars, colVar: options.colVar ?? null },
+      { rows: raw.data as AggregatedRow[], tableStats: raw.tableStats ?? null },
+      raw.durationMs,
+      options.filters?.length ?? 0,
+      !!options.weightVar,
+    );
   }
 
   async processData(
@@ -339,9 +356,38 @@ export class EngineProxy {
     return this.worker;
   }
 
+  /** Update dataset context used to populate ResultEnvelope metadata. Call after loadSAV/loadCSV. */
+  setDatasetContext(datasetName: string, rowCount: number): void {
+    this.datasetContext = { datasetName, rowCount };
+  }
+
   // ==========================================================================
   // Internal
   // ==========================================================================
+
+  private wrapResult<T>(
+    operation: string,
+    inputs: Record<string, unknown>,
+    data: T,
+    durationMs: number,
+    filtersApplied = 0,
+    isWeighted = false,
+  ): ResultEnvelope<T> {
+    return {
+      data,
+      operation,
+      inputs,
+      durationMs,
+      warnings: [],
+      metadata: {
+        datasetName: this.datasetContext.datasetName,
+        rowCount: this.datasetContext.rowCount,
+        filtersApplied,
+        isWeighted,
+        engineVersion: 'browser-wasm',
+      },
+    };
+  }
 
   private send(
     payload: Record<string, unknown> & { type: string },

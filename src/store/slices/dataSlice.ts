@@ -649,6 +649,8 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
             activeFilters: [],
         } as any);
 
+        engineProxy.setDatasetContext(fileName, response.rowCount);
+
         const datasetId = get().dataset?.id;
         if (datasetId) {
             void engineProxy.updatePersistenceMetadata({
@@ -701,6 +703,7 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
             activeFilters: [],
         } as any);
 
+        engineProxy.setDatasetContext(fileName, response.rowCount);
         console.log(`📊 [DataSlice] SAV loaded: ${response.rowCount} rows, ${variables.length} variables, ${variableSets.length} variable sets in ${response.durationMs.toFixed(2)}ms`);
         if (datasetId) {
             void engineProxy.updatePersistenceMetadata({
@@ -830,10 +833,10 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                 variable?.missingValues,
             );
             set((state) => ({
-                variableStats: { ...state.variableStats, [variableId]: response.stats },
+                variableStats: { ...state.variableStats, [variableId]: response.data },
                 variableStatsLoading: { ...state.variableStatsLoading, [variableId]: false }
             }));
-            return response.stats;
+            return response.data;
         } catch (error: any) {
             set((state) => ({
                 variableStatsLoading: { ...state.variableStatsLoading, [variableId]: false }
