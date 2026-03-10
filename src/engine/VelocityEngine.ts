@@ -2,6 +2,8 @@ import { analysisRegistry } from '../core/analysis/registry';
 import { buildCrosstabRequest } from '../core/analysis/buildCrosstabRequest';
 import { runCrosstab } from '../core/analysis/crosstabRunner';
 import { getVariableStats } from '../core/analysis/variableStatsRunner';
+import { buildHarmonizedTableQuery } from '../core/harmonization/harmonizationQueries';
+import { autoMatchVariables } from '../core/harmonization/matchEngine';
 import type { DatabaseAdapter, QueryResult } from '../core/DatabaseAdapter';
 import { exportSession as exportSessionFile, importSession as importSessionFile } from '../core/session';
 import type {
@@ -17,10 +19,17 @@ import type {
   Folder,
 } from '../types';
 import { normalizeVariableType } from '../types';
+import type { ChartRecommendation } from '../types/charts';
+import type { VariableMapping } from '../types/harmonization';
+import { recommendChart } from '../services/chartRecommender';
+import { DeckBuilder } from './DeckBuilder';
 import type {
   AnalysisDescriptor,
+  BuiltDeck,
   DatasetDescription,
   DatasetSummary,
+  DeckExportOptions,
+  DeckSpec,
   EngineOptions,
   EngineRecodeConfig,
   ResultEnvelope,
@@ -148,14 +157,16 @@ export class VelocityEngine {
   static async create(options: EngineOptions = {}): Promise<VelocityEngine> {
     const runtime = options.runtime ?? 'node';
 
+    const dataDir = options.dataDir ?? null;
+
     if (options.adapter) {
-      return new VelocityEngine(options.adapter as DatabaseAdapter, runtime, options.engineVersion ?? 'dev');
+      return new VelocityEngine(options.adapter as DatabaseAdapter, runtime, options.engineVersion ?? 'dev', dataDir);
     }
 
     if (runtime === 'node') {
       const { DuckDBNodeAdapter } = await import('../adapters/DuckDBNodeAdapter');
       const adapter = await DuckDBNodeAdapter.create();
-      return new VelocityEngine(adapter, runtime, options.engineVersion ?? 'dev');
+      return new VelocityEngine(adapter, runtime, options.engineVersion ?? 'dev', dataDir);
     }
 
     throw new VelocityError(
@@ -178,13 +189,15 @@ export class VelocityEngine {
   private constructor(
     private readonly adapter: DatabaseAdapter,
     private readonly runtime: 'node' | 'wasm',
-    private readonly engineVersion: string
+    private readonly engineVersion: string,
+    private readonly dataDir: string | null = null
   ) {}
 
   async loadFile(path: string): Promise<ResultEnvelope<DatasetSummary>> {
     return this.wrap('loadFile', { path, runtime: this.runtime }, async () => {
-      const source = inferDatasetSource(path);
-      const fileName = getBasename(path);
+      const resolvedPath = this.resolveSafePath(path);
+      const source = inferDatasetSource(resolvedPath);
+      const fileName = getBasename(resolvedPath);
       const nodeAdapter = this.adapter as LoadableNodeAdapter;
 
       try {
@@ -193,7 +206,7 @@ export class VelocityEngine {
             throw new VelocityError('FILE_LOAD_FAILED', 'Current adapter does not support SAV file loading.');
           }
 
-          const result = await nodeAdapter.loadSav(path, 'main');
+          const result = await nodeAdapter.loadSav(resolvedPath, 'main');
           this.dataset = {
             id: `dataset-${Date.now()}`,
             name: fileName,
@@ -207,7 +220,7 @@ export class VelocityEngine {
             throw new VelocityError('FILE_LOAD_FAILED', 'Current adapter does not support CSV file loading.');
           }
 
-          const rowCount = await nodeAdapter.loadCSV(path, 'main');
+          const rowCount = await nodeAdapter.loadCSV(resolvedPath, 'main');
           const schema = await this.adapter.query(`PRAGMA table_info('main')`);
           const variables = buildCsvVariables(schema.rows);
 
@@ -232,7 +245,7 @@ export class VelocityEngine {
         };
       } catch (error) {
         if (error instanceof VelocityError) throw error;
-        throw new VelocityError('FILE_LOAD_FAILED', `Failed to load file: ${path}`, error);
+        throw new VelocityError('FILE_LOAD_FAILED', `Failed to load file: ${resolvedPath}`, error);
       }
     });
   }
@@ -487,6 +500,55 @@ export class VelocityEngine {
     return this.getSession();
   }
 
+  // ============================================================================
+  // Deck Building (Phase 2)
+  // ============================================================================
+
+  async buildDeck(spec: DeckSpec): Promise<ResultEnvelope<BuiltDeck>> {
+    return this.wrap('buildDeck', { deckTitle: spec.title, sectionCount: spec.sections.length }, async () => {
+      this.requireDataset();
+      const builder = new DeckBuilder(this);
+      return builder.build(spec);
+    });
+  }
+
+  async exportDeck(deck: BuiltDeck, options: DeckExportOptions): Promise<ResultEnvelope<Uint8Array>> {
+    return this.wrap('exportDeck', { format: options.format, slideCount: deck.slides.length }, async () => {
+      const builder = new DeckBuilder(this);
+      return builder.export(deck, options);
+    });
+  }
+
+  recommendChart(context: Parameters<typeof recommendChart>[0]): ChartRecommendation {
+    return recommendChart(context);
+  }
+
+  // ============================================================================
+  // Harmonization (Phase 2)
+  // ============================================================================
+
+  async proposeMappings(
+    wave1Vars: Variable[],
+    wave2Vars: Variable[]
+  ): Promise<ResultEnvelope<VariableMapping[]>> {
+    return this.wrap('proposeMappings', { wave1Count: wave1Vars.length, wave2Count: wave2Vars.length }, async () => {
+      return autoMatchVariables(wave1Vars, wave2Vars);
+    });
+  }
+
+  async buildHarmonizedTable(
+    sourceTable: string,
+    targetTable: string,
+    mappings: VariableMapping[],
+    sourceVarNames: Record<string, string>,
+    targetVarNames: Record<string, string>
+  ): Promise<ResultEnvelope<{ sql: string }>> {
+    return this.wrap('buildHarmonizedTable', { sourceTable, targetTable, mappingCount: mappings.length }, async () => {
+      const sql = buildHarmonizedTableQuery(sourceTable, targetTable, mappings, sourceVarNames, targetVarNames);
+      return { sql };
+    });
+  }
+
   async importSession(
     session: VelocitySessionFile
   ): Promise<ResultEnvelope<ReturnType<typeof importSessionFile>['diagnostics']>> {
@@ -511,6 +573,38 @@ export class VelocityEngine {
         throw new VelocityError('SESSION_INVALID', 'Failed to import session.', error);
       }
     });
+  }
+
+  private resolveSafePath(inputPath: string): string {
+    if (!this.dataDir) {
+      return inputPath;
+    }
+
+    // Inline resolution to avoid a Node-only `path.resolve` at the top level
+    // (this file must stay platform-portable — no unconditional Node imports).
+    const segments = inputPath.split(/[\\/]/);
+    const resolved = [this.dataDir];
+    for (const seg of segments) {
+      if (seg === '' || seg === '.') continue;
+      if (seg === '..') {
+        throw new VelocityError(
+          'PATH_TRAVERSAL_DENIED',
+          `Path traversal is not allowed: ${inputPath}`
+        );
+      }
+      resolved.push(seg);
+    }
+    const full = resolved.join('/');
+
+    // Reject absolute paths that escape the dataDir
+    if (!full.startsWith(this.dataDir)) {
+      throw new VelocityError(
+        'PATH_TRAVERSAL_DENIED',
+        `Path is outside the allowed data directory: ${inputPath}`
+      );
+    }
+
+    return full;
   }
 
   private resetSessionState(): void {

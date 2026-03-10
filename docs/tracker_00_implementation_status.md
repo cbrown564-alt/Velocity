@@ -59,7 +59,7 @@ S2-STAT-1 through S2-STAT-4 are resolved. S2-EXP-1 and S2-EXP-2 are done. Phase 
 | ID | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | S3-ENG-1 | Engine | VelocityEngine facade, `ResultEnvelope` provenance, headless slide defaults, CLI migration, PPTX export gap closure | S2-EXP-2 | Done | Yes | T,L,U,I,A | 02d54c2, cf3dc13 |
-| S3-MCP-1 | Agent Platform | DeckBuilder, MCP server package, engine tool surface for deck build/export and harmonization | S3-ENG-1 | Not started | Yes | T,L,U,I,A | [design_phase2_mcp_deck_builder.md](docs/design_phase2_mcp_deck_builder.md) |
+| S3-MCP-1 | Agent Platform | DeckBuilder, MCP server package, engine tool surface for deck build/export and harmonization | S3-ENG-1 | Done | Yes | T,L,U,I,A | See evidence below |
 | S3-BROW-1 | Browser | Worker-hosted engine, EngineProxy migration, store slice convergence, App shell decomposition, live agent mode plumbing | S3-MCP-1 | Not started | Yes | T,L,U,I,A | [design_phase3_browser_convergence.md](docs/design_phase3_browser_convergence.md) |
 | S3-SEM-1 | Semantics | Variable semantic annotations, concepts, semantic search, domain-aware recommendations | S3-BROW-1 | Not started | Yes | T,L,U,I,A | [design_phase4_semantic_layer.md](docs/design_phase4_semantic_layer.md) |
 
@@ -112,6 +112,7 @@ Completed work remains documented in git history and prior tracker revisions. Cu
 - Phase 2 charting refactor and weighting application
 - **New Phase 3 critical path defined:** `S3-ENG-1 -> S3-MCP-1 -> S3-BROW-1 -> S3-SEM-1`, based on the March 9, 2026 design briefs for engine extraction, MCP deck building, browser convergence, and semantic layering.
 - **Phase 3 engine foundation complete (S3-ENG-1):** `VelocityEngine`, `ResultEnvelope` provenance wrapping, CLI migration, headless slide default resolution, and PPTX subtitle/notes/section-divider semantics landed in `02d54c2` with Phase 1 review-gap fixes closed in `cf3dc13`.
+- **MCP server + DeckBuilder complete (S3-MCP-1):** `DeckBuilder` class (`src/engine/DeckBuilder.ts`) — batch deck composition with fail-soft per-slide error handling, per-slide filter/weight isolation, automatic title/subtitle/chart-type resolution. `VelocityEngine` extended with `buildDeck`, `exportDeck`, `recommendChart`, `proposeMappings`, `buildHarmonizedTable`, and `dataDir` path sandboxing. MCP server package (`mcp-server/`) with stdio transport, 20 tool definitions covering full lifecycle (load → describe → analyze → build deck → export → harmonize → session). 31 new tests (DeckBuilder: 12, MCP tools: 19). All 63 test files passing.
 - **Export engine closure (S2-EXP-1):** Browser-side PPTX/XLSX export via PptxGenJS, slide-deck-level modal, multi-slide scope selection. All critical and medium bugs resolved; 22 tests passing.
 - Analysis deck interaction foundation (state capture, timeline actions, timeline rail redesign)
 - Workspace expansion: longitudinal support plus batch operations/export-import workflows
