@@ -30,6 +30,8 @@ import { walkOpfs, findOpfsFile } from './opfsTraversal';
 // Re-export types from canonical location for backward compatibility
 export type { WorkerRequest, WorkerResponse, VariableStatsResult, VariableStatsFrequency, NumericStats, PersistedMetadata } from '../types/worker';
 import type { WorkerRequest, WorkerResponse, VariableStatsResult, PersistedMetadata } from '../types/worker';
+import type { EngineWorkerRequest, EngineWorkerResponse } from '../types/engineWorker';
+import { isEngineMessage } from '../types/engineWorker';
 
 const DUCKDB_BUNDLES = getLocalDuckDbBundles();
 
@@ -1290,12 +1292,438 @@ async function fillSystemMissing(column: string, value: number | string): Promis
 }
 
 // ============================================================================
-// Message Handler
+// Engine Protocol Handler (new request-ID-based protocol)
 // ============================================================================
 
-self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
-  const request = event.data;
+function postEngineResponse(response: EngineWorkerResponse): void {
+  self.postMessage(response);
+}
 
+function postEngineTransfer(response: EngineWorkerResponse, transfer: Transferable[]): void {
+  (self as unknown as Worker).postMessage(response, transfer);
+}
+
+async function handleEngineMessage(request: EngineWorkerRequest): Promise<void> {
+  const { requestId } = request;
+
+  try {
+    switch (request.type) {
+      case 'engine.init': {
+        if (request.datasetId || request.schemaVersion) {
+          persistenceContext = {
+            datasetId: request.datasetId,
+            schemaVersion: request.schemaVersion ?? OPFS_SCHEMA_VERSION,
+          };
+        }
+        const initResult = await init(request.forceCleanStart);
+        if (initResult.corruptionDetected) {
+          postEngineResponse({
+            type: 'engine.corruptionDetected',
+            requestId,
+            message: initResult.corruptionMessage || 'OPFS database corruption detected',
+          });
+        }
+        postEngineResponse({
+          type: 'engine.persistenceStatus',
+          requestId,
+          ...getPersistenceStatus(),
+        });
+        postEngineResponse({
+          type: 'engine.ready',
+          requestId,
+          opfsAvailable: initResult.opfsAvailable,
+        });
+        break;
+      }
+
+      case 'engine.ping': {
+        if (!conn) {
+          postEngineResponse({ type: 'engine.pong', requestId, hasData: false });
+        } else {
+          try {
+            const tableCheck = await conn.query(`
+              SELECT COUNT(*) as cnt
+              FROM information_schema.tables
+              WHERE table_name = 'main'
+            `);
+            const tableExists = Number(tableCheck.toArray()[0]?.cnt) > 0;
+            if (tableExists) {
+              const countResult = await conn.query(`SELECT COUNT(*) as cnt FROM main`);
+              const rowCount = Number(countResult.toArray()[0]?.cnt);
+              postEngineResponse({ type: 'engine.pong', requestId, hasData: true, rowCount });
+            } else {
+              postEngineResponse({ type: 'engine.pong', requestId, hasData: false });
+            }
+          } catch {
+            postEngineResponse({ type: 'engine.pong', requestId, hasData: false });
+          }
+        }
+        break;
+      }
+
+      case 'engine.setPersistenceContext': {
+        persistenceContext = {
+          datasetId: request.datasetId,
+          schemaVersion: request.schemaVersion ?? OPFS_SCHEMA_VERSION,
+        };
+        if (!db) {
+          activeDbPath = buildOpfsDbPath(persistenceContext.datasetId, persistenceContext.schemaVersion);
+        }
+        break;
+      }
+
+      case 'engine.updatePersistenceMetadata': {
+        await updateMeta(request.metadata);
+        break;
+      }
+
+      case 'engine.checkPersistedData': {
+        const persistedResult = await checkPersistedData();
+        if (persistedResult.exists) {
+          postEngineResponse({
+            type: 'engine.persistedDataFound',
+            requestId,
+            schema: persistedResult.schema!,
+            rowCount: persistedResult.rowCount!,
+            metadata: persistedResult.metadata || undefined,
+          });
+        } else {
+          postEngineResponse({ type: 'engine.noPersistedData', requestId });
+        }
+        break;
+      }
+
+      case 'engine.clearPersistedData': {
+        await clearPersistedData();
+        postEngineResponse({ type: 'engine.persistedDataCleared', requestId });
+        break;
+      }
+
+      case 'engine.flushPersistedData': {
+        const flushResult = await flushPersistedData();
+        postEngineResponse({
+          type: 'engine.flushComplete',
+          requestId,
+          ok: flushResult.ok,
+          durationMs: flushResult.durationMs,
+          error: flushResult.error,
+        });
+        break;
+      }
+
+      case 'engine.loadCSV': {
+        const csvResult = await loadCSV(request.fileName, request.content);
+        postEngineResponse({
+          type: 'engine.csvLoaded',
+          requestId,
+          schema: csvResult.schema,
+          rowCount: csvResult.rowCount,
+          durationMs: csvResult.durationMs,
+        });
+        break;
+      }
+
+      case 'engine.loadSAV': {
+        let savResult;
+        try {
+          savResult = await loadSAV(request.buffer, request.forceChunked);
+        } catch (error: any) {
+          if (!isWriteModeCommitError(error)) throw error;
+          console.warn('🦆 [Worker/Engine] Detected OPFS write-mode commit failure during SAV load; recovering');
+          await reopenWritableDatabase();
+          try {
+            savResult = await loadSAV(request.buffer.slice(0), request.forceChunked);
+          } catch (retryError: any) {
+            if (!isWriteModeCommitError(retryError)) throw retryError;
+            console.warn('🦆 [Worker/Engine] Retry failed; forcing in-memory');
+            await reopenInMemoryDatabase();
+            savResult = await loadSAV(request.buffer.slice(0), request.forceChunked);
+          }
+        }
+        postEngineResponse({
+          type: 'engine.savLoaded',
+          requestId,
+          variables: savResult.variables,
+          variableSets: savResult.variableSets,
+          rowCount: savResult.rowCount,
+          durationMs: savResult.durationMs,
+        });
+        break;
+      }
+
+      case 'engine.loadSAVMetadata': {
+        const savResult = await loadSAVMetadata(request.buffer);
+        postEngineResponse({
+          type: 'engine.savMetadataLoaded',
+          requestId,
+          variables: savResult.variables,
+          variableSets: savResult.variableSets,
+          rowCount: savResult.rowCount,
+          durationMs: savResult.durationMs,
+        });
+        break;
+      }
+
+      case 'engine.loadSAVSample': {
+        const savResult = await loadSAVSample(request.buffer, request.rowLimit, request.strategy || 'spread');
+        postEngineResponse({
+          type: 'engine.savSampleLoaded',
+          requestId,
+          variables: savResult.variables,
+          variableSets: savResult.variableSets,
+          rowCount: savResult.rowCount,
+          sampleRowCount: savResult.sampleRowCount,
+          sampleStrategy: savResult.sampleStrategy,
+          durationMs: savResult.durationMs,
+        });
+        break;
+      }
+
+      case 'engine.query': {
+        const queryResult = await runQuery(request.sql);
+        postEngineResponse({
+          type: 'engine.queryResult',
+          requestId,
+          data: queryResult.data,
+          durationMs: queryResult.durationMs,
+        });
+        break;
+      }
+
+      case 'engine.getSchema': {
+        const schemaResult = await getSchema();
+        postEngineResponse({ type: 'engine.schema', requestId, data: schemaResult });
+        break;
+      }
+
+      case 'engine.getUniqueValues': {
+        const uniqueVals = await getUniqueValues(request.column);
+        postEngineResponse({ type: 'engine.uniqueValues', requestId, data: uniqueVals });
+        break;
+      }
+
+      case 'engine.getVariableStats': {
+        if (!adapter) throw new Error('DB not initialized');
+        const stats = await coreGetVariableStats(
+          adapter,
+          request.column,
+          request.variableType,
+          request.orderedScoring,
+          request.binCount,
+          request.missingValues,
+        );
+        postEngineResponse({ type: 'engine.variableStats', requestId, stats });
+        break;
+      }
+
+      case 'engine.runCrosstab': {
+        if (!adapter) throw new Error('DB not initialized');
+        const start = performance.now();
+        const crosstabResult = await coreRunCrosstab(
+          adapter,
+          { ...request.options, significanceOptions: request.analysisSettings },
+          request.context,
+        );
+        postEngineResponse({
+          type: 'engine.queryResult',
+          requestId,
+          data: crosstabResult.rows,
+          tableStats: crosstabResult.tableStats,
+          durationMs: performance.now() - start,
+        });
+        break;
+      }
+
+      case 'engine.runAnalysis': {
+        if (!adapter) throw new Error('DB not initialized');
+        const runner = analysisRegistry.get(request.id);
+        if (!runner) throw new Error(`Analysis runner not found: ${request.id}`);
+        const start = performance.now();
+        const result = await runner.run(adapter, request.config);
+        postEngineResponse({
+          type: 'engine.analysisResult',
+          requestId,
+          id: request.id,
+          result: result as Record<string, unknown>,
+          durationMs: performance.now() - start,
+        });
+        break;
+      }
+
+      case 'engine.processData': {
+        const processed = processAnalysisData({
+          data: request.data,
+          ...request.options,
+        });
+        if (!processed) {
+          postEngineResponse({ type: 'engine.processedData', requestId, result: null });
+          break;
+        }
+        let finalResult = processed;
+        if (request.chartType) {
+          const transformed = transformChartData(processed, request.chartType);
+          if (transformed) finalResult = transformed;
+        }
+        postEngineResponse({ type: 'engine.processedData', requestId, result: finalResult });
+        break;
+      }
+
+      case 'engine.recodeVariable': {
+        const newCol = await recodeVariable(request.sourceCol, request.newColName, request.config);
+        postEngineResponse({ type: 'engine.recodeComplete', requestId, newColName: newCol });
+        break;
+      }
+
+      case 'engine.dropColumn': {
+        if (!conn) throw new Error('DB not initialized');
+        await conn.query(`ALTER TABLE main DROP COLUMN "${request.column}"`);
+        postEngineResponse({ type: 'engine.columnDropped', requestId, column: request.column });
+        break;
+      }
+
+      case 'engine.updateColumn': {
+        if (!conn) throw new Error('DB not initialized');
+        await conn.query(`UPDATE main SET "${request.targetCol}" = ${buildCaseSql(request.sourceCol, request.config)}`);
+        postEngineResponse({ type: 'engine.columnUpdated', requestId, column: request.targetCol });
+        break;
+      }
+
+      case 'engine.fillSystemMissing': {
+        await fillSystemMissing(request.column, request.value);
+        postEngineResponse({ type: 'engine.fillSystemMissingComplete', requestId, column: request.column });
+        break;
+      }
+
+      case 'engine.exportArrow': {
+        if (!conn) throw new Error('DB not initialized');
+        const start = performance.now();
+        const result = await conn.query(request.sql);
+        const ipcBuffer = arrow.tableToIPC(result);
+        postEngineTransfer(
+          {
+            type: 'engine.arrowExported',
+            requestId,
+            buffer: ipcBuffer.buffer as ArrayBuffer,
+            rowCount: result.numRows,
+            durationMs: performance.now() - start,
+          },
+          [ipcBuffer.buffer as Transferable],
+        );
+        break;
+      }
+
+      case 'engine.getValueFrequencies': {
+        if (!conn) throw new Error('DuckDB not initialized');
+        const { buildValueFrequencyQuery } = await import('../core/harmonization/harmonizationQueries');
+        const sql = buildValueFrequencyQuery(request.tableName, request.columnName);
+        const result = await conn.query(sql);
+        const rows = result.toArray().map((r: any) => ({
+          value: r.col_value,
+          count: Number(r.count),
+        }));
+        postEngineResponse({
+          type: 'engine.valueFrequencies',
+          requestId,
+          column: request.columnName,
+          frequencies: rows,
+        });
+        break;
+      }
+
+      case 'engine.buildHarmonizedTable': {
+        if (!conn) throw new Error('DuckDB not initialized');
+        const t0 = performance.now();
+        const { buildHarmonizedTableQuery } = await import('../core/harmonization/harmonizationQueries');
+        const sourceVarNames: Record<string, string> = { ...(request.sourceVarNames ?? {}) };
+        const targetVarNames: Record<string, string> = { ...(request.targetVarNames ?? {}) };
+        for (const m of request.mappings) {
+          if (m.sourceVariableId && !sourceVarNames[m.sourceVariableId]) {
+            sourceVarNames[m.sourceVariableId] = m.sourceVariableId;
+          }
+          if (m.targetVariableId && !targetVarNames[m.targetVariableId]) {
+            targetVarNames[m.targetVariableId] = m.targetVariableId;
+          }
+        }
+        const sql = buildHarmonizedTableQuery(
+          request.sourceTable,
+          request.targetTable,
+          request.mappings,
+          sourceVarNames,
+          targetVarNames,
+        );
+        await conn.query(`CREATE OR REPLACE TABLE "${request.outputTableName}" AS (${sql})`);
+        const countResult = await conn.query(`SELECT COUNT(*) as cnt FROM "${request.outputTableName}"`);
+        const rowCount = Number(countResult.toArray()[0]?.cnt ?? 0);
+        postEngineResponse({
+          type: 'engine.harmonizedTableCreated',
+          requestId,
+          tableName: request.outputTableName,
+          rowCount,
+          durationMs: performance.now() - t0,
+        });
+        break;
+      }
+
+      case 'engine.getRespondentOverlap': {
+        if (!conn) throw new Error('DuckDB not initialized');
+        const { buildRespondentOverlapQuery } = await import('../core/harmonization/harmonizationQueries');
+        const sql = buildRespondentOverlapQuery(
+          request.sourceTable,
+          request.targetTable,
+          request.keyColumn,
+        );
+        const result = await conn.query(sql);
+        const row = result.toArray()[0] as any;
+        postEngineResponse({
+          type: 'engine.respondentOverlap',
+          requestId,
+          totalSource: Number(row?.total_source ?? 0),
+          totalTarget: Number(row?.total_target ?? 0),
+          overlap: Number(row?.overlap ?? 0),
+        });
+        break;
+      }
+
+      case 'engine.close': {
+        if (adapter) await adapter.close();
+        postEngineResponse({ type: 'engine.closed', requestId });
+        break;
+      }
+
+      default: {
+        postEngineResponse({
+          type: 'engine.error',
+          requestId,
+          message: `Unknown engine message type: ${(request as any).type}`,
+        });
+      }
+    }
+  } catch (error: any) {
+    console.error('[Worker/Engine] Error:', error);
+    postEngineResponse({
+      type: 'engine.error',
+      requestId,
+      message: error.message || 'Unknown error',
+      code: error.code,
+    });
+  }
+}
+
+// ============================================================================
+// Message Handler (Legacy + Engine Protocol Router)
+// ============================================================================
+
+self.onmessage = async (event: MessageEvent<WorkerRequest | EngineWorkerRequest>) => {
+  const rawRequest = event.data;
+
+  // Route engine-protocol messages to the new handler
+  if (isEngineMessage(rawRequest as { type: string })) {
+    await handleEngineMessage(rawRequest as EngineWorkerRequest);
+    return;
+  }
+
+  // Legacy protocol below — deprecated, will be removed after full migration
+  const request = rawRequest as WorkerRequest;
   try {
     switch (request.type) {
       case 'setPersistenceContext': {
