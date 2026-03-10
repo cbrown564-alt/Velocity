@@ -57,7 +57,7 @@ function makeEngine(overrides: Record<string, unknown> = {}) {
     setWeight: vi.fn(),
     buildDeck: vi.fn().mockResolvedValue({ data: { slides: [], errors: [], spec: {}, buildDurationMs: 1 }, operation: 'buildDeck', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
     exportDeck: vi.fn().mockResolvedValue({ data: new Uint8Array([1, 2, 3]), operation: 'exportDeck', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
-    recommendChart: vi.fn().mockReturnValue({ default: 'horizontal-bar', alternatives: [], reason: 'test' }),
+    recommendChart: vi.fn().mockResolvedValue({ data: { default: 'horizontal-bar', alternatives: [], reason: 'test' }, operation: 'recommendChart', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
     proposeMappings: vi.fn().mockResolvedValue({ data: [], operation: 'proposeMappings', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
     buildHarmonizedTable: vi.fn().mockResolvedValue({ data: { sql: 'SELECT 1' }, operation: 'buildHarmonizedTable', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
     exportSession: vi.fn().mockResolvedValue({ formatVersion: '1.0.0' }),
@@ -221,26 +221,24 @@ describe('velocity_export_deck', () => {
 });
 
 describe('velocity_recommend_chart', () => {
-  it('calls engine.recommendChart and returns recommendation', async () => {
+  it('calls engine.recommendChart with var IDs and returns recommendation', async () => {
     const engine = makeEngine();
     const result = await callTool(engine, 'velocity_recommend_chart', { rowVarIds: ['Q1'] }) as { content: { text: string }[] };
-    expect(engine.recommendChart).toHaveBeenCalled();
+    expect(engine.recommendChart).toHaveBeenCalledWith(['Q1'], null);
     const parsed = JSON.parse(result.content[0].text);
-    expect(parsed).toHaveProperty('default');
+    expect(parsed.data).toHaveProperty('default');
   });
 });
 
 describe('velocity_propose_mappings', () => {
-  it('calls engine.proposeMappings with the resolved Variable objects', async () => {
+  it('calls engine.proposeMappings with the raw variable ID strings', async () => {
     const engine = makeEngine();
     await callTool(engine, 'velocity_propose_mappings', {
       wave1VarIds: ['Q1'],
       wave2VarIds: ['GENDER'],
     });
-    expect(engine.proposeMappings).toHaveBeenCalledWith(
-      expect.arrayContaining([expect.objectContaining({ id: 'Q1' })]),
-      expect.arrayContaining([expect.objectContaining({ id: 'GENDER' })])
-    );
+    // Engine now owns the ID→Variable lookup; MCP layer passes IDs only.
+    expect(engine.proposeMappings).toHaveBeenCalledWith(['Q1'], ['GENDER']);
   });
 });
 

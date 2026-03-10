@@ -10,9 +10,10 @@
 import { processAnalysisData } from '../services/analysisProcessor';
 import { resolveSlideTitle, resolveSlideSubtitle } from '../core/export/resolveSlideDefaults';
 import { recommendChart } from '../services/chartRecommender';
+import { mapCrosstabRows } from '../core/analysis/mapCrosstabRows';
 import { exportPptx, exportXlsx } from '../core/export';
 import type { AnalysisExportItem, ExportConfig } from '../core/export/types';
-import type { AggregatedRow, Filter, Variable } from '../types';
+import type { Filter, Variable } from '../types';
 import type {
   BuiltDeck,
   BuiltSlide,
@@ -38,7 +39,7 @@ interface DeckEngineInterface {
 export class DeckBuilder {
   constructor(private readonly engine: DeckEngineInterface) {}
 
-  async build(spec: DeckSpec): Promise<BuiltDeck> {
+  async build(spec: DeckSpec): Promise<ResultEnvelope<BuiltDeck>> {
     const startTime = performance.now();
     const slides: BuiltSlide[] = [];
     const errors: DeckBuildError[] = [];
@@ -66,11 +67,22 @@ export class DeckBuilder {
       }
     }
 
+    const buildDurationMs = performance.now() - startTime;
+    const deck: BuiltDeck = { spec, slides, errors, buildDurationMs };
+
     return {
-      spec,
-      slides,
-      errors,
-      buildDurationMs: performance.now() - startTime,
+      data: deck,
+      operation: 'buildDeck',
+      inputs: { deckTitle: spec.title, sectionCount: spec.sections.length },
+      durationMs: buildDurationMs,
+      warnings: errors.map((e) => `Slide ${e.slideIndex} (${e.sectionTitle}): ${e.error.message}`),
+      metadata: {
+        datasetName: dataset.name,
+        rowCount: dataset.rowCount,
+        filtersApplied: description.activeFilters.length,
+        isWeighted: description.weightVariable !== null,
+        engineVersion: 'engine',
+      },
     };
   }
 
@@ -108,9 +120,11 @@ export class DeckBuilder {
       weightVar: effectiveWeightVar,
     });
 
-    // Extract rows from the crosstab result
-    const crosstabData = result.data as { rows: AggregatedRow[]; tableStats?: unknown } | null;
-    const rows: AggregatedRow[] = crosstabData?.rows ?? [];
+    // Extract rows from the crosstab result and convert from raw DuckDB format
+    // (rowKey_0, rowKey_1 ...) to AggregatedRow format (rowKeys: string[]).
+    const crosstabData = result.data as { rows: unknown[]; tableStats?: unknown } | null;
+    const rawRows = crosstabData?.rows ?? [];
+    const rows = mapCrosstabRows(rawRows, !!effectiveWeightVar);
 
     // Resolve Variable objects for the slide
     const rowVariables: Variable[] = slideSpec.rowVars

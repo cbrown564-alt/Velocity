@@ -403,38 +403,16 @@ export function registerTools(server: Server, engine: VelocityEngine): void {
         }
 
         case 'velocity_recommend_chart': {
-          const description = engine.describe();
-          const dataset = description.dataset;
-          if (!dataset) {
-            return errorResponse({ code: 'NO_DATASET_LOADED', message: 'No dataset loaded.', details: null });
-          }
           const rowVarIds = Array.isArray(a.rowVarIds) ? (a.rowVarIds as string[]) : [];
-          const rowVars = rowVarIds
-            .map((id) => dataset.variables.find((v) => v.id === id))
-            .filter(Boolean) as never[];
-          const colVar = a.colVarId
-            ? (dataset.variables.find((v) => v.id === a.colVarId) ?? null)
-            : null;
-          const result = engine.recommendChart({ rowVars, colVar });
+          const result = await engine.recommendChart(rowVarIds, (a.colVarId as string | null) ?? null);
           return successResponse(result);
         }
 
         // ---- Harmonization ----
         case 'velocity_propose_mappings': {
-          const description = engine.describe();
-          const dataset = description.dataset;
-          if (!dataset) {
-            return errorResponse({ code: 'NO_DATASET_LOADED', message: 'No dataset loaded.', details: null });
-          }
           const wave1VarIds = Array.isArray(a.wave1VarIds) ? (a.wave1VarIds as string[]) : [];
           const wave2VarIds = Array.isArray(a.wave2VarIds) ? (a.wave2VarIds as string[]) : [];
-          const wave1Vars = wave1VarIds
-            .map((id) => dataset.variables.find((v) => v.id === id))
-            .filter(Boolean) as never[];
-          const wave2Vars = wave2VarIds
-            .map((id) => dataset.variables.find((v) => v.id === id))
-            .filter(Boolean) as never[];
-          const result = await engine.proposeMappings(wave1Vars, wave2Vars);
+          const result = await engine.proposeMappings(wave1VarIds, wave2VarIds);
           return successResponse(result);
         }
 

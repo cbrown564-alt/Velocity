@@ -505,11 +505,20 @@ export class VelocityEngine {
   // ============================================================================
 
   async buildDeck(spec: DeckSpec): Promise<ResultEnvelope<BuiltDeck>> {
-    return this.wrap('buildDeck', { deckTitle: spec.title, sectionCount: spec.sections.length }, async () => {
-      this.requireDataset();
-      const builder = new DeckBuilder(this);
-      return builder.build(spec);
-    });
+    this.requireDataset();
+    const builder = new DeckBuilder(this);
+    const envelope = await builder.build(spec);
+    // Enrich with engine-level metadata (accurate filter count, weight state, version)
+    return {
+      ...envelope,
+      metadata: {
+        datasetName: this.dataset?.name ?? 'unloaded',
+        rowCount: this.dataset?.rowCount ?? 0,
+        filtersApplied: this.activeFilters.length,
+        isWeighted: !!this.dataset?.weightVariable,
+        engineVersion: this.engineVersion,
+      },
+    };
   }
 
   async exportDeck(deck: BuiltDeck, options: DeckExportOptions): Promise<ResultEnvelope<Uint8Array>> {
@@ -519,8 +528,22 @@ export class VelocityEngine {
     });
   }
 
-  recommendChart(context: Parameters<typeof recommendChart>[0]): ChartRecommendation {
-    return recommendChart(context);
+  async recommendChart(
+    rowVarIds: string[],
+    colVarId?: string | null
+  ): Promise<ResultEnvelope<ChartRecommendation>> {
+    return this.wrap('recommendChart', { rowVarIds, colVarId: colVarId ?? null }, async () => {
+      const dataset = this.requireDataset();
+      const rowVars = rowVarIds.map((id) => {
+        const v = dataset.variables.find((variable) => variable.id === id);
+        if (!v) throw new VelocityError('INVALID_VARIABLE', `Unknown variable: ${id}`);
+        return v;
+      });
+      const colVar = colVarId
+        ? (dataset.variables.find((v) => v.id === colVarId) ?? null)
+        : null;
+      return recommendChart({ rowVars, colVar });
+    });
   }
 
   // ============================================================================
@@ -528,10 +551,21 @@ export class VelocityEngine {
   // ============================================================================
 
   async proposeMappings(
-    wave1Vars: Variable[],
-    wave2Vars: Variable[]
+    wave1VarIds: string[],
+    wave2VarIds: string[]
   ): Promise<ResultEnvelope<VariableMapping[]>> {
-    return this.wrap('proposeMappings', { wave1Count: wave1Vars.length, wave2Count: wave2Vars.length }, async () => {
+    return this.wrap('proposeMappings', { wave1Count: wave1VarIds.length, wave2Count: wave2VarIds.length }, async () => {
+      const dataset = this.requireDataset();
+      const wave1Vars = wave1VarIds.map((id) => {
+        const v = dataset.variables.find((variable) => variable.id === id);
+        if (!v) throw new VelocityError('INVALID_VARIABLE', `Unknown wave1 variable: ${id}`);
+        return v;
+      });
+      const wave2Vars = wave2VarIds.map((id) => {
+        const v = dataset.variables.find((variable) => variable.id === id);
+        if (!v) throw new VelocityError('INVALID_VARIABLE', `Unknown wave2 variable: ${id}`);
+        return v;
+      });
       return autoMatchVariables(wave1Vars, wave2Vars);
     });
   }
@@ -596,8 +630,9 @@ export class VelocityEngine {
     }
     const full = resolved.join('/');
 
-    // Reject absolute paths that escape the dataDir
-    if (!full.startsWith(this.dataDir)) {
+    // Reject paths that are not within dataDir.
+    // Must use trailing-slash check to prevent /data2/file from passing when dataDir=/data.
+    if (!full.startsWith(this.dataDir + '/')) {
       throw new VelocityError(
         'PATH_TRAVERSAL_DENIED',
         `Path is outside the allowed data directory: ${inputPath}`

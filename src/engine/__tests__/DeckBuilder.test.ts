@@ -55,11 +55,12 @@ const MOCK_DESCRIPTION: DatasetDescription = {
   weightVariable: null,
 };
 
-// Correct AggregatedRow format: rowKeys is string[], colKey is the column key
+// Raw DuckDB crosstab format: rowKey_0, rowKey_1, ... colKey, count, weightedCount.
+// DeckBuilder calls mapCrosstabRows() to convert this to AggregatedRow format.
 const DEFAULT_ROWS = [
-  { rowKeys: ['1'], colKey: 'Total', count: 100, weightedCount: 100 },
-  { rowKeys: ['2'], colKey: 'Total', count: 200, weightedCount: 200 },
-  { rowKeys: ['3'], colKey: 'Total', count: 200, weightedCount: 200 },
+  { rowKey_0: '1', colKey: 'Total', count: 100, weightedCount: 100 },
+  { rowKey_0: '2', colKey: 'Total', count: 200, weightedCount: 200 },
+  { rowKey_0: '3', colKey: 'Total', count: 200, weightedCount: 200 },
 ];
 
 function makeCrosstabEnvelope(rows: unknown[] = DEFAULT_ROWS): ResultEnvelope<unknown> {
@@ -109,14 +110,15 @@ describe('DeckBuilder.build()', () => {
       ],
     };
 
-    const deck = await builder.build(spec);
+    const envelope = await builder.build(spec);
 
-    expect(deck.spec).toBe(spec);
-    expect(deck.slides).toHaveLength(1);
-    expect(deck.errors).toHaveLength(0);
-    expect(deck.buildDurationMs).toBeGreaterThanOrEqual(0);
-    expect(deck.slides[0].sectionTitle).toBe('Section A');
-    expect(deck.slides[0].resolvedTitle).toBe('Overall Satisfaction');
+    expect(envelope.operation).toBe('buildDeck');
+    expect(envelope.data.spec).toBe(spec);
+    expect(envelope.data.slides).toHaveLength(1);
+    expect(envelope.data.errors).toHaveLength(0);
+    expect(envelope.data.buildDurationMs).toBeGreaterThanOrEqual(0);
+    expect(envelope.data.slides[0].sectionTitle).toBe('Section A');
+    expect(envelope.data.slides[0].resolvedTitle).toBe('Overall Satisfaction');
   });
 
   it('builds a multi-section deck with correct slide count and section titles', async () => {
@@ -130,13 +132,13 @@ describe('DeckBuilder.build()', () => {
       ],
     };
 
-    const deck = await builder.build(spec);
+    const envelope = await builder.build(spec);
 
-    expect(deck.slides).toHaveLength(3);
-    expect(deck.slides[0].sectionTitle).toBe('Demographics');
-    expect(deck.slides[1].sectionTitle).toBe('Demographics');
-    expect(deck.slides[2].sectionTitle).toBe('Satisfaction');
-    expect(deck.errors).toHaveLength(0);
+    expect(envelope.data.slides).toHaveLength(3);
+    expect(envelope.data.slides[0].sectionTitle).toBe('Demographics');
+    expect(envelope.data.slides[1].sectionTitle).toBe('Demographics');
+    expect(envelope.data.slides[2].sectionTitle).toBe('Satisfaction');
+    expect(envelope.data.errors).toHaveLength(0);
   });
 
   it('records error for slide with invalid variable and continues building other slides', async () => {
@@ -158,13 +160,13 @@ describe('DeckBuilder.build()', () => {
       ],
     };
 
-    const deck = await builder.build(spec);
+    const envelope = await builder.build(spec);
 
-    expect(deck.errors).toHaveLength(1);
-    expect(deck.errors[0].slideIndex).toBe(0);
-    expect(deck.errors[0].error.code).toBe('INVALID_VARIABLE');
-    expect(deck.slides).toHaveLength(1);
-    expect(deck.slides[0].spec.rowVars).toEqual(['Q1']);
+    expect(envelope.data.errors).toHaveLength(1);
+    expect(envelope.data.errors[0].slideIndex).toBe(0);
+    expect(envelope.data.errors[0].error.code).toBe('INVALID_VARIABLE');
+    expect(envelope.data.slides).toHaveLength(1);
+    expect(envelope.data.slides[0].spec.rowVars).toEqual(['Q1']);
   });
 
   it('uses slide-level filters when provided (does not mix with global filters)', async () => {
@@ -234,26 +236,26 @@ describe('DeckBuilder.build()', () => {
     const engine = makeMockEngine();
     const builder = new DeckBuilder(engine);
 
-    const deck = await builder.build({
+    const envelope = await builder.build({
       title: 'T',
       sections: [{ title: 'S', slides: [{ rowVars: ['Q1'], title: 'My Custom Title' }] }],
     });
 
-    expect(deck.slides[0].resolvedTitle).toBe('My Custom Title');
+    expect(envelope.data.slides[0].resolvedTitle).toBe('My Custom Title');
   });
 
   it('auto-generates title from variable labels when no title specified', async () => {
     const engine = makeMockEngine();
     const builder = new DeckBuilder(engine);
 
-    const deck = await builder.build({
+    const envelope = await builder.build({
       title: 'T',
       sections: [{ title: 'S', slides: [{ rowVars: ['Q1'], colVar: 'GENDER' }] }],
     });
 
     // resolveSlideTitle returns "Overall Satisfaction by Gender"
-    expect(deck.slides[0].resolvedTitle).toContain('Overall Satisfaction');
-    expect(deck.slides[0].resolvedTitle).toContain('Gender');
+    expect(envelope.data.slides[0].resolvedTitle).toContain('Overall Satisfaction');
+    expect(envelope.data.slides[0].resolvedTitle).toContain('Gender');
   });
 
   it('throws DECK_BUILD_FAILED wrapping non-VelocityError exceptions', async () => {
@@ -261,13 +263,13 @@ describe('DeckBuilder.build()', () => {
     const engine = makeMockEngine({ runAnalysis });
     const builder = new DeckBuilder(engine);
 
-    const deck = await builder.build({
+    const envelope = await builder.build({
       title: 'T',
       sections: [{ title: 'S', slides: [{ rowVars: ['Q1'] }] }],
     });
 
-    expect(deck.errors).toHaveLength(1);
-    expect(deck.errors[0].error.code).toBe('DECK_BUILD_FAILED');
+    expect(envelope.data.errors).toHaveLength(1);
+    expect(envelope.data.errors[0].error.code).toBe('DECK_BUILD_FAILED');
   });
 
   it('throws NO_DATASET_LOADED when no dataset is in engine', async () => {
@@ -294,14 +296,14 @@ describe('DeckBuilder.export()', () => {
     // Build a minimal deck with processed data so we can test export routing
     const engine = makeMockEngine();
     const builder = new DeckBuilder(engine);
-    const deck = await builder.build({
+    const envelope = await builder.build({
       title: 'Export Test',
       sections: [{ title: 'S', slides: [{ rowVars: ['Q1'] }] }],
     });
 
     // export() should not throw even if pptxgenjs isn't fully available in test env
     await expect(
-      builder.export(deck, { format: 'pptx' })
+      builder.export(envelope.data, { format: 'pptx' })
     ).resolves.toBeInstanceOf(Uint8Array);
 
     spy.mockRestore();
@@ -310,13 +312,13 @@ describe('DeckBuilder.export()', () => {
   it('throws UNSUPPORTED_FORMAT for unknown formats', async () => {
     const engine = makeMockEngine();
     const builder = new DeckBuilder(engine);
-    const deck = await builder.build({
+    const envelope = await builder.build({
       title: 'T',
       sections: [{ title: 'S', slides: [{ rowVars: ['Q1'] }] }],
     });
 
     await expect(
-      builder.export(deck, { format: 'docx' as 'pptx' })
+      builder.export(envelope.data, { format: 'docx' as 'pptx' })
     ).rejects.toMatchObject({ code: 'UNSUPPORTED_FORMAT' });
   });
 });
