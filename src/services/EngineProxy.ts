@@ -179,6 +179,13 @@ export class EngineProxy {
     ) as Promise<EngineResponseByType<'engine.queryResult'>>;
   }
 
+  async getSchema(): Promise<EngineResponseByType<'engine.schema'>> {
+    return this.send(
+      { type: 'engine.getSchema' },
+      'engine.schema'
+    ) as Promise<EngineResponseByType<'engine.schema'>>;
+  }
+
   async getUniqueValues(column: string): Promise<EngineResponseByType<'engine.uniqueValues'>> {
     return this.send(
       { type: 'engine.getUniqueValues', column },
