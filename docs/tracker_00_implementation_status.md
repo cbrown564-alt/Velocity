@@ -60,7 +60,7 @@ S2-STAT-1 through S2-STAT-4 are resolved. S2-EXP-1 and S2-EXP-2 are done. Phase 
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | S3-ENG-1 | Engine | VelocityEngine facade, `ResultEnvelope` provenance, headless slide defaults, CLI migration, PPTX export gap closure | S2-EXP-2 | Done | Yes | T,L,U,I,A | 02d54c2, cf3dc13 |
 | S3-MCP-1 | Agent Platform | DeckBuilder, MCP server package, engine tool surface for deck build/export and harmonization | S3-ENG-1 | Done | Yes | T,L,U,I,A | See evidence below |
-| S3-BROW-1 | Browser | Worker-hosted engine, EngineProxy migration, store slice convergence, App shell decomposition, live agent mode plumbing | S3-MCP-1 | Not started | Yes | T,L,U,I,A | [design_phase3_browser_convergence.md](docs/design_phase3_browser_convergence.md) |
+| S3-BROW-1 | Browser | Worker-hosted engine, EngineProxy migration, store slice convergence, App shell decomposition, live agent mode plumbing | S3-MCP-1 | Done | Yes | T,L,U,I,A | d3c33a3..5576abc (EngineProxy + slice migration + legacy removal + App decomposition + AgentBridge scaffold) |
 | S3-SEM-1 | Semantics | Variable semantic annotations, concepts, semantic search, domain-aware recommendations | S3-BROW-1 | Not started | Yes | T,L,U,I,A | [design_phase4_semantic_layer.md](docs/design_phase4_semantic_layer.md) |
 
 ### 4.2 Next (Phase 4)
