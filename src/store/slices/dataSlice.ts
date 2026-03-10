@@ -6,7 +6,7 @@
  */
 
 import type { StateCreator } from 'zustand';
-import type { WorkerRequest, WorkerResponse, VariableStatsResult } from '../../types/worker';
+import type { VariableStatsResult } from '../../types/worker';
 import type { OrderedScoring, OrderedStyle, RecodeConfig, VariableType } from '../../types';
 import { allowsNumericStats, normalizeVariableType } from '../../types';
 import * as opfsFileManager from '../../services/opfsFileManager';
@@ -189,7 +189,6 @@ export interface PersistedDataInfo {
 
 export interface DataSlice {
     // State
-    worker: Worker | null;
     engineProxy: EngineProxy | null;
     isDbReady: boolean;
     initError: string | null;
@@ -252,7 +251,6 @@ export interface DataSlice {
 
 export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set, get) => ({
     // Initial state
-    worker: null,
     engineProxy: null,
     isDbReady: false,
     initError: null,
@@ -312,7 +310,7 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                 },
             });
 
-            set({ worker, engineProxy: proxy, persistenceState: 'checking' });
+            set({ engineProxy: proxy, persistenceState: 'checking' });
 
             const datasetId = get().dataset?.id;
             const result = await proxy.init({ datasetId, schemaVersion: 1 });
@@ -346,7 +344,6 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
             console.log('[DataSlice] Engine terminated');
         }
         set({
-            worker: null,
             engineProxy: null,
             isDbReady: false,
             initError: null
@@ -386,7 +383,7 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                 },
             });
 
-            set({ worker, engineProxy: proxy });
+            set({ engineProxy: proxy });
 
             const datasetId = get().dataset?.id;
             const result = await proxy.init({

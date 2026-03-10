@@ -8,9 +8,8 @@ import { createHarmonizationSlice, type HarmonizationSlice } from './harmonizati
 import { wave1Variables, wave2Variables } from '../../test/fixtures/harmonization';
 
 function createTestStore() {
-  return create<HarmonizationSlice & { worker: Worker | null; engineProxy: any }>()((...args) => ({
+  return create<HarmonizationSlice & { engineProxy: any }>()((...args) => ({
     ...createHarmonizationSlice(...args),
-    worker: null,
     engineProxy: null,
   }));
 }

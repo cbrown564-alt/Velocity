@@ -267,7 +267,7 @@ export default function App() {
     persistenceMode,
     persistenceError,
     activeDbPath,
-    worker,
+    engineProxy,
     persistenceState,
     persistedDataInfo,
     initWorker,
@@ -1075,15 +1075,12 @@ export default function App() {
   const materializedDatasetTables = useRef<Set<string>>(new Set());
 
   const materializeDatasetTable = useCallback((datasetId: string) => {
-    if (!worker) return;
+    if (!engineProxy) return;
     const tableName = datasetTableName(datasetId);
     if (materializedDatasetTables.current.has(tableName)) return;
     materializedDatasetTables.current.add(tableName);
-    worker.postMessage({
-      type: 'query',
-      sql: `CREATE OR REPLACE TABLE "${tableName}" AS SELECT * FROM main`,
-    });
-  }, [worker]);
+    engineProxy.query(`CREATE OR REPLACE TABLE "${tableName}" AS SELECT * FROM main`);
+  }, [engineProxy]);
 
   // Register current dataset in workspace when loaded
   // Note: We use a ref to track registration to avoid dependency on workspace.datasets

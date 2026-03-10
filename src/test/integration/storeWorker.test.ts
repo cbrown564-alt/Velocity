@@ -7,7 +7,6 @@ describe('Integration: Store <-> EngineProxy Analysis Flow', () => {
 
     beforeEach(() => {
         useVelocityStore.setState({
-            worker: null,
             engineProxy: null,
             dataset: null,
             variableSets: [],

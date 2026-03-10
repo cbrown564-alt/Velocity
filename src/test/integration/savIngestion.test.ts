@@ -7,7 +7,6 @@ describe('Integration: SAV Ingestion Flow', () => {
 
     beforeEach(() => {
         useVelocityStore.setState({
-            worker: null,
             engineProxy: null,
             dataset: null,
             variableSets: [],

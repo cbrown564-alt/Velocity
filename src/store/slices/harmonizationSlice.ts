@@ -72,7 +72,7 @@ const initialHarmonizationState = {
 // ============================================================================
 
 export const createHarmonizationSlice: StateCreator<
-  HarmonizationSlice & Pick<DataSlice, 'worker' | 'engineProxy'>,
+  HarmonizationSlice & Pick<DataSlice, 'engineProxy'>,
   [],
   [],
   HarmonizationSlice
