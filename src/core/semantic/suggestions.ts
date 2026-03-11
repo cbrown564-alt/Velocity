@@ -28,6 +28,21 @@ interface AnnotatedVar {
  * Suggest analyses given a set of variable IDs and their annotations.
  * Returns suggestions ranked by priority.
  */
+/**
+ * Return true if a variable's type suggests it is categorical/demographic
+ * even when semantic annotation is absent. Used as a fallback for unannotated
+ * datasets so the suggestion engine can still produce crosstab recommendations.
+ */
+function isCategoricalByType(v: AnnotatedVar): boolean {
+  const t = v.variable.type;
+  // nominal/categorical types with value labels are almost always cross-break candidates
+  return (
+    (t === 'nominal' || t === 'categorical' || t === 'ordinal') &&
+    v.variable.valueLabels.length > 0 &&
+    v.variable.valueLabels.length <= 12  // avoid high-cardinality open-codes
+  );
+}
+
 export function suggestAnalyses(annotatedVars: AnnotatedVar[]): AnalysisSuggestion[] {
   const suggestions: AnalysisSuggestion[] = [];
 
@@ -49,6 +64,29 @@ export function suggestAnalyses(annotatedVars: AnnotatedVar[]): AnalysisSuggesti
   const identifiers = annotatedVars.filter(
     (v) => v.annotation?.measurementIntent === 'identifier'
   );
+
+  // ── Crosstab-first fallback for unannotated or sparsely-annotated datasets ──
+  // When annotation coverage is low, use variable type to detect a potential
+  // cross-break variable and generate a crosstab suggestion regardless of annotation.
+  // This ensures agents get actionable output even before semantic enrichment.
+  const unannotated = annotatedVars.filter((v) => !v.annotation);
+  if (unannotated.length > 0 && (attitudes.length === 0 || demographics.length === 0)) {
+    const categoricals = annotatedVars.filter(isCategoricalByType);
+    const nonCategoricals = annotatedVars.filter(
+      (v) => !isCategoricalByType(v) && v.annotation?.measurementIntent !== 'identifier' && v.annotation?.measurementIntent !== 'weight'
+    );
+
+    if (categoricals.length > 0 && nonCategoricals.length > 0) {
+      const breakVar = categoricals[0].variable;
+      const outcomeVars = nonCategoricals.slice(0, 3).map((v) => v.variable.id);
+      suggestions.push({
+        analysisType: 'crosstab',
+        config: { rowVars: outcomeVars, colVar: breakVar.id },
+        rationale: `Crosstab: outcomes by "${breakVar.label || breakVar.name}" (type-based fallback — annotate variables for richer suggestions).`,
+        priority: 'high',
+      });
+    }
+  }
 
   // Attitude × Demographic → crosstab
   if (attitudes.length > 0 && demographics.length > 0) {

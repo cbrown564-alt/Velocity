@@ -162,6 +162,68 @@ const DEMOGRAPHIC_LABEL_KEYWORDS = [
   /\bmarital\b/i,
 ];
 
+/**
+ * Health/clinical domain label keyword patterns.
+ * Matches common survey instrument prefixes, scale names, and symptom labels.
+ * Covers: ESS, HADS, PHQ, GAD, SF-36, WHOQOL, and generic clinical outcomes.
+ */
+const HEALTH_LABEL_KEYWORDS: RegExp[] = [
+  // Named instruments — matched by variable name prefix or label
+  /\bess\b/i,           // Epworth Sleepiness Scale
+  /\bhads\b/i,          // Hospital Anxiety and Depression Scale
+  /\bphq\b/i,           // Patient Health Questionnaire
+  /\bgad\b/i,           // Generalised Anxiety Disorder scale
+  /\bsf.?36\b/i,        // SF-36 health survey
+  /\bwhoqol\b/i,        // WHO Quality of Life
+  /\bsas\b/i,           // Zung Self-Rating Anxiety Scale
+
+  // Symptom/outcome domains
+  /\banxiet/i,
+  /\bdepress/i,
+  /\bfatigue\b/i,
+  /\bstress/i,
+  /\bpain\b/i,
+  /\binsomni/i,
+  /\bsleepless/i,
+
+  // Sleep-specific
+  /\bsleep\b/i,
+  /\bsleepy/i,
+  /\bdrowsy/i,
+  /\bsomnolen/i,
+  /\bslumber\b/i,
+
+  // Quality of life / wellbeing
+  /\bwellbeing\b/i,
+  /\bquality\s+of\s+life\b/i,
+  /\bqol\b/i,
+  /\bhealth\s+status\b/i,
+
+  // Functional status
+  /\bfunction/i,
+  /\bdisabilit/i,
+  /\bimpairment\b/i,
+];
+
+const HEALTH_NAME_PATTERNS: RegExp[] = [
+  /^ess\d*/i,
+  /^hads/i,
+  /^phq\d*/i,
+  /^gad\d*/i,
+  /^sf\d+/i,
+  /^qol/i,
+  /^sleep/i,
+  /^anxiet/i,
+  /^depress/i,
+  /^fatigue/i,
+  /^stress/i,
+  /^niteshft$/i,          // night-shift (common in sleep studies)
+  /^quals?leep/i,         // quality sleep
+  /^satissleep/i,         // satisfied with sleep
+  /^trouble.*(sleep|fall|stay)/i,
+  /^hours.*(sleep|bed|night)/i,
+];
+
 const CLASSIFICATION_NAME_PATTERNS = [
   /^brand/i,
   /^product/i,
@@ -295,6 +357,19 @@ function detectAnnotation(variable: Variable, inGridSet: boolean): RuleMatch | n
       confidence = 0.6;
       intent = 'classification';
       topic = 'brand_classification';
+    }
+  }
+
+  // Rule 10 — Health/clinical domain (name pattern or label keyword)
+  // Fires at lower confidence so domain-specific rules can still override.
+  const healthNameMatch = HEALTH_NAME_PATTERNS.some((p) => p.test(variable.name));
+  const healthLabelMatch = HEALTH_LABEL_KEYWORDS.some((p) => p.test(label));
+  if (healthNameMatch || healthLabelMatch) {
+    const healthConfidence = healthNameMatch ? 0.72 : 0.65;
+    if (confidence < healthConfidence) {
+      confidence = healthConfidence;
+      intent = 'attitude';
+      topic = 'health_wellbeing';
     }
   }
 

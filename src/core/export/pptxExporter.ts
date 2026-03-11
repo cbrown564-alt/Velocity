@@ -1,4 +1,10 @@
-import PptxGenJS from 'pptxgenjs';
+// Dynamic import handles both Vite's bundled ESM context and Node.js CJS interop
+// (tsx/Node wraps CJS modules differently — .default ?? module guards against both)
+async function getPptxGenJS() {
+  const mod = await import('pptxgenjs');
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return (mod.default ?? mod) as any;
+}
 import { ExportConfig, AnalysisExportItem } from './types';
 import { ProcessedRow, ProcessedColumn, ProcessedCell } from '../../types/processedData';
 import type { SlideSection } from '../../types/slides';
@@ -292,6 +298,7 @@ function normalizeColor(color: string): string {
 }
 
 export async function exportPptx(config: ExportConfig): Promise<Uint8Array> {
+  const PptxGenJS = await getPptxGenJS();
   const pptx = new PptxGenJS();
   pptx.layout = 'LAYOUT_WIDE';
 
