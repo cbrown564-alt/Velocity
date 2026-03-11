@@ -403,7 +403,7 @@ export class VelocityEngine {
             return {
               ...(result as Record<string, unknown>),
               rows: this.resolveValueLabelsInRows(
-                (result as { rows: import('../types').AggregatedRow[] }).rows,
+                (result as { rows: Record<string, unknown>[] }).rows,
                 rowVariables,
                 colVariable
               ),
@@ -951,15 +951,16 @@ export class VelocityEngine {
   }
 
   /**
-   * Replace raw integer codes in AggregatedRow rowKeys/colKey with human-readable
-   * value labels. Used by runAnalysis when resolveLabels:true is requested.
+   * Replace raw integer codes in crosstab rows with human-readable value labels.
+   * Operates on the raw DuckDB format returned by runCrosstab: rows have flat
+   * rowKey_0, rowKey_1, ... and colKey fields (not the mapped AggregatedRow format).
    * Falls back to the original code string when no label exists.
    */
   private resolveValueLabelsInRows(
-    rows: import('../types').AggregatedRow[],
+    rows: Record<string, unknown>[],
     rowVariables: Variable[],
     colVariable: Variable | null
-  ): import('../types').AggregatedRow[] {
+  ): Record<string, unknown>[] {
     const buildLabelMap = (variable: Variable): Map<string, string> => {
       const m = new Map<string, string>();
       for (const vl of variable.valueLabels) {
@@ -971,11 +972,19 @@ export class VelocityEngine {
     const rowMaps = rowVariables.map(buildLabelMap);
     const colMap = colVariable ? buildLabelMap(colVariable) : null;
 
-    return rows.map((row) => ({
-      ...row,
-      rowKeys: row.rowKeys.map((key, i) => rowMaps[i]?.get(key) ?? key),
-      colKey: colMap?.get(row.colKey) ?? row.colKey,
-    }));
+    return rows.map((row) => {
+      const resolved: Record<string, unknown> = { ...row };
+      rowVariables.forEach((_, i) => {
+        const key = `rowKey_${i}`;
+        if (key in resolved) {
+          resolved[key] = rowMaps[i]?.get(String(resolved[key])) ?? resolved[key];
+        }
+      });
+      if (colMap && 'colKey' in resolved) {
+        resolved['colKey'] = colMap.get(String(resolved['colKey'])) ?? resolved['colKey'];
+      }
+      return resolved;
+    });
   }
 }
 

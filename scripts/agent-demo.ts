@@ -144,6 +144,7 @@ async function main() {
     const crosstabResult = await engine.runAnalysis('crosstab', {
       rowVars: [qualSleep.id],
       colVar: sex.id,
+      resolveLabels: true,
       analysisSettings: {
         significanceLevel: 0.05,
         applyCorrections: false,
@@ -187,6 +188,7 @@ async function main() {
     const essResult = await engine.runAnalysis('crosstab', {
       rowVars: [ess.id],
       colVar: marital.id,
+      resolveLabels: true,
     });
 
     if (essResult.error) {
@@ -194,6 +196,14 @@ async function main() {
     } else {
       const rows = (essResult.data as { rows: unknown[] })?.rows ?? [];
       console.log(`  ✓ ${rows.length} rows, ${essResult.durationMs}ms`);
+      if (rows.length > 0) {
+        console.log('\n  Sample rows (rowKeys resolved):');
+        for (const row of rows.slice(0, 6)) {
+          const r = row as Record<string, unknown>;
+          const rowKeys = Array.isArray(r.rowKeys) ? r.rowKeys.join(' / ') : String(r.rowKeys ?? '');
+          console.log(`  rowKeys: [${rowKeys}]  colKey: ${r.colKey}  count: ${r.count}`);
+        }
+      }
     }
   }
 
