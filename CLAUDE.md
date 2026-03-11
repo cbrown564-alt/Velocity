@@ -269,6 +269,7 @@ PPTX and XLSX export via `src/core/export/`:
 
 **Historical (fixed):**
 1. **Dual DuckDB Instance Bug (FIXED in Milestone 1.7):** Never create DuckDB instances outside the worker. `src/services/duckDb.ts` is deprecated.
+2. **ReadStat WASM Vercel Build Failure (RECURRING):** Dynamic `import('../dist/readstat.js')` inside `packages/readstat-wasm/ts/index.ts` must use `/* @vite-ignore */` or Rollup will fail to resolve it at build time. Every occurrence of `import('...readstat.js')` in that file needs the comment. This has broken Vercel at least twice — check this file if the build error is `Could not resolve "../dist/readstat.js"`.
 
 **Ongoing architectural constraints:**
 2. **Variable Type Detection:** Variables with value labels should be `nominal`, not `scale` (even if numeric codes).

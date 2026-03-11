@@ -260,7 +260,7 @@ export async function initReadStat(): Promise<void> {
     modulePromise = (async () => {
         if (isNodeRuntime()) {
             try {
-                const imported = await import('../dist/readstat.js');
+                const imported = await import(/* @vite-ignore */ '../dist/readstat.js');
                 const moduleFactory = (imported as { default: () => Promise<ReadStatModule> }).default;
                 const instance = await moduleFactory();
                 moduleInstance = instance;
