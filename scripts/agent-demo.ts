@@ -197,11 +197,10 @@ async function main() {
       const rows = (essResult.data as { rows: unknown[] })?.rows ?? [];
       console.log(`  ✓ ${rows.length} rows, ${essResult.durationMs}ms`);
       if (rows.length > 0) {
-        console.log('\n  Sample rows (rowKeys resolved):');
+        console.log('\n  Sample rows (rowKey_0 resolved):');
         for (const row of rows.slice(0, 6)) {
           const r = row as Record<string, unknown>;
-          const rowKeys = Array.isArray(r.rowKeys) ? r.rowKeys.join(' / ') : String(r.rowKeys ?? '');
-          console.log(`  rowKeys: [${rowKeys}]  colKey: ${r.colKey}  count: ${r.count}`);
+          console.log(`  rowKey_0: ${r.rowKey_0}  colKey: ${r.colKey}  mean: ${r.mean}  n: ${r.count ?? r.n}`);
         }
       }
     }

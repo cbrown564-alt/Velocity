@@ -247,6 +247,22 @@ export async function runCrosstab(
         modifiedOptions.measureLabel = lastRowVar.label || lastRowVar.name;
       }
       modifiedOptions.rowVars = modifiedOptions.rowVars.slice(0, -1);
+
+      // Coerce to "profile grid" orientation when the numeric variable was the
+      // sole rowVar: promote the colVar to rowVar so the categorical variable
+      // becomes the row grouping and the metric becomes the column header.
+      //
+      // Before: rowVars=[], colVar=marital, measureVar=ess
+      //   SQL → SELECT 'ess' as rowKey_0, marital as colKey, AVG(ess) GROUP BY marital
+      //   Pivot → 1 row ('ess') × N marital columns  ← semantically inverted
+      //
+      // After:  rowVars=[marital], colVar=null, measureVar=ess
+      //   SQL → SELECT marital as rowKey_0, 'ess' as colKey, AVG(ess) GROUP BY marital
+      //   Pivot → N marital rows × 1 metric column  ← correct orientation
+      if (modifiedOptions.rowVars.length === 0 && modifiedOptions.colVar) {
+        modifiedOptions.rowVars = [modifiedOptions.colVar];
+        modifiedOptions.colVar = null;
+      }
     }
   }
 

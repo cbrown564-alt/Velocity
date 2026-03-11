@@ -14,7 +14,17 @@
       "Bash(npm run:*)",
       "Bash(grep:*)",
       "Bash(python3:*)",
-      "Bash(find /Users/cobro/Code/Velocity/docs -name \"*.md\" -type f 2>/dev/null | sort)"
+      "Bash(find /Users/cobro/Code/Velocity/docs -name \"*.md\" -type f 2>/dev/null | sort)",
+      "Bash(ls scripts/ 2>/dev/null || echo \"no scripts dir\"; which tsx 2>/dev/null || npx tsx --version 2>/dev/null | head -3)",
+      "Bash(npx tsx:*)",
+      "Bash(node -e \"import\\('pptxgenjs'\\).then\\(m => console.log\\(Object.keys\\(m\\)\\)\\)\" 2>&1)",
+      "Bash(node -e \"import\\('pptxgenjs'\\).then\\(m => { const P = m.default; console.log\\(typeof P, typeof P.default\\); const p = new P\\(\\); console.log\\('instance ok'\\) }\\)\" 2>&1)",
+      "Bash(node -e \"const P = require\\('pptxgenjs'\\); console.log\\(typeof P, typeof P.default\\); try { new P\\(\\); console.log\\('direct ok'\\) } catch\\(e\\) { console.log\\('direct fail:', e.message\\) }\" 2>&1)",
+      "Bash(grep -rn \"exportDeck\\\\|exportPptx\\\\|export.*pptx\" /Users/cobro/Code/Velocity/src/engine/__tests__/ /Users/cobro/Code/Velocity/src/core/export/ 2>/dev/null | grep -v \".ts:\" | head -5\ngrep -rn \"exportPptx\\\\|exportDeck\" /Users/cobro/Code/Velocity/src/core/export/*.test.ts 2>/dev/null | head -10)",
+      "mcp__claude_ai_Vercel__list_teams",
+      "mcp__claude_ai_Vercel__list_projects",
+      "mcp__claude_ai_Vercel__list_deployments",
+      "mcp__claude_ai_Vercel__get_deployment_build_logs"
     ]
   }
 }
