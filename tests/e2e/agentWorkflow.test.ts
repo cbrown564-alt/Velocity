@@ -220,4 +220,25 @@ describe('Phase 2 E2E: Full Agent Workflow', () => {
     // Session stores the original filename, not a 'name' field
     expect(session.dataset.originalFilename).toBe('survey.csv');
   });
+
+  it('Step 8 — commitDeck: getSession captures deck slides after commitDeck', async () => {
+    const spec = {
+      title: 'Commit Test Deck',
+      sections: [{ title: 'Results', slides: [{ rowVars: ['Q1'], colVar: 'GENDER' }] }],
+    };
+
+    const buildResp = await callTool(engine, 'velocity_build_deck', { spec });
+    const deck = buildResp.parsed.data;
+    expect(deck.slides).toHaveLength(1);
+
+    // Before commitDeck, session should have 0 slides (this test runs after Step 7 which had 0)
+    engine.commitDeck(deck);
+
+    const session = engine.getSession();
+    expect(session.slides.length).toBeGreaterThan(0);
+    const committed = session.slides.find((s) => s.title === deck.slides[0].resolvedTitle);
+    expect(committed).toBeDefined();
+    expect(committed!.analysisState.rowVars).toEqual(['Q1']);
+    expect(committed!.analysisState.colVar).toBe('GENDER');
+  });
 });

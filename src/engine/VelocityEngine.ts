@@ -20,6 +20,7 @@ import type {
 } from '../types';
 import { normalizeVariableType } from '../types';
 import type { ChartRecommendation } from '../types/charts';
+import type { Slide, SlideSection } from '../types/slides';
 import type { VariableMapping } from '../types/harmonization';
 import type {
   AnalysisSuggestion,
@@ -542,6 +543,48 @@ export class VelocityEngine {
       const builder = new DeckBuilder(this);
       return builder.export(deck, options);
     });
+  }
+
+  /**
+   * Write a BuiltDeck back into the engine's session slides array so that
+   * getSession() / exportSession() captures the deck structure.
+   *
+   * buildDeck() is deliberately pure (no side effects). Call commitDeck() explicitly
+   * when you want the agent workflow build → export PPTX → save session to round-trip.
+   * Appends to existing slides/sections rather than replacing them.
+   */
+  commitDeck(deck: BuiltDeck): void {
+    const now = Date.now();
+    const sectionMap = new Map<string, string>(); // sectionTitle → sectionId
+
+    const newSections: SlideSection[] = deck.spec.sections.map((sec, i) => {
+      const id = `deck-section-${i}-${now}`;
+      sectionMap.set(sec.title, id);
+      return { id, title: sec.title };
+    });
+
+    const newSlides: Slide[] = deck.slides.map((builtSlide, i) => ({
+      id: `deck-slide-${i}-${now}`,
+      title: builtSlide.resolvedTitle,
+      subtitle: builtSlide.resolvedSubtitle,
+      notes: builtSlide.spec.notes,
+      analysisState: {
+        rowVars: builtSlide.spec.rowVars,
+        colVar: builtSlide.spec.colVar ?? null,
+        filters: builtSlide.spec.filters ?? [],
+        weightVar: builtSlide.spec.weightVar ?? null,
+      },
+      visualizationType: builtSlide.spec.visualizationType ?? 'table',
+      chartType: builtSlide.resolvedChartType,
+      layoutMode: 'focus' as const,
+      cells: [],
+      sectionId: sectionMap.get(builtSlide.sectionTitle),
+      createdAt: now,
+      updatedAt: now,
+    }));
+
+    this.slides = [...this.slides, ...newSlides];
+    this.sections = [...this.sections, ...newSections];
   }
 
   async recommendChart(
