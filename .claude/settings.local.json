@@ -13,7 +13,8 @@
       "WebFetch(domain:www.inkandswitch.com)",
       "Bash(npm run:*)",
       "Bash(grep:*)",
-      "Bash(python3:*)"
+      "Bash(python3:*)",
+      "Bash(find /Users/cobro/Code/Velocity/docs -name \"*.md\" -type f 2>/dev/null | sort)"
     ]
   }
 }
