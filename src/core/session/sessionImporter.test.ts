@@ -133,7 +133,7 @@ describe('importSession', () => {
   });
 
   it('throws when session file validation fails', () => {
-    const invalid = buildSessionFile({ formatVersion: 2 as 1 });
+    const invalid = buildSessionFile({ formatVersion: 99 as 1 });
     expect(() => importSession(invalid, loadedDataset)).toThrow('Invalid session file');
   });
 });

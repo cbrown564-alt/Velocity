@@ -1,4 +1,4 @@
-import { SESSION_FORMAT_VERSION } from './sessionTypes';
+import { SESSION_FORMAT_VERSION, SESSION_FORMAT_VERSION_V1 } from './sessionTypes';
 import type { SessionDatasetDescriptor, VelocitySessionFile } from './sessionTypes';
 
 type LooseRecord = Record<string, unknown>;
@@ -39,7 +39,8 @@ export function validateSessionFile(candidate: unknown): SessionFileValidationRe
     return { valid: false, errors: ['Session file must be a JSON object'] };
   }
 
-  if (candidate.formatVersion !== SESSION_FORMAT_VERSION) {
+  const supportedVersions: unknown[] = [SESSION_FORMAT_VERSION_V1, SESSION_FORMAT_VERSION];
+  if (!supportedVersions.includes(candidate.formatVersion)) {
     errors.push(`Unsupported formatVersion: ${String(candidate.formatVersion)}`);
   }
 

@@ -99,7 +99,7 @@ describe('exportSession', () => {
       exportedAt: new Date('2026-02-26T15:00:00.000Z'),
     });
 
-    expect(session.formatVersion).toBe(1);
+    expect(session.formatVersion).toBe(2);
     expect(session.exportedAt).toBe('2026-02-26T15:00:00.000Z');
     expect(session.dataset).toEqual({
       originalFilename: 'wave7_2024.sav',
@@ -168,7 +168,7 @@ describe('exportSession', () => {
 
     const serialized = serializeSessionFile(session);
     expect(serialized).toContain('\n');
-    expect(serialized).toContain('"formatVersion": 1');
+    expect(serialized).toContain('"formatVersion": 2');
   });
 
   it('excludes transform-generated columns from dataset fingerprint', () => {

@@ -21,6 +21,18 @@ import type {
 import { normalizeVariableType } from '../types';
 import type { ChartRecommendation } from '../types/charts';
 import type { VariableMapping } from '../types/harmonization';
+import type {
+  AnalysisSuggestion,
+  Concept,
+  HarmonizationSuggestion,
+  SemanticAnnotation,
+  SemanticSearchResult,
+} from '../types/semantic';
+import { autoAnnotate } from '../core/semantic/annotator';
+import { ConceptStore } from '../core/semantic/concepts';
+import { buildConceptsFromAnnotations } from '../core/semantic/conceptDiscovery';
+import { buildSearchIndex, searchVariables } from '../core/semantic/search';
+import { suggestAnalyses, suggestHarmonizations } from '../core/semantic/suggestions';
 import { recommendChart } from '../services/chartRecommender';
 import { DeckBuilder } from './DeckBuilder';
 import type {
@@ -185,6 +197,10 @@ export class VelocityEngine {
   private slides: ExportSessionInput['slides'] = [];
   private sections: ExportSessionInput['sections'] = [];
   private harmonizationSession: ExportSessionInput['harmonizationSession'] = null;
+
+  // Phase 4: Semantic Layer
+  private semanticAnnotations: Map<string, SemanticAnnotation> = new Map();
+  private conceptStore: ConceptStore = new ConceptStore();
 
   private constructor(
     private readonly adapter: DatabaseAdapter,
@@ -609,6 +625,173 @@ export class VelocityEngine {
     });
   }
 
+  // ============================================================================
+  // Semantic Layer (Phase 4)
+  // ============================================================================
+
+  /**
+   * Run heuristic auto-annotation over all variables in the loaded dataset.
+   * Annotations are stored in-engine and written to the variable objects.
+   */
+  async annotateDataset(): Promise<ResultEnvelope<{ annotated: number; total: number }>> {
+    return this.wrap('annotateDataset', {}, async () => {
+      const dataset = this.requireDataset();
+      const annotations = autoAnnotate(dataset.variables, this.variableSets);
+      this.semanticAnnotations = annotations;
+
+      // Write annotations back to variable objects
+      dataset.variables = dataset.variables.map((variable) => {
+        const annotation = annotations.get(variable.id);
+        return annotation ? { ...variable, semantic: annotation } : variable;
+      });
+
+      // Auto-discover concepts from annotations
+      buildConceptsFromAnnotations(
+        dataset.variables,
+        this.variableSets,
+        annotations,
+        dataset.id,
+        this.conceptStore
+      );
+
+      return { annotated: annotations.size, total: dataset.variables.length };
+    });
+  }
+
+  /**
+   * Manually add or update a semantic annotation for a variable.
+   */
+  annotateVariable(
+    variableId: string,
+    annotation: Partial<SemanticAnnotation> & Pick<SemanticAnnotation, 'topic' | 'measurementIntent'>
+  ): void {
+    const dataset = this.requireDataset();
+    const variable = this.requireVariable(variableId);
+
+    const full: SemanticAnnotation = {
+      source: 'manual',
+      confidence: 1.0,
+      ...annotation,
+    };
+
+    this.semanticAnnotations.set(variableId, full);
+    dataset.variables = dataset.variables.map((v) =>
+      v.id === variableId ? { ...v, semantic: full } : v
+    );
+    void variable; // used via requireVariable for validation
+  }
+
+  /**
+   * Get the current semantic annotation for a variable (if any).
+   */
+  getAnnotation(variableId: string): SemanticAnnotation | undefined {
+    return this.semanticAnnotations.get(variableId);
+  }
+
+  /**
+   * Search variables by semantic meaning across the loaded dataset.
+   */
+  async searchVariables(
+    query: string,
+    options: { limit?: number } = {}
+  ): Promise<ResultEnvelope<SemanticSearchResult[]>> {
+    return this.wrap('searchVariables', { query, ...options }, async () => {
+      const dataset = this.requireDataset();
+      const concepts = this.conceptStore.listConcepts();
+      const index = buildSearchIndex(
+        dataset.variables,
+        dataset.id,
+        this.semanticAnnotations,
+        concepts
+      );
+      return searchVariables(query, index, options.limit ?? 20);
+    });
+  }
+
+  /**
+   * Get all concepts in the concept store.
+   */
+  listConcepts(): Concept[] {
+    return this.conceptStore.listConcepts();
+  }
+
+  /**
+   * Create a new concept entity.
+   */
+  createConcept(spec: {
+    name: string;
+    aliases?: string[];
+    canonicalScale?: Concept['canonicalScale'];
+  }): Concept {
+    return this.conceptStore.createConcept(spec);
+  }
+
+  /**
+   * Link a variable to a concept.
+   */
+  linkVariableToConcept(variableId: string, conceptId: string): void {
+    const dataset = this.requireDataset();
+    this.requireVariable(variableId);
+    const annotation = this.semanticAnnotations.get(variableId);
+    this.conceptStore.linkVariable(conceptId, {
+      datasetId: dataset.id,
+      variableId,
+      matchConfidence: annotation?.confidence ?? 1.0,
+    });
+  }
+
+  /**
+   * Suggest analyses for a set of variable IDs based on their semantic annotations.
+   */
+  async suggestAnalyses(
+    variableIds: string[]
+  ): Promise<ResultEnvelope<AnalysisSuggestion[]>> {
+    return this.wrap('suggestAnalyses', { variableIds }, async () => {
+      const dataset = this.requireDataset();
+      const annotatedVars = variableIds.map((id) => {
+        const variable = dataset.variables.find((v) => v.id === id);
+        if (!variable) throw new VelocityError('INVALID_VARIABLE', `Unknown variable: ${id}`);
+        return { variable, annotation: this.semanticAnnotations.get(id) };
+      });
+      return suggestAnalyses(annotatedVars);
+    });
+  }
+
+  /**
+   * Suggest cross-dataset harmonizations based on shared concepts.
+   */
+  suggestHarmonizations(): HarmonizationSuggestion[] {
+    return suggestHarmonizations(this.conceptStore.listConcepts());
+  }
+
+  /**
+   * Get the full semantic state (for session export).
+   */
+  getSemanticState(): { annotations: Record<string, SemanticAnnotation>; concepts: Concept[] } {
+    const annotations: Record<string, SemanticAnnotation> = {};
+    for (const [id, ann] of this.semanticAnnotations) {
+      annotations[id] = ann;
+    }
+    return { annotations, concepts: this.conceptStore.toJSON() };
+  }
+
+  /**
+   * Restore semantic state (for session import).
+   */
+  restoreSemanticState(state: { annotations: Record<string, SemanticAnnotation>; concepts: Concept[] }): void {
+    this.semanticAnnotations = new Map(Object.entries(state.annotations));
+    this.conceptStore.fromJSON(state.concepts);
+
+    // Sync back to variable objects
+    const dataset = this.dataset;
+    if (dataset) {
+      dataset.variables = dataset.variables.map((v) => {
+        const ann = this.semanticAnnotations.get(v.id);
+        return ann ? { ...v, semantic: ann } : v;
+      });
+    }
+  }
+
   private resolveSafePath(inputPath: string): string {
     if (!this.dataDir) {
       return inputPath;
@@ -651,6 +834,8 @@ export class VelocityEngine {
     this.slides = [];
     this.sections = [];
     this.harmonizationSession = null;
+    this.semanticAnnotations = new Map();
+    this.conceptStore.clear();
   }
 
   private requireDataset(): Dataset {

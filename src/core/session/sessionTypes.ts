@@ -1,9 +1,11 @@
 import type { AnalysisSettings, Filter, TableConfig } from '../../store/slices/analysisSlice';
 import type { DataTransform, Dataset, Folder, Variable, VariableSet } from '../../store/slices/dataSlice';
 import type { HarmonizationSession } from '../../types/harmonization';
+import type { SemanticSessionBlock } from '../../types/semantic';
 import type { Slide, SlideSection } from '../../types/slides';
 
-export const SESSION_FORMAT_VERSION = 1 as const;
+export const SESSION_FORMAT_VERSION = 2 as const;
+export const SESSION_FORMAT_VERSION_V1 = 1 as const;
 export const SESSION_FILE_EXTENSION = '.velocity';
 
 export interface SessionDatasetFingerprint {
@@ -42,7 +44,7 @@ export interface SessionWorkspaceSnapshot {
 }
 
 export interface VelocitySessionFile {
-  formatVersion: typeof SESSION_FORMAT_VERSION;
+  formatVersion: typeof SESSION_FORMAT_VERSION | typeof SESSION_FORMAT_VERSION_V1;
   exportedAt: string;
   velocityVersion: string;
   dataset: SessionDatasetDescriptor;
@@ -57,6 +59,8 @@ export interface VelocitySessionFile {
   sections: SlideSection[];
   workspace?: SessionWorkspaceSnapshot;
   harmonizationSession?: HarmonizationSession | null;
+  /** Phase 4: Semantic annotations and concepts (v2+, optional) */
+  semantic?: SemanticSessionBlock;
 }
 
 export interface SessionWorkspaceInput {

@@ -33,7 +33,10 @@ export interface Variable {
   orderedStyle?: OrderedStyle;
   /** For ordered variables: allow numeric summaries (mean/std/histogram) or treat as purely categorical. */
   orderedScoring?: OrderedScoring;
+  /** @deprecated Use `semantic.measurementIntent` instead */
   semanticType?: 'text' | 'entity' | 'sentiment' | 'location' | 'temporal';
+  /** Phase 4: Rich semantic annotation (optional, populated incrementally) */
+  semantic?: import('./semantic').SemanticAnnotation;
   valueLabels: ValueLabel[];
   missingValues: MissingValueDef;
   /** True if this variable was generated automatically (e.g. for grid rows/cols) */

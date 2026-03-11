@@ -35,10 +35,18 @@ describe('validateSessionFile', () => {
   it('rejects unsupported format versions', () => {
     const result = validateSessionFile({
       ...validSession,
-      formatVersion: 2,
+      formatVersion: 99,
     });
     expect(result.valid).toBe(false);
     expect(result.errors.join(' ')).toContain('Unsupported formatVersion');
+  });
+
+  it('accepts v1 format version for backward compatibility', () => {
+    const result = validateSessionFile({
+      ...validSession,
+      formatVersion: 1,
+    });
+    expect(result.valid).toBe(true);
   });
 
   it('parses valid JSON and throws on invalid shape', () => {

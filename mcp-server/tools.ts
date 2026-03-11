@@ -260,6 +260,107 @@ const TOOLS = [
       required: ['session'],
     },
   },
+  // Semantic Layer (Phase 4)
+  {
+    name: 'velocity_annotate_dataset',
+    description: 'Run heuristic auto-annotation over all variables in the loaded dataset. Classifies each variable with a topic, measurement intent, and confidence score. Returns counts of annotated vs total variables.',
+    inputSchema: { type: 'object', properties: {} },
+  },
+  {
+    name: 'velocity_annotate',
+    description: 'Manually add or update a semantic annotation for a specific variable.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        variableId: { type: 'string', description: 'Variable ID to annotate.' },
+        annotation: {
+          type: 'object',
+          description: 'Semantic annotation fields.',
+          properties: {
+            topic: { type: 'string', description: 'Domain topic, e.g. "satisfaction", "demographics".' },
+            measurementIntent: {
+              type: 'string',
+              enum: ['attitude', 'behavior', 'awareness', 'demographic', 'classification', 'outcome', 'weight', 'identifier', 'open_end', 'other'],
+            },
+            conceptFamily: { type: 'string', description: 'Links to a Concept entity by name.' },
+            source: { type: 'string', enum: ['auto', 'manual', 'agent'] },
+            confidence: { type: 'number', description: '0–1 confidence score.' },
+          },
+          required: ['topic', 'measurementIntent'],
+        },
+      },
+      required: ['variableId', 'annotation'],
+    },
+  },
+  {
+    name: 'velocity_search_variables',
+    description: 'Find variables by semantic meaning (not just name). Searches variable names, labels, topic annotations, concept names/aliases, and value labels. Returns ranked results with relevance scores.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        query: { type: 'string', description: 'Natural language query, e.g. "satisfaction variables" or "demographics".' },
+        limit: { type: 'number', description: 'Maximum results to return (default: 20).' },
+      },
+      required: ['query'],
+    },
+  },
+  {
+    name: 'velocity_list_concepts',
+    description: 'List all concept entities. Concepts link variables across datasets that measure the same construct.',
+    inputSchema: { type: 'object', properties: {} },
+  },
+  {
+    name: 'velocity_create_concept',
+    description: 'Define a new concept entity for cross-dataset variable linking.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string', description: 'Concept name, e.g. "Overall Satisfaction".' },
+        aliases: { type: 'array', items: { type: 'string' }, description: 'Alternative names for synonym expansion.' },
+        canonicalScale: {
+          type: 'object',
+          description: 'Expected measurement scale properties.',
+          properties: {
+            points: { type: 'number' },
+            direction: { type: 'string', enum: ['ascending', 'descending'] },
+            anchors: {
+              type: 'object',
+              properties: { low: { type: 'string' }, high: { type: 'string' } },
+            },
+          },
+          required: ['points', 'direction'],
+        },
+      },
+      required: ['name'],
+    },
+  },
+  {
+    name: 'velocity_link_concept',
+    description: 'Link a variable to an existing concept entity.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        variableId: { type: 'string', description: 'Variable ID to link.' },
+        conceptId: { type: 'string', description: 'Concept ID to link to.' },
+      },
+      required: ['variableId', 'conceptId'],
+    },
+  },
+  {
+    name: 'velocity_suggest_analyses',
+    description: 'Get domain-aware analysis suggestions for a set of variables. Uses semantic annotations to recommend crosstabs, frequency distributions, trend analyses, and more.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        variableIds: {
+          type: 'array',
+          items: { type: 'string' },
+          description: 'Variable IDs to generate suggestions for.',
+        },
+      },
+      required: ['variableIds'],
+    },
+  },
 ] as const;
 
 // ---------------------------------------------------------------------------
@@ -435,6 +536,49 @@ export function registerTools(server: Server, engine: VelocityEngine): void {
 
         case 'velocity_import_session': {
           const result = await engine.importSession(a.session as never);
+          return successResponse(result);
+        }
+
+        // ---- Semantic Layer (Phase 4) ----
+        case 'velocity_annotate_dataset': {
+          const result = await engine.annotateDataset();
+          return successResponse(result);
+        }
+
+        case 'velocity_annotate': {
+          engine.annotateVariable(String(a.variableId), a.annotation as never);
+          return successResponse({ ok: true });
+        }
+
+        case 'velocity_search_variables': {
+          const result = await engine.searchVariables(String(a.query), {
+            limit: typeof a.limit === 'number' ? a.limit : undefined,
+          });
+          return successResponse(result);
+        }
+
+        case 'velocity_list_concepts': {
+          const result = engine.listConcepts();
+          return successResponse(result);
+        }
+
+        case 'velocity_create_concept': {
+          const result = engine.createConcept({
+            name: String(a.name),
+            aliases: Array.isArray(a.aliases) ? (a.aliases as string[]) : undefined,
+            canonicalScale: a.canonicalScale as never,
+          });
+          return successResponse(result);
+        }
+
+        case 'velocity_link_concept': {
+          engine.linkVariableToConcept(String(a.variableId), String(a.conceptId));
+          return successResponse({ ok: true });
+        }
+
+        case 'velocity_suggest_analyses': {
+          const varIds = Array.isArray(a.variableIds) ? (a.variableIds as string[]) : [];
+          const result = await engine.suggestAnalyses(varIds);
           return successResponse(result);
         }
 
