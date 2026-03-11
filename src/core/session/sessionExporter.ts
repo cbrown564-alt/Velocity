@@ -85,6 +85,10 @@ export function exportSession(input: ExportSessionInput): VelocitySessionFile {
     base.harmonizationSession = input.harmonizationSession;
   }
 
+  if (input.semantic && Object.keys(input.semantic.annotations).length > 0) {
+    base.semantic = input.semantic;
+  }
+
   return base;
 }
 

@@ -360,6 +360,7 @@ export class VelocityEngine {
       slides: this.slides,
       sections: this.sections,
       harmonizationSession: this.harmonizationSession,
+      semantic: this.getSemanticState(),
       velocityVersion: this.engineVersion,
     });
   }
@@ -372,17 +373,19 @@ export class VelocityEngine {
         if (id === 'crosstab') {
           const crosstabConfig = this.toRecord(config);
           const analysisSettings = crosstabConfig.analysisSettings as Partial<EngineAnalysisSettings> | undefined;
+          const rowVarIds = Array.isArray(crosstabConfig.rowVars) ? (crosstabConfig.rowVars as string[]) : [];
+          const colVarId = (crosstabConfig.colVar as string | null | undefined) ?? null;
           const request = buildCrosstabRequest({
             dataset: this.requireDataset(),
             variableSets: this.variableSets,
-            rowVars: Array.isArray(crosstabConfig.rowVars) ? (crosstabConfig.rowVars as string[]) : [],
-            colVar: (crosstabConfig.colVar as string | null | undefined) ?? null,
+            rowVars: rowVarIds,
+            colVar: colVarId,
             filters: (crosstabConfig.filters as Filter[] | undefined) ?? this.activeFilters,
             weightVar: (crosstabConfig.weightVar as string | null | undefined) ?? this.dataset?.weightVariable ?? null,
             analysisSettings: isCompleteAnalysisSettings(analysisSettings) ? analysisSettings : undefined,
           });
 
-          return runCrosstab(this.adapter, {
+          const result = await runCrosstab(this.adapter, {
             ...request.options,
             significanceOptions: request.analysisSettings
               ? {
@@ -392,6 +395,22 @@ export class VelocityEngine {
                 }
               : undefined,
           }, request.context);
+
+          if (crosstabConfig.resolveLabels === true && result && typeof result === 'object' && 'rows' in result) {
+            const dataset = this.requireDataset();
+            const rowVariables = rowVarIds.map((id) => dataset.variables.find((v) => v.id === id)).filter((v): v is Variable => !!v);
+            const colVariable = colVarId ? (dataset.variables.find((v) => v.id === colVarId) ?? null) : null;
+            return {
+              ...(result as Record<string, unknown>),
+              rows: this.resolveValueLabelsInRows(
+                (result as { rows: import('../types').AggregatedRow[] }).rows,
+                rowVariables,
+                colVariable
+              ),
+            };
+          }
+
+          return result;
         }
 
         if (id === 'variableStats') {
@@ -929,6 +948,34 @@ export class VelocityEngine {
       return {};
     }
     return value as Record<string, unknown>;
+  }
+
+  /**
+   * Replace raw integer codes in AggregatedRow rowKeys/colKey with human-readable
+   * value labels. Used by runAnalysis when resolveLabels:true is requested.
+   * Falls back to the original code string when no label exists.
+   */
+  private resolveValueLabelsInRows(
+    rows: import('../types').AggregatedRow[],
+    rowVariables: Variable[],
+    colVariable: Variable | null
+  ): import('../types').AggregatedRow[] {
+    const buildLabelMap = (variable: Variable): Map<string, string> => {
+      const m = new Map<string, string>();
+      for (const vl of variable.valueLabels) {
+        m.set(String(vl.value), vl.label);
+      }
+      return m;
+    };
+
+    const rowMaps = rowVariables.map(buildLabelMap);
+    const colMap = colVariable ? buildLabelMap(colVariable) : null;
+
+    return rows.map((row) => ({
+      ...row,
+      rowKeys: row.rowKeys.map((key, i) => rowMaps[i]?.get(key) ?? key),
+      colKey: colMap?.get(row.colKey) ?? row.colKey,
+    }));
   }
 }
 

@@ -362,6 +362,7 @@ function detectAnnotation(variable: Variable, inGridSet: boolean): RuleMatch | n
 
   // Rule 10 — Health/clinical domain (name pattern or label keyword)
   // Fires at lower confidence so domain-specific rules can still override.
+  // Assigns specific sub-topics so search scores benefit from topic matching.
   const healthNameMatch = HEALTH_NAME_PATTERNS.some((p) => p.test(variable.name));
   const healthLabelMatch = HEALTH_LABEL_KEYWORDS.some((p) => p.test(label));
   if (healthNameMatch || healthLabelMatch) {
@@ -369,7 +370,26 @@ function detectAnnotation(variable: Variable, inGridSet: boolean): RuleMatch | n
     if (confidence < healthConfidence) {
       confidence = healthConfidence;
       intent = 'attitude';
-      topic = 'health_wellbeing';
+      // Assign a specific sub-topic based on the strongest signal in name + label
+      if (/sleep|somnolen|drowsy|insomni|sleepless/i.test(label) || /sleep|niteshft|quals?leep|satissleep|trouble.*(sleep|fall|stay)/i.test(variable.name)) {
+        topic = 'sleep_quality';
+      } else if (/anxiet|gad|sas/i.test(label) || /anxiet|gad\d*/i.test(variable.name)) {
+        topic = 'mental_health';
+      } else if (/depress|phq/i.test(label) || /depress|phq\d*/i.test(variable.name)) {
+        topic = 'mental_health';
+      } else if (/stress|fatigue|pain/i.test(label) || /stress|fatigue/i.test(variable.name)) {
+        topic = 'mental_health';
+      } else if (/quality\s+of\s+life|qol|whoqol|wellbeing/i.test(label) || /^qol/i.test(variable.name)) {
+        topic = 'quality_of_life';
+      } else if (/function|disabilit|impairment/i.test(label)) {
+        topic = 'functional_status';
+      } else if (/\bess\b/i.test(label) || /^ess\d*/i.test(variable.name)) {
+        topic = 'sleep_quality';
+      } else if (/hads/i.test(label) || /^hads/i.test(variable.name)) {
+        topic = 'mental_health';
+      } else {
+        topic = 'health_wellbeing';
+      }
     }
   }
 

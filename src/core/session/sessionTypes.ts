@@ -86,6 +86,8 @@ export interface ExportSessionInput {
   workspace?: SessionWorkspaceInput;
   activeDatasetId?: string | null;
   harmonizationSession?: HarmonizationSession | null;
+  /** Phase 4: Semantic annotations and concepts — omit if empty */
+  semantic?: SemanticSessionBlock;
   velocityVersion?: string;
   exportedAt?: Date;
   checksum?: string;
