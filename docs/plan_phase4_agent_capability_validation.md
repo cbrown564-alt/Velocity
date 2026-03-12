@@ -22,6 +22,8 @@ Use with:
 - [eval_00_agent_interface_validation.md](/Users/cobro/Code/Velocity/docs/eval_00_agent_interface_validation.md)
 - [eval_00_outcome_decision_framework.md](/Users/cobro/Code/Velocity/docs/eval_00_outcome_decision_framework.md)
 - [eval_00_capability_gap_review.md](/Users/cobro/Code/Velocity/docs/eval_00_capability_gap_review.md)
+- [eval_00_task_portfolio.md](/Users/cobro/Code/Velocity/docs/eval_00_task_portfolio.md)
+- [eval_00_phase_synthesis_template.md](/Users/cobro/Code/Velocity/docs/eval_00_phase_synthesis_template.md)
 - [plan_eval_02_benchmark.md](/Users/cobro/Code/Velocity/docs/plan_eval_02_benchmark.md)
 - [eval_02_process_log.md](/Users/cobro/Code/Velocity/docs/eval_02_process_log.md)
 
