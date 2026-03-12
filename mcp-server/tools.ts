@@ -56,7 +56,7 @@ const TOOLS = [
   // Analysis
   {
     name: 'velocity_crosstab',
-    description: 'Run a cross-tabulation analysis with optional significance testing.',
+    description: 'Run a cross-tabulation analysis with optional significance testing. Use resolveLabels: true to get human-readable value labels instead of raw integer codes.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -68,6 +68,7 @@ const TOOLS = [
         colVar: { type: 'string', description: 'Variable ID for columns (optional).' },
         filters: { type: 'array', description: 'Filter conditions (optional).' },
         weightVar: { type: 'string', description: 'Weight variable ID (optional).' },
+        resolveLabels: { type: 'boolean', description: 'If true, replace raw integer codes in output with human-readable value labels. Strongly recommended.' },
         analysisSettings: {
           type: 'object',
           description: 'Significance testing settings.',
@@ -444,6 +445,7 @@ export function registerTools(server: Server, engine: VelocityEngine): void {
             colVar: a.colVar ?? null,
             filters: a.filters,
             weightVar: a.weightVar ?? null,
+            resolveLabels: a.resolveLabels ?? undefined,
             analysisSettings: a.analysisSettings,
           });
           return successResponse(result);

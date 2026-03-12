@@ -8,6 +8,7 @@ Before modifying code, agents must read the relevant documentation based on the 
 
 | If you are touching... | You MUST read... | Why? (The invariant) |
 | :--- | :--- | :--- |
+| **Using MCP tools to analyze data (as an AI agent)** | **`guide_agent_quickstart.md`** | **Tool reference, parameters, output formats, common patterns. Start here.** |
 | Any new feature or major refactor | `arch_01_system_architecture.md` | To understand the "Map of the World" (main thread vs worker vs core). |
 | Data structures, ingestion, or types | `arch_02_data_model.md` | To strictly preserve the "Dual-State" principle (Raw vs Labeled). |
 | `src/core/*` or `adapters/*` | `arch_03_headless_core.md` | To maintain the platform-independent seam and dependency direction. |
@@ -97,6 +98,7 @@ Triaging runtime issues or debugging failures | `docs/playbooks/log_triage.md`  
 Change UI layout, interaction, or UX mode responsibilities | `docs/playbooks/ui_mode_change.md` |
 Add or change VelocityEngine public methods | `docs/playbooks/engine_api_change.md` |
 Migrate a store slice from worker to EngineProxy (Phase 3) | `docs/playbooks/worker_migration.md` |
+**Analyze a dataset via MCP tools (as an AI agent)** | **`docs/guide_agent_quickstart.md`** & **`docs/playbooks/agent_analysis_workflow.md`** |
 
 ### Enforcement Rule
 Failure to follow the relevant playbook may result in:
