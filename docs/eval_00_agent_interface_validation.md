@@ -86,6 +86,15 @@ The intended state is:
 - same session model
 - different interaction modes, not different powers
 
+**How to test convergence honestly:** Convergence is the hardest claim to eval because it is easy to test the agent path in isolation and declare it "good enough." To actually validate convergence, at least one eval in the program should run the same analytical task through both paths and compare outputs side-by-side. Specifically:
+
+1. Define a concrete task (e.g., "produce a 5-slide deck on attitudes toward X, broken by age and region").
+2. Have a human complete the task using the browser UI.
+3. Have the agent complete the same task using only the MCP/engine path.
+4. Compare the outputs on: variable selection, chart quality, export fidelity, total effort, and whether either path required workarounds the other did not.
+
+If the browser output is materially stronger, document exactly which affordances made the difference. Those affordances become the convergence work backlog. If the outputs are comparable, that is genuine evidence of convergence for that task shape.
+
 ### 4. The semantic layer makes unfamiliar datasets navigable
 
 The eval should tell us whether semantic annotations, search, and suggestions make large or messy datasets tractable for agents.

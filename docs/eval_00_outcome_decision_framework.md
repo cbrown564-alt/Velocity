@@ -35,7 +35,10 @@ Most outcomes map to one or more of these layers:
 | Semantic layer | Search, annotation quality, discovery support, suggestions |
 | Browser convergence | Whether humans and agents share the same real capabilities |
 | Deliverable layer | Deck/session/export quality, reviewability, presentation readiness |
-| Agent guidance | Docs, defaults, examples, prompting assumptions |
+| Product defaults | Built-in recommendations, safer defaults, suggestion quality, analysis templates |
+| Agent prompting | Eval prompt framing, playbook quality, example coverage, docs clarity |
+
+**Note on the guidance split:** The former "Agent guidance" layer has been separated into **product defaults** (what Velocity itself offers to steer agents toward good choices) and **agent prompting** (what the eval harness, docs, or playbooks tell the agent to do). This distinction matters because the fix for each is different: product defaults are engineering work inside Velocity; agent prompting is documentation and eval-design work outside it. When Pattern 5 appears, locate which side is the real bottleneck before investing.
 
 The point of post-eval interpretation is to locate the main bottleneck correctly.
 
@@ -125,26 +128,45 @@ Velocity still understands the data too syntactically.
 - Add category-aware or intent-aware search affordances
 - Improve analysis suggestions once relevant variables are found
 
-### Pattern 5: Correct computations, weak analytical judgment
+### Pattern 5a: Correct computations, weak analytical judgment — product defaults
 
 **Symptoms**
 
 - The agent uses the tools correctly
 - But selects poor breaks, redundant variables, or weak narratives
-- The resulting artifact is technically valid but strategically shallow
+- Velocity offered no recommendations, suggestions, or guardrails that would have steered the agent toward better choices
+- A human using the browser would have been guided by UI affordances the agent path lacks
 
 **What it means**
 
-The bottleneck may be guidance, defaults, or prompt framing rather than core engine capability.
-
-It may also indicate that the semantic/discovery tools are not structuring the task well enough.
+The product itself is not opinionated enough. The agent is left to make analytical decisions that the system should help with.
 
 **What to do next**
 
-- Improve playbooks and examples
+- Add higher-level recommendations (e.g., suggested breaks, recommended demographic splits)
+- Improve analysis suggestion quality from the semantic layer
+- Add safer defaults for common analysis patterns
+- Surface warnings when the agent makes statistically questionable choices (e.g., small cell sizes, redundant variables)
+
+### Pattern 5b: Correct computations, weak analytical judgment — agent prompting
+
+**Symptoms**
+
+- The agent uses the tools correctly
+- But selects poor breaks, redundant variables, or weak narratives
+- Velocity does offer relevant defaults or suggestions, but the agent ignores or never discovers them
+- The eval prompt or playbook does not frame the task well enough to elicit good judgment
+
+**What it means**
+
+The product may already support better choices, but the agent-facing documentation, examples, or eval prompt framing is not surfacing them effectively.
+
+**What to do next**
+
+- Improve playbooks and examples so agents know what good analysis looks like for this task shape
 - Improve deck-authoring guidance
-- Add higher-level recommendations and safer defaults
 - Refine eval prompts so they test the intended behavior more cleanly
+- Ensure tool descriptions and discovery flows surface the product's built-in recommendations
 
 ### Pattern 6: Agent cannot complete the task through the intended path
 
@@ -196,9 +218,80 @@ This is the point where the eval can become a true benchmark baseline rather tha
 | Good results, lots of workarounds | Workflow weak | MCP ergonomics, docs, API consistency |
 | Browser stronger than agent path | Convergence weak | Shared abstractions, parity work |
 | Discovery poor on large datasets | Semantic layer weak | Search, annotation, suggestions |
-| Correct but shallow analysis | Guidance/defaults weak | Playbooks, recommendations, prompts |
+| Correct but shallow — no product guidance available | Product defaults weak | Recommendations, suggestions, guardrails |
+| Correct but shallow — product guidance available but unused | Agent prompting weak | Playbooks, docs, eval prompt framing |
 | Task only possible via escape hatches | Interface thesis not validated | Product blocker work |
 | Clean end-to-end success | Thesis validated for this task | Freeze baseline, scale eval program |
+
+---
+
+## Scoring Rubric
+
+Every eval should produce a per-layer score so results can be compared across runs and tracked over time. Use a 1–5 scale for each layer the eval touches.
+
+| Score | Label | Meaning |
+|---|---|---|
+| 5 | Strong | Layer worked as intended with no issues. Agent used it naturally. |
+| 4 | Adequate | Layer worked but with minor friction or suboptimal results. |
+| 3 | Weak | Layer was usable but required workarounds or produced mediocre output. |
+| 2 | Poor | Layer was a significant obstacle. Agent struggled or produced bad results. |
+| 1 | Failed | Layer blocked the task or was not usable at all. |
+
+### Applying the rubric
+
+Score every layer the eval is designed to test. Layers not tested by a given eval should be marked N/A, not scored.
+
+Example scorecard for an eval:
+
+| Layer | Score | Notes |
+|---|---|---|
+| Engine | 5 | Crosstab computation correct, provenance intact |
+| MCP / workflow | 3 | Agent needed two retries to discover filter syntax |
+| Semantic layer | 4 | Found key variables, missed one relevant demographic |
+| Browser convergence | N/A | Not tested in this eval |
+| Deliverable layer | 2 | Deck exported but charts were cluttered and unlabeled |
+| Product defaults | 3 | No suggestions surfaced for demographic breaks |
+| Agent prompting | 4 | Playbook was clear, agent followed it |
+
+**Regression tracking:** Once an eval reaches Pattern 7 (end-to-end success) and is frozen as a baseline, subsequent runs should maintain or improve scores. Any layer dropping by 2+ points is a regression that warrants investigation.
+
+---
+
+## Failure Severity and Expected Difficulty
+
+Not all failures are equally meaningful. A discovery failure on a 2,000-variable dataset with cryptic naming is qualitatively different from the same failure on a clean 40-variable dataset. Eval results should be interpreted relative to the expected difficulty of the task.
+
+### Difficulty dimensions
+
+When defining an eval, tag it with expected difficulty along these dimensions:
+
+| Dimension | Low | Medium | High |
+|---|---|---|---|
+| Dataset size | < 50 variables | 50–500 variables | 500+ variables |
+| Naming quality | Clear, labeled variables | Mixed (some labeled, some cryptic) | Mostly raw codes or abbreviations |
+| Domain specificity | General-purpose data | Some domain knowledge needed | Deep domain expertise required |
+| Analysis complexity | Single crosstab | Multi-table with filters/weights | Longitudinal, multi-dataset, or custom statistics |
+| Deliverable expectations | Raw findings | Formatted tables/charts | Presentation-ready deck with narrative |
+
+### Interpreting failures relative to difficulty
+
+- A failure at **low difficulty** is alarming — it indicates a fundamental gap in the layer.
+- A failure at **medium difficulty** is informative — it shows where the current ceiling is.
+- A failure at **high difficulty** is expected early in the eval program — it sets an aspirational target.
+
+When reporting eval outcomes, always note the difficulty level. A Pattern 4 (discovery failure) at high dataset complexity is a different signal than the same pattern at low complexity. The former suggests the semantic layer needs to scale; the latter suggests it is fundamentally broken.
+
+### Severity classification
+
+After scoring, classify the overall eval outcome:
+
+| Severity | Criteria | Response |
+|---|---|---|
+| Critical | Any layer scores 1, or task could not be completed at all | Treat as product blocker. Fix before next eval cycle. |
+| Significant | Multiple layers score 2, or one layer scores 2 on a low-difficulty eval | Prioritize in next sprint. Investigate root cause. |
+| Moderate | Layers score 3 on medium-difficulty eval | Track and improve. Not a blocker. |
+| Minor | Layers score 3–4 on high-difficulty eval | Note for future improvement. Expected at this stage. |
+| Passing | All tested layers score 4+, or 5 on low/medium difficulty | Candidate for baseline freeze. |
 
 ---
 
@@ -267,9 +360,17 @@ Use eval outcomes to choose the next layer of investment.
 - the analysis is good but the artifact is poor
 - outputs are reviewable in theory but unusable in practice
 
-### Invest in guidance/defaults when
+### Invest in product defaults when
 
-- the product technically supports the right move, but agents do the wrong thing by default
+- the product technically supports the right move, but offers no recommendations or guardrails
+- agents make analytically weak choices that better defaults would prevent
+- the browser path has richer guidance than the agent path
+
+### Invest in agent prompting when
+
+- the product offers good defaults, but agents do not discover or use them
+- eval prompts are too vague to elicit the intended behavior
+- playbooks and docs are missing or unclear for the task shape
 
 ---
 
@@ -278,8 +379,17 @@ Use eval outcomes to choose the next layer of investment.
 Future benchmark plans should explicitly include:
 
 1. Which architectural claims the eval is trying to test
-2. Which outcome patterns are most likely
-3. Which product decisions will follow from each major outcome
+2. Expected difficulty ratings across the five dimensions (dataset size, naming quality, domain specificity, analysis complexity, deliverable expectations)
+3. Which outcome patterns are most likely
+4. Which product decisions will follow from each major outcome
+5. A completed scorecard for every layer the eval tests
+
+Post-eval reports should include:
+
+1. The per-layer scorecard with notes
+2. The severity classification
+3. Whether difficulty was as expected or surprising
+4. Comparison to baseline scores if this eval has been run before
 
 That prevents evals from becoming retrospective narratives with no operational consequence.
 
