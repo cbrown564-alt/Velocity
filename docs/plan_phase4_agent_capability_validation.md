@@ -23,6 +23,7 @@ Use with:
 - [eval_00_outcome_decision_framework.md](/Users/cobro/Code/Velocity/docs/eval_00_outcome_decision_framework.md)
 - [eval_00_capability_gap_review.md](/Users/cobro/Code/Velocity/docs/eval_00_capability_gap_review.md)
 - [eval_00_task_portfolio.md](/Users/cobro/Code/Velocity/docs/eval_00_task_portfolio.md)
+- [eval_00_benchmark_result_template.md](/Users/cobro/Code/Velocity/docs/eval_00_benchmark_result_template.md)
 - [eval_00_phase_synthesis_template.md](/Users/cobro/Code/Velocity/docs/eval_00_phase_synthesis_template.md)
 - [plan_eval_02_benchmark.md](/Users/cobro/Code/Velocity/docs/plan_eval_02_benchmark.md)
 - [eval_02_process_log.md](/Users/cobro/Code/Velocity/docs/eval_02_process_log.md)
@@ -157,17 +158,18 @@ Define exactly what Phase 4 is testing, what outputs every eval must produce, an
 
 **Deliverables**
 
-- canonical task portfolio
-- evaluation templates
-- run artifact contract
-- per-layer scoring rubric
-- capability-gap review template
-- phase synthesis template
+- canonical task portfolio (`eval_00_task_portfolio.md`)
+- benchmark-result template (`eval_00_benchmark_result_template.md`)
+- run artifact contract (defined in §"Required evidence package per eval" below)
+- per-layer scoring rubric (`eval_00_outcome_decision_framework.md`)
+- capability-gap review template (`eval_00_capability_gap_review.md`)
+- phase synthesis template (`eval_00_phase_synthesis_template.md`)
 
 **Done checks**
 
-- every major eval has a written brief
-- every eval produces both a benchmark result and a capability review
+- every eval in the portfolio that will be run during this phase has a written brief (for S4-EVAL-1, this means the evals with existing datasets and run-ready detail — currently EVAL-01 and EVAL-02; briefs for planned evals in families C–F are written during S4-EVAL-2 as part of intended-path readiness, since those briefs depend on setup and workflow clarity that S4-EVAL-2 delivers)
+- the portfolio structure covers all six task families with assigned datasets and difficulty ratings, even where individual briefs are deferred
+- reusable templates exist for both benchmark results and capability-gap reviews
 - the outcome framework and capability-gap review are used consistently
 
 ## 2. Intended-Path Readiness
@@ -531,11 +533,11 @@ This final statement matters more than a vanity benchmark result.
 
 ## Immediate next actions
 
-1. Adopt this document as the active Phase 4 plan.
-2. Treat Eval 02 as the first benchmark, not the whole phase.
-3. Define the broader task portfolio that covers discovery, decking, handoff, convergence, and harmonization.
-4. Create the standard output template for benchmark result plus capability-gap review.
-5. Identify the minimum intended-path blockers that must be removed before running the full portfolio.
+1. ~~Adopt this document as the active Phase 4 plan.~~ Done.
+2. ~~Treat Eval 02 as the first benchmark, not the whole phase.~~ Done — `plan_eval_02_benchmark.md` positions it as one benchmark within the portfolio.
+3. ~~Define the broader task portfolio that covers discovery, decking, handoff, convergence, and harmonization.~~ Done — `eval_00_task_portfolio.md` covers all six families (A–F) with datasets and difficulty ratings.
+4. ~~Create the standard output template for benchmark result plus capability-gap review.~~ Done — `eval_00_benchmark_result_template.md` (benchmark result) and `eval_00_phase_synthesis_template.md` (synthesis). Capability-gap review structure is in `eval_00_capability_gap_review.md`.
+5. Identify the minimum intended-path blockers that must be removed before running the full portfolio. **This is S4-EVAL-2.**
 
 ---
 
