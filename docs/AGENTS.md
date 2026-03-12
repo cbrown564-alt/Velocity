@@ -9,6 +9,7 @@ Before modifying code, agents must read the relevant documentation based on the 
 | If you are touching... | You MUST read... | Why? (The invariant) |
 | :--- | :--- | :--- |
 | **Using MCP tools to analyze data (as an AI agent)** | **`guide_agent_quickstart.md`** | **Tool reference, parameters, output formats, common patterns. Start here.** |
+| **Planning, running, or interpreting agent capability evals** | **`plan_phase4_agent_capability_validation.md`**, **`eval_00_agent_interface_validation.md`**, **`eval_00_outcome_decision_framework.md`**, **`eval_00_capability_gap_review.md`** | **To evaluate the full app surface against the current Phase 4 mandate and distinguish rough-edge fixes from capability gaps, interface re-engineering, or scope revision.** |
 | Any new feature or major refactor | `arch_01_system_architecture.md` | To understand the "Map of the World" (main thread vs worker vs core). |
 | Data structures, ingestion, or types | `arch_02_data_model.md` | To strictly preserve the "Dual-State" principle (Raw vs Labeled). |
 | `src/core/*` or `adapters/*` | `arch_03_headless_core.md` | To maintain the platform-independent seam and dependency direction. |
@@ -19,7 +20,7 @@ Before modifying code, agents must read the relevant documentation based on the 
 | Statistical calcs, weights, or significance | `arch_04_statistical_engine.md` | To adhere to survey-native methodology and known correctness standards. |
 | Charts, D3 renderers, or canvas layout | `arch_05_visualisation_engine.md` | To follow the phased chart system architecture. |
 | Worker protocol or `EngineProxy` | `design_phase3_browser_convergence.md` | To follow the request-ID protocol and slice-by-slice migration order. |
-| The `docs/` folder or prioritizing work | `roadmap_00_strategic_guide.md`, `blue_02_feature_matrix.md` (and `blue_01_unified_roadmap.md` for full context) | To enforce scope gates and keep sequencing aligned to the current strategic plan. |
+| The `docs/` folder or prioritizing work | `plan_phase4_agent_capability_validation.md`, `roadmap_00_strategic_guide.md`, `blue_02_feature_matrix.md` (and `blue_01_unified_roadmap.md` for full context) | To enforce scope gates and keep sequencing aligned to the current strategic plan, including the Phase 4 validation-first priority. |
 | React UI, CSS, or Theme tokens | `design_01_system.md` & `design_02_ux_modes.md` | To respect strict mode separation (Manager vs Canvas) and tokens. |
 
 ---
@@ -51,7 +52,7 @@ Configure your system prompt or task instructions according to your current role
 
 ### 🏛️ Architect (Gemini Pro / Claude Opus)
 *Role: System design, risk assessment, and sequencing.*
-* **Inputs needed:** System architecture (`arch_01`), headless core seam (`arch_03`), agent architecture (`arch_07`), relevant phase design brief (`design_phase{1-4}_*.md`), and Roadmap/Feature Matrix for scope boundaries.
+* **Inputs needed:** System architecture (`arch_01`), headless core seam (`arch_03`), agent architecture (`arch_07`), relevant phase design brief (`design_phase{1-4}_*.md`), the Phase 4 validation plan when agent-facing capability is in scope, and Roadmap/Feature Matrix for scope boundaries.
 * **Outputs expected:** A 1-2 page Design Brief containing approach, risks, invariants touched, test strategy, and performance expectations.
 * **Definition of Done:** Proposal respects the adapter seam, engine boundary (core vs engine vs transport), dual-state data model, ResultEnvelope provenance, session format stability, and explicitly defers out-of-scope features.
 
@@ -99,6 +100,7 @@ Change UI layout, interaction, or UX mode responsibilities | `docs/playbooks/ui_
 Add or change VelocityEngine public methods | `docs/playbooks/engine_api_change.md` |
 Migrate a store slice from worker to EngineProxy (Phase 3) | `docs/playbooks/worker_migration.md` |
 **Analyze a dataset via MCP tools (as an AI agent)** | **`docs/guide_agent_quickstart.md`** & **`docs/playbooks/agent_analysis_workflow.md`** |
+**Design or execute agent capability validation work** | **`docs/plan_phase4_agent_capability_validation.md`**, **`docs/eval_00_agent_interface_validation.md`**, **`docs/eval_00_outcome_decision_framework.md`**, **`docs/eval_00_capability_gap_review.md`** |
 
 ### Enforcement Rule
 Failure to follow the relevant playbook may result in:
