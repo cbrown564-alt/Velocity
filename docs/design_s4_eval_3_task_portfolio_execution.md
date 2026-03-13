@@ -2,117 +2,179 @@
 
 ## 1. Scope and Objective
 
-S4-EVAL-3 requires executing all six eval briefs (EVAL-01 through EVAL-06) through the intended MCP tool path, producing the standardized evidence package for each: benchmark result (Output A) and capability-gap review (Output B).
+S4-EVAL-3 executes the full six-brief Phase 4 task portfolio (`EVAL-01` through `EVAL-06`) through the intended product path and leaves behind the standardized evidence package for each run:
 
-**Done checks** (from the plan):
-- Each task family (A–F) has at least one executed eval
+- Output A: benchmark result (`process_log.md` + `scorecard.md`)
+- Output B: capability-gap review (`gap_review.md`)
+- Structured run metadata (`artifacts/summary.json`)
+
+This stream is now an in-flight execution brief, not a pre-run kickoff note. `EVAL-01` and `EVAL-02` have already been completed through MCP and should be treated as the first locked baselines for the portfolio.
+
+**Done checks** (from the Phase 4 plan):
+- Each task family (A-F) has at least one executed eval
 - At least one task family is re-run after product changes
 - Failures are logged as product evidence, not just anecdotes
 
-## 2. Current State Assessment
+## 2. Current Execution State
 
-**Ready:**
-- All 6 eval briefs are written and checked in
-- MCP server is configured in `.claude/settings.json` with correct `node --import tsx` invocation
-- Setup script exists (`scripts/velocity-mcp-setup.mjs`)
-- Quickstart guide and analysis playbook are comprehensive and aligned to the MCP path
-- Eval artifact structure is defined (`evals/README.md`) with `EvalRunSummary` schema
-- Benchmark result template, scorecard rubric, and gap review structure are all finalized
-- All 6 datasets are present locally (sleep.sav, BSA 2017, ELSA waves, WVS Wave 7, Trust)
+**Completed runs on disk:**
+- `EVAL-01` (`evals/eval-01/runs/run-2026-03-13/`): successful 9-slide MCP deck + session run on `sleep.sav`; surfaced a real workflow blocker and a build/transport ceiling
+- `EVAL-02` (`evals/eval-02/runs/run-2026-03-13/`): successful 13-slide weighted MCP deck + session run on BSA 2017; isolated semantic discovery as the main remaining weakness at large-survey scale
 
-**Prior art:**
-- EVAL-02 was run once (2026-03-12) but via CLI scripts, not MCP. Process log exists at `docs/eval_02_process_log.md`. Key findings: MCP server was not configured (now fixed), semantic search good for topic but weak for category-level queries, chi-square statistic field `undefined`, session export failed.
+**What changed during S4-EVAL-3 already:**
+- The stream is no longer "execution only" in the strictest sense. `EVAL-01` discovered that MCP exposed session export but not deck commit, so `velocity_commit_deck` was added and covered in:
+  - `mcp-server/tools.ts`
+  - `mcp-server/__tests__/tools.test.ts`
+  - `tests/e2e/agentWorkflow.test.ts`
+  - `docs/guide_agent_quickstart.md`
+  - `docs/playbooks/agent_analysis_workflow.md`
+- The tracker is therefore correct to mark `S4-EVAL-3` as `Contract change: Yes`.
 
-## 3. Execution Plan
+**Current program read:**
+- MCP deck/session round-trip is now real on both a small survey (`EVAL-01`) and a 654-variable weighted survey (`EVAL-02`)
+- No eval has yet delivered a clean primary `Pattern 7` baseline; `EVAL-02` includes a secondary Pattern 7 signal, but its primary result is still `Pattern 4` because large-survey discovery remains materially weak
+- Remaining execution work is concentrated in families `C-F`: handoff, browser convergence, harmonization, and stress
 
-**Sequencing:** Run evals in dependency order — simpler evals first to shake out remaining MCP friction, complex evals later.
+## 3. Portfolio Status
 
-| Order | Eval | Family | Dataset | Risk level | Rationale |
+| Eval | Family | Dataset / artifact | Status | Current read | Next dependency |
 |---|---|---|---|---|---|
-| 1 | EVAL-01 | B (deck) | sleep.sav | Low | Small dataset, known pitfalls, validates MCP path end-to-end |
-| 2 | EVAL-02 | A (discovery) | BSA 2017 | Medium | Rerun through MCP (vs prior CLI run), validates discovery at scale |
-| 3 | EVAL-03 | C (handoff) | Reuse EVAL-01 output | Medium | Depends on EVAL-01 session artifact; tests round-trip |
-| 4 | EVAL-04 | D (convergence) | sleep.sav | Medium | Requires both browser and agent runs; browser path is manual |
-| 5 | EVAL-05 | E (harmonization) | ELSA waves | High | Workspace maturity risk; harmonization MCP tools untested in real eval |
-| 6 | EVAL-06 | F (stress) | WVS Wave 7 | High | Known parse issues; fallback to Trust dataset defined |
+| `EVAL-01` | B (deck) | `test_data/sleep.sav` | Done | End-to-end MCP deck + session works, but richer deck builds exposed memory and JSON transport limits | Use its session artifact as the baseline for `EVAL-03` |
+| `EVAL-02` | A (discovery) | `test_data/British Social Attitudes Survey/bsa2017_for_ukda.sav` | Done | Weighted large-survey execution path is viable; semantic discovery is still the bottleneck | Freeze as the large-survey baseline for later comparison |
+| `EVAL-03` | C (handoff) | Reuse `EVAL-01` session | Pending | Now unblocked by `velocity_commit_deck`; should validate browser import, refinement, and re-export | Requires a controlled browser refinement pass |
+| `EVAL-04` | D (convergence) | `test_data/sleep.sav` | Pending | Should quantify whether browser users still have materially stronger effective affordances | Requires one browser-only run and one MCP-only run of the same task |
+| `EVAL-05` | E (harmonization) | `test_data/English Longitudinal Study of Ageing/` | Pending | Dataset is available locally, but the eval still carries the highest workspace/workflow ambiguity | Requires bounded file selection and strict no-improvisation discipline |
+| `EVAL-06` | F (stress) | `test_data/WVS/WVS_Cross-National_Wave_7_spss_v6_0.sav` with Trust fallback | Pending | Best stress case remains WVS; fallback path is ready if ingestion fails | Requires a quick viability check, then immediate fallback if blocked |
 
-## 4. Artifact Contract Per Eval
+## 4. Remaining Execution Plan
 
-Each eval produces the following under `evals/eval-{NN}/runs/run-YYYY-MM-DD/`:
+**Sequencing:** keep the original dependency-first order, but start from the now-unblocked handoff path.
 
-```
-brief.md          — Copy of or link to the eval brief
-process_log.md    — Benchmark result (Output A) using eval_00_benchmark_result_template.md
-scorecard.md      — Per-layer 1-5 scores
-gap_review.md     — Capability-gap review (Output B) using eval_00_capability_gap_review.md
+| Order | Eval | Why now | Success signal |
+|---|---|---|---|
+| 1 | `EVAL-03` | Directly exercises the new deck/session contract change from `EVAL-01` while the baseline artifact is fresh and small | Session imports cleanly in the browser, human makes additive refinements, refined session re-exports |
+| 2 | `EVAL-04` | Reuses the same `sleep.sav` task shape and browser familiarity from `EVAL-03` | Browser vs MCP comparison identifies explicit parity gaps rather than vague "browser felt better" claims |
+| 3 | `EVAL-05` | Highest-value remaining capability test outside single-dataset deck work | Agent reaches a reviewable mapping flow and produces a harmonized output or records a crisp intended-path block |
+| 4 | `EVAL-06` | Best final resilience pass after the other workflow layers have been exercised | WVS yields a bounded analysis, or fallback activates cleanly with documented evidence |
+
+### Recommended execution details
+
+#### `EVAL-03`
+
+- Use `evals/eval-01/runs/run-2026-03-13/artifacts/session.velocity` as the agent baseline
+- Record the exact browser refinements required by the brief:
+  - reorder one slide
+  - edit one title or note
+  - add one follow-up analysis or slide
+- Treat any missing filters, missing notes, dropped sections, or semantic-state loss as first-class evidence
+
+#### `EVAL-04`
+
+- Keep the browser and agent task tightly scoped to the same 5-slide assignment in `docs/eval_04_browser_vs_agent_convergence_brief.md`
+- Do not let either path expand into a nicer-but-different deck; comparability matters more than local quality
+- Log total effort, workarounds, and "last-minute edit" friction explicitly
+
+#### `EVAL-05`
+
+- The ELSA directory is present locally with multiple candidate wave files
+- To keep the eval bounded, choose two closely related files before starting and document the choice in `brief.md` / `summary.json`
+- Preferred direction: start with adjacent derived-variable or similarly scoped wave files so the eval tests harmonization workflow rather than arbitrary file mismatch
+- If the harmonization path becomes opaque or requires bespoke glue code, record the run as blocked rather than inventing a substitute workflow
+
+#### `EVAL-06`
+
+- Attempt the WVS file first and make a quick go/no-go call in the first 5-10 workflow steps
+- If parsing or viability fails, switch immediately to `test_data/People_s Trust - A Survey-Based Experiment/trust.sav`
+- Preserve the exact WVS failure in both `process_log.md` and `artifacts/summary.json`
+
+## 5. Artifact Contract Per Eval
+
+Each eval still produces the same evidence package under `evals/eval-{NN}/runs/run-YYYY-MM-DD/`:
+
+```text
+brief.md
+process_log.md
+scorecard.md
+gap_review.md
 artifacts/
-  deck.pptx       — Exported deck (or primary artifact)
-  session.velocity — Exported session file
-  summary.json    — EvalRunSummary per eval_00_run_summary_schema.ts
+  deck.pptx          (or primary artifact if deck is not the right output)
+  session.velocity   (when the workflow reaches the persist step)
+  summary.json
 ```
 
-## 5. Risks and Mitigations
+Normalization rules remain unchanged:
+
+- Always create `artifacts/`, even for blocked runs
+- If an artifact is absent, record why in `summary.json`
+- Keep one run directory per date unless a rerun is necessary; then suffix `-a`, `-b`, etc.
+
+## 6. Risks and Mitigations
 
 | Risk | Severity | Mitigation |
 |---|---|---|
-| **Session export bug** (`.data` undefined, seen in EVAL-02) | High | Must verify fix before EVAL-03 depends on it. If still broken, treat as product blocker — fix before continuing. |
-| **EVAL-04 requires manual browser run** | Medium | Keep task deliberately small (5-slide deck on sleep.sav). Document browser workflow step-by-step so it's reproducible. |
-| **EVAL-05 workspace immaturity** | High | If harmonization MCP tools cannot complete the intended path, record as blocked (not improvised). The brief explicitly says to record rather than substitute. |
-| **EVAL-06 WVS parse failure** | High | Fallback to Trust dataset is already defined in the brief. Switch immediately on parse failure; don't debug ReadStat-WASM mid-eval. |
-| **Chi-square statistic undefined** | Low | Note in process logs if still present. Not a blocker for benchmark scoring. |
-| **MCP server startup reliability** | Medium | Run `npm run velocity-mcp-setup` validation before first eval. If it fails, fix before proceeding. |
+| **Deck build / MCP transport ceiling** (confirmed in `EVAL-01`) | High | Keep `EVAL-03` and `EVAL-04` deck scopes deliberately small; if a richer spec fails, record it as product evidence rather than expanding workarounds |
+| **Large-survey discovery remains weak** (confirmed in `EVAL-02`) | High | Accept some disciplined manual variable curation, but log every place where search or suggestions fail to provide the expected shortlist |
+| **Browser-path reproducibility drift** | Medium | Record browser actions step-by-step in `process_log.md` so `EVAL-03` and `EVAL-04` remain reviewable and repeatable |
+| **Harmonization workflow ambiguity** | High | Pre-commit to a bounded two-file ELSA slice; if the intended mapping/review path is not understandable, mark the run blocked instead of improvising |
+| **WVS ingestion or viability failure** | High | Switch immediately to Trust per the brief; do not debug ReadStat-WASM in the middle of the eval |
 
-## 6. Invariants Touched
+## 7. Invariants Touched
 
-- **No contract changes.** S4-EVAL-3 is execution, not engineering. The tracker marks `Contract change: No`.
-- **No code changes unless a product blocker is discovered.** If a blocker (e.g., session export bug) is found, fix it with minimal scope, commit, then resume the eval. Do not scope-creep into feature work during eval execution.
-- Engine boundary, dual-state model, and provenance rules remain untouched.
+- **Execution-first, but blocker fixes are allowed.** S4-EVAL-3 began as a pure execution stream, but it already triggered one legitimate MCP contract change (`velocity_commit_deck`) because the intended path was incomplete without it.
+- **Further code changes must stay minimal and blocker-driven.** If another blocker appears, fix only what is required to restore the intended path, add focused test coverage, then resume the portfolio.
+- **Phase 4 interpretation rules still apply.** Every run must separate:
+  - rough-edge fixes
+  - capability expansion
+  - interface or architecture re-engineering
+  - scope/thesis revision
 
-## 7. Test Strategy
+## 8. Gate Strategy
 
-Gates required: `U, I, A` per tracker.
-- **U (unit):** Not directly applicable — evals produce artifacts, not code. However, if any product fix is made mid-flight, it must have unit test coverage.
-- **I (integration):** Each eval is itself an integration test of the full MCP → Engine → DuckDB path.
-- **A (architecture):** Each gap_review.md must classify findings per the four response classes. Each scorecard must score all 7 layers.
+Tracker gates remain `U, I, A`.
 
-## 8. Definition of Done
+- **U (unit):** required only for any new blocker fix introduced during the remaining evals
+- **I (integration):** the eval runs themselves are the primary integration evidence for MCP -> Engine -> export -> session -> browser/harmonization paths
+- **A (architecture):** every `gap_review.md` must classify the core findings using the capability-gap framework and respect the engine/MCP/browser seam
+
+## 9. Definition of Done
 
 S4-EVAL-3 is complete when:
-1. All 6 evals have `evals/eval-{NN}/runs/run-YYYY-MM-DD/` directories with the required artifact set
-2. Every eval has both Output A (benchmark result) and Output B (capability-gap review)
-3. Blocked evals are explicitly recorded as blocked with reasons (not silently skipped)
-4. At least one eval achieves Pattern 7 (end-to-end success) — likely EVAL-01 on sleep.sav
-5. The tracker is updated: `S4-EVAL-3` status moves to `Done` with evidence links
 
-## 9. Recommended Immediate Next Action
+1. `EVAL-01` through `EVAL-06` each have a dated run directory with the required evidence package or an explicit blocked outcome
+2. Every task family (`A-F`) has at least one executed eval, not just a written brief
+3. At least one rerun or follow-on eval demonstrates the impact of the `velocity_commit_deck` contract change on the intended path
+4. The remaining open failures are captured as scoped product evidence, not hidden inside anecdotal notes
+5. `docs/tracker_00_implementation_status.md` can move `S4-EVAL-3` from `In progress` to `Done` with links to all six evidence packages
 
-**Start with EVAL-01 (Sleep Health Study) through the MCP path.**
+## 10. Recommended Immediate Next Action
 
-This is the lowest-risk eval, uses a small familiar dataset, and will immediately validate:
-- MCP server starts and responds
-- The full load → describe → annotate → search → analyze → build deck → export → session workflow
-- Whether the session export bug from EVAL-02 is fixed
-- Whether the chi-square statistic issue persists
+**Execute `EVAL-03` next using the completed `EVAL-01` session artifact.**
 
-If EVAL-01 succeeds cleanly, proceed to EVAL-02 rerun. If it hits blockers, fix them before continuing — they will affect every downstream eval.
+Why this is the right next move:
 
-## 10. Reference Documents
+- it directly validates the blocker fix that `EVAL-01` forced into the MCP contract
+- it keeps the task on the smallest, most controlled dataset
+- it creates the browser-path muscle memory needed for `EVAL-04`
+- it tests the human-agent collaboration claim before moving into the more ambiguous harmonization and stress runs
 
-The implementer must read these before starting execution:
+If `EVAL-03` shows that session import/refinement is still lossy, pause there and treat it as the next product blocker. If it succeeds, proceed immediately to `EVAL-04`.
+
+## 11. Reference Documents
 
 | Document | Purpose |
 |---|---|
-| `docs/guide_agent_quickstart.md` | MCP tool reference, parameters, output formats |
-| `docs/playbooks/agent_analysis_workflow.md` | Step-by-step analysis procedure |
-| `docs/eval_00_benchmark_result_template.md` | Output A template (process log + scorecard) |
-| `docs/eval_00_capability_gap_review.md` | Output B template (strategic gap review) |
-| `docs/eval_00_outcome_decision_framework.md` | Scoring rubric (1-5 per layer), severity classification, outcome patterns |
-| `docs/eval_00_run_summary_schema.ts` | `summary.json` TypeScript schema |
-| `evals/README.md` | Artifact directory structure |
-| `docs/eval_01_sleep_research_brief.md` | EVAL-01 brief (start here) |
-| `docs/eval_02_bsa2017_research_brief.md` | EVAL-02 brief |
-| `docs/eval_03_session_handoff_roundtrip_brief.md` | EVAL-03 brief |
-| `docs/eval_04_browser_vs_agent_convergence_brief.md` | EVAL-04 brief |
-| `docs/eval_05_cross_wave_harmonization_brief.md` | EVAL-05 brief |
-| `docs/eval_06_stress_wvs_brief.md` | EVAL-06 brief |
-| `docs/eval_02_process_log.md` | Prior EVAL-02 run (CLI, not MCP) — reference for known issues |
+| `docs/plan_phase4_agent_capability_validation.md` | Phase 4 mandate and done checks |
+| `docs/eval_00_agent_interface_validation.md` | What the eval program is fundamentally validating |
+| `docs/eval_00_outcome_decision_framework.md` | Layer scoring and outcome-pattern interpretation |
+| `docs/eval_00_capability_gap_review.md` | Strategic classification of gaps |
+| `docs/eval_00_task_portfolio.md` | Portfolio coverage and family mapping |
+| `evals/README.md` | Run artifact directory contract |
+| `docs/eval_00_run_summary_schema.ts` | `summary.json` schema |
+| `docs/eval_03_session_handoff_roundtrip_brief.md` | Next execution target |
+| `docs/eval_04_browser_vs_agent_convergence_brief.md` | Controlled browser-vs-agent comparison brief |
+| `docs/eval_05_cross_wave_harmonization_brief.md` | Harmonization eval brief |
+| `docs/eval_06_stress_wvs_brief.md` | Stress / fallback eval brief |
+| `evals/eval-01/runs/run-2026-03-13/process_log.md` | Current small-survey MCP baseline |
+| `evals/eval-01/runs/run-2026-03-13/gap_review.md` | `EVAL-01` strategic interpretation |
+| `evals/eval-02/runs/run-2026-03-13/process_log.md` | Current large-survey MCP baseline |
+| `evals/eval-02/runs/run-2026-03-13/gap_review.md` | `EVAL-02` strategic interpretation |
