@@ -9,7 +9,8 @@
  *   4. velocity_crosstab   → cross-tabulation with significance
  *   5. velocity_build_deck → built deck (slides materialized)
  *   6. velocity_export_deck → PPTX bytes
- *   7. velocity_export_session → .velocity session file
+ *   7. velocity_commit_deck → write built deck into session state
+ *   8. velocity_export_session → .velocity session file
  *
  * Uses a real VelocityEngine + DuckDB Node adapter with a temporary CSV dataset.
  * This test is the gate condition before Phase 3 begins.
@@ -211,7 +212,7 @@ describe('Phase 2 E2E: Full Agent Workflow', () => {
     expect(result.data.byteLength).toBeGreaterThan(0);
   });
 
-  it('Step 7 — velocity_export_session: exports a valid .velocity session file', async () => {
+  it('Step 7 — velocity_export_session: exports a valid .velocity session file before deck commit', async () => {
     const resp = await callTool(engine, 'velocity_export_session');
 
     expect(resp.isError).toBeUndefined();
@@ -223,7 +224,7 @@ describe('Phase 2 E2E: Full Agent Workflow', () => {
     expect(session.data.dataset.originalFilename).toBe('survey.csv');
   });
 
-  it('Step 8 — commitDeck: getSession captures deck slides after commitDeck', async () => {
+  it('Step 8 — velocity_commit_deck: committed deck appears in later session export', async () => {
     const spec = {
       title: 'Commit Test Deck',
       sections: [{ title: 'Results', slides: [{ rowVars: ['Q1'], colVar: 'GENDER' }] }],
@@ -233,14 +234,21 @@ describe('Phase 2 E2E: Full Agent Workflow', () => {
     const deck = buildResp.parsed.data;
     expect(deck.slides).toHaveLength(1);
 
-    // Before commitDeck, session should have 0 slides (this test runs after Step 7 which had 0)
-    engine.commitDeck(deck);
+    const commitResp = await callTool(engine, 'velocity_commit_deck', { deck });
+    expect(commitResp.isError).toBeUndefined();
+    expect(commitResp.parsed).toEqual({
+      ok: true,
+      committedSlides: 1,
+      committedSections: 1,
+    });
 
-    const session = engine.getSession();
+    const sessionResp = await callTool(engine, 'velocity_export_session');
+    expect(sessionResp.isError).toBeUndefined();
+    const session = sessionResp.parsed;
     expect(session.data.slides.length).toBeGreaterThan(0);
-    const committed = session.data.slides.find((s) => s.title === deck.slides[0].resolvedTitle);
+    const committed = session.data.slides.find((s: { title: string; analysisState: { rowVars: string[]; colVar: string | null } }) => s.title === deck.slides[0].resolvedTitle);
     expect(committed).toBeDefined();
-    expect(committed!.analysisState.rowVars).toEqual(['Q1']);
-    expect(committed!.analysisState.colVar).toBe('GENDER');
+    expect(committed.analysisState.rowVars).toEqual(['Q1']);
+    expect(committed.analysisState.colVar).toBe('GENDER');
   });
 });

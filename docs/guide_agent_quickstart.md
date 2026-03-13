@@ -39,7 +39,7 @@ If the checked-in config does not load in your Claude Code build, use the same c
 Every agent session follows this sequence:
 
 ```
-load → describe → annotate → search → analyze → build deck → export → commit session
+load → describe → annotate → search → analyze → build deck → export deck → commit deck → export session
 ```
 
 | Step | Tool | Purpose |
@@ -51,7 +51,8 @@ load → describe → annotate → search → analyze → build deck → export 
 | 5 | `velocity_crosstab` / `velocity_stats` | Run analyses |
 | 6 | `velocity_build_deck` | Compose a presentation from slide specs |
 | 7 | `velocity_export_deck` | Export to PPTX or XLSX |
-| 8 | `velocity_export_session` | Save state for human review |
+| 8 | `velocity_commit_deck` | Write the built deck into session state |
+| 9 | `velocity_export_session` | Save state for human review |
 
 Steps 3-5 are iterative. You will typically search → analyze → search again → analyze more before building the deck.
 
@@ -586,6 +587,25 @@ Export a built deck to PPTX or XLSX format.
 
 ---
 
+#### `velocity_commit_deck`
+
+Commit a built deck into the engine session so `velocity_export_session` includes the deck's slides and sections.
+
+```json
+{
+  "deck": { ... }
+}
+```
+
+**Parameters:**
+- `deck`: The `BuiltDeck` object returned by `velocity_build_deck` (pass the `.data` field from the ResultEnvelope)
+
+**Returns** `{ ok, committedSlides, committedSections }`.
+
+**Important:** `velocity_build_deck` is pure. If you skip `velocity_commit_deck`, the exported `.velocity` file will contain dataset state and semantic state, but not the deck you just built.
+
+---
+
 #### `velocity_recommend_chart`
 
 Get a chart type recommendation for given variables.
@@ -613,6 +633,7 @@ The session captures: dataset metadata, variables, variable sets, transforms, fi
 **Behavior:**
 - With no `outputPath`, the tool returns `ResultEnvelope<VelocitySessionFile>`.
 - With `outputPath`, the MCP server writes the JSON file directly, adds `.velocity` if needed, and returns the same envelope plus the resolved `outputPath`.
+- To include a built deck in the session file, call `velocity_commit_deck` first.
 - The session contains analysis state and metadata only. It does **not** contain respondent rows or the raw SAV/CSV data file.
 
 #### `velocity_import_session`

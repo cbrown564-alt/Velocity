@@ -1,0 +1,2839 @@
+{
+  "timestamp": "2026-03-13T16:03:13.755Z",
+  "dataset": {
+    "path": "test_data/British Social Attitudes Survey/bsa2017_for_ukda.sav",
+    "rowCount": 3988,
+    "variableCount": 654,
+    "variableSetCount": 415,
+    "datasetName": "bsa2017_for_ukda.sav"
+  },
+  "annotate": {
+    "annotated": 287,
+    "total": 654
+  },
+  "searches": [
+    {
+      "query": "EU membership Europe remain leave Brexit referendum",
+      "results": [
+        {
+          "variable": {
+            "id": "EUVOTWHO",
+            "name": "EUVOTWHO",
+            "label": "Did you vote to ‘remain a member of the EU’ or to ‘leave the EU’?",
+            "type": "categorical",
+            "valueLabels": [
+              {
+                "value": -2,
+                "label": "skip, version off route"
+              },
+              {
+                "value": -1,
+                "label": "Item not applicable"
+              },
+              {
+                "value": 1,
+                "label": "Remain a member of the European Union"
+              },
+              {
+                "value": 2,
+                "label": "Leave the European Union"
+              },
+              {
+                "value": 3,
+                "label": "Prefer not to say"
+              },
+              {
+                "value": 4,
+                "label": "Don`t remember"
+              },
+              {
+                "value": 5,
+                "label": "DK/Refusal"
+              },
+              {
+                "value": 8,
+                "label": "Don`t know"
+              },
+              {
+                "value": 9,
+                "label": "Refusal"
+              }
+            ],
+            "missingValues": {
+              "discrete": [
+                -1,
+                -2
+              ]
+            }
+          },
+          "datasetId": "dataset-1773417793312",
+          "relevance": 0.193,
+          "matchedOn": [
+            "label",
+            "name",
+            "valueLabel"
+          ]
+        },
+        {
+          "variable": {
+            "id": "EURefb",
+            "name": "EURefb",
+            "label": "If you were given the chance to vote again, how would you vote - to remain a member of the EU, to leave the EU, or would you not vote?",
+            "type": "categorical",
+            "valueLabels": [
+              {
+                "value": -2,
+                "label": "skip, version off route"
+              },
+              {
+                "value": -1,
+                "label": "Item not applicable"
+              },
+              {
+                "value": 1,
+                "label": "Remain a member of the European Union"
+              },
+              {
+                "value": 2,
+                "label": "Leave the European Union"
+              },
+              {
+                "value": 3,
+                "label": "I would not vote"
+              },
+              {
+                "value": 4,
+                "label": "Prefer not to say"
+              },
+              {
+                "value": 5,
+                "label": "DK/Refusal"
+              },
+              {
+                "value": 8,
+                "label": "Don`t know"
+              },
+              {
+                "value": 9,
+                "label": "Refusal"
+              }
+            ],
+            "missingValues": {
+              "discrete": [
+                -1
+              ]
+            }
+          },
+          "datasetId": "dataset-1773417793312",
+          "relevance": 0.193,
+          "matchedOn": [
+            "label",
+            "name",
+            "valueLabel"
+          ]
+        },
+        {
+          "variable": {
+            "id": "ECPolicy2",
+            "name": "ECPolicy2",
+            "label": "Leaving aside the result of the referendum, what should Britain's policy towards the EU be",
+            "type": "categorical",
+            "valueLabels": [
+              {
+                "value": -2,
+                "label": "skip, version off route"
+              },
+              {
+                "value": -1,
+                "label": "Item not applicable"
+              },
+              {
+                "value": 1,
+                "label": "... leave the European Union,"
+              },
+              {
+                "value": 2,
+                "label": "stay in the EU and try to reduce the EU s powers,"
+              },
+              {
+                "value": 3,
+                "label": "stay in the EU and try to keep the EU s powers as they are,"
+              },
+              {
+                "value": 4,
+                "label": "stay in the EU and try to increase the EU s powers,"
+              },
+              {
+                "value": 5,
+                "label": "or, work for the formation of a single European government?"
+              },
+              {
+                "value": 8,
+                "label": "Don`t know"
+              },
+              {
+                "value": 9,
+                "label": "Refusal"
+              }
+            ],
+            "missingValues": {
+              "discrete": [
+                -2
+              ]
+            }
+          },
+          "datasetId": "dataset-1773417793312",
+          "relevance": 0.164,
+          "matchedOn": [
+            "label",
+            "valueLabel"
+          ]
+        },
+        {
+          "variable": {
+            "id": "EULtop1",
+            "name": "EULtop1",
+            "label": "After Britain leaves the EU, which if any of the following should be the top priority of the government?",
+            "type": "ordered",
+            "orderedStyle": "rating",
+            "orderedScoring": "allow_numeric_stats",
+            "valueLabels": [
+              {
+                "value": -2,
+                "label": "skip, version off route"
+              },
+              {
+                "value": -1,
+                "label": "Item not applicable"
+              },
+              {
+                "value": 1,
+                "label": "Reducing immigration"
+              },
+              {
+                "value": 2,
+                "label": "Improving public services such as schools and hospitals"
+              },
+              {
+                "value": 3,
+                "label": "Reducing the number of people on low incomes"
+              },
+              {
+                "value": 4,
+                "label": "Keeping prices in the shops low"
+              },
+              {
+                "value": 5,
+                "label": "Creating better paid jobs"
+              },
+              {
+                "value": 6,
+                "label": "Creating more jobs"
+              },
+              {
+                "value": 7,
+                "label": "Reducing crime"
+              },
+              {
+                "value": 8,
+                "label": "Protecting the environment"
+              },
+              {
+                "value": 9,
+                "label": "Something else (WRITE IN)"
+              },
+              {
+                "value": 10,
+                "label": "None of these things"
+              },
+              {
+                "value": 98,
+                "label": "Don`t know"
+              },
+              {
+                "value": 99,
+                "label": "Refusal"
+              }
+            ],
+            "missingValues": {
+              "discrete": [
+                -2
+              ]
+            }
+          },
+          "datasetId": "dataset-1773417793312",
+          "relevance": 0.164,
+          "matchedOn": [
+            "label",
+            "name",
+            "valueLabel"
+          ]
+        },
+        {
+          "variable": {
+            "id": "EULtop2",
+            "name": "EULtop2",
+            "label": "After Britain leaves the EU, which if any of the following should be the second priority of the government?",
+            "type": "ordered",
+            "orderedStyle": "rating",
+            "orderedScoring": "allow_numeric_stats",
+            "valueLabels": [
+              {
+                "value": -2,
+                "label": "skip, version off route"
+              },
+              {
+                "value": -1,
+                "label": "Item not applicable"
+              },
+              {
+                "value": 1,
+                "label": "Reducing immigration"
+              },
+              {
+                "value": 2,
+                "label": "Improving public services such as schools and hospitals"
+              },
+              {
+                "value": 3,
+                "label": "Reducing the number of people on low incomes"
+              },
+              {
+                "value": 4,
+                "label": "Keeping prices in the shops low"
+              },
+              {
+                "value": 5,
+                "label": "Creating better paid jobs"
+              },
+              {
+                "value": 6,
+                "label": "Creating more jobs"
+              },
+              {
+                "value": 7,
+                "label": "Reducing crime"
+              },
+              {
+                "value": 8,
+                "label": "Protecting the environment"
+              },
+              {
+                "value": 9,
+                "label": "Something else (WRITE IN)"
+              },
+              {
+                "value": 10,
+                "label": "None of these things"
+              },
+              {
+                "value": 98,
+                "label": "Don`t know"
+              },
+              {
+                "value": 99,
+                "label": "Refusal"
+              }
+            ],
+            "missingValues": {
+              "discrete": [
+                -2,
+                -1
+              ]
+            }
+          },
+          "datasetId": "dataset-1773417793312",
+          "relevance": 0.164,
+          "matchedOn": [
+            "label",
+            "name",
+            "valueLabel"
+          ]
+        },
+        {
+          "variable": {
+            "id": "EULtop3",
+            "name": "EULtop3",
+            "label": "After Britain leaves the EU, which if any of the following should be the third priority of the government?",
+            "type": "ordered",
+            "orderedStyle": "rating",
+            "orderedScoring": "allow_numeric_stats",
+            "valueLabels": [
+              {
+                "value": -2,
+                "label": "skip, version off route"
+              },
+              {
+                "value": -1,
+                "label": "Item not applicable"
+              },
+              {
+                "value": 1,
+                "label": "Reducing immigration"
+              },
+              {
+                "value": 2,
+                "label": "Improving public services such as schools and hospitals"
+              },
+              {
+                "value": 3,
+                "label": "Reducing the number of people on low incomes"
+              },
+              {
+                "value": 4,
+                "label": "Keeping prices in the shops low"
+              },
+              {
+                "value": 5,
+                "label": "Creating better paid jobs"
+              },
+              {
+                "value": 6,
+                "label": "Creating more jobs"
+              },
+              {
+                "value": 7,
+                "label": "Reducing crime"
+              },
+              {
+                "value": 8,
+                "label": "Protecting the environment"
+              },
+              {
+                "value": 9,
+                "label": "Something else (WRITE IN)"
+              },
+              {
+                "value": 10,
+                "label": "None of these things"
+              },
+              {
+                "value": 98,
+                "label": "Don`t know"
+              },
+              {
+                "value": 99,
+                "label": "Refusal"
+              }
+            ],
+            "missingValues": {
+              "discrete": [
+                -2,
+                -1
+              ]
+            }
+          },
+          "datasetId": "dataset-1773417793312",
+          "relevance": 0.164,
+          "matchedOn": [
+            "label",
+            "name",
+            "valueLabel"
+          ]
+        },
+        {
+          "variable": {
+            "id": "EUExUne2",
+            "name": "EUExUne2",
+            "label": "As a result of leaving the EU will unemployment in Britain be higher, lower, or won't it make much difference?",
+            "type": "ordered",
+            "orderedStyle": "rating",
+            "orderedScoring": "allow_numeric_stats",
+            "valueLabels": [
+              {
+                "value": -2,
+                "label": "skip, version off route"
+              },
+              {
+                "value": -1,
+                "label": "Item not applicable"
+              },
+              {
+                "value": 1,
+                "label": "A lot higher"
+              },
+              {
+                "value": 2,
+                "label": "A little higher"
+              },
+              {
+                "value": 3,
+                "label": "Won`t make much difference"
+              },
+              {
+                "value": 4,
+                "label": "A little lower"
+              },
+              {
+                "value": 5,
+                "label": "A lot lower"
+              },
+              {
+                "value": 8,
+                "label": "Don`t know"
+              },
+              {
+                "value": 9,
+                "label": "Refusal"
+              }
+            ],
+            "missingValues": {
+              "discrete": [
+                -2
+              ]
+            }
+          },
+          "datasetId": "dataset-1773417793312",
+          "relevance": 0.143,
+          "matchedOn": [
+            "label",
+            "name"
+          ]
+        },
+        {
+          "variable": {
+            "id": "eulunem",
+            "name": "eulunem",
+            "label": "Do you think that as a result of leaving the EU, unemployment in Britain will be higher in 10 years’ time, lower, or won’t it make much difference?",
+            "type": "ordered",
+            "orderedStyle": "rating",
+            "orderedScoring": "allow_numeric_stats",
+            "valueLabels": [
+              {
+                "value": -2,
+                "label": "skip, version off route"
+              },
+              {
+                "value": -1,
+                "label": "skip, didn't return SC questionnaire"
+              },
+              {
+                "value": 1,
+                "label": "A lot higher"
+              },
+              {
+                "value": 2,
+                "label": "A little higher"
+              },
+              {
+                "value": 3,
+                "label": "Won`t make much difference"
+              },
+              {
+                "value": 4,
+                "label": "A little lower"
+              },
+              {
+                "value": 5,
+                "label": "A lot lower"
+              },
+              {
+                "value": 8,
+                "label": "Can`t choose"
+              },
+              {
+                "value": 9,
+                "label": "Not answered"
+              }
+            ],
+            "missingValues": {
+              "discrete": [
+                -1,
+                -2
+              ]
+            }
+          },
+          "datasetId": "dataset-1773417793312",
+          "relevance": 0.143,
+          "matchedOn": [
+            "label",
+            "name"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "NHS satisfaction health service spending",
+      "results": [
+        {
+          "variable": {
+            "id": "ImpHSafe",
+            "name": "ImpHSafe",
+            "label": "How large an impact, if any, on someone's health: how safe someone feels in their local area?",
+            "type": "categorical",
+            "valueLabels": [
+              {
+                "value": -2,
+                "label": "skip, version off route"
+              },
+              {
+                "value": -1,
+                "label": "Item not applicable"
+              },
+              {
+                "value": 1,
+                "label": "A very large impact"
+              },
+              {
+                "value": 2,
+                "label": "Quite a large impact"
+              },
+              {
+                "value": 3,
+                "label": "Not much of an impact"
+              },
+              {
+                "value": 4,
+                "label": "No impact at all"
+              },
+              {
+                "value": 8,
+                "label": "Don`t know"
+              },
+              {
+                "value": 9,
+                "label": "Refusal"
+              }
+            ],
+            "missingValues": {
+              "discrete": [
+                -2
+              ]
+            }
+          },
+          "datasetId": "dataset-1773417793312",
+          "relevance": 0.17,
+          "matchedOn": [
+            "label",
+            "valueLabel"
+          ]
+        },
+        {
+          "variable": {
+            "id": "NHSImp",
+            "name": "NHSImp",
+            "label": "If demand for NHS services exceeds the amount of funding it receives, what is the most important thing for the NHS to do?",
+            "type": "categorical",
+            "valueLabels": [
+              {
+                "value": -2,
+                "label": "skip, version off route"
+              },
+              {
+                "value": -1,
+                "label": "Item not applicable"
+              },
+              {
+                "value": 1,
+                "label": "Stop providing treatments that are poor value for money"
+              },
+              {
+                "value": 2,
+                "label": "Raise the threshold for treatment to qualify for NHS care"
+              },
+              {
+                "value": 3,
+                "label": "Delay treatments so people have to wait longer"
+              },
+              {
+                "value": 4,
+                "label": "Restrict access to non-emergency treatment"
+              },
+              {
+                "value": 5,
+                "label": "SPONTANEOUS - (None of the above)"
+              },
+              {
+                "value": 8,
+                "label": "Don`t know"
+              },
+              {
+                "value": 9,
+                "label": "Refusal"
+              }
+            ],
+            "missingValues": {
+              "discrete": [
+                -2
+              ]
+            }
+          },
+          "datasetId": "dataset-1773417793312",
+          "relevance": 0.17,
+          "matchedOn": [
+            "label",
+            "name",
+            "valueLabel"
+          ]
+        },
+        {
+          "variable": {
+            "id": "consvfa",
+            "name": "consvfa",
+            "label": "Is the Conservative party IN FAVOUR or AGAINST allowing people from the EU to come here freely to live and work in return for allowing British firms to sell goods and services freely in the EU?",
+            "type": "categorical",
+            "valueLabels": [
+              {
+                "value": -2,
+                "label": "skip, version off route"
+              },
+              {
+                "value": -1,
+                "label": "skip, didn't return SC questionnaire"
+              },
+              {
+                "value": 1,
+                "label": "Definitely in favour"
+              },
+              {
+                "value": 2,
+                "label": "Probably in favour"
+              },
+              {
+                "value": 3,
+                "label": "Probably against"
+              },
+              {
+                "value": 4,
+                "label": "Definitely against"
+              },
+              {
+                "value": 8,
+                "label": "Can`t choose"
+              },
+              {
+                "value": 9,
+                "label": "Not answered"
+              }
+            ],
+            "missingValues": {
+              "discrete": [
+                -2,
+                -1
+              ]
+            }
+          },
+          "datasetId": "dataset-1773417793312",
+          "relevance": 0.17,
+          "matchedOn": [
+            "label",
+            "valueLabel"
+          ]
+        },
+        {
+          "variable": {
+            "id": "labrfa",
+            "name": "labrfa",
+            "label": "Is the Labour party IN FAVOUR or AGAINST allowing people from the EU to come here freely to live and work in return for allowing British firms to sell goods and services freely in the EU?",
+            "type": "categorical",
+            "valueLabels": [
+              {
+                "value": -2,
+                "label": "skip, version off route"
+              },
+              {
+                "value": -1,
+                "label": "skip, didn't return SC questionnaire"
+              },
+              {
+                "value": 1,
+                "label": "Definitely in favour"
+              },
+              {
+                "value": 2,
+                "label": "Probably in favour"
+              },
+              {
+                "value": 3,
+                "label": "Probably against"
+              },
+              {
+                "value": 4,
+                "label": "Definitely against"
+              },
+              {
+                "value": 8,
+                "label": "Can`t choose"
+              },
+              {
+                "value": 9,
+                "label": "Not answered"
+              }
+            ],
+            "missingValues": {
+              "discrete": [
+                -2,
+                -1
+              ]
+            }
+          },
+          "datasetId": "dataset-1773417793312",
+          "relevance": 0.17,
+          "matchedOn": [
+            "label",
+            "valueLabel"
+          ]
+        },
+        {
+          "variable": {
+            "id": "ukipfa",
+            "name": "ukipfa",
+            "label": "Is UKIP IN FAVOUR or AGAINST allowing people from the EU to come here freely to live and work in return for allowing British firms to sell goods and services freely in the EU?",
+            "type": "categorical",
+            "valueLabels": [
+              {
+                "value": -2,
+                "label": "skip, version off route"
+              },
+              {
+                "value": -1,
+                "label": "skip, didn't return SC questionnaire"
+              },
+              {
+                "value": 1,
+                "label": "Definitely in favour"
+              },
+              {
+                "value": 2,
+                "label": "Probably in favour"
+              },
+              {
+                "value": 3,
+                "label": "Probably against"
+              },
+              {
+                "value": 4,
+                "label": "Definitely against"
+              },
+              {
+                "value": 8,
+                "label": "Can`t choose"
+              },
+              {
+                "value": 9,
+                "label": "Not answered"
+              }
+            ],
+            "missingValues": {
+              "discrete": [
+                -2,
+                -1
+              ]
+            }
+          },
+          "datasetId": "dataset-1773417793312",
+          "relevance": 0.17,
+          "matchedOn": [
+            "label",
+            "valueLabel"
+          ]
+        },
+        {
+          "variable": {
+            "id": "InpatSat",
+            "name": "InpatSat",
+            "label": "How satisfied or dissatisfied you are with National Health Service: being in hospital as an in -patient?",
+            "type": "ordered",
+            "orderedStyle": "rating",
+            "orderedScoring": "allow_numeric_stats",
+            "valueLabels": [
+              {
+                "value": -2,
+                "label": "skip, version off route"
+              },
+              {
+                "value": -1,
+                "label": "Item not applicable"
+              },
+              {
+                "value": 1,
+                "label": "Very satisfied"
+              },
+              {
+                "value": 2,
+                "label": "Quite satisfied"
+              },
+              {
+                "value": 3,
+                "label": "Neither satisfied nor dissatisfied"
+              },
+              {
+                "value": 4,
+                "label": "Quite dissatisfied"
+              },
+              {
+                "value": 5,
+                "label": "Very dissatisfied"
+              },
+              {
+                "value": 8,
+                "label": "Don`t know"
+              },
+              {
+                "value": 9,
+                "label": "Refusal"
+              }
+            ],
+            "missingValues": {
+              "discrete": [
+                -2
+              ]
+            },
+            "semantic": {
+              "topic": "satisfaction",
+              "measurementIntent": "attitude",
+              "conceptFamily": "satisfaction",
+              "source": "auto",
+              "confidence": 1
+            }
+          },
+          "datasetId": "dataset-1773417793312",
+          "relevance": 0.132,
+          "matchedOn": [
+            "concept",
+            "topic",
+            "label"
+          ]
+        },
+        {
+          "variable": {
+            "id": "MedResI",
+            "name": "MedResI",
+            "label": "How interested, if at all, would you say you are in medical research?",
+            "type": "ordered",
+            "orderedStyle": "rating",
+            "orderedScoring": "allow_numeric_stats",
+            "valueLabels": [
+              {
+                "value": -2,
+                "label": "skip, version off route"
+              },
+              {
+                "value": -1,
+                "label": "Item not applicable"
+              },
+              {
+                "value": 1,
+                "label": "Very interested"
+              },
+              {
+                "value": 2,
+                "label": "Fairly interested"
+              },
+              {
+                "value": 3,
+                "label": "Not very interested"
+              },
+              {
+                "value": 4,
+                "label": "Not at all interested"
+              },
+              {
+                "value": 8,
+                "label": "Don`t know"
+              },
+              {
+                "value": 9,
+                "label": "Refusal"
+              }
+            ],
+            "missingValues": {
+              "discrete": []
+            }
+          },
+          "datasetId": "dataset-1773417793312",
+          "relevance": 0.13,
+          "matchedOn": [
+            "label",
+            "valueLabel"
+          ]
+        },
+        {
+          "variable": {
+            "id": "SocSpnd1",
+            "name": "SocSpnd1",
+            "label": "Would you like to see more or less government spending than now on benefits for unemployed people",
+            "type": "ordered",
+            "orderedStyle": "rating",
+            "orderedScoring": "allow_numeric_stats",
+            "valueLabels": [
+              {
+                "value": -2,
+                "label": "skip, version off route"
+              },
+              {
+                "value": -1,
+                "label": "Item not applicable"
+              },
+              {
+                "value": 1,
+                "label": "Spend much more"
+              },
+              {
+                "value": 2,
+                "label": "Spend more"
+              },
+              {
+                "value": 3,
+                "label": "Spend the same as now"
+              },
+              {
+                "value": 4,
+                "label": "Spend less"
+              },
+              {
+                "value": 5,
+                "label": "Spend much less"
+              },
+              {
+                "value": 8,
+                "label": "Don`t know"
+              },
+              {
+                "value": 9,
+                "label": "Refusal"
+              }
+            ],
+            "missingValues": {
+              "discrete": [
+                -2
+              ]
+            }
+          },
+          "datasetId": "dataset-1773417793312",
+          "relevance": 0.13,
+          "matchedOn": [
+            "label",
+            "valueLabel"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "trust government parliament political system",
+      "results": [
+        {
+          "variable": {
+            "id": "Himp",
+            "name": "Himp",
+            "label": "How important it is for a young person to go on to a university or college?",
+            "type": "ordered",
+            "orderedStyle": "rating",
+            "orderedScoring": "allow_numeric_stats",
+            "valueLabels": [
+              {
+                "value": -2,
+                "label": "skip, version off route"
+              },
+              {
+                "value": -1,
+                "label": "Item not applicable"
+              },
+              {
+                "value": 1,
+                "label": "Very important"
+              },
+              {
+                "value": 2,
+                "label": "Fairly important"
+              },
+              {
+                "value": 3,
+                "label": "Not very important"
+              },
+              {
+                "value": 4,
+                "label": "Not at all important"
+              },
+              {
+                "value": 5,
+                "label": "SPONTANEOUS: It depends on the young person wants"
+              },
+              {
+                "value": 6,
+                "label": "SPONTANEOUS: It depends on the career that the young person"
+              },
+              {
+                "value": 7,
+                "label": "SPONTANEOUS: It depends how the young person will fund their higher education"
+              },
+              {
+                "value": 8,
+                "label": "SPONTANEOUS: It depends what the young person`s motivations are"
+              },
+              {
+                "value": 98,
+                "label": "Don`t know"
+              },
+              {
+                "value": 99,
+                "label": "Refusal"
+              }
+            ],
+            "missingValues": {
+              "discrete": [
+                -2
+              ]
+            }
+          },
+          "datasetId": "dataset-1773417793312",
+          "relevance": 0.13,
+          "matchedOn": [
+            "label",
+            "valueLabel"
+          ]
+        },
+        {
+          "variable": {
+            "id": "GovTrust",
+            "name": "GovTrust",
+            "label": "How much do you trust British governments of any party to place the needs of the nation above the interests of their own political party",
+            "type": "ordered",
+            "orderedStyle": "rating",
+            "orderedScoring": "allow_numeric_stats",
+            "valueLabels": [
+              {
+                "value": -2,
+                "label": "skip, version off route"
+              },
+              {
+                "value": -1,
+                "label": "Item not applicable"
+              },
+              {
+                "value": 1,
+                "label": "Just about always"
+              },
+              {
+                "value": 2,
+                "label": "Most of the time"
+              },
+              {
+                "value": 3,
+                "label": "Only some of the time"
+              },
+              {
+                "value": 4,
+                "label": "Almost never"
+              },
+              {
+                "value": 8,
+                "label": "Don`t know"
+              },
+              {
+                "value": 9,
+                "label": "Refusal"
+              }
+            ],
+            "missingValues": {
+              "discrete": [
+                -2
+              ]
+            },
+            "semantic": {
+              "topic": "behavior_frequency",
+              "measurementIntent": "behavior",
+              "source": "auto",
+              "confidence": 0.75
+            }
+          },
+          "datasetId": "dataset-1773417793312",
+          "relevance": 0.12,
+          "matchedOn": [
+            "label",
+            "name"
+          ]
+        },
+        {
+          "variable": {
+            "id": "WhyNRep3",
+            "name": "WhyNRep3",
+            "label": "Why not likely to report  benefit fraud: I would worry that they would find out it was me who reported them",
+            "type": "categorical",
+            "valueLabels": [
+              {
+                "value": -2,
+                "label": "skip, version off route"
+              },
+              {
+                "value": -1,
+                "label": "Item not applicable"
+              },
+              {
+                "value": 0,
+                "label": "Not mentioned"
+              },
+              {
+                "value": 1,
+                "label": "Mentioned"
+              },
+              {
+                "value": 8,
+                "label": "Don`t know"
+              },
+              {
+                "value": 9,
+                "label": "Refusal"
+              }
+            ],
+            "missingValues": {
+              "discrete": [
+                -1,
+                -2
+              ]
+            }
+          },
+          "datasetId": "dataset-1773417793312",
+          "relevance": 0.12,
+          "matchedOn": [
+            "label"
+          ]
+        },
+        {
+          "variable": {
+            "id": "WhyNRep5",
+            "name": "WhyNRep5",
+            "label": "Why not likely to report  benefit fraud: Nothing would happen as a result of me reporting it",
+            "type": "categorical",
+            "valueLabels": [
+              {
+                "value": -2,
+                "label": "skip, version off route"
+              },
+              {
+                "value": -1,
+                "label": "Item not applicable"
+              },
+              {
+                "value": 0,
+                "label": "Not mentioned"
+              },
+              {
+                "value": 1,
+                "label": "Mentioned"
+              },
+              {
+                "value": 8,
+                "label": "Don`t know"
+              },
+              {
+                "value": 9,
+                "label": "Refusal"
+              }
+            ],
+            "missingValues": {
+              "discrete": [
+                -1,
+                -2
+              ]
+            }
+          },
+          "datasetId": "dataset-1773417793312",
+          "relevance": 0.12,
+          "matchedOn": [
+            "label"
+          ]
+        },
+        {
+          "variable": {
+            "id": "WhyNRep8",
+            "name": "WhyNRep8",
+            "label": "Why not likely to report  benefit fraud: I don't care / it doesn't bother me",
+            "type": "categorical",
+            "valueLabels": [
+              {
+                "value": -2,
+                "label": "skip, version off route"
+              },
+              {
+                "value": -1,
+                "label": "Item not applicable"
+              },
+              {
+                "value": 0,
+                "label": "Not mentioned"
+              },
+              {
+                "value": 1,
+                "label": "Mentioned"
+              },
+              {
+                "value": 8,
+                "label": "Don`t know"
+              },
+              {
+                "value": 9,
+                "label": "Refusal"
+              }
+            ],
+            "missingValues": {
+              "discrete": [
+                -1,
+                -2
+              ]
+            }
+          },
+          "datasetId": "dataset-1773417793312",
+          "relevance": 0.12,
+          "matchedOn": [
+            "label"
+          ]
+        },
+        {
+          "variable": {
+            "id": "CycDang",
+            "name": "CycDang",
+            "label": "It is too dangerous for me to cycle on the roads.",
+            "type": "ordered",
+            "orderedStyle": "rating",
+            "orderedScoring": "allow_numeric_stats",
+            "valueLabels": [
+              {
+                "value": -2,
+                "label": "skip, version off route"
+              },
+              {
+                "value": -1,
+                "label": "Item not applicable"
+              },
+              {
+                "value": 1,
+                "label": "Agree strongly"
+              },
+              {
+                "value": 2,
+                "label": "Agree"
+              },
+              {
+                "value": 3,
+                "label": "Neither agree nor disagree"
+              },
+              {
+                "value": 4,
+                "label": "Disagree"
+              },
+              {
+                "value": 5,
+                "label": "Disagree strongly"
+              },
+              {
+                "value": 8,
+                "label": "Don`t know"
+              },
+              {
+                "value": 9,
+                "label": "Refusal"
+              }
+            ],
+            "missingValues": {
+              "discrete": [
+                -2
+              ]
+            },
+            "semantic": {
+              "topic": "attitude_scale",
+              "measurementIntent": "attitude",
+              "source": "auto",
+              "confidence": 0.75
+            }
+          },
+          "datasetId": "dataset-1773417793312",
+          "relevance": 0.12,
+          "matchedOn": [
+            "label"
+          ]
+        },
+        {
+          "variable": {
+            "id": "acgoals",
+            "name": "acgoals",
+            "label": "It is easy for me to accomplish my goals.",
+            "type": "ordered",
+            "orderedStyle": "rating",
+            "orderedScoring": "allow_numeric_stats",
+            "valueLabels": [
+              {
+                "value": -2,
+                "label": "skip, version off route"
+              },
+              {
+                "value": -1,
+                "label": "skip, didn't return SC questionnaire"
+              },
+              {
+                "value": 1,
+                "label": "Completely true"
+              },
+              {
+                "value": 2,
+                "label": "Mostly true"
+              },
+              {
+                "value": 3,
+                "label": "Somewhat true"
+              },
+              {
+                "value": 4,
+                "label": "Neither true, nor untrue"
+              },
+              {
+                "value": 5,
+                "label": "Somewhat untrue"
+              },
+              {
+                "value": 6,
+                "label": "Mostly untrue"
+              },
+              {
+                "value": 7,
+                "label": "Completely untrue"
+              },
+              {
+                "value": 8,
+                "label": "Can`t choose"
+              },
+              {
+                "value": 9,
+                "label": "Not answered"
+              }
+            ],
+            "missingValues": {
+              "discrete": [
+                -1,
+                -2
+              ]
+            },
+            "semantic": {
+              "topic": "attitude_scale",
+              "measurementIntent": "attitude",
+              "source": "auto",
+              "confidence": 0.75
+            }
+          },
+          "datasetId": "dataset-1773417793312",
+          "relevance": 0.12,
+          "matchedOn": [
+            "label"
+          ]
+        },
+        {
+          "variable": {
+            "id": "VoteSyst",
+            "name": "VoteSyst",
+            "label": "Should we change or keep the voting system for general elections?",
+            "type": "categorical",
+            "valueLabels": [
+              {
+                "value": -2,
+                "label": "skip, version off route"
+              },
+              {
+                "value": -1,
+                "label": "Item not applicable"
+              },
+              {
+                "value": 1,
+                "label": "Change voting system for House of Commons"
+              },
+              {
+                "value": 2,
+                "label": "Keep it as it is"
+              },
+              {
+                "value": 8,
+                "label": "Don`t know"
+              },
+              {
+                "value": 9,
+                "label": "Refusal"
+              }
+            ],
+            "missingValues": {
+              "discrete": [
+                -2
+              ]
+            }
+          },
+          "datasetId": "dataset-1773417793312",
+          "relevance": 0.09,
+          "matchedOn": [
+            "label",
+            "valueLabel"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "welfare benefits unemployment spending redistribute",
+      "results": [
+        {
+          "variable": {
+            "id": "SocSpnd6",
+            "name": "SocSpnd6",
+            "label": "Would you like to see more or less government spending than now on benefits for people who care for those who are sick or disabled",
+            "type": "ordered",
+            "orderedStyle": "rating",
+            "orderedScoring": "allow_numeric_stats",
+            "valueLabels": [
+              {
+                "value": -2,
+                "label": "skip, version off route"
+              },
+              {
+                "value": -1,
+                "label": "Item not applicable"
+              },
+              {
+                "value": 1,
+                "label": "Spend much more"
+              },
+              {
+                "value": 2,
+                "label": "Spend more"
+              },
+              {
+                "value": 3,
+                "label": "Spend the same as now"
+              },
+              {
+                "value": 4,
+                "label": "Spend less"
+              },
+              {
+                "value": 5,
+                "label": "Spend much less"
+              },
+              {
+                "value": 8,
+                "label": "Don`t know"
+              },
+              {
+                "value": 9,
+                "label": "Refusal"
+              }
+            ],
+            "missingValues": {
+              "discrete": [
+                -2
+              ]
+            }
+          },
+          "datasetId": "dataset-1773417793312",
+          "relevance": 0.17,
+          "matchedOn": [
+            "label",
+            "valueLabel"
+          ]
+        },
+        {
+          "variable": {
+            "id": "Buldres",
+            "name": "Buldres",
+            "label": "Assuming a decision had been made to build new houses in your local area, who should be mainly responsible for deciding where new homes are built?",
+            "type": "categorical",
+            "valueLabels": [
+              {
+                "value": -2,
+                "label": "skip, version off route"
+              },
+              {
+                "value": -1,
+                "label": "Item not applicable"
+              },
+              {
+                "value": 1,
+                "label": "Local communities"
+              },
+              {
+                "value": 2,
+                "label": "Local council"
+              },
+              {
+                "value": 3,
+                "label": "National government"
+              },
+              {
+                "value": 4,
+                "label": "House builders"
+              },
+              {
+                "value": 5,
+                "label": "Someone else (WRITE IN)"
+              },
+              {
+                "value": 6,
+                "label": "(Spontaneous - I don`t mind)"
+              },
+              {
+                "value": 7,
+                "label": "(Spontaneous - I don`t think housing should be built in my local area)"
+              },
+              {
+                "value": 8,
+                "label": "Don`t know"
+              },
+              {
+                "value": 9,
+                "label": "Refusal"
+              }
+            ],
+            "missingValues": {
+              "discrete": [
+                -2,
+                -1
+              ]
+            }
+          },
+          "datasetId": "dataset-1773417793312",
+          "relevance": 0.17,
+          "matchedOn": [
+            "label",
+            "valueLabel"
+          ]
+        },
+        {
+          "variable": {
+            "id": "WRKCON",
+            "name": "WRKCON",
+            "label": "How confident are you that you will be working in 12 months  time?",
+            "type": "ordered",
+            "orderedStyle": "rating",
+            "orderedScoring": "allow_numeric_stats",
+            "valueLabels": [
+              {
+                "value": -2,
+                "label": "skip, version off route"
+              },
+              {
+                "value": -1,
+                "label": "Item not applicable"
+              },
+              {
+                "value": 1,
+                "label": "Very confident"
+              },
+              {
+                "value": 2,
+                "label": "Somewhat confident"
+              },
+              {
+                "value": 3,
+                "label": "Not very confident"
+              },
+              {
+                "value": 4,
+                "label": "Not at all confident"
+              },
+              {
+                "value": 5,
+                "label": "(SPONTANEOUS: Plan to be retired/not in work within 12 month"
+              },
+              {
+                "value": 8,
+                "label": "Don`t know"
+              },
+              {
+                "value": 9,
+                "label": "Refusal"
+              }
+            ],
+            "missingValues": {
+              "discrete": [
+                -1,
+                -2
+              ]
+            }
+          },
+          "datasetId": "dataset-1773417793312",
+          "relevance": 0.17,
+          "matchedOn": [
+            "label",
+            "valueLabel"
+          ]
+        },
+        {
+          "variable": {
+            "id": "ChgJbTim",
+            "name": "ChgJbTim",
+            "label": "What is the maximum time you would be willing to spend on your daily trip from home to a new job?",
+            "type": "categorical",
+            "valueLabels": [
+              {
+                "value": -2,
+                "label": "skip, version off route"
+              },
+              {
+                "value": -1,
+                "label": "Item not applicable"
+              },
+              {
+                "value": 1,
+                "label": "Up to 30 mins"
+              },
+              {
+                "value": 2,
+                "label": "Over 30 mins - up to 1 hr"
+              },
+              {
+                "value": 3,
+                "label": "Over 1 hr - up to 1.5 hrs"
+              },
+              {
+                "value": 4,
+                "label": "More than 1.5 hrs"
+              },
+              {
+                "value": 5,
+                "label": "(SPONTANEOUS: I would not be willing to travel at all)"
+              },
+              {
+                "value": 8,
+                "label": "Don`t know"
+              },
+              {
+                "value": 9,
+                "label": "Refusal"
+              }
+            ],
+            "missingValues": {
+              "discrete": [
+                -1,
+                -2
+              ]
+            }
+          },
+          "datasetId": "dataset-1773417793312",
+          "relevance": 0.17,
+          "matchedOn": [
+            "label",
+            "valueLabel"
+          ]
+        },
+        {
+          "variable": {
+            "id": "govldif",
+            "name": "govldif",
+            "label": "It is the responsibility of the government to reduce the differences in income between people with high incomes and those with low incomes.",
+            "type": "ordered",
+            "orderedStyle": "rating",
+            "orderedScoring": "allow_numeric_stats",
+            "valueLabels": [
+              {
+                "value": -2,
+                "label": "skip, version off route"
+              },
+              {
+                "value": -1,
+                "label": "skip, didn't return SC questionnaire"
+              },
+              {
+                "value": 1,
+                "label": "Agree strongly"
+              },
+              {
+                "value": 2,
+                "label": "Agree"
+              },
+              {
+                "value": 3,
+                "label": "Neither agree nor disagree"
+              },
+              {
+                "value": 4,
+                "label": "Disagree"
+              },
+              {
+                "value": 5,
+                "label": "Disagree strongly"
+              },
+              {
+                "value": 8,
+                "label": "Can`t choose"
+              },
+              {
+                "value": 9,
+                "label": "Not answered"
+              }
+            ],
+            "missingValues": {
+              "discrete": [
+                -1,
+                -2
+              ]
+            },
+            "semantic": {
+              "topic": "demographics",
+              "measurementIntent": "demographic",
+              "source": "auto",
+              "confidence": 1
+            }
+          },
+          "datasetId": "dataset-1773417793312",
+          "relevance": 0.132,
+          "matchedOn": [
+            "label"
+          ]
+        },
+        {
+          "variable": {
+            "id": "morewelf",
+            "name": "morewelf",
+            "label": "The government should spend more money on welfare benefits for the poor",
+            "type": "ordered",
+            "orderedStyle": "rating",
+            "orderedScoring": "allow_numeric_stats",
+            "valueLabels": [
+              {
+                "value": -2,
+                "label": "skip, version off route"
+              },
+              {
+                "value": -1,
+                "label": "skip, didn't return SC questionnaire"
+              },
+              {
+                "value": 1,
+                "label": "Agree strongly"
+              },
+              {
+                "value": 2,
+                "label": "Agree"
+              },
+              {
+                "value": 3,
+                "label": "Neither agree nor disagree"
+              },
+              {
+                "value": 4,
+                "label": "Disagree"
+              },
+              {
+                "value": 5,
+                "label": "Disagree strongly"
+              },
+              {
+                "value": 9,
+                "label": "Not answered"
+              }
+            ],
+            "missingValues": {
+              "discrete": [
+                -1
+              ]
+            },
+            "semantic": {
+              "topic": "attitude_scale",
+              "measurementIntent": "attitude",
+              "source": "auto",
+              "confidence": 1
+            }
+          },
+          "datasetId": "dataset-1773417793312",
+          "relevance": 0.132,
+          "matchedOn": [
+            "label"
+          ]
+        },
+        {
+          "variable": {
+            "id": "Monarchy",
+            "name": "Monarchy",
+            "label": "How important is it for Britain to have a monarchy?",
+            "type": "ordered",
+            "orderedStyle": "rating",
+            "orderedScoring": "allow_numeric_stats",
+            "valueLabels": [
+              {
+                "value": -2,
+                "label": "skip, version off route"
+              },
+              {
+                "value": -1,
+                "label": "Item not applicable"
+              },
+              {
+                "value": 1,
+                "label": "....very important,"
+              },
+              {
+                "value": 2,
+                "label": "quite important,"
+              },
+              {
+                "value": 3,
+                "label": "not very important,"
+              },
+              {
+                "value": 4,
+                "label": "not at all important,"
+              },
+              {
+                "value": 5,
+                "label": "or, do you think the monarchy should be abolished?"
+              },
+              {
+                "value": 8,
+                "label": "Don`t know"
+              },
+              {
+                "value": 9,
+                "label": "Refusal"
+              }
+            ],
+            "missingValues": {
+              "discrete": [
+                -2
+              ]
+            }
+          },
+          "datasetId": "dataset-1773417793312",
+          "relevance": 0.13,
+          "matchedOn": [
+            "label",
+            "valueLabel"
+          ]
+        },
+        {
+          "variable": {
+            "id": "Spend1",
+            "name": "Spend1",
+            "label": "Which would be your highest priority for extra govt spending?",
+            "type": "categorical",
+            "valueLabels": [
+              {
+                "value": -2,
+                "label": "skip, version off route"
+              },
+              {
+                "value": -1,
+                "label": "Item not applicable"
+              },
+              {
+                "value": 1,
+                "label": "Education"
+              },
+              {
+                "value": 2,
+                "label": "Defence"
+              },
+              {
+                "value": 3,
+                "label": "Health"
+              },
+              {
+                "value": 4,
+                "label": "Housing"
+              },
+              {
+                "value": 5,
+                "label": "Public transport"
+              },
+              {
+                "value": 6,
+                "label": "Roads"
+              },
+              {
+                "value": 7,
+                "label": "Police and prisons"
+              },
+              {
+                "value": 8,
+                "label": "Social security benefits"
+              },
+              {
+                "value": 9,
+                "label": "Help for industry"
+              },
+              {
+                "value": 10,
+                "label": "Overseas aid"
+              },
+              {
+                "value": 11,
+                "label": "(None of these)"
+              },
+              {
+                "value": 98,
+                "label": "Don`t know"
+              },
+              {
+                "value": 99,
+                "label": "Refusal"
+              }
+            ],
+            "missingValues": {
+              "discrete": [
+                -2
+              ]
+            }
+          },
+          "datasetId": "dataset-1773417793312",
+          "relevance": 0.13,
+          "matchedOn": [
+            "label",
+            "valueLabel"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "age gender sex social class education region party",
+      "results": [
+        {
+          "variable": {
+            "id": "TVNews",
+            "name": "TVNews",
+            "label": "How often do you watch all or part of a news programme on television?",
+            "type": "ordered",
+            "orderedStyle": "rating",
+            "orderedScoring": "allow_numeric_stats",
+            "valueLabels": [
+              {
+                "value": -2,
+                "label": "skip, version off route"
+              },
+              {
+                "value": -1,
+                "label": "Item not applicable"
+              },
+              {
+                "value": 1,
+                "label": "Several times a day"
+              },
+              {
+                "value": 2,
+                "label": "Every day"
+              },
+              {
+                "value": 3,
+                "label": "Several times a week"
+              },
+              {
+                "value": 4,
+                "label": "At least once a week"
+              },
+              {
+                "value": 5,
+                "label": "A couple of times a month"
+              },
+              {
+                "value": 6,
+                "label": "Once a month"
+              },
+              {
+                "value": 7,
+                "label": "Less often than once a month"
+              },
+              {
+                "value": 8,
+                "label": "Never"
+              },
+              {
+                "value": 98,
+                "label": "Don`t know"
+              },
+              {
+                "value": 99,
+                "label": "Refusal"
+              }
+            ],
+            "missingValues": {
+              "discrete": []
+            },
+            "semantic": {
+              "topic": "behavior_frequency",
+              "measurementIntent": "behavior",
+              "source": "auto",
+              "confidence": 0.75
+            }
+          },
+          "datasetId": "dataset-1773417793312",
+          "relevance": 0.125,
+          "matchedOn": [
+            "label",
+            "valueLabel"
+          ]
+        },
+        {
+          "variable": {
+            "id": "SMNews",
+            "name": "SMNews",
+            "label": "How often, if at all, do you read the news via a social media site, such as Facebook or Twitter?",
+            "type": "ordered",
+            "orderedStyle": "rating",
+            "orderedScoring": "allow_numeric_stats",
+            "valueLabels": [
+              {
+                "value": -2,
+                "label": "skip, version off route"
+              },
+              {
+                "value": -1,
+                "label": "Item not applicable"
+              },
+              {
+                "value": 1,
+                "label": "Several times a day"
+              },
+              {
+                "value": 2,
+                "label": "Every day"
+              },
+              {
+                "value": 3,
+                "label": "Several times a week"
+              },
+              {
+                "value": 4,
+                "label": "At least once a week"
+              },
+              {
+                "value": 5,
+                "label": "A couple of times a month"
+              },
+              {
+                "value": 6,
+                "label": "Once a month"
+              },
+              {
+                "value": 7,
+                "label": "Less often than once a month"
+              },
+              {
+                "value": 8,
+                "label": "Never"
+              },
+              {
+                "value": 98,
+                "label": "Don`t know"
+              },
+              {
+                "value": 99,
+                "label": "Refusal"
+              }
+            ],
+            "missingValues": {
+              "discrete": []
+            },
+            "semantic": {
+              "topic": "behavior_frequency",
+              "measurementIntent": "behavior",
+              "source": "auto",
+              "confidence": 0.75
+            }
+          },
+          "datasetId": "dataset-1773417793312",
+          "relevance": 0.125,
+          "matchedOn": [
+            "label",
+            "valueLabel"
+          ]
+        },
+        {
+          "variable": {
+            "id": "ImpHBeha",
+            "name": "ImpHBeha",
+            "label": "How large an impact, if any, on someone's health: someone's own behaviour, such as smoking, drinking alcohol, being physically active?",
+            "type": "categorical",
+            "valueLabels": [
+              {
+                "value": -2,
+                "label": "skip, version off route"
+              },
+              {
+                "value": -1,
+                "label": "Item not applicable"
+              },
+              {
+                "value": 1,
+                "label": "A very large impact"
+              },
+              {
+                "value": 2,
+                "label": "Quite a large impact"
+              },
+              {
+                "value": 3,
+                "label": "Not much of an impact"
+              },
+              {
+                "value": 4,
+                "label": "No impact at all"
+              },
+              {
+                "value": 8,
+                "label": "Don`t know"
+              },
+              {
+                "value": 9,
+                "label": "Refusal"
+              }
+            ],
+            "missingValues": {
+              "discrete": [
+                -2
+              ]
+            }
+          },
+          "datasetId": "dataset-1773417793312",
+          "relevance": 0.125,
+          "matchedOn": [
+            "label",
+            "valueLabel"
+          ]
+        },
+        {
+          "variable": {
+            "id": "ImpHFam",
+            "name": "ImpHFam",
+            "label": "How large an impact, if any, on someone's health: the level of social support someone has from their friends and family?",
+            "type": "categorical",
+            "valueLabels": [
+              {
+                "value": -2,
+                "label": "skip, version off route"
+              },
+              {
+                "value": -1,
+                "label": "Item not applicable"
+              },
+              {
+                "value": 1,
+                "label": "A very large impact"
+              },
+              {
+                "value": 2,
+                "label": "Quite a large impact"
+              },
+              {
+                "value": 3,
+                "label": "Not much of an impact"
+              },
+              {
+                "value": 4,
+                "label": "No impact at all"
+              },
+              {
+                "value": 8,
+                "label": "Don`t know"
+              },
+              {
+                "value": 9,
+                "label": "Refusal"
+              }
+            ],
+            "missingValues": {
+              "discrete": [
+                -2
+              ]
+            }
+          },
+          "datasetId": "dataset-1773417793312",
+          "relevance": 0.125,
+          "matchedOn": [
+            "label",
+            "valueLabel"
+          ]
+        },
+        {
+          "variable": {
+            "id": "womworka",
+            "name": "womworka",
+            "label": "Do you think that women should work outside the home full-time, part-time or not at all ...When there is a child under school age.",
+            "type": "categorical",
+            "valueLabels": [
+              {
+                "value": -2,
+                "label": "skip, version off route"
+              },
+              {
+                "value": -1,
+                "label": "skip, didn't return SC questionnaire"
+              },
+              {
+                "value": 1,
+                "label": "Work full-time"
+              },
+              {
+                "value": 2,
+                "label": "Work part-time"
+              },
+              {
+                "value": 3,
+                "label": "Stay at home"
+              },
+              {
+                "value": 8,
+                "label": "Can`t choose"
+              },
+              {
+                "value": 9,
+                "label": "Not answered"
+              }
+            ],
+            "missingValues": {
+              "discrete": [
+                -2,
+                -1
+              ]
+            },
+            "semantic": {
+              "topic": "demographics",
+              "measurementIntent": "demographic",
+              "source": "auto",
+              "confidence": 0.7
+            }
+          },
+          "datasetId": "dataset-1773417793312",
+          "relevance": 0.125,
+          "matchedOn": [
+            "label",
+            "valueLabel"
+          ]
+        },
+        {
+          "variable": {
+            "id": "heuristic_grid_PMS_HomoSex_SSRel_items",
+            "name": "heuristic_grid_PMS_HomoSex_SSRel_items",
+            "label": "PMS",
+            "type": "categorical",
+            "valueLabels": [
+              {
+                "value": 0,
+                "label": "If a man and woman have sexual relations before marriage, what would your general opinion be?"
+              },
+              {
+                "value": 1,
+                "label": "What about sexual relations between two adults of the same sex? What would your general opinion be?"
+              },
+              {
+                "value": 2,
+                "label": "If two adults of the same sex are in a relationship as a couple, what would your general opinion be?"
+              }
+            ],
+            "missingValues": {
+              "discrete": []
+            },
+            "synthetic": true,
+            "sourceGridId": "heuristic_grid_PMS_HomoSex_SSRel",
+            "semantic": {
+              "topic": "demographics",
+              "measurementIntent": "demographic",
+              "conceptFamily": "gender",
+              "source": "auto",
+              "confidence": 0.9
+            }
+          },
+          "datasetId": "dataset-1773417793312",
+          "relevance": 0.11,
+          "matchedOn": [
+            "concept",
+            "topic",
+            "name",
+            "valueLabel"
+          ]
+        },
+        {
+          "variable": {
+            "id": "heuristic_grid_knwbdri_knwexec_knwclea_knwhair_knwhr_knwlaw_knwmech_knwnurs_knwpol_knwtchr_items",
+            "name": "heuristic_grid_knwbdri_knwexec_knwclea_knwhair_knwhr_knwlaw_knwmech_knwnurs_knwpol_knwtchr_items",
+            "label": "knwbdri",
+            "type": "categorical",
+            "valueLabels": [
+              {
+                "value": 0,
+                "label": "Do you know a woman or a man who is… a bus/lorry driver"
+              },
+              {
+                "value": 1,
+                "label": "Do you know a woman or a man who is… a senior executive of a large company"
+              },
+              {
+                "value": 2,
+                "label": "Do you know a woman or a man who is… a home or office cleaner"
+              },
+              {
+                "value": 3,
+                "label": "Do you know a woman or a man who is… a hairdresser/barber"
+              },
+              {
+                "value": 4,
+                "label": "Do you know a woman or a man who is… a human resource manager/personnel manager"
+              },
+              {
+                "value": 5,
+                "label": "Do you know a woman or a man who is… a lawyer"
+              },
+              {
+                "value": 6,
+                "label": "Do you know a woman or a man who is… a car mechanic"
+              },
+              {
+                "value": 7,
+                "label": "Do you know a woman or a man who is… a nurse"
+              },
+              {
+                "value": 8,
+                "label": "Do you know a woman or a man who is… a police officer"
+              },
+              {
+                "value": 9,
+                "label": "Do you know a woman or a man who is… a school teacher"
+              }
+            ],
+            "missingValues": {
+              "discrete": []
+            },
+            "synthetic": true,
+            "sourceGridId": "heuristic_grid_knwbdri_knwexec_knwclea_knwhair_knwhr_knwlaw_knwmech_knwnurs_knwpol_knwtchr",
+            "semantic": {
+              "topic": "demographics",
+              "measurementIntent": "demographic",
+              "conceptFamily": "gender",
+              "source": "auto",
+              "confidence": 0.9
+            }
+          },
+          "datasetId": "dataset-1773417793312",
+          "relevance": 0.11,
+          "matchedOn": [
+            "concept",
+            "topic",
+            "valueLabel"
+          ]
+        },
+        {
+          "variable": {
+            "id": "heuristic_grid_sxbstrm_sxbintm_sxbstrw_sxbintw_items",
+            "name": "heuristic_grid_sxbstrm_sxbintm_sxbstrw_sxbintw_items",
+            "label": "sxbstrm",
+            "type": "categorical",
+            "valueLabels": [
+              {
+                "value": 0,
+                "label": "SPLIT SAMPLE: If a man comments  that a woman on the street looks gorgeous, what do you think about his behaviour?"
+              },
+              {
+                "value": 1,
+                "label": "SPLIT SAMPLE: If a man writes a crude, sexual comment online about a woman he doesn't know, what do you think about his behaviour?"
+              },
+              {
+                "value": 2,
+                "label": "SPLIT SAMPLE: If a woman comments that a man on the street looks gorgeous, what do you think about her behaviour?"
+              },
+              {
+                "value": 3,
+                "label": "SPLIT SAMPLE: If a woman writes a crude, sexual comment online about a man she doesn't know, what do you think about her behaviour?"
+              }
+            ],
+            "missingValues": {
+              "discrete": []
+            },
+            "synthetic": true,
+            "sourceGridId": "heuristic_grid_sxbstrm_sxbintm_sxbstrw_sxbintw",
+            "semantic": {
+              "topic": "demographics",
+              "measurementIntent": "demographic",
+              "conceptFamily": "gender",
+              "source": "auto",
+              "confidence": 0.9
+            }
+          },
+          "datasetId": "dataset-1773417793312",
+          "relevance": 0.11,
+          "matchedOn": [
+            "concept",
+            "topic",
+            "valueLabel"
+          ]
+        }
+      ]
+    }
+  ],
+  "inspected": [
+    {
+      "id": "WtFactor"
+    },
+    {
+      "id": "EUVOTWHO"
+    },
+    {
+      "id": "RAgeCat"
+    },
+    {
+      "id": "PartyId2"
+    },
+    {
+      "id": "HEdQual"
+    },
+    {
+      "id": "RClassGp"
+    },
+    {
+      "id": "libauth2"
+    },
+    {
+      "id": "NHSSat"
+    },
+    {
+      "id": "HHIncQ"
+    },
+    {
+      "id": "TaxSpend"
+    },
+    {
+      "id": "Spend1"
+    },
+    {
+      "id": "GovTrust"
+    }
+  ],
+  "crosstabs": [
+    {
+      "rowVars": [
+        "EUVOTWHO"
+      ],
+      "colVar": "RAgeCat",
+      "pValue": 1.1324274851176597e-14,
+      "weighted": null,
+      "warningCount": 0
+    },
+    {
+      "rowVars": [
+        "EUVOTWHO"
+      ],
+      "colVar": "PartyId2",
+      "pValue": 0,
+      "weighted": null,
+      "warningCount": 0
+    },
+    {
+      "rowVars": [
+        "EUVOTWHO"
+      ],
+      "colVar": "HEdQual",
+      "pValue": 0,
+      "weighted": null,
+      "warningCount": 0
+    },
+    {
+      "rowVars": [
+        "EUVOTWHO"
+      ],
+      "colVar": "RClassGp",
+      "pValue": 0,
+      "weighted": null,
+      "warningCount": 0
+    },
+    {
+      "rowVars": [
+        "libauth2"
+      ],
+      "colVar": "EUVOTWHO",
+      "pValue": 0,
+      "weighted": null,
+      "warningCount": 0
+    },
+    {
+      "rowVars": [
+        "NHSSat"
+      ],
+      "colVar": "RAgeCat",
+      "pValue": 3.1655678078834626e-11,
+      "weighted": null,
+      "warningCount": 0
+    },
+    {
+      "rowVars": [
+        "NHSSat"
+      ],
+      "colVar": "PartyId2",
+      "pValue": 4.741917969397491e-11,
+      "weighted": null,
+      "warningCount": 0
+    },
+    {
+      "rowVars": [
+        "NHSSat"
+      ],
+      "colVar": "HHIncQ",
+      "pValue": 0.061756536921150795,
+      "weighted": null,
+      "warningCount": 0
+    },
+    {
+      "rowVars": [
+        "TaxSpend"
+      ],
+      "colVar": "PartyId2",
+      "pValue": 0,
+      "weighted": null,
+      "warningCount": 0
+    },
+    {
+      "rowVars": [
+        "Spend1"
+      ],
+      "colVar": "RAgeCat",
+      "pValue": 0.002027950879977869,
+      "weighted": null,
+      "warningCount": 0
+    },
+    {
+      "rowVars": [
+        "GovTrust"
+      ],
+      "colVar": "PartyId2",
+      "pValue": 0,
+      "weighted": null,
+      "warningCount": 0
+    },
+    {
+      "rowVars": [
+        "GovTrust"
+      ],
+      "colVar": "RAgeCat",
+      "pValue": 0.019645609264972053,
+      "weighted": null,
+      "warningCount": 0
+    },
+    {
+      "rowVars": [
+        "GovTrust"
+      ],
+      "colVar": "EUVOTWHO",
+      "pValue": 0.007808037430302117,
+      "weighted": null,
+      "warningCount": 0
+    },
+    {
+      "rowVars": [
+        "GovTrust"
+      ],
+      "colVar": "HEdQual",
+      "pValue": 0.00017301779466505351,
+      "weighted": null,
+      "warningCount": 0
+    }
+  ],
+  "deck": {
+    "slides": 13,
+    "sections": 3,
+    "errors": 0,
+    "exportFormat": "pptx",
+    "byteLength": 2361188,
+    "outputPath": "/Users/cobro/Code/Velocity/evals/eval-02/runs/run-2026-03-13/artifacts/deck.pptx"
+  },
+  "commit": {
+    "ok": true,
+    "committedSlides": 13,
+    "committedSections": 3
+  },
+  "session": {
+    "outputPath": "/Users/cobro/Code/Velocity/evals/eval-02/runs/run-2026-03-13/artifacts/session.velocity",
+    "slides": 13,
+    "sections": 3
+  },
+  "metrics": {
+    "totalToolCalls": 39,
+    "totalWallMs": 853.09,
+    "totalDurationMs": 665.11,
+    "byTool": [
+      {
+        "name": "velocity_load",
+        "wallMs": 424.251709,
+        "durationMs": 422.184417
+      },
+      {
+        "name": "velocity_describe",
+        "wallMs": 22.046542000000045,
+        "durationMs": 0.10770800000000236
+      },
+      {
+        "name": "velocity_annotate_dataset",
+        "wallMs": 16.667457999999897,
+        "durationMs": 16.025750000000016
+      },
+      {
+        "name": "velocity_search_variables",
+        "wallMs": 9.31637499999988,
+        "durationMs": 8.534583999999995
+      },
+      {
+        "name": "velocity_search_variables",
+        "wallMs": 7.8152500000001055,
+        "durationMs": 5.970082999999931
+      },
+      {
+        "name": "velocity_search_variables",
+        "wallMs": 5.776875000000018,
+        "durationMs": 5.207416999999964
+      },
+      {
+        "name": "velocity_search_variables",
+        "wallMs": 5.4928339999999025,
+        "durationMs": 4.8091249999999945
+      },
+      {
+        "name": "velocity_search_variables",
+        "wallMs": 7.058334000000059,
+        "durationMs": 6.25912500000004
+      },
+      {
+        "name": "velocity_describe_variable",
+        "wallMs": 20.714500000000044,
+        "durationMs": 20.105833000000075
+      },
+      {
+        "name": "velocity_describe_variable",
+        "wallMs": 2.4078329999999823,
+        "durationMs": 2.1572920000000977
+      },
+      {
+        "name": "velocity_describe_variable",
+        "wallMs": 1.3159159999997883,
+        "durationMs": 1.111167000000023
+      },
+      {
+        "name": "velocity_describe_variable",
+        "wallMs": 1.1996670000000904,
+        "durationMs": 1.0284580000000005
+      },
+      {
+        "name": "velocity_describe_variable",
+        "wallMs": 1.2282910000001266,
+        "durationMs": 1.0655830000000606
+      },
+      {
+        "name": "velocity_describe_variable",
+        "wallMs": 1.7517500000001291,
+        "durationMs": 1.6034579999998186
+      },
+      {
+        "name": "velocity_describe_variable",
+        "wallMs": 1.538957999999866,
+        "durationMs": 1.3914999999999509
+      },
+      {
+        "name": "velocity_describe_variable",
+        "wallMs": 4.216833999999835,
+        "durationMs": 4.039833000000044
+      },
+      {
+        "name": "velocity_describe_variable",
+        "wallMs": 3.9798339999999826,
+        "durationMs": 3.7226250000001073
+      },
+      {
+        "name": "velocity_describe_variable",
+        "wallMs": 3.8758750000001783,
+        "durationMs": 3.6752080000001115
+      },
+      {
+        "name": "velocity_describe_variable",
+        "wallMs": 1.6651670000001104,
+        "durationMs": 1.4723340000000462
+      },
+      {
+        "name": "velocity_describe_variable",
+        "wallMs": 4.0377910000001975,
+        "durationMs": 3.826334000000088
+      },
+      {
+        "name": "velocity_set_weight",
+        "wallMs": 0.21433400000000802,
+        "durationMs": null
+      },
+      {
+        "name": "velocity_crosstab",
+        "wallMs": 5.290040999999974,
+        "durationMs": 4.836207999999942
+      },
+      {
+        "name": "velocity_crosstab",
+        "wallMs": 2.566165999999839,
+        "durationMs": 2.2035410000000866
+      },
+      {
+        "name": "velocity_crosstab",
+        "wallMs": 2.4217089999999644,
+        "durationMs": 2.035333000000037
+      },
+      {
+        "name": "velocity_crosstab",
+        "wallMs": 2.5656659999999647,
+        "durationMs": 2.2404169999999795
+      },
+      {
+        "name": "velocity_crosstab",
+        "wallMs": 2.3392499999999927,
+        "durationMs": 2.0320420000000468
+      },
+      {
+        "name": "velocity_crosstab",
+        "wallMs": 2.647457999999915,
+        "durationMs": 2.009375000000091
+      },
+      {
+        "name": "velocity_crosstab",
+        "wallMs": 2.327833999999939,
+        "durationMs": 1.889417000000094
+      },
+      {
+        "name": "velocity_crosstab",
+        "wallMs": 2.2136250000000928,
+        "durationMs": 1.8102919999998903
+      },
+      {
+        "name": "velocity_crosstab",
+        "wallMs": 2.2828750000001037,
+        "durationMs": 1.8880830000000515
+      },
+      {
+        "name": "velocity_crosstab",
+        "wallMs": 2.919125000000122,
+        "durationMs": 2.3244159999999283
+      },
+      {
+        "name": "velocity_crosstab",
+        "wallMs": 2.073707999999897,
+        "durationMs": 1.6764999999998054
+      },
+      {
+        "name": "velocity_crosstab",
+        "wallMs": 2.4072499999999764,
+        "durationMs": 1.9618749999999636
+      },
+      {
+        "name": "velocity_crosstab",
+        "wallMs": 4.177541000000019,
+        "durationMs": 2.1133330000000115
+      },
+      {
+        "name": "velocity_crosstab",
+        "wallMs": 2.6552500000000236,
+        "durationMs": 2.1577910000000884
+      },
+      {
+        "name": "velocity_build_deck",
+        "wallMs": 59.27666700000009,
+        "durationMs": 38.432415999999876
+      },
+      {
+        "name": "velocity_export_deck",
+        "wallMs": 178.85145899999998,
+        "durationMs": 80.61474999999996
+      },
+      {
+        "name": "velocity_commit_deck",
+        "wallMs": 7.479499999999916,
+        "durationMs": null
+      },
+      {
+        "name": "velocity_export_session",
+        "wallMs": 22.026834000000008,
+        "durationMs": 0.5862500000000637
+      }
+    ]
+  }
+}

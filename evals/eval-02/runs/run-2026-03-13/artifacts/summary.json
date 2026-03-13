@@ -1,0 +1,85 @@
+{
+  "evalId": "eval-02",
+  "runId": "run-2026-03-13",
+  "runDate": "2026-03-13",
+  "commitSha": "2fe3e35f913e7fb471e80056c0803cc35daf8eb6",
+  "briefPath": "docs/eval_02_bsa2017_research_brief.md",
+  "dataset": {
+    "path": "test_data/British Social Attitudes Survey/bsa2017_for_ukda.sav",
+    "fallbackPath": null,
+    "rowCount": 3988,
+    "variableCount": 654
+  },
+  "outcome": "success",
+  "outcomePattern": "pattern_4_agent_lost_in_discovery",
+  "toolMetrics": {
+    "totalToolCalls": 39,
+    "totalDurationMs": 665.11,
+    "retries": 0,
+    "externalScriptsWritten": 1
+  },
+  "artifacts": {
+    "deck": {
+      "path": "artifacts/deck.pptx",
+      "produced": true,
+      "notes": "13-slide weighted PPTX exported through MCP."
+    },
+    "session": {
+      "path": "artifacts/session.velocity",
+      "produced": true,
+      "notes": "Session contains 13 slides and 3 sections after velocity_commit_deck."
+    },
+    "summary": {
+      "path": "artifacts/summary.json",
+      "produced": true
+    }
+  },
+  "scores": [
+    {
+      "layer": "engine",
+      "score": 5,
+      "notes": "The engine handled weighted analysis, deck build, export, and session persistence correctly on a 654-variable dataset."
+    },
+    {
+      "layer": "mcp_workflow",
+      "score": 4,
+      "notes": "The intended MCP path completed cleanly end-to-end; the main remaining drag is discovery churn rather than tool transport friction."
+    },
+    {
+      "layer": "semantic_layer",
+      "score": 2,
+      "notes": "Topic discovery was inconsistent and category-level discovery was weak, especially for NHS, trust, and demographic-break queries."
+    },
+    {
+      "layer": "deliverable_layer",
+      "score": 5,
+      "notes": "The run produced a coherent 13-slide deck and matching session handoff artifact."
+    },
+    {
+      "layer": "product_defaults",
+      "score": 3,
+      "notes": "Weight detection was good, but the product still lacked strong break-variable guidance and theme-narrowing support."
+    },
+    {
+      "layer": "agent_prompting",
+      "score": 4,
+      "notes": "The brief and playbook supported the run; the main bottleneck was search quality, not prompt framing."
+    }
+  ],
+  "notableFindings": [
+    "The MCP path now supports a full weighted BSA workflow: load, discover, analyze, build deck, commit deck, export PPTX, and export session.",
+    "EU referendum vote shows strong age, party, education, and class gradients, with all four core crosstabs highly significant.",
+    "NHS satisfaction varies sharply by age and party but not materially by income in this run (p = 0.061756536921150795 for HHIncQ).",
+    "Government trust remains broadly low, with especially strong party differences and weaker age effects."
+  ],
+  "blockers": [
+    "Semantic search ranked incorrect top hits for NHS, trust, and demographic queries, so discovery still required manual judgment.",
+    "Large-survey discovery still lacks product-level affordances for break-variable selection and theme narrowing."
+  ],
+  "followUps": [
+    "Add category-aware or intent-aware search affordances for demographic and break-variable discovery.",
+    "Surface recommended breaks and starter analyses once a substantive topic variable is selected.",
+    "Clarify the chi-square field shape in docs and examples so agents read stats objects correctly.",
+    "Freeze this run as the current MCP baseline for BSA-scale deck and session generation."
+  ]
+}

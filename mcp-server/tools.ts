@@ -204,6 +204,17 @@ const TOOLS = [
     },
   },
   {
+    name: 'velocity_commit_deck',
+    description: 'Write a BuiltDeck into the session so a later session export includes the built slides and sections.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        deck: { type: 'object', description: 'BuiltDeck object from velocity_build_deck.' },
+      },
+      required: ['deck'],
+    },
+  },
+  {
     name: 'velocity_recommend_chart',
     description: 'Get chart type recommendation for a set of variables.',
     inputSchema: {
@@ -523,6 +534,16 @@ export function registerTools(server: Server, engine: VelocityEngine): void {
           return successResponse({
             ...result,
             data: { format: (a.options as DeckExportOptions).format, base64, byteLength: bytes.length },
+          });
+        }
+
+        case 'velocity_commit_deck': {
+          const deck = a.deck as BuiltDeck;
+          engine.commitDeck(deck);
+          return successResponse({
+            ok: true,
+            committedSlides: deck.slides.length,
+            committedSections: deck.spec.sections.length,
           });
         }
 

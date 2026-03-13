@@ -215,7 +215,7 @@ Inspect the `BuiltDeck`:
 
 ---
 
-## Phase 5: Export & Persist (2-3 calls)
+## Phase 5: Export & Persist (3-4 calls)
 
 ### Step 5.1 — Export to PPTX
 
@@ -227,6 +227,16 @@ velocity_export_deck({
 ```
 
 ### Step 5.2 — Export session
+
+Before exporting the session, commit the built deck so the handoff file actually includes the deck structure:
+
+```
+velocity_commit_deck({
+  deck: <the BuiltDeck from step 4.2>
+})
+```
+
+### Step 5.3 — Export session
 
 ```
 velocity_export_session({ outputPath: "evals/eval-01/runs/run-YYYY-MM-DD/artifacts/session" })
@@ -264,5 +274,5 @@ It does **not** contain respondent rows. A human opens it in the browser, re-upl
 | Discover | 3-8 | Annotate + 2-5 searches + 1-3 variable inspections |
 | Analyze | 5-12 | Exploratory cross-tabs, iteration |
 | Compose | 1-2 | Build deck + possibly rebuild after fixing issues |
-| Export | 2-3 | Export PPTX + export session |
+| Export | 3-4 | Export PPTX + commit deck + export session |
 | **Total** | **15-30** | Larger datasets skew toward the high end |

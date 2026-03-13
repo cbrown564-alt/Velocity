@@ -67,6 +67,7 @@ function makeEngine(overrides: Record<string, unknown> = {}) {
     setWeight: vi.fn(),
     buildDeck: vi.fn().mockResolvedValue({ data: { slides: [], errors: [], spec: {}, buildDurationMs: 1 }, operation: 'buildDeck', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
     exportDeck: vi.fn().mockResolvedValue({ data: new Uint8Array([1, 2, 3]), operation: 'exportDeck', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
+    commitDeck: vi.fn(),
     recommendChart: vi.fn().mockResolvedValue({ data: { default: 'horizontal-bar', alternatives: [], reason: 'test' }, operation: 'recommendChart', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
     proposeMappings: vi.fn().mockResolvedValue({ data: [], operation: 'proposeMappings', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
     buildHarmonizedTable: vi.fn().mockResolvedValue({ data: { sql: 'SELECT 1' }, operation: 'buildHarmonizedTable', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
@@ -230,6 +231,28 @@ describe('velocity_export_deck', () => {
     expect(parsed.data.format).toBe('pptx');
     expect(typeof parsed.data.base64).toBe('string');
     expect(parsed.data.byteLength).toBe(3);
+  });
+});
+
+describe('velocity_commit_deck', () => {
+  it('calls engine.commitDeck and returns a commit summary', async () => {
+    const engine = makeEngine();
+    const deck = {
+      spec: { title: 'T', sections: [{ title: 'Results', slides: [] }] },
+      slides: [{ resolvedTitle: 'Slide 1' }],
+      errors: [],
+      buildDurationMs: 0,
+    };
+
+    const result = await callTool(engine, 'velocity_commit_deck', { deck }) as { content: { text: string }[] };
+    const parsed = JSON.parse(result.content[0].text);
+
+    expect(engine.commitDeck).toHaveBeenCalledWith(deck);
+    expect(parsed).toEqual({
+      ok: true,
+      committedSlides: 1,
+      committedSections: 1,
+    });
   });
 });
 
