@@ -98,21 +98,43 @@ These elements exist in ALL three visions and can be built immediately.
     *   **Smart Export:** Use **PptxGenJS** to export editable slides.
     *   **Reference:** `docs/research_08_UX_patterns_for_surveys.md` (Detailed UX Specs).
 
-### Phase 3: "Project Aletheia" (Advanced/Long Term)
+### Phase 3: Engine Convergence & Semantic Layer - COMPLETED
+*Goal: Unify all consumers (UI, CLI, MCP) under a single Engine and structure domain data semantics.*
+*   **Architecture:** `VelocityEngine` introduced as the unified headless orchestrator. MCP server introduced.
+*   **Features:**
+    *   **Browser Convergence:** Transition React UI to consume `VelocityEngine` directly.
+    *   **Semantic Layer:** Heuristic auto-annotators, concept stores, and token-based search for discovery.
+    *   **Deck Builder:** Declarative slide specification and generation via `pptxgenjs` in the Engine layer.
+    *   **MCP Server Tools:** Enabling AI language models to interact with the system via standard interface.
+
+### Phase 4: Agent Capability Validation - IN PROGRESS
+*Goal: Prove Velocity operates as a highly robust, fully autonomous analytical environment for AI agents.*
+*   **Features:**
+    *   **Intended-Path Readiness:** Frictionless MCP setup and session round-tripping for Human-AI handoff.
+    *   **Eval Portfolios:** Formalized task execution over discovery, narrative deck composition, harmonization, and edge cases.
+    *   **Capability Gap Analysis:** Categorization of evaluation failures into rough edges, architectural gaps, and scope issues.
+    *   **Reference:** `docs/plan_phase4_agent_capability_validation.md`
+
+### Phase 5: "Project Aletheia" (Advanced/Long Term)
 *Goal: The Academic/Longitudinal Environment.*
 *   **Features:**
-    *   **WebR:** Lazy-load R for `lme4`/`psych`.
-    *   **Visualizations:** GPU Scatterplots (Regl).
-    *   **Visual Recipe Stack:** Non-destructive "Time Travel" for data cleaning steps (Import -> Rename -> Recode).
-    *   **Advanced Visual ETL:** **Sankey Diagrams** for harmonizing longitudinal data (Wave 1 vs Wave 2).
-    *   **Logic Builder:** Block-based formula builder for complex variable derivation.
+    *   **Harmonization Workspace:** Lasso, Sankey mapping, and wave detection.
+    *   **WebR/Runtime Bridge:** Lazy-load R natively for scale features.
+    *   **Advanced Models:** `lme4` integration and complex survey weighting raking logic.
+    *   **Data Prep Recipes:** Non-destructive "Time Travel" for data cleaning steps.
 
-### Phase 4: The Cognitive Engine (AI-Native)
-*Goal: Transform Velocity from an analysis tool into an agentic research partner.*
+### Phase 6: The Cognitive Engine (AI-Native)
+*Goal: Transform Velocity from an analysis API into an agentic research partner.*
 *   **Features:**
-    *   **Semantic Reasoning ("The Glass Box"):** Local LLM (WebGPU) or Privacy-Preserving API to auto-code open-ended text.
-    *   **Text-to-SQL:** "Ask your data" interface powered by `queryBuilder` and LLM intent recognition.
+    *   **Semantic Reasoning ("The Glass Box"):** Local LLM (WebGPU) or API to intelligently auto-code open-ended text.
+    *   **Natural Language Querying:** "Ask your data" interface powered by text-to-state and text-to-SQL workflows.
     *   **The Action Hub:** Secure integration with Linear/Jira to export insights directly to product trackers.
+
+### Phase 7: Realtime Cloud (Backend Extensions)
+*Goal: Scale out to multi-user, multi-platform collaborative environments.*
+*   **Features:**
+    *   **Realtime Collaboration:** Synchronized browser state and shared session storage layers.
+    *   **Direct Platform Imports:** Qualtrics/Decipher API integrations.
 
 ---
 
