@@ -1,0 +1,2717 @@
+{
+  "formatVersion": 2,
+  "exportedAt": "2026-03-13T19:38:40.104Z",
+  "velocityVersion": "dev",
+  "dataset": {
+    "originalFilename": "sleep.sav",
+    "rowCount": 271,
+    "source": "sav",
+    "fingerprint": {
+      "columnCount": 59,
+      "columnNames": [
+        "id",
+        "sex",
+        "age",
+        "marital",
+        "edlevel",
+        "weight",
+        "height",
+        "healthrate",
+        "fitrate",
+        "weightrate",
+        "smoke",
+        "smokenum",
+        "alchohol",
+        "caffeine",
+        "hourswkend",
+        "hourneed",
+        "troublefallasleep",
+        "troublestaysleep",
+        "wakenite",
+        "niteshft",
+        "lightsleeper",
+        "refreshed",
+        "satissleep",
+        "qualsleep",
+        "stressmonth",
+        "medichelp",
+        "problem",
+        "impact1",
+        "impact2",
+        "impact3",
+        "impact4",
+        "impact5",
+        "impact6",
+        "impact7",
+        "stopbreathe",
+        "restless",
+        "drivesleep",
+        "drivesleeprec",
+        "driveaccident",
+        "ess",
+        "anxiety",
+        "depress",
+        "fatigue",
+        "lethargy",
+        "tired",
+        "sleepy",
+        "energy",
+        "qualsleep4gp",
+        "cigs3gp",
+        "age3gp",
+        "totsas",
+        "probsleeprec",
+        "hourweeknight",
+        "getsleeprec",
+        "staysleeprec",
+        "heuristic_grid_tired_sleepy_energy_scale",
+        "heuristic_grid_tired_sleepy_energy_items",
+        "heuristic_grid_impact2_impact3_impact4_impact5_impact6_scale",
+        "heuristic_grid_impact2_impact3_impact4_impact5_impact6_items"
+      ]
+    }
+  },
+  "variables": [
+    {
+      "id": "id",
+      "name": "id",
+      "label": "Identification Number",
+      "type": "numeric",
+      "valueLabels": [],
+      "missingValues": {
+        "discrete": []
+      },
+      "semantic": {
+        "topic": "respondent_id",
+        "measurementIntent": "identifier",
+        "source": "auto",
+        "confidence": 0.9
+      }
+    },
+    {
+      "id": "sex",
+      "name": "sex",
+      "label": "sex",
+      "type": "categorical",
+      "valueLabels": [
+        {
+          "value": 0,
+          "label": "female"
+        },
+        {
+          "value": 1,
+          "label": "male"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      },
+      "semantic": {
+        "topic": "demographics",
+        "measurementIntent": "demographic",
+        "conceptFamily": "gender",
+        "source": "auto",
+        "confidence": 0.9
+      }
+    },
+    {
+      "id": "age",
+      "name": "age",
+      "label": "age",
+      "type": "numeric",
+      "valueLabels": [],
+      "missingValues": {
+        "discrete": []
+      },
+      "semantic": {
+        "topic": "demographics",
+        "measurementIntent": "demographic",
+        "source": "auto",
+        "confidence": 0.7
+      }
+    },
+    {
+      "id": "marital",
+      "name": "marital",
+      "label": "marital status",
+      "type": "categorical",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "single"
+        },
+        {
+          "value": 2,
+          "label": "married/defacto"
+        },
+        {
+          "value": 3,
+          "label": "divorced"
+        },
+        {
+          "value": 4,
+          "label": "widowed"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      },
+      "semantic": {
+        "topic": "demographics",
+        "measurementIntent": "demographic",
+        "source": "auto",
+        "confidence": 0.7
+      }
+    },
+    {
+      "id": "edlevel",
+      "name": "edlevel",
+      "label": "highest education level achieved",
+      "type": "categorical",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "primary school"
+        },
+        {
+          "value": 2,
+          "label": "secondary school"
+        },
+        {
+          "value": 3,
+          "label": "trade training/ post secondary training"
+        },
+        {
+          "value": 4,
+          "label": "undergraduate degree"
+        },
+        {
+          "value": 5,
+          "label": "postgraduate degree"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      },
+      "semantic": {
+        "topic": "demographics",
+        "measurementIntent": "demographic",
+        "source": "auto",
+        "confidence": 0.7
+      }
+    },
+    {
+      "id": "weight",
+      "name": "weight",
+      "label": "weight",
+      "type": "numeric",
+      "valueLabels": [],
+      "missingValues": {
+        "discrete": []
+      },
+      "semantic": {
+        "topic": "sampling_weight",
+        "measurementIntent": "weight",
+        "source": "auto",
+        "confidence": 0.95
+      }
+    },
+    {
+      "id": "height",
+      "name": "height",
+      "label": "height",
+      "type": "numeric",
+      "valueLabels": [],
+      "missingValues": {
+        "discrete": []
+      }
+    },
+    {
+      "id": "healthrate",
+      "name": "healthrate",
+      "label": "general health",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "very poor"
+        },
+        {
+          "value": 3,
+          "label": "3"
+        },
+        {
+          "value": 4,
+          "label": "4"
+        },
+        {
+          "value": 5,
+          "label": "5"
+        },
+        {
+          "value": 6,
+          "label": "6"
+        },
+        {
+          "value": 7,
+          "label": "7"
+        },
+        {
+          "value": 8,
+          "label": "8"
+        },
+        {
+          "value": 9,
+          "label": "9"
+        },
+        {
+          "value": 10,
+          "label": "very good"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      }
+    },
+    {
+      "id": "fitrate",
+      "name": "fitrate",
+      "label": "physical fitness",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "very poor"
+        },
+        {
+          "value": 3,
+          "label": "3"
+        },
+        {
+          "value": 4,
+          "label": "4"
+        },
+        {
+          "value": 5,
+          "label": "5"
+        },
+        {
+          "value": 6,
+          "label": "6"
+        },
+        {
+          "value": 7,
+          "label": "7"
+        },
+        {
+          "value": 8,
+          "label": "8"
+        },
+        {
+          "value": 9,
+          "label": "9"
+        },
+        {
+          "value": 10,
+          "label": "very good"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      }
+    },
+    {
+      "id": "weightrate",
+      "name": "weightrate",
+      "label": "current weight",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "very underweight"
+        },
+        {
+          "value": 3,
+          "label": "3"
+        },
+        {
+          "value": 4,
+          "label": "4"
+        },
+        {
+          "value": 5,
+          "label": "5"
+        },
+        {
+          "value": 6,
+          "label": "6"
+        },
+        {
+          "value": 7,
+          "label": "7"
+        },
+        {
+          "value": 8,
+          "label": "8"
+        },
+        {
+          "value": 9,
+          "label": "9"
+        },
+        {
+          "value": 10,
+          "label": "very overweight"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      }
+    },
+    {
+      "id": "smoke",
+      "name": "smoke",
+      "label": "do you smoke",
+      "type": "categorical",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "yes"
+        },
+        {
+          "value": 2,
+          "label": "no"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      }
+    },
+    {
+      "id": "smokenum",
+      "name": "smokenum",
+      "label": "cigs per day",
+      "type": "numeric",
+      "valueLabels": [],
+      "missingValues": {
+        "discrete": []
+      }
+    },
+    {
+      "id": "alchohol",
+      "name": "alchohol",
+      "label": "alcoholic drinks per day",
+      "type": "numeric",
+      "valueLabels": [],
+      "missingValues": {
+        "discrete": []
+      }
+    },
+    {
+      "id": "caffeine",
+      "name": "caffeine",
+      "label": "caffeine drinks per day",
+      "type": "numeric",
+      "valueLabels": [],
+      "missingValues": {
+        "discrete": []
+      }
+    },
+    {
+      "id": "hourswkend",
+      "name": "hourswkend",
+      "label": "hours sleep/ week ends",
+      "type": "numeric",
+      "valueLabels": [],
+      "missingValues": {
+        "discrete": []
+      },
+      "semantic": {
+        "topic": "sleep_quality",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 0.65
+      }
+    },
+    {
+      "id": "hourneed",
+      "name": "hourneed",
+      "label": "how many hours sleep needed",
+      "type": "numeric",
+      "valueLabels": [],
+      "missingValues": {
+        "discrete": []
+      },
+      "semantic": {
+        "topic": "sleep_quality",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 0.65
+      }
+    },
+    {
+      "id": "troublefallasleep",
+      "name": "troublefallasleep",
+      "label": "trouble falling asleep",
+      "type": "categorical",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "yes"
+        },
+        {
+          "value": 2,
+          "label": "no"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      },
+      "semantic": {
+        "topic": "sleep_quality",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 0.72
+      }
+    },
+    {
+      "id": "troublestaysleep",
+      "name": "troublestaysleep",
+      "label": "trouble staying asleep",
+      "type": "categorical",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "yes"
+        },
+        {
+          "value": 2,
+          "label": "no"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      },
+      "semantic": {
+        "topic": "sleep_quality",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 0.72
+      }
+    },
+    {
+      "id": "wakenite",
+      "name": "wakenite",
+      "label": "waking during night",
+      "type": "categorical",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "yes"
+        },
+        {
+          "value": 2,
+          "label": "no"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      }
+    },
+    {
+      "id": "niteshft",
+      "name": "niteshft",
+      "label": "work night shift or rotating shifts",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "yes"
+        },
+        {
+          "value": 2,
+          "label": "no"
+        },
+        {
+          "value": 3,
+          "label": "sometimes"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      },
+      "semantic": {
+        "topic": "behavior_frequency",
+        "measurementIntent": "behavior",
+        "source": "auto",
+        "confidence": 0.75
+      }
+    },
+    {
+      "id": "lightsleeper",
+      "name": "lightsleeper",
+      "label": "light sleeper",
+      "type": "categorical",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "yes"
+        },
+        {
+          "value": 2,
+          "label": "no"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      }
+    },
+    {
+      "id": "refreshed",
+      "name": "refreshed",
+      "label": "wake refreshed weekdays",
+      "type": "categorical",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "yes"
+        },
+        {
+          "value": 2,
+          "label": "no"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      }
+    },
+    {
+      "id": "satissleep",
+      "name": "satissleep",
+      "label": "satisfied with sleep amount",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "very dissatisfied"
+        },
+        {
+          "value": 2,
+          "label": "2"
+        },
+        {
+          "value": 3,
+          "label": "3"
+        },
+        {
+          "value": 4,
+          "label": "4"
+        },
+        {
+          "value": 5,
+          "label": "5"
+        },
+        {
+          "value": 6,
+          "label": "6"
+        },
+        {
+          "value": 7,
+          "label": "7"
+        },
+        {
+          "value": 8,
+          "label": "8"
+        },
+        {
+          "value": 9,
+          "label": "9"
+        },
+        {
+          "value": 10,
+          "label": "very satisfied"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      },
+      "semantic": {
+        "topic": "sleep_quality",
+        "measurementIntent": "attitude",
+        "conceptFamily": "satisfaction",
+        "source": "auto",
+        "confidence": 0.72
+      }
+    },
+    {
+      "id": "qualsleep",
+      "name": "qualsleep",
+      "label": "quality of sleep",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "very poor"
+        },
+        {
+          "value": 2,
+          "label": "poor"
+        },
+        {
+          "value": 3,
+          "label": "fair"
+        },
+        {
+          "value": 4,
+          "label": "good"
+        },
+        {
+          "value": 5,
+          "label": "very good"
+        },
+        {
+          "value": 6,
+          "label": "excellent"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      },
+      "semantic": {
+        "topic": "sleep_quality",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 0.72
+      }
+    },
+    {
+      "id": "stressmonth",
+      "name": "stressmonth",
+      "label": "stressed over last month",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "not at all"
+        },
+        {
+          "value": 2,
+          "label": "2"
+        },
+        {
+          "value": 3,
+          "label": "3"
+        },
+        {
+          "value": 4,
+          "label": "4"
+        },
+        {
+          "value": 5,
+          "label": "5"
+        },
+        {
+          "value": 6,
+          "label": "6"
+        },
+        {
+          "value": 7,
+          "label": "7"
+        },
+        {
+          "value": 7.5,
+          "label": "7.5"
+        },
+        {
+          "value": 8,
+          "label": "8"
+        },
+        {
+          "value": 9,
+          "label": "9"
+        },
+        {
+          "value": 10,
+          "label": "extremely stressed"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      },
+      "semantic": {
+        "topic": "mental_health",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 0.72
+      }
+    },
+    {
+      "id": "medichelp",
+      "name": "medichelp",
+      "label": "medication  taken to help sleep",
+      "type": "categorical",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "yes"
+        },
+        {
+          "value": 2,
+          "label": "no"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      },
+      "semantic": {
+        "topic": "sleep_quality",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 0.65
+      }
+    },
+    {
+      "id": "problem",
+      "name": "problem",
+      "label": "problem with sleep",
+      "type": "categorical",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "yes"
+        },
+        {
+          "value": 2,
+          "label": "no"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      },
+      "semantic": {
+        "topic": "sleep_quality",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 0.65
+      }
+    },
+    {
+      "id": "impact1",
+      "name": "impact1",
+      "label": "mood",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "not at all"
+        },
+        {
+          "value": 2,
+          "label": "2"
+        },
+        {
+          "value": 3,
+          "label": "3"
+        },
+        {
+          "value": 4,
+          "label": "4"
+        },
+        {
+          "value": 5,
+          "label": "5"
+        },
+        {
+          "value": 6,
+          "label": "6"
+        },
+        {
+          "value": 7,
+          "label": "7"
+        },
+        {
+          "value": 8,
+          "label": "8"
+        },
+        {
+          "value": 10,
+          "label": "to a great extent"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      }
+    },
+    {
+      "id": "impact2",
+      "name": "impact2",
+      "label": "energy level",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "not at all"
+        },
+        {
+          "value": 2,
+          "label": "2"
+        },
+        {
+          "value": 3,
+          "label": "3"
+        },
+        {
+          "value": 4,
+          "label": "4"
+        },
+        {
+          "value": 5,
+          "label": "5"
+        },
+        {
+          "value": 6,
+          "label": "6"
+        },
+        {
+          "value": 7,
+          "label": "7"
+        },
+        {
+          "value": 8,
+          "label": "8"
+        },
+        {
+          "value": 9,
+          "label": "9"
+        },
+        {
+          "value": 10,
+          "label": "to a great extent"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      }
+    },
+    {
+      "id": "impact3",
+      "name": "impact3",
+      "label": "concent",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "not at all"
+        },
+        {
+          "value": 2,
+          "label": "2"
+        },
+        {
+          "value": 3,
+          "label": "3"
+        },
+        {
+          "value": 4,
+          "label": "4"
+        },
+        {
+          "value": 5,
+          "label": "5"
+        },
+        {
+          "value": 6,
+          "label": "6"
+        },
+        {
+          "value": 7,
+          "label": "7"
+        },
+        {
+          "value": 8,
+          "label": "8"
+        },
+        {
+          "value": 9,
+          "label": "9"
+        },
+        {
+          "value": 10,
+          "label": "to a great extent"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      }
+    },
+    {
+      "id": "impact4",
+      "name": "impact4",
+      "label": "memory",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "not at all"
+        },
+        {
+          "value": 2,
+          "label": "2"
+        },
+        {
+          "value": 3,
+          "label": "3"
+        },
+        {
+          "value": 4,
+          "label": "4"
+        },
+        {
+          "value": 5,
+          "label": "5"
+        },
+        {
+          "value": 6,
+          "label": "6"
+        },
+        {
+          "value": 7,
+          "label": "7"
+        },
+        {
+          "value": 8,
+          "label": "8"
+        },
+        {
+          "value": 9,
+          "label": "9"
+        },
+        {
+          "value": 10,
+          "label": "to a great extent"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      }
+    },
+    {
+      "id": "impact5",
+      "name": "impact5",
+      "label": "life sat",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "not at all"
+        },
+        {
+          "value": 2,
+          "label": "2"
+        },
+        {
+          "value": 3,
+          "label": "3"
+        },
+        {
+          "value": 4,
+          "label": "4"
+        },
+        {
+          "value": 5,
+          "label": "5"
+        },
+        {
+          "value": 6,
+          "label": "6"
+        },
+        {
+          "value": 7,
+          "label": "7"
+        },
+        {
+          "value": 8,
+          "label": "8"
+        },
+        {
+          "value": 9,
+          "label": "9"
+        },
+        {
+          "value": 10,
+          "label": "to a great extent"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      }
+    },
+    {
+      "id": "impact6",
+      "name": "impact6",
+      "label": "overall well-being",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "not at all"
+        },
+        {
+          "value": 2,
+          "label": "2"
+        },
+        {
+          "value": 3,
+          "label": "3"
+        },
+        {
+          "value": 4,
+          "label": "4"
+        },
+        {
+          "value": 5,
+          "label": "5"
+        },
+        {
+          "value": 6,
+          "label": "6"
+        },
+        {
+          "value": 7,
+          "label": "7"
+        },
+        {
+          "value": 8,
+          "label": "8"
+        },
+        {
+          "value": 9,
+          "label": "9"
+        },
+        {
+          "value": 10,
+          "label": "to a great extent"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      }
+    },
+    {
+      "id": "impact7",
+      "name": "impact7",
+      "label": "relationships",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "not at all"
+        },
+        {
+          "value": 2,
+          "label": "2"
+        },
+        {
+          "value": 3,
+          "label": "3"
+        },
+        {
+          "value": 5,
+          "label": "5"
+        },
+        {
+          "value": 6,
+          "label": "6"
+        },
+        {
+          "value": 7,
+          "label": "7"
+        },
+        {
+          "value": 8,
+          "label": "8"
+        },
+        {
+          "value": 9,
+          "label": "9"
+        },
+        {
+          "value": 10,
+          "label": "to a great extent"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      }
+    },
+    {
+      "id": "stopbreathe",
+      "name": "stopbreathe",
+      "label": "stop breathing",
+      "type": "categorical",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "yes"
+        },
+        {
+          "value": 2,
+          "label": "no"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      }
+    },
+    {
+      "id": "restless",
+      "name": "restless",
+      "label": "restless sleeper",
+      "type": "categorical",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "yes"
+        },
+        {
+          "value": 2,
+          "label": "no"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      }
+    },
+    {
+      "id": "drivesleep",
+      "name": "drivesleep",
+      "label": "asleep while driving",
+      "type": "categorical",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "yes"
+        },
+        {
+          "value": 2,
+          "label": "no"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      }
+    },
+    {
+      "id": "drivesleeprec",
+      "name": "drivesleeprec",
+      "label": "fall asleep while driving rec 01",
+      "type": "categorical",
+      "valueLabels": [
+        {
+          "value": 0,
+          "label": "no"
+        },
+        {
+          "value": 1,
+          "label": "yes"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      }
+    },
+    {
+      "id": "driveaccident",
+      "name": "driveaccident",
+      "label": "drive, result in acc due to sleepy",
+      "type": "categorical",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "yes"
+        },
+        {
+          "value": 2,
+          "label": "no"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      },
+      "semantic": {
+        "topic": "sleep_quality",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 0.65
+      }
+    },
+    {
+      "id": "ess",
+      "name": "ess",
+      "label": "epworth sleepiness scale",
+      "type": "numeric",
+      "valueLabels": [],
+      "missingValues": {
+        "discrete": []
+      },
+      "semantic": {
+        "topic": "sleep_quality",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 0.72
+      }
+    },
+    {
+      "id": "anxiety",
+      "name": "anxiety",
+      "label": "HADS Anxiety",
+      "type": "numeric",
+      "valueLabels": [],
+      "missingValues": {
+        "discrete": []
+      },
+      "semantic": {
+        "topic": "mental_health",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 0.72
+      }
+    },
+    {
+      "id": "depress",
+      "name": "depress",
+      "label": "HADS Depression",
+      "type": "numeric",
+      "valueLabels": [],
+      "missingValues": {
+        "discrete": []
+      },
+      "semantic": {
+        "topic": "mental_health",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 0.72
+      }
+    },
+    {
+      "id": "fatigue",
+      "name": "fatigue",
+      "label": "SAS fatigued",
+      "type": "numeric",
+      "valueLabels": [],
+      "missingValues": {
+        "discrete": []
+      },
+      "semantic": {
+        "topic": "mental_health",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 0.72
+      }
+    },
+    {
+      "id": "lethargy",
+      "name": "lethargy",
+      "label": "SAS lethargic",
+      "type": "numeric",
+      "valueLabels": [],
+      "missingValues": {
+        "discrete": []
+      },
+      "semantic": {
+        "topic": "mental_health",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 0.65
+      }
+    },
+    {
+      "id": "tired",
+      "name": "tired",
+      "label": "SAS tired",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "1"
+        },
+        {
+          "value": 2,
+          "label": "2"
+        },
+        {
+          "value": 3,
+          "label": "3"
+        },
+        {
+          "value": 4,
+          "label": "4"
+        },
+        {
+          "value": 5,
+          "label": "5"
+        },
+        {
+          "value": 6,
+          "label": "6"
+        },
+        {
+          "value": 7,
+          "label": "7"
+        },
+        {
+          "value": 8,
+          "label": "8"
+        },
+        {
+          "value": 9,
+          "label": "9"
+        },
+        {
+          "value": 10,
+          "label": "10"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      },
+      "semantic": {
+        "topic": "mental_health",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 0.65
+      }
+    },
+    {
+      "id": "sleepy",
+      "name": "sleepy",
+      "label": "SAS sleepy",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "1"
+        },
+        {
+          "value": 2,
+          "label": "2"
+        },
+        {
+          "value": 3,
+          "label": "3"
+        },
+        {
+          "value": 4,
+          "label": "4"
+        },
+        {
+          "value": 5,
+          "label": "5"
+        },
+        {
+          "value": 6,
+          "label": "6"
+        },
+        {
+          "value": 7,
+          "label": "7"
+        },
+        {
+          "value": 8,
+          "label": "8"
+        },
+        {
+          "value": 9,
+          "label": "9"
+        },
+        {
+          "value": 10,
+          "label": "10"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      },
+      "semantic": {
+        "topic": "sleep_quality",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 0.72
+      }
+    },
+    {
+      "id": "energy",
+      "name": "energy",
+      "label": "SAS lack energy",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "1"
+        },
+        {
+          "value": 2,
+          "label": "2"
+        },
+        {
+          "value": 3,
+          "label": "3"
+        },
+        {
+          "value": 4,
+          "label": "4"
+        },
+        {
+          "value": 5,
+          "label": "5"
+        },
+        {
+          "value": 6,
+          "label": "6"
+        },
+        {
+          "value": 7,
+          "label": "7"
+        },
+        {
+          "value": 8,
+          "label": "8"
+        },
+        {
+          "value": 9,
+          "label": "9"
+        },
+        {
+          "value": 10,
+          "label": "10"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      },
+      "semantic": {
+        "topic": "mental_health",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 0.65
+      }
+    },
+    {
+      "id": "qualsleep4gp",
+      "name": "qualsleep4gp",
+      "label": "qual sleep 4 gps",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "very poor, poor"
+        },
+        {
+          "value": 2,
+          "label": "fair"
+        },
+        {
+          "value": 3,
+          "label": "good"
+        },
+        {
+          "value": 4,
+          "label": "very good, excellent"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      },
+      "semantic": {
+        "topic": "sleep_quality",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 0.72
+      }
+    },
+    {
+      "id": "cigs3gp",
+      "name": "cigs3gp",
+      "label": "cigs per day 3 gps",
+      "type": "categorical",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "<= 5"
+        },
+        {
+          "value": 2,
+          "label": "6 - 15"
+        },
+        {
+          "value": 3,
+          "label": "16+"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      }
+    },
+    {
+      "id": "age3gp",
+      "name": "age3gp",
+      "label": "age 3 gps",
+      "type": "ordered",
+      "orderedStyle": "sequence",
+      "orderedScoring": "categorical_only",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "<= 37"
+        },
+        {
+          "value": 2,
+          "label": "38 - 50"
+        },
+        {
+          "value": 3,
+          "label": "51+"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      },
+      "semantic": {
+        "topic": "demographics",
+        "measurementIntent": "demographic",
+        "source": "auto",
+        "confidence": 0.7
+      }
+    },
+    {
+      "id": "totsas",
+      "name": "totsas",
+      "label": "sleepy & assoc sensations scale",
+      "type": "numeric",
+      "valueLabels": [],
+      "missingValues": {
+        "discrete": []
+      },
+      "semantic": {
+        "topic": "sleep_quality",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 0.65
+      }
+    },
+    {
+      "id": "probsleeprec",
+      "name": "probsleeprec",
+      "label": "problem sleep recoded 01",
+      "type": "categorical",
+      "valueLabels": [
+        {
+          "value": 0,
+          "label": "no"
+        },
+        {
+          "value": 1,
+          "label": "yes"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      },
+      "semantic": {
+        "topic": "sleep_quality",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 0.65
+      }
+    },
+    {
+      "id": "hourweeknight",
+      "name": "hourweeknight",
+      "label": "hrs sleep weeknights",
+      "type": "numeric",
+      "valueLabels": [],
+      "missingValues": {
+        "discrete": []
+      },
+      "semantic": {
+        "topic": "sleep_quality",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 0.65
+      }
+    },
+    {
+      "id": "getsleeprec",
+      "name": "getsleeprec",
+      "label": "getting asleep recoded 01",
+      "type": "categorical",
+      "valueLabels": [
+        {
+          "value": 0,
+          "label": "no"
+        },
+        {
+          "value": 1,
+          "label": "yes"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      }
+    },
+    {
+      "id": "staysleeprec",
+      "name": "staysleeprec",
+      "label": "problem stay asleep recoded 01",
+      "type": "categorical",
+      "valueLabels": [
+        {
+          "value": 0,
+          "label": "no"
+        },
+        {
+          "value": 1,
+          "label": "yes"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      }
+    },
+    {
+      "id": "heuristic_grid_tired_sleepy_energy_scale",
+      "name": "tired_scale",
+      "label": "tired",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "1"
+        },
+        {
+          "value": 2,
+          "label": "2"
+        },
+        {
+          "value": 3,
+          "label": "3"
+        },
+        {
+          "value": 4,
+          "label": "4"
+        },
+        {
+          "value": 5,
+          "label": "5"
+        },
+        {
+          "value": 6,
+          "label": "6"
+        },
+        {
+          "value": 7,
+          "label": "7"
+        },
+        {
+          "value": 8,
+          "label": "8"
+        },
+        {
+          "value": 9,
+          "label": "9"
+        },
+        {
+          "value": 10,
+          "label": "10"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      },
+      "synthetic": true,
+      "sourceGridId": "heuristic_grid_tired_sleepy_energy"
+    },
+    {
+      "id": "heuristic_grid_tired_sleepy_energy_items",
+      "name": "heuristic_grid_tired_sleepy_energy_items",
+      "label": "tired",
+      "type": "categorical",
+      "valueLabels": [
+        {
+          "value": 0,
+          "label": "SAS tired"
+        },
+        {
+          "value": 1,
+          "label": "SAS sleepy"
+        },
+        {
+          "value": 2,
+          "label": "SAS lack energy"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      },
+      "synthetic": true,
+      "sourceGridId": "heuristic_grid_tired_sleepy_energy"
+    },
+    {
+      "id": "heuristic_grid_impact2_impact3_impact4_impact5_impact6_scale",
+      "name": "impact_scale",
+      "label": "impact",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "not at all"
+        },
+        {
+          "value": 2,
+          "label": "2"
+        },
+        {
+          "value": 3,
+          "label": "3"
+        },
+        {
+          "value": 4,
+          "label": "4"
+        },
+        {
+          "value": 5,
+          "label": "5"
+        },
+        {
+          "value": 6,
+          "label": "6"
+        },
+        {
+          "value": 7,
+          "label": "7"
+        },
+        {
+          "value": 8,
+          "label": "8"
+        },
+        {
+          "value": 9,
+          "label": "9"
+        },
+        {
+          "value": 10,
+          "label": "to a great extent"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      },
+      "synthetic": true,
+      "sourceGridId": "heuristic_grid_impact2_impact3_impact4_impact5_impact6"
+    },
+    {
+      "id": "heuristic_grid_impact2_impact3_impact4_impact5_impact6_items",
+      "name": "heuristic_grid_impact2_impact3_impact4_impact5_impact6_items",
+      "label": "impact",
+      "type": "categorical",
+      "valueLabels": [
+        {
+          "value": 0,
+          "label": "energy level"
+        },
+        {
+          "value": 1,
+          "label": "concent"
+        },
+        {
+          "value": 2,
+          "label": "memory"
+        },
+        {
+          "value": 3,
+          "label": "life sat"
+        },
+        {
+          "value": 4,
+          "label": "overall well-being"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      },
+      "synthetic": true,
+      "sourceGridId": "heuristic_grid_impact2_impact3_impact4_impact5_impact6"
+    }
+  ],
+  "variableSets": [
+    {
+      "id": "vs_id",
+      "name": "Identification Number",
+      "variableIds": [
+        "id"
+      ],
+      "structure": "single",
+      "type": "numeric"
+    },
+    {
+      "id": "vs_sex",
+      "name": "sex",
+      "variableIds": [
+        "sex"
+      ],
+      "structure": "single",
+      "type": "categorical"
+    },
+    {
+      "id": "vs_age",
+      "name": "age",
+      "variableIds": [
+        "age"
+      ],
+      "structure": "single",
+      "type": "numeric"
+    },
+    {
+      "id": "vs_marital",
+      "name": "marital status",
+      "variableIds": [
+        "marital"
+      ],
+      "structure": "single",
+      "type": "categorical"
+    },
+    {
+      "id": "vs_edlevel",
+      "name": "highest education level achieved",
+      "variableIds": [
+        "edlevel"
+      ],
+      "structure": "single",
+      "type": "categorical"
+    },
+    {
+      "id": "vs_weight",
+      "name": "weight",
+      "variableIds": [
+        "weight"
+      ],
+      "structure": "single",
+      "type": "numeric"
+    },
+    {
+      "id": "vs_height",
+      "name": "height",
+      "variableIds": [
+        "height"
+      ],
+      "structure": "single",
+      "type": "numeric"
+    },
+    {
+      "id": "vs_healthrate",
+      "name": "general health",
+      "variableIds": [
+        "healthrate"
+      ],
+      "structure": "single",
+      "type": "ordered"
+    },
+    {
+      "id": "vs_fitrate",
+      "name": "physical fitness",
+      "variableIds": [
+        "fitrate"
+      ],
+      "structure": "single",
+      "type": "ordered"
+    },
+    {
+      "id": "vs_weightrate",
+      "name": "current weight",
+      "variableIds": [
+        "weightrate"
+      ],
+      "structure": "single",
+      "type": "ordered"
+    },
+    {
+      "id": "vs_smoke",
+      "name": "do you smoke",
+      "variableIds": [
+        "smoke"
+      ],
+      "structure": "single",
+      "type": "categorical"
+    },
+    {
+      "id": "vs_smokenum",
+      "name": "cigs per day",
+      "variableIds": [
+        "smokenum"
+      ],
+      "structure": "single",
+      "type": "numeric"
+    },
+    {
+      "id": "vs_alchohol",
+      "name": "alcoholic drinks per day",
+      "variableIds": [
+        "alchohol"
+      ],
+      "structure": "single",
+      "type": "numeric"
+    },
+    {
+      "id": "vs_caffeine",
+      "name": "caffeine drinks per day",
+      "variableIds": [
+        "caffeine"
+      ],
+      "structure": "single",
+      "type": "numeric"
+    },
+    {
+      "id": "vs_hourswkend",
+      "name": "hours sleep/ week ends",
+      "variableIds": [
+        "hourswkend"
+      ],
+      "structure": "single",
+      "type": "numeric"
+    },
+    {
+      "id": "vs_hourneed",
+      "name": "how many hours sleep needed",
+      "variableIds": [
+        "hourneed"
+      ],
+      "structure": "single",
+      "type": "numeric"
+    },
+    {
+      "id": "heuristic_multiple_troublefallasleep_troublestaysleep_wakenite_lightsleeper_refreshed",
+      "name": "troublefallasleep",
+      "variableIds": [
+        "troublefallasleep",
+        "troublestaysleep",
+        "wakenite",
+        "lightsleeper",
+        "refreshed"
+      ],
+      "structure": "multiple",
+      "type": "categorical",
+      "countedValue": 1,
+      "description": "Detected multi-response with shared Yes/No scale"
+    },
+    {
+      "id": "vs_niteshft",
+      "name": "work night shift or rotating shifts",
+      "variableIds": [
+        "niteshft"
+      ],
+      "structure": "single",
+      "type": "ordered"
+    },
+    {
+      "id": "vs_satissleep",
+      "name": "satisfied with sleep amount",
+      "variableIds": [
+        "satissleep"
+      ],
+      "structure": "single",
+      "type": "ordered"
+    },
+    {
+      "id": "vs_qualsleep",
+      "name": "quality of sleep",
+      "variableIds": [
+        "qualsleep"
+      ],
+      "structure": "single",
+      "type": "ordered"
+    },
+    {
+      "id": "vs_stressmonth",
+      "name": "stressed over last month",
+      "variableIds": [
+        "stressmonth"
+      ],
+      "structure": "single",
+      "type": "ordered"
+    },
+    {
+      "id": "vs_medichelp",
+      "name": "medication  taken to help sleep",
+      "variableIds": [
+        "medichelp"
+      ],
+      "structure": "single",
+      "type": "categorical"
+    },
+    {
+      "id": "vs_problem",
+      "name": "problem with sleep",
+      "variableIds": [
+        "problem"
+      ],
+      "structure": "single",
+      "type": "categorical"
+    },
+    {
+      "id": "vs_impact1",
+      "name": "mood",
+      "variableIds": [
+        "impact1"
+      ],
+      "structure": "single",
+      "type": "ordered"
+    },
+    {
+      "id": "heuristic_grid_impact2_impact3_impact4_impact5_impact6",
+      "name": "impact",
+      "variableIds": [
+        "impact2",
+        "impact3",
+        "impact4",
+        "impact5",
+        "impact6"
+      ],
+      "structure": "grid",
+      "type": "ordered",
+      "description": "Detected grid with shared scale",
+      "gridMetadata": {
+        "sharedScale": {
+          "valueLabels": {
+            "1": "not at all",
+            "2": "2",
+            "3": "3",
+            "4": "4",
+            "5": "5",
+            "6": "6",
+            "7": "7",
+            "8": "8",
+            "9": "9",
+            "10": "to a great extent"
+          },
+          "type": "ordered",
+          "orderedStyle": "rating",
+          "orderedScoring": "allow_numeric_stats"
+        },
+        "itemLabels": [
+          "energy level",
+          "concent",
+          "memory",
+          "life sat",
+          "overall well-being"
+        ],
+        "itemMapping": {
+          "impact2": 0,
+          "impact3": 1,
+          "impact4": 2,
+          "impact5": 3,
+          "impact6": 4
+        }
+      }
+    },
+    {
+      "id": "vs_impact7",
+      "name": "relationships",
+      "variableIds": [
+        "impact7"
+      ],
+      "structure": "single",
+      "type": "ordered"
+    },
+    {
+      "id": "heuristic_multiple_stopbreathe_restless_drivesleep_driveaccident",
+      "name": "stopbreathe",
+      "variableIds": [
+        "stopbreathe",
+        "restless",
+        "drivesleep",
+        "driveaccident"
+      ],
+      "structure": "multiple",
+      "type": "categorical",
+      "countedValue": 1,
+      "description": "Detected multi-response with shared Yes/No scale"
+    },
+    {
+      "id": "vs_drivesleeprec",
+      "name": "fall asleep while driving rec 01",
+      "variableIds": [
+        "drivesleeprec"
+      ],
+      "structure": "single",
+      "type": "categorical"
+    },
+    {
+      "id": "vs_ess",
+      "name": "epworth sleepiness scale",
+      "variableIds": [
+        "ess"
+      ],
+      "structure": "single",
+      "type": "numeric"
+    },
+    {
+      "id": "vs_anxiety",
+      "name": "HADS Anxiety",
+      "variableIds": [
+        "anxiety"
+      ],
+      "structure": "single",
+      "type": "numeric"
+    },
+    {
+      "id": "vs_depress",
+      "name": "HADS Depression",
+      "variableIds": [
+        "depress"
+      ],
+      "structure": "single",
+      "type": "numeric"
+    },
+    {
+      "id": "vs_fatigue",
+      "name": "SAS fatigued",
+      "variableIds": [
+        "fatigue"
+      ],
+      "structure": "single",
+      "type": "numeric"
+    },
+    {
+      "id": "vs_lethargy",
+      "name": "SAS lethargic",
+      "variableIds": [
+        "lethargy"
+      ],
+      "structure": "single",
+      "type": "numeric"
+    },
+    {
+      "id": "heuristic_grid_tired_sleepy_energy",
+      "name": "tired",
+      "variableIds": [
+        "tired",
+        "sleepy",
+        "energy"
+      ],
+      "structure": "grid",
+      "type": "ordered",
+      "description": "Detected grid with shared scale",
+      "gridMetadata": {
+        "sharedScale": {
+          "valueLabels": {
+            "1": "1",
+            "2": "2",
+            "3": "3",
+            "4": "4",
+            "5": "5",
+            "6": "6",
+            "7": "7",
+            "8": "8",
+            "9": "9",
+            "10": "10"
+          },
+          "type": "ordered",
+          "orderedStyle": "rating",
+          "orderedScoring": "allow_numeric_stats"
+        },
+        "itemLabels": [
+          "SAS tired",
+          "SAS sleepy",
+          "SAS lack energy"
+        ],
+        "itemMapping": {
+          "tired": 0,
+          "sleepy": 1,
+          "energy": 2
+        }
+      }
+    },
+    {
+      "id": "vs_qualsleep4gp",
+      "name": "qual sleep 4 gps",
+      "variableIds": [
+        "qualsleep4gp"
+      ],
+      "structure": "single",
+      "type": "ordered"
+    },
+    {
+      "id": "vs_cigs3gp",
+      "name": "cigs per day 3 gps",
+      "variableIds": [
+        "cigs3gp"
+      ],
+      "structure": "single",
+      "type": "categorical"
+    },
+    {
+      "id": "vs_age3gp",
+      "name": "age 3 gps",
+      "variableIds": [
+        "age3gp"
+      ],
+      "structure": "single",
+      "type": "ordered"
+    },
+    {
+      "id": "vs_totsas",
+      "name": "sleepy & assoc sensations scale",
+      "variableIds": [
+        "totsas"
+      ],
+      "structure": "single",
+      "type": "numeric"
+    },
+    {
+      "id": "heuristic_multiple_probsleeprec_getsleeprec_staysleeprec",
+      "name": "probsleeprec",
+      "variableIds": [
+        "probsleeprec",
+        "getsleeprec",
+        "staysleeprec"
+      ],
+      "structure": "multiple",
+      "type": "categorical",
+      "countedValue": 1,
+      "description": "Detected multi-response with shared Yes/No scale"
+    },
+    {
+      "id": "vs_hourweeknight",
+      "name": "hrs sleep weeknights",
+      "variableIds": [
+        "hourweeknight"
+      ],
+      "structure": "single",
+      "type": "numeric"
+    },
+    {
+      "id": "heuristic_grid_tired_sleepy_energy_scale",
+      "name": "tired",
+      "variableIds": [
+        "heuristic_grid_tired_sleepy_energy_scale"
+      ],
+      "structure": "single",
+      "type": "ordered",
+      "derived": true,
+      "description": "Synthetic variable for grid unpivoting"
+    },
+    {
+      "id": "heuristic_grid_tired_sleepy_energy_items",
+      "name": "tired",
+      "variableIds": [
+        "heuristic_grid_tired_sleepy_energy_items"
+      ],
+      "structure": "single",
+      "type": "categorical",
+      "derived": true,
+      "description": "Synthetic variable for grid unpivoting"
+    },
+    {
+      "id": "heuristic_grid_impact2_impact3_impact4_impact5_impact6_scale",
+      "name": "impact",
+      "variableIds": [
+        "heuristic_grid_impact2_impact3_impact4_impact5_impact6_scale"
+      ],
+      "structure": "single",
+      "type": "ordered",
+      "derived": true,
+      "description": "Synthetic variable for grid unpivoting"
+    },
+    {
+      "id": "heuristic_grid_impact2_impact3_impact4_impact5_impact6_items",
+      "name": "impact",
+      "variableIds": [
+        "heuristic_grid_impact2_impact3_impact4_impact5_impact6_items"
+      ],
+      "structure": "single",
+      "type": "categorical",
+      "derived": true,
+      "description": "Synthetic variable for grid unpivoting"
+    }
+  ],
+  "folders": [],
+  "transformLog": [],
+  "tableConfig": {
+    "rowVars": [],
+    "colVar": null
+  },
+  "activeFilters": [],
+  "weightVariable": null,
+  "slides": [
+    {
+      "id": "deck-slide-0-1773430720104",
+      "title": "Overall Sleep Quality",
+      "subtitle": "N = 271 Respondents",
+      "analysisState": {
+        "rowVars": [
+          "qualsleep4gp"
+        ],
+        "colVar": null,
+        "filters": [],
+        "weightVar": null
+      },
+      "visualizationType": "chart",
+      "chartType": "diverging-bar",
+      "layoutMode": "focus",
+      "cells": [],
+      "sectionId": "deck-section-0-1773430720104",
+      "createdAt": 1773430720104,
+      "updatedAt": 1773430720104
+    },
+    {
+      "id": "deck-slide-1-1773430720104",
+      "title": "Sleep Quality by Sex",
+      "subtitle": "N = 271 Respondents",
+      "analysisState": {
+        "rowVars": [
+          "qualsleep4gp"
+        ],
+        "colVar": "sex",
+        "filters": [],
+        "weightVar": null
+      },
+      "visualizationType": "chart",
+      "chartType": "diverging-bar",
+      "layoutMode": "focus",
+      "cells": [],
+      "sectionId": "deck-section-0-1773430720104",
+      "createdAt": 1773430720104,
+      "updatedAt": 1773430720104
+    },
+    {
+      "id": "deck-slide-2-1773430720104",
+      "title": "Sleep Quality by Age Group",
+      "subtitle": "N = 271 Respondents",
+      "analysisState": {
+        "rowVars": [
+          "qualsleep4gp"
+        ],
+        "colVar": "age3gp",
+        "filters": [],
+        "weightVar": null
+      },
+      "visualizationType": "chart",
+      "chartType": "diverging-bar",
+      "layoutMode": "focus",
+      "cells": [],
+      "sectionId": "deck-section-0-1773430720104",
+      "createdAt": 1773430720104,
+      "updatedAt": 1773430720104
+    },
+    {
+      "id": "deck-slide-3-1773430720104",
+      "title": "Sleep Quality by Education Level",
+      "subtitle": "N = 271 Respondents",
+      "analysisState": {
+        "rowVars": [
+          "qualsleep4gp"
+        ],
+        "colVar": "edlevel",
+        "filters": [],
+        "weightVar": null
+      },
+      "visualizationType": "chart",
+      "chartType": "diverging-bar",
+      "layoutMode": "focus",
+      "cells": [],
+      "sectionId": "deck-section-0-1773430720104",
+      "createdAt": 1773430720104,
+      "updatedAt": 1773430720104
+    },
+    {
+      "id": "deck-slide-4-1773430720104",
+      "title": "Sleep Problems by Marital Status",
+      "subtitle": "N = 271 Respondents",
+      "analysisState": {
+        "rowVars": [
+          "problem"
+        ],
+        "colVar": "marital",
+        "filters": [],
+        "weightVar": null
+      },
+      "visualizationType": "chart",
+      "chartType": "grouped-bar",
+      "layoutMode": "focus",
+      "cells": [],
+      "sectionId": "deck-section-0-1773430720104",
+      "createdAt": 1773430720104,
+      "updatedAt": 1773430720104
+    }
+  ],
+  "sections": [
+    {
+      "id": "deck-section-0-1773430720104",
+      "title": "Sleep Quality by Demographics"
+    }
+  ],
+  "harmonizationSession": null,
+  "semantic": {
+    "annotations": {
+      "id": {
+        "topic": "respondent_id",
+        "measurementIntent": "identifier",
+        "source": "auto",
+        "confidence": 0.9
+      },
+      "sex": {
+        "topic": "demographics",
+        "measurementIntent": "demographic",
+        "conceptFamily": "gender",
+        "source": "auto",
+        "confidence": 0.9
+      },
+      "age": {
+        "topic": "demographics",
+        "measurementIntent": "demographic",
+        "source": "auto",
+        "confidence": 0.7
+      },
+      "marital": {
+        "topic": "demographics",
+        "measurementIntent": "demographic",
+        "source": "auto",
+        "confidence": 0.7
+      },
+      "edlevel": {
+        "topic": "demographics",
+        "measurementIntent": "demographic",
+        "source": "auto",
+        "confidence": 0.7
+      },
+      "weight": {
+        "topic": "sampling_weight",
+        "measurementIntent": "weight",
+        "source": "auto",
+        "confidence": 0.95
+      },
+      "hourswkend": {
+        "topic": "sleep_quality",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 0.65
+      },
+      "hourneed": {
+        "topic": "sleep_quality",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 0.65
+      },
+      "troublefallasleep": {
+        "topic": "sleep_quality",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 0.72
+      },
+      "troublestaysleep": {
+        "topic": "sleep_quality",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 0.72
+      },
+      "niteshft": {
+        "topic": "behavior_frequency",
+        "measurementIntent": "behavior",
+        "source": "auto",
+        "confidence": 0.75
+      },
+      "satissleep": {
+        "topic": "sleep_quality",
+        "measurementIntent": "attitude",
+        "conceptFamily": "satisfaction",
+        "source": "auto",
+        "confidence": 0.72
+      },
+      "qualsleep": {
+        "topic": "sleep_quality",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 0.72
+      },
+      "stressmonth": {
+        "topic": "mental_health",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 0.72
+      },
+      "medichelp": {
+        "topic": "sleep_quality",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 0.65
+      },
+      "problem": {
+        "topic": "sleep_quality",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 0.65
+      },
+      "driveaccident": {
+        "topic": "sleep_quality",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 0.65
+      },
+      "ess": {
+        "topic": "sleep_quality",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 0.72
+      },
+      "anxiety": {
+        "topic": "mental_health",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 0.72
+      },
+      "depress": {
+        "topic": "mental_health",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 0.72
+      },
+      "fatigue": {
+        "topic": "mental_health",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 0.72
+      },
+      "lethargy": {
+        "topic": "mental_health",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 0.65
+      },
+      "tired": {
+        "topic": "mental_health",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 0.65
+      },
+      "sleepy": {
+        "topic": "sleep_quality",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 0.72
+      },
+      "energy": {
+        "topic": "mental_health",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 0.65
+      },
+      "qualsleep4gp": {
+        "topic": "sleep_quality",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 0.72
+      },
+      "age3gp": {
+        "topic": "demographics",
+        "measurementIntent": "demographic",
+        "source": "auto",
+        "confidence": 0.7
+      },
+      "totsas": {
+        "topic": "sleep_quality",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 0.65
+      },
+      "probsleeprec": {
+        "topic": "sleep_quality",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 0.65
+      },
+      "hourweeknight": {
+        "topic": "sleep_quality",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 0.65
+      }
+    },
+    "concepts": [
+      {
+        "id": "concept-1773430720024-1",
+        "name": "gender (2pt)",
+        "aliases": [
+          "gender"
+        ],
+        "canonicalScale": {
+          "points": 2,
+          "direction": "ascending"
+        },
+        "variableRefs": [
+          {
+            "datasetId": "dataset-1773430720020",
+            "variableId": "sex",
+            "matchConfidence": 0.9
+          }
+        ]
+      },
+      {
+        "id": "concept-1773430720025-2",
+        "name": "satisfaction (10pt)",
+        "aliases": [
+          "satisfaction"
+        ],
+        "canonicalScale": {
+          "points": 10,
+          "direction": "ascending"
+        },
+        "variableRefs": [
+          {
+            "datasetId": "dataset-1773430720020",
+            "variableId": "satissleep",
+            "matchConfidence": 0.72
+          }
+        ]
+      }
+    ]
+  }
+}

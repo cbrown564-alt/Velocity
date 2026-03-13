@@ -1,0 +1,88 @@
+{
+  "evalId": "eval-03",
+  "runId": "run-2026-03-13",
+  "runDate": "2026-03-13",
+  "commitSha": "bc3a0af55a43000f4c8c70fa34cae1a1c985568d",
+  "briefPath": "docs/eval_03_session_handoff_roundtrip_brief.md",
+  "dataset": {
+    "path": "test_data/sleep.sav",
+    "fallbackPath": null,
+    "rowCount": 271,
+    "variableCount": 59
+  },
+  "outcome": "success",
+  "outcomePattern": "pattern_2_good_insight_painful_workflow",
+  "toolMetrics": {
+    "totalToolCalls": 8,
+    "retries": 0,
+    "externalScriptsWritten": 0
+  },
+  "artifacts": {
+    "deck": {
+      "path": null,
+      "produced": false,
+      "notes": "This eval's primary artifact is the refined session handoff, not a PPTX export."
+    },
+    "session": {
+      "path": "artifacts/session.velocity",
+      "produced": true,
+      "notes": "Refined browser session with 10 slides, 3 sections, 30 semantic annotations, and 2 concepts. Baseline copy preserved at artifacts/session_baseline.velocity."
+    },
+    "summary": {
+      "path": "artifacts/summary.json",
+      "produced": true
+    }
+  },
+  "scores": [
+    {
+      "layer": "engine",
+      "score": 4,
+      "notes": "Session state remained coherent across import, refinement, and re-export on sleep.sav."
+    },
+    {
+      "layer": "mcp_workflow",
+      "score": 4,
+      "notes": "The MCP-authored EVAL-01 session was a valid browser baseline and closed the intended handoff loop."
+    },
+    {
+      "layer": "semantic_layer",
+      "score": 4,
+      "notes": "Semantic annotations and concepts now survive browser re-export, but the browser still lacks a clear semantic inspection surface."
+    },
+    {
+      "layer": "browser_convergence",
+      "score": 4,
+      "notes": "Browser import, additive refinement, and re-export all worked, though the import still raised adjustment diagnostics."
+    },
+    {
+      "layer": "deliverable_layer",
+      "score": 4,
+      "notes": "The refined session is a reviewable, portable artifact with one new slide and a persisted reorder."
+    },
+    {
+      "layer": "product_defaults",
+      "score": 3,
+      "notes": "The product surfaced import adjustments but did not explain their cause or make semantic state inspectable."
+    },
+    {
+      "layer": "agent_prompting",
+      "score": 4,
+      "notes": "The brief kept the handoff task tightly scoped and made the required refinements straightforward to validate."
+    }
+  ],
+  "notableFindings": [
+    "The browser imported the EVAL-01 baseline session and re-exported a refined session with 10 slides and 3 sections.",
+    "A browser-session blocker fix was required so the refined export preserved the semantic block rather than dropping it.",
+    "The refined session retained all 30 semantic annotations and both concepts from the baseline artifact.",
+    "The controlled refinements persisted: retitled lead slide, reordered daytime sleepiness ahead of energy, and added a problem-by-sex follow-up slide."
+  ],
+  "blockers": [
+    "Before this run's fix, the browser session export path silently dropped semantic annotations and concepts.",
+    "Importing the exact sleep.sav baseline still reported 4 unresolved variables and 4 removed variable sets."
+  ],
+  "followUps": [
+    "Trace and eliminate the unresolved-variable / dropped-variable-set diagnostics on exact-match imports.",
+    "Expose semantic annotations and concepts in an inspectable browser UI after session import.",
+    "Add targeted browser-path test coverage for session import, refinement, and re-export."
+  ]
+}

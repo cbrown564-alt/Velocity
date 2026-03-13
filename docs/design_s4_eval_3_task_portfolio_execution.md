@@ -8,7 +8,7 @@ S4-EVAL-3 executes the full six-brief Phase 4 task portfolio (`EVAL-01` through 
 - Output B: capability-gap review (`gap_review.md`)
 - Structured run metadata (`artifacts/summary.json`)
 
-This stream is now an in-flight execution brief, not a pre-run kickoff note. `EVAL-01` and `EVAL-02` have already been completed through MCP and should be treated as the first locked baselines for the portfolio.
+This stream is now an in-flight execution brief, not a pre-run kickoff note. `EVAL-01` through `EVAL-04` now have dated run evidence on disk and should be treated as the current locked baselines for deck, discovery, handoff, and controlled convergence.
 
 **Done checks** (from the Phase 4 plan):
 - Each task family (A-F) has at least one executed eval
@@ -20,6 +20,8 @@ This stream is now an in-flight execution brief, not a pre-run kickoff note. `EV
 **Completed runs on disk:**
 - `EVAL-01` (`evals/eval-01/runs/run-2026-03-13/`): successful 9-slide MCP deck + session run on `sleep.sav`; surfaced a real workflow blocker and a build/transport ceiling
 - `EVAL-02` (`evals/eval-02/runs/run-2026-03-13/`): successful 13-slide weighted MCP deck + session run on BSA 2017; isolated semantic discovery as the main remaining weakness at large-survey scale
+- `EVAL-03` (`evals/eval-03/runs/run-2026-03-13/`): successful browser import/refinement/re-export round-trip on the `EVAL-01` `sleep.sav` session; fixed browser semantic-state loss on session export
+- `EVAL-04` (`evals/eval-04/runs/run-2026-03-13/`): successful controlled browser-vs-MCP 5-slide convergence comparison on `sleep.sav`; outputs were materially comparable, with one remaining top-level session-state mismatch
 
 **What changed during S4-EVAL-3 already:**
 - The stream is no longer "execution only" in the strictest sense. `EVAL-01` discovered that MCP exposed session export but not deck commit, so `velocity_commit_deck` was added and covered in:
@@ -32,8 +34,8 @@ This stream is now an in-flight execution brief, not a pre-run kickoff note. `EV
 
 **Current program read:**
 - MCP deck/session round-trip is now real on both a small survey (`EVAL-01`) and a 654-variable weighted survey (`EVAL-02`)
-- No eval has yet delivered a clean primary `Pattern 7` baseline; `EVAL-02` includes a secondary Pattern 7 signal, but its primary result is still `Pattern 4` because large-survey discovery remains materially weak
-- Remaining execution work is concentrated in families `C-F`: handoff, browser convergence, harmonization, and stress
+- Browser handoff and controlled convergence now both have executable `sleep.sav` evidence (`EVAL-03`, `EVAL-04`), and `EVAL-04` provides the first narrow convergence baseline where browser and MCP artifacts are materially comparable
+- Remaining execution work is now concentrated in families `E-F`: harmonization and stress
 
 ## 3. Portfolio Status
 
@@ -41,38 +43,21 @@ This stream is now an in-flight execution brief, not a pre-run kickoff note. `EV
 |---|---|---|---|---|---|
 | `EVAL-01` | B (deck) | `test_data/sleep.sav` | Done | End-to-end MCP deck + session works, but richer deck builds exposed memory and JSON transport limits | Use its session artifact as the baseline for `EVAL-03` |
 | `EVAL-02` | A (discovery) | `test_data/British Social Attitudes Survey/bsa2017_for_ukda.sav` | Done | Weighted large-survey execution path is viable; semantic discovery is still the bottleneck | Freeze as the large-survey baseline for later comparison |
-| `EVAL-03` | C (handoff) | Reuse `EVAL-01` session | Pending | Now unblocked by `velocity_commit_deck`; should validate browser import, refinement, and re-export | Requires a controlled browser refinement pass |
-| `EVAL-04` | D (convergence) | `test_data/sleep.sav` | Pending | Should quantify whether browser users still have materially stronger effective affordances | Requires one browser-only run and one MCP-only run of the same task |
+| `EVAL-03` | C (handoff) | Reuse `EVAL-01` session | Done | Browser import, additive refinement, and re-export now work on `sleep.sav`; semantic-state loss was fixed during execution | Freeze as the current handoff baseline |
+| `EVAL-04` | D (convergence) | `test_data/sleep.sav` | Done | Browser and MCP produced materially comparable 5-slide deck/session artifacts; remaining gap is top-level working-state parity and last-mile editability | Carry the named gaps into `S4-EVAL-4` and move execution to `EVAL-05` |
 | `EVAL-05` | E (harmonization) | `test_data/English Longitudinal Study of Ageing/` | Pending | Dataset is available locally, but the eval still carries the highest workspace/workflow ambiguity | Requires bounded file selection and strict no-improvisation discipline |
 | `EVAL-06` | F (stress) | `test_data/WVS/WVS_Cross-National_Wave_7_spss_v6_0.sav` with Trust fallback | Pending | Best stress case remains WVS; fallback path is ready if ingestion fails | Requires a quick viability check, then immediate fallback if blocked |
 
 ## 4. Remaining Execution Plan
 
-**Sequencing:** keep the original dependency-first order, but start from the now-unblocked handoff path.
+**Sequencing:** keep the original dependency-first order. With handoff and convergence now executed, the remaining sequence begins at harmonization.
 
 | Order | Eval | Why now | Success signal |
 |---|---|---|---|
-| 1 | `EVAL-03` | Directly exercises the new deck/session contract change from `EVAL-01` while the baseline artifact is fresh and small | Session imports cleanly in the browser, human makes additive refinements, refined session re-exports |
-| 2 | `EVAL-04` | Reuses the same `sleep.sav` task shape and browser familiarity from `EVAL-03` | Browser vs MCP comparison identifies explicit parity gaps rather than vague "browser felt better" claims |
-| 3 | `EVAL-05` | Highest-value remaining capability test outside single-dataset deck work | Agent reaches a reviewable mapping flow and produces a harmonized output or records a crisp intended-path block |
-| 4 | `EVAL-06` | Best final resilience pass after the other workflow layers have been exercised | WVS yields a bounded analysis, or fallback activates cleanly with documented evidence |
+| 1 | `EVAL-05` | Highest-value remaining capability test outside single-dataset deck work | Agent reaches a reviewable mapping flow and produces a harmonized output or records a crisp intended-path block |
+| 2 | `EVAL-06` | Best final resilience pass after the other workflow layers have been exercised | WVS yields a bounded analysis, or fallback activates cleanly with documented evidence |
 
 ### Recommended execution details
-
-#### `EVAL-03`
-
-- Use `evals/eval-01/runs/run-2026-03-13/artifacts/session.velocity` as the agent baseline
-- Record the exact browser refinements required by the brief:
-  - reorder one slide
-  - edit one title or note
-  - add one follow-up analysis or slide
-- Treat any missing filters, missing notes, dropped sections, or semantic-state loss as first-class evidence
-
-#### `EVAL-04`
-
-- Keep the browser and agent task tightly scoped to the same 5-slide assignment in `docs/eval_04_browser_vs_agent_convergence_brief.md`
-- Do not let either path expand into a nicer-but-different deck; comparability matters more than local quality
-- Log total effort, workarounds, and "last-minute edit" friction explicitly
 
 #### `EVAL-05`
 
@@ -148,16 +133,16 @@ S4-EVAL-3 is complete when:
 
 ## 10. Recommended Immediate Next Action
 
-**Execute `EVAL-03` next using the completed `EVAL-01` session artifact.**
+**Execute `EVAL-05` next using a bounded two-file ELSA slice.**
 
 Why this is the right next move:
 
-- it directly validates the blocker fix that `EVAL-01` forced into the MCP contract
-- it keeps the task on the smallest, most controlled dataset
-- it creates the browser-path muscle memory needed for `EVAL-04`
-- it tests the human-agent collaboration claim before moving into the more ambiguous harmonization and stress runs
+- `EVAL-01` through `EVAL-04` now cover decking, large-survey discovery, handoff, and controlled convergence
+- harmonization is now the highest-value unexecuted family in the portfolio
+- `EVAL-05` is the remaining workflow most likely to surface true workspace-level ambiguity before Phase 5
+- executing it now preserves the dependency-first intent of the original plan
 
-If `EVAL-03` shows that session import/refinement is still lossy, pause there and treat it as the next product blocker. If it succeeds, proceed immediately to `EVAL-04`.
+If `EVAL-05` reaches a clear, reviewable mapping flow, proceed directly to `EVAL-06`. If it becomes opaque or requires bespoke glue code, stop and record the intended-path block explicitly rather than improvising a substitute workflow.
 
 ## 11. Reference Documents
 

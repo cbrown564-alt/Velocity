@@ -13,6 +13,11 @@ import {
   type SessionImportDiagnosticsSummary,
 } from './core/session';
 import { encodeSessionFile } from './services/sessionFileCodec';
+import {
+  captureImportedSessionSemanticState,
+  selectExportSessionSemantic,
+  type ImportedSessionSemanticState,
+} from './services/sessionSemanticState';
 import * as opfsFileManager from './services/opfsFileManager';
 
 import { WorkspaceView, ProjectLinkModal, CrossWavePanel, ExportImportModal, type StoredDataset, type Project, type WorkspaceExport } from './features/workspace';
@@ -204,6 +209,7 @@ export default function App() {
   const [showSessionImportModal, setShowSessionImportModal] = React.useState(false);
   const [showSessionExportModal, setShowSessionExportModal] = React.useState(false);
   const [sessionImportDiagnostics, setSessionImportDiagnostics] = React.useState<SessionImportDiagnosticsSummary | null>(null);
+  const [importedSessionSemantic, setImportedSessionSemantic] = React.useState<ImportedSessionSemanticState | null>(null);
 
   // -- Workspace local state --
   const [showProjectModal, setShowProjectModal] = React.useState(false);
@@ -222,6 +228,7 @@ export default function App() {
   // -- Session export --
   const doExportSessionDownload = React.useCallback(async () => {
     if (!dataset) return;
+    const semantic = selectExportSessionSemantic(dataset, importedSessionSemantic);
     const sessionFile = exportSession({
       dataset, variableSets, folders, transformLog, tableConfig, activeFilters, analysisSettings, slides, sections,
       workspace: {
@@ -230,6 +237,7 @@ export default function App() {
       },
       activeDatasetId,
       harmonizationSession: harmonization.session,
+      semantic,
       velocityVersion: import.meta.env.VITE_APP_VERSION ?? 'dev',
     });
     const sessionJson = serializeSessionFile(sessionFile);
@@ -242,7 +250,7 @@ export default function App() {
     anchor.click();
     document.body.removeChild(anchor);
     URL.revokeObjectURL(url);
-  }, [dataset, variableSets, folders, transformLog, tableConfig, activeFilters, analysisSettings, slides, sections, workspace.datasets, workspace.projects, activeDatasetId, harmonization.session]);
+  }, [dataset, variableSets, folders, transformLog, tableConfig, activeFilters, analysisSettings, slides, sections, workspace.datasets, workspace.projects, activeDatasetId, harmonization.session, importedSessionSemantic]);
 
   const sessionExportSummary = React.useMemo((): SessionExportSummary | null => {
     if (!dataset) return null;
@@ -308,6 +316,7 @@ export default function App() {
         },
       }));
       await useVelocityStore.getState().runAnalysis();
+      setImportedSessionSemantic(captureImportedSessionSemanticState(payload.sessionFile));
       setMode('dashboard');
       setShowSessionImportModal(false);
       if (hasSessionImportDiagnostics(imported.diagnostics)) {
@@ -318,6 +327,10 @@ export default function App() {
       throw new Error(importError?.message || 'Session import failed');
     }
   }, [mode, loadSAV, recodeVariable]);
+
+  const clearImportedSessionSemantic = React.useCallback(() => {
+    setImportedSessionSemantic(null);
+  }, []);
 
   const sessionImportMessages = React.useMemo(
     () => (sessionImportDiagnostics ? listSessionImportDiagnostics(sessionImportDiagnostics) : []),
@@ -357,6 +370,7 @@ export default function App() {
   }, [dataset?.id, mode]);
 
   const handleOpenDataset = useCallback(async (storedDataset: StoredDataset) => {
+    clearImportedSessionSemantic();
     if (dataset && activeDatasetId) {
       saveDatasetSession(activeDatasetId, { tableConfig, activeFilters, transformLog: [] });
     }
@@ -364,7 +378,7 @@ export default function App() {
     setActiveDataset(storedDataset.id);
     setWorkspaceMode(false);
     setMode('dashboard');
-  }, [dataset, activeDatasetId, tableConfig, activeFilters, saveDatasetSession, updateDatasetAccess, setActiveDataset, setWorkspaceMode]);
+  }, [clearImportedSessionSemantic, dataset, activeDatasetId, tableConfig, activeFilters, saveDatasetSession, updateDatasetAccess, setActiveDataset, setWorkspaceMode]);
 
   const handleDeleteDataset = useCallback(async (id: string) => {
     if (window.confirm('Delete this dataset from your workspace? The original file will not be affected.')) {
@@ -457,9 +471,20 @@ export default function App() {
   };
 
   const handleDiscard = async () => {
+    clearImportedSessionSemantic();
     await discardPersistedData();
     setMode('splash');
   };
+
+  const handleDatasetFileUpload = React.useCallback(async (event: React.ChangeEvent<HTMLInputElement>) => {
+    clearImportedSessionSemantic();
+    await fileUpload.handleFileUpload(event);
+  }, [clearImportedSessionSemantic, fileUpload]);
+
+  const handleLoadExample = React.useCallback(() => {
+    clearImportedSessionSemantic();
+    fileUpload.handleDemoClick();
+  }, [clearImportedSessionSemantic, fileUpload]);
 
   // -- Filter save handler --
   const handleSaveFilter = useCallback((filter: Omit<Filter, 'id'>, applyToAll: boolean) => {
@@ -475,7 +500,7 @@ export default function App() {
   return (
     <div className={`min-h-screen bg-[var(--bg-app)] text-[var(--text-primary)] antialiased overflow-hidden flex flex-col`}>
 
-      <input type="file" ref={fileInputRef} onChange={fileUpload.handleFileUpload} className="hidden" accept=".csv,.sav" data-testid="dataset-upload-input" />
+      <input type="file" ref={fileInputRef} onChange={handleDatasetFileUpload} className="hidden" accept=".csv,.sav" data-testid="dataset-upload-input" />
 
       {/* MODALS */}
       <DataDrawer
@@ -597,7 +622,7 @@ export default function App() {
                 workspaceState={workspace}
                 onOpenDataset={handleOpenDataset}
                 onUploadFile={() => fileInputRef.current?.click()}
-                onLoadExample={fileUpload.handleDemoClick}
+                onLoadExample={handleLoadExample}
                 onCreateProject={handleOpenProjectModal}
                 onDeleteDataset={handleDeleteDataset}
                 onToggleStar={(id) => toggleDatasetStar(id)}
