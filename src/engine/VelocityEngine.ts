@@ -406,9 +406,7 @@ export class VelocityEngine {
           }, request.context);
 
           if (crosstabConfig.resolveLabels === true && result && typeof result === 'object' && 'rows' in result) {
-            const dataset = this.requireDataset();
-            const rowVariables = rowVarIds.map((id) => dataset.variables.find((v) => v.id === id)).filter((v): v is Variable => !!v);
-            const colVariable = colVarId ? (dataset.variables.find((v) => v.id === colVarId) ?? null) : null;
+            const { rowVariables, colVariable } = this.resolveCrosstabLabelAxes(rowVarIds, colVarId);
             return {
               ...(result as unknown as Record<string, unknown>),
               rows: this.resolveValueLabelsInRows(
@@ -1042,6 +1040,39 @@ export class VelocityEngine {
       }
       return resolved;
     });
+  }
+
+  /**
+   * Mirror the crosstab runner's axis-rewrite rules closely enough to resolve
+   * value labels on the fields that actually ended up in rowKey_N / colKey.
+   */
+  private resolveCrosstabLabelAxes(
+    rowVarIds: string[],
+    colVarId: string | null
+  ): { rowVariables: Variable[]; colVariable: Variable | null } {
+    const dataset = this.requireDataset();
+    let rowVariables = rowVarIds
+      .map((id) => dataset.variables.find((v) => v.id === id))
+      .filter((v): v is Variable => !!v);
+    let colVariable = colVarId
+      ? (dataset.variables.find((v) => v.id === colVarId) ?? null)
+      : null;
+
+    if (colVariable?.type === 'numeric' && !colVariable.synthetic) {
+      colVariable = null;
+    }
+
+    const lastRowVariable = rowVariables[rowVariables.length - 1];
+    if (lastRowVariable?.type === 'numeric' && !lastRowVariable.synthetic) {
+      rowVariables = rowVariables.slice(0, -1);
+
+      if (rowVariables.length === 0 && colVariable) {
+        rowVariables = [colVariable];
+        colVariable = null;
+      }
+    }
+
+    return { rowVariables, colVariable };
   }
 
   private cloneConcept(concept: Concept): Concept {

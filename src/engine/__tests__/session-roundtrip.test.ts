@@ -119,4 +119,25 @@ describe('VelocityEngine session round-trip', () => {
     );
     expect(concepts.data.map((item) => item.id)).toContain(localConcept.data.id);
   }, 30000);
+
+  it('preserves concepts when exporting semantic state without annotations', async () => {
+    await sourceEngine.loadFile('sleep.sav');
+
+    const concept = sourceEngine.createConcept({
+      name: 'Concept Only',
+      aliases: ['standalone concept'],
+    });
+
+    const exported = await sourceEngine.exportSession();
+    expect(exported.data.semantic?.annotations).toEqual({});
+    expect(exported.data.semantic?.concepts.map((item) => item.id)).toContain(concept.data.id);
+
+    await targetEngine.loadFile('sleep.sav');
+    const imported = await targetEngine.importSession(exported.data);
+    expect(imported.data.missingVariableIds).toEqual([]);
+
+    const concepts = targetEngine.listConcepts();
+    expect(concepts.data.map((item) => item.id)).toContain(concept.data.id);
+    expect(concepts.data.map((item) => item.name)).toContain('Concept Only');
+  }, 30000);
 });

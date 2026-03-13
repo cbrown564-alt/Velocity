@@ -172,6 +172,42 @@ describe('exportSession', () => {
     expect(serialized).toContain('"formatVersion": 2');
   });
 
+  it('includes semantic concepts even when there are no annotations', () => {
+    const session = exportSession({
+      dataset: datasetFixture,
+      variableSets: variableSetsFixture,
+      folders: foldersFixture,
+      transformLog: [],
+      tableConfig: tableConfigFixture,
+      activeFilters: [],
+      slides: slidesFixture,
+      sections: [],
+      semantic: {
+        annotations: {},
+        concepts: [
+          {
+            id: 'concept-1',
+            name: 'Sleep Quality',
+            aliases: ['sleep satisfaction'],
+            variableRefs: [],
+          },
+        ],
+      },
+    });
+
+    expect(session.semantic).toEqual({
+      annotations: {},
+      concepts: [
+        {
+          id: 'concept-1',
+          name: 'Sleep Quality',
+          aliases: ['sleep satisfaction'],
+          variableRefs: [],
+        },
+      ],
+    });
+  });
+
   it('excludes transform-generated columns from dataset fingerprint', () => {
     const session = exportSession({
       dataset: {
