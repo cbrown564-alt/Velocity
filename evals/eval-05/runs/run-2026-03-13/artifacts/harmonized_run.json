@@ -1,0 +1,206 @@
+{
+  "sourceFile": "wave_4_ifs_derived_variables.sav",
+  "targetFile": "wave_5_ifs_derived_variables.sav",
+  "workspace": [
+    {
+      "id": "6f63e50a-0309-499f-9c58-1d0ef07bfe26",
+      "name": "wave_4_ifs_derived_variables.sav",
+      "rowCount": 11050,
+      "tableName": "dataset_6f63e50a_0309_499f_9c58_1d0ef07bfe26",
+      "waveNumber": 4
+    },
+    {
+      "id": "b0148147-ad96-450c-970f-0d8c9544fb37",
+      "name": "wave_5_ifs_derived_variables.sav",
+      "rowCount": 10274,
+      "tableName": "dataset_b0148147_ad96_450c_970f_0d8c9544fb37",
+      "waveNumber": 5
+    }
+  ],
+  "overlap": {
+    "type": "engine.respondentOverlap",
+    "requestId": "a460e4dd-9e5c-4d0a-8a9e-969e5eae1c1e",
+    "totalSource": 11050,
+    "totalTarget": 10274,
+    "overlap": 9460
+  },
+  "mappingCounts": {
+    "total": 436,
+    "autoMatched": 433,
+    "confirmed": 1
+  },
+  "selectedMapping": {
+    "id": "srh3_hrs::srh3_hrs",
+    "sourceVariableId": "srh3_hrs",
+    "targetVariableId": "srh3_hrs",
+    "score": 1,
+    "warnings": [],
+    "valueMappings": [
+      {
+        "sourceValue": -9,
+        "sourceLabel": "refuse",
+        "targetValue": -9,
+        "targetLabel": "refuse"
+      },
+      {
+        "sourceValue": -8,
+        "sourceLabel": "don't know",
+        "targetValue": -8,
+        "targetLabel": "don't know"
+      },
+      {
+        "sourceValue": -3,
+        "sourceLabel": "not asked this wave",
+        "targetValue": -3,
+        "targetLabel": "not asked this wave"
+      },
+      {
+        "sourceValue": -2,
+        "sourceLabel": "not asked",
+        "targetValue": -2,
+        "targetLabel": "not asked"
+      },
+      {
+        "sourceValue": -1,
+        "sourceLabel": "inapp (proxy)",
+        "targetValue": -1,
+        "targetLabel": "inapp (proxy)"
+      },
+      {
+        "sourceValue": 1,
+        "sourceLabel": "Exc/v.g",
+        "targetValue": 1,
+        "targetLabel": "Exc/v.g"
+      },
+      {
+        "sourceValue": 2,
+        "sourceLabel": "Good",
+        "targetValue": 2,
+        "targetLabel": "Good"
+      },
+      {
+        "sourceValue": 3,
+        "sourceLabel": "Fair/Poor",
+        "targetValue": 3,
+        "targetLabel": "Fair/Poor"
+      }
+    ]
+  },
+  "applyResult": {
+    "tableName": "harm_eval05_wave4_wave5_srh3_hrs",
+    "rowCount": 21324,
+    "durationMs": 18.600000023841858
+  },
+  "counts": [
+    {
+      "_wave": 1,
+      "_value": -9,
+      "count": 6
+    },
+    {
+      "_wave": 1,
+      "_value": -8,
+      "count": 4
+    },
+    {
+      "_wave": 1,
+      "_value": -1,
+      "count": 446
+    },
+    {
+      "_wave": 1,
+      "_value": 1,
+      "count": 4444
+    },
+    {
+      "_wave": 1,
+      "_value": 2,
+      "count": 3375
+    },
+    {
+      "_wave": 1,
+      "_value": 3,
+      "count": 2775
+    },
+    {
+      "_wave": 2,
+      "_value": -9,
+      "count": 4
+    },
+    {
+      "_wave": 2,
+      "_value": -8,
+      "count": 8
+    },
+    {
+      "_wave": 2,
+      "_value": -1,
+      "count": 537
+    },
+    {
+      "_wave": 2,
+      "_value": 1,
+      "count": 4082
+    },
+    {
+      "_wave": 2,
+      "_value": 2,
+      "count": 3094
+    },
+    {
+      "_wave": 2,
+      "_value": 3,
+      "count": 2549
+    }
+  ],
+  "validSummary": [
+    {
+      "wave": 1,
+      "validCount": 10594,
+      "categories": [
+        {
+          "value": 1,
+          "label": "Exc/v.g",
+          "count": 4444,
+          "pct": 41.9
+        },
+        {
+          "value": 2,
+          "label": "Good",
+          "count": 3375,
+          "pct": 31.9
+        },
+        {
+          "value": 3,
+          "label": "Fair/Poor",
+          "count": 2775,
+          "pct": 26.2
+        }
+      ]
+    },
+    {
+      "wave": 2,
+      "validCount": 9725,
+      "categories": [
+        {
+          "value": 1,
+          "label": "Exc/v.g",
+          "count": 4082,
+          "pct": 42
+        },
+        {
+          "value": 2,
+          "label": "Good",
+          "count": 3094,
+          "pct": 31.8
+        },
+        {
+          "value": 3,
+          "label": "Fair/Poor",
+          "count": 2549,
+          "pct": 26.2
+        }
+      ]
+    }
+  ]
+}
