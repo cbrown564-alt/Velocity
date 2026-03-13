@@ -79,3 +79,13 @@ One focused browser session and one focused agent session. Each should be short 
 **Good outcome:** Both paths produce credible 5-slide decks with only minor differences in polish or speed.
 
 **Poor outcome:** The browser path clearly outperforms the agent path because the effective product surfaces still diverge.
+
+---
+
+## Sequencing Note
+
+EVAL-04 is a **diagnostic eval**, not a parity test. It is designed to run *before* browser-agent convergence work is complete in order to establish a pre-convergence baseline.
+
+The "poor outcome" above (browser outperforms agent) is the **expected finding** at this stage. That gap — once named and quantified — is the direct input to S4-EVAL-4, which will plan and execute the convergence work needed to close it.
+
+Browser convergence (EngineProxy migration, Phase 3 feature surface) is explicitly deferred to S4-EVAL-4 per `design_s4_eval_2_intended_path_readiness.md §9`. Do not block execution of EVAL-04 waiting for that work to land.
