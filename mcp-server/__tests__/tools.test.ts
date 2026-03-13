@@ -7,7 +7,10 @@
  *  - Returns isError: true with a VelocityError code on failure
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
+import { mkdtemp, readFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { registerTools } from '../tools';
 import { VelocityError } from '../../src/engine/index';
 
@@ -32,23 +35,30 @@ function makeEngine(overrides: Record<string, unknown> = {}) {
   const base = {
     loadFile: vi.fn().mockResolvedValue({ data: { rowCount: 100 }, metadata: {}, operation: 'loadFile', inputs: {}, durationMs: 1, warnings: [] }),
     describe: vi.fn().mockReturnValue({
-      dataset: {
-        id: 'ds1',
-        name: 'test.sav',
-        rowCount: 100,
-        variables: [
-          { id: 'Q1', name: 'Q1', label: 'Q1 label', type: 'ordinal', valueLabels: [], missingValues: {} },
-          { id: 'GENDER', name: 'GENDER', label: 'Gender', type: 'nominal', valueLabels: [], missingValues: {} },
-        ],
-        source: 'sav',
+      data: {
+        dataset: {
+          id: 'ds1',
+          name: 'test.sav',
+          rowCount: 100,
+          variables: [
+            { id: 'Q1', name: 'Q1', label: 'Q1 label', type: 'ordinal', valueLabels: [], missingValues: {} },
+            { id: 'GENDER', name: 'GENDER', label: 'Gender', type: 'nominal', valueLabels: [], missingValues: {} },
+          ],
+          source: 'sav',
+        },
+        variableSets: [],
+        folders: [],
+        activeFilters: [],
+        weightVariable: null,
       },
-      variableSets: [],
-      folders: [],
-      activeFilters: [],
-      weightVariable: null,
+      operation: 'describe',
+      inputs: {},
+      durationMs: 1,
+      warnings: [],
+      metadata: {},
     }),
     describeVariable: vi.fn().mockResolvedValue({ data: {}, operation: 'describeVariable', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
-    listAnalyses: vi.fn().mockReturnValue([{ id: 'crosstab', label: 'Crosstab', configSchema: {} }]),
+    listAnalyses: vi.fn().mockReturnValue({ data: [{ id: 'crosstab', label: 'Crosstab', configSchema: {} }], operation: 'listAnalyses', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
     runAnalysis: vi.fn().mockResolvedValue({ data: { rows: [] }, operation: 'runAnalysis', inputs: {}, durationMs: 5, warnings: [], metadata: { rowCount: 100, isWeighted: false } }),
     query: vi.fn().mockResolvedValue({ data: { rows: [] }, operation: 'query', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
     recode: vi.fn().mockResolvedValue({ data: {}, operation: 'recode', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
@@ -60,9 +70,11 @@ function makeEngine(overrides: Record<string, unknown> = {}) {
     recommendChart: vi.fn().mockResolvedValue({ data: { default: 'horizontal-bar', alternatives: [], reason: 'test' }, operation: 'recommendChart', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
     proposeMappings: vi.fn().mockResolvedValue({ data: [], operation: 'proposeMappings', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
     buildHarmonizedTable: vi.fn().mockResolvedValue({ data: { sql: 'SELECT 1' }, operation: 'buildHarmonizedTable', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
-    exportSession: vi.fn().mockResolvedValue({ formatVersion: '1.0.0' }),
+    exportSession: vi.fn().mockResolvedValue({ data: { formatVersion: 2, dataset: { originalFilename: 'test.sav' } }, operation: 'exportSession', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
     importSession: vi.fn().mockResolvedValue({ data: {}, operation: 'importSession', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
-    getActiveFilters: vi.fn().mockReturnValue([]),
+    getActiveFilters: vi.fn().mockReturnValue({ data: [], operation: 'getActiveFilters', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
+    listConcepts: vi.fn().mockReturnValue({ data: [], operation: 'listConcepts', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
+    createConcept: vi.fn().mockReturnValue({ data: { id: 'concept-1', name: 'Test', aliases: [], variableRefs: [] }, operation: 'createConcept', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
     ...overrides,
   };
   return base;
@@ -123,7 +135,8 @@ describe('velocity_describe', () => {
     expect(engine.describe).toHaveBeenCalled();
     expect(engine.runAnalysis).not.toHaveBeenCalled();
     const parsed = JSON.parse(result.content[0].text);
-    expect(parsed.dataset.name).toBe('test.sav');
+    expect(parsed.operation).toBe('describe');
+    expect(parsed.data.dataset.name).toBe('test.sav');
   });
 });
 
@@ -248,7 +261,22 @@ describe('velocity_export_session', () => {
     const result = await callTool(engine, 'velocity_export_session') as { content: { text: string }[] };
     expect(engine.exportSession).toHaveBeenCalled();
     const parsed = JSON.parse(result.content[0].text);
-    expect(parsed).toHaveProperty('formatVersion');
+    expect(parsed.operation).toBe('exportSession');
+    expect(parsed.data).toHaveProperty('formatVersion');
+  });
+
+  it('writes the session file when outputPath is provided', async () => {
+    const tempDir = await mkdtemp(join(tmpdir(), 'velocity-tools-test-'));
+    const outputPath = join(tempDir, 'session-output');
+    const engine = makeEngine();
+
+    const result = await callTool(engine, 'velocity_export_session', { outputPath }) as { content: { text: string }[] };
+    const parsed = JSON.parse(result.content[0].text);
+    const savedPath = `${outputPath}.velocity`;
+    const written = JSON.parse(await readFile(savedPath, 'utf8'));
+
+    expect(parsed.outputPath).toBe(savedPath);
+    expect(written.formatVersion).toBe(2);
   });
 });
 

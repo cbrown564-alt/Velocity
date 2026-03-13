@@ -56,6 +56,11 @@ type EngineAnalysisSettings = {
   significanceLevel: 0.95 | 0.90 | 0.80;
 };
 
+type SemanticStateSnapshot = {
+  annotations: Record<string, SemanticAnnotation>;
+  concepts: Concept[];
+};
+
 type LoadableNodeAdapter = DatabaseAdapter & {
   loadCSV?: (filePath: string, tableName?: string) => Promise<number>;
   loadSav?: (
@@ -298,8 +303,8 @@ export class VelocityEngine {
     await this.adapter.close();
   }
 
-  describe(): DatasetDescription {
-    return {
+  describe(): ResultEnvelope<DatasetDescription> {
+    return this.wrapSync('describe', {}, () => ({
       dataset: this.dataset
         ? {
             ...this.dataset,
@@ -310,7 +315,7 @@ export class VelocityEngine {
       folders: this.folders.map((folder) => ({ ...folder })),
       activeFilters: this.activeFilters.map(cloneFilter),
       weightVariable: this.dataset?.weightVariable ?? null,
-    };
+    }));
   }
 
   async describeVariable(id: string): Promise<ResultEnvelope<VariableDetail>> {
@@ -339,15 +344,19 @@ export class VelocityEngine {
     });
   }
 
-  listAnalyses(): AnalysisDescriptor[] {
-    return analysisRegistry.list().map((descriptor) => ({
+  listAnalyses(): ResultEnvelope<AnalysisDescriptor[]> {
+    return this.wrapSync('listAnalyses', {}, () => analysisRegistry.list().map((descriptor) => ({
       id: descriptor.id,
       label: descriptor.label,
       configSchema: descriptor.configSchema,
-    }));
+    })));
   }
 
-  getSession(): VelocitySessionFile {
+  getSession(): ResultEnvelope<VelocitySessionFile> {
+    return this.wrapSync('getSession', {}, () => this.buildSessionFile());
+  }
+
+  private buildSessionFile(): VelocitySessionFile {
     const dataset = this.requireDataset();
     return exportSessionFile({
       dataset,
@@ -360,7 +369,7 @@ export class VelocityEngine {
       slides: this.slides,
       sections: this.sections,
       harmonizationSession: this.harmonizationSession,
-      semantic: this.getSemanticState(),
+      semantic: this.readSemanticState(),
       velocityVersion: this.engineVersion,
     });
   }
@@ -401,7 +410,7 @@ export class VelocityEngine {
             const rowVariables = rowVarIds.map((id) => dataset.variables.find((v) => v.id === id)).filter((v): v is Variable => !!v);
             const colVariable = colVarId ? (dataset.variables.find((v) => v.id === colVarId) ?? null) : null;
             return {
-              ...(result as Record<string, unknown>),
+              ...(result as unknown as Record<string, unknown>),
               rows: this.resolveValueLabelsInRows(
                 (result as { rows: Record<string, unknown>[] }).rows,
                 rowVariables,
@@ -528,12 +537,12 @@ export class VelocityEngine {
     this.activeFilters = [];
   }
 
-  getActiveFilters(): Filter[] {
-    return this.activeFilters.map(cloneFilter);
+  getActiveFilters(): ResultEnvelope<Filter[]> {
+    return this.wrapSync('getActiveFilters', {}, () => this.activeFilters.map(cloneFilter));
   }
 
-  async exportSession(): Promise<VelocitySessionFile> {
-    return this.getSession();
+  async exportSession(): Promise<ResultEnvelope<VelocitySessionFile>> {
+    return this.wrap('exportSession', {}, async () => this.buildSessionFile());
   }
 
   // ============================================================================
@@ -679,6 +688,7 @@ export class VelocityEngine {
         this.slides = result.patch.slides;
         this.sections = result.patch.sections;
         this.harmonizationSession = result.patch.harmonizationSession;
+        this.restoreSemanticState(session.semantic ?? { annotations: {}, concepts: [] });
         return result.diagnostics;
       } catch (error) {
         if (error instanceof VelocityError) throw error;
@@ -746,8 +756,11 @@ export class VelocityEngine {
   /**
    * Get the current semantic annotation for a variable (if any).
    */
-  getAnnotation(variableId: string): SemanticAnnotation | undefined {
-    return this.semanticAnnotations.get(variableId);
+  getAnnotation(variableId: string): ResultEnvelope<SemanticAnnotation | undefined> {
+    return this.wrapSync('getAnnotation', { variableId }, () => {
+      const annotation = this.semanticAnnotations.get(variableId);
+      return annotation ? { ...annotation } : undefined;
+    });
   }
 
   /**
@@ -773,8 +786,8 @@ export class VelocityEngine {
   /**
    * Get all concepts in the concept store.
    */
-  listConcepts(): Concept[] {
-    return this.conceptStore.listConcepts();
+  listConcepts(): ResultEnvelope<Concept[]> {
+    return this.wrapSync('listConcepts', {}, () => this.cloneConcepts(this.conceptStore.listConcepts()));
   }
 
   /**
@@ -784,8 +797,11 @@ export class VelocityEngine {
     name: string;
     aliases?: string[];
     canonicalScale?: Concept['canonicalScale'];
-  }): Concept {
-    return this.conceptStore.createConcept(spec);
+  }): ResultEnvelope<Concept> {
+    return this.wrapSync('createConcept', { name: spec.name }, () => {
+      const concept = this.conceptStore.createConcept(spec);
+      return this.cloneConcept(concept);
+    });
   }
 
   /**
@@ -822,34 +838,50 @@ export class VelocityEngine {
   /**
    * Suggest cross-dataset harmonizations based on shared concepts.
    */
-  suggestHarmonizations(): HarmonizationSuggestion[] {
-    return suggestHarmonizations(this.conceptStore.listConcepts());
+  suggestHarmonizations(): ResultEnvelope<HarmonizationSuggestion[]> {
+    return this.wrapSync('suggestHarmonizations', {}, () => suggestHarmonizations(this.conceptStore.listConcepts()));
   }
 
   /**
    * Get the full semantic state (for session export).
    */
-  getSemanticState(): { annotations: Record<string, SemanticAnnotation>; concepts: Concept[] } {
+  getSemanticState(): ResultEnvelope<SemanticStateSnapshot> {
+    return this.wrapSync('getSemanticState', {}, () => this.readSemanticState());
+  }
+
+  private readSemanticState(): SemanticStateSnapshot {
     const annotations: Record<string, SemanticAnnotation> = {};
     for (const [id, ann] of this.semanticAnnotations) {
-      annotations[id] = ann;
+      annotations[id] = { ...ann };
     }
-    return { annotations, concepts: this.conceptStore.toJSON() };
+    return { annotations, concepts: this.cloneConcepts(this.conceptStore.toJSON()) };
   }
 
   /**
    * Restore semantic state (for session import).
    */
-  restoreSemanticState(state: { annotations: Record<string, SemanticAnnotation>; concepts: Concept[] }): void {
-    this.semanticAnnotations = new Map(Object.entries(state.annotations));
-    this.conceptStore.fromJSON(state.concepts);
+  restoreSemanticState(state: SemanticStateSnapshot): void {
+    const mergedAnnotations = new Map(this.semanticAnnotations);
+    for (const [id, annotation] of Object.entries(state.annotations)) {
+      mergedAnnotations.set(id, { ...annotation });
+    }
+    this.semanticAnnotations = mergedAnnotations;
+
+    const conceptMap = new Map<string, Concept>();
+    for (const concept of this.conceptStore.toJSON()) {
+      conceptMap.set(concept.id, this.cloneConcept(concept));
+    }
+    for (const concept of state.concepts) {
+      conceptMap.set(concept.id, this.cloneConcept(concept));
+    }
+    this.conceptStore.fromJSON([...conceptMap.values()]);
 
     // Sync back to variable objects
     const dataset = this.dataset;
     if (dataset) {
       dataset.variables = dataset.variables.map((v) => {
         const ann = this.semanticAnnotations.get(v.id);
-        return ann ? { ...v, semantic: ann } : v;
+        return ann ? { ...v, semantic: { ...ann } } : v;
       });
     }
   }
@@ -943,6 +975,31 @@ export class VelocityEngine {
     };
   }
 
+  private wrapSync<T>(
+    operation: string,
+    inputs: Record<string, unknown>,
+    fn: () => T
+  ): ResultEnvelope<T> {
+    const start = performance.now();
+    const data = fn();
+    const dataset = this.dataset;
+
+    return {
+      data,
+      operation,
+      inputs,
+      durationMs: performance.now() - start,
+      warnings: [],
+      metadata: {
+        datasetName: dataset?.name ?? 'unloaded',
+        rowCount: dataset?.rowCount ?? 0,
+        filtersApplied: this.activeFilters.length,
+        isWeighted: !!dataset?.weightVariable,
+        engineVersion: this.engineVersion,
+      },
+    };
+  }
+
   private toRecord(value: unknown): Record<string, unknown> {
     if (!value || typeof value !== 'object' || Array.isArray(value)) {
       return {};
@@ -985,6 +1042,26 @@ export class VelocityEngine {
       }
       return resolved;
     });
+  }
+
+  private cloneConcept(concept: Concept): Concept {
+    return {
+      ...concept,
+      aliases: [...concept.aliases],
+      canonicalScale: concept.canonicalScale
+        ? {
+            ...concept.canonicalScale,
+            anchors: concept.canonicalScale.anchors
+              ? { ...concept.canonicalScale.anchors }
+              : undefined,
+          }
+        : undefined,
+      variableRefs: concept.variableRefs.map((ref) => ({ ...ref })),
+    };
+  }
+
+  private cloneConcepts(concepts: Concept[]): Concept[] {
+    return concepts.map((concept) => this.cloneConcept(concept));
   }
 }
 

@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "velocity": {
+      "command": "node",
+      "args": ["--import", "tsx", "mcp-server/index.ts"],
+      "env": {
+        "VELOCITY_DATA_DIR": "${workspaceFolder}"
+      }
+    }
+  }
+}

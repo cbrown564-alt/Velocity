@@ -54,6 +54,7 @@ export interface VelocitySessionFile {
   transformLog: DataTransform[];
   tableConfig: TableConfig;
   activeFilters: Filter[];
+  weightVariable?: string | null;
   analysisSettings?: Partial<AnalysisSettings>;
   slides: Slide[];
   sections: SlideSection[];

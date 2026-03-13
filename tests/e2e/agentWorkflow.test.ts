@@ -130,12 +130,13 @@ describe('Phase 2 E2E: Full Agent Workflow', () => {
 
     expect(resp.isError).toBeUndefined();
     const desc = resp.parsed;
-    expect(desc.dataset).not.toBeNull();
-    expect(desc.dataset.variables.map((v: { name: string }) => v.name)).toEqual(
+    expect(desc.operation).toBe('describe');
+    expect(desc.data.dataset).not.toBeNull();
+    expect(desc.data.dataset.variables.map((v: { name: string }) => v.name)).toEqual(
       expect.arrayContaining(['Q1', 'GENDER', 'AGE'])
     );
-    expect(desc.activeFilters).toHaveLength(0);
-    expect(desc.weightVariable).toBeNull();
+    expect(desc.data.activeFilters).toHaveLength(0);
+    expect(desc.data.weightVariable).toBeNull();
   });
 
   it('Step 3 — velocity_stats: returns frequency distribution for Q1', async () => {
@@ -215,10 +216,11 @@ describe('Phase 2 E2E: Full Agent Workflow', () => {
 
     expect(resp.isError).toBeUndefined();
     const session = resp.parsed;
-    expect(session).toHaveProperty('formatVersion');
-    expect(session).toHaveProperty('dataset');
+    expect(session.operation).toBe('exportSession');
+    expect(session.data).toHaveProperty('formatVersion');
+    expect(session.data).toHaveProperty('dataset');
     // Session stores the original filename, not a 'name' field
-    expect(session.dataset.originalFilename).toBe('survey.csv');
+    expect(session.data.dataset.originalFilename).toBe('survey.csv');
   });
 
   it('Step 8 — commitDeck: getSession captures deck slides after commitDeck', async () => {
@@ -235,8 +237,8 @@ describe('Phase 2 E2E: Full Agent Workflow', () => {
     engine.commitDeck(deck);
 
     const session = engine.getSession();
-    expect(session.slides.length).toBeGreaterThan(0);
-    const committed = session.slides.find((s) => s.title === deck.slides[0].resolvedTitle);
+    expect(session.data.slides.length).toBeGreaterThan(0);
+    const committed = session.data.slides.find((s) => s.title === deck.slides[0].resolvedTitle);
     expect(committed).toBeDefined();
     expect(committed!.analysisState.rowVars).toEqual(['Q1']);
     expect(committed!.analysisState.colVar).toBe('GENDER');

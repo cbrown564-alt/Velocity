@@ -319,6 +319,7 @@ describe('session export/import round trip', () => {
     });
 
     const imported = importSession(session, loadedDatasetForImport);
+    expect(session.weightVariable).toBe('weight');
 
     const expectedEquivalent = normalizeEquivalentState({
       dataset: exportedDataset,

@@ -55,6 +55,42 @@ const MOCK_DESCRIPTION: DatasetDescription = {
   weightVariable: null,
 };
 
+function makeDescribeEnvelope(
+  description: DatasetDescription = MOCK_DESCRIPTION
+): ResultEnvelope<DatasetDescription> {
+  return {
+    data: description,
+    operation: 'describe',
+    inputs: {},
+    durationMs: 1,
+    warnings: [],
+    metadata: {
+      datasetName: description.dataset?.name ?? 'unloaded',
+      rowCount: description.dataset?.rowCount ?? 0,
+      filtersApplied: description.activeFilters.length,
+      isWeighted: description.weightVariable !== null,
+      engineVersion: 'test',
+    },
+  };
+}
+
+function makeFiltersEnvelope(filters: Filter[] = []): ResultEnvelope<Filter[]> {
+  return {
+    data: filters,
+    operation: 'getActiveFilters',
+    inputs: {},
+    durationMs: 1,
+    warnings: [],
+    metadata: {
+      datasetName: 'test.sav',
+      rowCount: 500,
+      filtersApplied: filters.length,
+      isWeighted: false,
+      engineVersion: 'test',
+    },
+  };
+}
+
 // Raw DuckDB crosstab format: rowKey_0, rowKey_1, ... colKey, count, weightedCount.
 // DeckBuilder calls mapCrosstabRows() to convert this to AggregatedRow format.
 const DEFAULT_ROWS = [
@@ -87,8 +123,8 @@ function makeMockEngine(overrides: Partial<{
 }> = {}) {
   return {
     runAnalysis: overrides.runAnalysis ?? vi.fn().mockResolvedValue(makeCrosstabEnvelope()),
-    describe: overrides.describe ?? vi.fn().mockReturnValue(MOCK_DESCRIPTION),
-    getActiveFilters: overrides.getActiveFilters ?? vi.fn().mockReturnValue([]),
+    describe: overrides.describe ?? vi.fn().mockReturnValue(makeDescribeEnvelope()),
+    getActiveFilters: overrides.getActiveFilters ?? vi.fn().mockReturnValue(makeFiltersEnvelope()),
   };
 }
 
@@ -185,7 +221,7 @@ describe('DeckBuilder.build()', () => {
     const runAnalysis = vi.fn().mockResolvedValue(makeCrosstabEnvelope());
     const engine = makeMockEngine({
       runAnalysis,
-      getActiveFilters: vi.fn().mockReturnValue([globalFilter]),
+      getActiveFilters: vi.fn().mockReturnValue(makeFiltersEnvelope([globalFilter])),
     });
     const builder = new DeckBuilder(engine);
 
@@ -205,7 +241,7 @@ describe('DeckBuilder.build()', () => {
     const runAnalysis = vi.fn().mockResolvedValue(makeCrosstabEnvelope());
     const engine = makeMockEngine({
       runAnalysis,
-      getActiveFilters: vi.fn().mockReturnValue([globalFilter]),
+      getActiveFilters: vi.fn().mockReturnValue(makeFiltersEnvelope([globalFilter])),
     });
     const builder = new DeckBuilder(engine);
 
@@ -275,8 +311,8 @@ describe('DeckBuilder.build()', () => {
   it('throws NO_DATASET_LOADED when no dataset is in engine', async () => {
     const engine = {
       runAnalysis: vi.fn(),
-      describe: vi.fn().mockReturnValue({ ...MOCK_DESCRIPTION, dataset: null }),
-      getActiveFilters: vi.fn().mockReturnValue([]),
+      describe: vi.fn().mockReturnValue(makeDescribeEnvelope({ ...MOCK_DESCRIPTION, dataset: null })),
+      getActiveFilters: vi.fn().mockReturnValue(makeFiltersEnvelope()),
     };
     const builder = new DeckBuilder(engine);
 

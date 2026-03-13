@@ -73,6 +73,7 @@ export function exportSession(input: ExportSessionInput): VelocitySessionFile {
       colVar: input.tableConfig.colVar,
     },
     activeFilters: input.activeFilters.map((filter) => ({ ...filter })),
+    weightVariable: input.dataset.weightVariable ?? null,
     analysisSettings,
     slides: input.slides.map((slide) => ({ ...slide })),
     sections: input.sections.map((section) => ({ ...section })),

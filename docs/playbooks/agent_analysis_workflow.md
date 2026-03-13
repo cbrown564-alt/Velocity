@@ -25,7 +25,7 @@ velocity_describe()
 ```
 
 Skim the response for:
-- **Total variable count** — determines how much searching you need to do
+- **Total variable count** — `response.data.dataset.variables.length` determines how much searching you need to do
 - **Variable types** — how many nominal vs. ordinal vs. scale
 - **Value labels** — are they present? (SAV files usually have them; CSV files don't)
 - **Missing values** — are user-missing codes defined?
@@ -184,7 +184,7 @@ velocity_build_deck({
             weightVar: "WtFactor",
             title: "Finding-Based Title (Not Variable Names)",
             notes: "Speaker notes explaining the finding, context, and caveats...",
-            visualizationType: "table",
+            visualizationType: "chart",
             displayOptions: { showSignificance: true, showPercents: true }
           }
         ]
@@ -229,10 +229,15 @@ velocity_export_deck({
 ### Step 5.2 — Export session
 
 ```
-velocity_export_session()
+velocity_export_session({ outputPath: "evals/eval-01/runs/run-YYYY-MM-DD/artifacts/session" })
 ```
 
-This creates a `.velocity` file that a human can open in the browser to review, refine, reorder slides, and add more analyses.
+This writes a `.velocity` file directly from MCP and also returns the session envelope. The file contains:
+- dataset metadata and fingerprint
+- variables, variable sets, filters, weight, transforms
+- slides, sections, semantic annotations, and concepts
+
+It does **not** contain respondent rows. A human opens it in the browser, re-uploads the matching dataset, and then reviews, refines, reorders slides, or adds more analyses.
 
 ---
 

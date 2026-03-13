@@ -9,6 +9,14 @@ import { ExportConfig, AnalysisExportItem } from './types';
 import { ProcessedRow, ProcessedColumn, ProcessedCell } from '../../types/processedData';
 import type { SlideSection } from '../../types/slides';
 
+type PptxTableCell = {
+  text: string;
+  options: Record<string, unknown>;
+};
+
+type PptxTableRow = PptxTableCell[];
+type PptxChartName = 'bar' | 'doughnut' | 'scatter';
+
 const SIG_LETTERS: Record<string, string> = {
   high_95: '▲',
   high_80: '△',
@@ -70,12 +78,12 @@ function buildSlideTable(
   item: AnalysisExportItem,
   columns: ProcessedColumn[],
   branding: typeof DEFAULTS,
-): PptxGenJS.TableRow[] {
+): PptxTableRow[] {
   const showSig = item.options?.showSignificance !== false;
   const showPercents = item.options?.showPercents !== false;
   const showCounts = item.options?.showCounts === true;
 
-  const headerStyle: PptxGenJS.TableCellProps = {
+  const headerStyle: Record<string, unknown> = {
     fill: { color: branding.headerColor },
     color: 'FFFFFF',
     bold: true,
@@ -85,17 +93,17 @@ function buildSlideTable(
     valign: 'middle',
   };
 
-  const cellStyle: PptxGenJS.TableCellProps = {
+  const cellStyle: Record<string, unknown> = {
     fontSize: branding.fontSize,
     fontFace: branding.fontFamily,
     border: { type: 'solid', pt: 0.5, color: 'CCCCCC' },
     valign: 'middle',
   };
 
-  const tableRows: PptxGenJS.TableRow[] = [];
+  const tableRows: PptxTableRow[] = [];
 
   // Header row — "Total" column only shown when showCounts is enabled
-  const headerRow: PptxGenJS.TableCell[] = [
+  const headerRow: PptxTableCell[] = [
     { text: '', options: headerStyle },
     ...columns.map(col => ({ text: col.label, options: headerStyle })),
     ...(showCounts ? [{ text: 'Total', options: headerStyle }] : []),
@@ -106,12 +114,12 @@ function buildSlideTable(
   const flatRows = flattenRows(item.result.rows);
   for (const row of flatRows) {
     const indent = row.depth > 0 ? '  '.repeat(row.depth) : '';
-    const labelStyle: PptxGenJS.TableCellProps = {
+    const labelStyle: Record<string, unknown> = {
       ...cellStyle,
       bold: row.depth === 0,
     };
 
-    const dataRow: PptxGenJS.TableCell[] = [
+    const dataRow: PptxTableCell[] = [
       { text: `${indent}${row.label}`, options: labelStyle },
       ...columns.map(col => ({
         text: formatCell(row.cells[col.key], showSig, showPercents, showCounts),
@@ -126,8 +134,8 @@ function buildSlideTable(
 }
 
 function buildSlideChart(
-  pptx: PptxGenJS,
-  slide: ReturnType<PptxGenJS['addSlide']>,
+  _pptx: unknown,
+  slide: any,
   item: AnalysisExportItem,
   branding: typeof DEFAULTS,
   contentY: number,
@@ -143,7 +151,7 @@ function buildSlideChart(
   // Mapping Velocity ChartType to PPTX chart types.
   // PptxGenJS.ChartType is an instance property, so we use string literals directly.
   // Exotic types that have no direct PPTX equivalent fall back to clustered column.
-  let pptxChartType: PptxGenJS.CHART_NAME = 'bar';
+  let pptxChartType: PptxChartName = 'bar';
   let barDir: 'bar' | 'col' = 'col';
   let barGrouping: 'clustered' | 'stacked' | 'percentStacked' = 'clustered';
   let isBarChart = true;
@@ -253,7 +261,7 @@ function buildSlideChart(
 }
 
 function addSectionDividerSlide(
-  pptx: PptxGenJS,
+  pptx: any,
   section: SlideSection,
   branding: typeof DEFAULTS
 ) {

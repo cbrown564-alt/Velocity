@@ -69,6 +69,27 @@ function buildFallbackVariableSets(variables: Variable[]): VariableSet[] {
   }));
 }
 
+function buildVariableToSetMap(variableSets: VariableSet[]): Map<string, string> {
+  const map = new Map<string, string>();
+  for (const variableSet of variableSets) {
+    for (const variableId of variableSet.variableIds) {
+      if (!map.has(variableId)) {
+        map.set(variableId, variableSet.id);
+      }
+    }
+  }
+  return map;
+}
+
+function resolveVariableSetReference(
+  candidate: string,
+  validVariableSetIds: Set<string>,
+  variableToSetMap: Map<string, string>
+): string | null {
+  if (validVariableSetIds.has(candidate)) return candidate;
+  return variableToSetMap.get(candidate) ?? null;
+}
+
 function mergeDatasetVariables(dataset: Dataset, sessionFile: VelocitySessionFile): Variable[] {
   const byId = new Map(sessionFile.variables.map((variable) => [variable.id, variable]));
 
@@ -94,6 +115,7 @@ function mergeDatasetVariables(dataset: Dataset, sessionFile: VelocitySessionFil
 function sanitizeSlides(
   slides: Slide[],
   validVariableSetIds: Set<string>,
+  variableToSetMap: Map<string, string>,
   validVariableIds: Set<string>,
   validSectionIds: Set<string>,
   diagnostics: SessionImportDiagnostics
@@ -109,16 +131,21 @@ function sanitizeSlides(
     seenSlideIds.add(slideId);
 
     const analysisState = slide.analysisState ?? { rowVars: [], colVar: null, filters: [], weightVar: null };
-    const rowVars = uniqueStrings(analysisState.rowVars ?? []).filter((rowVarId) => {
-      const ok = validVariableSetIds.has(rowVarId);
-      if (!ok) diagnostics.droppedRowVarIds.add(rowVarId);
-      return ok;
-    });
+    const rowVars = uniqueStrings(analysisState.rowVars ?? []).map((rowVarId) => {
+      const resolved = resolveVariableSetReference(rowVarId, validVariableSetIds, variableToSetMap);
+      if (!resolved) diagnostics.droppedRowVarIds.add(rowVarId);
+      return resolved;
+    }).filter((rowVarId): rowVarId is string => rowVarId !== null);
 
     let colVar = analysisState.colVar ?? null;
-    if (colVar && !validVariableSetIds.has(colVar)) {
-      diagnostics.droppedColVarIds.add(colVar);
-      colVar = null;
+    if (colVar) {
+      const resolved = resolveVariableSetReference(colVar, validVariableSetIds, variableToSetMap);
+      if (!resolved) {
+        diagnostics.droppedColVarIds.add(colVar);
+        colVar = null;
+      } else {
+        colVar = resolved;
+      }
     }
 
     const filters = (analysisState.filters ?? []).filter((filter) => {
@@ -263,16 +290,22 @@ export function importSession(sessionFile: VelocitySessionFile, dataset: Dataset
   });
 
   const validVariableSetIds = new Set(variableSets.map((variableSet) => variableSet.id));
-  const rowVars = uniqueStrings(sessionFile.tableConfig.rowVars ?? []).filter((rowVarId) => {
-    const ok = validVariableSetIds.has(rowVarId);
-    if (!ok) diagnostics.droppedRowVarIds.add(rowVarId);
-    return ok;
-  });
+  const variableToSetMap = buildVariableToSetMap(variableSets);
+  const rowVars = uniqueStrings(sessionFile.tableConfig.rowVars ?? []).map((rowVarId) => {
+    const resolved = resolveVariableSetReference(rowVarId, validVariableSetIds, variableToSetMap);
+    if (!resolved) diagnostics.droppedRowVarIds.add(rowVarId);
+    return resolved;
+  }).filter((rowVarId): rowVarId is string => rowVarId !== null);
 
   let colVar = sessionFile.tableConfig.colVar ?? null;
-  if (colVar && !validVariableSetIds.has(colVar)) {
-    diagnostics.droppedColVarIds.add(colVar);
-    colVar = null;
+  if (colVar) {
+    const resolved = resolveVariableSetReference(colVar, validVariableSetIds, variableToSetMap);
+    if (!resolved) {
+      diagnostics.droppedColVarIds.add(colVar);
+      colVar = null;
+    } else {
+      colVar = resolved;
+    }
   }
 
   const activeFilters = (sessionFile.activeFilters ?? []).filter((filter) => {
@@ -295,6 +328,7 @@ export function importSession(sessionFile: VelocitySessionFile, dataset: Dataset
   const slides = sanitizeSlides(
     sessionFile.slides ?? [],
     validVariableSetIds,
+    variableToSetMap,
     validVariableIds,
     validSectionIds,
     diagnostics
@@ -314,8 +348,12 @@ export function importSession(sessionFile: VelocitySessionFile, dataset: Dataset
     variables: mergedVariables,
   };
 
-  if (nextDataset.weightVariable && !validVariableIds.has(nextDataset.weightVariable)) {
+  const importedWeightVariable = sessionFile.weightVariable ?? null;
+  if (importedWeightVariable && !validVariableIds.has(importedWeightVariable)) {
+    diagnostics.missingVariableIds.add(importedWeightVariable);
     nextDataset.weightVariable = undefined;
+  } else {
+    nextDataset.weightVariable = importedWeightVariable ?? undefined;
   }
 
   const analysisSettings =

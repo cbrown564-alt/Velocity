@@ -5,6 +5,8 @@
  * Zero business logic here: validate inputs, dispatch to engine, format response.
  */
 
+import { mkdir, writeFile } from 'node:fs/promises';
+import path from 'node:path';
 import type { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import {
   CallToolRequestSchema,
@@ -12,6 +14,7 @@ import {
 } from '@modelcontextprotocol/sdk/types.js';
 import type { VelocityEngine, VelocityError } from '../src/engine/index.js';
 import type { DeckSpec, DeckExportOptions, BuiltDeck } from '../src/engine/types.js';
+import { serializeSessionFile, SESSION_FILE_EXTENSION } from '../src/core/session/index.js';
 import type { Filter } from '../src/types/index.js';
 import type { VariableMapping } from '../src/types/harmonization.js';
 
@@ -248,7 +251,15 @@ const TOOLS = [
   {
     name: 'velocity_export_session',
     description: 'Export the current engine state as a .velocity session file.',
-    inputSchema: { type: 'object', properties: {} },
+    inputSchema: {
+      type: 'object',
+      properties: {
+        outputPath: {
+          type: 'string',
+          description: 'Optional file path to write the exported session JSON directly. Adds .velocity if omitted.',
+        },
+      },
+    },
   },
   {
     name: 'velocity_import_session',
@@ -377,6 +388,16 @@ function successResponse(data: unknown) {
       },
     ],
   };
+}
+
+function resolveSessionOutputPath(outputPath: string): string {
+  const resolved = path.isAbsolute(outputPath)
+    ? outputPath
+    : path.resolve(process.cwd(), outputPath);
+
+  return resolved.endsWith(SESSION_FILE_EXTENSION)
+    ? resolved
+    : `${resolved}${SESSION_FILE_EXTENSION}`;
 }
 
 function errorResponse(err: VelocityError | Error | unknown) {
@@ -533,6 +554,19 @@ export function registerTools(server: Server, engine: VelocityEngine): void {
         // ---- Session ----
         case 'velocity_export_session': {
           const result = await engine.exportSession();
+          const outputPath = typeof a.outputPath === 'string' && a.outputPath.length > 0
+            ? resolveSessionOutputPath(a.outputPath)
+            : null;
+
+          if (outputPath) {
+            await mkdir(path.dirname(outputPath), { recursive: true });
+            await writeFile(outputPath, serializeSessionFile(result.data), 'utf8');
+            return successResponse({
+              ...result,
+              outputPath,
+            });
+          }
+
           return successResponse(result);
         }
 

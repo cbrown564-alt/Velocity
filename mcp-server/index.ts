@@ -13,7 +13,7 @@
  *     "mcpServers": {
  *       "velocity": {
  *         "command": "node",
- *         "args": ["/path/to/mcp-server/dist/index.js"],
+ *         "args": ["--import", "tsx", "/path/to/mcp-server/index.ts"],
  *         "env": { "VELOCITY_DATA_DIR": "/your/data/directory" }
  *       }
  *     }

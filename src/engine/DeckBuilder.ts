@@ -32,8 +32,8 @@ import { VelocityError } from './types';
  */
 interface DeckEngineInterface {
   runAnalysis(id: string, config: unknown): Promise<ResultEnvelope<unknown>>;
-  describe(): DatasetDescription;
-  getActiveFilters(): Filter[];
+  describe(): ResultEnvelope<DatasetDescription>;
+  getActiveFilters(): ResultEnvelope<Filter[]>;
 }
 
 export class DeckBuilder {
@@ -45,7 +45,7 @@ export class DeckBuilder {
     const errors: DeckBuildError[] = [];
     let slideIndex = 0;
 
-    const description = this.engine.describe();
+    const description = this.engine.describe().data;
     const dataset = description.dataset;
     if (!dataset) {
       throw new VelocityError('NO_DATASET_LOADED', 'Cannot build deck: no dataset loaded.');
@@ -106,7 +106,7 @@ export class DeckBuilder {
 
     // Determine effective filters and weight (per-slide overrides, fall back to engine globals)
     const effectiveFilters: Filter[] =
-      slideSpec.filters !== undefined ? slideSpec.filters : this.engine.getActiveFilters();
+      slideSpec.filters !== undefined ? slideSpec.filters : this.engine.getActiveFilters().data;
     const effectiveWeightVar: string | null =
       slideSpec.weightVar !== undefined
         ? slideSpec.weightVar

@@ -68,7 +68,7 @@ program
         console.log(`Loaded ${summary.rowCount} rows from ${summary.datasetName}`);
 
         const description = engine.describe();
-        const variables = description.dataset?.variables ?? [];
+        const variables = description.data.dataset?.variables ?? [];
         console.log(`\nSchema (${variables.length} columns):`);
         variables.forEach((variable) => {
           console.log(`  ${variable.id}: ${variable.type}`);
@@ -86,7 +86,7 @@ program
     try {
       await withEngine(async (engine) => {
         await loadEngineFile(engine, file);
-        const variables = engine.describe().dataset?.variables ?? [];
+        const variables = engine.describe().data.dataset?.variables ?? [];
         printJson(variables.map((variable) => ({
           name: variable.id,
           label: variable.label,
@@ -215,15 +215,17 @@ program
           colVar: opts.cols || null,
         });
         const description = engine.describe();
-        const variablesById = new Map((description.dataset?.variables ?? []).map((variable) => [variable.id, variable]));
-        const rowVariables = rowVars.map((id: string) => variablesById.get(id)).filter(Boolean);
+        const variablesById = new Map((description.data.dataset?.variables ?? []).map((variable) => [variable.id, variable]));
+        const rowVariables = rowVars
+          .map((id: string) => variablesById.get(id))
+          .filter((variable): variable is NonNullable<typeof variable> => variable !== undefined);
         const colVariable = opts.cols ? variablesById.get(opts.cols) ?? null : null;
 
         const processed = processAnalysisData({
           data: (envelope.data as any).rows ?? [],
           rowVariables,
           colVariable,
-          isWeighted: !!description.dataset?.weightVariable,
+          isWeighted: !!description.data.weightVariable,
         });
 
         if (!processed) {

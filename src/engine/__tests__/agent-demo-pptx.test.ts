@@ -16,7 +16,7 @@ describe('Agent demo: sleep.sav → PPTX', () => {
     console.log(`\nLoaded: ${load.data?.rowCount} rows, ${load.data?.variableCount} vars`);
 
     // Find variables
-    const vars = engine.describe().dataset!.variables;
+    const vars = engine.describe().data.dataset!.variables;
     const qualsleep = vars.find(v => v.name === 'qualsleep')!;
     const sex = vars.find(v => v.name === 'sex')!;
     const ess = vars.find(v => v.name === 'ess')!;

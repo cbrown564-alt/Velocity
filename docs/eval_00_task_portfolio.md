@@ -99,11 +99,11 @@ Per `eval_00_outcome_decision_framework.md`, every eval should be tagged on thes
 | Field | Value |
 |---|---|
 | **ID** | EVAL-03 |
-| **Brief** | Not yet written |
+| **Brief** | `eval_03_session_handoff_roundtrip_brief.md` |
 | **Dataset** | Reuse EVAL-01 or EVAL-02 output session |
 | **Primary family** | C (session handoff and browser refinement) |
 | **Secondary families** | — |
-| **Status** | Planned. Depends on S4-EVAL-2 (intended-path readiness). |
+| **Status** | Brief complete. Run pending. |
 
 **Purpose:** Test whether an agent-produced session file can be loaded in the browser, inspected, and meaningfully refined by a human without rebuilding from scratch. Validates provenance, slide spec round-trip, and filter/weight persistence.
 
@@ -124,11 +124,11 @@ Per `eval_00_outcome_decision_framework.md`, every eval should be tagged on thes
 | Field | Value |
 |---|---|
 | **ID** | EVAL-04 |
-| **Brief** | Not yet written |
+| **Brief** | `eval_04_browser_vs_agent_convergence_brief.md` |
 | **Dataset** | `test_data/sleep.sav` (controlled; same task, both paths) |
 | **Primary family** | D (browser-agent convergence) |
 | **Secondary families** | B (deck creation as the shared task) |
-| **Status** | Planned. Depends on S4-EVAL-2. |
+| **Status** | Brief complete. Run pending. |
 
 **Purpose:** Run the same concrete task ("produce a 5-slide deck on sleep quality by demographics") through both the browser UI and the MCP/engine path. Compare outputs side-by-side on: variable selection, chart quality, export fidelity, total effort, and required workarounds.
 
@@ -151,11 +151,11 @@ Per `eval_00_agent_interface_validation.md` §3 convergence testing guidance, th
 | Field | Value |
 |---|---|
 | **ID** | EVAL-05 |
-| **Brief** | Not yet written |
+| **Brief** | `eval_05_cross_wave_harmonization_brief.md` |
 | **Dataset** | `test_data/English Longitudinal Study of Ageing/` (multiple wave files) |
 | **Primary family** | E (harmonization and cross-wave work) |
 | **Secondary families** | A (discovery across waves) |
-| **Status** | Planned. Depends on S4-EVAL-2. |
+| **Status** | Brief complete. Run pending on data availability and workspace maturity. |
 
 **Purpose:** Test whether the agent can load multiple wave files, discover mapping candidates across waves, interpret harmonization suggestions, and produce a harmonized cross-wave analysis. ELSA provides a real longitudinal dataset with wave-to-wave variable drift.
 
@@ -176,11 +176,11 @@ Per `eval_00_agent_interface_validation.md` §3 convergence testing guidance, th
 | Field | Value |
 |---|---|
 | **ID** | EVAL-06 |
-| **Brief** | Not yet written |
+| **Brief** | `eval_06_stress_wvs_brief.md` |
 | **Dataset** | `test_data/WVS/WVS_Cross-National_Wave_7_spss_v6_0.sav` |
 | **Primary family** | F (stress and edge cases) |
 | **Secondary families** | A (discovery under adversity) |
-| **Status** | Planned. Depends on S4-EVAL-2. Note: WVS parsing has known issues (3 `.todo` tests in S2-VAL-1 pending ReadStat-WASM fix). Feasibility depends on parse success. |
+| **Status** | Brief complete. Run pending. Note: WVS parsing has known issues (3 `.todo` tests in S2-VAL-1 pending ReadStat-WASM fix). Trust dataset remains the explicit fallback. |
 
 **Purpose:** Test agent resilience on a large, internationally-sourced dataset with high variable count, multi-language labels, complex coding schemes, and high missingness from country-level question routing. If the WVS file cannot be parsed, substitute `test_data/People_s Trust - A Survey-Based Experiment/trust.sav` as a smaller stress case with potentially weaker metadata.
 
@@ -202,10 +202,10 @@ Per `eval_00_agent_interface_validation.md` §3 convergence testing guidance, th
 |---|---|---|---|
 | Unfamiliar dataset discovery | A | EVAL-02 (primary), EVAL-01 (secondary) | None — well covered at both low and high difficulty |
 | End-to-end deck creation | B | EVAL-01 (primary), EVAL-02 (secondary) | None — covered at both scales |
-| Session handoff | C | EVAL-03 (planned) | Brief not yet written |
-| Browser-agent convergence | D | EVAL-04 (planned) | Brief not yet written |
-| Harmonization / cross-wave | E | EVAL-05 (planned) | Brief not yet written; depends on harmonization workspace maturity |
-| Stress / edge cases | F | EVAL-06 (planned) | Brief not yet written; WVS parsing feasibility uncertain |
+| Session handoff | C | EVAL-03 (planned) | None — brief exists |
+| Browser-agent convergence | D | EVAL-04 (planned) | None — brief exists |
+| Harmonization / cross-wave | E | EVAL-05 (planned) | Workspace maturity and local data availability remain gating factors |
+| Stress / edge cases | F | EVAL-06 (planned) | WVS parsing feasibility remains uncertain; fallback is defined |
 
 ---
 
@@ -215,7 +215,7 @@ The portfolio is considered complete for S4-EVAL-1 purposes when:
 
 1. Every task family (A–F) has at least one eval with an assigned dataset and difficulty ratings.
 2. Families A and B have concrete briefs with run-ready detail (done).
-3. Families C–F have planned entries with purpose, candidate dataset, and difficulty ratings (done — this document).
-4. Briefs for families C–F are written during S4-EVAL-2 (intended-path readiness), not blocked on S4-EVAL-1.
+3. Families C–F have concrete briefs with purpose, task, deliverable, and difficulty framing (done).
+4. Remaining blockers are runtime readiness, dataset availability, and workflow maturity — not missing brief documents.
 
 The distinction matters: the **portfolio structure** is an S4-EVAL-1 deliverable. The **individual briefs** for later families are S4-EVAL-2/S4-EVAL-3 deliverables, because they depend on intended-path readiness work to be meaningfully specified.

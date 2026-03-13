@@ -63,6 +63,7 @@ function buildSessionFile(overrides: Partial<VelocitySessionFile> = {}): Velocit
       { id: 'filter-valid', variableId: 'q1', operator: 'eq', value: 1 },
       { id: 'filter-missing', variableId: 'q_missing', operator: 'eq', value: 1 },
     ],
+    weightVariable: 'weight',
     analysisSettings: { engine: 'webr' },
     slides: [
       {
@@ -97,6 +98,7 @@ describe('importSession', () => {
     const result = importSession(buildSessionFile(), loadedDataset);
 
     expect(result.patch.dataset.variables.find((item) => item.id === 'q1')?.label).toBe('Session Label 1');
+    expect(result.patch.dataset.weightVariable).toBe('weight');
     expect(result.patch.variableSets.map((item) => item.id)).toEqual(['set-valid', 'set-partial']);
     expect(result.patch.variableSets.find((item) => item.id === 'set-partial')?.variableIds).toEqual(['q2']);
     expect(result.patch.tableConfig).toEqual({ rowVars: ['set-valid'], colVar: null });

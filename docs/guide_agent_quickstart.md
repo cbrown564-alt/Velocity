@@ -6,6 +6,34 @@ For architecture context, see `arch_07_agent_architecture.md`. For the statistic
 
 ---
 
+## 0. Setup
+
+If you are running inside this repository, the intended Claude Code MCP config is already checked in at `.claude/settings.json`.
+
+Before starting analysis:
+
+1. Reload Claude Code after opening the workspace so it picks up `.claude/settings.json`.
+2. Run `npm run velocity-mcp-setup` from the repo root.
+3. Confirm the script prints a successful MCP initialize handshake and the registered `velocity_*` tools.
+
+If the checked-in config does not load in your Claude Code build, use the same command manually:
+
+```json
+{
+  "mcpServers": {
+    "velocity": {
+      "command": "node",
+      "args": ["--import", "tsx", "mcp-server/index.ts"],
+      "env": { "VELOCITY_DATA_DIR": "/absolute/path/to/your/data/root" }
+    }
+  }
+}
+```
+
+`VELOCITY_DATA_DIR` should point to the folder you want `velocity_load` to resolve relative paths against. Using the repo root works well for files under `test_data/`.
+
+---
+
 ## 1. Core Workflow
 
 Every agent session follows this sequence:
@@ -73,37 +101,43 @@ Get the full dataset description: all variables, variable sets, active filters, 
 {}
 ```
 
-**Returns** `DatasetDescription`:
+**Returns** `ResultEnvelope<DatasetDescription>`:
 ```json
 {
-  "dataset": {
-    "id": "dataset-1710288000000",
-    "name": "survey_data.sav",
-    "rowCount": 3988,
-    "variables": [
-      {
-        "id": "Redistrb",
-        "name": "Redistrb",
-        "label": "Government should redistribute income from the better off to those who are less well off",
-        "type": "ordinal",
-        "valueLabels": [
-          { "value": 1, "label": "Agree strongly" },
-          { "value": 2, "label": "Agree" },
-          { "value": 3, "label": "Neither agree nor disagree" },
-          { "value": 4, "label": "Disagree" },
-          { "value": 5, "label": "Disagree strongly" },
-          { "value": 8, "label": "Don't know" },
-          { "value": 9, "label": "Refusal" }
-        ],
-        "missingValues": { "discrete": [8, 9] }
-      }
-    ],
-    "source": "sav"
+  "data": {
+    "dataset": {
+      "id": "dataset-1710288000000",
+      "name": "survey_data.sav",
+      "rowCount": 3988,
+      "variables": [
+        {
+          "id": "Redistrb",
+          "name": "Redistrb",
+          "label": "Government should redistribute income from the better off to those who are less well off",
+          "type": "ordinal",
+          "valueLabels": [
+            { "value": 1, "label": "Agree strongly" },
+            { "value": 2, "label": "Agree" },
+            { "value": 3, "label": "Neither agree nor disagree" },
+            { "value": 4, "label": "Disagree" },
+            { "value": 5, "label": "Disagree strongly" },
+            { "value": 8, "label": "Don't know" },
+            { "value": 9, "label": "Refusal" }
+          ],
+          "missingValues": { "discrete": [8, 9] }
+        }
+      ],
+      "source": "sav"
+    },
+    "variableSets": [...],
+    "folders": [],
+    "activeFilters": [],
+    "weightVariable": null
   },
-  "variableSets": [...],
-  "folders": [],
-  "activeFilters": [],
-  "weightVariable": null
+  "operation": "describe",
+  "durationMs": 0.2,
+  "warnings": [],
+  "metadata": { "datasetName": "survey_data.sav", "rowCount": 3988, "filtersApplied": 0, "isWeighted": false, "engineVersion": "dev" }
 }
 ```
 
@@ -142,7 +176,7 @@ List registered analysis types and their config schemas.
 {}
 ```
 
-**Returns** `AnalysisDescriptor[]` — currently `crosstab` and `variableStats`.
+**Returns** `ResultEnvelope<AnalysisDescriptor[]>` — currently `crosstab` and `variableStats`.
 
 ---
 
@@ -460,7 +494,7 @@ Compose a full presentation deck from a declarative specification. Each slide de
             "weightVar": "WtFactor",
             "title": "Britain Divided: EU Attitudes by Age",
             "notes": "Younger respondents are significantly more pro-EU, consistent with the known age gradient in the 2016 referendum vote. The 18-24 cohort shows 70% support for EU membership vs. 35% among 65+.",
-            "visualizationType": "table",
+            "visualizationType": "chart",
             "displayOptions": {
               "showSignificance": true,
               "showPercents": true
@@ -471,7 +505,8 @@ Compose a full presentation deck from a declarative specification. Each slide de
             "colVar": "PartyId3",
             "weightVar": "WtFactor",
             "title": "EU Attitudes by Party Identification",
-            "notes": "Labour and Liberal Democrat identifiers overwhelmingly favour EU membership. Conservative identifiers are split, reflecting the party's internal Brexit divide."
+            "notes": "Labour and Liberal Democrat identifiers overwhelmingly favour EU membership. Conservative identifiers are split, reflecting the party's internal Brexit divide.",
+            "visualizationType": "chart"
           }
         ]
       },
@@ -570,10 +605,15 @@ Returns the recommended chart type based on variable types and cardinality.
 Export the complete engine state as a `.velocity` session file (JSON).
 
 ```json
-{}
+{ "outputPath": "evals/eval-03/runs/run-2026-03-12/artifacts/session" }
 ```
 
 The session captures: dataset metadata, variables, variable sets, transforms, filters, weight, slides, sections, and semantic state. A human can open this in the browser to review and refine the agent's work.
+
+**Behavior:**
+- With no `outputPath`, the tool returns `ResultEnvelope<VelocitySessionFile>`.
+- With `outputPath`, the MCP server writes the JSON file directly, adds `.velocity` if needed, and returns the same envelope plus the resolved `outputPath`.
+- The session contains analysis state and metadata only. It does **not** contain respondent rows or the raw SAV/CSV data file.
 
 #### `velocity_import_session`
 
@@ -587,7 +627,7 @@ Restore state from a previously exported session.
 
 ## 3. The ResultEnvelope
 
-Every tool that returns data wraps it in a `ResultEnvelope`:
+Every data-returning tool wraps its result in a `ResultEnvelope`. State-mutation helpers like `velocity_filter`, `velocity_clear_filters`, and `velocity_set_weight` return `{ "ok": true }`.
 
 ```json
 {
@@ -658,13 +698,19 @@ Alternatively, pass `weightVar` directly in each `velocity_crosstab` or `velocit
 7. Select 15-25 variables for analysis
 ```
 
-### 5.3 Dealing with Questionnaire Versioning (Split Samples)
+### 5.3 Watch Out For
+
+- Semantic search is strong for topic queries, not category-level navigation. Use `velocity_describe()` plus name/label patterns to find demographics and break variables.
+- `velocity_describe()` returns the full variable inventory. On 500+ variable datasets, search first and only inspect promising candidates in detail.
+- Some surveys use split-sample questionnaire versions. Seeing ~75% missing on one variable can be normal rather than a broken import.
+
+### 5.4 Dealing with Questionnaire Versioning (Split Samples)
 
 Some surveys (like BSA) split the sample into versions (A/B/C/D), where each question is asked of only ~25% of respondents. This means many variables will show ~75% missing data. This is **not** an error — the variable is valid, just asked of fewer people.
 
 Use `velocity_describe_variable` to check the N for any variable before panicking about missing rates. If a variable has ~1,000 valid responses out of 4,000 total, it's likely a version-specific question and perfectly usable.
 
-### 5.4 Choosing Condensed Variables
+### 5.5 Choosing Condensed Variables
 
 Many datasets include both detailed and condensed versions of the same variable:
 - `PartyId1` (14 categories) vs. `PartyId3` (8 categories)
@@ -672,13 +718,13 @@ Many datasets include both detailed and condensed versions of the same variable:
 
 **Always prefer the condensed version for cross-tabs.** High-cardinality cross-tabs produce sparse, unreadable tables. Search for both variants and choose the one with fewer categories.
 
-### 5.5 Scale Variables in Cross-tabs
+### 5.6 Scale Variables in Cross-tabs
 
 Continuous scale variables (left-right scores, age in years, composite indices) produce sparse tables when used as row or column variables in frequency cross-tabs. Instead:
 - Use them as the **row variable** — the engine automatically runs metric analysis (mean, median, stdDev) broken by column categories
 - Or recode them into bins first using `velocity_recode` with `mode: "binning"`
 
-### 5.6 Exploratory Analysis Before Deck Building
+### 5.7 Exploratory Analysis Before Deck Building
 
 Before composing your deck, run a few exploratory `velocity_crosstab` calls with `resolveLabels: true` to understand the data. Read the results, decide what's interesting, then build the deck around findings — not around variables.
 

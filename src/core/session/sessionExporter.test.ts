@@ -111,6 +111,7 @@ describe('exportSession', () => {
         checksum: undefined,
       },
     });
+    expect(session.weightVariable).toBeNull();
     expect('opfsFileKey' in (session.dataset as Record<string, unknown>)).toBe(false);
     expect(session.variables).toHaveLength(2);
     expect(session.variableSets).toHaveLength(1);
@@ -224,6 +225,7 @@ describe('exportSession', () => {
       columnNames: ['q1', 'q2'],
       checksum: undefined,
     });
+    expect(session.weightVariable).toBeNull();
     expect(session.variables.map((variable) => variable.id)).toContain('q2_top2');
   });
 });

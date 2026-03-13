@@ -12,6 +12,7 @@
     "typecheck:all": "npm run typecheck && npm run typecheck:test",
     "check:worker-boundary": "node scripts/check-worker-boundary.mjs",
     "check:querybuilder-pure": "node scripts/check-querybuilder-pure.mjs",
+    "velocity-mcp-setup": "node scripts/velocity-mcp-setup.mjs",
     "benchmark:sav": "npx tsx scripts/benchmark-sav-ingestion.ts",
     "benchmark:sav:v2v3": "npx tsx scripts/benchmark-sav-v2-v3.ts",
     "test": "vitest",

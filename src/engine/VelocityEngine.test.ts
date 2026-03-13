@@ -166,9 +166,10 @@ describe('VelocityEngine', () => {
       filtersApplied: 0,
       isWeighted: false,
     });
-    expect(description.dataset?.name).toBe('demo.csv');
-    expect(description.dataset?.variables.map((variable) => variable.id)).toEqual(['gender', 'score']);
-    expect(description.variableSets.map((variableSet) => variableSet.id)).toEqual(['gender', 'score']);
+    expect(description.operation).toBe('describe');
+    expect(description.data.dataset?.name).toBe('demo.csv');
+    expect(description.data.dataset?.variables.map((variable) => variable.id)).toEqual(['gender', 'score']);
+    expect(description.data.variableSets.map((variableSet) => variableSet.id)).toEqual(['gender', 'score']);
   });
 
   it('wraps describeVariable, query, and registered analysis results in provenance envelopes', async () => {
@@ -205,7 +206,7 @@ describe('VelocityEngine', () => {
     });
 
     expect(analysisEnvelope.data).toEqual({ received: { hello: 'world' } });
-    expect(engine.listAnalyses()).toContainEqual({
+    expect(engine.listAnalyses().data).toContainEqual({
       id: TEST_RUNNER_ID,
       label: 'Echo Runner',
       configSchema: {
@@ -238,7 +239,7 @@ describe('VelocityEngine', () => {
     });
 
     const description = engine.describe();
-    const variables = description.dataset?.variables ?? [];
+    const variables = description.data.dataset?.variables ?? [];
 
     // Variable labels (human-readable question text) must be preserved
     expect(variables.find(v => v.id === 'Q1')?.label).toBe('Overall Satisfaction');
@@ -259,8 +260,8 @@ describe('VelocityEngine', () => {
     expect(variables.find(v => v.id === 'WEIGHT')?.type).toBe('scale');
 
     // VariableSets must reflect SAV structure
-    expect(description.variableSets).toHaveLength(3);
-    expect(description.variableSets.find(vs => vs.id === 'Q1')?.name).toBe('Overall Satisfaction');
+    expect(description.data.variableSets).toHaveLength(3);
+    expect(description.data.variableSets.find(vs => vs.id === 'Q1')?.name).toBe('Overall Satisfaction');
   });
 
   it('unwraps a ResultEnvelope returned by a registry runner rather than double-wrapping', async () => {
@@ -295,5 +296,44 @@ describe('VelocityEngine', () => {
     // The outer envelope's data should be the inner result, not the inner envelope itself
     expect(envelope.data).toEqual({ innerResult: true });
     expect((envelope.data as Record<string, unknown>).operation).toBeUndefined();
+  });
+
+  it('wraps session getters and exportSession in provenance envelopes', async () => {
+    const adapter = new MockAdapter();
+    const engine = await VelocityEngine.create({ runtime: 'node', adapter, engineVersion: 'test-engine' });
+    await engine.loadFile('/data/brand_tracker.sav');
+
+    engine.addFilter({
+      id: 'filter-q1',
+      variableId: 'Q1',
+      operator: 'eq',
+      value: 1,
+    });
+    engine.setWeight('WEIGHT');
+
+    const session = engine.getSession();
+    const exported = await engine.exportSession();
+    const activeFilters = engine.getActiveFilters();
+
+    expect(session.operation).toBe('getSession');
+    expect(session.data.formatVersion).toBe(2);
+    expect(session.metadata).toMatchObject({
+      datasetName: 'brand_tracker.sav',
+      rowCount: 1200,
+      filtersApplied: 1,
+      isWeighted: true,
+      engineVersion: 'test-engine',
+    });
+
+    expect(exported.operation).toBe('exportSession');
+    expect(exported.data.dataset.originalFilename).toBe('brand_tracker.sav');
+    expect(activeFilters.data).toEqual([
+      {
+        id: 'filter-q1',
+        variableId: 'Q1',
+        operator: 'eq',
+        value: 1,
+      },
+    ]);
   });
 });

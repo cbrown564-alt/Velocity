@@ -77,19 +77,19 @@ class VelocityEngine {
 
 ```typescript
   // Full dataset metadata: variables, sets, folders, types, value labels
-  describe(): DatasetDescription;
+  describe(): ResultEnvelope<DatasetDescription>;
 
   // Deep dive on one variable: frequencies, stats, missing breakdown
   async describeVariable(id: string): Promise<ResultEnvelope<VariableDetail>>;
 
   // Available analysis types + their config schemas
-  listAnalyses(): AnalysisDescriptor[];
+  listAnalyses(): ResultEnvelope<AnalysisDescriptor[]>;
 
   // Current session state as a portable snapshot
-  getSession(): VelocitySessionFile;
+  getSession(): ResultEnvelope<VelocitySessionFile>;
 ```
 
-`describe()` is the most important method for agents. It returns the full `Variable[]` and `VariableSet[]` arrays with human-readable labels, value label mappings, types, and missing value definitions. This is what lets an agent understand the dataset and propose meaningful analyses.
+`describe()` is the most important method for agents. Its `data` field returns the full `Variable[]` and `VariableSet[]` arrays with human-readable labels, value label mappings, types, and missing value definitions. This is what lets an agent understand the dataset and propose meaningful analyses.
 
 `listAnalyses()` exposes `configSchema` from each `AnalysisRunner`, giving agents machine-readable knowledge of what analyses exist and what parameters they accept.
 
@@ -116,7 +116,7 @@ Analysis execution is always explicit. There is no auto-run on config change. Th
   addFilter(filter: FilterSpec): void;
   removeFilter(filterId: string): void;
   clearFilters(): void;
-  getActiveFilters(): Filter[];
+  getActiveFilters(): ResultEnvelope<Filter[]>;
 ```
 
 Filters and config changes are staged. They take effect on the next `runAnalysis()` call. This replaces the current pattern where `analysisSlice.addFilter()` immediately triggers `runAnalysis()`.
@@ -124,7 +124,7 @@ Filters and config changes are staged. They take effect on the next `runAnalysis
 ### 3.5 Session Management
 
 ```typescript
-  async exportSession(): Promise<VelocitySessionFile>;
+  async exportSession(): Promise<ResultEnvelope<VelocitySessionFile>>;
   async importSession(session: VelocitySessionFile): Promise<ResultEnvelope<SessionImportDiagnostics>>;
 ```
 
@@ -137,7 +137,7 @@ Sessions are the checkpoint/restore mechanism. An agent can export a session aft
   async buildDeck(spec: DeckSpec): Promise<ResultEnvelope<BuiltDeck>>;
 
   // Export a built deck to PPTX or XLSX
-  async exportDeck(deck: BuiltDeck, options: DeckExportOptions): Promise<Uint8Array>;
+  async exportDeck(deck: BuiltDeck, options: DeckExportOptions): Promise<ResultEnvelope<Uint8Array>>;
 ```
 
 See section 5 for the full deck builder design.
