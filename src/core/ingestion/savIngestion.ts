@@ -25,8 +25,10 @@ interface ReadStatModule {
     _free: (ptr: number) => void;
     _parse_sav: (bufferPtr: number, len: number) => number;
     _parse_sav_metadata?: (bufferPtr: number, len: number) => number;
+    _parse_sav_sample?: (bufferPtr: number, len: number, rowLimit: number, strategy: number) => number;
     _get_variable_count: () => number;
     _get_row_count: () => number;
+    _get_parsed_row_count?: () => number;
     _get_value_label_count: () => number;
     _get_variable_name: (index: number) => number;
     _get_variable_type: (index: number) => number;
@@ -219,6 +221,63 @@ async function parseSavMetadataWithReadStat(buffer: Buffer): Promise<ParsedSavMe
     }
 }
 
+async function parseSavSampleWithReadStat(
+    buffer: Buffer,
+    rowLimit: number
+): Promise<{ metadata: ParsedSavMetadata; rows: any[][] }> {
+    const mod = await getReadStatModule();
+    if (!mod._parse_sav_sample || !mod._get_parsed_row_count) {
+        throw new Error('ReadStat sample parsing is unavailable in this build');
+    }
+
+    const input = toUint8Array(buffer);
+    const bufferPtr = mod._malloc(input.length);
+
+    if (bufferPtr === 0) {
+        throw new Error('Failed to allocate memory for SAV sample parse');
+    }
+
+    mod.writeArrayToMemory(input, bufferPtr);
+
+    try {
+        const safeLimit = Math.max(0, Math.floor(rowLimit));
+        const errorCode = mod._parse_sav_sample(bufferPtr, input.length, safeLimit, 0);
+
+        // ReadStat uses USER_ABORT (4) when it intentionally stops after collecting a sample.
+        if (errorCode !== 0 && errorCode !== 4) {
+            assertReadStatSuccess(mod, errorCode, 'sample parse');
+        }
+
+        const metadata = extractMetadata(mod);
+        const parsedRowCount = mod._get_parsed_row_count();
+        const rows: any[][] = [];
+
+        for (let rowIndex = 0; rowIndex < parsedRowCount; rowIndex++) {
+            const row = new Array(metadata.variables.length);
+            for (let colIndex = 0; colIndex < metadata.variables.length; colIndex++) {
+                if (isCellSystemMissing(mod, rowIndex, colIndex)) {
+                    row[colIndex] = null;
+                    continue;
+                }
+
+                const variable = metadata.variables[colIndex];
+                if (variable.type === 'string') {
+                    const strPtr = mod._get_string_value(rowIndex, colIndex);
+                    row[colIndex] = mod.UTF8ToString(strPtr);
+                } else {
+                    row[colIndex] = mod._get_numeric_value(rowIndex, colIndex);
+                }
+            }
+            rows.push(row);
+        }
+
+        return { metadata, rows };
+    } finally {
+        freeParseResultsSafe(mod);
+        mod._free(bufferPtr);
+    }
+}
+
 async function buildMetadataFromDuckDbSchema(
     adapter: DuckDBNodeAdapter,
     tableName: string
@@ -319,6 +378,37 @@ async function loadDataViaAppenderFromReadStat(
     }
 }
 
+async function tryLoadSavViaDuckDbReadStat(
+    adapter: DuckDBNodeAdapter,
+    filePath: string,
+    tableName: string
+): Promise<{ loaded: boolean; error?: Error }> {
+    const safePath = escapeString(filePath);
+    const safeTableName = escapeIdentifier(tableName);
+
+    try {
+        await adapter.execute('LOAD read_stat;');
+    } catch {
+        try {
+            await adapter.execute('INSTALL read_stat FROM community;');
+            await adapter.execute('LOAD read_stat;');
+        } catch (error) {
+            return { loaded: false, error: error as Error };
+        }
+    }
+
+    try {
+        await adapter.execute(
+            `CREATE OR REPLACE TABLE "${safeTableName}" AS ` +
+            `SELECT * FROM read_stat('${safePath}', format='sav')`
+        );
+        console.log('🦆 [SAV] Loaded data via DuckDB read_stat');
+        return { loaded: true };
+    } catch (error) {
+        return { loaded: false, error: error as Error };
+    }
+}
+
 /**
  * Load a SAV file using a hybrid approach.
  */
@@ -330,14 +420,14 @@ export async function loadSav(
     let hasReadStat = false;
 
     // 1. Try to use DuckDB read_stat for fast data ingest
-    try {
-        await adapter.execute('INSTALL read_stat; LOAD read_stat;');
-        const safePath = escapeString(filePath);
-        await adapter.execute(`CREATE OR REPLACE TABLE "${tableName}" AS SELECT * FROM read_sav('${safePath}')`);
+    const nativeReadStatLoad = await tryLoadSavViaDuckDbReadStat(adapter, filePath, tableName);
+    if (nativeReadStatLoad.loaded) {
         hasReadStat = true;
-        console.log('🦆 [SAV] Loaded data via DuckDB read_stat');
-    } catch (err) {
-        console.warn('⚠️ [SAV] DuckDB read_stat failed, falling back to ReadStat-WASM for data:', (err as Error).message);
+    } else if (nativeReadStatLoad.error) {
+        console.warn(
+            '⚠️ [SAV] DuckDB read_stat failed, falling back to ReadStat-WASM for data:',
+            nativeReadStatLoad.error.message
+        );
     }
 
     // 2. Parse metadata via ReadStat-WASM (same parser family as browser path)
@@ -346,7 +436,13 @@ export async function loadSav(
     let rows: any[][] = [];
 
     try {
-        metadata = await parseSavMetadataWithReadStat(buffer);
+        if (hasReadStat) {
+            const sampled = await parseSavSampleWithReadStat(buffer, FALLBACK_SAMPLE_ROWS);
+            metadata = sampled.metadata;
+            rows = sampled.rows;
+        } else {
+            metadata = await parseSavMetadataWithReadStat(buffer);
+        }
     } catch (err) {
         if (!hasReadStat) {
             throw err;

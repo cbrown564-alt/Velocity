@@ -27,16 +27,40 @@ describe('savIngestion loadSav', () => {
 
     const result = await loadSav(adapter, tempSavPath, 'main');
 
-    const createSql = execute.mock.calls.find((call) => String(call[0]).includes('read_sav'))?.[0] as string;
-    expect(createSql).toContain("read_sav('");
+    const createSql = execute.mock.calls.find((call) => String(call[0]).includes('read_stat('))?.[0] as string;
+    expect(createSql).toContain("read_stat('");
+    expect(createSql).toContain("format='sav'");
     expect(createSql).toContain("te''st.sav");
     expect(result.rowCount).toBe(271);
   });
 
-  it('falls back to ReadStat appender flow when read_stat is unavailable', async () => {
+  it('installs read_stat from community when not already cached', async () => {
+    let loadAttempts = 0;
     const execute = vi.fn(async (sql: string) => {
-      if (sql.includes('INSTALL read_stat; LOAD read_stat;')) {
-        throw new Error('read_stat extension unavailable');
+      if (sql === 'LOAD read_stat;' && loadAttempts++ === 0) {
+        throw new Error('Extension not found');
+      }
+    });
+
+    const adapter = { execute, query: vi.fn() } as any;
+
+    const result = await loadSav(adapter, tempSavPath, 'main');
+
+    expect(execute).toHaveBeenCalledWith('LOAD read_stat;');
+    expect(execute).toHaveBeenCalledWith('INSTALL read_stat FROM community;');
+    expect(
+      execute.mock.calls.some((call) => String(call[0]).includes("SELECT * FROM read_stat('"))
+    ).toBe(true);
+    expect(result.rowCount).toBe(271);
+  });
+
+  it('falls back to ReadStat appender flow when community read_stat is unavailable', async () => {
+    const execute = vi.fn(async (sql: string) => {
+      if (sql === 'LOAD read_stat;') {
+        throw new Error('Extension not found');
+      }
+      if (sql === 'INSTALL read_stat FROM community;') {
+        throw new Error('community repository unavailable');
       }
     });
 
