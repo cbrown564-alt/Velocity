@@ -20,6 +20,8 @@ This is an honest product claim, not a marketing claim. It describes where curre
 
 The gap is a capability expansion problem, not an architecture failure or scope crisis. The engine thesis is validated. The interface thesis is partially validated. The remaining work is proportionate and within the current product direction.
 
+**Critical correction (independent review):** The agent's self-assessed scores inflated deliverable quality (scored 4.3, actual ~2.5 for stakeholder-facing output) and missed two structural gaps: (1) PPTX chart rendering is not client-presentable — each bar gets a random color, no gridlines, library defaults throughout; (2) MCP returns crosstab data in raw long format, not standard matrix shape, so agent artifacts look nothing like what a professional would expect. Additionally, EVAL-05's "Pattern 7 success" only tested exact-name harmonization matching, exercising none of the fuzzy/semantic capabilities. See §"Independent Review" in the cross-cutting gap review for full analysis.
+
 ---
 
 ## 2. Validated Claims
@@ -50,6 +52,9 @@ The gap is a capability expansion problem, not an architecture failure or scope 
 | U5 | Browser and agent convergence extends beyond bounded single-dataset deck tasks | **Unvalidated** | EVAL-04 proved narrow parity; harmonization (EVAL-05) and stress (EVAL-06) remain browser-first |
 | U6 | Session import on exact-match datasets is lossless | **Unvalidated** | EVAL-03: importing exact `sleep.sav` baseline still reported 4 unresolved variables and 4 removed variable sets |
 | U7 | The agent can efficiently navigate datasets with 500+ variables | **Unvalidated** | EVAL-02 and EVAL-06 both required bounded, pre-known query targets; broad exploratory discovery at scale was not demonstrated |
+| U8 | PPTX export is presentation-ready | **Contradicted** | Independent review of EVAL-04 deck: single-series bars get random colors (palette cycling bug), no gridlines, PptxGenJS defaults throughout. Not client-shareable. |
+| U9 | MCP crosstab returns are in a standard analysis format | **Contradicted** | `velocity_crosstab` returns long/tidy format (one row per cell), not a standard crosstab matrix. EVAL-06 CSV artifact is raw computation output. Browser pivots the data; agent surface does not. |
+| U10 | Harmonization matching works on real cross-wave drift | **Unvalidated** | EVAL-05 only tested exact-name matching (`srh3_hrs → srh3_hrs`, score 1.0, zero warnings). Jaro-Winkler, Jaccard, scale inversion, and type compatibility algorithms were never exercised on real data. |
 
 ---
 
@@ -69,6 +74,12 @@ The gap is a capability expansion problem, not an architecture failure or scope 
 
 7. **Do not assume annotations and concepts are inspectable in the browser after import.** The session carries them, but no browser UI surface exposes them for human review. (Source: EVAL-03 gap review)
 
+8. **Do not assume PPTX chart output is client-presentable.** The current chart rendering applies the full color palette to every data point in single-series charts, producing bars with random colors. There are no gridlines, no bar gap control, and no axis formatting beyond library defaults. The D3 browser charts are far better than the exported PPTX. (Source: independent artifact review of EVAL-04 deck)
+
+9. **Do not assume agent crosstab artifacts look like standard crosstabs.** The MCP `velocity_crosstab` returns data in long/tidy format (one row per cell intersection). The browser pivots this into a matrix, but the agent surface does not. Agent-produced CSVs are raw computation output, not recognizable analysis tables. (Source: independent review of EVAL-06 CSV artifact)
+
+10. **Do not assume the harmonization eval validated matching quality.** EVAL-05 tested only exact-name matching on adjacent ELSA files. The matching engine's Jaro-Winkler, Jaccard, scale inversion, and type compatibility algorithms have unit tests but have never been exercised on a real cross-wave scenario with naming drift. (Source: independent code review of `matchEngine.ts` vs EVAL-05 process log)
+
 ---
 
 ## 5. Ranked Product Gaps
@@ -76,14 +87,16 @@ The gap is a capability expansion problem, not an architecture failure or scope 
 | Rank | Gap | Response class | Affected layers | Source evals | Priority |
 |---|---|---|---|---|---|
 | 1 | No category-level discovery primitive (annotation-type filtering, guided "suggest breaks") | Capability expansion | Semantic / discovery, Product defaults | EVAL-01, EVAL-02 | P1 |
-| 2 | MCP surface does not cover multi-dataset workspace or large-file metadata flow | Capability expansion | MCP / workflow, Browser convergence | EVAL-05, EVAL-06 | P2 |
-| 3 | No recommended break variables or false-positive warnings after topic selection | Capability expansion | Product defaults | EVAL-01, EVAL-02 | P3 |
-| 4 | Deck build transport ceiling — large JSON payloads over stdio | Capability expansion | MCP / workflow | EVAL-01 | P3 |
-| 5 | Session import variable-resolution diagnostics on exact-match datasets | Rough-edge | Browser convergence | EVAL-03 | P4 |
-| 6 | Browser and MCP session export diverge on top-level working-state semantics | Rough-edge | Browser convergence | EVAL-04 | P4 |
-| 7 | No browser UI for semantic state inspection after session import | Rough-edge | Browser convergence, Product defaults | EVAL-03 | P5 |
-| 8 | Chart recommendation produces clutter on multi-variable slides | Rough-edge | Deliverable quality | EVAL-01 | P5 |
-| 9 | Harmonized output uses generic `_wave` markers instead of original wave identifiers | Rough-edge | Deliverable quality | EVAL-05 | P5 |
+| 2 | PPTX chart rendering is not client-presentable: single-series color cycling bug, no gridlines, no bar gap control, PptxGenJS defaults throughout | Capability expansion | Deliverable quality | EVAL-04 (independent review), all chart evals | P2 |
+| 3 | MCP crosstab returns raw long/tidy format, not standard crosstab matrix — agent artifacts are unrecognizable to stakeholders | Capability expansion | MCP / workflow, Browser convergence | EVAL-06 (independent review) | P2 |
+| 4 | MCP surface does not cover multi-dataset workspace or large-file metadata flow | Capability expansion | MCP / workflow, Browser convergence | EVAL-05, EVAL-06 | P3 |
+| 5 | No recommended break variables or false-positive warnings after topic selection | Capability expansion | Product defaults | EVAL-01, EVAL-02 | P3 |
+| 6 | EVAL-05 only tested exact-name harmonization — fuzzy matching, scale inversion, label overlap all untested on real data | Eval coverage gap | Harmonization | EVAL-05 (independent review) | P4 |
+| 7 | Deck build transport ceiling — large JSON payloads over stdio | Capability expansion | MCP / workflow | EVAL-01 | P4 |
+| 8 | Session import variable-resolution diagnostics on exact-match datasets | Rough-edge | Browser convergence | EVAL-03 | P5 |
+| 9 | Browser and MCP session export diverge on top-level working-state semantics | Rough-edge | Browser convergence | EVAL-04 | P5 |
+| 10 | No browser UI for semantic state inspection after session import | Rough-edge | Browser convergence, Product defaults | EVAL-03 | P5 |
+| 11 | Harmonized output uses generic `_wave` markers instead of original wave identifiers | Rough-edge | Deliverable quality | EVAL-05 | P5 |
 
 ---
 
@@ -93,41 +106,43 @@ The gap is a capability expansion problem, not an architecture failure or scope 
 
 These items block the thesis statement from advancing beyond "strong backend":
 
-1. **Category-aware discovery.** Expose annotation types as a filterable dimension. Add a `listVariablesByCategory(category)` engine method and MCP tool. Add guided "suggest breaks for topic X" flow. This directly addresses the two contradicted claims (U1, U2) and the #1 ranked gap.
+1. **Category-aware discovery.** Expose annotation types as a filterable dimension. Add a `listVariablesByCategory(category)` engine method and MCP tool. Add guided "suggest breaks for topic X" flow. This directly addresses the two contradicted claims (U1, U2) and gap #1.
 
-2. **MCP workspace and large-file tools.** Add `velocity_load_metadata` + `velocity_load_full` two-step flow. Add multi-dataset workspace tools dispatching to existing engine harmonization methods. This addresses U3 and gap #2.
+2. **PPTX chart rendering overhaul.** Fix the single-series color cycling bug (each bar should not get a different color). Add bar gap control, gridlines, axis formatting, data label positioning. Close the quality gap between D3 browser charts and PPTX export so output is client-presentable. This addresses U8 and gap #2. This is not polish — the current output would fail stakeholder review.
 
-3. **Recommended break variables.** After the agent selects a topic variable, surface recommended demographic or thematic break variables based on annotation types. This addresses U4 and gap #3.
+3. **Crosstab matrix format for MCP.** Add a `format: 'matrix'` option to `velocity_crosstab` (or a dedicated `velocity_format_crosstab` tool) that returns standard pivot-shaped output instead of raw long/tidy computation rows. Agent artifacts must look like standard crosstabs. This addresses U9 and gap #3.
+
+4. **MCP workspace and large-file tools.** Add `velocity_load_metadata` + `velocity_load_full` two-step flow. Add multi-dataset workspace tools dispatching to existing engine harmonization methods. This addresses U3 and gap #4.
+
+5. **Recommended break variables.** After the agent selects a topic variable, surface recommended demographic or thematic break variables based on annotation types. This addresses U4 and gap #5.
 
 ### Should-do in next phase
 
 These strengthen the thesis but do not block it:
 
-4. **Deck build transport resilience.** Stream or chunk `buildDeck` responses to avoid stdio OOM on richer decks. (Gap #4)
+6. **Harmonization re-run on fuzzy-match scenario.** Rerun EVAL-05 with a construct that has naming drift, partial label overlap, or scale inversions between waves. Without this, the harmonization claim is only validated for the trivial case. (Gap #6, addresses U10)
 
-5. **Session import fidelity.** Eliminate spurious unresolved-variable diagnostics on exact-match imports. (Gap #5)
+7. **Deck build transport resilience.** Stream or chunk `buildDeck` responses to avoid stdio OOM on richer decks. (Gap #7)
 
-6. **Session export alignment.** Ensure browser and MCP export the same top-level working state. (Gap #6)
+8. **Session import fidelity.** Eliminate spurious unresolved-variable diagnostics on exact-match imports. (Gap #8)
 
-7. **False-positive warnings.** Warn when a variable name suggests a survey weight but is actually a measurement. Warn before high-cardinality crosstabs. (Part of gap #3)
+9. **Session export alignment.** Ensure browser and MCP export the same top-level working state. (Gap #9)
+
+10. **False-positive warnings.** Warn when a variable name suggests a survey weight but is actually a measurement. Warn before high-cardinality crosstabs. (Part of gap #5)
 
 ### Explicitly deferred
 
-8. **Browser semantic inspection UI.** Real but not blocking — annotations are preserved, just not displayed. (Gap #7)
+11. **Browser semantic inspection UI.** Real but not blocking — annotations are preserved, just not displayed. (Gap #10)
 
-9. **Harmonized output wave identifiers.** Polish issue. (Gap #9)
+12. **Harmonized output wave identifiers.** Polish issue. (Gap #11)
 
-10. **Chart recommendation for multi-variable slides.** The current workaround (narrow the slide scope) is acceptable for now. (Gap #8)
-
-11. **TF-IDF/BM25 for search ranking.** Defined as the escalation path if category-aware discovery does not raise EVAL-02 discovery above score 3. Not needed until the primary intervention is tested.
+13. **TF-IDF/BM25 for search ranking.** Defined as the escalation path if category-aware discovery does not raise EVAL-02 discovery above score 3. Not needed until the primary intervention is tested.
 
 ### Out of current scope
 
-12. **Embedding-based retrieval.** The evidence does not show synonym drift or concept-level mismatch as the primary discovery failure. The bottleneck is a missing navigational primitive, not a ranking quality problem. Embeddings are premature.
+14. **Embedding-based retrieval.** The evidence does not show synonym drift or concept-level mismatch as the primary discovery failure. The bottleneck is a missing navigational primitive, not a ranking quality problem. Embeddings are premature.
 
-13. **Retrieval-augmented discovery.** The evals show agents struggling to find variables, not struggling to decide what to analyze once variables are found. RAG addresses the wrong level of abstraction.
-
-14. **First-class harmonization and stress report formats.** These are Phase 5+ deliverable-layer work. The current CSV and markdown outputs are adequate for eval purposes.
+15. **Retrieval-augmented discovery.** The evals show agents struggling to find variables, not struggling to decide what to analyze once variables are found. RAG addresses the wrong level of abstraction.
 
 ---
 
@@ -158,10 +173,13 @@ Per `eval_00_outcome_decision_framework.md`: any layer dropping by 2+ points on 
 
 | Proposed ID | Stream | Outcome | Depends on | Recommended phase |
 |---|---|---|---|---|
-| S4-DISC-1 | Discovery | Category-aware discovery: annotation-type filters, `listVariablesByCategory` engine method + MCP tool, guided "suggest breaks for topic X" | S4-EVAL-5 | Post-Phase-4 (first priority) |
-| S4-MCP-1 | MCP | Workspace-aware MCP: `velocity_load_metadata` + `velocity_load_full` two-step flow; multi-dataset workspace tools | S4-EVAL-5 | Post-Phase-4 (second priority) |
-| S4-DEF-1 | Defaults | Recommended break variables after topic selection; false-positive weight warnings; high-cardinality guardrails | S4-DISC-1 | Post-Phase-4 (third priority) |
-| S4-MCP-2 | MCP | Deck build transport resilience: stream or chunk `buildDeck` responses | S4-EVAL-5 | Post-Phase-4 (should-do) |
+| S4-DISC-1 | Discovery | Category-aware discovery: annotation-type filters, `listVariablesByCategory` engine method + MCP tool, guided "suggest breaks for topic X" | S4-EVAL-5 | Post-Phase-4 (P1) |
+| S4-DELIV-1 | Export | PPTX chart rendering overhaul: fix single-series color cycling, add bar gap/gridline/axis control, close D3→PPTX quality gap | S4-EVAL-5 | Post-Phase-4 (P2) |
+| S4-FMT-1 | MCP | Crosstab matrix format: add `format: 'matrix'` to `velocity_crosstab` so agents receive standard pivot-shaped output | S4-EVAL-5 | Post-Phase-4 (P2) |
+| S4-MCP-1 | MCP | Workspace-aware MCP: `velocity_load_metadata` + `velocity_load_full` two-step flow; multi-dataset workspace tools | S4-EVAL-5 | Post-Phase-4 (P3) |
+| S4-DEF-1 | Defaults | Recommended break variables after topic selection; false-positive weight warnings; high-cardinality guardrails | S4-DISC-1 | Post-Phase-4 (P3) |
+| S4-MCP-2 | MCP | Deck build transport resilience: stream or chunk `buildDeck` responses | S4-EVAL-5 | Post-Phase-4 (P4, should-do) |
+| S4-EVAL-5b | Eval | Harmonization re-run: EVAL-05 follow-on with naming drift, partial label overlap, or scale inversion construct | S4-EVAL-5 | Post-Phase-4 (P4, should-do) |
 
 ### Existing items to re-sequence
 
@@ -198,6 +216,8 @@ The MCP/browser/engine path is runnable for single-dataset deck workflows. Artif
 ### Gate 2: Benchmark honesty — PASSED WITH CAVEATS
 
 The three Pattern 7 successes were deliberately bounded. Open-ended discovery on large surveys (EVAL-02) drops to Pattern 4. Success at the current level depends on the agent compensating for weak discovery and passive defaults with reasoning effort.
+
+**Independent review addendum:** The agent's self-assessment systematically overrated deliverable quality because language models can work with any data format — but human stakeholders cannot. PPTX output scored 4–5 by the agent is not client-presentable (color cycling bug, library defaults). CSV artifacts scored as adequate are in a format no analyst would recognize as a crosstab. EVAL-05's Pattern 7 claim rests on testing only the trivial exact-match case. The honest summary: computation is strong, communication is weak.
 
 ### Gate 3: Strategic sufficiency — PASSED
 

@@ -44,8 +44,11 @@ graph TD
   S4EVAL4 --> S4EVAL5["S4-EVAL-5 Strategy Synthesis + Baselines"]
 
   S4EVAL5 --> S4DISC1["S4-DISC-1 Category-Aware Discovery"]
+  S4EVAL5 --> S4DELIV1["S4-DELIV-1 PPTX Chart Overhaul"]
+  S4EVAL5 --> S4FMT1["S4-FMT-1 Crosstab Matrix Format"]
   S4EVAL5 --> S4MCP1["S4-MCP-1 Workspace MCP Tools"]
   S4EVAL5 --> S4MCP2["S4-MCP-2 Deck Transport Resilience"]
+  S4EVAL5 --> S4EVAL5b["S4-EVAL-5b Harmonization Fuzzy Re-run"]
   S4DISC1 --> S4DEF1["S4-DEF-1 Recommended Breaks + Warnings"]
 
   S3SEM1 --> S5HARM1["S5-HARM-1 Harmonization Workspace"]
@@ -62,7 +65,7 @@ graph TD
   S7CLOUD1 --> S7CLOUD2["S7-CLOUD-2 Direct Data Imports"]
 ```
 
-S2-STAT-1 through S2-STAT-4 are resolved. S2-EXP-1 and S2-EXP-2 are done. Phase 3 critical path delivery is complete. **Phase 4 agent-capability validation is now complete.** All five workstreams (`S4-EVAL-1` through `S4-EVAL-5`) are Done. The phase synthesis validates the engine thesis (mean 4.7), identifies semantic discovery (mean 3.0) and MCP workflow breadth (mean 3.0) as the primary capability expansion gaps, and freezes four benchmark baselines (EVAL-01, 02, 04, 06). The honest product claim: Velocity is a strong analytical backend with narrow browser-agent convergence, not yet a first-class agent interface — the gap is discovery, MCP breadth, and defaults. The active critical path is now the post-validation follow-through sequence (`S4-DISC-1 -> S4-DEF-1`, `S4-MCP-1`, `S4-MCP-2`) before Phase 5 expansion. Runtime/workspace/harmonization work has shifted to Phase 5, AI work to Phase 6, and cloud work to Phase 7.
+S2-STAT-1 through S2-STAT-4 are resolved. S2-EXP-1 and S2-EXP-2 are done. Phase 3 critical path delivery is complete. **Phase 4 agent-capability validation is now complete.** All five workstreams (`S4-EVAL-1` through `S4-EVAL-5`) are Done. The phase synthesis validates the engine thesis (mean 4.7), identifies semantic discovery (mean 3.0) and MCP workflow breadth (mean 3.0) as the primary capability expansion gaps, and freezes four benchmark baselines (EVAL-01, 02, 04, 06). The honest product claim: Velocity is a strong analytical backend with narrow browser-agent convergence, not yet a first-class agent interface — the gap is discovery, MCP breadth, and defaults. Independent artifact review revealed additional gaps not captured by agent self-assessment: PPTX chart output is not client-presentable (color cycling bug, library defaults), MCP crosstab returns raw long format instead of standard matrix, and EVAL-05 harmonization only tested exact-name matching. The active critical path is now the post-validation follow-through sequence (`S4-DISC-1`, `S4-DELIV-1`, `S4-FMT-1`, `S4-MCP-1`, `S4-DEF-1`, `S4-MCP-2`, `S4-EVAL-5b`) before Phase 5 expansion. Runtime/workspace/harmonization work has shifted to Phase 5, AI work to Phase 6, and cloud work to Phase 7.
 
 ## 4. Execution Board
 
@@ -81,9 +84,12 @@ S2-STAT-1 through S2-STAT-4 are resolved. S2-EXP-1 and S2-EXP-2 are done. Phase 
 | ID | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | S4-DISC-1 | Discovery | Category-aware discovery: annotation-type filters, `listVariablesByCategory` engine method + MCP tool, guided "suggest breaks for topic X" flow | S4-EVAL-5 | Not started | Yes | T,L,U,I,A | - |
+| S4-DELIV-1 | Export | PPTX chart rendering overhaul: fix single-series color cycling, add bar gap/gridline/axis control, close D3→PPTX quality gap for client-presentable output | S4-EVAL-5 | Not started | Yes | T,L,U,A | - |
+| S4-FMT-1 | MCP | Crosstab matrix format: add `format: 'matrix'` to `velocity_crosstab` so agents receive standard pivot-shaped output, not raw long/tidy rows | S4-EVAL-5 | Not started | Yes | T,L,U,I,A | - |
 | S4-MCP-1 | MCP | Workspace-aware MCP: `velocity_load_metadata` + `velocity_load_full` two-step flow; multi-dataset workspace tools | S4-EVAL-5 | Not started | Yes | T,L,U,I,A | - |
 | S4-DEF-1 | Defaults | Recommended break variables after topic selection; false-positive weight warnings; high-cardinality guardrails | S4-DISC-1 | Not started | Yes | T,L,U,I,A | - |
 | S4-MCP-2 | MCP | Deck build transport resilience: stream or chunk `buildDeck` responses to avoid stdio OOM | S4-EVAL-5 | Not started | Yes | T,L,U,A | - |
+| S4-EVAL-5b | Eval | Harmonization re-run: EVAL-05 follow-on with naming drift, partial label overlap, or scale inversion construct | S4-EVAL-5 | Not started | No | A | - |
 
 ### 4.3 Next After Validation (Phase 5)
 

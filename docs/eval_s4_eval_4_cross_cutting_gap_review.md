@@ -401,6 +401,90 @@ EVAL-01 and EVAL-02 — the two evals that required open-ended discovery — bot
 
 ---
 
+## Independent Review: Correcting Self-Assessment Bias
+
+The layer scores above were produced by the agent evaluating its own work. Independent examination of the actual artifacts reveals several gaps that the self-assessment either missed entirely or classified too generously. These corrections materially change the priority matrix.
+
+### Finding 1: PPTX visual quality is not client-presentable (Deliverable layer downgraded from 4.3 → 2.5)
+
+The agent scored deliverable quality 4–5 because the data was correct and the deck had titles and sections. But "presentation-ready" means something different to a stakeholder who needs to share this with clients or executives.
+
+**What the screenshot actually shows (EVAL-04 agent deck, slide 3):**
+- Each bar in a single-series chart gets a **different color** (green, blue, black, salmon). This is the palette cycling bug: `chartColors` in `pptxExporter.ts:206` applies the full 5-color array to every bar in a single series, so PptxGenJS assigns one color per data point rather than one color for the series. A standard bar chart should use a single color for all bars in one series, or a semantically meaningful gradient.
+- Massive whitespace gaps between bars — PptxGenJS default `barGapWidthPct` is not configured
+- Axis labels are tiny and hard to read at presentation scale
+- No gridlines to guide the eye across values
+- The overall aesthetic is "default charting library output" rather than "designed presentation"
+
+**What this means:** The deliverable layer was scored as if "structurally correct deck" = "presentation-ready." It is not. A Displayr, Qualtrics, or SPSS user comparing Velocity's PPTX output to their existing tools would see a significant quality regression. This is not a rough-edge — it is a **capability gap** in the export rendering pipeline that affects every chart-based slide across all evals.
+
+**Root cause:** The chart export code (`pptxExporter.ts:198-261`) applies minimal configuration to PptxGenJS. No bar gap control, no gridline styling, no axis tick formatting, no data label positioning, no single-series color handling. The D3 chart renderer in the browser is far more sophisticated, but none of that rendering intelligence carries over to PPTX export.
+
+**Corrected classification:** Capability expansion. The chart rendering defaults need substantive work, not just polish. This should be P2 priority, not P5.
+
+### Finding 2: MCP crosstab return format is fundamentally wrong for agent consumption (new gap, not previously identified)
+
+The agent never flagged this because it can reason over any data shape. But the MCP `velocity_crosstab` tool returns results in **long/tidy format** (one row per cell: `col_value, col_label, row_value, row_label, weighted_count, pct`), not as a standard crosstab matrix.
+
+**Why this matters:**
+- Agents must mentally pivot the data to reason about cross-tabulated relationships
+- Any CSV artifact the agent produces is in this raw computation format — the `happiness_by_generalized_trust.csv` from EVAL-06 is literally the engine's internal row-per-cell output, not a recognizable crosstab
+- A stakeholder receiving this CSV would not recognize it as a crosstab
+- The browser performs the pivoting in `analysisProcessor.ts` to display as a matrix, but the MCP surface returns the pre-pivoted raw data
+
+**What this means:** The product has two fundamentally different data surfaces: the browser shows a proper matrix crosstab; the agent gets raw computation output. This is a convergence failure that was never scored because the agent — being a language model — can work with any format. But "can work with it" is not the same as "gets the same effective product." A human reviewing the agent's artifact sees something alien.
+
+**Corrected classification:** Capability expansion (P2). The engine or MCP layer needs a `formatCrosstab()` method that returns matrix-shaped output, or `velocity_crosstab` needs a `format: 'matrix'` parameter.
+
+### Finding 3: EVAL-05 harmonization tested none of the semantic matching capabilities (eval coverage gap)
+
+The agent scored EVAL-05 as Pattern 7 (end-to-end success) and classified harmonization as "benchmark baseline validated." But the eval tested **only exact-name matching** (`srh3_hrs → srh3_hrs` with a composite score of 1.0 and zero warnings).
+
+**What was NOT tested:**
+- **Jaro-Winkler fuzzy matching** (`matchEngine.ts:28-76`): handles name drift like `health_satisf_w4 → hsq_final_w5`. Never exercised.
+- **Jaccard value-label overlap** (`matchEngine.ts:86-100`): handles partial label remapping. Never exercised.
+- **Scale inversion detection** (`matchEngine.ts:137-163`): catches flipped Likert scales between waves. Never exercised.
+- **Type compatibility scoring** (`matchEngine.ts:110-127`): handles `nominal → ordinal` drift. Never exercised.
+- **Data loss detection** (`matchEngine.ts:172-179`): identifies orphaned value codes. Never exercised.
+
+The auto-match engine scored 433 of 436 variables, but the eval only confirmed one perfect-match variable. This tells us the workflow plumbing works but gives **zero signal** on whether the matching algorithm is actually useful on real-world longitudinal drift — which is the entire point of harmonization.
+
+**What this means:** The semantic option study in the previous version of this review focused entirely on discovery search quality. It missed the harmonization matching quality question entirely. The harmonization matching engine has sophisticated algorithms (Jaro-Winkler + Jaccard + type compat + scale inversion) that have unit test coverage but have never been validated on a real cross-wave scenario with actual naming drift, label remapping, or scale inversions.
+
+**Corrected classification:** The harmonization eval needs a follow-on run with a construct that has naming differences, partial label overlap, or scale inversions. Without this, the claim that "harmonization workspace is execution-real" is only true for the trivial case.
+
+### Finding 4: The "bounded success" pattern inflates the overall picture
+
+Three of six evals (EVAL-04, 05, 06) achieved Pattern 7 specifically because the task was scoped to avoid the weakest areas. This is legitimate for proving plumbing works, but the synthesis should not treat these the same as EVAL-02's Pattern 4 result, which tested the product under realistic conditions.
+
+A more honest severity assessment:
+- EVAL-01: **Significant** (MCP workflow scored 2 on a low-difficulty task)
+- EVAL-02: **Significant** (discovery scored 2 on the most realistic eval)
+- EVAL-03: **Moderate** (handoff works with rough edges)
+- EVAL-04: **Passing but narrow** (convergence only on pre-bounded task)
+- EVAL-05: **Incomplete** (trivial test case; matching capabilities untested)
+- EVAL-06: **Passing but narrow** (browser stress validated; agent path untested)
+
+### Revised Priority Matrix
+
+| Priority | Layer | Gap class | Intervention | Revision note |
+|---|---|---|---|---|
+| **P1** | Semantic / discovery | Capability expansion | Category-aware discovery (unchanged) | — |
+| **P2** | Deliverable quality | Capability expansion | **Chart rendering overhaul:** fix single-series color cycling, add bar gap control, gridlines, axis formatting; close the D3→PPTX quality gap | **Upgraded from P5 rough-edge** |
+| **P2** | MCP data format | Capability expansion | **Crosstab matrix format:** add `format: 'matrix'` to `velocity_crosstab` so agents receive standard pivot-shaped output | **New gap — not in original review** |
+| **P3** | MCP / workflow | Capability expansion | Workspace-aware MCP tools (unchanged) | — |
+| **P4** | Product defaults | Capability expansion | Recommended breaks + warnings (unchanged) | — |
+| **P5** | Eval coverage | Follow-on eval | **Harmonization re-run** on a construct with naming drift, partial label overlap, or scale inversions | **New — EVAL-05 result is incomplete** |
+| **P5** | Browser convergence | Rough-edge | Align session export semantics (unchanged) | — |
+
+### Cross-cutting theme: computation vs communication
+
+The underlying pattern across findings 1, 2, and 3 is the same: **the product is optimized for computing correct answers, not for communicating them.** The engine is genuinely strong. But every layer between computation and human consumption — chart rendering, data formatting, artifact presentation, harmonization review — shows the same gap: technically correct output that a professional would not share.
+
+This is not a rough-edge problem. It is the central product challenge for Phase 5: closing the "last mile" between correct computation and professional-quality deliverables, across both the agent and browser surfaces.
+
+---
+
 ## Appendix: Evidence Index
 
 | Eval | Scorecard | Gap Review | Key evidence |
