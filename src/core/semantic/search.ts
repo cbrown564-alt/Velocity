@@ -11,7 +11,7 @@
  */
 
 import type { Variable } from '../../types';
-import type { Concept, SemanticAnnotation, SemanticSearchResult } from '../../types/semantic';
+import type { Concept, MeasurementIntent, SemanticAnnotation, SemanticSearchResult } from '../../types/semantic';
 
 // ============================================================================
 // Tokenizer
@@ -41,7 +41,7 @@ function overlapScore(queryTokens: string[], targetText: string): number {
 // Search Index Entry
 // ============================================================================
 
-interface SearchEntry {
+export interface SearchEntry {
   variable: Variable;
   datasetId: string;
   annotation?: SemanticAnnotation;
@@ -213,4 +213,77 @@ export function searchVariablesAcrossDatasets(
   return allResults
     .sort((a, b) => b.relevance - a.relevance)
     .slice(0, limit);
+}
+
+// ============================================================================
+// Demographic name patterns for fallback classification
+// ============================================================================
+
+const DEMOGRAPHIC_NAME_PATTERNS =
+  /\b(age|sex|gender|income|region|educ|marital|ethni|race|occupation|employ|hhinc|socio|class)\b/i;
+
+/**
+ * Filter variables by MeasurementIntent category.
+ *
+ * Primary path: returns variables whose annotation.measurementIntent matches.
+ * Fallback path: when annotation coverage is below 50% or `includeUnannotated`
+ * is true, uses type-based heuristics for demographic/classification categories.
+ */
+export function listVariablesByCategory(
+  entries: SearchEntry[],
+  category: MeasurementIntent,
+  options?: { includeUnannotated?: boolean; limit?: number }
+): SemanticSearchResult[] {
+  const limit = options?.limit ?? 50;
+  const results: SemanticSearchResult[] = [];
+
+  // Count annotation coverage
+  const annotatedCount = entries.filter((e) => e.annotation).length;
+  const coverage = entries.length > 0 ? annotatedCount / entries.length : 0;
+  const useFallback =
+    options?.includeUnannotated === true ||
+    coverage < 0.5;
+
+  // Primary: annotated variables matching intent
+  for (const entry of entries) {
+    if (entry.annotation?.measurementIntent === category) {
+      results.push({
+        variable: entry.variable,
+        datasetId: entry.datasetId,
+        relevance: entry.annotation.confidence,
+        matchedOn: ['category'],
+      });
+    }
+  }
+
+  // Fallback: type-based heuristic for demographic/classification
+  if (useFallback && (category === 'demographic' || category === 'classification')) {
+    const alreadyIncluded = new Set(results.map((r) => r.variable.id));
+    for (const entry of entries) {
+      if (alreadyIncluded.has(entry.variable.id)) continue;
+      if (entry.annotation?.measurementIntent) continue; // already classified differently
+
+      const v = entry.variable;
+      const isCategorical =
+        (v.type === 'nominal' || v.type === 'categorical' || v.type === 'ordinal') &&
+        v.valueLabels.length >= 2 &&
+        v.valueLabels.length <= 12;
+
+      if (!isCategorical) continue;
+
+      const nameLabel = `${v.name} ${v.label ?? ''}`;
+      if (DEMOGRAPHIC_NAME_PATTERNS.test(nameLabel)) {
+        results.push({
+          variable: v,
+          datasetId: entry.datasetId,
+          relevance: 0.4, // low confidence fallback
+          matchedOn: ['category:fallback'],
+        });
+      }
+    }
+  }
+
+  // Sort by relevance descending
+  results.sort((a, b) => b.relevance - a.relevance);
+  return results.slice(0, limit);
 }

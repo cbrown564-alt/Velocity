@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { suggestAnalyses, suggestHarmonizations } from '../suggestions';
+import { suggestAnalyses, suggestBreaks, suggestHarmonizations } from '../suggestions';
 import type { Variable } from '../../../types';
 import type { Concept, SemanticAnnotation } from '../../../types/semantic';
 
@@ -222,5 +222,131 @@ describe('suggestHarmonizations', () => {
     };
     const suggestions = suggestHarmonizations([concept]);
     expect(suggestions[0].rationale).toContain('10');
+  });
+});
+
+// ============================================================================
+// Break Variable Suggestions
+// ============================================================================
+
+function makeVarWithLabels(id: string, name: string, labels: { value: number; label: string }[]): Variable {
+  return { id, name, label: name, type: 'nominal', valueLabels: labels, missingValues: {} };
+}
+
+describe('suggestBreaks', () => {
+  const genderVarWithLabels = makeVarWithLabels('gender', 'Gender', [
+    { value: 1, label: 'Male' }, { value: 2, label: 'Female' },
+  ]);
+  const ageVarWithLabels = makeVarWithLabels('age_group', 'Age Group', [
+    { value: 1, label: '18-24' }, { value: 2, label: '25-34' },
+    { value: 3, label: '35-44' }, { value: 4, label: '45-54' },
+    { value: 5, label: '55+' },
+  ]);
+  const regionVar = makeVarWithLabels('region', 'Region', [
+    { value: 1, label: 'North' }, { value: 2, label: 'South' },
+    { value: 3, label: 'East' }, { value: 4, label: 'West' },
+  ]);
+
+  it('ranks demographic variables highest', () => {
+    const topic = { variable: satVar, annotation: satAnn };
+    const allVars = [
+      topic,
+      { variable: genderVarWithLabels, annotation: ann('demographic', 'demographics') },
+      { variable: freqVar, annotation: freqAnn },
+    ];
+    const suggestions = suggestBreaks(topic, allVars);
+    expect(suggestions[0].variable.id).toBe('gender');
+    expect(suggestions[0].score).toBeGreaterThan(0.5);
+  });
+
+  it('excludes the topic variable itself', () => {
+    const topic = { variable: satVar, annotation: satAnn };
+    const allVars = [
+      topic,
+      { variable: genderVarWithLabels, annotation: ann('demographic', 'demographics') },
+    ];
+    const suggestions = suggestBreaks(topic, allVars);
+    const ids = suggestions.map((s) => s.variable.id);
+    expect(ids).not.toContain('q5_sat');
+  });
+
+  it('excludes weight, identifier, and open_end variables', () => {
+    const topic = { variable: satVar, annotation: satAnn };
+    const allVars = [
+      topic,
+      { variable: weightVar, annotation: weightAnn },
+      { variable: makeVar('rid', 'RespondentID'), annotation: ann('identifier', 'id') },
+      { variable: makeVar('oe', 'Comments'), annotation: ann('open_end', 'comments') },
+      { variable: genderVarWithLabels, annotation: ann('demographic', 'demographics') },
+    ];
+    const suggestions = suggestBreaks(topic, allVars);
+    const ids = suggestions.map((s) => s.variable.id);
+    expect(ids).not.toContain('wt');
+    expect(ids).not.toContain('rid');
+    expect(ids).not.toContain('oe');
+    expect(ids).toContain('gender');
+  });
+
+  it('gives cardinality bonus for 2-8 value labels', () => {
+    const topic = { variable: satVar, annotation: satAnn };
+    const allVars = [
+      topic,
+      { variable: genderVarWithLabels, annotation: ann('demographic', 'demographics') },
+      { variable: ageVarWithLabels, annotation: ann('demographic', 'demographics') },
+    ];
+    const suggestions = suggestBreaks(topic, allVars);
+    // Both are demographic with good cardinality, both should have high scores
+    expect(suggestions.length).toBe(2);
+    expect(suggestions[0].score).toBeGreaterThan(0.6);
+  });
+
+  it('gives name pattern bonus', () => {
+    const topic = { variable: satVar, annotation: satAnn };
+    // regionVar has no annotation but matches name pattern and has value labels
+    const allVars = [
+      topic,
+      { variable: regionVar, annotation: undefined },
+    ];
+    const suggestions = suggestBreaks(topic, allVars);
+    expect(suggestions.length).toBe(1);
+    expect(suggestions[0].rationale).toContain('name matches');
+  });
+
+  it('respects limit option', () => {
+    const topic = { variable: satVar, annotation: satAnn };
+    const allVars = [
+      topic,
+      { variable: genderVarWithLabels, annotation: ann('demographic', 'demographics') },
+      { variable: ageVarWithLabels, annotation: ann('demographic', 'demographics') },
+      { variable: regionVar, annotation: ann('demographic', 'demographics') },
+    ];
+    const suggestions = suggestBreaks(topic, allVars, { limit: 2 });
+    expect(suggestions.length).toBe(2);
+  });
+
+  it('sorts by score descending', () => {
+    const topic = { variable: satVar, annotation: satAnn };
+    const allVars = [
+      topic,
+      { variable: genderVarWithLabels, annotation: ann('demographic', 'demographics') },
+      { variable: freqVar, annotation: freqAnn },
+      { variable: regionVar, annotation: ann('classification', 'region') },
+    ];
+    const suggestions = suggestBreaks(topic, allVars);
+    for (let i = 1; i < suggestions.length; i++) {
+      expect(suggestions[i - 1].score).toBeGreaterThanOrEqual(suggestions[i].score);
+    }
+  });
+
+  it('returns empty for variables with no scoring signals', () => {
+    const topic = { variable: satVar, annotation: satAnn };
+    const noSignalVar = makeVar('q99', 'q99_internal');
+    const allVars = [
+      topic,
+      { variable: noSignalVar, annotation: ann('attitude', 'satisfaction') },
+    ];
+    // attitude intent gives no score, no value labels, no name pattern
+    const suggestions = suggestBreaks(topic, allVars);
+    expect(suggestions).toHaveLength(0);
   });
 });

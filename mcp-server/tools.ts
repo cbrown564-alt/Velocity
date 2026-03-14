@@ -384,6 +384,34 @@ const TOOLS = [
       required: ['variableIds'],
     },
   },
+  {
+    name: 'velocity_list_variables_by_category',
+    description: 'Filter variables by measurement intent category (e.g. "demographic", "attitude", "behavior"). Much more reliable than keyword search for navigating large datasets. Run velocity_annotate_dataset first.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        category: {
+          type: 'string',
+          enum: ['attitude', 'behavior', 'awareness', 'demographic', 'classification', 'outcome', 'weight', 'identifier', 'open_end', 'other'],
+          description: 'MeasurementIntent category to filter by.',
+        },
+        limit: { type: 'number', description: 'Maximum results to return (default: 50).' },
+      },
+      required: ['category'],
+    },
+  },
+  {
+    name: 'velocity_suggest_breaks',
+    description: 'Suggest good cross-break (column) variables for a given topic (row) variable. Returns ranked candidates scored by demographic intent, cardinality, and naming patterns. Run velocity_annotate_dataset first.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        variableId: { type: 'string', description: 'Variable ID of the topic/row variable.' },
+        limit: { type: 'number', description: 'Maximum suggestions to return (default: 5).' },
+      },
+      required: ['variableId'],
+    },
+  },
 ] as const;
 
 // ---------------------------------------------------------------------------
@@ -636,6 +664,22 @@ export function registerTools(server: Server, engine: VelocityEngine): void {
         case 'velocity_suggest_analyses': {
           const varIds = Array.isArray(a.variableIds) ? (a.variableIds as string[]) : [];
           const result = await engine.suggestAnalyses(varIds);
+          return successResponse(result);
+        }
+
+        case 'velocity_list_variables_by_category': {
+          const result = engine.listVariablesByCategory(
+            String(a.category) as never,
+            { includeUnannotated: true, limit: typeof a.limit === 'number' ? a.limit : undefined }
+          );
+          return successResponse(result);
+        }
+
+        case 'velocity_suggest_breaks': {
+          const result = engine.suggestBreaks(
+            String(a.variableId),
+            { limit: typeof a.limit === 'number' ? a.limit : undefined }
+          );
           return successResponse(result);
         }
 

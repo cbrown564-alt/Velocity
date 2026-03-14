@@ -24,16 +24,18 @@ import type { Slide, SlideSection } from '../types/slides';
 import type { VariableMapping } from '../types/harmonization';
 import type {
   AnalysisSuggestion,
+  BreakSuggestion,
   Concept,
   HarmonizationSuggestion,
+  MeasurementIntent,
   SemanticAnnotation,
   SemanticSearchResult,
 } from '../types/semantic';
 import { autoAnnotate } from '../core/semantic/annotator';
 import { ConceptStore } from '../core/semantic/concepts';
 import { buildConceptsFromAnnotations } from '../core/semantic/conceptDiscovery';
-import { buildSearchIndex, searchVariables } from '../core/semantic/search';
-import { suggestAnalyses, suggestHarmonizations } from '../core/semantic/suggestions';
+import { buildSearchIndex, listVariablesByCategory, searchVariables } from '../core/semantic/search';
+import { suggestAnalyses, suggestBreaks, suggestHarmonizations } from '../core/semantic/suggestions';
 import { recommendChart } from '../services/chartRecommender';
 import { DeckBuilder } from './DeckBuilder';
 import type {
@@ -838,6 +840,49 @@ export class VelocityEngine {
    */
   suggestHarmonizations(): ResultEnvelope<HarmonizationSuggestion[]> {
     return this.wrapSync('suggestHarmonizations', {}, () => suggestHarmonizations(this.conceptStore.listConcepts()));
+  }
+
+  /**
+   * Filter variables by MeasurementIntent category (e.g. 'demographic').
+   * Uses annotation-first with type-based fallback for unannotated datasets.
+   */
+  listVariablesByCategory(
+    category: MeasurementIntent,
+    options?: { includeUnannotated?: boolean; limit?: number }
+  ): ResultEnvelope<SemanticSearchResult[]> {
+    return this.wrapSync('listVariablesByCategory', { category, ...options }, () => {
+      const dataset = this.requireDataset();
+      const concepts = this.conceptStore.listConcepts();
+      const index = buildSearchIndex(
+        dataset.variables,
+        dataset.id,
+        this.semanticAnnotations,
+        concepts
+      );
+      return listVariablesByCategory(index.entries, category, options);
+    });
+  }
+
+  /**
+   * Suggest good cross-break variables for a given topic variable.
+   */
+  suggestBreaks(
+    variableId: string,
+    options?: { limit?: number }
+  ): ResultEnvelope<BreakSuggestion[]> {
+    return this.wrapSync('suggestBreaks', { variableId, ...options }, () => {
+      const dataset = this.requireDataset();
+      const topicVar = this.requireVariable(variableId);
+      const topicAnnotated = {
+        variable: topicVar,
+        annotation: this.semanticAnnotations.get(variableId),
+      };
+      const allAnnotated = dataset.variables.map((v) => ({
+        variable: v,
+        annotation: this.semanticAnnotations.get(v.id),
+      }));
+      return suggestBreaks(topicAnnotated, allAnnotated, options);
+    });
   }
 
   /**

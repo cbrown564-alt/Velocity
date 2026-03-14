@@ -106,6 +106,12 @@ export interface HarmonizationSuggestion {
   rationale: string;
 }
 
+export interface BreakSuggestion {
+  variable: import('./index').Variable;
+  score: number;       // 0–1 suitability
+  rationale: string;
+}
+
 // ============================================================================
 // Session Format v2
 // ============================================================================

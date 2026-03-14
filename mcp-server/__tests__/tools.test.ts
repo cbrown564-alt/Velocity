@@ -303,6 +303,67 @@ describe('velocity_export_session', () => {
   });
 });
 
+describe('velocity_list_variables_by_category', () => {
+  it('calls engine.listVariablesByCategory with category and includeUnannotated', async () => {
+    const engine = makeEngine({
+      listVariablesByCategory: vi.fn().mockReturnValue({
+        data: [{ variable: { id: 'age' }, datasetId: 'ds1', relevance: 0.9, matchedOn: ['category'] }],
+        operation: 'listVariablesByCategory', inputs: {}, durationMs: 1, warnings: [], metadata: {},
+      }),
+    });
+    const result = await callTool(engine, 'velocity_list_variables_by_category', { category: 'demographic' }) as { content: { text: string }[] };
+    expect(engine.listVariablesByCategory).toHaveBeenCalledWith('demographic', { includeUnannotated: true, limit: undefined });
+    const parsed = JSON.parse(result.content[0].text);
+    expect(parsed.data[0].variable.id).toBe('age');
+  });
+
+  it('passes limit when provided', async () => {
+    const engine = makeEngine({
+      listVariablesByCategory: vi.fn().mockReturnValue({
+        data: [], operation: 'listVariablesByCategory', inputs: {}, durationMs: 1, warnings: [], metadata: {},
+      }),
+    });
+    await callTool(engine, 'velocity_list_variables_by_category', { category: 'attitude', limit: 10 });
+    expect(engine.listVariablesByCategory).toHaveBeenCalledWith('attitude', { includeUnannotated: true, limit: 10 });
+  });
+});
+
+describe('velocity_suggest_breaks', () => {
+  it('calls engine.suggestBreaks with variableId', async () => {
+    const engine = makeEngine({
+      suggestBreaks: vi.fn().mockReturnValue({
+        data: [{ variable: { id: 'gender' }, score: 0.85, rationale: 'demographic variable' }],
+        operation: 'suggestBreaks', inputs: {}, durationMs: 1, warnings: [], metadata: {},
+      }),
+    });
+    const result = await callTool(engine, 'velocity_suggest_breaks', { variableId: 'q5_sat' }) as { content: { text: string }[] };
+    expect(engine.suggestBreaks).toHaveBeenCalledWith('q5_sat', { limit: undefined });
+    const parsed = JSON.parse(result.content[0].text);
+    expect(parsed.data[0].variable.id).toBe('gender');
+  });
+
+  it('passes limit when provided', async () => {
+    const engine = makeEngine({
+      suggestBreaks: vi.fn().mockReturnValue({
+        data: [], operation: 'suggestBreaks', inputs: {}, durationMs: 1, warnings: [], metadata: {},
+      }),
+    });
+    await callTool(engine, 'velocity_suggest_breaks', { variableId: 'q1', limit: 3 });
+    expect(engine.suggestBreaks).toHaveBeenCalledWith('q1', { limit: 3 });
+  });
+
+  it('returns isError when engine throws', async () => {
+    const engine = makeEngine({
+      suggestBreaks: vi.fn().mockImplementation(() => {
+        throw new VelocityError('INVALID_VARIABLE', 'Unknown variable: bad_id');
+      }),
+    });
+    const result = await callTool(engine, 'velocity_suggest_breaks', { variableId: 'bad_id' }) as { isError?: boolean; content: { text: string }[] };
+    expect(result.isError).toBe(true);
+    expect(JSON.parse(result.content[0].text).error).toBe('INVALID_VARIABLE');
+  });
+});
+
 describe('unknown tool', () => {
   it('returns isError for unrecognized tool names', async () => {
     const engine = makeEngine();

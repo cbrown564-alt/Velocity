@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { buildSearchIndex, searchVariables, searchVariablesAcrossDatasets } from '../search';
+import { buildSearchIndex, listVariablesByCategory, searchVariables, searchVariablesAcrossDatasets } from '../search';
 import type { Variable } from '../../../types';
 import type { Concept, SemanticAnnotation } from '../../../types/semantic';
 
@@ -166,5 +166,95 @@ describe('searchVariablesAcrossDatasets', () => {
     const index2 = buildIndex();
     const results = searchVariablesAcrossDatasets('a', [index1, index2], 3);
     expect(results.length).toBeLessThanOrEqual(3);
+  });
+});
+
+// ============================================================================
+// listVariablesByCategory
+// ============================================================================
+
+describe('listVariablesByCategory', () => {
+  it('returns variables matching the specified measurement intent', () => {
+    const index = buildIndex();
+    const results = listVariablesByCategory(index.entries, 'demographic');
+    const ids = results.map((r) => r.variable.id);
+    expect(ids).toContain('age');
+    expect(ids).toContain('gender');
+    expect(ids).not.toContain('q5_sat');
+  });
+
+  it('returns attitude variables', () => {
+    const index = buildIndex();
+    const results = listVariablesByCategory(index.entries, 'attitude');
+    const ids = results.map((r) => r.variable.id);
+    expect(ids).toContain('q5_sat');
+    expect(ids).toContain('nps');
+    expect(ids).not.toContain('age');
+  });
+
+  it('sorts by annotation confidence descending', () => {
+    const index = buildIndex();
+    const results = listVariablesByCategory(index.entries, 'demographic');
+    for (let i = 1; i < results.length; i++) {
+      expect(results[i - 1].relevance).toBeGreaterThanOrEqual(results[i].relevance);
+    }
+  });
+
+  it('sets matchedOn to ["category"]', () => {
+    const index = buildIndex();
+    const results = listVariablesByCategory(index.entries, 'demographic');
+    expect(results.length).toBeGreaterThan(0);
+    for (const r of results) {
+      expect(r.matchedOn).toContain('category');
+    }
+  });
+
+  it('returns empty array for category with no matches', () => {
+    const index = buildIndex();
+    const results = listVariablesByCategory(index.entries, 'outcome');
+    expect(results).toHaveLength(0);
+  });
+
+  it('respects limit option', () => {
+    const index = buildIndex();
+    const results = listVariablesByCategory(index.entries, 'demographic', { limit: 1 });
+    expect(results).toHaveLength(1);
+  });
+
+  it('uses fallback for unannotated demographic-like variables when annotation coverage is low', () => {
+    // Create a mostly unannotated dataset with a demographic-like variable
+    const incomeVar = makeVar('income', 'income', 'Household Income', [
+      { value: 1, label: 'Under 25k' },
+      { value: 2, label: '25k-50k' },
+      { value: 3, label: '50k-100k' },
+      { value: 4, label: 'Over 100k' },
+    ]);
+    const otherVar1 = makeVar('q1', 'q1', 'Question 1');
+    const otherVar2 = makeVar('q2', 'q2', 'Question 2');
+
+    // No annotations → coverage = 0 → fallback activates
+    const index = buildSearchIndex([incomeVar, otherVar1, otherVar2], 'ds1', new Map(), []);
+    const results = listVariablesByCategory(index.entries, 'demographic');
+    const ids = results.map((r) => r.variable.id);
+    expect(ids).toContain('income');
+    expect(results[0].matchedOn).toContain('category:fallback');
+  });
+
+  it('does not use fallback when annotation coverage is high', () => {
+    // All variables annotated, income annotated as "other" (not demographic)
+    const incomeVar = makeVar('income', 'income', 'Household Income', [
+      { value: 1, label: 'Low' }, { value: 2, label: 'High' },
+    ]);
+    const otherVar = makeVar('q1', 'q1', 'Question 1');
+
+    const anns = new Map<string, SemanticAnnotation>([
+      ['income', { topic: 'finance', measurementIntent: 'other', source: 'manual', confidence: 1.0 }],
+      ['q1', { topic: 'test', measurementIntent: 'attitude', source: 'manual', confidence: 1.0 }],
+    ]);
+
+    const index = buildSearchIndex([incomeVar, otherVar], 'ds1', anns, []);
+    const results = listVariablesByCategory(index.entries, 'demographic');
+    // income is annotated as 'other', not demographic, and coverage is 100% so no fallback
+    expect(results).toHaveLength(0);
   });
 });

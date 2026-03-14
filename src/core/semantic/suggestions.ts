@@ -10,6 +10,7 @@
 import type { Variable } from '../../types';
 import type {
   AnalysisSuggestion,
+  BreakSuggestion,
   Concept,
   HarmonizationSuggestion,
   SemanticAnnotation,
@@ -19,7 +20,7 @@ import type {
 // Analysis Suggestions
 // ============================================================================
 
-interface AnnotatedVar {
+export interface AnnotatedVar {
   variable: Variable;
   annotation?: SemanticAnnotation;
 }
@@ -239,4 +240,78 @@ export function suggestHarmonizations(concepts: Concept[]): HarmonizationSuggest
   }
 
   return suggestions.sort((a, b) => b.confidence - a.confidence);
+}
+
+// ============================================================================
+// Break Variable Suggestions
+// ============================================================================
+
+const BREAK_NAME_PATTERNS =
+  /\b(age|sex|gender|region|income|education|educ|marital|ethni|race|occupation|employ|hhinc|socio|class)\b/i;
+
+const EXCLUDED_INTENTS = new Set<string>(['weight', 'identifier', 'open_end']);
+
+/**
+ * Given a topic variable, recommends good cross-break variables.
+ * Uses annotation-based heuristics (no ML).
+ */
+export function suggestBreaks(
+  topicVariable: AnnotatedVar,
+  allVars: AnnotatedVar[],
+  options?: { limit?: number }
+): BreakSuggestion[] {
+  const limit = options?.limit ?? 5;
+  const results: BreakSuggestion[] = [];
+
+  for (const candidate of allVars) {
+    // Exclude: same variable as topic
+    if (candidate.variable.id === topicVariable.variable.id) continue;
+
+    // Exclude: weight, identifier, open_end intents
+    const intent = candidate.annotation?.measurementIntent;
+    if (intent && EXCLUDED_INTENTS.has(intent)) continue;
+
+    let score = 0;
+    const reasons: string[] = [];
+
+    // demographic intent → +0.5
+    if (intent === 'demographic') {
+      score += 0.5;
+      reasons.push('demographic variable');
+    }
+
+    // classification intent → +0.3
+    if (intent === 'classification') {
+      score += 0.3;
+      reasons.push('classification variable');
+    }
+
+    // Cardinality scoring
+    const cardinality = candidate.variable.valueLabels.length;
+    if (cardinality >= 2 && cardinality <= 8) {
+      score += 0.2;
+      reasons.push(`good cardinality (${cardinality} values)`);
+    } else if (cardinality >= 9 && cardinality <= 12) {
+      score += 0.1;
+      reasons.push(`acceptable cardinality (${cardinality} values)`);
+    }
+
+    // Name matches common break patterns → +0.15
+    const nameLabel = `${candidate.variable.name} ${candidate.variable.label ?? ''}`;
+    if (BREAK_NAME_PATTERNS.test(nameLabel)) {
+      score += 0.15;
+      reasons.push('name matches common break pattern');
+    }
+
+    if (score > 0) {
+      results.push({
+        variable: candidate.variable,
+        score: Math.round(Math.min(1, score) * 1000) / 1000,
+        rationale: reasons.join('; '),
+      });
+    }
+  }
+
+  results.sort((a, b) => b.score - a.score);
+  return results.slice(0, limit);
 }
