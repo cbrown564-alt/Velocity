@@ -1,0 +1,87 @@
+{
+  "evalId": "EVAL-06",
+  "runId": "run-2026-03-13",
+  "runDate": "2026-03-13",
+  "commitSha": "59fc94d2357b5e2b6deb95b574069892920e1778",
+  "briefPath": "docs/eval_06_stress_wvs_brief.md",
+  "dataset": {
+    "path": "test_data/WVS/WVS_Cross-National_Wave_7_spss_v6_0.sav",
+    "fallbackPath": "test_data/People_s Trust - A Survey-Based Experiment/trust.sav",
+    "rowCount": 97220,
+    "variableCount": 693
+  },
+  "outcome": "success",
+  "outcomePattern": "pattern_7_end_to_end_success",
+  "toolMetrics": {
+    "totalToolCalls": 8,
+    "retries": 0,
+    "externalScriptsWritten": 1
+  },
+  "artifacts": {
+    "deck": {
+      "path": "artifacts/findings_summary.md",
+      "produced": true,
+      "notes": "Primary artifact for this stress eval is a bounded findings summary rather than a deck."
+    },
+    "session": {
+      "path": "artifacts/session.velocity",
+      "produced": true,
+      "notes": "Browser session export capturing the weighted WVS stress analysis state."
+    },
+    "summary": {
+      "path": "artifacts/summary.json",
+      "produced": true
+    }
+  },
+  "scores": [
+    {
+      "layer": "engine",
+      "score": 5,
+      "notes": "WVS passed the metadata gate and then completed the worker-backed chunked v3 load in 21 chunks without parse or stability failure."
+    },
+    {
+      "layer": "mcp_workflow",
+      "score": 2,
+      "notes": "The successful stress evidence is browser-real, but the broader agent-native and CLI story for this exact file still lacks equivalent execution confidence."
+    },
+    {
+      "layer": "semantic_layer",
+      "score": 3,
+      "notes": "Label-level orientation to happiness, trust, and government was quick, but the run did not fully stress open-ended WVS discovery across hundreds of code-heavy variables."
+    },
+    {
+      "layer": "browser_convergence",
+      "score": 4,
+      "notes": "The browser path handled upload, metadata review, full load, weighted analysis, and session export cleanly, though the repeatable harness still uses in-page store actions."
+    },
+    {
+      "layer": "deliverable_layer",
+      "score": 4,
+      "notes": "The run produced a reviewable findings summary, CSV evidence, raw run metadata, and a portable session, but not a more polished first-class stress-report export."
+    },
+    {
+      "layer": "product_defaults",
+      "score": 4,
+      "notes": "The metadata-first large-file guardrail and automatic chunked routing behaved as intended on a hostile dataset, though the extra handoff still adds workflow friction."
+    },
+    {
+      "layer": "agent_prompting",
+      "score": 4,
+      "notes": "Tight scope control kept the stress run bounded and attributable instead of letting WVS sprawl into ad hoc exploration."
+    }
+  ],
+  "notableFindings": [
+    "WVS Wave 7 completed the browser metadata gate, then the full chunked v3 load, without requiring fallback to trust.sav.",
+    "The worker loaded 97,220 rows in 21 chunks and surfaced 693 variables plus 502 variable sets on the app side.",
+    "Bounded weighted analysis showed higher happiness among respondents who said most people can be trusted (90.9% happy or quite happy) than among those who said one must be very careful (84.0%)."
+  ],
+  "blockers": [
+    "This run validates the browser stress path more strongly than the broader agent-native or CLI story for the same WVS file.",
+    "The raw parser metadata count and the surfaced app variable count still need clearer explanation for large-dataset discovery."
+  ],
+  "followUps": [
+    "Freeze this run as the Phase 4 stress baseline and move to S4-EVAL-4 synthesis.",
+    "Bring MCP and CLI WVS ingestion into line with the now-proven browser path.",
+    "Document the heuristic variable-surface expansion layer so large-file discovery remains interpretable."
+  ]
+}

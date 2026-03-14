@@ -1,0 +1,9 @@
+col_value,col_label,row_value,row_label,weighted_count,weighted_pct_within_col
+1,Most people can be trusted,1,Very happy,7267.481,32
+1,Most people can be trusted,2,Quite happy,13376.4,58.9
+1,Most people can be trusted,3,Not very happy,1835.536,8.1
+1,Most people can be trusted,4,Not at all happy,226.768,1
+2,Need to be very careful,1,Very happy,22563.243,31
+2,Need to be very careful,2,Quite happy,38513.973,53
+2,Need to be very careful,3,Not very happy,9783.646,13.5
+2,Need to be very careful,4,Not at all happy,1861.825,2.6

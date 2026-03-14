@@ -1,0 +1,524 @@
+{
+  "dataset": {
+    "key": "wvs",
+    "label": "WVS Wave 7",
+    "path": "test_data/WVS/WVS_Cross-National_Wave_7_spss_v6_0.sav",
+    "rowCount": 97220,
+    "variableCount": 693
+  },
+  "fallbackUsed": false,
+  "attempts": [
+    {
+      "datasetKey": "wvs",
+      "datasetLabel": "WVS Wave 7",
+      "datasetPath": "test_data/WVS/WVS_Cross-National_Wave_7_spss_v6_0.sav",
+      "startedAt": "2026-03-14T08:23:10.903Z",
+      "metadataStage": {
+        "mode": "metadata",
+        "rowCount": 97220,
+        "variableCount": 693,
+        "sampleRowCount": 1000,
+        "metadataOnly": true,
+        "loadDiagnostics": {
+          "isPartial": true,
+          "reason": "sampling",
+          "message": "Loaded using sampled metadata to reduce memory risk. Value labels may be incomplete until full load.",
+          "createdAt": 1773476592446
+        },
+        "variableSetCount": 502,
+        "discovery": [
+          {
+            "term": "happiness",
+            "matches": [
+              {
+                "id": "Q46",
+                "label": "Feeling of happiness"
+              }
+            ]
+          },
+          {
+            "term": "trust",
+            "matches": [
+              {
+                "id": "Q57",
+                "label": "Most people can be trusted"
+              },
+              {
+                "id": "Q58",
+                "label": "Trust: Your family"
+              },
+              {
+                "id": "Q59",
+                "label": "Trust: Your neighborhood"
+              },
+              {
+                "id": "Q60",
+                "label": "Trust: People you know personally"
+              },
+              {
+                "id": "Q61",
+                "label": "Trust: People you meet for the first time"
+              },
+              {
+                "id": "Q62",
+                "label": "Trust: People of another religion"
+              },
+              {
+                "id": "Q63",
+                "label": "Trust: People of another nationality"
+              },
+              {
+                "id": "Q292B",
+                "label": "I am usually cautious about trusting politicians"
+              }
+            ]
+          },
+          {
+            "term": "government",
+            "matches": [
+              {
+                "id": "Q71",
+                "label": "Confidence: The Government"
+              },
+              {
+                "id": "Q108",
+                "label": "Government's vs individual's responsibility"
+              },
+              {
+                "id": "Q177",
+                "label": "Justifiable: Claiming government benefits to which you are not entitled"
+              },
+              {
+                "id": "Q196",
+                "label": "Government has the right: Keep people under video surveillance in public areas"
+              },
+              {
+                "id": "Q197",
+                "label": "Government has the right: Monitor all e-mails and any other information exchanged on the Internet"
+              },
+              {
+                "id": "Q198",
+                "label": "Government has the right: Collect information about anyone living in [COUNTRY] without their knowledge"
+              },
+              {
+                "id": "Q214",
+                "label": "Social activism: Contacting a government official"
+              },
+              {
+                "id": "Q234A",
+                "label": "How much would you say the political system in your country allows people like you to have a say in what the government does?"
+              }
+            ]
+          }
+        ]
+      },
+      "fullLoadStage": {
+        "mode": "dashboard",
+        "rowCount": 97220,
+        "variableCount": 693,
+        "variableSetCount": 502,
+        "metadataOnly": false
+      },
+      "succeeded": true,
+      "failureReason": null,
+      "completedAt": "2026-03-14T08:23:25.643Z"
+    }
+  ],
+  "weightVariable": "W_WEIGHT",
+  "boundedTheme": "Happiness and generalized trust",
+  "variableSetCount": 502,
+  "workspaceDatasets": [
+    {
+      "id": "5d59941e-c52e-40ac-9611-51717881f9c9",
+      "name": "WVS_Cross-National_Wave_7_spss_v6_0.sav",
+      "rowCount": 97220,
+      "tableName": "dataset_5d59941e_c52e_40ac_9611_51717881f9c9"
+    }
+  ],
+  "dialogs": [],
+  "consoleEvents": [
+    {
+      "type": "log",
+      "text": "[DataSlice] Engine already initialized, skipping duplicate init"
+    },
+    {
+      "type": "log",
+      "text": "🦆 [Worker] DuckDB Bundle Selected: {mainModule: http://127.0.0.1:4174/node_modules/@duckdb/duckdb-wasm/dist/duckdb-eh.wasm, mainWorker: http://127.0.0.1:4174/node_modules/@duckdb/duckdb-wasm/dist/duckdb-browser-eh.worker.js, pthreadWorker: null}"
+    },
+    {
+      "type": "log",
+      "text": "[DataSlice] Engine already initialized, skipping duplicate init"
+    },
+    {
+      "type": "log",
+      "text": "🦆 [Worker] DuckDB Bundle Selected: {mainModule: http://127.0.0.1:4174/node_modules/@duckdb/duckdb-wasm/dist/duckdb-eh.wasm, mainWorker: http://127.0.0.1:4174/node_modules/@duckdb/duckdb-wasm/dist/duckdb-browser-eh.worker.js, pthreadWorker: null}"
+    },
+    {
+      "type": "log",
+      "text": "🦆 [Worker] DuckDB Version: v1.4.3"
+    },
+    {
+      "type": "log",
+      "text": "🦆 [Worker] DuckDB opened with OPFS persistence (new): opfs://velocity_data_v1_default.db"
+    },
+    {
+      "type": "log",
+      "text": "🦆 [Worker] DuckDB Initialized"
+    },
+    {
+      "type": "log",
+      "text": "🦆 [Worker] Keepalive started (20s interval)"
+    },
+    {
+      "type": "log",
+      "text": "[DataSlice] Engine ready, OPFS available: true"
+    },
+    {
+      "type": "log",
+      "text": "[DataSlice] No persisted data found"
+    },
+    {
+      "type": "log",
+      "text": "📁 [OPFS] Stored file: WVS_Cross-National_Wave_7_spss_v6_0_1773476590929.sav (176.59 MB)"
+    },
+    {
+      "type": "log",
+      "text": "📁 [App] Stored file in OPFS: WVS_Cross-National_Wave_7_spss_v6_0_1773476590929.sav"
+    },
+    {
+      "type": "log",
+      "text": "📦 [ReadStat] WASM module initialized"
+    },
+    {
+      "type": "log",
+      "text": "📦 [ReadStat] Parsing SAV sample (1000 rows, spread): 176.59 MB"
+    },
+    {
+      "type": "log",
+      "text": "📦 [ReadStat] Allocated 185163494 bytes at ptr 5394648"
+    },
+    {
+      "type": "log",
+      "text": "📦 [ReadStat] Copied data to WASM memory, calling parse_sav_sample..."
+    },
+    {
+      "type": "log",
+      "text": "🦆 [Worker] Loaded SAV sample: 1000/97220 rows (spread), 693 variables in 1020.00ms"
+    },
+    {
+      "type": "log",
+      "text": "📊 [DataSlice] SAV sample loaded: 1000/97220 rows (spread), 693 variables in 1020.00ms"
+    },
+    {
+      "type": "log",
+      "text": "📁 [App] Reading from OPFS: WVS_Cross-National_Wave_7_spss_v6_0_1773476590929.sav"
+    },
+    {
+      "type": "log",
+      "text": "📁 [OPFS] Read file: WVS_Cross-National_Wave_7_spss_v6_0_1773476590929.sav (176.59 MB)"
+    },
+    {
+      "type": "log",
+      "text": "🦆 [Worker] Auto-routing to chunked mode (176.6 MB > 50 MB threshold)"
+    },
+    {
+      "type": "log",
+      "text": "🦆 [Worker] Starting single-pass SAV load v3: 176.6 MB, chunk size 5000, credits 2/4"
+    },
+    {
+      "type": "log",
+      "text": "📦 [ReadStat] Streaming parse SAV: 176.59 MB, batch size 5000"
+    },
+    {
+      "type": "log",
+      "text": "📦 [ReadStat] Metadata extracted: 613 variables, 97220 rows. Streaming..."
+    },
+    {
+      "type": "log",
+      "text": "📊 [Worker] V3 chunk 5: 25000/97220 rows (26%), 392ms"
+    },
+    {
+      "type": "log",
+      "text": "📊 [Worker] V3 chunk 10: 50000/97220 rows (51%), 487ms"
+    },
+    {
+      "type": "log",
+      "text": "📊 [Worker] V3 chunk 15: 75000/97220 rows (77%), 386ms"
+    },
+    {
+      "type": "log",
+      "text": "📦 [ReadStat] Streaming complete: 97220 rows in 21 batches, 12462ms"
+    },
+    {
+      "type": "log",
+      "text": "📊 [Worker] V3 chunk 20: 97000/97220 rows (100%), 398ms"
+    },
+    {
+      "type": "log",
+      "text": "📊 [Worker] V3 chunk 21: 97220/97220 rows (100%), 49ms"
+    },
+    {
+      "type": "log",
+      "text": "🦆 [Worker] Loaded SAV (single-pass v3): 97220 rows in 21 chunks, 693 variables in 12825.30ms (bridge queue max 2, produced 21, consumed 21)"
+    },
+    {
+      "type": "log",
+      "text": "📊 [DataSlice] Detected 40 grid sets, 0 multi-response sets"
+    },
+    {
+      "type": "log",
+      "text": "📊 [DataSlice] SAV loaded: 97220 rows, 693 variables, 502 variable sets in 12825.30ms"
+    }
+  ],
+  "analysisResults": [
+    {
+      "id": "happiness_overall",
+      "rowVariables": [
+        {
+          "id": "Q46",
+          "label": "Feeling of happiness",
+          "valueLabels": [
+            {
+              "value": "-5",
+              "label": "Other missing; Multiple answers Mail (EVS)"
+            },
+            {
+              "value": "-4",
+              "label": "Not asked"
+            },
+            {
+              "value": "-2",
+              "label": "No answer"
+            },
+            {
+              "value": "-1",
+              "label": "Don't know"
+            },
+            {
+              "value": "1",
+              "label": "Very happy"
+            },
+            {
+              "value": "2",
+              "label": "Quite happy"
+            },
+            {
+              "value": "3",
+              "label": "Not very happy"
+            },
+            {
+              "value": "4",
+              "label": "Not at all happy"
+            }
+          ],
+          "missingValues": {
+            "discrete": [
+              -1,
+              -2,
+              -5
+            ],
+            "range": {
+              "low": -5,
+              "high": -1
+            }
+          }
+        }
+      ],
+      "colVariable": null,
+      "tableStats": null,
+      "summary": [
+        {
+          "value": "1",
+          "label": "Very happy",
+          "weightedCount": 30144.494,
+          "pct": 31.2
+        },
+        {
+          "value": "2",
+          "label": "Quite happy",
+          "weightedCount": 52508.619,
+          "pct": 54.4
+        },
+        {
+          "value": "3",
+          "label": "Not very happy",
+          "weightedCount": 11808.229,
+          "pct": 12.2
+        },
+        {
+          "value": "4",
+          "label": "Not at all happy",
+          "weightedCount": 2120.749,
+          "pct": 2.2
+        }
+      ]
+    },
+    {
+      "id": "happiness_by_generalized_trust",
+      "rowVariables": [
+        {
+          "id": "Q46",
+          "label": "Feeling of happiness",
+          "valueLabels": [
+            {
+              "value": "-5",
+              "label": "Other missing; Multiple answers Mail (EVS)"
+            },
+            {
+              "value": "-4",
+              "label": "Not asked"
+            },
+            {
+              "value": "-2",
+              "label": "No answer"
+            },
+            {
+              "value": "-1",
+              "label": "Don't know"
+            },
+            {
+              "value": "1",
+              "label": "Very happy"
+            },
+            {
+              "value": "2",
+              "label": "Quite happy"
+            },
+            {
+              "value": "3",
+              "label": "Not very happy"
+            },
+            {
+              "value": "4",
+              "label": "Not at all happy"
+            }
+          ],
+          "missingValues": {
+            "discrete": [
+              -1,
+              -2,
+              -5
+            ],
+            "range": {
+              "low": -5,
+              "high": -1
+            }
+          }
+        }
+      ],
+      "colVariable": {
+        "id": "Q57",
+        "label": "Most people can be trusted",
+        "valueLabels": [
+          {
+            "value": "-5",
+            "label": "Other missing; Multiple answers Mail (EVS)"
+          },
+          {
+            "value": "-4",
+            "label": "Not asked"
+          },
+          {
+            "value": "-2",
+            "label": "No answer"
+          },
+          {
+            "value": "-1",
+            "label": "Don't know"
+          },
+          {
+            "value": "1",
+            "label": "Most people can be trusted"
+          },
+          {
+            "value": "2",
+            "label": "Need to be very careful"
+          }
+        ],
+        "missingValues": {
+          "discrete": [
+            -2,
+            -1,
+            -5
+          ],
+          "range": {
+            "low": -5,
+            "high": -1
+          }
+        }
+      },
+      "tableStats": {
+        "chiSquare": {
+          "chiSquare": 720.5074163571944,
+          "df": 3,
+          "pValue": 0,
+          "cramersV": 0.08689190822393894
+        }
+      },
+      "summary": [
+        {
+          "colValue": "1",
+          "colLabel": "Most people can be trusted",
+          "totalWeightedCount": 22706.184,
+          "categories": [
+            {
+              "rowValue": "1",
+              "rowLabel": "Very happy",
+              "weightedCount": 7267.481,
+              "pct": 32
+            },
+            {
+              "rowValue": "2",
+              "rowLabel": "Quite happy",
+              "weightedCount": 13376.4,
+              "pct": 58.9
+            },
+            {
+              "rowValue": "3",
+              "rowLabel": "Not very happy",
+              "weightedCount": 1835.536,
+              "pct": 8.1
+            },
+            {
+              "rowValue": "4",
+              "rowLabel": "Not at all happy",
+              "weightedCount": 226.768,
+              "pct": 1
+            }
+          ]
+        },
+        {
+          "colValue": "2",
+          "colLabel": "Need to be very careful",
+          "totalWeightedCount": 72722.687,
+          "categories": [
+            {
+              "rowValue": "1",
+              "rowLabel": "Very happy",
+              "weightedCount": 22563.243,
+              "pct": 31
+            },
+            {
+              "rowValue": "2",
+              "rowLabel": "Quite happy",
+              "weightedCount": 38513.973,
+              "pct": 53
+            },
+            {
+              "rowValue": "3",
+              "rowLabel": "Not very happy",
+              "weightedCount": 9783.646,
+              "pct": 13.5
+            },
+            {
+              "rowValue": "4",
+              "rowLabel": "Not at all happy",
+              "weightedCount": 1861.825,
+              "pct": 2.6
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

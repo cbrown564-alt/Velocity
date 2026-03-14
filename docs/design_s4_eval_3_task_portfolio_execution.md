@@ -8,7 +8,7 @@ S4-EVAL-3 executes the full six-brief Phase 4 task portfolio (`EVAL-01` through 
 - Output B: capability-gap review (`gap_review.md`)
 - Structured run metadata (`artifacts/summary.json`)
 
-This stream is now an in-flight execution brief, not a pre-run kickoff note. `EVAL-01` through `EVAL-05` now have dated run evidence on disk and should be treated as the current locked baselines for deck, discovery, handoff, controlled convergence, and bounded harmonization.
+This stream is now an in-flight execution brief, not a pre-run kickoff note. `EVAL-01` through `EVAL-06` now have dated run evidence on disk and should be treated as the current locked baselines for deck, discovery, handoff, controlled convergence, bounded harmonization, and stress.
 
 **Done checks** (from the Phase 4 plan):
 - Each task family (A-F) has at least one executed eval
@@ -23,6 +23,7 @@ This stream is now an in-flight execution brief, not a pre-run kickoff note. `EV
 - `EVAL-03` (`evals/eval-03/runs/run-2026-03-13/`): successful browser import/refinement/re-export round-trip on the `EVAL-01` `sleep.sav` session; fixed browser semantic-state loss on session export
 - `EVAL-04` (`evals/eval-04/runs/run-2026-03-13/`): successful controlled browser-vs-MCP 5-slide convergence comparison on `sleep.sav`; outputs were materially comparable, with one remaining top-level session-state mismatch
 - `EVAL-05` (`evals/eval-05/runs/run-2026-03-13/`): successful bounded browser harmonization run on adjacent ELSA `wave_4_ifs_derived_variables.sav` and `wave_5_ifs_derived_variables.sav`; confirmed an exact `srh3_hrs` mapping, built a harmonized output, and exported a workspace-aware session
+- `EVAL-06` (`evals/eval-06/runs/run-2026-03-13/`): successful WVS Wave 7 stress run through the browser metadata gate and full chunked v3 load; produced a bounded weighted findings summary on happiness and generalized trust without activating the Trust fallback
 
 **What changed during S4-EVAL-3 already:**
 - The stream is no longer "execution only" in the strictest sense. `EVAL-01` discovered that MCP exposed session export but not deck commit, so `velocity_commit_deck` was added and covered in:
@@ -37,7 +38,7 @@ This stream is now an in-flight execution brief, not a pre-run kickoff note. `EV
 - MCP deck/session round-trip is now real on both a small survey (`EVAL-01`) and a 654-variable weighted survey (`EVAL-02`)
 - Browser handoff and controlled convergence now both have executable `sleep.sav` evidence (`EVAL-03`, `EVAL-04`), and `EVAL-04` provides the first narrow convergence baseline where browser and MCP artifacts are materially comparable
 - Browser harmonization is now execution-real on a bounded adjacent-wave slice (`EVAL-05`), though the strongest current path is still browser-native rather than MCP-native
-- Remaining execution work is now concentrated in family `F`: stress
+- Browser stress execution is now real on WVS itself (`EVAL-06`), completing the full `A-F` task-family portfolio
 
 ## 3. Portfolio Status
 
@@ -48,15 +49,11 @@ This stream is now an in-flight execution brief, not a pre-run kickoff note. `EV
 | `EVAL-03` | C (handoff) | Reuse `EVAL-01` session | Done | Browser import, additive refinement, and re-export now work on `sleep.sav`; semantic-state loss was fixed during execution | Freeze as the current handoff baseline |
 | `EVAL-04` | D (convergence) | `test_data/sleep.sav` | Done | Browser and MCP produced materially comparable 5-slide deck/session artifacts; remaining gap is top-level working-state parity and last-mile editability | Carry the named gaps into `S4-EVAL-4` and move execution to `EVAL-05` |
 | `EVAL-05` | E (harmonization) | `test_data/English Longitudinal Study of Ageing/` | Done | Adjacent ELSA IFS-derived files can be harmonized through the browser workspace with a reviewable single-construct confirmation flow | Freeze as the current bounded harmonization baseline and move execution to `EVAL-06` |
-| `EVAL-06` | F (stress) | `test_data/WVS/WVS_Cross-National_Wave_7_spss_v6_0.sav` with Trust fallback | Pending | Best stress case remains WVS; fallback path is ready if ingestion fails | Requires a quick viability check, then immediate fallback if blocked |
+| `EVAL-06` | F (stress) | `test_data/WVS/WVS_Cross-National_Wave_7_spss_v6_0.sav` with Trust fallback | Done | WVS completed the browser metadata gate and full chunked load, then produced a bounded weighted findings package without fallback | Freeze as the stress baseline and move to `S4-EVAL-4` synthesis |
 
 ## 4. Remaining Execution Plan
 
-**Sequencing:** keep the original dependency-first order. With harmonization now executed, the remaining sequence begins at stress.
-
-| Order | Eval | Why now | Success signal |
-|---|---|---|---|
-| 1 | `EVAL-06` | Final resilience / scale pass after deck, discovery, handoff, convergence, and harmonization all have executed baselines | WVS yields a bounded analysis, or fallback activates cleanly with documented evidence |
+Execution sequencing is complete. The remaining work has shifted from portfolio execution to interpretation and synthesis in `S4-EVAL-4` and `S4-EVAL-5`.
 
 ### Recommended execution details
 
@@ -69,9 +66,9 @@ This stream is now an in-flight execution brief, not a pre-run kickoff note. `EV
 
 #### `EVAL-06`
 
-- Attempt the WVS file first and make a quick go/no-go call in the first 5-10 workflow steps
-- If parsing or viability fails, switch immediately to `test_data/People_s Trust - A Survey-Based Experiment/trust.sav`
-- Preserve the exact WVS failure in both `process_log.md` and `artifacts/summary.json`
+- Attempted WVS first and made the go/no-go call from the metadata gate in the first workflow steps
+- WVS remained viable, so `test_data/People_s Trust - A Survey-Based Experiment/trust.sav` was not used
+- Full worker-backed chunked v3 load completed in `21` chunks, and the bounded findings package focused on `Q46` happiness by `Q57` generalized trust with `W_WEIGHT`
 
 ## 5. Artifact Contract Per Eval
 
@@ -134,16 +131,14 @@ S4-EVAL-3 is complete when:
 
 ## 10. Recommended Immediate Next Action
 
-**Execute `EVAL-06` next, attempting WVS first and falling back immediately to Trust if viability fails.**
+**Move to `S4-EVAL-4` and synthesize the gap classes from the now-complete six-run portfolio.**
 
 Why this is the right next move:
 
-- `EVAL-01` through `EVAL-05` now cover decking, large-survey discovery, handoff, controlled convergence, and bounded harmonization
-- every task family except stress now has executed evidence on disk
-- `EVAL-06` is the final open execution family before `S4-EVAL-4` can synthesize the remaining gaps
-- executing it now preserves the dependency-first intent of the original plan
-
-If WVS is viable in the first 5-10 workflow steps, keep the run there. If not, switch immediately to `trust.sav` and preserve the exact WVS failure as product evidence.
+- `EVAL-01` through `EVAL-06` now cover discovery, deck authoring, handoff, convergence, harmonization, and stress
+- every task family (`A-F`) now has executed evidence on disk
+- the final stress family completed on WVS itself rather than requiring fallback
+- the program's open questions have shifted from "can the intended path execute?" to "what class of intervention does each remaining gap require?"
 
 ## 11. Reference Documents
 
@@ -164,3 +159,5 @@ If WVS is viable in the first 5-10 workflow steps, keep the run there. If not, s
 | `evals/eval-01/runs/run-2026-03-13/gap_review.md` | `EVAL-01` strategic interpretation |
 | `evals/eval-02/runs/run-2026-03-13/process_log.md` | Current large-survey MCP baseline |
 | `evals/eval-02/runs/run-2026-03-13/gap_review.md` | `EVAL-02` strategic interpretation |
+| `evals/eval-06/runs/run-2026-03-13/process_log.md` | Current WVS stress baseline |
+| `evals/eval-06/runs/run-2026-03-13/gap_review.md` | `EVAL-06` strategic interpretation |
