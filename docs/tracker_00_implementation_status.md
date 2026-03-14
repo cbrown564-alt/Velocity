@@ -43,6 +43,11 @@ graph TD
   S4EVAL3 --> S4EVAL4["S4-EVAL-4 Capability Gap Review"]
   S4EVAL4 --> S4EVAL5["S4-EVAL-5 Strategy Synthesis + Baselines"]
 
+  S4EVAL5 --> S4DISC1["S4-DISC-1 Category-Aware Discovery"]
+  S4EVAL5 --> S4MCP1["S4-MCP-1 Workspace MCP Tools"]
+  S4EVAL5 --> S4MCP2["S4-MCP-2 Deck Transport Resilience"]
+  S4DISC1 --> S4DEF1["S4-DEF-1 Recommended Breaks + Warnings"]
+
   S3SEM1 --> S5HARM1["S5-HARM-1 Harmonization Workspace"]
   S5HARM1 --> S5R1["S5-R-1 WebR Bridge"]
   S4EVAL5 --> S5R1
@@ -57,7 +62,7 @@ graph TD
   S7CLOUD1 --> S7CLOUD2["S7-CLOUD-2 Direct Data Imports"]
 ```
 
-S2-STAT-1 through S2-STAT-4 are resolved. S2-EXP-1 and S2-EXP-2 are done. Phase 3 critical path delivery is complete. The active critical path is now the dedicated Phase 4 agent-capability validation sequence before more major downstream expansion. `S4-EVAL-3` is now complete: `EVAL-01` through `EVAL-06` all have executable evidence packages on disk. `S4-EVAL-4` is now complete: the cross-cutting capability gap review classifies the engine as validated (mean 4.7), identifies semantic discovery (mean 3.0) and MCP workflow breadth (mean 3.0) as the primary capability expansion gaps, and recommends category-aware discovery + workspace MCP tools as the P1/P2 next investments. No layer requires interface re-engineering or scope revision. The semantic option study recommends Option A+E (annotation-type filters + guided discovery) over embeddings or RAG. Runtime/workspace/harmonization work has shifted to Phase 5, AI work to Phase 6, and cloud work to Phase 7.
+S2-STAT-1 through S2-STAT-4 are resolved. S2-EXP-1 and S2-EXP-2 are done. Phase 3 critical path delivery is complete. **Phase 4 agent-capability validation is now complete.** All five workstreams (`S4-EVAL-1` through `S4-EVAL-5`) are Done. The phase synthesis validates the engine thesis (mean 4.7), identifies semantic discovery (mean 3.0) and MCP workflow breadth (mean 3.0) as the primary capability expansion gaps, and freezes four benchmark baselines (EVAL-01, 02, 04, 06). The honest product claim: Velocity is a strong analytical backend with narrow browser-agent convergence, not yet a first-class agent interface — the gap is discovery, MCP breadth, and defaults. The active critical path is now the post-validation follow-through sequence (`S4-DISC-1 -> S4-DEF-1`, `S4-MCP-1`, `S4-MCP-2`) before Phase 5 expansion. Runtime/workspace/harmonization work has shifted to Phase 5, AI work to Phase 6, and cloud work to Phase 7.
 
 ## 4. Execution Board
 
@@ -69,9 +74,18 @@ S2-STAT-1 through S2-STAT-4 are resolved. S2-EXP-1 and S2-EXP-2 are done. Phase 
 | S4-EVAL-2 | Workflow Validation | Intended-path readiness: MCP setup reliability, session round-trip clarity, engine/tool contract consistency, workflow docs alignment, artifact capture | S4-EVAL-1 | Done | Yes | T,L,U,I,A | `.claude/settings.json`, `scripts/velocity-mcp-setup.mjs`, `src/engine/VelocityEngine.ts`, `src/engine/__tests__/session-roundtrip.test.ts`, `mcp-server/tools.ts`, `docs/guide_agent_quickstart.md`, `docs/playbooks/agent_analysis_workflow.md`, `evals/README.md`, `docs/eval_00_run_summary_schema.ts`, `docs/eval_03_session_handoff_roundtrip_brief.md`, `docs/eval_04_browser_vs_agent_convergence_brief.md`, `docs/eval_05_cross_wave_harmonization_brief.md`, `docs/eval_06_stress_wvs_brief.md` |
 | S4-EVAL-3 | Eval Execution | Executed task portfolio across discovery, deck authoring, handoff, convergence, harmonization, and stress cases with standardized outputs | S4-EVAL-2 | Done | Yes | U,I,A | `docs/design_s4_eval_3_task_portfolio_execution.md`, `evals/eval-01/runs/run-2026-03-13/brief.md`, `evals/eval-01/runs/run-2026-03-13/process_log.md`, `evals/eval-01/runs/run-2026-03-13/scorecard.md`, `evals/eval-01/runs/run-2026-03-13/gap_review.md`, `evals/eval-01/runs/run-2026-03-13/artifacts/summary.json`, `evals/eval-02/runs/run-2026-03-13/brief.md`, `evals/eval-02/runs/run-2026-03-13/process_log.md`, `evals/eval-02/runs/run-2026-03-13/scorecard.md`, `evals/eval-02/runs/run-2026-03-13/gap_review.md`, `evals/eval-02/runs/run-2026-03-13/artifacts/summary.json`, `evals/eval-03/runs/run-2026-03-13/brief.md`, `evals/eval-03/runs/run-2026-03-13/process_log.md`, `evals/eval-03/runs/run-2026-03-13/scorecard.md`, `evals/eval-03/runs/run-2026-03-13/gap_review.md`, `evals/eval-03/runs/run-2026-03-13/artifacts/summary.json`, `evals/eval-04/runs/run-2026-03-13/brief.md`, `evals/eval-04/runs/run-2026-03-13/process_log.md`, `evals/eval-04/runs/run-2026-03-13/scorecard.md`, `evals/eval-04/runs/run-2026-03-13/gap_review.md`, `evals/eval-04/runs/run-2026-03-13/artifacts/summary.json`, `evals/eval-05/runs/run-2026-03-13/brief.md`, `evals/eval-05/runs/run-2026-03-13/process_log.md`, `evals/eval-05/runs/run-2026-03-13/scorecard.md`, `evals/eval-05/runs/run-2026-03-13/gap_review.md`, `evals/eval-05/runs/run-2026-03-13/artifacts/summary.json`, `evals/eval-06/runs/run-2026-03-13/brief.md`, `evals/eval-06/runs/run-2026-03-13/process_log.md`, `evals/eval-06/runs/run-2026-03-13/scorecard.md`, `evals/eval-06/runs/run-2026-03-13/gap_review.md`, `evals/eval-06/runs/run-2026-03-13/artifacts/summary.json`, `src/App.tsx`, `src/services/sessionSemanticState.ts`, `src/services/sessionSemanticState.test.ts`, `mcp-server/tools.ts`, `mcp-server/__tests__/tools.test.ts`, `tests/e2e/agentWorkflow.test.ts`, `docs/guide_agent_quickstart.md`, `docs/playbooks/agent_analysis_workflow.md`, `scripts/run-eval-06.mjs` |
 | S4-EVAL-4 | Capability Review | Per-eval strategic assessments that classify gaps as rough-edge, capability expansion, interface re-engineering, or scope/thesis revision, including semantic option studies | S4-EVAL-3 | Done | No | A | `docs/design_s4_eval_4_capability_gap_review.md`, `docs/eval_s4_eval_4_cross_cutting_gap_review.md` |
-| S4-EVAL-5 | Strategy | Phase synthesis: validated claims, unvalidated claims, frozen benchmark baselines, and roadmap reset for post-validation work | S4-EVAL-4 | Not started | No | A | - |
+| S4-EVAL-5 | Strategy | Phase synthesis: validated claims, unvalidated claims, frozen benchmark baselines, and roadmap reset for post-validation work | S4-EVAL-4 | Done | No | A | `docs/eval_s4_eval_5_phase_synthesis.md` |
 
-### 4.2 Next After Validation (Phase 5)
+### 4.2 Post-Validation Priority (Phase 4 Follow-Through)
+
+| ID | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| S4-DISC-1 | Discovery | Category-aware discovery: annotation-type filters, `listVariablesByCategory` engine method + MCP tool, guided "suggest breaks for topic X" flow | S4-EVAL-5 | Not started | Yes | T,L,U,I,A | - |
+| S4-MCP-1 | MCP | Workspace-aware MCP: `velocity_load_metadata` + `velocity_load_full` two-step flow; multi-dataset workspace tools | S4-EVAL-5 | Not started | Yes | T,L,U,I,A | - |
+| S4-DEF-1 | Defaults | Recommended break variables after topic selection; false-positive weight warnings; high-cardinality guardrails | S4-DISC-1 | Not started | Yes | T,L,U,I,A | - |
+| S4-MCP-2 | MCP | Deck build transport resilience: stream or chunk `buildDeck` responses to avoid stdio OOM | S4-EVAL-5 | Not started | Yes | T,L,U,A | - |
+
+### 4.3 Next After Validation (Phase 5)
 
 | ID | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -81,7 +95,7 @@ S2-STAT-1 through S2-STAT-4 are resolved. S2-EXP-1 and S2-EXP-2 are done. Phase 
 | S5-PREP-1 | Data Prep | Recipe manager + time travel | S5-R-1 (if R-backed steps), else S5-HARM-1; informed by S4-EVAL-5 | Not started | Yes | T,L,U,I,A | - |
 | S5-PREP-2 | Data Prep | Block formula builder + programming-by-example | S5-PREP-1 | Not started | Yes | T,L,U,I,A | - |
 
-### 4.3 Later (Phase 6-7)
+### 4.4 Later (Phase 6-7)
 
 | ID | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -91,7 +105,7 @@ S2-STAT-1 through S2-STAT-4 are resolved. S2-EXP-1 and S2-EXP-2 are done. Phase 
 | S7-CLOUD-1 | Cloud | Realtime collaboration backend + UI integration | S6-AI-3 | Not started | Yes | T,L,U,I,A | - |
 | S7-CLOUD-2 | Cloud | Direct survey platform imports via backend proxy | S7-CLOUD-1 | Not started | Yes | T,L,U,I,A | - |
 
-### 4.4 Recent Delivered (Last 20 Commits Snapshot)
+### 4.5 Recent Delivered (Last 20 Commits Snapshot)
 
 Snapshot reference window: commits on February 5, 2026 through March 11, 2026.
 

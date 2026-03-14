@@ -37,15 +37,17 @@ For execution details and dependencies, use:
 
 ## 2.1 Current Reality Check
 
-As of the Pivot to AI Agents (March 2026), implementation progress includes:
+As of March 2026, Phase 4 Agent Capability Validation is **complete**. Key findings:
 
-- **Browser Convergence Underway:** The React UI is being refactored to consume the new `VelocityEngine` headless core.
-- **Agent First Focus:** Phase 4 is explicitly dedicated to proving autonomous agents can operate the application via MCP before building further UI features.
-- **Export & Sessions:** `.velocity` session files and `pptxgenjs` deck generation have moved to the engine layer to support machine-to-machine handoffs.
+- **Engine validated:** Mean score 4.7/5 across six eval families. Computation, provenance, export, and session mechanics all work.
+- **Discovery and MCP breadth are the primary gaps:** Semantic discovery (mean 3.0) and MCP workflow coverage (mean 3.0) need capability expansion. Category-aware discovery and workspace MCP tools are the P1/P2 next investments.
+- **No architecture rewrite needed:** All gaps are capability expansion within the current thesis. The product direction is correct; the agent-guidance layers need to catch up with the computational substrate.
+- **Four benchmark baselines frozen:** EVAL-01 (small deck), EVAL-02 (large survey), EVAL-04 (convergence), EVAL-06 (stress).
 
 Implication:
-- The strategic critical path is **Phase 4 Agent Capability Validation**.
-- All feature additions must be evaluated against the question: "Can an AI agent use this autonomously?"
+- The strategic critical path is now **post-validation follow-through** (`S4-DISC-1`, `S4-MCP-1`, `S4-DEF-1`, `S4-MCP-2`) before Phase 5 expansion.
+- All feature additions must be evaluated against the question: "Does this close a validated gap from Phase 4?"
+- See `docs/eval_s4_eval_5_phase_synthesis.md` for the full decision package.
 
 ## 3. Scope Governance
 
