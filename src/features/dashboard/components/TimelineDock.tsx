@@ -33,6 +33,7 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import { Plus, BarChart3, Table2, Copy, Trash2 } from 'lucide-react';
 import { useVelocityStore } from '../../../store';
+import { resolveSlideTitle } from '../../../core/export/resolveSlideDefaults';
 import { Slide, SlideSection, SlideAnalysisState } from '../../../types/slides';
 import { ConfirmModal } from '../../../components/overlays/ConfirmModal';
 
@@ -83,19 +84,33 @@ export function getSlideDisplayLabel(
     variableSets: Array<{ id: string; name: string }> = [],
     currentTableConfig?: { rowVars: string[]; colVar: string | null }
 ): string {
+    const hasCustomTitle = Boolean(slide.title && slide.title !== 'New Slide');
+    if (hasCustomTitle) {
+        return slide.title;
+    }
+
     const sourceState = currentTableConfig ?? slide.analysisState;
     const { rowVars, colVar } = sourceState;
+    const rowVariables = rowVars.map((id) => {
+        const variableSet = variableSets.find((value) => value.id === id);
+        return {
+            id,
+            name: variableSet?.name || id,
+            label: variableSet?.name || id,
+        };
+    });
+    const columnVariable = colVar
+        ? (() => {
+            const variableSet = variableSets.find((value) => value.id === colVar);
+            return {
+                id: colVar,
+                name: variableSet?.name || colVar,
+                label: variableSet?.name || colVar,
+            };
+        })()
+        : null;
 
-    if (rowVars.length === 0) return 'New Slide';
-
-    const r1 = rowVars[0];
-    const r1Name = variableSets.find(v => v.id === r1)?.name || r1;
-
-    if (colVar) {
-        const cName = variableSets.find(v => v.id === colVar)?.name || colVar;
-        return `${r1Name} x ${cName}`;
-    }
-    return r1Name;
+    return resolveSlideTitle(rowVariables, columnVariable);
 }
 
 const SlideThumb: React.FC<SlideThumbProps> = ({ slide, index, isActive, hasUnsavedChanges, canDelete, section, variableSets = [], currentTableConfig, onClick, onDuplicate, onDelete }) => {

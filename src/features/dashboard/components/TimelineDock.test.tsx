@@ -1,6 +1,6 @@
 import React from 'react';
 import { describe, it, expect, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import { TimelineDock } from './TimelineDock';
 import { useVelocityStore } from '../../../store';
 import type { Slide } from '../../../types/slides';
@@ -75,5 +75,16 @@ describe('TimelineDock', () => {
         render(<TimelineDock />);
 
         expect(screen.getAllByText('Second Label').length).toBeGreaterThan(0);
+    });
+
+    it('updates the active slide thumbnail label when the slide title changes', () => {
+        render(<TimelineDock />);
+
+        act(() => {
+            useVelocityStore.getState().updateSlideTitle('slide-1', 'Renamed Slide');
+        });
+
+        expect(screen.getByText('Renamed Slide')).toBeInTheDocument();
+        expect(screen.queryByText('Live Label')).not.toBeInTheDocument();
     });
 });
