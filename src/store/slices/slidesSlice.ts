@@ -279,7 +279,9 @@ export const createSlidesSlice: SlidesSliceCreator = (set, get) => ({
 
             // Trigger analysis re-run
             if (state.runAnalysis) {
-                state.runAnalysis();
+                void state.runAnalysis().catch((error) => {
+                    console.warn('[SlidesSlice] Failed to rerun analysis while restoring slide:', error);
+                });
             }
         }
     },

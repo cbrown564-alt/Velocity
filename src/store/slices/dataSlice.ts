@@ -218,7 +218,7 @@ export interface DataSlice {
     flushPersistedData: () => Promise<void>;
     restoreFromPersistence: () => void;
     discardPersistedData: () => Promise<void>;
-    rehydrateDatasetFromOpfs: () => Promise<void>;
+    rehydrateDatasetFromOpfs: (options?: { forceReload?: boolean }) => Promise<void>;
     loadCSV: (fileName: string, content: string) => Promise<void>;
     loadSAV: (fileName: string, buffer: ArrayBuffer, options?: { datasetId?: string; opfsFileKey?: string }) => Promise<void>;
     loadSAVMetadata: (fileName: string, buffer: ArrayBuffer) => Promise<void>;
@@ -306,6 +306,7 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                         persistenceState: 'corrupt',
                         persistenceError: msg.message || 'OPFS database corruption detected',
                         opfsAvailable: false,
+                        persistedDataInfo: null,
                     });
                 },
             });
@@ -379,6 +380,7 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                         persistenceState: 'corrupt',
                         persistenceError: msg.message || 'OPFS database corruption detected',
                         opfsAvailable: false,
+                        persistedDataInfo: null,
                     });
                 },
             });
@@ -431,7 +433,9 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                 console.log('[DataSlice] No persisted data found');
             }
         } catch (error: any) {
-            set({ persistenceState: 'ready' });
+            if (get().persistenceState !== 'corrupt') {
+                set({ persistenceState: 'ready' });
+            }
             throw error;
         }
     },
@@ -465,22 +469,26 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
 
     // Rehydrate DuckDB data from persisted source file in OPFS (best-effort).
     // This is the local-first fallback when DuckDB OPFS DB persistence is unavailable/corrupt.
-    rehydrateDatasetFromOpfs: async () => {
+    rehydrateDatasetFromOpfs: async (options?: { forceReload?: boolean }) => {
         const { engineProxy, dataset } = get();
         if (!engineProxy) throw new Error('Engine not initialized');
         if (!dataset?.opfsFileKey) throw new Error('Dataset has no OPFS source key');
 
-        try {
-            const status = await engineProxy.ping();
-            if (status.hasData) {
-                const runAnalysis = (get() as any).runAnalysis as undefined | (() => Promise<void>);
-                if (typeof runAnalysis === 'function') {
-                    void runAnalysis();
+        if (!options?.forceReload) {
+            try {
+                const status = await engineProxy.ping();
+                if (status.hasData) {
+                    const runAnalysis = (get() as any).runAnalysis as undefined | (() => Promise<void>);
+                    if (typeof runAnalysis === 'function') {
+                        void runAnalysis().catch((error) => {
+                            console.warn('[DataSlice] Analysis replay failed during OPFS rehydration shortcut:', error);
+                        });
+                    }
+                    return;
                 }
-                return;
+            } catch {
+                // Ping failed, proceed with rehydration
             }
-        } catch {
-            // Ping failed, proceed with rehydration
         }
 
         console.log(`[DataSlice] Rehydrating DuckDB from OPFS source: ${dataset.opfsFileKey}`);
@@ -545,7 +553,9 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
             set({ persistenceState: 'ready' });
             const runAnalysis = (get() as any).runAnalysis as undefined | (() => Promise<void>);
             if (typeof runAnalysis === 'function') {
-                void runAnalysis();
+                void runAnalysis().catch((error) => {
+                    console.warn('[DataSlice] Analysis replay failed after persistence restore:', error);
+                });
             }
         } else {
             // Reconstruct minimal dataset from OPFS schema
@@ -586,7 +596,9 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
             });
             const runAnalysis = (get() as any).runAnalysis as undefined | (() => Promise<void>);
             if (typeof runAnalysis === 'function') {
-                void runAnalysis();
+                void runAnalysis().catch((error) => {
+                    console.warn('[DataSlice] Analysis replay failed after schema-only restore:', error);
+                });
             }
         }
     },
@@ -1209,7 +1221,9 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
 
         const runAnalysis = (get() as unknown as { runAnalysis?: () => Promise<void> }).runAnalysis;
         if (typeof runAnalysis === 'function') {
-            void runAnalysis();
+            void runAnalysis().catch((error) => {
+                console.warn('[DataSlice] Analysis refresh failed after missing-value update:', error);
+            });
         }
     },
 
@@ -1312,7 +1326,9 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
         void get().getVariableStats(varId);
         const runAnalysis = (get() as unknown as { runAnalysis?: () => Promise<void> }).runAnalysis;
         if (typeof runAnalysis === 'function') {
-            void runAnalysis();
+            void runAnalysis().catch((error) => {
+                console.warn('[DataSlice] Analysis refresh failed after splitGroupValue:', error);
+            });
         }
     },
 });

@@ -90,6 +90,13 @@ const defaultAnalysisSettings: AnalysisSettings = {
     enableDesignEffects: false,
 };
 
+function triggerAnalysisSafely(runAnalysis: (() => Promise<void>) | undefined, context: string): void {
+    if (typeof runAnalysis !== 'function') return;
+    void runAnalysis().catch((error) => {
+        console.warn(`[AnalysisSlice] ${context} failed:`, error);
+    });
+}
+
 export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
     // Initial state
     tableConfig: { rowVars: [], colVar: null },
@@ -107,7 +114,7 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
             // Reset chart type to auto when variables change so the recommender picks the best chart
             selectedChartType: null,
         }));
-        get().runAnalysis();
+        triggerAnalysisSafely(get().runAnalysis, 'setTableConfig analysis');
     },
 
     runAnalysis: async () => {
@@ -119,21 +126,21 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
 
         set({ isQuerying: true });
 
-        const request = buildCrosstabRequest({
-            dataset,
-            variableSets,
-            rowVars: tableConfig.rowVars,
-            colVar: tableConfig.colVar,
-            filters: activeFilters,
-            weightVar: dataset?.weightVariable ?? null,
-            analysisSettings,
-        });
-
-        if (request.measureVarId) {
-            get().fetchVariableStats(request.measureVarId, 'numeric');
-        }
-
         try {
+            const request = buildCrosstabRequest({
+                dataset,
+                variableSets,
+                rowVars: tableConfig.rowVars,
+                colVar: tableConfig.colVar,
+                filters: activeFilters,
+                weightVar: dataset?.weightVariable ?? null,
+                analysisSettings,
+            });
+
+            if (request.measureVarId) {
+                void get().fetchVariableStats(request.measureVarId, 'numeric');
+            }
+
             const response = await engineProxy.runCrosstab(
                 request.options,
                 request.context,
@@ -157,7 +164,7 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
         set((state) => ({
             tableConfig: { ...state.tableConfig, rowVars: newOrder },
         }));
-        get().runAnalysis();
+        triggerAnalysisSafely(get().runAnalysis, 'reorderRowVars analysis');
     },
 
     addFilter: (filterData) => {
@@ -168,19 +175,19 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
         set((state) => ({
             activeFilters: [...state.activeFilters, filter],
         }));
-        get().runAnalysis();
+        triggerAnalysisSafely(get().runAnalysis, 'addFilter analysis');
     },
 
     removeFilter: (filterId) => {
         set((state) => ({
             activeFilters: state.activeFilters.filter(f => f.id !== filterId),
         }));
-        get().runAnalysis();
+        triggerAnalysisSafely(get().runAnalysis, 'removeFilter analysis');
     },
 
     clearFilters: () => {
         set({ activeFilters: [] });
-        get().runAnalysis();
+        triggerAnalysisSafely(get().runAnalysis, 'clearFilters analysis');
     },
 
     fetchVariableStats: async (variableId: string, variableType?: VariableType, binCount?: number) => {
@@ -223,7 +230,7 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
                 colVar: newColVar
             }
         }));
-        get().runAnalysis();
+        triggerAnalysisSafely(get().runAnalysis, 'swapAxes analysis');
     },
 
     clearConfiguration: () => {
@@ -239,7 +246,7 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
             analysisSettings: { ...state.analysisSettings, ...settings },
         }));
         // Re-run analysis to apply new settings
-        get().runAnalysis();
+        triggerAnalysisSafely(get().runAnalysis, 'updateAnalysisSettings analysis');
     },
 
     reset: () => {

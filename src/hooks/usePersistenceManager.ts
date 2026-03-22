@@ -57,7 +57,7 @@ export interface PersistenceManagerState {
   partialLoadMessage: string | null;
 
   // Actions
-  rebuildFromOpfsSource: (fallbackMode: AppMode) => Promise<void>;
+  rebuildFromOpfsSource: (fallbackMode: AppMode, options?: { forceReload?: boolean }) => Promise<void>;
   attemptRestoreFromPersistence: () => boolean;
   handleDismissPartialLoadNotice: () => void;
   refreshOpfsDbFiles: () => Promise<void>;
@@ -95,6 +95,7 @@ export function usePersistenceManager(
   const [restoreActionError, setRestoreActionError] = React.useState<string | null>(null);
   const [showPartialLoadNotice, setShowPartialLoadNotice] = React.useState(false);
   const [persistentStorageGranted, setPersistentStorageGranted] = React.useState<boolean | null>(null);
+  const [persistentStorageResolved, setPersistentStorageResolved] = React.useState(false);
   const [showStorageReminderToast, setShowStorageReminderToast] = React.useState(false);
 
   // -- Refs --
@@ -102,6 +103,7 @@ export function usePersistenceManager(
   const hasShownStorageToast = useRef(false);
   const hasProcessedPersistence = useRef(false);
   const partialNoticeDismissedByDataset = useRef<Set<string>>(new Set());
+  const autoRecoveredDatasets = useRef<Set<string>>(new Set());
 
   // -- Derived values --
   const opfsUsageMb = opfsEstimate ? opfsEstimate.usage / (1024 * 1024) : null;
@@ -207,7 +209,14 @@ export function usePersistenceManager(
     ) {
       return 'OPFS database is locked (often another tab is using it). Close other Velocity tabs and reload to re-enable fast OPFS DB restore.';
     }
-    if (normalized.includes('not a valid duckdb database file') || normalized.includes('corrupt')) {
+    if (
+      normalized.includes('not a valid duckdb database file') ||
+      normalized.includes('database file appears to be corrupted') ||
+      normalized.includes('failed to scan dictionary string') ||
+      normalized.includes('invalid bit width for bitpacking') ||
+      normalized.includes('out of bounds memory access') ||
+      normalized.includes('corrupt')
+    ) {
       return 'OPFS database looks corrupted or partially written. Velocity will fall back to rebuilding from the OPFS source file when possible. You can also purge quarantined DBs.';
     }
     if (normalized.includes('insecure context')) {
@@ -220,12 +229,12 @@ export function usePersistenceManager(
   }, [persistenceError]);
 
   // -- Callbacks --
-  const rebuildFromOpfsSource = useCallback(async (fallbackMode: AppMode) => {
+  const rebuildFromOpfsSource = useCallback(async (fallbackMode: AppMode, options?: { forceReload?: boolean }) => {
     if (!dataset?.opfsFileKey) return;
     setOpfsRehydrateError(null);
     setMode('uploading');
     try {
-      await rehydrateDatasetFromOpfs();
+      await rehydrateDatasetFromOpfs(options);
       setMode('dashboard');
     } catch (error: any) {
       const message = error?.message || String(error) || 'Failed to restore from OPFS source file';
@@ -296,6 +305,7 @@ export function usePersistenceManager(
 
     if (!navigator.storage?.persist) {
       setPersistentStorageGranted(null);
+      setPersistentStorageResolved(true);
       return;
     }
 
@@ -305,12 +315,14 @@ export function usePersistenceManager(
       .then((granted) => {
         if (cancelled) return;
         setPersistentStorageGranted(granted);
+        setPersistentStorageResolved(true);
         console.log(`[Storage] Persistent storage ${granted ? 'granted' : 'denied'}`);
       })
       .catch((error) => {
         if (cancelled) return;
         console.warn('[Storage] Failed to request persistent storage:', error);
         setPersistentStorageGranted(false);
+        setPersistentStorageResolved(true);
       });
 
     return () => { cancelled = true; };
@@ -387,6 +399,11 @@ export function usePersistenceManager(
     if (hasProcessedPersistence.current) return;
 
     if (persistenceState === 'found' && persistedDataInfo) {
+      const shouldWaitForStorageDecision = Boolean(dataset?.opfsFileKey) && !persistentStorageResolved;
+      if (shouldWaitForStorageDecision) {
+        return;
+      }
+
       const persistedMeta = persistedDataInfo.metadata;
       const hasMatchingMetadata = dataset && (persistedMeta
         ? (
@@ -398,8 +415,13 @@ export function usePersistenceManager(
           dataset.rowCount === persistedDataInfo.rowCount &&
           dataset.variables.length === persistedDataInfo.schema.length
         ));
+      const shouldPreferSourceRebuild = Boolean(dataset?.opfsFileKey) && persistentStorageGranted === false;
 
-      if (hasMatchingMetadata) {
+      if (hasMatchingMetadata && shouldPreferSourceRebuild) {
+        console.log('[App] Persistent storage denied; rebuilding from OPFS source file instead of trusting persisted DuckDB cache');
+        hasProcessedPersistence.current = true;
+        void rebuildFromOpfsSource('splash', { forceReload: true });
+      } else if (hasMatchingMetadata) {
         console.log('[App] Auto-restoring: localStorage metadata matches OPFS data');
         hasProcessedPersistence.current = true;
         const restored = attemptRestoreFromPersistence();
@@ -424,7 +446,17 @@ export function usePersistenceManager(
         hasProcessedPersistence.current = true;
       }
     }
-  }, [persistenceState, persistedDataInfo, dataset, mode, attemptRestoreFromPersistence, rebuildFromOpfsSource, setMode]);
+  }, [persistenceState, persistedDataInfo, dataset, mode, persistentStorageGranted, persistentStorageResolved, attemptRestoreFromPersistence, rebuildFromOpfsSource, setMode]);
+
+  useEffect(() => {
+    if (persistenceState !== 'corrupt') return;
+    if (!dataset?.opfsFileKey || !dataset?.id) return;
+    if (autoRecoveredDatasets.current.has(dataset.id)) return;
+
+    autoRecoveredDatasets.current.add(dataset.id);
+    console.log('[App] Persisted DuckDB restore failed; rebuilding from OPFS source file');
+    void rebuildFromOpfsSource(mode === 'dashboard' ? 'dashboard' : 'splash', { forceReload: true });
+  }, [dataset?.id, dataset?.opfsFileKey, mode, persistenceState, rebuildFromOpfsSource]);
 
   return {
     opfsAvailableLocal,

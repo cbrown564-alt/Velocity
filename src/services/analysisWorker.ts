@@ -416,11 +416,32 @@ function getPersistenceStatus() {
   };
 }
 
+function getErrorMessage(error: unknown): string {
+  return String((error as any)?.message || error || '');
+}
+
 function isWriteModeCommitError(error: unknown): boolean {
-  const message = String((error as any)?.message || error || '').toLowerCase();
+  const message = getErrorMessage(error).toLowerCase();
   return message.includes('file is not opened in write mode')
     || (message.includes('failed to commit') && message.includes('write mode'));
 }
+
+function isCorruptionLikeError(error: unknown): boolean {
+  const message = getErrorMessage(error).toLowerCase();
+  return message.includes('not a valid duckdb database file')
+    || message.includes('database file appears to be corrupted')
+    || message.includes('failed to scan dictionary string')
+    || message.includes('invalid bit width for bitpacking')
+    || message.includes('corrupt');
+}
+
+function isFatalDatabaseRuntimeError(error: unknown): boolean {
+  const message = getErrorMessage(error).toLowerCase();
+  return isCorruptionLikeError(error)
+    || message.includes('out of bounds memory access');
+}
+
+let fatalRecoveryPromise: Promise<void> | null = null;
 
 async function reopenWritableDatabase(): Promise<void> {
   if (!db) throw new Error('DB not initialized');
@@ -498,6 +519,43 @@ async function reopenInMemoryDatabase(): Promise<void> {
   conn = await db.connect();
   adapter = new DuckDBWasmAdapter(conn, db);
   console.warn('🦆 [Worker] Reopened DuckDB in forced memory mode');
+}
+
+async function recoverFromFatalDatabaseError(error: unknown, requestId: string): Promise<void> {
+  if (!fatalRecoveryPromise) {
+    fatalRecoveryPromise = (async () => {
+      const message = getErrorMessage(error);
+
+      if (isCorruptionLikeError(error) && activeDbPath.startsWith('opfs://')) {
+        try {
+          await quarantineCorruptedDb(activeDbPath);
+        } catch (quarantineError: any) {
+          console.warn('🦆 [Worker] Failed to quarantine fatal DB path:', quarantineError?.message || quarantineError);
+        }
+      }
+
+      persistenceError = message || 'Fatal DuckDB runtime error';
+      await reopenInMemoryDatabase();
+    })().finally(() => {
+      fatalRecoveryPromise = null;
+    });
+  }
+
+  await fatalRecoveryPromise;
+
+  const message = getErrorMessage(error) || 'Fatal DuckDB runtime error';
+  if (isCorruptionLikeError(error)) {
+    postEngineResponse({
+      type: 'engine.corruptionDetected',
+      requestId,
+      message,
+    });
+  }
+  postEngineResponse({
+    type: 'engine.persistenceStatus',
+    requestId,
+    ...getPersistenceStatus(),
+  });
 }
 
   // ============================================================================ 
@@ -1412,7 +1470,22 @@ async function handleEngineMessage(request: EngineWorkerRequest): Promise<void> 
       }
 
       case 'engine.loadCSV': {
-        const csvResult = await loadCSV(request.fileName, request.content);
+        let csvResult;
+        try {
+          csvResult = await loadCSV(request.fileName, request.content);
+        } catch (error: any) {
+          if (!isWriteModeCommitError(error)) throw error;
+          console.warn('🦆 [Worker/Engine] Detected OPFS write-mode commit failure during CSV load; recovering');
+          await reopenWritableDatabase();
+          try {
+            csvResult = await loadCSV(request.fileName, request.content);
+          } catch (retryError: any) {
+            if (!isWriteModeCommitError(retryError)) throw retryError;
+            console.warn('🦆 [Worker/Engine] CSV retry failed; forcing in-memory');
+            await reopenInMemoryDatabase();
+            csvResult = await loadCSV(request.fileName, request.content);
+          }
+        }
         postEngineResponse({
           type: 'engine.csvLoaded',
           requestId,
@@ -1700,6 +1773,13 @@ async function handleEngineMessage(request: EngineWorkerRequest): Promise<void> 
     }
   } catch (error: any) {
     console.error('[Worker/Engine] Error:', error);
+    if (isFatalDatabaseRuntimeError(error)) {
+      try {
+        await recoverFromFatalDatabaseError(error, requestId);
+      } catch (recoveryError: any) {
+        console.error('[Worker/Engine] Fatal recovery failed:', recoveryError);
+      }
+    }
     postEngineResponse({
       type: 'engine.error',
       requestId,

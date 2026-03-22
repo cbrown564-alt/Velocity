@@ -166,6 +166,7 @@ export default function App() {
     persistedDataInfo,
     persistenceError,
     engineProxy,
+    activeDbPath,
     // Workspace
     workspace,
     activeDatasetId,
@@ -338,12 +339,26 @@ export default function App() {
   );
 
   // -- Workspace handlers --
-  const materializeDatasetTable = useCallback((datasetId: string) => {
-    if (!engineProxy) return;
+  const materializeDatasetTable = useCallback(async (datasetId: string) => {
+    if (!engineProxy) return false;
     const tableName = datasetTableName(datasetId);
-    if (materializedDatasetTables.current.has(tableName)) return;
-    materializedDatasetTables.current.add(tableName);
-    engineProxy.query(`CREATE OR REPLACE TABLE "${tableName}" AS SELECT * FROM main`);
+    if (materializedDatasetTables.current.has(tableName)) return true;
+
+    try {
+      const status = await engineProxy.ping();
+      if (!status.hasData) {
+        console.log(`[App] Skipping workspace table materialization for ${tableName}: DuckDB has no active main table`);
+        return false;
+      }
+
+      await engineProxy.query(`CREATE OR REPLACE TABLE "${tableName}" AS SELECT * FROM main`);
+      materializedDatasetTables.current.add(tableName);
+      return true;
+    } catch (error) {
+      console.warn(`[App] Failed to materialize workspace table ${tableName}:`, error);
+      materializedDatasetTables.current.delete(tableName);
+      return false;
+    }
   }, [engineProxy]);
 
   const registerDatasetInWorkspace = useCallback(() => {
@@ -355,7 +370,6 @@ export default function App() {
       columnCount: dataset.variables.length, fileSize: 0, source: dataset.source,
       variables: dataset.variables, opfsFileKey: dataset.opfsFileKey, tableName: datasetTableName(dataset.id),
     });
-    materializeDatasetTable(dataset.id);
     if (dataset.opfsFileKey) {
       opfsFileManager.getFileSize(dataset.opfsFileKey)
         .then(size => { if (size > 0) updateStoredDataset(dataset.id, { fileSize: size }); })
@@ -368,6 +382,15 @@ export default function App() {
     if (dataset && mode === 'dashboard') registerDatasetInWorkspace();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataset?.id, mode]);
+
+  useEffect(() => {
+    materializedDatasetTables.current.clear();
+  }, [activeDbPath]);
+
+  useEffect(() => {
+    if (!dataset || mode !== 'dashboard') return;
+    void materializeDatasetTable(dataset.id);
+  }, [dataset?.id, mode, materializeDatasetTable]);
 
   const handleOpenDataset = useCallback(async (storedDataset: StoredDataset) => {
     clearImportedSessionSemantic();

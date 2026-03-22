@@ -58,6 +58,29 @@ describe('initOpfsPersistence', () => {
     expect(openMemory).not.toHaveBeenCalled();
   });
 
+  it('treats dictionary-scan failures as corruption', async () => {
+    const quarantine = vi.fn(async () => undefined);
+    const openPath = vi.fn(async () => ({
+      ok: false,
+      error: 'IO Error: Failed to scan dictionary string - index was out of range. Database file appears to be corrupted.',
+    }));
+
+    const result = await initOpfsPersistence({
+      enableOpfs: true,
+      opfsSupport: { supported: true },
+      desiredPath: 'opfs://bad.db',
+      fallbackPath: null,
+      openPath,
+      listCandidates: async () => [{ path: 'opfs://bad.db' }],
+      quarantine,
+      buildRepairPath: () => 'opfs://repair.db',
+      openMemory: vi.fn(async () => undefined),
+    });
+
+    expect(result.corruptionDetected).toBe(true);
+    expect(quarantine).toHaveBeenCalledWith('opfs://bad.db');
+  });
+
   it('prefers existing fallback DB when desired DB does not exist', async () => {
     const openPath = vi.fn(async (path: string) => {
       if (path === 'opfs://default.db') return { ok: true };
