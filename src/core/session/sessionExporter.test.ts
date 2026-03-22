@@ -112,7 +112,7 @@ describe('exportSession', () => {
       },
     });
     expect(session.weightVariable).toBeNull();
-    expect('opfsFileKey' in (session.dataset as Record<string, unknown>)).toBe(false);
+    expect('opfsFileKey' in session.dataset).toBe(false);
     expect(session.variables).toHaveLength(2);
     expect(session.variableSets).toHaveLength(1);
     expect(session.workspace).toBeUndefined();
@@ -242,10 +242,8 @@ describe('exportSession', () => {
           newColId: 'q2_top2',
           label: 'Top-2 Box',
           config: {
-            rules: [{ from: [4, 5], to: 1 }],
-            elseValue: 0,
-            valueLabels: [],
-            preserveMissing: true,
+            mode: 'binning',
+            rules: [{ min: 4, max: 6, label: 'Top-2' }],
           },
           createdAt: 1,
         },

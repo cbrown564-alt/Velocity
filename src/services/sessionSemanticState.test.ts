@@ -14,8 +14,8 @@ function buildDataset(overrides: Partial<Dataset> = {}): Dataset {
     source: 'sav',
     rowCount: 271,
     variables: [
-      { id: 'sex', name: 'sex', label: 'Sex', type: 'nominal', valueLabels: [] },
-      { id: 'problem', name: 'problem', label: 'Problem with sleep', type: 'nominal', valueLabels: [] },
+      { id: 'sex', name: 'sex', label: 'Sex', type: 'nominal', valueLabels: [], missingValues: {} },
+      { id: 'problem', name: 'problem', label: 'Problem with sleep', type: 'nominal', valueLabels: [], missingValues: {} },
     ],
     ...overrides,
   } as Dataset;
@@ -105,15 +105,15 @@ describe('sessionSemanticState', () => {
     });
     const dataset = buildDataset({
       variables: [
-        { id: 'sex', name: 'sex', label: 'Sex', type: 'nominal', valueLabels: [] },
-        { id: 'problem', name: 'problem', label: 'Problem with sleep', type: 'nominal', valueLabels: [] },
-        { id: 'v3', name: 'v3', label: 'v3', type: 'nominal', valueLabels: [] },
-        { id: 'v4', name: 'v4', label: 'v4', type: 'nominal', valueLabels: [] },
-        { id: 'v5', name: 'v5', label: 'v5', type: 'nominal', valueLabels: [] },
-        { id: 'v6', name: 'v6', label: 'v6', type: 'nominal', valueLabels: [] },
-        { id: 'v7', name: 'v7', label: 'v7', type: 'nominal', valueLabels: [] },
-        { id: 'v8', name: 'v8', label: 'v8', type: 'nominal', valueLabels: [] },
-        { id: 'v9', name: 'v9', label: 'v9', type: 'nominal', valueLabels: [] },
+        { id: 'sex', name: 'sex', label: 'Sex', type: 'nominal', valueLabels: [], missingValues: {} },
+        { id: 'problem', name: 'problem', label: 'Problem with sleep', type: 'nominal', valueLabels: [], missingValues: {} },
+        { id: 'v3', name: 'v3', label: 'v3', type: 'nominal', valueLabels: [], missingValues: {} },
+        { id: 'v4', name: 'v4', label: 'v4', type: 'nominal', valueLabels: [], missingValues: {} },
+        { id: 'v5', name: 'v5', label: 'v5', type: 'nominal', valueLabels: [], missingValues: {} },
+        { id: 'v6', name: 'v6', label: 'v6', type: 'nominal', valueLabels: [], missingValues: {} },
+        { id: 'v7', name: 'v7', label: 'v7', type: 'nominal', valueLabels: [], missingValues: {} },
+        { id: 'v8', name: 'v8', label: 'v8', type: 'nominal', valueLabels: [], missingValues: {} },
+        { id: 'v9', name: 'v9', label: 'v9', type: 'nominal', valueLabels: [], missingValues: {} },
       ],
     });
 
@@ -124,7 +124,7 @@ describe('sessionSemanticState', () => {
     const imported = captureImportedSessionSemanticState(buildSessionFile());
     const mismatchedDataset = buildDataset({
       rowCount: 300,
-      variables: [{ id: 'sex', name: 'sex', label: 'Sex', type: 'nominal', valueLabels: [] }],
+      variables: [{ id: 'sex', name: 'sex', label: 'Sex', type: 'nominal', valueLabels: [], missingValues: {} }],
     });
 
     expect(selectExportSessionSemantic(mismatchedDataset, imported)).toBeUndefined();

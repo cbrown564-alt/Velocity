@@ -104,13 +104,8 @@ const transformLog: DataTransform[] = [
     newColId: 'q2_top2',
     label: 'Top-2 Box',
     config: {
-      rules: [{ from: [4, 5], to: 1 }],
-      elseValue: 0,
-      valueLabels: [
-        { value: 0, label: 'Other' },
-        { value: 1, label: 'Top-2' },
-      ],
-      preserveMissing: true,
+      mode: 'binning',
+      rules: [{ min: 4, max: 6, label: 'Top-2' }],
     },
     createdAt: 1700000000000,
   },
@@ -173,8 +168,7 @@ const sections: SlideSection[] = [
 
 const analysisSettings: Partial<AnalysisSettings> = {
   engine: 'auto',
-  showWeightedBase: true,
-  compareBy: 'none',
+  showConfidenceIntervals: true,
 };
 
 const loadedDatasetForImport: Dataset = {

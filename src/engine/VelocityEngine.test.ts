@@ -92,7 +92,7 @@ class MockAdapter implements DatabaseAdapter {
             { value: 4, label: 'Satisfied' },
             { value: 5, label: 'Very Satisfied' },
           ],
-          missingValues: { type: 'discrete', values: [99] },
+          missingValues: { discrete: [99] },
         },
         {
           id: 'GENDER',
@@ -221,7 +221,7 @@ describe('VelocityEngine', () => {
   it('throws a structured error when queried before a dataset is loaded', async () => {
     const engine = await VelocityEngine.create({ runtime: 'node', adapter: new MockAdapter() });
 
-    await expect(engine.query('SELECT 1 as one')).rejects.toMatchObject<Partial<VelocityError>>({
+    await expect(engine.query('SELECT 1 as one')).rejects.toMatchObject({
       code: 'NO_DATASET_LOADED',
     });
   });
@@ -252,7 +252,7 @@ describe('VelocityEngine', () => {
     expect(q1?.valueLabels[4]).toEqual({ value: 5, label: 'Very Satisfied' });
 
     // Missing value definitions must survive
-    expect(q1?.missingValues).toEqual({ type: 'discrete', values: [99] });
+    expect(q1?.missingValues).toEqual({ discrete: [99] });
 
     // Types must not be re-inferred from SQL schema — they come from the SAV metadata
     expect(variables.find(v => v.id === 'Q1')?.type).toBe('ordinal');

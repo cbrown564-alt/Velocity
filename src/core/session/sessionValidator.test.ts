@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import type { VelocitySessionFile } from './sessionTypes';
 import { SESSION_FORMAT_VERSION } from './sessionTypes';
 import { parseSessionFile, validateDatasetMatch, validateSessionFile } from './sessionValidator';
 
@@ -23,7 +24,7 @@ const validSession = {
   activeFilters: [],
   slides: [],
   sections: [],
-};
+} satisfies VelocitySessionFile;
 
 describe('validateSessionFile', () => {
   it('accepts a structurally valid session file', () => {

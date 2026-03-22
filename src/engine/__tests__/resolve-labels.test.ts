@@ -23,21 +23,23 @@ describe('VelocityEngine crosstab resolveLabels', () => {
       colVar: 'sex',
       resolveLabels: true,
     });
+    const bySexRows = (bySex.data as { rows: Array<{ rowKey_0: string; colKey: string }> }).rows;
 
-    expect(bySex.data.rows.map((row) => row.rowKey_0)).toEqual(
+    expect(bySexRows.map((row) => row.rowKey_0)).toEqual(
       expect.arrayContaining(['female', 'male'])
     );
-    expect(new Set(bySex.data.rows.map((row) => row.colKey))).toEqual(new Set(['age']));
+    expect(new Set(bySexRows.map((row) => row.colKey))).toEqual(new Set(['age']));
 
     const byMarital = await engine.runAnalysis('crosstab', {
       rowVars: ['age'],
       colVar: 'marital',
       resolveLabels: true,
     });
+    const byMaritalRows = (byMarital.data as { rows: Array<{ rowKey_0: string; colKey: string }> }).rows;
 
-    expect(byMarital.data.rows.map((row) => row.rowKey_0)).toEqual(
+    expect(byMaritalRows.map((row) => row.rowKey_0)).toEqual(
       expect.arrayContaining(['single', 'married/defacto', 'divorced', 'widowed'])
     );
-    expect(new Set(byMarital.data.rows.map((row) => row.colKey))).toEqual(new Set(['age']));
+    expect(new Set(byMaritalRows.map((row) => row.colKey))).toEqual(new Set(['age']));
   }, 30000);
 });
