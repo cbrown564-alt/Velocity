@@ -14,6 +14,7 @@ function getFingerprintColumnNames(input: ExportSessionInput): string[] {
   }
 
   return input.dataset.variables
+    .filter((variable) => !variable.synthetic || !variable.sourceGridId)
     .map((variable) => variable.id)
     .filter((id) => !derivedIds.has(id));
 }

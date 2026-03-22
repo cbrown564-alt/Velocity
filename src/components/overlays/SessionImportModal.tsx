@@ -46,7 +46,6 @@ export const SessionImportModal: React.FC<SessionImportModalProps> = ({
   const [savFileName, setSavFileName] = React.useState<string | null>(null);
   const [savBuffer, setSavBuffer] = React.useState<ArrayBuffer | null>(null);
   const [savRowCount, setSavRowCount] = React.useState<number | null>(null);
-  const [savColumnCount, setSavColumnCount] = React.useState<number | null>(null);
   const [matchResult, setMatchResult] = React.useState<DatasetMatchResult | null>(null);
   const [isValidatingSav, setIsValidatingSav] = React.useState(false);
   const [isImporting, setIsImporting] = React.useState(false);
@@ -61,7 +60,6 @@ export const SessionImportModal: React.FC<SessionImportModalProps> = ({
     setSavFileName(null);
     setSavBuffer(null);
     setSavRowCount(null);
-    setSavColumnCount(null);
     setMatchResult(null);
     setIsValidatingSav(false);
     setIsImporting(false);
@@ -86,7 +84,6 @@ export const SessionImportModal: React.FC<SessionImportModalProps> = ({
     setSavFileName(null);
     setSavBuffer(null);
     setSavRowCount(null);
-    setSavColumnCount(null);
     setMatchResult(null);
 
     try {
@@ -116,10 +113,11 @@ export const SessionImportModal: React.FC<SessionImportModalProps> = ({
       const buffer = await file.arrayBuffer();
       const metadata = await parseSavMetadata(buffer);
       setSavRowCount(metadata.metadata.rowCount);
-      setSavColumnCount(metadata.metadata.variables.length);
       const result = validateDatasetMatch(sessionFile.dataset, {
         rowCount: metadata.metadata.rowCount,
         columnNames: metadata.metadata.variables.map((variable) => variable.name),
+      }, {
+        sessionVariables: sessionFile.variables,
       });
 
       setMatchResult(result);
@@ -266,7 +264,7 @@ export const SessionImportModal: React.FC<SessionImportModalProps> = ({
                       Rows: {matchResult.rowCountMatches ? 'match' : 'differ'} ({formatCount(sessionFile?.dataset.rowCount ?? 0)} expected, {formatCount(savRowCount ?? 0)} uploaded)
                     </div>
                     <div>
-                      Columns: {formatCount(matchResult.matchingColumnCount)}/{formatCount(sessionFile?.dataset.fingerprint.columnCount ?? 0)} matched ({(matchResult.overlapRatio * 100).toFixed(1)}%)
+                      Columns: {formatCount(matchResult.matchingColumnCount)}/{formatCount(matchResult.expectedColumnCount)} matched ({(matchResult.overlapRatio * 100).toFixed(1)}%)
                     </div>
                   </div>
 
@@ -276,9 +274,9 @@ export const SessionImportModal: React.FC<SessionImportModalProps> = ({
                     </div>
                   )}
 
-                  {savColumnCount !== null && savColumnCount !== (sessionFile?.dataset.fingerprint.columnCount ?? 0) && (
+                  {matchResult.actualColumnCount !== matchResult.expectedColumnCount && (
                     <div className="mt-1">
-                      Column count differs (expected {formatCount(sessionFile?.dataset.fingerprint.columnCount ?? 0)}, got {formatCount(savColumnCount)}).
+                      Column count differs (expected {formatCount(matchResult.expectedColumnCount)}, got {formatCount(matchResult.actualColumnCount)}).
                     </div>
                   )}
 

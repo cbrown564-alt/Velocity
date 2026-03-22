@@ -1,5 +1,6 @@
 import { SESSION_FORMAT_VERSION, SESSION_FORMAT_VERSION_V1 } from './sessionTypes';
 import type { SessionDatasetDescriptor, VelocitySessionFile } from './sessionTypes';
+import type { Variable } from '../../store/slices/dataSlice';
 
 type LooseRecord = Record<string, unknown>;
 
@@ -25,11 +26,47 @@ export interface DatasetMatchResult {
   overlapRatio: number;
   rowCountMatches: boolean;
   columnCountMatches: boolean;
+  expectedColumnCount: number;
+  actualColumnCount: number;
   matchingColumnCount: number;
   missingColumns: string[];
   extraColumns: string[];
   warnings: string[];
   issues: string[];
+}
+
+export interface DatasetMatchOptions {
+  sessionVariables?: Pick<Variable, 'id' | 'synthetic' | 'sourceGridId'>[];
+}
+
+function isSyntheticGridFingerprintColumn(name: string): boolean {
+  return name.startsWith('heuristic_grid_') && (name.endsWith('_scale') || name.endsWith('_items'));
+}
+
+function getIgnoredExpectedColumns(
+  sessionVariables: DatasetMatchOptions['sessionVariables']
+): Set<string> {
+  const ignored = new Set<string>();
+
+  for (const variable of sessionVariables ?? []) {
+    if (variable.synthetic && variable.sourceGridId) {
+      ignored.add(variable.id);
+    }
+  }
+
+  return ignored;
+}
+
+function getComparableColumnNames(
+  columnNames: string[],
+  options: {
+    ignoredColumns?: Set<string>;
+  } = {}
+): string[] {
+  const ignoredColumns = options.ignoredColumns ?? new Set<string>();
+  return Array.from(new Set(columnNames)).filter(
+    (name) => !ignoredColumns.has(name) && !isSyntheticGridFingerprintColumn(name)
+  );
 }
 
 export function validateSessionFile(candidate: unknown): SessionFileValidationResult {
@@ -119,10 +156,14 @@ export function parseSessionFile(raw: string): VelocitySessionFile {
 
 export function validateDatasetMatch(
   expected: SessionDatasetDescriptor,
-  actual: DatasetMatchInput
+  actual: DatasetMatchInput,
+  options: DatasetMatchOptions = {}
 ): DatasetMatchResult {
-  const expectedColumns = Array.from(new Set(expected.fingerprint.columnNames));
-  const actualColumns = Array.from(new Set(actual.columnNames));
+  const ignoredExpectedColumns = getIgnoredExpectedColumns(options.sessionVariables);
+  const expectedColumns = getComparableColumnNames(expected.fingerprint.columnNames, {
+    ignoredColumns: ignoredExpectedColumns,
+  });
+  const actualColumns = getComparableColumnNames(actual.columnNames);
   const actualSet = new Set(actualColumns);
   const expectedSet = new Set(expectedColumns);
 
@@ -167,6 +208,8 @@ export function validateDatasetMatch(
     overlapRatio,
     rowCountMatches,
     columnCountMatches,
+    expectedColumnCount: expectedColumns.length,
+    actualColumnCount: actualColumns.length,
     matchingColumnCount: matchingColumns.length,
     missingColumns,
     extraColumns,

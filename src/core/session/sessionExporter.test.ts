@@ -264,4 +264,50 @@ describe('exportSession', () => {
     expect(session.weightVariable).toBeNull();
     expect(session.variables.map((variable) => variable.id)).toContain('q2_top2');
   });
+
+  it('excludes synthetic grid helper columns from dataset fingerprint', () => {
+    const session = exportSession({
+      dataset: {
+        ...datasetFixture,
+        variables: [
+          ...datasetFixture.variables,
+          {
+            id: 'heuristic_grid_sleep_energy_scale',
+            name: 'sleep_scale',
+            label: 'Sleep',
+            type: 'ordered',
+            orderedStyle: 'rating',
+            orderedScoring: 'allow_numeric_stats',
+            valueLabels: [],
+            missingValues: {},
+            synthetic: true,
+            sourceGridId: 'heuristic_grid_sleep_energy',
+          },
+          {
+            id: 'heuristic_grid_sleep_energy_items',
+            name: 'heuristic_grid_sleep_energy_items',
+            label: 'Sleep',
+            type: 'categorical',
+            valueLabels: [],
+            missingValues: {},
+            synthetic: true,
+            sourceGridId: 'heuristic_grid_sleep_energy',
+          },
+        ],
+      },
+      variableSets: variableSetsFixture,
+      folders: foldersFixture,
+      transformLog: [],
+      tableConfig: tableConfigFixture,
+      activeFilters: [],
+      slides: slidesFixture,
+      sections: [],
+    });
+
+    expect(session.dataset.fingerprint).toEqual({
+      columnCount: 2,
+      columnNames: ['q1', 'q2'],
+      checksum: undefined,
+    });
+  });
 });
