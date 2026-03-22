@@ -119,6 +119,27 @@ describe('Store: Persistence', () => {
                 queryResult: [{ rowKeys: ['A'], colKey: 'B', count: 10 }],
                 isQuerying: true,
 
+                // SlidesSlice
+                slides: [{
+                    id: 'slide-1',
+                    title: 'Analysis 1',
+                    subtitle: '',
+                    analysisState: {
+                        rowVars: ['v1'],
+                        colVar: 'v2',
+                        filters: [],
+                        weightVar: null,
+                    },
+                    visualizationType: 'table' as const,
+                    layoutMode: 'focus' as const,
+                    cells: [{ id: 'cell-1', content: { type: 'table' as const } }],
+                    createdAt: 1,
+                    updatedAt: 1,
+                }],
+                sections: [{ id: 'section-1', title: 'Intro' }],
+                activeSlideId: 'slide-1',
+                activeCellId: 'cell-1',
+
                 // DrillDownSlice
                 drillDown: {
                     isOpen: true,
@@ -143,6 +164,10 @@ describe('Store: Persistence', () => {
             expect(persisted.activeFolderId).toBe('f1');
             expect(persisted.tableConfig).toEqual({ rowVars: ['v1'], colVar: 'v2' });
             expect(persisted.activeFilters).toHaveLength(1);
+            expect(persisted.slides).toHaveLength(1);
+            expect(persisted.sections).toHaveLength(1);
+            expect(persisted.activeSlideId).toBe('slide-1');
+            expect(persisted.activeCellId).toBe('cell-1');
         });
 
         it('should NOT include ephemeral state fields', () => {
@@ -164,6 +189,10 @@ describe('Store: Persistence', () => {
                 lastSelectedId: 'vs2',
                 tableConfig: { rowVars: [], colVar: null },
                 activeFilters: [],
+                slides: [],
+                sections: [],
+                activeSlideId: null,
+                activeCellId: null,
                 queryResult: [{ rowKeys: ['A'], colKey: 'B', count: 10 }],
                 isQuerying: true,
                 drillDown: { isOpen: true, title: 'Test', data: [], loading: false, totalCount: 0, currentPage: 1, pageSize: 50, rowFilters: [], colFilter: null },

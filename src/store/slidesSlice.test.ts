@@ -27,6 +27,34 @@ describe('slidesSlice', () => {
         });
     });
 
+    describe('addSlide', () => {
+        it('should snapshot the active slide before switching to a blank slide', () => {
+            const { result } = renderHook(() => useVelocityStore());
+
+            act(() => {
+                result.current.setTableConfig({ rowVars: ['impact'], colVar: 'segment' });
+                result.current.addSlide();
+            });
+
+            const originalSlide = result.current.slides[0];
+            const newSlide = result.current.slides[1];
+
+            expect(originalSlide.analysisState).toEqual({
+                rowVars: ['impact'],
+                colVar: 'segment',
+                filters: [],
+                weightVar: null,
+            });
+            expect(newSlide.analysisState).toEqual({
+                rowVars: [],
+                colVar: null,
+                filters: [],
+                weightVar: null,
+            });
+            expect(result.current.activeSlideId).toBe(newSlide.id);
+        });
+    });
+
     describe('duplicateSlide', () => {
         it('should create a copy with a new ID', () => {
             const { result } = renderHook(() => useVelocityStore());

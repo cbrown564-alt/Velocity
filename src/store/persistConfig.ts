@@ -51,6 +51,12 @@ export interface PersistedState {
     tableConfig: VelocityState['tableConfig'];
     activeFilters: VelocityState['activeFilters'];
 
+    // From SlidesSlice
+    slides: VelocityState['slides'];
+    sections: VelocityState['sections'];
+    activeSlideId: VelocityState['activeSlideId'];
+    activeCellId: VelocityState['activeCellId'];
+
     // From WorkspaceSlice
     workspace: VelocityState['workspace'];
     activeDatasetId: VelocityState['activeDatasetId'];
@@ -129,6 +135,12 @@ export const partialize = (state: VelocityState): PersistedState => {
         // AnalysisSlice - persist configuration but NOT query results
         tableConfig: state.tableConfig,
         activeFilters: state.activeFilters,
+
+        // SlidesSlice - persist authored deck state and current selection
+        slides: state.slides,
+        sections: state.sections,
+        activeSlideId: state.activeSlideId,
+        activeCellId: state.activeCellId,
 
         // WorkspaceSlice - persist workspace state for multi-file management
         workspace: persistWorkspace,

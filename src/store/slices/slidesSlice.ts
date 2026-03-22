@@ -113,6 +113,16 @@ export const createSlidesSlice: SlidesSliceCreator = (set, get) => ({
         const state = get();
         const now = Date.now();
         const newId = `slide-${now}`;
+        const outgoingSlide = state.slides.find((slide) => slide.id === state.activeSlideId);
+
+        const currentAnalysisState: SlideAnalysisState = {
+            rowVars: state.tableConfig?.rowVars ?? [],
+            colVar: state.tableConfig?.colVar ?? null,
+            filters: state.activeFilters ?? [],
+            weightVar: state.dataset?.weightVariable ?? null,
+        };
+        const currentVisualizationType = outgoingSlide?.visualizationType || 'table';
+        const currentChartType = outgoingSlide?.chartType;
 
         // Feature: Blank Canvas for new slides.
         // We do *not* inherit the current slide's state.
@@ -141,7 +151,21 @@ export const createSlidesSlice: SlidesSliceCreator = (set, get) => ({
         };
 
         set({
-            slides: [...state.slides, newSlide],
+            slides: [
+                ...state.slides.map((slide) => {
+                    if (slide.id === state.activeSlideId && outgoingSlide) {
+                        return {
+                            ...slide,
+                            analysisState: currentAnalysisState,
+                            visualizationType: currentVisualizationType as 'table' | 'chart',
+                            chartType: currentChartType,
+                            updatedAt: now,
+                        };
+                    }
+                    return slide;
+                }),
+                newSlide,
+            ],
             activeSlideId: newId,
             activeCellId: `cell-${now}`,
         });
