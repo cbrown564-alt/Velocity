@@ -26,6 +26,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
   padding: var(--space-6) var(--space-8);
   border-bottom: 1px solid var(--border-color);
   background: var(--bg-panel);
@@ -36,12 +38,27 @@
   display: flex;
   align-items: center;
   gap: var(--space-8);
+  flex: 1 1 320px;
+  flex-wrap: wrap;
+  min-width: 0;
 }
 
 .headerRight {
   display: flex;
   align-items: center;
   gap: var(--space-4);
+  flex: 1 1 420px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  min-width: 0;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 .title {
@@ -137,7 +154,9 @@
   background: var(--bg-surface);
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius-md);
-  min-width: 240px;
+  flex: 1 1 240px;
+  min-width: 220px;
+  max-width: 320px;
 }
 
 .searchBox svg {
@@ -191,6 +210,32 @@
 .viewToggle button.active {
   color: var(--color-accent);
   background: var(--bg-active);
+}
+
+/* ============================================================================
+   Import Button
+   ============================================================================ */
+
+.importButton {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.importButton:hover {
+  background: var(--bg-active);
+  border-color: var(--color-accent);
+  color: var(--color-accent);
 }
 
 /* ============================================================================

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Table, X, BarChart3, LayoutGrid, Loader2, AlertCircle, Upload } from 'lucide-react';
+import { Table, X, BarChart3, LayoutGrid, Loader2, AlertCircle } from 'lucide-react';
 
 import { useVelocityStore, type Variable, type Filter } from './store';
 import {
@@ -613,12 +613,22 @@ export default function App() {
         {mode === 'splash' && (
           <motion.div exit={{ opacity: 0, y: -20, pointerEvents: 'none' }} className="fixed inset-0 bg-[var(--bg-app)] z-40">
             {isDbReady && !initError && (
-              <div className="absolute right-6 top-6 z-50">
-                <button onClick={handleOpenSessionImportModal}
-                  className="flex items-center gap-2 rounded-md border border-[var(--border-color)] bg-[var(--bg-surface)] px-3 py-1.5 text-xs font-medium text-[var(--text-primary)] hover:bg-[var(--bg-active)]">
-                  <Upload size={14} /> Import Session
-                </button>
-              </div>
+              <WorkspaceView
+                workspaceState={workspace}
+                onOpenDataset={handleOpenDataset}
+                onUploadFile={() => fileInputRef.current?.click()}
+                onLoadExample={handleLoadExample}
+                onCreateProject={handleOpenProjectModal}
+                onDeleteDataset={handleDeleteDataset}
+                onToggleStar={(id) => toggleDatasetStar(id)}
+                onLinkDatasets={handleAddToProject}
+                onUnlinkDataset={handleUnlinkDataset}
+                onCompareWaves={handleOpenCrossWavePanel}
+                onBatchStar={handleBatchStar}
+                onBatchDelete={handleBatchDelete}
+                onExport={(ids) => { setExportSelectedIds(ids); setShowExportModal(true); }}
+                onImportSession={handleOpenSessionImportModal}
+              />
             )}
 
             {(!isDbReady || initError) && (
@@ -638,24 +648,6 @@ export default function App() {
                   )}
                 </div>
               </div>
-            )}
-
-            {isDbReady && !initError && (
-              <WorkspaceView
-                workspaceState={workspace}
-                onOpenDataset={handleOpenDataset}
-                onUploadFile={() => fileInputRef.current?.click()}
-                onLoadExample={handleLoadExample}
-                onCreateProject={handleOpenProjectModal}
-                onDeleteDataset={handleDeleteDataset}
-                onToggleStar={(id) => toggleDatasetStar(id)}
-                onLinkDatasets={handleAddToProject}
-                onUnlinkDataset={handleUnlinkDataset}
-                onCompareWaves={handleOpenCrossWavePanel}
-                onBatchStar={handleBatchStar}
-                onBatchDelete={handleBatchDelete}
-                onExport={(ids) => { setExportSelectedIds(ids); setShowExportModal(true); }}
-              />
             )}
 
             {/* OPFS error overlay */}

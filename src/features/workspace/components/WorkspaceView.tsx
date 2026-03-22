@@ -9,6 +9,7 @@ import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   FileUp,
+  Upload,
   FolderOpen,
   Clock,
   Star,
@@ -112,6 +113,8 @@ interface WorkspaceViewProps {
   onBatchDelete?: (ids: string[]) => void;
   /** Callback to open export modal */
   onExport?: (selectedIds: string[]) => void;
+  /** Callback to open the portable session import flow */
+  onImportSession?: () => void;
 }
 
 // ============================================================================
@@ -545,6 +548,7 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
   onBatchStar,
   onBatchDelete,
   onExport,
+  onImportSession,
 }) => {
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
   const [filterMode, setFilterMode] = useState<FilterMode>('recent');
@@ -677,43 +681,57 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
             />
           </div>
 
-          {/* View toggle */}
-          <div className={styles.viewToggle}>
-            <button
-              className={viewMode === 'grid' ? styles.active : ''}
-              onClick={() => setViewMode('grid')}
-            >
-              <Grid3X3 size={16} />
-            </button>
-            <button
-              className={viewMode === 'list' ? styles.active : ''}
-              onClick={() => setViewMode('list')}
-            >
-              <List size={16} />
-            </button>
-          </div>
+          <div className={styles.headerActions}>
+            {/* View toggle */}
+            <div className={styles.viewToggle}>
+              <button
+                className={viewMode === 'grid' ? styles.active : ''}
+                onClick={() => setViewMode('grid')}
+              >
+                <Grid3X3 size={16} />
+              </button>
+              <button
+                className={viewMode === 'list' ? styles.active : ''}
+                onClick={() => setViewMode('list')}
+              >
+                <List size={16} />
+              </button>
+            </div>
 
-          {/* Actions */}
-          {onExport && datasets.length > 0 && (
+            {/* Actions */}
+            {onExport && datasets.length > 0 && (
+              <motion.button
+                className={styles.exportButton}
+                onClick={() => onExport([])}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                title="Export workspace"
+              >
+                <Download size={16} />
+              </motion.button>
+            )}
+            {onImportSession && (
+              <motion.button
+                className={styles.importButton}
+                onClick={onImportSession}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                title="Import portable session"
+              >
+                <Upload size={16} />
+                Import Session
+              </motion.button>
+            )}
             <motion.button
-              className={styles.exportButton}
-              onClick={() => onExport([])}
+              className={styles.uploadButton}
+              onClick={onUploadFile}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              title="Export workspace"
             >
-              <Download size={16} />
+              <FileUp size={16} />
+              Upload
             </motion.button>
-          )}
-          <motion.button
-            className={styles.uploadButton}
-            onClick={onUploadFile}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            <FileUp size={16} />
-            Upload
-          </motion.button>
+          </div>
         </div>
       </header>
 
