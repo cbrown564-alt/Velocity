@@ -21,12 +21,12 @@ async function gzipText(text: string): Promise<Uint8Array> {
   }
 
   const encoder = new TextEncoder();
-  const stream = new CompressionStream('gzip');
-  const writer = stream.writable.getWriter();
-  await writer.write(encoder.encode(text));
-  await writer.close();
-
-  const compressed = await new Response(stream.readable).arrayBuffer();
+  // Writing directly via stream.writable can hang indefinitely in real browsers.
+  // Piping a Blob stream through CompressionStream completes reliably.
+  const compressedStream = new Blob([encoder.encode(text)])
+    .stream()
+    .pipeThrough(new CompressionStream('gzip'));
+  const compressed = await new Response(compressedStream).arrayBuffer();
   return new Uint8Array(compressed);
 }
 
@@ -69,4 +69,3 @@ export async function decodeSessionFile(buffer: ArrayBuffer, fileName?: string):
 
   return gunzipBufferToText(buffer);
 }
-
