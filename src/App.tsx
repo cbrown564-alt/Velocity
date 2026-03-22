@@ -495,8 +495,12 @@ export default function App() {
 
   const handleDiscard = async () => {
     clearImportedSessionSemantic();
-    await discardPersistedData();
-    setMode('splash');
+    try {
+      await discardPersistedData();
+      setMode('splash');
+    } catch (error) {
+      console.error('[App] Discard persisted data failed:', error);
+    }
   };
 
   const handleDatasetFileUpload = React.useCallback(async (event: React.ChangeEvent<HTMLInputElement>) => {

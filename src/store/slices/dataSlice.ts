@@ -606,7 +606,21 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
     // Discard persisted data and start fresh
     discardPersistedData: async () => {
         const opfsKey = get().dataset?.opfsFileKey;
-        await get().clearPersistedData();
+        const activeDbPath = get().activeDbPath;
+
+        if (activeDbPath?.startsWith('opfs://')) {
+            get().terminateWorker();
+            try {
+                const dbFiles = await opfsFileManager.listDbFiles();
+                await Promise.all(dbFiles.map((file) => opfsFileManager.deleteDbFile(file.name)));
+            } catch (error) {
+                console.warn('[DataSlice] Failed to purge OPFS DB files during discard:', error);
+            }
+            await get().respawnWorker(false);
+        } else {
+            await get().clearPersistedData();
+        }
+
         if (opfsKey) {
             await opfsFileManager.deleteFile(opfsKey).catch(() => {});
         }

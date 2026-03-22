@@ -443,7 +443,7 @@ function isFatalDatabaseRuntimeError(error: unknown): boolean {
 
 let fatalRecoveryPromise: Promise<void> | null = null;
 
-async function reopenWritableDatabase(): Promise<void> {
+async function closeActiveDatabase(): Promise<void> {
   if (!db) throw new Error('DB not initialized');
 
   try {
@@ -462,9 +462,30 @@ async function reopenWritableDatabase(): Promise<void> {
   } catch {
     // Continue recovery even if reset fails.
   }
+}
 
-  if (opfsAvailable) {
-    const repairPath = buildRepairDbPath();
+async function removeOpfsDbFile(dbPath: string): Promise<void> {
+  if (!dbPath.startsWith('opfs://')) return;
+
+  try {
+    const opfsRoot = await navigator.storage.getDirectory();
+    const fileName = dbPath.replace('opfs://', '');
+    await opfsRoot.removeEntry(fileName);
+    console.log('🦆 [Worker] Removed OPFS DB file:', fileName);
+  } catch (error: any) {
+    if (error?.name !== 'NotFoundError') {
+      console.warn('🦆 [Worker] Failed to remove OPFS DB file:', error?.message || error);
+    }
+  }
+}
+
+async function reopenWritableDatabase(pathOverride?: string): Promise<void> {
+  if (!db) throw new Error('DB not initialized');
+
+  await closeActiveDatabase();
+
+  if (opfsAvailable || pathOverride?.startsWith('opfs://')) {
+    const repairPath = pathOverride ?? buildRepairDbPath();
     try {
       await db.open({
         path: repairPath,
@@ -494,24 +515,7 @@ async function reopenWritableDatabase(): Promise<void> {
 
 async function reopenInMemoryDatabase(): Promise<void> {
   if (!db) throw new Error('DB not initialized');
-
-  try {
-    if (conn) {
-      await conn.close();
-    }
-  } catch {
-    // Ignore close failures during recovery.
-  }
-
-  conn = null;
-  adapter = null;
-
-  try {
-    await db.reset();
-  } catch {
-    // Continue recovery even if reset fails.
-  }
-
+  await closeActiveDatabase();
   await db.open({ path: ':memory:' });
   activeDbPath = ':memory:';
   persistenceMode = 'memory';
@@ -590,19 +594,23 @@ async function checkPersistedData(): Promise<{ exists: boolean; schema?: { name:
 
 async function clearPersistedData(): Promise<void> {
   if (!conn) throw new Error('DB not initialized');
-  await conn.query(`DROP TABLE IF EXISTS main`);
-  await conn.query(`DROP TABLE IF EXISTS ${META_TABLE}`);
-  if (activeDbPath.startsWith('opfs://')) {
+
+  const targetDbPath = activeDbPath;
+  const nextOpfsPath = buildOpfsDbPath(persistenceContext.datasetId, persistenceContext.schemaVersion);
+
+  if (targetDbPath.startsWith('opfs://')) {
+    await reopenInMemoryDatabase();
+    await removeOpfsDbFile(targetDbPath);
+
     try {
-      const opfsRoot = await navigator.storage.getDirectory();
-      const fileName = activeDbPath.replace('opfs://', '');
-      await opfsRoot.removeEntry(fileName);
-      console.log('🦆 [Worker] Removed OPFS DB file:', fileName);
+      await reopenWritableDatabase(nextOpfsPath);
     } catch (error: any) {
-      if (error?.name !== 'NotFoundError') {
-        console.warn('🦆 [Worker] Failed to remove OPFS DB file:', error?.message || error);
-      }
+      console.warn('🦆 [Worker] Failed to reopen writable OPFS database after discard:', error?.message || error);
+      await reopenInMemoryDatabase();
     }
+  } else {
+    await conn.query(`DROP TABLE IF EXISTS main`);
+    await conn.query(`DROP TABLE IF EXISTS ${META_TABLE}`);
   }
   console.log('🦆 [Worker] Persisted data cleared');
 }

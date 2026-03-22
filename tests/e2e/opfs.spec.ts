@@ -60,6 +60,62 @@ test('OPFS persists dataset across reloads', async ({ page }) => {
   await expect(page.getByText('Survey Questions')).toBeVisible({ timeout: 120000 });
 });
 
+test('Start Fresh clears persisted session after reload', async ({ page }) => {
+  await page.goto('/');
+  page.on('dialog', (dialog) => dialog.dismiss());
+
+  const opfsSupported = await page.evaluate(async () => {
+    try {
+      if (!(self as any).isSecureContext) return false;
+      if (!navigator.storage || typeof navigator.storage.getDirectory !== 'function') return false;
+      await navigator.storage.getDirectory();
+      return true;
+    } catch {
+      return false;
+    }
+  });
+
+  test.skip(!opfsSupported, 'OPFS not supported in this environment');
+
+  await expect(page.getByRole('button', { name: /Upload/i }).first()).toBeVisible({ timeout: 60000 });
+
+  const fileInput = page.getByTestId('dataset-upload-input');
+  await expect(fileInput).toBeAttached({ timeout: 60000 });
+  await fileInput.setInputFiles(savFixture);
+
+  const surveyQuestions = page.getByText(/Survey Questions/);
+  const metadataLoaded = page.getByText('Metadata Loaded');
+
+  await expect.poll(async () => {
+    if (await surveyQuestions.isVisible().catch(() => false)) return 'dashboard';
+    if (await metadataLoaded.isVisible().catch(() => false)) return 'metadata';
+    return 'pending';
+  }, { timeout: 120000 }).not.toBe('pending');
+
+  if (await metadataLoaded.isVisible().catch(() => false)) {
+    await page.getByRole('button', { name: 'Load Full Data' }).click();
+    await expect(surveyQuestions).toBeVisible({ timeout: 120000 });
+  }
+
+  await page.evaluate(() => {
+    localStorage.removeItem('velocity-state');
+  });
+
+  await page.reload();
+
+  const startFreshButton = page.getByRole('button', { name: 'Start Fresh' });
+  await expect(startFreshButton).toBeVisible({ timeout: 30000 });
+  await startFreshButton.click();
+
+  await expect(page.getByText('Welcome to Velocity')).toBeVisible({ timeout: 30000 });
+  await expect(page.getByRole('button', { name: 'Restore Session' })).toBeHidden({ timeout: 5000 });
+
+  await page.reload();
+
+  await expect(page.getByText('Welcome to Velocity')).toBeVisible({ timeout: 30000 });
+  await expect(page.getByRole('button', { name: 'Restore Session' })).toBeHidden({ timeout: 5000 });
+});
+
 test('Reload smoke: app boots after reload', async ({ page }) => {
   await page.goto('/');
 
