@@ -1801,7 +1801,26 @@ async function handleEngineMessage(request: EngineWorkerRequest): Promise<void> 
 // Message Handler (Engine Protocol)
 // ============================================================================
 
-self.onmessage = async (event: MessageEvent<EngineWorkerRequest>) => {
+let engineRequestQueue: Promise<void> = Promise.resolve();
+
+async function runQueuedEngineMessage(request: EngineWorkerRequest): Promise<void> {
+  try {
+    await handleEngineMessage(request);
+  } catch (error: any) {
+    // handleEngineMessage is expected to catch request-level failures and return
+    // engine.error responses. This catch is a final guard so a truly unexpected
+    // throw does not break the serialized worker queue for later requests.
+    console.error('[Worker/Engine] Unhandled queued request failure:', error);
+    postEngineResponse({
+      type: 'engine.error',
+      requestId: request.requestId,
+      message: error?.message || 'Unhandled worker request failure',
+      code: error?.code,
+    });
+  }
+}
+
+self.onmessage = (event: MessageEvent<EngineWorkerRequest>) => {
   const request = event.data;
 
   if (!isEngineMessage(request as { type: string })) {
@@ -1809,5 +1828,9 @@ self.onmessage = async (event: MessageEvent<EngineWorkerRequest>) => {
     return;
   }
 
-  await handleEngineMessage(request);
+  // DuckDB-WASM connections are not a concurrency boundary. The UI can fire
+  // several stats/query requests in one render pass, especially in Variable
+  // Manager; serialize them here so one connection is never used by overlapping
+  // async operations.
+  engineRequestQueue = engineRequestQueue.then(() => runQueuedEngineMessage(request));
 };
