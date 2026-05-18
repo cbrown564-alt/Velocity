@@ -122,7 +122,11 @@ let moduleInstance: ReadStatModule | null = null;
 let modulePromise: Promise<ReadStatModule> | null = null;
 
 const READSTAT_PUBLIC_MODULE_URL = '/readstat/readstat.js';
-const READSTAT_DIST_MODULE_URL = new URL('../dist/readstat.js', import.meta.url).toString();
+const READSTAT_DIST_MODULE_RELATIVE_PATH = '../dist/readstat.js';
+
+function getReadStatDistModuleUrl(): string {
+    return new URL(READSTAT_DIST_MODULE_RELATIVE_PATH, import.meta.url).toString();
+}
 
 function isNodeRuntime(): boolean {
     return typeof process !== 'undefined' && !!process.versions?.node;
@@ -131,7 +135,7 @@ function isNodeRuntime(): boolean {
 function getReadStatModuleCandidates(): string[] {
     // Prefer colocated dist artifact first (works in local dev and Node tooling),
     // then fall back to public /readstat path when deployed that way.
-    const candidates = [READSTAT_DIST_MODULE_URL, READSTAT_PUBLIC_MODULE_URL];
+    const candidates = [getReadStatDistModuleUrl(), READSTAT_PUBLIC_MODULE_URL];
     return [...new Set(candidates)];
 }
 
@@ -259,15 +263,16 @@ export async function initReadStat(): Promise<void> {
 
     modulePromise = (async () => {
         if (isNodeRuntime()) {
+            const nodeModuleUrl = getReadStatDistModuleUrl();
             try {
-                const imported = await import(/* @vite-ignore */ '../dist/readstat.js');
+                const imported = await import(/* @vite-ignore */ nodeModuleUrl);
                 const moduleFactory = (imported as { default: () => Promise<ReadStatModule> }).default;
                 const instance = await moduleFactory();
                 moduleInstance = instance;
                 console.log('📦 [ReadStat] WASM module initialized');
                 return instance;
             } catch (error) {
-                console.warn('⚠️ [ReadStat] Failed to load WASM module from ../dist/readstat.js', error);
+                console.warn(`⚠️ [ReadStat] Failed to load WASM module from ${nodeModuleUrl}`, error);
                 console.warn('⚠️ [ReadStat] WASM artifacts unavailable; falling back to jsavvy parser.', error);
                 throw error;
             }
