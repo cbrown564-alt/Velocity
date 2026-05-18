@@ -9,6 +9,9 @@ lerna-debug.log*
 
 node_modules
 dist
+!packages/readstat-wasm/dist/
+!packages/readstat-wasm/dist/readstat.js
+!packages/readstat-wasm/dist/readstat.wasm
 dist-ssr
 *.local
 
@@ -31,6 +34,7 @@ test-results/
 
 # Demo data
 *.sav
+!test_data/British Social Attitudes Survey/bsa93.sav
 public/demo/wvs.csv
 public/demo/*.csv
 test_data/wvs_processed/

@@ -22,12 +22,7 @@ export default defineConfig(({ mode }) => {
     },
     optimizeDeps: {
       exclude: ['@velocity/readstat-wasm', 'webr'],
-      include: [
-        '@uwdata/vgplot',
-        '@uwdata/mosaic-core',
-        '@uwdata/mosaic-plot',
-        '@uwdata/mosaic-sql',
-      ]
+      include: []
     },
     worker: {
       format: 'es'
