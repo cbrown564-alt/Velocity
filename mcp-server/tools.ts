@@ -18,6 +18,7 @@ import { serializeSessionFile, SESSION_FILE_EXTENSION } from '../src/core/sessio
 import type { Filter } from '../src/types/index.js';
 import type { VariableMapping } from '../src/types/harmonization.js';
 import { formatCrosstabMatrix } from '../src/core/analysis/formatCrosstabMatrix.js';
+import { formatBuildDeckResponse } from './deckTransport.js';
 
 // ---------------------------------------------------------------------------
 // Tool Schemas (JSON Schema for each tool's input)
@@ -270,7 +271,8 @@ const TOOLS = [
   // Deck building
   {
     name: 'velocity_build_deck',
-    description: 'Build a full presentation deck from a DeckSpec. Returns a BuiltDeck with processed slides.',
+    description:
+      'Build a full presentation deck from a DeckSpec. Returns a BuiltDeck with processed slides. Large decks (8+ slides or heavy payloads) are returned as multiple MCP content parts (transport: chunked); merge chunked-slide parts by index before export/commit.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -729,7 +731,7 @@ export function registerTools(server: Server, engine: VelocityEngine): void {
         // ---- Deck building ----
         case 'velocity_build_deck': {
           const result = await engine.buildDeck(a.spec as DeckSpec);
-          return successResponse(result);
+          return formatBuildDeckResponse(result);
         }
 
         case 'velocity_export_deck': {

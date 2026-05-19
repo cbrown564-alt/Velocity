@@ -98,7 +98,7 @@ S2-STAT-1 through S2-STAT-4 are resolved. S2-EXP-1 and S2-EXP-2 are done. Phase 
 
 ### 4.2 Current Stabilization Sprint (May 2026)
 
-Grilled against `docs/archive/2026-05/audits/audit_05_deep_code_review_2026-05-19.md` (May 2026). **Stabilization sprint closed May 19, 2026** — all `STAB-*` rows below are Done. **Active critical path:** finish `S4-DEF-1`, then `S4-MCP-1` / `S4-MCP-2` / `S4-EVAL-5b`; parallel `STAB-ARCH-1` thin slices (§8). Phase 5+ remains frozen until post–Phase 4 follow-through.
+Grilled against `docs/archive/2026-05/audits/audit_05_deep_code_review_2026-05-19.md` (May 2026). **Stabilization sprint closed May 19, 2026** — all `STAB-*` rows below are Done. **Active critical path:** `S4-EVAL-5b`; parallel `STAB-ARCH-1` thin slices (§8). Phase 5+ remains frozen until post–Phase 4 follow-through.
 
 #### 4.2.1 Stabilization contract (execution rules)
 
@@ -113,7 +113,7 @@ Grilled against `docs/archive/2026-05/audits/audit_05_deep_code_review_2026-05-1
 | Design system | Staged allowlist ratchet (`scripts/check-design-tokens.mjs`); see §7 |
 | Design audit plan | Superseded by tracker §7 (`STAB-DS-1`); no `docs/DESIGN_AUDIT_PLAN.md` |
 | Expansion freeze | **Lifted (May 19, 2026)** after `STAB-WS-1` + `STAB-EXP-1` (1a+1b) shipped. **Allowed now:** finish `S4-DEF-1` (engine/MCP/tests only — no `dataSlice` / `App.tsx` / OPFS edits); start `S4-MCP-1`, `S4-MCP-2`, `S4-EVAL-5b`; `STAB-ARCH-1` scoped slices (§8). **Still frozen:** Phase 5+ (`S5-R-1` WebR, `S5-STATS-1`, `S5-PREP-*`), Phase 6–7, ad-hoc monolith refactors outside `STAB-ARCH-1`, net-new MCP tools beyond the S4-MCP rows |
-| Post-stabilization priority | (1) `S4-DEF-1` → (2) `S4-MCP-1` → (3) `S4-MCP-2` + `S4-EVAL-5b` in parallel when staffed; `STAB-ARCH-1` slices may run in parallel if they do not touch active WS/MCP PRs |
+| Post-stabilization priority | (1) `S4-EVAL-5b` harmonization re-run; (2) `STAB-ARCH-1` slices in parallel when staffed |
 
 | ID | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -136,7 +136,7 @@ Grilled against `docs/archive/2026-05/audits/audit_05_deep_code_review_2026-05-1
 | S4-FMT-1 | MCP | Crosstab matrix format (absorbed by `STAB-EXP-1a`) | STAB-EXP-1a | Merged | Yes | T,L,U,I,A | `STAB-EXP-1a` |
 | S4-MCP-1 | MCP | Workspace-aware MCP: `velocity_load_metadata` + `velocity_load_full` two-step flow; multi-dataset workspace tools | STAB-EXP-1, S4-DEF-1 preferred first | Not started | Yes | T,L,U,I,A | - |
 | S4-DEF-1 | Defaults | Recommended break variables after topic selection; false-positive weight warnings; high-cardinality guardrails | S4-DISC-1 | In progress | Yes | T,L,U,I,A | `src/engine/VelocityEngine.ts`, `mcp-server/tools.ts`, `mcp-server/__tests__/tools.test.ts` — **scope:** engine/MCP only until Done; no WS/persistence files |
-| S4-MCP-2 | MCP | Deck build transport resilience: stream or chunk `buildDeck` responses to avoid stdio OOM | STAB-EXP-1 | Not started | Yes | T,L,U,A | - |
+| S4-MCP-2 | MCP | Deck build transport resilience: stream or chunk `buildDeck` responses to avoid stdio OOM | STAB-EXP-1 | Done | Yes | T,L,U,A | `mcp-server/deckTransport.ts`, `mcp-server/__tests__/deckTransport.test.ts`, `mcp-server/tools.ts`, `mcp-server/__tests__/tools.test.ts`, `docs/guide_agent_quickstart.md` |
 | S4-EVAL-5b | Eval | Harmonization re-run: EVAL-05 follow-on with naming drift, partial label overlap, or scale inversion construct | STAB-EXP-1 | Not started | No | A | - |
 | STAB-ARCH-1 | Architecture | Thin-slice decomposition of `App.tsx` / `dataSlice` orchestration (§8); no behavior change | STAB-EXP-1 | Not started | No | T,U,I,A | - |
 

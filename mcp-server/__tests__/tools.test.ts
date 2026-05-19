@@ -369,6 +369,58 @@ describe('velocity_build_deck', () => {
     expect(engine.buildDeck).toHaveBeenCalledWith(spec);
   });
 
+  it('returns a single content part for small decks', async () => {
+    const engine = makeEngine();
+    const result = await callTool(engine, 'velocity_build_deck', {
+      spec: { title: 'T', sections: [] },
+    }) as { content: { text: string }[] };
+    expect(result.content).toHaveLength(1);
+    const parsed = JSON.parse(result.content[0].text);
+    expect(parsed.transport).toBeUndefined();
+  });
+
+  it('returns chunked content parts when the deck has many slides', async () => {
+    const slides = Array.from({ length: 9 }, (_, index) => ({
+      spec: { rowVars: [`Q${index}`] },
+      sectionTitle: 'Results',
+      result: {
+        data: { rows: [{ row: 'a', col: 'b', count: 1 }] },
+        operation: 'runAnalysis:crosstab',
+        inputs: {},
+        durationMs: 1,
+        warnings: [],
+        metadata: {},
+      },
+      processed: { rows: [] },
+      resolvedTitle: `Slide ${index}`,
+      resolvedSubtitle: 'N = 100',
+    }));
+    const engine = makeEngine({
+      buildDeck: vi.fn().mockResolvedValue({
+        data: {
+          spec: { title: 'Large', sections: [] },
+          slides,
+          errors: [],
+          buildDurationMs: 100,
+        },
+        operation: 'buildDeck',
+        inputs: {},
+        durationMs: 100,
+        warnings: [],
+        metadata: {},
+      }),
+    });
+
+    const result = await callTool(engine, 'velocity_build_deck', {
+      spec: { title: 'Large', sections: [] },
+    }) as { content: { text: string }[] };
+
+    expect(result.content.length).toBeGreaterThan(1);
+    const manifest = JSON.parse(result.content[0].text);
+    expect(manifest.transport).toBe('chunked');
+    expect(manifest.data.slideCount).toBe(9);
+  });
+
   it('returns isError when buildDeck throws', async () => {
     const engine = makeEngine({
       buildDeck: vi.fn().mockRejectedValue(new VelocityError('DECK_BUILD_FAILED', 'Failed')),

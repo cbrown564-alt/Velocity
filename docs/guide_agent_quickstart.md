@@ -610,7 +610,16 @@ Compose a full presentation deck from a declarative specification. Each slide de
 }
 ```
 
-**Returns** `ResultEnvelope<BuiltDeck>`:
+**Returns** `ResultEnvelope<BuiltDeck>` as one or more MCP text content parts:
+
+- **Small decks** (fewer than 8 slides and compact JSON under ~256KB): a single JSON blob (same shape as below).
+- **Large decks** (8+ slides or heavy payloads): **chunked transport** to avoid stdio OOM:
+  1. First part: manifest with `"transport": "chunked"`, `data.spec`, `data.errors`, `data.buildDurationMs`, `data.slideCount` (no `data.slides`).
+  2. Following parts: `{ "transport": "chunked-slide", "index": 0, "slide": { ... } }` per slide.
+
+**Reassembly before export/commit:** Merge all `chunked-slide` parts into `data.slides` ordered by `index`, then pass `envelope.data` to `velocity_export_deck` / `velocity_commit_deck`.
+
+Single-part example:
 ```json
 {
   "data": {
