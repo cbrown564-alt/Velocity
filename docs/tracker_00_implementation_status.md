@@ -102,7 +102,7 @@ S2-STAT-1 through S2-STAT-4 are resolved. S2-EXP-1 and S2-EXP-2 are done. Phase 
 
 ### 4.2 Current Stabilization Sprint (May 2026)
 
-Grilled against `docs/archive/2026-05/audits/audit_05_deep_code_review_2026-05-19.md` (May 2026). **Stabilization sprint closed May 19, 2026** — all `STAB-*` rows below are Done. **Active critical path:** `STAB-ARCH-1` thin slices (§8) and `STAB-UI-*` (§4.7). `S4-EVAL-5b` Done (May 19, 2026). Phase 5+ remains frozen until post–Phase 4 follow-through.
+Grilled against `docs/archive/2026-05/audits/audit_05_deep_code_review_2026-05-19.md` (May 2026). **Stabilization sprint closed May 19, 2026** — all `STAB-*` rows below are Done. **Active critical path:** `STAB-UI-*` (§4.7). `STAB-ARCH-1` and `S4-EVAL-5b` Done (May 19, 2026). Phase 5+ remains frozen until post–Phase 4 follow-through.
 
 #### 4.2.1 Stabilization contract (execution rules)
 
@@ -117,7 +117,7 @@ Grilled against `docs/archive/2026-05/audits/audit_05_deep_code_review_2026-05-1
 | Design system | Staged allowlist ratchet (`scripts/check-design-tokens.mjs`); see §7 |
 | Design audit plan | Superseded by tracker §7 (`STAB-DS-1`); no `docs/DESIGN_AUDIT_PLAN.md` |
 | Expansion freeze | **Lifted (May 19, 2026)** after `STAB-WS-1` + `STAB-EXP-1` (1a+1b) shipped. **Allowed now:** finish `S4-DEF-1` (engine/MCP/tests only — no `dataSlice` / `App.tsx` / OPFS edits); start `S4-MCP-1`, `S4-MCP-2`, `S4-EVAL-5b`; `STAB-ARCH-1` scoped slices (§8). **Still frozen:** Phase 5+ (`S5-R-1` WebR, `S5-STATS-1`, `S5-PREP-*`), Phase 6–7, ad-hoc monolith refactors outside `STAB-ARCH-1`, net-new MCP tools beyond the S4-MCP rows |
-| Post-stabilization priority | (1) `STAB-ARCH-1` slices + `STAB-UI-*` in parallel when staffed; harmonization fuzzy re-run (`S4-EVAL-5b`) complete |
+| Post-stabilization priority | (1) `STAB-UI-*` when staffed; `STAB-ARCH-1` complete; harmonization fuzzy re-run (`S4-EVAL-5b`) complete |
 
 | ID | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -142,7 +142,7 @@ Grilled against `docs/archive/2026-05/audits/audit_05_deep_code_review_2026-05-1
 | S4-DEF-1 | Defaults | Recommended break variables after topic selection; false-positive weight warnings; high-cardinality guardrails | S4-DISC-1 | Done | Yes | T,L,U,I,A | `src/core/semantic/analysisGuardrails.ts`, `src/core/semantic/weightPatterns.ts`, `src/engine/VelocityEngine.ts`, `mcp-server/tools.ts`, `mcp-server/__tests__/tools.test.ts`, `src/core/semantic/__tests__/analysisGuardrails.test.ts` |
 | S4-MCP-2 | MCP | Deck build transport resilience: stream or chunk `buildDeck` responses to avoid stdio OOM | STAB-EXP-1 | Done | Yes | T,L,U,A | `mcp-server/deckTransport.ts`, `mcp-server/__tests__/deckTransport.test.ts`, `mcp-server/tools.ts`, `mcp-server/__tests__/tools.test.ts`, `docs/guide_agent_quickstart.md` |
 | S4-EVAL-5b | Eval | Harmonization re-run: EVAL-05 follow-on with naming drift, partial label overlap, or scale inversion construct | STAB-EXP-1 | Done | No | A | `evals/eval-05/runs/run-2026-05-19/`, `evals/eval-05/scripts/discover_fuzzy_construct.ts`, `evals/eval-05/scripts/run_fuzzy_harmonization.ts`, `npm run eval:05b:engine` |
-| STAB-ARCH-1 | Architecture | Thin-slice decomposition of `App.tsx` / `dataSlice` orchestration (§8); no behavior change | STAB-EXP-1 | In progress | No | T,U,I,A | §8.1: `useWorkspaceOpen.ts`; §8.2: `workspaceDatasetLifecycle.ts` |
+| STAB-ARCH-1 | Architecture | Thin-slice decomposition of `App.tsx` / `dataSlice` orchestration (§8); no behavior change | STAB-EXP-1 | Done | No | T,U,I,A | §8.1–8.4: `useWorkspaceOpen.ts`, `workspaceDatasetLifecycle.ts`, `enginePersistenceBridge.ts`, `assignOpfsKeyAndLoad.ts` |
 
 ### 4.7 UI Excellence Workstream (May 2026)
 
@@ -276,7 +276,7 @@ CSS Modules remain for complex component states, grids, animations, and unreadab
 
 ## 8. STAB-ARCH-1 — Orchestration thin slices
 
-**Status:** In progress (May 2026). §8.1–8.2 Done. Follow `docs/playbooks/refactor_safely.md` — zero behavior change per slice.
+**Status:** Done (May 2026). All §8.1–8.4 slices shipped. Follow `docs/playbooks/refactor_safely.md` — zero behavior change per slice.
 
 **Problem:** `src/App.tsx` (~960 lines) and `src/store/slices/dataSlice.ts` (~1,480 lines) concentrate workspace open/switch, OPFS rehydration, engine proxy lifecycle, and upload orchestration. Stabilization added correct behavior but increased coupling risk.
 
@@ -288,8 +288,8 @@ CSS Modules remain for complex component states, grids, animations, and unreadab
 | :--- | :--- | :--- | :--- |
 | 8.1 | `App.tsx` workspace-open handler + `openWorkspaceDataset` call chain | `src/features/workspace/hooks/useWorkspaceOpen.ts` (or extend `useWorkspace.ts`) | Done — `useWorkspaceOpen.test.ts` + `workspace-switch.spec.ts` gates; `App.tsx` workspace-open block removed |
 | 8.2 | `dataSlice` OPFS rehydrate + `openWorkspaceDataset` persistence switch | `src/store/workspaceDatasetLifecycle.ts` (pure helpers + typed calls into slice) | Done — `dataSlice.workspace.test.ts`, `persistence.test.ts`, `workspaceDatasetLifecycle.test.ts` green; ~90 lines removed from `dataSlice.ts` |
-| 8.3 | `dataSlice` engine init/respawn + corruption handlers | `src/store/enginePersistenceBridge.ts` | Existing `persistence.test.ts` + `opfsFileManager.test.ts` green; no new public store API |
-| 8.4 | Upload → OPFS key assignment in `App.tsx` / `useFileUpload` | Colocate with workspace hooks; single `assignOpfsKeyAndLoad` helper | `useFileUpload` tests if present; E2E upload path unchanged |
+| 8.3 | `dataSlice` engine init/respawn + corruption handlers | `src/store/enginePersistenceBridge.ts` | Done — `persistence.test.ts`, `opfsFileManager.test.ts`, `enginePersistenceBridge.test.ts` green; no new public store API |
+| 8.4 | Upload → OPFS key assignment in `App.tsx` / `useFileUpload` | Colocate with workspace hooks; single `assignOpfsKeyAndLoad` helper | Done — `assignOpfsKeyAndLoad.test.ts`; `useFileUpload` moved to `features/workspace/hooks/` |
 
 ### Gates per slice
 

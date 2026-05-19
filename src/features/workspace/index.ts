@@ -15,3 +15,13 @@ export { CrossWavePanel } from './components/CrossWavePanel';
 export { ExportImportModal, type WorkspaceExport } from './components/ExportImportModal';
 
 export { useWorkspace } from './hooks/useWorkspace';
+export { useWorkspaceOpen } from './hooks/useWorkspaceOpen';
+export type { WorkspaceOpenAppMode, UseWorkspaceOpenOptions, UseWorkspaceOpenReturn } from './hooks/useWorkspaceOpen';
+export { useFileUpload, type FileUploadState } from './hooks/useFileUpload';
+export {
+  assignOpfsKeyAndLoad,
+  assignOpfsStorageForUpload,
+  type AssignOpfsKeyAndLoadOptions,
+  type AssignOpfsStorageResult,
+  type LoadSavFn,
+} from './hooks/assignOpfsKeyAndLoad';

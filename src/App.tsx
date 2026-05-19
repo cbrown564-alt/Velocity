@@ -34,7 +34,7 @@ import { InputModal } from './components/overlays/InputModal';
 import { ContextMenu } from './features/dashboard/components/ContextMenu';
 
 import { usePersistenceManager } from './hooks/usePersistenceManager';
-import { useFileUpload } from './hooks/useFileUpload';
+import { useFileUpload } from './features/workspace/hooks/useFileUpload';
 import { useWorkspaceOpen } from './features/workspace/hooks/useWorkspaceOpen';
 
 // App Modes

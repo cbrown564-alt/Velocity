@@ -11,7 +11,15 @@ import type { OrderedScoring, OrderedStyle, RecodeConfig, VariableType } from '.
 import { allowsNumericStats, normalizeVariableType } from '../../types';
 import * as opfsFileManager from '../../services/opfsFileManager';
 import { EngineProxy } from '../../services/EngineProxy';
-import type { EngineResponseByType } from '../../types/engineWorker';
+import {
+    openWorkspaceDatasetLifecycle,
+    rehydrateDatasetFromOpfsSource,
+} from '../workspaceDatasetLifecycle';
+import {
+    initializeEngineWorker,
+    respawnEngineWorker,
+    createStorePersistenceBridge,
+} from '../enginePersistenceBridge';
 
 export type { VariableType } from '../../types';
 
@@ -98,7 +106,7 @@ export interface Folder {
     order: number;
 }
 
-function normalizeVariable(variable: Variable): Variable {
+export function normalizeVariable(variable: Variable): Variable {
     const normalizedType = normalizeVariableType(variable.type);
     const next: Variable = {
         ...variable,
@@ -120,7 +128,7 @@ function normalizeVariable(variable: Variable): Variable {
     return next;
 }
 
-function normalizeVariableSet(variableSet: VariableSet): VariableSet {
+export function normalizeVariableSet(variableSet: VariableSet): VariableSet {
     if (!variableSet.type) return variableSet;
     const normalizedType = normalizeVariableType(variableSet.type);
     const next: VariableSet = {
@@ -143,7 +151,7 @@ function normalizeVariableSet(variableSet: VariableSet): VariableSet {
     return next;
 }
 
-function buildVariableSetsFromVariables(variables: Variable[]): VariableSet[] {
+export function buildVariableSetsFromVariables(variables: Variable[]): VariableSet[] {
     return variables
         .filter((variable) => !variable.synthetic)
         .map((variable) => ({
@@ -303,68 +311,21 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
 
     // Initialize Web Worker with EngineProxy
     initWorker: async () => {
-        const currentProxy = get().engineProxy;
-        if (currentProxy) {
-            console.log('[DataSlice] Engine already initialized, skipping duplicate init');
-            return;
-        }
+        const bridge = createStorePersistenceBridge((partial) => set(partial as any));
 
-        try {
-            const worker = new Worker(
-                new URL('../../services/analysisWorker.ts', import.meta.url),
-                { type: 'module' }
-            );
-
-            // Set up general error handler for runtime errors
-            worker.onerror = (error) => {
-                console.error('[DataSlice] Worker runtime error:', error);
-                set({ initError: error.message || 'Worker runtime error' });
-            };
-
-            const proxy = new EngineProxy(worker, {
-                onPersistenceStatus: (msg) => {
-                    set({
-                        opfsAvailable: msg.opfsAvailable,
-                        persistenceMode: msg.mode,
-                        persistenceError: msg.lastError ?? null,
-                        activeDbPath: msg.dbPath,
-                    });
-                },
-                onCorruption: (msg) => {
-                    console.warn('[DataSlice] OPFS corruption detected:', msg.message);
-                    set({
-                        persistenceState: 'corrupt',
-                        persistenceError: msg.message || 'OPFS database corruption detected',
-                        opfsAvailable: false,
-                        persistedDataInfo: null,
-                    });
-                },
-            });
-
-            set({ engineProxy: proxy, persistenceState: 'checking' });
-
-            const datasetId = get().dataset?.id;
-            const result = await proxy.init({ datasetId, schemaVersion: 1 });
-
-            set({
-                isDbReady: true,
-                opfsAvailable: result.opfsAvailable,
-            });
-            console.log(`[DataSlice] Engine ready, OPFS available: ${result.opfsAvailable}`);
-
-            // If OPFS is available, check for persisted data
-            if (get().opfsAvailable && get().persistenceState !== 'corrupt') {
-                await get().checkPersistedData();
-            } else {
-                set({ persistenceState: 'ready' });
-            }
-        } catch (error: any) {
-            console.error('[DataSlice] Failed to init engine:', error);
-            set({
-                initError: error.message || 'Failed to initialize engine',
-                persistenceState: 'error'
-            });
-        }
+        await initializeEngineWorker({
+            getExistingProxy: () => get().engineProxy,
+            getDatasetId: () => get().dataset?.id,
+            getOpfsAvailable: () => get().opfsAvailable,
+            getPersistenceState: () => get().persistenceState,
+            bridge,
+            setWorkerRuntimeError: (message) => set({ initError: message }),
+            assignEngineProxy: (proxy) => set({ engineProxy: proxy, persistenceState: 'checking' }),
+            setInitSuccess: (opfsAvailable) => set({ isDbReady: true, opfsAvailable }),
+            setPersistenceReady: () => set({ persistenceState: 'ready' }),
+            setInitError: (message) => set({ initError: message, persistenceState: 'error' }),
+            checkPersistedData: () => get().checkPersistedData(),
+        });
     },
 
     // Terminate the current worker
@@ -383,60 +344,25 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
 
     // Respawn worker (terminates existing and creates fresh)
     respawnWorker: async (cleanStart: boolean = false, datasetIdOverride?: string) => {
-        console.log(`[DataSlice] Respawning engine (cleanStart: ${cleanStart})`);
-        get().terminateWorker();
+        const bridge = createStorePersistenceBridge((partial) => set(partial as any));
 
-        // Small delay to ensure clean termination
-        await new Promise(resolve => setTimeout(resolve, 100));
-
-        try {
-            const worker = new Worker(
-                new URL('../../services/analysisWorker.ts', import.meta.url),
-                { type: 'module' }
-            );
-
-            const proxy = new EngineProxy(worker, {
-                onPersistenceStatus: (msg) => {
-                    set({
-                        opfsAvailable: msg.opfsAvailable,
-                        persistenceMode: msg.mode,
-                        persistenceError: msg.lastError ?? null,
-                        activeDbPath: msg.dbPath,
-                    });
-                },
-                onCorruption: (msg) => {
-                    console.warn('[DataSlice] OPFS corruption detected during respawn:', msg.message);
-                    set({
-                        persistenceState: 'corrupt',
-                        persistenceError: msg.message || 'OPFS database corruption detected',
-                        opfsAvailable: false,
-                        persistedDataInfo: null,
-                    });
-                },
-            });
-
-            set({ engineProxy: proxy });
-
-            const datasetId = datasetIdOverride ?? get().dataset?.id;
-            const result = await proxy.init({
-                forceCleanStart: cleanStart,
-                datasetId,
-                schemaVersion: 1,
-            });
-
-            set({
+        await respawnEngineWorker({
+            terminateWorker: () => get().terminateWorker(),
+            getDatasetId: () => get().dataset?.id,
+            bridge,
+            setEngineProxy: (proxy) => set({ engineProxy: proxy }),
+            setRespawnSuccess: (opfsAvailable) => set({
                 isDbReady: true,
-                opfsAvailable: result.opfsAvailable,
+                opfsAvailable,
                 persistenceState: 'ready',
-            });
-            console.log(`[DataSlice] Engine respawned, OPFS available: ${result.opfsAvailable}`);
-        } catch (error: any) {
-            console.error('[DataSlice] Failed to respawn engine:', error);
-            set({
-                initError: error.message || 'Failed to respawn engine',
-                persistenceState: 'error'
-            });
-        }
+            }),
+            setRespawnError: (message) => set({
+                initError: message,
+                persistenceState: 'error',
+            }),
+            cleanStart,
+            datasetIdOverride,
+        });
     },
 
     // Check for persisted data in OPFS
@@ -500,163 +426,71 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
     // Rehydrate DuckDB data from persisted source file in OPFS (best-effort).
     // This is the local-first fallback when DuckDB OPFS DB persistence is unavailable/corrupt.
     rehydrateDatasetFromOpfs: async (options?: { forceReload?: boolean }) => {
-        const { engineProxy, dataset } = get();
+        const { engineProxy, dataset, transformLog } = get();
         if (!engineProxy) throw new Error('Engine not initialized');
-        if (!dataset?.opfsFileKey) throw new Error('Dataset has no OPFS source key');
+        if (!dataset) throw new Error('Dataset has no OPFS source key');
 
-        if (!options?.forceReload) {
-            try {
-                const status = await engineProxy.ping();
-                if (status.hasData) {
-                    const runAnalysis = (get() as any).runAnalysis as undefined | (() => Promise<void>);
-                    if (typeof runAnalysis === 'function') {
-                        void runAnalysis().catch((error) => {
-                            console.warn('[DataSlice] Analysis replay failed during OPFS rehydration shortcut:', error);
-                        });
-                    }
-                    return;
-                }
-            } catch {
-                // Ping failed, proceed with rehydration
-            }
-        }
-
-        console.log(`[DataSlice] Rehydrating DuckDB from OPFS source: ${dataset.opfsFileKey}`);
-        const opfsOk = await opfsFileManager.isAvailable().catch(() => false);
-        if (!opfsOk) {
-            throw new Error('OPFS is unavailable in this browser/session (private browsing can disable it)');
-        }
-
-        const sourceKey = dataset.opfsFileKey;
-        const exists = await opfsFileManager.fileExists(sourceKey).catch(() => false);
-        if (!exists) {
-            throw new Error(`OPFS source file not found: ${sourceKey}`);
-        }
-
-        let buffer: ArrayBuffer;
-        try {
-            buffer = await opfsFileManager.readFile(sourceKey);
-        } catch (error: any) {
-            const message = error?.message || String(error) || 'Unknown read error';
-            throw new Error(`Failed to read OPFS source file (${sourceKey}): ${message}`);
-        }
-
-        await engineProxy.loadSAV(buffer);
-
-        const transforms = get().transformLog;
-        if (transforms.length > 0) {
-            console.log(`[DataSlice] Replaying ${transforms.length} transforms`);
-        }
-
-        for (const transform of transforms) {
-            if (transform.type !== 'recode') continue;
-            try {
-                await engineProxy.recodeVariable(transform.sourceColId, transform.newColId, transform.config);
-            } catch (error: any) {
-                console.warn('[DataSlice] Transform replay failed:', error.message);
-            }
-        }
-
-        // If the user had an analysis in view (tableConfig persisted), rerun it now
         const runAnalysis = (get() as any).runAnalysis as undefined | (() => Promise<void>);
-        if (typeof runAnalysis === 'function') {
-            await runAnalysis();
-        }
 
-        void get().flushPersistedData();
+        await rehydrateDatasetFromOpfsSource(
+            {
+                engineProxy,
+                dataset,
+                transformLog,
+                runAnalysis: typeof runAnalysis === 'function' ? runAnalysis : undefined,
+                flushPersistedData: () => get().flushPersistedData(),
+            },
+            options,
+        );
     },
 
     openWorkspaceDataset: async (stored: WorkspaceDatasetOpenInput) => {
         const { engineProxy, dataset: currentDataset } = get();
         if (!engineProxy) throw new Error('Engine not initialized');
 
-        if (currentDataset?.id === stored.id) {
-            if (stored.sessionState) {
-                set({
-                    tableConfig: stored.sessionState.tableConfig,
-                    activeFilters: stored.sessionState.activeFilters,
-                    transformLog: stored.sessionState.transformLog as DataTransform[],
-                } as any);
-            }
-            const runAnalysis = (get() as any).runAnalysis as undefined | (() => Promise<void>);
-            if (typeof runAnalysis === 'function') {
-                await runAnalysis();
-            }
-            return;
-        }
-
-        if (currentDataset) {
-            await get().flushPersistedData().catch(() => {});
-        }
-
-        const variables = (stored.variables ?? []).map(normalizeVariable);
-        const variableSets = stored.variableSets && stored.variableSets.length > 0
-            ? stored.variableSets.map(normalizeVariableSet)
-            : buildVariableSetsFromVariables(variables);
-        const session = stored.sessionState;
-        const transformLog = (session?.transformLog ?? []) as DataTransform[];
-        const fileName = stored.fileName || stored.name;
-
-        set({
-            dataset: {
-                id: stored.id,
-                name: fileName,
-                rowCount: stored.rowCount,
-                variables,
-                source: stored.source,
-                opfsFileKey: stored.opfsFileKey,
-                metadataOnly: variables.length === 0,
-            },
-            variableSets,
-            folders: stored.folders ?? [],
-            transformLog,
-            variableStats: {},
-            variableStatsLoading: {},
-            tableConfig: session?.tableConfig ?? { rowVars: [], colVar: null },
-            activeFilters: session?.activeFilters ?? [],
-            queryResult: [],
-            tableStats: null,
-            persistenceState: 'checking',
-            persistedDataInfo: null,
-            persistenceError: null,
-        } as any);
-
-        await get().respawnWorker(false);
-
-        const activeProxy = get().engineProxy;
-        if (!activeProxy) throw new Error('Engine not initialized after dataset switch');
-
-        let hasData = false;
-        try {
-            const ping = await activeProxy.ping();
-            hasData = ping.hasData;
-        } catch {
-            hasData = false;
-        }
-
-        const needsSourceRebuild = !hasData || get().persistenceState === 'corrupt';
-
-        if (needsSourceRebuild) {
-            if (!stored.opfsFileKey) {
-                throw new Error('Dataset has no persisted source file. Re-upload the original file.');
-            }
-
-            const exists = await opfsFileManager.fileExists(stored.opfsFileKey).catch(() => false);
-            if (!exists) {
-                throw new Error(`OPFS source file not found: ${stored.opfsFileKey}`);
-            }
-
-            await get().rehydrateDatasetFromOpfs({ forceReload: true });
-            return;
-        }
-
-        activeProxy.setDatasetContext(fileName, stored.rowCount);
-        set({ persistenceState: 'ready' });
-
         const runAnalysis = (get() as any).runAnalysis as undefined | (() => Promise<void>);
-        if (typeof runAnalysis === 'function') {
-            await runAnalysis();
-        }
+
+        await openWorkspaceDatasetLifecycle(stored, {
+            engineProxy,
+            currentDataset,
+            runAnalysis: typeof runAnalysis === 'function' ? runAnalysis : undefined,
+            flushPersistedData: () => get().flushPersistedData(),
+            respawnWorker: (cleanStart) => get().respawnWorker(cleanStart),
+            getEngineProxy: () => get().engineProxy,
+            getPersistenceState: () => get().persistenceState,
+            applyOpenPatch: (patch) => {
+                set({
+                    dataset: patch.dataset,
+                    variableSets: patch.variableSets,
+                    folders: patch.folders,
+                    transformLog: patch.transformLog,
+                    variableStats: {},
+                    variableStatsLoading: {},
+                    tableConfig: patch.tableConfig,
+                    activeFilters: patch.activeFilters,
+                    queryResult: [],
+                    tableStats: null,
+                    persistenceState: 'checking',
+                    persistedDataInfo: null,
+                    persistenceError: null,
+                } as any);
+            },
+            applySameDatasetSession: (sessionState) => {
+                if (!sessionState) return;
+                set({
+                    tableConfig: sessionState.tableConfig,
+                    activeFilters: sessionState.activeFilters,
+                    transformLog: sessionState.transformLog as DataTransform[],
+                } as any);
+            },
+            rehydrateFromOpfs: (options) => get().rehydrateDatasetFromOpfs(options),
+            setPersistenceReady: (fileName, rowCount) => {
+                const activeProxy = get().engineProxy;
+                if (!activeProxy) return;
+                activeProxy.setDatasetContext(fileName, rowCount);
+                set({ persistenceState: 'ready' });
+            },
+        });
     },
 
     // Restore session from persisted data (user chose to restore)
