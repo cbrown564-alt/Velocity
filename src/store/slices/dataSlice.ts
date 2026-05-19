@@ -143,6 +143,33 @@ function normalizeVariableSet(variableSet: VariableSet): VariableSet {
     return next;
 }
 
+function buildVariableSetsFromVariables(variables: Variable[]): VariableSet[] {
+    return variables
+        .filter((variable) => !variable.synthetic)
+        .map((variable) => ({
+            id: crypto.randomUUID(),
+            name: variable.label || variable.name,
+            variableIds: [variable.id],
+            structure: 'single' as const,
+            type: variable.type,
+        }));
+}
+
+export interface WorkspaceDatasetOpenInput {
+    id: string;
+    name: string;
+    fileName?: string;
+    rowCount: number;
+    source: 'sav' | 'csv' | 'arrow';
+    opfsFileKey?: string;
+    variables?: Variable[];
+    sessionState?: {
+        tableConfig: { rowVars: string[]; colVar: string | null };
+        activeFilters: unknown[];
+        transformLog: unknown[];
+    };
+}
+
 // ============================================================================
 // Transform Log (Local-First Rebuild)
 // ============================================================================
@@ -219,6 +246,7 @@ export interface DataSlice {
     restoreFromPersistence: () => void;
     discardPersistedData: () => Promise<void>;
     rehydrateDatasetFromOpfs: (options?: { forceReload?: boolean }) => Promise<void>;
+    openWorkspaceDataset: (stored: WorkspaceDatasetOpenInput) => Promise<void>;
     loadCSV: (fileName: string, content: string) => Promise<void>;
     loadSAV: (fileName: string, buffer: ArrayBuffer, options?: { datasetId?: string; opfsFileKey?: string }) => Promise<void>;
     loadSAVMetadata: (fileName: string, buffer: ArrayBuffer) => Promise<void>;
@@ -534,6 +562,96 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
         }
 
         void get().flushPersistedData();
+    },
+
+    openWorkspaceDataset: async (stored: WorkspaceDatasetOpenInput) => {
+        const { engineProxy, dataset: currentDataset } = get();
+        if (!engineProxy) throw new Error('Engine not initialized');
+
+        if (currentDataset?.id === stored.id) {
+            if (stored.sessionState) {
+                set({
+                    tableConfig: stored.sessionState.tableConfig,
+                    activeFilters: stored.sessionState.activeFilters,
+                    transformLog: stored.sessionState.transformLog as DataTransform[],
+                } as any);
+            }
+            const runAnalysis = (get() as any).runAnalysis as undefined | (() => Promise<void>);
+            if (typeof runAnalysis === 'function') {
+                await runAnalysis();
+            }
+            return;
+        }
+
+        if (currentDataset) {
+            await get().flushPersistedData().catch(() => {});
+        }
+
+        const variables = (stored.variables ?? []).map(normalizeVariable);
+        const session = stored.sessionState;
+        const transformLog = (session?.transformLog ?? []) as DataTransform[];
+        const fileName = stored.fileName || stored.name;
+
+        set({
+            dataset: {
+                id: stored.id,
+                name: fileName,
+                rowCount: stored.rowCount,
+                variables,
+                source: stored.source,
+                opfsFileKey: stored.opfsFileKey,
+                metadataOnly: variables.length === 0,
+            },
+            variableSets: buildVariableSetsFromVariables(variables),
+            folders: [],
+            transformLog,
+            variableStats: {},
+            variableStatsLoading: {},
+            tableConfig: session?.tableConfig ?? { rowVars: [], colVar: null },
+            activeFilters: session?.activeFilters ?? [],
+            queryResult: [],
+            tableStats: null,
+            persistenceState: 'checking',
+            persistedDataInfo: null,
+            persistenceError: null,
+        } as any);
+
+        await get().respawnWorker(false);
+
+        const activeProxy = get().engineProxy;
+        if (!activeProxy) throw new Error('Engine not initialized after dataset switch');
+
+        let hasData = false;
+        try {
+            const ping = await activeProxy.ping();
+            hasData = ping.hasData;
+        } catch {
+            hasData = false;
+        }
+
+        const needsSourceRebuild = !hasData || get().persistenceState === 'corrupt';
+
+        if (needsSourceRebuild) {
+            if (!stored.opfsFileKey) {
+                throw new Error('Dataset has no persisted source file. Re-upload the original file.');
+            }
+
+            const exists = await opfsFileManager.fileExists(stored.opfsFileKey).catch(() => false);
+            if (!exists) {
+                throw new Error(`OPFS source file not found: ${stored.opfsFileKey}`);
+            }
+
+            await get().rehydrateDatasetFromOpfs({ forceReload: true });
+            return;
+        }
+
+        activeProxy.setDatasetContext(fileName, stored.rowCount);
+        set({ persistenceState: 'ready' });
+
+        const runAnalysis = (get() as any).runAnalysis as undefined | (() => Promise<void>);
+        if (typeof runAnalysis === 'function') {
+            await runAnalysis();
+        }
     },
 
     // Restore session from persisted data (user chose to restore)

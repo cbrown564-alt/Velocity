@@ -580,7 +580,7 @@ interface Project {
 
 ### 9.3 Stabilization requirements
 
-Reopen, switch, and delete must work reliably across sessions (`STAB-WS-1` in tracker). Until then, treat workspace metadata as best-effort and prefer `.velocity` export for handoff.
+Reopen, switch, and delete must work reliably across sessions (`STAB-WS-1` in tracker). Implementation: `openWorkspaceDataset()` in `dataSlice` (DB-first via per-dataset OPFS DuckDB path, source replay via `rehydrateDatasetFromOpfs` on miss/corruption), wired from `App.tsx` / `useWorkspace`, with OPFS cleanup on delete via `deleteDatasetPersistence()`.
 
 ## 10. Slide System Gaps (Current → Required)
 

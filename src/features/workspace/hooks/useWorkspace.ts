@@ -46,7 +46,6 @@ export function useWorkspace(): UseWorkspaceReturn {
     toggleDatasetStar,
     updateDatasetAccess,
     saveDatasetSession,
-    getDatasetSession,
     updateStorageQuota,
 
     // Data state
@@ -57,9 +56,7 @@ export function useWorkspace(): UseWorkspaceReturn {
     transformLog,
 
     // Data actions
-    loadSAV,
-    rehydrateDatasetFromOpfs,
-    reset,
+    openWorkspaceDataset,
   } = useVelocityStore();
 
   // Track if we've registered the current dataset
@@ -183,40 +180,23 @@ export function useWorkspace(): UseWorkspaceReturn {
    * Open a dataset from the workspace.
    */
   const openDataset = useCallback(async (storedDataset: StoredDataset): Promise<void> => {
-    // Save current session before switching
     saveCurrentSession();
-
-    // Update access time
     updateDatasetAccess(storedDataset.id);
 
-    // Check if this is the currently loaded dataset
     if (dataset?.id === storedDataset.id) {
       setWorkspaceMode(false);
       setActiveDataset(storedDataset.id);
       return;
     }
 
-    // We need to load this dataset
-    // First, find the OPFS file key from the stored dataset or try to match by name
     const existingDataset = workspace.datasets.find(d => d.id === storedDataset.id);
-
     if (!existingDataset) {
       throw new Error('Dataset not found in workspace');
     }
 
-    // Try to restore from OPFS
-    // For now, we rely on the user re-uploading if the file isn't available
-    // TODO: Store OPFS file key in StoredDataset
-
+    await openWorkspaceDataset(existingDataset);
     setActiveDataset(storedDataset.id);
     setWorkspaceMode(false);
-
-    // Restore session state if available
-    const session = getDatasetSession(storedDataset.id);
-    if (session) {
-      console.log('[useWorkspace] Restoring session for dataset:', storedDataset.name);
-      // Session restoration will be handled by the App component
-    }
   }, [
     dataset,
     workspace.datasets,
@@ -224,7 +204,7 @@ export function useWorkspace(): UseWorkspaceReturn {
     updateDatasetAccess,
     setWorkspaceMode,
     setActiveDataset,
-    getDatasetSession,
+    openWorkspaceDataset,
   ]);
 
   /**
@@ -233,7 +213,7 @@ export function useWorkspace(): UseWorkspaceReturn {
   const deleteDataset = useCallback(async (id: string): Promise<void> => {
     const storedDataset = workspace.datasets.find(d => d.id === id);
     if (storedDataset) {
-      // TODO: Clean up OPFS files associated with this dataset
+      await opfsFileManager.deleteDatasetPersistence(storedDataset.id, storedDataset.opfsFileKey);
       removeStoredDatasets([id]);
     }
 

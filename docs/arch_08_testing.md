@@ -96,7 +96,7 @@ Playwright specs under `tests/e2e/` validate product journeys in a real browser.
 | `opfs.spec.ts` | OPFS persistence, session restore, Start Fresh |
 | `session-export.spec.ts` | Session export round-trip |
 | `agentWorkflow.test.ts` | Agent-oriented UI workflow |
-| *(planned, `STAB-WS-1`)* | Workspace: upload two datasets, switch from catalog without re-upload |
+| `workspace-switch.spec.ts` | Workspace: upload two datasets, switch from catalog without re-upload |
 
 ## 6. Fixture Data
 

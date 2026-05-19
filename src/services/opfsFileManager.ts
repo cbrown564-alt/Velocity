@@ -12,6 +12,7 @@ const UPLOADED_DIR = 'uploaded_sav';
 import { walkOpfs, resolveOpfsPath } from './opfsTraversal';
 
 const DB_PREFIX = 'velocity_data';
+const OPFS_SCHEMA_VERSION = 1;
 
 /**
  * Check if OPFS is available in the current environment.
@@ -247,6 +248,33 @@ function sanitizeFileName(name: string): string {
     .replace(/[<>:"/\\|?*]/g, '_')
     .replace(/\s+/g, '_')
     .slice(0, 200); // Limit length
+}
+
+/**
+ * DuckDB OPFS filename for a workspace dataset (matches worker `buildOpfsDbPath`).
+ */
+export function buildDatasetDbFileName(datasetId: string, schemaVersion = OPFS_SCHEMA_VERSION): string {
+  return `${DB_PREFIX}_v${schemaVersion}_dataset_${datasetId}.db`;
+}
+
+/**
+ * Remove OPFS artifacts for a workspace dataset (source upload + DuckDB files).
+ */
+export async function deleteDatasetPersistence(datasetId: string, opfsFileKey?: string): Promise<void> {
+  if (opfsFileKey) {
+    await deleteFile(opfsFileKey).catch(() => {});
+  }
+
+  const baseName = buildDatasetDbFileName(datasetId);
+  await deleteDbFile(baseName).catch(() => {});
+
+  const prefix = `${DB_PREFIX}_v${OPFS_SCHEMA_VERSION}_dataset_${datasetId}`;
+  const dbFiles = await listDbFiles().catch(() => []);
+  await Promise.all(
+    dbFiles
+      .filter((file) => file.name.includes(prefix))
+      .map((file) => deleteDbFile(file.name).catch(() => {})),
+  );
 }
 
 /**

@@ -200,6 +200,8 @@ export default function App() {
     loadSAV,
     recodeVariable,
     discardPersistedData,
+    openWorkspaceDataset,
+    respawnWorker,
   } = useVelocityStore();
 
   // -- Hooks --
@@ -394,21 +396,84 @@ export default function App() {
 
   const handleOpenDataset = useCallback(async (storedDataset: StoredDataset) => {
     clearImportedSessionSemantic();
-    if (dataset && activeDatasetId) {
+    if (dataset && activeDatasetId && dataset.id !== storedDataset.id) {
       saveDatasetSession(activeDatasetId, { tableConfig, activeFilters, transformLog: [] });
     }
     updateDatasetAccess(storedDataset.id);
     setActiveDataset(storedDataset.id);
     setWorkspaceMode(false);
-    setMode('dashboard');
-  }, [clearImportedSessionSemantic, dataset, activeDatasetId, tableConfig, activeFilters, saveDatasetSession, updateDatasetAccess, setActiveDataset, setWorkspaceMode]);
+
+    if (dataset?.id === storedDataset.id) {
+      setMode('dashboard');
+      return;
+    }
+
+    setMode('uploading');
+    try {
+      await openWorkspaceDataset(storedDataset);
+      setMode('dashboard');
+    } catch (error: any) {
+      console.error('[App] Failed to open workspace dataset:', error);
+      alert(error?.message || 'Failed to open dataset from workspace.');
+      setMode('splash');
+      setWorkspaceMode(true);
+    }
+  }, [
+    clearImportedSessionSemantic,
+    dataset,
+    activeDatasetId,
+    tableConfig,
+    activeFilters,
+    saveDatasetSession,
+    updateDatasetAccess,
+    setActiveDataset,
+    setWorkspaceMode,
+    openWorkspaceDataset,
+  ]);
+
+  const clearLoadedDatasetState = useCallback(async () => {
+    useVelocityStore.setState({
+      dataset: null,
+      variableSets: [],
+      folders: [],
+      transformLog: [],
+      tableConfig: { rowVars: [], colVar: null },
+      activeFilters: [],
+      queryResult: [],
+      tableStats: null,
+      persistedDataInfo: null,
+      persistenceState: 'ready',
+    } as any);
+    await respawnWorker(false);
+  }, [respawnWorker]);
 
   const handleDeleteDataset = useCallback(async (id: string) => {
-    if (window.confirm('Delete this dataset from your workspace? The original file will not be affected.')) {
-      removeStoredDataset(id);
-      if (activeDatasetId === id) setActiveDataset(null);
+    if (!window.confirm('Delete this dataset from your workspace? The original file will not be affected.')) {
+      return;
     }
-  }, [removeStoredDataset, activeDatasetId, setActiveDataset]);
+
+    const storedDataset = workspace.datasets.find((entry) => entry.id === id);
+    if (storedDataset) {
+      await opfsFileManager.deleteDatasetPersistence(storedDataset.id, storedDataset.opfsFileKey);
+    }
+
+    removeStoredDataset(id);
+
+    if (activeDatasetId === id || dataset?.id === id) {
+      setActiveDataset(null);
+      await clearLoadedDatasetState();
+      setMode('splash');
+      setWorkspaceMode(true);
+    }
+  }, [
+    workspace.datasets,
+    removeStoredDataset,
+    activeDatasetId,
+    dataset?.id,
+    setActiveDataset,
+    clearLoadedDatasetState,
+    setWorkspaceMode,
+  ]);
 
   const handleReturnToWorkspace = useCallback(() => {
     if (dataset && activeDatasetId) {
@@ -483,9 +548,34 @@ export default function App() {
     });
   }, [workspace.datasets, toggleDatasetStar]);
 
-  const handleBatchDelete = useCallback((ids: string[]) => {
-    if (window.confirm(`Delete ${ids.length} datasets from your workspace?`)) removeStoredDatasets(ids);
-  }, [removeStoredDatasets]);
+  const handleBatchDelete = useCallback(async (ids: string[]) => {
+    if (!window.confirm(`Delete ${ids.length} datasets from your workspace?`)) return;
+
+    await Promise.all(ids.map(async (id) => {
+      const storedDataset = workspace.datasets.find((entry) => entry.id === id);
+      if (storedDataset) {
+        await opfsFileManager.deleteDatasetPersistence(storedDataset.id, storedDataset.opfsFileKey);
+      }
+    }));
+
+    const deletingActive = ids.includes(activeDatasetId ?? '') || (dataset?.id ? ids.includes(dataset.id) : false);
+    removeStoredDatasets(ids);
+
+    if (deletingActive) {
+      setActiveDataset(null);
+      await clearLoadedDatasetState();
+      setMode('splash');
+      setWorkspaceMode(true);
+    }
+  }, [
+    workspace.datasets,
+    activeDatasetId,
+    dataset?.id,
+    removeStoredDatasets,
+    setActiveDataset,
+    clearLoadedDatasetState,
+    setWorkspaceMode,
+  ]);
 
   // -- Restore/Discard --
   const handleRestore = () => {

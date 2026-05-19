@@ -115,8 +115,8 @@ Grilled against `docs/archive/2026-05/audits/audit_05_deep_code_review_2026-05-1
 
 | ID | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| STAB-DOC-1 | Docs/process | Stabilization contract in tracker, roadmap §2.1, and `arch_08`; reconcile feature matrix drift; archive audit is evidence-only | S4-EVAL-5 | In progress | No | A | `docs/archive/2026-05/audits/audit_05_deep_code_review_2026-05-19.md`, §4.2.1 |
-| STAB-WS-1 | Workspace | Stored datasets reopen/switch/delete across sessions (DB-first, source replay fallback) | STAB-DOC-1 | Not started | Yes | T,U,I,A | §4.2.1 WS rows |
+| STAB-DOC-1 | Docs/process | Stabilization contract in tracker, roadmap §2.1, and `arch_08`; reconcile feature matrix drift; archive audit is evidence-only | S4-EVAL-5 | Done | No | A | `docs/archive/2026-05/audits/audit_05_deep_code_review_2026-05-19.md`, §4.2.1 |
+| STAB-WS-1 | Workspace | Stored datasets reopen/switch/delete across sessions (DB-first, source replay fallback) | STAB-DOC-1 | In review | Yes | T,U,I,A | `src/store/slices/dataSlice.ts` (`openWorkspaceDataset`), `src/App.tsx`, `src/features/workspace/hooks/useWorkspace.ts`, `src/services/opfsFileManager.ts`, `tests/e2e/workspace-switch.spec.ts` |
 | STAB-EXP-1 | Export | Stakeholder-ready deliverables: matrix MCP + PPTX polish (parent; closes when 1a+1b done) | STAB-WS-1 | Not started | Yes | T,U,A | §4.2.1 Export rows |
 | STAB-EXP-1a | Export / MCP | `S4-FMT-1`: `format: 'matrix'` on `velocity_crosstab`; formatter in `src/core/`; unit + MCP tests | STAB-WS-1 | Not started | Yes | T,U,A | - |
 | STAB-EXP-1b | Export | `S4-DELIV-1`: wire `resolveExportBranding(theme)`; PPTX chart quality; unify or remove `pptxChartBuilder` | STAB-EXP-1a | Not started | Yes | T,U,A | - |

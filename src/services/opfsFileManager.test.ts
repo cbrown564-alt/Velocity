@@ -244,4 +244,23 @@ describe('opfsFileManager', () => {
     expect(key.includes('My_File_')).toBe(true);
     expect(key.includes(' ')).toBe(false);
   });
+
+  it('builds per-dataset DuckDB filenames', () => {
+    expect(opfs.buildDatasetDbFileName('abc-123')).toBe('velocity_data_v1_dataset_abc-123.db');
+  });
+
+  it('deleteDatasetPersistence removes source and dataset DuckDB files', async () => {
+    const root = new FakeDirectoryHandle('root');
+    const uploadedDir = await root.getDirectoryHandle('uploaded_sav', { create: true });
+    uploadedDir.seedFile('sleep_123.sav', new Uint8Array([1, 2]));
+    root.seedFile('velocity_data_v1_dataset_ds-1.db', new Uint8Array([3]));
+    root.seedFile('velocity_data_v1_dataset_ds-1.db.corrupt_999', new Uint8Array([4]));
+    mockStorage(root);
+
+    await opfs.deleteDatasetPersistence('ds-1', 'sleep_123.sav');
+
+    expect(uploadedDir.hasFile('sleep_123.sav')).toBe(false);
+    expect(root.hasFile('velocity_data_v1_dataset_ds-1.db')).toBe(false);
+    expect(root.hasFile('velocity_data_v1_dataset_ds-1.db.corrupt_999')).toBe(false);
+  });
 });
