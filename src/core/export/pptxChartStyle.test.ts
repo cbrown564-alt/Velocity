@@ -5,12 +5,12 @@ import {
 } from './pptxChartStyle';
 import type { ExportBranding } from './types';
 
-const branding: ExportBranding = {
+const branding = {
   primaryColor: '2D4A3E',
   headerColor: 'E07860',
   fontFamily: 'Atkinson Hyperlegible',
   chartColors: ['2D4A3E', 'E07860', 'E8B468', '6B8BA4', 'A45D5D'],
-};
+} satisfies ExportBranding & { fontFamily: string; chartColors: string[] };
 
 describe('resolveChartColorsForExport', () => {
   it('uses one color for single-series charts to avoid per-bar palette cycling', () => {
