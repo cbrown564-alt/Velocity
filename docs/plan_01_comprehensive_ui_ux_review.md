@@ -1,6 +1,6 @@
 # Comprehensive UI/UX Review Program
 
-**Status:** Active (multi-session)  
+**Status:** Complete (agent pass May 19, 2026; human sign-off on P1 fixes pending)  
 **Created:** May 19, 2026  
 **Owner:** Product + engineering (assign per session in §8)  
 **Scope:** Full Velocity human-facing surface — Workspace, Analysis Canvas, Variable Manager, harmonization, modals, themes, session/portability flows.
@@ -348,7 +348,7 @@ Each finding entry:
 - ~~Liquid Glass theme~~ (Session 7 — immaturity logged UXR-030/031)  
 - Import Session round-trip  
 - Actual PPTX binary quality  
-- Mobile/narrow breakpoints  
+- ~~Mobile/narrow breakpoints~~ (Session 11 — desktop 900–1920; mobile guard UXR-048)  
 - `prefers-reduced-motion` in OS settings  
 
 ---
@@ -385,7 +385,7 @@ Rate each heuristic **0** (no issue) – **4** (usability catastrophe) per major
 
 ---
 
-## 13. Session status (updated May 19, 2026 — Session 10 complete)
+## 13. Session status (updated May 19, 2026 — Session 11 complete)
 
 | Session | Status | Notes |
 | :--- | :--- | :--- |
@@ -400,7 +400,8 @@ Rate each heuristic **0** (no issue) – **4** (usability catastrophe) per major
 | 8 | Done | A11y/keyboard — `session-08-accessibility.md`; UXR-032–035; fixes for 004/012/032–035 |
 | 9 | Done | Performance — `session-09-performance.md`; UXR-036–040 |
 | 10 | Done | Errors/edge — `session-10-errors.md`; UXR-041–043; revalidated 008/037/040 |
-| 11+ | Pending | Responsive + browser matrix next |
+| 11 | Done | Responsive — `session-11-responsive.md`; UXR-044–048; screenshots at 1920 |
+| 12 | Done | Synthesis — `session-12-synthesis.md`, `audit_06_ui_ux_review_2026-05.md`; `STAB-UI-D` proposed in tracker |
 
 **Pre–Session 3 gate (complete):** UXR-000 shortcut conflict fixed — see §14.
 

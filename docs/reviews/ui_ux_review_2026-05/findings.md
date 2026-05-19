@@ -669,4 +669,88 @@ Log one entry per `UXR-###`. Update **Status** when fixed: `open` | `confirmed` 
 
 ---
 
+## UXR-044 — Canvas header toolbar does not adapt at narrow widths
+
+- **Status:** open
+- **Severity:** P2
+- **Mode:** Canvas
+- **Session:** 11
+- **Steps to reproduce:**
+  1. Open F1 dataset on Canvas.
+  2. Resize browser to 1280px or 900px width.
+  3. Observe header row: Table/Chart toggle, Import Session, Export Session, Export, theme, Focus, Variables, Reset.
+- **Expected:** Secondary actions collapse to icons or overflow menu below ~1200px.
+- **Actual:** All controls remain full-width labels in one row (`DashboardShell` header `flex gap-6` with no `@media` rules); layout feels crowded below 1280px.
+- **Heuristic:** #8 Aesthetic and minimalist design
+- **Related:** `src/features/dashboard/DashboardShell.tsx` header block
+- **Screenshot:** `screenshots/S11-canvas-1920.png` (comfortable at 1920; contrast by resize)
+
+---
+
+## UXR-045 — Canvas sidebar fixed at 288px with no narrow collapse
+
+- **Status:** open
+- **Severity:** P2
+- **Mode:** Canvas
+- **Session:** 11
+- **Steps to reproduce:**
+  1. Open Canvas at 1280×900 or 900×700.
+  2. Compare to Workspace `DatasetSidebar`, which supports collapsed width.
+- **Expected:** Optional sidebar collapse (or icon rail) when viewport &lt; 1280px to preserve analysis area.
+- **Actual:** Sidebar always `w-72` (288px) unless Focus mode; main slide area ~500–700px on target laptop widths.
+- **Heuristic:** #8 Aesthetic and minimalist design; #7 Flexibility
+- **Related:** `DashboardShell.tsx` aside classes; `DatasetSidebar.module.css` (collapse pattern exists elsewhere)
+
+---
+
+## UXR-046 — Timeline slide labels truncate with larger decks
+
+- **Status:** open
+- **Severity:** P3
+- **Mode:** Canvas
+- **Session:** 11
+- **Steps to reproduce:**
+  1. Create or open a deck with 6+ slides (Session 0 recon deck).
+  2. Observe timeline dock at 1280–1440px width.
+- **Expected:** Enough label context to distinguish slides without hovering every thumb.
+- **Actual:** Capsules show truncated titles (e.g. “gender by r…”); horizontal scroll works but off-screen slides are hard to identify.
+- **Heuristic:** #6 Recognition rather than recall
+- **Related:** `TimelineDock.tsx`, `SlideThumb` width
+- **Screenshot:** `screenshots/S11-canvas-1920.png`
+
+---
+
+## UXR-047 — Workspace OPFS banner shows raw browser exception
+
+- **Status:** open
+- **Severity:** P2
+- **Mode:** Workspace
+- **Session:** 11
+- **Steps to reproduce:**
+  1. Open Workspace with OPFS lock active (e.g. multiple Velocity tabs).
+  2. Observe bottom warning card.
+- **Expected:** Plain-language message only (hint text is good); dismiss or link to Storage Health.
+- **Actual:** Full `createSyncAccessHandle…` exception string rendered above friendlier `opfsErrorHint`; card consumes large fraction of viewport at 1280×900.
+- **Heuristic:** #9 Help users recover from errors
+- **Related:** `App.tsx` OPFS overlay; UXR-040
+- **Screenshot:** `screenshots/S11-workspace-1920.png`
+
+---
+
+## UXR-048 — No minimum viewport guard or desktop guidance
+
+- **Status:** open
+- **Severity:** P3
+- **Mode:** Global
+- **Session:** 11
+- **Steps to reproduce:**
+  1. Resize browser to 768px or below.
+  2. Use Canvas and Workspace normally.
+- **Expected:** Documented minimum width (e.g. 1280px) or lightweight “desktop recommended” banner.
+- **Actual:** App renders without guard; Canvas has no responsive rules in `DashboardShell`; only minor Workspace `@media` for project cards.
+- **Heuristic:** #10 Help and documentation
+- **Related:** `design_02_ux_modes.md` (desktop-first assumption); Session 12 synthesis
+
+---
+
 <!-- Add new findings below as sessions progress -->
