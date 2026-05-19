@@ -621,4 +621,52 @@ Log one entry per `UXR-###`. Update **Status** when fixed: `open` | `confirmed` 
 
 ---
 
+## UXR-041 — Filter and Import Session modals ignore Escape
+
+- **Status:** open
+- **Severity:** P2
+- **Mode:** Canvas
+- **Session:** 10
+- **Steps to reproduce:**
+  1. Open **Add Filter** or **Import Session**.
+  2. Press `Escape`.
+- **Expected:** Modal closes (same as Export close / ConfirmModal).
+- **Actual:** Modal stays open; only backdrop click, Cancel, or X dismisses.
+- **Heuristic:** #3 User control and freedom; #4 Consistency (ConfirmModal and Export support Esc when focused)
+- **Related:** `FilterModal.tsx`, `SessionImportModal.tsx`
+
+---
+
+## UXR-042 — Export modal Escape fails without focus inside panel
+
+- **Status:** open
+- **Severity:** P2
+- **Mode:** Canvas
+- **Session:** 10
+- **Steps to reproduce:**
+  1. Open **Export** from header (focus often remains on trigger behind modal).
+  2. Press `Escape`.
+- **Expected:** Modal closes immediately.
+- **Actual:** Modal remains open until user tabs into modal or clicks Cancel/Close.
+- **Heuristic:** #3 User control and freedom
+- **Related:** `ExportModal.tsx` — `onKeyDown` on inner `.modal` only; no focus trap or `autoFocus`
+
+---
+
+## UXR-043 — Purge Corruption has no confirmation
+
+- **Status:** open
+- **Severity:** P2
+- **Mode:** Canvas (Storage Health)
+- **Session:** 10
+- **Steps to reproduce:**
+  1. Open sidebar **Storage Issue** → Storage Health modal.
+  2. Click **Purge Corruption**.
+- **Expected:** Confirm destructive action (quarantined OPFS DB files).
+- **Actual:** Purge runs immediately (`purgeQuarantinedDbs` in `usePersistenceManager.ts`).
+- **Heuristic:** #5 Error prevention
+- **Related:** `PersistenceStatus.tsx`, `usePersistenceManager.ts`
+
+---
+
 <!-- Add new findings below as sessions progress -->
