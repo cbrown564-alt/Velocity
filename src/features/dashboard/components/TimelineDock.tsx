@@ -8,7 +8,7 @@
  * - Compact slide capsules with number + icon
  * - Drag-to-reorder via dnd-kit
  * - Section dividers
- * - Keyboard navigation (←/→, N for new)
+ * - Keyboard navigation (←/→, N new slide, ⌘/Ctrl+D duplicate)
  * - Theme-aware styling (Mission Control, Soft Machine, Liquid Glass)
  */
 
@@ -260,7 +260,8 @@ const SlideThumb: React.FC<SlideThumbProps> = ({ slide, index, isActive, hasUnsa
                             className="w-full flex items-center gap-2 px-3 py-1.5 text-xs text-[var(--text-primary)] hover:bg-[var(--bg-active)] transition-colors"
                         >
                             <Copy size={12} />
-                            Duplicate
+                            <span className="flex-1 text-left">Duplicate</span>
+                            <kbd className="text-[10px] text-[var(--text-secondary)] font-mono">⌘D</kbd>
                         </button>
                         <button
                             onClick={() => {
@@ -366,6 +367,10 @@ export const TimelineDock: React.FC = () => {
 
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
+            if (useVelocityStore.getState().appMode === 'variables') {
+                return;
+            }
+
             const target = e.target as HTMLElement;
             if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
                 return;
@@ -375,7 +380,12 @@ export const TimelineDock: React.FC = () => {
                 case 'ArrowLeft': e.preventDefault(); navigateSlide('prev'); break;
                 case 'ArrowRight': e.preventDefault(); navigateSlide('next'); break;
                 case 'n': case 'N': if (!e.metaKey && !e.ctrlKey) { e.preventDefault(); addSlide(); } break;
-                case 'd': case 'D': if (!e.metaKey && !e.ctrlKey && activeSlideId) { e.preventDefault(); duplicateSlide(activeSlideId); } break;
+                case 'd': case 'D':
+                    if ((e.metaKey || e.ctrlKey) && activeSlideId) {
+                        e.preventDefault();
+                        duplicateSlide(activeSlideId);
+                    }
+                    break;
                 case 'Delete': case 'Backspace': if (!e.metaKey && !e.ctrlKey && activeSlideId && slides.length > 1) { e.preventDefault(); setSlideToDelete(activeSlideId); setDeleteModalOpen(true); } break;
             }
         };
@@ -409,7 +419,7 @@ export const TimelineDock: React.FC = () => {
         <>
             {/* Film-strip rail — sits in document flow as flex child */}
             <div
-                className="shrink-0 border-t border-[var(--border-color)] shadow-[0_-4px_20px_rgba(0,0,0,0.02)]"
+                className="shrink-0 border-t border-[var(--border-color)] shadow-up"
                 style={{ background: 'var(--bg-panel)' }}
             >
                 <div className="flex items-center h-14 px-4 gap-3 max-w-[1400px] mx-auto">

@@ -40,6 +40,17 @@ export interface AnalysisExportModalState {
     config: ExportConfig | null;
 }
 
+export interface Toast {
+    id: string;
+    message: string;
+    type: 'success' | 'info' | 'warning' | 'error';
+    duration?: number;
+    action?: {
+        label: string;
+        onClick: () => void;
+    };
+}
+
 // ============================================================================
 // Slice State & Actions
 // ============================================================================
@@ -68,6 +79,14 @@ export interface UISlice {
     lastSelectedId: string | null;
     /** Active folder filter in Variable Manager (null = all) */
     activeFolderId: string | null;
+    /** Focus mode hides chrome for immersive analysis */
+    focusMode: boolean;
+    /** Toast notification queue */
+    toasts: Toast[];
+    /** Command palette open state */
+    commandPaletteOpen: boolean;
+    /** Keyboard shortcut reference open state */
+    shortcutsOpen: boolean;
 
     // Miller Column Navigation State
     /** Selected data source ID (for future multi-source support) */
@@ -111,6 +130,23 @@ export interface UISlice {
     // Wave Detection Banner
     showWaveDetectionBanner: (state: Omit<WaveDetectionBannerState, 'isVisible'>) => void;
     dismissWaveDetectionBanner: () => void;
+
+    // Focus Mode
+    setFocusMode: (enabled: boolean) => void;
+    toggleFocusMode: () => void;
+
+    // Toast Layer
+    addToast: (toast: Omit<Toast, 'id'>) => void;
+    dismissToast: (id: string) => void;
+    clearToasts: () => void;
+
+    // Command Palette
+    openCommandPalette: () => void;
+    closeCommandPalette: () => void;
+
+    // Shortcuts Reference
+    openShortcuts: () => void;
+    closeShortcuts: () => void;
 }
 
 const DEFAULT_WAVE_BANNER: WaveDetectionBannerState = {
@@ -133,6 +169,10 @@ export const createUISlice: StateCreator<UISlice, [], [], UISlice> = (set) => ({
     selectedVariableSetIds: [],
     lastSelectedId: null,
     activeFolderId: null,
+    focusMode: false,
+    toasts: [],
+    commandPaletteOpen: false,
+    shortcutsOpen: false,
 
     // Miller Column Navigation State
     selectedDataSourceId: null,
@@ -254,4 +294,25 @@ export const createUISlice: StateCreator<UISlice, [], [], UISlice> = (set) => ({
     dismissWaveDetectionBanner: () => set({
         waveDetectionBanner: { ...DEFAULT_WAVE_BANNER },
     }),
+
+    // Focus Mode Actions
+    setFocusMode: (enabled) => set({ focusMode: enabled }),
+    toggleFocusMode: () => set((state) => ({ focusMode: !state.focusMode })),
+
+    // Toast Actions
+    addToast: (toast) => set((state) => ({
+        toasts: [...state.toasts, { ...toast, id: crypto.randomUUID(), duration: toast.duration ?? 4000 }],
+    })),
+    dismissToast: (id) => set((state) => ({
+        toasts: state.toasts.filter((t) => t.id !== id),
+    })),
+    clearToasts: () => set({ toasts: [] }),
+
+    // Command Palette Actions
+    openCommandPalette: () => set({ commandPaletteOpen: true }),
+    closeCommandPalette: () => set({ commandPaletteOpen: false }),
+
+    // Shortcuts Reference Actions
+    openShortcuts: () => set({ shortcutsOpen: true }),
+    closeShortcuts: () => set({ shortcutsOpen: false }),
 });

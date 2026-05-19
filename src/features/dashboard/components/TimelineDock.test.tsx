@@ -1,6 +1,6 @@
 import React from 'react';
 import { describe, it, expect, beforeEach } from 'vitest';
-import { act, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import { TimelineDock } from './TimelineDock';
 import { useVelocityStore } from '../../../store';
 import type { Slide } from '../../../types/slides';
@@ -86,5 +86,39 @@ describe('TimelineDock', () => {
 
         expect(screen.getByText('Renamed Slide')).toBeInTheDocument();
         expect(screen.queryByText('Live Label')).not.toBeInTheDocument();
+    });
+
+    it('does not duplicate the slide on plain D', () => {
+        render(<TimelineDock />);
+        const countBefore = useVelocityStore.getState().slides.length;
+
+        act(() => {
+            fireEvent.keyDown(document, { key: 'd' });
+        });
+
+        expect(useVelocityStore.getState().slides.length).toBe(countBefore);
+    });
+
+    it('duplicates the active slide on Ctrl+D', () => {
+        render(<TimelineDock />);
+        const countBefore = useVelocityStore.getState().slides.length;
+
+        act(() => {
+            fireEvent.keyDown(document, { key: 'd', ctrlKey: true });
+        });
+
+        expect(useVelocityStore.getState().slides.length).toBe(countBefore + 1);
+    });
+
+    it('does not add a slide on N while Variable Manager is open', () => {
+        useVelocityStore.setState({ appMode: 'variables' });
+        render(<TimelineDock />);
+        const countBefore = useVelocityStore.getState().slides.length;
+
+        act(() => {
+            fireEvent.keyDown(document, { key: 'n' });
+        });
+
+        expect(useVelocityStore.getState().slides.length).toBe(countBefore);
     });
 });

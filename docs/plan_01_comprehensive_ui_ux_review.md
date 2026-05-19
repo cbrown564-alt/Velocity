@@ -385,7 +385,7 @@ Rate each heuristic **0** (no issue) – **4** (usability catastrophe) per major
 
 ---
 
-## 13. Session status (updated May 19, 2026 — Session 7 complete)
+## 13. Session status (updated May 19, 2026 — Session 8 complete)
 
 | Session | Status | Notes |
 | :--- | :--- | :--- |
@@ -397,7 +397,8 @@ Rate each heuristic **0** (no issue) – **4** (usability catastrophe) per major
 | 5 | Done | Export/session J6 — `session-05-export.md`; UXR-021–023; P0 import fix |
 | 6 | Done | J7 advanced — `session-06-advanced.md`; UXR-024–026; harmonization needs 2-wave human pass |
 | 7 | Done | Themes/visual — `session-07-themes.md`; UXR-027–031 |
-| 8+ | Pending | Accessibility + keyboard next |
+| 8 | Done | A11y/keyboard — `session-08-accessibility.md`; UXR-032–035; fixes for 004/012/032–035 |
+| 9+ | Pending | Performance perception next |
 
 **Pre–Session 3 gate (complete):** UXR-000 shortcut conflict fixed — see §14.
 

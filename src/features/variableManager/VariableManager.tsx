@@ -264,10 +264,12 @@ export const VariableManager: React.FC<VariableManagerProps> = ({ onClose }) => 
 
                         {/* Close Button */}
                         <button
+                            type="button"
                             onClick={onClose}
+                            aria-label="Close Variable Manager"
                             className="flex items-center justify-center w-8 h-8 p-0 border-none rounded-sm bg-transparent text-[var(--text-secondary)] cursor-pointer hover:bg-[var(--bg-active)] hover:text-[var(--text-primary)] transition-colors"
                         >
-                            <X size={20} />
+                            <X size={20} aria-hidden />
                         </button>
                     </div>
                 </header>

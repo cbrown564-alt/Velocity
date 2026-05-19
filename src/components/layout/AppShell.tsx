@@ -21,7 +21,9 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
     const { appMode, toggleAppMode } = useVelocityStore();
     const reducedMotion = useReducedMotion();
 
-    // Keyboard shortcut: D key toggles mode
+    const { focusMode, toggleFocusMode, setFocusMode, openCommandPalette, openShortcuts } = useVelocityStore();
+
+    // Keyboard shortcuts
     const handleKeyDown = useCallback((event: KeyboardEvent) => {
         // Ignore if user is typing in an input
         const target = event.target as HTMLElement;
@@ -29,11 +31,37 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
             return;
         }
 
-        if (event.key === 'd' || event.key === 'D') {
+        // Command palette (Cmd+K or Ctrl+K)
+        if ((event.metaKey || event.ctrlKey) && event.key === 'k') {
+            event.preventDefault();
+            openCommandPalette();
+            return;
+        }
+
+        // Shortcuts reference (?)
+        if (event.key === '?') {
+            event.preventDefault();
+            openShortcuts();
+            return;
+        }
+
+        if ((event.key === 'd' || event.key === 'D') && !event.metaKey && !event.ctrlKey) {
             event.preventDefault();
             toggleAppMode();
         }
-    }, [toggleAppMode]);
+
+        if ((event.key === 'f' || event.key === 'F') && appMode !== 'variables') {
+            event.preventDefault();
+            toggleFocusMode();
+        }
+    }, [appMode, toggleAppMode, toggleFocusMode, openCommandPalette, openShortcuts]);
+
+    // Exit focus mode when Variable Manager opens
+    useEffect(() => {
+        if (appMode === 'variables' && focusMode) {
+            setFocusMode(false);
+        }
+    }, [appMode, focusMode, setFocusMode]);
 
     useEffect(() => {
         document.addEventListener('keydown', handleKeyDown);
@@ -98,7 +126,7 @@ export const ModeToggleButton: React.FC = () => {
             title="Toggle Variable Manager (D)"
         >
             <Database size={14} />
-            <span>Data</span>
+            <span>Variables</span>
             <kbd className="hidden sm:inline-block text-[10px] px-1 py-0.5 bg-[var(--border-color)] rounded ml-1 text-[var(--text-secondary)]">
                 D
             </kbd>

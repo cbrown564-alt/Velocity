@@ -67,7 +67,7 @@ Log one entry per `UXR-###`. Update **Status** when fixed: `open` | `confirmed` 
 
 ## UXR-004 — Variable Manager close button lacks accessible name
 
-- **Status:** open
+- **Status:** fixed (May 19, 2026; `aria-label="Close Variable Manager"`)
 - **Severity:** P2
 - **Mode:** Variable Manager
 - **Session:** 0
@@ -177,7 +177,7 @@ Log one entry per `UXR-###`. Update **Status** when fixed: `open` | `confirmed` 
 
 ## UXR-012 — Table/chart view toggles lack accessible names
 
-- **Status:** open
+- **Status:** fixed (May 19, 2026; `aria-label` + `aria-pressed` on header toggles)
 - **Severity:** P2
 - **Mode:** Canvas
 - **Session:** 2
@@ -477,6 +477,65 @@ Log one entry per `UXR-###`. Update **Status** when fixed: `open` | `confirmed` 
 - **Actual:** Muted pastels on light slide; legend truncation (`Internatio...`) worse combined with low contrast.
 - **Heuristic:** #8 Aesthetic and minimalist design
 - **Related:** `themes.ts` `liquidGlass` viz palette; `AnalysisChart.tsx` / renderers
+
+---
+
+## UXR-032 — Canvas deck shortcuts fire while Variable Manager is open
+
+- **Status:** fixed (May 19, 2026)
+- **Severity:** P1
+- **Mode:** Canvas → Variable Manager (mode boundary)
+- **Session:** 8
+- **Steps to reproduce:**
+  1. Open Canvas; press `D` to open Variable Manager.
+  2. Press `N` (new slide) without closing Manager.
+- **Expected:** Deck mutations disabled until Manager closes (mode spoke owns keyboard).
+- **Actual:** New slide added behind overlay; active slide changed to empty “New Slide”.
+- **Heuristic:** #3 User control and freedom; mode separation per `design_02_ux_modes.md`
+- **Related:** `TimelineDock.tsx` document listener; `uiSlice` `appMode`
+- **Resolution:** `TimelineDock` ignores deck keys when `appMode === 'variables'`.
+
+---
+
+## UXR-033 — Keyboard shortcuts reference misdocuments bindings
+
+- **Status:** fixed (May 19, 2026)
+- **Severity:** P2
+- **Mode:** Global (`?` modal)
+- **Session:** 8
+- **Steps to reproduce:** Press `?`; read Canvas group.
+- **Expected:** Matches plan §14 (`N`, `⌘D`, Manager-only `⌘A`).
+- **Actual:** Canvas listed `⌘A` for variables; omitted `N` and duplicate slide.
+- **Heuristic:** #4 Consistency and standards; #6 Recognition rather than recall
+- **Related:** `KeyboardShortcuts.tsx`
+
+---
+
+## UXR-034 — Keyboard shortcuts list not exposed to assistive tech
+
+- **Status:** fixed (May 19, 2026)
+- **Severity:** P2
+- **Mode:** Global
+- **Session:** 8
+- **Steps to reproduce:** Open `?` modal; inspect accessibility tree.
+- **Expected:** Each shortcut row readable (description + keys).
+- **Actual:** Only section headings (`Global`, `Canvas`, `Manager`) appeared in tree.
+- **Heuristic:** #4 Consistency
+- **Related:** `KeyboardShortcuts.tsx` — now uses `role="dialog"` and `<ul>` rows
+
+---
+
+## UXR-035 — Keyboard shortcuts modal close control unnamed
+
+- **Status:** fixed (May 19, 2026)
+- **Severity:** P2
+- **Mode:** Global
+- **Session:** 8
+- **Steps to reproduce:** Open `?` modal; inspect close button.
+- **Expected:** `aria-label="Close keyboard shortcuts"`.
+- **Actual:** Icon-only button with no accessible name.
+- **Heuristic:** #4 Consistency (Export modal names close control)
+- **Related:** `KeyboardShortcuts.tsx`
 
 ---
 

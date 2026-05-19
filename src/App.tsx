@@ -25,6 +25,9 @@ import { WorkspaceView, ProjectLinkModal, CrossWavePanel, ExportImportModal, typ
 import { HarmonizationWorkspace } from './features/harmonization';
 import { DashboardShell } from './features/dashboard/DashboardShell';
 import { DataDrawer } from './components/overlays/DataDrawer';
+import { ToastLayer } from './components/common/ToastLayer';
+import { CommandPalette } from './components/common/CommandPalette';
+import { KeyboardShortcuts } from './components/common/KeyboardShortcuts';
 import { RecodeModal } from './components/overlays/RecodeModal';
 import { FilterModal } from './components/overlays/FilterModal';
 import { ExportModal } from './components/overlays/ExportModal';
@@ -927,6 +930,15 @@ export default function App() {
           onExportSession={handleExportSession}
         />
       )}
+
+      {/* COMMAND PALETTE — global action surface */}
+      <CommandPalette />
+
+      {/* KEYBOARD SHORTCUTS REFERENCE */}
+      <KeyboardShortcuts />
+
+      {/* TOAST LAYER — global operation feedback */}
+      <ToastLayer />
     </div>
   );
 }

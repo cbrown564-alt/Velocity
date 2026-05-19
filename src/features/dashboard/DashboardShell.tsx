@@ -6,7 +6,7 @@
 import React, { useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { useReducedMotion, getMotionProps, DURATIONS } from '../../lib/motion';
-import { Search, Table, RotateCcw, CheckCircle2, BarChart3, Loader2, AlertCircle, Moon, Sun, Home, FileDown, Download, Upload } from 'lucide-react';
+import { Search, Table, RotateCcw, CheckCircle2, BarChart3, Loader2, AlertCircle, Home, FileDown, Download, Upload, Plus, Maximize2, Minimize2 } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { DndContext, DragOverlay, useSensor, useSensors, MouseSensor, TouchSensor, DragEndEvent, DragStartEvent, useDroppable, closestCenter, pointerWithin, rectIntersection } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
@@ -27,6 +27,7 @@ import { StorageStatusIndicator } from '../../components/common/StorageStatusInd
 import { FilterBar } from '../../components/common/FilterBar';
 import { Logo } from '../../components/common/Logo';
 import { AppShell, ModeToggleButton } from '../../components/layout/AppShell';
+import { ThemeSwitcher } from '../../components/common/ThemeSwitcher';
 import { VariableCard } from './components/DraggableVariable';
 
 import type { PersistenceManagerState } from '../../hooks/usePersistenceManager';
@@ -57,7 +58,7 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
   onOpenSessionImport,
   onExportSession,
 }) => {
-  const { theme, toggleTheme } = useTheme();
+  const { theme } = useTheme();
 
   const {
     dataset,
@@ -71,6 +72,9 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
     slides,
     activeSlideId,
     selectedVariableSetId,
+    focusMode,
+    toggleFocusMode,
+    addToast,
     setTableConfig,
     setDraggingId,
     setSearchQuery,
@@ -299,7 +303,13 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
       const slideIds = slides.map(s => s.id);
       addFilterToSlides(slideIds, filterWithId);
     }
-  }, [slides]);
+    addToast({ message: `Filter applied${applyToAll ? ' to all slides' : ''}`, type: 'success' });
+  }, [slides, addToast]);
+
+  const handleExport = useCallback(() => {
+    openAnalysisExportModal(buildCurrentExportConfig());
+    addToast({ message: 'Export dialog opened', type: 'info' });
+  }, [openAnalysisExportModal, buildCurrentExportConfig, addToast]);
 
   // -- Derived --
   const variables = dataset?.variables || [];
@@ -351,7 +361,7 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
           className="flex h-screen"
         >
           {/* SIDEBAR */}
-          <aside className="w-72 bg-[var(--bg-panel)] border-r border-[var(--border-color)] flex flex-col shrink-0 z-30 relative">
+          <aside className={`bg-[var(--bg-panel)] border-r border-[var(--border-color)] flex flex-col shrink-0 z-30 relative transition-all duration-300 ${focusMode ? 'w-0 opacity-0 overflow-hidden' : 'w-72 opacity-100'}`}>
             <div className="p-4 border-b border-[var(--border-color-muted)] bg-[var(--bg-app)]">
               <div className="flex items-center gap-2 mb-4">
                 <Logo size={24} />
@@ -381,6 +391,9 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
                   onRecode={handleRecodeClick}
                   onClick={handleVariableClick}
                   onContextMenu={handleContextMenu}
+                  rowIds={new Set(tableConfig.rowVars)}
+                  colId={tableConfig.colVar}
+                  weightId={dataset?.weightVariable ? variableSets.find(s => s.variableIds.includes(dataset.weightVariable!))?.id ?? null : null}
                 />
               </div>
             </div>
@@ -448,24 +461,30 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
               <div className="flex items-center gap-6">
                 <div className="flex items-center bg-[var(--bg-surface)] p-1 rounded-lg">
                   <button
+                    type="button"
                     onClick={() => {
                       if (activeSlideId) {
                         useVelocityStore.getState().setSlideVisualizationType(activeSlideId, 'table');
                       }
                     }}
+                    aria-label="Table view"
+                    aria-pressed={activeSlide?.visualizationType === 'table'}
                     className={`p-1.5 rounded-md transition-all ${activeSlide?.visualizationType === 'table' ? 'bg-[var(--bg-panel)] text-[var(--color-accent)] shadow-sm' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}
                   >
-                    <Table size={16} />
+                    <Table size={16} aria-hidden />
                   </button>
                   <button
+                    type="button"
                     onClick={() => {
                       if (activeSlideId) {
                         useVelocityStore.getState().setSlideVisualizationType(activeSlideId, 'chart');
                       }
                     }}
+                    aria-label="Chart view"
+                    aria-pressed={activeSlide?.visualizationType === 'chart'}
                     className={`p-1.5 rounded-md transition-all ${activeSlide?.visualizationType === 'chart' ? 'bg-[var(--bg-panel)] text-[var(--color-accent)] shadow-sm' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}
                   >
-                    <BarChart3 size={16} />
+                    <BarChart3 size={16} aria-hidden />
                   </button>
                 </div>
 
@@ -489,7 +508,7 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
                 </button>
 
                 <button
-                  onClick={() => openAnalysisExportModal(buildCurrentExportConfig())}
+                  onClick={handleExport}
                   disabled={!canOpenExport}
                   className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--color-accent)] rounded-md hover:bg-[var(--bg-surface)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   title="Export current slide"
@@ -498,12 +517,16 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
                   Export
                 </button>
 
+                <ThemeSwitcher />
+
                 <button
-                  onClick={toggleTheme}
-                  className="p-2 rounded-lg hover:bg-[var(--bg-active)] text-[var(--text-secondary)] hover:text-[var(--color-accent)] transition-colors"
-                  title={`Switch to ${theme.id === 'soft-machine' ? 'Mission Control' : 'Soft Machine'}`}
+                  onClick={toggleFocusMode}
+                  className={`p-2 rounded-lg transition-colors ${focusMode ? 'bg-[var(--color-accent)] text-[var(--text-inverse)]' : 'hover:bg-[var(--bg-active)] text-[var(--text-secondary)] hover:text-[var(--color-accent)]'}`}
+                  title={focusMode ? 'Exit Focus Mode (F)' : 'Enter Focus Mode (F)'}
+                  aria-label={focusMode ? 'Exit Focus Mode' : 'Enter Focus Mode'}
+                  aria-pressed={focusMode}
                 >
-                  {theme.id === 'soft-machine' ? <Moon size={18} /> : <Sun size={18} />}
+                  {focusMode ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
                 </button>
 
                 <ModeToggleButton />
@@ -528,10 +551,17 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
 
             {/* WORKSPACE */}
             <div className="flex-1 flex flex-col min-h-0 bg-[var(--bg-app)]">
-              {/* SHELF */}
-              <div className="shrink-0 bg-[var(--bg-app)] border-b border-[var(--border-color)] px-6 py-4 flex flex-col gap-3 shadow-[0_1px_2px_rgba(0,0,0,0.02)] z-10">
-                {/* Columns Shelf */}
-                <div className="flex items-center gap-4">
+              {/* SHELF — adaptive collapse when empty and not dragging */}
+              <div className={`shrink-0 bg-[var(--bg-app)] border-b border-[var(--border-color)] flex flex-col gap-3 shadow-xs z-10 transition-all duration-300 overflow-hidden ${focusMode ? 'h-0 py-0 opacity-0 border-none' : ''} ${!focusMode ? 'px-6 py-4 opacity-100' : ''}`}>
+                {/* Collapsed indicator when shelves are empty and not dragging */}
+                {!focusMode && !draggingId && tableConfig.rowVars.length === 0 && !tableConfig.colVar && !(dataset?.weightVariable || rememberedWeightVar) && (
+                  <div className="flex items-center gap-3 text-xs text-[var(--text-secondary)]">
+                    <Plus size={14} className="text-[var(--color-accent)]" />
+                    <span className="font-medium">Drag variables to rows, columns, or weight to begin</span>
+                  </div>
+                )}
+                {/* Columns Shelf — collapse when empty */}
+                <div className={`flex items-center gap-4 transition-all duration-200 ${!tableConfig.colVar && !draggingId ? 'h-0 opacity-0 overflow-hidden' : 'h-auto opacity-100'}`}>
                   <div className="w-16 flex justify-end shrink-0">
                     <span className="text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-wider">Columns</span>
                   </div>
@@ -547,8 +577,8 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
                   </div>
                 </div>
 
-                {/* Rows Shelf */}
-                <div className="flex items-center gap-4">
+                {/* Rows Shelf — collapse when empty */}
+                <div className={`flex items-center gap-4 transition-all duration-200 ${tableConfig.rowVars.length === 0 && !draggingId ? 'h-0 opacity-0 overflow-hidden' : 'h-auto opacity-100'}`}>
                   <div className="w-16 flex justify-end shrink-0">
                     <span className="text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-wider">Rows</span>
                   </div>
@@ -598,7 +628,9 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
                     <div className="flex-1 min-h-0">
                       <SlideContainer className="h-full w-full" />
                     </div>
-                    <TimelineDock />
+                    <div className={`transition-all duration-300 ${focusMode ? 'h-0 opacity-0 overflow-hidden' : ''}`}>
+                      <TimelineDock />
+                    </div>
                   </div>
                 </div>
               </SmartCanvas>
