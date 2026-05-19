@@ -116,10 +116,12 @@ See `docs/arch_02_data_model.md`, `src/types/index.ts`, `src/types/slides.ts`, a
 
 ### CSS Architecture
 
-**Strict Vanilla CSS.** No Tailwind, no CSS-in-JS libraries.
+**Hybrid CSS Architecture.** Tailwind CSS is approved and canonical. No CSS-in-JS libraries.
 
 - **Global tokens:** `src/index.css` (based on `docs/design_01_system.md`)
-- **Component styles:** Use `*.module.css` for scoped styles
+- **Layout & rapid UI:** Tailwind utilities with CSS variable values only (e.g., `bg-[var(--bg-panel)]`)
+- **Component styles:** Use `*.module.css` for complex component styles (hover states, animations, grids)
+- **Dynamic/data-driven values:** Inline styles for D3 SVG, react-window, positioned elements
 - **Design philosophy:** Dynamic theme system with three themes:
   - **Soft Machine** (default): Warm, organic, Dieter Rams-inspired
   - **Mission Control**: Dark, high-contrast, NASA/Bloomberg-inspired
@@ -135,10 +137,12 @@ See `docs/arch_02_data_model.md`, `src/types/index.ts`, `src/types/slides.ts`, a
 --bg-panel: var(--card);            /* Cards, modals, panels */
 --bg-surface: var(--popover);       /* Popovers, dropdowns */
 --bg-active: var(--secondary);      /* Active/selected states */
+--bg-hover: var(--secondary);       /* Hover states */
 
 /* Typography */
 --text-primary: var(--foreground);          /* Primary text */
 --text-secondary: var(--muted-foreground);  /* Secondary text */
+--text-tertiary: var(--muted-foreground);   /* Tertiary/muted text */
 --text-accent: var(--accent);               /* Accent text */
 --text-inverse: var(--primary-foreground);  /* Text on colored backgrounds */
 
@@ -160,13 +164,33 @@ See `docs/arch_02_data_model.md`, `src/types/index.ts`, `src/types/slides.ts`, a
 
 /* Accent */
 --color-accent: var(--accent);
+
+/* Status */
+--status-success-text: var(--success);
+--status-success-bg: color-mix(in srgb, var(--success) 10%, transparent);
+--status-warning-text: var(--warning);
+--status-warning-bg: color-mix(in srgb, var(--warning) 10%, transparent);
+--status-error-text: var(--destructive);
+--status-error-bg: color-mix(in srgb, var(--destructive) 10%, transparent);
 ```
 
-**Rule:** Always use semantic tokens. Never hardcode hex values. Components must work across all three themes without modification.
+**Rule 1 — Semantic tokens only:** Always use semantic tokens. Never hardcode hex values. Components must work across all three themes without modification.
+
+**Rule 2 — Tailwind colors via CSS variables only:** When using Tailwind, always reference tokens: `bg-[var(--bg-panel)]`, `text-[var(--text-primary)]`. Raw Tailwind color classes (`bg-white`, `text-indigo-600`, `bg-red-500`) bypass the theme system and are prohibited.
+
+**Rule 3 — No CSS fallback hexes:** Do not use `var(--token, #hex)` in CSS. Fallbacks embed theme-specific colors and mask missing token definitions.
 
 ### Legacy Note
 
 "The Research Desk" design language (Newsreader/Atkinson fonts, Ink & Paper palette) has been **fully deprecated** and replaced with the dynamic theme system above. `design_01_system.md` now documents the current token-based theme architecture, not the old Research Desk palette.
+
+**Active cleanup in progress:** The following legacy CSS variables are still referenced in code but are undefined. They are being remapped to semantic tokens as part of the design system cleanup:
+- `--color-paper` → `--bg-panel` or `--bg-app`
+- `--color-ink` → `--text-primary`
+- `--color-terracotta` → `--color-accent`
+- `--color-parchment` → `--bg-app`
+
+Deprecated font imports (Newsreader, Atkinson Hyperlegible) should be removed from `src/index.css` once PPTX export no longer depends on Atkinson.
 
 ## File Organization
 
@@ -291,6 +315,7 @@ PPTX and XLSX export via `src/core/export/`:
 - `docs/arch_02_data_model.md` - Canonical data structures
 - `docs/design_01_system.md` - Dynamic theme system (tokens, themes)
 - `docs/code-review-report-2026-02-05.md` - Known bugs and suggested fix order
+- `docs/DESIGN_AUDIT_PLAN.md` - Full design audit remediation plan (phases, tasks, acceptance criteria)
 
 **Architecture deep-dives:**
 - `docs/arch_04_statistical_engine.md` - Significance testing, ESS, t-tests
