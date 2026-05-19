@@ -20,7 +20,6 @@ dist-ssr
 !.vscode/extensions.json
 .idea
 .DS_Store
-.agents/
 
 # Accidental TypeScript emit beside sources (e.g. mcp-server tsc)
 src/**/*.js
