@@ -76,6 +76,8 @@ function makeEngine(overrides: Record<string, unknown> = {}) {
     getActiveFilters: vi.fn().mockReturnValue({ data: [], operation: 'getActiveFilters', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
     listConcepts: vi.fn().mockReturnValue({ data: [], operation: 'listConcepts', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
     createConcept: vi.fn().mockReturnValue({ data: { id: 'concept-1', name: 'Test', aliases: [], variableRefs: [] }, operation: 'createConcept', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
+    listVariablesByCategory: vi.fn().mockReturnValue({ data: [], operation: 'listVariablesByCategory', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
+    suggestBreaks: vi.fn().mockReturnValue({ data: [], operation: 'suggestBreaks', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
     ...overrides,
   };
   return base;

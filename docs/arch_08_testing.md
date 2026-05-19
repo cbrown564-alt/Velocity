@@ -38,6 +38,7 @@ Velocity uses a **5-layer testing pyramid** to ensure correctness at each archit
 npm test              # Watch mode (development)
 npm run test:run      # Single run (CI)
 npm run test:coverage # With coverage report
+npm run typecheck:mcp # MCP package/server TypeScript contract
 npm run test:ui       # Interactive UI
 npm run test:e2e      # Playwright E2E (CI e2e job)
 npm run test:parity   # R parity (optional; not in default CI)
@@ -131,7 +132,7 @@ GitHub Actions (`.github/workflows/test.yml`) runs on every PR to `main`:
 
 ### `test` job
 
-1. **Typecheck**: `npm run typecheck:all`
+1. **Typecheck**: `npm run typecheck:all` (app, tests, and MCP package)
 2. **Architecture guards**: `npm run check:worker-boundary`, `npm run check:querybuilder-pure`
 3. **Unit/integration tests with coverage**: `npm run test:run -- --coverage` (80% thresholds on non-excluded paths)
 4. **Production build**: `npm run build`
