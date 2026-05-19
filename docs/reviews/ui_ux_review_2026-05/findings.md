@@ -90,4 +90,56 @@ Log one entry per `UXR-###`. Update **Status** when fixed: `open` | `confirmed` 
 
 ---
 
+## UXR-006 — Dataset card shows `0 B` file size
+
+- **Status:** open
+- **Severity:** P2
+- **Mode:** Workspace
+- **Session:** 1
+- **Steps to reproduce:** Upload or Load Example; open Workspace Recent/All Datasets.
+- **Expected:** File size reflects OPFS/stored bytes (consistent with Local Storage meter).
+- **Actual:** Card shows `250 rows · 7 cols · 0 B` while header reports ~819 KB used.
+- **Heuristic:** #1 Visibility of system status
+
+---
+
+## UXR-007 — Starred search with no matches lacks empty feedback
+
+- **Status:** open
+- **Severity:** P3
+- **Mode:** Workspace
+- **Session:** 1
+- **Steps to reproduce:** Starred tab + search filter that excludes all cards.
+- **Expected:** “No datasets match your search” (or clear empty state).
+- **Actual:** Section heading remains; content area empty without explanation.
+- **Heuristic:** #1 Visibility of system status
+
+---
+
+## UXR-008 — Projects tab is a blank panel
+
+- **Status:** open
+- **Severity:** P1
+- **Mode:** Workspace
+- **Session:** 1
+- **Steps to reproduce:** Workspace → Projects tab (grid or list).
+- **Expected:** Empty state with copy + CTA (create/link project) per longitudinal UX spec.
+- **Actual:** Empty dark content area; no heading or action in UI or a11y tree.
+- **Heuristic:** #6 Recognition rather than recall; #8 Minimalist (too empty)
+
+---
+
+## UXR-009 — List view hides dataset cards from workspace content
+
+- **Status:** open
+- **Severity:** P2
+- **Mode:** Workspace
+- **Session:** 1
+- **Steps to reproduce:** Recent tab → switch to list view (header toggle).
+- **Expected:** Same datasets as grid, row layout.
+- **Actual:** “Recent Datasets” heading + batch checkbox; `mock_data.csv` card not present in accessibility tree (grid toggle restores it).
+- **Heuristic:** #4 Consistency and standards
+
+---
+
 <!-- Add new findings below as sessions progress -->
