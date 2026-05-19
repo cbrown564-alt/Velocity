@@ -539,4 +539,86 @@ Log one entry per `UXR-###`. Update **Status** when fixed: `open` | `confirmed` 
 
 ---
 
+## UXR-036 — Upload progress bar is decorative, not data-driven
+
+- **Status:** open
+- **Severity:** P1
+- **Mode:** Workspace → Canvas (uploading overlay)
+- **Session:** 9
+- **Steps to reproduce:**
+  1. Upload a large `.sav` or open a workspace dataset that triggers `mode === 'uploading'`.
+  2. Observe top accent bar and “Loading dataset...” overlay.
+- **Expected:** Progress reflects worker `engine.loadProgress` (parse/insert phases, row counts).
+- **Actual:** Bar animates `0% → 100%` over fixed **1.2s** (`App.tsx` `motion.div`); completes before or after real load unpredictably. `EngineProxy.onProgress` exists but is not wired from the app.
+- **Heuristic:** #1 Visibility of system status
+- **Related:** `App.tsx`, `EngineProxy.ts`, `analysisWorker.ts` `loadProgress`
+
+---
+
+## UXR-037 — Crosstab query failures are silent in the slide UI
+
+- **Status:** open
+- **Severity:** P1
+- **Mode:** Canvas
+- **Session:** 9
+- **Steps to reproduce:**
+  1. Open Canvas with row/column variables configured.
+  2. Trigger `runAnalysis` when worker has no `main` table (e.g. OPFS conflict / failed dataset materialization).
+  3. Check slide body vs browser console.
+- **Expected:** Inline error (“Couldn’t run analysis”) with retry; shelves remain editable.
+- **Actual:** `analysisSlice` logs `[AnalysisSlice] Query error` and clears `isQuerying`; slide title/shelves render but table/chart area stays empty with no explanation.
+- **Heuristic:** #1 Visibility of system status; #9 Help users recover from errors
+- **Related:** `analysisSlice.ts`, `SlideContainer.tsx`, `DataTable.tsx`
+
+---
+
+## UXR-038 — Analysis loading state not exposed to assistive tech
+
+- **Status:** open
+- **Severity:** P2
+- **Mode:** Canvas
+- **Session:** 9
+- **Steps to reproduce:**
+  1. Add row/column variables on a slow query (large dataset or throttled worker).
+  2. Inspect slide region during recompute with screen reader or accessibility tree.
+- **Expected:** `aria-busy="true"` and/or `role="status"` announcement while `isQuerying`.
+- **Actual:** Visual spinner overlay only (`DashboardShell`); no busy semantics on analysis container. On F1 the overlay is often sub-perceptual.
+- **Heuristic:** #1 Visibility of system status
+- **Related:** `DashboardShell.tsx` `isQuerying` block
+
+---
+
+## UXR-039 — Engine initialization has no progress feedback
+
+- **Status:** open
+- **Severity:** P2
+- **Mode:** Global (splash)
+- **Session:** 9
+- **Steps to reproduce:**
+  1. Cold load app (hard refresh).
+  2. Time from “Initializing Analysis Engine...” to workspace ready.
+- **Expected:** Phase label and/or % while DuckDB WASM and persistence bridge start (similar to WebR panel pattern).
+- **Actual:** Indeterminate spinner and static copy; DuckDB init ~0.5–4s with no user-facing phases.
+- **Heuristic:** #1 Visibility of system status
+- **Related:** `App.tsx` engine init overlay; `enginePersistenceBridge.ts`
+
+---
+
+## UXR-040 — Multiple tabs cause OPFS errors and opaque “Storage Issue”
+
+- **Status:** open
+- **Severity:** P1
+- **Mode:** Global / Canvas
+- **Session:** 9
+- **Steps to reproduce:**
+  1. Open Velocity in two browser tabs on the same origin.
+  2. Open dataset in tab B; add row/column variables.
+  3. Observe sidebar footer and console.
+- **Expected:** Warning that only one tab should use local storage, or coordinated lock; analysis either works or shows clear blocker.
+- **Actual:** Console: `createSyncAccessHandle` / OPFS repair DB churn; sidebar shows **Storage Issue**; crosstab queries fail with “Table main does not exist” and no slide-level error (see UXR-037).
+- **Heuristic:** #1 Visibility of system status; #5 Error prevention
+- **Related:** `analysisWorker.ts` OPFS open paths; `PersistenceStatus.tsx`
+
+---
+
 <!-- Add new findings below as sessions progress -->
