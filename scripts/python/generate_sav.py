@@ -20,6 +20,7 @@ variable_labels = {
 # Define value labels for 'group' (SPSS maps numbers to labels usually, but string variables can represent categories too)
 # For simplicity in this test, we'll keep it as strings, but pyreadstat handles it.
 
-print("Generating 'test_small.sav'...")
-pyreadstat.write_sav(df, "test_small.sav", variable_value_labels={}, column_labels=variable_labels)
-print("Success! Created 'test_small.sav'")
+output = "test_data/fixtures/test_small.sav"
+print(f"Generating '{output}'...")
+pyreadstat.write_sav(df, output, variable_value_labels={}, column_labels=variable_labels)
+print(f"Success! Created '{output}'")

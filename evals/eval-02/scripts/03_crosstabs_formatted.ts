@@ -1,4 +1,4 @@
-import { VelocityEngine } from "../src/engine/index.js";
+import { VelocityEngine } from "../../../src/engine/index.js";
 
 // Utility: format crosstab rows into a readable percentage table
 function formatCrosstab(rows: Record<string, unknown>[], label: string) {

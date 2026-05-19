@@ -1,4 +1,4 @@
-import { VelocityEngine } from "../src/engine/index.js";
+import { VelocityEngine } from "../../../src/engine/index.js";
 
 async function main() {
   const engine = await VelocityEngine.create({

@@ -25,7 +25,35 @@
     ```
     *Note: The dev server is configured with COOP/COEP headers required for DuckDB-Wasm multi-threading.*
 
-## 3. Project Structure
+## 3. Repository Layout
+
+```
+velocity/
+├── README.md, AGENTS.md     # Human + agent entry points
+├── index.html               # Vite app shell
+├── package.json             # npm scripts and dependencies
+├── vite.config.ts, vitest.config.ts, playwright.config.ts
+│
+├── src/                     # Application (React UI + core + engine)
+├── public/                  # Static assets
+├── packages/readstat-wasm/  # WASM SAV reader (git submodule)
+│
+├── cli/                     # CLI entry (`velocity.ts`)
+│
+├── docs/                    # Product contracts, playbooks, archive
+├── evals/                   # Frozen benchmark briefs, runs, repro scripts
+├── tests/                   # Vitest suites (golden, parity, e2e)
+├── test_data/               # Survey fixtures (large `.sav` mostly gitignored)
+│   └── fixtures/            # Small committed fixtures (e.g. test_small.sav)
+│
+├── scripts/                 # Maintenance, benchmarks, python/
+│   └── eval/                # Browser eval runners (`npm run eval:05|06`)
+├── mcp-server/              # `@velocity/mcp-server` workspace package
+├── validation/              # R scripts for golden fixture regeneration
+└── .github/                 # CI workflows
+```
+
+### `src/` application tree
 
 ```
 src/
@@ -38,6 +66,19 @@ src/
 ├── theme/            # Runtime theme definitions
 ├── types/            # Shared TypeScript interfaces
 └── index.css         # Global semantic token layer
+```
+
+**Root policy:** keep only toolchain configs and entry docs at the repo root. Ad-hoc logs, debug dumps, and one-off scripts belong under `scripts/` or `test_data/fixtures/`. Eval reproduction scripts live next to their benchmark under `evals/eval-NN/scripts/`.
+
+### npm workspaces
+
+The root `package.json` declares workspaces for `packages/*` and `mcp-server`. Always `npm install` from the repository root. Workspace packages are linked under `node_modules/@velocity/`.
+
+```bash
+npm run mcp:dev      # MCP server (tsx)
+npm run mcp:build    # MCP tool tests
+npm run eval:05      # Browser eval runner (EVAL-05)
+npm run eval:06      # Browser eval runner (EVAL-06)
 ```
 
 ## 4. Development Guidelines

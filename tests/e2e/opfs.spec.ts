@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import path from 'path';
 
-const savFixture = path.resolve(process.cwd(), 'test_small.sav');
+const savFixture = path.resolve(process.cwd(), 'test_data/fixtures/test_small.sav');
 
 test('OPFS persists dataset across reloads', async ({ page }) => {
   await page.goto('/');

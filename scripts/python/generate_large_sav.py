@@ -1,10 +1,13 @@
+import os
+
+import numpy as np
 import pandas as pd
 import pyreadstat
-import numpy as np
 
 # Settings
-rows = 5_000_000 # 5 million rows -> ~200MB
-output_file = "test_large.sav"
+rows = 5_000_000  # 5 million rows -> ~200MB
+output_file = "test_data/fixtures/test_large.sav"
+os.makedirs(os.path.dirname(output_file), exist_ok=True)
 
 print(f"Generating data for {rows} rows...")
 

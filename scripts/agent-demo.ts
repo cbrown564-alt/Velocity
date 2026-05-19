@@ -297,7 +297,7 @@ async function main() {
       console.log(`  Export error: ${exportResult.error.message}`);
     } else {
       const bytes = exportResult.data!;
-      const outPath = path.resolve(__dirname, '../scripts/sleep-report.pptx');
+      const outPath = path.resolve(__dirname, '../tests/fixtures/export/sleep-report.pptx');
       const { writeFileSync } = await import('fs');
       writeFileSync(outPath, bytes);
       console.log(`\n  ✓ PPTX written: ${outPath}`);

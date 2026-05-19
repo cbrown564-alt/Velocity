@@ -1,5 +1,6 @@
 {
   "name": "@velocity/mcp-server",
+  "private": true,
   "version": "1.0.0",
   "description": "MCP server transport adapter for Velocity engine",
   "type": "module",
@@ -8,13 +9,10 @@
     "velocity-mcp": "./dist/index.js"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "node -e \"console.log('@velocity/mcp-server: use npm run mcp:build from repo root (vitest)')\"",
     "dev": "tsx index.ts"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.0.4"
-  },
-  "peerDependencies": {
-    "velocity": "*"
   }
 }

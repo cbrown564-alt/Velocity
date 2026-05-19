@@ -52,7 +52,7 @@ describe('Agent demo: sleep.sav → PPTX', () => {
     const exportResult = await engine.exportDeck(deckResult.data!, { format: 'pptx' });
     const bytes = exportResult.data!;
 
-    const outPath = path.resolve(__dirname, '../../../scripts/sleep-report.pptx');
+    const outPath = path.resolve(__dirname, '../../../tests/fixtures/export/sleep-report.pptx');
     writeFileSync(outPath, bytes);
 
     console.log(`\n✓ PPTX written: ${outPath}`);

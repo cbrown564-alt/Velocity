@@ -13,11 +13,19 @@ Frozen benchmark evidence and canonical briefs. Scoring and gap review: **`docs/
 
 EVAL-01 and EVAL-02 briefs live in their frozen `runs/run-2026-03-13/` directories.
 
+## Reproduction scripts
+
+| Kind | Location | How to run |
+| :--- | :--- | :--- |
+| Engine-driven (Node) | `evals/eval-NN/scripts/` | `npx tsx evals/eval-02/scripts/01_explore.ts` (see folder `README.md`) |
+| Browser automation | `scripts/eval/run-eval-NN.mjs` | `npm run eval:05` or `npm run eval:06` (see `scripts/eval/README.md`) |
+
 ## Run structure
 
 ```text
 evals/eval-NN/
   brief.md
+  scripts/              # optional: engine-driven repro scripts
   runs/run-YYYY-MM-DD/
     brief.md
     process_log.md

@@ -1,13 +1,15 @@
-
-import pyreadstat
-import pandas as pd
 import os
+from pathlib import Path
 
-sav_path = '/Users/cobro/Code/Velocity/test_data/sleep.sav'
-sps_path = '/Users/cobro/Code/Velocity/test_data/surveysyntax.sps'
+import pandas as pd
+import pyreadstat
+
+ROOT = Path(__file__).resolve().parents[2]
+sav_path = ROOT / "test_data/sleep.sav"
+sps_path = ROOT / "test_data/surveysyntax.sps"
 
 # Read metadata from SAV file
-df, meta = pyreadstat.read_sav(sav_path)
+df, meta = pyreadstat.read_sav(str(sav_path))
 
 print(f"Variables in {os.path.basename(sav_path)}: {list(df.columns)}")
 

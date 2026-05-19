@@ -3,6 +3,10 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "workspaces": [
+    "packages/*",
+    "mcp-server"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -13,6 +17,10 @@
     "check:worker-boundary": "node scripts/check-worker-boundary.mjs",
     "check:querybuilder-pure": "node scripts/check-querybuilder-pure.mjs",
     "velocity-mcp-setup": "node scripts/velocity-mcp-setup.mjs",
+    "mcp:build": "vitest run mcp-server/__tests__/tools.test.ts",
+    "mcp:dev": "npm run dev -w @velocity/mcp-server",
+    "eval:05": "node scripts/eval/run-eval-05.mjs",
+    "eval:06": "node scripts/eval/run-eval-06.mjs",
     "benchmark:sav": "npx tsx scripts/benchmark-sav-ingestion.ts",
     "benchmark:sav:v2v3": "npx tsx scripts/benchmark-sav-v2-v3.ts",
     "test": "vitest",

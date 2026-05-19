@@ -1,5 +1,5 @@
-import { VelocityEngine } from "../src/engine/index.js";
-import type { DeckSpec } from "../src/engine/types.js";
+import { VelocityEngine } from "../../../src/engine/index.js";
+import type { DeckSpec } from "../../../src/engine/types.js";
 import { writeFileSync } from "fs";
 
 async function main() {

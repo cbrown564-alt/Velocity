@@ -32,9 +32,18 @@ playwright-report/
 test-results/
 .playwright/
 
-# Demo data
+# Local scratch (eval scripts, ad-hoc exports)
+output/
+tmp/
+
+# Tooling noise
+scripts/agent-demo-output.txt
+scripts/python/inspect_sav_output.json
+
+# Demo / fixture data
 *.sav
 !test_data/British Social Attitudes Survey/bsa93.sav
+!test_data/fixtures/test_small.sav
 public/demo/wvs.csv
 public/demo/*.csv
 test_data/wvs_processed/

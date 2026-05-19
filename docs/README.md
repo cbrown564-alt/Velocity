@@ -51,6 +51,7 @@ Deck, session, and workspace contracts are in **`arch_07`** §5, §8–§9. Hist
 | `eval_00_run_summary_schema.ts` | `summary.json` schema |
 | `evals/eval-NN/brief.md` | Canonical benchmark briefs |
 | `evals/eval-NN/runs/` | Frozen run evidence |
+| `evals/eval-NN/scripts/` | Optional engine repro scripts (e.g. EVAL-02) |
 | `evals/templates/` | Result and synthesis templates |
 
 Phase 4 synthesis (historical): `archive/2026-03/phase4-eval/eval_s4_eval_5_phase_synthesis.md`. Current claims: roadmap §2.1 and tracker.
