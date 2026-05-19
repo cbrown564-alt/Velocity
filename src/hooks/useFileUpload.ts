@@ -28,7 +28,7 @@ export function useFileUpload(
   setMode: React.Dispatch<React.SetStateAction<AppMode>>,
   opfsAvailableLocal: boolean,
 ): FileUploadState {
-  const { dataset, loadCSV, loadSAV, loadSAVSample, discardPersistedData } = useVelocityStore();
+  const { loadCSV, loadSAV, loadSAVSample, discardPersistedData } = useVelocityStore();
 
   const [pendingSavFile, setPendingSavFile] = React.useState<File | null>(null);
   const [pendingSavSizeMb, setPendingSavSizeMb] = React.useState<number | null>(null);
@@ -70,10 +70,6 @@ export function useFileUpload(
         // Store in OPFS for local-first restore (best-effort).
         if (opfsAvailableLocal) {
           try {
-            if (dataset?.opfsFileKey) {
-              await opfsFileManager.deleteFile(dataset.opfsFileKey).catch(() => { });
-            }
-
             let canStore = true;
             const estimate = await opfsFileManager.getStorageEstimate();
             if (estimate) {
@@ -151,7 +147,7 @@ export function useFileUpload(
       alert('Error loading file. Check console.');
       setMode('splash');
     }
-  }, [dataset?.opfsFileKey, loadCSV, loadSAV, loadSAVSample, opfsAvailableLocal, setMode]);
+  }, [loadCSV, loadSAV, loadSAVSample, opfsAvailableLocal, setMode]);
 
   const handleMetadataLoadFull = useCallback(async () => {
     if (!pendingSavFile && !opfsStorageKey) return;

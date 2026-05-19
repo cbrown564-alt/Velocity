@@ -51,6 +51,7 @@ export function useWorkspace(): UseWorkspaceReturn {
     // Data state
     dataset,
     variableSets,
+    folders,
     tableConfig,
     activeFilters,
     transformLog,
@@ -99,6 +100,10 @@ export function useWorkspace(): UseWorkspaceReturn {
         name: dataset.name,
         rowCount: dataset.rowCount,
         columnCount: dataset.variables.length,
+        variables: dataset.variables,
+        variableSets,
+        folders,
+        opfsFileKey: dataset.opfsFileKey,
         lastOpenedAt: Date.now(),
       });
       updateDatasetAccess(dataset.id);
@@ -114,6 +119,8 @@ export function useWorkspace(): UseWorkspaceReturn {
         fileSize: 0, // Will be updated if we have OPFS info
         source: dataset.source,
         variables: dataset.variables,
+        variableSets,
+        folders,
         opfsFileKey: dataset.opfsFileKey,
         tableName: `dataset_${dataset.id.replace(/[^a-zA-Z0-9_]/g, '_')}`,
       };
@@ -141,6 +148,8 @@ export function useWorkspace(): UseWorkspaceReturn {
     hasRegisteredDataset.current = true;
   }, [
     dataset,
+    variableSets,
+    folders,
     workspace.datasets,
     addStoredDataset,
     updateStoredDataset,
@@ -174,7 +183,12 @@ export function useWorkspace(): UseWorkspaceReturn {
       activeFilters,
       transformLog,
     });
-  }, [dataset, activeDatasetId, tableConfig, activeFilters, transformLog, saveDatasetSession]);
+    updateStoredDataset(activeDatasetId, {
+      variables: dataset.variables,
+      variableSets,
+      folders,
+    });
+  }, [dataset, activeDatasetId, tableConfig, activeFilters, transformLog, variableSets, folders, saveDatasetSession, updateStoredDataset]);
 
   /**
    * Open a dataset from the workspace.

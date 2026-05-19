@@ -92,6 +92,67 @@ describe('Store: Persistence', () => {
             expect(persisted.workspace.datasets[0].variables?.[0].valueLabels).toEqual([]);
         });
 
+        it('preserves workspace dataset session metadata needed for source rebuilds', () => {
+            const mockState = {
+                dataset: null,
+                variableSets: [],
+                folders: [],
+                transformLog: [],
+                appMode: 'analysis' as const,
+                activeFolderId: null,
+                tableConfig: { rowVars: [], colVar: null },
+                activeFilters: [],
+                activeDatasetId: 'ds1',
+                isWorkspaceMode: true,
+                harmonization: { session: null },
+                workspace: {
+                    datasets: [{
+                        id: 'ds1',
+                        name: 'test.sav',
+                        fileName: 'test.sav',
+                        rowCount: 100,
+                        columnCount: 2,
+                        fileSize: 1,
+                        source: 'sav' as const,
+                        createdAt: Date.now(),
+                        lastOpenedAt: Date.now(),
+                        lastModifiedAt: Date.now(),
+                        starred: false,
+                        variables: [],
+                        variableSets: [{
+                            id: 'grid-1',
+                            name: 'Brand Ratings',
+                            variableIds: ['q1_a', 'q1_b'],
+                            structure: 'grid' as const,
+                            type: 'ordered' as const,
+                        }],
+                        folders: [{ id: 'folder-1', name: 'Brands', order: 0 }],
+                        sessionState: {
+                            tableConfig: { rowVars: ['q1_recode'], colVar: null },
+                            activeFilters: [],
+                            transformLog: [{
+                                type: 'recode',
+                                sourceColId: 'q1',
+                                newColId: 'q1_recode',
+                                label: 'Q1 Recode',
+                                config: { mode: 'categorical', mappings: { 1: 'Top box' } },
+                                createdAt: 123,
+                            }],
+                        },
+                    }],
+                    projects: [],
+                    storageUsed: 0,
+                    storageQuota: 0,
+                },
+            } as unknown as VelocityState;
+
+            const persisted = partialize(mockState);
+            const stored = persisted.workspace.datasets[0] as any;
+            expect(stored.variableSets).toHaveLength(1);
+            expect(stored.folders).toEqual([{ id: 'folder-1', name: 'Brands', order: 0 }]);
+            expect(stored.sessionState.transformLog).toEqual(mockState.workspace.datasets[0].sessionState.transformLog);
+        });
+
         it('should include persistable state fields', () => {
             const mockState = {
                 // DataSlice

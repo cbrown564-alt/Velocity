@@ -112,12 +112,6 @@ export const partialize = (state: VelocityState): PersistedState => {
             ...dataset,
             // Keep variable identifiers for harmonization matching, but drop heavy label maps.
             variables: dataset.variables ? compactVariablesForWorkspacePersistence(dataset.variables) : dataset.variables,
-            sessionState: dataset.sessionState
-                ? {
-                    ...dataset.sessionState,
-                    transformLog: [],
-                }
-                : dataset.sessionState,
         })),
     };
 

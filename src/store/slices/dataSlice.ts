@@ -163,6 +163,8 @@ export interface WorkspaceDatasetOpenInput {
     source: 'sav' | 'csv' | 'arrow';
     opfsFileKey?: string;
     variables?: Variable[];
+    variableSets?: VariableSet[];
+    folders?: Folder[];
     sessionState?: {
         tableConfig: { rowVars: string[]; colVar: string | null };
         activeFilters: unknown[];
@@ -239,7 +241,7 @@ export interface DataSlice {
     // Actions
     initWorker: () => Promise<void>;
     terminateWorker: () => void;
-    respawnWorker: (cleanStart?: boolean) => Promise<void>;
+    respawnWorker: (cleanStart?: boolean, datasetIdOverride?: string) => Promise<void>;
     checkPersistedData: () => Promise<void>;
     clearPersistedData: () => Promise<void>;
     flushPersistedData: () => Promise<void>;
@@ -380,7 +382,7 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
     },
 
     // Respawn worker (terminates existing and creates fresh)
-    respawnWorker: async (cleanStart: boolean = false) => {
+    respawnWorker: async (cleanStart: boolean = false, datasetIdOverride?: string) => {
         console.log(`[DataSlice] Respawning engine (cleanStart: ${cleanStart})`);
         get().terminateWorker();
 
@@ -415,7 +417,7 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
 
             set({ engineProxy: proxy });
 
-            const datasetId = get().dataset?.id;
+            const datasetId = datasetIdOverride ?? get().dataset?.id;
             const result = await proxy.init({
                 forceCleanStart: cleanStart,
                 datasetId,
@@ -588,6 +590,9 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
         }
 
         const variables = (stored.variables ?? []).map(normalizeVariable);
+        const variableSets = stored.variableSets && stored.variableSets.length > 0
+            ? stored.variableSets.map(normalizeVariableSet)
+            : buildVariableSetsFromVariables(variables);
         const session = stored.sessionState;
         const transformLog = (session?.transformLog ?? []) as DataTransform[];
         const fileName = stored.fileName || stored.name;
@@ -602,8 +607,8 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
                 opfsFileKey: stored.opfsFileKey,
                 metadataOnly: variables.length === 0,
             },
-            variableSets: buildVariableSetsFromVariables(variables),
-            folders: [],
+            variableSets,
+            folders: stored.folders ?? [],
             transformLog,
             variableStats: {},
             variableStatsLoading: {},
@@ -812,12 +817,22 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
 
     // Load SAV file
     loadSAV: async (fileName: string, buffer: ArrayBuffer, options?: { datasetId?: string; opfsFileKey?: string }) => {
+        const targetDatasetId = options?.datasetId;
+        const currentDataset = get().dataset;
+
+        if (targetDatasetId && currentDataset?.id !== targetDatasetId) {
+            if (currentDataset) {
+                await get().flushPersistedData().catch(() => {});
+            }
+            await get().respawnWorker(false, targetDatasetId);
+        }
+
         const { engineProxy } = get();
         if (!engineProxy) throw new Error('Engine not initialized');
 
         const response = await engineProxy.loadSAV(buffer);
 
-        const datasetId = options?.datasetId || crypto.randomUUID();
+        const datasetId = targetDatasetId || crypto.randomUUID();
         const variableSets: VariableSet[] = response.variableSets.map(normalizeVariableSet);
         const variables: Variable[] = response.variables.map(normalizeVariable);
 

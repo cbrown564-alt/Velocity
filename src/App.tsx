@@ -370,7 +370,7 @@ export default function App() {
     addStoredDataset({
       id: dataset.id, name: dataset.name, fileName: dataset.name, rowCount: dataset.rowCount,
       columnCount: dataset.variables.length, fileSize: 0, source: dataset.source,
-      variables: dataset.variables, opfsFileKey: dataset.opfsFileKey, tableName: datasetTableName(dataset.id),
+      variables: dataset.variables, variableSets, folders, opfsFileKey: dataset.opfsFileKey, tableName: datasetTableName(dataset.id),
     });
     if (dataset.opfsFileKey) {
       opfsFileManager.getFileSize(dataset.opfsFileKey)
@@ -378,7 +378,7 @@ export default function App() {
         .catch(() => { });
     }
     setActiveDataset(dataset.id);
-  }, [dataset, addStoredDataset, updateStoredDataset, setActiveDataset, materializeDatasetTable]);
+  }, [dataset, variableSets, folders, addStoredDataset, updateStoredDataset, setActiveDataset, materializeDatasetTable]);
 
   useEffect(() => {
     if (dataset && mode === 'dashboard') registerDatasetInWorkspace();
@@ -397,7 +397,8 @@ export default function App() {
   const handleOpenDataset = useCallback(async (storedDataset: StoredDataset) => {
     clearImportedSessionSemantic();
     if (dataset && activeDatasetId && dataset.id !== storedDataset.id) {
-      saveDatasetSession(activeDatasetId, { tableConfig, activeFilters, transformLog: [] });
+      saveDatasetSession(activeDatasetId, { tableConfig, activeFilters, transformLog });
+      updateStoredDataset(activeDatasetId, { variables: dataset.variables, variableSets, folders });
     }
     updateDatasetAccess(storedDataset.id);
     setActiveDataset(storedDataset.id);
@@ -424,8 +425,12 @@ export default function App() {
     activeDatasetId,
     tableConfig,
     activeFilters,
+    transformLog,
+    variableSets,
+    folders,
     saveDatasetSession,
     updateDatasetAccess,
+    updateStoredDataset,
     setActiveDataset,
     setWorkspaceMode,
     openWorkspaceDataset,
@@ -477,11 +482,12 @@ export default function App() {
 
   const handleReturnToWorkspace = useCallback(() => {
     if (dataset && activeDatasetId) {
-      saveDatasetSession(activeDatasetId, { tableConfig, activeFilters, transformLog: [] });
+      saveDatasetSession(activeDatasetId, { tableConfig, activeFilters, transformLog });
+      updateStoredDataset(activeDatasetId, { variables: dataset.variables, variableSets, folders });
     }
     setWorkspaceMode(true);
     setMode('splash');
-  }, [dataset, activeDatasetId, tableConfig, activeFilters, saveDatasetSession, setWorkspaceMode]);
+  }, [dataset, activeDatasetId, tableConfig, activeFilters, transformLog, variableSets, folders, saveDatasetSession, updateStoredDataset, setWorkspaceMode]);
 
   const handleOpenProjectModal = useCallback((ids: string[]) => { setProjectModalDatasetIds(ids); setShowProjectModal(true); }, []);
   const handleCreateProject = useCallback((project: Omit<Project, 'id' | 'createdAt'>) => { createProject(project); setShowProjectModal(false); setProjectModalDatasetIds([]); }, [createProject]);
@@ -532,7 +538,7 @@ export default function App() {
     data.workspace.datasets.forEach(d => {
       const existing = workspace.datasets.find(e => e.id === d.id);
       if (existing) updateStoredDataset(d.id, d);
-      else addStoredDataset({ id: d.id, name: d.name, fileName: d.fileName, rowCount: d.rowCount, columnCount: d.columnCount, fileSize: d.fileSize, source: d.source, variables: d.variables, opfsFileKey: d.opfsFileKey, tableName: d.tableName });
+      else addStoredDataset({ id: d.id, name: d.name, fileName: d.fileName, rowCount: d.rowCount, columnCount: d.columnCount, fileSize: d.fileSize, source: d.source, variables: d.variables, variableSets: d.variableSets, folders: d.folders, opfsFileKey: d.opfsFileKey, tableName: d.tableName });
     });
     data.workspace.projects.forEach(p => {
       if (!workspace.projects.find(e => e.id === p.id)) {

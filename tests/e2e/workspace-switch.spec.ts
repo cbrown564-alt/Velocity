@@ -51,6 +51,7 @@ test('workspace switches between stored datasets without re-upload', async ({ pa
   await expect(page.getByRole('button', { name: /Upload/i }).first()).toBeVisible({ timeout: 60000 });
 
   await uploadSavAndReachDashboard(page, sleepSavFixture);
+  await expect(page.getByText('sleep.sav (271 rows)')).toBeVisible({ timeout: 30000 });
   await returnToWorkspace(page);
 
   await uploadSavAndReachDashboard(page, smallSavFixture);
@@ -58,10 +59,26 @@ test('workspace switches between stored datasets without re-upload', async ({ pa
 
   await expect(page.getByText('sleep.sav')).toBeVisible({ timeout: 30000 });
   await expect(page.getByText('test_small.sav')).toBeVisible({ timeout: 30000 });
+  await expect.poll(async () => {
+    return page.evaluate(async () => {
+      const raw = localStorage.getItem('velocity-state');
+      if (!raw) return false;
+      const parsed = JSON.parse(raw);
+      const datasets = parsed?.state?.workspace?.datasets ?? [];
+      const sleep = datasets.find((entry: any) => entry.fileName === 'sleep.sav');
+      if (!sleep?.opfsFileKey) return false;
+
+      const root = await navigator.storage.getDirectory();
+      const uploaded = await root.getDirectoryHandle('uploaded_sav');
+      await uploaded.getFileHandle(sleep.opfsFileKey);
+      return true;
+    });
+  }, { timeout: 30000 }).toBe(true);
 
   await page.getByRole('button', { name: 'All Datasets' }).click();
   await page.getByPlaceholder('Search datasets...').fill('sleep.sav');
   await page.getByRole('heading', { name: 'sleep.sav' }).dblclick();
 
   await expect(page.getByText(/Survey Questions/)).toBeVisible({ timeout: 120000 });
+  await expect(page.getByText('sleep.sav (271 rows)')).toBeVisible({ timeout: 30000 });
 });
