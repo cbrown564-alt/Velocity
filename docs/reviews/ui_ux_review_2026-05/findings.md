@@ -308,4 +308,49 @@ Log one entry per `UXR-###`. Update **Status** when fixed: `open` | `confirmed` 
 
 ---
 
+## UXR-021 — Import Session modal crashes the app (hooks violation)
+
+- **Status:** fixed (May 19, 2026)
+- **Severity:** P0
+- **Mode:** Canvas / Workspace (Import Session)
+- **Session:** 5
+- **Steps to reproduce:**
+  1. Open Canvas with any dataset loaded.
+  2. Click **Import Session** in the header.
+- **Expected:** Two-step import modal (`.velocity` then matching `.sav`).
+- **Actual:** React error — “Rendered more hooks than during the previous render”; page shows only splash/empty document.
+- **Heuristic:** #9 Help users recover from errors (total failure)
+- **Related:** `src/components/overlays/SessionImportModal.tsx` — `useReducedMotion()` was called after `if (!isOpen) return null`
+- **Resolution:** Call `useReducedMotion()` before the early return.
+
+---
+
+## UXR-022 — Export format picker not exposed to accessibility tree
+
+- **Status:** open
+- **Severity:** P2
+- **Mode:** Canvas (Export modal)
+- **Session:** 5
+- **Steps to reproduce:** Open Export modal; inspect format section in accessibility tree.
+- **Expected:** Named controls for PowerPoint vs Excel (radio group or tabs).
+- **Actual:** Scope radios and checkboxes are named; PPTX/XLSX tiles are clickable `motion.div` elements with no role/name.
+- **Heuristic:** #4 Consistency (scope section is accessible; format section is not)
+- **Related:** `src/components/overlays/ExportModal.tsx` format grid
+
+---
+
+## UXR-023 — “Export dialog opened” toast on every open
+
+- **Status:** open
+- **Severity:** P3
+- **Mode:** Canvas
+- **Session:** 5
+- **Steps to reproduce:** Click **Export** in header twice.
+- **Expected:** Silent open or single dismissible hint for first use.
+- **Actual:** Info toast “Export dialog opened” each time (`DashboardShell` `addToast`).
+- **Heuristic:** #8 Minimalist design
+- **Related:** `src/features/dashboard/DashboardShell.tsx` `handleExport`
+
+---
+
 <!-- Add new findings below as sessions progress -->

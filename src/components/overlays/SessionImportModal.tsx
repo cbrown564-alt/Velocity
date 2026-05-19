@@ -154,6 +154,8 @@ export const SessionImportModal: React.FC<SessionImportModalProps> = ({
     }
   };
 
+  const reducedMotion = useReducedMotion();
+
   if (!isOpen) return null;
 
   const recodeCount = sessionFile?.transformLog.filter((transform) => transform.type === 'recode').length ?? 0;
@@ -166,8 +168,6 @@ export const SessionImportModal: React.FC<SessionImportModalProps> = ({
     : matchResult?.status === 'partial_match'
       ? 'warning'
       : 'danger';
-
-  const reducedMotion = useReducedMotion();
 
   return (
     <AnimatePresence>
