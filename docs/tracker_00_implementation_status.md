@@ -64,8 +64,6 @@ graph TD
   S4EVAL5 -.-> S4MCP1
   S4EVAL5 -.-> S4MCP2
   S4EVAL5 -.-> S4EVAL5b
-  classDef frozen fill:#f5f5f5,stroke:#999,stroke-dasharray: 5 5
-  class S4MCP1,S4MCP2,S4EVAL5b frozen
 
   S3SEM1 --> S5HARM1["S5-HARM-1 Harmonization Workspace"]
   S5HARM1 --> S5R1["S5-R-1 WebR Bridge"]
@@ -117,11 +115,11 @@ Grilled against `docs/archive/2026-05/audits/audit_05_deep_code_review_2026-05-1
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | STAB-DOC-1 | Docs/process | Stabilization contract in tracker, roadmap §2.1, and `arch_08`; reconcile feature matrix drift; archive audit is evidence-only | S4-EVAL-5 | Done | No | A | `docs/archive/2026-05/audits/audit_05_deep_code_review_2026-05-19.md`, §4.2.1 |
 | STAB-WS-1 | Workspace | Stored datasets reopen/switch/delete across sessions (DB-first, source replay fallback) | STAB-DOC-1 | Done | Yes | T,U,I,A | `src/store/slices/dataSlice.ts` (`openWorkspaceDataset`), `src/App.tsx`, `src/features/workspace/hooks/useWorkspace.ts`, `src/services/opfsFileManager.ts`, `tests/e2e/workspace-switch.spec.ts` |
-| STAB-EXP-1 | Export | Stakeholder-ready deliverables: matrix MCP + PPTX polish (parent; closes when 1a+1b done) | STAB-WS-1 | In review | Yes | T,U,A | `STAB-EXP-1a` + `STAB-EXP-1b` in review |
-| STAB-EXP-1a | Export / MCP | `S4-FMT-1`: `format: 'matrix'` on `velocity_crosstab`; formatter in `src/core/`; unit + MCP tests | STAB-WS-1 | In review | Yes | T,U,A | `src/core/analysis/formatCrosstabMatrix.ts`, `mcp-server/tools.ts`, `mcp-server/__tests__/tools.test.ts`, `docs/guide_agent_quickstart.md` |
-| STAB-EXP-1b | Export | `S4-DELIV-1`: wire `resolveExportBranding(theme)`; PPTX chart quality; unify or remove `pptxChartBuilder` | STAB-EXP-1a | In review | Yes | T,U,A | `src/core/export/pptxChartStyle.ts`, `src/core/export/pptxChartStyle.test.ts`, `src/core/export/pptxExporter.ts`, `src/features/dashboard/DashboardShell.tsx`, `src/core/export/__tests__/pptxExporter.semantics.test.ts` |
+| STAB-EXP-1 | Export | Stakeholder-ready deliverables: matrix MCP + PPTX polish (parent; closes when 1a+1b done) | STAB-WS-1 | Done | Yes | T,U,A | `STAB-EXP-1a` + `STAB-EXP-1b` done |
+| STAB-EXP-1a | Export / MCP | `S4-FMT-1`: `format: 'matrix'` on `velocity_crosstab`; formatter in `src/core/`; unit + MCP tests | STAB-WS-1 | Done | Yes | T,U,A | `src/core/analysis/formatCrosstabMatrix.ts`, `mcp-server/tools.ts`, `mcp-server/__tests__/tools.test.ts`, `docs/guide_agent_quickstart.md` |
+| STAB-EXP-1b | Export | `S4-DELIV-1`: wire `resolveExportBranding(theme)`; PPTX chart quality; unify or remove `pptxChartBuilder` | STAB-EXP-1a | Done | Yes | T,U,A | `src/core/export/pptxChartStyle.ts`, `src/core/export/pptxChartStyle.test.ts`, `src/core/export/pptxExporter.ts`, `src/features/dashboard/DashboardShell.tsx`, `src/core/export/__tests__/pptxExporter.semantics.test.ts` |
 | STAB-DS-1 | Design system | Semantic tokens, cleanup, staged allowlist guard (`check-design-tokens`) | S4-EVAL-5 | Done | No | T,U,A | `src/index.css`, `src/index.css.test.ts`, `scripts/check-design-tokens.mjs`, `package.json` (`check:design-tokens`), `.github/workflows/test.yml`, tracker §7 |
-| STAB-CI-1 | Quality gates | Document truthful CI; workspace-switch E2E required; hook design guard when script exists; defer coverage un-exclude | S4-EVAL-5 | In progress | No | T,U,I,A | `.github/workflows/test.yml`, `docs/arch_08_testing.md`, `npm run check:design-tokens` in `test` job |
+| STAB-CI-1 | Quality gates | Document truthful CI; workspace-switch E2E required; hook design guard when script exists; defer coverage un-exclude | S4-EVAL-5 | Done | No | T,U,I,A | `.github/workflows/test.yml`, `docs/arch_08_testing.md`, `npm run check:design-tokens` in `test` job |
 
 ### 4.3 Post-Validation Follow-Through (Phase 4)
 
@@ -132,10 +130,10 @@ Grilled against `docs/archive/2026-05/audits/audit_05_deep_code_review_2026-05-1
 | S4-DISC-1 | Discovery | Category-aware discovery: annotation-type filters, `listVariablesByCategory` engine method + MCP tool, guided "suggest breaks for topic X" flow | S4-EVAL-5 | Done | Yes | T,L,U,I,A | `src/engine/VelocityEngine.ts`, `mcp-server/tools.ts`, `mcp-server/__tests__/tools.test.ts` |
 | S4-DELIV-1 | Export | PPTX chart rendering overhaul (absorbed by `STAB-EXP-1b`) | STAB-EXP-1b | Merged | Yes | T,L,U,A | `STAB-EXP-1b` |
 | S4-FMT-1 | MCP | Crosstab matrix format (absorbed by `STAB-EXP-1a`) | STAB-EXP-1a | Merged | Yes | T,L,U,I,A | `STAB-EXP-1a` |
-| S4-MCP-1 | MCP | Workspace-aware MCP: `velocity_load_metadata` + `velocity_load_full` two-step flow; multi-dataset workspace tools | STAB-EXP-1 | Frozen | Yes | T,L,U,I,A | §4.2.1 freeze |
+| S4-MCP-1 | MCP | Workspace-aware MCP: `velocity_load_metadata` + `velocity_load_full` two-step flow; multi-dataset workspace tools | STAB-EXP-1 | Not started | Yes | T,L,U,I,A | - |
 | S4-DEF-1 | Defaults | Recommended break variables after topic selection; false-positive weight warnings; high-cardinality guardrails | S4-DISC-1 | In progress | Yes | T,L,U,I,A | `src/engine/VelocityEngine.ts`, `mcp-server/tools.ts`, `mcp-server/__tests__/tools.test.ts` |
-| S4-MCP-2 | MCP | Deck build transport resilience: stream or chunk `buildDeck` responses to avoid stdio OOM | STAB-EXP-1 | Frozen | Yes | T,L,U,A | §4.2.1 freeze |
-| S4-EVAL-5b | Eval | Harmonization re-run: EVAL-05 follow-on with naming drift, partial label overlap, or scale inversion construct | STAB-EXP-1 | Frozen | No | A | §4.2.1 freeze |
+| S4-MCP-2 | MCP | Deck build transport resilience: stream or chunk `buildDeck` responses to avoid stdio OOM | STAB-EXP-1 | Not started | Yes | T,L,U,A | - |
+| S4-EVAL-5b | Eval | Harmonization re-run: EVAL-05 follow-on with naming drift, partial label overlap, or scale inversion construct | STAB-EXP-1 | Not started | No | A | - |
 
 ### 4.4 Next After Validation (Phase 5)
 
