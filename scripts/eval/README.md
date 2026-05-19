@@ -8,6 +8,12 @@ Playwright-driven automation for benchmarks that need a live browser build. Froz
 # Default output: evals/eval-05/runs/run-2026-03-13/artifacts
 npm run eval:05
 
+# S4-EVAL-5b fuzzy harmonization (ageg5 → ageg7); default run-2026-05-19/artifacts
+npm run eval:05b
+
+# Canonical S4-EVAL-5b repro (engine workspace; no browser)
+npm run eval:05b:engine
+
 # Default output: evals/eval-06/runs/run-2026-03-13/artifacts
 npm run eval:06
 

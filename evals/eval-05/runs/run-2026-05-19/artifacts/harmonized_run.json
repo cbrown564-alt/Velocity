@@ -1,0 +1,332 @@
+{
+  "trackerId": "S4-EVAL-5b",
+  "sourceFile": "wave_4_ifs_derived_variables.sav",
+  "targetFile": "wave_5_ifs_derived_variables.sav",
+  "wave4": {
+    "id": "ws-1779221227524-cobax6",
+    "name": "wave_4_ifs_derived_variables.sav",
+    "tableName": "ws_ws_1779221227524_cobax6",
+    "rowCount": 11050,
+    "variableCount": 436,
+    "source": "sav",
+    "metadataOnly": false,
+    "waveNumber": 4,
+    "isActive": true
+  },
+  "wave5": {
+    "id": "ws-1779221228474-6sexu7",
+    "name": "wave_5_ifs_derived_variables.sav",
+    "tableName": "ws_ws_1779221228474_6sexu7",
+    "rowCount": 10274,
+    "variableCount": 440,
+    "source": "sav",
+    "metadataOnly": false,
+    "waveNumber": 5,
+    "isActive": false
+  },
+  "autoMatchTarget": "ageg5",
+  "fuzzyConstruct": {
+    "sourceId": "ageg5",
+    "targetId": "ageg7",
+    "nameSimilarity": 0.92,
+    "valueLabelOverlap": 0.7,
+    "score": {
+      "total": 0.8908421052631579,
+      "nameSimilarity": 0.92,
+      "labelSimilarity": 0.9894736842105264,
+      "typeMatch": 1,
+      "valueLabelOverlap": 0.7
+    },
+    "scaleInversion": false,
+    "sourceLabels": [
+      "50-54",
+      "55-59",
+      "60-64",
+      "65-69",
+      "70-74",
+      "75-79",
+      "80-84",
+      "85+"
+    ],
+    "targetLabels": [
+      "50-54",
+      "55-59",
+      "60-64",
+      "65-69",
+      "70-74",
+      "75-79",
+      "80+"
+    ]
+  },
+  "selectedMapping": {
+    "id": "ageg5::ageg5",
+    "sourceVariableId": "ageg5",
+    "targetVariableId": "ageg7",
+    "status": "manual",
+    "score": {
+      "total": 0.8908421052631579,
+      "nameSimilarity": 0.92,
+      "labelSimilarity": 0.9894736842105264,
+      "typeMatch": 1,
+      "valueLabelOverlap": 0.7
+    },
+    "valueMappings": [
+      {
+        "sourceValue": -1,
+        "sourceLabel": "under 50",
+        "targetValue": -1,
+        "targetLabel": "under 50"
+      },
+      {
+        "sourceValue": 1,
+        "sourceLabel": "50-54",
+        "targetValue": 1,
+        "targetLabel": "50-54"
+      },
+      {
+        "sourceValue": 2,
+        "sourceLabel": "55-59",
+        "targetValue": 2,
+        "targetLabel": "55-59"
+      },
+      {
+        "sourceValue": 3,
+        "sourceLabel": "60-64",
+        "targetValue": 3,
+        "targetLabel": "60-64"
+      },
+      {
+        "sourceValue": 4,
+        "sourceLabel": "65-69",
+        "targetValue": 4,
+        "targetLabel": "65-69"
+      },
+      {
+        "sourceValue": 5,
+        "sourceLabel": "70-74",
+        "targetValue": 5,
+        "targetLabel": "70-74"
+      },
+      {
+        "sourceValue": 6,
+        "sourceLabel": "75-79",
+        "targetValue": 6,
+        "targetLabel": "75-79"
+      },
+      {
+        "sourceValue": 7,
+        "sourceLabel": "80-84",
+        "targetValue": 7,
+        "targetLabel": "80+"
+      },
+      {
+        "sourceValue": 8,
+        "sourceLabel": "85+",
+        "targetValue": null,
+        "targetLabel": ""
+      }
+    ],
+    "warnings": [],
+    "confirmed": true
+  },
+  "applyResult": {
+    "tableName": "harm_eval05b_wave4_wave5_ageg5_ageg7",
+    "rowCount": 21324,
+    "sql": "SELECT 1 AS _wave, 'ageg5' AS _variable_name, CASE WHEN \"ageg5\" = -1 THEN -1 WHEN \"ageg5\" = 1 THEN 1 WHEN \"ageg5\" = 2 THEN 2 WHEN \"ageg5\" = 3 THEN 3 WHEN \"ageg5\" = 4 THEN 4 WHEN \"ageg5\" = 5 THEN 5 WHEN \"ageg5\" = 6 THEN 6 WHEN \"ageg5\" = 7 THEN 7 ELSE \"ageg5\" END AS _value FROM ws_ws_1779221227524_cobax6\nUNION ALL\nSELECT 2 AS _wave, 'ageg5' AS _variable_name, \"ageg7\" AS _value FROM ws_ws_1779221228474_6sexu7"
+  },
+  "counts": [
+    {
+      "_wave": 1,
+      "_value": -1,
+      "count": 301
+    },
+    {
+      "_wave": 1,
+      "_value": 1,
+      "count": 1331
+    },
+    {
+      "_wave": 1,
+      "_value": 2,
+      "count": 2097
+    },
+    {
+      "_wave": 1,
+      "_value": 3,
+      "count": 2143
+    },
+    {
+      "_wave": 1,
+      "_value": 4,
+      "count": 1553
+    },
+    {
+      "_wave": 1,
+      "_value": 5,
+      "count": 1494
+    },
+    {
+      "_wave": 1,
+      "_value": 6,
+      "count": 984
+    },
+    {
+      "_wave": 1,
+      "_value": 7,
+      "count": 628
+    },
+    {
+      "_wave": 1,
+      "_value": 8,
+      "count": 519
+    },
+    {
+      "_wave": 2,
+      "_value": -1,
+      "count": 179
+    },
+    {
+      "_wave": 2,
+      "_value": 1,
+      "count": 544
+    },
+    {
+      "_wave": 2,
+      "_value": 2,
+      "count": 2016
+    },
+    {
+      "_wave": 2,
+      "_value": 3,
+      "count": 2158
+    },
+    {
+      "_wave": 2,
+      "_value": 4,
+      "count": 1608
+    },
+    {
+      "_wave": 2,
+      "_value": 5,
+      "count": 1453
+    },
+    {
+      "_wave": 2,
+      "_value": 6,
+      "count": 1080
+    },
+    {
+      "_wave": 2,
+      "_value": 7,
+      "count": 1236
+    }
+  ],
+  "validSummary": [
+    {
+      "wave": 1,
+      "validCount": 10749,
+      "categories": [
+        {
+          "value": 1,
+          "label": "50-54",
+          "count": 1331,
+          "pct": 12.4
+        },
+        {
+          "value": 2,
+          "label": "55-59",
+          "count": 2097,
+          "pct": 19.5
+        },
+        {
+          "value": 3,
+          "label": "60-64",
+          "count": 2143,
+          "pct": 19.9
+        },
+        {
+          "value": 4,
+          "label": "65-69",
+          "count": 1553,
+          "pct": 14.4
+        },
+        {
+          "value": 5,
+          "label": "70-74",
+          "count": 1494,
+          "pct": 13.9
+        },
+        {
+          "value": 6,
+          "label": "75-79",
+          "count": 984,
+          "pct": 9.2
+        },
+        {
+          "value": 7,
+          "label": "80-84",
+          "count": 628,
+          "pct": 5.8
+        },
+        {
+          "value": 8,
+          "label": "85+",
+          "count": 519,
+          "pct": 4.8
+        }
+      ]
+    },
+    {
+      "wave": 2,
+      "validCount": 10095,
+      "categories": [
+        {
+          "value": 1,
+          "label": "50-54",
+          "count": 544,
+          "pct": 5.4
+        },
+        {
+          "value": 2,
+          "label": "55-59",
+          "count": 2016,
+          "pct": 20
+        },
+        {
+          "value": 3,
+          "label": "60-64",
+          "count": 2158,
+          "pct": 21.4
+        },
+        {
+          "value": 4,
+          "label": "65-69",
+          "count": 1608,
+          "pct": 15.9
+        },
+        {
+          "value": 5,
+          "label": "70-74",
+          "count": 1453,
+          "pct": 14.4
+        },
+        {
+          "value": 6,
+          "label": "75-79",
+          "count": 1080,
+          "pct": 10.7
+        },
+        {
+          "value": 7,
+          "label": "80-84",
+          "count": 1236,
+          "pct": 12.2
+        }
+      ]
+    }
+  ],
+  "mappingCounts": {
+    "total": 436,
+    "autoMatched": 432
+  }
+}

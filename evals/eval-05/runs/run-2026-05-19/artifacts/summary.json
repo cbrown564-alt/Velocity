@@ -1,0 +1,85 @@
+{
+  "evalId": "EVAL-05",
+  "runId": "run-2026-05-19",
+  "trackerTask": "S4-EVAL-5b",
+  "runDate": "2026-05-19",
+  "commitSha": "69cb33af663e64bc739773f200457053229120e6",
+  "briefPath": "evals/eval-05/brief.md",
+  "dataset": {
+    "path": "test_data/English Longitudinal Study of Ageing",
+    "rowCount": 21324,
+    "variableCount": 876
+  },
+  "outcome": "success",
+  "outcomePattern": "pattern_7_end_to_end_success",
+  "toolMetrics": {
+    "totalToolCalls": 4,
+    "totalDurationMs": 2272.893043,
+    "retries": 0,
+    "externalScriptsWritten": 0
+  },
+  "artifacts": {
+    "deck": {
+      "path": "evals/eval-05/runs/run-2026-05-19/artifacts/harmonized_counts.csv",
+      "produced": true,
+      "notes": "Harmonized counts for fuzzy-mapped age-band construct (5-band → 7-band)."
+    },
+    "session": {
+      "path": null,
+      "produced": false,
+      "notes": "Engine-only repro; browser session not required for S4-EVAL-5b."
+    },
+    "summary": {
+      "path": "evals/eval-05/runs/run-2026-05-19/artifacts/summary.json",
+      "produced": true
+    }
+  },
+  "scores": [
+    {
+      "layer": "engine",
+      "score": 5,
+      "notes": "Workspace engine loaded two ELSA tables, proposed mappings, applied manual fuzzy remap (ageg5→ageg7), and materialized harmonized output."
+    },
+    {
+      "layer": "mcp_workflow",
+      "score": 4,
+      "notes": "Same engine methods are exposed via velocity_workspace_* MCP tools; run used direct engine repro script."
+    },
+    {
+      "layer": "semantic_layer",
+      "score": 4,
+      "notes": "Jaro-Winkler name drift and Jaccard partial label overlap (0.7) exercised on real ELSA age-band variables; top band 85+ unmapped."
+    },
+    {
+      "layer": "browser_convergence",
+      "score": 3,
+      "notes": "Browser Playwright harness blocked by worker respawn on second upload (datasetId mismatch); engine path is validated separately."
+    },
+    {
+      "layer": "deliverable_layer",
+      "score": 4,
+      "notes": "Counts CSV and run JSON are reviewable; generic _wave markers persist."
+    },
+    {
+      "layer": "product_defaults",
+      "score": 4,
+      "notes": "Auto-match correctly proposed exact ageg5; operator must manually retarget to ageg7 for alternate banding."
+    },
+    {
+      "layer": "agent_prompting",
+      "score": 4,
+      "notes": "Bounded single-construct confirmation with explicit remap documented in mapping log."
+    }
+  ],
+  "notableFindings": [
+    "Auto-match selected exact ageg5→ageg5 (score 1.0); fuzzy pair ageg5→ageg7 scored ~0.89 with value-label Jaccard 0.7.",
+    "Value remap maps 80-84→80+; source code 85+ has no target mapping (data-loss warning).",
+    "Discovery pitfall: srh3_hse is 100% missing (-3) in wave 5 — name-similar health variables are not always harmonizable.",
+    "Harmonized table row count matches prior exact-match baseline (~21k rows)."
+  ],
+  "blockers": [],
+  "followUps": [
+    "Fix browser eval harness to materialize first dataset table before second upload (worker respawn).",
+    "Add scale-inversion construct to a future eval if no inversion case exists in adjacent ELSA IFS waves."
+  ]
+}

@@ -18,7 +18,8 @@ EVAL-01 and EVAL-02 briefs live in their frozen `runs/run-2026-03-13/` directori
 | Kind | Location | How to run |
 | :--- | :--- | :--- |
 | Engine-driven (Node) | `evals/eval-NN/scripts/` | `npx tsx evals/eval-02/scripts/01_explore.ts` (see folder `README.md`) |
-| Browser automation | `scripts/eval/run-eval-NN.mjs` | `npm run eval:05` or `npm run eval:06` (see `scripts/eval/README.md`) |
+| Browser automation | `scripts/eval/run-eval-NN.mjs` | `npm run eval:05`, `npm run eval:05b`, or `npm run eval:06` (see `scripts/eval/README.md`) |
+| Engine (EVAL-05b fuzzy) | `evals/eval-05/scripts/run_fuzzy_harmonization.ts` | `npm run eval:05b:engine` |
 
 ## Run structure
 

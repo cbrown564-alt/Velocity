@@ -68,6 +68,10 @@ graph TD
   S4EVAL5 -.-> S4MCP2
   S4EVAL5 -.-> S4EVAL5b
 
+  STABEXPB --> STABUIA["STAB-UI-A Motion & Accessibility"]
+  STABUIA --> STABUIB["STAB-UI-B Canvas Polish"]
+  STABUIB --> STABUIC["STAB-UI-C Theme & Density"]
+
   S3SEM1 --> S5HARM1["S5-HARM-1 Harmonization Workspace"]
   S5HARM1 --> S5R1["S5-R-1 WebR Bridge"]
   S4EVAL5 --> S5R1
@@ -98,7 +102,7 @@ S2-STAT-1 through S2-STAT-4 are resolved. S2-EXP-1 and S2-EXP-2 are done. Phase 
 
 ### 4.2 Current Stabilization Sprint (May 2026)
 
-Grilled against `docs/archive/2026-05/audits/audit_05_deep_code_review_2026-05-19.md` (May 2026). **Stabilization sprint closed May 19, 2026** — all `STAB-*` rows below are Done. **Active critical path:** `S4-EVAL-5b`; parallel `STAB-ARCH-1` thin slices (§8). Phase 5+ remains frozen until post–Phase 4 follow-through.
+Grilled against `docs/archive/2026-05/audits/audit_05_deep_code_review_2026-05-19.md` (May 2026). **Stabilization sprint closed May 19, 2026** — all `STAB-*` rows below are Done. **Active critical path:** `STAB-ARCH-1` thin slices (§8) and `STAB-UI-*` (§4.7). `S4-EVAL-5b` Done (May 19, 2026). Phase 5+ remains frozen until post–Phase 4 follow-through.
 
 #### 4.2.1 Stabilization contract (execution rules)
 
@@ -113,7 +117,7 @@ Grilled against `docs/archive/2026-05/audits/audit_05_deep_code_review_2026-05-1
 | Design system | Staged allowlist ratchet (`scripts/check-design-tokens.mjs`); see §7 |
 | Design audit plan | Superseded by tracker §7 (`STAB-DS-1`); no `docs/DESIGN_AUDIT_PLAN.md` |
 | Expansion freeze | **Lifted (May 19, 2026)** after `STAB-WS-1` + `STAB-EXP-1` (1a+1b) shipped. **Allowed now:** finish `S4-DEF-1` (engine/MCP/tests only — no `dataSlice` / `App.tsx` / OPFS edits); start `S4-MCP-1`, `S4-MCP-2`, `S4-EVAL-5b`; `STAB-ARCH-1` scoped slices (§8). **Still frozen:** Phase 5+ (`S5-R-1` WebR, `S5-STATS-1`, `S5-PREP-*`), Phase 6–7, ad-hoc monolith refactors outside `STAB-ARCH-1`, net-new MCP tools beyond the S4-MCP rows |
-| Post-stabilization priority | (1) `S4-EVAL-5b` harmonization re-run; (2) `STAB-ARCH-1` slices in parallel when staffed |
+| Post-stabilization priority | (1) `STAB-ARCH-1` slices + `STAB-UI-*` in parallel when staffed; harmonization fuzzy re-run (`S4-EVAL-5b`) complete |
 
 | ID | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -127,18 +131,53 @@ Grilled against `docs/archive/2026-05/audits/audit_05_deep_code_review_2026-05-1
 
 ### 4.3 Post-Validation Follow-Through (Phase 4)
 
-**Expansion freeze lifted (May 19, 2026):** `STAB-WS-1` and `STAB-EXP-1` are Done. `S4-FMT-1` / `S4-DELIV-1` were delivered via `STAB-EXP-1a` / `STAB-EXP-1b`. Next authorized work is §4.2.1 post-stabilization priority — not Phase 5+ expansion.
+**Expansion freeze lifted (May 19, 2026):** `STAB-WS-1` and `STAB-EXP-1` are Done. `S4-FMT-1` / `S4-DELIV-1` were delivered via `STAB-EXP-1a` / `STAB-EXP-1b`. Next authorized work is §4.2.1 post-stabilization priority — not Phase 5+ expansion. A parallel **UI Excellence workstream** (§4.7) is now authorized following the gap analysis in `docs/audit_02_ui_gap_analysis_2026-05-19.md`.
 
 | ID | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | S4-DISC-1 | Discovery | Category-aware discovery: annotation-type filters, `listVariablesByCategory` engine method + MCP tool, guided "suggest breaks for topic X" flow | S4-EVAL-5 | Done | Yes | T,L,U,I,A | `src/engine/VelocityEngine.ts`, `mcp-server/tools.ts`, `mcp-server/__tests__/tools.test.ts` |
 | S4-DELIV-1 | Export | PPTX chart rendering overhaul (absorbed by `STAB-EXP-1b`) | STAB-EXP-1b | Merged | Yes | T,L,U,A | `STAB-EXP-1b` |
 | S4-FMT-1 | MCP | Crosstab matrix format (absorbed by `STAB-EXP-1a`) | STAB-EXP-1a | Merged | Yes | T,L,U,I,A | `STAB-EXP-1a` |
-| S4-MCP-1 | MCP | Workspace-aware MCP: `velocity_load_metadata` + `velocity_load_full` two-step flow; multi-dataset workspace tools | STAB-EXP-1, S4-DEF-1 preferred first | Not started | Yes | T,L,U,I,A | - |
-| S4-DEF-1 | Defaults | Recommended break variables after topic selection; false-positive weight warnings; high-cardinality guardrails | S4-DISC-1 | In progress | Yes | T,L,U,I,A | `src/engine/VelocityEngine.ts`, `mcp-server/tools.ts`, `mcp-server/__tests__/tools.test.ts` — **scope:** engine/MCP only until Done; no WS/persistence files |
+| S4-MCP-1 | MCP | Workspace-aware MCP: `velocity_load_metadata` + `velocity_load_full` two-step flow; multi-dataset workspace tools | STAB-EXP-1, S4-DEF-1 preferred first | Done | Yes | T,L,U,I,A | `src/core/ingestion/savIngestion.ts` (`loadSavMetadata`), `src/engine/VelocityEngine.ts`, `mcp-server/tools.ts`, `mcp-server/__tests__/tools.test.ts`, `src/engine/VelocityEngine.test.ts`, `docs/guide_agent_quickstart.md` |
+| S4-DEF-1 | Defaults | Recommended break variables after topic selection; false-positive weight warnings; high-cardinality guardrails | S4-DISC-1 | Done | Yes | T,L,U,I,A | `src/core/semantic/analysisGuardrails.ts`, `src/core/semantic/weightPatterns.ts`, `src/engine/VelocityEngine.ts`, `mcp-server/tools.ts`, `mcp-server/__tests__/tools.test.ts`, `src/core/semantic/__tests__/analysisGuardrails.test.ts` |
 | S4-MCP-2 | MCP | Deck build transport resilience: stream or chunk `buildDeck` responses to avoid stdio OOM | STAB-EXP-1 | Done | Yes | T,L,U,A | `mcp-server/deckTransport.ts`, `mcp-server/__tests__/deckTransport.test.ts`, `mcp-server/tools.ts`, `mcp-server/__tests__/tools.test.ts`, `docs/guide_agent_quickstart.md` |
-| S4-EVAL-5b | Eval | Harmonization re-run: EVAL-05 follow-on with naming drift, partial label overlap, or scale inversion construct | STAB-EXP-1 | Not started | No | A | - |
+| S4-EVAL-5b | Eval | Harmonization re-run: EVAL-05 follow-on with naming drift, partial label overlap, or scale inversion construct | STAB-EXP-1 | Done | No | A | `evals/eval-05/runs/run-2026-05-19/`, `evals/eval-05/scripts/discover_fuzzy_construct.ts`, `evals/eval-05/scripts/run_fuzzy_harmonization.ts`, `npm run eval:05b:engine` |
 | STAB-ARCH-1 | Architecture | Thin-slice decomposition of `App.tsx` / `dataSlice` orchestration (§8); no behavior change | STAB-EXP-1 | Not started | No | T,U,I,A | - |
+
+### 4.7 UI Excellence Workstream (May 2026)
+
+**Authorization:** Post-stabilization UI review (`docs/audit_02_ui_gap_analysis_2026-05-19.md`) identified high-impact polish opportunities. Workstream runs in parallel with Phase 4 follow-through; no dependency on S4-MCP rows. Scope is UI/UX polish only — no engine contracts, no MCP schemas, no persistence changes.
+
+**Goal:** Elevate Velocity from "functionally complete" to "delightfully crafted" through motion system unification, canvas polish, accessibility completion, and micro-interaction design.
+
+**Strategic principles:**
+1. Content is King — chrome recedes when not active
+2. Every pixel has a purpose — no decorative elements
+3. Speed is a feature — local-first speed should be *felt*
+4. Intelligence is invisible until needed — contextual, not persistent
+5. Accessibility is not a mode — built into the design system
+6. Progressive disclosure — features discovered through usage
+
+| ID | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| STAB-UI-A | Motion & Accessibility | Unified Motion DSL (`motion.ts` presets); `prefers-reduced-motion` support across all animated surfaces; accessible focus rings; chart ARIA labels; `sr-only` data tables alongside D3 charts | STAB-EXP-1 | In progress | No | T,U,A | `docs/audit_02_ui_gap_analysis_2026-05-19.md` §3.1, §3.7; `src/lib/motion.ts`, `src/components/common/AccessibleMotion.tsx`, `src/index.css` (reduced-motion block), `src/components/layout/AppShell.tsx` (DSL proof-of-concept), `src/components/charts/AnalysisChart.tsx` (ARIA + sr-only table) |
+| STAB-UI-B | Canvas Polish | Smart empty states with suggested variables; adaptive shelf collapse (empty shelves minimize); crosstab typographic hierarchy; Focus Mode (`F` shortcut); toast/feedback layer for operations | STAB-UI-A | Not started | No | T,U,I,A | `docs/audit_02_ui_gap_analysis_2026-05-19.md` §3.2, §3.3, §3.6 |
+| STAB-UI-C | Theme & Density | Shadow token fix (remove hardcoded `rgba(0,0,0,…)`); theme preview cards in switcher; variable list visual weight (derived badges, shelf color indicators); command palette MVP (`Cmd+K`); keyboard shortcut reference (`?`) | STAB-UI-B | Not started | No | T,U,A | `docs/audit_02_ui_gap_analysis_2026-05-19.md` §3.4, §3.5 |
+
+**Sprint sequencing:**
+- **Sprint A (STAB-UI-A):** Motion DSL + accessibility foundation — 1 week
+- **Sprint B (STAB-UI-B):** Canvas polish + feedback layer — 1 week
+- **Sprint C (STAB-UI-C):** Theme/density + command palette — 1 week
+
+**Out of scope (remain frozen until Phase 5+):**
+- Chart morphing between types (Phase 5)
+- Annotation layer on charts (Phase 5)
+- Insight Engine narrative generation (Phase 5)
+- Infinite canvas mode (Phase 6)
+- Living slides / real-time refresh (Phase 6)
+- Semantic suggestions overlay (Phase 6)
+- LCH color space migration / auto-generated dark variants (Phase 5)
+- Accessibility theme pack (high-contrast, colorblind) (Phase 5)
 
 ### 4.4 Next After Validation (Phase 5)
 
