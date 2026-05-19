@@ -17,6 +17,7 @@ import type { DeckSpec, DeckExportOptions, BuiltDeck } from '../src/engine/types
 import { serializeSessionFile, SESSION_FILE_EXTENSION } from '../src/core/session/index.js';
 import type { Filter } from '../src/types/index.js';
 import type { VariableMapping } from '../src/types/harmonization.js';
+import { formatCrosstabMatrix } from '../src/core/analysis/formatCrosstabMatrix.js';
 
 // ---------------------------------------------------------------------------
 // Tool Schemas (JSON Schema for each tool's input)
@@ -72,6 +73,11 @@ const TOOLS = [
         filters: { type: 'array', description: 'Filter conditions (optional).' },
         weightVar: { type: 'string', description: 'Weight variable ID (optional).' },
         resolveLabels: { type: 'boolean', description: 'If true, replace raw integer codes in output with human-readable value labels. Strongly recommended.' },
+        format: {
+          type: 'string',
+          enum: ['long', 'matrix'],
+          description: 'Output shape. "long" (default) returns one row per cell. "matrix" returns a pivot table with column bases and column percentages.',
+        },
         analysisSettings: {
           type: 'object',
           description: 'Significance testing settings.',
@@ -508,6 +514,28 @@ export function registerTools(server: Server, engine: VelocityEngine): void {
             resolveLabels: a.resolveLabels ?? undefined,
             analysisSettings: a.analysisSettings,
           });
+
+          if (a.format === 'matrix') {
+            const envelope = result as {
+              data: { rows: Record<string, unknown>[]; tableStats?: unknown };
+              metadata?: { isWeighted?: boolean };
+            };
+            const matrix = formatCrosstabMatrix(envelope.data.rows, {
+              isWeighted: envelope.metadata?.isWeighted ?? !!a.weightVar,
+            });
+
+            return successResponse({
+              ...result,
+              data: {
+                format: 'matrix',
+                columns: matrix.columns,
+                rows: matrix.rows,
+                grandTotal: matrix.grandTotal,
+                tableStats: envelope.data.tableStats,
+              },
+            });
+          }
+
           return successResponse(result);
         }
 

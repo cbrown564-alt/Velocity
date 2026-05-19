@@ -193,6 +193,7 @@ The primary analysis tool. Runs a cross-tabulation with optional column break, w
   "colVar": "RAgeCat",
   "weightVar": "WtFactor",
   "resolveLabels": true,
+  "format": "matrix",
   "analysisSettings": {
     "comparisonMethod": "pairwise",
     "correctionType": "bonferroni",
@@ -210,6 +211,7 @@ The primary analysis tool. Runs a cross-tabulation with optional column break, w
 | `filters` | `Filter[]` | No | Per-analysis filters. Falls back to engine's active filters. |
 | `weightVar` | `string` | No | Weight variable ID. Falls back to engine's set weight. |
 | `resolveLabels` | `boolean` | No | If `true`, replaces raw integer codes in output with human-readable value labels. **Strongly recommended for agent use.** |
+| `format` | `"long"` \| `"matrix"` | No | Output shape. Default `"long"` returns one row per cell. `"matrix"` returns a pivot table with column bases and column percentages — preferred for stakeholder artifacts. |
 | `analysisSettings` | `object` | No | Significance testing configuration. |
 
 **`analysisSettings` options:**
@@ -237,6 +239,28 @@ With `resolveLabels: true`:
     { "rowKey_0": "Very satisfied", "colKey": "18-24", "count": 245, "pct": 28.5, "wpct": 27.8 },
     { "rowKey_0": "Very satisfied", "colKey": "25-34", "count": 312, "pct": 31.2, "wpct": 30.9 }
   ],
+  "tableStats": { ... }
+}
+```
+
+With `format: "matrix"` (recommended for deliverables):
+```json
+{
+  "format": "matrix",
+  "columns": [
+    { "key": "18-24", "label": "18-24", "base": 860 },
+    { "key": "25-34", "label": "25-34", "base": 1000 }
+  ],
+  "rows": [
+    {
+      "label": "Very satisfied",
+      "cells": {
+        "18-24": { "count": 245, "percent": 28.5 },
+        "25-34": { "count": 312, "percent": 31.2 }
+      }
+    }
+  ],
+  "grandTotal": 1860,
   "tableStats": { ... }
 }
 ```

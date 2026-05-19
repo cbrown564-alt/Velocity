@@ -224,9 +224,16 @@ export function useWorkspace(): UseWorkspaceReturn {
    * Delete multiple datasets from the workspace.
    */
   const deleteDatasets = useCallback(async (ids: string[]): Promise<void> => {
+    await Promise.all(ids.map(async (id) => {
+      const storedDataset = workspace.datasets.find(d => d.id === id);
+      if (storedDataset) {
+        await opfsFileManager.deleteDatasetPersistence(storedDataset.id, storedDataset.opfsFileKey);
+      }
+    }));
+
     removeStoredDatasets(ids);
     await refreshStorageQuota();
-  }, [removeStoredDatasets, refreshStorageQuota]);
+  }, [workspace.datasets, removeStoredDatasets, refreshStorageQuota]);
 
   /**
    * Toggle star status for a dataset.

@@ -150,6 +150,43 @@ describe('velocity_crosstab', () => {
       colVar: 'GENDER',
     }));
   });
+
+  it('returns matrix-shaped data when format is matrix', async () => {
+    const engine = makeEngine({
+      runAnalysis: vi.fn().mockResolvedValue({
+        data: {
+          rows: [
+            { rowKey_0: 'Male', colKey: 'Brand A', count: 10 },
+            { rowKey_0: 'Male', colKey: 'Brand B', count: 30 },
+            { rowKey_0: 'Female', colKey: 'Brand A', count: 40 },
+            { rowKey_0: 'Female', colKey: 'Brand B', count: 20 },
+          ],
+          tableStats: { chiSquare: { statistic: 5.4, df: 1, pValue: 0.02 } },
+        },
+        operation: 'runAnalysis:crosstab',
+        inputs: {},
+        durationMs: 5,
+        warnings: [],
+        metadata: { isWeighted: false },
+      }),
+    });
+
+    const result = await callTool(engine, 'velocity_crosstab', {
+      rowVars: ['GENDER'],
+      colVar: 'BRAND',
+      format: 'matrix',
+    }) as { content: { text: string }[] };
+
+    const parsed = JSON.parse(result.content[0].text);
+    expect(parsed.data.format).toBe('matrix');
+    expect(parsed.data.columns).toEqual([
+      { key: 'Brand A', label: 'Brand A', base: 50 },
+      { key: 'Brand B', label: 'Brand B', base: 50 },
+    ]);
+    expect(parsed.data.rows).toHaveLength(2);
+    expect(parsed.data.rows[0].cells['Brand A'].percent).toBe(20);
+    expect(parsed.data.tableStats.chiSquare.pValue).toBe(0.02);
+  });
 });
 
 describe('velocity_stats', () => {
