@@ -392,7 +392,9 @@ Rate each heuristic **0** (no issue) – **4** (usability catastrophe) per major
 | 0 | Done | Recon + plan committed (`d69d513`) |
 | 1 | Done | Workspace/reopen (`6a48fb4`); Playwright SAV switch pass |
 | 2 | Done | Canvas core J3 — `session-02-canvas.md`; UXR-010–016 logged |
-| 3+ | Pending | Deck/timeline/focus (J4) next |
+| 3 | Done | Deck/timeline/focus — `session-03-deck.md`; UXR-003/005/017 |
+| 4 | Done | Variable Manager J5 — `session-04-variable-manager.md`; UXR-018–020 |
+| 5+ | Pending | Export/session portability (J6) next |
 
 **Pre–Session 3 gate (complete):** UXR-000 shortcut conflict fixed — see §14.
 

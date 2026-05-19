@@ -54,7 +54,7 @@ Log one entry per `UXR-###`. Update **Status** when fixed: `open` | `confirmed` 
 
 ## UXR-003 — Duplicate slide titles propagate to export
 
-- **Status:** open
+- **Status:** fixed (May 19, 2026)
 - **Severity:** P2
 - **Mode:** Canvas / Export
 - **Session:** 0
@@ -81,7 +81,7 @@ Log one entry per `UXR-###`. Update **Status** when fixed: `open` | `confirmed` 
 
 ## UXR-005 — Session backup toast competes with first-run focus
 
-- **Status:** open
+- **Status:** fixed (May 19, 2026; deferred until first row/column shelf use)
 - **Severity:** P3
 - **Mode:** Canvas
 - **Session:** 0
@@ -242,6 +242,69 @@ Log one entry per `UXR-###`. Update **Status** when fixed: `open` | `confirmed` 
 - **Actual:** Unnamed button (row `gender` chip is named).
 - **Heuristic:** #4 Consistency
 - **Related:** Dashboard shelf / column chip component
+
+---
+
+## UXR-017 — `⌘/Ctrl+D` opens Variable Manager while duplicating slide
+
+- **Status:** fixed (May 19, 2026)
+- **Severity:** P1
+- **Mode:** Canvas
+- **Session:** 3
+- **Steps to reproduce:**
+  1. Canvas with active slide.
+  2. Press `⌘D` / `Ctrl+D` to duplicate.
+- **Expected:** Only slide duplication (`TimelineDock`); no mode change.
+- **Actual:** Slide duplicated **and** `AppShell` toggled Variable Manager (`D` handler ignored modifiers).
+- **Heuristic:** #4 Consistency and standards
+- **Related code:** `src/components/layout/AppShell.tsx`
+- **Resolution:** Ignore `D` when `metaKey` or `ctrlKey` is set.
+
+---
+
+## UXR-018 — Variable Manager search filters Canvas sidebar
+
+- **Status:** open
+- **Severity:** P2
+- **Mode:** Variable Manager → Canvas (mode boundary)
+- **Session:** 4
+- **Steps to reproduce:**
+  1. Open Canvas with F1 loaded; note all 7 variables in sidebar.
+  2. Open Variable Manager (`D`); type `gender` in Manager search.
+  3. Observe Canvas sidebar: only `gender` remains visible (`Survey Questions ( 1 )`).
+  4. Clear Manager search — sidebar restores all variables.
+- **Expected:** Manager search scopes to Manager columns only; Canvas sidebar unchanged while overlay is open.
+- **Actual:** Both surfaces bind to the same `searchQuery` in global store.
+- **Heuristic:** #4 Consistency and standards (mode separation per `design_02_ux_modes.md`)
+- **Related:** `uiSlice.ts` `searchQuery`, `VariableManager.tsx`, Canvas sidebar search
+
+---
+
+## UXR-019 — Facet dropdown options missing from accessibility tree
+
+- **Status:** open
+- **Severity:** P2
+- **Mode:** Variable Manager
+- **Session:** 4
+- **Steps to reproduce:** Open Manager → click **Type** facet → inspect dropdown options in accessibility tree.
+- **Expected:** Checkbox options (Category, Scale, Numeric, …) exposed as named controls.
+- **Actual:** Options render as clickable `div`s; tree shows only the **Type** trigger button. Keyboard/a11y users cannot reach facet values.
+- **Heuristic:** #4 Consistency; #7 Flexibility and efficiency of use
+- **Related:** `FacetedSearchBar.tsx` `FacetDropdown`
+
+---
+
+## UXR-020 — Value-mapping row actions share identical accessible names
+
+- **Status:** open
+- **Severity:** P2
+- **Mode:** Variable Manager (Inspector)
+- **Session:** 4
+- **Steps to reproduce:** Select `region` (5 categories) or `gender` (2); inspect value-mapping action buttons in a11y tree.
+- **Expected:** Distinct names per row, e.g. “Set Male as missing”.
+- **Actual:** Every row action is named “Set as Missing” (from `title` only); screen readers cannot distinguish targets.
+- **Heuristic:** #4 Consistency
+- **Related:** `InspectorStats.tsx` `tableActionButton`
 
 ---
 
