@@ -38,6 +38,8 @@ Deck, session, and workspace contracts are in **`arch_07`** §5, §8–§9. Hist
 
 ## Procedures
 
+- `plan_01_comprehensive_ui_ux_review.md` — multi-session UI/UX review program (active May 2026)
+- `reviews/ui_ux_review_2026-05/` — findings register and session notes for that program
 - `playbooks/` — refactors, stats, engine API, UI modes, worker migration, agent analysis, triage
 - `guide_plugin_authoring.md` — plugins
 - `agent_handoff_template.md` — multi-agent handoffs
