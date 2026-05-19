@@ -4,7 +4,7 @@
  * A Concept links variables across datasets and waves that measure
  * the same underlying construct (e.g. "Overall Satisfaction").
  *
- * Ref: docs/design_phase4_semantic_layer.md §1.3
+ * Ref: docs/design_06_semantic_layer.md §1.3
  */
 
 import type { Concept, ConceptVariableRef } from '../../types/semantic';

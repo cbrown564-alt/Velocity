@@ -1,6 +1,6 @@
 # Eval 06 Brief Reference
 
-- Source brief: [docs/eval_06_stress_wvs_brief.md](/Users/cobro/Code/Velocity/docs/eval_06_stress_wvs_brief.md)
+- Source brief: [evals/eval-06/brief.md](../../brief.md)
 - Run commit: `59fc94d2357b5e2b6deb95b574069892920e1778`
 - Primary dataset attempted: `test_data/WVS/WVS_Cross-National_Wave_7_spss_v6_0.sav`
 - Fallback dataset prepared but unused: `test_data/People_s Trust - A Survey-Based Experiment/trust.sav`

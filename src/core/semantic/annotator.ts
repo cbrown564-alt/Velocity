@@ -5,7 +5,7 @@
  * Runs O(n) after dataset load. Each rule assigns a confidence (0.5–0.95).
  * Multi-signal matches boost confidence.
  *
- * Ref: docs/design_phase4_semantic_layer.md §1.2
+ * Ref: docs/design_06_semantic_layer.md §1.2
  */
 
 import type { Variable, VariableSet } from '../../types';

@@ -16,11 +16,11 @@ This playbook applies to:
 - Request/response flows must remain traceable and collision-safe.
 
 ## Inputs you MUST read
-- `docs/design_phase3_browser_convergence.md`
+- `docs/arch_07_agent_architecture.md` and `docs/archive/2026-03/phase-design/design_phase3_browser_convergence.md` (historical migration detail)
 - `docs/arch_07_agent_architecture.md`
 - `docs/arch_01_system_architecture.md`
 - `docs/arch_03_headless_core.md`
-- `docs/design_04_session_portability.md` if slide/session restoration is touched
+- `docs/arch_07_agent_architecture.md` §8–§9 if slide/session/workspace restoration is touched
 
 ## Output artifacts required in the PR
 - PR description includes:

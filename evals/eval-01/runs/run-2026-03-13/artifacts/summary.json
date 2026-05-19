@@ -3,7 +3,7 @@
   "runId": "run-2026-03-13",
   "runDate": "2026-03-13",
   "commitSha": "2fe3e35f913e7fb471e80056c0803cc35daf8eb6",
-  "briefPath": "docs/eval_01_sleep_research_brief.md",
+  "briefPath": "docs/archive/2026-03/phase4-eval/eval_01_sleep_research_brief.md",
   "dataset": {
     "path": "test_data/sleep.sav",
     "fallbackPath": null,

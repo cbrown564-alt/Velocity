@@ -3,7 +3,7 @@
   "runId": "run-2026-03-13",
   "runDate": "2026-03-13",
   "commitSha": "d96e9cc09290b7b54ea5508c63c61cabf07f3d64",
-  "briefPath": "docs/eval_05_cross_wave_harmonization_brief.md",
+  "briefPath": "evals/eval-05/brief.md",
   "dataset": {
     "path": "test_data/English Longitudinal Study of Ageing/",
     "rowCount": 21324,

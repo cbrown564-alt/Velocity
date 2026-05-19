@@ -2,7 +2,7 @@
 
 Eval ID:        `EVAL-06`
 Task family:    `F - stress and edge cases`
-Brief:          [docs/eval_06_stress_wvs_brief.md](/Users/cobro/Code/Velocity/docs/eval_06_stress_wvs_brief.md)
+Brief:          [evals/eval-06/brief.md](../../brief.md)
 Dataset:        `test_data/WVS/WVS_Cross-National_Wave_7_spss_v6_0.sav` - 97,220 respondents, 693 surfaced variables
 Fallback:       `test_data/People_s Trust - A Survey-Based Experiment/trust.sav` - prepared but not needed
 Agent:          `Browser upload + worker-backed chunked ingestion + bounded weighted analysis`

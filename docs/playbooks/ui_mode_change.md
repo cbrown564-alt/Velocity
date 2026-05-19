@@ -27,7 +27,7 @@ This playbook applies to:
 ## Inputs you MUST read
 - `design_01_system.md` (tokens, component system, styling rules)
 - `design_02_ux_modes.md` (mode separation, intended UX responsibilities)
-- If the change affects analysis deck/canvas concepts: `design_03_analysis_deck.md`
+- If the change affects analysis deck/canvas concepts: `arch_07_agent_architecture.md` §5
 
 ## Output artifacts required in the PR
 - PR description includes:

@@ -4,7 +4,7 @@
  * Clusters annotated variables into Concept entities based on shared
  * (topic, measurementIntent) pairs and similar value label structures.
  *
- * Ref: docs/design_phase4_semantic_layer.md §1.4
+ * Ref: docs/design_06_semantic_layer.md §1.4
  */
 
 import type { Variable, VariableSet } from '../../types';

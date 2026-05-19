@@ -2,7 +2,7 @@
 
 Eval ID:        `EVAL-04`
 Task family:    `D - browser-agent convergence`
-Brief:          [docs/eval_04_browser_vs_agent_convergence_brief.md](/Users/cobro/Code/Velocity/docs/eval_04_browser_vs_agent_convergence_brief.md)
+Brief:          [evals/eval-04/brief.md](../../brief.md)
 Dataset:        `test_data/sleep.sav` — 271 respondents, 59 variables
 Agent:          `Controlled dual-path run: MCP-only agent path + browser worker/export path`
 Date:           `2026-03-13`

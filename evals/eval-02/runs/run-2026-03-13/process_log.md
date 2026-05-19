@@ -2,7 +2,7 @@
 
 Eval ID:        `EVAL-02`
 Task family:    `A — discovery`
-Brief:          [docs/eval_02_bsa2017_research_brief.md](/Users/cobro/Code/Velocity/docs/eval_02_bsa2017_research_brief.md)
+Brief:          [docs/archive/2026-03/phase4-eval/eval_02_bsa2017_research_brief.md](/Users/cobro/code/Velocity/docs/archive/2026-03/phase4-eval/eval_02_bsa2017_research_brief.md)
 Dataset:        `test_data/British Social Attitudes Survey/bsa2017_for_ukda.sav` — 3,988 respondents, 654 variables
 Agent:          `Codex via MCP`
 Date:           `2026-03-13`

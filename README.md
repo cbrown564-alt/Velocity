@@ -4,34 +4,33 @@
 
 Velocity is a browser-based research tool designed to replace legacy desktop software (SPSS, WinCross) with a fast, modern, and privacy-centric "Notion for Data."
 
-## 🚀 The Vision
+## The Vision
 
-We are building a tool that spans three evolutionary phases:
+Velocity is a local-first statistical workbench for serious survey analysis. The core analytical spine is in place: browser-side ingestion, DuckDB-WASM compute, crosstabs, weighting, significance testing, editable export, the Analysis Deck, workspace concepts, `VelocityEngine`, MCP tooling, and agent-eval evidence.
 
-1.  **Velocity Core:** An instant `.SAV` viewer that runs entirely in the browser (DuckDB-Wasm).
-2.  **Strategic Workbench:** A commercial-grade analysis tool with weighting, nets, and editable PowerPoint export.
-3.  **Project Aletheia:** An academic environment for longitudinal research, powered by WebR and Pyodide.
+The current product phase is stabilization before expansion: durable workspace reopen, export quality, design-system enforcement, documentation order, and truthful quality gates.
 
-## 📚 Documentation
+## Documentation
 
-The project is heavily documented in the `docs/` folder. Start here:
+Start with `docs/README.md`. It separates live product contracts from archived planning history.
 
-### 🔹 The Plan
-*   [`docs/tracker_00_implementation_status.md`](docs/tracker_00_implementation_status.md) - **Start Here.** The daily task tracker.
-*   [`docs/blue_01_unified_roadmap.md`](docs/blue_01_unified_roadmap.md) - The high-level phased roadmap.
-*   [`docs/blue_02_feature_matrix.md`](docs/blue_02_feature_matrix.md) - Comprehensive feature list (Keep/Reject/Delay).
+### The Plan
+*   [`docs/roadmap_00_strategic_guide.md`](docs/roadmap_00_strategic_guide.md) - Strategy and sequencing.
+*   [`docs/tracker_00_implementation_status.md`](docs/tracker_00_implementation_status.md) - Execution board and active work.
+*   [`docs/blue_02_feature_matrix.md`](docs/blue_02_feature_matrix.md) - Scope gates.
 
-### 🔹 The Tech
+### The Tech
 *   [`docs/arch_01_system_architecture.md`](docs/arch_01_system_architecture.md) - System design (React, Worker, DuckDB).
 *   [`docs/arch_02_data_model.md`](docs/arch_02_data_model.md) - Core TypeScript interfaces and data storage.
-*   [`docs/design_01_system.md`](docs/design_01_system.md) - "The Research Desk" design system & CSS tokens.
-*   [`docs/dec_01_stats_engine_r_vs_python.md`](docs/dec_01_stats_engine_r_vs_python.md) - Decision record on the stats engine.
+*   [`docs/arch_07_agent_architecture.md`](docs/arch_07_agent_architecture.md) - Engine, MCP, session, and provenance contracts.
+*   [`docs/design_01_system.md`](docs/design_01_system.md) - Dynamic theme system, semantic tokens, and Tailwind usage.
 
-### 🔹 For Developers
+### For Developers
+*   [`AGENTS.md`](AGENTS.md) - Agent operating rules, invariants, and mandatory playbooks.
 *   [`docs/dev_01_contributing.md`](docs/dev_01_contributing.md) - Setup guide and coding standards.
 *   [`docs/ref_00_glossary.md`](docs/ref_00_glossary.md) - Domain terminology.
 
-## 🛠️ Quick Start
+## Quick Start
 
 **Prerequisites:** Node.js v20+
 

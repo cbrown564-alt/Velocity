@@ -487,9 +487,104 @@ The session file is the collaboration primitive. The workflow:
 
 The browser's drag-and-drop UX is ideal for the human refinement step. The agent handles tedious exploration and initial assembly. Each plays to their strengths.
 
-## 8. Slide System Gaps (Current → Required)
+## 8. Session Format (`.velocity`)
 
-### 8.1 Must-Fix for Agent Decks
+Portable session files are the collaboration primitive between agents, humans, and devices. They contain the analysis recipe only — never respondent rows.
+
+### 8.1 `VelocitySessionFile` contract
+
+```typescript
+interface VelocitySessionFile {
+  formatVersion: number;           // Bump on breaking changes; ship migration
+  exportedAt: string;
+  velocityVersion: string;
+  dataset: {
+    originalFilename: string;
+    rowCount: number;
+    source: 'sav' | 'csv' | 'arrow';
+    fingerprint: { columnCount: number; columnNames: string[]; checksum?: string };
+  };
+  variables: Variable[];
+  variableSets: VariableSet[];
+  folders: Folder[];
+  transformLog: DataTransform[];
+  tableConfig: TableConfig;
+  activeFilters: Filter[];
+  analysisSettings?: Partial<AnalysisSettings>;
+  slides: Slide[];
+  sections: SlideSection[];
+  workspace?: { projects: Project[]; datasetLinks: Array<{ datasetFilename: string; datasetRowCount: number; role: string }> };
+  harmonizationSession?: HarmonizationSession | null;
+  semantic?: SemanticSessionState;  // v2+: annotations and concepts
+}
+```
+
+### 8.2 Excluded from export
+
+| Excluded | Reason |
+| :--- | :--- |
+| Raw respondent rows | Privacy — SAV stays separate |
+| OPFS keys, worker state, DuckDB files | Device-local runtime |
+| Cached query results / stats | Recomputed on import |
+
+### 8.3 Import invariants
+
+1. Match dataset by `rowCount` + `columnNames` (checksum is advisory).
+2. Replay `transformLog` in order on a fresh ingest.
+3. Validate slide variable references; surface diagnostics for mismatches.
+4. Preserve dual-state variable metadata (codes + labels).
+5. Version changes require a migration function; no silent field removal.
+
+Implementation: `src/core/session/*`, `VelocityEngine.exportSession()` / `importSession()`.
+
+## 9. Workspace & Local Persistence
+
+Multi-dataset projects and longitudinal waves are workspace concerns, not engine internals.
+
+### 9.1 Core types
+
+```typescript
+interface StoredDataset {
+  id: string;
+  name: string;
+  fileName: string;
+  rowCount: number;
+  columnCount: number;
+  fileSize: number;
+  source: 'sav' | 'csv' | 'arrow';
+  createdAt: number;
+  lastOpenedAt: number;
+  lastModifiedAt: number;
+  projectId?: string;
+  starred: boolean;
+  waveNumber?: number;
+  respondentKey?: string;
+}
+
+interface Project {
+  id: string;
+  name: string;
+  color: string;
+  datasetIds: string[];
+  isLongitudinal: boolean;
+  respondentKeyVariable?: string;
+}
+```
+
+### 9.2 Storage layout
+
+- One DuckDB file per dataset under OPFS (`velocity_data_v1_dataset_{uuid}.db`).
+- Original uploads under `uploaded_sav/`.
+- Workspace metadata in `workspace.json` (backed by localStorage).
+- Request `navigator.storage.persist()` on worker ready for durable OPFS.
+
+### 9.3 Stabilization requirements
+
+Reopen, switch, and delete must work reliably across sessions (`STAB-WS-1` in tracker). Until then, treat workspace metadata as best-effort and prefer `.velocity` export for handoff.
+
+## 10. Slide System Gaps (Current → Required)
+
+### 10.1 Must-Fix for Agent Decks
 
 | Gap | Current state | Required change | Location |
 |---|---|---|---|
@@ -500,7 +595,7 @@ The browser's drag-and-drop UX is ideal for the human refinement step. The agent
 | Auto-subtitle lives in UI component | Same | Extract to headless `resolveSlideSubtitle()` | New function |
 | No batch deck creation | Slides created one-at-a-time via store | `DeckBuilder` in engine builds entire deck from spec | New module |
 
-### 8.2 Should-Fix for Good Agent Decks
+### 10.2 Should-Fix for Good Agent Decks
 
 | Gap | Required change |
 |---|---|
@@ -509,7 +604,7 @@ The browser's drag-and-drop UX is ideal for the human refinement step. The agent
 | Text cells stubbed | Implement `SlideCell` with `type: 'text'` for agent annotations |
 | No conditional formatting | Add `highlights?: HighlightRule[]` to `SlideSpec` for "bold cells where p<0.05" |
 
-### 8.3 Future (Exceptional Agent Decks)
+### 10.3 Future (Exceptional Agent Decks)
 
 | Gap | Required change |
 |---|---|
@@ -518,11 +613,11 @@ The browser's drag-and-drop UX is ideal for the human refinement step. The agent
 | Comparison slides | Side-by-side charts for A/B or wave-over-wave |
 | Executive summary generation | Agent-composed text slide summarizing deck findings |
 
-## 9. Browser Convergence
+## 11. Browser Convergence
 
 After the engine and MCP server are working, the browser should migrate to consume the engine too. This eliminates divergence between what agents and humans can do.
 
-### 9.1 What Changes
+### 11.1 What Changes
 
 | Current | After convergence |
 |---|---|
@@ -532,14 +627,14 @@ After the engine and MCP server are working, the browser should migrate to consu
 | Slide switching snapshots/restores store state | Slide switching calls `engine.importSession(slide.analysisState)` |
 | Export modal calls `runCrosstabForExport()` with worker | Export uses `engine.buildDeck()` / `engine.exportDeck()` |
 
-### 9.2 What Doesn't Change
+### 11.2 What Doesn't Change
 
 - React components, CSS, drag-and-drop, virtualization — all stay
 - Zustand store still manages UI state (which mode, which modal, selections)
 - OPFS persistence strategy stays (engine wraps it)
 - The visual experience is unchanged; only the plumbing beneath it shifts
 
-### 9.3 New Capability: Live Agent Mode
+### 11.3 New Capability: Live Agent Mode
 
 Once the browser consumes the engine, an agent connected via MCP could operate the browser in real-time:
 
@@ -549,7 +644,7 @@ Once the browser consumes the engine, an agent connected via MCP could operate t
 
 The human watches the agent work and can intervene at any point. This is the "pair analyst" experience.
 
-## 10. Implementation Phases
+## 12. Implementation Phases (historical)
 
 ### Phase 1: VelocityEngine + Provenance
 
@@ -597,7 +692,9 @@ The human watches the agent work and can intervene at any point. This is the "pa
 3. Expose semantic search: "find satisfaction variables" → filtered variable list
 4. Enable domain-aware chart/analysis suggestions
 
-## 11. Risks and Mitigations
+Phases 1–4 are complete. Use `tracker_00_implementation_status.md` for current work.
+
+## 13. Risks and Mitigations
 
 | Risk | Impact | Mitigation |
 |---|---|---|
@@ -609,7 +706,7 @@ The human watches the agent work and can intervene at any point. This is the "pa
 | **PPTX quality gap** | Medium | Tier the deck builder additions. Speaker notes and section dividers first. Multi-cell layouts later. |
 | **Trust in survey context** | High | ResultEnvelope provides full provenance. Significance markers and test statistics always included. Agent notes are clearly labeled as machine-generated. |
 
-## 12. File Locations
+## 14. File Locations
 
 ### Existing (to be consumed by engine)
 

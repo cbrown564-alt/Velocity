@@ -3,7 +3,7 @@
   "runId": "run-2026-03-13",
   "runDate": "2026-03-13",
   "commitSha": "59fc94d2357b5e2b6deb95b574069892920e1778",
-  "briefPath": "docs/eval_06_stress_wvs_brief.md",
+  "briefPath": "evals/eval-06/brief.md",
   "dataset": {
     "path": "test_data/WVS/WVS_Cross-National_Wave_7_spss_v6_0.sav",
     "fallbackPath": "test_data/People_s Trust - A Survey-Based Experiment/trust.sav",

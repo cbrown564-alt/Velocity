@@ -2,7 +2,7 @@
 
 Eval ID:        `EVAL-03`
 Task family:    `C — handoff`
-Brief:          [docs/eval_03_session_handoff_roundtrip_brief.md](/Users/cobro/Code/Velocity/docs/eval_03_session_handoff_roundtrip_brief.md)
+Brief:          [evals/eval-03/brief.md](../../brief.md)
 Dataset:        `test_data/sleep.sav` — 271 respondents, 59 variables
 Baseline:       [evals/eval-01/runs/run-2026-03-13/artifacts/session.velocity](/Users/cobro/Code/Velocity/evals/eval-01/runs/run-2026-03-13/artifacts/session.velocity)
 Agent:          `Browser session import/refinement/export`

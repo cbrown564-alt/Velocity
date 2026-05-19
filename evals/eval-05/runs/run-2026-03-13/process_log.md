@@ -2,7 +2,7 @@
 
 Eval ID:        `EVAL-05`
 Task family:    `E — harmonization`
-Brief:          [docs/eval_05_cross_wave_harmonization_brief.md](/Users/cobro/Code/Velocity/docs/eval_05_cross_wave_harmonization_brief.md)
+Brief:          [evals/eval-05/brief.md](../../brief.md)
 Dataset slice:  `test_data/English Longitudinal Study of Ageing/wave_4_ifs_derived_variables.sav` + `test_data/English Longitudinal Study of Ageing/wave_5_ifs_derived_variables.sav`
 Agent:          `Browser workspace + harmonization session`
 Date:           `2026-03-13`

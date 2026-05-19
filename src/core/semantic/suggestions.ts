@@ -4,7 +4,7 @@
  * Rule-based analysis and harmonization suggestions derived from
  * semantic annotations. No ML dependency; pure heuristics.
  *
- * Ref: docs/design_phase4_semantic_layer.md §1.6
+ * Ref: docs/design_06_semantic_layer.md §1.6
  */
 
 import type { Variable } from '../../types';

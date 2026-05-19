@@ -2,20 +2,20 @@
 
 ## Purpose
 
-This is the reusable template for Output A (benchmark result) of every Phase 4 eval run. It standardizes the process log, scorecard, and verdict so results are comparable across runs and over time.
+This is the reusable template for Output A (benchmark result) of any agent-capability eval run. It standardizes the process log, scorecard, and verdict so results are comparable across runs and over time.
 
 Every serious eval produces two outputs:
 
 - **Output A: Benchmark result** (this template)
-- **Output B: Capability-gap review** (use `eval_00_capability_gap_review.md` structure)
+- **Output B: Capability-gap review** (use `docs/eval_framework.md` Part II structure)
 
-See `eval_02_process_log.md` for a completed example of this template in practice.
+See `evals/eval-02/runs/run-2026-03-13/process_log.md` for a completed example of this template in practice.
 
 Use with:
 
-- [eval_00_outcome_decision_framework.md](/Users/cobro/Code/Velocity/docs/eval_00_outcome_decision_framework.md) — scoring rubric, severity classification, difficulty dimensions
-- [eval_00_task_portfolio.md](/Users/cobro/Code/Velocity/docs/eval_00_task_portfolio.md) — eval definitions and difficulty ratings
-- [plan_phase4_agent_capability_validation.md](/Users/cobro/Code/Velocity/docs/plan_phase4_agent_capability_validation.md) — phase plan
+- [eval_framework.md](../../docs/eval_framework.md) Part I — scoring rubric, severity classification, difficulty dimensions
+- [evals/README.md](../evals/README.md) — run-artifact layout
+- [eval_00_task_portfolio.md](../../docs/archive/2026-03/phase4-eval/eval_00_task_portfolio.md) — archived Phase 4 eval definitions
 
 ---
 
@@ -89,7 +89,7 @@ Log every point of friction, bug, or workaround. Classify each by layer and seve
 
 ## 5. Per-Layer Scorecard
 
-Score every layer the eval tests. Use the 1–5 rubric from `eval_00_outcome_decision_framework.md`. Mark untested layers as N/A.
+Score every layer the eval tests. Use the 1–5 rubric from `docs/eval_framework.md` Part I. Mark untested layers as N/A.
 
 | Layer | Score | Notes |
 |---|---|---|
@@ -129,7 +129,7 @@ Were the difficulty ratings from `eval_00_task_portfolio.md` accurate? Note any 
 
 ## 8. Severity Classification
 
-Per `eval_00_outcome_decision_framework.md`, classify the overall eval outcome.
+Per `docs/eval_framework.md` Part I, classify the overall eval outcome.
 
 | Severity | Criteria |
 |---|---|
@@ -145,7 +145,7 @@ Per `eval_00_outcome_decision_framework.md`, classify the overall eval outcome.
 
 ## 9. Outcome Pattern
 
-Which outcome pattern from `eval_00_outcome_decision_framework.md` best describes this run?
+Which outcome pattern from `docs/eval_framework.md` Part I best describes this run?
 
 | Pattern | Description |
 |---|---|

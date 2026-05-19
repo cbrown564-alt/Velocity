@@ -1,7 +1,7 @@
 # Analysis Deck: Design & Architecture
 
-> **Status:** In Progress  
-> **Audit Reference:** [audit_01_vision_vs_implementation.md](./audit_01_vision_vs_implementation.md) §3.4
+> **Status:** Implemented baseline; export and deck presentation quality remain part of the stabilization backlog.
+> **Current Authority:** See `tracker_00_implementation_status.md` and `roadmap_00_strategic_guide.md`.
 
 ---
 
@@ -311,6 +311,6 @@ sequenceDiagram
 
 ## References
 
-- [audit_01_vision_vs_implementation.md](./audit_01_vision_vs_implementation.md) — Gap analysis
+- [tracker_00_implementation_status.md](./tracker_00_implementation_status.md) — Current execution status
 - [design_01_system.md](./design_01_system.md) — Design system tokens
-- [blue_01_unified_roadmap.md](./blue_01_unified_roadmap.md) — Project roadmap
+- [roadmap_00_strategic_guide.md](./roadmap_00_strategic_guide.md) — Current strategy

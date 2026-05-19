@@ -17,11 +17,10 @@ This playbook applies to:
 
 ## Inputs you MUST read
 - `docs/arch_07_agent_architecture.md`
-- `docs/design_phase1_engine_provenance.md`
 - `docs/arch_03_headless_core.md`
-- `docs/design_04_session_portability.md` if session or `.velocity` behavior is touched
-- `docs/design_phase2_mcp_deck_builder.md` if deck or MCP-facing flows are touched
-- `docs/design_phase3_browser_convergence.md` if browser/worker consumers are touched
+- `docs/arch_07_agent_architecture.md` §8 if session or `.velocity` behavior is touched
+- `docs/arch_07_agent_architecture.md` §6 if deck or MCP-facing flows are touched
+- `docs/playbooks/worker_migration.md` if browser/worker consumers are touched
 
 ## Output artifacts required in the PR
 - PR description includes:

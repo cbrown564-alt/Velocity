@@ -3,7 +3,7 @@
   "runId": "run-2026-03-13",
   "runDate": "2026-03-13",
   "commitSha": "bc3a0af55a43000f4c8c70fa34cae1a1c985568d",
-  "briefPath": "docs/eval_04_browser_vs_agent_convergence_brief.md",
+  "briefPath": "evals/eval-04/brief.md",
   "dataset": {
     "path": "test_data/sleep.sav",
     "fallbackPath": null,

@@ -51,4 +51,4 @@ Several steps were run as inline `npx tsx -e` one-liners during the session:
 - `describeVariable()` for return-shape probing
 - Direct name-pattern filtering for demographic variables
 
-These are documented in `docs/eval_02_process_log.md`.
+These are documented in `docs/archive/2026-03/phase4-eval/eval_02_process_log.md`.

@@ -10,13 +10,13 @@
 - [ ] Test-only
 
 ## Scope + Required Docs Read
-List docs read based on touched areas (per `docs/AGENTS.md`):
+List docs read based on touched areas (per `AGENTS.md`):
 - [ ] `docs/arch_01_system_architecture.md` (new feature / major refactor)
 - [ ] `docs/arch_02_data_model.md` (data structures / ingestion / types)
 - [ ] `docs/arch_03_headless_core.md` (`src/core/*` or `adapters/*`)
 - [ ] `docs/arch_04_statistical_engine.md` (stats, weights, significance)
 - [ ] `docs/arch_05_visualisation_engine.md` (charts / D3 / canvas)
-- [ ] `docs/blue_01_unified_roadmap.md`
+- [ ] `docs/roadmap_00_strategic_guide.md`
 - [ ] `docs/blue_02_feature_matrix.md`
 - [ ] `docs/design_01_system.md` (React UI / CSS / theme tokens)
 - [ ] `docs/design_02_ux_modes.md` (mode separation)

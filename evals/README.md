@@ -1,39 +1,33 @@
 # Eval Artifacts
 
-Every Phase 4 eval run should produce the same on-disk evidence package so runs are reviewable and machine-comparable.
+Frozen benchmark evidence and canonical briefs. Scoring and gap review: **`docs/eval_framework.md`**. Schema: `docs/eval_00_run_summary_schema.ts`. Templates: `evals/templates/`.
 
-## Canonical Structure
+## Canonical briefs
+
+| Family | Brief |
+| :--- | :--- |
+| EVAL-03 | [`eval-03/brief.md`](eval-03/brief.md) |
+| EVAL-04 | [`eval-04/brief.md`](eval-04/brief.md) |
+| EVAL-05 | [`eval-05/brief.md`](eval-05/brief.md) |
+| EVAL-06 | [`eval-06/brief.md`](eval-06/brief.md) |
+
+EVAL-01 and EVAL-02 briefs live in their frozen `runs/run-2026-03-13/` directories.
+
+## Run structure
 
 ```text
-evals/
-  eval-01/
-    runs/
-      run-YYYY-MM-DD/
-        brief.md
-        process_log.md
-        scorecard.md
-        gap_review.md
-        artifacts/
-          deck.pptx
-          session.velocity
-          summary.json
+evals/eval-NN/
+  brief.md
+  runs/run-YYYY-MM-DD/
+    brief.md
+    process_log.md
+    scorecard.md
+    gap_review.md
+    artifacts/
 ```
 
-Use the same shape for `eval-02` through `eval-06`.
+## Required per run
 
-## Required Files
-
-- `brief.md`: The exact eval brief used for the run. Copy the brief or link the checked-in doc and record the commit hash in `summary.json`.
-- `process_log.md`: Chronological notes on what the agent or human did, where it got stuck, and what workarounds were required.
-- `scorecard.md`: Per-layer 1-5 scores using the rubric in `docs/eval_00_outcome_decision_framework.md`.
-- `gap_review.md`: Strategic interpretation using `docs/eval_00_capability_gap_review.md`.
-- `artifacts/deck.pptx`: The exported deck, or the primary human-facing output format if the eval uses XLSX instead.
-- `artifacts/session.velocity`: The exported session file when session handoff is part of the run or when the workflow reaches the intended persist step.
-- `artifacts/summary.json`: Structured run metadata matching `docs/eval_00_run_summary_schema.ts`.
-
-## Normalization Rules
-
-- Always create the `artifacts/` directory, even if the run is blocked.
-- If a file is not produced because the run failed or the eval does not require it, leave the file absent and record the reason in `summary.json`.
-- Keep one run directory per date unless you need multiple runs that day; then suffix with `-a`, `-b`, and so on.
-- Prefer relative paths inside `summary.json` so runs stay portable within the repo.
+- `scorecard.md` — per `docs/eval_framework.md` Part I
+- `gap_review.md` — per `docs/eval_framework.md` Part II
+- `artifacts/summary.json` — per `docs/eval_00_run_summary_schema.ts`

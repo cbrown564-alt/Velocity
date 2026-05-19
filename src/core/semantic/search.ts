@@ -7,7 +7,7 @@
  *
  * Scoring: concept match (0.4) > topic match (0.3) > label keyword match (0.2) > name match (0.1)
  *
- * Ref: docs/design_phase4_semantic_layer.md §1.5
+ * Ref: docs/design_06_semantic_layer.md §1.5
  */
 
 import type { Variable } from '../../types';

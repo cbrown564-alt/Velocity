@@ -4,7 +4,7 @@
  * Enriches variables with semantic annotations, enables concept entities for
  * cross-dataset linking, and powers semantic search and domain-aware suggestions.
  *
- * Ref: docs/design_phase4_semantic_layer.md
+ * Ref: docs/design_06_semantic_layer.md
  */
 
 // ============================================================================

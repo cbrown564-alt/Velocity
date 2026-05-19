@@ -2,7 +2,7 @@
 /**
  * E2E Agent Workflow Test — Phase 2 Acceptance Gate
  *
- * Scripts the full agent workflow from design_phase2_mcp_deck_builder.md §4.3:
+ * Scripts the full agent workflow from arch_07 agent/MCP deck-building contract:
  *   1. velocity_load       → dataset summary
  *   2. velocity_describe   → variable list
  *   3. velocity_stats      → frequency distribution

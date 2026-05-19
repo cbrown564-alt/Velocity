@@ -2,7 +2,7 @@
 
 Eval ID:        `EVAL-01`
 Task family:    `B — deck`
-Brief:          [docs/eval_01_sleep_research_brief.md](/Users/cobro/Code/Velocity/docs/eval_01_sleep_research_brief.md)
+Brief:          [docs/archive/2026-03/phase4-eval/eval_01_sleep_research_brief.md](/Users/cobro/code/Velocity/docs/archive/2026-03/phase4-eval/eval_01_sleep_research_brief.md)
 Dataset:        `test_data/sleep.sav` — 271 respondents, 59 variables
 Agent:          `Codex via MCP`
 Date:           `2026-03-13`

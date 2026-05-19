@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This is the structured template for the Phase 4 strategic synthesis (workstream 5 in `plan_phase4_agent_capability_validation.md`).
+This is the structured template for agent-capability strategic synthesis reports. The original Phase 4 plan is archived at `archive/2026-03/phase4-eval/plan_phase4_agent_capability_validation.md`.
 
 After the task portfolio has been executed and capability-gap reviews written, this template guides the final Phase 4 output: a product decision package that determines what to build next and what to stop assuming.
 
@@ -57,7 +57,7 @@ Explicit statements about what the team should stop treating as settled. Each sh
 
 ## 5. Ranked Product Gaps
 
-Gaps discovered during Phase 4, ranked by strategic importance. Each gap should be classified per the four response classes from `eval_00_capability_gap_review.md`.
+Gaps discovered during Phase 4, ranked by strategic importance. Each gap should be classified per the four response classes from `docs/eval_framework.md` Part II.
 
 | Rank | Gap | Response class | Affected layers | Source evals |
 |---|---|---|---|---|
@@ -97,7 +97,7 @@ Eval runs that achieved Pattern 7 (end-to-end success) or are otherwise stable e
 
 ### Regression rule
 
-Per `eval_00_outcome_decision_framework.md`: any layer dropping by 2+ points on a re-run is a regression that warrants investigation.
+Per `docs/eval_framework.md` Part I: any layer dropping by 2+ points on a re-run is a regression that warrants investigation.
 
 ---
 

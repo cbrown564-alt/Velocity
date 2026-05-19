@@ -3,10 +3,11 @@
 This tracker is the operational delivery board. It is dependency-first and optimized for multi-agent orchestration.
 
 Use with:
+- Documentation index: `docs/README.md`
 - Strategic roadmap: `docs/roadmap_00_strategic_guide.md`
 - Scope gates: `docs/blue_02_feature_matrix.md`
-- Phase 4 plan: `docs/plan_phase4_agent_capability_validation.md`
-- Agent rules: `docs/AGENTS.md`
+- Phase 4 synthesis: `docs/archive/2026-03/phase4-eval/eval_s4_eval_5_phase_synthesis.md`
+- Agent rules: `AGENTS.md`
 
 ## 1. Status Model
 
@@ -51,6 +52,12 @@ graph TD
   S4EVAL5 --> S4EVAL5b["S4-EVAL-5b Harmonization Fuzzy Re-run"]
   S4DISC1 --> S4DEF1["S4-DEF-1 Recommended Breaks + Warnings"]
 
+  S4EVAL5 --> STABDOC1["STAB-DOC-1 Docs Reconciliation"]
+  STABDOC1 --> STABWS1["STAB-WS-1 Reopenable Workspace"]
+  STABDOC1 --> STABEXP1["STAB-EXP-1 Export Quality"]
+  STABDOC1 --> STABDS1["STAB-DS-1 Design-System Enforcement"]
+  STABDOC1 --> STABCI1["STAB-CI-1 Truthful CI Gates"]
+
   S3SEM1 --> S5HARM1["S5-HARM-1 Harmonization Workspace"]
   S5HARM1 --> S5R1["S5-R-1 WebR Bridge"]
   S4EVAL5 --> S5R1
@@ -65,33 +72,43 @@ graph TD
   S7CLOUD1 --> S7CLOUD2["S7-CLOUD-2 Direct Data Imports"]
 ```
 
-S2-STAT-1 through S2-STAT-4 are resolved. S2-EXP-1 and S2-EXP-2 are done. Phase 3 critical path delivery is complete. **Phase 4 agent-capability validation is now complete.** All five workstreams (`S4-EVAL-1` through `S4-EVAL-5`) are Done. The phase synthesis validates the engine thesis (mean 4.7), identifies semantic discovery (mean 3.0) and MCP workflow breadth (mean 3.0) as the primary capability expansion gaps, and freezes four benchmark baselines (EVAL-01, 02, 04, 06). The honest product claim: Velocity is a strong analytical backend with narrow browser-agent convergence, not yet a first-class agent interface — the gap is discovery, MCP breadth, and defaults. Independent artifact review revealed additional gaps not captured by agent self-assessment: PPTX chart output is not client-presentable (color cycling bug, library defaults), MCP crosstab returns raw long format instead of standard matrix, and EVAL-05 harmonization only tested exact-name matching. The active critical path is now the post-validation follow-through sequence (`S4-DISC-1`, `S4-DELIV-1`, `S4-FMT-1`, `S4-MCP-1`, `S4-DEF-1`, `S4-MCP-2`, `S4-EVAL-5b`) before Phase 5 expansion. Runtime/workspace/harmonization work has shifted to Phase 5, AI work to Phase 6, and cloud work to Phase 7.
+S2-STAT-1 through S2-STAT-4 are resolved. S2-EXP-1 and S2-EXP-2 are done. Phase 3 critical path delivery is complete. **Phase 4 agent-capability validation is now complete.** All five workstreams (`S4-EVAL-1` through `S4-EVAL-5`) are Done. The phase synthesis validates the engine thesis (mean 4.7), identifies semantic discovery (mean 3.0) and MCP workflow breadth (mean 3.0) as the primary capability expansion gaps, and freezes four benchmark baselines (EVAL-01, 02, 04, 06). The May 2026 deep review reframes the next phase as **stabilization, not expansion**: documentation trust, reopenable workspace durability, export quality, design-system enforcement, monolith decomposition, and CI truthfulness are now higher priority than WebR, deeper AI, or cloud work. Independent artifact review still flags PPTX chart polish, MCP crosstab matrix output, and EVAL-05 harmonization drift coverage as open follow-through. Runtime/workspace/harmonization expansion remains Phase 5, AI work Phase 6, and cloud work Phase 7.
 
 ## 4. Execution Board
 
-### 4.1 Active Critical Path (Phase 4: Agent Capability Validation)
+### 4.1 Completed Phase 4 Evidence
 
 | ID | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| S4-EVAL-1 | Eval Program | Canonical Phase 4 plan, task portfolio, benchmark contract, scoring model, and capability-gap review structure for agent-led validation of the full app surface | S3-SEM-1 | Done | No | A | `docs/plan_phase4_agent_capability_validation.md`, `docs/eval_00_agent_interface_validation.md`, `docs/eval_00_outcome_decision_framework.md`, `docs/eval_00_capability_gap_review.md`, `docs/eval_00_task_portfolio.md`, `docs/eval_00_benchmark_result_template.md`, `docs/eval_00_phase_synthesis_template.md` |
-| S4-EVAL-2 | Workflow Validation | Intended-path readiness: MCP setup reliability, session round-trip clarity, engine/tool contract consistency, workflow docs alignment, artifact capture | S4-EVAL-1 | Done | Yes | T,L,U,I,A | `.claude/settings.json`, `scripts/velocity-mcp-setup.mjs`, `src/engine/VelocityEngine.ts`, `src/engine/__tests__/session-roundtrip.test.ts`, `mcp-server/tools.ts`, `docs/guide_agent_quickstart.md`, `docs/playbooks/agent_analysis_workflow.md`, `evals/README.md`, `docs/eval_00_run_summary_schema.ts`, `docs/eval_03_session_handoff_roundtrip_brief.md`, `docs/eval_04_browser_vs_agent_convergence_brief.md`, `docs/eval_05_cross_wave_harmonization_brief.md`, `docs/eval_06_stress_wvs_brief.md` |
-| S4-EVAL-3 | Eval Execution | Executed task portfolio across discovery, deck authoring, handoff, convergence, harmonization, and stress cases with standardized outputs | S4-EVAL-2 | Done | Yes | U,I,A | `docs/design_s4_eval_3_task_portfolio_execution.md`, `evals/eval-01/runs/run-2026-03-13/brief.md`, `evals/eval-01/runs/run-2026-03-13/process_log.md`, `evals/eval-01/runs/run-2026-03-13/scorecard.md`, `evals/eval-01/runs/run-2026-03-13/gap_review.md`, `evals/eval-01/runs/run-2026-03-13/artifacts/summary.json`, `evals/eval-02/runs/run-2026-03-13/brief.md`, `evals/eval-02/runs/run-2026-03-13/process_log.md`, `evals/eval-02/runs/run-2026-03-13/scorecard.md`, `evals/eval-02/runs/run-2026-03-13/gap_review.md`, `evals/eval-02/runs/run-2026-03-13/artifacts/summary.json`, `evals/eval-03/runs/run-2026-03-13/brief.md`, `evals/eval-03/runs/run-2026-03-13/process_log.md`, `evals/eval-03/runs/run-2026-03-13/scorecard.md`, `evals/eval-03/runs/run-2026-03-13/gap_review.md`, `evals/eval-03/runs/run-2026-03-13/artifacts/summary.json`, `evals/eval-04/runs/run-2026-03-13/brief.md`, `evals/eval-04/runs/run-2026-03-13/process_log.md`, `evals/eval-04/runs/run-2026-03-13/scorecard.md`, `evals/eval-04/runs/run-2026-03-13/gap_review.md`, `evals/eval-04/runs/run-2026-03-13/artifacts/summary.json`, `evals/eval-05/runs/run-2026-03-13/brief.md`, `evals/eval-05/runs/run-2026-03-13/process_log.md`, `evals/eval-05/runs/run-2026-03-13/scorecard.md`, `evals/eval-05/runs/run-2026-03-13/gap_review.md`, `evals/eval-05/runs/run-2026-03-13/artifacts/summary.json`, `evals/eval-06/runs/run-2026-03-13/brief.md`, `evals/eval-06/runs/run-2026-03-13/process_log.md`, `evals/eval-06/runs/run-2026-03-13/scorecard.md`, `evals/eval-06/runs/run-2026-03-13/gap_review.md`, `evals/eval-06/runs/run-2026-03-13/artifacts/summary.json`, `src/App.tsx`, `src/services/sessionSemanticState.ts`, `src/services/sessionSemanticState.test.ts`, `mcp-server/tools.ts`, `mcp-server/__tests__/tools.test.ts`, `tests/e2e/agentWorkflow.test.ts`, `docs/guide_agent_quickstart.md`, `docs/playbooks/agent_analysis_workflow.md`, `scripts/run-eval-06.mjs` |
-| S4-EVAL-4 | Capability Review | Per-eval strategic assessments that classify gaps as rough-edge, capability expansion, interface re-engineering, or scope/thesis revision, including semantic option studies | S4-EVAL-3 | Done | No | A | `docs/design_s4_eval_4_capability_gap_review.md`, `docs/eval_s4_eval_4_cross_cutting_gap_review.md` |
-| S4-EVAL-5 | Strategy | Phase synthesis: validated claims, unvalidated claims, frozen benchmark baselines, and roadmap reset for post-validation work | S4-EVAL-4 | Done | No | A | `docs/eval_s4_eval_5_phase_synthesis.md` |
+| S4-EVAL-1 | Eval Program | Canonical Phase 4 plan, task portfolio, benchmark contract, scoring model, and capability-gap review structure for agent-led validation of the full app surface | S3-SEM-1 | Done | No | A | `docs/archive/2026-03/phase4-eval/plan_phase4_agent_capability_validation.md`, `docs/archive/2026-03/phase4-eval/eval_00_agent_interface_validation.md`, `docs/eval_framework.md`, `docs/archive/2026-03/phase4-eval/eval_00_task_portfolio.md`, `evals/templates/eval_00_benchmark_result_template.md`, `evals/templates/eval_00_phase_synthesis_template.md` |
+| S4-EVAL-2 | Workflow Validation | Intended-path readiness: MCP setup reliability, session round-trip clarity, engine/tool contract consistency, workflow docs alignment, artifact capture | S4-EVAL-1 | Done | Yes | T,L,U,I,A | `.claude/settings.json`, `scripts/velocity-mcp-setup.mjs`, `src/engine/VelocityEngine.ts`, `src/engine/__tests__/session-roundtrip.test.ts`, `mcp-server/tools.ts`, `docs/guide_agent_quickstart.md`, `docs/playbooks/agent_analysis_workflow.md`, `evals/README.md`, `docs/eval_00_run_summary_schema.ts`, `evals/eval-03/brief.md`, `evals/eval-04/brief.md`, `evals/eval-05/brief.md`, `evals/eval-06/brief.md` |
+| S4-EVAL-3 | Eval Execution | Executed task portfolio across discovery, deck authoring, handoff, convergence, harmonization, and stress cases with standardized outputs | S4-EVAL-2 | Done | Yes | U,I,A | `docs/archive/2026-03/phase4-eval/design_s4_eval_3_task_portfolio_execution.md`, `evals/eval-*/runs/run-2026-03-13/`, `src/App.tsx`, `src/services/sessionSemanticState.ts`, `src/services/sessionSemanticState.test.ts`, `mcp-server/tools.ts`, `mcp-server/__tests__/tools.test.ts`, `tests/e2e/agentWorkflow.test.ts`, `docs/guide_agent_quickstart.md`, `docs/playbooks/agent_analysis_workflow.md`, `scripts/run-eval-06.mjs` |
+| S4-EVAL-4 | Capability Review | Per-eval strategic assessments that classify gaps as rough-edge, capability expansion, interface re-engineering, or scope/thesis revision, including semantic option studies | S4-EVAL-3 | Done | No | A | `docs/archive/2026-03/phase4-eval/design_s4_eval_4_capability_gap_review.md`, `docs/archive/2026-03/phase4-eval/eval_s4_eval_4_cross_cutting_gap_review.md` |
+| S4-EVAL-5 | Strategy | Phase synthesis: validated claims, unvalidated claims, frozen benchmark baselines, and roadmap reset for post-validation work | S4-EVAL-4 | Done | No | A | `docs/archive/2026-03/phase4-eval/eval_s4_eval_5_phase_synthesis.md` |
 
-### 4.2 Post-Validation Priority (Phase 4 Follow-Through)
+### 4.2 Current Stabilization Sprint (May 2026)
 
 | ID | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| S4-DISC-1 | Discovery | Category-aware discovery: annotation-type filters, `listVariablesByCategory` engine method + MCP tool, guided "suggest breaks for topic X" flow | S4-EVAL-5 | Not started | Yes | T,L,U,I,A | - |
+| STAB-DOC-1 | Docs/process | Reconcile tracker, strategic roadmap, feature matrix, design audit plan, and agent guidance against current code and quality-gate reality | S4-EVAL-5 | In progress | No | A | `docs/README.md`, `docs/archive/2026-05/audits/audit_05_deep_code_review_2026-05-19.md` |
+| STAB-WS-1 | Workspace | Stored datasets can reopen from OPFS/source-file persistence, switch active worker/persistence context, and delete cleanly across sessions | STAB-DOC-1 | Not started | Yes | T,U,I,A | - |
+| STAB-EXP-1 | Export | PPTX/chart output is stakeholder-ready and export chart-builder paths are unified | STAB-DOC-1 | Not started | Yes | T,U,A | - |
+| STAB-DS-1 | Design system | Raw Tailwind colors, CSS fallback hexes, and legacy tokens are blocked by a guard script and remapped to semantic tokens | STAB-DOC-1 | In progress | No | T,L,A | `AGENTS.md`, `docs/design_01_system.md`, tracker §7 |
+| STAB-CI-1 | Quality gates | CI reflects product confidence: typecheck, architecture guards, tests with coverage, production build, and browser persistence smoke coverage | STAB-DOC-1 | In progress | No | T,U,I,A | `.github/workflows/test.yml` |
+
+### 4.3 Post-Validation Follow-Through (Phase 4)
+
+| ID | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| S4-DISC-1 | Discovery | Category-aware discovery: annotation-type filters, `listVariablesByCategory` engine method + MCP tool, guided "suggest breaks for topic X" flow | S4-EVAL-5 | Done | Yes | T,L,U,I,A | `src/engine/VelocityEngine.ts`, `mcp-server/tools.ts`, `mcp-server/__tests__/tools.test.ts` |
 | S4-DELIV-1 | Export | PPTX chart rendering overhaul: fix single-series color cycling, add bar gap/gridline/axis control, close D3→PPTX quality gap for client-presentable output | S4-EVAL-5 | Not started | Yes | T,L,U,A | - |
 | S4-FMT-1 | MCP | Crosstab matrix format: add `format: 'matrix'` to `velocity_crosstab` so agents receive standard pivot-shaped output, not raw long/tidy rows | S4-EVAL-5 | Not started | Yes | T,L,U,I,A | - |
 | S4-MCP-1 | MCP | Workspace-aware MCP: `velocity_load_metadata` + `velocity_load_full` two-step flow; multi-dataset workspace tools | S4-EVAL-5 | Not started | Yes | T,L,U,I,A | - |
-| S4-DEF-1 | Defaults | Recommended break variables after topic selection; false-positive weight warnings; high-cardinality guardrails | S4-DISC-1 | Not started | Yes | T,L,U,I,A | - |
+| S4-DEF-1 | Defaults | Recommended break variables after topic selection; false-positive weight warnings; high-cardinality guardrails | S4-DISC-1 | In progress | Yes | T,L,U,I,A | `src/engine/VelocityEngine.ts`, `mcp-server/tools.ts`, `mcp-server/__tests__/tools.test.ts` |
 | S4-MCP-2 | MCP | Deck build transport resilience: stream or chunk `buildDeck` responses to avoid stdio OOM | S4-EVAL-5 | Not started | Yes | T,L,U,A | - |
 | S4-EVAL-5b | Eval | Harmonization re-run: EVAL-05 follow-on with naming drift, partial label overlap, or scale inversion construct | S4-EVAL-5 | Not started | No | A | - |
 
-### 4.3 Next After Validation (Phase 5)
+### 4.4 Next After Validation (Phase 5)
 
 | ID | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -101,7 +118,7 @@ S2-STAT-1 through S2-STAT-4 are resolved. S2-EXP-1 and S2-EXP-2 are done. Phase 
 | S5-PREP-1 | Data Prep | Recipe manager + time travel | S5-R-1 (if R-backed steps), else S5-HARM-1; informed by S4-EVAL-5 | Not started | Yes | T,L,U,I,A | - |
 | S5-PREP-2 | Data Prep | Block formula builder + programming-by-example | S5-PREP-1 | Not started | Yes | T,L,U,I,A | - |
 
-### 4.4 Later (Phase 6-7)
+### 4.5 Later (Phase 6-7)
 
 | ID | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -111,7 +128,7 @@ S2-STAT-1 through S2-STAT-4 are resolved. S2-EXP-1 and S2-EXP-2 are done. Phase 
 | S7-CLOUD-1 | Cloud | Realtime collaboration backend + UI integration | S6-AI-3 | Not started | Yes | T,L,U,I,A | - |
 | S7-CLOUD-2 | Cloud | Direct survey platform imports via backend proxy | S7-CLOUD-1 | Not started | Yes | T,L,U,I,A | - |
 
-### 4.5 Recent Delivered (Last 20 Commits Snapshot)
+### 4.6 Recent Delivered (Last 20 Commits Snapshot)
 
 Snapshot reference window: commits on February 5, 2026 through March 11, 2026.
 
@@ -159,3 +176,35 @@ When updating this file:
 2. If `Contract change` is `Yes`, link evidence in PR description using `.github/pull_request_template.md`.
 3. Move items only by status transitions (`Not started` -> `In progress` -> `In review` -> `Done`).
 4. Keep dependency graph and tables in sync in the same commit.
+
+## 7. STAB-DS-1 — Design-system cleanup
+
+**Scope:** Semantic token integrity, Tailwind color discipline, CSS fallback cleanup, and visual consistency across themes.
+
+### Policy
+
+Tailwind CSS is approved with one hard rule: color-bearing classes must reference semantic CSS variables.
+
+```tsx
+// Good
+<div className="bg-[var(--bg-panel)] text-[var(--text-primary)]">
+
+// Bad
+<div className="bg-white text-indigo-600">
+```
+
+CSS Modules remain for complex component states, grids, animations, and unreadable utility strings. Inline styles are acceptable for D3, SVG, virtualization, or dynamic geometry.
+
+### Tasks
+
+1. **Semantic token completeness** — expose in `src/index.css`: `--text-tertiary`, `--bg-hover`, status success/warning/error text and background pairs. No `--gray-*` families; remap to purpose tokens.
+2. **Legacy token removal** — eliminate Research Desk tokens (`--color-paper`, `--color-ink`, `--color-terracotta`, `--color-parchment`) in active source.
+3. **CSS fallback and hex cleanup** — no hardcoded hex in component CSS; no `var(--token, #fff)` fallbacks; prefer semantic tokens or `color-mix()` over raw `rgba(0,0,0,…)`.
+4. **Raw Tailwind palette cleanup** — replace `bg-white`, `text-red-600`, `border-amber-200`, etc. with `bg-[var(--…)]` or CSS Module classes.
+5. **Regression guard** — CI or script blocking palette utility classes and CSS fallback hex patterns (ignore archive and vendor).
+
+### Acceptance
+
+- `AGENTS.md`, `docs/design_01_system.md`, and `docs/dev_01_contributing.md` agree on Tailwind policy.
+- Active source has no deprecated Research Desk tokens, raw palette utilities, or CSS fallback hexes.
+- App builds across all supported themes.

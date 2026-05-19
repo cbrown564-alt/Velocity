@@ -6,9 +6,9 @@ This is the final Phase 4 output. It turns the S4-EVAL-4 capability gap review i
 
 Use with:
 
-- [eval_s4_eval_4_cross_cutting_gap_review.md](/Users/cobro/Code/Velocity/docs/eval_s4_eval_4_cross_cutting_gap_review.md) — the gap review this synthesis is based on
-- [plan_phase4_agent_capability_validation.md](/Users/cobro/Code/Velocity/docs/plan_phase4_agent_capability_validation.md) — the Phase 4 mandate
-- [eval_00_phase_synthesis_template.md](/Users/cobro/Code/Velocity/docs/eval_00_phase_synthesis_template.md) — the template this document follows
+- [archive/2026-03/phase4-eval/eval_s4_eval_4_cross_cutting_gap_review.md](archive/2026-03/phase4-eval/eval_s4_eval_4_cross_cutting_gap_review.md) — archived gap review this synthesis is based on
+- [archive/2026-03/phase4-eval/plan_phase4_agent_capability_validation.md](archive/2026-03/phase4-eval/plan_phase4_agent_capability_validation.md) — archived Phase 4 mandate
+- [eval_00_phase_synthesis_template.md](../../../evals/templates/eval_00_phase_synthesis_template.md) — the template this document follows
 
 ---
 
