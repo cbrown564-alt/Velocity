@@ -187,6 +187,37 @@ describe('velocity_crosstab', () => {
     expect(parsed.data.rows[0].cells['Brand A'].percent).toBe(20);
     expect(parsed.data.tableStats.chiSquare.pValue).toBe(0.02);
   });
+
+  it('uses weighted counts for matrix output when weightVar is passed per call', async () => {
+    const engine = makeEngine({
+      runAnalysis: vi.fn().mockResolvedValue({
+        data: {
+          rows: [
+            { rowKey_0: 'Male', colKey: 'Brand A', count: 10, weightedCount: 100 },
+            { rowKey_0: 'Female', colKey: 'Brand A', count: 40, weightedCount: 100 },
+          ],
+        },
+        operation: 'runAnalysis:crosstab',
+        inputs: {},
+        durationMs: 5,
+        warnings: [],
+        metadata: { isWeighted: false },
+      }),
+    });
+
+    const result = await callTool(engine, 'velocity_crosstab', {
+      rowVars: ['GENDER'],
+      colVar: 'BRAND',
+      weightVar: 'WEIGHT',
+      format: 'matrix',
+    }) as { content: { text: string }[] };
+
+    const parsed = JSON.parse(result.content[0].text);
+    expect(parsed.metadata.isWeighted).toBe(true);
+    expect(parsed.data.columns).toEqual([{ key: 'Brand A', label: 'Brand A', base: 200 }]);
+    expect(parsed.data.rows[0].cells['Brand A']).toEqual({ count: 100, percent: 50 });
+    expect(parsed.data.rows[1].cells['Brand A']).toEqual({ count: 100, percent: 50 });
+  });
 });
 
 describe('velocity_stats', () => {

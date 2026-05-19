@@ -265,6 +265,8 @@ With `format: "matrix"` (recommended for deliverables):
 }
 ```
 
+For metric analysis, each matrix cell also includes the metric fields returned by the crosstab engine, such as `mean`, `stdDev`, `median`, and `validCount`. Weighted matrix requests use weighted bases and counts when a `weightVar` is supplied or a global weight is active.
+
 **Row format:**
 - `rowKey_0`, `rowKey_1`, ... — One per row variable (corresponds to `rowVars[0]`, `rowVars[1]`, ...)
 - `colKey` — Column variable value (present when `colVar` is set)

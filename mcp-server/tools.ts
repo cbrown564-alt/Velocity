@@ -520,12 +520,18 @@ export function registerTools(server: Server, engine: VelocityEngine): void {
               data: { rows: Record<string, unknown>[]; tableStats?: unknown };
               metadata?: { isWeighted?: boolean };
             };
+            const hasPerCallWeight = typeof a.weightVar === 'string' && a.weightVar.length > 0;
+            const isWeighted = hasPerCallWeight || envelope.metadata?.isWeighted === true;
             const matrix = formatCrosstabMatrix(envelope.data.rows, {
-              isWeighted: envelope.metadata?.isWeighted ?? !!a.weightVar,
+              isWeighted,
             });
 
             return successResponse({
               ...result,
+              metadata: {
+                ...(envelope.metadata ?? {}),
+                isWeighted,
+              },
               data: {
                 format: 'matrix',
                 columns: matrix.columns,

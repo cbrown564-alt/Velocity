@@ -48,6 +48,33 @@ describe('formatCrosstabMatrix', () => {
     expect(result.rows[1].cells.Total).toEqual({ count: 75, percent: 75 });
   });
 
+  it('preserves metric statistics and uses valid denominators for metric rows', () => {
+    const rows = [
+      { rowKey_0: '18-34', colKey: 'Satisfaction', count: 10, validCount: 8, mean: 7.5, stdDev: 1.2, median: 8 },
+      { rowKey_0: '35+', colKey: 'Satisfaction', count: 20, validCount: 12, mean: 6.25, stdDev: 1.5, median: 6 },
+    ];
+
+    const result = formatCrosstabMatrix(rows, { isWeighted: false });
+
+    expect(result.columns).toEqual([{ key: 'Satisfaction', label: 'Satisfaction', base: 20 }]);
+    expect(result.rows[0].cells.Satisfaction).toEqual({
+      count: 8,
+      percent: 40,
+      mean: 7.5,
+      stdDev: 1.2,
+      median: 8,
+      validCount: 8,
+    });
+    expect(result.rows[1].cells.Satisfaction).toEqual({
+      count: 12,
+      percent: 60,
+      mean: 6.25,
+      stdDev: 1.5,
+      median: 6,
+      validCount: 12,
+    });
+  });
+
   it('joins multi-level row keys and preserves significance markers', () => {
     const rows = [
       {

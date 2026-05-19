@@ -1,6 +1,15 @@
 export interface CrosstabMatrixCell {
   count: number;
   percent: number;
+  mean?: number;
+  stdDev?: number;
+  median?: number;
+  min?: number;
+  max?: number;
+  q1?: number;
+  q3?: number;
+  validCount?: number;
+  weightedCount?: number;
   sig?: boolean;
   sigLetters?: string;
 }
@@ -29,11 +38,22 @@ interface FormatCrosstabMatrixOptions {
   isWeighted?: boolean;
 }
 
+const isMetricRow = (row: CrosstabLongRow): boolean => row.mean !== undefined || row.validCount !== undefined;
+
 const getEffectiveCount = (row: CrosstabLongRow, isWeighted: boolean): number => {
   if (isWeighted && row.weightedCount !== undefined) {
     return Number(row.weightedCount);
   }
+  if (isMetricRow(row) && row.validCount !== undefined) {
+    return Number(row.validCount);
+  }
   return Number(row.count ?? row.validCount ?? 0);
+};
+
+const copyNumericField = (cell: CrosstabMatrixCell, row: CrosstabLongRow, key: keyof CrosstabMatrixCell): void => {
+  if (row[key] !== undefined) {
+    cell[key] = Number(row[key]) as never;
+  }
 };
 
 const getRowLabel = (row: CrosstabLongRow): string => {
@@ -97,6 +117,17 @@ export const formatCrosstabMatrix = (
       const percent = base > 0 ? Math.round((count / base) * 1000) / 10 : 0;
 
       cells[colKey] = { count, percent };
+      if (sourceRow && isMetricRow(sourceRow)) {
+        copyNumericField(cells[colKey], sourceRow, 'mean');
+        copyNumericField(cells[colKey], sourceRow, 'stdDev');
+        copyNumericField(cells[colKey], sourceRow, 'median');
+        copyNumericField(cells[colKey], sourceRow, 'min');
+        copyNumericField(cells[colKey], sourceRow, 'max');
+        copyNumericField(cells[colKey], sourceRow, 'q1');
+        copyNumericField(cells[colKey], sourceRow, 'q3');
+        copyNumericField(cells[colKey], sourceRow, 'validCount');
+        copyNumericField(cells[colKey], sourceRow, 'weightedCount');
+      }
       if (sourceRow?.sig !== undefined) {
         cells[colKey].sig = Boolean(sourceRow.sig);
       }
