@@ -353,4 +353,53 @@ Log one entry per `UXR-###`. Update **Status** when fixed: `open` | `confirmed` 
 
 ---
 
+## UXR-024 — Recode modal unreachable from Canvas sidebar
+
+- **Status:** open
+- **Severity:** P1
+- **Mode:** Canvas
+- **Session:** 6
+- **Steps to reproduce:**
+  1. Open Canvas with F1 loaded.
+  2. Attempt to open **Recode Variable** from sidebar variable cards (context menu, hover actions, etc.).
+- **Expected:** Documented recode flow via `RecodeModal` or clear Manager-only path.
+- **Actual:** `DashboardShell` passes `onRecode={handleRecodeClick}` → `openRecodeModal`, but `VariableCard` / `DraggableVariable` never call `onRecode`; modal never opens from Canvas.
+- **Heuristic:** #4 Consistency; #6 Recognition rather than recall
+- **Related:** `RecodeModal.tsx`, `DraggableVariable.tsx`, `DashboardShell.tsx`
+- **Note:** Recode **does** work from Variable Manager distribution chart (group/bin flow).
+
+---
+
+## UXR-025 — Table cell drill-down / Data drawer not wired
+
+- **Status:** open
+- **Severity:** P1
+- **Mode:** Canvas
+- **Session:** 6
+- **Steps to reproduce:**
+  1. Build a crosstab in table view.
+  2. Click a data cell to inspect underlying respondents.
+- **Expected:** `DataDrawer` opens with filtered respondent rows (`openDrillDown`).
+- **Actual:** `DataTable` supports `onCellClick`, but `SlideContainer` does not pass it; clicks have no effect.
+- **Heuristic:** #1 Visibility of system status; #7 Flexibility and efficiency of use
+- **Related:** `SlideContainer.tsx`, `DataTable.tsx`, `drillDownSlice.ts`, `DataDrawer.tsx`
+
+---
+
+## UXR-026 — Variable Manager stays open over Workspace
+
+- **Status:** open
+- **Severity:** P2
+- **Mode:** Variable Manager → Workspace (mode boundary)
+- **Session:** 6
+- **Steps to reproduce:**
+  1. Open Variable Manager (`D`) on Canvas.
+  2. Click **Return to Workspace** without closing Manager.
+- **Expected:** Manager closes (or Workspace is fully interactive); user can use Projects tab and dataset actions.
+- **Actual:** Manager overlay remains; Workspace controls (e.g. Projects tab) are click-intercepted.
+- **Heuristic:** #3 User control and freedom; mode separation per `design_02_ux_modes.md`
+- **Related:** `AppShell.tsx`, `App.tsx` mode routing
+
+---
+
 <!-- Add new findings below as sessions progress -->

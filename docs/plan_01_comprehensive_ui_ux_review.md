@@ -395,7 +395,8 @@ Rate each heuristic **0** (no issue) – **4** (usability catastrophe) per major
 | 3 | Done | Deck/timeline/focus — `session-03-deck.md`; UXR-003/005/017 |
 | 4 | Done | Variable Manager J5 — `session-04-variable-manager.md`; UXR-018–020 |
 | 5 | Done | Export/session J6 — `session-05-export.md`; UXR-021–023; P0 import fix |
-| 6+ | Pending | Recode, harmonization, projects (J7) next |
+| 6 | Done | J7 advanced — `session-06-advanced.md`; UXR-024–026; harmonization needs 2-wave human pass |
+| 7+ | Pending | Themes + visual system next |
 
 **Pre–Session 3 gate (complete):** UXR-000 shortcut conflict fixed — see §14.
 
