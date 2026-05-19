@@ -163,6 +163,7 @@ Rather than using theme colors directly, components consume **semantic tokens** 
 ```css
 --text-primary: var(--foreground);          /* Primary text */
 --text-secondary: var(--muted-foreground);  /* Secondary text */
+--text-tertiary: var(--muted-foreground);   /* Low-emphasis helper text */
 --text-accent: var(--accent);               /* Accent text */
 --text-inverse: var(--primary-foreground);  /* Text on colored backgrounds */
 ```
@@ -173,6 +174,14 @@ Rather than using theme colors directly, components consume **semantic tokens** 
 --border-color-muted: var(--input);         /* Subtle borders */
 --border-color-active: var(--ring);         /* Focus/active borders */
 --border-grid: var(--viz-grid);             /* Data grid lines */
+```
+
+#### Interaction & Status
+```css
+--bg-hover: var(--secondary);               /* Hover states */
+--status-success-text / --status-success-bg /* Success states */
+--status-warning-text / --status-warning-bg /* Warning states */
+--status-error-text / --status-error-bg     /* Error states */
 ```
 
 #### Data Visualization
@@ -352,6 +361,24 @@ Data rows show a coral vertical bar on the left edge on hover:
 <div className="bg-[#FAF8F5] text-[#2D4A3E]">
 ```
 
+### Tailwind Usage
+
+Tailwind CSS is approved for layout, spacing, typography utilities, and rapid composition. Color-bearing Tailwind classes must reference semantic CSS variables so components remain theme-neutral.
+
+✅ Good:
+```tsx
+<button className="rounded-md bg-[var(--color-accent)] px-3 py-2 text-[var(--text-inverse)]">
+```
+
+❌ Bad:
+```tsx
+<button className="rounded-md bg-indigo-600 px-3 py-2 text-white">
+```
+
+Use CSS Modules for complex component states, animation, grid layouts, and selectors that would become unreadable as long utility strings. Inline styles are acceptable for dynamic chart, D3, virtualization, or geometry values.
+
+Do not use CSS fallback hexes such as `var(--bg-panel, #fff)`. Missing tokens should be fixed at the semantic-token layer instead of hidden by theme-specific fallback values.
+
 ### Material Surfaces
 
 For panels that should support Liquid Glass blur effects:
@@ -433,16 +460,6 @@ Potential high-contrast themes optimized for:
 
 ---
 
-## 13. Migration Notes
+## 13. Cleanup Notes
 
-### From Research Desk (Legacy)
-
-The original "Research Desk" concept has been **deprecated** in favor of the theme system. Key changes:
-
-- **Before:** Single fixed aesthetic (warm paper tones, Newsreader/Atkinson fonts)
-- **After:** Three themes with distinct aesthetics
-- **Typography:** Research Desk fonts (Newsreader, Atkinson) are still loaded but only used as fallbacks
-- **Colors:** "Ink & Paper" palette replaced with theme-specific palettes
-- **Implementation:** Static CSS replaced with dynamic token injection
-
-**Migration Path:** Components using old Research Desk tokens should be updated to use semantic tokens from the new system.
+Legacy Research Desk tokens and raw Tailwind palette colors are deprecated. Components should use semantic tokens from this document, Tailwind utilities with CSS-variable color values, or CSS Modules backed by the same tokens.

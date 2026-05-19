@@ -1,80 +1,75 @@
-# Design: UX Architecture & Application Modes
+# UX Modes
 
-## 1. Problem Definition
-Currently, Velocity works as a **Single-Screen Prototype**.
-*   The Sidebar lists all variables (List View).
-*   The Canvas waits for drops.
-*   Data management (Recoding, Renaming) happens in disjointed modals or is impossible.
+Velocity uses three coordinated modes. The modes are not separate products; they are different working postures over the same local-first dataset and analysis state.
 
-**The Friction:**
-*   Managing 500+ variables in a sidebar is cognitively overloaded.
-*   Performing complex "Data Engineering" (Visual Recoding) on top of an active Analysis Table is cluttered.
-*   Users need distinct "Mental Modes":
-    1.  **Preparation Mode:** "I am organizing my variables (concepts)."
-    2.  **Analysis Mode:** "I am asking questions of the data."
+## 1. Workspace
 
-## 2. The Solution: Two Distinct Modes
+**Purpose:** dataset and project management.
 
-We will introduce a global navigation (App Shell) that separates the application into two primary screens.
+Users come here to import files, reopen stored datasets, manage projects, inspect longitudinal studies, and choose what dataset is active. Workspace is the product shell for local-first durability.
 
-### Mode A: The Variable Manager (Preparation)
-*Target: Milestone 2.2 (Visual ETL)*
+Primary responsibilities:
 
-**Purpose:** Organizing the messy list of raw columns into clean, semantic "Constructs".
-**Visual Metaphor:** **Infinite Canvas with Cards** (Miro/Pinterest style).
-**Key Interactions:**
-*   **Card Sorting:** Variables are displayed as Cards (Label + Sparkline).
-*   **Clustering:** Dragging cards together creates a "Variable Set" (e.g., stacking 5 "Brand Rating" columns into a single Grid Set).
-*   **Visual Recoding:** Clicking a card enters "Focus Mode" (Histogram Bucketing).
-*   **Drop Zone:** There is *no* Analysis Table here. The goal is pure organization.
+- dataset library and metadata
+- import/export of workspace/session artifacts
+- project grouping
+- longitudinal study linking
+- dataset reopen, switch, delete, and recovery flows
 
-### Mode B: The Analysis Canvas (Reporting)
-*Target: Milestone 2.3 (Stats)*
+Workspace should not become the place for analytical computation. It prepares and selects data; analysis runs through the worker/engine path.
 
-**Purpose:** Creating Crosstabs, Charts, and Slides.
-**Visual Metaphor:** **Dashboard / Slide Editor** (PowerPoint/Tableau style).
-**Key Interactions:**
-*   **Clean Sidebar:** The sidebar *only* shows the "Clean Sets" created in Mode A. No raw columns unless explicitly toggled.
-*   **Drag & Drop:** Drag Sets onto the Table/Chart slots.
-*   **Contextual Stats:** The sidebar provides statistical context (Mean/N) for the active selection.
+## 2. Analysis Canvas
 
-## 3. Screen Flow & Navigation
+**Purpose:** low-density analysis, interpretation, and presentation.
+
+The Analysis Canvas is the hub. Users drag variables into rows, columns, filters, and weights; inspect crosstabs and charts; and build the Analysis Deck.
+
+Primary responsibilities:
+
+- crosstab and chart authoring
+- filtering and weighting choices
+- reading mode for analytical output
+- slide/deck state capture
+- export initiation
+- stakeholder-facing narrative refinement
+
+Canvas UI should optimize clarity and interpretation. Dense variable editing, bulk organization, and complex data cleaning belong in Variable Manager.
+
+## 3. Variable Manager
+
+**Purpose:** high-density variable organization and cleaning.
+
+Variable Manager is the spoke. It overlays the Canvas rather than replacing the app route, preserving context while giving users room for sorting, grouping, labeling, and recoding.
+
+Primary responsibilities:
+
+- variable search, sorting, and inspection
+- variable set/grid management
+- recoding and cleanup workflows
+- card/list/Miller-column style organization
+- harmonization entry points when working across waves
+
+Variable Manager may preview distributions and metadata, but it should not duplicate Canvas analysis output.
+
+## 4. Mode Relationships
 
 ```mermaid
 graph TD
-    A[Landing / Import] --> B[Variable Manager]
-    B -- Organized Sets --> C[Analysis Canvas]
-    C -- "Wait, I need to recode" --> B
-    C -- Export --> D[PPTX Output]
+    Workspace["Workspace\nDataset library and projects"] --> Canvas["Analysis Canvas\nAnalysis and deck hub"]
+    Canvas --> Manager["Variable Manager\nOverlay spoke"]
+    Manager --> Canvas
+    Canvas --> Export["PPTX / session export"]
+    Workspace --> Recovery["Reopen / rebuild / delete flows"]
 ```
 
-### 3.1 The App Shell
-A persistent Rail Navigation on the left:
-1.  **Data (Icon)** -> Activates Variable Manager.
-2.  **Analysis (Icon)** -> Activates Analysis Canvas.
-3.  **Report (Icon)** -> Future (Storyboarding).
-4.  **Settings (Icon)**
+## 5. Design Rules
 
-## 4. Detailed Component Design
+- Keep heavy compute off the main thread in every mode.
+- Keep source-of-truth state in the store/engine path, not duplicated in ad hoc UI state.
+- Use semantic design tokens from `design_01_system.md`.
+- Preserve the distinction between selection/navigation UI and analysis computation.
+- If a new feature crosses modes, document which mode owns the user decision and which mode only displays the result.
 
-### 4.1 The "Variable Card" (Mode A)
-Instead of a text row, a "Card" uses roughly 150x100px:
-*   **Top:** Variable Name/Label (truncated).
-*   **Middle:** Micro-chart (Bar for Nominal, Histogram for Scale).
-*   **Bottom:** Metadata badges (Type, Missing Count).
-*   **Context Menu:** Recode, Rename, Delete.
+## 6. Current Stabilization Focus
 
-### 4.2 The "Variable Set" (Sidebar in Mode B)
-When switching to Analysis Mode, the user sees "Variable Sets":
-*   **Icon:** Represents structure (Grid, Single, Multi).
-*   **Label:** The Set Label (e.g. "Brand Awareness") not the raw variable label.
-*   **Interaction:** Dragging the *Set* drags all underlying columns correctly.
-
-## 5. Implementation Strategy
-
-1.  **Phase 1 (The Shell):** Implement the `AppShell` layout and Client-side Routing (React Router or simpler State-based switching).
-2.  **Phase 2 (The Views):**
-    *   Move existing `DataTable` + `Sidebar` into `AnalysisView.tsx`.
-    *   Create a blank `VariableManagerView.tsx`.
-3.  **Phase 3 (The Bridge):**
-    *   Ensure creating a "Set" in Manager immediately updates the List in Analysis.
+The mode model is coherent, but the Workspace promise is not complete until stored datasets can reopen, switch, rebuild, and delete predictably across sessions. Treat that as the highest-priority UX-mode gap before adding new advanced surfaces.
