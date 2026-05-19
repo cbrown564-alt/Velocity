@@ -14,7 +14,7 @@ This document catalogs every feature proposed across the three source documents 
 | **Instant Crosstabs** | MVP | **KEEP** | **Done** | The primary value prop vs. Displayr/SPSS. |
 | **Top 2 Box Toggle (Global)** | MVP | **REJECT** | N/A | **Reasoning:** Too simplistic. Replaced by "Variable Sets/Nets" in Phase 2. A global toggle confuses users when variables have different scales (1-5 vs 1-10). |
 | **Export to Image** | MVP | **REJECT** | N/A | **Reasoning:** "Sarah" needs editable charts. Images are dead ends. We focus on HTML/PPTX export. |
-| **Undo/Redo / Recoverable Sessions** | MVP | **KEEP** | **Partial** | Trust still depends on stronger session/workspace recovery. Zustand persistence covers some state, but durable reopen remains an active stabilization priority. |
+| **Undo/Redo / Recoverable Sessions** | MVP | **KEEP** | **Partial** | Workspace dataset reopen/switch without re-upload shipped (`STAB-WS-1`, May 2026). Session export/import and transform replay remain; full undo/redo stack not complete. |
 | **Searchable Variable List** | MVP | **KEEP** | **Done** | Standard requirement for finding data. |
 | **DuckDB-Wasm Engine** | Strategic | **KEEP** | **Done** | The only viable architecture for speed. |
 

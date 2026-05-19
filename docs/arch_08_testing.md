@@ -97,7 +97,7 @@ Playwright specs under `tests/e2e/` validate product journeys in a real browser.
 | `opfs.spec.ts` | OPFS persistence, session restore, Start Fresh |
 | `session-export.spec.ts` | Session export round-trip |
 | `agentWorkflow.test.ts` | Agent-oriented UI workflow |
-| `workspace-switch.spec.ts` | Workspace: upload two datasets, switch from catalog without re-upload |
+| `workspace-switch.spec.ts` | Workspace: upload two datasets, switch from catalog without re-upload (`STAB-WS-1`; verified locally May 19, 2026; runs in CI `e2e` job) |
 
 ## 6. Fixture Data
 
@@ -134,21 +134,23 @@ GitHub Actions (`.github/workflows/test.yml`) runs on every PR to `main`:
 
 1. **Typecheck**: `npm run typecheck:all` (app, tests, and MCP package)
 2. **Architecture guards**: `npm run check:worker-boundary`, `npm run check:querybuilder-pure`
-3. **Unit/integration tests with coverage**: `npm run test:run -- --coverage` (80% thresholds on non-excluded paths)
-4. **Production build**: `npm run build`
+3. **Design token policy**: `npm run check:design-tokens`
+4. **Unit/integration tests with coverage**: `npm run test:run -- --coverage` (80% thresholds on non-excluded paths)
+5. **Production build**: `npm run build`
 
 ### `e2e` job
 
-1. **Playwright**: `npm run test:e2e` (browser installed in CI)
+1. **Playwright**: `npm run test:e2e` (includes `workspace-switch.spec.ts`; browser installed in CI)
 
 ### Architecture guards (`test` job)
 
 - `npm run check:design-tokens` — semantic token policy ratchet (`scripts/check-design-tokens.mjs` with shrinkable allowlist)
 
-### Planned (`STAB-CI-1`)
+### Deferred (post–`STAB-CI-1`)
 
 - No ESLint gate today (no lint script in `package.json`)
 - `npm run test:parity` remains optional/local unless runtime is proven acceptable for every PR
+- Shrinking Vitest coverage exclusions (tracker: future `STAB-CI-2` or dedicated row when scheduled)
 
 ## 9. Writing New Tests
 

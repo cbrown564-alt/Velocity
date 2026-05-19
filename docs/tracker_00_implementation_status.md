@@ -60,6 +60,9 @@ graph TD
   STABDOC1 --> STABWS1["STAB-WS-1 Reopenable Workspace"]
   STABWS1 --> STABEXPA["STAB-EXP-1a Matrix MCP"]
   STABEXPA --> STABEXPB["STAB-EXP-1b PPTX Polish"]
+  STABEXPB --> S4DEF1
+  S4DEF1 --> S4MCP1
+  STABEXPB --> STABARCH1["STAB-ARCH-1 Thin slices"]
 
   S4EVAL5 -.-> S4MCP1
   S4EVAL5 -.-> S4MCP2
@@ -95,7 +98,7 @@ S2-STAT-1 through S2-STAT-4 are resolved. S2-EXP-1 and S2-EXP-2 are done. Phase 
 
 ### 4.2 Current Stabilization Sprint (May 2026)
 
-Grilled against `docs/archive/2026-05/audits/audit_05_deep_code_review_2026-05-19.md` (May 2026). **Product hard gate:** `STAB-WS-1` then `STAB-EXP-1` (both phases). **Parallel process lanes:** `STAB-DS-1`, `STAB-CI-1` (may proceed alongside WS after the stabilization contract lands).
+Grilled against `docs/archive/2026-05/audits/audit_05_deep_code_review_2026-05-19.md` (May 2026). **Stabilization sprint closed May 19, 2026** — all `STAB-*` rows below are Done. **Active critical path:** finish `S4-DEF-1`, then `S4-MCP-1` / `S4-MCP-2` / `S4-EVAL-5b`; parallel `STAB-ARCH-1` thin slices (§8). Phase 5+ remains frozen until post–Phase 4 follow-through.
 
 #### 4.2.1 Stabilization contract (execution rules)
 
@@ -109,7 +112,8 @@ Grilled against `docs/archive/2026-05/audits/audit_05_deep_code_review_2026-05-1
 | CI | E2E-first product truth; update `arch_08_testing.md`; defer shrinking Vitest coverage exclusions; `check-design-tokens` in CI (`scripts/check-design-tokens.mjs`, empty allowlist) |
 | Design system | Staged allowlist ratchet (`scripts/check-design-tokens.mjs`); see §7 |
 | Design audit plan | Superseded by tracker §7 (`STAB-DS-1`); no `docs/DESIGN_AUDIT_PLAN.md` |
-| Expansion freeze | Until `STAB-WS-1` and `STAB-EXP-1` (1a+1b) are **Done**: no `S4-MCP-1`, `S4-MCP-2`, `S4-EVAL-5b`, Phase 5+, monolith splits, WebR/collaboration UI, or net-new MCP tools. In-flight `S4-DEF-1` only if the PR is small and does not touch WS/persistence |
+| Expansion freeze | **Lifted (May 19, 2026)** after `STAB-WS-1` + `STAB-EXP-1` (1a+1b) shipped. **Allowed now:** finish `S4-DEF-1` (engine/MCP/tests only — no `dataSlice` / `App.tsx` / OPFS edits); start `S4-MCP-1`, `S4-MCP-2`, `S4-EVAL-5b`; `STAB-ARCH-1` scoped slices (§8). **Still frozen:** Phase 5+ (`S5-R-1` WebR, `S5-STATS-1`, `S5-PREP-*`), Phase 6–7, ad-hoc monolith refactors outside `STAB-ARCH-1`, net-new MCP tools beyond the S4-MCP rows |
+| Post-stabilization priority | (1) `S4-DEF-1` → (2) `S4-MCP-1` → (3) `S4-MCP-2` + `S4-EVAL-5b` in parallel when staffed; `STAB-ARCH-1` slices may run in parallel if they do not touch active WS/MCP PRs |
 
 | ID | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -123,17 +127,18 @@ Grilled against `docs/archive/2026-05/audits/audit_05_deep_code_review_2026-05-1
 
 ### 4.3 Post-Validation Follow-Through (Phase 4)
 
-**Freeze (§4.2.1):** rows marked `Frozen` do not start until `STAB-WS-1` and `STAB-EXP-1` are Done. `S4-FMT-1` / `S4-DELIV-1` are delivered via `STAB-EXP-1a` / `STAB-EXP-1b`.
+**Expansion freeze lifted (May 19, 2026):** `STAB-WS-1` and `STAB-EXP-1` are Done. `S4-FMT-1` / `S4-DELIV-1` were delivered via `STAB-EXP-1a` / `STAB-EXP-1b`. Next authorized work is §4.2.1 post-stabilization priority — not Phase 5+ expansion.
 
 | ID | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | S4-DISC-1 | Discovery | Category-aware discovery: annotation-type filters, `listVariablesByCategory` engine method + MCP tool, guided "suggest breaks for topic X" flow | S4-EVAL-5 | Done | Yes | T,L,U,I,A | `src/engine/VelocityEngine.ts`, `mcp-server/tools.ts`, `mcp-server/__tests__/tools.test.ts` |
 | S4-DELIV-1 | Export | PPTX chart rendering overhaul (absorbed by `STAB-EXP-1b`) | STAB-EXP-1b | Merged | Yes | T,L,U,A | `STAB-EXP-1b` |
 | S4-FMT-1 | MCP | Crosstab matrix format (absorbed by `STAB-EXP-1a`) | STAB-EXP-1a | Merged | Yes | T,L,U,I,A | `STAB-EXP-1a` |
-| S4-MCP-1 | MCP | Workspace-aware MCP: `velocity_load_metadata` + `velocity_load_full` two-step flow; multi-dataset workspace tools | STAB-EXP-1 | Not started | Yes | T,L,U,I,A | - |
-| S4-DEF-1 | Defaults | Recommended break variables after topic selection; false-positive weight warnings; high-cardinality guardrails | S4-DISC-1 | In progress | Yes | T,L,U,I,A | `src/engine/VelocityEngine.ts`, `mcp-server/tools.ts`, `mcp-server/__tests__/tools.test.ts` |
+| S4-MCP-1 | MCP | Workspace-aware MCP: `velocity_load_metadata` + `velocity_load_full` two-step flow; multi-dataset workspace tools | STAB-EXP-1, S4-DEF-1 preferred first | Not started | Yes | T,L,U,I,A | - |
+| S4-DEF-1 | Defaults | Recommended break variables after topic selection; false-positive weight warnings; high-cardinality guardrails | S4-DISC-1 | In progress | Yes | T,L,U,I,A | `src/engine/VelocityEngine.ts`, `mcp-server/tools.ts`, `mcp-server/__tests__/tools.test.ts` — **scope:** engine/MCP only until Done; no WS/persistence files |
 | S4-MCP-2 | MCP | Deck build transport resilience: stream or chunk `buildDeck` responses to avoid stdio OOM | STAB-EXP-1 | Not started | Yes | T,L,U,A | - |
 | S4-EVAL-5b | Eval | Harmonization re-run: EVAL-05 follow-on with naming drift, partial label overlap, or scale inversion construct | STAB-EXP-1 | Not started | No | A | - |
+| STAB-ARCH-1 | Architecture | Thin-slice decomposition of `App.tsx` / `dataSlice` orchestration (§8); no behavior change | STAB-EXP-1 | Not started | No | T,U,I,A | - |
 
 ### 4.4 Next After Validation (Phase 5)
 
@@ -155,26 +160,18 @@ Grilled against `docs/archive/2026-05/audits/audit_05_deep_code_review_2026-05-1
 | S7-CLOUD-1 | Cloud | Realtime collaboration backend + UI integration | S6-AI-3 | Not started | Yes | T,L,U,I,A | - |
 | S7-CLOUD-2 | Cloud | Direct survey platform imports via backend proxy | S7-CLOUD-1 | Not started | Yes | T,L,U,I,A | - |
 
-### 4.6 Recent Delivered (Last 20 Commits Snapshot)
+### 4.6 Recent Delivered (Snapshot)
 
-Snapshot reference window: commits on February 5, 2026 through March 11, 2026.
+**Current window:** May 19, 2026 stabilization sprint (`main`, commits `f67b3da`…`ced9b1d`). Older delivered work (Feb–Mar 2026) remains in git history and §5 foundations; do not treat this table as the only source of past evidence.
 
 | ID | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| S3-SEM-1 | Semantics | Heuristic annotator (9 rules, O(n), no ML), ConceptStore (CRUD, merge, serialization), concept discovery (Jaccard clustering), token-based semantic search (weighted scoring), domain-aware analysis/harmonization suggestions, 7 new MCP tools, session v2 format, chart recommender semantic overrides. 68 new tests. | S3-BROW-1 | Done | Yes (new `src/types/semantic.ts`, `Variable.semantic`, session v2, 7 MCP tools) | T,U,A | af4c925 |
-| S3-ENG-1 | Engine | VelocityEngine facade, `ResultEnvelope` provenance, headless slide defaults, CLI migration, PPTX export gap closure | S2-EXP-2 | Done | Yes | T,L,U,I,A | 02d54c2, cf3dc13 |
-| S5-HARM-1 | Harmonization | Lasso + Sankey + mapping workflow: auto-match engine (Jaro-Winkler + Jaccard + type compat + scale inversion), D3 Sankey diagram, virtualized MappingTable, ValueRemapPanel, LassoSelector, WaveDetectionBanner, HarmonizationWorkspace overlay, import-time wave detection, CrossWavePanel Harmonize entry point | S2-STAT-4, S2-EXP-2 | Done | Yes (new `harmonization` store slice; 6 worker message types; `waveDetectionBanner` in UISlice) | T,U,I,A | 3bd2bf1 |
-| S2-VAL-1 | Validation | R parity test suite (12 tests vs R reference on real SAV files); fixes `regularizedGammaP` CF bug (chi-square p-values) and `STDDEV→STDDEV_POP` formula consistency | S2-STAT-1–4 | Done | No | G,A | 56a2241 |
-| S2-EXP-1 | Export | Browser-side PPTX export using `PptxGenJS` | Milestone 2.4 complete | Done | Yes | T,L,U,I,A | 3d80d06, cab233a, e840767, c9cc564 |
-| S2-DECK-1 | Analysis Deck | Analysis state capture, editable headers, unsaved indicator | Hub-and-spoke baseline | Done | Yes | T,L,U,A | a3679f7 |
-| S2-DECK-2 | Analysis Deck | Duplicate/delete slide actions + inline film-strip timeline dock | S2-DECK-1 | Done | Yes | T,L,U,A | b97658f, 14adb12 |
-| S2-DECK-3 | Analysis Deck | Empty-variable fallback for slide rendering robustness | S2-DECK-2 | Done | No | U,A | 26e0d6f |
-| S5-WS-1 | Workspace | Longitudinal workspace support (WaveTimeline, CrossWavePanel) | Workspace baseline | Done | Yes | T,L,U,I,A | 947f2fd |
-| S5-WS-2 | Workspace | Batch operations + workspace export/import modal | S5-WS-1 | Done | Yes | T,L,U,I,A | 11bfd89 |
-| S2-STAT-1 | Stats | Pairwise column proportions tests (A/B/C letters) | Milestone 2.3 complete | Done | Yes | T,L,U,G,A | 3a9f2a1 (audit confirms pre-existing) |
-| S2-STAT-2 | Stats | FDR + Bonferroni corrections wired into crosstab pipeline | S2-STAT-1 | Done | Yes (additive: `adjustedPValue`, `correctionMethod` on stats; `SignificanceOptions` on runner) | T,L,U,G,A | 8d1b585, bf7e58a |
-| S2-STAT-3 | Stats | Dependent-sample overlap handling for multi-response column banners | S2-STAT-1 | Done | Yes (additive: `isOverlapCorrected` on stats; `buildOverlapQuery` in queryBuilder) | T,L,U,G,A | 8d1b585, a8b63e8, bf7e58a |
-| S2-STAT-4 | Stats | TSL variance estimation go/no-go decision | S2-STAT-2, S2-STAT-3 | Done | No (decision only: NO-GO — deferred to Phase 5+ via WebR) | A | 3a9f2a1 |
+| STAB-DOC-1 | Docs/process | Stabilization contract, doc archive/reorg, eval framework consolidation, repo layout + npm workspaces | S4-EVAL-5 | Done | No | A | `f67b3da`, `d0ff00b`…`9ab295f`, `ab99ccf` |
+| STAB-WS-1 | Workspace | `openWorkspaceDataset`, OPFS DB-first + source replay, workspace-switch E2E | STAB-DOC-1 | Done | Yes | T,U,I,A | `848cbab`, `727c944`, `tests/e2e/workspace-switch.spec.ts` (E2E pass local + CI job) |
+| STAB-EXP-1a | Export / MCP | `formatCrosstabMatrix` in core; MCP `format: 'matrix'`; weighted counts fix | STAB-WS-1 | Done | Yes | T,U,A | `1ef4f6b`, `eb3459c` |
+| STAB-EXP-1b | Export | `pptxChartStyle`, branding resolution; removed `pptxChartBuilder` | STAB-EXP-1a | Done | Yes | T,U,A | `2fc1a0f`, `5f686e4`, `ced9b1d` |
+| STAB-DS-1 | Design system | Token migration + `check-design-tokens` CI (empty allowlist) | S4-EVAL-5 | Done | No | T,U,A | `2fc1a0f`, `scripts/check-design-tokens.mjs` |
+| STAB-CI-1 | Quality gates | Production build + design-token + MCP typecheck in CI; `arch_08` E2E truth | S4-EVAL-5 | Done | No | T,U,I,A | `57f5642`, `2fc1a0f`, `.github/workflows/test.yml` |
 
 ## 5. Completed Foundations (Summary)
 
@@ -237,3 +234,33 @@ CSS Modules remain for complex component states, grids, animations, and unreadab
 - `AGENTS.md`, `docs/design_01_system.md`, and `docs/dev_01_contributing.md` agree on Tailwind policy.
 - Active source has no deprecated Research Desk tokens, raw palette utilities, or CSS fallback hexes.
 - App builds across all supported themes.
+
+## 8. STAB-ARCH-1 — Orchestration thin slices
+
+**Status:** Not started (May 2026). Parent row in §4.3. Follow `docs/playbooks/refactor_safely.md` — zero behavior change per slice.
+
+**Problem:** `src/App.tsx` (~960 lines) and `src/store/slices/dataSlice.ts` (~1,480 lines) concentrate workspace open/switch, OPFS rehydration, engine proxy lifecycle, and upload orchestration. Stabilization added correct behavior but increased coupling risk.
+
+**Goal:** Move orchestration behind small modules/hooks so Phase 4 MCP and future Phase 5 work do not require editing monolith files.
+
+### Slices (sequential; one PR each)
+
+| Slice | Extract from | Into | Acceptance |
+| :--- | :--- | :--- | :--- |
+| 8.1 | `App.tsx` workspace-open handler + `openWorkspaceDataset` call chain | `src/features/workspace/hooks/useWorkspaceOpen.ts` (or extend `useWorkspace.ts`) | `useWorkspace.test.ts` + `workspace-switch.spec.ts` green; `App.tsx` loses workspace-open block |
+| 8.2 | `dataSlice` OPFS rehydrate + `openWorkspaceDataset` persistence switch | `src/store/workspaceDatasetLifecycle.ts` (pure helpers + typed calls into slice) | `dataSlice.workspace.test.ts`, `persistence.test.ts` green; slice file shrinks by ≥150 lines |
+| 8.3 | `dataSlice` engine init/respawn + corruption handlers | `src/store/enginePersistenceBridge.ts` | Existing `persistence.test.ts` + `opfsFileManager.test.ts` green; no new public store API |
+| 8.4 | Upload → OPFS key assignment in `App.tsx` / `useFileUpload` | Colocate with workspace hooks; single `assignOpfsKeyAndLoad` helper | `useFileUpload` tests if present; E2E upload path unchanged |
+
+### Gates per slice
+
+- `npm run typecheck:all`
+- `npm run test:run`
+- `npx playwright test tests/e2e/workspace-switch.spec.ts` when touching WS/open paths
+- No changes to `VelocityEngine` public API or MCP tool schemas
+
+### Out of scope (remain frozen)
+
+- Splitting `analysisWorker.ts` or `VelocityEngine.ts`
+- Coverage exclusion removal (separate future `STAB-CI-2` if needed)
+- WebR / Phase 5 runtime work

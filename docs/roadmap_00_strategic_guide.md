@@ -37,19 +37,19 @@ For execution details and dependencies, use:
 
 ## 2.1 Current Reality Check
 
-As of the May 2026 maturity review, Phase 4 Agent Capability Validation is **complete** and the next phase should be treated as stabilization, not expansion. Key findings:
+As of **May 19, 2026**, Phase 4 validation is complete and the **May stabilization sprint is complete** (`STAB-DOC-1` through `STAB-CI-1` on tracker §4.2). Key findings:
 
 - **Engine validated:** Mean score 4.7/5 across six eval families. Computation, provenance, export, and session mechanics all work.
-- **Discovery and MCP breadth remain post-stabilization gaps:** Semantic discovery (mean 3.0) and MCP workflow coverage (mean 3.0) need expansion, but **after** stabilization (`STAB-WS-1`, `STAB-EXP-1`). Category-aware discovery (`S4-DISC-1`) is Done; workspace MCP (`S4-MCP-1`) is frozen until export/workspace hardening ships.
-- **No architecture rewrite needed:** All gaps are capability expansion within the current thesis. The product direction is correct; the agent-guidance layers need to catch up with the computational substrate.
+- **Stabilization shipped:** Reopenable workspace (`STAB-WS-1`), matrix MCP + PPTX polish (`STAB-EXP-1`), design-token CI (`STAB-DS-1`), production build + E2E gates (`STAB-CI-1`).
+- **Discovery and MCP breadth remain the active Phase 4 gaps:** Semantic discovery (mean 3.0) and MCP workflow coverage (mean 3.0). Category-aware discovery (`S4-DISC-1`) is Done; **next authorized expansion:** finish `S4-DEF-1`, then `S4-MCP-1` / `S4-MCP-2` / `S4-EVAL-5b` (tracker §4.2.1).
+- **No architecture rewrite needed:** Gaps are capability expansion within the current thesis. Orchestration debt in `App.tsx` / `dataSlice` is addressed via scoped `STAB-ARCH-1` slices (tracker §8), not a big-bang refactor.
 - **Four benchmark baselines frozen:** EVAL-01 (small deck), EVAL-02 (large survey), EVAL-04 (convergence), EVAL-06 (stress).
-- **Quality gates are currently green but narrow:** typecheck, tests, coverage, and build pass, but coverage excludes large UI/store/product surfaces.
-- **Product durability is the largest blocker:** workspace metadata exists, but stored datasets still need reliable reopen/switch/delete behavior across sessions.
+- **Quality gates are green but narrow:** typecheck (incl. MCP), tests, coverage, build, and Playwright E2E pass; Vitest coverage still excludes large UI/store surfaces.
 
 Implication:
-- The strategic critical path is now a **stabilization overlay** before Phase 5 expansion: stabilization contract (`STAB-DOC-1`), reopenable workspace (`STAB-WS-1`), export deliverables (`STAB-EXP-1a`/`1b`), design-system ratchet (`STAB-DS-1`), and E2E-first CI truth (`STAB-CI-1`). Monolith splits and coverage un-exclude are explicitly deferred until stabilization exit (see tracker §4.2.1).
-- All feature additions must be evaluated against the question: "Does this close a validated gap from Phase 4?"
-- WebR, deeper AI, and cloud collaboration should remain deferred unless they directly support the stabilization priorities above.
+- The strategic critical path is **Phase 4 follow-through**, not Phase 5 expansion: `S4-DEF-1` → `S4-MCP-1` → parallel `S4-MCP-2` / `S4-EVAL-5b`, with `STAB-ARCH-1` thin slices in parallel when they do not conflict with active MCP PRs.
+- All feature additions must be evaluated against: "Does this close a validated gap from Phase 4?"
+- WebR (`S5-R-1`), deeper AI (Phase 6), and cloud collaboration (Phase 7) remain frozen until Phase 4 follow-through rows are Done.
 - See `docs/archive/2026-03/phase4-eval/eval_s4_eval_5_phase_synthesis.md` for the full Phase 4 decision package.
 
 ## 3. Scope Governance
