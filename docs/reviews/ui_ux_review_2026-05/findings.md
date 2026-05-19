@@ -9,7 +9,7 @@ Log one entry per `UXR-###`. Update **Status** when fixed: `open` | `confirmed` 
 
 ## UXR-000 — `D` key binds both Variable Manager and duplicate slide
 
-- **Status:** open (confirmed Session 0)
+- **Status:** fixed (May 19, 2026)
 - **Severity:** P0
 - **Mode:** Canvas (TimelineDock + AppShell)
 - **Session:** 0
@@ -22,12 +22,13 @@ Log one entry per `UXR-###`. Update **Status** when fixed: `open` | `confirmed` 
 - **Heuristic:** #3 User control and freedom; #4 Consistency and standards
 - **Related code:** `src/components/layout/AppShell.tsx`, `src/features/dashboard/components/TimelineDock.tsx`
 - **Screenshot:** Session 0 browser recon (deck shows 3 slides after `D` presses)
+- **Resolution:** `D` toggles Variable Manager only; duplicate slide is `⌘D` / `Ctrl+D`. Header control label renamed to “Variables”.
 
 ---
 
 ## UXR-001 — “Data D” label vs Variable Manager shortcut
 
-- **Status:** open
+- **Status:** fixed (May 19, 2026; label → “Variables” with `D`)
 - **Severity:** P1
 - **Mode:** Canvas
 - **Session:** 0
@@ -139,6 +140,108 @@ Log one entry per `UXR-###`. Update **Status** when fixed: `open` | `confirmed` 
 - **Expected:** Same datasets as grid, row layout.
 - **Actual:** “Recent Datasets” heading + batch checkbox; `mock_data.csv` card not present in accessibility tree (grid toggle restores it).
 - **Heuristic:** #4 Consistency and standards
+
+---
+
+## UXR-010 — Filtered subtitle shows unfiltered N
+
+- **Status:** open
+- **Severity:** P1
+- **Mode:** Canvas
+- **Session:** 2
+- **Steps to reproduce:**
+  1. Build crosstab on F1; note `N = 250 Respondents`.
+  2. Add Filter → `nps segment` → select `Promoter` → Apply.
+  3. Observe subtitle: `Filtered: nps segment = Promoter · N = 250 Respondents`.
+  4. Table row totals drop (e.g. Total row counts ~10–17 per column) — filter is applied to data.
+- **Expected:** Subtitle `N` reflects filtered sample size (survey-native base).
+- **Actual:** `N` still shows full dataset row count.
+- **Heuristic:** #1 Visibility of system status; trust impact for researchers
+- **Related:** `src/features/dashboard/components/SlideHeader.tsx` (`dataset?.rowCount`), `resolveSlideDefaults.ts`
+
+---
+
+## UXR-011 — Chart legend truncates region labels
+
+- **Status:** open
+- **Severity:** P2
+- **Mode:** Canvas (chart view)
+- **Session:** 2
+- **Steps to reproduce:** gender × region crosstab → switch to chart view.
+- **Expected:** Full region names in legend (`International`, `South`).
+- **Actual:** Labels clip (`Internatio...`, `Sout`).
+- **Heuristic:** #4 Consistency; #8 Aesthetic and minimalist design
+- **Related:** `src/components/charts/AnalysisChart.tsx`
+
+---
+
+## UXR-012 — Table/chart view toggles lack accessible names
+
+- **Status:** open
+- **Severity:** P2
+- **Mode:** Canvas
+- **Session:** 2
+- **Steps to reproduce:** Inspect header grid/chart toggle buttons in accessibility tree.
+- **Expected:** `aria-label` such as “Table view” / “Chart view” (pressed state).
+- **Actual:** Two unnamed icon buttons.
+- **Heuristic:** #4 Consistency (Export modal radios are named)
+- **Related:** `src/features/dashboard/DashboardShell.tsx`
+
+---
+
+## UXR-013 — Filter modal: age group has no selectable values
+
+- **Status:** open
+- **Severity:** P2
+- **Mode:** Canvas
+- **Session:** 2
+- **Steps to reproduce:** Add Filter → select `age group`.
+- **Expected:** Age bracket values (as used in crosstabs).
+- **Actual:** “No values found”; Apply disabled.
+- **Heuristic:** #9 Help users recover from errors
+- **Related:** `src/components/overlays/FilterModal.tsx`
+
+---
+
+## UXR-014 — Filter modal flashes stale values while loading
+
+- **Status:** open
+- **Severity:** P2
+- **Mode:** Canvas
+- **Session:** 2
+- **Steps to reproduce:** Add Filter → pick `nps segment` immediately after another variable.
+- **Expected:** Loading state until correct values arrive.
+- **Actual:** Brief display of prior variable’s values (e.g. age brackets) before NPS Detractor/Passive/Promoter.
+- **Heuristic:** #1 Visibility of system status
+- **Related:** `FilterModal.tsx` value fetch / `loadingValues`
+
+---
+
+## UXR-015 — Statistical settings popover clipped in slide scrollport
+
+- **Status:** open
+- **Severity:** P2
+- **Mode:** Canvas
+- **Session:** 2
+- **Steps to reproduce:** Build crosstab; scroll slide content; open Statistical settings.
+- **Expected:** Full panel visible or portaled above slide.
+- **Actual:** Popover bottom clipped; inner page scroll required to reach control.
+- **Heuristic:** #7 Flexibility and efficiency of use
+- **Related:** `AnalysisSettingsPanel.tsx`, `SlideContainer.tsx`
+
+---
+
+## UXR-016 — Column shelf variable chip lacks accessible name
+
+- **Status:** open
+- **Severity:** P2
+- **Mode:** Canvas
+- **Session:** 2
+- **Steps to reproduce:** Add `region` to columns; inspect shelf chip in a11y tree.
+- **Expected:** Named control (e.g. “region, column”).
+- **Actual:** Unnamed button (row `gender` chip is named).
+- **Heuristic:** #4 Consistency
+- **Related:** Dashboard shelf / column chip component
 
 ---
 

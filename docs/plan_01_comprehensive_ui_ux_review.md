@@ -193,7 +193,7 @@ Each task: **steps → success criteria → UI notes → UX notes**.
 
 | Step | Action |
 | :--- | :--- |
-| 1 | New slide (N), navigate (←/→), duplicate (intended shortcut only) |
+| 1 | New slide (N), navigate (←/→), duplicate (⌘/Ctrl+D) |
 | 2 | Edit title/subtitle; Focus mode (F) |
 | 3 | Timeline dock: delete with confirm when >1 slide |
 
@@ -332,8 +332,8 @@ Each finding entry:
 
 | ID | Severity | Finding | Next session |
 | :--- | :--- | :--- | :--- |
-| UXR-000 | **P0** | **`D` key conflict:** `AppShell` binds `D` → toggle Variable Manager; `TimelineDock` binds `D` → duplicate slide. Observed duplicate slides when pressing `D` twice. | Session 3 + 8 |
-| UXR-001 | P1 | **Shortcut label collision:** Header shows **“Data D”** while `D` is documented for Manager in `AppShell` tooltip — cognitive clash | Session 8 |
+| UXR-000 | ~~P0~~ **Fixed** | **`D` key conflict** — resolved May 19: `D` = Variable Manager; `⌘/Ctrl+D` = duplicate slide (see §14) | — |
+| UXR-001 | ~~P1~~ **Fixed** | Header label **“Variables”** + `D` (was “Data D”) | — |
 | UXR-002 | P2 | **Workspace → Canvas** is an instant cut (no shared-element transition); acceptable but noted in gap analysis | Session 7 |
 | UXR-003 | P2 | **Slide title noise:** Duplicate slide names propagate to export modal (“Analysis 1 (Copy) (Copy)”) | Session 3, 5 |
 | UXR-004 | P2 | **Variable Manager close control** — icon-only button without accessible name in snapshot | Session 4, 8 |
@@ -385,12 +385,39 @@ Rate each heuristic **0** (no issue) – **4** (usability catastrophe) per major
 
 ---
 
-## 13. Immediate actions (before Session 1)
+## 13. Session status (updated May 19, 2026)
 
-1. Create `docs/reviews/ui_ux_review_2026-05/` and seed `findings.md` with UXR-000–005 from §10.  
-2. Assign human sign-off partner for P0/P1.  
-3. **Provisional fix candidate:** Resolve `D` shortcut conflict (Manager vs duplicate slide) before Session 3 to avoid polluted deck tests — track as hotfix if confirmed.  
-4. Schedule Session 1 with F2 SAV and clean browser profile for ingest/reopen.
+| Session | Status | Notes |
+| :--- | :--- | :--- |
+| 0 | Done | Recon + plan committed (`d69d513`) |
+| 1 | Done | Workspace/reopen (`6a48fb4`); Playwright SAV switch pass |
+| 2 | Done | Canvas core J3 — `session-02-canvas.md`; UXR-010–016 logged |
+| 3+ | Pending | Deck/timeline/focus (J4) next |
+
+**Pre–Session 3 gate (complete):** UXR-000 shortcut conflict fixed — see §14.
+
+---
+
+## 14. Keyboard shortcut registry (canonical)
+
+Single source of truth for review sessions and `STAB-UI-C` shortcut reference (`?`). Modifiers use **⌘** on macOS and **Ctrl** on Windows/Linux unless noted.
+
+| Key | Context | Action | Owner |
+| :--- | :--- | :--- | :--- |
+| `D` | Canvas (not in input) | Toggle Variable Manager overlay | `AppShell` |
+| `⌘/Ctrl+D` | Canvas, active slide (not in input) | Duplicate active slide | `TimelineDock` |
+| `F` | Canvas (not in input) | Toggle Focus Mode | `AppShell` |
+| `N` | Canvas (not in input) | New slide | `TimelineDock` |
+| `←` / `→` | Canvas (not in input) | Previous / next slide | `TimelineDock` |
+| `Delete` / `Backspace` | Canvas, >1 slide | Delete slide (confirm modal) | `TimelineDock` |
+| `Esc` | Variable Manager | Clear selection, then close | `VariableManager` |
+| `⌘/Ctrl+A` | Variable Manager | Select all visible variable sets | `VariableManager` |
+
+**Rules for new shortcuts**
+
+1. Register every binding here before shipping; Session 8 audits this table against code.  
+2. Do not reuse the same unmodified key in two `document` listeners.  
+3. Prefer industry defaults (`⌘/Ctrl+D` = duplicate) over ad-hoc letter keys.
 
 ---
 
