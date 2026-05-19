@@ -2,7 +2,18 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import * as fs from 'node:fs/promises';
 import * as os from 'node:os';
 import * as path from 'node:path';
-import { loadSav } from './savIngestion';
+import { loadSav, loadSavMetadata } from './savIngestion';
+
+describe('savIngestion loadSavMetadata', () => {
+  it('returns variable inventory without requiring a DuckDB adapter', async () => {
+    const sourceSavPath = path.resolve(process.cwd(), 'test_data/sleep.sav');
+    const result = await loadSavMetadata(sourceSavPath);
+
+    expect(result.rowCount).toBe(271);
+    expect(result.variables.length).toBeGreaterThan(0);
+    expect(result.variableSets.length).toBeGreaterThan(0);
+  });
+});
 
 describe('savIngestion loadSav', () => {
   let tempDir = '';

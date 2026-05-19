@@ -44,7 +44,8 @@ load → describe → annotate → search → analyze → build deck → export 
 
 | Step | Tool | Purpose |
 |------|------|---------|
-| 1 | `velocity_load` | Load a .sav or .csv file |
+| 1 | `velocity_load` | Load a .sav or .csv file (full rows) |
+| 1b | `velocity_load_metadata` → `velocity_load_full` | Large SAV: inspect variables first, then load rows |
 | 2 | `velocity_describe` | Get the full variable inventory |
 | 3 | `velocity_annotate_dataset` | Auto-classify variables by topic and intent |
 | 4 | `velocity_search_variables` | Find variables relevant to your research questions |
@@ -62,9 +63,31 @@ Steps 3-5 are iterative. You will typically search → analyze → search again 
 
 ### 2.1 Data Lifecycle
 
+#### `velocity_load_metadata` / `velocity_load_full`
+
+Two-step flow for large SAV files (recommended above ~50MB):
+
+1. `velocity_load_metadata` — variable inventory and row count without loading respondent rows into DuckDB.
+2. `velocity_load_full` — same path as step 1; materializes full row data for crosstabs and deck building.
+
+Analysis tools return `METADATA_ONLY` until `velocity_load_full` completes.
+
+#### `velocity_workspace_*`
+
+Multi-dataset workspace for cross-wave harmonization (browser-parity path for EVAL-05-style workflows):
+
+| Tool | Purpose |
+|------|---------|
+| `velocity_workspace_load` | Register a wave/dataset (optional `metadataOnly`, `waveNumber`) |
+| `velocity_workspace_list` | List registered datasets |
+| `velocity_workspace_set_active` | Switch active dataset for single-dataset tools |
+| `velocity_workspace_load_full` | Complete metadata-only workspace entry |
+| `velocity_workspace_propose_mappings` | Auto-match variables between two workspace datasets |
+| `velocity_workspace_harmonize` | Materialize harmonized table from confirmed mappings |
+
 #### `velocity_load`
 
-Load a dataset into the engine. Only one dataset can be loaded at a time.
+Load a dataset into the engine (full row data). Only one **active** dataset drives `velocity_describe` / `velocity_crosstab` at a time; use workspace tools when multiple waves must stay loaded together.
 
 ```json
 { "path": "survey_data.sav" }
@@ -476,6 +499,39 @@ Get domain-aware analysis suggestions for a set of variables.
 ```
 
 **Returns** `AnalysisSuggestion[]` with suggested crosstab configurations, rationales, and priority levels. Useful for discovering interesting cross-tabulations you might not have thought of.
+
+---
+
+#### `velocity_suggest_breaks`
+
+After choosing a topic (row) variable, get ranked demographic or thematic column-break candidates.
+
+```json
+{ "variableId": "NHSSat", "limit": 5 }
+```
+
+**Returns** `BreakSuggestion[]` plus `warnings[]` when the topic variable has issues (e.g. high cardinality, or a weight-like name that is actually a measurement such as body weight in `sleep.sav`). Prefer breaks with scores ≥ 0.5 and ≤ 12 value labels.
+
+---
+
+#### `velocity_list_variables_by_category`
+
+Filter variables by `measurementIntent` (e.g. `"demographic"`, `"attitude"`). More reliable than keyword search for break-variable discovery on large surveys. Run `velocity_annotate_dataset` first.
+
+---
+
+#### Product-default warnings (`warnings[]`)
+
+Several tools now return non-fatal guardrails in the envelope `warnings` array:
+
+| Trigger | Example |
+| :--- | :--- |
+| Body-weight false positive | Variable named `weight` that is numeric with no value labels — not a sampling weight |
+| High-cardinality row | Row variable with > 20 categories — table may be unreadable |
+| High-cardinality column | Column break with > 12 categories — prefer a condensed version |
+| Continuous row without labels | Numeric variable used as row without value labels |
+
+Check `warnings` on `velocity_crosstab`, `velocity_suggest_breaks`, and `velocity_describe_variable` before committing to an analysis plan.
 
 ---
 

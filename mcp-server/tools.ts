@@ -27,7 +27,7 @@ const TOOLS = [
   // Data lifecycle
   {
     name: 'velocity_load',
-    description: 'Load a SAV or CSV file into the engine. Returns a DatasetSummary.',
+    description: 'Load a SAV or CSV file into the engine (full row data). For large SAV files (>50MB), prefer velocity_load_metadata then velocity_load_full.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -37,13 +37,107 @@ const TOOLS = [
     },
   },
   {
+    name: 'velocity_load_metadata',
+    description:
+      'Load SAV variable metadata only (no respondent rows). Use for large files to inspect variables before committing to a full load. Follow with velocity_load_full on the same path.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        path: { type: 'string', description: 'Path to the SAV file (relative to dataDir or absolute).' },
+      },
+      required: ['path'],
+    },
+  },
+  {
+    name: 'velocity_load_full',
+    description:
+      'Complete a full row load for a file previously opened with velocity_load_metadata, or load a file directly when no metadata-only session is active.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        path: { type: 'string', description: 'Path to the SAV file (must match the metadata load path when applicable).' },
+      },
+      required: ['path'],
+    },
+  },
+  {
+    name: 'velocity_workspace_load',
+    description:
+      'Register a dataset in the multi-dataset workspace (separate DuckDB table per dataset). Use for cross-wave harmonization. Set metadataOnly: true on large SAV files, then velocity_workspace_load_full before harmonizing.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        path: { type: 'string', description: 'Path to the SAV or CSV file.' },
+        metadataOnly: { type: 'boolean', description: 'SAV only: load variable metadata without rows.' },
+        waveNumber: { type: 'number', description: 'Optional wave label for longitudinal projects.' },
+        makeActive: { type: 'boolean', description: 'If true, switch the active analysis dataset to this entry (default: false).' },
+      },
+      required: ['path'],
+    },
+  },
+  {
+    name: 'velocity_workspace_list',
+    description: 'List datasets registered in the current workspace session.',
+    inputSchema: { type: 'object', properties: {} },
+  },
+  {
+    name: 'velocity_workspace_set_active',
+    description: 'Set the active analysis dataset to a workspace entry (for describe/crosstab/deck tools).',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        datasetId: { type: 'string', description: 'Workspace dataset ID from velocity_workspace_load or velocity_workspace_list.' },
+      },
+      required: ['datasetId'],
+    },
+  },
+  {
+    name: 'velocity_workspace_load_full',
+    description: 'Materialize full row data for a metadata-only workspace dataset.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        datasetId: { type: 'string', description: 'Workspace dataset ID.' },
+      },
+      required: ['datasetId'],
+    },
+  },
+  {
+    name: 'velocity_workspace_propose_mappings',
+    description: 'Auto-propose variable mappings between two workspace datasets (cross-wave harmonization).',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        sourceDatasetId: { type: 'string', description: 'Source wave dataset ID.' },
+        targetDatasetId: { type: 'string', description: 'Target wave dataset ID.' },
+      },
+      required: ['sourceDatasetId', 'targetDatasetId'],
+    },
+  },
+  {
+    name: 'velocity_workspace_harmonize',
+    description:
+      'Build and materialize a harmonized DuckDB table from two workspace datasets using confirmed mappings.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        sourceDatasetId: { type: 'string' },
+        targetDatasetId: { type: 'string' },
+        mappings: { type: 'array', description: 'VariableMapping[] (typically from velocity_workspace_propose_mappings).' },
+        outputTableName: { type: 'string', description: 'Name for the harmonized output table.' },
+        onlyConfirmed: { type: 'boolean', description: 'If true, apply only mappings with status confirmed (default: true).' },
+      },
+      required: ['sourceDatasetId', 'targetDatasetId', 'mappings', 'outputTableName'],
+    },
+  },
+  {
     name: 'velocity_describe',
     description: 'Describe the loaded dataset: variables, variable sets, active filters, weight.',
     inputSchema: { type: 'object', properties: {} },
   },
   {
     name: 'velocity_describe_variable',
-    description: 'Get detailed statistics for a single variable.',
+    description: 'Get detailed statistics for a single variable. Response warnings flag weight-like measurement variables and high-cardinality fields.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -60,7 +154,7 @@ const TOOLS = [
   // Analysis
   {
     name: 'velocity_crosstab',
-    description: 'Run a cross-tabulation analysis with optional significance testing. Use resolveLabels: true to get human-readable value labels instead of raw integer codes.',
+    description: 'Run a cross-tabulation analysis with optional significance testing. Use resolveLabels: true to get human-readable value labels instead of raw integer codes. Response includes warnings for high-cardinality row/column variables and weight-like names that may be measurements (e.g. body weight), not sampling weights.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -408,7 +502,7 @@ const TOOLS = [
   },
   {
     name: 'velocity_suggest_breaks',
-    description: 'Suggest good cross-break (column) variables for a given topic (row) variable. Returns ranked candidates scored by demographic intent, cardinality, and naming patterns. Run velocity_annotate_dataset first.',
+    description: 'Suggest good cross-break (column) variables for a given topic (row) variable. Returns ranked candidates scored by demographic intent, cardinality, and naming patterns. Response warnings flag high-cardinality topics and weight-like measurement variables. Run velocity_annotate_dataset first.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -486,6 +580,59 @@ export function registerTools(server: Server, engine: VelocityEngine): void {
         // ---- Data lifecycle ----
         case 'velocity_load': {
           const result = await engine.loadFile(String(a.path));
+          return successResponse(result);
+        }
+
+        case 'velocity_load_metadata': {
+          const result = await engine.loadFileMetadata(String(a.path));
+          return successResponse(result);
+        }
+
+        case 'velocity_load_full': {
+          const result = await engine.loadFileFull(String(a.path));
+          return successResponse(result);
+        }
+
+        case 'velocity_workspace_load': {
+          const result = await engine.loadWorkspaceDataset(String(a.path), {
+            metadataOnly: a.metadataOnly === true,
+            waveNumber: typeof a.waveNumber === 'number' ? a.waveNumber : undefined,
+            makeActive: a.makeActive === true,
+          });
+          return successResponse(result);
+        }
+
+        case 'velocity_workspace_list': {
+          const result = engine.listWorkspaceDatasets();
+          return successResponse(result);
+        }
+
+        case 'velocity_workspace_set_active': {
+          const result = engine.setActiveWorkspaceDataset(String(a.datasetId));
+          return successResponse(result);
+        }
+
+        case 'velocity_workspace_load_full': {
+          const result = await engine.loadWorkspaceDatasetFull(String(a.datasetId));
+          return successResponse(result);
+        }
+
+        case 'velocity_workspace_propose_mappings': {
+          const result = await engine.proposeWorkspaceMappings(
+            String(a.sourceDatasetId),
+            String(a.targetDatasetId)
+          );
+          return successResponse(result);
+        }
+
+        case 'velocity_workspace_harmonize': {
+          const result = await engine.harmonizeWorkspaceDatasets({
+            sourceDatasetId: String(a.sourceDatasetId),
+            targetDatasetId: String(a.targetDatasetId),
+            mappings: (Array.isArray(a.mappings) ? a.mappings : []) as VariableMapping[],
+            outputTableName: String(a.outputTableName),
+            onlyConfirmed: a.onlyConfirmed !== false,
+          });
           return successResponse(result);
         }
 

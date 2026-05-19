@@ -35,6 +35,10 @@ import { autoAnnotate } from '../core/semantic/annotator';
 import { ConceptStore } from '../core/semantic/concepts';
 import { buildConceptsFromAnnotations } from '../core/semantic/conceptDiscovery';
 import { buildSearchIndex, listVariablesByCategory, searchVariables } from '../core/semantic/search';
+import {
+  collectCrosstabWarnings,
+  collectTopicGuidanceWarnings,
+} from '../core/semantic/analysisGuardrails';
 import { suggestAnalyses, suggestBreaks, suggestHarmonizations } from '../core/semantic/suggestions';
 import { recommendChart } from '../services/chartRecommender';
 import { DeckBuilder } from './DeckBuilder';
@@ -49,6 +53,7 @@ import type {
   EngineRecodeConfig,
   ResultEnvelope,
   VariableDetail,
+  WorkspaceDatasetSummary,
 } from './types';
 import { VelocityError } from './types';
 
@@ -70,6 +75,21 @@ type LoadableNodeAdapter = DatabaseAdapter & {
     tableName?: string
   ) => Promise<{ variables: Variable[]; variableSets: VariableSet[]; rowCount: number }>;
 };
+
+const METADATA_FIRST_THRESHOLD_BYTES = 50 * 1024 * 1024;
+
+interface WorkspaceDatasetEntry {
+  id: string;
+  name: string;
+  tableName: string;
+  rowCount: number;
+  variables: Variable[];
+  variableSets: VariableSet[];
+  source: Dataset['source'];
+  metadataOnly: boolean;
+  filePath: string;
+  waveNumber?: number;
+}
 
 function getBasename(filePath: string): string {
   const parts = filePath.split(/[\\/]/).filter(Boolean);
@@ -205,6 +225,9 @@ export class VelocityEngine {
   private slides: ExportSessionInput['slides'] = [];
   private sections: ExportSessionInput['sections'] = [];
   private harmonizationSession: ExportSessionInput['harmonizationSession'] = null;
+  private workspaceDatasets = new Map<string, WorkspaceDatasetEntry>();
+  private activeWorkspaceDatasetId: string | null = null;
+  private pendingFullLoadPath: string | null = null;
 
   // Phase 4: Semantic Layer
   private semanticAnnotations: Map<string, SemanticAnnotation> = new Map();
@@ -258,20 +281,84 @@ export class VelocityEngine {
           this.variableSets = buildDefaultVariableSets(variables);
         }
 
-        this.resetSessionState();
+        this.pendingFullLoadPath = null;
+        this.dataset.metadataOnly = false;
 
-        return {
-          datasetName: this.dataset.name,
-          rowCount: this.dataset.rowCount,
-          variableCount: this.dataset.variables.length,
-          variableSetCount: this.variableSets.length,
-          source: this.dataset.source,
-        };
+        return this.buildDatasetSummary(this.dataset);
       } catch (error) {
         if (error instanceof VelocityError) throw error;
         throw new VelocityError('FILE_LOAD_FAILED', `Failed to load file: ${resolvedPath}`, error);
       }
     });
+  }
+
+  async loadFileMetadata(path: string): Promise<ResultEnvelope<DatasetSummary>> {
+    const resolvedPath = this.resolveSafePath(path);
+    const fileSizeBytes = await this.getFileSizeBytes(resolvedPath);
+    const warnings: string[] = [];
+    if (fileSizeBytes >= METADATA_FIRST_THRESHOLD_BYTES) {
+      warnings.push(
+        `File is ${(fileSizeBytes / (1024 * 1024)).toFixed(1)} MB. Metadata loaded; call velocity_load_full when ready to analyze rows.`
+      );
+    }
+
+    return this.wrap(
+      'loadFileMetadata',
+      { path, runtime: this.runtime },
+      async () => {
+        const source = inferDatasetSource(resolvedPath);
+        if (source !== 'sav') {
+          throw new VelocityError(
+            'UNSUPPORTED_FORMAT',
+            'Metadata-only load is supported for SAV files. Use velocity_load for CSV.'
+          );
+        }
+
+        const fileName = getBasename(resolvedPath);
+        const { loadSavMetadata } = await import('../core/ingestion/savIngestion');
+        const result = await loadSavMetadata(resolvedPath);
+
+        this.dataset = {
+          id: `dataset-${Date.now()}`,
+          name: fileName,
+          rowCount: result.rowCount,
+          variables: result.variables.map((variable) => ({ ...variable })),
+          source,
+          metadataOnly: true,
+          loadDiagnostics: {
+            isPartial: true,
+            reason: 'metadata_only',
+            message: 'Loaded metadata only. Call velocity_load_full before running analyses.',
+            createdAt: Date.now(),
+          },
+        };
+        this.variableSets = result.variableSets.map((variableSet) => ({ ...variableSet }));
+        this.pendingFullLoadPath = resolvedPath;
+        this.resetSessionState();
+
+        return this.buildDatasetSummary(this.dataset, { fileSizeBytes });
+      },
+      warnings
+    );
+  }
+
+  async loadFileFull(path: string): Promise<ResultEnvelope<DatasetSummary>> {
+    const resolvedPath = this.resolveSafePath(path);
+    const pendingPath = this.pendingFullLoadPath;
+    const metadataOnly = this.dataset?.metadataOnly === true;
+
+    if (!metadataOnly && !pendingPath) {
+      return this.loadFile(path);
+    }
+
+    if (pendingPath && pendingPath !== resolvedPath) {
+      throw new VelocityError(
+        'FILE_LOAD_FAILED',
+        `Expected full load for ${pendingPath}, received ${resolvedPath}.`
+      );
+    }
+
+    return this.loadFile(resolvedPath);
   }
 
   async loadBuffer(
@@ -321,29 +408,44 @@ export class VelocityEngine {
   }
 
   async describeVariable(id: string): Promise<ResultEnvelope<VariableDetail>> {
-    return this.wrap('describeVariable', { id }, async () => {
-      const dataset = this.requireDataset();
-      const variable = dataset.variables.find((entry) => entry.id === id);
-      if (!variable) {
-        throw new VelocityError('INVALID_VARIABLE', `Unknown variable: ${id}`, {
-          available: dataset.variables.map((entry) => entry.id),
-        });
-      }
+    this.requireDataset();
+    const variable = this.requireVariable(id);
+    const warnings = collectTopicGuidanceWarnings(
+      variable,
+      this.semanticAnnotations.get(id)
+    );
 
-      const stats = await getVariableStats(
-        this.adapter,
-        variable.id,
-        variable.type,
-        variable.orderedScoring,
-        10,
-        variable.missingValues
-      );
+    if (this.dataset?.metadataOnly) {
+      warnings.push('Variable statistics require full row data. Call velocity_load_full first.');
+    }
 
-      return {
-        variable: { ...variable },
-        stats,
-      };
-    });
+    return this.wrap(
+      'describeVariable',
+      { id },
+      async () => {
+        if (this.dataset?.metadataOnly) {
+          return {
+            variable: { ...variable },
+            stats: null,
+          };
+        }
+
+        const stats = await getVariableStats(
+          this.adapter,
+          variable.id,
+          variable.type,
+          variable.orderedScoring,
+          10,
+          variable.missingValues
+        );
+
+        return {
+          variable: { ...variable },
+          stats,
+        };
+      },
+      warnings
+    );
   }
 
   listAnalyses(): ResultEnvelope<AnalysisDescriptor[]> {
@@ -377,12 +479,34 @@ export class VelocityEngine {
   }
 
   async runAnalysis(id: string, config: unknown): Promise<ResultEnvelope<unknown>> {
-    return this.wrap(`runAnalysis:${id}`, { id, config: this.toRecord(config) }, async () => {
-      this.requireDataset();
+    const configRecord = this.toRecord(config);
+    let crosstabWarnings: string[] = [];
+
+    if (id === 'crosstab') {
+      const rowVarIds = Array.isArray(configRecord.rowVars) ? (configRecord.rowVars as string[]) : [];
+      const colVarId = (configRecord.colVar as string | null | undefined) ?? null;
+      const weightVarId =
+        (configRecord.weightVar as string | null | undefined) ??
+        this.dataset?.weightVariable ??
+        null;
+
+      crosstabWarnings = collectCrosstabWarnings({
+        rowVars: rowVarIds.map((varId) => this.requireVariable(varId)),
+        colVar: colVarId ? this.requireVariable(colVarId) : null,
+        weightVar: weightVarId ? this.requireVariable(weightVarId) : null,
+        getAnnotation: (varId) => this.semanticAnnotations.get(varId),
+      });
+    }
+
+    return this.wrap(
+      `runAnalysis:${id}`,
+      { id, config: configRecord },
+      async () => {
+      this.requireDatasetWithRows();
 
       try {
         if (id === 'crosstab') {
-          const crosstabConfig = this.toRecord(config);
+          const crosstabConfig = configRecord;
           const analysisSettings = crosstabConfig.analysisSettings as Partial<EngineAnalysisSettings> | undefined;
           const rowVarIds = Array.isArray(crosstabConfig.rowVars) ? (crosstabConfig.rowVars as string[]) : [];
           const colVarId = (crosstabConfig.colVar as string | null | undefined) ?? null;
@@ -459,19 +583,21 @@ export class VelocityEngine {
         if (error instanceof VelocityError) throw error;
         throw new VelocityError('ANALYSIS_FAILED', `Analysis failed: ${id}`, error);
       }
-    });
+    },
+      crosstabWarnings
+    );
   }
 
   async query(sql: string): Promise<ResultEnvelope<QueryResult>> {
     return this.wrap('query', { sql }, async () => {
-      this.requireDataset();
+      this.requireDatasetWithRows();
       return this.adapter.query(sql);
     });
   }
 
   async recode(sourceVar: string, config: EngineRecodeConfig): Promise<ResultEnvelope<Variable>> {
     return this.wrap('recode', { sourceVar, config: this.toRecord(config) }, async () => {
-      const dataset = this.requireDataset();
+      const dataset = this.requireDatasetWithRows();
       const sourceVariable = this.requireVariable(sourceVar);
       const safeTargetName = (config.targetVariableName ?? `${sourceVar}_recode`)
         .replace(/[^a-zA-Z0-9_]/g, '_')
@@ -550,7 +676,7 @@ export class VelocityEngine {
   // ============================================================================
 
   async buildDeck(spec: DeckSpec): Promise<ResultEnvelope<BuiltDeck>> {
-    this.requireDataset();
+    this.requireDatasetWithRows();
     const builder = new DeckBuilder(this);
     const envelope = await builder.build(spec);
     // Enrich with engine-level metadata (accurate filter count, weight state, version)
@@ -667,6 +793,208 @@ export class VelocityEngine {
     return this.wrap('buildHarmonizedTable', { sourceTable, targetTable, mappingCount: mappings.length }, async () => {
       const sql = buildHarmonizedTableQuery(sourceTable, targetTable, mappings, sourceVarNames, targetVarNames);
       return { sql };
+    });
+  }
+
+  async applyHarmonizedTable(
+    sourceTable: string,
+    targetTable: string,
+    mappings: VariableMapping[],
+    outputTableName: string,
+    sourceVarNames: Record<string, string>,
+    targetVarNames: Record<string, string>
+  ): Promise<ResultEnvelope<{ tableName: string; rowCount: number; sql: string }>> {
+    return this.wrap(
+      'applyHarmonizedTable',
+      { sourceTable, targetTable, outputTableName, mappingCount: mappings.length },
+      async () => {
+        const sql = buildHarmonizedTableQuery(
+          sourceTable,
+          targetTable,
+          mappings,
+          sourceVarNames,
+          targetVarNames
+        );
+        const safeOutput = outputTableName.replace(/"/g, '""');
+        await this.adapter.execute(`CREATE OR REPLACE TABLE "${safeOutput}" AS (${sql})`);
+        const count = await this.adapter.query(`SELECT COUNT(*) AS cnt FROM "${safeOutput}"`);
+        const rowCount = Number(count.rows[0]?.cnt ?? 0);
+        return { tableName: outputTableName, rowCount, sql };
+      }
+    );
+  }
+
+  async loadWorkspaceDataset(
+    path: string,
+    options?: { metadataOnly?: boolean; waveNumber?: number; makeActive?: boolean }
+  ): Promise<ResultEnvelope<WorkspaceDatasetSummary>> {
+    return this.wrap('loadWorkspaceDataset', { path, ...options }, async () => {
+      const resolvedPath = this.resolveSafePath(path);
+      const source = inferDatasetSource(resolvedPath);
+      const fileName = getBasename(resolvedPath);
+      const datasetId = `ws-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+      const tableName = this.workspaceTableName(datasetId);
+      const metadataOnly = options?.metadataOnly === true && source === 'sav';
+      const nodeAdapter = this.adapter as LoadableNodeAdapter;
+
+      let variables: Variable[];
+      let variableSets: VariableSet[];
+      let rowCount: number;
+
+      if (metadataOnly) {
+        const { loadSavMetadata } = await import('../core/ingestion/savIngestion');
+        const parsed = await loadSavMetadata(resolvedPath);
+        variables = parsed.variables.map((variable) => ({ ...variable }));
+        variableSets = parsed.variableSets.map((variableSet) => ({ ...variableSet }));
+        rowCount = parsed.rowCount;
+      } else if (source === 'sav') {
+        if (!nodeAdapter.loadSav) {
+          throw new VelocityError('FILE_LOAD_FAILED', 'Current adapter does not support SAV file loading.');
+        }
+        const loaded = await nodeAdapter.loadSav(resolvedPath, tableName);
+        variables = loaded.variables.map((variable) => ({ ...variable }));
+        variableSets = loaded.variableSets.map((variableSet) => ({ ...variableSet }));
+        rowCount = loaded.rowCount;
+      } else {
+        if (!nodeAdapter.loadCSV) {
+          throw new VelocityError('FILE_LOAD_FAILED', 'Current adapter does not support CSV file loading.');
+        }
+        rowCount = await nodeAdapter.loadCSV(resolvedPath, tableName);
+        const schema = await this.adapter.query(`PRAGMA table_info('${tableName.replace(/'/g, "''")}')`);
+        variables = buildCsvVariables(schema.rows);
+        variableSets = buildDefaultVariableSets(variables);
+      }
+
+      const entry: WorkspaceDatasetEntry = {
+        id: datasetId,
+        name: fileName,
+        tableName,
+        rowCount,
+        variables,
+        variableSets,
+        source,
+        metadataOnly,
+        filePath: resolvedPath,
+        waveNumber: options?.waveNumber,
+      };
+      this.workspaceDatasets.set(datasetId, entry);
+
+      if (options?.makeActive === true) {
+        this.activateWorkspaceEntry(entry);
+      }
+
+      return this.toWorkspaceSummary(entry);
+    });
+  }
+
+  listWorkspaceDatasets(): ResultEnvelope<WorkspaceDatasetSummary[]> {
+    return this.wrapSync('listWorkspaceDatasets', {}, () =>
+      Array.from(this.workspaceDatasets.values()).map((entry) => this.toWorkspaceSummary(entry))
+    );
+  }
+
+  setActiveWorkspaceDataset(datasetId: string): ResultEnvelope<WorkspaceDatasetSummary> {
+    return this.wrapSync('setActiveWorkspaceDataset', { datasetId }, () => {
+      const entry = this.workspaceDatasets.get(datasetId);
+      if (!entry) {
+        throw new VelocityError('WORKSPACE_DATASET_NOT_FOUND', `Unknown workspace dataset: ${datasetId}`, {
+          available: Array.from(this.workspaceDatasets.keys()),
+        });
+      }
+      this.activateWorkspaceEntry(entry);
+      return this.toWorkspaceSummary(entry);
+    });
+  }
+
+  async loadWorkspaceDatasetFull(datasetId: string): Promise<ResultEnvelope<WorkspaceDatasetSummary>> {
+    return this.wrap('loadWorkspaceDatasetFull', { datasetId }, async () => {
+      const entry = this.requireWorkspaceEntry(datasetId);
+      if (!entry.metadataOnly) {
+        return this.toWorkspaceSummary(entry);
+      }
+      if (entry.source !== 'sav') {
+        throw new VelocityError('UNSUPPORTED_FORMAT', 'Full workspace reload is only supported for SAV datasets.');
+      }
+
+      const nodeAdapter = this.adapter as LoadableNodeAdapter;
+      if (!nodeAdapter.loadSav) {
+        throw new VelocityError('FILE_LOAD_FAILED', 'Current adapter does not support SAV file loading.');
+      }
+
+      const loaded = await nodeAdapter.loadSav(entry.filePath, entry.tableName);
+      entry.variables = loaded.variables.map((variable) => ({ ...variable }));
+      entry.variableSets = loaded.variableSets.map((variableSet) => ({ ...variableSet }));
+      entry.rowCount = loaded.rowCount;
+      entry.metadataOnly = false;
+      this.workspaceDatasets.set(entry.id, entry);
+
+      if (this.activeWorkspaceDatasetId === entry.id) {
+        this.activateWorkspaceEntry(entry);
+      }
+
+      return this.toWorkspaceSummary(entry);
+    });
+  }
+
+  proposeWorkspaceMappings(
+    sourceDatasetId: string,
+    targetDatasetId: string
+  ): Promise<ResultEnvelope<VariableMapping[]>> {
+    return this.wrap(
+      'proposeWorkspaceMappings',
+      { sourceDatasetId, targetDatasetId },
+      async () => {
+        const source = this.requireWorkspaceEntry(sourceDatasetId);
+        const target = this.requireWorkspaceEntry(targetDatasetId);
+        return autoMatchVariables(source.variables, target.variables);
+      }
+    );
+  }
+
+  async harmonizeWorkspaceDatasets(params: {
+    sourceDatasetId: string;
+    targetDatasetId: string;
+    mappings: VariableMapping[];
+    outputTableName: string;
+    onlyConfirmed?: boolean;
+  }): Promise<ResultEnvelope<{ tableName: string; rowCount: number; sql: string }>> {
+    return this.wrap('harmonizeWorkspaceDatasets', params, async () => {
+      const source = this.requireWorkspaceEntry(params.sourceDatasetId);
+      const target = this.requireWorkspaceEntry(params.targetDatasetId);
+
+      if (source.metadataOnly || target.metadataOnly) {
+        throw new VelocityError(
+          'METADATA_ONLY',
+          'Both workspace datasets must have full row data. Call loadWorkspaceDatasetFull first.'
+        );
+      }
+
+      const onlyConfirmed = params.onlyConfirmed !== false;
+      const eligible = params.mappings.filter((mapping) => {
+        if (mapping.targetVariableId === null || mapping.status === 'excluded') return false;
+        if (onlyConfirmed) return mapping.confirmed;
+        return true;
+      });
+
+      if (eligible.length === 0) {
+        throw new VelocityError('ANALYSIS_FAILED', 'No eligible mappings to harmonize.');
+      }
+
+      const sourceVarNames = Object.fromEntries(source.variables.map((v) => [v.id, v.name]));
+      const targetVarNames = Object.fromEntries(target.variables.map((v) => [v.id, v.name]));
+      const sql = buildHarmonizedTableQuery(
+        source.tableName,
+        target.tableName,
+        eligible,
+        sourceVarNames,
+        targetVarNames
+      );
+      const safeOutput = params.outputTableName.replace(/"/g, '""');
+      await this.adapter.execute(`CREATE OR REPLACE TABLE "${safeOutput}" AS (${sql})`);
+      const count = await this.adapter.query(`SELECT COUNT(*) AS cnt FROM "${safeOutput}"`);
+      const rowCount = Number(count.rows[0]?.cnt ?? 0);
+
+      return { tableName: params.outputTableName, rowCount, sql };
     });
   }
 
@@ -870,19 +1198,29 @@ export class VelocityEngine {
     variableId: string,
     options?: { limit?: number }
   ): ResultEnvelope<BreakSuggestion[]> {
-    return this.wrapSync('suggestBreaks', { variableId, ...options }, () => {
-      const dataset = this.requireDataset();
-      const topicVar = this.requireVariable(variableId);
-      const topicAnnotated = {
-        variable: topicVar,
-        annotation: this.semanticAnnotations.get(variableId),
-      };
-      const allAnnotated = dataset.variables.map((v) => ({
-        variable: v,
-        annotation: this.semanticAnnotations.get(v.id),
-      }));
-      return suggestBreaks(topicAnnotated, allAnnotated, options);
-    });
+    const topicVar = this.requireVariable(variableId);
+    const warnings = collectTopicGuidanceWarnings(
+      topicVar,
+      this.semanticAnnotations.get(variableId)
+    );
+
+    return this.wrapSync(
+      'suggestBreaks',
+      { variableId, ...options },
+      () => {
+        const dataset = this.requireDataset();
+        const topicAnnotated = {
+          variable: topicVar,
+          annotation: this.semanticAnnotations.get(variableId),
+        };
+        const allAnnotated = dataset.variables.map((v) => ({
+          variable: v,
+          annotation: this.semanticAnnotations.get(v.id),
+        }));
+        return suggestBreaks(topicAnnotated, allAnnotated, options);
+      },
+      warnings
+    );
   }
 
   /**
@@ -934,6 +1272,15 @@ export class VelocityEngine {
       return inputPath;
     }
 
+    const normalizedInput = inputPath.replace(/\\/g, '/');
+    const normalizedDataDir = this.dataDir.replace(/\\/g, '/');
+    if (
+      normalizedInput === normalizedDataDir ||
+      normalizedInput.startsWith(`${normalizedDataDir}/`)
+    ) {
+      return normalizedInput;
+    }
+
     // Inline resolution to avoid a Node-only `path.resolve` at the top level
     // (this file must stay platform-portable — no unconditional Node imports).
     const segments = inputPath.split(/[\\/]/);
@@ -982,6 +1329,82 @@ export class VelocityEngine {
     return this.dataset;
   }
 
+  private requireDatasetWithRows(): Dataset {
+    const dataset = this.requireDataset();
+    if (dataset.metadataOnly) {
+      throw new VelocityError(
+        'METADATA_ONLY',
+        'Full row data is not loaded. Call velocity_load_full (or velocity_workspace_load_full) before running analyses.'
+      );
+    }
+    return dataset;
+  }
+
+  private requireWorkspaceEntry(datasetId: string): WorkspaceDatasetEntry {
+    const entry = this.workspaceDatasets.get(datasetId);
+    if (!entry) {
+      throw new VelocityError('WORKSPACE_DATASET_NOT_FOUND', `Unknown workspace dataset: ${datasetId}`, {
+        available: Array.from(this.workspaceDatasets.keys()),
+      });
+    }
+    return entry;
+  }
+
+  private workspaceTableName(datasetId: string): string {
+    return `ws_${datasetId.replace(/[^a-zA-Z0-9_]/g, '_')}`;
+  }
+
+  private activateWorkspaceEntry(entry: WorkspaceDatasetEntry): void {
+    this.activeWorkspaceDatasetId = entry.id;
+    this.dataset = {
+      id: entry.id,
+      name: entry.name,
+      rowCount: entry.rowCount,
+      variables: entry.variables.map((variable) => ({ ...variable })),
+      source: entry.source,
+      metadataOnly: entry.metadataOnly,
+    };
+    this.variableSets = entry.variableSets.map((variableSet) => ({ ...variableSet }));
+    this.pendingFullLoadPath = entry.metadataOnly ? entry.filePath : null;
+    this.resetSessionState();
+  }
+
+  private toWorkspaceSummary(entry: WorkspaceDatasetEntry): WorkspaceDatasetSummary {
+    return {
+      id: entry.id,
+      name: entry.name,
+      tableName: entry.tableName,
+      rowCount: entry.rowCount,
+      variableCount: entry.variables.length,
+      source: entry.source,
+      metadataOnly: entry.metadataOnly,
+      waveNumber: entry.waveNumber,
+      isActive: this.activeWorkspaceDatasetId === entry.id,
+    };
+  }
+
+  private buildDatasetSummary(
+    dataset: Dataset,
+    extras?: { fileSizeBytes?: number }
+  ): DatasetSummary {
+    return {
+      datasetName: dataset.name,
+      rowCount: dataset.rowCount,
+      variableCount: dataset.variables.length,
+      variableSetCount: this.variableSets.length,
+      source: dataset.source,
+      metadataOnly: dataset.metadataOnly,
+      datasetId: dataset.id,
+      fileSizeBytes: extras?.fileSizeBytes,
+    };
+  }
+
+  private async getFileSizeBytes(filePath: string): Promise<number> {
+    const { stat } = await import('node:fs/promises');
+    const info = await stat(filePath);
+    return info.size;
+  }
+
   private requireVariable(id: string): Variable {
     const dataset = this.requireDataset();
     const variable = dataset.variables.find((entry) => entry.id === id);
@@ -996,7 +1419,8 @@ export class VelocityEngine {
   private async wrap<T>(
     operation: string,
     inputs: Record<string, unknown>,
-    fn: () => Promise<T>
+    fn: () => Promise<T>,
+    warnings: string[] = []
   ): Promise<ResultEnvelope<T>> {
     const start = performance.now();
     const data = await fn();
@@ -1007,7 +1431,7 @@ export class VelocityEngine {
       operation,
       inputs,
       durationMs: performance.now() - start,
-      warnings: [],
+      warnings,
       metadata: {
         datasetName: dataset?.name ?? 'unloaded',
         rowCount: dataset?.rowCount ?? 0,
@@ -1021,7 +1445,8 @@ export class VelocityEngine {
   private wrapSync<T>(
     operation: string,
     inputs: Record<string, unknown>,
-    fn: () => T
+    fn: () => T,
+    warnings: string[] = []
   ): ResultEnvelope<T> {
     const start = performance.now();
     const data = fn();
@@ -1032,7 +1457,7 @@ export class VelocityEngine {
       operation,
       inputs,
       durationMs: performance.now() - start,
-      warnings: [],
+      warnings,
       metadata: {
         datasetName: dataset?.name ?? 'unloaded',
         rowCount: dataset?.rowCount ?? 0,

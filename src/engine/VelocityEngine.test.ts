@@ -77,6 +77,37 @@ class MockAdapter implements DatabaseAdapter {
   }
 
   async loadSav(filePath: string): Promise<{ variables: Variable[]; variableSets: VariableSet[]; rowCount: number }> {
+    if (filePath.includes('sleep')) {
+      return {
+        rowCount: 500,
+        variables: [
+          {
+            id: 'weight',
+            name: 'weight',
+            label: 'weight',
+            type: 'numeric',
+            valueLabels: [],
+            missingValues: { discrete: [] },
+          },
+          {
+            id: 'gender',
+            name: 'gender',
+            label: 'Gender',
+            type: 'nominal',
+            valueLabels: [
+              { value: 1, label: 'Male' },
+              { value: 2, label: 'Female' },
+            ],
+            missingValues: {},
+          },
+        ],
+        variableSets: [
+          { id: 'weight', name: 'weight', variableIds: ['weight'], structure: 'single', type: 'numeric' },
+          { id: 'gender', name: 'Gender', variableIds: ['gender'], structure: 'single', type: 'nominal' },
+        ],
+      };
+    }
+
     return {
       rowCount: 1200,
       variables: [
@@ -297,6 +328,65 @@ describe('VelocityEngine', () => {
     expect(envelope.data).toEqual({ innerResult: true });
     expect((envelope.data as Record<string, unknown>).operation).toBeUndefined();
   });
+
+  it('surfaces body-weight and cardinality guardrails on suggestBreaks', async () => {
+    const adapter = new MockAdapter();
+    const engine = await VelocityEngine.create({ runtime: 'node', adapter });
+    await engine.loadFile('/data/sleep.sav');
+    await engine.annotateDataset();
+
+    const breaks = engine.suggestBreaks('weight');
+    expect(breaks.warnings.some((warning) => warning.includes('body weight'))).toBe(true);
+  });
+
+  it('supports metadata-first load then full load for analysis', async () => {
+    const { DuckDBNodeAdapter } = await import('../adapters/DuckDBNodeAdapter');
+    const adapter = await DuckDBNodeAdapter.create();
+    const engine = await VelocityEngine.create({
+      runtime: 'node',
+      adapter,
+      dataDir: process.cwd(),
+    });
+
+    const savPath = 'test_data/sleep.sav';
+    const metadata = await engine.loadFileMetadata(savPath);
+    expect(metadata.data.metadataOnly).toBe(true);
+    expect(metadata.data.variableCount).toBeGreaterThan(0);
+
+    const described = engine.describe();
+    const firstVarId = described.data.dataset?.variables[0]?.id;
+    expect(firstVarId).toBeTruthy();
+
+    await expect(
+      engine.runAnalysis('crosstab', { rowVars: [firstVarId!] })
+    ).rejects.toMatchObject({ code: 'METADATA_ONLY' });
+
+    const full = await engine.loadFileFull(savPath);
+    expect(full.data.metadataOnly).toBe(false);
+
+    const crosstab = await engine.runAnalysis('crosstab', { rowVars: [firstVarId!] });
+    expect(crosstab.operation).toContain('crosstab');
+  }, 120_000);
+
+  it('registers workspace datasets and proposes cross-wave mappings', async () => {
+    const { DuckDBNodeAdapter } = await import('../adapters/DuckDBNodeAdapter');
+    const adapter = await DuckDBNodeAdapter.create();
+    const engine = await VelocityEngine.create({
+      runtime: 'node',
+      adapter,
+      dataDir: process.cwd(),
+    });
+
+    const wave4 = await engine.loadWorkspaceDataset('test_data/sleep.sav', { waveNumber: 4 });
+    const wave5 = await engine.loadWorkspaceDataset('test_data/sleep.sav', { waveNumber: 5 });
+    expect(wave4.data.id).not.toBe(wave5.data.id);
+
+    const listed = engine.listWorkspaceDatasets();
+    expect(listed.data).toHaveLength(2);
+
+    const mappings = await engine.proposeWorkspaceMappings(wave4.data.id, wave5.data.id);
+    expect(mappings.data.length).toBeGreaterThan(0);
+  }, 120_000);
 
   it('wraps session getters and exportSession in provenance envelopes', async () => {
     const adapter = new MockAdapter();

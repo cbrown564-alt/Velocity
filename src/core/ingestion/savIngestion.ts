@@ -410,6 +410,24 @@ async function tryLoadSavViaDuckDbReadStat(
 }
 
 /**
+ * Parse SAV metadata only (no DuckDB table materialization).
+ * Used by the metadata-first large-file flow in MCP and browser guardrails.
+ */
+export async function loadSavMetadata(filePath: string): Promise<SavLoadResult> {
+    const buffer = await fs.promises.readFile(filePath);
+    const metadata = await parseSavMetadataWithReadStat(buffer);
+    const processed = processMetadata({
+        metadata,
+        rows: [],
+    });
+
+    return {
+        ...processed,
+        rowCount: metadata.rowCount,
+    };
+}
+
+/**
  * Load a SAV file using a hybrid approach.
  */
 export async function loadSav(

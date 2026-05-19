@@ -34,6 +34,21 @@ function makeServer() {
 function makeEngine(overrides: Record<string, unknown> = {}) {
   const base = {
     loadFile: vi.fn().mockResolvedValue({ data: { rowCount: 100 }, metadata: {}, operation: 'loadFile', inputs: {}, durationMs: 1, warnings: [] }),
+    loadFileMetadata: vi.fn().mockResolvedValue({ data: { rowCount: 100, metadataOnly: true }, metadata: {}, operation: 'loadFileMetadata', inputs: {}, durationMs: 1, warnings: [] }),
+    loadFileFull: vi.fn().mockResolvedValue({ data: { rowCount: 100, metadataOnly: false }, metadata: {}, operation: 'loadFileFull', inputs: {}, durationMs: 1, warnings: [] }),
+    loadWorkspaceDataset: vi.fn().mockResolvedValue({ data: { id: 'ws-1', tableName: 'ws_ws_1' }, metadata: {}, operation: 'loadWorkspaceDataset', inputs: {}, durationMs: 1, warnings: [] }),
+    listWorkspaceDatasets: vi.fn().mockReturnValue({ data: [], operation: 'listWorkspaceDatasets', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
+    setActiveWorkspaceDataset: vi.fn().mockReturnValue({ data: { id: 'ws-1', isActive: true }, operation: 'setActiveWorkspaceDataset', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
+    loadWorkspaceDatasetFull: vi.fn().mockResolvedValue({ data: { id: 'ws-1', metadataOnly: false }, metadata: {}, operation: 'loadWorkspaceDatasetFull', inputs: {}, durationMs: 1, warnings: [] }),
+    proposeWorkspaceMappings: vi.fn().mockResolvedValue({ data: [], operation: 'proposeWorkspaceMappings', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
+    harmonizeWorkspaceDatasets: vi.fn().mockResolvedValue({
+      data: { tableName: 'harm_out', rowCount: 10, sql: 'SELECT 1' },
+      operation: 'harmonizeWorkspaceDatasets',
+      inputs: {},
+      durationMs: 1,
+      warnings: [],
+      metadata: {},
+    }),
     describe: vi.fn().mockReturnValue({
       data: {
         dataset: {
@@ -118,6 +133,58 @@ describe('velocity_load', () => {
   });
 });
 
+describe('velocity_load_metadata', () => {
+  it('calls engine.loadFileMetadata with the provided path', async () => {
+    const engine = makeEngine();
+    await callTool(engine, 'velocity_load_metadata', { path: '/data/large.sav' });
+    expect(engine.loadFileMetadata).toHaveBeenCalledWith('/data/large.sav');
+  });
+});
+
+describe('velocity_load_full', () => {
+  it('calls engine.loadFileFull with the provided path', async () => {
+    const engine = makeEngine();
+    await callTool(engine, 'velocity_load_full', { path: '/data/large.sav' });
+    expect(engine.loadFileFull).toHaveBeenCalledWith('/data/large.sav');
+  });
+});
+
+describe('velocity_workspace_load', () => {
+  it('calls engine.loadWorkspaceDataset with path and options', async () => {
+    const engine = makeEngine();
+    await callTool(engine, 'velocity_workspace_load', {
+      path: '/data/wave4.sav',
+      metadataOnly: true,
+      waveNumber: 4,
+      makeActive: true,
+    });
+    expect(engine.loadWorkspaceDataset).toHaveBeenCalledWith('/data/wave4.sav', {
+      metadataOnly: true,
+      waveNumber: 4,
+      makeActive: true,
+    });
+  });
+});
+
+describe('velocity_workspace_harmonize', () => {
+  it('calls engine.harmonizeWorkspaceDatasets with dataset ids and mappings', async () => {
+    const engine = makeEngine();
+    await callTool(engine, 'velocity_workspace_harmonize', {
+      sourceDatasetId: 'ws-a',
+      targetDatasetId: 'ws-b',
+      mappings: [{ id: 'm1', sourceVariableId: 'Q1', targetVariableId: 'Q1', confirmed: true }],
+      outputTableName: 'harm_eval',
+    });
+    expect(engine.harmonizeWorkspaceDatasets).toHaveBeenCalledWith(
+      expect.objectContaining({
+        sourceDatasetId: 'ws-a',
+        targetDatasetId: 'ws-b',
+        outputTableName: 'harm_eval',
+      })
+    );
+  });
+});
+
 describe('velocity_load — path traversal', () => {
   it('returns isError when engine throws PATH_TRAVERSAL_DENIED', async () => {
     const engine = makeEngine({
@@ -188,6 +255,29 @@ describe('velocity_crosstab', () => {
     expect(parsed.data.rows).toHaveLength(2);
     expect(parsed.data.rows[0].cells['Brand A'].percent).toBe(20);
     expect(parsed.data.tableStats.chiSquare.pValue).toBe(0.02);
+  });
+
+  it('returns guardrail warnings from the engine envelope', async () => {
+    const engine = makeEngine({
+      runAnalysis: vi.fn().mockResolvedValue({
+        data: { rows: [] },
+        operation: 'runAnalysis:crosstab',
+        inputs: {},
+        durationMs: 5,
+        warnings: [
+          'High cardinality (25 categories): "Region" as a row variable may produce sparse or unreadable cross-tabs. Look for a condensed version with fewer categories.',
+        ],
+        metadata: { isWeighted: false },
+      }),
+    });
+
+    const result = await callTool(engine, 'velocity_crosstab', {
+      rowVars: ['REGION'],
+    }) as { content: { text: string }[] };
+
+    const parsed = JSON.parse(result.content[0].text);
+    expect(parsed.warnings).toHaveLength(1);
+    expect(parsed.warnings[0]).toContain('High cardinality');
   });
 
   it('uses weighted counts for matrix output when weightVar is passed per call', async () => {
@@ -431,6 +521,26 @@ describe('velocity_suggest_breaks', () => {
     const result = await callTool(engine, 'velocity_suggest_breaks', { variableId: 'bad_id' }) as { isError?: boolean; content: { text: string }[] };
     expect(result.isError).toBe(true);
     expect(JSON.parse(result.content[0].text).error).toBe('INVALID_VARIABLE');
+  });
+
+  it('returns topic guidance warnings in the envelope', async () => {
+    const engine = makeEngine({
+      suggestBreaks: vi.fn().mockReturnValue({
+        data: [],
+        operation: 'suggestBreaks',
+        inputs: {},
+        durationMs: 1,
+        warnings: [
+          '"weight" has a weight-like name but appears to be a respondent measurement (e.g. body weight), not a sampling weight.',
+        ],
+        metadata: {},
+      }),
+    });
+    const result = await callTool(engine, 'velocity_suggest_breaks', { variableId: 'weight' }) as {
+      content: { text: string }[];
+    };
+    const parsed = JSON.parse(result.content[0].text);
+    expect(parsed.warnings[0]).toContain('body weight');
   });
 });
 

@@ -46,6 +46,21 @@ export interface DatasetSummary {
   variableCount: number;
   variableSetCount: number;
   source: Dataset['source'];
+  metadataOnly?: boolean;
+  datasetId?: string;
+  fileSizeBytes?: number;
+}
+
+export interface WorkspaceDatasetSummary {
+  id: string;
+  name: string;
+  tableName: string;
+  rowCount: number;
+  variableCount: number;
+  source: Dataset['source'];
+  metadataOnly: boolean;
+  waveNumber?: number;
+  isActive: boolean;
 }
 
 export interface DatasetDescription {
@@ -58,7 +73,7 @@ export interface DatasetDescription {
 
 export interface VariableDetail {
   variable: Variable;
-  stats: VariableStatsResult;
+  stats: VariableStatsResult | null;
 }
 
 export interface AnalysisDescriptor {
@@ -81,7 +96,9 @@ export type VelocityErrorCode =
   | 'UNSUPPORTED_RUNTIME'
   | 'UNSUPPORTED_FORMAT'
   | 'DECK_BUILD_FAILED'
-  | 'PATH_TRAVERSAL_DENIED';
+  | 'PATH_TRAVERSAL_DENIED'
+  | 'METADATA_ONLY'
+  | 'WORKSPACE_DATASET_NOT_FOUND';
 
 export class VelocityError extends Error {
   constructor(
