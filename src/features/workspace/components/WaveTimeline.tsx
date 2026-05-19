@@ -10,6 +10,7 @@
 
 import React, { useMemo } from 'react';
 import { motion } from 'framer-motion';
+import { useReducedMotion, DURATIONS } from '../../../lib/motion';
 import {
   Layers,
   Users,
@@ -65,6 +66,8 @@ export const WaveTimeline: React.FC<WaveTimelineProps> = ({
   onWaveClick,
   onCompareWaves,
 }) => {
+  const reducedMotion = useReducedMotion();
+
   // Calculate wave statistics
   const waveStats = useMemo((): WaveStats[] => {
     const waveDatasetsRaw = datasets
@@ -185,12 +188,11 @@ export const WaveTimeline: React.FC<WaveTimelineProps> = ({
       <div className={styles.timelineTrack}>
         {waveStats.map((wave, index) => (
           <React.Fragment key={wave.dataset.id}>
-            {/* Wave node */}
             <motion.div
               className={styles.waveNode}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: reducedMotion ? 0 : 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
+              transition={{ delay: reducedMotion ? 0 : index * 0.1, duration: reducedMotion ? 0.01 : DURATIONS.normal }}
               style={{ '--project-color': project.color } as React.CSSProperties}
             >
               {/* Wave header */}
@@ -231,7 +233,7 @@ export const WaveTimeline: React.FC<WaveTimelineProps> = ({
                       className={styles.retentionFill}
                       initial={{ width: 0 }}
                       animate={{ width: `${wave.retentionRate}%` }}
-                      transition={{ duration: 0.6, delay: index * 0.1 }}
+                      transition={{ duration: reducedMotion ? 0.01 : 0.6, delay: reducedMotion ? 0 : index * 0.1 }}
                     />
                   </div>
                   <span className={styles.retentionLabel}>{wave.retentionRate}%</span>

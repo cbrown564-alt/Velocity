@@ -142,7 +142,7 @@ Grilled against `docs/archive/2026-05/audits/audit_05_deep_code_review_2026-05-1
 | S4-DEF-1 | Defaults | Recommended break variables after topic selection; false-positive weight warnings; high-cardinality guardrails | S4-DISC-1 | Done | Yes | T,L,U,I,A | `src/core/semantic/analysisGuardrails.ts`, `src/core/semantic/weightPatterns.ts`, `src/engine/VelocityEngine.ts`, `mcp-server/tools.ts`, `mcp-server/__tests__/tools.test.ts`, `src/core/semantic/__tests__/analysisGuardrails.test.ts` |
 | S4-MCP-2 | MCP | Deck build transport resilience: stream or chunk `buildDeck` responses to avoid stdio OOM | STAB-EXP-1 | Done | Yes | T,L,U,A | `mcp-server/deckTransport.ts`, `mcp-server/__tests__/deckTransport.test.ts`, `mcp-server/tools.ts`, `mcp-server/__tests__/tools.test.ts`, `docs/guide_agent_quickstart.md` |
 | S4-EVAL-5b | Eval | Harmonization re-run: EVAL-05 follow-on with naming drift, partial label overlap, or scale inversion construct | STAB-EXP-1 | Done | No | A | `evals/eval-05/runs/run-2026-05-19/`, `evals/eval-05/scripts/discover_fuzzy_construct.ts`, `evals/eval-05/scripts/run_fuzzy_harmonization.ts`, `npm run eval:05b:engine` |
-| STAB-ARCH-1 | Architecture | Thin-slice decomposition of `App.tsx` / `dataSlice` orchestration (§8); no behavior change | STAB-EXP-1 | Not started | No | T,U,I,A | - |
+| STAB-ARCH-1 | Architecture | Thin-slice decomposition of `App.tsx` / `dataSlice` orchestration (§8); no behavior change | STAB-EXP-1 | In progress | No | T,U,I,A | §8.1: `useWorkspaceOpen.ts`; §8.2: `workspaceDatasetLifecycle.ts` |
 
 ### 4.7 UI Excellence Workstream (May 2026)
 
@@ -160,7 +160,7 @@ Grilled against `docs/archive/2026-05/audits/audit_05_deep_code_review_2026-05-1
 
 | ID | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| STAB-UI-A | Motion & Accessibility | Unified Motion DSL (`motion.ts` presets); `prefers-reduced-motion` support across all animated surfaces; accessible focus rings; chart ARIA labels; `sr-only` data tables alongside D3 charts | STAB-EXP-1 | In progress | No | T,U,A | `docs/audit_02_ui_gap_analysis_2026-05-19.md` §3.1, §3.7; `src/lib/motion.ts`, `src/components/common/AccessibleMotion.tsx`, `src/index.css` (reduced-motion block), `src/components/layout/AppShell.tsx` (DSL proof-of-concept), `src/components/charts/AnalysisChart.tsx` (ARIA + sr-only table) |
+| STAB-UI-A | Motion & Accessibility | Unified Motion DSL (`motion.ts` presets); `prefers-reduced-motion` support across all animated surfaces; accessible focus rings; chart ARIA labels; `sr-only` data tables alongside D3 charts | STAB-EXP-1 | Done | No | T,U,A | `src/lib/motion.ts` + `.test.ts` (19 tests), `src/components/common/AccessibleMotion.tsx`, `src/index.css` (reduced-motion media query), `src/components/layout/AppShell.tsx`, `src/features/dashboard/components/DataTable.tsx`, `src/components/charts/AnalysisChart.tsx` (ARIA + `ChartScreenReaderTable` + `.test.tsx`), `src/App.tsx`, `src/features/workspace/components/WorkspaceView.tsx`, `src/features/dashboard/DashboardShell.tsx`, `src/features/dashboard/components/TimelineDock.tsx`, `src/features/dashboard/components/PersistenceStatus.tsx`, `src/features/dashboard/components/ContextMenu.tsx`, `src/components/overlays/InputModal.tsx`, `src/components/overlays/ConfirmModal.tsx`, `src/components/overlays/FilterModal.tsx`, `src/components/overlays/ExportModal.tsx`, `src/components/overlays/SessionImportModal.tsx`, `src/components/overlays/SessionExportModal.tsx`, `src/components/overlays/RecodeModal.tsx`, `src/components/overlays/ConvertSystemMissingModal.tsx`, `src/components/overlays/DataDrawer.tsx`, `src/components/common/MethodologyPanel.tsx`, `src/features/variableManager/BulkActionBar.tsx`, `src/components/common/StatisticsStatusBar.tsx`, `src/features/harmonization/HarmonizationWorkspace.tsx`, `src/features/harmonization/components/WaveDetectionBanner.tsx`, `src/features/workspace/components/DatasetSidebar.tsx`, `src/features/workspace/components/CrossWavePanel.tsx`, `src/features/workspace/components/WaveTimeline.tsx`, `src/features/workspace/components/ExportImportModal.tsx`, `src/features/workspace/components/ProjectLinkModal.tsx`, `src/components/common/CollaboratorCursor.tsx` |
 | STAB-UI-B | Canvas Polish | Smart empty states with suggested variables; adaptive shelf collapse (empty shelves minimize); crosstab typographic hierarchy; Focus Mode (`F` shortcut); toast/feedback layer for operations | STAB-UI-A | Not started | No | T,U,I,A | `docs/audit_02_ui_gap_analysis_2026-05-19.md` §3.2, §3.3, §3.6 |
 | STAB-UI-C | Theme & Density | Shadow token fix (remove hardcoded `rgba(0,0,0,…)`); theme preview cards in switcher; variable list visual weight (derived badges, shelf color indicators); command palette MVP (`Cmd+K`); keyboard shortcut reference (`?`) | STAB-UI-B | Not started | No | T,U,A | `docs/audit_02_ui_gap_analysis_2026-05-19.md` §3.4, §3.5 |
 
@@ -276,7 +276,7 @@ CSS Modules remain for complex component states, grids, animations, and unreadab
 
 ## 8. STAB-ARCH-1 — Orchestration thin slices
 
-**Status:** Not started (May 2026). Parent row in §4.3. Follow `docs/playbooks/refactor_safely.md` — zero behavior change per slice.
+**Status:** In progress (May 2026). §8.1–8.2 Done. Follow `docs/playbooks/refactor_safely.md` — zero behavior change per slice.
 
 **Problem:** `src/App.tsx` (~960 lines) and `src/store/slices/dataSlice.ts` (~1,480 lines) concentrate workspace open/switch, OPFS rehydration, engine proxy lifecycle, and upload orchestration. Stabilization added correct behavior but increased coupling risk.
 
@@ -286,8 +286,8 @@ CSS Modules remain for complex component states, grids, animations, and unreadab
 
 | Slice | Extract from | Into | Acceptance |
 | :--- | :--- | :--- | :--- |
-| 8.1 | `App.tsx` workspace-open handler + `openWorkspaceDataset` call chain | `src/features/workspace/hooks/useWorkspaceOpen.ts` (or extend `useWorkspace.ts`) | `useWorkspace.test.ts` + `workspace-switch.spec.ts` green; `App.tsx` loses workspace-open block |
-| 8.2 | `dataSlice` OPFS rehydrate + `openWorkspaceDataset` persistence switch | `src/store/workspaceDatasetLifecycle.ts` (pure helpers + typed calls into slice) | `dataSlice.workspace.test.ts`, `persistence.test.ts` green; slice file shrinks by ≥150 lines |
+| 8.1 | `App.tsx` workspace-open handler + `openWorkspaceDataset` call chain | `src/features/workspace/hooks/useWorkspaceOpen.ts` (or extend `useWorkspace.ts`) | Done — `useWorkspaceOpen.test.ts` + `workspace-switch.spec.ts` gates; `App.tsx` workspace-open block removed |
+| 8.2 | `dataSlice` OPFS rehydrate + `openWorkspaceDataset` persistence switch | `src/store/workspaceDatasetLifecycle.ts` (pure helpers + typed calls into slice) | Done — `dataSlice.workspace.test.ts`, `persistence.test.ts`, `workspaceDatasetLifecycle.test.ts` green; ~90 lines removed from `dataSlice.ts` |
 | 8.3 | `dataSlice` engine init/respawn + corruption handlers | `src/store/enginePersistenceBridge.ts` | Existing `persistence.test.ts` + `opfsFileManager.test.ts` green; no new public store API |
 | 8.4 | Upload → OPFS key assignment in `App.tsx` / `useFileUpload` | Colocate with workspace hooks; single `assignOpfsKeyAndLoad` helper | `useFileUpload` tests if present; E2E upload path unchanged |
 

@@ -7,6 +7,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useReducedMotion, getBackdropProps, getModalPresenceProps } from '../../lib/motion';
 import { X } from 'lucide-react';
 
 interface InputModalProps {
@@ -48,6 +49,8 @@ export const InputModal: React.FC<InputModalProps> = ({
         }
     };
 
+    const reducedMotion = useReducedMotion();
+
     const handleKeyDown = (e: React.KeyboardEvent) => {
         if (e.key === 'Escape') {
             onClose();
@@ -60,19 +63,14 @@ export const InputModal: React.FC<InputModalProps> = ({
                 <>
                     {/* Backdrop */}
                     <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
+                        {...getBackdropProps(reducedMotion)}
                         onClick={onClose}
                         className="fixed inset-0 bg-[var(--text-primary)]/30 backdrop-blur-sm z-50"
                     />
 
                     {/* Modal */}
                     <motion.div
-                        initial={{ opacity: 0, scale: 0.95, y: 10 }}
-                        animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.95, y: 10 }}
-                        transition={{ duration: 0.2 }}
+                        {...getModalPresenceProps(reducedMotion)}
                         className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none"
                     >
                         <div

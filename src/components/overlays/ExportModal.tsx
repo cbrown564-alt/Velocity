@@ -7,6 +7,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useReducedMotion, getBackdropProps, getModalPresenceProps } from '../../lib/motion';
 import { X, FileDown, FileSpreadsheet, Presentation, Download, CheckCircle2 } from 'lucide-react';
 import styles from './ExportModal.module.css';
 import { exportPptx } from '../../core/export/pptxExporter';
@@ -222,25 +223,22 @@ export const ExportModal: React.FC<ExportModalProps> = ({
         }
     };
 
+    const reducedMotion = useReducedMotion();
+
     return (
         <AnimatePresence>
             {isOpen && (
                 <>
                     {/* Backdrop */}
                     <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
+                        {...getBackdropProps(reducedMotion)}
                         onClick={onClose}
                         className={styles.backdrop}
                     />
 
                     {/* Modal */}
                     <motion.div
-                        initial={{ opacity: 0, scale: 0.95, y: 10 }}
-                        animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.95, y: 10 }}
-                        transition={{ duration: 0.2 }}
+                        {...getModalPresenceProps(reducedMotion)}
                         className={styles.backdrop}
                         style={{ pointerEvents: 'none' }}
                     >

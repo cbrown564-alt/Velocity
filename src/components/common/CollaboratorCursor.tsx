@@ -1,10 +1,12 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
+import { useReducedMotion, DURATIONS } from '../../lib/motion';
 import { MousePointer2 } from 'lucide-react';
 import { Collaborator } from '../../types';
 
 export const CollaboratorCursor: React.FC<{ user: Collaborator }> = ({ user }) => {
+  const reducedMotion = useReducedMotion();
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.8 }}
@@ -15,7 +17,7 @@ export const CollaboratorCursor: React.FC<{ user: Collaborator }> = ({ user }) =
         top: `${user.y}%`
       }}
       transition={{
-        duration: 1.5,
+        duration: reducedMotion ? DURATIONS.instant : 1.5,
         ease: "easeInOut" // Smooth floating movement
       }}
       className="absolute pointer-events-none z-50 flex flex-col items-start font-body"

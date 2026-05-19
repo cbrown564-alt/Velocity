@@ -1,5 +1,6 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useReducedMotion, getMotionProps, DURATIONS } from '../../../lib/motion';
 
 export interface ContextMenuAction {
     label: string;
@@ -57,14 +58,13 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, actions, onClose
         setPosition({ top: newTop, left: newLeft });
     }, [x, y, actions]);
 
+    const reducedMotion = useReducedMotion();
+
     return (
         <AnimatePresence>
             <motion.div
                 ref={ref}
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.1, ease: "easeOut" }}
+                {...getMotionProps({ preset: 'fadeScale', duration: reducedMotion ? DURATIONS.instant : DURATIONS.fast, reducedMotion })}
                 className="fixed z-[9999] min-w-[200px] bg-[var(--bg-surface)] rounded-lg shadow-xl border border-[var(--border-subtle)] py-1.5 overflow-hidden backdrop-blur-sm"
                 style={{ top: position.top, left: position.left }}
             >

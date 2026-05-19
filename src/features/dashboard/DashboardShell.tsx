@@ -5,6 +5,7 @@
 
 import React, { useCallback } from 'react';
 import { motion } from 'framer-motion';
+import { useReducedMotion, getMotionProps, DURATIONS } from '../../lib/motion';
 import { Search, Table, RotateCcw, CheckCircle2, BarChart3, Loader2, AlertCircle, Moon, Sun, Home, FileDown, Download, Upload } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { DndContext, DragOverlay, useSensor, useSensors, MouseSensor, TouchSensor, DragEndEvent, DragStartEvent, useDroppable, closestCenter, pointerWithin, rectIntersection } from '@dnd-kit/core';
@@ -346,8 +347,7 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
         onDragEnd={handleDragEnd}
       >
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+          {...getMotionProps({ preset: 'fade', duration: DURATIONS.enter })}
           className="flex h-screen"
         >
           {/* SIDEBAR */}

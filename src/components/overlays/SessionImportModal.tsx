@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useReducedMotion, getBackdropProps, getMotionProps } from '../../lib/motion';
 import { AlertCircle, CheckCircle2, FileUp, Upload, X } from 'lucide-react';
 import { parseSavMetadata } from '@velocity/readstat-wasm';
 import type { DatasetMatchResult, VelocitySessionFile } from '../../core/session';
@@ -166,20 +167,18 @@ export const SessionImportModal: React.FC<SessionImportModalProps> = ({
       ? 'warning'
       : 'danger';
 
+  const reducedMotion = useReducedMotion();
+
   return (
     <AnimatePresence>
       <motion.div
         className="fixed inset-0 z-[140] flex items-center justify-center bg-[var(--text-primary)]/40 px-4"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
+        {...getBackdropProps(reducedMotion)}
         onClick={handleClose}
       >
         <motion.div
           className="w-full max-w-2xl rounded-xl border border-[var(--border-color)] bg-[var(--bg-surface)] shadow-2xl"
-          initial={{ opacity: 0, y: 18, scale: 0.98 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: 18, scale: 0.98 }}
+          {...getMotionProps({ preset: 'fadeScale', duration: reducedMotion ? 0.01 : 0.25, reducedMotion })}
           onClick={(event) => event.stopPropagation()}
         >
           <div className="flex items-center justify-between border-b border-[var(--border-color)] px-5 py-4">

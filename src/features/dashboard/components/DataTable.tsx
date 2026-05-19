@@ -1,6 +1,7 @@
 import React, { useMemo, useState, useRef, useCallback } from 'react';
 import { AggregatedRow, Variable, TableStats } from '../../../types';
 import { motion } from 'framer-motion';
+import { getMotionProps, useReducedMotion, DURATIONS } from '../../../lib/motion';
 import { ChevronRight, ChevronDown, ArrowUp, ArrowDown } from 'lucide-react';
 import type { VariableStatsResult } from '../../../types/worker';
 import { AnalysisChart } from '../../../components/charts/AnalysisChart';
@@ -80,6 +81,8 @@ export const DataTable: React.FC<DataTableProps> = ({
     variableId: string;
     rowLabel: string;
   } | null>(null);
+
+  const reducedMotion = useReducedMotion();
 
   const toggleRow = (key: string) => {
     setExpandedKeys(prev => ({ ...prev, [key]: !prev[key] }));
@@ -398,8 +401,7 @@ export const DataTable: React.FC<DataTableProps> = ({
     return (
       <motion.div
         key="table"
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
+        {...getMotionProps({ preset: 'fadeUp', duration: DURATIONS.enter, reducedMotion })}
         className="w-full overflow-hidden bg-transparent border-none rounded-lg shadow-sm"
       >
         <div ref={tableContainerRef} className="overflow-x-auto overflow-y-auto max-h-[60vh] custom-scrollbar" style={{ position: 'relative' }}>
@@ -566,8 +568,7 @@ export const DataTable: React.FC<DataTableProps> = ({
   return (
     <motion.div
       key="chart"
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
+      {...getMotionProps({ preset: 'fadeUp', duration: DURATIONS.enter, reducedMotion })}
       className="w-full h-[500px] bg-[var(--bg-active)] border border-[var(--border-color)] rounded-lg shadow-sm p-6"
     >
       <AnalysisChart

@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useReducedMotion, getBackdropProps, getMotionProps, getModalPresenceProps, DURATIONS } from './lib/motion';
 import { Table, X, BarChart3, LayoutGrid, Loader2, AlertCircle } from 'lucide-react';
 
 import { useVelocityStore, type Variable, type Filter } from './store';
@@ -34,6 +35,7 @@ import { ContextMenu } from './features/dashboard/components/ContextMenu';
 
 import { usePersistenceManager } from './hooks/usePersistenceManager';
 import { useFileUpload } from './hooks/useFileUpload';
+import { useWorkspaceOpen } from './features/workspace/hooks/useWorkspaceOpen';
 
 // App Modes
 type AppMode = 'splash' | 'uploading' | 'dashboard' | 'restoring' | 'metadata';
@@ -64,8 +66,9 @@ const RestorationPrompt: React.FC<RestorationPromptProps> = ({
   rowCount, columnCount, datasetName, lastModified, warning, onRestore, onDiscard,
 }) => {
   const lastModifiedLabel = lastModified ? new Date(lastModified).toLocaleString() : null;
+  const reducedMotion = useReducedMotion();
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+    <motion.div {...getMotionProps({ preset: 'fade', duration: DURATIONS.enter, reducedMotion })}
       className="fixed inset-0 flex items-center justify-center bg-[var(--bg-app)] z-40">
       <div className="text-center space-y-6 max-w-md w-full px-6">
         <div className="space-y-2">
@@ -115,10 +118,12 @@ interface PartialLoadNoticeProps {
 
 const PartialLoadNotice: React.FC<PartialLoadNoticeProps> = ({
   title, message, details, canRebuild, onRebuild, onDismiss,
-}) => (
-  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+}) => {
+  const reducedMotion = useReducedMotion();
+  return (
+  <motion.div {...getBackdropProps(reducedMotion)}
     className="fixed inset-0 flex items-center justify-center bg-[var(--text-primary)]/30 z-[110] px-4">
-    <motion.div initial={{ opacity: 0, y: 16, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 16, scale: 0.98 }}
+    <motion.div {...getMotionProps({ preset: 'fadeScale', duration: reducedMotion ? DURATIONS.instant : DURATIONS.normal, reducedMotion })}
       className="w-full max-w-lg rounded-xl border border-[var(--status-warning-border)] bg-[var(--bg-panel)] shadow-2xl p-6 space-y-4">
       <div className="space-y-2">
         <h2 className="text-xl font-semibold text-[var(--status-warning-text)]">{title}</h2>
@@ -139,11 +144,13 @@ const PartialLoadNotice: React.FC<PartialLoadNoticeProps> = ({
       </div>
     </motion.div>
   </motion.div>
-);
+  );
+};
 
 export default function App() {
   const [mode, setMode] = React.useState<AppMode>('splash');
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const reducedMotion = useReducedMotion();
 
   // -- Store --
   const {
@@ -176,7 +183,6 @@ export default function App() {
     toggleDatasetStar,
     removeStoredDataset,
     removeStoredDatasets,
-    updateDatasetAccess,
     saveDatasetSession,
     setWorkspaceMode,
     createProject,
@@ -200,7 +206,6 @@ export default function App() {
     loadSAV,
     recodeVariable,
     discardPersistedData,
-    openWorkspaceDataset,
     respawnWorker,
   } = useVelocityStore();
 
@@ -335,6 +340,11 @@ export default function App() {
     setImportedSessionSemantic(null);
   }, []);
 
+  const { openDataset: handleOpenDataset } = useWorkspaceOpen({
+    setMode,
+    clearImportedSessionSemantic,
+  });
+
   const sessionImportMessages = React.useMemo(
     () => (sessionImportDiagnostics ? listSessionImportDiagnostics(sessionImportDiagnostics) : []),
     [sessionImportDiagnostics]
@@ -393,48 +403,6 @@ export default function App() {
     if (!dataset || mode !== 'dashboard') return;
     void materializeDatasetTable(dataset.id);
   }, [dataset?.id, mode, materializeDatasetTable]);
-
-  const handleOpenDataset = useCallback(async (storedDataset: StoredDataset) => {
-    clearImportedSessionSemantic();
-    if (dataset && activeDatasetId && dataset.id !== storedDataset.id) {
-      saveDatasetSession(activeDatasetId, { tableConfig, activeFilters, transformLog });
-      updateStoredDataset(activeDatasetId, { variables: dataset.variables, variableSets, folders });
-    }
-    updateDatasetAccess(storedDataset.id);
-    setActiveDataset(storedDataset.id);
-    setWorkspaceMode(false);
-
-    if (dataset?.id === storedDataset.id) {
-      setMode('dashboard');
-      return;
-    }
-
-    setMode('uploading');
-    try {
-      await openWorkspaceDataset(storedDataset);
-      setMode('dashboard');
-    } catch (error: any) {
-      console.error('[App] Failed to open workspace dataset:', error);
-      alert(error?.message || 'Failed to open dataset from workspace.');
-      setMode('splash');
-      setWorkspaceMode(true);
-    }
-  }, [
-    clearImportedSessionSemantic,
-    dataset,
-    activeDatasetId,
-    tableConfig,
-    activeFilters,
-    transformLog,
-    variableSets,
-    folders,
-    saveDatasetSession,
-    updateDatasetAccess,
-    updateStoredDataset,
-    setActiveDataset,
-    setWorkspaceMode,
-    openWorkspaceDataset,
-  ]);
 
   const clearLoadedDatasetState = useCallback(async () => {
     useVelocityStore.setState({
@@ -683,7 +651,7 @@ export default function App() {
       <AnimatePresence>
         {mode === 'uploading' && (
           <motion.div initial={{ width: '0%' }} animate={{ width: '100%' }} exit={{ opacity: 0 }}
-            transition={{ duration: 1.2, ease: 'easeInOut' }}
+            transition={{ duration: reducedMotion ? 0.01 : 1.2, ease: 'easeInOut' }}
             className="fixed top-0 left-0 h-1 bg-[var(--color-accent)] z-50 shadow-[0_0_10px_var(--color-accent)]" />
         )}
       </AnimatePresence>
@@ -691,7 +659,7 @@ export default function App() {
       {/* UPLOADING OVERLAY */}
       <AnimatePresence>
         {mode === 'uploading' && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+          <motion.div {...getMotionProps({ preset: 'fade', duration: DURATIONS.enter, reducedMotion })}
             className="fixed inset-0 flex items-center justify-center bg-[var(--bg-app)] z-40">
             <div className="text-center space-y-4 max-w-md w-full px-6">
               <div className="mx-auto w-14 h-14 rounded-full bg-[var(--bg-panel)] border border-[var(--border-color)] flex items-center justify-center">
@@ -711,7 +679,7 @@ export default function App() {
       {/* WORKSPACE / SPLASH SCREEN */}
       <AnimatePresence>
         {mode === 'splash' && (
-          <motion.div exit={{ opacity: 0, y: -20, pointerEvents: 'none' }} className="fixed inset-0 bg-[var(--bg-app)] z-40">
+          <motion.div exit={{ opacity: 0, y: reducedMotion ? 0 : -20, pointerEvents: 'none' }} className="fixed inset-0 bg-[var(--bg-app)] z-40">
             {isDbReady && !initError && (
               <WorkspaceView
                 workspaceState={workspace}
@@ -812,7 +780,7 @@ export default function App() {
       {/* STORAGE REMINDER TOAST */}
       <AnimatePresence>
         {persistence.showStorageReminderToast && dataset && (
-          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 12 }}
+          <motion.div {...getMotionProps({ preset: 'slideUp', duration: DURATIONS.normal, reducedMotion })}
             className="fixed bottom-6 right-6 z-[120] w-full max-w-sm rounded-lg border border-[var(--border-color)] bg-[var(--bg-surface)] shadow-xl p-4">
             <div className="flex items-start gap-3">
               <AlertCircle size={16} className="mt-0.5 text-[var(--color-accent)] shrink-0" />
@@ -839,7 +807,7 @@ export default function App() {
       {/* SESSION IMPORT DIAGNOSTICS TOAST */}
       <AnimatePresence>
         {sessionImportDiagnostics && dataset && sessionImportMessages.length > 0 && (
-          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 12 }}
+          <motion.div {...getMotionProps({ preset: 'slideUp', duration: DURATIONS.normal, reducedMotion })}
             className={`fixed right-6 z-[121] w-full max-w-sm rounded-lg border border-[var(--status-warning-border)] bg-[var(--status-warning-surface)] shadow-xl p-4 ${persistence.showStorageReminderToast ? 'bottom-36' : 'bottom-6'}`}>
             <div className="flex items-start gap-3">
               <AlertCircle size={16} className="mt-0.5 text-[var(--status-warning-text)] shrink-0" />
@@ -864,7 +832,7 @@ export default function App() {
       {/* METADATA-ONLY MODE */}
       <AnimatePresence>
         {mode === 'metadata' && dataset && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+          <motion.div {...getMotionProps({ preset: 'fade', duration: DURATIONS.enter, reducedMotion })}
             className="fixed inset-0 flex items-center justify-center bg-[var(--bg-app)] z-40">
             <div className="text-center space-y-8 max-w-2xl w-full px-6">
               <div className="space-y-3">

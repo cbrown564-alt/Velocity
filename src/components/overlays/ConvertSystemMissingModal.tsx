@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useReducedMotion, getBackdropProps, getModalPresenceProps } from '../../lib/motion';
 import { X } from 'lucide-react';
 
 interface ConvertSystemMissingModalProps {
@@ -25,6 +26,7 @@ export const ConvertSystemMissingModal: React.FC<ConvertSystemMissingModalProps>
   const [labelDraft, setLabelDraft] = useState(initialLabel);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const reducedMotion = useReducedMotion();
   const codeRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -72,18 +74,13 @@ export const ConvertSystemMissingModal: React.FC<ConvertSystemMissingModalProps>
       {isOpen && (
         <>
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            {...getBackdropProps(reducedMotion)}
             onClick={isSubmitting ? undefined : onClose}
             className="fixed inset-0 bg-[var(--text-primary)]/30 backdrop-blur-sm z-50"
           />
 
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 10 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 10 }}
-            transition={{ duration: 0.2 }}
+            {...getModalPresenceProps(reducedMotion)}
             className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none"
           >
             <div className="bg-[var(--bg-panel)] rounded-xl shadow-2xl w-full max-w-md overflow-hidden pointer-events-auto border border-[var(--border-color)]">

@@ -14,6 +14,7 @@
 
 import React, { useCallback, useEffect, useMemo, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useReducedMotion, getMotionProps, DURATIONS } from '../../../lib/motion';
 import {
     DndContext,
     closestCenter,
@@ -114,6 +115,7 @@ export function getSlideDisplayLabel(
 }
 
 const SlideThumb: React.FC<SlideThumbProps> = ({ slide, index, isActive, hasUnsavedChanges, canDelete, section, variableSets = [], currentTableConfig, onClick, onDuplicate, onDelete }) => {
+    const reducedMotion = useReducedMotion();
     const [contextMenuOpen, setContextMenuOpen] = useState(false);
     const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
     const menuRef = useRef<HTMLDivElement>(null);
@@ -170,9 +172,9 @@ const SlideThumb: React.FC<SlideThumbProps> = ({ slide, index, isActive, hasUnsa
                 <motion.button
                     onClick={onClick}
                     onContextMenu={handleContextMenu}
-                    whileHover={{ y: -1 }}
-                    whileTap={{ scale: 0.97 }}
-                    transition={{ duration: 0.15 }}
+                    whileHover={reducedMotion ? undefined : { y: -1 }}
+                    whileTap={reducedMotion ? undefined : { scale: 0.97 }}
+                    transition={{ duration: reducedMotion ? 0.01 : 0.15 }}
                     className={`
                         relative flex items-center gap-1.5
                         h-7 px-2.5 rounded-md
@@ -246,10 +248,7 @@ const SlideThumb: React.FC<SlideThumbProps> = ({ slide, index, isActive, hasUnsa
                 {contextMenuOpen && (
                     <motion.div
                         ref={menuRef}
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.95 }}
-                        transition={{ duration: 0.1 }}
+                        {...getMotionProps({ preset: 'fadeScale', duration: DURATIONS.instant, reducedMotion })}
                         className="fixed z-[100] bg-[var(--bg-panel)] border border-[var(--border-color)] rounded-lg shadow-xl py-1 min-w-[140px]"
                         style={{ left: menuPosition.x, top: menuPosition.y - 80 }}
                     >
@@ -314,6 +313,7 @@ const SectionDivider: React.FC<{ section: SlideSection }> = ({ section }) => (
 // ============================================================================
 
 export const TimelineDock: React.FC = () => {
+    const reducedMotion = useReducedMotion();
     const slides = useVelocityStore((state) => state.slides);
     const sections = useVelocityStore((state) => state.sections);
     const activeSlideId = useVelocityStore((state) => state.activeSlideId);

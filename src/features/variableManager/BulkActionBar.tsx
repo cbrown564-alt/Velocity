@@ -7,6 +7,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useReducedMotion } from '../../lib/motion';
 import { FolderPlus, Eye, EyeOff, Tag, BarChart2, Layers, X } from 'lucide-react';
 import { useVelocityStore } from '../../store';
 import type { VariableType } from '../../store/slices/dataSlice';
@@ -23,6 +24,7 @@ export const BulkActionBar: React.FC<BulkActionBarProps> = ({
     selectedIds,
     onClearSelection,
 }) => {
+    const reducedMotion = useReducedMotion();
     const {
         createFolder,
         moveToFolder,
@@ -73,10 +75,10 @@ export const BulkActionBar: React.FC<BulkActionBarProps> = ({
             <AnimatePresence>
                 {selectedCount > 1 && (
                     <motion.div
-                        initial={{ y: 100, opacity: 0 }}
+                        initial={{ y: reducedMotion ? 0 : 100, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
-                        exit={{ y: 100, opacity: 0 }}
-                        transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+                        exit={{ y: reducedMotion ? 0 : 100, opacity: 0 }}
+                        transition={reducedMotion ? { duration: 0.01 } : { type: 'spring', damping: 25, stiffness: 300 }}
                         className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50"
                     >
                         <div className="bg-[var(--mat-panel-bg,var(--bg-panel))] backdrop-blur-md border border-[var(--border-color)] text-[var(--text-primary)] rounded-xl shadow-float px-4 py-3 flex items-center gap-4">

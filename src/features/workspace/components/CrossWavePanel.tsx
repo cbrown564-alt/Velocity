@@ -10,6 +10,7 @@
 
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useReducedMotion, getBackdropProps, getMotionProps, DURATIONS } from '../../../lib/motion';
 import {
   X,
   TrendingUp,
@@ -134,20 +135,18 @@ export const CrossWavePanel: React.FC<CrossWavePanelProps> = ({
 
   if (!isOpen) return null;
 
+  const reducedMotion = useReducedMotion();
+
   return (
     <AnimatePresence>
       <motion.div
         className={styles.overlay}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
+        {...getBackdropProps(reducedMotion)}
         onClick={onClose}
       >
         <motion.div
           className={styles.panel}
-          initial={{ opacity: 0, x: 40 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: 40 }}
+          {...getMotionProps({ preset: 'slideLeft', duration: reducedMotion ? DURATIONS.instant : DURATIONS.normal, reducedMotion })}
           onClick={e => e.stopPropagation()}
         >
           {/* Header */}
@@ -322,7 +321,7 @@ export const CrossWavePanel: React.FC<CrossWavePanelProps> = ({
                         style={{ '--project-color': project.color } as React.CSSProperties}
                         initial={{ width: 0 }}
                         animate={{ width: `${wave.retention}%` }}
-                        transition={{ duration: 0.5, delay: i * 0.1 }}
+                        transition={{ duration: reducedMotion ? 0.01 : 0.5, delay: reducedMotion ? 0 : i * 0.1 }}
                       />
                       <span className={styles.funnelCount}>{formatNumber(wave.count)}</span>
                     </div>

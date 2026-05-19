@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useReducedMotion, getBackdropProps, getMotionProps } from '../../lib/motion';
 import { Download, FileText, LayoutGrid, Wand2, Filter, Layers, ShieldCheck, X } from 'lucide-react';
 
 export interface SessionExportSummary {
@@ -66,21 +67,19 @@ export const SessionExportModal: React.FC<SessionExportModalProps> = ({
     onClose();
   };
 
+  const reducedMotion = useReducedMotion();
+
   return (
     <AnimatePresence>
       {isOpen && (
         <motion.div
           className="fixed inset-0 z-[140] flex items-center justify-center bg-[var(--text-primary)]/40 px-4"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
+          {...getBackdropProps(reducedMotion)}
           onClick={handleClose}
         >
           <motion.div
             className="w-full max-w-md rounded-xl border border-[var(--border-color)] bg-[var(--bg-surface)] shadow-2xl"
-            initial={{ opacity: 0, y: 18, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 18, scale: 0.98 }}
+            {...getMotionProps({ preset: 'fadeScale', duration: reducedMotion ? 0.01 : 0.25, reducedMotion })}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}

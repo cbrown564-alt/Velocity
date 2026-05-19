@@ -11,6 +11,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useVelocityStore } from '../../store';
 import { VariableManager } from '../../features/variableManager/VariableManager';
 import { Database } from 'lucide-react';
+import { getMotionProps, useReducedMotion, DURATIONS, EASINGS } from '../../lib/motion';
 
 interface AppShellProps {
     children: React.ReactNode;
@@ -18,6 +19,7 @@ interface AppShellProps {
 
 export const AppShell: React.FC<AppShellProps> = ({ children }) => {
     const { appMode, toggleAppMode } = useVelocityStore();
+    const reducedMotion = useReducedMotion();
 
     // Keyboard shortcut: D key toggles mode
     const handleKeyDown = useCallback((event: KeyboardEvent) => {
@@ -46,7 +48,10 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
                     scale: appMode === 'variables' ? 0.95 : 1,
                     filter: appMode === 'variables' ? 'blur(4px)' : 'blur(0px)',
                 }}
-                transition={{ duration: 0.2, ease: 'easeOut' }}
+                transition={{
+                    duration: reducedMotion ? DURATIONS.instant : DURATIONS.normal,
+                    ease: EASINGS.standard,
+                }}
                 className="h-full"
             >
                 {children}
@@ -56,10 +61,12 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
             <AnimatePresence>
                 {appMode === 'variables' && (
                     <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 20 }}
-                        transition={{ duration: 0.2, ease: 'easeOut' }}
+                        {...getMotionProps({
+                            preset: 'slideUp',
+                            duration: reducedMotion ? DURATIONS.instant : DURATIONS.normal,
+                            ease: 'standard',
+                            reducedMotion,
+                        })}
                         className="absolute inset-0 z-50"
                     >
                         <VariableManager onClose={toggleAppMode} />

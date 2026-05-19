@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useReducedMotion, getBackdropProps, getModalPresenceProps } from '../../lib/motion';
 import { X, ArrowRight, Wand2, Save, Layers, ListFilter, Plus, Trash2 } from 'lucide-react';
 import { Variable, RecodeMode, RecodeRule } from '../../types';
 import { allowsNumericStats } from '../../types';
@@ -85,21 +86,19 @@ export const RecodeModal: React.FC<RecodeModalProps> = ({ isOpen, onClose, varia
     }
   };
 
+  const reducedMotion = useReducedMotion();
+
   return (
     <AnimatePresence>
       {isOpen && (
         <>
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.5 }}
-            exit={{ opacity: 0 }}
+            {...getBackdropProps(reducedMotion)}
             onClick={onClose}
             className="fixed inset-0 bg-[var(--text-primary)]/60 backdrop-blur-sm z-50"
           />
           <motion.div
-            initial={{ scale: 0.95, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.95, opacity: 0 }}
+            {...getModalPresenceProps(reducedMotion)}
             className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none"
           >
             <div className="bg-[var(--bg-panel)] rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden pointer-events-auto flex flex-col max-h-[85vh]">

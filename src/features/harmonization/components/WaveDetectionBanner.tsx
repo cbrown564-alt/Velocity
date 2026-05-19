@@ -7,6 +7,7 @@
 
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useReducedMotion, DURATIONS, EASINGS } from '../../../lib/motion';
 import { Waves, X, ArrowRight } from 'lucide-react';
 import styles from './WaveDetectionBanner.module.css';
 
@@ -28,16 +29,17 @@ export const WaveDetectionBanner: React.FC<WaveDetectionBannerProps> = ({
   onDismiss,
 }) => {
   const confidencePct = Math.round(confidence * 100);
+  const reducedMotion = useReducedMotion();
 
   return (
     <AnimatePresence>
       {isVisible && (
         <motion.div
           className={styles.banner}
-          initial={{ opacity: 0, y: -8, height: 0 }}
+          initial={{ opacity: 0, y: reducedMotion ? 0 : -8, height: reducedMotion ? 'auto' : 0 }}
           animate={{ opacity: 1, y: 0, height: 'auto' }}
-          exit={{ opacity: 0, y: -8, height: 0 }}
-          transition={{ duration: 0.2, ease: 'easeOut' }}
+          exit={{ opacity: 0, y: reducedMotion ? 0 : -8, height: reducedMotion ? 'auto' : 0 }}
+          transition={{ duration: reducedMotion ? DURATIONS.instant : DURATIONS.normal, ease: EASINGS.standard }}
         >
           <div className={styles.iconWrap}>
             <Waves size={16} />

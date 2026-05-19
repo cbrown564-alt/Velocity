@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useReducedMotion } from '../../lib/motion';
 import { X, BookOpen, Calculator, Scale, Info } from 'lucide-react';
 
 interface MethodologyDrawerProps {
@@ -147,6 +148,8 @@ export const MethodologyDrawer: React.FC<MethodologyDrawerProps> = ({
     },
   ];
 
+  const reducedMotion = useReducedMotion();
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -165,7 +168,7 @@ export const MethodologyDrawer: React.FC<MethodologyDrawerProps> = ({
             initial={{ x: '100%', opacity: 0.5 }}
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: '100%', opacity: 0.5 }}
-            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+            transition={reducedMotion ? { duration: 0.01 } : { type: 'spring', damping: 25, stiffness: 200 }}
             className="fixed top-0 bottom-0 right-0 w-[400px] bg-[var(--bg-panel)] border-l border-[var(--border-color)] shadow-2xl z-50 flex flex-col"
           >
             {/* Header */}
@@ -218,10 +221,10 @@ export const MethodologyDrawer: React.FC<MethodologyDrawerProps> = ({
               <AnimatePresence mode="wait">
                 <motion.div
                   key={activeSection}
-                  initial={{ opacity: 0, y: 10 }}
+                  initial={{ opacity: 0, y: reducedMotion ? 0 : 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.2 }}
+                  exit={{ opacity: 0, y: reducedMotion ? 0 : -10 }}
+                  transition={{ duration: reducedMotion ? 0.01 : 0.2 }}
                 >
                   {sections.find(s => s.id === activeSection)?.content}
                 </motion.div>

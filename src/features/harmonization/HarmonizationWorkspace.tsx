@@ -8,6 +8,7 @@
 
 import React, { useCallback, useMemo, useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useReducedMotion, getBackdropProps, getMotionProps, DURATIONS } from '../../lib/motion';
 import { X, Play, Check, CheckCheck, Crosshair, ArrowRight, Layers } from 'lucide-react';
 import { useVelocityStore } from '../../store';
 import type { Variable } from '../../types/index';
@@ -156,23 +157,19 @@ export const HarmonizationWorkspace: React.FC<HarmonizationWorkspaceProps> = ({
     closeHarmonization,
   ]);
 
+  const reducedMotion = useReducedMotion();
+
   if (!isOpen) return null;
 
   return (
     <AnimatePresence>
       <motion.div
         className={styles.overlay}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.2 }}
+        {...getBackdropProps(reducedMotion)}
       >
         <motion.div
           className={styles.workspace}
-          initial={{ opacity: 0, scale: 0.98 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.98 }}
-          transition={{ duration: 0.2, ease: 'easeOut' }}
+          {...getMotionProps({ preset: 'fadeScale', duration: reducedMotion ? DURATIONS.instant : DURATIONS.normal, reducedMotion })}
         >
           {/* Header */}
           <div className={styles.header}>

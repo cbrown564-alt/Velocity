@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useReducedMotion, DURATIONS } from '../../lib/motion';
 import { Settings } from 'lucide-react';
 import { SignificanceLegend } from './SignificanceLegend';
 import { AnalysisSettingsPanel } from './AnalysisSettingsPanel';
@@ -39,6 +40,7 @@ export const StatisticsStatusBar: React.FC<StatisticsStatusBarProps> = ({
   overlapCorrected,
   onMethodologyClick,
 }) => {
+  const reducedMotion = useReducedMotion();
   const [showSettings, setShowSettings] = useState(false);
 
   // Determine table type based on column variable's measurement level, not on
@@ -166,10 +168,10 @@ export const StatisticsStatusBar: React.FC<StatisticsStatusBarProps> = ({
         {showSettings && showGear && (
           <motion.div
             className={styles.settingsTray}
-            initial={{ height: 0, opacity: 0 }}
+            initial={{ height: reducedMotion ? 'auto' : 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.2, ease: 'easeInOut' }}
+            exit={{ height: reducedMotion ? 'auto' : 0, opacity: 0 }}
+            transition={{ duration: reducedMotion ? DURATIONS.instant : DURATIONS.normal, ease: 'easeInOut' }}
           >
             <AnalysisSettingsPanel variant="inline" />
           </motion.div>

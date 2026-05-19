@@ -236,7 +236,7 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
 
         if (!chartData) {
             return (
-                <div className={styles.placeholder}>
+                <div className={styles.placeholder} role="status" aria-live="polite">
                     No data to display
                 </div>
             );
@@ -417,9 +417,16 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
             <div
                 ref={containerRef}
                 className={styles.chartCanvas}
+                role="img"
+                aria-label={chartData ? `Chart showing ${chartData.rowVariables.map(v => v.label).join(', ')}` : 'Analysis chart'}
             >
                 {renderContent()}
             </div>
+
+            {/* Screen-reader accessible data table (visually hidden) */}
+            {chartData && (
+                <ChartScreenReaderTable data={chartData} />
+            )}
 
             {/* Context Menu */}
             <ChartContextMenu
@@ -450,5 +457,58 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
                 submitLabel="Create Group"
             />
         </div >
+    );
+};
+
+/**
+ * Screen-reader accessible data table for charts.
+ * Renders a visually hidden HTML table with the same data as the chart
+ * so that screen-reader users can access the underlying numbers.
+ */
+export const ChartScreenReaderTable: React.FC<{ data: ProcessedAnalysisData }> = ({ data }) => {
+    const headers = data.columns.map(c => c.label);
+    const hasMultipleCols = data.columns.length > 1;
+
+    return (
+        <table className="sr-only">
+            <caption>
+                Data table for {data.rowVariables.map(v => v.label).join(', ')}
+                {data.colVariable ? ` by ${data.colVariable.label}` : ''}
+            </caption>
+            <thead>
+                <tr>
+                    <th scope="col">{data.rowVariables[0]?.label ?? 'Category'}</th>
+                    {headers.map(h => (
+                        <th key={h} scope="col">{h}</th>
+                    ))}
+                    {hasMultipleCols && <th scope="col">Total</th>}
+                </tr>
+            </thead>
+            <tbody>
+                {data.series[0]?.data.map((point, idx) => (
+                    <tr key={point.rawValue}>
+                        <th scope="row">{point.label}</th>
+                        {data.series.map((series) => {
+                            const cell = series.data[idx];
+                            return (
+                                <td key={series.key}>
+                                    {cell
+                                        ? `${cell.value.toLocaleString()} (${cell.percent.toFixed(1)}%)`
+                                        : '—'}
+                                </td>
+                            );
+                        })}
+                        {hasMultipleCols && (
+                            <td>
+                                {data.series.reduce((sum, s) => {
+                                    const cell = s.data[idx];
+                                    return sum + (cell?.value ?? 0);
+                                }, 0).toLocaleString()}
+                            </td>
+                        )}
+                    </tr>
+                ))}
+            </tbody>
+        </table>
     );
 };

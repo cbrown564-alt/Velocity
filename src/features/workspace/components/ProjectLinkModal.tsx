@@ -7,6 +7,7 @@
 
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useReducedMotion, getBackdropProps, getModalPresenceProps } from '../../../lib/motion';
 import {
   X,
   Link2,
@@ -124,20 +125,18 @@ export const ProjectLinkModal: React.FC<ProjectLinkModalProps> = ({
 
   if (!isOpen) return null;
 
+  const reducedMotion = useReducedMotion();
+
   return (
     <AnimatePresence>
       <motion.div
         className={styles.overlay}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
+        {...getBackdropProps(reducedMotion)}
         onClick={onClose}
       >
         <motion.div
           className={styles.modal}
-          initial={{ opacity: 0, scale: 0.95, y: 20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.95, y: 20 }}
+          {...getModalPresenceProps(reducedMotion)}
           onClick={e => e.stopPropagation()}
         >
           {/* Header */}

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Database, HardDrive, AlertCircle, RefreshCw, Trash2, CheckCircle2, TriangleAlert, Activity, FileUp } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useReducedMotion, getBackdropProps, getModalPresenceProps } from '../../../lib/motion';
 
 interface PersistenceStatusProps {
     mode: string;
@@ -77,6 +78,8 @@ export const PersistenceStatus: React.FC<PersistenceStatusProps> = ({
             ? Math.round((labeledVariableCount / totalVariableCount) * 100)
             : null;
 
+    const reducedMotion = useReducedMotion();
+
     return (
         <>
             <button
@@ -116,17 +119,13 @@ export const PersistenceStatus: React.FC<PersistenceStatusProps> = ({
                 {showDetails && (
                     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
                         <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
+                            {...getBackdropProps(reducedMotion)}
                             onClick={() => setShowDetails(false)}
                             className="absolute inset-0 bg-[var(--text-primary)]/20 backdrop-blur-sm"
                         />
 
                         <motion.div
-                            initial={{ opacity: 0, scale: 0.95, y: 10 }}
-                            animate={{ opacity: 1, scale: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                            {...getModalPresenceProps(reducedMotion)}
                             className="relative w-full max-w-md bg-[var(--bg-surface)] rounded-xl shadow-2xl border border-[var(--border-color)] overflow-hidden"
                         >
                             <div className="p-4 border-b border-[var(--border-color)] flex items-center justify-between bg-[var(--bg-panel)]">

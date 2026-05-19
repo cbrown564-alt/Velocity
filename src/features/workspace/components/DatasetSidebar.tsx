@@ -7,6 +7,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useReducedMotion, DURATIONS } from '../../../lib/motion';
 import {
   ChevronLeft,
   ChevronRight,
@@ -72,11 +73,13 @@ export const DatasetSidebar: React.FC<DatasetSidebarProps> = ({
   // Limit to recent datasets in collapsed mode
   const displayedDatasets = isExpanded ? sortedDatasets : sortedDatasets.slice(0, 6);
 
+  const reducedMotion = useReducedMotion();
+
   return (
     <motion.aside
       className={`${styles.sidebar} ${isExpanded ? styles.expanded : styles.collapsed}`}
       animate={{ width: isExpanded ? 280 : 56 }}
-      transition={{ duration: 0.2, ease: 'easeInOut' }}
+      transition={{ duration: reducedMotion ? 0.01 : DURATIONS.normal, ease: 'easeInOut' }}
     >
       {/* Toggle button */}
       <button className={styles.toggleButton} onClick={onToggleExpand}>
@@ -92,6 +95,7 @@ export const DatasetSidebar: React.FC<DatasetSidebarProps> = ({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
+              transition={{ duration: reducedMotion ? 0.01 : DURATIONS.fast }}
               className={styles.title}
             >
               Datasets
@@ -102,6 +106,7 @@ export const DatasetSidebar: React.FC<DatasetSidebarProps> = ({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
+              transition={{ duration: reducedMotion ? 0.01 : DURATIONS.fast }}
             >
               <Database size={18} />
             </motion.span>
@@ -146,9 +151,10 @@ export const DatasetSidebar: React.FC<DatasetSidebarProps> = ({
                 {isExpanded && (
                   <motion.div
                     className={styles.datasetContent}
-                    initial={{ opacity: 0, width: 0 }}
+                    initial={{ opacity: 0, width: reducedMotion ? 'auto' : 0 }}
                     animate={{ opacity: 1, width: 'auto' }}
-                    exit={{ opacity: 0, width: 0 }}
+                    exit={{ opacity: 0, width: reducedMotion ? 'auto' : 0 }}
+                    transition={{ duration: reducedMotion ? 0.01 : DURATIONS.fast }}
                   >
                     <div className={styles.datasetName}>
                       <span>{dataset.name}</span>

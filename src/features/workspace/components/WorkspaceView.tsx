@@ -8,6 +8,12 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
+  useReducedMotion,
+  getMotionProps,
+  getModalPresenceProps,
+  DURATIONS,
+} from '../../../lib/motion';
+import {
   FileUp,
   Upload,
   FolderOpen,
@@ -172,6 +178,7 @@ const StorageIndicator: React.FC<{
   used: number;
   quota: number;
 }> = ({ used, quota }) => {
+  const reducedMotion = useReducedMotion();
   const percentage = Math.min((used / quota) * 100, 100);
   const status = getStorageHealthStatus(used, quota);
 
@@ -189,7 +196,7 @@ const StorageIndicator: React.FC<{
           className={`${styles.storageFill} ${styles[status]}`}
           initial={{ width: 0 }}
           animate={{ width: `${percentage}%` }}
-          transition={{ duration: 0.6, ease: 'easeOut' }}
+          transition={{ duration: reducedMotion ? 0.01 : 0.6, ease: 'easeOut' }}
         />
       </div>
       {status !== 'healthy' && (
@@ -271,6 +278,7 @@ const DatasetCard: React.FC<{
   onDelete,
   onContextMenu,
 }) => {
+    const reducedMotion = useReducedMotion();
     const hasSession = Boolean(dataset.sessionState);
 
     return (
@@ -279,9 +287,7 @@ const DatasetCard: React.FC<{
         onClick={onSelect}
         onDoubleClick={onOpen}
         onContextMenu={onContextMenu}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95 }}
+        {...getModalPresenceProps(reducedMotion)}
         whileHover={{ y: -2 }}
         layout
       >
@@ -290,8 +296,7 @@ const DatasetCard: React.FC<{
           {isSelected && (
             <motion.div
               className={styles.checkmark}
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
+              {...getMotionProps({ preset: 'scale', duration: DURATIONS.fast, reducedMotion })}
             >
               <Check size={12} />
             </motion.div>
@@ -385,6 +390,7 @@ const DatasetListItem: React.FC<{
   onOpen: () => void;
   onToggleStar: () => void;
 }> = ({ dataset, project, isSelected, onSelect, onOpen, onToggleStar }) => {
+  const reducedMotion = useReducedMotion();
   const hasSession = Boolean(dataset.sessionState);
 
   return (
@@ -392,8 +398,7 @@ const DatasetListItem: React.FC<{
       className={`${styles.datasetListItem} ${isSelected ? styles.selected : ''}`}
       onClick={onSelect}
       onDoubleClick={onOpen}
-      initial={{ opacity: 0, x: -10 }}
-      animate={{ opacity: 1, x: 0 }}
+      {...getMotionProps({ preset: 'slideRight', duration: reducedMotion ? DURATIONS.instant : DURATIONS.normal, reducedMotion })}
       whileHover={{ x: 2 }}
     >
       <button
@@ -494,13 +499,13 @@ const ProjectCard: React.FC<{
 const EmptyState: React.FC<{
   onUpload: () => void;
   onLoadExample: () => void;
-}> = ({ onUpload, onLoadExample }) => (
-  <motion.div
-    className={styles.emptyState}
-    initial={{ opacity: 0, scale: 0.98, y: 10 }}
-    animate={{ opacity: 1, scale: 1, y: 0 }}
-    transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-  >
+}> = ({ onUpload, onLoadExample }) => {
+  const reducedMotion = useReducedMotion();
+  return (
+    <motion.div
+      className={styles.emptyState}
+      {...getMotionProps({ preset: 'fadeScale', duration: reducedMotion ? DURATIONS.instant : DURATIONS.complex, ease: 'snappy', reducedMotion })}
+    >
     <Logo size={48} className={styles.emptyLogo} />
     <h2>Welcome to Velocity</h2>
     <p>
@@ -528,8 +533,9 @@ const EmptyState: React.FC<{
         <span className={styles.cardDesc}>Explore features instantly</span>
       </motion.button>
     </div>
-  </motion.div>
-);
+    </motion.div>
+  );
+};
 
 // ============================================================================
 // Main Component
@@ -564,6 +570,8 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
     x: number;
     y: number;
   } | null>(null);
+
+  const reducedMotion = useReducedMotion();
 
   const { datasets, projects, storageUsed, storageQuota } = workspaceState;
 
@@ -777,9 +785,7 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
           {selectedIds.size > 0 && (
             <motion.div
               className={styles.selectionActions}
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 20 }}
+              {...getMotionProps({ preset: 'slideLeft', duration: reducedMotion ? DURATIONS.instant : DURATIONS.normal, reducedMotion })}
             >
               <span>{selectedIds.size} selected</span>
 
@@ -966,17 +972,13 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
           <>
             <motion.div
               className={styles.contextBackdrop}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+              {...getMotionProps({ preset: 'fade', duration: DURATIONS.fast, reducedMotion })}
               onClick={closeContextMenu}
             />
             <motion.div
               className={styles.contextMenu}
               style={{ left: contextMenuTarget.x, top: contextMenuTarget.y }}
-              initial={{ opacity: 0, scale: 0.9, y: -10 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: -10 }}
+              {...getModalPresenceProps(reducedMotion)}
             >
               <button onClick={() => {
                 onOpenDataset(contextMenuTarget.dataset);

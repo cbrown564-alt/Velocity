@@ -8,6 +8,7 @@
 
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useReducedMotion, getBackdropProps, getModalPresenceProps } from '../../lib/motion';
 import { X, Search, ChevronLeft, Check } from 'lucide-react';
 import { useVelocityStore, type Variable, type Filter } from '../../store';
 import { Loader2 } from 'lucide-react';
@@ -119,22 +120,19 @@ export const FilterModal: React.FC<FilterModalProps> = ({
         setSelectedValues([]);
     };
 
+    const reducedMotion = useReducedMotion();
+
     if (!isOpen) return null;
 
     return (
         <AnimatePresence>
             <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
+                {...getBackdropProps(reducedMotion)}
                 className="fixed inset-0 bg-[var(--text-primary)]/30 backdrop-blur-sm z-50 flex items-center justify-center"
                 onClick={handleClose}
             >
                 <motion.div
-                    initial={{ opacity: 0, scale: 0.95, y: 10 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.95, y: 10 }}
-                    transition={{ duration: 0.2 }}
+                    {...getModalPresenceProps(reducedMotion)}
                     onClick={(e) => e.stopPropagation()}
                     className="w-full max-w-md rounded-lg overflow-hidden shadow-2xl"
                     style={{

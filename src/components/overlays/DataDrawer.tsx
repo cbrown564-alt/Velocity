@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useReducedMotion } from '../../lib/motion';
 import { X, Download, ListFilter, ChevronDown, Loader2 } from 'lucide-react';
 
 interface DataDrawerProps {
@@ -78,6 +79,8 @@ export const DataDrawer: React.FC<DataDrawerProps> = ({
     return filterColumns.some(fc => fc.toLowerCase() === colName.toLowerCase());
   };
 
+  const reducedMotion = useReducedMotion();
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -96,7 +99,7 @@ export const DataDrawer: React.FC<DataDrawerProps> = ({
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
-            transition={{ type: "spring", damping: 30, stiffness: 300 }}
+            transition={reducedMotion ? { duration: 0.01 } : { type: "spring", damping: 30, stiffness: 300 }}
             className="fixed inset-y-0 right-0 w-[700px] bg-[var(--bg-panel)] shadow-[var(--shadow-drag)] z-50 flex flex-col border-l border-[var(--border-color)]"
           >
             {/* Header */}
