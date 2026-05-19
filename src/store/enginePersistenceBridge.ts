@@ -9,7 +9,7 @@ import { EngineProxy, type EngineProxyOptions } from '../services/EngineProxy';
 import type { EngineResponseByType } from '../types/engineWorker';
 import type { PersistenceState } from './slices/dataSlice';
 
-export const ANALYSIS_WORKER_MODULE = new URL('../../services/analysisWorker.ts', import.meta.url);
+export const ANALYSIS_WORKER_MODULE = new URL('../services/analysisWorker.ts', import.meta.url);
 
 export function createAnalysisWorker(): Worker {
   return new Worker(ANALYSIS_WORKER_MODULE, { type: 'module' });
