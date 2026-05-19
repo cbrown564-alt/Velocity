@@ -8,7 +8,7 @@ Velocity uses a **5-layer testing pyramid** to ensure correctness at each archit
 
 ```
         ┌───────────────┐
-        │   Browser     │  ← Ad-hoc via browser agent
+        │   Browser     │  ← Playwright (`tests/e2e/`)
         │   (E2E)       │
         ├───────────────┤
         │  Integration  │  ← Store + Worker + DuckDB
@@ -29,6 +29,7 @@ Velocity uses a **5-layer testing pyramid** to ensure correctness at each archit
 | **@testing-library/react** | Component testing |
 | **happy-dom** | Fast DOM simulation |
 | **@vitest/coverage-v8** | Coverage reporting |
+| **Playwright** | Browser E2E (`tests/e2e/`) |
 | **GitHub Actions** | CI/CD automation |
 
 ## 3. Test Commands
@@ -38,6 +39,8 @@ npm test              # Watch mode (development)
 npm run test:run      # Single run (CI)
 npm run test:coverage # With coverage report
 npm run test:ui       # Interactive UI
+npm run test:e2e      # Playwright E2E (CI e2e job)
+npm run test:parity   # R parity (optional; not in default CI)
 ```
 
 ## 4. Directory Structure
@@ -86,7 +89,14 @@ Test multiple layers working together:
 - DuckDB query execution
 
 ### 5.5 End-to-End Tests
-Browser-based testing via the browser agent for ad-hoc user journey validation.
+Playwright specs under `tests/e2e/` validate product journeys in a real browser. During stabilization (`STAB-CI-1`), E2E is the primary gate for UI/workspace/persistence behavior that Vitest coverage excludes.
+
+| Spec | Covers |
+| :--- | :--- |
+| `opfs.spec.ts` | OPFS persistence, session restore, Start Fresh |
+| `session-export.spec.ts` | Session export round-trip |
+| `agentWorkflow.test.ts` | Agent-oriented UI workflow |
+| *(planned, `STAB-WS-1`)* | Workspace: upload two datasets, switch from catalog without re-upload |
 
 ## 6. Fixture Data
 
@@ -109,17 +119,32 @@ Reusable test data matching `arch_02_data_model.md`:
 | Lines | 80% |
 | Statements | 80% |
 
-Coverage is enforced in CI. PRs failing coverage checks will not merge.
+Coverage is enforced in CI on the **included** file set. PRs failing coverage checks will not merge.
+
+### Known blind spots (stabilization)
+
+`vitest.config.ts` excludes large product areas (`src/features/`, `src/store/slices/`, `src/components/overlays/`, `src/services/EngineProxy.ts`, etc.). Green coverage does not imply workspace/export UI confidence — treat Playwright E2E as the product gate until exclusions are reduced post-stabilization.
 
 ## 8. CI/CD Pipeline
 
-GitHub Actions runs on every PR:
+GitHub Actions (`.github/workflows/test.yml`) runs on every PR to `main`:
 
-1. **Lint**: TypeScript type check
-2. **Test**: `npm run test:run`
-3. **Coverage**: Fail if below 80%
+### `test` job
 
-See `.github/workflows/test.yml` for configuration.
+1. **Typecheck**: `npm run typecheck:all`
+2. **Architecture guards**: `npm run check:worker-boundary`, `npm run check:querybuilder-pure`
+3. **Unit/integration tests with coverage**: `npm run test:run -- --coverage` (80% thresholds on non-excluded paths)
+4. **Production build**: `npm run build`
+
+### `e2e` job
+
+1. **Playwright**: `npm run test:e2e` (browser installed in CI)
+
+### Planned (`STAB-CI-1` / `STAB-DS-1`)
+
+- `scripts/check-design-tokens.mjs` (allowlisted ratchet) added to the `test` job when the script lands
+- No ESLint gate today (no lint script in `package.json`)
+- `npm run test:parity` remains optional/local unless runtime is proven acceptable for every PR
 
 ## 9. Writing New Tests
 

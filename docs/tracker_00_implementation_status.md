@@ -16,6 +16,8 @@ Use with:
 - `Blocked`: waiting on dependency or decision
 - `In review`: implementation complete, awaiting review gates
 - `Done`: merged with required evidence
+- `Merged`: absorbed into another tracker row (do not start separately)
+- `Frozen`: explicitly deferred until stabilization exit criteria in §4.2.1
 
 ## 2. Gate Legend
 
@@ -52,11 +54,18 @@ graph TD
   S4EVAL5 --> S4EVAL5b["S4-EVAL-5b Harmonization Fuzzy Re-run"]
   S4DISC1 --> S4DEF1["S4-DEF-1 Recommended Breaks + Warnings"]
 
-  S4EVAL5 --> STABDOC1["STAB-DOC-1 Docs Reconciliation"]
+  S4EVAL5 --> STABDOC1["STAB-DOC-1 Stabilization Contract"]
+  S4EVAL5 --> STABDS1["STAB-DS-1 Design-System Enforcement"]
+  S4EVAL5 --> STABCI1["STAB-CI-1 Truthful CI Gates"]
   STABDOC1 --> STABWS1["STAB-WS-1 Reopenable Workspace"]
-  STABDOC1 --> STABEXP1["STAB-EXP-1 Export Quality"]
-  STABDOC1 --> STABDS1["STAB-DS-1 Design-System Enforcement"]
-  STABDOC1 --> STABCI1["STAB-CI-1 Truthful CI Gates"]
+  STABWS1 --> STABEXPA["STAB-EXP-1a Matrix MCP"]
+  STABEXPA --> STABEXPB["STAB-EXP-1b PPTX Polish"]
+
+  S4EVAL5 -.-> S4MCP1
+  S4EVAL5 -.-> S4MCP2
+  S4EVAL5 -.-> S4EVAL5b
+  classDef frozen fill:#f5f5f5,stroke:#999,stroke-dasharray: 5 5
+  class S4MCP1,S4MCP2,S4EVAL5b frozen
 
   S3SEM1 --> S5HARM1["S5-HARM-1 Harmonization Workspace"]
   S5HARM1 --> S5R1["S5-R-1 WebR Bridge"]
@@ -88,25 +97,45 @@ S2-STAT-1 through S2-STAT-4 are resolved. S2-EXP-1 and S2-EXP-2 are done. Phase 
 
 ### 4.2 Current Stabilization Sprint (May 2026)
 
+Grilled against `docs/archive/2026-05/audits/audit_05_deep_code_review_2026-05-19.md` (May 2026). **Product hard gate:** `STAB-WS-1` then `STAB-EXP-1` (both phases). **Parallel process lanes:** `STAB-DS-1`, `STAB-CI-1` (may proceed alongside WS after the stabilization contract lands).
+
+#### 4.2.1 Stabilization contract (execution rules)
+
+| Rule | Decision |
+| :--- | :--- |
+| Sequencing | Hybrid: WS hard gate → export phased (`EXP-A` then `EXP-B`); doc/DS/CI parallel after contract PR |
+| WS persistence | Per-dataset OPFS DuckDB open first (`buildOpfsDbPath` / `setPersistenceContext`); fall back to `rehydrateDatasetFromOpfs` on miss/corruption |
+| WS implementation | Add `openWorkspaceDataset(stored)` (hydrate store `dataset`, restore session, switch persistence, rehydrate); wire `App.tsx` / `useWorkspace` `openDataset`; OPFS delete on dataset remove |
+| WS acceptance | New Playwright spec: two uploads → workspace → open non-active dataset → dashboard usable without re-upload |
+| Export | `STAB-EXP-1a` = `S4-FMT-1` (matrix formatter in `src/core/`, MCP `format: 'matrix'`); `STAB-EXP-1b` = `S4-DELIV-1` (theme branding, chart polish, merge/delete `pptxChartBuilder`) |
+| CI | E2E-first product truth; update `arch_08_testing.md`; defer shrinking Vitest coverage exclusions; add `check-design-tokens` to CI when `STAB-DS-1` ships the script |
+| Design system | Staged allowlist ratchet (`scripts/check-design-tokens.mjs`); see §7 |
+| Design audit plan | Superseded by tracker §7 (`STAB-DS-1`); no `docs/DESIGN_AUDIT_PLAN.md` |
+| Expansion freeze | Until `STAB-WS-1` and `STAB-EXP-1` (1a+1b) are **Done**: no `S4-MCP-1`, `S4-MCP-2`, `S4-EVAL-5b`, Phase 5+, monolith splits, WebR/collaboration UI, or net-new MCP tools. In-flight `S4-DEF-1` only if the PR is small and does not touch WS/persistence |
+
 | ID | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| STAB-DOC-1 | Docs/process | Reconcile tracker, strategic roadmap, feature matrix, design audit plan, and agent guidance against current code and quality-gate reality | S4-EVAL-5 | In progress | No | A | `docs/README.md`, `docs/archive/2026-05/audits/audit_05_deep_code_review_2026-05-19.md` |
-| STAB-WS-1 | Workspace | Stored datasets can reopen from OPFS/source-file persistence, switch active worker/persistence context, and delete cleanly across sessions | STAB-DOC-1 | Not started | Yes | T,U,I,A | - |
-| STAB-EXP-1 | Export | PPTX/chart output is stakeholder-ready and export chart-builder paths are unified | STAB-DOC-1 | Not started | Yes | T,U,A | - |
-| STAB-DS-1 | Design system | Raw Tailwind colors, CSS fallback hexes, and legacy tokens are blocked by a guard script and remapped to semantic tokens | STAB-DOC-1 | In progress | No | T,L,A | `AGENTS.md`, `docs/design_01_system.md`, tracker §7 |
-| STAB-CI-1 | Quality gates | CI reflects product confidence: typecheck, architecture guards, tests with coverage, production build, and browser persistence smoke coverage | STAB-DOC-1 | In progress | No | T,U,I,A | `.github/workflows/test.yml` |
+| STAB-DOC-1 | Docs/process | Stabilization contract in tracker, roadmap §2.1, and `arch_08`; reconcile feature matrix drift; archive audit is evidence-only | S4-EVAL-5 | In progress | No | A | `docs/archive/2026-05/audits/audit_05_deep_code_review_2026-05-19.md`, §4.2.1 |
+| STAB-WS-1 | Workspace | Stored datasets reopen/switch/delete across sessions (DB-first, source replay fallback) | STAB-DOC-1 | Not started | Yes | T,U,I,A | §4.2.1 WS rows |
+| STAB-EXP-1 | Export | Stakeholder-ready deliverables: matrix MCP + PPTX polish (parent; closes when 1a+1b done) | STAB-WS-1 | Not started | Yes | T,U,A | §4.2.1 Export rows |
+| STAB-EXP-1a | Export / MCP | `S4-FMT-1`: `format: 'matrix'` on `velocity_crosstab`; formatter in `src/core/`; unit + MCP tests | STAB-WS-1 | Not started | Yes | T,U,A | - |
+| STAB-EXP-1b | Export | `S4-DELIV-1`: wire `resolveExportBranding(theme)`; PPTX chart quality; unify or remove `pptxChartBuilder` | STAB-EXP-1a | Not started | Yes | T,U,A | - |
+| STAB-DS-1 | Design system | Semantic tokens, cleanup, staged allowlist guard (`check-design-tokens`) | S4-EVAL-5 | In progress | No | T,L,A | `AGENTS.md`, `docs/design_01_system.md`, tracker §7 |
+| STAB-CI-1 | Quality gates | Document truthful CI; workspace-switch E2E required; hook design guard when script exists; defer coverage un-exclude | S4-EVAL-5 | In progress | No | T,U,I,A | `.github/workflows/test.yml`, `docs/arch_08_testing.md` |
 
 ### 4.3 Post-Validation Follow-Through (Phase 4)
+
+**Freeze (§4.2.1):** rows marked `Frozen` do not start until `STAB-WS-1` and `STAB-EXP-1` are Done. `S4-FMT-1` / `S4-DELIV-1` are delivered via `STAB-EXP-1a` / `STAB-EXP-1b`.
 
 | ID | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | S4-DISC-1 | Discovery | Category-aware discovery: annotation-type filters, `listVariablesByCategory` engine method + MCP tool, guided "suggest breaks for topic X" flow | S4-EVAL-5 | Done | Yes | T,L,U,I,A | `src/engine/VelocityEngine.ts`, `mcp-server/tools.ts`, `mcp-server/__tests__/tools.test.ts` |
-| S4-DELIV-1 | Export | PPTX chart rendering overhaul: fix single-series color cycling, add bar gap/gridline/axis control, close D3→PPTX quality gap for client-presentable output | S4-EVAL-5 | Not started | Yes | T,L,U,A | - |
-| S4-FMT-1 | MCP | Crosstab matrix format: add `format: 'matrix'` to `velocity_crosstab` so agents receive standard pivot-shaped output, not raw long/tidy rows | S4-EVAL-5 | Not started | Yes | T,L,U,I,A | - |
-| S4-MCP-1 | MCP | Workspace-aware MCP: `velocity_load_metadata` + `velocity_load_full` two-step flow; multi-dataset workspace tools | S4-EVAL-5 | Not started | Yes | T,L,U,I,A | - |
+| S4-DELIV-1 | Export | PPTX chart rendering overhaul (absorbed by `STAB-EXP-1b`) | STAB-EXP-1b | Merged | Yes | T,L,U,A | `STAB-EXP-1b` |
+| S4-FMT-1 | MCP | Crosstab matrix format (absorbed by `STAB-EXP-1a`) | STAB-EXP-1a | Merged | Yes | T,L,U,I,A | `STAB-EXP-1a` |
+| S4-MCP-1 | MCP | Workspace-aware MCP: `velocity_load_metadata` + `velocity_load_full` two-step flow; multi-dataset workspace tools | STAB-EXP-1 | Frozen | Yes | T,L,U,I,A | §4.2.1 freeze |
 | S4-DEF-1 | Defaults | Recommended break variables after topic selection; false-positive weight warnings; high-cardinality guardrails | S4-DISC-1 | In progress | Yes | T,L,U,I,A | `src/engine/VelocityEngine.ts`, `mcp-server/tools.ts`, `mcp-server/__tests__/tools.test.ts` |
-| S4-MCP-2 | MCP | Deck build transport resilience: stream or chunk `buildDeck` responses to avoid stdio OOM | S4-EVAL-5 | Not started | Yes | T,L,U,A | - |
-| S4-EVAL-5b | Eval | Harmonization re-run: EVAL-05 follow-on with naming drift, partial label overlap, or scale inversion construct | S4-EVAL-5 | Not started | No | A | - |
+| S4-MCP-2 | MCP | Deck build transport resilience: stream or chunk `buildDeck` responses to avoid stdio OOM | STAB-EXP-1 | Frozen | Yes | T,L,U,A | §4.2.1 freeze |
+| S4-EVAL-5b | Eval | Harmonization re-run: EVAL-05 follow-on with naming drift, partial label overlap, or scale inversion construct | STAB-EXP-1 | Frozen | No | A | §4.2.1 freeze |
 
 ### 4.4 Next After Validation (Phase 5)
 
@@ -201,7 +230,7 @@ CSS Modules remain for complex component states, grids, animations, and unreadab
 2. **Legacy token removal** — eliminate Research Desk tokens (`--color-paper`, `--color-ink`, `--color-terracotta`, `--color-parchment`) in active source.
 3. **CSS fallback and hex cleanup** — no hardcoded hex in component CSS; no `var(--token, #fff)` fallbacks; prefer semantic tokens or `color-mix()` over raw `rgba(0,0,0,…)`.
 4. **Raw Tailwind palette cleanup** — replace `bg-white`, `text-red-600`, `border-amber-200`, etc. with `bg-[var(--…)]` or CSS Module classes.
-5. **Regression guard** — CI or script blocking palette utility classes and CSS fallback hex patterns (ignore archive and vendor).
+5. **Regression guard** — `scripts/check-design-tokens.mjs` with a shrinkable allowlist; wire into CI via `STAB-CI-1` (fails on new violations outside allowlist; remove allowlist when §7 acceptance is met).
 
 ### Acceptance
 

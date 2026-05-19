@@ -40,14 +40,14 @@ For execution details and dependencies, use:
 As of the May 2026 maturity review, Phase 4 Agent Capability Validation is **complete** and the next phase should be treated as stabilization, not expansion. Key findings:
 
 - **Engine validated:** Mean score 4.7/5 across six eval families. Computation, provenance, export, and session mechanics all work.
-- **Discovery and MCP breadth are the primary gaps:** Semantic discovery (mean 3.0) and MCP workflow coverage (mean 3.0) need capability expansion. Category-aware discovery and workspace MCP tools are the P1/P2 next investments.
+- **Discovery and MCP breadth remain post-stabilization gaps:** Semantic discovery (mean 3.0) and MCP workflow coverage (mean 3.0) need expansion, but **after** stabilization (`STAB-WS-1`, `STAB-EXP-1`). Category-aware discovery (`S4-DISC-1`) is Done; workspace MCP (`S4-MCP-1`) is frozen until export/workspace hardening ships.
 - **No architecture rewrite needed:** All gaps are capability expansion within the current thesis. The product direction is correct; the agent-guidance layers need to catch up with the computational substrate.
 - **Four benchmark baselines frozen:** EVAL-01 (small deck), EVAL-02 (large survey), EVAL-04 (convergence), EVAL-06 (stress).
 - **Quality gates are currently green but narrow:** typecheck, tests, coverage, and build pass, but coverage excludes large UI/store/product surfaces.
 - **Product durability is the largest blocker:** workspace metadata exists, but stored datasets still need reliable reopen/switch/delete behavior across sessions.
 
 Implication:
-- The strategic critical path is now a **stabilization overlay** before Phase 5 expansion: reconcile docs, finish reopenable workspace durability, polish export output, enforce design-system rules, split monoliths at stable boundaries, and tighten CI/coverage truthfulness.
+- The strategic critical path is now a **stabilization overlay** before Phase 5 expansion: stabilization contract (`STAB-DOC-1`), reopenable workspace (`STAB-WS-1`), export deliverables (`STAB-EXP-1a`/`1b`), design-system ratchet (`STAB-DS-1`), and E2E-first CI truth (`STAB-CI-1`). Monolith splits and coverage un-exclude are explicitly deferred until stabilization exit (see tracker §4.2.1).
 - All feature additions must be evaluated against the question: "Does this close a validated gap from Phase 4?"
 - WebR, deeper AI, and cloud collaboration should remain deferred unless they directly support the stabilization priorities above.
 - See `docs/archive/2026-03/phase4-eval/eval_s4_eval_5_phase_synthesis.md` for the full Phase 4 decision package.
