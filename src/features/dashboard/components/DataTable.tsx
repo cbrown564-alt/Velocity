@@ -568,7 +568,7 @@ export const DataTable: React.FC<DataTableProps> = ({
       key="chart"
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="w-full h-[500px] bg-[var(--bg-active)] border border-[var(--gray-200)] rounded-lg shadow-sm p-6"
+      className="w-full h-[500px] bg-[var(--bg-active)] border border-[var(--border-color)] rounded-lg shadow-sm p-6"
     >
       <AnalysisChart
         data={data}

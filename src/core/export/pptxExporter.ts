@@ -5,9 +5,10 @@ async function getPptxGenJS() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return (mod.default ?? mod) as any;
 }
-import { ExportConfig, AnalysisExportItem } from './types';
+import { ExportConfig, AnalysisExportItem, ExportBranding } from './types';
 import { ProcessedRow, ProcessedColumn, ProcessedCell } from '../../types/processedData';
 import type { SlideSection } from '../../types/slides';
+import { buildPresentationChartOptions } from './pptxChartStyle';
 
 type PptxTableCell = {
   text: string;
@@ -195,35 +196,21 @@ function buildSlideChart(
       break;
   }
 
-  const baseChartOpts: any = {
-    x: 0.5,
-    y: contentY,
-    w: 12.3,
-    h: 6.0 - Math.max(0, contentY - 1.0),
-    showTitle: false,
-    showLegend: item.result.series.length > 1,
-    legendPos: 'b',
-    chartColors: branding.chartColors ?? [branding.headerColor, branding.primaryColor, '4F46E5', '10B981', 'F59E0B'],
-    dataLabelFontFace: branding.fontFamily,
-    dataLabelFontSize: 10,
-    showValue: true,
-  };
+  const seriesCount =
+    pptxChartType === 'doughnut'
+      ? 1
+      : item.result.series.length;
 
-  // Bar-specific options must not be applied to donut or scatter
-  if (isBarChart) {
-    // Data label format: percent takes precedence, then raw count
-    const labelFmt = showPercents ? '0.0"%"' : '0';
-    const axisFmt = showPercents ? '0"%"' : '0';
-    Object.assign(baseChartOpts, {
-      barDir,
-      barGrouping,
-      dataLabelFormatCode: labelFmt,
-      dataBorder: { pt: 1, color: 'FFFFFF' },
-      dataLabelColor: '333333',
-      valAxisLabelFormatCode: axisFmt,
-      showValue: showPercents || showCounts,
-    });
-  }
+  const baseChartOpts: any = buildPresentationChartOptions({
+    branding: branding as ExportBranding & { fontFamily: string; chartColors: string[] },
+    seriesCount,
+    isBarChart,
+    showPercents,
+    showCounts,
+    contentY,
+    barDir,
+    barGrouping,
+  });
 
   if (pptxChartType === 'scatter') {
     // PptxGenJS scatter requires { name, values: y[], xData: x[] }.

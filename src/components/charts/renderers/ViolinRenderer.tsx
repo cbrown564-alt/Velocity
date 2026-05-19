@@ -36,7 +36,7 @@ export const ViolinRenderer: React.FC<BaseChartRendererProps> = ({
 
     if (groups.length === 0) {
         return (
-            <div className="flex items-center justify-center h-full text-gray-400 text-sm">
+            <div className="flex items-center justify-center h-full text-[var(--text-tertiary)] text-sm">
                 Violin plot data not available.
             </div>
         );

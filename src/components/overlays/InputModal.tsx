@@ -64,7 +64,7 @@ export const InputModal: React.FC<InputModalProps> = ({
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={onClose}
-                        className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50"
+                        className="fixed inset-0 bg-[var(--text-primary)]/30 backdrop-blur-sm z-50"
                     />
 
                     {/* Modal */}
@@ -76,17 +76,17 @@ export const InputModal: React.FC<InputModalProps> = ({
                         className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none"
                     >
                         <div
-                            className="bg-white rounded-xl shadow-2xl w-full max-w-sm overflow-hidden pointer-events-auto"
+                            className="bg-[var(--bg-panel)] rounded-xl shadow-2xl w-full max-w-sm overflow-hidden pointer-events-auto border border-[var(--border-color)]"
                             onKeyDown={handleKeyDown}
                         >
                             {/* Header */}
-                            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
-                                <h2 className="text-lg font-semibold text-gray-900">
+                            <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--border-subtle)]">
+                                <h2 className="text-lg font-semibold text-[var(--text-primary)]">
                                     {title}
                                 </h2>
                                 <button
                                     onClick={onClose}
-                                    className="p-1.5 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+                                    className="p-1.5 rounded-md text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] transition-colors"
                                 >
                                     <X size={18} />
                                 </button>
@@ -100,7 +100,7 @@ export const InputModal: React.FC<InputModalProps> = ({
                                     value={value}
                                     onChange={(e) => setValue(e.target.value)}
                                     placeholder={placeholder}
-                                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all"
+                                    className="w-full px-4 py-2.5 border border-[var(--border-color)] rounded-lg text-sm outline-none focus:border-[var(--border-color-active)] focus:ring-2 focus:ring-[var(--border-color-active)]/20 transition-all bg-[var(--bg-panel)] text-[var(--text-primary)]"
                                 />
 
                                 {/* Buttons */}
@@ -108,14 +108,14 @@ export const InputModal: React.FC<InputModalProps> = ({
                                     <button
                                         type="button"
                                         onClick={onClose}
-                                        className="px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                                        className="px-4 py-2 text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] rounded-lg transition-colors"
                                     >
                                         Cancel
                                     </button>
                                     <button
                                         type="submit"
                                         disabled={!value.trim()}
-                                        className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                        className="px-4 py-2 text-sm font-medium text-[var(--text-inverse)] bg-[var(--color-accent)] hover:opacity-90 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
                                         {submitLabel}
                                     </button>

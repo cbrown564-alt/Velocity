@@ -157,7 +157,7 @@ export const MethodologyDrawer: React.FC<MethodologyDrawerProps> = ({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40"
+            className="fixed inset-0 bg-[var(--text-primary)]/20 backdrop-blur-sm z-40"
           />
 
           {/* Drawer */}

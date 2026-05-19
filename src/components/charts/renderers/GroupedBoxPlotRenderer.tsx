@@ -137,7 +137,7 @@ export const GroupedBoxPlotRenderer: React.FC<BaseChartRendererProps> = ({
                 alignItems: 'center',
                 justifyContent: 'center',
                 height: '100%',
-                color: 'var(--gray-400)',
+                color: 'var(--text-tertiary)',
                 fontSize: 'var(--font-size-sm)',
                 fontFamily: 'var(--font-mono)',
             }}>

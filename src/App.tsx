@@ -66,7 +66,7 @@ const RestorationPrompt: React.FC<RestorationPromptProps> = ({
   const lastModifiedLabel = lastModified ? new Date(lastModified).toLocaleString() : null;
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-      className="fixed inset-0 flex items-center justify-center bg-white z-40">
+      className="fixed inset-0 flex items-center justify-center bg-[var(--bg-app)] z-40">
       <div className="text-center space-y-6 max-w-md w-full px-6">
         <div className="space-y-2">
           <h1 className="text-3xl font-bold tracking-tight text-[var(--text-primary)]">Welcome Back</h1>
@@ -74,8 +74,8 @@ const RestorationPrompt: React.FC<RestorationPromptProps> = ({
         </div>
         <div className="bg-[var(--bg-surface)] rounded-xl p-6 text-left space-y-3">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
-              <Table className="w-5 h-5 text-indigo-600" />
+            <div className="w-10 h-10 bg-[var(--bg-active)] rounded-lg flex items-center justify-center">
+              <Table className="w-5 h-5 text-[var(--text-accent)]" />
             </div>
             <div>
               <p className="font-medium text-[var(--text-primary)]">{datasetName || 'Previous Session'}</p>
@@ -84,7 +84,7 @@ const RestorationPrompt: React.FC<RestorationPromptProps> = ({
             </div>
           </div>
           {warning && (
-            <div className="text-xs text-amber-700 bg-amber-50 border border-amber-100 rounded-md p-2">{warning}</div>
+            <div className="text-xs text-[var(--status-warning-text)] bg-[var(--status-warning-surface)] border border-[var(--status-warning-border)] rounded-md p-2">{warning}</div>
           )}
         </div>
         <div className="flex gap-3">
@@ -97,7 +97,7 @@ const RestorationPrompt: React.FC<RestorationPromptProps> = ({
             Start Fresh
           </motion.button>
         </div>
-        <p className="text-xs text-slate-400">Your data is stored locally in your browser.</p>
+        <p className="text-xs text-[var(--text-tertiary)]">Your data is stored locally in your browser.</p>
       </div>
     </motion.div>
   );
@@ -117,13 +117,13 @@ const PartialLoadNotice: React.FC<PartialLoadNoticeProps> = ({
   title, message, details, canRebuild, onRebuild, onDismiss,
 }) => (
   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-    className="fixed inset-0 flex items-center justify-center bg-black/30 z-[110] px-4">
+    className="fixed inset-0 flex items-center justify-center bg-[var(--text-primary)]/30 z-[110] px-4">
     <motion.div initial={{ opacity: 0, y: 16, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 16, scale: 0.98 }}
-      className="w-full max-w-lg rounded-xl border border-amber-200 bg-white shadow-2xl p-6 space-y-4">
+      className="w-full max-w-lg rounded-xl border border-[var(--status-warning-border)] bg-[var(--bg-panel)] shadow-2xl p-6 space-y-4">
       <div className="space-y-2">
-        <h2 className="text-xl font-semibold text-amber-900">{title}</h2>
-        <p className="text-sm text-amber-900/90">{message}</p>
-        {details && <p className="text-xs text-amber-800/90 bg-amber-50 border border-amber-100 rounded-md p-2">{details}</p>}
+        <h2 className="text-xl font-semibold text-[var(--status-warning-text)]">{title}</h2>
+        <p className="text-sm text-[var(--text-primary)]">{message}</p>
+        {details && <p className="text-xs text-[var(--text-secondary)] bg-[var(--status-warning-surface)] border border-[var(--status-warning-border)] rounded-md p-2">{details}</p>}
       </div>
       <div className="flex gap-3">
         {canRebuild && (
@@ -133,7 +133,7 @@ const PartialLoadNotice: React.FC<PartialLoadNoticeProps> = ({
           </button>
         )}
         <button onClick={onDismiss}
-          className="flex-1 px-4 py-2 rounded-lg border border-amber-200 bg-white text-amber-900 text-sm font-medium hover:bg-amber-50 transition-colors">
+          className="flex-1 px-4 py-2 rounded-lg border border-[var(--status-warning-border)] bg-[var(--bg-panel)] text-[var(--status-warning-text)] text-sm font-medium hover:bg-[var(--status-warning-surface)] transition-colors">
           Continue
         </button>
       </div>
@@ -731,7 +731,7 @@ export default function App() {
                   <h1 className="text-4xl font-bold tracking-tight text-[var(--text-primary)]">Velocity.</h1>
                   <p className="text-[var(--text-secondary)] text-lg">The zero-latency research dashboard.</p>
                   {initError ? (
-                    <div className="flex items-center justify-center gap-2 text-red-500 text-sm font-medium bg-red-50 p-2 rounded-md">
+                    <div className="flex items-center justify-center gap-2 text-[var(--color-error)] text-sm font-medium bg-[var(--status-error-surface)] p-2 rounded-md">
                       <AlertCircle size={16} /><span>{initError}</span>
                     </div>
                   ) : (
@@ -747,7 +747,7 @@ export default function App() {
             {/* OPFS error overlay */}
             {dataset && (persistence.opfsRehydrateError || persistenceError) && (
               <div className="absolute bottom-6 left-6 right-6 max-w-lg mx-auto">
-                <div className="text-left text-amber-800 bg-amber-50 border border-amber-100 rounded-lg p-4 shadow-lg space-y-2">
+                <div className="text-left text-[var(--status-warning-text)] bg-[var(--status-warning-surface)] border border-[var(--status-warning-border)] rounded-lg p-4 shadow-lg space-y-2">
                   <div className="flex items-start gap-2">
                     <AlertCircle size={16} className="mt-0.5 shrink-0" />
                     <div className="space-y-1">
@@ -764,7 +764,7 @@ export default function App() {
                         Retry Restore
                       </button>
                       <button type="button" onClick={handleDiscard}
-                        className="px-3 py-1.5 rounded bg-white border border-amber-200 text-amber-900 text-xs font-medium hover:bg-amber-100 transition-colors">
+                        className="px-3 py-1.5 rounded bg-[var(--bg-panel)] border border-[var(--status-warning-border)] text-[var(--status-warning-text)] text-xs font-medium hover:bg-[var(--status-warning-surface)] transition-colors">
                         Start Fresh
                       </button>
                     </div>
@@ -834,20 +834,20 @@ export default function App() {
       <AnimatePresence>
         {sessionImportDiagnostics && dataset && sessionImportMessages.length > 0 && (
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 12 }}
-            className={`fixed right-6 z-[121] w-full max-w-sm rounded-lg border border-amber-200 bg-amber-50 shadow-xl p-4 ${persistence.showStorageReminderToast ? 'bottom-36' : 'bottom-6'}`}>
+            className={`fixed right-6 z-[121] w-full max-w-sm rounded-lg border border-[var(--status-warning-border)] bg-[var(--status-warning-surface)] shadow-xl p-4 ${persistence.showStorageReminderToast ? 'bottom-36' : 'bottom-6'}`}>
             <div className="flex items-start gap-3">
-              <AlertCircle size={16} className="mt-0.5 text-amber-700 shrink-0" />
+              <AlertCircle size={16} className="mt-0.5 text-[var(--status-warning-text)] shrink-0" />
               <div className="flex-1 space-y-2">
                 <div className="space-y-1">
-                  <p className="text-sm font-semibold text-amber-900">Session imported with adjustments</p>
-                  <p className="text-xs text-amber-900/90">Some saved references did not match the uploaded dataset.</p>
+                  <p className="text-sm font-semibold text-[var(--status-warning-text)]">Session imported with adjustments</p>
+                  <p className="text-xs text-[var(--text-primary)]">Some saved references did not match the uploaded dataset.</p>
                 </div>
-                <ul className="list-disc pl-4 space-y-1 text-xs text-amber-900/90">
+                <ul className="list-disc pl-4 space-y-1 text-xs text-[var(--text-secondary)]">
                   {sessionImportMessages.map((item) => <li key={item.id}>{item.message}</li>)}
                 </ul>
               </div>
               <button onClick={() => setSessionImportDiagnostics(null)}
-                className="p-1.5 rounded-md text-amber-700 hover:bg-amber-100" aria-label="Dismiss session import diagnostics">
+                className="p-1.5 rounded-md text-[var(--status-warning-text)] hover:bg-[var(--bg-hover)]" aria-label="Dismiss session import diagnostics">
                 <X size={14} />
               </button>
             </div>
@@ -869,8 +869,8 @@ export default function App() {
               </div>
               <div className="bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-2xl p-8 text-left space-y-6 shadow-sm">
                 <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-amber-50 border border-amber-100 rounded-xl flex items-center justify-center shrink-0">
-                    <AlertCircle className="w-6 h-6 text-amber-600" />
+                  <div className="w-12 h-12 bg-[var(--status-warning-surface)] border border-[var(--status-warning-border)] rounded-xl flex items-center justify-center shrink-0">
+                    <AlertCircle className="w-6 h-6 text-[var(--status-warning-text)]" />
                   </div>
                   <div className="space-y-4 flex-1">
                     <div>
@@ -905,7 +905,7 @@ export default function App() {
                   </div>
                 </div>
               </div>
-              <div className="bg-white border border-[var(--border-color)] rounded-2xl p-6 text-left shadow-sm">
+              <div className="bg-[var(--bg-panel)] border border-[var(--border-color)] rounded-2xl p-6 text-left shadow-sm">
                 <div className="flex items-center justify-between mb-4">
                   <p className="text-sm font-semibold text-[var(--text-primary)]">Variables Preview</p>
                   <p className="text-xs text-[var(--text-secondary)] bg-[var(--bg-panel)] px-2 py-0.5 rounded-full">Showing top 20</p>
@@ -914,7 +914,7 @@ export default function App() {
                   {dataset.variables.slice(0, 20).map((v) => (
                     <div key={v.id} className="flex items-center gap-3 p-2.5 rounded-xl border border-[var(--border-color-muted)] bg-[var(--bg-panel)] hover:bg-[var(--bg-active)] transition-colors">
                       <div className="w-8 h-8 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-color-muted)] flex items-center justify-center shrink-0">
-                        {v.type === 'numeric' || v.type === 'scale' ? <BarChart3 className="w-4 h-4 text-blue-500" /> : <LayoutGrid className="w-4 h-4 text-purple-500" />}
+                        {v.type === 'numeric' || v.type === 'scale' ? <BarChart3 className="w-4 h-4 text-[var(--tag-scale-text)]" /> : <LayoutGrid className="w-4 h-4 text-[var(--tag-nominal-text)]" />}
                       </div>
                       <div className="min-w-0 pr-2">
                         <p className="text-sm font-medium text-[var(--text-primary)] truncate" title={v.label || v.name}>{v.label || v.name}</p>
@@ -935,7 +935,7 @@ export default function App() {
                   Back to Upload
                 </motion.button>
                 <motion.button onClick={fileUpload.handleMetadataLoadFull} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
-                  className="flex-1 py-3.5 px-6 rounded-xl bg-[var(--color-accent)] text-white font-semibold shadow-md shadow-indigo-500/20">
+                  className="flex-1 py-3.5 px-6 rounded-xl bg-[var(--color-accent)] text-[var(--text-inverse)] font-semibold shadow-md shadow-[var(--color-accent)]/20">
                   Load Full Data
                 </motion.button>
               </div>

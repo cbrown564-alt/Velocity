@@ -57,7 +57,7 @@ export const AnalysisSettingsPanel: React.FC<AnalysisSettingsPanelProps> = ({
             onClick={() => handleComparisonMethodChange('cell_vs_rest')}
             className={`px-2 py-1 text-xs rounded transition-colors ${
               analysisSettings.comparisonMethod === 'cell_vs_rest'
-                ? 'bg-[var(--color-accent)] text-white'
+                ? 'bg-[var(--color-accent)] text-[var(--text-inverse)]'
                 : 'bg-[var(--bg-panel)] text-[var(--text-primary)] hover:bg-[var(--bg-active)]'
             } ${isInline ? '' : 'flex-1'}`}
           >
@@ -67,7 +67,7 @@ export const AnalysisSettingsPanel: React.FC<AnalysisSettingsPanelProps> = ({
             onClick={() => handleComparisonMethodChange('pairwise')}
             className={`px-2 py-1 text-xs rounded transition-colors ${
               analysisSettings.comparisonMethod === 'pairwise'
-                ? 'bg-[var(--color-accent)] text-white'
+                ? 'bg-[var(--color-accent)] text-[var(--text-inverse)]'
                 : 'bg-[var(--bg-panel)] text-[var(--text-primary)] hover:bg-[var(--bg-active)]'
             } ${isInline ? '' : 'flex-1'}`}
           >
@@ -106,7 +106,7 @@ export const AnalysisSettingsPanel: React.FC<AnalysisSettingsPanelProps> = ({
           }`}
         >
           <span
-            className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full transition-transform shadow-sm ${
+            className={`absolute top-0.5 left-0.5 w-4 h-4 bg-[var(--bg-panel)] rounded-full transition-transform shadow-sm ${
               analysisSettings.showConfidenceIntervals ? 'translate-x-4' : ''
             }`}
           />

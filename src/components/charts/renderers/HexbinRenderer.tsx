@@ -38,7 +38,7 @@ export const HexbinRenderer: React.FC<BaseChartRendererProps> = ({
 
     if (points.length === 0) {
         return (
-            <div className="flex items-center justify-center h-full text-gray-400 text-sm">
+            <div className="flex items-center justify-center h-full text-[var(--text-tertiary)] text-sm">
                 No data available for Hexbin plot.
             </div>
         );
@@ -121,7 +121,7 @@ export const HexbinRenderer: React.FC<BaseChartRendererProps> = ({
                             fillOpacity={opacityScale(bin.length)}
                             stroke="var(--viz-stroke-bar)"
                             strokeWidth={0.5}
-                            className="transition-all duration-200 hover:stroke-gray-600 hover:stroke-1"
+                            className="transition-all duration-200 hover:stroke-[var(--viz-stroke-main)] hover:stroke-1"
                         >
                             <title>
                                 {`Count: ${bin.length}\nRange: [${Math.min(...bin.map(d => d[0])).toFixed(1)} - ${Math.max(...bin.map(d => d[0])).toFixed(1)}]`}

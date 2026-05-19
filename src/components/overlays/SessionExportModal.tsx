@@ -70,7 +70,7 @@ export const SessionExportModal: React.FC<SessionExportModalProps> = ({
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed inset-0 z-[140] flex items-center justify-center bg-black/40 px-4"
+          className="fixed inset-0 z-[140] flex items-center justify-center bg-[var(--text-primary)]/40 px-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}

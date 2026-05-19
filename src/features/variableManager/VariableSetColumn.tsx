@@ -449,7 +449,7 @@ export const VariableSetColumn: React.FC = () => {
         <div className={`${styles.column} ${styles.col3}`}>
             <div className={styles.columnHeader}>
                 <span className={styles.columnTitle}>Variable Sets</span>
-                <span style={{ fontSize: 'var(--text-xs)', color: 'var(--gray-400)' }}>
+                <span style={{ fontSize: 'var(--text-xs)', color: 'var(--text-tertiary)' }}>
                     {filteredSets.length}
                 </span>
             </div>

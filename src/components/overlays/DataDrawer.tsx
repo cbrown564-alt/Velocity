@@ -88,7 +88,7 @@ export const DataDrawer: React.FC<DataDrawerProps> = ({
             animate={{ opacity: 0.5 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-[var(--color-ink)]/20 backdrop-blur-sm z-40"
+            className="fixed inset-0 bg-[var(--text-primary)]/20 backdrop-blur-sm z-40"
           />
 
           {/* Drawer Panel */}
@@ -97,17 +97,17 @@ export const DataDrawer: React.FC<DataDrawerProps> = ({
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: "spring", damping: 30, stiffness: 300 }}
-            className="fixed inset-y-0 right-0 w-[700px] bg-[var(--color-paper)] shadow-[var(--shadow-drag)] z-50 flex flex-col border-l border-[var(--gray-200)]"
+            className="fixed inset-y-0 right-0 w-[700px] bg-[var(--bg-panel)] shadow-[var(--shadow-drag)] z-50 flex flex-col border-l border-[var(--border-color)]"
           >
             {/* Header */}
-            <div className="h-16 border-b border-[var(--gray-200)] flex items-center justify-between px-6 bg-[var(--color-paper)] shrink-0">
+            <div className="h-16 border-b border-[var(--border-color)] flex items-center justify-between px-6 bg-[var(--bg-panel)] shrink-0">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-[var(--gray-50)] rounded-lg text-[var(--color-terracotta)]">
+                <div className="p-2 bg-[var(--bg-active)] rounded-lg text-[var(--text-accent)]">
                   <ListFilter size={20} />
                 </div>
                 <div>
-                  <h2 className="font-semibold text-[var(--color-ink)] leading-tight font-display text-lg">X-Ray View</h2>
-                  <p className="text-xs text-[var(--gray-500)] font-medium font-body max-w-[300px] truncate" title={title}>
+                  <h2 className="font-semibold text-[var(--text-primary)] leading-tight font-display text-lg">X-Ray View</h2>
+                  <p className="text-xs text-[var(--text-secondary)] font-medium font-body max-w-[300px] truncate" title={title}>
                     {title}
                   </p>
                 </div>
@@ -116,43 +116,43 @@ export const DataDrawer: React.FC<DataDrawerProps> = ({
                 <button
                   onClick={handleExportCSV}
                   disabled={data.length === 0}
-                  className="p-2 hover:bg-[var(--gray-100)] rounded-full text-[var(--gray-400)] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="p-2 hover:bg-[var(--bg-hover)] rounded-full text-[var(--text-tertiary)] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                   title="Export to CSV"
                 >
                   <Download size={18} />
                 </button>
-                <button onClick={onClose} className="p-2 hover:bg-[var(--gray-100)] rounded-full text-[var(--gray-400)] transition-colors">
+                <button onClick={onClose} className="p-2 hover:bg-[var(--bg-hover)] rounded-full text-[var(--text-tertiary)] transition-colors">
                   <X size={18} />
                 </button>
               </div>
             </div>
 
             {/* Content */}
-            <div className="flex-1 overflow-auto p-6 bg-[var(--gray-50)]/50">
+            <div className="flex-1 overflow-auto p-6 bg-[var(--bg-active)]/50">
               {loading && data.length === 0 ? (
-                <div className="h-full flex items-center justify-center flex-col gap-3 text-[var(--gray-400)]">
-                  <Loader2 className="animate-spin h-8 w-8 text-[var(--color-terracotta)]" />
+                <div className="h-full flex items-center justify-center flex-col gap-3 text-[var(--text-tertiary)]">
+                  <Loader2 className="animate-spin h-8 w-8 text-[var(--text-accent)]" />
                   <span className="text-sm font-medium font-body">Fetching raw records...</span>
                 </div>
               ) : data.length === 0 ? (
-                <div className="h-full flex items-center justify-center text-[var(--gray-400)] text-sm font-body">
+                <div className="h-full flex items-center justify-center text-[var(--text-tertiary)] text-sm font-body">
                   No records found matching this segment.
                 </div>
               ) : (
-                <div className="bg-[var(--color-paper)] border border-[var(--gray-200)] rounded-lg overflow-hidden shadow-sm">
+                <div className="bg-[var(--bg-panel)] border border-[var(--border-color)] rounded-lg overflow-hidden shadow-sm">
                   <div className="overflow-x-auto max-h-[calc(100vh-220px)]">
                     <table className="w-full text-xs text-left">
-                      <thead className="border-b border-[var(--gray-100)] text-[var(--gray-500)] uppercase font-medium font-body sticky top-0 z-10">
+                      <thead className="border-b border-[var(--bg-hover)] text-[var(--text-secondary)] uppercase font-medium font-body sticky top-0 z-10">
                         <tr>
                           {/* Row number column */}
-                          <th className="px-3 py-2.5 whitespace-nowrap bg-[var(--gray-50)] border-b border-[var(--gray-200)] text-center w-12">
+                          <th className="px-3 py-2.5 whitespace-nowrap bg-[var(--bg-active)] border-b border-[var(--border-color)] text-center w-12">
                             #
                           </th>
                           {/* Filter columns - highlighted */}
                           {orderedColumns.filterCols.map((key, idx) => (
                             <th
                               key={key}
-                              className={`px-3 py-2.5 whitespace-nowrap border-b border-[var(--gray-200)] bg-[var(--gray-50)] text-[var(--color-terracotta)] font-semibold ${idx === orderedColumns.filterCols.length - 1 ? 'border-r-2 border-r-[var(--color-terracotta)]/30' : ''
+                              className={`px-3 py-2.5 whitespace-nowrap border-b border-[var(--border-color)] bg-[var(--bg-active)] text-[var(--text-accent)] font-semibold ${idx === orderedColumns.filterCols.length - 1 ? 'border-r-2 border-r-[var(--text-accent)]/30' : ''
                                 }`}
                             >
                               <div className="flex items-center gap-1.5">
@@ -163,36 +163,36 @@ export const DataDrawer: React.FC<DataDrawerProps> = ({
                           ))}
                           {/* Other columns */}
                           {orderedColumns.otherCols.map(key => (
-                            <th key={key} className="px-3 py-2.5 whitespace-nowrap bg-[var(--gray-50)] border-b border-[var(--gray-200)]">
+                            <th key={key} className="px-3 py-2.5 whitespace-nowrap bg-[var(--bg-active)] border-b border-[var(--border-color)]">
                               {key}
                             </th>
                           ))}
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-[var(--gray-100)] font-body">
+                      <tbody className="divide-y divide-[var(--bg-hover)] font-body">
                         {data.map((row, i) => (
-                          <tr key={i} className="hover:bg-[var(--gray-50)] transition-colors">
+                          <tr key={i} className="hover:bg-[var(--bg-active)] transition-colors">
                             {/* Row number */}
-                            <td className="px-3 py-2 text-center text-[var(--gray-400)] font-mono text-[10px]">
+                            <td className="px-3 py-2 text-center text-[var(--text-tertiary)] font-mono text-[10px]">
                               {i + 1}
                             </td>
                             {/* Filter column values - highlighted */}
                             {orderedColumns.filterCols.map((col, idx) => (
                               <td
                                 key={col}
-                                className={`px-3 py-2 whitespace-nowrap max-w-[180px] overflow-hidden text-ellipsis bg-[var(--color-terracotta)]/5 text-[var(--color-ink)] font-medium ${idx === orderedColumns.filterCols.length - 1 ? 'border-r-2 border-r-[var(--color-terracotta)]/20' : ''
+                                className={`px-3 py-2 whitespace-nowrap max-w-[180px] overflow-hidden text-ellipsis bg-[var(--text-accent)]/5 text-[var(--text-primary)] font-medium ${idx === orderedColumns.filterCols.length - 1 ? 'border-r-2 border-r-[var(--text-accent)]/20' : ''
                                   }`}
                               >
                                 {row[col] === null || row[col] === undefined
-                                  ? <span className="text-[var(--gray-300)]">—</span>
+                                  ? <span className="text-[var(--border-color-muted)]">—</span>
                                   : String(row[col])}
                               </td>
                             ))}
                             {/* Other column values */}
                             {orderedColumns.otherCols.map(col => (
-                              <td key={col} className="px-3 py-2 text-[var(--color-charcoal)] whitespace-nowrap max-w-[180px] overflow-hidden text-ellipsis">
+                              <td key={col} className="px-3 py-2 text-[var(--text-primary)] whitespace-nowrap max-w-[180px] overflow-hidden text-ellipsis">
                                 {row[col] === null || row[col] === undefined
-                                  ? <span className="text-[var(--gray-300)]">—</span>
+                                  ? <span className="text-[var(--border-color-muted)]">—</span>
                                   : String(row[col])}
                               </td>
                             ))}
@@ -206,16 +206,16 @@ export const DataDrawer: React.FC<DataDrawerProps> = ({
             </div>
 
             {/* Footer with pagination */}
-            <div className="p-3 border-t border-[var(--gray-100)] bg-[var(--color-paper)] flex items-center justify-between">
-              <div className="text-xs text-[var(--gray-500)] font-body">
-                Showing <span className="font-semibold text-[var(--color-ink)]">{loadedCount.toLocaleString()}</span> of{' '}
-                <span className="font-semibold text-[var(--color-ink)]">{totalCount.toLocaleString()}</span> records
+            <div className="p-3 border-t border-[var(--bg-hover)] bg-[var(--bg-panel)] flex items-center justify-between">
+              <div className="text-xs text-[var(--text-secondary)] font-body">
+                Showing <span className="font-semibold text-[var(--text-primary)]">{loadedCount.toLocaleString()}</span> of{' '}
+                <span className="font-semibold text-[var(--text-primary)]">{totalCount.toLocaleString()}</span> records
               </div>
               {hasMore && (
                 <button
                   onClick={onLoadMore}
                   disabled={loading}
-                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[var(--color-terracotta)] hover:bg-[var(--gray-100)] rounded-md transition-colors disabled:opacity-50"
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[var(--text-accent)] hover:bg-[var(--bg-hover)] rounded-md transition-colors disabled:opacity-50"
                 >
                   {loading ? (
                     <Loader2 size={14} className="animate-spin" />

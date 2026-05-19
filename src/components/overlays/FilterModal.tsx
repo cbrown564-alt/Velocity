@@ -127,7 +127,7 @@ export const FilterModal: React.FC<FilterModalProps> = ({
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center"
+                className="fixed inset-0 bg-[var(--text-primary)]/30 backdrop-blur-sm z-50 flex items-center justify-center"
                 onClick={handleClose}
             >
                 <motion.div
@@ -216,7 +216,7 @@ export const FilterModal: React.FC<FilterModalProps> = ({
                                     {filteredVariables.length === 0 ? (
                                         <p
                                             className="text-sm text-center py-8"
-                                            style={{ color: 'var(--gray-400)' }}
+                                            style={{ color: 'var(--text-tertiary)' }}
                                         >
                                             No categorical variables found
                                         </p>
@@ -247,12 +247,12 @@ export const FilterModal: React.FC<FilterModalProps> = ({
                                 {/* Value List */}
                                 <div className="max-h-64 overflow-y-auto custom-scrollbar space-y-1">
                                     {loadingValues ? (
-                                        <div className="flex flex-col items-center justify-center py-8 text-[var(--gray-400)] gap-2">
+                                        <div className="flex flex-col items-center justify-center py-8 text-[var(--text-tertiary)] gap-2">
                                             <Loader2 className="animate-spin" size={20} />
                                             <span className="text-sm">Loading values...</span>
                                         </div>
                                     ) : availableValues.length === 0 ? (
-                                        <p className="text-sm text-center py-8 text-[var(--gray-400)]">
+                                        <p className="text-sm text-center py-8 text-[var(--text-tertiary)]">
                                             No values found
                                         </p>
                                     ) : (

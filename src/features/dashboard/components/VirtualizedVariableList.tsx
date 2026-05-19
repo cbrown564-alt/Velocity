@@ -75,7 +75,7 @@ export const VirtualizedVariableList: React.FC<VirtualizedVariableListProps> = (
 
     if (variableSets.length === 0) {
         return (
-            <div className="flex items-center justify-center h-32 text-gray-400 text-sm">
+            <div className="flex items-center justify-center h-32 text-[var(--text-tertiary)] text-sm">
                 No variables found
             </div>
         );

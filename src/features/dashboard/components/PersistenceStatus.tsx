@@ -90,10 +90,10 @@ export const PersistenceStatus: React.FC<PersistenceStatusProps> = ({
                 <div className={`
           w-8 h-8 rounded-full flex items-center justify-center shrink-0
           ${statusTone === 'issue'
-                        ? 'bg-red-100 text-red-600'
+                        ? 'bg-[var(--status-error-surface)] text-[var(--color-error)]'
                         : statusTone === 'warn'
-                            ? 'bg-amber-100 text-amber-700'
-                            : 'bg-emerald-100 text-emerald-600'
+                            ? 'bg-[var(--status-warning-surface)] text-[var(--status-warning-text)]'
+                            : 'bg-[var(--status-success-surface)] text-[var(--color-success)]'
                     }
         `}>
                     {statusTone === 'issue' ? <AlertCircle size={16} /> : statusTone === 'warn' ? <TriangleAlert size={16} /> : <Database size={16} />}
@@ -120,7 +120,7 @@ export const PersistenceStatus: React.FC<PersistenceStatusProps> = ({
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             onClick={() => setShowDetails(false)}
-                            className="absolute inset-0 bg-black/20 backdrop-blur-sm"
+                            className="absolute inset-0 bg-[var(--text-primary)]/20 backdrop-blur-sm"
                         />
 
                         <motion.div
@@ -151,8 +151,8 @@ export const PersistenceStatus: React.FC<PersistenceStatusProps> = ({
                                         <div className="text-xs text-[var(--text-secondary)] mb-1">Status</div>
                                         <div className="flex items-center gap-2">
                                             {opfsAvailable
-                                                ? <><CheckCircle2 size={14} className="text-emerald-500" /><span className="text-sm font-medium">Active</span></>
-                                                : <><AlertCircle size={14} className="text-amber-500" /><span className="text-sm font-medium">Unavailable</span></>
+                                                ? <><CheckCircle2 size={14} className="text-[var(--color-success)]" /><span className="text-sm font-medium">Active</span></>
+                                                : <><AlertCircle size={14} className="text-[var(--status-warning-text)]" /><span className="text-sm font-medium">Unavailable</span></>
                                             }
                                         </div>
                                     </div>
@@ -204,15 +204,15 @@ export const PersistenceStatus: React.FC<PersistenceStatusProps> = ({
 
                                             <div className="text-[var(--text-secondary)]">Memory Risk</div>
                                             <div className={`text-right font-medium flex items-center justify-end gap-1.5 ${memoryRisk === 'critical'
-                                                ? 'text-red-600'
+                                                ? 'text-[var(--color-error)]'
                                                 : memoryRisk === 'elevated'
-                                                    ? 'text-amber-600'
-                                                    : 'text-emerald-600'}`}>
+                                                    ? 'text-[var(--status-warning-text)]'
+                                                    : 'text-[var(--color-success)]'}`}>
                                                 {memoryRisk === 'critical' ? 'Critical' : memoryRisk === 'elevated' ? 'Elevated' : 'Normal'}
                                                 {memoryRisk !== 'normal' && <AlertCircle size={14} />}
                                             </div>
                                         </div>
-                                        <div className="mt-3 pt-3 border-t border-[var(--border-color-muted)] flex items-start gap-2 text-amber-700 bg-amber-50/50 p-2.5 rounded-md">
+                                        <div className="mt-3 pt-3 border-t border-[var(--border-color-muted)] flex items-start gap-2 text-[var(--status-warning-text)] bg-[var(--status-warning-surface)] p-2.5 rounded-md">
                                             <AlertCircle size={14} className="shrink-0 mt-0.5" />
                                             <div className="text-xs leading-relaxed">
                                                 Browser limits are based on total process memory, not only OPFS disk quota. High memory risk may cause the tab to crash.
@@ -223,7 +223,7 @@ export const PersistenceStatus: React.FC<PersistenceStatusProps> = ({
 
                                 {/* Error Section */}
                                 {(hasError || errorHint || partialLoadMessage) && (
-                                    <div className="p-3 rounded-lg bg-amber-50 border border-amber-100 text-amber-900 text-sm space-y-2">
+                                    <div className="p-3 rounded-lg bg-[var(--status-warning-surface)] border border-[var(--status-warning-border)] text-[var(--status-warning-text)] text-sm space-y-2">
                                         {error && <div className="font-medium flex items-center gap-2"><AlertCircle size={14} /> {error}</div>}
                                         {rehydrateError && <div className="font-medium flex items-center gap-2"><AlertCircle size={14} /> {rehydrateError}</div>}
                                         {partialLoadMessage && <div className="font-medium flex items-center gap-2"><TriangleAlert size={14} /> {partialLoadMessage}</div>}
@@ -245,7 +245,7 @@ export const PersistenceStatus: React.FC<PersistenceStatusProps> = ({
                                                 </button>
                                                 <button
                                                     onClick={onPurge}
-                                                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-red-50 text-red-700 border border-red-200 hover:bg-red-100 hover:border-red-300 text-sm font-medium transition-colors"
+                                                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-[var(--status-error-surface)] text-[var(--color-error)] border border-[var(--status-error-border)] hover:opacity-90 text-sm font-medium transition-opacity"
                                                 >
                                                     <Trash2 size={16} /> Purge Corruption
                                                 </button>
@@ -260,7 +260,7 @@ export const PersistenceStatus: React.FC<PersistenceStatusProps> = ({
                                             )}
                                             <button
                                                 onClick={onRebuild}
-                                                className={`w-full ${hasError || errorHint || partialLoadMessage ? 'mt-2' : ''} flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg bg-[var(--color-accent)] text-white hover:opacity-90 text-sm font-medium transition-opacity shadow-sm`}
+                                                className={`w-full ${hasError || errorHint || partialLoadMessage ? 'mt-2' : ''} flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg bg-[var(--color-accent)] text-[var(--text-inverse)] hover:opacity-90 text-sm font-medium transition-opacity shadow-sm`}
                                             >
                                                 <FileUp size={16} /> Re-import Original File
                                             </button>

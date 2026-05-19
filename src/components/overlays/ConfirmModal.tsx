@@ -62,7 +62,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={onClose}
-                        className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50"
+                        className="fixed inset-0 bg-[var(--text-primary)]/30 backdrop-blur-sm z-50"
                     />
 
                     {/* Modal */}
@@ -81,7 +81,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
                             <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--border-color)]">
                                 <div className="flex items-center gap-2">
                                     {isDanger && (
-                                        <AlertTriangle size={18} className="text-red-500" />
+                                        <AlertTriangle size={18} className="text-[var(--color-error)]" />
                                     )}
                                     <h2 className="text-lg font-semibold text-[var(--text-primary)]">
                                         {title}
@@ -115,7 +115,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
                                         type="button"
                                         onClick={handleConfirm}
                                         className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${isDanger
-                                                ? 'bg-red-600 hover:bg-red-700 text-white'
+                                                ? 'bg-[var(--color-error)] hover:opacity-90 text-[var(--text-inverse)]'
                                                 : 'bg-[var(--color-accent)] hover:opacity-90 text-[var(--text-inverse)]'
                                             }`}
                                     >

@@ -78,7 +78,7 @@
     width: 100%;
     font-size: 10px;
     /* Smaller font for hint */
-    color: var(--gray-400);
+    color: var(--text-tertiary);
     text-align: center;
     font-style: italic;
     pointer-events: none;

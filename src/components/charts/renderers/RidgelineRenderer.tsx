@@ -26,7 +26,7 @@ export const RidgelineRenderer: React.FC<BaseChartRendererProps> = ({
 
     if (groups.length === 0) {
         return (
-            <div className="flex items-center justify-center h-full text-gray-400 text-sm">
+            <div className="flex items-center justify-center h-full text-[var(--text-tertiary)] text-sm">
                 Ridgeline data not available.
             </div>
         );
@@ -114,7 +114,7 @@ export const RidgelineRenderer: React.FC<BaseChartRendererProps> = ({
                                 fillOpacity={0.6}
                                 stroke={color}
                                 strokeWidth={1}
-                                className="transition-all hover:fill-opacity-90 hover:stroke-gray-300"
+                                className="transition-all hover:fill-opacity-90 hover:stroke-[var(--border-color-muted)]"
                             />
                             {/* Baseline line for this ridge */}
                             <line

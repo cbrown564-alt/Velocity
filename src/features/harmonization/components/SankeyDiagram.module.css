@@ -84,7 +84,7 @@
 }
 
 .link.inverted {
-  stroke: var(--destructive, #ef4444);
+  stroke: var(--destructive);
   stroke-opacity: 0.4;
 }
 

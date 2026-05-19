@@ -112,8 +112,8 @@ export const Sparkline: React.FC<SparklineProps> = ({
                 </div>
                 <div style={{
                     fontSize: '9px',
-                    color: 'var(--gray-500)',
-                    backgroundColor: 'var(--gray-100)',
+                    color: 'var(--text-secondary)',
+                    backgroundColor: 'var(--bg-hover)',
                     padding: '0 4px',
                     borderRadius: '3px',
                     flexShrink: 0,
@@ -226,7 +226,7 @@ export const MissingnessBadge: React.FC<MissingnessBadgeProps> = ({
                 gap: '4px',
                 fontSize: '9px',
                 fontWeight: 600,
-                color: 'var(--gray-600)'
+                color: 'var(--text-secondary)'
             }}
         >
             <div

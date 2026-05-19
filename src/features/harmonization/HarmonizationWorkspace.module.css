@@ -12,7 +12,7 @@
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: color-mix(in srgb, var(--text-primary) 60%, transparent);
   backdrop-filter: blur(8px);
   z-index: 200;
   display: flex;
@@ -208,9 +208,9 @@
   flex-shrink: 0;
 }
 
-.statusDot.confirmed { background: var(--green-500, #22c55e); }
-.statusDot.matched { background: var(--amber-500, #f59e0b); }
-.statusDot.unmapped { background: var(--destructive, #ef4444); }
+.statusDot.confirmed { background: var(--status-success-text); }
+.statusDot.matched { background: var(--status-warning-text); }
+.statusDot.unmapped { background: var(--destructive); }
 
 .statusSeparator {
   width: 1px;

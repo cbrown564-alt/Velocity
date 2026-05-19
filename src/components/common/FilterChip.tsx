@@ -65,9 +65,9 @@ export const FilterChip: React.FC<FilterChipProps> = ({ filter, variable, onRemo
         <div
             className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-full border transition-colors"
             style={{
-                backgroundColor: 'var(--gray-100)',
-                borderColor: 'var(--gray-200)',
-                color: 'var(--color-charcoal)',
+                backgroundColor: 'var(--bg-hover)',
+                borderColor: 'var(--border-color)',
+                color: 'var(--text-primary)',
             }}
         >
             <span className="truncate max-w-[120px]" title={variableLabel}>
@@ -75,7 +75,7 @@ export const FilterChip: React.FC<FilterChipProps> = ({ filter, variable, onRemo
             </span>
             <span
                 className="opacity-60"
-                style={{ color: 'var(--gray-500)' }}
+                style={{ color: 'var(--text-secondary)' }}
             >
                 {displayOperator}
             </span>
@@ -86,15 +86,15 @@ export const FilterChip: React.FC<FilterChipProps> = ({ filter, variable, onRemo
                 onClick={() => onRemove(filter.id)}
                 className="p-0.5 rounded-full transition-colors hover:bg-opacity-20"
                 style={{
-                    color: 'var(--gray-400)',
+                    color: 'var(--text-tertiary)',
                 }}
                 onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = 'var(--gray-200)';
-                    e.currentTarget.style.color = 'var(--gray-600)';
+                    e.currentTarget.style.backgroundColor = 'var(--border-color)';
+                    e.currentTarget.style.color = 'var(--text-secondary)';
                 }}
                 onMouseLeave={(e) => {
                     e.currentTarget.style.backgroundColor = 'transparent';
-                    e.currentTarget.style.color = 'var(--gray-400)';
+                    e.currentTarget.style.color = 'var(--text-tertiary)';
                 }}
                 aria-label={`Remove filter: ${variableLabel}`}
             >

@@ -6,7 +6,7 @@
  */
 
 import React, { useState } from 'react';
-import { Folder, FolderPlus, Trash2, ChevronRight, Layers } from 'lucide-react';
+import { Folder, FolderPlus, Trash2, Layers } from 'lucide-react';
 import { useDroppable } from '@dnd-kit/core';
 import { useVelocityStore } from '../../store';
 
@@ -37,24 +37,24 @@ const FolderItem: React.FC<FolderItemProps> = ({
                 group flex items-center justify-between px-3 py-2 rounded-lg cursor-pointer
                 transition-all duration-150
                 ${isActive
-                    ? 'bg-indigo-100 text-indigo-700'
-                    : 'hover:bg-gray-100 text-gray-700'
+                    ? 'bg-[var(--bg-active)] text-[var(--text-accent)]'
+                    : 'hover:bg-[var(--bg-hover)] text-[var(--text-primary)]'
                 }
-                ${isOver ? 'ring-2 ring-indigo-400 bg-indigo-50' : ''}
+                ${isOver ? 'ring-2 ring-[var(--border-color-active)] bg-[var(--bg-active)]' : ''}
             `}
         >
             <div className="flex items-center gap-2">
-                <Folder size={16} className={isActive ? 'text-indigo-500' : 'text-gray-400'} />
+                <Folder size={16} className={isActive ? 'text-[var(--text-accent)]' : 'text-[var(--text-tertiary)]'} />
                 <span className="text-sm font-medium truncate max-w-32">{name}</span>
             </div>
             <div className="flex items-center gap-1">
-                <span className="text-xs text-gray-400">{count}</span>
+                <span className="text-xs text-[var(--text-tertiary)]">{count}</span>
                 <button
                     onClick={(e) => {
                         e.stopPropagation();
                         onDelete();
                     }}
-                    className="p-1 opacity-0 group-hover:opacity-100 hover:text-red-500 transition-opacity"
+                    className="p-1 opacity-0 group-hover:opacity-100 hover:text-[var(--color-error)] transition-opacity"
                 >
                     <Trash2 size={12} />
                 </button>
@@ -76,7 +76,6 @@ export const FolderPanel: React.FC = () => {
     const [isCreating, setIsCreating] = useState(false);
     const [newFolderName, setNewFolderName] = useState('');
 
-    // Count variables per folder
     const folderCounts = React.useMemo(() => {
         const counts: Record<string, number> = { ungrouped: 0 };
         folders.forEach(f => counts[f.id] = 0);
@@ -109,20 +108,19 @@ export const FolderPanel: React.FC = () => {
         }
     };
 
-    // Drop zone for ungrouped
     const { setNodeRef: setUngroupedRef, isOver: isOverUngrouped } = useDroppable({
         id: 'folder-ungrouped',
     });
 
     return (
-        <div className="w-56 border-r border-gray-200 bg-gray-50 p-4 flex flex-col h-full">
+        <div className="w-56 border-r border-[var(--border-color)] bg-[var(--bg-active)] p-4 flex flex-col h-full">
             <div className="flex items-center justify-between mb-4">
-                <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                <h3 className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">
                     Folders
                 </h3>
                 <button
                     onClick={() => setIsCreating(true)}
-                    className="p-1 text-gray-400 hover:text-indigo-600 transition-colors"
+                    className="p-1 text-[var(--text-tertiary)] hover:text-[var(--text-accent)] transition-colors"
                     title="Create folder"
                 >
                     <FolderPlus size={16} />
@@ -130,26 +128,24 @@ export const FolderPanel: React.FC = () => {
             </div>
 
             <div className="space-y-1 flex-1 overflow-auto">
-                {/* All Variables */}
                 <div
                     onClick={() => setActiveFolderId(null)}
                     className={`
                         flex items-center justify-between px-3 py-2 rounded-lg cursor-pointer
                         transition-colors
                         ${activeFolderId === null
-                            ? 'bg-indigo-100 text-indigo-700'
-                            : 'hover:bg-gray-100 text-gray-700'
+                            ? 'bg-[var(--bg-active)] text-[var(--text-accent)]'
+                            : 'hover:bg-[var(--bg-hover)] text-[var(--text-primary)]'
                         }
                     `}
                 >
                     <div className="flex items-center gap-2">
-                        <Layers size={16} className={activeFolderId === null ? 'text-indigo-500' : 'text-gray-400'} />
+                        <Layers size={16} className={activeFolderId === null ? 'text-[var(--text-accent)]' : 'text-[var(--text-tertiary)]'} />
                         <span className="text-sm font-medium">All Variables</span>
                     </div>
-                    <span className="text-xs text-gray-400">{variableSets.length}</span>
+                    <span className="text-xs text-[var(--text-tertiary)]">{variableSets.length}</span>
                 </div>
 
-                {/* Ungrouped */}
                 <div
                     ref={setUngroupedRef}
                     onClick={() => setActiveFolderId('ungrouped')}
@@ -157,23 +153,21 @@ export const FolderPanel: React.FC = () => {
                         flex items-center justify-between px-3 py-2 rounded-lg cursor-pointer
                         transition-all
                         ${activeFolderId === 'ungrouped'
-                            ? 'bg-indigo-100 text-indigo-700'
-                            : 'hover:bg-gray-100 text-gray-700'
+                            ? 'bg-[var(--bg-active)] text-[var(--text-accent)]'
+                            : 'hover:bg-[var(--bg-hover)] text-[var(--text-primary)]'
                         }
-                        ${isOverUngrouped ? 'ring-2 ring-indigo-400 bg-indigo-50' : ''}
+                        ${isOverUngrouped ? 'ring-2 ring-[var(--border-color-active)] bg-[var(--bg-active)]' : ''}
                     `}
                 >
                     <div className="flex items-center gap-2">
-                        <Folder size={16} className={activeFolderId === 'ungrouped' ? 'text-indigo-500' : 'text-gray-400'} />
+                        <Folder size={16} className={activeFolderId === 'ungrouped' ? 'text-[var(--text-accent)]' : 'text-[var(--text-tertiary)]'} />
                         <span className="text-sm font-medium">Ungrouped</span>
                     </div>
-                    <span className="text-xs text-gray-400">{folderCounts.ungrouped}</span>
+                    <span className="text-xs text-[var(--text-tertiary)]">{folderCounts.ungrouped}</span>
                 </div>
 
-                {/* Divider */}
-                {folders.length > 0 && <div className="border-t border-gray-200 my-2" />}
+                {folders.length > 0 && <div className="border-t border-[var(--border-color)] my-2" />}
 
-                {/* Custom Folders */}
                 {folders.map(folder => (
                     <FolderItem
                         key={folder.id}
@@ -186,7 +180,6 @@ export const FolderPanel: React.FC = () => {
                     />
                 ))}
 
-                {/* New Folder Input */}
                 {isCreating && (
                     <div className="px-2 py-1">
                         <input
@@ -200,14 +193,13 @@ export const FolderPanel: React.FC = () => {
                             onBlur={handleCreateFolder}
                             autoFocus
                             placeholder="Folder name..."
-                            className="w-full px-2 py-1 text-sm border border-indigo-300 rounded focus:ring-2 focus:ring-indigo-500/20 outline-none"
+                            className="w-full px-2 py-1 text-sm border border-[var(--border-color-active)] rounded focus:ring-2 focus:ring-[var(--border-color-active)]/20 outline-none bg-[var(--bg-panel)] text-[var(--text-primary)]"
                         />
                     </div>
                 )}
             </div>
 
-            {/* Footer hint */}
-            <div className="mt-4 pt-3 border-t border-gray-200 text-[10px] text-gray-400 text-center">
+            <div className="mt-4 pt-3 border-t border-[var(--border-color)] text-[10px] text-[var(--text-tertiary)] text-center">
                 Drag cards to folders
             </div>
         </div>

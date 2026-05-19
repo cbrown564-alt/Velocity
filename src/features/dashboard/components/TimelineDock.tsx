@@ -220,7 +220,7 @@ const SlideThumb: React.FC<SlideThumbProps> = ({ slide, index, isActive, hasUnsa
 
                     {/* Unsaved indicator */}
                     {hasUnsavedChanges && (
-                        <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-[var(--status-warning-text)] shrink-0" />
                     )}
                 </motion.button>
 
@@ -270,7 +270,7 @@ const SlideThumb: React.FC<SlideThumbProps> = ({ slide, index, isActive, hasUnsa
                             }}
                             disabled={!canDelete}
                             className={`w-full flex items-center gap-2 px-3 py-1.5 text-xs transition-colors ${canDelete
-                                ? 'text-red-500 hover:bg-red-500/10'
+                                ? 'text-[var(--color-error)] hover:bg-[var(--status-error-surface)]'
                                 : 'text-[var(--text-secondary)] opacity-50 cursor-not-allowed'
                                 }`}
                         >
@@ -468,7 +468,7 @@ export const TimelineDock: React.FC = () => {
                             onClick={() => addSlide()}
                             className="
                               flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium
-                              bg-[var(--color-accent)] text-white shadow-sm hover:shadow 
+                              bg-[var(--color-accent)] text-[var(--text-inverse)] shadow-sm hover:shadow 
                               transition-all duration-150 hover:bg-opacity-90 active:scale-95
                           "
                             title="New Slide (N)"

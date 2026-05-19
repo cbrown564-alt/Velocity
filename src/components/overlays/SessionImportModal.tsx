@@ -169,7 +169,7 @@ export const SessionImportModal: React.FC<SessionImportModalProps> = ({
   return (
     <AnimatePresence>
       <motion.div
-        className="fixed inset-0 z-[140] flex items-center justify-center bg-black/40 px-4"
+        className="fixed inset-0 z-[140] flex items-center justify-center bg-[var(--text-primary)]/40 px-4"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -249,10 +249,10 @@ export const SessionImportModal: React.FC<SessionImportModalProps> = ({
                 <div
                   className={`mt-3 rounded-md border px-3 py-2 text-xs ${
                     matchTone === 'success'
-                      ? 'border-emerald-200 bg-emerald-50 text-emerald-900'
+                      ? 'border-[var(--status-success-border)] bg-[var(--status-success-surface)] text-[var(--color-success)]'
                       : matchTone === 'warning'
-                        ? 'border-amber-200 bg-amber-50 text-amber-900'
-                        : 'border-red-200 bg-red-50 text-red-900'
+                        ? 'border-[var(--status-warning-border)] bg-[var(--status-warning-surface)] text-[var(--status-warning-text)]'
+                        : 'border-[var(--status-error-border)] bg-[var(--status-error-surface)] text-[var(--color-error)]'
                   }`}
                 >
                   <div className="flex items-center gap-1.5 font-medium">
@@ -311,7 +311,7 @@ export const SessionImportModal: React.FC<SessionImportModalProps> = ({
             </div>
 
             {error && (
-              <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-900">
+              <div className="rounded-md border border-[var(--status-error-border)] bg-[var(--status-error-surface)] px-3 py-2 text-xs text-[var(--color-error)]">
                 {error}
               </div>
             )}

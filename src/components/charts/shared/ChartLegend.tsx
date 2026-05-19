@@ -19,7 +19,7 @@ export const ChartLegend: React.FC<ChartLegendProps> = ({
     if (!items || items.length === 0) return null;
 
     return (
-        <div className={`flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-stone-600 ${className}`}>
+        <div className={`flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-[var(--text-secondary)] ${className}`}>
             {items.map((item, index) => (
                 <div key={index} className="flex items-center gap-2">
                     <span

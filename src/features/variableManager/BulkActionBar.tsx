@@ -82,7 +82,7 @@ export const BulkActionBar: React.FC<BulkActionBarProps> = ({
                         <div className="bg-[var(--mat-panel-bg,var(--bg-panel))] backdrop-blur-md border border-[var(--border-color)] text-[var(--text-primary)] rounded-xl shadow-float px-4 py-3 flex items-center gap-4">
                             {/* Selection Count */}
                             <div className="flex items-center gap-2 pr-4 border-r border-[var(--border-color)]">
-                                <span className="bg-[var(--viz-palette-2)] text-white text-xs font-bold px-2 py-1 rounded-full">
+                                <span className="bg-[var(--viz-palette-2)] text-[var(--text-inverse)] text-xs font-bold px-2 py-1 rounded-full">
                                     {selectedCount}
                                 </span>
                                 <span className="text-sm text-[var(--text-secondary)] font-body">selected</span>

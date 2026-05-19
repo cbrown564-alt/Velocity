@@ -129,7 +129,7 @@ export const InspectorDistribution: React.FC<InspectorDistributionProps> = ({
                 {!isNumericVariable && (
                     <span style={{
                         fontSize: '10px',
-                        color: 'var(--text-tertiary, #9ca3af)', /* Subtler slate gray */
+                        color: 'var(--text-tertiary)',
                         fontWeight: 400,
                         textTransform: 'none',
                         letterSpacing: 'normal',

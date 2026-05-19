@@ -61,13 +61,13 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
     }, [resolvedRowVars, resolvedColVar, firstVarSet, isMultipleResponse]);
 
     if (!activeSlide) {
-        return <div className="p-4 text-gray-500">No active slide</div>;
+        return <div className="p-4 text-[var(--text-secondary)]">No active slide</div>;
     }
 
     // Focus mode logic: Render the first cell full screen
     const cell = activeSlide.cells[0];
     if (!cell) {
-        return <div className="p-4 text-gray-500">Empty slide</div>;
+        return <div className="p-4 text-[var(--text-secondary)]">Empty slide</div>;
     }
 
     const renderCellContent = () => {

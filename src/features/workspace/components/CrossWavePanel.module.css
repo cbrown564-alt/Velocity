@@ -11,7 +11,7 @@
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: color-mix(in srgb, var(--text-primary) 50%, transparent);
   backdrop-filter: blur(4px);
   display: flex;
   justify-content: flex-end;
@@ -185,11 +185,11 @@
 }
 
 .summaryCard.increase {
-  border-color: color-mix(in srgb, var(--color-success, #10b981) 30%, transparent);
+  border-color: color-mix(in srgb, var(--color-success) 30%, transparent);
 }
 
 .summaryCard.decrease {
-  border-color: color-mix(in srgb, var(--color-error, #ef4444) 30%, transparent);
+  border-color: color-mix(in srgb, var(--color-error) 30%, transparent);
 }
 
 .summaryIcon {
@@ -204,13 +204,13 @@
 }
 
 .summaryCard.increase .summaryIcon {
-  background: color-mix(in srgb, var(--color-success, #10b981) 10%, transparent);
-  color: var(--color-success, #10b981);
+  background: color-mix(in srgb, var(--color-success) 10%, transparent);
+  color: var(--color-success);
 }
 
 .summaryCard.decrease .summaryIcon {
-  background: color-mix(in srgb, var(--color-error, #ef4444) 10%, transparent);
-  color: var(--color-error, #ef4444);
+  background: color-mix(in srgb, var(--color-error) 10%, transparent);
+  color: var(--color-error);
 }
 
 .summaryContent {
@@ -231,11 +231,11 @@
 }
 
 .summaryCard.increase .summaryValue {
-  color: var(--color-success, #10b981);
+  color: var(--color-success);
 }
 
 .summaryCard.decrease .summaryValue {
-  color: var(--color-error, #ef4444);
+  color: var(--color-error);
 }
 
 .summaryPercent {
@@ -334,7 +334,7 @@
 }
 
 .attritionSection h3 svg {
-  color: var(--color-warning, #f59e0b);
+  color: var(--color-warning);
 }
 
 .funnelChart {
@@ -405,7 +405,7 @@
   border: 1px solid var(--border-color-muted);
   border-radius: var(--radius-full);
   font-size: 10px;
-  color: var(--color-warning, #f59e0b);
+  color: var(--color-warning);
   white-space: nowrap;
 }
 

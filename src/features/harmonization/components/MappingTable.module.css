@@ -99,9 +99,9 @@
 }
 
 /* Status colors */
-.confirmed .rowStatus { color: var(--green-500, #22c55e); }
-.autoMatched .rowStatus { color: var(--amber-500, #f59e0b); }
-.unmapped .rowStatus { color: var(--destructive, #ef4444); }
+.confirmed .rowStatus { color: var(--status-success-text); }
+.autoMatched .rowStatus { color: var(--status-warning-text); }
+.unmapped .rowStatus { color: var(--destructive); }
 .excluded .rowStatus { color: var(--text-secondary); }
 
 .rowStatus {
@@ -190,7 +190,7 @@
 
 .actionBtn:hover {
   background: var(--bg-active);
-  color: var(--green-500, #22c55e);
+  color: var(--status-success-text);
 }
 
 .actionBtnDanger {
@@ -199,8 +199,8 @@
 }
 
 .actionBtnDanger:hover {
-  background: color-mix(in srgb, var(--destructive, #ef4444) 10%, transparent);
-  color: var(--destructive, #ef4444);
+  background: color-mix(in srgb, var(--destructive) 10%, transparent);
+  color: var(--destructive);
 }
 
 .warningDot {
@@ -210,7 +210,7 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: var(--amber-500, #f59e0b);
+  background: var(--status-warning-text);
 }
 
 .empty {

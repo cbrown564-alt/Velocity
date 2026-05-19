@@ -13,6 +13,7 @@ import { arrayMove } from '@dnd-kit/sortable';
 import { useVelocityStore, type VariableSet, type Filter } from '../../store';
 import { useResolvedVariables } from './hooks/useResolvedVariables';
 import { buildExportConfig } from '../../core/export/buildExportConfig';
+import { resolveExportBranding } from '../../core/export/resolveThemeColors';
 import { filterSyntheticGridShellSets } from '../variableManager/variableSetFilters';
 import { allowsNumericStats } from '../../types';
 
@@ -35,7 +36,7 @@ const SmartCanvas: React.FC<{ children: React.ReactNode; className?: string }> =
   return (
     <div
       ref={setNodeRef}
-      className={`${className} ${isOver ? 'bg-indigo-50/30' : ''} transition-colors duration-300`}
+      className={`${className} ${isOver ? 'bg-[var(--bg-active)]/30' : ''} transition-colors duration-300`}
     >
       {children}
     </div>
@@ -107,8 +108,9 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
       isMultipleResponse,
       viewType: activeSlide?.visualizationType,
       chartType: activeSlide?.chartType,
+      branding: resolveExportBranding(theme),
     });
-  }, [activeSlide?.title, activeSlide?.visualizationType, activeSlide?.chartType, dataset?.name, queryResult, resolvedRowVars, resolvedColVar, isWeighted, isMultipleResponse]);
+  }, [activeSlide?.title, activeSlide?.visualizationType, activeSlide?.chartType, dataset?.name, queryResult, resolvedRowVars, resolvedColVar, isWeighted, isMultipleResponse, theme]);
 
   // -- Local DnD state --
   const [activeDragSet, setActiveDragSet] = React.useState<VariableSet | null>(null);
@@ -389,7 +391,7 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
                 <span>{filename} ({totalRows} rows)</span>
               </div>
               {dataset?.sampleRowCount && (
-                <div className="flex items-center gap-2 text-xs text-amber-600 px-2 mt-2 bg-amber-50 rounded py-1">
+                <div className="flex items-center gap-2 text-xs text-[var(--status-warning-text)] px-2 mt-2 bg-[var(--status-warning-surface)] rounded py-1">
                   <AlertCircle size={12} />
                   <span>Heuristics based on {dataset.sampleRowCount.toLocaleString()} sample rows</span>
                 </div>

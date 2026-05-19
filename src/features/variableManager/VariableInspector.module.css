@@ -82,7 +82,7 @@
 }
 
 .editIcon {
-  color: var(--text-tertiary, #888);
+  color: var(--text-tertiary);
   opacity: 0;
   transition: opacity var(--transition-fast), color var(--transition-fast);
 }
@@ -130,7 +130,7 @@
 }
 
 .editIconSmall {
-  color: var(--text-tertiary, #888);
+  color: var(--text-tertiary);
   opacity: 0;
   transition: opacity var(--transition-fast);
 }
@@ -193,7 +193,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: var(--text-tertiary, #888);
+  color: var(--text-tertiary);
   margin: 0;
 }
 
@@ -290,7 +290,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: var(--text-tertiary, #888);
+  color: var(--text-tertiary);
   margin: 0;
   display: flex;
   align-items: center;
@@ -317,7 +317,7 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
   font-weight: 600;
-  color: var(--text-tertiary, #888);
+  color: var(--text-tertiary);
   border-bottom: 1px solid var(--border-color-muted);
 }
 
@@ -367,12 +367,12 @@
 }
 
 .labelMissing {
-  color: var(--text-tertiary, #888);
+  color: var(--text-tertiary);
   text-decoration: line-through;
 }
 
 .mappingEditIcon {
-  color: var(--text-tertiary, #888);
+  color: var(--text-tertiary);
   opacity: 0;
   transition: opacity var(--transition-fast);
   cursor: pointer;
@@ -441,11 +441,11 @@
 }
 
 .successIcon {
-  color: var(--status-success-text, #10b981);
+  color: var(--status-success-text);
 }
 
 .warningIcon {
-  color: var(--status-warning-text, #f59e0b);
+  color: var(--status-warning-text);
 }
 
 .valueLabelsScroll {
@@ -483,7 +483,7 @@
 }
 
 .noMissing {
-  color: var(--gray-400);
+  color: var(--text-tertiary);
   font-style: italic;
 }
 
@@ -563,7 +563,7 @@
 .statLabel {
   font-family: var(--font-body);
   font-size: var(--text-xs);
-  color: var(--text-tertiary, #888);
+  color: var(--text-tertiary);
 }
 
 .statValueWarning {
@@ -587,7 +587,7 @@
 .loadingState {
   font-family: var(--font-body);
   font-size: var(--text-sm);
-  color: var(--gray-400);
+  color: var(--text-tertiary);
   font-style: italic;
   padding: var(--space-2);
 }
@@ -595,7 +595,7 @@
 .noStats {
   font-family: var(--font-body);
   font-size: var(--text-sm);
-  color: var(--gray-400);
+  color: var(--text-tertiary);
   font-style: italic;
 }
 
@@ -628,7 +628,7 @@
 .distributionBar {
   flex: 1;
   height: 16px;
-  background-color: var(--gray-100);
+  background-color: var(--bg-hover);
   border-radius: 2px;
   overflow: hidden;
 }
@@ -644,7 +644,7 @@
   flex: 0 0 40px;
   font-family: var(--font-mono);
   font-size: var(--text-xs);
-  color: var(--gray-500);
+  color: var(--text-secondary);
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
@@ -674,14 +674,14 @@
   font-family: var(--font-display);
   font-size: var(--text-lg);
   font-weight: 600;
-  color: var(--gray-400);
+  color: var(--text-tertiary);
   margin: 0 0 var(--space-2) 0;
 }
 
 .emptyText {
   font-family: var(--font-body);
   font-size: var(--text-sm);
-  color: var(--gray-400);
+  color: var(--text-tertiary);
   margin: 0;
 }
 
@@ -716,9 +716,9 @@
   font-family: var(--font-body);
   font-size: var(--text-xs);
   font-weight: 600;
-  color: var(--gray-500);
-  background-color: var(--gray-100);
-  border-bottom: 1px solid var(--gray-200);
+  color: var(--text-secondary);
+  background-color: var(--bg-hover);
+  border-bottom: 1px solid var(--border-color);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -739,9 +739,9 @@
 }
 
 .contextMenuItem:hover {
-  background-color: var(--gray-100);
+  background-color: var(--bg-hover);
 }
 
 .contextMenuItem:active {
-  background-color: var(--gray-200);
+  background-color: var(--border-color);
 }

@@ -48,7 +48,7 @@
   align-items: center;
   gap: var(--space-1);
   font-size: 10px;
-  color: var(--destructive, #ef4444);
+  color: var(--destructive);
 }
 
 .autoAlignBtn {
@@ -115,7 +115,7 @@
 }
 
 .orphanRow {
-  background: color-mix(in srgb, var(--destructive, #ef4444) 4%, transparent);
+  background: color-mix(in srgb, var(--destructive) 4%, transparent);
 }
 
 .sourceValue {
@@ -157,7 +157,7 @@
 }
 
 .warnIcon {
-  color: var(--amber-500, #f59e0b);
+  color: var(--status-warning-text);
 }
 
 .noLabels {

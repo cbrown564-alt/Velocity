@@ -140,9 +140,12 @@ GitHub Actions (`.github/workflows/test.yml`) runs on every PR to `main`:
 
 1. **Playwright**: `npm run test:e2e` (browser installed in CI)
 
-### Planned (`STAB-CI-1` / `STAB-DS-1`)
+### Architecture guards (`test` job)
 
-- `scripts/check-design-tokens.mjs` (allowlisted ratchet) added to the `test` job when the script lands
+- `npm run check:design-tokens` — semantic token policy ratchet (`scripts/check-design-tokens.mjs` with shrinkable allowlist)
+
+### Planned (`STAB-CI-1`)
+
 - No ESLint gate today (no lint script in `package.json`)
 - `npm run test:parity` remains optional/local unless runtime is proven acceptable for every PR
 

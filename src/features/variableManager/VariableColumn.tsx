@@ -181,7 +181,7 @@ export const VariableColumn: React.FC = () => {
         <div className={`${styles.column} ${styles.col4}`}>
             <div className={styles.columnHeader}>
                 <span className={styles.columnTitle}>Variables</span>
-                <span style={{ fontSize: 'var(--text-xs)', color: 'var(--gray-400)' }}>
+                <span style={{ fontSize: 'var(--text-xs)', color: 'var(--text-tertiary)' }}>
                     {variables.length}
                 </span>
             </div>

@@ -108,7 +108,7 @@ Grilled against `docs/archive/2026-05/audits/audit_05_deep_code_review_2026-05-1
 | WS implementation | Add `openWorkspaceDataset(stored)` (hydrate store `dataset`, restore session, switch persistence, rehydrate); wire `App.tsx` / `useWorkspace` `openDataset`; OPFS delete on dataset remove |
 | WS acceptance | New Playwright spec: two uploads → workspace → open non-active dataset → dashboard usable without re-upload |
 | Export | `STAB-EXP-1a` = `S4-FMT-1` (matrix formatter in `src/core/`, MCP `format: 'matrix'`); `STAB-EXP-1b` = `S4-DELIV-1` (theme branding, chart polish, merge/delete `pptxChartBuilder`) |
-| CI | E2E-first product truth; update `arch_08_testing.md`; defer shrinking Vitest coverage exclusions; add `check-design-tokens` to CI when `STAB-DS-1` ships the script |
+| CI | E2E-first product truth; update `arch_08_testing.md`; defer shrinking Vitest coverage exclusions; `check-design-tokens` in CI (`scripts/check-design-tokens.mjs`, empty allowlist) |
 | Design system | Staged allowlist ratchet (`scripts/check-design-tokens.mjs`); see §7 |
 | Design audit plan | Superseded by tracker §7 (`STAB-DS-1`); no `docs/DESIGN_AUDIT_PLAN.md` |
 | Expansion freeze | Until `STAB-WS-1` and `STAB-EXP-1` (1a+1b) are **Done**: no `S4-MCP-1`, `S4-MCP-2`, `S4-EVAL-5b`, Phase 5+, monolith splits, WebR/collaboration UI, or net-new MCP tools. In-flight `S4-DEF-1` only if the PR is small and does not touch WS/persistence |
@@ -117,11 +117,11 @@ Grilled against `docs/archive/2026-05/audits/audit_05_deep_code_review_2026-05-1
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | STAB-DOC-1 | Docs/process | Stabilization contract in tracker, roadmap §2.1, and `arch_08`; reconcile feature matrix drift; archive audit is evidence-only | S4-EVAL-5 | Done | No | A | `docs/archive/2026-05/audits/audit_05_deep_code_review_2026-05-19.md`, §4.2.1 |
 | STAB-WS-1 | Workspace | Stored datasets reopen/switch/delete across sessions (DB-first, source replay fallback) | STAB-DOC-1 | In review | Yes | T,U,I,A | `src/store/slices/dataSlice.ts` (`openWorkspaceDataset`), `src/App.tsx`, `src/features/workspace/hooks/useWorkspace.ts`, `src/services/opfsFileManager.ts`, `tests/e2e/workspace-switch.spec.ts` |
-| STAB-EXP-1 | Export | Stakeholder-ready deliverables: matrix MCP + PPTX polish (parent; closes when 1a+1b done) | STAB-WS-1 | In progress | Yes | T,U,A | §4.2.1 Export rows; `STAB-EXP-1a` in review |
+| STAB-EXP-1 | Export | Stakeholder-ready deliverables: matrix MCP + PPTX polish (parent; closes when 1a+1b done) | STAB-WS-1 | In review | Yes | T,U,A | `STAB-EXP-1a` + `STAB-EXP-1b` in review |
 | STAB-EXP-1a | Export / MCP | `S4-FMT-1`: `format: 'matrix'` on `velocity_crosstab`; formatter in `src/core/`; unit + MCP tests | STAB-WS-1 | In review | Yes | T,U,A | `src/core/analysis/formatCrosstabMatrix.ts`, `mcp-server/tools.ts`, `mcp-server/__tests__/tools.test.ts`, `docs/guide_agent_quickstart.md` |
-| STAB-EXP-1b | Export | `S4-DELIV-1`: wire `resolveExportBranding(theme)`; PPTX chart quality; unify or remove `pptxChartBuilder` | STAB-EXP-1a | Not started | Yes | T,U,A | - |
-| STAB-DS-1 | Design system | Semantic tokens, cleanup, staged allowlist guard (`check-design-tokens`) | S4-EVAL-5 | In progress | No | T,L,A | `AGENTS.md`, `docs/design_01_system.md`, tracker §7 |
-| STAB-CI-1 | Quality gates | Document truthful CI; workspace-switch E2E required; hook design guard when script exists; defer coverage un-exclude | S4-EVAL-5 | In progress | No | T,U,I,A | `.github/workflows/test.yml`, `docs/arch_08_testing.md` |
+| STAB-EXP-1b | Export | `S4-DELIV-1`: wire `resolveExportBranding(theme)`; PPTX chart quality; unify or remove `pptxChartBuilder` | STAB-EXP-1a | In review | Yes | T,U,A | `src/core/export/pptxChartStyle.ts`, `src/core/export/pptxChartStyle.test.ts`, `src/core/export/pptxExporter.ts`, `src/features/dashboard/DashboardShell.tsx`, `src/core/export/__tests__/pptxExporter.semantics.test.ts` |
+| STAB-DS-1 | Design system | Semantic tokens, cleanup, staged allowlist guard (`check-design-tokens`) | S4-EVAL-5 | Done | No | T,U,A | `src/index.css`, `src/index.css.test.ts`, `scripts/check-design-tokens.mjs`, `package.json` (`check:design-tokens`), `.github/workflows/test.yml`, tracker §7 |
+| STAB-CI-1 | Quality gates | Document truthful CI; workspace-switch E2E required; hook design guard when script exists; defer coverage un-exclude | S4-EVAL-5 | In progress | No | T,U,I,A | `.github/workflows/test.yml`, `docs/arch_08_testing.md`, `npm run check:design-tokens` in `test` job |
 
 ### 4.3 Post-Validation Follow-Through (Phase 4)
 
@@ -208,6 +208,8 @@ When updating this file:
 
 ## 7. STAB-DS-1 — Design-system cleanup
 
+**Status:** Done (May 2026). Tasks 1–5 complete; allowlist empty.
+
 **Scope:** Semantic token integrity, Tailwind color discipline, CSS fallback cleanup, and visual consistency across themes.
 
 ### Policy
@@ -226,11 +228,11 @@ CSS Modules remain for complex component states, grids, animations, and unreadab
 
 ### Tasks
 
-1. **Semantic token completeness** — expose in `src/index.css`: `--text-tertiary`, `--bg-hover`, status success/warning/error text and background pairs. No `--gray-*` families; remap to purpose tokens.
-2. **Legacy token removal** — eliminate Research Desk tokens (`--color-paper`, `--color-ink`, `--color-terracotta`, `--color-parchment`) in active source.
-3. **CSS fallback and hex cleanup** — no hardcoded hex in component CSS; no `var(--token, #fff)` fallbacks; prefer semantic tokens or `color-mix()` over raw `rgba(0,0,0,…)`.
-4. **Raw Tailwind palette cleanup** — replace `bg-white`, `text-red-600`, `border-amber-200`, etc. with `bg-[var(--…)]` or CSS Module classes.
-5. **Regression guard** — `scripts/check-design-tokens.mjs` with a shrinkable allowlist; wire into CI via `STAB-CI-1` (fails on new violations outside allowlist; remove allowlist when §7 acceptance is met).
+1. **Semantic token completeness** — Done (`--text-tertiary`, `--bg-hover`, status pairs in `src/index.css`).
+2. **Legacy token removal** — Done (Research Desk tokens removed from active source).
+3. **CSS fallback and hex cleanup** — Done (component CSS; `src/index.css.test.ts` regression).
+4. **Raw Tailwind palette cleanup** — Done (`--gray-*` eliminated; semantic `var(--…)` utilities in TSX).
+5. **Regression guard** — Done (`scripts/check-design-tokens.mjs`, CI wired, empty allowlist).
 
 ### Acceptance
 

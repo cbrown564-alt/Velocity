@@ -126,7 +126,7 @@
   border: none;
   border-radius: var(--border-radius-sm);
   background: transparent;
-  color: var(--gray-400);
+  color: var(--text-tertiary);
   cursor: pointer;
   transition: background-color var(--transition-fast), color var(--transition-fast);
 }
@@ -157,12 +157,12 @@
 }
 
 .columnContent::-webkit-scrollbar-thumb {
-  background: var(--gray-300);
+  background: var(--border-color-muted);
   border-radius: 3px;
 }
 
 .columnContent::-webkit-scrollbar-thumb:hover {
-  background: var(--gray-400);
+  background: var(--text-tertiary);
 }
 
 /* ============================================================================
@@ -346,7 +346,7 @@
 
 .divider {
   height: 1px;
-  background-color: var(--gray-200);
+  background-color: var(--border-color);
   margin: var(--space-2) var(--space-3);
 }
 
@@ -366,14 +366,14 @@
 .emptyIcon {
   width: 32px;
   height: 32px;
-  color: var(--gray-300);
+  color: var(--border-color-muted);
   margin-bottom: var(--space-3);
 }
 
 .emptyText {
   font-family: var(--font-body);
   font-size: var(--text-sm);
-  color: var(--gray-400);
+  color: var(--text-tertiary);
 }
 
 /* ============================================================================

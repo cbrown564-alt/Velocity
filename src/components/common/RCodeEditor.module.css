@@ -141,7 +141,7 @@
   background: var(--bg-panel);
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius-sm);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--text-primary) 15%, transparent);
   overflow: hidden;
   animation: fadeInDown 0.15s ease-out;
 }

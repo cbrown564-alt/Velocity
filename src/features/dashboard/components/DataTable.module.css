@@ -45,7 +45,7 @@
     color: var(--text-primary);
     font-size: var(--text-xs);
     font-weight: 600;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--text-primary) 12%, transparent);
     white-space: nowrap;
     transform: translate(12px, -50%);
     opacity: 0.92;

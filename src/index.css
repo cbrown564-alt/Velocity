@@ -28,10 +28,12 @@
   --bg-panel: var(--card);
   --bg-surface: var(--popover);
   --bg-active: var(--secondary);
+  --bg-hover: var(--secondary);
 
   /* Typography */
   --text-primary: var(--foreground);
   --text-secondary: var(--muted-foreground);
+  --text-tertiary: var(--muted-foreground);
   --text-accent: var(--accent);
   --text-inverse: var(--primary-foreground);
 
@@ -51,6 +53,12 @@
   --status-warning-text: var(--viz-palette-3);
   --status-success-bg: var(--muted);
   --status-success-text: var(--viz-palette-2);
+  --status-warning-surface: color-mix(in srgb, var(--status-warning-text) 12%, var(--bg-panel));
+  --status-warning-border: color-mix(in srgb, var(--status-warning-text) 22%, transparent);
+  --status-error-surface: color-mix(in srgb, var(--color-error) 12%, var(--bg-panel));
+  --status-error-border: color-mix(in srgb, var(--color-error) 22%, transparent);
+  --status-success-surface: color-mix(in srgb, var(--color-success) 12%, var(--bg-panel));
+  --status-success-border: color-mix(in srgb, var(--color-success) 22%, transparent);
 
   /* Data Identity (Variable Types, Categories - NOT status) */
   --tag-nominal-bg: var(--muted);
@@ -99,6 +107,7 @@
      legibility at small sizes. Falls back to diverging scale if not set. */
   --color-success: var(--sig-higher, var(--viz-diverging-1));
   --color-error:   var(--sig-lower,  var(--viz-diverging-6));
+  --color-warning: var(--status-warning-text);
 
   /* Legacy Functional (Deprecating slowly or remapping) */
   --color-accent: var(--accent);

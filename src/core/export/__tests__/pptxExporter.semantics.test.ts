@@ -160,7 +160,7 @@ describe('exportPptx semantics', () => {
     expect(dataRow).toEqual(['Male', '30 (60.0% ▲)', '20 (40.0%)', '50']);
   });
 
-  it('normalizes chart colors before building chart options', async () => {
+  it('normalizes chart colors and uses a single series color for single-series bars', async () => {
     const config: ExportConfig = {
       title: 'Chart Colors',
       analyses: [
@@ -178,7 +178,11 @@ describe('exportPptx semantics', () => {
     const analysisSlide = lastDeck().slides[1];
     const chart = analysisSlide.charts[0];
 
-    expect(chart.opts.chartColors).toEqual(['2D4A3E', 'e07860']);
+    expect(chart.opts.chartColors).toEqual(['2D4A3E']);
+    expect(chart.opts.valGridLine).toEqual(
+      expect.objectContaining({ color: '222222', size: 0.5 }),
+    );
+    expect(chart.opts.barGapWidthPct).toBe(25);
   });
 
   it('renders subtitles, notes, and section divider slides when present', async () => {

@@ -27,8 +27,8 @@ export const FilterBar: React.FC<FilterBarProps> = ({
         <div
             className="h-12 border-b flex items-center px-6 gap-3 shrink-0 z-10"
             style={{
-                borderColor: 'var(--gray-200)',
-                backgroundColor: 'var(--color-parchment)',
+                borderColor: 'var(--border-color)',
+                backgroundColor: 'var(--bg-surface)',
             }}
         >
             {/* Add Filter Button */}
@@ -36,17 +36,17 @@ export const FilterBar: React.FC<FilterBarProps> = ({
                 onClick={onAddFilter}
                 className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium border border-dashed rounded-full transition-colors group"
                 style={{
-                    borderColor: 'var(--gray-300)',
-                    color: 'var(--gray-600)',
+                    borderColor: 'var(--border-color-muted)',
+                    color: 'var(--text-secondary)',
                 }}
                 onMouseEnter={(e) => {
-                    e.currentTarget.style.borderColor = 'var(--color-terracotta)';
-                    e.currentTarget.style.color = 'var(--color-terracotta)';
-                    e.currentTarget.style.backgroundColor = 'rgba(224, 122, 95, 0.05)';
+                    e.currentTarget.style.borderColor = 'var(--text-accent)';
+                    e.currentTarget.style.color = 'var(--text-accent)';
+                    e.currentTarget.style.backgroundColor = 'color-mix(in srgb, var(--text-accent) 5%, transparent)';
                 }}
                 onMouseLeave={(e) => {
-                    e.currentTarget.style.borderColor = 'var(--gray-300)';
-                    e.currentTarget.style.color = 'var(--gray-600)';
+                    e.currentTarget.style.borderColor = 'var(--border-color-muted)';
+                    e.currentTarget.style.color = 'var(--text-secondary)';
                     e.currentTarget.style.backgroundColor = 'transparent';
                 }}
             >
@@ -68,7 +68,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
             {filters.length > 0 && (
                 <span
                     className="text-xs ml-auto"
-                    style={{ color: 'var(--gray-400)' }}
+                    style={{ color: 'var(--text-tertiary)' }}
                 >
                     {filters.length} filter{filters.length !== 1 ? 's' : ''} active
                 </span>

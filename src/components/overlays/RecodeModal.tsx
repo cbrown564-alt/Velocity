@@ -94,7 +94,7 @@ export const RecodeModal: React.FC<RecodeModalProps> = ({ isOpen, onClose, varia
             animate={{ opacity: 0.5 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
+            className="fixed inset-0 bg-[var(--text-primary)]/60 backdrop-blur-sm z-50"
           />
           <motion.div
             initial={{ scale: 0.95, opacity: 0 }}

@@ -119,11 +119,11 @@
 }
 
 .storageFill.warning {
-  background: var(--viz-palette-2, #FFB800);
+  background: var(--viz-palette-2);
 }
 
 .storageFill.critical {
-  background: var(--destructive, #E74C3C);
+  background: var(--destructive);
 }
 
 .storageWarning {
@@ -135,11 +135,11 @@
 }
 
 .storageWarning.warning {
-  color: var(--viz-palette-2, #FFB800);
+  color: var(--viz-palette-2);
 }
 
 .storageWarning.critical {
-  color: var(--destructive, #E74C3C);
+  color: var(--destructive);
 }
 
 /* ============================================================================
@@ -372,15 +372,14 @@
 }
 
 .selectionActions .destructiveButton {
-  color: #E11D48 !important;
-  /* Vibrant Rose-Red */
+  color: var(--color-error) !important;
   font-weight: 600;
 }
 
 .selectionActions .destructiveButton:hover {
-  background: #FFF1F2;
-  border-color: #FECDD3;
-  color: #E11D48 !important;
+  background: color-mix(in srgb, var(--color-error) 8%, var(--bg-panel));
+  border-color: color-mix(in srgb, var(--color-error) 22%, transparent);
+  color: var(--color-error) !important;
 }
 
 .actionDivider {
@@ -717,7 +716,7 @@
 }
 
 .starButton.starred {
-  color: var(--viz-palette-2, #FFB800);
+  color: var(--viz-palette-2);
 }
 
 .starButton.starred svg {
@@ -993,7 +992,8 @@
   -webkit-backdrop-filter: var(--mat-panel-filter, blur(16px));
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius-lg);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), inset 0 1px 1px rgba(255, 255, 255, 0.05);
+  box-shadow: 0 8px 32px color-mix(in srgb, var(--text-primary) 10%, transparent),
+    inset 0 1px 1px color-mix(in srgb, var(--text-inverse) 5%, transparent);
   position: relative;
   overflow: hidden;
 }
@@ -1058,7 +1058,8 @@
 .exampleCard:hover {
   transform: translateY(-4px);
   border-color: var(--color-accent);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15), inset 0 1px 1px rgba(255, 255, 255, 0.05);
+  box-shadow: 0 12px 24px color-mix(in srgb, var(--text-primary) 15%, transparent),
+    inset 0 1px 1px color-mix(in srgb, var(--text-inverse) 5%, transparent);
 }
 
 .cardIconWrapper {
@@ -1136,11 +1137,11 @@
 }
 
 .contextMenu button.destructive {
-  color: var(--destructive, #E74C3C);
+  color: var(--destructive);
 }
 
 .contextMenu button.destructive:hover {
-  background: color-mix(in srgb, var(--destructive, #E74C3C) 10%, transparent);
+  background: color-mix(in srgb, var(--destructive) 10%, transparent);
 }
 
 .contextDivider {
