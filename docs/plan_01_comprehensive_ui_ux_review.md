@@ -345,7 +345,7 @@ Each finding entry:
 - Chart view toggle and D3 readability per theme  
 - Filter / recode / weight modals end-to-end  
 - Harmonization workspace and Sankey  
-- Liquid Glass theme  
+- ~~Liquid Glass theme~~ (Session 7 — immaturity logged UXR-030/031)  
 - Import Session round-trip  
 - Actual PPTX binary quality  
 - Mobile/narrow breakpoints  
@@ -385,7 +385,7 @@ Rate each heuristic **0** (no issue) – **4** (usability catastrophe) per major
 
 ---
 
-## 13. Session status (updated May 19, 2026)
+## 13. Session status (updated May 19, 2026 — Session 7 complete)
 
 | Session | Status | Notes |
 | :--- | :--- | :--- |
@@ -396,7 +396,8 @@ Rate each heuristic **0** (no issue) – **4** (usability catastrophe) per major
 | 4 | Done | Variable Manager J5 — `session-04-variable-manager.md`; UXR-018–020 |
 | 5 | Done | Export/session J6 — `session-05-export.md`; UXR-021–023; P0 import fix |
 | 6 | Done | J7 advanced — `session-06-advanced.md`; UXR-024–026; harmonization needs 2-wave human pass |
-| 7+ | Pending | Themes + visual system next |
+| 7 | Done | Themes/visual — `session-07-themes.md`; UXR-027–031 |
+| 8+ | Pending | Accessibility + keyboard next |
 
 **Pre–Session 3 gate (complete):** UXR-000 shortcut conflict fixed — see §14.
 

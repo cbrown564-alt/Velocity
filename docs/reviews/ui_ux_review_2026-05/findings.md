@@ -402,4 +402,82 @@ Log one entry per `UXR-###`. Update **Status** when fixed: `open` | `confirmed` 
 
 ---
 
+## UXR-027 — Theme toggle tooltip omits Liquid Glass
+
+- **Status:** open
+- **Severity:** P2
+- **Mode:** Canvas
+- **Session:** 7
+- **Steps to reproduce:**
+  1. Open Canvas; note theme control tooltip: “Switch to Mission Control” or “Switch to Soft Machine” only.
+  2. Click repeatedly — Liquid Glass appears between Soft Machine and Mission Control.
+- **Expected:** Tooltip names **next** theme (all three) or shows current theme name.
+- **Actual:** Tooltip binary string; Liquid Glass is undiscoverable from copy.
+- **Heuristic:** #4 Consistency and standards; #6 Recognition rather than recall
+- **Related:** `DashboardShell.tsx` theme button `title`
+
+---
+
+## UXR-028 — No theme control on Workspace
+
+- **Status:** open
+- **Severity:** P2
+- **Mode:** Workspace
+- **Session:** 7
+- **Steps to reproduce:**
+  1. Land on Workspace (cold or Return to Workspace).
+  2. Search header for theme toggle.
+- **Expected:** Same theme switcher as Canvas (or settings entry) per `design_01` three-theme system.
+- **Actual:** Theme changes only inside Canvas; Workspace inherits last Canvas theme with no local control.
+- **Heuristic:** #4 Consistency and standards
+- **Related:** `WorkspaceView.tsx` (no `useTheme`); `DashboardShell.tsx` only consumer of `toggleTheme`
+
+---
+
+## UXR-029 — Theme toggle icon implies light/dark only
+
+- **Status:** open
+- **Severity:** P3
+- **Mode:** Canvas
+- **Session:** 7
+- **Steps to reproduce:** Observe theme button icon (Sun on non–Soft Machine, Moon on Soft Machine) while cycling three distinct aesthetics.
+- **Expected:** Icon or label reflects current theme or “cycle theme”.
+- **Actual:** Sun/Moon metaphor matches two themes, not Liquid Glass.
+- **Heuristic:** #6 Recognition rather than recall
+- **Related:** `DashboardShell.tsx` lines 515–516
+
+---
+
+## UXR-030 — Liquid Glass blur under-realized on Canvas chrome
+
+- **Status:** open
+- **Severity:** P2
+- **Mode:** Canvas
+- **Session:** 7
+- **Steps to reproduce:**
+  1. Cycle to Liquid Glass on F1 crosstab.
+  2. Compare sidebar, shelves, and slide chrome to `design_01` “translucent, biomorphic” spec.
+- **Expected:** Visible material depth (blur/translucency) on panels over `bg-glass-app`.
+- **Actual:** Sidebar and shelves read as flat warm panels; slide card blur subtle; spec differentiation from Soft Machine is weak.
+- **Heuristic:** #8 Aesthetic and minimalist design
+- **Related:** `SlideContainer.tsx` (panel uses tokens); sidebar/shelves lack `mat-*` surfaces
+
+---
+
+## UXR-031 — Liquid Glass chart palette low contrast
+
+- **Status:** open
+- **Severity:** P2
+- **Mode:** Canvas (chart view)
+- **Session:** 7
+- **Steps to reproduce:**
+  1. Liquid Glass + gender × region grouped bar chart.
+  2. Compare bar/legend contrast to Mission Control on same data.
+- **Expected:** Chart series distinguishable at a glance (WCAG-oriented contrast for UI graphics).
+- **Actual:** Muted pastels on light slide; legend truncation (`Internatio...`) worse combined with low contrast.
+- **Heuristic:** #8 Aesthetic and minimalist design
+- **Related:** `themes.ts` `liquidGlass` viz palette; `AnalysisChart.tsx` / renderers
+
+---
+
 <!-- Add new findings below as sessions progress -->
