@@ -753,4 +753,55 @@ Log one entry per `UXR-###`. Update **Status** when fixed: `open` | `confirmed` 
 
 ---
 
+## UXR-049 — MC chart multi-hue palette reads as “rainbow” on dark chrome
+
+- **Status:** open
+- **Severity:** P2
+- **Mode:** Canvas (chart)
+- **Session:** VP-D §12 frame-it (2026-05-20)
+- **Steps to reproduce:**
+  1. Mission Control theme; gender × region grouped horizontal bar.
+  2. Open chart view; view unedited screenshot artifact.
+- **Expected:** Region series feel like one instrument panel — restrained hue count, coherent with MC cyan/orange accent system.
+- **Actual:** High-saturation multi-hue bars on dark background; reviewer would not paste into a deck without rework.
+- **Heuristic:** #4 Consistency and standards; #8 Aesthetic and minimalist design
+- **Related:** UXP-033; UXR-031 (LG chart contrast); `vp-d-06/05-chart-theme-mc.png`
+- **Screenshot:** `screenshots/vp-d-06/05-chart-theme-mc.png`
+
+---
+
+## UXR-050 — Footer χ² badge uses success green and dominates attention
+
+- **Status:** open
+- **Severity:** P2
+- **Mode:** Canvas (crosstab footer)
+- **Session:** VP-D §12 frame-it (2026-05-20)
+- **Steps to reproduce:**
+  1. Mission Control; gender × region crosstab with statistics footer visible.
+  2. Observe χ² result at bottom-right of analysis frame.
+- **Expected:** Footer supports the table; significance styling only when result is significant.
+- **Actual:** Green χ² pill pulls focus even when association is not significant (p ≥ 0.05); competes with cell data.
+- **Heuristic:** #8 Aesthetic and minimalist design
+- **Related:** UXP-005, UXP-034; `StatisticsStatusBar.module.css` `.chiSquareSignificant`; `vp-d-05/01-crosstab-compact-mc-frame-it.png`
+- **Screenshot:** `screenshots/vp-d-05/01-crosstab-compact-mc-frame-it.png`
+
+---
+
+## UXR-051 — Small-base cell `n=` warning color too prominent (especially MC)
+
+- **Status:** open
+- **Severity:** P2
+- **Mode:** Canvas (crosstab)
+- **Session:** VP-D §12 frame-it (2026-05-20)
+- **Steps to reproduce:**
+  1. Mission Control; crosstab with cells where 0 &lt; n &lt; 30.
+  2. Compare orange `n=` under % values vs primary numeric scan path.
+- **Expected:** Small-base caution is discoverable but does not outrank percentages.
+- **Actual:** Orange `--status-warning-text` on `n=` draws excessive attention; undermines “evidence” framing.
+- **Heuristic:** #8 Aesthetic and minimalist design
+- **Related:** UXP-035; `CrosstabCell.tsx` `smallBaseClass()`; delight Idea 4; UXP-040 (visibility toggle)
+- **Screenshot:** `screenshots/vp-d-05/01-crosstab-compact-mc-frame-it.png`
+
+---
+
 <!-- Add new findings below as sessions progress -->

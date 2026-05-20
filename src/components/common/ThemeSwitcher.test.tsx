@@ -24,6 +24,13 @@ describe('ThemeSwitcher', () => {
         expect(screen.getByText('Choose Theme')).toBeInTheDocument();
     });
 
+    it('renders theme listbox in a portal above app stacking contexts', () => {
+        render(<ThemeSwitcher />, { wrapper: Wrapper });
+        fireEvent.click(screen.getByLabelText(/Theme:/));
+        const listbox = screen.getByRole('listbox');
+        expect(listbox.parentElement).toBe(document.body);
+    });
+
     it('renders all three theme preview cards', () => {
         render(<ThemeSwitcher />, { wrapper: Wrapper });
         fireEvent.click(screen.getByLabelText(/Theme:/));

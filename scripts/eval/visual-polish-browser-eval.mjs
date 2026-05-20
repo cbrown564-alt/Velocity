@@ -8,6 +8,8 @@
  *   VP_D_RUN=05 node scripts/eval/visual-polish-browser-eval.mjs
  *   VP_D_RUN=06 node scripts/eval/visual-polish-browser-eval.mjs
  *   VP_D_RUN=07 node scripts/eval/visual-polish-browser-eval.mjs
+ *   VP_D_RUN=08 node scripts/eval/visual-polish-browser-eval.mjs
+ *   VP_D_RUN=09 node scripts/eval/visual-polish-browser-eval.mjs
  */
 import { chromium } from '@playwright/test';
 import path from 'path';
@@ -22,15 +24,180 @@ const DOCS_OUT = path.resolve(
   `vp-d-${RUN}`
 );
 fs.mkdirSync(OUT, { recursive: true });
-if (RUN === '05' || RUN === '06' || RUN === '07') fs.mkdirSync(DOCS_OUT, { recursive: true });
+const COPY_SHOTS_TO_DOCS = new Set(['05', '06', '07', '08', '09']);
+if (COPY_SHOTS_TO_DOCS.has(RUN)) fs.mkdirSync(DOCS_OUT, { recursive: true });
 
 async function shot(page, name) {
   const file = path.join(OUT, `${name}.png`);
   await page.screenshot({ path: file });
   console.log('SCREENSHOT', file);
-  if (RUN === '05' || RUN === '06' || RUN === '07') {
+  if (COPY_SHOTS_TO_DOCS.has(RUN)) {
     const docsFile = path.join(DOCS_OUT, `${name}.png`);
     fs.copyFileSync(file, docsFile);
+  }
+}
+
+const VP_THEMES = [
+  ['sm', 'Soft Machine'],
+  ['mc', 'Mission Control'],
+  ['lg', 'Liquid Glass'],
+];
+
+async function applyTheme(page, label) {
+  const themeList = page.locator('[role="listbox"][aria-label="Theme selection"]');
+  await page.keyboard.press('Escape');
+  await page.waitForTimeout(200);
+  await page.getByRole('button', { name: /Change theme/i }).first().click({ force: true });
+  await themeList.waitFor({ timeout: 5000 });
+  await themeList.getByText(label, { exact: true }).click({ force: true });
+  await page.waitForTimeout(900);
+}
+
+async function returnToWorkspace(page) {
+  const home = page.getByTitle('Return to Workspace');
+  if (await home.isVisible({ timeout: 3000 }).catch(() => false)) {
+    await home.click();
+    await page.waitForTimeout(800);
+    return true;
+  }
+  return false;
+}
+
+async function openDatasetFromWorkspace(page) {
+  const heading = page.getByRole('heading', { name: /mock_data/i });
+  if (await heading.isVisible({ timeout: 5000 }).catch(() => false)) {
+    await heading.dblclick();
+    await page.getByRole('button', { name: 'Table view' }).waitFor({ timeout: 120000 });
+    await page.waitForTimeout(600);
+    return true;
+  }
+  const openBtn = page.getByRole('button', { name: 'Open' });
+  if (await openBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
+    await openBtn.click();
+    await page.getByRole('button', { name: 'Table view' }).waitFor({ timeout: 120000 });
+    await page.waitForTimeout(600);
+    return true;
+  }
+  return false;
+}
+
+async function testThemeSurfaceMatrix(page, results) {
+  const built = await buildCrosstab(page, {
+    rowChip: /gender Good starting point/i,
+    colButton: /^region$/i,
+  });
+  if (!built) {
+    record(results, 'VP-D-08 Theme matrix — crosstab setup', false, 'gender×region not built');
+    return;
+  }
+
+  for (const [slug, label] of VP_THEMES) {
+    await applyTheme(page, label);
+    await page.locator('table').waitFor({ timeout: 30000 });
+
+    const footer = page.locator('.analysis-frame .statistics-status-bar').first();
+    const footerVisible = await footer.isVisible({ timeout: 5000 }).catch(() => false);
+    const footerText = footerVisible
+      ? ((await footer.innerText().catch(() => '')) || '').replace(/\s+/g, ' ').trim().slice(0, 120)
+      : 'missing';
+    record(
+      results,
+      `D-025–027 Statistics footer — ${slug}`,
+      footerVisible,
+      footerText
+    );
+    if (footerVisible) {
+      await footer.scrollIntoViewIfNeeded();
+      await page.waitForTimeout(200);
+    }
+    await shot(page, `01-footer-theme-${slug}`);
+
+    const exportBtn = page.getByRole('button', { name: 'Export', exact: true });
+    const exportVisible = await exportBtn.isVisible({ timeout: 3000 }).catch(() => false);
+    if (!exportVisible) {
+      record(results, `P10 Export modal — ${slug}`, false, 'Export button not visible');
+      continue;
+    }
+    await exportBtn.click();
+    const modal = page.getByRole('heading', { name: /Export Analysis/i });
+    const modalOpen = await modal.isVisible({ timeout: 8000 }).catch(() => false);
+    const pptx = modalOpen && (await page.getByText('PowerPoint', { exact: true }).isVisible().catch(() => false));
+    const frame = page.locator('.analysis-frame').filter({ has: page.locator('table') });
+    const pass = modalOpen && pptx && (await frame.count()) > 0;
+    record(
+      results,
+      `P10 Export modal — ${slug}`,
+      pass,
+      pass ? 'modal + PPTX + table frame' : `modal=${modalOpen} pptx=${pptx}`
+    );
+    if (modalOpen) await shot(page, `02-export-modal-theme-${slug}`);
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(400);
+  }
+}
+
+async function testThemeStretchSurfaces(page, results) {
+  const built = await buildCrosstab(page, {
+    rowChip: /gender Good starting point/i,
+    colButton: /^region$/i,
+  });
+  if (!built) {
+    record(results, 'VP-D-09 Stretch matrix — crosstab setup', false, 'gender×region not built');
+    return;
+  }
+
+  for (const [slug, label] of VP_THEMES) {
+    await applyTheme(page, label);
+
+    const newSlideBtn = page.getByRole('button', { name: /New Slide/i });
+    const slideCounter = page.getByText(/\d+\s*\/\s*\d+/).first();
+    const dockVisible =
+      (await newSlideBtn.isVisible({ timeout: 5000 }).catch(() => false))
+      && (await slideCounter.isVisible({ timeout: 3000 }).catch(() => false));
+    record(
+      results,
+      `§5 Timeline dock — ${slug}`,
+      dockVisible,
+      dockVisible ? 'slide counter + New Slide control' : 'missing'
+    );
+    if (dockVisible) {
+      await newSlideBtn.scrollIntoViewIfNeeded();
+      await page.waitForTimeout(200);
+    }
+    await shot(page, `01-timeline-dock-theme-${slug}`);
+
+    const returned = await returnToWorkspace(page);
+    const workspaceTitle = await page.getByText('Velocity Workspace').isVisible({ timeout: 5000 }).catch(() => false);
+    const datasetCard = await page.getByRole('heading', { name: /mock_data/i }).isVisible({ timeout: 5000 }).catch(() => false);
+    record(
+      results,
+      `§5 Workspace card — ${slug}`,
+      returned && workspaceTitle && datasetCard,
+      `return=${returned} workspace=${workspaceTitle} card=${datasetCard}`
+    );
+    if (workspaceTitle && datasetCard) await shot(page, `02-workspace-card-theme-${slug}`);
+
+    const reopened = await openDatasetFromWorkspace(page);
+    if (!reopened) {
+      record(results, `§5 Manager overlay — ${slug}`, false, 'could not reopen dataset');
+      continue;
+    }
+    await ensureCrosstab(page);
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(300);
+    await openVariableManager(page);
+    const managerOpen = await page.getByRole('heading', { name: 'Variable Manager' }).isVisible({ timeout: 5000 }).catch(() => false);
+    const glassShell = await page.locator('div.h-full.bg-glass-app').filter({
+      has: page.getByRole('heading', { name: 'Variable Manager' }),
+    }).count();
+    record(
+      results,
+      `§5 Manager overlay — ${slug}`,
+      managerOpen && glassShell > 0,
+      managerOpen ? 'manager + glass shell' : 'manager not open'
+    );
+    if (managerOpen) await shot(page, `03-manager-overlay-theme-${slug}`);
+    await closeVariableManager(page);
   }
 }
 
@@ -697,6 +864,18 @@ async function main() {
 
     if (RUN === '07') {
       await testVariableManager(page, results);
+      console.log(JSON.stringify(results, null, 2));
+      return;
+    }
+
+    if (RUN === '08') {
+      await testThemeSurfaceMatrix(page, results);
+      console.log(JSON.stringify(results, null, 2));
+      return;
+    }
+
+    if (RUN === '09') {
+      await testThemeStretchSurfaces(page, results);
       console.log(JSON.stringify(results, null, 2));
       return;
     }

@@ -513,7 +513,7 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
           {/* MAIN CANVAS */}
           <main className="flex-1 flex flex-col bg-[var(--bg-app)] relative overflow-hidden z-0">
             {/* HEADER */}
-            <header className="h-14 border-b border-[var(--border-color-muted)] flex items-center justify-between px-6 bg-[var(--bg-app)] shrink-0 z-10">
+            <header className="relative z-30 h-14 border-b border-[var(--border-color-muted)] flex items-center justify-between px-6 bg-[var(--bg-app)] shrink-0 overflow-visible">
               <div className="flex items-center gap-4 text-sm text-[var(--text-secondary)]">
                 <button
                   onClick={onReturnToWorkspace}
@@ -635,7 +635,7 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
             {/* WORKSPACE */}
             <div className="flex-1 flex flex-col min-h-0 bg-[var(--bg-app)]">
               {/* SHELF — adaptive collapse when empty and not dragging */}
-              <div className={`shrink-0 surface-panel bg-[var(--bg-app)] border-b border-[var(--border-color)] flex flex-col gap-3 shadow-xs z-10 transition-all duration-300 overflow-hidden ${focusMode ? 'h-0 py-0 opacity-0 border-none' : ''} ${!focusMode ? 'px-4 xl:px-6 py-4 opacity-100' : ''}`}>
+              <div className={`shrink-0 surface-panel bg-[var(--bg-app)] border-b border-[var(--border-color)] flex flex-col gap-3 shadow-xs z-0 transition-all duration-300 overflow-hidden ${focusMode ? 'h-0 py-0 opacity-0 border-none' : ''} ${!focusMode ? 'px-4 xl:px-6 py-4 opacity-100' : ''}`}>
                 {/* Collapsed indicator when shelves are empty and not dragging */}
                 {!focusMode && !draggingId && tableConfig.rowVars.length === 0 && !tableConfig.colVar && !(dataset?.weightVariable || rememberedWeightVar) && (
                   <div className="flex items-center gap-3 text-xs text-[var(--text-secondary)]">

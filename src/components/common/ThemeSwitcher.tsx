@@ -1,7 +1,35 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useLayoutEffect, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { useTheme } from '../../context/ThemeContext';
 import { themes } from '../../theme/themes';
 import { Check, Palette } from 'lucide-react';
+
+const PANEL_WIDTH = 256;
+const GAP = 8;
+const VIEWPORT_MARGIN = 8;
+
+interface ThemePanelCoords {
+    top: number;
+    left: number;
+    placement: 'below' | 'above';
+}
+
+function computeThemePanelCoords(anchor: HTMLElement): ThemePanelCoords {
+    const rect = anchor.getBoundingClientRect();
+    let left = rect.right - PANEL_WIDTH;
+    if (left < VIEWPORT_MARGIN) left = VIEWPORT_MARGIN;
+    if (left + PANEL_WIDTH > window.innerWidth - VIEWPORT_MARGIN) {
+        left = window.innerWidth - PANEL_WIDTH - VIEWPORT_MARGIN;
+    }
+
+    const spaceBelow = window.innerHeight - rect.bottom - VIEWPORT_MARGIN;
+    const spaceAbove = rect.top - VIEWPORT_MARGIN;
+    const placement =
+        spaceBelow < 280 && spaceAbove > spaceBelow ? 'above' : 'below';
+    const top = placement === 'below' ? rect.bottom + GAP : rect.top - GAP;
+
+    return { top, left, placement };
+}
 
 interface ThemePreviewCardProps {
     themeId: string;
@@ -74,13 +102,37 @@ const ThemePreviewCard: React.FC<ThemePreviewCardProps> = ({ themeId, isActive, 
 export const ThemeSwitcher: React.FC = () => {
     const { theme, setTheme } = useTheme();
     const [open, setOpen] = useState(false);
-    const ref = useRef<HTMLDivElement>(null);
+    const [coords, setCoords] = useState<ThemePanelCoords | null>(null);
+    const triggerRef = useRef<HTMLDivElement>(null);
+    const panelRef = useRef<HTMLDivElement>(null);
+
+    const updatePosition = useCallback(() => {
+        const anchor = triggerRef.current;
+        if (!anchor) return;
+        setCoords(computeThemePanelCoords(anchor));
+    }, []);
+
+    useLayoutEffect(() => {
+        if (!open) {
+            setCoords(null);
+            return;
+        }
+        updatePosition();
+        window.addEventListener('resize', updatePosition);
+        window.addEventListener('scroll', updatePosition, true);
+        return () => {
+            window.removeEventListener('resize', updatePosition);
+            window.removeEventListener('scroll', updatePosition, true);
+        };
+    }, [open, updatePosition]);
 
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
-            if (ref.current && !ref.current.contains(e.target as Node)) {
-                setOpen(false);
+            const target = e.target as Node;
+            if (triggerRef.current?.contains(target) || panelRef.current?.contains(target)) {
+                return;
             }
+            setOpen(false);
         };
         if (open) {
             document.addEventListener('mousedown', handleClickOutside);
@@ -88,8 +140,38 @@ export const ThemeSwitcher: React.FC = () => {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, [open]);
 
+    const panel =
+        open && coords ? (
+            <div
+                ref={panelRef}
+                className="fixed z-[100] w-64 bg-[var(--bg-panel)] border border-[var(--border-color)] rounded-xl shadow-xl p-3 flex flex-col gap-2"
+                role="listbox"
+                aria-label="Theme selection"
+                style={{
+                    top: coords.top,
+                    left: coords.left,
+                    transform: coords.placement === 'above' ? 'translateY(-100%)' : undefined,
+                }}
+            >
+                <span className="text-[10px] font-bold text-[var(--text-tertiary)] uppercase tracking-wider px-1">
+                    Choose Theme
+                </span>
+                {themes.map((t) => (
+                    <ThemePreviewCard
+                        key={t.id}
+                        themeId={t.id}
+                        isActive={theme.id === t.id}
+                        onSelect={() => {
+                            setTheme(t.id);
+                            setOpen(false);
+                        }}
+                    />
+                ))}
+            </div>
+        ) : null;
+
     return (
-        <div ref={ref} className="relative">
+        <div ref={triggerRef} className="relative">
             <button
                 onClick={() => setOpen(v => !v)}
                 className="p-2 rounded-lg hover:bg-[var(--bg-active)] text-[var(--text-secondary)] hover:text-[var(--color-accent)] transition-colors"
@@ -101,28 +183,7 @@ export const ThemeSwitcher: React.FC = () => {
                 <Palette size={18} />
             </button>
 
-            {open && (
-                <div
-                    className="absolute right-0 top-full mt-2 w-64 bg-[var(--bg-panel)] border border-[var(--border-color)] rounded-xl shadow-xl p-3 z-50 flex flex-col gap-2"
-                    role="listbox"
-                    aria-label="Theme selection"
-                >
-                    <span className="text-[10px] font-bold text-[var(--text-tertiary)] uppercase tracking-wider px-1">
-                        Choose Theme
-                    </span>
-                    {themes.map((t) => (
-                        <ThemePreviewCard
-                            key={t.id}
-                            themeId={t.id}
-                            isActive={theme.id === t.id}
-                            onSelect={() => {
-                                setTheme(t.id);
-                                setOpen(false);
-                            }}
-                        />
-                    ))}
-                </div>
-            )}
+            {typeof document !== 'undefined' && panel ? createPortal(panel, document.body) : null}
         </div>
     );
 };

@@ -1,7 +1,7 @@
 # Visual Polish Delight — Validation & Multi-Session Test Plan
 
 **Date:** May 20, 2026  
-**Status:** Crosstab + chart + Manager tracks **complete** (VP-D-01–07); product-wide delight sign-off **blocked** on theme×surface matrix (footer, export) and §12 frame-it  
+**Status:** VP-D-01–09 automation **complete**; §12 frame-it **No** (May 20, 2026, human reviewer) — MC crosstab + chart fail “screenshot-ready”; UXP-033–035 polish required before re-test  
 **Owner:** Product + engineering (assign per run in session log)  
 **Scope:** Live validation of `STAB-UI-D` delight layer described in `visual-polish-vision-delight.md`  
 **Builds on:** `visual-polish-review.md` (UXP-001–032), `plan_01_comprehensive_ui_ux_review.md`, `session-02-canvas.md`, `session-04-variable-manager.md`, `session-07-themes.md`
@@ -22,8 +22,8 @@ Crosstab coverage alone does not answer **§12 “Would You Frame It?”** for t
 
 | Priority | Session | Scope | IDs | Pass criteria |
 | :--- | :--- | :--- | :--- | :--- |
-| **P1** | **VP-D-08** | Theme × surface matrix | §5 | Minimum: statistics footer + export modal × SM/MC/LG; stretch: workspace card, timeline dock, Manager overlay |
-| **P2** | After VP-D-06–08 | Frame-it synthesis | §12 | Human reviewer **Yes** on unedited artifacts from **crosstab + chart + at least one non-Canvas surface** (Manager or workspace), MC minimum |
+| **P1** | **STAB-UI-D polish** | Visual hierarchy on hero output | UXP-033–035 | MC chart palette + footer χ² + cell `n=` warning color; re-run frame-it after fix |
+| **P2** | After UXP-033–035 | Frame-it re-test | §12 | Human reviewer **Yes** on MC crosstab + chart (+ Manager inspector optional) |
 
 **Rule:** Do not mark `visual-polish-vision-delight.md` as fully validated until the product-wide track below is complete.
 
@@ -39,17 +39,18 @@ Crosstab coverage alone does not answer **§12 “Would You Frame It?”** for t
 
 - [x] D-030–031 Chart mode Pass with screenshots (VP-D-06; D-030 **mostly pass** — no stats footer on chart, settling N/A)
 - [x] D-040–042 Variable Manager + inspector Pass or gaps filed as UXP (VP-D-07; D-041 distribution confirmed live, headless stats flake)
-- [ ] Theme matrix (§6) filled for chart, footer, export modal (+ stretch rows)
-- [ ] `visual-polish-vision-delight.md` §10 links all VP-D runs
-- [ ] **§12 “Would You Frame It?”** — **Yes** from human reviewer (see §1.2)
+- [x] Theme matrix (§5) — chart (VP-D-06), statistics footer + export modal × SM/MC/LG (VP-D-08)
+- [x] Theme matrix stretch rows — workspace card, timeline dock, Manager overlay (VP-D-09)
+- [x] `visual-polish-vision-delight.md` §10 links VP-D-01–08 runs
+- [x] **§12 “Would You Frame It?”** — **No** (May 20, 2026) — MC `vp-d-05/01` + `vp-d-06/05-chart-theme-mc`; SM/LG better but not ready; see §6 Frame-it
 
 ### 1.4 Next session playbook
 
-Run **VP-D-08** next. Environment: §3.
+Implement **UXP-033–035** (visual hierarchy), then re-run frame-it on MC artifacts.
 
 | Session | First steps | Evidence target |
 | :--- | :--- | :--- |
-| **VP-D-08** | Same slide; cycle SM → MC → LG on chart, footer, export modal | Fill §5 “Not run” cells; link per-theme screenshots |
+| **Frame-it (re-test)** | Regenerate MC crosstab + chart shots after UXP-033–035; human §12 review | New **Yes/No** in §6; only sign off vision doc when **Yes** |
 
 **Automation backlog (supports next runs):**
 
@@ -58,6 +59,8 @@ Run **VP-D-08** next. Environment: §3.
 | P1 | Playwright visual regression: 3 themes × table | Open |
 | P1 | Chart mode eval path (`VP_D_RUN=06`) | Done |
 | P1 | Variable Manager eval path (`VP_D_RUN=07`) | Done |
+| P1 | Theme matrix eval path (`VP_D_RUN=08`) | Done |
+| P2 | Stretch theme surfaces (`VP_D_RUN=09`) | Done |
 | P2 | Story Shelf timing test with clock mock | Open |
 | P2 | `prefers-reduced-motion` e2e via `emulateMedia` | Open |
 
@@ -75,7 +78,7 @@ Runs **VP-D-01 through VP-D-05** exercised the **Analysis Canvas crosstab** deep
 | **Chart mode** | VP-D-06 (D-030–031) | Shared `AnalysisOutputFrame`; chart path lacks stats footer band |
 | **Variable Manager** | VP-D-07 (D-040–042) | Mode boundary, Miller nav, facets, bulk bar; UXR-018 fixed (`managerSearchQuery`) |
 | **Inspector (in Manager)** | VP-D-07 (D-041) | Distribution + value mapping pass live; headless stats load flaky |
-| **Theme × surface matrix (§6)** | Partial (table only) | Materials must hold on workspace, chart, footer, dock |
+| **Theme × surface matrix (§5)** | Full matrix VP-D-02/06/08/09 (table, chart, footer, export, workspace, dock, Manager) | Materials hold; frame-it still **No** on MC hero output |
 
 **Relationship to tracker `STAB-UI-D`:** Tracker §4.7 lists STAB-UI-D as UXR remediation. This plan validates the **delight layer** from the vision doc — a distinct but overlapping workstream. Close UXR items via `findings.md`; use `D-###` IDs here for polish validation only.
 
@@ -120,16 +123,17 @@ Run D-001–005 and D-020, D-025–027 on each theme after P1 passes. **Dedicate
 
 | Surface | Soft Machine | Mission Control | Liquid Glass |
 | :--- | :---: | :---: | :---: |
-| Workspace card | Not run | Not run | Not run |
+| Workspace card | Pass | Pass | Pass |
 | Canvas empty state | Pass | Not run | Not run |
 | Crosstab table | Pass | Pass | Pass |
 | Presentation density | Pass | Not run | Not run |
 | Focus mode | Pass | — | — |
 | Reduced motion table | Pass | — | — |
 | Grouped bar chart | Pass | Pass | Pass |
-| Statistics footer | Not run | Not run | Not run |
-| Export modal | Not run | Not run | — |
-| Timeline dock | Not run | Not run | Not run |
+| Statistics footer | Pass | Pass | Pass |
+| Export modal | Pass | Pass | Pass |
+| Timeline dock | Pass | Pass | Pass |
+| Manager overlay | Pass | Pass | Pass |
 
 Baseline reference: `session-07-themes.md` — re-run after STAB-UI-D delight validation.
 
@@ -141,7 +145,9 @@ Baseline reference: `session-07-themes.md` — re-run after STAB-UI-D delight va
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | VP-D-06 | 2026-05-20 | Agent (Playwright) | 4176 | Chart mode (D-030–031) | **Mostly pass** | Evidence `screenshots/vp-d-06/`; run VP-D-07 Manager |
 | VP-D-07 | 2026-05-20 | Agent (Playwright + live browser) | 4176 | Variable Manager + inspector (D-040–042) | **Pass** | Evidence `screenshots/vp-d-07/`; run VP-D-08 theme matrix |
-| VP-D-08 | — | — | 4176 | Theme × surface matrix (§5) | Not run | Footer + export modal per theme; stretch surfaces |
+| VP-D-08 | 2026-05-20 | Agent (Playwright) | 4176 | Theme × surface matrix (§5) | **Pass** | Evidence `screenshots/vp-d-08/`; §12 frame-it synthesis |
+| VP-D-09 | 2026-05-20 | Agent (Playwright) | 4176 | Stretch surfaces (§5) | **Pass** | Evidence `screenshots/vp-d-09/`; workspace + dock + Manager × 3 themes |
+| Frame-it | 2026-05-20 | Human reviewer (product) | 4176 | §12 synthesis | **No** | MC crosstab + chart; UXP-033–035 filed; Manager inspector not reviewed |
 
 ### VP-D-06 notes (2026-05-20)
 
@@ -176,6 +182,61 @@ Evidence: `screenshots/vp-d-06/` (7 PNGs).
 | D-042 Search isolation | Pass | `managerSearchQuery` does not filter Canvas sidebar (UXR-018 remediated) |
 
 Evidence: `screenshots/vp-d-07/` (4 PNGs).
+
+### VP-D-08 notes (2026-05-20)
+
+**Driver:** Playwright `VP_D_RUN=08` on `127.0.0.1:4176`  
+**Fixture:** gender×region crosstab (mock_data.csv)
+
+| Check | Result | Detail |
+| :--- | :--- | :--- |
+| Statistics footer — SM | Pass | Welch's T · Cell vs Rest; χ² badge; sig legend |
+| Statistics footer — MC | Pass | Same methodology strip; MC material tokens |
+| Statistics footer — LG | Pass | Frosted footer band readable (frosted footer from Phase 3) |
+| Export modal — SM | Pass | PPTX tile + table frame behind modal |
+| Export modal — MC | Pass | Token-consistent dark panel |
+| Export modal — LG | Pass | Previously marked N/A in §5; modal opens and reads cleanly |
+
+Evidence: `screenshots/vp-d-08/` (6 PNGs: `01-footer-theme-{sm,mc,lg}`, `02-export-modal-theme-{sm,mc,lg}`).
+
+### VP-D-09 notes (2026-05-20)
+
+**Driver:** Playwright `VP_D_RUN=09` on `127.0.0.1:4176`  
+**Fixture:** gender×region crosstab → per-theme workspace / dock / Manager captures
+
+| Check | Result | Detail |
+| :--- | :--- | :--- |
+| Timeline dock — SM/MC/LG | Pass | Slide counter (`N / M`) + New Slide control visible on Canvas |
+| Workspace card — SM/MC/LG | Pass | Return-to-workspace → `Velocity Workspace` + `mock_data` dataset card |
+| Manager overlay — SM/MC/LG | Pass | Glass shell + Miller columns after reopen from workspace |
+
+Evidence: `screenshots/vp-d-09/` (9 PNGs: `01-timeline-dock-theme-{sm,mc,lg}`, `02-workspace-card-theme-{sm,mc,lg}`, `03-manager-overlay-theme-{sm,mc,lg}`).
+
+**Note:** `index.css` defines `.timeline-dock` theme tokens, but `TimelineDock.tsx` does not apply that class — eval targets the live film-strip rail (border-t footer band).
+
+### Frame-it synthesis (§12) — 2026-05-20
+
+**Reviewer:** Product (human)  
+**Artifacts reviewed:** `vp-d-05/01-crosstab-compact-mc-frame-it.png`, `vp-d-06/05-chart-theme-mc.png`  
+**Not reviewed this pass:** `vp-d-07/02-inspector-gender.png`
+
+| Artifact | Verdict | Rationale |
+| :--- | :---: | :--- |
+| MC crosstab (`vp-d-05/01`) | **No** | Orange cell `n=` (small-base warning) draws too much attention; green χ² badge in footer competes with data; overall not “screenshot-ready” |
+| MC chart (`vp-d-06/05-chart-theme-mc`) | **No** | Multi-hue / “rainbow” region palette on dark MC chrome does not read as one coherent instrument |
+| SM / LG (informal) | **No** (provisional) | Less harsh than MC; still not frame-ready |
+
+**Product-wide §12 verdict:** **No** — does not meet vision doc §8 (“feel proud pasting into a deck without cropping”).
+
+**Filed as polish work (extends UXP-005, UXP-012, UXR-031):**
+
+| ID | Issue | Direction |
+| :--- | :--- | :--- |
+| **UXP-033** | MC grouped-bar chart uses high-saturation multi-hue series on dark panel | Theme-scoped chart palette: fewer hues, muted fills, or sequential ramp; align with “flight instrument” metaphor |
+| **UXP-034** | Footer χ² result uses success green even when p ≥ 0.05 — reads as “good news” | Demote insignificance: `text-secondary` only, or move χ² to second line per UXP-005; reserve green for p &lt; 0.05 only |
+| **UXP-035** | Small-base `n=` uses `--status-warning-text` (orange on MC) at full cell prominence | Whisper: smaller type, muted token, or footnote style; consider UXP-040 toggle for deck mode |
+
+Cross-reference: `findings.md` UXR-049–051; `visual-polish-review.md` Tier 4b.
 
 **Run naming:** `VP-D-##` (Visual Polish — Delight validation run).
 
