@@ -11,6 +11,7 @@
 import type { Variable, VariableSet } from '../../types';
 import { normalizeVariableType } from '../../types';
 import type { MeasurementIntent, SemanticAnnotation } from '../../types/semantic';
+import { WEIGHT_NAME_PATTERNS } from './weightPatterns';
 
 // ============================================================================
 // Rule Helpers
@@ -105,17 +106,6 @@ function isNpsScale(variable: Variable): boolean {
 // ============================================================================
 // Name-Pattern Rules
 // ============================================================================
-
-const WEIGHT_NAME_PATTERNS = [
-  /^wt$/i,
-  /^wt_/i,
-  /^weight$/i,
-  /^weight_/i,
-  /^w\d+$/i,
-  /^fw\d*$/i,
-  /^finalwt/i,
-  /^sampleweight/i,
-];
 
 const IDENTIFIER_NAME_PATTERNS = [
   /^resp_?id$/i,

@@ -126,6 +126,11 @@ function collectViolations() {
     if (/\.(tsx|ts)$/.test(filePath) && RAW_TAILWIND_PALETTE.test(content)) {
       pushViolation(violations, filePath, RULE.RAW_TAILWIND, 'raw Tailwind palette utility');
     }
+
+    // rgba(0,0,0,…) in TSX/TS (theme definitions excluded — they legitimately define colors)
+    if (/\.(tsx|ts)$/.test(filePath) && !filePath.includes('theme/themes.ts') && RGBA_BLACK.test(content)) {
+      pushViolation(violations, filePath, RULE.RGBA_BLACK_CSS, 'rgba(0,0,0,…) usage');
+    }
   }
 
   for (const filePath of walk(SRC_DIR, isComponentCss)) {

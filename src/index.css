@@ -109,6 +109,11 @@
   --color-error:   var(--sig-lower,  var(--viz-diverging-6));
   --color-warning: var(--status-warning-text);
 
+  /* Insight Halo: subtle cell background tints for significance */
+  --halo-high: color-mix(in srgb, var(--color-success) 5%, transparent);
+  --halo-mid: color-mix(in srgb, var(--text-secondary) 4%, transparent);
+  --halo-low: color-mix(in srgb, var(--color-error) 4%, transparent);
+
   /* Legacy Functional (Deprecating slowly or remapping) */
   --color-accent: var(--accent);
   --color-accent-hover: var(--ring);
@@ -146,6 +151,22 @@
   --border-radius-md: calc(var(--radius) + 2px);
   --border-radius-lg: calc(var(--radius) + 4px);
 
+  /* Shelf Colors */
+  --shelf-row: var(--color-accent);
+  --shelf-col: var(--viz-secondary);
+  --shelf-weight: var(--status-warning-text);
+
+  /* Shadow Scale */
+  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px 0 rgb(0 0 0 / 0.06);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+  --shadow-inset: inset 0 2px 4px 0 rgb(0 0 0 / 0.05);
+  --shadow-up: 0 -4px 20px rgb(0 0 0 / 0.02);
+  --shadow-text: 0 1px 2px rgb(0 0 0 / 0.5);
+
   /* Motion */
   --ease-standard: cubic-bezier(0.4, 0.0, 0.2, 1);
   --transition-fast: 150ms var(--ease-standard);
@@ -161,9 +182,21 @@
 
 /* Mission Control overrides */
 [data-theme="mission-control"] {
-  --shadow-inset: inset 0 1px 2px rgba(0, 0, 0, 0.5);
-  --shadow-float: 0 4px 20px rgba(0, 0, 0, 0.6);
-  --shadow-drag: 0 8px 32px rgba(0, 0, 0, 0.8);
+  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.2);
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.3), 0 1px 2px 0 rgb(0 0 0 / 0.2);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.3);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -4px rgb(0 0 0 / 0.4);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.6), 0 8px 10px -6px rgb(0 0 0 / 0.5);
+  --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.8);
+  --shadow-inset: inset 0 1px 2px rgb(0 0 0 / 0.5);
+  --shadow-float: 0 4px 20px rgb(0 0 0 / 0.6);
+  --shadow-drag: 0 8px 32px rgb(0 0 0 / 0.8);
+  --shadow-up: 0 -4px 20px rgb(0 0 0 / 0.15);
+  --shadow-text: 0 1px 2px rgb(0 0 0 / 0.8);
+
+  /* Flight Instrument: cyan luminescence for high significance */
+  --halo-high: color-mix(in srgb, var(--color-accent) 6%, transparent);
+  --halo-mid: color-mix(in srgb, var(--text-secondary) 5%, transparent);
 }
 
 /* Liquid Glass behavior */
@@ -190,9 +223,7 @@
   backdrop-filter: var(--mat-panel-filter, none);
   -webkit-backdrop-filter: var(--mat-panel-filter, none);
   border: 1px solid var(--mat-panel-border, transparent);
-  box-shadow:
-    0 4px 6px -1px rgba(0, 0, 0, 0.1),
-    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  box-shadow: var(--shadow-md);
 }
 
 /* Overlay Surface (Popovers) */
@@ -453,7 +484,92 @@ h3 {
 }
 
 /* ============================================================================
-   12. Timeline Dock (Deck Navigation)
+   12. Theme Material Systems (Phase 3: Delight Layer)
+   ============================================================================ */
+
+/* --------------------------------------------------------------------------
+   Soft Machine: The Research Journal
+   -------------------------------------------------------------------------- */
+
+/* Paper texture on panels */
+[data-theme="soft-machine"] .bg-\[var\(--bg-panel\)\],
+:root:not([data-theme]) .bg-\[var\(--bg-panel\)\] {
+  background-image:
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  background-blend-mode: multiply;
+}
+
+/* Ink density: secondary text slightly faded */
+[data-theme="soft-machine"] .text-\[var\(--text-secondary\)\],
+:root:not([data-theme]) .text-\[var\(--text-secondary\)\] {
+  opacity: 0.85;
+}
+
+/* Warmer grid borders */
+[data-theme="soft-machine"] td,
+[data-theme="soft-machine"] th,
+:root:not([data-theme]) td,
+:root:not([data-theme]) th {
+  border-color: color-mix(in srgb, var(--border-grid) 70%, var(--color-accent) 5%);
+}
+
+/* --------------------------------------------------------------------------
+   Mission Control: Flight Instrument System
+   -------------------------------------------------------------------------- */
+
+/* Graticule-style grid: higher contrast grid lines */
+[data-theme="mission-control"] .data-cell,
+[data-theme="mission-control"] th {
+  border-color: color-mix(in srgb, var(--border-grid) 90%, var(--color-accent) 8%);
+}
+
+/* Amber caution treatment for small-base cells (enhanced) */
+[data-theme="mission-control"] [data-small-base="true"] {
+  color: var(--status-warning-text);
+  text-shadow: 0 0 6px color-mix(in srgb, var(--status-warning-text) 30%, transparent);
+}
+
+/* --------------------------------------------------------------------------
+   Liquid Glass: Holographic Display
+   -------------------------------------------------------------------------- */
+
+/* Specular cell highlight on hover */
+[data-theme="liquid-glass"] .data-cell:hover::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 50% 0%,
+    rgba(255, 255, 255, 0.06) 0%,
+    transparent 60%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Refracted typography: lighter weight, slightly increased tracking */
+[data-theme="liquid-glass"] .data-cell,
+[data-theme="liquid-glass"] .statistic-value {
+  font-weight: 400;
+  letter-spacing: 0.01em;
+}
+
+[data-theme="liquid-glass"] h1,
+[data-theme="liquid-glass"] h2,
+[data-theme="liquid-glass"] .slide-header-title {
+  font-weight: 300;
+  letter-spacing: -0.01em;
+}
+
+/* Frosted footer: more blur than table body */
+[data-theme="liquid-glass"] .statistics-status-bar,
+[data-theme="liquid-glass"] .methodology-drawer {
+  backdrop-filter: blur(30px) saturate(160%);
+  -webkit-backdrop-filter: blur(30px) saturate(160%);
+}
+
+/* ============================================================================
+   13. Timeline Dock (Deck Navigation)
    ============================================================================ */
 
 .timeline-dock {
@@ -472,7 +588,7 @@ h3 {
   -webkit-backdrop-filter: var(--mat-panel-filter, none);
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius-lg);
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-lg);
 
   z-index: 100;
 }
@@ -517,7 +633,7 @@ h3 {
 
 .timeline-add-btn:hover {
   transform: scale(1.1);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-md);
 }
 
 /* Hide scrollbar in timeline */
@@ -537,7 +653,7 @@ h3 {
   background: rgba(26, 29, 33, 0.9);
   border: 1px solid rgba(0, 212, 255, 0.15);
   box-shadow:
-    0 4px 24px rgba(0, 0, 0, 0.5),
+    var(--shadow-lg),
     inset 0 1px 0 rgba(0, 212, 255, 0.1);
 }
 
@@ -552,7 +668,7 @@ h3 {
 [data-theme="soft-machine"] .timeline-dock,
 :root:not([data-theme]) .timeline-dock {
   background: var(--bg-panel);
-  box-shadow: 0 4px 16px rgba(45, 74, 62, 0.08);
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--primary) 8%, transparent);
 }
 
 [data-theme="soft-machine"] .timeline-active-glow,
@@ -567,7 +683,7 @@ h3 {
   -webkit-backdrop-filter: blur(25px) saturate(180%);
   border: 1px solid rgba(255, 255, 255, 0.3);
   box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.1),
+    var(--shadow-lg),
     inset 0 1px 0 rgba(255, 255, 255, 0.4);
 }
 

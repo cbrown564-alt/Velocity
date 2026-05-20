@@ -12,6 +12,8 @@ interface VariableCardProps {
   isSelected?: boolean;
   /** Indicates this card has bi-directional focus (from Variable Manager) */
   isFocused?: boolean;
+  /** Which shelf this variable currently occupies, if any */
+  shelfType?: 'row' | 'col' | 'weight' | null;
   onRecode?: (variableSet: VariableSet) => void;
   onClick?: (variableSet: VariableSet, e: React.MouseEvent) => void;
   onContextMenu?: (variableSet: VariableSet, e: React.MouseEvent) => void;
@@ -27,6 +29,7 @@ export const VariableCard: React.FC<VariableCardProps> = ({
   isSelected,
   isFocused,
   isOverlay,
+  shelfType,
   onRecode,
   onClick,
   onContextMenu,
@@ -43,6 +46,7 @@ export const VariableCard: React.FC<VariableCardProps> = ({
   };
 
   const Component = isOverlay ? 'div' : motion.div;
+  const shelfColor = shelfType ? `var(--shelf-${shelfType})` : undefined;
 
   return (
     <Component
@@ -65,6 +69,14 @@ export const VariableCard: React.FC<VariableCardProps> = ({
         }
       }}
     >
+      {/* Shelf color indicator */}
+      {shelfType && (
+        <div
+          className="absolute left-0 top-1.5 bottom-1.5 w-[3px] rounded-full"
+          style={{ background: shelfColor }}
+        />
+      )}
+
       <div className="text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors shrink-0 opacity-0 group-hover:opacity-100 -ml-1">
         <GripVertical size={14} />
       </div>
@@ -79,6 +91,11 @@ export const VariableCard: React.FC<VariableCardProps> = ({
           />
         </span>
         <span className={`text-sm font-medium truncate font-body leading-none ${isSelected ? 'text-[var(--text-primary)]' : 'text-[var(--text-secondary)] group-hover:text-[var(--text-primary)]'}`}>{variableSet.name}</span>
+        {variableSet.derived && (
+          <span className="text-[9px] px-1 py-0.5 rounded bg-[var(--bg-active)] text-[var(--text-tertiary)] uppercase tracking-wider font-semibold shrink-0">
+            derived
+          </span>
+        )}
       </div>
 
       <div className="absolute right-2 text-[var(--text-secondary)] group-hover:text-[var(--color-accent)] transition-colors shrink-0 opacity-0 group-hover:opacity-100 flex items-center justify-center w-5 h-5 rounded hover:bg-[var(--bg-active)]" title="Click to assign">
@@ -94,6 +111,8 @@ interface DraggableVariableProps {
   isSelected?: boolean;
   /** Indicates this card has bi-directional focus (from Variable Manager) */
   isFocused?: boolean;
+  /** Which shelf this variable currently occupies, if any */
+  shelfType?: 'row' | 'col' | 'weight' | null;
   onRecode?: (variableSet: VariableSet) => void;
   onClick?: (variableSet: VariableSet, e: React.MouseEvent) => void;
   onContextMenu?: (variableSet: VariableSet, e: React.MouseEvent) => void;
@@ -103,6 +122,7 @@ export const DraggableVariable: React.FC<DraggableVariableProps> = ({
   variableSet,
   isSelected,
   isFocused,
+  shelfType,
   onRecode,
   onClick,
   onContextMenu
@@ -118,6 +138,7 @@ export const DraggableVariable: React.FC<DraggableVariableProps> = ({
       isDragging={isDragging}
       isSelected={isSelected}
       isFocused={isFocused}
+      shelfType={shelfType}
       onRecode={onRecode}
       onClick={onClick}
       onContextMenu={onContextMenu}

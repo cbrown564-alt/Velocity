@@ -9,6 +9,9 @@ import { EngineProxy, type EngineProxyOptions } from '../services/EngineProxy';
 import type { EngineResponseByType } from '../types/engineWorker';
 import type { PersistenceState } from './slices/dataSlice';
 
+type LoadProgressMessage = EngineResponseByType<'engine.loadProgress'>;
+type LoadProgressCallback = (msg: LoadProgressMessage) => void;
+
 export const ANALYSIS_WORKER_MODULE = new URL('../services/analysisWorker.ts', import.meta.url);
 
 export function createAnalysisWorker(): Worker {
@@ -88,9 +91,12 @@ export function createEnginePersistenceCallbacks(
 export function createEngineProxy(
   worker: Worker,
   bridge: EnginePersistenceBridge,
-  options: { corruptionLogLabel?: string } = {},
+  options: { corruptionLogLabel?: string; onLoadProgress?: LoadProgressCallback } = {},
 ): EngineProxy {
-  return new EngineProxy(worker, createEnginePersistenceCallbacks(bridge, options));
+  return new EngineProxy(worker, {
+    ...createEnginePersistenceCallbacks(bridge, options),
+    onProgress: options.onLoadProgress,
+  });
 }
 
 export interface InitializeEngineContext {
@@ -105,6 +111,7 @@ export interface InitializeEngineContext {
   setPersistenceReady: () => void;
   setInitError: (message: string) => void;
   checkPersistedData: () => Promise<void>;
+  onLoadProgress?: LoadProgressCallback;
 }
 
 export async function initializeEngineWorker(ctx: InitializeEngineContext): Promise<void> {
@@ -121,7 +128,7 @@ export async function initializeEngineWorker(ctx: InitializeEngineContext): Prom
       ctx.setWorkerRuntimeError(error.message || 'Worker runtime error');
     };
 
-    const proxy = createEngineProxy(worker, ctx.bridge);
+    const proxy = createEngineProxy(worker, ctx.bridge, { onLoadProgress: ctx.onLoadProgress });
 
     ctx.assignEngineProxy(proxy);
 
@@ -152,6 +159,7 @@ export interface RespawnEngineContext {
   setRespawnError: (message: string) => void;
   cleanStart?: boolean;
   datasetIdOverride?: string;
+  onLoadProgress?: LoadProgressCallback;
 }
 
 const RESPAWN_TERMINATION_DELAY_MS = 100;
@@ -165,7 +173,10 @@ export async function respawnEngineWorker(ctx: RespawnEngineContext): Promise<vo
 
   try {
     const worker = createAnalysisWorker();
-    const proxy = createEngineProxy(worker, ctx.bridge, { corruptionLogLabel: ' during respawn' });
+    const proxy = createEngineProxy(worker, ctx.bridge, {
+      corruptionLogLabel: ' during respawn',
+      onLoadProgress: ctx.onLoadProgress,
+    });
 
     ctx.setEngineProxy(proxy);
 

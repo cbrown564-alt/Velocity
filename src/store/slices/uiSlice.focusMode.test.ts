@@ -27,6 +27,32 @@ describe('UISlice — Focus Mode', () => {
   });
 });
 
+describe('UISlice — Table Density', () => {
+  beforeEach(() => {
+    useVelocityStore.setState({ tableDensity: 'compact' });
+  });
+
+  it('defaults tableDensity to compact', () => {
+    expect(useVelocityStore.getState().tableDensity).toBe('compact');
+  });
+
+  it('toggles density between compact and generous', () => {
+    useVelocityStore.getState().toggleTableDensity();
+    expect(useVelocityStore.getState().tableDensity).toBe('generous');
+
+    useVelocityStore.getState().toggleTableDensity();
+    expect(useVelocityStore.getState().tableDensity).toBe('compact');
+  });
+
+  it('sets density explicitly', () => {
+    useVelocityStore.getState().setTableDensity('generous');
+    expect(useVelocityStore.getState().tableDensity).toBe('generous');
+
+    useVelocityStore.getState().setTableDensity('compact');
+    expect(useVelocityStore.getState().tableDensity).toBe('compact');
+  });
+});
+
 describe('UISlice — Toast Layer', () => {
   beforeEach(() => {
     useVelocityStore.setState({ toasts: [] });

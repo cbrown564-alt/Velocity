@@ -169,7 +169,7 @@ export const MethodologyDrawer: React.FC<MethodologyDrawerProps> = ({
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: '100%', opacity: 0.5 }}
             transition={reducedMotion ? { duration: 0.01 } : { type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed top-0 bottom-0 right-0 w-[400px] bg-[var(--bg-panel)] border-l border-[var(--border-color)] shadow-2xl z-50 flex flex-col"
+            className="fixed top-0 bottom-0 right-0 w-[400px] bg-[var(--bg-panel)] border-l border-[var(--border-color)] shadow-2xl z-50 flex flex-col methodology-drawer"
           >
             {/* Header */}
             <div className="flex items-center justify-between p-6 border-b border-[var(--border-color)] shrink-0">

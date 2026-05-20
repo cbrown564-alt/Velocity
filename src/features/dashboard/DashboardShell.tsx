@@ -6,7 +6,7 @@
 import React, { useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { useReducedMotion, getMotionProps, DURATIONS } from '../../lib/motion';
-import { Search, Table, RotateCcw, CheckCircle2, BarChart3, Loader2, AlertCircle, Home, FileDown, Download, Upload, Plus, Maximize2, Minimize2 } from 'lucide-react';
+import { Search, Table, RotateCcw, CheckCircle2, BarChart3, Loader2, AlertCircle, Home, FileDown, Download, Upload, Plus, Maximize2, Minimize2, Pencil, ChevronLeft, ChevronRight, Rows3 } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { DndContext, DragOverlay, useSensor, useSensors, MouseSensor, TouchSensor, DragEndEvent, DragStartEvent, useDroppable, closestCenter, pointerWithin, rectIntersection } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
@@ -29,6 +29,7 @@ import { Logo } from '../../components/common/Logo';
 import { AppShell, ModeToggleButton } from '../../components/layout/AppShell';
 import { ThemeSwitcher } from '../../components/common/ThemeSwitcher';
 import { VariableCard } from './components/DraggableVariable';
+import { ContextMenu } from './components/ContextMenu';
 
 import type { PersistenceManagerState } from '../../hooks/usePersistenceManager';
 
@@ -74,6 +75,9 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
     selectedVariableSetId,
     focusMode,
     toggleFocusMode,
+    tableDensity,
+    toggleTableDensity,
+    setTableDensity,
     addToast,
     setTableConfig,
     setDraggingId,
@@ -120,9 +124,54 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
   // -- Local DnD state --
   const [activeDragSet, setActiveDragSet] = React.useState<VariableSet | null>(null);
   const [selectedSetIds, setSelectedSetIds] = React.useState<Set<string>>(new Set());
+  const [variableContextMenu, setVariableContextMenu] = React.useState<{
+    set: VariableSet;
+    x: number;
+    y: number;
+  } | null>(null);
   const [showCombineModal, setShowCombineModal] = React.useState(false);
   const [weightEnabled, setWeightEnabled] = React.useState(true);
   const [rememberedWeightVar, setRememberedWeightVar] = React.useState<string | null>(null);
+  const [sidebarCollapsed, setSidebarCollapsed] = React.useState(false);
+  const [sidebarUserToggled, setSidebarUserToggled] = React.useState(false);
+
+  React.useEffect(() => {
+    const media = window.matchMedia('(max-width: 1279px)');
+    const apply = () => {
+      if (!sidebarUserToggled) setSidebarCollapsed(media.matches);
+    };
+    apply();
+    media.addEventListener('change', apply);
+    return () => media.removeEventListener('change', apply);
+  }, [sidebarUserToggled]);
+
+  // Focus Breathing: auto-switch to generous density in Focus Mode, restore on exit
+  const prevDensityRef = React.useRef<'compact' | 'generous'>('compact');
+  const wasFocusedRef = React.useRef(focusMode);
+  const tableDensityRef = React.useRef(tableDensity);
+
+  React.useEffect(() => {
+    tableDensityRef.current = tableDensity;
+  }, [tableDensity]);
+
+  React.useEffect(() => {
+    const wasFocused = wasFocusedRef.current;
+    const isFocused = focusMode;
+
+    if (!wasFocused && isFocused) {
+      prevDensityRef.current = tableDensityRef.current;
+      setTableDensity('generous');
+    } else if (wasFocused && !isFocused) {
+      setTableDensity(prevDensityRef.current);
+    }
+
+    wasFocusedRef.current = isFocused;
+  }, [focusMode, setTableDensity]);
+
+  const toggleSidebar = () => {
+    setSidebarUserToggled(true);
+    setSidebarCollapsed((collapsed) => !collapsed);
+  };
 
   const sensors = useSensors(
     useSensor(MouseSensor, { activationConstraint: { distance: 10 } }),
@@ -267,10 +316,11 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
   };
 
   const handleContextMenu = (set: VariableSet, e: React.MouseEvent) => {
+    e.preventDefault();
     if (!selectedSetIds.has(set.id)) {
       setSelectedSetIds(new Set([set.id]));
     }
-    // Context menu rendering handled by parent ModalLayer
+    setVariableContextMenu({ set, x: e.clientX, y: e.clientY });
   };
 
   const handleRecodeClick = (set: VariableSet) => {
@@ -361,7 +411,23 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
           className="flex h-screen"
         >
           {/* SIDEBAR */}
-          <aside className={`bg-[var(--bg-panel)] border-r border-[var(--border-color)] flex flex-col shrink-0 z-30 relative transition-all duration-300 ${focusMode ? 'w-0 opacity-0 overflow-hidden' : 'w-72 opacity-100'}`}>
+          <aside
+            className={`surface-panel bg-[var(--bg-panel)] border-r border-[var(--border-color)] flex flex-col shrink-0 z-30 relative transition-all duration-300 ${
+              focusMode ? 'w-0 opacity-0 overflow-hidden' : sidebarCollapsed ? 'w-14 opacity-100' : 'w-72 opacity-100'
+            }`}
+          >
+            <button
+              type="button"
+              onClick={toggleSidebar}
+              className="absolute -right-3 top-4 z-40 w-6 h-6 rounded-full border border-[var(--border-color)] bg-[var(--bg-panel)] text-[var(--text-secondary)] hover:text-[var(--color-accent)] flex items-center justify-center shadow-sm"
+              aria-label={sidebarCollapsed ? 'Expand variable sidebar' : 'Collapse variable sidebar'}
+              aria-expanded={!sidebarCollapsed}
+            >
+              {sidebarCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
+            </button>
+
+            {!sidebarCollapsed && (
+            <>
             <div className="p-4 border-b border-[var(--border-color-muted)] bg-[var(--bg-app)]">
               <div className="flex items-center gap-2 mb-4">
                 <Logo size={24} />
@@ -401,7 +467,7 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
             <div className="p-3 border-t border-[var(--border-color)] bg-[var(--bg-app)]">
               <div className="flex items-center gap-3 text-xs text-[var(--text-secondary)] px-2">
                 <CheckCircle2 size={12} className="text-[var(--color-success)]" />
-                <span>{filename} ({totalRows} rows)</span>
+                <span className="truncate">{filename} ({totalRows} rows)</span>
               </div>
               {dataset?.sampleRowCount && (
                 <div className="flex items-center gap-2 text-xs text-[var(--status-warning-text)] px-2 mt-2 bg-[var(--status-warning-surface)] rounded py-1">
@@ -440,6 +506,8 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
                 />
               </div>
             </div>
+            </>
+            )}
           </aside>
 
           {/* MAIN CANVAS */}
@@ -458,7 +526,7 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
                 <span className="text-[var(--text-primary)] font-medium">{dataset?.name || 'Untitled'}</span>
               </div>
 
-              <div className="flex items-center gap-6">
+              <div className="flex items-center gap-2 xl:gap-4 shrink-0">
                 <div className="flex items-center bg-[var(--bg-surface)] p-1 rounded-lg">
                   <button
                     type="button"
@@ -490,31 +558,34 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
 
                 <button
                   onClick={onOpenSessionImport}
-                  className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--color-accent)] rounded-md hover:bg-[var(--bg-surface)] transition-colors"
+                  className="flex items-center gap-2 px-2 xl:px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--color-accent)] rounded-md hover:bg-[var(--bg-surface)] transition-colors"
                   title="Import portable session"
+                  aria-label="Import Session"
                 >
-                  <Upload size={14} />
-                  Import Session
+                  <Upload size={14} aria-hidden />
+                  <span className="hidden xl:inline">Import Session</span>
                 </button>
 
                 <button
                   onClick={onExportSession}
                   disabled={!dataset}
-                  className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--color-accent)] rounded-md hover:bg-[var(--bg-surface)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex items-center gap-2 px-2 xl:px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--color-accent)] rounded-md hover:bg-[var(--bg-surface)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   title="Export portable session"
+                  aria-label="Export Session"
                 >
-                  <Download size={14} />
-                  Export Session
+                  <Download size={14} aria-hidden />
+                  <span className="hidden xl:inline">Export Session</span>
                 </button>
 
                 <button
                   onClick={handleExport}
                   disabled={!canOpenExport}
-                  className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--color-accent)] rounded-md hover:bg-[var(--bg-surface)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex items-center gap-2 px-2 xl:px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--color-accent)] rounded-md hover:bg-[var(--bg-surface)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   title="Export current slide"
+                  aria-label="Export"
                 >
-                  <FileDown size={14} />
-                  Export
+                  <FileDown size={14} aria-hidden />
+                  <span className="hidden xl:inline">Export</span>
                 </button>
 
                 <ThemeSwitcher />
@@ -529,14 +600,26 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
                   {focusMode ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
                 </button>
 
+                <button
+                  onClick={toggleTableDensity}
+                  className={`p-2 rounded-lg transition-colors ${tableDensity === 'generous' ? 'bg-[var(--color-accent)] text-[var(--text-inverse)]' : 'hover:bg-[var(--bg-active)] text-[var(--text-secondary)] hover:text-[var(--color-accent)]'}`}
+                  title={tableDensity === 'generous' ? 'Switch to Compact View' : 'Switch to Presentation View'}
+                  aria-label={tableDensity === 'generous' ? 'Compact View' : 'Presentation View'}
+                  aria-pressed={tableDensity === 'generous'}
+                >
+                  <Rows3 size={18} />
+                </button>
+
                 <ModeToggleButton />
 
                 <button
                   onClick={reset}
-                  className="text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--color-accent)] flex items-center gap-1.5 px-3 py-1.5 rounded-md hover:bg-[var(--bg-surface)] transition-colors"
+                  className="text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--color-accent)] flex items-center gap-1.5 px-2 xl:px-3 py-1.5 rounded-md hover:bg-[var(--bg-surface)] transition-colors"
+                  title="Reset analysis"
+                  aria-label="Reset"
                 >
-                  <RotateCcw size={12} />
-                  Reset
+                  <RotateCcw size={12} aria-hidden />
+                  <span className="hidden xl:inline">Reset</span>
                 </button>
               </div>
             </header>
@@ -552,7 +635,7 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
             {/* WORKSPACE */}
             <div className="flex-1 flex flex-col min-h-0 bg-[var(--bg-app)]">
               {/* SHELF — adaptive collapse when empty and not dragging */}
-              <div className={`shrink-0 bg-[var(--bg-app)] border-b border-[var(--border-color)] flex flex-col gap-3 shadow-xs z-10 transition-all duration-300 overflow-hidden ${focusMode ? 'h-0 py-0 opacity-0 border-none' : ''} ${!focusMode ? 'px-6 py-4 opacity-100' : ''}`}>
+              <div className={`shrink-0 surface-panel bg-[var(--bg-app)] border-b border-[var(--border-color)] flex flex-col gap-3 shadow-xs z-10 transition-all duration-300 overflow-hidden ${focusMode ? 'h-0 py-0 opacity-0 border-none' : ''} ${!focusMode ? 'px-4 xl:px-6 py-4 opacity-100' : ''}`}>
                 {/* Collapsed indicator when shelves are empty and not dragging */}
                 {!focusMode && !draggingId && tableConfig.rowVars.length === 0 && !tableConfig.colVar && !(dataset?.weightVariable || rememberedWeightVar) && (
                   <div className="flex items-center gap-3 text-xs text-[var(--text-secondary)]">
@@ -638,11 +721,41 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
           </main>
         </motion.div>
 
-        <DragOverlay dropAnimation={null}>
+        <DragOverlay
+          dropAnimation={{
+            duration: 300,
+            easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
+          }}
+        >
           {activeDragSet ? (
-            <VariableCard variableSet={activeDragSet} isOverlay />
+            <motion.div
+              initial={{ scale: 1.02, boxShadow: '0 8px 24px color-mix(in srgb, var(--text-primary) 12%, transparent)' }}
+              animate={{ scale: 1.05, boxShadow: '0 12px 32px color-mix(in srgb, var(--text-primary) 18%, transparent)' }}
+              exit={{ scale: 1, boxShadow: '0 4px 12px color-mix(in srgb, var(--text-primary) 8%, transparent)' }}
+              transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+            >
+              <VariableCard variableSet={activeDragSet} isOverlay />
+            </motion.div>
           ) : null}
         </DragOverlay>
+
+        {variableContextMenu && (
+          <ContextMenu
+            x={variableContextMenu.x}
+            y={variableContextMenu.y}
+            onClose={() => setVariableContextMenu(null)}
+            actions={[
+              {
+                label: 'Recode variable',
+                icon: <Pencil size={14} />,
+                disabled:
+                  variableContextMenu.set.structure !== 'single' ||
+                  variableContextMenu.set.variableIds.length === 0,
+                onClick: () => handleRecodeClick(variableContextMenu.set),
+              },
+            ]}
+          />
+        )}
       </DndContext>
     </AppShell>
   );

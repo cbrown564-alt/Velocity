@@ -290,7 +290,7 @@ export const VerticalBarRenderer: React.FC<BaseChartRendererProps> = ({
                                 fontSize: 'var(--font-size-xs)',
                                 fontWeight: 600,
                                 fill: 'var(--text-primary)',
-                                textShadow: '0 1px 2px rgba(0,0,0,0.5)'
+                                textShadow: 'var(--shadow-text)'
                             }}
                         >
                             {dragState.dropTarget ? 'Merge' : 'Drag to merge'}

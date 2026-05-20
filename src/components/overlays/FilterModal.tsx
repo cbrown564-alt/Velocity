@@ -13,6 +13,7 @@ import { X, Search, ChevronLeft, Check } from 'lucide-react';
 import { useVelocityStore, type Variable, type Filter } from '../../store';
 import { Loader2 } from 'lucide-react';
 import { isCategoricalType, isOrderedType } from '../../types';
+import { useModalEscape } from '../../hooks/useModalEscape';
 
 interface FilterModalProps {
     isOpen: boolean;
@@ -121,6 +122,7 @@ export const FilterModal: React.FC<FilterModalProps> = ({
     };
 
     const reducedMotion = useReducedMotion();
+    useModalEscape(isOpen, handleClose);
 
     if (!isOpen) return null;
 

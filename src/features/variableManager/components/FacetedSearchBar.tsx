@@ -89,6 +89,9 @@ function FacetDropdown<T extends string>({
             <button
                 className={`${styles.facetButton} ${hasSelection ? styles.facetButtonActive : ''}`}
                 onClick={() => setIsOpen(!isOpen)}
+                aria-haspopup="listbox"
+                aria-expanded={isOpen}
+                aria-label={`${label} filter${hasSelection ? `, ${selected.length} selected` : ''}`}
             >
                 <span>{label}</span>
                 {hasSelection && (
@@ -98,12 +101,15 @@ function FacetDropdown<T extends string>({
             </button>
 
             {isOpen && (
-                <div className={styles.dropdown}>
+                <div className={styles.dropdown} role="listbox" aria-label={`${label} options`}>
                     {options.map((option) => {
                         const isSelected = selected.includes(option.value);
                         return (
-                            <div
+                            <button
+                                type="button"
                                 key={option.value}
+                                role="option"
+                                aria-selected={isSelected}
                                 className={styles.dropdownItem}
                                 onClick={() => onToggle(option.value)}
                             >
@@ -114,7 +120,7 @@ function FacetDropdown<T extends string>({
                                     {isSelected && <Check className={styles.checkmark} />}
                                 </span>
                                 <span className={styles.dropdownLabel}>{option.label}</span>
-                            </div>
+                            </button>
                         );
                     })}
                 </div>

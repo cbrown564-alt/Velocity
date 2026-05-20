@@ -18,6 +18,7 @@ import { buildExportConfig } from '../../core/export/buildExportConfig';
 import { resolveAnalysisVariables } from '../../core/export/resolveAnalysisVariables';
 import { runCrosstabForExport } from '../../core/export/runCrosstabForExport';
 import type { SlideAnalysisState } from '../../types/slides';
+import { useModalEscape } from '../../hooks/useModalEscape';
 
 interface ExportModalProps {
     isOpen: boolean;
@@ -69,11 +70,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
         setSelectedSlideIds(activeSlideId ? [activeSlideId] : []);
     }, [isOpen, initialConfig.title, activeSlideId]);
 
-    const handleKeyDown = (e: React.KeyboardEvent) => {
-        if (e.key === 'Escape') {
-            onClose();
-        }
-    };
+    useModalEscape(isOpen, onClose);
 
     const slideIdsForScope = useMemo(() => {
         if (scope === 'current') {
@@ -245,7 +242,6 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                         <div
                             className={styles.modal}
                             style={{ pointerEvents: 'auto' }}
-                            onKeyDown={handleKeyDown}
                         >
                             {/* Header */}
                             <div className={styles.header}>
@@ -361,31 +357,43 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                                 {/* Format Selection */}
                                 <div className={styles.section}>
                                     <div className={styles.sectionLabel}>Export Format</div>
-                                    <div className={styles.formatGrid}>
-                                        <div
+                                    <div className={styles.formatGrid} role="radiogroup" aria-label="Export format">
+                                        <label
                                             className={`${styles.formatOption} ${format === 'pptx' ? styles.selected : ''}`}
-                                            onClick={() => setFormat('pptx')}
                                         >
+                                            <input
+                                                type="radio"
+                                                name="export-format"
+                                                checked={format === 'pptx'}
+                                                onChange={() => setFormat('pptx')}
+                                                className="sr-only"
+                                            />
                                             <div className={styles.formatIcon}>
-                                                <Presentation size={24} />
+                                                <Presentation size={24} aria-hidden />
                                             </div>
                                             <div className={styles.formatName}>PowerPoint</div>
                                             <div className={styles.formatDescription}>
                                                 Editable slides with tables
                                             </div>
-                                        </div>
-                                        <div
+                                        </label>
+                                        <label
                                             className={`${styles.formatOption} ${format === 'xlsx' ? styles.selected : ''}`}
-                                            onClick={() => setFormat('xlsx')}
                                         >
+                                            <input
+                                                type="radio"
+                                                name="export-format"
+                                                checked={format === 'xlsx'}
+                                                onChange={() => setFormat('xlsx')}
+                                                className="sr-only"
+                                            />
                                             <div className={styles.formatIcon}>
-                                                <FileSpreadsheet size={24} />
+                                                <FileSpreadsheet size={24} aria-hidden />
                                             </div>
                                             <div className={styles.formatName}>Excel</div>
                                             <div className={styles.formatDescription}>
                                                 Workbook with formatted data
                                             </div>
-                                        </div>
+                                        </label>
                                     </div>
                                 </div>
 

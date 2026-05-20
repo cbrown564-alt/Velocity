@@ -376,17 +376,23 @@ export function usePersistenceManager(
     setShowPartialLoadNotice(true);
   }, [dataset?.id, partialLoadMessage, mode]);
 
-  // Storage reminder toast
+  const tableConfig = useVelocityStore((state) => state.tableConfig);
+
+  // Storage reminder toast — defer until first analysis shelf use (UXR-005)
   useEffect(() => {
     if (!dataset?.id || hasShownStorageToast.current) return;
     if (hasSeenStorageToast()) {
       hasShownStorageToast.current = true;
       return;
     }
+    const hasStartedAnalysis =
+      tableConfig.rowVars.length > 0 || tableConfig.colVar !== null;
+    if (!hasStartedAnalysis) return;
+
     hasShownStorageToast.current = true;
     markStorageToastSeen();
     setShowStorageReminderToast(true);
-  }, [dataset?.id]);
+  }, [dataset?.id, tableConfig.rowVars.length, tableConfig.colVar]);
 
   useEffect(() => {
     if (!showStorageReminderToast) return;

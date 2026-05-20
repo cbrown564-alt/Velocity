@@ -41,6 +41,7 @@ import {
   Download,
 } from 'lucide-react';
 import { Logo } from '../../../components/common/Logo';
+import { ThemeSwitcher } from '../../../components/common/ThemeSwitcher';
 import type { Folder, Variable, VariableSet } from '../../../types';
 import styles from './WorkspaceView.module.css';
 import { WaveTimeline } from './WaveTimeline';
@@ -694,6 +695,7 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
           </div>
 
           <div className={styles.headerActions}>
+            <ThemeSwitcher />
             {/* View toggle */}
             <div className={styles.viewToggle}>
               <button
@@ -865,6 +867,27 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
         ) : (
           <>
             {/* Projects section (when in projects view) */}
+            {filterMode === 'projects' && projectsWithDatasets.length === 0 && (
+              <section className={styles.projectsSection}>
+                <div className={styles.sectionHeader}>
+                  <h2>Projects</h2>
+                </div>
+                <motion.div
+                  className={styles.projectsEmptyState}
+                  {...getMotionProps({ preset: 'fadeUp', duration: reducedMotion ? DURATIONS.instant : DURATIONS.normal, reducedMotion })}
+                >
+                  <FolderOpen size={40} className={styles.projectsEmptyIcon} />
+                  <h3>No projects yet</h3>
+                  <p>
+                    Group datasets into projects for multi-wave studies. Create a project from selected datasets or start fresh.
+                  </p>
+                  <button type="button" onClick={() => onCreateProject([])}>
+                    <Plus size={14} />
+                    New Project
+                  </button>
+                </motion.div>
+              </section>
+            )}
             {filterMode === 'projects' && projectsWithDatasets.length > 0 && (
               <section className={styles.projectsSection}>
                 <div className={styles.sectionHeader}>

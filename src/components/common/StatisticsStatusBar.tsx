@@ -85,7 +85,7 @@ export const StatisticsStatusBar: React.FC<StatisticsStatusBarProps> = ({
   return (
     <>
       {/* Main status bar */}
-      <div className={styles.statusBar}>
+      <div className={`${styles.statusBar} statistics-status-bar`}>
         {/* Methodology Pill */}
         {(isCatCrossTab || isCatNumeric) ? (
           <button

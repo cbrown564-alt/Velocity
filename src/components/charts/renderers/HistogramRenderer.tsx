@@ -183,7 +183,7 @@ export const HistogramRenderer: React.FC<BaseChartRendererProps> = ({
                 const label = `${d.x0} - ${d.x1}`;
                 const isMissing = d.originalBin?.isMissing;
                 if (hoveredKey === label) return isMissing ? 'var(--bg-active)' : barColor;
-                if (hoveredKey) return 'rgba(0, 0, 0, 0.2)';
+                if (hoveredKey) return 'var(--viz-fill-muted)';
                 return isMissing ? 'var(--bg-active)' : barColor;
             })
             .attr('fill-opacity', (d) => {

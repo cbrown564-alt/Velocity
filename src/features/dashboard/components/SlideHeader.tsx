@@ -5,8 +5,11 @@
  * Click to edit, Enter/Escape or blur to commit/cancel.
  */
 
-import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Pencil } from 'lucide-react';
+import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
+import { motion } from 'framer-motion';
+import { Pencil, Sparkles } from 'lucide-react';
+import { computeAnalysisSampleSize } from '../../../core/analysis/computeAnalysisSampleSize';
+import { generateNarrativeTitleFromRows } from '../../../core/analysis/generateNarrativeTitleFromRows';
 import { resolveSlideSubtitle, resolveSlideTitle } from '../../../core/export/resolveSlideDefaults';
 import { useVelocityStore } from '../../../store';
 
@@ -23,6 +26,8 @@ export const SlideHeader: React.FC<SlideHeaderProps> = ({ className = '' }) => {
     const activeFilters = useVelocityStore(s => s.activeFilters);
     const dataset = useVelocityStore(s => s.dataset);
     const variableSets = useVelocityStore(s => s.variableSets);
+    const queryResult = useVelocityStore(s => s.queryResult);
+    const isWeighted = useVelocityStore(s => !!s.dataset?.weightVariable);
 
     const activeSlide = slides.find(s => s.id === activeSlideId);
 
@@ -30,6 +35,10 @@ export const SlideHeader: React.FC<SlideHeaderProps> = ({ className = '' }) => {
     const [editingField, setEditingField] = useState<'title' | 'subtitle' | null>(null);
     const [editValue, setEditValue] = useState('');
     const inputRef = useRef<HTMLInputElement>(null);
+
+    // Story Shelf: narrative suggestion state
+    const [suggestionDismissed, setSuggestionDismissed] = useState(false);
+    const [suggestionVisible, setSuggestionVisible] = useState(false);
 
     // Focus input when entering edit mode
     useEffect(() => {
@@ -39,10 +48,21 @@ export const SlideHeader: React.FC<SlideHeaderProps> = ({ className = '' }) => {
         }
     }, [editingField]);
 
+    // Story Shelf: auto-dismiss suggestion after 3 seconds
+    useEffect(() => {
+        if (!suggestionVisible) return;
+        const timer = setTimeout(() => setSuggestionVisible(false), 3000);
+        return () => clearTimeout(timer);
+    }, [suggestionVisible]);
+
     const startEditing = useCallback((field: 'title' | 'subtitle') => {
         if (!activeSlide) return;
         setEditingField(field);
         setEditValue(field === 'title' ? activeSlide.title : activeSlide.subtitle);
+        if (field === 'title') {
+            setSuggestionVisible(false);
+            setSuggestionDismissed(true);
+        }
     }, [activeSlide]);
 
     const commitEdit = useCallback(() => {
@@ -58,6 +78,7 @@ export const SlideHeader: React.FC<SlideHeaderProps> = ({ className = '' }) => {
         }
         setEditingField(null);
         setEditValue('');
+        setSuggestionDismissed(true);
     }, [activeSlideId, editingField, editValue, updateSlideTitle, updateSlideSubtitle]);
 
     const cancelEdit = useCallback(() => {
@@ -83,11 +104,60 @@ export const SlideHeader: React.FC<SlideHeaderProps> = ({ className = '' }) => {
         ? variables.find(v => v.id === dataset.weightVariable)?.label || null
         : null;
 
+    // Story Shelf: compute narrative suggestion
+    const isDefaultTitleUnedited = activeSlide.title === 'New Slide';
+    const hasVariablesInCanvas = tableConfig.rowVars.length > 0;
+
+    const suggestedTitle = useMemo(() => {
+        if (!isDefaultTitleUnedited || !hasVariablesInCanvas || !queryResult || queryResult.length === 0) {
+            return null;
+        }
+        const rowVarSet = variableSets.find(v => v.id === tableConfig.rowVars[0]);
+        const colVarSet = tableConfig.colVar ? variableSets.find(v => v.id === tableConfig.colVar) : null;
+        const rowVarLabel = rowVarSet?.name || 'Variable';
+        const colVarLabel = colVarSet?.name || null;
+
+        // Build simple label resolver from variable valueLabels
+        const rowVar = variables.find(v => v.id === rowVarSet?.variableIds[0]);
+        const colVar = tableConfig.colVar ? variables.find(v => {
+            const colSet = variableSets.find(vs => vs.id === tableConfig.colVar);
+            return v.id === colSet?.variableIds[0];
+        }) : null;
+
+        const valueLabelMap = (varObj: typeof rowVar) => {
+            const map = new Map<string, string>();
+            if (varObj?.valueLabels) {
+                for (const vl of varObj.valueLabels) {
+                    map.set(String(vl.value), vl.label);
+                }
+            }
+            return map;
+        };
+
+        const rowLabelMap = valueLabelMap(rowVar);
+        const colLabelMap = valueLabelMap(colVar);
+
+        return generateNarrativeTitleFromRows(
+            queryResult,
+            useVelocityStore.getState().tableStats,
+            rowVarLabel,
+            colVarLabel,
+            {
+                rowLabel: (k) => rowLabelMap.get(k) || null,
+                colLabel: (k) => colLabelMap.get(k) || null,
+            }
+        );
+    }, [isDefaultTitleUnedited, hasVariablesInCanvas, queryResult, tableConfig.rowVars, tableConfig.colVar, variableSets, variables]);
+
+    useEffect(() => {
+        if (suggestedTitle && !suggestionDismissed) {
+            setSuggestionVisible(true);
+        }
+    }, [suggestedTitle, suggestionDismissed]);
+
     // Dynamic title logic: If the slide's saved title is simply the default "New Slide", 
     // it means the user hasn't explicitly renamed it yet. If they've dropped variables
     // into the workspace, we should auto-generate a descriptive title on the fly.
-    const isDefaultTitleUnedited = activeSlide.title === 'New Slide';
-    const hasVariablesInCanvas = tableConfig.rowVars.length > 0;
 
     let displayTitle = activeSlide.title;
     if (isDefaultTitleUnedited && hasVariablesInCanvas) {
@@ -124,10 +194,14 @@ export const SlideHeader: React.FC<SlideHeaderProps> = ({ className = '' }) => {
     const variableLabels = Object.fromEntries(
         (dataset?.variables ?? []).map(v => [v.id, v.label || v.name])
     );
+
+    const filteredSampleSize = computeAnalysisSampleSize(queryResult, { isWeighted });
+    const respondentCount = filteredSampleSize ?? dataset?.rowCount ?? 0;
+
     const displaySubtitle = activeSlide.subtitle || resolveSlideSubtitle(
         activeFilters || [],
         weightVarLabel ? { id: dataset?.weightVariable || 'weight', name: weightVarLabel, label: weightVarLabel } : null,
-        dataset?.rowCount || 0,
+        respondentCount,
         !!dataset?.weightVariable,
         variableLabels
     );
@@ -162,6 +236,25 @@ export const SlideHeader: React.FC<SlideHeaderProps> = ({ className = '' }) => {
                         >
                             <Pencil size={14} className="text-[var(--text-secondary)]" />
                         </button>
+                        {suggestionVisible && suggestedTitle && (
+                            <motion.button
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ duration: 0.4 }}
+                                onClick={() => {
+                                    if (activeSlideId) {
+                                        updateSlideTitle(activeSlideId, suggestedTitle);
+                                        setSuggestionVisible(false);
+                                        setSuggestionDismissed(true);
+                                    }
+                                }}
+                                className="ml-2 flex items-center gap-1 text-[var(--text-secondary)] italic text-sm hover:text-[var(--color-accent)] transition-colors"
+                                title="Click to use suggested title"
+                            >
+                                <Sparkles size={12} />
+                                <span className="hidden sm:inline">{suggestedTitle}</span>
+                            </motion.button>
+                        )}
                     </>
                 )}
             </div>

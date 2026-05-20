@@ -174,12 +174,12 @@ export const liquidGlass: Theme = {
         vizGrid: 'rgba(0, 0, 0, 0.05)',
         vizTextValue: '#1d1d1f',
         vizTextAxis: '#86868b',
-        vizPalette1: '#007AFF',
-        vizPalette2: '#34C759', // Green
-        vizPalette3: '#FF9500', // Orange
-        vizPalette4: '#FF2D55', // Pink
-        vizPalette5: '#AF52DE', // Purple
-        vizPalette6: '#5856D6', // Indigo
+        vizPalette1: '#0066CC',
+        vizPalette2: '#248A3D',
+        vizPalette3: '#C93400',
+        vizPalette4: '#D70040',
+        vizPalette5: '#8944AB',
+        vizPalette6: '#3634A3',
         vizDiverging1: '#007AFF',
         vizDiverging2: '#5AC8FA',
         vizDiverging3: '#e0e5ec',

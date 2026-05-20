@@ -20,6 +20,7 @@ import {
     respawnEngineWorker,
     createStorePersistenceBridge,
 } from '../enginePersistenceBridge';
+import type { EngineResponseByType } from '../../types/engineWorker';
 
 export type { VariableType } from '../../types';
 
@@ -220,6 +221,33 @@ export interface PersistedDataInfo {
     };
 }
 
+export interface LoadProgressState {
+    phase: 'parsing' | 'inserting' | 'complete';
+    progress: number;
+    message: string;
+    rowsProcessed?: number;
+    totalRows?: number;
+}
+
+function applyLoadProgressMessage(
+    set: (partial: Partial<DataSlice>) => void,
+    msg: EngineResponseByType<'engine.loadProgress'>,
+): void {
+    if (msg.phase === 'complete') {
+        set({ loadProgress: null });
+    } else {
+        set({
+            loadProgress: {
+                phase: msg.phase,
+                progress: msg.progress,
+                message: msg.message,
+                rowsProcessed: msg.rowsProcessed,
+                totalRows: msg.totalRows,
+            },
+        });
+    }
+}
+
 // ============================================================================
 // Slice State & Actions
 // ============================================================================
@@ -245,6 +273,8 @@ export interface DataSlice {
     activeDbPath: string | null;
     persistenceState: PersistenceState;
     persistedDataInfo: PersistedDataInfo | null;
+    /** Worker-driven ingest progress (UXR-036) */
+    loadProgress: LoadProgressState | null;
 
     // Actions
     initWorker: () => Promise<void>;
@@ -285,6 +315,7 @@ export interface DataSlice {
     updateVariableMetadata: (variableId: string, updates: { label?: string; name?: string }) => void;
     updateValueLabel: (variableId: string, valueCode: number | string, newLabel: string) => void;
     toggleDiscreteMissingValue: (variableId: string, valueCode: number | string, isMissing: boolean) => void;
+    setLoadProgress: (progress: LoadProgressState | null) => void;
 }
 
 export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set, get) => ({
@@ -308,10 +339,15 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
     activeDbPath: null,
     persistenceState: 'idle',
     persistedDataInfo: null,
+    loadProgress: null,
 
     // Initialize Web Worker with EngineProxy
     initWorker: async () => {
         const bridge = createStorePersistenceBridge((partial) => set(partial as any));
+
+        const handleLoadProgress = (msg: EngineResponseByType<'engine.loadProgress'>) => {
+            applyLoadProgressMessage(set, msg);
+        };
 
         await initializeEngineWorker({
             getExistingProxy: () => get().engineProxy,
@@ -325,6 +361,7 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
             setPersistenceReady: () => set({ persistenceState: 'ready' }),
             setInitError: (message) => set({ initError: message, persistenceState: 'error' }),
             checkPersistedData: () => get().checkPersistedData(),
+            onLoadProgress: handleLoadProgress,
         });
     },
 
@@ -346,6 +383,10 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
     respawnWorker: async (cleanStart: boolean = false, datasetIdOverride?: string) => {
         const bridge = createStorePersistenceBridge((partial) => set(partial as any));
 
+        const handleLoadProgress = (msg: EngineResponseByType<'engine.loadProgress'>) => {
+            applyLoadProgressMessage(set, msg);
+        };
+
         await respawnEngineWorker({
             terminateWorker: () => get().terminateWorker(),
             getDatasetId: () => get().dataset?.id,
@@ -362,8 +403,11 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
             }),
             cleanStart,
             datasetIdOverride,
+            onLoadProgress: handleLoadProgress,
         });
     },
+
+    setLoadProgress: (progress) => set({ loadProgress: progress }),
 
     // Check for persisted data in OPFS
     checkPersistedData: async () => {

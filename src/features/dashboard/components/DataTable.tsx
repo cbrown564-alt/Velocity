@@ -2,7 +2,7 @@ import React, { useMemo, useState, useRef, useCallback } from 'react';
 import { AggregatedRow, Variable, TableStats } from '../../../types';
 import { motion } from 'framer-motion';
 import { getMotionProps, useReducedMotion, DURATIONS } from '../../../lib/motion';
-import { ChevronRight, ChevronDown, ArrowUp, ArrowDown } from 'lucide-react';
+import { ChevronRight, ChevronDown } from 'lucide-react';
 import type { VariableStatsResult } from '../../../types/worker';
 import { AnalysisChart } from '../../../components/charts/AnalysisChart';
 import { useProcessedAnalysisData } from '../../../hooks/useProcessedAnalysisData';
@@ -18,6 +18,7 @@ import { MethodologyDrawer } from '../../../components/common/MethodologyPanel';
 import { StatisticsStatusBar } from '../../../components/common/StatisticsStatusBar';
 import { useVelocityStore } from '../../../store';
 import mergeStyles from './DataTable.module.css';
+import { CrosstabCell } from './CrosstabCell';
 export type { RowPathEntry, TableRowNode };
 
 /**
@@ -45,6 +46,8 @@ interface DataTableProps {
   isGrid?: boolean;
   /** Table-level statistics (chi-square, etc.) */
   tableStats?: TableStats | null;
+  /** Table density: compact (exploration) or generous (presentation) */
+  density?: 'compact' | 'generous';
 }
 
 export const DataTable: React.FC<DataTableProps> = ({
@@ -59,6 +62,7 @@ export const DataTable: React.FC<DataTableProps> = ({
   isMultipleResponse = false,
   isGrid = false,
   tableStats,
+  density = 'compact',
 }) => {
   const analysisSettings = useVelocityStore((state) => state.analysisSettings);
   const transformLog = useVelocityStore((state) => state.transformLog);
@@ -189,7 +193,21 @@ export const DataTable: React.FC<DataTableProps> = ({
 
   if (!tableData) return null;
 
+  // Stable key that changes whenever the underlying query result changes,
+  // triggering cell entry animations (Settling Scale) in CrosstabCell.
+  const animationKey = useMemo(() => {
+    if (!tableData.rows.length) return undefined;
+    const first = tableData.rows[0]?.key ?? '';
+    const last = tableData.rows[tableData.rows.length - 1]?.key ?? '';
+    return `${first}-${last}-${tableData.rows.length}-${tableData.colKeys.length}-${tableData.grandTotal}`;
+  }, [tableData]);
 
+  /** Insight Halo: subtle background tint based on significance level */
+  const haloClass = useCallback((sig?: string | null): string => {
+    if (sig === 'high_95' || sig === 'low_95') return 'bg-[var(--halo-high)]';
+    if (sig === 'high_80' || sig === 'low_80') return 'bg-[var(--halo-mid)]';
+    return '';
+  }, []);
 
   // -- RENDER MODE: TABLE --
   if (viewMode === 'table') {
@@ -203,7 +221,7 @@ export const DataTable: React.FC<DataTableProps> = ({
       const isRowSelected = selectedRows.has(row.rawValue);
 
       const rowHeaderClasses = [
-        'py-1 font-medium text-[var(--text-primary)] align-top',
+        'py-1.5 font-semibold text-[var(--text-primary)] align-top text-sm font-body',
         mergeStyles.mergeHeader,
         isRowDragging ? mergeStyles.mergeDragging : '',
         isRowDropTarget ? mergeStyles.mergeDropTarget : '',
@@ -260,7 +278,7 @@ export const DataTable: React.FC<DataTableProps> = ({
                   </button>
                 )}
                 {(!hasChildren && row.depth > 0) && <div className="w-4" />} {/* Spacer only for nested rows */}
-                <span>{row.label}</span>
+                <span className="leading-snug">{row.label}</span>
               </div>
             </td>
             {tableData.colKeys.map(col => {
@@ -271,68 +289,47 @@ export const DataTable: React.FC<DataTableProps> = ({
                 : (cell.percent === 0);
 
               const isSignificant = Boolean(cell.sig) || Boolean(cell.sigLetters && cell.sigLetters.length > 0);
-              const textClass = isZero
-                ? 'text-[var(--text-secondary)] opacity-50'
-                : (isSignificant ? 'stat-significant' : 'text-[var(--text-primary)]');
-
-              const secondaryTextClass = isZero ? 'text-[var(--text-secondary)] opacity-40' : 'text-[var(--text-secondary)]';
-
               // Determine if we have stats for tooltip
               const hasStats = cell.stats && typeof cell.stats.effN === 'number';
               const cellValue = cell.mean !== undefined ? cell.mean : cell.percent;
 
-              const cellContent = (
-                <div className="flex flex-row items-baseline justify-start gap-2 text-left w-full">
-                  {cell.mean !== undefined ? (
-                    // METRIC DISPLAY
-                    <>
-                      <div className="flex items-baseline gap-1">
-                        <span className={`font-bold tabular-nums text-right w-[42px] ${textClass}`}>{cell.mean.toFixed(1)}</span>
-                        {cell.sigLetters && (
-                          <span className="text-[10px] font-mono font-semibold text-[var(--color-success)]">{cell.sigLetters}</span>
-                        )}
-                        {!isZero && !cell.sigLetters && <span className={`text-[10px] ${secondaryTextClass} bg-[var(--bg-panel)] px-1 rounded`}>Mean</span>}
-                      </div>
-                      <span className={`text-[10px] ${secondaryTextClass} font-mono tracking-tight group-hover:opacity-100 transition-opacity flex gap-2`}>
-                        {cell.stdDev !== undefined && <span>SD: {cell.stdDev.toFixed(1)}</span>}
-                        <span>n={cell.validCount ?? cell.count}</span>
-                      </span>
-                    </>
-                  ) : (
-                    // FREQUENCY DISPLAY
-                    <>
-                      <div className="flex items-center gap-0.5">
-                        <span className={`font-bold tabular-nums text-right w-[48px] ${textClass}`}>{cell.percent.toFixed(1)}%</span>
-                        {cell.sigLetters ? (
-                          <span className="text-[10px] font-mono font-semibold text-[var(--color-success)]">{cell.sigLetters}</span>
-                        ) : (
-                          <>
-                            {cell.sig === 'high_95' && (
-                              <ArrowUp size={12} style={{ color: 'var(--color-success)' }} />
-                            )}
-                            {cell.sig === 'high_80' && (
-                              <ArrowUp size={12} style={{ color: 'var(--text-secondary)' }} />
-                            )}
-                            {cell.sig === 'low_95' && (
-                              <ArrowDown size={12} style={{ color: 'var(--color-error)' }} />
-                            )}
-                            {cell.sig === 'low_80' && (
-                              <ArrowDown size={12} style={{ color: 'var(--text-secondary)' }} />
-                            )}
-                          </>
-                        )}
-                      </div>
-                      <span className={`text-[10px] ${secondaryTextClass} font-mono tracking-tight opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap`}>n={cell.count}</span>
-                    </>
-                  )}
-                </div>
-              );
+              const cellContent = cell.mean !== undefined ? (
+                <CrosstabCell
+                  key={`cell-${animationKey}-${row.key}-${col}`}
+                  variant="metric"
+                  isZero={isZero}
+                  isSignificant={isSignificant}
+                  mean={cell.mean}
+                  count={cell.count}
+                  validCount={cell.validCount}
+                  stdDev={cell.stdDev}
+                  sigLetters={cell.sigLetters}
+                  showMeanBadge
+                  animationTrigger={animationKey}
+                  reducedMotion={reducedMotion}
+                />
+              ) : (
+                <CrosstabCell
+                  key={`cell-${animationKey}-${row.key}-${col}`}
+                  variant="frequency"
+                  isZero={isZero}
+                  isSignificant={isSignificant}
+                  percent={cell.percent}
+                  count={cell.count}
+                  sig={cell.sig}
+                  sigLetters={cell.sigLetters}
+                  animationTrigger={animationKey}
+                  reducedMotion={reducedMotion}
+                />
+              )
 
+              const halo = haloClass(cell.sig || cell.sigLetters || null);
               return (
                 <td
                   key={col}
-                  className={`px-2 py-1 text-left align-middle cursor-pointer relative data-cell border-l border-[var(--border-subtle)] transition-colors
-                    ${hoveredCol === col ? 'bg-[var(--bg-surface)]' : ''}
+                  className={`px-2 ${density === 'generous' ? 'py-2.5' : 'py-1'} text-left align-middle cursor-pointer relative data-cell border-l transition-colors
+                    ${hoveredCol === col ? 'bg-[var(--bg-surface)] border-[var(--border-color-active)]' : 'border-[var(--border-subtle)]'}
+                    ${halo}
                   `}
                   onMouseEnter={() => setHoveredCol(col)}
                   onMouseLeave={() => setHoveredCol(null)}
@@ -366,29 +363,31 @@ export const DataTable: React.FC<DataTableProps> = ({
             {/* Only show Row Total if we have columns OR if it's a frequency table (always show 100%)
                 For Metric tables without columns, the single column is already the total. */}
             {(tableData.colKeys.length > 1) && (
-              <td className="px-2 py-1 text-left font-mono font-semibold text-[var(--text-primary)] bg-[var(--bg-active)]/30 align-middle data-cell">
-                <div className="flex flex-row items-baseline justify-start gap-2 text-left w-full">
-                  {row.mean ? (
-                    // METRIC ROW TOTAL (Global Mean for this row)
-                    // If this is the top-level row and we have variableStats, use that for precision
-                    // Otherwise use the aggregated mean from the row node
-                    <>
-                      <div className="flex items-baseline gap-1">
-                        <span className="font-bold text-[var(--text-primary)]">
-                          {(variableStats && row.depth === 0) ? variableStats.numeric?.mean.toFixed(1) : row.mean?.toFixed(1)}
-                        </span>
-                        <span className="text-[10px] text-[var(--text-secondary)] bg-[var(--bg-panel)] px-1 rounded">Mean</span>
-                      </div>
-                      <span className="text-[10px] text-[var(--text-secondary)]">n={row.total}</span>
-                    </>
-                  ) : (
-                    // FREQUENCY ROW TOTAL
-                    <>
-                      <span>{((row.total / tableData.grandTotal) * 100).toFixed(1)}%</span>
-                      <span className="text-[10px] text-[var(--text-secondary)]">n={row.total}</span>
-                    </>
-                  )}
-                </div>
+              <td className={`px-2 ${density === 'generous' ? 'py-2.5' : 'py-1'} text-left bg-[var(--bg-active)]/30 align-middle data-cell`}>
+                {row.mean !== undefined ? (
+                  <CrosstabCell
+                    key={`total-${animationKey}-${row.key}`}
+                    variant="metric"
+                    mean={
+                      variableStats && row.depth === 0
+                        ? variableStats.numeric?.mean
+                        : row.mean
+                    }
+                    count={row.total}
+                    showMeanBadge
+                    animationTrigger={animationKey}
+                    reducedMotion={reducedMotion}
+                  />
+                ) : (
+                  <CrosstabCell
+                    key={`total-${animationKey}-${row.key}`}
+                    variant="frequency"
+                    percent={(row.total / tableData.grandTotal) * 100}
+                    count={row.total}
+                    animationTrigger={animationKey}
+                    reducedMotion={reducedMotion}
+                  />
+                )}
               </td>
             )}
           </tr>
@@ -402,13 +401,14 @@ export const DataTable: React.FC<DataTableProps> = ({
       <motion.div
         key="table"
         {...getMotionProps({ preset: 'fadeUp', duration: DURATIONS.enter, reducedMotion })}
-        className="w-full overflow-hidden bg-transparent border-none rounded-lg shadow-sm"
+        data-density={density}
+        className="w-full overflow-hidden bg-[var(--bg-panel)] border border-[var(--border-subtle)] rounded-lg shadow-sm"
       >
         <div ref={tableContainerRef} className="overflow-x-auto overflow-y-auto max-h-[60vh] custom-scrollbar" style={{ position: 'relative' }}>
           <table className="w-full text-sm text-left border-collapse">
-            <thead className="text-xs uppercase bg-[var(--bg-panel)] border-b border-[var(--border-grid)] data-[theme=liquid-glass]:bg-[var(--mat-panel-bg)] data-[theme=liquid-glass]:backdrop-blur-md">
+            <thead className="text-xs bg-[var(--bg-panel)] border-b border-[var(--border-grid)] data-[theme=liquid-glass]:bg-[var(--mat-panel-bg)] data-[theme=liquid-glass]:backdrop-blur-md">
               <tr className="font-body">
-                <th className="px-2 py-2 font-bold text-[var(--text-accent)] tracking-wider text-left w-64 align-bottom sticky top-0 bg-[var(--bg-panel)] data-[theme=liquid-glass]:bg-[var(--mat-panel-bg)] data-[theme=liquid-glass]:backdrop-blur-md z-10 box-border border-b border-[var(--border-grid)]">
+                <th className={`px-2 ${density === 'generous' ? 'py-4' : 'py-2.5'} font-bold text-[var(--text-accent)] tracking-wider text-left w-64 align-bottom sticky top-0 bg-[var(--bg-panel)] data-[theme=liquid-glass]:bg-[var(--mat-panel-bg)] data-[theme=liquid-glass]:backdrop-blur-md z-10 box-border border-b border-[var(--border-grid)] uppercase text-[11px]`}>
                   {rowVariables[0].label}
                 </th>
                 {tableData.colKeys.map((col) => {
@@ -421,8 +421,8 @@ export const DataTable: React.FC<DataTableProps> = ({
                     <th
                       key={col}
                       className={[
-                        'px-2 py-2 font-bold text-[var(--text-accent)] text-left w-28 align-bottom sticky top-0 bg-[var(--bg-panel)] data-[theme=liquid-glass]:bg-[var(--mat-panel-bg)] data-[theme=liquid-glass]:backdrop-blur-md z-10 border-b border-[var(--border-grid)] transition-colors',
-                        hoveredCol === col ? 'bg-[var(--bg-active)]' : '',
+                        `px-2 ${density === 'generous' ? 'py-3' : 'py-2'} font-bold text-[var(--text-accent)] text-left min-w-[5.5rem] align-bottom sticky top-0 bg-[var(--bg-panel)] data-[theme=liquid-glass]:bg-[var(--mat-panel-bg)] data-[theme=liquid-glass]:backdrop-blur-md z-10 border-b border-l border-[var(--border-grid)] transition-colors`,
+                        hoveredCol === col ? 'bg-[var(--bg-active)] border-l-[var(--border-color-active)]' : 'border-l-transparent',
                         colVariable ? mergeStyles.mergeHeader : '',
                         isColDragging ? mergeStyles.mergeDragging : '',
                         isColDropTarget ? mergeStyles.mergeDropTarget : '',
@@ -455,13 +455,13 @@ export const DataTable: React.FC<DataTableProps> = ({
                             {tableData.colLetters[col]}
                           </span>
                         )}
-                        <span>{tableData.colLabels[col]}</span>
+                        <span className="text-[11px] uppercase tracking-wider font-bold">{tableData.colLabels[col]}</span>
                       </div>
                     </th>
                   );
                 })}
                 {(tableData.colKeys.length > 1) && (
-                  <th className="px-2 py-2 font-bold text-left w-24 text-[var(--text-primary)] bg-[var(--bg-active)] align-bottom sticky top-0 z-10 border-b border-[var(--border-grid)] shadow-[inset_0_-2px_0_var(--border-grid)]">
+                  <th className="px-2 py-2.5 font-bold text-left w-24 text-[var(--text-primary)] bg-[var(--bg-active)] align-bottom sticky top-0 z-10 border-b border-[var(--border-grid)] shadow-[inset_0_-2px_0_var(--border-grid)] text-[11px] uppercase tracking-wider">
                     Total
                   </th>
                 )}
@@ -470,16 +470,27 @@ export const DataTable: React.FC<DataTableProps> = ({
             <tbody className="divide-y divide-[var(--border-grid)] font-body">
               {tableData.rows.map(row => renderRow(row))}
               <tr className="bg-[var(--bg-surface)] font-semibold border-t border-[var(--border-grid)] border-b border-[var(--border-grid)]">
-                <td className="px-2 py-1 text-[var(--text-primary)]">Total</td>
+                <td className={`px-2 ${density === 'generous' ? 'py-2.5' : 'py-1.5'} text-[var(--text-primary)] font-body text-sm font-bold`}>Total</td>
                 {tableData.colKeys.map(col => (
-                  <td key={col} className="px-2 py-1 text-left font-mono text-[var(--text-primary)]">
-                    {tableData.colTotals[col]}
+                  <td key={col} className={`px-2 ${density === 'generous' ? 'py-2.5' : 'py-1.5'} text-left align-middle data-cell`}>
+                    <CrosstabCell
+                      key={`coltotal-${animationKey}-${col}`}
+                      variant="count"
+                      count={tableData.colTotals[col]}
+                      animationTrigger={animationKey}
+                      reducedMotion={reducedMotion}
+                    />
                   </td>
                 ))}
                 {(tableData.colKeys.length > 1) && (
-                  <td className="px-2 py-1 text-left font-mono text-[var(--text-primary)]">
-                    {/* GRAND TOTAL CELL */}
-                    {totalCount}
+                  <td className={`px-2 ${density === 'generous' ? 'py-2.5' : 'py-1.5'} text-left align-middle data-cell bg-[var(--bg-active)]/30`}>
+                    <CrosstabCell
+                      key={`grand-${animationKey}`}
+                      variant="count"
+                      count={totalCount}
+                      animationTrigger={animationKey}
+                      reducedMotion={reducedMotion}
+                    />
                   </td>
                 )}
               </tr>

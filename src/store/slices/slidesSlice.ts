@@ -5,6 +5,18 @@ import type { AnalysisSlice } from './analysisSlice';
 import type { UISlice } from './uiSlice';
 import type { DataSlice } from './dataSlice';
 
+/** Next title when duplicating a slide; avoids chained `(Copy) (Copy)` suffixes. */
+export function getDuplicateSlideTitle(title: string): string {
+    const match = title.match(/^(.+?) \(Copy(?: (\d+))?\)$/);
+    if (!match) {
+        return `${title} (Copy)`;
+    }
+    const base = match[1];
+    const copyNumber = match[2] ? parseInt(match[2], 10) : 1;
+    const nextNumber = copyNumber + 1;
+    return `${base} (Copy ${nextNumber})`;
+}
+
 // ============================================================================
 // Slice Interface
 // ============================================================================
@@ -215,7 +227,7 @@ export const createSlidesSlice: SlidesSliceCreator = (set, get) => ({
         const duplicatedSlide: Slide = {
             ...sourceSlide,
             id: newSlideId,
-            title: `${sourceSlide.title} (Copy)`,
+            title: getDuplicateSlideTitle(sourceSlide.title),
             analysisState: {
                 ...sourceSlide.analysisState,
                 rowVars: [...sourceSlide.analysisState.rowVars],

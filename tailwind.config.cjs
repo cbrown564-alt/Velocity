@@ -81,9 +81,18 @@ module.exports = {
                 lg: 'var(--border-radius-lg)',
             },
             boxShadow: {
+                xs: 'var(--shadow-xs)',
+                sm: 'var(--shadow-sm)',
+                md: 'var(--shadow-md)',
+                lg: 'var(--shadow-lg)',
+                xl: 'var(--shadow-xl)',
+                '2xl': 'var(--shadow-2xl)',
                 inset: 'var(--shadow-inset)',
+                'inset-lg': 'inset 0 2px 10px 0 rgb(0 0 0 / 0.05)',
                 float: 'var(--shadow-float)',
                 drag: 'var(--shadow-drag)',
+                up: 'var(--shadow-up)',
+                text: 'var(--shadow-text)',
             }
         },
     },

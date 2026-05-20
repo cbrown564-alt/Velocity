@@ -14,19 +14,19 @@ describe('ThemeSwitcher', () => {
 
     it('renders the palette trigger button', () => {
         render(<ThemeSwitcher />, { wrapper: Wrapper });
-        expect(screen.getByTitle('Change theme')).toBeInTheDocument();
+        expect(screen.getByLabelText(/Theme:/)).toBeInTheDocument();
     });
 
     it('opens dropdown when trigger is clicked', () => {
         render(<ThemeSwitcher />, { wrapper: Wrapper });
-        fireEvent.click(screen.getByTitle('Change theme'));
+        fireEvent.click(screen.getByLabelText(/Theme:/));
         expect(screen.getByRole('listbox')).toBeInTheDocument();
         expect(screen.getByText('Choose Theme')).toBeInTheDocument();
     });
 
     it('renders all three theme preview cards', () => {
         render(<ThemeSwitcher />, { wrapper: Wrapper });
-        fireEvent.click(screen.getByTitle('Change theme'));
+        fireEvent.click(screen.getByLabelText(/Theme:/));
         expect(screen.getByText('Soft Machine')).toBeInTheDocument();
         expect(screen.getByText('Mission Control')).toBeInTheDocument();
         expect(screen.getByText('Liquid Glass')).toBeInTheDocument();
@@ -34,14 +34,14 @@ describe('ThemeSwitcher', () => {
 
     it('marks the active theme with a check', () => {
         render(<ThemeSwitcher />, { wrapper: Wrapper });
-        fireEvent.click(screen.getByTitle('Change theme'));
+        fireEvent.click(screen.getByLabelText(/Theme:/));
         const active = screen.getAllByRole('button', { pressed: true });
         expect(active.length).toBeGreaterThanOrEqual(1);
     });
 
     it('closes dropdown after selecting a theme', () => {
         render(<ThemeSwitcher />, { wrapper: Wrapper });
-        fireEvent.click(screen.getByTitle('Change theme'));
+        fireEvent.click(screen.getByLabelText(/Theme:/));
         fireEvent.click(screen.getByText('Mission Control'));
         expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
     });

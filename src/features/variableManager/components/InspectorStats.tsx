@@ -196,6 +196,13 @@ export const InspectorStats: React.FC<InspectorStatsProps> = ({ variable, stats,
                                                         <button
                                                             className={styles.tableActionButton}
                                                             title={item.code === null ? 'Convert system missing values' : (item.isMissing ? "Include value" : "Set as Missing")}
+                                                            aria-label={
+                                                                item.code === null
+                                                                    ? 'Convert system missing values'
+                                                                    : item.isMissing
+                                                                        ? `Include ${item.label} in analysis`
+                                                                        : `Set ${item.label} as missing`
+                                                            }
                                                             onClick={() => {
                                                                 if (item.code === null) {
                                                                     setShowConvertSystemMissingModal(true);

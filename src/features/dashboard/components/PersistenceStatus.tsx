@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Database, HardDrive, AlertCircle, RefreshCw, Trash2, CheckCircle2, TriangleAlert, Activity, FileUp } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useReducedMotion, getBackdropProps, getModalPresenceProps } from '../../../lib/motion';
+import { getPersistenceDisplayMessage } from '../../../lib/persistenceDisplay';
+import { ConfirmModal } from '../../../components/overlays/ConfirmModal';
 
 interface PersistenceStatusProps {
     mode: string;
@@ -51,6 +53,7 @@ export const PersistenceStatus: React.FC<PersistenceStatusProps> = ({
     onRebuild,
 }) => {
     const [showDetails, setShowDetails] = useState(false);
+    const [showPurgeConfirm, setShowPurgeConfirm] = useState(false);
 
     // Determine status color/icon
     const hasError = !!error || !!rehydrateError;
@@ -79,6 +82,7 @@ export const PersistenceStatus: React.FC<PersistenceStatusProps> = ({
             : null;
 
     const reducedMotion = useReducedMotion();
+    const persistenceMessage = getPersistenceDisplayMessage(error, errorHint);
 
     return (
         <>
@@ -223,10 +227,30 @@ export const PersistenceStatus: React.FC<PersistenceStatusProps> = ({
                                 {/* Error Section */}
                                 {(hasError || errorHint || partialLoadMessage) && (
                                     <div className="p-3 rounded-lg bg-[var(--status-warning-surface)] border border-[var(--status-warning-border)] text-[var(--status-warning-text)] text-sm space-y-2">
-                                        {error && <div className="font-medium flex items-center gap-2"><AlertCircle size={14} /> {error}</div>}
-                                        {rehydrateError && <div className="font-medium flex items-center gap-2"><AlertCircle size={14} /> {rehydrateError}</div>}
-                                        {partialLoadMessage && <div className="font-medium flex items-center gap-2"><TriangleAlert size={14} /> {partialLoadMessage}</div>}
-                                        {errorHint && <div className="text-xs opacity-90">{errorHint}</div>}
+                                        {persistenceMessage.headline && (
+                                            <div className="font-medium flex items-center gap-2">
+                                                <AlertCircle size={14} />
+                                                {persistenceMessage.headline}
+                                            </div>
+                                        )}
+                                        {rehydrateError && !error && (
+                                            <div className="font-medium flex items-center gap-2">
+                                                <AlertCircle size={14} />
+                                                Couldn&apos;t restore data from your saved file.
+                                            </div>
+                                        )}
+                                        {partialLoadMessage && (
+                                            <div className="font-medium flex items-center gap-2">
+                                                <TriangleAlert size={14} />
+                                                {partialLoadMessage}
+                                            </div>
+                                        )}
+                                        {(persistenceMessage.detail || rehydrateError) && (
+                                            <details className="text-xs opacity-90">
+                                                <summary className="cursor-pointer hover:opacity-100">Technical details</summary>
+                                                <p className="mt-1 break-words">{persistenceMessage.detail || rehydrateError}</p>
+                                            </details>
+                                        )}
                                     </div>
                                 )}
 
@@ -243,7 +267,7 @@ export const PersistenceStatus: React.FC<PersistenceStatusProps> = ({
                                                     <RefreshCw size={16} /> Refresh
                                                 </button>
                                                 <button
-                                                    onClick={onPurge}
+                                                    onClick={() => setShowPurgeConfirm(true)}
                                                     className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-[var(--status-error-surface)] text-[var(--color-error)] border border-[var(--status-error-border)] hover:opacity-90 text-sm font-medium transition-opacity"
                                                 >
                                                     <Trash2 size={16} /> Purge Corruption
@@ -272,6 +296,17 @@ export const PersistenceStatus: React.FC<PersistenceStatusProps> = ({
                     </div>
                 )}
             </AnimatePresence>
+
+            <ConfirmModal
+                isOpen={showPurgeConfirm}
+                onClose={() => setShowPurgeConfirm(false)}
+                onConfirm={onPurge}
+                title="Purge corrupted storage?"
+                message="This permanently deletes quarantined OPFS database files. You may need to re-import your datasets afterward."
+                confirmLabel="Purge"
+                cancelLabel="Cancel"
+                variant="danger"
+            />
         </>
     );
 };

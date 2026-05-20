@@ -43,8 +43,8 @@ export const VariableManager: React.FC<VariableManagerProps> = ({ onClose }) => 
     const {
         dataset,
         variableSets,
-        searchQuery,
-        setSearchQuery,
+        managerSearchQuery,
+        setManagerSearchQuery,
         selectedVariableSetIds,
         selectedVariableSetId,
         selectedVariableId,
@@ -81,8 +81,8 @@ export const VariableManager: React.FC<VariableManagerProps> = ({ onClose }) => 
         }
 
         // Filter by search
-        if (searchQuery) {
-            const query = searchQuery.toLowerCase();
+        if (managerSearchQuery) {
+            const query = managerSearchQuery.toLowerCase();
             sets = sets.filter(vs => vs.name.toLowerCase().includes(query));
         }
 
@@ -121,7 +121,7 @@ export const VariableManager: React.FC<VariableManagerProps> = ({ onClose }) => 
         }
 
         return sets;
-    }, [visibleVariableSets, searchQuery, activeFolderId, facetFilters, variableStats]);
+    }, [visibleVariableSets, managerSearchQuery, activeFolderId, facetFilters, variableStats]);
 
     const filteredIds = useMemo(() => filteredSets.map(vs => vs.id), [filteredSets]);
 
@@ -256,8 +256,8 @@ export const VariableManager: React.FC<VariableManagerProps> = ({ onClose }) => 
                             <input
                                 type="text"
                                 placeholder="Search variables..."
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
+                                value={managerSearchQuery}
+                                onChange={(e) => setManagerSearchQuery(e.target.value)}
                                 className="w-full pl-8 pr-3 py-1.5 bg-transparent border-b border-[var(--border-color)] text-sm font-body outline-none focus:border-[var(--color-accent)] focus:border-b-2 transition-all placeholder:text-[var(--text-secondary)] text-[var(--text-primary)]"
                             />
                         </div>

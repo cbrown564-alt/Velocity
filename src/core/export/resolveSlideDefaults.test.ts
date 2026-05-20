@@ -76,6 +76,15 @@ describe('resolveSlideSubtitle', () => {
     );
   });
 
+  it('uses provided respondent count for filtered bases', () => {
+    const filters: Filter[] = [
+      { id: 'f1', variableId: 'nps', operator: 'eq', value: 'Promoter' },
+    ];
+    expect(resolveSlideSubtitle(filters, null, 42, false, { nps: 'NPS segment' })).toBe(
+      'Filtered: NPS segment = Promoter · N = 42 Respondents'
+    );
+  });
+
   it('includes weighting and formatted N when present', () => {
     const filters: Filter[] = [
       { id: 'f1', variableId: 'region', operator: 'eq', value: 'North' },

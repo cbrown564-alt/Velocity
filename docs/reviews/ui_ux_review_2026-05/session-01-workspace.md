@@ -60,4 +60,4 @@
 
 ## Next session
 
-**Session 2** — J3 Canvas analysis core: filters, chart toggle, weight, statistical settings (F1). Fix or avoid `D` shortcut (UXR-000) before deck-heavy testing.
+**Session 2** — J3 Canvas analysis core: filters, chart toggle, weight, statistical settings (F1). UXR-000 resolved (`D` = Manager, `⌘/Ctrl+D` = duplicate).

@@ -6,6 +6,7 @@ import { parseSavMetadata } from '@velocity/readstat-wasm';
 import type { DatasetMatchResult, VelocitySessionFile } from '../../core/session';
 import { parseSessionFile, validateDatasetMatch } from '../../core/session';
 import { decodeSessionFile } from '../../services/sessionFileCodec';
+import { useModalEscape } from '../../hooks/useModalEscape';
 
 export interface SessionImportPayload {
   sessionFile: VelocitySessionFile;
@@ -155,6 +156,7 @@ export const SessionImportModal: React.FC<SessionImportModalProps> = ({
   };
 
   const reducedMotion = useReducedMotion();
+  useModalEscape(isOpen, handleClose);
 
   if (!isOpen) return null;
 

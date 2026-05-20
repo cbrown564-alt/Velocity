@@ -87,6 +87,24 @@ describe('slidesSlice', () => {
             expect(duplicatedSlide.title).toBe(`${initialSlide.title} (Copy)`);
         });
 
+        it('should number repeated duplicates instead of chaining "(Copy) (Copy)"', () => {
+            const { result } = renderHook(() => useVelocityStore());
+            const initialSlide = result.current.slides[0];
+
+            act(() => {
+                result.current.duplicateSlide(initialSlide.id);
+            });
+            const firstCopy = result.current.slides.find((s) => s.title.endsWith('(Copy)'));
+            expect(firstCopy).toBeDefined();
+
+            act(() => {
+                result.current.duplicateSlide(firstCopy!.id);
+            });
+
+            const secondCopy = result.current.slides.find((s) => s.title.endsWith('(Copy 2)'));
+            expect(secondCopy?.title).toBe(`${initialSlide.title} (Copy 2)`);
+        });
+
         it('should preserve analysisState', () => {
             const { result } = renderHook(() => useVelocityStore());
 

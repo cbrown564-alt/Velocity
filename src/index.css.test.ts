@@ -115,6 +115,23 @@ describe('index.css semantic tokens (STAB-DS-1)', () => {
     expect(violations).toEqual([]);
   });
 
+  it('has no rgba(0,0,0,…) in TSX/TS source outside theme definitions', () => {
+    const srcDir = resolve(__dirname);
+    const violations: string[] = [];
+
+    for (const file of walkSourceFiles(srcDir)) {
+      if (file.endsWith('.test.ts') || file.endsWith('.test.tsx')) continue;
+      if (file.includes('theme/themes.ts')) continue; // theme color definitions are expected
+      if (!/\.(tsx|ts)$/.test(file)) continue;
+      const content = readFileSync(file, 'utf8');
+      if (RGBA_BLACK.test(content)) {
+        violations.push(`${file.replace(srcDir + '/', '')}: rgba(0,0,0,…)`);
+      }
+    }
+
+    expect(violations).toEqual([]);
+  });
+
   it('has no gray families or raw Tailwind palette utilities in active source', () => {
     const srcDir = resolve(__dirname);
     const violations: string[] = [];

@@ -39,6 +39,7 @@ import { ContextMenu } from './features/dashboard/components/ContextMenu';
 import { usePersistenceManager } from './hooks/usePersistenceManager';
 import { useFileUpload } from './features/workspace/hooks/useFileUpload';
 import { useWorkspaceOpen } from './features/workspace/hooks/useWorkspaceOpen';
+import { getPersistenceDisplayMessage } from './lib/persistenceDisplay';
 
 // App Modes
 type AppMode = 'splash' | 'uploading' | 'dashboard' | 'restoring' | 'metadata';
@@ -210,6 +211,7 @@ export default function App() {
     recodeVariable,
     discardPersistedData,
     respawnWorker,
+    loadProgress,
   } = useVelocityStore();
 
   // -- Hooks --
@@ -653,9 +655,18 @@ export default function App() {
       {/* GLOBAL PROGRESS BAR */}
       <AnimatePresence>
         {mode === 'uploading' && (
-          <motion.div initial={{ width: '0%' }} animate={{ width: '100%' }} exit={{ opacity: 0 }}
-            transition={{ duration: reducedMotion ? 0.01 : 1.2, ease: 'easeInOut' }}
-            className="fixed top-0 left-0 h-1 bg-[var(--color-accent)] z-50 shadow-[0_0_10px_var(--color-accent)]" />
+          <motion.div
+            initial={{ width: '0%' }}
+            animate={{ width: `${Math.round((loadProgress?.progress ?? 0) * 100)}%` }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: reducedMotion ? 0.01 : 0.25, ease: 'easeOut' }}
+            className="fixed top-0 left-0 h-1 bg-[var(--color-accent)] z-50 shadow-[0_0_10px_var(--color-accent)]"
+            role="progressbar"
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={Math.round((loadProgress?.progress ?? 0) * 100)}
+            aria-label="Dataset load progress"
+          />
         )}
       </AnimatePresence>
 
@@ -669,10 +680,18 @@ export default function App() {
                 <Loader2 className="w-7 h-7 text-[var(--color-accent)] animate-spin" />
               </div>
               <div className="space-y-1">
-                <p className="font-medium text-[var(--text-primary)]">Loading dataset...</p>
+                <p className="font-medium text-[var(--text-primary)]">
+                  {loadProgress?.message || 'Loading dataset...'}
+                </p>
                 <p className="text-sm text-[var(--text-secondary)]">
                   {fileUpload.pendingSavFile?.name || dataset?.name || 'Preparing analysis engine'}
                 </p>
+                {loadProgress?.totalRows != null && loadProgress.totalRows > 0 && (
+                  <p className="text-xs text-[var(--text-tertiary)]">
+                    {Math.min(loadProgress.rowsProcessed ?? 0, loadProgress.totalRows).toLocaleString()} of{' '}
+                    {loadProgress.totalRows.toLocaleString()} rows
+                  </p>
+                )}
               </div>
             </div>
           </motion.div>
@@ -728,10 +747,36 @@ export default function App() {
                   <div className="flex items-start gap-2">
                     <AlertCircle size={16} className="mt-0.5 shrink-0" />
                     <div className="space-y-1">
-                      {persistence.opfsRehydrateError && <div className="text-sm font-medium">Couldn't restore data from OPFS source file.</div>}
-                      {persistence.opfsRehydrateError && <div className="text-xs break-words">{persistence.opfsRehydrateError}</div>}
-                      {!persistence.opfsRehydrateError && persistenceError && <div className="text-xs break-words">OPFS: {persistenceError}</div>}
-                      {persistence.opfsErrorHint && <div className="text-xs">{persistence.opfsErrorHint}</div>}
+                      {persistence.opfsRehydrateError && (
+                        <>
+                          <div className="text-sm font-medium">Couldn&apos;t restore data from your saved file.</div>
+                          <details className="text-xs">
+                            <summary className="cursor-pointer text-[var(--text-secondary)] hover:text-[var(--text-primary)]">
+                              Technical details
+                            </summary>
+                            <p className="mt-1 break-words opacity-90">{persistence.opfsRehydrateError}</p>
+                          </details>
+                        </>
+                      )}
+                      {!persistence.opfsRehydrateError && persistenceError && (() => {
+                        const { headline, detail } = getPersistenceDisplayMessage(
+                          persistenceError,
+                          persistence.opfsErrorHint,
+                        );
+                        return (
+                          <>
+                            {headline && <div className="text-sm font-medium">{headline}</div>}
+                            {detail && (
+                              <details className="text-xs">
+                                <summary className="cursor-pointer text-[var(--text-secondary)] hover:text-[var(--text-primary)]">
+                                  Technical details
+                                </summary>
+                                <p className="mt-1 break-words opacity-90">{detail}</p>
+                              </details>
+                            )}
+                          </>
+                        );
+                      })()}
                     </div>
                   </div>
                   {dataset.opfsFileKey && (

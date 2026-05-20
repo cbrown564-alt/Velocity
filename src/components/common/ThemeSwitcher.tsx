@@ -93,7 +93,8 @@ export const ThemeSwitcher: React.FC = () => {
             <button
                 onClick={() => setOpen(v => !v)}
                 className="p-2 rounded-lg hover:bg-[var(--bg-active)] text-[var(--text-secondary)] hover:text-[var(--color-accent)] transition-colors"
-                title="Change theme"
+                title={`Theme: ${theme.name}`}
+                aria-label={`Theme: ${theme.name}. Change theme`}
                 aria-haspopup="listbox"
                 aria-expanded={open}
             >

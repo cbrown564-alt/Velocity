@@ -68,6 +68,8 @@ export interface UISlice {
     appMode: AppMode;
     draggingId: string | null;
     searchQuery: string;
+    /** Variable Manager search — isolated from Canvas sidebar search (UXR-018) */
+    managerSearchQuery: string;
     recodeModal: RecodeModalState;
     filterModal: FilterModalState;
     analysisExportModal: AnalysisExportModalState;
@@ -81,6 +83,8 @@ export interface UISlice {
     activeFolderId: string | null;
     /** Focus mode hides chrome for immersive analysis */
     focusMode: boolean;
+    /** Table density: compact for exploration, generous for presentation */
+    tableDensity: 'compact' | 'generous';
     /** Toast notification queue */
     toasts: Toast[];
     /** Command palette open state */
@@ -101,6 +105,7 @@ export interface UISlice {
     toggleAppMode: () => void;
     setDraggingId: (id: string | null) => void;
     setSearchQuery: (query: string) => void;
+    setManagerSearchQuery: (query: string) => void;
     openRecodeModal: (variable: Variable) => void;
     closeRecodeModal: () => void;
     openFilterModal: () => void;
@@ -135,6 +140,10 @@ export interface UISlice {
     setFocusMode: (enabled: boolean) => void;
     toggleFocusMode: () => void;
 
+    // Table Density
+    setTableDensity: (density: 'compact' | 'generous') => void;
+    toggleTableDensity: () => void;
+
     // Toast Layer
     addToast: (toast: Omit<Toast, 'id'>) => void;
     dismissToast: (id: string) => void;
@@ -162,6 +171,7 @@ export const createUISlice: StateCreator<UISlice, [], [], UISlice> = (set) => ({
     appMode: 'analysis',
     draggingId: null,
     searchQuery: '',
+    managerSearchQuery: '',
     recodeModal: { isOpen: false, variable: null },
     filterModal: { isOpen: false },
     analysisExportModal: { isOpen: false, config: null },
@@ -170,6 +180,7 @@ export const createUISlice: StateCreator<UISlice, [], [], UISlice> = (set) => ({
     lastSelectedId: null,
     activeFolderId: null,
     focusMode: false,
+    tableDensity: 'compact',
     toasts: [],
     commandPaletteOpen: false,
     shortcutsOpen: false,
@@ -197,6 +208,7 @@ export const createUISlice: StateCreator<UISlice, [], [], UISlice> = (set) => ({
 
     setDraggingId: (id) => set({ draggingId: id }),
     setSearchQuery: (query) => set({ searchQuery: query }),
+    setManagerSearchQuery: (query) => set({ managerSearchQuery: query }),
 
     openRecodeModal: (variable) => set({ recodeModal: { isOpen: true, variable } }),
     closeRecodeModal: () => set({ recodeModal: { isOpen: false, variable: null } }),
@@ -298,6 +310,10 @@ export const createUISlice: StateCreator<UISlice, [], [], UISlice> = (set) => ({
     // Focus Mode Actions
     setFocusMode: (enabled) => set({ focusMode: enabled }),
     toggleFocusMode: () => set((state) => ({ focusMode: !state.focusMode })),
+
+    // Table Density Actions
+    setTableDensity: (density) => set({ tableDensity: density }),
+    toggleTableDensity: () => set((state) => ({ tableDensity: state.tableDensity === 'compact' ? 'generous' : 'compact' })),
 
     // Toast Actions
     addToast: (toast) => set((state) => ({

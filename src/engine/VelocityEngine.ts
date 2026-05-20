@@ -283,6 +283,7 @@ export class VelocityEngine {
 
         this.pendingFullLoadPath = null;
         this.dataset.metadataOnly = false;
+        this.resetSessionState();
 
         return this.buildDatasetSummary(this.dataset);
       } catch (error) {

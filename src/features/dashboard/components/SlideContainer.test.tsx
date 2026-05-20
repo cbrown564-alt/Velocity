@@ -1,6 +1,6 @@
 import React from 'react';
 import { describe, it, expect, beforeEach } from 'vitest';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { SlideContainer } from './SlideContainer';
 import { useVelocityStore } from '../../../store';
 import type { Slide } from '../../../types/slides';
@@ -38,9 +38,31 @@ describe('SlideContainer', () => {
             variableSets: [],
             activeFilters: [],
             tableStats: null,
+            queryError: null,
+            isQuerying: false,
             activeVariableStats: null,
             dataset: null,
         });
+    });
+
+    it('shows inline error when query fails', () => {
+        useVelocityStore.setState({
+            tableConfig: { rowVars: ['gender'], colVar: null },
+            queryError: 'Table main does not exist',
+            isQuerying: false,
+            variableSets: [{ id: 'gender', name: 'Gender', variableIds: ['v1'], type: 'categorical', structure: 'single' }],
+            dataset: {
+                id: 'ds1',
+                name: 'test',
+                rowCount: 100,
+                variables: [{ id: 'v1', name: 'gender', label: 'Gender', type: 'categorical', valueLabels: [], missingValues: {} }],
+                source: 'csv',
+            },
+        });
+
+        render(<SlideContainer />);
+        expect(screen.getByRole('alert')).toHaveTextContent("Couldn't run analysis");
+        expect(screen.getByText('Table main does not exist')).toBeInTheDocument();
     });
 
     it('uses theme token background classes for the 16:9 canvas', () => {
@@ -51,4 +73,5 @@ describe('SlideContainer', () => {
         expect(canvas?.className).toContain('bg-[var(--mat-panel-bg,var(--bg-panel))]');
         expect(canvas?.className).not.toContain('bg-white');
     });
+
 });

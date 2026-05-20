@@ -208,7 +208,7 @@ export const VariableSetColumn: React.FC = () => {
         dataset,
         variableSets,
         activeFolderId,
-        searchQuery,
+        managerSearchQuery,
         selectedVariableSetId,
         selectedVariableSetIds,
         setSelectedVariableSetId,
@@ -241,8 +241,8 @@ export const VariableSetColumn: React.FC = () => {
         }
 
         // Filter by search
-        if (searchQuery) {
-            const query = searchQuery.toLowerCase();
+        if (managerSearchQuery) {
+            const query = managerSearchQuery.toLowerCase();
             sets = sets.filter(vs => vs.name.toLowerCase().includes(query));
         }
 
@@ -281,7 +281,7 @@ export const VariableSetColumn: React.FC = () => {
         }
 
         return sets;
-    }, [visibleVariableSets, activeFolderId, searchQuery, facetFilters, variableStats]);
+    }, [visibleVariableSets, activeFolderId, managerSearchQuery, facetFilters, variableStats]);
 
     const filteredIds = useMemo(() => filteredSets.map(vs => vs.id), [filteredSets]);
 
@@ -458,7 +458,7 @@ export const VariableSetColumn: React.FC = () => {
                 <div className={styles.emptyState}>
                     <CheckCircle className={styles.emptyIcon} />
                     <span className={styles.emptyText}>
-                        {searchQuery ? 'No matching variables' : 'No variables in folder'}
+                        {managerSearchQuery ? 'No matching variables' : 'No variables in folder'}
                     </span>
                 </div>
             ) : (

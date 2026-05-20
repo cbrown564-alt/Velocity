@@ -55,6 +55,8 @@ export interface AnalysisSlice {
     queryResult: AggregatedRow[];
     tableStats: TableStats | null;
     isQuerying: boolean;
+    /** Last crosstab failure message for inline slide UI (UXR-037). */
+    queryError: string | null;
     activeFilters: Filter[];
     activeVariableStats: VariableStatsResult | null;
     analysisSettings: AnalysisSettings;
@@ -103,6 +105,7 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
     queryResult: [],
     tableStats: null,
     isQuerying: false,
+    queryError: null,
     activeFilters: [],
     activeVariableStats: null,
     analysisSettings: defaultAnalysisSettings,
@@ -120,11 +123,11 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
     runAnalysis: async () => {
         const { engineProxy, tableConfig, dataset, variableSets, activeFilters, analysisSettings } = get();
         if (!engineProxy || !dataset || tableConfig.rowVars.length === 0) {
-            set({ queryResult: [], tableStats: null });
+            set({ queryResult: [], tableStats: null, queryError: null });
             return;
         }
 
-        set({ isQuerying: true });
+        set({ isQuerying: true, queryError: null });
 
         try {
             const request = buildCrosstabRequest({
@@ -153,10 +156,18 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
                 queryResult: mappedData,
                 tableStats: response.data.tableStats,
                 isQuerying: false,
+                queryError: null,
             });
-        } catch (error: any) {
-            console.error('[AnalysisSlice] Query error:', error.message);
-            set({ isQuerying: false });
+        } catch (error: unknown) {
+            const message =
+                error instanceof Error ? error.message : 'Couldn\'t run analysis';
+            console.error('[AnalysisSlice] Query error:', message);
+            set({
+                isQuerying: false,
+                queryResult: [],
+                tableStats: null,
+                queryError: message,
+            });
         }
     },
 
@@ -254,6 +265,7 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
             tableConfig: { rowVars: [], colVar: null },
             queryResult: [],
             tableStats: null,
+            queryError: null,
             activeFilters: [],
             analysisSettings: defaultAnalysisSettings,
         });

@@ -258,7 +258,9 @@ It does **not** contain respondent rows. A human opens it in the browser, re-upl
 | **Not setting the weight** | All results are unweighted — methodologically invalid for population inference | Search for weight variables immediately after annotation |
 | **Using raw codes instead of labels** | Output is unreadable (numbers instead of text) | Always pass `resolveLabels: true` in crosstab calls |
 | **Analyzing too many variables shallowly** | 30 slides with no narrative thread | Select 15-25 variables, aim for 12-18 slides |
-| **Using high-cardinality variables as columns** | Sparse, unreadable cross-tabs | Look for condensed versions; recode if needed |
+| **Using high-cardinality variables as columns** | Sparse, unreadable cross-tabs | Check `warnings` on `velocity_crosstab`; look for condensed versions; recode if needed |
+| **Using body weight as sampling weight** | Wrong weighted estimates | Check `warnings` when `weightVar` or variable name is `weight`; use `wt` / `WtFactor` style names instead |
+| **Skipping break suggestions** | Weak demographic splits | After picking a topic variable, call `velocity_suggest_breaks` or `velocity_list_variables_by_category` |
 | **Ignoring split-sample versioning** | Confusion about high missing rates | Check N via `describe_variable`; ~25% response rate may be normal |
 | **Variable-first deck organization** | "Here's Q1 by Q2" instead of "Here's what we found" | Structure by themes and findings, not by variable order |
 | **Missing speaker notes** | Deck has no interpretation — just raw tables | Notes are the agent's highest-value contribution |

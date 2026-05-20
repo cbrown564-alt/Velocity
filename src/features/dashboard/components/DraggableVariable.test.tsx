@@ -136,6 +136,49 @@ describe('VariableCard', () => {
             expect(card.className).toContain('shadow-xl');
             expect(card.className).toContain('scale-105');
         });
+
+        it('shows derived badge for derived variables', () => {
+            const derivedSet = { ...mockNominalSet, derived: true };
+            render(<VariableCard variableSet={derivedSet} />);
+            expect(screen.getByText('derived')).toBeInTheDocument();
+        });
+
+        it('does not show derived badge for non-derived variables', () => {
+            render(<VariableCard variableSet={mockNominalSet} />);
+            expect(screen.queryByText('derived')).not.toBeInTheDocument();
+        });
+
+        it('renders shelf color indicator for row variables', () => {
+            const { container } = render(
+                <VariableCard variableSet={mockNominalSet} shelfType="row" />
+            );
+            const indicator = container.querySelector('[style*="--shelf-row"]');
+            expect(indicator).toBeInTheDocument();
+        });
+
+        it('renders shelf color indicator for column variables', () => {
+            const { container } = render(
+                <VariableCard variableSet={mockNominalSet} shelfType="col" />
+            );
+            const indicator = container.querySelector('[style*="--shelf-col"]');
+            expect(indicator).toBeInTheDocument();
+        });
+
+        it('renders shelf color indicator for weight variables', () => {
+            const { container } = render(
+                <VariableCard variableSet={mockNominalSet} shelfType="weight" />
+            );
+            const indicator = container.querySelector('[style*="--shelf-weight"]');
+            expect(indicator).toBeInTheDocument();
+        });
+
+        it('does not render shelf indicator when shelfType is null', () => {
+            const { container } = render(
+                <VariableCard variableSet={mockNominalSet} shelfType={null} />
+            );
+            const indicator = container.querySelector('[style*="--shelf-"]');
+            expect(indicator).not.toBeInTheDocument();
+        });
     });
 });
 
