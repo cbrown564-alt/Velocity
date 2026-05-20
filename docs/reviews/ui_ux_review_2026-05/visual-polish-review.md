@@ -132,6 +132,50 @@ Metric cells repeat the pattern (`w-[42px]` + visible secondary stats on hover f
 | **UXP-031** | Soft Machine | Warmer panels forgive empty space more — still benefit from alignment fix | — |
 | **UXP-032** | Liquid Glass | Translucency exposes misalignment more | Defer glass polish until table grammar is stable |
 
+### Tier 5 — Deferred (post STAB-UI-P)
+
+| ID | Surface | Issue | Direction |
+| :--- | :--- | :--- | :--- |
+| **UXP-040** | Crosstab statistics visibility | Cell `n=` and column **base** row are always on; deck users want less chrome, researchers want bases without hover | User-controlled **what** appears **where** — inspired by Displayr’s Cells / Below split, but simpler |
+
+#### UXP-040 — Statistics visibility (think later)
+
+**Problem:** After UXP-001 (Strategy A), `%` + `n=` + base row are always visible. That is good for research trust, but dense for client decks. Displayr solves this with **Statistics → Cells / Right / Below** — powerful, but the inspector is heavy for a quick “show bases” toggle.
+
+**Proposed capability (not specced for implementation yet):**
+
+| Statistic | Typical placement today | User control |
+| :--- | :--- | :--- |
+| Column % (primary) | Cell | Always on (non-negotiable for crosstab) |
+| Cell sample size (`n=`) | Cell, under % | Toggle: **Show cell n** |
+| Column base (unweighted count) | Base row below body | Toggle: **Show column bases** |
+| Row / grand totals | Total row / column | Optional later: hide marginals for “slide mode” |
+
+**UX principles (avoid Displayr bloat):**
+
+1. **One surface, two toggles** — e.g. in Analysis settings or a compact “Table display” popover on the slide (not a full statistics tree). Default: both on for exploration; remember per slide or per workspace.
+2. **Placement is fixed by grammar** — toggles only show/hide; they do not let users drag `n=` to arbitrary zones. Strategy A alignment is preserved when a stat is on.
+3. **No layout shift** — hiding `n=` or base row removes content from flow (not `opacity-0` reserve); column widths may reflow once (UXP-002 proportional widths should tolerate).
+4. **Subtitle / footer honesty** — if cell `n=` is hidden, filtered **N** in subtitle or footer must remain the authoritative sample-size story (no trust regression vs UXR-010).
+
+**Comparison anchor:**
+
+| Product | Model | Velocity delta |
+| :--- | :--- | :--- |
+| **Displayr** | Per-table Statistics → Cells / Right / Below; many stats | Same *idea* (cell vs below), fewer choices, Canvas-native UI |
+| **Qualtrics** | Separate counts vs % tables, or combined | Simpler binary toggles, single table |
+| **Current Velocity** | Always `%` + `n=` + base row | Add toggles; keep Strategy A when visible |
+
+**Open questions for a future pass:**
+
+- Scope: slide-local vs global analysis setting?
+- Export / MCP deck: do hidden bases still appear in exported tables?
+- Small-base warning (`data-small-base`): only when cell `n=` is visible, or also via tooltip?
+
+**Out of scope for first slice:** separate columns per statistic (Displayr “each stat in its own column”), statistics on the Right of the table, custom stat picker.
+
+**Schedule:** After STAB-UI-P sign-off and VP-D “Would You Frame It?” pass. Depends on `CrosstabCell` + `AnalysisOutputFrame` remaining the single render path.
+
 ---
 
 ## What the first review got right (keep doing)
@@ -151,7 +195,7 @@ The gap is not feature discovery — it is **finish on the object users photogra
 
 | Product | What they do well | Velocity opportunity |
 | :--- | :--- | :--- |
-| **Displayr / Q Research** | Stable column grids; bases visible without hover | Always-visible `n=` or footnoted bases |
+| **Displayr / Q Research** | Stable column grids; bases visible without hover; Cells / Below stat placement | Strategy A done; **UXP-040** — optional cell `n=` + base row toggles, simpler than Displayr inspector |
 | **Apple Numbers / Excel** | Clear number column alignment | Adopt fixed numeric column strategy |
 | **Bloomberg** | Dense but aligned — nothing floats | Mission Control already aims here — table must match |
 | **Figma / Linear** | One spacing scale (4/8/12/16) | Audit canvas padding stack (UXP-022) |
@@ -167,7 +211,9 @@ Distinct from `STAB-UI-D` (trust/a11y/responsive). Proposed slices:
 3. **Canvas frame unification** (UXP-004–005, 022–023) — table/chart/footer share one frame  
 4. **Hover/layout audit** (UXP-020–021) — grep `opacity-0` in `src/features/dashboard`  
 
-**Out of scope for STAB-UI-P:** OPFS errors, keyboard conflicts, filter modal dead-ends — keep in `STAB-UI-D`.
+**Out of scope for STAB-UI-P:** OPFS errors, keyboard conflicts, filter modal dead-ends — keep in `STAB-UI-D`. Statistics visibility toggles (UXP-040) — deferred to post-polish slice.
+
+5. **Statistics visibility** (UXP-040) — cell `n=` + column base toggles; Displayr-like placement, Canvas-simple UI
 
 ---
 
@@ -195,9 +241,9 @@ No UXP item duplicates UXR-010 (filtered N in subtitle) — that is trust; UXP-0
 
 ## Implementation status
 
-**UXP-001 (Strategy B)** — implemented May 20, 2026:
+**UXP-001 (Strategy A)** — implemented May 20, 2026; alignment unified May 20, 2026:
 
-- `src/features/dashboard/components/CrosstabCell.tsx` — left-stacked `%` + visible `n=`, sig inline
+- `src/features/dashboard/components/CrosstabCell.tsx` — right-stacked `%` + visible `n=`, sig inline; shared right edge with base row
 - `DataTable.tsx` — data cells, row totals, and column base row use `CrosstabCell`
 - Tests: `CrosstabCell.test.tsx`
 
@@ -215,9 +261,32 @@ No UXP item duplicates UXR-010 (filtered N in subtitle) — that is trust; UXP-0
 - **Focus mode:** frame bleeds to slide edges; compact `SlideHeader`; SmartCanvas / shell inner panel de-nested
 - Tests: `AnalysisOutputFrame.test.tsx`
 
+**UXP-010–012 (Typography & accent)** — implemented May 20, 2026:
+
+- **`displayCase.ts`** — `toTitleCase` for slide titles; `toUiCaps` for axis headers
+- **`resolveSlideTitle`** — auto titles use Title Case (`Gender by Region`)
+- **`DataTable`** — column headers: mono + `text-secondary`; row axis header: body caps + secondary; accent reserved for significance/interaction
+- Documented in `design_01_system.md` §10 Data Display Typography
+
+**UXP-020–021 (Hover/layout + shelf rhythm)** — implemented May 20, 2026:
+
+- **UXP-020:** Duplicate `StatisticsStatusBar` removed from table body (footer band only); `DraggableVariable` grip and `SlideHeader` pencils absolutely positioned
+- **UXP-021:** Shelf margin labels (`Columns` / `Rows`) left-aligned with slide padding stack
+- **Story Shelf gate:** initial slide title unified to `New Slide` (matches `SlideHeader` default-title check)
+
+**Story Shelf (VP-D-03)** — fixed May 20, 2026:
+
+- `SlideHeader.tsx` — hooks moved before early return; `tableStats` subscribed (was `getState()` in `useMemo` deps); auto-dismiss 8s; `data-testid="story-shelf-suggestion"`
+- `slidesSlice.ts` — seed title `New Slide` (was `Analysis 1`)
+- Eval: `visual-polish-browser-eval.mjs` checks D-022 immediately after crosstab load
+- E2E: `visual-polish-crosstab.spec.ts` asserts story shelf visible
+- Evidence: `screenshots/vp-d-03/05-story-shelf.png`
+
+**Delight validation (VP-D-03)** — May 20, 2026: D-001–005, D-010–014, D-022–023 pass on 4176; D-020 halo flaky after NPS filter in automated run; D-003/015, P9–P10 pending VP-D-04. See `visual-polish-delight-validation-plan.md` §8.
+
 **Quick validation checklist** (after UXP-001–003):
 
 - [x] Vertical scan: EAST header → both % cells → column total — no horizontal drift  
 - [x] Total column and East column use same internal layout  
 - [x] Hover does not shift column width  
-- [ ] Screenshot-ready: would embed in a deck without red circles  
+- [ ] Screenshot-ready: would embed in a deck without red circles — pending human VP-D-03 pass  

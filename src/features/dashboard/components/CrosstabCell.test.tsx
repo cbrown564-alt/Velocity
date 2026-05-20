@@ -3,13 +3,20 @@ import { render, screen } from '@testing-library/react';
 import { CrosstabCell } from './CrosstabCell';
 
 describe('CrosstabCell', () => {
-  it('stacks frequency percent and sample size left-aligned (strategy B)', () => {
+  it('stacks frequency percent and sample size right-aligned (strategy A)', () => {
     render(
       <CrosstabCell variant="frequency" percent={47.7} count={21} sig="high_95" />
     );
     expect(screen.getByText('47.7%')).toBeInTheDocument();
     expect(screen.getByText('n=21')).toBeInTheDocument();
     expect(screen.getByText('n=21')).toBeVisible();
+    const stack = screen.getByTestId('crosstab-cell-frequency');
+    expect(stack).toHaveClass('items-end', 'text-right');
+  });
+
+  it('right-aligns column base count stack', () => {
+    render(<CrosstabCell variant="count" count={49} />);
+    expect(screen.getByTestId('crosstab-cell-count')).toHaveClass('items-end', 'text-right');
   });
 
   it('stacks metric mean and sample size', () => {

@@ -602,7 +602,7 @@ h3 {
 
 /* Frosted footer: more blur than table body */
 [data-theme="liquid-glass"] .statistics-status-bar,
-[data-theme="liquid-glass"] .methodology-drawer {
+[data-theme="liquid-glass"] .methodology-popover {
   backdrop-filter: blur(30px) saturate(160%);
   -webkit-backdrop-filter: blur(30px) saturate(160%);
 }

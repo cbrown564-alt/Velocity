@@ -82,6 +82,8 @@ test('P1 crosstab render gate — gender x region with trust anchor', async ({ p
   const frame = page.locator('.analysis-frame').filter({ has: table });
   await expect(frame).toBeVisible();
 
+  await expect(page.getByTestId('story-shelf-suggestion')).toBeVisible({ timeout: 8000 });
+
   const consoleErrors: string[] = [];
   page.on('console', (msg) => {
     if (msg.type() === 'error' && /hooks|DataTable/i.test(msg.text())) {

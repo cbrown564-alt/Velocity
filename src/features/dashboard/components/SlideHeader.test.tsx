@@ -50,6 +50,34 @@ describe('SlideHeader', () => {
     expect(screen.getByText('New Slide')).toBeInTheDocument();
   });
 
+  it('shows a narrative suggestion when chi-square is significant', () => {
+    useVelocityStore.setState({
+      tableConfig: { rowVars: ['gender'], colVar: 'region' },
+      variableSets: [
+        { id: 'gender', name: 'Gender', variableIds: ['v1'], type: 'categorical', structure: 'single' },
+        { id: 'region', name: 'Region', variableIds: ['v2'], type: 'categorical', structure: 'single' },
+      ],
+      dataset: {
+        id: 'ds1',
+        name: 'test',
+        rowCount: 100,
+        variables: [
+          { id: 'v1', name: 'gender', label: 'Gender', type: 'categorical', valueLabels: [], missingValues: {} },
+          { id: 'v2', name: 'region', label: 'Region', type: 'categorical', valueLabels: [], missingValues: {} },
+        ],
+        source: 'csv',
+      },
+      queryResult: [
+        { rowKeys: ['1'], colKey: 'east', count: 50 },
+        { rowKeys: ['2'], colKey: 'west', count: 50 },
+      ],
+      tableStats: { chiSquare: { chiSquare: 12, df: 3, pValue: 0.01, cramersV: 0.25 } },
+    });
+
+    render(<SlideHeader />);
+    expect(screen.getByTestId('story-shelf-suggestion')).toBeInTheDocument();
+  });
+
   it('shows a narrative suggestion when data has significant findings', () => {
     useVelocityStore.setState({
       tableConfig: { rowVars: ['gender'], colVar: 'region' },

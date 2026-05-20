@@ -111,7 +111,7 @@ type SlidesSliceCreator = StateCreator<
 export const createSlidesSlice: SlidesSliceCreator = (set, get) => ({
     slides: [
         // Default initial slide with full structure
-        createNewSlide('slide-1', 'Analysis 1', createDefaultAnalysisState()),
+        createNewSlide('slide-1', 'New Slide', createDefaultAnalysisState()),
     ],
     sections: [],
     activeSlideId: 'slide-1',

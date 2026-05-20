@@ -644,8 +644,8 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
                   </div>
                 )}
                 {/* Columns Shelf — collapse when empty */}
-                <div className={`flex items-center gap-4 transition-all duration-200 ${!tableConfig.colVar && !draggingId ? 'h-0 opacity-0 overflow-hidden' : 'h-auto opacity-100'}`}>
-                  <div className="w-16 flex justify-end shrink-0">
+                <div className={`flex items-center gap-3 transition-all duration-200 ${!tableConfig.colVar && !draggingId ? 'h-0 opacity-0 overflow-hidden' : 'h-auto opacity-100'}`}>
+                  <div className="shrink-0 min-w-[4.5rem]">
                     <span className="text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-wider">Columns</span>
                   </div>
                   <div className="flex-1 max-w-3xl">
@@ -661,8 +661,8 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
                 </div>
 
                 {/* Rows Shelf — collapse when empty */}
-                <div className={`flex items-center gap-4 transition-all duration-200 ${tableConfig.rowVars.length === 0 && !draggingId ? 'h-0 opacity-0 overflow-hidden' : 'h-auto opacity-100'}`}>
-                  <div className="w-16 flex justify-end shrink-0">
+                <div className={`flex items-center gap-3 transition-all duration-200 ${tableConfig.rowVars.length === 0 && !draggingId ? 'h-0 opacity-0 overflow-hidden' : 'h-auto opacity-100'}`}>
+                  <div className="shrink-0 min-w-[4.5rem]">
                     <span className="text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-wider">Rows</span>
                   </div>
                   <div className="flex-1 max-w-3xl">

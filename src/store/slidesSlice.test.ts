@@ -8,7 +8,7 @@ describe('slidesSlice', () => {
         useVelocityStore.setState({
             slides: [{
                 id: 'slide-test-1',
-                title: 'Analysis 1',
+                title: 'New Slide',
                 subtitle: '',
                 analysisState: {
                     rowVars: [],

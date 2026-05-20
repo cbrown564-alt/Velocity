@@ -12,11 +12,11 @@ import { ChartContextMenu } from '../../../components/overlays/ChartContextMenu'
 import { RowPathEntry, TableRowNode } from '../../../services/treeBuilder';
 import { Tooltip } from '../../../components/common/Tooltip';
 import { StatisticsTooltip } from '../../../components/common/StatisticsTooltip';
-import { MethodologyDrawer } from '../../../components/common/MethodologyPanel';
 import { StatisticsStatusBar } from '../../../components/common/StatisticsStatusBar';
 import { useReducedMotion } from '../../../lib/motion';
 import { useVelocityStore } from '../../../store';
 import mergeStyles from './DataTable.module.css';
+import { toUiCaps } from '../../../core/text/displayCase';
 import { CrosstabCell } from './CrosstabCell';
 import { computeCrosstabColumnWidths } from './crosstabColumnWidths';
 import { AnalysisOutputFrame } from './AnalysisOutputFrame';
@@ -79,9 +79,6 @@ export const DataTable: React.FC<DataTableProps> = ({
 
   // UI State for expanded rows
   const [expandedKeys, setExpandedKeys] = useState<Record<string, boolean>>({});
-  // State for methodology panel visibility
-  const [showMethodology, setShowMethodology] = useState(false);
-
   // Row context menu state (for ungroup/split on derived variables)
   const [rowContextMenu, setRowContextMenu] = useState<{
     isOpen: boolean;
@@ -337,7 +334,7 @@ export const DataTable: React.FC<DataTableProps> = ({
               return (
                 <td
                   key={col}
-                  className={`px-2 ${density === 'generous' ? 'py-2.5' : 'py-1'} text-left align-middle cursor-pointer relative data-cell border-l transition-colors
+                  className={`px-2 ${density === 'generous' ? 'py-2.5' : 'py-1'} text-right align-middle cursor-pointer relative data-cell border-l transition-colors
                     ${hoveredCol === col ? 'bg-[var(--bg-surface)] border-[var(--border-color-active)]' : 'border-[var(--border-subtle)]'}
                     ${halo}
                   `}
@@ -373,7 +370,7 @@ export const DataTable: React.FC<DataTableProps> = ({
             {/* Only show Row Total if we have columns OR if it's a frequency table (always show 100%)
                 For Metric tables without columns, the single column is already the total. */}
             {(tableData.colKeys.length > 1) && (
-              <td className={`px-2 ${density === 'generous' ? 'py-2.5' : 'py-1'} text-left bg-[var(--bg-active)]/30 align-middle data-cell`}>
+              <td className={`px-2 ${density === 'generous' ? 'py-2.5' : 'py-1'} text-right bg-[var(--bg-active)]/30 align-middle data-cell`}>
                 {row.mean !== undefined ? (
                   <CrosstabCell
                     key={`total-${animationKey}-${row.key}`}
@@ -418,7 +415,6 @@ export const DataTable: React.FC<DataTableProps> = ({
             tableStats={tableStats}
             colVariable={colVariable}
             overlapCorrected={overlapCorrected}
-            onMethodologyClick={() => setShowMethodology(!showMethodology)}
           />
         }
       >
@@ -428,9 +424,9 @@ export const DataTable: React.FC<DataTableProps> = ({
               <tr className="font-body">
                 <th
                   style={{ width: columnWidths?.rowLabel }}
-                  className={`px-2 ${density === 'generous' ? 'py-4' : 'py-2.5'} font-bold text-[var(--text-accent)] tracking-wider text-left align-bottom sticky top-0 bg-[var(--bg-panel)] data-[theme=liquid-glass]:bg-[var(--mat-panel-bg)] data-[theme=liquid-glass]:backdrop-blur-md z-10 box-border border-b border-[var(--border-grid)] uppercase text-[11px]`}
+                  className={`px-2 ${density === 'generous' ? 'py-4' : 'py-2.5'} font-bold text-[var(--text-secondary)] tracking-wider text-left align-bottom sticky top-0 bg-[var(--bg-panel)] data-[theme=liquid-glass]:bg-[var(--mat-panel-bg)] data-[theme=liquid-glass]:backdrop-blur-md z-10 box-border border-b border-[var(--border-grid)] uppercase text-[11px] font-body`}
                 >
-                  {rowVariables[0].label}
+                  {toUiCaps(rowVariables[0].label)}
                 </th>
                 {tableData.colKeys.map((col) => {
                   const isColDragging = dragState.isDragging && dragState.draggedItem?.rawValue === col && dragState.draggedItem?.axis === 'column';
@@ -443,7 +439,7 @@ export const DataTable: React.FC<DataTableProps> = ({
                       key={col}
                       style={{ width: columnWidths?.columns[col] }}
                       className={[
-                        `px-2 ${density === 'generous' ? 'py-3' : 'py-2'} font-bold text-[var(--text-accent)] text-left align-bottom sticky top-0 bg-[var(--bg-panel)] data-[theme=liquid-glass]:bg-[var(--mat-panel-bg)] data-[theme=liquid-glass]:backdrop-blur-md z-10 border-b border-l border-[var(--border-grid)] transition-colors`,
+                        `px-2 ${density === 'generous' ? 'py-3' : 'py-2'} font-bold font-mono text-[var(--text-secondary)] text-left align-bottom sticky top-0 bg-[var(--bg-panel)] data-[theme=liquid-glass]:bg-[var(--mat-panel-bg)] data-[theme=liquid-glass]:backdrop-blur-md z-10 border-b border-l border-[var(--border-grid)] transition-colors`,
                         hoveredCol === col ? 'bg-[var(--bg-active)] border-l-[var(--border-color-active)]' : 'border-l-transparent',
                         colVariable ? mergeStyles.mergeHeader : '',
                         isColDragging ? mergeStyles.mergeDragging : '',
@@ -477,7 +473,7 @@ export const DataTable: React.FC<DataTableProps> = ({
                             {tableData.colLetters[col]}
                           </span>
                         )}
-                        <span className="text-[11px] uppercase tracking-wider font-bold">{tableData.colLabels[col]}</span>
+                        <span className="text-[11px] uppercase tracking-wider font-bold">{toUiCaps(tableData.colLabels[col])}</span>
                       </div>
                     </th>
                   );
@@ -485,7 +481,7 @@ export const DataTable: React.FC<DataTableProps> = ({
                 {(tableData.colKeys.length > 1) && (
                   <th
                     style={{ width: columnWidths?.total }}
-                    className="px-2 py-2.5 font-bold text-left text-[var(--text-primary)] bg-[var(--bg-active)] align-bottom sticky top-0 z-10 border-b border-[var(--border-grid)] shadow-[inset_0_-2px_0_var(--border-grid)] text-[11px] uppercase tracking-wider"
+                    className="px-2 py-2.5 font-bold font-mono text-left text-[var(--text-secondary)] bg-[var(--bg-active)] align-bottom sticky top-0 z-10 border-b border-[var(--border-grid)] shadow-[inset_0_-2px_0_var(--border-grid)] text-[11px] uppercase tracking-wider"
                   >
                     Total
                   </th>
@@ -497,7 +493,7 @@ export const DataTable: React.FC<DataTableProps> = ({
               <tr className={`${mergeStyles.totalRow} bg-[var(--bg-surface)] font-semibold border-t border-[var(--border-grid)] border-b border-[var(--border-grid)]`}>
                 <td className={`total-row-label px-2 ${density === 'generous' ? 'py-2.5' : 'py-1.5'} text-[var(--text-secondary)] font-body text-xs font-bold uppercase tracking-wide`}>Total</td>
                 {tableData.colKeys.map(col => (
-                  <td key={col} className={`total-row-cell px-2 ${density === 'generous' ? 'py-2.5' : 'py-1.5'} text-left align-middle data-cell`}>
+                  <td key={col} className={`total-row-cell px-2 ${density === 'generous' ? 'py-2.5' : 'py-1.5'} text-right align-middle data-cell`}>
                     <CrosstabCell
                       key={`coltotal-${animationKey}-${col}`}
                       variant="count"
@@ -509,7 +505,7 @@ export const DataTable: React.FC<DataTableProps> = ({
                   </td>
                 ))}
                 {(tableData.colKeys.length > 1) && (
-                  <td className={`total-row-cell px-2 ${density === 'generous' ? 'py-2.5' : 'py-1.5'} text-left align-middle data-cell bg-[var(--bg-active)]/30`}>
+                  <td className={`total-row-cell px-2 ${density === 'generous' ? 'py-2.5' : 'py-1.5'} text-right align-middle data-cell bg-[var(--bg-active)]/30`}>
                     <CrosstabCell
                       key={`grand-${animationKey}`}
                       variant="count"
@@ -524,20 +520,6 @@ export const DataTable: React.FC<DataTableProps> = ({
             </tbody>
           </table>
         </div>
-        {/* Statistics Status Bar */}
-        <StatisticsStatusBar
-          analysisSettings={analysisSettings}
-          tableStats={tableStats}
-          colVariable={colVariable}
-          overlapCorrected={overlapCorrected}
-          onMethodologyClick={() => setShowMethodology(!showMethodology)}
-        />
-
-        {/* Methodology Drawer */}
-        <MethodologyDrawer
-          isOpen={showMethodology}
-          onClose={() => setShowMethodology(false)}
-        />
 
         {/* Drag ghost */}
         {dragState.isDragging && dragState.draggedItem && (

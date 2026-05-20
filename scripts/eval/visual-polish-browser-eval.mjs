@@ -127,6 +127,23 @@ async function main() {
 
     await shot(page, '01-crosstab-compact');
 
+    // Story Shelf — check immediately after crosstab (before 8s auto-dismiss)
+    const storyBtn = page.getByTestId('story-shelf-suggestion');
+    const storyVisible = await storyBtn.isVisible({ timeout: 8000 }).catch(() => false);
+    record(
+      results,
+      'D-022 Story Shelf — suggestion visible',
+      storyVisible,
+      storyVisible ? 'suggestion chip visible' : 'not visible within 8s'
+    );
+    if (storyVisible) {
+      await shot(page, '05-story-shelf');
+      await storyBtn.click();
+      await page.waitForTimeout(400);
+      const committed = await page.getByText(/over-represented|under-represented|distribution|significantly|even across/i).isVisible().catch(() => false);
+      record(results, 'D-023 Story Shelf — accept', committed);
+    }
+
     const th = page.locator('th').nth(2);
     if (await th.count() > 0) {
       await th.hover();
@@ -167,23 +184,6 @@ async function main() {
       await page.waitForTimeout(700);
       const afterExit = await page.locator('[data-density="compact"]').count();
       record(results, 'D-014 Focus Breathing — density restored on exit', afterExit > 0);
-    }
-
-    // --- Story Shelf (before filter; needs title "New Slide" + sig) ---
-    const storyBtn = page.getByTitle('Click to use suggested title');
-    const storyVisible = await storyBtn.isVisible({ timeout: 5000 }).catch(() => false);
-    record(
-      results,
-      'D-022 Story Shelf — suggestion visible',
-      storyVisible,
-      storyVisible ? 'suggestion chip visible' : 'not visible within 5s'
-    );
-    if (storyVisible) {
-      await shot(page, '05-story-shelf');
-      await storyBtn.click();
-      await page.waitForTimeout(400);
-      const committed = await page.getByText(/over-represented|under-represented|distribution|significantly|even across/i).isVisible().catch(() => false);
-      record(results, 'D-023 Story Shelf — accept', committed);
     }
 
     // --- D-011 Filter re-animate ---

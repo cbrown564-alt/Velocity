@@ -1,4 +1,5 @@
 import type { Filter, Variable } from '../../types';
+import { toTitleCase } from '../text/displayCase';
 
 type LabeledValue = Pick<Variable, 'id' | 'name' | 'label'>;
 
@@ -29,10 +30,11 @@ export function resolveSlideTitle(
 
   const rowLabels = rowVars.map(getDisplayLabel);
   if (!colVar) {
-    return rowLabels.length > 1 ? rowLabels.join(' > ') : rowLabels[0];
+    const raw = rowLabels.length > 1 ? rowLabels.join(' > ') : rowLabels[0];
+    return toTitleCase(raw);
   }
 
-  return `${rowLabels.join(' > ')} by ${getDisplayLabel(colVar)}`;
+  return toTitleCase(`${rowLabels.join(' > ')} by ${getDisplayLabel(colVar)}`);
 }
 
 export function resolveSlideSubtitle(

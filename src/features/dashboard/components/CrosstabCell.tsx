@@ -213,8 +213,12 @@ function SignificanceMarkers({
   return null;
 }
 
+/** Strategy A: numeric block right-aligned; headers stay left in DataTable. */
+const CELL_STACK =
+  'w-full flex flex-col items-end gap-0.5 text-right';
+
 /**
- * Strategy B crosstab cell: left-aligned stack of primary value + secondary metadata.
+ * Crosstab cell: right-aligned stack of primary value + secondary metadata (Strategy A).
  * Supports entry animations (Settling Scale) when animationTrigger is provided.
  */
 export const CrosstabCell: React.FC<CrosstabCellProps> = ({
@@ -253,7 +257,7 @@ export const CrosstabCell: React.FC<CrosstabCellProps> = ({
       <span className={`font-mono ${primarySizeClass} font-bold tabular-nums ${primaryClass}`}>{n}</span>
     );
     return (
-      <div className="flex flex-col items-start gap-0.5 text-left" data-testid="crosstab-cell-count">
+      <div className={CELL_STACK} data-testid="crosstab-cell-count">
         <PhosphorWrap ghost={ghost} formatter={(v) => `${Math.round(v)}`} className={primaryClass}>
           {countDisplay}
         </PhosphorWrap>
@@ -280,8 +284,8 @@ export const CrosstabCell: React.FC<CrosstabCellProps> = ({
       <span className={`font-mono ${primarySizeClass} font-bold tabular-nums ${primaryClass}`}>{displayMean}</span>
     );
     return (
-      <div className="flex flex-col items-start gap-0.5 text-left" data-testid="crosstab-cell-metric">
-        <div className="flex items-baseline gap-1">
+      <div className={CELL_STACK} data-testid="crosstab-cell-metric">
+        <div className="flex w-full items-baseline justify-end gap-1">
           <PhosphorWrap ghost={meanGhost} formatter={(v) => v.toFixed(1)} className={primaryClass}>
             {meanEl}
           </PhosphorWrap>
@@ -329,8 +333,8 @@ export const CrosstabCell: React.FC<CrosstabCellProps> = ({
   );
 
   return (
-    <div className="flex flex-col items-start gap-0.5 text-left" data-testid="crosstab-cell-frequency">
-      <div className="flex items-center gap-0.5">
+    <div className={CELL_STACK} data-testid="crosstab-cell-frequency">
+      <div className="flex w-full items-center justify-end gap-0.5">
         <PhosphorWrap ghost={pctGhost} formatter={(v) => `${v.toFixed(1)}%`} className={primaryClass}>
           {percentEl}
         </PhosphorWrap>

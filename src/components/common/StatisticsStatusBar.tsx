@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
+import { MethodologyDrawer } from './MethodologyPanel';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useReducedMotion, DURATIONS } from '../../lib/motion';
 import { Settings } from 'lucide-react';
@@ -23,8 +24,6 @@ interface StatisticsStatusBarProps {
   colVariable: Variable | null;
   /** Whether overlap correction is active */
   overlapCorrected: boolean;
-  /** Callback to open methodology drawer */
-  onMethodologyClick: () => void;
 }
 
 /**
@@ -38,10 +37,11 @@ export const StatisticsStatusBar: React.FC<StatisticsStatusBarProps> = ({
   tableStats,
   colVariable,
   overlapCorrected,
-  onMethodologyClick,
 }) => {
   const reducedMotion = useReducedMotion();
   const [showSettings, setShowSettings] = useState(false);
+  const [showMethodology, setShowMethodology] = useState(false);
+  const methodologyPillRef = useRef<HTMLButtonElement>(null);
 
   // Determine table type based on column variable's measurement level, not on
   // whether any cells happen to be significant (which gives false negatives when
@@ -90,8 +90,11 @@ export const StatisticsStatusBar: React.FC<StatisticsStatusBarProps> = ({
           {/* Methodology Pill */}
           {(isCatCrossTab || isCatNumeric) ? (
             <button
+              ref={methodologyPillRef}
+              type="button"
               className={`${styles.methodologyPill} ${isCatNumeric ? styles.descriptiveLabel : ''}`}
-              onClick={onMethodologyClick}
+              onClick={() => setShowMethodology((open) => !open)}
+              aria-expanded={showMethodology}
               title="View statistical methodology"
             >
               {getMethodologyText()}
@@ -180,6 +183,12 @@ export const StatisticsStatusBar: React.FC<StatisticsStatusBarProps> = ({
           </motion.div>
         )}
       </AnimatePresence>
+
+      <MethodologyDrawer
+        isOpen={showMethodology}
+        onClose={() => setShowMethodology(false)}
+        anchorRef={methodologyPillRef}
+      />
     </>
   );
 };

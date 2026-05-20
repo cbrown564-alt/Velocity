@@ -77,8 +77,11 @@ export const VariableCard: React.FC<VariableCardProps> = ({
         />
       )}
 
-      <div className="text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors shrink-0 opacity-0 group-hover:opacity-100 -ml-1">
-        <GripVertical size={14} />
+      <div
+        className="w-4 shrink-0 flex items-center justify-center text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors"
+        aria-hidden
+      >
+        <GripVertical size={14} className="opacity-0 group-hover:opacity-100 transition-opacity" />
       </div>
 
       <div className="flex-1 min-w-0 flex items-center gap-2">

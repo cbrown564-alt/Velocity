@@ -416,6 +416,25 @@ function ThemeSwitcher() {
 
 ---
 
+## 10. Data Display Typography (Analysis Canvas)
+
+Crosstabs and slide chrome use a fixed **case map** so stakeholders read hierarchy at a glance (UXP-010–012):
+
+| Surface | Case | Font | Accent |
+| :--- | :--- | :--- | :--- |
+| Slide title (auto or edited) | Title Case (`Gender by Region`) | Display / body per theme | Interactive hover only |
+| Row/column axis headers | UI caps (`GENDER`, `EAST`) | Row axis: body bold; column headers: mono | `text-secondary` — not accent |
+| Category row labels | As ingested (sentence case from data) | Body | — |
+| Cell values (`%`, `n=`, counts, SD) | Numeric formatting | Mono, tabular, **right-aligned** (Strategy A) | Accent only for significance |
+
+**Column alignment (Strategy A):** Axis headers left; numeric block (`%`, `n=`, base counts) right-aligned on a shared edge down the column (Excel / terminal convention).
+
+Implementation: `src/core/text/displayCase.ts` (`toTitleCase`, `toUiCaps`); `resolveSlideTitle` applies Title Case; `DataTable` applies UI caps to headers; `CrosstabCell` stacks values with `items-end`.
+
+**Layout rule (UXP-020):** Never use `opacity-0` on in-flow content that affects column width (e.g. `n=`). Hover-only chrome (pencil, grip) must be `position: absolute` so hover does not shift layout.
+
+---
+
 ## 11. Design Rationale
 
 ### Why Multiple Themes?
