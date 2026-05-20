@@ -5,6 +5,7 @@
 
 import React, { useEffect, useRef, useCallback } from 'react';
 import { useVelocityStore } from '../store';
+import { STORAGE_REMINDER_DELAY_MS } from '../store/toastPolicy';
 import * as opfsFileManager from '../services/opfsFileManager';
 
 type AppMode = 'splash' | 'uploading' | 'dashboard' | 'restoring' | 'metadata';
@@ -37,8 +38,6 @@ export interface PersistenceManagerState {
   restoreActionError: string | null;
   showPartialLoadNotice: boolean;
   persistentStorageGranted: boolean | null;
-  showStorageReminderToast: boolean;
-
   // Derived
   opfsUsageMb: number | null;
   opfsQuotaMb: number | null;
@@ -62,7 +61,6 @@ export interface PersistenceManagerState {
   handleDismissPartialLoadNotice: () => void;
   refreshOpfsDbFiles: () => Promise<void>;
   purgeQuarantinedDbs: () => Promise<void>;
-  setShowStorageReminderToast: React.Dispatch<React.SetStateAction<boolean>>;
   setShowPartialLoadNotice: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
@@ -96,7 +94,6 @@ export function usePersistenceManager(
   const [showPartialLoadNotice, setShowPartialLoadNotice] = React.useState(false);
   const [persistentStorageGranted, setPersistentStorageGranted] = React.useState<boolean | null>(null);
   const [persistentStorageResolved, setPersistentStorageResolved] = React.useState(false);
-  const [showStorageReminderToast, setShowStorageReminderToast] = React.useState(false);
 
   // -- Refs --
   const hasRequestedPersistentStorage = useRef(false);
@@ -378,7 +375,7 @@ export function usePersistenceManager(
 
   const tableConfig = useVelocityStore((state) => state.tableConfig);
 
-  // Storage reminder toast — defer until first analysis shelf use (UXR-005)
+  // Storage reminder — one deferred toast via ToastLayer (UXR-005); avoids stacking on first crosstab
   useEffect(() => {
     if (!dataset?.id || hasShownStorageToast.current) return;
     if (hasSeenStorageToast()) {
@@ -391,14 +388,20 @@ export function usePersistenceManager(
 
     hasShownStorageToast.current = true;
     markStorageToastSeen();
-    setShowStorageReminderToast(true);
-  }, [dataset?.id, tableConfig.rowVars.length, tableConfig.colVar]);
 
-  useEffect(() => {
-    if (!showStorageReminderToast) return;
-    const timer = window.setTimeout(() => setShowStorageReminderToast(false), 10000);
+    const timer = window.setTimeout(() => {
+      useVelocityStore.getState().addToast({
+        dedupeKey: 'storage-reminder',
+        title: 'Saved on this device',
+        message:
+          'Your data stays in this browser only. Use Export Session in the header when you want a portable backup.',
+        type: 'info',
+        duration: 10_000,
+      });
+    }, STORAGE_REMINDER_DELAY_MS);
+
     return () => window.clearTimeout(timer);
-  }, [showStorageReminderToast]);
+  }, [dataset?.id, tableConfig.rowVars.length, tableConfig.colVar]);
 
   // Persistence state handling
   useEffect(() => {
@@ -474,7 +477,6 @@ export function usePersistenceManager(
     restoreActionError,
     showPartialLoadNotice,
     persistentStorageGranted,
-    showStorageReminderToast,
     opfsUsageMb,
     opfsQuotaMb,
     opfsUsagePct,
@@ -493,7 +495,6 @@ export function usePersistenceManager(
     handleDismissPartialLoadNotice,
     refreshOpfsDbFiles,
     purgeQuarantinedDbs,
-    setShowStorageReminderToast,
     setShowPartialLoadNotice,
   };
 }

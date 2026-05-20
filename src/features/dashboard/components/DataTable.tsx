@@ -409,6 +409,7 @@ export const DataTable: React.FC<DataTableProps> = ({
         bleed={frameBleed}
         density={density}
         reducedMotion={reducedMotion}
+        className="h-full min-h-0"
         footer={
           <StatisticsStatusBar
             analysisSettings={analysisSettings}
@@ -418,7 +419,7 @@ export const DataTable: React.FC<DataTableProps> = ({
           />
         }
       >
-        <div ref={tableContainerRef} className="overflow-x-auto overflow-y-auto max-h-[60vh] custom-scrollbar" style={{ position: 'relative' }}>
+        <div ref={tableContainerRef} className={`${mergeStyles.tableScrollRegion} custom-scrollbar`}>
           <table className={`${mergeStyles.crosstabTable} w-full text-sm text-left border-collapse`}>
             <thead className="text-xs bg-[var(--bg-panel)] border-b border-[var(--border-grid)] data-[theme=liquid-glass]:bg-[var(--mat-panel-bg)] data-[theme=liquid-glass]:backdrop-blur-md">
               <tr className="font-body">

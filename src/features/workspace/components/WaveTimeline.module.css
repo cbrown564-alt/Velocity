@@ -104,6 +104,27 @@
   background: color-mix(in srgb, var(--color-error) 10%, transparent);
 }
 
+.deltaPreview {
+  font-size: var(--text-xxs);
+  color: var(--text-secondary);
+  padding: var(--space-1) var(--space-2);
+  background: var(--bg-surface);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+}
+
+.gapPlaceholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1px dashed var(--border-color);
+  color: var(--text-secondary);
+  opacity: 0.7;
+}
+
 /* ============================================================================
    Detailed Timeline
    ============================================================================ */

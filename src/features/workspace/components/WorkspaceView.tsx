@@ -45,6 +45,15 @@ import { ThemeSwitcher } from '../../../components/common/ThemeSwitcher';
 import type { Folder, Variable, VariableSet } from '../../../types';
 import styles from './WorkspaceView.module.css';
 import { WaveTimeline } from './WaveTimeline';
+import { DatasetPortrait } from './DatasetPortrait';
+import {
+  applyWorkspaceCategoryFilter,
+  computeAmbientSearchHints,
+  computeHarmonizationStatus,
+  computeWorkspaceCategoryChips,
+  matchesVariableKeyword,
+  type WorkspaceCategoryChip,
+} from '../lib/workspaceLibrary';
 
 // ============================================================================
 // Types
@@ -210,36 +219,6 @@ const StorageIndicator: React.FC<{
   );
 };
 
-const MiniSparkline: React.FC<{ data?: number[] }> = ({ data }) => {
-  if (!data || data.length === 0) return null;
-
-  const max = Math.max(...data);
-  const min = Math.min(...data);
-  const range = max - min || 1;
-  const width = 60;
-  const height = 24;
-  const padding = 2;
-
-  const points = data.map((value, index) => {
-    const x = padding + (index / (data.length - 1)) * (width - padding * 2);
-    const y = height - padding - ((value - min) / range) * (height - padding * 2);
-    return `${x},${y}`;
-  }).join(' ');
-
-  return (
-    <svg className={styles.sparkline} width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
-      <polyline
-        points={points}
-        fill="none"
-        stroke="var(--color-accent)"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-};
-
 const ProjectBadge: React.FC<{
   project: Project;
   compact?: boolean;
@@ -281,6 +260,7 @@ const DatasetCard: React.FC<{
 }) => {
     const reducedMotion = useReducedMotion();
     const hasSession = Boolean(dataset.sessionState);
+    const isRecentlyOpened = Date.now() - dataset.lastOpenedAt < 24 * 60 * 60 * 1000;
 
     return (
       <motion.div
@@ -303,6 +283,11 @@ const DatasetCard: React.FC<{
             </motion.div>
           )}
         </div>
+
+        {/* Activity dot — Quick Win 9.3 */}
+        {isRecentlyOpened && (
+          <span className={styles.activityDot} title="Opened recently" />
+        )}
 
         {/* Star button */}
         <button
@@ -335,8 +320,8 @@ const DatasetCard: React.FC<{
             <span>{formatFileSize(dataset.fileSize)}</span>
           </div>
 
-          {/* Sparkline preview */}
-          <MiniSparkline data={dataset.thumbnail} />
+          {/* Dataset portrait — Phase 3 library layer */}
+          <DatasetPortrait dataset={dataset} />
 
           {/* Project and wave badges */}
           <div className={styles.badges}>
@@ -441,10 +426,11 @@ const DatasetListItem: React.FC<{
 const ProjectCard: React.FC<{
   project: Project;
   datasets: StoredDataset[];
+  harmonizationStatus: 'complete' | 'partial' | 'none';
   onOpenProject: () => void;
   onOpenDataset?: (dataset: StoredDataset) => void;
   onCompareWaves?: (wave1: StoredDataset, wave2: StoredDataset) => void;
-}> = ({ project, datasets, onOpenProject, onOpenDataset, onCompareWaves }) => {
+}> = ({ project, datasets, harmonizationStatus, onOpenProject, onOpenDataset, onCompareWaves }) => {
   const [showDetails, setShowDetails] = useState(false);
 
   return (
@@ -452,7 +438,19 @@ const ProjectCard: React.FC<{
       className={`${styles.projectCard} ${showDetails ? styles.expanded : ''}`}
       style={{ '--project-color': project.color } as React.CSSProperties}
       layout
+      data-testid="project-card"
     >
+      {project.isLongitudinal && harmonizationStatus !== 'none' && (
+        <span
+          className={`${styles.harmonyRing} ${styles[`harmony_${harmonizationStatus}`]}`}
+          title={
+            harmonizationStatus === 'complete'
+              ? 'Variables aligned across waves'
+              : 'Partial variable overlap — harmonization recommended'
+          }
+          data-testid="harmonization-ring"
+        />
+      )}
       <div className={styles.projectHeader} onClick={onOpenProject}>
         <div className={styles.projectIcon}>
           {project.isLongitudinal ? <Link2 size={18} /> : <FolderOpen size={18} />}
@@ -564,6 +562,7 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
   const [filterMode, setFilterMode] = useState<FilterMode>('recent');
   const [searchQuery, setSearchQuery] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState<WorkspaceCategoryChip['filter'] | null>(null);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [lastSelectedId, setLastSelectedId] = useState<string | null>(null);
   const [contextMenuTarget, setContextMenuTarget] = useState<{
@@ -583,18 +582,33 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
     return map;
   }, [projects]);
 
+  const categoryChips = useMemo(
+    () => computeWorkspaceCategoryChips(datasets, projects),
+    [datasets, projects]
+  );
+
+  const ambientHints = useMemo(
+    () => computeAmbientSearchHints(searchQuery, datasets, projects),
+    [searchQuery, datasets, projects]
+  );
+
   // Filter and sort datasets
   const filteredDatasets = useMemo(() => {
     let result = [...datasets];
 
-    // Apply search
+    // Apply search (filename + variable keyword)
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       result = result.filter(
         d =>
           d.name.toLowerCase().includes(query) ||
-          d.fileName.toLowerCase().includes(query)
+          d.fileName.toLowerCase().includes(query) ||
+          matchesVariableKeyword(d, searchQuery)
       );
+    }
+
+    if (categoryFilter) {
+      result = applyWorkspaceCategoryFilter(result, projects, categoryFilter);
     }
 
     // Apply filter mode
@@ -613,7 +627,7 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
     }
 
     return result;
-  }, [datasets, searchQuery, filterMode]);
+  }, [datasets, searchQuery, filterMode, categoryFilter, projects]);
 
   // Group by project for project view
   const projectsWithDatasets = useMemo(() => {
@@ -684,14 +698,43 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
 
         <div className={styles.headerRight}>
           {/* Search */}
-          <div className={styles.searchBox}>
-            <Search size={16} />
-            <input
-              type="text"
-              placeholder="Search datasets..."
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-            />
+          <div className={styles.searchArea}>
+            <div className={styles.searchBox}>
+              <Search size={16} />
+              <input
+                type="text"
+                placeholder="Search datasets..."
+                value={searchQuery}
+                onChange={e => {
+                  setSearchQuery(e.target.value);
+                  if (!e.target.value) setCategoryFilter(null);
+                }}
+                data-testid="workspace-search-input"
+              />
+            </div>
+            {ambientHints.length > 0 && (
+              <ul className={styles.searchHints} data-testid="workspace-search-hints">
+                {ambientHints.map(hint => (
+                  <li key={hint.id}>{hint.message}</li>
+                ))}
+              </ul>
+            )}
+            {categoryChips.length > 0 && !searchQuery && (
+              <div className={styles.categoryChips} data-testid="workspace-category-chips">
+                {categoryChips.map(chip => (
+                  <button
+                    key={chip.id}
+                    type="button"
+                    className={categoryFilter === chip.filter ? styles.chipActive : ''}
+                    onClick={() =>
+                      setCategoryFilter(prev => (prev === chip.filter ? null : chip.filter))
+                    }
+                  >
+                    {chip.count} {chip.label}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className={styles.headerActions}>
@@ -903,6 +946,7 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
                       key={project.id}
                       project={project}
                       datasets={pDatasets}
+                      harmonizationStatus={computeHarmonizationStatus(project, pDatasets)}
                       onOpenProject={() => {
                         // Open first dataset in project
                         if (pDatasets.length > 0) {

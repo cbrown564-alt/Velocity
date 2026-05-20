@@ -9,10 +9,17 @@ export default defineConfig({
   testMatch: '**/*.spec.ts',
   timeout: 120000,
   retries: process.env.CI ? 1 : 0,
+  expect: {
+    toHaveScreenshot: {
+      maxDiffPixelRatio: 0.02,
+      animations: 'disabled',
+    },
+  },
   use: {
     baseURL,
     browserName: 'chromium',
     trace: 'retain-on-failure',
+    viewport: { width: 1440, height: 900 },
   },
   webServer: {
     command: `npm run dev -- --host ${host} --port ${port}`,

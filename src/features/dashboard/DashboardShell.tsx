@@ -93,6 +93,7 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
     reorderRowVars,
     setWeightVariable,
     setSelectedVariableSetId,
+    hoveredVariableSetId,
   } = useVelocityStore();
 
   const { resolvedRowVars, resolvedColVar, firstRowVarSet } = useResolvedVariables();
@@ -454,6 +455,7 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
                   variableSets={filteredSets}
                   selectedIds={selectedSetIds}
                   focusedId={selectedVariableSetId}
+                  hoveredId={hoveredVariableSetId}
                   onRecode={handleRecodeClick}
                   onClick={handleVariableClick}
                   onContextMenu={handleContextMenu}

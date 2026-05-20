@@ -6,6 +6,7 @@
  */
 
 import type { StateCreator } from 'zustand';
+import { MAX_VISIBLE_TOASTS } from '../toastPolicy';
 import type { VariableType } from './dataSlice';
 import type { Variable } from './dataSlice';
 import type { ExportConfig } from '../../core/export/types';
@@ -43,8 +44,12 @@ export interface AnalysisExportModalState {
 export interface Toast {
     id: string;
     message: string;
+    /** Short headline — avoids long single-line blobs */
+    title?: string;
     type: 'success' | 'info' | 'warning' | 'error';
     duration?: number;
+    /** Replace an existing toast with the same key instead of stacking */
+    dedupeKey?: string;
     action?: {
         label: string;
         onClick: () => void;
@@ -91,6 +96,10 @@ export interface UISlice {
     commandPaletteOpen: boolean;
     /** Keyboard shortcut reference open state */
     shortcutsOpen: boolean;
+    /** Whether the user has already seen the auto-crosstab onboarding */
+    hasSeenAutoCrosstab: boolean;
+    /** Cross-surface hover state for Living Inspector (Manager ↔ Canvas sidebar) */
+    hoveredVariableSetId: string | null;
 
     // Miller Column Navigation State
     /** Selected data source ID (for future multi-source support) */
@@ -156,6 +165,11 @@ export interface UISlice {
     // Shortcuts Reference
     openShortcuts: () => void;
     closeShortcuts: () => void;
+
+    // Onboarding
+    markAutoCrosstabSeen: () => void;
+    // Living Inspector (cross-surface hover)
+    setHoveredVariableSetId: (id: string | null) => void;
 }
 
 const DEFAULT_WAVE_BANNER: WaveDetectionBannerState = {
@@ -184,6 +198,8 @@ export const createUISlice: StateCreator<UISlice, [], [], UISlice> = (set) => ({
     toasts: [],
     commandPaletteOpen: false,
     shortcutsOpen: false,
+    hasSeenAutoCrosstab: false,
+    hoveredVariableSetId: null,
 
     // Miller Column Navigation State
     selectedDataSourceId: null,
@@ -316,9 +332,24 @@ export const createUISlice: StateCreator<UISlice, [], [], UISlice> = (set) => ({
     toggleTableDensity: () => set((state) => ({ tableDensity: state.tableDensity === 'compact' ? 'generous' : 'compact' })),
 
     // Toast Actions
-    addToast: (toast) => set((state) => ({
-        toasts: [...state.toasts, { ...toast, id: crypto.randomUUID(), duration: toast.duration ?? 4000 }],
-    })),
+    addToast: (toast) => set((state) => {
+        const withoutDupes = state.toasts.filter((existing) => {
+            if (toast.dedupeKey && existing.dedupeKey === toast.dedupeKey) return false;
+            if (!toast.dedupeKey && existing.message === toast.message) return false;
+            return true;
+        });
+        const entry: Toast = {
+            ...toast,
+            id: crypto.randomUUID(),
+            duration: toast.duration ?? 4000,
+        };
+        const next = [...withoutDupes, entry];
+        return {
+            toasts: next.length > MAX_VISIBLE_TOASTS
+                ? next.slice(-MAX_VISIBLE_TOASTS)
+                : next,
+        };
+    }),
     dismissToast: (id) => set((state) => ({
         toasts: state.toasts.filter((t) => t.id !== id),
     })),
@@ -331,4 +362,10 @@ export const createUISlice: StateCreator<UISlice, [], [], UISlice> = (set) => ({
     // Shortcuts Reference Actions
     openShortcuts: () => set({ shortcutsOpen: true }),
     closeShortcuts: () => set({ shortcutsOpen: false }),
+
+    // Onboarding Actions
+    markAutoCrosstabSeen: () => set({ hasSeenAutoCrosstab: true }),
+
+    // Living Inspector Actions
+    setHoveredVariableSetId: (id) => set({ hoveredVariableSetId: id }),
 });

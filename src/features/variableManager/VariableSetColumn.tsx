@@ -12,7 +12,7 @@
 import React, { useMemo, useEffect, useCallback } from 'react';
 import { useDraggable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
-import { ChevronRight, EyeOff, CheckCircle } from 'lucide-react';
+import { ChevronRight, EyeOff, CheckCircle, GitBranch } from 'lucide-react';
 import { List, useListRef, type RowComponentProps } from 'react-window';
 import { useVelocityStore } from '../../store';
 import type { VariableSet, Dataset } from '../../store/slices/dataSlice';
@@ -35,6 +35,8 @@ interface VariableSetItemProps {
     dataset: Dataset | null; // Needed for value labels
     isActive: boolean;
     isSelected: boolean;
+    isHoverLinked?: boolean;
+    derivedFromName?: string;
     onClick: (e: React.MouseEvent) => void;
     onHover: () => void;
     onContextMenu?: (e: React.MouseEvent) => void;
@@ -42,6 +44,7 @@ interface VariableSetItemProps {
     histogramBins?: any[]; // HistogramBin[] from worker
     topCategory?: { label: string; percent: number; count: number }; // For Nominal Leaderboard
     missingPercent?: number;
+    valueCount?: number; // Number of distinct values (for label quality dot)
 }
 
 const getStructureLabel = (structure: string, count: number) => {
@@ -51,10 +54,30 @@ const getStructureLabel = (structure: string, count: number) => {
     return `${count} items`;
 };
 
+const getLabelQuality = (
+    variableSet: VariableSet,
+    dataset: Dataset | null,
+    valueCount?: number
+): 'none' | 'partial' | 'full' | null => {
+    if (!dataset || variableSet.variableIds.length !== 1) return null;
+    const variable = dataset.variables.find(v => v.id === variableSet.variableIds[0]);
+    if (!variable) return null;
+    const labelCount = variable.valueLabels?.length ?? 0;
+    if (labelCount === 0) return 'none';
+    if (valueCount && valueCount > 0) {
+        return labelCount >= valueCount ? 'full' : 'partial';
+    }
+    // Fallback heuristic when stats not yet loaded
+    return labelCount >= 3 ? 'full' : 'partial';
+};
+
 const VariableSetItem: React.FC<VariableSetItemProps> = ({
     variableSet,
+    dataset,
     isActive,
     isSelected,
+    isHoverLinked,
+    derivedFromName,
     onClick,
     onHover,
     onContextMenu,
@@ -62,9 +85,11 @@ const VariableSetItem: React.FC<VariableSetItemProps> = ({
     histogramBins,
     topCategory,
     missingPercent,
+    valueCount,
 }) => {
     const varCount = variableSet.variableIds.length;
     const structureLabel = getStructureLabel(variableSet.structure, varCount);
+    const labelQuality = getLabelQuality(variableSet, dataset, valueCount);
 
     const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
         id: variableSet.id,
@@ -88,7 +113,7 @@ const VariableSetItem: React.FC<VariableSetItemProps> = ({
             onClick={onClick}
             onMouseEnter={onHover}
             onContextMenu={onContextMenu}
-            className={`${styles.item} ${isActive ? styles.itemActive : ''}`}
+            className={`${styles.item} ${isActive ? styles.itemActive : ''} ${isHoverLinked && !isActive ? styles.itemHoverLinked : ''}`}
         >
             <div className={styles.itemContent}>
                 <span className={styles.itemIcon} style={
@@ -114,7 +139,28 @@ const VariableSetItem: React.FC<VariableSetItemProps> = ({
                             }}
                         />
                     )}
+                    {derivedFromName && (
+                        <span
+                            className={styles.lineageBadge}
+                            title={`Derived from ${derivedFromName} via recode`}
+                        >
+                            <GitBranch size={10} />
+                        </span>
+                    )}
                 </span>
+                {labelQuality && (
+                    <span
+                        className={styles.labelQualityDot}
+                        data-quality={labelQuality}
+                        title={
+                            labelQuality === 'full'
+                                ? 'All values labeled'
+                                : labelQuality === 'partial'
+                                    ? 'Some values unlabeled'
+                                    : 'No value labels'
+                        }
+                    />
+                )}
             </div>
             <div className={styles.itemMeta}>
                 {(frequencies || histogramBins || topCategory) && (
@@ -152,11 +198,14 @@ type VariableSetRowProps = {
     dataset: Dataset | null;
     selectedVariableSetId: string | null | undefined;
     selectedVariableSetIds: string[];
+    hoveredVariableSetId: string | null;
+    transformLog: { sourceColId: string; newColId: string; type: string }[];
     getStatsForSet: (vs: VariableSet) => {
         frequencies: number[] | undefined;
         missingPercent: number | undefined;
         histogramBins: any[] | undefined;
         topCategory: { label: string; percent: number; count: number } | undefined;
+        valueCount: number | undefined;
     };
     onClickSet: (vs: VariableSet, e: React.MouseEvent) => void;
     onHoverSet: (vs: VariableSet) => void;
@@ -170,6 +219,8 @@ const VariableSetRow = ({
     dataset,
     selectedVariableSetId,
     selectedVariableSetIds,
+    hoveredVariableSetId,
+    transformLog,
     getStatsForSet,
     onClickSet,
     onHoverSet,
@@ -178,7 +229,17 @@ const VariableSetRow = ({
     const vs = filteredSets[index];
     if (!vs) return <></>;
 
-    const { frequencies, missingPercent, histogramBins, topCategory } = getStatsForSet(vs);
+    const { frequencies, missingPercent, histogramBins, topCategory, valueCount } = getStatsForSet(vs);
+
+    // Recode Chronicle: resolve parent variable name for derived sets
+    let derivedFromName: string | undefined;
+    if (vs.derived && vs.variableIds.length === 1) {
+        const transform = transformLog.find(t => t.newColId === vs.variableIds[0]);
+        if (transform) {
+            const sourceVar = dataset?.variables.find(v => v.id === transform.sourceColId);
+            derivedFromName = sourceVar?.label || sourceVar?.name;
+        }
+    }
 
     return (
         <div style={style}>
@@ -187,6 +248,8 @@ const VariableSetRow = ({
                 dataset={dataset}
                 isActive={selectedVariableSetId === vs.id}
                 isSelected={selectedVariableSetIds.includes(vs.id)}
+                isHoverLinked={hoveredVariableSetId === vs.id}
+                derivedFromName={derivedFromName}
                 onClick={(e) => onClickSet(vs, e)}
                 onHover={() => onHoverSet(vs)}
                 onContextMenu={(e) => onContextMenuSet(vs, e)}
@@ -194,6 +257,7 @@ const VariableSetRow = ({
                 histogramBins={histogramBins}
                 topCategory={topCategory}
                 missingPercent={missingPercent}
+                valueCount={valueCount}
             />
         </div>
     );
@@ -221,6 +285,9 @@ export const VariableSetColumn: React.FC = () => {
         setActiveFolderId,
         facetFilters,
         convertMultipleToGrid,
+        hoveredVariableSetId,
+        setHoveredVariableSetId,
+        transformLog,
     } = useVelocityStore();
 
     const listRef = useListRef(null);
@@ -318,18 +385,19 @@ export const VariableSetColumn: React.FC = () => {
     // Helper to get stats for a variable set (uses first variable for single sets)
     const getStatsForSet = useCallback((variableSet: VariableSet) => {
         if (variableSet.variableIds.length !== 1) {
-            return { frequencies: undefined, missingPercent: undefined, histogramBins: undefined, topCategory: undefined };
+            return { frequencies: undefined, missingPercent: undefined, histogramBins: undefined, topCategory: undefined, valueCount: undefined };
         }
 
         const variableId = variableSet.variableIds[0];
         const stats = variableStats[variableId];
 
         if (!stats) {
-            return { frequencies: undefined, missingPercent: undefined, histogramBins: undefined, topCategory: undefined };
+            return { frequencies: undefined, missingPercent: undefined, histogramBins: undefined, topCategory: undefined, valueCount: undefined };
         }
 
         const frequencies = stats.frequencies.map(f => f.count);
         const histogramBins = stats.numeric?.histogramBins;
+        const valueCount = stats.frequencies.length;
 
         const missingPercent = stats.totalCount > 0
             ? (stats.missingCount / stats.totalCount) * 100
@@ -358,18 +426,19 @@ export const VariableSetColumn: React.FC = () => {
             }
         }
 
-        return { frequencies, missingPercent, histogramBins, topCategory };
+        return { frequencies, missingPercent, histogramBins, topCategory, valueCount };
     }, [variableStats, dataset]);
 
-    // Load stats on hover (immediate trigger for the hovered item)
+    // Load stats on hover + cross-surface hover state (Living Inspector)
     const handleHover = useCallback((variableSet: VariableSet) => {
+        setHoveredVariableSetId(variableSet.id);
         if (variableSet.variableIds.length === 1) {
             const variableId = variableSet.variableIds[0];
             getVariableStats(variableId).catch(err => {
                 console.warn('[VariableSetColumn] Failed to fetch stats:', err);
             });
         }
-    }, [getVariableStats]);
+    }, [getVariableStats, setHoveredVariableSetId]);
 
     // Load stats for all rows as they scroll into view
     const handleRowsRendered = useCallback(
@@ -425,11 +494,13 @@ export const VariableSetColumn: React.FC = () => {
         dataset,
         selectedVariableSetId: selectedVariableSetId ?? null,
         selectedVariableSetIds,
+        hoveredVariableSetId,
+        transformLog,
         getStatsForSet,
         onClickSet: handleClick,
         onHoverSet: handleHover,
         onContextMenuSet: handleContextMenu,
-    }), [filteredSets, dataset, selectedVariableSetId, selectedVariableSetIds, getStatsForSet, handleClick, handleHover, handleContextMenu]);
+    }), [filteredSets, dataset, selectedVariableSetId, selectedVariableSetIds, hoveredVariableSetId, transformLog, getStatsForSet, handleClick, handleHover, handleContextMenu]);
 
     if (!dataset) {
         return (
@@ -446,7 +517,7 @@ export const VariableSetColumn: React.FC = () => {
     }
 
     return (
-        <div className={`${styles.column} ${styles.col3}`}>
+        <div className={`${styles.column} ${styles.col3}`} onMouseLeave={() => setHoveredVariableSetId(null)}>
             <div className={styles.columnHeader}>
                 <span className={styles.columnTitle}>Variable Sets</span>
                 <span style={{ fontSize: 'var(--text-xs)', color: 'var(--text-tertiary)' }}>

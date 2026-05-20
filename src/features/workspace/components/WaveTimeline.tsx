@@ -8,8 +8,8 @@
  * - Date information
  */
 
-import React, { useMemo } from 'react';
-import { motion } from 'framer-motion';
+import React, { useMemo, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useReducedMotion, DURATIONS } from '../../../lib/motion';
 import {
   Layers,
@@ -21,8 +21,13 @@ import {
   AlertTriangle,
   CheckCircle2,
   Database,
+  Plus,
 } from 'lucide-react';
 import type { StoredDataset, Project } from './WorkspaceView';
+import {
+  computeWaveDeltaPreview,
+  findWaveGaps,
+} from '../lib/workspaceLibrary';
 import styles from './WaveTimeline.module.css';
 
 interface WaveTimelineProps {
@@ -67,6 +72,7 @@ export const WaveTimeline: React.FC<WaveTimelineProps> = ({
   onCompareWaves,
 }) => {
   const reducedMotion = useReducedMotion();
+  const [hoveredWaveId, setHoveredWaveId] = useState<string | null>(null);
 
   // Calculate wave statistics
   const waveStats = useMemo((): WaveStats[] => {
@@ -113,6 +119,9 @@ export const WaveTimeline: React.FC<WaveTimelineProps> = ({
     };
   }, [waveStats]);
 
+  const waveGaps = useMemo(() => findWaveGaps(datasets), [datasets]);
+  const baseline = waveStats[0]?.dataset;
+
   if (waveStats.length === 0) {
     return (
       <div className={styles.emptyTimeline}>
@@ -132,9 +141,12 @@ export const WaveTimeline: React.FC<WaveTimelineProps> = ({
               <motion.button
                 className={styles.compactWaveNode}
                 onClick={() => onWaveClick?.(wave.dataset)}
+                onMouseEnter={() => setHoveredWaveId(wave.dataset.id)}
+                onMouseLeave={() => setHoveredWaveId(null)}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
                 style={{ '--project-color': project.color } as React.CSSProperties}
+                data-testid={`wave-node-${wave.waveNumber}`}
               >
                 <span className={styles.compactWaveNumber}>W{wave.waveNumber}</span>
                 {wave.attritionRate && wave.attritionRate > 10 && (
@@ -143,6 +155,11 @@ export const WaveTimeline: React.FC<WaveTimelineProps> = ({
                   </span>
                 )}
               </motion.button>
+              {index < waveStats.length - 1 && waveGaps.includes(wave.waveNumber + 1) && (
+                <div className={styles.gapPlaceholder} title={`Wave ${wave.waveNumber + 1} missing`} data-testid="wave-gap">
+                  <Plus size={10} />
+                </div>
+              )}
               {index < waveStats.length - 1 && (
                 <div className={styles.compactConnector}>
                   <ArrowRight size={12} />
@@ -156,6 +173,28 @@ export const WaveTimeline: React.FC<WaveTimelineProps> = ({
             {studyHealth.overallRetention}% retained
           </div>
         )}
+        <AnimatePresence>
+          {hoveredWaveId && baseline && (() => {
+            const wave = waveStats.find(w => w.dataset.id === hoveredWaveId);
+            if (!wave || wave.dataset.id === baseline.id) return null;
+            const prev = waveStats[waveStats.findIndex(w => w.dataset.id === hoveredWaveId) - 1]?.dataset;
+            const delta = computeWaveDeltaPreview(wave.dataset, baseline, prev);
+            const varSign = delta.variableDelta >= 0 ? '+' : '';
+            const rateSign = delta.responseDelta !== undefined && delta.responseDelta < 0 ? '↓' : '↑';
+            return (
+              <motion.div
+                className={styles.deltaPreview}
+                initial={{ opacity: 0, y: reducedMotion ? 0 : 4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                data-testid="wave-delta-preview"
+              >
+                {varSign}{delta.variableDelta} variables vs Wave 1 · {delta.responseRate}% response
+                {delta.responseDelta !== undefined && ` (${rateSign}${Math.abs(delta.responseDelta)}%)`}
+              </motion.div>
+            );
+          })()}
+        </AnimatePresence>
       </div>
     );
   }
@@ -211,6 +250,8 @@ export const WaveTimeline: React.FC<WaveTimelineProps> = ({
               <motion.button
                 className={styles.waveCard}
                 onClick={() => onWaveClick?.(wave.dataset)}
+                onMouseEnter={() => setHoveredWaveId(wave.dataset.id)}
+                onMouseLeave={() => setHoveredWaveId(null)}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >

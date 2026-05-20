@@ -355,6 +355,29 @@ export default function App() {
     [sessionImportDiagnostics]
   );
 
+  // Session import adjustments — one summary toast (replaces overlapping fixed overlay)
+  useEffect(() => {
+    if (!sessionImportDiagnostics || sessionImportMessages.length === 0) return;
+
+    const preview = sessionImportMessages
+      .slice(0, 2)
+      .map((item) => item.message)
+      .join(' ');
+    const extra =
+      sessionImportMessages.length > 2
+        ? ` (+${sessionImportMessages.length - 2} more)`
+        : '';
+
+    useVelocityStore.getState().addToast({
+      dedupeKey: 'session-import',
+      title: 'Session imported with adjustments',
+      message: `${preview}${extra}`.trim(),
+      type: 'warning',
+      duration: 10_000,
+    });
+    setSessionImportDiagnostics(null);
+  }, [sessionImportDiagnostics, sessionImportMessages]);
+
   // -- Workspace handlers --
   const materializeDatasetTable = useCallback(async (datasetId: string) => {
     if (!engineProxy) return false;
@@ -822,58 +845,6 @@ export default function App() {
             onRebuild={() => { persistence.setShowPartialLoadNotice(false); void persistence.rebuildFromOpfsSource('dashboard'); }}
             onDismiss={persistence.handleDismissPartialLoadNotice}
           />
-        )}
-      </AnimatePresence>
-
-      {/* STORAGE REMINDER TOAST */}
-      <AnimatePresence>
-        {persistence.showStorageReminderToast && dataset && (
-          <motion.div {...getMotionProps({ preset: 'slideUp', duration: DURATIONS.normal, reducedMotion })}
-            className="fixed bottom-6 right-6 z-[120] w-full max-w-sm rounded-lg border border-[var(--border-color)] bg-[var(--bg-surface)] shadow-xl p-4">
-            <div className="flex items-start gap-3">
-              <AlertCircle size={16} className="mt-0.5 text-[var(--color-accent)] shrink-0" />
-              <div className="flex-1 space-y-2">
-                <p className="text-sm text-[var(--text-primary)]">
-                  Your data is stored locally in this browser only. Use <strong>Export Session</strong> to save a portable backup.
-                </p>
-                <div className="flex items-center gap-2">
-                  <button onClick={handleExportSession}
-                    className="px-3 py-1.5 text-xs rounded-md bg-[var(--color-accent)] text-[var(--text-inverse)] hover:opacity-90 transition-opacity">
-                    Export Session
-                  </button>
-                  <button onClick={() => persistence.setShowStorageReminderToast(false)}
-                    className="p-1.5 rounded-md text-[var(--text-secondary)] hover:bg-[var(--bg-active)]" aria-label="Dismiss">
-                    <X size={14} />
-                  </button>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* SESSION IMPORT DIAGNOSTICS TOAST */}
-      <AnimatePresence>
-        {sessionImportDiagnostics && dataset && sessionImportMessages.length > 0 && (
-          <motion.div {...getMotionProps({ preset: 'slideUp', duration: DURATIONS.normal, reducedMotion })}
-            className={`fixed right-6 z-[121] w-full max-w-sm rounded-lg border border-[var(--status-warning-border)] bg-[var(--status-warning-surface)] shadow-xl p-4 ${persistence.showStorageReminderToast ? 'bottom-36' : 'bottom-6'}`}>
-            <div className="flex items-start gap-3">
-              <AlertCircle size={16} className="mt-0.5 text-[var(--status-warning-text)] shrink-0" />
-              <div className="flex-1 space-y-2">
-                <div className="space-y-1">
-                  <p className="text-sm font-semibold text-[var(--status-warning-text)]">Session imported with adjustments</p>
-                  <p className="text-xs text-[var(--text-primary)]">Some saved references did not match the uploaded dataset.</p>
-                </div>
-                <ul className="list-disc pl-4 space-y-1 text-xs text-[var(--text-secondary)]">
-                  {sessionImportMessages.map((item) => <li key={item.id}>{item.message}</li>)}
-                </ul>
-              </div>
-              <button onClick={() => setSessionImportDiagnostics(null)}
-                className="p-1.5 rounded-md text-[var(--status-warning-text)] hover:bg-[var(--bg-hover)]" aria-label="Dismiss session import diagnostics">
-                <X size={14} />
-              </button>
-            </div>
-          </motion.div>
         )}
       </AnimatePresence>
 

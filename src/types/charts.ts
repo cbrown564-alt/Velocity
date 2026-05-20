@@ -77,6 +77,8 @@ export interface BaseChartRendererProps {
     hoveredKey?: string | null;
     /** Callback when hover state changes */
     onHoverChange?: (key: string | null) => void;
+    /** Inspector §9.2: bars grow from baseline when stats first render */
+    animateBarEntrance?: boolean;
 }
 
 /**

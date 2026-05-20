@@ -1,5 +1,5 @@
 /**
- * FacetedSearchBar Styles
+ * FacetedSearchBar Styles — Smart Facets (Phase 1 Back-Room Delight)
  *
  * Search interface that integrates with Velocity's dynamic
  * theme system and semantic token architecture.
@@ -21,14 +21,101 @@
 }
 
 /* ============================================================================
-   Facet Dropdown
+   Facet Group (shared dropdown positioning)
    ============================================================================ */
 
 .facetGroup {
   position: relative;
 }
 
-.facetButton {
+/* ============================================================================
+   Type Distribution Mini-Bar
+   ============================================================================ */
+
+.typeFacet {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-2);
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-sm);
+}
+
+.typeBars {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 20px;
+}
+
+.typeBar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  width: 20px;
+  height: 100%;
+  padding: 0;
+  border: none;
+  border-radius: var(--border-radius-sm);
+  background: transparent;
+  cursor: pointer;
+  gap: 2px;
+  transition: background-color var(--transition-fast);
+}
+
+.typeBar:hover {
+  background-color: var(--bg-active);
+}
+
+.typeBarActive {
+  background-color: color-mix(in srgb, var(--color-accent) 12%, var(--bg-active));
+}
+
+.typeBarEmpty {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.typeBarEmpty:hover {
+  background: transparent;
+}
+
+.typeBarFill {
+  width: 4px;
+  min-height: 2px;
+  background-color: var(--color-accent);
+  border-radius: 1px;
+  transition: height 0.2s ease-out;
+}
+
+.typeBarActive .typeBarFill {
+  background-color: var(--color-accent);
+  box-shadow: 0 0 4px color-mix(in srgb, var(--color-accent) 40%, transparent);
+}
+
+.typeBarEmpty .typeBarFill {
+  background-color: var(--border-color-muted);
+}
+
+.typeBarLabel {
+  font-size: 8px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.typeBarActive .typeBarLabel {
+  color: var(--color-accent);
+}
+
+/* ============================================================================
+   Insight Buttons (Quality + Status)
+   ============================================================================ */
+
+.insightButton {
   display: flex;
   align-items: center;
   gap: var(--space-1);
@@ -43,50 +130,84 @@
   transition: background-color var(--transition-fast), border-color var(--transition-fast);
 }
 
-.facetButton:hover {
+.insightButton:hover {
   background-color: var(--bg-active);
   border-color: var(--border-color-muted);
 }
 
-.facetButtonActive {
+.insightButtonActive {
   background-color: var(--color-accent);
   border-color: var(--color-accent);
   color: var(--text-inverse);
 }
 
-.facetButtonActive:hover {
+.insightButtonActive:hover {
   background-color: var(--color-accent-hover);
   opacity: 1;
 }
 
-.facetCount {
+.insightButtonAttention {
+  border-color: var(--viz-palette-2);
+}
+
+.insightButtonAttention:hover {
+  border-color: var(--viz-palette-2);
+  background-color: color-mix(in srgb, var(--viz-palette-2) 8%, var(--bg-active));
+}
+
+.insightButtonAttention.insightButtonActive {
+  background-color: var(--viz-palette-2);
+  border-color: var(--viz-palette-2);
+  color: var(--text-inverse);
+}
+
+.facetLabel {
+  font-weight: 500;
+}
+
+.insightBadge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   min-width: 16px;
   height: 16px;
   padding: 0 4px;
-  background-color: var(--bg-active);
+  background-color: var(--destructive);
   border-radius: 8px;
   font-size: 10px;
   font-weight: 600;
-  color: currentColor;
+  color: var(--text-inverse);
+  gap: 2px;
 }
 
-.facetButtonActive .facetCount {
-  background-color: rgba(255, 255, 255, 0.2);
+.insightButtonActive .insightBadge {
+  background-color: rgba(255, 255, 255, 0.25);
+}
+
+.insightBadgeMuted {
+  background-color: var(--text-tertiary);
+}
+
+.insightOk {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--status-success-text);
+}
+
+.insightButtonActive .insightOk {
+  color: rgba(255, 255, 255, 0.8);
 }
 
 /* ============================================================================
-   Dropdown Menu
+   Insight Dropdown (Quality + Status)
    ============================================================================ */
 
-.dropdown {
+.insightDropdown {
   position: absolute;
   top: 100%;
   left: 0;
   z-index: 100;
-  min-width: 160px;
+  min-width: 220px;
   margin-top: var(--space-1);
   padding: var(--space-2);
   background-color: var(--mat-overlay-bg, var(--bg-surface));
@@ -96,6 +217,10 @@
   border-radius: var(--border-radius-md);
   box-shadow: var(--shadow-float);
 }
+
+/* ============================================================================
+   Dropdown Item (shared)
+   ============================================================================ */
 
 .dropdownItem {
   display: flex;
@@ -144,6 +269,62 @@
   font-family: var(--font-body);
   font-size: var(--text-sm);
   color: var(--text-primary);
+  flex: 1;
+}
+
+.dropdownCount {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  background: var(--bg-active);
+  padding: 1px 6px;
+  border-radius: 8px;
+}
+
+/* ============================================================================
+   Suggestion & Action Items
+   ============================================================================ */
+
+.suggestionItem {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  margin-top: var(--space-1);
+  border-top: 1px solid var(--border-color);
+  font-size: 11px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.suggestionItem svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: var(--viz-palette-2);
+}
+
+.actionItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  margin-top: var(--space-1);
+  border: none;
+  border-top: 1px solid var(--border-color);
+  border-radius: 0 0 var(--border-radius-sm) var(--border-radius-sm);
+  background: transparent;
+  color: var(--color-accent);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.actionItem:hover {
+  background-color: var(--bg-active);
 }
 
 /* ============================================================================

@@ -1,15 +1,17 @@
 /**
- * ToastLayer — Floating toast notification stack
+ * ToastLayer — Single bottom-right notification stack
  *
- * Bottom-right toast system for operation feedback.
- * Auto-dismisses after configurable duration.
+ * All transient feedback (backup reminder, session import, operations) routes here
+ * so messages do not overlap separate fixed overlays in App.tsx.
  */
 
 import React, { useEffect, useCallback } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { X, CheckCircle2, Info, AlertCircle, AlertTriangle } from 'lucide-react';
 import { useVelocityStore } from '../../store';
+import type { Toast } from '../../store/slices/uiSlice';
 import { getMotionProps, useReducedMotion, DURATIONS } from '../../lib/motion';
+import styles from './ToastLayer.module.css';
 
 const ICONS = {
   success: CheckCircle2,
@@ -18,27 +20,37 @@ const ICONS = {
   error: AlertCircle,
 } as const;
 
-const ICON_COLORS = {
-  success: 'text-[var(--color-success)]',
-  info: 'text-[var(--color-accent)]',
-  warning: 'text-[var(--status-warning-text)]',
-  error: 'text-[var(--color-error)]',
-} as const;
+const TOAST_CLASS: Record<Toast['type'], string> = {
+  success: styles.toastSuccess,
+  info: styles.toastInfo,
+  warning: styles.toastWarning,
+  error: styles.toastError,
+};
 
-const BORDER_COLORS = {
-  success: 'border-[var(--color-success)]/20',
-  info: 'border-[var(--color-accent)]/20',
-  warning: 'border-[var(--status-warning-border)]',
-  error: 'border-[var(--color-error)]/20',
-} as const;
+const ICON_CLASS: Record<Toast['type'], string> = {
+  success: styles.iconSuccess,
+  info: styles.iconInfo,
+  warning: styles.iconWarning,
+  error: styles.iconError,
+};
 
 export const ToastLayer: React.FC = () => {
   const toasts = useVelocityStore((state) => state.toasts);
   const dismissToast = useVelocityStore((state) => state.dismissToast);
   const reducedMotion = useReducedMotion();
 
+  if (toasts.length === 0) {
+    return null;
+  }
+
   return (
-    <div className="fixed bottom-6 right-6 z-[130] flex flex-col gap-3 w-full max-w-sm pointer-events-none">
+    <div
+      className={styles.region}
+      role="region"
+      aria-label="Notifications"
+      aria-live="polite"
+      aria-relevant="additions removals"
+    >
       <AnimatePresence mode="popLayout">
         {toasts.map((toast) => (
           <ToastItem
@@ -54,24 +66,14 @@ export const ToastLayer: React.FC = () => {
 };
 
 interface ToastItemProps {
-  toast: {
-    id: string;
-    message: string;
-    type: 'success' | 'info' | 'warning' | 'error';
-    duration?: number;
-    action?: {
-      label: string;
-      onClick: () => void;
-    };
-  };
+  toast: Toast;
   reducedMotion: boolean;
   onDismiss: (id: string) => void;
 }
 
 const ToastItem: React.FC<ToastItemProps> = ({ toast, reducedMotion, onDismiss }) => {
   const Icon = ICONS[toast.type];
-  const iconColor = ICON_COLORS[toast.type];
-  const borderColor = BORDER_COLORS[toast.type];
+  const iconClass = ICON_CLASS[toast.type];
 
   const handleDismiss = useCallback(() => {
     onDismiss(toast.id);
@@ -81,7 +83,7 @@ const ToastItem: React.FC<ToastItemProps> = ({ toast, reducedMotion, onDismiss }
     const duration = toast.duration ?? 4000;
     const timer = setTimeout(handleDismiss, duration);
     return () => clearTimeout(timer);
-  }, [toast.duration, handleDismiss]);
+  }, [toast.duration, handleDismiss, toast.id]);
 
   return (
     <motion.div
@@ -91,26 +93,29 @@ const ToastItem: React.FC<ToastItemProps> = ({ toast, reducedMotion, onDismiss }
         reducedMotion,
       })}
       layout
-      className={`pointer-events-auto rounded-lg border ${borderColor} bg-[var(--bg-surface)] shadow-xl p-4 flex items-start gap-3`}
+      className={`${styles.toast} ${TOAST_CLASS[toast.type]}`}
     >
-      <Icon size={18} className={`mt-0.5 shrink-0 ${iconColor}`} />
-      <div className="flex-1 min-w-0">
-        <p className="text-sm text-[var(--text-primary)] leading-relaxed">{toast.message}</p>
-        {toast.action && (
+      <Icon size={18} className={`mt-0.5 shrink-0 ${iconClass}`} aria-hidden />
+      <div className={styles.body}>
+        {toast.title ? <p className={styles.title}>{toast.title}</p> : null}
+        <p className={styles.message}>{toast.message}</p>
+        {toast.action ? (
           <button
+            type="button"
             onClick={() => {
               toast.action?.onClick();
               handleDismiss();
             }}
-            className="mt-2 text-xs font-medium text-[var(--color-accent)] hover:underline"
+            className={styles.action}
           >
             {toast.action.label}
           </button>
-        )}
+        ) : null}
       </div>
       <button
+        type="button"
         onClick={handleDismiss}
-        className="p-1 rounded-md text-[var(--text-secondary)] hover:bg-[var(--bg-active)] hover:text-[var(--text-primary)] transition-colors shrink-0"
+        className={styles.dismiss}
         aria-label="Dismiss notification"
       >
         <X size={14} />

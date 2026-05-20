@@ -11,6 +11,7 @@
 import type { Variable, VariableSet } from '../../types';
 import { normalizeVariableType } from '../../types';
 import type { MeasurementIntent, SemanticAnnotation } from '../../types/semantic';
+import { hasRespondentIdentifierName } from './identifierPatterns';
 import { WEIGHT_NAME_PATTERNS } from './weightPatterns';
 
 // ============================================================================
@@ -106,19 +107,6 @@ function isNpsScale(variable: Variable): boolean {
 // ============================================================================
 // Name-Pattern Rules
 // ============================================================================
-
-const IDENTIFIER_NAME_PATTERNS = [
-  /^resp_?id$/i,
-  /^respondent_?id$/i,
-  /^caseid$/i,
-  /^case_?no$/i,
-  /^r_?no$/i,
-  /^id$/i,
-  /^respondentno$/i,
-  /^sampleno$/i,
-  /^serialno$/i,
-  /^serial$/i,
-];
 
 const TEMPORAL_NAME_PATTERNS = [
   /^wave$/i,
@@ -245,8 +233,8 @@ function detectAnnotation(variable: Variable, inGridSet: boolean): RuleMatch | n
     return { intent: 'weight', topic: 'sampling_weight', confidence: 0.95 };
   }
 
-  // Rule 2 — Identifier
-  if (IDENTIFIER_NAME_PATTERNS.some((p) => p.test(variable.name))) {
+  // Rule 2 — Respondent / case identifier
+  if (hasRespondentIdentifierName(variable.name)) {
     return { intent: 'identifier', topic: 'respondent_id', confidence: 0.9 };
   }
 

@@ -1,7 +1,7 @@
 # Visual Polish Delight — Validation & Multi-Session Test Plan
 
 **Date:** May 20, 2026  
-**Status:** VP-D-01–09 automation **complete**; UXP-033–035 **implemented**; §12 frame-it **Yes** (May 20, 2026, human re-test) — STAB-UI-D delight layer validated  
+**Status:** VP-D-01–10 complete; UXP-033–035 **implemented**; §12 frame-it **Yes** (May 20, 2026, human re-test) — STAB-UI-D delight layer validated; Playwright 3-theme table regression in CI  
 **Owner:** Product + engineering (assign per run in session log)  
 **Scope:** Live validation of `STAB-UI-D` delight layer described in `visual-polish-vision-delight.md`  
 **Builds on:** `visual-polish-review.md` (UXP-001–032), `plan_01_comprehensive_ui_ux_review.md`, `session-02-canvas.md`, `session-04-variable-manager.md`, `session-07-themes.md`
@@ -12,9 +12,9 @@
 
 ### 1.1 What’s done
 
-The **Analysis Canvas crosstab** path is signed off. VP-D-01 through VP-D-05 (May 20, 2026) validated pathways P1–P10 and features D-001–024 on port 4176 with `mock_data.csv`. D-015 (DnD micro-delight) passes headless. Theme materials D-025–027 have table-only screenshots on all three themes.
+The **Analysis Canvas crosstab** path is signed off. VP-D-01 through VP-D-05 (May 20, 2026) validated pathways P1–P10 and features D-001–024 on port 4176 with `mock_data.csv`. D-015 (DnD micro-delight) passes headless. Theme materials D-025–027 have table-only screenshots on all three themes. **VP-D-10** added Playwright pixel baselines for gender×region crosstab × SM/MC/LG (`tests/e2e/visual-polish-theme-table.spec.ts`).
 
-Evidence lives under `docs/reviews/ui_ux_review_2026-05/screenshots/vp-d-01/` … `vp-d-05/`.
+Evidence lives under `docs/reviews/ui_ux_review_2026-05/screenshots/vp-d-01/` … `vp-d-09/`; CI baselines under `tests/e2e/visual-polish-theme-table.spec.ts-snapshots/`.
 
 ### 1.2 What’s blocking sign-off
 
@@ -23,7 +23,7 @@ Evidence lives under `docs/reviews/ui_ux_review_2026-05/screenshots/vp-d-01/` �
 | Priority | Session | Scope | Note |
 | :--- | :--- | :--- | :--- |
 | **P3** | Optional | Manager inspector frame-it | `vp-d-07/02-inspector-gender.png` not reviewed in §12 passes |
-| **P3** | Automation backlog | Playwright visual regression, Story Shelf clock mock, reduced-motion e2e | See §1.4 |
+| **P3** | Automation backlog | Story Shelf clock mock; reduced-motion beyond table theme spec | See §9 |
 
 **Rule:** `visual-polish-vision-delight.md` is signed off for the STAB-UI-D delight layer scope validated here.
 
@@ -33,7 +33,8 @@ Evidence lives under `docs/reviews/ui_ux_review_2026-05/screenshots/vp-d-01/` �
 
 - [x] P1–P10 Pass or documented N/A — crosstab paths including D-015 headless
 - [x] D-001–024 Pass on live browser (crosstab-scoped)
-- [x] D-025–027 partial (table screenshots per theme)
+- [x] D-025–027 Pass (manual theme shots VP-D-02/08 + Playwright baselines VP-D-10)
+- [x] Playwright 3-theme table regression (VP-D-10)
 
 **Product-wide track (done)**
 
@@ -51,21 +52,21 @@ Delight validation **closed.** Remaining work is optional polish and automation 
 
 | Priority | Action | Status |
 | :--- | :--- | :--- |
-| P1 | Playwright visual regression: 3 themes × table | Open |
+| P1 | Playwright visual regression: 3 themes × table | Done |
 | P1 | Chart mode eval path (`VP_D_RUN=06`) | Done |
 | P1 | Variable Manager eval path (`VP_D_RUN=07`) | Done |
 | P1 | Theme matrix eval path (`VP_D_RUN=08`) | Done |
 | P2 | Stretch theme surfaces (`VP_D_RUN=09`) | Done |
 | P2 | Story Shelf timing test with clock mock | Open |
-| P2 | `prefers-reduced-motion` e2e via `emulateMedia` | Open |
+| P2 | `prefers-reduced-motion` e2e via `emulateMedia` | Partial — table theme spec only (§9) |
 
-Completed automation: `tests/e2e/visual-polish-crosstab.spec.ts`, OPFS isolation, eval script fixes, Story Shelf seed, D-015 headless testids.
+Completed automation: `tests/e2e/visual-polish-crosstab.spec.ts`, `tests/e2e/visual-polish-theme-table.spec.ts`, `tests/e2e/helpers/visualPolish.ts`, OPFS isolation, eval script fixes, Story Shelf seed, D-015 headless testids. See §9 for commands and snapshot policy.
 
 ---
 
 ## 2. Validation scope
 
-Runs **VP-D-01 through VP-D-05** exercised the **Analysis Canvas crosstab** deeply — correctly, since it is where users spend most analysis time. That is **not** sufficient for product-wide delight sign-off.
+**VP-D-01 through VP-D-05** exercised the **Analysis Canvas crosstab** deeply — correctly, since it is where users spend most analysis time. **VP-D-06 through VP-D-09** plus §12 frame-it closed product-wide delight sign-off. **VP-D-10** locks table theme materials in Playwright.
 
 | Surface | VP-D coverage | Why it matters |
 | :--- | :--- | :--- |
@@ -96,7 +97,7 @@ Runs **VP-D-01 through VP-D-05** exercised the **Analysis Canvas crosstab** deep
 
 ---
 
-## 4. Feature matrix — upcoming (Phase 4)
+## 4. Feature matrix — Phase 4 (complete)
 
 Update **Status** each session: `Not run` | `Pass` | `Fail` | `Blocked` | `N/A`
 
@@ -145,6 +146,24 @@ Baseline reference: `session-07-themes.md` — re-run after STAB-UI-D delight va
 | Frame-it | 2026-05-20 | Human reviewer (product) | 4176 | §12 synthesis | **No** | MC crosstab + chart; UXP-033–035 filed; Manager inspector not reviewed |
 | Polish pass | 2026-05-20 | Agent (code + Playwright) | 4176 | UXP-033–035 implementation | **Pass** | Refreshed `vp-d-05/01`, `vp-d-06/05-chart-theme-mc` |
 | Frame-it (re-test) | 2026-05-20 | Human reviewer (product) | 4176 | §12 post-polish | **Yes** | MC crosstab + chart screenshot-ready; vision doc signed off |
+| VP-D-10 | 2026-05-20 | Agent (Playwright) | 4173 (webServer) | 3-theme table pixel regression (D-025–027 guard) | **Pass** | `visual-polish-theme-table.spec.ts` + darwin snapshots; `npm run test:e2e:visual-polish` |
+
+### VP-D-10 notes (2026-05-20)
+
+**Driver:** Playwright `tests/e2e/visual-polish-theme-table.spec.ts` (shared helpers in `tests/e2e/helpers/visualPolish.ts`)  
+**Fixture:** gender×region crosstab after Load Example (`mock_data.csv`)  
+**Motion:** `prefers-reduced-motion: reduce` via `emulateMedia` + init script (stable screenshots; does not replace VP-D-02 manual reduced-motion pass)
+
+| Check | Result | Detail |
+| :--- | :--- | :--- |
+| D-025 SM table material | Pass | `crosstab-table-theme-sm-darwin.png` |
+| D-026 MC table material | Pass | `crosstab-table-theme-mc-darwin.png` |
+| D-027 LG table material | Pass | `crosstab-table-theme-lg-darwin.png` |
+| Story shelf dismissed | Pass | `waitForStableCrosstab` hides chip before capture |
+| Stats footer present | Pass | `.statistics-status-bar` inside `.analysis-frame` |
+
+**Commands:** `npm run test:e2e:visual-polish` · update baselines: `npm run test:e2e:visual-polish:update`  
+**CI:** Included in `npm run test:e2e` (`.github/workflows/test.yml`). Baselines committed with `-darwin` suffix (macOS-generated); regenerate on Linux CI if pixel diffs appear.
 
 ### VP-D-06 notes (2026-05-20)
 
@@ -306,7 +325,7 @@ Implementation confidence is **test-backed and crosstab-validated** on port 4176
 | P5 | Filter re-animate | **Pass** |
 | P6 | Insight halo | **Pass** (VP-D-05: 3 high, 1 mid on gender×region) |
 | P7 | Story shelf | **Pass** (VP-D-03) |
-| P8 | Theme cycle | **Partial** (table screenshots all themes) |
+| P8 | Theme cycle | **Pass** (VP-D-02 manual + VP-D-10 Playwright baselines) |
 | P9 | Workspace reopen | **Pass** (VP-D-04) |
 | P10 | Export artifact | **Pass** (VP-D-04) |
 
@@ -330,9 +349,9 @@ Implementation confidence is **test-backed and crosstab-validated** on port 4176
 | D-022 | Story Shelf — generate | **Pass** | `screenshots/vp-d-03/05-story-shelf.png` |
 | D-023 | Story Shelf — accept | **Pass** | VP-D-03 eval |
 | D-024 | Story Shelf — dismiss | **Pass** | VP-D-05: chip gone at 8.5s |
-| D-025 | MC flight instrument | **Partial** | `screenshots/vp-d-02/08-theme-mc.png` |
-| D-026 | SM research journal | **Pass** | `screenshots/vp-d-02/01-crosstab-compact.png` |
-| D-027 | LG holographic | **Partial** | `screenshots/vp-d-02/08-theme-lg.png` |
+| D-025 | MC flight instrument | **Pass** | VP-D-02 + VP-D-10 `crosstab-table-theme-mc-darwin.png` |
+| D-026 | SM research journal | **Pass** | VP-D-02 + VP-D-10 `crosstab-table-theme-sm-darwin.png` |
+| D-027 | LG holographic | **Pass** | VP-D-02 + VP-D-10 `crosstab-table-theme-lg-darwin.png` |
 
 ### 7.6 Pre-crosstab checks (VP-D-01 recon)
 
@@ -375,7 +394,73 @@ Verify after any delight-layer change. Components from vision doc §10.
 | `uiSlice.ts` | `tableDensity` | D-014 focus restore |
 | `index.css` | Halo tokens, theme materials | `index.css.test.ts` + D-025–027 |
 | `themes.ts` / `tailwind.config.cjs` | Material tokens | `npm run check:design-tokens` |
+| `tests/e2e/visual-polish-crosstab.spec.ts` | P1 render gate, trust anchor | `npm run test:e2e -- tests/e2e/visual-polish-crosstab.spec.ts` |
+| `tests/e2e/visual-polish-theme-table.spec.ts` | D-025–027 table materials × 3 themes | `npm run test:e2e:visual-polish` |
+| `scripts/eval/visual-polish-browser-eval.mjs` | VP-D-02–09 screenshot harvest | `VELOCITY_URL=… VP_D_RUN=## node scripts/eval/…` |
 
 ---
 
-*Living document — update §1 sign-off checklist, §4–5 matrices, and §6 session log after each validation run.*
+## 9. Automation guardrails
+
+Delight validation is **closed** for live browser runs; ongoing protection is Playwright + unit tests below.
+
+### 9.1 Playwright specs
+
+| Spec | Guards | Notes |
+| :--- | :--- | :--- |
+| `visual-polish-crosstab.spec.ts` | P1 — gender×region table renders; `n=` trust anchor | Clears OPFS per test; no screenshots |
+| `visual-polish-theme-table.spec.ts` | D-025–027 — `.analysis-frame` table × SM/MC/LG | `toHaveScreenshot` per theme; `maxDiffPixelRatio: 0.02` |
+
+Shared flow (`helpers/visualPolish.ts`): clear OPFS → Load Example → gender + region crosstab → dismiss Story Shelf → wait for stats footer → cycle themes via **Change theme**.
+
+### 9.2 Commands
+
+```bash
+# Table theme regression (3 snapshots)
+npm run test:e2e:visual-polish
+
+# Refresh baselines after intentional visual change
+npm run test:e2e:visual-polish:update
+
+# P1 crosstab gate only
+npm run test:e2e -- tests/e2e/visual-polish-crosstab.spec.ts
+
+# Manual eval harvest (dev server on dedicated port)
+VELOCITY_URL=http://127.0.0.1:4176 VP_D_RUN=08 node scripts/eval/visual-polish-browser-eval.mjs
+```
+
+Default Playwright `webServer` uses port **4173** (`PLAYWRIGHT_PORT`). Manual VP-D runs historically used **4176** to avoid OPFS collisions with an open dev tab.
+
+### 9.3 Snapshot policy
+
+- Baselines live in `tests/e2e/visual-polish-theme-table.spec.ts-snapshots/` (`crosstab-table-theme-{sm,mc,lg}-darwin.png`).
+- Review diffs in Playwright HTML report on failure (`playwright-report/`).
+- After token/CSS changes affecting table chrome, run `test:e2e:visual-polish:update` on the **same OS** as CI expects, or add platform-specific baselines if Linux CI diverges.
+- Reduced motion is enforced in the theme-table spec only; chart settling (D-010–012) and focus breathing (D-013–014) still rely on unit tests + VP-D-02 manual evidence.
+
+### 9.4 Open automation backlog
+
+| Item | Why still open |
+| :--- | :--- |
+| Story Shelf 3s dismiss | Needs `page.clock` mock; VP-D-05 validated manually at 8.5s |
+| Reduced-motion chart/filter pass | Theme spec covers table mount; not full D-012 matrix |
+| Chart/footer/export pixel baselines | Optional; VP-D-06/08 use eval PNGs in `screenshots/` |
+
+---
+
+## 10. Evidence index
+
+| Run | Folder | Primary artifacts |
+| :--- | :--- | :--- |
+| VP-D-01–05 | `screenshots/vp-d-01/` … `vp-d-05/` | Crosstab pathways, frame-it MC (`vp-d-05/01`) |
+| VP-D-06 | `screenshots/vp-d-06/` | Chart themes, table↔chart toggle |
+| VP-D-07 | `screenshots/vp-d-07/` | Manager shell, inspector, bulk bar |
+| VP-D-08 | `screenshots/vp-d-08/` | Footer + export modal × 3 themes |
+| VP-D-09 | `screenshots/vp-d-09/` | Workspace card, timeline dock, Manager overlay |
+| VP-D-10 | `tests/e2e/visual-polish-theme-table.spec.ts-snapshots/` | CI pixel baselines (not copied to `screenshots/`) |
+
+Eval script may also write to `tmp/visual-polish-eval/vp-d-##/` during local harvests.
+
+---
+
+*Living document — validation closed May 20, 2026. Update §8–9 when adding automation; §6–7 remain archival record of VP-D runs.*

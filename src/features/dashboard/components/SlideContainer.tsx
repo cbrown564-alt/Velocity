@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { AlertCircle, LayoutGrid, RefreshCw, Sparkles, MousePointerClick } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useVelocityStore } from '../../../store';
@@ -52,6 +52,10 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
         return useVelocityStore.getState().dataset?.rowCount || 0;
     }, [chartData, isWeighted]);
 
+    const dataset = useVelocityStore((state) => state.dataset);
+    const hasSeenAutoCrosstab = useVelocityStore((state) => state.hasSeenAutoCrosstab);
+    const markAutoCrosstabSeen = useVelocityStore((state) => state.markAutoCrosstabSeen);
+
     /**
      * Resolve VariableSet IDs to Variable objects.
      */
@@ -90,8 +94,62 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
         ...(tableConfig.colVar ? [tableConfig.colVar] : [])
     ]), [tableConfig.rowVars, tableConfig.colVar]);
 
-    const suggestions = useSuggestedVariables(allVariables, variableSets, inUseIds, 5);
+    const suggestions = useSuggestedVariables(
+        allVariables,
+        variableSets,
+        inUseIds,
+        5,
+        dataset?.rowCount
+    );
     const reducedMotion = useReducedMotion();
+    const autoCrosstabAppliedRef = useRef(false);
+
+    // Quick Win 9.4: Auto-first-crosstab after Load Example (no toast — Story Shelf + deferred backup reminder)
+    useEffect(() => {
+        if (autoCrosstabAppliedRef.current || hasSeenAutoCrosstab) return;
+
+        const isMockDataset = dataset?.name === 'mock_data.csv';
+        const isEmptyDeck = resolvedRowVars.length === 0 && !tableConfig.colVar;
+        if (
+            !isMockDataset ||
+            !isEmptyDeck ||
+            suggestions.length < 2 ||
+            variableSets.length === 0
+        ) {
+            return;
+        }
+
+        const first = suggestions[0];
+        const second = suggestions[1];
+        const firstSet = variableSets.find(s => s.id === first.setId);
+        const secondSet = variableSets.find(s => s.id === second.setId);
+        if (!firstSet || !secondSet) return;
+
+        autoCrosstabAppliedRef.current = true;
+        const store = useVelocityStore.getState();
+
+        if (firstSet.structure === 'grid') {
+            const itemsId = `${firstSet.id}_items`;
+            const scaleId = `${firstSet.id}_scale`;
+            store.setTableConfig({ rowVars: [scaleId], colVar: itemsId });
+        } else if (secondSet.structure === 'grid') {
+            const itemsId = `${secondSet.id}_items`;
+            const scaleId = `${secondSet.id}_scale`;
+            store.setTableConfig({ rowVars: [firstSet.id], colVar: itemsId });
+        } else {
+            store.setTableConfig({ rowVars: [firstSet.id], colVar: secondSet.id });
+        }
+
+        markAutoCrosstabSeen();
+    }, [
+        dataset?.name,
+        resolvedRowVars.length,
+        tableConfig.colVar,
+        hasSeenAutoCrosstab,
+        suggestions,
+        variableSets,
+        markAutoCrosstabSeen,
+    ]);
 
     const handleSuggestClick = (setId: string) => {
         const set = variableSets.find(s => s.id === setId);

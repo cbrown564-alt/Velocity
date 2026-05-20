@@ -72,4 +72,33 @@ describe('useSuggestedVariables', () => {
     const { result } = renderHook(() => useSuggestedVariables(vars, sets, new Set(), 3));
     expect(result.current.length).toBe(3);
   });
+
+  it('excludes respondent id variables from suggestions', () => {
+    const vars = [
+      makeVariable({ id: 'id', name: 'id' }),
+      makeVariable({
+        id: 'region',
+        valueLabels: [
+          { value: 1, label: 'North' },
+          { value: 2, label: 'South' },
+          { value: 3, label: 'East' },
+          { value: 4, label: 'West' },
+          { value: 5, label: 'International' },
+        ],
+      }),
+      makeVariable({
+        id: 'gender',
+        valueLabels: [
+          { value: 1, label: 'Female' },
+          { value: 2, label: 'Male' },
+        ],
+      }),
+    ];
+    const sets = vars.map((v) => makeSet({ id: `s_${v.id}`, variableIds: [v.id] }));
+    const { result } = renderHook(() => useSuggestedVariables(vars, sets, new Set(), 5, 250));
+    const suggestedNames = result.current.map((s) => s.name);
+    expect(suggestedNames).not.toContain('id');
+    expect(suggestedNames).not.toContain('s_id');
+    expect(result.current.length).toBeGreaterThanOrEqual(2);
+  });
 });

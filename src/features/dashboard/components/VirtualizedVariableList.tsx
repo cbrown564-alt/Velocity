@@ -16,6 +16,8 @@ interface VirtualizedVariableListProps {
     selectedIds: Set<string>;
     /** ID of the variable set that has focus (for bi-directional context awareness) */
     focusedId?: string | null;
+    /** ID cross-highlighted from Variable Manager hover (Living Inspector) */
+    hoveredId?: string | null;
     onRecode: (variable: VariableSet) => void;
     onClick: (variableSet: VariableSet, e: React.MouseEvent) => void;
     onContextMenu: (variableSet: VariableSet, e: React.MouseEvent) => void;
@@ -36,6 +38,7 @@ type RowProps = {
     variableSets: VariableSet[];
     selectedIds: Set<string>;
     focusedId?: string | null;
+    hoveredId?: string | null;
     onRecode: (variableSet: VariableSet) => void;
     onClick: (variableSet: VariableSet, e: React.MouseEvent) => void;
     onContextMenu: (variableSet: VariableSet, e: React.MouseEvent) => void;
@@ -48,6 +51,7 @@ export const VirtualizedVariableList: React.FC<VirtualizedVariableListProps> = (
     variableSets,
     selectedIds,
     focusedId,
+    hoveredId,
     onRecode,
     onClick,
     onContextMenu,
@@ -63,6 +67,7 @@ export const VirtualizedVariableList: React.FC<VirtualizedVariableListProps> = (
             variableSets,
             selectedIds,
             focusedId,
+            hoveredId,
             onRecode,
             onClick,
             onContextMenu,
@@ -79,6 +84,7 @@ export const VirtualizedVariableList: React.FC<VirtualizedVariableListProps> = (
                         variableSet={set}
                         isSelected={selectedIds.has(set.id)}
                         isFocused={focusedId === set.id}
+                        isHovered={hoveredId === set.id}
                         shelfType={shelfType}
                         onRecode={onRecode}
                         onClick={onClick}
@@ -110,6 +116,7 @@ export const VirtualizedVariableList: React.FC<VirtualizedVariableListProps> = (
                     variableSets,
                     selectedIds,
                     focusedId,
+                    hoveredId,
                     onRecode,
                     onClick,
                     onContextMenu,

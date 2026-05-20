@@ -1,9 +1,10 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useDraggable } from '@dnd-kit/core';
-import { GripVertical, Plus } from 'lucide-react';
+import { GripVertical, Plus, GitBranch } from 'lucide-react';
 import { VariableTypeIcon } from '../../../components/common/VariableTypeIcon';
 import { VariableSet, VariableType } from '../../../types';
+import { useVelocityStore } from '../../../store';
 
 interface VariableCardProps {
   variableSet: VariableSet;
@@ -12,6 +13,8 @@ interface VariableCardProps {
   isSelected?: boolean;
   /** Indicates this card has bi-directional focus (from Variable Manager) */
   isFocused?: boolean;
+  /** Cross-surface hover highlight (Living Inspector) */
+  isHovered?: boolean;
   /** Which shelf this variable currently occupies, if any */
   shelfType?: 'row' | 'col' | 'weight' | null;
   onRecode?: (variableSet: VariableSet) => void;
@@ -28,6 +31,7 @@ export const VariableCard: React.FC<VariableCardProps> = ({
   isDragging,
   isSelected,
   isFocused,
+  isHovered,
   isOverlay,
   shelfType,
   onRecode,
@@ -38,7 +42,7 @@ export const VariableCard: React.FC<VariableCardProps> = ({
   setNodeRef,
   style
 }) => {
-
+  const setHoveredVariableSetId = useVelocityStore((state) => state.setHoveredVariableSetId);
 
   const cardStyle = {
     ...style,
@@ -61,8 +65,11 @@ export const VariableCard: React.FC<VariableCardProps> = ({
         ${isDragging ? 'ring-2 ring-[var(--color-accent)] ring-opacity-50 grayscale shadow-drag' : ''}
         ${isSelected ? 'bg-[var(--bg-active)] border-[var(--color-accent)] ring-1 ring-[var(--color-accent)]' : 'hover:bg-[var(--bg-panel)]'}
         ${isFocused && !isSelected ? 'border-[var(--color-accent)] bg-[var(--bg-active)] ring-1 ring-[var(--color-accent)]/30' : ''}
+        ${isHovered && !isSelected && !isFocused ? 'border-[var(--color-accent)]/60 bg-[color-mix(in_srgb,var(--color-accent),transparent_94%)]' : ''}
         ${isOverlay ? 'shadow-xl scale-105 cursor-grabbing !opacity-100 z-50' : ''}
       `}
+      onMouseEnter={() => setHoveredVariableSetId(variableSet.id)}
+      onMouseLeave={() => setHoveredVariableSetId(null)}
       onClick={(e: React.MouseEvent) => !isDragging && onClick?.(variableSet, e)}
       onContextMenu={(e: React.MouseEvent) => {
         if (!isDragging && onContextMenu) {
@@ -97,7 +104,11 @@ export const VariableCard: React.FC<VariableCardProps> = ({
         </span>
         <span className={`text-sm font-medium truncate font-body leading-none ${isSelected ? 'text-[var(--text-primary)]' : 'text-[var(--text-secondary)] group-hover:text-[var(--text-primary)]'}`}>{variableSet.name}</span>
         {variableSet.derived && (
-          <span className="text-[9px] px-1 py-0.5 rounded bg-[var(--bg-active)] text-[var(--text-tertiary)] uppercase tracking-wider font-semibold shrink-0">
+          <span
+            className="text-[9px] px-1 py-0.5 rounded bg-[var(--bg-active)] text-[var(--text-tertiary)] uppercase tracking-wider font-semibold shrink-0 flex items-center gap-1"
+            title="Derived from recode"
+          >
+            <GitBranch size={9} />
             derived
           </span>
         )}
@@ -116,6 +127,8 @@ interface DraggableVariableProps {
   isSelected?: boolean;
   /** Indicates this card has bi-directional focus (from Variable Manager) */
   isFocused?: boolean;
+  /** Cross-surface hover highlight (Living Inspector) */
+  isHovered?: boolean;
   /** Which shelf this variable currently occupies, if any */
   shelfType?: 'row' | 'col' | 'weight' | null;
   onRecode?: (variableSet: VariableSet) => void;
@@ -127,6 +140,7 @@ export const DraggableVariable: React.FC<DraggableVariableProps> = ({
   variableSet,
   isSelected,
   isFocused,
+  isHovered,
   shelfType,
   onRecode,
   onClick,
@@ -143,6 +157,7 @@ export const DraggableVariable: React.FC<DraggableVariableProps> = ({
       isDragging={isDragging}
       isSelected={isSelected}
       isFocused={isFocused}
+      isHovered={isHovered}
       shelfType={shelfType}
       onRecode={onRecode}
       onClick={onClick}

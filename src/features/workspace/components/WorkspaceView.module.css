@@ -146,6 +146,15 @@
    Search
    ============================================================================ */
 
+.searchArea {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  flex: 1 1 240px;
+  min-width: 220px;
+  max-width: 360px;
+}
+
 .searchBox {
   display: flex;
   align-items: center;
@@ -154,9 +163,43 @@
   background: var(--bg-surface);
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius-md);
-  flex: 1 1 240px;
-  min-width: 220px;
-  max-width: 320px;
+  width: 100%;
+}
+
+.searchHints {
+  margin: 0;
+  padding: 0 var(--space-1);
+  list-style: none;
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+}
+
+.searchHints li + li {
+  margin-top: var(--space-1);
+}
+
+.categoryChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.categoryChips button {
+  padding: 2px var(--space-2);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-sm);
+  background: var(--bg-surface);
+  font-size: var(--text-xxs);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.categoryChips button:hover,
+.categoryChips button.chipActive {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  background: color-mix(in srgb, var(--color-accent) 8%, var(--bg-surface));
 }
 
 .searchBox svg {
@@ -551,6 +594,7 @@
 }
 
 .projectCard {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
@@ -561,6 +605,27 @@
   border-radius: var(--border-radius-lg);
   cursor: pointer;
   transition: all 0.2s ease;
+}
+
+.harmonyRing {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid var(--project-color);
+  pointer-events: none;
+}
+
+.harmony_complete {
+  background: color-mix(in srgb, var(--project-color) 35%, transparent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--project-color) 15%, transparent);
+}
+
+.harmony_partial {
+  background: transparent;
+  border-style: dashed;
 }
 
 .projectCard:hover {
@@ -774,6 +839,30 @@
 
 .starButton.starred svg {
   fill: currentColor;
+}
+
+/* Activity dot — Quick Win 9.3 */
+.activityDot {
+  position: absolute;
+  top: var(--space-3);
+  right: calc(var(--space-3) + 32px);
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  box-shadow: 0 0 0 2px var(--bg-panel);
+  animation: activityPulse 2s ease-in-out infinite;
+}
+
+@keyframes activityPulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.2);
+  }
 }
 
 /* Card content */

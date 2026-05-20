@@ -26,6 +26,7 @@ export const HistogramRenderer: React.FC<BaseChartRendererProps> = ({
     labelMode = 'count',
     hoveredKey,
     onHoverChange,
+    animateBarEntrance = false,
 }) => {
     const { rows } = processedData;
     const svgRef = useRef<SVGSVGElement>(null);
@@ -214,6 +215,17 @@ export const HistogramRenderer: React.FC<BaseChartRendererProps> = ({
                 if (onHoverChange) onHoverChange(null);
             });
 
+        if (animateBarEntrance) {
+            bars
+                .attr('y', innerHeight)
+                .attr('height', 0)
+                .transition()
+                .duration(300)
+                .delay((_, i) => i * 25)
+                .attr('y', (d) => yScale(d.count))
+                .attr('height', (d) => Math.max(0, innerHeight - yScale(d.count)));
+        }
+
         if (interactive) {
             bars.on('click', function (event, d) {
                 event.stopPropagation();
@@ -254,7 +266,7 @@ export const HistogramRenderer: React.FC<BaseChartRendererProps> = ({
         }
 
 
-    }, [bins, width, height, innerWidth, innerHeight, margin, dataExtent, barColor, selectedBarColor, interactive, labelMode, handleBinClick, handleContextMenuInteraction, hoveredKey, onHoverChange]);
+    }, [bins, width, height, innerWidth, innerHeight, margin, dataExtent, barColor, selectedBarColor, interactive, labelMode, handleBinClick, handleContextMenuInteraction, hoveredKey, onHoverChange, animateBarEntrance]);
 
     return (
         <svg

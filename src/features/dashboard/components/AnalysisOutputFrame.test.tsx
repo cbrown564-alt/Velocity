@@ -33,4 +33,19 @@ describe('AnalysisOutputFrame', () => {
 
     expect(container.querySelector('.analysis-frame')).toHaveAttribute('data-bleed', 'true');
   });
+
+  it('renders footer band as sibling after body when footer prop is set', () => {
+    const { container } = render(
+      <AnalysisOutputFrame footer={<div data-testid="stats-footer">footer</div>}>
+        <div data-testid="table-body">body</div>
+      </AnalysisOutputFrame>
+    );
+
+    const frame = container.querySelector('.analysis-frame');
+    const children = frame?.children;
+    expect(children?.length).toBe(2);
+    expect(children?.[0]?.textContent).toContain('body');
+    expect(children?.[1]?.textContent).toContain('footer');
+    expect(screen.getByTestId('stats-footer')).toBeInTheDocument();
+  });
 });

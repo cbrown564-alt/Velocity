@@ -4,6 +4,7 @@ import type { VariableStatsResult } from '../../../types/worker';
 import { isOrderedType, normalizeVariableType } from '../../../types';
 import { HorizontalBarRenderer, HistogramRenderer, VerticalBarRenderer } from '../../../components/charts/renderers';
 import { useResizeObserver } from '../../../hooks/useResizeObserver';
+import { useReducedMotion } from '../../../lib/motion';
 import styles from '../VariableInspector.module.css';
 
 interface InspectorDistributionProps {
@@ -27,6 +28,8 @@ export const InspectorDistribution: React.FC<InspectorDistributionProps> = ({
     hoveredKey,
     onHoverChange
 }) => {
+    const reducedMotion = useReducedMotion();
+
     // Responsive chart width
     const containerRef = useRef<HTMLDivElement>(null);
     const { width: containerWidth } = useResizeObserver(containerRef);
@@ -122,6 +125,9 @@ export const InspectorDistribution: React.FC<InspectorDistributionProps> = ({
 
     if ((!nominalChartData && !histogramData) || !variable) return null;
 
+    const chartKey = `${variable.id}-${stats ? 'loaded' : 'empty'}`;
+    const animateBarEntrance = !reducedMotion && Boolean(stats);
+
     return (
         <div className={styles.chartSection} ref={containerRef}>
             <h3 className={styles.chartSectionTitle}>
@@ -139,47 +145,51 @@ export const InspectorDistribution: React.FC<InspectorDistributionProps> = ({
                     </span>
                 )}
             </h3>
-            {/* Rendering logic */}
-            {isNumericVariable && histogramData ? (
-                <div style={{ width: '100%', minHeight: 180 }}>
-                    <HistogramRenderer
-                        width={chartWidth}
-                        height={180}
-                        processedData={histogramData}
-                        interactive={true}
-                        variableStats={stats} // Pass stats for optimized bin rendering
-                        onContextMenu={onContextMenu}
-                        hoveredKey={hoveredKey}
-                        onHoverChange={onHoverChange}
-                    />
-                </div>
-            ) : nominalChartData ? (
-                <div style={{ width: '100%' }}>
-                    {useColumnChart ? (
-                        <VerticalBarRenderer
+            <div key={chartKey}>
+                {isNumericVariable && histogramData ? (
+                    <div style={{ width: '100%', minHeight: 180 }}>
+                        <HistogramRenderer
                             width={chartWidth}
-                            height={220}
-                            processedData={nominalChartData}
+                            height={180}
+                            processedData={histogramData}
                             interactive={true}
-                            selectedKeys={selectedKeys}
-                            onSelectionChange={setSelectedKeys}
-                            onContextMenu={onContextMenu}
-                        />
-                    ) : (
-                        <HorizontalBarRenderer
-                            width={chartWidth}
-                            height={Math.max(180, nominalChartData.series[0].data.length * 28)}
-                            processedData={nominalChartData}
-                            interactive={true}
-                            selectedKeys={selectedKeys}
-                            onSelectionChange={setSelectedKeys}
+                            variableStats={stats}
+                            animateBarEntrance={animateBarEntrance}
                             onContextMenu={onContextMenu}
                             hoveredKey={hoveredKey}
                             onHoverChange={onHoverChange}
                         />
-                    )}
-                </div>
-            ) : null}
+                    </div>
+                ) : nominalChartData ? (
+                    <div style={{ width: '100%' }}>
+                        {useColumnChart ? (
+                            <VerticalBarRenderer
+                                width={chartWidth}
+                                height={220}
+                                processedData={nominalChartData}
+                                interactive={true}
+                                animateBarEntrance={animateBarEntrance}
+                                selectedKeys={selectedKeys}
+                                onSelectionChange={setSelectedKeys}
+                                onContextMenu={onContextMenu}
+                            />
+                        ) : (
+                            <HorizontalBarRenderer
+                                width={chartWidth}
+                                height={Math.max(180, nominalChartData.series[0].data.length * 28)}
+                                processedData={nominalChartData}
+                                interactive={true}
+                                animateBarEntrance={animateBarEntrance}
+                                selectedKeys={selectedKeys}
+                                onSelectionChange={setSelectedKeys}
+                                onContextMenu={onContextMenu}
+                                hoveredKey={hoveredKey}
+                                onHoverChange={onHoverChange}
+                            />
+                        )}
+                    </div>
+                ) : null}
+            </div>
         </div>
     );
 };

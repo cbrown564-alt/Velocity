@@ -1,5 +1,7 @@
 import React, { useMemo, useEffect, useRef, useCallback, useState } from 'react';
+import { motion } from 'framer-motion';
 import * as d3 from 'd3-scale';
+import { getBarEntranceMotionProps } from '../../../lib/chartBarEntrance';
 import { select, pointer } from 'd3-selection';
 import { brushY } from 'd3-brush';
 import { max } from 'd3-array';
@@ -27,7 +29,9 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
     labelMode = 'count',
     hoveredKey,
     onHoverChange,
+    animateBarEntrance = false,
 }) => {
+    const BarRect = animateBarEntrance ? motion.rect : 'rect';
     const brushRef = useRef<SVGGElement>(null);
     const svgRef = useRef<SVGSVGElement>(null);
 
@@ -297,6 +301,7 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
                         const isSelected = selectedKeys?.has(d.label);
                         const isDragging = dragState.isDragging && dragState.draggedItem?.label === d.label;
                         const isDropTarget = dragState.isDragging && dragState.dropTarget === d.label;
+                        const entranceProps = getBarEntranceMotionProps('horizontal', i, animateBarEntrance);
 
                         // Determine bar color based on state
                         // Single color for all bars in this chart type
@@ -341,22 +346,26 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
                                 )}
 
                                 {/* Actual bar: Transparent Fill + Solid Stroke */}
-                                <rect
+                                <BarRect
                                     y={y}
                                     height={yScale.bandwidth()}
                                     width={barWidth}
-                                    // Use palette colors if available, otherwise fall back to primary
                                     fill={isDropTarget ? 'var(--status-success-bg)' : (d.isMissing ? 'var(--bg-active)' : (colors ? colors[0] : 'var(--viz-fill-secondary)'))}
                                     fillOpacity={hoveredKey === (d.code !== undefined ? String(d.code) : d.label) ? 1 : (hoveredKey ? 0.3 : (d.isMissing ? 0.3 : 0.8))}
                                     stroke={isSelected ? 'var(--text-accent)' : (hoveredKey === (d.code !== undefined ? String(d.code) : d.label) ? 'var(--viz-fill-primary)' : (d.isMissing ? 'var(--text-tertiary)' : 'none'))}
                                     strokeWidth={isSelected || hoveredKey === (d.code !== undefined ? String(d.code) : d.label) || d.isMissing ? 2 : 0}
                                     strokeDasharray={d.isMissing ? "4,2" : "none"}
-                                    rx={1} // Slight rounding looks more "UI" than "Data"
+                                    rx={1}
+                                    className="hover:opacity-90"
+                                    initial={entranceProps.initial}
+                                    animate={entranceProps.animate}
+                                    transition={entranceProps.transition}
                                     style={{
+                                        transformOrigin: entranceProps.style?.transformOrigin,
+                                        transformBox: entranceProps.style?.transformBox,
                                         transition: dragState.isDragging ? 'none' : 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                                         cursor: onMerge ? 'grab' : (interactive ? 'pointer' : 'default'),
                                     }}
-                                    className="hover:opacity-90"
                                 />
 
                                 {/* Label Logic */}

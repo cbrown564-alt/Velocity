@@ -9,6 +9,7 @@
  */
 
 import { useMemo } from 'react';
+import { isExcludedFromAutoAnalysis } from '../../../core/semantic/respondentIdentifier';
 import { Variable, VariableSet } from '../../../types';
 
 export interface SuggestedVariable {
@@ -48,13 +49,18 @@ export function useSuggestedVariables(
   variables: Variable[] | undefined,
   variableSets: VariableSet[] | undefined,
   excludeIds: Set<string>,
-  maxSuggestions = 5
+  maxSuggestions = 5,
+  rowCount?: number
 ): SuggestedVariable[] {
   return useMemo(() => {
     if (!variables?.length || !variableSets?.length) return [];
 
     const scored = variables
-      .filter((v) => !v.synthetic && !excludeIds.has(v.id))
+      .filter(
+        (v) =>
+          !excludeIds.has(v.id) &&
+          !isExcludedFromAutoAnalysis(v, rowCount != null ? { rowCount } : undefined)
+      )
       .map((v) => ({
         variable: v,
         score: scoreVariable(v),
@@ -88,5 +94,5 @@ export function useSuggestedVariables(
     }
 
     return suggestions;
-  }, [variables, variableSets, excludeIds, maxSuggestions]);
+  }, [variables, variableSets, excludeIds, maxSuggestions, rowCount]);
 }

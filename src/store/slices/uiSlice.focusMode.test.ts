@@ -93,4 +93,28 @@ describe('UISlice — Toast Layer', () => {
     useVelocityStore.getState().clearToasts();
     expect(useVelocityStore.getState().toasts).toEqual([]);
   });
+
+  it('replaces toasts with the same dedupeKey', () => {
+    useVelocityStore.getState().addToast({
+      dedupeKey: 'storage-reminder',
+      message: 'First',
+      type: 'info',
+    });
+    useVelocityStore.getState().addToast({
+      dedupeKey: 'storage-reminder',
+      message: 'Second',
+      type: 'info',
+    });
+    const toasts = useVelocityStore.getState().toasts;
+    expect(toasts).toHaveLength(1);
+    expect(toasts[0].message).toBe('Second');
+  });
+
+  it('caps the toast queue at two items', () => {
+    useVelocityStore.getState().addToast({ message: 'One', type: 'info' });
+    useVelocityStore.getState().addToast({ message: 'Two', type: 'info' });
+    useVelocityStore.getState().addToast({ message: 'Three', type: 'info' });
+    const messages = useVelocityStore.getState().toasts.map((t) => t.message);
+    expect(messages).toEqual(['Two', 'Three']);
+  });
 });

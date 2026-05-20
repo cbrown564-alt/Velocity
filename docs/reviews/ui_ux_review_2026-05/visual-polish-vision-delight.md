@@ -5,7 +5,7 @@
 **Focus:** User-centric delight, instrumental beauty, and the psychology of data trust  
 **Builds on:** `visual-polish-review.md` (UXP-001 through UXP-032)  
 **Evidence:** Live UI screenshots (`S11-canvas-1920.png`, `S11-workspace-1920.png`), design system docs (`design_01_system.md`), component code  
-**Status:** §9 Quick Wins implemented — see §10. VP-D-01–09 validated on 4176; UXP-033–035 fixed May 20; §12 frame-it **Yes** (human re-test) — see `visual-polish-delight-validation-plan.md`.  
+**Status:** §9 Quick Wins implemented — see §10. VP-D-01–10 validated; UXP-033–035 fixed May 20; §12 frame-it **Yes** (human re-test) — see `visual-polish-delight-validation-plan.md`.  
 
 ---
 
@@ -390,6 +390,7 @@ All three quick wins were implemented on May 19, 2026.
 | 2026-05-20 | Validation VP-D-07 (Manager) | — | D-040–042 on 4176; `screenshots/vp-d-07/`. UXR-018 fixed via `managerSearchQuery`. |
 | 2026-05-20 | Validation VP-D-06 (chart) | — | D-030–031 on 4176; `screenshots/vp-d-06/`. Chart lacks stats footer band; VP-D-08 + §12 remain. |
 | 2026-05-20 | Validation VP-D-01–05 (crosstab) | — | P1–P10, D-001–024 on 4176; `screenshots/vp-d-01` … `vp-d-05`. Manager, theme matrix (footer/export), §12 frame-it remain. |
+| 2026-05-20 | Validation VP-D-10 (Playwright) | — | 3-theme crosstab pixel baselines; `tests/e2e/visual-polish-theme-table.spec.ts`. |
 
 ---
 

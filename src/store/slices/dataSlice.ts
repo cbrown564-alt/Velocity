@@ -21,6 +21,7 @@ import {
     createStorePersistenceBridge,
 } from '../enginePersistenceBridge';
 import type { EngineResponseByType } from '../../types/engineWorker';
+import { enrichVariablesWithSemantic } from '../../core/semantic/respondentIdentifier';
 
 export type { VariableType } from '../../types';
 
@@ -642,22 +643,30 @@ export const createDataSlice: StateCreator<DataSlice, [], [], DataSlice> = (set,
 
         const response = await engineProxy.loadCSV(fileName, content);
 
-        const variables: Variable[] = response.schema.map((col) => ({
-            id: col.name,
-            name: col.name,
-            label: col.name.replace(/_/g, ' '),
-            type: col.type === 'VARCHAR' ? 'categorical' : 'numeric',
-            valueLabels: [],
-            missingValues: {},
-        }));
+        const variableSets: VariableSet[] = response.schema.map((col) => {
+            const id = col.name;
+            const label = col.name.replace(/_/g, ' ');
+            const type = col.type === 'VARCHAR' ? 'categorical' : 'numeric';
+            return {
+                id: crypto.randomUUID(),
+                name: label || id,
+                variableIds: [id],
+                structure: 'single' as const,
+                type,
+            };
+        });
 
-        const variableSets: VariableSet[] = variables.map(v => ({
-            id: crypto.randomUUID(),
-            name: v.label || v.name,
-            variableIds: [v.id],
-            structure: 'single',
-            type: v.type,
-        }));
+        const variables: Variable[] = enrichVariablesWithSemantic(
+            response.schema.map((col) => ({
+                id: col.name,
+                name: col.name,
+                label: col.name.replace(/_/g, ' '),
+                type: col.type === 'VARCHAR' ? 'categorical' : 'numeric',
+                valueLabels: [],
+                missingValues: {},
+            })),
+            variableSets
+        );
 
         set({
             dataset: {

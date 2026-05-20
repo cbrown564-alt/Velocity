@@ -36,6 +36,17 @@ describe('ToastLayer', () => {
     expect(screen.getByText('Second')).toBeInTheDocument();
   });
 
+  it('renders optional title above message', () => {
+    useVelocityStore.getState().addToast({
+      title: 'Saved on this device',
+      message: 'Export Session when you need a backup.',
+      type: 'info',
+    });
+    render(<ToastLayer />);
+    expect(screen.getByText('Saved on this device')).toBeInTheDocument();
+    expect(screen.getByText('Export Session when you need a backup.')).toBeInTheDocument();
+  });
+
   it('renders action button when provided', () => {
     const actionClick = vi.fn();
     useVelocityStore.getState().addToast({

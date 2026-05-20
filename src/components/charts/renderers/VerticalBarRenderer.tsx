@@ -1,5 +1,7 @@
 import React, { useMemo, useCallback, useRef } from 'react';
+import { motion } from 'framer-motion';
 import * as d3 from 'd3-scale';
+import { getBarEntranceMotionProps } from '../../../lib/chartBarEntrance';
 import { max } from 'd3-array';
 import { BaseChartRendererProps } from '../../../types/charts';
 // getChartColor removed
@@ -21,7 +23,9 @@ export const VerticalBarRenderer: React.FC<BaseChartRendererProps> = ({
     onContextMenu,
     onMerge,
     labelMode = 'count',
+    animateBarEntrance = false,
 }) => {
+    const BarRect = animateBarEntrance ? motion.rect : 'rect';
     const svgRef = useRef<SVGSVGElement>(null);
 
     // Use the first series (single column analysis) or "Total" column
@@ -188,7 +192,7 @@ export const VerticalBarRenderer: React.FC<BaseChartRendererProps> = ({
                     const isSelected = selectedKeys?.has(d.label);
                     const isDragging = dragState.isDragging && dragState.draggedItem?.label === d.label;
                     const isDropTarget = dragState.isDragging && dragState.dropTarget === d.label;
-
+                    const entranceProps = getBarEntranceMotionProps('vertical', i, animateBarEntrance);
 
                     return (
                         <g
@@ -226,19 +230,25 @@ export const VerticalBarRenderer: React.FC<BaseChartRendererProps> = ({
                                 />
                             )}
 
-                            <rect
+                            <BarRect
                                 x={xScale(d.label)}
                                 y={yScale(d.value)}
                                 width={xScale.bandwidth()}
                                 height={barHeight}
-                                // Use palette colors if available, otherwise fall back to primary
                                 fill={isDropTarget ? 'var(--status-success-bg)' : (colors ? colors[0] : 'var(--viz-fill-secondary)')}
                                 fillOpacity={0.8}
                                 stroke={isSelected ? 'var(--text-accent)' : 'none'}
                                 strokeWidth={isSelected ? 2 : 0}
                                 rx={1}
                                 className="hover:opacity-90 chart-bar-rect"
-                                style={{ transition: dragState.isDragging ? 'none' : 'height 0.3s cubic-bezier(0.4, 0, 0.2, 1)' }}
+                                initial={entranceProps.initial}
+                                animate={entranceProps.animate}
+                                transition={entranceProps.transition}
+                                style={{
+                                    transformOrigin: entranceProps.style?.transformOrigin,
+                                    transformBox: entranceProps.style?.transformBox,
+                                    transition: dragState.isDragging ? 'none' : 'height 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                }}
                             />
 
                             {/* Labels */}
