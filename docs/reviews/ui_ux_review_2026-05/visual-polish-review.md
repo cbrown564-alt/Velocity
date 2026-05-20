@@ -208,6 +208,13 @@ No UXP item duplicates UXR-010 (filtered N in subtitle) — that is trust; UXP-0
 - **UXP-005:** `StatisticsStatusBar` split into two rows — methodology + legend on line 1; χ² results right-aligned on line 2
 - Tests: `crosstabColumnWidths.test.ts`, `DataTable.test.tsx`, `CrosstabCell.test.tsx`
 
+**UXP-004, UXP-022–023 (Canvas frame unification)** — implemented May 20, 2026:
+
+- **`AnalysisOutputFrame`** — shared bordered artifact for table + chart (body band + footer band)
+- **`DataTable`** + **`SlideContainer`** chart path use the frame; duplicate chart wrapper removed
+- **Focus mode:** frame bleeds to slide edges; compact `SlideHeader`; SmartCanvas / shell inner panel de-nested
+- Tests: `AnalysisOutputFrame.test.tsx`
+
 **Quick validation checklist** (after UXP-001–003):
 
 - [x] Vertical scan: EAST header → both % cells → column total — no horizontal drift  

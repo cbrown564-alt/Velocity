@@ -1,7 +1,5 @@
 import React, { useMemo, useState, useRef, useCallback } from 'react';
 import { AggregatedRow, Variable, TableStats } from '../../../types';
-import { motion } from 'framer-motion';
-import { getMotionProps, useReducedMotion, DURATIONS } from '../../../lib/motion';
 import { ChevronRight, ChevronDown } from 'lucide-react';
 import type { VariableStatsResult } from '../../../types/worker';
 import { AnalysisChart } from '../../../components/charts/AnalysisChart';
@@ -16,10 +14,12 @@ import { Tooltip } from '../../../components/common/Tooltip';
 import { StatisticsTooltip } from '../../../components/common/StatisticsTooltip';
 import { MethodologyDrawer } from '../../../components/common/MethodologyPanel';
 import { StatisticsStatusBar } from '../../../components/common/StatisticsStatusBar';
+import { useReducedMotion } from '../../../lib/motion';
 import { useVelocityStore } from '../../../store';
 import mergeStyles from './DataTable.module.css';
 import { CrosstabCell } from './CrosstabCell';
 import { computeCrosstabColumnWidths } from './crosstabColumnWidths';
+import { AnalysisOutputFrame } from './AnalysisOutputFrame';
 export type { RowPathEntry, TableRowNode };
 
 /**
@@ -49,6 +49,8 @@ interface DataTableProps {
   tableStats?: TableStats | null;
   /** Table density: compact (exploration) or generous (presentation) */
   density?: 'compact' | 'generous';
+  /** Bleed output frame to slide edges (Focus mode) */
+  frameBleed?: boolean;
 }
 
 export const DataTable: React.FC<DataTableProps> = ({
@@ -64,6 +66,7 @@ export const DataTable: React.FC<DataTableProps> = ({
   isGrid = false,
   tableStats,
   density = 'compact',
+  frameBleed = false,
 }) => {
   const analysisSettings = useVelocityStore((state) => state.analysisSettings);
   const transformLog = useVelocityStore((state) => state.transformLog);
@@ -405,11 +408,19 @@ export const DataTable: React.FC<DataTableProps> = ({
     };
 
     return (
-      <motion.div
-        key="table"
-        {...getMotionProps({ preset: 'fadeUp', duration: DURATIONS.enter, reducedMotion })}
-        data-density={density}
-        className="analysis-frame w-full overflow-hidden bg-[var(--bg-panel)] border border-[var(--border-subtle)] rounded-lg shadow-sm"
+      <AnalysisOutputFrame
+        bleed={frameBleed}
+        density={density}
+        reducedMotion={reducedMotion}
+        footer={
+          <StatisticsStatusBar
+            analysisSettings={analysisSettings}
+            tableStats={tableStats}
+            colVariable={colVariable}
+            overlapCorrected={overlapCorrected}
+            onMethodologyClick={() => setShowMethodology(!showMethodology)}
+          />
+        }
       >
         <div ref={tableContainerRef} className="overflow-x-auto overflow-y-auto max-h-[60vh] custom-scrollbar" style={{ position: 'relative' }}>
           <table className={`${mergeStyles.crosstabTable} w-full text-sm text-left border-collapse`}>
@@ -587,16 +598,17 @@ export const DataTable: React.FC<DataTableProps> = ({
           );
         })()}
 
-      </motion.div>
+      </AnalysisOutputFrame>
     );
   }
 
   // -- RENDER MODE: CHART --
   return (
-    <motion.div
-      key="chart"
-      {...getMotionProps({ preset: 'fadeUp', duration: DURATIONS.enter, reducedMotion })}
-      className="w-full h-[500px] bg-[var(--bg-active)] border border-[var(--border-color)] rounded-lg shadow-sm p-6"
+    <AnalysisOutputFrame
+      bodyPadding="chart"
+      density={density}
+      reducedMotion={reducedMotion}
+      className="h-[500px]"
     >
       <AnalysisChart
         data={data}
@@ -612,6 +624,6 @@ export const DataTable: React.FC<DataTableProps> = ({
         }}
         variableStats={variableStats}
       />
-    </motion.div>
+    </AnalysisOutputFrame>
   );
 };

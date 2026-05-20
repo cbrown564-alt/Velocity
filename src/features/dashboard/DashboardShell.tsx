@@ -700,9 +700,13 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
               </div>
 
               {/* MAIN CANVAS AREA */}
-              <SmartCanvas className="flex-1 relative overflow-hidden p-6 flex flex-col">
+              <SmartCanvas className={`flex-1 relative overflow-hidden flex flex-col ${focusMode ? 'p-2' : 'p-6'}`}>
                 <div className="flex-1 w-full h-full flex flex-col min-h-0">
-                  <div className="flex-1 relative bg-[var(--bg-panel)] rounded-xl border border-[var(--border-color)] shadow-sm overflow-hidden flex flex-col">
+                  <div className={`flex-1 relative overflow-hidden flex flex-col ${
+                    focusMode
+                      ? 'bg-transparent border-0 shadow-none rounded-none'
+                      : 'bg-[var(--bg-panel)] rounded-xl border border-[var(--border-color)] shadow-sm'
+                  }`}>
                     {isQuerying && (
                       <div className="absolute inset-0 bg-[var(--bg-panel)]/50 z-20 flex items-center justify-center backdrop-blur-sm">
                         <Loader2 className="animate-spin text-[var(--color-accent)]" size={32} />

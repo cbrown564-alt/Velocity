@@ -13,6 +13,7 @@ import { recommendChart } from '../../../services/chartRecommender';
 import { useResolvedVariables } from '../hooks/useResolvedVariables';
 import { useSuggestedVariables } from '../hooks/useSuggestedVariables';
 import { getMotionProps, useReducedMotion, DURATIONS } from '../../../lib/motion';
+import { AnalysisOutputFrame } from './AnalysisOutputFrame';
 
 import './SlideHeader.css';
 
@@ -43,6 +44,7 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
     const isQuerying = useVelocityStore((state) => state.isQuerying);
     const openDrillDown = useVelocityStore((state) => state.openDrillDown);
     const tableDensity = useVelocityStore((state) => state.tableDensity);
+    const focusMode = useVelocityStore((state) => state.focusMode);
 
     const totalCount = useMemo(() => {
         const fromQuery = computeAnalysisSampleSize(chartData, { isWeighted });
@@ -195,7 +197,13 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
                     enableVisualETL: true
                 };
                 return (
-                    <div className="w-full h-full p-4 flex flex-col">
+                    <AnalysisOutputFrame
+                        bodyPadding="chart"
+                        density={tableDensity}
+                        reducedMotion={reducedMotion}
+                        bleed={focusMode}
+                        className="h-full"
+                    >
                         <AnalysisChart
                             data={chartData}
                             config={config}
@@ -205,27 +213,24 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
                             isMultipleResponse={isMultipleResponse}
                             variableStats={variableStats}
                         />
-                    </div>
+                    </AnalysisOutputFrame>
                 );
             case 'table':
-                // Render legacy table - assuming it handles its own data fetching for now
-                // In future, we pass props
                 return (
-                    <div className="w-full h-full overflow-hidden flex flex-col">
-                        <DataTable
-                            data={chartData}
-                            rowVariables={resolvedRowVars}
-                            colVariable={resolvedColVar}
-                            totalCount={totalCount}
-                            isWeighted={isWeighted}
-                            variableStats={variableStats}
-                            tableStats={tableStats}
-                            isMultipleResponse={isMultipleResponse}
-                            isGrid={firstVarSet?.structure === 'grid'}
-                            density={tableDensity}
-                            onCellClick={(rowPath, colValue) => void openDrillDown(rowPath, colValue)}
-                        />
-                    </div>
+                    <DataTable
+                        data={chartData}
+                        rowVariables={resolvedRowVars}
+                        colVariable={resolvedColVar}
+                        totalCount={totalCount}
+                        isWeighted={isWeighted}
+                        variableStats={variableStats}
+                        tableStats={tableStats}
+                        isMultipleResponse={isMultipleResponse}
+                        isGrid={firstVarSet?.structure === 'grid'}
+                        density={tableDensity}
+                        frameBleed={focusMode}
+                        onCellClick={(rowPath, colValue) => void openDrillDown(rowPath, colValue)}
+                    />
                 );
             default:
                 return <div>Unknown content type</div>;
@@ -233,19 +238,17 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
     };
 
     return (
-        <div className={`flex-1 flex flex-col items-center justify-center p-8 bg-glass-app overflow-y-auto ${className}`}>
+        <div className={`flex-1 flex flex-col items-center justify-center ${focusMode ? 'p-2' : 'p-6'} bg-glass-app overflow-y-auto ${className}`}>
             {/* 16:9 Presentation Canvas Container */}
             <div
                 className="w-full max-w-[1200px] bg-[var(--mat-panel-bg,var(--bg-panel))] backdrop-blur-[var(--mat-panel-filter,0)] rounded-xl shadow-md border border-[var(--border-color)] overflow-hidden flex flex-col"
-                style={{ aspectRatio: '16/9', minHeight: '600px' }}
+                style={{ aspectRatio: '16/9', minHeight: focusMode ? '640px' : '600px' }}
             >
-                {/* Slide Header inside the Canvas */}
-                <div className="px-8 pt-8">
-                    <SlideHeader />
+                <div className={focusMode ? 'px-4 pt-4' : 'px-6 pt-6'}>
+                    <SlideHeader className={focusMode ? 'compact' : ''} />
                 </div>
 
-                {/* Chart/Table Content */}
-                <div className="flex-1 overflow-hidden px-4 pb-4">
+                <div className={`flex-1 min-h-0 flex flex-col ${focusMode ? 'px-0 pb-2' : 'px-6 pb-6'}`}>
                     {renderCellContent()}
                 </div>
             </div>
