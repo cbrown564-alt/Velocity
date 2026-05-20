@@ -153,4 +153,53 @@ describe('DataTable Insight Halo', () => {
     expect(cells[0].className).toContain('bg-[var(--halo-mid)]');
     expect(cells[1].className).not.toContain('bg-[var(--halo-mid)]');
   });
+
+  it('uses fixed table layout with proportional column widths (UXP-002)', () => {
+    const processed = makeProcessedData([
+      { col: 'east', row: 'r1', percent: 50 },
+      { col: 'north', row: 'r1', percent: 50 },
+      { col: 'east', row: 'r2', percent: 30 },
+      { col: 'north', row: 'r2', percent: 70 },
+    ]);
+    processed.columns = [
+      { key: 'east', label: 'East', total: 80 },
+      { key: 'north', label: 'North Eastern Region', total: 120 },
+    ];
+    processed.colVariable = {
+      id: 'region',
+      name: 'region',
+      label: 'Region',
+      type: 'categorical',
+      valueLabels: [],
+      missingValues: {},
+    } as Variable;
+    mockUseProcessedAnalysisData.mockReturnValue(processed);
+
+    useVelocityStore.setState({
+      analysisSettings: {
+        comparisonMethod: 'cell_vs_rest',
+        correctionType: 'none',
+        showConfidenceIntervals: false,
+      },
+      transformLog: [],
+    });
+
+    const { container } = render(
+      <DataTable
+        data={[]}
+        rowVariables={processed.rowVariables}
+        colVariable={processed.colVariable}
+        totalCount={200}
+      />
+    );
+
+    const table = container.querySelector('table');
+    expect(table?.className).toContain('crosstabTable');
+
+    const headers = Array.from(container.querySelectorAll('thead th')).slice(1);
+    expect(headers).toHaveLength(3);
+    const eastWidth = parseFloat((headers[0] as HTMLElement).style.width);
+    const northWidth = parseFloat((headers[1] as HTMLElement).style.width);
+    expect(northWidth).toBeGreaterThan(eastWidth);
+  });
 });

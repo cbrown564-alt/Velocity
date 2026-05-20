@@ -81,6 +81,8 @@ export interface CrosstabCellProps {
   sig?: CellSig | null;
   sigLetters?: string;
   showMeanBadge?: boolean;
+  /** Marginal rows (column totals) use smaller type */
+  size?: 'default' | 'marginal';
   /** If provided, primary values animate on mount and when this key changes */
   animationTrigger?: string;
   /** Respects prefers-reduced-motion; passed from parent DataTable */
@@ -227,11 +229,14 @@ export const CrosstabCell: React.FC<CrosstabCellProps> = ({
   sig,
   sigLetters,
   showMeanBadge = false,
+  size = 'default',
   animationTrigger,
   reducedMotion = false,
 }) => {
   const primaryClass = primaryTextClass(isZero, isSignificant);
   const secondaryClass = secondaryTextClass(isZero);
+  const primarySizeClass = size === 'marginal' ? 'text-xs' : 'text-sm';
+  const secondarySizeClass = size === 'marginal' ? 'text-[9px]' : 'text-[10px]';
 
   if (variant === 'count') {
     const n = count ?? 0;
@@ -242,17 +247,17 @@ export const CrosstabCell: React.FC<CrosstabCellProps> = ({
         value={n}
         formatter={(v) => `${Math.round(v)}`}
         reducedMotion={reducedMotion}
-        className={`font-mono text-sm font-bold tabular-nums ${primaryClass}`}
+        className={`font-mono ${primarySizeClass} font-bold tabular-nums ${primaryClass}`}
       />
     ) : (
-      <span className={`font-mono text-sm font-bold tabular-nums ${primaryClass}`}>{n}</span>
+      <span className={`font-mono ${primarySizeClass} font-bold tabular-nums ${primaryClass}`}>{n}</span>
     );
     return (
       <div className="flex flex-col items-start gap-0.5 text-left" data-testid="crosstab-cell-count">
         <PhosphorWrap ghost={ghost} formatter={(v) => `${Math.round(v)}`} className={primaryClass}>
           {countDisplay}
         </PhosphorWrap>
-        <FadeIn animationTrigger={animationTrigger} reducedMotion={reducedMotion} delay={0.1} className={`text-[10px] font-mono tracking-tight ${secondaryClass}`}>
+        <FadeIn animationTrigger={animationTrigger} reducedMotion={reducedMotion} delay={0.1} className={`${secondarySizeClass} font-mono tracking-tight ${secondaryClass}`}>
           base
         </FadeIn>
       </div>
@@ -269,10 +274,10 @@ export const CrosstabCell: React.FC<CrosstabCellProps> = ({
         value={mean ?? 0}
         formatter={(v) => v.toFixed(1)}
         reducedMotion={reducedMotion}
-        className={`font-mono text-sm font-bold tabular-nums ${primaryClass}`}
+        className={`font-mono ${primarySizeClass} font-bold tabular-nums ${primaryClass}`}
       />
     ) : (
-      <span className={`font-mono text-sm font-bold tabular-nums ${primaryClass}`}>{displayMean}</span>
+      <span className={`font-mono ${primarySizeClass} font-bold tabular-nums ${primaryClass}`}>{displayMean}</span>
     );
     return (
       <div className="flex flex-col items-start gap-0.5 text-left" data-testid="crosstab-cell-metric">
@@ -282,7 +287,7 @@ export const CrosstabCell: React.FC<CrosstabCellProps> = ({
           </PhosphorWrap>
           {sigLetters ? (
             <SpringLock animationTrigger={animationTrigger} reducedMotion={reducedMotion}>
-              <span className="text-[10px] font-mono font-semibold text-[var(--color-success)] align-super">
+              <span className={`${secondarySizeClass} font-mono font-semibold text-[var(--color-success)] align-super`}>
                 {sigLetters}
               </span>
             </SpringLock>
@@ -290,13 +295,13 @@ export const CrosstabCell: React.FC<CrosstabCellProps> = ({
             showMeanBadge &&
             !isZero &&
             !sigLetters && (
-              <FadeIn animationTrigger={animationTrigger} reducedMotion={reducedMotion} delay={0.1} className={`text-[10px] ${secondaryClass} bg-[var(--bg-panel)] px-1 rounded font-mono`}>
+              <FadeIn animationTrigger={animationTrigger} reducedMotion={reducedMotion} delay={0.1} className={`${secondarySizeClass} ${secondaryClass} bg-[var(--bg-panel)] px-1 rounded font-mono`}>
                 Mean
               </FadeIn>
             )
           )}
         </div>
-        <FadeIn animationTrigger={animationTrigger} reducedMotion={reducedMotion} delay={0.1} className={`text-[10px] font-mono tracking-tight ${secondaryClass}`}>
+        <FadeIn animationTrigger={animationTrigger} reducedMotion={reducedMotion} delay={0.1} className={`${secondarySizeClass} font-mono tracking-tight ${secondaryClass}`}>
           {stdDev !== undefined && <span className="mr-2">SD: {stdDev.toFixed(1)}</span>}
           {sampleN !== undefined && (
             <span className={smallBaseClass(sampleN)} data-small-base={smallBaseClass(sampleN) ? 'true' : undefined}>
@@ -317,10 +322,10 @@ export const CrosstabCell: React.FC<CrosstabCellProps> = ({
       value={percent ?? 0}
       formatter={(v) => `${v.toFixed(1)}%`}
       reducedMotion={reducedMotion}
-      className={`font-mono text-sm font-bold tabular-nums ${primaryClass}`}
+      className={`font-mono ${primarySizeClass} font-bold tabular-nums ${primaryClass}`}
     />
   ) : (
-    <span className={`font-mono text-sm font-bold tabular-nums ${primaryClass}`}>{displayPercent}</span>
+    <span className={`font-mono ${primarySizeClass} font-bold tabular-nums ${primaryClass}`}>{displayPercent}</span>
   );
 
   return (
@@ -341,7 +346,7 @@ export const CrosstabCell: React.FC<CrosstabCellProps> = ({
           animationTrigger={animationTrigger}
           reducedMotion={reducedMotion}
           delay={0.15}
-          className={`text-[10px] font-mono tracking-tight ${secondaryClass} ${baseClass}`}
+          className={`${secondarySizeClass} font-mono tracking-tight ${secondaryClass} ${baseClass}`}
         >
           <span data-small-base={baseClass ? 'true' : undefined}>n={count}</span>
         </FadeIn>

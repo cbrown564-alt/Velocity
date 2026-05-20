@@ -61,3 +61,18 @@
     background-color: color-mix(in srgb, var(--color-accent) 6%, transparent) !important;
     box-shadow: inset 0 -2px 0 var(--color-accent);
 }
+
+/* UXP-002: fixed table layout with proportional data columns */
+.crosstabTable {
+    table-layout: fixed;
+    width: 100%;
+}
+
+.crosstabTable th,
+.crosstabTable td {
+    overflow: hidden;
+}
+
+.totalRow {
+    font-size: 0.8125rem;
+}

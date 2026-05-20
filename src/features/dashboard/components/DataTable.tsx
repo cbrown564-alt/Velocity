@@ -19,6 +19,7 @@ import { StatisticsStatusBar } from '../../../components/common/StatisticsStatus
 import { useVelocityStore } from '../../../store';
 import mergeStyles from './DataTable.module.css';
 import { CrosstabCell } from './CrosstabCell';
+import { computeCrosstabColumnWidths } from './crosstabColumnWidths';
 export type { RowPathEntry, TableRowNode };
 
 /**
@@ -198,6 +199,12 @@ export const DataTable: React.FC<DataTableProps> = ({
     const first = tableData.rows[0]?.key ?? '';
     const last = tableData.rows[tableData.rows.length - 1]?.key ?? '';
     return `${first}-${last}-${tableData.rows.length}-${tableData.colKeys.length}-${tableData.grandTotal}`;
+  }, [tableData]);
+
+  const columnWidths = useMemo(() => {
+    if (!tableData) return null;
+    const hasTotalColumn = tableData.colKeys.length > 1;
+    return computeCrosstabColumnWidths(tableData.colKeys, tableData.colLabels, hasTotalColumn);
   }, [tableData]);
 
   /** Insight Halo: subtle background tint based on significance level */
@@ -405,10 +412,13 @@ export const DataTable: React.FC<DataTableProps> = ({
         className="analysis-frame w-full overflow-hidden bg-[var(--bg-panel)] border border-[var(--border-subtle)] rounded-lg shadow-sm"
       >
         <div ref={tableContainerRef} className="overflow-x-auto overflow-y-auto max-h-[60vh] custom-scrollbar" style={{ position: 'relative' }}>
-          <table className="w-full text-sm text-left border-collapse">
+          <table className={`${mergeStyles.crosstabTable} w-full text-sm text-left border-collapse`}>
             <thead className="text-xs bg-[var(--bg-panel)] border-b border-[var(--border-grid)] data-[theme=liquid-glass]:bg-[var(--mat-panel-bg)] data-[theme=liquid-glass]:backdrop-blur-md">
               <tr className="font-body">
-                <th className={`px-2 ${density === 'generous' ? 'py-4' : 'py-2.5'} font-bold text-[var(--text-accent)] tracking-wider text-left w-64 align-bottom sticky top-0 bg-[var(--bg-panel)] data-[theme=liquid-glass]:bg-[var(--mat-panel-bg)] data-[theme=liquid-glass]:backdrop-blur-md z-10 box-border border-b border-[var(--border-grid)] uppercase text-[11px]`}>
+                <th
+                  style={{ width: columnWidths?.rowLabel }}
+                  className={`px-2 ${density === 'generous' ? 'py-4' : 'py-2.5'} font-bold text-[var(--text-accent)] tracking-wider text-left align-bottom sticky top-0 bg-[var(--bg-panel)] data-[theme=liquid-glass]:bg-[var(--mat-panel-bg)] data-[theme=liquid-glass]:backdrop-blur-md z-10 box-border border-b border-[var(--border-grid)] uppercase text-[11px]`}
+                >
                   {rowVariables[0].label}
                 </th>
                 {tableData.colKeys.map((col) => {
@@ -420,8 +430,9 @@ export const DataTable: React.FC<DataTableProps> = ({
                   return (
                     <th
                       key={col}
+                      style={{ width: columnWidths?.columns[col] }}
                       className={[
-                        `px-2 ${density === 'generous' ? 'py-3' : 'py-2'} font-bold text-[var(--text-accent)] text-left min-w-[5.5rem] align-bottom sticky top-0 bg-[var(--bg-panel)] data-[theme=liquid-glass]:bg-[var(--mat-panel-bg)] data-[theme=liquid-glass]:backdrop-blur-md z-10 border-b border-l border-[var(--border-grid)] transition-colors`,
+                        `px-2 ${density === 'generous' ? 'py-3' : 'py-2'} font-bold text-[var(--text-accent)] text-left align-bottom sticky top-0 bg-[var(--bg-panel)] data-[theme=liquid-glass]:bg-[var(--mat-panel-bg)] data-[theme=liquid-glass]:backdrop-blur-md z-10 border-b border-l border-[var(--border-grid)] transition-colors`,
                         hoveredCol === col ? 'bg-[var(--bg-active)] border-l-[var(--border-color-active)]' : 'border-l-transparent',
                         colVariable ? mergeStyles.mergeHeader : '',
                         isColDragging ? mergeStyles.mergeDragging : '',
@@ -461,7 +472,10 @@ export const DataTable: React.FC<DataTableProps> = ({
                   );
                 })}
                 {(tableData.colKeys.length > 1) && (
-                  <th className="px-2 py-2.5 font-bold text-left w-24 text-[var(--text-primary)] bg-[var(--bg-active)] align-bottom sticky top-0 z-10 border-b border-[var(--border-grid)] shadow-[inset_0_-2px_0_var(--border-grid)] text-[11px] uppercase tracking-wider">
+                  <th
+                    style={{ width: columnWidths?.total }}
+                    className="px-2 py-2.5 font-bold text-left text-[var(--text-primary)] bg-[var(--bg-active)] align-bottom sticky top-0 z-10 border-b border-[var(--border-grid)] shadow-[inset_0_-2px_0_var(--border-grid)] text-[11px] uppercase tracking-wider"
+                  >
                     Total
                   </th>
                 )}
@@ -469,14 +483,15 @@ export const DataTable: React.FC<DataTableProps> = ({
             </thead>
             <tbody className="divide-y divide-[var(--border-grid)] font-body">
               {tableData.rows.map(row => renderRow(row))}
-              <tr className="bg-[var(--bg-surface)] font-semibold border-t border-[var(--border-grid)] border-b border-[var(--border-grid)]">
-                <td className={`total-row-label px-2 ${density === 'generous' ? 'py-2.5' : 'py-1.5'} text-[var(--text-primary)] font-body text-sm font-bold`}>Total</td>
+              <tr className={`${mergeStyles.totalRow} bg-[var(--bg-surface)] font-semibold border-t border-[var(--border-grid)] border-b border-[var(--border-grid)]`}>
+                <td className={`total-row-label px-2 ${density === 'generous' ? 'py-2.5' : 'py-1.5'} text-[var(--text-secondary)] font-body text-xs font-bold uppercase tracking-wide`}>Total</td>
                 {tableData.colKeys.map(col => (
                   <td key={col} className={`total-row-cell px-2 ${density === 'generous' ? 'py-2.5' : 'py-1.5'} text-left align-middle data-cell`}>
                     <CrosstabCell
                       key={`coltotal-${animationKey}-${col}`}
                       variant="count"
                       count={tableData.colTotals[col]}
+                      size="marginal"
                       animationTrigger={animationKey}
                       reducedMotion={reducedMotion}
                     />
@@ -488,6 +503,7 @@ export const DataTable: React.FC<DataTableProps> = ({
                       key={`grand-${animationKey}`}
                       variant="count"
                       count={totalCount}
+                      size="marginal"
                       animationTrigger={animationKey}
                       reducedMotion={reducedMotion}
                     />

@@ -84,82 +84,85 @@ export const StatisticsStatusBar: React.FC<StatisticsStatusBarProps> = ({
 
   return (
     <>
-      {/* Main status bar */}
+      {/* Main status bar — UXP-005: method/legend on line 1, test results on line 2 */}
       <div className={`${styles.statusBar} statistics-status-bar`}>
-        {/* Methodology Pill */}
-        {(isCatCrossTab || isCatNumeric) ? (
-          <button
-            className={`${styles.methodologyPill} ${isCatNumeric ? styles.descriptiveLabel : ''}`}
-            onClick={onMethodologyClick}
-            title="View statistical methodology"
-          >
-            {getMethodologyText()}
-          </button>
-        ) : noCol ? (
-          <span className={styles.descriptiveLabel}>
-            Frequency distribution
-          </span>
-        ) : null}
+        <div className={styles.statusRow}>
+          {/* Methodology Pill */}
+          {(isCatCrossTab || isCatNumeric) ? (
+            <button
+              className={`${styles.methodologyPill} ${isCatNumeric ? styles.descriptiveLabel : ''}`}
+              onClick={onMethodologyClick}
+              title="View statistical methodology"
+            >
+              {getMethodologyText()}
+            </button>
+          ) : noCol ? (
+            <span className={styles.descriptiveLabel}>
+              Frequency distribution
+            </span>
+          ) : null}
 
-        {/* Significance Legend (only for cat x cat with arrows) */}
-        {isCatCrossTab && (
-          <SignificanceLegend
-            compact
-            comparisonMethod={analysisSettings.comparisonMethod}
-            correctionType={analysisSettings.correctionType}
-            overlapCorrected={overlapCorrected}
-            showMethodologyLink={false}
-          />
-        )}
+          {/* Significance Legend (only for cat x cat with arrows) */}
+          {isCatCrossTab && (
+            <SignificanceLegend
+              compact
+              comparisonMethod={analysisSettings.comparisonMethod}
+              correctionType={analysisSettings.correctionType}
+              overlapCorrected={overlapCorrected}
+              showMethodologyLink={false}
+            />
+          )}
 
-        <div className={styles.spacer} />
+          <div className={styles.spacer} />
 
-        {/* Chi-square badge */}
+          {/* Settings Gear */}
+          {showGear && (
+            <button
+              className={`${styles.gearButton} ${showSettings ? styles.gearButtonActive : ''}`}
+              onClick={() => setShowSettings(!showSettings)}
+              title="Statistical settings"
+            >
+              <Settings size={14} />
+            </button>
+          )}
+        </div>
+
         {chiSq && (
-          <Tooltip
-            content={
-              <div className="text-xs space-y-1">
-                <div className="font-semibold">Chi-Square Test of Independence</div>
-                <div className="grid grid-cols-2 gap-x-3 gap-y-0.5">
-                  <span className="text-[var(--text-secondary)]">Chi-Square (χ²):</span>
-                  <span className="font-mono">{chiSq.chiSquare.toFixed(2)}</span>
-                  <span className="text-[var(--text-secondary)]">Degrees of Freedom:</span>
-                  <span className="font-mono">{chiSq.df}</span>
-                  <span className="text-[var(--text-secondary)]">p-value:</span>
-                  <span className="font-mono">{chiSq.pValue < 0.001 ? '<0.001' : chiSq.pValue.toFixed(3)}</span>
-                  <span className="text-[var(--text-secondary)]">Cramér's V:</span>
-                  <span className="font-mono">{chiSq.cramersV.toFixed(3)}</span>
+          <div className={styles.statusRowSecondary}>
+            <Tooltip
+              content={
+                <div className="text-xs space-y-1">
+                  <div className="font-semibold">Chi-Square Test of Independence</div>
+                  <div className="grid grid-cols-2 gap-x-3 gap-y-0.5">
+                    <span className="text-[var(--text-secondary)]">Chi-Square (χ²):</span>
+                    <span className="font-mono">{chiSq.chiSquare.toFixed(2)}</span>
+                    <span className="text-[var(--text-secondary)]">Degrees of Freedom:</span>
+                    <span className="font-mono">{chiSq.df}</span>
+                    <span className="text-[var(--text-secondary)]">p-value:</span>
+                    <span className="font-mono">{chiSq.pValue < 0.001 ? '<0.001' : chiSq.pValue.toFixed(3)}</span>
+                    <span className="text-[var(--text-secondary)]">Cramér's V:</span>
+                    <span className="font-mono">{chiSq.cramersV.toFixed(3)}</span>
+                  </div>
+                  <div className="pt-1 text-[var(--text-secondary)] text-[10px]">
+                    {isSignificantChi
+                      ? 'Variables are significantly associated (p < 0.05)'
+                      : 'No significant association found (p ≥ 0.05)'}
+                  </div>
                 </div>
-                <div className="pt-1 text-[var(--text-secondary)] text-[10px]">
-                  {isSignificantChi
-                    ? 'Variables are significantly associated (p < 0.05)'
-                    : 'No significant association found (p ≥ 0.05)'}
-                </div>
+              }
+              position="top"
+              delay={200}
+              maxWidth={280}
+            >
+              <div className={`${styles.chiSquareBadge} ${isSignificantChi ? styles.chiSquareSignificant : styles.chiSquareInsignificant}`}>
+                χ² = {chiSq.chiSquare.toFixed(1)}
+                {' · '}
+                p {chiSq.pValue < 0.001 ? '< .001' : `= ${chiSq.pValue.toFixed(3)}`}
+                {' · '}
+                {isSignificantChi ? 'Associated' : 'Independent'}
               </div>
-            }
-            position="top"
-            delay={200}
-            maxWidth={280}
-          >
-            <div className={`${styles.chiSquareBadge} ${isSignificantChi ? styles.chiSquareSignificant : styles.chiSquareInsignificant}`}>
-              χ² = {chiSq.chiSquare.toFixed(1)}
-              {' · '}
-              p {chiSq.pValue < 0.001 ? '< .001' : `= ${chiSq.pValue.toFixed(3)}`}
-              {' · '}
-              {isSignificantChi ? 'Associated' : 'Independent'}
-            </div>
-          </Tooltip>
-        )}
-
-        {/* Settings Gear */}
-        {showGear && (
-          <button
-            className={`${styles.gearButton} ${showSettings ? styles.gearButtonActive : ''}`}
-            onClick={() => setShowSettings(!showSettings)}
-            title="Statistical settings"
-          >
-            <Settings size={14} />
-          </button>
+            </Tooltip>
+          </div>
         )}
       </div>
 

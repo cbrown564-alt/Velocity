@@ -200,3 +200,17 @@ No UXP item duplicates UXR-010 (filtered N in subtitle) — that is trust; UXP-0
 - `src/features/dashboard/components/CrosstabCell.tsx` — left-stacked `%` + visible `n=`, sig inline
 - `DataTable.tsx` — data cells, row totals, and column base row use `CrosstabCell`
 - Tests: `CrosstabCell.test.tsx`
+
+**UXP-002–003, UXP-005** — implemented May 20, 2026:
+
+- **UXP-002:** `table-layout: fixed` + `computeCrosstabColumnWidths()` — proportional data columns weighted by header label length
+- **UXP-003:** Total row uses `size="marginal"` on `CrosstabCell`; muted uppercase row label distinguishes counts from body `%`
+- **UXP-005:** `StatisticsStatusBar` split into two rows — methodology + legend on line 1; χ² results right-aligned on line 2
+- Tests: `crosstabColumnWidths.test.ts`, `DataTable.test.tsx`, `CrosstabCell.test.tsx`
+
+**Quick validation checklist** (after UXP-001–003):
+
+- [x] Vertical scan: EAST header → both % cells → column total — no horizontal drift  
+- [x] Total column and East column use same internal layout  
+- [x] Hover does not shift column width  
+- [ ] Screenshot-ready: would embed in a deck without red circles  

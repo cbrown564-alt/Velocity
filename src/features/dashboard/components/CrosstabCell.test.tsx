@@ -25,6 +25,11 @@ describe('CrosstabCell', () => {
     expect(screen.getByText('base')).toBeInTheDocument();
   });
 
+  it('uses smaller type for marginal count cells', () => {
+    render(<CrosstabCell variant="count" count={48} size="marginal" />);
+    expect(screen.getByText('48')).toHaveClass('text-xs');
+  });
+
   it('warns on small sample sizes (n < 30)', () => {
     render(<CrosstabCell variant="frequency" percent={47.7} count={12} />);
     expect(screen.getByText('n=12')).toHaveAttribute('data-small-base', 'true');
