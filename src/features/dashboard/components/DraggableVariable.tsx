@@ -51,6 +51,8 @@ export const VariableCard: React.FC<VariableCardProps> = ({
   return (
     <Component
       ref={setNodeRef}
+      data-testid={isOverlay ? 'variable-drag-overlay' : 'variable-draggable'}
+      data-variable-set-id={variableSet.id}
       layoutId={isOverlay ? undefined : `var-${variableSet.id}`}
       style={cardStyle}
       {...dragListeners}

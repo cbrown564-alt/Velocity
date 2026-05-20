@@ -380,6 +380,7 @@ All three quick wins were implemented on May 19, 2026.
 | 2026-05-19 | Phase 3: Story Shelf | — | `generateNarrativeTitle.ts` + `generateNarrativeTitleFromRows.ts` rule-based generators; `SlideHeader.tsx` ghosted suggestion with 3s auto-dismiss + click-to-accept; 9 unit + 4 component tests. |
 | 2026-05-19 | Phase 3: Theme Material Systems | — | Soft Machine paper-texture SVG noise + ink-density + warmer borders; Mission Control graticule grid + amber caution glow; Liquid Glass specular cell highlights + refracted typography + frosted footer. |
 | 2026-05-20 | Validation recon (VP-D-00) | — | Browser eval blocked: OPFS lock on 4174; blank viewport after row var on 4175/4176. Plan: `visual-polish-delight-validation-plan.md`. |
+| 2026-05-20 | Validation VP-D-01–05 (crosstab) | — | P1–P10, D-001–024 on 4176; `screenshots/vp-d-01` … `vp-d-05`. Chart, Manager, theme matrix, §12 frame-it **out of scope** until VP-D-06–08. |
 
 ---
 

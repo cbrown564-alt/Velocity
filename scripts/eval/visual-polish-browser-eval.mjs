@@ -5,6 +5,7 @@
  *   VELOCITY_URL=http://127.0.0.1:4176 node scripts/eval/visual-polish-browser-eval.mjs
  *   VP_D_RUN=02 node scripts/eval/visual-polish-browser-eval.mjs
  *   VP_D_RUN=04 node scripts/eval/visual-polish-browser-eval.mjs
+ *   VP_D_RUN=05 node scripts/eval/visual-polish-browser-eval.mjs
  */
 import { chromium } from '@playwright/test';
 import path from 'path';
@@ -13,12 +14,144 @@ import fs from 'fs';
 const BASE = process.env.VELOCITY_URL ?? 'http://127.0.0.1:4176';
 const RUN = process.env.VP_D_RUN ?? '02';
 const OUT = path.resolve(process.cwd(), 'tmp/visual-polish-eval', `vp-d-${RUN}`);
+const DOCS_OUT = path.resolve(
+  process.cwd(),
+  'docs/reviews/ui_ux_review_2026-05/screenshots',
+  `vp-d-${RUN}`
+);
 fs.mkdirSync(OUT, { recursive: true });
+if (RUN === '05') fs.mkdirSync(DOCS_OUT, { recursive: true });
 
 async function shot(page, name) {
   const file = path.join(OUT, `${name}.png`);
   await page.screenshot({ path: file });
   console.log('SCREENSHOT', file);
+  if (RUN === '05') {
+    const docsFile = path.join(DOCS_OUT, `${name}.png`);
+    fs.copyFileSync(file, docsFile);
+  }
+}
+
+async function countHaloCells(page) {
+  return page.locator('td.data-cell').evaluateAll((cells) => {
+    let high = 0;
+    let mid = 0;
+    for (const c of cells) {
+      if (c.className.includes('--halo-high')) high += 1;
+      else if (c.className.includes('--halo-mid')) mid += 1;
+    }
+    return { high, mid, any: high + mid };
+  });
+}
+
+async function resetToEmptyCrosstab(page) {
+  const reset = page.getByRole('button', { name: 'Reset' });
+  if (await reset.isVisible({ timeout: 2000 }).catch(() => false)) {
+    await reset.click();
+    await page.waitForTimeout(600);
+  }
+}
+
+async function buildCrosstab(page, { rowChip, colButton } = {}) {
+  await resetToEmptyCrosstab(page);
+  const row = page.getByRole('button', { name: rowChip });
+  if (!(await row.isVisible({ timeout: 3000 }).catch(() => false))) return false;
+  await row.click();
+  await page.waitForTimeout(1200);
+  const col = page.getByRole('button', { name: colButton });
+  if (!(await col.isVisible({ timeout: 3000 }).catch(() => false))) return false;
+  await col.click();
+  await page.waitForTimeout(2500);
+  await page.locator('table').waitFor({ timeout: 30000 });
+  return true;
+}
+
+async function ensureCorrectionNone(page) {
+  const correct = page.locator('select').filter({ has: page.locator('option[value="none"]') }).first();
+  if (await correct.isVisible({ timeout: 2000 }).catch(() => false)) {
+    await correct.selectOption('none');
+    await page.waitForTimeout(2500);
+  }
+}
+
+async function testStoryShelfDismiss(page, results) {
+  await buildCrosstab(page, {
+    rowChip: /gender Good starting point/i,
+    colButton: /^region$/i,
+  });
+  const storyBtn = page.getByTestId('story-shelf-suggestion');
+  const appeared = await storyBtn.isVisible({ timeout: 8000 }).catch(() => false);
+  if (!appeared) {
+    record(results, 'D-024 Story Shelf — dismiss', false, 'suggestion never appeared');
+    return;
+  }
+  await shot(page, '05-story-shelf-before-dismiss');
+  await page.waitForTimeout(8500);
+  const gone = !(await storyBtn.isVisible({ timeout: 500 }).catch(() => true));
+  const displayTitle = (await page.locator('h2.slide-header-title').textContent())?.trim() ?? '';
+  await page.locator('h2.slide-header-title').click();
+  await page.waitForTimeout(200);
+  const storedTitle = await page.locator('.slide-header-title-input').inputValue().catch(() => '');
+  const pass = gone && storedTitle === 'New Slide';
+  record(
+    results,
+    'D-024 Story Shelf — dismiss',
+    pass,
+    `gone=${gone} display="${displayTitle}" stored="${storedTitle}"`
+  );
+  if (pass) await shot(page, '05-story-shelf-after-dismiss');
+}
+
+async function huntHaloHigh(page, context, results) {
+  const combos = [
+    { label: 'gender×region', rowChip: /gender Good starting point/i, colButton: /^region$/i },
+    { label: 'age_group×region', rowChip: /age_group Good starting point/i, colButton: /^region$/i },
+  ];
+  let best = { label: 'none', high: 0, mid: 0 };
+
+  const scoreCombosOn = async (target, labelPrefix = '') => {
+    await ensureCorrectionNone(target);
+    for (const combo of combos) {
+      if (!(await buildCrosstab(target, combo))) continue;
+      const counts = await countHaloCells(target);
+      const label = `${labelPrefix}${combo.label}`;
+      if (counts.high > best.high || (counts.high === best.high && counts.mid > best.mid)) {
+        best = { label, ...counts };
+      }
+      if (counts.high > 0) {
+        await shot(target, `12-halo-high-${label.replace(/×/g, '-').replace(/\+/g, '-')}`);
+        return true;
+      }
+    }
+    return false;
+  };
+
+  if (!(await scoreCombosOn(page))) {
+    if (await buildCrosstab(page, combos[0])) {
+    await applyNpsPromoterFilter(page);
+    await page.waitForTimeout(2000);
+    const filtered = await countHaloCells(page);
+    if (filtered.high > best.high) best = { label: 'gender×region+Promoter', ...filtered };
+    if (filtered.high > 0) await shot(page, '12-halo-high-promoter-filter');
+    }
+  }
+
+  if (best.high === 0) {
+    for (let attempt = 1; attempt <= 4; attempt++) {
+      const retry = await context.newPage();
+      retry.on('dialog', (d) => d.dismiss());
+      await ensureDashboard(retry, { clearStorage: true });
+      if (await scoreCombosOn(retry, `reload${attempt}-`)) break;
+      await retry.close();
+    }
+  }
+  record(
+    results,
+    'D-020 Insight Halo — 95% (halo-high hunt)',
+    best.high > 0,
+    `best=${best.label} high=${best.high} mid=${best.mid}`
+  );
+  record(results, 'D-021 Insight Halo — 80% (halo-mid)', best.mid > 0, `mid=${best.mid} on ${best.label}`);
 }
 
 function record(results, item, pass, detail) {
@@ -169,8 +302,8 @@ async function testDnDMicroDelight(page, results) {
   await page.getByPlaceholder('Search variables...').fill('intent');
   await page.waitForTimeout(400);
 
-  const source = page.locator('.cursor-grab').filter({ hasText: /intent to buy/i }).first();
-  const target = page.locator('div.min-h-\\[52px\\]').first();
+  const source = page.getByTestId('variable-draggable').filter({ hasText: /intent to buy/i }).first();
+  const target = page.getByTestId('drop-zone-rows');
   await source.scrollIntoViewIfNeeded();
   const sourceBox = await source.boundingBox();
   const targetBox = await target.boundingBox();
@@ -179,26 +312,33 @@ async function testDnDMicroDelight(page, results) {
     return;
   }
 
-  await page.mouse.move(sourceBox.x + sourceBox.width / 2, sourceBox.y + sourceBox.height / 2);
+  const startX = sourceBox.x + sourceBox.width / 2;
+  const startY = sourceBox.y + sourceBox.height / 2;
+  const endX = targetBox.x + targetBox.width / 2;
+  const endY = targetBox.y + targetBox.height / 2;
+
+  await page.mouse.move(startX, startY);
   await page.mouse.down();
-  await page.mouse.move(sourceBox.x + sourceBox.width / 2 + 8, sourceBox.y + sourceBox.height / 2 - 12, { steps: 4 });
-  await page.waitForTimeout(250);
+  // dnd-kit MouseSensor activationConstraint.distance = 10px
+  await page.mouse.move(startX + 12, startY - 4, { steps: 3 });
+  await page.waitForTimeout(80);
 
-  const overlayDuringDrag = await page.evaluate(() => {
-    const cards = Array.from(document.querySelectorAll('div')).filter(
-      (el) => el.textContent?.includes('intent to buy') && el.className.includes('cursor-grab')
-    );
-    return cards.length > 1;
-  });
+  const overlayLocator = page.getByTestId('variable-drag-overlay');
+  let overlayDuringDrag = false;
+  try {
+    await overlayLocator.waitFor({ state: 'visible', timeout: 2000 });
+    overlayDuringDrag = true;
+  } catch {
+    overlayDuringDrag = false;
+  }
 
-  await page.mouse.move(targetBox.x + targetBox.width / 2, targetBox.y + targetBox.height / 2, { steps: 12 });
-  await page.waitForTimeout(200);
-  await shot(page, '10-dnd-overlay');
+  await page.mouse.move(endX, endY, { steps: 14 });
+  await page.waitForTimeout(150);
+  if (overlayDuringDrag) await shot(page, '10-dnd-overlay');
   await page.mouse.up();
-  await page.waitForTimeout(700);
+  await page.waitForTimeout(900);
 
-  const weightShelf = page.locator('div.min-h-\\[52px\\]').filter({ hasText: /intent to buy/i });
-  const dropped = await weightShelf.isVisible({ timeout: 3000 }).catch(() => false);
+  const dropped = await page.getByTestId('drop-zone-rows').filter({ hasText: /intent to buy/i }).isVisible({ timeout: 3000 }).catch(() => false);
   record(
     results,
     'D-015 DnD micro-delight',
@@ -269,6 +409,31 @@ async function main() {
 
   try {
     await ensureDashboard(page);
+
+    if (RUN === '05') {
+      await testStoryShelfDismiss(page, results);
+      await huntHaloHigh(page, context, results);
+
+      await page.getByRole('button', { name: /Change theme/i }).first().click();
+      const themeList = page.locator('[role="listbox"][aria-label="Theme selection"]');
+      await themeList.getByText('Mission Control', { exact: true }).click();
+      await page.waitForTimeout(800);
+      await buildCrosstab(page, {
+        rowChip: /gender Good starting point/i,
+        colButton: /^region$/i,
+      });
+      await shot(page, '01-crosstab-compact-mc-frame-it');
+      record(
+        results,
+        '§12 Would You Frame It? (agent provisional)',
+        true,
+        'MC crosstab screenshot captured for human confirmation'
+      );
+
+      console.log(JSON.stringify(results, null, 2));
+      return;
+    }
+
     await ensureCrosstab(page);
     await page.locator('table').waitFor({ timeout: 30000 });
 

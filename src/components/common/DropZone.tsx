@@ -41,6 +41,7 @@ export const DropZone: React.FC<DropZoneProps> = ({
       return (
         <div
           ref={setNodeRef}
+          data-testid={id}
           className={`
             flex items-center gap-2 min-h-[36px] px-2 py-1 rounded-md transition-all duration-200
             ${active
@@ -106,6 +107,7 @@ export const DropZone: React.FC<DropZoneProps> = ({
     return (
       <div
         ref={setNodeRef}
+        data-testid={id}
         className={`
           relative flex items-center justify-start px-3 transition-all duration-200 rounded-md border border-dashed
           ${isOver
@@ -132,6 +134,7 @@ export const DropZone: React.FC<DropZoneProps> = ({
       return (
         <div
           ref={setNodeRef}
+          data-testid={id}
           className={`
             w-full min-h-[52px] px-2 py-1.5 rounded-md transition-all duration-200 flex items-center
             ${active
@@ -153,6 +156,7 @@ export const DropZone: React.FC<DropZoneProps> = ({
     return (
       <div
         ref={setNodeRef}
+        data-testid={id}
         className={`
           flex flex-row flex-wrap gap-2 min-w-[120px] min-h-[40px] px-2 py-1.5 rounded-md transition-all duration-200 items-center
           ${active
@@ -193,6 +197,7 @@ export const DropZone: React.FC<DropZoneProps> = ({
   return (
     <div
       ref={setNodeRef}
+      data-testid={id}
       className={`
         relative flex items-center justify-start px-3 transition-all duration-200 rounded-md border border-dashed
         ${isOver
