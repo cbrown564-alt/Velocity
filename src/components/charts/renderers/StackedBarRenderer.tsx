@@ -3,7 +3,7 @@ import * as d3 from 'd3-scale';
 import * as d3Shape from 'd3-shape';
 import { max } from 'd3-array';
 import { BaseChartRendererProps } from '../../../types/charts';
-// getChartColor removed
+import { CHART_BAR_FILL_OPACITY } from '../shared/chartColors';
 
 interface StackedBarRendererProps extends BaseChartRendererProps {
     type: 'stacked-bar';
@@ -197,9 +197,7 @@ export const StackedBarRenderer: React.FC<StackedBarRendererProps> = ({
                                         height={12}
                                         rx={1}
                                         fill={colors ? colors[i % colors.length] : `var(--viz-palette-${(i % 6) + 1})`}
-                                        style={{
-                                            fillOpacity: 0.8
-                                        }}
+                                        fillOpacity={CHART_BAR_FILL_OPACITY}
                                     />
                                     <text
                                         x={18}
@@ -262,12 +260,13 @@ export const StackedBarRenderer: React.FC<StackedBarRendererProps> = ({
                     ))}
 
                     {/* Stacked Bars */}
-                    {stackedSeries.map((seriesItem, seriesIndex) => (
-                        <g
-                            key={stackKeys[seriesIndex]}
-                            fill={colors ? colors[seriesIndex % colors.length] : `var(--viz-palette-${(seriesIndex % 6) + 1})`}
-                            fillOpacity={colors ? 1 : 0.8}
-                        >
+                    {stackedSeries.map((seriesItem, seriesIndex) => {
+                        const segmentColor = colors
+                            ? colors[seriesIndex % colors.length]
+                            : `var(--viz-palette-${(seriesIndex % 6) + 1})`;
+
+                        return (
+                        <g key={stackKeys[seriesIndex]}>
                             {seriesItem.map((d, i) => {
                                 const barWidth = xScale(d[1]) - xScale(d[0]);
                                 const y = yScale(d.data.label) || 0;
@@ -301,6 +300,8 @@ export const StackedBarRenderer: React.FC<StackedBarRendererProps> = ({
                                             x={xScale(d[0])}
                                             width={Math.max(barWidth, 0)}
                                             height={yScale.bandwidth()}
+                                            fill={segmentColor}
+                                            fillOpacity={CHART_BAR_FILL_OPACITY}
                                             className="transition-all duration-300 hover:opacity-80 chart-bar-rect"
                                             stroke={isSelected ? 'var(--text-accent)' : 'var(--viz-stroke-bar)'}
                                             strokeWidth={isSelected ? 2 : 1}
@@ -311,7 +312,7 @@ export const StackedBarRenderer: React.FC<StackedBarRendererProps> = ({
                                                 y={y + yScale.bandwidth() / 2}
                                                 dy=".35em"
                                                 textAnchor="middle"
-                                                className="text-[10px] font-medium fill-[var(--viz-text-value)] pointer-events-none font-mono"
+                                                className="text-[10px] font-medium fill-[var(--text-inverse)] pointer-events-none font-mono"
                                                 style={{ textShadow: 'none' }}
                                             >
                                                 {displayValue}
@@ -321,7 +322,8 @@ export const StackedBarRenderer: React.FC<StackedBarRendererProps> = ({
                                 );
                             })}
                         </g>
-                    ))}
+                        );
+                    })}
 
                     {/* Row totals (right side) */}
                     {labelMode !== 'none' && chartData.map((d) => {

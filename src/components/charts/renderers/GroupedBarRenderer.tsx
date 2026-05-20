@@ -2,15 +2,9 @@ import React, { useMemo, useCallback } from 'react';
 import * as d3 from 'd3-scale';
 import { max } from 'd3-array';
 import { BaseChartRendererProps } from '../../../types/charts';
-// getChartColor removed use palette
-const DEFAULT_PALETTE = [
-    'var(--viz-palette-1)',
-    'var(--viz-palette-2)',
-    'var(--viz-palette-3)',
-    'var(--viz-palette-4)',
-    'var(--viz-palette-5)',
-    'var(--viz-palette-6)',
-];
+import { CHART_BAR_FILL_OPACITY, CHART_PALETTE } from '../shared/chartColors';
+
+const DEFAULT_PALETTE = CHART_PALETTE;
 
 /**
  * Grouped Bar Chart Renderer
@@ -144,7 +138,7 @@ export const GroupedBarRenderer: React.FC<BaseChartRendererProps> = ({
                                         height={12}
                                         rx={1}
                                         fill={colors ? colors[i % colors.length] : DEFAULT_PALETTE[i % DEFAULT_PALETTE.length]}
-                                        fillOpacity={0.8}
+                                        fillOpacity={CHART_BAR_FILL_OPACITY}
                                     />
                                     <text
                                         x={18}
@@ -231,7 +225,7 @@ export const GroupedBarRenderer: React.FC<BaseChartRendererProps> = ({
                                                 width={barWidth}
                                                 height={barHeight}
                                                 fill={color}
-                                                fillOpacity={0.8}
+                                                fillOpacity={CHART_BAR_FILL_OPACITY}
                                                 style={{
                                                     transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                                                     cursor: interactive ? 'pointer' : 'default',
@@ -247,7 +241,7 @@ export const GroupedBarRenderer: React.FC<BaseChartRendererProps> = ({
                                                     style={{
                                                         fontSize: '10px',
                                                         fontWeight: 500,
-                                                        fill: 'white',
+                                                        fill: 'var(--text-inverse)',
                                                         pointerEvents: 'none',
                                                         textShadow: 'none',
                                                         fontFamily: 'var(--font-mono)',

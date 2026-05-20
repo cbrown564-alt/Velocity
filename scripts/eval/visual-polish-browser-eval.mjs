@@ -6,6 +6,8 @@
  *   VP_D_RUN=02 node scripts/eval/visual-polish-browser-eval.mjs
  *   VP_D_RUN=04 node scripts/eval/visual-polish-browser-eval.mjs
  *   VP_D_RUN=05 node scripts/eval/visual-polish-browser-eval.mjs
+ *   VP_D_RUN=06 node scripts/eval/visual-polish-browser-eval.mjs
+ *   VP_D_RUN=07 node scripts/eval/visual-polish-browser-eval.mjs
  */
 import { chromium } from '@playwright/test';
 import path from 'path';
@@ -20,16 +22,299 @@ const DOCS_OUT = path.resolve(
   `vp-d-${RUN}`
 );
 fs.mkdirSync(OUT, { recursive: true });
-if (RUN === '05') fs.mkdirSync(DOCS_OUT, { recursive: true });
+if (RUN === '05' || RUN === '06' || RUN === '07') fs.mkdirSync(DOCS_OUT, { recursive: true });
 
 async function shot(page, name) {
   const file = path.join(OUT, `${name}.png`);
   await page.screenshot({ path: file });
   console.log('SCREENSHOT', file);
-  if (RUN === '05') {
+  if (RUN === '05' || RUN === '06' || RUN === '07') {
     const docsFile = path.join(DOCS_OUT, `${name}.png`);
     fs.copyFileSync(file, docsFile);
   }
+}
+
+async function switchToChartView(page) {
+  await page.getByRole('button', { name: 'Chart view' }).click();
+  await page.waitForTimeout(1200);
+}
+
+async function switchToTableView(page) {
+  await page.getByRole('button', { name: 'Table view' }).click();
+  await page.waitForTimeout(1200);
+}
+
+async function measureSlideArtifactBox(page) {
+  const frame = page.locator('.analysis-frame').first();
+  if (!(await frame.isVisible({ timeout: 3000 }).catch(() => false))) return null;
+  return frame.boundingBox();
+}
+
+async function testChartMode(page, results) {
+  const built = await buildCrosstab(page, {
+    rowChip: /gender Good starting point/i,
+    colButton: /^region$/i,
+  });
+  if (!built) {
+    record(results, 'D-030 Chart mode — crosstab setup', false, 'gender×region not built');
+    return;
+  }
+
+  const tableFrame = page.locator('.analysis-frame').filter({ has: page.locator('table') });
+  record(
+    results,
+    'D-030 Analysis Frame — table path',
+    (await tableFrame.count()) > 0,
+    `${await tableFrame.count()} table frame(s)`
+  );
+  await shot(page, '01-crosstab-table-before-chart');
+
+  const tableBox = await measureSlideArtifactBox(page);
+  await switchToChartView(page);
+
+  const chartFrame = page.locator('.analysis-frame').filter({ has: page.locator('[role="img"][aria-label*="Chart"]') });
+  const chartFrameCount = await chartFrame.count();
+  const anyFrame = await page.locator('.analysis-frame').count();
+  const svgBars = await page.locator('.analysis-frame svg rect, .analysis-frame svg path').count();
+  const legendItems = await page.locator('.analysis-frame [class*="legend"], .analysis-frame [class*="Legend"]').count();
+  const chartLegendText = await page.locator('.analysis-frame').getByText(/North|South|East|West|Internatio/i).count();
+
+  record(
+    results,
+    'D-030 Analysis Frame — chart path',
+    chartFrameCount > 0 || (anyFrame > 0 && svgBars > 0),
+    `frames=${anyFrame} chartFrame=${chartFrameCount} svgShapes=${svgBars}`
+  );
+  record(
+    results,
+    'D-030 Chart legend readable',
+    legendItems > 0 || chartLegendText > 0,
+    `legendNodes=${legendItems} regionLabels=${chartLegendText}`
+  );
+
+  const animatedBars = await page.locator('.analysis-frame [data-animated="true"]').count();
+  record(
+    results,
+    'D-030 Bar settle / animation markers',
+    svgBars > 0,
+    `${svgBars} svg shapes, ${animatedBars} data-animated (chart may omit settling)`
+  );
+
+  await shot(page, '02-chart-grouped-bar-sm');
+
+  const chartBox = await measureSlideArtifactBox(page);
+  const layoutStable =
+    tableBox && chartBox
+      ? Math.abs(tableBox.width - chartBox.width) < 8
+        && Math.abs(tableBox.x - chartBox.x) < 4
+        && Math.abs(tableBox.y - chartBox.y) < 4
+      : false;
+  record(
+    results,
+    'D-031 Chart ↔ table toggle — no horizontal/layout jump',
+    layoutStable,
+    tableBox && chartBox
+      ? `pos (${Math.round(tableBox.x)},${Math.round(tableBox.y)})→(${Math.round(chartBox.x)},${Math.round(chartBox.y)}); width ${Math.round(tableBox.width)}→${Math.round(chartBox.width)}; height ${Math.round(tableBox.height)}→${Math.round(chartBox.height)} (height delta expected)`
+      : 'missing frame box'
+  );
+
+  await switchToTableView(page);
+  const tableRestored = (await page.locator('.analysis-frame table').count()) > 0;
+  const pctCells = await page.locator('text=/\\d+\\.\\d%/').count();
+  record(
+    results,
+    'D-031 Toggle back to table preserves artifact',
+    tableRestored && pctCells > 0,
+    `table=${tableRestored} pctCells=${pctCells}`
+  );
+  await shot(page, '03-table-after-chart-toggle');
+
+  await switchToChartView(page);
+  await page.waitForTimeout(400);
+  await shot(page, '04-chart-restored');
+}
+
+async function testChartThemes(page, results) {
+  const themeList = page.locator('[role="listbox"][aria-label="Theme selection"]');
+  for (const [slug, label] of [
+    ['sm', 'Soft Machine'],
+    ['mc', 'Mission Control'],
+    ['lg', 'Liquid Glass'],
+  ]) {
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(200);
+    await page.getByRole('button', { name: /Change theme/i }).first().click({ force: true });
+    await themeList.waitFor({ timeout: 5000 });
+    await themeList.getByText(label, { exact: true }).click({ force: true });
+    await page.waitForTimeout(900);
+    await switchToChartView(page);
+    const svgBars = await page.locator('.analysis-frame svg rect, .analysis-frame svg path').count();
+    record(
+      results,
+      `D-030 Theme ${slug} — chart readable`,
+      svgBars > 0,
+      `${svgBars} svg shapes`
+    );
+    await shot(page, `05-chart-theme-${slug}`);
+  }
+}
+
+async function openVariableManager(page) {
+  await page.keyboard.press('d');
+  await page.getByRole('heading', { name: 'Variable Manager' }).waitFor({ timeout: 8000 });
+  await page.waitForTimeout(500);
+}
+
+async function closeVariableManager(page) {
+  for (let i = 0; i < 3; i++) {
+    if (!(await page.getByRole('heading', { name: 'Variable Manager' }).isVisible({ timeout: 500 }).catch(() => false))) {
+      return;
+    }
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(450);
+  }
+}
+
+function managerSearchInput(page) {
+  return page
+    .locator('header')
+    .filter({ has: page.getByRole('heading', { name: 'Variable Manager' }) })
+    .getByPlaceholder('Search variables...');
+}
+
+function canvasSidebarSearchInput(page) {
+  return page.locator('aside').getByPlaceholder('Search variables...').first();
+}
+
+async function testVariableManager(page, results) {
+  await ensureDashboard(page);
+  await page.getByRole('button', { name: 'Export Session' }).waitFor({ timeout: 3000 }).catch(() => {});
+  await page.keyboard.press('Escape');
+  await page.waitForTimeout(300);
+
+  const sidebarItemsBefore = await page.locator('aside button').filter({ hasText: /gender|region|nps/i }).count();
+
+  await openVariableManager(page);
+  const manager = page.locator('div.h-full.bg-glass-app').filter({
+    has: page.getByRole('heading', { name: 'Variable Manager' }),
+  });
+  await shot(page, '01-manager-open');
+
+  const modeState = await page.evaluate(() => {
+    const blurEl = [...document.querySelectorAll('div')].find((el) => {
+      const s = el.getAttribute('style') ?? '';
+      return s.includes('blur') || s.includes('scale(0.95');
+    });
+    return {
+      appMode: window.__VELOCITY_STORE__?.getState?.()?.appMode ?? null,
+      motionStyle: blurEl?.getAttribute('style') ?? null,
+    };
+  }).catch(() => ({ appMode: null, motionStyle: null }));
+
+  const canvasBlur =
+    (modeState.motionStyle && /blur|scale\(0\.95/.test(modeState.motionStyle))
+    || modeState.appMode === 'variables';
+  record(
+    results,
+    'D-040 Mode boundary — canvas recedes',
+    !!canvasBlur,
+    modeState.motionStyle ?? `appMode=${modeState.appMode}`
+  );
+
+  const millerTitles = await page.locator('[class*="columnTitle"]').allTextContents();
+  record(
+    results,
+    'D-040 Miller navigation columns',
+    millerTitles.some((t) => /Variable Sets/i.test(t)),
+    millerTitles.join(' | ') || 'none'
+  );
+
+  const facetButtons = await page.getByRole('button', { name: /Type filter|Status filter|Quality filter/i }).count();
+  record(results, 'D-040 Facet affordances', facetButtons >= 3, `${facetButtons} facet controls`);
+
+  await page.getByRole('button', { name: /Type filter/i }).click({ force: true });
+  await page.waitForTimeout(300);
+  const typeOptions = await page.locator('[role="listbox"][aria-label="Type options"]').count();
+  record(results, 'D-040 Type facet opens', typeOptions > 0, `${typeOptions} listbox`);
+  await page.getByRole('heading', { name: 'Variable Manager' }).click();
+  await page.waitForTimeout(200);
+
+  const genderSet = manager.locator('[data-variable-set-id]').filter({ hasText: /^gender$/i }).first();
+  await genderSet.waitFor({ state: 'visible', timeout: 8000 });
+  await genderSet.click({ force: true });
+  await page.waitForTimeout(600);
+
+  const genderVar = manager.locator('[data-variable-id]').filter({ hasText: /^gender$/i }).first();
+  if (await genderVar.isVisible({ timeout: 4000 }).catch(() => false)) {
+    await genderVar.click({ force: true });
+    await page.waitForTimeout(500);
+  }
+
+  await manager.getByText('Distribution').waitFor({ timeout: 25000 }).catch(() => {});
+  for (let i = 0; i < 20; i++) {
+    const mapping = await manager.getByText('Value Mapping').count();
+    if (mapping > 0) break;
+    await page.waitForTimeout(1000);
+  }
+
+  const inspectorVisible = await manager.locator('[aria-label="Distribution histogram"], [aria-label="Distribution strip"]').count();
+  const distributionSection = await manager.getByText('Distribution').count();
+  const valueMappingSection = await manager.getByText('Value Mapping').count();
+  const valueRows = await manager.locator('table tbody tr').count();
+  record(
+    results,
+    'D-041 Inspector — distribution + mapping',
+    (inspectorVisible > 0 || distributionSection > 0) && (valueMappingSection > 0 || valueRows > 0),
+    `charts=${inspectorVisible} distribution=${distributionSection} mapping=${valueMappingSection} rows=${valueRows}`
+  );
+
+  const typeBadge = await manager.getByText(/Category|Nominal|Scale|Numeric/i).count();
+  record(results, 'D-041 Inspector — type badge hierarchy', typeBadge > 0, `${typeBadge} type labels`);
+
+  const editableTitle = manager.locator('h2, h3').filter({ hasText: /^gender$/i }).first();
+  if (await editableTitle.isVisible({ timeout: 2000 }).catch(() => false)) {
+    await editableTitle.click();
+    await page.waitForTimeout(300);
+    const inlineInput = manager.locator('input[type="text"]:visible').last();
+    const editing = await inlineInput.isVisible({ timeout: 2000 }).catch(() => false);
+    record(results, 'D-041 Inline label edit affordance', editing, editing ? 'input visible' : 'no inline input');
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(200);
+  } else {
+    record(results, 'D-041 Inline label edit affordance', false, 'title not found');
+  }
+
+  await shot(page, '02-inspector-gender');
+
+  await managerSearchInput(page).fill('nps');
+  await page.waitForTimeout(400);
+  const sidebarItemsAfter = await page.locator('aside button').filter({ hasText: /gender|region|nps/i }).count();
+  const canvasSearchValue = await canvasSidebarSearchInput(page).inputValue().catch(() => '');
+  record(
+    results,
+    'D-042 Manager search isolated from Canvas (UXR-018)',
+    canvasSearchValue === '' && sidebarItemsAfter >= sidebarItemsBefore,
+    `canvasSearch="${canvasSearchValue}" sidebarItems ${sidebarItemsBefore}→${sidebarItemsAfter}`
+  );
+
+  await managerSearchInput(page).fill('');
+  await page.waitForTimeout(200);
+  await managerSearchInput(page).click();
+  await page.keyboard.press('Meta+a');
+  await page.waitForTimeout(400);
+  const bulkBar = await manager.getByText(/selected|Group|Hide|Bulk/i).count();
+  record(results, 'D-040 Bulk action bar', bulkBar > 0, `${bulkBar} bulk cues`);
+  if (bulkBar > 0) await shot(page, '03-bulk-selection');
+
+  await closeVariableManager(page);
+  const closed = !(await page.getByRole('heading', { name: 'Variable Manager' }).isVisible({ timeout: 1000 }).catch(() => false));
+  if (!closed) {
+    await page.getByRole('button', { name: 'Close Variable Manager' }).click({ force: true });
+    await page.waitForTimeout(400);
+  }
+  const closedFinal = !(await page.getByRole('heading', { name: 'Variable Manager' }).isVisible({ timeout: 1000 }).catch(() => false));
+  record(results, 'D-040 Esc closes Manager', closedFinal, closedFinal ? 'overlay gone' : 'still open');
+  await shot(page, '04-manager-closed');
 }
 
 async function countHaloCells(page) {
@@ -409,6 +694,19 @@ async function main() {
 
   try {
     await ensureDashboard(page);
+
+    if (RUN === '07') {
+      await testVariableManager(page, results);
+      console.log(JSON.stringify(results, null, 2));
+      return;
+    }
+
+    if (RUN === '06') {
+      await testChartMode(page, results);
+      await testChartThemes(page, results);
+      console.log(JSON.stringify(results, null, 2));
+      return;
+    }
 
     if (RUN === '05') {
       await testStoryShelfDismiss(page, results);

@@ -282,14 +282,14 @@ No UXP item duplicates UXR-010 (filtered N in subtitle) — that is trust; UXP-0
 - E2E: `visual-polish-crosstab.spec.ts` asserts story shelf visible
 - Evidence: `screenshots/vp-d-03/05-story-shelf.png`
 
-**Delight validation (VP-D-03)** — May 20, 2026: D-001–005, D-010–014, D-022–023 pass on 4176; D-020 halo flaky after NPS filter in automated run; D-003/015, P9–P10 pending VP-D-04. See `visual-polish-delight-validation-plan.md` §8.
+**Delight validation (VP-D-03)** — May 20, 2026: D-001–005, D-010–014, D-022–023 pass on 4176; D-020 halo flaky after NPS filter in automated run; D-003/015, P9–P10 pending VP-D-04. See `visual-polish-delight-validation-plan.md` §7.3.
 
 **D-003 zero/missing cells** — implemented May 20, 2026:
 
 - `CrosstabCell.tsx` — `isZero` frequency/metric cells render em-dash (—); no `n=0` or `0.0%`
 - Tests: `CrosstabCell.test.tsx` (zero frequency + metric)
 
-**Delight validation (VP-D-04)** — May 20, 2026: D-003, P9–P10 pass; D-015 drop confirmed (overlay detection flaky headless); D-020 intermittent on gender×region+Promoter filter. Evidence: `screenshots/vp-d-04/`. See `visual-polish-delight-validation-plan.md` §8.
+**Delight validation (VP-D-04)** — May 20, 2026: D-003, P9–P10 pass; D-015 drop confirmed (overlay detection flaky headless); D-020 intermittent on gender×region+Promoter filter. Evidence: `screenshots/vp-d-04/`. See `visual-polish-delight-validation-plan.md` §7.3.
 
 **Quick validation checklist** (after UXP-001–003):
 
