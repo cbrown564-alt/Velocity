@@ -755,7 +755,7 @@ Log one entry per `UXR-###`. Update **Status** when fixed: `open` | `confirmed` 
 
 ## UXR-049 — MC chart multi-hue palette reads as “rainbow” on dark chrome
 
-- **Status:** open
+- **Status:** fixed (May 20, 2026; UXP-033 — MC viz palette → sequential cyan ramp)
 - **Severity:** P2
 - **Mode:** Canvas (chart)
 - **Session:** VP-D §12 frame-it (2026-05-20)
@@ -772,7 +772,7 @@ Log one entry per `UXR-###`. Update **Status** when fixed: `open` | `confirmed` 
 
 ## UXR-050 — Footer χ² badge uses success green and dominates attention
 
-- **Status:** open
+- **Status:** fixed (May 20, 2026; UXP-034 — green pill only when p &lt; 0.05)
 - **Severity:** P2
 - **Mode:** Canvas (crosstab footer)
 - **Session:** VP-D §12 frame-it (2026-05-20)
@@ -789,7 +789,7 @@ Log one entry per `UXR-###`. Update **Status** when fixed: `open` | `confirmed` 
 
 ## UXR-051 — Small-base cell `n=` warning color too prominent (especially MC)
 
-- **Status:** open
+- **Status:** fixed (May 20, 2026; UXP-035 — `.crosstab-small-base` whisper; removed MC amber glow)
 - **Severity:** P2
 - **Mode:** Canvas (crosstab)
 - **Session:** VP-D §12 frame-it (2026-05-20)

@@ -100,7 +100,7 @@ function secondaryTextClass(isZero: boolean): string {
 }
 
 function smallBaseClass(n: number | undefined): string {
-  if (n !== undefined && n > 0 && n < 30) return 'text-[var(--status-warning-text)]';
+  if (n !== undefined && n > 0 && n < 30) return 'crosstab-small-base';
   return '';
 }
 

@@ -1,7 +1,7 @@
 # Visual Polish Delight — Validation & Multi-Session Test Plan
 
 **Date:** May 20, 2026  
-**Status:** VP-D-01–09 automation **complete**; §12 frame-it **No** (May 20, 2026, human reviewer) — MC crosstab + chart fail “screenshot-ready”; UXP-033–035 polish required before re-test  
+**Status:** VP-D-01–09 automation **complete**; UXP-033–035 **implemented**; §12 frame-it **Yes** (May 20, 2026, human re-test) — STAB-UI-D delight layer validated  
 **Owner:** Product + engineering (assign per run in session log)  
 **Scope:** Live validation of `STAB-UI-D` delight layer described in `visual-polish-vision-delight.md`  
 **Builds on:** `visual-polish-review.md` (UXP-001–032), `plan_01_comprehensive_ui_ux_review.md`, `session-02-canvas.md`, `session-04-variable-manager.md`, `session-07-themes.md`
@@ -18,14 +18,14 @@ Evidence lives under `docs/reviews/ui_ux_review_2026-05/screenshots/vp-d-01/` �
 
 ### 1.2 What’s blocking sign-off
 
-Crosstab coverage alone does not answer **§12 “Would You Frame It?”** for the product. Remaining work:
+**Nothing.** Product-wide delight validation is complete. Optional follow-ups (not blockers):
 
-| Priority | Session | Scope | IDs | Pass criteria |
-| :--- | :--- | :--- | :--- | :--- |
-| **P1** | **STAB-UI-D polish** | Visual hierarchy on hero output | UXP-033–035 | MC chart palette + footer χ² + cell `n=` warning color; re-run frame-it after fix |
-| **P2** | After UXP-033–035 | Frame-it re-test | §12 | Human reviewer **Yes** on MC crosstab + chart (+ Manager inspector optional) |
+| Priority | Session | Scope | Note |
+| :--- | :--- | :--- | :--- |
+| **P3** | Optional | Manager inspector frame-it | `vp-d-07/02-inspector-gender.png` not reviewed in §12 passes |
+| **P3** | Automation backlog | Playwright visual regression, Story Shelf clock mock, reduced-motion e2e | See §1.4 |
 
-**Rule:** Do not mark `visual-polish-vision-delight.md` as fully validated until the product-wide track below is complete.
+**Rule:** `visual-polish-vision-delight.md` is signed off for the STAB-UI-D delight layer scope validated here.
 
 ### 1.3 Sign-off checklist
 
@@ -35,24 +35,19 @@ Crosstab coverage alone does not answer **§12 “Would You Frame It?”** for t
 - [x] D-001–024 Pass on live browser (crosstab-scoped)
 - [x] D-025–027 partial (table screenshots per theme)
 
-**Product-wide track (remaining)**
+**Product-wide track (done)**
 
 - [x] D-030–031 Chart mode Pass with screenshots (VP-D-06; D-030 **mostly pass** — no stats footer on chart, settling N/A)
 - [x] D-040–042 Variable Manager + inspector Pass or gaps filed as UXP (VP-D-07; D-041 distribution confirmed live, headless stats flake)
 - [x] Theme matrix (§5) — chart (VP-D-06), statistics footer + export modal × SM/MC/LG (VP-D-08)
 - [x] Theme matrix stretch rows — workspace card, timeline dock, Manager overlay (VP-D-09)
 - [x] `visual-polish-vision-delight.md` §10 links VP-D-01–08 runs
-- [x] **§12 “Would You Frame It?”** — **No** (May 20, 2026) — MC `vp-d-05/01` + `vp-d-06/05-chart-theme-mc`; SM/LG better but not ready; see §6 Frame-it
+- [x] **§12 “Would You Frame It?”** — **No** (May 20, 2026, first pass) — MC `vp-d-05/01` + `vp-d-06/05-chart-theme-mc`; UXP-033–035 filed
+- [x] **§12 re-test** — **Yes** (May 20, 2026, human) — post UXP-033–035; MC crosstab + chart screenshot-ready
 
 ### 1.4 Next session playbook
 
-Implement **UXP-033–035** (visual hierarchy), then re-run frame-it on MC artifacts.
-
-| Session | First steps | Evidence target |
-| :--- | :--- | :--- |
-| **Frame-it (re-test)** | Regenerate MC crosstab + chart shots after UXP-033–035; human §12 review | New **Yes/No** in §6; only sign off vision doc when **Yes** |
-
-**Automation backlog (supports next runs):**
+Delight validation **closed.** Remaining work is optional polish and automation hardening only.
 
 | Priority | Action | Status |
 | :--- | :--- | :--- |
@@ -78,7 +73,7 @@ Runs **VP-D-01 through VP-D-05** exercised the **Analysis Canvas crosstab** deep
 | **Chart mode** | VP-D-06 (D-030–031) | Shared `AnalysisOutputFrame`; chart path lacks stats footer band |
 | **Variable Manager** | VP-D-07 (D-040–042) | Mode boundary, Miller nav, facets, bulk bar; UXR-018 fixed (`managerSearchQuery`) |
 | **Inspector (in Manager)** | VP-D-07 (D-041) | Distribution + value mapping pass live; headless stats load flaky |
-| **Theme × surface matrix (§5)** | Full matrix VP-D-02/06/08/09 (table, chart, footer, export, workspace, dock, Manager) | Materials hold; frame-it still **No** on MC hero output |
+| **Theme × surface matrix (§5)** | Full matrix VP-D-02/06/08/09 (table, chart, footer, export, workspace, dock, Manager) | Materials hold; §12 **Yes** on MC hero output (May 20 re-test) |
 
 **Relationship to tracker `STAB-UI-D`:** Tracker §4.7 lists STAB-UI-D as UXR remediation. This plan validates the **delight layer** from the vision doc — a distinct but overlapping workstream. Close UXR items via `findings.md`; use `D-###` IDs here for polish validation only.
 
@@ -148,6 +143,8 @@ Baseline reference: `session-07-themes.md` — re-run after STAB-UI-D delight va
 | VP-D-08 | 2026-05-20 | Agent (Playwright) | 4176 | Theme × surface matrix (§5) | **Pass** | Evidence `screenshots/vp-d-08/`; §12 frame-it synthesis |
 | VP-D-09 | 2026-05-20 | Agent (Playwright) | 4176 | Stretch surfaces (§5) | **Pass** | Evidence `screenshots/vp-d-09/`; workspace + dock + Manager × 3 themes |
 | Frame-it | 2026-05-20 | Human reviewer (product) | 4176 | §12 synthesis | **No** | MC crosstab + chart; UXP-033–035 filed; Manager inspector not reviewed |
+| Polish pass | 2026-05-20 | Agent (code + Playwright) | 4176 | UXP-033–035 implementation | **Pass** | Refreshed `vp-d-05/01`, `vp-d-06/05-chart-theme-mc` |
+| Frame-it (re-test) | 2026-05-20 | Human reviewer (product) | 4176 | §12 post-polish | **Yes** | MC crosstab + chart screenshot-ready; vision doc signed off |
 
 ### VP-D-06 notes (2026-05-20)
 
@@ -236,7 +233,32 @@ Evidence: `screenshots/vp-d-09/` (9 PNGs: `01-timeline-dock-theme-{sm,mc,lg}`, `
 | **UXP-034** | Footer χ² result uses success green even when p ≥ 0.05 — reads as “good news” | Demote insignificance: `text-secondary` only, or move χ² to second line per UXP-005; reserve green for p &lt; 0.05 only |
 | **UXP-035** | Small-base `n=` uses `--status-warning-text` (orange on MC) at full cell prominence | Whisper: smaller type, muted token, or footnote style; consider UXP-040 toggle for deck mode |
 
-Cross-reference: `findings.md` UXR-049–051; `visual-polish-review.md` Tier 4b.
+Cross-reference: `findings.md` UXR-049–051 (fixed); `visual-polish-review.md` Tier 4b.
+
+### Polish pass — UXP-033–035 (2026-05-20)
+
+**Driver:** Agent implementation + Playwright screenshot regen on `127.0.0.1:4176`
+
+| ID | Change | Verification |
+| :--- | :--- | :--- |
+| **UXP-033** | MC `vizPalette1–6` → sequential cyan ramp (`themes.ts`) | `vp-d-06/05-chart-theme-mc.png` — no rainbow region series |
+| **UXP-034** | χ² badge: green pill only when p &lt; 0.05; insignificant demoted to plain secondary text | `StatisticsStatusBar.test.tsx`; `vp-d-05/01` shows muted χ² when p ≥ 0.05 |
+| **UXP-035** | Small-base `n=` → `.crosstab-small-base` whisper (secondary, 55% opacity); removed MC amber glow override | `CrosstabCell.test.tsx`; `vp-d-05/01` — n= no longer competes with % |
+
+**Agent provisional §12 (not a sign-off):** Refreshed MC crosstab + chart artifacts look materially closer to “evidence, not decoration.” Human reviewer must confirm **Yes/No** before vision doc sign-off.
+
+### Frame-it re-test (§12) — 2026-05-20
+
+**Reviewer:** Product (human)  
+**Artifacts reviewed:** `vp-d-05/01-crosstab-compact-mc-frame-it.png`, `vp-d-06/05-chart-theme-mc.png` (post UXP-033–035)  
+**Not reviewed this pass:** `vp-d-07/02-inspector-gender.png`
+
+| Artifact | Verdict | Rationale |
+| :--- | :---: | :--- |
+| MC crosstab (`vp-d-05/01`) | **Yes** | Percentages lead scan path; `n=` whispered; χ² demoted when insignificant — paste-ready without cropping |
+| MC chart (`vp-d-06/05-chart-theme-mc`) | **Yes** | Sequential cyan instrument palette reads as one coherent panel on dark chrome |
+
+**Product-wide §12 verdict:** **Yes** — meets vision doc §8 for MC hero output (crosstab + chart).
 
 **Run naming:** `VP-D-##` (Visual Polish — Delight validation run).
 

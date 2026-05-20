@@ -5,7 +5,7 @@
 **Focus:** User-centric delight, instrumental beauty, and the psychology of data trust  
 **Builds on:** `visual-polish-review.md` (UXP-001 through UXP-032)  
 **Evidence:** Live UI screenshots (`S11-canvas-1920.png`, `S11-workspace-1920.png`), design system docs (`design_01_system.md`), component code  
-**Status:** §9 Quick Wins implemented — see §10. VP-D-01–09 automation pass on 4176; §12 frame-it **No** (May 20) — UXP-033–035; see `visual-polish-delight-validation-plan.md`.  
+**Status:** §9 Quick Wins implemented — see §10. VP-D-01–09 validated on 4176; UXP-033–035 fixed May 20; §12 frame-it **Yes** (human re-test) — see `visual-polish-delight-validation-plan.md`.  
 
 ---
 
@@ -327,13 +327,13 @@ The ultimate validation for a data interface:
 
 > **Would a researcher screenshot this table, paste it into a presentation, and feel proud—not because it proves their point, but because it looks like evidence?**
 
-**Validated May 20, 2026 (human reviewer):** **No** for Mission Control crosstab + chart artifacts (`vp-d-05/01`, `vp-d-06/05-chart-theme-mc`). Blockers: multi-hue chart on dark MC chrome (UXP-033), footer χ² green prominence (UXP-034), orange small-base `n=` (UXP-035). Soft Machine / Liquid Glass less harsh; still not deck-ready.
+**Validated May 20, 2026 (human reviewer):** **Yes** for Mission Control crosstab + chart (post UXP-033–035 re-test on `vp-d-05/01`, `vp-d-06/05-chart-theme-mc`).
 
-Current state: Delight layer implemented; **visual hierarchy on hero output not yet at frame-it bar.**
+First pass was **No** (same day, pre-polish): multi-hue chart (UXP-033), footer χ² prominence (UXP-034), orange small-base `n=` (UXP-035). All three fixed before re-test.
 
-After `STAB-UI-P`: Yes, without red circles (table grammar).
+Current state: Delight layer **validated** for MC hero output — screenshot-ready without cropping.
 
-After `STAB-UI-D` + UXP-033–035: Re-test — target is **Yes** without cropping, MC minimum.
+After `STAB-UI-P`: Yes, without red circles (table grammar) — separate track.
 
 That is the standard.
 
@@ -383,6 +383,8 @@ All three quick wins were implemented on May 19, 2026.
 | 2026-05-19 | Phase 3: Theme Material Systems | — | Soft Machine paper-texture SVG noise + ink-density + warmer borders; Mission Control graticule grid + amber caution glow; Liquid Glass specular cell highlights + refracted typography + frosted footer. |
 | 2026-05-20 | Validation recon (VP-D-00) | — | Browser eval blocked: OPFS lock on 4174; blank viewport after row var on 4175/4176. Plan: `visual-polish-delight-validation-plan.md`. |
 | 2026-05-20 | §12 Frame-it (human) | — | **No** on MC crosstab + chart; UXP-033–035 / UXR-049–051. Re-test after visual hierarchy fixes. |
+| 2026-05-20 | UXP-033–035 polish pass | — | MC sequential chart palette; demoted χ² when p ≥ 0.05; whisper small-base `n=`. Refreshed `vp-d-05/01`, `vp-d-06/05-chart-theme-mc`. |
+| 2026-05-20 | §12 Frame-it re-test (human) | — | **Yes** on MC crosstab + chart post-polish. STAB-UI-D delight layer validated. |
 | 2026-05-20 | Validation VP-D-09 (stretch surfaces) | — | Workspace card + timeline dock + Manager overlay × SM/MC/LG; `screenshots/vp-d-09/`. |
 | 2026-05-20 | Validation VP-D-08 (theme matrix) | — | Statistics footer + export modal × SM/MC/LG on 4176; `screenshots/vp-d-08/`. |
 | 2026-05-20 | Validation VP-D-07 (Manager) | — | D-040–042 on 4176; `screenshots/vp-d-07/`. UXR-018 fixed via `managerSearchQuery`. |

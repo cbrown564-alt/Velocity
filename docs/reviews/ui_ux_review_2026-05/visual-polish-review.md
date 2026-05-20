@@ -134,13 +134,13 @@ Metric cells repeat the pattern (`w-[42px]` + visible secondary stats on hover f
 
 ### Tier 4b — Frame-it blockers (VP-D §12, May 2026)
 
-Human reviewer **No** on MC crosstab + chart (`vp-d-05/01`, `vp-d-06/05-chart-theme-mc`). SM/LG provisional **No** — less harsh, not deck-ready.
+Human reviewer **Yes** on MC crosstab + chart (§12 re-test, May 20, post UXP-033–035). First pass was **No**; blockers fixed same day.
 
-| ID | Surface | Issue | Direction |
-| :--- | :--- | :--- | :--- |
-| **UXP-033** | MC chart (grouped bar) | Rainbow / multi-hue region series on dark chrome — not one coherent instrument | Theme-scoped chart tokens: fewer saturated hues, muted fills, or sequential ramp; relates UXR-031 (LG contrast) |
-| **UXP-034** | Statistics footer | χ² badge in green draws eye away from table (including non-significant results) | Extend UXP-005: demote insignificance to secondary text; green only when p &lt; 0.05 |
-| **UXP-035** | Crosstab cells | Orange `n=` for small bases (`--status-warning-text`) competes with % values | Smaller/muted treatment; MC amber especially loud — ties to delight Idea 4 and UXP-040 deck toggle |
+| ID | Surface | Issue | Direction | Status |
+| :--- | :--- | :--- | :--- | :--- |
+| **UXP-033** | MC chart (grouped bar) | Rainbow / multi-hue region series on dark chrome — not one coherent instrument | Theme-scoped chart tokens: fewer saturated hues, muted fills, or sequential ramp; relates UXR-031 (LG contrast) | **Fixed** — MC palette sequential cyan (`themes.ts`) |
+| **UXP-034** | Statistics footer | χ² badge in green draws eye away from table (including non-significant results) | Extend UXP-005: demote insignificance to secondary text; green only when p &lt; 0.05 | **Fixed** — `chiSquareInsignificant` demoted styling |
+| **UXP-035** | Crosstab cells | Orange `n=` for small bases (`--status-warning-text`) competes with % values | Smaller/muted treatment; MC amber especially loud — ties to delight Idea 4 and UXP-040 deck toggle | **Fixed** — `.crosstab-small-base` whisper |
 
 ### Tier 5 — Deferred (post STAB-UI-P)
 

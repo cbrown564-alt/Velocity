@@ -66,8 +66,12 @@
 }
 
 .chiSquareInsignificant {
-  background: var(--bg-surface);
+  background: transparent;
   color: var(--text-secondary);
+  font-size: 10px;
+  font-weight: 400;
+  padding: 0;
+  opacity: 0.75;
 }
 
 /* Spacer pushes right-side content */

@@ -182,6 +182,8 @@
 
 /* Mission Control overrides */
 [data-theme="mission-control"] {
+  /* Caution amber decoupled from chart palette (UXP-035) */
+  --status-warning-text: #9A8540;
   --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.2);
   --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.3), 0 1px 2px 0 rgb(0 0 0 / 0.2);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.3);
@@ -536,10 +538,12 @@ h3 {
   border-color: color-mix(in srgb, var(--border-grid) 90%, var(--color-accent) 8%);
 }
 
-/* Amber caution treatment for small-base cells (enhanced) */
-[data-theme="mission-control"] [data-small-base="true"] {
-  color: var(--status-warning-text);
-  text-shadow: 0 0 6px color-mix(in srgb, var(--status-warning-text) 30%, transparent);
+/* Small-base n= — whisper, not warning shout (UXP-035) */
+.crosstab-small-base,
+[data-small-base="true"] {
+  color: var(--text-secondary);
+  opacity: 0.55;
+  font-weight: 400;
 }
 
 /* Monospace discipline: Total row reads as instrument panel */

@@ -40,6 +40,7 @@ describe('CrosstabCell', () => {
   it('warns on small sample sizes (n < 30)', () => {
     render(<CrosstabCell variant="frequency" percent={47.7} count={12} />);
     expect(screen.getByText('n=12')).toHaveAttribute('data-small-base', 'true');
+    expect(screen.getByText('n=12').closest('.crosstab-small-base')).toBeTruthy();
   });
 
   it('does not warn on adequate sample sizes', () => {
