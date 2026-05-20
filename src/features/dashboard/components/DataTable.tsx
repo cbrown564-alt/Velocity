@@ -402,7 +402,7 @@ export const DataTable: React.FC<DataTableProps> = ({
         key="table"
         {...getMotionProps({ preset: 'fadeUp', duration: DURATIONS.enter, reducedMotion })}
         data-density={density}
-        className="w-full overflow-hidden bg-[var(--bg-panel)] border border-[var(--border-subtle)] rounded-lg shadow-sm"
+        className="analysis-frame w-full overflow-hidden bg-[var(--bg-panel)] border border-[var(--border-subtle)] rounded-lg shadow-sm"
       >
         <div ref={tableContainerRef} className="overflow-x-auto overflow-y-auto max-h-[60vh] custom-scrollbar" style={{ position: 'relative' }}>
           <table className="w-full text-sm text-left border-collapse">
@@ -470,9 +470,9 @@ export const DataTable: React.FC<DataTableProps> = ({
             <tbody className="divide-y divide-[var(--border-grid)] font-body">
               {tableData.rows.map(row => renderRow(row))}
               <tr className="bg-[var(--bg-surface)] font-semibold border-t border-[var(--border-grid)] border-b border-[var(--border-grid)]">
-                <td className={`px-2 ${density === 'generous' ? 'py-2.5' : 'py-1.5'} text-[var(--text-primary)] font-body text-sm font-bold`}>Total</td>
+                <td className={`total-row-label px-2 ${density === 'generous' ? 'py-2.5' : 'py-1.5'} text-[var(--text-primary)] font-body text-sm font-bold`}>Total</td>
                 {tableData.colKeys.map(col => (
-                  <td key={col} className={`px-2 ${density === 'generous' ? 'py-2.5' : 'py-1.5'} text-left align-middle data-cell`}>
+                  <td key={col} className={`total-row-cell px-2 ${density === 'generous' ? 'py-2.5' : 'py-1.5'} text-left align-middle data-cell`}>
                     <CrosstabCell
                       key={`coltotal-${animationKey}-${col}`}
                       variant="count"
@@ -483,7 +483,7 @@ export const DataTable: React.FC<DataTableProps> = ({
                   </td>
                 ))}
                 {(tableData.colKeys.length > 1) && (
-                  <td className={`px-2 ${density === 'generous' ? 'py-2.5' : 'py-1.5'} text-left align-middle data-cell bg-[var(--bg-active)]/30`}>
+                  <td className={`total-row-cell px-2 ${density === 'generous' ? 'py-2.5' : 'py-1.5'} text-left align-middle data-cell bg-[var(--bg-active)]/30`}>
                     <CrosstabCell
                       key={`grand-${animationKey}`}
                       variant="count"

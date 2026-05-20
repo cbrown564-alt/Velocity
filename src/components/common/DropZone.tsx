@@ -119,7 +119,7 @@ export const DropZone: React.FC<DropZoneProps> = ({
       >
         <div className="flex items-center gap-2 pointer-events-none">
           <Weight size={14} className={(active || isOver) ? 'text-[var(--color-accent)]' : 'text-[var(--text-secondary)]'} />
-          <span className="text-xs font-medium uppercase tracking-widest font-mono">{label}</span>
+          <span className="shelf-label text-xs font-medium uppercase tracking-widest font-mono">{label}</span>
         </div>
       </div>
     );
@@ -206,7 +206,7 @@ export const DropZone: React.FC<DropZoneProps> = ({
     >
       <div className="flex items-center gap-2 pointer-events-none">
         <Plus size={16} className={(active || isOver) ? "text-[var(--color-accent)]" : "text-[var(--text-secondary)]"} />
-        <span className="text-xs font-medium uppercase tracking-widest font-mono">{label}</span>
+        <span className="shelf-label text-xs font-medium uppercase tracking-widest font-mono">{label}</span>
       </div>
     </div>
   );

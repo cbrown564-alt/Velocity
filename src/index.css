@@ -513,6 +513,19 @@ h3 {
   border-color: color-mix(in srgb, var(--border-grid) 70%, var(--color-accent) 5%);
 }
 
+/* Margin notes: shelf labels as handwritten section headers */
+[data-theme="soft-machine"] .shelf-label,
+:root:not([data-theme]) .shelf-label {
+  font-family: var(--font-display);
+  font-size: 0.65rem;
+  font-weight: 600;
+  font-style: italic;
+  letter-spacing: 0.05em;
+  text-transform: lowercase;
+  color: var(--text-secondary);
+  opacity: 0.7;
+}
+
 /* --------------------------------------------------------------------------
    Mission Control: Flight Instrument System
    -------------------------------------------------------------------------- */
@@ -527,6 +540,14 @@ h3 {
 [data-theme="mission-control"] [data-small-base="true"] {
   color: var(--status-warning-text);
   text-shadow: 0 0 6px color-mix(in srgb, var(--status-warning-text) 30%, transparent);
+}
+
+/* Monospace discipline: Total row reads as instrument panel */
+[data-theme="mission-control"] .total-row-label,
+[data-theme="mission-control"] .total-row-cell {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  letter-spacing: -0.01em;
 }
 
 /* --------------------------------------------------------------------------
@@ -559,6 +580,17 @@ h3 {
 [data-theme="liquid-glass"] .slide-header-title {
   font-weight: 300;
   letter-spacing: -0.01em;
+}
+
+/* Depth hierarchy: table floats above background on a distinct z-layer */
+[data-theme="liquid-glass"] .analysis-frame {
+  box-shadow:
+    0 24px 48px -12px rgba(0, 0, 0, 0.15),
+    0 0 0 1px rgba(255, 255, 255, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.08) 0%, transparent 8%),
+    var(--mat-panel-bg, var(--bg-panel));
 }
 
 /* Frosted footer: more blur than table body */
