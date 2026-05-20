@@ -3,6 +3,7 @@
 **Date:** May 20, 2026  
 **Focus:** Perceived quality, visual coherence, and “product-grade” finish — not defect hunting  
 **Complements:** `docs/audit_06_ui_ux_review_2026-05.md` (UXR program outcomes)  
+**Delight validation:** `visual-polish-delight-validation-plan.md` (multi-session browser test plan for `visual-polish-vision-delight.md`)  
 **Evidence:** Live UI (`mock_data.csv`, Mission Control), `DataTable.tsx`, design system docs  
 **IDs:** `UXP-###` (Visual Polish) — separate from `UXR-###` bug register
 

@@ -43,6 +43,49 @@ function makeProcessedData(cells: { col: string; row: string; percent: number; s
   };
 }
 
+describe('DataTable hook stability', () => {
+  beforeEach(() => {
+    mockUseProcessedAnalysisData.mockReturnValue(null);
+  });
+
+  it('renders after processed data arrives (no conditional hooks)', () => {
+    const rowVar = {
+      id: 'v1',
+      name: 'gender',
+      label: 'Gender',
+      type: 'categorical',
+      valueLabels: [],
+      missingValues: {},
+    } as Variable;
+
+    const { rerender } = render(
+      <DataTable
+        data={[]}
+        rowVariables={[rowVar]}
+        colVariable={null}
+        totalCount={100}
+      />
+    );
+
+    const processed = makeProcessedData([
+      { col: 'c1', row: 'r1', percent: 50 },
+      { col: 'c1', row: 'r2', percent: 50 },
+    ]);
+    mockUseProcessedAnalysisData.mockReturnValue(processed);
+
+    rerender(
+      <DataTable
+        data={[]}
+        rowVariables={[rowVar]}
+        colVariable={null}
+        totalCount={100}
+      />
+    );
+
+    expect(document.querySelector('table')).toBeTruthy();
+  });
+});
+
 describe('DataTable Insight Halo', () => {
   beforeEach(() => {
     mockUseProcessedAnalysisData.mockReturnValue(null);

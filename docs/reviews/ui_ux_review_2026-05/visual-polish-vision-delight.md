@@ -5,7 +5,7 @@
 **Focus:** User-centric delight, instrumental beauty, and the psychology of data trust  
 **Builds on:** `visual-polish-review.md` (UXP-001 through UXP-032)  
 **Evidence:** Live UI screenshots (`S11-canvas-1920.png`, `S11-workspace-1920.png`), design system docs (`design_01_system.md`), component code  
-**Status:** §9 Quick Wins implemented — see §10 for execution log.  
+**Status:** §9 Quick Wins implemented — see §10 for execution log. Live validation **in progress** — blocked at crosstab render gate; see `visual-polish-delight-validation-plan.md`.  
 
 ---
 
@@ -379,7 +379,8 @@ All three quick wins were implemented on May 19, 2026.
 | 2026-05-19 | Phase 3: Insight Halo | — | `--halo-high`/`--halo-mid` tokens in `index.css` (theme-aware: MC gets cyan); `DataTable.tsx` `haloClass()` applied to data cells; 2 component tests. |
 | 2026-05-19 | Phase 3: Story Shelf | — | `generateNarrativeTitle.ts` + `generateNarrativeTitleFromRows.ts` rule-based generators; `SlideHeader.tsx` ghosted suggestion with 3s auto-dismiss + click-to-accept; 9 unit + 4 component tests. |
 | 2026-05-19 | Phase 3: Theme Material Systems | — | Soft Machine paper-texture SVG noise + ink-density + warmer borders; Mission Control graticule grid + amber caution glow; Liquid Glass specular cell highlights + refracted typography + frosted footer. |
+| 2026-05-20 | Validation recon (VP-D-00) | — | Browser eval blocked: OPFS lock on 4174; blank viewport after row var on 4175/4176. Plan: `visual-polish-delight-validation-plan.md`. |
 
 ---
 
-*End of vision document. This is a living artifact—iterate as prototypes validate or invalidate the emotional hypotheses above.*
+*End of vision document. This is a living artifact—iterate as prototypes validate or invalidate the emotional hypotheses above. Multi-session validation tracked in `visual-polish-delight-validation-plan.md`.*

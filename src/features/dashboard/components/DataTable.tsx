@@ -191,12 +191,10 @@ export const DataTable: React.FC<DataTableProps> = ({
     };
   }, [processedData]);
 
-  if (!tableData) return null;
-
   // Stable key that changes whenever the underlying query result changes,
   // triggering cell entry animations (Settling Scale) in CrosstabCell.
   const animationKey = useMemo(() => {
-    if (!tableData.rows.length) return undefined;
+    if (!tableData?.rows.length) return undefined;
     const first = tableData.rows[0]?.key ?? '';
     const last = tableData.rows[tableData.rows.length - 1]?.key ?? '';
     return `${first}-${last}-${tableData.rows.length}-${tableData.colKeys.length}-${tableData.grandTotal}`;
@@ -208,6 +206,8 @@ export const DataTable: React.FC<DataTableProps> = ({
     if (sig === 'high_80' || sig === 'low_80') return 'bg-[var(--halo-mid)]';
     return '';
   }, []);
+
+  if (!tableData) return null;
 
   // -- RENDER MODE: TABLE --
   if (viewMode === 'table') {
