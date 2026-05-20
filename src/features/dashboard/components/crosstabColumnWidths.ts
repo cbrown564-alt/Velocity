@@ -19,7 +19,7 @@ export function computeCrosstabColumnWidths(
   hasTotalColumn: boolean
 ): CrosstabColumnWidths {
   if (colKeys.length === 0) {
-    return { rowLabel: `${ROW_LABEL_PCT}%` };
+    return { rowLabel: `${ROW_LABEL_PCT}%`, columns: {} };
   }
 
   const weights = colKeys.map((key) => {
