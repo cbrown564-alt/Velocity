@@ -1,7 +1,7 @@
 # Visual Polish Delight — Validation & Multi-Session Test Plan
 
 **Date:** May 20, 2026  
-**Status:** In progress — P1 unblocked (VP-D-01); Phase 1 partial; Phases 2–3 not run  
+**Status:** In progress — P1–P4 pass (VP-D-01/02); Phase 1 complete; Phase 2 mostly pass; Phase 3 partial; Story Shelf blocked on default title  
 **Owner:** Product + engineering (assign per run in §8)  
 **Scope:** Live validation of `STAB-UI-D` delight layer described in `visual-polish-vision-delight.md`  
 **Builds on:** `visual-polish-review.md` (UXP-001–032), `plan_01_comprehensive_ui_ux_review.md`, `session-02-canvas.md`, `session-07-themes.md`
@@ -31,7 +31,7 @@ This document is the **operating plan** for validating delight-layer work across
 
 ### 2.1 Executive summary
 
-Implementation confidence is **test-backed and partially visually signed off**. VP-D-01 confirmed gender×region crosstab on port 4176 after fixing a **DataTable hooks-order crash** (blank viewport). Unit tests cover delight components; e2e `visual-polish-crosstab.spec.ts` automates P1. Story Shelf and reduced-motion passes remain open. The §12 "Would You Frame It?" test remains **unanswered**.
+Implementation confidence is **test-backed and largely visually signed off**. VP-D-01/02 confirmed gender×region crosstab on port 4176 after fixing a **DataTable hooks-order crash**. VP-D-02 passed Phase 2 (settling scale, focus breathing, reduced motion) and D-002 small-base on live mock_data. **Story Shelf is blocked** by a title gate mismatch (`Analysis 1` vs `New Slide`). DnD, zero-cell anchor, export, and reopen remain for VP-D-03/04. The §12 "Would You Frame It?" test remains **unanswered**.
 
 ### 2.2 Confirmed (pre-table)
 
@@ -56,12 +56,12 @@ Implementation confidence is **test-backed and partially visually signed off**. 
 | Log item | Unit tests | Live browser | Notes |
 | :--- | :---: | :---: | :--- |
 | Quick Wins 1–3 (Trust Anchor, Column Guide, Frame) | Partial | **Pass** (VP-D-01) | 12 `n=` cells; frame + column hover screenshots |
-| Settling Scale | Yes | **Partial** | % values render; motion not captured in automation |
-| Focus Breathing | Implied | **Pass** (presentation) | `[data-density="generous"]` after Presentation View toggle |
-| DnD micro-delight | Unknown | **Not verified** | |
-| Insight Halo | Yes (2 tests) | **Partial** | 1 halo class on gender×region; sig fixture not exercised |
-| Story Shelf | Yes (4 tests) | **Fail** (timing) | Suggestion not visible within 2s window in eval script |
-| Theme material systems | `index.css.test.ts` | **Partial** | SM/MC/LG crosstab screenshots captured |
+| Settling Scale | Yes | **Pass** (VP-D-02) | Mount + filter + reduced motion (`data-animated` 0 under `reduce`) |
+| Focus Breathing | Implied | **Pass** (VP-D-02) | Presentation + Focus Mode enter/exit restore compact |
+| DnD micro-delight | Unknown | **Not verified** | VP-D-03 |
+| Insight Halo | Yes (2 tests) | **Partial** (VP-D-02) | 2 `halo-mid` cells; no `halo-high` on gender×region |
+| Story Shelf | Yes (4 tests) | **Blocked** | Default slide title `Analysis 1` — gate expects `New Slide` |
+| Theme material systems | `index.css.test.ts` | **Partial** | SM/MC/LG table screenshots in `screenshots/vp-d-02/` |
 
 ### 2.5 Code review risk register
 
@@ -105,11 +105,11 @@ Run in order. **Stop and file a blocker if P1 fails.**
 | **P1** | Crosstab render gate | Load Example → gender (rows) → region (cols) | Table with `%` and `n=` cells visible | **Pass** (VP-D-01) |
 | P2 | Column guide | P1 → hover column header | Active border from th through td; no layout shift | **Pass** (screenshot `sm-column-guide-hover.png`) |
 | P3 | Presentation density | P1 → toggle Presentation View | `[data-density="generous"]`; increased row padding | **Pass** (screenshot `sm-presentation-density.png`) |
-| P4 | Focus mode breathing | P1 → Enter Focus Mode → exit | Auto-generous on enter; prior density restored | Not run |
-| P5 | Filter re-animate | P1 → apply filter | `animationKey` changes; cells re-settle (or instant if reduced motion) | Not run |
-| P6 | Insight halo | P1 with sig cells | Peripheral tint on sig cells only | Not run |
-| P7 | Story shelf | P1 → wait for ghost title | Suggestion appears; click accept persists title | Not run |
-| P8 | Theme cycle | P1 → SM → MC → LG | Table + chart readable on each theme | Not run |
+| P4 | Focus mode breathing | P1 → Enter Focus Mode → exit | Auto-generous on enter; prior density restored | **Pass** (VP-D-02) |
+| P5 | Filter re-animate | P1 → apply filter | `animationKey` changes; cells re-settle (or instant if reduced motion) | **Pass** (NPS Promoter filter) |
+| P6 | Insight halo | P1 with sig cells | Peripheral tint on sig cells only | **Partial** (2 mid halos; no high_95 cells) |
+| P7 | Story shelf | P1 → wait for ghost title | Suggestion appears; click accept persists title | **Blocked** — default slide title `Analysis 1` |
+| P8 | Theme cycle | P1 → SM → MC → LG | Table + chart readable on each theme | **Partial** (table screenshots all themes) |
 | P9 | Workspace reopen | Close tab → reopen mock_data.csv | Deck + crosstab restored; no OPFS lock | Not run |
 | P10 | Export artifact | P1 → Export PNG/PDF | Output includes bordered Analysis Frame | Not run |
 
@@ -124,7 +124,7 @@ Update **Status** column each session: `Not run` | `Pass` | `Fail` | `Blocked` |
 | ID | Feature | Steps | Pass criteria | Status | Evidence |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | D-001 | Trust Anchor — `n=` visible | gender×region crosstab | Every frequency cell shows `n=N` without hover; Total uses same `CrosstabCell` | **Pass** | `screenshots/sm-crosstab-compact.png` |
-| D-002 | Trust Anchor — small base | Filter or F2 to get `n<30` | Base in `--status-warning-text`; `data-small-base="true"` | Not run | |
+| D-002 | Trust Anchor — small base | Filter or F2 to get `n<30` | Base in `--status-warning-text`; `data-small-base="true"` | **Pass** | VP-D-02: 7–9 cells on mock_data gender×region |
 | D-003 | Trust Anchor — zero/missing | Force empty cell if possible | Em-dash (—), not "0%" + faded n | Not run | |
 | D-004 | Column Guide | Hover each column header | 1px active left border th→td; no horizontal shift | **Pass** | `screenshots/sm-column-guide-hover.png` |
 | D-005 | Analysis Frame | View table in Canvas | Card: panel bg, subtle border, rounded-lg, shadow; no bleed into SmartCanvas | **Pass** | `.analysis-frame` in eval + screenshot |
@@ -133,25 +133,25 @@ Update **Status** column each session: `Not run` | `Pass` | `Fail` | `Blocked` |
 
 | ID | Feature | Steps | Pass criteria | Status | Evidence |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| D-010 | Settling Scale — mount | Fresh crosstab load | % count 0→final ~400ms; SD 100ms delayed on metrics | Not run | |
-| D-011 | Settling Scale — filter | Apply/remove filter | Re-settle; MC phosphor ghost 200ms on old value | Not run | |
-| D-012 | Settling Scale — reduced motion | OS reduce motion ON | Instant display, no animation | Not run | |
-| D-013 | Focus Breathing — toggle | Presentation View on/off | `[data-density="generous"]`; py increases; restores compact | Not run | |
-| D-014 | Focus Breathing — focus mode | Enter/exit Focus Mode | Auto-generous on enter; density restored on exit | Not run | |
+| D-010 | Settling Scale — mount | Fresh crosstab load | % count 0→final ~400ms; SD 100ms delayed on metrics | **Pass** | VP-D-02: 12 % cells, 36–40 `[data-animated="true"]` |
+| D-011 | Settling Scale — filter | Apply/remove filter | Re-settle; MC phosphor ghost 200ms on old value | **Pass** | NPS Promoter filter applied; cells remain animated |
+| D-012 | Settling Scale — reduced motion | OS reduce motion ON | Instant display, no animation | **Pass** | `reducedMotion: 'reduce'` — 0 animated spans |
+| D-013 | Focus Breathing — toggle | Presentation View on/off | `[data-density="generous"]`; py increases; restores compact | **Pass** | `screenshots/vp-d-02/03-presentation-density.png` |
+| D-014 | Focus Breathing — focus mode | Enter/exit Focus Mode | Auto-generous on enter; density restored on exit | **Pass** | `screenshots/vp-d-02/04-focus-mode.png` |
 | D-015 | DnD micro-delight | Drag variable to shelf | Spring overlay; color-mix shadow; snap on drop | Not run | |
 
 ### 5.3 Phase 3 — Intelligence & materials
 
 | ID | Feature | Steps | Pass criteria | Status | Evidence |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| D-020 | Insight Halo — 95% | Slide with sig cells | `--halo-high` tint on sig cells only | Not run | |
-| D-021 | Insight Halo — 80% | Same slide | `--halo-mid` subtler than high | Not run | |
-| D-022 | Story Shelf — generate | Load crosstab with sig | Ghost italic suggestion within 1s | Not run | |
-| D-023 | Story Shelf — accept | Click suggestion | Becomes real title; editable | Not run | |
-| D-024 | Story Shelf — dismiss | Wait 3s | Suggestion fades; title editable | Not run | |
-| D-025 | MC flight instrument | Mission Control theme | Graticule grid; amber small-base; mono Total row | Not run | |
-| D-026 | SM research journal | Soft Machine theme | Paper noise subtle; warmer borders; ink hierarchy | Not run | |
-| D-027 | LG holographic | Liquid Glass theme | Specular hover; refracted type; frosted footer | Not run | |
+| D-020 | Insight Halo — 95% | Slide with sig cells | `--halo-high` tint on sig cells only | **Partial** | VP-D-02: 0 high, 2 mid on gender×region (χ² sig at table level) |
+| D-021 | Insight Halo — 80% | Same slide | `--halo-mid` subtler than high | **Pass** | 2 `--halo-mid` cells observed |
+| D-022 | Story Shelf — generate | Load crosstab with sig | Ghost italic suggestion within 1s | **Blocked** | Default slide `Analysis 1` ≠ `New Slide` gate in `SlideHeader.tsx` |
+| D-023 | Story Shelf — accept | Click suggestion | Becomes real title; editable | Not run | Blocked by D-022 |
+| D-024 | Story Shelf — dismiss | Wait 3s | Suggestion fades; title editable | Not run | Blocked by D-022 |
+| D-025 | MC flight instrument | Mission Control theme | Graticule grid; amber small-base; mono Total row | **Partial** | `screenshots/vp-d-02/08-theme-mc.png` — visual pass, graticule not asserted |
+| D-026 | SM research journal | Soft Machine theme | Paper noise subtle; warmer borders; ink hierarchy | **Pass** | `screenshots/vp-d-02/01-crosstab-compact.png` |
+| D-027 | LG holographic | Liquid Glass theme | Specular hover; refracted type; frosted footer | **Partial** | `screenshots/vp-d-02/08-theme-lg.png` — table readable |
 
 ---
 
@@ -164,6 +164,9 @@ Run D-001–005 and D-020, D-025–027 on each theme after P1 passes.
 | Workspace card | Not run | Not run | Not run |
 | Canvas empty state | Pass | Not run | Not run |
 | Crosstab table | Pass | Pass | Pass |
+| Presentation density | Pass | Not run | Not run |
+| Focus mode | Pass | — | — |
+| Reduced motion table | Pass | — | — |
 | Grouped bar chart | Not run | Not run | Not run |
 | Statistics footer | Not run | Not run | Not run |
 | Export modal | Not run | Not run | — |
@@ -197,7 +200,7 @@ Components touched in vision doc §10 — verify after any delight-layer change.
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | VP-D-00 | 2026-05-20 | Agent (cursor-ide-browser) | 4174/4175/4176 | Recon + P1 attempt | **Blocked** — OPFS lock (4174); blank viewport (hooks bug in `DataTable`) | Fix hooks; re-run VP-D-01 |
 | VP-D-01 | 2026-05-20 | Agent | 4176 | P1 + Phase 1 (D-001, D-004–005) + partial P2/P3 | **Pass** — crosstab renders; 5 screenshots; Story Shelf not caught | VP-D-02: D-002–003, D-010–015, sig filter for halo/shelf |
-| VP-D-02 | | | | Phase 2 (D-010–015) + reduced motion | | |
+| VP-D-02 | 2026-05-20 | Agent | 4176 | Phase 2 + D-002; partial Phase 3; P4–P6 | **Mostly pass** — D-010–014, D-012, D-002 pass; Story Shelf blocked (`Analysis 1` title); D-022 fail | VP-D-03: fix Story Shelf gate or add fresh slide; D-003, D-015, P9–P10 |
 | VP-D-03 | | | | Phase 3 (D-020–027) + theme matrix | | |
 | VP-D-04 | | | | P9 reopen + P10 export + synthesis | | |
 
@@ -213,6 +216,7 @@ Components touched in vision doc §10 — verify after any delight-layer change.
 | ~~**P0**~~ | ~~OPFS isolation in e2e (clear storage per spec)~~ | Done in `visual-polish-crosstab.spec.ts` + eval script |
 | ~~**P1**~~ | ~~Fix `scripts/eval/visual-polish-browser-eval.mjs`~~ | Done — theme listbox selectors, region column, gender×region |
 | **P1** | Playwright visual regression: 3 themes × table | Catches halo/frame/material drift |
+| **P1** | Story Shelf e2e: seed slide with `title: 'New Slide'` or align default title | VP-D-02 blocked on `slidesSlice` default `Analysis 1` |
 | **P2** | Story Shelf timing test with clock mock | 3s dismiss is flaky manually |
 | **P2** | `prefers-reduced-motion` e2e via `emulateMedia` | D-012 |
 
@@ -231,12 +235,13 @@ Components touched in vision doc §10 — verify after any delight-layer change.
 
 ---
 
-## 11. Immediate actions (before VP-D-02)
+## 11. Immediate actions (before VP-D-03)
 
 1. ~~**Diagnose blank viewport**~~ — fixed: `animationKey`/`haloClass` hooks moved above early return in `DataTable.tsx`.  
-2. **Run VP-D-02** — reduced motion (D-012), filter re-animate (D-011), focus mode (D-014).  
-3. **Prepare sig fixture** — mock_data + `nps segment = Promoter` filter for Halo + Story Shelf (D-020–024).  
-4. **Small-base fixture** — F2 `test_small.sav` or filter for D-002.  
+2. ~~**Run VP-D-02**~~ — D-010–014, D-012, D-002 pass; eval script extended (`VP_D_RUN=02`).  
+3. **Story Shelf gate** — `slidesSlice` seeds `Analysis 1`; `SlideHeader` requires `New Slide`. Align default title or expand `isDefaultTitleUnedited` before D-022–024.  
+4. **Run VP-D-03** — D-003 zero cells, D-015 DnD, P9 reopen, P10 export, manual "Would You Frame It?" pass.  
+5. **Sig fixture for halo-high** — try comparison method / filter combo that yields `high_95` cell-level sig (current gender×region shows table χ² + mid halos only).  
 
 ---
 
