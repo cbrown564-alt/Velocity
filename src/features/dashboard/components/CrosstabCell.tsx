@@ -1,9 +1,73 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowDown, ArrowUp } from 'lucide-react';
 import { AnimatedNumber } from '../../../components/common/AnimatedNumber';
 
 type CellSig = 'high_95' | 'high_80' | 'low_95' | 'low_80';
+
+/** Detect Mission Control theme for phosphor persistence */
+function isMissionControl(): boolean {
+  return document.documentElement.getAttribute('data-theme') === 'mission-control';
+}
+
+/**
+ * Tracks previous primary value and emits a ghost for 200ms when
+ * animationTrigger changes. Only active in Mission Control.
+ */
+function usePhosphorGhost(
+  value: number,
+  animationTrigger: string | undefined
+): { value: number; key: string } | null {
+  const [ghost, setGhost] = useState<{ value: number; key: string } | null>(null);
+  const prevTriggerRef = useRef(animationTrigger);
+  const prevValueRef = useRef(value);
+
+  useEffect(() => {
+    if (animationTrigger && animationTrigger !== prevTriggerRef.current && isMissionControl()) {
+      setGhost({ value: prevValueRef.current, key: prevTriggerRef.current ?? 'init' });
+      const timer = setTimeout(() => setGhost(null), 220);
+      prevTriggerRef.current = animationTrigger;
+    } else {
+      prevTriggerRef.current = animationTrigger;
+    }
+    prevValueRef.current = value;
+  }, [animationTrigger, value]);
+
+  return ghost;
+}
+
+/**
+ * Renders primary value with an optional phosphor ghost overlay.
+ * In Mission Control, the old value lingers like CRT phosphor decay.
+ */
+function PhosphorWrap({
+  children,
+  ghost,
+  formatter,
+  className,
+}: {
+  children: React.ReactNode;
+  ghost: { value: number; key: string } | null;
+  formatter: (v: number) => string;
+  className?: string;
+}) {
+  if (!ghost) return <>{children}</>;
+  return (
+    <span className="relative inline-block">
+      {children}
+      <motion.span
+        key={ghost.key}
+        className={`phosphor-ghost absolute inset-0 pointer-events-none ${className}`}
+        initial={{ opacity: 0.75 }}
+        animate={{ opacity: 0 }}
+        transition={{ duration: 0.2, ease: 'easeOut' }}
+        aria-hidden
+      >
+        {formatter(ghost.value)}
+      </motion.span>
+    </span>
+  );
+}
 
 export interface CrosstabCellProps {
   variant: 'frequency' | 'metric' | 'count';
@@ -171,7 +235,8 @@ export const CrosstabCell: React.FC<CrosstabCellProps> = ({
 
   if (variant === 'count') {
     const n = count ?? 0;
-    const display = animationTrigger ? (
+    const ghost = usePhosphorGhost(n, animationTrigger);
+    const countDisplay = animationTrigger ? (
       <AnimatedNumber
         key={`count-${animationTrigger}`}
         value={n}
@@ -184,7 +249,9 @@ export const CrosstabCell: React.FC<CrosstabCellProps> = ({
     );
     return (
       <div className="flex flex-col items-start gap-0.5 text-left" data-testid="crosstab-cell-count">
-        {display}
+        <PhosphorWrap ghost={ghost} formatter={(v) => `${Math.round(v)}`} className={primaryClass}>
+          {countDisplay}
+        </PhosphorWrap>
         <FadeIn animationTrigger={animationTrigger} reducedMotion={reducedMotion} delay={0.1} className={`text-[10px] font-mono tracking-tight ${secondaryClass}`}>
           base
         </FadeIn>
@@ -195,6 +262,7 @@ export const CrosstabCell: React.FC<CrosstabCellProps> = ({
   if (variant === 'metric') {
     const displayMean = mean !== undefined ? mean.toFixed(1) : '—';
     const sampleN = validCount ?? count;
+    const meanGhost = usePhosphorGhost(mean ?? 0, animationTrigger);
     const meanEl = animationTrigger ? (
       <AnimatedNumber
         key={`mean-${animationTrigger}`}
@@ -209,7 +277,9 @@ export const CrosstabCell: React.FC<CrosstabCellProps> = ({
     return (
       <div className="flex flex-col items-start gap-0.5 text-left" data-testid="crosstab-cell-metric">
         <div className="flex items-baseline gap-1">
-          {meanEl}
+          <PhosphorWrap ghost={meanGhost} formatter={(v) => v.toFixed(1)} className={primaryClass}>
+            {meanEl}
+          </PhosphorWrap>
           {sigLetters ? (
             <SpringLock animationTrigger={animationTrigger} reducedMotion={reducedMotion}>
               <span className="text-[10px] font-mono font-semibold text-[var(--color-success)] align-super">
@@ -240,6 +310,7 @@ export const CrosstabCell: React.FC<CrosstabCellProps> = ({
 
   const displayPercent = percent !== undefined ? `${percent.toFixed(1)}%` : '—';
   const baseClass = smallBaseClass(count);
+  const pctGhost = usePhosphorGhost(percent ?? 0, animationTrigger);
   const percentEl = animationTrigger ? (
     <AnimatedNumber
       key={`pct-${animationTrigger}`}
@@ -255,7 +326,9 @@ export const CrosstabCell: React.FC<CrosstabCellProps> = ({
   return (
     <div className="flex flex-col items-start gap-0.5 text-left" data-testid="crosstab-cell-frequency">
       <div className="flex items-center gap-0.5">
-        {percentEl}
+        <PhosphorWrap ghost={pctGhost} formatter={(v) => `${v.toFixed(1)}%`} className={primaryClass}>
+          {percentEl}
+        </PhosphorWrap>
         <SignificanceMarkers
           sig={sig}
           sigLetters={sigLetters}

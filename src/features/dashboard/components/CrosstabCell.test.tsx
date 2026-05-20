@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { CrosstabCell } from './CrosstabCell';
 
@@ -74,6 +74,64 @@ describe('CrosstabCell', () => {
       );
       const marker = screen.getByTestId('crosstab-cell-frequency').querySelector('[data-animated="true"]');
       expect(marker).toBeInTheDocument();
+    });
+  });
+
+  describe('phosphor persistence (Mission Control only)', () => {
+    beforeEach(() => {
+      document.documentElement.setAttribute('data-theme', 'mission-control');
+    });
+
+    afterEach(() => {
+      document.documentElement.removeAttribute('data-theme');
+    });
+
+    it('renders phosphor ghost with old value when animationTrigger changes', () => {
+      const { rerender } = render(
+        <CrosstabCell variant="frequency" percent={47.7} count={21} animationTrigger="v1" />
+      );
+      rerender(
+        <CrosstabCell variant="frequency" percent={52.3} count={21} animationTrigger="v2" />
+      );
+      const ghosts = screen.getByTestId('crosstab-cell-frequency').querySelectorAll('.phosphor-ghost');
+      expect(ghosts.length).toBeGreaterThan(0);
+      expect(ghosts[0]).toHaveTextContent('47.7%');
+    });
+
+    it('does not render phosphor ghost in Soft Machine theme', () => {
+      document.documentElement.setAttribute('data-theme', 'soft-machine');
+      const { rerender } = render(
+        <CrosstabCell variant="frequency" percent={47.7} count={21} animationTrigger="v1" />
+      );
+      rerender(
+        <CrosstabCell variant="frequency" percent={52.3} count={21} animationTrigger="v2" />
+      );
+      const ghosts = screen.getByTestId('crosstab-cell-frequency').querySelectorAll('.phosphor-ghost');
+      expect(ghosts.length).toBe(0);
+    });
+
+    it('renders metric phosphor ghost on trigger change', () => {
+      const { rerender } = render(
+        <CrosstabCell variant="metric" mean={3.2} count={44} animationTrigger="v1" />
+      );
+      rerender(
+        <CrosstabCell variant="metric" mean={4.1} count={44} animationTrigger="v2" />
+      );
+      const ghosts = screen.getByTestId('crosstab-cell-metric').querySelectorAll('.phosphor-ghost');
+      expect(ghosts.length).toBeGreaterThan(0);
+      expect(ghosts[0]).toHaveTextContent('3.2');
+    });
+
+    it('renders count phosphor ghost on trigger change', () => {
+      const { rerender } = render(
+        <CrosstabCell variant="count" count={48} animationTrigger="v1" />
+      );
+      rerender(
+        <CrosstabCell variant="count" count={55} animationTrigger="v2" />
+      );
+      const ghosts = screen.getByTestId('crosstab-cell-count').querySelectorAll('.phosphor-ghost');
+      expect(ghosts.length).toBeGreaterThan(0);
+      expect(ghosts[0]).toHaveTextContent('48');
     });
   });
 });

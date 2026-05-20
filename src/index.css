@@ -550,6 +550,13 @@ h3 {
   letter-spacing: -0.01em;
 }
 
+/* Phosphor persistence ghost: CRT-style cyan afterglow */
+[data-theme="mission-control"] .phosphor-ghost {
+  text-shadow:
+    0 0 4px color-mix(in srgb, var(--color-accent) 40%, transparent),
+    0 0 12px color-mix(in srgb, var(--color-accent) 20%, transparent);
+}
+
 /* --------------------------------------------------------------------------
    Liquid Glass: Holographic Display
    -------------------------------------------------------------------------- */
