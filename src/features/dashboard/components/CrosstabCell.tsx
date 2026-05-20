@@ -269,9 +269,18 @@ export const CrosstabCell: React.FC<CrosstabCellProps> = ({
   }
 
   if (variant === 'metric') {
-    const displayMean = mean !== undefined ? mean.toFixed(1) : '—';
     const sampleN = validCount ?? count;
     const meanGhost = usePhosphorGhost(mean ?? 0, animationTrigger);
+
+    if (isZero) {
+      return (
+        <div className={CELL_STACK} data-testid="crosstab-cell-metric" data-zero-cell="true">
+          <span className={`font-mono ${primarySizeClass} tabular-nums ${primaryClass}`}>—</span>
+        </div>
+      );
+    }
+
+    const displayMean = mean !== undefined ? mean.toFixed(1) : '—';
     const meanEl = animationTrigger ? (
       <AnimatedNumber
         key={`mean-${animationTrigger}`}
@@ -317,9 +326,18 @@ export const CrosstabCell: React.FC<CrosstabCellProps> = ({
     );
   }
 
+  const pctGhost = usePhosphorGhost(percent ?? 0, animationTrigger);
+
+  if (isZero) {
+    return (
+      <div className={CELL_STACK} data-testid="crosstab-cell-frequency" data-zero-cell="true">
+        <span className={`font-mono ${primarySizeClass} tabular-nums ${primaryClass}`}>—</span>
+      </div>
+    );
+  }
+
   const displayPercent = percent !== undefined ? `${percent.toFixed(1)}%` : '—';
   const baseClass = smallBaseClass(count);
-  const pctGhost = usePhosphorGhost(percent ?? 0, animationTrigger);
   const percentEl = animationTrigger ? (
     <AnimatedNumber
       key={`pct-${animationTrigger}`}

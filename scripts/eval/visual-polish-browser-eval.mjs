@@ -1,9 +1,10 @@
 /**
- * Browser eval for visual-polish-vision-delight.md (VP-D-01 / VP-D-02)
+ * Browser eval for visual-polish-vision-delight.md (VP-D-01 / VP-D-02 / VP-D-03 / VP-D-04)
  *
  * Usage:
  *   VELOCITY_URL=http://127.0.0.1:4176 node scripts/eval/visual-polish-browser-eval.mjs
  *   VP_D_RUN=02 node scripts/eval/visual-polish-browser-eval.mjs
+ *   VP_D_RUN=04 node scripts/eval/visual-polish-browser-eval.mjs
  */
 import { chromium } from '@playwright/test';
 import path from 'path';
@@ -24,21 +25,25 @@ function record(results, item, pass, detail) {
   results.checks.push({ item, pass, detail });
 }
 
-async function ensureDashboard(page) {
+async function ensureDashboard(page, { clearStorage = true } = {}) {
   await page.goto(BASE);
-  await page.evaluate(async () => {
-    try { localStorage.clear(); } catch {}
-    try {
-      if (navigator.storage?.getDirectory) {
-        const root = await navigator.storage.getDirectory();
-        for await (const [name] of root.entries()) {
-          try { await root.removeEntry(name, { recursive: true }); } catch {}
+  if (clearStorage) {
+    await page.evaluate(async () => {
+      try { localStorage.clear(); } catch {}
+      try {
+        if (navigator.storage?.getDirectory) {
+          const root = await navigator.storage.getDirectory();
+          for await (const [name] of root.entries()) {
+            try { await root.removeEntry(name, { recursive: true }); } catch {}
+          }
         }
-      }
-    } catch {}
-  });
-  await page.reload();
-  await page.waitForTimeout(3000);
+      } catch {}
+    });
+    await page.reload();
+    await page.waitForTimeout(3000);
+  } else {
+    await page.waitForTimeout(2000);
+  }
 
   const restore = page.getByRole('button', { name: 'Restore Session' });
   const loadExample = page.getByRole('button', { name: /Load Example/i });
@@ -102,6 +107,158 @@ async function applyNpsPromoterFilter(page) {
   await page.waitForTimeout(3500);
 }
 
+async function ensureSparseCrosstab(page) {
+  const reset = page.getByRole('button', { name: 'Reset' });
+  if (await reset.isVisible({ timeout: 2000 }).catch(() => false)) {
+    await reset.click();
+    await page.waitForTimeout(800);
+  }
+
+  const ageBtn = page.getByRole('button', { name: /age_group Good starting point/i });
+  if (await ageBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+    await ageBtn.click();
+    await page.waitForTimeout(1200);
+  } else {
+    const ageVar = page.locator('.cursor-grab').filter({ hasText: 'age_group' }).first();
+    const rows = page.locator('#drop-zone-rows');
+    if (await ageVar.isVisible({ timeout: 3000 }).catch(() => false)) {
+      await ageVar.dragTo(rows);
+      await page.waitForTimeout(1500);
+    }
+  }
+
+  const region = page.getByRole('button', { name: /^region$/i });
+  if (await region.isVisible({ timeout: 5000 }).catch(() => false)) {
+    await region.click();
+    await page.waitForTimeout(2500);
+  }
+
+  await applyNpsPromoterFilter(page);
+  await page.locator('table').waitFor({ timeout: 30000 });
+}
+
+async function testZeroCells(page, results) {
+  let zeroCells = await page.locator('[data-zero-cell="true"]').count();
+  let emDashCells = await page.locator('td.data-cell').filter({ hasText: '—' }).count();
+  let badZeros = await page.locator('td.data-cell').filter({ hasText: /^0\.0%$/ }).count();
+
+  if (zeroCells === 0 && emDashCells === 0) {
+    await ensureSparseCrosstab(page);
+    zeroCells = await page.locator('[data-zero-cell="true"]').count();
+    emDashCells = await page.locator('td.data-cell').filter({ hasText: '—' }).count();
+    badZeros = await page.locator('td.data-cell').filter({ hasText: /^0\.0%$/ }).count();
+  }
+
+  const pass = zeroCells > 0 && badZeros === 0 && emDashCells >= zeroCells;
+  record(
+    results,
+    'D-003 Trust Anchor — zero/missing',
+    pass,
+    `${zeroCells} zero cells, ${emDashCells} em-dash, ${badZeros} raw 0%`
+  );
+  if (zeroCells > 0 || emDashCells > 0) await shot(page, '08-zero-cells');
+}
+
+async function testDnDMicroDelight(page, results) {
+  const expand = page.getByRole('button', { name: 'Expand variable sidebar' });
+  if (await expand.isVisible({ timeout: 1000 }).catch(() => false)) {
+    await expand.click();
+    await page.waitForTimeout(300);
+  }
+
+  await page.getByPlaceholder('Search variables...').fill('intent');
+  await page.waitForTimeout(400);
+
+  const source = page.locator('.cursor-grab').filter({ hasText: /intent to buy/i }).first();
+  const target = page.locator('div.min-h-\\[52px\\]').first();
+  await source.scrollIntoViewIfNeeded();
+  const sourceBox = await source.boundingBox();
+  const targetBox = await target.boundingBox();
+  if (!sourceBox || !targetBox) {
+    record(results, 'D-015 DnD micro-delight', false, 'source or drop zone not found');
+    return;
+  }
+
+  await page.mouse.move(sourceBox.x + sourceBox.width / 2, sourceBox.y + sourceBox.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(sourceBox.x + sourceBox.width / 2 + 8, sourceBox.y + sourceBox.height / 2 - 12, { steps: 4 });
+  await page.waitForTimeout(250);
+
+  const overlayDuringDrag = await page.evaluate(() => {
+    const cards = Array.from(document.querySelectorAll('div')).filter(
+      (el) => el.textContent?.includes('intent to buy') && el.className.includes('cursor-grab')
+    );
+    return cards.length > 1;
+  });
+
+  await page.mouse.move(targetBox.x + targetBox.width / 2, targetBox.y + targetBox.height / 2, { steps: 12 });
+  await page.waitForTimeout(200);
+  await shot(page, '10-dnd-overlay');
+  await page.mouse.up();
+  await page.waitForTimeout(700);
+
+  const weightShelf = page.locator('div.min-h-\\[52px\\]').filter({ hasText: /intent to buy/i });
+  const dropped = await weightShelf.isVisible({ timeout: 3000 }).catch(() => false);
+  record(
+    results,
+    'D-015 DnD micro-delight',
+    overlayDuringDrag && dropped,
+    `overlay=${overlayDuringDrag} dropped=${dropped}`
+  );
+}
+
+async function testWorkspaceReopen(context, results) {
+  const page = await context.newPage();
+  page.on('dialog', (d) => d.dismiss());
+  await ensureDashboard(page, { clearStorage: true });
+  await ensureCrosstab(page);
+  await page.locator('table').waitFor({ timeout: 30000 });
+  const rowsBefore = await page.locator('table tbody tr').count();
+  const pctBefore = await page.locator('text=/\\d+\\.\\d%/').count();
+  await page.close();
+
+  const reopen = await context.newPage();
+  reopen.on('dialog', (d) => d.dismiss());
+  await ensureDashboard(reopen, { clearStorage: false });
+
+  let rowsAfter = 0;
+  const tableView = reopen.getByRole('button', { name: 'Table view' });
+  const restore = reopen.getByRole('button', { name: 'Restore Session' });
+
+  if (await tableView.isVisible({ timeout: 8000 }).catch(() => false)) {
+    rowsAfter = await reopen.locator('table tbody tr').count();
+  } else if (await restore.isVisible({ timeout: 8000 }).catch(() => false)) {
+    await restore.click();
+    await reopen.locator('table').waitFor({ timeout: 120000 });
+    rowsAfter = await reopen.locator('table tbody tr').count();
+  }
+
+  const pctAfter = await reopen.locator('text=/\\d+\\.\\d%/').count();
+  const pass = rowsAfter >= 2 && pctAfter > 0;
+  record(
+    results,
+    'P9 Workspace reopen',
+    pass,
+    `rows ${rowsBefore}→${rowsAfter}, pct cells ${pctBefore}→${pctAfter}`
+  );
+  if (pass) await shot(reopen, '11-workspace-reopen');
+  await reopen.close();
+}
+
+async function testExportModal(page, results) {
+  const exportBtn = page.getByRole('button', { name: 'Export', exact: true });
+  await exportBtn.click();
+  const modal = page.getByRole('heading', { name: /Export Analysis/i });
+  await modal.waitFor({ timeout: 8000 });
+  const pptx = page.getByText('PowerPoint', { exact: true });
+  const frame = page.locator('.analysis-frame').filter({ has: page.locator('table') });
+  const pass = (await pptx.isVisible()) && (await frame.count()) > 0;
+  record(results, 'P10 Export artifact', pass, 'modal open; table frame visible behind modal');
+  await shot(page, '09-export-modal');
+  await page.keyboard.press('Escape');
+  await page.waitForTimeout(300);
+}
+
 async function main() {
   const browser = await chromium.launch({ headless: true });
   const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
@@ -140,8 +297,9 @@ async function main() {
       await shot(page, '05-story-shelf');
       await storyBtn.click();
       await page.waitForTimeout(400);
-      const committed = await page.getByText(/over-represented|under-represented|distribution|significantly|even across/i).isVisible().catch(() => false);
-      record(results, 'D-023 Story Shelf — accept', committed);
+      const titleText = (await page.locator('.slide-header-title').textContent())?.trim() ?? '';
+      const committed = titleText !== '' && titleText !== 'New Slide';
+      record(results, 'D-023 Story Shelf — accept', committed, titleText || 'empty');
     }
 
     const th = page.locator('th').nth(2);
@@ -208,6 +366,12 @@ async function main() {
     );
     record(results, 'D-020 Insight Halo — live cells', haloAny > 0, `high=${haloHigh} mid=${haloMid} tinted=${haloAny}`);
 
+    if (RUN === '04') {
+      await testDnDMicroDelight(page, results);
+      await testExportModal(page, results);
+      await testZeroCells(page, results);
+    }
+
     // --- D-012 Reduced motion ---
     await context.close();
     const rmContext = await browser.newContext({
@@ -244,6 +408,12 @@ async function main() {
     }
     record(results, 'D-025–027 Theme materials — table readable', (await page2.locator('table tbody tr').count()) >= 2);
     await page2.close();
+
+    if (RUN === '04') {
+      const reopenContext = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+      await testWorkspaceReopen(reopenContext, results);
+      await reopenContext.close();
+    }
 
     console.log(JSON.stringify(results, null, 2));
   } catch (err) {

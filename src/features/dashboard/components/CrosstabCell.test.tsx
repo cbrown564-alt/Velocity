@@ -47,6 +47,21 @@ describe('CrosstabCell', () => {
     expect(screen.getByText('n=131')).not.toHaveAttribute('data-small-base');
   });
 
+  it('renders em-dash for zero frequency cells instead of 0%', () => {
+    render(<CrosstabCell variant="frequency" isZero percent={0} count={0} />);
+    expect(screen.getByText('—')).toBeInTheDocument();
+    expect(screen.queryByText('0.0%')).not.toBeInTheDocument();
+    expect(screen.queryByText('n=0')).not.toBeInTheDocument();
+    expect(screen.getByTestId('crosstab-cell-frequency')).toHaveAttribute('data-zero-cell', 'true');
+  });
+
+  it('renders em-dash for zero metric cells', () => {
+    render(<CrosstabCell variant="metric" isZero mean={0} count={0} />);
+    expect(screen.getByText('—')).toBeInTheDocument();
+    expect(screen.queryByText('0.0')).not.toBeInTheDocument();
+    expect(screen.queryByText('n=0')).not.toBeInTheDocument();
+  });
+
   describe('animation (Settling Scale)', () => {
     it('animates percent when animationTrigger is provided', () => {
       render(

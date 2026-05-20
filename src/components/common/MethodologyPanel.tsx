@@ -2,7 +2,7 @@ import React, { useState, useLayoutEffect, useCallback, type RefObject } from 'r
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useReducedMotion } from '../../lib/motion';
-import { X } from 'lucide-react';
+import { X, ArrowUp, ArrowDown } from 'lucide-react';
 
 const POPOVER_WIDTH = 300;
 const POPOVER_MAX_HEIGHT = 280;
@@ -94,13 +94,24 @@ function SectionContent({ id }: { id: SectionId }) {
       return (
         <div className="space-y-2 text-[var(--text-secondary)] text-xs leading-relaxed">
           <div className="flex gap-2">
-            <div className="flex-1 rounded border border-[var(--border-color)] bg-[var(--bg-active)] px-2 py-1.5">
-              <div className="text-[var(--color-success)] font-semibold text-[11px]">95%</div>
-              <div className="text-[10px] mt-0.5">Strong evidence (p &lt; .05)</div>
+            <div className="flex-1 rounded border border-[var(--border-color)] bg-[var(--bg-panel)] px-2 py-1.5">
+              <div className="text-[var(--text-primary)] font-semibold text-[11px] mb-1">95%</div>
+              <div className="flex items-center gap-1 flex-wrap text-[10px]">
+                <ArrowUp size={10} style={{ color: 'var(--color-success)' }} aria-hidden />
+                <span style={{ color: 'var(--color-success)' }}>Higher</span>
+                <ArrowDown size={10} style={{ color: 'var(--color-error)' }} aria-hidden />
+                <span style={{ color: 'var(--color-error)' }}>Lower</span>
+              </div>
+              <div className="text-[10px] mt-1 text-[var(--color-success)]">Strong evidence (p &lt; .05)</div>
             </div>
-            <div className="flex-1 rounded border border-[var(--border-color)] bg-[var(--bg-active)] px-2 py-1.5">
-              <div className="text-[var(--text-primary)] font-semibold text-[11px]">80%</div>
-              <div className="text-[10px] mt-0.5">Directional (exploratory)</div>
+            <div className="flex-1 rounded border border-[var(--border-color)] bg-[var(--bg-panel)] px-2 py-1.5">
+              <div className="text-[var(--text-primary)] font-semibold text-[11px] mb-1">80%</div>
+              <div className="flex items-center gap-1 text-[10px] text-[var(--text-secondary)]">
+                <ArrowUp size={10} aria-hidden />
+                <ArrowDown size={10} aria-hidden />
+                <span>Directional</span>
+              </div>
+              <div className="text-[10px] mt-1 text-[var(--text-secondary)]">Exploratory indicator</div>
             </div>
           </div>
           <p className="text-[10px] text-[var(--text-tertiary)]">Report at 95%; use 80% to flag patterns worth validating.</p>

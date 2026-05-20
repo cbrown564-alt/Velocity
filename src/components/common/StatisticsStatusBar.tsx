@@ -84,28 +84,37 @@ export const StatisticsStatusBar: React.FC<StatisticsStatusBarProps> = ({
 
   return (
     <>
-      {/* Main status bar — UXP-005: method/legend on line 1, test results on line 2 */}
       <div className={`${styles.statusBar} statistics-status-bar`}>
         <div className={styles.statusRow}>
-          {/* Methodology Pill */}
           {(isCatCrossTab || isCatNumeric) ? (
-            <button
-              ref={methodologyPillRef}
-              type="button"
-              className={`${styles.methodologyPill} ${isCatNumeric ? styles.descriptiveLabel : ''}`}
-              onClick={() => setShowMethodology((open) => !open)}
-              aria-expanded={showMethodology}
-              title="View statistical methodology"
-            >
-              {getMethodologyText()}
-            </button>
+            <div className={styles.methodologyGroup}>
+              {showGear && (
+                <button
+                  className={`${styles.gearButton} ${showSettings ? styles.gearButtonActive : ''}`}
+                  onClick={() => setShowSettings(!showSettings)}
+                  title="Statistical settings"
+                  aria-label="Statistical settings"
+                >
+                  <Settings size={14} />
+                </button>
+              )}
+              <button
+                ref={methodologyPillRef}
+                type="button"
+                className={`${styles.methodologyPill} ${isCatNumeric ? styles.descriptiveLabel : ''}`}
+                onClick={() => setShowMethodology((open) => !open)}
+                aria-expanded={showMethodology}
+                title="View statistical methodology"
+              >
+                {getMethodologyText()}
+              </button>
+            </div>
           ) : noCol ? (
             <span className={styles.descriptiveLabel}>
               Frequency distribution
             </span>
           ) : null}
 
-          {/* Significance Legend (only for cat x cat with arrows) */}
           {isCatCrossTab && (
             <SignificanceLegend
               compact
@@ -118,20 +127,7 @@ export const StatisticsStatusBar: React.FC<StatisticsStatusBarProps> = ({
 
           <div className={styles.spacer} />
 
-          {/* Settings Gear */}
-          {showGear && (
-            <button
-              className={`${styles.gearButton} ${showSettings ? styles.gearButtonActive : ''}`}
-              onClick={() => setShowSettings(!showSettings)}
-              title="Statistical settings"
-            >
-              <Settings size={14} />
-            </button>
-          )}
-        </div>
-
-        {chiSq && (
-          <div className={styles.statusRowSecondary}>
+          {chiSq && (
             <Tooltip
               content={
                 <div className="text-xs space-y-1">
@@ -165,8 +161,8 @@ export const StatisticsStatusBar: React.FC<StatisticsStatusBarProps> = ({
                 {isSignificantChi ? 'Associated' : 'Independent'}
               </div>
             </Tooltip>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {/* Collapsible Settings Tray */}

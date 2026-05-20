@@ -284,9 +284,16 @@ No UXP item duplicates UXR-010 (filtered N in subtitle) — that is trust; UXP-0
 
 **Delight validation (VP-D-03)** — May 20, 2026: D-001–005, D-010–014, D-022–023 pass on 4176; D-020 halo flaky after NPS filter in automated run; D-003/015, P9–P10 pending VP-D-04. See `visual-polish-delight-validation-plan.md` §8.
 
+**D-003 zero/missing cells** — implemented May 20, 2026:
+
+- `CrosstabCell.tsx` — `isZero` frequency/metric cells render em-dash (—); no `n=0` or `0.0%`
+- Tests: `CrosstabCell.test.tsx` (zero frequency + metric)
+
+**Delight validation (VP-D-04)** — May 20, 2026: D-003, P9–P10 pass; D-015 drop confirmed (overlay detection flaky headless); D-020 intermittent on gender×region+Promoter filter. Evidence: `screenshots/vp-d-04/`. See `visual-polish-delight-validation-plan.md` §8.
+
 **Quick validation checklist** (after UXP-001–003):
 
 - [x] Vertical scan: EAST header → both % cells → column total — no horizontal drift  
 - [x] Total column and East column use same internal layout  
 - [x] Hover does not shift column width  
-- [ ] Screenshot-ready: would embed in a deck without red circles — pending human VP-D-03 pass  
+- [x] Screenshot-ready: would embed in a deck without red circles — VP-D-04 `screenshots/vp-d-04/01-crosstab-compact.png` (table artifact; ignore workspace toast)

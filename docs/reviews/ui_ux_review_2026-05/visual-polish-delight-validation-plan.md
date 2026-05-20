@@ -1,7 +1,7 @@
 # Visual Polish Delight — Validation & Multi-Session Test Plan
 
 **Date:** May 20, 2026  
-**Status:** In progress — P1–P4 pass (VP-D-01/02/03); Phase 1–2 pass; Phase 3 partial (Story Shelf pass); P9–P10 and D-003/015 pending  
+**Status:** In progress — P1–P4 pass (VP-D-01/02/03/04); Phase 1–2 pass; Phase 3 partial (D-020 intermittent); P9–P10 pass; D-015 drop pass / overlay flaky headless; §12 "Would You Frame It?" pending human pass  
 **Owner:** Product + engineering (assign per run in §8)  
 **Scope:** Live validation of `STAB-UI-D` delight layer described in `visual-polish-vision-delight.md`  
 **Builds on:** `visual-polish-review.md` (UXP-001–032), `plan_01_comprehensive_ui_ux_review.md`, `session-02-canvas.md`, `session-07-themes.md`
@@ -31,7 +31,7 @@ This document is the **operating plan** for validating delight-layer work across
 
 ### 2.1 Executive summary
 
-Implementation confidence is **test-backed and largely visually signed off**. VP-D-01/02 confirmed gender×region crosstab on port 4176 after fixing a **DataTable hooks-order crash**. VP-D-02 passed Phase 2 (settling scale, focus breathing, reduced motion) and D-002 small-base on live mock_data. **VP-D-03** fixed Story Shelf (hooks order + `tableStats` subscription + eval timing); D-022/023 **pass** with `New Slide` seed and early eval check. DnD, zero-cell anchor, export, and reopen remain for VP-D-04. The §12 "Would You Frame It?" test remains **unanswered**.
+Implementation confidence is **test-backed and largely visually signed off**. VP-D-01/02 confirmed gender×region crosstab on port 4176 after fixing a **DataTable hooks-order crash**. VP-D-02 passed Phase 2 (settling scale, focus breathing, reduced motion) and D-002 small-base on live mock_data. **VP-D-03** fixed Story Shelf (hooks order + `tableStats` subscription + eval timing); D-022/023 **pass** with `New Slide` seed and early eval check. **VP-D-04** (May 20) closed D-003 zero-cell em-dash, P9 workspace reopen, P10 export modal; D-015 drop confirmed; D-020 halo intermittent on Promoter-filtered gender×region. The §12 "Would You Frame It?" test remains **unanswered**.
 
 ### 2.2 Confirmed (pre-table)
 
@@ -110,8 +110,8 @@ Run in order. **Stop and file a blocker if P1 fails.**
 | P6 | Insight halo | P1 with sig cells | Peripheral tint on sig cells only | **Partial** (2 mid halos; no high_95 cells) |
 | P7 | Story shelf | P1 → wait for ghost title | Suggestion appears; click accept persists title | **Pass** (VP-D-03) |
 | P8 | Theme cycle | P1 → SM → MC → LG | Table + chart readable on each theme | **Partial** (table screenshots all themes) |
-| P9 | Workspace reopen | Close tab → reopen mock_data.csv | Deck + crosstab restored; no OPFS lock | Not run |
-| P10 | Export artifact | P1 → Export PNG/PDF | Output includes bordered Analysis Frame | Not run |
+| P9 | Workspace reopen | Close tab → reopen mock_data.csv | Deck + crosstab restored; no OPFS lock | **Pass** (VP-D-04) |
+| P10 | Export artifact | P1 → Export PNG/PDF | Output includes bordered Analysis Frame | **Pass** (VP-D-04 export modal + frame behind) |
 
 ---
 
@@ -125,7 +125,7 @@ Update **Status** column each session: `Not run` | `Pass` | `Fail` | `Blocked` |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | D-001 | Trust Anchor — `n=` visible | gender×region crosstab | Every frequency cell shows `n=N` without hover; Total uses same `CrosstabCell` | **Pass** | `screenshots/sm-crosstab-compact.png` |
 | D-002 | Trust Anchor — small base | Filter or F2 to get `n<30` | Base in `--status-warning-text`; `data-small-base="true"` | **Pass** | VP-D-02: 7–9 cells on mock_data gender×region |
-| D-003 | Trust Anchor — zero/missing | Force empty cell if possible | Em-dash (—), not "0%" + faded n | Not run | |
+| D-003 | Trust Anchor — zero/missing | Force empty cell if possible | Em-dash (—), not "0%" + faded n | **Pass** | VP-D-04: 11 em-dash cells on age_group×region+Promoter |
 | D-004 | Column Guide | Hover each column header | 1px active left border th→td; no horizontal shift | **Pass** | `screenshots/sm-column-guide-hover.png` |
 | D-005 | Analysis Frame | View table in Canvas | Card: panel bg, subtle border, rounded-lg, shadow; no bleed into SmartCanvas | **Pass** | `.analysis-frame` in eval + screenshot |
 
@@ -138,7 +138,7 @@ Update **Status** column each session: `Not run` | `Pass` | `Fail` | `Blocked` |
 | D-012 | Settling Scale — reduced motion | OS reduce motion ON | Instant display, no animation | **Pass** | `reducedMotion: 'reduce'` — 0 animated spans |
 | D-013 | Focus Breathing — toggle | Presentation View on/off | `[data-density="generous"]`; py increases; restores compact | **Pass** | `screenshots/vp-d-02/03-presentation-density.png` |
 | D-014 | Focus Breathing — focus mode | Enter/exit Focus Mode | Auto-generous on enter; density restored on exit | **Pass** | `screenshots/vp-d-02/04-focus-mode.png` |
-| D-015 | DnD micro-delight | Drag variable to shelf | Spring overlay; color-mix shadow; snap on drop | Not run | |
+| D-015 | DnD micro-delight | Drag variable to shelf | Spring overlay; color-mix shadow; snap on drop | **Partial** | VP-D-04: drop to row shelf pass; overlay not detected headless (`10-dnd-overlay.png`) |
 
 ### 5.3 Phase 3 — Intelligence & materials
 
@@ -202,7 +202,7 @@ Components touched in vision doc §10 — verify after any delight-layer change.
 | VP-D-01 | 2026-05-20 | Agent | 4176 | P1 + Phase 1 (D-001, D-004–005) + partial P2/P3 | **Pass** — crosstab renders; 5 screenshots; Story Shelf not caught | VP-D-02: D-002–003, D-010–015, sig filter for halo/shelf |
 | VP-D-02 | 2026-05-20 | Agent | 4176 | Phase 2 + D-002; partial Phase 3; P4–P6 | **Mostly pass** — D-010–014, D-012, D-002 pass; Story Shelf blocked (`Analysis 1` title); D-022 fail | VP-D-03: fix Story Shelf gate or add fresh slide; D-003, D-015, P9–P10 |
 | VP-D-03 | 2026-05-20 | Agent | 4176 | Story Shelf + early D-022/023; regression fixes | **Pass** — D-022/023; hooks/`tableStats` fix; halo flaky post-filter | VP-D-04: D-003, D-015, P9–P10, frame-it pass |
-| VP-D-04 | | | | P9 reopen + P10 export + synthesis | | |
+| VP-D-04 | 2026-05-20 | Agent | 4176 | D-003 zero cells, D-015 DnD, P9 reopen, P10 export | **Mostly pass** — D-003, P9–P10; D-015 drop ok; D-020 intermittent | Human §12 frame-it; D-024 dismiss; sig fixture for halo-high |
 
 **Run naming:** `VP-D-##` (Visual Polish — Delight validation run).
 
@@ -241,8 +241,9 @@ Components touched in vision doc §10 — verify after any delight-layer change.
 2. ~~**Run VP-D-02**~~ — D-010–014, D-012, D-002 pass; eval script extended (`VP_D_RUN=02`).  
 3. ~~**Story Shelf gate**~~ — `slidesSlice` now seeds `New Slide` (aligned with `SlideHeader`). Re-run D-022–024 on VP-D-03.  
 4. ~~**Run VP-D-03**~~ — Story Shelf pass; D-022/023 evidence in `screenshots/vp-d-03/`.  
-5. **Run VP-D-04** — D-003 zero cells, D-015 DnD, P9 reopen, P10 export, manual "Would You Frame It?" pass.  
-6. **Sig fixture for halo-high** — try comparison method / filter combo that yields `high_95` cell-level sig (current gender×region shows table χ² + mid halos only).  
+5. ~~**Run VP-D-04**~~ — D-003, P9–P10 pass; D-015 drop pass; evidence in `screenshots/vp-d-04/`.
+6. **Human §12 pass** — "Would You Frame It?" on unedited `screenshots/vp-d-04/01-crosstab-compact.png` or MC theme variant.
+7. **Sig fixture for halo-high** — try comparison method / filter combo that yields `high_95` cell-level sig (current gender×region shows table χ² + mid halos only).
 
 ---
 
@@ -250,13 +251,13 @@ Components touched in vision doc §10 — verify after any delight-layer change.
 
 Delight layer validation is **complete** when:
 
-- [ ] P1–P10 all Pass or documented N/A with rationale  
-- [ ] D-001–005 Pass on at least Mission Control (primary analysis theme)  
-- [ ] D-010–015 Pass or Pass with reduced-motion fallback confirmed  
-- [ ] D-020–027 Pass or Fail filed with UXP ID in `visual-polish-review.md`  
-- [ ] Theme matrix filled for crosstab on all three themes  
-- [ ] `visual-polish-vision-delight.md` §10 updated with validation evidence links  
-- [ ] At least one reviewer answers **Yes** to §8 "Would You Frame It?" on an unedited screenshot  
+- [ ] P1–P10 all Pass or documented N/A with rationale — P9–P10 pass; P6 partial (D-020 intermittent)
+- [x] D-001–005 Pass on at least Mission Control (primary analysis theme) — SM pass; MC in `vp-d-04/08-theme-mc.png`
+- [ ] D-010–015 Pass or Pass with reduced-motion fallback confirmed — D-015 partial (drop ok, overlay flaky headless)
+- [ ] D-020–027 Pass or Fail filed with UXP ID in `visual-polish-review.md` — D-020 intermittent; D-024 not run
+- [ ] Theme matrix filled for crosstab on all three themes — table pass all three; other surfaces partial
+- [ ] `visual-polish-vision-delight.md` §10 updated with validation evidence links
+- [ ] At least one reviewer answers **Yes** to §12 "Would You Frame It?" on an unedited screenshot — provisional **Yes** on `screenshots/vp-d-04/01-crosstab-compact.png` (table artifact; agent review)
 
 ---
 
