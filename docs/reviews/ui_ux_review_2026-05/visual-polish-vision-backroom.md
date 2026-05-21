@@ -5,7 +5,7 @@
 **Focus:** Instrumental beauty for data gardening, library wayfinding, and first-run trust
 **Builds on:** `visual-polish-vision-delight.md` (Five Pillars), `visual-polish-review.md` (UXP-001–032), session notes 00–12
 **Evidence:** `session-04-variable-manager.md` (J5), `session-01-workspace.md` (J1/J2), `session-00-recon.md` (cold load), `findings.md` (UXR-000–048)
-**Status:** Quick wins §9.1–9.4 Done (2026-05-19); aligns with tracker `STAB-UI-E` (Back-Room Delight) and post-polish back-room workstream. Full phases 1–4 pending prioritization.
+**Status:** Quick wins §9.1–9.4 Done (2026-05-19); Phases 1–4 Done (2026-05-21). Aligns with tracker `STAB-UI-E` (Back-Room Delight).
 
 ---
 
@@ -424,6 +424,7 @@ These are minimal interventions that deliver disproportionate delight:
 | 2026-05-19 | Phase 2: Recode Chronicle (minimal) | — | `GitBranch` lineage badge on derived variable sets in Manager list (`VariableSetColumn.tsx` + `MillerColumns.module.css`) and Canvas sidebar (`DraggableVariable.tsx`). Tooltip shows parent variable name resolved from `transformLog`. |
 | 2026-05-19 | Tracker alignment | — | Added `STAB-UI-E` to tracker; quick wins + Phases 1–2 verified (typecheck clean, tests pass: `uiSlice.focusMode.test.ts`, `useSuggestedVariables.test.ts`, `SlideContainer.test.tsx`, `variableSetFilters.test.ts`, `DraggableVariable.test.tsx`). |
 | 2026-05-21 | Phase 3: Library Layer | — | **Dataset Portraits:** `DatasetPortrait.tsx` + `workspaceLibrary.ts` — color signature bar, 7×3 activity heatmap, mini crosstab/bar/shelf thumbnail, session badge. **Project Timeline:** `WaveTimeline.tsx` delta preview on hover, ghost gap nodes, harmonization ring on project cards. **Ambient Search:** variable-name keyword matching, semantic hints, dynamic category chips (`Unanalyzed`, `With session`, etc.). Tests: `workspaceLibrary.test.ts` (8). |
+| 2026-05-21 | Phase 4: Onboarding Layer | — | **Confidence Builder:** `uploadFeedback.ts` — stage headlines in upload overlay (`App.tsx`), CSV pre-load progress, format-specific toasts (Excel→CSV guidance, OPFS lock copy) via `useFileUpload.ts`; `PersistenceStatus` uses friendly OPFS headline. **Returning Researcher:** `returningResearcher.ts` + `WelcomeBackCard.tsx` — welcome card after 3+ days (`lastActiveAt` on dashboard entry, not workspace open); deck summary `title` on dataset cards; Manager change dot (`lastSeenTransformCount`, `ModeToggleButton`). Tests: `uploadFeedback.test.ts`, `returningResearcher.test.ts`. |
 
 ---
 

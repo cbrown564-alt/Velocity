@@ -40,6 +40,7 @@ import { usePersistenceManager } from './hooks/usePersistenceManager';
 import { useFileUpload } from './features/workspace/hooks/useFileUpload';
 import { useWorkspaceOpen } from './features/workspace/hooks/useWorkspaceOpen';
 import { getPersistenceDisplayMessage } from './lib/persistenceDisplay';
+import { getLoadStageHeadline } from './lib/uploadFeedback';
 
 // App Modes
 type AppMode = 'splash' | 'uploading' | 'dashboard' | 'restoring' | 'metadata';
@@ -212,6 +213,7 @@ export default function App() {
     discardPersistedData,
     respawnWorker,
     loadProgress,
+    touchLastActiveAt,
   } = useVelocityStore();
 
   // -- Hooks --
@@ -483,7 +485,29 @@ export default function App() {
     }
     setWorkspaceMode(true);
     setMode('splash');
-  }, [dataset, activeDatasetId, tableConfig, activeFilters, transformLog, variableSets, folders, saveDatasetSession, updateStoredDataset, setWorkspaceMode]);
+  }, [
+    dataset,
+    activeDatasetId,
+    tableConfig,
+    activeFilters,
+    transformLog,
+    variableSets,
+    folders,
+    saveDatasetSession,
+    updateStoredDataset,
+    setWorkspaceMode,
+  ]);
+
+  const prevModeRef = useRef<AppMode>(mode);
+
+  useEffect(() => {
+    if (mode === 'dashboard' && prevModeRef.current !== 'dashboard') {
+      touchLastActiveAt();
+    }
+    prevModeRef.current = mode;
+  }, [mode, touchLastActiveAt]);
+
+  const loadStageHeadline = getLoadStageHeadline(loadProgress);
 
   const handleOpenProjectModal = useCallback((ids: string[]) => { setProjectModalDatasetIds(ids); setShowProjectModal(true); }, []);
   const handleCreateProject = useCallback((project: Omit<Project, 'id' | 'createdAt'>) => { createProject(project); setShowProjectModal(false); setProjectModalDatasetIds([]); }, [createProject]);
@@ -703,11 +727,14 @@ export default function App() {
                 <Loader2 className="w-7 h-7 text-[var(--color-accent)] animate-spin" />
               </div>
               <div className="space-y-1">
-                <p className="font-medium text-[var(--text-primary)]">
-                  {loadProgress?.message || 'Loading dataset...'}
+                <p className="font-medium text-[var(--text-primary)]" data-testid="upload-stage-headline">
+                  {loadStageHeadline}
                 </p>
                 <p className="text-sm text-[var(--text-secondary)]">
-                  {fileUpload.pendingSavFile?.name || dataset?.name || 'Preparing analysis engine'}
+                  {loadProgress?.message ||
+                    fileUpload.pendingSavFile?.name ||
+                    dataset?.name ||
+                    'Preparing analysis engine'}
                 </p>
                 {loadProgress?.totalRows != null && loadProgress.totalRows > 0 && (
                   <p className="text-xs text-[var(--text-tertiary)]">

@@ -54,6 +54,13 @@ import {
   matchesVariableKeyword,
   type WorkspaceCategoryChip,
 } from '../lib/workspaceLibrary';
+import {
+  findResumeCandidate,
+  formatDeckSummaryTooltip,
+  shouldShowWelcomeBack,
+} from '../lib/returningResearcher';
+import { WelcomeBackCard } from './WelcomeBackCard';
+import { useVelocityStore } from '../../../store';
 
 // ============================================================================
 // Types
@@ -261,6 +268,7 @@ const DatasetCard: React.FC<{
     const reducedMotion = useReducedMotion();
     const hasSession = Boolean(dataset.sessionState);
     const isRecentlyOpened = Date.now() - dataset.lastOpenedAt < 24 * 60 * 60 * 1000;
+    const deckSummary = formatDeckSummaryTooltip(dataset);
 
     return (
       <motion.div
@@ -268,6 +276,7 @@ const DatasetCard: React.FC<{
         onClick={onSelect}
         onDoubleClick={onOpen}
         onContextMenu={onContextMenu}
+        title={deckSummary ?? undefined}
         {...getModalPresenceProps(reducedMotion)}
         whileHover={{ y: -2 }}
         layout
@@ -378,12 +387,14 @@ const DatasetListItem: React.FC<{
 }> = ({ dataset, project, isSelected, onSelect, onOpen, onToggleStar }) => {
   const reducedMotion = useReducedMotion();
   const hasSession = Boolean(dataset.sessionState);
+  const deckSummary = formatDeckSummaryTooltip(dataset);
 
   return (
     <motion.div
       className={`${styles.datasetListItem} ${isSelected ? styles.selected : ''}`}
       onClick={onSelect}
       onDoubleClick={onOpen}
+      title={deckSummary ?? undefined}
       {...getMotionProps({ preset: 'slideRight', duration: reducedMotion ? DURATIONS.instant : DURATIONS.normal, reducedMotion })}
       whileHover={{ x: 2 }}
     >
@@ -573,7 +584,27 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
 
   const reducedMotion = useReducedMotion();
 
+  const {
+    lastActiveAt,
+    welcomeBackDismissed,
+    dismissWelcomeBack,
+    activeDatasetId,
+    tableConfig,
+  } = useVelocityStore();
+
   const { datasets, projects, storageUsed, storageQuota } = workspaceState;
+
+  const isEmpty = datasets.length === 0;
+
+  const resumeCandidate = useMemo(
+    () => findResumeCandidate(datasets, activeDatasetId, tableConfig),
+    [datasets, activeDatasetId, tableConfig],
+  );
+
+  const showWelcomeBack =
+    !isEmpty &&
+    shouldShowWelcomeBack(lastActiveAt, welcomeBackDismissed) &&
+    resumeCandidate !== null;
 
   // Build project lookup
   const projectMap = useMemo(() => {
@@ -682,7 +713,12 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
 
   const closeContextMenu = () => setContextMenuTarget(null);
 
-  const isEmpty = datasets.length === 0;
+  const handleResumeWelcomeBack = () => {
+    if (!resumeCandidate) return;
+    const target = datasets.find(d => d.id === resumeCandidate.datasetId);
+    if (target) onOpenDataset(target);
+    dismissWelcomeBack();
+  };
 
   return (
     <div className={styles.workspace}>
@@ -791,6 +827,14 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
           </div>
         </div>
       </header>
+
+      {showWelcomeBack && resumeCandidate && (
+        <WelcomeBackCard
+          candidate={resumeCandidate}
+          onResume={handleResumeWelcomeBack}
+          onDismiss={dismissWelcomeBack}
+        />
+      )}
 
       {/* Filter tabs */}
       <nav className={styles.filterTabs}>

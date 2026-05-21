@@ -10,6 +10,7 @@ import { MAX_VISIBLE_TOASTS } from '../toastPolicy';
 import type { VariableType } from './dataSlice';
 import type { Variable } from './dataSlice';
 import type { ExportConfig } from '../../core/export/types';
+import { MS_THREE_DAYS } from '../../features/workspace/lib/returningResearcher';
 
 // ============================================================================
 // Types
@@ -98,6 +99,12 @@ export interface UISlice {
     shortcutsOpen: boolean;
     /** Whether the user has already seen the auto-crosstab onboarding */
     hasSeenAutoCrosstab: boolean;
+    /** Timestamp when user last returned to workspace (returning-researcher ritual) */
+    lastActiveAt: number;
+    /** Transform log length last acknowledged on Variables button (-1 = sync on next dashboard visit) */
+    lastSeenTransformCount: number;
+    /** Hide welcome-back card until next absence period */
+    welcomeBackDismissed: boolean;
     /** Cross-surface hover state for Living Inspector (Manager ↔ Canvas sidebar) */
     hoveredVariableSetId: string | null;
 
@@ -168,6 +175,9 @@ export interface UISlice {
 
     // Onboarding
     markAutoCrosstabSeen: () => void;
+    touchLastActiveAt: () => void;
+    dismissWelcomeBack: () => void;
+    markTransformsSeen: (count: number) => void;
     // Living Inspector (cross-surface hover)
     setHoveredVariableSetId: (id: string | null) => void;
 }
@@ -199,6 +209,9 @@ export const createUISlice: StateCreator<UISlice, [], [], UISlice> = (set) => ({
     commandPaletteOpen: false,
     shortcutsOpen: false,
     hasSeenAutoCrosstab: false,
+    lastActiveAt: 0,
+    lastSeenTransformCount: -1,
+    welcomeBackDismissed: false,
     hoveredVariableSetId: null,
 
     // Miller Column Navigation State
@@ -365,6 +378,22 @@ export const createUISlice: StateCreator<UISlice, [], [], UISlice> = (set) => ({
 
     // Onboarding Actions
     markAutoCrosstabSeen: () => set({ hasSeenAutoCrosstab: true }),
+    touchLastActiveAt: () =>
+        set((state) => {
+            const now = Date.now();
+            const returningAfterAbsence =
+                state.lastActiveAt > 0 && now - state.lastActiveAt >= MS_THREE_DAYS;
+            return {
+                lastActiveAt: now,
+                ...(returningAfterAbsence ? { welcomeBackDismissed: false } : {}),
+            };
+        }),
+    dismissWelcomeBack: () =>
+        set({
+            welcomeBackDismissed: true,
+            lastActiveAt: Date.now(),
+        }),
+    markTransformsSeen: (count) => set({ lastSeenTransformCount: count }),
 
     // Living Inspector Actions
     setHoveredVariableSetId: (id) => set({ hoveredVariableSetId: id }),

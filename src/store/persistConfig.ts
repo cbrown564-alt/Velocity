@@ -46,6 +46,10 @@ export interface PersistedState {
     // From UISlice
     appMode: VelocityState['appMode'];
     activeFolderId: VelocityState['activeFolderId'];
+    hasSeenAutoCrosstab: VelocityState['hasSeenAutoCrosstab'];
+    lastActiveAt: VelocityState['lastActiveAt'];
+    lastSeenTransformCount: VelocityState['lastSeenTransformCount'];
+    welcomeBackDismissed: VelocityState['welcomeBackDismissed'];
 
     // From AnalysisSlice
     tableConfig: VelocityState['tableConfig'];
@@ -125,6 +129,10 @@ export const partialize = (state: VelocityState): PersistedState => {
         // UISlice - persist view preferences but NOT dragging/modal state
         appMode: state.appMode,
         activeFolderId: state.activeFolderId,
+        hasSeenAutoCrosstab: state.hasSeenAutoCrosstab,
+        lastActiveAt: state.lastActiveAt,
+        lastSeenTransformCount: state.lastSeenTransformCount,
+        welcomeBackDismissed: state.welcomeBackDismissed,
 
         // AnalysisSlice - persist configuration but NOT query results
         tableConfig: state.tableConfig,

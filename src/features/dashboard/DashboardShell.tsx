@@ -94,7 +94,16 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
     setWeightVariable,
     setSelectedVariableSetId,
     hoveredVariableSetId,
+    transformLog,
+    lastSeenTransformCount,
+    markTransformsSeen,
   } = useVelocityStore();
+
+  React.useEffect(() => {
+    if (lastSeenTransformCount < 0) {
+      markTransformsSeen(transformLog.length);
+    }
+  }, [lastSeenTransformCount, transformLog.length, markTransformsSeen]);
 
   const { resolvedRowVars, resolvedColVar, firstRowVarSet } = useResolvedVariables();
   const isMultipleResponse = firstRowVarSet?.structure === 'multiple';

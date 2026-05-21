@@ -58,6 +58,7 @@ export const PersistenceStatus: React.FC<PersistenceStatusProps> = ({
     // Determine status color/icon
     const hasError = !!error || !!rehydrateError;
     const hasPartialLoad = !!partialLoadMessage;
+    const persistenceMessage = getPersistenceDisplayMessage(error, errorHint);
     const statusTone = hasError || hasPartialLoad
         ? 'issue'
         : memoryRisk === 'critical'
@@ -66,7 +67,7 @@ export const PersistenceStatus: React.FC<PersistenceStatusProps> = ({
                 ? 'warn'
                 : 'ok';
     const statusLabel = hasError
-        ? 'Storage Issue'
+        ? (persistenceMessage.headline ?? 'Storage Issue')
         : hasPartialLoad
             ? 'Partial Metadata'
             : memoryRisk === 'critical'
@@ -82,7 +83,6 @@ export const PersistenceStatus: React.FC<PersistenceStatusProps> = ({
             : null;
 
     const reducedMotion = useReducedMotion();
-    const persistenceMessage = getPersistenceDisplayMessage(error, errorHint);
 
     return (
         <>

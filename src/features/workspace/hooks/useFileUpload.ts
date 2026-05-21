@@ -5,6 +5,7 @@
 import React, { useCallback } from 'react';
 import { useVelocityStore } from '../../../store';
 import { MOCK_DATASET } from '../../../constants';
+import { formatUploadFailure, getUploadFormatError } from '../../../lib/uploadFeedback';
 import * as opfsFileManager from '../../../services/opfsFileManager';
 import {
   assignOpfsKeyAndLoad,
@@ -32,7 +33,8 @@ export function useFileUpload(
   setMode: React.Dispatch<React.SetStateAction<AppMode>>,
   opfsAvailableLocal: boolean,
 ): FileUploadState {
-  const { loadCSV, loadSAV, loadSAVSample, discardPersistedData } = useVelocityStore();
+  const { loadCSV, loadSAV, loadSAVSample, discardPersistedData, setLoadProgress, addToast } =
+    useVelocityStore();
 
   const [pendingSavFile, setPendingSavFile] = React.useState<File | null>(null);
   const [pendingSavSizeMb, setPendingSavSizeMb] = React.useState<number | null>(null);
@@ -50,9 +52,31 @@ export function useFileUpload(
     setMode('dashboard');
   }, [loadCSV, setMode]);
 
+  const reportUploadError = useCallback(
+    (err: unknown, fileName: string) => {
+      const { title, message, duration } = formatUploadFailure(err, fileName);
+      addToast({ type: 'error', title, message, duration });
+      setLoadProgress(null);
+      setMode('splash');
+    },
+    [addToast, setLoadProgress, setMode],
+  );
+
   const handleFileUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    e.target.value = '';
+
+    const formatError = getUploadFormatError(file.name);
+    if (formatError) {
+      addToast({
+        type: 'warning',
+        title: formatError.title,
+        message: formatError.message,
+        duration: formatError.duration,
+      });
+      return;
+    }
 
     setMode('uploading');
 
@@ -108,17 +132,36 @@ export function useFileUpload(
         setPendingSavFile(null);
         setPendingSavSizeMb(null);
         setOpfsStorageKey(null);
+        setLoadProgress({
+          phase: 'parsing',
+          progress: 0.05,
+          message: 'Reading file...',
+        });
         const text = await file.text();
+        setLoadProgress({
+          phase: 'parsing',
+          progress: 0.2,
+          message: 'Parsing variables...',
+        });
         await loadCSV(file.name, text);
       }
 
+      setLoadProgress(null);
       setMode('dashboard');
     } catch (err) {
       console.error(err);
-      alert('Error loading file. Check console.');
-      setMode('splash');
+      reportUploadError(err, file.name);
     }
-  }, [loadCSV, loadSAV, loadSAVSample, opfsAvailableLocal, setMode]);
+  }, [
+    loadCSV,
+    loadSAV,
+    loadSAVSample,
+    opfsAvailableLocal,
+    setMode,
+    setLoadProgress,
+    addToast,
+    reportUploadError,
+  ]);
 
   const handleMetadataLoadFull = useCallback(async () => {
     if (!pendingSavFile && !opfsStorageKey) return;
@@ -146,10 +189,9 @@ export function useFileUpload(
       setMode('dashboard');
     } catch (err) {
       console.error(err);
-      alert('Error loading file. Check console.');
-      setMode('splash');
+      reportUploadError(err, pendingSavFile?.name ?? 'dataset.sav');
     }
-  }, [pendingSavFile, opfsStorageKey, loadSAV, setMode]);
+  }, [pendingSavFile, opfsStorageKey, loadSAV, setMode, reportUploadError]);
 
   const handleMetadataCancel = useCallback(async () => {
     await discardPersistedData();

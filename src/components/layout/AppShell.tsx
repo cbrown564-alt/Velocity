@@ -110,23 +110,47 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
  * Placed in the header to switch between modes.
  */
 export const ModeToggleButton: React.FC = () => {
-    const { appMode, toggleAppMode } = useVelocityStore();
+    const { appMode, toggleAppMode, transformLog, lastSeenTransformCount, markTransformsSeen } =
+        useVelocityStore();
+
+    const hasNewTransforms =
+        lastSeenTransformCount >= 0 && transformLog.length > lastSeenTransformCount;
+
+    const handleClick = () => {
+        if (appMode !== 'variables') {
+            markTransformsSeen(transformLog.length);
+        }
+        toggleAppMode();
+    };
+
+    const newsTitle =
+        hasNewTransforms && appMode !== 'variables'
+            ? `${transformLog.length - lastSeenTransformCount} new transform${transformLog.length - lastSeenTransformCount === 1 ? '' : 's'} since your last visit`
+            : 'Toggle Variable Manager (D)';
 
     return (
         <button
-            onClick={toggleAppMode}
+            onClick={handleClick}
             className={`
-                flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium
+                relative flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium
                 transition-all duration-150
                 ${appMode === 'variables'
                     ? 'bg-[var(--color-accent)] text-[var(--text-inverse)] shadow-sm'
                     : 'text-[var(--text-secondary)] hover:text-[var(--color-accent)] hover:bg-[var(--bg-active)]'
                 }
             `}
-            title="Toggle Variable Manager (D)"
+            title={newsTitle}
+            data-testid="mode-toggle-variables"
         >
             <Database size={14} />
             <span>Variables</span>
+            {hasNewTransforms && appMode !== 'variables' && (
+                <span
+                    className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-[var(--color-accent)] ring-2 ring-[var(--bg-panel)]"
+                    data-testid="manager-change-dot"
+                    aria-hidden
+                />
+            )}
             <kbd className="hidden sm:inline-block text-[10px] px-1 py-0.5 bg-[var(--border-color)] rounded ml-1 text-[var(--text-secondary)]">
                 D
             </kbd>
