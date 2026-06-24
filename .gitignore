@@ -43,6 +43,10 @@ tmp/
 scripts/agent-demo-output.txt
 scripts/python/inspect_sav_output.json
 
+# Mutation testing (Stryker)
+stryker-tmp/
+reports/mutation/
+
 # Demo / fixture data
 *.sav
 !test_data/British Social Attitudes Survey/bsa93.sav

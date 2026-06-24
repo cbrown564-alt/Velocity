@@ -124,6 +124,9 @@ Update existing docs only if you changed:
 
 No proactive new docs.
 
+### Step 8 — Mutation check (when touching `src/core/`)
+For logic under `src/core/`, run `npm run test:mutation` on the changed module before opening a PR. CI runs the gated scope via `.github/workflows/mutation.yml` when `src/core/**` changes. Surviving mutants in the HTML report indicate assertions that do not pin behavior.
+
 ## Reviewer checklist
 Reviewers should verify:
 - tests exist and would have failed before the change

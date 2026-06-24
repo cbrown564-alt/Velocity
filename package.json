@@ -32,6 +32,8 @@
     "test:coverage": "vitest run --coverage",
     "test:ui": "vitest --ui",
     "test:parity": "vitest run tests/parity/runParity.test.ts",
+    "test:mutation": "stryker run",
+    "test:mutation:ci": "stryker run --concurrency 2",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:visual-polish": "playwright test tests/e2e/visual-polish-theme-table.spec.ts",
@@ -70,6 +72,8 @@
   "devDependencies": {
     "@modelcontextprotocol/sdk": "^1.0.4",
     "@playwright/test": "^1.58.1",
+    "@stryker-mutator/core": "^9.6.1",
+    "@stryker-mutator/vitest-runner": "^9.6.1",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",

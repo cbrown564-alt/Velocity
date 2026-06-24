@@ -32,7 +32,7 @@ velocity/
 ├── README.md, AGENTS.md     # Human + agent entry points
 ├── index.html               # Vite app shell
 ├── package.json             # npm scripts and dependencies
-├── vite.config.ts, vitest.config.ts, playwright.config.ts
+├── vite.config.ts, vitest.config.ts, vitest.mutation.config.ts, playwright.config.ts, stryker.config.json
 │
 ├── src/                     # Application (React UI + core + engine)
 ├── public/                  # Static assets
@@ -107,7 +107,10 @@ npm run eval:06      # Browser eval runner (EVAL-06)
 npm run test
 npm run typecheck:all
 npm run build
+npm run test:mutation   # optional: Stryker mutation score for src/core/
 ```
+
+See `docs/arch_08_testing.md` for the full pyramid, coverage gates, and mutation thresholds.
 
 ## 6. Code Style
 

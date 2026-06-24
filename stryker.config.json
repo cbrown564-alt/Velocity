@@ -1,0 +1,53 @@
+{
+  "$schema": "./node_modules/@stryker-mutator/core/schema/stryker-schema.json",
+  "packageManager": "npm",
+  "plugins": [
+    "@stryker-mutator/vitest-runner"
+  ],
+  "testRunner": "vitest",
+  "reporters": ["clear-text", "progress", "html"],
+  "htmlReporter": {
+    "fileName": "reports/mutation/mutation-report.html"
+  },
+  "coverageAnalysis": "perTest",
+  "ignoreStatic": true,
+  "concurrency": 4,
+  "timeoutMS": 60000,
+  "timeoutFactor": 2,
+  "vitest": {
+    "configFile": "vitest.mutation.config.ts",
+    "related": true
+  },
+  "mutate": [
+    "src/core/**/*.ts",
+    "!src/core/**/*.test.ts",
+    "!src/core/**/__tests__/**",
+    "!src/core/**/index.ts",
+    "!src/core/export/types.ts",
+    "!src/core/session/sessionTypes.ts",
+    "!src/core/analysis/engines/**",
+    "!src/core/analysis/runners/**",
+    "!src/core/analysis/registry.ts",
+    "!src/core/export/resolveThemeColors.ts",
+    "!src/core/session/**",
+    "!src/core/ingestion/savLoader.ts",
+    "!src/core/harmonization/sankeyBuilder.ts",
+    "!src/core/semantic/conceptDiscovery.ts",
+    "!src/core/semantic/identifierPatterns.ts",
+    "!src/core/semantic/weightPatterns.ts",
+    "!src/core/semantic/respondentIdentifier.ts",
+    "!src/core/export/buildExportConfig.ts",
+    "!src/core/export/resolveAnalysisVariables.ts",
+    "!src/core/gridDetection.ts",
+    "!src/core/scaleNormalization.ts"
+  ],
+  "thresholds": {
+    "high": 55,
+    "low": 45,
+    "break": 40
+  },
+  "tempDirName": "stryker-tmp",
+  "cleanTempDir": true,
+  "incremental": true,
+  "incrementalFile": "reports/mutation/stryker-incremental.json"
+}

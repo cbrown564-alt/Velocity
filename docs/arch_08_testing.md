@@ -38,6 +38,7 @@ Velocity uses a **5-layer testing pyramid** to ensure correctness at each archit
 npm test              # Watch mode (development)
 npm run test:run      # Single run (CI)
 npm run test:coverage # With coverage report
+npm run test:mutation # Stryker mutation testing for src/core/
 npm run typecheck:mcp # MCP package/server TypeScript contract
 npm run test:ui       # Interactive UI
 npm run test:e2e      # Playwright E2E (CI e2e job)
@@ -122,6 +123,29 @@ Reusable test data matching `arch_02_data_model.md`:
 
 Coverage is enforced in CI on the **included** file set. PRs failing coverage checks will not merge.
 
+### Mutation testing (`src/core/`)
+
+Stryker mutation testing measures whether unit tests actually detect logic changes, not just line coverage.
+
+```bash
+npm run test:mutation       # local (concurrency 4)
+npm run test:mutation:ci    # CI-style (concurrency 2)
+```
+
+Configuration: `stryker.config.json`, `vitest.mutation.config.ts`. Scope is portable logic under `src/core/` with exclusions for session I/O, WASM loader glue, untested runners, and layout-only modules. Tests include co-located `src/core/**/*.test.ts` plus golden/parity suites. Stryker uses the Vitest runner only (no project-wide TypeScript checker, so `npm run typecheck:all` remains the compile gate).
+
+| Threshold | Meaning |
+|-----------|---------|
+| `high` (55) | Target mutation score (covered modules) |
+| `low` (45) | Warning band |
+| `break` (40) | CI fails below this score |
+
+Scope excludes session I/O, SAV loader WASM glue, analysis runners without tests, sankey layout, and other modules where mutants cannot be exercised meaningfully. Baseline (June 2026): ~46% covered score on the full `src/core/` tree; gated scope targets portable stats/semantic/harmonization logic.
+
+HTML report: `reports/mutation/mutation-report.html` (gitignored). Incremental results cache locally in `reports/mutation/stryker-incremental.json` to speed repeat runs.
+
+When changing `src/core/`, run mutation tests locally or rely on the CI `mutation` job (path-filtered to `src/core/**`).
+
 ### Known blind spots (stabilization)
 
 `vitest.config.ts` excludes large product areas (`src/features/`, `src/store/slices/`, `src/components/overlays/`, `src/services/EngineProxy.ts`, etc.). Green coverage does not imply workspace/export UI confidence — treat Playwright E2E as the product gate until exclusions are reduced post-stabilization.
@@ -145,6 +169,12 @@ GitHub Actions (`.github/workflows/test.yml`) runs on every PR to `main`:
 ### Architecture guards (`test` job)
 
 - `npm run check:design-tokens` — semantic token policy ratchet (`scripts/check-design-tokens.mjs` with shrinkable allowlist)
+
+### `mutation` workflow (path-filtered)
+
+`.github/workflows/mutation.yml` runs when `src/core/**`, Stryker config, or lockfile change:
+
+1. **Mutation testing**: `npm run test:mutation:ci` (Stryker + Vitest; 40% break threshold on gated `src/core/` scope)
 
 ### Deferred (post–`STAB-CI-1`)
 
