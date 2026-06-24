@@ -16,10 +16,10 @@ import { ChevronRight, EyeOff, CheckCircle, GitBranch } from 'lucide-react';
 import { List, useListRef, type RowComponentProps } from 'react-window';
 import { useVelocityStore } from '../../store';
 import type { VariableSet, Dataset } from '../../store/slices/dataSlice';
-import { isCategoricalType, normalizeVariableType } from '../../types';
+import { isCategoricalType } from '../../types';
 import { Sparkline, MissingnessBadge } from './Sparkline';
 import { VariableTypeIcon } from '../../components/common/VariableTypeIcon';
-import { filterSyntheticGridShellSets } from './variableSetFilters';
+import { filterVariableSets } from './variableSetFilters';
 import styles from './MillerColumns.module.css';
 
 // Height of each row in the virtual list (8px top + ~20px content + 8px bottom + 4px margin)
@@ -291,64 +291,16 @@ export const VariableSetColumn: React.FC = () => {
     } = useVelocityStore();
 
     const listRef = useListRef(null);
-    const visibleVariableSets = useMemo(
-        () => filterSyntheticGridShellSets(variableSets, dataset),
-        [variableSets, dataset]
+    const filteredSets = useMemo(
+        () => filterVariableSets(variableSets, {
+            dataset,
+            activeFolderId,
+            searchQuery: managerSearchQuery,
+            facetFilters,
+            variableStats,
+        }),
+        [variableSets, dataset, activeFolderId, managerSearchQuery, facetFilters, variableStats]
     );
-
-    // Filter variable sets by folder, search, and facets
-    const filteredSets = useMemo(() => {
-        let sets = visibleVariableSets;
-
-        // Filter by folder
-        if (activeFolderId === 'ungrouped') {
-            sets = sets.filter(vs => !vs.folderId);
-        } else if (activeFolderId && activeFolderId !== null) {
-            sets = sets.filter(vs => vs.folderId === activeFolderId);
-        }
-
-        // Filter by search
-        if (managerSearchQuery) {
-            const query = managerSearchQuery.toLowerCase();
-            sets = sets.filter(vs => vs.name.toLowerCase().includes(query));
-        }
-
-        // Type facet filter
-        if (facetFilters.types.length > 0) {
-            sets = sets.filter(vs => {
-                return vs.type && facetFilters.types.includes(normalizeVariableType(vs.type));
-            });
-        }
-
-        // Status facet filter
-        if (facetFilters.statuses.length > 0) {
-            sets = sets.filter(vs => {
-                if (facetFilters.statuses.includes('hidden') && vs.hidden) return true;
-                if (facetFilters.statuses.includes('visible') && !vs.hidden) return true;
-                if (facetFilters.statuses.includes('derived') && vs.derived) return true;
-                return false;
-            });
-        }
-
-        // Quality facet filter (uses variableStats)
-        if (facetFilters.qualities.length > 0) {
-            sets = sets.filter(vs => {
-                if (vs.variableIds.length === 1) {
-                    const stats = variableStats[vs.variableIds[0]];
-                    if (!stats) return true; // Include if stats not loaded yet
-                    const missingPercent = stats.totalCount > 0
-                        ? (stats.missingCount / stats.totalCount) * 100
-                        : 0;
-                    const isComplete = missingPercent === 0;
-                    return (facetFilters.qualities.includes('complete') && isComplete) ||
-                        (facetFilters.qualities.includes('incomplete') && !isComplete);
-                }
-                return true;
-            });
-        }
-
-        return sets;
-    }, [visibleVariableSets, activeFolderId, managerSearchQuery, facetFilters, variableStats]);
 
     const filteredIds = useMemo(() => filteredSets.map(vs => vs.id), [filteredSets]);
 

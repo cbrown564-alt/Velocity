@@ -1,4 +1,4 @@
-import type { Folder, Variable, VariableSet } from '../../../types';
+import type { Folder, Variable, VariableSet } from '../../types';
 
 export interface StoredDataset {
   id: string;

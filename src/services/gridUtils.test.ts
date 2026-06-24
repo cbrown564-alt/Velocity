@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { applyGridSetDrop, generateSyntheticGridVariables, gridSetToTableConfig } from './gridUtils';
+import { applyCanvasPlacement, applyGridSetDrop, generateSyntheticGridVariables, gridSetToTableConfig, placeVariableSet } from './gridUtils';
 import type { VariableSet } from '../types';
 
 describe('gridSetToTableConfig', () => {
@@ -15,6 +15,72 @@ describe('gridSetToTableConfig', () => {
             rowVars: ['grid_test_scale'],
             colVar: 'grid_test_items',
         });
+    });
+});
+
+describe('placeVariableSet', () => {
+    const empty = { rowVars: [] as string[], colVar: null as string | null };
+
+    describe('non-grid', () => {
+        it('drop-zone-rows appends set id when not already present', () => {
+            expect(placeVariableSet('age', 'single', 'drop-zone-rows', empty)).toEqual({
+                rowVars: ['age'],
+            });
+        });
+
+        it('drop-zone-rows is a no-op when set is already in rows', () => {
+            expect(
+                placeVariableSet('age', 'single', 'drop-zone-rows', { rowVars: ['age'], colVar: null }),
+            ).toBeNull();
+        });
+
+        it('drop-zone-cols sets column variable', () => {
+            expect(placeVariableSet('region', 'multiple', 'drop-zone-cols', empty)).toEqual({
+                colVar: 'region',
+            });
+        });
+
+        it('canvas places first variable on rows', () => {
+            expect(placeVariableSet('gender', 'single', 'canvas', empty)).toEqual({
+                rowVars: ['gender'],
+            });
+        });
+
+        it('canvas places second variable on columns', () => {
+            expect(
+                placeVariableSet('region', 'single', 'canvas', { rowVars: ['gender'], colVar: null }),
+            ).toEqual({ colVar: 'region' });
+        });
+    });
+
+    describe('grid', () => {
+        const setId = 'grid_test';
+
+        it('delegates drop-zone-rows to applyGridSetDrop', () => {
+            expect(
+                placeVariableSet(setId, 'grid', 'drop-zone-rows', { rowVars: ['other'], colVar: null }),
+            ).toEqual(applyGridSetDrop(setId, 'drop-zone-rows', { rowVars: ['other'], colVar: null }));
+        });
+
+        it('delegates canvas to full grid layout', () => {
+            expect(placeVariableSet(setId, 'grid', 'canvas', empty)).toEqual(
+                gridSetToTableConfig(setId, 'full'),
+            );
+        });
+    });
+});
+
+describe('applyCanvasPlacement', () => {
+    it('matches placeVariableSet canvas intent for non-grid', () => {
+        expect(applyCanvasPlacement('gender', 'single', { rowVars: [], colVar: null })).toEqual({
+            rowVars: ['gender'],
+        });
+    });
+
+    it('matches placeVariableSet canvas intent for grid', () => {
+        expect(applyCanvasPlacement('grid_test', 'grid', { rowVars: [], colVar: null })).toEqual(
+            gridSetToTableConfig('grid_test', 'full'),
+        );
     });
 });
 

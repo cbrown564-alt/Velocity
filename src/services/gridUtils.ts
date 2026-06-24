@@ -5,6 +5,13 @@ export type GridTableConfigMode = 'full' | 'row-scale-col-items';
 
 export type GridDropTarget = 'drop-zone-rows' | 'drop-zone-cols' | 'canvas';
 
+export type CanvasPlacementTarget = GridDropTarget;
+
+export type TableConfigSnapshot = {
+    rowVars: string[];
+    colVar: string | null;
+};
+
 /** Synthetic variable ids for a grid VariableSet. */
 export function gridSyntheticVarIds(setId: string): { scaleId: string; itemsId: string } {
     return { scaleId: `${setId}_scale`, itemsId: `${setId}_items` };
@@ -31,12 +38,55 @@ export function gridSetToTableConfig(
     }
 }
 
+/**
+ * Compute a table-config patch for placing a variable set on a shelf or the canvas.
+ * Returns null when the placement is a no-op (e.g. duplicate row drop).
+ */
+export function placeVariableSet(
+    setId: string,
+    structure: VariableSet['structure'],
+    target: CanvasPlacementTarget,
+    current: TableConfigSnapshot,
+): Partial<TableConfigSnapshot> | null {
+    if (structure === 'grid') {
+        return applyGridSetDrop(setId, target, current);
+    }
+
+    switch (target) {
+        case 'drop-zone-rows':
+            if (current.rowVars.includes(setId)) {
+                return null;
+            }
+            return { rowVars: [...current.rowVars, setId] };
+        case 'drop-zone-cols':
+            return { colVar: setId };
+        case 'canvas':
+            if (current.rowVars.length === 0) {
+                return { rowVars: [setId] };
+            }
+            return { colVar: setId };
+        default: {
+            const _exhaustive: never = target;
+            return _exhaustive;
+        }
+    }
+}
+
+/** Canvas click / suggest placement (first row, then column). */
+export function applyCanvasPlacement(
+    setId: string,
+    structure: VariableSet['structure'],
+    current: TableConfigSnapshot,
+): Partial<TableConfigSnapshot> {
+    return placeVariableSet(setId, structure, 'canvas', current) ?? {};
+}
+
 /** Apply grid set drop onto a dashboard table config for the given target zone. */
 export function applyGridSetDrop(
     setId: string,
     target: GridDropTarget,
-    current: { rowVars: string[]; colVar: string | null },
-): { rowVars: string[]; colVar: string | null } {
+    current: TableConfigSnapshot,
+): TableConfigSnapshot {
     const { scaleId, itemsId } = gridSyntheticVarIds(setId);
     switch (target) {
         case 'drop-zone-rows':

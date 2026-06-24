@@ -13,7 +13,8 @@ import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { ChevronDown, Check, X, Wand2, Eye, EyeOff } from 'lucide-react';
 import { useVelocityStore } from '../../../store';
 import type { TypeFacet, StatusFacet, QualityFacet } from '../../../store/slices/uiSlice';
-import { normalizeVariableType, isCategoricalType, type CanonicalVariableType } from '../../../types';
+import { normalizeVariableType, type CanonicalVariableType } from '../../../types';
+import { filterVariableSets } from '../variableSetFilters';
 import styles from './FacetedSearchBar.module.css';
 
 // ============================================================================
@@ -278,6 +279,8 @@ export const FacetedSearchBar: React.FC = () => {
     const {
         variableSets,
         dataset,
+        activeFolderId,
+        managerSearchQuery,
         facetFilters,
         setFacetFilters,
         clearFacetFilters,
@@ -290,8 +293,13 @@ export const FacetedSearchBar: React.FC = () => {
     // ------------------------------------------------------------------------
 
     const visibleVariableSets = useMemo(
-        () => variableSets,
-        [variableSets]
+        () => filterVariableSets(variableSets, {
+            dataset,
+            activeFolderId,
+            searchQuery: managerSearchQuery,
+            variableStats,
+        }),
+        [variableSets, dataset, activeFolderId, managerSearchQuery, variableStats]
     );
 
     const typeCounts = useMemo(() => {

@@ -13,7 +13,7 @@ import { recommendChart } from '../../../services/chartRecommender';
 import { useResolvedVariables } from '../hooks/useResolvedVariables';
 import { useSuggestedVariables } from '../hooks/useSuggestedVariables';
 import { useAutoFirstCrosstab } from '../hooks/useAutoFirstCrosstab';
-import { gridSetToTableConfig } from '../../../services/gridUtils';
+import { applyCanvasPlacement } from '../../../services/gridUtils';
 import { getMotionProps, useReducedMotion, DURATIONS } from '../../../lib/motion';
 import { AnalysisOutputFrame } from './AnalysisOutputFrame';
 
@@ -98,17 +98,9 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
         const set = variableSets.find(s => s.id === setId);
         if (!set) return;
 
-        if (set.structure === 'grid') {
-            useVelocityStore.getState().setTableConfig(gridSetToTableConfig(set.id, 'full'));
-            return;
-        }
-
-        const { rowVars, colVar } = useVelocityStore.getState().tableConfig;
-        if (rowVars.length === 0) {
-            useVelocityStore.getState().setTableConfig({ rowVars: [setId] });
-        } else {
-            useVelocityStore.getState().setTableConfig({ colVar: setId });
-        }
+        useVelocityStore.getState().setTableConfig(
+            applyCanvasPlacement(setId, set.structure, useVelocityStore.getState().tableConfig),
+        );
     };
 
     const renderCellContent = () => {
@@ -220,7 +212,6 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
                         variableStats={variableStats}
                         tableStats={tableStats}
                         isMultipleResponse={isMultipleResponse}
-                        isGrid={firstVarSet?.structure === 'grid'}
                         density={tableDensity}
                         frameBleed={focusMode}
                         onCellClick={(rowPath, colValue) => void openDrillDown(rowPath, colValue)}

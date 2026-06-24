@@ -17,7 +17,6 @@ interface UseWorkspaceReturn {
   isWorkspaceMode: boolean;
 
   // Actions
-  openDataset: (dataset: StoredDataset) => Promise<void>;
   registerCurrentDataset: () => void;
   deleteDataset: (id: string) => Promise<void>;
   toggleStar: (id: string) => void;
@@ -57,7 +56,6 @@ export function useWorkspace(): UseWorkspaceReturn {
     transformLog,
 
     // Data actions
-    openWorkspaceDataset,
   } = useVelocityStore();
 
   // Track if we've registered the current dataset
@@ -191,37 +189,6 @@ export function useWorkspace(): UseWorkspaceReturn {
   }, [dataset, activeDatasetId, tableConfig, activeFilters, transformLog, variableSets, folders, saveDatasetSession, updateStoredDataset]);
 
   /**
-   * Open a dataset from the workspace.
-   */
-  const openDataset = useCallback(async (storedDataset: StoredDataset): Promise<void> => {
-    saveCurrentSession();
-    updateDatasetAccess(storedDataset.id);
-
-    if (dataset?.id === storedDataset.id) {
-      setWorkspaceMode(false);
-      setActiveDataset(storedDataset.id);
-      return;
-    }
-
-    const existingDataset = workspace.datasets.find(d => d.id === storedDataset.id);
-    if (!existingDataset) {
-      throw new Error('Dataset not found in workspace');
-    }
-
-    await openWorkspaceDataset(existingDataset);
-    setActiveDataset(storedDataset.id);
-    setWorkspaceMode(false);
-  }, [
-    dataset,
-    workspace.datasets,
-    saveCurrentSession,
-    updateDatasetAccess,
-    setWorkspaceMode,
-    setActiveDataset,
-    openWorkspaceDataset,
-  ]);
-
-  /**
    * Delete a dataset from the workspace.
    */
   const deleteDataset = useCallback(async (id: string): Promise<void> => {
@@ -269,7 +236,6 @@ export function useWorkspace(): UseWorkspaceReturn {
     workspace,
     activeDatasetId,
     isWorkspaceMode,
-    openDataset,
     registerCurrentDataset,
     deleteDataset,
     deleteDatasets,

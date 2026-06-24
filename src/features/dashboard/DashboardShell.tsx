@@ -11,13 +11,13 @@ import { useTheme } from '../../context/ThemeContext';
 import { DndContext, DragOverlay, useSensor, useSensors, MouseSensor, TouchSensor, DragEndEvent, DragStartEvent, useDroppable, closestCenter, pointerWithin, rectIntersection } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
 
-import { useVelocityStore, type VariableSet, type Filter } from '../../store';
+import { useVelocityStore, type VariableSet } from '../../store';
 import { useResolvedVariables } from './hooks/useResolvedVariables';
 import { buildExportConfig } from '../../core/export/buildExportConfig';
 import { resolveExportBranding } from '../../core/export/resolveThemeColors';
 import { filterSyntheticGridShellSets } from '../variableManager/variableSetFilters';
 import { allowsNumericStats } from '../../types';
-import { applyGridSetDrop, gridSetToTableConfig } from '../../services/gridUtils';
+import { applyCanvasPlacement, placeVariableSet } from '../../services/gridUtils';
 
 import { VirtualizedVariableList } from './components/VirtualizedVariableList';
 import { DropZone } from '../../components/common/DropZone';
@@ -140,7 +140,6 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
     x: number;
     y: number;
   } | null>(null);
-  const [showCombineModal, setShowCombineModal] = React.useState(false);
   const [weightEnabled, setWeightEnabled] = React.useState(true);
   const [rememberedWeightVar, setRememberedWeightVar] = React.useState<string | null>(null);
   const [sidebarCollapsed, setSidebarCollapsed] = React.useState(false);
@@ -254,38 +253,32 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
       const variableSet = active.data.current.variableSet;
       const setId = variableSet.id;
 
-      // Grid auto-expansion
-      if (variableSet.structure === 'grid') {
-        if (zoneId === 'drop-zone-rows' || zoneId === 'drop-zone-cols' || zoneId === 'canvas') {
-          setTableConfig(applyGridSetDrop(setId, zoneId, tableConfig));
-        }
-        return;
-      }
-
-      // Weight drop
       if (zoneId === 'drop-zone-weight') {
-        const variable = dataset?.variables.find(v => v.id === variableSet.variableIds[0]);
-        if (variable && allowsNumericStats(variable.type, variable.orderedScoring)) {
-          const varId = variableSet.variableIds[0];
-          setWeightVariable(varId);
-          setRememberedWeightVar(varId);
-          setWeightEnabled(true);
+        if (variableSet.structure !== 'grid') {
+          const variable = dataset?.variables.find(v => v.id === variableSet.variableIds[0]);
+          if (variable && allowsNumericStats(variable.type, variable.orderedScoring)) {
+            const varId = variableSet.variableIds[0];
+            setWeightVariable(varId);
+            setRememberedWeightVar(varId);
+            setWeightEnabled(true);
+          }
         }
         return;
       }
 
-      // Standard drop
-      if (zoneId === 'drop-zone-rows') {
-        if (!tableConfig.rowVars.includes(setId)) {
-          setTableConfig({ rowVars: [...tableConfig.rowVars, setId] });
-        }
-      } else if (zoneId === 'drop-zone-cols') {
-        setTableConfig({ colVar: setId });
-      } else if (zoneId === 'canvas') {
-        if (tableConfig.rowVars.length === 0) {
-          setTableConfig({ rowVars: [setId] });
-        } else {
-          setTableConfig({ colVar: setId });
+      if (
+        zoneId === 'drop-zone-rows' ||
+        zoneId === 'drop-zone-cols' ||
+        zoneId === 'canvas'
+      ) {
+        const placement = placeVariableSet(
+          setId,
+          variableSet.structure,
+          zoneId,
+          tableConfig,
+        );
+        if (placement) {
+          setTableConfig(placement);
         }
       }
     }
@@ -302,15 +295,7 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
       return;
     }
 
-    if (set.structure === 'grid') {
-      setTableConfig(gridSetToTableConfig(set.id, 'full'));
-    } else {
-      if (tableConfig.rowVars.length === 0) {
-        setTableConfig({ rowVars: [set.id] });
-      } else {
-        setTableConfig({ colVar: set.id });
-      }
-    }
+    setTableConfig(applyCanvasPlacement(set.id, set.structure, tableConfig));
   };
 
   const handleContextMenu = (set: VariableSet, e: React.MouseEvent) => {
@@ -342,17 +327,6 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
     setRememberedWeightVar(null);
     setWeightEnabled(true);
   };
-
-  const handleSaveFilter = useCallback((filter: Omit<Filter, 'id'>, applyToAll: boolean) => {
-    const { addFilter, addFilterToSlides } = useVelocityStore.getState();
-    addFilter(filter);
-    if (applyToAll) {
-      const filterWithId = { ...filter, id: crypto.randomUUID() };
-      const slideIds = slides.map(s => s.id);
-      addFilterToSlides(slideIds, filterWithId);
-    }
-    addToast({ message: `Filter applied${applyToAll ? ' to all slides' : ''}`, type: 'success' });
-  }, [slides, addToast]);
 
   const handleExport = useCallback(() => {
     openAnalysisExportModal(buildCurrentExportConfig());

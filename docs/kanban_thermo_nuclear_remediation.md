@@ -83,62 +83,7 @@ graph TD
 
 ## Phase 0 — Quick wins
 
-### Ready
-
-#### TN-0.1 — Fix SAV loadProgress protocol
-
-| Field | Value |
-| :--- | :--- |
-| **Outcome** | Worker posts `engine.loadProgress`; `EngineProxy` forwards to store `onLoadProgress`; SAV upload UI shows progress again. |
-| **Dependencies** | none |
-| **Parallelizable** | yes |
-| **Owner** | unassigned |
-| **Validation** | Manual SAV load shows progress; grep confirms no bare `type: 'loadProgress'` posts remain (or legacy shim documented); `npm run test:run` |
-| **Notes** | ~9 sites in `analysisWorker.ts`. Known UXR-036 root cause. |
-
-#### TN-0.2 — Extract `buildCaseSql` to core
-
-| Field | Value |
-| :--- | :--- |
-| **Outcome** | Single `src/core/transforms/recodeSql.ts` (or equivalent); `VelocityEngine` and `analysisWorker` import it. |
-| **Dependencies** | none |
-| **Parallelizable** | yes |
-| **Owner** | unassigned |
-| **Validation** | Unit test for SQL output; recode E2E or slice tests green; `npm run typecheck:all` |
-| **Notes** | Duplicate at `VelocityEngine.ts:134–153` and `analysisWorker.ts:1313–1334`. |
-
-#### TN-0.3 — Delete or wire dead orchestration paths
-
-| Field | Value |
-| :--- | :--- |
-| **Outcome** | Removed: `useEngineProxy.ts` (unused), `DataTable` chart branch + `viewMode` prop, unused Dashboard symbols (`showCombineModal`, `handleSaveFilter`, unused export modal destructuring). Wired or deleted: `useWorkspace.openDataset` duplicate vs `useWorkspaceOpen`. |
-| **Dependencies** | none |
-| **Parallelizable** | yes (sub-tasks can split by file) |
-| **Owner** | unassigned |
-| **Validation** | `npm run test:run`; grep shows no imports of deleted modules; Dashboard tests pass |
-| **Notes** | Workspace hook decision: wire App through one canonical open path (feeds TN-3.2). |
-
-#### TN-0.4 — Extract `filterVariableSets`
-
-| Field | Value |
-| :--- | :--- |
-| **Outcome** | One function in `variableSetFilters.ts`; `VariableManager`, `VariableSetColumn`, and `FacetedSearchBar` use it for list + counts. |
-| **Dependencies** | none |
-| **Parallelizable** | yes |
-| **Owner** | unassigned |
-| **Validation** | `variableSetFilters.test.ts` covers folder/search/facet/grid-shell cases; facet counts match column render |
-| **Notes** | Largest copy-paste surface in Variable Manager. |
-
-#### TN-0.5 — Extract canvas variable placement helper
-
-| Field | Value |
-| :--- | :--- |
-| **Outcome** | Pure `placeVariableSet` / `applyCanvasPlacement` in `services/` or extended `gridUtils`; `DashboardShell` drag, click, and `SlideContainer` suggest handlers delegate to it. |
-| **Dependencies** | none |
-| **Parallelizable** | yes |
-| **Owner** | unassigned |
-| **Validation** | Unit tests for grid vs non-grid intents; existing dashboard DnD tests green |
-| **Notes** | Complements `applyGridSetDrop` (already approved). |
+*(all cards complete — see Done)*
 
 ---
 
@@ -427,7 +372,11 @@ graph TD
 
 | Card | Evidence |
 | :--- | :--- |
-| *(none — board initialized June 2026)* | — |
+| **TN-0.1** — Fix SAV loadProgress protocol | **Files:** `src/services/analysisWorker.ts` (9 sites: `type: 'loadProgress'` → `type: 'engine.loadProgress'`). **Grep:** no bare `loadProgress` posts in worker; legacy type retained in `src/types/worker.ts`. **Tests:** `npm run test:run` — 892 passed, 7 skipped (2026-06-24). **Manual:** SAV load progress path wired — worker → `EngineProxy.onProgress` → `dataSlice.applyLoadProgressMessage` → App progress bar. |
+| **TN-0.2** — Extract `buildCaseSql` to core | **Files:** `src/core/transforms/recodeSql.ts` (canonical `buildCaseSql`); imports in `VelocityEngine.ts` and `analysisWorker.ts`; duplicates removed. **Tests:** `recodeSql.test.ts` — 5 tests; `npm run typecheck` green; `npm run test:run` — 915 passed (2026-06-24). |
+| **TN-0.3** — Delete or wire dead orchestration paths | **Removed:** `src/hooks/useEngineProxy.ts` (grep: no `src/` imports), DataTable `viewMode`/chart branch + unused `isGrid` prop, `useWorkspace.openDataset` duplicate, unused `showCombineModal`/`handleSaveFilter`/export-modal destructuring in `DashboardShell.tsx`. **Wired:** `useWorkspaceOpen` canonical via `App.tsx` → `WorkspaceView`/`CrossWavePanel`. **Tests:** `npm run test:run` — 112 files / 915 passed; dashboard + workspace hook tests green (2026-06-24). |
+| **TN-0.4** — Extract `filterVariableSets` | **Files:** `src/features/variableManager/variableSetFilters.ts` (`filterVariableSets` + existing grid-shell helpers); call sites in `VariableManager.tsx`, `VariableSetColumn.tsx`, `FacetedSearchBar.tsx`. **Tests:** `variableSetFilters.test.ts` — 12 tests (grid-shell, folder, search, type/status/quality facets, combined filters, facet-count parity). **Tests:** `npm run test:run` — 910 passed, 7 skipped (2026-06-24). |
+| **TN-0.5** — Extract canvas variable placement helper | **Files:** `src/services/gridUtils.ts` (`placeVariableSet`, `applyCanvasPlacement`, `TableConfigSnapshot`); call sites in `DashboardShell.tsx` (drag + click), `SlideContainer.tsx` (suggest). **Tests:** `gridUtils.test.ts` — 9 new placement tests (grid/non-grid × rows/cols/canvas). **Tests:** `npm run test:run` — 910 passed, 7 skipped; `SlideContainer.test.tsx`, `DropZone.test.tsx` green (2026-06-24). |
 
 ---
 
@@ -446,20 +395,18 @@ graph TD
 
 | Safe to run in parallel now | Keep single-threaded |
 | :--- | :--- |
-| TN-0.1, TN-0.2, TN-0.3, TN-0.4, TN-0.5 | TN-1.8 (integration pass) |
-| TN-1.1 + TN-1.2 + TN-1.3 + TN-1.4 (one PR or coordinated) | TN-3.1 (BrowserEngine) |
-| TN-1.5, TN-1.6, TN-1.7 | TN-2.3 + TN-2.4 if both touch store/App wiring |
+| TN-1.1 + TN-1.2 + TN-1.3 + TN-1.4 (one PR or coordinated) | TN-1.8 (integration pass) |
+| TN-1.5, TN-1.6, TN-1.7 | TN-3.1 (BrowserEngine) |
 | TN-3.3, TN-3.5 (UI-only, no layer deps) | |
 
 ---
 
 ## Recommended next pull (start here)
 
-1. **TN-0.1** — Fix loadProgress (user-visible bug, ~9 line class of fix).
-2. **TN-0.2 + TN-0.4** — Dedupe recode SQL and variable-set filters (high leverage, low risk).
-3. **TN-1.1 + TN-1.2** — Relocate queryBuilder and statistics to core (architecture gate for everything else).
+1. **TN-1.1 + TN-1.2** — Relocate queryBuilder and statistics to core (architecture gate for everything else).
+2. **TN-1.3 + TN-1.4** — gridUtils, chartRecommender, analysisProcessor relocations (coordinate imports with 1.1/1.2).
 
-**First PR bundle suggestion:** TN-0.1 alone (hotfix). **Second PR:** TN-0.2 + TN-0.4. **Third PR:** TN-1.1 + TN-1.2 + TN-1.8 partial (imports only).
+**First PR bundle suggestion:** TN-1.1 + TN-1.2 + TN-1.8 partial (imports only). **Second PR:** TN-1.3 + TN-1.4.
 
 ---
 

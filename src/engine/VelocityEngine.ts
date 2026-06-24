@@ -3,6 +3,7 @@ import { buildCrosstabRequest } from '../core/analysis/buildCrosstabRequest';
 import { runCrosstab } from '../core/analysis/crosstabRunner';
 import { getVariableStats } from '../core/analysis/variableStatsRunner';
 import { buildHarmonizedTableQuery } from '../core/harmonization/harmonizationQueries';
+import { buildCaseSql } from '../core/transforms/recodeSql';
 import { autoMatchVariables } from '../core/harmonization/matchEngine';
 import type { DatabaseAdapter, QueryResult } from '../core/DatabaseAdapter';
 import { exportSession as exportSessionFile, importSession as importSessionFile } from '../core/session';
@@ -129,27 +130,6 @@ function cloneFilter(filter: Filter): Filter {
     ...filter,
     value: Array.isArray(filter.value) ? [...filter.value] : filter.value,
   };
-}
-
-function buildCaseSql(sourceCol: string, config: RecodeConfig): string {
-  let caseSql = 'CASE ';
-
-  if (config.mode === 'categorical' && config.mappings) {
-    for (const [oldValue, newValue] of Object.entries(config.mappings)) {
-      caseSql += `WHEN "${sourceCol}" = '${oldValue.replace(/'/g, "''")}' THEN '${newValue.replace(/'/g, "''")}' `;
-    }
-  } else if (config.mode === 'binning' && config.rules) {
-    for (const rule of config.rules) {
-      const parts: string[] = [];
-      if (rule.min !== undefined) parts.push(`"${sourceCol}" >= ${rule.min}`);
-      if (rule.max !== undefined) parts.push(`"${sourceCol}" < ${rule.max}`);
-      if (parts.length > 0) {
-        caseSql += `WHEN ${parts.join(' AND ')} THEN '${rule.label.replace(/'/g, "''")}' `;
-      }
-    }
-  }
-
-  return `${caseSql}ELSE CAST("${sourceCol}" AS VARCHAR) END`;
 }
 
 function buildCsvVariables(schemaRows: Array<Record<string, unknown>>): Variable[] {

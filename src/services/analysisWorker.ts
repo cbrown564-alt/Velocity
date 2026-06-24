@@ -26,6 +26,7 @@ import { ArrowChunkBuilder } from './arrowChunkBuilder';
 import { getLocalDuckDbBundles, resolveDuckDbBundleUrls } from './duckdbBundles';
 import { initOpfsPersistence } from './opfsPersistence';
 import { walkOpfs, findOpfsFile } from './opfsTraversal';
+import { buildCaseSql } from '../core/transforms/recodeSql';
 
 // Re-export types from canonical location for backward compatibility
 export type { WorkerRequest, WorkerResponse, VariableStatsResult, VariableStatsFrequency, NumericStats, PersistedMetadata } from '../types/worker';
@@ -1309,29 +1310,6 @@ async function getUniqueValues(column: string): Promise<string[]> {
 // ============================================================================
 // Recode Operations
 // ============================================================================
-
-function buildCaseSql(sourceCol: string, config: RecodeConfig): string {
-  let caseSql = `CASE `;
-
-  if (config.mode === 'categorical' && config.mappings) {
-    for (const [oldVal, newVal] of Object.entries(config.mappings)) {
-      caseSql += `WHEN "${sourceCol}" = '${oldVal.replace(/'/g, "''")}' THEN '${newVal.replace(/'/g, "''")}' `;
-    }
-  } else if (config.mode === 'binning' && config.rules) {
-    for (const rule of config.rules) {
-      const parts: string[] = [];
-      if (rule.min !== undefined) parts.push(`"${sourceCol}" >= ${rule.min}`);
-      if (rule.max !== undefined) parts.push(`"${sourceCol}" < ${rule.max}`);
-
-      if (parts.length > 0) {
-        caseSql += `WHEN ${parts.join(' AND ')} THEN '${rule.label.replace(/'/g, "''")}' `;
-      }
-    }
-  }
-
-  caseSql += `ELSE CAST("${sourceCol}" AS VARCHAR) END`;
-  return caseSql;
-}
 
 async function recodeVariable(
   sourceCol: string,

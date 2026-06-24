@@ -2,9 +2,7 @@ import React, { useMemo, useState, useRef, useCallback } from 'react';
 import { AggregatedRow, Variable, TableStats } from '../../../types';
 import { ChevronRight, ChevronDown } from 'lucide-react';
 import type { VariableStatsResult } from '../../../types/worker';
-import { AnalysisChart } from '../../../components/charts/AnalysisChart';
 import { useProcessedAnalysisData } from '../../../hooks/useProcessedAnalysisData';
-import { recommendChart } from '../../../services/chartRecommender';
 import { useTableDragMerge, TableDragItem } from '../../../hooks/useTableDragMerge';
 import { useMergeOrchestration } from '../../../hooks/useMergeOrchestration';
 import { InputModal } from '../../../components/overlays/InputModal';
@@ -25,8 +23,8 @@ export type { RowPathEntry, TableRowNode };
 /**
  * DataTable Component
  * 
- * Displays aggregated analysis results in a hierarchical table or chart.
- * Uses useAggregatedTableData for data processing to separate logic from view.
+ * Displays aggregated analysis results in a hierarchical table.
+ * Uses useProcessedAnalysisData for data processing to separate logic from view.
  */
 
 interface DataTableProps {
@@ -34,7 +32,6 @@ interface DataTableProps {
   rowVariables: Variable[];
   colVariable: Variable | null;
   totalCount: number;
-  viewMode?: 'table' | 'chart';
   /** Whether weighted analysis is active */
   isWeighted?: boolean;
   /** Called when a cell is clicked for drill-down */
@@ -43,8 +40,6 @@ interface DataTableProps {
   variableStats?: VariableStatsResult | null;
   /** If true, row keys are already labels (multiple response) - skip label resolution */
   isMultipleResponse?: boolean;
-  /** Whether the variables form a grid structure */
-  isGrid?: boolean;
   /** Table-level statistics (chi-square, etc.) */
   tableStats?: TableStats | null;
   /** Table density: compact (exploration) or generous (presentation) */
@@ -58,12 +53,10 @@ export const DataTable: React.FC<DataTableProps> = ({
   rowVariables,
   colVariable,
   totalCount,
-  viewMode = 'table',
   isWeighted = false,
   onCellClick,
   variableStats,
   isMultipleResponse = false,
-  isGrid = false,
   tableStats,
   density = 'compact',
   frameBleed = false,
@@ -143,20 +136,6 @@ export const DataTable: React.FC<DataTableProps> = ({
     isMultipleResponse,
   });
 
-  // Determine default chart type
-  const chartConfig = useMemo(() => {
-    if (!processedData) return { type: 'horizontal-bar' as const };
-
-    return {
-      type: recommendChart({
-        rowVars: rowVariables,
-        colVar: colVariable,
-        isMultiResponse: isMultipleResponse,
-        isGrid,
-      }).default
-    };
-  }, [processedData, rowVariables, colVariable, isMultipleResponse]);
-
   // Aggregate Data for Table View (Derived from Worker Result)
   const tableData = useMemo(() => {
     if (!processedData) return null;
@@ -216,9 +195,7 @@ export const DataTable: React.FC<DataTableProps> = ({
 
   if (!tableData) return null;
 
-  // -- RENDER MODE: TABLE --
-  if (viewMode === 'table') {
-    const renderRow = (row: TableRowNode) => {
+  const renderRow = (row: TableRowNode) => {
       const isExpanded = expandedKeys[row.key] ?? true; // Default expanded?
       const hasChildren = row.children.length > 0;
       const paddingLeft = row.depth * 24 + 8; // Match the px-2 (8px) padding of the header
@@ -583,30 +560,4 @@ export const DataTable: React.FC<DataTableProps> = ({
 
       </AnalysisOutputFrame>
     );
-  }
-
-  // -- RENDER MODE: CHART --
-  return (
-    <AnalysisOutputFrame
-      bodyPadding="chart"
-      density={density}
-      reducedMotion={reducedMotion}
-      className="h-[500px]"
-    >
-      <AnalysisChart
-        data={data}
-        rowVariables={rowVariables}
-        colVariable={colVariable}
-        isWeighted={isWeighted}
-        isMultipleResponse={isMultipleResponse}
-        config={{
-          type: chartConfig.type,
-          showLegend: true,
-          showTooltip: true,
-          enableVisualETL: true
-        }}
-        variableStats={variableStats}
-      />
-    </AnalysisOutputFrame>
-  );
 };
