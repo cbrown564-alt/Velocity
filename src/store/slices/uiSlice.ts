@@ -10,7 +10,7 @@ import { MAX_VISIBLE_TOASTS } from '../toastPolicy';
 import type { VariableType } from './dataSlice';
 import type { Variable } from './dataSlice';
 import type { ExportConfig } from '../../core/export/types';
-import { MS_THREE_DAYS } from '../../features/workspace/lib/returningResearcher';
+import { computeActivityTouchPatch } from '../../features/workspace/lib/returningResearcher';
 
 // ============================================================================
 // Types
@@ -378,16 +378,7 @@ export const createUISlice: StateCreator<UISlice, [], [], UISlice> = (set) => ({
 
     // Onboarding Actions
     markAutoCrosstabSeen: () => set({ hasSeenAutoCrosstab: true }),
-    touchLastActiveAt: () =>
-        set((state) => {
-            const now = Date.now();
-            const returningAfterAbsence =
-                state.lastActiveAt > 0 && now - state.lastActiveAt >= MS_THREE_DAYS;
-            return {
-                lastActiveAt: now,
-                ...(returningAfterAbsence ? { welcomeBackDismissed: false } : {}),
-            };
-        }),
+    touchLastActiveAt: () => set((state) => computeActivityTouchPatch(state)),
     dismissWelcomeBack: () =>
         set({
             welcomeBackDismissed: true,

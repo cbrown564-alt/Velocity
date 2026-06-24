@@ -19,6 +19,24 @@ function resolveVarLabel(id: string, variables?: Variable[]): string {
   return v?.label || v?.name || id;
 }
 
+export type ActivityTouchState = {
+  lastActiveAt: number;
+  welcomeBackDismissed: boolean;
+};
+
+/** Partial state patch for `touchLastActiveAt` — pure, no store dependencies. */
+export function computeActivityTouchPatch(
+  state: ActivityTouchState,
+  now = Date.now(),
+): Partial<ActivityTouchState> {
+  const returningAfterAbsence =
+    state.lastActiveAt > 0 && now - state.lastActiveAt >= MS_THREE_DAYS;
+  if (returningAfterAbsence) {
+    return { welcomeBackDismissed: false };
+  }
+  return { lastActiveAt: now };
+}
+
 /** Whether the welcome-back card should appear after a long absence. */
 export function shouldShowWelcomeBack(
   lastActiveAt: number,

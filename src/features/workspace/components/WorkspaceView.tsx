@@ -54,13 +54,9 @@ import {
   matchesVariableKeyword,
   type WorkspaceCategoryChip,
 } from '../lib/workspaceLibrary';
-import {
-  findResumeCandidate,
-  formatDeckSummaryTooltip,
-  shouldShowWelcomeBack,
-} from '../lib/returningResearcher';
+import { formatDeckSummaryTooltip } from '../lib/returningResearcher';
+import { useWelcomeBack } from '../hooks/useWelcomeBack';
 import { WelcomeBackCard } from './WelcomeBackCard';
-import { useVelocityStore } from '../../../store';
 
 // ============================================================================
 // Types
@@ -584,27 +580,14 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
 
   const reducedMotion = useReducedMotion();
 
-  const {
-    lastActiveAt,
-    welcomeBackDismissed,
-    dismissWelcomeBack,
-    activeDatasetId,
-    tableConfig,
-  } = useVelocityStore();
-
   const { datasets, projects, storageUsed, storageQuota } = workspaceState;
 
   const isEmpty = datasets.length === 0;
 
-  const resumeCandidate = useMemo(
-    () => findResumeCandidate(datasets, activeDatasetId, tableConfig),
-    [datasets, activeDatasetId, tableConfig],
-  );
-
-  const showWelcomeBack =
-    !isEmpty &&
-    shouldShowWelcomeBack(lastActiveAt, welcomeBackDismissed) &&
-    resumeCandidate !== null;
+  const { showWelcomeBack, resumeCandidate, onResume, onDismiss } = useWelcomeBack({
+    datasets,
+    onOpenDataset,
+  });
 
   // Build project lookup
   const projectMap = useMemo(() => {
@@ -712,13 +695,6 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
   };
 
   const closeContextMenu = () => setContextMenuTarget(null);
-
-  const handleResumeWelcomeBack = () => {
-    if (!resumeCandidate) return;
-    const target = datasets.find(d => d.id === resumeCandidate.datasetId);
-    if (target) onOpenDataset(target);
-    dismissWelcomeBack();
-  };
 
   return (
     <div className={styles.workspace}>
@@ -831,8 +807,8 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
       {showWelcomeBack && resumeCandidate && (
         <WelcomeBackCard
           candidate={resumeCandidate}
-          onResume={handleResumeWelcomeBack}
-          onDismiss={dismissWelcomeBack}
+          onResume={onResume}
+          onDismiss={onDismiss}
         />
       )}
 

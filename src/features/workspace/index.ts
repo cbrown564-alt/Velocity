@@ -17,6 +17,8 @@ export { ExportImportModal, type WorkspaceExport } from './components/ExportImpo
 export { useWorkspace } from './hooks/useWorkspace';
 export { useWorkspaceOpen } from './hooks/useWorkspaceOpen';
 export type { WorkspaceOpenAppMode, UseWorkspaceOpenOptions, UseWorkspaceOpenReturn } from './hooks/useWorkspaceOpen';
+export { useWelcomeBack } from './hooks/useWelcomeBack';
+export type { UseWelcomeBackOptions, UseWelcomeBackReturn } from './hooks/useWelcomeBack';
 export { useFileUpload, type FileUploadState } from './hooks/useFileUpload';
 export {
   assignOpfsKeyAndLoad,

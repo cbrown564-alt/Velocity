@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useMemo } from 'react';
 import { AlertCircle, LayoutGrid, RefreshCw, Sparkles, MousePointerClick } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useVelocityStore } from '../../../store';
@@ -12,6 +12,8 @@ import { computeAnalysisSampleSize } from '../../../core/analysis/computeAnalysi
 import { recommendChart } from '../../../services/chartRecommender';
 import { useResolvedVariables } from '../hooks/useResolvedVariables';
 import { useSuggestedVariables } from '../hooks/useSuggestedVariables';
+import { useAutoFirstCrosstab } from '../hooks/useAutoFirstCrosstab';
+import { gridSetToTableConfig } from '../../../services/gridUtils';
 import { getMotionProps, useReducedMotion, DURATIONS } from '../../../lib/motion';
 import { AnalysisOutputFrame } from './AnalysisOutputFrame';
 
@@ -45,6 +47,7 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
     const openDrillDown = useVelocityStore((state) => state.openDrillDown);
     const tableDensity = useVelocityStore((state) => state.tableDensity);
     const focusMode = useVelocityStore((state) => state.focusMode);
+    const dataset = useVelocityStore((state) => state.dataset);
 
     const totalCount = useMemo(() => {
         const fromQuery = computeAnalysisSampleSize(chartData, { isWeighted });
@@ -52,22 +55,10 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
         return useVelocityStore.getState().dataset?.rowCount || 0;
     }, [chartData, isWeighted]);
 
-    const dataset = useVelocityStore((state) => state.dataset);
-    const hasSeenAutoCrosstab = useVelocityStore((state) => state.hasSeenAutoCrosstab);
-    const markAutoCrosstabSeen = useVelocityStore((state) => state.markAutoCrosstabSeen);
-
-    /**
-     * Resolve VariableSet IDs to Variable objects.
-     */
     const { resolvedRowVars, resolvedColVar, firstRowVarSet: firstVarSet } = useResolvedVariables();
 
-    // Check if first row variable set is a multiple response
     const isMultipleResponse = firstVarSet?.structure === 'multiple';
 
-    // Processed data handling moved to individual components
-    // const processedData = useProcessedAnalysisData({ ... });
-
-    // Get chart recommendation based on data configuration
     const chartRecommendation = useMemo(() => {
         if (resolvedRowVars.length === 0) return null;
 
@@ -78,16 +69,6 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
             isMultiResponse: isMultipleResponse,
         });
     }, [resolvedRowVars, resolvedColVar, firstVarSet, isMultipleResponse]);
-
-    if (!activeSlide) {
-        return <div className="p-4 text-[var(--text-secondary)]">No active slide</div>;
-    }
-
-    // Focus mode logic: Render the first cell full screen
-    const cell = activeSlide.cells[0];
-    if (!cell) {
-        return <div className="p-4 text-[var(--text-secondary)]">Empty slide</div>;
-    }
 
     const inUseIds = useMemo(() => new Set([
         ...tableConfig.rowVars,
@@ -102,68 +83,26 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
         dataset?.rowCount
     );
     const reducedMotion = useReducedMotion();
-    const autoCrosstabAppliedRef = useRef(false);
+    useAutoFirstCrosstab(resolvedRowVars.length, tableConfig.colVar);
 
-    // Quick Win 9.4: Auto-first-crosstab after Load Example (no toast — Story Shelf + deferred backup reminder)
-    useEffect(() => {
-        if (autoCrosstabAppliedRef.current || hasSeenAutoCrosstab) return;
+    if (!activeSlide) {
+        return <div className="p-4 text-[var(--text-secondary)]">No active slide</div>;
+    }
 
-        const isMockDataset = dataset?.name === 'mock_data.csv';
-        const isEmptyDeck = resolvedRowVars.length === 0 && !tableConfig.colVar;
-        if (
-            !isMockDataset ||
-            !isEmptyDeck ||
-            suggestions.length < 2 ||
-            variableSets.length === 0
-        ) {
-            return;
-        }
-
-        const first = suggestions[0];
-        const second = suggestions[1];
-        const firstSet = variableSets.find(s => s.id === first.setId);
-        const secondSet = variableSets.find(s => s.id === second.setId);
-        if (!firstSet || !secondSet) return;
-
-        autoCrosstabAppliedRef.current = true;
-        const store = useVelocityStore.getState();
-
-        if (firstSet.structure === 'grid') {
-            const itemsId = `${firstSet.id}_items`;
-            const scaleId = `${firstSet.id}_scale`;
-            store.setTableConfig({ rowVars: [scaleId], colVar: itemsId });
-        } else if (secondSet.structure === 'grid') {
-            const itemsId = `${secondSet.id}_items`;
-            const scaleId = `${secondSet.id}_scale`;
-            store.setTableConfig({ rowVars: [firstSet.id], colVar: itemsId });
-        } else {
-            store.setTableConfig({ rowVars: [firstSet.id], colVar: secondSet.id });
-        }
-
-        markAutoCrosstabSeen();
-    }, [
-        dataset?.name,
-        resolvedRowVars.length,
-        tableConfig.colVar,
-        hasSeenAutoCrosstab,
-        suggestions,
-        variableSets,
-        markAutoCrosstabSeen,
-    ]);
+    const cell = activeSlide.cells[0];
+    if (!cell) {
+        return <div className="p-4 text-[var(--text-secondary)]">Empty slide</div>;
+    }
 
     const handleSuggestClick = (setId: string) => {
         const set = variableSets.find(s => s.id === setId);
         if (!set) return;
 
-        // Grid auto-expansion
         if (set.structure === 'grid') {
-            const itemsId = `${set.id}_items`;
-            const scaleId = `${set.id}_scale`;
-            useVelocityStore.getState().setTableConfig({ rowVars: [scaleId], colVar: itemsId });
+            useVelocityStore.getState().setTableConfig(gridSetToTableConfig(set.id, 'full'));
             return;
         }
 
-        // Standard: if no rows, add to rows; else add to columns
         const { rowVars, colVar } = useVelocityStore.getState().tableConfig;
         if (rowVars.length === 0) {
             useVelocityStore.getState().setTableConfig({ rowVars: [setId] });
@@ -203,7 +142,6 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
                     {...getMotionProps({ preset: 'fadeUp', duration: DURATIONS.enter, reducedMotion })}
                     className="w-full h-full rounded-xl flex flex-col items-center justify-center text-[var(--text-secondary)] gap-5 bg-gradient-to-b from-[var(--bg-panel)] to-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-inset-lg relative overflow-hidden"
                 >
-                    {/* Decorative background elements */}
                     <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[var(--color-accent)] to-transparent opacity-20" />
                     <div className="relative flex items-center justify-center w-20 h-20 rounded-2xl bg-[var(--bg-active)] border border-[var(--border-color)] shadow-sm">
                         <LayoutGrid size={32} className="text-[var(--color-accent)] opacity-80" />
@@ -213,7 +151,6 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
                         <p className="text-sm">Drag or click variables to start building your view.</p>
                     </div>
 
-                    {/* Smart Suggested Variables */}
                     {suggestions.length > 0 && (
                         <div className="flex flex-col items-center gap-3 mt-2 max-w-lg px-4">
                             <div className="flex items-center gap-2 text-xs text-[var(--text-secondary)] uppercase tracking-wider font-semibold">
@@ -243,12 +180,10 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
             );
         }
 
-        // Use true slide state
         const contentType = activeSlide.visualizationType;
 
         switch (contentType) {
-            case 'chart':
-                // Use chart recommendation or cell override
+            case 'chart': {
                 const recommendedType = chartRecommendation?.default || 'horizontal-bar';
                 const config: AnalysisChartConfig = {
                     type: cell.content.chartType || recommendedType,
@@ -273,6 +208,7 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
                         />
                     </AnalysisOutputFrame>
                 );
+            }
             case 'table':
                 return (
                     <DataTable
@@ -297,7 +233,6 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
 
     return (
         <div className={`flex-1 flex flex-col items-center justify-center ${focusMode ? 'p-2' : 'p-6'} bg-glass-app overflow-y-auto ${className}`}>
-            {/* 16:9 Presentation Canvas Container */}
             <div
                 className="w-full max-w-[1200px] bg-[var(--mat-panel-bg,var(--bg-panel))] backdrop-blur-[var(--mat-panel-filter,0)] rounded-xl shadow-md border border-[var(--border-color)] overflow-hidden flex flex-col"
                 style={{ aspectRatio: '16/9', minHeight: focusMode ? '640px' : '600px' }}

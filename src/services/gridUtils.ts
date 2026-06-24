@@ -1,6 +1,34 @@
 import { Variable, VariableSet } from '../types';
 import { normalizeVariableType } from '../types';
 
+export type GridTableConfigMode = 'full' | 'row-scale-col-items';
+
+/** Synthetic variable ids for a grid VariableSet. */
+export function gridSyntheticVarIds(setId: string): { scaleId: string; itemsId: string } {
+    return { scaleId: `${setId}_scale`, itemsId: `${setId}_items` };
+}
+
+/**
+ * Map a grid set id to table row/col synthetic variable ids.
+ * `full` and `row-scale-col-items` both use scale on rows and items on columns
+ * (click-to-analyze and canvas drop behavior).
+ */
+export function gridSetToTableConfig(
+    setId: string,
+    mode: GridTableConfigMode = 'full',
+): { rowVars: string[]; colVar: string } {
+    const { scaleId, itemsId } = gridSyntheticVarIds(setId);
+    switch (mode) {
+        case 'full':
+        case 'row-scale-col-items':
+            return { rowVars: [scaleId], colVar: itemsId };
+        default: {
+            const _exhaustive: never = mode;
+            return _exhaustive;
+        }
+    }
+}
+
 /**
  * Generate synthetic variables for a grid VariableSet
  * Creates:

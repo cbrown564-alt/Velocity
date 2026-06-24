@@ -3,6 +3,7 @@ import type { StoredDataset } from '../components/WorkspaceView';
 import { useVelocityStore } from '../../../store';
 import {
   MS_THREE_DAYS,
+  computeActivityTouchPatch,
   findResumeCandidate,
   formatDeckSummaryTooltip,
   shouldShowWelcomeBack,
@@ -24,6 +25,32 @@ const baseDataset = (overrides: Partial<StoredDataset> = {}): StoredDataset => (
 });
 
 describe('returningResearcher', () => {
+  it('computeActivityTouchPatch resets welcome-back after long absence', () => {
+    const now = 1_700_000_000_000;
+    const stale = now - MS_THREE_DAYS - 1;
+    expect(
+      computeActivityTouchPatch({ lastActiveAt: stale, welcomeBackDismissed: true }, now),
+    ).toEqual({ welcomeBackDismissed: false });
+  });
+
+  it('computeActivityTouchPatch defers lastActiveAt after long absence', () => {
+    const now = 1_700_000_000_000;
+    const stale = now - MS_THREE_DAYS - 1;
+    const patch = computeActivityTouchPatch(
+      { lastActiveAt: stale, welcomeBackDismissed: false },
+      now,
+    );
+    expect(patch).toEqual({ welcomeBackDismissed: false });
+    expect(patch).not.toHaveProperty('lastActiveAt');
+  });
+
+  it('computeActivityTouchPatch updates lastActiveAt for recent activity', () => {
+    const now = 1_700_000_000_000;
+    expect(
+      computeActivityTouchPatch({ lastActiveAt: now - 60_000, welcomeBackDismissed: true }, now),
+    ).toEqual({ lastActiveAt: now });
+  });
+
   it('shouldShowWelcomeBack after three days away', () => {
     const now = Date.now();
     expect(shouldShowWelcomeBack(now - MS_THREE_DAYS - 1, false, now)).toBe(true);
@@ -84,6 +111,20 @@ describe('touchLastActiveAt welcome-back reset', () => {
   it('clears welcomeBackDismissed after a long absence', () => {
     useVelocityStore.getState().touchLastActiveAt();
     expect(useVelocityStore.getState().welcomeBackDismissed).toBe(false);
+  });
+
+  it('defers lastActiveAt update until welcome-back is acknowledged', () => {
+    const stale = Date.now() - MS_THREE_DAYS - 1;
+    useVelocityStore.setState({ lastActiveAt: stale });
+    useVelocityStore.getState().touchLastActiveAt();
+    expect(useVelocityStore.getState().lastActiveAt).toBe(stale);
+  });
+
+  it('updates lastActiveAt when activity was recent', () => {
+    const recent = Date.now() - 60_000;
+    useVelocityStore.setState({ lastActiveAt: recent, welcomeBackDismissed: false });
+    useVelocityStore.getState().touchLastActiveAt();
+    expect(useVelocityStore.getState().lastActiveAt).toBeGreaterThan(recent);
   });
 
   it('keeps welcomeBackDismissed when activity was recent', () => {

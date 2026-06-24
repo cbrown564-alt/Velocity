@@ -499,13 +499,25 @@ export default function App() {
   ]);
 
   const prevModeRef = useRef<AppMode>(mode);
+  const splashActivityTouchedRef = useRef(false);
 
   useEffect(() => {
     if (mode === 'dashboard' && prevModeRef.current !== 'dashboard') {
       touchLastActiveAt();
     }
+
+    if (mode === 'splash' && isDbReady) {
+      const enteredSplash = prevModeRef.current !== 'splash';
+      if (enteredSplash || !splashActivityTouchedRef.current) {
+        touchLastActiveAt();
+        splashActivityTouchedRef.current = true;
+      }
+    } else if (mode !== 'splash') {
+      splashActivityTouchedRef.current = false;
+    }
+
     prevModeRef.current = mode;
-  }, [mode, touchLastActiveAt]);
+  }, [mode, isDbReady, touchLastActiveAt]);
 
   const loadStageHeadline = getLoadStageHeadline(loadProgress);
 

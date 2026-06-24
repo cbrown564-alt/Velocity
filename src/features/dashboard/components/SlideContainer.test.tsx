@@ -1,6 +1,6 @@
 import React from 'react';
 import { describe, it, expect, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { SlideContainer } from './SlideContainer';
 import { useVelocityStore } from '../../../store';
 import type { Slide } from '../../../types/slides';
@@ -72,6 +72,36 @@ describe('SlideContainer', () => {
         expect(canvas).toBeInTheDocument();
         expect(canvas?.className).toContain('bg-[var(--mat-panel-bg,var(--bg-panel))]');
         expect(canvas?.className).not.toContain('bg-white');
+    });
+
+    it('auto-populates gender × region on mock_data.csv when deck is empty', async () => {
+        useVelocityStore.setState({
+            hasSeenAutoCrosstab: false,
+            tableConfig: { rowVars: [], colVar: null },
+            variableSets: [
+                { id: 'id', name: 'id', variableIds: ['v-id'], type: 'categorical', structure: 'single' },
+                { id: 'gender', name: 'gender', variableIds: ['v-g'], type: 'categorical', structure: 'single' },
+                { id: 'region', name: 'region', variableIds: ['v-r'], type: 'categorical', structure: 'single' },
+                { id: 'sat', name: 'product sat', variableIds: ['v-s'], type: 'numeric', structure: 'single' },
+            ],
+            dataset: {
+                id: 'mock',
+                name: 'mock_data.csv',
+                rowCount: 250,
+                variables: [],
+                source: 'csv',
+            },
+        });
+
+        render(<SlideContainer />);
+
+        await waitFor(() => {
+            expect(useVelocityStore.getState().tableConfig).toEqual({
+                rowVars: ['gender'],
+                colVar: 'region',
+            });
+        });
+        expect(useVelocityStore.getState().hasSeenAutoCrosstab).toBe(true);
     });
 
 });

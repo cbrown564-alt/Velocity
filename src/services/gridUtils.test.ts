@@ -1,6 +1,22 @@
 import { describe, it, expect } from 'vitest';
-import { generateSyntheticGridVariables } from './gridUtils';
+import { generateSyntheticGridVariables, gridSetToTableConfig } from './gridUtils';
 import type { VariableSet } from '../types';
+
+describe('gridSetToTableConfig', () => {
+    it('maps full mode to scale rows and items column', () => {
+        expect(gridSetToTableConfig('grid_test', 'full')).toEqual({
+            rowVars: ['grid_test_scale'],
+            colVar: 'grid_test_items',
+        });
+    });
+
+    it('row-scale-col-items mode matches full click-to-analyze layout', () => {
+        expect(gridSetToTableConfig('grid_test', 'row-scale-col-items')).toEqual({
+            rowVars: ['grid_test_scale'],
+            colVar: 'grid_test_items',
+        });
+    });
+});
 
 describe('generateSyntheticGridVariables', () => {
     it('should generate a scale variable with value labels and correct type', () => {

@@ -17,6 +17,7 @@ import { buildExportConfig } from '../../core/export/buildExportConfig';
 import { resolveExportBranding } from '../../core/export/resolveThemeColors';
 import { filterSyntheticGridShellSets } from '../variableManager/variableSetFilters';
 import { allowsNumericStats } from '../../types';
+import { gridSetToTableConfig, gridSyntheticVarIds } from '../../services/gridUtils';
 
 import { VirtualizedVariableList } from './components/VirtualizedVariableList';
 import { DropZone } from '../../components/common/DropZone';
@@ -255,8 +256,7 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
 
       // Grid auto-expansion
       if (variableSet.structure === 'grid') {
-        const itemsId = `${setId}_items`;
-        const scaleId = `${setId}_scale`;
+        const { scaleId, itemsId } = gridSyntheticVarIds(setId);
         if (zoneId === 'drop-zone-rows') {
           if (!tableConfig.rowVars.includes(scaleId)) {
             setTableConfig({ rowVars: [...tableConfig.rowVars, scaleId], colVar: itemsId });
@@ -267,7 +267,7 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
             rowVars: tableConfig.rowVars.includes(itemsId) ? tableConfig.rowVars : [...tableConfig.rowVars, itemsId]
           });
         } else if (zoneId === 'canvas') {
-          setTableConfig({ rowVars: [scaleId], colVar: itemsId });
+          setTableConfig(gridSetToTableConfig(setId, 'full'));
         }
         return;
       }
@@ -313,9 +313,7 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
     }
 
     if (set.structure === 'grid') {
-      const itemsId = `${set.id}_items`;
-      const scaleId = `${set.id}_scale`;
-      setTableConfig({ rowVars: [scaleId], colVar: itemsId });
+      setTableConfig(gridSetToTableConfig(set.id, 'full'));
     } else {
       if (tableConfig.rowVars.length === 0) {
         setTableConfig({ rowVars: [set.id] });
