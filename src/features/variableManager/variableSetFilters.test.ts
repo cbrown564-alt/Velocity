@@ -4,7 +4,7 @@ import {
   filterVariableSets,
   isSyntheticGridShellSet,
 } from './variableSetFilters';
-import type { Dataset, VariableSet } from '../../store/slices/dataSlice';
+import type { Dataset, VariableSet } from '../../types/dataset';
 import type { VariableStatsResult } from '../../types/worker';
 
 const dataset: Dataset = {

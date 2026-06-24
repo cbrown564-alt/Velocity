@@ -15,7 +15,7 @@ import {
     escapeIdentifier,
     escapeString,
 } from './queryBuilder';
-import type { Filter } from '../types';
+import type { Filter } from '../../types';
 
 describe('queryBuilder', () => {
     // ==========================================================================

@@ -1,4 +1,4 @@
-import type { Filter } from '../store/slices/analysisSlice';
+import type { Filter } from '../types';
 
 export interface DrillDownPathEntry {
   variable: string;

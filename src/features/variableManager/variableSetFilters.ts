@@ -1,4 +1,4 @@
-import type { Dataset, VariableSet } from '../../store/slices/dataSlice';
+import type { Dataset, VariableSet } from '../../types/dataset';
 import type { FacetFilters } from '../../store/slices/uiSlice';
 import type { VariableStatsResult } from '../../types/worker';
 import { normalizeVariableType } from '../../types';

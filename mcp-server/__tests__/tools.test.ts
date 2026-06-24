@@ -13,6 +13,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { registerTools } from '../tools';
 import { VelocityError } from '../../src/engine/index';
+import { formatCrosstabMatrix } from '../../src/core/analysis/formatCrosstabMatrix';
 
 // ---------------------------------------------------------------------------
 // Minimal Server mock
@@ -220,16 +221,33 @@ describe('velocity_crosstab', () => {
     }));
   });
 
+  it('passes format to engine.runAnalysis when provided', async () => {
+    const engine = makeEngine();
+    await callTool(engine, 'velocity_crosstab', {
+      rowVars: ['GENDER'],
+      colVar: 'BRAND',
+      format: 'matrix',
+    });
+    expect(engine.runAnalysis).toHaveBeenCalledWith('crosstab', expect.objectContaining({
+      format: 'matrix',
+    }));
+  });
+
   it('returns matrix-shaped data when format is matrix', async () => {
+    const longRows = [
+      { rowKey_0: 'Male', colKey: 'Brand A', count: 10 },
+      { rowKey_0: 'Male', colKey: 'Brand B', count: 30 },
+      { rowKey_0: 'Female', colKey: 'Brand A', count: 40 },
+      { rowKey_0: 'Female', colKey: 'Brand B', count: 20 },
+    ];
+    const matrix = formatCrosstabMatrix(longRows, { isWeighted: false });
     const engine = makeEngine({
       runAnalysis: vi.fn().mockResolvedValue({
         data: {
-          rows: [
-            { rowKey_0: 'Male', colKey: 'Brand A', count: 10 },
-            { rowKey_0: 'Male', colKey: 'Brand B', count: 30 },
-            { rowKey_0: 'Female', colKey: 'Brand A', count: 40 },
-            { rowKey_0: 'Female', colKey: 'Brand B', count: 20 },
-          ],
+          format: 'matrix',
+          columns: matrix.columns,
+          rows: matrix.rows,
+          grandTotal: matrix.grandTotal,
           tableStats: { chiSquare: { statistic: 5.4, df: 1, pValue: 0.02 } },
         },
         operation: 'runAnalysis:crosstab',
@@ -281,19 +299,24 @@ describe('velocity_crosstab', () => {
   });
 
   it('uses weighted counts for matrix output when weightVar is passed per call', async () => {
+    const longRows = [
+      { rowKey_0: 'Male', colKey: 'Brand A', count: 10, weightedCount: 100 },
+      { rowKey_0: 'Female', colKey: 'Brand A', count: 40, weightedCount: 100 },
+    ];
+    const matrix = formatCrosstabMatrix(longRows, { isWeighted: true });
     const engine = makeEngine({
       runAnalysis: vi.fn().mockResolvedValue({
         data: {
-          rows: [
-            { rowKey_0: 'Male', colKey: 'Brand A', count: 10, weightedCount: 100 },
-            { rowKey_0: 'Female', colKey: 'Brand A', count: 40, weightedCount: 100 },
-          ],
+          format: 'matrix',
+          columns: matrix.columns,
+          rows: matrix.rows,
+          grandTotal: matrix.grandTotal,
         },
         operation: 'runAnalysis:crosstab',
         inputs: {},
         durationMs: 5,
         warnings: [],
-        metadata: { isWeighted: false },
+        metadata: { isWeighted: true },
       }),
     });
 

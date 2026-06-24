@@ -10,64 +10,26 @@
 // Core Data Model (from arch_02_data_model.md)
 // ============================================================================
 
-import type { OrderedScoring, OrderedStyle, VariableType } from './variableType';
 export type { CanonicalVariableType, LegacyVariableType, OrderedScoring, OrderedStyle, VariableType } from './variableType';
 export { allowsNumericStats, isCategoricalType, isOrderedType, normalizeVariableType } from './variableType';
-
-export interface ValueLabel {
-  value: number;
-  label: string;
-}
-
-export interface MissingValueDef {
-  discrete?: number[];
-  range?: { low: number; high: number };
-}
-
-export interface Variable {
-  id: string;
-  name: string;
-  label: string;
-  type: VariableType;
-  /** For ordered variables: "rating" (Likert-like) or "sequence" (rank/education progression). */
-  orderedStyle?: OrderedStyle;
-  /** For ordered variables: allow numeric summaries (mean/std/histogram) or treat as purely categorical. */
-  orderedScoring?: OrderedScoring;
-  /** @deprecated Use `semantic.measurementIntent` instead */
-  semanticType?: 'text' | 'entity' | 'sentiment' | 'location' | 'temporal';
-  /** Phase 4: Rich semantic annotation (optional, populated incrementally) */
-  semantic?: import('./semantic').SemanticAnnotation;
-  valueLabels: ValueLabel[];
-  missingValues: MissingValueDef;
-  /** True if this variable was generated automatically (e.g. for grid rows/cols) */
-  synthetic?: boolean;
-  /** ID of the VariableSet that generated this synthetic variable */
-  sourceGridId?: string;
-}
-
-export interface Dataset {
-  id: string;
-  name: string;
-  rowCount: number;
-  variables: Variable[];
-  weightVariable?: string;
-  source: 'sav' | 'csv' | 'arrow';
-  /** True if only metadata was loaded (no rows in DuckDB) */
-  metadataOnly?: boolean;
-  /** Number of rows loaded in sample mode (if applicable) */
-  sampleRowCount?: number;
-  /** Sampling strategy used: 'sequential' (first N rows) or 'spread' (evenly distributed) */
-  sampleStrategy?: 'sequential' | 'spread';
-  /** Non-fatal ingestion/degradation diagnostics surfaced to the UI. */
-  loadDiagnostics?: {
-    isPartial: boolean;
-    reason: 'storage_quota' | 'sampling' | 'metadata_only' | 'unknown';
-    message: string;
-    valueLabelsDropped?: number;
-    valueLabelsRetained?: number;
-    createdAt: number;
-  };
-}
+export type { RecodeMode, RecodeRule, RecodeConfig } from './recode';
+export type {
+  ValueLabel,
+  MissingValueDef,
+  Variable,
+  Dataset,
+  VariableSet,
+  Folder,
+  DataTransform,
+} from './dataset';
+export type {
+  AnalysisSettings,
+  AnalysisEngine,
+  ComparisonMethod,
+  CorrectionType,
+  Filter,
+  TableConfig,
+} from './analysis';
 
 // ============================================================================
 // Analysis Types
@@ -90,13 +52,6 @@ export interface Crosstab {
   isWeighted: boolean;
 }
 
-export interface Filter {
-  id: string;
-  variableId: string;
-  operator: 'eq' | 'neq' | 'in' | 'gt' | 'lt';
-  value: number | string | (number | string)[];
-}
-
 export interface Recode {
   id: string;
   sourceVariableId: string;
@@ -108,80 +63,6 @@ export interface RecodeMapping {
   sourceValues: number[];
   targetValue: number;
   targetLabel: string;
-}
-
-export type RecodeMode = 'categorical' | 'binning';
-
-export interface RecodeRule {
-  min?: number;
-  max?: number;
-  label: string;
-}
-
-export interface RecodeConfig {
-  mode: RecodeMode;
-  mappings?: Record<string, string>;
-  rules?: RecodeRule[];
-}
-
-export interface VariableSet {
-  id: string;
-  /** Display name for the set (e.g., "Brand Awareness") */
-  name: string;
-  /** IDs of variables in this set */
-  variableIds: string[];
-  /**
-   * Structure type determines how the set is used in analysis:
-   * - 'single': Standard single variable (1:1 mapping, default)
-   * - 'multiple': Multiple response set (e.g., "Select all that apply")
-   * - 'grid': Grid/matrix structure (rows x columns)
-   */
-  structure: 'single' | 'multiple' | 'grid';
-  /** Inferred or explicit variable type for the set */
-  type?: VariableType;
-  /** For ordered sets: "rating" (Likert-like) or "sequence" (rank/education progression). */
-  orderedStyle?: OrderedStyle;
-  /** For ordered sets: allow numeric summaries (mean/std/histogram) or treat as purely categorical. */
-  orderedScoring?: OrderedScoring;
-  /** Optional description */
-  description?: string;
-  /** Whether to hide from Analysis Canvas (Data Gardening only) */
-  hidden?: boolean;
-  /** Folder this set belongs to (null = ungrouped) */
-  folderId?: string;
-  /** True if created via recode/compute operation */
-  derived?: boolean;
-  /** For multiple-response sets, which value counts as "selected" */
-  countedValue?: number;
-
-  /** 
-   * Metadata for grid/matrix variable sets.
-   * Enables explicit row x column handling instead of monolithic processing.
-   */
-  gridMetadata?: {
-    /** The shared scale used by all items in the grid (rows) */
-    sharedScale: {
-      valueLabels: Record<number, string>;
-      type: VariableType;
-      orderedStyle?: OrderedStyle;
-      orderedScoring?: OrderedScoring;
-    };
-    /** Labels for the items being rated (columns) */
-    itemLabels: string[];
-    /** Maps variableId to its index in itemLabels */
-    itemMapping: Record<string, number>;
-  };
-}
-
-/**
- * Folder for organizing variable sets.
- * Flat structure (no nesting) per implementation decision.
- */
-export interface Folder {
-  id: string;
-  name: string;
-  /** Order for display (lower = higher) */
-  order: number;
 }
 
 // ============================================================================
@@ -251,11 +132,6 @@ export interface TableStats {
   chiSquare?: ChiSquareResult;
 }
 
-export interface TableConfig {
-  rowVars: string[];
-  colVar: string | null;
-}
-
 export type DragItem = {
   id: string;
   label: string;
@@ -288,6 +164,6 @@ export interface Respondent {
 
 // Old DataSet type - kept for mock data compatibility
 export interface DataSet {
-  variables: Variable[];
+  variables: import('./dataset').Variable[];
   data: Respondent[];
 }

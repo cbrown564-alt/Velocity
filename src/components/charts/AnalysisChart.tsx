@@ -21,7 +21,7 @@ import {
 } from './renderers';
 import { ProcessedAnalysisData, ChartDataPoint, ChartSeries } from '../../types/processedData';
 import { ChartSelector } from './ChartSelector';
-import { recommendChart } from '../../services/chartRecommender';
+import { recommendChart } from '../../core/visualization/chartRecommender';
 import { resolveMetricChartType } from '../../core/visualization/chartTypeResolver';
 import { transformChartData } from '../../services/chartDataTransformer';
 import { ChartLegend } from './shared/ChartLegend';

@@ -2,7 +2,7 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-const filePath = join(process.cwd(), 'src/services/queryBuilder.ts');
+const filePath = join(process.cwd(), 'src/core/sql/queryBuilder.ts');
 const content = readFileSync(filePath, 'utf8');
 
 const forbiddenPatterns = [

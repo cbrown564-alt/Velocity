@@ -9,7 +9,7 @@
 import React, { useMemo, useEffect, useState, useCallback } from 'react';
 import { Info } from 'lucide-react';
 import { useVelocityStore } from '../../store';
-import type { Variable } from '../../store/slices/dataSlice';
+import type { Variable } from '../../types/dataset';
 import type { VariableStatsResult } from '../../types/worker';
 import type { BarDatum, BinData } from '../../types/charts';
 import { allowsNumericStats, normalizeVariableType } from '../../types';

@@ -1,4 +1,4 @@
-import type { AnalysisSettings, Filter, TableConfig } from '../../store/slices/analysisSlice';
+import type { AnalysisSettings, Filter, TableConfig } from '../../types/analysis';
 import type {
   DataTransform,
   Dataset,
@@ -7,7 +7,7 @@ import type {
   ValueLabel,
   Variable,
   VariableSet,
-} from '../../store/slices/dataSlice';
+} from '../../types/dataset';
 import type { HarmonizationSession } from '../../types/harmonization';
 import type { LayoutMode, Slide, SlideCell, SlideSection } from '../../types/slides';
 import type { SessionWorkspaceSnapshot, VelocitySessionFile } from './sessionTypes';

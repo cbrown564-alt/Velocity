@@ -1,4 +1,4 @@
-import type { CrosstabQueryOptions } from '../../services/queryBuilder';
+import type { CrosstabQueryOptions } from '../sql/queryBuilder';
 import type { Dataset, Filter, Variable, VariableSet } from '../../types';
 import { allowsNumericStats } from '../../types';
 

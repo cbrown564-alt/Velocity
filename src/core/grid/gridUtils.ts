@@ -1,5 +1,5 @@
-import { Variable, VariableSet } from '../types';
-import { normalizeVariableType } from '../types';
+import { Variable, VariableSet } from '../../types';
+import { normalizeVariableType } from '../../types';
 
 export type GridTableConfigMode = 'full' | 'row-scale-col-items';
 

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { applyCanvasPlacement, applyGridSetDrop, generateSyntheticGridVariables, gridSetToTableConfig, placeVariableSet } from './gridUtils';
-import type { VariableSet } from '../types';
+import type { VariableSet } from '../../types';
 
 describe('gridSetToTableConfig', () => {
     it('maps full mode to scale rows and items column', () => {

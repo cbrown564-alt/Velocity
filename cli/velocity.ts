@@ -6,7 +6,7 @@ import { createInterface } from 'node:readline/promises';
 import { stdin as input, stdout as output } from 'node:process';
 import { exportPptx, exportXlsx } from '../src/core/export';
 import { VelocityEngine, VelocityError } from '../src/engine';
-import { processAnalysisData } from '../src/services/analysisProcessor';
+import { processAnalysisData } from '../src/core/analysis/analysisProcessor';
 
 const program = new Command();
 

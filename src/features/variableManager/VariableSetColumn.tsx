@@ -15,7 +15,7 @@ import { CSS } from '@dnd-kit/utilities';
 import { ChevronRight, EyeOff, CheckCircle, GitBranch } from 'lucide-react';
 import { List, useListRef, type RowComponentProps } from 'react-window';
 import { useVelocityStore } from '../../store';
-import type { VariableSet, Dataset } from '../../store/slices/dataSlice';
+import type { VariableSet, Dataset } from '../../types/dataset';
 import { isCategoricalType } from '../../types';
 import { Sparkline, MissingnessBadge } from './Sparkline';
 import { VariableTypeIcon } from '../../components/common/VariableTypeIcon';

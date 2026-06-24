@@ -175,33 +175,16 @@ export class MixedEffectsRunner
   };
 
   /**
-   * Generate R code and return placeholder result.
-   * Actual execution requires WebR.
+   * Mixed effects models require WebR orchestration (see `src/engine/webr/WebREngine`).
+   * Core exposes pure R-code generation via `generateRCode()` and `toWebRConfig()`.
    */
   async run(
-    adapter: DatabaseAdapter,
-    config: MixedEffectsConfig
+    _adapter: DatabaseAdapter,
+    _config: MixedEffectsConfig
   ): Promise<MixedEffectsResult> {
-    const rCode = this.generateRCode(config);
-
-    return {
-      fixedEffects: [],
-      randomEffects: [],
-      residualVariance: 0,
-      residualSD: 0,
-      modelFit: {
-        aic: 0,
-        bic: 0,
-        logLikelihood: 0,
-        deviance: 0,
-        degreesOfFreedom: 0,
-      },
-      nObservations: 0,
-      nGroups: {},
-      converged: true,
-      rCode,
-      durationMs: 0,
-    };
+    throw new Error(
+      'mixedEffects requires WebR execution via WebREngine; use generateRCode() in core and orchestrate in engine/store'
+    );
   }
 
   /**

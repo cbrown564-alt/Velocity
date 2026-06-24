@@ -8,7 +8,7 @@
 
 import { RecodeConfig, VariableSet, Variable, Filter, HistogramBin, AggregatedRow, ChiSquareResult, TableStats, MissingValueDef } from './index';
 import type { OrderedScoring, VariableType } from './index';
-import { CrosstabQueryOptions } from '../services/queryBuilder';
+import { CrosstabQueryOptions } from '../core/sql/queryBuilder';
 import { ProcessedAnalysisData } from './processedData';
 import { ChartType } from './charts';
 import type { VariableMapping } from './harmonization';

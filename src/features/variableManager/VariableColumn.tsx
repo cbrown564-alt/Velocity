@@ -9,7 +9,7 @@
 import React, { useMemo, useEffect, useCallback, useRef } from 'react';
 import { CheckCircle, ChevronRight } from 'lucide-react';
 import { useVelocityStore } from '../../store';
-import type { Variable, Dataset } from '../../store/slices/dataSlice';
+import type { Variable, Dataset } from '../../types/dataset';
 import { isCategoricalType } from '../../types';
 import { Sparkline, MissingnessBadge } from './Sparkline';
 import { VariableTypeIcon } from '../../components/common/VariableTypeIcon';

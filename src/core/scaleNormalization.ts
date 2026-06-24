@@ -9,7 +9,7 @@
  */
 
 import { Variable } from '../types';
-import { inferVariableTyping } from '../services/dataHeuristics';
+import { inferVariableTyping } from './ingestion/dataHeuristics';
 
 export interface ColumnLookup {
   findColumnIndex(variableName: string): number;

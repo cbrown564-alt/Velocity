@@ -7,7 +7,7 @@ import { useTableDragMerge, TableDragItem } from '../../../hooks/useTableDragMer
 import { useMergeOrchestration } from '../../../hooks/useMergeOrchestration';
 import { InputModal } from '../../../components/overlays/InputModal';
 import { ChartContextMenu } from '../../../components/overlays/ChartContextMenu';
-import { RowPathEntry, TableRowNode } from '../../../services/treeBuilder';
+import { RowPathEntry, TableRowNode } from '../../../core/analysis/treeBuilder';
 import { Tooltip } from '../../../components/common/Tooltip';
 import { StatisticsTooltip } from '../../../components/common/StatisticsTooltip';
 import { StatisticsStatusBar } from '../../../components/common/StatisticsStatusBar';

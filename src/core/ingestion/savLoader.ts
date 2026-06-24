@@ -11,8 +11,8 @@
 import { Variable, VariableSet, VariableType } from '../../types';
 import { isDateFormat, inferPositiveValue, detectImplicitScale, detectSequentialPattern, detectNumericGrids, VariableWithIndex } from '../gridDetection';
 import { fillEndpointLabelGaps } from '../scaleNormalization';
-import { inferVariableTyping } from '../../services/dataHeuristics';
-import { generateSyntheticGridVariables } from '../../services/gridUtils';
+import { inferVariableTyping } from './dataHeuristics';
+import { generateSyntheticGridVariables } from '../grid/gridUtils';
 
 // ============================================================================
 // Input types (parser-agnostic)

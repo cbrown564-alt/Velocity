@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { buildWorkspaceDatasetOpenPatch } from './workspaceDatasetLifecycle';
-import type { WorkspaceDatasetOpenInput } from './slices/dataSlice';
+import type { WorkspaceDatasetOpenInput } from './slices/data/types';
 
 describe('buildWorkspaceDatasetOpenPatch', () => {
   it('normalizes variables and preserves session state', () => {

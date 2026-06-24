@@ -7,7 +7,7 @@
 
 import { EngineProxy, type EngineProxyOptions } from '../services/EngineProxy';
 import type { EngineResponseByType } from '../types/engineWorker';
-import type { PersistenceState } from './slices/dataSlice';
+import type { PersistenceState } from './slices/data/types';
 
 type LoadProgressMessage = EngineResponseByType<'engine.loadProgress'>;
 type LoadProgressCallback = (msg: LoadProgressMessage) => void;

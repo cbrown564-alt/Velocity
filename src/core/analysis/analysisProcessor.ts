@@ -1,5 +1,5 @@
-import { AggregatedRow, Variable } from '../types';
-import { ProcessedAnalysisData, ProcessedColumn, ChartSeries, ProcessedRow } from '../types/processedData';
+import { AggregatedRow, Variable } from '../../types';
+import { ProcessedAnalysisData, ProcessedColumn, ChartSeries, ProcessedRow } from '../../types/processedData';
 import { buildTree } from './treeBuilder';
 
 interface ProcessAnalysisOptions {

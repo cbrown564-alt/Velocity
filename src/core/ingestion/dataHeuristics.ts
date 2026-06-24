@@ -1,5 +1,5 @@
 
-import type { OrderedScoring, OrderedStyle } from '../types';
+import type { OrderedScoring, OrderedStyle } from '../../types';
 
 // Common ordinal scale keywords for detecting Likert-type scales.
 const ORDINAL_PATTERNS = {

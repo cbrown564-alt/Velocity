@@ -5,7 +5,7 @@
 
 import { hasRespondentIdentifierName } from '../../../core/semantic/identifierPatterns';
 import { isExcludedFromAutoAnalysis } from '../../../core/semantic/respondentIdentifier';
-import { gridSetToTableConfig } from '../../../services/gridUtils';
+import { gridSetToTableConfig } from '../../../core/grid/gridUtils';
 import type { Variable, VariableSet } from '../../../types';
 
 export type AutoCrosstabPair = {

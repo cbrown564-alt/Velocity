@@ -17,7 +17,7 @@ import { buildExportConfig } from '../../core/export/buildExportConfig';
 import { resolveExportBranding } from '../../core/export/resolveThemeColors';
 import { filterSyntheticGridShellSets } from '../variableManager/variableSetFilters';
 import { allowsNumericStats } from '../../types';
-import { applyCanvasPlacement, placeVariableSet } from '../../services/gridUtils';
+import { applyCanvasPlacement, placeVariableSet } from '../../core/grid/gridUtils';
 
 import { VirtualizedVariableList } from './components/VirtualizedVariableList';
 import { DropZone } from '../../components/common/DropZone';

@@ -12,7 +12,7 @@ import { pathToFileURL } from 'node:url';
 import { DuckDBNodeAdapter } from '../../adapters/DuckDBNodeAdapter';
 import { processMetadata, ParsedSavMetadata } from './savLoader';
 import { Variable, VariableSet } from '../../types';
-import { escapeString } from '../../services/queryBuilder';
+import { escapeIdentifier, escapeString } from '../sql/queryBuilder';
 
 export interface SavLoadResult {
     variables: Variable[];
@@ -66,10 +66,6 @@ const READSTAT_JS_URL = pathToFileURL(path.join(READSTAT_DIST_DIR, 'readstat.js'
 const READSTAT_WASM_PATH = path.join(READSTAT_DIST_DIR, 'readstat.wasm');
 
 let readStatModulePromise: Promise<ReadStatModule> | null = null;
-
-function escapeIdentifier(identifier: string): string {
-    return identifier.replace(/"/g, '""');
-}
 
 function toUint8Array(buffer: Buffer): Uint8Array {
     return new Uint8Array(buffer.buffer, buffer.byteOffset, buffer.byteLength);
@@ -335,8 +331,7 @@ async function loadDataViaAppenderFromReadStat(
             .join(', ');
         await adapter.execute(`CREATE OR REPLACE TABLE "${escapeIdentifier(tableName)}" (${colDefs})`);
 
-        const conn = (adapter as any).connection;
-        const appender = await conn.createAppender(tableName);
+        const appender = await adapter.createAppender(tableName);
 
         try {
             for (let rowIndex = 0; rowIndex < parsedRowCount; rowIndex++) {

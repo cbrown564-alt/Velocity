@@ -10,7 +10,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useReducedMotion } from '../../lib/motion';
 import { FolderPlus, Eye, EyeOff, Tag, BarChart2, Layers, X } from 'lucide-react';
 import { useVelocityStore } from '../../store';
-import type { VariableType } from '../../store/slices/dataSlice';
+import type { VariableType } from '../../types';
 import { InputModal } from '../../components/overlays/InputModal';
 
 interface BulkActionBarProps {

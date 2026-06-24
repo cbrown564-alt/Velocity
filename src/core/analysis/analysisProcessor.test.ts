@@ -1,6 +1,6 @@
 
 import { processAnalysisData } from './analysisProcessor';
-import { AggregatedRow, Variable } from '../types';
+import { AggregatedRow, Variable } from '../../types';
 
 describe('analysisProcessor', () => {
     const mockRowVariable: Variable = {

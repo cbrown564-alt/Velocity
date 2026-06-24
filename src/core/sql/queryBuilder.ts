@@ -5,7 +5,7 @@
  * Extracted from store for testability - no side effects.
  */
 
-import type { Filter } from '../types';
+import type { Filter } from '../../types';
 
 // ============================================================================
 // Crosstab / Frequency Queries

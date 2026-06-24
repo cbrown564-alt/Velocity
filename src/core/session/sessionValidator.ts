@@ -1,6 +1,6 @@
 import { SESSION_FORMAT_VERSION, SESSION_FORMAT_VERSION_V1 } from './sessionTypes';
 import type { SessionDatasetDescriptor, VelocitySessionFile } from './sessionTypes';
-import type { Variable } from '../../store/slices/dataSlice';
+import type { Variable } from '../../types/dataset';
 
 type LooseRecord = Record<string, unknown>;
 

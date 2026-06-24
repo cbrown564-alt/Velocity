@@ -1,5 +1,5 @@
-import type { AnalysisSettings, Filter, TableConfig } from '../../store/slices/analysisSlice';
-import type { DataTransform, Dataset, Folder, Variable, VariableSet } from '../../store/slices/dataSlice';
+import type { AnalysisSettings, Filter, TableConfig } from '../../types/analysis';
+import type { DataTransform, Dataset, Folder, Variable, VariableSet } from '../../types/dataset';
 import type { HarmonizationSession } from '../../types/harmonization';
 import type { SemanticSessionBlock } from '../../types/semantic';
 import type { Slide, SlideSection } from '../../types/slides';

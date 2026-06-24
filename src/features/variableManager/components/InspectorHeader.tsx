@@ -1,6 +1,6 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { Edit2 } from 'lucide-react';
-import type { Variable } from '../../../store/slices/dataSlice';
+import type { Variable } from '../../../types/dataset';
 import type { VariableStatsResult } from '../../../types/worker';
 import { useVelocityStore } from '../../../store';
 import { VariableTypeIcon } from '../../../components/common/VariableTypeIcon';

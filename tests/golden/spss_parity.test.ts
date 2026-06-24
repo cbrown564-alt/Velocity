@@ -16,7 +16,7 @@ import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { resolve } from 'path';
 import { DuckDBNodeAdapter } from '../../src/adapters/DuckDBNodeAdapter';
 import { runCrosstab } from '../../src/core/analysis/crosstabRunner';
-import { calculateTScore, calculateESS, calculatePValue } from '../../src/services/statistics';
+import { calculateTScore, calculateESS, calculatePValue } from '../../src/core/stats/statistics';
 
 const FIXTURES = resolve(__dirname, 'fixtures');
 

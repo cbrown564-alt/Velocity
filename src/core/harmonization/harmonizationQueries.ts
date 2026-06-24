@@ -6,7 +6,7 @@
  */
 
 import type { VariableMapping, ValueMapping } from '../../types/harmonization';
-import { escapeString } from '../../services/queryBuilder';
+import { escapeString } from '../sql/queryBuilder';
 
 // ============================================================================
 // Value Frequency Query

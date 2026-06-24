@@ -89,7 +89,7 @@ describe('savIngestion loadSav', () => {
     const adapter = {
       execute,
       query: vi.fn(),
-      connection: { createAppender },
+      createAppender,
     } as any;
 
     const result = await loadSav(adapter, tempSavPath, 'main');

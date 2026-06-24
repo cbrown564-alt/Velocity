@@ -1,7 +1,6 @@
-import { AggregatedRow, Variable } from '../types';
-import { isCategoricalType, isOrderedType, normalizeVariableType } from '../types';
-import type { VariableStatsResult } from '../types/worker';
-import { ProcessedRow, ProcessedCell } from '../types/processedData';
+import { AggregatedRow, Variable } from '../../types';
+import { isCategoricalType, isOrderedType, normalizeVariableType } from '../../types';
+import { ProcessedRow, ProcessedCell } from '../../types/processedData';
 
 export type RowPathEntry = { variable: string; value: string };
 export type TableRowNode = ProcessedRow;

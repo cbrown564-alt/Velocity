@@ -7,9 +7,9 @@
  * Fail-soft per slide: errors are recorded but do not abort the build.
  */
 
-import { processAnalysisData } from '../services/analysisProcessor';
+import { processAnalysisData } from '../core/analysis/analysisProcessor';
 import { resolveSlideTitle, resolveSlideSubtitle } from '../core/export/resolveSlideDefaults';
-import { recommendChart } from '../services/chartRecommender';
+import { recommendChart } from '../core/visualization/chartRecommender';
 import { mapCrosstabRows } from '../core/analysis/mapCrosstabRows';
 import { exportPptx, exportXlsx } from '../core/export';
 import type { AnalysisExportItem, ExportConfig } from '../core/export/types';

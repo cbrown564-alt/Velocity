@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { Dataset, Variable } from '../../store/slices/dataSlice';
+import type { Dataset, Variable } from '../../types/dataset';
 import type { VelocitySessionFile } from './sessionTypes';
 import { importSession } from './sessionImporter';
 

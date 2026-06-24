@@ -15,12 +15,12 @@ import type {
   Variable,
   VariableSet,
   WorkspaceDatasetOpenInput,
-} from './slices/dataSlice';
+} from './slices/data/types';
 import {
   buildVariableSetsFromVariables,
   normalizeVariable,
   normalizeVariableSet,
-} from './slices/dataSlice';
+} from './slices/data/variableNormalization';
 
 export type RunAnalysisFn = () => Promise<void>;
 

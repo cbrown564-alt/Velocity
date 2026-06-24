@@ -9,11 +9,11 @@ import { AnalysisChartConfig } from '../../../types/charts';
 import { Variable } from '../../../types';
 
 import { computeAnalysisSampleSize } from '../../../core/analysis/computeAnalysisSampleSize';
-import { recommendChart } from '../../../services/chartRecommender';
+import { recommendChart } from '../../../core/visualization/chartRecommender';
 import { useResolvedVariables } from '../hooks/useResolvedVariables';
 import { useSuggestedVariables } from '../hooks/useSuggestedVariables';
 import { useAutoFirstCrosstab } from '../hooks/useAutoFirstCrosstab';
-import { applyCanvasPlacement } from '../../../services/gridUtils';
+import { applyCanvasPlacement } from '../../../core/grid/gridUtils';
 import { getMotionProps, useReducedMotion, DURATIONS } from '../../../lib/motion';
 import { AnalysisOutputFrame } from './AnalysisOutputFrame';
 

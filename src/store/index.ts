@@ -97,7 +97,8 @@ export type {
 export type {
     TableConfig,
     Filter,
-} from './slices/analysisSlice';
+    AnalysisSettings,
+} from '../types/analysis';
 
 export type { AggregatedRow } from '../types';
 

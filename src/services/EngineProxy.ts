@@ -23,7 +23,7 @@ import type { ResultEnvelope } from '../engine/types';
 import { isEngineMessage } from '../types/engineWorker';
 import type { Variable, VariableSet, AggregatedRow, TableStats, RecodeConfig, MissingValueDef } from '../types';
 import type { OrderedScoring, VariableType } from '../types';
-import type { CrosstabQueryOptions } from './queryBuilder';
+import type { CrosstabQueryOptions } from '../core/sql/queryBuilder';
 import type { ProcessedAnalysisData } from '../types/processedData';
 import type { ChartType } from '../types/charts';
 import type { WorkerAnalysisSettings, WorkerAnalysisContext } from '../types/worker';

@@ -11,7 +11,7 @@
 
 import type { RecodeConfig, Variable, VariableSet, Filter, AggregatedRow, TableStats, MissingValueDef } from './index';
 import type { OrderedScoring, VariableType } from './index';
-import type { CrosstabQueryOptions } from '../services/queryBuilder';
+import type { CrosstabQueryOptions } from '../core/sql/queryBuilder';
 import type { ProcessedAnalysisData } from './processedData';
 import type { ChartType } from './charts';
 import type { VariableMapping } from './harmonization';

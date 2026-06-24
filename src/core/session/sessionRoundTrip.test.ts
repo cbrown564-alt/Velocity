@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import type { AnalysisSettings, Filter, TableConfig } from '../../store/slices/analysisSlice';
-import type { DataTransform, Dataset, Folder, VariableSet } from '../../store/slices/dataSlice';
+import type { AnalysisSettings, Filter, TableConfig } from '../../types/analysis';
+import type { DataTransform, Dataset, Folder, VariableSet } from '../../types/dataset';
 import type { Slide, SlideSection } from '../../types/slides';
 import { exportSession } from './sessionExporter';
 import { importSession } from './sessionImporter';

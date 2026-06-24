@@ -18,7 +18,7 @@ import {
   buildFilterClause,
   escapeIdentifier,
   escapeString,
-} from '../../services/queryBuilder';
+} from '../sql/queryBuilder';
 import {
   calculateTScore,
   calculateESS,
@@ -32,7 +32,7 @@ import {
   bonferroniAdjustedPValues,
   benjaminiHochbergAdjustedPValues,
   calculateDependentProportionsTest,
-} from '../../services/statistics';
+} from '../stats/statistics';
 import { AnalysisRunner } from './AnalysisRunner';
 import { analysisRegistry } from './registry';
 

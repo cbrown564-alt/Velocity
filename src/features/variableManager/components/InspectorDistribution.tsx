@@ -1,5 +1,5 @@
 import React, { useMemo, useRef } from 'react';
-import type { Variable } from '../../../store/slices/dataSlice';
+import type { Variable } from '../../../types/dataset';
 import type { VariableStatsResult } from '../../../types/worker';
 import { isOrderedType, normalizeVariableType } from '../../../types';
 import { HorizontalBarRenderer, HistogramRenderer, VerticalBarRenderer } from '../../../components/charts/renderers';

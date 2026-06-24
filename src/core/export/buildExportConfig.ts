@@ -1,4 +1,4 @@
-import { processAnalysisData } from '../../services/analysisProcessor';
+import { processAnalysisData } from '../analysis/analysisProcessor';
 import type { AggregatedRow, Variable } from '../../types';
 import type { ExportBranding, ExportConfig } from './types';
 import type { ChartType } from '../../types/charts';

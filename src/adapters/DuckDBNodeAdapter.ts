@@ -8,7 +8,7 @@
 import { DuckDBInstance, DuckDBConnection } from '@duckdb/node-api';
 import { DatabaseAdapter, QueryResult, StreamOptions } from '../core/DatabaseAdapter';
 import { Variable, VariableSet } from '../types';
-import { escapeString } from '../services/queryBuilder';
+import { escapeString } from '../core/sql/queryBuilder';
 
 type LegacyDuckDBChunk = {
   value: (columnIndex: number, rowIndex: number) => unknown;
@@ -77,6 +77,10 @@ export class DuckDBNodeAdapter implements DatabaseAdapter {
 
   async execute(sql: string): Promise<void> {
     await this.connection.run(sql);
+  }
+
+  async createAppender(tableName: string) {
+    return this.connection.createAppender(tableName);
   }
 
   async insertArrowBuffer(tableName: string, buffer: Uint8Array): Promise<void> {

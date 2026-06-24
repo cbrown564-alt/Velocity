@@ -1,5 +1,5 @@
 import type { AggregatedRow, Dataset, Filter, TableStats, VariableSet } from '../../types';
-import type { EngineProxy } from '../../services/EngineProxy';
+import type { CrosstabEnginePort } from './crosstabEnginePort';
 import { buildCrosstabRequest } from '../analysis/buildCrosstabRequest';
 import { mapCrosstabRows } from '../analysis/mapCrosstabRows';
 
@@ -10,7 +10,7 @@ interface AnalysisSignificanceSettings {
 }
 
 interface RunCrosstabParams {
-  engineProxy: EngineProxy;
+  engineProxy: CrosstabEnginePort;
   dataset: Dataset;
   variableSets: VariableSet[];
   rowVars: string[];

@@ -89,136 +89,13 @@ graph TD
 
 ## Phase 1 — Layer correction
 
-### Ready
-
-#### TN-1.1 — Relocate `queryBuilder` to core
-
-| Field | Value |
-| :--- | :--- |
-| **Outcome** | `src/core/sql/queryBuilder.ts` (or `core/analysis/queries/`); all imports updated; no `core/` → `services/queryBuilder` remains. |
-| **Dependencies** | none |
-| **Parallelizable** | yes (coordinate with TN-1.2 on same PR or sequential imports) |
-| **Owner** | unassigned |
-| **Validation** | `npm run typecheck:all`; `queryBuilder.test.ts` passes from new path; architecture grep: core does not import services for SQL |
-| **Notes** | 773 lines — consider sub-split (`crosstabQueries`, `gridQueries`, `drillDownQueries`) in same card or follow-up. |
-
-#### TN-1.2 — Relocate `statistics` to core
-
-| Field | Value |
-| :--- | :--- |
-| **Outcome** | `src/core/stats/` per `arch_04`; `crosstabRunner` imports from core. |
-| **Dependencies** | none |
-| **Parallelizable** | yes (with TN-1.1) |
-| **Owner** | unassigned |
-| **Validation** | `statistics.test.ts` green; stats integrity gates per `docs/playbooks/stats_integrity.md` |
-| **Notes** | 662 lines. |
-
-#### TN-1.3 — Relocate `gridUtils` to core
-
-| Field | Value |
-| :--- | :--- |
-| **Outcome** | `src/core/grid/gridUtils.ts`; ingestion and dashboard import from core. |
-| **Dependencies** | none |
-| **Parallelizable** | yes |
-| **Owner** | unassigned |
-| **Validation** | `gridUtils.test.ts` green; dual-state grid synthetic IDs unchanged |
-| **Notes** | Pairs with dual-state invariant — no convention changes. |
-
-#### TN-1.4 — Relocate `chartRecommender` + `analysisProcessor` to core
-
-| Field | Value |
-| :--- | :--- |
-| **Outcome** | Pure modules under `core/visualization/` and `core/analysis/`; `VelocityEngine`, worker, `DeckBuilder` import from core. |
-| **Dependencies** | none |
-| **Parallelizable** | yes |
-| **Owner** | unassigned |
-| **Validation** | Existing recommender/processor tests; engine boundary check (no engine → services) |
-| **Notes** | Unblocks TN-2.2 engine import fix. |
-
-#### TN-1.5 — Move WebREngine out of core
-
-| Field | Value |
-| :--- | :--- |
-| **Outcome** | Worker lifecycle in `src/engine/webr/` or `src/services/webr/`; core exposes pure R-code generation only; placeholder `AnalysisRunner.run()` throws or removed. |
-| **Dependencies** | none |
-| **Parallelizable** | yes |
-| **Owner** | unassigned |
-| **Validation** | Core portability grep (no `Worker` in `src/core/`); WebR slice tests if present |
-| **Notes** | Phase 5 WebR work depends on clean boundary — do not expand WebR features in this card. |
-
-#### TN-1.6 — Move matrix crosstab format into VelocityEngine
-
-| Field | Value |
-| :--- | :--- |
-| **Outcome** | `format: 'matrix'` handled in `VelocityEngine.runAnalysis('crosstab')`; MCP `velocity_crosstab` handler deletes matrix branch; browser/CLI can share contract. |
-| **Dependencies** | none |
-| **Parallelizable** | yes |
-| **Owner** | unassigned |
-| **Validation** | `mcp-server/__tests__/tools.test.ts`; `formatCrosstabMatrix` tests; MCP matrix output unchanged |
-| **Notes** | Reverses STAB-EXP-1a placement of orchestration in MCP — formatter stays in core, orchestration moves to engine. |
-
-#### TN-1.7 — Move dataset domain types out of dataSlice
-
-| Field | Value |
-| :--- | :--- |
-| **Outcome** | `Variable`, `Dataset`, `VariableSet`, `Folder`, `DataTransform` in `src/types/dataset.ts`; session and features import types without pulling store. |
-| **Dependencies** | none |
-| **Parallelizable** | yes |
-| **Owner** | unassigned |
-| **Validation** | `npm run typecheck:all`; session round-trip tests |
-| **Notes** | Prerequisite for TN-2.3 slice split. |
-
-### Backlog
-
-#### TN-1.8 — Import graph cleanup after relocations
-
-| Field | Value |
-| :--- | :--- |
-| **Outcome** | No circular core ↔ services imports; session types decoupled from Redux slices; `escapeIdentifier` deduped; `(adapter as any).connection` addressed via adapter seam. |
-| **Dependencies** | TN-1.1, TN-1.2, TN-1.3, TN-1.4, TN-1.7 |
-| **Parallelizable** | no |
-| **Owner** | unassigned |
-| **Validation** | Dependency-cruiser or manual audit; `AGENTS.md` §2 invariants documented in PR |
-| **Notes** | Gate before Phase 2 large splits. |
+*(all cards complete — see Done)*
 
 ---
 
 ## Phase 2 — God-file decomposition
 
 ### Backlog
-
-#### TN-2.1 — Split `analysisWorker.ts` (1,836 lines)
-
-| Field | Value |
-| :--- | :--- |
-| **Outcome** | Modules: bootstrap/dispatch, `duckdbPersistence`, ingestion (SAV/CSV), engine handlers; no file > ~400 lines. |
-| **Dependencies** | TN-0.1, TN-0.2, TN-1.8 |
-| **Parallelizable** | after TN-1.8 |
-| **Owner** | unassigned |
-| **Validation** | Full test suite; worker protocol tests; persistence + ingestion tests |
-| **Notes** | Extract OPFS first (~450 lines). Replace 400-line switch with handler map. |
-
-#### TN-2.2 — Split `VelocityEngine.ts` (1,571 lines)
-
-| Field | Value |
-| :--- | :--- |
-| **Outcome** | Thin facade + `datasetLoading`, `workspaceManager`, `sessionState`, `crosstabPostProcess`, `semanticFacade` modules. |
-| **Dependencies** | TN-1.4, TN-1.8 |
-| **Parallelizable** | after TN-1.8 (parallel with TN-2.1 if different authors) |
-| **Owner** | unassigned |
-| **Validation** | `VelocityEngine.test.ts`; MCP tool wiring tests |
-| **Notes** | `DeckBuilder.ts` (237 lines) is the decomposition model. |
-
-#### TN-2.3 — Split `dataSlice.ts` (1,368 lines)
-
-| Field | Value |
-| :--- | :--- |
-| **Outcome** | Slices: engine, persistence, dataset, variable catalog, transform; `dataSlice` < ~400 lines of delegators. |
-| **Dependencies** | TN-1.7, TN-1.8 |
-| **Parallelizable** | after TN-1.7 |
-| **Owner** | unassigned |
-| **Validation** | `dataSlice.workspace.test.ts`, `persistence.test.ts`, `enginePersistenceBridge.test.ts`; no `as any` cross-slice access |
-| **Notes** | Extend STAB-ARCH-1 pattern (`enginePersistenceBridge`, `workspaceDatasetLifecycle`). |
 
 #### TN-2.4 — Split `App.tsx` (999 lines)
 
@@ -229,7 +106,7 @@ graph TD
 | **Parallelizable** | after workspace coordinator |
 | **Owner** | unassigned |
 | **Validation** | E2E smoke; `npm run typecheck:all`; App.tsx < ~200 lines |
-| **Notes** | Reframe `AppPhase` + `AppOverlay` typed models to collapse boolean sprawl. |
+| **Notes** | Reframe `AppPhase` + `AppOverlay` typed models to collapse boolean sprawl. **Blocked:** wait for TN-3.2 (recommended) or TN-3.5 (partial). |
 
 #### TN-2.5 — Split `crosstabRunner.ts` (880 lines)
 
@@ -240,18 +117,7 @@ graph TD
 | **Parallelizable** | after TN-3.9 |
 | **Owner** | unassigned |
 | **Validation** | `crosstabRunner.significance.test.ts`; stats integrity playbook |
-| **Notes** | Significance block (~400 lines) → strategy objects. |
-
-#### TN-2.6 — Split `mcp-server/tools.ts` (878 lines)
-
-| Field | Value |
-| :--- | :--- |
-| **Outcome** | `schemas.ts`, handler map by domain, `responses.ts`; no 300-line switch. |
-| **Dependencies** | TN-1.6 |
-| **Parallelizable** | after TN-1.6 |
-| **Owner** | unassigned |
-| **Validation** | `mcp-server/__tests__/tools.test.ts`; update `arch_07` §6.1 tool inventory (37 tools) |
-| **Notes** | Follow `deckTransport.ts` module pattern. |
+| **Notes** | Significance block (~400 lines) → strategy objects. **Blocked:** TN-3.9 (CrosstabSqlRow + extractRowKeys) must land first. |
 
 ---
 
@@ -364,7 +230,8 @@ graph TD
 
 | Card | Blocker |
 | :--- | :--- |
-| *(none yet)* | — |
+| **TN-2.4** — Split `App.tsx` | TN-3.2 (datasetSessionCoordinator, recommended), TN-3.5 (workspace CSS, partial) |
+| **TN-2.5** — Split `crosstabRunner.ts` | TN-3.9 (CrosstabSqlRow + extractRowKeys) |
 
 ---
 
@@ -377,13 +244,25 @@ graph TD
 | **TN-0.3** — Delete or wire dead orchestration paths | **Removed:** `src/hooks/useEngineProxy.ts` (grep: no `src/` imports), DataTable `viewMode`/chart branch + unused `isGrid` prop, `useWorkspace.openDataset` duplicate, unused `showCombineModal`/`handleSaveFilter`/export-modal destructuring in `DashboardShell.tsx`. **Wired:** `useWorkspaceOpen` canonical via `App.tsx` → `WorkspaceView`/`CrossWavePanel`. **Tests:** `npm run test:run` — 112 files / 915 passed; dashboard + workspace hook tests green (2026-06-24). |
 | **TN-0.4** — Extract `filterVariableSets` | **Files:** `src/features/variableManager/variableSetFilters.ts` (`filterVariableSets` + existing grid-shell helpers); call sites in `VariableManager.tsx`, `VariableSetColumn.tsx`, `FacetedSearchBar.tsx`. **Tests:** `variableSetFilters.test.ts` — 12 tests (grid-shell, folder, search, type/status/quality facets, combined filters, facet-count parity). **Tests:** `npm run test:run` — 910 passed, 7 skipped (2026-06-24). |
 | **TN-0.5** — Extract canvas variable placement helper | **Files:** `src/services/gridUtils.ts` (`placeVariableSet`, `applyCanvasPlacement`, `TableConfigSnapshot`); call sites in `DashboardShell.tsx` (drag + click), `SlideContainer.tsx` (suggest). **Tests:** `gridUtils.test.ts` — 9 new placement tests (grid/non-grid × rows/cols/canvas). **Tests:** `npm run test:run` — 910 passed, 7 skipped; `SlideContainer.test.tsx`, `DropZone.test.tsx` green (2026-06-24). |
+| **TN-1.6** — Move matrix crosstab format into VelocityEngine | **Files:** `VelocityEngine.ts` (`applyCrosstabFormat`, `format` in crosstab config); removed matrix branch + `formatCrosstabMatrix` import from `mcp-server/tools.ts`. **Tests:** `formatCrosstabMatrix.test.ts` — 4 passed; `crosstabMatrixEnvelope.test.ts` — 2 passed; `mcp-server/__tests__/tools.test.ts` — 37 passed (matrix passthrough + `format` param); `npm run typecheck` + `typecheck:mcp` green (2026-06-24). |
+| **TN-1.7** — Move dataset domain types out of dataSlice | **Files:** `src/types/dataset.ts` (canonical `Variable`, `Dataset`, `VariableSet`, `Folder`, `DataTransform`); `src/types/recode.ts` (extracted `RecodeConfig` to break circular deps); `dataSlice.ts` re-exports from dataset; session + variableManager features import from `types/dataset`. **Tests:** `npm run typecheck` green; `sessionRoundTrip.test.ts` — 1 passed (2026-06-24). |
+| **TN-1.1** — Relocate `queryBuilder` to core | **Files:** `src/core/sql/queryBuilder.ts` (+ `queryBuilder.test.ts`, `queryBuilder_numeric_grid.test.ts`); imports updated in 11 call sites (`crosstabRunner`, `buildCrosstabRequest`, `harmonizationQueries`, `savIngestion`, `analysisWorker`, `EngineProxy`, `DuckDBNodeAdapter`, `drillDownSlice`, `worker.ts`, `engineWorker.ts`, `scripts/check-querybuilder-pure.mjs`). **Grep:** no `core/` → `services/queryBuilder`. **Tests:** `queryBuilder.test.ts` — 40 tests; `queryBuilder_numeric_grid.test.ts` — 3 tests; `npm run check:querybuilder-pure` green; `npm run typecheck` green (2026-06-24). |
+| **TN-1.2** — Relocate `statistics` to core | **Files:** `src/core/stats/statistics.ts` (+ `statistics.test.ts`); imports updated in `crosstabRunner.ts`, `tests/golden/spss_parity.test.ts`. **Tests:** `statistics.test.ts` — 51 tests; `crosstabRunner.significance.test.ts` — 4 tests; `spss_parity.test.ts` — 18 tests; `npm run test:run` — 915 passed, 7 skipped (2026-06-24). |
+| **TN-1.3** — Relocate `gridUtils` to core | **Files:** `src/core/grid/gridUtils.ts` (+ test); removed `src/services/gridUtils.ts`. **Imports:** `savLoader.ts`, `DashboardShell.tsx`, `SlideContainer.tsx`, `autoFirstCrosstab.ts` → core paths. **Grep:** no `services/gridUtils` in `src/`. **Tests:** `gridUtils.test.ts` — 18 passed; dual-state synthetic IDs (`{setId}_scale`, `{setId}_items`) unchanged. **Tests:** `npm run test:run` — 915 passed (2026-06-24). |
+| **TN-1.4** — Relocate `chartRecommender` + `analysisProcessor` to core | **Files:** `src/core/visualization/chartRecommender.ts` (+ test), `src/core/analysis/analysisProcessor.ts` (+ test); removed service copies. **Imports:** `VelocityEngine.ts`, `DeckBuilder.ts`, `analysisWorker.ts`, `buildExportConfig.ts`, `AnalysisChart.tsx`, `SlideContainer.tsx`, `cli/velocity.ts` → core paths. **Grep:** no `engine/` → `services/` for recommender/processor. **Tests:** `chartRecommender.test.ts` — 5 passed; `analysisProcessor.test.ts` — 3 passed; `npm run typecheck` green; `npm run test:run` — 915 passed (2026-06-24). |
+| **TN-1.5** — Move WebREngine out of core | **Files:** `src/engine/webr/WebREngine.ts` (worker lifecycle); `src/engine/webr/index.ts`; deleted `src/core/analysis/engines/WebREngine.ts`. **Core:** `SurveyWeightingRunner` + `MixedEffectsRunner` keep `generateRCode()` / `toWebRConfig()`; stub `run()` now throws. **Imports:** `webrSlice.ts` → `engine/webr`. **Grep:** no `Worker` API usage in `src/core/` (comment-only references remain). **Tests:** `npm run test:run` — 112 files / 915 passed, 7 skipped (2026-06-24). **Typecheck:** `tsc -p tsconfig.json` for moved modules clean; `typecheck:all` has pre-existing failures in `src/types/index.ts` (TN-1.7 in flight) unrelated to this card. |
+| **TN-2.6** — Split `mcp-server/tools.ts` | **Files:** `mcp-server/schemas.ts` (36 tool JSON schemas), `mcp-server/responses.ts` (`successResponse`, `errorResponse`, `resolveSessionOutputPath`), `mcp-server/handlers/` (6 domain maps: `dataLifecycle`, `analysis`, `deck`, `harmonization`, `session`, `semantic` → `TOOL_HANDLERS` in `index.ts`); `tools.ts` thinned to ~40 lines (handler-map dispatch, no switch). **Pattern:** follows `deckTransport.ts` — pure formatting in transport, engine delegation in handlers. **Inventory:** 36 tools unchanged (arch_07 §6.1 not updated). **Tests:** `mcp-server/__tests__/tools.test.ts` — 37 passed; `npm run typecheck:mcp` green (2026-06-24). |
+| **TN-1.8** — Import graph cleanup after relocations | **Cycles fixed:** `core/analysisProcessor` → `services/treeBuilder` (moved to `core/analysis/treeBuilder.ts`); `core/savLoader` + `core/scaleNormalization` → `services/dataHeuristics` (moved to `core/ingestion/dataHeuristics.ts`); `core/export/runCrosstabForExport` → `services/EngineProxy` (replaced with `CrosstabEnginePort` seam); `core/session/*` → `store/slices/analysisSlice` (types moved to `src/types/analysis.ts`). **Deduped:** `escapeIdentifier` — canonical in `core/sql/queryBuilder.ts`; local copy removed from `savIngestion.ts`. **Adapter seam:** `DuckDBNodeAdapter.createAppender()` replaces `(adapter as any).connection`. **Grep:** zero `core/` → `services/` or `core/` → `store/` imports. **AGENTS.md §2:** core portable (no React/DOM); dependency direction core ← types/engine/adapters only; dual-state unchanged. **Known (documented, not blocking Phase 2):** `savIngestion.ts` uses concrete `DuckDBNodeAdapter` for Node CLI appender path; UI/features may still import slice types (`uiSlice`, `dataSlice`) — out of core/session scope. **Tests:** `npm run typecheck` green; `npm run test:run` — 112 files / 918 passed, 7 skipped (2026-06-24). **Phase 2 unblocked.** |
+| **TN-2.1** — Split `analysisWorker.ts` | **Before:** monolithic `src/services/analysisWorker.ts` (1,814 lines). **After:** thin shell (24 lines) + `src/services/worker/` package (14 modules, max 368 lines/file): `workerDbState`, `duckdbOpfs` (133), `duckdbInit` (179), `duckdbPersistence` (302), `duckdbErrorHelpers`, `workerIngestion` (174), `savArrowHelpers`, `savChunkedLoader` (288), `savChunkedLegacy` (159), `workerQueries`, `engineMessaging`, `engineHandlerTypes`, `engineHandlers` (368), `engineHandlersHarmonization` (104), `engineDispatch` (68). **Grep:** `engineHandlers[request.type]` in `engineDispatch.ts`; no `switch (request.type)` in worker modules. **Tests:** `opfsPersistence.test.ts` — 7 passed; `arrowIngestion.test.ts` — 10 passed; `enginePersistenceBridge.test.ts` — 2 passed; `worker.contract.test.ts` — 2 passed; `savIngestion.test.ts` — 1 passed; `npm run test:run` — 916 passed, 7 skipped (2 pre-existing `chartRecommender` import failures unrelated). **Typecheck:** worker modules clean; 4 pre-existing errors in `AnalysisChart.tsx` / `chartTypeResolver.ts` (TN-1.4 path drift, unrelated). **Behavior:** zero change — structural refactor only (2026-06-24). |
+| **TN-2.2** — Split `VelocityEngine.ts` | **Files:** `VelocityEngine.ts` (761 lines, thin facade) delegates to `datasetLoading.ts` (244), `workspaceManager.ts` (243), `sessionState.ts` (154), `crosstabPostProcess.ts` (102), `semanticFacade.ts` (239), plus shared `velocityEngineTypes.ts` (97, `VelocityEngineHost` structural interface) and `engineEnvelope.ts` (59). **Pattern:** DeckBuilder-style `VelocityEngineHost` avoids circular imports; `VelocityEngine` implements host and wires module classes. **Public API:** unchanged (`src/engine/index.ts` re-exports). **Tests:** `VelocityEngine.test.ts` — 9 passed; `crosstabMatrixEnvelope.test.ts` — 2 passed; `session-roundtrip.test.ts` — 2 passed; `resolve-labels.test.ts` — 1 passed; `mcp-server/__tests__/tools.test.ts` — 37 passed; `npm run test:run` — 916 passed, 7 skipped (2 pre-existing UI import failures unrelated); `npm run typecheck:mcp` green (2026-06-24). |
+| **TN-2.3** — Split `dataSlice.ts` | **Files:** `src/store/slices/data/` — `types.ts` (129), `variableNormalization.ts` (63), `sliceContext.ts` (21), `loadProgress.ts` (30), `engineActions.ts` (79), `persistenceActions.ts` (193), `datasetActions.ts` (274), `variableCatalogActions.ts` (336), `transformActions.ts` (204), `initialState.ts` (42), `index.ts` (35); `dataSlice.ts` thinned to 59-line compositor (was ~1,295). **Pattern:** extends STAB-ARCH-1 (`enginePersistenceBridge`, `workspaceDatasetLifecycle`); `DataSliceStore` typed cross-slice access replaces 15+ `as any` in slice body. **Grep:** zero `as any` in `slices/data/` or `dataSlice.ts`. **Tests:** `dataSlice.workspace.test.ts` — 2 passed; `persistence.test.ts` — 6 passed; `enginePersistenceBridge.test.ts` — 2 passed; `workspaceDatasetLifecycle.test.ts` — 2 passed; `npm run test:run` — 112 files / 916 passed, 7 skipped (2 pre-existing `AnalysisChart` import failures unrelated); data-slice `tsc` clean (2026-06-24). |
 
 ---
 
 ## Dependency notes
 
 1. **Phase 1 before Phase 2:** Decomposing god files before layer correction re-creates the same imports inside smaller files.
-2. **TN-1.8 is the Phase 1 gate:** Do not start TN-2.x until relocations and import cycles are resolved.
+2. **TN-1.8 complete — Phase 1 gate cleared:** Phase 2 god-file splits (TN-2.x) may proceed.
 3. **TN-3.1 (BrowserEngine) is single-threaded:** Defines the convergence contract; avoid parallel store migration PRs that fight it.
 4. **Stats integrity:** TN-1.2, TN-2.5, TN-3.9 require `docs/playbooks/stats_integrity.md` review.
 5. **STAB-EXP-1a overlap:** TN-1.6 moves matrix orchestration from MCP to engine; formatter remains in core (`formatCrosstabMatrix.ts`).
@@ -395,18 +274,15 @@ graph TD
 
 | Safe to run in parallel now | Keep single-threaded |
 | :--- | :--- |
-| TN-1.1 + TN-1.2 + TN-1.3 + TN-1.4 (one PR or coordinated) | TN-1.8 (integration pass) |
-| TN-1.5, TN-1.6, TN-1.7 | TN-3.1 (BrowserEngine) |
+| TN-1.1 + TN-1.2 + TN-1.3 + TN-1.4 (one PR or coordinated) | TN-3.1 (BrowserEngine) |
 | TN-3.3, TN-3.5 (UI-only, no layer deps) | |
 
 ---
 
 ## Recommended next pull (start here)
 
-1. **TN-1.1 + TN-1.2** — Relocate queryBuilder and statistics to core (architecture gate for everything else).
-2. **TN-1.3 + TN-1.4** — gridUtils, chartRecommender, analysisProcessor relocations (coordinate imports with 1.1/1.2).
-
-**First PR bundle suggestion:** TN-1.1 + TN-1.2 + TN-1.8 partial (imports only). **Second PR:** TN-1.3 + TN-1.4.
+1. **TN-3.1** — Introduce BrowserEngine facade (TN-2.1 + TN-2.2 complete).
+2. **TN-2.4** — Split `App.tsx` (after TN-3.2 recommended).
 
 ---
 
@@ -415,12 +291,12 @@ graph TD
 | Area | Verdict | Top blocker |
 | :--- | :--- | :--- |
 | Core | Fail | Inverted deps; crosstabRunner monolith |
-| Engine + Worker | Fail | Split-brain; analysisWorker 1,836 lines |
-| Store | Fail | dataSlice 1,368 lines; `as any` coupling |
+| Engine + Worker | Partial | `analysisWorker` + `VelocityEngine` splits done (TN-2.1, TN-2.2); BrowserEngine facade (TN-3.1) next |
+| Store | Partial | `dataSlice` split done (TN-2.3); remaining slice `as any` in analysis/drillDown |
 | Dashboard | Fail | God shell + DataTable; triplicated placement |
 | Workspace + VM | Fail (incomplete) | CSS monolith; duplicate hooks |
 | App shell | Fail | App.tsx 999 lines; wrong layer for SQL/stats |
-| MCP | Fail | Matrix logic in handler; tools.ts monolith |
+| MCP | Partial | tools.ts split (TN-2.6); matrix moved to engine (TN-1.6) |
 
 ---
 

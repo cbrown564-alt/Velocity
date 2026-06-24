@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { runCrosstabForExport } from '../runCrosstabForExport';
-import type { EngineProxy } from '../../../services/EngineProxy';
+import type { CrosstabEnginePort } from '../crosstabEnginePort';
 
 vi.mock('../../analysis/buildCrosstabRequest', () => ({
   buildCrosstabRequest: () => ({
@@ -25,7 +25,7 @@ function makeEnvelope(data: unknown) {
   };
 }
 
-function createMockEngineProxy(overrides: Partial<EngineProxy> = {}): EngineProxy {
+function createMockEngineProxy(overrides: Partial<CrosstabEnginePort> = {}): CrosstabEnginePort {
   return {
     runCrosstab: vi.fn().mockResolvedValue(makeEnvelope({ rows: [], tableStats: null })),
     ...overrides,

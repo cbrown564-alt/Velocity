@@ -19,7 +19,7 @@ import type {
   SurveyResult,
   MixedModelConfig,
   MixedModelResult,
-} from '../../../types/webr';
+} from '../../types/webr';
 
 export type WebREngineStatus = 'idle' | 'initializing' | 'ready' | 'busy' | 'error';
 
@@ -59,7 +59,7 @@ export class WebREngine {
       try {
         // Create worker from the webRWorker module
         this.worker = new Worker(
-          new URL('../../../services/webRWorker.ts', import.meta.url),
+          new URL('../../services/webRWorker.ts', import.meta.url),
           { type: 'module' }
         );
 

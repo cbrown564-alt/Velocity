@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import type { Dataset, Folder, VariableSet } from '../../store/slices/dataSlice';
-import type { Filter, TableConfig } from '../../store/slices/analysisSlice';
+import type { Dataset, Folder, VariableSet } from '../../types/dataset';
+import type { Filter, TableConfig } from '../../types/analysis';
 import type { Slide } from '../../types/slides';
 import { exportSession, serializeSessionFile } from './sessionExporter';
 

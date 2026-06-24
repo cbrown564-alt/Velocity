@@ -28,7 +28,7 @@ export default defineConfig({
                 'test_*.{js,mjs,ts}',
                 'src/components/charts/',
                 'src/components/overlays/',
-                'src/core/analysis/engines/',
+                'src/engine/webr/',
                 'src/core/export/chartBuilder.ts',
                 'src/core/export/resolveThemeColors.ts',
                 'src/core/export/types.ts',

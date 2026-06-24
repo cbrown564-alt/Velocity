@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { AggregatedRow, Variable } from '../../../types';
 import type { VariableStatsResult } from '../../../types/worker';
 
-import { buildTree, RowPathEntry, TableRowNode } from '../../../services/treeBuilder';
+import { buildTree, RowPathEntry, TableRowNode } from '../../../core/analysis/treeBuilder';
 export type { RowPathEntry, TableRowNode };
 
 export interface TableDataResult {

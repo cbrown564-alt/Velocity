@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useRef, useCallback } from 'react';
 import { CheckCircle, AlertTriangle, Edit2 } from 'lucide-react';
-import type { Variable } from '../../../store/slices/dataSlice';
+import type { Variable } from '../../../types/dataset';
 import type { VariableStatsResult } from '../../../types/worker';
 import { allowsNumericStats } from '../../../types';
 import { useVelocityStore } from '../../../store';

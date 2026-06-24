@@ -132,32 +132,16 @@ export class SurveyWeightingRunner
   };
 
   /**
-   * This runner cannot use DatabaseAdapter directly since it needs WebR.
-   * Instead, it generates R code that should be executed via WebREngine.
-   *
-   * The actual execution happens in the store/UI layer which has access
-   * to both the DatabaseAdapter (for Arrow export) and WebREngine.
+   * Survey weighting requires WebR orchestration (see `src/engine/webr/WebREngine`).
+   * Core exposes pure R-code generation via `generateRCode()` and `toWebRConfig()`.
    */
   async run(
-    adapter: DatabaseAdapter,
-    config: SurveyWeightingConfig
+    _adapter: DatabaseAdapter,
+    _config: SurveyWeightingConfig
   ): Promise<SurveyWeightingResult> {
-    // This method is called from the DuckDB worker context, but we need WebR.
-    // For now, generate the R code and return a placeholder result.
-    // The actual WebR execution should be orchestrated at a higher level.
-
-    const rCode = this.generateRCode(config);
-
-    return {
-      designEffects: {},
-      estimates: {},
-      standardErrors: {},
-      confidenceIntervals: {},
-      effectiveSampleSizes: {},
-      sampleSize: 0,
-      rCode,
-      durationMs: 0,
-    };
+    throw new Error(
+      'surveyWeighting requires WebR execution via WebREngine; use generateRCode() in core and orchestrate in engine/store'
+    );
   }
 
   /**

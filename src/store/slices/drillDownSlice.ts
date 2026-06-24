@@ -90,7 +90,7 @@ export const createDrillDownSlice: DrillDownSliceCreator = (set, get) => ({
             },
         });
 
-        const { buildDrillDownQuery, buildDrillDownCountQuery } = await import('../../services/queryBuilder');
+        const { buildDrillDownQuery, buildDrillDownCountQuery } = await import('../../core/sql/queryBuilder');
 
         const queryOptions = buildDrillDownQueryOptions({
             rowFilters,
@@ -141,7 +141,7 @@ export const createDrillDownSlice: DrillDownSliceCreator = (set, get) => ({
             drillDown: { ...state.drillDown, loading: true },
         }));
 
-        const { buildDrillDownQuery } = await import('../../services/queryBuilder');
+        const { buildDrillDownQuery } = await import('../../core/sql/queryBuilder');
 
         const queryOptions = buildDrillDownQueryOptions({
             rowFilters,

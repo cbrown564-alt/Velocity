@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { recommendChart } from './chartRecommender';
-import { Variable } from '../types';
+import { Variable } from '../../types';
 
 describe('chartRecommender', () => {
     it('should recommend horizontal-bar for single ordered sequence variable', () => {
