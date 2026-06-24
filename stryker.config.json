@@ -19,8 +19,7 @@
     "related": true
   },
   "mutate": [
-    "src/core/**/*.ts",
-    "!src/core/**/*.test.ts",
+    "src/core/**/!(*.test|*.spec).ts",
     "!src/core/**/__tests__/**",
     "!src/core/**/index.ts",
     "!src/core/export/types.ts",

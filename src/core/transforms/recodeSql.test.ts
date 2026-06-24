@@ -61,4 +61,50 @@ describe('buildCaseSql', () => {
       'CASE ELSE CAST("region" AS VARCHAR) END'
     );
   });
+
+  it('uses binning path when mode is binning even if mappings are present', () => {
+    const config: RecodeConfig = {
+      mode: 'binning',
+      mappings: { '1': 'Yes' },
+      rules: [{ min: 0, max: 18, label: 'Under 18' }],
+    };
+
+    expect(buildCaseSql('age', config)).toBe(
+      'CASE WHEN "age" >= 0 AND "age" < 18 THEN \'Under 18\' ELSE CAST("age" AS VARCHAR) END'
+    );
+  });
+
+  it('does not apply binning when mode is categorical even if rules are present', () => {
+    const config: RecodeConfig = {
+      mode: 'categorical',
+      rules: [{ min: 0, max: 18, label: 'Under 18' }],
+    };
+
+    expect(buildCaseSql('age', config)).toBe(
+      'CASE ELSE CAST("age" AS VARCHAR) END'
+    );
+  });
+
+  it('uses categorical path when mode is categorical with both mappings and rules', () => {
+    const config: RecodeConfig = {
+      mode: 'categorical',
+      mappings: { '1': 'Yes' },
+      rules: [{ min: 0, max: 18, label: 'Under 18' }],
+    };
+
+    expect(buildCaseSql('q1', config)).toBe(
+      "CASE WHEN \"q1\" = '1' THEN 'Yes' ELSE CAST(\"q1\" AS VARCHAR) END"
+    );
+  });
+
+  it('escapes single quotes in binning rule labels', () => {
+    const config: RecodeConfig = {
+      mode: 'binning',
+      rules: [{ min: 65, label: "65+' years" }],
+    };
+
+    expect(buildCaseSql('age', config)).toBe(
+      "CASE WHEN \"age\" >= 65 THEN '65+'' years' ELSE CAST(\"age\" AS VARCHAR) END"
+    );
+  });
 });
