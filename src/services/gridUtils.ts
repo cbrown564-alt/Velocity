@@ -3,6 +3,8 @@ import { normalizeVariableType } from '../types';
 
 export type GridTableConfigMode = 'full' | 'row-scale-col-items';
 
+export type GridDropTarget = 'drop-zone-rows' | 'drop-zone-cols' | 'canvas';
+
 /** Synthetic variable ids for a grid VariableSet. */
 export function gridSyntheticVarIds(setId: string): { scaleId: string; itemsId: string } {
     return { scaleId: `${setId}_scale`, itemsId: `${setId}_items` };
@@ -24,6 +26,35 @@ export function gridSetToTableConfig(
             return { rowVars: [scaleId], colVar: itemsId };
         default: {
             const _exhaustive: never = mode;
+            return _exhaustive;
+        }
+    }
+}
+
+/** Apply grid set drop onto a dashboard table config for the given target zone. */
+export function applyGridSetDrop(
+    setId: string,
+    target: GridDropTarget,
+    current: { rowVars: string[]; colVar: string | null },
+): { rowVars: string[]; colVar: string | null } {
+    const { scaleId, itemsId } = gridSyntheticVarIds(setId);
+    switch (target) {
+        case 'drop-zone-rows':
+            if (current.rowVars.includes(scaleId)) {
+                return current;
+            }
+            return { rowVars: [...current.rowVars, scaleId], colVar: itemsId };
+        case 'drop-zone-cols':
+            return {
+                colVar: scaleId,
+                rowVars: current.rowVars.includes(itemsId)
+                    ? current.rowVars
+                    : [...current.rowVars, itemsId],
+            };
+        case 'canvas':
+            return gridSetToTableConfig(setId, 'full');
+        default: {
+            const _exhaustive: never = target;
             return _exhaustive;
         }
     }

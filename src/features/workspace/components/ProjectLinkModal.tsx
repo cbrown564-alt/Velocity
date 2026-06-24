@@ -20,7 +20,7 @@ import {
   ChevronDown,
   ArrowRight,
 } from 'lucide-react';
-import type { StoredDataset, Project } from './WorkspaceView';
+import type { StoredDataset, Project } from '../types';
 import styles from './ProjectLinkModal.module.css';
 
 interface ProjectLinkModalProps {

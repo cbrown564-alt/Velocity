@@ -12,7 +12,7 @@ import {
   shouldShowWelcomeBack,
   type ResumeCandidate,
 } from '../lib/returningResearcher';
-import type { StoredDataset } from '../components/WorkspaceView';
+import type { StoredDataset } from '../types';
 
 export interface UseWelcomeBackOptions {
   datasets: StoredDataset[];

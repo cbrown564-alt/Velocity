@@ -27,7 +27,7 @@ import {
   ChevronDown,
   Database,
 } from 'lucide-react';
-import type { StoredDataset, Project } from './WorkspaceView';
+import type { StoredDataset, Project } from '../types';
 import styles from './CrossWavePanel.module.css';
 
 interface CrossWavePanelProps {

@@ -22,7 +22,7 @@ import {
   Copy,
   Check,
 } from 'lucide-react';
-import type { StoredDataset, Project, WorkspaceState } from './WorkspaceView';
+import type { StoredDataset, Project, WorkspaceState } from '../types';
 import styles from './ExportImportModal.module.css';
 
 interface ExportImportModalProps {

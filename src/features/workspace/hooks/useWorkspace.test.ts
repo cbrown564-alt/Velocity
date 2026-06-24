@@ -3,7 +3,7 @@ import { act, renderHook } from '@testing-library/react';
 import { useVelocityStore } from '../../../store';
 import { useWorkspace } from './useWorkspace';
 import * as opfsFileManager from '../../../services/opfsFileManager';
-import type { StoredDataset } from '../components/WorkspaceView';
+import type { StoredDataset } from '../types';
 
 vi.mock('../../../services/opfsFileManager', () => ({
   deleteDatasetPersistence: vi.fn().mockResolvedValue(undefined),

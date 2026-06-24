@@ -7,7 +7,7 @@
 
 import { useCallback } from 'react';
 import { useVelocityStore } from '../../../store';
-import type { StoredDataset } from '../components/WorkspaceView';
+import type { StoredDataset } from '../types';
 
 export type WorkspaceOpenAppMode = 'splash' | 'uploading' | 'dashboard' | 'restoring' | 'metadata';
 

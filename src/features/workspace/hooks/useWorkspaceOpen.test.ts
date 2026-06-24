@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { act, renderHook } from '@testing-library/react';
 import { useVelocityStore } from '../../../store';
 import { useWorkspaceOpen } from './useWorkspaceOpen';
-import type { StoredDataset } from '../components/WorkspaceView';
+import type { StoredDataset } from '../types';
 
 const makeStoredDataset = (id: string): StoredDataset => ({
   id,

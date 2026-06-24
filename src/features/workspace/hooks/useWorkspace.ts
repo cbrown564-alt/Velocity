@@ -8,7 +8,7 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { useVelocityStore } from '../../../store';
 import * as opfsFileManager from '../../../services/opfsFileManager';
-import type { StoredDataset, WorkspaceState } from '../components/WorkspaceView';
+import type { StoredDataset, WorkspaceState } from '../types';
 
 interface UseWorkspaceReturn {
   // State

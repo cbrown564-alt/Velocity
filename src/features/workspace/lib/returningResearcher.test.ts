@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import type { StoredDataset } from '../components/WorkspaceView';
+import type { StoredDataset } from '../types';
 import { useVelocityStore } from '../../../store';
 import {
   MS_THREE_DAYS,

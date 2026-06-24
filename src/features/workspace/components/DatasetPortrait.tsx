@@ -4,7 +4,7 @@
 
 import React, { useMemo } from 'react';
 import { LayoutGrid, BarChart3 } from 'lucide-react';
-import type { StoredDataset } from './WorkspaceView';
+import type { StoredDataset } from '../types';
 import {
   buildActivityHeatmap,
   computeColorSignature,

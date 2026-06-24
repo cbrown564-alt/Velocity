@@ -5,7 +5,7 @@
 
 import type { Variable } from '../../../types';
 import { normalizeVariableType } from '../../../types/variableType';
-import type { Project, StoredDataset } from '../components/WorkspaceView';
+import type { Project, StoredDataset } from '../types';
 
 const MS_PER_DAY = 86_400_000;
 const HEATMAP_DAYS = 7;

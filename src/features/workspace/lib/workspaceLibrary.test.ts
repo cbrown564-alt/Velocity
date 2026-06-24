@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import type { StoredDataset } from '../components/WorkspaceView';
+import type { StoredDataset } from '../types';
 import {
   buildActivityHeatmap,
   computeAmbientSearchHints,

@@ -4,7 +4,7 @@
  */
 
 import type { Variable } from '../../../types';
-import type { StoredDataset } from '../components/WorkspaceView';
+import type { StoredDataset } from '../types';
 
 export const MS_THREE_DAYS = 3 * 86_400_000;
 

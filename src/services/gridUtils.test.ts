@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { generateSyntheticGridVariables, gridSetToTableConfig } from './gridUtils';
+import { applyGridSetDrop, generateSyntheticGridVariables, gridSetToTableConfig } from './gridUtils';
 import type { VariableSet } from '../types';
 
 describe('gridSetToTableConfig', () => {
@@ -15,6 +15,49 @@ describe('gridSetToTableConfig', () => {
             rowVars: ['grid_test_scale'],
             colVar: 'grid_test_items',
         });
+    });
+});
+
+describe('applyGridSetDrop', () => {
+    const setId = 'grid_test';
+    const scaleId = 'grid_test_scale';
+    const itemsId = 'grid_test_items';
+
+    it('drop-zone-rows appends scale and sets items column', () => {
+        expect(
+            applyGridSetDrop(setId, 'drop-zone-rows', { rowVars: ['other_var'], colVar: null }),
+        ).toEqual({
+            rowVars: ['other_var', scaleId],
+            colVar: itemsId,
+        });
+    });
+
+    it('drop-zone-rows is a no-op when scale is already in rows', () => {
+        const current = { rowVars: [scaleId, 'other_var'], colVar: 'existing_col' };
+        expect(applyGridSetDrop(setId, 'drop-zone-rows', current)).toBe(current);
+    });
+
+    it('drop-zone-cols sets scale column and appends items to rows', () => {
+        expect(
+            applyGridSetDrop(setId, 'drop-zone-cols', { rowVars: ['other_var'], colVar: null }),
+        ).toEqual({
+            rowVars: ['other_var', itemsId],
+            colVar: scaleId,
+        });
+    });
+
+    it('drop-zone-cols keeps rows unchanged when items already present', () => {
+        const current = { rowVars: [itemsId, 'other_var'], colVar: null };
+        expect(applyGridSetDrop(setId, 'drop-zone-cols', current)).toEqual({
+            rowVars: [itemsId, 'other_var'],
+            colVar: scaleId,
+        });
+    });
+
+    it('canvas delegates to gridSetToTableConfig full mode', () => {
+        expect(
+            applyGridSetDrop(setId, 'canvas', { rowVars: ['other_var'], colVar: 'other_col' }),
+        ).toEqual(gridSetToTableConfig(setId, 'full'));
     });
 });
 

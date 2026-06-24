@@ -3,7 +3,7 @@ import { act, renderHook } from '@testing-library/react';
 import { useVelocityStore } from '../../../store';
 import { MS_THREE_DAYS } from '../lib/returningResearcher';
 import { useWelcomeBack } from './useWelcomeBack';
-import type { StoredDataset } from '../components/WorkspaceView';
+import type { StoredDataset } from '../types';
 
 const makeDataset = (overrides: Partial<StoredDataset> = {}): StoredDataset => ({
   id: 'ds-1',
