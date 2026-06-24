@@ -113,6 +113,7 @@ describe('useWorkspaceOpen', () => {
     expect(openWorkspaceDataset).not.toHaveBeenCalled();
     expect(setMode).toHaveBeenCalledOnce();
     expect(setMode).toHaveBeenCalledWith('dashboard');
+    expect(useVelocityStore.getState().isWorkspaceMode).toBe(false);
   });
 
   it('restores workspace mode on open failure', async () => {

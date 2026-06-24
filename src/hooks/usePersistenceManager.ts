@@ -76,6 +76,7 @@ export function usePersistenceManager(
     persistenceError,
     opfsAvailable,
     activeDbPath,
+    isWorkspaceMode,
     restoreFromPersistence,
     rehydrateDatasetFromOpfs,
     discardPersistedData,
@@ -434,7 +435,11 @@ export function usePersistenceManager(
         console.log('[App] Auto-restoring: localStorage metadata matches OPFS data');
         hasProcessedPersistence.current = true;
         const restored = attemptRestoreFromPersistence();
-        setMode(restored ? 'dashboard' : 'restoring');
+        if (isWorkspaceMode) {
+          setMode('splash');
+        } else {
+          setMode(restored ? 'dashboard' : 'restoring');
+        }
       } else {
         console.log('[App] Showing restoration prompt: metadata mismatch or missing');
         setMode('restoring');
@@ -455,7 +460,7 @@ export function usePersistenceManager(
         hasProcessedPersistence.current = true;
       }
     }
-  }, [persistenceState, persistedDataInfo, dataset, mode, persistentStorageGranted, persistentStorageResolved, attemptRestoreFromPersistence, rebuildFromOpfsSource, setMode]);
+  }, [persistenceState, persistedDataInfo, dataset, mode, isWorkspaceMode, persistentStorageGranted, persistentStorageResolved, attemptRestoreFromPersistence, rebuildFromOpfsSource, setMode]);
 
   useEffect(() => {
     if (persistenceState !== 'corrupt') return;

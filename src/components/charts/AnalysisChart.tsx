@@ -22,6 +22,8 @@ import {
 import { ProcessedAnalysisData, ChartDataPoint, ChartSeries } from '../../types/processedData';
 import { ChartSelector } from './ChartSelector';
 import { recommendChart } from '../../services/chartRecommender';
+import { resolveMetricChartType } from '../../core/visualization/chartTypeResolver';
+import { transformChartData } from '../../services/chartDataTransformer';
 import { ChartLegend } from './shared/ChartLegend';
 import { ChartType } from '../../types/charts';
 import { useVelocityStore } from '../../store';
@@ -107,6 +109,17 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
         isMultipleResponse,
         chartType: activeChartType
     });
+
+    const effectiveChartType = useMemo(
+        () => resolveMetricChartType(activeChartType, chartData),
+        [activeChartType, chartData],
+    );
+
+    const displayChartData = useMemo(() => {
+        if (!chartData) return null;
+        if (effectiveChartType === activeChartType) return chartData;
+        return transformChartData(chartData, effectiveChartType) ?? chartData;
+    }, [chartData, activeChartType, effectiveChartType]);
 
     // Derive available charts from context
     const recommendation = useMemo(() => {
@@ -211,30 +224,41 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
         return options;
     }, [chartData, contextMenu.selectedItems, addFilter, enableVisualETL, openMergeFromSelection]);
 
-    // Simple resize observer
+    const measureContainer = useCallback(() => {
+        const el = containerRef.current;
+        if (!el) return;
+        const { width, height } = el.getBoundingClientRect();
+        if (width > 0 && height > 0) {
+            setDimensions((prev) =>
+                prev.width === width && prev.height === height ? prev : { width, height },
+            );
+        }
+    }, []);
+
+    // Simple resize observer + initial measure (chart mode can mount before layout settles)
     useEffect(() => {
         if (!containerRef.current) return;
 
-        const observer = new ResizeObserver((entries) => {
-            const entry = entries[0];
-            if (entry) {
-                setDimensions({
-                    width: entry.contentRect.width,
-                    height: entry.contentRect.height,
-                });
-            }
+        measureContainer();
+        const raf = requestAnimationFrame(measureContainer);
+
+        const observer = new ResizeObserver(() => {
+            measureContainer();
         });
 
         observer.observe(containerRef.current);
-        return () => observer.disconnect();
-    }, []);
+        return () => {
+            cancelAnimationFrame(raf);
+            observer.disconnect();
+        };
+    }, [measureContainer, effectiveChartType, displayChartData]);
 
     const renderContent = () => {
         if (dimensions.width === 0 || dimensions.height === 0) {
             return null;
         }
 
-        if (!chartData) {
+        if (!displayChartData) {
             return (
                 <div className={styles.placeholder} role="status" aria-live="polite">
                     No data to display
@@ -254,7 +278,7 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
             height: dimensions.height,
             colors: CHART_PALETTE,
             interactive: true,
-            processedData: chartData,
+            processedData: displayChartData,
             selectedKeys: config.selectedKeys,
             onSelectionChange: config.onSelectionChange,
             onContextMenu: enableVisualETL ? combinedContextMenuHandler : undefined,
@@ -265,7 +289,7 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
 
         // TODO: Pass proper height accounting for toolbar
 
-        switch (activeChartType) {
+        switch (effectiveChartType) {
             case 'horizontal-bar':
                 return <HorizontalBarRenderer {...commonProps} />;
             case 'stacked-bar':
@@ -286,7 +310,7 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
                 return <LollipopRenderer {...commonProps} />;
             case 'box-plot':
                 // Check if we have stats, if not try to use processedData series stats if available
-                const boxStats = variableStats || (chartData?.series[0]?.stats ? { stats: chartData.series[0].stats } : undefined);
+                const boxStats = variableStats || (displayChartData?.series[0]?.stats ? { stats: displayChartData.series[0].stats } : undefined);
                 return <BoxPlotRenderer {...commonProps} variableStats={boxStats} />;
             case 'grouped-box-plot':
                 // If no explicit stats, try to infer from data if it's raw values (rare) or just pass through
@@ -302,14 +326,14 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
             default:
                 return (
                     <div className={styles.placeholder}>
-                        Chart type '{activeChartType}' not yet implemented
+                        Chart type '{effectiveChartType}' not yet implemented
                     </div>
                 );
         }
     };
 
     // Extract series for legend if available
-    const legendItems = chartData?.series.map((s, i) => ({
+    const legendItems = displayChartData?.series.map((s, i) => ({
         label: s.label,
         color: CHART_PALETTE[i % CHART_PALETTE.length]
     })) || [];
@@ -418,14 +442,14 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
                 ref={containerRef}
                 className={styles.chartCanvas}
                 role="img"
-                aria-label={chartData ? `Chart showing ${chartData.rowVariables.map(v => v.label).join(', ')}` : 'Analysis chart'}
+                aria-label={displayChartData ? `Chart showing ${displayChartData.rowVariables.map(v => v.label).join(', ')}` : 'Analysis chart'}
             >
                 {renderContent()}
             </div>
 
             {/* Screen-reader accessible data table (visually hidden) */}
-            {chartData && (
-                <ChartScreenReaderTable data={chartData} />
+            {displayChartData && (
+                <ChartScreenReaderTable data={displayChartData} />
             )}
 
             {/* Context Menu */}

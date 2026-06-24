@@ -59,15 +59,20 @@ test('P1 crosstab render gate — gender x region with trust anchor', async ({ p
   await reachDashboardWithExample(page);
 
   if (await page.getByText('Ready for Analysis').isVisible({ timeout: 3000 }).catch(() => false)) {
-    await page.getByRole('button', { name: /gender Good starting point/i }).click();
-    await page.waitForTimeout(1200);
+    await page.getByRole('button', { name: /product sat Good starting point/i }).click();
+    await page.waitForTimeout(800);
+    await expect(page.getByTestId('story-shelf-suggestion')).toBeVisible({ timeout: 8000 });
+    await page.getByRole('button', { name: 'Reset' }).click();
+    await page.waitForTimeout(500);
   }
 
+  await page.getByRole('button', { name: /^gender$/i }).first().click();
+  await page.waitForTimeout(1200);
+
   const regionBtn = page.getByRole('button', { name: /^region$/i });
-  if (await regionBtn.isVisible({ timeout: 5000 }).catch(() => false)) {
-    await regionBtn.click();
-    await page.waitForTimeout(2500);
-  }
+  await expect(regionBtn).toBeVisible({ timeout: 5000 });
+  await regionBtn.click();
+  await page.waitForTimeout(2500);
 
   const table = page.locator('table');
   await expect(table).toBeVisible({ timeout: 30000 });
@@ -81,8 +86,6 @@ test('P1 crosstab render gate — gender x region with trust anchor', async ({ p
 
   const frame = page.locator('.analysis-frame').filter({ has: table });
   await expect(frame).toBeVisible();
-
-  await expect(page.getByTestId('story-shelf-suggestion')).toBeVisible({ timeout: 8000 });
 
   const consoleErrors: string[] = [];
   page.on('console', (msg) => {

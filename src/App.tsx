@@ -506,6 +506,10 @@ export default function App() {
       touchLastActiveAt();
     }
 
+    if (mode === 'dashboard') {
+      setWorkspaceMode(false);
+    }
+
     if (mode === 'splash' && isDbReady) {
       const enteredSplash = prevModeRef.current !== 'splash';
       if (enteredSplash || !splashActivityTouchedRef.current) {
@@ -517,7 +521,7 @@ export default function App() {
     }
 
     prevModeRef.current = mode;
-  }, [mode, isDbReady, touchLastActiveAt]);
+  }, [mode, isDbReady, touchLastActiveAt, setWorkspaceMode]);
 
   const loadStageHeadline = getLoadStageHeadline(loadProgress);
 
@@ -761,9 +765,14 @@ export default function App() {
       </AnimatePresence>
 
       {/* WORKSPACE / SPLASH SCREEN */}
-      <AnimatePresence>
+      <AnimatePresence mode="wait">
         {mode === 'splash' && (
-          <motion.div exit={{ opacity: 0, y: reducedMotion ? 0 : -20, pointerEvents: 'none' }} className="fixed inset-0 bg-[var(--bg-app)] z-40">
+          <motion.div
+            key="workspace-splash"
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0, transition: { duration: reducedMotion ? 0 : 0.12 } }}
+            className="fixed inset-0 bg-[var(--bg-app)] z-40"
+          >
             {isDbReady && !initError && (
               <WorkspaceView
                 workspaceState={workspace}

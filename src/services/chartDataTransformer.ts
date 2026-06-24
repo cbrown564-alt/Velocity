@@ -1,5 +1,6 @@
 import { ProcessedAnalysisData, ChartDataPoint, ChartSeries } from '../types/processedData';
 import { ChartType } from '../types/charts';
+import { hasBoxPlotStats } from '../core/visualization/chartTypeResolver';
 
 /**
  * Transforms processed analysis data based on the active chart type.
@@ -10,6 +11,35 @@ export const transformChartData = (
     activeChartType: ChartType
 ): ProcessedAnalysisData | null => {
     if (!processedData) return null;
+
+    // Mean-only metric crosstabs (no quartiles) → column means as vertical bars
+    if (
+        (activeChartType === 'grouped-box-plot' ||
+            activeChartType === 'box-plot' ||
+            activeChartType === 'violin' ||
+            activeChartType === 'ridgeline') &&
+        processedData.isMetric &&
+        !hasBoxPlotStats(processedData)
+    ) {
+        if (processedData.rows.length === 1 && processedData.columns.length > 0) {
+            const metricRow = processedData.rows[0];
+            const data = processedData.columns.map((col) => ({
+                label: col.label,
+                rawValue: col.key,
+                value: metricRow.cells[col.key]?.mean ?? 0,
+                percent: 0,
+            }));
+
+            return {
+                ...processedData,
+                series: [{
+                    key: 'means',
+                    label: metricRow.label,
+                    data,
+                }],
+            };
+        }
+    }
 
     if (activeChartType === 'diverging-bar') {
         // CASE 1: Single Variable (Pivot Categories to Segments)

@@ -51,6 +51,7 @@ export function useWorkspaceOpen({
     setWorkspaceMode(false);
 
     if (dataset?.id === storedDataset.id) {
+      setWorkspaceMode(false);
       setMode('dashboard');
       return;
     }
