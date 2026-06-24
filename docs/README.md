@@ -7,6 +7,7 @@ Navigation hub for live documentation. **Agent rules: [`AGENTS.md`](../AGENTS.md
 | Need | Read |
 | :--- | :--- |
 | What to work on | `tracker_00_implementation_status.md` (stabilization rules: §4.2.1) |
+| Code quality remediation | `kanban_thermo_nuclear_remediation.md` (June 2026 thermo-nuclear review board) |
 | Why and sequencing | `roadmap_00_strategic_guide.md` |
 | Scope gates | `blue_02_feature_matrix.md` |
 | Local setup | `dev_01_contributing.md` |
