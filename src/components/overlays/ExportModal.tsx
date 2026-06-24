@@ -6,8 +6,6 @@
  */
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useReducedMotion, getBackdropProps, getModalPresenceProps } from '../../lib/motion';
 import { X, FileDown, FileSpreadsheet, Presentation, Download, CheckCircle2 } from 'lucide-react';
 import styles from './ExportModal.module.css';
 import { exportPptx } from '../../core/export/pptxExporter';
@@ -18,7 +16,7 @@ import { buildExportConfig } from '../../core/export/buildExportConfig';
 import { resolveAnalysisVariables } from '../../core/export/resolveAnalysisVariables';
 import { runCrosstabForExport } from '../../core/export/runCrosstabForExport';
 import type { SlideAnalysisState } from '../../types/slides';
-import { useModalEscape } from '../../hooks/useModalEscape';
+import { ModalShell } from './ModalShell';
 
 interface ExportModalProps {
     isOpen: boolean;
@@ -52,7 +50,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
     const activeFilters = useVelocityStore((state) => state.activeFilters);
     const dataset = useVelocityStore((state) => state.dataset);
     const variableSets = useVelocityStore((state) => state.variableSets);
-    const engineProxy = useVelocityStore((state) => state.engineProxy);
+    const browserEngine = useVelocityStore((state) => state.browserEngine);
     const isQuerying = useVelocityStore((state) => state.isQuerying);
     const analysisSettings = useVelocityStore((state) => state.analysisSettings);
 
@@ -69,8 +67,6 @@ export const ExportModal: React.FC<ExportModalProps> = ({
         setScope('current');
         setSelectedSlideIds(activeSlideId ? [activeSlideId] : []);
     }, [isOpen, initialConfig.title, activeSlideId]);
-
-    useModalEscape(isOpen, onClose);
 
     const slideIdsForScope = useMemo(() => {
         if (scope === 'current') {
@@ -99,10 +95,10 @@ export const ExportModal: React.FC<ExportModalProps> = ({
         setSelectedSlideIds([]);
     };
 
-    const isExportDisabled = isExporting || !title.trim() || slideIdsForScope.length === 0 || isQuerying || !dataset || !engineProxy;
+    const isExportDisabled = isExporting || !title.trim() || slideIdsForScope.length === 0 || isQuerying || !dataset || !browserEngine;
 
     const handleExport = async () => {
-        if (!engineProxy || !dataset) {
+        if (!browserEngine || !dataset) {
             setExportError('Export is unavailable until a dataset is loaded.');
             return;
         }
@@ -144,7 +140,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
 
                 const isMultipleResponse = firstRowVarSet?.structure === 'multiple';
                 const crosstab = await runCrosstabForExport({
-                    engineProxy,
+                    engine: browserEngine,
                     dataset,
                     variableSets,
                     rowVars: analysisState.rowVars,
@@ -220,29 +216,17 @@ export const ExportModal: React.FC<ExportModalProps> = ({
         }
     };
 
-    const reducedMotion = useReducedMotion();
-
     return (
-        <AnimatePresence>
-            {isOpen && (
-                <>
-                    {/* Backdrop */}
-                    <motion.div
-                        {...getBackdropProps(reducedMotion)}
-                        onClick={onClose}
-                        className={styles.backdrop}
-                    />
-
-                    {/* Modal */}
-                    <motion.div
-                        {...getModalPresenceProps(reducedMotion)}
-                        className={styles.backdrop}
-                        style={{ pointerEvents: 'none' }}
-                    >
-                        <div
-                            className={styles.modal}
-                            style={{ pointerEvents: 'auto' }}
-                        >
+        <ModalShell
+            isOpen={isOpen}
+            onClose={onClose}
+            escapeToClose
+            backdropClassName={styles.backdrop}
+            overlayClassName={styles.backdrop}
+            overlayStyle={{ pointerEvents: 'none' }}
+            panelClassName={styles.modal}
+            panelStyle={{ pointerEvents: 'auto' }}
+        >
                             {/* Header */}
                             <div className={styles.header}>
                                 <div className={styles.headerLeft}>
@@ -521,11 +505,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                                     </button>
                                 </div>
                             </div>
-                        </div>
-                    </motion.div>
-                </>
-            )}
-        </AnimatePresence>
+        </ModalShell>
     );
 };
 

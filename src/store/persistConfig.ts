@@ -120,7 +120,7 @@ export const partialize = (state: VelocityState): PersistedState => {
     };
 
     return {
-        // DataSlice - persist dataset metadata but NOT engineProxy/loading state
+        // DataSlice - persist dataset metadata but NOT browserEngine/loading state
         dataset: persistDataset,
         variableSets: persistVariableSets,
         folders: persistFolders,

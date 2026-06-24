@@ -1,9 +1,10 @@
-import React, { useMemo, useRef, useCallback, useEffect } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import * as d3 from 'd3-scale';
-import { select } from 'd3-selection';
 import { max } from 'd3-array';
 import { BaseChartRendererProps } from '../../../types/charts';
-// getChartColor removed
+import { ChartDataPoint } from '../../../types/processedData';
+import { useChartSelection } from '../hooks/useChartSelection';
+import { ChartPlotArea } from '../shared/ChartPlotArea';
 
 /**
  * Lollipop Chart Renderer
@@ -49,23 +50,12 @@ export const LollipopRenderer: React.FC<BaseChartRendererProps> = ({
             .range([0, innerWidth]);
     }, [chartData, innerWidth]);
 
-    const handlePointClick = useCallback((d: any, event: React.MouseEvent) => {
-        if (!interactive || !onSelectionChange) return;
-
-        const newSelection = new Set(selectedKeys);
-        if (event.metaKey || event.ctrlKey) {
-            if (newSelection.has(d.label)) {
-                newSelection.delete(d.label);
-            } else {
-                newSelection.add(d.label);
-            }
-        } else {
-            newSelection.clear();
-            newSelection.add(d.label);
-        }
-        onSelectionChange(newSelection);
-    }, [interactive, onSelectionChange, selectedKeys]);
-
+    const { handleToggle } = useChartSelection<ChartDataPoint>({
+        interactive,
+        selectedKeys,
+        onSelectionChange,
+        onContextMenu,
+    });
 
     // X-axis ticks
     const xTicks = xScale.ticks(5);
@@ -86,7 +76,7 @@ export const LollipopRenderer: React.FC<BaseChartRendererProps> = ({
                 }
             }}
         >
-            <g transform={`translate(${margin.left},${margin.top})`}>
+            <ChartPlotArea margin={margin}>
                 {/* Grid lines */}
                 {xTicks.map(tick => (
                     <line
@@ -147,7 +137,7 @@ export const LollipopRenderer: React.FC<BaseChartRendererProps> = ({
                             className={`transition-all duration-300 ${interactive ? 'cursor-pointer hover:opacity-80' : ''}`}
                             onClick={(e) => {
                                 e.stopPropagation();
-                                handlePointClick(d, e);
+                                handleToggle(d.label, e);
                             }}
                         >
                             {/* Stick */}
@@ -187,7 +177,7 @@ export const LollipopRenderer: React.FC<BaseChartRendererProps> = ({
                         </g>
                     );
                 })}
-            </g>
+            </ChartPlotArea>
         </svg>
     );
 };

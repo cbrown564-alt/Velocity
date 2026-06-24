@@ -31,7 +31,7 @@ describe('Store: reorderRowVars', () => {
     it('should trigger runAnalysis after reordering', async () => {
         const { result } = renderHook(() => useVelocityStore());
 
-        // Mock engineProxy to avoid actual query execution
+        // Mock browserEngine to avoid actual query execution
         const mockEnvelope = (data: unknown) => ({
             data,
             operation: 'test',
@@ -41,14 +41,14 @@ describe('Store: reorderRowVars', () => {
             metadata: { datasetName: 'test.sav', rowCount: 0, filtersApplied: 0, isWeighted: false, engineVersion: 'browser-wasm' },
         });
 
-        const mockRunCrosstab = vi.fn().mockResolvedValue(mockEnvelope({ rows: [], tableStats: null }));
+        const mockRunAnalysis = vi.fn().mockResolvedValue(mockEnvelope({ rows: [], tableStats: null }));
         const mockEngineProxy = {
-            runCrosstab: mockRunCrosstab,
+            runAnalysis: mockRunAnalysis,
             getVariableStats: vi.fn().mockResolvedValue(mockEnvelope({})),
         } as any;
 
         act(() => {
-            result.current.engineProxy = mockEngineProxy;
+            result.current.browserEngine = mockEngineProxy;
             result.current.isDbReady = true;
             result.current.dataset = {
                 id: 'ds1',
@@ -65,7 +65,7 @@ describe('Store: reorderRowVars', () => {
         });
 
         // Clear previous calls
-        mockRunCrosstab.mockClear();
+        mockRunAnalysis.mockClear();
 
         // Reorder
         act(() => {
@@ -73,7 +73,7 @@ describe('Store: reorderRowVars', () => {
         });
 
         // Verify that runCrosstab was called (runAnalysis was triggered)
-        expect(mockRunCrosstab).toHaveBeenCalled();
+        expect(mockRunAnalysis).toHaveBeenCalled();
     });
 
     it('should preserve column variable when reordering rows', () => {

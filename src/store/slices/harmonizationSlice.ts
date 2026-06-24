@@ -72,7 +72,7 @@ const initialHarmonizationState = {
 // ============================================================================
 
 export const createHarmonizationSlice: StateCreator<
-  HarmonizationSlice & Pick<DataSlice, 'engineProxy'>,
+  HarmonizationSlice & Pick<DataSlice, 'browserEngine'>,
   [],
   [],
   HarmonizationSlice
@@ -225,8 +225,8 @@ export const createHarmonizationSlice: StateCreator<
     outputTableName,
     onlyConfirmed = true,
   }) => {
-    const engineProxy = get().engineProxy;
-    if (!engineProxy) throw new Error('Engine not initialized');
+    const browserEngine = get().browserEngine;
+    if (!browserEngine) throw new Error('Engine not initialized');
 
     const session = get().harmonization.session;
     if (!session) return null;
@@ -245,7 +245,7 @@ export const createHarmonizationSlice: StateCreator<
     const targetVarNames = Object.fromEntries(targetVars.map(v => [v.id, v.name]));
     const resolvedOutputTable = outputTableName ?? `harmonized_${session.id.replace(/[^a-zA-Z0-9_]/g, '_')}`;
 
-    const response = await engineProxy.buildHarmonizedTable(
+    const response = await browserEngine.buildHarmonizedTable(
       sourceTable,
       targetTable,
       eligibleMappings,

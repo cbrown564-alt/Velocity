@@ -7,7 +7,7 @@ import {
 } from '../../../lib/motion';
 import { FileUp, Sparkles } from 'lucide-react';
 import { Logo } from '../../../components/common/Logo';
-import styles from './WorkspaceView.module.css';
+import styles from './WorkspaceEmptyState.module.css';
 
 export const WorkspaceEmptyState: React.FC<{
   onUpload: () => void;

@@ -17,10 +17,10 @@ export function createTransformActions(
 > {
     return {
         recodeVariable: async (sourceColId: string, newColName: string, config: RecodeConfig): Promise<string> => {
-            const { engineProxy, dataset } = get();
-            if (!engineProxy) throw new Error('Engine not initialized');
+            const { browserEngine, dataset } = get();
+            if (!browserEngine) throw new Error('Engine not initialized');
 
-            const response = await engineProxy.recodeVariable(sourceColId, newColName, config);
+            const response = await browserEngine.recodeVariable(sourceColId, newColName, config);
 
             if (dataset) {
                 const createdAt = Date.now();
@@ -58,7 +58,7 @@ export function createTransformActions(
                     ],
                 }));
 
-                void engineProxy.updatePersistenceMetadata({
+                void browserEngine.updatePersistenceMetadata({
                     datasetId: updatedDataset.id,
                     datasetName: updatedDataset.name,
                     rowCount: updatedDataset.rowCount,
@@ -72,8 +72,8 @@ export function createTransformActions(
         },
 
         fillSystemMissing: async (variableId: string, replacementCode: number, replacementLabel: string): Promise<void> => {
-            const { engineProxy, dataset } = get();
-            if (!engineProxy) throw new Error('Engine not initialized');
+            const { browserEngine, dataset } = get();
+            if (!browserEngine) throw new Error('Engine not initialized');
             if (!dataset) throw new Error('No dataset loaded');
 
             const variable = dataset.variables.find(v => v.id === variableId);
@@ -87,7 +87,7 @@ export function createTransformActions(
                 }
             }
 
-            await engineProxy.fillSystemMissing(variableId, replacementCode);
+            await browserEngine.fillSystemMissing(variableId, replacementCode);
 
             set((state) => {
                 if (!state.dataset) return state;
@@ -115,13 +115,13 @@ export function createTransformActions(
         },
 
         deleteGroupedVariable: async (varId: string): Promise<void> => {
-            const { engineProxy, dataset, variableSets, transformLog } = get();
-            if (!engineProxy || !dataset) return;
+            const { browserEngine, dataset, variableSets, transformLog } = get();
+            if (!browserEngine || !dataset) return;
 
             const transform = transformLog.find(t => t.newColId === varId);
             if (!transform) return;
 
-            await engineProxy.dropColumn(varId);
+            await browserEngine.dropColumn(varId);
 
             set((state) => {
                 const newVariables = state.dataset
@@ -158,8 +158,8 @@ export function createTransformActions(
         },
 
         splitGroupValue: async (varId: string, groupValue: string): Promise<void> => {
-            const { engineProxy, dataset, transformLog } = get();
-            if (!engineProxy || !dataset) return;
+            const { browserEngine, dataset, transformLog } = get();
+            if (!browserEngine || !dataset) return;
 
             const transform = transformLog.find(t => t.newColId === varId);
             if (!transform || transform.config.mode !== 'categorical' || !transform.config.mappings) return;
@@ -180,7 +180,7 @@ export function createTransformActions(
 
             const newConfig: RecodeConfig = { ...transform.config, mappings: newMappings };
 
-            await engineProxy.updateColumn(transform.sourceColId, varId, newConfig);
+            await browserEngine.updateColumn(transform.sourceColId, varId, newConfig);
 
             set((state) => ({
                 transformLog: state.transformLog.map(t =>

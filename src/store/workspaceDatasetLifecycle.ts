@@ -6,7 +6,13 @@
  */
 
 import * as opfsFileManager from '../services/opfsFileManager';
-import type { EngineProxy } from '../services/EngineProxy';
+import type { BrowserEngine } from '../engine/BrowserEngine';
+import type { Filter } from '../types/analysis';
+import type { DatasetSessionState } from '../types/workspaceSession';
+import {
+  normalizeStoredSessionState,
+  sessionStateToStorePatch,
+} from './datasetSessionCoordinator';
 import type {
   DataTransform,
   Dataset,
@@ -25,7 +31,7 @@ import {
 export type RunAnalysisFn = () => Promise<void>;
 
 export interface RehydrateFromOpfsContext {
-  engineProxy: EngineProxy;
+  browserEngine: BrowserEngine;
   dataset: Dataset;
   transformLog: DataTransform[];
   runAnalysis?: RunAnalysisFn;
@@ -36,13 +42,13 @@ export async function rehydrateDatasetFromOpfsSource(
   ctx: RehydrateFromOpfsContext,
   options?: { forceReload?: boolean },
 ): Promise<void> {
-  const { engineProxy, dataset, transformLog, runAnalysis, flushPersistedData } = ctx;
+  const { browserEngine, dataset, transformLog, runAnalysis, flushPersistedData } = ctx;
 
   if (!dataset.opfsFileKey) throw new Error('Dataset has no OPFS source key');
 
   if (!options?.forceReload) {
     try {
-      const status = await engineProxy.ping();
+      const status = await browserEngine.ping();
       if (status.hasData) {
         if (runAnalysis) {
           void runAnalysis().catch((error) => {
@@ -76,7 +82,7 @@ export async function rehydrateDatasetFromOpfsSource(
     throw new Error(`Failed to read OPFS source file (${sourceKey}): ${message}`);
   }
 
-  await engineProxy.loadSAV(buffer);
+  await browserEngine.loadSAV(buffer);
 
   if (transformLog.length > 0) {
     console.log(`[workspaceDatasetLifecycle] Replaying ${transformLog.length} transforms`);
@@ -85,7 +91,7 @@ export async function rehydrateDatasetFromOpfsSource(
   for (const transform of transformLog) {
     if (transform.type !== 'recode') continue;
     try {
-      await engineProxy.recodeVariable(transform.sourceColId, transform.newColId, transform.config);
+      await browserEngine.recodeVariable(transform.sourceColId, transform.newColId, transform.config);
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : String(error);
       console.warn('[workspaceDatasetLifecycle] Transform replay failed:', message);
@@ -105,7 +111,7 @@ export interface WorkspaceDatasetOpenPatch {
   folders: Folder[];
   transformLog: DataTransform[];
   tableConfig: { rowVars: string[]; colVar: string | null };
-  activeFilters: unknown[];
+  activeFilters: Filter[];
 }
 
 export function buildWorkspaceDatasetOpenPatch(stored: WorkspaceDatasetOpenInput): WorkspaceDatasetOpenPatch {
@@ -113,9 +119,9 @@ export function buildWorkspaceDatasetOpenPatch(stored: WorkspaceDatasetOpenInput
   const variableSets = stored.variableSets && stored.variableSets.length > 0
     ? stored.variableSets.map(normalizeVariableSet)
     : buildVariableSetsFromVariables(variables);
-  const session = stored.sessionState;
-  const transformLog = (session?.transformLog ?? []) as DataTransform[];
+  const session = normalizeStoredSessionState(stored.sessionState);
   const fileName = stored.fileName || stored.name;
+  const sessionPatch = sessionStateToStorePatch(session);
 
   return {
     dataset: {
@@ -129,22 +135,22 @@ export function buildWorkspaceDatasetOpenPatch(stored: WorkspaceDatasetOpenInput
     },
     variableSets,
     folders: stored.folders ?? [],
-    transformLog,
-    tableConfig: session?.tableConfig ?? { rowVars: [], colVar: null },
-    activeFilters: session?.activeFilters ?? [],
+    transformLog: sessionPatch.transformLog,
+    tableConfig: sessionPatch.tableConfig,
+    activeFilters: sessionPatch.activeFilters,
   };
 }
 
 export interface OpenWorkspaceDatasetContext {
-  engineProxy: EngineProxy;
+  browserEngine: BrowserEngine;
   currentDataset: Dataset | null;
   runAnalysis?: RunAnalysisFn;
   flushPersistedData: () => Promise<void>;
   respawnWorker: (cleanStart?: boolean) => Promise<void>;
-  getEngineProxy: () => EngineProxy | null;
+  getBrowserEngine: () => BrowserEngine | null;
   getPersistenceState: () => PersistenceState;
   applyOpenPatch: (patch: WorkspaceDatasetOpenPatch) => void;
-  applySameDatasetSession: (sessionState: WorkspaceDatasetOpenInput['sessionState']) => void;
+  applySameDatasetSession: (sessionState: DatasetSessionState | undefined) => void;
   rehydrateFromOpfs: (options?: { forceReload?: boolean }) => Promise<void>;
   setPersistenceReady: (fileName: string, rowCount: number) => void;
 }
@@ -153,11 +159,11 @@ export async function openWorkspaceDatasetLifecycle(
   stored: WorkspaceDatasetOpenInput,
   ctx: OpenWorkspaceDatasetContext,
 ): Promise<void> {
-  const { engineProxy, currentDataset, runAnalysis } = ctx;
+  const { browserEngine, currentDataset, runAnalysis } = ctx;
 
   if (currentDataset?.id === stored.id) {
     if (stored.sessionState) {
-      ctx.applySameDatasetSession(stored.sessionState);
+      ctx.applySameDatasetSession(normalizeStoredSessionState(stored.sessionState));
     }
     if (runAnalysis) {
       await runAnalysis();
@@ -174,7 +180,7 @@ export async function openWorkspaceDatasetLifecycle(
 
   await ctx.respawnWorker(false);
 
-  const activeProxy = ctx.getEngineProxy();
+  const activeProxy = ctx.getBrowserEngine();
   if (!activeProxy) throw new Error('Engine not initialized after dataset switch');
 
   let hasData = false;

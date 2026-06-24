@@ -7,6 +7,7 @@
 
 import { useCallback, useEffect, useRef } from 'react';
 import { useVelocityStore } from '../../../store';
+import { persistDatasetSession } from '../../../store/datasetSessionCoordinator';
 import * as opfsFileManager from '../../../services/opfsFileManager';
 import type { StoredDataset, WorkspaceState } from '../types';
 
@@ -174,18 +175,18 @@ export function useWorkspace(): UseWorkspaceReturn {
    * Save current session state before switching datasets.
    */
   const saveCurrentSession = useCallback(() => {
-    if (!dataset || !activeDatasetId) return;
-
-    saveDatasetSession(activeDatasetId, {
-      tableConfig,
-      activeFilters,
-      transformLog,
-    });
-    updateStoredDataset(activeDatasetId, {
-      variables: dataset.variables,
-      variableSets,
-      folders,
-    });
+    persistDatasetSession(
+      {
+        dataset,
+        activeDatasetId,
+        tableConfig,
+        activeFilters,
+        transformLog,
+        variableSets,
+        folders,
+      },
+      { saveDatasetSession, updateStoredDataset },
+    );
   }, [dataset, activeDatasetId, tableConfig, activeFilters, transformLog, variableSets, folders, saveDatasetSession, updateStoredDataset]);
 
   /**

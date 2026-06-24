@@ -25,13 +25,13 @@ export function createEngineActions(
     return {
         initWorker: async () => {
             await initializeEngineWorker({
-                getExistingProxy: () => get().engineProxy,
+                getExistingEngine: () => get().browserEngine,
                 getDatasetId: () => get().dataset?.id,
                 getOpfsAvailable: () => get().opfsAvailable,
                 getPersistenceState: () => get().persistenceState,
                 bridge: bridge(),
                 setWorkerRuntimeError: (message) => set({ initError: message }),
-                assignEngineProxy: (proxy) => set({ engineProxy: proxy, persistenceState: 'checking' }),
+                assignBrowserEngine: (engine) => set({ browserEngine: engine, persistenceState: 'checking' }),
                 setInitSuccess: (opfsAvailable) => set({ isDbReady: true, opfsAvailable }),
                 setPersistenceReady: () => set({ persistenceState: 'ready' }),
                 setInitError: (message) => set({ initError: message, persistenceState: 'error' }),
@@ -41,13 +41,13 @@ export function createEngineActions(
         },
 
         terminateWorker: () => {
-            const { engineProxy } = get();
-            if (engineProxy) {
-                engineProxy.terminate();
+            const { browserEngine } = get();
+            if (browserEngine) {
+                browserEngine.terminate();
                 console.log('[DataSlice] Engine terminated');
             }
             set({
-                engineProxy: null,
+                browserEngine: null,
                 isDbReady: false,
                 initError: null,
             });
@@ -58,7 +58,7 @@ export function createEngineActions(
                 terminateWorker: () => get().terminateWorker(),
                 getDatasetId: () => get().dataset?.id,
                 bridge: bridge(),
-                setEngineProxy: (proxy) => set({ engineProxy: proxy }),
+                setBrowserEngine: (engine) => set({ browserEngine: engine }),
                 setRespawnSuccess: (opfsAvailable) => set({
                     isDbReady: true,
                     opfsAvailable,

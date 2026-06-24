@@ -1,12 +1,11 @@
 import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useReducedMotion, getBackdropProps, getMotionProps } from '../../lib/motion';
+import { useReducedMotion, getMotionProps } from '../../lib/motion';
 import { AlertCircle, CheckCircle2, FileUp, Upload, X } from 'lucide-react';
 import { parseSavMetadata } from '@velocity/readstat-wasm';
 import type { DatasetMatchResult, VelocitySessionFile } from '../../core/session';
 import { parseSessionFile, validateDatasetMatch } from '../../core/session';
 import { decodeSessionFile } from '../../services/sessionFileCodec';
-import { useModalEscape } from '../../hooks/useModalEscape';
+import { ModalShell } from './ModalShell';
 
 export interface SessionImportPayload {
   sessionFile: VelocitySessionFile;
@@ -156,7 +155,11 @@ export const SessionImportModal: React.FC<SessionImportModalProps> = ({
   };
 
   const reducedMotion = useReducedMotion();
-  useModalEscape(isOpen, handleClose);
+  const panelMotionProps = getMotionProps({
+    preset: 'fadeScale',
+    duration: reducedMotion ? 0.01 : 0.25,
+    reducedMotion,
+  });
 
   if (!isOpen) return null;
 
@@ -172,17 +175,17 @@ export const SessionImportModal: React.FC<SessionImportModalProps> = ({
       : 'danger';
 
   return (
-    <AnimatePresence>
-      <motion.div
-        className="fixed inset-0 z-[140] flex items-center justify-center bg-[var(--text-primary)]/40 px-4"
-        {...getBackdropProps(reducedMotion)}
-        onClick={handleClose}
-      >
-        <motion.div
-          className="w-full max-w-2xl rounded-xl border border-[var(--border-color)] bg-[var(--bg-surface)] shadow-2xl"
-          {...getMotionProps({ preset: 'fadeScale', duration: reducedMotion ? 0.01 : 0.25, reducedMotion })}
-          onClick={(event) => event.stopPropagation()}
-        >
+    <ModalShell
+      isOpen={isOpen}
+      onClose={handleClose}
+      layout="unified"
+      escapeToClose
+      unmountWhenClosed
+      onBackdropClick={handleClose}
+      backdropClassName="fixed inset-0 z-[140] flex items-center justify-center bg-[var(--text-primary)]/40 px-4"
+      panelClassName="w-full max-w-2xl rounded-xl border border-[var(--border-color)] bg-[var(--bg-surface)] shadow-2xl"
+      panelMotionProps={panelMotionProps}
+    >
           <div className="flex items-center justify-between border-b border-[var(--border-color)] px-5 py-4">
             <div>
               <h2 className="text-lg font-semibold text-[var(--text-primary)]">Import Session</h2>
@@ -334,8 +337,6 @@ export const SessionImportModal: React.FC<SessionImportModalProps> = ({
               {isImporting ? 'Importing...' : 'Continue'}
             </button>
           </div>
-        </motion.div>
-      </motion.div>
-    </AnimatePresence>
+    </ModalShell>
   );
 };

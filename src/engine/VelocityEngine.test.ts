@@ -426,4 +426,74 @@ describe('VelocityEngine', () => {
       },
     ]);
   });
+
+  it('wraps session mutation methods in provenance envelopes', async () => {
+    const adapter = new MockAdapter();
+    const engine = await VelocityEngine.create({ runtime: 'node', adapter, engineVersion: 'test-engine' });
+    await engine.loadFile('/data/brand_tracker.sav');
+
+    const filter = {
+      id: 'filter-q1',
+      variableId: 'Q1',
+      operator: 'eq' as const,
+      value: 1,
+    };
+
+    const addFilterEnvelope = engine.addFilter(filter);
+    const setWeightEnvelope = engine.setWeight('WEIGHT');
+    const clearFiltersEnvelope = engine.clearFilters();
+    const removeFilterEnvelope = engine.removeFilter('missing-filter');
+
+    expect(addFilterEnvelope.operation).toBe('addFilter');
+    expect(addFilterEnvelope.data.filter).toEqual(filter);
+    expect(addFilterEnvelope.metadata.filtersApplied).toBe(1);
+
+    expect(setWeightEnvelope.operation).toBe('setWeight');
+    expect(setWeightEnvelope.data.variableId).toBe('WEIGHT');
+    expect(setWeightEnvelope.metadata.isWeighted).toBe(true);
+
+    expect(clearFiltersEnvelope.operation).toBe('clearFilters');
+    expect(clearFiltersEnvelope.data.clearedCount).toBe(1);
+    expect(clearFiltersEnvelope.metadata.filtersApplied).toBe(0);
+
+    expect(removeFilterEnvelope.operation).toBe('removeFilter');
+    expect(removeFilterEnvelope.data).toEqual({ filterId: 'missing-filter', removed: false });
+
+    const commitEnvelope = engine.commitDeck({
+      spec: {
+        title: 'Commit Test',
+        sections: [{ title: 'Results', slides: [] }],
+      },
+      slides: [
+        {
+          spec: { rowVars: ['Q1'] },
+          sectionTitle: 'Results',
+          result: {
+            data: { rows: [] },
+            operation: 'runAnalysis:crosstab',
+            inputs: { rowVars: ['Q1'] },
+            durationMs: 1,
+            warnings: [],
+            metadata: {
+              datasetName: 'brand_tracker.sav',
+              rowCount: 1200,
+              filtersApplied: 0,
+              isWeighted: false,
+              engineVersion: 'test-engine',
+            },
+          },
+          processed: { rows: [] },
+          resolvedTitle: 'Slide 1',
+          resolvedSubtitle: 'N = 1200',
+        },
+      ],
+      errors: [],
+      buildDurationMs: 1,
+    });
+
+    expect(commitEnvelope.operation).toBe('commitDeck');
+    expect(commitEnvelope.data.committedSlides).toBe(1);
+    expect(commitEnvelope.data.committedSections).toBe(1);
+    expect(commitEnvelope.metadata.engineVersion).toBe('test-engine');
+  });
 });

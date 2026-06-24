@@ -4,9 +4,10 @@ import * as d3 from 'd3-scale';
 import { getBarEntranceMotionProps } from '../../../lib/chartBarEntrance';
 import { max } from 'd3-array';
 import { BaseChartRendererProps } from '../../../types/charts';
-// getChartColor removed
 import { ChartDataPoint } from '../../../types/processedData';
 import { useChartDragMerge } from '../hooks/useChartDragMerge';
+import { useChartSelection } from '../hooks/useChartSelection';
+import { ChartPlotArea } from '../shared/ChartPlotArea';
 
 /**
  * Vertical Bar (Column) Chart Renderer
@@ -52,40 +53,12 @@ export const VerticalBarRenderer: React.FC<BaseChartRendererProps> = ({
             .range([innerHeight, 0]);
     }, [chartData, innerHeight]);
 
-    // Handle interactions
-    const handleBarClick = useCallback((d: any, event: React.MouseEvent) => {
-        if (!interactive || !onSelectionChange) return;
-
-        const newSelection = new Set(selectedKeys);
-        if (event.metaKey || event.ctrlKey) {
-            if (newSelection.has(d.label)) {
-                newSelection.delete(d.label);
-            } else {
-                newSelection.add(d.label);
-            }
-        } else {
-            newSelection.clear();
-            newSelection.add(d.label);
-        }
-        onSelectionChange(newSelection);
-    }, [interactive, onSelectionChange, selectedKeys]);
-
-
-    const handleContextMenu = useCallback((d: any, event: React.MouseEvent) => {
-        if (!interactive || !onContextMenu) return;
-        event.preventDefault();
-        event.stopPropagation();
-
-        const isCurrentlySelected = selectedKeys?.has(d.label);
-        const selectedItems = isCurrentlySelected
-            ? chartData.filter(item => selectedKeys?.has(item.label))
-            : [d];
-
-        onContextMenu({
-            selected: selectedItems,
-            position: { x: event.clientX, y: event.clientY },
-        });
-    }, [interactive, onContextMenu, selectedKeys, chartData]);
+    const { handleToggle, handleItemContextMenu } = useChartSelection<ChartDataPoint>({
+        interactive,
+        selectedKeys,
+        onSelectionChange,
+        onContextMenu,
+    });
 
     // Drag-to-merge Logic
     const getDropTarget = useCallback((x: number, y: number) => {
@@ -124,7 +97,7 @@ export const VerticalBarRenderer: React.FC<BaseChartRendererProps> = ({
                 cursor: dragState.isDragging ? 'grabbing' : 'default',
             }}
         >
-            <g transform={`translate(${margin.left},${margin.top})`}>
+            <ChartPlotArea margin={margin}>
                 {/* Grid lines (Horizontal) */}
                 {yTicks.map(tick => (
                     <line
@@ -199,10 +172,10 @@ export const VerticalBarRenderer: React.FC<BaseChartRendererProps> = ({
                             key={d.label}
                             onClick={(e) => {
                                 if (!dragState.isDragging) {
-                                    handleBarClick(d, e);
+                                    handleToggle(d.label, e);
                                 }
                             }}
-                            onContextMenu={(e) => handleContextMenu(d, e)}
+                            onContextMenu={(e) => handleItemContextMenu(d, chartData, e)}
                             onMouseDown={(e) => {
                                 if (e.button === 0 && onMerge) {
                                     handleDragStart(d, e);
@@ -316,7 +289,7 @@ export const VerticalBarRenderer: React.FC<BaseChartRendererProps> = ({
                     y2={innerHeight}
                     stroke="var(--viz-stroke-main)"
                 />
-            </g>
+            </ChartPlotArea>
         </svg>
     );
 };

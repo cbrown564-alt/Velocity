@@ -167,6 +167,28 @@ export interface DeckBuildError {
   error: VelocityError;
 }
 
+export interface WeightMutationResult {
+  variableId: string | null;
+}
+
+export interface FilterMutationResult {
+  filter: Filter;
+}
+
+export interface RemoveFilterResult {
+  filterId: string;
+  removed: boolean;
+}
+
+export interface ClearFiltersResult {
+  clearedCount: number;
+}
+
+export interface CommitDeckResult {
+  committedSlides: number;
+  committedSections: number;
+}
+
 export interface BuiltDeck {
   spec: DeckSpec;
   slides: BuiltSlide[];

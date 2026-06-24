@@ -38,14 +38,19 @@ import { WorkspaceManager } from './workspaceManager';
 import type {
   AnalysisDescriptor,
   BuiltDeck,
+  ClearFiltersResult,
+  CommitDeckResult,
   DatasetDescription,
   DatasetSummary,
   DeckExportOptions,
   DeckSpec,
   EngineOptions,
   EngineRecodeConfig,
+  FilterMutationResult,
+  RemoveFilterResult,
   ResultEnvelope,
   VariableDetail,
+  WeightMutationResult,
   WorkspaceDatasetSummary,
 } from './types';
 import { VelocityError } from './types';
@@ -420,20 +425,20 @@ export class VelocityEngine implements VelocityEngineHost {
     });
   }
 
-  setWeight(variableId: string | null): void {
-    this.sessionState.setWeight(variableId);
+  setWeight(variableId: string | null): ResultEnvelope<WeightMutationResult> {
+    return this.sessionState.setWeight(variableId);
   }
 
-  addFilter(filter: Filter): void {
-    this.sessionState.addFilter(filter);
+  addFilter(filter: Filter): ResultEnvelope<FilterMutationResult> {
+    return this.sessionState.addFilter(filter);
   }
 
-  removeFilter(filterId: string): void {
-    this.sessionState.removeFilter(filterId);
+  removeFilter(filterId: string): ResultEnvelope<RemoveFilterResult> {
+    return this.sessionState.removeFilter(filterId);
   }
 
-  clearFilters(): void {
-    this.sessionState.clearFilters();
+  clearFilters(): ResultEnvelope<ClearFiltersResult> {
+    return this.sessionState.clearFilters();
   }
 
   getActiveFilters(): ResultEnvelope<Filter[]> {
@@ -467,8 +472,8 @@ export class VelocityEngine implements VelocityEngineHost {
     });
   }
 
-  commitDeck(deck: BuiltDeck): void {
-    this.sessionState.commitDeck(deck);
+  commitDeck(deck: BuiltDeck): ResultEnvelope<CommitDeckResult> {
+    return this.sessionState.commitDeck(deck);
   }
 
   async recommendChart(

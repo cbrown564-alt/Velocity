@@ -1,0 +1,27 @@
+.projectBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  background: color-mix(in srgb, var(--project-color) 15%, transparent);
+  color: var(--project-color);
+  border-radius: var(--border-radius-sm);
+  font-size: var(--text-xxs);
+  font-weight: 500;
+}
+
+.projectBadge.compact {
+  padding: 2px var(--space-1);
+  font-size: 9px;
+}
+
+.waveBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  background: var(--bg-active);
+  color: var(--text-secondary);
+  border-radius: var(--border-radius-sm);
+  font-size: var(--text-xxs);
+}

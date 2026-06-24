@@ -2,9 +2,10 @@
  * Data slice types — persistence, load progress, workspace open input, and slice contract.
  */
 
-import type { EngineProxy } from '../../../services/EngineProxy';
+import type { BrowserEngine } from '../../../engine/BrowserEngine';
 import type { VariableStatsResult } from '../../../types/worker';
 import type { RecodeConfig, VariableType } from '../../../types';
+import type { DatasetSessionState } from '../../../types/workspaceSession';
 import type {
     DataTransform,
     Dataset,
@@ -34,11 +35,7 @@ export interface WorkspaceDatasetOpenInput {
     variables?: Variable[];
     variableSets?: VariableSet[];
     folders?: Folder[];
-    sessionState?: {
-        tableConfig: { rowVars: string[]; colVar: string | null };
-        activeFilters: unknown[];
-        transformLog: unknown[];
-    };
+    sessionState?: DatasetSessionState;
 }
 
 export type PersistenceState =
@@ -72,7 +69,7 @@ export interface LoadProgressState {
 }
 
 export interface DataSlice {
-    engineProxy: EngineProxy | null;
+    browserEngine: BrowserEngine | null;
     isDbReady: boolean;
     initError: string | null;
     dataset: Dataset | null;

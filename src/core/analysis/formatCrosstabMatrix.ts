@@ -32,6 +32,8 @@ export interface CrosstabMatrixResult {
   grandTotal: number;
 }
 
+import { extractRowKeyStrings } from './crosstab/rowKeys';
+
 export type CrosstabLongRow = Record<string, unknown>;
 
 interface FormatCrosstabMatrixOptions {
@@ -57,12 +59,7 @@ const copyNumericField = (cell: CrosstabMatrixCell, row: CrosstabLongRow, key: k
 };
 
 const getRowLabel = (row: CrosstabLongRow): string => {
-  const rowKeys = Object.keys(row)
-    .filter((key) => key.startsWith('rowKey_'))
-    .sort()
-    .map((key) => String(row[key] ?? ''));
-
-  return rowKeys.join(' / ');
+  return extractRowKeyStrings(row).join(' / ');
 };
 
 export const formatCrosstabMatrix = (

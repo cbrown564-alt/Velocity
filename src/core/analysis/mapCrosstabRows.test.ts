@@ -1,4 +1,34 @@
 import { mapCrosstabRows } from './mapCrosstabRows';
+import {
+  extractRowKeys,
+  extractRowKeyStrings,
+  joinRowKeyPath,
+} from './crosstab/rowKeys';
+
+describe('extractRowKeys', () => {
+  it('collects contiguous rowKey_N columns in index order', () => {
+    const row = { rowKey_0: 'A', rowKey_1: 'B', colKey: 'Total', count: 5 };
+    expect(extractRowKeys(row)).toEqual(['A', 'B']);
+    expect(extractRowKeyStrings(row)).toEqual(['A', 'B']);
+    expect(joinRowKeyPath(row)).toBe('A|B');
+  });
+
+  it('stops at the first gap in rowKey indices', () => {
+    const row = { rowKey_0: 'A', rowKey_2: 'C' };
+    expect(extractRowKeys(row)).toEqual(['A']);
+  });
+
+  it('preserves numeric row key values', () => {
+    const row = { rowKey_0: 1, colKey: 'X' };
+    expect(extractRowKeys(row)).toEqual([1]);
+    expect(extractRowKeyStrings(row)).toEqual(['1']);
+  });
+
+  it('returns empty array when no row keys present', () => {
+    expect(extractRowKeys({ colKey: 'Total' })).toEqual([]);
+    expect(joinRowKeyPath({ colKey: 'Total' })).toBe('');
+  });
+});
 
 describe('mapCrosstabRows', () => {
   it('maps raw rows to AggregatedRow for unweighted data', () => {

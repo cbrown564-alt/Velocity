@@ -1,4 +1,4 @@
-import type { Folder, Variable, VariableSet } from '../../types';
+import type { DatasetSessionState, Folder, Variable, VariableSet } from '../../types';
 
 export interface StoredDataset {
   id: string;
@@ -20,11 +20,7 @@ export interface StoredDataset {
   /** Thumbnail data for preview (sparkline of first variable) */
   thumbnail?: number[];
   /** Session state to restore */
-  sessionState?: {
-    tableConfig: { rowVars: string[]; colVar: string | null };
-    activeFilters: unknown[];
-    transformLog: unknown[];
-  };
+  sessionState?: DatasetSessionState;
   /** Optional variable metadata for cross-wave harmonization */
   variables?: Variable[];
   /** Original variable grouping metadata from ingest/manager state */

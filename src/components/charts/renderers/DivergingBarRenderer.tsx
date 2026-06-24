@@ -2,6 +2,8 @@ import React, { useMemo, useCallback } from 'react';
 import * as d3 from 'd3-scale';
 import { max } from 'd3-array';
 import { BaseChartRendererProps } from '../../../types/charts';
+import { useChartSelection } from '../hooks/useChartSelection';
+import { ChartPlotArea } from '../shared/ChartPlotArea';
 
 /**
  * Diverging Bar Chart Renderer
@@ -206,19 +208,11 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
 
     const legendItems = getLegendColors();
 
-    const handleRowClick = useCallback((rowLabel: string, event: React.MouseEvent) => {
-        if (!interactive || !onSelectionChange) return;
-
-        const newSelection = new Set(selectedKeys);
-        if (event.metaKey || event.ctrlKey) {
-            newSelection.has(rowLabel) ? newSelection.delete(rowLabel) : newSelection.add(rowLabel);
-        } else {
-            newSelection.clear();
-            newSelection.add(rowLabel);
-        }
-        onSelectionChange(newSelection);
-    }, [interactive, onSelectionChange, selectedKeys]);
-
+    const { handleToggle } = useChartSelection({
+        interactive,
+        selectedKeys,
+        onSelectionChange,
+    });
 
     const handleRowContextMenu = useCallback((rowLabel: string, event: React.MouseEvent) => {
         if (!interactive || !onContextMenu) return;
@@ -259,7 +253,7 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
                     </div>
                 </foreignObject>
 
-                <g transform={`translate(${margin.left},${margin.top})`}>
+                <ChartPlotArea margin={margin}>
 
                     {/* Center Line for Diverging Part */}
                     <line
@@ -354,7 +348,7 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
                         return (
                             <g
                                 key={row.label}
-                                onClick={(e) => handleRowClick(row.label, e)}
+                                onClick={(e) => handleToggle(row.label, e)}
                                 onContextMenu={(e) => handleRowContextMenu(row.label, e)}
                                 style={{ cursor: interactive ? 'pointer' : 'default' }}
                             >
@@ -550,7 +544,7 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
                             </g>
                         );
                     })}
-                </g >
+                </ChartPlotArea>
             </svg>
         </div>
     );

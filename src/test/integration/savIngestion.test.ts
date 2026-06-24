@@ -7,7 +7,7 @@ describe('Integration: SAV Ingestion Flow', () => {
 
     beforeEach(() => {
         useVelocityStore.setState({
-            engineProxy: null,
+            browserEngine: null,
             dataset: null,
             variableSets: [],
             isDbReady: false,
@@ -15,7 +15,7 @@ describe('Integration: SAV Ingestion Flow', () => {
         vi.clearAllMocks();
     });
 
-    it('should load SAV via engineProxy and update store on success', async () => {
+    it('should load SAV via browserEngine and update store on success', async () => {
         const variables = mockDataset.variables;
         const variableSets = mockDataset.variables.map(v => ({
             id: v.id,
@@ -25,7 +25,7 @@ describe('Integration: SAV Ingestion Flow', () => {
             type: v.type
         }));
 
-        // Mock engineProxy with loadSAV returning expected response
+        // Mock browserEngine with loadSAV returning expected response
         const mockEngineProxy = {
             loadSAV: vi.fn().mockResolvedValue({
                 type: 'engine.savLoaded',
@@ -41,7 +41,7 @@ describe('Integration: SAV Ingestion Flow', () => {
         } as any;
 
         useVelocityStore.setState({
-            engineProxy: mockEngineProxy,
+            browserEngine: mockEngineProxy,
             isDbReady: true,
         });
 
@@ -51,7 +51,7 @@ describe('Integration: SAV Ingestion Flow', () => {
 
         await useVelocityStore.getState().loadSAV(fileName, buffer);
 
-        // Verify engineProxy.loadSAV was called
+        // Verify browserEngine.loadSAV was called
         expect(mockEngineProxy.loadSAV).toHaveBeenCalledWith(buffer);
 
         // Assert final state

@@ -1,0 +1,282 @@
+.datasetCard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-4);
+  background: var(--bg-panel);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-lg);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.datasetCard:hover {
+  border-color: var(--color-accent);
+  box-shadow: var(--shadow-md);
+}
+
+.datasetCard.selected {
+  border-color: var(--color-accent);
+  background: color-mix(in srgb, var(--color-accent) 5%, var(--bg-panel));
+}
+
+/* Selection ring */
+.selectionRing {
+  position: absolute;
+  top: var(--space-3);
+  left: var(--space-3);
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--border-color);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.datasetCard:hover .selectionRing,
+.datasetCard.selected .selectionRing {
+  border-color: var(--color-accent);
+}
+
+.checkmark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background: var(--color-accent);
+  color: var(--text-inverse);
+  border-radius: 50%;
+}
+
+/* Star button */
+.starButton {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  opacity: 0;
+  transition: all 0.15s ease;
+}
+
+.datasetCard:hover .starButton,
+.starButton.starred {
+  opacity: 1;
+}
+
+.starButton:hover {
+  background: var(--bg-active);
+}
+
+.starButton.starred {
+  color: var(--viz-palette-2);
+}
+
+.starButton.starred svg {
+  fill: currentColor;
+}
+
+/* Activity dot — Quick Win 9.3 */
+.activityDot {
+  position: absolute;
+  top: var(--space-3);
+  right: calc(var(--space-3) + 32px);
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  box-shadow: 0 0 0 2px var(--bg-panel);
+  animation: activityPulse 2s ease-in-out infinite;
+}
+
+@keyframes activityPulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.2);
+  }
+}
+
+/* Card content */
+.cardContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-top: var(--space-6);
+}
+
+.fileIcon {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--text-secondary);
+}
+
+.fileType {
+  font-family: var(--font-mono);
+  font-size: var(--text-xxs);
+  text-transform: uppercase;
+  padding: var(--space-1) var(--space-2);
+  background: var(--bg-active);
+  border-radius: var(--border-radius-sm);
+}
+
+.fileName {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.metaRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+}
+
+.metaDot {
+  opacity: 0.5;
+}
+
+.sparkline {
+  margin: var(--space-2) 0;
+}
+
+/* Badges container */
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.lastOpened {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  margin-top: auto;
+  padding-top: var(--space-2);
+}
+
+.sessionIndicator {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin-left: auto;
+  color: var(--color-accent);
+}
+
+/* Card actions */
+.cardActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding-top: var(--space-3);
+  margin-top: var(--space-3);
+  border-top: 1px solid var(--border-color);
+  opacity: 0;
+  transform: translateY(4px);
+  transition: all 0.15s ease;
+}
+
+.datasetCard:hover .cardActions {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.actionButton {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  flex: 1;
+  padding: var(--space-2);
+  border: none;
+  border-radius: var(--border-radius-md);
+  background: var(--color-accent);
+  color: var(--text-inverse);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  cursor: pointer;
+  justify-content: center;
+  transition: opacity 0.15s ease;
+}
+
+.actionButton:hover {
+  opacity: 0.9;
+}
+
+.iconButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.iconButton:hover {
+  border-color: var(--color-accent);
+  color: var(--text-primary);
+}
+
+/* Mission Control: Radar sweep on hover */
+[data-theme="mission-control"] .datasetCard::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 100%;
+  background: linear-gradient(90deg,
+      transparent 0%,
+      color-mix(in srgb, var(--color-accent) 10%, transparent) 50%,
+      transparent 100%);
+  pointer-events: none;
+  transition: width 0.3s ease;
+}
+
+[data-theme="mission-control"] .datasetCard:hover::after {
+  width: 100%;
+}
+
+/* Soft Machine: Left accent bar */
+[data-theme="soft-machine"] .datasetCard {
+  border-left: 3px solid transparent;
+}
+
+[data-theme="soft-machine"] .datasetCard:hover {
+  border-left-color: var(--color-accent);
+}
+
+/* Liquid Glass: Enhanced blur */
+[data-theme="liquid-glass"] .datasetCard {
+  background: var(--mat-panel-bg, var(--bg-panel));
+  backdrop-filter: var(--mat-panel-filter, blur(15px) saturate(150%));
+}

@@ -7,7 +7,7 @@ describe('Integration: Store <-> EngineProxy Analysis Flow', () => {
 
     beforeEach(() => {
         useVelocityStore.setState({
-            engineProxy: null,
+            browserEngine: null,
             dataset: null,
             variableSets: [],
             isDbReady: false,
@@ -45,17 +45,17 @@ describe('Integration: Store <-> EngineProxy Analysis Flow', () => {
             metadata: { datasetName: 'test.sav', rowCount: 100, filtersApplied: 0, isWeighted: false, engineVersion: 'browser-wasm' },
         });
 
-        const mockRunCrosstab = vi.fn().mockResolvedValue(
+        const mockRunAnalysis = vi.fn().mockResolvedValue(
             mockEnvelope({ rows: mockResult, tableStats: null })
         );
 
         const mockEngineProxy = {
-            runCrosstab: mockRunCrosstab,
+            runAnalysis: mockRunAnalysis,
             getVariableStats: vi.fn().mockResolvedValue(mockEnvelope({})),
         } as any;
 
         useVelocityStore.setState({
-            engineProxy: mockEngineProxy,
+            browserEngine: mockEngineProxy,
             dataset: mockDataset,
             isDbReady: true,
             variableSets: [{
@@ -77,15 +77,13 @@ describe('Integration: Store <-> EngineProxy Analysis Flow', () => {
         await new Promise(resolve => setTimeout(resolve, 0));
 
         // Verify runCrosstab was called
-        expect(mockRunCrosstab).toHaveBeenCalledWith(
+        expect(mockRunAnalysis).toHaveBeenCalledWith(
+            'crosstab',
             expect.objectContaining({
-                rowVars: [mockNominalVariable.id]
+                rowVars: [mockNominalVariable.id],
             }),
-            expect.any(Object),
             expect.objectContaining({
-                comparisonMethod: 'cell_vs_rest',
-                correctionType: 'none',
-                significanceLevel: 0.95,
+                dataset: mockDataset,
             }),
         );
 

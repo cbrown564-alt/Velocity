@@ -159,7 +159,7 @@ describe('Store: Persistence', () => {
                 dataset: { id: 'ds1', name: 'test.sav', rowCount: 100, variables: [], source: 'sav' as const },
                 variableSets: [{ id: 'vs1', name: 'Test', variableIds: ['v1'], structure: 'single' as const }],
                 folders: [{ id: 'f1', name: 'Demographics', order: 0 }],
-                engineProxy: null,
+                browserEngine: null,
                 isDbReady: true,
                 initError: null,
 
@@ -236,7 +236,7 @@ describe('Store: Persistence', () => {
                 dataset: null,
                 variableSets: [],
                 folders: [],
-                engineProxy: null,
+                browserEngine: null,
                 isDbReady: true,
                 initError: 'Some error',
                 appMode: 'analysis' as const,
@@ -263,7 +263,7 @@ describe('Store: Persistence', () => {
             const keys = Object.keys(persisted);
 
             // Should NOT include ephemeral fields
-            expect(keys).not.toContain('engineProxy');
+            expect(keys).not.toContain('browserEngine');
             expect(keys).not.toContain('isDbReady');
             expect(keys).not.toContain('initError');
             expect(keys).not.toContain('draggingId');

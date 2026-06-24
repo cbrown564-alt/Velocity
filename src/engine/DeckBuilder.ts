@@ -11,6 +11,7 @@ import { processAnalysisData } from '../core/analysis/analysisProcessor';
 import { resolveSlideTitle, resolveSlideSubtitle } from '../core/export/resolveSlideDefaults';
 import { recommendChart } from '../core/visualization/chartRecommender';
 import { mapCrosstabRows } from '../core/analysis/mapCrosstabRows';
+import type { CrosstabSqlRow } from '../core/analysis/crosstab/types';
 import { exportPptx, exportXlsx } from '../core/export';
 import type { AnalysisExportItem, ExportConfig } from '../core/export/types';
 import type { Filter, Variable } from '../types';
@@ -122,7 +123,7 @@ export class DeckBuilder {
 
     // Extract rows from the crosstab result and convert from raw DuckDB format
     // (rowKey_0, rowKey_1 ...) to AggregatedRow format (rowKeys: string[]).
-    const crosstabData = result.data as { rows: unknown[]; tableStats?: unknown } | null;
+    const crosstabData = result.data as { rows: CrosstabSqlRow[]; tableStats?: unknown } | null;
     const rawRows = crosstabData?.rows ?? [];
     const rows = mapCrosstabRows(rawRows, !!effectiveWeightVar);
 

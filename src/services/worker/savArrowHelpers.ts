@@ -9,10 +9,10 @@ export const FAST_BATCH_MS = 350;
 export const CHUNK_DOWNSHIFT_FACTOR = 0.7;
 export const CHUNK_UPSHIFT_FACTOR = 1.2;
 
-export const ENABLE_SAV_STREAMING_V2 = true;
+/** Canonical streaming path (v3 single-pass bridge). */
 export const ENABLE_SAV_STREAMING_V3_SINGLE_PASS = true;
-export const STREAMING_V2_HIGH_RISK_BYTES = CHUNKED_THRESHOLD_BYTES;
-export const STREAMING_V3_HIGH_RISK_BYTES = CHUNKED_THRESHOLD_BYTES;
+/** Legacy chunked parser; disable once v3 is fully validated in production. */
+export const ENABLE_SAV_STREAMING_LEGACY = true;
 export const V3_INITIAL_CREDITS = 2;
 export const V3_MAX_CREDITS = 4;
 

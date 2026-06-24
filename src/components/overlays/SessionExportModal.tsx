@@ -1,7 +1,7 @@
 import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useReducedMotion, getBackdropProps, getMotionProps } from '../../lib/motion';
+import { useReducedMotion, getMotionProps } from '../../lib/motion';
 import { Download, FileText, LayoutGrid, Wand2, Filter, Layers, ShieldCheck, X } from 'lucide-react';
+import { ModalShell } from './ModalShell';
 
 export interface SessionExportSummary {
   datasetName: string;
@@ -68,20 +68,22 @@ export const SessionExportModal: React.FC<SessionExportModalProps> = ({
   };
 
   const reducedMotion = useReducedMotion();
+  const panelMotionProps = getMotionProps({
+    preset: 'fadeScale',
+    duration: reducedMotion ? 0.01 : 0.25,
+    reducedMotion,
+  });
 
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <motion.div
-          className="fixed inset-0 z-[140] flex items-center justify-center bg-[var(--text-primary)]/40 px-4"
-          {...getBackdropProps(reducedMotion)}
-          onClick={handleClose}
-        >
-          <motion.div
-            className="w-full max-w-md rounded-xl border border-[var(--border-color)] bg-[var(--bg-surface)] shadow-2xl"
-            {...getMotionProps({ preset: 'fadeScale', duration: reducedMotion ? 0.01 : 0.25, reducedMotion })}
-            onClick={(e) => e.stopPropagation()}
-          >
+    <ModalShell
+      isOpen={isOpen}
+      onClose={handleClose}
+      layout="unified"
+      onBackdropClick={handleClose}
+      backdropClassName="fixed inset-0 z-[140] flex items-center justify-center bg-[var(--text-primary)]/40 px-4"
+      panelClassName="w-full max-w-md rounded-xl border border-[var(--border-color)] bg-[var(--bg-surface)] shadow-2xl"
+      panelMotionProps={panelMotionProps}
+    >
             {/* Header */}
             <div className="flex items-center justify-between border-b border-[var(--border-color)] px-5 py-4">
               <div>
@@ -166,9 +168,6 @@ export const SessionExportModal: React.FC<SessionExportModalProps> = ({
                 {done ? 'Downloaded' : isExporting ? 'Preparing…' : 'Download .velocity'}
               </button>
             </div>
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+    </ModalShell>
   );
 };

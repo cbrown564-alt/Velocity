@@ -4,7 +4,7 @@ import { FolderOpen, Link2, TrendingUp } from 'lucide-react';
 import type { StoredDataset, Project } from '../types';
 import { formatRelativeTime } from '../lib/workspaceFormatters';
 import { WaveTimeline } from './WaveTimeline';
-import styles from './WorkspaceView.module.css';
+import styles from './WorkspaceProjectCard.module.css';
 
 export const WorkspaceProjectCard: React.FC<{
   project: Project;

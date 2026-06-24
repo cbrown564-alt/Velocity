@@ -6,6 +6,7 @@
  */
 
 import { EngineProxy, type EngineProxyOptions } from '../services/EngineProxy';
+import { BrowserEngine } from '../engine/BrowserEngine';
 import type { EngineResponseByType } from '../types/engineWorker';
 import type { PersistenceState } from './slices/data/types';
 
@@ -99,14 +100,22 @@ export function createEngineProxy(
   });
 }
 
+export function createBrowserEngine(
+  worker: Worker,
+  bridge: EnginePersistenceBridge,
+  options: { corruptionLogLabel?: string; onLoadProgress?: LoadProgressCallback } = {},
+): BrowserEngine {
+  return new BrowserEngine(createEngineProxy(worker, bridge, options));
+}
+
 export interface InitializeEngineContext {
-  getExistingProxy: () => EngineProxy | null;
+  getExistingEngine: () => BrowserEngine | null;
   getDatasetId: () => string | undefined;
   getOpfsAvailable: () => boolean;
   getPersistenceState: () => PersistenceState;
   bridge: EnginePersistenceBridge;
   setWorkerRuntimeError: (message: string) => void;
-  assignEngineProxy: (proxy: EngineProxy) => void;
+  assignBrowserEngine: (engine: BrowserEngine) => void;
   setInitSuccess: (opfsAvailable: boolean) => void;
   setPersistenceReady: () => void;
   setInitError: (message: string) => void;
@@ -115,7 +124,7 @@ export interface InitializeEngineContext {
 }
 
 export async function initializeEngineWorker(ctx: InitializeEngineContext): Promise<void> {
-  if (ctx.getExistingProxy()) {
+  if (ctx.getExistingEngine()) {
     console.log('[enginePersistenceBridge] Engine already initialized, skipping duplicate init');
     return;
   }
@@ -128,12 +137,12 @@ export async function initializeEngineWorker(ctx: InitializeEngineContext): Prom
       ctx.setWorkerRuntimeError(error.message || 'Worker runtime error');
     };
 
-    const proxy = createEngineProxy(worker, ctx.bridge, { onLoadProgress: ctx.onLoadProgress });
+    const engine = createBrowserEngine(worker, ctx.bridge, { onLoadProgress: ctx.onLoadProgress });
 
-    ctx.assignEngineProxy(proxy);
+    ctx.assignBrowserEngine(engine);
 
     const datasetId = ctx.getDatasetId();
-    const result = await proxy.init({ datasetId, schemaVersion: 1 });
+    const result = await engine.init({ datasetId, schemaVersion: 1 });
 
     ctx.setInitSuccess(result.opfsAvailable);
     console.log(`[enginePersistenceBridge] Engine ready, OPFS available: ${result.opfsAvailable}`);
@@ -154,7 +163,7 @@ export interface RespawnEngineContext {
   terminateWorker: () => void;
   getDatasetId: () => string | undefined;
   bridge: EnginePersistenceBridge;
-  setEngineProxy: (proxy: EngineProxy) => void;
+  setBrowserEngine: (engine: BrowserEngine) => void;
   setRespawnSuccess: (opfsAvailable: boolean) => void;
   setRespawnError: (message: string) => void;
   cleanStart?: boolean;
@@ -173,15 +182,15 @@ export async function respawnEngineWorker(ctx: RespawnEngineContext): Promise<vo
 
   try {
     const worker = createAnalysisWorker();
-    const proxy = createEngineProxy(worker, ctx.bridge, {
+    const engine = createBrowserEngine(worker, ctx.bridge, {
       corruptionLogLabel: ' during respawn',
       onLoadProgress: ctx.onLoadProgress,
     });
 
-    ctx.setEngineProxy(proxy);
+    ctx.setBrowserEngine(engine);
 
     const datasetId = ctx.datasetIdOverride ?? ctx.getDatasetId();
-    const result = await proxy.init({
+    const result = await engine.init({
       forceCleanStart: cleanStart,
       datasetId,
       schemaVersion: 1,

@@ -28,12 +28,8 @@ export const deckHandlers: Record<string, ToolHandler> = {
 
   velocity_commit_deck: (engine, a) => {
     const deck = a.deck as BuiltDeck;
-    engine.commitDeck(deck);
-    return successResponse({
-      ok: true,
-      committedSlides: deck.slides.length,
-      committedSections: deck.spec.sections.length,
-    });
+    const result = engine.commitDeck(deck);
+    return successResponse(result);
   },
 
   velocity_recommend_chart: async (engine, a) => {

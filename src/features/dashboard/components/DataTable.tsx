@@ -1,24 +1,22 @@
 import React, { useMemo, useState, useRef, useCallback } from 'react';
 import { AggregatedRow, Variable, TableStats } from '../../../types';
-import { ChevronRight, ChevronDown } from 'lucide-react';
 import type { VariableStatsResult } from '../../../types/worker';
 import { useProcessedAnalysisData } from '../../../hooks/useProcessedAnalysisData';
-import { useTableDragMerge, TableDragItem } from '../../../hooks/useTableDragMerge';
+import { useTableDragMerge } from '../../../hooks/useTableDragMerge';
 import { useMergeOrchestration } from '../../../hooks/useMergeOrchestration';
 import { InputModal } from '../../../components/overlays/InputModal';
 import { ChartContextMenu } from '../../../components/overlays/ChartContextMenu';
-import { RowPathEntry, TableRowNode } from '../../../core/analysis/treeBuilder';
-import { Tooltip } from '../../../components/common/Tooltip';
-import { StatisticsTooltip } from '../../../components/common/StatisticsTooltip';
+import { RowPathEntry } from '../../../core/analysis/treeBuilder';
 import { StatisticsStatusBar } from '../../../components/common/StatisticsStatusBar';
 import { useReducedMotion } from '../../../lib/motion';
 import { useVelocityStore } from '../../../store';
 import mergeStyles from './DataTable.module.css';
 import { toUiCaps } from '../../../core/text/displayCase';
+import { CrosstabRow } from './CrosstabRow';
 import { CrosstabCell } from './CrosstabCell';
 import { computeCrosstabColumnWidths } from './crosstabColumnWidths';
 import { AnalysisOutputFrame } from './AnalysisOutputFrame';
-export type { RowPathEntry, TableRowNode };
+export type { RowPathEntry, TableRowNode } from '../../../core/analysis/treeBuilder';
 
 /**
  * DataTable Component
@@ -127,7 +125,7 @@ export const DataTable: React.FC<DataTableProps> = ({
     });
   }, []);
 
-  // Process data for Visualization (Chart & Future Table)
+  // Process data for table view via worker
   const processedData = useProcessedAnalysisData({
     data,
     rowVariables,
@@ -186,200 +184,27 @@ export const DataTable: React.FC<DataTableProps> = ({
     return computeCrosstabColumnWidths(tableData.colKeys, tableData.colLabels, hasTotalColumn);
   }, [tableData]);
 
-  /** Insight Halo: subtle background tint based on significance level */
   const haloClass = useCallback((sig?: string | null): string => {
     if (sig === 'high_95' || sig === 'low_95') return 'bg-[var(--halo-high)]';
     if (sig === 'high_80' || sig === 'low_80') return 'bg-[var(--halo-mid)]';
     return '';
   }, []);
 
+  const handleRowContextMenu = useCallback((params: {
+    variableId: string;
+    rowLabel: string;
+    x: number;
+    y: number;
+  }) => {
+    setRowContextMenu({
+      isOpen: true,
+      position: { x: params.x, y: params.y },
+      variableId: params.variableId,
+      rowLabel: params.rowLabel,
+    });
+  }, []);
+
   if (!tableData) return null;
-
-  const renderRow = (row: TableRowNode) => {
-      const isExpanded = expandedKeys[row.key] ?? true; // Default expanded?
-      const hasChildren = row.children.length > 0;
-      const paddingLeft = row.depth * 24 + 8; // Match the px-2 (8px) padding of the header
-      const rowVarId = rowVariables[row.depth]?.id ?? rowVariables[0]?.id ?? '';
-      const isRowDragging = dragState.isDragging && dragState.draggedItem?.rawValue === row.rawValue && dragState.draggedItem?.axis === 'row';
-      const isRowDropTarget = dragState.dropTarget === row.rawValue && dragState.draggedItem?.axis === 'row';
-      const isRowSelected = selectedRows.has(row.rawValue);
-
-      const rowHeaderClasses = [
-        'py-1.5 font-semibold text-[var(--text-primary)] align-top text-sm font-body',
-        mergeStyles.mergeHeader,
-        isRowDragging ? mergeStyles.mergeDragging : '',
-        isRowDropTarget ? mergeStyles.mergeDropTarget : '',
-        isRowSelected ? mergeStyles.mergeSelected : '',
-      ].filter(Boolean).join(' ');
-
-      return (
-        <React.Fragment key={row.key}>
-          <tr className="group data-row-interactive">
-            <td
-              className={rowHeaderClasses}
-              style={{ paddingLeft }}
-              data-merge-key={row.rawValue}
-              data-merge-depth={row.depth}
-              data-merge-axis="row"
-              data-merge-label={row.label}
-              data-merge-var={rowVarId}
-              onMouseDown={(e) => {
-                // Only left button, ignore if clicking expand toggle
-                if (e.button !== 0 || (e.target as HTMLElement).closest('button')) return;
-                handleDragStart({
-                  label: row.label,
-                  rawValue: row.rawValue,
-                  depth: row.depth,
-                  variableId: rowVarId,
-                  axis: 'row',
-                }, e);
-              }}
-              onClick={(e) => {
-                // Toggle selection on click (not drag)
-                if (!dragState.isDragging && !(e.target as HTMLElement).closest('button')) {
-                  toggleRowSelection(row.rawValue);
-                }
-              }}
-              onContextMenu={(e) => {
-                const transform = transformLog.find(t => t.newColId === rowVarId);
-                if (!transform) return;
-                e.preventDefault();
-                setRowContextMenu({
-                  isOpen: true,
-                  position: { x: e.clientX, y: e.clientY },
-                  variableId: rowVarId,
-                  rowLabel: row.label,
-                });
-              }}
-            >
-              <div className="flex items-center gap-2">
-                {hasChildren && (
-                  <button
-                    onClick={(e) => { e.stopPropagation(); toggleRow(row.key); }}
-                    className="p-0.5 rounded hover:bg-[var(--bg-active)] text-[var(--text-secondary)] transition-colors"
-                  >
-                    {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
-                  </button>
-                )}
-                {(!hasChildren && row.depth > 0) && <div className="w-4" />} {/* Spacer only for nested rows */}
-                <span className="leading-snug">{row.label}</span>
-              </div>
-            </td>
-            {tableData.colKeys.map(col => {
-              const cell = row.cells[col];
-              // Dim zeros logic
-              const isZero = cell.mean !== undefined
-                ? (Math.abs(cell.mean) === 0)
-                : (cell.percent === 0);
-
-              const isSignificant = Boolean(cell.sig) || Boolean(cell.sigLetters && cell.sigLetters.length > 0);
-              // Determine if we have stats for tooltip
-              const hasStats = cell.stats && typeof cell.stats.effN === 'number';
-              const cellValue = cell.mean !== undefined ? cell.mean : cell.percent;
-
-              const cellContent = cell.mean !== undefined ? (
-                <CrosstabCell
-                  key={`cell-${animationKey}-${row.key}-${col}`}
-                  variant="metric"
-                  isZero={isZero}
-                  isSignificant={isSignificant}
-                  mean={cell.mean}
-                  count={cell.count}
-                  validCount={cell.validCount}
-                  stdDev={cell.stdDev}
-                  sigLetters={cell.sigLetters}
-                  showMeanBadge
-                  animationTrigger={animationKey}
-                  reducedMotion={reducedMotion}
-                />
-              ) : (
-                <CrosstabCell
-                  key={`cell-${animationKey}-${row.key}-${col}`}
-                  variant="frequency"
-                  isZero={isZero}
-                  isSignificant={isSignificant}
-                  percent={cell.percent}
-                  count={cell.count}
-                  sig={cell.sig}
-                  sigLetters={cell.sigLetters}
-                  animationTrigger={animationKey}
-                  reducedMotion={reducedMotion}
-                />
-              )
-
-              const halo = haloClass(cell.sig || cell.sigLetters || null);
-              return (
-                <td
-                  key={col}
-                  className={`px-2 ${density === 'generous' ? 'py-2.5' : 'py-1'} text-right align-middle cursor-pointer relative data-cell border-l transition-colors
-                    ${hoveredCol === col ? 'bg-[var(--bg-surface)] border-[var(--border-color-active)]' : 'border-[var(--border-subtle)]'}
-                    ${halo}
-                  `}
-                  onMouseEnter={() => setHoveredCol(col)}
-                  onMouseLeave={() => setHoveredCol(null)}
-                  onClick={() => onCellClick?.(row.rowPath, colVariable ? col : null)}
-                  title={!hasStats ? "Click to X-Ray" : undefined}
-                >
-                  {hasStats ? (
-                    <Tooltip
-                      content={
-                        <StatisticsTooltip
-                          stats={cell.stats!}
-                          sig={cell.sig}
-                          value={cellValue}
-                          isMetric={cell.mean !== undefined}
-                          ci95={cell.ci95}
-                          ci80={cell.ci80}
-                        />
-                      }
-                      position="top"
-                      delay={300}
-                      maxWidth={320}
-                    >
-                      {cellContent}
-                    </Tooltip>
-                  ) : (
-                    cellContent
-                  )}
-                </td>
-              );
-            })}
-            {/* Only show Row Total if we have columns OR if it's a frequency table (always show 100%)
-                For Metric tables without columns, the single column is already the total. */}
-            {(tableData.colKeys.length > 1) && (
-              <td className={`px-2 ${density === 'generous' ? 'py-2.5' : 'py-1'} text-right bg-[var(--bg-active)]/30 align-middle data-cell`}>
-                {row.mean !== undefined ? (
-                  <CrosstabCell
-                    key={`total-${animationKey}-${row.key}`}
-                    variant="metric"
-                    mean={
-                      variableStats && row.depth === 0
-                        ? variableStats.numeric?.mean
-                        : row.mean
-                    }
-                    count={row.total}
-                    showMeanBadge
-                    animationTrigger={animationKey}
-                    reducedMotion={reducedMotion}
-                  />
-                ) : (
-                  <CrosstabCell
-                    key={`total-${animationKey}-${row.key}`}
-                    variant="frequency"
-                    percent={(row.total / tableData.grandTotal) * 100}
-                    count={row.total}
-                    animationTrigger={animationKey}
-                    reducedMotion={reducedMotion}
-                  />
-                )}
-              </td>
-            )}
-          </tr>
-          {/* Render Children */}
-          {hasChildren && isExpanded && row.children.map(child => renderRow(child))}
-        </React.Fragment>
-      );
-    };
 
     return (
       <AnalysisOutputFrame
@@ -467,7 +292,31 @@ export const DataTable: React.FC<DataTableProps> = ({
               </tr>
             </thead>
             <tbody className="divide-y divide-[var(--border-grid)] font-body">
-              {tableData.rows.map(row => renderRow(row))}
+              {tableData.rows.map(row => (
+                <CrosstabRow
+                  key={row.key}
+                  row={row}
+                  tableData={tableData}
+                  rowVariables={rowVariables}
+                  colVariable={colVariable}
+                  expandedKeys={expandedKeys}
+                  onToggleRow={toggleRow}
+                  dragState={dragState}
+                  onDragStart={handleDragStart}
+                  selectedRows={selectedRows}
+                  onToggleRowSelection={toggleRowSelection}
+                  hoveredCol={hoveredCol}
+                  onHoverCol={setHoveredCol}
+                  onCellClick={onCellClick}
+                  density={density}
+                  animationKey={animationKey}
+                  reducedMotion={reducedMotion}
+                  haloClass={haloClass}
+                  variableStats={variableStats}
+                  transformLog={transformLog}
+                  onRowContextMenu={handleRowContextMenu}
+                />
+              ))}
               <tr className={`${mergeStyles.totalRow} bg-[var(--bg-surface)] font-semibold border-t border-[var(--border-grid)] border-b border-[var(--border-grid)]`}>
                 <td className={`total-row-label px-2 ${density === 'generous' ? 'py-2.5' : 'py-1.5'} text-[var(--text-secondary)] font-body text-xs font-bold uppercase tracking-wide`}>Total</td>
                 {tableData.colKeys.map(col => (

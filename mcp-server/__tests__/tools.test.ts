@@ -78,12 +78,40 @@ function makeEngine(overrides: Record<string, unknown> = {}) {
     runAnalysis: vi.fn().mockResolvedValue({ data: { rows: [] }, operation: 'runAnalysis', inputs: {}, durationMs: 5, warnings: [], metadata: { rowCount: 100, isWeighted: false } }),
     query: vi.fn().mockResolvedValue({ data: { rows: [] }, operation: 'query', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
     recode: vi.fn().mockResolvedValue({ data: {}, operation: 'recode', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
-    addFilter: vi.fn(),
-    clearFilters: vi.fn(),
-    setWeight: vi.fn(),
+    addFilter: vi.fn().mockReturnValue({
+      data: { filter: { id: 'f1', variableId: 'GENDER', operator: 'eq', value: '1' } },
+      operation: 'addFilter',
+      inputs: { filterId: 'f1', variableId: 'GENDER' },
+      durationMs: 1,
+      warnings: [],
+      metadata: { datasetName: 'test.sav', rowCount: 100, filtersApplied: 1, isWeighted: false, engineVersion: 'test' },
+    }),
+    clearFilters: vi.fn().mockReturnValue({
+      data: { clearedCount: 2 },
+      operation: 'clearFilters',
+      inputs: {},
+      durationMs: 1,
+      warnings: [],
+      metadata: { datasetName: 'test.sav', rowCount: 100, filtersApplied: 0, isWeighted: false, engineVersion: 'test' },
+    }),
+    setWeight: vi.fn().mockReturnValue({
+      data: { variableId: 'WEIGHT' },
+      operation: 'setWeight',
+      inputs: { variableId: 'WEIGHT' },
+      durationMs: 1,
+      warnings: [],
+      metadata: { datasetName: 'test.sav', rowCount: 100, filtersApplied: 0, isWeighted: true, engineVersion: 'test' },
+    }),
     buildDeck: vi.fn().mockResolvedValue({ data: { slides: [], errors: [], spec: {}, buildDurationMs: 1 }, operation: 'buildDeck', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
     exportDeck: vi.fn().mockResolvedValue({ data: new Uint8Array([1, 2, 3]), operation: 'exportDeck', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
-    commitDeck: vi.fn(),
+    commitDeck: vi.fn().mockReturnValue({
+      data: { committedSlides: 1, committedSections: 1 },
+      operation: 'commitDeck',
+      inputs: { slideCount: 1, sectionCount: 1 },
+      durationMs: 1,
+      warnings: [],
+      metadata: { datasetName: 'test.sav', rowCount: 100, filtersApplied: 0, isWeighted: false, engineVersion: 'test' },
+    }),
     recommendChart: vi.fn().mockResolvedValue({ data: { default: 'horizontal-bar', alternatives: [], reason: 'test' }, operation: 'recommendChart', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
     proposeMappings: vi.fn().mockResolvedValue({ data: [], operation: 'proposeMappings', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
     buildHarmonizedTable: vi.fn().mockResolvedValue({ data: { sql: 'SELECT 1' }, operation: 'buildHarmonizedTable', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
@@ -104,6 +132,23 @@ async function callTool(engine: ReturnType<typeof makeEngine>, toolName: string,
   registerTools(server as never, engine as never);
   const callHandler = server.handlers['call'];
   return callHandler({ params: { name: toolName, arguments: args } });
+}
+
+function expectEnvelopeShape(parsed: Record<string, unknown>, operation: string) {
+  expect(parsed).toMatchObject({
+    operation,
+    inputs: expect.any(Object),
+    durationMs: expect.any(Number),
+    warnings: expect.any(Array),
+    metadata: expect.objectContaining({
+      datasetName: expect.any(String),
+      rowCount: expect.any(Number),
+      filtersApplied: expect.any(Number),
+      isWeighted: expect.any(Boolean),
+      engineVersion: expect.any(String),
+    }),
+  });
+  expect(parsed).toHaveProperty('data');
 }
 
 // ---------------------------------------------------------------------------
@@ -360,6 +405,16 @@ describe('velocity_filter', () => {
     await callTool(engine, 'velocity_filter', { filter });
     expect(engine.addFilter).toHaveBeenCalledWith(filter);
   });
+
+  it('returns a ResultEnvelope with the staged filter', async () => {
+    const engine = makeEngine();
+    const filter = { id: 'f1', variableId: 'GENDER', operator: 'eq', value: '1' };
+    const result = await callTool(engine, 'velocity_filter', { filter }) as { content: { text: string }[] };
+    const parsed = JSON.parse(result.content[0].text) as Record<string, unknown>;
+
+    expectEnvelopeShape(parsed, 'addFilter');
+    expect(parsed.data).toEqual({ filter: { id: 'f1', variableId: 'GENDER', operator: 'eq', value: '1' } });
+  });
 });
 
 describe('velocity_clear_filters', () => {
@@ -367,6 +422,15 @@ describe('velocity_clear_filters', () => {
     const engine = makeEngine();
     await callTool(engine, 'velocity_clear_filters');
     expect(engine.clearFilters).toHaveBeenCalled();
+  });
+
+  it('returns a ResultEnvelope with the cleared count', async () => {
+    const engine = makeEngine();
+    const result = await callTool(engine, 'velocity_clear_filters') as { content: { text: string }[] };
+    const parsed = JSON.parse(result.content[0].text) as Record<string, unknown>;
+
+    expectEnvelopeShape(parsed, 'clearFilters');
+    expect(parsed.data).toEqual({ clearedCount: 2 });
   });
 });
 
@@ -381,6 +445,16 @@ describe('velocity_set_weight', () => {
     const engine = makeEngine();
     await callTool(engine, 'velocity_set_weight', { variableId: null });
     expect(engine.setWeight).toHaveBeenCalledWith(null);
+  });
+
+  it('returns a ResultEnvelope with the active weight variable', async () => {
+    const engine = makeEngine();
+    const result = await callTool(engine, 'velocity_set_weight', { variableId: 'WEIGHT' }) as { content: { text: string }[] };
+    const parsed = JSON.parse(result.content[0].text) as Record<string, unknown>;
+
+    expectEnvelopeShape(parsed, 'setWeight');
+    expect(parsed.data).toEqual({ variableId: 'WEIGHT' });
+    expect(parsed.metadata).toMatchObject({ isWeighted: true });
   });
 });
 
@@ -470,7 +544,7 @@ describe('velocity_export_deck', () => {
 });
 
 describe('velocity_commit_deck', () => {
-  it('calls engine.commitDeck and returns a commit summary', async () => {
+  it('calls engine.commitDeck and returns a commit envelope', async () => {
     const engine = makeEngine();
     const deck = {
       spec: { title: 'T', sections: [{ title: 'Results', slides: [] }] },
@@ -480,11 +554,11 @@ describe('velocity_commit_deck', () => {
     };
 
     const result = await callTool(engine, 'velocity_commit_deck', { deck }) as { content: { text: string }[] };
-    const parsed = JSON.parse(result.content[0].text);
+    const parsed = JSON.parse(result.content[0].text) as Record<string, unknown>;
 
     expect(engine.commitDeck).toHaveBeenCalledWith(deck);
-    expect(parsed).toEqual({
-      ok: true,
+    expectEnvelopeShape(parsed, 'commitDeck');
+    expect(parsed.data).toEqual({
       committedSlides: 1,
       committedSections: 1,
     });

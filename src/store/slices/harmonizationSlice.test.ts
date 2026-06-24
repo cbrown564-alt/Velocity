@@ -8,9 +8,9 @@ import { createHarmonizationSlice, type HarmonizationSlice } from './harmonizati
 import { wave1Variables, wave2Variables } from '../../test/fixtures/harmonization';
 
 function createTestStore() {
-  return create<HarmonizationSlice & { engineProxy: any }>()((...args) => ({
+  return create<HarmonizationSlice & { browserEngine: any }>()((...args) => ({
     ...createHarmonizationSlice(...args),
-    engineProxy: null,
+    browserEngine: null,
   }));
 }
 
@@ -156,7 +156,7 @@ describe('harmonizationSlice', () => {
   });
 
   describe('applyHarmonization', () => {
-    it('calls engineProxy.buildHarmonizedTable with id->name lookups and stores output table name', async () => {
+    it('calls browserEngine.buildHarmonizedTable with id->name lookups and stores output table name', async () => {
       const mockBuildHarmonizedTable = vi.fn().mockResolvedValue({
         tableName: 'harm_test_table',
         rowCount: 42,
@@ -168,7 +168,7 @@ describe('harmonizationSlice', () => {
       } as any;
 
       const store = createTestStore();
-      store.setState({ engineProxy: mockEngineProxy });
+      store.setState({ browserEngine: mockEngineProxy });
       store.getState().openHarmonization('wave1', 'wave2');
       store.getState().runAutoMatch(wave1Variables, wave2Variables);
       store.getState().confirmAllMappings();

@@ -4,6 +4,8 @@ import * as d3Shape from 'd3-shape';
 import { max } from 'd3-array';
 import { BaseChartRendererProps } from '../../../types/charts';
 import { CHART_BAR_FILL_OPACITY } from '../shared/chartColors';
+import { useChartSelection } from '../hooks/useChartSelection';
+import { ChartPlotArea } from '../shared/ChartPlotArea';
 
 interface StackedBarRendererProps extends BaseChartRendererProps {
     type: 'stacked-bar';
@@ -110,27 +112,11 @@ export const StackedBarRenderer: React.FC<StackedBarRendererProps> = ({
 
     const stackedSeries = stackGenerator(chartData);
 
-    // Handle click for selection
-    const handleClick = useCallback((rowLabel: string, segmentKey: string, event: React.MouseEvent) => {
-        if (!interactive || !onSelectionChange) return;
-
-        // In single variable mode, we select the segment (category).
-        // In cross-tab mode, we select the row.
-        const keyToToggle = isSingleVariable ? segmentKey : rowLabel;
-
-        const newSelection = new Set(selectedKeys);
-        if (event.metaKey || event.ctrlKey) {
-            if (newSelection.has(keyToToggle)) {
-                newSelection.delete(keyToToggle);
-            } else {
-                newSelection.add(keyToToggle);
-            }
-        } else {
-            newSelection.clear();
-            newSelection.add(keyToToggle);
-        }
-        onSelectionChange(newSelection);
-    }, [interactive, onSelectionChange, selectedKeys, isSingleVariable]);
+    const { handleToggle } = useChartSelection({
+        interactive,
+        selectedKeys,
+        onSelectionChange,
+    });
 
     // Handle right-click context menu
     const handleContextMenu = useCallback((rowLabel: string, segmentKey: string, value: number, event: React.MouseEvent) => {
@@ -185,7 +171,7 @@ export const StackedBarRenderer: React.FC<StackedBarRendererProps> = ({
                 className="overflow-visible font-body"
                 style={{ display: 'block' }}
             >
-                <g transform={`translate(${margin.left},${margin.top})`}>
+                <ChartPlotArea margin={margin}>
                     {/* Legend (Top) */}
                     <g transform={`translate(${(innerWidth - legendWidth) / 2}, -${margin.top - 8})`}>
                         {stackLabels.map((label, i) => {
@@ -291,7 +277,7 @@ export const StackedBarRenderer: React.FC<StackedBarRendererProps> = ({
                                 return (
                                     <g
                                         key={`${d.data.label}-${segmentKey}`}
-                                        onClick={(e) => handleClick(d.data.label, segmentKey, e)}
+                                        onClick={(e) => handleToggle(isSingleVariable ? segmentKey : d.data.label, e)}
                                         onContextMenu={(e) => handleContextMenu(d.data.label, segmentKey, value, e)}
                                         style={{ cursor: interactive ? 'pointer' : 'default' }}
                                     >
@@ -350,7 +336,7 @@ export const StackedBarRenderer: React.FC<StackedBarRendererProps> = ({
                         y2={actualHeight}
                         stroke="var(--viz-stroke-main)"
                     />
-                </g>
+                </ChartPlotArea>
             </svg>
         </div>
     );

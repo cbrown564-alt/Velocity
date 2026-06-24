@@ -6,7 +6,7 @@ import type { DataSlice } from './types';
 
 export const dataSliceInitialState: Pick<
     DataSlice,
-    | 'engineProxy'
+    | 'browserEngine'
     | 'isDbReady'
     | 'initError'
     | 'dataset'
@@ -23,7 +23,7 @@ export const dataSliceInitialState: Pick<
     | 'persistedDataInfo'
     | 'loadProgress'
 > = {
-    engineProxy: null,
+    browserEngine: null,
     isDbReady: false,
     initError: null,
     dataset: null,

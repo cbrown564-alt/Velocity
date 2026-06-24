@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect, useRef, useCallback, useState } from 'react';
+import React, { useMemo, useEffect, useRef, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import * as d3 from 'd3-scale';
 import { getBarEntranceMotionProps } from '../../../lib/chartBarEntrance';
@@ -6,9 +6,10 @@ import { select, pointer } from 'd3-selection';
 import { brushY } from 'd3-brush';
 import { max } from 'd3-array';
 import { BaseChartRendererProps } from '../../../types/charts';
-// getChartColor removed replaced by CSS vars
 import { ChartDataPoint } from '../../../types/processedData';
 import { useChartDragMerge } from '../hooks/useChartDragMerge';
+import { useChartSelection } from '../hooks/useChartSelection';
+import { ChartPlotArea } from '../shared/ChartPlotArea';
 
 /**
  * Horizontal Bar Chart Renderer
@@ -73,56 +74,12 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
             .range([0, innerWidth]);
     }, [chartData, innerWidth]);
 
-    // Handle interactions
-    const handleBarClick = useCallback((d: any, event: React.MouseEvent) => {
-        if (!interactive || !onSelectionChange) return;
-
-        const newSelection = new Set(selectedKeys);
-        if (event.metaKey || event.ctrlKey) {
-            if (newSelection.has(d.label)) {
-                newSelection.delete(d.label);
-            } else {
-                newSelection.add(d.label);
-            }
-        } else {
-            newSelection.clear();
-            newSelection.add(d.label);
-        }
-        onSelectionChange(newSelection);
-    }, [interactive, onSelectionChange, selectedKeys]);
-
-    // Handle right-click on individual bars
-    const handleBarContextMenu = useCallback((d: any, event: React.MouseEvent) => {
-        if (!interactive || !onContextMenu) return;
-        event.preventDefault();
-        event.stopPropagation();
-
-        // If clicking on a bar that isn't already selected, use just that bar
-        // If clicking on a selected bar, use all selected items
-        const isCurrentlySelected = selectedKeys?.has(d.label);
-        const selectedItems = isCurrentlySelected
-            ? chartData.filter(item => selectedKeys?.has(item.label))
-            : [d];
-
-        onContextMenu({
-            selected: selectedItems,
-            position: { x: event.clientX, y: event.clientY },
+    const { handleToggle, handleItemContextMenu } = useChartSelection<ChartDataPoint>({
+            interactive,
+            selectedKeys,
+            onSelectionChange,
+            onContextMenu,
         });
-    }, [interactive, onContextMenu, chartData, selectedKeys]);
-
-    // Handle right-click on chart background (uses current selection)
-    const handleBackgroundContextMenu = useCallback((event: React.MouseEvent) => {
-        if (!interactive || !onContextMenu) return;
-        event.preventDefault();
-
-        const selectedItems = chartData.filter(d => selectedKeys?.has(d.label));
-        if (selectedItems.length === 0) return; // Nothing selected, don't show menu
-
-        onContextMenu({
-            selected: selectedItems,
-            position: { x: event.clientX, y: event.clientY },
-        });
-    }, [interactive, onContextMenu, chartData, selectedKeys]);
 
     // Drag-to-Merge Logic
     const getDropTarget = useCallback((x: number, y: number) => {
@@ -241,7 +198,7 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
                     cursor: dragState.isDragging ? 'grabbing' : 'default',
                 }}
             >
-                <g transform={`translate(${margin.left},${margin.top})`}>
+                <ChartPlotArea margin={margin}>
                     {/* Grid lines */}
                     {xTicks.map(tick => (
                         <line
@@ -312,10 +269,10 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
                                 onClick={(e) => {
                                     if (!dragState.isDragging) {
                                         e.stopPropagation();
-                                        handleBarClick(d, e);
+                                        handleToggle(d.label, e);
                                     }
                                 }}
-                                onContextMenu={(e) => handleBarContextMenu(d, e)}
+                                onContextMenu={(e) => handleItemContextMenu(d, chartData, e)}
                                 onMouseEnter={() => onHoverChange && onHoverChange(d.code !== undefined ? String(d.code) : d.label)}
                                 onMouseLeave={() => onHoverChange && onHoverChange(null)}
                                 onMouseDown={(e) => {
@@ -434,7 +391,7 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
                         y2={actualHeight}
                         stroke="var(--viz-stroke-main)"
                     />
-                </g>
+                </ChartPlotArea>
             </svg>
         </div>
     );

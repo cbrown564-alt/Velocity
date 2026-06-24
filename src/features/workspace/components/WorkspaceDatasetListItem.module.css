@@ -1,0 +1,101 @@
+.datasetListItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--bg-panel);
+  border: 1px solid transparent;
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.datasetListItem:hover {
+  background: var(--bg-surface);
+  border-color: var(--border-color);
+}
+
+.datasetListItem.selected {
+  border-color: var(--color-accent);
+  background: color-mix(in srgb, var(--color-accent) 5%, var(--bg-panel));
+}
+
+.starButton {
+  position: static;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  opacity: 0.5;
+  transition: all 0.15s ease;
+}
+
+.datasetListItem:hover .starButton {
+  opacity: 1;
+}
+
+.starButton:hover {
+  background: var(--bg-active);
+}
+
+.starButton.starred {
+  color: var(--viz-palette-2);
+  opacity: 1;
+}
+
+.starButton.starred svg {
+  fill: currentColor;
+}
+
+.listFileIcon {
+  color: var(--text-secondary);
+}
+
+.listContent {
+  flex: 1;
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.listFileName {
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.listMeta {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.sessionDot {
+  color: var(--color-accent);
+}
+
+.listTime {
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.listArrow {
+  color: var(--text-secondary);
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.datasetListItem:hover .listArrow {
+  opacity: 1;
+}

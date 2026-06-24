@@ -2,7 +2,15 @@ import { exportSession as exportSessionFile, importSession as importSessionFile 
 import type { VelocitySessionFile } from '../core/session';
 import type { Filter } from '../types';
 import type { Slide, SlideSection } from '../types/slides';
-import type { BuiltDeck, ResultEnvelope } from './types';
+import type {
+  BuiltDeck,
+  ClearFiltersResult,
+  CommitDeckResult,
+  FilterMutationResult,
+  RemoveFilterResult,
+  ResultEnvelope,
+  WeightMutationResult,
+} from './types';
 import { VelocityError } from './types';
 import type { SemanticStateSnapshot, VelocityEngineHost } from './velocityEngineTypes';
 
@@ -57,27 +65,46 @@ export class SessionState {
     });
   }
 
-  setWeight(variableId: string | null): void {
-    if (variableId !== null) {
-      this.host.requireVariable(variableId);
-    }
-    const dataset = this.host.requireDataset();
-    dataset.weightVariable = variableId ?? undefined;
+  setWeight(variableId: string | null): ResultEnvelope<WeightMutationResult> {
+    return this.host.wrapSync('setWeight', { variableId }, () => {
+      if (variableId !== null) {
+        this.host.requireVariable(variableId);
+      }
+      const dataset = this.host.requireDataset();
+      dataset.weightVariable = variableId ?? undefined;
+      return { variableId };
+    });
   }
 
-  addFilter(filter: Filter): void {
-    this.host.requireVariable(filter.variableId);
-    this.host.state.activeFilters = [...this.host.state.activeFilters, cloneFilter(filter)];
-  }
-
-  removeFilter(filterId: string): void {
-    this.host.state.activeFilters = this.host.state.activeFilters.filter(
-      (filter) => filter.id !== filterId
+  addFilter(filter: Filter): ResultEnvelope<FilterMutationResult> {
+    return this.host.wrapSync(
+      'addFilter',
+      { filterId: filter.id, variableId: filter.variableId },
+      () => {
+        this.host.requireVariable(filter.variableId);
+        const cloned = cloneFilter(filter);
+        this.host.state.activeFilters = [...this.host.state.activeFilters, cloned];
+        return { filter: cloned };
+      }
     );
   }
 
-  clearFilters(): void {
-    this.host.state.activeFilters = [];
+  removeFilter(filterId: string): ResultEnvelope<RemoveFilterResult> {
+    return this.host.wrapSync('removeFilter', { filterId }, () => {
+      const before = this.host.state.activeFilters.length;
+      this.host.state.activeFilters = this.host.state.activeFilters.filter(
+        (filter) => filter.id !== filterId
+      );
+      return { filterId, removed: this.host.state.activeFilters.length < before };
+    });
+  }
+
+  clearFilters(): ResultEnvelope<ClearFiltersResult> {
+    return this.host.wrapSync('clearFilters', {}, () => {
+      const clearedCount = this.host.state.activeFilters.length;
+      this.host.state.activeFilters = [];
+      return { clearedCount };
+    });
   }
 
   getActiveFilters(): ResultEnvelope<Filter[]> {
@@ -90,38 +117,49 @@ export class SessionState {
     return this.host.wrap('exportSession', {}, async () => this.buildSessionFile());
   }
 
-  commitDeck(deck: BuiltDeck): void {
-    const now = Date.now();
-    const sectionMap = new Map<string, string>();
+  commitDeck(deck: BuiltDeck): ResultEnvelope<CommitDeckResult> {
+    return this.host.wrapSync(
+      'commitDeck',
+      { slideCount: deck.slides.length, sectionCount: deck.spec.sections.length },
+      () => {
+        const now = Date.now();
+        const sectionMap = new Map<string, string>();
 
-    const newSections: SlideSection[] = deck.spec.sections.map((sec, i) => {
-      const id = `deck-section-${i}-${now}`;
-      sectionMap.set(sec.title, id);
-      return { id, title: sec.title };
-    });
+        const newSections: SlideSection[] = deck.spec.sections.map((sec, i) => {
+          const id = `deck-section-${i}-${now}`;
+          sectionMap.set(sec.title, id);
+          return { id, title: sec.title };
+        });
 
-    const newSlides: Slide[] = deck.slides.map((builtSlide, i) => ({
-      id: `deck-slide-${i}-${now}`,
-      title: builtSlide.resolvedTitle,
-      subtitle: builtSlide.resolvedSubtitle,
-      notes: builtSlide.spec.notes,
-      analysisState: {
-        rowVars: builtSlide.spec.rowVars,
-        colVar: builtSlide.spec.colVar ?? null,
-        filters: builtSlide.spec.filters ?? [],
-        weightVar: builtSlide.spec.weightVar ?? null,
-      },
-      visualizationType: builtSlide.spec.visualizationType ?? 'table',
-      chartType: builtSlide.resolvedChartType,
-      layoutMode: 'focus' as const,
-      cells: [],
-      sectionId: sectionMap.get(builtSlide.sectionTitle),
-      createdAt: now,
-      updatedAt: now,
-    }));
+        const newSlides: Slide[] = deck.slides.map((builtSlide, i) => ({
+          id: `deck-slide-${i}-${now}`,
+          title: builtSlide.resolvedTitle,
+          subtitle: builtSlide.resolvedSubtitle,
+          notes: builtSlide.spec.notes,
+          analysisState: {
+            rowVars: builtSlide.spec.rowVars,
+            colVar: builtSlide.spec.colVar ?? null,
+            filters: builtSlide.spec.filters ?? [],
+            weightVar: builtSlide.spec.weightVar ?? null,
+          },
+          visualizationType: builtSlide.spec.visualizationType ?? 'table',
+          chartType: builtSlide.resolvedChartType,
+          layoutMode: 'focus' as const,
+          cells: [],
+          sectionId: sectionMap.get(builtSlide.sectionTitle),
+          createdAt: now,
+          updatedAt: now,
+        }));
 
-    this.host.state.slides = [...this.host.state.slides, ...newSlides];
-    this.host.state.sections = [...this.host.state.sections, ...newSections];
+        this.host.state.slides = [...this.host.state.slides, ...newSlides];
+        this.host.state.sections = [...this.host.state.sections, ...newSections];
+
+        return {
+          committedSlides: deck.slides.length,
+          committedSections: deck.spec.sections.length,
+        };
+      }
+    );
   }
 
   async importSession(

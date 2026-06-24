@@ -10,7 +10,7 @@
  * Phase 3 scope: Scaffold only. Full bidirectional collaboration is Phase 4.
  */
 
-import type { EngineProxy } from './EngineProxy';
+import type { BrowserEngine } from '../engine/BrowserEngine';
 
 // -- Agent Command Protocol --
 
@@ -43,7 +43,7 @@ const DEFAULT_PORT = 9823;
 const DEFAULT_RATE_LIMIT = 10;
 
 export class AgentBridge {
-  private engineProxy: EngineProxy | null = null;
+  private browserEngine: BrowserEngine | null = null;
   private ws: WebSocket | null = null;
   private options: Required<AgentBridgeOptions>;
   private commandCount = 0;
@@ -66,8 +66,8 @@ export class AgentBridge {
    * Bind the bridge to an EngineProxy instance.
    * Must be called before connect().
    */
-  bind(engineProxy: EngineProxy): void {
-    this.engineProxy = engineProxy;
+  bind(browserEngine: BrowserEngine): void {
+    this.browserEngine = browserEngine;
   }
 
   /**
@@ -80,8 +80,8 @@ export class AgentBridge {
       return;
     }
 
-    if (!this.engineProxy) {
-      throw new Error('[AgentBridge] Must call bind(engineProxy) before connect()');
+    if (!this.browserEngine) {
+      throw new Error('[AgentBridge] Must call bind(browserEngine) before connect()');
     }
 
     const url = `ws://localhost:${this.options.port}`;
@@ -159,7 +159,7 @@ export class AgentBridge {
       return;
     }
 
-    if (!this.engineProxy) {
+    if (!this.browserEngine) {
       this.send({
         type: 'agent.error',
         commandType: command.type,
@@ -178,18 +178,18 @@ export class AgentBridge {
           break;
 
         case 'agent.query':
-          result = await this.engineProxy.query(command.sql);
+          result = await this.browserEngine.query(command.sql);
           break;
 
         case 'agent.loadSAV': {
           const buffer = Uint8Array.from(atob(command.buffer), c => c.charCodeAt(0)).buffer;
-          result = await this.engineProxy.loadSAV(buffer);
+          result = await this.browserEngine.loadSAV(buffer);
           this.options.onStateChange(command.type);
           break;
         }
 
         case 'agent.runCrosstab':
-          result = await this.engineProxy.runCrosstab(
+          result = await this.browserEngine.runCrosstab(
             command.options as any,
             command.context as any,
           );
@@ -197,11 +197,11 @@ export class AgentBridge {
           break;
 
         case 'agent.getSchema':
-          result = await this.engineProxy.getSchema();
+          result = await this.browserEngine.getSchema();
           break;
 
         case 'agent.getUniqueValues':
-          result = await this.engineProxy.getUniqueValues(command.column);
+          result = await this.browserEngine.getUniqueValues(command.column);
           break;
 
         default: {

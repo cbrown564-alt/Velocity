@@ -33,18 +33,18 @@ export function useProcessedAnalysisData({
     isMultipleResponse = false,
     chartType
 }: UseProcessedAnalysisDataOptions): ProcessedAnalysisData | null {
-    const engineProxy = useVelocityStore(state => state.engineProxy);
+    const browserEngine = useVelocityStore(state => state.browserEngine);
     const [result, setResult] = useState<ProcessedAnalysisData | null>(null);
 
     useEffect(() => {
-        if (!engineProxy || !data || data.length === 0 || rowVariables.length === 0) {
+        if (!browserEngine || !data || data.length === 0 || rowVariables.length === 0) {
             setResult(null);
             return;
         }
 
         let isMounted = true;
 
-        engineProxy.processData(
+        browserEngine.processData(
             data,
             { rowVariables, colVariable, isWeighted, isMultipleResponse },
             chartType,
@@ -59,7 +59,7 @@ export function useProcessedAnalysisData({
         return () => {
             isMounted = false;
         };
-    }, [engineProxy, data, rowVariables, colVariable, isWeighted, isMultipleResponse, chartType]);
+    }, [browserEngine, data, rowVariables, colVariable, isWeighted, isMultipleResponse, chartType]);
 
     return result;
 }

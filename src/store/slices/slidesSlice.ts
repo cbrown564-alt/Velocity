@@ -1,6 +1,7 @@
 import { StateCreator } from 'zustand';
 import { Slide, SlideCell, LayoutMode, SlideSection, SlideAnalysisState } from '../../types/slides';
 import { ChartType } from '../../types/charts';
+import type { Filter } from '../../types';
 import type { AnalysisSlice } from './analysisSlice';
 import type { UISlice } from './uiSlice';
 import type { DataSlice } from './dataSlice';
@@ -59,6 +60,35 @@ export interface SlidesSlice {
 // ============================================================================
 // Helper Functions
 // ============================================================================
+
+/**
+ * Capture the current global analysis state for slide snapshotting.
+ */
+function captureAnalysisStateFromStore(state: {
+    tableConfig?: { rowVars: string[]; colVar: string | null };
+    activeFilters?: Filter[];
+    dataset?: { weightVariable?: string | null };
+}): SlideAnalysisState {
+    return {
+        rowVars: state.tableConfig?.rowVars ?? [],
+        colVar: state.tableConfig?.colVar ?? null,
+        filters: state.activeFilters ?? [],
+        weightVar: state.dataset?.weightVariable ?? null,
+    };
+}
+
+/**
+ * Project a slide's analysis config into the global store (single analysis trigger).
+ */
+function projectSlideAnalysisState(
+    state: {
+        applySlideAnalysisState?: AnalysisSlice['applySlideAnalysisState'];
+    },
+    slideState: SlideAnalysisState,
+    options?: { runAnalysis?: boolean },
+): void {
+    state.applySlideAnalysisState?.(slideState, options);
+}
 
 /**
  * Create a default empty analysis state.
@@ -127,12 +157,7 @@ export const createSlidesSlice: SlidesSliceCreator = (set, get) => ({
         const newId = `slide-${now}`;
         const outgoingSlide = state.slides.find((slide) => slide.id === state.activeSlideId);
 
-        const currentAnalysisState: SlideAnalysisState = {
-            rowVars: state.tableConfig?.rowVars ?? [],
-            colVar: state.tableConfig?.colVar ?? null,
-            filters: state.activeFilters ?? [],
-            weightVar: state.dataset?.weightVariable ?? null,
-        };
+        const currentAnalysisState = captureAnalysisStateFromStore(state);
         const currentVisualizationType = outgoingSlide?.visualizationType || 'table';
         const currentChartType = outgoingSlide?.chartType;
 
@@ -182,15 +207,8 @@ export const createSlidesSlice: SlidesSliceCreator = (set, get) => ({
             activeCellId: `cell-${now}`,
         });
 
-        // After adding, we must clear the active analysis store state 
-        // so the UI (shelves, charts) instantly reflects the empty canvas.
-        const updatedState = get();
-        if (updatedState.setTableConfig) {
-            updatedState.setTableConfig({ rowVars: [], colVar: null });
-        }
-        if (updatedState.clearFilters) {
-            updatedState.clearFilters();
-        }
+        // Project blank canvas into global analysis store (no redundant analysis runs).
+        projectSlideAnalysisState(get(), createDefaultAnalysisState(), { runAnalysis: false });
     },
 
     removeSlide: (slideId) => set((state) => {
@@ -259,21 +277,14 @@ export const createSlidesSlice: SlidesSliceCreator = (set, get) => ({
         const outgoingSlide = state.slides.find(s => s.id === state.activeSlideId);
         const incomingSlide = state.slides.find(s => s.id === id);
 
-        if (!incomingSlide) return;
+        if (!incomingSlide || id === state.activeSlideId) return;
 
         const now = Date.now();
-
-        // Snapshot current analysis state to outgoing slide
-        const currentAnalysisState: SlideAnalysisState = {
-            rowVars: state.tableConfig?.rowVars ?? [],
-            colVar: state.tableConfig?.colVar ?? null,
-            filters: state.activeFilters ?? [],
-            weightVar: state.dataset?.weightVariable ?? null,
-        };
+        const currentAnalysisState = captureAnalysisStateFromStore(state);
         const currentVisualizationType = outgoingSlide?.visualizationType || 'table';
         const currentChartType = outgoingSlide?.chartType;
 
-        // Update slides with snapshotted outgoing and activate incoming
+        // Snapshot outgoing slide and activate incoming
         set({
             slides: state.slides.map(s => {
                 if (s.id === state.activeSlideId && outgoingSlide) {
@@ -291,35 +302,8 @@ export const createSlidesSlice: SlidesSliceCreator = (set, get) => ({
             activeCellId: incomingSlide.cells[0]?.id ?? null,
         });
 
-        // Restore incoming slide's state via AnalysisSlice and UISlice actions
-        // Note: These actions are available since we're in combined store
-        const restored = state.slides.find(s => s.id === id);
-        if (restored && state.setTableConfig) {
-            // Restore table config
-            state.setTableConfig({
-                rowVars: restored.analysisState.rowVars,
-                colVar: restored.analysisState.colVar,
-            });
-
-            // Filters need separate handling - clear and re-add
-            if (state.clearFilters && state.addFilter) {
-                state.clearFilters();
-                restored.analysisState.filters.forEach(f => {
-                    state.addFilter!({
-                        variableId: f.variableId,
-                        operator: f.operator,
-                        value: f.value,
-                    });
-                });
-            }
-
-            // Trigger analysis re-run
-            if (state.runAnalysis) {
-                void state.runAnalysis().catch((error) => {
-                    console.warn('[SlidesSlice] Failed to rerun analysis while restoring slide:', error);
-                });
-            }
-        }
+        // Project incoming slide config — one runAnalysis, not N+1 filter replay
+        projectSlideAnalysisState(get(), incomingSlide.analysisState);
     },
 
     setSlideLayoutMode: (slideId, mode) => set((state) => ({
@@ -451,12 +435,7 @@ export const createSlidesSlice: SlidesSliceCreator = (set, get) => ({
         if (!state.activeSlideId) return;
 
         const now = Date.now();
-        const analysisState: SlideAnalysisState = {
-            rowVars: state.tableConfig?.rowVars ?? [],
-            colVar: state.tableConfig?.colVar ?? null,
-            filters: state.activeFilters ?? [],
-            weightVar: state.dataset?.weightVariable ?? null,
-        };
+        const analysisState = captureAnalysisStateFromStore(state);
         const activeSlide = state.slides.find(s => s.id === state.activeSlideId);
         const visualizationType = activeSlide?.visualizationType || 'table';
         const chartType = activeSlide?.chartType;

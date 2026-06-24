@@ -7,9 +7,12 @@
 
 import { useCallback } from 'react';
 import { useVelocityStore } from '../../../store';
+import { captureBeforeDatasetSwitch } from '../../../store/datasetSessionCoordinator';
 import type { StoredDataset } from '../types';
 
-export type WorkspaceOpenAppMode = 'splash' | 'uploading' | 'dashboard' | 'restoring' | 'metadata';
+import type { AppPhase } from '../../../app/types';
+
+export type WorkspaceOpenAppMode = AppPhase;
 
 export interface UseWorkspaceOpenOptions {
   setMode: (mode: WorkspaceOpenAppMode) => void;
@@ -42,10 +45,19 @@ export function useWorkspaceOpen({
 
   const openDataset = useCallback(async (storedDataset: StoredDataset) => {
     clearImportedSessionSemantic();
-    if (dataset && activeDatasetId && dataset.id !== storedDataset.id) {
-      saveDatasetSession(activeDatasetId, { tableConfig, activeFilters, transformLog });
-      updateStoredDataset(activeDatasetId, { variables: dataset.variables, variableSets, folders });
-    }
+    captureBeforeDatasetSwitch(
+      {
+        dataset,
+        activeDatasetId,
+        tableConfig,
+        activeFilters,
+        transformLog,
+        variableSets,
+        folders,
+      },
+      storedDataset.id,
+      { saveDatasetSession, updateStoredDataset },
+    );
     updateDatasetAccess(storedDataset.id);
     setActiveDataset(storedDataset.id);
     setWorkspaceMode(false);

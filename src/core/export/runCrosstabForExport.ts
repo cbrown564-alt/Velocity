@@ -2,6 +2,7 @@ import type { AggregatedRow, Dataset, Filter, TableStats, VariableSet } from '..
 import type { CrosstabEnginePort } from './crosstabEnginePort';
 import { buildCrosstabRequest } from '../analysis/buildCrosstabRequest';
 import { mapCrosstabRows } from '../analysis/mapCrosstabRows';
+import type { CrosstabSqlRow } from '../analysis/crosstab/types';
 
 interface AnalysisSignificanceSettings {
   comparisonMethod: 'cell_vs_rest' | 'pairwise';
@@ -10,7 +11,7 @@ interface AnalysisSignificanceSettings {
 }
 
 interface RunCrosstabParams {
-  engineProxy: CrosstabEnginePort;
+  engine: CrosstabEnginePort;
   dataset: Dataset;
   variableSets: VariableSet[];
   rowVars: string[];
@@ -26,7 +27,7 @@ interface RunCrosstabResult {
 }
 
 export const runCrosstabForExport = async ({
-  engineProxy,
+  engine,
   dataset,
   variableSets,
   rowVars,
@@ -35,7 +36,7 @@ export const runCrosstabForExport = async ({
   weightVar,
   analysisSettings,
 }: RunCrosstabParams): Promise<RunCrosstabResult> => {
-  if (!engineProxy || rowVars.length === 0) {
+  if (!engine || rowVars.length === 0) {
     return { data: [], tableStats: null };
   }
 
@@ -50,12 +51,12 @@ export const runCrosstabForExport = async ({
   });
 
   try {
-    const response = await engineProxy.runCrosstab(
+    const response = await engine.runCrosstab(
       request.options,
       request.context,
       request.analysisSettings,
     );
-    const rawData = response.data.rows as any[];
+    const rawData = response.data.rows as unknown as CrosstabSqlRow[];
     const mappedData: AggregatedRow[] = mapCrosstabRows(rawData, request.isWeighted);
     return { data: mappedData, tableStats: response.data.tableStats };
   } catch (error: any) {

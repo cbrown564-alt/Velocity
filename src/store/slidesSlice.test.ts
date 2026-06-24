@@ -1,6 +1,33 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useVelocityStore } from './index';
+import type { Filter } from '../types';
+
+function mockEngineProxy() {
+    const mockEnvelope = (data: unknown) => ({
+        data,
+        operation: 'test',
+        inputs: {},
+        durationMs: 10,
+        warnings: [],
+        metadata: {
+            datasetName: 'test.sav',
+            rowCount: 100,
+            filtersApplied: 0,
+            isWeighted: false,
+            engineVersion: 'browser-wasm',
+        },
+    });
+
+    const mockRunAnalysis = vi.fn().mockResolvedValue(mockEnvelope({ rows: [], tableStats: null }));
+    return {
+        browserEngine: {
+            runAnalysis: mockRunAnalysis,
+            getVariableStats: vi.fn().mockResolvedValue(mockEnvelope({})),
+        } as any,
+        mockRunCrosstab: mockRunAnalysis,
+    };
+}
 
 describe('slidesSlice', () => {
     beforeEach(() => {
@@ -157,6 +184,192 @@ describe('slidesSlice', () => {
 
             const duplicatedSlide = result.current.slides.find(s => s.title.includes('(Copy)'));
             expect(result.current.activeSlideId).toBe(duplicatedSlide!.id);
+        });
+    });
+
+    describe('setActiveSlide', () => {
+        it('should snapshot outgoing slide and project incoming slide config', () => {
+            const { result } = renderHook(() => useVelocityStore());
+            const filterA: Filter = {
+                id: 'filter-a',
+                variableId: 'region',
+                operator: 'eq',
+                value: 'North',
+            };
+            const filterB: Filter = {
+                id: 'filter-b',
+                variableId: 'age',
+                operator: 'gt',
+                value: 18,
+            };
+
+            act(() => {
+                useVelocityStore.setState({
+                    slides: [
+                        {
+                            id: 'slide-1',
+                            title: 'Slide 1',
+                            subtitle: '',
+                            analysisState: {
+                                rowVars: ['impact'],
+                                colVar: null,
+                                filters: [],
+                                weightVar: null,
+                            },
+                            visualizationType: 'table',
+                            layoutMode: 'focus',
+                            cells: [{ id: 'cell-1', content: { type: 'table' } }],
+                            createdAt: 1,
+                            updatedAt: 1,
+                        },
+                        {
+                            id: 'slide-2',
+                            title: 'Slide 2',
+                            subtitle: '',
+                            analysisState: {
+                                rowVars: ['brand'],
+                                colVar: 'segment',
+                                filters: [filterA, filterB],
+                                weightVar: null,
+                            },
+                            visualizationType: 'chart',
+                            chartType: 'horizontal-bar',
+                            layoutMode: 'focus',
+                            cells: [{ id: 'cell-2', content: { type: 'chart', chartType: 'horizontal-bar' } }],
+                            createdAt: 2,
+                            updatedAt: 2,
+                        },
+                    ],
+                    activeSlideId: 'slide-1',
+                    activeCellId: 'cell-1',
+                    tableConfig: { rowVars: ['awareness'], colVar: 'wave' },
+                    activeFilters: [],
+                });
+            });
+
+            act(() => {
+                result.current.setActiveSlide('slide-2');
+            });
+
+            const outgoingSlide = result.current.slides.find((slide) => slide.id === 'slide-1');
+            expect(outgoingSlide?.analysisState).toEqual({
+                rowVars: ['awareness'],
+                colVar: 'wave',
+                filters: [],
+                weightVar: null,
+            });
+            expect(result.current.activeSlideId).toBe('slide-2');
+            expect(result.current.tableConfig).toEqual({ rowVars: ['brand'], colVar: 'segment' });
+            expect(result.current.activeFilters).toHaveLength(2);
+            expect(result.current.activeFilters[0]?.variableId).toBe('region');
+            expect(result.current.activeFilters[1]?.variableId).toBe('age');
+        });
+
+        it('should trigger exactly one analysis run when switching slides with filters', async () => {
+            const { result } = renderHook(() => useVelocityStore());
+            const { browserEngine, mockRunCrosstab } = mockEngineProxy();
+            const filterA: Filter = {
+                id: 'filter-a',
+                variableId: 'region',
+                operator: 'eq',
+                value: 'North',
+            };
+            const filterB: Filter = {
+                id: 'filter-b',
+                variableId: 'age',
+                operator: 'gt',
+                value: 18,
+            };
+
+            act(() => {
+                useVelocityStore.setState({
+                    browserEngine,
+                    isDbReady: true,
+                    dataset: {
+                        id: 'ds1',
+                        name: 'test.sav',
+                        rowCount: 100,
+                        variables: [],
+                        source: 'sav',
+                    } as any,
+                    slides: [
+                        {
+                            id: 'slide-1',
+                            title: 'Slide 1',
+                            subtitle: '',
+                            analysisState: {
+                                rowVars: ['impact'],
+                                colVar: null,
+                                filters: [],
+                                weightVar: null,
+                            },
+                            visualizationType: 'table',
+                            layoutMode: 'focus',
+                            cells: [{ id: 'cell-1', content: { type: 'table' } }],
+                            createdAt: 1,
+                            updatedAt: 1,
+                        },
+                        {
+                            id: 'slide-2',
+                            title: 'Slide 2',
+                            subtitle: '',
+                            analysisState: {
+                                rowVars: ['brand'],
+                                colVar: 'segment',
+                                filters: [filterA, filterB],
+                                weightVar: null,
+                            },
+                            visualizationType: 'table',
+                            layoutMode: 'focus',
+                            cells: [{ id: 'cell-2', content: { type: 'table' } }],
+                            createdAt: 2,
+                            updatedAt: 2,
+                        },
+                    ],
+                    activeSlideId: 'slide-1',
+                    activeCellId: 'cell-1',
+                    tableConfig: { rowVars: ['impact'], colVar: null },
+                    activeFilters: [],
+                });
+            });
+
+            mockRunCrosstab.mockClear();
+
+            act(() => {
+                result.current.setActiveSlide('slide-2');
+            });
+
+            await vi.waitFor(() => {
+                expect(mockRunCrosstab).toHaveBeenCalledTimes(1);
+            });
+        });
+
+        it('should no-op when activating the already active slide', () => {
+            const { result } = renderHook(() => useVelocityStore());
+            const { browserEngine, mockRunCrosstab } = mockEngineProxy();
+
+            act(() => {
+                useVelocityStore.setState({
+                    browserEngine,
+                    isDbReady: true,
+                    dataset: {
+                        id: 'ds1',
+                        name: 'test.sav',
+                        rowCount: 100,
+                        variables: [],
+                        source: 'sav',
+                    } as any,
+                    tableConfig: { rowVars: ['impact'], colVar: null },
+                });
+            });
+
+            mockRunCrosstab.mockClear();
+
+            act(() => {
+                result.current.setActiveSlide('slide-test-1');
+            });
+
+            expect(mockRunCrosstab).not.toHaveBeenCalled();
         });
     });
 

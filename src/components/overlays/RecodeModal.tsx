@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useReducedMotion, getBackdropProps, getModalPresenceProps } from '../../lib/motion';
 import { X, ArrowRight, Wand2, Save, Layers, ListFilter, Plus, Trash2 } from 'lucide-react';
 import { Variable, RecodeMode, RecodeRule } from '../../types';
 import { allowsNumericStats } from '../../types';
 import { useVelocityStore } from '../../store';
+import { ModalShell } from './ModalShell';
 
 interface RecodeModalProps {
   isOpen: boolean;
@@ -86,22 +85,13 @@ export const RecodeModal: React.FC<RecodeModalProps> = ({ isOpen, onClose, varia
     }
   };
 
-  const reducedMotion = useReducedMotion();
-
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <>
-          <motion.div
-            {...getBackdropProps(reducedMotion)}
-            onClick={onClose}
-            className="fixed inset-0 bg-[var(--text-primary)]/60 backdrop-blur-sm z-50"
-          />
-          <motion.div
-            {...getModalPresenceProps(reducedMotion)}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none"
-          >
-            <div className="bg-[var(--bg-panel)] rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden pointer-events-auto flex flex-col max-h-[85vh]">
+    <ModalShell
+      isOpen={isOpen}
+      onClose={onClose}
+      backdropClassName="fixed inset-0 bg-[var(--text-primary)]/60 backdrop-blur-sm z-50"
+      panelClassName="bg-[var(--bg-panel)] rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden pointer-events-auto flex flex-col max-h-[85vh]"
+    >
               {/* Header */}
               <div className="p-6 border-b border-[var(--border-color)] flex items-center justify-between bg-[var(--bg-panel)]">
                 <div className="flex items-center gap-3">
@@ -284,10 +274,6 @@ export const RecodeModal: React.FC<RecodeModalProps> = ({ isOpen, onClose, varia
                   Create Variable
                 </button>
               </div>
-            </div>
-          </motion.div>
-        </>
-      )}
-    </AnimatePresence>
+    </ModalShell>
   );
 };

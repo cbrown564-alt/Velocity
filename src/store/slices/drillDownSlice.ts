@@ -64,8 +64,8 @@ export const createDrillDownSlice: DrillDownSliceCreator = (set, get) => ({
     drillDown: initialDrillDown,
 
     openDrillDown: async (rowPath, colValue) => {
-        const { engineProxy, tableConfig, dataset, activeFilters, variableSets } = get();
-        if (!engineProxy || rowPath.length === 0) return;
+        const { browserEngine, tableConfig, dataset, activeFilters, variableSets } = get();
+        if (!browserEngine || rowPath.length === 0) return;
 
         const pageSize = 50;
         const { rowFilters, colFilter, title } = resolveDrillDownContext({
@@ -105,11 +105,11 @@ export const createDrillDownSlice: DrillDownSliceCreator = (set, get) => ({
 
         // Run both queries concurrently via EngineProxy
         const [dataResponse, countResponse] = await Promise.all([
-            engineProxy.query(dataSql).catch((err) => {
+            browserEngine.query(dataSql).catch((err) => {
                 console.error('[DrillDownSlice] Data query error:', err.message);
                 return { data: [] as any[], durationMs: 0 };
             }),
-            engineProxy.query(countSql).catch((err) => {
+            browserEngine.query(countSql).catch((err) => {
                 console.error('[DrillDownSlice] Count query error:', err.message);
                 return { data: [{ total: 0 }] as any[], durationMs: 0 };
             }),
@@ -130,8 +130,8 @@ export const createDrillDownSlice: DrillDownSliceCreator = (set, get) => ({
     },
 
     loadMoreDrillDown: async () => {
-        const { engineProxy, drillDown, activeFilters } = get();
-        if (!engineProxy || drillDown.loading) return;
+        const { browserEngine, drillDown, activeFilters } = get();
+        if (!browserEngine || drillDown.loading) return;
 
         const { rowFilters, colFilter, currentPage, pageSize, data } = drillDown;
         const nextPage = currentPage + 1;
@@ -154,7 +154,7 @@ export const createDrillDownSlice: DrillDownSliceCreator = (set, get) => ({
         const sql = buildDrillDownQuery(queryOptions);
 
         try {
-            const response = await engineProxy.query(sql);
+            const response = await browserEngine.query(sql);
             set((state) => ({
                 drillDown: {
                     ...state.drillDown,

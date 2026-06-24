@@ -15,8 +15,8 @@ import {
 import type { StoredDataset, Project } from '../types';
 import { formatDeckSummaryTooltip } from '../lib/returningResearcher';
 import { formatRelativeTime } from '../lib/workspaceFormatters';
-import { ProjectBadge, WaveBadge } from './WorkspaceDatasetCard';
-import styles from './WorkspaceView.module.css';
+import { ProjectBadge, WaveBadge } from './WorkspaceBadges';
+import styles from './WorkspaceDatasetListItem.module.css';
 
 export const WorkspaceDatasetListItem: React.FC<{
   dataset: StoredDataset;

@@ -4,6 +4,7 @@ import { readFileSync, readdirSync } from 'fs';
 import { createWasmAdapter, loadCSVToWasm } from './adapters/wasm';
 import { createNodeAdapter } from './adapters/node';
 import { runCrosstab } from '../../src/core/analysis/crosstabRunner';
+import { extractRowKeyStrings } from '../../src/core/analysis/crosstab/rowKeys';
 import { getVariableStats } from '../../src/core/analysis/variableStatsRunner';
 import { DuckDBNodeAdapter } from '../../src/adapters/DuckDBNodeAdapter';
 
@@ -15,13 +16,8 @@ const FIXTURES = resolve(__dirname, '../golden/fixtures');
 function sortRows(rows: any[]): any[] {
     if (!Array.isArray(rows)) return rows;
     return [...rows].sort((a, b) => {
-        const getSortKey = (r: any) => {
-            const parts = [];
-            let i = 0;
-            while (r[`rowKey_${i}`] !== undefined) {
-                parts.push(String(r[`rowKey_${i}`]));
-                i++;
-            }
+        const getSortKey = (r: Record<string, unknown>) => {
+            const parts = extractRowKeyStrings(r);
             parts.push(String(r.colKey || 'Total'));
             return parts.join('|');
         };

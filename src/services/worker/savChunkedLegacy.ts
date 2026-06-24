@@ -10,8 +10,8 @@ import {
 import { workerDbState } from './workerDbState';
 
 /**
- * Legacy chunked parser path.
- * Kept as rollback path while streaming v2 hardens in production.
+ * Legacy chunked parser path (parseSavStreaming).
+ * Gated by ENABLE_SAV_STREAMING_LEGACY until deleted.
  */
 export async function loadSAVChunkedLegacy(
   buffer: ArrayBuffer,

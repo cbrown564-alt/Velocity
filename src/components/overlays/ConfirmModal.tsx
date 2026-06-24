@@ -6,9 +6,8 @@
  */
 
 import React, { useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useReducedMotion, getBackdropProps, getModalPresenceProps } from '../../lib/motion';
-import { X, AlertTriangle } from 'lucide-react';
+import { AlertTriangle, X } from 'lucide-react';
+import { ModalShell } from './ModalShell';
 
 interface ConfirmModalProps {
     isOpen: boolean;
@@ -51,80 +50,62 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
         onClose();
     };
 
-    const reducedMotion = useReducedMotion();
     const isDanger = variant === 'danger';
 
     return (
-        <AnimatePresence>
-            {isOpen && (
-                <>
-                    {/* Backdrop */}
-                    <motion.div
-                        {...getBackdropProps(reducedMotion)}
+        <ModalShell
+            isOpen={isOpen}
+            onClose={onClose}
+            onPanelKeyDown={handleKeyDown}
+            panelClassName="bg-[var(--bg-panel)] rounded-xl shadow-2xl w-full max-w-sm overflow-hidden pointer-events-auto border border-[var(--border-color)]"
+        >
+            {/* Header */}
+            <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--border-color)]">
+                <div className="flex items-center gap-2">
+                    {isDanger && (
+                        <AlertTriangle size={18} className="text-[var(--color-error)]" />
+                    )}
+                    <h2 className="text-lg font-semibold text-[var(--text-primary)]">
+                        {title}
+                    </h2>
+                </div>
+                <button
+                    onClick={onClose}
+                    className="p-1.5 rounded-md text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-active)] transition-colors"
+                >
+                    <X size={18} />
+                </button>
+            </div>
+
+            {/* Content */}
+            <div className="p-5">
+                <p className="text-sm text-[var(--text-secondary)]">
+                    {message}
+                </p>
+
+                {/* Buttons */}
+                <div className="flex justify-end gap-2 mt-5">
+                    <button
+                        type="button"
                         onClick={onClose}
-                        className="fixed inset-0 bg-[var(--text-primary)]/30 backdrop-blur-sm z-50"
-                    />
-
-                    {/* Modal */}
-                    <motion.div
-                        {...getModalPresenceProps(reducedMotion)}
-                        className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none"
+                        className="px-4 py-2 text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-active)] rounded-lg transition-colors"
                     >
-                        <div
-                            className="bg-[var(--bg-panel)] rounded-xl shadow-2xl w-full max-w-sm overflow-hidden pointer-events-auto border border-[var(--border-color)]"
-                            onKeyDown={handleKeyDown}
-                        >
-                            {/* Header */}
-                            <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--border-color)]">
-                                <div className="flex items-center gap-2">
-                                    {isDanger && (
-                                        <AlertTriangle size={18} className="text-[var(--color-error)]" />
-                                    )}
-                                    <h2 className="text-lg font-semibold text-[var(--text-primary)]">
-                                        {title}
-                                    </h2>
-                                </div>
-                                <button
-                                    onClick={onClose}
-                                    className="p-1.5 rounded-md text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-active)] transition-colors"
-                                >
-                                    <X size={18} />
-                                </button>
-                            </div>
-
-                            {/* Content */}
-                            <div className="p-5">
-                                <p className="text-sm text-[var(--text-secondary)]">
-                                    {message}
-                                </p>
-
-                                {/* Buttons */}
-                                <div className="flex justify-end gap-2 mt-5">
-                                    <button
-                                        type="button"
-                                        onClick={onClose}
-                                        className="px-4 py-2 text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-active)] rounded-lg transition-colors"
-                                    >
-                                        {cancelLabel}
-                                    </button>
-                                    <button
-                                        ref={confirmButtonRef}
-                                        type="button"
-                                        onClick={handleConfirm}
-                                        className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${isDanger
-                                                ? 'bg-[var(--color-error)] hover:opacity-90 text-[var(--text-inverse)]'
-                                                : 'bg-[var(--color-accent)] hover:opacity-90 text-[var(--text-inverse)]'
-                                            }`}
-                                    >
-                                        {confirmLabel}
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </motion.div>
-                </>
-            )}
-        </AnimatePresence>
+                        {cancelLabel}
+                    </button>
+                    <button
+                        ref={confirmButtonRef}
+                        type="button"
+                        onClick={handleConfirm}
+                        className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${isDanger
+                                ? 'bg-[var(--color-error)] hover:opacity-90 text-[var(--text-inverse)]'
+                                : 'bg-[var(--color-accent)] hover:opacity-90 text-[var(--text-inverse)]'
+                            }`}
+                    >
+                        {confirmLabel}
+                    </button>
+                </div>
+            </div>
+        </ModalShell>
     );
 };
 

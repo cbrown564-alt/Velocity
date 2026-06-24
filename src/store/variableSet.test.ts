@@ -41,7 +41,7 @@ describe('Variable Logic', () => {
     });
 
     it('should dispatch recodeVariable action correctly for binning', async () => {
-        // Mock engineProxy
+        // Mock browserEngine
         const mockRecodeVariable = vi.fn().mockResolvedValue({ newColName: 'v3_binned' });
         const mockEngineProxy = {
             recodeVariable: mockRecodeVariable,
@@ -51,7 +51,7 @@ describe('Variable Logic', () => {
         } as any;
 
         useVelocityStore.setState({
-            engineProxy: mockEngineProxy,
+            browserEngine: mockEngineProxy,
             isDbReady: true,
         });
 
@@ -62,7 +62,7 @@ describe('Variable Logic', () => {
             rules: [{ min: 0, max: 10, label: 'Low' }]
         });
 
-        // Check that engineProxy.recodeVariable was called with correct args
+        // Check that browserEngine.recodeVariable was called with correct args
         expect(mockRecodeVariable).toHaveBeenCalledWith(
             'v3',
             'v3_binned',

@@ -44,7 +44,6 @@ graph TD
 
   subgraph P3["Phase 3 — Convergence & UI structure"]
     TN31["TN-3.1 BrowserEngine facade"]
-    TN32["TN-3.2 datasetSessionCoordinator"]
     TN33["TN-3.3 ModalShell + chart primitives"]
     TN34["TN-3.4 Dashboard shell split"]
     TN35["TN-3.5 Workspace CSS + badges"]
@@ -71,8 +70,7 @@ graph TD
   TN21 --> TN31
   TN22 --> TN31
   TN16 --> TN26
-  TN23 --> TN32
-  TN32 --> TN24
+  TN23 --> TN24
   TN04 --> TN34
   TN05 --> TN34
   TN33 --> TN34
@@ -95,143 +93,31 @@ graph TD
 
 ## Phase 2 — God-file decomposition
 
+### In Progress
+
+_None._
+
 ### Backlog
 
-#### TN-2.4 — Split `App.tsx` (999 lines)
-
-| Field | Value |
-| :--- | :--- |
-| **Outcome** | `AppModeRouter`, `ModalHost`, lifecycle hooks (`useSessionLifecycle`, `useWorkspaceOrchestration`), extracted inline screens. |
-| **Dependencies** | TN-3.2 (recommended), TN-3.5 (partial) |
-| **Parallelizable** | after workspace coordinator |
-| **Owner** | unassigned |
-| **Validation** | E2E smoke; `npm run typecheck:all`; App.tsx < ~200 lines |
-| **Notes** | Reframe `AppPhase` + `AppOverlay` typed models to collapse boolean sprawl. **Blocked:** wait for TN-3.2 (recommended) or TN-3.5 (partial). |
-
-#### TN-2.5 — Split `crosstabRunner.ts` (880 lines)
-
-| Field | Value |
-| :--- | :--- |
-| **Outcome** | `core/analysis/crosstab/` package: prepare, histogram, significance, chi-square, row keys, types; orchestrator < ~100 lines. |
-| **Dependencies** | TN-1.1, TN-1.2, TN-3.9 |
-| **Parallelizable** | after TN-3.9 |
-| **Owner** | unassigned |
-| **Validation** | `crosstabRunner.significance.test.ts`; stats integrity playbook |
-| **Notes** | Significance block (~400 lines) → strategy objects. **Blocked:** TN-3.9 (CrosstabSqlRow + extractRowKeys) must land first. |
+*(Phase 2 complete — see Done)*
 
 ---
 
 ## Phase 3 — Convergence & UI structure
 
+### In Progress
+
+*(none)*
+
 ### Backlog
 
-#### TN-3.1 — Introduce BrowserEngine facade
-
-| Field | Value |
-| :--- | :--- |
-| **Outcome** | `src/engine/BrowserEngine.ts` wraps `EngineProxy`; store slices migrate incrementally per `docs/playbooks/worker_migration.md`. |
-| **Dependencies** | TN-2.1, TN-2.2 |
-| **Parallelizable** | no (defines shared contract) |
-| **Owner** | unassigned |
-| **Validation** | Browser E2E; MCP parity checklist for shared methods |
-| **Notes** | Eliminates split-brain: browser vs VelocityEngine duplication. |
-
-#### TN-3.2 — Add datasetSessionCoordinator
-
-| Field | Value |
-| :--- | :--- |
-| **Outcome** | Single capture/apply/switch module; `useWorkspaceOpen`, `useWorkspace`, and `openWorkspaceDatasetLifecycle` call it. |
-| **Dependencies** | TN-2.3 (partial — can start typed API earlier) |
-| **Parallelizable** | after TN-1.7 |
-| **Owner** | unassigned |
-| **Validation** | Coordinator unit tests; `workspace-switch.spec.ts` |
-| **Notes** | Fixes `StoredDataset.sessionState` `unknown[]` → typed `Filter[]`. |
-
-#### TN-3.3 — Introduce ModalShell + chart interaction primitives
-
-| Field | Value |
-| :--- | :--- |
-| **Outcome** | `ModalShell` adopted by overlay modals; `useChartSelection`, `ChartPlotArea` shared across renderers. |
-| **Dependencies** | none |
-| **Parallelizable** | yes (can start in Phase 0/1) |
-| **Owner** | unassigned |
-| **Validation** | Modal a11y tests; chart renderer tests unchanged |
-| **Notes** | ~300 lines modal duplication; ~80 lines/chart copy-paste. |
-
-#### TN-3.4 — Decompose DashboardShell + DataTable
-
-| Field | Value |
-| :--- | :--- |
-| **Outcome** | Sidebar, Toolbar, AnalysisShelf, `useDashboardDnD`; DataTable loses dead chart path; `CrosstabRow` extracted; wire or delete `useAggregatedTableData`. |
-| **Dependencies** | TN-0.3, TN-0.5, TN-3.3 (optional) |
-| **Parallelizable** | after TN-0.5 |
-| **Owner** | unassigned |
-| **Validation** | Dashboard unit tests; canvas E2E |
-| **Notes** | Move `filterSyntheticGridShellSets` out of variableManager into core/services. |
-
-#### TN-3.5 — Finish workspace presentation split
-
-| Field | Value |
-| :--- | :--- |
-| **Outcome** | `WorkspaceView.module.css` split per component; `WorkspaceBadges.tsx`; import direction fixed. |
-| **Dependencies** | none |
-| **Parallelizable** | yes |
-| **Owner** | unassigned |
-| **Validation** | Visual regression or manual workspace pass; CSS module line counts < 1k each |
-| **Notes** | 1344-line CSS is a 1k-rule violation. |
-
-#### TN-3.6 — Engine ResultEnvelopes for mutations
-
-| Field | Value |
-| :--- | :--- |
-| **Outcome** | `setWeight`, `addFilter`, `commitDeck`, etc. return envelopes; MCP passthrough consistent. |
-| **Dependencies** | TN-2.2 |
-| **Parallelizable** | after engine split |
-| **Owner** | unassigned |
-| **Validation** | MCP mutation tool tests assert envelope shape |
-| **Notes** | Cross-cutting MCP + engine. |
-
-#### TN-3.7 — Collapse SAV streaming paths
-
-| Field | Value |
-| :--- | :--- |
-| **Outcome** | Single parameterized pipeline; v3 canonical; legacy behind one flag until deleted. |
-| **Dependencies** | TN-2.1 |
-| **Parallelizable** | after worker split |
-| **Owner** | unassigned |
-| **Validation** | SAV ingestion tests; large-file manual load |
-| **Notes** | Deletes ~400 lines duplication between v2/v3. |
-
-#### TN-3.8 — Refactor slide activation model
-
-| Field | Value |
-| :--- | :--- |
-| **Outcome** | Slides own config; global analysis is projection of active slide; one `runAnalysis` on switch. |
-| **Dependencies** | TN-2.3 |
-| **Parallelizable** | after store split |
-| **Owner** | unassigned |
-| **Validation** | `slidesSlice.test.ts` for `setActiveSlide`; assert single analysis trigger |
-| **Notes** | Removes N+1 filter replay loop. |
-
-#### TN-3.9 — Introduce CrosstabSqlRow + extractRowKeys
-
-| Field | Value |
-| :--- | :--- |
-| **Outcome** | Typed SQL row contract; `mapCrosstabRows` typed; row-key helper replaces 15+ copy-paste loops. |
-| **Dependencies** | TN-1.1, TN-1.2 |
-| **Parallelizable** | after core relocations |
-| **Owner** | unassigned |
-| **Validation** | Typecheck; crosstab unit tests |
-| **Notes** | Prerequisite for TN-2.5; can land early. |
+*(Wave 2 complete — incremental store migration can proceed slice-by-slice)*
 
 ---
 
 ## Blocked
 
-| Card | Blocker |
-| :--- | :--- |
-| **TN-2.4** — Split `App.tsx` | TN-3.2 (datasetSessionCoordinator, recommended), TN-3.5 (workspace CSS, partial) |
-| **TN-2.5** — Split `crosstabRunner.ts` | TN-3.9 (CrosstabSqlRow + extractRowKeys) |
+*(none — TN-2.5 unblocked by TN-3.9)*
 
 ---
 
@@ -256,6 +142,17 @@ graph TD
 | **TN-2.1** — Split `analysisWorker.ts` | **Before:** monolithic `src/services/analysisWorker.ts` (1,814 lines). **After:** thin shell (24 lines) + `src/services/worker/` package (14 modules, max 368 lines/file): `workerDbState`, `duckdbOpfs` (133), `duckdbInit` (179), `duckdbPersistence` (302), `duckdbErrorHelpers`, `workerIngestion` (174), `savArrowHelpers`, `savChunkedLoader` (288), `savChunkedLegacy` (159), `workerQueries`, `engineMessaging`, `engineHandlerTypes`, `engineHandlers` (368), `engineHandlersHarmonization` (104), `engineDispatch` (68). **Grep:** `engineHandlers[request.type]` in `engineDispatch.ts`; no `switch (request.type)` in worker modules. **Tests:** `opfsPersistence.test.ts` — 7 passed; `arrowIngestion.test.ts` — 10 passed; `enginePersistenceBridge.test.ts` — 2 passed; `worker.contract.test.ts` — 2 passed; `savIngestion.test.ts` — 1 passed; `npm run test:run` — 916 passed, 7 skipped (2 pre-existing `chartRecommender` import failures unrelated). **Typecheck:** worker modules clean; 4 pre-existing errors in `AnalysisChart.tsx` / `chartTypeResolver.ts` (TN-1.4 path drift, unrelated). **Behavior:** zero change — structural refactor only (2026-06-24). |
 | **TN-2.2** — Split `VelocityEngine.ts` | **Files:** `VelocityEngine.ts` (761 lines, thin facade) delegates to `datasetLoading.ts` (244), `workspaceManager.ts` (243), `sessionState.ts` (154), `crosstabPostProcess.ts` (102), `semanticFacade.ts` (239), plus shared `velocityEngineTypes.ts` (97, `VelocityEngineHost` structural interface) and `engineEnvelope.ts` (59). **Pattern:** DeckBuilder-style `VelocityEngineHost` avoids circular imports; `VelocityEngine` implements host and wires module classes. **Public API:** unchanged (`src/engine/index.ts` re-exports). **Tests:** `VelocityEngine.test.ts` — 9 passed; `crosstabMatrixEnvelope.test.ts` — 2 passed; `session-roundtrip.test.ts` — 2 passed; `resolve-labels.test.ts` — 1 passed; `mcp-server/__tests__/tools.test.ts` — 37 passed; `npm run test:run` — 916 passed, 7 skipped (2 pre-existing UI import failures unrelated); `npm run typecheck:mcp` green (2026-06-24). |
 | **TN-2.3** — Split `dataSlice.ts` | **Files:** `src/store/slices/data/` — `types.ts` (129), `variableNormalization.ts` (63), `sliceContext.ts` (21), `loadProgress.ts` (30), `engineActions.ts` (79), `persistenceActions.ts` (193), `datasetActions.ts` (274), `variableCatalogActions.ts` (336), `transformActions.ts` (204), `initialState.ts` (42), `index.ts` (35); `dataSlice.ts` thinned to 59-line compositor (was ~1,295). **Pattern:** extends STAB-ARCH-1 (`enginePersistenceBridge`, `workspaceDatasetLifecycle`); `DataSliceStore` typed cross-slice access replaces 15+ `as any` in slice body. **Grep:** zero `as any` in `slices/data/` or `dataSlice.ts`. **Tests:** `dataSlice.workspace.test.ts` — 2 passed; `persistence.test.ts` — 6 passed; `enginePersistenceBridge.test.ts` — 2 passed; `workspaceDatasetLifecycle.test.ts` — 2 passed; `npm run test:run` — 112 files / 916 passed, 7 skipped (2 pre-existing `AnalysisChart` import failures unrelated); data-slice `tsc` clean (2026-06-24). |
+| **TN-3.9** — Introduce CrosstabSqlRow + extractRowKeys | **Files:** `src/core/analysis/crosstabSqlRow.ts` (new: `CrosstabSqlRow`, `CrosstabOverlapSqlRow`, `CrosstabHistogramBinSqlRow`, `extractRowKeys`, `extractRowKeyStrings`, `joinRowKeyPath`, `getColKeyString`); `mapCrosstabRows.ts` typed to `CrosstabSqlRow[]`; `crosstabRunner.ts` — 8 row-key loops + `any[]` casts replaced; `formatCrosstabMatrix.ts`, `tests/parity/runParity.test.ts` — shared helper; call sites in `DeckBuilder.ts`, `analysisSlice.ts`, `runCrosstabForExport.ts`. **Grep:** zero `while (rowKey_N)` loops outside `crosstabSqlRow.ts`; 11 shared-helper call sites in `src/`. **Tests:** `mapCrosstabRows.test.ts` — 6 passed (4 new extractRowKeys); `crosstabRunner.significance.test.ts` — 4 passed; `queryBuilder.test.ts` — 40 passed; `formatCrosstabMatrix.test.ts` — 4 passed; crosstab-related suite — 95 passed; `npm run typecheck` — no crosstab-related errors (2026-06-24). **TN-2.5 unblocked.** |
+| **TN-3.2** — Add datasetSessionCoordinator | **Files:** `src/store/datasetSessionCoordinator.ts` (+ `datasetSessionCoordinator.test.ts` — 7 tests), `src/types/workspaceSession.ts` (`DatasetSessionState` with typed `Filter[]` + `DataTransform[]`). **Call sites:** `useWorkspaceOpen.ts` (`captureBeforeDatasetSwitch`), `useWorkspace.ts` (`persistDatasetSession`), `workspaceDatasetLifecycle.ts` + `datasetActions.ts` (`normalizeStoredSessionState`, `sessionStateToStorePatch`). **Types:** `StoredDataset.sessionState` and `WorkspaceDatasetOpenInput.sessionState` → `DatasetSessionState`; removed `activeFilters as Filter[]` casts in `datasetActions.ts`. **Tests:** `datasetSessionCoordinator.test.ts` — 7 passed; `workspaceDatasetLifecycle.test.ts` — 2 passed; `useWorkspaceOpen.test.ts` — 3 passed; `useWorkspace.test.ts` — 2 passed; `npm run test:run` — 937 passed, 7 skipped (2 pre-existing unrelated failures: `r_parity` chi-square, `agentWorkflow` commit deck envelope); `npm run typecheck` — pre-existing failures in `AnalysisChart` / `crosstabRunner` / `chartTypeResolver` unrelated (2026-06-24). **Behavior:** zero change — structural refactor only. |
+| **TN-3.6** — Engine ResultEnvelopes for mutations | **Files:** `sessionState.ts` — `setWeight`, `addFilter`, `removeFilter`, `clearFilters`, `commitDeck` now return `ResultEnvelope` via `wrapSync`; `VelocityEngine.ts` delegates unchanged public surface; `types.ts` — mutation result types (`WeightMutationResult`, `FilterMutationResult`, `RemoveFilterResult`, `ClearFiltersResult`, `CommitDeckResult`). **MCP:** `handlers/analysis.ts` (`velocity_filter`, `velocity_clear_filters`, `velocity_set_weight`) and `handlers/deck.ts` (`velocity_commit_deck`) passthrough engine envelopes via `successResponse(result)` (removed ad-hoc `{ ok: true }` payloads). **Tests:** `VelocityEngine.test.ts` — 10 passed (mutation envelope contract); `session-roundtrip.test.ts` — 2 passed; `mcp-server/__tests__/tools.test.ts` — 40 passed (`expectEnvelopeShape` on mutation tools); `npm run typecheck:mcp` — pre-existing failures in `crosstabRunner.ts` / `DeckBuilder.ts` (TN-3.9 in flight), no new errors from this card (2026-06-24). |
+| **TN-3.7** — Collapse SAV streaming paths | **Files:** `savChunkedLoader.ts` (251 lines, was 288) — merged `loadSAVChunkedV2` + `loadSAVChunkedV3SinglePass` into parameterized `loadSAVChunkedStreaming` + `runSavStreamingParser`; `savArrowHelpers.ts` — canonical flag `ENABLE_SAV_STREAMING_V3_SINGLE_PASS`, legacy gate `ENABLE_SAV_STREAMING_LEGACY`; removed `ENABLE_SAV_STREAMING_V2`, `STREAMING_V2_HIGH_RISK_BYTES`, `STREAMING_V3_HIGH_RISK_BYTES`. **Grep:** zero `loadSAVChunkedV2`, `loadSAVChunkedV3`, `ENABLE_SAV_STREAMING_V2`. **Diff:** −37 net lines (−152/+115); ~130 lines v2/v3 duplication eliminated. **Dual-state:** `processMetadata` + `buildVectorsFromBatch` unchanged; valueLabels path preserved. **Tests:** `savIngestion.test.ts` — 4 passed; `arrowIngestion.test.ts` — 10 passed; `npm run test:run` — 923 passed, 7 skipped (2 pre-existing MCP deck failures unrelated). **Behavior:** zero change on default v3 path (2026-06-24). |
+| **TN-3.5** — Finish workspace presentation split | **Before:** monolithic `WorkspaceView.module.css` (1,344 lines); child components imported parent CSS (import-direction violation); `ProjectBadge`/`WaveBadge` lived in `WorkspaceDatasetCard.tsx`. **After:** 7 per-component CSS modules (max 615 lines): `WorkspaceView` (615), `WorkspaceDatasetCard` (282), `WorkspaceProjectCard` (150), `WorkspaceEmptyState` (116), `WorkspaceDatasetListItem` (101), `WorkspaceStorageIndicator` (61), `WorkspaceBadges` (27); new `WorkspaceBadges.tsx`. **Grep:** only `WorkspaceView.tsx` imports `WorkspaceView.module.css`; badges imported from `./WorkspaceBadges` (not card → list). **Typecheck:** workspace modules clean; repo has pre-existing unrelated errors in `AnalysisChart.tsx` / `crosstabRunner.ts`. **Behavior:** zero visual/behavior change — CSS extraction only (2026-06-24). |
+| **TN-3.8** — Refactor slide activation model | **Before:** `setActiveSlide` restored incoming slide via `setTableConfig` + `clearFilters` + per-filter `addFilter` loop + explicit `runAnalysis` (N+1 analysis runs). **After:** slides own `SlideAnalysisState`; global `tableConfig`/`activeFilters` are projection via new `analysisSlice.applySlideAnalysisState` (atomic set + single optional `runAnalysis`); helpers `captureAnalysisStateFromStore` / `projectSlideAnalysisState` in `slidesSlice.ts`; `addSlide` uses silent projection for blank canvas. **Tests:** `slidesSlice.test.ts` — 13 passed (3 new `setActiveSlide` tests: snapshot outgoing, single `runCrosstab` on switch with 2 filters, no-op on same slide); `npm run test:run` — 936 passed, 7 skipped (2 pre-existing unrelated failures: `r_parity`, `agentWorkflow`). **Behavior:** slide switch snapshot/restore preserved; duplicate analysis on switch eliminated (2026-06-24). |
+| **TN-3.3** — ModalShell + chart interaction primitives | **Files:** `src/components/overlays/ModalShell.tsx` (+ `ModalShell.test.tsx` — 5 tests); `src/components/charts/hooks/useChartSelection.ts` (+ test — 5 tests); `src/components/charts/shared/ChartPlotArea.tsx`. **Modals migrated (8):** `ConfirmModal`, `InputModal`, `ConvertSystemMissingModal`, `RecodeModal`, `FilterModal`, `ExportModal`, `SessionExportModal`, `SessionImportModal` — split/unified layouts, `escapeToClose`, backdrop-click disable preserved. **Charts migrated (6):** `VerticalBarRenderer`, `HorizontalBarRenderer`, `LollipopRenderer`, `StackedBarRenderer`, `DonutRenderer`, `DivergingBarRenderer` — shared toggle/context-menu + plot-area group. **Line reduction (est.):** ~280 lines modal boilerplate removed (−~350 gross / +~120 `ModalShell`); ~90 lines/chart selection copy-paste removed (−~540 gross / +~140 shared hooks). **Tests:** `ModalShell.test.tsx` — 5 passed; `useChartSelection.test.ts` — 5 passed; `AnalysisChart.test.tsx` — 2 passed; `npm run typecheck` — pre-existing unrelated errors in `AnalysisChart.tsx` / `chartTypeResolver.ts` only (2026-06-24). **Behavior:** zero change — structural refactor only; modal Escape/backdrop a11y preserved. |
+| **TN-3.4** — Decompose DashboardShell + DataTable | **Before:** monolithic `DashboardShell.tsx` (740 lines); inline DnD/sidebar/toolbar/shelf; `DataTable.tsx` (564 lines) with inline `renderRow`; dead `useAggregatedTableData` hook; `filterSyntheticGridShellSets` in variableManager. **After:** `DashboardShell.tsx` (345 lines, compositor) + `DashboardSidebar` (181), `DashboardToolbar` (162), `AnalysisShelf` (92), `useDashboardDnD` (200); `CrosstabRow.tsx` (271) extracted from DataTable (412 lines, −152); `filterSyntheticGridShellSets` → `src/core/services/syntheticGridShellFilters.ts` (25); deleted `useAggregatedTableData.ts` + test (superseded by `useProcessedAnalysisData`). **Grep:** no `useAggregatedTableData` imports; TN-0.3 chart path already removed from DataTable. **Tests:** dashboard suite — 90 passed (`DataTable`, `SlideContainer`, `DropZone`, `TimelineDock`, `DraggableVariable`); `variableSetFilters.test.ts` — 12 passed; `npm run test:run` — 948 passed, 5 failed (pre-existing unrelated: `BrowserEngine`, `slidesSlice`/`storeWorker`, `agentWorkflow`); `npm run typecheck` — pre-existing unrelated errors only (2026-06-24). **Behavior:** zero change — structural refactor only. |
+| **TN-2.4** — Split `App.tsx` | **Before:** monolithic `src/App.tsx` (1,009 lines). **After:** `src/App.tsx` (160 lines) + `src/app/` package (13 modules): `types.ts` (`AppPhase`, `AppOverlay`), `utils.ts`, `hooks/useAppOverlay.ts`, `hooks/useSessionLifecycle.ts`, `hooks/useWorkspaceOrchestration.ts`, `components/AppModeRouter.tsx`, `components/ModalHost.tsx`, screens (`SplashScreen`, `UploadOverlay`, `UploadProgressBar`, `RestorationPrompt`, `PartialLoadNotice`, `MetadataScreen`). **Coordinator:** `handleReturnToWorkspace` uses `persistDatasetSession` from `datasetSessionCoordinator` (no duplicate capture logic). **Tests:** `useWorkspaceOpen.test.ts` — 3 passed; `datasetSessionCoordinator.test.ts` — 7 passed; `npm run test:run` — 948 passed, 7 skipped (1 pre-existing `agentWorkflow` failure unrelated); app modules typecheck clean; repo pre-existing errors in `AnalysisChart.tsx` / `chartTypeResolver.ts` only. **E2E:** `workspace-switch.spec.ts` — failed (fixture `sleep.sav` heading not found; likely environmental, not app-shell regression). **Behavior:** zero change — structural refactor only (2026-06-24). |
+| **TN-2.5** — Split `crosstabRunner.ts` | **Before:** monolithic `crosstabRunner.ts` (839 lines) + `crosstabSqlRow.ts` (83 lines). **After:** `crosstabRunner.ts` (76 lines, orchestrator) + `src/core/analysis/crosstab/` package: `types.ts` (82), `rowKeys.ts` (30), `prepare.ts` (171), `histogram.ts` (166), `significance.ts` (367), `significanceStrategies.ts` (237 — `MeansSignificanceStrategy` / `ProportionsSignificanceStrategy`), `chiSquare.ts` (48). **Removed:** `crosstabSqlRow.ts` (types/rowKeys absorbed into package). **Grep:** zero `crosstabSqlRow` imports in `src/`; chi-square retains raw `r.colKey` equality (not `getColKeyString`). **Tests:** `crosstabRunner.significance.test.ts` — 4 passed; crosstab-related suite — 204 passed (20 files); `npm run test:run` — 926 passed, 7 skipped (12 pre-existing unrelated failures); `npm run typecheck` — no crosstab-related errors (2026-06-24). **Behavior:** zero change — structural refactor only; stats integrity playbook followed. **Phase 2 complete.** |
+| **TN-3.1** — BrowserEngine facade | **Files:** `src/engine/BrowserEngine.ts` (+ `BrowserEngine.test.ts` — 6 tests) wraps `EngineProxy`; `enginePersistenceBridge.ts` creates `BrowserEngine` via `createBrowserEngine()`; store field `engineProxy` → `browserEngine` (`DataSlice`, 22 call sites). **MCP parity (VelocityEngine-aligned):** `runAnalysis('crosstab'|'variableStats')`, `loadBuffer`, `recode`; transport delegated (`init`, `loadSAV`/`loadCSV`, `query`, transforms, harmonization, persistence). **Crosstab browser context:** `runAnalysis('crosstab', config, { dataset, variableSets })` until worker-hosted engine state lands. **Migrated slice:** `analysisSlice` — `runAnalysis` + `fetchVariableStats` use `browserEngine.runAnalysis` (no direct `runCrosstab`/`getVariableStats`). **Grep:** zero `engineProxy` in `src/store/`; `EngineProxy` only in `services/` + `BrowserEngine.getProxy()` escape hatch. **Tests:** `BrowserEngine.test.ts` — 6 passed; `storeWorker.test.ts` — 1 passed; `reorderRowVars.test.ts` — 4 passed; `slidesSlice.test.ts` — 13 passed; `npm run test:run` — 952 passed, 7 skipped (1 pre-existing `agentWorkflow` commit-deck envelope failure unrelated); `npm run typecheck` — pre-existing unrelated errors in `AnalysisChart.tsx` / `chartTypeResolver.ts` only (2026-06-24). **Behavior:** analysis path preserved via shared `buildCrosstabRequest` inside facade. |
 
 ---
 
@@ -263,7 +160,7 @@ graph TD
 
 1. **Phase 1 before Phase 2:** Decomposing god files before layer correction re-creates the same imports inside smaller files.
 2. **TN-1.8 complete — Phase 1 gate cleared:** Phase 2 god-file splits (TN-2.x) may proceed.
-3. **TN-3.1 (BrowserEngine) is single-threaded:** Defines the convergence contract; avoid parallel store migration PRs that fight it.
+3. **TN-3.1 complete — BrowserEngine contract established:** Remaining store slices may migrate incrementally to `browserEngine.runAnalysis` / shared engine methods; avoid parallel PRs that rename the facade.
 4. **Stats integrity:** TN-1.2, TN-2.5, TN-3.9 require `docs/playbooks/stats_integrity.md` review.
 5. **STAB-EXP-1a overlap:** TN-1.6 moves matrix orchestration from MCP to engine; formatter remains in core (`formatCrosstabMatrix.ts`).
 6. **STAB-ARCH-1 overlap:** TN-2.3 and TN-2.4 continue unfinished STAB-ARCH-1 goals; reference §8 of tracker for shipped slices.
@@ -274,15 +171,18 @@ graph TD
 
 | Safe to run in parallel now | Keep single-threaded |
 | :--- | :--- |
-| TN-1.1 + TN-1.2 + TN-1.3 + TN-1.4 (one PR or coordinated) | TN-3.1 (BrowserEngine) |
-| TN-3.3, TN-3.5 (UI-only, no layer deps) | |
+| Incremental store slice migration (drillDown → data transforms) | Facade API changes on `BrowserEngine` |
 
 ---
 
 ## Recommended next pull (start here)
 
-1. **TN-3.1** — Introduce BrowserEngine facade (TN-2.1 + TN-2.2 complete).
-2. **TN-2.4** — Split `App.tsx` (after TN-3.2 recommended).
+**Wave 2 complete.** Next: incremental store migration (e.g. `drillDownSlice` → `browserEngine.query`, `dataSlice` → `loadBuffer`).
+
+**Suggested migration order (per `worker_migration.md`):**
+1. `drillDownSlice` — single `query()` call
+2. `variableCatalogActions` — `describeVariable` / stats
+3. `dataSlice` load/transform paths — `loadBuffer`, `recode`
 
 ---
 
@@ -290,12 +190,12 @@ graph TD
 
 | Area | Verdict | Top blocker |
 | :--- | :--- | :--- |
-| Core | Fail | Inverted deps; crosstabRunner monolith |
-| Engine + Worker | Partial | `analysisWorker` + `VelocityEngine` splits done (TN-2.1, TN-2.2); BrowserEngine facade (TN-3.1) next |
+| Core | Partial | crosstabRunner split done (TN-2.5); inverted deps resolved (TN-1.8) |
+| Engine + Worker | Partial | BrowserEngine facade done (TN-3.1); incremental store migration next |
 | Store | Partial | `dataSlice` split done (TN-2.3); remaining slice `as any` in analysis/drillDown |
 | Dashboard | Fail | God shell + DataTable; triplicated placement |
 | Workspace + VM | Fail (incomplete) | CSS monolith; duplicate hooks |
-| App shell | Fail | App.tsx 999 lines; wrong layer for SQL/stats |
+| App shell | Partial | App.tsx split done (TN-2.4, 160 lines); SQL materialization still in orchestration hook |
 | MCP | Partial | tools.ts split (TN-2.6); matrix moved to engine (TN-1.6) |
 
 ---

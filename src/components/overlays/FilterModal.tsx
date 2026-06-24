@@ -7,13 +7,11 @@
  */
 
 import React, { useState, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useReducedMotion, getBackdropProps, getModalPresenceProps } from '../../lib/motion';
 import { X, Search, ChevronLeft, Check } from 'lucide-react';
 import { useVelocityStore, type Variable, type Filter } from '../../store';
 import { Loader2 } from 'lucide-react';
 import { isCategoricalType, isOrderedType } from '../../types';
-import { useModalEscape } from '../../hooks/useModalEscape';
+import { ModalShell } from './ModalShell';
 
 interface FilterModalProps {
     isOpen: boolean;
@@ -121,28 +119,21 @@ export const FilterModal: React.FC<FilterModalProps> = ({
         setSelectedValues([]);
     };
 
-    const reducedMotion = useReducedMotion();
-    useModalEscape(isOpen, handleClose);
-
-    if (!isOpen) return null;
-
     return (
-        <AnimatePresence>
-            <motion.div
-                {...getBackdropProps(reducedMotion)}
-                className="fixed inset-0 bg-[var(--text-primary)]/30 backdrop-blur-sm z-50 flex items-center justify-center"
-                onClick={handleClose}
-            >
-                <motion.div
-                    {...getModalPresenceProps(reducedMotion)}
-                    onClick={(e) => e.stopPropagation()}
-                    className="w-full max-w-md rounded-lg overflow-hidden shadow-2xl"
-                    style={{
-                        backgroundColor: 'var(--bg-panel)',
-                        border: '1px solid var(--border-color)',
-                        backdropFilter: 'blur(16px)',
-                    }}
-                >
+        <ModalShell
+            isOpen={isOpen}
+            onClose={handleClose}
+            layout="unified"
+            escapeToClose
+            unmountWhenClosed
+            backdropClassName="fixed inset-0 bg-[var(--text-primary)]/30 backdrop-blur-sm z-50 flex items-center justify-center"
+            panelClassName="w-full max-w-md rounded-lg overflow-hidden shadow-2xl"
+            panelStyle={{
+                backgroundColor: 'var(--bg-panel)',
+                border: '1px solid var(--border-color)',
+                backdropFilter: 'blur(16px)',
+            }}
+        >
                     {/* Header */}
                     <div
                         className="flex items-center justify-between px-5 py-4 border-b"
@@ -333,8 +324,6 @@ export const FilterModal: React.FC<FilterModalProps> = ({
                             </>
                         )}
                     </div>
-                </motion.div>
-            </motion.div>
-        </AnimatePresence>
+        </ModalShell>
     );
 };

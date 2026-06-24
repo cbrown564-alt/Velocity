@@ -9,7 +9,8 @@ import type { VariableStatsResult } from '../../../types/worker';
 import {
     openWorkspaceDatasetLifecycle,
 } from '../../workspaceDatasetLifecycle';
-import type { DataTransform, Variable, VariableSet } from '../../../types/dataset';
+import { sessionStateToStorePatch } from '../../datasetSessionCoordinator';
+import type { Variable, VariableSet } from '../../../types/dataset';
 import type { DataSlice, WorkspaceDatasetOpenInput } from './types';
 import type { DataSliceGet, DataSliceSet } from './sliceContext';
 import { getRunAnalysis as resolveRunAnalysis } from './sliceContext';
@@ -39,10 +40,10 @@ export function createDatasetActions(
 > {
     return {
         loadCSV: async (fileName: string, content: string) => {
-            const { engineProxy } = get();
-            if (!engineProxy) throw new Error('Engine not initialized');
+            const { browserEngine } = get();
+            if (!browserEngine) throw new Error('Engine not initialized');
 
-            const response = await engineProxy.loadCSV(fileName, content);
+            const response = await browserEngine.loadCSV(fileName, content);
 
             const variableSets: VariableSet[] = response.schema.map((col) => {
                 const id = col.name;
@@ -83,11 +84,11 @@ export function createDatasetActions(
                 ...postLoadAnalysisReset(),
             });
 
-            engineProxy.setDatasetContext(fileName, response.rowCount);
+            browserEngine.setDatasetContext(fileName, response.rowCount);
 
             const datasetId = get().dataset?.id;
             if (datasetId) {
-                void engineProxy.updatePersistenceMetadata({
+                void browserEngine.updatePersistenceMetadata({
                     datasetId,
                     datasetName: fileName,
                     rowCount: response.rowCount,
@@ -111,10 +112,10 @@ export function createDatasetActions(
                 await get().respawnWorker(false, targetDatasetId);
             }
 
-            const { engineProxy } = get();
-            if (!engineProxy) throw new Error('Engine not initialized');
+            const { browserEngine } = get();
+            if (!browserEngine) throw new Error('Engine not initialized');
 
-            const response = await engineProxy.loadSAV(buffer);
+            const response = await browserEngine.loadSAV(buffer);
 
             const datasetId = targetDatasetId || crypto.randomUUID();
             const variableSets: VariableSet[] = response.variableSets.map(normalizeVariableSet);
@@ -143,10 +144,10 @@ export function createDatasetActions(
                 ...postLoadAnalysisReset(),
             });
 
-            engineProxy.setDatasetContext(fileName, response.rowCount);
+            browserEngine.setDatasetContext(fileName, response.rowCount);
             console.log(`📊 [DataSlice] SAV loaded: ${response.rowCount} rows, ${variables.length} variables, ${variableSets.length} variable sets in ${response.durationMs.toFixed(2)}ms`);
             if (datasetId) {
-                void engineProxy.updatePersistenceMetadata({
+                void browserEngine.updatePersistenceMetadata({
                     datasetId,
                     datasetName: fileName,
                     rowCount: response.rowCount,
@@ -159,10 +160,10 @@ export function createDatasetActions(
         },
 
         loadSAVMetadata: async (fileName: string, buffer: ArrayBuffer) => {
-            const { engineProxy } = get();
-            if (!engineProxy) throw new Error('Engine not initialized');
+            const { browserEngine } = get();
+            if (!browserEngine) throw new Error('Engine not initialized');
 
-            const response = await engineProxy.loadSAVMetadata(buffer);
+            const response = await browserEngine.loadSAVMetadata(buffer);
             const variableSets: VariableSet[] = response.variableSets.map(normalizeVariableSet);
             const variables: Variable[] = response.variables.map(normalizeVariable);
 
@@ -190,10 +191,10 @@ export function createDatasetActions(
         },
 
         loadSAVSample: async (fileName: string, buffer: ArrayBuffer, rowLimit: number, strategy: 'sequential' | 'spread' = 'spread') => {
-            const { engineProxy } = get();
-            if (!engineProxy) throw new Error('Engine not initialized');
+            const { browserEngine } = get();
+            if (!browserEngine) throw new Error('Engine not initialized');
 
-            const response = await engineProxy.loadSAVSample(buffer, rowLimit, strategy);
+            const response = await browserEngine.loadSAVSample(buffer, rowLimit, strategy);
             const variableSets: VariableSet[] = response.variableSets.map(normalizeVariableSet);
             const variables: Variable[] = response.variables.map(normalizeVariable);
 
@@ -223,29 +224,34 @@ export function createDatasetActions(
         },
 
         openWorkspaceDataset: async (stored: WorkspaceDatasetOpenInput) => {
-            const { engineProxy, dataset: currentDataset } = get();
-            if (!engineProxy) throw new Error('Engine not initialized');
+            const { browserEngine, dataset: currentDataset } = get();
+            if (!browserEngine) throw new Error('Engine not initialized');
 
             const runAnalysis = resolveRunAnalysis(get);
 
             await openWorkspaceDatasetLifecycle(stored, {
-                engineProxy,
+                browserEngine,
                 currentDataset,
                 runAnalysis,
                 flushPersistedData: () => get().flushPersistedData(),
                 respawnWorker: (cleanStart) => get().respawnWorker(cleanStart),
-                getEngineProxy: () => get().engineProxy,
+                getBrowserEngine: () => get().browserEngine,
                 getPersistenceState: () => get().persistenceState,
                 applyOpenPatch: (patch) => {
+                    const sessionPatch = sessionStateToStorePatch({
+                        tableConfig: patch.tableConfig,
+                        activeFilters: patch.activeFilters,
+                        transformLog: patch.transformLog,
+                    });
                     set({
                         dataset: patch.dataset,
                         variableSets: patch.variableSets,
                         folders: patch.folders,
-                        transformLog: patch.transformLog,
+                        transformLog: sessionPatch.transformLog,
                         variableStats: {},
                         variableStatsLoading: {},
-                        tableConfig: patch.tableConfig,
-                        activeFilters: patch.activeFilters as Filter[],
+                        tableConfig: sessionPatch.tableConfig,
+                        activeFilters: sessionPatch.activeFilters,
                         queryResult: [],
                         tableStats: null,
                         persistenceState: 'checking',
@@ -255,15 +261,11 @@ export function createDatasetActions(
                 },
                 applySameDatasetSession: (sessionState) => {
                     if (!sessionState) return;
-                    set({
-                        tableConfig: sessionState.tableConfig,
-                        activeFilters: sessionState.activeFilters as Filter[],
-                        transformLog: sessionState.transformLog as DataTransform[],
-                    });
+                    set(sessionStateToStorePatch(sessionState));
                 },
                 rehydrateFromOpfs: (options) => get().rehydrateDatasetFromOpfs(options),
                 setPersistenceReady: (fileName, rowCount) => {
-                    const activeProxy = get().engineProxy;
+                    const activeProxy = get().browserEngine;
                     if (!activeProxy) return;
                     activeProxy.setDatasetContext(fileName, rowCount);
                     set({ persistenceState: 'ready' });

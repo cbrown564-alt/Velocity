@@ -33,8 +33,10 @@ export type {
 // Types (canonical definitions in src/types/analysis.ts)
 // ============================================================================
 import type { VariableType } from '../../types';
+import type { SlideAnalysisState } from '../../types/slides';
 import { buildCrosstabRequest } from '../../core/analysis/buildCrosstabRequest';
 import { mapCrosstabRows } from '../../core/analysis/mapCrosstabRows';
+import type { CrosstabSqlRow } from '../../core/analysis/crosstab/types';
 
 // ============================================================================
 // Slice State & Actions
@@ -54,6 +56,11 @@ export interface AnalysisSlice {
 
     // Actions
     setTableConfig: (config: Partial<TableConfig>) => void;
+    /** Project slide-owned analysis config into global store; optional single runAnalysis. */
+    applySlideAnalysisState: (
+        slideState: SlideAnalysisState,
+        options?: { runAnalysis?: boolean },
+    ) => void;
     runAnalysis: () => Promise<void>;
     reorderRowVars: (newOrder: string[]) => void;
     addFilter: (filter: Omit<Filter, 'id'>) => void;
@@ -111,9 +118,24 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
         triggerAnalysisSafely(get().runAnalysis, 'setTableConfig analysis');
     },
 
+    applySlideAnalysisState: (slideState, options = {}) => {
+        const { runAnalysis: shouldRun = true } = options;
+        set((state) => ({
+            tableConfig: {
+                rowVars: [...slideState.rowVars],
+                colVar: slideState.colVar,
+            },
+            activeFilters: slideState.filters.map((filter) => ({ ...filter })),
+            selectedChartType: null,
+        }));
+        if (shouldRun) {
+            triggerAnalysisSafely(get().runAnalysis, 'applySlideAnalysisState analysis');
+        }
+    },
+
     runAnalysis: async () => {
-        const { engineProxy, tableConfig, dataset, variableSets, activeFilters, analysisSettings } = get();
-        if (!engineProxy || !dataset || tableConfig.rowVars.length === 0) {
+        const { browserEngine, tableConfig, dataset, variableSets, activeFilters, analysisSettings } = get();
+        if (!browserEngine || !dataset || tableConfig.rowVars.length === 0) {
             set({ queryResult: [], tableStats: null, queryError: null });
             return;
         }
@@ -135,17 +157,19 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
                 void get().fetchVariableStats(request.measureVarId, 'numeric');
             }
 
-            const response = await engineProxy.runCrosstab(
-                request.options,
-                request.context,
-                request.analysisSettings,
-            );
-            const rawData = response.data.rows as any[];
-            const mappedData: AggregatedRow[] = mapCrosstabRows(rawData, request.isWeighted);
+            const response = await browserEngine.runAnalysis('crosstab', {
+                rowVars: tableConfig.rowVars,
+                colVar: tableConfig.colVar,
+                filters: activeFilters,
+                weightVar: dataset?.weightVariable ?? null,
+                analysisSettings,
+            }, { dataset, variableSets });
+            const rawData = response.data as { rows: CrosstabSqlRow[] };
+            const mappedData: AggregatedRow[] = mapCrosstabRows(rawData.rows, request.isWeighted);
 
             set({
                 queryResult: mappedData,
-                tableStats: response.data.tableStats,
+                tableStats: (response.data as { tableStats: TableStats | null }).tableStats,
                 isQuerying: false,
                 queryError: null,
             });
@@ -193,14 +217,19 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
     },
 
     fetchVariableStats: async (variableId: string, variableType?: VariableType, binCount?: number) => {
-        const { engineProxy } = get();
-        if (!engineProxy) return;
+        const { browserEngine } = get();
+        if (!browserEngine) return;
 
         try {
-            const response = await engineProxy.getVariableStats(variableId, variableType, undefined, binCount);
-            set({ activeVariableStats: response.data });
-        } catch (error: any) {
-            console.error('[AnalysisSlice] Variable stats error:', error.message);
+            const response = await browserEngine.runAnalysis('variableStats', {
+                column: variableId,
+                variableType,
+                binCount,
+            });
+            set({ activeVariableStats: response.data as VariableStatsResult });
+        } catch (error: unknown) {
+            const message = error instanceof Error ? error.message : 'Variable stats failed';
+            console.error('[AnalysisSlice] Variable stats error:', message);
         }
     },
 

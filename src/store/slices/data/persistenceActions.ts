@@ -23,13 +23,13 @@ export function createPersistenceActions(
 > {
     return {
         checkPersistedData: async () => {
-            const { engineProxy } = get();
-            if (!engineProxy) throw new Error('Engine not initialized');
+            const { browserEngine } = get();
+            if (!browserEngine) throw new Error('Engine not initialized');
 
             set({ persistenceState: 'checking' });
 
             try {
-                const response = await engineProxy.checkPersistedData();
+                const response = await browserEngine.checkPersistedData();
                 if (response.type === 'engine.persistedDataFound') {
                     set({
                         persistenceState: 'found',
@@ -53,20 +53,20 @@ export function createPersistenceActions(
         },
 
         clearPersistedData: async () => {
-            const { engineProxy } = get();
-            if (!engineProxy) throw new Error('Engine not initialized');
+            const { browserEngine } = get();
+            if (!browserEngine) throw new Error('Engine not initialized');
 
-            await engineProxy.clearPersistedData();
+            await browserEngine.clearPersistedData();
             set({ persistedDataInfo: null });
             console.log('[DataSlice] Persisted data cleared');
         },
 
         flushPersistedData: async () => {
-            const { engineProxy, opfsAvailable } = get();
-            if (!engineProxy || !opfsAvailable) return;
+            const { browserEngine, opfsAvailable } = get();
+            if (!browserEngine || !opfsAvailable) return;
 
             try {
-                const response = await engineProxy.flushPersistedData();
+                const response = await browserEngine.flushPersistedData();
                 if (!response.ok) {
                     console.warn('[DataSlice] OPFS flush failed:', response.error);
                     set({ persistenceError: response.error || 'OPFS flush failed' });
@@ -79,15 +79,15 @@ export function createPersistenceActions(
         },
 
         rehydrateDatasetFromOpfs: async (options?: { forceReload?: boolean }) => {
-            const { engineProxy, dataset, transformLog } = get();
-            if (!engineProxy) throw new Error('Engine not initialized');
+            const { browserEngine, dataset, transformLog } = get();
+            if (!browserEngine) throw new Error('Engine not initialized');
             if (!dataset) throw new Error('Dataset has no OPFS source key');
 
             const runAnalysis = resolveRunAnalysis(get);
 
             await rehydrateDatasetFromOpfsSource(
                 {
-                    engineProxy,
+                    browserEngine,
                     dataset,
                     transformLog,
                     runAnalysis,

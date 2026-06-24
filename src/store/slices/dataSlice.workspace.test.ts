@@ -28,7 +28,7 @@ describe('DataSlice workspace persistence', () => {
     vi.clearAllMocks();
     useVelocityStore.getState().reset();
     useVelocityStore.setState({
-      engineProxy: null,
+      browserEngine: null,
       dataset: null,
       variableSets: [],
       folders: [],
@@ -44,11 +44,11 @@ describe('DataSlice workspace persistence', () => {
   });
 
   it('opens workspace datasets with persisted variable sets and folders intact', async () => {
-    const engineProxy = makeEngineProxy();
+    const browserEngine = makeEngineProxy();
     const runAnalysis = vi.fn().mockResolvedValue(undefined);
 
     useVelocityStore.setState({
-      engineProxy: engineProxy as any,
+      browserEngine: browserEngine as any,
       isDbReady: true,
       respawnWorker: vi.fn().mockResolvedValue(undefined),
       runAnalysis,
@@ -99,11 +99,11 @@ describe('DataSlice workspace persistence', () => {
     const nextProxy = makeEngineProxy();
     const respawnWorker = vi.fn().mockImplementation(async (_cleanStart?: boolean, datasetId?: string) => {
       expect(datasetId).toBe('new-ds');
-      useVelocityStore.setState({ engineProxy: nextProxy as any });
+      useVelocityStore.setState({ browserEngine: nextProxy as any });
     });
 
     useVelocityStore.setState({
-      engineProxy: oldProxy as any,
+      browserEngine: oldProxy as any,
       dataset: {
         id: 'old-ds',
         name: 'old.sav',

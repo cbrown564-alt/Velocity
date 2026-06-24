@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { useReducedMotion } from '../../../lib/motion';
 import { HardDrive, AlertCircle } from 'lucide-react';
 import { formatFileSize, getStorageHealthStatus } from '../lib/workspaceFormatters';
-import styles from './WorkspaceView.module.css';
+import styles from './WorkspaceStorageIndicator.module.css';
 
 export const WorkspaceStorageIndicator: React.FC<{
   used: number;

@@ -32,21 +32,21 @@ export function createVariableCatalogActions(
 > {
     return {
         getUniqueValues: async (variableId: string): Promise<string[]> => {
-            const { engineProxy, dataset } = get();
-            if (!engineProxy) throw new Error('Engine not initialized');
+            const { browserEngine, dataset } = get();
+            if (!browserEngine) throw new Error('Engine not initialized');
 
             const variable = dataset?.variables.find(v => v.id === variableId);
             if (variable?.valueLabels && variable.valueLabels.length > 0) {
                 return variable.valueLabels.map(vl => String(vl.value));
             }
 
-            const response = await engineProxy.getUniqueValues(variableId);
+            const response = await browserEngine.getUniqueValues(variableId);
             return response.data;
         },
 
         getVariableStats: async (variableId: string) => {
-            const { engineProxy, variableStats, variableStatsLoading, dataset } = get();
-            if (!engineProxy) return null;
+            const { browserEngine, variableStats, variableStatsLoading, dataset } = get();
+            if (!browserEngine) return null;
 
             const variable = dataset?.variables.find(v => v.id === variableId);
             const variableType = variable?.type;
@@ -64,7 +64,7 @@ export function createVariableCatalogActions(
             }));
 
             try {
-                const response = await engineProxy.getVariableStats(
+                const response = await browserEngine.getVariableStats(
                     variableId,
                     variableType,
                     variable?.orderedScoring,

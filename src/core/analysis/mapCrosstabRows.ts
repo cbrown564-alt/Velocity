@@ -1,11 +1,10 @@
 import type { AggregatedRow } from '../../types';
+import type { CrosstabSqlRow } from './crosstab/types';
+import { extractRowKeys } from './crosstab/rowKeys';
 
-export const mapCrosstabRows = (rows: any[], isWeighted: boolean): AggregatedRow[] => {
+export const mapCrosstabRows = (rows: CrosstabSqlRow[], isWeighted: boolean): AggregatedRow[] => {
   return rows.map((row) => {
-    const rowKeys = Object.keys(row)
-      .filter((k) => k.startsWith('rowKey_'))
-      .sort()
-      .map((k) => row[k]);
+    const rowKeys = extractRowKeys(row) as AggregatedRow['rowKeys'];
     const count = Number(row.count ?? row.validCount ?? 0);
     const weightedCount =
       row.weightedCount !== undefined
@@ -14,7 +13,7 @@ export const mapCrosstabRows = (rows: any[], isWeighted: boolean): AggregatedRow
 
     return {
       rowKeys,
-      colKey: row.colKey,
+      colKey: row.colKey as string,
       count,
       weightedCount,
       sumSqWeights: row.sumSqWeights !== undefined ? Number(row.sumSqWeights) : undefined,
@@ -29,7 +28,7 @@ export const mapCrosstabRows = (rows: any[], isWeighted: boolean): AggregatedRow
       q3: row.q3,
       validCount: row.validCount !== undefined ? Number(row.validCount) : undefined,
       histogramBins: row.histogramBins,
-      sig: row.sig,
+      sig: row.sig as AggregatedRow['sig'],
       stats: row.stats,
       ci95: row.ci95,
       ci80: row.ci80,

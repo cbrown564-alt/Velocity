@@ -40,17 +40,17 @@ export const analysisHandlers: Record<string, ToolHandler> = {
   },
 
   velocity_filter: (engine, a) => {
-    engine.addFilter(a.filter as Filter);
-    return successResponse({ ok: true });
+    const result = engine.addFilter(a.filter as Filter);
+    return successResponse(result);
   },
 
   velocity_clear_filters: (engine) => {
-    engine.clearFilters();
-    return successResponse({ ok: true });
+    const result = engine.clearFilters();
+    return successResponse(result);
   },
 
   velocity_set_weight: (engine, a) => {
-    engine.setWeight(a.variableId as string | null);
-    return successResponse({ ok: true });
+    const result = engine.setWeight(a.variableId as string | null);
+    return successResponse(result);
   },
 };

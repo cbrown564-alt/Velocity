@@ -29,17 +29,17 @@ function createMockEngineProxy(overrides: Partial<CrosstabEnginePort> = {}): Cro
   return {
     runCrosstab: vi.fn().mockResolvedValue(makeEnvelope({ rows: [], tableStats: null })),
     ...overrides,
-  } as unknown as EngineProxy;
+  } as unknown as CrosstabEnginePort;
 }
 
 describe('runCrosstabForExport', () => {
   it('returns mapped data on successful response', async () => {
-    const engineProxy = createMockEngineProxy({
+    const engine = createMockEngineProxy({
       runCrosstab: vi.fn().mockResolvedValue(makeEnvelope({ rows: [{ foo: 'bar' }], tableStats: null })),
     });
 
     const result = await runCrosstabForExport({
-      engineProxy,
+      engine,
       dataset: { id: 'x', name: 'x', rowCount: 0, variables: [] } as any,
       variableSets: [],
       rowVars: ['gender'],
@@ -52,12 +52,12 @@ describe('runCrosstabForExport', () => {
   });
 
   it('returns empty data on error', async () => {
-    const engineProxy = createMockEngineProxy({
+    const engine = createMockEngineProxy({
       runCrosstab: vi.fn().mockRejectedValue(new Error('timeout')),
     });
 
     const result = await runCrosstabForExport({
-      engineProxy,
+      engine,
       dataset: { id: 'x', name: 'x', rowCount: 0, variables: [] } as any,
       variableSets: [],
       rowVars: ['gender'],

@@ -30,6 +30,7 @@ export type {
   Filter,
   TableConfig,
 } from './analysis';
+export type { DatasetSessionState } from './workspaceSession';
 
 // ============================================================================
 // Analysis Types

@@ -1,7 +1,7 @@
 import React, { useMemo, useCallback } from 'react';
 import * as d3 from 'd3-shape';
 import { BaseChartRendererProps } from '../../../types/charts';
-// getChartColor removed use palette
+import { useChartSelection } from '../hooks/useChartSelection';
 const DEFAULT_PALETTE = [
     'var(--viz-palette-1)',
     'var(--viz-palette-2)',
@@ -49,23 +49,11 @@ export const DonutRenderer: React.FC<BaseChartRendererProps> = ({
             }));
     }, [data]);
 
-    // Handle slice click for selection
-    const handleSliceClick = useCallback((datum: DonutDatum, event: React.MouseEvent) => {
-        if (!interactive || !onSelectionChange) return;
-
-        const newSelection = new Set(selectedKeys);
-        if (event.metaKey || event.ctrlKey) {
-            if (newSelection.has(datum.label)) {
-                newSelection.delete(datum.label);
-            } else {
-                newSelection.add(datum.label);
-            }
-        } else {
-            newSelection.clear();
-            newSelection.add(datum.label);
-        }
-        onSelectionChange(newSelection);
-    }, [interactive, onSelectionChange, selectedKeys]);
+    const { handleToggle } = useChartSelection<DonutDatum>({
+        interactive,
+        selectedKeys,
+        onSelectionChange,
+    });
 
     // Handle right-click context menu
     const handleSliceContextMenu = useCallback((datum: DonutDatum, event: React.MouseEvent) => {
@@ -126,7 +114,7 @@ export const DonutRenderer: React.FC<BaseChartRendererProps> = ({
                     return (
                         <g
                             key={d.data.label}
-                            onClick={(e) => handleSliceClick(d.data, e)}
+                            onClick={(e) => handleToggle(d.data.label, e)}
                             onContextMenu={(e) => handleSliceContextMenu(d.data, e)}
                             style={{ cursor: interactive ? 'pointer' : 'default' }}
                         >
