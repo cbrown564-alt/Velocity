@@ -27,12 +27,34 @@ describe('Integration: SAV Ingestion Flow', () => {
 
         // Mock browserEngine with loadSAV returning expected response
         const mockEngineProxy = {
-            loadSAV: vi.fn().mockResolvedValue({
-                type: 'engine.savLoaded',
-                variables,
-                variableSets,
-                rowCount: 500,
-                durationMs: 125,
+            loadBuffer: vi.fn().mockResolvedValue({
+                loaded: {
+                    type: 'engine.savLoaded',
+                    variables,
+                    variableSets,
+                    rowCount: 500,
+                    durationMs: 125,
+                },
+                envelope: {
+                    data: {
+                        datasetName: 'test_survey.sav',
+                        rowCount: 500,
+                        variableCount: variables.length,
+                        variableSetCount: variableSets.length,
+                        source: 'sav',
+                    },
+                    operation: 'loadBuffer',
+                    inputs: {},
+                    durationMs: 125,
+                    warnings: [],
+                    metadata: {
+                        datasetName: 'test_survey.sav',
+                        rowCount: 500,
+                        filtersApplied: 0,
+                        isWeighted: false,
+                        engineVersion: 'browser-wasm',
+                    },
+                },
             }),
             checkPersistedData: vi.fn().mockResolvedValue({ type: 'engine.noPersistedData' }),
             init: vi.fn().mockResolvedValue({ opfsAvailable: false }),
@@ -51,8 +73,12 @@ describe('Integration: SAV Ingestion Flow', () => {
 
         await useVelocityStore.getState().loadSAV(fileName, buffer);
 
-        // Verify browserEngine.loadSAV was called
-        expect(mockEngineProxy.loadSAV).toHaveBeenCalledWith(buffer);
+        // Verify browserEngine.loadBuffer was called
+        expect(mockEngineProxy.loadBuffer).toHaveBeenCalledWith(
+            fileName,
+            expect.any(ArrayBuffer),
+            'sav',
+        );
 
         // Assert final state
         const finalState = useVelocityStore.getState();

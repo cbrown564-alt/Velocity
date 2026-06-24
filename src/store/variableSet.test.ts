@@ -42,9 +42,9 @@ describe('Variable Logic', () => {
 
     it('should dispatch recodeVariable action correctly for binning', async () => {
         // Mock browserEngine
-        const mockRecodeVariable = vi.fn().mockResolvedValue({ newColName: 'v3_binned' });
+        const mockRecode = vi.fn().mockResolvedValue({ data: { column: 'v3_binned' } });
         const mockEngineProxy = {
-            recodeVariable: mockRecodeVariable,
+            recode: mockRecode,
             init: vi.fn().mockResolvedValue({ opfsAvailable: false }),
             checkPersistedData: vi.fn().mockResolvedValue({ type: 'engine.noPersistedData' }),
             updatePersistenceMetadata: vi.fn(),
@@ -62,13 +62,13 @@ describe('Variable Logic', () => {
             rules: [{ min: 0, max: 10, label: 'Low' }]
         });
 
-        // Check that browserEngine.recodeVariable was called with correct args
-        expect(mockRecodeVariable).toHaveBeenCalledWith(
+        // Check that browserEngine.recode was called with correct args
+        expect(mockRecode).toHaveBeenCalledWith(
             'v3',
-            'v3_binned',
             expect.objectContaining({
                 mode: 'binning',
                 rules: [{ min: 0, max: 10, label: 'Low' }],
+                targetVariableName: 'v3_binned',
             })
         );
     });

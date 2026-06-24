@@ -82,7 +82,7 @@ export async function rehydrateDatasetFromOpfsSource(
     throw new Error(`Failed to read OPFS source file (${sourceKey}): ${message}`);
   }
 
-  await browserEngine.loadSAV(buffer);
+  await browserEngine.loadBuffer(dataset.name, buffer, 'sav');
 
   if (transformLog.length > 0) {
     console.log(`[workspaceDatasetLifecycle] Replaying ${transformLog.length} transforms`);
@@ -91,7 +91,10 @@ export async function rehydrateDatasetFromOpfsSource(
   for (const transform of transformLog) {
     if (transform.type !== 'recode') continue;
     try {
-      await browserEngine.recodeVariable(transform.sourceColId, transform.newColId, transform.config);
+      await browserEngine.recode(transform.sourceColId, {
+        ...transform.config,
+        targetVariableName: transform.newColId,
+      });
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : String(error);
       console.warn('[workspaceDatasetLifecycle] Transform replay failed:', message);

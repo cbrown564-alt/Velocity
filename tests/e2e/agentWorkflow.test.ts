@@ -236,8 +236,24 @@ describe('Phase 2 E2E: Full Agent Workflow', () => {
 
     const commitResp = await callTool(engine, 'velocity_commit_deck', { deck });
     expect(commitResp.isError).toBeUndefined();
-    expect(commitResp.parsed).toEqual({
-      ok: true,
+    const commit = commitResp.parsed;
+    expect(commit).toMatchObject({
+      operation: 'commitDeck',
+      inputs: expect.objectContaining({
+        slideCount: 1,
+        sectionCount: 1,
+      }),
+      durationMs: expect.any(Number),
+      warnings: expect.any(Array),
+      metadata: expect.objectContaining({
+        datasetName: expect.any(String),
+        rowCount: expect.any(Number),
+        filtersApplied: expect.any(Number),
+        isWeighted: expect.any(Boolean),
+        engineVersion: expect.any(String),
+      }),
+    });
+    expect(commit.data).toEqual({
       committedSlides: 1,
       committedSections: 1,
     });

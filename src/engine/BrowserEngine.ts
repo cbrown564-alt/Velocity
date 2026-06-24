@@ -38,6 +38,14 @@ export interface BrowserEngineContext {
   variableSets: VariableSet[];
 }
 
+/** Browser loadBuffer result: MCP-aligned envelope plus raw worker payload for store migration. */
+export interface BrowserLoadBufferResult {
+  envelope: ResultEnvelope<DatasetSummary>;
+  loaded:
+    | EngineResponseByType<'engine.savLoaded'>
+    | EngineResponseByType<'engine.csvLoaded'>;
+}
+
 function toRecord(value: unknown): Record<string, unknown> {
   if (!value || typeof value !== 'object' || Array.isArray(value)) {
     return {};
@@ -123,7 +131,7 @@ export class BrowserEngine {
       return this.proxy.getVariableStats(
         column,
         configRecord.variableType as VariableType | undefined,
-        undefined,
+        configRecord.orderedScoring as OrderedScoring | undefined,
         Number(configRecord.binCount ?? 10),
         configRecord.missingValues as MissingValueDef | undefined,
       );
@@ -141,19 +149,49 @@ export class BrowserEngine {
     name: string,
     buffer: ArrayBuffer,
     format: 'sav' | 'csv',
-  ): Promise<ResultEnvelope<DatasetSummary>> {
+  ): Promise<BrowserLoadBufferResult> {
     const t0 = performance.now();
 
     if (format === 'sav') {
       const loaded = await this.proxy.loadSAV(buffer);
       this.proxy.setDatasetContext(name, loaded.rowCount);
       return {
+        loaded,
+        envelope: {
+          data: {
+            datasetName: name,
+            rowCount: loaded.rowCount,
+            variableCount: loaded.variables.length,
+            variableSetCount: loaded.variableSets.length,
+            source: 'sav',
+          },
+          operation: 'loadBuffer',
+          inputs: { name, format },
+          durationMs: performance.now() - t0,
+          warnings: [],
+          metadata: {
+            datasetName: name,
+            rowCount: loaded.rowCount,
+            filtersApplied: 0,
+            isWeighted: false,
+            engineVersion: 'browser-wasm',
+          },
+        },
+      };
+    }
+
+    const content = new TextDecoder().decode(buffer);
+    const loaded = await this.proxy.loadCSV(name, content);
+    this.proxy.setDatasetContext(name, loaded.rowCount);
+    return {
+      loaded,
+      envelope: {
         data: {
           datasetName: name,
           rowCount: loaded.rowCount,
-          variableCount: loaded.variables.length,
-          variableSetCount: loaded.variableSets.length,
-          source: 'sav',
+          variableCount: loaded.schema.length,
+          variableSetCount: loaded.schema.length,
+          source: 'csv',
         },
         operation: 'loadBuffer',
         inputs: { name, format },
@@ -166,30 +204,6 @@ export class BrowserEngine {
           isWeighted: false,
           engineVersion: 'browser-wasm',
         },
-      };
-    }
-
-    const content = new TextDecoder().decode(buffer);
-    const loaded = await this.proxy.loadCSV(name, content);
-    this.proxy.setDatasetContext(name, loaded.rowCount);
-    return {
-      data: {
-        datasetName: name,
-        rowCount: loaded.rowCount,
-        variableCount: loaded.schema.length,
-        variableSetCount: loaded.schema.length,
-        source: 'csv',
-      },
-      operation: 'loadBuffer',
-      inputs: { name, format },
-      durationMs: performance.now() - t0,
-      warnings: [],
-      metadata: {
-        datasetName: name,
-        rowCount: loaded.rowCount,
-        filtersApplied: 0,
-        isWeighted: false,
-        engineVersion: 'browser-wasm',
       },
     };
   }

@@ -20,13 +20,17 @@ export function createTransformActions(
             const { browserEngine, dataset } = get();
             if (!browserEngine) throw new Error('Engine not initialized');
 
-            const response = await browserEngine.recodeVariable(sourceColId, newColName, config);
+            const envelope = await browserEngine.recode(sourceColId, {
+                ...config,
+                targetVariableName: newColName,
+            });
+            const newColId = envelope.data.column;
 
             if (dataset) {
                 const createdAt = Date.now();
                 const newVariable: Variable = {
-                    id: response.newColName,
-                    name: response.newColName,
+                    id: newColId,
+                    name: newColId,
                     label: newColName,
                     type: 'categorical',
                     valueLabels: [],
@@ -41,7 +45,7 @@ export function createTransformActions(
                     variableSets: [...state.variableSets, {
                         id: crypto.randomUUID(),
                         name: newColName,
-                        variableIds: [response.newColName],
+                        variableIds: [newColId],
                         structure: 'single',
                         type: 'categorical',
                     }],
@@ -50,7 +54,7 @@ export function createTransformActions(
                         {
                             type: 'recode',
                             sourceColId,
-                            newColId: response.newColName,
+                            newColId,
                             label: newColName,
                             config,
                             createdAt,
@@ -68,7 +72,7 @@ export function createTransformActions(
                 });
             }
             void get().flushPersistedData();
-            return response.newColName;
+            return newColId;
         },
 
         fillSystemMissing: async (variableId: string, replacementCode: number, replacementLabel: string): Promise<void> => {

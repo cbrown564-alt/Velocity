@@ -9,6 +9,39 @@ vi.mock('../../services/opfsFileManager', () => ({
 
 const makeEngineProxy = (overrides: Record<string, unknown> = {}) => ({
   ping: vi.fn().mockResolvedValue({ type: 'engine.pong', requestId: 'ping', hasData: true, rowCount: 100 }),
+  loadBuffer: vi.fn().mockImplementation(async (_name: string, _buffer: ArrayBuffer, format: string) => {
+    const savLoaded = {
+      type: 'engine.savLoaded',
+      requestId: 'sav',
+      variables: [{ id: 'q1', name: 'q1', label: 'Q1', type: 'categorical', valueLabels: [], missingValues: {} }],
+      variableSets: [{ id: 'set-q1', name: 'Q1', variableIds: ['q1'], structure: 'single', type: 'categorical' }],
+      rowCount: 100,
+      durationMs: 1,
+    };
+    return {
+      loaded: savLoaded,
+      envelope: {
+        data: {
+          datasetName: _name,
+          rowCount: 100,
+          variableCount: 1,
+          variableSetCount: 1,
+          source: format === 'csv' ? 'csv' : 'sav',
+        },
+        operation: 'loadBuffer',
+        inputs: { name: _name, format },
+        durationMs: 1,
+        warnings: [],
+        metadata: {
+          datasetName: _name,
+          rowCount: 100,
+          filtersApplied: 0,
+          isWeighted: false,
+          engineVersion: 'browser-wasm',
+        },
+      },
+    };
+  }),
   loadSAV: vi.fn().mockResolvedValue({
     type: 'engine.savLoaded',
     requestId: 'sav',
@@ -121,8 +154,9 @@ describe('DataSlice workspace persistence', () => {
     });
 
     expect(respawnWorker).toHaveBeenCalledWith(false, 'new-ds');
-    expect(oldProxy.loadSAV).not.toHaveBeenCalled();
-    expect(nextProxy.loadSAV).toHaveBeenCalledTimes(1);
+    expect(oldProxy.loadBuffer).not.toHaveBeenCalled();
+    expect(nextProxy.loadBuffer).toHaveBeenCalledTimes(1);
+    expect(nextProxy.loadBuffer).toHaveBeenCalledWith('new.sav', expect.any(ArrayBuffer), 'sav');
     expect(useVelocityStore.getState().dataset?.id).toBe('new-ds');
     expect(useVelocityStore.getState().dataset?.opfsFileKey).toBe('new_123.sav');
   });

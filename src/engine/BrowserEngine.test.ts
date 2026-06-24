@@ -30,6 +30,7 @@ function createMockProxy(overrides: Partial<EngineProxy> = {}): EngineProxy {
     }),
     query: vi.fn().mockResolvedValue({ type: 'engine.queryResult', data: [], durationMs: 1 }),
     loadSAV: vi.fn(),
+    loadCSV: vi.fn(),
     setDatasetContext: vi.fn(),
     ping: vi.fn(),
     ...overrides,
@@ -105,6 +106,28 @@ describe('BrowserEngine', () => {
     expect(proxy.getVariableStats).toHaveBeenCalledWith('score', 'numeric', undefined, 8, undefined);
   });
 
+  it('runAnalysis("variableStats") forwards orderedScoring and missingValues', async () => {
+    const proxy = createMockProxy();
+    const engine = new BrowserEngine(proxy);
+    const missingValues = { discrete: [99] };
+
+    await engine.runAnalysis('variableStats', {
+      column: 'likert',
+      variableType: 'ordered',
+      orderedScoring: 'allow_numeric_stats',
+      binCount: 10,
+      missingValues,
+    });
+
+    expect(proxy.getVariableStats).toHaveBeenCalledWith(
+      'likert',
+      'ordered',
+      'allow_numeric_stats',
+      10,
+      missingValues,
+    );
+  });
+
   it('throws ANALYSIS_NOT_FOUND for unknown analysis id', async () => {
     const engine = new BrowserEngine(createMockProxy());
 
@@ -127,5 +150,63 @@ describe('BrowserEngine', () => {
 
     await engine.query('SELECT 1');
     expect(proxy.query).toHaveBeenCalledWith('SELECT 1');
+  });
+
+  it('loadBuffer("sav") orchestrates loadSAV and returns envelope + raw payload', async () => {
+    const savLoaded = {
+      type: 'engine.savLoaded' as const,
+      requestId: 'req-1',
+      variables: [{ id: 'q1', name: 'q1', label: 'Q1', type: 'nominal' as const, valueLabels: [], missingValues: {} }],
+      variableSets: [{ id: 'vs1', name: 'Q1', variableIds: ['q1'], structure: 'single' as const, type: 'nominal' as const }],
+      rowCount: 42,
+      durationMs: 10,
+    };
+    const proxy = createMockProxy({
+      loadSAV: vi.fn().mockResolvedValue(savLoaded),
+    });
+    const engine = new BrowserEngine(proxy);
+    const buffer = new ArrayBuffer(8);
+
+    const result = await engine.loadBuffer('survey.sav', buffer, 'sav');
+
+    expect(proxy.loadSAV).toHaveBeenCalledWith(buffer);
+    expect(proxy.setDatasetContext).toHaveBeenCalledWith('survey.sav', 42);
+    expect(result.loaded).toBe(savLoaded);
+    expect(result.envelope.data).toMatchObject({
+      datasetName: 'survey.sav',
+      rowCount: 42,
+      variableCount: 1,
+      variableSetCount: 1,
+      source: 'sav',
+    });
+    expect(result.envelope.operation).toBe('loadBuffer');
+  });
+
+  it('loadBuffer("csv") orchestrates loadCSV and returns envelope + raw payload', async () => {
+    const csvLoaded = {
+      type: 'engine.csvLoaded' as const,
+      requestId: 'req-2',
+      schema: [{ name: 'age', type: 'INTEGER' }, { name: 'gender', type: 'VARCHAR' }],
+      rowCount: 99,
+      durationMs: 5,
+    };
+    const proxy = createMockProxy({
+      loadCSV: vi.fn().mockResolvedValue(csvLoaded),
+    });
+    const engine = new BrowserEngine(proxy);
+    const buffer = new TextEncoder().encode('age,gender\n1,M').buffer;
+
+    const result = await engine.loadBuffer('people.csv', buffer, 'csv');
+
+    expect(proxy.loadCSV).toHaveBeenCalledWith('people.csv', 'age,gender\n1,M');
+    expect(proxy.setDatasetContext).toHaveBeenCalledWith('people.csv', 99);
+    expect(result.loaded).toBe(csvLoaded);
+    expect(result.envelope.data).toMatchObject({
+      datasetName: 'people.csv',
+      rowCount: 99,
+      variableCount: 2,
+      variableSetCount: 2,
+      source: 'csv',
+    });
   });
 });

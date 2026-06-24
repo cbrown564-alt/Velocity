@@ -43,7 +43,12 @@ export function createDatasetActions(
             const { browserEngine } = get();
             if (!browserEngine) throw new Error('Engine not initialized');
 
-            const response = await browserEngine.loadCSV(fileName, content);
+            const buffer = new TextEncoder().encode(content).buffer;
+            const { loaded } = await browserEngine.loadBuffer(fileName, buffer, 'csv');
+            if (loaded.type !== 'engine.csvLoaded') {
+                throw new Error('Unexpected loadBuffer response for CSV');
+            }
+            const response = loaded;
 
             const variableSets: VariableSet[] = response.schema.map((col) => {
                 const id = col.name;
@@ -84,8 +89,6 @@ export function createDatasetActions(
                 ...postLoadAnalysisReset(),
             });
 
-            browserEngine.setDatasetContext(fileName, response.rowCount);
-
             const datasetId = get().dataset?.id;
             if (datasetId) {
                 void browserEngine.updatePersistenceMetadata({
@@ -115,7 +118,11 @@ export function createDatasetActions(
             const { browserEngine } = get();
             if (!browserEngine) throw new Error('Engine not initialized');
 
-            const response = await browserEngine.loadSAV(buffer);
+            const { loaded } = await browserEngine.loadBuffer(fileName, buffer, 'sav');
+            if (loaded.type !== 'engine.savLoaded') {
+                throw new Error('Unexpected loadBuffer response for SAV');
+            }
+            const response = loaded;
 
             const datasetId = targetDatasetId || crypto.randomUUID();
             const variableSets: VariableSet[] = response.variableSets.map(normalizeVariableSet);
@@ -144,7 +151,6 @@ export function createDatasetActions(
                 ...postLoadAnalysisReset(),
             });
 
-            browserEngine.setDatasetContext(fileName, response.rowCount);
             console.log(`📊 [DataSlice] SAV loaded: ${response.rowCount} rows, ${variables.length} variables, ${variableSets.length} variable sets in ${response.durationMs.toFixed(2)}ms`);
             if (datasetId) {
                 void browserEngine.updatePersistenceMetadata({

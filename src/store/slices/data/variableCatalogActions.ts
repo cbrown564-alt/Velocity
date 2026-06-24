@@ -4,6 +4,7 @@
 
 import { allowsNumericStats, normalizeVariableType } from '../../../types';
 import type { Variable } from '../../../types/dataset';
+import type { VariableStatsResult } from '../../../types/worker';
 import type { DataSlice } from './types';
 import type { DataSliceGet, DataSliceSet } from './sliceContext';
 import { getRunAnalysis as resolveRunAnalysis } from './sliceContext';
@@ -64,18 +65,18 @@ export function createVariableCatalogActions(
             }));
 
             try {
-                const response = await browserEngine.getVariableStats(
-                    variableId,
+                const response = await browserEngine.runAnalysis('variableStats', {
+                    column: variableId,
                     variableType,
-                    variable?.orderedScoring,
-                    undefined,
-                    variable?.missingValues,
-                );
+                    orderedScoring: variable?.orderedScoring,
+                    missingValues: variable?.missingValues,
+                });
+                const stats = response.data as VariableStatsResult;
                 set((state) => ({
-                    variableStats: { ...state.variableStats, [variableId]: response.data },
+                    variableStats: { ...state.variableStats, [variableId]: stats },
                     variableStatsLoading: { ...state.variableStatsLoading, [variableId]: false },
                 }));
-                return response.data;
+                return stats;
             } catch (error: unknown) {
                 set((state) => ({
                     variableStatsLoading: { ...state.variableStatsLoading, [variableId]: false },
