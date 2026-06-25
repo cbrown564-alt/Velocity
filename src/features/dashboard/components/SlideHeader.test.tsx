@@ -139,6 +139,39 @@ describe('SlideHeader', () => {
     });
   });
 
+  it('shows filtered sample size in subtitle when filters are active (UXR-010)', () => {
+    useVelocityStore.setState({
+      tableConfig: { rowVars: ['gender'], colVar: 'region' },
+      activeFilters: [
+        { id: 'f1', variableId: 'nps', operator: 'eq', value: 'Promoter' },
+      ],
+      variableSets: [
+        { id: 'gender', name: 'Gender', variableIds: ['v1'], type: 'categorical', structure: 'single' },
+        { id: 'region', name: 'Region', variableIds: ['v2'], type: 'categorical', structure: 'single' },
+      ],
+      dataset: {
+        id: 'ds1',
+        name: 'test',
+        rowCount: 250,
+        variables: [
+          { id: 'v1', name: 'gender', label: 'Gender', type: 'categorical', valueLabels: [], missingValues: {} },
+          { id: 'v2', name: 'region', label: 'Region', type: 'categorical', valueLabels: [], missingValues: {} },
+          { id: 'nps', name: 'nps', label: 'NPS segment', type: 'categorical', valueLabels: [], missingValues: {} },
+        ],
+        source: 'csv',
+      },
+      queryResult: [
+        { rowKeys: ['1'], colKey: 'Total', count: 25 },
+        { rowKeys: ['2'], colKey: 'Total', count: 17 },
+      ],
+    });
+
+    render(<SlideHeader />);
+    expect(screen.getByText(/Filtered: NPS segment = Promoter/)).toBeInTheDocument();
+    expect(screen.getByText(/N = 42 Respondents/)).toBeInTheDocument();
+    expect(screen.queryByText(/N = 250 Respondents/)).not.toBeInTheDocument();
+  });
+
   it('does not show suggestion when slide title has been edited', () => {
     useVelocityStore.setState({
       slides: [createSlide({ id: 'slide-1', title: 'My Custom Title' })],

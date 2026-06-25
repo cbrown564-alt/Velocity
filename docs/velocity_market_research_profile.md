@@ -262,7 +262,7 @@ Tool categories: lifecycle, workspace (multi-dataset), introspection, analysis (
 Active work:
 
 - **Thermo-nuclear remediation** — god-file decomposition (Phase 0+1 Done; Phase 2 backlog)
-- **UI excellence** — `STAB-UI-A/B/C/E` Done; `STAB-UI-D` (UXR remediation) Not started
+- **UI excellence** — `STAB-UI-A/B/C/D/E` Done; remaining UXR P2/P3 polish in `findings.md`
 - **Structural debt** — 7/7 code areas rated Fail at June audit; layer correction in progress
 
 ### Eval validation scores (Phase 4)

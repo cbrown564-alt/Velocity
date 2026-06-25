@@ -56,7 +56,7 @@ graph TD
   P5 --> P6
   P6 --> P7["PILOT-7 Readout + Roadmap Gate"]
 
-  STABUIC["STAB-UI-C Complete"] --> STABUID["STAB-UI-D P1 Remediation"]
+  STABUIC["STAB-UI-C Complete"] --> STABUID["STAB-UI-D Done"]
   STABUID -. supports polish .-> P1
 
   P7 -. gate .-> S5R1["S5-R-1 WebR Bridge"]
@@ -81,7 +81,7 @@ Completed Phase 1-4, stabilization, UI polish, engine/MCP, export, parity, and h
 | ID | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence / validation |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | PILOT-0 | Strategy / Validation | Pilot thesis, ICP screen, workflow definition, success metrics, and pricing hypotheses for the SAV-to-deck wedge | External market assessment | Done | No | A,V | [`docs/pilot_00_brief.md`](pilot_00_brief.md) — thesis, workflow targets (<5 min crosstab, <15 min slide), 8 qualification criteria, 3 pricing hypotheses, scope boundaries; gate A conditional pass (June 2026 sub-agent audit) |
-| PILOT-1 | Release / Packaging | Deployable pilot build with durable project flow, clear privacy language, browser-limit warnings, and onboarding instrumentation | PILOT-0, STAB-UI-D preferred | Done | Yes | T,L,U,I,A,V | [`docs/pilot_01_packaging.md`](pilot_01_packaging.md) — v0.1.0-pilot build, privacy banner, browser checks, local event log (`pilotOnboarding.ts`), `tests/e2e/pilot-workflow.spec.ts` |
+| PILOT-1 | Release / Packaging | Deployable pilot build with durable project flow, clear privacy language, browser-limit warnings, and onboarding instrumentation | PILOT-0 | Done | Yes | T,L,U,I,A,V | [`docs/pilot_01_packaging.md`](pilot_01_packaging.md) — v0.1.0-pilot build, privacy banner, browser checks, local event log (`pilotOnboarding.ts`), `tests/e2e/pilot-workflow.spec.ts` |
 | PILOT-2 | Trust Evidence | Buyer-facing trust pack: parity results, performance benchmarks, missing-value behavior, weighting assumptions, known unsupported cases, and reproducible methodology notes | PILOT-0 | Done | No | G,A,V | [`docs/pilot_02_trust_pack.md`](pilot_02_trust_pack.md) — R/SPSS/golden parity, adapter parity (8/8, 2026-06-25), fresh `benchmark:sav` (sleep + WVS7), missing-value/weighting/limitations sections; `arch_04` weighted-mean gap corrected |
 | PILOT-3 | PowerPoint Loop | Complete the high-value PPTX loop: client template import/map, editable object preservation, saved slide recipes, dataset/wave replacement, review-before-export | PILOT-1, PILOT-2 | Not started | Yes | T,L,U,I,A,V | Template fixture tests; PPTX golden/semantic checks; manual blind review against incumbent/current workflow; recipe refresh preserves analyst edits where specified |
 | PILOT-4a | Processing Discovery | Observe pilot files and classify which prep gaps actually block the Friday-4pm job: raking/RIM, nets, derived variables, banner plans, reshaping, repeatable recipes | PILOT-0 | Not started | No | V,A | 10-15 project/file review notes; ranked blockers by frequency/severity; explicit "do not build yet" list |
@@ -102,16 +102,14 @@ Completed Phase 1-4, stabilization, UI polish, engine/MCP, export, parity, and h
 #### Recommended Next Pull
 
 1. `PILOT-6`: recruit paid pilots — deploy per `pilot_01_packaging.md`, collect Pilot Log exports.
-2. `STAB-UI-D`: close P1 UX findings that threaten <5 min / <15 min targets (UXR-037, 040, 010).
-3. `PILOT-3`: complete PPTX template loop once pilots confirm wedge value.
+2. `PILOT-3`: complete PPTX template loop once pilots confirm wedge value.
+3. `PILOT-4a`: observe pilot files to rank processing gaps before building `PILOT-4b`.
 
-### 4.2 Active UI Remediation
-
-This is the remaining active UI quality row from the May 2026 review program. It supports pilot readiness but should not expand engine, MCP, or persistence contracts.
+### 4.2 Completed UI Remediation (May 2026 review)
 
 | ID | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence / validation |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| STAB-UI-D | UI/UX review remediation | Close P1 findings from comprehensive review: UXR-037, 040, 008, 010, 024; modal Esc/focus (041-042); OPFS user-facing copy (047); responsive Canvas chrome (044-045) | STAB-UI-C | Not started | No | T,U,I,A | `docs/reviews/ui_ux_review_2026-05/findings.md`, `session-12-synthesis.md`, `docs/audit_06_ui_ux_review_2026-05.md`; targeted component/E2E evidence |
+| STAB-UI-D | UI/UX review remediation | Closed P1 findings UXR-037, 040, 008, 010, 024; modal Esc/focus (041–042); OPFS user-facing copy (047); responsive Canvas chrome (044–045) | STAB-UI-C | Done | No | T,U,I,A | `findings.md` (UXR-008/010/024/037/040/041/042/044/045/047 fixed); `src/lib/persistenceDisplay.ts`, `src/hooks/useModalEscape.ts`, `src/features/dashboard/components/SlideContainer.tsx`, `DashboardToolbar.tsx`, `DashboardSidebar.tsx`; tests: `persistenceDisplay.test.ts`, `SlideHeader.test.tsx`, `SlideContainer.test.tsx`, `ModalShell.test.tsx` |
 
 ### 4.3 Future Gates
 
@@ -138,7 +136,7 @@ Completed work is no longer expanded in this tracker. Use `docs/completed_founda
 - Phase 3 `VelocityEngine`, MCP, browser convergence, and semantic layer
 - Phase 4 eval program, benchmark baselines, capability-gap synthesis, and follow-through
 - Stabilization: workspace reopen, export quality, design tokens, truthful CI, thin-slice architecture cleanup
-- UI excellence: motion/accessibility, canvas polish, theme/density, delight layers
+- UI excellence: motion/accessibility, canvas polish, theme/density, delight layers, and May 2026 review remediation (`STAB-UI-D`)
 - Harmonization workspace and fuzzy EVAL-05 follow-up
 - Testing and evidence anchors
 

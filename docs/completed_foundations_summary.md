@@ -73,7 +73,7 @@ The next strategic question is no longer "can the engine thesis work?" The answe
 - Canvas polish added: smart empty states, adaptive shelves, Focus Mode, toasts, and crosstab hierarchy.
 - Theme/density polish added: shadow tokens, theme previews, variable list visual weight, command palette, and shortcut reference.
 - Back-room delight layers shipped for Variable Manager diagnostics, workspace portraits/timeline/search, onboarding feedback, returning researcher cues, and deck summary tooltips.
-- Remaining active UI work is tracked as `STAB-UI-D` in the main tracker.
+- May 2026 review remediation (`STAB-UI-D`) closed P1 trust/responsive gaps: inline crosstab errors, filtered-N subtitles, projects empty state, Canvas recode path, modal Escape, OPFS plain-language copy, and narrow-width Canvas chrome.
 
 ### Harmonization Workspace
 

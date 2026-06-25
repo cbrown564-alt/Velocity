@@ -119,7 +119,7 @@ Log one entry per `UXR-###`. Update **Status** when fixed: `open` | `confirmed` 
 
 ## UXR-008 — Projects tab is a blank panel
 
-- **Status:** open
+- **Status:** fixed (June 25, 2026; `WorkspaceView` projects empty state + New Project CTA)
 - **Severity:** P1
 - **Mode:** Workspace
 - **Session:** 1
@@ -145,7 +145,7 @@ Log one entry per `UXR-###`. Update **Status** when fixed: `open` | `confirmed` 
 
 ## UXR-010 — Filtered subtitle shows unfiltered N
 
-- **Status:** open
+- **Status:** fixed (June 25, 2026; `computeAnalysisSampleSize` + `SlideHeader` filtered N)
 - **Severity:** P1
 - **Mode:** Canvas
 - **Session:** 2
@@ -355,7 +355,7 @@ Log one entry per `UXR-###`. Update **Status** when fixed: `open` | `confirmed` 
 
 ## UXR-024 — Recode modal unreachable from Canvas sidebar
 
-- **Status:** open
+- **Status:** fixed (June 25, 2026; Canvas sidebar context menu → `RecodeModal`)
 - **Severity:** P1
 - **Mode:** Canvas
 - **Session:** 6
@@ -557,7 +557,7 @@ Log one entry per `UXR-###`. Update **Status** when fixed: `open` | `confirmed` 
 
 ## UXR-037 — Crosstab query failures are silent in the slide UI
 
-- **Status:** open
+- **Status:** fixed (June 25, 2026; `queryError` in `analysisSlice` + inline alert/retry in `SlideContainer`)
 - **Severity:** P1
 - **Mode:** Canvas
 - **Session:** 9
@@ -606,7 +606,7 @@ Log one entry per `UXR-###`. Update **Status** when fixed: `open` | `confirmed` 
 
 ## UXR-040 — Multiple tabs cause OPFS errors and opaque “Storage Issue”
 
-- **Status:** open
+- **Status:** fixed (June 25, 2026; `getPersistenceDisplayMessage`, pilot single-tab warning, `PersistenceStatus` copy)
 - **Severity:** P1
 - **Mode:** Global / Canvas
 - **Session:** 9
@@ -623,7 +623,7 @@ Log one entry per `UXR-###`. Update **Status** when fixed: `open` | `confirmed` 
 
 ## UXR-041 — Filter and Import Session modals ignore Escape
 
-- **Status:** open
+- **Status:** fixed (June 25, 2026; `useModalEscape` via `ModalShell.escapeToClose`)
 - **Severity:** P2
 - **Mode:** Canvas
 - **Session:** 10
@@ -639,7 +639,7 @@ Log one entry per `UXR-###`. Update **Status** when fixed: `open` | `confirmed` 
 
 ## UXR-042 — Export modal Escape fails without focus inside panel
 
-- **Status:** open
+- **Status:** fixed (June 25, 2026; document-level `useModalEscape` on `ExportModal`)
 - **Severity:** P2
 - **Mode:** Canvas
 - **Session:** 10
@@ -671,7 +671,7 @@ Log one entry per `UXR-###`. Update **Status** when fixed: `open` | `confirmed` 
 
 ## UXR-044 — Canvas header toolbar does not adapt at narrow widths
 
-- **Status:** open
+- **Status:** fixed (June 25, 2026; `DashboardToolbar` icon-only labels below `xl` breakpoint)
 - **Severity:** P2
 - **Mode:** Canvas
 - **Session:** 11
@@ -689,7 +689,7 @@ Log one entry per `UXR-###`. Update **Status** when fixed: `open` | `confirmed` 
 
 ## UXR-045 — Canvas sidebar fixed at 288px with no narrow collapse
 
-- **Status:** open
+- **Status:** fixed (June 25, 2026; collapsible sidebar + auto-collapse below 1280px)
 - **Severity:** P2
 - **Mode:** Canvas
 - **Session:** 11
@@ -722,7 +722,7 @@ Log one entry per `UXR-###`. Update **Status** when fixed: `open` | `confirmed` 
 
 ## UXR-047 — Workspace OPFS banner shows raw browser exception
 
-- **Status:** open
+- **Status:** fixed (June 25, 2026; `getPersistenceDisplayMessage` + collapsible technical details in `SplashScreen`)
 - **Severity:** P2
 - **Mode:** Workspace
 - **Session:** 11

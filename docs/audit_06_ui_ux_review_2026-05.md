@@ -19,8 +19,8 @@ This addendum captures the **outcome** of the comprehensive UI/UX review program
 
 1. **Core journeys work** — Workspace ingest/open, Canvas crosstab, deck, Variable Manager, export/session (with noted gaps).
 2. **Two P0 defects fixed during the program** — keyboard conflict (UXR-000) and import crash (UXR-021).
-3. **Seven P1 items remain open** — prioritize silent query failures (UXR-037) and OPFS multi-tab messaging (UXR-040).
-4. **Desktop layouts OK at 1440–1920**; **1280 and below** need header/sidebar responsive work (UXR-044–045).
+3. **STAB-UI-D P1 items closed** (June 2026) — silent query failures (UXR-037), OPFS multi-tab messaging (UXR-040/047), projects empty state (UXR-008), filtered N (UXR-010), Canvas recode (UXR-024), modal Escape (UXR-041/042), responsive header/sidebar (UXR-044/045). Remaining P1s (UXR-025 drill-down, UXR-036 upload progress) and P2 polish tail stay in `findings.md`.
+4. **Desktop layouts OK at 1440–1920**; **1280 and below** improved via header icon collapse and sidebar rail (UXR-044–045).
 5. **Liquid Glass** remains preview-grade (UXR-030–031); Mission Control / Soft Machine are production-ready themes.
 
 ---
@@ -38,11 +38,11 @@ This addendum captures the **outcome** of the comprehensive UI/UX review program
 
 ## Recommended execution
 
-Staff **`STAB-UI-D`** (proposed in synthesis) or equivalent stabilization slice:
+**`STAB-UI-D`** (Done June 2026) closed the stabilization slice scoped in synthesis:
 
-1. P1 trust blockers (037, 040, 008, 010)
-2. Modal Escape/focus batch (041–042)
-3. Responsive header/sidebar (044–045)
-4. Playwright regressions listed in synthesis §7
+1. P1 trust blockers (037, 040, 008, 010, 024) — **Done**
+2. Modal Escape/focus batch (041–042) — **Done**
+3. Responsive header/sidebar (044–045) — **Done**
+4. OPFS user-facing copy (047) — **Done**
 
-Phase 5+ feature work remains frozen per tracker unless escalated through the feature matrix.
+Follow-on polish (remaining open UXR P2/P3 items, Playwright viewport matrix) is optional and tracked in `findings.md`, not the active execution board.
