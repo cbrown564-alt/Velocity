@@ -4,6 +4,7 @@ import { processMetadata } from '../../core/ingestion/savLoader';
 import { escapeString } from '../../core/sql/queryBuilder';
 import { CHUNKED_THRESHOLD_BYTES } from './savArrowHelpers';
 import { loadSAVChunked } from './savChunkedLoader';
+import type { SavLoadProgressReporter } from './loadProgress';
 import { getSchema } from './workerQueries';
 import { workerDbState } from './workerDbState';
 
@@ -32,19 +33,32 @@ export async function loadCSV(
 export async function loadSAV(
   buffer: ArrayBuffer,
   forceChunked?: boolean,
+  onProgress?: SavLoadProgressReporter,
 ): Promise<{ variables: Variable[]; variableSets: VariableSet[]; rowCount: number; durationMs: number }> {
   const { db, conn } = workerDbState;
   if (!db || !conn) throw new Error('DB not initialized');
 
   if (forceChunked || buffer.byteLength > CHUNKED_THRESHOLD_BYTES) {
     console.log(`🦆 [Worker] Auto-routing to chunked mode (${(buffer.byteLength / 1024 / 1024).toFixed(1)} MB > ${CHUNKED_THRESHOLD_BYTES / 1024 / 1024} MB threshold)`);
-    return loadSAVChunked(buffer);
+    return loadSAVChunked(buffer, undefined, onProgress);
   }
 
   const start = performance.now();
 
+  onProgress?.({
+    phase: 'parsing',
+    progress: 0,
+    message: 'Reading SAV metadata...',
+  });
+
   const { parseSavFile } = await import('@velocity/readstat-wasm');
   const parsed = await parseSavFile(buffer, (progress) => {
+    const boundedProgress = Math.max(0, Math.min(progress.progress, 0.7));
+    onProgress?.({
+      phase: 'parsing',
+      progress: boundedProgress,
+      message: `Parsing variables (${Math.round(progress.progress * 100)}%)...`,
+    });
     console.log(`📊 [Worker] Parse progress: ${(progress.progress * 100).toFixed(1)}%`);
   });
 
@@ -88,6 +102,12 @@ export async function loadSAV(
   const table = new arrow.Table(vectors);
 
   await conn.query(`DROP TABLE IF EXISTS main`);
+  onProgress?.({
+    phase: 'inserting',
+    progress: 0.8,
+    totalRows: numRows,
+    message: 'Building index...',
+  });
 
   try {
     await conn.insertArrowTable(table, { name: 'main', create: true });
@@ -104,6 +124,13 @@ export async function loadSAV(
 
   const durationMs = performance.now() - start;
   console.log(`🦆 [Worker] Loaded SAV: ${parsed.metadata.rowCount} rows, ${variables.length} variables in ${durationMs.toFixed(2)}ms`);
+  onProgress?.({
+    phase: 'complete',
+    progress: 1,
+    rowsProcessed: parsed.metadata.rowCount,
+    totalRows: parsed.metadata.rowCount,
+    message: `Loaded ${parsed.metadata.rowCount.toLocaleString()} rows successfully`,
+  });
 
   return { variables, variableSets, rowCount: parsed.metadata.rowCount, durationMs };
 }

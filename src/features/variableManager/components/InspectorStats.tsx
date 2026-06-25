@@ -195,13 +195,19 @@ export const InspectorStats: React.FC<InspectorStatsProps> = ({ variable, stats,
                                                     <td className={styles.actionCell}>
                                                         <button
                                                             className={styles.tableActionButton}
-                                                            title={item.code === null ? 'Convert system missing values' : (item.isMissing ? "Include value" : "Set as Missing")}
+                                                            title={
+                                                                item.code === null
+                                                                    ? 'Convert system missing values'
+                                                                    : item.isMissing
+                                                                        ? `Include ${item.label} (${item.code}) in analysis`
+                                                                        : `Set ${item.label} (${item.code}) as missing`
+                                                            }
                                                             aria-label={
                                                                 item.code === null
                                                                     ? 'Convert system missing values'
                                                                     : item.isMissing
-                                                                        ? `Include ${item.label} in analysis`
-                                                                        : `Set ${item.label} as missing`
+                                                                        ? `Include ${item.label} (${item.code}) in analysis`
+                                                                        : `Set ${item.label} (${item.code}) as missing`
                                                             }
                                                             onClick={() => {
                                                                 if (item.code === null) {

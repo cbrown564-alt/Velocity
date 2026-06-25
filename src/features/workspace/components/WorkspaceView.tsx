@@ -153,6 +153,17 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
     }));
   }, [projects, datasets]);
 
+  const showFilteredEmptyState =
+    !isEmpty && filterMode !== 'projects' && filteredDatasets.length === 0;
+
+  const filteredEmptyMessage = searchQuery
+    ? 'No datasets match your search. Try a different keyword or clear filters.'
+    : filterMode === 'starred'
+      ? 'No starred datasets yet. Star a dataset to pin it here.'
+      : filterMode === 'recent'
+        ? 'No recent datasets yet. Open a dataset to populate this view.'
+        : 'No datasets available for this view.';
+
   const handleSelectDataset = (id: string, shiftKey: boolean = false) => {
     setSelectedIds(prev => {
       const next = new Set(prev);
@@ -254,12 +265,14 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
               <button
                 className={viewMode === 'grid' ? styles.active : ''}
                 onClick={() => setViewMode('grid')}
+                aria-label="Grid view"
               >
                 <Grid3X3 size={16} />
               </button>
               <button
                 className={viewMode === 'list' ? styles.active : ''}
                 onClick={() => setViewMode('list')}
+                aria-label="List view"
               >
                 <List size={16} />
               </button>
@@ -547,6 +560,18 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
                     ))}
                   </AnimatePresence>
                 </div>
+              )}
+
+              {showFilteredEmptyState && (
+                <motion.div
+                  className={styles.projectsEmptyState}
+                  {...getMotionProps({ preset: 'fadeUp', duration: reducedMotion ? DURATIONS.instant : DURATIONS.normal, reducedMotion })}
+                  data-testid="workspace-filter-empty-state"
+                >
+                  <Search size={24} className={styles.projectsEmptyIcon} />
+                  <h3>No datasets found</h3>
+                  <p>{filteredEmptyMessage}</p>
+                </motion.div>
               )}
             </section>
           </>

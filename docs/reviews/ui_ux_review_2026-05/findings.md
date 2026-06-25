@@ -93,7 +93,7 @@ Log one entry per `UXR-###`. Update **Status** when fixed: `open` | `confirmed` 
 
 ## UXR-006 — Dataset card shows `0 B` file size
 
-- **Status:** open
+- **Status:** fixed (June 25, 2026; dataset persistence bytes computed from OPFS source + dataset DB files)
 - **Severity:** P2
 - **Mode:** Workspace
 - **Session:** 1
@@ -106,7 +106,7 @@ Log one entry per `UXR-###`. Update **Status** when fixed: `open` | `confirmed` 
 
 ## UXR-007 — Starred search with no matches lacks empty feedback
 
-- **Status:** open
+- **Status:** fixed (June 25, 2026; WorkspaceView now renders filtered-empty feedback copy)
 - **Severity:** P3
 - **Mode:** Workspace
 - **Session:** 1
@@ -132,7 +132,7 @@ Log one entry per `UXR-###`. Update **Status** when fixed: `open` | `confirmed` 
 
 ## UXR-009 — List view hides dataset cards from workspace content
 
-- **Status:** open
+- **Status:** fixed (June 25, 2026; list rows exposed as keyboard-accessible dataset items with explicit view toggle labels)
 - **Severity:** P2
 - **Mode:** Workspace
 - **Session:** 1
@@ -191,7 +191,7 @@ Log one entry per `UXR-###`. Update **Status** when fixed: `open` | `confirmed` 
 
 ## UXR-013 — Filter modal: age group has no selectable values
 
-- **Status:** open
+- **Status:** fixed (June 25, 2026; `FilterModal` falls back to `variableStats.frequencies` when distinct-value lookup returns empty)
 - **Severity:** P2
 - **Mode:** Canvas
 - **Session:** 2
@@ -205,7 +205,7 @@ Log one entry per `UXR-###`. Update **Status** when fixed: `open` | `confirmed` 
 
 ## UXR-014 — Filter modal flashes stale values while loading
 
-- **Status:** open
+- **Status:** fixed (June 25, 2026; `FilterModal` clears value list on variable switch and ignores stale async responses)
 - **Severity:** P2
 - **Mode:** Canvas
 - **Session:** 2
@@ -264,7 +264,7 @@ Log one entry per `UXR-###`. Update **Status** when fixed: `open` | `confirmed` 
 
 ## UXR-018 — Variable Manager search filters Canvas sidebar
 
-- **Status:** open
+- **Status:** fixed (June 25, 2026; isolated `managerSearchQuery` confirmed via `uiSlice` tests)
 - **Severity:** P2
 - **Mode:** Variable Manager → Canvas (mode boundary)
 - **Session:** 4
@@ -282,7 +282,7 @@ Log one entry per `UXR-###`. Update **Status** when fixed: `open` | `confirmed` 
 
 ## UXR-019 — Facet dropdown options missing from accessibility tree
 
-- **Status:** open
+- **Status:** fixed (June 25, 2026; facet dropdowns now expose `menuitemcheckbox` options with accessible names)
 - **Severity:** P2
 - **Mode:** Variable Manager
 - **Session:** 4
@@ -296,7 +296,7 @@ Log one entry per `UXR-###`. Update **Status** when fixed: `open` | `confirmed` 
 
 ## UXR-020 — Value-mapping row actions share identical accessible names
 
-- **Status:** open
+- **Status:** fixed (June 25, 2026; Inspector row actions include value label + code in accessible names)
 - **Severity:** P2
 - **Mode:** Variable Manager (Inspector)
 - **Session:** 4
@@ -327,7 +327,7 @@ Log one entry per `UXR-###`. Update **Status** when fixed: `open` | `confirmed` 
 
 ## UXR-022 — Export format picker not exposed to accessibility tree
 
-- **Status:** open
+- **Status:** fixed (June 25, 2026; Export format rendered as labeled radios inside a fieldset/radiogroup)
 - **Severity:** P2
 - **Mode:** Canvas (Export modal)
 - **Session:** 5
@@ -341,7 +341,7 @@ Log one entry per `UXR-###`. Update **Status** when fixed: `open` | `confirmed` 
 
 ## UXR-023 — “Export dialog opened” toast on every open
 
-- **Status:** open
+- **Status:** fixed (June 25, 2026; removed repetitive open-toast in `DashboardShell` export handler)
 - **Severity:** P3
 - **Mode:** Canvas
 - **Session:** 5
@@ -372,7 +372,7 @@ Log one entry per `UXR-###`. Update **Status** when fixed: `open` | `confirmed` 
 
 ## UXR-025 — Table cell drill-down / Data drawer not wired
 
-- **Status:** open
+- **Status:** fixed (June 25, 2026; drill-down click path validated end-to-end, including multiple-response axis mapping)
 - **Severity:** P1
 - **Mode:** Canvas
 - **Session:** 6
@@ -383,12 +383,13 @@ Log one entry per `UXR-###`. Update **Status** when fixed: `open` | `confirmed` 
 - **Actual:** `DataTable` supports `onCellClick`, but `SlideContainer` does not pass it; clicks have no effect.
 - **Heuristic:** #1 Visibility of system status; #7 Flexibility and efficiency of use
 - **Related:** `SlideContainer.tsx`, `DataTable.tsx`, `drillDownSlice.ts`, `DataDrawer.tsx`
+- **Resolution:** Verified `SlideContainer` → `DataTable` wiring and fixed downstream drill-down filter resolution for multiple-response row/column labels (`resolveDrillDownContext`) so cell clicks open `DataDrawer` with matching respondent rows.
 
 ---
 
 ## UXR-026 — Variable Manager stays open over Workspace
 
-- **Status:** open
+- **Status:** fixed (June 25, 2026; Return to Workspace now forces app mode back to analysis)
 - **Severity:** P2
 - **Mode:** Variable Manager → Workspace (mode boundary)
 - **Session:** 6
@@ -541,7 +542,7 @@ Log one entry per `UXR-###`. Update **Status** when fixed: `open` | `confirmed` 
 
 ## UXR-036 — Upload progress bar is decorative, not data-driven
 
-- **Status:** open
+- **Status:** fixed (June 25, 2026; SAV worker progress is bridged to `engine.loadProgress` and consumed by `UploadProgressBar`/`UploadOverlay`)
 - **Severity:** P1
 - **Mode:** Workspace → Canvas (uploading overlay)
 - **Session:** 9
@@ -549,9 +550,9 @@ Log one entry per `UXR-###`. Update **Status** when fixed: `open` | `confirmed` 
   1. Upload a large `.sav` or open a workspace dataset that triggers `mode === 'uploading'`.
   2. Observe top accent bar and “Loading dataset...” overlay.
 - **Expected:** Progress reflects worker `engine.loadProgress` (parse/insert phases, row counts).
-- **Actual:** Bar animates `0% → 100%` over fixed **1.2s** (`App.tsx` `motion.div`); completes before or after real load unpredictably. `EngineProxy.onProgress` exists but is not wired from the app.
+- **Actual (fixed):** Chunked and non-chunked SAV ingestion now emits `engine.loadProgress` from worker handlers; UI progress bar width, phase headline, and row-count copy render directly from store `loadProgress` updates.
 - **Heuristic:** #1 Visibility of system status
-- **Related:** `App.tsx`, `EngineProxy.ts`, `analysisWorker.ts` `loadProgress`
+- **Related:** `engineHandlers.ts`, `workerIngestion.ts`, `savChunkedLoader.ts`, `UploadProgressBar.tsx`, `UploadOverlay.tsx`
 
 ---
 

@@ -118,3 +118,25 @@ describe('UISlice — Toast Layer', () => {
     expect(messages).toEqual(['Two', 'Three']);
   });
 });
+
+describe('UISlice — Search Scope Boundaries', () => {
+  beforeEach(() => {
+    useVelocityStore.setState({ searchQuery: '', managerSearchQuery: '' });
+  });
+
+  it('keeps manager search isolated from canvas sidebar search', () => {
+    useVelocityStore.getState().setSearchQuery('region');
+    useVelocityStore.getState().setManagerSearchQuery('gender');
+
+    expect(useVelocityStore.getState().searchQuery).toBe('region');
+    expect(useVelocityStore.getState().managerSearchQuery).toBe('gender');
+  });
+
+  it('updates manager search without mutating canvas search', () => {
+    useVelocityStore.getState().setSearchQuery('age');
+    useVelocityStore.getState().setManagerSearchQuery('nps');
+
+    expect(useVelocityStore.getState().searchQuery).toBe('age');
+    expect(useVelocityStore.getState().managerSearchQuery).toBe('nps');
+  });
+});

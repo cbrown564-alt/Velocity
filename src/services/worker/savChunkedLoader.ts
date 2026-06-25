@@ -21,6 +21,7 @@ import {
   V3_INITIAL_CREDITS,
   V3_MAX_CREDITS,
 } from './savArrowHelpers';
+import type { SavLoadProgressReporter } from './loadProgress';
 import { workerDbState } from './workerDbState';
 
 type SavLoadResult = {
@@ -60,12 +61,13 @@ const STREAMING_MODE_LABELS: Record<SavStreamingMode, string> = {
 export async function loadSAVChunked(
   buffer: ArrayBuffer,
   chunkSize: number = DEFAULT_CHUNK_SIZE,
+  onProgress?: SavLoadProgressReporter,
 ): Promise<SavLoadResult> {
   const isLargeFile = buffer.byteLength >= CHUNKED_THRESHOLD_BYTES;
 
   if (isLargeFile && ENABLE_SAV_STREAMING_V3_SINGLE_PASS) {
     try {
-      return await loadSAVChunkedStreaming(buffer, chunkSize, 'v3-single-pass');
+      return await loadSAVChunkedStreaming(buffer, chunkSize, 'v3-single-pass', onProgress);
     } catch (error: unknown) {
       if (isWriteModeCommitError(error)) throw error;
       const message = error instanceof Error ? error.message : String(error);
@@ -75,7 +77,7 @@ export async function loadSAVChunked(
 
   if (isLargeFile) {
     try {
-      return await loadSAVChunkedStreaming(buffer, chunkSize, 'v2');
+      return await loadSAVChunkedStreaming(buffer, chunkSize, 'v2', onProgress);
     } catch (error: unknown) {
       if (isWriteModeCommitError(error)) throw error;
       const message = error instanceof Error ? error.message : String(error);
@@ -84,10 +86,10 @@ export async function loadSAVChunked(
   }
 
   if (ENABLE_SAV_STREAMING_LEGACY) {
-    return loadSAVChunkedLegacy(buffer, chunkSize);
+    return loadSAVChunkedLegacy(buffer, chunkSize, onProgress);
   }
 
-  return loadSAVChunkedStreaming(buffer, chunkSize, 'v3-single-pass');
+  return loadSAVChunkedStreaming(buffer, chunkSize, 'v3-single-pass', onProgress);
 }
 
 async function runSavStreamingParser(
@@ -119,6 +121,7 @@ async function loadSAVChunkedStreaming(
   buffer: ArrayBuffer,
   chunkSize: number,
   mode: SavStreamingMode,
+  onProgress?: SavLoadProgressReporter,
 ): Promise<SavLoadResult> {
   const { db, conn } = workerDbState;
   if (!db || !conn) throw new Error('DB not initialized');
@@ -139,8 +142,7 @@ async function loadSAVChunkedStreaming(
     : `🦆 [Worker] Starting streaming SAV load v2: ${fileSizeMb.toFixed(1)} MB, chunk size ${activeChunkSize}`;
 
   console.log(startLog);
-  self.postMessage({
-    type: 'loadProgress',
+  onProgress?.({
     phase: 'parsing',
     progress: 0,
     message: startMessage,
@@ -180,8 +182,7 @@ async function loadSAVChunkedStreaming(
         console.log(
           `📊 [Worker] ${chunkLabel} chunk ${chunksInserted}: ${rowsInserted}/${batch.totalRows} rows (${progressPct}%), ${batchMs.toFixed(0)}ms`,
         );
-        self.postMessage({
-          type: 'loadProgress',
+        onProgress?.({
           phase: 'inserting',
           progress: batch.progress,
           rowsProcessed: rowsInserted,
@@ -233,8 +234,7 @@ async function loadSAVChunkedStreaming(
     : `🦆 [Worker] Loaded SAV (${modeLabel}): ${count} rows in ${chunksInserted} chunks, ${processedMeta.variables.length} variables in ${durationMs.toFixed(2)}ms`;
 
   console.log(completionLog);
-  self.postMessage({
-    type: 'loadProgress',
+  onProgress?.({
     phase: 'complete',
     progress: 1,
     rowsProcessed: count,

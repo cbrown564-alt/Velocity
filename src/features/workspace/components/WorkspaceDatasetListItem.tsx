@@ -35,7 +35,16 @@ export const WorkspaceDatasetListItem: React.FC<{
       className={`${styles.datasetListItem} ${isSelected ? styles.selected : ''}`}
       onClick={onSelect}
       onDoubleClick={onOpen}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onOpen();
+        }
+      }}
       title={deckSummary ?? undefined}
+      role="button"
+      tabIndex={0}
+      aria-label={`Open dataset ${dataset.name}`}
       {...getMotionProps({ preset: 'slideRight', duration: reducedMotion ? DURATIONS.instant : DURATIONS.normal, reducedMotion })}
       whileHover={{ x: 2 }}
     >

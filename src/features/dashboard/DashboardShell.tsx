@@ -73,7 +73,6 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
     tableDensity,
     toggleTableDensity,
     setTableDensity,
-    addToast,
     setTableConfig,
     setSearchQuery,
     reset,
@@ -182,8 +181,7 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
 
   const handleExport = useCallback(() => {
     openAnalysisExportModal(buildCurrentExportConfig());
-    addToast({ message: 'Export dialog opened', type: 'info' });
-  }, [openAnalysisExportModal, buildCurrentExportConfig, addToast]);
+  }, [openAnalysisExportModal, buildCurrentExportConfig]);
 
   const variables = dataset?.variables || [];
   const filename = dataset?.name || '';

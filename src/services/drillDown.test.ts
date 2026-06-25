@@ -31,6 +31,51 @@ describe('resolveDrillDownContext', () => {
     expect(result.colFilter).toEqual({ variable: 'missing_set', value: 'A' });
     expect(result.title).toBe('q1: 1 • missing_set: A');
   });
+
+  it('maps multiple-response row labels to backing columns', () => {
+    const result = resolveDrillDownContext({
+      rowPath: [{ variable: 'brand_coke', value: 'Coca-Cola' }],
+      colValue: null,
+      colVarId: null,
+      variableSets: [{
+        id: 'brand_awareness',
+        variableIds: ['brand_coke', 'brand_pepsi'],
+        structure: 'multiple',
+        countedValue: 1,
+      }],
+      variables: [
+        { id: 'brand_coke', label: 'Coca-Cola' },
+        { id: 'brand_pepsi', label: 'Pepsi' },
+      ],
+    });
+
+    expect(result.rowFilters).toEqual([{ variable: 'brand_coke', value: '1' }]);
+    expect(result.colFilter).toBeNull();
+    expect(result.title).toBe('Coca-Cola: Coca-Cola');
+  });
+
+  it('maps multiple-response column labels to backing columns', () => {
+    const result = resolveDrillDownContext({
+      rowPath: [{ variable: 'gender', value: 'Male' }],
+      colValue: 'Pepsi',
+      colVarId: 'brand_awareness',
+      variableSets: [{
+        id: 'brand_awareness',
+        variableIds: ['brand_coke', 'brand_pepsi'],
+        structure: 'multiple',
+        countedValue: 1,
+      }],
+      variables: [
+        { id: 'gender', label: 'Gender' },
+        { id: 'brand_coke', label: 'Coca-Cola' },
+        { id: 'brand_pepsi', label: 'Pepsi' },
+      ],
+    });
+
+    expect(result.rowFilters).toEqual([{ variable: 'gender', value: 'Male' }]);
+    expect(result.colFilter).toEqual({ variable: 'brand_pepsi', value: '1' });
+    expect(result.title).toBe('Gender: Male • Pepsi: Pepsi');
+  });
 });
 
 describe('buildDrillDownQueryOptions', () => {

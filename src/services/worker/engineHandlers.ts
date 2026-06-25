@@ -19,6 +19,7 @@ import {
   updateMeta,
 } from './duckdbPersistence';
 import { engineHandlersHarmonization } from './engineHandlersHarmonization';
+import { toEngineLoadProgress } from './loadProgress';
 import { postEngineResponse } from './engineMessaging';
 import {
   loadCSV,
@@ -181,18 +182,24 @@ export const engineHandlers: Record<EngineWorkerRequest['type'], EngineMessageHa
     const { requestId } = request;
     let savResult;
     try {
-      savResult = await loadSAV(request.buffer, request.forceChunked);
+      savResult = await loadSAV(request.buffer, request.forceChunked, (progress) => {
+        postEngineResponse(toEngineLoadProgress(requestId, progress));
+      });
     } catch (error: any) {
       if (!isWriteModeCommitError(error)) throw error;
       console.warn('🦆 [Worker/Engine] Detected OPFS write-mode commit failure during SAV load; recovering');
       await reopenWritableDatabase();
       try {
-        savResult = await loadSAV(request.buffer.slice(0), request.forceChunked);
+        savResult = await loadSAV(request.buffer.slice(0), request.forceChunked, (progress) => {
+          postEngineResponse(toEngineLoadProgress(requestId, progress));
+        });
       } catch (retryError: any) {
         if (!isWriteModeCommitError(retryError)) throw retryError;
         console.warn('🦆 [Worker/Engine] Retry failed; forcing in-memory');
         await reopenInMemoryDatabase();
-        savResult = await loadSAV(request.buffer.slice(0), request.forceChunked);
+        savResult = await loadSAV(request.buffer.slice(0), request.forceChunked, (progress) => {
+          postEngineResponse(toEngineLoadProgress(requestId, progress));
+        });
       }
     }
     postEngineResponse({

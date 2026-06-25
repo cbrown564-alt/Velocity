@@ -7,6 +7,7 @@ import {
   DEFAULT_CHUNK_SIZE,
   type SavColumnMetadata,
 } from './savArrowHelpers';
+import type { SavLoadProgressReporter } from './loadProgress';
 import { workerDbState } from './workerDbState';
 
 /**
@@ -16,6 +17,7 @@ import { workerDbState } from './workerDbState';
 export async function loadSAVChunkedLegacy(
   buffer: ArrayBuffer,
   chunkSize: number = DEFAULT_CHUNK_SIZE,
+  onProgress?: SavLoadProgressReporter,
 ): Promise<{ variables: Variable[]; variableSets: VariableSet[]; rowCount: number; durationMs: number }> {
   const { db, conn } = workerDbState;
   if (!db || !conn) throw new Error('DB not initialized');
@@ -25,8 +27,7 @@ export async function loadSAVChunkedLegacy(
 
   console.log(`🦆 [Worker] Starting legacy streaming SAV load: ${fileSizeMb.toFixed(1)} MB, chunk size ${chunkSize}`);
 
-  self.postMessage({
-    type: 'loadProgress',
+  onProgress?.({
     phase: 'parsing',
     progress: 0,
     message: `Starting to parse ${fileSizeMb.toFixed(1)} MB file...`,
@@ -79,8 +80,7 @@ export async function loadSAVChunkedLegacy(
       const progressPct = Math.round(batch.progress * 100);
       if (chunksInserted % 5 === 0 || progressPct >= 99) {
         console.log(`📊 [Worker] Legacy chunk ${chunksInserted}: ${totalRowsInserted}/${batch.totalRows} rows (${progressPct}%)`);
-        self.postMessage({
-          type: 'loadProgress',
+        onProgress?.({
           phase: 'inserting',
           progress: batch.progress,
           rowsProcessed: totalRowsInserted,
@@ -141,8 +141,7 @@ export async function loadSAVChunkedLegacy(
 
   const durationMs = performance.now() - start;
   console.log(`🦆 [Worker] Loaded SAV (legacy streaming): ${streamingResult.metadata.rowCount} rows in ${chunksInserted} chunks, ${processedMeta.variables.length} variables in ${durationMs.toFixed(2)}ms`);
-  self.postMessage({
-    type: 'loadProgress',
+  onProgress?.({
     phase: 'complete',
     progress: 1,
     rowsProcessed: count,

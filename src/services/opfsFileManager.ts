@@ -159,6 +159,30 @@ export async function getFileSize(name: string): Promise<number> {
 }
 
 /**
+ * Get persisted bytes for one workspace dataset (source upload + DuckDB files).
+ */
+export async function getDatasetPersistenceSize(
+  datasetId: string,
+  opfsFileKey?: string,
+): Promise<number> {
+  let total = 0;
+
+  if (opfsFileKey) {
+    total += await getFileSize(opfsFileKey).catch(() => 0);
+  }
+
+  const prefix = `${DB_PREFIX}_v${OPFS_SCHEMA_VERSION}_dataset_${datasetId}`;
+  const dbFiles = await listDbFiles().catch(() => []);
+  for (const file of dbFiles) {
+    if (file.name.includes(prefix)) {
+      total += file.size;
+    }
+  }
+
+  return total;
+}
+
+/**
  * Get storage estimate for quota info.
  */
 export async function getStorageEstimate(): Promise<{ usage: number; quota: number } | null> {

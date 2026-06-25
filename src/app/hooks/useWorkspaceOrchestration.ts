@@ -70,6 +70,7 @@ export function useWorkspaceOrchestration({
     removeStoredDataset,
     removeStoredDatasets,
     saveDatasetSession,
+    setAppMode,
     setWorkspaceMode,
     createProject,
     addDatasetsToProject,
@@ -108,6 +109,10 @@ export function useWorkspaceOrchestration({
 
         await browserEngine.query(`CREATE OR REPLACE TABLE "${tableName}" AS SELECT * FROM main`);
         materializedDatasetTables.current.add(tableName);
+        const persistedSize = await opfsFileManager.getDatasetPersistenceSize(datasetId, dataset?.opfsFileKey);
+        if (persistedSize > 0) {
+          updateStoredDataset(datasetId, { fileSize: persistedSize });
+        }
         return true;
       } catch (error) {
         console.warn(`[App] Failed to materialize workspace table ${tableName}:`, error);
@@ -115,7 +120,7 @@ export function useWorkspaceOrchestration({
         return false;
       }
     },
-    [browserEngine],
+    [browserEngine, dataset?.opfsFileKey, updateStoredDataset],
   );
 
   const registerDatasetInWorkspace = useCallback(() => {
@@ -136,14 +141,12 @@ export function useWorkspaceOrchestration({
       opfsFileKey: dataset.opfsFileKey,
       tableName: datasetTableName(dataset.id),
     });
-    if (dataset.opfsFileKey) {
-      opfsFileManager
-        .getFileSize(dataset.opfsFileKey)
-        .then((size) => {
-          if (size > 0) updateStoredDataset(dataset.id, { fileSize: size });
-        })
-        .catch(() => {});
-    }
+    opfsFileManager
+      .getDatasetPersistenceSize(dataset.id, dataset.opfsFileKey)
+      .then((size) => {
+        if (size > 0) updateStoredDataset(dataset.id, { fileSize: size });
+      })
+      .catch(() => {});
     setActiveDataset(dataset.id);
   }, [dataset, variableSets, folders, addStoredDataset, updateStoredDataset, setActiveDataset]);
 
@@ -223,6 +226,7 @@ export function useWorkspaceOrchestration({
       { saveDatasetSession, updateStoredDataset },
     );
     setWorkspaceMode(true);
+    setAppMode('analysis');
     setPhase('splash');
   }, [
     dataset,
@@ -234,6 +238,7 @@ export function useWorkspaceOrchestration({
     folders,
     saveDatasetSession,
     updateStoredDataset,
+    setAppMode,
     setWorkspaceMode,
     setPhase,
   ]);

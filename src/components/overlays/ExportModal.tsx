@@ -347,8 +347,9 @@ export const ExportModal: React.FC<ExportModalProps> = ({
 
                                 {/* Format Selection */}
                                 <div className={styles.section}>
-                                    <div className={styles.sectionLabel}>Export Format</div>
-                                    <div className={styles.formatGrid} role="radiogroup" aria-label="Export format">
+                                    <fieldset>
+                                        <legend className={styles.sectionLabel}>Export Format</legend>
+                                        <div className={styles.formatGrid} role="radiogroup" aria-label="Export format">
                                         <label
                                             className={`${styles.formatOption} ${format === 'pptx' ? styles.selected : ''}`}
                                         >
@@ -358,6 +359,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                                                 checked={format === 'pptx'}
                                                 onChange={() => setFormat('pptx')}
                                                 className="sr-only"
+                                                aria-label="PowerPoint"
                                             />
                                             <div className={styles.formatIcon}>
                                                 <Presentation size={24} aria-hidden />
@@ -376,6 +378,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                                                 checked={format === 'xlsx'}
                                                 onChange={() => setFormat('xlsx')}
                                                 className="sr-only"
+                                                aria-label="Excel"
                                             />
                                             <div className={styles.formatIcon}>
                                                 <FileSpreadsheet size={24} aria-hidden />
@@ -385,7 +388,8 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                                                 Workbook with formatted data
                                             </div>
                                         </label>
-                                    </div>
+                                        </div>
+                                    </fieldset>
                                 </div>
 
                                 {/* Title Input */}

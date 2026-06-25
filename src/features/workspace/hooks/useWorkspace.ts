@@ -124,16 +124,14 @@ export function useWorkspace(): UseWorkspaceReturn {
         tableName: `dataset_${dataset.id.replace(/[^a-zA-Z0-9_]/g, '_')}`,
       };
 
-      // If we have an OPFS file key, try to get the file size
-      if (dataset.opfsFileKey) {
-        opfsFileManager.getFileSize(dataset.opfsFileKey)
-          .then(size => {
-            if (size > 0) {
-              updateStoredDataset(dataset.id, { fileSize: size });
-            }
-          })
-          .catch(() => { });
-      }
+      opfsFileManager
+        .getDatasetPersistenceSize(dataset.id, dataset.opfsFileKey)
+        .then((size) => {
+          if (size > 0) {
+            updateStoredDataset(dataset.id, { fileSize: size });
+          }
+        })
+        .catch(() => {});
 
       // Add to workspace with the dataset's ID
       const id = addStoredDataset(storedDataset);

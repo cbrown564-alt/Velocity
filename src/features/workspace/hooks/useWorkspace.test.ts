@@ -9,6 +9,7 @@ vi.mock('../../../services/opfsFileManager', () => ({
   deleteDatasetPersistence: vi.fn().mockResolvedValue(undefined),
   getStorageEstimate: vi.fn().mockResolvedValue({ usage: 0, quota: 1000 }),
   getFileSize: vi.fn().mockResolvedValue(0),
+  getDatasetPersistenceSize: vi.fn().mockResolvedValue(2048),
 }));
 
 const makeStoredDataset = (id: string, opfsFileKey: string): StoredDataset => ({

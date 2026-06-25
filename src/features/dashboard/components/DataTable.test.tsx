@@ -1,6 +1,6 @@
 import React from 'react';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { render } from '@testing-library/react';
+import { fireEvent, render } from '@testing-library/react';
 import { DataTable } from './DataTable';
 import { useVelocityStore } from '../../../store';
 import type { Variable, AggregatedRow } from '../../../types';
@@ -83,6 +83,65 @@ describe('DataTable hook stability', () => {
     );
 
     expect(document.querySelector('table')).toBeTruthy();
+  });
+
+  it('forwards cell clicks to onCellClick with row path and col key', () => {
+    const rowVar = {
+      id: 'v1',
+      name: 'gender',
+      label: 'Gender',
+      type: 'categorical',
+      valueLabels: [],
+      missingValues: {},
+    } as Variable;
+    const colVar = {
+      id: 'v2',
+      name: 'region',
+      label: 'Region',
+      type: 'categorical',
+      valueLabels: [],
+      missingValues: {},
+    } as Variable;
+
+    const processed = makeProcessedData([
+      { col: 'north', row: 'male', percent: 60 },
+      { col: 'north', row: 'female', percent: 40 },
+    ]);
+    processed.colVariable = colVar;
+    processed.rows[0].rowPath = [{ variable: 'v1', value: 'male' }];
+    mockUseProcessedAnalysisData.mockReturnValue(processed);
+
+    useVelocityStore.setState({
+      analysisSettings: {
+        comparisonMethod: 'cell_vs_rest',
+        correctionType: 'none',
+        showConfidenceIntervals: false,
+        significanceLevel: 0.95,
+        engine: 'auto',
+        enableDesignEffects: false,
+      },
+      transformLog: [],
+    });
+
+    const onCellClick = vi.fn();
+    const { container } = render(
+      <DataTable
+        data={[]}
+        rowVariables={[rowVar]}
+        colVariable={colVar}
+        totalCount={100}
+        onCellClick={onCellClick}
+      />
+    );
+
+    const firstDataCell = container.querySelector('tbody td.data-cell') as HTMLTableCellElement;
+    fireEvent.click(firstDataCell);
+
+    expect(onCellClick).toHaveBeenCalledTimes(1);
+    expect(onCellClick).toHaveBeenCalledWith(
+      [{ variable: 'v1', value: 'male' }],
+      'north'
+    );
   });
 });
 

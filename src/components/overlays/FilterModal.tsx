@@ -37,8 +37,10 @@ export const FilterModal: React.FC<FilterModalProps> = ({
     const [availableValues, setAvailableValues] = useState<{ value: string | number; label: string }[]>([]);
     const [loadingValues, setLoadingValues] = useState(false);
     const [applyToAll, setApplyToAll] = useState(false);
+    const valuesRequestIdRef = React.useRef(0);
 
     const getUniqueValues = useVelocityStore(state => state.getUniqueValues);
+    const getVariableStats = useVelocityStore(state => state.getVariableStats);
 
     // Filter variables based on search (only show categoricals with value labels)
     const filteredVariables = useMemo(() => {
@@ -61,6 +63,7 @@ export const FilterModal: React.FC<FilterModalProps> = ({
         setSearchQuery('');
         setSelectedVariable(null);
         setSelectedValues([]);
+        setAvailableValues([]);
         onClose();
     };
 
@@ -73,26 +76,47 @@ export const FilterModal: React.FC<FilterModalProps> = ({
     // Effect to load values when step changes to 'values'
     React.useEffect(() => {
         if (step === 'values' && selectedVariable) {
+            const requestId = valuesRequestIdRef.current + 1;
+            valuesRequestIdRef.current = requestId;
             const loadValues = async () => {
                 setLoadingValues(true);
+                setAvailableValues([]);
                 try {
                     // Check if we have embedded labels (SAV)
                     if (selectedVariable.valueLabels && selectedVariable.valueLabels.length > 0) {
-                        setAvailableValues(selectedVariable.valueLabels);
+                        const embeddedValues = selectedVariable.valueLabels.map((entry) => ({
+                            value: String(entry.value),
+                            label: entry.label,
+                        }));
+                        if (valuesRequestIdRef.current === requestId) {
+                            setAvailableValues(embeddedValues);
+                        }
                     } else {
                         // Otherwise fetch from DB (CSV)
-                        const values = await getUniqueValues(selectedVariable.id);
-                        setAvailableValues(values.map(v => ({ value: v, label: v })));
+                        let values = await getUniqueValues(selectedVariable.id);
+                        if (values.length === 0) {
+                            const stats = await getVariableStats(selectedVariable.id);
+                            values = (stats?.frequencies ?? [])
+                                .map((freq) => freq.value)
+                                .filter((value): value is string | number => value !== null)
+                                .map((value) => String(value));
+                        }
+                        const uniqueValues = [...new Set(values)];
+                        if (valuesRequestIdRef.current === requestId) {
+                            setAvailableValues(uniqueValues.map(v => ({ value: v, label: v })));
+                        }
                     }
                 } catch (e) {
                     console.error("Failed to load unique values", e);
                 } finally {
-                    setLoadingValues(false);
+                    if (valuesRequestIdRef.current === requestId) {
+                        setLoadingValues(false);
+                    }
                 }
             };
             loadValues();
         }
-    }, [step, selectedVariable, getUniqueValues]);
+    }, [step, selectedVariable, getUniqueValues, getVariableStats]);
 
     const handleValueToggle = (value: number | string) => {
         setSelectedValues(prev =>
@@ -117,6 +141,7 @@ export const FilterModal: React.FC<FilterModalProps> = ({
     const handleBack = () => {
         setStep('variable');
         setSelectedValues([]);
+        setAvailableValues([]);
     };
 
     return (
@@ -143,6 +168,7 @@ export const FilterModal: React.FC<FilterModalProps> = ({
                             {step === 'values' && (
                                 <button
                                     onClick={handleBack}
+                                    aria-label="Back to variable selection"
                                     className="p-1 rounded-md transition-colors"
                                     style={{ color: 'var(--text-secondary)' }}
                                     onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--bg-active)'}
@@ -163,6 +189,7 @@ export const FilterModal: React.FC<FilterModalProps> = ({
                         </div>
                         <button
                             onClick={handleClose}
+                            aria-label="Close filter modal"
                             className="p-1.5 rounded-md transition-colors"
                             style={{ color: 'var(--text-secondary)' }}
                             onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--bg-active)'}

@@ -109,8 +109,9 @@ function QualityInsight({
             <button
                 className={`${styles.insightButton} ${isActive ? styles.insightButtonActive : ''} ${hasIssues ? styles.insightButtonAttention : ''}`}
                 onClick={() => setIsOpen(!isOpen)}
-                aria-haspopup="listbox"
+                aria-haspopup="menu"
                 aria-expanded={isOpen}
+                aria-label="Quality filters"
             >
                 <span className={styles.facetLabel}>Quality</span>
                 {hasIssues ? (
@@ -124,12 +125,12 @@ function QualityInsight({
             </button>
 
             {isOpen && (
-                <div className={styles.insightDropdown} role="listbox" aria-label="Quality options">
+                <div className={styles.insightDropdown} role="menu" aria-label="Quality options">
                     {/* Filter toggle */}
                     <button
                         type="button"
-                        role="option"
-                        aria-selected={selected.includes('incomplete')}
+                        role="menuitemcheckbox"
+                        aria-checked={selected.includes('incomplete')}
                         className={styles.dropdownItem}
                         onClick={() => onToggle('incomplete')}
                     >
@@ -144,8 +145,8 @@ function QualityInsight({
 
                     <button
                         type="button"
-                        role="option"
-                        aria-selected={selected.includes('complete')}
+                        role="menuitemcheckbox"
+                        aria-checked={selected.includes('complete')}
                         className={styles.dropdownItem}
                         onClick={() => onToggle('complete')}
                     >
@@ -213,8 +214,9 @@ function StatusInsight({
             <button
                 className={`${styles.insightButton} ${isActive ? styles.insightButtonActive : ''}`}
                 onClick={() => setIsOpen(!isOpen)}
-                aria-haspopup="listbox"
+                aria-haspopup="menu"
                 aria-expanded={isOpen}
+                aria-label="Status filters"
             >
                 <span className={styles.facetLabel}>Status</span>
                 {hiddenCount > 0 && (
@@ -227,15 +229,15 @@ function StatusInsight({
             </button>
 
             {isOpen && (
-                <div className={styles.insightDropdown} role="listbox" aria-label="Status options">
+                <div className={styles.insightDropdown} role="menu" aria-label="Status options">
                     {['visible', 'hidden', 'derived'] .map((status) => {
                         const count = status === 'hidden' ? hiddenCount : status === 'derived' ? derivedCount : undefined;
                         return (
                             <button
                                 key={status}
                                 type="button"
-                                role="option"
-                                aria-selected={selected.includes(status as StatusFacet)}
+                                role="menuitemcheckbox"
+                                aria-checked={selected.includes(status as StatusFacet)}
                                 className={styles.dropdownItem}
                                 onClick={() => onToggle(status as StatusFacet)}
                             >

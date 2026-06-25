@@ -13,6 +13,8 @@ export interface DrillDownFilter {
 interface VariableSetLike {
   id: string;
   variableIds: string[];
+  structure?: 'single' | 'grid' | 'multiple';
+  countedValue?: number;
 }
 
 interface VariableLike {
@@ -56,20 +58,20 @@ export function resolveDrillDownContext({
   colFilter: DrillDownFilter | null;
   title: string;
 } {
-  const rowFilters: DrillDownFilter[] = rowPath.map((entry) => ({
-    variable: entry.variable,
-    value: entry.value,
-  }));
+  const variableById = new Map(variables.map((variable) => [variable.id, variable]));
 
-  const resolvedColVar = colVarId ? resolveVariableSetToColumn(colVarId, variableSets) : null;
-  const colFilter: DrillDownFilter | null = resolvedColVar && colValue
-    ? { variable: resolvedColVar, value: colValue }
+  const rowFilters: DrillDownFilter[] = rowPath.map((entry) =>
+    resolvePathEntryFilter(entry, variableSets, variableById)
+  );
+
+  const colFilter: DrillDownFilter | null = colVarId && colValue
+    ? resolveColumnFilter(colVarId, colValue, variableSets, variableById)
     : null;
 
   const variableLabelById = new Map(variables.map((v) => [v.id, v.label]));
-  const titleParts = rowFilters.map((entry) => `${variableLabelById.get(entry.variable) ?? entry.variable}: ${entry.value}`);
-  if (colFilter) {
-    titleParts.push(`${variableLabelById.get(colFilter.variable) ?? colFilter.variable}: ${colFilter.value}`);
+  const titleParts = rowPath.map((entry) => `${variableLabelById.get(entry.variable) ?? entry.variable}: ${entry.value}`);
+  if (colFilter && colValue) {
+    titleParts.push(`${variableLabelById.get(colFilter.variable) ?? colFilter.variable}: ${colValue}`);
   }
 
   return {
@@ -96,4 +98,69 @@ function resolveVariableSetToColumn(id: string, variableSets: VariableSetLike[])
     return id;
   }
   return varSet.variableIds[0];
+}
+
+function resolvePathEntryFilter(
+  entry: DrillDownPathEntry,
+  variableSets: VariableSetLike[],
+  variableById: Map<string, VariableLike>
+): DrillDownFilter {
+  const sourceSet = variableSets.find((set) => set.variableIds.includes(entry.variable));
+  if (!sourceSet || sourceSet.structure !== 'multiple') {
+    return {
+      variable: entry.variable,
+      value: entry.value,
+    };
+  }
+
+  const matchedMember = findVariableByLabel(sourceSet.variableIds, entry.value, variableById);
+  if (!matchedMember) {
+    return {
+      variable: entry.variable,
+      value: entry.value,
+    };
+  }
+
+  return {
+    variable: matchedMember.id,
+    value: String(sourceSet.countedValue ?? 1),
+  };
+}
+
+function resolveColumnFilter(
+  colVarId: string,
+  colValue: string,
+  variableSets: VariableSetLike[],
+  variableById: Map<string, VariableLike>
+): DrillDownFilter {
+  const colVarSet = variableSets.find((entry) => entry.id === colVarId);
+  if (colVarSet?.structure === 'multiple') {
+    const matchedMember = findVariableByLabel(colVarSet.variableIds, colValue, variableById);
+    if (matchedMember) {
+      return {
+        variable: matchedMember.id,
+        value: String(colVarSet.countedValue ?? 1),
+      };
+    }
+  }
+
+  return {
+    variable: resolveVariableSetToColumn(colVarId, variableSets),
+    value: colValue,
+  };
+}
+
+function findVariableByLabel(
+  variableIds: string[],
+  displayValue: string,
+  variableById: Map<string, VariableLike>
+): VariableLike | undefined {
+  const normalizedTarget = normalizeForMatch(displayValue);
+  return variableIds
+    .map((id) => variableById.get(id))
+    .find((variable) => variable && normalizeForMatch(variable.label) === normalizedTarget);
+}
+
+function normalizeForMatch(value: string): string {
+  return value.trim().toLowerCase();
 }
