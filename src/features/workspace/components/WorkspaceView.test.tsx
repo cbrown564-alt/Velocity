@@ -61,6 +61,7 @@ describe('WorkspaceView', () => {
       target: { value: 'no-match-term' },
     });
 
+    expect(screen.getByTestId('theme-switcher')).toBeInTheDocument();
     expect(screen.getByTestId('workspace-filter-empty-state')).toBeInTheDocument();
     expect(screen.getByText(/no datasets found/i)).toBeInTheDocument();
   });

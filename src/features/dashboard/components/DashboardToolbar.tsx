@@ -49,7 +49,7 @@ export const DashboardToolbar: React.FC<DashboardToolbarProps> = ({
   onToggleTableDensity,
   onReset,
 }) => (
-  <header className="relative z-30 h-14 border-b border-[var(--border-color-muted)] flex items-center justify-between px-6 bg-[var(--bg-app)] shrink-0 overflow-visible">
+  <header className="surface-panel relative z-30 h-14 border-b border-[var(--border-color-muted)] flex items-center justify-between px-6 bg-[var(--bg-panel)] shrink-0 overflow-visible">
     <div className="flex items-center gap-4 text-sm text-[var(--text-secondary)]">
       <button
         onClick={onReturnToWorkspace}

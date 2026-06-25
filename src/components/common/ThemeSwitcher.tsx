@@ -170,13 +170,19 @@ export const ThemeSwitcher: React.FC = () => {
             </div>
         ) : null;
 
+    const currentThemeIndex = themes.findIndex((t) => t.id === theme.id);
+    const nextTheme =
+        currentThemeIndex >= 0 ? themes[(currentThemeIndex + 1) % themes.length] : themes[0];
+    const triggerTitle = `Theme: ${theme.name}. Next: ${nextTheme.name}`;
+    const triggerAriaLabel = `Theme: ${theme.name}. Activate to switch to ${nextTheme.name}`;
+
     return (
         <div ref={triggerRef} className="relative">
             <button
                 onClick={() => setOpen(v => !v)}
                 className="p-2 rounded-lg hover:bg-[var(--bg-active)] text-[var(--text-secondary)] hover:text-[var(--color-accent)] transition-colors"
-                title={`Theme: ${theme.name}`}
-                aria-label={`Theme: ${theme.name}. Change theme`}
+                title={triggerTitle}
+                aria-label={triggerAriaLabel}
                 aria-haspopup="listbox"
                 aria-expanded={open}
             >

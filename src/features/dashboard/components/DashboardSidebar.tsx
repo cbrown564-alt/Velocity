@@ -95,7 +95,7 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
 
       {!sidebarCollapsed && (
         <>
-          <div className="p-4 border-b border-[var(--border-color-muted)] bg-[var(--bg-app)]">
+          <div className="p-4 border-b border-[var(--border-color-muted)] bg-[var(--bg-panel)]">
             <div className="flex items-center gap-2 mb-4">
               <Logo size={24} />
               <span className="font-semibold text-[var(--text-primary)] tracking-tight">Velocity</span>
@@ -132,7 +132,7 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
             </div>
           </div>
 
-          <div className="p-3 border-t border-[var(--border-color)] bg-[var(--bg-app)]">
+          <div className="p-3 border-t border-[var(--border-color)] bg-[var(--bg-panel)]">
             <div className="flex items-center gap-3 text-xs text-[var(--text-secondary)] px-2">
               <CheckCircle2 size={12} className="text-[var(--color-success)]" />
               <span className="truncate">{filename} ({totalRows} rows)</span>

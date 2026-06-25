@@ -14,7 +14,8 @@ describe('ThemeSwitcher', () => {
 
     it('renders the palette trigger button', () => {
         render(<ThemeSwitcher />, { wrapper: Wrapper });
-        expect(screen.getByLabelText(/Theme:/)).toBeInTheDocument();
+        expect(screen.getByLabelText(/Theme: Soft Machine/i)).toBeInTheDocument();
+        expect(screen.getByTitle(/Next: Mission Control/i)).toBeInTheDocument();
     });
 
     it('opens dropdown when trigger is clicked', () => {
@@ -51,5 +52,6 @@ describe('ThemeSwitcher', () => {
         fireEvent.click(screen.getByLabelText(/Theme:/));
         fireEvent.click(screen.getByText('Mission Control'));
         expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
+        expect(screen.getByTitle(/Theme: Mission Control\. Next: Liquid Glass/i)).toBeInTheDocument();
     });
 });

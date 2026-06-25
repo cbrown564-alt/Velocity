@@ -169,18 +169,18 @@ export const liquidGlass: Theme = {
 
         // Viz
         vizPrimary: '#007AFF',
-        vizSecondary: '#5AC8FA', // Cyan
+        vizSecondary: '#1D6FDB',
         vizMuted: 'rgba(255, 255, 255, 0.5)',
         vizStroke: 'rgba(0, 0, 0, 0.2)',
         vizGrid: 'rgba(0, 0, 0, 0.05)',
         vizTextValue: '#1d1d1f',
-        vizTextAxis: '#86868b',
-        vizPalette1: '#0066CC',
-        vizPalette2: '#248A3D',
-        vizPalette3: '#C93400',
-        vizPalette4: '#D70040',
-        vizPalette5: '#8944AB',
-        vizPalette6: '#3634A3',
+        vizTextAxis: '#4E5563',
+        vizPalette1: '#0058CC',
+        vizPalette2: '#1F7A36',
+        vizPalette3: '#B84A00',
+        vizPalette4: '#B0003B',
+        vizPalette5: '#6C36A0',
+        vizPalette6: '#2E3F9E',
         vizDiverging1: '#007AFF',
         vizDiverging2: '#5AC8FA',
         vizDiverging3: '#e0e5ec',
@@ -206,19 +206,19 @@ export const liquidGlass: Theme = {
     shadow: 'xl', // We will augment this with CSS
     materials: {
         surface: {
-            background: 'rgba(240, 245, 255, 0.15)', // Barely there
-            backdropFilter: 'blur(30px) saturate(140%)',
-            border: 'rgba(255, 255, 255, 0.2)',
+            background: 'rgba(240, 245, 255, 0.22)',
+            backdropFilter: 'blur(34px) saturate(155%)',
+            border: 'rgba(255, 255, 255, 0.28)',
         },
         panel: {
-            background: 'rgba(255, 255, 255, 0.3)', // Matches card
-            backdropFilter: 'blur(25px) saturate(180%)',
-            border: 'rgba(255, 255, 255, 0.3)',
+            background: 'rgba(255, 255, 255, 0.4)',
+            backdropFilter: 'blur(32px) saturate(190%)',
+            border: 'rgba(255, 255, 255, 0.45)',
         },
         overlay: {
-            background: 'rgba(255, 255, 255, 0.4)', // Matches popover
-            backdropFilter: 'blur(40px) saturate(200%)',
-            border: 'rgba(255, 255, 255, 0.4)',
+            background: 'rgba(255, 255, 255, 0.48)',
+            backdropFilter: 'blur(42px) saturate(210%)',
+            border: 'rgba(255, 255, 255, 0.5)',
         }
     },
     typography: {

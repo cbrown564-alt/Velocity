@@ -42,7 +42,7 @@ Log one entry per `UXR-###`. Update **Status** when fixed: `open` | `confirmed` 
 
 ## UXR-002 — Workspace → Canvas transition is an instant cut
 
-- **Status:** open
+- **Status:** fixed (June 25, 2026; `AppModeRouter` now uses a motion fade for dashboard entry and preserves reduced-motion behavior)
 - **Severity:** P2
 - **Mode:** Workspace → Canvas
 - **Session:** 0
@@ -405,7 +405,7 @@ Log one entry per `UXR-###`. Update **Status** when fixed: `open` | `confirmed` 
 
 ## UXR-027 — Theme toggle tooltip omits Liquid Glass
 
-- **Status:** open
+- **Status:** fixed (June 25, 2026; `ThemeSwitcher` trigger copy now announces current + next theme across all three themes)
 - **Severity:** P2
 - **Mode:** Canvas
 - **Session:** 7
@@ -421,7 +421,7 @@ Log one entry per `UXR-###`. Update **Status** when fixed: `open` | `confirmed` 
 
 ## UXR-028 — No theme control on Workspace
 
-- **Status:** open
+- **Status:** fixed (June 25, 2026; `WorkspaceView` header includes shared `ThemeSwitcher`)
 - **Severity:** P2
 - **Mode:** Workspace
 - **Session:** 7
@@ -437,7 +437,7 @@ Log one entry per `UXR-###`. Update **Status** when fixed: `open` | `confirmed` 
 
 ## UXR-029 — Theme toggle icon implies light/dark only
 
-- **Status:** open
+- **Status:** fixed (June 25, 2026; shared `ThemeSwitcher` uses neutral palette icon + theme-name copy)
 - **Severity:** P3
 - **Mode:** Canvas
 - **Session:** 7
@@ -451,7 +451,7 @@ Log one entry per `UXR-###`. Update **Status** when fixed: `open` | `confirmed` 
 
 ## UXR-030 — Liquid Glass blur under-realized on Canvas chrome
 
-- **Status:** open
+- **Status:** fixed (June 25, 2026; Canvas chrome panels use stronger Liquid Glass material tokens and shared `surface-panel` treatment)
 - **Severity:** P2
 - **Mode:** Canvas
 - **Session:** 7
@@ -467,7 +467,7 @@ Log one entry per `UXR-###`. Update **Status** when fixed: `open` | `confirmed` 
 
 ## UXR-031 — Liquid Glass chart palette low contrast
 
-- **Status:** open
+- **Status:** fixed (June 25, 2026; `liquidGlass` viz palette + axis text tokens retuned for stronger chart/legend contrast)
 - **Severity:** P2
 - **Mode:** Canvas (chart view)
 - **Session:** 7
@@ -591,7 +591,7 @@ Log one entry per `UXR-###`. Update **Status** when fixed: `open` | `confirmed` 
 
 ## UXR-039 — Engine initialization has no progress feedback
 
-- **Status:** open
+- **Status:** fixed (June 25, 2026; splash now surfaces init phase/detail text and load-progress percent when available)
 - **Severity:** P2
 - **Mode:** Global (splash)
 - **Session:** 9
@@ -656,7 +656,7 @@ Log one entry per `UXR-###`. Update **Status** when fixed: `open` | `confirmed` 
 
 ## UXR-043 — Purge Corruption has no confirmation
 
-- **Status:** open
+- **Status:** fixed (June 25, 2026; destructive purge now routes through `ConfirmModal` before execution)
 - **Severity:** P2
 - **Mode:** Canvas (Storage Health)
 - **Session:** 10
@@ -740,7 +740,7 @@ Log one entry per `UXR-###`. Update **Status** when fixed: `open` | `confirmed` 
 
 ## UXR-048 — No minimum viewport guard or desktop guidance
 
-- **Status:** open
+- **Status:** fixed (June 25, 2026; global desktop-recommended banner appears below 1280px viewport width)
 - **Severity:** P3
 - **Mode:** Global
 - **Session:** 11

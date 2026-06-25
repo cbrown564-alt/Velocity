@@ -30,7 +30,7 @@ export const AnalysisShelf: React.FC<AnalysisShelfProps> = ({
   onWeightRemove,
   onToggleWeight,
 }) => (
-  <div className={`shrink-0 surface-panel bg-[var(--bg-app)] border-b border-[var(--border-color)] flex flex-col gap-3 shadow-xs z-0 transition-all duration-300 overflow-hidden ${focusMode ? 'h-0 py-0 opacity-0 border-none' : ''} ${!focusMode ? 'px-4 xl:px-6 py-4 opacity-100' : ''}`}>
+  <div className={`shrink-0 surface-panel bg-[var(--bg-panel)] border-b border-[var(--border-color)] flex flex-col gap-3 shadow-xs z-0 transition-all duration-300 overflow-hidden ${focusMode ? 'h-0 py-0 opacity-0 border-none' : ''} ${!focusMode ? 'px-4 xl:px-6 py-4 opacity-100' : ''}`}>
     {!focusMode && !draggingId && tableConfig.rowVars.length === 0 && !tableConfig.colVar && !(dataset?.weightVariable || rememberedWeightVar) && (
       <div className="flex items-center gap-3 text-xs text-[var(--text-secondary)]">
         <Plus size={14} className="text-[var(--color-accent)]" />
