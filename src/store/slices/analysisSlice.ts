@@ -37,6 +37,7 @@ import type { SlideAnalysisState } from '../../types/slides';
 import { buildCrosstabRequest } from '../../core/analysis/buildCrosstabRequest';
 import { mapCrosstabRows } from '../../core/analysis/mapCrosstabRows';
 import type { CrosstabSqlRow } from '../../core/analysis/crosstab/types';
+import { recordPilotEvent } from '../../services/pilotOnboarding';
 
 // ============================================================================
 // Slice State & Actions
@@ -173,6 +174,15 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
                 isQuerying: false,
                 queryError: null,
             });
+
+            if (tableConfig.colVar && mappedData.length > 0) {
+                recordPilotEvent('first_crosstab', {
+                    rowVars: tableConfig.rowVars,
+                    colVar: tableConfig.colVar,
+                    rowCount: mappedData.length,
+                    weighted: !!dataset?.weightVariable,
+                });
+            }
         } catch (error: unknown) {
             const message =
                 error instanceof Error ? error.message : 'Couldn\'t run analysis';

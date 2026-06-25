@@ -17,6 +17,7 @@ import { resolveAnalysisVariables } from '../../core/export/resolveAnalysisVaria
 import { runCrosstabForExport } from '../../core/export/runCrosstabForExport';
 import type { SlideAnalysisState } from '../../types/slides';
 import { ModalShell } from './ModalShell';
+import { recordPilotEvent } from '../../services/pilotOnboarding';
 
 interface ExportModalProps {
     isOpen: boolean;
@@ -203,6 +204,12 @@ export const ExportModal: React.FC<ExportModalProps> = ({
             link.click();
             document.body.removeChild(link);
             URL.revokeObjectURL(url);
+
+            recordPilotEvent(format === 'pptx' ? 'pptx_exported' : 'xlsx_exported', {
+                title,
+                slideCount: slideIdsForScope.length,
+                scope,
+            });
 
             setExportSuccess(true);
             setTimeout(() => {
@@ -490,6 +497,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                                         onClick={handleExport}
                                         className={`${styles.button} ${styles.buttonPrimary}`}
                                         disabled={isExportDisabled}
+                                        data-testid="export-modal-submit"
                                     >
                                         {isExporting ? (
                                             <>

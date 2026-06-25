@@ -15,6 +15,7 @@ import type { DataSlice, WorkspaceDatasetOpenInput } from './types';
 import type { DataSliceGet, DataSliceSet } from './sliceContext';
 import { getRunAnalysis as resolveRunAnalysis } from './sliceContext';
 import { normalizeVariable, normalizeVariableSet } from './variableNormalization';
+import { recordPilotEvent } from '../../../services/pilotOnboarding';
 
 function postLoadAnalysisReset() {
     return {
@@ -102,6 +103,12 @@ export function createDatasetActions(
             }
 
             void get().flushPersistedData();
+            recordPilotEvent('canvas_ready', {
+                fileName,
+                format: 'csv',
+                rowCount: response.rowCount,
+                variableCount: variables.length,
+            });
         },
 
         loadSAV: async (fileName: string, buffer: ArrayBuffer, options?: { datasetId?: string; opfsFileKey?: string }) => {
@@ -163,6 +170,13 @@ export function createDatasetActions(
                 });
             }
             void get().flushPersistedData();
+            recordPilotEvent('canvas_ready', {
+                fileName,
+                format: 'sav',
+                rowCount: response.rowCount,
+                variableCount: variables.length,
+                opfsFileKey: options?.opfsFileKey ?? null,
+            });
         },
 
         loadSAVMetadata: async (fileName: string, buffer: ArrayBuffer) => {

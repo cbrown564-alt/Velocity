@@ -42,7 +42,7 @@ npm run test:mutation # Stryker mutation testing for src/core/
 npm run typecheck:mcp # MCP package/server TypeScript contract
 npm run test:ui       # Interactive UI
 npm run test:e2e      # Playwright E2E (CI e2e job)
-npm run test:parity   # R parity (optional; not in default CI)
+npm run test:parity   # WASM vs Node adapter parity on golden fixtures (optional; not in default CI)
 ```
 
 ## 4. Directory Structure

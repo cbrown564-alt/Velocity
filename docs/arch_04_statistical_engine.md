@@ -1,6 +1,6 @@
 # Architecture 04: The Statistical Engine
 
-**Status:** Phase 1 Implemented (with known gaps)
+**Status:** Phase 2 core implemented (weighted means/stddev validated; see `tests/golden/spss_parity.test.ts`, `r_parity.test.ts`, `pilot_02_trust_pack.md`)
 **Reference:** [Displayr Statistical Methodology](https://www.displayr.com/)
 **Owner:** Analysis Engine Core (`src/core/analysis/`)
 
@@ -47,8 +47,8 @@ Visual indicators (Green/Red Arrows) are determined by testing the **Cell** agai
 To maintain "Speed > Power," certain complex decompositions use defensible approximations:
 
 *   **Rest ESS (Proportions):** Approximated using the efficiency factor ($ESS/N$) of the total column applied to the rest-base.
-*   **Rest Variance (Means):** Currently approximates $s_{rest} \approx s_{total}$ for large samples. Exact variance decomposition requires tracking `SUM(x²)` per cell, which is deferred to Phase 2.
-*   **Weighted Mean/StdDev:** **[CRITICAL GAP]** The current engine implementation contains a bug where means are calculated unweighted. Fixing this is a Priority 1 task.
+*   **Rest Variance (Means):** Currently approximates $s_{rest} \approx s_{total}$ for large samples. Exact variance decomposition requires tracking `SUM(x²)` per cell, which is deferred.
+*   **Weighted Mean/StdDev:** Implemented via weighted SQL aggregates; validated by `tests/golden/spss_parity.test.ts`, `weighted_validation` golden fixture, and R parity tests 4–5, 7, 9, 12 on `bsa93.sav`.
 
 ## 3. Implementation Details
 
@@ -61,9 +61,9 @@ Velocity's engine has been refactored into a platform-agnostic **Headless Core**
 ## 4. Roadmap
 
 ### Phase 2: Correctness & Trust
-*   **Weighted Statistics Fix:** Implement proper weighted mean/stddev via two-pass queries or subqueries.
-*   **Validation Suite:** Continuous Parity Testing (decimal-for-decimal) against SPSS Statistics outputs.
-*   **Exact Rest Variance:** Capture `SUM(x²)` to remove approximations in means testing.
+*   **Weighted Statistics:** Shipped and validated (see `docs/pilot_02_trust_pack.md`).
+*   **Validation Suite:** R parity on real SAVs, SPSS-style golden fixtures, adapter parity (`npm run test:parity`).
+*   **Exact Rest Variance:** Capture `SUM(x²)` to remove approximations in means testing (deferred).
 
 ### Phase 3+: Premium Features
 *   **Pairwise Column Comparisons:** Side-by-side significance (Letters A/B/C) with $O(N^2)$ complexity.

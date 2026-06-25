@@ -1,29 +1,29 @@
 {
-  "generatedAt": "2026-02-25T14:14:52.941Z",
+  "generatedAt": "2026-06-25T06:46:41.776Z",
   "datasets": [
     {
       "key": "sleep",
-      "filePath": "/Users/cobro/Code/Velocity/test_data/sleep.sav",
+      "filePath": "/Users/cobro/code/Velocity/test_data/sleep.sav",
       "fileSizeBytes": 26781,
       "metadataParse": {
         "result": {
           "rowCount": 271,
           "variableCount": 55
         },
-        "durationMs": 7.553334000000007,
-        "peakRssBytes": 164577280,
-        "startRssBytes": 124747776,
-        "endRssBytes": 164577280
+        "durationMs": 11.01762500000001,
+        "peakRssBytes": 151437312,
+        "startRssBytes": 111673344,
+        "endRssBytes": 151437312
       },
       "fullParse": {
         "result": {
           "rowCount": 271,
           "variableCount": 55
         },
-        "durationMs": 4.327875000000006,
-        "peakRssBytes": 165036032,
-        "startRssBytes": 164577280,
-        "endRssBytes": 165036032
+        "durationMs": 6.875917000000015,
+        "peakRssBytes": 152043520,
+        "startRssBytes": 151437312,
+        "endRssBytes": 152043520
       },
       "windowParse": {
         "result": {
@@ -32,20 +32,72 @@
           "chunkSize": 5000,
           "windows": 1
         },
-        "durationMs": 7.475458000000003,
-        "peakRssBytes": 165445632,
-        "startRssBytes": 165036032,
-        "endRssBytes": 165445632
+        "durationMs": 9.27495799999997,
+        "peakRssBytes": 152092672,
+        "startRssBytes": 152043520,
+        "endRssBytes": 152092672
       },
       "nodeIngestion": {
         "result": {
           "rowCount": 271,
           "variableCount": 59
         },
-        "durationMs": 206.454584,
-        "peakRssBytes": 228376576,
-        "startRssBytes": 165445632,
-        "endRssBytes": 228376576
+        "durationMs": 118.10179200000005,
+        "peakRssBytes": 217923584,
+        "startRssBytes": 152092672,
+        "endRssBytes": 217923584
+      },
+      "parity": {
+        "metadataVsFullRows": true,
+        "metadataVsWindowRows": true,
+        "metadataVsNodeRows": true
+      }
+    },
+    {
+      "key": "wvs7",
+      "filePath": "/Users/cobro/code/Velocity/test_data/WVS/WVS_Cross-National_Wave_7_spss_v6_0.sav",
+      "fileSizeBytes": 185163494,
+      "metadataParse": {
+        "result": {
+          "rowCount": 97220,
+          "variableCount": 613
+        },
+        "durationMs": 70.93783400000007,
+        "peakRssBytes": 533889024,
+        "startRssBytes": 397869056,
+        "endRssBytes": 533889024
+      },
+      "fullParse": {
+        "result": {
+          "rowCount": 97220,
+          "variableCount": 613
+        },
+        "durationMs": 2283.2862499999997,
+        "peakRssBytes": 1757085696,
+        "startRssBytes": 533905408,
+        "endRssBytes": 1757085696
+      },
+      "windowParse": {
+        "result": {
+          "rowCount": 97220,
+          "variableCount": 613,
+          "chunkSize": 5000,
+          "windows": 20
+        },
+        "durationMs": 2914.853333,
+        "peakRssBytes": 1757085696,
+        "startRssBytes": 1757085696,
+        "endRssBytes": 1489682432
+      },
+      "nodeIngestion": {
+        "result": {
+          "rowCount": 97220,
+          "variableCount": 693
+        },
+        "durationMs": 17254.699083,
+        "peakRssBytes": 1747189760,
+        "startRssBytes": 1489682432,
+        "endRssBytes": 1182187520
       },
       "parity": {
         "metadataVsFullRows": true,
@@ -55,11 +107,5 @@
     }
   ],
   "skipped": [],
-  "failures": [
-    {
-      "key": "wvs7",
-      "filePath": "/Users/cobro/Code/Velocity/test_data/WVS/WVS_Cross-National_Wave_7_spss_v6_0.sav",
-      "reason": "[SAV] read_stat unavailable and fallback parse would materialize 59,595,860 cells (97,220 rows × 613 variables). This is likely to exceed memory limits. Use an environment with DuckDB read_stat support for this file."
-    }
-  ]
+  "failures": []
 }

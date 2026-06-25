@@ -8,6 +8,7 @@
 import { useCallback } from 'react';
 import { useVelocityStore } from '../../../store';
 import { captureBeforeDatasetSwitch } from '../../../store/datasetSessionCoordinator';
+import { recordPilotEvent } from '../../../services/pilotOnboarding';
 import type { StoredDataset } from '../types';
 
 import type { AppPhase } from '../../../app/types';
@@ -63,6 +64,11 @@ export function useWorkspaceOpen({
     setWorkspaceMode(false);
 
     if (dataset?.id === storedDataset.id) {
+      recordPilotEvent('workspace_reopened', {
+        fileName: storedDataset.fileName,
+        datasetId: storedDataset.id,
+        fromCache: true,
+      });
       setWorkspaceMode(false);
       setMode('dashboard');
       return;
@@ -71,6 +77,10 @@ export function useWorkspaceOpen({
     setMode('uploading');
     try {
       await openWorkspaceDataset(storedDataset);
+      recordPilotEvent('workspace_reopened', {
+        fileName: storedDataset.fileName,
+        datasetId: storedDataset.id,
+      });
       setMode('dashboard');
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : undefined;

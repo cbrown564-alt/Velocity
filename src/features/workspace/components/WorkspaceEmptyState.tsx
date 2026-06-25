@@ -8,6 +8,7 @@ import {
 import { FileUp, Sparkles } from 'lucide-react';
 import { Logo } from '../../../components/common/Logo';
 import styles from './WorkspaceEmptyState.module.css';
+import { PILOT_PRIVACY_DETAIL } from '../../../constants/pilotCopy';
 
 export const WorkspaceEmptyState: React.FC<{
   onUpload: () => void;
@@ -21,9 +22,7 @@ export const WorkspaceEmptyState: React.FC<{
     >
       <Logo size={48} className={styles.emptyLogo} />
       <h2>Welcome to Velocity</h2>
-      <p>
-        Upload your first dataset to begin analysis. Your data stays securely on your device—nothing is ever uploaded to a server.
-      </p>
+      <p>{PILOT_PRIVACY_DETAIL}</p>
       <div className={styles.emptyActions}>
         <motion.button
           className={styles.uploadCard}
@@ -33,7 +32,7 @@ export const WorkspaceEmptyState: React.FC<{
             <FileUp size={24} />
           </div>
           <span className={styles.cardTitle}>Upload Dataset</span>
-          <span className={styles.cardDesc}>.SAV, .CSV, or .Arrow</span>
+          <span className={styles.cardDesc}>.SAV or .CSV</span>
         </motion.button>
         <motion.button
           className={styles.exampleCard}

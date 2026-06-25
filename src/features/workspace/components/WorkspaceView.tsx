@@ -49,6 +49,8 @@ import { WorkspaceDatasetCard } from './WorkspaceDatasetCard';
 import { WorkspaceDatasetListItem } from './WorkspaceDatasetListItem';
 import { WorkspaceProjectCard } from './WorkspaceProjectCard';
 import { WorkspaceEmptyState } from './WorkspaceEmptyState';
+import { PilotEnvironmentBanner } from '../../../components/common/PilotEnvironmentBanner';
+import { downloadPilotEventLog } from '../../../services/pilotOnboarding';
 import type { StoredDataset, Project, WorkspaceViewProps } from '../types';
 
 export type { StoredDataset, Project, WorkspaceState } from '../types';
@@ -287,6 +289,17 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
               </motion.button>
             )}
             <motion.button
+              className={styles.importButton}
+              onClick={downloadPilotEventLog}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              title="Download local pilot workflow event log (JSON)"
+              data-testid="pilot-event-log-download"
+            >
+              <Download size={16} />
+              Pilot Log
+            </motion.button>
+            <motion.button
               className={styles.uploadButton}
               onClick={onUploadFile}
               whileHover={{ scale: 1.02 }}
@@ -298,6 +311,8 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
           </div>
         </div>
       </header>
+
+      <PilotEnvironmentBanner />
 
       {showWelcomeBack && resumeCandidate && (
         <WelcomeBackCard

@@ -80,9 +80,9 @@ Completed Phase 1-4, stabilization, UI polish, engine/MCP, export, parity, and h
 
 | ID | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence / validation |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| PILOT-0 | Strategy / Validation | Pilot thesis, ICP screen, workflow definition, success metrics, and pricing hypotheses for the SAV-to-deck wedge | External market assessment | Not started | No | A,V | One-page pilot brief; target workflow: useful crosstab <5 min, acceptable editable slide <15 min, output not rebuilt from scratch; 5-8 paid-pilot qualification criteria |
-| PILOT-1 | Release / Packaging | Deployable pilot build with durable project flow, clear privacy language, browser-limit warnings, and onboarding instrumentation | PILOT-0, STAB-UI-D preferred | Not started | Yes | T,L,U,I,A,V | Pilot build URL/package; upload/reopen/export E2E; privacy copy review; browser-limit smoke matrix on representative Mac/Windows hardware; onboarding event capture |
-| PILOT-2 | Trust Evidence | Buyer-facing trust pack: parity results, performance benchmarks, missing-value behavior, weighting assumptions, known unsupported cases, and reproducible methodology notes | PILOT-0 | Not started | No | G,A,V | Published evidence page/doc generated from `npm run test:parity`, `npm run benchmark:sav`, golden fixtures, and manual real-SAV edge-case notes |
+| PILOT-0 | Strategy / Validation | Pilot thesis, ICP screen, workflow definition, success metrics, and pricing hypotheses for the SAV-to-deck wedge | External market assessment | Done | No | A,V | [`docs/pilot_00_brief.md`](pilot_00_brief.md) — thesis, workflow targets (<5 min crosstab, <15 min slide), 8 qualification criteria, 3 pricing hypotheses, scope boundaries; gate A conditional pass (June 2026 sub-agent audit) |
+| PILOT-1 | Release / Packaging | Deployable pilot build with durable project flow, clear privacy language, browser-limit warnings, and onboarding instrumentation | PILOT-0, STAB-UI-D preferred | Done | Yes | T,L,U,I,A,V | [`docs/pilot_01_packaging.md`](pilot_01_packaging.md) — v0.1.0-pilot build, privacy banner, browser checks, local event log (`pilotOnboarding.ts`), `tests/e2e/pilot-workflow.spec.ts` |
+| PILOT-2 | Trust Evidence | Buyer-facing trust pack: parity results, performance benchmarks, missing-value behavior, weighting assumptions, known unsupported cases, and reproducible methodology notes | PILOT-0 | Done | No | G,A,V | [`docs/pilot_02_trust_pack.md`](pilot_02_trust_pack.md) — R/SPSS/golden parity, adapter parity (8/8, 2026-06-25), fresh `benchmark:sav` (sleep + WVS7), missing-value/weighting/limitations sections; `arch_04` weighted-mean gap corrected |
 | PILOT-3 | PowerPoint Loop | Complete the high-value PPTX loop: client template import/map, editable object preservation, saved slide recipes, dataset/wave replacement, review-before-export | PILOT-1, PILOT-2 | Not started | Yes | T,L,U,I,A,V | Template fixture tests; PPTX golden/semantic checks; manual blind review against incumbent/current workflow; recipe refresh preserves analyst edits where specified |
 | PILOT-4a | Processing Discovery | Observe pilot files and classify which prep gaps actually block the Friday-4pm job: raking/RIM, nets, derived variables, banner plans, reshaping, repeatable recipes | PILOT-0 | Not started | No | V,A | 10-15 project/file review notes; ranked blockers by frequency/severity; explicit "do not build yet" list |
 | PILOT-4b | Minimum Viable Processing | Implement only the smallest processing layer required by PILOT-4a: reusable derived variables/nets, saved banner/break plans, common transformation recipes; raking only if repeatedly pilot-blocking | PILOT-4a | Blocked | Yes | T,L,U,I,G,A,V | Narrow implementation PRs with add-tests-first; transform/session replay tests; dual-state safeguards; pilot unblock evidence |
@@ -101,9 +101,9 @@ Completed Phase 1-4, stabilization, UI polish, engine/MCP, export, parity, and h
 
 #### Recommended Next Pull
 
-1. `PILOT-0`: write the pilot brief and success metrics.
-2. `PILOT-2`: turn existing parity/benchmark evidence into a trust pack.
-3. `PILOT-1`: make the product deployable and instrumented enough for pilots.
+1. `PILOT-6`: recruit paid pilots — deploy per `pilot_01_packaging.md`, collect Pilot Log exports.
+2. `STAB-UI-D`: close P1 UX findings that threaten <5 min / <15 min targets (UXR-037, 040, 010).
+3. `PILOT-3`: complete PPTX template loop once pilots confirm wedge value.
 
 ### 4.2 Active UI Remediation
 

@@ -11,6 +11,7 @@ import {
   assignOpfsKeyAndLoad,
   assignOpfsStorageForUpload,
 } from './assignOpfsKeyAndLoad';
+import { recordPilotEvent } from '../../../services/pilotOnboarding';
 
 type AppMode = 'splash' | 'uploading' | 'dashboard' | 'restoring' | 'metadata';
 
@@ -80,8 +81,14 @@ export function useFileUpload(
 
     setMode('uploading');
 
+    const ext = file.name.toLowerCase().split('.').pop();
+    recordPilotEvent('file_selected', {
+      fileName: file.name,
+      fileSizeMb: Number((file.size / (1024 * 1024)).toFixed(2)),
+      format: ext ?? 'unknown',
+    });
+
     try {
-      const ext = file.name.toLowerCase().split('.').pop();
 
       if (ext === 'sav') {
         const datasetId = crypto.randomUUID();
