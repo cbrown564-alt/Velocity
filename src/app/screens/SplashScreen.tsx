@@ -3,13 +3,17 @@ import { motion } from 'framer-motion';
 import { AlertCircle, BarChart3, LayoutGrid, Loader2 } from 'lucide-react';
 import { useReducedMotion, getMotionProps, DURATIONS } from '../../lib/motion';
 import { getPersistenceDisplayMessage } from '../../lib/persistenceDisplay';
+import { getLoadStageHeadline } from '../../lib/uploadFeedback';
 import type { Dataset } from '../../types/dataset';
 import type { WorkspaceState, Project, StoredDataset } from '../../features/workspace';
 import { WorkspaceView } from '../../features/workspace';
+import type { LoadProgressState, PersistenceState } from '../../store/slices/data/types';
 
 export interface SplashScreenProps {
   isDbReady: boolean;
   initError: string | null;
+  persistenceState: PersistenceState;
+  loadProgress: LoadProgressState | null;
   workspace: WorkspaceState;
   dataset: Dataset | null;
   persistenceError: string | null;
@@ -35,6 +39,8 @@ export interface SplashScreenProps {
 export const SplashScreen: React.FC<SplashScreenProps> = ({
   isDbReady,
   initError,
+  persistenceState,
+  loadProgress,
   workspace,
   dataset,
   persistenceError,
@@ -57,6 +63,9 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
   onDiscard,
 }) => {
   const reducedMotion = useReducedMotion();
+  const initHeadline = loadProgress ? getLoadStageHeadline(loadProgress) : getEngineInitHeadline(persistenceState);
+  const initDetail = loadProgress?.message || getEngineInitDetail(persistenceState);
+  const initPercent = loadProgress ? Math.max(0, Math.min(100, Math.round(loadProgress.progress * 100))) : null;
 
   return (
     <motion.div
@@ -97,7 +106,21 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
             ) : (
               <div className="flex items-center justify-center gap-2">
                 <Loader2 className="w-5 h-5 text-[var(--color-accent)] animate-spin" />
-                <p className="text-sm text-[var(--color-accent)]">Initializing Analysis Engine...</p>
+                <p className="text-sm text-[var(--color-accent)]" data-testid="engine-init-headline">
+                  {initHeadline}
+                </p>
+              </div>
+            )}
+            {!initError && (
+              <div className="space-y-1">
+                <p className="text-xs text-[var(--text-secondary)]" data-testid="engine-init-detail">
+                  {initDetail}
+                </p>
+                {initPercent !== null && (
+                  <p className="text-xs text-[var(--text-tertiary)]" data-testid="engine-init-progress">
+                    {initPercent}% complete
+                  </p>
+                )}
               </div>
             )}
           </div>
@@ -163,3 +186,43 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
     </motion.div>
   );
 };
+
+function getEngineInitHeadline(persistenceState: PersistenceState): string {
+  switch (persistenceState) {
+    case 'checking':
+      return 'Starting analysis engine...';
+    case 'found':
+      return 'Restoring local workspace...';
+    case 'restoring':
+      return 'Restoring dataset...';
+    case 'ready':
+      return 'Preparing workspace...';
+    case 'corrupt':
+      return 'Recovering storage...';
+    case 'error':
+      return 'Engine initialization failed';
+    case 'idle':
+    default:
+      return 'Initializing Analysis Engine...';
+  }
+}
+
+function getEngineInitDetail(persistenceState: PersistenceState): string {
+  switch (persistenceState) {
+    case 'checking':
+      return 'Checking local storage and persistence availability.';
+    case 'found':
+      return 'Verifying saved dataset metadata before opening.';
+    case 'restoring':
+      return 'Applying your last saved analysis context.';
+    case 'ready':
+      return 'Finalizing startup checks.';
+    case 'corrupt':
+      return 'Attempting safe recovery from corrupted cache files.';
+    case 'error':
+      return 'Review the error above and reload to retry initialization.';
+    case 'idle':
+    default:
+      return 'Booting worker runtime and preparing the analysis engine.';
+  }
+}

@@ -1,10 +1,12 @@
 import React from 'react';
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
+import { DURATIONS, getMotionProps, useReducedMotion } from '../../lib/motion';
 import { DashboardShell } from '../../features/dashboard/DashboardShell';
 import type { PersistenceManagerState } from '../../hooks/usePersistenceManager';
 import type { FileUploadState } from '../../features/workspace/hooks/useFileUpload';
 import type { Dataset } from '../../types/dataset';
 import type { LoadProgressState } from '../../store/slices/data/types';
+import type { PersistenceState } from '../../store/slices/data/types';
 import type { WorkspaceState, Project, StoredDataset } from '../../features/workspace';
 import type { AppPhase } from '../types';
 import { MetadataScreen } from '../screens/MetadataScreen';
@@ -26,6 +28,7 @@ export interface AppModeRouterProps {
     metadata?: { datasetName?: string; lastModified?: number };
   } | null;
   persistenceError: string | null;
+  persistenceState: PersistenceState;
   loadProgress: LoadProgressState | null;
   loadStageHeadline: string;
   persistence: PersistenceManagerState;
@@ -58,6 +61,7 @@ export const AppModeRouter: React.FC<AppModeRouterProps> = ({
   workspace,
   persistedDataInfo,
   persistenceError,
+  persistenceState,
   loadProgress,
   loadStageHeadline,
   persistence,
@@ -80,8 +84,11 @@ export const AppModeRouter: React.FC<AppModeRouterProps> = ({
   onReturnToWorkspace,
   onOpenSessionImport,
   onExportSession,
-}) => (
-  <>
+}) => {
+  const reducedMotion = useReducedMotion();
+
+  return (
+    <>
     <AnimatePresence>
       {phase === 'uploading' && <UploadProgressBar progress={loadProgress} />}
     </AnimatePresence>
@@ -105,6 +112,8 @@ export const AppModeRouter: React.FC<AppModeRouterProps> = ({
           workspace={workspace}
           dataset={dataset}
           persistenceError={persistenceError}
+          persistenceState={persistenceState}
+          loadProgress={loadProgress}
           opfsRehydrateError={persistence.opfsRehydrateError}
           opfsErrorHint={persistence.opfsErrorHint ?? undefined}
           onOpenDataset={onOpenDataset}
@@ -123,6 +132,24 @@ export const AppModeRouter: React.FC<AppModeRouterProps> = ({
           onRebuildFromOpfs={persistence.rebuildFromOpfsSource}
           onDiscard={onDiscard}
         />
+      )}
+      {phase === 'dashboard' && (
+        <motion.div
+          key="analysis-dashboard"
+          {...getMotionProps({
+            preset: 'fade',
+            duration: reducedMotion ? DURATIONS.instant : DURATIONS.fast,
+            reducedMotion,
+          })}
+          className="h-full"
+        >
+          <DashboardShell
+            persistence={persistence}
+            onReturnToWorkspace={onReturnToWorkspace}
+            onOpenSessionImport={onOpenSessionImport}
+            onExportSession={onExportSession}
+          />
+        </motion.div>
       )}
     </AnimatePresence>
 
@@ -174,13 +201,6 @@ export const AppModeRouter: React.FC<AppModeRouterProps> = ({
       )}
     </AnimatePresence>
 
-    {phase === 'dashboard' && (
-      <DashboardShell
-        persistence={persistence}
-        onReturnToWorkspace={onReturnToWorkspace}
-        onOpenSessionImport={onOpenSessionImport}
-        onExportSession={onExportSession}
-      />
-    )}
-  </>
-);
+    </>
+  );
+};

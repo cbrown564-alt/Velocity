@@ -7,6 +7,7 @@ import { getLoadStageHeadline } from './lib/uploadFeedback';
 import { ToastLayer } from './components/common/ToastLayer';
 import { CommandPalette } from './components/common/CommandPalette';
 import { KeyboardShortcuts } from './components/common/KeyboardShortcuts';
+import { DesktopRecommendationBanner } from './components/common/DesktopRecommendationBanner';
 import { AppModeRouter } from './app/components/AppModeRouter';
 import { ModalHost } from './app/components/ModalHost';
 import { useAppOverlay } from './app/hooks/useAppOverlay';
@@ -53,6 +54,7 @@ export default function App() {
     workspace,
     persistedDataInfo,
     persistenceError,
+    persistenceState,
     loadProgress,
     drillDown,
     recodeModal,
@@ -85,6 +87,8 @@ export default function App() {
         accept=".csv,.sav"
         data-testid="dataset-upload-input"
       />
+
+      <DesktopRecommendationBanner />
 
       <ModalHost
         overlay={overlay.overlay}
@@ -128,6 +132,7 @@ export default function App() {
         workspace={workspace}
         persistedDataInfo={persistedDataInfo}
         persistenceError={persistenceError}
+        persistenceState={persistenceState}
         loadProgress={loadProgress}
         loadStageHeadline={loadStageHeadline}
         persistence={persistence}
