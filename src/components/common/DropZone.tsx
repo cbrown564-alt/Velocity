@@ -80,6 +80,7 @@ export const DropZone: React.FC<DropZoneProps> = ({
                 onClick={onToggleWeight}
                 className="ml-1 p-0.5 rounded transition-colors hover:bg-[var(--bg-active)]"
                 title={weightEnabled ? 'Disable weighting' : 'Enable weighting'}
+                aria-label={weightEnabled ? `Disable weighting for ${weightVar.name}` : `Enable weighting for ${weightVar.name}`}
               >
                 {weightEnabled
                   ? <ToggleRight size={18} className="text-[var(--color-accent)]" />
@@ -92,6 +93,7 @@ export const DropZone: React.FC<DropZoneProps> = ({
             <button
               onClick={() => onRemove(weightVar.id)}
               className="p-1 text-[var(--text-secondary)] hover:text-[var(--color-accent)] hover:bg-[var(--bg-active)] rounded-full transition-colors"
+              aria-label={`Remove weight variable ${weightVar.name}`}
             >
               <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -181,6 +183,7 @@ export const DropZone: React.FC<DropZoneProps> = ({
             <button
               onClick={() => onRemove(set.id)}
               className="ml-2 p-1 text-[var(--text-secondary)] hover:text-[var(--color-accent)] hover:bg-[var(--bg-active)] rounded-full transition-colors"
+              aria-label={`Remove column variable ${set.name}`}
             >
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="18" y1="6" x2="6" y2="18"></line>

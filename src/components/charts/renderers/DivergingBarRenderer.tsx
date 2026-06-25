@@ -247,7 +247,7 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
                         {legendItems.map((item) => (
                             <div key={item.label} className="flex items-center gap-1">
                                 <span className="w-3 h-3 rounded-[2px]" style={{ backgroundColor: item.color }} />
-                                <span className="truncate max-w-[100px]" title={item.label}>{item.label}</span>
+                                <span className="max-w-[180px] whitespace-normal break-words leading-tight" title={item.label}>{item.label}</span>
                             </div>
                         ))}
                     </div>

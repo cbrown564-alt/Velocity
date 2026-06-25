@@ -119,6 +119,25 @@ describe('DropZone', () => {
             expect(screen.getByText('Overall Satisfaction')).toBeInTheDocument();
         });
 
+        it('exposes an accessible name for column chip removal', () => {
+            const onRemove = vi.fn();
+
+            renderWithDnd(
+                <DropZone
+                    id="drop-zone-columns"
+                    type="column"
+                    label="Columns"
+                    active={false}
+                    currentVariables={[mockNominalSet]}
+                    onRemove={onRemove}
+                />
+            );
+
+            const removeButton = screen.getByRole('button', { name: /remove column variable gender/i });
+            fireEvent.click(removeButton);
+            expect(onRemove).toHaveBeenCalledWith('set_gender');
+        });
+
         it('calls onRemove when remove button is clicked', () => {
             const onRemove = vi.fn();
 

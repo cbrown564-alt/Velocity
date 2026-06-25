@@ -191,7 +191,8 @@ export const StackedBarRenderer: React.FC<StackedBarRendererProps> = ({
                                         className="text-[11px] fill-[var(--viz-text-axis)]"
                                         style={{ fontFamily: 'var(--font-body)' }}
                                     >
-                                        {(label || '').length > 12 ? (label || '').substring(0, 10) + '...' : (label || '')}
+                                        {label ? <title>{label}</title> : null}
+                                        {label || ''}
                                     </text>
                                 </g>
                             );

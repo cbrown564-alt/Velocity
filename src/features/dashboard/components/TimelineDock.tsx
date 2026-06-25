@@ -175,6 +175,8 @@ const SlideThumb: React.FC<SlideThumbProps> = ({ slide, index, isActive, hasUnsa
                     whileHover={reducedMotion ? undefined : { y: -1 }}
                     whileTap={reducedMotion ? undefined : { scale: 0.97 }}
                     transition={{ duration: reducedMotion ? 0.01 : 0.15 }}
+                    title={displayLabel}
+                    aria-label={`Slide ${index + 1}: ${displayLabel}`}
                     className={`
                         relative flex items-center gap-1.5
                         h-7 px-2.5 rounded-md
@@ -212,8 +214,8 @@ const SlideThumb: React.FC<SlideThumbProps> = ({ slide, index, isActive, hasUnsa
 
                     {/* Truncated auto-title (only show on active or hover) */}
                     <span className={`
-                        max-w-[70px] truncate transition-all duration-150
-                        ${isActive ? 'opacity-100' : 'max-w-0 opacity-0 group-hover:max-w-[70px] group-hover:opacity-70'}
+                        max-w-[120px] truncate transition-all duration-150
+                        ${isActive ? 'opacity-100' : 'opacity-70'}
                     `}
                         style={{ fontFamily: 'var(--font-body, sans-serif)', fontWeight: 400 }}
                     >

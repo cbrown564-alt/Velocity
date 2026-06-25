@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { StatisticsStatusBar } from './StatisticsStatusBar';
 import type { Variable } from '../../types';
 
@@ -43,5 +43,21 @@ describe('StatisticsStatusBar chi-square styling (UXP-034)', () => {
     expect(badge.className).toMatch(/chiSquareInsignificant/);
     expect(badge.className).not.toMatch(/chiSquareSignificant/);
     expect(badge).toHaveTextContent('Independent');
+  });
+
+  it('renders statistical settings in a fixed dialog popover', () => {
+    render(
+      <StatisticsStatusBar
+        analysisSettings={baseSettings}
+        tableStats={{
+          chiSquare: { chiSquare: 8.2, df: 4, pValue: 0.084, cramersV: 0.19 },
+        }}
+        colVariable={colVariable}
+        overlapCorrected={false}
+      />
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: /statistical settings/i }));
+    expect(screen.getByRole('dialog', { name: /statistical settings/i })).toBeInTheDocument();
   });
 });

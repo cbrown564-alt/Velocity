@@ -65,12 +65,21 @@ describe('SlideContainer', () => {
         expect(screen.getByText('Table main does not exist')).toBeInTheDocument();
     });
 
+  it('announces loading state to assistive tech while querying', () => {
+    useVelocityStore.setState({ isQuerying: true });
+    const { container } = render(<SlideContainer />);
+
+    const analysisRegion = container.firstElementChild as HTMLElement;
+    expect(analysisRegion).toHaveAttribute('aria-busy', 'true');
+    expect(screen.getByRole('status')).toHaveTextContent('Updating analysis results');
+  });
+
     it('uses theme token background classes for the 16:9 canvas', () => {
         const { container } = render(<SlideContainer />);
         const canvas = container.querySelector('div[style*="aspect-ratio"]') as HTMLDivElement | null;
 
         expect(canvas).toBeInTheDocument();
-        expect(canvas?.className).toContain('bg-[var(--mat-panel-bg,var(--bg-panel))]');
+        expect(canvas?.className).toContain('surface-panel');
         expect(canvas?.className).not.toContain('bg-white');
     });
 

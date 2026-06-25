@@ -75,6 +75,7 @@ describe('TimelineDock', () => {
         render(<TimelineDock />);
 
         expect(screen.getAllByText('Second Label').length).toBeGreaterThan(0);
+        expect(screen.getByRole('button', { name: /slide 2: second label/i })).toBeInTheDocument();
     });
 
     it('updates the active slide thumbnail label when the slide title changes', () => {

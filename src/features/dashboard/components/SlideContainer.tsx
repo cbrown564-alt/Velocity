@@ -223,9 +223,14 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
     };
 
     return (
-        <div className={`flex-1 flex flex-col items-center justify-center ${focusMode ? 'p-2' : 'p-6'} bg-glass-app overflow-y-auto ${className}`}>
+        <div
+            className={`flex-1 flex flex-col items-center justify-center ${focusMode ? 'p-2' : 'p-6'} bg-glass-app overflow-y-auto ${className}`}
+            aria-busy={isQuerying}
+            aria-live="polite"
+        >
+            {isQuerying && <div className="sr-only" role="status">Updating analysis results</div>}
             <div
-                className="w-full max-w-[1200px] bg-[var(--mat-panel-bg,var(--bg-panel))] backdrop-blur-[var(--mat-panel-filter,0)] rounded-xl shadow-md border border-[var(--border-color)] overflow-hidden flex flex-col"
+                className="surface-panel w-full max-w-[1200px] rounded-xl shadow-md border border-[var(--border-color)] overflow-hidden flex flex-col"
                 style={{ aspectRatio: '16/9', minHeight: focusMode ? '640px' : '600px' }}
             >
                 <div className={focusMode ? 'px-4 pt-4' : 'px-6 pt-6'}>

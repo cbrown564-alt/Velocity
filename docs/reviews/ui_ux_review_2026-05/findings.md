@@ -163,7 +163,7 @@ Log one entry per `UXR-###`. Update **Status** when fixed: `open` | `confirmed` 
 
 ## UXR-011 — Chart legend truncates region labels
 
-- **Status:** open
+- **Status:** fixed (June 25, 2026; wider legend slots + SVG `<title>` tooltips in grouped/stacked renderers)
 - **Severity:** P2
 - **Mode:** Canvas (chart view)
 - **Session:** 2
@@ -219,7 +219,7 @@ Log one entry per `UXR-###`. Update **Status** when fixed: `open` | `confirmed` 
 
 ## UXR-015 — Statistical settings popover clipped in slide scrollport
 
-- **Status:** open
+- **Status:** fixed (June 25, 2026; portaled fixed-position settings popover in `StatisticsStatusBar`)
 - **Severity:** P2
 - **Mode:** Canvas
 - **Session:** 2
@@ -233,7 +233,7 @@ Log one entry per `UXR-###`. Update **Status** when fixed: `open` | `confirmed` 
 
 ## UXR-016 — Column shelf variable chip lacks accessible name
 
-- **Status:** open
+- **Status:** fixed (June 25, 2026; column/weight shelf chips expose per-variable `aria-label` in `DropZone`)
 - **Severity:** P2
 - **Mode:** Canvas
 - **Session:** 2
@@ -575,7 +575,7 @@ Log one entry per `UXR-###`. Update **Status** when fixed: `open` | `confirmed` 
 
 ## UXR-038 — Analysis loading state not exposed to assistive tech
 
-- **Status:** open
+- **Status:** fixed (June 25, 2026; `aria-busy` + `role="status"` on slide analysis container in `SlideContainer`)
 - **Severity:** P2
 - **Mode:** Canvas
 - **Session:** 9
@@ -706,7 +706,7 @@ Log one entry per `UXR-###`. Update **Status** when fixed: `open` | `confirmed` 
 
 ## UXR-046 — Timeline slide labels truncate with larger decks
 
-- **Status:** open
+- **Status:** fixed (June 25, 2026; wider label cap + `title`/`aria-label` with full slide name in `TimelineDock`)
 - **Severity:** P3
 - **Mode:** Canvas
 - **Session:** 11

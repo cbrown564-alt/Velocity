@@ -378,10 +378,7 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
                 </div>
 
                 {config.showLegend && legendItems.length > 0 && (
-                    <ChartLegend items={legendItems} />
-                )}
-                {config.showLegend && legendItems.length > 0 && (
-                    <ChartLegend items={legendItems} />
+                    <ChartLegend items={legendItems} className={styles.legend} />
                 )}
 
                 <div className="flex gap-2">
