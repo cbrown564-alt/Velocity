@@ -73,7 +73,11 @@ The next strategic question is no longer "can the engine thesis work?" The answe
 - Canvas polish added: smart empty states, adaptive shelves, Focus Mode, toasts, and crosstab hierarchy.
 - Theme/density polish added: shadow tokens, theme previews, variable list visual weight, command palette, and shortcut reference.
 - Back-room delight layers shipped for Variable Manager diagnostics, workspace portraits/timeline/search, onboarding feedback, returning researcher cues, and deck summary tooltips.
-- May 2026 review remediation (`STAB-UI-D`) closed P1 trust/responsive gaps: inline crosstab errors, filtered-N subtitles, projects empty state, Canvas recode path, modal Escape, OPFS plain-language copy, and narrow-width Canvas chrome.
+- **May 2026 UXR program complete** (June 25, 2026): all `UXR-000`–`UXR-051` findings in `docs/reviews/ui_ux_review_2026-05/findings.md` are `fixed`. Delivered in four waves after `STAB-UI-C`:
+  - **`STAB-UI-D`** (`54b55d2`): P1 trust/responsive slice — inline crosstab errors, filtered-N subtitles, projects empty state, Canvas recode, modal Escape, OPFS copy, narrow Canvas chrome.
+  - **Post–STAB-UI-D backlog** (`f778dda`): drill-down (UXR-025), data-driven upload progress (UXR-036), workspace polish (UXR-006/007/009/026), filter/modal/a11y batch (UXR-013/014/018–020/022/023).
+  - **Theme system** (`ae6b13c`): three-theme affordances, Workspace theme control, Liquid Glass chrome/palette (UXR-027–031).
+  - **System + Canvas polish** (`52d2d58`, `dc4c33d`): mode transition, engine-init progress, purge confirm, viewport guard (UXR-002/039/043/048); chart legends, portaled stats settings, shelf a11y, analysis busy state, timeline labels (UXR-011/015/016/038/046).
 
 ### Harmonization Workspace
 
@@ -97,7 +101,8 @@ The next strategic question is no longer "can the engine thesis work?" The answe
 - `tests/golden/`
 - `tests/parity/`
 - `tests/e2e/workspace-switch.spec.ts`
-- `scripts/benchmark-sav-ingestion.ts`
+- `docs/reviews/ui_ux_review_2026-05/findings.md` (UXR register — all entries fixed June 2026)
+- `docs/audit_06_ui_ux_review_2026-05.md`
 - `scripts/benchmark-sav-v2-v3.ts`
 
 ## Strategic Interpretation

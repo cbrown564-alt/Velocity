@@ -178,4 +178,4 @@ Validated E2E paths:
 | :--- | :--- |
 | PILOT-6 | Paid pilot recruiting with deployable URL + event log collection |
 | PILOT-3 | PPTX template loop (not required for initial pilot deploy) |
-| STAB-UI-D | P1 UX fixes — Done (June 2026); improves <5 / <15 min targets |
+| STAB-UI-D | UXR program — **Done** (June 2026); all `UXR-###` fixed; improves <5 / <15 min targets |

@@ -57,7 +57,8 @@ graph TD
   P6 --> P7["PILOT-7 Readout + Roadmap Gate"]
 
   STABUIC["STAB-UI-C Complete"] --> STABUID["STAB-UI-D Done"]
-  STABUID -. supports polish .-> P1
+  STABUID --> UXRREM["UXR Program Complete"]
+  UXRREM -. supports polish .-> P1
 
   P7 -. gate .-> S5R1["S5-R-1 WebR Bridge"]
   P7 -. gate .-> S5PREP1["S5-PREP-1 Recipe Manager"]
@@ -105,13 +106,7 @@ Completed Phase 1-4, stabilization, UI polish, engine/MCP, export, parity, and h
 2. `PILOT-3`: complete PPTX template loop once pilots confirm wedge value.
 3. `PILOT-4a`: observe pilot files to rank processing gaps before building `PILOT-4b`.
 
-### 4.2 Completed UI Remediation (May 2026 review)
-
-| ID | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence / validation |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| STAB-UI-D | UI/UX review remediation | Closed P1 findings UXR-037, 040, 008, 010, 024; modal Esc/focus (041–042); OPFS user-facing copy (047); responsive Canvas chrome (044–045) | STAB-UI-C | Done | No | T,U,I,A | `findings.md` (UXR-008/010/024/037/040/041/042/044/045/047 fixed); `src/lib/persistenceDisplay.ts`, `src/hooks/useModalEscape.ts`, `src/features/dashboard/components/SlideContainer.tsx`, `DashboardToolbar.tsx`, `DashboardSidebar.tsx`; tests: `persistenceDisplay.test.ts`, `SlideHeader.test.tsx`, `SlideContainer.test.tsx`, `ModalShell.test.tsx` |
-
-### 4.3 Future Gates
+### 4.2 Future Gates
 
 These rows remain directionally valid, but should not become active until `PILOT-7` shows retention, willingness to pay, or repeated pilot blockers that justify them.
 
@@ -136,7 +131,7 @@ Completed work is no longer expanded in this tracker. Use `docs/completed_founda
 - Phase 3 `VelocityEngine`, MCP, browser convergence, and semantic layer
 - Phase 4 eval program, benchmark baselines, capability-gap synthesis, and follow-through
 - Stabilization: workspace reopen, export quality, design tokens, truthful CI, thin-slice architecture cleanup
-- UI excellence: motion/accessibility, canvas polish, theme/density, delight layers, and May 2026 review remediation (`STAB-UI-D`)
+- UI excellence: motion/accessibility, canvas polish, theme/density, delight layers, and **complete May 2026 UXR program** (`STAB-UI-D` + follow-on waves — all `UXR-###` entries fixed in `findings.md`)
 - Harmonization workspace and fuzzy EVAL-05 follow-up
 - Testing and evidence anchors
 

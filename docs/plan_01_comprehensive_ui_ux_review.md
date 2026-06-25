@@ -401,7 +401,7 @@ Rate each heuristic **0** (no issue) – **4** (usability catastrophe) per major
 | 9 | Done | Performance — `session-09-performance.md`; UXR-036–040 |
 | 10 | Done | Errors/edge — `session-10-errors.md`; UXR-041–043; revalidated 008/037/040 |
 | 11 | Done | Responsive — `session-11-responsive.md`; UXR-044–048; screenshots at 1920 |
-| 12 | Done | Synthesis — `session-12-synthesis.md`, `audit_06_ui_ux_review_2026-05.md`; `STAB-UI-D` proposed in tracker |
+| 12 | Done | Synthesis — `session-12-synthesis.md`, `audit_06_ui_ux_review_2026-05.md`; UXR program closed in tracker June 2026 |
 
 **Pre–Session 3 gate (complete):** UXR-000 shortcut conflict fixed — see §14.
 
