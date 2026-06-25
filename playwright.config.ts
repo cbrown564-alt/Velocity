@@ -15,6 +15,7 @@ export default defineConfig({
       animations: 'disabled',
     },
   },
+  snapshotPathTemplate: '{testDir}/{testFileDir}/{testFileName}-snapshots/{arg}{ext}',
   use: {
     baseURL,
     browserName: 'chromium',

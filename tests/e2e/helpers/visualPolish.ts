@@ -16,6 +16,7 @@ export async function clearBrowserStorage(page: Page) {
     try {
       if (navigator.storage?.getDirectory) {
         const root = await navigator.storage.getDirectory();
+        // @ts-expect-error - entries() returns an async iterator
         for await (const [name] of root.entries()) {
           try {
             await root.removeEntry(name, { recursive: true });
@@ -64,9 +65,14 @@ export async function buildGenderRegionCrosstab(page: Page) {
   }
 
   if (await page.getByText('Ready for Analysis').isVisible({ timeout: 3000 }).catch(() => false)) {
-    await page.getByRole('button', { name: /gender Good starting point/i }).click();
-    await page.waitForTimeout(1200);
+    await page.getByRole('button', { name: /product sat Good starting point/i }).click().catch(() => {});
+    await page.waitForTimeout(800);
+    await page.getByRole('button', { name: 'Reset' }).click().catch(() => {});
+    await page.waitForTimeout(500);
   }
+
+  await page.getByRole('button', { name: /^gender$/i }).first().click();
+  await page.waitForTimeout(1200);
 
   const regionBtn = page.getByRole('button', { name: /^region$/i });
   await expect(regionBtn).toBeVisible({ timeout: 5000 });
@@ -103,8 +109,8 @@ export async function applyTheme(page: Page, label: string) {
   await page.waitForTimeout(900);
 }
 
-export function crosstabFrame(page: Page) {
-  return page.locator('.analysis-frame').filter({ has: page.locator('table') });
+export function crosstabTable(page: Page) {
+  return page.locator('.analysis-frame table').first();
 }
 
 export async function assertOpfsSupported(page: Page) {

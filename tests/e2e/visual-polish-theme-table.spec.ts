@@ -4,7 +4,7 @@ import {
   applyTheme,
   assertOpfsSupported,
   buildGenderRegionCrosstab,
-  crosstabFrame,
+  crosstabTable,
   reachDashboardWithExample,
   waitForStableCrosstab,
 } from './helpers/visualPolish';
@@ -32,9 +32,9 @@ test.describe('Visual polish — crosstab table theme regression', () => {
       await applyTheme(page, label);
       await waitForStableCrosstab(page);
 
-      const frame = crosstabFrame(page);
-      await expect(frame).toBeVisible();
-      await expect(frame).toHaveScreenshot(`crosstab-table-theme-${slug}.png`, {
+      const table = crosstabTable(page);
+      await expect(table).toBeVisible();
+      await expect(table).toHaveScreenshot(`crosstab-table-theme-${slug}.png`, {
         animations: 'disabled',
       });
     }

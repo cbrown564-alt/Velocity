@@ -1,5 +1,5 @@
-import type { ProcessedAnalysisData } from '../types/processedData';
-import type { ChartType } from '../types/charts';
+import type { ProcessedAnalysisData } from '../../types/processedData';
+import type { ChartType } from '../../types/charts';
 
 const DISTRIBUTION_CHART_TYPES = new Set<ChartType>([
   'grouped-box-plot',

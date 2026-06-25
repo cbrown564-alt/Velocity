@@ -92,7 +92,7 @@ describe('pickAutoFirstCrosstabPair', () => {
       variable({
         id: 'v-id',
         name: 'respondent_key',
-        semantic: { measurementIntent: 'identifier', confidence: 1 },
+        semantic: { topic: 'identifiers', measurementIntent: 'identifier', confidence: 1, source: 'auto' },
       }),
       variable({
         id: 'v-g',

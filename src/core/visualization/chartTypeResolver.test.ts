@@ -8,6 +8,9 @@ const metricCrosstab = {
     label: 'product sat',
     rawValue: 'product_sat',
     total: 250,
+    depth: 0,
+    children: [],
+    rowPath: [{ variable: 'product_sat', value: 'product_sat' }],
     cells: {
       east: { count: 50, percent: 20, mean: 3.2, validCount: 50 },
       west: { count: 43, percent: 17, mean: 3.1, validCount: 43 },

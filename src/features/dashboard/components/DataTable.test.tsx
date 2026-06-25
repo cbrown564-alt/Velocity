@@ -103,6 +103,9 @@ describe('DataTable Insight Halo', () => {
         comparisonMethod: 'cell_vs_rest',
         correctionType: 'none',
         showConfidenceIntervals: false,
+        significanceLevel: 0.95,
+        engine: 'auto',
+        enableDesignEffects: false,
       },
       transformLog: [],
     });
@@ -136,6 +139,9 @@ describe('DataTable Insight Halo', () => {
         comparisonMethod: 'cell_vs_rest',
         correctionType: 'none',
         showConfidenceIntervals: false,
+        significanceLevel: 0.95,
+        engine: 'auto',
+        enableDesignEffects: false,
       },
       transformLog: [],
     });
@@ -180,6 +186,9 @@ describe('DataTable Insight Halo', () => {
         comparisonMethod: 'cell_vs_rest',
         correctionType: 'none',
         showConfidenceIntervals: false,
+        significanceLevel: 0.95,
+        engine: 'auto',
+        enableDesignEffects: false,
       },
       transformLog: [],
     });

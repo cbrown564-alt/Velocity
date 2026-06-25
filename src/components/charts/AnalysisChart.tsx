@@ -293,7 +293,7 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
             case 'horizontal-bar':
                 return <HorizontalBarRenderer {...commonProps} />;
             case 'stacked-bar':
-                return <StackedBarRenderer {...commonProps} type={activeChartType} />;
+                return <StackedBarRenderer {...commonProps} type="stacked-bar" />;
             case 'grouped-bar':
                 return <GroupedBarRenderer {...commonProps} />;
             case 'grouped-column':

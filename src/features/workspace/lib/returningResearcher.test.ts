@@ -89,8 +89,15 @@ describe('returningResearcher', () => {
         ],
         sessionState: {
           tableConfig: { rowVars: ['gender'], colVar: 'region' },
-          activeFilters: [{ id: 'f1' }],
-          transformLog: [{ type: 'recode' }],
+          activeFilters: [{ id: 'f1', variableId: 'gender', operator: 'eq', value: 1 }],
+          transformLog: [{
+            type: 'recode',
+            sourceColId: 'gender',
+            newColId: 'gender_recoded',
+            label: 'Gender recoded',
+            config: { mode: 'categorical', rules: [] },
+            createdAt: 0,
+          }],
         },
       }),
     );

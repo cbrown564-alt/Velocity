@@ -8,6 +8,7 @@ async function clearBrowserStorage(page: import('@playwright/test').Page) {
     try {
       if (navigator.storage?.getDirectory) {
         const root = await navigator.storage.getDirectory();
+        // @ts-expect-error - entries() returns an async iterator
         for await (const [name] of root.entries()) {
           try {
             await root.removeEntry(name, { recursive: true });
