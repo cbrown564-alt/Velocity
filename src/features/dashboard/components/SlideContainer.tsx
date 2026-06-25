@@ -222,22 +222,15 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
         }
     };
 
-    const canvasHeight = focusMode
-        ? 'clamp(680px, 82vh, 980px)'
-        : 'clamp(640px, 78vh, 900px)';
-
     return (
         <div
-            className={`flex-1 flex flex-col items-center justify-center ${focusMode ? 'p-2' : 'p-6'} bg-glass-app overflow-y-auto ${className}`}
+            className={`flex-1 flex flex-col min-h-0 h-full bg-glass-app ${className}`}
             aria-busy={isQuerying}
             aria-live="polite"
         >
             {isQuerying && <div className="sr-only" role="status">Updating analysis results</div>}
-            <div
-                className="surface-panel w-full max-w-[1200px] rounded-xl shadow-md border border-[var(--border-color)] overflow-hidden flex flex-col"
-                style={{ height: canvasHeight, minHeight: focusMode ? '680px' : '640px' }}
-            >
-                <div className={focusMode ? 'px-4 pt-4' : 'px-6 pt-6'}>
+            <div className="surface-panel w-full max-w-[1200px] mx-auto flex flex-col flex-1 min-h-0 h-full rounded-xl shadow-md border border-[var(--border-color)] overflow-hidden">
+                <div className={`flex-shrink-0 ${focusMode ? 'px-4 pt-4' : 'px-6 pt-5'}`}>
                     <SlideHeader className={focusMode ? 'compact' : ''} />
                 </div>
 

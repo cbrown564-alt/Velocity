@@ -74,14 +74,17 @@ describe('SlideContainer', () => {
     expect(screen.getByRole('status')).toHaveTextContent('Updating analysis results');
   });
 
-    it('uses theme token classes on adaptive canvas container', () => {
+    it('uses theme token classes on flex-filling canvas container', () => {
         const { container } = render(<SlideContainer />);
         const canvas = container.querySelector('.surface-panel') as HTMLDivElement | null;
+        const header = container.querySelector('.slide-header') as HTMLDivElement | null;
 
         expect(canvas).toBeInTheDocument();
-        expect(canvas?.getAttribute('style') ?? '').toContain('min-height: 640px');
+        expect(canvas?.className).toContain('flex-1');
+        expect(canvas?.className).toContain('min-h-0');
         expect(canvas?.className).toContain('surface-panel');
         expect(canvas?.className).not.toContain('bg-white');
+        expect(header?.parentElement?.className).toContain('flex-shrink-0');
     });
 
     it('auto-populates gender × region on mock_data.csv when deck is empty', async () => {

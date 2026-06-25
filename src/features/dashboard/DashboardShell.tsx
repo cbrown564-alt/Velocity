@@ -277,9 +277,9 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
                 onToggleWeight={handleToggleWeight}
               />
 
-              <SmartCanvas className={`flex-1 relative overflow-hidden flex flex-col ${focusMode ? 'p-2' : 'p-6'}`}>
-                <div className="flex-1 w-full h-full flex flex-col min-h-0">
-                  <div className={`flex-1 relative overflow-hidden flex flex-col ${
+              <SmartCanvas className={`flex-1 relative min-h-0 flex flex-col ${focusMode ? 'p-2' : 'p-4'}`}>
+                <div className="flex-1 w-full min-h-0 flex flex-col">
+                  <div className={`flex-1 relative min-h-0 flex flex-col ${
                     focusMode
                       ? 'bg-transparent border-0 shadow-none rounded-none'
                       : 'bg-[var(--bg-panel)] rounded-xl border border-[var(--border-color)] shadow-sm'
@@ -289,8 +289,8 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
                         <Loader2 className="animate-spin text-[var(--color-accent)]" size={32} />
                       </div>
                     )}
-                    <div className="flex-1 min-h-0">
-                      <SlideContainer className="h-full w-full" />
+                    <div className="flex-1 min-h-0 flex flex-col">
+                      <SlideContainer className="flex-1 min-h-0" />
                     </div>
                     <div className={`transition-all duration-300 ${focusMode ? 'h-0 opacity-0 overflow-hidden' : ''}`}>
                       <TimelineDock />
