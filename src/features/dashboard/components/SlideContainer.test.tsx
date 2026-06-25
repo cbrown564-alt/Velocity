@@ -74,11 +74,12 @@ describe('SlideContainer', () => {
     expect(screen.getByRole('status')).toHaveTextContent('Updating analysis results');
   });
 
-    it('uses theme token background classes for the 16:9 canvas', () => {
+    it('uses theme token classes on adaptive canvas container', () => {
         const { container } = render(<SlideContainer />);
-        const canvas = container.querySelector('div[style*="aspect-ratio"]') as HTMLDivElement | null;
+        const canvas = container.querySelector('.surface-panel') as HTMLDivElement | null;
 
         expect(canvas).toBeInTheDocument();
+        expect(canvas?.getAttribute('style') ?? '').toContain('min-height: 640px');
         expect(canvas?.className).toContain('surface-panel');
         expect(canvas?.className).not.toContain('bg-white');
     });

@@ -222,6 +222,10 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
         }
     };
 
+    const canvasHeight = focusMode
+        ? 'clamp(680px, 82vh, 980px)'
+        : 'clamp(640px, 78vh, 900px)';
+
     return (
         <div
             className={`flex-1 flex flex-col items-center justify-center ${focusMode ? 'p-2' : 'p-6'} bg-glass-app overflow-y-auto ${className}`}
@@ -231,7 +235,7 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
             {isQuerying && <div className="sr-only" role="status">Updating analysis results</div>}
             <div
                 className="surface-panel w-full max-w-[1200px] rounded-xl shadow-md border border-[var(--border-color)] overflow-hidden flex flex-col"
-                style={{ aspectRatio: '16/9', minHeight: focusMode ? '640px' : '600px' }}
+                style={{ height: canvasHeight, minHeight: focusMode ? '680px' : '640px' }}
             >
                 <div className={focusMode ? 'px-4 pt-4' : 'px-6 pt-6'}>
                     <SlideHeader className={focusMode ? 'compact' : ''} />
