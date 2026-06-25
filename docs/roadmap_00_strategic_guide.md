@@ -27,29 +27,34 @@ For execution details and dependencies, use:
 - Task portfolio execution & eval tracking
 - Capability gap analysis
 
-4. Phase 5 expansion (Advanced stats)
+4. Market-reset pilot (Commercial validation)
+- SAV-to-deck pilot for boutique researchers and independent consultants
+- Trust/performance evidence pack
+- Complete PowerPoint loop and paid-pilot validation
+
+5. Phase 5 expansion (Advanced stats)
 - Harmonization workspace baseline
 - WebR bridge & advanced stats
 
-5. Phase 6/7 extensions (Cognitive Engine & Cloud)
+6. Phase 6/7 extensions (Cognitive Engine & Cloud)
 - Deep semantic reasoning
 - Realtime collaboration & platform imports
 
 ## 2.1 Current Reality Check
 
-As of **May 19, 2026**, Phase 4 validation is complete and the **May stabilization sprint is complete** (`STAB-DOC-1` through `STAB-CI-1` on tracker §4.2). Key findings:
+As of **June 25, 2026**, Phase 4 validation, post-validation follow-through, May stabilization, and most UI excellence work are complete. The external market assessment resets the active question from "can the architecture work?" to "can Velocity own a narrow paid workflow?"
 
 - **Engine validated:** Mean score 4.7/5 across six eval families. Computation, provenance, export, and session mechanics all work.
 - **Stabilization shipped:** Reopenable workspace (`STAB-WS-1`), matrix MCP + PPTX polish (`STAB-EXP-1`), design-token CI (`STAB-DS-1`), production build + E2E gates (`STAB-CI-1`).
-- **Discovery and MCP breadth remain the active Phase 4 gaps:** Semantic discovery (mean 3.0) and MCP workflow coverage (mean 3.0). Category-aware discovery (`S4-DISC-1`) is Done; **next authorized expansion:** finish `S4-DEF-1`, then `S4-MCP-1` / `S4-MCP-2` / `S4-EVAL-5b` (tracker §4.2.1).
-- **No architecture rewrite needed:** Gaps are capability expansion within the current thesis. Orchestration debt in `App.tsx` / `dataSlice` is addressed via scoped `STAB-ARCH-1` slices (tracker §8), not a big-bang refactor.
+- **Phase 4 follow-through shipped:** Category-aware discovery, recommended breaks/guardrails, workspace-aware MCP, deck transport resilience, and EVAL-05b harmonization rerun are Done.
+- **No architecture rewrite needed:** Gaps are commercial workflow completion and validation, not an engine/platform thesis failure. Completed foundations are summarized in `docs/completed_foundations_summary.md`.
 - **Four benchmark baselines frozen:** EVAL-01 (small deck), EVAL-02 (large survey), EVAL-04 (convergence), EVAL-06 (stress).
-- **Quality gates are green but narrow:** typecheck (incl. MCP), tests, coverage, build, and Playwright E2E pass; Vitest coverage still excludes large UI/store surfaces.
+- **Market opening narrowed:** Velocity should not claim broad local-first survey AI novelty. The active wedge is analysis-ready SAV file -> defensible, editable client deck for boutique agencies and independent consultants.
 
 Implication:
-- The strategic critical path is **Phase 4 follow-through**, not Phase 5 expansion: `S4-DEF-1` → `S4-MCP-1` → parallel `S4-MCP-2` / `S4-EVAL-5b`, with `STAB-ARCH-1` thin slices in parallel when they do not conflict with active MCP PRs.
-- All feature additions must be evaluated against: "Does this close a validated gap from Phase 4?"
-- WebR (`S5-R-1`), deeper AI (Phase 6), and cloud collaboration (Phase 7) remain frozen until Phase 4 follow-through rows are Done.
+- The strategic critical path is **SAV-to-deck pilot validation**, not Phase 5 expansion: `PILOT-0` -> `PILOT-2` / `PILOT-1` -> `PILOT-3` / `PILOT-6` -> `PILOT-7`.
+- All feature additions must be evaluated against: "Does this improve paid-pilot completion, trust, or willingness to pay for the SAV-to-deck wedge?"
+- WebR (`S5-R-1`), broad prep (`S5-PREP-*`), deeper AI (Phase 6), and cloud collaboration (Phase 7) remain frozen until pilot evidence justifies them.
 - See `docs/archive/2026-03/phase4-eval/eval_s4_eval_5_phase_synthesis.md` for the full Phase 4 decision package.
 
 ## 3. Scope Governance
@@ -57,6 +62,7 @@ Implication:
 - Default to `Keep/Delay/Reject` logic from feature matrix before starting implementation.
 - All new capabilities must be exposed via the `VelocityEngine` and MCP before the React UI.
 - Do not start dependent work if predecessor contracts (eval passes) are unresolved.
+- Do not activate broad Phase 5+ work without `PILOT-7` evidence or an explicit roadmap decision.
 
 ## 4. Which Docs To Use (And When)
 

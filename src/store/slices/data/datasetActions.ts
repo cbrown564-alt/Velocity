@@ -236,13 +236,11 @@ export function createDatasetActions(
             const runAnalysis = resolveRunAnalysis(get);
 
             await openWorkspaceDatasetLifecycle(stored, {
-                browserEngine,
                 currentDataset,
                 runAnalysis,
                 flushPersistedData: () => get().flushPersistedData(),
-                respawnWorker: (cleanStart) => get().respawnWorker(cleanStart),
+                respawnWorker: (cleanStart, datasetId) => get().respawnWorker(cleanStart, datasetId),
                 getBrowserEngine: () => get().browserEngine,
-                getPersistenceState: () => get().persistenceState,
                 applyOpenPatch: (patch) => {
                     const sessionPatch = sessionStateToStorePatch({
                         tableConfig: patch.tableConfig,
@@ -270,12 +268,6 @@ export function createDatasetActions(
                     set(sessionStateToStorePatch(sessionState));
                 },
                 rehydrateFromOpfs: (options) => get().rehydrateDatasetFromOpfs(options),
-                setPersistenceReady: (fileName, rowCount) => {
-                    const activeProxy = get().browserEngine;
-                    if (!activeProxy) return;
-                    activeProxy.setDatasetContext(fileName, rowCount);
-                    set({ persistenceState: 'ready' });
-                },
             });
         },
     };

@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import {
   buildWorkspaceDatasetOpenPatch,
+  openWorkspaceDatasetLifecycle,
   rehydrateDatasetFromOpfsSource,
 } from './workspaceDatasetLifecycle';
 import type { WorkspaceDatasetOpenInput } from './slices/data/types';
@@ -173,5 +174,76 @@ describe('buildWorkspaceDatasetOpenPatch', () => {
         targetVariableName: 'q1_binned',
       }),
     );
+  });
+});
+
+describe('openWorkspaceDatasetLifecycle', () => {
+  const makeStored = (id: string): WorkspaceDatasetOpenInput => ({
+    id,
+    name: `${id}.sav`,
+    fileName: `${id}.sav`,
+    rowCount: 100,
+    source: 'sav',
+    opfsFileKey: `${id}_key.sav`,
+    variables: [
+      { id: 'sex', name: 'sex', label: 'Sex', type: 'categorical', valueLabels: [], missingValues: {} },
+    ],
+  });
+
+  it('rehydrates from OPFS source even when engine ping reports hasData', async () => {
+    const respawnWorker = vi.fn().mockResolvedValue(undefined);
+    const rehydrateFromOpfs = vi.fn().mockResolvedValue(undefined);
+    const applyOpenPatch = vi.fn();
+    const flushPersistedData = vi.fn().mockResolvedValue(undefined);
+
+    await openWorkspaceDatasetLifecycle(makeStored('sleep-ds'), {
+      currentDataset: {
+        id: 'small-ds',
+        name: 'test_small.sav',
+        rowCount: 5,
+        source: 'sav',
+        variables: [],
+        opfsFileKey: 'small_key.sav',
+      },
+      flushPersistedData,
+      respawnWorker,
+      getBrowserEngine: () => ({
+        ping: vi.fn().mockResolvedValue({ hasData: true, rowCount: 5 }),
+      }) as any,
+      applyOpenPatch,
+      applySameDatasetSession: vi.fn(),
+      rehydrateFromOpfs,
+    });
+
+    expect(flushPersistedData).toHaveBeenCalled();
+    expect(applyOpenPatch).toHaveBeenCalled();
+    expect(respawnWorker).toHaveBeenCalledWith(false, 'sleep-ds');
+    expect(rehydrateFromOpfs).toHaveBeenCalledWith({ forceReload: true });
+  });
+
+  it('skips rehydrate when reopening the already active dataset', async () => {
+    const rehydrateFromOpfs = vi.fn();
+    const runAnalysis = vi.fn().mockResolvedValue(undefined);
+
+    await openWorkspaceDatasetLifecycle(makeStored('sleep-ds'), {
+      currentDataset: {
+        id: 'sleep-ds',
+        name: 'sleep.sav',
+        rowCount: 271,
+        source: 'sav',
+        variables: [],
+        opfsFileKey: 'sleep_key.sav',
+      },
+      runAnalysis,
+      flushPersistedData: vi.fn(),
+      respawnWorker: vi.fn(),
+      getBrowserEngine: () => null,
+      applyOpenPatch: vi.fn(),
+      applySameDatasetSession: vi.fn(),
+      rehydrateFromOpfs,
+    });
+
+    expect(rehydrateFromOpfs).not.toHaveBeenCalled();
+    expect(runAnalysis).toHaveBeenCalled();
   });
 });

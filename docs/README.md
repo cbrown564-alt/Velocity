@@ -6,7 +6,8 @@ Navigation hub for live documentation. **Agent rules: [`AGENTS.md`](../AGENTS.md
 
 | Need | Read |
 | :--- | :--- |
-| What to work on | `tracker_00_implementation_status.md` (stabilization rules: §4.2.1) |
+| What to work on | `tracker_00_implementation_status.md` (active pilot and gated work) |
+| What has shipped | `completed_foundations_summary.md` |
 | Code quality remediation | `kanban_thermo_nuclear_remediation.md` (June 2026 thermo-nuclear review board) |
 | Why and sequencing | `roadmap_00_strategic_guide.md` |
 | Scope gates | `blue_02_feature_matrix.md` |
@@ -61,4 +62,4 @@ Phase 4 synthesis (historical): `archive/2026-03/phase4-eval/eval_s4_eval_5_phas
 
 ## Archive
 
-`docs/archive/` — historical plans, audits, reports, and superseded design briefs. Evidence only; extract invariants into active docs before citing. May 2026 deep review: `archive/2026-05/audits/audit_05_deep_code_review_2026-05-19.md` → execution contract in tracker §4.2.1 (not a live backlog).
+`docs/archive/` — historical plans, audits, reports, and superseded design briefs. Evidence only; extract invariants into active docs before citing. May 2026 deep review: `archive/2026-05/audits/audit_05_deep_code_review_2026-05-19.md` is summarized in `completed_foundations_summary.md`; active sequencing lives in the tracker.

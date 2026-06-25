@@ -308,12 +308,11 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
                 return <VerticalBarRenderer {...commonProps} />;
             case 'lollipop':
                 return <LollipopRenderer {...commonProps} />;
-            case 'box-plot':
-                // Check if we have stats, if not try to use processedData series stats if available
+            case 'box-plot': {
                 const boxStats = variableStats || (displayChartData?.series[0]?.stats ? { stats: displayChartData.series[0].stats } : undefined);
                 return <BoxPlotRenderer {...commonProps} variableStats={boxStats} />;
+            }
             case 'grouped-box-plot':
-                // If no explicit stats, try to infer from data if it's raw values (rare) or just pass through
                 return <GroupedBoxPlotRenderer {...commonProps} />;
             case 'violin':
                 return <ViolinRenderer {...commonProps} />;
@@ -323,12 +322,14 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
                 return <HexbinRenderer {...commonProps} />;
             case 'scatter':
                 return <ScatterPlotRenderer {...commonProps} />;
-            default:
+            default: {
+                const unhandledType: never = effectiveChartType;
                 return (
                     <div className={styles.placeholder}>
-                        Chart type '{effectiveChartType}' not yet implemented
+                        Chart type '{unhandledType}' not yet implemented
                     </div>
                 );
+            }
         }
     };
 

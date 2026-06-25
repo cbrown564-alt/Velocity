@@ -17,8 +17,6 @@ import type {
   DataTransform,
   Dataset,
   Folder,
-  PersistenceState,
-  Variable,
   VariableSet,
   WorkspaceDatasetOpenInput,
 } from './slices/data/types';
@@ -145,24 +143,21 @@ export function buildWorkspaceDatasetOpenPatch(stored: WorkspaceDatasetOpenInput
 }
 
 export interface OpenWorkspaceDatasetContext {
-  browserEngine: BrowserEngine;
   currentDataset: Dataset | null;
   runAnalysis?: RunAnalysisFn;
   flushPersistedData: () => Promise<void>;
-  respawnWorker: (cleanStart?: boolean) => Promise<void>;
+  respawnWorker: (cleanStart?: boolean, datasetIdOverride?: string) => Promise<void>;
   getBrowserEngine: () => BrowserEngine | null;
-  getPersistenceState: () => PersistenceState;
   applyOpenPatch: (patch: WorkspaceDatasetOpenPatch) => void;
   applySameDatasetSession: (sessionState: DatasetSessionState | undefined) => void;
   rehydrateFromOpfs: (options?: { forceReload?: boolean }) => Promise<void>;
-  setPersistenceReady: (fileName: string, rowCount: number) => void;
 }
 
 export async function openWorkspaceDatasetLifecycle(
   stored: WorkspaceDatasetOpenInput,
   ctx: OpenWorkspaceDatasetContext,
 ): Promise<void> {
-  const { browserEngine, currentDataset, runAnalysis } = ctx;
+  const { currentDataset, runAnalysis } = ctx;
 
   if (currentDataset?.id === stored.id) {
     if (stored.sessionState) {
@@ -181,39 +176,21 @@ export async function openWorkspaceDatasetLifecycle(
   const patch = buildWorkspaceDatasetOpenPatch(stored);
   ctx.applyOpenPatch(patch);
 
-  await ctx.respawnWorker(false);
+  await ctx.respawnWorker(false, stored.id);
 
   const activeProxy = ctx.getBrowserEngine();
   if (!activeProxy) throw new Error('Engine not initialized after dataset switch');
 
-  let hasData = false;
-  try {
-    const ping = await activeProxy.ping();
-    hasData = ping.hasData;
-  } catch {
-    hasData = false;
+  if (!stored.opfsFileKey) {
+    throw new Error('Dataset has no persisted source file. Re-upload the original file.');
   }
 
-  const needsSourceRebuild = !hasData || ctx.getPersistenceState() === 'corrupt';
-
-  if (needsSourceRebuild) {
-    if (!stored.opfsFileKey) {
-      throw new Error('Dataset has no persisted source file. Re-upload the original file.');
-    }
-
-    const exists = await opfsFileManager.fileExists(stored.opfsFileKey).catch(() => false);
-    if (!exists) {
-      throw new Error(`OPFS source file not found: ${stored.opfsFileKey}`);
-    }
-
-    await ctx.rehydrateFromOpfs({ forceReload: true });
-    return;
+  const exists = await opfsFileManager.fileExists(stored.opfsFileKey).catch(() => false);
+  if (!exists) {
+    throw new Error(`OPFS source file not found: ${stored.opfsFileKey}`);
   }
 
-  const fileName = stored.fileName || stored.name;
-  ctx.setPersistenceReady(fileName, stored.rowCount);
-
-  if (runAnalysis) {
-    await runAnalysis();
-  }
+  // Always rebuild DuckDB from the OPFS source file when switching datasets.
+  // ping.hasData is not sufficient — a prior dataset may still be loaded in DuckDB.
+  await ctx.rehydrateFromOpfs({ forceReload: true });
 }
