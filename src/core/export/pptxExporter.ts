@@ -9,6 +9,7 @@ import { ExportConfig, AnalysisExportItem, ExportBranding } from './types';
 import { ProcessedRow, ProcessedColumn, ProcessedCell } from '../../types/processedData';
 import type { SlideSection } from '../../types/slides';
 import { buildPresentationChartOptions } from './pptxChartStyle';
+import { canApplyTemplate, mapTemplatePlaceholders } from './templateMapping';
 
 type PptxTableCell = {
   text: string;
@@ -293,6 +294,39 @@ function normalizeColor(color: string): string {
 }
 
 export async function exportPptx(config: ExportConfig): Promise<Uint8Array> {
+  if (config.templateOptions) {
+    const templateIssues = canApplyTemplate(
+      config.templateOptions.mapping,
+      config.templateOptions.template,
+      config.templateOptions.slideRecipes
+    );
+    const blockingIssue = templateIssues.find((issue) => issue.severity === 'block');
+    if (blockingIssue) {
+      throw new Error(`Template export blocked: ${blockingIssue.message}`);
+    }
+
+    const applyTemplateBindings = config.templateOptions.applyTemplateBindings;
+    const baseTemplate = config.templateOptions.baseTemplate;
+    if (!applyTemplateBindings || !baseTemplate) {
+      throw new Error(
+        'Template export requires a base template binary and an applyTemplateBindings handler.'
+      );
+    }
+
+    const applied = mapTemplatePlaceholders(
+      config.templateOptions.template,
+      config.templateOptions.mapping,
+      config.templateOptions.slideRecipes
+    );
+
+    return applyTemplateBindings({
+      baseTemplate,
+      bindings: applied.bindings,
+      refreshMode: config.templateOptions.refreshMode ?? 'full_rebuild',
+      preserveUntouchedContent: config.templateOptions.preserveUntouchedContent ?? true,
+    });
+  }
+
   const PptxGenJS = await getPptxGenJS();
   const pptx = new PptxGenJS();
   pptx.layout = 'LAYOUT_WIDE';

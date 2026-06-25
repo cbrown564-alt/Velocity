@@ -646,3 +646,10 @@
 .reviewIssueWarn {
     color: var(--text-secondary);
 }
+
+.templateModeOptions {
+    margin-top: var(--space-3);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}

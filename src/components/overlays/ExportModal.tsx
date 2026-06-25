@@ -10,10 +10,11 @@ import { X, FileDown, FileSpreadsheet, Presentation, Download, CheckCircle2 } fr
 import styles from './ExportModal.module.css';
 import { exportPptx } from '../../core/export/pptxExporter';
 import { exportXlsx } from '../../core/export/xlsxExporter';
-import { ExportConfig } from '../../core/export/types';
+import { ExportConfig, TemplateRefreshMode } from '../../core/export/types';
 import { useVelocityStore } from '../../store';
 import { buildExportConfig } from '../../core/export/buildExportConfig';
 import { buildExportReview } from '../../core/export/slideRecipe';
+import { buildTemplateApplicabilityReview } from '../../core/export/templateMapping';
 import { resolveAnalysisVariables } from '../../core/export/resolveAnalysisVariables';
 import { runCrosstabForExport } from '../../core/export/runCrosstabForExport';
 import type { SlideAnalysisState } from '../../types/slides';
@@ -45,6 +46,8 @@ export const ExportModal: React.FC<ExportModalProps> = ({
     const [exportError, setExportError] = useState<string | null>(null);
     const [scope, setScope] = useState<ExportScope>('current');
     const [selectedSlideIds, setSelectedSlideIds] = useState<string[]>([]);
+    const [useTemplateMode, setUseTemplateMode] = useState(false);
+    const [templateRefreshMode, setTemplateRefreshMode] = useState<TemplateRefreshMode>('wave_refresh');
 
     const slides = useVelocityStore((state) => state.slides);
     const activeSlideId = useVelocityStore((state) => state.activeSlideId);
@@ -68,6 +71,8 @@ export const ExportModal: React.FC<ExportModalProps> = ({
         setExportError(null);
         setScope('current');
         setSelectedSlideIds(activeSlideId ? [activeSlideId] : []);
+        setUseTemplateMode(false);
+        setTemplateRefreshMode('wave_refresh');
     }, [isOpen, initialConfig.title, activeSlideId]);
 
     const slideIdsForScope = useMemo(() => {
@@ -96,8 +101,37 @@ export const ExportModal: React.FC<ExportModalProps> = ({
             slideIds: slideIdsForScope,
             variableSets,
             variables: dataset.variables,
+            analysisStateOverrides: activeSlideId
+                ? {
+                    [activeSlideId]: {
+                        rowVars: tableConfig.rowVars,
+                        colVar: tableConfig.colVar,
+                        filters: activeFilters,
+                        weightVar: dataset.weightVariable ?? null,
+                    },
+                }
+                : undefined,
         });
-    }, [dataset, slides, slideIdsForScope, variableSets]);
+    }, [dataset, slides, slideIdsForScope, variableSets, activeSlideId, tableConfig, activeFilters]);
+
+    const templateReviewIssues = useMemo(() => {
+        if (!useTemplateMode || format !== 'pptx') {
+            return [];
+        }
+        return buildTemplateApplicabilityReview({
+            template: initialConfig.templateOptions?.template,
+            mapping: initialConfig.templateOptions?.mapping,
+            recipes: initialConfig.templateOptions?.slideRecipes ?? [],
+            preserveEditableObjects: initialConfig.templateOptions?.preserveUntouchedContent ?? true,
+        });
+    }, [useTemplateMode, format, initialConfig.templateOptions]);
+
+    const reviewIssues = useMemo(() => {
+        if (format !== 'pptx' || !useTemplateMode) {
+            return exportReview.issues;
+        }
+        return [...exportReview.issues, ...templateReviewIssues];
+    }, [exportReview.issues, format, useTemplateMode, templateReviewIssues]);
 
     const handleToggleSelectedSlide = (slideId: string) => {
         setSelectedSlideIds((prev) => {
@@ -123,7 +157,10 @@ export const ExportModal: React.FC<ExportModalProps> = ({
         || isQuerying
         || !dataset
         || !browserEngine
-        || !exportReview.canExport;
+        || !exportReview.canExport
+        || (format === 'pptx'
+            && useTemplateMode
+            && templateReviewIssues.some((issue) => issue.severity === 'block'));
 
     const handleExport = async () => {
         if (!browserEngine || !dataset) {
@@ -142,6 +179,13 @@ export const ExportModal: React.FC<ExportModalProps> = ({
             setExportError(exportReview.issues.find((issue) => issue.severity === 'block')?.message
                 ?? 'Resolve export issues before downloading.');
             return;
+        }
+        if (format === 'pptx' && useTemplateMode) {
+            const blockingIssue = templateReviewIssues.find((issue) => issue.severity === 'block');
+            if (blockingIssue) {
+                setExportError(`Template export blocked: ${blockingIssue.message}`);
+                return;
+            }
         }
 
         setIsExporting(true);
@@ -215,6 +259,15 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                     },
                 })),
                 branding: initialConfig.branding,
+                ...(format === 'pptx' && useTemplateMode && initialConfig.templateOptions
+                    ? {
+                        templateOptions: {
+                            ...initialConfig.templateOptions,
+                            refreshMode: templateRefreshMode,
+                            preserveUntouchedContent: true,
+                        },
+                    }
+                    : {}),
             };
 
             // Call appropriate exporter
@@ -424,6 +477,81 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                                     </fieldset>
                                 </div>
 
+                                {format === 'pptx' && (
+                                    <div className={styles.section}>
+                                        <div className={styles.sectionLabel}>Template Mode</div>
+                                        <label className={styles.checkboxItem}>
+                                            <input
+                                                type="checkbox"
+                                                checked={useTemplateMode}
+                                                onChange={(e) => setUseTemplateMode(e.target.checked)}
+                                                disabled={!initialConfig.templateOptions}
+                                            />
+                                            <div className={styles.checkbox} />
+                                            <div>
+                                                <div className={styles.checkboxLabel}>
+                                                    Apply mapped placeholders
+                                                </div>
+                                                <div className={styles.checkboxDescription}>
+                                                    {initialConfig.templateOptions
+                                                        ? 'Keep untouched template content and refresh mapped values only.'
+                                                        : 'Load and map a PowerPoint template to enable template-aware export.'}
+                                                </div>
+                                            </div>
+                                        </label>
+                                        {useTemplateMode && initialConfig.templateOptions && (
+                                            <div className={styles.templateModeOptions}>
+                                                <label className={styles.scopeOption}>
+                                                    <input
+                                                        type="radio"
+                                                        name="template-refresh-mode"
+                                                        checked={templateRefreshMode === 'wave_refresh'}
+                                                        onChange={() => setTemplateRefreshMode('wave_refresh')}
+                                                    />
+                                                    <div className={styles.scopeRadio} />
+                                                    <div>
+                                                        <div className={styles.scopeLabel}>Wave refresh</div>
+                                                        <div className={styles.scopeDescription}>
+                                                            Refresh mapped placeholders and preserve untouched template content.
+                                                        </div>
+                                                    </div>
+                                                </label>
+                                                <label className={styles.scopeOption}>
+                                                    <input
+                                                        type="radio"
+                                                        name="template-refresh-mode"
+                                                        checked={templateRefreshMode === 'full_rebuild'}
+                                                        onChange={() => setTemplateRefreshMode('full_rebuild')}
+                                                    />
+                                                    <div className={styles.scopeRadio} />
+                                                    <div>
+                                                        <div className={styles.scopeLabel}>Full rebuild</div>
+                                                        <div className={styles.scopeDescription}>
+                                                            Re-apply placeholders for a full template export refresh.
+                                                        </div>
+                                                    </div>
+                                                </label>
+                                            </div>
+                                        )}
+                                        {useTemplateMode && templateReviewIssues.length > 0 && (
+                                            <ul className={styles.reviewList} data-testid="template-review-list">
+                                                {templateReviewIssues.map((issue) => (
+                                                    <li
+                                                        key={`${issue.code}-${issue.placeholderId ?? 'none'}-${issue.slot ?? 'none'}`}
+                                                        className={
+                                                            issue.severity === 'block'
+                                                                ? styles.reviewIssueBlock
+                                                                : styles.reviewIssueWarn
+                                                        }
+                                                    >
+                                                        {issue.message}
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        )}
+                                    </div>
+                                )}
+
                                 {/* Title Input */}
                                 <div className={styles.section}>
                                     <div className={styles.inputGroup}>
@@ -498,13 +626,13 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                                     </div>
                                 </div>
 
-                                {exportReview.issues.length > 0 && (
+                                {reviewIssues.length > 0 && (
                                     <div className={styles.section}>
                                         <div className={styles.sectionLabel}>Review Before Export</div>
                                         <ul className={styles.reviewList} data-testid="export-review-list">
-                                            {exportReview.issues.map((issue) => (
+                                            {reviewIssues.map((issue, index) => (
                                                 <li
-                                                    key={`${issue.slideId}-${issue.code}-${issue.referenceId ?? 'none'}`}
+                                                    key={`${issue.code}-${issue.severity}-${index}`}
                                                     className={
                                                         issue.severity === 'block'
                                                             ? styles.reviewIssueBlock

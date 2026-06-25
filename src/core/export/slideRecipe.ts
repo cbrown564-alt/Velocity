@@ -53,6 +53,7 @@ interface RecipeAssessmentInput {
   slides: Slide[];
   variableSets: VariableSet[];
   variables: Variable[];
+  analysisStateOverrides?: Record<string, SlideAnalysisState>;
 }
 
 function isResolvableReference(
@@ -222,16 +223,26 @@ export function buildExportReview(
   const selectedSlides = input.slideIds
     .map((slideId) => input.slides.find((slide) => slide.id === slideId))
     .filter((slide): slide is Slide => slide !== undefined);
+  const normalizedSlides = selectedSlides.map((slide) => {
+    const overrideState = input.analysisStateOverrides?.[slide.id];
+    if (!overrideState) {
+      return slide;
+    }
+    return {
+      ...slide,
+      analysisState: overrideState,
+    };
+  });
 
-  const issues = selectedSlides.flatMap((slide) =>
+  const issues = normalizedSlides.flatMap((slide) =>
     assessSlideRecipe(slide, input.variableSets, input.variables)
   );
-  const summary = summarizeAssessment(selectedSlides, issues);
+  const summary = summarizeAssessment(normalizedSlides, issues);
   const warningCount = issues.filter((issue) => issue.severity === 'warn').length;
 
   return {
-    canExport: summary.ready && selectedSlides.length > 0,
-    slideCount: selectedSlides.length,
+    canExport: summary.ready && normalizedSlides.length > 0,
+    slideCount: normalizedSlides.length,
     blockedSlideCount: summary.blockedSlides,
     warningCount,
     issues,

@@ -35,7 +35,11 @@ export interface TemplateMapping {
 export type TemplateApplyIssueCode =
   | 'template_mismatch'
   | 'placeholder_missing'
-  | 'slot_unresolved';
+  | 'slot_unresolved'
+  | 'template_missing'
+  | 'mapping_missing'
+  | 'template_diagnostic'
+  | 'editable_preservation_off';
 
 export interface TemplateApplyIssue {
   code: TemplateApplyIssueCode;
@@ -56,6 +60,13 @@ export interface AppliedTemplateBinding {
 export interface AppliedTemplateMapping {
   templateId: string;
   bindings: AppliedTemplateBinding[];
+}
+
+export interface TemplateApplicabilityInput {
+  template?: PptxTemplate | null;
+  mapping?: TemplateMapping | null;
+  recipes: SlideRecipe[];
+  preserveEditableObjects?: boolean;
 }
 
 interface ExtractTemplateMetadataInput {
@@ -140,14 +151,18 @@ export function mapTemplatePlaceholders(
       return [];
     }
 
-    const resolvedValue = resolveSlotValue(fallbackRecipe, binding.slot) ?? '';
+    const recipeForBinding =
+      placeholder.slideIndex && placeholder.slideIndex > 0
+        ? recipes[placeholder.slideIndex - 1] ?? fallbackRecipe
+        : fallbackRecipe;
+    const resolvedValue = resolveSlotValue(recipeForBinding, binding.slot) ?? '';
     return [
       {
         placeholderId: placeholder.id,
         token: placeholder.token,
         slot: binding.slot,
         resolvedValue,
-        recipeId: fallbackRecipe.slideId,
+        recipeId: recipeForBinding.slideId,
       },
     ];
   });
@@ -197,6 +212,62 @@ export function canApplyTemplate(
         message: `Slot "${binding.slot}" cannot be resolved from the selected slide recipe.`,
       });
     }
+  }
+
+  return issues;
+}
+
+export function buildTemplateApplicabilityReview(
+  input: TemplateApplicabilityInput
+): TemplateApplyIssue[] {
+  const issues: TemplateApplyIssue[] = [];
+  const template = input.template ?? null;
+  const mapping = input.mapping ?? null;
+
+  if (!template && !mapping) {
+    issues.push({
+      code: 'template_missing',
+      severity: 'warn',
+      message:
+        'No client template is configured; export will use the default editable Velocity layout.',
+    });
+  } else if (!template && mapping) {
+    issues.push({
+      code: 'template_missing',
+      severity: 'block',
+      message:
+        'Template mapping is present but no template file is available. Re-import the client template before export.',
+    });
+  } else if (template && !mapping) {
+    issues.push({
+      code: 'mapping_missing',
+      severity: 'warn',
+      message:
+        'Template loaded without placeholder mapping; editable fields may not land in intended template slots.',
+    });
+  }
+
+  if (template) {
+    for (const diagnostic of template.diagnostics) {
+      issues.push({
+        code: 'template_diagnostic',
+        severity: 'warn',
+        message: diagnostic,
+      });
+    }
+  }
+
+  if (input.preserveEditableObjects === false) {
+    issues.push({
+      code: 'editable_preservation_off',
+      severity: 'warn',
+      message:
+        'Editable template-object preservation is disabled; exported content may be flattened by the selected template flow.',
+    });
+  }
+
+  if (template && mapping) {
+    issues.push(...canApplyTemplate(mapping, template, input.recipes));
   }
 
   return issues;

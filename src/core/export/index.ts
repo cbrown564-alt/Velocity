@@ -20,6 +20,7 @@ export type {
   SlideRecipeIssue,
 } from './slideRecipe';
 export {
+  buildTemplateApplicabilityReview,
   canApplyTemplate,
   extractTemplateMetadata,
   mapTemplatePlaceholders,
@@ -28,6 +29,7 @@ export type {
   AppliedTemplateBinding,
   AppliedTemplateMapping,
   PptxTemplate,
+  TemplateApplicabilityInput,
   TemplateApplyIssue,
   TemplateApplyIssueCode,
   TemplateMapping,

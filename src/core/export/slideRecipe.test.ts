@@ -225,4 +225,33 @@ describe('buildExportReview', () => {
     expect(review.canExport).toBe(true);
     expect(review.slideCount).toBe(1);
   });
+
+  it('uses analysis state overrides for active-slide dataset replacement checks', () => {
+    const staleSlide = makeSlide({
+      analysisState: {
+        rowVars: [],
+        colVar: null,
+        filters: [],
+        weightVar: null,
+      },
+    });
+
+    const review = buildExportReview({
+      slides: [staleSlide],
+      slideIds: ['slide-1'],
+      variableSets,
+      variables,
+      analysisStateOverrides: {
+        'slide-1': {
+          rowVars: ['vs_age'],
+          colVar: null,
+          filters: [],
+          weightVar: null,
+        },
+      },
+    });
+
+    expect(review.canExport).toBe(true);
+    expect(review.issues).toHaveLength(0);
+  });
 });

@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { ExportModal } from './ExportModal';
 import { useVelocityStore } from '../../store';
 
@@ -77,6 +77,85 @@ describe('ExportModal accessibility', () => {
 
     expect(screen.getByTestId('export-review-list')).toBeInTheDocument();
     expect(screen.getByText(/add at least one row variable/i)).toBeInTheDocument();
+    expect(screen.getByTestId('export-modal-submit')).toBeDisabled();
+  });
+
+  it('shows template mode controls and wave refresh options when template config is present', () => {
+    render(
+      <ExportModal
+        isOpen
+        onClose={vi.fn()}
+        config={{
+          title: 'Report',
+          analyses: [],
+          templateOptions: {
+            template: {
+              id: 'tmpl-1',
+              filename: 'client-template.pptx',
+              placeholders: [{ id: 'p1', token: '{{slide.title}}' }],
+              diagnostics: [],
+            },
+            mapping: {
+              templateId: 'tmpl-1',
+              bindings: [{ placeholderId: 'p1', slot: 'slide.title' }],
+            },
+            slideRecipes: [
+              {
+                slideId: 's1',
+                title: 'Slide 1',
+                subtitle: '',
+                analysisState: { rowVars: ['q1'], colVar: null, filters: [], weightVar: null },
+                visualizationType: 'table',
+              },
+            ],
+          },
+        }}
+      />
+    );
+
+    expect(screen.getByText(/template mode/i)).toBeInTheDocument();
+    fireEvent.click(screen.getByLabelText(/apply mapped placeholders/i));
+    expect(screen.getByLabelText(/wave refresh/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/full rebuild/i)).toBeInTheDocument();
+  });
+
+  it('shows template applicability warnings in review-before-export list', () => {
+    render(
+      <ExportModal
+        isOpen
+        onClose={vi.fn()}
+        config={{
+          title: 'Report',
+          analyses: [],
+          templateOptions: {
+            template: {
+              id: 'tmpl-1',
+              filename: 'client-template.pptx',
+              placeholders: [{ id: 'p1', token: '{{slide.title}}' }],
+              diagnostics: [],
+            },
+            mapping: {
+              templateId: 'tmpl-mismatch',
+              bindings: [{ placeholderId: 'p1', slot: 'slide.title' }],
+            },
+            slideRecipes: [
+              {
+                slideId: 's1',
+                title: 'Slide 1',
+                subtitle: '',
+                analysisState: { rowVars: ['q1'], colVar: null, filters: [], weightVar: null },
+                visualizationType: 'table',
+              },
+            ],
+          },
+        }}
+      />
+    );
+
+    fireEvent.click(screen.getByLabelText(/apply mapped placeholders/i));
+
+    expect(screen.getByTestId('export-review-list')).toBeInTheDocument();
+    expect(screen.getAllByText(/template mapping references/i).length).toBeGreaterThan(0);
     expect(screen.getByTestId('export-modal-submit')).toBeDisabled();
   });
 });

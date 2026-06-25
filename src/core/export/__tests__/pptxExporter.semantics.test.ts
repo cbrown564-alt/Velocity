@@ -210,4 +210,83 @@ describe('exportPptx semantics', () => {
     );
     expect(deck.slides[2].notes).toEqual(['Lead with the gender split on slide delivery.']);
   });
+
+  it('applies template bindings in wave refresh mode when template options are provided', async () => {
+    const applyTemplateBindings = vi.fn(async () => new Uint8Array([1, 2, 3]));
+    const config: ExportConfig = {
+      title: 'Template Refresh',
+      analyses: [],
+      templateOptions: {
+        template: {
+          id: 'tmpl-1',
+          filename: 'client-template.pptx',
+          placeholders: [{ id: 'placeholder-1', token: '{{slide.title}}', slideIndex: 1 }],
+          diagnostics: [],
+        },
+        mapping: {
+          templateId: 'tmpl-1',
+          bindings: [{ placeholderId: 'placeholder-1', slot: 'slide.title' }],
+        },
+        slideRecipes: [
+          {
+            slideId: 'slide-1',
+            title: 'Wave 3 Tracker',
+            subtitle: 'Latest wave',
+            analysisState: { rowVars: ['q1'], colVar: null, filters: [], weightVar: null },
+            visualizationType: 'table',
+          },
+        ],
+        baseTemplate: new Uint8Array([0x50, 0x4b]),
+        refreshMode: 'wave_refresh',
+        applyTemplateBindings,
+      },
+    };
+
+    const output = await exportPptx(config);
+
+    expect(output).toEqual(new Uint8Array([1, 2, 3]));
+    expect(applyTemplateBindings).toHaveBeenCalledWith(
+      expect.objectContaining({
+        refreshMode: 'wave_refresh',
+        preserveUntouchedContent: true,
+        bindings: [
+          expect.objectContaining({
+            placeholderId: 'placeholder-1',
+            resolvedValue: 'Wave 3 Tracker',
+          }),
+        ],
+      })
+    );
+    expect(mockDecks).toHaveLength(0);
+  });
+
+  it('fails template export when required template wiring is missing', async () => {
+    await expect(
+      exportPptx({
+        title: 'Broken Template',
+        analyses: [],
+        templateOptions: {
+          template: {
+            id: 'tmpl-1',
+            filename: 'client-template.pptx',
+            placeholders: [{ id: 'placeholder-1', token: '{{slide.title}}' }],
+            diagnostics: [],
+          },
+          mapping: {
+            templateId: 'tmpl-1',
+            bindings: [{ placeholderId: 'placeholder-1', slot: 'slide.title' }],
+          },
+          slideRecipes: [
+            {
+              slideId: 'slide-1',
+              title: 'Slide 1',
+              subtitle: '',
+              analysisState: { rowVars: ['q1'], colVar: null, filters: [], weightVar: null },
+              visualizationType: 'table',
+            },
+          ],
+        },
+      })
+    ).rejects.toThrow(/requires a base template binary/i);
+  });
 });

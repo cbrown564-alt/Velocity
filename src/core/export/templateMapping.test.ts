@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { SlideRecipe } from './slideRecipe';
 import {
+  buildTemplateApplicabilityReview,
   canApplyTemplate,
   extractTemplateMetadata,
   mapTemplatePlaceholders,
@@ -16,6 +17,19 @@ const recipes: SlideRecipe[] = [
     analysisState: {
       rowVars: ['age'],
       colVar: 'region',
+      filters: [],
+      weightVar: 'wt',
+    },
+    visualizationType: 'table',
+  },
+  {
+    slideId: 'slide-2',
+    title: 'Gender by Wave',
+    subtitle: 'Wave 2',
+    notes: 'Refresh wave placeholders',
+    analysisState: {
+      rowVars: ['gender'],
+      colVar: 'wave',
       filters: [],
       weightVar: 'wt',
     },
@@ -83,6 +97,34 @@ describe('mapTemplatePlaceholders', () => {
       },
     ]);
   });
+
+  it('uses slideIndex to resolve bindings per recipe for wave refresh', () => {
+    const mapping: TemplateMapping = {
+      templateId: 'tmpl-1',
+      bindings: [{ placeholderId: 'placeholder-2', slot: 'slide.title' }],
+    };
+
+    const applied = mapTemplatePlaceholders(
+      {
+        id: 'tmpl-1',
+        filename: 'client-template.pptx',
+        placeholders: [
+          { id: 'placeholder-2', token: '{{slide.title}}', slideIndex: 2 },
+        ],
+        diagnostics: [],
+      },
+      mapping,
+      recipes
+    );
+
+    expect(applied.bindings).toEqual([
+      expect.objectContaining({
+        placeholderId: 'placeholder-2',
+        recipeId: 'slide-2',
+        resolvedValue: 'Gender by Wave',
+      }),
+    ]);
+  });
 });
 
 describe('canApplyTemplate', () => {
@@ -131,5 +173,37 @@ describe('canApplyTemplate', () => {
         expect.objectContaining({ code: 'slot_unresolved', severity: 'block' }),
       ])
     );
+  });
+});
+
+describe('buildTemplateApplicabilityReview', () => {
+  it('warns when template mode is enabled without a configured template', () => {
+    const issues = buildTemplateApplicabilityReview({
+      recipes,
+    });
+
+    expect(issues).toEqual([
+      expect.objectContaining({
+        code: 'template_missing',
+        severity: 'warn',
+      }),
+    ]);
+  });
+
+  it('returns blocking issues when a mapping is provided without template binary', () => {
+    const issues = buildTemplateApplicabilityReview({
+      mapping: {
+        templateId: 'tmpl-1',
+        bindings: [{ placeholderId: 'placeholder-1', slot: 'slide.title' }],
+      },
+      recipes,
+    });
+
+    expect(issues).toEqual([
+      expect.objectContaining({
+        code: 'template_missing',
+        severity: 'block',
+      }),
+    ]);
   });
 });
