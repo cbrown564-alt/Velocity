@@ -623,3 +623,26 @@
     font-weight: 500;
     animation: slideIn 300ms var(--ease-standard);
 }
+
+.reviewList {
+    margin: 0;
+    padding-left: var(--space-5);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.reviewIssueBlock,
+.reviewIssueWarn {
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    line-height: 1.4;
+}
+
+.reviewIssueBlock {
+    color: var(--color-error);
+}
+
+.reviewIssueWarn {
+    color: var(--text-secondary);
+}

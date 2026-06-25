@@ -7,3 +7,31 @@ export {
 } from './pptxChartStyle';
 export type { ExportConfig, AnalysisExportItem, ExportBranding } from './types';
 export { ExportError } from './types';
+export {
+  assessDatasetReplacement,
+  buildExportReview,
+  slideToRecipe,
+  slidesToRecipes,
+} from './slideRecipe';
+export type {
+  DatasetReplacementAssessment,
+  ExportReview,
+  SlideRecipe,
+  SlideRecipeIssue,
+} from './slideRecipe';
+export {
+  canApplyTemplate,
+  extractTemplateMetadata,
+  mapTemplatePlaceholders,
+} from './templateMapping';
+export type {
+  AppliedTemplateBinding,
+  AppliedTemplateMapping,
+  PptxTemplate,
+  TemplateApplyIssue,
+  TemplateApplyIssueCode,
+  TemplateMapping,
+  TemplateMappingBinding,
+  TemplatePlaceholder,
+  TemplateSlot,
+} from './templateMapping';

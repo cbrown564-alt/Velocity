@@ -13,6 +13,7 @@ import { exportXlsx } from '../../core/export/xlsxExporter';
 import { ExportConfig } from '../../core/export/types';
 import { useVelocityStore } from '../../store';
 import { buildExportConfig } from '../../core/export/buildExportConfig';
+import { buildExportReview } from '../../core/export/slideRecipe';
 import { resolveAnalysisVariables } from '../../core/export/resolveAnalysisVariables';
 import { runCrosstabForExport } from '../../core/export/runCrosstabForExport';
 import type { SlideAnalysisState } from '../../types/slides';
@@ -79,6 +80,25 @@ export const ExportModal: React.FC<ExportModalProps> = ({
         return selectedSlideIds;
     }, [scope, activeSlideId, slides, selectedSlideIds]);
 
+    const exportReview = useMemo(() => {
+        if (!dataset) {
+            return {
+                canExport: false,
+                slideCount: 0,
+                blockedSlideCount: 0,
+                warningCount: 0,
+                issues: [],
+            };
+        }
+
+        return buildExportReview({
+            slides,
+            slideIds: slideIdsForScope,
+            variableSets,
+            variables: dataset.variables,
+        });
+    }, [dataset, slides, slideIdsForScope, variableSets]);
+
     const handleToggleSelectedSlide = (slideId: string) => {
         setSelectedSlideIds((prev) => {
             if (prev.includes(slideId)) {
@@ -96,7 +116,14 @@ export const ExportModal: React.FC<ExportModalProps> = ({
         setSelectedSlideIds([]);
     };
 
-    const isExportDisabled = isExporting || !title.trim() || slideIdsForScope.length === 0 || isQuerying || !dataset || !browserEngine;
+    const isExportDisabled =
+        isExporting
+        || !title.trim()
+        || slideIdsForScope.length === 0
+        || isQuerying
+        || !dataset
+        || !browserEngine
+        || !exportReview.canExport;
 
     const handleExport = async () => {
         if (!browserEngine || !dataset) {
@@ -109,6 +136,11 @@ export const ExportModal: React.FC<ExportModalProps> = ({
         }
         if (slideIdsForScope.length === 0) {
             setExportError('Select at least one slide to export.');
+            return;
+        }
+        if (!exportReview.canExport) {
+            setExportError(exportReview.issues.find((issue) => issue.severity === 'block')?.message
+                ?? 'Resolve export issues before downloading.');
             return;
         }
 
@@ -465,6 +497,26 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                                         </label>
                                     </div>
                                 </div>
+
+                                {exportReview.issues.length > 0 && (
+                                    <div className={styles.section}>
+                                        <div className={styles.sectionLabel}>Review Before Export</div>
+                                        <ul className={styles.reviewList} data-testid="export-review-list">
+                                            {exportReview.issues.map((issue) => (
+                                                <li
+                                                    key={`${issue.slideId}-${issue.code}-${issue.referenceId ?? 'none'}`}
+                                                    className={
+                                                        issue.severity === 'block'
+                                                            ? styles.reviewIssueBlock
+                                                            : styles.reviewIssueWarn
+                                                    }
+                                                >
+                                                    {issue.message}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                )}
 
                                 {/* Status Messages */}
                                 {exportSuccess && (

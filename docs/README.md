@@ -10,6 +10,8 @@ Navigation hub for live documentation. **Agent rules: [`AGENTS.md`](../AGENTS.md
 | Pilot contract (PILOT-0) | `pilot_00_brief.md` — SAV-to-deck thesis, scope, metrics, ICP screen |
 | Trust evidence (PILOT-2) | `pilot_02_trust_pack.md` — parity, benchmarks, limitations, reproduce commands |
 | Pilot packaging (PILOT-1) | `pilot_01_packaging.md` — build, host, browser matrix, event log |
+| Paid pilot ops kit (PILOT-6) | `pilot_06_paid_pilot_program.md` — outreach, screener, offer scope, runbook, evidence template |
+| Pilot evidence execution checklist | `pilot_evidence_collection_checklist.md` — week-by-week ops playbook for PILOT-4a and PILOT-6 evidence capture |
 | What has shipped | `completed_foundations_summary.md` |
 | Code quality remediation | `kanban_thermo_nuclear_remediation.md` (June 2026 thermo-nuclear review board) |
 | Why and sequencing | `roadmap_00_strategic_guide.md` |
