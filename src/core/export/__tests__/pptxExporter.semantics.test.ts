@@ -2,6 +2,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { exportPptx } from '../pptxExporter';
 import type { ExportConfig } from '../types';
 import type { ProcessedAnalysisData } from '../../../types/processedData';
+import { applyTemplateBindingsToPptx } from '../templateMapping';
+import JSZip from 'jszip';
 
 type TableRow = Array<{ text: string }>;
 
@@ -288,5 +290,44 @@ describe('exportPptx semantics', () => {
         },
       })
     ).rejects.toThrow(/requires a base template binary/i);
+  });
+
+  it('executes binary template path with real applyTemplateBindings handler', async () => {
+    const zip = new JSZip();
+    zip.file('ppt/slides/slide1.xml', '<p:sld><a:t>{{slide.title}}</a:t></p:sld>');
+    const baseTemplate = await zip.generateAsync({ type: 'uint8array' });
+
+    const output = await exportPptx({
+      title: 'Template Binary Path',
+      analyses: [],
+      templateOptions: {
+        template: {
+          id: 'tmpl-1',
+          filename: 'client-template.pptx',
+          placeholders: [{ id: 'placeholder-1', token: '{{slide.title}}', slideIndex: 1 }],
+          diagnostics: [],
+        },
+        mapping: {
+          templateId: 'tmpl-1',
+          bindings: [{ placeholderId: 'placeholder-1', slot: 'slide.title' }],
+        },
+        slideRecipes: [
+          {
+            slideId: 'slide-1',
+            title: 'Client Headline',
+            subtitle: '',
+            analysisState: { rowVars: ['q1'], colVar: null, filters: [], weightVar: null },
+            visualizationType: 'table',
+          },
+        ],
+        baseTemplate,
+        applyTemplateBindings: applyTemplateBindingsToPptx,
+      },
+    });
+
+    const resultZip = await JSZip.loadAsync(output);
+    const slideXml = await resultZip.file('ppt/slides/slide1.xml')!.async('string');
+    expect(slideXml).toContain('Client Headline');
+    expect(slideXml).not.toContain('{{slide.title}}');
   });
 });

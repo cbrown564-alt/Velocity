@@ -13,13 +13,20 @@ import { exportXlsx } from '../../core/export/xlsxExporter';
 import { ExportConfig, TemplateRefreshMode } from '../../core/export/types';
 import { useVelocityStore } from '../../store';
 import { buildExportConfig } from '../../core/export/buildExportConfig';
-import { buildExportReview } from '../../core/export/slideRecipe';
-import { buildTemplateApplicabilityReview } from '../../core/export/templateMapping';
+import { buildExportReview, slidesToRecipes } from '../../core/export/slideRecipe';
+import {
+    applyTemplateBindingsToPptx,
+    buildDefaultTemplateMapping,
+    buildTemplateApplicabilityReview,
+    extractTemplateMetadataFromPptxBinary,
+} from '../../core/export/templateMapping';
 import { resolveAnalysisVariables } from '../../core/export/resolveAnalysisVariables';
 import { runCrosstabForExport } from '../../core/export/runCrosstabForExport';
 import type { SlideAnalysisState } from '../../types/slides';
 import { ModalShell } from './ModalShell';
 import { recordPilotEvent } from '../../services/pilotOnboarding';
+
+const TEMPLATE_STATE_STORAGE_KEY = 'velocity.export.template-state.v1';
 
 interface ExportModalProps {
     isOpen: boolean;
@@ -48,6 +55,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
     const [selectedSlideIds, setSelectedSlideIds] = useState<string[]>([]);
     const [useTemplateMode, setUseTemplateMode] = useState(false);
     const [templateRefreshMode, setTemplateRefreshMode] = useState<TemplateRefreshMode>('wave_refresh');
+    const [templateOptionsState, setTemplateOptionsState] = useState(initialConfig.templateOptions ?? null);
 
     const slides = useVelocityStore((state) => state.slides);
     const activeSlideId = useVelocityStore((state) => state.activeSlideId);
@@ -73,6 +81,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
         setSelectedSlideIds(activeSlideId ? [activeSlideId] : []);
         setUseTemplateMode(false);
         setTemplateRefreshMode('wave_refresh');
+        setTemplateOptionsState(initialConfig.templateOptions ?? null);
     }, [isOpen, initialConfig.title, activeSlideId]);
 
     const slideIdsForScope = useMemo(() => {
@@ -114,17 +123,74 @@ export const ExportModal: React.FC<ExportModalProps> = ({
         });
     }, [dataset, slides, slideIdsForScope, variableSets, activeSlideId, tableConfig, activeFilters]);
 
+    const templateSlideRecipes = useMemo(
+        () => slidesToRecipes(slides.filter((slide) => slideIdsForScope.includes(slide.id))),
+        [slides, slideIdsForScope]
+    );
+
+    useEffect(() => {
+        if (!isOpen || initialConfig.templateOptions) {
+            return;
+        }
+        const stored = localStorage.getItem(TEMPLATE_STATE_STORAGE_KEY);
+        if (!stored) {
+            return;
+        }
+        try {
+            const parsed = JSON.parse(stored) as {
+                template: NonNullable<ExportConfig['templateOptions']>['template'];
+                mapping: NonNullable<ExportConfig['templateOptions']>['mapping'];
+                baseTemplate: string;
+            };
+            const raw = atob(parsed.baseTemplate);
+            const bytes = new Uint8Array(raw.length);
+            for (let index = 0; index < raw.length; index += 1) {
+                bytes[index] = raw.charCodeAt(index);
+            }
+            setTemplateOptionsState({
+                template: parsed.template,
+                mapping: parsed.mapping,
+                slideRecipes: templateSlideRecipes,
+                baseTemplate: bytes,
+                applyTemplateBindings: applyTemplateBindingsToPptx,
+                preserveUntouchedContent: true,
+            });
+        } catch {
+            localStorage.removeItem(TEMPLATE_STATE_STORAGE_KEY);
+        }
+    }, [isOpen, initialConfig.templateOptions, templateSlideRecipes]);
+
+    useEffect(() => {
+        if (!templateOptionsState?.baseTemplate) {
+            localStorage.removeItem(TEMPLATE_STATE_STORAGE_KEY);
+            return;
+        }
+        let raw = '';
+        for (const byte of templateOptionsState.baseTemplate) {
+            raw += String.fromCharCode(byte);
+        }
+        const baseTemplate = btoa(raw);
+        localStorage.setItem(
+            TEMPLATE_STATE_STORAGE_KEY,
+            JSON.stringify({
+                template: templateOptionsState.template,
+                mapping: templateOptionsState.mapping,
+                baseTemplate,
+            })
+        );
+    }, [templateOptionsState]);
+
     const templateReviewIssues = useMemo(() => {
         if (!useTemplateMode || format !== 'pptx') {
             return [];
         }
         return buildTemplateApplicabilityReview({
-            template: initialConfig.templateOptions?.template,
-            mapping: initialConfig.templateOptions?.mapping,
-            recipes: initialConfig.templateOptions?.slideRecipes ?? [],
-            preserveEditableObjects: initialConfig.templateOptions?.preserveUntouchedContent ?? true,
+            template: templateOptionsState?.template,
+            mapping: templateOptionsState?.mapping,
+            recipes: templateOptionsState?.slideRecipes ?? templateSlideRecipes,
+            preserveEditableObjects: templateOptionsState?.preserveUntouchedContent ?? true,
         });
-    }, [useTemplateMode, format, initialConfig.templateOptions]);
+    }, [useTemplateMode, format, templateOptionsState, templateSlideRecipes]);
 
     const reviewIssues = useMemo(() => {
         if (format !== 'pptx' || !useTemplateMode) {
@@ -259,10 +325,12 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                     },
                 })),
                 branding: initialConfig.branding,
-                ...(format === 'pptx' && useTemplateMode && initialConfig.templateOptions
+                ...(format === 'pptx' && useTemplateMode && templateOptionsState
                     ? {
                         templateOptions: {
-                            ...initialConfig.templateOptions,
+                            ...templateOptionsState,
+                            slideRecipes: templateSlideRecipes,
+                            applyTemplateBindings: applyTemplateBindingsToPptx,
                             refreshMode: templateRefreshMode,
                             preserveUntouchedContent: true,
                         },
@@ -305,6 +373,33 @@ export const ExportModal: React.FC<ExportModalProps> = ({
             setExportError(error instanceof Error ? error.message : 'Export failed. Please try again.');
         } finally {
             setIsExporting(false);
+        }
+    };
+
+    const handleTemplateImport = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (!file) {
+            return;
+        }
+        try {
+            const buffer = await file.arrayBuffer();
+            const baseTemplate = new Uint8Array(buffer);
+            const template = await extractTemplateMetadataFromPptxBinary(file.name, baseTemplate);
+            const mapping = buildDefaultTemplateMapping(template);
+            setTemplateOptionsState({
+                template,
+                mapping,
+                slideRecipes: templateSlideRecipes,
+                baseTemplate,
+                refreshMode: templateRefreshMode,
+                preserveUntouchedContent: true,
+                applyTemplateBindings: applyTemplateBindingsToPptx,
+            });
+            setUseTemplateMode(true);
+        } catch (error) {
+            setExportError(error instanceof Error ? error.message : 'Template import failed.');
+        } finally {
+            event.target.value = '';
         }
     };
 
@@ -485,7 +580,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                                                 type="checkbox"
                                                 checked={useTemplateMode}
                                                 onChange={(e) => setUseTemplateMode(e.target.checked)}
-                                                disabled={!initialConfig.templateOptions}
+                                                disabled={!templateOptionsState}
                                             />
                                             <div className={styles.checkbox} />
                                             <div>
@@ -493,13 +588,13 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                                                     Apply mapped placeholders
                                                 </div>
                                                 <div className={styles.checkboxDescription}>
-                                                    {initialConfig.templateOptions
+                                                    {templateOptionsState
                                                         ? 'Keep untouched template content and refresh mapped values only.'
                                                         : 'Load and map a PowerPoint template to enable template-aware export.'}
                                                 </div>
                                             </div>
                                         </label>
-                                        {useTemplateMode && initialConfig.templateOptions && (
+                                        {useTemplateMode && templateOptionsState && (
                                             <div className={styles.templateModeOptions}>
                                                 <label className={styles.scopeOption}>
                                                     <input
@@ -533,6 +628,18 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                                                 </label>
                                             </div>
                                         )}
+                                        <div className={styles.inputGroup}>
+                                            <label htmlFor="template-import" className={styles.inputLabel}>
+                                                Import Client Template (.pptx)
+                                            </label>
+                                            <input
+                                                id="template-import"
+                                                type="file"
+                                                accept=".pptx,application/vnd.openxmlformats-officedocument.presentationml.presentation"
+                                                className={styles.input}
+                                                onChange={handleTemplateImport}
+                                            />
+                                        </div>
                                         {useTemplateMode && templateReviewIssues.length > 0 && (
                                             <ul className={styles.reviewList} data-testid="template-review-list">
                                                 {templateReviewIssues.map((issue) => (

@@ -1,10 +1,12 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import JSZip from 'jszip';
 import { ExportModal } from './ExportModal';
 import { useVelocityStore } from '../../store';
 
 describe('ExportModal accessibility', () => {
   beforeEach(() => {
+    localStorage.clear();
     useVelocityStore.setState({
       slides: [{ id: 's1', title: 'Slide 1', analysisState: { rowVars: [], colVar: null, filters: [], weightVar: null } }],
       activeSlideId: 's1',
@@ -157,5 +159,44 @@ describe('ExportModal accessibility', () => {
     expect(screen.getByTestId('export-review-list')).toBeInTheDocument();
     expect(screen.getAllByText(/template mapping references/i).length).toBeGreaterThan(0);
     expect(screen.getByTestId('export-modal-submit')).toBeDisabled();
+  });
+
+  it('imports template binary and restores it on modal reopen', async () => {
+    const zip = new JSZip();
+    zip.file('ppt/slides/slide1.xml', '<p:sld><a:t>{{slide.title}}</a:t></p:sld>');
+    const binary = await zip.generateAsync({ type: 'uint8array' });
+    const file = new File([binary], 'client-template.pptx', {
+      type: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    });
+
+    const { unmount } = render(
+      <ExportModal
+        isOpen
+        onClose={vi.fn()}
+        config={{ title: 'Report', analyses: [] }}
+      />
+    );
+
+    fireEvent.change(screen.getByLabelText(/import client template/i), {
+      target: { files: [file] },
+    });
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/apply mapped placeholders/i)).toBeEnabled();
+    });
+
+    unmount();
+
+    render(
+      <ExportModal
+        isOpen
+        onClose={vi.fn()}
+        config={{ title: 'Report', analyses: [] }}
+      />
+    );
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/apply mapped placeholders/i)).toBeEnabled();
+    });
   });
 });

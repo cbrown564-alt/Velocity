@@ -20,9 +20,12 @@ export type {
   SlideRecipeIssue,
 } from './slideRecipe';
 export {
+  applyTemplateBindingsToPptx,
+  buildDefaultTemplateMapping,
   buildTemplateApplicabilityReview,
   canApplyTemplate,
   extractTemplateMetadata,
+  extractTemplateMetadataFromPptxBinary,
   mapTemplatePlaceholders,
 } from './templateMapping';
 export type {

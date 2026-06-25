@@ -1,9 +1,13 @@
 import { describe, expect, it } from 'vitest';
+import JSZip from 'jszip';
 import type { SlideRecipe } from './slideRecipe';
 import {
+  applyTemplateBindingsToPptx,
+  buildDefaultTemplateMapping,
   buildTemplateApplicabilityReview,
   canApplyTemplate,
   extractTemplateMetadata,
+  extractTemplateMetadataFromPptxBinary,
   mapTemplatePlaceholders,
   type TemplateMapping,
 } from './templateMapping';
@@ -205,5 +209,61 @@ describe('buildTemplateApplicabilityReview', () => {
         severity: 'block',
       }),
     ]);
+  });
+});
+
+describe('template binary wiring', () => {
+  it('extracts placeholders and builds default mapping from PPTX binary', async () => {
+    const zip = new JSZip();
+    zip.file(
+      'ppt/slides/slide1.xml',
+      '<p:sld><a:t>{{slide.title}}</a:t><a:t>{{slide.subtitle}}</a:t></p:sld>'
+    );
+    const baseTemplate = await zip.generateAsync({ type: 'uint8array' });
+    const template = await extractTemplateMetadataFromPptxBinary('client.pptx', baseTemplate);
+    const mapping = buildDefaultTemplateMapping(template);
+
+    expect(template.placeholders.map((entry) => entry.token)).toEqual([
+      '{{slide.title}}',
+      '{{slide.subtitle}}',
+    ]);
+    expect(mapping.bindings).toEqual([
+      { placeholderId: 'placeholder-1', slot: 'slide.title' },
+      { placeholderId: 'placeholder-2', slot: 'slide.subtitle' },
+    ]);
+  });
+
+  it('applies resolved template bindings to PPTX slide XML', async () => {
+    const zip = new JSZip();
+    zip.file(
+      'ppt/slides/slide1.xml',
+      '<p:sld><a:t>{{slide.title}}</a:t><a:t>{{slide.subtitle}}</a:t></p:sld>'
+    );
+    const baseTemplate = await zip.generateAsync({ type: 'uint8array' });
+    const output = await applyTemplateBindingsToPptx({
+      baseTemplate,
+      bindings: [
+        {
+          placeholderId: 'placeholder-1',
+          token: '{{slide.title}}',
+          slot: 'slide.title',
+          resolvedValue: 'Wave 4 Summary',
+          recipeId: 'slide-1',
+        },
+        {
+          placeholderId: 'placeholder-2',
+          token: '{{slide.subtitle}}',
+          slot: 'slide.subtitle',
+          resolvedValue: 'Weighted adults 18+',
+          recipeId: 'slide-1',
+        },
+      ],
+    });
+
+    const nextZip = await JSZip.loadAsync(output);
+    const slideXml = await nextZip.file('ppt/slides/slide1.xml')!.async('string');
+    expect(slideXml).toContain('Wave 4 Summary');
+    expect(slideXml).toContain('Weighted adults 18+');
+    expect(slideXml).not.toContain('{{slide.title}}');
   });
 });

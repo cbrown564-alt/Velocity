@@ -1,4 +1,5 @@
 import type { SlideRecipe } from './slideRecipe';
+import JSZip from 'jszip';
 
 const PLACEHOLDER_REGEX = /\{\{\s*([a-zA-Z0-9_.-]+)\s*\}\}/g;
 
@@ -75,6 +76,16 @@ interface ExtractTemplateMetadataInput {
   extractedTexts?: string[];
 }
 
+const TEMPLATE_SLOT_BY_KEY: Partial<Record<string, TemplateSlot>> = {
+  'slide.title': 'slide.title',
+  'slide.subtitle': 'slide.subtitle',
+  'slide.notes': 'slide.notes',
+  'analysis.label': 'analysis.label',
+};
+
+const XML_TEXT_NODE_REGEX = /<a:t>([\s\S]*?)<\/a:t>/g;
+const PPTX_SLIDE_PATH_REGEX = /^ppt\/slides\/slide(\d+)\.xml$/;
+
 function extractPlaceholderTokens(text: string): string[] {
   const matches = text.matchAll(PLACEHOLDER_REGEX);
   const tokens: string[] = [];
@@ -86,6 +97,24 @@ function extractPlaceholderTokens(text: string): string[] {
 
 function normalizePlaceholderKey(token: string): string {
   return token.replace('{{', '').replace('}}', '').trim();
+}
+
+function decodeXmlText(value: string): string {
+  return value
+    .replaceAll('&lt;', '<')
+    .replaceAll('&gt;', '>')
+    .replaceAll('&amp;', '&')
+    .replaceAll('&quot;', '"')
+    .replaceAll('&apos;', '\'');
+}
+
+function escapeXmlText(value: string): string {
+  return value
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll('\'', '&apos;');
 }
 
 function resolveSlotValue(recipe: SlideRecipe, slot: TemplateSlot): string | null {
@@ -137,6 +166,109 @@ export async function extractTemplateMetadata(
     placeholders,
     diagnostics,
   };
+}
+
+export async function extractTemplateMetadataFromPptxBinary(
+  filename: string,
+  baseTemplate: Uint8Array
+): Promise<PptxTemplate> {
+  const zip = await JSZip.loadAsync(baseTemplate);
+  const placeholders: TemplatePlaceholder[] = [];
+  const seenTokens = new Set<string>();
+  const diagnostics: string[] = [];
+
+  const slideEntries = Object.keys(zip.files)
+    .map((path) => {
+      const match = path.match(PPTX_SLIDE_PATH_REGEX);
+      if (!match) {
+        return null;
+      }
+      return { path, slideIndex: Number.parseInt(match[1], 10) };
+    })
+    .filter((entry): entry is { path: string; slideIndex: number } => entry !== null)
+    .sort((a, b) => a.slideIndex - b.slideIndex);
+
+  for (const slideEntry of slideEntries) {
+    const file = zip.file(slideEntry.path);
+    if (!file) {
+      continue;
+    }
+    const xml = await file.async('string');
+    const textChunks = [...xml.matchAll(XML_TEXT_NODE_REGEX)].map((match) => decodeXmlText(match[1]));
+    for (const chunk of textChunks) {
+      for (const token of extractPlaceholderTokens(chunk)) {
+        if (seenTokens.has(token)) {
+          continue;
+        }
+        seenTokens.add(token);
+        placeholders.push({
+          id: `placeholder-${placeholders.length + 1}`,
+          token,
+          key: normalizePlaceholderKey(token),
+          slideIndex: slideEntry.slideIndex,
+        });
+      }
+    }
+  }
+
+  if (placeholders.length === 0) {
+    diagnostics.push(
+      `No placeholders were detected in "${filename}". Add {{slide.title}}, {{slide.subtitle}}, {{slide.notes}}, or {{analysis.label}} tokens to template text boxes before export.`
+    );
+  }
+
+  return {
+    id: `${filename}:${placeholders.length}`,
+    filename,
+    placeholders,
+    diagnostics,
+  };
+}
+
+export function buildDefaultTemplateMapping(template: PptxTemplate): TemplateMapping {
+  return {
+    templateId: template.id,
+    bindings: template.placeholders.flatMap((placeholder) => {
+      const slot = TEMPLATE_SLOT_BY_KEY[placeholder.key];
+      if (!slot) {
+        return [];
+      }
+      return [{ placeholderId: placeholder.id, slot }];
+    }),
+  };
+}
+
+export async function applyTemplateBindingsToPptx(input: {
+  baseTemplate: Uint8Array;
+  bindings: AppliedTemplateBinding[];
+}): Promise<Uint8Array> {
+  const zip = await JSZip.loadAsync(input.baseTemplate);
+
+  for (const binding of input.bindings) {
+    const slideIndex = Number.parseInt(binding.recipeId.replace('slide-', ''), 10);
+    const candidates = Number.isFinite(slideIndex)
+      ? [`ppt/slides/slide${slideIndex}.xml`]
+      : [];
+    const fallbackCandidates = Object.keys(zip.files).filter((path) => path.match(PPTX_SLIDE_PATH_REGEX));
+    const uniqueCandidates = [...new Set([...candidates, ...fallbackCandidates])];
+
+    for (const slidePath of uniqueCandidates) {
+      const file = zip.file(slidePath);
+      if (!file) {
+        continue;
+      }
+      const xml = await file.async('string');
+      if (!xml.includes(binding.token)) {
+        continue;
+      }
+      const nextXml = xml.replaceAll(binding.token, escapeXmlText(binding.resolvedValue));
+      zip.file(slidePath, nextXml);
+      break;
+    }
+  }
+
+  const output = await zip.generateAsync({ type: 'uint8array' });
+  return output;
 }
 
 export function mapTemplatePlaceholders(
