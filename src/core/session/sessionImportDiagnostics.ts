@@ -21,6 +21,7 @@ export function hasSessionImportDiagnostics(diagnostics: SessionImportDiagnostic
     diagnostics.droppedRowVarIds.length > 0 ||
     diagnostics.droppedColVarIds.length > 0 ||
     diagnostics.missingSectionIds.length > 0 ||
+    diagnostics.droppedDeckRecipeSlideIds.length > 0 ||
     diagnostics.skippedTransforms > 0 ||
     diagnostics.fallbackVariableSetsGenerated
   );
@@ -75,6 +76,14 @@ export function listSessionImportDiagnostics(
     messages.push({
       id: 'missing-section-ids',
       message: `${pluralize(count, 'slide section reference')} ${wasOrWere(count)} removed.`,
+    });
+  }
+
+  if (diagnostics.droppedDeckRecipeSlideIds.length > 0) {
+    const count = diagnostics.droppedDeckRecipeSlideIds.length;
+    messages.push({
+      id: 'dropped-deck-recipe-slide-ids',
+      message: `${pluralize(count, 'deck recipe slide reference')} ${wasOrWere(count)} removed.`,
     });
   }
 

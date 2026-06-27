@@ -102,6 +102,7 @@ function makeEngine(overrides: Record<string, unknown> = {}) {
       warnings: [],
       metadata: { datasetName: 'test.sav', rowCount: 100, filtersApplied: 0, isWeighted: true, engineVersion: 'test' },
     }),
+    draftDeckPlan: vi.fn().mockReturnValue({ data: { approvalRequired: true, actions: [], deckSpec: { title: 'Draft', sections: [] } }, operation: 'draftDeckPlan', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
     buildDeck: vi.fn().mockResolvedValue({ data: { slides: [], errors: [], spec: {}, buildDurationMs: 1 }, operation: 'buildDeck', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
     exportDeck: vi.fn().mockResolvedValue({ data: new Uint8Array([1, 2, 3]), operation: 'exportDeck', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
     commitDeck: vi.fn().mockReturnValue({
@@ -459,6 +460,13 @@ describe('velocity_set_weight', () => {
 });
 
 describe('velocity_build_deck', () => {
+  it('calls engine.draftDeckPlan with the spec for bounded draft review', async () => {
+    const engine = makeEngine();
+    const spec = { title: 'Draft Deck', sections: [] };
+    await callTool(engine, 'velocity_draft_deck_plan', { spec });
+    expect(engine.draftDeckPlan).toHaveBeenCalledWith(spec);
+  });
+
   it('calls engine.buildDeck with the spec', async () => {
     const engine = makeEngine();
     const spec = { title: 'My Deck', sections: [] };

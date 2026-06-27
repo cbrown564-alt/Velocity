@@ -78,6 +78,7 @@ describe('ExportModal accessibility', () => {
     );
 
     expect(screen.getByTestId('export-review-list')).toBeInTheDocument();
+    expect(screen.getByTestId('deck-readiness-status')).toHaveTextContent(/blocked/i);
     expect(screen.getByText(/add at least one row variable/i)).toBeInTheDocument();
     expect(screen.getByTestId('export-modal-submit')).toBeDisabled();
   });
@@ -94,7 +95,7 @@ describe('ExportModal accessibility', () => {
             template: {
               id: 'tmpl-1',
               filename: 'client-template.pptx',
-              placeholders: [{ id: 'p1', token: '{{slide.title}}' }],
+              placeholders: [{ id: 'p1', token: '{{slide.title}}', key: 'slide.title' }],
               diagnostics: [],
             },
             mapping: {
@@ -133,7 +134,7 @@ describe('ExportModal accessibility', () => {
             template: {
               id: 'tmpl-1',
               filename: 'client-template.pptx',
-              placeholders: [{ id: 'p1', token: '{{slide.title}}' }],
+              placeholders: [{ id: 'p1', token: '{{slide.title}}', key: 'slide.title' }],
               diagnostics: [],
             },
             mapping: {

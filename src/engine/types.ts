@@ -151,6 +151,33 @@ export interface DeckSpec {
   sections: DeckSectionSpec[];
 }
 
+export type DeckDraftActionType = 'create_section' | 'create_slide';
+
+export interface DeckDraftAction {
+  id: string;
+  type: DeckDraftActionType;
+  label: string;
+  requiresApproval: true;
+  sectionTitle: string;
+  slideTitle?: string;
+  slideSpec?: SlideSpec;
+  caveats: string[];
+  provenance: {
+    source: 'agent_draft';
+    deckTitle: string;
+    sectionIndex: number;
+    slideIndex?: number;
+  };
+}
+
+export interface DeckDraftPlan {
+  title: string;
+  approvalRequired: true;
+  actionCount: number;
+  actions: DeckDraftAction[];
+  deckSpec: DeckSpec;
+}
+
 export interface BuiltSlide {
   spec: SlideSpec;
   sectionTitle: string;

@@ -343,6 +343,8 @@ describe('session export/import round trip', () => {
 
     expect(actualEquivalent).toEqual(expectedEquivalent);
     expect(imported.patch.activeSlideId).toBe('slide-1');
+    expect(imported.patch.deckRecipe.slideRecipes.map((recipe) => recipe.slideId)).toEqual(['slide-1', 'slide-2']);
+    expect(imported.patch.deckRecipe.sections.map((section) => section.id)).toEqual(['section-main']);
     expect(imported.diagnostics).toEqual({
       missingVariableIds: [],
       droppedVariableSetIds: [],
@@ -350,6 +352,7 @@ describe('session export/import round trip', () => {
       droppedRowVarIds: [],
       droppedColVarIds: [],
       missingSectionIds: [],
+      droppedDeckRecipeSlideIds: [],
       skippedTransforms: 0,
       fallbackVariableSetsGenerated: false,
     });

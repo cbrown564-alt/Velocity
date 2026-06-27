@@ -506,4 +506,54 @@ describe('VelocityEngine', () => {
     expect(commitEnvelope.data.committedSections).toBe(1);
     expect(commitEnvelope.metadata.engineVersion).toBe('test-engine');
   });
+
+  it('drafts approval-required deck actions without mutating slide state', async () => {
+    const adapter = new MockAdapter();
+    const engine = await VelocityEngine.create({ runtime: 'node', adapter, engineVersion: 'test-engine' });
+    await engine.loadFile('/data/brand_tracker.sav');
+
+    const spec = {
+      title: 'Pilot Draft',
+      sections: [
+        {
+          title: 'Results',
+          slides: [
+            {
+              rowVars: ['Q1'],
+              colVar: 'GENDER',
+              title: 'Satisfaction by Gender',
+              notes: 'Check significance before sending.',
+              visualizationType: 'table' as const,
+            },
+          ],
+        },
+      ],
+    };
+
+    const envelope = engine.draftDeckPlan(spec);
+
+    expect(envelope.operation).toBe('draftDeckPlan');
+    expect(envelope.data.approvalRequired).toBe(true);
+    expect(envelope.data.actions).toEqual([
+      expect.objectContaining({
+        type: 'create_section',
+        label: 'Create section "Results"',
+        requiresApproval: true,
+      }),
+      expect.objectContaining({
+        type: 'create_slide',
+        label: 'Add slide "Satisfaction by Gender"',
+        requiresApproval: true,
+        slideSpec: expect.objectContaining({
+          rowVars: ['Q1'],
+          colVar: 'GENDER',
+          notes: 'Check significance before sending.',
+        }),
+        caveats: expect.arrayContaining(['Review generated notes before commit/export.']),
+      }),
+    ]);
+    expect(envelope.data.deckSpec).toEqual(spec);
+    expect(envelope.metadata.engineVersion).toBe('test-engine');
+    expect(engine.state.slides).toEqual([]);
+  });
 });

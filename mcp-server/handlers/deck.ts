@@ -8,6 +8,11 @@ import { successResponse } from '../responses.js';
 import type { ToolHandler } from './types.js';
 
 export const deckHandlers: Record<string, ToolHandler> = {
+  velocity_draft_deck_plan: (engine, a) => {
+    const result = engine.draftDeckPlan(a.spec as DeckSpec);
+    return successResponse(result);
+  },
+
   velocity_build_deck: async (engine, a) => {
     const result = await engine.buildDeck(a.spec as DeckSpec);
     return formatBuildDeckResponse(result);

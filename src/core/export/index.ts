@@ -9,12 +9,15 @@ export type { ExportConfig, AnalysisExportItem, ExportBranding } from './types';
 export { ExportError } from './types';
 export {
   assessDatasetReplacement,
+  buildDatasetReplacementReview,
   buildExportReview,
   slideToRecipe,
   slidesToRecipes,
 } from './slideRecipe';
 export type {
   DatasetReplacementAssessment,
+  DatasetReplacementReview,
+  DatasetReplacementSlideReview,
   ExportReview,
   SlideRecipe,
   SlideRecipeIssue,

@@ -12,6 +12,7 @@ Navigation hub for live documentation. **Agent rules: [`AGENTS.md`](../AGENTS.md
 | Pilot packaging (PILOT-1) | `pilot_01_packaging.md` — build, host, browser matrix, event log |
 | Paid pilot ops kit (PILOT-6) | `pilot_06_paid_pilot_program.md` — outreach, screener, offer scope, runbook, evidence template |
 | Pilot evidence execution checklist | `pilot_evidence_collection_checklist.md` — week-by-week ops playbook for PILOT-4a and PILOT-6 evidence capture |
+| Deck-native multi-agent plan | `deck_native_multi_agent_plan.md` — planner/designer/builder/evaluator protocol and phased deck-native gates |
 | What has shipped | `completed_foundations_summary.md` |
 | Code quality remediation | `kanban_thermo_nuclear_remediation.md` (June 2026 thermo-nuclear review board) |
 | Why and sequencing | `roadmap_00_strategic_guide.md` |

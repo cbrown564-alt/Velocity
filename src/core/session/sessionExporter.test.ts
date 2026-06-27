@@ -116,6 +116,9 @@ describe('exportSession', () => {
     expect(session.variables).toHaveLength(2);
     expect(session.variableSets).toHaveLength(1);
     expect(session.workspace).toBeUndefined();
+    expect(session.deckRecipe?.slideRecipes.map((recipe) => recipe.slideId)).toEqual(['slide-1']);
+    expect(session.deckRecipe?.slideRecipes[0].analysisState).toEqual(slidesFixture[0].analysisState);
+    expect(JSON.stringify(session.deckRecipe)).not.toContain('opfs');
   });
 
   it('includes workspace snapshot when multiple datasets/projects exist', () => {

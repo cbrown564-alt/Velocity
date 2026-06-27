@@ -624,6 +624,35 @@
     animation: slideIn 300ms var(--ease-standard);
 }
 
+.readinessStatus {
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius);
+    border: 1px solid var(--border-color);
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    line-height: 1.4;
+    margin-bottom: var(--space-6);
+}
+
+.readinessStatus_ready {
+    color: var(--status-success-text);
+    background: var(--status-success-bg);
+    border-color: color-mix(in srgb, var(--status-success-text) 45%, var(--border-color));
+}
+
+.readinessStatus_warning {
+    color: var(--status-warning-text);
+    background: var(--status-warning-bg);
+    border-color: color-mix(in srgb, var(--status-warning-text) 45%, var(--border-color));
+}
+
+.readinessStatus_blocked {
+    color: var(--color-error);
+    background: color-mix(in srgb, var(--color-error) 12%, transparent);
+    border-color: var(--color-error);
+}
+
 .reviewList {
     margin: 0;
     padding-left: var(--space-5);

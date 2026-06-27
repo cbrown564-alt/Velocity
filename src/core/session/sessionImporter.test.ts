@@ -109,6 +109,7 @@ describe('importSession', () => {
     expect(result.patch.slides[0].analysisState.filters.map((filter) => filter.id)).toEqual(['slide-filter-valid']);
     expect(result.patch.slides[0].analysisState.weightVar).toBeNull();
     expect(result.patch.slides[0].sectionId).toBeUndefined();
+    expect(result.patch.deckRecipe.slideRecipes.map((recipe) => recipe.slideId)).toEqual(['slide-1']);
 
     expect(result.diagnostics.missingVariableIds).toContain('q_missing');
     expect(result.diagnostics.droppedVariableSetIds).toContain('set-missing');
@@ -132,6 +133,44 @@ describe('importSession', () => {
     expect(result.patch.variableSets[0].id).toBe('vs_q1');
     expect(result.patch.tableConfig).toEqual({ rowVars: [], colVar: null });
     expect(result.diagnostics.fallbackVariableSetsGenerated).toBe(true);
+  });
+
+  it('drops stale deck recipe slide references and reports diagnostics', () => {
+    const result = importSession(buildSessionFile({
+      deckRecipe: {
+        recipeVersion: 1,
+        sections: [],
+        slideRecipes: [
+          {
+            slideId: 'slide-1',
+            title: 'Slide',
+            subtitle: '',
+            analysisState: {
+              rowVars: ['set-valid'],
+              colVar: null,
+              filters: [],
+              weightVar: null,
+            },
+            visualizationType: 'table',
+          },
+          {
+            slideId: 'stale-slide',
+            title: 'Stale',
+            subtitle: '',
+            analysisState: {
+              rowVars: ['set-valid'],
+              colVar: null,
+              filters: [],
+              weightVar: null,
+            },
+            visualizationType: 'table',
+          },
+        ],
+      },
+    }), loadedDataset);
+
+    expect(result.patch.deckRecipe.slideRecipes.map((recipe) => recipe.slideId)).toEqual(['slide-1']);
+    expect(result.diagnostics.droppedDeckRecipeSlideIds).toContain('stale-slide');
   });
 
   it('throws when session file validation fails', () => {

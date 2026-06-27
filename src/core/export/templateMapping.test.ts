@@ -76,9 +76,10 @@ describe('mapTemplatePlaceholders', () => {
         id: 'tmpl-1',
         filename: 'client-template.pptx',
         placeholders: [
-          { id: 'placeholder-1', token: '{{slide.title}}', slideIndex: 1 },
-          { id: 'placeholder-2', token: '{{slide.subtitle}}', slideIndex: 1 },
+          { id: 'placeholder-1', token: '{{slide.title}}', key: 'slide.title', slideIndex: 1 },
+          { id: 'placeholder-2', token: '{{slide.subtitle}}', key: 'slide.subtitle', slideIndex: 1 },
         ],
+        diagnostics: [],
       },
       mapping,
       recipes
@@ -113,7 +114,7 @@ describe('mapTemplatePlaceholders', () => {
         id: 'tmpl-1',
         filename: 'client-template.pptx',
         placeholders: [
-          { id: 'placeholder-2', token: '{{slide.title}}', slideIndex: 2 },
+          { id: 'placeholder-2', token: '{{slide.title}}', key: 'slide.title', slideIndex: 2 },
         ],
         diagnostics: [],
       },
@@ -141,7 +142,8 @@ describe('canApplyTemplate', () => {
       {
         id: 'tmpl-1',
         filename: 'client-template.pptx',
-        placeholders: [{ id: 'placeholder-1', token: '{{slide.title}}' }],
+        placeholders: [{ id: 'placeholder-1', token: '{{slide.title}}', key: 'slide.title' }],
+        diagnostics: [],
       },
       recipes
     );
@@ -161,7 +163,8 @@ describe('canApplyTemplate', () => {
       {
         id: 'tmpl-1',
         filename: 'client-template.pptx',
-        placeholders: [{ id: 'placeholder-1', token: '{{slide.notes}}' }],
+        placeholders: [{ id: 'placeholder-1', token: '{{slide.notes}}', key: 'slide.notes' }],
+        diagnostics: [],
       },
       [
         {

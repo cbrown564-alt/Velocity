@@ -10,6 +10,7 @@ function emptyDiagnostics(): SessionImportDiagnosticsSummary {
     droppedRowVarIds: [],
     droppedColVarIds: [],
     missingSectionIds: [],
+    droppedDeckRecipeSlideIds: [],
     skippedTransforms: 0,
     fallbackVariableSetsGenerated: false,
   };
@@ -30,6 +31,7 @@ describe('sessionImportDiagnostics', () => {
       droppedRowVarIds: ['row1'],
       droppedColVarIds: ['col1'],
       missingSectionIds: ['section1'],
+      droppedDeckRecipeSlideIds: ['slide-stale'],
       skippedTransforms: 2,
       fallbackVariableSetsGenerated: true,
     };
@@ -44,6 +46,7 @@ describe('sessionImportDiagnostics', () => {
       'dropped-row-var-ids',
       'dropped-col-var-ids',
       'missing-section-ids',
+      'dropped-deck-recipe-slide-ids',
       'skipped-transforms',
       'fallback-variable-sets-generated',
     ]);

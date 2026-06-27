@@ -42,6 +42,7 @@ import type {
   CommitDeckResult,
   DatasetDescription,
   DatasetSummary,
+  DeckDraftPlan,
   DeckExportOptions,
   DeckSpec,
   EngineOptions,
@@ -463,6 +464,87 @@ export class VelocityEngine implements VelocityEngineHost {
         engineVersion: this.engineVersion,
       },
     };
+  }
+
+  draftDeckPlan(spec: DeckSpec): ResultEnvelope<DeckDraftPlan> {
+    this.requireDataset();
+    const warnings: string[] = [];
+    const actions = spec.sections.flatMap((section, sectionIndex) => {
+      const sectionActions: DeckDraftPlan['actions'] = [
+        {
+          id: `section-${sectionIndex + 1}`,
+          type: 'create_section',
+          label: `Create section "${section.title}"`,
+          requiresApproval: true,
+          sectionTitle: section.title,
+          caveats: [],
+          provenance: {
+            source: 'agent_draft',
+            deckTitle: spec.title,
+            sectionIndex,
+          },
+        },
+      ];
+
+      const slideActions: DeckDraftPlan['actions'] = section.slides.map((slideSpec, slideIndex) => {
+        const slideTitle = slideSpec.title?.trim() || `Slide ${slideIndex + 1}`;
+        const caveats: string[] = ['Review generated notes before commit/export.'];
+        if (slideSpec.rowVars.length === 0) {
+          caveats.push('Add at least one row variable before building this slide.');
+          warnings.push(`Slide "${slideTitle}" has no row variables.`);
+        }
+
+        for (const rowVar of slideSpec.rowVars) {
+          if (!this.state.dataset?.variables.some((variable) => variable.id === rowVar)) {
+            caveats.push(`Variable "${rowVar}" is not in the active dataset.`);
+            warnings.push(`Slide "${slideTitle}" references unknown variable "${rowVar}".`);
+          }
+        }
+
+        return {
+          id: `section-${sectionIndex + 1}-slide-${slideIndex + 1}`,
+          type: 'create_slide',
+          label: `Add slide "${slideTitle}"`,
+          requiresApproval: true,
+          sectionTitle: section.title,
+          slideTitle,
+          slideSpec: {
+            ...slideSpec,
+            rowVars: [...slideSpec.rowVars],
+            filters: slideSpec.filters?.map((filter) => ({
+              ...filter,
+              value: Array.isArray(filter.value) ? [...filter.value] : filter.value,
+            })),
+          },
+          caveats,
+          provenance: {
+            source: 'agent_draft',
+            deckTitle: spec.title,
+            sectionIndex,
+            slideIndex,
+          },
+        };
+      });
+
+      return [...sectionActions, ...slideActions];
+    });
+
+    return this.wrapSync(
+      'draftDeckPlan',
+      {
+        deckTitle: spec.title,
+        sectionCount: spec.sections.length,
+        slideCount: spec.sections.reduce((count, section) => count + section.slides.length, 0),
+      },
+      () => ({
+        title: spec.title,
+        approvalRequired: true,
+        actionCount: actions.length,
+        actions,
+        deckSpec: spec,
+      }),
+      warnings
+    );
   }
 
   async exportDeck(deck: BuiltDeck, options: DeckExportOptions): Promise<ResultEnvelope<Uint8Array>> {

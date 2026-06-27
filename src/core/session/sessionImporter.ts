@@ -10,7 +10,8 @@ import type {
 } from '../../types/dataset';
 import type { HarmonizationSession } from '../../types/harmonization';
 import type { LayoutMode, Slide, SlideCell, SlideSection } from '../../types/slides';
-import type { SessionWorkspaceSnapshot, VelocitySessionFile } from './sessionTypes';
+import type { SessionDeckRecipe, SessionWorkspaceSnapshot, VelocitySessionFile } from './sessionTypes';
+import { buildSessionDeckRecipe, findStaleDeckRecipeSlideIds } from './sessionDeckRecipe';
 import { validateSessionFile } from './sessionValidator';
 
 const VALID_LAYOUT_MODES: LayoutMode[] = ['focus', 'grid', 'comparison', 'freeform'];
@@ -208,6 +209,7 @@ export interface SessionStatePatch {
   analysisSettings?: Partial<AnalysisSettings>;
   slides: Slide[];
   sections: SlideSection[];
+  deckRecipe: SessionDeckRecipe;
   activeSlideId: string | null;
   harmonizationSession: HarmonizationSession | null;
 }
@@ -219,6 +221,7 @@ export interface SessionImportDiagnostics {
   droppedRowVarIds: Set<string>;
   droppedColVarIds: Set<string>;
   missingSectionIds: Set<string>;
+  droppedDeckRecipeSlideIds: Set<string>;
   skippedTransforms: number;
   fallbackVariableSetsGenerated: boolean;
 }
@@ -230,6 +233,7 @@ export interface SessionImportDiagnosticsSummary {
   droppedRowVarIds: string[];
   droppedColVarIds: string[];
   missingSectionIds: string[];
+  droppedDeckRecipeSlideIds: string[];
   skippedTransforms: number;
   fallbackVariableSetsGenerated: boolean;
 }
@@ -253,6 +257,7 @@ export function importSession(sessionFile: VelocitySessionFile, dataset: Dataset
     droppedRowVarIds: new Set<string>(),
     droppedColVarIds: new Set<string>(),
     missingSectionIds: new Set<string>(),
+    droppedDeckRecipeSlideIds: new Set<string>(),
     skippedTransforms: 0,
     fallbackVariableSetsGenerated: false,
   };
@@ -333,6 +338,10 @@ export function importSession(sessionFile: VelocitySessionFile, dataset: Dataset
     validSectionIds,
     diagnostics
   );
+  for (const slideId of findStaleDeckRecipeSlideIds(sessionFile.deckRecipe, slides)) {
+    diagnostics.droppedDeckRecipeSlideIds.add(slideId);
+  }
+  const deckRecipe = buildSessionDeckRecipe(slides, sections);
 
   const transformLog: DataTransform[] = [];
   for (const transform of sessionFile.transformLog ?? []) {
@@ -371,6 +380,7 @@ export function importSession(sessionFile: VelocitySessionFile, dataset: Dataset
     analysisSettings,
     slides,
     sections,
+    deckRecipe,
     activeSlideId: slides[0]?.id ?? null,
     harmonizationSession: sessionFile.harmonizationSession ?? null,
   };
@@ -390,6 +400,7 @@ export function importSession(sessionFile: VelocitySessionFile, dataset: Dataset
       droppedRowVarIds: [...diagnostics.droppedRowVarIds],
       droppedColVarIds: [...diagnostics.droppedColVarIds],
       missingSectionIds: [...diagnostics.missingSectionIds],
+      droppedDeckRecipeSlideIds: [...diagnostics.droppedDeckRecipeSlideIds],
       skippedTransforms: diagnostics.skippedTransforms,
       fallbackVariableSetsGenerated: diagnostics.fallbackVariableSetsGenerated,
     },

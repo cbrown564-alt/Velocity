@@ -248,6 +248,22 @@ export const TOOLS = [
   },
   // Deck building
   {
+    name: 'velocity_draft_deck_plan',
+    description:
+      'Draft an approval-required deck action plan from a DeckSpec without mutating session state. Use this before build/commit when an agent proposes slides for human review.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        spec: {
+          type: 'object',
+          description: 'DeckSpec: { title, subtitle?, branding?, sections: [{ title, slides: [...] }] }',
+          required: ['title', 'sections'],
+        },
+      },
+      required: ['spec'],
+    },
+  },
+  {
     name: 'velocity_build_deck',
     description:
       'Build a full presentation deck from a DeckSpec. Returns a BuiltDeck with processed slides. Large decks (8+ slides or heavy payloads) are returned as multiple MCP content parts (transport: chunked); merge chunked-slide parts by index before export/commit.',

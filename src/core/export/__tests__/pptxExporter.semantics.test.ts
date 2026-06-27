@@ -222,7 +222,7 @@ describe('exportPptx semantics', () => {
         template: {
           id: 'tmpl-1',
           filename: 'client-template.pptx',
-          placeholders: [{ id: 'placeholder-1', token: '{{slide.title}}', slideIndex: 1 }],
+          placeholders: [{ id: 'placeholder-1', token: '{{slide.title}}', key: 'slide.title', slideIndex: 1 }],
           diagnostics: [],
         },
         mapping: {
@@ -271,7 +271,7 @@ describe('exportPptx semantics', () => {
           template: {
             id: 'tmpl-1',
             filename: 'client-template.pptx',
-            placeholders: [{ id: 'placeholder-1', token: '{{slide.title}}' }],
+            placeholders: [{ id: 'placeholder-1', token: '{{slide.title}}', key: 'slide.title' }],
             diagnostics: [],
           },
           mapping: {
@@ -304,7 +304,7 @@ describe('exportPptx semantics', () => {
         template: {
           id: 'tmpl-1',
           filename: 'client-template.pptx',
-          placeholders: [{ id: 'placeholder-1', token: '{{slide.title}}', slideIndex: 1 }],
+          placeholders: [{ id: 'placeholder-1', token: '{{slide.title}}', key: 'slide.title', slideIndex: 1 }],
           diagnostics: [],
         },
         mapping: {

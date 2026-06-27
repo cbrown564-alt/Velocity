@@ -4,6 +4,7 @@ import type {
   SessionWorkspaceSnapshot,
   VelocitySessionFile,
 } from './sessionTypes';
+import { buildSessionDeckRecipe } from './sessionDeckRecipe';
 
 function getFingerprintColumnNames(input: ExportSessionInput): string[] {
   const derivedIds = new Set<string>();
@@ -78,6 +79,7 @@ export function exportSession(input: ExportSessionInput): VelocitySessionFile {
     analysisSettings,
     slides: input.slides.map((slide) => ({ ...slide })),
     sections: input.sections.map((section) => ({ ...section })),
+    deckRecipe: input.deckRecipe ?? buildSessionDeckRecipe(input.slides, input.sections),
   };
 
   const workspace = buildWorkspaceSnapshot(input);

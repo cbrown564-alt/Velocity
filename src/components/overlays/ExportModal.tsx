@@ -97,6 +97,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
     const exportReview = useMemo(() => {
         if (!dataset) {
             return {
+                status: 'blocked',
                 canExport: false,
                 slideCount: 0,
                 blockedSlideCount: 0,
@@ -198,6 +199,42 @@ export const ExportModal: React.FC<ExportModalProps> = ({
         }
         return [...exportReview.issues, ...templateReviewIssues];
     }, [exportReview.issues, format, useTemplateMode, templateReviewIssues]);
+
+    const readinessIssueCounts = useMemo(() => {
+        return {
+            blockers: reviewIssues.filter((issue) => issue.severity === 'block').length,
+            warnings: reviewIssues.filter((issue) => issue.severity === 'warn').length,
+        };
+    }, [reviewIssues]);
+
+    const deckReadinessStatus = useMemo(() => {
+        if (!dataset || slideIdsForScope.length === 0 || readinessIssueCounts.blockers > 0) {
+            return 'blocked';
+        }
+        if (readinessIssueCounts.warnings > 0 || exportReview.status === 'warning') {
+            return 'warning';
+        }
+        return 'ready';
+    }, [dataset, slideIdsForScope.length, readinessIssueCounts, exportReview.status]);
+
+    const deckReadinessText = useMemo(() => {
+        if (!dataset) {
+            return 'Blocked: load a dataset before exporting.';
+        }
+        if (slideIdsForScope.length === 0) {
+            return 'Blocked: select at least one slide to export.';
+        }
+        if (deckReadinessStatus === 'blocked') {
+            const issueLabel = readinessIssueCounts.blockers === 1 ? 'issue' : 'issues';
+            return `Blocked: resolve ${readinessIssueCounts.blockers} ${issueLabel} before export.`;
+        }
+        if (deckReadinessStatus === 'warning') {
+            const warningLabel = readinessIssueCounts.warnings === 1 ? 'warning' : 'warnings';
+            return `Ready with warnings: review ${readinessIssueCounts.warnings} ${warningLabel} before export.`;
+        }
+        const slideLabel = slideIdsForScope.length === 1 ? 'slide is' : 'slides are';
+        return `Ready: ${slideIdsForScope.length} ${slideLabel} exportable.`;
+    }, [dataset, slideIdsForScope.length, deckReadinessStatus, readinessIssueCounts]);
 
     const handleToggleSelectedSlide = (slideId: string) => {
         setSelectedSlideIds((prev) => {
@@ -732,6 +769,13 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                                             </div>
                                         </label>
                                     </div>
+                                </div>
+
+                                <div
+                                    className={`${styles.readinessStatus} ${styles[`readinessStatus_${deckReadinessStatus}`]}`}
+                                    data-testid="deck-readiness-status"
+                                >
+                                    {deckReadinessText}
                                 </div>
 
                                 {reviewIssues.length > 0 && (

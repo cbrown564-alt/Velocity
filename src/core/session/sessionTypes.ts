@@ -3,6 +3,7 @@ import type { DataTransform, Dataset, Folder, Variable, VariableSet } from '../.
 import type { HarmonizationSession } from '../../types/harmonization';
 import type { SemanticSessionBlock } from '../../types/semantic';
 import type { Slide, SlideSection } from '../../types/slides';
+import type { SlideRecipe } from '../export/slideRecipe';
 
 export const SESSION_FORMAT_VERSION = 2 as const;
 export const SESSION_FORMAT_VERSION_V1 = 1 as const;
@@ -43,6 +44,18 @@ export interface SessionWorkspaceSnapshot {
   datasetLinks: SessionDatasetLink[];
 }
 
+export interface SessionDeckRecipeSection {
+  id: string;
+  title: string;
+  color?: string;
+}
+
+export interface SessionDeckRecipe {
+  recipeVersion: 1;
+  sections: SessionDeckRecipeSection[];
+  slideRecipes: SlideRecipe[];
+}
+
 export interface VelocitySessionFile {
   formatVersion: typeof SESSION_FORMAT_VERSION | typeof SESSION_FORMAT_VERSION_V1;
   exportedAt: string;
@@ -58,6 +71,7 @@ export interface VelocitySessionFile {
   analysisSettings?: Partial<AnalysisSettings>;
   slides: Slide[];
   sections: SlideSection[];
+  deckRecipe?: SessionDeckRecipe;
   workspace?: SessionWorkspaceSnapshot;
   harmonizationSession?: HarmonizationSession | null;
   /** Phase 4: Semantic annotations and concepts (v2+, optional) */
@@ -84,6 +98,7 @@ export interface ExportSessionInput {
   analysisSettings?: Partial<AnalysisSettings>;
   slides: Slide[];
   sections: SlideSection[];
+  deckRecipe?: SessionDeckRecipe;
   workspace?: SessionWorkspaceInput;
   activeDatasetId?: string | null;
   harmonizationSession?: HarmonizationSession | null;

@@ -3,6 +3,7 @@ import type { Variable, VariableSet } from '../../types';
 import type { Slide } from '../../types/slides';
 import {
   assessDatasetReplacement,
+  buildDatasetReplacementReview,
   buildExportReview,
   slideToRecipe,
   slidesToRecipes,
@@ -141,6 +142,98 @@ describe('assessDatasetReplacement', () => {
   });
 });
 
+describe('buildDatasetReplacementReview', () => {
+  it('does not block replacement for invalid slides outside the selected scope', () => {
+    const brokenSlide = makeSlide({
+      id: 'slide-broken',
+      title: 'Broken Slide',
+      analysisState: {
+        rowVars: ['vs_missing'],
+        colVar: null,
+        filters: [],
+        weightVar: null,
+      },
+    });
+
+    const review = buildDatasetReplacementReview({
+      slides: [makeSlide(), brokenSlide],
+      slideIds: ['slide-1'],
+      variableSets,
+      variables,
+    });
+
+    expect(review.canReplace).toBe(true);
+    expect(review.status).toBe('ready');
+    expect(review.slideReviews).toHaveLength(1);
+    expect(review.slideReviews[0]).toMatchObject({
+      slideId: 'slide-1',
+      status: 'ready',
+    });
+  });
+
+  it('groups selected replacement blockers by slide', () => {
+    const brokenSlide = makeSlide({
+      id: 'slide-broken',
+      title: 'Broken Slide',
+      analysisState: {
+        rowVars: ['vs_missing'],
+        colVar: 'vs_unknown_col',
+        filters: [],
+        weightVar: null,
+      },
+    });
+
+    const review = buildDatasetReplacementReview({
+      slides: [makeSlide(), brokenSlide],
+      slideIds: ['slide-1', 'slide-broken'],
+      variableSets,
+      variables,
+    });
+
+    expect(review.canReplace).toBe(false);
+    expect(review.status).toBe('blocked');
+    expect(review.blockedSlideCount).toBe(1);
+    expect(review.slideReviews.find((slide) => slide.slideId === 'slide-broken')).toMatchObject({
+      slideTitle: 'Broken Slide',
+      status: 'blocked',
+    });
+    expect(review.slideReviews.find((slide) => slide.slideId === 'slide-broken')?.blockers).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ code: 'unresolved_row_var', referenceId: 'vs_missing' }),
+        expect.objectContaining({ code: 'unresolved_col_var', referenceId: 'vs_unknown_col' }),
+      ])
+    );
+  });
+
+  it('allows replacement with warnings when only filters or weights drift', () => {
+    const warningSlide = makeSlide({
+      analysisState: {
+        rowVars: ['vs_age'],
+        colVar: null,
+        filters: [{ id: 'f1', variableId: 'missing_filter', operator: 'eq', value: 'A' }],
+        weightVar: 'missing_weight',
+      },
+    });
+
+    const review = buildDatasetReplacementReview({
+      slides: [warningSlide],
+      slideIds: ['slide-1'],
+      variableSets,
+      variables,
+    });
+
+    expect(review.canReplace).toBe(true);
+    expect(review.status).toBe('warning');
+    expect(review.warningCount).toBe(2);
+    expect(review.slideReviews[0].warnings).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ code: 'unresolved_filter_var', severity: 'warn' }),
+        expect.objectContaining({ code: 'unresolved_weight_var', severity: 'warn' }),
+      ])
+    );
+  });
+});
+
 describe('buildExportReview', () => {
   it('allows export when every selected slide resolves', () => {
     const review = buildExportReview({
@@ -151,6 +244,7 @@ describe('buildExportReview', () => {
     });
 
     expect(review.canExport).toBe(true);
+    expect(review.status).toBe('ready');
     expect(review.slideCount).toBe(1);
     expect(review.blockedSlideCount).toBe(0);
   });
@@ -173,6 +267,7 @@ describe('buildExportReview', () => {
     });
 
     expect(review.canExport).toBe(false);
+    expect(review.status).toBe('blocked');
     expect(review.blockedSlideCount).toBe(1);
     expect(review.issues[0]).toMatchObject({
       code: 'no_row_vars',
@@ -198,10 +293,39 @@ describe('buildExportReview', () => {
     });
 
     expect(review.canExport).toBe(false);
+    expect(review.status).toBe('blocked');
     expect(review.issues[0]).toMatchObject({
       code: 'unresolved_row_var',
       referenceId: 'vs_missing',
     });
+  });
+
+  it('blocks export when selected slide filters or weights reference missing variables', () => {
+    const slide = makeSlide({
+      analysisState: {
+        rowVars: ['vs_age'],
+        colVar: null,
+        filters: [{ id: 'f1', variableId: 'missing_filter', operator: 'eq', value: 'A' }],
+        weightVar: 'missing_weight',
+      },
+    });
+
+    const review = buildExportReview({
+      slides: [slide],
+      slideIds: ['slide-1'],
+      variableSets,
+      variables,
+    });
+
+    expect(review.canExport).toBe(false);
+    expect(review.status).toBe('blocked');
+    expect(review.blockedSlideCount).toBe(1);
+    expect(review.issues).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ code: 'unresolved_filter_var', severity: 'block' }),
+        expect.objectContaining({ code: 'unresolved_weight_var', severity: 'block' }),
+      ])
+    );
   });
 
   it('ignores slides outside the export scope', () => {
@@ -223,6 +347,7 @@ describe('buildExportReview', () => {
     });
 
     expect(review.canExport).toBe(true);
+    expect(review.status).toBe('ready');
     expect(review.slideCount).toBe(1);
   });
 
@@ -252,6 +377,7 @@ describe('buildExportReview', () => {
     });
 
     expect(review.canExport).toBe(true);
+    expect(review.status).toBe('ready');
     expect(review.issues).toHaveLength(0);
   });
 });

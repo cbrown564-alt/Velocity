@@ -42,11 +42,31 @@ export interface DatasetReplacementAssessment {
 }
 
 export interface ExportReview {
+  status: 'ready' | 'warning' | 'blocked';
   canExport: boolean;
   slideCount: number;
   blockedSlideCount: number;
   warningCount: number;
   issues: SlideRecipeIssue[];
+}
+
+export interface DatasetReplacementSlideReview {
+  slideId: string;
+  slideTitle: string;
+  status: 'ready' | 'warning' | 'blocked';
+  blockers: SlideRecipeIssue[];
+  warnings: SlideRecipeIssue[];
+}
+
+export interface DatasetReplacementReview {
+  status: 'ready' | 'warning' | 'blocked';
+  canReplace: boolean;
+  slideCount: number;
+  blockedSlideCount: number;
+  warningCount: number;
+  slideReviews: DatasetReplacementSlideReview[];
+  issues: SlideRecipeIssue[];
+  missingReferenceIds: string[];
 }
 
 interface RecipeAssessmentInput {
@@ -185,6 +205,23 @@ function summarizeAssessment(
   };
 }
 
+function hardenIssuesForExport(issues: SlideRecipeIssue[]): SlideRecipeIssue[] {
+  return issues.map((issue) => {
+    if (issue.code !== 'unresolved_filter_var' && issue.code !== 'unresolved_weight_var') {
+      return issue;
+    }
+
+    return {
+      ...issue,
+      severity: 'block',
+      message: issue.message.replace('will be ignored', 'must be resolved').replace(
+        'export will use the dataset default',
+        'resolve it before export'
+      ),
+    };
+  });
+}
+
 export function slideToRecipe(slide: Slide): SlideRecipe {
   return {
     slideId: slide.id,
@@ -217,6 +254,72 @@ export function assessDatasetReplacement(
   };
 }
 
+export function buildDatasetReplacementReview(
+  input: RecipeAssessmentInput & { slideIds?: string[] }
+): DatasetReplacementReview {
+  const scopedSlides = input.slideIds
+    ? input.slideIds
+      .map((slideId) => input.slides.find((slide) => slide.id === slideId))
+      .filter((slide): slide is Slide => slide !== undefined)
+    : input.slides;
+  const normalizedSlides = scopedSlides.map((slide) => {
+    const overrideState = input.analysisStateOverrides?.[slide.id];
+    if (!overrideState) {
+      return slide;
+    }
+    return {
+      ...slide,
+      analysisState: overrideState,
+    };
+  });
+
+  const slideReviews = normalizedSlides.map((slide): DatasetReplacementSlideReview => {
+    const issues = assessSlideRecipe(slide, input.variableSets, input.variables);
+    const blockers = issues.filter((issue) => issue.severity === 'block');
+    const warnings = issues.filter((issue) => issue.severity === 'warn');
+    const status: DatasetReplacementSlideReview['status'] = blockers.length > 0
+      ? 'blocked'
+      : warnings.length > 0
+        ? 'warning'
+        : 'ready';
+
+    return {
+      slideId: slide.id,
+      slideTitle: slide.title?.trim() || 'Untitled Slide',
+      status,
+      blockers,
+      warnings,
+    };
+  });
+
+  const issues = slideReviews.flatMap((review) => [...review.blockers, ...review.warnings]);
+  const blockedSlideCount = slideReviews.filter((review) => review.status === 'blocked').length;
+  const warningCount = slideReviews.reduce((total, review) => total + review.warnings.length, 0);
+  const missingReferenceIds = [
+    ...new Set(
+      issues
+        .filter((issue) => issue.referenceId)
+        .map((issue) => issue.referenceId as string)
+    ),
+  ];
+  const status: DatasetReplacementReview['status'] = blockedSlideCount > 0
+    ? 'blocked'
+    : warningCount > 0
+      ? 'warning'
+      : 'ready';
+
+  return {
+    status,
+    canReplace: status !== 'blocked',
+    slideCount: normalizedSlides.length,
+    blockedSlideCount,
+    warningCount,
+    slideReviews,
+    issues,
+    missingReferenceIds,
+  };
+}
+
 export function buildExportReview(
   input: RecipeAssessmentInput & { slideIds: string[] }
 ): ExportReview {
@@ -234,14 +337,23 @@ export function buildExportReview(
     };
   });
 
-  const issues = normalizedSlides.flatMap((slide) =>
-    assessSlideRecipe(slide, input.variableSets, input.variables)
+  const issues = hardenIssuesForExport(
+    normalizedSlides.flatMap((slide) =>
+      assessSlideRecipe(slide, input.variableSets, input.variables)
+    )
   );
   const summary = summarizeAssessment(normalizedSlides, issues);
   const warningCount = issues.filter((issue) => issue.severity === 'warn').length;
+  const canExport = summary.ready && normalizedSlides.length > 0;
+  const status: ExportReview['status'] = !canExport
+    ? 'blocked'
+    : warningCount > 0
+      ? 'warning'
+      : 'ready';
 
   return {
-    canExport: summary.ready && normalizedSlides.length > 0,
+    status,
+    canExport,
     slideCount: normalizedSlides.length,
     blockedSlideCount: summary.blockedSlides,
     warningCount,

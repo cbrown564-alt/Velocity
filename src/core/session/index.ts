@@ -10,6 +10,8 @@ export type {
   SessionWorkspaceInput,
   SessionWorkspaceProject,
   SessionWorkspaceSnapshot,
+  SessionDeckRecipe,
+  SessionDeckRecipeSection,
   VelocitySessionFile,
 } from './sessionTypes';
 
