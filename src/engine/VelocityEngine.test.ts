@@ -603,6 +603,55 @@ describe('VelocityEngine', () => {
     expect(engine.state.slides).toEqual([]);
   });
 
+  it('exposes chart, mapping, and harmonization helpers over the active dataset', async () => {
+    const adapter = new MockAdapter();
+    const engine = await VelocityEngine.create({ runtime: 'node', adapter });
+    await engine.loadFile('/data/brand_tracker.sav');
+
+    const chart = await engine.recommendChart(['Q1'], 'GENDER');
+    expect(chart.operation).toBe('recommendChart');
+    expect(chart.data).toBeDefined();
+
+    const mappings = await engine.proposeMappings(['Q1'], ['Q1']);
+    expect(mappings.operation).toBe('proposeMappings');
+    expect(Array.isArray(mappings.data)).toBe(true);
+
+    const harmonized = await engine.buildHarmonizedTable('wave1', 'wave2', [], {}, {});
+    expect(harmonized.operation).toBe('buildHarmonizedTable');
+    expect(harmonized.data.sql).toContain('SELECT');
+  });
+
+  it('exposes semantic search, suggestions, and state snapshot helpers', async () => {
+    const adapter = new MockAdapter();
+    const engine = await VelocityEngine.create({ runtime: 'node', adapter });
+    await engine.loadFile('/data/brand_tracker.sav');
+    await engine.annotateDataset();
+
+    const search = await engine.searchVariables('satisfaction');
+    expect(search.operation).toBe('searchVariables');
+    expect(Array.isArray(search.data)).toBe(true);
+
+    const analyses = await engine.suggestAnalyses(['Q1']);
+    expect(analyses.operation).toBe('suggestAnalyses');
+    expect(Array.isArray(analyses.data)).toBe(true);
+
+    const harmonizations = engine.suggestHarmonizations();
+    expect(harmonizations.operation).toBe('suggestHarmonizations');
+    expect(Array.isArray(harmonizations.data)).toBe(true);
+
+    const byCategory = engine.listVariablesByCategory('demographic', { includeUnannotated: true });
+    expect(byCategory.operation).toBe('listVariablesByCategory');
+    expect(Array.isArray(byCategory.data)).toBe(true);
+
+    const snapshot = engine.getSemanticState();
+    expect(snapshot.operation).toBe('getSemanticState');
+    expect(snapshot.data.annotations).toBeDefined();
+
+    // Round-trip the snapshot back through restore without throwing.
+    engine.restoreSemanticState(snapshot.data);
+    expect(engine.getSemanticState().data.concepts).toEqual(snapshot.data.concepts);
+  });
+
   it('rejects invalid deck draft specs with a structured VelocityError', async () => {
     const adapter = new MockAdapter();
     const engine = await VelocityEngine.create({ runtime: 'node', adapter, engineVersion: 'test-engine' });

@@ -103,7 +103,7 @@ export async function applyTheme(page: Page, label: string) {
   const themeList = page.locator('[role="listbox"][aria-label="Theme selection"]');
   await page.keyboard.press('Escape');
   await page.waitForTimeout(200);
-  await page.getByRole('button', { name: /Change theme/i }).first().click({ force: true });
+  await page.getByRole('button', { name: /Activate to switch to/i }).first().click({ force: true });
   await themeList.waitFor({ timeout: 5000 });
   await themeList.getByText(label, { exact: true }).click({ force: true });
   await page.waitForTimeout(900);
