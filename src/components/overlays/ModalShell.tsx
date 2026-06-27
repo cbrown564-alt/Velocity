@@ -23,6 +23,7 @@ export interface ModalShellProps {
   backdropClassName?: string;
   panelClassName?: string;
   panelStyle?: React.CSSProperties;
+  panelDataTestId?: string;
   /** Split layout: class on the centering overlay between backdrop and panel. */
   overlayClassName?: string;
   overlayStyle?: React.CSSProperties;
@@ -49,6 +50,7 @@ export const ModalShell: React.FC<ModalShellProps> = ({
   backdropClassName = DEFAULT_BACKDROP,
   panelClassName = '',
   panelStyle,
+  panelDataTestId,
   overlayClassName = DEFAULT_OVERLAY,
   overlayStyle,
   unmountWhenClosed = false,
@@ -108,6 +110,7 @@ export const ModalShell: React.FC<ModalShellProps> = ({
             <div
               className={panelClassName}
               style={panelStyle}
+              data-testid={panelDataTestId}
               onKeyDown={onPanelKeyDown}
             >
               {children}

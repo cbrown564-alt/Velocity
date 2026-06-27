@@ -1,0 +1,65 @@
+{
+  "contract": {
+    "name": "first-analysis",
+    "path": "demo/contracts/first-analysis.json",
+    "startUrl": "/",
+    "timeoutMs": 120000
+  },
+  "startedAt": "2026-06-25T08:44:11.805Z",
+  "baseUrl": "http://127.0.0.1:4173",
+  "completedSteps": 6,
+  "failedStepId": null,
+  "steps": [
+    {
+      "id": "open-workspace",
+      "goal": "Load root workspace view",
+      "action": "goto",
+      "durationMs": 592,
+      "screenshot": "screens/01-open-workspace.png",
+      "status": "passed"
+    },
+    {
+      "id": "upload-dataset",
+      "goal": "Attach analysis-ready SAV file",
+      "action": "upload",
+      "durationMs": 1746,
+      "screenshot": "screens/02-upload-dataset.png",
+      "status": "passed"
+    },
+    {
+      "id": "load-full-data-if-needed",
+      "goal": "Handle metadata-only branch deterministically",
+      "action": "clickIfVisible",
+      "durationMs": 506,
+      "screenshot": null,
+      "status": "passed"
+    },
+    {
+      "id": "select-row-variable",
+      "goal": "Create first row variable for crosstab",
+      "action": "clickRole",
+      "durationMs": 829,
+      "screenshot": "screens/04-select-row-variable.png",
+      "status": "passed"
+    },
+    {
+      "id": "select-column-variable",
+      "goal": "Add a column break variable and wait for computed table",
+      "action": "clickRole",
+      "durationMs": 1721,
+      "screenshot": "screens/05-select-column-variable.png",
+      "status": "passed"
+    },
+    {
+      "id": "open-export-modal",
+      "goal": "Open export modal from analysis canvas",
+      "action": "clickRole",
+      "durationMs": 896,
+      "screenshot": "screens/06-open-export-modal.png",
+      "status": "passed"
+    }
+  ],
+  "downloads": [],
+  "status": "passed",
+  "finishedAt": "2026-06-25T08:44:21.348Z"
+}

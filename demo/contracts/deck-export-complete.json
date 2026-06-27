@@ -1,0 +1,115 @@
+{
+  "name": "deck-export-complete",
+  "description": "Upload sleep.sav, run crosstab, export PPTX with download artifact and success-state screenshot.",
+  "startUrl": "/",
+  "timeoutMs": 120000,
+  "settleMs": 250,
+  "artifactsDir": "demo/artifacts/deck-export-complete/latest",
+  "preconditions": [
+    "Dev server reachable via Playwright baseURL (default: http://127.0.0.1:4173).",
+    "Fixture file exists at test_data/sleep.sav.",
+    "Browser context starts with no modal/dialog blockers."
+  ],
+  "sensitiveSelectors": [
+    "[data-testid='user-email']",
+    "[data-testid='account-id']"
+  ],
+  "steps": [
+    {
+      "id": "open-workspace",
+      "goal": "Load root workspace",
+      "action": "goto",
+      "target": "/",
+      "assert": {
+        "type": "attached",
+        "selector": "[data-testid='dataset-upload-input']"
+      },
+      "capture": true
+    },
+    {
+      "id": "upload-dataset",
+      "goal": "Attach SAV fixture",
+      "action": "upload",
+      "selector": "[data-testid='dataset-upload-input']",
+      "value": "test_data/sleep.sav",
+      "assert": {
+        "type": "visibleAny",
+        "selectors": [
+          "text=Survey Questions",
+          "text=Metadata Loaded"
+        ]
+      },
+      "capture": true,
+      "settleMs": 500
+    },
+    {
+      "id": "load-full-data-if-needed",
+      "goal": "Resolve metadata-only ingestion branch",
+      "action": "clickIfVisible",
+      "selector": "button:has-text('Load Full Data')",
+      "assert": {
+        "type": "visible",
+        "selector": "text=Survey Questions"
+      },
+      "capture": false,
+      "settleMs": 500
+    },
+    {
+      "id": "compose-crosstab",
+      "goal": "Create one representative crosstab",
+      "action": "clickRole",
+      "role": "button",
+      "namePattern": "^sex$",
+      "nameFlags": "i",
+      "capture": true,
+      "settleMs": 400
+    },
+    {
+      "id": "compose-crosstab-break",
+      "goal": "Add a break variable and wait for computed table",
+      "action": "clickRole",
+      "role": "button",
+      "namePattern": "^marital status$",
+      "nameFlags": "i",
+      "assert": {
+        "type": "visible",
+        "selector": "table"
+      },
+      "capture": true,
+      "settleMs": 1500
+    },
+    {
+      "id": "open-export-modal",
+      "goal": "Open export modal from analysis canvas",
+      "action": "clickRole",
+      "role": "button",
+      "namePattern": "^Export$",
+      "nameFlags": "i",
+      "assert": {
+        "type": "stable",
+        "selector": "[data-testid='export-modal']"
+      },
+      "capture": true,
+      "settleMs": 400
+    },
+    {
+      "id": "export-pptx",
+      "goal": "Download PPTX and confirm export success state",
+      "action": "clickAndWaitForDownload",
+      "selector": "[data-testid='export-modal-submit']",
+      "expectedExtension": ".pptx",
+      "downloadFilename": "velocity-export.pptx",
+      "assert": {
+        "type": "visible",
+        "selector": "[data-testid='export-modal-success']"
+      },
+      "capture": true,
+      "captureSelector": "[data-testid='export-modal-success']",
+      "settleMs": 400
+    }
+  ],
+  "successMetric": {
+    "type": "stepCount",
+    "minimumCompleted": 7
+  }
+}

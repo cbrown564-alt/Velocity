@@ -413,6 +413,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
             overlayStyle={{ pointerEvents: 'none' }}
             panelClassName={styles.modal}
             panelStyle={{ pointerEvents: 'auto' }}
+            panelDataTestId="export-modal"
         >
                             {/* Header */}
                             <div className={styles.header}>
@@ -755,7 +756,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
 
                                 {/* Status Messages */}
                                 {exportSuccess && (
-                                    <div className={styles.successMessage}>
+                                    <div className={styles.successMessage} data-testid="export-modal-success">
                                         <CheckCircle2 size={16} />
                                         Export successful! File downloaded.
                                     </div>

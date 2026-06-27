@@ -1,0 +1,84 @@
+{
+  "contract": {
+    "name": "deck-export-complete",
+    "path": "demo/contracts/deck-export-complete.json",
+    "startUrl": "/",
+    "timeoutMs": 120000
+  },
+  "startedAt": "2026-06-25T08:46:12.797Z",
+  "baseUrl": "http://127.0.0.1:4173",
+  "completedSteps": 7,
+  "failedStepId": null,
+  "steps": [
+    {
+      "id": "open-workspace",
+      "goal": "Load root workspace",
+      "action": "goto",
+      "durationMs": 550,
+      "screenshot": "screens/01-open-workspace.png",
+      "status": "passed"
+    },
+    {
+      "id": "upload-dataset",
+      "goal": "Attach SAV fixture",
+      "action": "upload",
+      "durationMs": 2074,
+      "screenshot": "screens/02-upload-dataset.png",
+      "status": "passed"
+    },
+    {
+      "id": "load-full-data-if-needed",
+      "goal": "Resolve metadata-only ingestion branch",
+      "action": "clickIfVisible",
+      "durationMs": 504,
+      "screenshot": null,
+      "status": "passed"
+    },
+    {
+      "id": "compose-crosstab",
+      "goal": "Create one representative crosstab",
+      "action": "clickRole",
+      "durationMs": 772,
+      "screenshot": "screens/04-compose-crosstab.png",
+      "status": "passed"
+    },
+    {
+      "id": "compose-crosstab-break",
+      "goal": "Add a break variable and wait for computed table",
+      "action": "clickRole",
+      "durationMs": 1724,
+      "screenshot": "screens/05-compose-crosstab-break.png",
+      "status": "passed"
+    },
+    {
+      "id": "open-export-modal",
+      "goal": "Open export modal from analysis canvas",
+      "action": "clickRole",
+      "durationMs": 1058,
+      "screenshot": "screens/06-open-export-modal.png",
+      "status": "passed"
+    },
+    {
+      "id": "export-pptx",
+      "goal": "Download PPTX and confirm export success state",
+      "action": "clickAndWaitForDownload",
+      "durationMs": 875,
+      "screenshot": "screens/07-export-pptx.png",
+      "status": "passed",
+      "download": {
+        "filename": "velocity-export.pptx",
+        "path": "downloads/velocity-export.pptx",
+        "byteLength": 76554
+      }
+    }
+  ],
+  "downloads": [
+    {
+      "filename": "velocity-export.pptx",
+      "path": "downloads/velocity-export.pptx",
+      "byteLength": 76554
+    }
+  ],
+  "status": "passed",
+  "finishedAt": "2026-06-25T08:46:21.293Z"
+}

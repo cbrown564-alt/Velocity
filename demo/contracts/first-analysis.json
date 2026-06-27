@@ -1,0 +1,100 @@
+{
+  "name": "first-analysis",
+  "description": "Upload sleep.sav, run one crosstab, open export modal.",
+  "startUrl": "/",
+  "timeoutMs": 120000,
+  "settleMs": 250,
+  "artifactsDir": "demo/artifacts/first-analysis/latest",
+  "preconditions": [
+    "Dev server reachable via Playwright baseURL (default: http://127.0.0.1:4173).",
+    "Fixture file exists at test_data/sleep.sav.",
+    "Local browser context should start clean for deterministic captures."
+  ],
+  "sensitiveSelectors": [
+    "[data-testid='user-email']",
+    "[data-testid='account-id']"
+  ],
+  "steps": [
+    {
+      "id": "open-workspace",
+      "goal": "Load root workspace view",
+      "action": "goto",
+      "target": "/",
+      "assert": {
+        "type": "attached",
+        "selector": "[data-testid='dataset-upload-input']"
+      },
+      "capture": true
+    },
+    {
+      "id": "upload-dataset",
+      "goal": "Attach analysis-ready SAV file",
+      "action": "upload",
+      "selector": "[data-testid='dataset-upload-input']",
+      "value": "test_data/sleep.sav",
+      "assert": {
+        "type": "visibleAny",
+        "selectors": [
+          "text=Survey Questions",
+          "text=Metadata Loaded"
+        ]
+      },
+      "capture": true,
+      "settleMs": 500
+    },
+    {
+      "id": "load-full-data-if-needed",
+      "goal": "Handle metadata-only branch deterministically",
+      "action": "clickIfVisible",
+      "selector": "button:has-text('Load Full Data')",
+      "assert": {
+        "type": "visible",
+        "selector": "text=Survey Questions"
+      },
+      "capture": false,
+      "settleMs": 500
+    },
+    {
+      "id": "select-row-variable",
+      "goal": "Create first row variable for crosstab",
+      "action": "clickRole",
+      "role": "button",
+      "namePattern": "^sex$",
+      "nameFlags": "i",
+      "capture": true,
+      "settleMs": 400
+    },
+    {
+      "id": "select-column-variable",
+      "goal": "Add a column break variable and wait for computed table",
+      "action": "clickRole",
+      "role": "button",
+      "namePattern": "^marital status$",
+      "nameFlags": "i",
+      "assert": {
+        "type": "visible",
+        "selector": "table"
+      },
+      "capture": true,
+      "settleMs": 1500
+    },
+    {
+      "id": "open-export-modal",
+      "goal": "Open export modal from analysis canvas",
+      "action": "clickRole",
+      "role": "button",
+      "namePattern": "^Export$",
+      "nameFlags": "i",
+      "assert": {
+        "type": "stable",
+        "selector": "[data-testid='export-modal']"
+      },
+      "capture": true,
+      "settleMs": 400
+    }
+  ],
+  "successMetric": {
+    "type": "stepCount",
+    "minimumCompleted": 6
+  }
+}
