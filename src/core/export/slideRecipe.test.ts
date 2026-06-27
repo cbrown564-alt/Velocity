@@ -98,6 +98,39 @@ describe('assessDatasetReplacement', () => {
     expect(assessment.issues).toHaveLength(0);
   });
 
+  it('blocks a variable set when any member is missing from the replacement dataset', () => {
+    const slide = makeSlide({
+      analysisState: {
+        rowVars: ['vs_partial'],
+        colVar: null,
+        filters: [],
+        weightVar: null,
+      },
+    });
+    const assessment = assessDatasetReplacement(
+      [slide],
+      [
+        ...variableSets,
+        {
+          id: 'vs_partial',
+          name: 'Partially present grid',
+          variableIds: ['age', 'missing_member'],
+          structure: 'grid',
+          type: 'numeric',
+        },
+      ],
+      variables
+    );
+
+    expect(assessment.ready).toBe(false);
+    expect(assessment.missingReferenceIds).toContain('vs_partial');
+    expect(assessment.issues[0]).toMatchObject({
+      code: 'unresolved_row_var',
+      referenceId: 'vs_partial',
+      severity: 'block',
+    });
+  });
+
   it('flags missing row variables as blocking for wave replacement', () => {
     const slide = makeSlide({
       analysisState: {
@@ -249,6 +282,42 @@ describe('buildExportReview', () => {
     expect(review.blockedSlideCount).toBe(0);
   });
 
+  it('allows export for direct variable IDs that are not the only dataset variable', () => {
+    const slide = makeSlide({
+      analysisState: {
+        rowVars: ['sex'],
+        colVar: null,
+        filters: [],
+        weightVar: null,
+      },
+    });
+
+    const review = buildExportReview({
+      slides: [slide],
+      slideIds: ['slide-1'],
+      variableSets,
+      variables,
+    });
+
+    expect(review.canExport).toBe(true);
+    expect(review.status).toBe('ready');
+    expect(review.issues).toHaveLength(0);
+  });
+
+  it('blocks export for an empty selected scope', () => {
+    const review = buildExportReview({
+      slides: [makeSlide()],
+      slideIds: [],
+      variableSets,
+      variables,
+    });
+
+    expect(review.canExport).toBe(false);
+    expect(review.status).toBe('blocked');
+    expect(review.slideCount).toBe(0);
+    expect(review.issues).toHaveLength(0);
+  });
+
   it('blocks export when a selected slide has no row variables', () => {
     const slide = makeSlide({
       analysisState: {
@@ -349,6 +418,29 @@ describe('buildExportReview', () => {
     expect(review.canExport).toBe(true);
     expect(review.status).toBe('ready');
     expect(review.slideCount).toBe(1);
+  });
+
+  it('blocks export with a readable issue when a selected slide no longer exists', () => {
+    const review = buildExportReview({
+      slides: [makeSlide()],
+      slideIds: ['slide-missing'],
+      variableSets,
+      variables,
+    });
+
+    expect(review.canExport).toBe(false);
+    expect(review.status).toBe('blocked');
+    expect(review.blockedSlideCount).toBe(1);
+    expect(review.issues).toEqual([
+      expect.objectContaining({
+        slideId: 'slide-missing',
+        slideTitle: 'Missing Slide',
+        code: 'selected_slide_missing',
+        referenceId: 'slide-missing',
+        severity: 'block',
+        message: 'Selected slide "slide-missing" is no longer available for export.',
+      }),
+    ]);
   });
 
   it('uses analysis state overrides for active-slide dataset replacement checks', () => {

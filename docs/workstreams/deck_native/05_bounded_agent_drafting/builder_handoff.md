@@ -18,15 +18,16 @@
   - `mcp-server/handlers/deck.ts`
   - `mcp-server/schemas.ts`
   - `mcp-server/__tests__/tools.test.ts`
+  - `src/engine/deckSpecValidation.ts`
   - `docs/workstreams/deck_native/05_bounded_agent_drafting/*`
-- What changed and why: added `draftDeckPlan` as a non-mutating, approval-required deck proposal surface and exposed it through MCP.
+- What changed and why: added `draftDeckPlan` as a non-mutating, approval-required deck proposal surface and exposed it through MCP. Post-review hardening added shared `DeckSpec` validation, MCP malformed-spec rejection before engine dispatch, and draft caveats for unknown row, column, filter, and weight references.
 
 ## 3) Contracts
 
-- Interfaces/types/schemas touched: `DeckDraftPlan`, `DeckDraftAction`, `VelocityEngine.draftDeckPlan`, MCP schema/tool `velocity_draft_deck_plan`.
+- Interfaces/types/schemas touched: `DeckDraftPlan`, `DeckDraftAction`, `VelocityEngine.draftDeckPlan`, `INVALID_DECK_SPEC`, MCP schema/tool `velocity_draft_deck_plan`.
 - Backward compatibility impact: additive.
 - Required downstream updates: agents should draft before build/commit when human approval is required.
-- Dual-state model impact (raw codes + labels): no data values touched; row variable IDs are inspected for caveats only.
+- Dual-state model impact (raw codes + labels): no data values touched; variable IDs are inspected for caveats only.
 
 ## 4) Invariant Check
 
@@ -38,7 +39,7 @@
 Notes/evidence:
 
 - `draftDeckPlan` returns a `ResultEnvelope`.
-- MCP handler is thin delegation.
+- MCP handler validates the transport payload shape, then delegates.
 - Session state is not mutated.
 
 ## 5) Checks Run
@@ -46,6 +47,8 @@ Notes/evidence:
 ```bash
 npm run test:run -- src/engine/VelocityEngine.test.ts mcp-server/__tests__/tools.test.ts
 npm run typecheck:all
+npm run test:run -- src/engine/VelocityEngine.test.ts mcp-server/__tests__/tools.test.ts src/core/export/slideRecipe.test.ts
+npx stryker run --mutate src/core/export/slideRecipe.ts --concurrency 2
 ```
 
 Results:
@@ -53,6 +56,7 @@ Results:
 - [x] Typecheck
 - [ ] Lint
 - [x] Unit tests
+- [x] Targeted mutation tests for changed core export-readiness logic
 - [ ] Integration/golden tests (if applicable)
 - [x] Manual verification (if applicable)
 

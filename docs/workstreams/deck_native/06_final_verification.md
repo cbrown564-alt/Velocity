@@ -17,11 +17,37 @@ npm run check:design-tokens
 Results:
 
 - `typecheck:all`: passed
-- full Vitest suite: passed (`132` files passed, `1` skipped; `1029` tests passed, `7` skipped, `3` todo)
+- full Vitest suite: passed (`132` files passed, `1` skipped; `1037` tests passed, `7` skipped, `3` todo)
 - production build: passed
 - worker-boundary guard: passed
 - query-builder purity guard: passed
 - design-token guard: passed
+
+## Post-Review Hardening
+
+Additional review pass completed on 2026-06-27:
+
+```bash
+npm run test:run -- src/engine/VelocityEngine.test.ts mcp-server/__tests__/tools.test.ts src/core/export/slideRecipe.test.ts
+```
+
+Result:
+
+- passed (`3` files, `74` tests)
+- Added coverage for `draftDeckPlan` caveats across row/column/filter/weight references.
+- Added MCP malformed `DeckSpec` rejection before engine dispatch.
+- Added export-readiness blocker for stale selected slide IDs and conservative variable-set replacement checks.
+
+Targeted mutation check for the changed core export-readiness module:
+
+```bash
+npx stryker run --mutate src/core/export/slideRecipe.ts --concurrency 2
+```
+
+Result:
+
+- passed threshold (`75.89%` total mutation score, `78.39%` covered score; break threshold `40%`)
+- `214` mutants killed, `59` survived, `9` no coverage, `0` timed out
 
 ## Mutation Testing
 

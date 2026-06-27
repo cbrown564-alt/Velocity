@@ -257,6 +257,40 @@ export const TOOLS = [
         spec: {
           type: 'object',
           description: 'DeckSpec: { title, subtitle?, branding?, sections: [{ title, slides: [...] }] }',
+          properties: {
+            title: { type: 'string' },
+            subtitle: { type: 'string' },
+            branding: { type: 'object' },
+            sections: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  title: { type: 'string' },
+                  slides: {
+                    type: 'array',
+                    items: {
+                      type: 'object',
+                      properties: {
+                        rowVars: { type: 'array', items: { type: 'string' } },
+                        colVar: { type: ['string', 'null'] },
+                        filters: { type: 'array' },
+                        weightVar: { type: ['string', 'null'] },
+                        title: { type: 'string' },
+                        subtitle: { type: 'string' },
+                        notes: { type: 'string' },
+                        visualizationType: { type: 'string', enum: ['table', 'chart'] },
+                        chartType: { type: 'string' },
+                        displayOptions: { type: 'object' },
+                      },
+                      required: ['rowVars'],
+                    },
+                  },
+                },
+                required: ['title', 'slides'],
+              },
+            },
+          },
           required: ['title', 'sections'],
         },
       },
@@ -273,6 +307,40 @@ export const TOOLS = [
         spec: {
           type: 'object',
           description: 'DeckSpec: { title, subtitle?, branding?, sections: [{ title, slides: [...] }] }',
+          properties: {
+            title: { type: 'string' },
+            subtitle: { type: 'string' },
+            branding: { type: 'object' },
+            sections: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  title: { type: 'string' },
+                  slides: {
+                    type: 'array',
+                    items: {
+                      type: 'object',
+                      properties: {
+                        rowVars: { type: 'array', items: { type: 'string' } },
+                        colVar: { type: ['string', 'null'] },
+                        filters: { type: 'array' },
+                        weightVar: { type: ['string', 'null'] },
+                        title: { type: 'string' },
+                        subtitle: { type: 'string' },
+                        notes: { type: 'string' },
+                        visualizationType: { type: 'string', enum: ['table', 'chart'] },
+                        chartType: { type: 'string' },
+                        displayOptions: { type: 'object' },
+                      },
+                      required: ['rowVars'],
+                    },
+                  },
+                },
+                required: ['title', 'slides'],
+              },
+            },
+          },
           required: ['title', 'sections'],
         },
       },

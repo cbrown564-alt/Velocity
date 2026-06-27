@@ -39,7 +39,7 @@ If the checked-in config does not load in your Claude Code build, use the same c
 Every agent session follows this sequence:
 
 ```
-load → describe → annotate → search → analyze → build deck → export deck → commit deck → export session
+load → describe → annotate → search → analyze → draft deck plan → build deck → export deck → commit deck → export session
 ```
 
 | Step | Tool | Purpose |
@@ -50,10 +50,11 @@ load → describe → annotate → search → analyze → build deck → export 
 | 3 | `velocity_annotate_dataset` | Auto-classify variables by topic and intent |
 | 4 | `velocity_search_variables` | Find variables relevant to your research questions |
 | 5 | `velocity_crosstab` / `velocity_stats` | Run analyses |
-| 6 | `velocity_build_deck` | Compose a presentation from slide specs |
-| 7 | `velocity_export_deck` | Export to PPTX or XLSX |
-| 8 | `velocity_commit_deck` | Write the built deck into session state |
-| 9 | `velocity_export_session` | Save state for human review |
+| 6 | `velocity_draft_deck_plan` | Produce an approval-required action plan from slide specs without mutating state |
+| 7 | `velocity_build_deck` | Compose a presentation from slide specs |
+| 8 | `velocity_export_deck` | Export to PPTX or XLSX |
+| 9 | `velocity_commit_deck` | Write the built deck into session state |
+| 10 | `velocity_export_session` | Save state for human review |
 
 Steps 3-5 are iterative. You will typically search → analyze → search again → analyze more before building the deck.
 
@@ -557,6 +558,34 @@ These are rarely needed in a typical analysis workflow. The auto-annotator + sea
 ---
 
 ### 2.4 Deck Building
+
+#### `velocity_draft_deck_plan`
+
+Produce a non-mutating, approval-required action plan from the same `DeckSpec` you would pass to `velocity_build_deck`. Use this before build/commit when an agent proposes slides for human review.
+
+```json
+{
+  "spec": {
+    "title": "BSA 2017: Britain After Brexit",
+    "sections": [
+      {
+        "title": "Key Findings",
+        "slides": [
+          {
+            "rowVars": ["EUBrld"],
+            "colVar": "RAgeCat",
+            "weightVar": "WtFactor",
+            "title": "EU Attitudes by Age",
+            "notes": "Review significance markers before sending."
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+**Returns** `ResultEnvelope<DeckDraftPlan>` with `approvalRequired: true`, approval-required actions, per-action provenance (`source: "agent_draft"`), copied notes, and caveats. The draft step validates the `DeckSpec` shape and warns about unknown row, column, filter, or weight variable references without changing the current session.
 
 #### `velocity_build_deck`
 

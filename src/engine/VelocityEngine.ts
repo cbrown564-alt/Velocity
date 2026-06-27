@@ -25,6 +25,7 @@ import { collectCrosstabWarnings, collectTopicGuidanceWarnings } from '../core/s
 import { ConceptStore } from '../core/semantic/concepts';
 import { recommendChart } from '../core/visualization/chartRecommender';
 import { DeckBuilder } from './DeckBuilder';
+import { assertValidDeckSpec } from './deckSpecValidation';
 import {
   applyCrosstabFormat,
   resolveCrosstabLabelAxes,
@@ -451,6 +452,7 @@ export class VelocityEngine implements VelocityEngineHost {
   }
 
   async buildDeck(spec: DeckSpec): Promise<ResultEnvelope<BuiltDeck>> {
+    assertValidDeckSpec(spec);
     this.requireDatasetWithRows();
     const builder = new DeckBuilder(this);
     const envelope = await builder.build(spec);
@@ -467,7 +469,9 @@ export class VelocityEngine implements VelocityEngineHost {
   }
 
   draftDeckPlan(spec: DeckSpec): ResultEnvelope<DeckDraftPlan> {
-    this.requireDataset();
+    assertValidDeckSpec(spec);
+    const dataset = this.requireDataset();
+    const availableVariableIds = new Set(dataset.variables.map((variable) => variable.id));
     const warnings: string[] = [];
     const actions = spec.sections.flatMap((section, sectionIndex) => {
       const sectionActions: DeckDraftPlan['actions'] = [
@@ -495,10 +499,24 @@ export class VelocityEngine implements VelocityEngineHost {
         }
 
         for (const rowVar of slideSpec.rowVars) {
-          if (!this.state.dataset?.variables.some((variable) => variable.id === rowVar)) {
+          if (!availableVariableIds.has(rowVar)) {
             caveats.push(`Variable "${rowVar}" is not in the active dataset.`);
-            warnings.push(`Slide "${slideTitle}" references unknown variable "${rowVar}".`);
+            warnings.push(`Slide "${slideTitle}" references unknown row variable "${rowVar}".`);
           }
+        }
+        if (slideSpec.colVar && !availableVariableIds.has(slideSpec.colVar)) {
+          caveats.push(`Column variable "${slideSpec.colVar}" is not in the active dataset.`);
+          warnings.push(`Slide "${slideTitle}" references unknown column variable "${slideSpec.colVar}".`);
+        }
+        for (const filter of slideSpec.filters ?? []) {
+          if (!availableVariableIds.has(filter.variableId)) {
+            caveats.push(`Filter variable "${filter.variableId}" is not in the active dataset.`);
+            warnings.push(`Slide "${slideTitle}" references unknown filter variable "${filter.variableId}".`);
+          }
+        }
+        if (slideSpec.weightVar && !availableVariableIds.has(slideSpec.weightVar)) {
+          caveats.push(`Weight variable "${slideSpec.weightVar}" is not in the active dataset.`);
+          warnings.push(`Slide "${slideTitle}" references unknown weight variable "${slideSpec.weightVar}".`);
         }
 
         return {

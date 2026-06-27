@@ -467,11 +467,41 @@ describe('velocity_build_deck', () => {
     expect(engine.draftDeckPlan).toHaveBeenCalledWith(spec);
   });
 
+  it('rejects malformed draft specs before dispatching to the engine', async () => {
+    const engine = makeEngine();
+    const result = await callTool(engine, 'velocity_draft_deck_plan', {
+      spec: { title: 'Draft Deck' },
+    }) as { content: { text: string }[]; isError?: true };
+    const parsed = JSON.parse(result.content[0].text) as Record<string, unknown>;
+
+    expect(result.isError).toBe(true);
+    expect(parsed).toMatchObject({
+      error: 'INVALID_DECK_SPEC',
+      message: 'Deck spec must include a sections array.',
+    });
+    expect(engine.draftDeckPlan).not.toHaveBeenCalled();
+  });
+
   it('calls engine.buildDeck with the spec', async () => {
     const engine = makeEngine();
     const spec = { title: 'My Deck', sections: [] };
     await callTool(engine, 'velocity_build_deck', { spec });
     expect(engine.buildDeck).toHaveBeenCalledWith(spec);
+  });
+
+  it('rejects malformed build specs before dispatching to the engine', async () => {
+    const engine = makeEngine();
+    const result = await callTool(engine, 'velocity_build_deck', {
+      spec: { title: 'My Deck', sections: [{ title: 'Section without slides' }] },
+    }) as { content: { text: string }[]; isError?: true };
+    const parsed = JSON.parse(result.content[0].text) as Record<string, unknown>;
+
+    expect(result.isError).toBe(true);
+    expect(parsed).toMatchObject({
+      error: 'INVALID_DECK_SPEC',
+      message: 'Deck spec section 1 must include a slides array.',
+    });
+    expect(engine.buildDeck).not.toHaveBeenCalled();
   });
 
   it('returns a single content part for small decks', async () => {

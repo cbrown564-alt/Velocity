@@ -1,6 +1,6 @@
 # Deck-Native Multi-Agent Delivery Plan
 
-**Status:** Complete through Gate 5; final verification passed with local mutation caveat  
+**Status:** Technical implementation complete through Gate 5; product/tracker acceptance remains gated by human review and pilot evidence; final verification passed with local mutation caveat
 **Purpose:** Coordinate a planner/designer/builder/evaluator loop for moving Velocity toward a deck-native product posture without losing the current SAV-to-deck pilot focus.
 
 Use this with:
@@ -369,14 +369,14 @@ Validation:
 | Surface readiness in UI | User-facing readiness panel or export-review surface | readiness computation | Gate 2 component tests + typecheck |
 | Persist deck recipe metadata | Session-safe deck recipe state | charter | Gate 3 session tests + typecheck |
 | Dataset replacement review | Wave/dataset replacement diagnostics | readiness + recipe persistence | Gate 4 unit tests + typecheck |
-| Agent draft workflow | Bounded agent proposes deck actions | readiness + recipe persistence | Gate 5 engine/MCP tests + typecheck |
+| Agent draft workflow | Bounded agent proposes approval-required deck actions through engine/MCP; row/column/filter/weight caveats and malformed-spec rejection are tested | readiness + recipe persistence | Gate 5 engine/MCP tests + typecheck |
 | Final verification + PR review | Full changed-surface checks and human review | Gates 1-5 | full tests, build, typecheck, guards passed; mutation deferred/CI |
 
 ### Ready
 
 | Card | Outcome | Dependencies | Validation |
 | :--- | :--- | :--- | :--- |
-| PR review / merge decision | Human review of completed deck-native workstream | final verification | PR checklist and mutation/CI decision |
+| PR review / merge decision | Human review of completed deck-native technical workstream before any `PILOT-5` tracker promotion | final verification | PR checklist, mutation/CI decision, and pilot-evidence decision |
 
 ### Next
 

@@ -381,6 +381,7 @@ The MCP server is a thin transport adapter over VelocityEngine. Each tool maps t
 
 | Tool | Engine method | Description |
 |---|---|---|
+| `velocity_draft_deck_plan` | `draftDeckPlan()` | Draft approval-required deck actions without mutating session state |
 | `velocity_build_deck` | `buildDeck()` | Compose and materialize a full slide deck |
 | `velocity_export_deck` | `exportDeck()` | Export materialized deck to PPTX/XLSX |
 | `velocity_recommend_chart` | `recommendChart()` | Suggest chart type for given data shape |
@@ -424,7 +425,13 @@ An agent asked "Analyze this brand tracking survey and build a deck of key findi
 
 5. ... (agent runs several more analyses, identifies key findings) ...
 
-6. velocity_build_deck({
+6. velocity_draft_deck_plan({
+     title: "Q2 Brand Tracker: Key Findings",
+     sections: [...]
+   })
+   → Approval-required action plan with provenance, notes, and caveats
+
+7. velocity_build_deck({
      title: "Q2 Brand Tracker: Key Findings",
      sections: [
        { title: "Executive Summary", slides: [
@@ -445,10 +452,10 @@ An agent asked "Analyze this brand tracking survey and build a deck of key findi
    })
    → BuiltDeck with 3 materialized slides
 
-7. velocity_export_deck({ format: "pptx" })
+8. velocity_export_deck({ format: "pptx" })
    → PPTX file (saved to disk)
 
-8. velocity_export_session()
+9. velocity_export_session()
    → .velocity file (human can open in browser to review/refine)
 ```
 

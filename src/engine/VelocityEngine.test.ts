@@ -556,4 +556,59 @@ describe('VelocityEngine', () => {
     expect(envelope.metadata.engineVersion).toBe('test-engine');
     expect(engine.state.slides).toEqual([]);
   });
+
+  it('drafts caveats for every unknown slide variable reference without mutating state', async () => {
+    const adapter = new MockAdapter();
+    const engine = await VelocityEngine.create({ runtime: 'node', adapter, engineVersion: 'test-engine' });
+    await engine.loadFile('/data/brand_tracker.sav');
+
+    const spec = {
+      title: 'Draft With Gaps',
+      sections: [
+        {
+          title: 'Risks',
+          slides: [
+            {
+              rowVars: ['MISSING_ROW'],
+              colVar: 'MISSING_COL',
+              filters: [{ id: 'f1', variableId: 'MISSING_FILTER', operator: 'eq' as const, value: 1 }],
+              weightVar: 'MISSING_WEIGHT',
+              title: 'Incomplete slide',
+            },
+          ],
+        },
+      ],
+    };
+
+    const envelope = engine.draftDeckPlan(spec);
+    const slideAction = envelope.data.actions.find((action) => action.type === 'create_slide');
+
+    expect(envelope.operation).toBe('draftDeckPlan');
+    expect(envelope.warnings).toEqual(
+      expect.arrayContaining([
+        'Slide "Incomplete slide" references unknown row variable "MISSING_ROW".',
+        'Slide "Incomplete slide" references unknown column variable "MISSING_COL".',
+        'Slide "Incomplete slide" references unknown filter variable "MISSING_FILTER".',
+        'Slide "Incomplete slide" references unknown weight variable "MISSING_WEIGHT".',
+      ])
+    );
+    expect(slideAction?.caveats).toEqual(
+      expect.arrayContaining([
+        'Variable "MISSING_ROW" is not in the active dataset.',
+        'Column variable "MISSING_COL" is not in the active dataset.',
+        'Filter variable "MISSING_FILTER" is not in the active dataset.',
+        'Weight variable "MISSING_WEIGHT" is not in the active dataset.',
+      ])
+    );
+    expect(engine.state.slides).toEqual([]);
+  });
+
+  it('rejects invalid deck draft specs with a structured VelocityError', async () => {
+    const adapter = new MockAdapter();
+    const engine = await VelocityEngine.create({ runtime: 'node', adapter, engineVersion: 'test-engine' });
+    await engine.loadFile('/data/brand_tracker.sav');
+
+    expect(() => engine.draftDeckPlan({ title: 'Broken' } as never)).toThrow(VelocityError);
+    expect(() => engine.draftDeckPlan({ title: 'Broken' } as never)).toThrow('Deck spec must include a sections array.');
+  });
 });
