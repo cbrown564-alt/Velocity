@@ -1,5 +1,5 @@
 import type { HistogramBin } from '../../../types';
-import type { CrosstabQueryOptions } from '../../sql/queryBuilder';
+import type { CrosstabQueryOptions } from '../../../types/worker';
 import type { ChiSquareResult } from '../../stats/statistics';
 import type { Variable, VariableSet } from '../../../types';
 

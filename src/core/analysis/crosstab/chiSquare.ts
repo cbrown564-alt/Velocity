@@ -1,5 +1,5 @@
 import { calculateChiSquare, ChiSquareResult } from '../../stats/statistics';
-import type { CrosstabQueryOptions } from '../../sql/queryBuilder';
+import type { CrosstabQueryOptions } from '../../../types/worker';
 import { joinRowKeyPath } from './rowKeys';
 import type { CrosstabSqlRow } from './types';
 

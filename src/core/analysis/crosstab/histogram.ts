@@ -3,10 +3,10 @@ import { DatabaseAdapter } from '../../DatabaseAdapter';
 import {
   buildGridHistogramQuery,
   buildFilterClause,
-  CrosstabQueryOptions,
   escapeIdentifier,
   escapeString,
 } from '../../sql/queryBuilder';
+import type { CrosstabQueryOptions } from '../../../types/worker';
 import { extractRowKeyStrings } from './rowKeys';
 import type { CrosstabHistogramBinSqlRow, CrosstabSqlRow } from './types';
 

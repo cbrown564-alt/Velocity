@@ -146,10 +146,9 @@ from its own layer or any layer **below** it, never above.
 
 ### 5.3 Known exceptions (to be resolved)
 
-These violations exist today and are explicitly scoped to later stabilization
-PRs. New code must not add to them.
-
-- `src/types/worker.ts` and `src/types/engineWorker.ts` import
-  `CrosstabQueryOptions` from `src/core/sql/queryBuilder` (kernel → platform
-  back-edge). Type-only and entirely within the headless side, so low-risk, but
-  a candidate for relocating the option type into the kernel.
+None outstanding. The last tracked violation — `src/types/worker.ts` /
+`src/types/engineWorker.ts` importing `CrosstabQueryOptions` from
+`src/core/sql/queryBuilder` (kernel → platform back-edge) — has been resolved by
+relocating the option type into the kernel (`CrosstabQueryOptions` now lives in
+`src/types/worker.ts`; `queryBuilder` and the `core/analysis` consumers import it
+from there). New code must not introduce kernel → platform back-edges.

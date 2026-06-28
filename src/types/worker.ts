@@ -14,12 +14,39 @@ import {
   AggregatedRow,
   TableStats,
   MissingValueDef,
+  Filter,
 } from './index';
 import type { OrderedScoring, VariableType } from './index';
-import { CrosstabQueryOptions } from '../core/sql/queryBuilder';
 import { ProcessedAnalysisData } from './processedData';
 import { ChartType } from './charts';
 import type { VariableMapping } from './harmonization';
+
+/**
+ * Options for building a crosstab/frequency query (shared between worker, engine,
+ * and core/analysis layers). Moved here from core/sql/queryBuilder so the kernel
+ * types/worker.ts does not have a back-edge into the platform layer.
+ */
+export interface CrosstabQueryOptions {
+  rowVars: string[];
+  colVar?: string | null;
+  filters?: Filter[];
+  additionalWhere?: string;
+  weightVar?: string;
+  /** For grid structure: array of columns with names and labels to unpivot */
+  gridColumns?: Array<{ name: string; label: string }>;
+  /** For multiple structure: column names, labels, and their counted value */
+  multipleColumns?: Array<{ name: string; label: string; countedValue: number }>;
+  /** For multiple structure used as column banner: MR columns become crosstab columns */
+  columnMultipleColumns?: Array<{ name: string; label: string; countedValue: number }>;
+  /** For scale variables: the variable to aggregate (Mean, Median, etc.) */
+  measureVar?: string;
+  /** Label to use for the measure row (e.g. "Age") */
+  measureLabel?: string;
+  /** If true, fetch histogram/distribution data (for Violin/Ridgeline/BoxPlot) */
+  includeDistributions?: boolean;
+  /** For grid structure: default to aggregating values (Mean) instead of counting frequencies */
+  gridAggregate?: boolean;
+}
 
 export interface WorkerAnalysisSettings {
   comparisonMethod: 'cell_vs_rest' | 'pairwise';

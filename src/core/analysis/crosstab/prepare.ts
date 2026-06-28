@@ -1,5 +1,6 @@
 import { MissingValueDef, Variable } from '../../../types';
-import { CrosstabQueryOptions, escapeIdentifier } from '../../sql/queryBuilder';
+import { escapeIdentifier } from '../../sql/queryBuilder';
+import type { CrosstabQueryOptions } from '../../../types/worker';
 import type { CrosstabContext } from './types';
 
 function buildVariableMissingConditionSql(columnName: string, missingValues?: MissingValueDef): string {

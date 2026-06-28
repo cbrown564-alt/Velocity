@@ -1,5 +1,5 @@
-import type { CrosstabQueryOptions } from '../sql/queryBuilder';
 import type { AggregatedRow, TableStats, Variable, VariableSet } from '../../types';
+import type { CrosstabQueryOptions } from '../../types/worker';
 
 interface CrosstabContext {
   variables: Record<string, Variable>;

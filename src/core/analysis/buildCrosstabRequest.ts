@@ -1,6 +1,6 @@
-import type { CrosstabQueryOptions } from '../sql/queryBuilder';
 import type { Dataset, Filter, Variable, VariableSet } from '../../types';
 import { allowsNumericStats } from '../../types';
+import type { CrosstabQueryOptions } from '../../types/worker';
 
 interface AnalysisSignificanceSettings {
   comparisonMethod: 'cell_vs_rest' | 'pairwise';

@@ -1,5 +1,6 @@
 import { DatabaseAdapter } from '../../DatabaseAdapter';
-import { buildCrosstabQuery, buildOverlapQuery, CrosstabQueryOptions } from '../../sql/queryBuilder';
+import { buildCrosstabQuery, buildOverlapQuery } from '../../sql/queryBuilder';
+import type { CrosstabQueryOptions } from '../../../types/worker';
 import {
   calculateESS,
   calculatePValue,

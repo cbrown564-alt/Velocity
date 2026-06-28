@@ -9,7 +9,8 @@
  */
 
 import { DatabaseAdapter } from '../DatabaseAdapter';
-import { buildCrosstabQuery, CrosstabQueryOptions } from '../sql/queryBuilder';
+import { buildCrosstabQuery } from '../sql/queryBuilder';
+import type { CrosstabQueryOptions } from '../../types/worker';
 import { AnalysisRunner } from './AnalysisRunner';
 import { analysisRegistry } from './registry';
 import { attachHistograms } from './crosstab/histogram';
