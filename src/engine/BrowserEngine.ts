@@ -56,11 +56,6 @@ function isCompleteAnalysisSettings(
 export class BrowserEngine {
   constructor(private readonly proxy: EngineProxy) {}
 
-  /** Underlying transport adapter (escape hatch during incremental migration). */
-  getProxy(): EngineProxy {
-    return this.proxy;
-  }
-
   // ==========================================================================
   // VelocityEngine-aligned (MCP parity)
   // ==========================================================================

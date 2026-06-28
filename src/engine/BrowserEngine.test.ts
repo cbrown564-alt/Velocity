@@ -60,7 +60,6 @@ describe('BrowserEngine', () => {
 
     await engine.ping();
     expect(proxy.ping).toHaveBeenCalled();
-    expect(engine.getProxy()).toBe(proxy);
   });
 
   it('runAnalysis("crosstab") builds request and delegates to proxy.runCrosstab', async () => {
