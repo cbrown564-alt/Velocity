@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-25T06:46:41.776Z",
+  "generatedAt": "2026-06-28T12:39:38.016Z",
   "datasets": [
     {
       "key": "sleep",
@@ -10,20 +10,20 @@
           "rowCount": 271,
           "variableCount": 55
         },
-        "durationMs": 11.01762500000001,
-        "peakRssBytes": 151437312,
-        "startRssBytes": 111673344,
-        "endRssBytes": 151437312
+        "durationMs": 8.011792000000014,
+        "peakRssBytes": 148733952,
+        "startRssBytes": 109002752,
+        "endRssBytes": 148733952
       },
       "fullParse": {
         "result": {
           "rowCount": 271,
           "variableCount": 55
         },
-        "durationMs": 6.875917000000015,
-        "peakRssBytes": 152043520,
-        "startRssBytes": 151437312,
-        "endRssBytes": 152043520
+        "durationMs": 3.4588749999999777,
+        "peakRssBytes": 149340160,
+        "startRssBytes": 148733952,
+        "endRssBytes": 149340160
       },
       "windowParse": {
         "result": {
@@ -32,20 +32,20 @@
           "chunkSize": 5000,
           "windows": 1
         },
-        "durationMs": 9.27495799999997,
-        "peakRssBytes": 152092672,
-        "startRssBytes": 152043520,
-        "endRssBytes": 152092672
+        "durationMs": 6.7700419999999895,
+        "peakRssBytes": 150437888,
+        "startRssBytes": 149340160,
+        "endRssBytes": 150437888
       },
       "nodeIngestion": {
         "result": {
           "rowCount": 271,
           "variableCount": 59
         },
-        "durationMs": 118.10179200000005,
-        "peakRssBytes": 217923584,
-        "startRssBytes": 152092672,
-        "endRssBytes": 217923584
+        "durationMs": 125.06874999999997,
+        "peakRssBytes": 216023040,
+        "startRssBytes": 150437888,
+        "endRssBytes": 216023040
       },
       "parity": {
         "metadataVsFullRows": true,
@@ -62,20 +62,20 @@
           "rowCount": 97220,
           "variableCount": 613
         },
-        "durationMs": 70.93783400000007,
-        "peakRssBytes": 533889024,
-        "startRssBytes": 397869056,
-        "endRssBytes": 533889024
+        "durationMs": 48.703125,
+        "peakRssBytes": 588087296,
+        "startRssBytes": 401309696,
+        "endRssBytes": 588087296
       },
       "fullParse": {
         "result": {
           "rowCount": 97220,
           "variableCount": 613
         },
-        "durationMs": 2283.2862499999997,
-        "peakRssBytes": 1757085696,
-        "startRssBytes": 533905408,
-        "endRssBytes": 1757085696
+        "durationMs": 2567.503083,
+        "peakRssBytes": 1902182400,
+        "startRssBytes": 588087296,
+        "endRssBytes": 1902182400
       },
       "windowParse": {
         "result": {
@@ -84,20 +84,20 @@
           "chunkSize": 5000,
           "windows": 20
         },
-        "durationMs": 2914.853333,
-        "peakRssBytes": 1757085696,
-        "startRssBytes": 1757085696,
-        "endRssBytes": 1489682432
+        "durationMs": 3014.065125,
+        "peakRssBytes": 1918451712,
+        "startRssBytes": 1902182400,
+        "endRssBytes": 1918451712
       },
       "nodeIngestion": {
         "result": {
           "rowCount": 97220,
           "variableCount": 693
         },
-        "durationMs": 17254.699083,
-        "peakRssBytes": 1747189760,
-        "startRssBytes": 1489682432,
-        "endRssBytes": 1182187520
+        "durationMs": 17366.28125,
+        "peakRssBytes": 2240888832,
+        "startRssBytes": 1918451712,
+        "endRssBytes": 931528704
       },
       "parity": {
         "metadataVsFullRows": true,
