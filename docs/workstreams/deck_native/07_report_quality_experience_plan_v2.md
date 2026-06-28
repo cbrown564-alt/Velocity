@@ -7,6 +7,11 @@
 
 > **What changed from v1.** v1 was disciplined about *not fooling ourselves* ("works" ≠ good) but set its quality ceiling at the **absence of defects** (no clipping, consistent styling, editable). That is the floor, not the bar, and it lands squarely in the documented "AI deck uncanny valley": polished enough not to look terrible, generic enough that a consultant rebuilds it anyway. v2 keeps v1's evaluation rigor and raises the ceiling: it commits to a **report archetype**, anchors quality to **external, named craft standards** rather than home-grown heuristics, adds **design craft / taste** and **narrative** as load-bearing dimensions, makes **action titles** a first-class primitive, names a **competitive floor and wedge**, and commits to a **north-star exemplar** to diff against. See §3, §4, §5, §8, and §15.
 
+**Companion artifacts (checked in alongside this plan).** This plan defines *what good means*; two sibling documents make it operational and are referenced throughout:
+
+- `08_brand_tracker_story_template.md` — the concrete narrative spine for the primary archetype (SCR exec summary, fixed section order, per-slide blueprints, a `Report Job` contract, and a conformance checklist). It is the target shape for the north-star exemplar (§4) and the agent story-draft eval (§10).
+- `09_action_title_eval_rubric.md` — the scoreable rubric behind the **narrative usefulness** dimension (§7): two gates, four graded criteria, per-title bands, a deck-level rollup tied to the promotion bar, an agent-evaluable JSON schema, and a calibration set. It is the action-title eval named in §9.3.
+
 ## 1. Scope Gate
 
 **Workstream sentence:** Build and evaluate the primary Velocity journey from analysis-ready SAV file to defensible, editable, client-quality PowerPoint deck.
@@ -84,7 +89,7 @@ Rationale: clearest pass/fail narrative (this concept wins/loses, here's why, he
 
 **North-star exemplar (the diff target).**
 
-Before scoring any generated deck, assemble a **gold-standard reference deck for the brand-tracker archetype on one of our fixture datasets** — ideally a real human-made deck, otherwise a hand-built one a consultant signs off on. "Score 3" is meaningless without a reference that embodies the dozens of micro-decisions taste is made of. Evaluation = *diff our output against this exemplar*, not score it in a vacuum. See §5 for the public references that calibrate each dimension.
+Before scoring any generated deck, assemble a **gold-standard reference deck for the brand-tracker archetype on one of our fixture datasets** — ideally a real human-made deck, otherwise a hand-built one a consultant signs off on. "Score 3" is meaningless without a reference that embodies the dozens of micro-decisions taste is made of. Evaluation = *diff our output against this exemplar*, not score it in a vacuum. The exemplar must conform to the brand-tracker story spine in `08_brand_tracker_story_template.md` — its §8 conformance checklist is the acceptance test for "is this a valid exemplar." See §5 for the public references that calibrate each dimension.
 
 ## 5. Exemplar Library (External Benchmarks)
 
@@ -177,7 +182,7 @@ A Velocity report is "good enough" only when it passes all six dimensions. v1 ha
 | Dimension | Minimum Standard | External anchor | Evaluation Evidence |
 | :--- | :--- | :--- | :--- |
 | Analytical defensibility | Numbers, bases, filters, weights, caveats are visible or inspectable. No silent unresolved references. | Pew topline/methodology transparency | readiness diagnostics, provenance metadata, parity/golden checks |
-| **Narrative usefulness** | Deck answers a client question in a coherent order; opens with an SCR executive summary; **every slide has a takeaway title**; recommendations separated from evidence. | MBB action titles + pyramid principle | deck-story rubric, action-title eval, human review |
+| **Narrative usefulness** | Deck answers a client question in a coherent order; opens with an SCR executive summary; **every slide has a takeaway title**; recommendations separated from evidence. | MBB action titles + pyramid principle | deck-story rubric, action-title eval (`09_action_title_eval_rubric.md`), human review |
 | **Technical PPTX integrity** | PPTX is editable, well-formed, free of clipping/overlap, no leftover `{{tokens}}`, no empty slides. | — (defect floor) | automated PPTX inspection |
 | **Design craft (taste)** | Slides look *intentional*, not templated: ≤2 fonts, constrained palette, consistent title size/position, grid alignment, deliberate white space, chart type matched to the data. Does **not** read as auto-generated. | Pew viz + MBB design discipline + Gamma defaults | rendered-slide review, uncanny-valley check (§9.2) |
 | Workflow smoothness | Primary journey feels fast, **reversible**, recoverable, predictable. | — | Playwright timings, UI screenshots, undo/loss-of-work tests |
@@ -207,6 +212,8 @@ Score each deck 0–3 per dimension.
 - At least one real or representative pilot deck must score **3 on narrative usefulness** (not configurability) before claiming "works well." Narrative is the wedge; a flexible deck with a mediocre story does not clear the bar.
 - The "confident but indefensible" failure is an automatic block at any visual quality.
 
+Narrative ≥2 is *evidenced*, not asserted: it requires meeting the deck-level action-title gate in `09_action_title_eval_rubric.md` §4 (zero gate failures, ≥90% of body titles Good-or-Strong, ≥40% Strong). Narrative = 3 requires that document's stricter "works well" thresholds (≥95% Good-or-Strong, ≥70% Strong, all exec-summary takeaways Strong).
+
 ## 8. Narrative & Design Primitives
 
 These are the two most under-specified, highest-leverage parts of the experience. They are first-class, not backlog.
@@ -223,7 +230,7 @@ Spec for generated titles:
 - **Carries direction + magnitude** where the data has them (movement vs. prior wave, vs. category).
 - **Editable and regenerable**; on wave refresh, recomputed and flagged for confirmation, never silently changed.
 
-This is gradeable: the action-title eval (§9.3) scores each title for conclusion-vs-topic, support, and length discipline.
+Concrete per-section title patterns (with ✅/❌ examples) live in `08_brand_tracker_story_template.md` §4. This is gradeable: the **action-title eval rubric** (`09_action_title_eval_rubric.md`, summarized in §9.3) scores each title against two gates — *supported* and *defensible* — and four graded criteria — *conclusion, specificity, comparison, form*.
 
 ### 8.2 Design discipline (so defaults have taste)
 
@@ -266,6 +273,8 @@ Render exported slides to images and check legibility, table/axis readability, o
 
 ### 9.3 Story Quality Review + Action-Title Eval
 
+The action-title eval is fully specified in `09_action_title_eval_rubric.md` (per-title gates + criteria, deck-level rollup, JSON output schema, calibration set); the tracker-specific story checklist is `08_brand_tracker_story_template.md` §8. This section is the harness summary that ties them in.
+
 Lightweight deck-story evaluator (human checklist first, agent-evaluable later):
 
 - Stated audience and job? SCR executive summary present?
@@ -303,7 +312,7 @@ For each paid or representative pilot: capture the user job; source file type an
 | **Assemble north-star exemplar** | One gold-standard brand-tracker deck on a fixture dataset, signed off by a consultant. | fixtures | yes | human owner | exemplar deck + screenshots in `exemplars/`; used as diff target |
 | Build PPTX inspection script | Exported decks produce `pptx_inspection.json` incl. font/palette checks. | none | yes | unassigned | script test on existing exported pptx |
 | Add rendered slide evidence + uncanny-valley check | Slides render to PNG; reviewer answers the "mistaken for hand-made?" question. | PPTX inspection | after inspection | unassigned | artifact folder with PNGs + filled taste check |
-| Draft story-quality checklist + action-title rubric | Human-review rubric for narrative coherence, slide usefulness, and title quality. | none | yes | unassigned | applied to one existing demo deck |
+| Draft story-quality checklist + action-title rubric | Human-review rubric for narrative coherence, slide usefulness, and title quality. **Action-title rubric drafted (`09_...`); tracker story checklist drafted (`08_...` §8).** Remaining: generalize the story checklist beyond the tracker archetype and apply both to a deck. | none | yes | unassigned | both applied to one existing demo deck; bands match expected on the §8 calibration set |
 | Extend demo timing + recoverability contract | Runner records journey timings, UI states, and undo/loss-of-work checks. | none | yes | unassigned | updated `steps.json` includes timing + recoverability fields |
 
 ### In Progress
@@ -316,13 +325,13 @@ For each paid or representative pilot: capture the user job; source file type an
 
 | Card | Outcome | Dependencies | Parallelizable | Owner | Validation |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Action-title generation + editing** | Every generated slide gets an editable takeaway title meeting §8.1. | story/title rubric, fixtures | high priority, after rubric | unassigned | action-title eval passes on fixture deck; titles editable/regenerable |
+| **Action-title generation + editing** | Every generated slide gets an editable takeaway title meeting §8.1. | story/title rubric (drafted: `09_...`), fixtures | high priority — rubric ready | unassigned | action-title eval (`09_...`) passes the deck-level gate on a fixture deck; titles editable/regenerable |
 | **Story outline editor** | Users group slides into sections, assign roles, get an SCR exec summary. | action titles | after titles | unassigned | create/reorder sections + exec summary export to PPTX |
 | Default design discipline | Defaults enforce §8.2 (fonts, palette, grid, white space) so output isn't templated-looking. | PPTX inspection, exemplar | after exemplar | unassigned | rendered decks pass uncanny-valley check; font/palette checks pass |
 | Deck review panel v2 | Review surface shows story role, takeaway title status, caveats, bases, template status, readiness in one pass. | story checklist, action titles | no | unassigned | component tests + browser walkthrough screenshots |
 | Configurable visual presets | Narrow presets: table density, chart/table style, theme/template mode. | design discipline | after discipline | unassigned | exported slides differ visibly and pass readability + taste checks |
 | Template mapping editor | Inspect/adjust placeholder–slot bindings. | PPTX inspection | after inspection | unassigned | mapping editor test + template mismatch demo |
-| Agent story draft eval | `velocity_draft_deck_plan` runs an eval-style deck-story + action-title task. | story checklist, fixtures, action titles | after titles | unassigned | eval artifact scored with rubric + exemplar diff |
+| Agent story draft eval | `velocity_draft_deck_plan` runs an eval-style deck-story + action-title task against the `08_...` story spine. | story checklist, fixtures, action titles | after titles | unassigned | eval artifact scored with `09_...` rubric + exemplar diff; output conforms to `08_...` §8 |
 | Wave refresh pilot task | Replacement dataset review + template refresh + title recompute, end to end. | fixtures, action titles | after titles | unassigned | compatible + incompatible wave fixtures reviewed; titles recompute |
 | PowerPoint rework log | Pilot users record remaining manual PPTX cleanup. | pilot review loop | after pilots | human owner | 5–8 pilot records or explicit blocker |
 
@@ -384,7 +393,7 @@ Any PR claiming to improve the deck-native journey should include:
 Resolved in v2:
 
 - **Archetype:** brand tracker first, concept test second (§4).
-- **Narrative standard:** SCR executive summary + per-slide action titles + one-message-per-slide (§8.1, anchored to MBB/Pew).
+- **Narrative standard:** SCR executive summary + per-slide action titles + one-message-per-slide (§8.1, anchored to MBB/Pew), now concretely specified in `08_brand_tracker_story_template.md` (story spine) and `09_action_title_eval_rubric.md` (title scoring).
 
 Still open for the human owner:
 
