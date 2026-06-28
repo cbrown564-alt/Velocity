@@ -10,10 +10,8 @@ import {
   RecodeConfig,
   VariableSet,
   Variable,
-  Filter,
   HistogramBin,
   AggregatedRow,
-  ChiSquareResult,
   TableStats,
   MissingValueDef,
 } from './index';

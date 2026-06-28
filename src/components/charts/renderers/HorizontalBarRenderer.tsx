@@ -44,8 +44,10 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
   }, [selectedKeys]);
 
   // Use the first series (single column analysis) or "Total" column
-  const series = processedData.series[0];
-  const chartData = series?.data || [];
+  const chartData = useMemo(() => {
+    const series = processedData.series[0];
+    return series?.data || [];
+  }, [processedData.series]);
 
   // Dynamic margin based on label length
   const maxLabelLength = Math.max(...chartData.map((d) => (d.label || '').length), 10);

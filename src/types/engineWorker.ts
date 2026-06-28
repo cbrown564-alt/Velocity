@@ -9,7 +9,7 @@
  * response, enabling EngineProxy to route concurrent responses correctly.
  */
 
-import type { RecodeConfig, Variable, VariableSet, Filter, AggregatedRow, TableStats, MissingValueDef } from './index';
+import type { RecodeConfig, Variable, VariableSet, AggregatedRow, TableStats, MissingValueDef } from './index';
 import type { OrderedScoring, VariableType } from './index';
 import type { CrosstabQueryOptions } from '../core/sql/queryBuilder';
 import type { ProcessedAnalysisData } from './processedData';
@@ -26,6 +26,14 @@ import type {
 
 // Re-export for convenience
 export type { VariableStatsResult, VariableStatsFrequency, NumericStats, PersistedMetadata };
+
+export interface WorkerProcessDataOptions {
+  rowVariables: Variable[];
+  colVariable: Variable | null;
+  isWeighted?: boolean;
+  isMultipleResponse?: boolean;
+  chartType?: ChartType;
+}
 
 // ============================================================================
 // Engine Request Types (Main Thread -> Worker)
@@ -74,6 +82,7 @@ export type EngineWorkerRequest = EngineRequestBase &
         options: CrosstabQueryOptions & { includeDistributions?: boolean };
         analysisSettings?: WorkerAnalysisSettings;
         context: WorkerAnalysisContext;
+        includeProcessedData?: WorkerProcessDataOptions;
       }
     | {
         type: 'engine.runAnalysis';
@@ -83,12 +92,7 @@ export type EngineWorkerRequest = EngineRequestBase &
     | {
         type: 'engine.processData';
         data: AggregatedRow[];
-        options: {
-          rowVariables: Variable[];
-          colVariable: Variable | null;
-          isWeighted?: boolean;
-          isMultipleResponse?: boolean;
-        };
+        options: Omit<WorkerProcessDataOptions, 'chartType'>;
         chartType?: ChartType;
       }
 
@@ -189,6 +193,12 @@ export type EngineWorkerResponse = EngineResponseBase &
         data: Array<AggregatedRow | Record<string, unknown>>;
         durationMs: number;
         tableStats?: TableStats;
+        processedData?: ProcessedAnalysisData | null;
+        timings?: {
+          queryMs: number;
+          processMs?: number;
+          totalMs: number;
+        };
       }
     | { type: 'engine.schema'; data: { name: string; type: string }[] }
     | { type: 'engine.uniqueValues'; data: string[] }
@@ -196,7 +206,7 @@ export type EngineWorkerResponse = EngineResponseBase &
 
     // --- Analysis ---
     | { type: 'engine.analysisResult'; id: string; result: Record<string, unknown> | null; durationMs: number }
-    | { type: 'engine.processedData'; result: ProcessedAnalysisData | null }
+    | { type: 'engine.processedData'; result: ProcessedAnalysisData | null; durationMs?: number }
 
     // --- Transformations ---
     | { type: 'engine.recodeComplete'; newColName: string }

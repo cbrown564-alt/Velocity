@@ -20,7 +20,6 @@ import type {
   SurveyResult,
   MixedModelConfig,
   MixedModelResult,
-  RDataFrame,
 } from '../types/webr';
 
 // WebR instance (lazy loaded)
@@ -100,9 +99,9 @@ async function loadPackageInternal(packageName: string): Promise<void> {
     postResponse({ type: 'packageLoaded', packageName });
 
     console.log(`🔬 [WebR Worker] Loaded package: ${packageName}`);
-  } catch (error: any) {
-    console.error(`🔬 [WebR Worker] Failed to load package ${packageName}:`, error);
-    throw new Error(`Failed to load R package "${packageName}": ${error.message}`);
+  } catch (err: any) {
+    console.error(`🔬 [WebR Worker] Failed to load package ${packageName}:`, err);
+    throw new Error(`Failed to load R package "${packageName}": ${err.message}`, { cause: err });
   }
 }
 
@@ -116,7 +115,7 @@ async function executeR(code: string, data?: Uint8Array): Promise<RResult> {
   }
 
   const start = performance.now();
-  let output = '';
+  let output: string;
   const warnings: string[] = [];
 
   try {
@@ -151,9 +150,9 @@ async function executeR(code: string, data?: Uint8Array): Promise<RResult> {
     } finally {
       await shelter.purge();
     }
-  } catch (error: any) {
-    console.error('🔬 [WebR Worker] R execution error:', error);
-    throw new Error(`R execution failed: ${error.message}`);
+  } catch (err: any) {
+    console.error('🔬 [WebR Worker] R execution error:', err);
+    throw new Error(`R execution failed: ${err.message}`, { cause: err });
   }
 }
 
@@ -219,8 +218,8 @@ async function runSurveyAnalysis(config: SurveyDesignConfig, data: Uint8Array): 
     } finally {
       await shelter.purge();
     }
-  } catch (error: any) {
-    throw new Error(`Survey analysis failed: ${error.message}`);
+  } catch (err: any) {
+    throw new Error(`Survey analysis failed: ${err.message}`, { cause: err });
   }
 }
 
@@ -261,7 +260,6 @@ function buildSurveyDesign(config: SurveyDesignConfig): string {
 
 function buildSurveyAnalysis(config: SurveyDesignConfig): string {
   const lines: string[] = [];
-  const vars = config.analysisVars.join(', ');
 
   for (const stat of config.statistics) {
     const formula = `~${config.analysisVars.join(' + ')}`;
@@ -391,8 +389,8 @@ async function runMixedModel(config: MixedModelConfig, data: Uint8Array): Promis
     } finally {
       await shelter.purge();
     }
-  } catch (error: any) {
-    throw new Error(`Mixed model analysis failed: ${error.message}`);
+  } catch (err: any) {
+    throw new Error(`Mixed model analysis failed: ${err.message}`, { cause: err });
   }
 }
 
@@ -586,26 +584,29 @@ self.onmessage = async (event: MessageEvent<WebRWorkerRequest>) => {
         await loadPackageInternal(request.packageName);
         break;
 
-      case 'executeR':
+      case 'executeR': {
         status.status = 'busy';
         const rResult = await executeR(request.code, request.data);
         status.status = 'ready';
         postResponse({ type: 'rResult', result: rResult });
         break;
+      }
 
-      case 'runSurveyAnalysis':
+      case 'runSurveyAnalysis': {
         status.status = 'busy';
         const surveyResult = await runSurveyAnalysis(request.config, request.data);
         status.status = 'ready';
         postResponse({ type: 'surveyResult', result: surveyResult });
         break;
+      }
 
-      case 'runMixedModel':
+      case 'runMixedModel': {
         status.status = 'busy';
         const mixedResult = await runMixedModel(request.config, request.data);
         status.status = 'ready';
         postResponse({ type: 'mixedModelResult', result: mixedResult });
         break;
+      }
 
       case 'getStatus':
         postResponse({ type: 'status', status: { ...status } });

@@ -44,7 +44,8 @@ export class DuckDBNodeAdapter implements DatabaseAdapter {
     return { columns, rows, rowCount };
   }
 
-  async *queryStream(sql: string, options?: StreamOptions): AsyncIterable<QueryResult> {
+  async *queryStream(sql: string, _options?: StreamOptions): AsyncIterable<QueryResult> {
+    void _options;
     const result = await this.connection.stream(sql);
     const columns = result.columnNames();
     for await (const chunk of result) {
@@ -84,6 +85,8 @@ export class DuckDBNodeAdapter implements DatabaseAdapter {
   }
 
   async insertArrowBuffer(tableName: string, buffer: Uint8Array): Promise<void> {
+    void tableName;
+    void buffer;
     throw new Error(
       'DuckDBNodeAdapter.insertArrowBuffer not yet implemented. ' +
         'Use loadCSV() or execute() with INSERT statements instead.',

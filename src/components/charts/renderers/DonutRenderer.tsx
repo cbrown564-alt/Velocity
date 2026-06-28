@@ -33,12 +33,10 @@ export const DonutRenderer: React.FC<BaseChartRendererProps> = ({
   onContextMenu,
   labelMode = 'count',
 }) => {
-  // Use the first series (single column analysis)
-  const series = processedData.series[0];
-  const data = series?.data || [];
-
   // Filter out zero values to avoid ugly empty slices
   const chartData = useMemo(() => {
+    const series = processedData.series[0];
+    const data = series?.data || [];
     return data
       .filter((d) => d.value > 0)
       .map((d) => ({
@@ -47,7 +45,7 @@ export const DonutRenderer: React.FC<BaseChartRendererProps> = ({
         percent: d.percent,
         rawValue: (d as any).rawValue ?? d.label,
       }));
-  }, [data]);
+  }, [processedData.series]);
 
   const { handleToggle } = useChartSelection<DonutDatum>({
     interactive,

@@ -7,7 +7,7 @@ import { VariableTypeIcon } from '../../../components/common/VariableTypeIcon';
 import styles from '../VariableInspector.module.css';
 import { normalizeVariableType, allowsNumericStats } from '../../../types';
 
-export const getTypeBadgeClass = (type: string) => {
+const getTypeBadgeClass = (type: string) => {
   switch (normalizeVariableType(type as any)) {
     case 'categorical':
       return styles.typeBadgeNominal;
@@ -24,7 +24,7 @@ export const getTypeBadgeClass = (type: string) => {
   }
 };
 
-export const getTypeLabel = (type: string) => {
+const getTypeLabel = (type: string) => {
   switch (normalizeVariableType(type as any)) {
     case 'categorical':
       return 'Category';

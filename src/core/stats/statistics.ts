@@ -461,7 +461,7 @@ export function calculatePairwiseComparisons(
   });
 
   // Build sigLetters string for each column
-  results.forEach((result, key) => {
+  results.forEach((result) => {
     // Sort letters and combine (showing columns this is higher than)
     result.higherThan.sort();
     result.sigLetters = result.higherThan.join('');

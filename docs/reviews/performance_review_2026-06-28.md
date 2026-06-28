@@ -359,14 +359,45 @@ Risk:
 
 **Goal:** Cut repeated worker/main-thread payloads and avoid unnecessary crosstab work.
 
+**Status:** Completed on 2026-06-28 for the worker-bridge and repeat-query paths. `engine.runCrosstab` now accepts an optional processed-data request, maps SQL rows with the same `mapCrosstabRows` path used by the store, runs `processAnalysisData` in the worker, and returns raw rows, processed table data, and query/process timing metadata in one response. `DataTable` consumes the processed crosstab payload when it matches the active row/column variables, so table view no longer sends the same crosstab rows back through `engine.processData`. `engine.processData` remains as a fallback and for chart-type transforms. `analysisSlice` now keeps a bounded in-memory crosstab cache keyed by dataset identity, transform log, row/column variables, filters, weight, analysis settings, and normalized query options; identical reruns reuse cached raw + processed results.
+
+Implementation note: histogram/distribution deferral remains the next runtime-path refinement because the current chart-selection flow does not safely re-run analysis when a distribution chart is selected. The worker timing fields added in this phase expose the query/process split needed to make that follow-up measurable without changing statistical outputs.
+
+Before/after evidence:
+
+| Measurement | Before Phase 2 | After Phase 2 |
+| :--- | :--- | :--- |
+| Table render worker roundtrips after crosstab | 2 (`runCrosstab` then `processData`) | 1 (`runCrosstab` includes processed table data) |
+| Repeated identical crosstab runs | Always called worker analysis | Bounded cache hit, no second worker analysis call |
+| Worker timing detail | Single crosstab `durationMs` | `queryMs`, `processMs`, `totalMs`; `processData.durationMs` |
+| Tree cell construction | Per group × column `filter()` scans | Per group column index reused for cells |
+| Production build main JS gzip | 154.03 KB after Phase 1 | 154.39 KB after Phase 2 |
+
+Validation:
+
+```bash
+npm run test:run -- src/services/worker/engineHandlers.loadProgress.test.ts src/test/integration/storeWorker.test.ts src/core/analysis/analysisProcessor.test.ts src/engine/BrowserEngine.test.ts src/hooks/useProcessedAnalysisData.test.tsx
+npm run typecheck
+npm run typecheck:test
+npx eslint src/services/worker/engineHandlers.ts src/types/engineWorker.ts src/services/EngineProxy.ts src/engine/BrowserEngine.ts src/store/slices/analysisSlice.ts src/hooks/useProcessedAnalysisData.ts src/hooks/useProcessedAnalysisData.test.tsx src/features/dashboard/components/DataTable.tsx src/core/analysis/treeBuilder.ts src/services/worker/engineHandlers.loadProgress.test.ts src/test/integration/storeWorker.test.ts src/store/slices/data/sliceContext.ts src/store/slices/data/datasetActions.ts src/app/hooks/useSessionLifecycle.ts src/app/hooks/useWorkspaceOrchestration.ts
+npm run build
+npx stryker run --mutate src/core/analysis/treeBuilder.ts
+```
+
+Mutation note: the narrowed Stryker run passed the configured break threshold (`49.48 >= 40`) but reported broad surviving-mutant gaps in older `treeBuilder` behavior; it also left mutation side effects in the worktree/index that had to be restored. Do not treat that score as a new quality baseline without cleaning the Stryker workflow.
+
+Production smoke note: `PLAYWRIGHT_PRODUCTION_PORT=4176 npm run test:e2e:production` passed during this phase after the worker-bridge change, but the final rerun after the cache addition could not be executed because local server binding requires escalation and the approval system hit its usage limit. The final `npm run build` passed.
+
+Next phase: Phase 3, Ingestion Throughput and Memory.
+
 Tasks:
 
-1. Add timing instrumentation to `engine.runCrosstab`, `engine.processData`, and main-thread render commit points.
-2. Add an option for `runCrosstab` to return processed analysis data in one worker response.
-3. Keep raw row output available only where needed for compatibility.
-4. Defer histogram/distribution SQL until a distribution chart is selected.
-5. Cache crosstab results by dataset/table version, row vars, col var, filters, weight, and analysis settings.
-6. Add explicit cache invalidation for recode, filter changes, dataset switch, weight changes, and session import.
+1. Done: add timing instrumentation to `engine.runCrosstab` and `engine.processData`; main-thread render commit timing remains a rendering-phase follow-up.
+2. Done: add an option for `runCrosstab` to return processed analysis data in one worker response.
+3. Done: keep raw row output available for compatibility.
+4. Follow-up: defer histogram/distribution SQL until a distribution chart is selected.
+5. Done: cache crosstab results by dataset/table version, row vars, col var, filters, weight, and analysis settings.
+6. Done by cache key: invalidate on recode/transform log, filter changes, dataset switch, weight changes, and session import.
 
 Success criteria:
 

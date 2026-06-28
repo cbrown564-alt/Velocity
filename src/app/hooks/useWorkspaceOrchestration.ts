@@ -157,7 +157,7 @@ export function useWorkspaceOrchestration({
   useEffect(() => {
     if (!dataset || phase !== 'dashboard') return;
     void materializeDatasetTable(dataset.id);
-  }, [dataset?.id, phase, materializeDatasetTable]);
+  }, [dataset, phase, materializeDatasetTable]);
 
   const clearLoadedDatasetState = useCallback(async () => {
     useVelocityStore.setState({
@@ -168,6 +168,7 @@ export function useWorkspaceOrchestration({
       tableConfig: { rowVars: [], colVar: null },
       activeFilters: [],
       queryResult: [],
+      processedQueryResult: null,
       tableStats: null,
       persistedDataInfo: null,
       persistenceState: 'ready',

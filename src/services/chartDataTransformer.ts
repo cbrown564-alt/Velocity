@@ -196,7 +196,7 @@ export const transformChartData = (
     // 2. Grouped metric (age × sex): 1 row ('Age'), multiple columns (Male, Female)
     //    → Create 1 series per column, using bins from that column's cell
 
-    let newSeries: ChartSeries[] = [];
+    let newSeries: ChartSeries[];
 
     if (processedData.columns.length === 1) {
       // Scenario 1: Single metric - iterate rows

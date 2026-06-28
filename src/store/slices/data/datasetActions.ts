@@ -19,6 +19,7 @@ function postLoadAnalysisReset() {
   return {
     tableConfig: { rowVars: [] as string[], colVar: null as string | null },
     queryResult: [] as AggregatedRow[],
+    processedQueryResult: null,
     activeFilters: [] as Filter[],
   };
 }
@@ -280,6 +281,7 @@ export function createDatasetActions(
             tableConfig: sessionPatch.tableConfig,
             activeFilters: sessionPatch.activeFilters,
             queryResult: [],
+            processedQueryResult: null,
             tableStats: null,
             persistenceState: 'checking',
             persistedDataInfo: null,

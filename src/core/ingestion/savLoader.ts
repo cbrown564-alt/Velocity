@@ -207,13 +207,10 @@ export function processMetadata(data: ParsedSavData): ProcessedSavResult {
   for (const [hash, varsInGroup] of byValueLabelHash.entries()) {
     if (varsInGroup.length < 3) continue;
 
-    let gridCandidatesList: Variable[][] = [];
-
-    if (hash === '__numeric_unlabeled__') {
-      gridCandidatesList = detectNumericGrids(varsInGroup, rows, metadata.variables, rows.length);
-    } else {
-      gridCandidatesList = detectSequentialPattern(varsInGroup);
-    }
+    const gridCandidatesList =
+      hash === '__numeric_unlabeled__'
+        ? detectNumericGrids(varsInGroup, rows, metadata.variables, rows.length)
+        : detectSequentialPattern(varsInGroup);
 
     for (const gridCandidates of gridCandidatesList) {
       const firstVar = gridCandidates[0];

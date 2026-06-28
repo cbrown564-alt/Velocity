@@ -86,7 +86,7 @@ export const ProjectLinkModal: React.FC<ProjectLinkModalProps> = ({
   const potentialKeyVariables = useMemo(() => {
     // Placeholder - in real implementation, would analyze actual variable metadata
     return ['respondent_id', 'uid', 'panel_id', 'email_hash'];
-  }, [selectedDatasets]);
+  }, []);
 
   const handleCreate = () => {
     if (!projectName.trim()) return;
@@ -121,9 +121,9 @@ export const ProjectLinkModal: React.FC<ProjectLinkModalProps> = ({
     onClose();
   };
 
-  if (!isOpen) return null;
-
   const reducedMotion = useReducedMotion();
+
+  if (!isOpen) return null;
 
   return (
     <AnimatePresence>

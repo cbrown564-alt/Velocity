@@ -1,4 +1,4 @@
-import { AggregatedRow, Variable, HistogramBin } from './index';
+import { Variable, HistogramBin } from './index';
 
 // ============================================================================
 // Types

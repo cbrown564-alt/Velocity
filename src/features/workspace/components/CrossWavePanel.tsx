@@ -116,9 +116,9 @@ export const CrossWavePanel: React.FC<CrossWavePanelProps> = ({
     }));
   }, [waveDatasets]);
 
-  if (!isOpen) return null;
-
   const reducedMotion = useReducedMotion();
+
+  if (!isOpen) return null;
 
   return (
     <AnimatePresence>

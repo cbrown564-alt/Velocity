@@ -83,7 +83,7 @@ export const HistogramRenderer: React.FC<BaseChartRendererProps> = ({
   }, [rows, variableStats, selectedIndices]);
 
   // Margins
-  const margin = { top: 10, right: 20, bottom: 20, left: 45 };
+  const margin = useMemo(() => ({ top: 10, right: 20, bottom: 20, left: 45 }), []);
   const innerWidth = width - margin.left - margin.right;
   const innerHeight = height - margin.top - margin.bottom;
 

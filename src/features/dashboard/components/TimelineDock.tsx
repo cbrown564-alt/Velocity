@@ -78,7 +78,7 @@ interface SlideThumbProps {
   onDelete: () => void;
 }
 
-export function getSlideDisplayLabel(
+function getSlideDisplayLabel(
   slide: Slide,
   variableSets: Array<{ id: string; name: string }> = [],
   currentTableConfig?: { rowVars: string[]; colVar: string | null },

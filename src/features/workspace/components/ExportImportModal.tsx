@@ -174,11 +174,11 @@ export const ExportImportModal: React.FC<ExportImportModalProps> = ({
     }
   };
 
+  const reducedMotion = useReducedMotion();
+
   if (!isOpen) return null;
 
   const exportPreview = generateExport();
-
-  const reducedMotion = useReducedMotion();
 
   return (
     <AnimatePresence>

@@ -9,7 +9,13 @@ import type { DataSlice } from './types';
 export type DataSliceStore = DataSlice &
   Pick<
     AnalysisSlice,
-    'tableConfig' | 'queryResult' | 'tableStats' | 'activeFilters' | 'runAnalysis' | 'setTableConfig'
+    | 'tableConfig'
+    | 'queryResult'
+    | 'processedQueryResult'
+    | 'tableStats'
+    | 'activeFilters'
+    | 'runAnalysis'
+    | 'setTableConfig'
   > &
   Pick<UISlice, 'setSelectedVariableId'>;
 

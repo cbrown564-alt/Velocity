@@ -5,7 +5,7 @@
  * Calls the export pipeline from src/core/export/*.
  */
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { X, FileDown, FileSpreadsheet, Presentation, Download, CheckCircle2 } from 'lucide-react';
 import styles from './ExportModal.module.css';
 import { exportPptx } from '../../core/export/pptxExporter';
@@ -118,17 +118,20 @@ export const ExportModal: React.FC<ExportModalProps> = ({ isOpen, onClose, confi
     [tableConfig.rowVars, tableConfig.colVar, activeFilters, dataset?.weightVariable],
   );
 
-  const resolveTitleForSlide = (slideId: string): string | null => {
-    const slide = slides.find((candidate) => candidate.id === slideId);
-    if (!slide || !dataset) return null;
-    const analysisState = slideId === activeSlideId ? activeAnalysisState : slide.analysisState;
-    return resolveExportSlideTitle(slide.title, analysisState, variableSets, dataset.variables);
-  };
+  const resolveTitleForSlide = useCallback(
+    (slideId: string): string | null => {
+      const slide = slides.find((candidate) => candidate.id === slideId);
+      if (!slide || !dataset) return null;
+      const analysisState = slideId === activeSlideId ? activeAnalysisState : slide.analysisState;
+      return resolveExportSlideTitle(slide.title, analysisState, variableSets, dataset.variables);
+    },
+    [slides, dataset, activeSlideId, activeAnalysisState, variableSets],
+  );
 
   const activeSlideTitle = useMemo(() => {
     if (!activeSlideId) return null;
     return resolveTitleForSlide(activeSlideId);
-  }, [slides, activeSlideId, activeAnalysisState, variableSets, dataset]);
+  }, [activeSlideId, resolveTitleForSlide]);
 
   const initialResolvedTitle = useMemo(() => {
     if (initialConfig.title.trim() && initialConfig.title.trim() !== 'New Slide') {

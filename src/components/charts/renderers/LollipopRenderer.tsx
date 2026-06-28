@@ -22,8 +22,10 @@ export const LollipopRenderer: React.FC<BaseChartRendererProps> = ({
   onContextMenu,
   labelMode = 'count',
 }) => {
-  const series = processedData.series[0];
-  const chartData = series?.data || [];
+  const chartData = useMemo(() => {
+    const series = processedData.series[0];
+    return series?.data || [];
+  }, [processedData.series]);
 
   // Dynamic margin similar to Horizontal Bar
   const maxLabelLength = Math.max(...chartData.map((d) => (d.label || '').length), 10);

@@ -2,7 +2,6 @@
 // (tsx/Node wraps CJS modules differently — .default ?? module guards against both)
 async function getPptxGenJS() {
   const mod = await import('pptxgenjs');
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return (mod.default ?? mod) as any;
 }
 import { ExportConfig, AnalysisExportItem, ExportBranding } from './types';

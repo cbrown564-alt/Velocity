@@ -238,9 +238,13 @@ export const CrosstabCell: React.FC<CrosstabCellProps> = ({
   const primarySizeClass = size === 'marginal' ? 'text-xs' : 'text-sm';
   const secondarySizeClass = size === 'marginal' ? 'text-[9px]' : 'text-[10px]';
 
+  const n = count ?? 0;
+  const sampleN = validCount ?? count;
+  const ghost = usePhosphorGhost(n, animationTrigger);
+  const meanGhost = usePhosphorGhost(mean ?? 0, animationTrigger);
+  const pctGhost = usePhosphorGhost(percent ?? 0, animationTrigger);
+
   if (variant === 'count') {
-    const n = count ?? 0;
-    const ghost = usePhosphorGhost(n, animationTrigger);
     const countDisplay = animationTrigger ? (
       <AnimatedNumber
         key={`count-${animationTrigger}`}
@@ -270,8 +274,6 @@ export const CrosstabCell: React.FC<CrosstabCellProps> = ({
   }
 
   if (variant === 'metric') {
-    const sampleN = validCount ?? count;
-    const meanGhost = usePhosphorGhost(mean ?? 0, animationTrigger);
 
     if (isZero) {
       return (
@@ -337,7 +339,6 @@ export const CrosstabCell: React.FC<CrosstabCellProps> = ({
     );
   }
 
-  const pctGhost = usePhosphorGhost(percent ?? 0, animationTrigger);
 
   if (isZero) {
     return (

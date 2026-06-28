@@ -8,7 +8,7 @@
  */
 
 import { HistogramBin } from '../../types';
-import { VariableStatsResult, VariableStatsFrequency, NumericStats } from '../../types/worker';
+import { VariableStatsResult, VariableStatsFrequency } from '../../types/worker';
 import { DatabaseAdapter } from '../DatabaseAdapter';
 import { AnalysisRunner } from './AnalysisRunner';
 import { analysisRegistry } from './registry';

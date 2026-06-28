@@ -44,6 +44,8 @@ export class DuckDBWasmAdapter implements DatabaseAdapter {
   }
 
   async insertArrowBuffer(tableName: string, buffer: Uint8Array): Promise<void> {
+    void tableName;
+    void buffer;
     // DuckDB-WASM expects an Arrow Table object, not raw buffer.
     // For raw buffer insertion, we'd need to register it as a file first.
     // This method is primarily used by the Node adapter; the WASM adapter

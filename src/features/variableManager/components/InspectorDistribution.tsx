@@ -35,7 +35,7 @@ export const InspectorDistribution: React.FC<InspectorDistributionProps> = ({
   const { width: containerWidth } = useResizeObserver(containerRef);
   const chartWidth = Math.max(280, containerWidth); // section has no horizontal padding
 
-  const isMissingValue = (value: number | string | null): boolean => {
+  const isMissingValue = useCallback((value: number | string | null): boolean => {
     if (value === null) return true;
     if (!variable?.missingValues) return false;
     const numericValue = typeof value === 'number' ? value : Number(value);
@@ -48,7 +48,7 @@ export const InspectorDistribution: React.FC<InspectorDistributionProps> = ({
       }
     }
     return false;
-  };
+  }, [variable?.missingValues]);
 
   // Prepare data for Nominal/Ordinal Charts (HorizontalBarRenderer)
   const nominalChartData = useMemo(() => {
@@ -92,7 +92,7 @@ export const InspectorDistribution: React.FC<InspectorDistributionProps> = ({
         },
       ],
     } as any;
-  }, [stats, variable, isNumericVariable]);
+  }, [stats, variable, isNumericVariable, isMissingValue]);
 
   const nominalItemCount = nominalChartData?.series?.[0]?.data?.length ?? 0;
   const useColumnChart = !isNumericVariable && nominalItemCount > 5;

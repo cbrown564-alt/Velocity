@@ -18,6 +18,7 @@ import {
   type CorrectionType,
   type Filter,
   type TableConfig,
+  type Variable,
 } from '../../types';
 
 export type { AnalysisEngine, AnalysisSettings, ComparisonMethod, CorrectionType, Filter, TableConfig };
@@ -31,6 +32,38 @@ import { buildCrosstabRequest } from '../../core/analysis/buildCrosstabRequest';
 import { mapCrosstabRows } from '../../core/analysis/mapCrosstabRows';
 import type { CrosstabSqlRow } from '../../core/analysis/crosstab/types';
 import { recordPilotEvent } from '../../services/pilotOnboarding';
+import type { ProcessedAnalysisData } from '../../types/processedData';
+
+interface CachedCrosstabResult {
+  queryResult: AggregatedRow[];
+  processedQueryResult: ProcessedAnalysisData | null;
+  tableStats: TableStats | null;
+}
+
+const CROSSTAB_CACHE_LIMIT = 25;
+const crosstabResultCache = new Map<string, CachedCrosstabResult>();
+
+function stableCacheStringify(value: unknown): string {
+  return JSON.stringify(value, (_key, nestedValue) => {
+    if (!nestedValue || typeof nestedValue !== 'object' || Array.isArray(nestedValue)) return nestedValue;
+    return Object.keys(nestedValue)
+      .sort()
+      .reduce<Record<string, unknown>>((acc, key) => {
+        acc[key] = (nestedValue as Record<string, unknown>)[key];
+        return acc;
+      }, {});
+  });
+}
+
+function writeCrosstabCache(key: string, result: CachedCrosstabResult): void {
+  if (crosstabResultCache.has(key)) crosstabResultCache.delete(key);
+  crosstabResultCache.set(key, result);
+  while (crosstabResultCache.size > CROSSTAB_CACHE_LIMIT) {
+    const oldestKey = crosstabResultCache.keys().next().value;
+    if (!oldestKey) break;
+    crosstabResultCache.delete(oldestKey);
+  }
+}
 
 // ============================================================================
 // Slice State & Actions
@@ -40,6 +73,7 @@ export interface AnalysisSlice {
   // State
   tableConfig: TableConfig;
   queryResult: AggregatedRow[];
+  processedQueryResult: ProcessedAnalysisData | null;
   tableStats: TableStats | null;
   isQuerying: boolean;
   /** Last crosstab failure message for inline slide UI (UXR-037). */
@@ -87,6 +121,7 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
   // Initial state
   tableConfig: { rowVars: [], colVar: null },
   queryResult: [],
+  processedQueryResult: null,
   tableStats: null,
   isQuerying: false,
   queryError: null,
@@ -106,7 +141,7 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
 
   applySlideAnalysisState: (slideState, options = {}) => {
     const { runAnalysis: shouldRun = true } = options;
-    set((state) => ({
+    set(() => ({
       tableConfig: {
         rowVars: [...slideState.rowVars],
         colVar: slideState.colVar,
@@ -120,9 +155,9 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
   },
 
   runAnalysis: async () => {
-    const { browserEngine, tableConfig, dataset, variableSets, activeFilters, analysisSettings } = get();
+    const { browserEngine, tableConfig, dataset, variableSets, activeFilters, analysisSettings, transformLog } = get();
     if (!browserEngine || !dataset || tableConfig.rowVars.length === 0) {
-      set({ queryResult: [], tableStats: null, queryError: null });
+      set({ queryResult: [], processedQueryResult: null, tableStats: null, queryError: null });
       return;
     }
 
@@ -143,6 +178,47 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
         void get().fetchVariableStats(request.measureVarId, 'numeric');
       }
 
+      const rowVariables = tableConfig.rowVars
+        .map((varId) => dataset.variables.find((variable) => variable.id === varId))
+        .filter((variable): variable is Variable => Boolean(variable));
+      const colVariable = tableConfig.colVar
+        ? (dataset.variables.find((variable) => variable.id === tableConfig.colVar) ?? null)
+        : null;
+      const isMultipleResponse = Boolean(request.options.multipleColumns || request.options.columnMultipleColumns);
+      const cacheKey = stableCacheStringify({
+        dataset: {
+          id: dataset.id,
+          name: dataset.name,
+          rowCount: dataset.rowCount,
+          variableCount: dataset.variables.length,
+          weightVariable: dataset.weightVariable ?? null,
+        },
+        transformLog: transformLog.map((transform) => ({
+          type: transform.type,
+          sourceColId: transform.sourceColId,
+          newColId: transform.newColId,
+          createdAt: transform.createdAt,
+          config: transform.config,
+        })),
+        rowVars: tableConfig.rowVars,
+        colVar: tableConfig.colVar,
+        filters: activeFilters,
+        weightVar: dataset?.weightVariable ?? null,
+        analysisSettings,
+        options: request.options,
+      });
+      const cached = crosstabResultCache.get(cacheKey);
+      if (cached) {
+        set({
+          queryResult: cached.queryResult,
+          processedQueryResult: cached.processedQueryResult,
+          tableStats: cached.tableStats,
+          isQuerying: false,
+          queryError: null,
+        });
+        return;
+      }
+
       const response = await browserEngine.runAnalysis(
         'crosstab',
         {
@@ -151,15 +227,32 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
           filters: activeFilters,
           weightVar: dataset?.weightVariable ?? null,
           analysisSettings,
+          includeProcessedData: {
+            rowVariables,
+            colVariable,
+            isWeighted: request.isWeighted,
+            isMultipleResponse,
+          },
         },
         { dataset, variableSets },
       );
-      const rawData = response.data as { rows: CrosstabSqlRow[] };
+      const rawData = response.data as {
+        rows: CrosstabSqlRow[];
+        processedData?: ProcessedAnalysisData | null;
+        timings?: { queryMs: number; processMs?: number; totalMs: number };
+      };
       const mappedData: AggregatedRow[] = mapCrosstabRows(rawData.rows, request.isWeighted);
+      const nextResult = {
+        queryResult: mappedData,
+        processedQueryResult: rawData.processedData ?? null,
+        tableStats: (response.data as { tableStats: TableStats | null }).tableStats,
+      };
+      writeCrosstabCache(cacheKey, nextResult);
 
       set({
-        queryResult: mappedData,
-        tableStats: (response.data as { tableStats: TableStats | null }).tableStats,
+        queryResult: nextResult.queryResult,
+        processedQueryResult: nextResult.processedQueryResult,
+        tableStats: nextResult.tableStats,
         isQuerying: false,
         queryError: null,
       });
@@ -178,6 +271,7 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
       set({
         isQuerying: false,
         queryResult: [],
+        processedQueryResult: null,
         tableStats: null,
         queryError: message,
       });
@@ -263,11 +357,12 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
   },
 
   clearConfiguration: () => {
-    set((state) => ({
+    set({
       tableConfig: { rowVars: [], colVar: null },
       queryResult: [],
+      processedQueryResult: null,
       tableStats: null,
-    }));
+    });
   },
 
   updateAnalysisSettings: (settings) => {
@@ -282,6 +377,7 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
     set({
       tableConfig: { rowVars: [], colVar: null },
       queryResult: [],
+      processedQueryResult: null,
       tableStats: null,
       queryError: null,
       activeFilters: [],

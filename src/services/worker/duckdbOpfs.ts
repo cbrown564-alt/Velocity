@@ -1,5 +1,5 @@
 import { findOpfsFile, walkOpfs } from '../opfsTraversal';
-import { OPFS_BASE_NAME, OPFS_SCHEMA_VERSION, workerDbState } from './workerDbState';
+import { OPFS_BASE_NAME, workerDbState } from './workerDbState';
 
 export async function cleanOPFS(): Promise<void> {
   try {

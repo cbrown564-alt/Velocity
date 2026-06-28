@@ -18,24 +18,11 @@ import { WEIGHT_NAME_PATTERNS } from './weightPatterns';
 // Rule Helpers
 // ============================================================================
 
-function normName(name: string): string {
-  return name.toLowerCase().replace(/[^a-z0-9]/g, '');
-}
 
 function normLabel(label: string): string {
   return label.toLowerCase();
 }
 
-/** Check if any value label text matches one of the given patterns (case-insensitive) */
-function valueLabelsMatch(variable: Variable, patterns: RegExp[]): boolean {
-  return variable.valueLabels.some((vl) => patterns.some((p) => p.test(vl.label)));
-}
-
-/** Check if all value labels (with at least minCount labels) match a pattern set */
-function allValueLabelsMatch(variable: Variable, patterns: RegExp[], minCount = 2): boolean {
-  if (variable.valueLabels.length < minCount) return false;
-  return variable.valueLabels.every((vl) => patterns.some((p) => p.test(vl.label)));
-}
 
 function hasLikertLabels(variable: Variable): boolean {
   const likertPatterns = [
@@ -204,7 +191,6 @@ interface RuleMatch {
 }
 
 function detectAnnotation(variable: Variable, inGridSet: boolean): RuleMatch | null {
-  const name = normName(variable.name);
   const label = normLabel(variable.label || variable.name);
 
   // Rule 1 — Weight

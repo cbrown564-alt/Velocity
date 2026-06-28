@@ -68,7 +68,7 @@ export async function rehydrateDatasetFromOpfsSource(
     buffer = await opfsFileManager.readFile(sourceKey);
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : String(error) || 'Unknown read error';
-    throw new Error(`Failed to read OPFS source file (${sourceKey}): ${message}`);
+    throw new Error(`Failed to read OPFS source file (${sourceKey}): ${message}`, { cause: error });
   }
 
   await browserEngine.loadBuffer(dataset.name, buffer, 'sav');

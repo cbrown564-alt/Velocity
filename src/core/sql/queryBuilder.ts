@@ -50,8 +50,8 @@ export function buildGridQuery(options: GridQueryOptions): string {
   }
 
   // 4. Metric Aggregation vs Frequency
-  let selectClause = '';
-  let groupByClause = '';
+  let selectClause: string;
+  let groupByClause: string;
 
   if (aggregate) {
     // Metric Mode: Group by Item, Aggregate Value
@@ -451,7 +451,7 @@ export function buildCrosstabQuery(options: CrosstabQueryOptions): string {
   }
 
   // Build SELECT clause
-  let rowSelectors = '';
+  let rowSelectors: string;
 
   if (measureVar && measureLabel && rowVars.length === 0) {
     // Metric-only rows (Standard "Summary Table")
@@ -464,7 +464,7 @@ export function buildCrosstabQuery(options: CrosstabQueryOptions): string {
   }
 
   // Determine Column Selector
-  let colSelector = '';
+  let colSelector: string;
 
   if (colVar) {
     // Explicit Column Variable
@@ -481,7 +481,7 @@ export function buildCrosstabQuery(options: CrosstabQueryOptions): string {
   }
 
   // Aggregate based on whether we have a measure variable (Scale) or just counting (Nominal)
-  let statsExpr = '';
+  let statsExpr: string;
 
   if (measureVar) {
     // Scale Variable Stats
@@ -540,7 +540,7 @@ export function buildCrosstabQuery(options: CrosstabQueryOptions): string {
   }
 
   // Build GROUP BY clause
-  let groupBy = '';
+  let groupBy: string;
 
   if (measureVar) {
     // When aggregating a measure, we usually group by row variables + column variable
@@ -690,12 +690,13 @@ export function buildFilterClause(filters?: Filter[]): string | null {
         return `${col} > ${formatValue(filter.value)}`;
       case 'lt':
         return `${col} < ${formatValue(filter.value)}`;
-      case 'in':
+      case 'in': {
         if (!Array.isArray(filter.value)) {
           throw new Error('IN operator requires an array value');
         }
         const values = filter.value.map((v) => formatValue(v)).join(', ');
         return `${col} IN (${values})`;
+      }
       default:
         throw new Error(`Unknown operator: ${filter.operator}`);
     }

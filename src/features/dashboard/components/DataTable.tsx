@@ -60,6 +60,7 @@ export const DataTable: React.FC<DataTableProps> = ({
   frameBleed = false,
 }) => {
   const analysisSettings = useVelocityStore((state) => state.analysisSettings);
+  const processedQueryResult = useVelocityStore((state) => state.processedQueryResult);
   const transformLog = useVelocityStore((state) => state.transformLog);
   const deleteGroupedVariable = useVelocityStore((state) => state.deleteGroupedVariable);
   const splitGroupValue = useVelocityStore((state) => state.splitGroupValue);
@@ -129,6 +130,7 @@ export const DataTable: React.FC<DataTableProps> = ({
     colVariable,
     isWeighted,
     isMultipleResponse,
+    initialProcessedData: processedQueryResult,
   });
 
   // Aggregate Data for Table View (Derived from Worker Result)

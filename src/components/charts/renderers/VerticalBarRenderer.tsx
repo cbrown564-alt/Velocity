@@ -30,8 +30,10 @@ export const VerticalBarRenderer: React.FC<BaseChartRendererProps> = ({
   const svgRef = useRef<SVGSVGElement>(null);
 
   // Use the first series (single column analysis) or "Total" column
-  const series = processedData.series[0];
-  const chartData = series?.data || [];
+  const chartData = useMemo(() => {
+    const series = processedData.series[0];
+    return series?.data || [];
+  }, [processedData.series]);
 
   // Margins
   const margin = { top: 40, right: 20, bottom: 60, left: 60 };

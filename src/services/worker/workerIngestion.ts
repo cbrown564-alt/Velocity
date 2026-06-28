@@ -120,8 +120,8 @@ export async function loadSAV(
     if (count !== numRows) {
       throw new Error(`Arrow insertion verification failed: expected ${numRows} rows, got ${count}`);
     }
-  } catch (insertError: any) {
-    throw new Error(`Arrow insertion failed: ${insertError.message}. Check apache-arrow version compatibility.`);
+  } catch (err: any) {
+    throw new Error(`Arrow insertion failed: ${err.message}. Check apache-arrow version compatibility.`, { cause: err });
   }
 
   const durationMs = performance.now() - start;

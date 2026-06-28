@@ -61,7 +61,7 @@ export const SlideHeader: React.FC<SlideHeaderProps> = ({ className = '' }) => {
     setSuggestionDismissed(false);
   }, [activeSlideId, tableConfig.rowVars, tableConfig.colVar]);
 
-  const variables = dataset?.variables ?? [];
+  const variables = useMemo(() => dataset?.variables ?? [], [dataset?.variables]);
 
   const isDefaultTitleUnedited = activeSlide?.title === 'New Slide';
   const hasVariablesInCanvas = tableConfig.rowVars.length > 0;

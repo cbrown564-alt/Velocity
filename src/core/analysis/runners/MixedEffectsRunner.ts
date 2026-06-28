@@ -10,7 +10,7 @@
 
 import type { AnalysisRunner } from '../AnalysisRunner';
 import type { DatabaseAdapter } from '../../DatabaseAdapter';
-import type { MixedModelConfig, MixedModelResult, RandomEffectSpec } from '../../../types/webr';
+import type { MixedModelConfig } from '../../../types/webr';
 import { analysisRegistry } from '../registry';
 
 // ============================================================================
@@ -173,6 +173,8 @@ export class MixedEffectsRunner implements AnalysisRunner<MixedEffectsConfig, Mi
    * Core exposes pure R-code generation via `generateRCode()` and `toWebRConfig()`.
    */
   async run(_adapter: DatabaseAdapter, _config: MixedEffectsConfig): Promise<MixedEffectsResult> {
+    void _adapter;
+    void _config;
     throw new Error(
       'mixedEffects requires WebR execution via WebREngine; use generateRCode() in core and orchestrate in engine/store',
     );

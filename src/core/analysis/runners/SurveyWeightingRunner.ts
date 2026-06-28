@@ -10,7 +10,7 @@
 
 import type { AnalysisRunner } from '../AnalysisRunner';
 import type { DatabaseAdapter } from '../../DatabaseAdapter';
-import type { SurveyDesignConfig, SurveyResult, SurveyStatistic } from '../../../types/webr';
+import type { SurveyDesignConfig, SurveyStatistic } from '../../../types/webr';
 import { analysisRegistry } from '../registry';
 
 // ============================================================================
@@ -130,6 +130,8 @@ export class SurveyWeightingRunner implements AnalysisRunner<SurveyWeightingConf
    * Core exposes pure R-code generation via `generateRCode()` and `toWebRConfig()`.
    */
   async run(_adapter: DatabaseAdapter, _config: SurveyWeightingConfig): Promise<SurveyWeightingResult> {
+    void _adapter;
+    void _config;
     throw new Error(
       'surveyWeighting requires WebR execution via WebREngine; use generateRCode() in core and orchestrate in engine/store',
     );

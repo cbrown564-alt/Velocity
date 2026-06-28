@@ -74,6 +74,12 @@ vi.mock('./workerDbState', () => ({
 }));
 
 import { engineHandlers } from './engineHandlers';
+import { processAnalysisData } from '../../core/analysis/analysisProcessor';
+import { runCrosstab } from '../../core/analysis/crosstabRunner';
+import { workerDbState } from './workerDbState';
+
+const mockProcessAnalysisData = vi.mocked(processAnalysisData);
+const mockRunCrosstab = vi.mocked(runCrosstab);
 
 describe('engineHandlers load progress forwarding', () => {
   it('forwards loadSAV progress as engine.loadProgress events', async () => {
@@ -114,6 +120,60 @@ describe('engineHandlers load progress forwarding', () => {
         type: 'engine.savLoaded',
         requestId: 'req-upload',
         rowCount: 1000,
+      }),
+    );
+  });
+});
+
+describe('engineHandlers crosstab processing', () => {
+  it('returns processed data with crosstab results when requested', async () => {
+    workerDbState.adapter = {} as never;
+    mockRunCrosstab.mockResolvedValue({
+      rows: [{ rowKey_0: '1', colKey: 'Total', count: 10 }],
+      tableStats: null,
+    });
+    mockProcessAnalysisData.mockReturnValue({
+      rows: [],
+      series: [],
+      columns: [],
+      grandTotal: 10,
+      isMetric: false,
+      isGrid: false,
+      rowVariables: [],
+      colVariable: null,
+      isMultipleResponse: false,
+    });
+
+    await engineHandlers['engine.runCrosstab']({
+      type: 'engine.runCrosstab',
+      requestId: 'req-crosstab',
+      options: { rowVars: ['gender'], colVar: null },
+      context: { variables: {}, variableSets: {} },
+      includeProcessedData: {
+        rowVariables: [],
+        colVariable: null,
+        isWeighted: false,
+        isMultipleResponse: false,
+      },
+    });
+
+    expect(mockProcessAnalysisData).toHaveBeenCalledWith({
+      data: [{ rowKeys: ['1'], colKey: 'Total', count: 10 }],
+      rowVariables: [],
+      colVariable: null,
+      isWeighted: false,
+      isMultipleResponse: false,
+    });
+    expect(mockPostEngineResponse).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: 'engine.queryResult',
+        requestId: 'req-crosstab',
+        processedData: expect.objectContaining({ grandTotal: 10 }),
+        timings: expect.objectContaining({
+          queryMs: expect.any(Number),
+          processMs: expect.any(Number),
+          totalMs: expect.any(Number),
+        }),
       }),
     );
   });

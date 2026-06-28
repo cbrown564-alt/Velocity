@@ -31,6 +31,21 @@ export const HexbinRenderer: React.FC<BaseChartRendererProps> = ({ width, height
     return [Math.min(...values), Math.max(...values)];
   }, [points]);
 
+  const xScale = useMemo(() => d3scale.scaleLinear().domain(xExtent).range([0, innerWidth]).nice(), [xExtent, innerWidth]);
+  const yScale = useMemo(() => d3scale.scaleLinear().domain(yExtent).range([innerHeight, 0]).nice(), [yExtent, innerHeight]);
+
+  const bins = useMemo(() => {
+    const hexbinGenerator = d3Hexbin()
+      .extent([
+        [0, 0],
+        [innerWidth, innerHeight],
+      ])
+      .radius(10)
+      .x((d) => xScale(d[0]))
+      .y((d) => yScale(d[1]));
+    return hexbinGenerator(points);
+  }, [xScale, yScale, innerWidth, innerHeight, points]);
+
   if (points.length === 0) {
     return (
       <div className="flex items-center justify-center h-full text-[var(--text-tertiary)] text-sm">
@@ -38,24 +53,6 @@ export const HexbinRenderer: React.FC<BaseChartRendererProps> = ({ width, height
       </div>
     );
   }
-
-  const xScale = d3scale.scaleLinear().domain(xExtent).range([0, innerWidth]).nice();
-
-  const yScale = d3scale.scaleLinear().domain(yExtent).range([innerHeight, 0]).nice();
-
-  // Configure Hexbin
-  const hexbinGenerator = d3Hexbin()
-    .extent([
-      [0, 0],
-      [innerWidth, innerHeight],
-    ])
-    .radius(10) // Fixed radius for now, could be dynamic
-    .x((d) => xScale(d[0]))
-    .y((d) => yScale(d[1]));
-
-  const bins = useMemo(() => {
-    return hexbinGenerator(points);
-  }, [hexbinGenerator, points]);
 
   // Color Scale for Density
   const maxCount = Math.max(...bins.map((b) => b.length));

@@ -13,7 +13,6 @@
 import type {
   WebRWorkerRequest,
   WebRWorkerResponse,
-  WebRStatus,
   RResult,
   SurveyDesignConfig,
   SurveyResult,
@@ -36,7 +35,7 @@ export class WebREngine {
   private loadedPackages: string[] = [];
   private initProgress: number = 0;
   private callbacks: WebREngineCallbacks = {};
-  private pendingRequests: Map<string, { resolve: Function; reject: Function }> = new Map();
+  private pendingRequests: Map<string, { resolve: (val: any) => void; reject: (err: any) => void }> = new Map();
   private requestId: number = 0;
 
   constructor(callbacks?: WebREngineCallbacks) {
@@ -308,7 +307,7 @@ export class WebREngine {
     request: WebRWorkerRequest,
   ): Promise<T> {
     return new Promise((resolve, reject) => {
-      const id = `${++this.requestId}`;
+      ++this.requestId;
 
       const handler = (event: MessageEvent<WebRWorkerResponse>) => {
         const response = event.data;

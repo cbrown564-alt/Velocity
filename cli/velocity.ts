@@ -16,8 +16,8 @@ function parseJsonConfig(raw?: string): JsonLike {
   if (!raw) return {};
   try {
     return JSON.parse(raw) as JsonLike;
-  } catch (error: any) {
-    throw new Error(`Failed to parse config JSON: ${error.message}`);
+  } catch (err: any) {
+    throw new Error(`Failed to parse config JSON: ${err.message}`, { cause: err });
   }
 }
 

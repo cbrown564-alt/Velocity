@@ -1,5 +1,6 @@
 import { processAnalysisData } from '../../core/analysis/analysisProcessor';
 import { runCrosstab as coreRunCrosstab } from '../../core/analysis/crosstabRunner';
+import { mapCrosstabRows } from '../../core/analysis/mapCrosstabRows';
 import { analysisRegistry } from '../../core/analysis/registry';
 import { getVariableStats as coreGetVariableStats } from '../../core/analysis/variableStatsRunner';
 import { buildCaseSql } from '../../core/transforms/recodeSql';
@@ -277,12 +278,39 @@ export const engineHandlers: Record<EngineWorkerRequest['type'], EngineMessageHa
       { ...request.options, significanceOptions: request.analysisSettings },
       request.context,
     );
+    const queryMs = performance.now() - start;
+    let processedData = null;
+    let processMs: number | undefined;
+    if (request.includeProcessedData) {
+      const processStart = performance.now();
+      const mappedRows = mapCrosstabRows(crosstabResult.rows, !!request.includeProcessedData.isWeighted);
+      const processed = processAnalysisData({
+        data: mappedRows,
+        rowVariables: request.includeProcessedData.rowVariables,
+        colVariable: request.includeProcessedData.colVariable,
+        isWeighted: request.includeProcessedData.isWeighted,
+        isMultipleResponse: request.includeProcessedData.isMultipleResponse,
+      });
+      if (processed && request.includeProcessedData.chartType) {
+        processedData = transformChartData(processed, request.includeProcessedData.chartType) ?? processed;
+      } else {
+        processedData = processed;
+      }
+      processMs = performance.now() - processStart;
+    }
+    const totalMs = performance.now() - start;
     postEngineResponse({
       type: 'engine.queryResult',
       requestId: request.requestId,
       data: crosstabResult.rows,
       tableStats: crosstabResult.tableStats,
-      durationMs: performance.now() - start,
+      processedData,
+      durationMs: totalMs,
+      timings: {
+        queryMs,
+        processMs,
+        totalMs,
+      },
     });
   },
 
@@ -305,12 +333,18 @@ export const engineHandlers: Record<EngineWorkerRequest['type'], EngineMessageHa
 
   'engine.processData': async (request) => {
     if (request.type !== 'engine.processData') return;
+    const start = performance.now();
     const processed = processAnalysisData({
       data: request.data,
       ...request.options,
     });
     if (!processed) {
-      postEngineResponse({ type: 'engine.processedData', requestId: request.requestId, result: null });
+      postEngineResponse({
+        type: 'engine.processedData',
+        requestId: request.requestId,
+        result: null,
+        durationMs: performance.now() - start,
+      });
       return;
     }
     let finalResult = processed;
@@ -318,7 +352,12 @@ export const engineHandlers: Record<EngineWorkerRequest['type'], EngineMessageHa
       const transformed = transformChartData(processed, request.chartType);
       if (transformed) finalResult = transformed;
     }
-    postEngineResponse({ type: 'engine.processedData', requestId: request.requestId, result: finalResult });
+    postEngineResponse({
+      type: 'engine.processedData',
+      requestId: request.requestId,
+      result: finalResult,
+      durationMs: performance.now() - start,
+    });
   },
 
   'engine.recodeVariable': async (request) => {

@@ -85,6 +85,11 @@ describe('Integration: Store <-> EngineProxy Analysis Flow', () => {
       'crosstab',
       expect.objectContaining({
         rowVars: [mockNominalVariable.id],
+        includeProcessedData: expect.objectContaining({
+          rowVariables: [mockNominalVariable],
+          colVariable: null,
+          isWeighted: false,
+        }),
       }),
       expect.objectContaining({
         dataset: mockDataset,
@@ -101,5 +106,58 @@ describe('Integration: Store <-> EngineProxy Analysis Flow', () => {
         count: 50,
       }),
     );
+  });
+
+  it('reuses cached crosstab results for identical analysis inputs', async () => {
+    const mockResult = [
+      {
+        rowKey_0: 'Male',
+        colKey: 'Total',
+        count: 50,
+      },
+    ];
+
+    const mockEnvelope = (data: unknown) => ({
+      data,
+      operation: 'test',
+      inputs: {},
+      durationMs: 50,
+      warnings: [],
+      metadata: {
+        datasetName: 'test.sav',
+        rowCount: 100,
+        filtersApplied: 0,
+        isWeighted: false,
+        engineVersion: 'browser-wasm',
+      },
+    });
+
+    const mockRunAnalysis = vi.fn().mockResolvedValue(mockEnvelope({ rows: mockResult, tableStats: null }));
+
+    useVelocityStore.setState({
+      browserEngine: {
+        runAnalysis: mockRunAnalysis,
+        getVariableStats: vi.fn().mockResolvedValue(mockEnvelope({})),
+      } as any,
+      dataset: { ...mockDataset, id: 'cache-dataset' },
+      isDbReady: true,
+      variableSets: [
+        {
+          id: mockNominalVariable.id,
+          name: mockNominalVariable.label,
+          variableIds: [mockNominalVariable.id],
+          structure: 'single',
+          type: 'nominal',
+        },
+      ],
+    });
+
+    useVelocityStore.setState({ tableConfig: { rowVars: [mockNominalVariable.id], colVar: null } });
+
+    await useVelocityStore.getState().runAnalysis();
+    await useVelocityStore.getState().runAnalysis();
+
+    expect(mockRunAnalysis).toHaveBeenCalledTimes(1);
+    expect(useVelocityStore.getState().queryResult).toHaveLength(1);
   });
 });

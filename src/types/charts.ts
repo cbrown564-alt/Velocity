@@ -1,4 +1,4 @@
-import type { ProcessedAnalysisData, ChartDataPoint } from './processedData';
+import type { ProcessedAnalysisData } from './processedData';
 
 export type ChartType =
   | 'horizontal-bar'

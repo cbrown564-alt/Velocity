@@ -84,7 +84,8 @@ export function buildHarmonizedTableQuery(
   return unionParts.join('\nUNION ALL\n');
 }
 
-function buildValueRemapCase(column: string, valueMappings: ValueMapping[], direction: 'source'): string {
+function buildValueRemapCase(column: string, valueMappings: ValueMapping[], _direction: 'source'): string {
+  void _direction;
   const relevantMappings = valueMappings.filter((m) => m.sourceValue !== null && m.targetValue !== null);
 
   if (relevantMappings.length === 0) return column;

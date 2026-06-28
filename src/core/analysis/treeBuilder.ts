@@ -91,7 +91,7 @@ export const buildTree = (
   };
 
   // Convert to array and map to Nodes
-  let nodes: TableRowNode[] = Array.from(allKeys).map((groupKey) => {
+  const nodes: TableRowNode[] = Array.from(allKeys).map((groupKey) => {
     const groupData = groups[groupKey] || []; // Might be empty if coming from labels only
     const uniqueKey = parentKey ? `${parentKey}-${groupKey}` : groupKey;
 
@@ -111,10 +111,19 @@ export const buildTree = (
     // Calculate totals for this node
     const nodeCells: Record<string, ProcessedCell> = {};
     let nodeRowTotal = 0;
+    const rowsByColumn = new Map<string, AggregatedRow[]>();
+    groupData.forEach((row) => {
+      const rows = rowsByColumn.get(row.colKey);
+      if (rows) {
+        rows.push(row);
+      } else {
+        rowsByColumn.set(row.colKey, [row]);
+      }
+    });
 
     colKeys.forEach((cKey) => {
       // Use weightedCount when weighted, otherwise count
-      const matchingRows = groupData.filter((d) => d.colKey === cKey);
+      const matchingRows = rowsByColumn.get(cKey) || [];
 
       const count = matchingRows.reduce((sum, d) => {
         const effectiveCount = isWeighted && d.weightedCount !== undefined ? d.weightedCount : d.count;

@@ -1,6 +1,6 @@
 import ExcelJS from 'exceljs';
 import { ExportConfig, AnalysisExportItem, ExportError } from './types';
-import { ProcessedRow, ProcessedColumn, ProcessedCell } from '../../types/processedData';
+import { ProcessedRow } from '../../types/processedData';
 
 const SIG_LETTERS: Record<string, string> = {
   high_95: '▲',

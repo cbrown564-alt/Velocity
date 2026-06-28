@@ -8,7 +8,7 @@
 
 import { buildCrosstabRequest } from '../core/analysis/buildCrosstabRequest';
 import type { EngineProxy } from '../services/EngineProxy';
-import type { EngineResponseByType, PersistedMetadata } from '../types/engineWorker';
+import type { EngineResponseByType, PersistedMetadata, WorkerProcessDataOptions } from '../types/engineWorker';
 import type {
   AggregatedRow,
   Dataset,
@@ -88,7 +88,12 @@ export class BrowserEngine {
         analysisSettings: isCompleteAnalysisSettings(analysisSettings) ? analysisSettings : undefined,
       });
 
-      return this.proxy.runCrosstab(request.options, request.context, request.analysisSettings);
+      return this.proxy.runCrosstab(
+        request.options,
+        request.context,
+        request.analysisSettings,
+        configRecord.includeProcessedData as WorkerProcessDataOptions | undefined,
+      );
     }
 
     if (id === 'variableStats') {
@@ -273,8 +278,16 @@ export class BrowserEngine {
     options: CrosstabQueryOptions & { includeDistributions?: boolean },
     context: WorkerAnalysisContext,
     analysisSettings?: WorkerAnalysisSettings,
-  ): Promise<ResultEnvelope<{ rows: AggregatedRow[]; tableStats: TableStats | null }>> {
-    return this.proxy.runCrosstab(options, context, analysisSettings);
+    includeProcessedData?: WorkerProcessDataOptions,
+  ): Promise<
+    ResultEnvelope<{
+      rows: AggregatedRow[];
+      tableStats: TableStats | null;
+      processedData?: ProcessedAnalysisData | null;
+      timings?: EngineResponseByType<'engine.queryResult'>['timings'];
+    }>
+  > {
+    return this.proxy.runCrosstab(options, context, analysisSettings, includeProcessedData);
   }
 
   async processData(

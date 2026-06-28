@@ -8,7 +8,6 @@
 import type { StateCreator } from 'zustand';
 import { getWebREngine, resetWebREngine, WebREngine } from '../../engine/webr/WebREngine';
 import type {
-  WebRWorkerResponse,
   SurveyDesignConfig,
   SurveyResult,
   MixedModelConfig,

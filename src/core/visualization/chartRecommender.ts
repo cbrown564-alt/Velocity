@@ -1,6 +1,6 @@
 import { Variable } from '../../types';
 import { isCategoricalType, isOrderedType, normalizeVariableType } from '../../types';
-import { ChartRecommendation, ChartType } from '../../types/charts';
+import { ChartRecommendation } from '../../types/charts';
 import type { MeasurementIntent } from '../../types/semantic';
 
 interface RecommenderContext {

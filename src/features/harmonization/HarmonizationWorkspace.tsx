@@ -75,7 +75,7 @@ export const HarmonizationWorkspace: React.FC<HarmonizationWorkspaceProps> = ({
     if (session && session.mappings.length > 0) {
       refreshSankeyData(sourceVars, targetVars, stubCounts, stubCounts);
     }
-  }, [session?.mappings, sourceVars, targetVars, stubCounts, refreshSankeyData]);
+  }, [session, sourceVars, targetVars, stubCounts, refreshSankeyData]);
 
   const handleAutoMatch = useCallback(() => {
     runAutoMatch(sourceVars, targetVars);

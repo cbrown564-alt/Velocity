@@ -15,6 +15,8 @@ interface UseProcessedAnalysisDataOptions {
   isMultipleResponse?: boolean;
   /** If provided, the worker will return data transformed for this chart type */
   chartType?: ChartType;
+  /** Already-processed worker result returned with the crosstab response. */
+  initialProcessedData?: ProcessedAnalysisData | null;
 }
 
 /**
@@ -31,11 +33,25 @@ export function useProcessedAnalysisData({
   isWeighted = false,
   isMultipleResponse = false,
   chartType,
+  initialProcessedData,
 }: UseProcessedAnalysisDataOptions): ProcessedAnalysisData | null {
   const browserEngine = useVelocityStore((state) => state.browserEngine);
   const [result, setResult] = useState<ProcessedAnalysisData | null>(null);
 
   useEffect(() => {
+    const matchesInitial =
+      initialProcessedData &&
+      !chartType &&
+      initialProcessedData.isMultipleResponse === isMultipleResponse &&
+      initialProcessedData.rowVariables.map((variable) => variable.id).join('\u0000') ===
+        rowVariables.map((variable) => variable.id).join('\u0000') &&
+      (initialProcessedData.colVariable?.id ?? null) === (colVariable?.id ?? null);
+
+    if (matchesInitial) {
+      setResult(initialProcessedData);
+      return;
+    }
+
     if (!browserEngine || !data || data.length === 0 || rowVariables.length === 0) {
       setResult(null);
       return;
@@ -57,7 +73,7 @@ export function useProcessedAnalysisData({
     return () => {
       isMounted = false;
     };
-  }, [browserEngine, data, rowVariables, colVariable, isWeighted, isMultipleResponse, chartType]);
+  }, [browserEngine, data, rowVariables, colVariable, isWeighted, isMultipleResponse, chartType, initialProcessedData]);
 
   return result;
 }

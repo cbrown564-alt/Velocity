@@ -18,10 +18,11 @@ import type {
   EngineResponseByType,
   PersistedMetadata,
   VariableStatsResult,
+  WorkerProcessDataOptions,
 } from '../types/engineWorker';
 import type { ResultEnvelope } from '../engine/types';
 import { isEngineMessage } from '../types/engineWorker';
-import type { Variable, VariableSet, AggregatedRow, TableStats, RecodeConfig, MissingValueDef } from '../types';
+import type { Variable, AggregatedRow, TableStats, RecodeConfig, MissingValueDef } from '../types';
 import type { OrderedScoring, VariableType } from '../types';
 import type { CrosstabQueryOptions } from '../core/sql/queryBuilder';
 import type { ProcessedAnalysisData } from '../types/processedData';
@@ -222,15 +223,28 @@ export class EngineProxy {
     options: CrosstabQueryOptions & { includeDistributions?: boolean },
     context: WorkerAnalysisContext,
     analysisSettings?: WorkerAnalysisSettings,
-  ): Promise<ResultEnvelope<{ rows: AggregatedRow[]; tableStats: TableStats | null }>> {
+    includeProcessedData?: WorkerProcessDataOptions,
+  ): Promise<
+    ResultEnvelope<{
+      rows: AggregatedRow[];
+      tableStats: TableStats | null;
+      processedData?: ProcessedAnalysisData | null;
+      timings?: EngineResponseByType<'engine.queryResult'>['timings'];
+    }>
+  > {
     const raw = (await this.send(
-      { type: 'engine.runCrosstab', options, context, analysisSettings },
+      { type: 'engine.runCrosstab', options, context, analysisSettings, includeProcessedData },
       'engine.queryResult',
     )) as EngineResponseByType<'engine.queryResult'>;
     return this.wrapResult(
       'runCrosstab',
       { rowVars: options.rowVars, colVar: options.colVar ?? null },
-      { rows: raw.data as AggregatedRow[], tableStats: raw.tableStats ?? null },
+      {
+        rows: raw.data as AggregatedRow[],
+        tableStats: raw.tableStats ?? null,
+        processedData: raw.processedData,
+        timings: raw.timings,
+      },
       raw.durationMs,
       options.filters?.length ?? 0,
       !!options.weightVar,
@@ -412,7 +426,7 @@ export class EngineProxy {
 
   private send(
     payload: Record<string, unknown> & { type: string },
-    expectedType: string | string[],
+    _expectedType: string | string[],
     transfer?: Transferable[],
   ): Promise<EngineWorkerResponse> {
     if (this.disposed) {
@@ -420,7 +434,6 @@ export class EngineProxy {
     }
 
     const requestId = crypto.randomUUID();
-    const expectedTypes = Array.isArray(expectedType) ? expectedType : [expectedType];
 
     return new Promise<EngineWorkerResponse>((resolve, reject) => {
       const timer = setTimeout(() => {

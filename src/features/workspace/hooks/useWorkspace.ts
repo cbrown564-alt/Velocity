@@ -166,7 +166,7 @@ export function useWorkspace(): UseWorkspaceReturn {
     if (!dataset) {
       hasRegisteredDataset.current = false;
     }
-  }, [dataset?.id]);
+  }, [dataset]);
 
   /**
    * Save current session state before switching datasets.

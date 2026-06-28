@@ -3,7 +3,7 @@
  */
 
 import type { EngineResponseByType } from '../../../types/engineWorker';
-import type { DataSlice, LoadProgressState } from './types';
+import type { LoadProgressState } from './types';
 import type { DataSliceSet } from './sliceContext';
 
 export function applyLoadProgressMessage(set: DataSliceSet, msg: EngineResponseByType<'engine.loadProgress'>): void {

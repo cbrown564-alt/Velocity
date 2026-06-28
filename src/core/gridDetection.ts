@@ -206,7 +206,7 @@ export function detectByNaming(vars: Variable[]): Variable[][] {
   }
 
   const groups: Variable[][] = [];
-  for (const [prefix, group] of byPrefix.entries()) {
+  for (const group of byPrefix.values()) {
     if (group.length < 3) continue;
 
     group.sort((a, b) => a.number - b.number);

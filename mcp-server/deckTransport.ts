@@ -110,7 +110,8 @@ export function parseBuildDeckToolContent(content: McpTextContent[]): ResultEnve
     }
   }
 
-  const { slideCount: _omit, ...deckData } = first.data;
+  const deckData = { ...first.data };
+  delete (deckData as any).slideCount;
 
   return {
     operation: first.operation,

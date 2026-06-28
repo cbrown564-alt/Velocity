@@ -198,6 +198,7 @@ export function useSessionLifecycle({
           activeSlideId: imported.patch.activeSlideId,
           activeCellId: nextActiveCellId,
           queryResult: [],
+          processedQueryResult: null,
           tableStats: null,
           activeVariableStats: null,
           harmonization: {
@@ -219,7 +220,7 @@ export function useSessionLifecycle({
       } catch (importError: unknown) {
         setPhase(previousPhase);
         const message = importError instanceof Error ? importError.message : undefined;
-        throw new Error(message || 'Session import failed');
+        throw new Error(message || 'Session import failed', { cause: importError });
       }
     },
     [phase, loadSAV, recodeVariable, setPhase, closeSessionImportOverlay],

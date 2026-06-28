@@ -91,7 +91,7 @@ export async function initOpfsPersistence(deps: PersistenceInitDeps): Promise<Pe
     };
   }
 
-  let candidates: { path: string }[] = [];
+  let candidates: { path: string }[];
   try {
     candidates = await listCandidates();
   } catch (error: any) {

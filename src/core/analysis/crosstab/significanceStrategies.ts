@@ -49,7 +49,7 @@ class MeansSignificanceStrategy implements CrosstabSignificanceStrategy {
   readonly isMeans = true;
 
   computeCellVsRestTScore(ctx: CellVsRestContext): number {
-    const { row, totalRow, cellN, cellESS, totalN, totalESS, restN, restESS } = ctx;
+    const { row, totalRow, cellN, cellESS, totalN, restN, restESS } = ctx;
 
     if (cellESS <= 2 || restESS <= 2) return 0;
 
@@ -84,7 +84,8 @@ class MeansSignificanceStrategy implements CrosstabSignificanceStrategy {
     }
   }
 
-  buildColumnStats(rowCells: CrosstabSqlRow[], colStats: Map<string, { n: number; ess: number }>): ColumnStats[] {
+  buildColumnStats(rowCells: CrosstabSqlRow[], _colStats: Map<string, { n: number; ess: number }>): ColumnStats[] {
+    void _colStats;
     return rowCells.map((cell) => {
       const cellN = cell.weightedCount ?? cell.count;
       const cellESS = calculateESS(cellN, cell.sumSqWeights ?? cellN);
@@ -103,6 +104,7 @@ class MeansSignificanceStrategy implements CrosstabSignificanceStrategy {
     params: PairwiseColumnStats,
     _pairKey: (rowKey: string, a: string, b: string) => string,
   ): { tScore: number; pValue: number } {
+    void _pairKey;
     const { colA, colB } = params;
 
     if (colA.mean !== undefined && colB.mean !== undefined && colA.stdDev !== undefined && colB.stdDev !== undefined) {
@@ -118,7 +120,7 @@ class ProportionsSignificanceStrategy implements CrosstabSignificanceStrategy {
   readonly isMeans = false;
 
   computeCellVsRestTScore(ctx: CellVsRestContext): number {
-    const { row, totalRow, cellN, cellESS, totalN, totalESS, colStats } = ctx;
+    const { row, cellN, cellESS, totalN, totalESS, colStats } = ctx;
 
     if (cellESS <= 2 || ctx.restESS <= 2) return 0;
 

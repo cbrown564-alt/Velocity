@@ -117,7 +117,7 @@ export function createTransformActions(
     },
 
     deleteGroupedVariable: async (varId: string): Promise<void> => {
-      const { browserEngine, dataset, variableSets, transformLog } = get();
+      const { browserEngine, dataset, transformLog } = get();
       if (!browserEngine || !dataset) return;
 
       const transform = transformLog.find((t) => t.newColId === varId);
