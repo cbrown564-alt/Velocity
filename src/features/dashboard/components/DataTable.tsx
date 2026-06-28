@@ -282,7 +282,11 @@ export const DataTable: React.FC<DataTableProps> = ({
         />
       }
     >
-      <div ref={tableContainerRef} className={`${mergeStyles.tableScrollRegion} custom-scrollbar`}>
+      <div
+        ref={tableContainerRef}
+        data-testid="crosstab-scroll-region"
+        className={`${mergeStyles.tableScrollRegion} custom-scrollbar`}
+      >
         <table className={`${mergeStyles.crosstabTable} w-full text-sm text-left border-collapse`}>
           <thead
             ref={headerRef}
