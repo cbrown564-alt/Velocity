@@ -9,7 +9,7 @@ interface CrosstabContext {
 interface AnalysisSignificanceSettings {
   comparisonMethod: 'cell_vs_rest' | 'pairwise';
   correctionType: 'none' | 'bonferroni' | 'fdr';
-  significanceLevel: 0.95 | 0.90 | 0.80;
+  significanceLevel: 0.95 | 0.9 | 0.8;
 }
 
 /** Minimal engine seam for export-time crosstab queries (no services dependency). */

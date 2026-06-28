@@ -87,7 +87,9 @@ export function usePersistenceManager(
   // -- Local state --
   const [opfsAvailableLocal, setOpfsAvailableLocal] = React.useState(false);
   const [opfsEstimate, setOpfsEstimate] = React.useState<{ usage: number; quota: number } | null>(null);
-  const [opfsDbFiles, setOpfsDbFiles] = React.useState<{ name: string; size: number; lastModified: number }[] | null>(null);
+  const [opfsDbFiles, setOpfsDbFiles] = React.useState<{ name: string; size: number; lastModified: number }[] | null>(
+    null,
+  );
   const [opfsDbListError, setOpfsDbListError] = React.useState<string | null>(null);
   const [opfsDbPurgeError, setOpfsDbPurgeError] = React.useState<string | null>(null);
   const [opfsRehydrateError, setOpfsRehydrateError] = React.useState<string | null>(null);
@@ -106,31 +108,28 @@ export function usePersistenceManager(
   // -- Derived values --
   const opfsUsageMb = opfsEstimate ? opfsEstimate.usage / (1024 * 1024) : null;
   const opfsQuotaMb = opfsEstimate ? opfsEstimate.quota / (1024 * 1024) : null;
-  const opfsUsagePct = opfsEstimate && opfsEstimate.quota > 0
-    ? Math.min(100, Math.round((opfsEstimate.usage / opfsEstimate.quota) * 100))
-    : null;
-  const opfsDbLabel = activeDbPath?.startsWith('opfs://')
-    ? activeDbPath.replace('opfs://', '')
-    : activeDbPath;
+  const opfsUsagePct =
+    opfsEstimate && opfsEstimate.quota > 0
+      ? Math.min(100, Math.round((opfsEstimate.usage / opfsEstimate.quota) * 100))
+      : null;
+  const opfsDbLabel = activeDbPath?.startsWith('opfs://') ? activeDbPath.replace('opfs://', '') : activeDbPath;
 
   const SAV_ELEVATED_RISK_CELLS = 20_000_000;
   const SAV_HIGH_RISK_CELLS = 40_000_000;
 
   const datasetVariableCount = React.useMemo(() => {
     if (!dataset?.variables) return null;
-    return dataset.variables.filter(v => !v.synthetic).length;
+    return dataset.variables.filter((v) => !v.synthetic).length;
   }, [dataset?.variables]);
 
   const labeledVariableCount = React.useMemo(() => {
     if (!dataset?.variables) return null;
-    return dataset.variables.filter(v => !v.synthetic && v.valueLabels.length > 0).length;
+    return dataset.variables.filter((v) => !v.synthetic && v.valueLabels.length > 0).length;
   }, [dataset?.variables]);
 
   const totalValueLabelCount = React.useMemo(() => {
     if (!dataset?.variables) return null;
-    return dataset.variables
-      .filter(v => !v.synthetic)
-      .reduce((sum, v) => sum + v.valueLabels.length, 0);
+    return dataset.variables.filter((v) => !v.synthetic).reduce((sum, v) => sum + v.valueLabels.length, 0);
   }, [dataset?.variables]);
 
   const estimatedCells = React.useMemo(() => {
@@ -147,7 +146,7 @@ export function usePersistenceManager(
 
   const categoricalOrOrderedCount = React.useMemo(() => {
     if (!dataset?.variables) return 0;
-    return dataset.variables.filter(v => !v.synthetic && (v.type === 'categorical' || v.type === 'ordered')).length;
+    return dataset.variables.filter((v) => !v.synthetic && (v.type === 'categorical' || v.type === 'ordered')).length;
   }, [dataset?.variables]);
 
   const likelyMissingValueLabels = React.useMemo(() => {
@@ -197,7 +196,10 @@ export function usePersistenceManager(
     if (!persistenceError) return null;
     const normalized = persistenceError.toLowerCase();
 
-    if (normalized.includes('opfs disabled by feature flag') || normalized.includes('does not support opfs db persistence')) {
+    if (
+      normalized.includes('opfs disabled by feature flag') ||
+      normalized.includes('does not support opfs db persistence')
+    ) {
       return 'DuckDB OPFS database-file persistence is disabled on this build. Velocity will use in-memory DuckDB and restore from the OPFS source file when available.';
     }
     if (
@@ -227,19 +229,22 @@ export function usePersistenceManager(
   }, [persistenceError]);
 
   // -- Callbacks --
-  const rebuildFromOpfsSource = useCallback(async (fallbackMode: AppMode, options?: { forceReload?: boolean }) => {
-    if (!dataset?.opfsFileKey) return;
-    setOpfsRehydrateError(null);
-    setMode('uploading');
-    try {
-      await rehydrateDatasetFromOpfs(options);
-      setMode('dashboard');
-    } catch (error: any) {
-      const message = error?.message || String(error) || 'Failed to restore from OPFS source file';
-      setOpfsRehydrateError(message);
-      setMode(fallbackMode);
-    }
-  }, [dataset?.opfsFileKey, rehydrateDatasetFromOpfs, setMode]);
+  const rebuildFromOpfsSource = useCallback(
+    async (fallbackMode: AppMode, options?: { forceReload?: boolean }) => {
+      if (!dataset?.opfsFileKey) return;
+      setOpfsRehydrateError(null);
+      setMode('uploading');
+      try {
+        await rehydrateDatasetFromOpfs(options);
+        setMode('dashboard');
+      } catch (error: any) {
+        const message = error?.message || String(error) || 'Failed to restore from OPFS source file';
+        setOpfsRehydrateError(message);
+        setMode(fallbackMode);
+      }
+    },
+    [dataset?.opfsFileKey, rehydrateDatasetFromOpfs, setMode],
+  );
 
   const attemptRestoreFromPersistence = useCallback((): boolean => {
     try {
@@ -250,7 +255,9 @@ export function usePersistenceManager(
       const message = error?.message || String(error) || 'Failed to restore session';
       const normalized = message.toLowerCase();
       if (normalized.includes('quota')) {
-        setRestoreActionError('Browser localStorage quota was exceeded while restoring cached metadata. Click Start Fresh to recover.');
+        setRestoreActionError(
+          'Browser localStorage quota was exceeded while restoring cached metadata. Click Start Fresh to recover.',
+        );
       } else {
         setRestoreActionError(`Restore failed: ${message}`);
       }
@@ -280,7 +287,7 @@ export function usePersistenceManager(
   const purgeQuarantinedDbs = useCallback(async () => {
     try {
       setOpfsDbPurgeError(null);
-      const files = opfsDbFiles ?? await opfsFileManager.listDbFiles();
+      const files = opfsDbFiles ?? (await opfsFileManager.listDbFiles());
       const quarantined = files.filter((file) => file.name.includes('.corrupt_'));
       await Promise.all(quarantined.map((file) => opfsFileManager.deleteDbFile(file.name)));
       await refreshOpfsDbFiles();
@@ -323,7 +330,9 @@ export function usePersistenceManager(
         setPersistentStorageResolved(true);
       });
 
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [isDbReady]);
 
   // OPFS availability check
@@ -342,7 +351,10 @@ export function usePersistenceManager(
 
     refreshEstimate();
     const interval = window.setInterval(refreshEstimate, 30000);
-    return () => { mounted = false; window.clearInterval(interval); };
+    return () => {
+      mounted = false;
+      window.clearInterval(interval);
+    };
   }, []);
 
   // Refresh workspace storage quota periodically
@@ -383,8 +395,7 @@ export function usePersistenceManager(
       hasShownStorageToast.current = true;
       return;
     }
-    const hasStartedAnalysis =
-      tableConfig.rowVars.length > 0 || tableConfig.colVar !== null;
+    const hasStartedAnalysis = tableConfig.rowVars.length > 0 || tableConfig.colVar !== null;
     if (!hasStartedAnalysis) return;
 
     hasShownStorageToast.current = true;
@@ -415,20 +426,20 @@ export function usePersistenceManager(
       }
 
       const persistedMeta = persistedDataInfo.metadata;
-      const hasMatchingMetadata = dataset && (persistedMeta
-        ? (
-          dataset.rowCount === persistedMeta.rowCount &&
-          dataset.variables.length === persistedMeta.columnCount &&
-          (persistedMeta.datasetId ? dataset.id === persistedMeta.datasetId : true)
-        )
-        : (
-          dataset.rowCount === persistedDataInfo.rowCount &&
-          dataset.variables.length === persistedDataInfo.schema.length
-        ));
+      const hasMatchingMetadata =
+        dataset &&
+        (persistedMeta
+          ? dataset.rowCount === persistedMeta.rowCount &&
+            dataset.variables.length === persistedMeta.columnCount &&
+            (persistedMeta.datasetId ? dataset.id === persistedMeta.datasetId : true)
+          : dataset.rowCount === persistedDataInfo.rowCount &&
+            dataset.variables.length === persistedDataInfo.schema.length);
       const shouldPreferSourceRebuild = Boolean(dataset?.opfsFileKey) && persistentStorageGranted === false;
 
       if (hasMatchingMetadata && shouldPreferSourceRebuild) {
-        console.log('[App] Persistent storage denied; rebuilding from OPFS source file instead of trusting persisted DuckDB cache');
+        console.log(
+          '[App] Persistent storage denied; rebuilding from OPFS source file instead of trusting persisted DuckDB cache',
+        );
         hasProcessedPersistence.current = true;
         void rebuildFromOpfsSource('splash', { forceReload: true });
       } else if (hasMatchingMetadata) {
@@ -460,7 +471,18 @@ export function usePersistenceManager(
         hasProcessedPersistence.current = true;
       }
     }
-  }, [persistenceState, persistedDataInfo, dataset, mode, isWorkspaceMode, persistentStorageGranted, persistentStorageResolved, attemptRestoreFromPersistence, rebuildFromOpfsSource, setMode]);
+  }, [
+    persistenceState,
+    persistedDataInfo,
+    dataset,
+    mode,
+    isWorkspaceMode,
+    persistentStorageGranted,
+    persistentStorageResolved,
+    attemptRestoreFromPersistence,
+    rebuildFromOpfsSource,
+    setMode,
+  ]);
 
   useEffect(() => {
     if (persistenceState !== 'corrupt') return;

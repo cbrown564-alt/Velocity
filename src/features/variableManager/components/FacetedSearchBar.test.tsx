@@ -7,7 +7,14 @@ describe('FacetedSearchBar accessibility', () => {
   beforeEach(() => {
     useVelocityStore.setState({
       variableSets: [
-        { id: 'vs-1', name: 'Gender', variableIds: ['gender'], structure: 'single', type: 'categorical', hidden: false },
+        {
+          id: 'vs-1',
+          name: 'Gender',
+          variableIds: ['gender'],
+          structure: 'single',
+          type: 'categorical',
+          hidden: false,
+        },
         { id: 'vs-2', name: 'Region', variableIds: ['region'], structure: 'single', type: 'categorical', hidden: true },
       ],
       dataset: {

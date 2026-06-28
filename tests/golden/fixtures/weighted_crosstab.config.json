@@ -1,27 +1,25 @@
 {
-    "csvFile": "weighted_crosstab.csv",
-    "expectedFile": "weighted_crosstab.expected.json",
-    "config": {
-        "rowVars": [
-            "gender"
-        ],
-        "colVar": null,
-        "weightVar": "weight",
-        "filters": []
+  "csvFile": "weighted_crosstab.csv",
+  "expectedFile": "weighted_crosstab.expected.json",
+  "config": {
+    "rowVars": ["gender"],
+    "colVar": null,
+    "weightVar": "weight",
+    "filters": []
+  },
+  "context": {
+    "variables": {
+      "gender": {
+        "name": "gender",
+        "type": "categorical",
+        "label": "Gender"
+      },
+      "weight": {
+        "name": "weight",
+        "type": "numeric",
+        "label": "Weight"
+      }
     },
-    "context": {
-        "variables": {
-            "gender": {
-                "name": "gender",
-                "type": "categorical",
-                "label": "Gender"
-            },
-            "weight": {
-                "name": "weight",
-                "type": "numeric",
-                "label": "Weight"
-            }
-        },
-        "variableSets": {}
-    }
+    "variableSets": {}
+  }
 }

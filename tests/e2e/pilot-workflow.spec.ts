@@ -11,11 +11,16 @@ async function uploadSavAndReachDashboard(page: import('@playwright/test').Page)
   const surveyQuestions = page.getByText(/Survey Questions/);
   const metadataLoaded = page.getByText('Metadata Loaded');
 
-  await expect.poll(async () => {
-    if (await surveyQuestions.isVisible().catch(() => false)) return 'dashboard';
-    if (await metadataLoaded.isVisible().catch(() => false)) return 'metadata';
-    return 'pending';
-  }, { timeout: 120000 }).not.toBe('pending');
+  await expect
+    .poll(
+      async () => {
+        if (await surveyQuestions.isVisible().catch(() => false)) return 'dashboard';
+        if (await metadataLoaded.isVisible().catch(() => false)) return 'metadata';
+        return 'pending';
+      },
+      { timeout: 120000 },
+    )
+    .not.toBe('pending');
 
   if (await metadataLoaded.isVisible().catch(() => false)) {
     await page.getByRole('button', { name: 'Load Full Data' }).click();
@@ -48,7 +53,10 @@ test('pilot workflow: upload, crosstab, export PPTX, reopen, event log', async (
 
   await page.getByRole('button', { name: /^sex$/i }).first().click();
   await page.waitForTimeout(500);
-  await page.getByRole('button', { name: /marital status/i }).first().click();
+  await page
+    .getByRole('button', { name: /marital status/i })
+    .first()
+    .click();
   await page.waitForTimeout(3000);
 
   const table = page.locator('table');

@@ -14,10 +14,7 @@ function isMissionControl(): boolean {
  * Tracks previous primary value and emits a ghost for 200ms when
  * animationTrigger changes. Only active in Mission Control.
  */
-function usePhosphorGhost(
-  value: number,
-  animationTrigger: string | undefined
-): { value: number; key: string } | null {
+function usePhosphorGhost(value: number, animationTrigger: string | undefined): { value: number; key: string } | null {
   const [ghost, setGhost] = useState<{ value: number; key: string } | null>(null);
   const prevTriggerRef = useRef(animationTrigger);
   const prevValueRef = useRef(value);
@@ -214,8 +211,7 @@ function SignificanceMarkers({
 }
 
 /** Strategy A: numeric block right-aligned; headers stay left in DataTable. */
-const CELL_STACK =
-  'w-full flex flex-col items-end gap-0.5 text-right';
+const CELL_STACK = 'w-full flex flex-col items-end gap-0.5 text-right';
 
 /**
  * Crosstab cell: right-aligned stack of primary value + secondary metadata (Strategy A).
@@ -261,7 +257,12 @@ export const CrosstabCell: React.FC<CrosstabCellProps> = ({
         <PhosphorWrap ghost={ghost} formatter={(v) => `${Math.round(v)}`} className={primaryClass}>
           {countDisplay}
         </PhosphorWrap>
-        <FadeIn animationTrigger={animationTrigger} reducedMotion={reducedMotion} delay={0.1} className={`${secondarySizeClass} font-mono tracking-tight ${secondaryClass}`}>
+        <FadeIn
+          animationTrigger={animationTrigger}
+          reducedMotion={reducedMotion}
+          delay={0.1}
+          className={`${secondarySizeClass} font-mono tracking-tight ${secondaryClass}`}
+        >
           base
         </FadeIn>
       </div>
@@ -308,13 +309,23 @@ export const CrosstabCell: React.FC<CrosstabCellProps> = ({
             showMeanBadge &&
             !isZero &&
             !sigLetters && (
-              <FadeIn animationTrigger={animationTrigger} reducedMotion={reducedMotion} delay={0.1} className={`${secondarySizeClass} ${secondaryClass} bg-[var(--bg-panel)] px-1 rounded font-mono`}>
+              <FadeIn
+                animationTrigger={animationTrigger}
+                reducedMotion={reducedMotion}
+                delay={0.1}
+                className={`${secondarySizeClass} ${secondaryClass} bg-[var(--bg-panel)] px-1 rounded font-mono`}
+              >
                 Mean
               </FadeIn>
             )
           )}
         </div>
-        <FadeIn animationTrigger={animationTrigger} reducedMotion={reducedMotion} delay={0.1} className={`${secondarySizeClass} font-mono tracking-tight ${secondaryClass}`}>
+        <FadeIn
+          animationTrigger={animationTrigger}
+          reducedMotion={reducedMotion}
+          delay={0.1}
+          className={`${secondarySizeClass} font-mono tracking-tight ${secondaryClass}`}
+        >
           {stdDev !== undefined && <span className="mr-2">SD: {stdDev.toFixed(1)}</span>}
           {sampleN !== undefined && (
             <span className={smallBaseClass(sampleN)} data-small-base={smallBaseClass(sampleN) ? 'true' : undefined}>

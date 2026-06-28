@@ -38,14 +38,7 @@ describe('FilterModal', () => {
       makeVariable({ id: 'nps', label: 'NPS Segment' }),
     ];
 
-    render(
-      <FilterModal
-        isOpen
-        onClose={vi.fn()}
-        variables={variables}
-        onSave={vi.fn()}
-      />
-    );
+    render(<FilterModal isOpen onClose={vi.fn()} variables={variables} onSave={vi.fn()} />);
 
     fireEvent.click(screen.getByRole('button', { name: /age group/i }));
     await screen.findByText('18-24');
@@ -70,14 +63,7 @@ describe('FilterModal', () => {
     useVelocityStore.setState({ getUniqueValues, getVariableStats } as never);
 
     const variables = [makeVariable({ id: 'age', label: 'Age Group' })];
-    render(
-      <FilterModal
-        isOpen
-        onClose={vi.fn()}
-        variables={variables}
-        onSave={vi.fn()}
-      />
-    );
+    render(<FilterModal isOpen onClose={vi.fn()} variables={variables} onSave={vi.fn()} />);
 
     fireEvent.click(screen.getByRole('button', { name: /age group/i }));
 

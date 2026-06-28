@@ -22,10 +22,10 @@ export function buildSankeyData(
   sourceVars: Variable[],
   targetVars: Variable[],
   sourceCounts: VariableFrequencyCounts,
-  targetCounts: VariableFrequencyCounts
+  targetCounts: VariableFrequencyCounts,
 ): SankeyData {
-  const sourceVarMap = new Map(sourceVars.map(v => [v.id, v]));
-  const targetVarMap = new Map(targetVars.map(v => [v.id, v]));
+  const sourceVarMap = new Map(sourceVars.map((v) => [v.id, v]));
+  const targetVarMap = new Map(targetVars.map((v) => [v.id, v]));
 
   const nodes: SankeyNode[] = [];
   const links: SankeyLink[] = [];
@@ -79,9 +79,7 @@ export function buildSankeyData(
 
   // Add orphan target nodes (targets with no source mapping)
   const mappedTargetIds = new Set(
-    session.mappings
-      .filter(m => m.targetVariableId !== null)
-      .map(m => m.targetVariableId!)
+    session.mappings.filter((m) => m.targetVariableId !== null).map((m) => m.targetVariableId!),
   );
 
   for (const targetVar of targetVars) {
@@ -106,7 +104,7 @@ export function buildSankeyData(
  */
 export function computeNodePositions(
   nodes: SankeyNode[],
-  padding = 0.02
+  padding = 0.02,
 ): Array<{ id: string; y0: number; y1: number }> {
   const totalValue = nodes.reduce((sum, n) => sum + n.value, 0);
   if (totalValue === 0) {
@@ -121,7 +119,7 @@ export function computeNodePositions(
   const totalPadding = padding * (nodes.length - 1);
   const availableHeight = 1 - totalPadding;
   let cursor = 0;
-  return nodes.map(n => {
+  return nodes.map((n) => {
     const h = (n.value / totalValue) * availableHeight;
     const y0 = cursor;
     const y1 = cursor + h;

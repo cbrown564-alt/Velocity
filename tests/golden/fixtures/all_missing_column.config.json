@@ -1,27 +1,25 @@
 {
-    "csvFile": "all_missing_column.csv",
-    "expectedFile": "all_missing_column.expected.json",
-    "config": {
-        "rowVars": [
-            "missing_var"
-        ],
-        "colVar": null,
-        "weightVar": null,
-        "filters": []
+  "csvFile": "all_missing_column.csv",
+  "expectedFile": "all_missing_column.expected.json",
+  "config": {
+    "rowVars": ["missing_var"],
+    "colVar": null,
+    "weightVar": null,
+    "filters": []
+  },
+  "context": {
+    "variables": {
+      "valid_var": {
+        "name": "valid_var",
+        "type": "categorical",
+        "label": "Valid Var"
+      },
+      "missing_var": {
+        "name": "missing_var",
+        "type": "categorical",
+        "label": "Missing Var"
+      }
     },
-    "context": {
-        "variables": {
-            "valid_var": {
-                "name": "valid_var",
-                "type": "categorical",
-                "label": "Valid Var"
-            },
-            "missing_var": {
-                "name": "missing_var",
-                "type": "categorical",
-                "label": "Missing Var"
-            }
-        },
-        "variableSets": {}
-    }
+    "variableSets": {}
+  }
 }

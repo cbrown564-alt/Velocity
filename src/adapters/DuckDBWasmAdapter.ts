@@ -12,7 +12,7 @@ import { DatabaseAdapter, QueryResult, StreamOptions } from '../core/DatabaseAda
 export class DuckDBWasmAdapter implements DatabaseAdapter {
   constructor(
     private conn: duckdb.AsyncDuckDBConnection,
-    private db?: duckdb.AsyncDuckDB
+    private db?: duckdb.AsyncDuckDB,
   ) {}
 
   async query(sql: string): Promise<QueryResult> {
@@ -50,7 +50,7 @@ export class DuckDBWasmAdapter implements DatabaseAdapter {
     // uses insertArrowTable directly via the connection.
     throw new Error(
       'DuckDBWasmAdapter.insertArrowBuffer not implemented. ' +
-      'Use conn.insertArrowTable() directly for WASM contexts.'
+        'Use conn.insertArrowTable() directly for WASM contexts.',
     );
   }
 
@@ -63,7 +63,7 @@ export class DuckDBWasmAdapter implements DatabaseAdapter {
 
   async getTableNames(): Promise<string[]> {
     const result = await this.conn.query(
-      `SELECT table_name FROM information_schema.tables WHERE table_schema = 'main'`
+      `SELECT table_name FROM information_schema.tables WHERE table_schema = 'main'`,
     );
     return result.toArray().map((row: any) => row.table_name as string);
   }

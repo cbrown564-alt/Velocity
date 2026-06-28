@@ -6,7 +6,8 @@ export const TOOLS = [
   // Data lifecycle
   {
     name: 'velocity_load',
-    description: 'Load a SAV or CSV file into the engine (full row data). For large SAV files (>50MB), prefer velocity_load_metadata then velocity_load_full.',
+    description:
+      'Load a SAV or CSV file into the engine (full row data). For large SAV files (>50MB), prefer velocity_load_metadata then velocity_load_full.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -34,7 +35,10 @@ export const TOOLS = [
     inputSchema: {
       type: 'object',
       properties: {
-        path: { type: 'string', description: 'Path to the SAV file (must match the metadata load path when applicable).' },
+        path: {
+          type: 'string',
+          description: 'Path to the SAV file (must match the metadata load path when applicable).',
+        },
       },
       required: ['path'],
     },
@@ -49,7 +53,10 @@ export const TOOLS = [
         path: { type: 'string', description: 'Path to the SAV or CSV file.' },
         metadataOnly: { type: 'boolean', description: 'SAV only: load variable metadata without rows.' },
         waveNumber: { type: 'number', description: 'Optional wave label for longitudinal projects.' },
-        makeActive: { type: 'boolean', description: 'If true, switch the active analysis dataset to this entry (default: false).' },
+        makeActive: {
+          type: 'boolean',
+          description: 'If true, switch the active analysis dataset to this entry (default: false).',
+        },
       },
       required: ['path'],
     },
@@ -65,7 +72,10 @@ export const TOOLS = [
     inputSchema: {
       type: 'object',
       properties: {
-        datasetId: { type: 'string', description: 'Workspace dataset ID from velocity_workspace_load or velocity_workspace_list.' },
+        datasetId: {
+          type: 'string',
+          description: 'Workspace dataset ID from velocity_workspace_load or velocity_workspace_list.',
+        },
       },
       required: ['datasetId'],
     },
@@ -102,9 +112,15 @@ export const TOOLS = [
       properties: {
         sourceDatasetId: { type: 'string' },
         targetDatasetId: { type: 'string' },
-        mappings: { type: 'array', description: 'VariableMapping[] (typically from velocity_workspace_propose_mappings).' },
+        mappings: {
+          type: 'array',
+          description: 'VariableMapping[] (typically from velocity_workspace_propose_mappings).',
+        },
         outputTableName: { type: 'string', description: 'Name for the harmonized output table.' },
-        onlyConfirmed: { type: 'boolean', description: 'If true, apply only mappings with status confirmed (default: true).' },
+        onlyConfirmed: {
+          type: 'boolean',
+          description: 'If true, apply only mappings with status confirmed (default: true).',
+        },
       },
       required: ['sourceDatasetId', 'targetDatasetId', 'mappings', 'outputTableName'],
     },
@@ -116,7 +132,8 @@ export const TOOLS = [
   },
   {
     name: 'velocity_describe_variable',
-    description: 'Get detailed statistics for a single variable. Response warnings flag weight-like measurement variables and high-cardinality fields.',
+    description:
+      'Get detailed statistics for a single variable. Response warnings flag weight-like measurement variables and high-cardinality fields.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -133,7 +150,8 @@ export const TOOLS = [
   // Analysis
   {
     name: 'velocity_crosstab',
-    description: 'Run a cross-tabulation analysis with optional significance testing. Use resolveLabels: true to get human-readable value labels instead of raw integer codes. Response includes warnings for high-cardinality row/column variables and weight-like names that may be measurements (e.g. body weight), not sampling weights.',
+    description:
+      'Run a cross-tabulation analysis with optional significance testing. Use resolveLabels: true to get human-readable value labels instead of raw integer codes. Response includes warnings for high-cardinality row/column variables and weight-like names that may be measurements (e.g. body weight), not sampling weights.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -145,11 +163,16 @@ export const TOOLS = [
         colVar: { type: 'string', description: 'Variable ID for columns (optional).' },
         filters: { type: 'array', description: 'Filter conditions (optional).' },
         weightVar: { type: 'string', description: 'Weight variable ID (optional).' },
-        resolveLabels: { type: 'boolean', description: 'If true, replace raw integer codes in output with human-readable value labels. Strongly recommended.' },
+        resolveLabels: {
+          type: 'boolean',
+          description:
+            'If true, replace raw integer codes in output with human-readable value labels. Strongly recommended.',
+        },
         format: {
           type: 'string',
           enum: ['long', 'matrix'],
-          description: 'Output shape. "long" (default) returns one row per cell. "matrix" returns a pivot table with column bases and column percentages.',
+          description:
+            'Output shape. "long" (default) returns one row per cell. "matrix" returns a pivot table with column bases and column percentages.',
         },
         analysisSettings: {
           type: 'object',
@@ -157,7 +180,7 @@ export const TOOLS = [
           properties: {
             comparisonMethod: { type: 'string', enum: ['cell_vs_rest', 'pairwise'] },
             correctionType: { type: 'string', enum: ['none', 'bonferroni', 'fdr'] },
-            significanceLevel: { type: 'number', enum: [0.95, 0.90, 0.80] },
+            significanceLevel: { type: 'number', enum: [0.95, 0.9, 0.8] },
           },
         },
       },
@@ -450,7 +473,8 @@ export const TOOLS = [
   // Semantic Layer (Phase 4)
   {
     name: 'velocity_annotate_dataset',
-    description: 'Run heuristic auto-annotation over all variables in the loaded dataset. Classifies each variable with a topic, measurement intent, and confidence score. Returns counts of annotated vs total variables.',
+    description:
+      'Run heuristic auto-annotation over all variables in the loaded dataset. Classifies each variable with a topic, measurement intent, and confidence score. Returns counts of annotated vs total variables.',
     inputSchema: { type: 'object', properties: {} },
   },
   {
@@ -467,7 +491,18 @@ export const TOOLS = [
             topic: { type: 'string', description: 'Domain topic, e.g. "satisfaction", "demographics".' },
             measurementIntent: {
               type: 'string',
-              enum: ['attitude', 'behavior', 'awareness', 'demographic', 'classification', 'outcome', 'weight', 'identifier', 'open_end', 'other'],
+              enum: [
+                'attitude',
+                'behavior',
+                'awareness',
+                'demographic',
+                'classification',
+                'outcome',
+                'weight',
+                'identifier',
+                'open_end',
+                'other',
+              ],
             },
             conceptFamily: { type: 'string', description: 'Links to a Concept entity by name.' },
             source: { type: 'string', enum: ['auto', 'manual', 'agent'] },
@@ -481,11 +516,15 @@ export const TOOLS = [
   },
   {
     name: 'velocity_search_variables',
-    description: 'Find variables by semantic meaning (not just name). Searches variable names, labels, topic annotations, concept names/aliases, and value labels. Returns ranked results with relevance scores.',
+    description:
+      'Find variables by semantic meaning (not just name). Searches variable names, labels, topic annotations, concept names/aliases, and value labels. Returns ranked results with relevance scores.',
     inputSchema: {
       type: 'object',
       properties: {
-        query: { type: 'string', description: 'Natural language query, e.g. "satisfaction variables" or "demographics".' },
+        query: {
+          type: 'string',
+          description: 'Natural language query, e.g. "satisfaction variables" or "demographics".',
+        },
         limit: { type: 'number', description: 'Maximum results to return (default: 20).' },
       },
       required: ['query'],
@@ -535,7 +574,8 @@ export const TOOLS = [
   },
   {
     name: 'velocity_suggest_analyses',
-    description: 'Get domain-aware analysis suggestions for a set of variables. Uses semantic annotations to recommend crosstabs, frequency distributions, trend analyses, and more.',
+    description:
+      'Get domain-aware analysis suggestions for a set of variables. Uses semantic annotations to recommend crosstabs, frequency distributions, trend analyses, and more.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -550,13 +590,25 @@ export const TOOLS = [
   },
   {
     name: 'velocity_list_variables_by_category',
-    description: 'Filter variables by measurement intent category (e.g. "demographic", "attitude", "behavior"). Much more reliable than keyword search for navigating large datasets. Run velocity_annotate_dataset first.',
+    description:
+      'Filter variables by measurement intent category (e.g. "demographic", "attitude", "behavior"). Much more reliable than keyword search for navigating large datasets. Run velocity_annotate_dataset first.',
     inputSchema: {
       type: 'object',
       properties: {
         category: {
           type: 'string',
-          enum: ['attitude', 'behavior', 'awareness', 'demographic', 'classification', 'outcome', 'weight', 'identifier', 'open_end', 'other'],
+          enum: [
+            'attitude',
+            'behavior',
+            'awareness',
+            'demographic',
+            'classification',
+            'outcome',
+            'weight',
+            'identifier',
+            'open_end',
+            'other',
+          ],
           description: 'MeasurementIntent category to filter by.',
         },
         limit: { type: 'number', description: 'Maximum results to return (default: 50).' },
@@ -566,7 +618,8 @@ export const TOOLS = [
   },
   {
     name: 'velocity_suggest_breaks',
-    description: 'Suggest good cross-break (column) variables for a given topic (row) variable. Returns ranked candidates scored by demographic intent, cardinality, and naming patterns. Response warnings flag high-cardinality topics and weight-like measurement variables. Run velocity_annotate_dataset first.',
+    description:
+      'Suggest good cross-break (column) variables for a given topic (row) variable. Returns ranked candidates scored by demographic intent, cardinality, and naming patterns. Response warnings flag high-cardinality topics and weight-like measurement variables. Run velocity_annotate_dataset first.',
     inputSchema: {
       type: 'object',
       properties: {

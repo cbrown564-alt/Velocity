@@ -29,9 +29,7 @@ describe('computeAnalysisSampleSize', () => {
   });
 
   it('returns null when no Total marginals exist', () => {
-    const data: AggregatedRow[] = [
-      { rowKeys: ['1'], colKey: 'North', count: 10 },
-    ];
+    const data: AggregatedRow[] = [{ rowKeys: ['1'], colKey: 'North', count: 10 }];
     expect(computeAnalysisSampleSize(data)).toBeNull();
   });
 });

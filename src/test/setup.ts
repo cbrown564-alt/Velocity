@@ -1,6 +1,6 @@
 /**
  * Vitest Global Test Setup
- * 
+ *
  * Configures test environment, mocks, and global utilities.
  */
 
@@ -9,101 +9,103 @@ import { cleanup } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
 
 function createStorageMock(): Storage {
-    let store: Record<string, string> = {};
+  let store: Record<string, string> = {};
 
-    return {
-        get length() {
-            return Object.keys(store).length;
-        },
-        clear() {
-            store = {};
-        },
-        getItem(key: string) {
-            return Object.prototype.hasOwnProperty.call(store, key) ? store[key] : null;
-        },
-        key(index: number) {
-            return Object.keys(store)[index] ?? null;
-        },
-        removeItem(key: string) {
-            delete store[key];
-        },
-        setItem(key: string, value: string) {
-            store[key] = String(value);
-        },
-    };
+  return {
+    get length() {
+      return Object.keys(store).length;
+    },
+    clear() {
+      store = {};
+    },
+    getItem(key: string) {
+      return Object.prototype.hasOwnProperty.call(store, key) ? store[key] : null;
+    },
+    key(index: number) {
+      return Object.keys(store)[index] ?? null;
+    },
+    removeItem(key: string) {
+      delete store[key];
+    },
+    setItem(key: string, value: string) {
+      store[key] = String(value);
+    },
+  };
 }
 
 const hasUsableStorage = (value: unknown): value is Storage => {
-    return typeof value === 'object'
-        && value !== null
-        && typeof (value as Storage).getItem === 'function'
-        && typeof (value as Storage).setItem === 'function'
-        && typeof (value as Storage).removeItem === 'function'
-        && typeof (value as Storage).clear === 'function';
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    typeof (value as Storage).getItem === 'function' &&
+    typeof (value as Storage).setItem === 'function' &&
+    typeof (value as Storage).removeItem === 'function' &&
+    typeof (value as Storage).clear === 'function'
+  );
 };
 
 if (!hasUsableStorage(globalThis.localStorage)) {
-    const localStorageMock = createStorageMock();
-    Object.defineProperty(globalThis, 'localStorage', {
-        value: localStorageMock,
-        configurable: true,
+  const localStorageMock = createStorageMock();
+  Object.defineProperty(globalThis, 'localStorage', {
+    value: localStorageMock,
+    configurable: true,
+  });
+  if (typeof window !== 'undefined') {
+    Object.defineProperty(window, 'localStorage', {
+      value: localStorageMock,
+      configurable: true,
     });
-    if (typeof window !== 'undefined') {
-        Object.defineProperty(window, 'localStorage', {
-            value: localStorageMock,
-            configurable: true,
-        });
-    }
+  }
 }
 
 // Cleanup after each test for React Testing Library
 afterEach(() => {
-    cleanup();
+  cleanup();
 });
 
 // Mock Web Worker globally for Node environment
 // Mock Web Worker globally for Node environment
 class MockWorker extends EventTarget implements Worker {
-    onmessage: ((this: Worker, event: MessageEvent) => any) | null = null;
-    onmessageerror: ((this: Worker, event: MessageEvent) => any) | null = null;
-    onerror: ((this: Worker, event: ErrorEvent) => any) | null = null;
+  onmessage: ((this: Worker, event: MessageEvent) => any) | null = null;
+  onmessageerror: ((this: Worker, event: MessageEvent) => any) | null = null;
+  onerror: ((this: Worker, event: ErrorEvent) => any) | null = null;
 
-    constructor(public url: string | URL) {
-        super();
-    }
+  constructor(public url: string | URL) {
+    super();
+  }
 
-    postMessage(data: any, transfer: Transferable[]): void;
-    postMessage(data: any, options?: StructuredSerializeOptions): void;
-    postMessage(data: any): void {
-        // In tests, we'll mock specific worker behavior
-        console.log('[MockWorker] postMessage:', data);
-    }
+  postMessage(data: any, transfer: Transferable[]): void;
+  postMessage(data: any, options?: StructuredSerializeOptions): void;
+  postMessage(data: any): void {
+    // In tests, we'll mock specific worker behavior
+    console.log('[MockWorker] postMessage:', data);
+  }
 
-    terminate() {
-        // Cleanup
-    }
+  terminate() {
+    // Cleanup
+  }
 
-    // Helper to simulate receiving a message from the worker
-    // This calls the onmessage property AND dispatches the event
-    dispatchMessage(data: any) {
-        const event = new MessageEvent('message', { data });
-        if (this.onmessage) {
-            this.onmessage.call(this, event);
-        }
-        this.dispatchEvent(event);
+  // Helper to simulate receiving a message from the worker
+  // This calls the onmessage property AND dispatches the event
+  dispatchMessage(data: any) {
+    const event = new MessageEvent('message', { data });
+    if (this.onmessage) {
+      this.onmessage.call(this, event);
     }
+    this.dispatchEvent(event);
+  }
 }
 
 // Only mock if not in browser
 if (typeof Worker === 'undefined') {
-    vi.stubGlobal('Worker', MockWorker);
+  vi.stubGlobal('Worker', MockWorker);
 }
 
 // Mock URL.createObjectURL for worker blob URLs
 if (typeof URL.createObjectURL === 'undefined') {
-    vi.stubGlobal('URL', {
-        ...URL,
-        createObjectURL: vi.fn(() => 'blob:mock-url'),
-        revokeObjectURL: vi.fn(),
-    });
+  vi.stubGlobal('URL', {
+    ...URL,
+    createObjectURL: vi.fn(() => 'blob:mock-url'),
+    revokeObjectURL: vi.fn(),
+  });
 }

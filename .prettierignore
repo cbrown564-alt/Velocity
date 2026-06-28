@@ -1,9 +1,10 @@
 .agents/
 .venv/
 coverage/
+demo/artifacts/
+docs/
 dist/
-docs/archive/
-evals/**/runs/
+evals/
 mcp-server/dist/
 node_modules/
 playwright-report/
@@ -15,6 +16,9 @@ tmp/
 
 packages/readstat-wasm/dist/
 packages/readstat-wasm/lib/
+validation/benchmark_*.json
+
+*.md
 
 *.sav
 *.wasm

@@ -63,7 +63,7 @@ export interface CrosstabContext {
 export interface SignificanceOptions {
   comparisonMethod?: 'cell_vs_rest' | 'pairwise';
   correctionType?: 'none' | 'bonferroni' | 'fdr';
-  significanceLevel?: 0.95 | 0.90 | 0.80;
+  significanceLevel?: 0.95 | 0.9 | 0.8;
 }
 
 export type CrosstabConfig = CrosstabQueryOptions & {

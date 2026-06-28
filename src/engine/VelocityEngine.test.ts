@@ -273,11 +273,11 @@ describe('VelocityEngine', () => {
     const variables = description.data.dataset?.variables ?? [];
 
     // Variable labels (human-readable question text) must be preserved
-    expect(variables.find(v => v.id === 'Q1')?.label).toBe('Overall Satisfaction');
-    expect(variables.find(v => v.id === 'GENDER')?.label).toBe('Respondent Gender');
+    expect(variables.find((v) => v.id === 'Q1')?.label).toBe('Overall Satisfaction');
+    expect(variables.find((v) => v.id === 'GENDER')?.label).toBe('Respondent Gender');
 
     // Value labels (the integer→string mapping) must survive the load
-    const q1 = variables.find(v => v.id === 'Q1');
+    const q1 = variables.find((v) => v.id === 'Q1');
     expect(q1?.valueLabels).toHaveLength(5);
     expect(q1?.valueLabels[0]).toEqual({ value: 1, label: 'Very Dissatisfied' });
     expect(q1?.valueLabels[4]).toEqual({ value: 5, label: 'Very Satisfied' });
@@ -286,13 +286,13 @@ describe('VelocityEngine', () => {
     expect(q1?.missingValues).toEqual({ discrete: [99] });
 
     // Types must not be re-inferred from SQL schema — they come from the SAV metadata
-    expect(variables.find(v => v.id === 'Q1')?.type).toBe('ordinal');
-    expect(variables.find(v => v.id === 'GENDER')?.type).toBe('nominal');
-    expect(variables.find(v => v.id === 'WEIGHT')?.type).toBe('scale');
+    expect(variables.find((v) => v.id === 'Q1')?.type).toBe('ordinal');
+    expect(variables.find((v) => v.id === 'GENDER')?.type).toBe('nominal');
+    expect(variables.find((v) => v.id === 'WEIGHT')?.type).toBe('scale');
 
     // VariableSets must reflect SAV structure
     expect(description.data.variableSets).toHaveLength(3);
-    expect(description.data.variableSets.find(vs => vs.id === 'Q1')?.name).toBe('Overall Satisfaction');
+    expect(description.data.variableSets.find((vs) => vs.id === 'Q1')?.name).toBe('Overall Satisfaction');
   });
 
   it('unwraps a ResultEnvelope returned by a registry runner rather than double-wrapping', async () => {
@@ -357,9 +357,9 @@ describe('VelocityEngine', () => {
     const firstVarId = described.data.dataset?.variables[0]?.id;
     expect(firstVarId).toBeTruthy();
 
-    await expect(
-      engine.runAnalysis('crosstab', { rowVars: [firstVarId!] })
-    ).rejects.toMatchObject({ code: 'METADATA_ONLY' });
+    await expect(engine.runAnalysis('crosstab', { rowVars: [firstVarId!] })).rejects.toMatchObject({
+      code: 'METADATA_ONLY',
+    });
 
     const full = await engine.loadFileFull(savPath);
     expect(full.data.metadataOnly).toBe(false);
@@ -590,7 +590,7 @@ describe('VelocityEngine', () => {
         'Slide "Incomplete slide" references unknown column variable "MISSING_COL".',
         'Slide "Incomplete slide" references unknown filter variable "MISSING_FILTER".',
         'Slide "Incomplete slide" references unknown weight variable "MISSING_WEIGHT".',
-      ])
+      ]),
     );
     expect(slideAction?.caveats).toEqual(
       expect.arrayContaining([
@@ -598,7 +598,7 @@ describe('VelocityEngine', () => {
         'Column variable "MISSING_COL" is not in the active dataset.',
         'Filter variable "MISSING_FILTER" is not in the active dataset.',
         'Weight variable "MISSING_WEIGHT" is not in the active dataset.',
-      ])
+      ]),
     );
     expect(engine.state.slides).toEqual([]);
   });
@@ -609,6 +609,8 @@ describe('VelocityEngine', () => {
     await engine.loadFile('/data/brand_tracker.sav');
 
     expect(() => engine.draftDeckPlan({ title: 'Broken' } as never)).toThrow(VelocityError);
-    expect(() => engine.draftDeckPlan({ title: 'Broken' } as never)).toThrow('Deck spec must include a sections array.');
+    expect(() => engine.draftDeckPlan({ title: 'Broken' } as never)).toThrow(
+      'Deck spec must include a sections array.',
+    );
   });
 });

@@ -62,8 +62,7 @@ export function jaroWinklerSimilarity(a: string, b: string): number {
     k++;
   }
 
-  const jaro =
-    (matches / s1.length + matches / s2.length + (matches - transpositions / 2) / matches) / 3;
+  const jaro = (matches / s1.length + matches / s2.length + (matches - transpositions / 2) / matches) / 3;
 
   // Winkler prefix boost
   let prefix = 0;
@@ -87,8 +86,8 @@ export function valueLabelOverlap(a: ValueLabel[], b: ValueLabel[]): number {
   if (a.length === 0 && b.length === 0) return 1;
   if (a.length === 0 || b.length === 0) return 0;
 
-  const setA = new Set(a.map(v => v.label.toLowerCase().trim()));
-  const setB = new Set(b.map(v => v.label.toLowerCase().trim()));
+  const setA = new Set(a.map((v) => v.label.toLowerCase().trim()));
+  const setB = new Set(b.map((v) => v.label.toLowerCase().trim()));
 
   let intersection = 0;
   for (const label of setA) {
@@ -155,11 +154,7 @@ export function detectScaleInversion(source: Variable, target: Variable): boolea
 
   // Inversion: cross-matching must be strong AND forward-matching must be weaker
   // This prevents false positives when "Very Dissatisfied" ≈ "Very Satisfied" lexically
-  return (
-    firstMatchesLast > 0.8 &&
-    lastMatchesFirst > 0.8 &&
-    firstMatchesFirst < firstMatchesLast
-  );
+  return firstMatchesLast > 0.8 && lastMatchesFirst > 0.8 && firstMatchesFirst < firstMatchesLast;
 }
 
 // ============================================================================
@@ -172,10 +167,8 @@ export function detectScaleInversion(source: Variable, target: Variable): boolea
 export function detectDataLoss(source: Variable, target: Variable): number[] {
   if (source.valueLabels.length === 0) return [];
 
-  const targetValues = new Set(target.valueLabels.map(v => v.value));
-  return source.valueLabels
-    .filter(v => !targetValues.has(v.value))
-    .map(v => v.value);
+  const targetValues = new Set(target.valueLabels.map((v) => v.value));
+  return source.valueLabels.filter((v) => !targetValues.has(v.value)).map((v) => v.value);
 }
 
 // ============================================================================
@@ -188,7 +181,7 @@ export function detectDataLoss(source: Variable, target: Variable): number[] {
 export function scoreVariablePair(
   source: Variable,
   target: Variable,
-  weights: MatchingWeights = DEFAULT_MATCHING_WEIGHTS
+  weights: MatchingWeights = DEFAULT_MATCHING_WEIGHTS,
 ): VariableMatchScore {
   const nameSimilarity = jaroWinklerSimilarity(source.name, target.name);
   const labelSimilarity = jaroWinklerSimilarity(source.label, target.label);
@@ -222,9 +215,9 @@ export function autoMatchVariables(
   sourceVars: Variable[],
   targetVars: Variable[],
   weights: MatchingWeights = DEFAULT_MATCHING_WEIGHTS,
-  threshold = 0.4
+  threshold = 0.4,
 ): VariableMapping[] {
-  const availableTargets = new Set(targetVars.map(v => v.id));
+  const availableTargets = new Set(targetVars.map((v) => v.id));
   const mappings: VariableMapping[] = [];
 
   for (const source of sourceVars) {
@@ -240,7 +233,7 @@ export function autoMatchVariables(
       }
     }
 
-    const targetVar = bestTargetId ? targetVars.find(v => v.id === bestTargetId) : null;
+    const targetVar = bestTargetId ? targetVars.find((v) => v.id === bestTargetId) : null;
 
     const warnings: HarmonizationWarning[] = [];
     let valueMappings: ValueMapping[] = [];
@@ -302,7 +295,7 @@ export function autoMatchVariables(
  */
 export function generateValueMappings(source: Variable, target: Variable): ValueMapping[] {
   if (source.valueLabels.length === 0) {
-    return target.valueLabels.map(tl => ({
+    return target.valueLabels.map((tl) => ({
       sourceValue: null,
       sourceLabel: '',
       targetValue: tl.value,
@@ -310,7 +303,7 @@ export function generateValueMappings(source: Variable, target: Variable): Value
     }));
   }
 
-  return source.valueLabels.map(sl => {
+  return source.valueLabels.map((sl) => {
     let bestMatch: ValueLabel | null = null;
     let bestSimilarity = -1;
 

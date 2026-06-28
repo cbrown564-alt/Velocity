@@ -1,33 +1,31 @@
 {
-    "csvFile": "filtered_query.csv",
-    "expectedFile": "filtered_query.expected.json",
-    "config": {
-        "rowVars": [
-            "city"
-        ],
-        "colVar": null,
-        "weightVar": null,
-        "filters": [
-            {
-                "variableId": "salary",
-                "operator": "gt",
-                "value": 5500
-            }
-        ]
+  "csvFile": "filtered_query.csv",
+  "expectedFile": "filtered_query.expected.json",
+  "config": {
+    "rowVars": ["city"],
+    "colVar": null,
+    "weightVar": null,
+    "filters": [
+      {
+        "variableId": "salary",
+        "operator": "gt",
+        "value": 5500
+      }
+    ]
+  },
+  "context": {
+    "variables": {
+      "city": {
+        "name": "city",
+        "type": "categorical",
+        "label": "City"
+      },
+      "salary": {
+        "name": "salary",
+        "type": "numeric",
+        "label": "Salary"
+      }
     },
-    "context": {
-        "variables": {
-            "city": {
-                "name": "city",
-                "type": "categorical",
-                "label": "City"
-            },
-            "salary": {
-                "name": "salary",
-                "type": "numeric",
-                "label": "Salary"
-            }
-        },
-        "variableSets": {}
-    }
+    "variableSets": {}
+  }
 }

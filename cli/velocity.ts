@@ -53,10 +53,7 @@ function printKnownError(error: unknown): never {
   process.exit(1);
 }
 
-program
-  .name('velocity')
-  .description('Velocity statistical analysis CLI')
-  .version('0.1.0');
+program.name('velocity').description('Velocity statistical analysis CLI').version('0.1.0');
 
 program
   .command('load <file>')
@@ -87,11 +84,13 @@ program
       await withEngine(async (engine) => {
         await loadEngineFile(engine, file);
         const variables = engine.describe().data.dataset?.variables ?? [];
-        printJson(variables.map((variable) => ({
-          name: variable.id,
-          label: variable.label,
-          type: variable.type,
-        })));
+        printJson(
+          variables.map((variable) => ({
+            name: variable.id,
+            label: variable.label,
+            type: variable.type,
+          })),
+        );
       });
     } catch (error) {
       printKnownError(error);
@@ -109,7 +108,10 @@ program
     try {
       await withEngine(async (engine) => {
         await loadEngineFile(engine, file);
-        const rowVars = opts.rows.split(',').map((value: string) => value.trim()).filter(Boolean);
+        const rowVars = opts.rows
+          .split(',')
+          .map((value: string) => value.trim())
+          .filter(Boolean);
 
         if (opts.weight) {
           engine.setWeight(opts.weight);
@@ -204,7 +206,10 @@ program
     try {
       await withEngine(async (engine) => {
         await loadEngineFile(engine, file);
-        const rowVars = opts.rows.split(',').map((value: string) => value.trim()).filter(Boolean);
+        const rowVars = opts.rows
+          .split(',')
+          .map((value: string) => value.trim())
+          .filter(Boolean);
 
         if (opts.weight) {
           engine.setWeight(opts.weight);
@@ -215,11 +220,13 @@ program
           colVar: opts.cols || null,
         });
         const description = engine.describe();
-        const variablesById = new Map((description.data.dataset?.variables ?? []).map((variable) => [variable.id, variable]));
+        const variablesById = new Map(
+          (description.data.dataset?.variables ?? []).map((variable) => [variable.id, variable]),
+        );
         const rowVariables = rowVars
           .map((id: string) => variablesById.get(id))
           .filter((variable): variable is NonNullable<typeof variable> => variable !== undefined);
-        const colVariable = opts.cols ? variablesById.get(opts.cols) ?? null : null;
+        const colVariable = opts.cols ? (variablesById.get(opts.cols) ?? null) : null;
 
         const processed = processAnalysisData({
           data: (envelope.data as any).rows ?? [],
@@ -234,18 +241,18 @@ program
 
         const config = {
           title: opts.title,
-          analyses: [{
-            label: rowVars.join(' × ') + (opts.cols ? ` by ${opts.cols}` : ''),
-            result: processed,
-          }],
+          analyses: [
+            {
+              label: rowVars.join(' × ') + (opts.cols ? ` by ${opts.cols}` : ''),
+              result: processed,
+            },
+          ],
         };
 
         const fmt = opts.format.toLowerCase();
         const ext = fmt === 'xlsx' ? 'xlsx' : 'pptx';
         const outputPath = opts.output || `report.${ext}`;
-        const bytes = fmt === 'xlsx'
-          ? await exportXlsx(config)
-          : await exportPptx(config);
+        const bytes = fmt === 'xlsx' ? await exportXlsx(config) : await exportPptx(config);
 
         writeFileSync(outputPath, bytes);
         console.log(`Exported to ${outputPath} (${(bytes.length / 1024).toFixed(1)} KB)`);
@@ -268,7 +275,9 @@ program
         console.log(`Loaded ${summary.datasetName} (${summary.rowCount} rows)`);
       }
 
-      console.log('Commands: load <file>, describe, analyses, query <sql>, run <id> <json>, weight <var|clear>, clear-filters, exit');
+      console.log(
+        'Commands: load <file>, describe, analyses, query <sql>, run <id> <json>, weight <var|clear>, clear-filters, exit',
+      );
 
       while (true) {
         const line = (await rl.question('velocity> ')).trim();

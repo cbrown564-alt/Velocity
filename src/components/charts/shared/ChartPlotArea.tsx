@@ -18,17 +18,8 @@ export interface ChartPlotAreaProps {
  * SVG plot-area group with standard margin translation.
  * Shared by bar, lollipop, stacked, and other cartesian chart renderers.
  */
-export const ChartPlotArea: React.FC<ChartPlotAreaProps> = ({
-  margin,
-  children,
-  innerRef,
-  className,
-}) => (
-  <g
-    ref={innerRef}
-    transform={`translate(${margin.left},${margin.top})`}
-    className={className}
-  >
+export const ChartPlotArea: React.FC<ChartPlotAreaProps> = ({ margin, children, innerRef, className }) => (
+  <g ref={innerRef} transform={`translate(${margin.left},${margin.top})`} className={className}>
     {children}
   </g>
 );

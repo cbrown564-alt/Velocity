@@ -16,9 +16,7 @@ const baseLive = (): DatasetLiveState => ({
     name: 'survey.sav',
     rowCount: 100,
     source: 'sav',
-    variables: [
-      { id: 'q1', name: 'q1', label: 'Q1', type: 'categorical', valueLabels: [], missingValues: {} },
-    ],
+    variables: [{ id: 'q1', name: 'q1', label: 'Q1', type: 'categorical', valueLabels: [], missingValues: {} }],
   },
   activeDatasetId: 'ds-1',
   tableConfig: { rowVars: ['q1'], colVar: null },
@@ -99,10 +97,12 @@ describe('datasetSessionCoordinator', () => {
       transformLog: [],
     });
 
-    expect(normalizeStoredSessionState({
-      tableConfig: { rowVars: ['a'], colVar: 'b' },
-      activeFilters: [{ id: 'f1', variableId: 'a', operator: 'in', value: [1, 2] }],
-    })).toEqual({
+    expect(
+      normalizeStoredSessionState({
+        tableConfig: { rowVars: ['a'], colVar: 'b' },
+        activeFilters: [{ id: 'f1', variableId: 'a', operator: 'in', value: [1, 2] }],
+      }),
+    ).toEqual({
       tableConfig: { rowVars: ['a'], colVar: 'b' },
       activeFilters: [{ id: 'f1', variableId: 'a', operator: 'in', value: [1, 2] }],
       transformLog: [],

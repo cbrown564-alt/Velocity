@@ -1,16 +1,6 @@
 import type { QueryResult } from '../core/DatabaseAdapter';
-import type {
-  SessionImportDiagnosticsSummary,
-  VelocitySessionFile,
-} from '../core/session';
-import type {
-  Dataset,
-  Filter,
-  Folder,
-  RecodeConfig,
-  Variable,
-  VariableSet,
-} from '../types';
+import type { SessionImportDiagnosticsSummary, VelocitySessionFile } from '../core/session';
+import type { Dataset, Filter, Folder, RecodeConfig, Variable, VariableSet } from '../types';
 import type { ChartType } from '../types/charts';
 import type { ProcessedAnalysisData } from '../types/processedData';
 import type { VariableStatsResult } from '../types/worker';
@@ -105,7 +95,7 @@ export class VelocityError extends Error {
   constructor(
     public code: VelocityErrorCode,
     message: string,
-    public details?: unknown
+    public details?: unknown,
   ) {
     super(message);
     this.name = 'VelocityError';

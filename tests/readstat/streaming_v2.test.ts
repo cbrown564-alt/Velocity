@@ -15,11 +15,7 @@ describe('readstat streaming v2 window APIs', () => {
   beforeAll(async () => {
     const wasmPath = path.resolve(process.cwd(), 'packages/readstat-wasm/dist/readstat.wasm');
     globalThis.fetch = async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
-      const href = typeof input === 'string'
-        ? input
-        : input instanceof URL
-          ? input.href
-          : input.url;
+      const href = typeof input === 'string' ? input : input instanceof URL ? input.href : input.url;
 
       if (href.endsWith('/readstat.wasm') || href.endsWith('readstat.wasm')) {
         const wasm = await fs.readFile(wasmPath);

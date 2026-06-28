@@ -4,12 +4,7 @@
  */
 
 export type PilotOnboardingEventName =
-  | 'file_selected'
-  | 'canvas_ready'
-  | 'first_crosstab'
-  | 'pptx_exported'
-  | 'xlsx_exported'
-  | 'workspace_reopened';
+  'file_selected' | 'canvas_ready' | 'first_crosstab' | 'pptx_exported' | 'xlsx_exported' | 'workspace_reopened';
 
 export interface PilotOnboardingEvent {
   id: string;

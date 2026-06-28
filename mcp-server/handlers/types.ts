@@ -3,5 +3,5 @@ import type { McpToolResponse } from '../responses.js';
 
 export type ToolHandler = (
   engine: VelocityEngine,
-  args: Record<string, unknown>
+  args: Record<string, unknown>,
 ) => Promise<McpToolResponse> | McpToolResponse;

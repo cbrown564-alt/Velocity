@@ -9,7 +9,14 @@
  */
 
 import { Variable, VariableSet, VariableType } from '../../types';
-import { isDateFormat, inferPositiveValue, detectImplicitScale, detectSequentialPattern, detectNumericGrids, VariableWithIndex } from '../gridDetection';
+import {
+  isDateFormat,
+  inferPositiveValue,
+  detectImplicitScale,
+  detectSequentialPattern,
+  detectNumericGrids,
+  VariableWithIndex,
+} from '../gridDetection';
 import { fillEndpointLabelGaps } from '../scaleNormalization';
 import { inferVariableTyping } from './dataHeuristics';
 import { generateSyntheticGridVariables } from '../grid/gridUtils';
@@ -82,14 +89,14 @@ export function processMetadata(data: ParsedSavData): ProcessedSavResult {
   }
 
   // Step 1: Convert variables
-  const variables: Variable[] = metadata.variables.map(v => {
+  const variables: Variable[] = metadata.variables.map((v) => {
     const id = v.name;
 
     let valueLabels: { value: number; label: string }[] = [];
     if (v.valueLabelSetName && metadata.valueLabelSets[v.valueLabelSetName]) {
-      valueLabels = metadata.valueLabelSets[v.valueLabelSetName].map(vl => ({
+      valueLabels = metadata.valueLabelSets[v.valueLabelSetName].map((vl) => ({
         value: vl.value,
-        label: vl.label
+        label: vl.label,
       }));
     }
 
@@ -122,17 +129,13 @@ export function processMetadata(data: ParsedSavData): ProcessedSavResult {
         discrete: v.missingValues?.discrete ? [...v.missingValues.discrete] : [],
         range: v.missingValues?.range
           ? { low: v.missingValues.range.low, high: v.missingValues.range.high }
-          : undefined
-      }
+          : undefined,
+      },
     };
   });
 
   // Step 2: Gap filling
-  fillEndpointLabelGaps(
-    variables,
-    rows,
-    (name) => metadata.variables.findIndex(pv => pv.name === name)
-  );
+  fillEndpointLabelGaps(variables, rows, (name) => metadata.variables.findIndex((pv) => pv.name === name));
 
   // Build variable name to ID map
   const varNameToId = new Map<string, string>();
@@ -158,7 +161,7 @@ export function processMetadata(data: ParsedSavData): ProcessedSavResult {
     if (variableIds.length > 0) {
       const structure = mrSet.type === 'C' ? 'grid' : 'multiple';
       const cleanName = mrSet.name.startsWith('$') ? mrSet.name.slice(1) : mrSet.name;
-      const firstVar = variables.find(v => v.id === variableIds[0]);
+      const firstVar = variables.find((v) => v.id === variableIds[0]);
       const setType = firstVar?.type;
 
       variableSets.push({
@@ -167,25 +170,24 @@ export function processMetadata(data: ParsedSavData): ProcessedSavResult {
         variableIds,
         structure,
         type: setType,
-        description: mrSet.type === 'D'
-          ? `Multiple response set (counted value: ${mrSet.countedValue})`
-          : 'Grid/category set'
+        description:
+          mrSet.type === 'D' ? `Multiple response set (counted value: ${mrSet.countedValue})` : 'Grid/category set',
       });
     }
   }
 
   // Step 4: Heuristic Grid Detection
-  const ungroupedVariables = variables.filter(v => !variablesInMRSets.has(v.id));
+  const ungroupedVariables = variables.filter((v) => !variablesInMRSets.has(v.id));
 
   const byValueLabelHash = new Map<string, VariableWithIndex[]>();
 
   for (const v of ungroupedVariables) {
-    const parsedVar = metadata.variables.find(pv => pv.name === v.id);
+    const parsedVar = metadata.variables.find((pv) => pv.name === v.id);
 
     let hash = '';
     if (v.valueLabels && v.valueLabels.length > 0) {
       const sortedLabels = [...v.valueLabels].sort((a, b) => a.value - b.value);
-      hash = sortedLabels.map(vl => `${vl.value}:${vl.label}`).join('|');
+      hash = sortedLabels.map((vl) => `${vl.value}:${vl.label}`).join('|');
     } else if (v.type === 'numeric') {
       hash = '__numeric_unlabeled__';
     }
@@ -197,7 +199,7 @@ export function processMetadata(data: ParsedSavData): ProcessedSavResult {
       byValueLabelHash.get(hash)!.push({
         variable: v,
         index: parsedVar?.index ?? -1,
-        valueLabelSetName: hash
+        valueLabelSetName: hash,
       });
     }
   }
@@ -221,7 +223,7 @@ export function processMetadata(data: ParsedSavData): ProcessedSavResult {
       let structure: 'grid' | 'multiple' = 'grid';
       let countedValue: number | undefined;
 
-      const variableIds = gridCandidates.map(v => v.id);
+      const variableIds = gridCandidates.map((v) => v.id);
 
       const prefixMatch = firstVar.name.match(/^([a-zA-Z_]+?)\d+$/);
       let prefix = prefixMatch?.[1] || firstVar.name.replace(/[0-9]+$/, '');
@@ -244,7 +246,7 @@ export function processMetadata(data: ParsedSavData): ProcessedSavResult {
           structure,
           type: firstVar.type,
           countedValue,
-          description: `Detected multi-response with shared Yes/No scale`
+          description: `Detected multi-response with shared Yes/No scale`,
         });
       } else {
         let isNumericGrid = hash === '__numeric_unlabeled__';
@@ -253,7 +255,7 @@ export function processMetadata(data: ParsedSavData): ProcessedSavResult {
 
         if (isNumericGrid) {
           const firstVarId = gridCandidates[0].id;
-          const parsedVarIndex = metadata.variables.findIndex(pv => pv.name === firstVarId);
+          const parsedVarIndex = metadata.variables.findIndex((pv) => pv.name === firstVarId);
 
           if (parsedVarIndex !== -1) {
             const check = detectImplicitScale(rows, parsedVarIndex, rows.length);
@@ -263,15 +265,15 @@ export function processMetadata(data: ParsedSavData): ProcessedSavResult {
               detectedType = 'ordered';
 
               syntheticLabels = {};
-              check.values.forEach(val => {
+              check.values.forEach((val) => {
                 syntheticLabels![val] = String(val);
               });
 
-              gridCandidates.forEach(v => {
+              gridCandidates.forEach((v) => {
                 v.type = 'ordered';
                 v.orderedStyle = 'rating';
                 v.orderedScoring = 'allow_numeric_stats';
-                v.valueLabels = check.values.map(val => ({ value: val, label: String(val) }));
+                v.valueLabels = check.values.map((val) => ({ value: val, label: String(val) }));
               });
             }
           }
@@ -279,9 +281,7 @@ export function processMetadata(data: ParsedSavData): ProcessedSavResult {
 
         const setId = `heuristic_${structure}_${variableIds.join('_')}`;
 
-        const description = isNumericGrid
-          ? `Detected numeric grid (metric set)`
-          : `Detected grid with shared scale`;
+        const description = isNumericGrid ? `Detected numeric grid (metric set)` : `Detected grid with shared scale`;
 
         variableSets.push({
           id: setId,
@@ -292,20 +292,30 @@ export function processMetadata(data: ParsedSavData): ProcessedSavResult {
           description,
           gridMetadata: {
             sharedScale: {
-              valueLabels: syntheticLabels || (isNumericGrid ? {} : firstVar.valueLabels.reduce((acc, vl) => {
-                acc[vl.value] = vl.label;
-                return acc;
-              }, {} as Record<number, string>)),
+              valueLabels:
+                syntheticLabels ||
+                (isNumericGrid
+                  ? {}
+                  : firstVar.valueLabels.reduce(
+                      (acc, vl) => {
+                        acc[vl.value] = vl.label;
+                        return acc;
+                      },
+                      {} as Record<number, string>,
+                    )),
               type: isNumericGrid ? 'numeric' : detectedType,
               orderedStyle: isNumericGrid ? undefined : firstVar.orderedStyle,
               orderedScoring: isNumericGrid ? undefined : firstVar.orderedScoring,
             },
-            itemLabels: gridCandidates.map(v => v.label || v.name),
-            itemMapping: gridCandidates.reduce((acc, v, idx) => {
-              acc[v.id] = idx;
-              return acc;
-            }, {} as Record<string, number>)
-          }
+            itemLabels: gridCandidates.map((v) => v.label || v.name),
+            itemMapping: gridCandidates.reduce(
+              (acc, v, idx) => {
+                acc[v.id] = idx;
+                return acc;
+              },
+              {} as Record<string, number>,
+            ),
+          },
         });
       }
     }
@@ -319,7 +329,7 @@ export function processMetadata(data: ParsedSavData): ProcessedSavResult {
         name: v.label || v.name,
         variableIds: [v.id],
         structure: 'single',
-        type: v.type
+        type: v.type,
       });
     }
   }
@@ -343,7 +353,7 @@ export function processMetadata(data: ParsedSavData): ProcessedSavResult {
         structure: 'single',
         type: sv.type,
         derived: true,
-        description: `Synthetic variable for grid unpivoting`
+        description: `Synthetic variable for grid unpivoting`,
       } as any);
     }
   }
@@ -367,7 +377,7 @@ export function processMetadata(data: ParsedSavData): ProcessedSavResult {
       if (!Number.isFinite(b.orderIndex)) return -1;
       return a.orderIndex - b.orderIndex;
     })
-    .map(entry => entry.vs);
+    .map((entry) => entry.vs);
 
   return { variables, variableSets: orderedVariableSets };
 }

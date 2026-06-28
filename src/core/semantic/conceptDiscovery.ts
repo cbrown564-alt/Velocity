@@ -54,7 +54,7 @@ function valueLabelSimilarity(v1: Variable, v2: Variable): number {
 export function discoverConcepts(
   annotatedVars: AnnotatedVariable[],
   store: ConceptStore,
-  options: { mergeThreshold?: number } = {}
+  options: { mergeThreshold?: number } = {},
 ): Concept[] {
   const mergeThreshold = options.mergeThreshold ?? 0.8;
 
@@ -87,19 +87,17 @@ export function discoverConcepts(
       const repVar = cluster[0].variable;
       const pointCount = scalePointCount(repVar);
       const scaleLabel = pointCount > 0 ? ` (${pointCount}pt)` : '';
-      const conceptName = conceptFamily
-        ? `${conceptFamily}${scaleLabel}`
-        : `${topic}${scaleLabel}`;
+      const conceptName = conceptFamily ? `${conceptFamily}${scaleLabel}` : `${topic}${scaleLabel}`;
 
       // Check if a concept with this name already exists
       const existing = store.findByName(conceptName)[0];
-      const concept = existing ?? store.createConcept({
-        name: conceptName,
-        aliases: conceptFamily && conceptFamily !== conceptName ? [conceptFamily] : [],
-        ...(pointCount > 0
-          ? { canonicalScale: { points: pointCount, direction: 'ascending' as const } }
-          : {}),
-      });
+      const concept =
+        existing ??
+        store.createConcept({
+          name: conceptName,
+          aliases: conceptFamily && conceptFamily !== conceptName ? [conceptFamily] : [],
+          ...(pointCount > 0 ? { canonicalScale: { points: pointCount, direction: 'ascending' as const } } : {}),
+        });
 
       // Link all variables in the cluster
       for (const av of cluster) {
@@ -123,16 +121,11 @@ export function discoverConcepts(
  * Sub-cluster a group of annotated variables by scale (point count + label similarity).
  * Returns an array of clusters.
  */
-function subClusterByScale(
-  members: AnnotatedVariable[],
-  mergeThreshold: number
-): AnnotatedVariable[][] {
+function subClusterByScale(members: AnnotatedVariable[], mergeThreshold: number): AnnotatedVariable[][] {
   if (members.length === 0) return [];
 
   // Sort by scale point count for stability
-  const sorted = [...members].sort(
-    (a, b) => scalePointCount(a.variable) - scalePointCount(b.variable)
-  );
+  const sorted = [...members].sort((a, b) => scalePointCount(a.variable) - scalePointCount(b.variable));
 
   const clusters: AnnotatedVariable[][] = [];
 
@@ -141,13 +134,10 @@ function subClusterByScale(
     for (const cluster of clusters) {
       const rep = cluster[0];
       const samePts = scalePointCount(rep.variable) === scalePointCount(member.variable);
-      const sim = samePts
-        ? valueLabelSimilarity(rep.variable, member.variable)
-        : 0;
+      const sim = samePts ? valueLabelSimilarity(rep.variable, member.variable) : 0;
 
       // Merge if same point count and high label similarity, or both have 0 value labels
-      const bothEmpty =
-        rep.variable.valueLabels.length === 0 && member.variable.valueLabels.length === 0;
+      const bothEmpty = rep.variable.valueLabels.length === 0 && member.variable.valueLabels.length === 0;
       if (samePts && (sim >= mergeThreshold || bothEmpty)) {
         cluster.push(member);
         placed = true;
@@ -171,7 +161,7 @@ export function buildConceptsFromAnnotations(
   variableSets: VariableSet[],
   annotations: Map<string, SemanticAnnotation>,
   datasetId: string,
-  store: ConceptStore
+  store: ConceptStore,
 ): Concept[] {
   const annotatedVars: AnnotatedVariable[] = [];
 

@@ -6,7 +6,7 @@ class RecordingAdapter implements DatabaseAdapter {
   public readonly queries: string[] = [];
   private cursor = 0;
 
-  constructor(private readonly responses: QueryResult[]) { }
+  constructor(private readonly responses: QueryResult[]) {}
 
   async query(sql: string): Promise<QueryResult> {
     this.queries.push(sql);
@@ -15,10 +15,12 @@ class RecordingAdapter implements DatabaseAdapter {
     return response ?? { columns: [], rows: [], rowCount: 0 };
   }
 
-  async execute(_sql: string): Promise<void> { }
-  async insertArrowBuffer(_tableName: string, _buffer: Uint8Array): Promise<void> { }
-  async getTableNames(): Promise<string[]> { return ['main']; }
-  async close(): Promise<void> { }
+  async execute(_sql: string): Promise<void> {}
+  async insertArrowBuffer(_tableName: string, _buffer: Uint8Array): Promise<void> {}
+  async getTableNames(): Promise<string[]> {
+    return ['main'];
+  }
+  async close(): Promise<void> {}
 }
 
 const resultWithRows = (rows: Record<string, unknown>[]): QueryResult => ({
@@ -36,14 +38,10 @@ describe('variableStatsRunner missing exclusions', () => {
       resultWithRows([{ value: 999, cnt: 25 }]), // user-missing frequency for mapping
     ]);
 
-    await getVariableStats(
-      adapter,
-      'q1',
-      'categorical',
-      undefined,
-      10,
-      { discrete: [999], range: { low: 98, high: 99 } }
-    );
+    await getVariableStats(adapter, 'q1', 'categorical', undefined, 10, {
+      discrete: [999],
+      range: { low: 98, high: 99 },
+    });
 
     const frequencySql = adapter.queries[2];
     expect(frequencySql).toContain('WHERE NOT ("q1" IS NULL OR "q1" IN (999) OR ("q1" >= 98 AND "q1" <= 99))');
@@ -59,17 +57,13 @@ describe('variableStatsRunner missing exclusions', () => {
       resultWithRows([{ min_val: 1, max_val: 5, mean_val: 3, median_val: 3, stddev_val: 1, q1_val: 2, q3_val: 4 }]), // numeric stats
       resultWithRows([{ whisker_min: 1, whisker_max: 5 }]), // fence
       resultWithRows([]), // outliers
-      resultWithRows([{ bucket: 1, cnt: 10 }, { bucket: 2, cnt: 10 }]), // histogram
+      resultWithRows([
+        { bucket: 1, cnt: 10 },
+        { bucket: 2, cnt: 10 },
+      ]), // histogram
     ]);
 
-    await getVariableStats(
-      adapter,
-      'q_age',
-      'numeric',
-      undefined,
-      2,
-      { discrete: [999] }
-    );
+    await getVariableStats(adapter, 'q_age', 'numeric', undefined, 2, { discrete: [999] });
 
     const numericSql = adapter.queries[4];
     const histogramSql = adapter.queries[7];

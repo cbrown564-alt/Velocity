@@ -72,7 +72,7 @@ export const WorkspaceProjectCard: React.FC<{
 
       <div className={styles.projectMeta}>
         <span>{datasets.reduce((sum, d) => sum + d.rowCount, 0).toLocaleString()} total rows</span>
-        <span>{formatRelativeTime(Math.max(...datasets.map(d => d.lastOpenedAt), 0))}</span>
+        <span>{formatRelativeTime(Math.max(...datasets.map((d) => d.lastOpenedAt), 0))}</span>
       </div>
     </motion.div>
   );

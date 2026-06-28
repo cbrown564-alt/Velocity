@@ -1,6 +1,6 @@
 /**
  * Velocity Type Definitions
- * 
+ *
  * Core data model types from arch_02_data_model.md.
  * These are re-exported from store.ts for consistency.
  * Legacy types are provided for backward compatibility with existing components.
@@ -10,18 +10,16 @@
 // Core Data Model (from arch_02_data_model.md)
 // ============================================================================
 
-export type { CanonicalVariableType, LegacyVariableType, OrderedScoring, OrderedStyle, VariableType } from './variableType';
+export type {
+  CanonicalVariableType,
+  LegacyVariableType,
+  OrderedScoring,
+  OrderedStyle,
+  VariableType,
+} from './variableType';
 export { allowsNumericStats, isCategoricalType, isOrderedType, normalizeVariableType } from './variableType';
 export type { RecodeMode, RecodeRule, RecodeConfig } from './recode';
-export type {
-  ValueLabel,
-  MissingValueDef,
-  Variable,
-  Dataset,
-  VariableSet,
-  Folder,
-  DataTransform,
-} from './dataset';
+export type { ValueLabel, MissingValueDef, Variable, Dataset, VariableSet, Folder, DataTransform } from './dataset';
 export type {
   AnalysisSettings,
   AnalysisEngine,

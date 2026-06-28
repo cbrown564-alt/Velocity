@@ -34,14 +34,70 @@ function makeServer() {
 
 function makeEngine(overrides: Record<string, unknown> = {}) {
   const base = {
-    loadFile: vi.fn().mockResolvedValue({ data: { rowCount: 100 }, metadata: {}, operation: 'loadFile', inputs: {}, durationMs: 1, warnings: [] }),
-    loadFileMetadata: vi.fn().mockResolvedValue({ data: { rowCount: 100, metadataOnly: true }, metadata: {}, operation: 'loadFileMetadata', inputs: {}, durationMs: 1, warnings: [] }),
-    loadFileFull: vi.fn().mockResolvedValue({ data: { rowCount: 100, metadataOnly: false }, metadata: {}, operation: 'loadFileFull', inputs: {}, durationMs: 1, warnings: [] }),
-    loadWorkspaceDataset: vi.fn().mockResolvedValue({ data: { id: 'ws-1', tableName: 'ws_ws_1' }, metadata: {}, operation: 'loadWorkspaceDataset', inputs: {}, durationMs: 1, warnings: [] }),
-    listWorkspaceDatasets: vi.fn().mockReturnValue({ data: [], operation: 'listWorkspaceDatasets', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
-    setActiveWorkspaceDataset: vi.fn().mockReturnValue({ data: { id: 'ws-1', isActive: true }, operation: 'setActiveWorkspaceDataset', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
-    loadWorkspaceDatasetFull: vi.fn().mockResolvedValue({ data: { id: 'ws-1', metadataOnly: false }, metadata: {}, operation: 'loadWorkspaceDatasetFull', inputs: {}, durationMs: 1, warnings: [] }),
-    proposeWorkspaceMappings: vi.fn().mockResolvedValue({ data: [], operation: 'proposeWorkspaceMappings', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
+    loadFile: vi.fn().mockResolvedValue({
+      data: { rowCount: 100 },
+      metadata: {},
+      operation: 'loadFile',
+      inputs: {},
+      durationMs: 1,
+      warnings: [],
+    }),
+    loadFileMetadata: vi.fn().mockResolvedValue({
+      data: { rowCount: 100, metadataOnly: true },
+      metadata: {},
+      operation: 'loadFileMetadata',
+      inputs: {},
+      durationMs: 1,
+      warnings: [],
+    }),
+    loadFileFull: vi.fn().mockResolvedValue({
+      data: { rowCount: 100, metadataOnly: false },
+      metadata: {},
+      operation: 'loadFileFull',
+      inputs: {},
+      durationMs: 1,
+      warnings: [],
+    }),
+    loadWorkspaceDataset: vi.fn().mockResolvedValue({
+      data: { id: 'ws-1', tableName: 'ws_ws_1' },
+      metadata: {},
+      operation: 'loadWorkspaceDataset',
+      inputs: {},
+      durationMs: 1,
+      warnings: [],
+    }),
+    listWorkspaceDatasets: vi.fn().mockReturnValue({
+      data: [],
+      operation: 'listWorkspaceDatasets',
+      inputs: {},
+      durationMs: 1,
+      warnings: [],
+      metadata: {},
+    }),
+    setActiveWorkspaceDataset: vi.fn().mockReturnValue({
+      data: { id: 'ws-1', isActive: true },
+      operation: 'setActiveWorkspaceDataset',
+      inputs: {},
+      durationMs: 1,
+      warnings: [],
+      metadata: {},
+    }),
+    loadWorkspaceDatasetFull: vi.fn().mockResolvedValue({
+      data: { id: 'ws-1', metadataOnly: false },
+      metadata: {},
+      operation: 'loadWorkspaceDatasetFull',
+      inputs: {},
+      durationMs: 1,
+      warnings: [],
+    }),
+    proposeWorkspaceMappings: vi.fn().mockResolvedValue({
+      data: [],
+      operation: 'proposeWorkspaceMappings',
+      inputs: {},
+      durationMs: 1,
+      warnings: [],
+      metadata: {},
+    }),
     harmonizeWorkspaceDatasets: vi.fn().mockResolvedValue({
       data: { tableName: 'harm_out', rowCount: 10, sql: 'SELECT 1' },
       operation: 'harmonizeWorkspaceDatasets',
@@ -73,11 +129,41 @@ function makeEngine(overrides: Record<string, unknown> = {}) {
       warnings: [],
       metadata: {},
     }),
-    describeVariable: vi.fn().mockResolvedValue({ data: {}, operation: 'describeVariable', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
-    listAnalyses: vi.fn().mockReturnValue({ data: [{ id: 'crosstab', label: 'Crosstab', configSchema: {} }], operation: 'listAnalyses', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
-    runAnalysis: vi.fn().mockResolvedValue({ data: { rows: [] }, operation: 'runAnalysis', inputs: {}, durationMs: 5, warnings: [], metadata: { rowCount: 100, isWeighted: false } }),
-    query: vi.fn().mockResolvedValue({ data: { rows: [] }, operation: 'query', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
-    recode: vi.fn().mockResolvedValue({ data: {}, operation: 'recode', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
+    describeVariable: vi.fn().mockResolvedValue({
+      data: {},
+      operation: 'describeVariable',
+      inputs: {},
+      durationMs: 1,
+      warnings: [],
+      metadata: {},
+    }),
+    listAnalyses: vi.fn().mockReturnValue({
+      data: [{ id: 'crosstab', label: 'Crosstab', configSchema: {} }],
+      operation: 'listAnalyses',
+      inputs: {},
+      durationMs: 1,
+      warnings: [],
+      metadata: {},
+    }),
+    runAnalysis: vi.fn().mockResolvedValue({
+      data: { rows: [] },
+      operation: 'runAnalysis',
+      inputs: {},
+      durationMs: 5,
+      warnings: [],
+      metadata: { rowCount: 100, isWeighted: false },
+    }),
+    query: vi.fn().mockResolvedValue({
+      data: { rows: [] },
+      operation: 'query',
+      inputs: {},
+      durationMs: 1,
+      warnings: [],
+      metadata: {},
+    }),
+    recode: vi
+      .fn()
+      .mockResolvedValue({ data: {}, operation: 'recode', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
     addFilter: vi.fn().mockReturnValue({
       data: { filter: { id: 'f1', variableId: 'GENDER', operator: 'eq', value: '1' } },
       operation: 'addFilter',
@@ -102,9 +188,30 @@ function makeEngine(overrides: Record<string, unknown> = {}) {
       warnings: [],
       metadata: { datasetName: 'test.sav', rowCount: 100, filtersApplied: 0, isWeighted: true, engineVersion: 'test' },
     }),
-    draftDeckPlan: vi.fn().mockReturnValue({ data: { approvalRequired: true, actions: [], deckSpec: { title: 'Draft', sections: [] } }, operation: 'draftDeckPlan', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
-    buildDeck: vi.fn().mockResolvedValue({ data: { slides: [], errors: [], spec: {}, buildDurationMs: 1 }, operation: 'buildDeck', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
-    exportDeck: vi.fn().mockResolvedValue({ data: new Uint8Array([1, 2, 3]), operation: 'exportDeck', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
+    draftDeckPlan: vi.fn().mockReturnValue({
+      data: { approvalRequired: true, actions: [], deckSpec: { title: 'Draft', sections: [] } },
+      operation: 'draftDeckPlan',
+      inputs: {},
+      durationMs: 1,
+      warnings: [],
+      metadata: {},
+    }),
+    buildDeck: vi.fn().mockResolvedValue({
+      data: { slides: [], errors: [], spec: {}, buildDurationMs: 1 },
+      operation: 'buildDeck',
+      inputs: {},
+      durationMs: 1,
+      warnings: [],
+      metadata: {},
+    }),
+    exportDeck: vi.fn().mockResolvedValue({
+      data: new Uint8Array([1, 2, 3]),
+      operation: 'exportDeck',
+      inputs: {},
+      durationMs: 1,
+      warnings: [],
+      metadata: {},
+    }),
     commitDeck: vi.fn().mockReturnValue({
       data: { committedSlides: 1, committedSections: 1 },
       operation: 'commitDeck',
@@ -113,16 +220,76 @@ function makeEngine(overrides: Record<string, unknown> = {}) {
       warnings: [],
       metadata: { datasetName: 'test.sav', rowCount: 100, filtersApplied: 0, isWeighted: false, engineVersion: 'test' },
     }),
-    recommendChart: vi.fn().mockResolvedValue({ data: { default: 'horizontal-bar', alternatives: [], reason: 'test' }, operation: 'recommendChart', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
-    proposeMappings: vi.fn().mockResolvedValue({ data: [], operation: 'proposeMappings', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
-    buildHarmonizedTable: vi.fn().mockResolvedValue({ data: { sql: 'SELECT 1' }, operation: 'buildHarmonizedTable', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
-    exportSession: vi.fn().mockResolvedValue({ data: { formatVersion: 2, dataset: { originalFilename: 'test.sav' } }, operation: 'exportSession', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
-    importSession: vi.fn().mockResolvedValue({ data: {}, operation: 'importSession', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
-    getActiveFilters: vi.fn().mockReturnValue({ data: [], operation: 'getActiveFilters', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
-    listConcepts: vi.fn().mockReturnValue({ data: [], operation: 'listConcepts', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
-    createConcept: vi.fn().mockReturnValue({ data: { id: 'concept-1', name: 'Test', aliases: [], variableRefs: [] }, operation: 'createConcept', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
-    listVariablesByCategory: vi.fn().mockReturnValue({ data: [], operation: 'listVariablesByCategory', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
-    suggestBreaks: vi.fn().mockReturnValue({ data: [], operation: 'suggestBreaks', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
+    recommendChart: vi.fn().mockResolvedValue({
+      data: { default: 'horizontal-bar', alternatives: [], reason: 'test' },
+      operation: 'recommendChart',
+      inputs: {},
+      durationMs: 1,
+      warnings: [],
+      metadata: {},
+    }),
+    proposeMappings: vi.fn().mockResolvedValue({
+      data: [],
+      operation: 'proposeMappings',
+      inputs: {},
+      durationMs: 1,
+      warnings: [],
+      metadata: {},
+    }),
+    buildHarmonizedTable: vi.fn().mockResolvedValue({
+      data: { sql: 'SELECT 1' },
+      operation: 'buildHarmonizedTable',
+      inputs: {},
+      durationMs: 1,
+      warnings: [],
+      metadata: {},
+    }),
+    exportSession: vi.fn().mockResolvedValue({
+      data: { formatVersion: 2, dataset: { originalFilename: 'test.sav' } },
+      operation: 'exportSession',
+      inputs: {},
+      durationMs: 1,
+      warnings: [],
+      metadata: {},
+    }),
+    importSession: vi.fn().mockResolvedValue({
+      data: {},
+      operation: 'importSession',
+      inputs: {},
+      durationMs: 1,
+      warnings: [],
+      metadata: {},
+    }),
+    getActiveFilters: vi.fn().mockReturnValue({
+      data: [],
+      operation: 'getActiveFilters',
+      inputs: {},
+      durationMs: 1,
+      warnings: [],
+      metadata: {},
+    }),
+    listConcepts: vi
+      .fn()
+      .mockReturnValue({ data: [], operation: 'listConcepts', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
+    createConcept: vi.fn().mockReturnValue({
+      data: { id: 'concept-1', name: 'Test', aliases: [], variableRefs: [] },
+      operation: 'createConcept',
+      inputs: {},
+      durationMs: 1,
+      warnings: [],
+      metadata: {},
+    }),
+    listVariablesByCategory: vi.fn().mockReturnValue({
+      data: [],
+      operation: 'listVariablesByCategory',
+      inputs: {},
+      durationMs: 1,
+      warnings: [],
+      metadata: {},
+    }),
+    suggestBreaks: vi
+      .fn()
+      .mockReturnValue({ data: [], operation: 'suggestBreaks', inputs: {}, durationMs: 1, warnings: [], metadata: {} }),
     ...overrides,
   };
   return base;
@@ -165,7 +332,9 @@ describe('velocity_load', () => {
 
   it('returns content text on success', async () => {
     const engine = makeEngine();
-    const result = await callTool(engine, 'velocity_load', { path: '/data/test.sav' }) as { content: { type: string; text: string }[] };
+    const result = (await callTool(engine, 'velocity_load', { path: '/data/test.sav' })) as {
+      content: { type: string; text: string }[];
+    };
     expect(result.content[0].type).toBe('text');
     expect(result.content[0].text).toContain('rowCount');
   });
@@ -174,7 +343,10 @@ describe('velocity_load', () => {
     const engine = makeEngine({
       loadFile: vi.fn().mockRejectedValue(new VelocityError('FILE_LOAD_FAILED', 'Not found')),
     });
-    const result = await callTool(engine, 'velocity_load', { path: '/bad.sav' }) as { isError?: boolean; content: { text: string }[] };
+    const result = (await callTool(engine, 'velocity_load', { path: '/bad.sav' })) as {
+      isError?: boolean;
+      content: { text: string }[];
+    };
     expect(result.isError).toBe(true);
     expect(JSON.parse(result.content[0].text).error).toBe('FILE_LOAD_FAILED');
   });
@@ -227,7 +399,7 @@ describe('velocity_workspace_harmonize', () => {
         sourceDatasetId: 'ws-a',
         targetDatasetId: 'ws-b',
         outputTableName: 'harm_eval',
-      })
+      }),
     );
   });
 });
@@ -235,11 +407,12 @@ describe('velocity_workspace_harmonize', () => {
 describe('velocity_load — path traversal', () => {
   it('returns isError when engine throws PATH_TRAVERSAL_DENIED', async () => {
     const engine = makeEngine({
-      loadFile: vi.fn().mockRejectedValue(
-        new VelocityError('PATH_TRAVERSAL_DENIED', 'Path traversal not allowed')
-      ),
+      loadFile: vi.fn().mockRejectedValue(new VelocityError('PATH_TRAVERSAL_DENIED', 'Path traversal not allowed')),
     });
-    const result = await callTool(engine, 'velocity_load', { path: '../../etc/passwd' }) as { isError?: boolean; content: { text: string }[] };
+    const result = (await callTool(engine, 'velocity_load', { path: '../../etc/passwd' })) as {
+      isError?: boolean;
+      content: { text: string }[];
+    };
     expect(result.isError).toBe(true);
     expect(JSON.parse(result.content[0].text).error).toBe('PATH_TRAVERSAL_DENIED');
   });
@@ -248,7 +421,7 @@ describe('velocity_load — path traversal', () => {
 describe('velocity_describe', () => {
   it('returns dataset description without calling runAnalysis', async () => {
     const engine = makeEngine();
-    const result = await callTool(engine, 'velocity_describe') as { content: { text: string }[] };
+    const result = (await callTool(engine, 'velocity_describe')) as { content: { text: string }[] };
     expect(engine.describe).toHaveBeenCalled();
     expect(engine.runAnalysis).not.toHaveBeenCalled();
     const parsed = JSON.parse(result.content[0].text);
@@ -261,10 +434,13 @@ describe('velocity_crosstab', () => {
   it('calls engine.runAnalysis with "crosstab" and passes rowVars', async () => {
     const engine = makeEngine();
     await callTool(engine, 'velocity_crosstab', { rowVars: ['Q1'], colVar: 'GENDER' });
-    expect(engine.runAnalysis).toHaveBeenCalledWith('crosstab', expect.objectContaining({
-      rowVars: ['Q1'],
-      colVar: 'GENDER',
-    }));
+    expect(engine.runAnalysis).toHaveBeenCalledWith(
+      'crosstab',
+      expect.objectContaining({
+        rowVars: ['Q1'],
+        colVar: 'GENDER',
+      }),
+    );
   });
 
   it('passes format to engine.runAnalysis when provided', async () => {
@@ -274,9 +450,12 @@ describe('velocity_crosstab', () => {
       colVar: 'BRAND',
       format: 'matrix',
     });
-    expect(engine.runAnalysis).toHaveBeenCalledWith('crosstab', expect.objectContaining({
-      format: 'matrix',
-    }));
+    expect(engine.runAnalysis).toHaveBeenCalledWith(
+      'crosstab',
+      expect.objectContaining({
+        format: 'matrix',
+      }),
+    );
   });
 
   it('returns matrix-shaped data when format is matrix', async () => {
@@ -304,11 +483,11 @@ describe('velocity_crosstab', () => {
       }),
     });
 
-    const result = await callTool(engine, 'velocity_crosstab', {
+    const result = (await callTool(engine, 'velocity_crosstab', {
       rowVars: ['GENDER'],
       colVar: 'BRAND',
       format: 'matrix',
-    }) as { content: { text: string }[] };
+    })) as { content: { text: string }[] };
 
     const parsed = JSON.parse(result.content[0].text);
     expect(parsed.data.format).toBe('matrix');
@@ -335,9 +514,9 @@ describe('velocity_crosstab', () => {
       }),
     });
 
-    const result = await callTool(engine, 'velocity_crosstab', {
+    const result = (await callTool(engine, 'velocity_crosstab', {
       rowVars: ['REGION'],
-    }) as { content: { text: string }[] };
+    })) as { content: { text: string }[] };
 
     const parsed = JSON.parse(result.content[0].text);
     expect(parsed.warnings).toHaveLength(1);
@@ -366,12 +545,12 @@ describe('velocity_crosstab', () => {
       }),
     });
 
-    const result = await callTool(engine, 'velocity_crosstab', {
+    const result = (await callTool(engine, 'velocity_crosstab', {
       rowVars: ['GENDER'],
       colVar: 'BRAND',
       weightVar: 'WEIGHT',
       format: 'matrix',
-    }) as { content: { text: string }[] };
+    })) as { content: { text: string }[] };
 
     const parsed = JSON.parse(result.content[0].text);
     expect(parsed.metadata.isWeighted).toBe(true);
@@ -385,9 +564,12 @@ describe('velocity_stats', () => {
   it('calls engine.runAnalysis with "variableStats"', async () => {
     const engine = makeEngine();
     await callTool(engine, 'velocity_stats', { column: 'Q1' });
-    expect(engine.runAnalysis).toHaveBeenCalledWith('variableStats', expect.objectContaining({
-      column: 'Q1',
-    }));
+    expect(engine.runAnalysis).toHaveBeenCalledWith(
+      'variableStats',
+      expect.objectContaining({
+        column: 'Q1',
+      }),
+    );
   });
 });
 
@@ -410,7 +592,7 @@ describe('velocity_filter', () => {
   it('returns a ResultEnvelope with the staged filter', async () => {
     const engine = makeEngine();
     const filter = { id: 'f1', variableId: 'GENDER', operator: 'eq', value: '1' };
-    const result = await callTool(engine, 'velocity_filter', { filter }) as { content: { text: string }[] };
+    const result = (await callTool(engine, 'velocity_filter', { filter })) as { content: { text: string }[] };
     const parsed = JSON.parse(result.content[0].text) as Record<string, unknown>;
 
     expectEnvelopeShape(parsed, 'addFilter');
@@ -427,7 +609,7 @@ describe('velocity_clear_filters', () => {
 
   it('returns a ResultEnvelope with the cleared count', async () => {
     const engine = makeEngine();
-    const result = await callTool(engine, 'velocity_clear_filters') as { content: { text: string }[] };
+    const result = (await callTool(engine, 'velocity_clear_filters')) as { content: { text: string }[] };
     const parsed = JSON.parse(result.content[0].text) as Record<string, unknown>;
 
     expectEnvelopeShape(parsed, 'clearFilters');
@@ -450,7 +632,9 @@ describe('velocity_set_weight', () => {
 
   it('returns a ResultEnvelope with the active weight variable', async () => {
     const engine = makeEngine();
-    const result = await callTool(engine, 'velocity_set_weight', { variableId: 'WEIGHT' }) as { content: { text: string }[] };
+    const result = (await callTool(engine, 'velocity_set_weight', { variableId: 'WEIGHT' })) as {
+      content: { text: string }[];
+    };
     const parsed = JSON.parse(result.content[0].text) as Record<string, unknown>;
 
     expectEnvelopeShape(parsed, 'setWeight');
@@ -469,9 +653,9 @@ describe('velocity_build_deck', () => {
 
   it('rejects malformed draft specs before dispatching to the engine', async () => {
     const engine = makeEngine();
-    const result = await callTool(engine, 'velocity_draft_deck_plan', {
+    const result = (await callTool(engine, 'velocity_draft_deck_plan', {
       spec: { title: 'Draft Deck' },
-    }) as { content: { text: string }[]; isError?: true };
+    })) as { content: { text: string }[]; isError?: true };
     const parsed = JSON.parse(result.content[0].text) as Record<string, unknown>;
 
     expect(result.isError).toBe(true);
@@ -491,9 +675,9 @@ describe('velocity_build_deck', () => {
 
   it('rejects malformed build specs before dispatching to the engine', async () => {
     const engine = makeEngine();
-    const result = await callTool(engine, 'velocity_build_deck', {
+    const result = (await callTool(engine, 'velocity_build_deck', {
       spec: { title: 'My Deck', sections: [{ title: 'Section without slides' }] },
-    }) as { content: { text: string }[]; isError?: true };
+    })) as { content: { text: string }[]; isError?: true };
     const parsed = JSON.parse(result.content[0].text) as Record<string, unknown>;
 
     expect(result.isError).toBe(true);
@@ -506,9 +690,9 @@ describe('velocity_build_deck', () => {
 
   it('returns a single content part for small decks', async () => {
     const engine = makeEngine();
-    const result = await callTool(engine, 'velocity_build_deck', {
+    const result = (await callTool(engine, 'velocity_build_deck', {
       spec: { title: 'T', sections: [] },
-    }) as { content: { text: string }[] };
+    })) as { content: { text: string }[] };
     expect(result.content).toHaveLength(1);
     const parsed = JSON.parse(result.content[0].text);
     expect(parsed.transport).toBeUndefined();
@@ -546,9 +730,9 @@ describe('velocity_build_deck', () => {
       }),
     });
 
-    const result = await callTool(engine, 'velocity_build_deck', {
+    const result = (await callTool(engine, 'velocity_build_deck', {
       spec: { title: 'Large', sections: [] },
-    }) as { content: { text: string }[] };
+    })) as { content: { text: string }[] };
 
     expect(result.content.length).toBeGreaterThan(1);
     const manifest = JSON.parse(result.content[0].text);
@@ -560,7 +744,9 @@ describe('velocity_build_deck', () => {
     const engine = makeEngine({
       buildDeck: vi.fn().mockRejectedValue(new VelocityError('DECK_BUILD_FAILED', 'Failed')),
     });
-    const result = await callTool(engine, 'velocity_build_deck', { spec: { title: 'T', sections: [] } }) as { isError?: boolean };
+    const result = (await callTool(engine, 'velocity_build_deck', { spec: { title: 'T', sections: [] } })) as {
+      isError?: boolean;
+    };
     expect(result.isError).toBe(true);
   });
 });
@@ -569,10 +755,10 @@ describe('velocity_export_deck', () => {
   it('returns base64-encoded bytes for pptx export', async () => {
     const engine = makeEngine();
     const deck = { spec: { title: 'T', sections: [] }, slides: [], errors: [], buildDurationMs: 0 };
-    const result = await callTool(engine, 'velocity_export_deck', {
+    const result = (await callTool(engine, 'velocity_export_deck', {
       deck,
       options: { format: 'pptx' },
-    }) as { content: { text: string }[] };
+    })) as { content: { text: string }[] };
 
     const parsed = JSON.parse(result.content[0].text);
     expect(parsed.data.format).toBe('pptx');
@@ -591,7 +777,7 @@ describe('velocity_commit_deck', () => {
       buildDurationMs: 0,
     };
 
-    const result = await callTool(engine, 'velocity_commit_deck', { deck }) as { content: { text: string }[] };
+    const result = (await callTool(engine, 'velocity_commit_deck', { deck })) as { content: { text: string }[] };
     const parsed = JSON.parse(result.content[0].text) as Record<string, unknown>;
 
     expect(engine.commitDeck).toHaveBeenCalledWith(deck);
@@ -606,7 +792,9 @@ describe('velocity_commit_deck', () => {
 describe('velocity_recommend_chart', () => {
   it('calls engine.recommendChart with var IDs and returns recommendation', async () => {
     const engine = makeEngine();
-    const result = await callTool(engine, 'velocity_recommend_chart', { rowVarIds: ['Q1'] }) as { content: { text: string }[] };
+    const result = (await callTool(engine, 'velocity_recommend_chart', { rowVarIds: ['Q1'] })) as {
+      content: { text: string }[];
+    };
     expect(engine.recommendChart).toHaveBeenCalledWith(['Q1'], null);
     const parsed = JSON.parse(result.content[0].text);
     expect(parsed.data).toHaveProperty('default');
@@ -628,7 +816,7 @@ describe('velocity_propose_mappings', () => {
 describe('velocity_export_session', () => {
   it('calls engine.exportSession and returns the session', async () => {
     const engine = makeEngine();
-    const result = await callTool(engine, 'velocity_export_session') as { content: { text: string }[] };
+    const result = (await callTool(engine, 'velocity_export_session')) as { content: { text: string }[] };
     expect(engine.exportSession).toHaveBeenCalled();
     const parsed = JSON.parse(result.content[0].text);
     expect(parsed.operation).toBe('exportSession');
@@ -640,7 +828,9 @@ describe('velocity_export_session', () => {
     const outputPath = join(tempDir, 'session-output');
     const engine = makeEngine();
 
-    const result = await callTool(engine, 'velocity_export_session', { outputPath }) as { content: { text: string }[] };
+    const result = (await callTool(engine, 'velocity_export_session', { outputPath })) as {
+      content: { text: string }[];
+    };
     const parsed = JSON.parse(result.content[0].text);
     const savedPath = `${outputPath}.velocity`;
     const written = JSON.parse(await readFile(savedPath, 'utf8'));
@@ -655,11 +845,20 @@ describe('velocity_list_variables_by_category', () => {
     const engine = makeEngine({
       listVariablesByCategory: vi.fn().mockReturnValue({
         data: [{ variable: { id: 'age' }, datasetId: 'ds1', relevance: 0.9, matchedOn: ['category'] }],
-        operation: 'listVariablesByCategory', inputs: {}, durationMs: 1, warnings: [], metadata: {},
+        operation: 'listVariablesByCategory',
+        inputs: {},
+        durationMs: 1,
+        warnings: [],
+        metadata: {},
       }),
     });
-    const result = await callTool(engine, 'velocity_list_variables_by_category', { category: 'demographic' }) as { content: { text: string }[] };
-    expect(engine.listVariablesByCategory).toHaveBeenCalledWith('demographic', { includeUnannotated: true, limit: undefined });
+    const result = (await callTool(engine, 'velocity_list_variables_by_category', { category: 'demographic' })) as {
+      content: { text: string }[];
+    };
+    expect(engine.listVariablesByCategory).toHaveBeenCalledWith('demographic', {
+      includeUnannotated: true,
+      limit: undefined,
+    });
     const parsed = JSON.parse(result.content[0].text);
     expect(parsed.data[0].variable.id).toBe('age');
   });
@@ -667,7 +866,12 @@ describe('velocity_list_variables_by_category', () => {
   it('passes limit when provided', async () => {
     const engine = makeEngine({
       listVariablesByCategory: vi.fn().mockReturnValue({
-        data: [], operation: 'listVariablesByCategory', inputs: {}, durationMs: 1, warnings: [], metadata: {},
+        data: [],
+        operation: 'listVariablesByCategory',
+        inputs: {},
+        durationMs: 1,
+        warnings: [],
+        metadata: {},
       }),
     });
     await callTool(engine, 'velocity_list_variables_by_category', { category: 'attitude', limit: 10 });
@@ -680,10 +884,16 @@ describe('velocity_suggest_breaks', () => {
     const engine = makeEngine({
       suggestBreaks: vi.fn().mockReturnValue({
         data: [{ variable: { id: 'gender' }, score: 0.85, rationale: 'demographic variable' }],
-        operation: 'suggestBreaks', inputs: {}, durationMs: 1, warnings: [], metadata: {},
+        operation: 'suggestBreaks',
+        inputs: {},
+        durationMs: 1,
+        warnings: [],
+        metadata: {},
       }),
     });
-    const result = await callTool(engine, 'velocity_suggest_breaks', { variableId: 'q5_sat' }) as { content: { text: string }[] };
+    const result = (await callTool(engine, 'velocity_suggest_breaks', { variableId: 'q5_sat' })) as {
+      content: { text: string }[];
+    };
     expect(engine.suggestBreaks).toHaveBeenCalledWith('q5_sat', { limit: undefined });
     const parsed = JSON.parse(result.content[0].text);
     expect(parsed.data[0].variable.id).toBe('gender');
@@ -692,7 +902,12 @@ describe('velocity_suggest_breaks', () => {
   it('passes limit when provided', async () => {
     const engine = makeEngine({
       suggestBreaks: vi.fn().mockReturnValue({
-        data: [], operation: 'suggestBreaks', inputs: {}, durationMs: 1, warnings: [], metadata: {},
+        data: [],
+        operation: 'suggestBreaks',
+        inputs: {},
+        durationMs: 1,
+        warnings: [],
+        metadata: {},
       }),
     });
     await callTool(engine, 'velocity_suggest_breaks', { variableId: 'q1', limit: 3 });
@@ -705,7 +920,10 @@ describe('velocity_suggest_breaks', () => {
         throw new VelocityError('INVALID_VARIABLE', 'Unknown variable: bad_id');
       }),
     });
-    const result = await callTool(engine, 'velocity_suggest_breaks', { variableId: 'bad_id' }) as { isError?: boolean; content: { text: string }[] };
+    const result = (await callTool(engine, 'velocity_suggest_breaks', { variableId: 'bad_id' })) as {
+      isError?: boolean;
+      content: { text: string }[];
+    };
     expect(result.isError).toBe(true);
     expect(JSON.parse(result.content[0].text).error).toBe('INVALID_VARIABLE');
   });
@@ -723,7 +941,7 @@ describe('velocity_suggest_breaks', () => {
         metadata: {},
       }),
     });
-    const result = await callTool(engine, 'velocity_suggest_breaks', { variableId: 'weight' }) as {
+    const result = (await callTool(engine, 'velocity_suggest_breaks', { variableId: 'weight' })) as {
       content: { text: string }[];
     };
     const parsed = JSON.parse(result.content[0].text);
@@ -734,7 +952,7 @@ describe('velocity_suggest_breaks', () => {
 describe('unknown tool', () => {
   it('returns isError for unrecognized tool names', async () => {
     const engine = makeEngine();
-    const result = await callTool(engine, 'velocity_nonexistent') as { isError?: boolean };
+    const result = (await callTool(engine, 'velocity_nonexistent')) as { isError?: boolean };
     expect(result.isError).toBe(true);
   });
 });

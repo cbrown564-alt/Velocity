@@ -28,7 +28,7 @@ export function hasSessionImportDiagnostics(diagnostics: SessionImportDiagnostic
 }
 
 export function listSessionImportDiagnostics(
-  diagnostics: SessionImportDiagnosticsSummary
+  diagnostics: SessionImportDiagnosticsSummary,
 ): SessionImportDiagnosticMessage[] {
   const messages: SessionImportDiagnosticMessage[] = [];
 

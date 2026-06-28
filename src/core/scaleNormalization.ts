@@ -32,13 +32,13 @@ export interface RowData {
 export function fillEndpointLabelGaps(
   variables: Variable[],
   rows: any[][],
-  findColumnIndex: (variableName: string) => number
+  findColumnIndex: (variableName: string) => number,
 ): void {
   for (let i = 0; i < variables.length; i++) {
     const v = variables[i];
 
     if (v.valueLabels.length === 2 && v.type !== 'text' && v.type !== 'date') {
-      const vals = v.valueLabels.map(vl => vl.value).sort((a, b) => a - b);
+      const vals = v.valueLabels.map((vl) => vl.value).sort((a, b) => a - b);
       const min = vals[0]!;
       const max = vals[1]!;
 
@@ -59,7 +59,7 @@ export function fillEndpointLabelGaps(
             const newLabels = [...v.valueLabels];
 
             for (const val of sortedUnique) {
-              if (!newLabels.some(l => l.value === val)) {
+              if (!newLabels.some((l) => l.value === val)) {
                 newLabels.push({ value: val, label: val.toString() });
               }
             }

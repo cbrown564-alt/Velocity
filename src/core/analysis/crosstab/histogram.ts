@@ -17,11 +17,10 @@ import type { CrosstabHistogramBinSqlRow, CrosstabSqlRow } from './types';
 export async function attachHistograms(
   adapter: DatabaseAdapter,
   options: CrosstabQueryOptions & { includeDistributions?: boolean },
-  rows: CrosstabSqlRow[]
+  rows: CrosstabSqlRow[],
 ): Promise<void> {
   const shouldComputeHistogram =
-    (options.measureVar || (options.gridColumns && options.gridAggregate)) &&
-    options.includeDistributions;
+    (options.measureVar || (options.gridColumns && options.gridAggregate)) && options.includeDistributions;
 
   if (!shouldComputeHistogram) return;
 
@@ -34,13 +33,14 @@ export async function attachHistograms(
 
     // Scenario A: Numeric Grid
     if (options.gridColumns && options.gridAggregate) {
-      const validRows = rows.filter(r => r.min !== undefined && r.max !== undefined);
+      const validRows = rows.filter((r) => r.min !== undefined && r.max !== undefined);
 
       if (validRows.length > 0) {
-        minVal = Math.min(...validRows.map(r => r.min as number));
-        maxVal = Math.max(...validRows.map(r => r.max as number));
+        minVal = Math.min(...validRows.map((r) => r.min as number));
+        maxVal = Math.max(...validRows.map((r) => r.max as number));
       } else {
-        minVal = 1; maxVal = 5;
+        minVal = 1;
+        maxVal = 5;
       }
 
       const range = maxVal - minVal;
@@ -53,7 +53,7 @@ export async function attachHistograms(
         colVar: options.colVar,
         minVal,
         maxVal,
-        binCount
+        binCount,
       });
     }
     // Scenario B: Standard Variable
@@ -69,9 +69,7 @@ export async function attachHistograms(
       if (options.additionalWhere) {
         whereConditions.push(options.additionalWhere);
       }
-      const whereSql = whereConditions.length > 0
-        ? `WHERE ${whereConditions.join(' AND ')}`
-        : '';
+      const whereSql = whereConditions.length > 0 ? `WHERE ${whereConditions.join(' AND ')}` : '';
 
       const rangeSql = `SELECT MIN(${safeMeasure}) as minVal, MAX(${safeMeasure}) as maxVal FROM main ${whereSql}`;
       const rangeRes = await adapter.query(rangeSql);
@@ -90,7 +88,7 @@ export async function attachHistograms(
           rowGroups = [`'${escapeString(options.measureLabel)}' as rowKey_0`];
         } else {
           rowGroups = options.rowVars.map((r, i) => `"${escapeIdentifier(r)}" as rowKey_${i}`);
-          groupByCols = options.rowVars.map(r => `"${escapeIdentifier(r)}"`);
+          groupByCols = options.rowVars.map((r) => `"${escapeIdentifier(r)}"`);
         }
 
         let colGroup = '';
@@ -145,11 +143,11 @@ export async function attachHistograms(
         binMap.get(key)!.push({
           x0: minVal + (b - 1) * binWidth,
           x1: minVal + b * binWidth,
-          count: Number(row.cnt)
+          count: Number(row.cnt),
         });
       }
 
-      rows.forEach(r => {
+      rows.forEach((r) => {
         const keyParts = extractRowKeyStrings(r);
         keyParts.push(String(r.colKey));
         const key = keyParts.join('|||');

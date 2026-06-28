@@ -46,11 +46,7 @@ describe('extractTemplateMetadata', () => {
     const template = await extractTemplateMetadata({
       filename: 'client-template.pptx',
       arrayBuffer: new ArrayBuffer(0),
-      extractedTexts: [
-        '{{slide.title}}',
-        '{{slide.subtitle}} and {{analysis.label}}',
-        '{{slide.title}}',
-      ],
+      extractedTexts: ['{{slide.title}}', '{{slide.subtitle}} and {{analysis.label}}', '{{slide.title}}'],
     });
 
     expect(template.filename).toBe('client-template.pptx');
@@ -82,7 +78,7 @@ describe('mapTemplatePlaceholders', () => {
         diagnostics: [],
       },
       mapping,
-      recipes
+      recipes,
     );
 
     expect(applied.bindings).toEqual([
@@ -113,13 +109,11 @@ describe('mapTemplatePlaceholders', () => {
       {
         id: 'tmpl-1',
         filename: 'client-template.pptx',
-        placeholders: [
-          { id: 'placeholder-2', token: '{{slide.title}}', key: 'slide.title', slideIndex: 2 },
-        ],
+        placeholders: [{ id: 'placeholder-2', token: '{{slide.title}}', key: 'slide.title', slideIndex: 2 }],
         diagnostics: [],
       },
       mapping,
-      recipes
+      recipes,
     );
 
     expect(applied.bindings).toEqual([
@@ -145,7 +139,7 @@ describe('canApplyTemplate', () => {
         placeholders: [{ id: 'placeholder-1', token: '{{slide.title}}', key: 'slide.title' }],
         diagnostics: [],
       },
-      recipes
+      recipes,
     );
 
     expect(issues).toEqual([]);
@@ -171,14 +165,14 @@ describe('canApplyTemplate', () => {
           ...recipes[0],
           notes: undefined,
         },
-      ]
+      ],
     );
 
     expect(issues).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ code: 'placeholder_missing', severity: 'block' }),
         expect.objectContaining({ code: 'slot_unresolved', severity: 'block' }),
-      ])
+      ]),
     );
   });
 });
@@ -218,18 +212,12 @@ describe('buildTemplateApplicabilityReview', () => {
 describe('template binary wiring', () => {
   it('extracts placeholders and builds default mapping from PPTX binary', async () => {
     const zip = new JSZip();
-    zip.file(
-      'ppt/slides/slide1.xml',
-      '<p:sld><a:t>{{slide.title}}</a:t><a:t>{{slide.subtitle}}</a:t></p:sld>'
-    );
+    zip.file('ppt/slides/slide1.xml', '<p:sld><a:t>{{slide.title}}</a:t><a:t>{{slide.subtitle}}</a:t></p:sld>');
     const baseTemplate = await zip.generateAsync({ type: 'uint8array' });
     const template = await extractTemplateMetadataFromPptxBinary('client.pptx', baseTemplate);
     const mapping = buildDefaultTemplateMapping(template);
 
-    expect(template.placeholders.map((entry) => entry.token)).toEqual([
-      '{{slide.title}}',
-      '{{slide.subtitle}}',
-    ]);
+    expect(template.placeholders.map((entry) => entry.token)).toEqual(['{{slide.title}}', '{{slide.subtitle}}']);
     expect(mapping.bindings).toEqual([
       { placeholderId: 'placeholder-1', slot: 'slide.title' },
       { placeholderId: 'placeholder-2', slot: 'slide.subtitle' },
@@ -238,10 +226,7 @@ describe('template binary wiring', () => {
 
   it('applies resolved template bindings to PPTX slide XML', async () => {
     const zip = new JSZip();
-    zip.file(
-      'ppt/slides/slide1.xml',
-      '<p:sld><a:t>{{slide.title}}</a:t><a:t>{{slide.subtitle}}</a:t></p:sld>'
-    );
+    zip.file('ppt/slides/slide1.xml', '<p:sld><a:t>{{slide.title}}</a:t><a:t>{{slide.subtitle}}</a:t></p:sld>');
     const baseTemplate = await zip.generateAsync({ type: 'uint8array' });
     const output = await applyTemplateBindingsToPptx({
       baseTemplate,

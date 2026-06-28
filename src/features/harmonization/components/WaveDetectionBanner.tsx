@@ -49,7 +49,9 @@ export const WaveDetectionBanner: React.FC<WaveDetectionBannerProps> = ({
             <p className={styles.headline}>
               This looks like a new wave of <strong>{matchedDatasetName}</strong>
             </p>
-            <p className={styles.sub}>{reason} · {confidencePct}% confidence</p>
+            <p className={styles.sub}>
+              {reason} · {confidencePct}% confidence
+            </p>
           </div>
 
           <div className={styles.actions}>

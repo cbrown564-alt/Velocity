@@ -3,26 +3,22 @@
  */
 
 export type {
-    DataSlice,
-    PersistenceState,
-    PersistedDataInfo,
-    LoadProgressState,
-    WorkspaceDatasetOpenInput,
-    VariableType,
-    DataTransform,
-    Dataset,
-    Folder,
-    MissingValueDef,
-    ValueLabel,
-    Variable,
-    VariableSet,
+  DataSlice,
+  PersistenceState,
+  PersistedDataInfo,
+  LoadProgressState,
+  WorkspaceDatasetOpenInput,
+  VariableType,
+  DataTransform,
+  Dataset,
+  Folder,
+  MissingValueDef,
+  ValueLabel,
+  Variable,
+  VariableSet,
 } from './types';
 
-export {
-    normalizeVariable,
-    normalizeVariableSet,
-    buildVariableSetsFromVariables,
-} from './variableNormalization';
+export { normalizeVariable, normalizeVariableSet, buildVariableSetsFromVariables } from './variableNormalization';
 
 export { applyLoadProgressMessage } from './loadProgress';
 export type { DataSliceGet, DataSliceSet, DataSliceStore } from './sliceContext';

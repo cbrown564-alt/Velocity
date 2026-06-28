@@ -62,11 +62,13 @@ export async function initOpfsPersistence(deps: PersistenceInitDeps): Promise<Pe
 
   const isCorruptionError = (message: string) => {
     const normalized = message.toLowerCase();
-    return normalized.includes('not a valid duckdb database file')
-      || normalized.includes('database file appears to be corrupted')
-      || normalized.includes('failed to scan dictionary string')
-      || normalized.includes('invalid bit width for bitpacking')
-      || normalized.includes('corrupt');
+    return (
+      normalized.includes('not a valid duckdb database file') ||
+      normalized.includes('database file appears to be corrupted') ||
+      normalized.includes('failed to scan dictionary string') ||
+      normalized.includes('invalid bit width for bitpacking') ||
+      normalized.includes('corrupt')
+    );
   };
 
   if (!enableOpfs) {
@@ -138,7 +140,8 @@ export async function initOpfsPersistence(deps: PersistenceInitDeps): Promise<Pe
 
   const existingAttempts: Array<{ path: string; label: string }> = [];
   if (candidatePaths.has(desiredPath)) existingAttempts.push({ path: desiredPath, label: 'OPFS desired DB' });
-  if (fallbackPath && candidatePaths.has(fallbackPath)) existingAttempts.push({ path: fallbackPath, label: 'OPFS fallback DB' });
+  if (fallbackPath && candidatePaths.has(fallbackPath))
+    existingAttempts.push({ path: fallbackPath, label: 'OPFS fallback DB' });
   for (const candidate of candidates) {
     if (candidate.path === desiredPath || candidate.path === fallbackPath) continue;
     existingAttempts.push({ path: candidate.path, label: 'OPFS candidate DB' });

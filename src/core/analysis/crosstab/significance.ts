@@ -1,9 +1,5 @@
 import { DatabaseAdapter } from '../../DatabaseAdapter';
-import {
-  buildCrosstabQuery,
-  buildOverlapQuery,
-  CrosstabQueryOptions,
-} from '../../sql/queryBuilder';
+import { buildCrosstabQuery, buildOverlapQuery, CrosstabQueryOptions } from '../../sql/queryBuilder';
 import {
   calculateESS,
   calculatePValue,
@@ -17,11 +13,7 @@ import {
   type CellVsRestContext,
   type CrosstabSignificanceStrategy,
 } from './significanceStrategies';
-import type {
-  CrosstabOverlapSqlRow,
-  CrosstabSqlRow,
-  SignificanceOptions,
-} from './types';
+import type { CrosstabOverlapSqlRow, CrosstabSqlRow, SignificanceOptions } from './types';
 
 const DEFAULT_SIGNIFICANCE_OPTIONS: Required<SignificanceOptions> = {
   comparisonMethod: 'cell_vs_rest',
@@ -29,7 +21,7 @@ const DEFAULT_SIGNIFICANCE_OPTIONS: Required<SignificanceOptions> = {
   significanceLevel: 0.95,
 };
 
-function significanceLevelToAlpha(level: 0.95 | 0.90 | 0.80): number {
+function significanceLevelToAlpha(level: 0.95 | 0.9 | 0.8): number {
   // Significance level is confidence (e.g. 0.95), alpha is Type I error (e.g. 0.05)
   return Number((1 - level).toFixed(10));
 }
@@ -46,7 +38,7 @@ function getAdjustedPValues(pValues: number[], correction: 'none' | 'bonferroni'
 
 function buildColStats(rows: CrosstabSqlRow[]): Map<string, { n: number; ess: number }> {
   const colStats = new Map<string, { n: number; ess: number }>();
-  rows.forEach(row => {
+  rows.forEach((row) => {
     const colKey = getColKeyString(row);
     const n = row.weightedCount ?? row.count;
     const ess = calculateESS(n, row.sumSqWeights ?? n);
@@ -61,17 +53,17 @@ function applyCellVsRestMarkers(
   cellTestResults: Array<{ row: CrosstabSqlRow; tScore: number; pValue: number }>,
   significanceOptions: Required<SignificanceOptions>,
   alpha: number,
-  pairwiseMode: boolean
+  pairwiseMode: boolean,
 ): void {
   if (cellTestResults.length === 0) return;
 
-  const rawPValues = cellTestResults.map(test => test.pValue);
+  const rawPValues = cellTestResults.map((test) => test.pValue);
   const adjustedPValues = getAdjustedPValues(rawPValues, significanceOptions.correctionType);
   const primarySig = applyMultipleTestingCorrection(rawPValues, significanceOptions.correctionType, alpha);
 
   const secondarySig =
     significanceOptions.significanceLevel >= 0.95
-      ? applyMultipleTestingCorrection(rawPValues, significanceOptions.correctionType, 0.20)
+      ? applyMultipleTestingCorrection(rawPValues, significanceOptions.correctionType, 0.2)
       : null;
 
   cellTestResults.forEach((test, idx) => {
@@ -104,12 +96,12 @@ async function applyPairwiseComparisons(
   colStats: Map<string, { n: number; ess: number }>,
   strategy: CrosstabSignificanceStrategy,
   significanceOptions: Required<SignificanceOptions>,
-  alpha: number
+  alpha: number,
 ): Promise<void> {
   const isColumnMultipleResponse = !!(options.columnMultipleColumns && options.columnMultipleColumns.length > 0);
 
   const rowKeyGroups = new Map<string, CrosstabSqlRow[]>();
-  rows.forEach(row => {
+  rows.forEach((row) => {
     const rowKey = joinRowKeyPath(row);
     if (!rowKeyGroups.has(rowKey)) {
       rowKeyGroups.set(rowKey, []);
@@ -126,11 +118,17 @@ async function applyPairwiseComparisons(
     tScore: number;
     pValue: number;
   }> = [];
-  const groupResults = new Map<string, Map<string, {
-    columnLetter: string;
-    higherThan: string[];
-    lowerThan: string[];
-  }>>();
+  const groupResults = new Map<
+    string,
+    Map<
+      string,
+      {
+        columnLetter: string;
+        higherThan: string[];
+        lowerThan: string[];
+      }
+    >
+  >();
 
   const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
   const overlapMap = new Map<string, { overlapN: number }>();
@@ -139,7 +137,12 @@ async function applyPairwiseComparisons(
     return `${rowKey}|||${left}|||${right}`;
   };
 
-  if (isColumnMultipleResponse && !strategy.isMeans && options.columnMultipleColumns && options.columnMultipleColumns.length > 1) {
+  if (
+    isColumnMultipleResponse &&
+    !strategy.isMeans &&
+    options.columnMultipleColumns &&
+    options.columnMultipleColumns.length > 1
+  ) {
     const overlapSql = buildOverlapQuery({
       rowVars: options.rowVars,
       columns: options.columnMultipleColumns,
@@ -148,13 +151,10 @@ async function applyPairwiseComparisons(
       weightVar: options.weightVar,
     });
     const overlapResult = await adapter.query(overlapSql);
-    (overlapResult.rows as CrosstabOverlapSqlRow[]).forEach(overlapRow => {
+    (overlapResult.rows as CrosstabOverlapSqlRow[]).forEach((overlapRow) => {
       const rowKey = joinRowKeyPath(overlapRow);
       const overlapN = Number(overlapRow.overlapCount ?? 0);
-      overlapMap.set(
-        pairKey(rowKey, String(overlapRow.colKeyA), String(overlapRow.colKeyB)),
-        { overlapN }
-      );
+      overlapMap.set(pairKey(rowKey, String(overlapRow.colKeyA), String(overlapRow.colKeyB)), { overlapN });
     });
   }
 
@@ -166,7 +166,7 @@ async function applyPairwiseComparisons(
 
     const columnStatsArray = strategy.buildColumnStats(rowCells, colStats);
     const cellNByColKey = new Map<string, number>();
-    rowCells.forEach(cell => {
+    rowCells.forEach((cell) => {
       const key = String(cell.colKey);
       const n = Number(cell.weightedCount ?? cell.count);
       cellNByColKey.set(key, n);
@@ -205,7 +205,7 @@ async function applyPairwiseComparisons(
             overlapMap,
             isColumnMultipleResponse,
           },
-          pairKey
+          pairKey,
         );
 
         pairwiseTests.push({
@@ -223,9 +223,9 @@ async function applyPairwiseComparisons(
 
   if (pairwiseTests.length > 0) {
     const pairwiseSig = applyMultipleTestingCorrection(
-      pairwiseTests.map(test => test.pValue),
+      pairwiseTests.map((test) => test.pValue),
       significanceOptions.correctionType,
-      alpha
+      alpha,
     );
 
     pairwiseTests.forEach((test, idx) => {
@@ -245,7 +245,7 @@ async function applyPairwiseComparisons(
   const overlapCorrected = isColumnMultipleResponse && !strategy.isMeans;
   rowKeyGroups.forEach((rowCells, rowKey) => {
     const rowResults = groupResults.get(rowKey);
-    rowCells.forEach(cell => {
+    rowCells.forEach((cell) => {
       const result = rowResults?.get(getColKeyString(cell));
       if (!result) return;
       result.higherThan.sort();
@@ -259,7 +259,7 @@ async function applyPairwiseComparisons(
 }
 
 function clearPairwiseMarkers(rows: CrosstabSqlRow[]): void {
-  rows.forEach(row => {
+  rows.forEach((row) => {
     delete row.sigLetters;
     delete row.columnLetter;
   });
@@ -272,7 +272,7 @@ function clearPairwiseMarkers(rows: CrosstabSqlRow[]): void {
 export async function applySignificanceTesting(
   adapter: DatabaseAdapter,
   options: CrosstabQueryOptions & { significanceOptions?: SignificanceOptions },
-  rows: CrosstabSqlRow[]
+  rows: CrosstabSqlRow[],
 ): Promise<void> {
   if (!options.colVar && !(options.columnMultipleColumns && options.columnMultipleColumns.length > 0)) {
     return;
@@ -296,14 +296,14 @@ export async function applySignificanceTesting(
   const totals = totalsResult.rows as CrosstabSqlRow[];
 
   const totalsMap = new Map<string, CrosstabSqlRow>();
-  totals.forEach(t => {
+  totals.forEach((t) => {
     totalsMap.set(joinRowKeyPath(t), t);
   });
 
   const colStats = buildColStats(rows);
   const cellTestResults: Array<{ row: CrosstabSqlRow; tScore: number; pValue: number }> = [];
 
-  rows.forEach(row => {
+  rows.forEach((row) => {
     const rowKey = joinRowKeyPath(row);
     const totalRow = totalsMap.get(rowKey);
 
@@ -336,7 +336,7 @@ export async function applySignificanceTesting(
       row.stats = {
         tScore,
         pValue,
-        effN: cellESS
+        effN: cellESS,
       };
       if (absT > 0) {
         cellTestResults.push({ row, tScore, pValue });
@@ -351,16 +351,7 @@ export async function applySignificanceTesting(
   applyCellVsRestMarkers(cellTestResults, significanceOptions, alpha, pairwiseMode);
 
   if (pairwiseMode) {
-    await applyPairwiseComparisons(
-      adapter,
-      options,
-      rows,
-      totalsMap,
-      colStats,
-      strategy,
-      significanceOptions,
-      alpha
-    );
+    await applyPairwiseComparisons(adapter, options, rows, totalsMap, colStats, strategy, significanceOptions, alpha);
   } else {
     clearPairwiseMarkers(rows);
   }

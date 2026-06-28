@@ -17,12 +17,7 @@ const ALLOWLIST = new Set([
   // Example: 'src/features/example/LegacyPanel.tsx|raw-tailwind-palette',
 ]);
 
-const LEGACY_RESEARCH_DESK_TOKENS = [
-  '--color-paper',
-  '--color-ink',
-  '--color-terracotta',
-  '--color-parchment',
-];
+const LEGACY_RESEARCH_DESK_TOKENS = ['--color-paper', '--color-ink', '--color-terracotta', '--color-parchment'];
 
 const RULE = {
   LEGACY_TOKEN: 'legacy-research-desk-token',
@@ -101,12 +96,7 @@ function collectViolations() {
 
   for (const pattern of ROOT_TOKEN_CHECKS) {
     if (!pattern.test(rootBlock)) {
-      pushViolation(
-        violations,
-        INDEX_CSS,
-        RULE.ROOT_CONTRACT,
-        `missing required semantic token (${pattern})`,
-      );
+      pushViolation(violations, INDEX_CSS, RULE.ROOT_CONTRACT, `missing required semantic token (${pattern})`);
     }
   }
 

@@ -10,11 +10,7 @@
 
 import type { AnalysisRunner } from '../AnalysisRunner';
 import type { DatabaseAdapter } from '../../DatabaseAdapter';
-import type {
-  SurveyDesignConfig,
-  SurveyResult,
-  SurveyStatistic,
-} from '../../../types/webr';
+import type { SurveyDesignConfig, SurveyResult, SurveyStatistic } from '../../../types/webr';
 import { analysisRegistry } from '../registry';
 
 // ============================================================================
@@ -83,9 +79,7 @@ export interface SurveyWeightingResult {
 // Runner Implementation
 // ============================================================================
 
-export class SurveyWeightingRunner
-  implements AnalysisRunner<SurveyWeightingConfig, SurveyWeightingResult>
-{
+export class SurveyWeightingRunner implements AnalysisRunner<SurveyWeightingConfig, SurveyWeightingResult> {
   readonly id = 'surveyWeighting';
   readonly label = 'Survey Weighting (Design Effects)';
   readonly configSchema = {
@@ -135,12 +129,9 @@ export class SurveyWeightingRunner
    * Survey weighting requires WebR orchestration (see `src/engine/webr/WebREngine`).
    * Core exposes pure R-code generation via `generateRCode()` and `toWebRConfig()`.
    */
-  async run(
-    _adapter: DatabaseAdapter,
-    _config: SurveyWeightingConfig
-  ): Promise<SurveyWeightingResult> {
+  async run(_adapter: DatabaseAdapter, _config: SurveyWeightingConfig): Promise<SurveyWeightingResult> {
     throw new Error(
-      'surveyWeighting requires WebR execution via WebREngine; use generateRCode() in core and orchestrate in engine/store'
+      'surveyWeighting requires WebR execution via WebREngine; use generateRCode() in core and orchestrate in engine/store',
     );
   }
 
@@ -261,10 +252,7 @@ export class SurveyWeightingRunner
     return parts.join('\n');
   }
 
-  private buildStatisticCode(
-    config: SurveyWeightingConfig,
-    statistic: SurveyStatistic
-  ): string {
+  private buildStatisticCode(config: SurveyWeightingConfig, statistic: SurveyStatistic): string {
     const formula = `~${config.analysisVariables.join(' + ')}`;
     const resultVar = `result_${statistic}`;
 

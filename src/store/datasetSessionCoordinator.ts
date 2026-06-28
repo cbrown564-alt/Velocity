@@ -6,13 +6,7 @@
  */
 
 import type { Filter, TableConfig } from '../types/analysis';
-import type {
-  DataTransform,
-  Dataset,
-  Folder,
-  Variable,
-  VariableSet,
-} from '../types/dataset';
+import type { DataTransform, Dataset, Folder, Variable, VariableSet } from '../types/dataset';
 import type { DatasetSessionState } from '../types/workspaceSession';
 
 export type { DatasetSessionState };
@@ -59,10 +53,7 @@ export function captureCatalogSnapshot(
   };
 }
 
-export function persistDatasetSession(
-  live: DatasetLiveState,
-  actions: DatasetSessionPersistenceActions,
-): void {
+export function persistDatasetSession(live: DatasetLiveState, actions: DatasetSessionPersistenceActions): void {
   if (!live.dataset || !live.activeDatasetId) return;
 
   actions.saveDatasetSession(live.activeDatasetId, captureSessionSnapshot(live));
@@ -77,11 +68,7 @@ export function shouldCaptureBeforeSwitch(
   live: Pick<DatasetLiveState, 'dataset' | 'activeDatasetId'>,
   targetDatasetId: string,
 ): boolean {
-  return Boolean(
-    live.dataset &&
-    live.activeDatasetId &&
-    live.dataset.id !== targetDatasetId,
-  );
+  return Boolean(live.dataset && live.activeDatasetId && live.dataset.id !== targetDatasetId);
 }
 
 export function captureBeforeDatasetSwitch(
@@ -93,9 +80,7 @@ export function captureBeforeDatasetSwitch(
   persistDatasetSession(live, actions);
 }
 
-export function normalizeStoredSessionState(
-  session?: Partial<DatasetSessionState> | null,
-): DatasetSessionState {
+export function normalizeStoredSessionState(session?: Partial<DatasetSessionState> | null): DatasetSessionState {
   return {
     tableConfig: session?.tableConfig ?? { rowVars: [], colVar: null },
     activeFilters: session?.activeFilters ?? [],
@@ -109,9 +94,7 @@ export interface DatasetSessionStorePatch {
   transformLog: DataTransform[];
 }
 
-export function sessionStateToStorePatch(
-  session: DatasetSessionState,
-): DatasetSessionStorePatch {
+export function sessionStateToStorePatch(session: DatasetSessionState): DatasetSessionStorePatch {
   return {
     tableConfig: session.tableConfig,
     activeFilters: session.activeFilters,

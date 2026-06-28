@@ -80,7 +80,7 @@ describe('harmonizationSlice', () => {
       store.getState().runAutoMatch(wave1Variables, wave2Variables, undefined, 0.9);
 
       const { session } = store.getState().harmonization;
-      const statuses = session?.mappings.map(m => m.status) ?? [];
+      const statuses = session?.mappings.map((m) => m.status) ?? [];
       expect(statuses).toContain('auto_matched');
       expect(statuses).toContain('unmapped');
     });
@@ -93,14 +93,12 @@ describe('harmonizationSlice', () => {
       store.getState().runAutoMatch(wave1Variables, wave2Variables);
 
       const { session } = store.getState().harmonization;
-      const firstMatchedId = session?.mappings.find(m => m.status === 'auto_matched')?.id;
+      const firstMatchedId = session?.mappings.find((m) => m.status === 'auto_matched')?.id;
       expect(firstMatchedId).toBeDefined();
 
       store.getState().confirmMapping(firstMatchedId!);
 
-      const updated = store.getState().harmonization.session?.mappings.find(
-        m => m.id === firstMatchedId
-      );
+      const updated = store.getState().harmonization.session?.mappings.find((m) => m.id === firstMatchedId);
       expect(updated?.confirmed).toBe(true);
     });
   });
@@ -113,7 +111,7 @@ describe('harmonizationSlice', () => {
       store.getState().confirmAllMappings();
 
       const { session } = store.getState().harmonization;
-      const mappedOnes = session?.mappings.filter(m => m.targetVariableId !== null) ?? [];
+      const mappedOnes = session?.mappings.filter((m) => m.targetVariableId !== null) ?? [];
       for (const m of mappedOnes) {
         expect(m.confirmed).toBe(true);
       }
@@ -145,9 +143,7 @@ describe('harmonizationSlice', () => {
       const mappingId = session?.mappings[0]?.id;
       expect(mappingId).toBeDefined();
 
-      const newValueMappings = [
-        { sourceValue: 1, sourceLabel: 'Test', targetValue: 2, targetLabel: 'Test2' },
-      ];
+      const newValueMappings = [{ sourceValue: 1, sourceLabel: 'Test', targetValue: 2, targetLabel: 'Test2' }];
       store.getState().updateValueMapping(mappingId!, newValueMappings);
 
       const updated = store.getState().harmonization.session?.mappings[0];
@@ -191,11 +187,11 @@ describe('harmonizationSlice', () => {
       expect(targetVarNames).toBeDefined();
 
       // Verify name lookups
-      const sample = store.getState().harmonization.session?.mappings.find(m => m.targetVariableId !== null);
+      const sample = store.getState().harmonization.session?.mappings.find((m) => m.targetVariableId !== null);
       expect(sample).toBeDefined();
       if (sample?.targetVariableId) {
-        const srcVar = wave1Variables.find(v => v.id === sample.sourceVariableId)!;
-        const tgtVar = wave2Variables.find(v => v.id === sample.targetVariableId)!;
+        const srcVar = wave1Variables.find((v) => v.id === sample.sourceVariableId)!;
+        const tgtVar = wave2Variables.find((v) => v.id === sample.targetVariableId)!;
         expect(sourceVarNames[sample.sourceVariableId]).toBe(srcVar.name);
         expect(targetVarNames[sample.targetVariableId]).toBe(tgtVar.name);
       }

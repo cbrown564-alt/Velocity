@@ -24,7 +24,7 @@ export interface FormatBuildDeckOptions {
 
 export function formatBuildDeckResponse(
   envelope: ResultEnvelope<BuiltDeck>,
-  options: FormatBuildDeckOptions = {}
+  options: FormatBuildDeckOptions = {},
 ): { content: McpTextContent[] } {
   const singleMax = options.singlePayloadMaxBytes ?? BUILD_DECK_SINGLE_PAYLOAD_MAX_BYTES;
   const slideThreshold = options.chunkMinSlides ?? BUILD_DECK_CHUNK_MIN_SLIDES;
@@ -45,7 +45,7 @@ export function formatBuildDeckResponse(
 
 function chunkBuildDeckEnvelope(
   envelope: ResultEnvelope<BuiltDeck>,
-  chunkMaxBytes: number
+  chunkMaxBytes: number,
 ): { content: McpTextContent[] } {
   const { slides, ...deckWithoutSlides } = envelope.data;
 
@@ -72,7 +72,7 @@ function chunkBuildDeckEnvelope(
     const text = JSON.stringify(part);
     if (Buffer.byteLength(text, 'utf8') > chunkMaxBytes) {
       throw new Error(
-        `BuiltDeck slide ${index} exceeds MCP chunk limit (${chunkMaxBytes} bytes). Reduce slide scope or use fewer row variables.`
+        `BuiltDeck slide ${index} exceeds MCP chunk limit (${chunkMaxBytes} bytes). Reduce slide scope or use fewer row variables.`,
       );
     }
     content.push({ type: 'text', text });

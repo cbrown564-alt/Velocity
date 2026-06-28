@@ -7,12 +7,7 @@
 
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
-  useReducedMotion,
-  getMotionProps,
-  getModalPresenceProps,
-  DURATIONS,
-} from '../../../lib/motion';
+import { useReducedMotion, getMotionProps, getModalPresenceProps, DURATIONS } from '../../../lib/motion';
 import {
   FileUp,
   Upload,
@@ -99,18 +94,15 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
 
   const projectMap = useMemo(() => {
     const map = new Map<string, Project>();
-    projects.forEach(p => map.set(p.id, p));
+    projects.forEach((p) => map.set(p.id, p));
     return map;
   }, [projects]);
 
-  const categoryChips = useMemo(
-    () => computeWorkspaceCategoryChips(datasets, projects),
-    [datasets, projects]
-  );
+  const categoryChips = useMemo(() => computeWorkspaceCategoryChips(datasets, projects), [datasets, projects]);
 
   const ambientHints = useMemo(
     () => computeAmbientSearchHints(searchQuery, datasets, projects),
-    [searchQuery, datasets, projects]
+    [searchQuery, datasets, projects],
   );
 
   const filteredDatasets = useMemo(() => {
@@ -119,10 +111,10 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       result = result.filter(
-        d =>
+        (d) =>
           d.name.toLowerCase().includes(query) ||
           d.fileName.toLowerCase().includes(query) ||
-          matchesVariableKeyword(d, searchQuery)
+          matchesVariableKeyword(d, searchQuery),
       );
     }
 
@@ -132,10 +124,10 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
 
     switch (filterMode) {
       case 'starred':
-        result = result.filter(d => d.starred);
+        result = result.filter((d) => d.starred);
         break;
       case 'projects':
-        result = result.filter(d => d.projectId);
+        result = result.filter((d) => d.projectId);
         break;
       case 'recent':
       default:
@@ -147,14 +139,13 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
   }, [datasets, searchQuery, filterMode, categoryFilter, projects]);
 
   const projectsWithDatasets = useMemo(() => {
-    return projects.map(project => ({
+    return projects.map((project) => ({
       project,
-      datasets: datasets.filter(d => d.projectId === project.id),
+      datasets: datasets.filter((d) => d.projectId === project.id),
     }));
   }, [projects, datasets]);
 
-  const showFilteredEmptyState =
-    !isEmpty && filterMode !== 'projects' && filteredDatasets.length === 0;
+  const showFilteredEmptyState = !isEmpty && filterMode !== 'projects' && filteredDatasets.length === 0;
 
   const filteredEmptyMessage = searchQuery
     ? 'No datasets match your search. Try a different keyword or clear filters.'
@@ -165,12 +156,12 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
         : 'No datasets available for this view.';
 
   const handleSelectDataset = (id: string, shiftKey: boolean = false) => {
-    setSelectedIds(prev => {
+    setSelectedIds((prev) => {
       const next = new Set(prev);
 
       if (shiftKey && lastSelectedId) {
-        const currentIndex = filteredDatasets.findIndex(d => d.id === id);
-        const lastIndex = filteredDatasets.findIndex(d => d.id === lastSelectedId);
+        const currentIndex = filteredDatasets.findIndex((d) => d.id === id);
+        const lastIndex = filteredDatasets.findIndex((d) => d.id === lastSelectedId);
 
         if (currentIndex !== -1 && lastIndex !== -1) {
           const start = Math.min(currentIndex, lastIndex);
@@ -227,7 +218,7 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
                 type="text"
                 placeholder="Search datasets..."
                 value={searchQuery}
-                onChange={e => {
+                onChange={(e) => {
                   setSearchQuery(e.target.value);
                   if (!e.target.value) setCategoryFilter(null);
                 }}
@@ -236,21 +227,19 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
             </div>
             {ambientHints.length > 0 && (
               <ul className={styles.searchHints} data-testid="workspace-search-hints">
-                {ambientHints.map(hint => (
+                {ambientHints.map((hint) => (
                   <li key={hint.id}>{hint.message}</li>
                 ))}
               </ul>
             )}
             {categoryChips.length > 0 && !searchQuery && (
               <div className={styles.categoryChips} data-testid="workspace-category-chips">
-                {categoryChips.map(chip => (
+                {categoryChips.map((chip) => (
                   <button
                     key={chip.id}
                     type="button"
                     className={categoryFilter === chip.filter ? styles.chipActive : ''}
-                    onClick={() =>
-                      setCategoryFilter(prev => (prev === chip.filter ? null : chip.filter))
-                    }
+                    onClick={() => setCategoryFilter((prev) => (prev === chip.filter ? null : chip.filter))}
                   >
                     {chip.count} {chip.label}
                   </button>
@@ -328,39 +317,23 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
       <PilotEnvironmentBanner />
 
       {showWelcomeBack && resumeCandidate && (
-        <WelcomeBackCard
-          candidate={resumeCandidate}
-          onResume={onResume}
-          onDismiss={onDismiss}
-        />
+        <WelcomeBackCard candidate={resumeCandidate} onResume={onResume} onDismiss={onDismiss} />
       )}
 
       <nav className={styles.filterTabs}>
-        <button
-          className={filterMode === 'recent' ? styles.active : ''}
-          onClick={() => setFilterMode('recent')}
-        >
+        <button className={filterMode === 'recent' ? styles.active : ''} onClick={() => setFilterMode('recent')}>
           <Clock size={14} />
           Recent
         </button>
-        <button
-          className={filterMode === 'starred' ? styles.active : ''}
-          onClick={() => setFilterMode('starred')}
-        >
+        <button className={filterMode === 'starred' ? styles.active : ''} onClick={() => setFilterMode('starred')}>
           <Star size={14} />
           Starred
         </button>
-        <button
-          className={filterMode === 'projects' ? styles.active : ''}
-          onClick={() => setFilterMode('projects')}
-        >
+        <button className={filterMode === 'projects' ? styles.active : ''} onClick={() => setFilterMode('projects')}>
           <FolderOpen size={14} />
           Projects
         </button>
-        <button
-          className={filterMode === 'all' ? styles.active : ''}
-          onClick={() => setFilterMode('all')}
-        >
+        <button className={filterMode === 'all' ? styles.active : ''} onClick={() => setFilterMode('all')}>
           <Database size={14} />
           All Datasets
         </button>
@@ -371,27 +344,29 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
           {selectedIds.size > 0 && (
             <motion.div
               className={styles.selectionActions}
-              {...getMotionProps({ preset: 'slideLeft', duration: reducedMotion ? DURATIONS.instant : DURATIONS.normal, reducedMotion })}
+              {...getMotionProps({
+                preset: 'slideLeft',
+                duration: reducedMotion ? DURATIONS.instant : DURATIONS.normal,
+                reducedMotion,
+              })}
             >
               <span>{selectedIds.size} selected</span>
 
               <button
                 onClick={() => {
-                  const allStarred = Array.from(selectedIds).every(id => {
-                    const dataset = datasets.find(d => d.id === id);
+                  const allStarred = Array.from(selectedIds).every((id) => {
+                    const dataset = datasets.find((d) => d.id === id);
                     return dataset?.starred;
                   });
                   if (onBatchStar) {
                     onBatchStar(Array.from(selectedIds), !allStarred);
                   } else {
-                    selectedIds.forEach(id => onToggleStar(id));
+                    selectedIds.forEach((id) => onToggleStar(id));
                   }
                 }}
                 title="Toggle Star"
               >
-                {Array.from(selectedIds).every(
-                  id => datasets.find(d => d.id === id)?.starred
-                ) ? (
+                {Array.from(selectedIds).every((id) => datasets.find((d) => d.id === id)?.starred) ? (
                   <StarOff size={14} />
                 ) : (
                   <Star size={14} />
@@ -426,7 +401,7 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
                   if (onBatchDelete) {
                     onBatchDelete(Array.from(selectedIds));
                   } else {
-                    selectedIds.forEach(id => onDeleteDataset(id));
+                    selectedIds.forEach((id) => onDeleteDataset(id));
                   }
                   setSelectedIds(new Set());
                 }}
@@ -452,12 +427,17 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
                 </div>
                 <motion.div
                   className={styles.projectsEmptyState}
-                  {...getMotionProps({ preset: 'fadeUp', duration: reducedMotion ? DURATIONS.instant : DURATIONS.normal, reducedMotion })}
+                  {...getMotionProps({
+                    preset: 'fadeUp',
+                    duration: reducedMotion ? DURATIONS.instant : DURATIONS.normal,
+                    reducedMotion,
+                  })}
                 >
                   <FolderOpen size={40} className={styles.projectsEmptyIcon} />
                   <h3>No projects yet</h3>
                   <p>
-                    Group datasets into projects for multi-wave studies. Create a project from selected datasets or start fresh.
+                    Group datasets into projects for multi-wave studies. Create a project from selected datasets or
+                    start fresh.
                   </p>
                   <button type="button" onClick={() => onCreateProject([])}>
                     <Plus size={14} />
@@ -488,11 +468,7 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
                         }
                       }}
                       onOpenDataset={onOpenDataset}
-                      onCompareWaves={
-                        onCompareWaves
-                          ? (w1, w2) => onCompareWaves(project, w1, w2)
-                          : undefined
-                      }
+                      onCompareWaves={onCompareWaves ? (w1, w2) => onCompareWaves(project, w1, w2) : undefined}
                     />
                   ))}
                 </div>
@@ -509,7 +485,7 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
                       checked={filteredDatasets.length > 0 && selectedIds.size === filteredDatasets.length}
                       onChange={(e) => {
                         if (e.target.checked) {
-                          setSelectedIds(new Set(filteredDatasets.map(d => d.id)));
+                          setSelectedIds(new Set(filteredDatasets.map((d) => d.id)));
                         } else {
                           setSelectedIds(new Set());
                         }
@@ -529,7 +505,7 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
               {viewMode === 'grid' ? (
                 <div className={styles.datasetsGrid}>
                   <AnimatePresence mode="popLayout">
-                    {filteredDatasets.map(dataset => (
+                    {filteredDatasets.map((dataset) => (
                       <WorkspaceDatasetCard
                         key={dataset.id}
                         dataset={dataset}
@@ -539,7 +515,7 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
                         onOpen={() => onOpenDataset(dataset)}
                         onToggleStar={() => onToggleStar(dataset.id)}
                         onDelete={() => onDeleteDataset(dataset.id)}
-                        onContextMenu={e => handleContextMenu(dataset, e)}
+                        onContextMenu={(e) => handleContextMenu(dataset, e)}
                       />
                     ))}
                   </AnimatePresence>
@@ -547,7 +523,7 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
               ) : (
                 <div className={styles.datasetsList}>
                   <AnimatePresence>
-                    {filteredDatasets.map(dataset => (
+                    {filteredDatasets.map((dataset) => (
                       <WorkspaceDatasetListItem
                         key={dataset.id}
                         dataset={dataset}
@@ -565,7 +541,11 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
               {showFilteredEmptyState && (
                 <motion.div
                   className={styles.projectsEmptyState}
-                  {...getMotionProps({ preset: 'fadeUp', duration: reducedMotion ? DURATIONS.instant : DURATIONS.normal, reducedMotion })}
+                  {...getMotionProps({
+                    preset: 'fadeUp',
+                    duration: reducedMotion ? DURATIONS.instant : DURATIONS.normal,
+                    reducedMotion,
+                  })}
                   data-testid="workspace-filter-empty-state"
                 >
                   <Search size={24} className={styles.projectsEmptyIcon} />
@@ -591,34 +571,42 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
               style={{ left: contextMenuTarget.x, top: contextMenuTarget.y }}
               {...getModalPresenceProps(reducedMotion)}
             >
-              <button onClick={() => {
-                onOpenDataset(contextMenuTarget.dataset);
-                closeContextMenu();
-              }}>
+              <button
+                onClick={() => {
+                  onOpenDataset(contextMenuTarget.dataset);
+                  closeContextMenu();
+                }}
+              >
                 <ArrowUpRight size={14} />
                 Open
               </button>
-              <button onClick={() => {
-                onToggleStar(contextMenuTarget.dataset.id);
-                closeContextMenu();
-              }}>
+              <button
+                onClick={() => {
+                  onToggleStar(contextMenuTarget.dataset.id);
+                  closeContextMenu();
+                }}
+              >
                 {contextMenuTarget.dataset.starred ? <StarOff size={14} /> : <Star size={14} />}
                 {contextMenuTarget.dataset.starred ? 'Unstar' : 'Star'}
               </button>
               <div className={styles.contextDivider} />
               {contextMenuTarget.dataset.projectId ? (
-                <button onClick={() => {
-                  onUnlinkDataset(contextMenuTarget.dataset.id);
-                  closeContextMenu();
-                }}>
+                <button
+                  onClick={() => {
+                    onUnlinkDataset(contextMenuTarget.dataset.id);
+                    closeContextMenu();
+                  }}
+                >
                   <Unlink size={14} />
                   Remove from Project
                 </button>
               ) : (
-                <button onClick={() => {
-                  onCreateProject([contextMenuTarget.dataset.id]);
-                  closeContextMenu();
-                }}>
+                <button
+                  onClick={() => {
+                    onCreateProject([contextMenuTarget.dataset.id]);
+                    closeContextMenu();
+                  }}
+                >
                   <Link2 size={14} />
                   Add to Project...
                 </button>

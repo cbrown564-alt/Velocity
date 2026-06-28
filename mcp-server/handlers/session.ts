@@ -12,9 +12,7 @@ export const sessionHandlers: Record<string, ToolHandler> = {
   velocity_export_session: async (engine, a) => {
     const result = await engine.exportSession();
     const outputPath =
-      typeof a.outputPath === 'string' && a.outputPath.length > 0
-        ? resolveSessionOutputPath(a.outputPath)
-        : null;
+      typeof a.outputPath === 'string' && a.outputPath.length > 0 ? resolveSessionOutputPath(a.outputPath) : null;
 
     if (outputPath) {
       await mkdir(path.dirname(outputPath), { recursive: true });

@@ -287,9 +287,13 @@ export function getSlideInProps(reducedMotion = false) {
  * Generate a CSS transition string that respects the design-system tokens.
  * Use for non-Framer-Motion transitions (e.g. hover states in CSS/Tailwind).
  */
-export function cssTransition(properties: string | string[], durationKey: keyof typeof DURATIONS = 'fast', easeKey: keyof typeof EASINGS = 'standard'): string {
+export function cssTransition(
+  properties: string | string[],
+  durationKey: keyof typeof DURATIONS = 'fast',
+  easeKey: keyof typeof EASINGS = 'standard',
+): string {
   const props = Array.isArray(properties) ? properties : [properties];
   const duration = `${DURATIONS[durationKey] * 1000}ms`;
   const ease = `cubic-bezier(${EASINGS[easeKey].join(', ')})`;
-  return props.map(p => `${p} ${duration} ${ease}`).join(', ');
+  return props.map((p) => `${p} ${duration} ${ease}`).join(', ');
 }

@@ -50,7 +50,10 @@ export async function reachDashboardWithExample(page: Page) {
 }
 
 export async function ensureCorrectionNone(page: Page) {
-  const correct = page.locator('select').filter({ has: page.locator('option[value="none"]') }).first();
+  const correct = page
+    .locator('select')
+    .filter({ has: page.locator('option[value="none"]') })
+    .first();
   if (await correct.isVisible({ timeout: 2000 }).catch(() => false)) {
     await correct.selectOption('none');
     await page.waitForTimeout(2500);
@@ -64,14 +67,28 @@ export async function buildGenderRegionCrosstab(page: Page) {
     await page.waitForTimeout(600);
   }
 
-  if (await page.getByText('Ready for Analysis').isVisible({ timeout: 3000 }).catch(() => false)) {
-    await page.getByRole('button', { name: /product sat Good starting point/i }).click().catch(() => {});
+  if (
+    await page
+      .getByText('Ready for Analysis')
+      .isVisible({ timeout: 3000 })
+      .catch(() => false)
+  ) {
+    await page
+      .getByRole('button', { name: /product sat Good starting point/i })
+      .click()
+      .catch(() => {});
     await page.waitForTimeout(800);
-    await page.getByRole('button', { name: 'Reset' }).click().catch(() => {});
+    await page
+      .getByRole('button', { name: 'Reset' })
+      .click()
+      .catch(() => {});
     await page.waitForTimeout(500);
   }
 
-  await page.getByRole('button', { name: /^gender$/i }).first().click();
+  await page
+    .getByRole('button', { name: /^gender$/i })
+    .first()
+    .click();
   await page.waitForTimeout(1200);
 
   const regionBtn = page.getByRole('button', { name: /^region$/i });
@@ -103,7 +120,10 @@ export async function applyTheme(page: Page, label: string) {
   const themeList = page.locator('[role="listbox"][aria-label="Theme selection"]');
   await page.keyboard.press('Escape');
   await page.waitForTimeout(200);
-  await page.getByRole('button', { name: /Change theme/i }).first().click({ force: true });
+  await page
+    .getByRole('button', { name: /Change theme/i })
+    .first()
+    .click({ force: true });
   await themeList.waitFor({ timeout: 5000 });
   await themeList.getByText(label, { exact: true }).click({ force: true });
   await page.waitForTimeout(900);

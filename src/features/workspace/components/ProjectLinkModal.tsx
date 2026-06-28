@@ -68,7 +68,7 @@ export const ProjectLinkModal: React.FC<ProjectLinkModalProps> = ({
 
   // Get selected datasets
   const selectedDatasets = useMemo(() => {
-    return datasets.filter(d => selectedDatasetIds.includes(d.id));
+    return datasets.filter((d) => selectedDatasetIds.includes(d.id));
   }, [datasets, selectedDatasetIds]);
 
   // Initialize wave assignments based on file dates
@@ -108,7 +108,7 @@ export const ProjectLinkModal: React.FC<ProjectLinkModalProps> = ({
         onUpdateWaveNumber(datasetId, waveNumber);
       });
       if (respondentKeyVar) {
-        selectedDatasetIds.forEach(id => {
+        selectedDatasetIds.forEach((id) => {
           onSetRespondentKey(id, respondentKeyVar);
         });
       }
@@ -129,15 +129,11 @@ export const ProjectLinkModal: React.FC<ProjectLinkModalProps> = ({
 
   return (
     <AnimatePresence>
-      <motion.div
-        className={styles.overlay}
-        {...getBackdropProps(reducedMotion)}
-        onClick={onClose}
-      >
+      <motion.div className={styles.overlay} {...getBackdropProps(reducedMotion)} onClick={onClose}>
         <motion.div
           className={styles.modal}
           {...getModalPresenceProps(reducedMotion)}
-          onClick={e => e.stopPropagation()}
+          onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
           <div className={styles.header}>
@@ -173,18 +169,12 @@ export const ProjectLinkModal: React.FC<ProjectLinkModalProps> = ({
 
           {/* Mode tabs */}
           <div className={styles.modeTabs}>
-            <button
-              className={mode === 'create' ? styles.active : ''}
-              onClick={() => setMode('create')}
-            >
+            <button className={mode === 'create' ? styles.active : ''} onClick={() => setMode('create')}>
               <FolderPlus size={14} />
               New Project
             </button>
             {projects.length > 0 && (
-              <button
-                className={mode === 'existing' ? styles.active : ''}
-                onClick={() => setMode('existing')}
-              >
+              <button className={mode === 'existing' ? styles.active : ''} onClick={() => setMode('existing')}>
                 <Link2 size={14} />
                 Add to Existing
               </button>
@@ -202,7 +192,7 @@ export const ProjectLinkModal: React.FC<ProjectLinkModalProps> = ({
                     type="text"
                     placeholder="e.g., Brand Tracking 2024"
                     value={projectName}
-                    onChange={e => setProjectName(e.target.value)}
+                    onChange={(e) => setProjectName(e.target.value)}
                     autoFocus
                   />
                 </div>
@@ -213,7 +203,7 @@ export const ProjectLinkModal: React.FC<ProjectLinkModalProps> = ({
                   <textarea
                     placeholder="Brief description of this project..."
                     value={projectDescription}
-                    onChange={e => setProjectDescription(e.target.value)}
+                    onChange={(e) => setProjectDescription(e.target.value)}
                     rows={2}
                   />
                 </div>
@@ -222,7 +212,7 @@ export const ProjectLinkModal: React.FC<ProjectLinkModalProps> = ({
                 <div className={styles.field}>
                   <label>Color</label>
                   <div className={styles.colorPicker}>
-                    {PROJECT_COLORS.map(color => (
+                    {PROJECT_COLORS.map((color) => (
                       <button
                         key={color.value}
                         className={`${styles.colorOption} ${selectedColor === color.value ? styles.selected : ''}`}
@@ -261,11 +251,9 @@ export const ProjectLinkModal: React.FC<ProjectLinkModalProps> = ({
                 {isLongitudinal && selectedDatasets.length > 1 && (
                   <div className={styles.waveConfig}>
                     <h4>Wave Assignment</h4>
-                    <p className={styles.waveHint}>
-                      Assign wave numbers to track data across time periods
-                    </p>
+                    <p className={styles.waveHint}>Assign wave numbers to track data across time periods</p>
                     <div className={styles.waveList}>
-                      {selectedDatasets.map(d => (
+                      {selectedDatasets.map((d) => (
                         <div key={d.id} className={styles.waveItem}>
                           <span className={styles.waveDataset}>
                             <Database size={14} />
@@ -275,13 +263,17 @@ export const ProjectLinkModal: React.FC<ProjectLinkModalProps> = ({
                             <label>Wave</label>
                             <select
                               value={waveAssignments[d.id] || 1}
-                              onChange={e => setWaveAssignments(prev => ({
-                                ...prev,
-                                [d.id]: parseInt(e.target.value),
-                              }))}
+                              onChange={(e) =>
+                                setWaveAssignments((prev) => ({
+                                  ...prev,
+                                  [d.id]: parseInt(e.target.value),
+                                }))
+                              }
                             >
-                              {Array.from({ length: 10 }, (_, i) => i + 1).map(n => (
-                                <option key={n} value={n}>{n}</option>
+                              {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
+                                <option key={n} value={n}>
+                                  {n}
+                                </option>
                               ))}
                             </select>
                           </div>
@@ -295,13 +287,12 @@ export const ProjectLinkModal: React.FC<ProjectLinkModalProps> = ({
                       <p className={styles.waveHint}>
                         Select a variable that uniquely identifies respondents across waves
                       </p>
-                      <select
-                        value={respondentKeyVar}
-                        onChange={e => setRespondentKeyVar(e.target.value)}
-                      >
+                      <select value={respondentKeyVar} onChange={(e) => setRespondentKeyVar(e.target.value)}>
                         <option value="">Select a variable...</option>
-                        {potentialKeyVariables.map(v => (
-                          <option key={v} value={v}>{v}</option>
+                        {potentialKeyVariables.map((v) => (
+                          <option key={v} value={v}>
+                            {v}
+                          </option>
                         ))}
                       </select>
                       {!respondentKeyVar && (
@@ -320,7 +311,7 @@ export const ProjectLinkModal: React.FC<ProjectLinkModalProps> = ({
                 <div className={styles.field}>
                   <label>Select Project</label>
                   <div className={styles.projectList}>
-                    {projects.map(project => (
+                    {projects.map((project) => (
                       <button
                         key={project.id}
                         className={`${styles.projectOption} ${selectedProjectId === project.id ? styles.selected : ''}`}
@@ -335,9 +326,7 @@ export const ProjectLinkModal: React.FC<ProjectLinkModalProps> = ({
                             {project.isLongitudinal && ' · Longitudinal'}
                           </span>
                         </div>
-                        {selectedProjectId === project.id && (
-                          <Check size={16} className={styles.checkIcon} />
-                        )}
+                        {selectedProjectId === project.id && <Check size={16} className={styles.checkIcon} />}
                       </button>
                     ))}
                   </div>

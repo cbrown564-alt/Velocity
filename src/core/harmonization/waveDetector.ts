@@ -34,10 +34,7 @@ const VARIABLE_OVERLAP_MEDIUM = 0.4;
  * 1. Filename similarity (Jaro-Winkler on stripped base names)
  * 2. Variable name overlap (Jaccard)
  */
-export function detectWave(
-  newDataset: NewDatasetSummary,
-  existingDatasets: DatasetSummary[]
-): WaveDetectionResult {
+export function detectWave(newDataset: NewDatasetSummary, existingDatasets: DatasetSummary[]): WaveDetectionResult {
   if (existingDatasets.length === 0) {
     return { isLikelyWave: false, confidence: 0, matchedDatasetId: null, reason: 'No existing datasets' };
   }
@@ -47,11 +44,11 @@ export function detectWave(
   let bestReason = '';
 
   const newName = stripWaveSuffix(newDataset.name);
-  const newVarNames = new Set(newDataset.variables.map(v => v.name.toLowerCase()));
+  const newVarNames = new Set(newDataset.variables.map((v) => v.name.toLowerCase()));
 
   for (const existing of existingDatasets) {
     const existingName = stripWaveSuffix(existing.name);
-    const existingVarNames = new Set(existing.variables.map(v => v.name.toLowerCase()));
+    const existingVarNames = new Set(existing.variables.map((v) => v.name.toLowerCase()));
 
     const nameSim = jaroWinklerSimilarity(newName, existingName);
     const overlap = jaccardOverlap(newVarNames, existingVarNames);

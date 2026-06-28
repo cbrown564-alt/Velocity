@@ -84,7 +84,9 @@
 .editIcon {
   color: var(--text-tertiary);
   opacity: 0;
-  transition: opacity var(--transition-fast), color var(--transition-fast);
+  transition:
+    opacity var(--transition-fast),
+    color var(--transition-fast);
 }
 
 .editableTitleContainer:hover .editIcon {
@@ -325,8 +327,6 @@
   width: 52px;
 }
 
-
-
 .valueLabelsTable tbody tr:hover {
   background-color: transparent;
 }
@@ -358,7 +358,9 @@
 .valueLabel {
   color: var(--text-primary);
   border-bottom: 1px dashed transparent;
-  transition: border-bottom-color var(--transition-fast), color var(--transition-fast);
+  transition:
+    border-bottom-color var(--transition-fast),
+    color var(--transition-fast);
   cursor: pointer;
 }
 
@@ -429,7 +431,9 @@
   align-items: center;
   justify-content: center;
   opacity: 0;
-  transition: opacity var(--transition-fast), background-color var(--transition-fast);
+  transition:
+    opacity var(--transition-fast),
+    background-color var(--transition-fast);
 }
 
 .mappingRow:hover .tableActionButton {

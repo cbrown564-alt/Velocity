@@ -14,8 +14,8 @@ describe('resolveSlideTitle', () => {
           { id: 'q1', name: 'Q1', label: 'Age' },
           { id: 'q2', name: 'Q2', label: 'Brand' },
         ],
-        { id: 'q3', name: 'Q3', label: 'Region' }
-      )
+        { id: 'q3', name: 'Q3', label: 'Region' },
+      ),
     ).toBe('Age > Brand by Region');
   });
 });
@@ -26,35 +26,23 @@ describe('resolveSlideSubtitle', () => {
   });
 
   it('renders filter variable label, operator, and value', () => {
-    const filters: Filter[] = [
-      { id: 'f1', variableId: 'region', operator: 'eq', value: 'North' },
-    ];
+    const filters: Filter[] = [{ id: 'f1', variableId: 'region', operator: 'eq', value: 'North' }];
     const labels = { region: 'Region' };
 
     expect(resolveSlideSubtitle(filters, null, 1500, false, labels)).toBe(
-      'Filtered: Region = North · N = 1,500 Respondents'
+      'Filtered: Region = North · N = 1,500 Respondents',
     );
   });
 
   it('falls back to variableId when no label map is provided', () => {
-    const filters: Filter[] = [
-      { id: 'f1', variableId: 'region', operator: 'eq', value: 'North' },
-    ];
+    const filters: Filter[] = [{ id: 'f1', variableId: 'region', operator: 'eq', value: 'North' }];
 
-    expect(resolveSlideSubtitle(filters, null, 1500, false)).toBe(
-      'Filtered: region = North · N = 1,500 Respondents'
-    );
+    expect(resolveSlideSubtitle(filters, null, 1500, false)).toBe('Filtered: region = North · N = 1,500 Respondents');
   });
 
   it('renders all operator types', () => {
     const base = (operator: Filter['operator']) =>
-      resolveSlideSubtitle(
-        [{ id: 'f', variableId: 'age', operator, value: 34 }],
-        null,
-        100,
-        false,
-        { age: 'Age' }
-      );
+      resolveSlideSubtitle([{ id: 'f', variableId: 'age', operator, value: 34 }], null, 100, false, { age: 'Age' });
 
     expect(base('eq')).toContain('Age = 34');
     expect(base('neq')).toContain('Age ≠ 34');
@@ -72,32 +60,24 @@ describe('resolveSlideSubtitle', () => {
     const labels = { region: 'Region', gender: 'Gender', age: 'Age' };
 
     expect(resolveSlideSubtitle(filters, null, 500, false, labels)).toBe(
-      'Filtered: Region = North, Gender = Female +1 more · N = 500 Respondents'
+      'Filtered: Region = North, Gender = Female +1 more · N = 500 Respondents',
     );
   });
 
   it('uses provided respondent count for filtered bases', () => {
-    const filters: Filter[] = [
-      { id: 'f1', variableId: 'nps', operator: 'eq', value: 'Promoter' },
-    ];
+    const filters: Filter[] = [{ id: 'f1', variableId: 'nps', operator: 'eq', value: 'Promoter' }];
     expect(resolveSlideSubtitle(filters, null, 42, false, { nps: 'NPS segment' })).toBe(
-      'Filtered: NPS segment = Promoter · N = 42 Respondents'
+      'Filtered: NPS segment = Promoter · N = 42 Respondents',
     );
   });
 
   it('includes weighting and formatted N when present', () => {
-    const filters: Filter[] = [
-      { id: 'f1', variableId: 'region', operator: 'eq', value: 'North' },
-    ];
+    const filters: Filter[] = [{ id: 'f1', variableId: 'region', operator: 'eq', value: 'North' }];
 
     expect(
-      resolveSlideSubtitle(
-        filters,
-        { id: 'w1', name: 'weight', label: 'Population weight' },
-        12345,
-        true,
-        { region: 'Region' }
-      )
+      resolveSlideSubtitle(filters, { id: 'w1', name: 'weight', label: 'Population weight' }, 12345, true, {
+        region: 'Region',
+      }),
     ).toBe('Filtered: Region = North · Weighted by Population weight · N = 12,345 Respondents');
   });
 });

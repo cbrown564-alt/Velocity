@@ -6,7 +6,17 @@
  * and future headless/CLI usage.
  */
 
-import { RecodeConfig, VariableSet, Variable, Filter, HistogramBin, AggregatedRow, ChiSquareResult, TableStats, MissingValueDef } from './index';
+import {
+  RecodeConfig,
+  VariableSet,
+  Variable,
+  Filter,
+  HistogramBin,
+  AggregatedRow,
+  ChiSquareResult,
+  TableStats,
+  MissingValueDef,
+} from './index';
 import type { OrderedScoring, VariableType } from './index';
 import { CrosstabQueryOptions } from '../core/sql/queryBuilder';
 import { ProcessedAnalysisData } from './processedData';
@@ -16,7 +26,7 @@ import type { VariableMapping } from './harmonization';
 export interface WorkerAnalysisSettings {
   comparisonMethod: 'cell_vs_rest' | 'pairwise';
   correctionType: 'none' | 'bonferroni' | 'fdr';
-  significanceLevel: 0.95 | 0.90 | 0.80;
+  significanceLevel: 0.95 | 0.9 | 0.8;
 }
 
 export interface WorkerAnalysisContext {
@@ -69,58 +79,66 @@ interface WorkerRequestBase {
   requestId?: string;
 }
 
-export type WorkerRequest = WorkerRequestBase & (
-  | { type: 'init'; forceCleanStart?: boolean; datasetId?: string; schemaVersion?: number }
-  | { type: 'setPersistenceContext'; datasetId?: string; schemaVersion?: number }
-  | { type: 'updatePersistenceMetadata'; metadata: PersistedMetadata }
-  | { type: 'loadCSV'; fileName: string; content: string }
-  | { type: 'loadSAV'; buffer: ArrayBuffer; forceChunked?: boolean }
-  | { type: 'loadSAVMetadata'; buffer: ArrayBuffer }
-  | { type: 'loadSAVSample'; buffer: ArrayBuffer; rowLimit: number; strategy?: 'sequential' | 'spread' }
-  | { type: 'flushPersistedData' }
-  | { type: 'query'; sql: string }
-  | { type: 'getSchema' }
-  | { type: 'getUniqueValues'; column: string }
-  | { type: 'getVariableStats'; column: string; variableType?: VariableType; orderedScoring?: OrderedScoring; binCount?: number; missingValues?: MissingValueDef }
-  | { type: 'recodeVariable'; sourceCol: string; newColName: string; config: RecodeConfig }
-  | { type: 'dropColumn'; column: string }
-  | { type: 'updateColumn'; sourceCol: string; targetCol: string; config: RecodeConfig }
-  | { type: 'fillSystemMissing'; column: string; value: number | string }
-  | { type: 'checkPersistedData' }
-  | { type: 'clearPersistedData' }
-  | {
-      type: 'runCrosstab';
-      options: RunCrosstabRequestPayload['options'];
-      analysisSettings?: WorkerAnalysisSettings;
-      context: WorkerAnalysisContext;
-    }
-  | {
-      type: 'processData';
-      data: AggregatedRow[];
-      options: {
-        rowVariables: Variable[];
-        colVariable: Variable | null;
-        isWeighted?: boolean;
-        isMultipleResponse?: boolean;
-      };
-      chartType?: ChartType;
-    }
-  | KnownRunAnalysisRequest
-  | UnknownRunAnalysisRequest
-  | { type: 'exportArrow'; sql: string; columns?: string[] }
-  | { type: 'getValueFrequencies'; tableName: string; columnName: string }
-  | {
-      type: 'buildHarmonizedTable';
-      sourceTable: string;
-      targetTable: string;
-      mappings: VariableMapping[];
-      outputTableName: string;
-      sourceVarNames?: Record<string, string>;
-      targetVarNames?: Record<string, string>;
-    }
-  | { type: 'getRespondentOverlap'; sourceTable: string; targetTable: string; keyColumn: string }
-  | { type: 'ping' }
-);
+export type WorkerRequest = WorkerRequestBase &
+  (
+    | { type: 'init'; forceCleanStart?: boolean; datasetId?: string; schemaVersion?: number }
+    | { type: 'setPersistenceContext'; datasetId?: string; schemaVersion?: number }
+    | { type: 'updatePersistenceMetadata'; metadata: PersistedMetadata }
+    | { type: 'loadCSV'; fileName: string; content: string }
+    | { type: 'loadSAV'; buffer: ArrayBuffer; forceChunked?: boolean }
+    | { type: 'loadSAVMetadata'; buffer: ArrayBuffer }
+    | { type: 'loadSAVSample'; buffer: ArrayBuffer; rowLimit: number; strategy?: 'sequential' | 'spread' }
+    | { type: 'flushPersistedData' }
+    | { type: 'query'; sql: string }
+    | { type: 'getSchema' }
+    | { type: 'getUniqueValues'; column: string }
+    | {
+        type: 'getVariableStats';
+        column: string;
+        variableType?: VariableType;
+        orderedScoring?: OrderedScoring;
+        binCount?: number;
+        missingValues?: MissingValueDef;
+      }
+    | { type: 'recodeVariable'; sourceCol: string; newColName: string; config: RecodeConfig }
+    | { type: 'dropColumn'; column: string }
+    | { type: 'updateColumn'; sourceCol: string; targetCol: string; config: RecodeConfig }
+    | { type: 'fillSystemMissing'; column: string; value: number | string }
+    | { type: 'checkPersistedData' }
+    | { type: 'clearPersistedData' }
+    | {
+        type: 'runCrosstab';
+        options: RunCrosstabRequestPayload['options'];
+        analysisSettings?: WorkerAnalysisSettings;
+        context: WorkerAnalysisContext;
+      }
+    | {
+        type: 'processData';
+        data: AggregatedRow[];
+        options: {
+          rowVariables: Variable[];
+          colVariable: Variable | null;
+          isWeighted?: boolean;
+          isMultipleResponse?: boolean;
+        };
+        chartType?: ChartType;
+      }
+    | KnownRunAnalysisRequest
+    | UnknownRunAnalysisRequest
+    | { type: 'exportArrow'; sql: string; columns?: string[] }
+    | { type: 'getValueFrequencies'; tableName: string; columnName: string }
+    | {
+        type: 'buildHarmonizedTable';
+        sourceTable: string;
+        targetTable: string;
+        mappings: VariableMapping[];
+        outputTableName: string;
+        sourceVarNames?: Record<string, string>;
+        targetVarNames?: Record<string, string>;
+      }
+    | { type: 'getRespondentOverlap'; sourceTable: string; targetTable: string; keyColumn: string }
+    | { type: 'ping' }
+  );
 
 // ============================================================================
 // Worker Response Types
@@ -169,34 +187,67 @@ interface WorkerResponseBase {
   requestId?: string;
 }
 
-export type WorkerResponse = WorkerResponseBase & (
-  | { type: 'ready'; opfsAvailable: boolean }
-  | { type: 'persistenceStatus'; opfsAvailable: boolean; mode: 'opfs' | 'memory' | 'disabled'; dbPath: string; lastError?: string }
-  | { type: 'corruptionDetected'; message: string }
-  | { type: 'schema'; data: { name: string; type: string }[] }
-  | { type: 'csvLoaded'; schema: { name: string; type: string }[]; rowCount: number; durationMs: number }
-  | { type: 'savLoaded'; variables: Variable[]; variableSets: VariableSet[]; rowCount: number; durationMs: number }
-  | { type: 'savMetadataLoaded'; variables: Variable[]; variableSets: VariableSet[]; rowCount: number; durationMs: number }
-  | { type: 'savSampleLoaded'; variables: Variable[]; variableSets: VariableSet[]; rowCount: number; sampleRowCount: number; sampleStrategy: 'sequential' | 'spread'; durationMs: number }
-  | { type: 'loadProgress'; phase: 'parsing' | 'inserting' | 'complete'; progress: number; rowsProcessed?: number; totalRows?: number; message: string }
-  | { type: 'flushComplete'; ok: boolean; durationMs: number; error?: string }
-  | { type: 'queryResult'; data: WorkerQueryRow[]; durationMs: number; tableStats?: TableStats }
-  | { type: 'uniqueValues'; data: string[] }
-  | { type: 'variableStats'; stats: VariableStatsResult }
-  | { type: 'recodeComplete'; newColName: string }
-  | { type: 'columnDropped'; column: string }
-  | { type: 'columnUpdated'; column: string }
-  | { type: 'persistedDataFound'; schema: { name: string; type: string }[]; rowCount: number; metadata?: PersistedMetadata }
-  | { type: 'noPersistedData' }
-  | { type: 'persistedDataCleared' }
-  | { type: 'pong'; hasData: boolean; rowCount?: number }
-  | { type: 'processedData'; result: ProcessedAnalysisData | null }
-  | KnownAnalysisResultResponse
-  | UnknownAnalysisResultResponse
-  | { type: 'arrowExported'; buffer: ArrayBuffer; rowCount: number; durationMs: number }
-  | { type: 'valueFrequencies'; column: string; frequencies: Array<{ value: number; count: number }> }
-  | { type: 'fillSystemMissingComplete'; column: string }
-  | { type: 'harmonizedTableCreated'; tableName: string; rowCount: number; durationMs: number }
-  | { type: 'respondentOverlap'; totalSource: number; totalTarget: number; overlap: number }
-  | { type: 'error'; message: string }
-);
+export type WorkerResponse = WorkerResponseBase &
+  (
+    | { type: 'ready'; opfsAvailable: boolean }
+    | {
+        type: 'persistenceStatus';
+        opfsAvailable: boolean;
+        mode: 'opfs' | 'memory' | 'disabled';
+        dbPath: string;
+        lastError?: string;
+      }
+    | { type: 'corruptionDetected'; message: string }
+    | { type: 'schema'; data: { name: string; type: string }[] }
+    | { type: 'csvLoaded'; schema: { name: string; type: string }[]; rowCount: number; durationMs: number }
+    | { type: 'savLoaded'; variables: Variable[]; variableSets: VariableSet[]; rowCount: number; durationMs: number }
+    | {
+        type: 'savMetadataLoaded';
+        variables: Variable[];
+        variableSets: VariableSet[];
+        rowCount: number;
+        durationMs: number;
+      }
+    | {
+        type: 'savSampleLoaded';
+        variables: Variable[];
+        variableSets: VariableSet[];
+        rowCount: number;
+        sampleRowCount: number;
+        sampleStrategy: 'sequential' | 'spread';
+        durationMs: number;
+      }
+    | {
+        type: 'loadProgress';
+        phase: 'parsing' | 'inserting' | 'complete';
+        progress: number;
+        rowsProcessed?: number;
+        totalRows?: number;
+        message: string;
+      }
+    | { type: 'flushComplete'; ok: boolean; durationMs: number; error?: string }
+    | { type: 'queryResult'; data: WorkerQueryRow[]; durationMs: number; tableStats?: TableStats }
+    | { type: 'uniqueValues'; data: string[] }
+    | { type: 'variableStats'; stats: VariableStatsResult }
+    | { type: 'recodeComplete'; newColName: string }
+    | { type: 'columnDropped'; column: string }
+    | { type: 'columnUpdated'; column: string }
+    | {
+        type: 'persistedDataFound';
+        schema: { name: string; type: string }[];
+        rowCount: number;
+        metadata?: PersistedMetadata;
+      }
+    | { type: 'noPersistedData' }
+    | { type: 'persistedDataCleared' }
+    | { type: 'pong'; hasData: boolean; rowCount?: number }
+    | { type: 'processedData'; result: ProcessedAnalysisData | null }
+    | KnownAnalysisResultResponse
+    | UnknownAnalysisResultResponse
+    | { type: 'arrowExported'; buffer: ArrayBuffer; rowCount: number; durationMs: number }
+    | { type: 'valueFrequencies'; column: string; frequencies: Array<{ value: number; count: number }> }
+    | { type: 'fillSystemMissingComplete'; column: string }
+    | { type: 'harmonizedTableCreated'; tableName: string; rowCount: number; durationMs: number }
+    | { type: 'respondentOverlap'; totalSource: number; totalTarget: number; overlap: number }
+    | { type: 'error'; message: string }
+  );

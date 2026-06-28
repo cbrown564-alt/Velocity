@@ -17,11 +17,16 @@ test('Export Session completes and downloads a session file for sleep.sav', asyn
   const surveyQuestions = page.getByText(/Survey Questions/i);
   const metadataLoaded = page.getByText('Metadata Loaded');
 
-  await expect.poll(async () => {
-    if (await surveyQuestions.isVisible().catch(() => false)) return 'dashboard';
-    if (await metadataLoaded.isVisible().catch(() => false)) return 'metadata';
-    return 'pending';
-  }, { timeout: 120000 }).not.toBe('pending');
+  await expect
+    .poll(
+      async () => {
+        if (await surveyQuestions.isVisible().catch(() => false)) return 'dashboard';
+        if (await metadataLoaded.isVisible().catch(() => false)) return 'metadata';
+        return 'pending';
+      },
+      { timeout: 120000 },
+    )
+    .not.toBe('pending');
 
   if (await metadataLoaded.isVisible().catch(() => false)) {
     await page.getByRole('button', { name: 'Load Full Data' }).click();

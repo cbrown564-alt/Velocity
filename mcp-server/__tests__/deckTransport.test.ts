@@ -4,11 +4,7 @@
 
 import { describe, it, expect } from 'vitest';
 import type { BuiltDeck, BuiltSlide, ResultEnvelope } from '../../src/engine/types.js';
-import {
-  BUILD_DECK_CHUNK_MAX_BYTES,
-  formatBuildDeckResponse,
-  parseBuildDeckToolContent,
-} from '../deckTransport.js';
+import { BUILD_DECK_CHUNK_MAX_BYTES, formatBuildDeckResponse, parseBuildDeckToolContent } from '../deckTransport.js';
 
 function makeSlide(index: number, rowPayloadSize = 80): BuiltSlide {
   const rows = Array.from({ length: rowPayloadSize }, (_, i) => ({

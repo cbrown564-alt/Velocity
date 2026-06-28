@@ -99,10 +99,7 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
   const isMultipleResponse = firstRowVarSet?.structure === 'multiple';
   const isWeighted = !!dataset?.weightVariable;
 
-  const activeSlide = React.useMemo(
-    () => slides.find((s) => s.id === activeSlideId) || null,
-    [slides, activeSlideId]
-  );
+  const activeSlide = React.useMemo(() => slides.find((s) => s.id === activeSlideId) || null, [slides, activeSlideId]);
 
   const canOpenExport = !!dataset;
 
@@ -119,7 +116,18 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
       chartType: activeSlide?.chartType,
       branding: resolveExportBranding(theme),
     });
-  }, [activeSlide?.title, activeSlide?.visualizationType, activeSlide?.chartType, dataset?.name, queryResult, resolvedRowVars, resolvedColVar, isWeighted, isMultipleResponse, theme]);
+  }, [
+    activeSlide?.title,
+    activeSlide?.visualizationType,
+    activeSlide?.chartType,
+    dataset?.name,
+    queryResult,
+    resolvedRowVars,
+    resolvedColVar,
+    isWeighted,
+    isMultipleResponse,
+    theme,
+  ]);
 
   const {
     sensors,
@@ -188,18 +196,15 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
   const totalRows = dataset?.rowCount || queryResult.reduce((sum, r) => sum + r.count, 0);
   const displaySets = filterSyntheticGridShellSets(variableSets || [], dataset);
 
-  const inUseIds = new Set([
-    ...tableConfig.rowVars,
-    ...(tableConfig.colVar ? [tableConfig.colVar] : [])
-  ]);
+  const inUseIds = new Set([...tableConfig.rowVars, ...(tableConfig.colVar ? [tableConfig.colVar] : [])]);
 
   const filteredSets = displaySets
-    .filter(s => !inUseIds.has(s.id))
-    .filter(s => !s.hidden)
-    .filter(s => s.name.toLowerCase().includes(searchQuery.toLowerCase()));
+    .filter((s) => !inUseIds.has(s.id))
+    .filter((s) => !s.hidden)
+    .filter((s) => s.name.toLowerCase().includes(searchQuery.toLowerCase()));
 
   const weightSetId = dataset?.weightVariable
-    ? variableSets.find(s => s.variableIds.includes(dataset.weightVariable!))?.id ?? null
+    ? (variableSets.find((s) => s.variableIds.includes(dataset.weightVariable!))?.id ?? null)
     : null;
 
   return (
@@ -210,10 +215,7 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       >
-        <motion.div
-          {...getMotionProps({ preset: 'fade', duration: DURATIONS.enter })}
-          className="flex h-screen"
-        >
+        <motion.div {...getMotionProps({ preset: 'fade', duration: DURATIONS.enter })} className="flex h-screen">
           <DashboardSidebar
             focusMode={focusMode}
             sidebarCollapsed={sidebarCollapsed}
@@ -279,11 +281,13 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
 
               <SmartCanvas className={`flex-1 relative min-h-0 flex flex-col ${focusMode ? 'p-2' : 'p-4'}`}>
                 <div className="flex-1 w-full min-h-0 flex flex-col">
-                  <div className={`flex-1 relative min-h-0 flex flex-col ${
-                    focusMode
-                      ? 'bg-transparent border-0 shadow-none rounded-none'
-                      : 'bg-[var(--bg-panel)] rounded-xl border border-[var(--border-color)] shadow-sm'
-                  }`}>
+                  <div
+                    className={`flex-1 relative min-h-0 flex flex-col ${
+                      focusMode
+                        ? 'bg-transparent border-0 shadow-none rounded-none'
+                        : 'bg-[var(--bg-panel)] rounded-xl border border-[var(--border-color)] shadow-sm'
+                    }`}
+                  >
                     {isQuerying && (
                       <div className="absolute inset-0 bg-[var(--bg-panel)]/50 z-20 flex items-center justify-center backdrop-blur-sm">
                         <Loader2 className="animate-spin text-[var(--color-accent)]" size={32} />
@@ -310,8 +314,14 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
         >
           {activeDragSet ? (
             <motion.div
-              initial={{ scale: 1.02, boxShadow: '0 8px 24px color-mix(in srgb, var(--text-primary) 12%, transparent)' }}
-              animate={{ scale: 1.05, boxShadow: '0 12px 32px color-mix(in srgb, var(--text-primary) 18%, transparent)' }}
+              initial={{
+                scale: 1.02,
+                boxShadow: '0 8px 24px color-mix(in srgb, var(--text-primary) 12%, transparent)',
+              }}
+              animate={{
+                scale: 1.05,
+                boxShadow: '0 12px 32px color-mix(in srgb, var(--text-primary) 18%, transparent)',
+              }}
               exit={{ scale: 1, boxShadow: '0 4px 12px color-mix(in srgb, var(--text-primary) 8%, transparent)' }}
               transition={{ type: 'spring', stiffness: 400, damping: 25 }}
             >
@@ -330,8 +340,7 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
                 label: 'Recode variable',
                 icon: <Pencil size={14} />,
                 disabled:
-                  variableContextMenu.set.structure !== 'single' ||
-                  variableContextMenu.set.variableIds.length === 0,
+                  variableContextMenu.set.structure !== 'single' || variableContextMenu.set.variableIds.length === 0,
                 onClick: () => handleRecodeClick(variableContextMenu.set),
               },
             ]}

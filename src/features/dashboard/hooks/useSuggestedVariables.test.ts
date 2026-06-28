@@ -38,8 +38,26 @@ describe('useSuggestedVariables', () => {
 
   it('prefers attitude variables with balanced labels', () => {
     const vars = [
-      makeVariable({ id: 'age', type: 'scale', valueLabels: [{ value: 1, label: '18-24' }, { value: 2, label: '25-34' }, { value: 3, label: '35-44' }, { value: 4, label: '45-54' }, { value: 5, label: '55+' }] }),
-      makeVariable({ id: 'nps', semantic: { topic: 'nps', measurementIntent: 'attitude', source: 'auto', confidence: 0.9 }, valueLabels: [{ value: 0, label: '0' }, { value: 1, label: '1' }, { value: 2, label: '2' }] }),
+      makeVariable({
+        id: 'age',
+        type: 'scale',
+        valueLabels: [
+          { value: 1, label: '18-24' },
+          { value: 2, label: '25-34' },
+          { value: 3, label: '35-44' },
+          { value: 4, label: '45-54' },
+          { value: 5, label: '55+' },
+        ],
+      }),
+      makeVariable({
+        id: 'nps',
+        semantic: { topic: 'nps', measurementIntent: 'attitude', source: 'auto', confidence: 0.9 },
+        valueLabels: [
+          { value: 0, label: '0' },
+          { value: 1, label: '1' },
+          { value: 2, label: '2' },
+        ],
+      }),
       makeVariable({ id: 'text', type: 'text', valueLabels: [] }),
     ];
     const sets = [
@@ -54,20 +72,23 @@ describe('useSuggestedVariables', () => {
   });
 
   it('excludes synthetic variables', () => {
-    const vars = [
-      makeVariable({ id: 'v1', synthetic: true }),
-      makeVariable({ id: 'v2' }),
-    ];
-    const sets = [
-      makeSet({ id: 's1', variableIds: ['v1'] }),
-      makeSet({ id: 's2', variableIds: ['v2'] }),
-    ];
+    const vars = [makeVariable({ id: 'v1', synthetic: true }), makeVariable({ id: 'v2' })];
+    const sets = [makeSet({ id: 's1', variableIds: ['v1'] }), makeSet({ id: 's2', variableIds: ['v2'] })];
     const { result } = renderHook(() => useSuggestedVariables(vars, sets, new Set(), 5));
     expect(result.current.map((s) => s.setId)).not.toContain('s1');
   });
 
   it('respects maxSuggestions', () => {
-    const vars = Array.from({ length: 10 }, (_, i) => makeVariable({ id: `v${i}`, valueLabels: [{ value: 1, label: 'A' }, { value: 2, label: 'B' }, { value: 3, label: 'C' }] }));
+    const vars = Array.from({ length: 10 }, (_, i) =>
+      makeVariable({
+        id: `v${i}`,
+        valueLabels: [
+          { value: 1, label: 'A' },
+          { value: 2, label: 'B' },
+          { value: 3, label: 'C' },
+        ],
+      }),
+    );
     const sets = vars.map((v) => makeSet({ id: `s_${v.id}`, variableIds: [v.id] }));
     const { result } = renderHook(() => useSuggestedVariables(vars, sets, new Set(), 3));
     expect(result.current.length).toBe(3);

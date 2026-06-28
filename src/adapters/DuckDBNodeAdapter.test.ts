@@ -7,7 +7,10 @@ describe('DuckDBNodeAdapter.queryStream', () => {
       {
         rowCount: 2,
         value: (c: number, r: number) => {
-          const data = [[1, 'a'], [2, 'b']];
+          const data = [
+            [1, 'a'],
+            [2, 'b'],
+          ];
           return data[r][c];
         },
       },
@@ -43,7 +46,10 @@ describe('DuckDBNodeAdapter.queryStream', () => {
 
     expect(chunks).toHaveLength(2);
     expect(chunks[0].columns).toEqual(['id', 'name']);
-    expect(chunks[0].rows).toEqual([{ id: 1, name: 'a' }, { id: 2, name: 'b' }]);
+    expect(chunks[0].rows).toEqual([
+      { id: 1, name: 'a' },
+      { id: 2, name: 'b' },
+    ]);
     expect(chunks[0].rowCount).toBe(2);
     expect(chunks[1].rows).toEqual([{ id: 3, name: 'c' }]);
     expect(chunks[1].rowCount).toBe(1);

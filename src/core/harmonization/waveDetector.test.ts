@@ -19,10 +19,7 @@ describe('detectWave', () => {
   });
 
   it('detects a likely wave by filename and variable similarity', () => {
-    const result = detectWave(
-      { name: 'CustomerSatisfaction_Wave2.sav', variables: wave2Variables },
-      [existingDataset]
-    );
+    const result = detectWave({ name: 'CustomerSatisfaction_Wave2.sav', variables: wave2Variables }, [existingDataset]);
     expect(result.isLikelyWave).toBe(true);
     expect(result.matchedDatasetId).toBe('dataset-wave1');
     expect(result.confidence).toBeGreaterThan(0.4);
@@ -48,18 +45,14 @@ describe('detectWave', () => {
   });
 
   it('strips wave suffixes before comparing names', () => {
-    const result = detectWave(
-      { name: 'BrandTracking_w1.sav', variables: wave1Variables },
-      [{ id: 'bt-w2', name: 'BrandTracking_w2.sav', variables: wave2Variables }]
-    );
+    const result = detectWave({ name: 'BrandTracking_w1.sav', variables: wave1Variables }, [
+      { id: 'bt-w2', name: 'BrandTracking_w2.sav', variables: wave2Variables },
+    ]);
     expect(result.isLikelyWave).toBe(true);
   });
 
   it('returns a result object with all required fields', () => {
-    const result = detectWave(
-      { name: 'test.sav', variables: wave2Variables },
-      [existingDataset]
-    );
+    const result = detectWave({ name: 'test.sav', variables: wave2Variables }, [existingDataset]);
     expect(typeof result.isLikelyWave).toBe('boolean');
     expect(typeof result.confidence).toBe('number');
     expect(result.confidence).toBeGreaterThanOrEqual(0);

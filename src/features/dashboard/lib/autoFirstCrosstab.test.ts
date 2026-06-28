@@ -48,11 +48,7 @@ describe('pickAutoFirstCrosstabPair', () => {
   });
 
   it('returns null for non-mock datasets', () => {
-    const sets = [
-      set({ id: 'id', name: 'id' }),
-      set({ id: 'a', name: 'segment' }),
-      set({ id: 'b', name: 'channel' }),
-    ];
+    const sets = [set({ id: 'id', name: 'id' }), set({ id: 'a', name: 'segment' }), set({ id: 'b', name: 'channel' })];
     expect(pickAutoFirstCrosstabPair('survey.csv', sets)).toBeNull();
   });
 
@@ -62,10 +58,7 @@ describe('pickAutoFirstCrosstabPair', () => {
   });
 
   it('returns null on mock when gender × region are unavailable', () => {
-    const sets = [
-      set({ id: 'a', name: 'segment' }),
-      set({ id: 'b', name: 'channel' }),
-    ];
+    const sets = [set({ id: 'a', name: 'segment' }), set({ id: 'b', name: 'channel' })];
     expect(pickAutoFirstCrosstabPair('mock_data.csv', sets)).toBeNull();
   });
 
@@ -97,12 +90,18 @@ describe('pickAutoFirstCrosstabPair', () => {
       variable({
         id: 'v-g',
         name: 'gender',
-        valueLabels: [{ value: 1, label: 'Male' }, { value: 2, label: 'Female' }],
+        valueLabels: [
+          { value: 1, label: 'Male' },
+          { value: 2, label: 'Female' },
+        ],
       }),
       variable({
         id: 'v-r',
         name: 'region',
-        valueLabels: [{ value: 1, label: 'North' }, { value: 2, label: 'South' }],
+        valueLabels: [
+          { value: 1, label: 'North' },
+          { value: 2, label: 'South' },
+        ],
       }),
     ];
     expect(pickAutoFirstCrosstabPair('mock_data.csv', sets, variables)).toEqual({
@@ -112,11 +111,7 @@ describe('pickAutoFirstCrosstabPair', () => {
   });
 
   it('works without variables for backward compatibility', () => {
-    const sets = [
-      set({ id: 'id', name: 'id' }),
-      set({ id: 'g', name: 'gender' }),
-      set({ id: 'r', name: 'region' }),
-    ];
+    const sets = [set({ id: 'id', name: 'id' }), set({ id: 'g', name: 'gender' }), set({ id: 'r', name: 'region' })];
     expect(pickAutoFirstCrosstabPair('mock_data.csv', sets)).toEqual({
       rowSetId: 'g',
       colSetId: 'r',
@@ -126,29 +121,23 @@ describe('pickAutoFirstCrosstabPair', () => {
 
 describe('resolveAutoCrosstabTableConfig', () => {
   it('expands grid sets to items and scale ids', () => {
-    const sets = [
-      set({ id: 'grid1', name: 'matrix', structure: 'grid' }),
-      set({ id: 'c', name: 'region' }),
-    ];
-    expect(
-      resolveAutoCrosstabTableConfig({ rowSetId: 'grid1', colSetId: 'c' }, sets),
-    ).toEqual({ rowVars: ['grid1_scale'], colVar: 'grid1_items' });
+    const sets = [set({ id: 'grid1', name: 'matrix', structure: 'grid' }), set({ id: 'c', name: 'region' })];
+    expect(resolveAutoCrosstabTableConfig({ rowSetId: 'grid1', colSetId: 'c' }, sets)).toEqual({
+      rowVars: ['grid1_scale'],
+      colVar: 'grid1_items',
+    });
   });
 
   it('returns null when row or col set is missing', () => {
     const sets = [set({ id: 'a', name: 'gender' })];
-    expect(
-      resolveAutoCrosstabTableConfig({ rowSetId: 'a', colSetId: 'missing' }, sets),
-    ).toBeNull();
+    expect(resolveAutoCrosstabTableConfig({ rowSetId: 'a', colSetId: 'missing' }, sets)).toBeNull();
   });
 
   it('uses items column when only col set is a grid', () => {
-    const sets = [
-      set({ id: 'row', name: 'gender' }),
-      set({ id: 'grid1', name: 'matrix', structure: 'grid' }),
-    ];
-    expect(
-      resolveAutoCrosstabTableConfig({ rowSetId: 'row', colSetId: 'grid1' }, sets),
-    ).toEqual({ rowVars: ['row'], colVar: 'grid1_items' });
+    const sets = [set({ id: 'row', name: 'gender' }), set({ id: 'grid1', name: 'matrix', structure: 'grid' })];
+    expect(resolveAutoCrosstabTableConfig({ rowSetId: 'row', colSetId: 'grid1' }, sets)).toEqual({
+      rowVars: ['row'],
+      colVar: 'grid1_items',
+    });
   });
 });

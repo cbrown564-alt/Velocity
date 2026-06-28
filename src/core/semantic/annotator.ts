@@ -28,17 +28,11 @@ function normLabel(label: string): string {
 
 /** Check if any value label text matches one of the given patterns (case-insensitive) */
 function valueLabelsMatch(variable: Variable, patterns: RegExp[]): boolean {
-  return variable.valueLabels.some((vl) =>
-    patterns.some((p) => p.test(vl.label))
-  );
+  return variable.valueLabels.some((vl) => patterns.some((p) => p.test(vl.label)));
 }
 
 /** Check if all value labels (with at least minCount labels) match a pattern set */
-function allValueLabelsMatch(
-  variable: Variable,
-  patterns: RegExp[],
-  minCount = 2
-): boolean {
+function allValueLabelsMatch(variable: Variable, patterns: RegExp[], minCount = 2): boolean {
   if (variable.valueLabels.length < minCount) return false;
   return variable.valueLabels.every((vl) => patterns.some((p) => p.test(vl.label)));
 }
@@ -53,15 +47,11 @@ function hasLikertLabels(variable: Variable): boolean {
     /neutral/i,
     /strongly/i,
   ];
-  return variable.valueLabels.some((vl) =>
-    likertPatterns.some((p) => p.test(vl.label))
-  );
+  return variable.valueLabels.some((vl) => likertPatterns.some((p) => p.test(vl.label)));
 }
 
 function hasSatisfactionLabels(variable: Variable): boolean {
-  return variable.valueLabels.some((vl) =>
-    /satisf|dissatisf|happy|unhappy|pleased|displeas/i.test(vl.label)
-  );
+  return variable.valueLabels.some((vl) => /satisf|dissatisf|happy|unhappy|pleased|displeas/i.test(vl.label));
 }
 
 function hasAwarenessLabels(variable: Variable): boolean {
@@ -98,10 +88,7 @@ function isLikertScale(variable: Variable): boolean {
 function isNpsScale(variable: Variable): boolean {
   if (variable.valueLabels.length < 5) return false;
   const labels = variable.valueLabels.map((vl) => vl.label.toLowerCase());
-  return (
-    labels.some((l) => l.includes('recommend')) ||
-    labels.some((l) => l.includes('likely'))
-  );
+  return labels.some((l) => l.includes('recommend')) || labels.some((l) => l.includes('likely'));
 }
 
 // ============================================================================
@@ -147,13 +134,13 @@ const DEMOGRAPHIC_LABEL_KEYWORDS = [
  */
 const HEALTH_LABEL_KEYWORDS: RegExp[] = [
   // Named instruments — matched by variable name prefix or label
-  /\bess\b/i,           // Epworth Sleepiness Scale
-  /\bhads\b/i,          // Hospital Anxiety and Depression Scale
-  /\bphq\b/i,           // Patient Health Questionnaire
-  /\bgad\b/i,           // Generalised Anxiety Disorder scale
-  /\bsf.?36\b/i,        // SF-36 health survey
-  /\bwhoqol\b/i,        // WHO Quality of Life
-  /\bsas\b/i,           // Zung Self-Rating Anxiety Scale
+  /\bess\b/i, // Epworth Sleepiness Scale
+  /\bhads\b/i, // Hospital Anxiety and Depression Scale
+  /\bphq\b/i, // Patient Health Questionnaire
+  /\bgad\b/i, // Generalised Anxiety Disorder scale
+  /\bsf.?36\b/i, // SF-36 health survey
+  /\bwhoqol\b/i, // WHO Quality of Life
+  /\bsas\b/i, // Zung Self-Rating Anxiety Scale
 
   // Symptom/outcome domains
   /\banxiet/i,
@@ -195,22 +182,14 @@ const HEALTH_NAME_PATTERNS: RegExp[] = [
   /^depress/i,
   /^fatigue/i,
   /^stress/i,
-  /^niteshft$/i,          // night-shift (common in sleep studies)
-  /^quals?leep/i,         // quality sleep
-  /^satissleep/i,         // satisfied with sleep
+  /^niteshft$/i, // night-shift (common in sleep studies)
+  /^quals?leep/i, // quality sleep
+  /^satissleep/i, // satisfied with sleep
   /^trouble.*(sleep|fall|stay)/i,
   /^hours.*(sleep|bed|night)/i,
 ];
 
-const CLASSIFICATION_NAME_PATTERNS = [
-  /^brand/i,
-  /^product/i,
-  /^category/i,
-  /^segment/i,
-  /^type/i,
-  /^cat_/i,
-  /^seg_/i,
-];
+const CLASSIFICATION_NAME_PATTERNS = [/^brand/i, /^product/i, /^category/i, /^segment/i, /^type/i, /^cat_/i, /^seg_/i];
 
 // ============================================================================
 // Single-variable Annotation
@@ -240,9 +219,11 @@ function detectAnnotation(variable: Variable, inGridSet: boolean): RuleMatch | n
 
   // Rule 9 — Temporal / date (name pattern)
   if (TEMPORAL_NAME_PATTERNS.some((p) => p.test(variable.name))) {
-    const role: SemanticAnnotation['temporalRole'] =
-      /wave/i.test(variable.name) ? 'wave_id' :
-      /date|timestamp/i.test(variable.name) ? 'timestamp' : 'period';
+    const role: SemanticAnnotation['temporalRole'] = /wave/i.test(variable.name)
+      ? 'wave_id'
+      : /date|timestamp/i.test(variable.name)
+        ? 'timestamp'
+        : 'period';
     return { intent: 'identifier', topic: 'temporal', confidence: 0.85, temporalRole: role };
   }
 
@@ -349,7 +330,10 @@ function detectAnnotation(variable: Variable, inGridSet: boolean): RuleMatch | n
       confidence = healthConfidence;
       intent = 'attitude';
       // Assign a specific sub-topic based on the strongest signal in name + label
-      if (/sleep|somnolen|drowsy|insomni|sleepless/i.test(label) || /sleep|niteshft|quals?leep|satissleep|trouble.*(sleep|fall|stay)/i.test(variable.name)) {
+      if (
+        /sleep|somnolen|drowsy|insomni|sleepless/i.test(label) ||
+        /sleep|niteshft|quals?leep|satissleep|trouble.*(sleep|fall|stay)/i.test(variable.name)
+      ) {
         topic = 'sleep_quality';
       } else if (/anxiet|gad|sas/i.test(label) || /anxiet|gad\d*/i.test(variable.name)) {
         topic = 'mental_health';
@@ -386,10 +370,7 @@ function detectAnnotation(variable: Variable, inGridSet: boolean): RuleMatch | n
  *
  * Only variables that match at least one rule are annotated.
  */
-export function autoAnnotate(
-  variables: Variable[],
-  variableSets: VariableSet[]
-): Map<string, SemanticAnnotation> {
+export function autoAnnotate(variables: Variable[], variableSets: VariableSet[]): Map<string, SemanticAnnotation> {
   // Build a set of variable IDs that are in grid VariableSets
   const gridVariableIds = new Set<string>();
   for (const vs of variableSets) {

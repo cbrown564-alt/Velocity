@@ -13,7 +13,7 @@ describe('buildCrosstabRequest', () => {
       analysisSettings: {
         comparisonMethod: 'pairwise',
         correctionType: 'fdr',
-        significanceLevel: 0.80,
+        significanceLevel: 0.8,
       },
     });
 
@@ -21,7 +21,7 @@ describe('buildCrosstabRequest', () => {
     expect(request.analysisSettings).toEqual({
       comparisonMethod: 'pairwise',
       correctionType: 'fdr',
-      significanceLevel: 0.80,
+      significanceLevel: 0.8,
     });
   });
 

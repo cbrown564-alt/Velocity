@@ -44,68 +44,71 @@ export function useWorkspaceOpen({
     openWorkspaceDataset,
   } = useVelocityStore();
 
-  const openDataset = useCallback(async (storedDataset: StoredDataset) => {
-    clearImportedSessionSemantic();
-    captureBeforeDatasetSwitch(
-      {
-        dataset,
-        activeDatasetId,
-        tableConfig,
-        activeFilters,
-        transformLog,
-        variableSets,
-        folders,
-      },
-      storedDataset.id,
-      { saveDatasetSession, updateStoredDataset },
-    );
-    updateDatasetAccess(storedDataset.id);
-    setActiveDataset(storedDataset.id);
-    setWorkspaceMode(false);
-
-    if (dataset?.id === storedDataset.id) {
-      recordPilotEvent('workspace_reopened', {
-        fileName: storedDataset.fileName,
-        datasetId: storedDataset.id,
-        fromCache: true,
-      });
+  const openDataset = useCallback(
+    async (storedDataset: StoredDataset) => {
+      clearImportedSessionSemantic();
+      captureBeforeDatasetSwitch(
+        {
+          dataset,
+          activeDatasetId,
+          tableConfig,
+          activeFilters,
+          transformLog,
+          variableSets,
+          folders,
+        },
+        storedDataset.id,
+        { saveDatasetSession, updateStoredDataset },
+      );
+      updateDatasetAccess(storedDataset.id);
+      setActiveDataset(storedDataset.id);
       setWorkspaceMode(false);
-      setMode('dashboard');
-      return;
-    }
 
-    setMode('uploading');
-    try {
-      await openWorkspaceDataset(storedDataset);
-      recordPilotEvent('workspace_reopened', {
-        fileName: storedDataset.fileName,
-        datasetId: storedDataset.id,
-      });
-      setMode('dashboard');
-    } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : undefined;
-      console.error('[useWorkspaceOpen] Failed to open workspace dataset:', error);
-      alert(message || 'Failed to open dataset from workspace.');
-      setMode('splash');
-      setWorkspaceMode(true);
-    }
-  }, [
-    clearImportedSessionSemantic,
-    dataset,
-    activeDatasetId,
-    tableConfig,
-    activeFilters,
-    transformLog,
-    variableSets,
-    folders,
-    saveDatasetSession,
-    updateDatasetAccess,
-    updateStoredDataset,
-    setActiveDataset,
-    setWorkspaceMode,
-    openWorkspaceDataset,
-    setMode,
-  ]);
+      if (dataset?.id === storedDataset.id) {
+        recordPilotEvent('workspace_reopened', {
+          fileName: storedDataset.fileName,
+          datasetId: storedDataset.id,
+          fromCache: true,
+        });
+        setWorkspaceMode(false);
+        setMode('dashboard');
+        return;
+      }
+
+      setMode('uploading');
+      try {
+        await openWorkspaceDataset(storedDataset);
+        recordPilotEvent('workspace_reopened', {
+          fileName: storedDataset.fileName,
+          datasetId: storedDataset.id,
+        });
+        setMode('dashboard');
+      } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : undefined;
+        console.error('[useWorkspaceOpen] Failed to open workspace dataset:', error);
+        alert(message || 'Failed to open dataset from workspace.');
+        setMode('splash');
+        setWorkspaceMode(true);
+      }
+    },
+    [
+      clearImportedSessionSemantic,
+      dataset,
+      activeDatasetId,
+      tableConfig,
+      activeFilters,
+      transformLog,
+      variableSets,
+      folders,
+      saveDatasetSession,
+      updateDatasetAccess,
+      updateStoredDataset,
+      setActiveDataset,
+      setWorkspaceMode,
+      openWorkspaceDataset,
+      setMode,
+    ],
+  );
 
   return { openDataset };
 }

@@ -37,9 +37,7 @@ function cloneValueLabels(valueLabels: ValueLabel[] = []): ValueLabel[] {
 function cloneMissingValues(missingValues: MissingValueDef = {}): MissingValueDef {
   return {
     discrete: missingValues.discrete ? [...missingValues.discrete] : undefined,
-    range: missingValues.range
-      ? { low: missingValues.range.low, high: missingValues.range.high }
-      : undefined,
+    range: missingValues.range ? { low: missingValues.range.low, high: missingValues.range.high } : undefined,
   };
 }
 
@@ -85,7 +83,7 @@ function buildVariableToSetMap(variableSets: VariableSet[]): Map<string, string>
 function resolveVariableSetReference(
   candidate: string,
   validVariableSetIds: Set<string>,
-  variableToSetMap: Map<string, string>
+  variableToSetMap: Map<string, string>,
 ): string | null {
   if (validVariableSetIds.has(candidate)) return candidate;
   return variableToSetMap.get(candidate) ?? null;
@@ -119,7 +117,7 @@ function sanitizeSlides(
   variableToSetMap: Map<string, string>,
   validVariableIds: Set<string>,
   validSectionIds: Set<string>,
-  diagnostics: SessionImportDiagnostics
+  diagnostics: SessionImportDiagnostics,
 ): Slide[] {
   const seenSlideIds = new Set<string>();
   const sanitizedSlides: Slide[] = [];
@@ -132,11 +130,13 @@ function sanitizeSlides(
     seenSlideIds.add(slideId);
 
     const analysisState = slide.analysisState ?? { rowVars: [], colVar: null, filters: [], weightVar: null };
-    const rowVars = uniqueStrings(analysisState.rowVars ?? []).map((rowVarId) => {
-      const resolved = resolveVariableSetReference(rowVarId, validVariableSetIds, variableToSetMap);
-      if (!resolved) diagnostics.droppedRowVarIds.add(rowVarId);
-      return resolved;
-    }).filter((rowVarId): rowVarId is string => rowVarId !== null);
+    const rowVars = uniqueStrings(analysisState.rowVars ?? [])
+      .map((rowVarId) => {
+        const resolved = resolveVariableSetReference(rowVarId, validVariableSetIds, variableToSetMap);
+        if (!resolved) diagnostics.droppedRowVarIds.add(rowVarId);
+        return resolved;
+      })
+      .filter((rowVarId): rowVarId is string => rowVarId !== null);
 
     let colVar = analysisState.colVar ?? null;
     if (colVar) {
@@ -149,14 +149,16 @@ function sanitizeSlides(
       }
     }
 
-    const filters = (analysisState.filters ?? []).filter((filter) => {
-      const ok = validVariableIds.has(filter.variableId);
-      if (!ok) {
-        diagnostics.droppedFilterIds.add(filter.id);
-        diagnostics.missingVariableIds.add(filter.variableId);
-      }
-      return ok;
-    }).map(cloneFilter);
+    const filters = (analysisState.filters ?? [])
+      .filter((filter) => {
+        const ok = validVariableIds.has(filter.variableId);
+        if (!ok) {
+          diagnostics.droppedFilterIds.add(filter.id);
+          diagnostics.missingVariableIds.add(filter.variableId);
+        }
+        return ok;
+      })
+      .map(cloneFilter);
 
     let weightVar = analysisState.weightVar ?? null;
     if (weightVar && !validVariableIds.has(weightVar)) {
@@ -170,9 +172,10 @@ function sanitizeSlides(
       sectionId = undefined;
     }
 
-    const cells = Array.isArray(slide.cells) && slide.cells.length > 0
-      ? slide.cells.map(cloneCell)
-      : [{ id: `${slideId}-cell-1`, content: { type: 'table' as const } }];
+    const cells =
+      Array.isArray(slide.cells) && slide.cells.length > 0
+        ? slide.cells.map(cloneCell)
+        : [{ id: `${slideId}-cell-1`, content: { type: 'table' as const } }];
 
     const layoutMode = VALID_LAYOUT_MODES.includes(slide.layoutMode) ? slide.layoutMode : 'focus';
     const visualizationType = slide.visualizationType === 'chart' ? 'chart' : 'table';
@@ -265,23 +268,25 @@ export function importSession(sessionFile: VelocitySessionFile, dataset: Dataset
   const mergedVariables = mergeDatasetVariables(dataset, sessionFile);
   const validVariableIds = new Set(mergedVariables.map((variable) => variable.id));
 
-  let variableSets = sessionFile.variableSets.map((variableSet) => {
-    const variableIds = uniqueStrings(variableSet.variableIds ?? []).filter((variableId) => {
-      const ok = validVariableIds.has(variableId);
-      if (!ok) diagnostics.missingVariableIds.add(variableId);
-      return ok;
-    });
+  let variableSets = sessionFile.variableSets
+    .map((variableSet) => {
+      const variableIds = uniqueStrings(variableSet.variableIds ?? []).filter((variableId) => {
+        const ok = validVariableIds.has(variableId);
+        if (!ok) diagnostics.missingVariableIds.add(variableId);
+        return ok;
+      });
 
-    if (variableIds.length === 0) {
-      diagnostics.droppedVariableSetIds.add(variableSet.id);
-      return null;
-    }
+      if (variableIds.length === 0) {
+        diagnostics.droppedVariableSetIds.add(variableSet.id);
+        return null;
+      }
 
-    return {
-      ...variableSet,
-      variableIds,
-    };
-  }).filter((variableSet): variableSet is VariableSet => variableSet !== null);
+      return {
+        ...variableSet,
+        variableIds,
+      };
+    })
+    .filter((variableSet): variableSet is VariableSet => variableSet !== null);
 
   if (variableSets.length === 0) {
     variableSets = buildFallbackVariableSets(mergedVariables);
@@ -296,11 +301,13 @@ export function importSession(sessionFile: VelocitySessionFile, dataset: Dataset
 
   const validVariableSetIds = new Set(variableSets.map((variableSet) => variableSet.id));
   const variableToSetMap = buildVariableToSetMap(variableSets);
-  const rowVars = uniqueStrings(sessionFile.tableConfig.rowVars ?? []).map((rowVarId) => {
-    const resolved = resolveVariableSetReference(rowVarId, validVariableSetIds, variableToSetMap);
-    if (!resolved) diagnostics.droppedRowVarIds.add(rowVarId);
-    return resolved;
-  }).filter((rowVarId): rowVarId is string => rowVarId !== null);
+  const rowVars = uniqueStrings(sessionFile.tableConfig.rowVars ?? [])
+    .map((rowVarId) => {
+      const resolved = resolveVariableSetReference(rowVarId, validVariableSetIds, variableToSetMap);
+      if (!resolved) diagnostics.droppedRowVarIds.add(rowVarId);
+      return resolved;
+    })
+    .filter((rowVarId): rowVarId is string => rowVarId !== null);
 
   let colVar = sessionFile.tableConfig.colVar ?? null;
   if (colVar) {
@@ -313,14 +320,16 @@ export function importSession(sessionFile: VelocitySessionFile, dataset: Dataset
     }
   }
 
-  const activeFilters = (sessionFile.activeFilters ?? []).filter((filter) => {
-    const ok = validVariableIds.has(filter.variableId);
-    if (!ok) {
-      diagnostics.droppedFilterIds.add(filter.id);
-      diagnostics.missingVariableIds.add(filter.variableId);
-    }
-    return ok;
-  }).map(cloneFilter);
+  const activeFilters = (sessionFile.activeFilters ?? [])
+    .filter((filter) => {
+      const ok = validVariableIds.has(filter.variableId);
+      if (!ok) {
+        diagnostics.droppedFilterIds.add(filter.id);
+        diagnostics.missingVariableIds.add(filter.variableId);
+      }
+      return ok;
+    })
+    .map(cloneFilter);
 
   const sectionsById = new Map<string, SlideSection>();
   for (const section of sessionFile.sections ?? []) {
@@ -336,7 +345,7 @@ export function importSession(sessionFile: VelocitySessionFile, dataset: Dataset
     variableToSetMap,
     validVariableIds,
     validSectionIds,
-    diagnostics
+    diagnostics,
   );
   for (const slideId of findStaleDeckRecipeSlideIds(sessionFile.deckRecipe, slides)) {
     diagnostics.droppedDeckRecipeSlideIds.add(slideId);
@@ -389,9 +398,9 @@ export function importSession(sessionFile: VelocitySessionFile, dataset: Dataset
     patch,
     workspaceSnapshot: sessionFile.workspace
       ? {
-        projects: sessionFile.workspace.projects.map((project) => ({ ...project })),
-        datasetLinks: sessionFile.workspace.datasetLinks.map((link) => ({ ...link })),
-      }
+          projects: sessionFile.workspace.projects.map((project) => ({ ...project })),
+          datasetLinks: sessionFile.workspace.datasetLinks.map((link) => ({ ...link })),
+        }
       : undefined,
     diagnostics: {
       missingVariableIds: [...diagnostics.missingVariableIds],

@@ -49,18 +49,17 @@ export const semanticHandlers: Record<string, ToolHandler> = {
   },
 
   velocity_list_variables_by_category: (engine, a) => {
-    const result = engine.listVariablesByCategory(
-      String(a.category) as never,
-      { includeUnannotated: true, limit: typeof a.limit === 'number' ? a.limit : undefined }
-    );
+    const result = engine.listVariablesByCategory(String(a.category) as never, {
+      includeUnannotated: true,
+      limit: typeof a.limit === 'number' ? a.limit : undefined,
+    });
     return successResponse(result);
   },
 
   velocity_suggest_breaks: (engine, a) => {
-    const result = engine.suggestBreaks(
-      String(a.variableId),
-      { limit: typeof a.limit === 'number' ? a.limit : undefined }
-    );
+    const result = engine.suggestBreaks(String(a.variableId), {
+      limit: typeof a.limit === 'number' ? a.limit : undefined,
+    });
     return successResponse(result);
   },
 };

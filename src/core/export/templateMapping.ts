@@ -3,11 +3,7 @@ import JSZip from 'jszip';
 
 const PLACEHOLDER_REGEX = /\{\{\s*([a-zA-Z0-9_.-]+)\s*\}\}/g;
 
-export type TemplateSlot =
-  | 'slide.title'
-  | 'slide.subtitle'
-  | 'slide.notes'
-  | 'analysis.label';
+export type TemplateSlot = 'slide.title' | 'slide.subtitle' | 'slide.notes' | 'analysis.label';
 
 export interface TemplatePlaceholder {
   id: string;
@@ -105,7 +101,7 @@ function decodeXmlText(value: string): string {
     .replaceAll('&gt;', '>')
     .replaceAll('&amp;', '&')
     .replaceAll('&quot;', '"')
-    .replaceAll('&apos;', '\'');
+    .replaceAll('&apos;', "'");
 }
 
 function escapeXmlText(value: string): string {
@@ -114,7 +110,7 @@ function escapeXmlText(value: string): string {
     .replaceAll('<', '&lt;')
     .replaceAll('>', '&gt;')
     .replaceAll('"', '&quot;')
-    .replaceAll('\'', '&apos;');
+    .replaceAll("'", '&apos;');
 }
 
 function resolveSlotValue(recipe: SlideRecipe, slot: TemplateSlot): string | null {
@@ -133,9 +129,7 @@ function resolveSlotValue(recipe: SlideRecipe, slot: TemplateSlot): string | nul
   }
 }
 
-export async function extractTemplateMetadata(
-  input: ExtractTemplateMetadataInput
-): Promise<PptxTemplate> {
+export async function extractTemplateMetadata(input: ExtractTemplateMetadataInput): Promise<PptxTemplate> {
   // Extension point: when we add zip/xml parsing, this function should populate
   // extractedTexts from the PPTX internals before token extraction.
   const extractedTexts = input.extractedTexts ?? [];
@@ -170,7 +164,7 @@ export async function extractTemplateMetadata(
 
 export async function extractTemplateMetadataFromPptxBinary(
   filename: string,
-  baseTemplate: Uint8Array
+  baseTemplate: Uint8Array,
 ): Promise<PptxTemplate> {
   const zip = await JSZip.loadAsync(baseTemplate);
   const placeholders: TemplatePlaceholder[] = [];
@@ -213,7 +207,7 @@ export async function extractTemplateMetadataFromPptxBinary(
 
   if (placeholders.length === 0) {
     diagnostics.push(
-      `No placeholders were detected in "${filename}". Add {{slide.title}}, {{slide.subtitle}}, {{slide.notes}}, or {{analysis.label}} tokens to template text boxes before export.`
+      `No placeholders were detected in "${filename}". Add {{slide.title}}, {{slide.subtitle}}, {{slide.notes}}, or {{analysis.label}} tokens to template text boxes before export.`,
     );
   }
 
@@ -246,9 +240,7 @@ export async function applyTemplateBindingsToPptx(input: {
 
   for (const binding of input.bindings) {
     const slideIndex = Number.parseInt(binding.recipeId.replace('slide-', ''), 10);
-    const candidates = Number.isFinite(slideIndex)
-      ? [`ppt/slides/slide${slideIndex}.xml`]
-      : [];
+    const candidates = Number.isFinite(slideIndex) ? [`ppt/slides/slide${slideIndex}.xml`] : [];
     const fallbackCandidates = Object.keys(zip.files).filter((path) => path.match(PPTX_SLIDE_PATH_REGEX));
     const uniqueCandidates = [...new Set([...candidates, ...fallbackCandidates])];
 
@@ -274,7 +266,7 @@ export async function applyTemplateBindingsToPptx(input: {
 export function mapTemplatePlaceholders(
   template: PptxTemplate,
   mapping: TemplateMapping,
-  recipes: SlideRecipe[]
+  recipes: SlideRecipe[],
 ): AppliedTemplateMapping {
   const fallbackRecipe = recipes[0];
   const bindings: AppliedTemplateBinding[] = mapping.bindings.flatMap((binding) => {
@@ -285,7 +277,7 @@ export function mapTemplatePlaceholders(
 
     const recipeForBinding =
       placeholder.slideIndex && placeholder.slideIndex > 0
-        ? recipes[placeholder.slideIndex - 1] ?? fallbackRecipe
+        ? (recipes[placeholder.slideIndex - 1] ?? fallbackRecipe)
         : fallbackRecipe;
     const resolvedValue = resolveSlotValue(recipeForBinding, binding.slot) ?? '';
     return [
@@ -308,7 +300,7 @@ export function mapTemplatePlaceholders(
 export function canApplyTemplate(
   mapping: TemplateMapping,
   template: PptxTemplate,
-  recipes: SlideRecipe[]
+  recipes: SlideRecipe[],
 ): TemplateApplyIssue[] {
   const issues: TemplateApplyIssue[] = [];
   const referenceRecipe = recipes[0];
@@ -349,9 +341,7 @@ export function canApplyTemplate(
   return issues;
 }
 
-export function buildTemplateApplicabilityReview(
-  input: TemplateApplicabilityInput
-): TemplateApplyIssue[] {
+export function buildTemplateApplicabilityReview(input: TemplateApplicabilityInput): TemplateApplyIssue[] {
   const issues: TemplateApplyIssue[] = [];
   const template = input.template ?? null;
   const mapping = input.mapping ?? null;
@@ -360,8 +350,7 @@ export function buildTemplateApplicabilityReview(
     issues.push({
       code: 'template_missing',
       severity: 'warn',
-      message:
-        'No client template is configured; export will use the default editable Velocity layout.',
+      message: 'No client template is configured; export will use the default editable Velocity layout.',
     });
   } else if (!template && mapping) {
     issues.push({
@@ -374,8 +363,7 @@ export function buildTemplateApplicabilityReview(
     issues.push({
       code: 'mapping_missing',
       severity: 'warn',
-      message:
-        'Template loaded without placeholder mapping; editable fields may not land in intended template slots.',
+      message: 'Template loaded without placeholder mapping; editable fields may not land in intended template slots.',
     });
   }
 

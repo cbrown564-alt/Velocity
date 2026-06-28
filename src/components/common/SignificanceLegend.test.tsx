@@ -43,9 +43,7 @@ describe('SignificanceLegend', () => {
 
     it('calls onMethodologyClick when link is clicked', () => {
       const handleClick = vi.fn();
-      render(
-        <SignificanceLegend showMethodologyLink onMethodologyClick={handleClick} />
-      );
+      render(<SignificanceLegend showMethodologyLink onMethodologyClick={handleClick} />);
 
       fireEvent.click(screen.getByText('How we calculate'));
       expect(handleClick).toHaveBeenCalledTimes(1);

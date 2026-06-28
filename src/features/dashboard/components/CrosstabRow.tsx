@@ -38,12 +38,7 @@ export interface CrosstabRowProps {
   haloClass: (sig?: string | null) => string;
   variableStats?: VariableStatsResult | null;
   transformLog: DataTransform[];
-  onRowContextMenu: (params: {
-    variableId: string;
-    rowLabel: string;
-    x: number;
-    y: number;
-  }) => void;
+  onRowContextMenu: (params: { variableId: string; rowLabel: string; x: number; y: number }) => void;
 }
 
 export const CrosstabRow: React.FC<CrosstabRowProps> = ({
@@ -72,7 +67,8 @@ export const CrosstabRow: React.FC<CrosstabRowProps> = ({
   const hasChildren = row.children.length > 0;
   const paddingLeft = row.depth * 24 + 8;
   const rowVarId = rowVariables[row.depth]?.id ?? rowVariables[0]?.id ?? '';
-  const isRowDragging = dragState.isDragging && dragState.draggedItem?.rawValue === row.rawValue && dragState.draggedItem?.axis === 'row';
+  const isRowDragging =
+    dragState.isDragging && dragState.draggedItem?.rawValue === row.rawValue && dragState.draggedItem?.axis === 'row';
   const isRowDropTarget = dragState.dropTarget === row.rawValue && dragState.draggedItem?.axis === 'row';
   const isRowSelected = selectedRows.has(row.rawValue);
 
@@ -82,7 +78,9 @@ export const CrosstabRow: React.FC<CrosstabRowProps> = ({
     isRowDragging ? mergeStyles.mergeDragging : '',
     isRowDropTarget ? mergeStyles.mergeDropTarget : '',
     isRowSelected ? mergeStyles.mergeSelected : '',
-  ].filter(Boolean).join(' ');
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   return (
     <React.Fragment key={row.key}>
@@ -97,13 +95,16 @@ export const CrosstabRow: React.FC<CrosstabRowProps> = ({
           data-merge-var={rowVarId}
           onMouseDown={(e) => {
             if (e.button !== 0 || (e.target as HTMLElement).closest('button')) return;
-            onDragStart({
-              label: row.label,
-              rawValue: row.rawValue,
-              depth: row.depth,
-              variableId: rowVarId,
-              axis: 'row',
-            }, e);
+            onDragStart(
+              {
+                label: row.label,
+                rawValue: row.rawValue,
+                depth: row.depth,
+                variableId: rowVarId,
+                axis: 'row',
+              },
+              e,
+            );
           }}
           onClick={(e) => {
             if (!dragState.isDragging && !(e.target as HTMLElement).closest('button')) {
@@ -111,7 +112,7 @@ export const CrosstabRow: React.FC<CrosstabRowProps> = ({
             }
           }}
           onContextMenu={(e) => {
-            const transform = transformLog.find(t => t.newColId === rowVarId);
+            const transform = transformLog.find((t) => t.newColId === rowVarId);
             if (!transform) return;
             e.preventDefault();
             onRowContextMenu({
@@ -125,55 +126,57 @@ export const CrosstabRow: React.FC<CrosstabRowProps> = ({
           <div className="flex items-center gap-2">
             {hasChildren && (
               <button
-                onClick={(e) => { e.stopPropagation(); onToggleRow(row.key); }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onToggleRow(row.key);
+                }}
                 className="p-0.5 rounded hover:bg-[var(--bg-active)] text-[var(--text-secondary)] transition-colors"
               >
                 {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
               </button>
             )}
-            {(!hasChildren && row.depth > 0) && <div className="w-4" />}
+            {!hasChildren && row.depth > 0 && <div className="w-4" />}
             <span className="leading-snug">{row.label}</span>
           </div>
         </td>
-        {tableData.colKeys.map(col => {
+        {tableData.colKeys.map((col) => {
           const cell = row.cells[col];
-          const isZero = cell.mean !== undefined
-            ? (Math.abs(cell.mean) === 0)
-            : (cell.percent === 0);
+          const isZero = cell.mean !== undefined ? Math.abs(cell.mean) === 0 : cell.percent === 0;
 
           const isSignificant = Boolean(cell.sig) || Boolean(cell.sigLetters && cell.sigLetters.length > 0);
           const hasStats = cell.stats && typeof cell.stats.effN === 'number';
           const cellValue = cell.mean !== undefined ? cell.mean : cell.percent;
 
-          const cellContent = cell.mean !== undefined ? (
-            <CrosstabCell
-              key={`cell-${animationKey}-${row.key}-${col}`}
-              variant="metric"
-              isZero={isZero}
-              isSignificant={isSignificant}
-              mean={cell.mean}
-              count={cell.count}
-              validCount={cell.validCount}
-              stdDev={cell.stdDev}
-              sigLetters={cell.sigLetters}
-              showMeanBadge
-              animationTrigger={animationKey}
-              reducedMotion={reducedMotion}
-            />
-          ) : (
-            <CrosstabCell
-              key={`cell-${animationKey}-${row.key}-${col}`}
-              variant="frequency"
-              isZero={isZero}
-              isSignificant={isSignificant}
-              percent={cell.percent}
-              count={cell.count}
-              sig={cell.sig}
-              sigLetters={cell.sigLetters}
-              animationTrigger={animationKey}
-              reducedMotion={reducedMotion}
-            />
-          );
+          const cellContent =
+            cell.mean !== undefined ? (
+              <CrosstabCell
+                key={`cell-${animationKey}-${row.key}-${col}`}
+                variant="metric"
+                isZero={isZero}
+                isSignificant={isSignificant}
+                mean={cell.mean}
+                count={cell.count}
+                validCount={cell.validCount}
+                stdDev={cell.stdDev}
+                sigLetters={cell.sigLetters}
+                showMeanBadge
+                animationTrigger={animationKey}
+                reducedMotion={reducedMotion}
+              />
+            ) : (
+              <CrosstabCell
+                key={`cell-${animationKey}-${row.key}-${col}`}
+                variant="frequency"
+                isZero={isZero}
+                isSignificant={isSignificant}
+                percent={cell.percent}
+                count={cell.count}
+                sig={cell.sig}
+                sigLetters={cell.sigLetters}
+                animationTrigger={animationKey}
+                reducedMotion={reducedMotion}
+              />
+            );
 
           const halo = haloClass(cell.sig || cell.sigLetters || null);
           return (
@@ -212,17 +215,15 @@ export const CrosstabRow: React.FC<CrosstabRowProps> = ({
             </td>
           );
         })}
-        {(tableData.colKeys.length > 1) && (
-          <td className={`px-2 ${density === 'generous' ? 'py-2.5' : 'py-1'} text-right bg-[var(--bg-active)]/30 align-middle data-cell`}>
+        {tableData.colKeys.length > 1 && (
+          <td
+            className={`px-2 ${density === 'generous' ? 'py-2.5' : 'py-1'} text-right bg-[var(--bg-active)]/30 align-middle data-cell`}
+          >
             {row.mean !== undefined ? (
               <CrosstabCell
                 key={`total-${animationKey}-${row.key}`}
                 variant="metric"
-                mean={
-                  variableStats && row.depth === 0
-                    ? variableStats.numeric?.mean
-                    : row.mean
-                }
+                mean={variableStats && row.depth === 0 ? variableStats.numeric?.mean : row.mean}
                 count={row.total}
                 showMeanBadge
                 animationTrigger={animationKey}
@@ -241,31 +242,33 @@ export const CrosstabRow: React.FC<CrosstabRowProps> = ({
           </td>
         )}
       </tr>
-      {hasChildren && isExpanded && row.children.map(child => (
-        <CrosstabRow
-          key={child.key}
-          row={child}
-          tableData={tableData}
-          rowVariables={rowVariables}
-          colVariable={colVariable}
-          expandedKeys={expandedKeys}
-          onToggleRow={onToggleRow}
-          dragState={dragState}
-          onDragStart={onDragStart}
-          selectedRows={selectedRows}
-          onToggleRowSelection={onToggleRowSelection}
-          hoveredCol={hoveredCol}
-          onHoverCol={onHoverCol}
-          onCellClick={onCellClick}
-          density={density}
-          animationKey={animationKey}
-          reducedMotion={reducedMotion}
-          haloClass={haloClass}
-          variableStats={variableStats}
-          transformLog={transformLog}
-          onRowContextMenu={onRowContextMenu}
-        />
-      ))}
+      {hasChildren &&
+        isExpanded &&
+        row.children.map((child) => (
+          <CrosstabRow
+            key={child.key}
+            row={child}
+            tableData={tableData}
+            rowVariables={rowVariables}
+            colVariable={colVariable}
+            expandedKeys={expandedKeys}
+            onToggleRow={onToggleRow}
+            dragState={dragState}
+            onDragStart={onDragStart}
+            selectedRows={selectedRows}
+            onToggleRowSelection={onToggleRowSelection}
+            hoveredCol={hoveredCol}
+            onHoverCol={onHoverCol}
+            onCellClick={onCellClick}
+            density={density}
+            animationKey={animationKey}
+            reducedMotion={reducedMotion}
+            haloClass={haloClass}
+            variableStats={variableStats}
+            transformLog={transformLog}
+            onRowContextMenu={onRowContextMenu}
+          />
+        ))}
     </React.Fragment>
   );
 };

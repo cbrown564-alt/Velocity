@@ -119,9 +119,7 @@ t.test(
  * Leverages Velocity's dynamic theme system and semantic tokens.
  * Allows writing and executing custom R code via WebR.
  */
-export const RCodeEditor: React.FC<RCodeEditorProps> = ({
-  defaultExpanded = false,
-}) => {
+export const RCodeEditor: React.FC<RCodeEditorProps> = ({ defaultExpanded = false }) => {
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
   const [code, setCode] = useState<string>('# Write R code here\n\n');
   const [result, setResult] = useState<RResult | null>(null);
@@ -189,10 +187,7 @@ export const RCodeEditor: React.FC<RCodeEditorProps> = ({
   return (
     <div className={styles.editor}>
       {/* Header */}
-      <button
-        onClick={() => setIsExpanded(!isExpanded)}
-        className={styles.header}
-      >
+      <button onClick={() => setIsExpanded(!isExpanded)} className={styles.header}>
         <div className={styles.headerLeft}>
           <Terminal size={16} className={styles.headerIcon} />
           <span className={styles.headerTitle}>R Console</span>
@@ -201,8 +196,7 @@ export const RCodeEditor: React.FC<RCodeEditorProps> = ({
         <div className={styles.headerRight}>
           {webrStatus === 'ready' && (
             <span className={styles.statusBadge}>
-              <span className={styles.statusDot} />
-              R Ready
+              <span className={styles.statusDot} />R Ready
             </span>
           )}
           {isExpanded ? (
@@ -220,10 +214,7 @@ export const RCodeEditor: React.FC<RCodeEditorProps> = ({
             <div className={styles.toolbarLeft}>
               {/* Templates Dropdown */}
               <div className={styles.templateWrapper} ref={templateDropdownRef}>
-                <button
-                  className={styles.templateButton}
-                  onClick={() => setShowTemplates(!showTemplates)}
-                >
+                <button className={styles.templateButton} onClick={() => setShowTemplates(!showTemplates)}>
                   <FileCode size={14} />
                   <span>Templates</span>
                   <ChevronDown size={12} />
@@ -237,12 +228,8 @@ export const RCodeEditor: React.FC<RCodeEditorProps> = ({
                         className={styles.templateOption}
                         onClick={() => handleTemplateSelect(template)}
                       >
-                        <span className={styles.templateName}>
-                          {template.name}
-                        </span>
-                        <span className={styles.templateDesc}>
-                          {template.description}
-                        </span>
+                        <span className={styles.templateName}>{template.name}</span>
+                        <span className={styles.templateDesc}>{template.description}</span>
                       </button>
                     ))}
                   </div>
@@ -251,19 +238,11 @@ export const RCodeEditor: React.FC<RCodeEditorProps> = ({
             </div>
 
             <div className={styles.toolbarRight}>
-              <button
-                className={styles.toolButton}
-                onClick={handleCopy}
-                title="Copy code"
-              >
+              <button className={styles.toolButton} onClick={handleCopy} title="Copy code">
                 {copied ? <Check size={14} /> : <Copy size={14} />}
               </button>
 
-              <button
-                className={styles.toolButton}
-                onClick={handleClear}
-                title="Clear"
-              >
+              <button className={styles.toolButton} onClick={handleClear} title="Clear">
                 <Trash2 size={14} />
               </button>
 
@@ -272,11 +251,7 @@ export const RCodeEditor: React.FC<RCodeEditorProps> = ({
                 onClick={handleExecute}
                 disabled={!canExecute || isExecuting}
               >
-                {isExecuting || isWebRBusy ? (
-                  <Loader2 size={14} className={styles.spinner} />
-                ) : (
-                  <Play size={14} />
-                )}
+                {isExecuting || isWebRBusy ? <Loader2 size={14} className={styles.spinner} /> : <Play size={14} />}
                 <span>{isExecuting ? 'Running...' : 'Run'}</span>
               </button>
             </div>
@@ -343,9 +318,7 @@ export const RCodeEditor: React.FC<RCodeEditorProps> = ({
                       </div>
                     )}
 
-                    <pre className={styles.consoleOutput}>
-                      {result.output || '(No output)'}
-                    </pre>
+                    <pre className={styles.consoleOutput}>{result.output || '(No output)'}</pre>
                   </>
                 )}
               </div>
@@ -356,9 +329,7 @@ export const RCodeEditor: React.FC<RCodeEditorProps> = ({
           {webrStatus !== 'ready' && (
             <div className={styles.footer}>
               {webrStatus === 'idle' && (
-                <span className={styles.footerText}>
-                  WebR not loaded. Click Run to initialize.
-                </span>
+                <span className={styles.footerText}>WebR not loaded. Click Run to initialize.</span>
               )}
               {webrStatus === 'initializing' && (
                 <span className={styles.footerText}>

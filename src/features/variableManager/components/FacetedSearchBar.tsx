@@ -22,53 +22,50 @@ import styles from './FacetedSearchBar.module.css';
 // ============================================================================
 
 const TYPE_ORDER: { value: CanonicalVariableType; label: string }[] = [
-    { value: 'categorical', label: 'Cat' },
-    { value: 'ordered',     label: 'Scale' },
-    { value: 'numeric',     label: 'Num' },
-    { value: 'date',        label: 'Date' },
-    { value: 'text',        label: 'Text' },
+  { value: 'categorical', label: 'Cat' },
+  { value: 'ordered', label: 'Scale' },
+  { value: 'numeric', label: 'Num' },
+  { value: 'date', label: 'Date' },
+  { value: 'text', label: 'Text' },
 ];
 
 function TypeDistributionBar({
-    counts,
-    selected,
-    onToggle,
+  counts,
+  selected,
+  onToggle,
 }: {
-    counts: Record<CanonicalVariableType, number>;
-    selected: TypeFacet[];
-    onToggle: (value: TypeFacet) => void;
+  counts: Record<CanonicalVariableType, number>;
+  selected: TypeFacet[];
+  onToggle: (value: TypeFacet) => void;
 }) {
-    const maxCount = Math.max(...TYPE_ORDER.map((t) => counts[t.value]), 1);
+  const maxCount = Math.max(...TYPE_ORDER.map((t) => counts[t.value]), 1);
 
-    return (
-        <div className={styles.typeFacet}>
-            <span className={styles.facetLabel}>Type</span>
-            <div className={styles.typeBars}>
-                {TYPE_ORDER.map((type) => {
-                    const count = counts[type.value];
-                    const isActive = selected.includes(type.value);
-                    const heightPercent = count > 0 ? Math.max(20, (count / maxCount) * 100) : 8;
+  return (
+    <div className={styles.typeFacet}>
+      <span className={styles.facetLabel}>Type</span>
+      <div className={styles.typeBars}>
+        {TYPE_ORDER.map((type) => {
+          const count = counts[type.value];
+          const isActive = selected.includes(type.value);
+          const heightPercent = count > 0 ? Math.max(20, (count / maxCount) * 100) : 8;
 
-                    return (
-                        <button
-                            key={type.value}
-                            type="button"
-                            className={`${styles.typeBar} ${isActive ? styles.typeBarActive : ''} ${count === 0 ? styles.typeBarEmpty : ''}`}
-                            onClick={() => onToggle(type.value as TypeFacet)}
-                            title={`${type.label}: ${count} variable${count !== 1 ? 's' : ''}`}
-                            aria-pressed={isActive}
-                        >
-                            <span
-                                className={styles.typeBarFill}
-                                style={{ height: `${heightPercent}%` }}
-                            />
-                            <span className={styles.typeBarLabel}>{type.label}</span>
-                        </button>
-                    );
-                })}
-            </div>
-        </div>
-    );
+          return (
+            <button
+              key={type.value}
+              type="button"
+              className={`${styles.typeBar} ${isActive ? styles.typeBarActive : ''} ${count === 0 ? styles.typeBarEmpty : ''}`}
+              onClick={() => onToggle(type.value as TypeFacet)}
+              title={`${type.label}: ${count} variable${count !== 1 ? 's' : ''}`}
+              aria-pressed={isActive}
+            >
+              <span className={styles.typeBarFill} style={{ height: `${heightPercent}%` }} />
+              <span className={styles.typeBarLabel}>{type.label}</span>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
 }
 
 // ============================================================================
@@ -76,103 +73,103 @@ function TypeDistributionBar({
 // ============================================================================
 
 function QualityInsight({
-    incompleteCount,
-    unlabeledCount,
-    selected,
-    onToggle,
+  incompleteCount,
+  unlabeledCount,
+  selected,
+  onToggle,
 }: {
-    incompleteCount: number;
-    unlabeledCount: number;
-    selected: QualityFacet[];
-    onToggle: (value: QualityFacet) => void;
+  incompleteCount: number;
+  unlabeledCount: number;
+  selected: QualityFacet[];
+  onToggle: (value: QualityFacet) => void;
 }) {
-    const [isOpen, setIsOpen] = useState(false);
-    const dropdownRef = useRef<HTMLDivElement>(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
-    useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-                setIsOpen(false);
-            }
-        };
-        if (isOpen) {
-            document.addEventListener('mousedown', handleClickOutside);
-            return () => document.removeEventListener('mousedown', handleClickOutside);
-        }
-    }, [isOpen]);
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [isOpen]);
 
-    const hasIssues = incompleteCount > 0 || unlabeledCount > 0;
-    const isActive = selected.length > 0;
+  const hasIssues = incompleteCount > 0 || unlabeledCount > 0;
+  const isActive = selected.length > 0;
 
-    return (
-        <div className={styles.facetGroup} ref={dropdownRef}>
-            <button
-                className={`${styles.insightButton} ${isActive ? styles.insightButtonActive : ''} ${hasIssues ? styles.insightButtonAttention : ''}`}
-                onClick={() => setIsOpen(!isOpen)}
-                aria-haspopup="menu"
-                aria-expanded={isOpen}
-                aria-label="Quality filters"
-            >
-                <span className={styles.facetLabel}>Quality</span>
-                {hasIssues ? (
-                    <span className={styles.insightBadge}>
-                        {incompleteCount + unlabeledCount}
-                    </span>
-                ) : (
-                    <span className={styles.insightOk}>OK</span>
-                )}
-                <ChevronDown size={12} />
-            </button>
+  return (
+    <div className={styles.facetGroup} ref={dropdownRef}>
+      <button
+        className={`${styles.insightButton} ${isActive ? styles.insightButtonActive : ''} ${hasIssues ? styles.insightButtonAttention : ''}`}
+        onClick={() => setIsOpen(!isOpen)}
+        aria-haspopup="menu"
+        aria-expanded={isOpen}
+        aria-label="Quality filters"
+      >
+        <span className={styles.facetLabel}>Quality</span>
+        {hasIssues ? (
+          <span className={styles.insightBadge}>{incompleteCount + unlabeledCount}</span>
+        ) : (
+          <span className={styles.insightOk}>OK</span>
+        )}
+        <ChevronDown size={12} />
+      </button>
 
-            {isOpen && (
-                <div className={styles.insightDropdown} role="menu" aria-label="Quality options">
-                    {/* Filter toggle */}
-                    <button
-                        type="button"
-                        role="menuitemcheckbox"
-                        aria-checked={selected.includes('incomplete')}
-                        className={styles.dropdownItem}
-                        onClick={() => onToggle('incomplete')}
-                    >
-                        <span className={`${styles.checkbox} ${selected.includes('incomplete') ? styles.checkboxChecked : ''}`}>
-                            {selected.includes('incomplete') && <Check className={styles.checkmark} />}
-                        </span>
-                        <span className={styles.dropdownLabel}>Incomplete data</span>
-                        {incompleteCount > 0 && (
-                            <span className={styles.dropdownCount}>{incompleteCount}</span>
-                        )}
-                    </button>
+      {isOpen && (
+        <div className={styles.insightDropdown} role="menu" aria-label="Quality options">
+          {/* Filter toggle */}
+          <button
+            type="button"
+            role="menuitemcheckbox"
+            aria-checked={selected.includes('incomplete')}
+            className={styles.dropdownItem}
+            onClick={() => onToggle('incomplete')}
+          >
+            <span className={`${styles.checkbox} ${selected.includes('incomplete') ? styles.checkboxChecked : ''}`}>
+              {selected.includes('incomplete') && <Check className={styles.checkmark} />}
+            </span>
+            <span className={styles.dropdownLabel}>Incomplete data</span>
+            {incompleteCount > 0 && <span className={styles.dropdownCount}>{incompleteCount}</span>}
+          </button>
 
-                    <button
-                        type="button"
-                        role="menuitemcheckbox"
-                        aria-checked={selected.includes('complete')}
-                        className={styles.dropdownItem}
-                        onClick={() => onToggle('complete')}
-                    >
-                        <span className={`${styles.checkbox} ${selected.includes('complete') ? styles.checkboxChecked : ''}`}>
-                            {selected.includes('complete') && <Check className={styles.checkmark} />}
-                        </span>
-                        <span className={styles.dropdownLabel}>Complete data</span>
-                    </button>
+          <button
+            type="button"
+            role="menuitemcheckbox"
+            aria-checked={selected.includes('complete')}
+            className={styles.dropdownItem}
+            onClick={() => onToggle('complete')}
+          >
+            <span className={`${styles.checkbox} ${selected.includes('complete') ? styles.checkboxChecked : ''}`}>
+              {selected.includes('complete') && <Check className={styles.checkmark} />}
+            </span>
+            <span className={styles.dropdownLabel}>Complete data</span>
+          </button>
 
-                    {/* Batch-fix suggestions */}
-                    {incompleteCount > 0 && (
-                        <div className={styles.suggestionItem}>
-                            <Wand2 size={12} />
-                            <span>{incompleteCount} variable{incompleteCount !== 1 ? 's' : ''} with missing values — review in Inspector</span>
-                        </div>
-                    )}
-                    {unlabeledCount > 0 && (
-                        <div className={styles.suggestionItem}>
-                            <Wand2 size={12} />
-                            <span>{unlabeledCount} variable{unlabeledCount !== 1 ? 's' : ''} missing value labels</span>
-                        </div>
-                    )}
-                </div>
-            )}
+          {/* Batch-fix suggestions */}
+          {incompleteCount > 0 && (
+            <div className={styles.suggestionItem}>
+              <Wand2 size={12} />
+              <span>
+                {incompleteCount} variable{incompleteCount !== 1 ? 's' : ''} with missing values — review in Inspector
+              </span>
+            </div>
+          )}
+          {unlabeledCount > 0 && (
+            <div className={styles.suggestionItem}>
+              <Wand2 size={12} />
+              <span>
+                {unlabeledCount} variable{unlabeledCount !== 1 ? 's' : ''} missing value labels
+              </span>
+            </div>
+          )}
         </div>
-    );
+      )}
+    </div>
+  );
 }
 
 // ============================================================================
@@ -180,97 +177,97 @@ function QualityInsight({
 // ============================================================================
 
 function StatusInsight({
-    hiddenCount,
-    derivedCount,
-    selected,
-    onToggle,
-    onUnhideAll,
+  hiddenCount,
+  derivedCount,
+  selected,
+  onToggle,
+  onUnhideAll,
 }: {
-    hiddenCount: number;
-    derivedCount: number;
-    selected: StatusFacet[];
-    onToggle: (value: StatusFacet) => void;
-    onUnhideAll: () => void;
+  hiddenCount: number;
+  derivedCount: number;
+  selected: StatusFacet[];
+  onToggle: (value: StatusFacet) => void;
+  onUnhideAll: () => void;
 }) {
-    const [isOpen, setIsOpen] = useState(false);
-    const dropdownRef = useRef<HTMLDivElement>(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
-    useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-                setIsOpen(false);
-            }
-        };
-        if (isOpen) {
-            document.addEventListener('mousedown', handleClickOutside);
-            return () => document.removeEventListener('mousedown', handleClickOutside);
-        }
-    }, [isOpen]);
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [isOpen]);
 
-    const isActive = selected.length > 0;
+  const isActive = selected.length > 0;
 
-    return (
-        <div className={styles.facetGroup} ref={dropdownRef}>
+  return (
+    <div className={styles.facetGroup} ref={dropdownRef}>
+      <button
+        className={`${styles.insightButton} ${isActive ? styles.insightButtonActive : ''}`}
+        onClick={() => setIsOpen(!isOpen)}
+        aria-haspopup="menu"
+        aria-expanded={isOpen}
+        aria-label="Status filters"
+      >
+        <span className={styles.facetLabel}>Status</span>
+        {hiddenCount > 0 && (
+          <span className={`${styles.insightBadge} ${styles.insightBadgeMuted}`}>
+            <EyeOff size={10} />
+            {hiddenCount}
+          </span>
+        )}
+        <ChevronDown size={12} />
+      </button>
+
+      {isOpen && (
+        <div className={styles.insightDropdown} role="menu" aria-label="Status options">
+          {['visible', 'hidden', 'derived'].map((status) => {
+            const count = status === 'hidden' ? hiddenCount : status === 'derived' ? derivedCount : undefined;
+            return (
+              <button
+                key={status}
+                type="button"
+                role="menuitemcheckbox"
+                aria-checked={selected.includes(status as StatusFacet)}
+                className={styles.dropdownItem}
+                onClick={() => onToggle(status as StatusFacet)}
+              >
+                <span
+                  className={`${styles.checkbox} ${selected.includes(status as StatusFacet) ? styles.checkboxChecked : ''}`}
+                >
+                  {selected.includes(status as StatusFacet) && <Check className={styles.checkmark} />}
+                </span>
+                <span className={styles.dropdownLabel}>
+                  {status === 'visible' ? 'Visible' : status === 'hidden' ? 'Hidden' : 'Derived'}
+                </span>
+                {count !== undefined && <span className={styles.dropdownCount}>{count}</span>}
+              </button>
+            );
+          })}
+
+          {hiddenCount > 0 && (
             <button
-                className={`${styles.insightButton} ${isActive ? styles.insightButtonActive : ''}`}
-                onClick={() => setIsOpen(!isOpen)}
-                aria-haspopup="menu"
-                aria-expanded={isOpen}
-                aria-label="Status filters"
+              type="button"
+              className={styles.actionItem}
+              onClick={() => {
+                onUnhideAll();
+                setIsOpen(false);
+              }}
             >
-                <span className={styles.facetLabel}>Status</span>
-                {hiddenCount > 0 && (
-                    <span className={`${styles.insightBadge} ${styles.insightBadgeMuted}`}>
-                        <EyeOff size={10} />
-                        {hiddenCount}
-                    </span>
-                )}
-                <ChevronDown size={12} />
+              <Eye size={12} />
+              <span>Unhide all {hiddenCount} hidden</span>
             </button>
-
-            {isOpen && (
-                <div className={styles.insightDropdown} role="menu" aria-label="Status options">
-                    {['visible', 'hidden', 'derived'] .map((status) => {
-                        const count = status === 'hidden' ? hiddenCount : status === 'derived' ? derivedCount : undefined;
-                        return (
-                            <button
-                                key={status}
-                                type="button"
-                                role="menuitemcheckbox"
-                                aria-checked={selected.includes(status as StatusFacet)}
-                                className={styles.dropdownItem}
-                                onClick={() => onToggle(status as StatusFacet)}
-                            >
-                                <span className={`${styles.checkbox} ${selected.includes(status as StatusFacet) ? styles.checkboxChecked : ''}`}>
-                                    {selected.includes(status as StatusFacet) && <Check className={styles.checkmark} />}
-                                </span>
-                                <span className={styles.dropdownLabel}>
-                                    {status === 'visible' ? 'Visible' : status === 'hidden' ? 'Hidden' : 'Derived'}
-                                </span>
-                                {count !== undefined && (
-                                    <span className={styles.dropdownCount}>{count}</span>
-                                )}
-                            </button>
-                        );
-                    })}
-
-                    {hiddenCount > 0 && (
-                        <button
-                            type="button"
-                            className={styles.actionItem}
-                            onClick={() => {
-                                onUnhideAll();
-                                setIsOpen(false);
-                            }}
-                        >
-                            <Eye size={12} />
-                            <span>Unhide all {hiddenCount} hidden</span>
-                        </button>
-                    )}
-                </div>
-            )}
+          )}
         </div>
-    );
+      )}
+    </div>
+  );
 }
 
 // ============================================================================
@@ -278,203 +275,190 @@ function StatusInsight({
 // ============================================================================
 
 export const FacetedSearchBar: React.FC = () => {
-    const {
-        variableSets,
+  const {
+    variableSets,
+    dataset,
+    activeFolderId,
+    managerSearchQuery,
+    facetFilters,
+    setFacetFilters,
+    clearFacetFilters,
+    variableStats,
+    bulkHide,
+  } = useVelocityStore();
+
+  // ------------------------------------------------------------------------
+  // Insight computations
+  // ------------------------------------------------------------------------
+
+  const visibleVariableSets = useMemo(
+    () =>
+      filterVariableSets(variableSets, {
         dataset,
         activeFolderId,
-        managerSearchQuery,
-        facetFilters,
-        setFacetFilters,
-        clearFacetFilters,
+        searchQuery: managerSearchQuery,
         variableStats,
-        bulkHide,
-    } = useVelocityStore();
+      }),
+    [variableSets, dataset, activeFolderId, managerSearchQuery, variableStats],
+  );
 
-    // ------------------------------------------------------------------------
-    // Insight computations
-    // ------------------------------------------------------------------------
-
-    const visibleVariableSets = useMemo(
-        () => filterVariableSets(variableSets, {
-            dataset,
-            activeFolderId,
-            searchQuery: managerSearchQuery,
-            variableStats,
-        }),
-        [variableSets, dataset, activeFolderId, managerSearchQuery, variableStats]
-    );
-
-    const typeCounts = useMemo(() => {
-        const counts: Record<CanonicalVariableType, number> = {
-            categorical: 0,
-            ordered: 0,
-            numeric: 0,
-            date: 0,
-            text: 0,
-        };
-        visibleVariableSets.forEach((vs) => {
-            const type = normalizeVariableType(vs.type || 'categorical');
-            counts[type] = (counts[type] ?? 0) + 1;
-        });
-        return counts;
-    }, [visibleVariableSets]);
-
-    const { incompleteCount, unlabeledCount, hiddenCount, derivedCount } = useMemo(() => {
-        let incomplete = 0;
-        let unlabeled = 0;
-        let hidden = 0;
-        let derived = 0;
-
-        visibleVariableSets.forEach((vs) => {
-            if (vs.hidden) hidden++;
-            if (vs.derived) derived++;
-
-            if (vs.variableIds.length === 1) {
-                const stats = variableStats[vs.variableIds[0]];
-                if (stats) {
-                    const missingPercent = stats.totalCount > 0
-                        ? (stats.missingCount / stats.totalCount) * 100
-                        : 0;
-                    if (missingPercent > 0) incomplete++;
-                }
-
-                const variable = dataset?.variables.find((v) => v.id === vs.variableIds[0]);
-                if (variable) {
-                    const hasLabels = (variable.valueLabels?.length ?? 0) > 0;
-                    const hasCodes = variable.type !== 'text' && variable.type !== 'date';
-                    if (hasCodes && !hasLabels) unlabeled++;
-                }
-            }
-        });
-
-        return { incompleteCount: incomplete, unlabeledCount: unlabeled, hiddenCount: hidden, derivedCount: derived };
-    }, [visibleVariableSets, variableStats, dataset]);
-
-    // ------------------------------------------------------------------------
-    // Toggle actions
-    // ------------------------------------------------------------------------
-
-    const toggleTypeFacet = (value: TypeFacet) => {
-        const current = facetFilters.types;
-        const newTypes = current.includes(value)
-            ? current.filter((v) => v !== value)
-            : [...current, value];
-        setFacetFilters({ types: newTypes });
+  const typeCounts = useMemo(() => {
+    const counts: Record<CanonicalVariableType, number> = {
+      categorical: 0,
+      ordered: 0,
+      numeric: 0,
+      date: 0,
+      text: 0,
     };
+    visibleVariableSets.forEach((vs) => {
+      const type = normalizeVariableType(vs.type || 'categorical');
+      counts[type] = (counts[type] ?? 0) + 1;
+    });
+    return counts;
+  }, [visibleVariableSets]);
 
-    const toggleStatusFacet = (value: StatusFacet) => {
-        const current = facetFilters.statuses;
-        const newStatuses = current.includes(value)
-            ? current.filter((v) => v !== value)
-            : [...current, value];
-        setFacetFilters({ statuses: newStatuses });
-    };
+  const { incompleteCount, unlabeledCount, hiddenCount, derivedCount } = useMemo(() => {
+    let incomplete = 0;
+    let unlabeled = 0;
+    let hidden = 0;
+    let derived = 0;
 
-    const toggleQualityFacet = (value: QualityFacet) => {
-        const current = facetFilters.qualities;
-        const newQualities = current.includes(value)
-            ? current.filter((v) => v !== value)
-            : [...current, value];
-        setFacetFilters({ qualities: newQualities });
-    };
+    visibleVariableSets.forEach((vs) => {
+      if (vs.hidden) hidden++;
+      if (vs.derived) derived++;
 
-    const handleUnhideAll = () => {
-        const hiddenIds = visibleVariableSets.filter((vs) => vs.hidden).map((vs) => vs.id);
-        if (hiddenIds.length > 0) {
-            bulkHide(hiddenIds, false);
+      if (vs.variableIds.length === 1) {
+        const stats = variableStats[vs.variableIds[0]];
+        if (stats) {
+          const missingPercent = stats.totalCount > 0 ? (stats.missingCount / stats.totalCount) * 100 : 0;
+          if (missingPercent > 0) incomplete++;
         }
-    };
 
-    // ------------------------------------------------------------------------
-    // Active chips (retained from original)
-    // ------------------------------------------------------------------------
+        const variable = dataset?.variables.find((v) => v.id === vs.variableIds[0]);
+        if (variable) {
+          const hasLabels = (variable.valueLabels?.length ?? 0) > 0;
+          const hasCodes = variable.type !== 'text' && variable.type !== 'date';
+          if (hasCodes && !hasLabels) unlabeled++;
+        }
+      }
+    });
 
-    const FACET_LABELS: Record<string, string> = {
-        categorical: 'Category',
-        ordered: 'Scale',
-        nominal: 'Category',
-        ordinal: 'Scale',
-        scale: 'Scale',
-        numeric: 'Numeric',
-        date: 'Date',
-        text: 'Text',
-        visible: 'Visible',
-        hidden: 'Hidden',
-        derived: 'Derived',
-        complete: 'Complete',
-        incomplete: 'Incomplete',
-    };
+    return { incompleteCount: incomplete, unlabeledCount: unlabeled, hiddenCount: hidden, derivedCount: derived };
+  }, [visibleVariableSets, variableStats, dataset]);
 
-    const hasActiveFilters =
-        facetFilters.types.length > 0 ||
-        facetFilters.statuses.length > 0 ||
-        facetFilters.qualities.length > 0;
+  // ------------------------------------------------------------------------
+  // Toggle actions
+  // ------------------------------------------------------------------------
 
-    const allChips: { key: string; label: string; onRemove: () => void }[] = [
-        ...facetFilters.types.map((v) => ({
-            key: `type-${v}`,
-            label: FACET_LABELS[v],
-            onRemove: () => setFacetFilters({ types: facetFilters.types.filter((t) => t !== v) }),
-        })),
-        ...facetFilters.statuses.map((v) => ({
-            key: `status-${v}`,
-            label: FACET_LABELS[v],
-            onRemove: () => setFacetFilters({ statuses: facetFilters.statuses.filter((s) => s !== v) }),
-        })),
-        ...facetFilters.qualities.map((v) => ({
-            key: `quality-${v}`,
-            label: FACET_LABELS[v],
-            onRemove: () => setFacetFilters({ qualities: facetFilters.qualities.filter((q) => q !== v) }),
-        })),
-    ];
+  const toggleTypeFacet = (value: TypeFacet) => {
+    const current = facetFilters.types;
+    const newTypes = current.includes(value) ? current.filter((v) => v !== value) : [...current, value];
+    setFacetFilters({ types: newTypes });
+  };
 
-    return (
-        <div className={styles.container}>
-            {/* Smart Facets */}
-            <TypeDistributionBar
-                counts={typeCounts}
-                selected={facetFilters.types}
-                onToggle={toggleTypeFacet}
-            />
+  const toggleStatusFacet = (value: StatusFacet) => {
+    const current = facetFilters.statuses;
+    const newStatuses = current.includes(value) ? current.filter((v) => v !== value) : [...current, value];
+    setFacetFilters({ statuses: newStatuses });
+  };
 
-            <QualityInsight
-                incompleteCount={incompleteCount}
-                unlabeledCount={unlabeledCount}
-                selected={facetFilters.qualities}
-                onToggle={toggleQualityFacet}
-            />
+  const toggleQualityFacet = (value: QualityFacet) => {
+    const current = facetFilters.qualities;
+    const newQualities = current.includes(value) ? current.filter((v) => v !== value) : [...current, value];
+    setFacetFilters({ qualities: newQualities });
+  };
 
-            <StatusInsight
-                hiddenCount={hiddenCount}
-                derivedCount={derivedCount}
-                selected={facetFilters.statuses}
-                onToggle={toggleStatusFacet}
-                onUnhideAll={handleUnhideAll}
-            />
+  const handleUnhideAll = () => {
+    const hiddenIds = visibleVariableSets.filter((vs) => vs.hidden).map((vs) => vs.id);
+    if (hiddenIds.length > 0) {
+      bulkHide(hiddenIds, false);
+    }
+  };
 
-            {/* Separator and active chips */}
-            {hasActiveFilters && (
-                <>
-                    <div className={styles.separator} />
-                    <div className={styles.chips}>
-                        {allChips.map((chip) => (
-                            <span key={chip.key} className={styles.chip}>
-                                {chip.label}
-                                <button
-                                    className={styles.chipRemove}
-                                    onClick={chip.onRemove}
-                                    aria-label={`Remove ${chip.label} filter`}
-                                >
-                                    <X size={10} />
-                                </button>
-                            </span>
-                        ))}
-                    </div>
-                    <button className={styles.clearAll} onClick={clearFacetFilters}>
-                        Clear all
-                    </button>
-                </>
-            )}
-        </div>
-    );
+  // ------------------------------------------------------------------------
+  // Active chips (retained from original)
+  // ------------------------------------------------------------------------
+
+  const FACET_LABELS: Record<string, string> = {
+    categorical: 'Category',
+    ordered: 'Scale',
+    nominal: 'Category',
+    ordinal: 'Scale',
+    scale: 'Scale',
+    numeric: 'Numeric',
+    date: 'Date',
+    text: 'Text',
+    visible: 'Visible',
+    hidden: 'Hidden',
+    derived: 'Derived',
+    complete: 'Complete',
+    incomplete: 'Incomplete',
+  };
+
+  const hasActiveFilters =
+    facetFilters.types.length > 0 || facetFilters.statuses.length > 0 || facetFilters.qualities.length > 0;
+
+  const allChips: { key: string; label: string; onRemove: () => void }[] = [
+    ...facetFilters.types.map((v) => ({
+      key: `type-${v}`,
+      label: FACET_LABELS[v],
+      onRemove: () => setFacetFilters({ types: facetFilters.types.filter((t) => t !== v) }),
+    })),
+    ...facetFilters.statuses.map((v) => ({
+      key: `status-${v}`,
+      label: FACET_LABELS[v],
+      onRemove: () => setFacetFilters({ statuses: facetFilters.statuses.filter((s) => s !== v) }),
+    })),
+    ...facetFilters.qualities.map((v) => ({
+      key: `quality-${v}`,
+      label: FACET_LABELS[v],
+      onRemove: () => setFacetFilters({ qualities: facetFilters.qualities.filter((q) => q !== v) }),
+    })),
+  ];
+
+  return (
+    <div className={styles.container}>
+      {/* Smart Facets */}
+      <TypeDistributionBar counts={typeCounts} selected={facetFilters.types} onToggle={toggleTypeFacet} />
+
+      <QualityInsight
+        incompleteCount={incompleteCount}
+        unlabeledCount={unlabeledCount}
+        selected={facetFilters.qualities}
+        onToggle={toggleQualityFacet}
+      />
+
+      <StatusInsight
+        hiddenCount={hiddenCount}
+        derivedCount={derivedCount}
+        selected={facetFilters.statuses}
+        onToggle={toggleStatusFacet}
+        onUnhideAll={handleUnhideAll}
+      />
+
+      {/* Separator and active chips */}
+      {hasActiveFilters && (
+        <>
+          <div className={styles.separator} />
+          <div className={styles.chips}>
+            {allChips.map((chip) => (
+              <span key={chip.key} className={styles.chip}>
+                {chip.label}
+                <button
+                  className={styles.chipRemove}
+                  onClick={chip.onRemove}
+                  aria-label={`Remove ${chip.label} filter`}
+                >
+                  <X size={10} />
+                </button>
+              </span>
+            ))}
+          </div>
+          <button className={styles.clearAll} onClick={clearFacetFilters}>
+            Clear all
+          </button>
+        </>
+      )}
+    </div>
+  );
 };

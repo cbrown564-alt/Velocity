@@ -8,11 +8,7 @@ export interface UseAppOverlayReturn {
   openSessionImport: () => void;
   openSessionExport: () => void;
   openProjectLink: (datasetIds: string[]) => void;
-  openCrossWave: (
-    project: Project,
-    datasets: StoredDataset[],
-    selectedWaves?: [StoredDataset, StoredDataset],
-  ) => void;
+  openCrossWave: (project: Project, datasets: StoredDataset[], selectedWaves?: [StoredDataset, StoredDataset]) => void;
   openWorkspaceExport: (selectedIds: string[]) => void;
   openCombine: () => void;
 }
@@ -26,17 +22,11 @@ export function useAppOverlay(): UseAppOverlayReturn {
 
   const openSessionExport = useCallback(() => setOverlay({ kind: 'sessionExport' }), []);
 
-  const openProjectLink = useCallback(
-    (datasetIds: string[]) => setOverlay({ kind: 'projectLink', datasetIds }),
-    [],
-  );
+  const openProjectLink = useCallback((datasetIds: string[]) => setOverlay({ kind: 'projectLink', datasetIds }), []);
 
   const openCrossWave = useCallback(
-    (
-      project: Project,
-      datasets: StoredDataset[],
-      selectedWaves?: [StoredDataset, StoredDataset],
-    ) => setOverlay({ kind: 'crossWave', project, datasets, selectedWaves }),
+    (project: Project, datasets: StoredDataset[], selectedWaves?: [StoredDataset, StoredDataset]) =>
+      setOverlay({ kind: 'crossWave', project, datasets, selectedWaves }),
     [],
   );
 

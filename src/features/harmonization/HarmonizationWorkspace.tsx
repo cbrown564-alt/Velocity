@@ -85,33 +85,32 @@ export const HarmonizationWorkspace: React.FC<HarmonizationWorkspaceProps> = ({
     (mappingId: string) => {
       updateMapping(mappingId, { targetVariableId: null, status: 'unmapped', score: null, valueMappings: [] });
     },
-    [updateMapping]
+    [updateMapping],
   );
 
   const selectedMapping = useMemo(
-    () => session?.mappings.find(m => m.id === selectedMappingId) ?? null,
-    [session?.mappings, selectedMappingId]
+    () => session?.mappings.find((m) => m.id === selectedMappingId) ?? null,
+    [session?.mappings, selectedMappingId],
   );
 
   const selectedSourceVar = useMemo(
-    () => selectedMapping ? sourceVars.find(v => v.id === selectedMapping.sourceVariableId) : null,
-    [selectedMapping, sourceVars]
+    () => (selectedMapping ? sourceVars.find((v) => v.id === selectedMapping.sourceVariableId) : null),
+    [selectedMapping, sourceVars],
   );
 
   const selectedTargetVar = useMemo(
-    () => selectedMapping?.targetVariableId
-      ? targetVars.find(v => v.id === selectedMapping.targetVariableId)
-      : null,
-    [selectedMapping, targetVars]
+    () =>
+      selectedMapping?.targetVariableId ? targetVars.find((v) => v.id === selectedMapping.targetVariableId) : null,
+    [selectedMapping, targetVars],
   );
 
   // Status counts
   const counts = useMemo(() => {
     const mappings = session?.mappings ?? [];
     return {
-      confirmed: mappings.filter(m => m.confirmed).length,
-      autoMatched: mappings.filter(m => m.status === 'auto_matched' && !m.confirmed).length,
-      unmapped: mappings.filter(m => m.status === 'unmapped').length,
+      confirmed: mappings.filter((m) => m.confirmed).length,
+      autoMatched: mappings.filter((m) => m.status === 'auto_matched' && !m.confirmed).length,
+      unmapped: mappings.filter((m) => m.status === 'unmapped').length,
       total: mappings.length,
     };
   }, [session?.mappings]);
@@ -119,15 +118,15 @@ export const HarmonizationWorkspace: React.FC<HarmonizationWorkspaceProps> = ({
   const handleLassoSelection = useCallback(
     (selectedNodeIds: string[]) => {
       // Select first source node in lasso selection
-      const firstSource = selectedNodeIds.find(id => id.startsWith('source::'));
+      const firstSource = selectedNodeIds.find((id) => id.startsWith('source::'));
       if (firstSource) {
         const varId = firstSource.replace('source::', '');
-        const mapping = session?.mappings.find(m => m.sourceVariableId === varId);
+        const mapping = session?.mappings.find((m) => m.sourceVariableId === varId);
         if (mapping) selectMapping(mapping.id);
       }
       setLassoActive(false);
     },
-    [session?.mappings, selectMapping]
+    [session?.mappings, selectMapping],
   );
 
   const handleApply = useCallback(async () => {
@@ -147,15 +146,7 @@ export const HarmonizationWorkspace: React.FC<HarmonizationWorkspaceProps> = ({
     } finally {
       setApplyInProgress(false);
     }
-  }, [
-    session,
-    applyHarmonization,
-    sourceTableName,
-    targetTableName,
-    sourceVars,
-    targetVars,
-    closeHarmonization,
-  ]);
+  }, [session, applyHarmonization, sourceTableName, targetTableName, sourceVars, targetVars, closeHarmonization]);
 
   const reducedMotion = useReducedMotion();
 
@@ -163,13 +154,14 @@ export const HarmonizationWorkspace: React.FC<HarmonizationWorkspaceProps> = ({
 
   return (
     <AnimatePresence>
-      <motion.div
-        className={styles.overlay}
-        {...getBackdropProps(reducedMotion)}
-      >
+      <motion.div className={styles.overlay} {...getBackdropProps(reducedMotion)}>
         <motion.div
           className={styles.workspace}
-          {...getMotionProps({ preset: 'fadeScale', duration: reducedMotion ? DURATIONS.instant : DURATIONS.normal, reducedMotion })}
+          {...getMotionProps({
+            preset: 'fadeScale',
+            duration: reducedMotion ? DURATIONS.instant : DURATIONS.normal,
+            reducedMotion,
+          })}
         >
           {/* Header */}
           <div className={styles.header}>
@@ -192,11 +184,7 @@ export const HarmonizationWorkspace: React.FC<HarmonizationWorkspaceProps> = ({
             </div>
 
             <div className={styles.headerActions}>
-              <button
-                className={styles.btnSecondary}
-                onClick={handleAutoMatch}
-                disabled={matchingInProgress}
-              >
+              <button className={styles.btnSecondary} onClick={handleAutoMatch} disabled={matchingInProgress}>
                 {matchingInProgress ? (
                   <>
                     <div className={styles.spinner} />
@@ -252,7 +240,7 @@ export const HarmonizationWorkspace: React.FC<HarmonizationWorkspaceProps> = ({
 
               <button
                 className={[styles.lassoToggle, lassoActive ? styles.lassoActive : ''].join(' ')}
-                onClick={() => setLassoActive(v => !v)}
+                onClick={() => setLassoActive((v) => !v)}
                 title="Lasso-select nodes (or hold Shift)"
               >
                 <Crosshair size={11} />
@@ -272,7 +260,10 @@ export const HarmonizationWorkspace: React.FC<HarmonizationWorkspaceProps> = ({
             <div className={styles.leftPanel}>
               {!session || session.mappings.length === 0 ? (
                 <div className={styles.emptyState}>
-                  <p>Click <strong>Auto-match</strong> to automatically map variables across waves using name, label, type, and value-label similarity.</p>
+                  <p>
+                    Click <strong>Auto-match</strong> to automatically map variables across waves using name, label,
+                    type, and value-label similarity.
+                  </p>
                 </div>
               ) : (
                 <MappingTable
@@ -300,7 +291,7 @@ export const HarmonizationWorkspace: React.FC<HarmonizationWorkspaceProps> = ({
                           selectMapping(null);
                           return;
                         }
-                        const m = session?.mappings.find(m => m.sourceVariableId === varId);
+                        const m = session?.mappings.find((m) => m.sourceVariableId === varId);
                         if (m) selectMapping(m.id);
                       }}
                       width={SANKEY_W}

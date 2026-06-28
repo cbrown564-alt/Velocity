@@ -16,7 +16,7 @@ export function generateNarrativeTitle(
   data: ProcessedAnalysisData | null,
   tableStats: TableStats | null,
   rowVarLabel: string,
-  colVarLabel: string | null
+  colVarLabel: string | null,
 ): string | null {
   if (!data || data.rows.length === 0) return null;
 

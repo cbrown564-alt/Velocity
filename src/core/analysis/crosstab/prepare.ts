@@ -1,8 +1,5 @@
 import { MissingValueDef, Variable } from '../../../types';
-import {
-  CrosstabQueryOptions,
-  escapeIdentifier,
-} from '../../sql/queryBuilder';
+import { CrosstabQueryOptions, escapeIdentifier } from '../../sql/queryBuilder';
 import type { CrosstabContext } from './types';
 
 function buildVariableMissingConditionSql(columnName: string, missingValues?: MissingValueDef): string {
@@ -24,10 +21,7 @@ function buildVariableMissingConditionSql(columnName: string, missingValues?: Mi
   return conditions.join(' OR ');
 }
 
-export function buildMissingExclusionSql(
-  options: CrosstabQueryOptions,
-  context: CrosstabContext
-): string | undefined {
+export function buildMissingExclusionSql(options: CrosstabQueryOptions, context: CrosstabContext): string | undefined {
   const involvedVariableIds = new Set<string>();
 
   options.rowVars.forEach((id) => involvedVariableIds.add(id));
@@ -53,7 +47,7 @@ export function buildMissingExclusionSql(
  */
 export function prepareCrosstabOptions(
   options: CrosstabQueryOptions & { includeDistributions?: boolean },
-  context: CrosstabContext
+  context: CrosstabContext,
 ): CrosstabQueryOptions & { includeDistributions?: boolean } {
   const modifiedOptions = { ...options };
 
@@ -75,11 +69,11 @@ export function prepareCrosstabOptions(
     const gridSet = context.variableSets[firstRowVar.sourceGridId!];
 
     if (gridSet && gridSet.structure === 'grid' && gridSet.gridMetadata) {
-      modifiedOptions.gridColumns = gridSet.variableIds.map(varId => {
+      modifiedOptions.gridColumns = gridSet.variableIds.map((varId) => {
         const itemVar = context.variables[varId];
         return {
           name: varId,
-          label: itemVar?.label || varId
+          label: itemVar?.label || varId,
         };
       });
 
@@ -93,7 +87,7 @@ export function prepareCrosstabOptions(
 
       // Sanitize Filters
       if (modifiedOptions.filters) {
-        modifiedOptions.filters = modifiedOptions.filters.map(f => {
+        modifiedOptions.filters = modifiedOptions.filters.map((f) => {
           const v = context.variables[f.variableId];
           if (v?.synthetic && v.sourceGridId === gridSet.id) {
             if (f.variableId.endsWith('_items')) {

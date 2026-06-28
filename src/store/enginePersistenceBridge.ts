@@ -9,14 +9,13 @@ import { EngineProxy, type EngineProxyOptions } from '../services/EngineProxy';
 import { BrowserEngine } from '../engine/BrowserEngine';
 import type { EngineResponseByType } from '../types/engineWorker';
 import type { PersistenceState } from './slices/data/types';
+import AnalysisWorker from '../services/analysisWorker?worker';
 
 type LoadProgressMessage = EngineResponseByType<'engine.loadProgress'>;
 type LoadProgressCallback = (msg: LoadProgressMessage) => void;
 
-export const ANALYSIS_WORKER_MODULE = new URL('../services/analysisWorker.ts', import.meta.url);
-
 export function createAnalysisWorker(): Worker {
-  return new Worker(ANALYSIS_WORKER_MODULE, { type: 'module' });
+  return new AnalysisWorker();
 }
 
 export interface EnginePersistenceStatusPatch {
@@ -75,10 +74,7 @@ export function createEnginePersistenceCallbacks(
       });
     },
     onCorruption: (msg: CorruptionMessage) => {
-      console.warn(
-        `[enginePersistenceBridge] OPFS corruption detected${corruptionLogLabel}:`,
-        msg.message,
-      );
+      console.warn(`[enginePersistenceBridge] OPFS corruption detected${corruptionLogLabel}:`, msg.message);
       bridge.applyCorruption({
         persistenceState: 'corrupt',
         persistenceError: msg.message || 'OPFS database corruption detected',

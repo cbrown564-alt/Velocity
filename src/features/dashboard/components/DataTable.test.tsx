@@ -15,15 +15,22 @@ import { useProcessedAnalysisData } from '../../../hooks/useProcessedAnalysisDat
 
 const mockUseProcessedAnalysisData = vi.mocked(useProcessedAnalysisData);
 
-function makeProcessedData(cells: { col: string; row: string; percent: number; sig?: ProcessedAnalysisData['rows'][0]['cells'][string]['sig'] }[]): ProcessedAnalysisData {
-  const columns = Array.from(new Set(cells.map(c => c.col))).map(key => ({ key, label: key, total: 100 }));
-  const rows = Array.from(new Set(cells.map(c => c.row))).map(key => ({
+function makeProcessedData(
+  cells: {
+    col: string;
+    row: string;
+    percent: number;
+    sig?: ProcessedAnalysisData['rows'][0]['cells'][string]['sig'];
+  }[],
+): ProcessedAnalysisData {
+  const columns = Array.from(new Set(cells.map((c) => c.col))).map((key) => ({ key, label: key, total: 100 }));
+  const rows = Array.from(new Set(cells.map((c) => c.row))).map((key) => ({
     key,
     label: key,
     rawValue: key,
     depth: 0,
     cells: Object.fromEntries(
-      cells.filter(c => c.row === key).map(c => [c.col, { count: 10, percent: c.percent, sig: c.sig }])
+      cells.filter((c) => c.row === key).map((c) => [c.col, { count: 10, percent: c.percent, sig: c.sig }]),
     ),
     total: 50,
     children: [],
@@ -37,7 +44,16 @@ function makeProcessedData(cells: { col: string; row: string; percent: number; s
     grandTotal: 100,
     isMetric: false,
     isGrid: false,
-    rowVariables: [{ id: 'v1', name: 'var1', label: 'Variable 1', type: 'categorical', valueLabels: [], missingValues: {} } as Variable],
+    rowVariables: [
+      {
+        id: 'v1',
+        name: 'var1',
+        label: 'Variable 1',
+        type: 'categorical',
+        valueLabels: [],
+        missingValues: {},
+      } as Variable,
+    ],
     colVariable: null,
     isMultipleResponse: false,
   };
@@ -58,14 +74,7 @@ describe('DataTable hook stability', () => {
       missingValues: {},
     } as Variable;
 
-    const { rerender } = render(
-      <DataTable
-        data={[]}
-        rowVariables={[rowVar]}
-        colVariable={null}
-        totalCount={100}
-      />
-    );
+    const { rerender } = render(<DataTable data={[]} rowVariables={[rowVar]} colVariable={null} totalCount={100} />);
 
     const processed = makeProcessedData([
       { col: 'c1', row: 'r1', percent: 50 },
@@ -73,14 +82,7 @@ describe('DataTable hook stability', () => {
     ]);
     mockUseProcessedAnalysisData.mockReturnValue(processed);
 
-    rerender(
-      <DataTable
-        data={[]}
-        rowVariables={[rowVar]}
-        colVariable={null}
-        totalCount={100}
-      />
-    );
+    rerender(<DataTable data={[]} rowVariables={[rowVar]} colVariable={null} totalCount={100} />);
 
     expect(document.querySelector('table')).toBeTruthy();
   });
@@ -125,23 +127,14 @@ describe('DataTable hook stability', () => {
 
     const onCellClick = vi.fn();
     const { container } = render(
-      <DataTable
-        data={[]}
-        rowVariables={[rowVar]}
-        colVariable={colVar}
-        totalCount={100}
-        onCellClick={onCellClick}
-      />
+      <DataTable data={[]} rowVariables={[rowVar]} colVariable={colVar} totalCount={100} onCellClick={onCellClick} />,
     );
 
     const firstDataCell = container.querySelector('tbody td.data-cell') as HTMLTableCellElement;
     fireEvent.click(firstDataCell);
 
     expect(onCellClick).toHaveBeenCalledTimes(1);
-    expect(onCellClick).toHaveBeenCalledWith(
-      [{ variable: 'v1', value: 'male' }],
-      'north'
-    );
+    expect(onCellClick).toHaveBeenCalledWith([{ variable: 'v1', value: 'male' }], 'north');
   });
 });
 
@@ -170,12 +163,7 @@ describe('DataTable Insight Halo', () => {
     });
 
     const { container } = render(
-      <DataTable
-        data={[]}
-        rowVariables={processed.rowVariables}
-        colVariable={null}
-        totalCount={100}
-      />
+      <DataTable data={[]} rowVariables={processed.rowVariables} colVariable={null} totalCount={100} />,
     );
 
     const cells = container.querySelectorAll('td.data-cell');
@@ -206,12 +194,7 @@ describe('DataTable Insight Halo', () => {
     });
 
     const { container } = render(
-      <DataTable
-        data={[]}
-        rowVariables={processed.rowVariables}
-        colVariable={null}
-        totalCount={100}
-      />
+      <DataTable data={[]} rowVariables={processed.rowVariables} colVariable={null} totalCount={100} />,
     );
 
     const cells = container.querySelectorAll('td.data-cell');
@@ -258,7 +241,7 @@ describe('DataTable Insight Halo', () => {
         rowVariables={processed.rowVariables}
         colVariable={processed.colVariable}
         totalCount={200}
-      />
+      />,
     );
 
     const table = container.querySelector('table');

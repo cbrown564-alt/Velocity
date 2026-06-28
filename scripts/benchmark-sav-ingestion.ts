@@ -64,7 +64,7 @@ const DEFAULT_WINDOW_CHUNK_SIZE = 5000;
 const RSS_POLL_MS = 25;
 
 function parseArgs(argv: string[]): { outputPath: string } {
-  const outputFlag = argv.find(arg => arg.startsWith('--output='));
+  const outputFlag = argv.find((arg) => arg.startsWith('--output='));
   const outputPath = outputFlag
     ? outputFlag.slice('--output='.length)
     : path.resolve(process.cwd(), 'validation/benchmark_sav_ingestion_latest.json');
@@ -111,7 +111,10 @@ async function measure<T>(fn: () => Promise<T>): Promise<Measurement<T>> {
   }
 }
 
-async function runMetadataParse(mod: ReadStatModule, data: Buffer): Promise<{ rowCount: number; variableCount: number }> {
+async function runMetadataParse(
+  mod: ReadStatModule,
+  data: Buffer,
+): Promise<{ rowCount: number; variableCount: number }> {
   const bytes = asU8(data);
   const ptr = mod._malloc(bytes.length);
   if (ptr === 0) throw new Error('Failed to allocate memory for metadata parse');
@@ -154,7 +157,7 @@ async function runFullParse(mod: ReadStatModule, data: Buffer): Promise<{ rowCou
 async function runWindowParse(
   mod: ReadStatModule,
   data: Buffer,
-  chunkSize: number
+  chunkSize: number,
 ): Promise<{ rowCount: number; variableCount: number; chunkSize: number; windows: number }> {
   if (!mod._parse_sav_window || !mod._get_window_row_count) {
     throw new Error('ReadStat build does not export window parsing APIs');
@@ -267,9 +270,9 @@ async function main(): Promise<void> {
 
       console.log(
         `[benchmark] ${dataset.key}: metadata ${result.metadataParse.durationMs.toFixed(1)}ms, ` +
-        `full ${result.fullParse.durationMs.toFixed(1)}ms, ` +
-        `window ${result.windowParse.durationMs.toFixed(1)}ms, ` +
-        `ingest ${result.nodeIngestion.durationMs.toFixed(1)}ms`
+          `full ${result.fullParse.durationMs.toFixed(1)}ms, ` +
+          `window ${result.windowParse.durationMs.toFixed(1)}ms, ` +
+          `ingest ${result.nodeIngestion.durationMs.toFixed(1)}ms`,
       );
     } catch (error: any) {
       const reason = error?.message || String(error);

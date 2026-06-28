@@ -7,7 +7,7 @@ import type { CrosstabSqlRow } from '../analysis/crosstab/types';
 interface AnalysisSignificanceSettings {
   comparisonMethod: 'cell_vs_rest' | 'pairwise';
   correctionType: 'none' | 'bonferroni' | 'fdr';
-  significanceLevel: 0.95 | 0.90 | 0.80;
+  significanceLevel: 0.95 | 0.9 | 0.8;
 }
 
 interface RunCrosstabParams {
@@ -51,11 +51,7 @@ export const runCrosstabForExport = async ({
   });
 
   try {
-    const response = await engine.runCrosstab(
-      request.options,
-      request.context,
-      request.analysisSettings,
-    );
+    const response = await engine.runCrosstab(request.options, request.context, request.analysisSettings);
     const rawData = response.data.rows as unknown as CrosstabSqlRow[];
     const mappedData: AggregatedRow[] = mapCrosstabRows(rawData, request.isWeighted);
     return { data: mappedData, tableStats: response.data.tableStats };

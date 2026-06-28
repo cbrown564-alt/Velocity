@@ -1,17 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import {
-  useReducedMotion,
-  getMotionProps,
-  DURATIONS,
-} from '../../../lib/motion';
-import {
-  Star,
-  StarOff,
-  Database,
-  ChevronRight,
-  Sparkles,
-} from 'lucide-react';
+import { useReducedMotion, getMotionProps, DURATIONS } from '../../../lib/motion';
+import { Star, StarOff, Database, ChevronRight, Sparkles } from 'lucide-react';
 import type { StoredDataset, Project } from '../types';
 import { formatDeckSummaryTooltip } from '../lib/returningResearcher';
 import { formatRelativeTime } from '../lib/workspaceFormatters';
@@ -45,7 +35,11 @@ export const WorkspaceDatasetListItem: React.FC<{
       role="button"
       tabIndex={0}
       aria-label={`Open dataset ${dataset.name}`}
-      {...getMotionProps({ preset: 'slideRight', duration: reducedMotion ? DURATIONS.instant : DURATIONS.normal, reducedMotion })}
+      {...getMotionProps({
+        preset: 'slideRight',
+        duration: reducedMotion ? DURATIONS.instant : DURATIONS.normal,
+        reducedMotion,
+      })}
       whileHover={{ x: 2 }}
     >
       <button

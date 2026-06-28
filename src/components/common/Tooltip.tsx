@@ -98,27 +98,28 @@ export const Tooltip: React.FC<TooltipProps> = ({
     }
   };
 
-  const tooltipElement = isVisible && content ? (
-    createPortal(
-      <div
-        role="tooltip"
-        className="fixed z-[100] pointer-events-none animate-[fadeInUp_0.15s_ease-out]"
-        style={{
-          left: coords.x,
-          top: coords.y,
-          transform: getTransform(),
-        }}
-      >
-        <div
-          className="bg-[var(--bg-surface)] border border-[var(--border-color)] text-[var(--text-primary)] text-xs px-3 py-2 rounded-md shadow-lg"
-          style={{ maxWidth }}
-        >
-          {content}
-        </div>
-      </div>,
-      document.body
-    )
-  ) : null;
+  const tooltipElement =
+    isVisible && content
+      ? createPortal(
+          <div
+            role="tooltip"
+            className="fixed z-[100] pointer-events-none animate-[fadeInUp_0.15s_ease-out]"
+            style={{
+              left: coords.x,
+              top: coords.y,
+              transform: getTransform(),
+            }}
+          >
+            <div
+              className="bg-[var(--bg-surface)] border border-[var(--border-color)] text-[var(--text-primary)] text-xs px-3 py-2 rounded-md shadow-lg"
+              style={{ maxWidth }}
+            >
+              {content}
+            </div>
+          </div>,
+          document.body,
+        )
+      : null;
 
   return (
     <>

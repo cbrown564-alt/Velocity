@@ -6,17 +6,11 @@ import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js'
 async function main() {
   const scriptDir = path.dirname(fileURLToPath(import.meta.url));
   const repoRoot = path.resolve(scriptDir, '..');
-  const dataDir = process.argv[2]
-    ? path.resolve(process.cwd(), process.argv[2])
-    : repoRoot;
+  const dataDir = process.argv[2] ? path.resolve(process.cwd(), process.argv[2]) : repoRoot;
 
   const transport = new StdioClientTransport({
     command: process.execPath,
-    args: [
-      '--import',
-      'tsx',
-      path.join(repoRoot, 'mcp-server', 'index.ts'),
-    ],
+    args: ['--import', 'tsx', path.join(repoRoot, 'mcp-server', 'index.ts')],
     env: {
       ...process.env,
       VELOCITY_DATA_DIR: dataDir,
@@ -24,10 +18,7 @@ async function main() {
     stderr: 'pipe',
   });
 
-  const client = new Client(
-    { name: 'velocity-mcp-setup', version: '1.0.0' },
-    { capabilities: {} }
-  );
+  const client = new Client({ name: 'velocity-mcp-setup', version: '1.0.0' }, { capabilities: {} });
 
   try {
     await client.connect(transport);

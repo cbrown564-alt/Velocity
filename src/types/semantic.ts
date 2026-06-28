@@ -12,16 +12,16 @@
 // ============================================================================
 
 export type MeasurementIntent =
-  | 'attitude'       // Likert scales, satisfaction, NPS
-  | 'behavior'       // Frequency, purchase, usage
-  | 'awareness'      // Aided/unaided awareness, recall
-  | 'demographic'    // Age, gender, income, region
+  | 'attitude' // Likert scales, satisfaction, NPS
+  | 'behavior' // Frequency, purchase, usage
+  | 'awareness' // Aided/unaided awareness, recall
+  | 'demographic' // Age, gender, income, region
   | 'classification' // Brand, product, category
-  | 'outcome'        // Dependent variables, KPIs
-  | 'weight'         // Sampling weights
-  | 'identifier'     // Respondent ID, case number
-  | 'open_end'       // Free-text responses
-  | 'other';         // Uncategorized
+  | 'outcome' // Dependent variables, KPIs
+  | 'weight' // Sampling weights
+  | 'identifier' // Respondent ID, case number
+  | 'open_end' // Free-text responses
+  | 'other'; // Uncategorized
 
 // ============================================================================
 // Semantic Annotation
@@ -108,7 +108,7 @@ export interface HarmonizationSuggestion {
 
 export interface BreakSuggestion {
   variable: import('./index').Variable;
-  score: number;       // 0–1 suitability
+  score: number; // 0–1 suitability
   rationale: string;
 }
 

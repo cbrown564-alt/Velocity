@@ -114,9 +114,7 @@ describe('VelocityEngine session round-trip', () => {
     expect(importedAnnotation.data?.topic).toBe('demographics');
 
     const concepts = targetEngine.listConcepts();
-    expect(concepts.data.map((item) => item.name)).toEqual(
-      expect.arrayContaining(['Sleep Quality', 'Local Concept'])
-    );
+    expect(concepts.data.map((item) => item.name)).toEqual(expect.arrayContaining(['Sleep Quality', 'Local Concept']));
     expect(concepts.data.map((item) => item.id)).toContain(localConcept.data.id);
   }, 30000);
 

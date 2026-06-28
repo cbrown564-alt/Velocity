@@ -11,11 +11,7 @@ export interface UseWorkspaceOrchestrationOptions {
   phase: AppPhase;
   setPhase: (phase: AppPhase) => void;
   openProjectLink: (datasetIds: string[]) => void;
-  openCrossWave: (
-    project: Project,
-    datasets: StoredDataset[],
-    selectedWaves?: [StoredDataset, StoredDataset],
-  ) => void;
+  openCrossWave: (project: Project, datasets: StoredDataset[], selectedWaves?: [StoredDataset, StoredDataset]) => void;
   openWorkspaceExport: (selectedIds: string[]) => void;
   closeCrossWaveOverlay: () => void;
   closeProjectLinkOverlay: () => void;
@@ -265,10 +261,7 @@ export function useWorkspaceOrchestration({
     prevPhaseRef.current = phase;
   }, [phase, isDbReady, touchLastActiveAt, setWorkspaceMode]);
 
-  const handleOpenProjectModal = useCallback(
-    (ids: string[]) => openProjectLink(ids),
-    [openProjectLink],
-  );
+  const handleOpenProjectModal = useCallback((ids: string[]) => openProjectLink(ids), [openProjectLink]);
 
   const handleCreateProject = useCallback(
     (project: Omit<Project, 'id' | 'createdAt'>) => {
@@ -286,20 +279,14 @@ export function useWorkspaceOrchestration({
     [addDatasetsToProject, closeProjectLinkOverlay],
   );
 
-  const handleUpdateWaveNumber = useCallback(
-    (id: string, wave: number) => setDatasetWave(id, wave),
-    [setDatasetWave],
-  );
+  const handleUpdateWaveNumber = useCallback((id: string, wave: number) => setDatasetWave(id, wave), [setDatasetWave]);
 
   const handleSetRespondentKey = useCallback(
     (id: string, key: string) => setDatasetRespondentKey(id, key),
     [setDatasetRespondentKey],
   );
 
-  const handleUnlinkDataset = useCallback(
-    (id: string) => removeDatasetsFromProject([id]),
-    [removeDatasetsFromProject],
-  );
+  const handleUnlinkDataset = useCallback((id: string) => removeDatasetsFromProject([id]), [removeDatasetsFromProject]);
 
   const handleOpenCrossWavePanel = useCallback(
     (project: Project, w1: StoredDataset, w2: StoredDataset) => {
@@ -427,8 +414,7 @@ export function useWorkspaceOrchestration({
         }),
       );
 
-      const deletingActive =
-        ids.includes(activeDatasetId ?? '') || (dataset?.id ? ids.includes(dataset.id) : false);
+      const deletingActive = ids.includes(activeDatasetId ?? '') || (dataset?.id ? ids.includes(dataset.id) : false);
       removeStoredDatasets(ids);
 
       if (deletingActive) {

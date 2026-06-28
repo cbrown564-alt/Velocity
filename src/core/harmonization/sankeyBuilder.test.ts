@@ -4,11 +4,7 @@
 
 import { describe, it, expect } from 'vitest';
 import { buildSankeyData, computeNodePositions } from './sankeyBuilder';
-import {
-  wave1Variables,
-  wave2Variables,
-  mockHarmonizationSession,
-} from '../../test/fixtures/harmonization';
+import { wave1Variables, wave2Variables, mockHarmonizationSession } from '../../test/fixtures/harmonization';
 import type { SankeyNode } from '../../types/harmonization';
 
 const sourceCounts = {
@@ -34,7 +30,7 @@ describe('buildSankeyData', () => {
       wave1Variables,
       wave2Variables,
       sourceCounts,
-      targetCounts
+      targetCounts,
     );
     expect(result.nodes.length).toBeGreaterThan(0);
     expect(Array.isArray(result.links)).toBe(true);
@@ -46,9 +42,9 @@ describe('buildSankeyData', () => {
       wave1Variables,
       wave2Variables,
       sourceCounts,
-      targetCounts
+      targetCounts,
     );
-    const q4Node = result.nodes.find(n => n.id === 'source::w1_q4');
+    const q4Node = result.nodes.find((n) => n.id === 'source::w1_q4');
     expect(q4Node?.isOrphan).toBe(true);
   });
 
@@ -58,9 +54,9 @@ describe('buildSankeyData', () => {
       wave1Variables,
       wave2Variables,
       sourceCounts,
-      targetCounts
+      targetCounts,
     );
-    const q1Node = result.nodes.find(n => n.id === 'source::w1_q1');
+    const q1Node = result.nodes.find((n) => n.id === 'source::w1_q1');
     expect(q1Node?.isOrphan).toBe(false);
   });
 
@@ -70,7 +66,7 @@ describe('buildSankeyData', () => {
       wave1Variables,
       wave2Variables,
       sourceCounts,
-      targetCounts
+      targetCounts,
     );
     // w1_q1→w2_q1 and w1_q2→w2_q2_renamed
     expect(result.links).toHaveLength(2);
@@ -82,11 +78,9 @@ describe('buildSankeyData', () => {
       wave1Variables,
       wave2Variables,
       sourceCounts,
-      targetCounts
+      targetCounts,
     );
-    const q1Link = result.links.find(
-      l => l.sourceId === 'source::w1_q1' && l.targetId === 'target::w2_q1'
-    );
+    const q1Link = result.links.find((l) => l.sourceId === 'source::w1_q1' && l.targetId === 'target::w2_q1');
     // min(500, 480) = 480
     expect(q1Link?.value).toBe(480);
   });
@@ -97,9 +91,9 @@ describe('buildSankeyData', () => {
       wave1Variables,
       wave2Variables,
       sourceCounts,
-      targetCounts
+      targetCounts,
     );
-    const orphanTarget = result.nodes.find(n => n.id === 'target::w2_q5_new');
+    const orphanTarget = result.nodes.find((n) => n.id === 'target::w2_q5_new');
     expect(orphanTarget).toBeDefined();
     expect(orphanTarget?.isOrphan).toBe(true);
   });

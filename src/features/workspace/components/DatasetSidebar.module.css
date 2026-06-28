@@ -266,12 +266,12 @@
 }
 
 /* Theme-specific overrides */
-[data-theme="liquid-glass"] .sidebar {
+[data-theme='liquid-glass'] .sidebar {
   background: var(--mat-panel-bg, var(--bg-panel));
   backdrop-filter: var(--mat-panel-filter, blur(25px) saturate(180%));
 }
 
-[data-theme="liquid-glass"] .tooltip {
+[data-theme='liquid-glass'] .tooltip {
   background: var(--mat-overlay-bg, var(--bg-panel));
   backdrop-filter: var(--mat-overlay-filter, blur(40px) saturate(200%));
 }

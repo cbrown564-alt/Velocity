@@ -162,9 +162,7 @@ const slides: Slide[] = [
   },
 ];
 
-const sections: SlideSection[] = [
-  { id: 'section-main', title: 'Main Deck' },
-];
+const sections: SlideSection[] = [{ id: 'section-main', title: 'Main Deck' }];
 
 const analysisSettings: Partial<AnalysisSettings> = {
   engine: 'auto',
@@ -251,9 +249,9 @@ function normalizeEquivalentState(input: {
           discrete: variable.missingValues.discrete ? [...variable.missingValues.discrete] : undefined,
           range: variable.missingValues.range
             ? {
-              low: variable.missingValues.range.low,
-              high: variable.missingValues.range.high,
-            }
+                low: variable.missingValues.range.low,
+                high: variable.missingValues.range.high,
+              }
             : undefined,
         },
       })),

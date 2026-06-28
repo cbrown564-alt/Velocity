@@ -36,14 +36,18 @@ describe('SPSS Parity: Weighted Statistics', () => {
     it('computes correct weighted mean for Group A (equal weights)', async () => {
       // Group A: values [10, 20, 30, 40], weights all 1.0
       // Expected: (10+20+30+40)/4 = 25.0
-      const results = await runCrosstab(db, {
-        rowVars: [],
-        colVar: 'group',
-        measureVar: 'value',
-        measureLabel: 'Value',
-        weightVar: 'weight',
-        filters: [],
-      }, { variables: {}, variableSets: {} });
+      const results = await runCrosstab(
+        db,
+        {
+          rowVars: [],
+          colVar: 'group',
+          measureVar: 'value',
+          measureLabel: 'Value',
+          weightVar: 'weight',
+          filters: [],
+        },
+        { variables: {}, variableSets: {} },
+      );
 
       const groupA = results.rows.find((r: any) => r.colKey === 'A');
       expect(groupA.mean).toBeCloseTo(25.0, 6);
@@ -54,14 +58,18 @@ describe('SPSS Parity: Weighted Statistics', () => {
       // SumXW = 15*2 + 25*0.5 + 35*1.5 + 45*1 = 30 + 12.5 + 52.5 + 45 = 140
       // SumW = 2 + 0.5 + 1.5 + 1 = 5.0
       // Expected: 140/5 = 28.0
-      const results = await runCrosstab(db, {
-        rowVars: [],
-        colVar: 'group',
-        measureVar: 'value',
-        measureLabel: 'Value',
-        weightVar: 'weight',
-        filters: [],
-      }, { variables: {}, variableSets: {} });
+      const results = await runCrosstab(
+        db,
+        {
+          rowVars: [],
+          colVar: 'group',
+          measureVar: 'value',
+          measureLabel: 'Value',
+          weightVar: 'weight',
+          filters: [],
+        },
+        { variables: {}, variableSets: {} },
+      );
 
       const groupB = results.rows.find((r: any) => r.colKey === 'B');
       expect(groupB.mean).toBeCloseTo(28.0, 6);
@@ -72,14 +80,18 @@ describe('SPSS Parity: Weighted Statistics', () => {
     it('computes correct weighted stddev for Group A', async () => {
       // Group A: variance = (100+400+900+1600)/4 - 25^2 = 750 - 625 = 125
       // StdDev = sqrt(125) = 11.1803398875...
-      const results = await runCrosstab(db, {
-        rowVars: [],
-        colVar: 'group',
-        measureVar: 'value',
-        measureLabel: 'Value',
-        weightVar: 'weight',
-        filters: [],
-      }, { variables: {}, variableSets: {} });
+      const results = await runCrosstab(
+        db,
+        {
+          rowVars: [],
+          colVar: 'group',
+          measureVar: 'value',
+          measureLabel: 'Value',
+          weightVar: 'weight',
+          filters: [],
+        },
+        { variables: {}, variableSets: {} },
+      );
 
       const groupA = results.rows.find((r: any) => r.colKey === 'A');
       expect(groupA.stdDev).toBeCloseTo(11.180339887498949, 6);
@@ -89,14 +101,18 @@ describe('SPSS Parity: Weighted Statistics', () => {
       // Group B: SumX2W = 225*2 + 625*0.5 + 1225*1.5 + 2025*1 = 450 + 312.5 + 1837.5 + 2025 = 4625
       // Variance = 4625/5 - 28^2 = 925 - 784 = 141
       // StdDev = sqrt(141) = 11.8743420870379...
-      const results = await runCrosstab(db, {
-        rowVars: [],
-        colVar: 'group',
-        measureVar: 'value',
-        measureLabel: 'Value',
-        weightVar: 'weight',
-        filters: [],
-      }, { variables: {}, variableSets: {} });
+      const results = await runCrosstab(
+        db,
+        {
+          rowVars: [],
+          colVar: 'group',
+          measureVar: 'value',
+          measureLabel: 'Value',
+          weightVar: 'weight',
+          filters: [],
+        },
+        { variables: {}, variableSets: {} },
+      );
 
       const groupB = results.rows.find((r: any) => r.colKey === 'B');
       expect(groupB.stdDev).toBeCloseTo(11.874342087037917, 6);
@@ -106,14 +122,18 @@ describe('SPSS Parity: Weighted Statistics', () => {
   describe('Effective Sample Size (ESS)', () => {
     it('ESS equals n for equal weights', async () => {
       // Group A: all weights = 1.0, so ESS = n = 4
-      const results = await runCrosstab(db, {
-        rowVars: [],
-        colVar: 'group',
-        measureVar: 'value',
-        measureLabel: 'Value',
-        weightVar: 'weight',
-        filters: [],
-      }, { variables: {}, variableSets: {} });
+      const results = await runCrosstab(
+        db,
+        {
+          rowVars: [],
+          colVar: 'group',
+          measureVar: 'value',
+          measureLabel: 'Value',
+          weightVar: 'weight',
+          filters: [],
+        },
+        { variables: {}, variableSets: {} },
+      );
 
       const groupA = results.rows.find((r: any) => r.colKey === 'A');
       expect(groupA.stats.effN).toBeCloseTo(4.0, 6);
@@ -123,14 +143,18 @@ describe('SPSS Parity: Weighted Statistics', () => {
       // Group B: weights [2.0, 0.5, 1.5, 1.0]
       // SumW = 5, SumW2 = 4 + 0.25 + 2.25 + 1 = 7.5
       // ESS = 25/7.5 = 3.333...
-      const results = await runCrosstab(db, {
-        rowVars: [],
-        colVar: 'group',
-        measureVar: 'value',
-        measureLabel: 'Value',
-        weightVar: 'weight',
-        filters: [],
-      }, { variables: {}, variableSets: {} });
+      const results = await runCrosstab(
+        db,
+        {
+          rowVars: [],
+          colVar: 'group',
+          measureVar: 'value',
+          measureLabel: 'Value',
+          weightVar: 'weight',
+          filters: [],
+        },
+        { variables: {}, variableSets: {} },
+      );
 
       const groupB = results.rows.find((r: any) => r.colKey === 'B');
       expect(groupB.stats.effN).toBeCloseTo(3.333333333, 6);
@@ -139,14 +163,18 @@ describe('SPSS Parity: Weighted Statistics', () => {
 
   describe('Sum Decomposition Fields', () => {
     it('captures sumXW for variance decomposition', async () => {
-      const results = await runCrosstab(db, {
-        rowVars: [],
-        colVar: 'group',
-        measureVar: 'value',
-        measureLabel: 'Value',
-        weightVar: 'weight',
-        filters: [],
-      }, { variables: {}, variableSets: {} });
+      const results = await runCrosstab(
+        db,
+        {
+          rowVars: [],
+          colVar: 'group',
+          measureVar: 'value',
+          measureLabel: 'Value',
+          weightVar: 'weight',
+          filters: [],
+        },
+        { variables: {}, variableSets: {} },
+      );
 
       const groupA = results.rows.find((r: any) => r.colKey === 'A');
       const groupB = results.rows.find((r: any) => r.colKey === 'B');
@@ -156,14 +184,18 @@ describe('SPSS Parity: Weighted Statistics', () => {
     });
 
     it('captures sumX2W for variance decomposition', async () => {
-      const results = await runCrosstab(db, {
-        rowVars: [],
-        colVar: 'group',
-        measureVar: 'value',
-        measureLabel: 'Value',
-        weightVar: 'weight',
-        filters: [],
-      }, { variables: {}, variableSets: {} });
+      const results = await runCrosstab(
+        db,
+        {
+          rowVars: [],
+          colVar: 'group',
+          measureVar: 'value',
+          measureLabel: 'Value',
+          weightVar: 'weight',
+          filters: [],
+        },
+        { variables: {}, variableSets: {} },
+      );
 
       const groupA = results.rows.find((r: any) => r.colKey === 'A');
       const groupB = results.rows.find((r: any) => r.colKey === 'B');
@@ -186,14 +218,18 @@ describe('SPSS Parity: Weighted Denominator Integrity', () => {
       ) AS t("group", "value", "weight")
     `);
 
-    const results = await runCrosstab(db, {
-      rowVars: [],
-      colVar: 'group',
-      measureVar: 'value',
-      measureLabel: 'Value',
-      weightVar: 'weight',
-      filters: [],
-    }, { variables: {}, variableSets: {} });
+    const results = await runCrosstab(
+      db,
+      {
+        rowVars: [],
+        colVar: 'group',
+        measureVar: 'value',
+        measureLabel: 'Value',
+        weightVar: 'weight',
+        filters: [],
+      },
+      { variables: {}, variableSets: {} },
+    );
 
     await db.close();
 
@@ -216,12 +252,16 @@ describe('SPSS Parity: Weighted Denominator Integrity', () => {
       ) AS t("group", "weight")
     `);
 
-    const results = await runCrosstab(db, {
-      rowVars: ['group'],
-      colVar: null,
-      weightVar: 'weight',
-      filters: [],
-    }, { variables: {}, variableSets: {} });
+    const results = await runCrosstab(
+      db,
+      {
+        rowVars: ['group'],
+        colVar: null,
+        weightVar: 'weight',
+        filters: [],
+      },
+      { variables: {}, variableSets: {} },
+    );
 
     await db.close();
 
@@ -247,14 +287,18 @@ describe('SPSS Parity: Cell-vs-Rest Significance', () => {
     const db = await DuckDBNodeAdapter.create();
     await db.loadCSV(resolve(FIXTURES, 'weighted_validation_simple.csv'));
 
-    const results = await runCrosstab(db, {
-      rowVars: [],
-      colVar: 'group',
-      measureVar: 'value',
-      measureLabel: 'Value',
-      weightVar: 'weight',
-      filters: [],
-    }, { variables: {}, variableSets: {} });
+    const results = await runCrosstab(
+      db,
+      {
+        rowVars: [],
+        colVar: 'group',
+        measureVar: 'value',
+        measureLabel: 'Value',
+        weightVar: 'weight',
+        filters: [],
+      },
+      { variables: {}, variableSets: {} },
+    );
 
     await db.close();
 

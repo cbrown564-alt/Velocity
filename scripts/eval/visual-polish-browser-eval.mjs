@@ -18,11 +18,7 @@ import fs from 'fs';
 const BASE = process.env.VELOCITY_URL ?? 'http://127.0.0.1:4176';
 const RUN = process.env.VP_D_RUN ?? '02';
 const OUT = path.resolve(process.cwd(), 'tmp/visual-polish-eval', `vp-d-${RUN}`);
-const DOCS_OUT = path.resolve(
-  process.cwd(),
-  'docs/reviews/ui_ux_review_2026-05/screenshots',
-  `vp-d-${RUN}`
-);
+const DOCS_OUT = path.resolve(process.cwd(), 'docs/reviews/ui_ux_review_2026-05/screenshots', `vp-d-${RUN}`);
 fs.mkdirSync(OUT, { recursive: true });
 const COPY_SHOTS_TO_DOCS = new Set(['05', '06', '07', '08', '09']);
 if (COPY_SHOTS_TO_DOCS.has(RUN)) fs.mkdirSync(DOCS_OUT, { recursive: true });
@@ -47,7 +43,10 @@ async function applyTheme(page, label) {
   const themeList = page.locator('[role="listbox"][aria-label="Theme selection"]');
   await page.keyboard.press('Escape');
   await page.waitForTimeout(200);
-  await page.getByRole('button', { name: /Change theme/i }).first().click({ force: true });
+  await page
+    .getByRole('button', { name: /Change theme/i })
+    .first()
+    .click({ force: true });
   await themeList.waitFor({ timeout: 5000 });
   await themeList.getByText(label, { exact: true }).click({ force: true });
   await page.waitForTimeout(900);
@@ -100,12 +99,7 @@ async function testThemeSurfaceMatrix(page, results) {
     const footerText = footerVisible
       ? ((await footer.innerText().catch(() => '')) || '').replace(/\s+/g, ' ').trim().slice(0, 120)
       : 'missing';
-    record(
-      results,
-      `D-025–027 Statistics footer — ${slug}`,
-      footerVisible,
-      footerText
-    );
+    record(results, `D-025–027 Statistics footer — ${slug}`, footerVisible, footerText);
     if (footerVisible) {
       await footer.scrollIntoViewIfNeeded();
       await page.waitForTimeout(200);
@@ -121,14 +115,19 @@ async function testThemeSurfaceMatrix(page, results) {
     await exportBtn.click();
     const modal = page.getByRole('heading', { name: /Export Analysis/i });
     const modalOpen = await modal.isVisible({ timeout: 8000 }).catch(() => false);
-    const pptx = modalOpen && (await page.getByText('PowerPoint', { exact: true }).isVisible().catch(() => false));
+    const pptx =
+      modalOpen &&
+      (await page
+        .getByText('PowerPoint', { exact: true })
+        .isVisible()
+        .catch(() => false));
     const frame = page.locator('.analysis-frame').filter({ has: page.locator('table') });
     const pass = modalOpen && pptx && (await frame.count()) > 0;
     record(
       results,
       `P10 Export modal — ${slug}`,
       pass,
-      pass ? 'modal + PPTX + table frame' : `modal=${modalOpen} pptx=${pptx}`
+      pass ? 'modal + PPTX + table frame' : `modal=${modalOpen} pptx=${pptx}`,
     );
     if (modalOpen) await shot(page, `02-export-modal-theme-${slug}`);
     await page.keyboard.press('Escape');
@@ -152,13 +151,13 @@ async function testThemeStretchSurfaces(page, results) {
     const newSlideBtn = page.getByRole('button', { name: /New Slide/i });
     const slideCounter = page.getByText(/\d+\s*\/\s*\d+/).first();
     const dockVisible =
-      (await newSlideBtn.isVisible({ timeout: 5000 }).catch(() => false))
-      && (await slideCounter.isVisible({ timeout: 3000 }).catch(() => false));
+      (await newSlideBtn.isVisible({ timeout: 5000 }).catch(() => false)) &&
+      (await slideCounter.isVisible({ timeout: 3000 }).catch(() => false));
     record(
       results,
       `§5 Timeline dock — ${slug}`,
       dockVisible,
-      dockVisible ? 'slide counter + New Slide control' : 'missing'
+      dockVisible ? 'slide counter + New Slide control' : 'missing',
     );
     if (dockVisible) {
       await newSlideBtn.scrollIntoViewIfNeeded();
@@ -167,13 +166,19 @@ async function testThemeStretchSurfaces(page, results) {
     await shot(page, `01-timeline-dock-theme-${slug}`);
 
     const returned = await returnToWorkspace(page);
-    const workspaceTitle = await page.getByText('Velocity Workspace').isVisible({ timeout: 5000 }).catch(() => false);
-    const datasetCard = await page.getByRole('heading', { name: /mock_data/i }).isVisible({ timeout: 5000 }).catch(() => false);
+    const workspaceTitle = await page
+      .getByText('Velocity Workspace')
+      .isVisible({ timeout: 5000 })
+      .catch(() => false);
+    const datasetCard = await page
+      .getByRole('heading', { name: /mock_data/i })
+      .isVisible({ timeout: 5000 })
+      .catch(() => false);
     record(
       results,
       `§5 Workspace card — ${slug}`,
       returned && workspaceTitle && datasetCard,
-      `return=${returned} workspace=${workspaceTitle} card=${datasetCard}`
+      `return=${returned} workspace=${workspaceTitle} card=${datasetCard}`,
     );
     if (workspaceTitle && datasetCard) await shot(page, `02-workspace-card-theme-${slug}`);
 
@@ -186,15 +191,21 @@ async function testThemeStretchSurfaces(page, results) {
     await page.keyboard.press('Escape');
     await page.waitForTimeout(300);
     await openVariableManager(page);
-    const managerOpen = await page.getByRole('heading', { name: 'Variable Manager' }).isVisible({ timeout: 5000 }).catch(() => false);
-    const glassShell = await page.locator('div.h-full.bg-glass-app').filter({
-      has: page.getByRole('heading', { name: 'Variable Manager' }),
-    }).count();
+    const managerOpen = await page
+      .getByRole('heading', { name: 'Variable Manager' })
+      .isVisible({ timeout: 5000 })
+      .catch(() => false);
+    const glassShell = await page
+      .locator('div.h-full.bg-glass-app')
+      .filter({
+        has: page.getByRole('heading', { name: 'Variable Manager' }),
+      })
+      .count();
     record(
       results,
       `§5 Manager overlay — ${slug}`,
       managerOpen && glassShell > 0,
-      managerOpen ? 'manager + glass shell' : 'manager not open'
+      managerOpen ? 'manager + glass shell' : 'manager not open',
     );
     if (managerOpen) await shot(page, `03-manager-overlay-theme-${slug}`);
     await closeVariableManager(page);
@@ -232,7 +243,7 @@ async function testChartMode(page, results) {
     results,
     'D-030 Analysis Frame — table path',
     (await tableFrame.count()) > 0,
-    `${await tableFrame.count()} table frame(s)`
+    `${await tableFrame.count()} table frame(s)`,
   );
   await shot(page, '01-crosstab-table-before-chart');
 
@@ -243,20 +254,25 @@ async function testChartMode(page, results) {
   const chartFrameCount = await chartFrame.count();
   const anyFrame = await page.locator('.analysis-frame').count();
   const svgBars = await page.locator('.analysis-frame svg rect, .analysis-frame svg path').count();
-  const legendItems = await page.locator('.analysis-frame [class*="legend"], .analysis-frame [class*="Legend"]').count();
-  const chartLegendText = await page.locator('.analysis-frame').getByText(/North|South|East|West|Internatio/i).count();
+  const legendItems = await page
+    .locator('.analysis-frame [class*="legend"], .analysis-frame [class*="Legend"]')
+    .count();
+  const chartLegendText = await page
+    .locator('.analysis-frame')
+    .getByText(/North|South|East|West|Internatio/i)
+    .count();
 
   record(
     results,
     'D-030 Analysis Frame — chart path',
     chartFrameCount > 0 || (anyFrame > 0 && svgBars > 0),
-    `frames=${anyFrame} chartFrame=${chartFrameCount} svgShapes=${svgBars}`
+    `frames=${anyFrame} chartFrame=${chartFrameCount} svgShapes=${svgBars}`,
   );
   record(
     results,
     'D-030 Chart legend readable',
     legendItems > 0 || chartLegendText > 0,
-    `legendNodes=${legendItems} regionLabels=${chartLegendText}`
+    `legendNodes=${legendItems} regionLabels=${chartLegendText}`,
   );
 
   const animatedBars = await page.locator('.analysis-frame [data-animated="true"]').count();
@@ -264,7 +280,7 @@ async function testChartMode(page, results) {
     results,
     'D-030 Bar settle / animation markers',
     svgBars > 0,
-    `${svgBars} svg shapes, ${animatedBars} data-animated (chart may omit settling)`
+    `${svgBars} svg shapes, ${animatedBars} data-animated (chart may omit settling)`,
   );
 
   await shot(page, '02-chart-grouped-bar-sm');
@@ -272,9 +288,9 @@ async function testChartMode(page, results) {
   const chartBox = await measureSlideArtifactBox(page);
   const layoutStable =
     tableBox && chartBox
-      ? Math.abs(tableBox.width - chartBox.width) < 8
-        && Math.abs(tableBox.x - chartBox.x) < 4
-        && Math.abs(tableBox.y - chartBox.y) < 4
+      ? Math.abs(tableBox.width - chartBox.width) < 8 &&
+        Math.abs(tableBox.x - chartBox.x) < 4 &&
+        Math.abs(tableBox.y - chartBox.y) < 4
       : false;
   record(
     results,
@@ -282,7 +298,7 @@ async function testChartMode(page, results) {
     layoutStable,
     tableBox && chartBox
       ? `pos (${Math.round(tableBox.x)},${Math.round(tableBox.y)})→(${Math.round(chartBox.x)},${Math.round(chartBox.y)}); width ${Math.round(tableBox.width)}→${Math.round(chartBox.width)}; height ${Math.round(tableBox.height)}→${Math.round(chartBox.height)} (height delta expected)`
-      : 'missing frame box'
+      : 'missing frame box',
   );
 
   await switchToTableView(page);
@@ -292,7 +308,7 @@ async function testChartMode(page, results) {
     results,
     'D-031 Toggle back to table preserves artifact',
     tableRestored && pctCells > 0,
-    `table=${tableRestored} pctCells=${pctCells}`
+    `table=${tableRestored} pctCells=${pctCells}`,
   );
   await shot(page, '03-table-after-chart-toggle');
 
@@ -310,18 +326,16 @@ async function testChartThemes(page, results) {
   ]) {
     await page.keyboard.press('Escape');
     await page.waitForTimeout(200);
-    await page.getByRole('button', { name: /Change theme/i }).first().click({ force: true });
+    await page
+      .getByRole('button', { name: /Change theme/i })
+      .first()
+      .click({ force: true });
     await themeList.waitFor({ timeout: 5000 });
     await themeList.getByText(label, { exact: true }).click({ force: true });
     await page.waitForTimeout(900);
     await switchToChartView(page);
     const svgBars = await page.locator('.analysis-frame svg rect, .analysis-frame svg path').count();
-    record(
-      results,
-      `D-030 Theme ${slug} — chart readable`,
-      svgBars > 0,
-      `${svgBars} svg shapes`
-    );
+    record(results, `D-030 Theme ${slug} — chart readable`, svgBars > 0, `${svgBars} svg shapes`);
     await shot(page, `05-chart-theme-${slug}`);
   }
 }
@@ -334,7 +348,12 @@ async function openVariableManager(page) {
 
 async function closeVariableManager(page) {
   for (let i = 0; i < 3; i++) {
-    if (!(await page.getByRole('heading', { name: 'Variable Manager' }).isVisible({ timeout: 500 }).catch(() => false))) {
+    if (
+      !(await page
+        .getByRole('heading', { name: 'Variable Manager' })
+        .isVisible({ timeout: 500 })
+        .catch(() => false))
+    ) {
       return;
     }
     await page.keyboard.press('Escape');
@@ -355,11 +374,17 @@ function canvasSidebarSearchInput(page) {
 
 async function testVariableManager(page, results) {
   await ensureDashboard(page);
-  await page.getByRole('button', { name: 'Export Session' }).waitFor({ timeout: 3000 }).catch(() => {});
+  await page
+    .getByRole('button', { name: 'Export Session' })
+    .waitFor({ timeout: 3000 })
+    .catch(() => {});
   await page.keyboard.press('Escape');
   await page.waitForTimeout(300);
 
-  const sidebarItemsBefore = await page.locator('aside button').filter({ hasText: /gender|region|nps/i }).count();
+  const sidebarItemsBefore = await page
+    .locator('aside button')
+    .filter({ hasText: /gender|region|nps/i })
+    .count();
 
   await openVariableManager(page);
   const manager = page.locator('div.h-full.bg-glass-app').filter({
@@ -367,25 +392,26 @@ async function testVariableManager(page, results) {
   });
   await shot(page, '01-manager-open');
 
-  const modeState = await page.evaluate(() => {
-    const blurEl = [...document.querySelectorAll('div')].find((el) => {
-      const s = el.getAttribute('style') ?? '';
-      return s.includes('blur') || s.includes('scale(0.95');
-    });
-    return {
-      appMode: window.__VELOCITY_STORE__?.getState?.()?.appMode ?? null,
-      motionStyle: blurEl?.getAttribute('style') ?? null,
-    };
-  }).catch(() => ({ appMode: null, motionStyle: null }));
+  const modeState = await page
+    .evaluate(() => {
+      const blurEl = [...document.querySelectorAll('div')].find((el) => {
+        const s = el.getAttribute('style') ?? '';
+        return s.includes('blur') || s.includes('scale(0.95');
+      });
+      return {
+        appMode: window.__VELOCITY_STORE__?.getState?.()?.appMode ?? null,
+        motionStyle: blurEl?.getAttribute('style') ?? null,
+      };
+    })
+    .catch(() => ({ appMode: null, motionStyle: null }));
 
   const canvasBlur =
-    (modeState.motionStyle && /blur|scale\(0\.95/.test(modeState.motionStyle))
-    || modeState.appMode === 'variables';
+    (modeState.motionStyle && /blur|scale\(0\.95/.test(modeState.motionStyle)) || modeState.appMode === 'variables';
   record(
     results,
     'D-040 Mode boundary — canvas recedes',
     !!canvasBlur,
-    modeState.motionStyle ?? `appMode=${modeState.appMode}`
+    modeState.motionStyle ?? `appMode=${modeState.appMode}`,
   );
 
   const millerTitles = await page.locator('[class*="columnTitle"]').allTextContents();
@@ -393,7 +419,7 @@ async function testVariableManager(page, results) {
     results,
     'D-040 Miller navigation columns',
     millerTitles.some((t) => /Variable Sets/i.test(t)),
-    millerTitles.join(' | ') || 'none'
+    millerTitles.join(' | ') || 'none',
   );
 
   const facetButtons = await page.getByRole('button', { name: /Type filter|Status filter|Quality filter/i }).count();
@@ -406,25 +432,36 @@ async function testVariableManager(page, results) {
   await page.getByRole('heading', { name: 'Variable Manager' }).click();
   await page.waitForTimeout(200);
 
-  const genderSet = manager.locator('[data-variable-set-id]').filter({ hasText: /^gender$/i }).first();
+  const genderSet = manager
+    .locator('[data-variable-set-id]')
+    .filter({ hasText: /^gender$/i })
+    .first();
   await genderSet.waitFor({ state: 'visible', timeout: 8000 });
   await genderSet.click({ force: true });
   await page.waitForTimeout(600);
 
-  const genderVar = manager.locator('[data-variable-id]').filter({ hasText: /^gender$/i }).first();
+  const genderVar = manager
+    .locator('[data-variable-id]')
+    .filter({ hasText: /^gender$/i })
+    .first();
   if (await genderVar.isVisible({ timeout: 4000 }).catch(() => false)) {
     await genderVar.click({ force: true });
     await page.waitForTimeout(500);
   }
 
-  await manager.getByText('Distribution').waitFor({ timeout: 25000 }).catch(() => {});
+  await manager
+    .getByText('Distribution')
+    .waitFor({ timeout: 25000 })
+    .catch(() => {});
   for (let i = 0; i < 20; i++) {
     const mapping = await manager.getByText('Value Mapping').count();
     if (mapping > 0) break;
     await page.waitForTimeout(1000);
   }
 
-  const inspectorVisible = await manager.locator('[aria-label="Distribution histogram"], [aria-label="Distribution strip"]').count();
+  const inspectorVisible = await manager
+    .locator('[aria-label="Distribution histogram"], [aria-label="Distribution strip"]')
+    .count();
   const distributionSection = await manager.getByText('Distribution').count();
   const valueMappingSection = await manager.getByText('Value Mapping').count();
   const valueRows = await manager.locator('table tbody tr').count();
@@ -432,13 +469,16 @@ async function testVariableManager(page, results) {
     results,
     'D-041 Inspector — distribution + mapping',
     (inspectorVisible > 0 || distributionSection > 0) && (valueMappingSection > 0 || valueRows > 0),
-    `charts=${inspectorVisible} distribution=${distributionSection} mapping=${valueMappingSection} rows=${valueRows}`
+    `charts=${inspectorVisible} distribution=${distributionSection} mapping=${valueMappingSection} rows=${valueRows}`,
   );
 
   const typeBadge = await manager.getByText(/Category|Nominal|Scale|Numeric/i).count();
   record(results, 'D-041 Inspector — type badge hierarchy', typeBadge > 0, `${typeBadge} type labels`);
 
-  const editableTitle = manager.locator('h2, h3').filter({ hasText: /^gender$/i }).first();
+  const editableTitle = manager
+    .locator('h2, h3')
+    .filter({ hasText: /^gender$/i })
+    .first();
   if (await editableTitle.isVisible({ timeout: 2000 }).catch(() => false)) {
     await editableTitle.click();
     await page.waitForTimeout(300);
@@ -455,13 +495,18 @@ async function testVariableManager(page, results) {
 
   await managerSearchInput(page).fill('nps');
   await page.waitForTimeout(400);
-  const sidebarItemsAfter = await page.locator('aside button').filter({ hasText: /gender|region|nps/i }).count();
-  const canvasSearchValue = await canvasSidebarSearchInput(page).inputValue().catch(() => '');
+  const sidebarItemsAfter = await page
+    .locator('aside button')
+    .filter({ hasText: /gender|region|nps/i })
+    .count();
+  const canvasSearchValue = await canvasSidebarSearchInput(page)
+    .inputValue()
+    .catch(() => '');
   record(
     results,
     'D-042 Manager search isolated from Canvas (UXR-018)',
     canvasSearchValue === '' && sidebarItemsAfter >= sidebarItemsBefore,
-    `canvasSearch="${canvasSearchValue}" sidebarItems ${sidebarItemsBefore}→${sidebarItemsAfter}`
+    `canvasSearch="${canvasSearchValue}" sidebarItems ${sidebarItemsBefore}→${sidebarItemsAfter}`,
   );
 
   await managerSearchInput(page).fill('');
@@ -474,12 +519,18 @@ async function testVariableManager(page, results) {
   if (bulkBar > 0) await shot(page, '03-bulk-selection');
 
   await closeVariableManager(page);
-  const closed = !(await page.getByRole('heading', { name: 'Variable Manager' }).isVisible({ timeout: 1000 }).catch(() => false));
+  const closed = !(await page
+    .getByRole('heading', { name: 'Variable Manager' })
+    .isVisible({ timeout: 1000 })
+    .catch(() => false));
   if (!closed) {
     await page.getByRole('button', { name: 'Close Variable Manager' }).click({ force: true });
     await page.waitForTimeout(400);
   }
-  const closedFinal = !(await page.getByRole('heading', { name: 'Variable Manager' }).isVisible({ timeout: 1000 }).catch(() => false));
+  const closedFinal = !(await page
+    .getByRole('heading', { name: 'Variable Manager' })
+    .isVisible({ timeout: 1000 })
+    .catch(() => false));
   record(results, 'D-040 Esc closes Manager', closedFinal, closedFinal ? 'overlay gone' : 'still open');
   await shot(page, '04-manager-closed');
 }
@@ -519,7 +570,10 @@ async function buildCrosstab(page, { rowChip, colButton } = {}) {
 }
 
 async function ensureCorrectionNone(page) {
-  const correct = page.locator('select').filter({ has: page.locator('option[value="none"]') }).first();
+  const correct = page
+    .locator('select')
+    .filter({ has: page.locator('option[value="none"]') })
+    .first();
   if (await correct.isVisible({ timeout: 2000 }).catch(() => false)) {
     await correct.selectOption('none');
     await page.waitForTimeout(2500);
@@ -543,13 +597,16 @@ async function testStoryShelfDismiss(page, results) {
   const displayTitle = (await page.locator('h2.slide-header-title').textContent())?.trim() ?? '';
   await page.locator('h2.slide-header-title').click();
   await page.waitForTimeout(200);
-  const storedTitle = await page.locator('.slide-header-title-input').inputValue().catch(() => '');
+  const storedTitle = await page
+    .locator('.slide-header-title-input')
+    .inputValue()
+    .catch(() => '');
   const pass = gone && storedTitle === 'New Slide';
   record(
     results,
     'D-024 Story Shelf — dismiss',
     pass,
-    `gone=${gone} display="${displayTitle}" stored="${storedTitle}"`
+    `gone=${gone} display="${displayTitle}" stored="${storedTitle}"`,
   );
   if (pass) await shot(page, '05-story-shelf-after-dismiss');
 }
@@ -580,11 +637,11 @@ async function huntHaloHigh(page, context, results) {
 
   if (!(await scoreCombosOn(page))) {
     if (await buildCrosstab(page, combos[0])) {
-    await applyNpsPromoterFilter(page);
-    await page.waitForTimeout(2000);
-    const filtered = await countHaloCells(page);
-    if (filtered.high > best.high) best = { label: 'gender×region+Promoter', ...filtered };
-    if (filtered.high > 0) await shot(page, '12-halo-high-promoter-filter');
+      await applyNpsPromoterFilter(page);
+      await page.waitForTimeout(2000);
+      const filtered = await countHaloCells(page);
+      if (filtered.high > best.high) best = { label: 'gender×region+Promoter', ...filtered };
+      if (filtered.high > 0) await shot(page, '12-halo-high-promoter-filter');
     }
   }
 
@@ -601,7 +658,7 @@ async function huntHaloHigh(page, context, results) {
     results,
     'D-020 Insight Halo — 95% (halo-high hunt)',
     best.high > 0,
-    `best=${best.label} high=${best.high} mid=${best.mid}`
+    `best=${best.label} high=${best.high} mid=${best.mid}`,
   );
   record(results, 'D-021 Insight Halo — 80% (halo-mid)', best.mid > 0, `mid=${best.mid} on ${best.label}`);
 }
@@ -614,12 +671,16 @@ async function ensureDashboard(page, { clearStorage = true } = {}) {
   await page.goto(BASE);
   if (clearStorage) {
     await page.evaluate(async () => {
-      try { localStorage.clear(); } catch {}
+      try {
+        localStorage.clear();
+      } catch {}
       try {
         if (navigator.storage?.getDirectory) {
           const root = await navigator.storage.getDirectory();
           for await (const [name] of root.entries()) {
-            try { await root.removeEntry(name, { recursive: true }); } catch {}
+            try {
+              await root.removeEntry(name, { recursive: true });
+            } catch {}
           }
         }
       } catch {}
@@ -664,13 +725,17 @@ async function ensureCrosstab(page) {
   const rowCount = await page.locator('table tbody tr').count();
   if (rowCount >= 2) return;
 
-  if (await page.getByText('Ready for Analysis').isVisible({ timeout: 3000 }).catch(() => false)) {
+  if (
+    await page
+      .getByText('Ready for Analysis')
+      .isVisible({ timeout: 3000 })
+      .catch(() => false)
+  ) {
     await page.getByRole('button', { name: /gender Good starting point/i }).click();
     await page.waitForTimeout(1200);
   }
 
-  if ((await page.locator('table tbody tr').count()) >= 2
-    && (await page.locator('th').count()) > 2) return;
+  if ((await page.locator('table tbody tr').count()) >= 2 && (await page.locator('th').count()) > 2) return;
 
   const region = page.getByRole('button', { name: /^region$/i });
   if (await region.isVisible({ timeout: 5000 }).catch(() => false)) {
@@ -681,7 +746,9 @@ async function ensureCrosstab(page) {
 
 async function applyNpsPromoterFilter(page) {
   await page.getByRole('button', { name: 'Add Filter' }).first().click();
-  const modal = page.locator('[class*="shadow-2xl"]').filter({ has: page.getByRole('heading', { name: /Add Filter|NPS Segment/i }) });
+  const modal = page
+    .locator('[class*="shadow-2xl"]')
+    .filter({ has: page.getByRole('heading', { name: /Add Filter|NPS Segment/i }) });
   await modal.waitFor({ timeout: 10000 });
   await modal.getByPlaceholder('Search variables...').fill('nps');
   await page.waitForTimeout(300);
@@ -725,13 +792,19 @@ async function ensureSparseCrosstab(page) {
 async function testZeroCells(page, results) {
   let zeroCells = await page.locator('[data-zero-cell="true"]').count();
   let emDashCells = await page.locator('td.data-cell').filter({ hasText: '—' }).count();
-  let badZeros = await page.locator('td.data-cell').filter({ hasText: /^0\.0%$/ }).count();
+  let badZeros = await page
+    .locator('td.data-cell')
+    .filter({ hasText: /^0\.0%$/ })
+    .count();
 
   if (zeroCells === 0 && emDashCells === 0) {
     await ensureSparseCrosstab(page);
     zeroCells = await page.locator('[data-zero-cell="true"]').count();
     emDashCells = await page.locator('td.data-cell').filter({ hasText: '—' }).count();
-    badZeros = await page.locator('td.data-cell').filter({ hasText: /^0\.0%$/ }).count();
+    badZeros = await page
+      .locator('td.data-cell')
+      .filter({ hasText: /^0\.0%$/ })
+      .count();
   }
 
   const pass = zeroCells > 0 && badZeros === 0 && emDashCells >= zeroCells;
@@ -739,7 +812,7 @@ async function testZeroCells(page, results) {
     results,
     'D-003 Trust Anchor — zero/missing',
     pass,
-    `${zeroCells} zero cells, ${emDashCells} em-dash, ${badZeros} raw 0%`
+    `${zeroCells} zero cells, ${emDashCells} em-dash, ${badZeros} raw 0%`,
   );
   if (zeroCells > 0 || emDashCells > 0) await shot(page, '08-zero-cells');
 }
@@ -754,7 +827,10 @@ async function testDnDMicroDelight(page, results) {
   await page.getByPlaceholder('Search variables...').fill('intent');
   await page.waitForTimeout(400);
 
-  const source = page.getByTestId('variable-draggable').filter({ hasText: /intent to buy/i }).first();
+  const source = page
+    .getByTestId('variable-draggable')
+    .filter({ hasText: /intent to buy/i })
+    .first();
   const target = page.getByTestId('drop-zone-rows');
   await source.scrollIntoViewIfNeeded();
   const sourceBox = await source.boundingBox();
@@ -790,12 +866,16 @@ async function testDnDMicroDelight(page, results) {
   await page.mouse.up();
   await page.waitForTimeout(900);
 
-  const dropped = await page.getByTestId('drop-zone-rows').filter({ hasText: /intent to buy/i }).isVisible({ timeout: 3000 }).catch(() => false);
+  const dropped = await page
+    .getByTestId('drop-zone-rows')
+    .filter({ hasText: /intent to buy/i })
+    .isVisible({ timeout: 3000 })
+    .catch(() => false);
   record(
     results,
     'D-015 DnD micro-delight',
     overlayDuringDrag && dropped,
-    `overlay=${overlayDuringDrag} dropped=${dropped}`
+    `overlay=${overlayDuringDrag} dropped=${dropped}`,
   );
 }
 
@@ -827,12 +907,7 @@ async function testWorkspaceReopen(context, results) {
 
   const pctAfter = await reopen.locator('text=/\\d+\\.\\d%/').count();
   const pass = rowsAfter >= 2 && pctAfter > 0;
-  record(
-    results,
-    'P9 Workspace reopen',
-    pass,
-    `rows ${rowsBefore}→${rowsAfter}, pct cells ${pctBefore}→${pctAfter}`
-  );
+  record(results, 'P9 Workspace reopen', pass, `rows ${rowsBefore}→${rowsAfter}, pct cells ${pctBefore}→${pctAfter}`);
   if (pass) await shot(reopen, '11-workspace-reopen');
   await reopen.close();
 }
@@ -891,7 +966,10 @@ async function main() {
       await testStoryShelfDismiss(page, results);
       await huntHaloHigh(page, context, results);
 
-      await page.getByRole('button', { name: /Change theme/i }).first().click();
+      await page
+        .getByRole('button', { name: /Change theme/i })
+        .first()
+        .click();
       const themeList = page.locator('[role="listbox"][aria-label="Theme selection"]');
       await themeList.getByText('Mission Control', { exact: true }).click();
       await page.waitForTimeout(800);
@@ -904,7 +982,7 @@ async function main() {
         results,
         '§12 Would You Frame It? (agent provisional)',
         true,
-        'MC crosstab screenshot captured for human confirmation'
+        'MC crosstab screenshot captured for human confirmation',
       );
 
       console.log(JSON.stringify(results, null, 2));
@@ -933,7 +1011,7 @@ async function main() {
       results,
       'D-022 Story Shelf — suggestion visible',
       storyVisible,
-      storyVisible ? 'suggestion chip visible' : 'not visible within 8s'
+      storyVisible ? 'suggestion chip visible' : 'not visible within 8s',
     );
     if (storyVisible) {
       await shot(page, '05-story-shelf');
@@ -945,7 +1023,7 @@ async function main() {
     }
 
     const th = page.locator('th').nth(2);
-    if (await th.count() > 0) {
+    if ((await th.count()) > 0) {
       await th.hover();
       await page.waitForTimeout(350);
       await shot(page, '02-column-guide-hover');
@@ -958,8 +1036,7 @@ async function main() {
     record(results, 'D-010 Settling Scale — mount', pct > 0 && animated > 0, `${pct} % cells, ${animated} animated`);
 
     // --- D-013 Presentation density ---
-    const densityToggle = () =>
-      page.getByRole('button', { name: /Presentation View|Compact View/i });
+    const densityToggle = () => page.getByRole('button', { name: /Presentation View|Compact View/i });
     if (await densityToggle().isVisible()) {
       await densityToggle().click();
       await page.waitForTimeout(700);
@@ -996,17 +1073,22 @@ async function main() {
       results,
       'D-011 Settling Scale — filter re-animate',
       filterChip > 0 && animatedAfter > 0,
-      `filter active; animated cells ${animatedBefore}→${animatedAfter}`
+      `filter active; animated cells ${animatedBefore}→${animatedAfter}`,
     );
     await shot(page, '06-after-nps-filter');
 
     // --- D-020 Insight Halo (live) ---
     const haloHigh = await page.locator('[class*="halo-high"], .bg-\\[var\\(--halo-high\\)\\]').count();
     const haloMid = await page.locator('[class*="halo-mid"], .bg-\\[var\\(--halo-mid\\)\\]').count();
-    const haloAny = await page.locator('td.data-cell').evaluateAll((cells) =>
-      cells.filter((c) => /halo/.test(c.className)).length
+    const haloAny = await page
+      .locator('td.data-cell')
+      .evaluateAll((cells) => cells.filter((c) => /halo/.test(c.className)).length);
+    record(
+      results,
+      'D-020 Insight Halo — live cells',
+      haloAny > 0,
+      `high=${haloHigh} mid=${haloMid} tinted=${haloAny}`,
     );
-    record(results, 'D-020 Insight Halo — live cells', haloAny > 0, `high=${haloHigh} mid=${haloMid} tinted=${haloAny}`);
 
     if (RUN === '04') {
       await testDnDMicroDelight(page, results);
@@ -1031,7 +1113,7 @@ async function main() {
       results,
       'D-012 Settling Scale — reduced motion',
       rmPct > 0 && rmAnimated === 0,
-      `${rmPct} % cells, ${rmAnimated} animated (expect 0)`
+      `${rmPct} % cells, ${rmAnimated} animated (expect 0)`,
     );
     await shot(rmPage, '07-reduced-motion');
     await rmContext.close();
@@ -1042,8 +1124,14 @@ async function main() {
     await ensureDashboard(page2);
     await ensureCrosstab(page2);
     const themeList = page2.locator('[role="listbox"][aria-label="Theme selection"]');
-    for (const [slug, label] of [['mc', 'Mission Control'], ['lg', 'Liquid Glass']]) {
-      await page2.getByRole('button', { name: /Change theme/i }).first().click();
+    for (const [slug, label] of [
+      ['mc', 'Mission Control'],
+      ['lg', 'Liquid Glass'],
+    ]) {
+      await page2
+        .getByRole('button', { name: /Change theme/i })
+        .first()
+        .click();
       await themeList.getByText(label, { exact: true }).click();
       await page2.waitForTimeout(800);
       await shot(page2, `08-theme-${slug}`);
@@ -1060,7 +1148,10 @@ async function main() {
     console.log(JSON.stringify(results, null, 2));
   } catch (err) {
     results.errors.push(String(err));
-    const bodyText = await page.locator('body').innerText().catch(() => 'unavailable');
+    const bodyText = await page
+      .locator('body')
+      .innerText()
+      .catch(() => 'unavailable');
     results.pageText = bodyText.slice(0, 800);
     await shot(page, 'error').catch(() => {});
     console.log(JSON.stringify(results, null, 2));

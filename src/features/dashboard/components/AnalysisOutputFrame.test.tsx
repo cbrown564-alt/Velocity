@@ -6,8 +6,14 @@ describe('AnalysisOutputFrame', () => {
   it('renders shared analysis-frame shell with body content', () => {
     const { container } = render(
       <AnalysisOutputFrame>
-        <table><tbody><tr><td>47.7%</td></tr></tbody></table>
-      </AnalysisOutputFrame>
+        <table>
+          <tbody>
+            <tr>
+              <td>47.7%</td>
+            </tr>
+          </tbody>
+        </table>
+      </AnalysisOutputFrame>,
     );
 
     expect(container.querySelector('.analysis-frame')).toBeInTheDocument();
@@ -18,7 +24,7 @@ describe('AnalysisOutputFrame', () => {
     render(
       <AnalysisOutputFrame footer={<div>χ² = 12.4</div>}>
         <span>body</span>
-      </AnalysisOutputFrame>
+      </AnalysisOutputFrame>,
     );
 
     expect(screen.getByText('χ² = 12.4')).toBeInTheDocument();
@@ -28,7 +34,7 @@ describe('AnalysisOutputFrame', () => {
     const { container } = render(
       <AnalysisOutputFrame bleed>
         <span>body</span>
-      </AnalysisOutputFrame>
+      </AnalysisOutputFrame>,
     );
 
     expect(container.querySelector('.analysis-frame')).toHaveAttribute('data-bleed', 'true');
@@ -38,7 +44,7 @@ describe('AnalysisOutputFrame', () => {
     const { container } = render(
       <AnalysisOutputFrame footer={<div data-testid="stats-footer">footer</div>}>
         <div data-testid="table-body">body</div>
-      </AnalysisOutputFrame>
+      </AnalysisOutputFrame>,
     );
 
     const frame = container.querySelector('.analysis-frame');

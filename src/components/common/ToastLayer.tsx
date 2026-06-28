@@ -53,12 +53,7 @@ export const ToastLayer: React.FC = () => {
     >
       <AnimatePresence mode="popLayout">
         {toasts.map((toast) => (
-          <ToastItem
-            key={toast.id}
-            toast={toast}
-            reducedMotion={reducedMotion}
-            onDismiss={dismissToast}
-          />
+          <ToastItem key={toast.id} toast={toast} reducedMotion={reducedMotion} onDismiss={dismissToast} />
         ))}
       </AnimatePresence>
     </div>
@@ -112,12 +107,7 @@ const ToastItem: React.FC<ToastItemProps> = ({ toast, reducedMotion, onDismiss }
           </button>
         ) : null}
       </div>
-      <button
-        type="button"
-        onClick={handleDismiss}
-        className={styles.dismiss}
-        aria-label="Dismiss notification"
-      >
+      <button type="button" onClick={handleDismiss} className={styles.dismiss} aria-label="Dismiss notification">
         <X size={14} />
       </button>
     </motion.div>

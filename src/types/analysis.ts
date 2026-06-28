@@ -16,7 +16,7 @@ export interface AnalysisSettings {
   comparisonMethod: ComparisonMethod;
   correctionType: CorrectionType;
   showConfidenceIntervals: boolean;
-  significanceLevel: 0.95 | 0.90 | 0.80;
+  significanceLevel: 0.95 | 0.9 | 0.8;
   /** Analysis engine selection: auto selects WebR for design effects/mixed models */
   engine: AnalysisEngine;
   /** Enable design effect calculation (requires WebR) */

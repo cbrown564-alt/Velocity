@@ -31,16 +31,12 @@ export const SignificanceLegend: React.FC<SignificanceLegendProps> = ({
   onMethodologyClick,
 }) => {
   const correctionLabel =
-    correctionType === 'bonferroni'
-      ? 'Bonferroni'
-      : correctionType === 'fdr'
-        ? 'Benjamini-Hochberg (FDR)'
-        : 'None';
+    correctionType === 'bonferroni' ? 'Bonferroni' : correctionType === 'fdr' ? 'Benjamini-Hochberg (FDR)' : 'None';
 
   const methodText =
     comparisonMethod === 'pairwise'
-      ? 'Pairwise Welch\'s T-Test with column letter coding.'
-      : 'Welch\'s T-Test (Cell vs Rest) with Effective Sample Size adjustment for weighted data.';
+      ? "Pairwise Welch's T-Test with column letter coding."
+      : "Welch's T-Test (Cell vs Rest) with Effective Sample Size adjustment for weighted data.";
 
   if (compact) {
     return (
@@ -91,15 +87,11 @@ export const SignificanceLegend: React.FC<SignificanceLegendProps> = ({
           </div>
           <div className="flex items-center gap-2">
             <ArrowUp size={14} style={{ color: 'var(--color-success)' }} />
-            <span className="text-[var(--text-primary)]">
-              Significantly higher than rest
-            </span>
+            <span className="text-[var(--text-primary)]">Significantly higher than rest</span>
           </div>
           <div className="flex items-center gap-2">
             <ArrowDown size={14} style={{ color: 'var(--color-error)' }} />
-            <span className="text-[var(--text-primary)]">
-              Significantly lower than rest
-            </span>
+            <span className="text-[var(--text-primary)]">Significantly lower than rest</span>
           </div>
         </div>
 
@@ -110,15 +102,11 @@ export const SignificanceLegend: React.FC<SignificanceLegendProps> = ({
           </div>
           <div className="flex items-center gap-2">
             <ArrowUp size={14} style={{ color: 'var(--text-secondary)' }} />
-            <span className="text-[var(--text-primary)]">
-              Moderately higher than rest
-            </span>
+            <span className="text-[var(--text-primary)]">Moderately higher than rest</span>
           </div>
           <div className="flex items-center gap-2">
             <ArrowDown size={14} style={{ color: 'var(--text-secondary)' }} />
-            <span className="text-[var(--text-primary)]">
-              Moderately lower than rest
-            </span>
+            <span className="text-[var(--text-primary)]">Moderately lower than rest</span>
           </div>
         </div>
       </div>

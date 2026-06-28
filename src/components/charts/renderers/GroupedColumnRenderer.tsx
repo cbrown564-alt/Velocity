@@ -1,16 +1,15 @@
-
 import React, { useMemo, useCallback } from 'react';
 import * as d3 from 'd3-scale';
 import { max } from 'd3-array';
 import { BaseChartRendererProps } from '../../../types/charts';
 
 const DEFAULT_PALETTE = [
-    'var(--viz-palette-1)',
-    'var(--viz-palette-2)',
-    'var(--viz-palette-3)',
-    'var(--viz-palette-4)',
-    'var(--viz-palette-5)',
-    'var(--viz-palette-6)',
+  'var(--viz-palette-1)',
+  'var(--viz-palette-2)',
+  'var(--viz-palette-3)',
+  'var(--viz-palette-4)',
+  'var(--viz-palette-5)',
+  'var(--viz-palette-6)',
 ];
 
 /**
@@ -19,273 +18,263 @@ const DEFAULT_PALETTE = [
  * Useful for comparing exact values across categories.
  */
 export const GroupedColumnRenderer: React.FC<BaseChartRendererProps> = ({
-    width,
-    height,
-    colors,
-    processedData,
-    interactive = true,
-    onContextMenu,
-    labelMode = 'count',
+  width,
+  height,
+  colors,
+  processedData,
+  interactive = true,
+  onContextMenu,
+  labelMode = 'count',
 }) => {
-    const { rows, columns } = processedData;
+  const { rows, columns } = processedData;
 
-    // Get column keys and labels for the legend/sub-groups
-    const columnKeys = columns.map(c => c.key);
-    const columnLabels = columns.map(c => c.label);
+  // Get column keys and labels for the legend/sub-groups
+  const columnKeys = columns.map((c) => c.key);
+  const columnLabels = columns.map((c) => c.label);
 
-    // Calculate dynamic dimensions
-    const margin = { top: 48, right: 20, bottom: 40, left: 60 };
+  // Calculate dynamic dimensions
+  const margin = { top: 48, right: 20, bottom: 40, left: 60 };
 
-    // Determine if we need to expand width based on number of groups
-    const groupPadding = 0.2;
-    const barPadding = 0.1;
-    const minBarWidth = 16; // Minimum width per bar
+  // Determine if we need to expand width based on number of groups
+  const groupPadding = 0.2;
+  const barPadding = 0.1;
+  const minBarWidth = 16; // Minimum width per bar
 
-    // Required width per group (category)
-    const minGroupWidth = Math.max(
-        (minBarWidth * columns.length) / (1 - barPadding),
-        80 // Minimum group width to fit labels reasonably
-    );
+  // Required width per group (category)
+  const minGroupWidth = Math.max(
+    (minBarWidth * columns.length) / (1 - barPadding),
+    80, // Minimum group width to fit labels reasonably
+  );
 
-    // Total required chart width
-    const requiredWidth = minGroupWidth * rows.length + margin.left + margin.right;
+  // Total required chart width
+  const requiredWidth = minGroupWidth * rows.length + margin.left + margin.right;
 
-    // Use the larger of provided width or required width
-    // This allows horizontal scrolling if needed (assuming parent container allows it)
-    const actualWidth = Math.max(width, requiredWidth);
+  // Use the larger of provided width or required width
+  // This allows horizontal scrolling if needed (assuming parent container allows it)
+  const actualWidth = Math.max(width, requiredWidth);
 
-    const innerWidth = actualWidth - margin.left - margin.right;
-    const innerHeight = Math.max(height - margin.top - margin.bottom, 150);
+  const innerWidth = actualWidth - margin.left - margin.right;
+  const innerHeight = Math.max(height - margin.top - margin.bottom, 150);
 
-    // Scales
-    // X0: The main row categories (Groups)
-    const x0Scale = useMemo(() => {
-        return d3.scaleBand()
-            .domain(rows.map(r => r.label))
-            .range([0, innerWidth])
-            .padding(groupPadding);
-    }, [rows, innerWidth]);
+  // Scales
+  // X0: The main row categories (Groups)
+  const x0Scale = useMemo(() => {
+    return d3
+      .scaleBand()
+      .domain(rows.map((r) => r.label))
+      .range([0, innerWidth])
+      .padding(groupPadding);
+  }, [rows, innerWidth]);
 
-    // X1: The sub-categories (columns) within each group
-    const x1Scale = useMemo(() => {
-        return d3.scaleBand()
-            .domain(columnKeys)
-            .range([0, x0Scale.bandwidth()])
-            .padding(barPadding);
-    }, [columnKeys, x0Scale]);
+  // X1: The sub-categories (columns) within each group
+  const x1Scale = useMemo(() => {
+    return d3.scaleBand().domain(columnKeys).range([0, x0Scale.bandwidth()]).padding(barPadding);
+  }, [columnKeys, x0Scale]);
 
-    const isPercentMode = labelMode === 'percent';
+  const isPercentMode = labelMode === 'percent';
 
-    // Y: Values scale
-    const yScale = useMemo(() => {
-        let maxVal = 1;
+  // Y: Values scale
+  const yScale = useMemo(() => {
+    let maxVal = 1;
 
-        if (isPercentMode) {
-            // Find max percentage across all cells (relative to column total)
-            maxVal = max(rows, row => {
-                return max(columnKeys, key => {
-                    const cell = row.cells[key];
-                    if (!cell) return 0;
-                    // Use pre-calculated percent from buildTree (it's 0-100)
-                    return cell.percent / 100;
-                });
-            }) || 1;
-        } else {
-            // Find max count across all cells
-            maxVal = max(rows, row => {
-                return max(columnKeys, key => row.cells[key]?.count || 0);
-            }) || 1;
-        }
+    if (isPercentMode) {
+      // Find max percentage across all cells (relative to column total)
+      maxVal =
+        max(rows, (row) => {
+          return max(columnKeys, (key) => {
+            const cell = row.cells[key];
+            if (!cell) return 0;
+            // Use pre-calculated percent from buildTree (it's 0-100)
+            return cell.percent / 100;
+          });
+        }) || 1;
+    } else {
+      // Find max count across all cells
+      maxVal =
+        max(rows, (row) => {
+          return max(columnKeys, (key) => row.cells[key]?.count || 0);
+        }) || 1;
+    }
 
-        return d3.scaleLinear()
-            .domain([0, maxVal * 1.1]) // Add 10% padding
-            .range([innerHeight, 0]); // Inverted for SVG Y coords
-    }, [rows, columnKeys, innerHeight, isPercentMode]);
+    return d3
+      .scaleLinear()
+      .domain([0, maxVal * 1.1]) // Add 10% padding
+      .range([innerHeight, 0]); // Inverted for SVG Y coords
+  }, [rows, columnKeys, innerHeight, isPercentMode]);
 
-    const yTicks = yScale.ticks(5);
+  const yTicks = yScale.ticks(5);
 
-    // Legend items
-    const legendItemWidth = 100;
-    const legendWidth = Math.min(columns.length * legendItemWidth, actualWidth - margin.left - margin.right);
+  // Legend items
+  const legendItemWidth = 100;
+  const legendWidth = Math.min(columns.length * legendItemWidth, actualWidth - margin.left - margin.right);
 
-    // Handle right-click on a group (row)
-    const handleGroupContextMenu = useCallback((row: any, event: React.MouseEvent) => {
-        if (!interactive || !onContextMenu) return;
-        event.preventDefault();
-        event.stopPropagation();
+  // Handle right-click on a group (row)
+  const handleGroupContextMenu = useCallback(
+    (row: any, event: React.MouseEvent) => {
+      if (!interactive || !onContextMenu) return;
+      event.preventDefault();
+      event.stopPropagation();
 
-        const firstColKey = columns[0]?.key || 'Total';
-        const cell = row.cells[firstColKey];
-        onContextMenu({
-            selected: [{
-                label: row.label,
-                rawValue: row.rawValue,
-                value: cell?.count || 0,
-                percent: cell?.percent || 0,
-            }],
-            position: { x: event.clientX, y: event.clientY },
-        });
-    }, [interactive, onContextMenu, columns]);
+      const firstColKey = columns[0]?.key || 'Total';
+      const cell = row.cells[firstColKey];
+      onContextMenu({
+        selected: [
+          {
+            label: row.label,
+            rawValue: row.rawValue,
+            value: cell?.count || 0,
+            percent: cell?.percent || 0,
+          },
+        ],
+        position: { x: event.clientX, y: event.clientY },
+      });
+    },
+    [interactive, onContextMenu, columns],
+  );
 
-    return (
-        <div style={{ width, height, overflowX: 'auto', overflowY: 'hidden' }}>
-            <svg
-                width={actualWidth}
-                height={height}
-                style={{ display: 'block', overflow: 'visible', fontFamily: 'var(--font-mono)' }}
-            >
-                <g transform={`translate(${margin.left},${margin.top})`}>
-                    {/* Legend (Top) */}
-                    <g transform={`translate(${(innerWidth - legendWidth) / 2}, -${margin.top - 8})`}>
-                        {columnLabels.map((label, i) => {
-                            const xOffset = i * legendItemWidth;
-                            return (
-                                <g key={columnKeys[i]} transform={`translate(${xOffset}, 0)`}>
-                                    <rect
-                                        width={12}
-                                        height={12}
-                                        rx={1}
-                                        fill={colors ? colors[i % colors.length] : DEFAULT_PALETTE[i % DEFAULT_PALETTE.length]}
-                                        fillOpacity={0.8}
-                                    />
-                                    <text
-                                        x={18}
-                                        y={10}
-                                        style={{ fontSize: '11px', fill: 'var(--viz-text-axis)', fontFamily: 'var(--font-body)' }}
-                                    >
-                                        {label ? <title>{label}</title> : null}
-                                        {label || ''}
-                                    </text>
-                                </g>
-                            );
-                        })}
-                    </g>
-
-                    {/* Grid lines (Horizontal for Column chart) */}
-                    {yTicks.map(tick => (
-                        <line
-                            key={tick}
-                            x1={0}
-                            y1={yScale(tick)}
-                            x2={innerWidth}
-                            y2={yScale(tick)}
-                            stroke="var(--viz-grid-line)"
-                            strokeDasharray="2,2"
-                        />
-                    ))}
-
-                    {/* Y-axis Labels and Ticks */}
-                    <g>
-                        <line x1={0} y1={0} x2={0} y2={innerHeight} stroke="var(--viz-stroke-main)" />
-                        {yTicks.map(tick => (
-                            <g key={tick} transform={`translate(0, ${yScale(tick)})`}>
-                                <line x2={-4} stroke="var(--viz-stroke-main)" />
-                                <text
-                                    x={-8}
-                                    y={4}
-                                    textAnchor="end"
-                                    style={{ fontSize: '10px', fill: 'var(--viz-text-axis)' }}
-                                >
-                                    {isPercentMode
-                                        ? `${Math.round(tick * 100)}%`
-                                        : tick.toLocaleString()}
-                                </text>
-                            </g>
-                        ))}
-                    </g>
-
-                    {/* X Axis Labels */}
-                    {rows.map((r) => (
-                        <g
-                            key={r.label}
-                            transform={`translate(${(x0Scale(r.label) || 0) + x0Scale.bandwidth() / 2}, ${innerHeight + 16})`}
-                        >
-                            <text
-                                textAnchor="middle"
-                                style={{
-                                    fontSize: 'var(--text-xs)',
-                                    fill: 'var(--viz-text-axis)',
-                                    fontFamily: 'var(--font-body)'
-                                }}
-                            >
-                                {r.label && r.label.length > 15 ? r.label.substring(0, 12) + '...' : r.label}
-                            </text>
-                        </g>
-                    ))}
-
-                    {/* Baseline (Bottom) */}
-                    <line
-                        x1={0}
-                        y1={innerHeight}
-                        x2={innerWidth}
-                        y2={innerHeight}
-                        stroke="var(--viz-stroke-main)"
-                    />
-
-                    {/* Grouped Columns */}
-                    {rows.map((row) => {
-                        const groupX = x0Scale(row.label) || 0;
-
-                        return (
-                            <g
-                                key={row.label}
-                                transform={`translate(${groupX}, 0)`}
-                                onContextMenu={(e) => handleGroupContextMenu(row, e)}
-                            >
-                                {columnKeys.map((colKey, i) => {
-                                    const count = row.cells[colKey]?.count || 0;
-                                    const percent = row.cells[colKey]?.percent || 0;
-                                    const value = isPercentMode ? percent / 100 : count;
-                                    const barHeight = Math.abs(yScale(value) - yScale(0));
-                                    const barY = yScale(value);
-                                    const barX = x1Scale(colKey) || 0;
-                                    const barWidth = x1Scale.bandwidth();
-
-                                    const color = colors ? colors[i % colors.length] : DEFAULT_PALETTE[i % DEFAULT_PALETTE.length];
-
-                                    return (
-                                        <g key={colKey}>
-                                            <rect
-                                                x={barX}
-                                                y={barY}
-                                                width={barWidth}
-                                                height={barHeight}
-                                                fill={color}
-                                                fillOpacity={0.8}
-                                                style={{
-                                                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                                                    cursor: interactive ? 'pointer' : 'default',
-                                                }}
-                                            />
-                                            {/* Value label if tall enough/wide enough and not hidden */}
-                                            {labelMode !== 'none' && barHeight > 14 && barWidth > 20 && (
-                                                <text
-                                                    x={barX + barWidth / 2}
-                                                    y={barY + 12}
-                                                    textAnchor="middle"
-                                                    style={{
-                                                        fontSize: '10px',
-                                                        fontWeight: 500,
-                                                        fill: 'white',
-                                                        pointerEvents: 'none',
-                                                        textShadow: 'none',
-                                                        fontFamily: 'var(--font-mono)',
-                                                    }}
-                                                >
-                                                    {isPercentMode
-                                                        ? `${Math.round(value * 100)}%`
-                                                        : count.toLocaleString()}
-                                                </text>
-                                            )}
-                                        </g>
-                                    );
-                                })}
-                            </g>
-                        );
-                    })}
-
+  return (
+    <div style={{ width, height, overflowX: 'auto', overflowY: 'hidden' }}>
+      <svg
+        width={actualWidth}
+        height={height}
+        style={{ display: 'block', overflow: 'visible', fontFamily: 'var(--font-mono)' }}
+      >
+        <g transform={`translate(${margin.left},${margin.top})`}>
+          {/* Legend (Top) */}
+          <g transform={`translate(${(innerWidth - legendWidth) / 2}, -${margin.top - 8})`}>
+            {columnLabels.map((label, i) => {
+              const xOffset = i * legendItemWidth;
+              return (
+                <g key={columnKeys[i]} transform={`translate(${xOffset}, 0)`}>
+                  <rect
+                    width={12}
+                    height={12}
+                    rx={1}
+                    fill={colors ? colors[i % colors.length] : DEFAULT_PALETTE[i % DEFAULT_PALETTE.length]}
+                    fillOpacity={0.8}
+                  />
+                  <text
+                    x={18}
+                    y={10}
+                    style={{ fontSize: '11px', fill: 'var(--viz-text-axis)', fontFamily: 'var(--font-body)' }}
+                  >
+                    {label ? <title>{label}</title> : null}
+                    {label || ''}
+                  </text>
                 </g>
-            </svg>
-        </div>
-    );
+              );
+            })}
+          </g>
+
+          {/* Grid lines (Horizontal for Column chart) */}
+          {yTicks.map((tick) => (
+            <line
+              key={tick}
+              x1={0}
+              y1={yScale(tick)}
+              x2={innerWidth}
+              y2={yScale(tick)}
+              stroke="var(--viz-grid-line)"
+              strokeDasharray="2,2"
+            />
+          ))}
+
+          {/* Y-axis Labels and Ticks */}
+          <g>
+            <line x1={0} y1={0} x2={0} y2={innerHeight} stroke="var(--viz-stroke-main)" />
+            {yTicks.map((tick) => (
+              <g key={tick} transform={`translate(0, ${yScale(tick)})`}>
+                <line x2={-4} stroke="var(--viz-stroke-main)" />
+                <text x={-8} y={4} textAnchor="end" style={{ fontSize: '10px', fill: 'var(--viz-text-axis)' }}>
+                  {isPercentMode ? `${Math.round(tick * 100)}%` : tick.toLocaleString()}
+                </text>
+              </g>
+            ))}
+          </g>
+
+          {/* X Axis Labels */}
+          {rows.map((r) => (
+            <g
+              key={r.label}
+              transform={`translate(${(x0Scale(r.label) || 0) + x0Scale.bandwidth() / 2}, ${innerHeight + 16})`}
+            >
+              <text
+                textAnchor="middle"
+                style={{
+                  fontSize: 'var(--text-xs)',
+                  fill: 'var(--viz-text-axis)',
+                  fontFamily: 'var(--font-body)',
+                }}
+              >
+                {r.label && r.label.length > 15 ? r.label.substring(0, 12) + '...' : r.label}
+              </text>
+            </g>
+          ))}
+
+          {/* Baseline (Bottom) */}
+          <line x1={0} y1={innerHeight} x2={innerWidth} y2={innerHeight} stroke="var(--viz-stroke-main)" />
+
+          {/* Grouped Columns */}
+          {rows.map((row) => {
+            const groupX = x0Scale(row.label) || 0;
+
+            return (
+              <g
+                key={row.label}
+                transform={`translate(${groupX}, 0)`}
+                onContextMenu={(e) => handleGroupContextMenu(row, e)}
+              >
+                {columnKeys.map((colKey, i) => {
+                  const count = row.cells[colKey]?.count || 0;
+                  const percent = row.cells[colKey]?.percent || 0;
+                  const value = isPercentMode ? percent / 100 : count;
+                  const barHeight = Math.abs(yScale(value) - yScale(0));
+                  const barY = yScale(value);
+                  const barX = x1Scale(colKey) || 0;
+                  const barWidth = x1Scale.bandwidth();
+
+                  const color = colors ? colors[i % colors.length] : DEFAULT_PALETTE[i % DEFAULT_PALETTE.length];
+
+                  return (
+                    <g key={colKey}>
+                      <rect
+                        x={barX}
+                        y={barY}
+                        width={barWidth}
+                        height={barHeight}
+                        fill={color}
+                        fillOpacity={0.8}
+                        style={{
+                          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                          cursor: interactive ? 'pointer' : 'default',
+                        }}
+                      />
+                      {/* Value label if tall enough/wide enough and not hidden */}
+                      {labelMode !== 'none' && barHeight > 14 && barWidth > 20 && (
+                        <text
+                          x={barX + barWidth / 2}
+                          y={barY + 12}
+                          textAnchor="middle"
+                          style={{
+                            fontSize: '10px',
+                            fontWeight: 500,
+                            fill: 'white',
+                            pointerEvents: 'none',
+                            textShadow: 'none',
+                            fontFamily: 'var(--font-mono)',
+                          }}
+                        >
+                          {isPercentMode ? `${Math.round(value * 100)}%` : count.toLocaleString()}
+                        </text>
+                      )}
+                    </g>
+                  );
+                })}
+              </g>
+            );
+          })}
+        </g>
+      </svg>
+    </div>
+  );
 };

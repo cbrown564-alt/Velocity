@@ -43,9 +43,7 @@ function isSyntheticGridFingerprintColumn(name: string): boolean {
   return name.startsWith('heuristic_grid_') && (name.endsWith('_scale') || name.endsWith('_items'));
 }
 
-function getIgnoredExpectedColumns(
-  sessionVariables: DatasetMatchOptions['sessionVariables']
-): Set<string> {
+function getIgnoredExpectedColumns(sessionVariables: DatasetMatchOptions['sessionVariables']): Set<string> {
   const ignored = new Set<string>();
 
   for (const variable of sessionVariables ?? []) {
@@ -61,11 +59,11 @@ function getComparableColumnNames(
   columnNames: string[],
   options: {
     ignoredColumns?: Set<string>;
-  } = {}
+  } = {},
 ): string[] {
   const ignoredColumns = options.ignoredColumns ?? new Set<string>();
   return Array.from(new Set(columnNames)).filter(
-    (name) => !ignoredColumns.has(name) && !isSyntheticGridFingerprintColumn(name)
+    (name) => !ignoredColumns.has(name) && !isSyntheticGridFingerprintColumn(name),
   );
 }
 
@@ -110,7 +108,10 @@ export function validateSessionFile(candidate: unknown): SessionFileValidationRe
       if (typeof fingerprint.columnCount !== 'number') {
         errors.push('dataset.fingerprint.columnCount is required');
       }
-      if (!Array.isArray(fingerprint.columnNames) || !fingerprint.columnNames.every((name) => typeof name === 'string')) {
+      if (
+        !Array.isArray(fingerprint.columnNames) ||
+        !fingerprint.columnNames.every((name) => typeof name === 'string')
+      ) {
         errors.push('dataset.fingerprint.columnNames must be a string array');
       }
     }
@@ -157,7 +158,7 @@ export function parseSessionFile(raw: string): VelocitySessionFile {
 export function validateDatasetMatch(
   expected: SessionDatasetDescriptor,
   actual: DatasetMatchInput,
-  options: DatasetMatchOptions = {}
+  options: DatasetMatchOptions = {},
 ): DatasetMatchResult {
   const ignoredExpectedColumns = getIgnoredExpectedColumns(options.sessionVariables);
   const expectedColumns = getComparableColumnNames(expected.fingerprint.columnNames, {
@@ -194,11 +195,11 @@ export function validateDatasetMatch(
 
   if (status === 'partial_match') {
     warnings.push(
-      `Dataset columns overlap ${(overlapRatio * 100).toFixed(1)}% (${matchingColumns.length}/${expectedColumns.length})`
+      `Dataset columns overlap ${(overlapRatio * 100).toFixed(1)}% (${matchingColumns.length}/${expectedColumns.length})`,
     );
   } else if (status === 'mismatch') {
     issues.push(
-      `Dataset columns overlap ${(overlapRatio * 100).toFixed(1)}% (${matchingColumns.length}/${expectedColumns.length})`
+      `Dataset columns overlap ${(overlapRatio * 100).toFixed(1)}% (${matchingColumns.length}/${expectedColumns.length})`,
     );
   }
 

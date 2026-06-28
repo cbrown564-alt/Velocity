@@ -123,9 +123,7 @@ describe('Motion DSL (STAB-UI-A)', () => {
 
     it('generates multiple property transitions', () => {
       const t = cssTransition(['opacity', 'transform'], 'normal', 'decelerate');
-      expect(t).toBe(
-        'opacity 200ms cubic-bezier(0, 0, 0.2, 1), transform 200ms cubic-bezier(0, 0, 0.2, 1)'
-      );
+      expect(t).toBe('opacity 200ms cubic-bezier(0, 0, 0.2, 1), transform 200ms cubic-bezier(0, 0, 0.2, 1)');
     });
   });
 
@@ -171,7 +169,7 @@ describe('Motion DSL (STAB-UI-A)', () => {
 
       // Simulate system preference change
       act(() => {
-        listeners.forEach(cb => cb({ matches: true } as MediaQueryListEvent));
+        listeners.forEach((cb) => cb({ matches: true } as MediaQueryListEvent));
       });
       expect(result.current).toBe(true);
     });

@@ -108,12 +108,7 @@ export const ModalHost: React.FC<ModalHostProps> = ({
       onSave={async () => {}}
     />
 
-    <FilterModal
-      isOpen={filterModal.isOpen}
-      onClose={onCloseFilterModal}
-      variables={variables}
-      onSave={onSaveFilter}
-    />
+    <FilterModal isOpen={filterModal.isOpen} onClose={onCloseFilterModal} variables={variables} onSave={onSaveFilter} />
 
     <InputModal
       isOpen={overlay.kind === 'combine'}
@@ -158,14 +153,8 @@ export const ModalHost: React.FC<ModalHostProps> = ({
           targetVars={harmonization.targetVars}
           sourceDatasetName={harmonization.sourceDataset.name}
           targetDatasetName={harmonization.targetDataset.name}
-          sourceTableName={
-            harmonization.sourceDataset.tableName ??
-            datasetTableName(harmonization.sourceDataset.id)
-          }
-          targetTableName={
-            harmonization.targetDataset.tableName ??
-            datasetTableName(harmonization.targetDataset.id)
-          }
+          sourceTableName={harmonization.sourceDataset.tableName ?? datasetTableName(harmonization.sourceDataset.id)}
+          targetTableName={harmonization.targetDataset.tableName ?? datasetTableName(harmonization.targetDataset.id)}
         />
       )}
 
@@ -183,11 +172,7 @@ export const ModalHost: React.FC<ModalHostProps> = ({
       config={analysisExportModal.config ?? { title: 'Analysis Report', analyses: [] }}
     />
 
-    <SessionImportModal
-      isOpen={overlay.kind === 'sessionImport'}
-      onClose={closeOverlay}
-      onImport={onSessionImport}
-    />
+    <SessionImportModal isOpen={overlay.kind === 'sessionImport'} onClose={closeOverlay} onImport={onSessionImport} />
 
     {sessionExportSummary && (
       <SessionExportModal

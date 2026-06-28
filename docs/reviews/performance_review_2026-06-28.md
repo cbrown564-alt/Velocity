@@ -275,6 +275,19 @@ Relevant source:
 
 **Goal:** Make production build runnable and measurable.
 
+**Status:** Completed on 2026-06-28. `createAnalysisWorker` now uses Vite's explicit `?worker` entry so production builds emit `analysisWorker` plus same-origin DuckDB worker/WASM assets. Added `playwright.production.config.ts`, `tests/e2e/production-smoke.spec.ts`, and `npm run test:e2e:production` to build, serve `dist`, wait for `[enginePersistenceBridge] Engine ready`, fail on `Worker runtime error`, assert same-origin worker/WASM fetches, and attach `production-startup-resources.json` for future comparisons.
+
+Validation:
+
+```bash
+npm run build
+PLAYWRIGHT_PRODUCTION_PORT=4176 npm run test:e2e:production
+npm run typecheck
+npm run typecheck:test
+```
+
+Next phase: Phase 1, First-Load Slimming.
+
 Tasks:
 
 1. Add a production smoke test that runs `npm run build`, serves `dist`, opens the app, and fails on `Worker runtime error`.

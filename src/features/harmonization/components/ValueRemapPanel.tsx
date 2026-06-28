@@ -25,28 +25,29 @@ export const ValueRemapPanel: React.FC<ValueRemapPanelProps> = ({
   targetVar,
   onUpdateValueMappings,
 }) => {
-  const hasScaleInversion = mapping.warnings.some(w => w.kind === 'scale_inversion');
+  const hasScaleInversion = mapping.warnings.some((w) => w.kind === 'scale_inversion');
   const orphanValues = useMemo(
-    () => mapping.warnings.find(w => w.kind === 'data_loss')?.orphanValues ?? [],
-    [mapping.warnings]
+    () => mapping.warnings.find((w) => w.kind === 'data_loss')?.orphanValues ?? [],
+    [mapping.warnings],
   );
 
   const targetOptions = useMemo(
-    () => [{ value: null, label: '— unmapped —' }, ...targetVar.valueLabels.map(v => ({
-      value: v.value,
-      label: `${v.value}: ${v.label}`,
-    }))],
-    [targetVar.valueLabels]
+    () => [
+      { value: null, label: '— unmapped —' },
+      ...targetVar.valueLabels.map((v) => ({
+        value: v.value,
+        label: `${v.value}: ${v.label}`,
+      })),
+    ],
+    [targetVar.valueLabels],
   );
 
   const handleTargetChange = (sourceValue: number | null, rawTargetValue: string) => {
     const targetValue = rawTargetValue === '' ? null : Number(rawTargetValue);
-    const targetLabel = targetVar.valueLabels.find(v => v.value === targetValue)?.label ?? '';
+    const targetLabel = targetVar.valueLabels.find((v) => v.value === targetValue)?.label ?? '';
 
-    const updated = mapping.valueMappings.map(vm =>
-      vm.sourceValue === sourceValue
-        ? { ...vm, targetValue, targetLabel }
-        : vm
+    const updated = mapping.valueMappings.map((vm) =>
+      vm.sourceValue === sourceValue ? { ...vm, targetValue, targetLabel } : vm,
     );
 
     onUpdateValueMappings(mapping.id, updated);
@@ -60,9 +61,7 @@ export const ValueRemapPanel: React.FC<ValueRemapPanelProps> = ({
   if (sourceVar.valueLabels.length === 0) {
     return (
       <div className={styles.container}>
-        <div className={styles.noLabels}>
-          No value labels defined — direct value passthrough
-        </div>
+        <div className={styles.noLabels}>No value labels defined — direct value passthrough</div>
       </div>
     );
   }
@@ -104,24 +103,16 @@ export const ValueRemapPanel: React.FC<ValueRemapPanelProps> = ({
             const isInList = orphanValues.includes(vm.sourceValue ?? -1);
 
             return (
-              <div
-                key={i}
-                className={[
-                  styles.valueRow,
-                  isOrphan ? styles.orphanRow : '',
-                ].join(' ')}
-              >
-                <span className={styles.sourceValue}>
-                  {vm.sourceValue ?? '—'}
-                </span>
+              <div key={i} className={[styles.valueRow, isOrphan ? styles.orphanRow : ''].join(' ')}>
+                <span className={styles.sourceValue}>{vm.sourceValue ?? '—'}</span>
                 <span className={styles.sourceLabel}>{vm.sourceLabel}</span>
                 <span className={styles.arrowCell}>→</span>
                 <select
                   className={styles.targetSelect}
                   value={vm.targetValue ?? ''}
-                  onChange={e => handleTargetChange(vm.sourceValue, e.target.value)}
+                  onChange={(e) => handleTargetChange(vm.sourceValue, e.target.value)}
                 >
-                  {targetOptions.map(opt => (
+                  {targetOptions.map((opt) => (
                     <option key={opt.value ?? 'null'} value={opt.value ?? ''}>
                       {opt.label}
                     </option>

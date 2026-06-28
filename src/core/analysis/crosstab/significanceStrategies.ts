@@ -38,13 +38,10 @@ export interface CrosstabSignificanceStrategy {
   readonly isMeans: boolean;
   computeCellVsRestTScore(ctx: CellVsRestContext): number;
   applyConfidenceIntervals(row: CrosstabSqlRow, ctx: CellVsRestContext): void;
-  buildColumnStats(
-    rowCells: CrosstabSqlRow[],
-    colStats: Map<string, { n: number; ess: number }>
-  ): ColumnStats[];
+  buildColumnStats(rowCells: CrosstabSqlRow[], colStats: Map<string, { n: number; ess: number }>): ColumnStats[];
   computePairwiseTest(
     params: PairwiseColumnStats,
-    pairKey: (rowKey: string, a: string, b: string) => string
+    pairKey: (rowKey: string, a: string, b: string) => string,
   ): { tScore: number; pValue: number };
 }
 
@@ -72,7 +69,7 @@ class MeansSignificanceStrategy implements CrosstabSignificanceStrategy {
     let s2 = 0;
     if (restN > 0) {
       m2 = restSumXW / restN;
-      const restVariance = Math.max(0, (restSumX2W / restN) - (m2 * m2));
+      const restVariance = Math.max(0, restSumX2W / restN - m2 * m2);
       s2 = Math.sqrt(restVariance);
     }
     const n2 = restESS;
@@ -83,15 +80,12 @@ class MeansSignificanceStrategy implements CrosstabSignificanceStrategy {
   applyConfidenceIntervals(row: CrosstabSqlRow, ctx: CellVsRestContext): void {
     if (row.mean !== undefined && row.stdDev !== undefined) {
       row.ci95 = calculateMeanCI(Number(row.mean), Number(row.stdDev), ctx.cellESS, 0.95);
-      row.ci80 = calculateMeanCI(Number(row.mean), Number(row.stdDev), ctx.cellESS, 0.80);
+      row.ci80 = calculateMeanCI(Number(row.mean), Number(row.stdDev), ctx.cellESS, 0.8);
     }
   }
 
-  buildColumnStats(
-    rowCells: CrosstabSqlRow[],
-    colStats: Map<string, { n: number; ess: number }>
-  ): ColumnStats[] {
-    return rowCells.map(cell => {
+  buildColumnStats(rowCells: CrosstabSqlRow[], colStats: Map<string, { n: number; ess: number }>): ColumnStats[] {
+    return rowCells.map((cell) => {
       const cellN = cell.weightedCount ?? cell.count;
       const cellESS = calculateESS(cellN, cell.sumSqWeights ?? cellN);
       const colKey = getColKeyString(cell);
@@ -107,18 +101,12 @@ class MeansSignificanceStrategy implements CrosstabSignificanceStrategy {
 
   computePairwiseTest(
     params: PairwiseColumnStats,
-    _pairKey: (rowKey: string, a: string, b: string) => string
+    _pairKey: (rowKey: string, a: string, b: string) => string,
   ): { tScore: number; pValue: number } {
     const { colA, colB } = params;
 
-    if (
-      colA.mean !== undefined && colB.mean !== undefined &&
-      colA.stdDev !== undefined && colB.stdDev !== undefined
-    ) {
-      const tScore = calculateTScore(
-        colA.mean, colA.stdDev, colA.ess,
-        colB.mean, colB.stdDev, colB.ess
-      );
+    if (colA.mean !== undefined && colB.mean !== undefined && colA.stdDev !== undefined && colB.stdDev !== undefined) {
+      const tScore = calculateTScore(colA.mean, colA.stdDev, colA.ess, colB.mean, colB.stdDev, colB.ess);
       return { tScore, pValue: calculatePValue(tScore) };
     }
 
@@ -168,15 +156,12 @@ class ProportionsSignificanceStrategy implements CrosstabSignificanceStrategy {
     if (colN > 0) {
       const proportion = ctx.cellN / colN;
       row.ci95 = calculateProportionCI(proportion, ctx.cellESS, 0.95);
-      row.ci80 = calculateProportionCI(proportion, ctx.cellESS, 0.80);
+      row.ci80 = calculateProportionCI(proportion, ctx.cellESS, 0.8);
     }
   }
 
-  buildColumnStats(
-    rowCells: CrosstabSqlRow[],
-    colStats: Map<string, { n: number; ess: number }>
-  ): ColumnStats[] {
-    return rowCells.map(cell => {
+  buildColumnStats(rowCells: CrosstabSqlRow[], colStats: Map<string, { n: number; ess: number }>): ColumnStats[] {
+    return rowCells.map((cell) => {
       const cellN = cell.weightedCount ?? cell.count;
       const cellESS = calculateESS(cellN, cell.sumSqWeights ?? cellN);
       const colKey = getColKeyString(cell);
@@ -193,18 +178,10 @@ class ProportionsSignificanceStrategy implements CrosstabSignificanceStrategy {
 
   computePairwiseTest(
     params: PairwiseColumnStats,
-    pairKey: (rowKey: string, a: string, b: string) => string
+    pairKey: (rowKey: string, a: string, b: string) => string,
   ): { tScore: number; pValue: number } {
-    const {
-      colA,
-      colB,
-      rowKey,
-      totalN,
-      baseNForDependentTest,
-      cellNByColKey,
-      overlapMap,
-      isColumnMultipleResponse,
-    } = params;
+    const { colA, colB, rowKey, totalN, baseNForDependentTest, cellNByColKey, overlapMap, isColumnMultipleResponse } =
+      params;
 
     const overlapCorrected = isColumnMultipleResponse && baseNForDependentTest > 2;
     if (overlapCorrected) {
@@ -224,10 +201,7 @@ class ProportionsSignificanceStrategy implements CrosstabSignificanceStrategy {
     if (colA.proportion !== undefined && colB.proportion !== undefined) {
       const s1 = Math.sqrt(colA.proportion * (1 - colA.proportion));
       const s2 = Math.sqrt(colB.proportion * (1 - colB.proportion));
-      const tScore = calculateTScore(
-        colA.proportion, s1, colA.ess,
-        colB.proportion, s2, colB.ess
-      );
+      const tScore = calculateTScore(colA.proportion, s1, colA.ess, colB.proportion, s2, colB.ess);
       return { tScore, pValue: calculatePValue(tScore) };
     }
 

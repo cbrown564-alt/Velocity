@@ -15,7 +15,7 @@ describe('demo runner quality summary', () => {
       [
         { stepId: 'first-crosstab', maxDurationMs: 5000, label: 'first representative crosstab' },
         { stepId: 'open-export-modal', maxDurationMs: 1000, label: 'export review opens' },
-      ]
+      ],
     );
 
     expect(results).toEqual([

@@ -5,11 +5,7 @@
 import React, { useMemo } from 'react';
 import { LayoutGrid, BarChart3 } from 'lucide-react';
 import type { StoredDataset } from '../types';
-import {
-  buildActivityHeatmap,
-  computeColorSignature,
-  summarizeSessionPortrait,
-} from '../lib/workspaceLibrary';
+import { buildActivityHeatmap, computeColorSignature, summarizeSessionPortrait } from '../lib/workspaceLibrary';
 import styles from './DatasetPortrait.module.css';
 
 interface DatasetPortraitProps {
@@ -17,13 +13,10 @@ interface DatasetPortraitProps {
 }
 
 export const DatasetPortrait: React.FC<DatasetPortraitProps> = ({ dataset }) => {
-  const signature = useMemo(
-    () => computeColorSignature(dataset.variables),
-    [dataset.variables]
-  );
+  const signature = useMemo(() => computeColorSignature(dataset.variables), [dataset.variables]);
   const heatmap = useMemo(
     () => buildActivityHeatmap(dataset.lastOpenedAt, dataset.lastModifiedAt, dataset.createdAt),
-    [dataset.lastOpenedAt, dataset.lastModifiedAt, dataset.createdAt]
+    [dataset.lastOpenedAt, dataset.lastModifiedAt, dataset.createdAt],
   );
   const session = useMemo(() => summarizeSessionPortrait(dataset), [dataset]);
 
@@ -79,11 +72,7 @@ export const DatasetPortrait: React.FC<DatasetPortraitProps> = ({ dataset }) => 
           ) : session.hasAnalysis ? (
             <div className={styles.miniBars}>
               {rowVars.slice(0, 4).map((_, i) => (
-                <span
-                  key={i}
-                  className={styles.miniBar}
-                  style={{ height: `${40 + (i % 3) * 18}%` }}
-                />
+                <span key={i} className={styles.miniBar} style={{ height: `${40 + (i % 3) * 18}%` }} />
               ))}
             </div>
           ) : (
@@ -98,8 +87,7 @@ export const DatasetPortrait: React.FC<DatasetPortraitProps> = ({ dataset }) => 
         <div className={styles.sessionBadge} data-testid="dataset-session-badge">
           <BarChart3 size={10} />
           <span>
-            {session.slideCount} slide{session.slideCount === 1 ? '' : 's'}, edited{' '}
-            {session.editedAgo}
+            {session.slideCount} slide{session.slideCount === 1 ? '' : 's'}, edited {session.editedAgo}
           </span>
         </div>
       )}

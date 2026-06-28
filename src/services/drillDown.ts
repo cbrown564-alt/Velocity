@@ -61,15 +61,16 @@ export function resolveDrillDownContext({
   const variableById = new Map(variables.map((variable) => [variable.id, variable]));
 
   const rowFilters: DrillDownFilter[] = rowPath.map((entry) =>
-    resolvePathEntryFilter(entry, variableSets, variableById)
+    resolvePathEntryFilter(entry, variableSets, variableById),
   );
 
-  const colFilter: DrillDownFilter | null = colVarId && colValue
-    ? resolveColumnFilter(colVarId, colValue, variableSets, variableById)
-    : null;
+  const colFilter: DrillDownFilter | null =
+    colVarId && colValue ? resolveColumnFilter(colVarId, colValue, variableSets, variableById) : null;
 
   const variableLabelById = new Map(variables.map((v) => [v.id, v.label]));
-  const titleParts = rowPath.map((entry) => `${variableLabelById.get(entry.variable) ?? entry.variable}: ${entry.value}`);
+  const titleParts = rowPath.map(
+    (entry) => `${variableLabelById.get(entry.variable) ?? entry.variable}: ${entry.value}`,
+  );
   if (colFilter && colValue) {
     titleParts.push(`${variableLabelById.get(colFilter.variable) ?? colFilter.variable}: ${colValue}`);
   }
@@ -103,7 +104,7 @@ function resolveVariableSetToColumn(id: string, variableSets: VariableSetLike[])
 function resolvePathEntryFilter(
   entry: DrillDownPathEntry,
   variableSets: VariableSetLike[],
-  variableById: Map<string, VariableLike>
+  variableById: Map<string, VariableLike>,
 ): DrillDownFilter {
   const sourceSet = variableSets.find((set) => set.variableIds.includes(entry.variable));
   if (!sourceSet || sourceSet.structure !== 'multiple') {
@@ -131,7 +132,7 @@ function resolveColumnFilter(
   colVarId: string,
   colValue: string,
   variableSets: VariableSetLike[],
-  variableById: Map<string, VariableLike>
+  variableById: Map<string, VariableLike>,
 ): DrillDownFilter {
   const colVarSet = variableSets.find((entry) => entry.id === colVarId);
   if (colVarSet?.structure === 'multiple') {
@@ -153,7 +154,7 @@ function resolveColumnFilter(
 function findVariableByLabel(
   variableIds: string[],
   displayValue: string,
-  variableById: Map<string, VariableLike>
+  variableById: Map<string, VariableLike>,
 ): VariableLike | undefined {
   const normalizedTarget = normalizeForMatch(displayValue);
   return variableIds

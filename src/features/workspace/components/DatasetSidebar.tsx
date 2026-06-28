@@ -8,17 +8,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useReducedMotion, DURATIONS } from '../../../lib/motion';
-import {
-  ChevronLeft,
-  ChevronRight,
-  Database,
-  Star,
-  Link2,
-  Layers,
-  Plus,
-  Home,
-  Sparkles,
-} from 'lucide-react';
+import { ChevronLeft, ChevronRight, Database, Star, Link2, Layers, Plus, Home, Sparkles } from 'lucide-react';
 import type { StoredDataset, Project } from '../types';
 import styles from './DatasetSidebar.module.css';
 
@@ -59,7 +49,7 @@ export const DatasetSidebar: React.FC<DatasetSidebarProps> = ({
   const [hoveredId, setHoveredId] = useState<string | null>(null);
 
   // Build project lookup
-  const projectMap = new Map(projects.map(p => [p.id, p]));
+  const projectMap = new Map(projects.map((p) => [p.id, p]));
 
   // Sort datasets: active first, then starred, then by last opened
   const sortedDatasets = [...datasets].sort((a, b) => {
@@ -135,7 +125,7 @@ export const DatasetSidebar: React.FC<DatasetSidebarProps> = ({
               {/* Icon or avatar */}
               <div
                 className={styles.datasetIcon}
-                style={project ? { '--project-color': project.color } as React.CSSProperties : undefined}
+                style={project ? ({ '--project-color': project.color } as React.CSSProperties) : undefined}
               >
                 {isActive ? (
                   <div className={styles.activeDot} />
@@ -164,8 +154,7 @@ export const DatasetSidebar: React.FC<DatasetSidebarProps> = ({
                     <div className={styles.datasetMeta}>
                       {dataset.waveNumber && (
                         <span className={styles.waveBadge}>
-                          <Layers size={9} />
-                          W{dataset.waveNumber}
+                          <Layers size={9} />W{dataset.waveNumber}
                         </span>
                       )}
                       <span>{dataset.rowCount.toLocaleString()}</span>
@@ -178,15 +167,9 @@ export const DatasetSidebar: React.FC<DatasetSidebarProps> = ({
 
               {/* Tooltip for collapsed mode */}
               {!isExpanded && isHovered && (
-                <motion.div
-                  className={styles.tooltip}
-                  initial={{ opacity: 0, x: -8 }}
-                  animate={{ opacity: 1, x: 0 }}
-                >
+                <motion.div className={styles.tooltip} initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }}>
                   <span className={styles.tooltipName}>{dataset.name}</span>
-                  <span className={styles.tooltipMeta}>
-                    {dataset.rowCount.toLocaleString()} rows
-                  </span>
+                  <span className={styles.tooltipMeta}>{dataset.rowCount.toLocaleString()} rows</span>
                 </motion.div>
               )}
             </motion.button>
@@ -203,19 +186,11 @@ export const DatasetSidebar: React.FC<DatasetSidebarProps> = ({
 
       {/* Footer actions */}
       <div className={styles.footer}>
-        <button
-          className={styles.footerButton}
-          onClick={onUpload}
-          title="Upload new dataset"
-        >
+        <button className={styles.footerButton} onClick={onUpload} title="Upload new dataset">
           <Plus size={16} />
           {isExpanded && <span>Upload</span>}
         </button>
-        <button
-          className={styles.footerButton}
-          onClick={onOpenWorkspace}
-          title="Open workspace"
-        >
+        <button className={styles.footerButton} onClick={onOpenWorkspace} title="Open workspace">
           <Home size={16} />
           {isExpanded && <span>Workspace</span>}
         </button>

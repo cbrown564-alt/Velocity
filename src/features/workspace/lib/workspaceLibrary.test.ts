@@ -39,7 +39,7 @@ describe('workspaceLibrary', () => {
   it('buildActivityHeatmap lights cells near recent timestamps', () => {
     const now = Date.now();
     const grid = buildActivityHeatmap(now, now, now - 2 * 86_400_000, now);
-    const maxIntensity = Math.max(...grid.flat().map(c => c.intensity));
+    const maxIntensity = Math.max(...grid.flat().map((c) => c.intensity));
     expect(maxIntensity).toBeGreaterThan(0.5);
   });
 
@@ -52,16 +52,22 @@ describe('workspaceLibrary', () => {
       }),
     ];
     const hints = computeAmbientSearchHints('gender', datasets, []);
-    expect(hints.some(h => h.message.includes('1 dataset'))).toBe(true);
+    expect(hints.some((h) => h.message.includes('1 dataset'))).toBe(true);
   });
 
   it('computeWorkspaceCategoryChips surfaces unanalyzed count', () => {
     const chips = computeWorkspaceCategoryChips(
-      [baseDataset(), baseDataset({ id: 'ds-2', sessionState: { tableConfig: { rowVars: ['a'], colVar: 'b' }, activeFilters: [], transformLog: [] } })],
+      [
+        baseDataset(),
+        baseDataset({
+          id: 'ds-2',
+          sessionState: { tableConfig: { rowVars: ['a'], colVar: 'b' }, activeFilters: [], transformLog: [] },
+        }),
+      ],
       [],
-      Date.now()
+      Date.now(),
     );
-    expect(chips.find(c => c.id === 'unanalyzed')?.count).toBe(1);
+    expect(chips.find((c) => c.id === 'unanalyzed')?.count).toBe(1);
   });
 
   it('computeHarmonizationStatus returns complete for overlapping waves', () => {
@@ -75,24 +81,47 @@ describe('workspaceLibrary', () => {
   });
 
   it('findWaveGaps detects missing wave numbers', () => {
-    expect(findWaveGaps([
-      baseDataset({ waveNumber: 1 }),
-      baseDataset({ id: 'ds-2', waveNumber: 3 }),
-    ])).toEqual([2]);
+    expect(findWaveGaps([baseDataset({ waveNumber: 1 }), baseDataset({ id: 'ds-2', waveNumber: 3 })])).toEqual([2]);
   });
 
   it('computeWaveDeltaPreview compares column counts', () => {
     const delta = computeWaveDeltaPreview(
-      baseDataset({ columnCount: 15, variables: Array.from({ length: 15 }, (_, i) => ({ id: String(i), name: `v${i}`, label: '', type: 'numeric' as const, valueLabels: [], missingValues: {} })) }),
-      baseDataset({ columnCount: 10, variables: Array.from({ length: 10 }, (_, i) => ({ id: String(i), name: `v${i}`, label: '', type: 'numeric' as const, valueLabels: [], missingValues: {} })) })
+      baseDataset({
+        columnCount: 15,
+        variables: Array.from({ length: 15 }, (_, i) => ({
+          id: String(i),
+          name: `v${i}`,
+          label: '',
+          type: 'numeric' as const,
+          valueLabels: [],
+          missingValues: {},
+        })),
+      }),
+      baseDataset({
+        columnCount: 10,
+        variables: Array.from({ length: 10 }, (_, i) => ({
+          id: String(i),
+          name: `v${i}`,
+          label: '',
+          type: 'numeric' as const,
+          valueLabels: [],
+          missingValues: {},
+        })),
+      }),
     );
     expect(delta.variableDelta).toBe(5);
   });
 
   it('matchesVariableKeyword is case-insensitive', () => {
-    expect(matchesVariableKeyword(
-      baseDataset({ variables: [{ id: '1', name: 'NPS', label: 'Net Promoter', type: 'numeric', valueLabels: [], missingValues: {} }] }),
-      'nps'
-    )).toBe(true);
+    expect(
+      matchesVariableKeyword(
+        baseDataset({
+          variables: [
+            { id: '1', name: 'NPS', label: 'Net Promoter', type: 'numeric', valueLabels: [], missingValues: {} },
+          ],
+        }),
+        'nps',
+      ),
+    ).toBe(true);
   });
 });

@@ -4,10 +4,7 @@ import type { AggregatedRow } from '../../types';
  * Effective respondent count (N) from crosstab marginal rows.
  * Uses top-level `Total` column marginals so filtered bases match table totals.
  */
-export function computeAnalysisSampleSize(
-  data: AggregatedRow[],
-  options?: { isWeighted?: boolean },
-): number | null {
+export function computeAnalysisSampleSize(data: AggregatedRow[], options?: { isWeighted?: boolean }): number | null {
   if (data.length === 0) return null;
 
   const isWeighted = options?.isWeighted ?? false;

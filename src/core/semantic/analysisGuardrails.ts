@@ -42,10 +42,7 @@ function labelText(variable: Variable): string {
  * True when a weight-like name likely refers to a respondent measurement
  * (e.g. body weight in sleep.sav) rather than a sampling weight.
  */
-export function isLikelyMeasurementWeight(
-  variable: Variable,
-  annotation?: SemanticAnnotation
-): boolean {
+export function isLikelyMeasurementWeight(variable: Variable, annotation?: SemanticAnnotation): boolean {
   if (!hasWeightLikeName(variable.name)) {
     return false;
   }
@@ -83,7 +80,7 @@ export function isLikelyMeasurementWeight(
 export function warnMisclassifiedWeight(
   variable: Variable,
   annotation?: SemanticAnnotation,
-  context?: 'weight_selection' | 'annotation'
+  context?: 'weight_selection' | 'annotation',
 ): string | null {
   if (!isLikelyMeasurementWeight(variable, annotation)) {
     return null;
@@ -97,13 +94,9 @@ export function warnMisclassifiedWeight(
   return `"${display}" has a weight-like name but appears to be a respondent measurement (e.g. body weight), not a sampling weight. It was auto-annotated as a weight variable; verify before using as weightVar.`;
 }
 
-export function warnHighCardinality(
-  variable: Variable,
-  role: 'row' | 'col'
-): string | null {
+export function warnHighCardinality(variable: Variable, role: 'row' | 'col'): string | null {
   const categoryCount = variable.valueLabels.length;
-  const threshold =
-    role === 'row' ? HIGH_CARDINALITY_ROW_THRESHOLD : HIGH_CARDINALITY_COL_THRESHOLD;
+  const threshold = role === 'row' ? HIGH_CARDINALITY_ROW_THRESHOLD : HIGH_CARDINALITY_COL_THRESHOLD;
 
   if (categoryCount > threshold) {
     const display = variable.label || variable.name;
@@ -143,20 +136,12 @@ export function collectCrosstabWarnings(input: CrosstabGuardrailInput): string[]
   };
 
   if (input.weightVar) {
-    push(
-      warnMisclassifiedWeight(
-        input.weightVar,
-        input.getAnnotation(input.weightVar.id),
-        'weight_selection'
-      )
-    );
+    push(warnMisclassifiedWeight(input.weightVar, input.getAnnotation(input.weightVar.id), 'weight_selection'));
   }
 
   for (const rowVar of input.rowVars) {
     push(warnHighCardinality(rowVar, 'row'));
-    push(
-      warnMisclassifiedWeight(rowVar, input.getAnnotation(rowVar.id), 'annotation')
-    );
+    push(warnMisclassifiedWeight(rowVar, input.getAnnotation(rowVar.id), 'annotation'));
   }
 
   if (input.colVar) {
@@ -169,10 +154,7 @@ export function collectCrosstabWarnings(input: CrosstabGuardrailInput): string[]
 /**
  * Warnings to surface when suggesting breaks for a topic (row) variable.
  */
-export function collectTopicGuidanceWarnings(
-  topicVariable: Variable,
-  annotation?: SemanticAnnotation
-): string[] {
+export function collectTopicGuidanceWarnings(topicVariable: Variable, annotation?: SemanticAnnotation): string[] {
   const warnings: string[] = [];
   const cardinality = warnHighCardinality(topicVariable, 'row');
   if (cardinality) {

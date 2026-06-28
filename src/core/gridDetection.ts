@@ -27,9 +27,23 @@ export interface VariableWithIndex {
  */
 export function isDateFormat(format: string | undefined): boolean {
   if (!format) return false;
-  const dateFormats = ['DATE', 'ADATE', 'EDATE', 'SDATE', 'JDATE', 'QYR', 'MOYR', 'WKYR', 'DATETIME', 'TIME', 'DTIME', 'WKDAY', 'MONTH'];
+  const dateFormats = [
+    'DATE',
+    'ADATE',
+    'EDATE',
+    'SDATE',
+    'JDATE',
+    'QYR',
+    'MOYR',
+    'WKYR',
+    'DATETIME',
+    'TIME',
+    'DTIME',
+    'WKDAY',
+    'MONTH',
+  ];
   const upperFormat = format.toUpperCase();
-  return dateFormats.some(df => upperFormat.startsWith(df));
+  return dateFormats.some((df) => upperFormat.startsWith(df));
 }
 
 // ============================================================================
@@ -49,7 +63,7 @@ export function inferPositiveValue(valueLabels: { value: number; label: string }
   }
 
   // Fallback: assume higher value is positive
-  return Math.max(...valueLabels.map(vl => vl.value));
+  return Math.max(...valueLabels.map((vl) => vl.value));
 }
 
 // ============================================================================
@@ -62,7 +76,7 @@ export function inferPositiveValue(valueLabels: { value: number; label: string }
 export function detectImplicitScale(
   rows: any[][],
   colIndex: number,
-  rowCount: number
+  rowCount: number,
 ): { isScale: boolean; values: number[] } {
   const MAX_SCALE_VALUE = 20;
   const MAX_CARDINALITY = 20;
@@ -92,7 +106,7 @@ export function detectImplicitScale(
 
   return {
     isScale: true,
-    values: Array.from(uniqueValues).sort((a, b) => a - b)
+    values: Array.from(uniqueValues).sort((a, b) => a - b),
   };
 }
 
@@ -107,7 +121,7 @@ export function calculateWordSimilarity(str1: string, str2: string): number {
   const words1 = new Set(str1.toLowerCase().split(/[\s\-_]+/));
   const words2 = new Set(str2.toLowerCase().split(/[\s\-_]+/));
 
-  const intersection = new Set([...words1].filter(x => words2.has(x)));
+  const intersection = new Set([...words1].filter((x) => words2.has(x)));
   const union = new Set([...words1, ...words2]);
 
   if (union.size === 0) return 0;
@@ -175,11 +189,13 @@ export function detectByPosition(vars: VariableWithIndex[]): Variable[][] {
 export function detectByNaming(vars: Variable[]): Variable[][] {
   if (vars.length < 3) return [];
 
-  const patterns = vars.map(v => {
-    const match = v.name.match(/^([a-zA-Z_]+?)(\d+)$/);
-    if (!match) return null;
-    return { variable: v, prefix: match[1], number: parseInt(match[2], 10) };
-  }).filter((p): p is { variable: Variable; prefix: string; number: number } => p !== null);
+  const patterns = vars
+    .map((v) => {
+      const match = v.name.match(/^([a-zA-Z_]+?)(\d+)$/);
+      if (!match) return null;
+      return { variable: v, prefix: match[1], number: parseInt(match[2], 10) };
+    })
+    .filter((p): p is { variable: Variable; prefix: string; number: number } => p !== null);
 
   if (patterns.length < 3) return [];
 
@@ -195,11 +211,11 @@ export function detectByNaming(vars: Variable[]): Variable[][] {
 
     group.sort((a, b) => a.number - b.number);
 
-    const numbers = group.map(g => g.number);
+    const numbers = group.map((g) => g.number);
     const range = numbers[numbers.length - 1] - numbers[0];
 
     if (range === numbers.length - 1 || range < numbers.length * 2) {
-      const vars = group.map(g => g.variable);
+      const vars = group.map((g) => g.variable);
       groups.push(vars);
     }
   }
@@ -217,7 +233,7 @@ export function detectSequentialPattern(vars: VariableWithIndex[]): Variable[][]
     return positionGroups;
   }
 
-  const nameGroups = detectByNaming(vars.map(v => v.variable));
+  const nameGroups = detectByNaming(vars.map((v) => v.variable));
   return nameGroups;
 }
 
@@ -237,7 +253,7 @@ export function detectNumericGrids(
   vars: VariableWithIndex[],
   rows: any[][],
   metaVars: any[],
-  rowCount: number
+  rowCount: number,
 ): Variable[][] {
   if (vars.length < 3) return [];
 
@@ -256,7 +272,7 @@ export function detectNumericGrids(
     const prev = sorted[i - 1];
     const curr = sorted[i];
 
-    const isNeighbor = (curr.index - prev.index <= 2);
+    const isNeighbor = curr.index - prev.index <= 2;
     const labelsRelated = areLabelsRelated(curr.variable.label, prev.variable.label);
     const currScale = getScaleInfo(curr.index, curr.index);
 
@@ -266,7 +282,7 @@ export function detectNumericGrids(
       const max1 = currentScale.values[currentScale.values.length - 1];
       const min2 = currScale.values[0];
       const max2 = currScale.values[currScale.values.length - 1];
-      scaleMatches = (min1 === min2 && max1 === max2);
+      scaleMatches = min1 === min2 && max1 === max2;
     } else if (!currentScale.isScale && !currScale.isScale) {
       scaleMatches = false;
     }
@@ -277,7 +293,7 @@ export function detectNumericGrids(
       currentGroup.push(curr);
     } else {
       if (currentGroup.length >= 3) {
-        groups.push(currentGroup.map(v => v.variable));
+        groups.push(currentGroup.map((v) => v.variable));
       }
       currentGroup = [curr];
       currentScale = currScale;
@@ -285,7 +301,7 @@ export function detectNumericGrids(
   }
 
   if (currentGroup.length >= 3) {
-    groups.push(currentGroup.map(v => v.variable));
+    groups.push(currentGroup.map((v) => v.variable));
   }
 
   return groups;

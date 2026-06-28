@@ -24,10 +24,7 @@ import {
   Plus,
 } from 'lucide-react';
 import type { StoredDataset, Project } from '../types';
-import {
-  computeWaveDeltaPreview,
-  findWaveGaps,
-} from '../lib/workspaceLibrary';
+import { computeWaveDeltaPreview, findWaveGaps } from '../lib/workspaceLibrary';
 import styles from './WaveTimeline.module.css';
 
 interface WaveTimelineProps {
@@ -77,7 +74,7 @@ export const WaveTimeline: React.FC<WaveTimelineProps> = ({
   // Calculate wave statistics
   const waveStats = useMemo((): WaveStats[] => {
     const waveDatasetsRaw = datasets
-      .filter(d => d.waveNumber !== undefined)
+      .filter((d) => d.waveNumber !== undefined)
       .sort((a, b) => (a.waveNumber || 0) - (b.waveNumber || 0));
 
     if (waveDatasetsRaw.length === 0) return [];
@@ -107,9 +104,8 @@ export const WaveTimeline: React.FC<WaveTimelineProps> = ({
     if (waveStats.length < 2) return null;
 
     const lastWave = waveStats[waveStats.length - 1];
-    const avgAttrition = waveStats
-      .slice(1)
-      .reduce((sum, w) => sum + (w.attritionRate || 0), 0) / (waveStats.length - 1);
+    const avgAttrition =
+      waveStats.slice(1).reduce((sum, w) => sum + (w.attritionRate || 0), 0) / (waveStats.length - 1);
 
     return {
       totalWaves: waveStats.length,
@@ -156,7 +152,11 @@ export const WaveTimeline: React.FC<WaveTimelineProps> = ({
                 )}
               </motion.button>
               {index < waveStats.length - 1 && waveGaps.includes(wave.waveNumber + 1) && (
-                <div className={styles.gapPlaceholder} title={`Wave ${wave.waveNumber + 1} missing`} data-testid="wave-gap">
+                <div
+                  className={styles.gapPlaceholder}
+                  title={`Wave ${wave.waveNumber + 1} missing`}
+                  data-testid="wave-gap"
+                >
                   <Plus size={10} />
                 </div>
               )}
@@ -174,26 +174,29 @@ export const WaveTimeline: React.FC<WaveTimelineProps> = ({
           </div>
         )}
         <AnimatePresence>
-          {hoveredWaveId && baseline && (() => {
-            const wave = waveStats.find(w => w.dataset.id === hoveredWaveId);
-            if (!wave || wave.dataset.id === baseline.id) return null;
-            const prev = waveStats[waveStats.findIndex(w => w.dataset.id === hoveredWaveId) - 1]?.dataset;
-            const delta = computeWaveDeltaPreview(wave.dataset, baseline, prev);
-            const varSign = delta.variableDelta >= 0 ? '+' : '';
-            const rateSign = delta.responseDelta !== undefined && delta.responseDelta < 0 ? '↓' : '↑';
-            return (
-              <motion.div
-                className={styles.deltaPreview}
-                initial={{ opacity: 0, y: reducedMotion ? 0 : 4 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-                data-testid="wave-delta-preview"
-              >
-                {varSign}{delta.variableDelta} variables vs Wave 1 · {delta.responseRate}% response
-                {delta.responseDelta !== undefined && ` (${rateSign}${Math.abs(delta.responseDelta)}%)`}
-              </motion.div>
-            );
-          })()}
+          {hoveredWaveId &&
+            baseline &&
+            (() => {
+              const wave = waveStats.find((w) => w.dataset.id === hoveredWaveId);
+              if (!wave || wave.dataset.id === baseline.id) return null;
+              const prev = waveStats[waveStats.findIndex((w) => w.dataset.id === hoveredWaveId) - 1]?.dataset;
+              const delta = computeWaveDeltaPreview(wave.dataset, baseline, prev);
+              const varSign = delta.variableDelta >= 0 ? '+' : '';
+              const rateSign = delta.responseDelta !== undefined && delta.responseDelta < 0 ? '↓' : '↑';
+              return (
+                <motion.div
+                  className={styles.deltaPreview}
+                  initial={{ opacity: 0, y: reducedMotion ? 0 : 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  data-testid="wave-delta-preview"
+                >
+                  {varSign}
+                  {delta.variableDelta} variables vs Wave 1 · {delta.responseRate}% response
+                  {delta.responseDelta !== undefined && ` (${rateSign}${Math.abs(delta.responseDelta)}%)`}
+                </motion.div>
+              );
+            })()}
         </AnimatePresence>
       </div>
     );

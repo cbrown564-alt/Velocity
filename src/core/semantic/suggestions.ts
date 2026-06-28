@@ -40,31 +40,21 @@ function isCategoricalByType(v: AnnotatedVar): boolean {
   return (
     (t === 'nominal' || t === 'categorical' || t === 'ordinal') &&
     v.variable.valueLabels.length > 0 &&
-    v.variable.valueLabels.length <= 12  // avoid high-cardinality open-codes
+    v.variable.valueLabels.length <= 12 // avoid high-cardinality open-codes
   );
 }
 
 export function suggestAnalyses(annotatedVars: AnnotatedVar[]): AnalysisSuggestion[] {
   const suggestions: AnalysisSuggestion[] = [];
 
-  const attitudes = annotatedVars.filter(
-    (v) => v.annotation?.measurementIntent === 'attitude'
-  );
-  const demographics = annotatedVars.filter(
-    (v) => v.annotation?.measurementIntent === 'demographic'
-  );
-  const behaviors = annotatedVars.filter(
-    (v) => v.annotation?.measurementIntent === 'behavior'
-  );
+  const attitudes = annotatedVars.filter((v) => v.annotation?.measurementIntent === 'attitude');
+  const demographics = annotatedVars.filter((v) => v.annotation?.measurementIntent === 'demographic');
+  const behaviors = annotatedVars.filter((v) => v.annotation?.measurementIntent === 'behavior');
   const temporal = annotatedVars.filter(
-    (v) => v.annotation?.temporalRole != null && v.annotation.temporalRole !== null
+    (v) => v.annotation?.temporalRole != null && v.annotation.temporalRole !== null,
   );
-  const weights = annotatedVars.filter(
-    (v) => v.annotation?.measurementIntent === 'weight'
-  );
-  const identifiers = annotatedVars.filter(
-    (v) => v.annotation?.measurementIntent === 'identifier'
-  );
+  const weights = annotatedVars.filter((v) => v.annotation?.measurementIntent === 'weight');
+  const identifiers = annotatedVars.filter((v) => v.annotation?.measurementIntent === 'identifier');
 
   // ── Crosstab-first fallback for unannotated or sparsely-annotated datasets ──
   // When annotation coverage is low, use variable type to detect a potential
@@ -74,7 +64,10 @@ export function suggestAnalyses(annotatedVars: AnnotatedVar[]): AnalysisSuggesti
   if (unannotated.length > 0 && (attitudes.length === 0 || demographics.length === 0)) {
     const categoricals = annotatedVars.filter(isCategoricalByType);
     const nonCategoricals = annotatedVars.filter(
-      (v) => !isCategoricalByType(v) && v.annotation?.measurementIntent !== 'identifier' && v.annotation?.measurementIntent !== 'weight'
+      (v) =>
+        !isCategoricalByType(v) &&
+        v.annotation?.measurementIntent !== 'identifier' &&
+        v.annotation?.measurementIntent !== 'weight',
     );
 
     if (categoricals.length > 0 && nonCategoricals.length > 0) {
@@ -214,8 +207,7 @@ export function suggestHarmonizations(concepts: Concept[]): HarmonizationSuggest
     if (datasetIds.size < 2) continue;
 
     const avgConfidence =
-      concept.variableRefs.reduce((sum, r) => sum + r.matchConfidence, 0) /
-      concept.variableRefs.length;
+      concept.variableRefs.reduce((sum, r) => sum + r.matchConfidence, 0) / concept.variableRefs.length;
 
     // Build rationale
     const byDataset = new Map<string, string[]>();
@@ -223,13 +215,9 @@ export function suggestHarmonizations(concepts: Concept[]): HarmonizationSuggest
       const existing = byDataset.get(ref.datasetId) ?? [];
       byDataset.set(ref.datasetId, [...existing, ref.variableId]);
     }
-    const parts = Array.from(byDataset.entries()).map(
-      ([ds, vars]) => `${vars.join(', ')} in ${ds}`
-    );
+    const parts = Array.from(byDataset.entries()).map(([ds, vars]) => `${vars.join(', ')} in ${ds}`);
 
-    const scaleDesc = concept.canonicalScale
-      ? ` on ${concept.canonicalScale.points}-point scale`
-      : '';
+    const scaleDesc = concept.canonicalScale ? ` on ${concept.canonicalScale.points}-point scale` : '';
 
     suggestions.push({
       concept,
@@ -258,7 +246,7 @@ const EXCLUDED_INTENTS = new Set<string>(['weight', 'identifier', 'open_end']);
 export function suggestBreaks(
   topicVariable: AnnotatedVar,
   allVars: AnnotatedVar[],
-  options?: { limit?: number }
+  options?: { limit?: number },
 ): BreakSuggestion[] {
   const limit = options?.limit ?? 5;
   const results: BreakSuggestion[] = [];

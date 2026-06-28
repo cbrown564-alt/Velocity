@@ -40,11 +40,9 @@ export function buildHarmonizedTableQuery(
   targetTable: string,
   mappings: VariableMapping[],
   sourceVarNames: Record<string, string>,
-  targetVarNames: Record<string, string>
+  targetVarNames: Record<string, string>,
 ): string {
-  const confirmedMappings = mappings.filter(
-    m => m.targetVariableId !== null && m.status !== 'excluded'
-  );
+  const confirmedMappings = mappings.filter((m) => m.targetVariableId !== null && m.status !== 'excluded');
 
   if (confirmedMappings.length === 0) {
     return `SELECT 1 AS _wave, NULL AS _variable_name, NULL AS _value, NULL AS _label WHERE 1=0`;
@@ -68,14 +66,14 @@ export function buildHarmonizedTableQuery(
     const sourceCaseExpr = buildValueRemapCase(escapedSourceCol, mapping.valueMappings, 'source');
     unionParts.push(
       `SELECT 1 AS _wave, '${harmonizedName.replace(/'/g, "''")}' AS _variable_name, ` +
-      `${sourceCaseExpr} AS _value FROM ${escapedSourceTable}`
+        `${sourceCaseExpr} AS _value FROM ${escapedSourceTable}`,
     );
 
     // Target wave values are already in canonical (target) coding.
     const targetCaseExpr = escapedTargetCol;
     unionParts.push(
       `SELECT 2 AS _wave, '${harmonizedName.replace(/'/g, "''")}' AS _variable_name, ` +
-      `${targetCaseExpr} AS _value FROM ${escapedTargetTable}`
+        `${targetCaseExpr} AS _value FROM ${escapedTargetTable}`,
     );
   }
 
@@ -86,18 +84,12 @@ export function buildHarmonizedTableQuery(
   return unionParts.join('\nUNION ALL\n');
 }
 
-function buildValueRemapCase(
-  column: string,
-  valueMappings: ValueMapping[],
-  direction: 'source'
-): string {
-  const relevantMappings = valueMappings.filter(
-    m => m.sourceValue !== null && m.targetValue !== null
-  );
+function buildValueRemapCase(column: string, valueMappings: ValueMapping[], direction: 'source'): string {
+  const relevantMappings = valueMappings.filter((m) => m.sourceValue !== null && m.targetValue !== null);
 
   if (relevantMappings.length === 0) return column;
 
-  const whenClauses = relevantMappings.map(m => {
+  const whenClauses = relevantMappings.map((m) => {
     return `WHEN ${column} = ${m.sourceValue} THEN ${m.targetValue}`;
   });
 
@@ -112,11 +104,7 @@ function buildValueRemapCase(
  * Builds a query to estimate respondent overlap between two datasets
  * using a shared key column (e.g., respondent ID).
  */
-export function buildRespondentOverlapQuery(
-  sourceTable: string,
-  targetTable: string,
-  keyColumn: string
-): string {
+export function buildRespondentOverlapQuery(sourceTable: string, targetTable: string, keyColumn: string): string {
   const escapedSourceTable = escapeString(sourceTable);
   const escapedTargetTable = escapeString(targetTable);
   const escapedKey = `"${keyColumn.replace(/"/g, '""')}"`;

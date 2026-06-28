@@ -6,7 +6,7 @@ function makeRow(
   rowKeys: string[],
   colKey: string,
   count: number,
-  overrides: Partial<AggregatedRow> = {}
+  overrides: Partial<AggregatedRow> = {},
 ): AggregatedRow {
   return {
     rowKeys,
@@ -30,10 +30,7 @@ describe('generateNarrativeTitleFromRows', () => {
   });
 
   it('detects over-representation from high_95 sig', () => {
-    const rows = [
-      makeRow(['Male'], 'East', 60, { sig: 'high_95' }),
-      makeRow(['Female'], 'East', 40),
-    ];
+    const rows = [makeRow(['Male'], 'East', 60, { sig: 'high_95' }), makeRow(['Female'], 'East', 40)];
     const title = generateNarrativeTitleFromRows(rows, null, 'Gender', 'Region');
     expect(title).toContain('Male');
     expect(title).toContain('over-represented');
@@ -41,10 +38,7 @@ describe('generateNarrativeTitleFromRows', () => {
   });
 
   it('detects under-representation from low_95 sig', () => {
-    const rows = [
-      makeRow(['Male'], 'West', 10, { sig: 'low_95' }),
-      makeRow(['Female'], 'West', 45),
-    ];
+    const rows = [makeRow(['Male'], 'West', 10, { sig: 'low_95' }), makeRow(['Female'], 'West', 45)];
     const title = generateNarrativeTitleFromRows(rows, null, 'Gender', 'Region');
     expect(title).toContain('Male');
     expect(title).toContain('under-represented');
@@ -63,10 +57,7 @@ describe('generateNarrativeTitleFromRows', () => {
   });
 
   it('prefers high_95 over high_80', () => {
-    const rows = [
-      makeRow(['A'], 'c1', 55, { sig: 'high_80' }),
-      makeRow(['B'], 'c1', 70, { sig: 'high_95' }),
-    ];
+    const rows = [makeRow(['A'], 'c1', 55, { sig: 'high_80' }), makeRow(['B'], 'c1', 70, { sig: 'high_95' })];
     const title = generateNarrativeTitleFromRows(rows, null, 'Row', 'Col');
     expect(title).toContain('B');
   });

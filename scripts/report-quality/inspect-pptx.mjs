@@ -30,12 +30,15 @@ function sortSlideNames(a, b) {
 }
 
 function stripTags(text) {
-  return text.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+  return text
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 function extractTextRuns(xml) {
   return extractMatches(xml, /<a:t[^>]*>([\s\S]*?)<\/a:t>/g).map((value) =>
-    value.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&')
+    value.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&'),
   );
 }
 
@@ -81,9 +84,7 @@ export async function inspectPptx(pptxPath) {
   const buffer = await readFile(absolutePath);
   const zip = await JSZip.loadAsync(buffer);
   const fileNames = Object.keys(zip.files);
-  const slideNames = fileNames
-    .filter((name) => /^ppt\/slides\/slide\d+\.xml$/.test(name))
-    .sort(sortSlideNames);
+  const slideNames = fileNames.filter((name) => /^ppt\/slides\/slide\d+\.xml$/.test(name)).sort(sortSlideNames);
   const notesNames = fileNames.filter((name) => /^ppt\/notesSlides\/notesSlide\d+\.xml$/.test(name));
   const mediaNames = fileNames.filter((name) => /^ppt\/media\/.+/.test(name) && !zip.files[name].dir);
   const themeNames = fileNames.filter((name) => /^ppt\/theme\/theme\d+\.xml$/.test(name));
@@ -125,7 +126,9 @@ export async function inspectPptx(pptxPath) {
   for (const themeName of themeNames) {
     const xml = await zip.file(themeName).async('string');
     themeFonts.push(...extractMatches(xml, /typeface="([^"]+)"/g));
-    themeColors.push(...extractMatches(xml, /<a:srgbClr[^>]*\bval="([A-Fa-f0-9]{6})"/g).map((value) => value.toUpperCase()));
+    themeColors.push(
+      ...extractMatches(xml, /<a:srgbClr[^>]*\bval="([A-Fa-f0-9]{6})"/g).map((value) => value.toUpperCase()),
+    );
   }
 
   const fontList = uniqueSorted(fonts);

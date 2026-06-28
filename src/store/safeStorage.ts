@@ -47,9 +47,7 @@ function compactVariablesPayload(variables: unknown): {
 
     const hasLabels = Array.isArray(variable.valueLabels) && variable.valueLabels.length > 0;
     const missingValues = variable.missingValues;
-    const hasMissing =
-      isRecord(missingValues) &&
-      Object.keys(missingValues).length > 0;
+    const hasMissing = isRecord(missingValues) && Object.keys(missingValues).length > 0;
 
     if (!hasLabels && !hasMissing) return variable;
 
@@ -90,7 +88,8 @@ function compactPersistedValue(rawValue: string): string | null {
           loadDiagnostics: {
             isPartial: true,
             reason: 'storage_quota',
-            message: 'Value labels were omitted from cached metadata due to browser storage limits. Rebuild from source to restore labels.',
+            message:
+              'Value labels were omitted from cached metadata due to browser storage limits. Rebuild from source to restore labels.',
             valueLabelsDropped: compactedDataset.droppedLabelCount,
             valueLabelsRetained: 0,
             createdAt: Date.now(),
@@ -115,7 +114,11 @@ function compactPersistedValue(rawValue: string): string | null {
           datasetChanged = true;
         }
 
-        if (isRecord(nextDataset.sessionState) && Array.isArray(nextDataset.sessionState.transformLog) && nextDataset.sessionState.transformLog.length > 0) {
+        if (
+          isRecord(nextDataset.sessionState) &&
+          Array.isArray(nextDataset.sessionState.transformLog) &&
+          nextDataset.sessionState.transformLog.length > 0
+        ) {
           nextDataset = {
             ...nextDataset,
             sessionState: {

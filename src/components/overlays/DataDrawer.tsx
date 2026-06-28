@@ -28,7 +28,7 @@ export const DataDrawer: React.FC<DataDrawerProps> = ({
   totalCount,
   loadedCount,
   onLoadMore,
-  filterColumns = []
+  filterColumns = [],
 }) => {
   const hasMore = loadedCount < totalCount;
 
@@ -37,10 +37,10 @@ export const DataDrawer: React.FC<DataDrawerProps> = ({
     if (data.length === 0) return { filterCols: [], otherCols: [] };
 
     const allColumns = Object.keys(data[0]);
-    const filterColsLower = new Set(filterColumns.map(c => c.toLowerCase()));
+    const filterColsLower = new Set(filterColumns.map((c) => c.toLowerCase()));
 
-    const filterCols = allColumns.filter(col => filterColsLower.has(col.toLowerCase()));
-    const otherCols = allColumns.filter(col => !filterColsLower.has(col.toLowerCase()));
+    const filterCols = allColumns.filter((col) => filterColsLower.has(col.toLowerCase()));
+    const otherCols = allColumns.filter((col) => !filterColsLower.has(col.toLowerCase()));
 
     return { filterCols, otherCols };
   }, [data, filterColumns]);
@@ -52,15 +52,15 @@ export const DataDrawer: React.FC<DataDrawerProps> = ({
     const headers = [...orderedColumns.filterCols, ...orderedColumns.otherCols];
     const csvRows = [
       headers.join(','),
-      ...data.map(row =>
-        headers.map(h => {
-          const val = row[h];
-          const str = String(val ?? '');
-          return str.includes(',') || str.includes('"')
-            ? `"${str.replace(/"/g, '""')}"`
-            : str;
-        }).join(',')
-      )
+      ...data.map((row) =>
+        headers
+          .map((h) => {
+            const val = row[h];
+            const str = String(val ?? '');
+            return str.includes(',') || str.includes('"') ? `"${str.replace(/"/g, '""')}"` : str;
+          })
+          .join(','),
+      ),
     ];
     const csvContent = csvRows.join('\n');
 
@@ -76,7 +76,7 @@ export const DataDrawer: React.FC<DataDrawerProps> = ({
   };
 
   const isFilterColumn = (colName: string) => {
-    return filterColumns.some(fc => fc.toLowerCase() === colName.toLowerCase());
+    return filterColumns.some((fc) => fc.toLowerCase() === colName.toLowerCase());
   };
 
   const reducedMotion = useReducedMotion();
@@ -99,7 +99,7 @@ export const DataDrawer: React.FC<DataDrawerProps> = ({
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
-            transition={reducedMotion ? { duration: 0.01 } : { type: "spring", damping: 30, stiffness: 300 }}
+            transition={reducedMotion ? { duration: 0.01 } : { type: 'spring', damping: 30, stiffness: 300 }}
             className="fixed inset-y-0 right-0 w-[700px] bg-[var(--bg-panel)] shadow-[var(--shadow-drag)] z-50 flex flex-col border-l border-[var(--border-color)]"
           >
             {/* Header */}
@@ -109,8 +109,13 @@ export const DataDrawer: React.FC<DataDrawerProps> = ({
                   <ListFilter size={20} />
                 </div>
                 <div>
-                  <h2 className="font-semibold text-[var(--text-primary)] leading-tight font-display text-lg">X-Ray View</h2>
-                  <p className="text-xs text-[var(--text-secondary)] font-medium font-body max-w-[300px] truncate" title={title}>
+                  <h2 className="font-semibold text-[var(--text-primary)] leading-tight font-display text-lg">
+                    X-Ray View
+                  </h2>
+                  <p
+                    className="text-xs text-[var(--text-secondary)] font-medium font-body max-w-[300px] truncate"
+                    title={title}
+                  >
                     {title}
                   </p>
                 </div>
@@ -124,7 +129,10 @@ export const DataDrawer: React.FC<DataDrawerProps> = ({
                 >
                   <Download size={18} />
                 </button>
-                <button onClick={onClose} className="p-2 hover:bg-[var(--bg-hover)] rounded-full text-[var(--text-tertiary)] transition-colors">
+                <button
+                  onClick={onClose}
+                  className="p-2 hover:bg-[var(--bg-hover)] rounded-full text-[var(--text-tertiary)] transition-colors"
+                >
                   <X size={18} />
                 </button>
               </div>
@@ -155,8 +163,11 @@ export const DataDrawer: React.FC<DataDrawerProps> = ({
                           {orderedColumns.filterCols.map((key, idx) => (
                             <th
                               key={key}
-                              className={`px-3 py-2.5 whitespace-nowrap border-b border-[var(--border-color)] bg-[var(--bg-active)] text-[var(--text-accent)] font-semibold ${idx === orderedColumns.filterCols.length - 1 ? 'border-r-2 border-r-[var(--text-accent)]/30' : ''
-                                }`}
+                              className={`px-3 py-2.5 whitespace-nowrap border-b border-[var(--border-color)] bg-[var(--bg-active)] text-[var(--text-accent)] font-semibold ${
+                                idx === orderedColumns.filterCols.length - 1
+                                  ? 'border-r-2 border-r-[var(--text-accent)]/30'
+                                  : ''
+                              }`}
                             >
                               <div className="flex items-center gap-1.5">
                                 <ListFilter size={10} className="opacity-60" />
@@ -165,8 +176,11 @@ export const DataDrawer: React.FC<DataDrawerProps> = ({
                             </th>
                           ))}
                           {/* Other columns */}
-                          {orderedColumns.otherCols.map(key => (
-                            <th key={key} className="px-3 py-2.5 whitespace-nowrap bg-[var(--bg-active)] border-b border-[var(--border-color)]">
+                          {orderedColumns.otherCols.map((key) => (
+                            <th
+                              key={key}
+                              className="px-3 py-2.5 whitespace-nowrap bg-[var(--bg-active)] border-b border-[var(--border-color)]"
+                            >
                               {key}
                             </th>
                           ))}
@@ -183,20 +197,30 @@ export const DataDrawer: React.FC<DataDrawerProps> = ({
                             {orderedColumns.filterCols.map((col, idx) => (
                               <td
                                 key={col}
-                                className={`px-3 py-2 whitespace-nowrap max-w-[180px] overflow-hidden text-ellipsis bg-[var(--text-accent)]/5 text-[var(--text-primary)] font-medium ${idx === orderedColumns.filterCols.length - 1 ? 'border-r-2 border-r-[var(--text-accent)]/20' : ''
-                                  }`}
+                                className={`px-3 py-2 whitespace-nowrap max-w-[180px] overflow-hidden text-ellipsis bg-[var(--text-accent)]/5 text-[var(--text-primary)] font-medium ${
+                                  idx === orderedColumns.filterCols.length - 1
+                                    ? 'border-r-2 border-r-[var(--text-accent)]/20'
+                                    : ''
+                                }`}
                               >
-                                {row[col] === null || row[col] === undefined
-                                  ? <span className="text-[var(--border-color-muted)]">—</span>
-                                  : String(row[col])}
+                                {row[col] === null || row[col] === undefined ? (
+                                  <span className="text-[var(--border-color-muted)]">—</span>
+                                ) : (
+                                  String(row[col])
+                                )}
                               </td>
                             ))}
                             {/* Other column values */}
-                            {orderedColumns.otherCols.map(col => (
-                              <td key={col} className="px-3 py-2 text-[var(--text-primary)] whitespace-nowrap max-w-[180px] overflow-hidden text-ellipsis">
-                                {row[col] === null || row[col] === undefined
-                                  ? <span className="text-[var(--border-color-muted)]">—</span>
-                                  : String(row[col])}
+                            {orderedColumns.otherCols.map((col) => (
+                              <td
+                                key={col}
+                                className="px-3 py-2 text-[var(--text-primary)] whitespace-nowrap max-w-[180px] overflow-hidden text-ellipsis"
+                              >
+                                {row[col] === null || row[col] === undefined ? (
+                                  <span className="text-[var(--border-color-muted)]">—</span>
+                                ) : (
+                                  String(row[col])
+                                )}
                               </td>
                             ))}
                           </tr>
@@ -211,8 +235,9 @@ export const DataDrawer: React.FC<DataDrawerProps> = ({
             {/* Footer with pagination */}
             <div className="p-3 border-t border-[var(--bg-hover)] bg-[var(--bg-panel)] flex items-center justify-between">
               <div className="text-xs text-[var(--text-secondary)] font-body">
-                Showing <span className="font-semibold text-[var(--text-primary)]">{loadedCount.toLocaleString()}</span> of{' '}
-                <span className="font-semibold text-[var(--text-primary)]">{totalCount.toLocaleString()}</span> records
+                Showing <span className="font-semibold text-[var(--text-primary)]">{loadedCount.toLocaleString()}</span>{' '}
+                of <span className="font-semibold text-[var(--text-primary)]">{totalCount.toLocaleString()}</span>{' '}
+                records
               </div>
               {hasMore && (
                 <button
@@ -220,11 +245,7 @@ export const DataDrawer: React.FC<DataDrawerProps> = ({
                   disabled={loading}
                   className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[var(--text-accent)] hover:bg-[var(--bg-hover)] rounded-md transition-colors disabled:opacity-50"
                 >
-                  {loading ? (
-                    <Loader2 size={14} className="animate-spin" />
-                  ) : (
-                    <ChevronDown size={14} />
-                  )}
+                  {loading ? <Loader2 size={14} className="animate-spin" /> : <ChevronDown size={14} />}
                   Load More
                 </button>
               )}

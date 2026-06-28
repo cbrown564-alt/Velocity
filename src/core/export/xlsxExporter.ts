@@ -24,7 +24,7 @@ function addAnalysisSheet(
   item: AnalysisExportItem,
   index: number,
   headerColorArgb: string,
-  headerTextArgb: string
+  headerTextArgb: string,
 ): void {
   const showSig = item.options?.showSignificance !== false;
   const sheetName = item.label.slice(0, 31).replace(/[\\/*?[\]:]/g, '_');
@@ -33,9 +33,9 @@ function addAnalysisSheet(
   const columns = item.result.columns;
 
   // Header row
-  const headerValues = ['', ...columns.map(c => c.label), 'Total'];
+  const headerValues = ['', ...columns.map((c) => c.label), 'Total'];
   const headerRow = sheet.addRow(headerValues);
-  headerRow.eachCell(cell => {
+  headerRow.eachCell((cell) => {
     cell.fill = {
       type: 'pattern',
       pattern: 'solid',
@@ -102,7 +102,7 @@ function addAnalysisSheet(
   }
 
   // Auto-width columns
-  sheet.columns.forEach(col => {
+  sheet.columns.forEach((col) => {
     col.width = 14;
   });
   if (sheet.columns[0]) {
@@ -131,7 +131,7 @@ export async function exportXlsx(config: ExportConfig): Promise<Uint8Array> {
     if (error instanceof ExportError) throw error;
     throw new ExportError(
       `Excel generation failed: ${error instanceof Error ? error.message : String(error)}`,
-      'GENERATION_FAILED'
+      'GENERATION_FAILED',
     );
   }
 }

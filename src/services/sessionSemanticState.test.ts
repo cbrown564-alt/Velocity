@@ -2,10 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import type { VelocitySessionFile } from '../core/session';
 import type { Dataset } from '../store';
-import {
-  captureImportedSessionSemanticState,
-  selectExportSessionSemantic,
-} from './sessionSemanticState';
+import { captureImportedSessionSemanticState, selectExportSessionSemantic } from './sessionSemanticState';
 
 function buildDataset(overrides: Partial<Dataset> = {}): Dataset {
   return {
@@ -15,7 +12,14 @@ function buildDataset(overrides: Partial<Dataset> = {}): Dataset {
     rowCount: 271,
     variables: [
       { id: 'sex', name: 'sex', label: 'Sex', type: 'nominal', valueLabels: [], missingValues: {} },
-      { id: 'problem', name: 'problem', label: 'Problem with sleep', type: 'nominal', valueLabels: [], missingValues: {} },
+      {
+        id: 'problem',
+        name: 'problem',
+        label: 'Problem with sleep',
+        type: 'nominal',
+        valueLabels: [],
+        missingValues: {},
+      },
     ],
     ...overrides,
   } as Dataset;
@@ -106,7 +110,14 @@ describe('sessionSemanticState', () => {
     const dataset = buildDataset({
       variables: [
         { id: 'sex', name: 'sex', label: 'Sex', type: 'nominal', valueLabels: [], missingValues: {} },
-        { id: 'problem', name: 'problem', label: 'Problem with sleep', type: 'nominal', valueLabels: [], missingValues: {} },
+        {
+          id: 'problem',
+          name: 'problem',
+          label: 'Problem with sleep',
+          type: 'nominal',
+          valueLabels: [],
+          missingValues: {},
+        },
         { id: 'v3', name: 'v3', label: 'v3', type: 'nominal', valueLabels: [], missingValues: {} },
         { id: 'v4', name: 'v4', label: 'v4', type: 'nominal', valueLabels: [], missingValues: {} },
         { id: 'v5', name: 'v5', label: 'v5', type: 'nominal', valueLabels: [], missingValues: {} },

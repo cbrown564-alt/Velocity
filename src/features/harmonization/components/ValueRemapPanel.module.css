@@ -92,7 +92,8 @@
   top: 0;
 }
 
-.arrowCol, .warnCol {
+.arrowCol,
+.warnCol {
   text-align: center;
 }
 

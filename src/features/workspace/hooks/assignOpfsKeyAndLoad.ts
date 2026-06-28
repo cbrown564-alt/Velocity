@@ -15,10 +15,7 @@ export interface AssignOpfsStorageResult {
  * Store an uploaded file in OPFS when available and quota permits.
  * Always returns a buffer suitable for loadSAV (from OPFS write or fresh read).
  */
-export async function assignOpfsStorageForUpload(
-  file: File,
-  opfsAvailable: boolean,
-): Promise<AssignOpfsStorageResult> {
+export async function assignOpfsStorageForUpload(file: File, opfsAvailable: boolean): Promise<AssignOpfsStorageResult> {
   let buffer: ArrayBuffer | null = null;
   let storageKey: string | null = null;
 

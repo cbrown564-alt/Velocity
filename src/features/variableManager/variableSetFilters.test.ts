@@ -1,9 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {
-  filterSyntheticGridShellSets,
-  filterVariableSets,
-  isSyntheticGridShellSet,
-} from './variableSetFilters';
+import { filterSyntheticGridShellSets, filterVariableSets, isSyntheticGridShellSet } from './variableSetFilters';
 import type { Dataset, VariableSet } from '../../types/dataset';
 import type { VariableStatsResult } from '../../types/worker';
 
@@ -115,7 +111,7 @@ describe('variableSetFilters', () => {
 
   it('filters only synthetic grid shell sets', () => {
     const visible = filterSyntheticGridShellSets(allSets, dataset);
-    expect(visible.map(v => v.id)).toEqual([
+    expect(visible.map((v) => v.id)).toEqual([
       'heuristic_grid_fatigue1_fatigue2_fatigue3',
       'vs_q_scale',
       'vs_age',
@@ -127,7 +123,7 @@ describe('variableSetFilters', () => {
   describe('filterVariableSets', () => {
     it('excludes synthetic grid shell sets when dataset is provided', () => {
       const result = filterVariableSets(allSets, { dataset });
-      expect(result.map(v => v.id)).not.toContain(shellSet.id);
+      expect(result.map((v) => v.id)).not.toContain(shellSet.id);
       expect(result).toHaveLength(5);
     });
 
@@ -136,8 +132,8 @@ describe('variableSetFilters', () => {
         dataset,
         activeFolderId: 'ungrouped',
       });
-      expect(result.every(vs => !vs.folderId)).toBe(true);
-      expect(result.map(v => v.id)).toEqual([
+      expect(result.every((vs) => !vs.folderId)).toBe(true);
+      expect(result.map((v) => v.id)).toEqual([
         'heuristic_grid_fatigue1_fatigue2_fatigue3',
         'vs_q_scale',
         'vs_hidden',
@@ -150,7 +146,7 @@ describe('variableSetFilters', () => {
         dataset,
         activeFolderId: 'folder-a',
       });
-      expect(result.map(v => v.id)).toEqual(['vs_age']);
+      expect(result.map((v) => v.id)).toEqual(['vs_age']);
     });
 
     it('filters by search query (case-insensitive)', () => {
@@ -158,7 +154,7 @@ describe('variableSetFilters', () => {
         dataset,
         searchQuery: 'AGE',
       });
-      expect(result.map(v => v.id)).toEqual(['vs_age']);
+      expect(result.map((v) => v.id)).toEqual(['vs_age']);
     });
 
     it('filters by type facet', () => {
@@ -166,7 +162,7 @@ describe('variableSetFilters', () => {
         dataset,
         facetFilters: { types: ['numeric'], statuses: [], qualities: [] },
       });
-      expect(result.map(v => v.id)).toEqual(['vs_q_scale', 'vs_age', 'vs_derived']);
+      expect(result.map((v) => v.id)).toEqual(['vs_q_scale', 'vs_age', 'vs_derived']);
     });
 
     it('filters by status facet (hidden, visible, derived)', () => {
@@ -174,19 +170,19 @@ describe('variableSetFilters', () => {
         dataset,
         facetFilters: { types: [], statuses: ['hidden'], qualities: [] },
       });
-      expect(hiddenResult.map(v => v.id)).toEqual(['vs_hidden']);
+      expect(hiddenResult.map((v) => v.id)).toEqual(['vs_hidden']);
 
       const visibleResult = filterVariableSets(allSets, {
         dataset,
         facetFilters: { types: [], statuses: ['visible'], qualities: [] },
       });
-      expect(visibleResult.map(v => v.id)).not.toContain('vs_hidden');
+      expect(visibleResult.map((v) => v.id)).not.toContain('vs_hidden');
 
       const derivedResult = filterVariableSets(allSets, {
         dataset,
         facetFilters: { types: [], statuses: ['derived'], qualities: [] },
       });
-      expect(derivedResult.map(v => v.id)).toEqual(['vs_derived']);
+      expect(derivedResult.map((v) => v.id)).toEqual(['vs_derived']);
     });
 
     it('filters by quality facet using variableStats', () => {
@@ -195,16 +191,16 @@ describe('variableSetFilters', () => {
         facetFilters: { types: [], statuses: [], qualities: ['complete'] },
         variableStats,
       });
-      expect(completeResult.map(v => v.id)).toContain('vs_age');
-      expect(completeResult.map(v => v.id)).not.toContain('vs_q_scale');
+      expect(completeResult.map((v) => v.id)).toContain('vs_age');
+      expect(completeResult.map((v) => v.id)).not.toContain('vs_q_scale');
 
       const incompleteResult = filterVariableSets(allSets, {
         dataset,
         facetFilters: { types: [], statuses: [], qualities: ['incomplete'] },
         variableStats,
       });
-      expect(incompleteResult.map(v => v.id)).toContain('vs_q_scale');
-      expect(incompleteResult.map(v => v.id)).not.toContain('vs_age');
+      expect(incompleteResult.map((v) => v.id)).toContain('vs_q_scale');
+      expect(incompleteResult.map((v) => v.id)).not.toContain('vs_age');
     });
 
     it('combines folder, search, and facet filters', () => {
@@ -215,7 +211,7 @@ describe('variableSetFilters', () => {
         facetFilters: { types: ['numeric'], statuses: [], qualities: [] },
         variableStats,
       });
-      expect(result.map(v => v.id)).toEqual(['vs_q_scale']);
+      expect(result.map((v) => v.id)).toEqual(['vs_q_scale']);
     });
 
     it('facet type counts match column render population', () => {
@@ -229,7 +225,7 @@ describe('variableSetFilters', () => {
         facetFilters: { types: ['numeric'], statuses: [], qualities: [] },
       });
 
-      const numericCount = baseSets.filter(vs => vs.type === 'numeric').length;
+      const numericCount = baseSets.filter((vs) => vs.type === 'numeric').length;
       expect(columnWithTypeFacet).toHaveLength(numericCount);
     });
   });

@@ -15,11 +15,7 @@ describe('readstat single-pass streaming bridge', () => {
   beforeAll(async () => {
     const wasmPath = path.resolve(process.cwd(), 'packages/readstat-wasm/dist/readstat.wasm');
     globalThis.fetch = async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
-      const href = typeof input === 'string'
-        ? input
-        : input instanceof URL
-          ? input.href
-          : input.url;
+      const href = typeof input === 'string' ? input : input instanceof URL ? input.href : input.url;
 
       if (href.endsWith('/readstat.wasm') || href.endsWith('readstat.wasm')) {
         const wasm = await fs.readFile(wasmPath);
@@ -62,7 +58,7 @@ describe('readstat single-pass streaming bridge', () => {
         }
 
         return 48;
-      }
+      },
     );
 
     expect(totalRows).toBe(metadata.metadata.rowCount);

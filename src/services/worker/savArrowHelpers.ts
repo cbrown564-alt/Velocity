@@ -23,14 +23,13 @@ export function clampChunkSize(size: number): number {
   return Math.max(MIN_CHUNK_SIZE, Math.min(MAX_CHUNK_SIZE, rounded));
 }
 
-export function buildEmptyVectorsFromMetadata(
-  variables: SavColumnMetadata[],
-): Record<string, arrow.Vector> {
+export function buildEmptyVectorsFromMetadata(variables: SavColumnMetadata[]): Record<string, arrow.Vector> {
   const vectors: Record<string, arrow.Vector> = {};
   for (const variable of variables) {
-    vectors[variable.name] = variable.type === 'numeric'
-      ? arrow.vectorFromArray([], new arrow.Float64())
-      : arrow.vectorFromArray([], new arrow.Utf8());
+    vectors[variable.name] =
+      variable.type === 'numeric'
+        ? arrow.vectorFromArray([], new arrow.Float64())
+        : arrow.vectorFromArray([], new arrow.Utf8());
   }
   return vectors;
 }

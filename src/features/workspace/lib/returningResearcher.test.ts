@@ -28,27 +28,24 @@ describe('returningResearcher', () => {
   it('computeActivityTouchPatch resets welcome-back after long absence', () => {
     const now = 1_700_000_000_000;
     const stale = now - MS_THREE_DAYS - 1;
-    expect(
-      computeActivityTouchPatch({ lastActiveAt: stale, welcomeBackDismissed: true }, now),
-    ).toEqual({ welcomeBackDismissed: false });
+    expect(computeActivityTouchPatch({ lastActiveAt: stale, welcomeBackDismissed: true }, now)).toEqual({
+      welcomeBackDismissed: false,
+    });
   });
 
   it('computeActivityTouchPatch defers lastActiveAt after long absence', () => {
     const now = 1_700_000_000_000;
     const stale = now - MS_THREE_DAYS - 1;
-    const patch = computeActivityTouchPatch(
-      { lastActiveAt: stale, welcomeBackDismissed: false },
-      now,
-    );
+    const patch = computeActivityTouchPatch({ lastActiveAt: stale, welcomeBackDismissed: false }, now);
     expect(patch).toEqual({ welcomeBackDismissed: false });
     expect(patch).not.toHaveProperty('lastActiveAt');
   });
 
   it('computeActivityTouchPatch updates lastActiveAt for recent activity', () => {
     const now = 1_700_000_000_000;
-    expect(
-      computeActivityTouchPatch({ lastActiveAt: now - 60_000, welcomeBackDismissed: true }, now),
-    ).toEqual({ lastActiveAt: now });
+    expect(computeActivityTouchPatch({ lastActiveAt: now - 60_000, welcomeBackDismissed: true }, now)).toEqual({
+      lastActiveAt: now,
+    });
   });
 
   it('shouldShowWelcomeBack after three days away', () => {
@@ -70,12 +67,7 @@ describe('returningResearcher', () => {
       }),
       baseDataset({ id: 'active', lastModifiedAt: Date.now() - 1000 }),
     ];
-    const candidate = findResumeCandidate(
-      datasets,
-      'active',
-      { rowVars: ['gender'], colVar: 'region' },
-      Date.now(),
-    );
+    const candidate = findResumeCandidate(datasets, 'active', { rowVars: ['gender'], colVar: 'region' }, Date.now());
     expect(candidate?.datasetId).toBe('active');
     expect(candidate?.summaryLine).toMatch(/gender.*region/i);
   });
@@ -90,14 +82,16 @@ describe('returningResearcher', () => {
         sessionState: {
           tableConfig: { rowVars: ['gender'], colVar: 'region' },
           activeFilters: [{ id: 'f1', variableId: 'gender', operator: 'eq', value: 1 }],
-          transformLog: [{
-            type: 'recode',
-            sourceColId: 'gender',
-            newColId: 'gender_recoded',
-            label: 'Gender recoded',
-            config: { mode: 'categorical', rules: [] },
-            createdAt: 0,
-          }],
+          transformLog: [
+            {
+              type: 'recode',
+              sourceColId: 'gender',
+              newColId: 'gender_recoded',
+              label: 'Gender recoded',
+              config: { mode: 'categorical', rules: [] },
+              createdAt: 0,
+            },
+          ],
         },
       }),
     );

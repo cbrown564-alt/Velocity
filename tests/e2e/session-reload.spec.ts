@@ -35,16 +35,33 @@ async function reachDashboardWithExample(page: import('@playwright/test').Page) 
 }
 
 async function buildGenderRegionCrosstab(page: import('@playwright/test').Page) {
-  if (await page.getByText('Ready for Analysis').isVisible({ timeout: 3000 }).catch(() => false)) {
-    await page.getByRole('button', { name: /product sat Good starting point/i }).click().catch(() => {});
+  if (
+    await page
+      .getByText('Ready for Analysis')
+      .isVisible({ timeout: 3000 })
+      .catch(() => false)
+  ) {
+    await page
+      .getByRole('button', { name: /product sat Good starting point/i })
+      .click()
+      .catch(() => {});
     await page.waitForTimeout(800);
-    await page.getByRole('button', { name: 'Reset' }).click().catch(() => {});
+    await page
+      .getByRole('button', { name: 'Reset' })
+      .click()
+      .catch(() => {});
     await page.waitForTimeout(500);
   }
 
-  await page.getByRole('button', { name: /^gender$/i }).first().click();
+  await page
+    .getByRole('button', { name: /^gender$/i })
+    .first()
+    .click();
   await page.waitForTimeout(1000);
-  await page.getByRole('button', { name: /^region$/i }).first().click();
+  await page
+    .getByRole('button', { name: /^region$/i })
+    .first()
+    .click();
   await page.waitForTimeout(2500);
 }
 

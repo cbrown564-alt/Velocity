@@ -6,10 +6,7 @@
  */
 
 import type { Server } from '@modelcontextprotocol/sdk/server/index.js';
-import {
-  CallToolRequestSchema,
-  ListToolsRequestSchema,
-} from '@modelcontextprotocol/sdk/types.js';
+import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types.js';
 import type { VelocityEngine } from '../src/engine/index.js';
 import { TOOL_HANDLERS } from './handlers/index.js';
 import { errorResponse } from './responses.js';
@@ -27,9 +24,7 @@ export function registerTools(server: Server, engine: VelocityEngine): void {
     try {
       const handler = TOOL_HANDLERS[name];
       if (!handler) {
-        return errorResponse(
-          Object.assign(new Error(`Unknown tool: ${name}`), { code: 'ANALYSIS_NOT_FOUND' })
-        );
+        return errorResponse(Object.assign(new Error(`Unknown tool: ${name}`), { code: 'ANALYSIS_NOT_FOUND' }));
       }
       return await handler(engine, a);
     } catch (err) {

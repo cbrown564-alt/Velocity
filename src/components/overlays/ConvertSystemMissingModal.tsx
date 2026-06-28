@@ -108,9 +108,7 @@ export const ConvertSystemMissingModal: React.FC<ConvertSystemMissingModalProps>
             className={inputClassName}
           />
         </div>
-        {error && (
-          <p className="text-xs text-[var(--color-error)]">{error}</p>
-        )}
+        {error && <p className="text-xs text-[var(--color-error)]">{error}</p>}
 
         <div className="flex justify-end gap-2 pt-1">
           <button

@@ -18,7 +18,11 @@ function makeVar(id: string, name: string): Variable {
   };
 }
 
-function ann(intent: SemanticAnnotation['measurementIntent'], topic: string, extra: Partial<SemanticAnnotation> = {}): SemanticAnnotation {
+function ann(
+  intent: SemanticAnnotation['measurementIntent'],
+  topic: string,
+  extra: Partial<SemanticAnnotation> = {},
+): SemanticAnnotation {
   return { measurementIntent: intent, topic, source: 'auto', confidence: 0.85, ...extra };
 }
 
@@ -66,7 +70,8 @@ describe('suggestAnalyses', () => {
       { variable: ageVar, annotation: ageAnn },
     ]);
     const multiRow = suggestions.find(
-      (s) => s.analysisType === 'crosstab' && Array.isArray(s.config.rowVars) && (s.config.rowVars as string[]).length >= 2
+      (s) =>
+        s.analysisType === 'crosstab' && Array.isArray(s.config.rowVars) && (s.config.rowVars as string[]).length >= 2,
     );
     expect(multiRow).toBeDefined();
   });
@@ -77,7 +82,7 @@ describe('suggestAnalyses', () => {
       { variable: genderVar, annotation: genderAnn },
     ]);
     const behaviorCross = suggestions.find(
-      (s) => s.analysisType === 'crosstab' && (s.config.rowVars as string[])[0] === 'freq_purchase'
+      (s) => s.analysisType === 'crosstab' && (s.config.rowVars as string[])[0] === 'freq_purchase',
     );
     expect(behaviorCross?.priority).toBe('medium');
   });
@@ -87,9 +92,7 @@ describe('suggestAnalyses', () => {
       { variable: satVar, annotation: satAnn },
       { variable: waveVar, annotation: waveAnn },
     ]);
-    const trend = suggestions.find(
-      (s) => s.analysisType === 'crosstab' && s.config.colVar === 'wave'
-    );
+    const trend = suggestions.find((s) => s.analysisType === 'crosstab' && s.config.colVar === 'wave');
     expect(trend).toBeDefined();
     expect(trend?.rationale).toMatch(/trend|wave|time/i);
   });
@@ -109,7 +112,7 @@ describe('suggestAnalyses', () => {
       { variable: ageVar, annotation: ageAnn },
     ]);
     const npsCross = suggestions.find(
-      (s) => s.analysisType === 'crosstab' && (s.config.rowVars as string[])[0] === 'nps' && s.priority === 'high'
+      (s) => s.analysisType === 'crosstab' && (s.config.rowVars as string[])[0] === 'nps' && s.priority === 'high',
     );
     expect(npsCross).toBeDefined();
   });
@@ -235,16 +238,21 @@ function makeVarWithLabels(id: string, name: string, labels: { value: number; la
 
 describe('suggestBreaks', () => {
   const genderVarWithLabels = makeVarWithLabels('gender', 'Gender', [
-    { value: 1, label: 'Male' }, { value: 2, label: 'Female' },
+    { value: 1, label: 'Male' },
+    { value: 2, label: 'Female' },
   ]);
   const ageVarWithLabels = makeVarWithLabels('age_group', 'Age Group', [
-    { value: 1, label: '18-24' }, { value: 2, label: '25-34' },
-    { value: 3, label: '35-44' }, { value: 4, label: '45-54' },
+    { value: 1, label: '18-24' },
+    { value: 2, label: '25-34' },
+    { value: 3, label: '35-44' },
+    { value: 4, label: '45-54' },
     { value: 5, label: '55+' },
   ]);
   const regionVar = makeVarWithLabels('region', 'Region', [
-    { value: 1, label: 'North' }, { value: 2, label: 'South' },
-    { value: 3, label: 'East' }, { value: 4, label: 'West' },
+    { value: 1, label: 'North' },
+    { value: 2, label: 'South' },
+    { value: 3, label: 'East' },
+    { value: 4, label: 'West' },
   ]);
 
   it('ranks demographic variables highest', () => {
@@ -261,10 +269,7 @@ describe('suggestBreaks', () => {
 
   it('excludes the topic variable itself', () => {
     const topic = { variable: satVar, annotation: satAnn };
-    const allVars = [
-      topic,
-      { variable: genderVarWithLabels, annotation: ann('demographic', 'demographics') },
-    ];
+    const allVars = [topic, { variable: genderVarWithLabels, annotation: ann('demographic', 'demographics') }];
     const suggestions = suggestBreaks(topic, allVars);
     const ids = suggestions.map((s) => s.variable.id);
     expect(ids).not.toContain('q5_sat');
@@ -303,10 +308,7 @@ describe('suggestBreaks', () => {
   it('gives name pattern bonus', () => {
     const topic = { variable: satVar, annotation: satAnn };
     // regionVar has no annotation but matches name pattern and has value labels
-    const allVars = [
-      topic,
-      { variable: regionVar, annotation: undefined },
-    ];
+    const allVars = [topic, { variable: regionVar, annotation: undefined }];
     const suggestions = suggestBreaks(topic, allVars);
     expect(suggestions.length).toBe(1);
     expect(suggestions[0].rationale).toContain('name matches');
@@ -341,10 +343,7 @@ describe('suggestBreaks', () => {
   it('returns empty for variables with no scoring signals', () => {
     const topic = { variable: satVar, annotation: satAnn };
     const noSignalVar = makeVar('q99', 'q99_internal');
-    const allVars = [
-      topic,
-      { variable: noSignalVar, annotation: ann('attitude', 'satisfaction') },
-    ];
+    const allVars = [topic, { variable: noSignalVar, annotation: ann('attitude', 'satisfaction') }];
     // attitude intent gives no score, no value labels, no name pattern
     const suggestions = suggestBreaks(topic, allVars);
     expect(suggestions).toHaveLength(0);

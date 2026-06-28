@@ -182,17 +182,14 @@ export class AgentBridge {
           break;
 
         case 'agent.loadSAV': {
-          const buffer = Uint8Array.from(atob(command.buffer), c => c.charCodeAt(0)).buffer;
+          const buffer = Uint8Array.from(atob(command.buffer), (c) => c.charCodeAt(0)).buffer;
           result = await this.browserEngine.loadSAV(buffer);
           this.options.onStateChange(command.type);
           break;
         }
 
         case 'agent.runCrosstab':
-          result = await this.browserEngine.runCrosstab(
-            command.options as any,
-            command.context as any,
-          );
+          result = await this.browserEngine.runCrosstab(command.options as any, command.context as any);
           this.options.onStateChange(command.type);
           break;
 

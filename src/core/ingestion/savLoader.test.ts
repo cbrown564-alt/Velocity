@@ -28,7 +28,7 @@ describe('processMetadata ordering', () => {
       ],
     });
 
-    const ids = result.variableSets.map(vs => vs.id);
+    const ids = result.variableSets.map((vs) => vs.id);
 
     const q1Index = ids.indexOf('vs_q1');
     const q2Index = ids.indexOf('vs_q2');

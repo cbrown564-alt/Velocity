@@ -21,9 +21,7 @@ export function resolveContextMenuSelection<T>(
   getKey: (item: T) => string,
 ): T[] {
   const isCurrentlySelected = selectedKeys?.has(clickedKey);
-  return isCurrentlySelected
-    ? items.filter((item) => selectedKeys?.has(getKey(item)))
-    : [clickedItem];
+  return isCurrentlySelected ? items.filter((item) => selectedKeys?.has(getKey(item))) : [clickedItem];
 }
 
 /**
@@ -63,13 +61,7 @@ export function useChartSelection<T>({
       event.stopPropagation();
 
       const key = getKey(item);
-      const selectedItems = resolveContextMenuSelection(
-        item,
-        key,
-        items,
-        selectedKeys,
-        getKey,
-      );
+      const selectedItems = resolveContextMenuSelection(item, key, items, selectedKeys, getKey);
 
       onContextMenu({
         selected: selectedItems,

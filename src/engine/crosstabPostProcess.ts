@@ -6,7 +6,7 @@ import type { VelocityEngineHost } from './velocityEngineTypes';
 export function applyCrosstabFormat(
   envelope: ResultEnvelope<unknown>,
   analysisId: string,
-  config: Record<string, unknown>
+  config: Record<string, unknown>,
 ): ResultEnvelope<unknown> {
   if (analysisId !== 'crosstab' || config.format !== 'matrix') {
     return envelope;
@@ -39,7 +39,7 @@ export function applyCrosstabFormat(
 export function resolveValueLabelsInRows(
   rows: Record<string, unknown>[],
   rowVariables: Variable[],
-  colVariable: Variable | null
+  colVariable: Variable | null,
 ): Record<string, unknown>[] {
   const buildLabelMap = (variable: Variable): Map<string, string> => {
     const m = new Map<string, string>();
@@ -74,15 +74,13 @@ export function resolveValueLabelsInRows(
 export function resolveCrosstabLabelAxes(
   host: VelocityEngineHost,
   rowVarIds: string[],
-  colVarId: string | null
+  colVarId: string | null,
 ): { rowVariables: Variable[]; colVariable: Variable | null } {
   const dataset = host.requireDataset();
   let rowVariables = rowVarIds
     .map((id) => dataset.variables.find((v) => v.id === id))
     .filter((v): v is Variable => !!v);
-  let colVariable = colVarId
-    ? (dataset.variables.find((v) => v.id === colVarId) ?? null)
-    : null;
+  let colVariable = colVarId ? (dataset.variables.find((v) => v.id === colVarId) ?? null) : null;
 
   if (colVariable?.type === 'numeric' && !colVariable.synthetic) {
     colVariable = null;

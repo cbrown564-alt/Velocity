@@ -35,11 +35,7 @@ export async function getUniqueValues(column: string): Promise<string[]> {
   return result.toArray().map((row) => String(row.val));
 }
 
-export async function recodeVariable(
-  sourceCol: string,
-  newColName: string,
-  config: RecodeConfig,
-): Promise<string> {
+export async function recodeVariable(sourceCol: string, newColName: string, config: RecodeConfig): Promise<string> {
   const { conn } = workerDbState;
   if (!conn) throw new Error('DB not initialized');
 
@@ -55,8 +51,6 @@ export async function fillSystemMissing(column: string, value: number | string):
   const { conn } = workerDbState;
   if (!conn) throw new Error('DB not initialized');
   const escapedCol = column.replace(/"/g, '""');
-  const valueSql = typeof value === 'number'
-    ? `${value}`
-    : `'${String(value).replace(/'/g, "''")}'`;
+  const valueSql = typeof value === 'number' ? `${value}` : `'${String(value).replace(/'/g, "''")}'`;
   await conn.query(`UPDATE main SET "${escapedCol}" = ${valueSql} WHERE "${escapedCol}" IS NULL`);
 }

@@ -109,12 +109,11 @@ export interface Folder {
   order: number;
 }
 
-export type DataTransform =
-  | {
-      type: 'recode';
-      sourceColId: string;
-      newColId: string;
-      label: string;
-      config: RecodeConfig;
-      createdAt: number;
-    };
+export type DataTransform = {
+  type: 'recode';
+  sourceColId: string;
+  newColId: string;
+  label: string;
+  config: RecodeConfig;
+  createdAt: number;
+};

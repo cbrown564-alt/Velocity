@@ -1,9 +1,5 @@
 import { mapCrosstabRows } from './mapCrosstabRows';
-import {
-  extractRowKeys,
-  extractRowKeyStrings,
-  joinRowKeyPath,
-} from './crosstab/rowKeys';
+import { extractRowKeys, extractRowKeyStrings, joinRowKeyPath } from './crosstab/rowKeys';
 
 describe('extractRowKeys', () => {
   it('collects contiguous rowKey_N columns in index order', () => {

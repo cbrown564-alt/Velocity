@@ -79,25 +79,19 @@ export const CrossWavePanel: React.FC<CrossWavePanelProps> = ({
   onOpenDataset,
   onOpenHarmonization,
 }) => {
-  const [wave1Id, setWave1Id] = useState<string | null>(
-    selectedWaves?.[0]?.id || null
-  );
-  const [wave2Id, setWave2Id] = useState<string | null>(
-    selectedWaves?.[1]?.id || null
-  );
+  const [wave1Id, setWave1Id] = useState<string | null>(selectedWaves?.[0]?.id || null);
+  const [wave2Id, setWave2Id] = useState<string | null>(selectedWaves?.[1]?.id || null);
   const [activeMetric, setActiveMetric] = useState<ComparisonMetric>('respondents');
 
   // Get sorted wave datasets
   const waveDatasets = useMemo(() => {
-    return datasets
-      .filter(d => d.waveNumber !== undefined)
-      .sort((a, b) => (a.waveNumber || 0) - (b.waveNumber || 0));
+    return datasets.filter((d) => d.waveNumber !== undefined).sort((a, b) => (a.waveNumber || 0) - (b.waveNumber || 0));
   }, [datasets]);
 
   // Calculate comparison stats
   const comparison = useMemo((): WaveComparison | null => {
-    const w1 = waveDatasets.find(d => d.id === wave1Id);
-    const w2 = waveDatasets.find(d => d.id === wave2Id);
+    const w1 = waveDatasets.find((d) => d.id === wave1Id);
+    const w2 = waveDatasets.find((d) => d.id === wave2Id);
 
     if (!w1 || !w2) return null;
 
@@ -111,12 +105,7 @@ export const CrossWavePanel: React.FC<CrossWavePanelProps> = ({
       respondentDiff,
       respondentDiffPercent,
       variableDiff,
-      direction:
-        Math.abs(respondentDiffPercent) < 1
-          ? 'stable'
-          : respondentDiff > 0
-          ? 'increase'
-          : 'decrease',
+      direction: Math.abs(respondentDiffPercent) < 1 ? 'stable' : respondentDiff > 0 ? 'increase' : 'decrease',
     };
   }, [waveDatasets, wave1Id, wave2Id]);
 
@@ -139,15 +128,15 @@ export const CrossWavePanel: React.FC<CrossWavePanelProps> = ({
 
   return (
     <AnimatePresence>
-      <motion.div
-        className={styles.overlay}
-        {...getBackdropProps(reducedMotion)}
-        onClick={onClose}
-      >
+      <motion.div className={styles.overlay} {...getBackdropProps(reducedMotion)} onClick={onClose}>
         <motion.div
           className={styles.panel}
-          {...getMotionProps({ preset: 'slideLeft', duration: reducedMotion ? DURATIONS.instant : DURATIONS.normal, reducedMotion })}
-          onClick={e => e.stopPropagation()}
+          {...getMotionProps({
+            preset: 'slideLeft',
+            duration: reducedMotion ? DURATIONS.instant : DURATIONS.normal,
+            reducedMotion,
+          })}
+          onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
           <div className={styles.header}>
@@ -156,7 +145,9 @@ export const CrossWavePanel: React.FC<CrossWavePanelProps> = ({
             </div>
             <div className={styles.headerText}>
               <h2>Cross-Wave Analysis</h2>
-              <p>{project.name} · {waveDatasets.length} waves</p>
+              <p>
+                {project.name} · {waveDatasets.length} waves
+              </p>
             </div>
             <button className={styles.closeButton} onClick={onClose}>
               <X size={18} />
@@ -168,12 +159,9 @@ export const CrossWavePanel: React.FC<CrossWavePanelProps> = ({
             <div className={styles.wavePicker}>
               <label>Compare</label>
               <div className={styles.selectWrapper}>
-                <select
-                  value={wave1Id || ''}
-                  onChange={e => setWave1Id(e.target.value || null)}
-                >
+                <select value={wave1Id || ''} onChange={(e) => setWave1Id(e.target.value || null)}>
                   <option value="">Select wave...</option>
-                  {waveDatasets.map(d => (
+                  {waveDatasets.map((d) => (
                     <option key={d.id} value={d.id}>
                       Wave {d.waveNumber} - {d.name}
                     </option>
@@ -188,12 +176,9 @@ export const CrossWavePanel: React.FC<CrossWavePanelProps> = ({
             <div className={styles.wavePicker}>
               <label>To</label>
               <div className={styles.selectWrapper}>
-                <select
-                  value={wave2Id || ''}
-                  onChange={e => setWave2Id(e.target.value || null)}
-                >
+                <select value={wave2Id || ''} onChange={(e) => setWave2Id(e.target.value || null)}>
                   <option value="">Select wave...</option>
-                  {waveDatasets.map(d => (
+                  {waveDatasets.map((d) => (
                     <option key={d.id} value={d.id}>
                       Wave {d.waveNumber} - {d.name}
                     </option>
@@ -225,9 +210,7 @@ export const CrossWavePanel: React.FC<CrossWavePanelProps> = ({
                       {comparison.respondentDiff > 0 ? '+' : ''}
                       {formatNumber(comparison.respondentDiff)}
                     </span>
-                    <span className={styles.summaryPercent}>
-                      {formatPercent(comparison.respondentDiffPercent)}
-                    </span>
+                    <span className={styles.summaryPercent}>{formatPercent(comparison.respondentDiffPercent)}</span>
                   </div>
                 </div>
 
@@ -267,10 +250,7 @@ export const CrossWavePanel: React.FC<CrossWavePanelProps> = ({
                     </div>
                   </div>
                   {onOpenDataset && (
-                    <button
-                      className={styles.openButton}
-                      onClick={() => onOpenDataset(comparison.wave1)}
-                    >
+                    <button className={styles.openButton} onClick={() => onOpenDataset(comparison.wave1)}>
                       Open Dataset
                     </button>
                   )}
@@ -293,10 +273,7 @@ export const CrossWavePanel: React.FC<CrossWavePanelProps> = ({
                     </div>
                   </div>
                   {onOpenDataset && (
-                    <button
-                      className={styles.openButton}
-                      onClick={() => onOpenDataset(comparison.wave2)}
-                    >
+                    <button className={styles.openButton} onClick={() => onOpenDataset(comparison.wave2)}>
                       Open Dataset
                     </button>
                   )}
@@ -331,8 +308,7 @@ export const CrossWavePanel: React.FC<CrossWavePanelProps> = ({
                     </div>
                     {wave.attrition > 0 && (
                       <div className={styles.funnelAttrition}>
-                        <TrendingDown size={10} />
-                        -{wave.attrition.toFixed(1)}%
+                        <TrendingDown size={10} />-{wave.attrition.toFixed(1)}%
                       </div>
                     )}
                   </div>

@@ -56,25 +56,19 @@ describe('buildHarmonizedTableQuery', () => {
   const targetVarNames = { w2_q1: 'Q1' };
 
   it('generates UNION ALL between source and target', () => {
-    const sql = buildHarmonizedTableQuery(
-      'wave1_data', 'wave2_data', mappings, sourceVarNames, targetVarNames
-    );
+    const sql = buildHarmonizedTableQuery('wave1_data', 'wave2_data', mappings, sourceVarNames, targetVarNames);
     expect(sql).toContain('UNION ALL');
     expect(sql).toContain('_wave');
   });
 
   it('includes wave number identifiers', () => {
-    const sql = buildHarmonizedTableQuery(
-      'wave1_data', 'wave2_data', mappings, sourceVarNames, targetVarNames
-    );
+    const sql = buildHarmonizedTableQuery('wave1_data', 'wave2_data', mappings, sourceVarNames, targetVarNames);
     expect(sql).toContain('1 AS _wave');
     expect(sql).toContain('2 AS _wave');
   });
 
   it('returns empty-result query for no valid mappings', () => {
-    const unmapped: VariableMapping[] = [
-      { ...mappings[0], targetVariableId: null, status: 'unmapped' }
-    ];
+    const unmapped: VariableMapping[] = [{ ...mappings[0], targetVariableId: null, status: 'unmapped' }];
     const sql = buildHarmonizedTableQuery('w1', 'w2', unmapped, sourceVarNames, targetVarNames);
     expect(sql).toContain('WHERE 1=0');
   });
@@ -89,13 +83,7 @@ describe('buildHarmonizedTableQuery', () => {
         ],
       },
     ];
-    const sql = buildHarmonizedTableQuery(
-      'wave1_data',
-      'wave2_data',
-      remapped,
-      { w1_q1: 'Q_OLD' },
-      { w2_q1: 'Q_NEW' }
-    );
+    const sql = buildHarmonizedTableQuery('wave1_data', 'wave2_data', remapped, { w1_q1: 'Q_OLD' }, { w2_q1: 'Q_NEW' });
 
     // Source rows are remapped to target coding.
     expect(sql).toContain('WHEN "Q_OLD" = 1 THEN 10');
@@ -109,7 +97,7 @@ describe('buildHarmonizedTableQuery', () => {
       'wave2_data',
       mappings,
       {}, // missing source lookup
-      {}  // missing target lookup
+      {}, // missing target lookup
     );
     expect(sql).toContain('WHERE 1=0');
   });

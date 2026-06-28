@@ -1,9 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import * as opfsFileManager from '../../../services/opfsFileManager';
-import {
-  assignOpfsKeyAndLoad,
-  assignOpfsStorageForUpload,
-} from './assignOpfsKeyAndLoad';
+import { assignOpfsKeyAndLoad, assignOpfsStorageForUpload } from './assignOpfsKeyAndLoad';
 
 vi.mock('../../../services/opfsFileManager', () => ({
   getStorageEstimate: vi.fn(),

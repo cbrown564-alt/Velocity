@@ -18,8 +18,7 @@ export const PilotEnvironmentBanner: React.FC = () => {
 
   if (!status || dismissed) return null;
 
-  const hasWarnings =
-    !status.secureContext || !status.opfsAvailable || !status.recommendedBrowser;
+  const hasWarnings = !status.secureContext || !status.opfsAvailable || !status.recommendedBrowser;
 
   return (
     <div

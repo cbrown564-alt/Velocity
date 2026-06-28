@@ -104,30 +104,20 @@ function MappingRow({
 
       {mapping.score && (
         <div className={styles.rowScore}>
-          <span className={styles.scoreBadge}>
-            {Math.round(mapping.score.total * 100)}%
-          </span>
+          <span className={styles.scoreBadge}>{Math.round(mapping.score.total * 100)}%</span>
         </div>
       )}
 
       {!mapping.score && <div className={styles.rowScore} />}
 
-      <div className={styles.rowActions} onClick={e => e.stopPropagation()}>
+      <div className={styles.rowActions} onClick={(e) => e.stopPropagation()}>
         {!mapping.confirmed && mapping.targetVariableId && (
-          <button
-            className={styles.actionBtn}
-            onClick={() => onConfirm(mapping.id)}
-            title="Confirm mapping"
-          >
+          <button className={styles.actionBtn} onClick={() => onConfirm(mapping.id)} title="Confirm mapping">
             <CheckCircle2 size={12} />
           </button>
         )}
         {mapping.targetVariableId && (
-          <button
-            className={styles.actionBtnDanger}
-            onClick={() => onUnmap(mapping.id)}
-            title="Unmap"
-          >
+          <button className={styles.actionBtnDanger} onClick={() => onUnmap(mapping.id)} title="Unmap">
             <XCircle size={12} />
           </button>
         )}
@@ -138,7 +128,7 @@ function MappingRow({
       )}
     </div>
   );
-};
+}
 
 export const MappingTable: React.FC<MappingTableProps> = ({
   mappings,
@@ -152,17 +142,11 @@ export const MappingTable: React.FC<MappingTableProps> = ({
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<MappingStatus | 'all' | 'confirmed'>('all');
 
-  const sourceVarMap = useMemo(
-    () => new Map(sourceVars.map(v => [v.id, v])),
-    [sourceVars]
-  );
-  const targetVarMap = useMemo(
-    () => new Map(targetVars.map(v => [v.id, v])),
-    [targetVars]
-  );
+  const sourceVarMap = useMemo(() => new Map(sourceVars.map((v) => [v.id, v])), [sourceVars]);
+  const targetVarMap = useMemo(() => new Map(targetVars.map((v) => [v.id, v])), [targetVars]);
 
   const filtered = useMemo(() => {
-    return mappings.filter(m => {
+    return mappings.filter((m) => {
       // Status filter
       if (statusFilter === 'confirmed' && !m.confirmed) return false;
       if (statusFilter !== 'all' && statusFilter !== 'confirmed' && m.status !== statusFilter) return false;
@@ -180,22 +164,28 @@ export const MappingTable: React.FC<MappingTableProps> = ({
     });
   }, [mappings, search, statusFilter, sourceVarMap, targetVarMap]);
 
-  const counts = useMemo(() => ({
-    confirmed: mappings.filter(m => m.confirmed).length,
-    auto_matched: mappings.filter(m => m.status === 'auto_matched' && !m.confirmed).length,
-    unmapped: mappings.filter(m => m.status === 'unmapped').length,
-    total: mappings.length,
-  }), [mappings]);
+  const counts = useMemo(
+    () => ({
+      confirmed: mappings.filter((m) => m.confirmed).length,
+      auto_matched: mappings.filter((m) => m.status === 'auto_matched' && !m.confirmed).length,
+      unmapped: mappings.filter((m) => m.status === 'unmapped').length,
+      total: mappings.length,
+    }),
+    [mappings],
+  );
 
-  const rowProps: RowProps = useMemo(() => ({
-    filtered,
-    sourceVarMap,
-    targetVarMap,
-    selectedMappingId,
-    onSelect,
-    onConfirm,
-    onUnmap,
-  }), [filtered, sourceVarMap, targetVarMap, selectedMappingId, onSelect, onConfirm, onUnmap]);
+  const rowProps: RowProps = useMemo(
+    () => ({
+      filtered,
+      sourceVarMap,
+      targetVarMap,
+      selectedMappingId,
+      onSelect,
+      onConfirm,
+      onUnmap,
+    }),
+    [filtered, sourceVarMap, targetVarMap, selectedMappingId, onSelect, onConfirm, onUnmap],
+  );
 
   const listHeight = Math.min(filtered.length * ROW_HEIGHT, 480);
 
@@ -208,13 +198,13 @@ export const MappingTable: React.FC<MappingTableProps> = ({
             className={styles.searchInput}
             placeholder="Search variables…"
             value={search}
-            onChange={e => setSearch(e.target.value)}
+            onChange={(e) => setSearch(e.target.value)}
           />
         </div>
         <select
           className={styles.filterSelect}
           value={statusFilter}
-          onChange={e => setStatusFilter(e.target.value as any)}
+          onChange={(e) => setStatusFilter(e.target.value as any)}
         >
           <option value="all">All ({counts.total})</option>
           <option value="confirmed">Confirmed ({counts.confirmed})</option>

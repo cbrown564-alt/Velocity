@@ -132,6 +132,6 @@ describe('ArrowChunkBuilder', () => {
 
     expect(batch).not.toBeNull();
     const schema = batch!.schema;
-    expect(schema.fields.map(f => f.name)).toEqual(['id', 'name', 'value']);
+    expect(schema.fields.map((f) => f.name)).toEqual(['id', 'name', 'value']);
   });
 });

@@ -144,22 +144,24 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
                     </details>
                   </>
                 )}
-                {!opfsRehydrateError && persistenceError && (() => {
-                  const { headline, detail } = getPersistenceDisplayMessage(persistenceError, opfsErrorHint);
-                  return (
-                    <>
-                      {headline && <div className="text-sm font-medium">{headline}</div>}
-                      {detail && (
-                        <details className="text-xs">
-                          <summary className="cursor-pointer text-[var(--text-secondary)] hover:text-[var(--text-primary)]">
-                            Technical details
-                          </summary>
-                          <p className="mt-1 break-words opacity-90">{detail}</p>
-                        </details>
-                      )}
-                    </>
-                  );
-                })()}
+                {!opfsRehydrateError &&
+                  persistenceError &&
+                  (() => {
+                    const { headline, detail } = getPersistenceDisplayMessage(persistenceError, opfsErrorHint);
+                    return (
+                      <>
+                        {headline && <div className="text-sm font-medium">{headline}</div>}
+                        {detail && (
+                          <details className="text-xs">
+                            <summary className="cursor-pointer text-[var(--text-secondary)] hover:text-[var(--text-primary)]">
+                              Technical details
+                            </summary>
+                            <p className="mt-1 break-words opacity-90">{detail}</p>
+                          </details>
+                        )}
+                      </>
+                    );
+                  })()}
               </div>
             </div>
             {dataset.opfsFileKey && (

@@ -1,21 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import {
-  useReducedMotion,
-  getMotionProps,
-  getModalPresenceProps,
-  DURATIONS,
-} from '../../../lib/motion';
-import {
-  Clock,
-  Star,
-  StarOff,
-  MoreHorizontal,
-  Database,
-  ArrowUpRight,
-  Check,
-  Sparkles,
-} from 'lucide-react';
+import { useReducedMotion, getMotionProps, getModalPresenceProps, DURATIONS } from '../../../lib/motion';
+import { Clock, Star, StarOff, MoreHorizontal, Database, ArrowUpRight, Check, Sparkles } from 'lucide-react';
 import type { StoredDataset, Project } from '../types';
 import { formatDeckSummaryTooltip } from '../lib/returningResearcher';
 import { formatFileSize, formatRelativeTime } from '../lib/workspaceFormatters';
@@ -32,16 +18,7 @@ export const WorkspaceDatasetCard: React.FC<{
   onToggleStar: () => void;
   onDelete: () => void;
   onContextMenu: (e: React.MouseEvent) => void;
-}> = ({
-  dataset,
-  project,
-  isSelected,
-  onSelect,
-  onOpen,
-  onToggleStar,
-  onDelete,
-  onContextMenu,
-}) => {
+}> = ({ dataset, project, isSelected, onSelect, onOpen, onToggleStar, onDelete, onContextMenu }) => {
   const reducedMotion = useReducedMotion();
   const hasSession = Boolean(dataset.sessionState);
   const isRecentlyOpened = Date.now() - dataset.lastOpenedAt < 24 * 60 * 60 * 1000;
@@ -69,9 +46,7 @@ export const WorkspaceDatasetCard: React.FC<{
         )}
       </div>
 
-      {isRecentlyOpened && (
-        <span className={styles.activityDot} title="Opened recently" />
-      )}
+      {isRecentlyOpened && <span className={styles.activityDot} title="Opened recently" />}
 
       <button
         className={`${styles.starButton} ${dataset.starred ? styles.starred : ''}`}

@@ -26,11 +26,7 @@ import type { ProcessedAnalysisData } from '../types/processedData';
 import type { WorkerAnalysisContext, WorkerAnalysisSettings } from '../types/worker';
 import type { VariableMapping } from '../types/harmonization';
 import type { VariableStatsResult } from '../types/worker';
-import type {
-  DatasetSummary,
-  EngineRecodeConfig,
-  ResultEnvelope,
-} from './types';
+import type { DatasetSummary, EngineRecodeConfig, ResultEnvelope } from './types';
 import { VelocityError } from './types';
 
 export interface BrowserEngineContext {
@@ -41,9 +37,7 @@ export interface BrowserEngineContext {
 /** Browser loadBuffer result: MCP-aligned envelope plus raw worker payload for store migration. */
 export interface BrowserLoadBufferResult {
   envelope: ResultEnvelope<DatasetSummary>;
-  loaded:
-    | EngineResponseByType<'engine.savLoaded'>
-    | EngineResponseByType<'engine.csvLoaded'>;
+  loaded: EngineResponseByType<'engine.savLoaded'> | EngineResponseByType<'engine.csvLoaded'>;
 }
 
 function toRecord(value: unknown): Record<string, unknown> {
@@ -56,10 +50,7 @@ function toRecord(value: unknown): Record<string, unknown> {
 function isCompleteAnalysisSettings(
   value: Partial<WorkerAnalysisSettings> | undefined,
 ): value is WorkerAnalysisSettings {
-  return !!value
-    && !!value.comparisonMethod
-    && !!value.correctionType
-    && !!value.significanceLevel;
+  return !!value && !!value.comparisonMethod && !!value.correctionType && !!value.significanceLevel;
 }
 
 export class BrowserEngine {
@@ -78,23 +69,14 @@ export class BrowserEngine {
    * Run a registered analysis. Crosstab requires `BrowserEngineContext` because browser
    * session state still lives in the Zustand store (worker-hosted VelocityEngine is future work).
    */
-  async runAnalysis(
-    id: string,
-    config: unknown,
-    ctx?: BrowserEngineContext,
-  ): Promise<ResultEnvelope<unknown>> {
+  async runAnalysis(id: string, config: unknown, ctx?: BrowserEngineContext): Promise<ResultEnvelope<unknown>> {
     if (id === 'crosstab') {
       if (!ctx) {
-        throw new VelocityError(
-          'NO_DATASET_LOADED',
-          'Crosstab analysis requires dataset context in the browser.',
-        );
+        throw new VelocityError('NO_DATASET_LOADED', 'Crosstab analysis requires dataset context in the browser.');
       }
 
       const configRecord = toRecord(config);
-      const analysisSettings = configRecord.analysisSettings as
-        | Partial<WorkerAnalysisSettings>
-        | undefined;
+      const analysisSettings = configRecord.analysisSettings as Partial<WorkerAnalysisSettings> | undefined;
 
       const request = buildCrosstabRequest({
         dataset: ctx.dataset,
@@ -102,30 +84,18 @@ export class BrowserEngine {
         rowVars: Array.isArray(configRecord.rowVars) ? (configRecord.rowVars as string[]) : [],
         colVar: (configRecord.colVar as string | null | undefined) ?? null,
         filters: (configRecord.filters as Filter[] | undefined) ?? [],
-        weightVar:
-          (configRecord.weightVar as string | null | undefined)
-          ?? ctx.dataset.weightVariable
-          ?? null,
-        analysisSettings: isCompleteAnalysisSettings(analysisSettings)
-          ? analysisSettings
-          : undefined,
+        weightVar: (configRecord.weightVar as string | null | undefined) ?? ctx.dataset.weightVariable ?? null,
+        analysisSettings: isCompleteAnalysisSettings(analysisSettings) ? analysisSettings : undefined,
       });
 
-      return this.proxy.runCrosstab(
-        request.options,
-        request.context,
-        request.analysisSettings,
-      );
+      return this.proxy.runCrosstab(request.options, request.context, request.analysisSettings);
     }
 
     if (id === 'variableStats') {
       const configRecord = toRecord(config);
       const column = String(configRecord.column ?? '');
       if (!column) {
-        throw new VelocityError(
-          'INVALID_VARIABLE',
-          'variableStats requires a "column" config value.',
-        );
+        throw new VelocityError('INVALID_VARIABLE', 'variableStats requires a "column" config value.');
       }
 
       return this.proxy.getVariableStats(
@@ -145,11 +115,7 @@ export class BrowserEngine {
     return this.proxy.query(sql);
   }
 
-  async loadBuffer(
-    name: string,
-    buffer: ArrayBuffer,
-    format: 'sav' | 'csv',
-  ): Promise<BrowserLoadBufferResult> {
+  async loadBuffer(name: string, buffer: ArrayBuffer, format: 'sav' | 'csv'): Promise<BrowserLoadBufferResult> {
     const t0 = performance.now();
 
     if (format === 'sav') {
@@ -208,10 +174,7 @@ export class BrowserEngine {
     };
   }
 
-  async recode(
-    sourceVar: string,
-    config: EngineRecodeConfig,
-  ): Promise<ResultEnvelope<{ column: string }>> {
+  async recode(sourceVar: string, config: EngineRecodeConfig): Promise<ResultEnvelope<{ column: string }>> {
     const safeTargetName = (config.targetVariableName ?? `${sourceVar}_recode`)
       .replace(/[^a-zA-Z0-9_]/g, '_')
       .replace(/^(\d)/, '_$1');
@@ -238,9 +201,11 @@ export class BrowserEngine {
   // EngineProxy delegation (transport — migrate slices incrementally)
   // ==========================================================================
 
-  async init(
-    opts?: { forceCleanStart?: boolean; datasetId?: string; schemaVersion?: number },
-  ): Promise<EngineResponseByType<'engine.ready'>> {
+  async init(opts?: {
+    forceCleanStart?: boolean;
+    datasetId?: string;
+    schemaVersion?: number;
+  }): Promise<EngineResponseByType<'engine.ready'>> {
     return this.proxy.init(opts);
   }
 
@@ -270,10 +235,7 @@ export class BrowserEngine {
     return this.proxy.loadCSV(fileName, content);
   }
 
-  async loadSAV(
-    buffer: ArrayBuffer,
-    forceChunked?: boolean,
-  ): Promise<EngineResponseByType<'engine.savLoaded'>> {
+  async loadSAV(buffer: ArrayBuffer, forceChunked?: boolean): Promise<EngineResponseByType<'engine.savLoaded'>> {
     return this.proxy.loadSAV(buffer, forceChunked);
   }
 

@@ -32,8 +32,7 @@ function polygonContainsPoint(polygon: Point[], point: Point): boolean {
   for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
     const [xi, yi] = polygon[i];
     const [xj, yj] = polygon[j];
-    const intersect =
-      yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi;
+    const intersect = yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi;
     if (intersect) inside = !inside;
   }
   return inside;
@@ -57,12 +56,9 @@ export const LassoSelector: React.FC<LassoSelectorProps> = ({
       const rect = svgRef.current!.getBoundingClientRect();
       const scaleX = width / rect.width;
       const scaleY = height / rect.height;
-      return [
-        (e.clientX - rect.left) * scaleX,
-        (e.clientY - rect.top) * scaleY,
-      ];
+      return [(e.clientX - rect.left) * scaleX, (e.clientY - rect.top) * scaleY];
     },
-    [width, height]
+    [width, height],
   );
 
   const handlePointerDown = useCallback(
@@ -73,15 +69,15 @@ export const LassoSelector: React.FC<LassoSelectorProps> = ({
       setPoints([getPoint(e)]);
       setDragging(true);
     },
-    [isActive, getPoint]
+    [isActive, getPoint],
   );
 
   const handlePointerMove = useCallback(
     (e: React.PointerEvent) => {
       if (!dragging || !isActive) return;
-      setPoints(prev => [...prev, getPoint(e)]);
+      setPoints((prev) => [...prev, getPoint(e)]);
     },
-    [dragging, isActive, getPoint]
+    [dragging, isActive, getPoint],
   );
 
   const handlePointerUp = useCallback(
@@ -107,7 +103,7 @@ export const LassoSelector: React.FC<LassoSelectorProps> = ({
       setPoints([]);
       onSelectionCommit(selected);
     },
-    [dragging, isActive, points, getPoint, nodes, nodeCenters, onSelectionCommit]
+    [dragging, isActive, points, getPoint, nodes, nodeCenters, onSelectionCommit],
   );
 
   // Escape to cancel
@@ -135,10 +131,7 @@ export const LassoSelector: React.FC<LassoSelectorProps> = ({
     };
   }, [isActive, dragging, onActiveChange]);
 
-  const pathD =
-    points.length > 1
-      ? `M ${points.map(([x, y]) => `${x},${y}`).join(' L ')} Z`
-      : '';
+  const pathD = points.length > 1 ? `M ${points.map(([x, y]) => `${x},${y}`).join(' L ')} Z` : '';
 
   return (
     <svg
@@ -151,12 +144,7 @@ export const LassoSelector: React.FC<LassoSelectorProps> = ({
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
     >
-      {pathD && (
-        <path
-          d={pathD}
-          className={styles.lasso}
-        />
-      )}
+      {pathD && <path d={pathD} className={styles.lasso} />}
       {isActive && !dragging && (
         <text x={8} y={height - 8} className={styles.hint}>
           Click &amp; drag to select nodes

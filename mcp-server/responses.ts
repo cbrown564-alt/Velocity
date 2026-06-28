@@ -25,13 +25,9 @@ export function successResponse(data: unknown): McpToolResponse {
 }
 
 export function resolveSessionOutputPath(outputPath: string): string {
-  const resolved = path.isAbsolute(outputPath)
-    ? outputPath
-    : path.resolve(process.cwd(), outputPath);
+  const resolved = path.isAbsolute(outputPath) ? outputPath : path.resolve(process.cwd(), outputPath);
 
-  return resolved.endsWith(SESSION_FILE_EXTENSION)
-    ? resolved
-    : `${resolved}${SESSION_FILE_EXTENSION}`;
+  return resolved.endsWith(SESSION_FILE_EXTENSION) ? resolved : `${resolved}${SESSION_FILE_EXTENSION}`;
 }
 
 export function errorResponse(err: VelocityError | Error | unknown): McpToolResponse {

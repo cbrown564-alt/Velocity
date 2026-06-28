@@ -27,7 +27,11 @@ describe('ConceptStore', () => {
   it('stores canonicalScale', () => {
     const concept = store.createConcept({
       name: 'Satisfaction (10pt)',
-      canonicalScale: { points: 10, direction: 'ascending', anchors: { low: 'Not satisfied', high: 'Extremely satisfied' } },
+      canonicalScale: {
+        points: 10,
+        direction: 'ascending',
+        anchors: { low: 'Not satisfied', high: 'Extremely satisfied' },
+      },
     });
     expect(concept.canonicalScale?.points).toBe(10);
     expect(concept.canonicalScale?.anchors?.high).toBe('Extremely satisfied');

@@ -107,7 +107,7 @@ function buildSlideTable(
   // Header row — "Total" column only shown when showCounts is enabled
   const headerRow: PptxTableCell[] = [
     { text: '', options: headerStyle },
-    ...columns.map(col => ({ text: col.label, options: headerStyle })),
+    ...columns.map((col) => ({ text: col.label, options: headerStyle })),
     ...(showCounts ? [{ text: 'Total', options: headerStyle }] : []),
   ];
   tableRows.push(headerRow);
@@ -123,11 +123,13 @@ function buildSlideTable(
 
     const dataRow: PptxTableCell[] = [
       { text: `${indent}${row.label}`, options: labelStyle },
-      ...columns.map(col => ({
+      ...columns.map((col) => ({
         text: formatCell(row.cells[col.key], showSig, showPercents, showCounts),
         options: { ...cellStyle, align: 'right' as const },
       })),
-      ...(showCounts ? [{ text: String(row.total), options: { ...cellStyle, align: 'right' as const, bold: true } }] : []),
+      ...(showCounts
+        ? [{ text: String(row.total), options: { ...cellStyle, align: 'right' as const, bold: true } }]
+        : []),
     ];
     tableRows.push(dataRow);
   }
@@ -197,10 +199,7 @@ function buildSlideChart(
       break;
   }
 
-  const seriesCount =
-    pptxChartType === 'doughnut'
-      ? 1
-      : item.result.series.length;
+  const seriesCount = pptxChartType === 'doughnut' ? 1 : item.result.series.length;
 
   const baseChartOpts: any = buildPresentationChartOptions({
     branding: branding as ExportBranding & { fontFamily: string; chartColors: string[] },
@@ -217,9 +216,9 @@ function buildSlideChart(
     // PptxGenJS scatter requires { name, values: y[], xData: x[] }.
     // Our data model has no dedicated x-axis variable, so we use the
     // categorical index (1-based) as x and value/percent as y.
-    const scatterData = item.result.series.map(series => ({
+    const scatterData = item.result.series.map((series) => ({
       name: series.label || 'Series 1',
-      values: series.data.map(d => (showPercents ? d.percent : d.value)),
+      values: series.data.map((d) => (showPercents ? d.percent : d.value)),
       xData: series.data.map((_, i) => i + 1),
     }));
     slide.addChart(pptxChartType, scatterData, baseChartOpts);
@@ -230,29 +229,21 @@ function buildSlideChart(
   // has multiple column-banner series we flatten all data points from the
   // first series into the ring. Using only the first series keeps the chart
   // readable and avoids garbled multi-ring output from PptxGenJS.
-  const seriesToRender =
-    pptxChartType === 'doughnut'
-      ? item.result.series.slice(0, 1)
-      : item.result.series;
+  const seriesToRender = pptxChartType === 'doughnut' ? item.result.series.slice(0, 1) : item.result.series;
 
   // Choose value source: percent when showing percentages, raw count otherwise
-  const getValue = (d: { percent: number; value: number }) =>
-    showPercents ? d.percent : d.value;
+  const getValue = (d: { percent: number; value: number }) => (showPercents ? d.percent : d.value);
 
-  const seriesData = seriesToRender.map(series => ({
+  const seriesData = seriesToRender.map((series) => ({
     name: series.label || 'Series 1',
-    labels: series.data.map(d => d.label),
-    values: series.data.map(d => getValue(d)),
+    labels: series.data.map((d) => d.label),
+    values: series.data.map((d) => getValue(d)),
   }));
 
   slide.addChart(pptxChartType, seriesData, baseChartOpts);
 }
 
-function addSectionDividerSlide(
-  pptx: any,
-  section: SlideSection,
-  branding: typeof DEFAULTS
-) {
+function addSectionDividerSlide(pptx: any, section: SlideSection, branding: typeof DEFAULTS) {
   const slide = pptx.addSlide();
   const accent = section.color ? normalizeColor(section.color) : branding.headerColor;
 
@@ -286,9 +277,7 @@ function normalizeColor(color: string): string {
   if (hex.startsWith('#')) return hex.slice(1);
   const rgba = hex.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
   if (rgba) {
-    return [rgba[1], rgba[2], rgba[3]]
-      .map(n => parseInt(n, 10).toString(16).padStart(2, '0'))
-      .join('');
+    return [rgba[1], rgba[2], rgba[3]].map((n) => parseInt(n, 10).toString(16).padStart(2, '0')).join('');
   }
   return hex;
 }
@@ -298,7 +287,7 @@ export async function exportPptx(config: ExportConfig): Promise<Uint8Array> {
     const templateIssues = canApplyTemplate(
       config.templateOptions.mapping,
       config.templateOptions.template,
-      config.templateOptions.slideRecipes
+      config.templateOptions.slideRecipes,
     );
     const blockingIssue = templateIssues.find((issue) => issue.severity === 'block');
     if (blockingIssue) {
@@ -308,15 +297,13 @@ export async function exportPptx(config: ExportConfig): Promise<Uint8Array> {
     const applyTemplateBindings = config.templateOptions.applyTemplateBindings;
     const baseTemplate = config.templateOptions.baseTemplate;
     if (!applyTemplateBindings || !baseTemplate) {
-      throw new Error(
-        'Template export requires a base template binary and an applyTemplateBindings handler.'
-      );
+      throw new Error('Template export requires a base template binary and an applyTemplateBindings handler.');
     }
 
     const applied = mapTemplatePlaceholders(
       config.templateOptions.template,
       config.templateOptions.mapping,
-      config.templateOptions.slideRecipes
+      config.templateOptions.slideRecipes,
     );
 
     return applyTemplateBindings({

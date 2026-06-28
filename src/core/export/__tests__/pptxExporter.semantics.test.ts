@@ -85,9 +85,7 @@ const mockData: ProcessedAnalysisData = {
     {
       key: 'total',
       label: 'Total',
-      data: [
-        { label: 'Male', rawValue: '1', value: 50, percent: 50 },
-      ],
+      data: [{ label: 'Male', rawValue: '1', value: 50, percent: 50 }],
     },
   ],
   columns: [
@@ -114,7 +112,9 @@ describe('exportPptx semantics', () => {
   it('renders percent-only cells and omits total column when showCounts is false', async () => {
     const config: ExportConfig = {
       title: 'Percent Only',
-      analyses: [{ label: 'A1', result: mockData, options: { showPercents: true, showCounts: false, showSignificance: true } }],
+      analyses: [
+        { label: 'A1', result: mockData, options: { showPercents: true, showCounts: false, showSignificance: true } },
+      ],
     };
 
     await exportPptx(config);
@@ -132,7 +132,9 @@ describe('exportPptx semantics', () => {
   it('renders count-only cells and includes total column when showCounts is true', async () => {
     const config: ExportConfig = {
       title: 'Count Only',
-      analyses: [{ label: 'A1', result: mockData, options: { showPercents: false, showCounts: true, showSignificance: true } }],
+      analyses: [
+        { label: 'A1', result: mockData, options: { showPercents: false, showCounts: true, showSignificance: true } },
+      ],
     };
 
     await exportPptx(config);
@@ -150,7 +152,9 @@ describe('exportPptx semantics', () => {
   it('renders combined count+percent format when both toggles are enabled', async () => {
     const config: ExportConfig = {
       title: 'Count and Percent',
-      analyses: [{ label: 'A1', result: mockData, options: { showPercents: true, showCounts: true, showSignificance: true } }],
+      analyses: [
+        { label: 'A1', result: mockData, options: { showPercents: true, showCounts: true, showSignificance: true } },
+      ],
     };
 
     await exportPptx(config);
@@ -165,9 +169,7 @@ describe('exportPptx semantics', () => {
   it('normalizes chart colors and uses a single series color for single-series bars', async () => {
     const config: ExportConfig = {
       title: 'Chart Colors',
-      analyses: [
-        { label: 'Chart 1', result: mockData, visualizationType: 'chart', chartType: 'horizontal-bar' },
-      ],
+      analyses: [{ label: 'Chart 1', result: mockData, visualizationType: 'chart', chartType: 'horizontal-bar' }],
       branding: {
         primaryColor: '#222222',
         headerColor: 'rgba(224, 122, 95, 1)',
@@ -181,9 +183,7 @@ describe('exportPptx semantics', () => {
     const chart = analysisSlide.charts[0];
 
     expect(chart.opts.chartColors).toEqual(['2D4A3E']);
-    expect(chart.opts.valGridLine).toEqual(
-      expect.objectContaining({ color: '222222', size: 0.5 }),
-    );
+    expect(chart.opts.valGridLine).toEqual(expect.objectContaining({ color: '222222', size: 0.5 }));
     expect(chart.opts.barGapWidthPct).toBe(25);
   });
 
@@ -208,7 +208,7 @@ describe('exportPptx semantics', () => {
     expect(deck.slides).toHaveLength(3);
     expect(deck.slides[1].texts.map((entry) => entry.text)).toContain('Executive Summary');
     expect(deck.slides[2].texts.map((entry) => entry.text)).toEqual(
-      expect.arrayContaining(['Gender by Agreement', 'Adults 18+'])
+      expect.arrayContaining(['Gender by Agreement', 'Adults 18+']),
     );
     expect(deck.slides[2].notes).toEqual(['Lead with the gender split on slide delivery.']);
   });
@@ -257,7 +257,7 @@ describe('exportPptx semantics', () => {
             resolvedValue: 'Wave 3 Tracker',
           }),
         ],
-      })
+      }),
     );
     expect(mockDecks).toHaveLength(0);
   });
@@ -288,7 +288,7 @@ describe('exportPptx semantics', () => {
             },
           ],
         },
-      })
+      }),
     ).rejects.toThrow(/requires a base template binary/i);
   });
 

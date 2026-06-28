@@ -7,11 +7,7 @@
 
 import { useCallback, useMemo } from 'react';
 import { useVelocityStore } from '../../../store';
-import {
-  findResumeCandidate,
-  shouldShowWelcomeBack,
-  type ResumeCandidate,
-} from '../lib/returningResearcher';
+import { findResumeCandidate, shouldShowWelcomeBack, type ResumeCandidate } from '../lib/returningResearcher';
 import type { StoredDataset } from '../types';
 
 export interface UseWelcomeBackOptions {
@@ -26,17 +22,8 @@ export interface UseWelcomeBackReturn {
   onDismiss: () => void;
 }
 
-export function useWelcomeBack({
-  datasets,
-  onOpenDataset,
-}: UseWelcomeBackOptions): UseWelcomeBackReturn {
-  const {
-    lastActiveAt,
-    welcomeBackDismissed,
-    dismissWelcomeBack,
-    activeDatasetId,
-    tableConfig,
-  } = useVelocityStore();
+export function useWelcomeBack({ datasets, onOpenDataset }: UseWelcomeBackOptions): UseWelcomeBackReturn {
+  const { lastActiveAt, welcomeBackDismissed, dismissWelcomeBack, activeDatasetId, tableConfig } = useVelocityStore();
 
   const resumeCandidate = useMemo(
     () => findResumeCandidate(datasets, activeDatasetId, tableConfig),
@@ -44,13 +31,11 @@ export function useWelcomeBack({
   );
 
   const showWelcomeBack =
-    datasets.length > 0 &&
-    shouldShowWelcomeBack(lastActiveAt, welcomeBackDismissed) &&
-    resumeCandidate !== null;
+    datasets.length > 0 && shouldShowWelcomeBack(lastActiveAt, welcomeBackDismissed) && resumeCandidate !== null;
 
   const onResume = useCallback(() => {
     if (!resumeCandidate) return;
-    const target = datasets.find(d => d.id === resumeCandidate.datasetId);
+    const target = datasets.find((d) => d.id === resumeCandidate.datasetId);
     if (target) onOpenDataset(target);
     dismissWelcomeBack();
   }, [resumeCandidate, datasets, onOpenDataset, dismissWelcomeBack]);

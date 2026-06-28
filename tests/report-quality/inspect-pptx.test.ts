@@ -11,7 +11,10 @@ async function writeFixturePptx() {
   const zip = new JSZip();
 
   zip.file('[Content_Types].xml', '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"/>');
-  zip.file('ppt/presentation.xml', '<p:presentation xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"/>');
+  zip.file(
+    'ppt/presentation.xml',
+    '<p:presentation xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"/>',
+  );
   zip.file(
     'ppt/slides/slide1.xml',
     `<?xml version="1.0" encoding="UTF-8"?>
@@ -36,17 +39,20 @@ async function writeFixturePptx() {
           <p:graphicFrame><a:graphic><a:graphicData><a:tbl><a:tr/></a:tbl></a:graphicData></a:graphic></p:graphicFrame>
         </p:spTree>
       </p:cSld>
-    </p:sld>`
+    </p:sld>`,
   );
   zip.file(
     'ppt/slides/slide2.xml',
-    '<p:sld xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"><p:cSld><p:spTree/></p:cSld></p:sld>'
+    '<p:sld xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"><p:cSld><p:spTree/></p:cSld></p:sld>',
   );
-  zip.file('ppt/notesSlides/notesSlide1.xml', '<p:notes xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"/>');
+  zip.file(
+    'ppt/notesSlides/notesSlide1.xml',
+    '<p:notes xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"/>',
+  );
   zip.file('ppt/media/image1.png', new Uint8Array([0, 1, 2, 3]));
   zip.file(
     'ppt/theme/theme1.xml',
-    '<a:theme xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"><a:latin typeface="Aptos"/><a:srgbClr val="FFFFFF"/></a:theme>'
+    '<a:theme xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"><a:latin typeface="Aptos"/><a:srgbClr val="FFFFFF"/></a:theme>',
   );
 
   await writeFile(pptxPath, await zip.generateAsync({ type: 'nodebuffer' }));

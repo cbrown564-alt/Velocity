@@ -32,10 +32,7 @@ export const DesktopRecommendationBanner: React.FC<DesktopRecommendationBannerPr
     >
       <div className="flex items-center gap-2">
         <MonitorSmartphone size={14} className="shrink-0" />
-        <span>
-          Desktop view recommended: expand to at least {minWidth}px for full Workspace and Canvas
-          controls.
-        </span>
+        <span>Desktop view recommended: expand to at least {minWidth}px for full Workspace and Canvas controls.</span>
       </div>
     </div>
   );

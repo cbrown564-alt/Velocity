@@ -45,8 +45,7 @@ export function getUploadFormatError(fileName: string): UploadFormatError | null
   if (ext === 'xlsx' || ext === 'xls') {
     return {
       title: 'Excel needs CSV first',
-      message:
-        'Save your spreadsheet as CSV (File → Save As → CSV), then upload the .csv file here.',
+      message: 'Save your spreadsheet as CSV (File → Save As → CSV), then upload the .csv file here.',
       duration: 8000,
     };
   }
@@ -77,8 +76,7 @@ export function formatUploadFailure(err: unknown, fileName: string): UploadForma
   ) {
     return {
       title: 'Dataset open elsewhere',
-      message:
-        'This dataset may be open in another Velocity tab. Switch to that tab or close it, then try again.',
+      message: 'This dataset may be open in another Velocity tab. Switch to that tab or close it, then try again.',
       duration: 8000,
     };
   }

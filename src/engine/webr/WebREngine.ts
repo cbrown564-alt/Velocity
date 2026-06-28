@@ -58,10 +58,7 @@ export class WebREngine {
     return new Promise((resolve, reject) => {
       try {
         // Create worker from the webRWorker module
-        this.worker = new Worker(
-          new URL('../../services/webRWorker.ts', import.meta.url),
-          { type: 'module' }
-        );
+        this.worker = new Worker(new URL('../../services/webRWorker.ts', import.meta.url), { type: 'module' });
 
         this.worker.onmessage = (event: MessageEvent<WebRWorkerResponse>) => {
           this.handleWorkerMessage(event.data);
@@ -120,10 +117,7 @@ export class WebREngine {
   /**
    * Run survey analysis with design effects
    */
-  async runSurveyAnalysis(
-    config: SurveyDesignConfig,
-    data: Uint8Array
-  ): Promise<SurveyResult> {
+  async runSurveyAnalysis(config: SurveyDesignConfig, data: Uint8Array): Promise<SurveyResult> {
     this.ensureReady();
 
     // Ensure survey package is loaded
@@ -141,10 +135,7 @@ export class WebREngine {
   /**
    * Run mixed effects model
    */
-  async runMixedModel(
-    config: MixedModelConfig,
-    data: Uint8Array
-  ): Promise<MixedModelResult> {
+  async runMixedModel(config: MixedModelConfig, data: Uint8Array): Promise<MixedModelResult> {
     this.ensureReady();
 
     // Ensure lme4 package is loaded
@@ -314,7 +305,7 @@ export class WebREngine {
 
   private async sendRequest<T>(
     expectedType: 'rResult' | 'surveyResult' | 'mixedModelResult',
-    request: WebRWorkerRequest
+    request: WebRWorkerRequest,
   ): Promise<T> {
     return new Promise((resolve, reject) => {
       const id = `${++this.requestId}`;

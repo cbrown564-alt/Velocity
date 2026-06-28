@@ -66,8 +66,7 @@ export function computeColorSignature(variables?: Variable[]): ColorSignature {
   const total = categorical + numeric || 1;
   const warmth = categorical / total;
   const hue = 28 + (1 - warmth) * 175;
-  const label: ColorSignature['label'] =
-    warmth > 0.65 ? 'categorical' : warmth < 0.35 ? 'numeric' : 'mixed';
+  const label: ColorSignature['label'] = warmth > 0.65 ? 'categorical' : warmth < 0.35 ? 'numeric' : 'mixed';
 
   return { hue, warmth, label };
 }
@@ -77,13 +76,13 @@ export function buildActivityHeatmap(
   lastOpenedAt: number,
   lastModifiedAt: number,
   createdAt: number,
-  now = Date.now()
+  now = Date.now(),
 ): ActivityHeatmapCell[][] {
   const grid: ActivityHeatmapCell[][] = Array.from({ length: HEATMAP_DAYS }, () =>
-    Array.from({ length: HEATMAP_SLOTS_PER_DAY }, () => ({ intensity: 0 }))
+    Array.from({ length: HEATMAP_SLOTS_PER_DAY }, () => ({ intensity: 0 })),
   );
 
-  const stamps = [lastOpenedAt, lastModifiedAt, createdAt].filter(t => t > 0);
+  const stamps = [lastOpenedAt, lastModifiedAt, createdAt].filter((t) => t > 0);
   for (const ts of stamps) {
     const dayOffset = Math.floor((now - ts) / MS_PER_DAY);
     if (dayOffset < 0 || dayOffset >= HEATMAP_DAYS) continue;
@@ -97,10 +96,7 @@ export function buildActivityHeatmap(
   return grid;
 }
 
-export function summarizeSessionPortrait(
-  dataset: StoredDataset,
-  now = Date.now()
-): SessionPortraitSummary {
+export function summarizeSessionPortrait(dataset: StoredDataset, now = Date.now()): SessionPortraitSummary {
   const session = dataset.sessionState;
   const rowVars = session?.tableConfig?.rowVars ?? [];
   const colVar = session?.tableConfig?.colVar;
@@ -126,18 +122,14 @@ export function summarizeSessionPortrait(
 export function computeAmbientSearchHints(
   query: string,
   datasets: StoredDataset[],
-  projects: Project[]
+  projects: Project[],
 ): AmbientSearchHint[] {
   const q = query.trim().toLowerCase();
   if (q.length < 2) return [];
 
   const hints: AmbientSearchHint[] = [];
-  const varMatches = datasets.filter(d =>
-    (d.variables ?? []).some(
-      v =>
-        v.name.toLowerCase().includes(q) ||
-        v.label.toLowerCase().includes(q)
-    )
+  const varMatches = datasets.filter((d) =>
+    (d.variables ?? []).some((v) => v.name.toLowerCase().includes(q) || v.label.toLowerCase().includes(q)),
   );
 
   if (varMatches.length > 0) {
@@ -147,7 +139,7 @@ export function computeAmbientSearchHints(
     });
   }
 
-  const longitudinal = projects.filter(p => p.isLongitudinal);
+  const longitudinal = projects.filter((p) => p.isLongitudinal);
   if (/wave|longitudinal|panel/i.test(q) && longitudinal.length > 0) {
     hints.push({
       id: 'longitudinal',
@@ -161,10 +153,10 @@ export function computeAmbientSearchHints(
 export function computeWorkspaceCategoryChips(
   datasets: StoredDataset[],
   projects: Project[],
-  now = Date.now()
+  now = Date.now(),
 ): WorkspaceCategoryChip[] {
   const chips: WorkspaceCategoryChip[] = [];
-  const longitudinal = projects.filter(p => p.isLongitudinal).length;
+  const longitudinal = projects.filter((p) => p.isLongitudinal).length;
   if (longitudinal > 0) {
     chips.push({
       id: 'longitudinal',
@@ -174,7 +166,7 @@ export function computeWorkspaceCategoryChips(
     });
   }
 
-  const unanalyzed = datasets.filter(d => !d.sessionState?.tableConfig?.rowVars?.length).length;
+  const unanalyzed = datasets.filter((d) => !d.sessionState?.tableConfig?.rowVars?.length).length;
   if (unanalyzed > 0) {
     chips.push({
       id: 'unanalyzed',
@@ -184,7 +176,7 @@ export function computeWorkspaceCategoryChips(
     });
   }
 
-  const withSession = datasets.filter(d => Boolean(d.sessionState)).length;
+  const withSession = datasets.filter((d) => Boolean(d.sessionState)).length;
   if (withSession > 0) {
     chips.push({
       id: 'with-session',
@@ -194,7 +186,7 @@ export function computeWorkspaceCategoryChips(
     });
   }
 
-  const recent = datasets.filter(d => now - d.lastOpenedAt < MS_PER_DAY).length;
+  const recent = datasets.filter((d) => now - d.lastOpenedAt < MS_PER_DAY).length;
   if (recent > 0) {
     chips.push({
       id: 'recent',
@@ -210,44 +202,41 @@ export function computeWorkspaceCategoryChips(
 export function applyWorkspaceCategoryFilter(
   datasets: StoredDataset[],
   projects: Project[],
-  filter: WorkspaceCategoryChip['filter']
+  filter: WorkspaceCategoryChip['filter'],
 ): StoredDataset[] {
   switch (filter) {
     case 'longitudinal':
-      return datasets.filter(d => {
-        const p = projects.find(pr => pr.id === d.projectId);
+      return datasets.filter((d) => {
+        const p = projects.find((pr) => pr.id === d.projectId);
         return Boolean(p?.isLongitudinal);
       });
     case 'unanalyzed':
-      return datasets.filter(d => !d.sessionState?.tableConfig?.rowVars?.length);
+      return datasets.filter((d) => !d.sessionState?.tableConfig?.rowVars?.length);
     case 'with-session':
-      return datasets.filter(d => Boolean(d.sessionState));
+      return datasets.filter((d) => Boolean(d.sessionState));
     case 'recent':
-      return datasets.filter(d => Date.now() - d.lastOpenedAt < MS_PER_DAY);
+      return datasets.filter((d) => Date.now() - d.lastOpenedAt < MS_PER_DAY);
     default:
       return datasets;
   }
 }
 
 /** Harmonization ring: variable-name overlap across waves in a project. */
-export function computeHarmonizationStatus(
-  project: Project,
-  datasets: StoredDataset[]
-): HarmonizationRingStatus {
+export function computeHarmonizationStatus(project: Project, datasets: StoredDataset[]): HarmonizationRingStatus {
   if (!project.isLongitudinal || datasets.length < 2) return 'none';
 
   const waveDatasets = datasets
-    .filter(d => d.projectId === project.id && d.variables && d.variables.length > 0)
+    .filter((d) => d.projectId === project.id && d.variables && d.variables.length > 0)
     .sort((a, b) => (a.waveNumber ?? 0) - (b.waveNumber ?? 0));
 
   if (waveDatasets.length < 2) return 'none';
 
-  const nameSets = waveDatasets.map(d => new Set((d.variables ?? []).map(v => v.name.toLowerCase())));
+  const nameSets = waveDatasets.map((d) => new Set((d.variables ?? []).map((v) => v.name.toLowerCase())));
   let minOverlap = 1;
   for (let i = 1; i < nameSets.length; i++) {
     const prev = nameSets[i - 1];
     const curr = nameSets[i];
-    const overlap = [...curr].filter(n => prev.has(n)).length;
+    const overlap = [...curr].filter((n) => prev.has(n)).length;
     const ratio = overlap / Math.max(prev.size, curr.size, 1);
     minOverlap = Math.min(minOverlap, ratio);
   }
@@ -260,15 +249,13 @@ export function computeHarmonizationStatus(
 export function computeWaveDeltaPreview(
   wave: StoredDataset,
   baseline: StoredDataset,
-  previous?: StoredDataset
+  previous?: StoredDataset,
 ): WaveDeltaPreview {
   const baseVars = baseline.variables?.length ?? baseline.columnCount;
   const waveVars = wave.variables?.length ?? wave.columnCount;
   const variableDelta = waveVars - baseVars;
 
-  const responseRate = baseline.rowCount > 0
-    ? Math.round((wave.rowCount / baseline.rowCount) * 100)
-    : 100;
+  const responseRate = baseline.rowCount > 0 ? Math.round((wave.rowCount / baseline.rowCount) * 100) : 100;
 
   let responseDelta: number | undefined;
   if (previous && previous.rowCount > 0) {
@@ -282,7 +269,7 @@ export function computeWaveDeltaPreview(
 /** Missing wave numbers between min and max for ghost placeholders. */
 export function findWaveGaps(datasets: StoredDataset[]): number[] {
   const waves = datasets
-    .map(d => d.waveNumber)
+    .map((d) => d.waveNumber)
     .filter((n): n is number => n !== undefined)
     .sort((a, b) => a - b);
 
@@ -298,7 +285,5 @@ export function findWaveGaps(datasets: StoredDataset[]): number[] {
 export function matchesVariableKeyword(dataset: StoredDataset, query: string): boolean {
   const q = query.trim().toLowerCase();
   if (q.length < 2) return false;
-  return (dataset.variables ?? []).some(
-    v => v.name.toLowerCase().includes(q) || v.label.toLowerCase().includes(q)
-  );
+  return (dataset.variables ?? []).some((v) => v.name.toLowerCase().includes(q) || v.label.toLowerCase().includes(q));
 }

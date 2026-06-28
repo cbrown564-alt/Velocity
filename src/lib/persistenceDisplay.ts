@@ -26,16 +26,14 @@ export function getPersistenceDisplayMessage(
     normalized.includes('another open access handle')
   ) {
     return {
-      headline:
-        'Local storage is locked — another Velocity tab may be using it. Close other tabs and reload.',
+      headline: 'Local storage is locked — another Velocity tab may be using it. Close other tabs and reload.',
       detail: error,
     };
   }
 
   if (normalized.includes('not a valid duckdb') || normalized.includes('corrupt')) {
     return {
-      headline:
-        'The saved database could not be opened. Velocity can rebuild from your source file when available.',
+      headline: 'The saved database could not be opened. Velocity can rebuild from your source file when available.',
       detail: error,
     };
   }

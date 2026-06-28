@@ -422,7 +422,7 @@
 }
 
 .selectAllCheckbox:checked::after {
-  content: "";
+  content: '';
   display: block;
   width: 5px;
   height: 10px;
@@ -603,13 +603,13 @@
    ============================================================================ */
 
 /* Liquid Glass: Enhanced blur */
-[data-theme="liquid-glass"] .header,
-[data-theme="liquid-glass"] .filterTabs {
+[data-theme='liquid-glass'] .header,
+[data-theme='liquid-glass'] .filterTabs {
   background: var(--mat-panel-bg, var(--bg-panel));
   backdrop-filter: var(--mat-panel-filter, blur(25px) saturate(180%));
 }
 
-[data-theme="liquid-glass"] .contextMenu {
+[data-theme='liquid-glass'] .contextMenu {
   background: var(--mat-overlay-bg, var(--bg-panel));
   backdrop-filter: var(--mat-overlay-filter, blur(40px) saturate(200%));
 }

@@ -5,7 +5,7 @@ import { allowsNumericStats } from '../../types';
 interface AnalysisSignificanceSettings {
   comparisonMethod: 'cell_vs_rest' | 'pairwise';
   correctionType: 'none' | 'bonferroni' | 'fdr';
-  significanceLevel: 0.95 | 0.90 | 0.80;
+  significanceLevel: 0.95 | 0.9 | 0.8;
 }
 
 interface BuildCrosstabRequestParams {
@@ -114,7 +114,11 @@ export const buildCrosstabRequest = ({
     colVarSet.variableIds.forEach((varId) => addToContext(varId));
   } else if (
     allowsNumericStats(firstRowVarSet?.type, firstRowVarSet?.orderedScoring) ||
-    (colVar && allowsNumericStats(variableSets.find((s) => s.id === colVar)?.type, variableSets.find((s) => s.id === colVar)?.orderedScoring))
+    (colVar &&
+      allowsNumericStats(
+        variableSets.find((s) => s.id === colVar)?.type,
+        variableSets.find((s) => s.id === colVar)?.orderedScoring,
+      ))
   ) {
     const colVarSet = colVar ? variableSets.find((s) => s.id === colVar) : null;
     const isRowScale = allowsNumericStats(firstRowVarSet?.type, firstRowVarSet?.orderedScoring);
@@ -129,7 +133,7 @@ export const buildCrosstabRequest = ({
     addToContext(measureVarId);
 
     if (isRowScale) {
-      const col = colVar ? (colVarSet?.variableIds[0] || colVar) : null;
+      const col = colVar ? colVarSet?.variableIds[0] || colVar : null;
       options.colVar = col;
     } else {
       const resolveToCol = (id: string): string => {
@@ -165,10 +169,10 @@ export const buildCrosstabRequest = ({
     },
     analysisSettings: analysisSettings
       ? {
-        comparisonMethod: analysisSettings.comparisonMethod,
-        correctionType: analysisSettings.correctionType,
-        significanceLevel: analysisSettings.significanceLevel,
-      }
+          comparisonMethod: analysisSettings.comparisonMethod,
+          correctionType: analysisSettings.correctionType,
+          significanceLevel: analysisSettings.significanceLevel,
+        }
       : undefined,
     isWeighted: !!resolvedWeightVar,
     measureVarId,

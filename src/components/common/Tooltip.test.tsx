@@ -7,7 +7,7 @@ describe('Tooltip', () => {
     render(
       <Tooltip content="Test tooltip">
         <button>Hover me</button>
-      </Tooltip>
+      </Tooltip>,
     );
 
     expect(screen.getByText('Hover me')).toBeInTheDocument();
@@ -19,7 +19,7 @@ describe('Tooltip', () => {
     render(
       <Tooltip content="Test tooltip content" delay={200}>
         <button>Hover me</button>
-      </Tooltip>
+      </Tooltip>,
     );
 
     const button = screen.getByText('Hover me');
@@ -45,7 +45,7 @@ describe('Tooltip', () => {
     render(
       <Tooltip content="Test tooltip" delay={100}>
         <button>Hover me</button>
-      </Tooltip>
+      </Tooltip>,
     );
 
     const button = screen.getByText('Hover me');
@@ -70,7 +70,7 @@ describe('Tooltip', () => {
     render(
       <Tooltip content="Test tooltip" delay={100} disabled>
         <button>Hover me</button>
-      </Tooltip>
+      </Tooltip>,
     );
 
     const button = screen.getByText('Hover me');

@@ -55,9 +55,7 @@ const MOCK_DESCRIPTION: DatasetDescription = {
   weightVariable: null,
 };
 
-function makeDescribeEnvelope(
-  description: DatasetDescription = MOCK_DESCRIPTION
-): ResultEnvelope<DatasetDescription> {
+function makeDescribeEnvelope(description: DatasetDescription = MOCK_DESCRIPTION): ResultEnvelope<DatasetDescription> {
   return {
     data: description,
     operation: 'describe',
@@ -116,11 +114,13 @@ function makeCrosstabEnvelope(rows: unknown[] = DEFAULT_ROWS): ResultEnvelope<un
   };
 }
 
-function makeMockEngine(overrides: Partial<{
-  runAnalysis: ReturnType<typeof vi.fn>;
-  describe: ReturnType<typeof vi.fn>;
-  getActiveFilters: ReturnType<typeof vi.fn>;
-}> = {}) {
+function makeMockEngine(
+  overrides: Partial<{
+    runAnalysis: ReturnType<typeof vi.fn>;
+    describe: ReturnType<typeof vi.fn>;
+    getActiveFilters: ReturnType<typeof vi.fn>;
+  }> = {},
+) {
   return {
     runAnalysis: overrides.runAnalysis ?? vi.fn().mockResolvedValue(makeCrosstabEnvelope()),
     describe: overrides.describe ?? vi.fn().mockReturnValue(makeDescribeEnvelope()),
@@ -189,8 +189,8 @@ describe('DeckBuilder.build()', () => {
         {
           title: 'Section',
           slides: [
-            { rowVars: ['BADVAR'] },   // will fail
-            { rowVars: ['Q1'] },        // should still succeed
+            { rowVars: ['BADVAR'] }, // will fail
+            { rowVars: ['Q1'] }, // should still succeed
           ],
         },
       ],
@@ -316,9 +316,9 @@ describe('DeckBuilder.build()', () => {
     };
     const builder = new DeckBuilder(engine);
 
-    await expect(
-      builder.build({ title: 'T', sections: [{ title: 'S', slides: [] }] })
-    ).rejects.toMatchObject({ code: 'NO_DATASET_LOADED' });
+    await expect(builder.build({ title: 'T', sections: [{ title: 'S', slides: [] }] })).rejects.toMatchObject({
+      code: 'NO_DATASET_LOADED',
+    });
   });
 });
 
@@ -338,9 +338,7 @@ describe('DeckBuilder.export()', () => {
     });
 
     // export() should not throw even if pptxgenjs isn't fully available in test env
-    await expect(
-      builder.export(envelope.data, { format: 'pptx' })
-    ).resolves.toBeInstanceOf(Uint8Array);
+    await expect(builder.export(envelope.data, { format: 'pptx' })).resolves.toBeInstanceOf(Uint8Array);
 
     spy.mockRestore();
   });
@@ -353,8 +351,8 @@ describe('DeckBuilder.export()', () => {
       sections: [{ title: 'S', slides: [{ rowVars: ['Q1'] }] }],
     });
 
-    await expect(
-      builder.export(envelope.data, { format: 'docx' as 'pptx' })
-    ).rejects.toMatchObject({ code: 'UNSUPPORTED_FORMAT' });
+    await expect(builder.export(envelope.data, { format: 'docx' as 'pptx' })).rejects.toMatchObject({
+      code: 'UNSUPPORTED_FORMAT',
+    });
   });
 });

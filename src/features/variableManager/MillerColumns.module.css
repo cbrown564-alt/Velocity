@@ -49,7 +49,9 @@
   background-color: var(--mat-panel-bg, var(--bg-panel));
   backdrop-filter: var(--mat-panel-filter, none);
   overflow: hidden;
-  transition: width var(--transition-base), opacity var(--transition-base);
+  transition:
+    width var(--transition-base),
+    opacity var(--transition-base);
 }
 
 .column:last-child {
@@ -128,7 +130,9 @@
   background: transparent;
   color: var(--text-tertiary);
   cursor: pointer;
-  transition: background-color var(--transition-fast), color var(--transition-fast);
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast);
 }
 
 .columnAction:hover {
@@ -235,11 +239,11 @@
 
 /* Soft Machine: Left Accent Bar
    Applied via theme attribute selector */
-[data-theme="soft-machine"] .item {
+[data-theme='soft-machine'] .item {
   position: relative;
 }
 
-[data-theme="soft-machine"] .item::before {
+[data-theme='soft-machine'] .item::before {
   content: '';
   position: absolute;
   left: 0;
@@ -253,12 +257,12 @@
   border-radius: 0 2px 2px 0;
 }
 
-[data-theme="soft-machine"] .item:hover::before,
-[data-theme="soft-machine"] .itemActive::before {
+[data-theme='soft-machine'] .item:hover::before,
+[data-theme='soft-machine'] .itemActive::before {
   transform: scaleY(0.7);
 }
 
-[data-theme="soft-machine"] .itemActive::before {
+[data-theme='soft-machine'] .itemActive::before {
   transform: scaleY(1);
 }
 
@@ -336,15 +340,15 @@
   background-color: var(--text-tertiary);
 }
 
-.labelQualityDot[data-quality="full"] {
+.labelQualityDot[data-quality='full'] {
   background-color: var(--status-success-text);
 }
 
-.labelQualityDot[data-quality="partial"] {
+.labelQualityDot[data-quality='partial'] {
   background-color: var(--viz-palette-2);
 }
 
-.labelQualityDot[data-quality="none"] {
+.labelQualityDot[data-quality='none'] {
   background-color: var(--destructive);
 }
 

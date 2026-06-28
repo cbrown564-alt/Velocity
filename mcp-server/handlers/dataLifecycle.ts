@@ -47,10 +47,7 @@ export const dataLifecycleHandlers: Record<string, ToolHandler> = {
   },
 
   velocity_workspace_propose_mappings: async (engine, a) => {
-    const result = await engine.proposeWorkspaceMappings(
-      String(a.sourceDatasetId),
-      String(a.targetDatasetId)
-    );
+    const result = await engine.proposeWorkspaceMappings(String(a.sourceDatasetId), String(a.targetDatasetId));
     return successResponse(result);
   },
 

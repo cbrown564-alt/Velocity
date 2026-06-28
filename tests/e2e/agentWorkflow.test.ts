@@ -54,28 +54,19 @@ const CSV_DATA = `Q1,GENDER,AGE
 // Minimal server mock (same pattern as tools.test.ts)
 // ---------------------------------------------------------------------------
 
-type Handler = (request: {
-  params: { name: string; arguments: Record<string, unknown> };
-}) => Promise<unknown>;
+type Handler = (request: { params: { name: string; arguments: Record<string, unknown> } }) => Promise<unknown>;
 
 function makeServer() {
   const handlers: Record<string, Handler> = {};
   return {
-    setRequestHandler: (
-      _schema: unknown,
-      handler: Handler
-    ) => {
+    setRequestHandler: (_schema: unknown, handler: Handler) => {
       handlers[Object.keys(handlers).length === 0 ? 'list' : 'call'] = handler;
     },
     handlers,
   };
 }
 
-async function callTool(
-  engine: VelocityEngine,
-  toolName: string,
-  args: Record<string, unknown> = {}
-) {
+async function callTool(engine: VelocityEngine, toolName: string, args: Record<string, unknown> = {}) {
   const server = makeServer();
   registerTools(server as never, engine);
   const handler = server.handlers['call'];
@@ -134,7 +125,7 @@ describe('Phase 2 E2E: Full Agent Workflow', () => {
     expect(desc.operation).toBe('describe');
     expect(desc.data.dataset).not.toBeNull();
     expect(desc.data.dataset.variables.map((v: { name: string }) => v.name)).toEqual(
-      expect.arrayContaining(['Q1', 'GENDER', 'AGE'])
+      expect.arrayContaining(['Q1', 'GENDER', 'AGE']),
     );
     expect(desc.data.activeFilters).toHaveLength(0);
     expect(desc.data.weightVariable).toBeNull();
@@ -170,10 +161,7 @@ describe('Phase 2 E2E: Full Agent Workflow', () => {
       sections: [
         {
           title: 'Satisfaction',
-          slides: [
-            { rowVars: ['Q1'] },
-            { rowVars: ['Q1'], colVar: 'GENDER' },
-          ],
+          slides: [{ rowVars: ['Q1'] }, { rowVars: ['Q1'], colVar: 'GENDER' }],
         },
       ],
     };
@@ -262,7 +250,10 @@ describe('Phase 2 E2E: Full Agent Workflow', () => {
     expect(sessionResp.isError).toBeUndefined();
     const session = sessionResp.parsed;
     expect(session.data.slides.length).toBeGreaterThan(0);
-    const committed = session.data.slides.find((s: { title: string; analysisState: { rowVars: string[]; colVar: string | null } }) => s.title === deck.slides[0].resolvedTitle);
+    const committed = session.data.slides.find(
+      (s: { title: string; analysisState: { rowVars: string[]; colVar: string | null } }) =>
+        s.title === deck.slides[0].resolvedTitle,
+    );
     expect(committed).toBeDefined();
     expect(committed.analysisState.rowVars).toEqual(['Q1']);
     expect(committed.analysisState.colVar).toBe('GENDER');

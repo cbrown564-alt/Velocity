@@ -20,10 +20,7 @@ export interface PresentationChartOptionsInput {
  * PptxGenJS cycles chartColors across data points in a single series.
  * Pass one color per series (or one color total for a single series).
  */
-export function resolveChartColorsForExport(
-  seriesCount: number,
-  branding: ExportBranding,
-): string[] {
+export function resolveChartColorsForExport(seriesCount: number, branding: ExportBranding): string[] {
   const palette =
     branding.chartColors && branding.chartColors.length > 0
       ? branding.chartColors
@@ -38,9 +35,7 @@ export function resolveChartColorsForExport(
   return palette.slice(0, seriesCount);
 }
 
-export function buildPresentationChartOptions(
-  input: PresentationChartOptionsInput,
-): Record<string, unknown> {
+export function buildPresentationChartOptions(input: PresentationChartOptionsInput): Record<string, unknown> {
   const chartColors = resolveChartColorsForExport(input.seriesCount, input.branding);
   const gridColor = input.branding.primaryColor ?? 'CCCCCC';
 

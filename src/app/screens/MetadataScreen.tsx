@@ -11,12 +11,7 @@ export interface MetadataScreenProps {
   onLoadFull: () => void;
 }
 
-export const MetadataScreen: React.FC<MetadataScreenProps> = ({
-  dataset,
-  pendingSavSizeMb,
-  onCancel,
-  onLoadFull,
-}) => {
+export const MetadataScreen: React.FC<MetadataScreenProps> = ({ dataset, pendingSavSizeMb, onCancel, onLoadFull }) => {
   const reducedMotion = useReducedMotion();
 
   return (

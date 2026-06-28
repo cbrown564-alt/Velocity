@@ -1,27 +1,25 @@
 {
-    "csvFile": "large_perf_baseline.csv",
-    "expectedFile": "large_perf_baseline.expected.json",
-    "config": {
-        "rowVars": [
-            "v1"
-        ],
-        "colVar": "v2",
-        "weightVar": null,
-        "filters": []
+  "csvFile": "large_perf_baseline.csv",
+  "expectedFile": "large_perf_baseline.expected.json",
+  "config": {
+    "rowVars": ["v1"],
+    "colVar": "v2",
+    "weightVar": null,
+    "filters": []
+  },
+  "context": {
+    "variables": {
+      "v1": {
+        "name": "v1",
+        "type": "categorical",
+        "label": "V1"
+      },
+      "v2": {
+        "name": "v2",
+        "type": "categorical",
+        "label": "V2"
+      }
     },
-    "context": {
-        "variables": {
-            "v1": {
-                "name": "v1",
-                "type": "categorical",
-                "label": "V1"
-            },
-            "v2": {
-                "name": "v2",
-                "type": "categorical",
-                "label": "V2"
-            }
-        },
-        "variableSets": {}
-    }
+    "variableSets": {}
+  }
 }

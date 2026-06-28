@@ -24,11 +24,7 @@ export class ConceptStore {
 
   // ---- CRUD ----------------------------------------------------------------
 
-  createConcept(spec: {
-    name: string;
-    aliases?: string[];
-    canonicalScale?: Concept['canonicalScale'];
-  }): Concept {
+  createConcept(spec: { name: string; aliases?: string[]; canonicalScale?: Concept['canonicalScale'] }): Concept {
     const concept: Concept = {
       id: generateConceptId(),
       name: spec.name,
@@ -63,22 +59,17 @@ export class ConceptStore {
 
   // ---- Variable Linking ----------------------------------------------------
 
-  linkVariable(
-    conceptId: string,
-    ref: Omit<ConceptVariableRef, never>
-  ): void {
+  linkVariable(conceptId: string, ref: Omit<ConceptVariableRef, never>): void {
     const concept = this.concepts.get(conceptId);
     if (!concept) throw new Error(`Concept not found: ${conceptId}`);
 
-    const exists = concept.variableRefs.some(
-      (r) => r.datasetId === ref.datasetId && r.variableId === ref.variableId
-    );
+    const exists = concept.variableRefs.some((r) => r.datasetId === ref.datasetId && r.variableId === ref.variableId);
     if (!exists) {
       concept.variableRefs = [...concept.variableRefs, ref];
     } else {
       // Update existing ref
       concept.variableRefs = concept.variableRefs.map((r) =>
-        r.datasetId === ref.datasetId && r.variableId === ref.variableId ? ref : r
+        r.datasetId === ref.datasetId && r.variableId === ref.variableId ? ref : r,
       );
     }
   }
@@ -87,14 +78,14 @@ export class ConceptStore {
     const concept = this.concepts.get(conceptId);
     if (!concept) return;
     concept.variableRefs = concept.variableRefs.filter(
-      (r) => !(r.datasetId === datasetId && r.variableId === variableId)
+      (r) => !(r.datasetId === datasetId && r.variableId === variableId),
     );
   }
 
   /** Find concepts linked to a given variable */
   conceptsForVariable(datasetId: string, variableId: string): Concept[] {
     return this.listConcepts().filter((c) =>
-      c.variableRefs.some((r) => r.datasetId === datasetId && r.variableId === variableId)
+      c.variableRefs.some((r) => r.datasetId === datasetId && r.variableId === variableId),
     );
   }
 
@@ -102,9 +93,7 @@ export class ConceptStore {
   findByName(query: string): Concept[] {
     const q = query.toLowerCase();
     return this.listConcepts().filter(
-      (c) =>
-        c.name.toLowerCase() === q ||
-        c.aliases.some((a) => a.toLowerCase() === q)
+      (c) => c.name.toLowerCase() === q || c.aliases.some((a) => a.toLowerCase() === q),
     );
   }
 

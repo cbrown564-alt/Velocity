@@ -7,8 +7,7 @@ const TARGET_DIRS = ['src/components', 'src/features', 'src/store'];
 const VALID_EXTS = new Set(['.ts', '.tsx', '.js', '.jsx', '.mts', '.cts']);
 const FORBIDDEN_STATIC_IMPORT =
   /^\s*import(?:["'\s]*[\w*{}\n,]+from\s*)?["'](?:@duckdb\/[^"']+|duckdb(?:\/[^"']*)?)["'];?/gm;
-const FORBIDDEN_DYNAMIC_IMPORT =
-  /\bimport\(\s*["'](?:@duckdb\/[^"']+|duckdb(?:\/[^"']*)?)["']\s*\)/gm;
+const FORBIDDEN_DYNAMIC_IMPORT = /\bimport\(\s*["'](?:@duckdb\/[^"']+|duckdb(?:\/[^"']*)?)["']\s*\)/gm;
 
 function walk(dir) {
   const out = [];

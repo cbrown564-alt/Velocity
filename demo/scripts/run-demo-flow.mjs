@@ -52,7 +52,7 @@ async function waitForStableElement(page, selector, timeout) {
   await page.waitForFunction(
     (sel) => {
       const el = document.querySelector(sel);
-      if (!el || typeof el.checkVisibility === 'function' && !el.checkVisibility()) {
+      if (!el || (typeof el.checkVisibility === 'function' && !el.checkVisibility())) {
         return false;
       }
 
@@ -67,7 +67,7 @@ async function waitForStableElement(page, selector, timeout) {
       return true;
     },
     selector,
-    { timeout }
+    { timeout },
   );
 }
 
@@ -94,7 +94,11 @@ async function assertCondition(page, assertion, timeoutMs) {
     const start = Date.now();
     while (Date.now() - start < timeout) {
       for (const selector of assertion.selectors || []) {
-        const visible = await page.locator(selector).first().isVisible().catch(() => false);
+        const visible = await page
+          .locator(selector)
+          .first()
+          .isVisible()
+          .catch(() => false);
         if (visible) return;
       }
       await page.waitForTimeout(250);
@@ -142,10 +146,7 @@ async function executeStep(page, step, config) {
       await page.locator(step.selector).first().click({ timeout });
       break;
     case 'clickRole': {
-      const name =
-        step.namePattern
-          ? new RegExp(step.namePattern, step.nameFlags || '')
-          : step.name;
+      const name = step.namePattern ? new RegExp(step.namePattern, step.nameFlags || '') : step.name;
       await page.getByRole(step.role, { name }).first().click({ timeout });
       break;
     }
@@ -155,9 +156,7 @@ async function executeStep(page, step, config) {
       const download = await downloadPromise;
       const suggestedFilename = download.suggestedFilename();
       if (step.expectedExtension && !suggestedFilename.endsWith(step.expectedExtension)) {
-        throw new Error(
-          `Download filename "${suggestedFilename}" does not end with "${step.expectedExtension}"`
-        );
+        throw new Error(`Download filename "${suggestedFilename}" does not end with "${step.expectedExtension}"`);
       }
       if (config.downloadsDir) {
         downloadMeta = await saveDownload(download, config.downloadsDir, step.downloadFilename);
@@ -166,17 +165,12 @@ async function executeStep(page, step, config) {
     }
     case 'clickRoleAndWaitForDownload': {
       const downloadPromise = page.waitForEvent('download', { timeout });
-      const name =
-        step.namePattern
-          ? new RegExp(step.namePattern, step.nameFlags || '')
-          : step.name;
+      const name = step.namePattern ? new RegExp(step.namePattern, step.nameFlags || '') : step.name;
       await page.getByRole(step.role, { name }).first().click({ timeout });
       const download = await downloadPromise;
       const suggestedFilename = download.suggestedFilename();
       if (step.expectedExtension && !suggestedFilename.endsWith(step.expectedExtension)) {
-        throw new Error(
-          `Download filename "${suggestedFilename}" does not end with "${step.expectedExtension}"`
-        );
+        throw new Error(`Download filename "${suggestedFilename}" does not end with "${step.expectedExtension}"`);
       }
       if (config.downloadsDir) {
         downloadMeta = await saveDownload(download, config.downloadsDir, step.downloadFilename);

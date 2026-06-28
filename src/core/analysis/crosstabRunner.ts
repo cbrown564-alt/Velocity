@@ -43,8 +43,8 @@ export class CrosstabRunner implements AnalysisRunner<CrosstabConfig, CrosstabRe
       rowVars: { type: 'array', items: { type: 'string' } },
       colVar: { type: 'string', nullable: true },
       filters: { type: 'array' },
-      includeDistributions: { type: 'boolean' }
-    }
+      includeDistributions: { type: 'boolean' },
+    },
   };
 
   async run(adapter: DatabaseAdapter, config: CrosstabConfig): Promise<CrosstabResult> {
@@ -59,7 +59,7 @@ analysisRegistry.register(crosstabRunner);
 export async function runCrosstab(
   adapter: DatabaseAdapter,
   options: CrosstabQueryOptions & { includeDistributions?: boolean; significanceOptions?: SignificanceOptions },
-  context: CrosstabContext
+  context: CrosstabContext,
 ): Promise<CrosstabResultData> {
   const modifiedOptions = prepareCrosstabOptions(options, context);
 

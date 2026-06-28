@@ -10,7 +10,7 @@ interface ResolvedAnalysisVariables {
 export const resolveAnalysisVariables = (
   analysisState: SlideAnalysisState,
   variableSets: VariableSet[],
-  variables: Variable[]
+  variables: Variable[],
 ): ResolvedAnalysisVariables => {
   const resolveVarSetToVariable = (varSetId: string): Variable | null => {
     const varSet = variableSets.find((vs) => vs.id === varSetId);
@@ -32,15 +32,12 @@ export const resolveAnalysisVariables = (
     return null;
   };
 
-  const rowVariables = analysisState.rowVars
-    .map(resolveVarSetToVariable)
-    .filter((v): v is Variable => v !== null);
+  const rowVariables = analysisState.rowVars.map(resolveVarSetToVariable).filter((v): v is Variable => v !== null);
 
   const colVariable = analysisState.colVar ? resolveVarSetToVariable(analysisState.colVar) : null;
 
-  const firstRowVarSet = analysisState.rowVars.length > 0
-    ? variableSets.find((vs) => vs.id === analysisState.rowVars[0])
-    : undefined;
+  const firstRowVarSet =
+    analysisState.rowVars.length > 0 ? variableSets.find((vs) => vs.id === analysisState.rowVars[0]) : undefined;
 
   return { rowVariables, colVariable, firstRowVarSet };
 };

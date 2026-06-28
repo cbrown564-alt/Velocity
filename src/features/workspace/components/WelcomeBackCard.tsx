@@ -15,11 +15,7 @@ export interface WelcomeBackCardProps {
   onDismiss: () => void;
 }
 
-export const WelcomeBackCard: React.FC<WelcomeBackCardProps> = ({
-  candidate,
-  onResume,
-  onDismiss,
-}) => {
+export const WelcomeBackCard: React.FC<WelcomeBackCardProps> = ({ candidate, onResume, onDismiss }) => {
   const reducedMotion = useReducedMotion();
 
   return (
@@ -39,12 +35,7 @@ export const WelcomeBackCard: React.FC<WelcomeBackCardProps> = ({
         <button type="button" className={styles.resumeButton} onClick={onResume}>
           Resume
         </button>
-        <button
-          type="button"
-          className={styles.dismissButton}
-          onClick={onDismiss}
-          aria-label="Dismiss welcome back"
-        >
+        <button type="button" className={styles.dismissButton} onClick={onDismiss} aria-label="Dismiss welcome back">
           <X size={16} />
         </button>
       </div>

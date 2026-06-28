@@ -21,7 +21,7 @@ export function generateNarrativeTitleFromRows(
   tableStats: TableStats | null,
   rowVarLabel: string,
   colVarLabel: string | null,
-  resolver?: LabelResolver
+  resolver?: LabelResolver,
 ): string | null {
   if (!rows || rows.length === 0) return null;
 
@@ -48,11 +48,7 @@ export function generateNarrativeTitleFromRows(
     const rank = SIG_RANK[row.sig] ?? 0;
     if (rank === 0) continue;
 
-    if (
-      !bestCell ||
-      rank > SIG_RANK[bestCell.sig] ||
-      (rank === SIG_RANK[bestCell.sig] && row.count > bestCell.count)
-    ) {
+    if (!bestCell || rank > SIG_RANK[bestCell.sig] || (rank === SIG_RANK[bestCell.sig] && row.count > bestCell.count)) {
       bestCell = {
         rowKey: row.rowKeys[0] ?? 'Unknown',
         colKey: row.colKey || 'Unknown',

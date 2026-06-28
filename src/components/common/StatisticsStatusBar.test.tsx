@@ -21,7 +21,7 @@ describe('StatisticsStatusBar chi-square styling (UXP-034)', () => {
         }}
         colVariable={colVariable}
         overlapCorrected={false}
-      />
+      />,
     );
     const badge = screen.getByText(/χ² = 12\.4/);
     expect(badge.className).toMatch(/chiSquareSignificant/);
@@ -37,7 +37,7 @@ describe('StatisticsStatusBar chi-square styling (UXP-034)', () => {
         }}
         colVariable={colVariable}
         overlapCorrected={false}
-      />
+      />,
     );
     const badge = screen.getByText(/χ² = 5\.8/);
     expect(badge.className).toMatch(/chiSquareInsignificant/);
@@ -54,7 +54,7 @@ describe('StatisticsStatusBar chi-square styling (UXP-034)', () => {
         }}
         colVariable={colVariable}
         overlapCorrected={false}
-      />
+      />,
     );
 
     fireEvent.click(screen.getByRole('button', { name: /statistical settings/i }));

@@ -90,8 +90,28 @@ describe('SlideHeader', () => {
         name: 'test',
         rowCount: 100,
         variables: [
-          { id: 'v1', name: 'gender', label: 'Gender', type: 'categorical', valueLabels: [{ value: 1, label: 'Male' }, { value: 2, label: 'Female' }], missingValues: {} },
-          { id: 'v2', name: 'region', label: 'Region', type: 'categorical', valueLabels: [{ value: 1, label: 'East' }, { value: 2, label: 'West' }], missingValues: {} },
+          {
+            id: 'v1',
+            name: 'gender',
+            label: 'Gender',
+            type: 'categorical',
+            valueLabels: [
+              { value: 1, label: 'Male' },
+              { value: 2, label: 'Female' },
+            ],
+            missingValues: {},
+          },
+          {
+            id: 'v2',
+            name: 'region',
+            label: 'Region',
+            type: 'categorical',
+            valueLabels: [
+              { value: 1, label: 'East' },
+              { value: 2, label: 'West' },
+            ],
+            missingValues: {},
+          },
         ],
         source: 'csv',
       },
@@ -117,8 +137,28 @@ describe('SlideHeader', () => {
         name: 'test',
         rowCount: 100,
         variables: [
-          { id: 'v1', name: 'gender', label: 'Gender', type: 'categorical', valueLabels: [{ value: 1, label: 'Male' }, { value: 2, label: 'Female' }], missingValues: {} },
-          { id: 'v2', name: 'region', label: 'Region', type: 'categorical', valueLabels: [{ value: 1, label: 'East' }, { value: 2, label: 'West' }], missingValues: {} },
+          {
+            id: 'v1',
+            name: 'gender',
+            label: 'Gender',
+            type: 'categorical',
+            valueLabels: [
+              { value: 1, label: 'Male' },
+              { value: 2, label: 'Female' },
+            ],
+            missingValues: {},
+          },
+          {
+            id: 'v2',
+            name: 'region',
+            label: 'Region',
+            type: 'categorical',
+            valueLabels: [
+              { value: 1, label: 'East' },
+              { value: 2, label: 'West' },
+            ],
+            missingValues: {},
+          },
         ],
         source: 'csv',
       },
@@ -134,7 +174,7 @@ describe('SlideHeader', () => {
 
     await waitFor(() => {
       const state = useVelocityStore.getState();
-      const slide = state.slides.find(s => s.id === 'slide-1');
+      const slide = state.slides.find((s) => s.id === 'slide-1');
       expect(slide?.title).toContain('Male');
     });
   });
@@ -142,9 +182,7 @@ describe('SlideHeader', () => {
   it('shows filtered sample size in subtitle when filters are active (UXR-010)', () => {
     useVelocityStore.setState({
       tableConfig: { rowVars: ['gender'], colVar: 'region' },
-      activeFilters: [
-        { id: 'f1', variableId: 'nps', operator: 'eq', value: 'Promoter' },
-      ],
+      activeFilters: [{ id: 'f1', variableId: 'nps', operator: 'eq', value: 'Promoter' }],
       variableSets: [
         { id: 'gender', name: 'Gender', variableIds: ['v1'], type: 'categorical', structure: 'single' },
         { id: 'region', name: 'Region', variableIds: ['v2'], type: 'categorical', structure: 'single' },
@@ -176,9 +214,7 @@ describe('SlideHeader', () => {
     useVelocityStore.setState({
       slides: [createSlide({ id: 'slide-1', title: 'My Custom Title' })],
       tableConfig: { rowVars: ['gender'], colVar: 'region' },
-      variableSets: [
-        { id: 'gender', name: 'Gender', variableIds: ['v1'], type: 'categorical', structure: 'single' },
-      ],
+      variableSets: [{ id: 'gender', name: 'Gender', variableIds: ['v1'], type: 'categorical', structure: 'single' }],
       dataset: {
         id: 'ds1',
         name: 'test',
@@ -188,9 +224,7 @@ describe('SlideHeader', () => {
         ],
         source: 'csv',
       },
-      queryResult: [
-        { rowKeys: ['1'], colKey: '1', count: 60, sig: 'high_95' },
-      ],
+      queryResult: [{ rowKeys: ['1'], colKey: '1', count: 60, sig: 'high_95' }],
     });
 
     render(<SlideHeader />);

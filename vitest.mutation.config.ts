@@ -7,21 +7,17 @@ import { defineConfig } from 'vitest/config';
  * to suites that exercise portable core logic (co-located + golden/parity).
  */
 export default defineConfig({
-    resolve: {
-        alias: {
-            '@': path.resolve(__dirname, 'src'),
-            '@velocity/readstat-wasm': path.resolve(__dirname, 'packages/readstat-wasm/ts'),
-        },
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, 'src'),
+      '@velocity/readstat-wasm': path.resolve(__dirname, 'packages/readstat-wasm/ts'),
     },
-    test: {
-        globals: true,
-        environment: 'happy-dom',
-        setupFiles: ['./src/test/setup.ts'],
-        include: [
-            'src/core/**/*.test.{ts,tsx}',
-            'tests/golden/**/*.test.ts',
-            'tests/parity/**/*.test.ts',
-        ],
-        pool: 'threads',
-    },
+  },
+  test: {
+    globals: true,
+    environment: 'happy-dom',
+    setupFiles: ['./src/test/setup.ts'],
+    include: ['src/core/**/*.test.{ts,tsx}', 'tests/golden/**/*.test.ts', 'tests/parity/**/*.test.ts'],
+    pool: 'threads',
+  },
 });

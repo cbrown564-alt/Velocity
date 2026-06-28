@@ -201,9 +201,7 @@ describe('annotator — Likert/attitude detection', () => {
     };
     const withGrid = autoAnnotate([LIKERT_VAR], [gridSet]);
     const withoutGrid = autoAnnotate([LIKERT_VAR], []);
-    expect(withGrid.get('q1_sat')!.confidence).toBeGreaterThanOrEqual(
-      withoutGrid.get('q1_sat')!.confidence
-    );
+    expect(withGrid.get('q1_sat')!.confidence).toBeGreaterThanOrEqual(withoutGrid.get('q1_sat')!.confidence);
   });
 });
 

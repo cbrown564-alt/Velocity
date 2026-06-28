@@ -15,7 +15,6 @@
    1. Typography
    ============================================================================ */
 
-
 /* ============================================================================
      1. Semantic Tokens (The Protocol)
      These tokens are used throughout the application.
@@ -106,7 +105,7 @@
   /* Functional semantic colors — mapped to per-theme significance tokens for
      legibility at small sizes. Falls back to diverging scale if not set. */
   --color-success: var(--sig-higher, var(--viz-diverging-1));
-  --color-error:   var(--sig-lower,  var(--viz-diverging-6));
+  --color-error: var(--sig-lower, var(--viz-diverging-6));
   --color-warning: var(--status-warning-text);
 
   /* Insight Halo: subtle cell background tints for significance */
@@ -168,7 +167,7 @@
   --shadow-text: 0 1px 2px rgb(0 0 0 / 0.5);
 
   /* Motion */
-  --ease-standard: cubic-bezier(0.4, 0.0, 0.2, 1);
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
   --transition-fast: 150ms var(--ease-standard);
   --transition-base: 250ms var(--ease-standard);
   --transition-slow: 400ms var(--ease-standard);
@@ -181,9 +180,9 @@
 /* Soft Machine Theme overrides are now consolidated in section 11 */
 
 /* Mission Control overrides */
-[data-theme="mission-control"] {
+[data-theme='mission-control'] {
   /* Caution amber decoupled from chart palette (UXP-035) */
-  --status-warning-text: #9A8540;
+  --status-warning-text: #9a8540;
   --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.2);
   --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.3), 0 1px 2px 0 rgb(0 0 0 / 0.2);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.3);
@@ -202,7 +201,7 @@
 }
 
 /* Liquid Glass behavior */
-[data-theme="liquid-glass"] body {
+[data-theme='liquid-glass'] body {
   background-image:
     radial-gradient(at 0% 0%, rgba(200, 220, 255, 0.4) 0, transparent 50%),
     radial-gradient(at 100% 0%, rgba(255, 200, 220, 0.4) 0, transparent 50%),
@@ -220,7 +219,7 @@
 
 /* Base Panel Surface */
 .surface-panel,
-[data-theme="liquid-glass"] .bg-\[var\(--bg-panel\)\] {
+[data-theme='liquid-glass'] .bg-\[var\(--bg-panel\)\] {
   background: var(--mat-panel-bg, var(--bg-panel));
   backdrop-filter: var(--mat-panel-filter, none);
   -webkit-backdrop-filter: var(--mat-panel-filter, none);
@@ -230,7 +229,7 @@
 
 /* Overlay Surface (Popovers) */
 .surface-overlay,
-[data-theme="liquid-glass"] .bg-\[var\(--bg-surface\)\] {
+[data-theme='liquid-glass'] .bg-\[var\(--bg-surface\)\] {
   background: var(--mat-overlay-bg, var(--bg-surface));
   backdrop-filter: var(--mat-overlay-filter, none);
   -webkit-backdrop-filter: var(--mat-overlay-filter, none);
@@ -238,9 +237,9 @@
 }
 
 /* Ensure headings are crisp on glass */
-[data-theme="liquid-glass"] h1,
-[data-theme="liquid-glass"] h2,
-[data-theme="liquid-glass"] h3 {
+[data-theme='liquid-glass'] h1,
+[data-theme='liquid-glass'] h2,
+[data-theme='liquid-glass'] h3 {
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
@@ -249,7 +248,7 @@
   background-color: var(--bg-app);
 }
 
-[data-theme="liquid-glass"] .bg-glass-app {
+[data-theme='liquid-glass'] .bg-glass-app {
   background-color: transparent;
 }
 
@@ -264,9 +263,10 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   line-height: 1.5;
-  transition: background-color var(--transition-base), color var(--transition-base);
+  transition:
+    background-color var(--transition-base),
+    color var(--transition-base);
 }
-
 
 /* Display headings use font-display */
 h1,
@@ -357,8 +357,6 @@ h3 {
   }
 }
 
-
-
 /* ============================================================================
    9. Animation Keyframes
    ============================================================================ */
@@ -376,7 +374,6 @@ h3 {
 }
 
 @keyframes pulse {
-
   0%,
   100% {
     opacity: 1;
@@ -421,11 +418,11 @@ h3 {
 }
 
 /* Mission Control: Scanline Sweep on Rows */
-[data-theme="mission-control"] .data-row-interactive {
+[data-theme='mission-control'] .data-row-interactive {
   overflow: hidden;
 }
 
-[data-theme="mission-control"] .data-row-interactive::after {
+[data-theme='mission-control'] .data-row-interactive::after {
   content: '';
   position: absolute;
   left: 0;
@@ -438,11 +435,11 @@ h3 {
   z-index: 10;
 }
 
-[data-theme="mission-control"] .data-row-interactive:hover {
+[data-theme='mission-control'] .data-row-interactive:hover {
   background: rgba(0, 212, 255, 0.03);
 }
 
-[data-theme="mission-control"] .data-row-interactive:hover::after {
+[data-theme='mission-control'] .data-row-interactive:hover::after {
   width: 100%;
 }
 
@@ -456,7 +453,7 @@ h3 {
   position: relative;
 }
 
-[data-theme="soft-machine"] .data-row-interactive td:first-child::before,
+[data-theme='soft-machine'] .data-row-interactive td:first-child::before,
 :root:not([data-theme]) .data-row-interactive td:first-child::before {
   content: '';
   position: absolute;
@@ -471,11 +468,11 @@ h3 {
   border-radius: 4px;
 }
 
-[data-theme="soft-machine"] .data-row-interactive:hover {
+[data-theme='soft-machine'] .data-row-interactive:hover {
   background: var(--bg-panel);
 }
 
-[data-theme="soft-machine"] .data-row-interactive:hover td:first-child::before,
+[data-theme='soft-machine'] .data-row-interactive:hover td:first-child::before,
 :root:not([data-theme]) .data-row-interactive:hover td:first-child::before {
   transform: scaleY(1);
 }
@@ -494,29 +491,28 @@ h3 {
    -------------------------------------------------------------------------- */
 
 /* Paper texture on panels */
-[data-theme="soft-machine"] .bg-\[var\(--bg-panel\)\],
+[data-theme='soft-machine'] .bg-\[var\(--bg-panel\)\],
 :root:not([data-theme]) .bg-\[var\(--bg-panel\)\] {
-  background-image:
-    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
   background-blend-mode: multiply;
 }
 
 /* Ink density: secondary text slightly faded */
-[data-theme="soft-machine"] .text-\[var\(--text-secondary\)\],
+[data-theme='soft-machine'] .text-\[var\(--text-secondary\)\],
 :root:not([data-theme]) .text-\[var\(--text-secondary\)\] {
   opacity: 0.85;
 }
 
 /* Warmer grid borders */
-[data-theme="soft-machine"] td,
-[data-theme="soft-machine"] th,
+[data-theme='soft-machine'] td,
+[data-theme='soft-machine'] th,
 :root:not([data-theme]) td,
 :root:not([data-theme]) th {
   border-color: color-mix(in srgb, var(--border-grid) 70%, var(--color-accent) 5%);
 }
 
 /* Margin notes: shelf labels as handwritten section headers */
-[data-theme="soft-machine"] .shelf-label,
+[data-theme='soft-machine'] .shelf-label,
 :root:not([data-theme]) .shelf-label {
   font-family: var(--font-display);
   font-size: 0.65rem;
@@ -533,29 +529,29 @@ h3 {
    -------------------------------------------------------------------------- */
 
 /* Graticule-style grid: higher contrast grid lines */
-[data-theme="mission-control"] .data-cell,
-[data-theme="mission-control"] th {
+[data-theme='mission-control'] .data-cell,
+[data-theme='mission-control'] th {
   border-color: color-mix(in srgb, var(--border-grid) 90%, var(--color-accent) 8%);
 }
 
 /* Small-base n= — whisper, not warning shout (UXP-035) */
 .crosstab-small-base,
-[data-small-base="true"] {
+[data-small-base='true'] {
   color: var(--text-secondary);
   opacity: 0.55;
   font-weight: 400;
 }
 
 /* Monospace discipline: Total row reads as instrument panel */
-[data-theme="mission-control"] .total-row-label,
-[data-theme="mission-control"] .total-row-cell {
+[data-theme='mission-control'] .total-row-label,
+[data-theme='mission-control'] .total-row-cell {
   font-family: var(--font-mono);
   font-weight: 700;
   letter-spacing: -0.01em;
 }
 
 /* Phosphor persistence ghost: CRT-style cyan afterglow */
-[data-theme="mission-control"] .phosphor-ghost {
+[data-theme='mission-control'] .phosphor-ghost {
   text-shadow:
     0 0 4px color-mix(in srgb, var(--color-accent) 40%, transparent),
     0 0 12px color-mix(in srgb, var(--color-accent) 20%, transparent);
@@ -566,47 +562,42 @@ h3 {
    -------------------------------------------------------------------------- */
 
 /* Specular cell highlight on hover */
-[data-theme="liquid-glass"] .data-cell:hover::before {
+[data-theme='liquid-glass'] .data-cell:hover::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(
-    circle at 50% 0%,
-    rgba(255, 255, 255, 0.06) 0%,
-    transparent 60%
-  );
+  background: radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.06) 0%, transparent 60%);
   pointer-events: none;
   z-index: 1;
 }
 
 /* Refracted typography: lighter weight, slightly increased tracking */
-[data-theme="liquid-glass"] .data-cell,
-[data-theme="liquid-glass"] .statistic-value {
+[data-theme='liquid-glass'] .data-cell,
+[data-theme='liquid-glass'] .statistic-value {
   font-weight: 400;
   letter-spacing: 0.01em;
 }
 
-[data-theme="liquid-glass"] h1,
-[data-theme="liquid-glass"] h2,
-[data-theme="liquid-glass"] .slide-header-title {
+[data-theme='liquid-glass'] h1,
+[data-theme='liquid-glass'] h2,
+[data-theme='liquid-glass'] .slide-header-title {
   font-weight: 300;
   letter-spacing: -0.01em;
 }
 
 /* Depth hierarchy: table floats above background on a distinct z-layer */
-[data-theme="liquid-glass"] .analysis-frame {
+[data-theme='liquid-glass'] .analysis-frame {
   box-shadow:
     0 24px 48px -12px rgba(0, 0, 0, 0.15),
     0 0 0 1px rgba(255, 255, 255, 0.2),
     inset 0 1px 0 rgba(255, 255, 255, 0.3);
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.08) 0%, transparent 8%),
-    var(--mat-panel-bg, var(--bg-panel));
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, transparent 8%), var(--mat-panel-bg, var(--bg-panel));
 }
 
 /* Frosted footer: more blur than table body */
-[data-theme="liquid-glass"] .statistics-status-bar,
-[data-theme="liquid-glass"] .methodology-popover {
+[data-theme='liquid-glass'] .statistics-status-bar,
+[data-theme='liquid-glass'] .methodology-popover {
   backdrop-filter: blur(30px) saturate(160%);
   -webkit-backdrop-filter: blur(30px) saturate(160%);
 }
@@ -692,7 +683,7 @@ h3 {
 /* Theme-specific Timeline Dock */
 
 /* Mission Control: Glowing cyan accents */
-[data-theme="mission-control"] .timeline-dock {
+[data-theme='mission-control'] .timeline-dock {
   background: rgba(26, 29, 33, 0.9);
   border: 1px solid rgba(0, 212, 255, 0.15);
   box-shadow:
@@ -700,7 +691,7 @@ h3 {
     inset 0 1px 0 rgba(0, 212, 255, 0.1);
 }
 
-[data-theme="mission-control"] .timeline-active-glow {
+[data-theme='mission-control'] .timeline-active-glow {
   box-shadow:
     0 0 12px rgba(0, 212, 255, 0.4),
     0 0 24px rgba(0, 212, 255, 0.2),
@@ -708,19 +699,19 @@ h3 {
 }
 
 /* Soft Machine: Warm with coral accent */
-[data-theme="soft-machine"] .timeline-dock,
+[data-theme='soft-machine'] .timeline-dock,
 :root:not([data-theme]) .timeline-dock {
   background: var(--bg-panel);
   box-shadow: 0 4px 16px color-mix(in srgb, var(--primary) 8%, transparent);
 }
 
-[data-theme="soft-machine"] .timeline-active-glow,
+[data-theme='soft-machine'] .timeline-active-glow,
 :root:not([data-theme]) .timeline-active-glow {
   box-shadow: -2px 0 0 0 var(--color-accent);
 }
 
 /* Liquid Glass: Frosted translucency */
-[data-theme="liquid-glass"] .timeline-dock {
+[data-theme='liquid-glass'] .timeline-dock {
   background: rgba(255, 255, 255, 0.25);
   backdrop-filter: blur(25px) saturate(180%);
   -webkit-backdrop-filter: blur(25px) saturate(180%);
@@ -730,7 +721,7 @@ h3 {
     inset 0 1px 0 rgba(255, 255, 255, 0.4);
 }
 
-[data-theme="liquid-glass"] .timeline-active-glow {
+[data-theme='liquid-glass'] .timeline-active-glow {
   box-shadow:
     0 0 0 2px rgba(0, 122, 255, 0.3),
     0 4px 12px rgba(0, 122, 255, 0.2);

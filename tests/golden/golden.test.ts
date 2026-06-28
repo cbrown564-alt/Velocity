@@ -75,34 +75,46 @@ describe('Golden Tests (Legacy)', () => {
   });
 
   it('gender counts', async () => {
-    const results = await runCrosstab(db, {
-      rowVars: ['gender'],
-      colVar: null,
-      weightVar: null,
-      filters: [],
-    }, { variables: {}, variableSets: {} });
+    const results = await runCrosstab(
+      db,
+      {
+        rowVars: ['gender'],
+        colVar: null,
+        weightVar: null,
+        filters: [],
+      },
+      { variables: {}, variableSets: {} },
+    );
 
     expectCloseDeepWithBootstrap(sortRows(results.rows), 'gender_counts.json');
   });
 
   it('region by gender crosstab', async () => {
-    const results = await runCrosstab(db, {
-      rowVars: ['region'],
-      colVar: 'gender',
-      weightVar: null,
-      filters: [],
-    }, { variables: {}, variableSets: {} });
+    const results = await runCrosstab(
+      db,
+      {
+        rowVars: ['region'],
+        colVar: 'gender',
+        weightVar: null,
+        filters: [],
+      },
+      { variables: {}, variableSets: {} },
+    );
 
     expectCloseDeepWithBootstrap(sortRows(results.rows), 'region_by_gender.json');
   });
 
   it('weighted gender counts', async () => {
-    const results = await runCrosstab(db, {
-      rowVars: ['gender'],
-      colVar: null,
-      weightVar: 'weight',
-      filters: [],
-    }, { variables: {}, variableSets: {} });
+    const results = await runCrosstab(
+      db,
+      {
+        rowVars: ['gender'],
+        colVar: null,
+        weightVar: 'weight',
+        filters: [],
+      },
+      { variables: {}, variableSets: {} },
+    );
 
     expectCloseDeepWithBootstrap(sortRows(results.rows), 'gender_weighted.json');
   });
@@ -114,7 +126,7 @@ describe('Golden Tests (Legacy)', () => {
 });
 
 describe('Dynamic Golden Tests', () => {
-  const configs = readdirSync(FIXTURES).filter(f => f.endsWith('.config.json'));
+  const configs = readdirSync(FIXTURES).filter((f) => f.endsWith('.config.json'));
 
   for (const configFile of configs) {
     it(`fixture: ${configFile}`, async () => {
@@ -128,7 +140,7 @@ describe('Dynamic Golden Tests', () => {
         const start = process.hrtime();
         const results = await runCrosstab(db, testConfig.config, testConfig.context);
         const [s, ns] = process.hrtime(start);
-        const durationMs = (s * 1e3) + (ns / 1e6);
+        const durationMs = s * 1e3 + ns / 1e6;
 
         // Performance logging for large datasets
         if (testConfig.csvFile.includes('large_perf')) {

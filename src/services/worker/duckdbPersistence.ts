@@ -8,23 +8,13 @@ import {
   isWriteModeCommitError,
 } from './duckdbErrorHelpers';
 import { init, stopKeepalive } from './duckdbInit';
-import {
-  buildOpfsDbPath,
-  buildRepairDbPath,
-  quarantineCorruptedDb,
-  removeOpfsDbFile,
-} from './duckdbOpfs';
+import { buildOpfsDbPath, buildRepairDbPath, quarantineCorruptedDb, removeOpfsDbFile } from './duckdbOpfs';
 import { postEngineResponse } from './engineMessaging';
 import { getSchema } from './workerQueries';
 import { META_TABLE, OPFS_SCHEMA_VERSION, workerDbState } from './workerDbState';
 
 export { init, stopKeepalive };
-export {
-  getErrorMessage,
-  isCorruptionLikeError,
-  isFatalDatabaseRuntimeError,
-  isWriteModeCommitError,
-};
+export { getErrorMessage, isCorruptionLikeError, isFatalDatabaseRuntimeError, isWriteModeCommitError };
 
 async function ensureMetaTable(): Promise<void> {
   const { conn } = workerDbState;
@@ -146,7 +136,10 @@ export async function reopenWritableDatabase(pathOverride?: string): Promise<voi
       return;
     } catch (error: any) {
       workerDbState.persistenceError = error?.message || String(error);
-      console.warn('🦆 [Worker] Failed to reopen writable OPFS database, falling back to memory:', workerDbState.persistenceError);
+      console.warn(
+        '🦆 [Worker] Failed to reopen writable OPFS database, falling back to memory:',
+        workerDbState.persistenceError,
+      );
     }
   }
 

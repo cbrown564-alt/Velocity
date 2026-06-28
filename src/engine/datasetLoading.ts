@@ -68,7 +68,7 @@ export function buildDefaultVariableSets(variables: Variable[]): VariableSet[] {
 export function buildDatasetSummary(
   dataset: Dataset,
   variableSetCount: number,
-  extras?: { fileSizeBytes?: number }
+  extras?: { fileSizeBytes?: number },
 ): DatasetSummary {
   return {
     datasetName: dataset.name,
@@ -151,7 +151,7 @@ export class DatasetLoading {
     const warnings: string[] = [];
     if (fileSizeBytes >= METADATA_FIRST_THRESHOLD_BYTES) {
       warnings.push(
-        `File is ${(fileSizeBytes / (1024 * 1024)).toFixed(1)} MB. Metadata loaded; call velocity_load_full when ready to analyze rows.`
+        `File is ${(fileSizeBytes / (1024 * 1024)).toFixed(1)} MB. Metadata loaded; call velocity_load_full when ready to analyze rows.`,
       );
     }
 
@@ -163,7 +163,7 @@ export class DatasetLoading {
         if (source !== 'sav') {
           throw new VelocityError(
             'UNSUPPORTED_FORMAT',
-            'Metadata-only load is supported for SAV files. Use velocity_load for CSV.'
+            'Metadata-only load is supported for SAV files. Use velocity_load for CSV.',
           );
         }
 
@@ -192,7 +192,7 @@ export class DatasetLoading {
 
         return buildDatasetSummary(state.dataset, state.variableSets.length, { fileSizeBytes });
       },
-      warnings
+      warnings,
     );
   }
 
@@ -206,25 +206,15 @@ export class DatasetLoading {
     }
 
     if (pendingPath && pendingPath !== resolvedPath) {
-      throw new VelocityError(
-        'FILE_LOAD_FAILED',
-        `Expected full load for ${pendingPath}, received ${resolvedPath}.`
-      );
+      throw new VelocityError('FILE_LOAD_FAILED', `Expected full load for ${pendingPath}, received ${resolvedPath}.`);
     }
 
     return this.loadFile(resolvedPath);
   }
 
-  async loadBuffer(
-    name: string,
-    buffer: ArrayBuffer,
-    format: 'sav' | 'csv'
-  ): Promise<ResultEnvelope<DatasetSummary>> {
+  async loadBuffer(name: string, buffer: ArrayBuffer, format: 'sav' | 'csv'): Promise<ResultEnvelope<DatasetSummary>> {
     if (this.host.runtime !== 'node') {
-      throw new VelocityError(
-        'UNSUPPORTED_RUNTIME',
-        'loadBuffer() is only wired for the Node runtime in Phase 1.'
-      );
+      throw new VelocityError('UNSUPPORTED_RUNTIME', 'loadBuffer() is only wired for the Node runtime in Phase 1.');
     }
 
     const { mkdtemp, rm, writeFile } = await import('node:fs/promises');

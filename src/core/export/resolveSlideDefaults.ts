@@ -22,10 +22,7 @@ function renderFilter(filter: Filter, variableLabels?: Record<string, string>): 
   return `${varLabel} ${op} ${val}`;
 }
 
-export function resolveSlideTitle(
-  rowVars: LabeledValue[],
-  colVar: LabeledValue | null
-): string {
+export function resolveSlideTitle(rowVars: LabeledValue[], colVar: LabeledValue | null): string {
   if (rowVars.length === 0) return 'New Slide';
 
   const rowLabels = rowVars.map(getDisplayLabel);
@@ -42,7 +39,7 @@ export function resolveSlideSubtitle(
   weightVar: LabeledValue | null,
   rowCount: number,
   isWeighted: boolean,
-  variableLabels?: Record<string, string>
+  variableLabels?: Record<string, string>,
 ): string {
   const parts: string[] = [];
 

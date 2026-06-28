@@ -80,15 +80,17 @@ export async function init(
   const enableDuckDbOpfsPersistence = ENABLE_DUCKDB_OPFS_PERSISTENCE && duckDbOpfsSupported;
   const opfsDisabledReason = !ENABLE_DUCKDB_OPFS_PERSISTENCE
     ? 'DuckDB OPFS DB persistence disabled by feature flag'
-    : (!duckDbOpfsSupported
+    : !duckDbOpfsSupported
       ? `DuckDB ${duckDbVersion || 'unknown'} does not support OPFS DB persistence (requires >= ${MIN_DUCKDB_VERSION_FOR_OPFS_PERSISTENCE.join('.')}). Upgrade @duckdb/duckdb-wasm to enable it.`
-      : undefined);
+      : undefined;
 
   if (duckDbVersion) {
     console.log('🦆 [Worker] DuckDB Version:', duckDbVersion);
   }
   if (!duckDbOpfsSupported) {
-    console.warn(`🦆 [Worker] Disabling DuckDB OPFS DB persistence: DuckDB ${duckDbVersion} < ${MIN_DUCKDB_VERSION_FOR_OPFS_PERSISTENCE.join('.')}`);
+    console.warn(
+      `🦆 [Worker] Disabling DuckDB OPFS DB persistence: DuckDB ${duckDbVersion} < ${MIN_DUCKDB_VERSION_FOR_OPFS_PERSISTENCE.join('.')}`,
+    );
   }
 
   const opfsSupport = await detectOpfsSupport();

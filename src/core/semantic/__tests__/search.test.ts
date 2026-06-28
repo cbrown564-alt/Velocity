@@ -7,7 +7,12 @@ import type { Concept, SemanticAnnotation } from '../../../types/semantic';
 // Fixtures
 // ============================================================================
 
-function makeVar(id: string, name: string, label: string, valueLabels: { value: number; label: string }[] = []): Variable {
+function makeVar(
+  id: string,
+  name: string,
+  label: string,
+  valueLabels: { value: number; label: string }[] = [],
+): Variable {
   return {
     id,
     name,
@@ -36,9 +41,27 @@ const npsVar = makeVar('nps', 'nps', 'Net Promoter Score - How likely to recomme
 const openEndVar = makeVar('q99_oe', 'q99_oe', 'Any other comments (open end)');
 
 const annotations = new Map<string, SemanticAnnotation>([
-  ['q5_sat', { topic: 'satisfaction', measurementIntent: 'attitude', conceptFamily: 'satisfaction', source: 'auto', confidence: 0.9 }],
+  [
+    'q5_sat',
+    {
+      topic: 'satisfaction',
+      measurementIntent: 'attitude',
+      conceptFamily: 'satisfaction',
+      source: 'auto',
+      confidence: 0.9,
+    },
+  ],
   ['age', { topic: 'demographics', measurementIntent: 'demographic', source: 'auto', confidence: 0.7 }],
-  ['gender', { topic: 'demographics', measurementIntent: 'demographic', conceptFamily: 'gender', source: 'auto', confidence: 0.9 }],
+  [
+    'gender',
+    {
+      topic: 'demographics',
+      measurementIntent: 'demographic',
+      conceptFamily: 'gender',
+      source: 'auto',
+      confidence: 0.9,
+    },
+  ],
   ['brand_aware', { topic: 'brand_awareness', measurementIntent: 'awareness', source: 'auto', confidence: 0.8 }],
   ['nps', { topic: 'nps', measurementIntent: 'attitude', conceptFamily: 'nps', source: 'auto', confidence: 0.85 }],
   ['q99_oe', { topic: 'open_ended', measurementIntent: 'open_end', source: 'auto', confidence: 0.8 }],
@@ -143,7 +166,16 @@ describe('searchVariablesAcrossDatasets', () => {
   it('merges results from multiple indexes', () => {
     const satVar2 = makeVar('sat_wave2', 'sat_wave2', 'Overall Satisfaction (Wave 2)');
     const annotations2 = new Map<string, SemanticAnnotation>([
-      ['sat_wave2', { topic: 'satisfaction', measurementIntent: 'attitude', conceptFamily: 'satisfaction', source: 'auto', confidence: 0.88 }],
+      [
+        'sat_wave2',
+        {
+          topic: 'satisfaction',
+          measurementIntent: 'attitude',
+          conceptFamily: 'satisfaction',
+          source: 'auto',
+          confidence: 0.88,
+        },
+      ],
     ]);
     const satConcept2: Concept = {
       id: 'c2',
@@ -243,7 +275,8 @@ describe('listVariablesByCategory', () => {
   it('does not use fallback when annotation coverage is high', () => {
     // All variables annotated, income annotated as "other" (not demographic)
     const incomeVar = makeVar('income', 'income', 'Household Income', [
-      { value: 1, label: 'Low' }, { value: 2, label: 'High' },
+      { value: 1, label: 'Low' },
+      { value: 2, label: 'High' },
     ]);
     const otherVar = makeVar('q1', 'q1', 'Question 1');
 

@@ -18,7 +18,11 @@ import path from 'node:path';
 import process from 'node:process';
 import { performance } from 'node:perf_hooks';
 import * as arrow from 'apache-arrow';
-import { parseSavStreamingV2, parseSavStreamingSinglePassBridge, type SavVariable } from '../packages/readstat-wasm/ts/index';
+import {
+  parseSavStreamingV2,
+  parseSavStreamingSinglePassBridge,
+  type SavVariable,
+} from '../packages/readstat-wasm/ts/index';
 
 type ScenarioName = 'v2_parse_only' | 'v3_parse_only' | 'v2_vectorize' | 'v3_vectorize';
 
@@ -95,7 +99,7 @@ const V3_INITIAL_CREDITS = 2;
 const V3_MAX_CREDITS = 4;
 
 function parseArgValue(argv: string[], key: string): string | null {
-  const entry = argv.find(arg => arg.startsWith(`${key}=`));
+  const entry = argv.find((arg) => arg.startsWith(`${key}=`));
   return entry ? entry.slice(key.length + 1) : null;
 }
 
@@ -125,7 +129,10 @@ function pickWinner(a: number, b: number): 'v2' | 'v3' | 'tie' {
   return a < b ? 'v2' : 'v3';
 }
 
-function buildVectorsFromBatch(rows: (number | string | null)[][], variables: SavVariable[]): Record<string, arrow.Vector> {
+function buildVectorsFromBatch(
+  rows: (number | string | null)[][],
+  variables: SavVariable[],
+): Record<string, arrow.Vector> {
   const numRows = rows.length;
   const numCols = rows[0]?.length ?? 0;
   const vectors: Record<string, arrow.Vector> = {};
@@ -169,11 +176,7 @@ async function measure<T>(fn: () => Promise<T>): Promise<Measurement<T>> {
   }
 }
 
-async function runScenario(
-  scenario: ScenarioName,
-  buffer: ArrayBuffer,
-  batchSize: number
-): Promise<ScenarioRunResult> {
+async function runScenario(scenario: ScenarioName, buffer: ArrayBuffer, batchSize: number): Promise<ScenarioRunResult> {
   if (scenario === 'v2_parse_only' || scenario === 'v2_vectorize') {
     let rows = 0;
     let batches = 0;
@@ -227,7 +230,7 @@ async function runScenario(
         const table = new arrow.Table(buildVectorsFromBatch(batch.rows, variableMeta));
         void table;
       }
-    }
+    },
   );
 
   return {
@@ -241,19 +244,20 @@ async function runScenario(
 }
 
 function aggregateScenario(runs: Measurement<ScenarioRunResult>[]): ScenarioAggregate {
-  const durations = runs.map(r => r.durationMs);
-  const peaks = runs.map(r => r.peakRssBytes);
-  const rowParity = runs.every(r => r.result.rows === r.result.metadataRowCount);
-  const batchParity = runs.every(r => r.result.batches > 0 || r.result.metadataRowCount === 0);
+  const durations = runs.map((r) => r.durationMs);
+  const peaks = runs.map((r) => r.peakRssBytes);
+  const rowParity = runs.every((r) => r.result.rows === r.result.metadataRowCount);
+  const batchParity = runs.every((r) => r.result.batches > 0 || r.result.metadataRowCount === 0);
 
-  const v3Runs = runs.filter(r => typeof r.result.queueMaxDepth === 'number');
-  const bridgeMetrics = v3Runs.length > 0
-    ? {
-        maxQueueDepthObserved: Math.max(...v3Runs.map(r => r.result.queueMaxDepth || 0)),
-        producedBatchesAvg: average(v3Runs.map(r => r.result.producedBatches || 0)),
-        consumedBatchesAvg: average(v3Runs.map(r => r.result.consumedBatches || 0)),
-      }
-    : undefined;
+  const v3Runs = runs.filter((r) => typeof r.result.queueMaxDepth === 'number');
+  const bridgeMetrics =
+    v3Runs.length > 0
+      ? {
+          maxQueueDepthObserved: Math.max(...v3Runs.map((r) => r.result.queueMaxDepth || 0)),
+          producedBatchesAvg: average(v3Runs.map((r) => r.result.producedBatches || 0)),
+          consumedBatchesAvg: average(v3Runs.map((r) => r.result.consumedBatches || 0)),
+        }
+      : undefined;
 
   return {
     runs,
@@ -272,11 +276,7 @@ async function withWasmFetchOverride<T>(fn: () => Promise<T>): Promise<T> {
   const originalFetch = globalThis.fetch;
 
   globalThis.fetch = async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
-    const href = typeof input === 'string'
-      ? input
-      : input instanceof URL
-        ? input.href
-        : input.url;
+    const href = typeof input === 'string' ? input : input instanceof URL ? input.href : input.url;
 
     if (href.endsWith('/readstat.wasm') || href.endsWith('readstat.wasm')) {
       const wasm = await fs.readFile(wasmPath);
@@ -303,18 +303,13 @@ async function benchmarkDataset(
   key: string,
   filePath: string,
   iterations: number,
-  batchSize: number
+  batchSize: number,
 ): Promise<DatasetBenchmark> {
   const stat = await fs.stat(filePath);
   const data = await fs.readFile(filePath);
   const buffer = asArrayBuffer(data);
 
-  const scenarioNames: ScenarioName[] = [
-    'v2_parse_only',
-    'v3_parse_only',
-    'v2_vectorize',
-    'v3_vectorize',
-  ];
+  const scenarioNames: ScenarioName[] = ['v2_parse_only', 'v3_parse_only', 'v2_vectorize', 'v3_vectorize'];
 
   const scenarios: Partial<Record<ScenarioName, ScenarioAggregate>> = {};
 
@@ -372,8 +367,8 @@ async function main(): Promise<void> {
         const w = result.winners;
         console.log(
           `[benchmark-v2v3] ${dataset.key} winners: ` +
-          `parse-time=${w.parseOnlyByAvgDuration}, vector-time=${w.vectorizeByAvgDuration}, ` +
-          `parse-rss=${w.parseOnlyByAvgPeakRss}, vector-rss=${w.vectorizeByAvgPeakRss}`
+            `parse-time=${w.parseOnlyByAvgDuration}, vector-time=${w.vectorizeByAvgDuration}, ` +
+            `parse-rss=${w.parseOnlyByAvgPeakRss}, vector-rss=${w.vectorizeByAvgPeakRss}`,
         );
       } catch (error: any) {
         const reason = error?.message || String(error);

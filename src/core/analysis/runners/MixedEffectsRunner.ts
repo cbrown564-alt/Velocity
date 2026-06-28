@@ -10,11 +10,7 @@
 
 import type { AnalysisRunner } from '../AnalysisRunner';
 import type { DatabaseAdapter } from '../../DatabaseAdapter';
-import type {
-  MixedModelConfig,
-  MixedModelResult,
-  RandomEffectSpec,
-} from '../../../types/webr';
+import type { MixedModelConfig, MixedModelResult, RandomEffectSpec } from '../../../types/webr';
 import { analysisRegistry } from '../registry';
 
 // ============================================================================
@@ -119,9 +115,7 @@ export interface MixedEffectsResult {
 // Runner Implementation
 // ============================================================================
 
-export class MixedEffectsRunner
-  implements AnalysisRunner<MixedEffectsConfig, MixedEffectsResult>
-{
+export class MixedEffectsRunner implements AnalysisRunner<MixedEffectsConfig, MixedEffectsResult> {
   readonly id = 'mixedEffects';
   readonly label = 'Mixed Effects Model (HLM/Multilevel)';
   readonly configSchema = {
@@ -178,12 +172,9 @@ export class MixedEffectsRunner
    * Mixed effects models require WebR orchestration (see `src/engine/webr/WebREngine`).
    * Core exposes pure R-code generation via `generateRCode()` and `toWebRConfig()`.
    */
-  async run(
-    _adapter: DatabaseAdapter,
-    _config: MixedEffectsConfig
-  ): Promise<MixedEffectsResult> {
+  async run(_adapter: DatabaseAdapter, _config: MixedEffectsConfig): Promise<MixedEffectsResult> {
     throw new Error(
-      'mixedEffects requires WebR execution via WebREngine; use generateRCode() in core and orchestrate in engine/store'
+      'mixedEffects requires WebR execution via WebREngine; use generateRCode() in core and orchestrate in engine/store',
     );
   }
 
@@ -214,9 +205,7 @@ export class MixedEffectsRunner
       lines.push(`  data = df,`);
       lines.push(`  family = ${familyStr}`);
       if (config.maxIterations) {
-        lines.push(
-          `,  control = glmerControl(optimizer = "bobyqa", optCtrl = list(maxfun = ${config.maxIterations}))`
-        );
+        lines.push(`,  control = glmerControl(optimizer = "bobyqa", optCtrl = list(maxfun = ${config.maxIterations}))`);
       }
       lines.push(')');
     } else {
@@ -228,9 +217,7 @@ export class MixedEffectsRunner
       lines.push(`  data = df,`);
       lines.push(`  REML = ${remlStr}`);
       if (config.maxIterations) {
-        lines.push(
-          `,  control = lmerControl(optimizer = "bobyqa", optCtrl = list(maxfun = ${config.maxIterations}))`
-        );
+        lines.push(`,  control = lmerControl(optimizer = "bobyqa", optCtrl = list(maxfun = ${config.maxIterations}))`);
       }
       lines.push(')');
     }
@@ -265,14 +252,9 @@ export class MixedEffectsRunner
     lines.push('');
 
     // ICC for intercept-only models
-    if (
-      config.fixedEffects.length === 0 ||
-      (config.fixedEffects.length === 1 && config.fixedEffects[0] === '1')
-    ) {
+    if (config.fixedEffects.length === 0 || (config.fixedEffects.length === 1 && config.fixedEffects[0] === '1')) {
       lines.push('# Intraclass correlation coefficient');
-      lines.push(
-        'icc <- var_components$vcov[var_components$grp != "Residual"][1] / sum(var_components$vcov)'
-      );
+      lines.push('icc <- var_components$vcov[var_components$grp != "Residual"][1] / sum(var_components$vcov)');
       lines.push('');
     }
 
@@ -300,8 +282,7 @@ export class MixedEffectsRunner
   toWebRConfig(config: MixedEffectsConfig): MixedModelConfig {
     return {
       responseVar: config.responseVariable,
-      fixedEffects:
-        config.fixedEffects.length > 0 ? config.fixedEffects : ['1'],
+      fixedEffects: config.fixedEffects.length > 0 ? config.fixedEffects : ['1'],
       randomEffects: config.randomEffects.map((re) => ({
         groupVar: re.groupVariable,
         slopes: re.randomSlopes,
@@ -336,9 +317,7 @@ export class MixedEffectsRunner
       const groups = config.randomEffects.map((re) => re.groupVariable);
       // This is just a warning, not an error
       if (groups.length > 2) {
-        errors.push(
-          'Note: Models with more than 2 random effect groups may have convergence issues'
-        );
+        errors.push('Note: Models with more than 2 random effect groups may have convergence issues');
       }
     }
 
@@ -351,10 +330,7 @@ export class MixedEffectsRunner
 
   private buildFormula(config: MixedEffectsConfig): string {
     // Fixed effects
-    const fixedPart =
-      config.fixedEffects && config.fixedEffects.length > 0
-        ? config.fixedEffects.join(' + ')
-        : '1';
+    const fixedPart = config.fixedEffects && config.fixedEffects.length > 0 ? config.fixedEffects.join(' + ') : '1';
 
     // Random effects
     const randomParts = config.randomEffects.map((re) => {
@@ -364,9 +340,7 @@ export class MixedEffectsRunner
           return `(1 + ${re.randomSlopes.join(' + ')} | ${re.groupVariable})`;
         } else {
           // Uncorrelated: (1 | group) + (0 + slope | group)
-          const slopeParts = re.randomSlopes.map(
-            (s) => `(0 + ${s} | ${re.groupVariable})`
-          );
+          const slopeParts = re.randomSlopes.map((s) => `(0 + ${s} | ${re.groupVariable})`);
           return `(1 | ${re.groupVariable}) + ${slopeParts.join(' + ')}`;
         }
       }

@@ -54,7 +54,13 @@ function buildSessionFile(overrides: Partial<VelocitySessionFile> = {}): Velocit
     variableSets: [
       { id: 'set-valid', name: 'Valid Set', variableIds: ['q1'], structure: 'single', type: 'categorical' },
       { id: 'set-missing', name: 'Missing Set', variableIds: ['q_missing'], structure: 'single', type: 'categorical' },
-      { id: 'set-partial', name: 'Partial Set', variableIds: ['q2', 'q_missing'], structure: 'multiple', type: 'categorical' },
+      {
+        id: 'set-partial',
+        name: 'Partial Set',
+        variableIds: ['q2', 'q_missing'],
+        structure: 'multiple',
+        type: 'categorical',
+      },
     ],
     folders: [{ id: 'folder-1', name: 'Main', order: 0 }],
     transformLog: [],
@@ -122,12 +128,15 @@ describe('importSession', () => {
   });
 
   it('generates fallback variable sets when imported sets are unusable', () => {
-    const result = importSession(buildSessionFile({
-      variableSets: [
-        { id: 'bad-set', name: 'Bad', variableIds: ['q_missing'], structure: 'single', type: 'categorical' },
-      ],
-      tableConfig: { rowVars: ['bad-set'], colVar: 'bad-set' },
-    }), loadedDataset);
+    const result = importSession(
+      buildSessionFile({
+        variableSets: [
+          { id: 'bad-set', name: 'Bad', variableIds: ['q_missing'], structure: 'single', type: 'categorical' },
+        ],
+        tableConfig: { rowVars: ['bad-set'], colVar: 'bad-set' },
+      }),
+      loadedDataset,
+    );
 
     expect(result.patch.variableSets.length).toBe(loadedDataset.variables.length);
     expect(result.patch.variableSets[0].id).toBe('vs_q1');
@@ -136,38 +145,41 @@ describe('importSession', () => {
   });
 
   it('drops stale deck recipe slide references and reports diagnostics', () => {
-    const result = importSession(buildSessionFile({
-      deckRecipe: {
-        recipeVersion: 1,
-        sections: [],
-        slideRecipes: [
-          {
-            slideId: 'slide-1',
-            title: 'Slide',
-            subtitle: '',
-            analysisState: {
-              rowVars: ['set-valid'],
-              colVar: null,
-              filters: [],
-              weightVar: null,
+    const result = importSession(
+      buildSessionFile({
+        deckRecipe: {
+          recipeVersion: 1,
+          sections: [],
+          slideRecipes: [
+            {
+              slideId: 'slide-1',
+              title: 'Slide',
+              subtitle: '',
+              analysisState: {
+                rowVars: ['set-valid'],
+                colVar: null,
+                filters: [],
+                weightVar: null,
+              },
+              visualizationType: 'table',
             },
-            visualizationType: 'table',
-          },
-          {
-            slideId: 'stale-slide',
-            title: 'Stale',
-            subtitle: '',
-            analysisState: {
-              rowVars: ['set-valid'],
-              colVar: null,
-              filters: [],
-              weightVar: null,
+            {
+              slideId: 'stale-slide',
+              title: 'Stale',
+              subtitle: '',
+              analysisState: {
+                rowVars: ['set-valid'],
+                colVar: null,
+                filters: [],
+                weightVar: null,
+              },
+              visualizationType: 'table',
             },
-            visualizationType: 'table',
-          },
-        ],
-      },
-    }), loadedDataset);
+          ],
+        },
+      }),
+      loadedDataset,
+    );
 
     expect(result.patch.deckRecipe.slideRecipes.map((recipe) => recipe.slideId)).toEqual(['slide-1']);
     expect(result.diagnostics.droppedDeckRecipeSlideIds).toContain('stale-slide');

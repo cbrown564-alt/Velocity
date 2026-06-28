@@ -494,7 +494,7 @@
 }
 
 /* Theme-specific */
-[data-theme="liquid-glass"] .modal {
+[data-theme='liquid-glass'] .modal {
   background: var(--mat-overlay-bg, var(--bg-panel));
   backdrop-filter: var(--mat-overlay-filter, blur(40px) saturate(200%));
 }

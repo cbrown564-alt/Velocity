@@ -34,10 +34,7 @@ async function main() {
     dataDir,
   });
 
-  const server = new Server(
-    { name: 'velocity', version: '1.0.0' },
-    { capabilities: { tools: {} } }
-  );
+  const server = new Server({ name: 'velocity', version: '1.0.0' }, { capabilities: { tools: {} } });
 
   registerTools(server, engine);
 

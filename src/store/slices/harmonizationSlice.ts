@@ -42,7 +42,7 @@ export interface HarmonizationSlice {
     sourceVars: Variable[],
     targetVars: Variable[],
     sourceCounts: Record<string, number>,
-    targetCounts: Record<string, number>
+    targetCounts: Record<string, number>,
   ) => void;
   applyHarmonization: (params: {
     sourceTable: string;
@@ -83,12 +83,8 @@ export const createHarmonizationSlice: StateCreator<
     const existing = get().harmonization.session;
 
     // Reuse existing session if same datasets
-    if (
-      existing &&
-      existing.sourceDatasetId === sourceDatasetId &&
-      existing.targetDatasetId === targetDatasetId
-    ) {
-      set(state => ({ harmonization: { ...state.harmonization, isOpen: true } }));
+    if (existing && existing.sourceDatasetId === sourceDatasetId && existing.targetDatasetId === targetDatasetId) {
+      set((state) => ({ harmonization: { ...state.harmonization, isOpen: true } }));
       return;
     }
 
@@ -115,7 +111,7 @@ export const createHarmonizationSlice: StateCreator<
   },
 
   closeHarmonization: () => {
-    set(state => ({
+    set((state) => ({
       harmonization: {
         ...state.harmonization,
         isOpen: false,
@@ -129,7 +125,7 @@ export const createHarmonizationSlice: StateCreator<
     const session = get().harmonization.session;
     if (!session) return;
 
-    set(state => ({
+    set((state) => ({
       harmonization: { ...state.harmonization, matchingInProgress: true },
     }));
 
@@ -141,7 +137,7 @@ export const createHarmonizationSlice: StateCreator<
       updatedAt: Date.now(),
     };
 
-    set(state => ({
+    set((state) => ({
       harmonization: {
         ...state.harmonization,
         session: updatedSession,
@@ -154,11 +150,9 @@ export const createHarmonizationSlice: StateCreator<
     const session = get().harmonization.session;
     if (!session) return;
 
-    const updatedMappings = session.mappings.map(m =>
-      m.id === mappingId ? { ...m, ...updates } : m
-    );
+    const updatedMappings = session.mappings.map((m) => (m.id === mappingId ? { ...m, ...updates } : m));
 
-    set(state => ({
+    set((state) => ({
       harmonization: {
         ...state.harmonization,
         session: {
@@ -178,13 +172,11 @@ export const createHarmonizationSlice: StateCreator<
     const session = get().harmonization.session;
     if (!session) return;
 
-    const updatedMappings = session.mappings.map(m =>
-      m.targetVariableId !== null
-        ? { ...m, confirmed: true, status: 'manual' as const }
-        : m
+    const updatedMappings = session.mappings.map((m) =>
+      m.targetVariableId !== null ? { ...m, confirmed: true, status: 'manual' as const } : m,
     );
 
-    set(state => ({
+    set((state) => ({
       harmonization: {
         ...state.harmonization,
         session: {
@@ -197,7 +189,7 @@ export const createHarmonizationSlice: StateCreator<
   },
 
   selectMapping: (mappingId) => {
-    set(state => ({
+    set((state) => ({
       harmonization: { ...state.harmonization, selectedMappingId: mappingId },
     }));
   },
@@ -212,7 +204,7 @@ export const createHarmonizationSlice: StateCreator<
 
     const sankeyData = buildSankeyData(session, sourceVars, targetVars, sourceCounts, targetCounts);
 
-    set(state => ({
+    set((state) => ({
       harmonization: { ...state.harmonization, sankeyData },
     }));
   },
@@ -231,7 +223,7 @@ export const createHarmonizationSlice: StateCreator<
     const session = get().harmonization.session;
     if (!session) return null;
 
-    const eligibleMappings = session.mappings.filter(m => {
+    const eligibleMappings = session.mappings.filter((m) => {
       if (m.targetVariableId === null || m.status === 'excluded') return false;
       if (onlyConfirmed) return m.confirmed;
       return true;
@@ -241,8 +233,8 @@ export const createHarmonizationSlice: StateCreator<
       throw new Error('No eligible mappings to apply');
     }
 
-    const sourceVarNames = Object.fromEntries(sourceVars.map(v => [v.id, v.name]));
-    const targetVarNames = Object.fromEntries(targetVars.map(v => [v.id, v.name]));
+    const sourceVarNames = Object.fromEntries(sourceVars.map((v) => [v.id, v.name]));
+    const targetVarNames = Object.fromEntries(targetVars.map((v) => [v.id, v.name]));
     const resolvedOutputTable = outputTableName ?? `harmonized_${session.id.replace(/[^a-zA-Z0-9_]/g, '_')}`;
 
     const response = await browserEngine.buildHarmonizedTable(
@@ -254,15 +246,15 @@ export const createHarmonizationSlice: StateCreator<
       targetVarNames,
     );
 
-    set(state => ({
+    set((state) => ({
       harmonization: {
         ...state.harmonization,
         session: state.harmonization.session
           ? {
-            ...state.harmonization.session,
-            outputTableName: response.tableName,
-            updatedAt: Date.now(),
-          }
+              ...state.harmonization.session,
+              outputTableName: response.tableName,
+              updatedAt: Date.now(),
+            }
           : null,
       },
     }));

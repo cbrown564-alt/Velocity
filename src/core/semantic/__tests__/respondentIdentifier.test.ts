@@ -66,8 +66,8 @@ describe('isExcludedFromAutoAnalysis', () => {
             source: 'auto',
             confidence: 0.95,
           },
-        })
-      )
+        }),
+      ),
     ).toBe(true);
   });
 

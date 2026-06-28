@@ -12,7 +12,7 @@ describe('buildCaseSql', () => {
     };
 
     expect(buildCaseSql('q1', config)).toBe(
-      "CASE WHEN \"q1\" = 'don''t know' THEN 'Don''t Know' ELSE CAST(\"q1\" AS VARCHAR) END"
+      "CASE WHEN \"q1\" = 'don''t know' THEN 'Don''t Know' ELSE CAST(\"q1\" AS VARCHAR) END",
     );
   });
 
@@ -23,8 +23,8 @@ describe('buildCaseSql', () => {
     };
 
     const sql = buildCaseSql('q1', config);
-    expect(sql).toContain('WHEN "q1" = \'1\' THEN \'Yes\'');
-    expect(sql).toContain('WHEN "q1" = \'2\' THEN \'No\'');
+    expect(sql).toContain("WHEN \"q1\" = '1' THEN 'Yes'");
+    expect(sql).toContain("WHEN \"q1\" = '2' THEN 'No'");
     expect(sql).toMatch(/ELSE CAST\("q1" AS VARCHAR\) END$/);
   });
 
@@ -39,7 +39,7 @@ describe('buildCaseSql', () => {
     };
 
     expect(buildCaseSql('age', config)).toBe(
-      'CASE WHEN "age" >= 0 AND "age" < 18 THEN \'Under 18\' WHEN "age" >= 18 AND "age" < 65 THEN \'Working age\' WHEN "age" >= 65 THEN \'65+\' ELSE CAST("age" AS VARCHAR) END'
+      'CASE WHEN "age" >= 0 AND "age" < 18 THEN \'Under 18\' WHEN "age" >= 18 AND "age" < 65 THEN \'Working age\' WHEN "age" >= 65 THEN \'65+\' ELSE CAST("age" AS VARCHAR) END',
     );
   });
 
@@ -49,17 +49,13 @@ describe('buildCaseSql', () => {
       rules: [{ label: 'orphan' }],
     };
 
-    expect(buildCaseSql('score', config)).toBe(
-      'CASE ELSE CAST("score" AS VARCHAR) END'
-    );
+    expect(buildCaseSql('score', config)).toBe('CASE ELSE CAST("score" AS VARCHAR) END');
   });
 
   it('falls through to ELSE when categorical mode has no mappings', () => {
     const config: RecodeConfig = { mode: 'categorical' };
 
-    expect(buildCaseSql('region', config)).toBe(
-      'CASE ELSE CAST("region" AS VARCHAR) END'
-    );
+    expect(buildCaseSql('region', config)).toBe('CASE ELSE CAST("region" AS VARCHAR) END');
   });
 
   it('uses binning path when mode is binning even if mappings are present', () => {
@@ -70,7 +66,7 @@ describe('buildCaseSql', () => {
     };
 
     expect(buildCaseSql('age', config)).toBe(
-      'CASE WHEN "age" >= 0 AND "age" < 18 THEN \'Under 18\' ELSE CAST("age" AS VARCHAR) END'
+      'CASE WHEN "age" >= 0 AND "age" < 18 THEN \'Under 18\' ELSE CAST("age" AS VARCHAR) END',
     );
   });
 
@@ -80,9 +76,7 @@ describe('buildCaseSql', () => {
       rules: [{ min: 0, max: 18, label: 'Under 18' }],
     };
 
-    expect(buildCaseSql('age', config)).toBe(
-      'CASE ELSE CAST("age" AS VARCHAR) END'
-    );
+    expect(buildCaseSql('age', config)).toBe('CASE ELSE CAST("age" AS VARCHAR) END');
   });
 
   it('uses categorical path when mode is categorical with both mappings and rules', () => {
@@ -92,9 +86,7 @@ describe('buildCaseSql', () => {
       rules: [{ min: 0, max: 18, label: 'Under 18' }],
     };
 
-    expect(buildCaseSql('q1', config)).toBe(
-      "CASE WHEN \"q1\" = '1' THEN 'Yes' ELSE CAST(\"q1\" AS VARCHAR) END"
-    );
+    expect(buildCaseSql('q1', config)).toBe('CASE WHEN "q1" = \'1\' THEN \'Yes\' ELSE CAST("q1" AS VARCHAR) END');
   });
 
   it('escapes single quotes in binning rule labels', () => {
@@ -104,7 +96,7 @@ describe('buildCaseSql', () => {
     };
 
     expect(buildCaseSql('age', config)).toBe(
-      "CASE WHEN \"age\" >= 65 THEN '65+'' years' ELSE CAST(\"age\" AS VARCHAR) END"
+      'CASE WHEN "age" >= 65 THEN \'65+\'\' years\' ELSE CAST("age" AS VARCHAR) END',
     );
   });
 });

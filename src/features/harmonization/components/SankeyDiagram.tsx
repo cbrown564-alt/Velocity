@@ -23,7 +23,7 @@ interface SankeyDiagramProps {
 }
 
 const NODE_WIDTH = 16;
-const PADDING_X = 120;  // label space on each side
+const PADDING_X = 120; // label space on each side
 const HEADER_HEIGHT = 28;
 
 export const SankeyDiagram: React.FC<SankeyDiagramProps> = ({
@@ -45,21 +45,19 @@ export const SankeyDiagram: React.FC<SankeyDiagramProps> = ({
     const innerWidth = width - PADDING_X * 2;
     const innerHeight = height - HEADER_HEIGHT - 16;
 
-    const sourceNodes = data.nodes.filter(n => n.column === 'source');
-    const targetNodes = data.nodes.filter(n => n.column === 'target');
+    const sourceNodes = data.nodes.filter((n) => n.column === 'source');
+    const targetNodes = data.nodes.filter((n) => n.column === 'target');
 
     const sourcePositions = computeNodePositions(sourceNodes);
     const targetPositions = computeNodePositions(targetNodes);
 
-    const sourcePosMap = new Map(sourcePositions.map(p => [p.id, p]));
-    const targetPosMap = new Map(targetPositions.map(p => [p.id, p]));
+    const sourcePosMap = new Map(sourcePositions.map((p) => [p.id, p]));
+    const targetPosMap = new Map(targetPositions.map((p) => [p.id, p]));
 
     // Helper: pixel y-center from normalized position
-    const toPixelY = (y0: number, y1: number) =>
-      HEADER_HEIGHT + (y0 + y1) / 2 * innerHeight;
+    const toPixelY = (y0: number, y1: number) => HEADER_HEIGHT + ((y0 + y1) / 2) * innerHeight;
     const toPixelY0 = (y: number) => HEADER_HEIGHT + y * innerHeight;
-    const toPixelH = (y0: number, y1: number) =>
-      Math.max((y1 - y0) * innerHeight, 4);
+    const toPixelH = (y0: number, y1: number) => Math.max((y1 - y0) * innerHeight, 4);
 
     const sourceX = PADDING_X;
     const targetX = PADDING_X + innerWidth;
@@ -67,14 +65,16 @@ export const SankeyDiagram: React.FC<SankeyDiagramProps> = ({
 
     // Column headers
     const headerG = svg.append('g');
-    headerG.append('text')
+    headerG
+      .append('text')
       .attr('x', sourceX + NODE_WIDTH / 2)
       .attr('y', 14)
       .attr('text-anchor', 'middle')
       .attr('class', styles.columnHeader)
       .text('Source Wave');
 
-    headerG.append('text')
+    headerG
+      .append('text')
       .attr('x', targetX + NODE_WIDTH / 2)
       .attr('y', 14)
       .attr('text-anchor', 'middle')
@@ -90,24 +90,26 @@ export const SankeyDiagram: React.FC<SankeyDiagramProps> = ({
 
       const srcY = toPixelY(srcPos.y0, srcPos.y1);
       const tgtY = toPixelY(tgtPos.y0, tgtPos.y1);
-      const strokeWidth = Math.max(
-        toPixelH(srcPos.y0, srcPos.y1) * 0.6,
-        2
-      );
+      const strokeWidth = Math.max(toPixelH(srcPos.y0, srcPos.y1) * 0.6, 2);
 
       const isSelected = selectedMappingId === link.sourceId.replace('source::', '');
 
-      linkG.append('path')
-        .attr('d', linkHorizontal()({
-          source: [sourceX + NODE_WIDTH, srcY],
-          target: [targetX, tgtY],
-        } as any))
+      linkG
+        .append('path')
+        .attr(
+          'd',
+          linkHorizontal()({
+            source: [sourceX + NODE_WIDTH, srcY],
+            target: [targetX, tgtY],
+          } as any),
+        )
         .attr('stroke-width', strokeWidth)
-        .attr('class', [
-          styles.link,
-          link.isInverted ? styles.inverted : '',
-          isSelected ? styles.selected : '',
-        ].filter(Boolean).join(' '));
+        .attr(
+          'class',
+          [styles.link, link.isInverted ? styles.inverted : '', isSelected ? styles.selected : '']
+            .filter(Boolean)
+            .join(' '),
+        );
     }
 
     // Draw source nodes
@@ -115,7 +117,7 @@ export const SankeyDiagram: React.FC<SankeyDiagramProps> = ({
       nodes: SankeyNode[],
       posMap: Map<string, { id: string; y0: number; y1: number }>,
       x: number,
-      isSource: boolean
+      isSource: boolean,
     ) => {
       for (const node of nodes) {
         const pos = posMap.get(node.id);
@@ -126,7 +128,8 @@ export const SankeyDiagram: React.FC<SankeyDiagramProps> = ({
         const isSelected = selectedMappingId === node.id.replace('source::', '').replace('target::', '');
         nodeCenters.set(node.id, { x: x + NODE_WIDTH / 2, y: y0 + h / 2 });
 
-        const g = svg.append('g')
+        const g = svg
+          .append('g')
           .attr('class', styles.node)
           .style('cursor', 'pointer')
           .on('click', () => {
@@ -141,12 +144,17 @@ export const SankeyDiagram: React.FC<SankeyDiagramProps> = ({
           .attr('y', y0)
           .attr('width', NODE_WIDTH)
           .attr('height', h)
-          .attr('class', [
-            styles.nodeRect,
-            isSource ? styles.source : styles.target,
-            node.isOrphan ? styles.orphan : '',
-            isSelected ? styles.selected : '',
-          ].filter(Boolean).join(' '));
+          .attr(
+            'class',
+            [
+              styles.nodeRect,
+              isSource ? styles.source : styles.target,
+              node.isOrphan ? styles.orphan : '',
+              isSelected ? styles.selected : '',
+            ]
+              .filter(Boolean)
+              .join(' '),
+          );
 
         // Label
         const labelX = isSource ? x - 6 : x + NODE_WIDTH + 6;
@@ -181,13 +189,7 @@ export const SankeyDiagram: React.FC<SankeyDiagramProps> = ({
 
   return (
     <div className={styles.container}>
-      <svg
-        ref={svgRef}
-        className={styles.svg}
-        width={width}
-        height={height}
-        viewBox={`0 0 ${width} ${height}`}
-      />
+      <svg ref={svgRef} className={styles.svg} width={width} height={height} viewBox={`0 0 ${width} ${height}`} />
     </div>
   );
 };

@@ -39,7 +39,9 @@ export async function loadSAV(
   if (!db || !conn) throw new Error('DB not initialized');
 
   if (forceChunked || buffer.byteLength > CHUNKED_THRESHOLD_BYTES) {
-    console.log(`🦆 [Worker] Auto-routing to chunked mode (${(buffer.byteLength / 1024 / 1024).toFixed(1)} MB > ${CHUNKED_THRESHOLD_BYTES / 1024 / 1024} MB threshold)`);
+    console.log(
+      `🦆 [Worker] Auto-routing to chunked mode (${(buffer.byteLength / 1024 / 1024).toFixed(1)} MB > ${CHUNKED_THRESHOLD_BYTES / 1024 / 1024} MB threshold)`,
+    );
     return loadSAVChunked(buffer, undefined, onProgress);
   }
 
@@ -123,7 +125,9 @@ export async function loadSAV(
   }
 
   const durationMs = performance.now() - start;
-  console.log(`🦆 [Worker] Loaded SAV: ${parsed.metadata.rowCount} rows, ${variables.length} variables in ${durationMs.toFixed(2)}ms`);
+  console.log(
+    `🦆 [Worker] Loaded SAV: ${parsed.metadata.rowCount} rows, ${variables.length} variables in ${durationMs.toFixed(2)}ms`,
+  );
   onProgress?.({
     phase: 'complete',
     progress: 1,
@@ -154,7 +158,9 @@ export async function loadSAVMetadata(
   });
 
   const durationMs = performance.now() - start;
-  console.log(`🦆 [Worker] Loaded SAV metadata: ${parsed.metadata.rowCount} rows, ${variables.length} variables in ${durationMs.toFixed(2)}ms`);
+  console.log(
+    `🦆 [Worker] Loaded SAV metadata: ${parsed.metadata.rowCount} rows, ${variables.length} variables in ${durationMs.toFixed(2)}ms`,
+  );
 
   return { variables, variableSets, rowCount: parsed.metadata.rowCount, durationMs };
 }
@@ -188,7 +194,9 @@ export async function loadSAVSample(
 
   const usedStrategy = parsed.sampleStrategy || strategy;
   const durationMs = performance.now() - start;
-  console.log(`🦆 [Worker] Loaded SAV sample: ${parsed.rows.length}/${parsed.metadata.rowCount} rows (${usedStrategy}), ${variables.length} variables in ${durationMs.toFixed(2)}ms`);
+  console.log(
+    `🦆 [Worker] Loaded SAV sample: ${parsed.rows.length}/${parsed.metadata.rowCount} rows (${usedStrategy}), ${variables.length} variables in ${durationMs.toFixed(2)}ms`,
+  );
 
   return {
     variables,

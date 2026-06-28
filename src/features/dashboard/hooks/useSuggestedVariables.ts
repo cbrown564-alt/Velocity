@@ -50,16 +50,14 @@ export function useSuggestedVariables(
   variableSets: VariableSet[] | undefined,
   excludeIds: Set<string>,
   maxSuggestions = 5,
-  rowCount?: number
+  rowCount?: number,
 ): SuggestedVariable[] {
   return useMemo(() => {
     if (!variables?.length || !variableSets?.length) return [];
 
     const scored = variables
       .filter(
-        (v) =>
-          !excludeIds.has(v.id) &&
-          !isExcludedFromAutoAnalysis(v, rowCount != null ? { rowCount } : undefined)
+        (v) => !excludeIds.has(v.id) && !isExcludedFromAutoAnalysis(v, rowCount != null ? { rowCount } : undefined),
       )
       .map((v) => ({
         variable: v,
@@ -73,14 +71,13 @@ export function useSuggestedVariables(
       if (suggestions.length >= maxSuggestions) break;
 
       // Find the VariableSet that contains this variable
-      const set = variableSets.find(
-        (s) => s.variableIds.includes(variable.id) && !excludeIds.has(s.id)
-      );
+      const set = variableSets.find((s) => s.variableIds.includes(variable.id) && !excludeIds.has(s.id));
       if (!set) continue;
 
       let reason = 'Good starting point';
       if (variable.semantic?.measurementIntent === 'attitude') reason = 'Attitude measure — high analytical value';
-      else if (variable.semantic?.measurementIntent === 'awareness') reason = 'Awareness question — good benchmark variable';
+      else if (variable.semantic?.measurementIntent === 'awareness')
+        reason = 'Awareness question — good benchmark variable';
       else if ((variable.valueLabels?.length ?? 0) >= 3 && (variable.valueLabels?.length ?? 0) <= 7) {
         reason = 'Balanced categories — clean crosstab';
       }

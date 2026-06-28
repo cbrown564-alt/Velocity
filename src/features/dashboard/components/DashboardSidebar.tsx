@@ -135,7 +135,9 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
           <div className="p-3 border-t border-[var(--border-color)] bg-[var(--bg-panel)]">
             <div className="flex items-center gap-3 text-xs text-[var(--text-secondary)] px-2">
               <CheckCircle2 size={12} className="text-[var(--color-success)]" />
-              <span className="truncate">{filename} ({totalRows} rows)</span>
+              <span className="truncate">
+                {filename} ({totalRows} rows)
+              </span>
             </div>
             {dataset?.sampleRowCount && (
               <div className="flex items-center gap-2 text-xs text-[var(--status-warning-text)] px-2 mt-2 bg-[var(--status-warning-surface)] rounded py-1">

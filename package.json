@@ -39,6 +39,7 @@
     "test:mutation": "stryker run",
     "test:mutation:ci": "stryker run --concurrency 2",
     "test:e2e": "playwright test",
+    "test:e2e:production": "playwright test --config playwright.production.config.ts",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:visual-polish": "playwright test tests/e2e/visual-polish-theme-table.spec.ts",
     "test:e2e:visual-polish:update": "playwright test tests/e2e/visual-polish-theme-table.spec.ts --update-snapshots",

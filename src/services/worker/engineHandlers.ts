@@ -21,19 +21,8 @@ import {
 import { engineHandlersHarmonization } from './engineHandlersHarmonization';
 import { toEngineLoadProgress } from './loadProgress';
 import { postEngineResponse } from './engineMessaging';
-import {
-  loadCSV,
-  loadSAV,
-  loadSAVMetadata,
-  loadSAVSample,
-} from './workerIngestion';
-import {
-  fillSystemMissing,
-  getSchema,
-  getUniqueValues,
-  recodeVariable,
-  runQuery,
-} from './workerQueries';
+import { loadCSV, loadSAV, loadSAVMetadata, loadSAVSample } from './workerIngestion';
+import { fillSystemMissing, getSchema, getUniqueValues, recodeVariable, runQuery } from './workerQueries';
 import { OPFS_SCHEMA_VERSION, workerDbState } from './workerDbState';
 
 export type { EngineMessageHandler } from './engineHandlerTypes';

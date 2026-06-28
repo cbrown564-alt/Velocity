@@ -84,19 +84,22 @@ async function clearBrowserStorage(page) {
 }
 
 async function waitForEngineReady(page, timeoutMs = 120000) {
-  await page.evaluate(async ({ timeoutMs: timeout }) => {
-    const { useVelocityStore } = await import('/src/store/index.ts');
+  await page.evaluate(
+    async ({ timeoutMs: timeout }) => {
+      const { useVelocityStore } = await import('/src/store/index.ts');
 
-    const start = Date.now();
-    while (true) {
-      const state = useVelocityStore.getState();
-      if (state.isDbReady && state.persistenceState === 'ready') return;
-      if (Date.now() - start > timeout) {
-        throw new Error('Timed out waiting for engine readiness');
+      const start = Date.now();
+      while (true) {
+        const state = useVelocityStore.getState();
+        if (state.isDbReady && state.persistenceState === 'ready') return;
+        if (Date.now() - start > timeout) {
+          throw new Error('Timed out waiting for engine readiness');
+        }
+        await new Promise((resolve) => setTimeout(resolve, 100));
       }
-      await new Promise((resolve) => setTimeout(resolve, 100));
-    }
-  }, { timeoutMs });
+    },
+    { timeoutMs },
+  );
 }
 
 async function resetToFreshState(page) {
@@ -129,11 +132,7 @@ async function attemptDataset(page, datasetConfig) {
       while (true) {
         const state = useVelocityStore.getState();
         const dataset = state.dataset;
-        const mode = dataset
-          ? dataset.metadataOnly
-            ? 'metadata'
-            : 'dashboard'
-          : 'pending';
+        const mode = dataset ? (dataset.metadataOnly ? 'metadata' : 'dashboard') : 'pending';
 
         if (mode !== 'pending') {
           const variables = dataset?.variables ?? [];
@@ -170,7 +169,7 @@ async function attemptDataset(page, datasetConfig) {
         await new Promise((resolve) => setTimeout(resolve, 250));
       }
     },
-    { timeoutMs: 180000, discoveryTerms: datasetConfig.discoveryTerms }
+    { timeoutMs: 180000, discoveryTerms: datasetConfig.discoveryTerms },
   );
 
   attempt.metadataStage = metadataStage;
@@ -179,31 +178,34 @@ async function attemptDataset(page, datasetConfig) {
     const loadFull = page.getByRole('button', { name: 'Load Full Data' });
     await loadFull.click();
 
-    const fullLoadStage = await page.evaluate(async ({ timeoutMs }) => {
-      const { useVelocityStore } = await import('/src/store/index.ts');
+    const fullLoadStage = await page.evaluate(
+      async ({ timeoutMs }) => {
+        const { useVelocityStore } = await import('/src/store/index.ts');
 
-      const start = Date.now();
-      while (true) {
-        const state = useVelocityStore.getState();
-        const dataset = state.dataset;
+        const start = Date.now();
+        while (true) {
+          const state = useVelocityStore.getState();
+          const dataset = state.dataset;
 
-        if (dataset && !dataset.metadataOnly) {
-          return {
-            mode: 'dashboard',
-            rowCount: dataset.rowCount,
-            variableCount: dataset.variables.length,
-            variableSetCount: state.variableSets.length,
-            metadataOnly: dataset.metadataOnly ?? false,
-          };
+          if (dataset && !dataset.metadataOnly) {
+            return {
+              mode: 'dashboard',
+              rowCount: dataset.rowCount,
+              variableCount: dataset.variables.length,
+              variableSetCount: state.variableSets.length,
+              metadataOnly: dataset.metadataOnly ?? false,
+            };
+          }
+
+          if (Date.now() - start > timeoutMs) {
+            throw new Error('Timed out waiting for full dataset load');
+          }
+
+          await new Promise((resolve) => setTimeout(resolve, 500));
         }
-
-        if (Date.now() - start > timeoutMs) {
-          throw new Error('Timed out waiting for full dataset load');
-        }
-
-        await new Promise((resolve) => setTimeout(resolve, 500));
-      }
-    }, { timeoutMs: 300000 });
+      },
+      { timeoutMs: 300000 },
+    );
 
     attempt.fullLoadStage = fullLoadStage;
   } else {
@@ -292,15 +294,16 @@ function buildFindingsMarkdown(result) {
   const trust = result.analysisResults.find((item) => item.id === 'happiness_by_generalized_trust');
 
   const overallBullets = frequency?.summary.map((row) => `- ${row.label}: ${row.pct}% weighted share`) ?? [];
-  const trustBullets = trust?.summary.map((column) => {
-    const happyShare = column.categories
-      .filter((category) => category.rowValue === '1' || category.rowValue === '2')
-      .reduce((sum, category) => sum + category.pct, 0);
-    const unhappyShare = column.categories
-      .filter((category) => category.rowValue === '3' || category.rowValue === '4')
-      .reduce((sum, category) => sum + category.pct, 0);
-    return `- ${column.colLabel}: ${happyShare.toFixed(1)}% weighted happy/quite happy vs ${unhappyShare.toFixed(1)}% weighted not very/not at all happy`;
-  }) ?? [];
+  const trustBullets =
+    trust?.summary.map((column) => {
+      const happyShare = column.categories
+        .filter((category) => category.rowValue === '1' || category.rowValue === '2')
+        .reduce((sum, category) => sum + category.pct, 0);
+      const unhappyShare = column.categories
+        .filter((category) => category.rowValue === '3' || category.rowValue === '4')
+        .reduce((sum, category) => sum + category.pct, 0);
+      return `- ${column.colLabel}: ${happyShare.toFixed(1)}% weighted happy/quite happy vs ${unhappyShare.toFixed(1)}% weighted not very/not at all happy`;
+    }) ?? [];
 
   const chiSquare = trust?.tableStats?.chiSquare;
   const chiSquareLine = chiSquare
@@ -332,7 +335,7 @@ ${chiSquareLine}
 function buildFrequencyCsv(summary) {
   return writeCsv(
     ['value', 'label', 'weighted_count', 'weighted_pct'],
-    summary.map((row) => [row.value, row.label, row.weightedCount, row.pct])
+    summary.map((row) => [row.value, row.label, row.weightedCount, row.pct]),
   );
 }
 
@@ -347,8 +350,8 @@ function buildCrosstabCsv(summary) {
         category.rowLabel,
         category.weightedCount,
         category.pct,
-      ])
-    )
+      ]),
+    ),
   );
 }
 
@@ -442,7 +445,7 @@ async function runBoundedAnalysis(page, datasetConfig) {
         sessionJson: serializeSessionFile(sessionFile),
       };
     },
-    { analyses: datasetConfig.analyses, weightVar: datasetConfig.weightVar }
+    { analyses: datasetConfig.analyses, weightVar: datasetConfig.weightVar },
   );
 }
 
@@ -504,9 +507,7 @@ async function main() {
       throw new Error('Neither WVS nor fallback Trust completed the load path');
     }
 
-    const analysisPayload = selectedConfig.analyses.length > 0
-      ? await runBoundedAnalysis(page, selectedConfig)
-      : null;
+    const analysisPayload = selectedConfig.analyses.length > 0 ? await runBoundedAnalysis(page, selectedConfig) : null;
 
     let result = {
       dataset: {
@@ -514,10 +515,11 @@ async function main() {
         label: selectedConfig.label,
         path: path.relative(process.cwd(), selectedConfig.filePath),
         rowCount: selectedAttempt.fullLoadStage?.rowCount ?? selectedAttempt.metadataStage?.rowCount ?? 0,
-        variableCount: analysisPayload?.dataset.variableCount
-          ?? selectedAttempt.fullLoadStage?.variableCount
-          ?? selectedAttempt.metadataStage?.variableCount
-          ?? 0,
+        variableCount:
+          analysisPayload?.dataset.variableCount ??
+          selectedAttempt.fullLoadStage?.variableCount ??
+          selectedAttempt.metadataStage?.variableCount ??
+          0,
       },
       fallbackUsed: selectedConfig.key !== DATASETS.wvs.key,
       attempts: attemptResults,

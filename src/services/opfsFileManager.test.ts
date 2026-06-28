@@ -44,7 +44,10 @@ class FakeWritable {
 class FakeFileHandle {
   kind = 'file' as const;
 
-  constructor(public name: string, private entry: FakeFileEntry) {}
+  constructor(
+    public name: string,
+    private entry: FakeFileEntry,
+  ) {}
 
   async getFile(): Promise<File> {
     return this.entry.toFile();
@@ -188,10 +191,7 @@ describe('opfsFileManager', () => {
 
     const files = await opfs.listDbFiles();
     const names = files.map((f) => f.name).sort();
-    expect(names).toEqual([
-      'velocity_data_v1_default.db',
-      'velocity_data_v1_default.db.corrupt_123',
-    ]);
+    expect(names).toEqual(['velocity_data_v1_default.db', 'velocity_data_v1_default.db.corrupt_123']);
 
     await opfs.deleteDbFile('velocity_data_v1_default.db');
     expect(root.hasFile('velocity_data_v1_default.db')).toBe(false);

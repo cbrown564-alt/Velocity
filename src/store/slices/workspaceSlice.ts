@@ -24,7 +24,9 @@ export interface WorkspaceSlice {
   setActiveDataset: (id: string | null) => void;
 
   // Dataset CRUD
-  addStoredDataset: (dataset: Omit<StoredDataset, 'createdAt' | 'lastOpenedAt' | 'lastModifiedAt' | 'starred'> & { id?: string }) => string;
+  addStoredDataset: (
+    dataset: Omit<StoredDataset, 'createdAt' | 'lastOpenedAt' | 'lastModifiedAt' | 'starred'> & { id?: string },
+  ) => string;
   updateStoredDataset: (id: string, updates: Partial<StoredDataset>) => void;
   removeStoredDataset: (id: string) => void;
   removeStoredDatasets: (ids: string[]) => void;
@@ -80,7 +82,7 @@ export const createWorkspaceSlice: StateCreator<WorkspaceSlice> = (set, get) => 
     const id = dataset.id ?? uuidv4();
     const now = Date.now();
     set((state) => {
-      const existingIndex = state.workspace.datasets.findIndex(d => d.id === id);
+      const existingIndex = state.workspace.datasets.findIndex((d) => d.id === id);
       if (existingIndex >= 0) {
         const existing = state.workspace.datasets[existingIndex];
         const updated: StoredDataset = {
@@ -124,7 +126,7 @@ export const createWorkspaceSlice: StateCreator<WorkspaceSlice> = (set, get) => 
       workspace: {
         ...state.workspace,
         datasets: state.workspace.datasets.map((d) =>
-          d.id === id ? { ...d, ...updates, lastModifiedAt: Date.now() } : d
+          d.id === id ? { ...d, ...updates, lastModifiedAt: Date.now() } : d,
         ),
       },
     }));
@@ -159,10 +161,7 @@ export const createWorkspaceSlice: StateCreator<WorkspaceSlice> = (set, get) => 
         })),
       },
       // Clear active if removed
-      activeDatasetId:
-        state.activeDatasetId && idSet.has(state.activeDatasetId)
-          ? null
-          : state.activeDatasetId,
+      activeDatasetId: state.activeDatasetId && idSet.has(state.activeDatasetId) ? null : state.activeDatasetId,
     }));
   },
 
@@ -170,9 +169,7 @@ export const createWorkspaceSlice: StateCreator<WorkspaceSlice> = (set, get) => 
     set((state) => ({
       workspace: {
         ...state.workspace,
-        datasets: state.workspace.datasets.map((d) =>
-          d.id === id ? { ...d, starred: !d.starred } : d
-        ),
+        datasets: state.workspace.datasets.map((d) => (d.id === id ? { ...d, starred: !d.starred } : d)),
       },
     }));
   },
@@ -181,9 +178,7 @@ export const createWorkspaceSlice: StateCreator<WorkspaceSlice> = (set, get) => 
     set((state) => ({
       workspace: {
         ...state.workspace,
-        datasets: state.workspace.datasets.map((d) =>
-          d.id === id ? { ...d, lastOpenedAt: Date.now() } : d
-        ),
+        datasets: state.workspace.datasets.map((d) => (d.id === id ? { ...d, lastOpenedAt: Date.now() } : d)),
       },
     }));
   },
@@ -203,7 +198,7 @@ export const createWorkspaceSlice: StateCreator<WorkspaceSlice> = (set, get) => 
         projects: [...state.workspace.projects, newProject],
         // Update datasets to reference this project
         datasets: state.workspace.datasets.map((d) =>
-          project.datasetIds.includes(d.id) ? { ...d, projectId: id } : d
+          project.datasetIds.includes(d.id) ? { ...d, projectId: id } : d,
         ),
       },
     }));
@@ -215,9 +210,7 @@ export const createWorkspaceSlice: StateCreator<WorkspaceSlice> = (set, get) => 
     set((state) => ({
       workspace: {
         ...state.workspace,
-        projects: state.workspace.projects.map((p) =>
-          p.id === id ? { ...p, ...updates } : p
-        ),
+        projects: state.workspace.projects.map((p) => (p.id === id ? { ...p, ...updates } : p)),
       },
     }));
   },
@@ -229,7 +222,7 @@ export const createWorkspaceSlice: StateCreator<WorkspaceSlice> = (set, get) => 
         projects: state.workspace.projects.filter((p) => p.id !== id),
         // Clear project reference from datasets
         datasets: state.workspace.datasets.map((d) =>
-          d.projectId === id ? { ...d, projectId: undefined, waveNumber: undefined } : d
+          d.projectId === id ? { ...d, projectId: undefined, waveNumber: undefined } : d,
         ),
       },
     }));
@@ -244,13 +237,9 @@ export const createWorkspaceSlice: StateCreator<WorkspaceSlice> = (set, get) => 
         workspace: {
           ...state.workspace,
           projects: state.workspace.projects.map((p) =>
-            p.id === projectId
-              ? { ...p, datasetIds: [...new Set([...p.datasetIds, ...datasetIds])] }
-              : p
+            p.id === projectId ? { ...p, datasetIds: [...new Set([...p.datasetIds, ...datasetIds])] } : p,
           ),
-          datasets: state.workspace.datasets.map((d) =>
-            datasetIds.includes(d.id) ? { ...d, projectId } : d
-          ),
+          datasets: state.workspace.datasets.map((d) => (datasetIds.includes(d.id) ? { ...d, projectId } : d)),
         },
       };
     });
@@ -267,7 +256,7 @@ export const createWorkspaceSlice: StateCreator<WorkspaceSlice> = (set, get) => 
         datasets: state.workspace.datasets.map((d) =>
           datasetIds.includes(d.id)
             ? { ...d, projectId: undefined, waveNumber: undefined, respondentKey: undefined }
-            : d
+            : d,
         ),
       },
     }));
@@ -278,9 +267,7 @@ export const createWorkspaceSlice: StateCreator<WorkspaceSlice> = (set, get) => 
     set((state) => ({
       workspace: {
         ...state.workspace,
-        datasets: state.workspace.datasets.map((d) =>
-          d.id === datasetId ? { ...d, waveNumber } : d
-        ),
+        datasets: state.workspace.datasets.map((d) => (d.id === datasetId ? { ...d, waveNumber } : d)),
       },
     }));
   },
@@ -289,9 +276,7 @@ export const createWorkspaceSlice: StateCreator<WorkspaceSlice> = (set, get) => 
     set((state) => ({
       workspace: {
         ...state.workspace,
-        datasets: state.workspace.datasets.map((d) =>
-          d.id === datasetId ? { ...d, respondentKey: variableName } : d
-        ),
+        datasets: state.workspace.datasets.map((d) => (d.id === datasetId ? { ...d, respondentKey: variableName } : d)),
       },
     }));
   },
@@ -302,7 +287,7 @@ export const createWorkspaceSlice: StateCreator<WorkspaceSlice> = (set, get) => 
       workspace: {
         ...state.workspace,
         datasets: state.workspace.datasets.map((d) =>
-          d.id === datasetId ? { ...d, sessionState: session, lastModifiedAt: Date.now() } : d
+          d.id === datasetId ? { ...d, sessionState: session, lastModifiedAt: Date.now() } : d,
         ),
       },
     }));

@@ -80,10 +80,7 @@ describe('slideToRecipe', () => {
 
 describe('slidesToRecipes', () => {
   it('preserves slide order for deck recipe persistence', () => {
-    const slides = [
-      makeSlide({ id: 'slide-a', title: 'First' }),
-      makeSlide({ id: 'slide-b', title: 'Second' }),
-    ];
+    const slides = [makeSlide({ id: 'slide-a', title: 'First' }), makeSlide({ id: 'slide-b', title: 'Second' })];
 
     expect(slidesToRecipes(slides).map((recipe) => recipe.slideId)).toEqual(['slide-a', 'slide-b']);
   });
@@ -119,7 +116,7 @@ describe('assessDatasetReplacement', () => {
           type: 'numeric',
         },
       ],
-      variables
+      variables,
     );
 
     expect(assessment.ready).toBe(false);
@@ -170,7 +167,7 @@ describe('assessDatasetReplacement', () => {
       expect.arrayContaining([
         expect.objectContaining({ code: 'unresolved_filter_var', severity: 'warn' }),
         expect.objectContaining({ code: 'unresolved_weight_var', severity: 'warn' }),
-      ])
+      ]),
     );
   });
 });
@@ -234,7 +231,7 @@ describe('buildDatasetReplacementReview', () => {
       expect.arrayContaining([
         expect.objectContaining({ code: 'unresolved_row_var', referenceId: 'vs_missing' }),
         expect.objectContaining({ code: 'unresolved_col_var', referenceId: 'vs_unknown_col' }),
-      ])
+      ]),
     );
   });
 
@@ -262,7 +259,7 @@ describe('buildDatasetReplacementReview', () => {
       expect.arrayContaining([
         expect.objectContaining({ code: 'unresolved_filter_var', severity: 'warn' }),
         expect.objectContaining({ code: 'unresolved_weight_var', severity: 'warn' }),
-      ])
+      ]),
     );
   });
 });
@@ -393,7 +390,7 @@ describe('buildExportReview', () => {
       expect.arrayContaining([
         expect.objectContaining({ code: 'unresolved_filter_var', severity: 'block' }),
         expect.objectContaining({ code: 'unresolved_weight_var', severity: 'block' }),
-      ])
+      ]),
     );
   });
 

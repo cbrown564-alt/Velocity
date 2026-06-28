@@ -9,10 +9,7 @@ export function normalizeOpfsPath(input: string): string {
   return input.replace(/^opfs:\/\//, '').replace(/^\/+/, '');
 }
 
-export async function* walkOpfs(
-  dir: FileSystemDirectoryHandle,
-  prefix: string = ''
-): AsyncIterable<OpfsEntry> {
+export async function* walkOpfs(dir: FileSystemDirectoryHandle, prefix: string = ''): AsyncIterable<OpfsEntry> {
   // @ts-expect-error - entries() returns an async iterator
   for await (const [name, handle] of dir.entries()) {
     const path = prefix ? `${prefix}/${name}` : name;
@@ -25,7 +22,7 @@ export async function* walkOpfs(
 
 export async function resolveOpfsPath(
   root: FileSystemDirectoryHandle,
-  path: string
+  path: string,
 ): Promise<{ parent: FileSystemDirectoryHandle; name: string } | null> {
   const normalized = normalizeOpfsPath(path);
   const parts = normalized.split('/').filter(Boolean);
@@ -45,7 +42,7 @@ export async function resolveOpfsPath(
 
 export async function findOpfsFile(
   root: FileSystemDirectoryHandle,
-  targetPath: string
+  targetPath: string,
 ): Promise<{ path: string; name: string; parent: FileSystemDirectoryHandle; handle: FileSystemFileHandle } | null> {
   const normalized = normalizeOpfsPath(targetPath);
   if (normalized.includes('/')) {

@@ -98,14 +98,16 @@ describe('DataSlice workspace persistence', () => {
         { id: 'q1_a', name: 'q1_a', label: 'Brand A', type: 'ordered', valueLabels: [], missingValues: {} },
         { id: 'q1_b', name: 'q1_b', label: 'Brand B', type: 'ordered', valueLabels: [], missingValues: {} },
       ],
-      variableSets: [{
-        id: 'grid-1',
-        name: 'Brand Ratings',
-        variableIds: ['q1_a', 'q1_b'],
-        structure: 'grid',
-        type: 'ordered',
-        folderId: 'folder-1',
-      }],
+      variableSets: [
+        {
+          id: 'grid-1',
+          name: 'Brand Ratings',
+          variableIds: ['q1_a', 'q1_b'],
+          structure: 'grid',
+          type: 'ordered',
+          folderId: 'folder-1',
+        },
+      ],
       folders: [{ id: 'folder-1', name: 'Brands', order: 0 }],
       sessionState: {
         tableConfig: { rowVars: ['q1_a'], colVar: null },
@@ -114,16 +116,18 @@ describe('DataSlice workspace persistence', () => {
       },
     } as any);
 
-    expect(useVelocityStore.getState().variableSets).toEqual([{
-      id: 'grid-1',
-      name: 'Brand Ratings',
-      variableIds: ['q1_a', 'q1_b'],
-      structure: 'grid',
-      type: 'ordered',
-      orderedStyle: 'sequence',
-      orderedScoring: 'categorical_only',
-      folderId: 'folder-1',
-    }]);
+    expect(useVelocityStore.getState().variableSets).toEqual([
+      {
+        id: 'grid-1',
+        name: 'Brand Ratings',
+        variableIds: ['q1_a', 'q1_b'],
+        structure: 'grid',
+        type: 'ordered',
+        orderedStyle: 'sequence',
+        orderedScoring: 'categorical_only',
+        folderId: 'folder-1',
+      },
+    ]);
     expect(useVelocityStore.getState().folders).toEqual([{ id: 'folder-1', name: 'Brands', order: 0 }]);
   });
 

@@ -72,9 +72,7 @@ export const ExportImportModal: React.FC<ExportImportModalProps> = ({
   onImport,
 }) => {
   const [activeTab, setActiveTab] = useState<Tab>('export');
-  const [exportMode, setExportMode] = useState<ExportMode>(
-    selectedDatasetIds.length > 0 ? 'selected' : 'full'
-  );
+  const [exportMode, setExportMode] = useState<ExportMode>(selectedDatasetIds.length > 0 ? 'selected' : 'full');
   const [copied, setCopied] = useState(false);
   const [importData, setImportData] = useState<WorkspaceExport | null>(null);
   const [importError, setImportError] = useState<string | null>(null);
@@ -85,19 +83,11 @@ export const ExportImportModal: React.FC<ExportImportModalProps> = ({
 
   // Generate export data
   const generateExport = (): WorkspaceExport => {
-    const exportDatasets =
-      exportMode === 'full'
-        ? datasets
-        : datasets.filter(d => selectedDatasetIds.includes(d.id));
+    const exportDatasets = exportMode === 'full' ? datasets : datasets.filter((d) => selectedDatasetIds.includes(d.id));
 
     // Get projects that contain any of the exported datasets
-    const relevantProjectIds = new Set(
-      exportDatasets.map(d => d.projectId).filter(Boolean)
-    );
-    const exportProjects =
-      exportMode === 'full'
-        ? projects
-        : projects.filter(p => relevantProjectIds.has(p.id));
+    const relevantProjectIds = new Set(exportDatasets.map((d) => d.projectId).filter(Boolean));
+    const exportProjects = exportMode === 'full' ? projects : projects.filter((p) => relevantProjectIds.has(p.id));
 
     // Strip session state from datasets (large, not portable)
     const cleanDatasets = exportDatasets.map(({ sessionState, ...rest }) => rest);
@@ -188,15 +178,11 @@ export const ExportImportModal: React.FC<ExportImportModalProps> = ({
 
   return (
     <AnimatePresence>
-      <motion.div
-        className={styles.overlay}
-        {...getBackdropProps(reducedMotion)}
-        onClick={onClose}
-      >
+      <motion.div className={styles.overlay} {...getBackdropProps(reducedMotion)} onClick={onClose}>
         <motion.div
           className={styles.modal}
           {...getModalPresenceProps(reducedMotion)}
-          onClick={e => e.stopPropagation()}
+          onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
           <div className={styles.header}>
@@ -214,17 +200,11 @@ export const ExportImportModal: React.FC<ExportImportModalProps> = ({
 
           {/* Tabs */}
           <div className={styles.tabs}>
-            <button
-              className={activeTab === 'export' ? styles.active : ''}
-              onClick={() => setActiveTab('export')}
-            >
+            <button className={activeTab === 'export' ? styles.active : ''} onClick={() => setActiveTab('export')}>
               <Download size={14} />
               Export
             </button>
-            <button
-              className={activeTab === 'import' ? styles.active : ''}
-              onClick={() => setActiveTab('import')}
-            >
+            <button className={activeTab === 'import' ? styles.active : ''} onClick={() => setActiveTab('import')}>
               <Upload size={14} />
               Import
             </button>
@@ -243,9 +223,7 @@ export const ExportImportModal: React.FC<ExportImportModalProps> = ({
                     >
                       <Database size={14} />
                       Full Workspace
-                      <span className={styles.modeMeta}>
-                        {datasets.length} datasets
-                      </span>
+                      <span className={styles.modeMeta}>{datasets.length} datasets</span>
                     </button>
                     <button
                       className={exportMode === 'selected' ? styles.active : ''}
@@ -253,9 +231,7 @@ export const ExportImportModal: React.FC<ExportImportModalProps> = ({
                     >
                       <CheckCircle2 size={14} />
                       Selected Only
-                      <span className={styles.modeMeta}>
-                        {selectedDatasetIds.length} datasets
-                      </span>
+                      <span className={styles.modeMeta}>{selectedDatasetIds.length} datasets</span>
                     </button>
                   </div>
                 )}
@@ -281,8 +257,8 @@ export const ExportImportModal: React.FC<ExportImportModalProps> = ({
                   <div className={styles.previewNote}>
                     <AlertCircle size={14} />
                     <span>
-                      Export includes metadata only. Original data files must be re-uploaded
-                      when importing on a new device.
+                      Export includes metadata only. Original data files must be re-uploaded when importing on a new
+                      device.
                     </span>
                   </div>
                 </div>
@@ -370,8 +346,8 @@ export const ExportImportModal: React.FC<ExportImportModalProps> = ({
                     <div className={styles.importWarning}>
                       <AlertCircle size={14} />
                       <span>
-                        Importing will add these datasets and projects to your workspace.
-                        Existing items with the same ID will be updated.
+                        Importing will add these datasets and projects to your workspace. Existing items with the same
+                        ID will be updated.
                       </span>
                     </div>
 

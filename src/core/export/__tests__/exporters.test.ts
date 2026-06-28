@@ -120,9 +120,7 @@ const emptySeriesData: ProcessedAnalysisData = {
 
 const config: ExportConfig = {
   title: 'Test Report',
-  analyses: [
-    { label: 'Gender by Agreement', result: mockData },
-  ],
+  analyses: [{ label: 'Gender by Agreement', result: mockData }],
 };
 
 async function loadZip(bytes: Uint8Array): Promise<JSZip> {
@@ -198,7 +196,7 @@ describe('exportPptx', () => {
     expect(bytes.length).toBeGreaterThan(1000);
     // ZIP magic number: PK\x03\x04
     expect(bytes[0]).toBe(0x50); // P
-    expect(bytes[1]).toBe(0x4B); // K
+    expect(bytes[1]).toBe(0x4b); // K
     expect(bytes[2]).toBe(0x03);
     expect(bytes[3]).toBe(0x04);
   });
@@ -207,14 +205,10 @@ describe('exportPptx', () => {
     const bytes = await exportPptx(config);
     const zip = await loadZip(bytes);
 
-    const slidePaths = Object.keys(zip.files).filter((name) =>
-      /^ppt\/slides\/slide\d+\.xml$/.test(name)
-    );
+    const slidePaths = Object.keys(zip.files).filter((name) => /^ppt\/slides\/slide\d+\.xml$/.test(name));
     expect(slidePaths.length).toBeGreaterThan(0);
 
-    const slideXml = await Promise.all(
-      slidePaths.map((path) => zip.file(path)!.async('string'))
-    );
+    const slideXml = await Promise.all(slidePaths.map((path) => zip.file(path)!.async('string')));
     const combined = slideXml.join('\n');
 
     expect(combined).toContain('Male');
@@ -240,7 +234,7 @@ describe('exportPptx', () => {
     expect(bytes).toBeInstanceOf(Uint8Array);
     expect(bytes.length).toBeGreaterThan(100);
     expect(bytes[0]).toBe(0x50);
-    expect(bytes[1]).toBe(0x4B);
+    expect(bytes[1]).toBe(0x4b);
   });
 
   it('handles chart view type without throwing', async () => {
@@ -289,11 +283,15 @@ describe('exportPptx', () => {
   it('produces a larger file when showCounts is enabled', async () => {
     const withCounts = await exportPptx({
       title: 'Counts',
-      analyses: [{ label: 'A', result: mockData, options: { showPercents: true, showCounts: true, showSignificance: false } }],
+      analyses: [
+        { label: 'A', result: mockData, options: { showPercents: true, showCounts: true, showSignificance: false } },
+      ],
     });
     const withoutCounts = await exportPptx({
       title: 'No Counts',
-      analyses: [{ label: 'A', result: mockData, options: { showPercents: true, showCounts: false, showSignificance: false } }],
+      analyses: [
+        { label: 'A', result: mockData, options: { showPercents: true, showCounts: false, showSignificance: false } },
+      ],
     });
     // More content in cells means a larger compressed file
     expect(withCounts.length).toBeGreaterThan(withoutCounts.length);
@@ -318,12 +316,14 @@ describe('exportPptx chart type fidelity', () => {
   function chartConfig(chartType: string, data = multiSeriesData): ExportConfig {
     return {
       title: `${chartType} Report`,
-      analyses: [{
-        label: `${chartType} chart`,
-        result: data,
-        viewType: 'chart' as const,
-        chartType: chartType as any,
-      }],
+      analyses: [
+        {
+          label: `${chartType} chart`,
+          result: data,
+          viewType: 'chart' as const,
+          chartType: chartType as any,
+        },
+      ],
     };
   }
 
@@ -345,23 +345,19 @@ describe('exportPptx chart type fidelity', () => {
     expect(bytes.length).toBeGreaterThan(1000);
     // ZIP magic number
     expect(bytes[0]).toBe(0x50);
-    expect(bytes[1]).toBe(0x4B);
+    expect(bytes[1]).toBe(0x4b);
   });
 
   // --- Unsupported types fall back to clustered column ---
 
-  it.each([
-    'histogram',
-    'box-plot',
-    'violin',
-    'ridgeline',
-    'hexbin',
-    'grouped-box-plot',
-  ] as const)('falls back to bar chart for unsupported %s type', async (chartType) => {
-    const bytes = await exportPptx(chartConfig(chartType));
-    expect(bytes).toBeInstanceOf(Uint8Array);
-    expect(bytes.length).toBeGreaterThan(1000);
-  });
+  it.each(['histogram', 'box-plot', 'violin', 'ridgeline', 'hexbin', 'grouped-box-plot'] as const)(
+    'falls back to bar chart for unsupported %s type',
+    async (chartType) => {
+      const bytes = await exportPptx(chartConfig(chartType));
+      expect(bytes).toBeInstanceOf(Uint8Array);
+      expect(bytes.length).toBeGreaterThan(1000);
+    },
+  );
 
   // --- Multi-series handling ---
 
@@ -403,13 +399,15 @@ describe('exportPptx chart type fidelity', () => {
   it('renders chart with showCounts option', async () => {
     const cfg: ExportConfig = {
       title: 'Counts Chart',
-      analyses: [{
-        label: 'Counts',
-        result: multiSeriesData,
-        viewType: 'chart',
-        chartType: 'vertical-bar',
-        options: { showPercents: false, showCounts: true },
-      }],
+      analyses: [
+        {
+          label: 'Counts',
+          result: multiSeriesData,
+          viewType: 'chart',
+          chartType: 'vertical-bar',
+          options: { showPercents: false, showCounts: true },
+        },
+      ],
     };
     const bytes = await exportPptx(cfg);
     expect(bytes).toBeInstanceOf(Uint8Array);
@@ -419,13 +417,15 @@ describe('exportPptx chart type fidelity', () => {
   it('renders chart with both showPercents and showCounts', async () => {
     const cfg: ExportConfig = {
       title: 'Both',
-      analyses: [{
-        label: 'Both',
-        result: multiSeriesData,
-        viewType: 'chart',
-        chartType: 'horizontal-bar',
-        options: { showPercents: true, showCounts: true },
-      }],
+      analyses: [
+        {
+          label: 'Both',
+          result: multiSeriesData,
+          viewType: 'chart',
+          chartType: 'horizontal-bar',
+          options: { showPercents: true, showCounts: true },
+        },
+      ],
     };
     const bytes = await exportPptx(cfg);
     expect(bytes).toBeInstanceOf(Uint8Array);
@@ -444,7 +444,7 @@ describe('exportXlsx', () => {
     expect(bytes.length).toBeGreaterThan(1000);
     // ZIP magic number
     expect(bytes[0]).toBe(0x50);
-    expect(bytes[1]).toBe(0x4B);
+    expect(bytes[1]).toBe(0x4b);
     expect(bytes[2]).toBe(0x03);
     expect(bytes[3]).toBe(0x04);
   });

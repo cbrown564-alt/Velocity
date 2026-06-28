@@ -88,13 +88,20 @@ export class EngineProxy {
   // Lifecycle
   // ==========================================================================
 
-  async init(opts?: { forceCleanStart?: boolean; datasetId?: string; schemaVersion?: number }): Promise<EngineResponseByType<'engine.ready'>> {
-    return this.send({
-      type: 'engine.init',
-      forceCleanStart: opts?.forceCleanStart,
-      datasetId: opts?.datasetId,
-      schemaVersion: opts?.schemaVersion,
-    }, 'engine.ready') as Promise<EngineResponseByType<'engine.ready'>>;
+  async init(opts?: {
+    forceCleanStart?: boolean;
+    datasetId?: string;
+    schemaVersion?: number;
+  }): Promise<EngineResponseByType<'engine.ready'>> {
+    return this.send(
+      {
+        type: 'engine.init',
+        forceCleanStart: opts?.forceCleanStart,
+        datasetId: opts?.datasetId,
+        schemaVersion: opts?.schemaVersion,
+      },
+      'engine.ready',
+    ) as Promise<EngineResponseByType<'engine.ready'>>;
   }
 
   async ping(): Promise<EngineResponseByType<'engine.pong'>> {
@@ -105,11 +112,13 @@ export class EngineProxy {
   // Persistence
   // ==========================================================================
 
-  async checkPersistedData(): Promise<EngineResponseByType<'engine.persistedDataFound'> | EngineResponseByType<'engine.noPersistedData'>> {
-    return this.send(
-      { type: 'engine.checkPersistedData' },
-      ['engine.persistedDataFound', 'engine.noPersistedData']
-    ) as Promise<EngineResponseByType<'engine.persistedDataFound'> | EngineResponseByType<'engine.noPersistedData'>>;
+  async checkPersistedData(): Promise<
+    EngineResponseByType<'engine.persistedDataFound'> | EngineResponseByType<'engine.noPersistedData'>
+  > {
+    return this.send({ type: 'engine.checkPersistedData' }, [
+      'engine.persistedDataFound',
+      'engine.noPersistedData',
+    ]) as Promise<EngineResponseByType<'engine.persistedDataFound'> | EngineResponseByType<'engine.noPersistedData'>>;
   }
 
   async clearPersistedData(): Promise<void> {
@@ -117,7 +126,9 @@ export class EngineProxy {
   }
 
   async flushPersistedData(): Promise<EngineResponseByType<'engine.flushComplete'>> {
-    return this.send({ type: 'engine.flushPersistedData' }, 'engine.flushComplete') as Promise<EngineResponseByType<'engine.flushComplete'>>;
+    return this.send({ type: 'engine.flushPersistedData' }, 'engine.flushComplete') as Promise<
+      EngineResponseByType<'engine.flushComplete'>
+    >;
   }
 
   async updatePersistenceMetadata(metadata: PersistedMetadata): Promise<void> {
@@ -136,26 +147,21 @@ export class EngineProxy {
   // ==========================================================================
 
   async loadCSV(fileName: string, content: string): Promise<EngineResponseByType<'engine.csvLoaded'>> {
-    return this.send(
-      { type: 'engine.loadCSV', fileName, content },
-      'engine.csvLoaded'
-    ) as Promise<EngineResponseByType<'engine.csvLoaded'>>;
+    return this.send({ type: 'engine.loadCSV', fileName, content }, 'engine.csvLoaded') as Promise<
+      EngineResponseByType<'engine.csvLoaded'>
+    >;
   }
 
   async loadSAV(buffer: ArrayBuffer, forceChunked?: boolean): Promise<EngineResponseByType<'engine.savLoaded'>> {
-    return this.send(
-      { type: 'engine.loadSAV', buffer, forceChunked },
-      'engine.savLoaded',
-      [buffer],
-    ) as Promise<EngineResponseByType<'engine.savLoaded'>>;
+    return this.send({ type: 'engine.loadSAV', buffer, forceChunked }, 'engine.savLoaded', [buffer]) as Promise<
+      EngineResponseByType<'engine.savLoaded'>
+    >;
   }
 
   async loadSAVMetadata(buffer: ArrayBuffer): Promise<EngineResponseByType<'engine.savMetadataLoaded'>> {
-    return this.send(
-      { type: 'engine.loadSAVMetadata', buffer },
-      'engine.savMetadataLoaded',
-      [buffer],
-    ) as Promise<EngineResponseByType<'engine.savMetadataLoaded'>>;
+    return this.send({ type: 'engine.loadSAVMetadata', buffer }, 'engine.savMetadataLoaded', [buffer]) as Promise<
+      EngineResponseByType<'engine.savMetadataLoaded'>
+    >;
   }
 
   async loadSAVSample(
@@ -163,11 +169,9 @@ export class EngineProxy {
     rowLimit: number,
     strategy?: 'sequential' | 'spread',
   ): Promise<EngineResponseByType<'engine.savSampleLoaded'>> {
-    return this.send(
-      { type: 'engine.loadSAVSample', buffer, rowLimit, strategy },
-      'engine.savSampleLoaded',
-      [buffer],
-    ) as Promise<EngineResponseByType<'engine.savSampleLoaded'>>;
+    return this.send({ type: 'engine.loadSAVSample', buffer, rowLimit, strategy }, 'engine.savSampleLoaded', [
+      buffer,
+    ]) as Promise<EngineResponseByType<'engine.savSampleLoaded'>>;
   }
 
   // ==========================================================================
@@ -175,24 +179,19 @@ export class EngineProxy {
   // ==========================================================================
 
   async query(sql: string): Promise<EngineResponseByType<'engine.queryResult'>> {
-    return this.send(
-      { type: 'engine.query', sql },
-      'engine.queryResult'
-    ) as Promise<EngineResponseByType<'engine.queryResult'>>;
+    return this.send({ type: 'engine.query', sql }, 'engine.queryResult') as Promise<
+      EngineResponseByType<'engine.queryResult'>
+    >;
   }
 
   async getSchema(): Promise<EngineResponseByType<'engine.schema'>> {
-    return this.send(
-      { type: 'engine.getSchema' },
-      'engine.schema'
-    ) as Promise<EngineResponseByType<'engine.schema'>>;
+    return this.send({ type: 'engine.getSchema' }, 'engine.schema') as Promise<EngineResponseByType<'engine.schema'>>;
   }
 
   async getUniqueValues(column: string): Promise<EngineResponseByType<'engine.uniqueValues'>> {
-    return this.send(
-      { type: 'engine.getUniqueValues', column },
-      'engine.uniqueValues'
-    ) as Promise<EngineResponseByType<'engine.uniqueValues'>>;
+    return this.send({ type: 'engine.getUniqueValues', column }, 'engine.uniqueValues') as Promise<
+      EngineResponseByType<'engine.uniqueValues'>
+    >;
   }
 
   async getVariableStats(
@@ -203,10 +202,10 @@ export class EngineProxy {
     missingValues?: MissingValueDef,
   ): Promise<ResultEnvelope<VariableStatsResult>> {
     const t0 = performance.now();
-    const raw = await this.send(
+    const raw = (await this.send(
       { type: 'engine.getVariableStats', column, variableType, orderedScoring, binCount, missingValues },
       'engine.variableStats',
-    ) as EngineResponseByType<'engine.variableStats'>;
+    )) as EngineResponseByType<'engine.variableStats'>;
     return this.wrapResult(
       'getVariableStats',
       { column, variableType: variableType ?? null },
@@ -224,10 +223,10 @@ export class EngineProxy {
     context: WorkerAnalysisContext,
     analysisSettings?: WorkerAnalysisSettings,
   ): Promise<ResultEnvelope<{ rows: AggregatedRow[]; tableStats: TableStats | null }>> {
-    const raw = await this.send(
+    const raw = (await this.send(
       { type: 'engine.runCrosstab', options, context, analysisSettings },
       'engine.queryResult',
-    ) as EngineResponseByType<'engine.queryResult'>;
+    )) as EngineResponseByType<'engine.queryResult'>;
     return this.wrapResult(
       'runCrosstab',
       { rowVars: options.rowVars, colVar: options.colVar ?? null },
@@ -248,41 +247,49 @@ export class EngineProxy {
     },
     chartType?: ChartType,
   ): Promise<EngineResponseByType<'engine.processedData'>> {
-    return this.send(
-      { type: 'engine.processData', data, options, chartType },
-      'engine.processedData'
-    ) as Promise<EngineResponseByType<'engine.processedData'>>;
+    return this.send({ type: 'engine.processData', data, options, chartType }, 'engine.processedData') as Promise<
+      EngineResponseByType<'engine.processedData'>
+    >;
   }
 
   // ==========================================================================
   // Transformations
   // ==========================================================================
 
-  async recodeVariable(sourceCol: string, newColName: string, config: RecodeConfig): Promise<EngineResponseByType<'engine.recodeComplete'>> {
+  async recodeVariable(
+    sourceCol: string,
+    newColName: string,
+    config: RecodeConfig,
+  ): Promise<EngineResponseByType<'engine.recodeComplete'>> {
     return this.send(
       { type: 'engine.recodeVariable', sourceCol, newColName, config },
-      'engine.recodeComplete'
+      'engine.recodeComplete',
     ) as Promise<EngineResponseByType<'engine.recodeComplete'>>;
   }
 
   async dropColumn(column: string): Promise<EngineResponseByType<'engine.columnDropped'>> {
-    return this.send(
-      { type: 'engine.dropColumn', column },
-      'engine.columnDropped'
-    ) as Promise<EngineResponseByType<'engine.columnDropped'>>;
+    return this.send({ type: 'engine.dropColumn', column }, 'engine.columnDropped') as Promise<
+      EngineResponseByType<'engine.columnDropped'>
+    >;
   }
 
-  async updateColumn(sourceCol: string, targetCol: string, config: RecodeConfig): Promise<EngineResponseByType<'engine.columnUpdated'>> {
-    return this.send(
-      { type: 'engine.updateColumn', sourceCol, targetCol, config },
-      'engine.columnUpdated'
-    ) as Promise<EngineResponseByType<'engine.columnUpdated'>>;
+  async updateColumn(
+    sourceCol: string,
+    targetCol: string,
+    config: RecodeConfig,
+  ): Promise<EngineResponseByType<'engine.columnUpdated'>> {
+    return this.send({ type: 'engine.updateColumn', sourceCol, targetCol, config }, 'engine.columnUpdated') as Promise<
+      EngineResponseByType<'engine.columnUpdated'>
+    >;
   }
 
-  async fillSystemMissing(column: string, value: number | string): Promise<EngineResponseByType<'engine.fillSystemMissingComplete'>> {
+  async fillSystemMissing(
+    column: string,
+    value: number | string,
+  ): Promise<EngineResponseByType<'engine.fillSystemMissingComplete'>> {
     return this.send(
       { type: 'engine.fillSystemMissing', column, value },
-      'engine.fillSystemMissingComplete'
+      'engine.fillSystemMissingComplete',
     ) as Promise<EngineResponseByType<'engine.fillSystemMissingComplete'>>;
   }
 
@@ -291,20 +298,22 @@ export class EngineProxy {
   // ==========================================================================
 
   async exportArrow(sql: string, columns?: string[]): Promise<EngineResponseByType<'engine.arrowExported'>> {
-    return this.send(
-      { type: 'engine.exportArrow', sql, columns },
-      'engine.arrowExported'
-    ) as Promise<EngineResponseByType<'engine.arrowExported'>>;
+    return this.send({ type: 'engine.exportArrow', sql, columns }, 'engine.arrowExported') as Promise<
+      EngineResponseByType<'engine.arrowExported'>
+    >;
   }
 
   // ==========================================================================
   // Harmonization
   // ==========================================================================
 
-  async getValueFrequencies(tableName: string, columnName: string): Promise<EngineResponseByType<'engine.valueFrequencies'>> {
+  async getValueFrequencies(
+    tableName: string,
+    columnName: string,
+  ): Promise<EngineResponseByType<'engine.valueFrequencies'>> {
     return this.send(
       { type: 'engine.getValueFrequencies', tableName, columnName },
-      'engine.valueFrequencies'
+      'engine.valueFrequencies',
     ) as Promise<EngineResponseByType<'engine.valueFrequencies'>>;
   }
 
@@ -317,15 +326,27 @@ export class EngineProxy {
     targetVarNames?: Record<string, string>,
   ): Promise<EngineResponseByType<'engine.harmonizedTableCreated'>> {
     return this.send(
-      { type: 'engine.buildHarmonizedTable', sourceTable, targetTable, mappings, outputTableName, sourceVarNames, targetVarNames },
-      'engine.harmonizedTableCreated'
+      {
+        type: 'engine.buildHarmonizedTable',
+        sourceTable,
+        targetTable,
+        mappings,
+        outputTableName,
+        sourceVarNames,
+        targetVarNames,
+      },
+      'engine.harmonizedTableCreated',
     ) as Promise<EngineResponseByType<'engine.harmonizedTableCreated'>>;
   }
 
-  async getRespondentOverlap(sourceTable: string, targetTable: string, keyColumn: string): Promise<EngineResponseByType<'engine.respondentOverlap'>> {
+  async getRespondentOverlap(
+    sourceTable: string,
+    targetTable: string,
+    keyColumn: string,
+  ): Promise<EngineResponseByType<'engine.respondentOverlap'>> {
     return this.send(
       { type: 'engine.getRespondentOverlap', sourceTable, targetTable, keyColumn },
-      'engine.respondentOverlap'
+      'engine.respondentOverlap',
     ) as Promise<EngineResponseByType<'engine.respondentOverlap'>>;
   }
 

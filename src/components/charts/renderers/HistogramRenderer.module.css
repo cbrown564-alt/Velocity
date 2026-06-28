@@ -3,83 +3,83 @@
  */
 
 .container {
-    position: relative;
-    display: block;
+  position: relative;
+  display: block;
 }
 
 .svg {
-    display: block;
-    overflow: visible;
-    font-family: var(--font-body);
+  display: block;
+  overflow: visible;
+  font-family: var(--font-body);
 }
 
 .bar {
-    transition: fill 0.1s ease;
+  transition: fill 0.1s ease;
 }
 
 .bar:hover {
-    opacity: 0.85;
+  opacity: 0.85;
 }
 
 .axis text {
-    font-family: var(--font-body);
-    font-size: 10px;
-    fill: var(--text-secondary);
+  font-family: var(--font-body);
+  font-size: 10px;
+  fill: var(--text-secondary);
 }
 
 .axis line {
-    stroke: var(--border-color);
+  stroke: var(--border-color);
 }
 
 .countLabel {
-    font-family: var(--font-body);
-    font-size: 9px;
-    fill: var(--text-secondary);
-    pointer-events: none;
+  font-family: var(--font-body);
+  font-size: 9px;
+  fill: var(--text-secondary);
+  pointer-events: none;
 }
 
 .thresholdHandle {
-    cursor: ew-resize;
+  cursor: ew-resize;
 }
 
 .thresholdHandle:hover line {
-    stroke: var(--color-accent);
-    stroke-width: 3;
+  stroke: var(--color-accent);
+  stroke-width: 3;
 }
 
 .thresholdHandle:hover .handleGrip {
-    fill: var(--color-accent);
+  fill: var(--color-accent);
 }
 
 .handleGrip {
-    transition: fill 0.1s ease;
+  transition: fill 0.1s ease;
 }
 
 .selectionInfo {
-    position: absolute;
-    top: 0;
-    right: 0;
-    margin: var(--space-2);
-    padding: var(--space-1) var(--space-2);
-    background-color: var(--bg-panel);
-    opacity: 0.9;
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius-sm);
-    font-size: var(--text-xs);
-    color: var(--text-secondary);
-    text-align: center;
-    box-shadow: var(--shadow-float);
-    z-index: 10;
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: var(--space-2);
+  padding: var(--space-1) var(--space-2);
+  background-color: var(--bg-panel);
+  opacity: 0.9;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-sm);
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  text-align: center;
+  box-shadow: var(--shadow-float);
+  z-index: 10;
 }
 
 .hint {
-    position: absolute;
-    bottom: 2px;
-    width: 100%;
-    font-size: 10px;
-    /* Smaller font for hint */
-    color: var(--text-tertiary);
-    text-align: center;
-    font-style: italic;
-    pointer-events: none;
+  position: absolute;
+  bottom: 2px;
+  width: 100%;
+  font-size: 10px;
+  /* Smaller font for hint */
+  color: var(--text-tertiary);
+  text-align: center;
+  font-style: italic;
+  pointer-events: none;
 }

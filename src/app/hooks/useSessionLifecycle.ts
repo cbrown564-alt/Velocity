@@ -70,10 +70,10 @@ export function useSessionLifecycle({
     discardPersistedData,
   } = useVelocityStore();
 
-  const [sessionImportDiagnostics, setSessionImportDiagnostics] =
-    useState<SessionImportDiagnosticsSummary | null>(null);
-  const [importedSessionSemantic, setImportedSessionSemantic] =
-    useState<ImportedSessionSemanticState | null>(null);
+  const [sessionImportDiagnostics, setSessionImportDiagnostics] = useState<SessionImportDiagnosticsSummary | null>(
+    null,
+  );
+  const [importedSessionSemantic, setImportedSessionSemantic] = useState<ImportedSessionSemanticState | null>(null);
 
   const clearImportedSessionSemantic = useCallback(() => {
     setImportedSessionSemantic(null);
@@ -183,8 +183,7 @@ export function useSessionLifecycle({
         if (!importedDataset) throw new Error('Imported dataset is unavailable after SAV load');
         const imported = importSession(payload.sessionFile, importedDataset);
         const activeSlide =
-          imported.patch.slides.find((s) => s.id === imported.patch.activeSlideId) ??
-          imported.patch.slides[0];
+          imported.patch.slides.find((s) => s.id === imported.patch.activeSlideId) ?? imported.patch.slides[0];
         const nextActiveCellId = activeSlide?.cells[0]?.id ?? null;
         useVelocityStore.setState((state) => ({
           dataset: imported.patch.dataset,

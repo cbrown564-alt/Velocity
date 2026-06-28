@@ -6,24 +6,12 @@ describe('resolveContextMenuSelection', () => {
   const items = [{ label: 'A' }, { label: 'B' }, { label: 'C' }];
 
   it('returns only clicked item when it is not selected', () => {
-    const result = resolveContextMenuSelection(
-      items[1],
-      'B',
-      items,
-      new Set(['A']),
-      (item) => item.label,
-    );
+    const result = resolveContextMenuSelection(items[1], 'B', items, new Set(['A']), (item) => item.label);
     expect(result).toEqual([{ label: 'B' }]);
   });
 
   it('returns all selected items when clicked item is selected', () => {
-    const result = resolveContextMenuSelection(
-      items[1],
-      'B',
-      items,
-      new Set(['A', 'B']),
-      (item) => item.label,
-    );
+    const result = resolveContextMenuSelection(items[1], 'B', items, new Set(['A', 'B']), (item) => item.label);
     expect(result).toEqual([{ label: 'A' }, { label: 'B' }]);
   });
 });

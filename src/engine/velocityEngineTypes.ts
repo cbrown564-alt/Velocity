@@ -1,23 +1,14 @@
 import type { DatabaseAdapter } from '../core/DatabaseAdapter';
 import type { ExportSessionInput } from '../core/session';
 import type { ConceptStore } from '../core/semantic/concepts';
-import type {
-  Filter,
-  Dataset,
-  Variable,
-  VariableSet,
-  Folder,
-} from '../types';
-import type {
-  SemanticAnnotation,
-  Concept,
-} from '../types/semantic';
+import type { Filter, Dataset, Variable, VariableSet, Folder } from '../types';
+import type { SemanticAnnotation, Concept } from '../types/semantic';
 import type { ResultEnvelope } from './types';
 
 export type EngineAnalysisSettings = {
   comparisonMethod: 'cell_vs_rest' | 'pairwise';
   correctionType: 'none' | 'bonferroni' | 'fdr';
-  significanceLevel: 0.95 | 0.90 | 0.80;
+  significanceLevel: 0.95 | 0.9 | 0.8;
 };
 
 export type SemanticStateSnapshot = {
@@ -29,7 +20,7 @@ export type LoadableNodeAdapter = DatabaseAdapter & {
   loadCSV?: (filePath: string, tableName?: string) => Promise<number>;
   loadSav?: (
     filePath: string,
-    tableName?: string
+    tableName?: string,
   ) => Promise<{ variables: Variable[]; variableSets: VariableSet[]; rowCount: number }>;
 };
 
@@ -79,15 +70,10 @@ export interface VelocityEngineHost {
     operation: string,
     inputs: Record<string, unknown>,
     fn: () => Promise<T>,
-    warnings?: string[]
+    warnings?: string[],
   ): Promise<ResultEnvelope<T>>;
 
-  wrapSync<T>(
-    operation: string,
-    inputs: Record<string, unknown>,
-    fn: () => T,
-    warnings?: string[]
-  ): ResultEnvelope<T>;
+  wrapSync<T>(operation: string, inputs: Record<string, unknown>, fn: () => T, warnings?: string[]): ResultEnvelope<T>;
 
   requireDataset(): Dataset;
   requireDatasetWithRows(): Dataset;

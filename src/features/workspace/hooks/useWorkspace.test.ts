@@ -60,14 +60,16 @@ describe('useWorkspace deleteDatasets', () => {
         ],
         opfsFileKey: 'grid_123.sav',
       },
-      variableSets: [{
-        id: 'grid-1',
-        name: 'Brand Ratings',
-        variableIds: ['q1_a', 'q1_b'],
-        structure: 'grid',
-        type: 'ordered',
-        folderId: 'folder-1',
-      }],
+      variableSets: [
+        {
+          id: 'grid-1',
+          name: 'Brand Ratings',
+          variableIds: ['q1_a', 'q1_b'],
+          structure: 'grid',
+          type: 'ordered',
+          folderId: 'folder-1',
+        },
+      ],
       folders: [{ id: 'folder-1', name: 'Brands', order: 0 }],
       workspace: {
         datasets: [],

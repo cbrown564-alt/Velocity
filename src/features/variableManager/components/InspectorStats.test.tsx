@@ -26,16 +26,18 @@ describe('InspectorStats accessibility labels', () => {
           ],
           missingValues: {},
         }}
-        stats={{
-          totalCount: 100,
-          missingCount: 0,
-          frequencies: [
-            { value: 1, count: 55 },
-            { value: 2, count: 45 },
-          ],
-        } as never}
+        stats={
+          {
+            totalCount: 100,
+            missingCount: 0,
+            frequencies: [
+              { value: 1, count: 55 },
+              { value: 2, count: 45 },
+            ],
+          } as never
+        }
         isLoadingStats={false}
-      />
+      />,
     );
 
     expect(screen.getByRole('button', { name: 'Set Male (1) as missing' })).toBeInTheDocument();

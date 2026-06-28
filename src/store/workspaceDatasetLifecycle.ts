@@ -9,17 +9,8 @@ import * as opfsFileManager from '../services/opfsFileManager';
 import type { BrowserEngine } from '../engine/BrowserEngine';
 import type { Filter } from '../types/analysis';
 import type { DatasetSessionState } from '../types/workspaceSession';
-import {
-  normalizeStoredSessionState,
-  sessionStateToStorePatch,
-} from './datasetSessionCoordinator';
-import type {
-  DataTransform,
-  Dataset,
-  Folder,
-  VariableSet,
-  WorkspaceDatasetOpenInput,
-} from './slices/data/types';
+import { normalizeStoredSessionState, sessionStateToStorePatch } from './datasetSessionCoordinator';
+import type { DataTransform, Dataset, Folder, VariableSet, WorkspaceDatasetOpenInput } from './slices/data/types';
 import {
   buildVariableSetsFromVariables,
   normalizeVariable,
@@ -117,9 +108,10 @@ export interface WorkspaceDatasetOpenPatch {
 
 export function buildWorkspaceDatasetOpenPatch(stored: WorkspaceDatasetOpenInput): WorkspaceDatasetOpenPatch {
   const variables = (stored.variables ?? []).map(normalizeVariable);
-  const variableSets = stored.variableSets && stored.variableSets.length > 0
-    ? stored.variableSets.map(normalizeVariableSet)
-    : buildVariableSetsFromVariables(variables);
+  const variableSets =
+    stored.variableSets && stored.variableSets.length > 0
+      ? stored.variableSets.map(normalizeVariableSet)
+      : buildVariableSetsFromVariables(variables);
   const session = normalizeStoredSessionState(stored.sessionState);
   const fileName = stored.fileName || stored.name;
   const sessionPatch = sessionStateToStorePatch(session);

@@ -37,11 +37,7 @@ function previewColumnList(columns: string[], max = 6): string {
   return `${preview}, +${columns.length - max} more`;
 }
 
-export const SessionImportModal: React.FC<SessionImportModalProps> = ({
-  isOpen,
-  onClose,
-  onImport,
-}) => {
+export const SessionImportModal: React.FC<SessionImportModalProps> = ({ isOpen, onClose, onImport }) => {
   const [sessionFileName, setSessionFileName] = React.useState<string | null>(null);
   const [sessionFile, setSessionFile] = React.useState<VelocitySessionFile | null>(null);
   const [savFileName, setSavFileName] = React.useState<string | null>(null);
@@ -114,12 +110,16 @@ export const SessionImportModal: React.FC<SessionImportModalProps> = ({
       const buffer = await file.arrayBuffer();
       const metadata = await parseSavMetadata(buffer);
       setSavRowCount(metadata.metadata.rowCount);
-      const result = validateDatasetMatch(sessionFile.dataset, {
-        rowCount: metadata.metadata.rowCount,
-        columnNames: metadata.metadata.variables.map((variable) => variable.name),
-      }, {
-        sessionVariables: sessionFile.variables,
-      });
+      const result = validateDatasetMatch(
+        sessionFile.dataset,
+        {
+          rowCount: metadata.metadata.rowCount,
+          columnNames: metadata.metadata.variables.map((variable) => variable.name),
+        },
+        {
+          sessionVariables: sessionFile.variables,
+        },
+      );
 
       setMatchResult(result);
       if (result.canProceed) {
@@ -168,11 +168,8 @@ export const SessionImportModal: React.FC<SessionImportModalProps> = ({
   const datasetLabel = sessionFile?.dataset
     ? `${sessionFile.dataset.originalFilename} (${sessionFile.dataset.rowCount.toLocaleString()} rows x ${sessionFile.dataset.fingerprint.columnCount} cols)`
     : null;
-  const matchTone = matchResult?.status === 'strict_match'
-    ? 'success'
-    : matchResult?.status === 'partial_match'
-      ? 'warning'
-      : 'danger';
+  const matchTone =
+    matchResult?.status === 'strict_match' ? 'success' : matchResult?.status === 'partial_match' ? 'warning' : 'danger';
 
   return (
     <ModalShell
@@ -186,157 +183,155 @@ export const SessionImportModal: React.FC<SessionImportModalProps> = ({
       panelClassName="w-full max-w-2xl rounded-xl border border-[var(--border-color)] bg-[var(--bg-surface)] shadow-2xl"
       panelMotionProps={panelMotionProps}
     >
-          <div className="flex items-center justify-between border-b border-[var(--border-color)] px-5 py-4">
-            <div>
-              <h2 className="text-lg font-semibold text-[var(--text-primary)]">Import Session</h2>
-              <p className="text-xs text-[var(--text-secondary)]">Step 1: choose .velocity session. Step 2: upload matching SAV.</p>
-            </div>
-            <button
-              onClick={handleClose}
-              className="rounded-md p-1.5 text-[var(--text-secondary)] hover:bg-[var(--bg-active)]"
-              aria-label="Close import modal"
-            >
-              <X size={16} />
-            </button>
+      <div className="flex items-center justify-between border-b border-[var(--border-color)] px-5 py-4">
+        <div>
+          <h2 className="text-lg font-semibold text-[var(--text-primary)]">Import Session</h2>
+          <p className="text-xs text-[var(--text-secondary)]">
+            Step 1: choose .velocity session. Step 2: upload matching SAV.
+          </p>
+        </div>
+        <button
+          onClick={handleClose}
+          className="rounded-md p-1.5 text-[var(--text-secondary)] hover:bg-[var(--bg-active)]"
+          aria-label="Close import modal"
+        >
+          <X size={16} />
+        </button>
+      </div>
+
+      <div className="space-y-4 p-5">
+        <input
+          ref={sessionInputRef}
+          type="file"
+          accept=".velocity,.json,.gz,.velocity.gz"
+          className="hidden"
+          onChange={handleSessionSelect}
+        />
+        <input ref={savInputRef} type="file" accept=".sav" className="hidden" onChange={handleSavSelect} />
+
+        <div className="rounded-lg border border-[var(--border-color)] bg-[var(--bg-app)] p-4">
+          <div className="mb-2 text-xs font-semibold uppercase tracking-wider text-[var(--text-secondary)]">
+            1. Session File
           </div>
-
-          <div className="space-y-4 p-5">
-            <input
-              ref={sessionInputRef}
-              type="file"
-              accept=".velocity,.json,.gz,.velocity.gz"
-              className="hidden"
-              onChange={handleSessionSelect}
-            />
-            <input
-              ref={savInputRef}
-              type="file"
-              accept=".sav"
-              className="hidden"
-              onChange={handleSavSelect}
-            />
-
-            <div className="rounded-lg border border-[var(--border-color)] bg-[var(--bg-app)] p-4">
-              <div className="mb-2 text-xs font-semibold uppercase tracking-wider text-[var(--text-secondary)]">1. Session File</div>
-              <button
-                onClick={() => sessionInputRef.current?.click()}
-                className="flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-[var(--border-color)] bg-[var(--bg-surface)] px-4 py-3 text-sm text-[var(--text-primary)] hover:bg-[var(--bg-active)]"
-              >
-                <FileUp size={16} />
-                {sessionFileName ? `Loaded: ${sessionFileName}` : 'Select .velocity file'}
-              </button>
-              {datasetLabel && (
-                <div className="mt-3 space-y-1 text-xs text-[var(--text-secondary)]">
-                  <div>{datasetLabel}</div>
-                  <div>{recodeCount} recoded variables</div>
-                  <div>{slideCount} analysis slides</div>
-                </div>
-              )}
+          <button
+            onClick={() => sessionInputRef.current?.click()}
+            className="flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-[var(--border-color)] bg-[var(--bg-surface)] px-4 py-3 text-sm text-[var(--text-primary)] hover:bg-[var(--bg-active)]"
+          >
+            <FileUp size={16} />
+            {sessionFileName ? `Loaded: ${sessionFileName}` : 'Select .velocity file'}
+          </button>
+          {datasetLabel && (
+            <div className="mt-3 space-y-1 text-xs text-[var(--text-secondary)]">
+              <div>{datasetLabel}</div>
+              <div>{recodeCount} recoded variables</div>
+              <div>{slideCount} analysis slides</div>
             </div>
+          )}
+        </div>
 
-            <div className={`rounded-lg border p-4 ${sessionFile ? 'border-[var(--border-color)] bg-[var(--bg-app)]' : 'border-[var(--border-color-muted)] bg-[var(--bg-app)] opacity-60'}`}>
-              <div className="mb-2 text-xs font-semibold uppercase tracking-wider text-[var(--text-secondary)]">2. Matching SAV</div>
-              <button
-                onClick={() => savInputRef.current?.click()}
-                disabled={!sessionFile || isValidatingSav}
-                className="flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-[var(--border-color)] bg-[var(--bg-surface)] px-4 py-3 text-sm text-[var(--text-primary)] hover:bg-[var(--bg-active)] disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                <Upload size={16} />
-                {isValidatingSav
-                  ? 'Validating SAV...'
-                  : savFileName
-                    ? `Selected: ${savFileName}`
-                    : 'Upload .sav file'}
-              </button>
+        <div
+          className={`rounded-lg border p-4 ${sessionFile ? 'border-[var(--border-color)] bg-[var(--bg-app)]' : 'border-[var(--border-color-muted)] bg-[var(--bg-app)] opacity-60'}`}
+        >
+          <div className="mb-2 text-xs font-semibold uppercase tracking-wider text-[var(--text-secondary)]">
+            2. Matching SAV
+          </div>
+          <button
+            onClick={() => savInputRef.current?.click()}
+            disabled={!sessionFile || isValidatingSav}
+            className="flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-[var(--border-color)] bg-[var(--bg-surface)] px-4 py-3 text-sm text-[var(--text-primary)] hover:bg-[var(--bg-active)] disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            <Upload size={16} />
+            {isValidatingSav ? 'Validating SAV...' : savFileName ? `Selected: ${savFileName}` : 'Upload .sav file'}
+          </button>
 
-              {matchResult && (
-                <div
-                  className={`mt-3 rounded-md border px-3 py-2 text-xs ${
-                    matchTone === 'success'
-                      ? 'border-[var(--status-success-border)] bg-[var(--status-success-surface)] text-[var(--color-success)]'
-                      : matchTone === 'warning'
-                        ? 'border-[var(--status-warning-border)] bg-[var(--status-warning-surface)] text-[var(--status-warning-text)]'
-                        : 'border-[var(--status-error-border)] bg-[var(--status-error-surface)] text-[var(--color-error)]'
-                  }`}
-                >
-                  <div className="flex items-center gap-1.5 font-medium">
-                    {matchResult.canProceed ? <CheckCircle2 size={13} /> : <AlertCircle size={13} />}
-                    {formatStatus(matchResult.status)}
-                  </div>
-                  <div className="mt-2 grid grid-cols-1 gap-1 sm:grid-cols-2">
-                    <div>
-                      Rows: {matchResult.rowCountMatches ? 'match' : 'differ'} ({formatCount(sessionFile?.dataset.rowCount ?? 0)} expected, {formatCount(savRowCount ?? 0)} uploaded)
-                    </div>
-                    <div>
-                      Columns: {formatCount(matchResult.matchingColumnCount)}/{formatCount(matchResult.expectedColumnCount)} matched ({(matchResult.overlapRatio * 100).toFixed(1)}%)
-                    </div>
-                  </div>
-
-                  {!matchResult.rowCountMatches && (
-                    <div className="mt-1">
-                      Row count differs (expected {formatCount(sessionFile?.dataset.rowCount ?? 0)}, got {formatCount(savRowCount ?? 0)}).
-                    </div>
-                  )}
-
-                  {matchResult.actualColumnCount !== matchResult.expectedColumnCount && (
-                    <div className="mt-1">
-                      Column count differs (expected {formatCount(matchResult.expectedColumnCount)}, got {formatCount(matchResult.actualColumnCount)}).
-                    </div>
-                  )}
-
-                  {matchResult.issues.length > 0 && (
-                    <ul className="mt-2 list-disc pl-4 space-y-1">
-                      {matchResult.issues.map((issue, index) => (
-                        <li key={`issue-${index}`}>{issue}</li>
-                      ))}
-                    </ul>
-                  )}
-
-                  {matchResult.warnings.length > 0 && (
-                    <ul className="mt-2 list-disc pl-4 space-y-1">
-                      {matchResult.warnings.map((warning, index) => (
-                        <li key={`warning-${index}`}>{warning}</li>
-                      ))}
-                    </ul>
-                  )}
-
-                  {matchResult.missingColumns.length > 0 && (
-                    <div className="mt-2">
-                      Missing columns: {previewColumnList(matchResult.missingColumns)}
-                    </div>
-                  )}
-                  {matchResult.extraColumns.length > 0 && (
-                    <div className="mt-1">
-                      Extra columns: {previewColumnList(matchResult.extraColumns)}
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-
-            {error && (
-              <div className="rounded-md border border-[var(--status-error-border)] bg-[var(--status-error-surface)] px-3 py-2 text-xs text-[var(--color-error)]">
-                {error}
+          {matchResult && (
+            <div
+              className={`mt-3 rounded-md border px-3 py-2 text-xs ${
+                matchTone === 'success'
+                  ? 'border-[var(--status-success-border)] bg-[var(--status-success-surface)] text-[var(--color-success)]'
+                  : matchTone === 'warning'
+                    ? 'border-[var(--status-warning-border)] bg-[var(--status-warning-surface)] text-[var(--status-warning-text)]'
+                    : 'border-[var(--status-error-border)] bg-[var(--status-error-surface)] text-[var(--color-error)]'
+              }`}
+            >
+              <div className="flex items-center gap-1.5 font-medium">
+                {matchResult.canProceed ? <CheckCircle2 size={13} /> : <AlertCircle size={13} />}
+                {formatStatus(matchResult.status)}
               </div>
-            )}
-          </div>
+              <div className="mt-2 grid grid-cols-1 gap-1 sm:grid-cols-2">
+                <div>
+                  Rows: {matchResult.rowCountMatches ? 'match' : 'differ'} (
+                  {formatCount(sessionFile?.dataset.rowCount ?? 0)} expected, {formatCount(savRowCount ?? 0)} uploaded)
+                </div>
+                <div>
+                  Columns: {formatCount(matchResult.matchingColumnCount)}/{formatCount(matchResult.expectedColumnCount)}{' '}
+                  matched ({(matchResult.overlapRatio * 100).toFixed(1)}%)
+                </div>
+              </div>
 
-          <div className="flex items-center justify-end gap-2 border-t border-[var(--border-color)] px-5 py-4">
-            <button
-              onClick={handleClose}
-              disabled={isImporting}
-              className="rounded-md border border-[var(--border-color)] px-3 py-1.5 text-sm text-[var(--text-primary)] hover:bg-[var(--bg-active)] disabled:opacity-50"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={handleImport}
-              disabled={!sessionFile || !savBuffer || !matchResult?.canProceed || isImporting || isValidatingSav}
-              className="rounded-md bg-[var(--color-accent)] px-3 py-1.5 text-sm text-[var(--text-inverse)] hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              {isImporting ? 'Importing...' : 'Continue'}
-            </button>
+              {!matchResult.rowCountMatches && (
+                <div className="mt-1">
+                  Row count differs (expected {formatCount(sessionFile?.dataset.rowCount ?? 0)}, got{' '}
+                  {formatCount(savRowCount ?? 0)}).
+                </div>
+              )}
+
+              {matchResult.actualColumnCount !== matchResult.expectedColumnCount && (
+                <div className="mt-1">
+                  Column count differs (expected {formatCount(matchResult.expectedColumnCount)}, got{' '}
+                  {formatCount(matchResult.actualColumnCount)}).
+                </div>
+              )}
+
+              {matchResult.issues.length > 0 && (
+                <ul className="mt-2 list-disc pl-4 space-y-1">
+                  {matchResult.issues.map((issue, index) => (
+                    <li key={`issue-${index}`}>{issue}</li>
+                  ))}
+                </ul>
+              )}
+
+              {matchResult.warnings.length > 0 && (
+                <ul className="mt-2 list-disc pl-4 space-y-1">
+                  {matchResult.warnings.map((warning, index) => (
+                    <li key={`warning-${index}`}>{warning}</li>
+                  ))}
+                </ul>
+              )}
+
+              {matchResult.missingColumns.length > 0 && (
+                <div className="mt-2">Missing columns: {previewColumnList(matchResult.missingColumns)}</div>
+              )}
+              {matchResult.extraColumns.length > 0 && (
+                <div className="mt-1">Extra columns: {previewColumnList(matchResult.extraColumns)}</div>
+              )}
+            </div>
+          )}
+        </div>
+
+        {error && (
+          <div className="rounded-md border border-[var(--status-error-border)] bg-[var(--status-error-surface)] px-3 py-2 text-xs text-[var(--color-error)]">
+            {error}
           </div>
+        )}
+      </div>
+
+      <div className="flex items-center justify-end gap-2 border-t border-[var(--border-color)] px-5 py-4">
+        <button
+          onClick={handleClose}
+          disabled={isImporting}
+          className="rounded-md border border-[var(--border-color)] px-3 py-1.5 text-sm text-[var(--text-primary)] hover:bg-[var(--bg-active)] disabled:opacity-50"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={handleImport}
+          disabled={!sessionFile || !savBuffer || !matchResult?.canProceed || isImporting || isValidatingSav}
+          className="rounded-md bg-[var(--color-accent)] px-3 py-1.5 text-sm text-[var(--text-inverse)] hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          {isImporting ? 'Importing...' : 'Continue'}
+        </button>
+      </div>
     </ModalShell>
   );
 };

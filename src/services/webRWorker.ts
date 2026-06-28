@@ -131,8 +131,8 @@ async function executeR(code: string, data?: Uint8Array): Promise<RResult> {
       const result = await shelter.evalR(code, { captureStreams: true });
 
       // Capture output
-      const stdout = await result.stdout?.toArray?.() ?? [];
-      const stderr = await result.stderr?.toArray?.() ?? [];
+      const stdout = (await result.stdout?.toArray?.()) ?? [];
+      const stderr = (await result.stderr?.toArray?.()) ?? [];
 
       output = stdout.join('\n');
       if (stderr.length > 0) {
@@ -191,10 +191,7 @@ async function extractRValues(result: any): Promise<Record<string, any> | undefi
 // Survey Analysis (survey package)
 // ============================================================================
 
-async function runSurveyAnalysis(
-  config: SurveyDesignConfig,
-  data: Uint8Array
-): Promise<SurveyResult> {
+async function runSurveyAnalysis(config: SurveyDesignConfig, data: Uint8Array): Promise<SurveyResult> {
   const start = performance.now();
 
   await loadArrowData(data);
@@ -307,10 +304,7 @@ function buildSurveyAnalysis(config: SurveyDesignConfig): string {
   return lines.join('\n');
 }
 
-async function extractSurveyResults(
-  config: SurveyDesignConfig,
-  shelter: any
-): Promise<SurveyResult> {
+async function extractSurveyResults(config: SurveyDesignConfig, shelter: any): Promise<SurveyResult> {
   const result: SurveyResult = {
     deff: {},
     estimates: {},
@@ -377,10 +371,7 @@ async function extractSurveyResults(
 // Mixed Effects Models (lme4 package)
 // ============================================================================
 
-async function runMixedModel(
-  config: MixedModelConfig,
-  data: Uint8Array
-): Promise<MixedModelResult> {
+async function runMixedModel(config: MixedModelConfig, data: Uint8Array): Promise<MixedModelResult> {
   const start = performance.now();
 
   await loadArrowData(data);
@@ -412,9 +403,10 @@ function buildMixedModelCode(config: MixedModelConfig): string {
   const fixedPart = config.fixedEffects.join(' + ');
   const randomParts = config.randomEffects.map((re) => {
     if (re.slopes && re.slopes.length > 0) {
-      const slopeFormula = re.correlated !== false
-        ? `(1 + ${re.slopes.join(' + ')} | ${re.groupVar})`
-        : `(1 | ${re.groupVar}) + (0 + ${re.slopes.join(' + ')} | ${re.groupVar})`;
+      const slopeFormula =
+        re.correlated !== false
+          ? `(1 + ${re.slopes.join(' + ')} | ${re.groupVar})`
+          : `(1 | ${re.groupVar}) + (0 + ${re.slopes.join(' + ')} | ${re.groupVar})`;
       return slopeFormula;
     }
     return `(1 | ${re.groupVar})`;
@@ -425,9 +417,7 @@ function buildMixedModelCode(config: MixedModelConfig): string {
   // Build model call
   if (config.family && config.family !== 'gaussian') {
     // GLMM
-    const familyStr = config.link
-      ? `${config.family}(link = "${config.link}")`
-      : config.family;
+    const familyStr = config.link ? `${config.family}(link = "${config.link}")` : config.family;
     lines.push(`model <- glmer(${formula}, data = df, family = ${familyStr})`);
   } else {
     // LMM
@@ -441,10 +431,7 @@ function buildMixedModelCode(config: MixedModelConfig): string {
   return lines.join('\n');
 }
 
-async function extractMixedModelResults(
-  config: MixedModelConfig,
-  shelter: any
-): Promise<MixedModelResult> {
+async function extractMixedModelResults(config: MixedModelConfig, shelter: any): Promise<MixedModelResult> {
   const result: MixedModelResult = {
     fixedEffects: [],
     randomEffects: [],
@@ -557,12 +544,7 @@ async function extractMixedModelResults(
 // Status Management
 // ============================================================================
 
-function updateStatus(
-  newStatus: WebRStatus['status'],
-  progress?: number,
-  message?: string,
-  error?: string
-): void {
+function updateStatus(newStatus: WebRStatus['status'], progress?: number, message?: string, error?: string): void {
   status.status = newStatus;
   if (progress !== undefined) {
     status.initProgress = progress;

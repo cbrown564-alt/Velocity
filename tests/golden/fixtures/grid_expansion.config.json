@@ -1,55 +1,49 @@
 {
-    "csvFile": "grid_expansion.csv",
-    "expectedFile": "grid_expansion.expected.json",
-    "config": {
-        "rowVars": [
-            "q1_grid"
-        ],
-        "colVar": null,
-        "weightVar": null,
-        "filters": []
+  "csvFile": "grid_expansion.csv",
+  "expectedFile": "grid_expansion.expected.json",
+  "config": {
+    "rowVars": ["q1_grid"],
+    "colVar": null,
+    "weightVar": null,
+    "filters": []
+  },
+  "context": {
+    "variables": {
+      "q1_1": {
+        "name": "q1_1",
+        "type": "numeric",
+        "label": "Item 1"
+      },
+      "q1_2": {
+        "name": "q1_2",
+        "type": "numeric",
+        "label": "Item 2"
+      },
+      "q1_3": {
+        "name": "q1_3",
+        "type": "numeric",
+        "label": "Item 3"
+      },
+      "q1_grid": {
+        "name": "q1_grid",
+        "type": "numeric",
+        "synthetic": true,
+        "sourceGridId": "grid_q1",
+        "label": "Q1 Grid"
+      }
     },
-    "context": {
-        "variables": {
-            "q1_1": {
-                "name": "q1_1",
-                "type": "numeric",
-                "label": "Item 1"
-            },
-            "q1_2": {
-                "name": "q1_2",
-                "type": "numeric",
-                "label": "Item 2"
-            },
-            "q1_3": {
-                "name": "q1_3",
-                "type": "numeric",
-                "label": "Item 3"
-            },
-            "q1_grid": {
-                "name": "q1_grid",
-                "type": "numeric",
-                "synthetic": true,
-                "sourceGridId": "grid_q1",
-                "label": "Q1 Grid"
-            }
-        },
-        "variableSets": {
-            "grid_q1": {
-                "id": "grid_q1",
-                "name": "Q1 Grid",
-                "structure": "grid",
-                "variableIds": [
-                    "q1_1",
-                    "q1_2",
-                    "q1_3"
-                ],
-                "gridMetadata": {
-                    "sharedScale": {
-                        "type": "numeric"
-                    }
-                }
-            }
+    "variableSets": {
+      "grid_q1": {
+        "id": "grid_q1",
+        "name": "Q1 Grid",
+        "structure": "grid",
+        "variableIds": ["q1_1", "q1_2", "q1_3"],
+        "gridMetadata": {
+          "sharedScale": {
+            "type": "numeric"
+          }
         }
+      }
     }
+  }
 }

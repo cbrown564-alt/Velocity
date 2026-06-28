@@ -40,7 +40,7 @@ export function useDashboardDnD() {
 
   const sensors = useSensors(
     useSensor(MouseSensor, { activationConstraint: { distance: 10 } }),
-    useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 5 } })
+    useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 5 } }),
   );
 
   const customCollisionDetection = (args: Parameters<typeof closestCenter>[0]) => {
@@ -61,8 +61,9 @@ export function useDashboardDnD() {
 
     const rectCollisions = rectIntersection(args);
     if (rectCollisions.length > 0) {
-      const dropZoneCollision = rectCollisions.find(c =>
-        c.id === 'drop-zone-rows' || c.id === 'drop-zone-cols' || c.id === 'drop-zone-weight' || c.id === 'canvas'
+      const dropZoneCollision = rectCollisions.find(
+        (c) =>
+          c.id === 'drop-zone-rows' || c.id === 'drop-zone-cols' || c.id === 'drop-zone-weight' || c.id === 'canvas',
       );
       if (dropZoneCollision && isDraggingFromSidebar) {
         return [dropZoneCollision];
@@ -107,7 +108,7 @@ export function useDashboardDnD() {
 
       if (zoneId === 'drop-zone-weight') {
         if (variableSet.structure !== 'grid') {
-          const variable = dataset?.variables.find(v => v.id === variableSet.variableIds[0]);
+          const variable = dataset?.variables.find((v) => v.id === variableSet.variableIds[0]);
           if (variable && allowsNumericStats(variable.type, variable.orderedScoring)) {
             const varId = variableSet.variableIds[0];
             setWeightVariable(varId);
@@ -118,17 +119,8 @@ export function useDashboardDnD() {
         return;
       }
 
-      if (
-        zoneId === 'drop-zone-rows' ||
-        zoneId === 'drop-zone-cols' ||
-        zoneId === 'canvas'
-      ) {
-        const placement = placeVariableSet(
-          setId,
-          variableSet.structure,
-          zoneId,
-          tableConfig,
-        );
+      if (zoneId === 'drop-zone-rows' || zoneId === 'drop-zone-cols' || zoneId === 'canvas') {
+        const placement = placeVariableSet(setId, variableSet.structure, zoneId, tableConfig);
         if (placement) {
           setTableConfig(placement);
         }
@@ -136,32 +128,41 @@ export function useDashboardDnD() {
     }
   };
 
-  const handleVariableClick = useCallback((set: VariableSet, e: React.MouseEvent) => {
-    setSelectedVariableSetId(set.id);
+  const handleVariableClick = useCallback(
+    (set: VariableSet, e: React.MouseEvent) => {
+      setSelectedVariableSetId(set.id);
 
-    if (e.metaKey || e.ctrlKey) {
-      const newSelected = new Set(selectedSetIds);
-      if (newSelected.has(set.id)) newSelected.delete(set.id);
-      else newSelected.add(set.id);
-      setSelectedSetIds(newSelected);
-      return;
-    }
+      if (e.metaKey || e.ctrlKey) {
+        const newSelected = new Set(selectedSetIds);
+        if (newSelected.has(set.id)) newSelected.delete(set.id);
+        else newSelected.add(set.id);
+        setSelectedSetIds(newSelected);
+        return;
+      }
 
-    setTableConfig(applyCanvasPlacement(set.id, set.structure, tableConfig));
-  }, [selectedSetIds, setSelectedVariableSetId, setTableConfig, tableConfig]);
+      setTableConfig(applyCanvasPlacement(set.id, set.structure, tableConfig));
+    },
+    [selectedSetIds, setSelectedVariableSetId, setTableConfig, tableConfig],
+  );
 
-  const handleContextMenu = useCallback((set: VariableSet, e: React.MouseEvent) => {
-    e.preventDefault();
-    if (!selectedSetIds.has(set.id)) {
-      setSelectedSetIds(new Set([set.id]));
-    }
-    setVariableContextMenu({ set, x: e.clientX, y: e.clientY });
-  }, [selectedSetIds]);
+  const handleContextMenu = useCallback(
+    (set: VariableSet, e: React.MouseEvent) => {
+      e.preventDefault();
+      if (!selectedSetIds.has(set.id)) {
+        setSelectedSetIds(new Set([set.id]));
+      }
+      setVariableContextMenu({ set, x: e.clientX, y: e.clientY });
+    },
+    [selectedSetIds],
+  );
 
-  const handleRecodeClick = useCallback((set: VariableSet) => {
-    const variable = dataset?.variables.find(v => v.id === set.variableIds[0]);
-    if (variable) openRecodeModal(variable);
-  }, [dataset?.variables, openRecodeModal]);
+  const handleRecodeClick = useCallback(
+    (set: VariableSet) => {
+      const variable = dataset?.variables.find((v) => v.id === set.variableIds[0]);
+      if (variable) openRecodeModal(variable);
+    },
+    [dataset?.variables, openRecodeModal],
+  );
 
   const handleToggleWeight = useCallback(() => {
     if (weightEnabled && dataset?.weightVariable) {

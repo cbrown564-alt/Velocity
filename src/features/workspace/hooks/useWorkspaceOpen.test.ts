@@ -77,10 +77,13 @@ describe('useWorkspaceOpen', () => {
       activeFilters: [{ id: 'f1', variableId: 'q1', operator: 'eq', value: 1 }],
       transformLog: [],
     });
-    expect(updateStoredDataset).toHaveBeenCalledWith('ds-current', expect.objectContaining({
-      variableSets: useVelocityStore.getState().variableSets,
-      folders: useVelocityStore.getState().folders,
-    }));
+    expect(updateStoredDataset).toHaveBeenCalledWith(
+      'ds-current',
+      expect.objectContaining({
+        variableSets: useVelocityStore.getState().variableSets,
+        folders: useVelocityStore.getState().folders,
+      }),
+    );
     expect(openWorkspaceDataset).toHaveBeenCalledWith(target);
     expect(setMode).toHaveBeenCalledWith('uploading');
     expect(setMode).toHaveBeenLastCalledWith('dashboard');

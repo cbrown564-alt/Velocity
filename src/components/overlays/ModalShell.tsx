@@ -1,11 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
-  useReducedMotion,
-  getBackdropProps,
-  getModalPresenceProps,
-  getMotionProps,
-} from '../../lib/motion';
+import { useReducedMotion, getBackdropProps, getModalPresenceProps, getMotionProps } from '../../lib/motion';
 import { useModalEscape } from '../../hooks/useModalEscape';
 
 export type ModalShellLayout = 'split' | 'unified';
@@ -33,11 +28,9 @@ export interface ModalShellProps {
   panelMotionProps?: ReturnType<typeof getMotionProps>;
 }
 
-const DEFAULT_BACKDROP =
-  'fixed inset-0 bg-[var(--text-primary)]/30 backdrop-blur-sm z-50';
+const DEFAULT_BACKDROP = 'fixed inset-0 bg-[var(--text-primary)]/30 backdrop-blur-sm z-50';
 
-const DEFAULT_OVERLAY =
-  'fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none';
+const DEFAULT_OVERLAY = 'fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none';
 
 export const ModalShell: React.FC<ModalShellProps> = ({
   isOpen,
@@ -62,8 +55,7 @@ export const ModalShell: React.FC<ModalShellProps> = ({
 
   useModalEscape(escapeToClose && isOpen, onClose);
 
-  const handleBackdropClick =
-    onBackdropClick === null ? undefined : (onBackdropClick ?? onClose);
+  const handleBackdropClick = onBackdropClick === null ? undefined : (onBackdropClick ?? onClose);
 
   if (unmountWhenClosed && !isOpen) {
     return null;
@@ -73,11 +65,7 @@ export const ModalShell: React.FC<ModalShellProps> = ({
     return (
       <AnimatePresence>
         {isOpen && (
-          <motion.div
-            {...backdropMotion}
-            className={backdropClassName}
-            onClick={handleBackdropClick}
-          >
+          <motion.div {...backdropMotion} className={backdropClassName} onClick={handleBackdropClick}>
             <motion.div
               {...panelMotion}
               className={panelClassName}
@@ -98,22 +86,9 @@ export const ModalShell: React.FC<ModalShellProps> = ({
     <AnimatePresence>
       {isOpen && (
         <>
-          <motion.div
-            {...backdropMotion}
-            onClick={handleBackdropClick}
-            className={backdropClassName}
-          />
-          <motion.div
-            {...panelMotion}
-            className={overlayClassName}
-            style={overlayStyle}
-          >
-            <div
-              className={panelClassName}
-              style={panelStyle}
-              data-testid={panelDataTestId}
-              onKeyDown={onPanelKeyDown}
-            >
+          <motion.div {...backdropMotion} onClick={handleBackdropClick} className={backdropClassName} />
+          <motion.div {...panelMotion} className={overlayClassName} style={overlayStyle}>
+            <div className={panelClassName} style={panelStyle} data-testid={panelDataTestId} onKeyDown={onPanelKeyDown}>
               {children}
             </div>
           </motion.div>

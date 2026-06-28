@@ -1,8 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import {
-  createEnginePersistenceCallbacks,
-  type EnginePersistenceBridge,
-} from './enginePersistenceBridge';
+import { createEnginePersistenceCallbacks, type EnginePersistenceBridge } from './enginePersistenceBridge';
 
 describe('enginePersistenceBridge callbacks', () => {
   it('maps persistence status updates onto bridge state', () => {

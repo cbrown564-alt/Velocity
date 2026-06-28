@@ -64,10 +64,7 @@ function scoreEntry(entry: SearchEntry, queryTokens: string[]): MatchDetail {
   // 1. Concept match (weight: 0.4) — highest signal
   for (const concept of entry.linkedConcepts) {
     const nameScore = overlapScore(queryTokens, concept.name);
-    const aliasScore = Math.max(
-      0,
-      ...concept.aliases.map((a) => overlapScore(queryTokens, a))
-    );
+    const aliasScore = Math.max(0, ...concept.aliases.map((a) => overlapScore(queryTokens, a)));
     const conceptScore = Math.max(nameScore, aliasScore);
     if (conceptScore > 0) {
       score = Math.max(score, 0.4 * conceptScore);
@@ -138,7 +135,7 @@ export function buildSearchIndex(
   variables: Variable[],
   datasetId: string,
   annotations: Map<string, SemanticAnnotation>,
-  concepts: Concept[]
+  concepts: Concept[],
 ): SearchIndex {
   const conceptsByVarId = new Map<string, Concept[]>();
   for (const concept of concepts) {
@@ -168,11 +165,7 @@ export function buildSearchIndex(
  * @param limit - Maximum results to return (default: 20)
  * @returns Ranked list of matching variables with relevance scores
  */
-export function searchVariables(
-  query: string,
-  index: SearchIndex,
-  limit = 20
-): SemanticSearchResult[] {
+export function searchVariables(query: string, index: SearchIndex, limit = 20): SemanticSearchResult[] {
   const trimmed = query.trim();
   if (!trimmed) return [];
 
@@ -193,9 +186,7 @@ export function searchVariables(
     }
   }
 
-  return results
-    .sort((a, b) => b.relevance - a.relevance)
-    .slice(0, limit);
+  return results.sort((a, b) => b.relevance - a.relevance).slice(0, limit);
 }
 
 /**
@@ -204,15 +195,13 @@ export function searchVariables(
 export function searchVariablesAcrossDatasets(
   query: string,
   indexes: SearchIndex[],
-  limit = 20
+  limit = 20,
 ): SemanticSearchResult[] {
   const allResults: SemanticSearchResult[] = [];
   for (const index of indexes) {
     allResults.push(...searchVariables(query, index, limit));
   }
-  return allResults
-    .sort((a, b) => b.relevance - a.relevance)
-    .slice(0, limit);
+  return allResults.sort((a, b) => b.relevance - a.relevance).slice(0, limit);
 }
 
 // ============================================================================
@@ -232,7 +221,7 @@ const DEMOGRAPHIC_NAME_PATTERNS =
 export function listVariablesByCategory(
   entries: SearchEntry[],
   category: MeasurementIntent,
-  options?: { includeUnannotated?: boolean; limit?: number }
+  options?: { includeUnannotated?: boolean; limit?: number },
 ): SemanticSearchResult[] {
   const limit = options?.limit ?? 50;
   const results: SemanticSearchResult[] = [];
@@ -240,9 +229,7 @@ export function listVariablesByCategory(
   // Count annotation coverage
   const annotatedCount = entries.filter((e) => e.annotation).length;
   const coverage = entries.length > 0 ? annotatedCount / entries.length : 0;
-  const useFallback =
-    options?.includeUnannotated === true ||
-    coverage < 0.5;
+  const useFallback = options?.includeUnannotated === true || coverage < 0.5;
 
   // Primary: annotated variables matching intent
   for (const entry of entries) {

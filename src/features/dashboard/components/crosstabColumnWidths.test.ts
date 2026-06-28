@@ -6,7 +6,7 @@ describe('computeCrosstabColumnWidths', () => {
     const widths = computeCrosstabColumnWidths(
       ['east', 'north'],
       { east: 'East', north: 'North Eastern Region' },
-      true
+      true,
     );
 
     const eastPct = parseFloat(widths.columns.east);
@@ -20,8 +20,7 @@ describe('computeCrosstabColumnWidths', () => {
     expect(widths.rowLabel).toBe('28%');
     expect(widths.total).toBe('8%');
 
-    const dataSum =
-      parseFloat(widths.columns.a) + parseFloat(widths.columns.b);
+    const dataSum = parseFloat(widths.columns.a) + parseFloat(widths.columns.b);
     expect(dataSum).toBeCloseTo(64, 0);
   });
 

@@ -1,4 +1,3 @@
-
 import { Collaborator, TableConfig, Variable } from '../types';
 
 type Listener = (users: Collaborator[]) => void;
@@ -17,7 +16,7 @@ export class SimulationService {
   private configListeners: ConfigListener[] = [];
   private interval: any;
 
-  private constructor() { }
+  private constructor() {}
 
   public static getInstance(): SimulationService {
     if (!SimulationService.instance) {
@@ -28,7 +27,7 @@ export class SimulationService {
 
   public connect(variables: Variable[]) {
     // Spawn users
-    this.users = MOCK_USERS.map(u => ({
+    this.users = MOCK_USERS.map((u) => ({
       ...u,
       x: 50 + (Math.random() * 20 - 10),
       y: 50 + (Math.random() * 20 - 10),
@@ -49,7 +48,7 @@ export class SimulationService {
 
   public subscribe(fn: Listener) {
     this.listeners.push(fn);
-    return () => this.listeners = this.listeners.filter(l => l !== fn);
+    return () => (this.listeners = this.listeners.filter((l) => l !== fn));
   }
 
   public onRemoteConfigUpdate(fn: ConfigListener) {
@@ -57,15 +56,15 @@ export class SimulationService {
   }
 
   private notify() {
-    this.listeners.forEach(fn => fn([...this.users]));
+    this.listeners.forEach((fn) => fn([...this.users]));
   }
 
   private updatePositions() {
-    this.users = this.users.map(u => ({
+    this.users = this.users.map((u) => ({
       ...u,
       x: Math.max(10, Math.min(90, u.x + (Math.random() * 40 - 20))),
       y: Math.max(10, Math.min(90, u.y + (Math.random() * 40 - 20))),
-      activeAction: undefined // clear old actions
+      activeAction: undefined, // clear old actions
     }));
     this.notify();
   }
@@ -91,9 +90,9 @@ export class SimulationService {
     setTimeout(() => {
       const newConfig: TableConfig = {
         rowVars: [rowVar.id],
-        colVar: colVar?.id || null
+        colVar: colVar?.id || null,
       };
-      this.configListeners.forEach(fn => fn(newConfig, actor.name));
+      this.configListeners.forEach((fn) => fn(newConfig, actor.name));
     }, 1000);
   }
 }

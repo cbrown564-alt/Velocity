@@ -25,9 +25,7 @@ describe('VelocityEngine crosstab resolveLabels', () => {
     });
     const bySexRows = (bySex.data as { rows: Array<{ rowKey_0: string; colKey: string }> }).rows;
 
-    expect(bySexRows.map((row) => row.rowKey_0)).toEqual(
-      expect.arrayContaining(['female', 'male'])
-    );
+    expect(bySexRows.map((row) => row.rowKey_0)).toEqual(expect.arrayContaining(['female', 'male']));
     expect(new Set(bySexRows.map((row) => row.colKey))).toEqual(new Set(['age']));
 
     const byMarital = await engine.runAnalysis('crosstab', {
@@ -38,7 +36,7 @@ describe('VelocityEngine crosstab resolveLabels', () => {
     const byMaritalRows = (byMarital.data as { rows: Array<{ rowKey_0: string; colKey: string }> }).rows;
 
     expect(byMaritalRows.map((row) => row.rowKey_0)).toEqual(
-      expect.arrayContaining(['single', 'married/defacto', 'divorced', 'widowed'])
+      expect.arrayContaining(['single', 'married/defacto', 'divorced', 'widowed']),
     );
     expect(new Set(byMaritalRows.map((row) => row.colKey))).toEqual(new Set(['age']));
   }, 30000);

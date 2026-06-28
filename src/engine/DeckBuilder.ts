@@ -91,7 +91,7 @@ export class DeckBuilder {
     slideSpec: SlideSpec,
     sectionTitle: string,
     slideIndex: number,
-    description: DatasetDescription
+    description: DatasetDescription,
   ): Promise<BuiltSlide> {
     const dataset = description.dataset!;
 
@@ -109,9 +109,7 @@ export class DeckBuilder {
     const effectiveFilters: Filter[] =
       slideSpec.filters !== undefined ? slideSpec.filters : this.engine.getActiveFilters().data;
     const effectiveWeightVar: string | null =
-      slideSpec.weightVar !== undefined
-        ? slideSpec.weightVar
-        : (description.weightVariable ?? null);
+      slideSpec.weightVar !== undefined ? slideSpec.weightVar : (description.weightVariable ?? null);
 
     // Execute crosstab analysis (passes explicit filters/weight — no engine state mutation)
     const result = await this.engine.runAnalysis('crosstab', {
@@ -148,7 +146,7 @@ export class DeckBuilder {
     if (!processed) {
       throw new VelocityError(
         'ANALYSIS_FAILED',
-        `Slide ${slideIndex}: analysis returned no data for vars [${slideSpec.rowVars.join(', ')}].`
+        `Slide ${slideIndex}: analysis returned no data for vars [${slideSpec.rowVars.join(', ')}].`,
       );
     }
 
@@ -159,12 +157,7 @@ export class DeckBuilder {
       : null;
     const resolvedSubtitle =
       slideSpec.subtitle ??
-      resolveSlideSubtitle(
-        effectiveFilters,
-        weightVarObj,
-        result.metadata.rowCount,
-        !!effectiveWeightVar
-      );
+      resolveSlideSubtitle(effectiveFilters, weightVarObj, result.metadata.rowCount, !!effectiveWeightVar);
 
     const resolvedChartType =
       slideSpec.chartType ??
@@ -197,9 +190,7 @@ export class DeckBuilder {
 
     // Map each BuiltSlide to an AnalysisExportItem
     const analyses: AnalysisExportItem[] = deck.slides.map((slide) => {
-      const sectionIndex = deck.spec.sections.findIndex(
-        (s) => s.title === slide.sectionTitle
-      );
+      const sectionIndex = deck.spec.sections.findIndex((s) => s.title === slide.sectionTitle);
       return {
         label: slide.resolvedTitle,
         subtitle: slide.resolvedSubtitle,
@@ -230,9 +221,6 @@ export class DeckBuilder {
       return exportXlsx(config);
     }
 
-    throw new VelocityError(
-      'UNSUPPORTED_FORMAT',
-      `Unsupported export format: ${options.format}`
-    );
+    throw new VelocityError('UNSUPPORTED_FORMAT', `Unsupported export format: ${options.format}`);
   }
 }

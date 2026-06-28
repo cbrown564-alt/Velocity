@@ -41,7 +41,8 @@ export function summarizeInspectionForReview(inspection) {
   const positives = [];
 
   if (inspection.slideCount > 0) positives.push(`${pluralize(inspection.slideCount, 'slide')} inspected`);
-  if (inspection.editableTextBoxCount > 0) positives.push(`${pluralize(inspection.editableTextBoxCount, 'editable text box', 'editable text boxes')}`);
+  if (inspection.editableTextBoxCount > 0)
+    positives.push(`${pluralize(inspection.editableTextBoxCount, 'editable text box', 'editable text boxes')}`);
   if (inspection.tableCount > 0) positives.push(`${pluralize(inspection.tableCount, 'editable table')}`);
   if (inspection.notesSlideCount > 0) positives.push(`${pluralize(inspection.notesSlideCount, 'speaker-notes slide')}`);
 
@@ -61,17 +62,16 @@ export function summarizeInspectionForReview(inspection) {
 
 export function buildVisualReviewMarkdown({ pptxPath, inspection, renderedSlides, renderer }) {
   const summary = summarizeInspectionForReview(inspection);
-  const renderLine = renderedSlides.length > 0
-    ? `Rendered slide evidence: ${pluralize(renderedSlides.length, 'image')}`
-    : `Rendered slide evidence: unavailable\nStatus: needs manual render${renderer?.command ? ` with \`${renderer.command}\`` : ''}`;
+  const renderLine =
+    renderedSlides.length > 0
+      ? `Rendered slide evidence: ${pluralize(renderedSlides.length, 'image')}`
+      : `Rendered slide evidence: unavailable\nStatus: needs manual render${renderer?.command ? ` with \`${renderer.command}\`` : ''}`;
 
   const gateLines = [
     inspection.remainingTokens?.length
       ? `Unresolved tokens: ${inspection.remainingTokens.join(', ')}`
       : 'No unresolved placeholder tokens',
-    inspection.emptySlides?.length
-      ? `Empty slides: ${inspection.emptySlides.join(', ')}`
-      : 'No empty slides detected',
+    inspection.emptySlides?.length ? `Empty slides: ${inspection.emptySlides.join(', ')}` : 'No empty slides detected',
     inspection.overflowWarnings?.length
       ? `Potential overflow warnings: ${inspection.overflowWarnings.length}`
       : 'No XML-bound overflow warnings',
@@ -240,7 +240,7 @@ export async function createReviewArtifact({ pptxPath, outDir, exemplarPath = nu
       renderedSlides: renderResult.renderedSlides,
       renderer: renderResult.renderer,
     }),
-    'utf8'
+    'utf8',
   );
   await writeFile(
     path.join(outDir, 'exemplar_diff.md'),
@@ -249,7 +249,7 @@ export async function createReviewArtifact({ pptxPath, outDir, exemplarPath = nu
       exemplarPath,
       inspectionSummary: summarizeInspectionForReview(inspection),
     }),
-    'utf8'
+    'utf8',
   );
   return { inspection, ...renderResult };
 }
@@ -257,7 +257,9 @@ export async function createReviewArtifact({ pptxPath, outDir, exemplarPath = nu
 export async function runCli(argv = process.argv) {
   const args = parseArgs(argv);
   if (!args.pptxPath || !args.outDir) {
-    throw new Error('Usage: node scripts/report-quality/review-artifact.mjs <deck.pptx> --out-dir demo/artifacts/report-quality/<run-id> [--exemplar exemplar.pptx]');
+    throw new Error(
+      'Usage: node scripts/report-quality/review-artifact.mjs <deck.pptx> --out-dir demo/artifacts/report-quality/<run-id> [--exemplar exemplar.pptx]',
+    );
   }
   await createReviewArtifact(args);
   const inspection = JSON.parse(await readFile(path.join(path.resolve(args.outDir), 'pptx_inspection.json'), 'utf8'));

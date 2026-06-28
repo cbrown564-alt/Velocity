@@ -34,7 +34,7 @@ function show(label: string, data: unknown) {
     const lines = str.split('\n');
     // Trim very long outputs
     const display = lines.length > 40 ? [...lines.slice(0, 40), `  ... (${lines.length - 40} more lines)`] : lines;
-    console.log(display.map(l => `  ${l}`).join('\n'));
+    console.log(display.map((l) => `  ${l}`).join('\n'));
   }
 }
 
@@ -65,12 +65,10 @@ async function main() {
   console.log(`  ${vars.length} variables loaded`);
 
   // Print first 15 with their types
-  const varTable = vars.slice(0, 15).map(v =>
-    `  ${v.name.padEnd(12)} ${v.type.padEnd(10)} ${v.label ?? ''}`
-  );
+  const varTable = vars.slice(0, 15).map((v) => `  ${v.name.padEnd(12)} ${v.type.padEnd(10)} ${v.label ?? ''}`);
   console.log('\n  Name         Type       Label');
   console.log('  ' + '─'.repeat(55));
-  varTable.forEach(r => console.log(r));
+  varTable.forEach((r) => console.log(r));
   if (vars.length > 15) console.log(`  ... and ${vars.length - 15} more`);
 
   // ── Step 4: Auto-annotate semantics ───────────────────────────────────────
@@ -87,7 +85,9 @@ async function main() {
   for (const v of vars.slice(0, 10)) {
     const ann = engine.getAnnotation(v.id);
     if (ann) {
-      console.log(`  ${v.name.padEnd(12)} ${(ann.topic ?? '—').padEnd(16)} ${(ann.measurementIntent ?? '—').padEnd(20)} ${ann.confidence?.toFixed(2) ?? '—'}`);
+      console.log(
+        `  ${v.name.padEnd(12)} ${(ann.topic ?? '—').padEnd(16)} ${(ann.measurementIntent ?? '—').padEnd(20)} ${ann.confidence?.toFixed(2) ?? '—'}`,
+      );
     }
   }
 
@@ -114,10 +114,10 @@ async function main() {
   // ── Step 7: Get analysis suggestions ─────────────────────────────────────
   section('STEP 7 · Analysis suggestions');
   // Find key variables by name (names are lowercased on ingest)
-  const qualSleep = vars.find(v => v.name.toLowerCase() === 'qualslee' || v.name === 'qualsleep');
-  const sex = vars.find(v => v.name === 'sex');
-  const ess = vars.find(v => v.name === 'ess');
-  const anxiety = vars.find(v => v.name === 'anxiety');
+  const qualSleep = vars.find((v) => v.name.toLowerCase() === 'qualslee' || v.name === 'qualsleep');
+  const sex = vars.find((v) => v.name === 'sex');
+  const ess = vars.find((v) => v.name === 'ess');
+  const anxiety = vars.find((v) => v.name === 'anxiety');
 
   if (qualSleep && sex && ess && anxiety) {
     const suggIds = [qualSleep.id, sex.id, ess.id, anxiety.id];
@@ -139,7 +139,12 @@ async function main() {
   section('STEP 8 · Crosstab: qualsleep × sex (with significance)');
 
   if (!qualSleep || !sex) {
-    console.log(`  qualsleep or sex not found (found: ${vars.map(v=>v.name).slice(0,10).join(', ')}), skipping crosstab.`);
+    console.log(
+      `  qualsleep or sex not found (found: ${vars
+        .map((v) => v.name)
+        .slice(0, 10)
+        .join(', ')}), skipping crosstab.`,
+    );
   } else {
     const crosstabResult = await engine.runAnalysis('crosstab', {
       rowVars: [qualSleep.id],
@@ -166,11 +171,24 @@ async function main() {
       if (rows.length > 0) {
         const first = rows[0] as Record<string, unknown>;
         const cols = Object.keys(first);
-        console.log('  ' + cols.slice(0, 6).map(c => c.padEnd(14)).join(' '));
+        console.log(
+          '  ' +
+            cols
+              .slice(0, 6)
+              .map((c) => c.padEnd(14))
+              .join(' '),
+        );
         console.log('  ' + '─'.repeat(90));
         for (const row of rows.slice(0, 8)) {
           const r = row as Record<string, unknown>;
-          const line = cols.slice(0, 6).map(c => String(r[c] ?? '').slice(0, 13).padEnd(14)).join(' ');
+          const line = cols
+            .slice(0, 6)
+            .map((c) =>
+              String(r[c] ?? '')
+                .slice(0, 13)
+                .padEnd(14),
+            )
+            .join(' ');
           console.log('  ' + line);
         }
         if (rows.length > 8) console.log(`  ... (${rows.length - 8} more rows)`);
@@ -180,7 +198,7 @@ async function main() {
 
   // ── Step 9: Crosstab — ESS by marital status ─────────────────────────────
   section('STEP 9 · Crosstab: ess × marital (sleepiness by marital status)');
-  const marital = vars.find(v => v.name === 'marital');
+  const marital = vars.find((v) => v.name === 'marital');
 
   if (!ess || !marital) {
     console.log('  ESS or MARITAL not found, skipping.');
@@ -242,23 +260,31 @@ async function main() {
             subtitle: 'Source: sleep.sav',
             chartType: 'horizontal-bar' as const,
           },
-          ...(ess ? [{
-            rowVars: [ess.id],
-            colVar: marital?.id ?? null,
-            title: 'Epworth Sleepiness Scale by Marital Status',
-            chartType: 'grouped-bar' as const,
-          }] : []),
+          ...(ess
+            ? [
+                {
+                  rowVars: [ess.id],
+                  colVar: marital?.id ?? null,
+                  title: 'Epworth Sleepiness Scale by Marital Status',
+                  chartType: 'grouped-bar' as const,
+                },
+              ]
+            : []),
         ],
       },
       {
         title: 'Mental Health & Wellbeing',
         slides: [
-          ...(anxiety ? [{
-            rowVars: [anxiety.id],
-            colVar: sex?.id ?? null,
-            title: 'HADS Anxiety by Gender',
-            chartType: 'horizontal-bar' as const,
-          }] : []),
+          ...(anxiety
+            ? [
+                {
+                  rowVars: [anxiety.id],
+                  colVar: sex?.id ?? null,
+                  title: 'HADS Anxiety by Gender',
+                  chartType: 'horizontal-bar' as const,
+                },
+              ]
+            : []),
         ],
       },
     ],
@@ -324,7 +350,9 @@ async function main() {
   console.log(`  Variables:       ${session.variables.length}`);
   console.log(`  Slides:          ${session.slides?.length ?? 0}`);
   console.log(`  Active filters:  ${session.activeFilters?.length ?? 0}`);
-  console.log(`  Semantic state:  ${session.semantic ? `${Object.keys(session.semantic.annotations).length} annotations` : 'none'}`);
+  console.log(
+    `  Semantic state:  ${session.semantic ? `${Object.keys(session.semantic.annotations).length} annotations` : 'none'}`,
+  );
 
   // ── Step 13: Chart recommendation ─────────────────────────────────────────
   section('STEP 13 · Chart recommendation');
@@ -343,7 +371,7 @@ async function main() {
   await engine.close();
 }
 
-main().catch(err => {
+main().catch((err) => {
   console.error('\n✗ Agent demo failed:', err);
   process.exit(1);
 });

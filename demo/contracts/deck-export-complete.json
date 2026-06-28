@@ -10,10 +10,7 @@
     "Fixture file exists at test_data/sleep.sav.",
     "Browser context starts with no modal/dialog blockers."
   ],
-  "sensitiveSelectors": [
-    "[data-testid='user-email']",
-    "[data-testid='account-id']"
-  ],
+  "sensitiveSelectors": ["[data-testid='user-email']", "[data-testid='account-id']"],
   "steps": [
     {
       "id": "open-workspace",
@@ -34,10 +31,7 @@
       "value": "test_data/sleep.sav",
       "assert": {
         "type": "visibleAny",
-        "selectors": [
-          "text=Survey Questions",
-          "text=Metadata Loaded"
-        ]
+        "selectors": ["text=Survey Questions", "text=Metadata Loaded"]
       },
       "capture": true,
       "settleMs": 500

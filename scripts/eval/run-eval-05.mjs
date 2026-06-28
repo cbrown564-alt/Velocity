@@ -7,12 +7,8 @@ const OUTPUT_DIR = process.argv[2]
   ? path.resolve(process.argv[2])
   : path.resolve('evals/eval-05/runs/run-2026-03-13/artifacts');
 
-const SOURCE_FILE = path.resolve(
-  'test_data/English Longitudinal Study of Ageing/wave_4_ifs_derived_variables.sav'
-);
-const TARGET_FILE = path.resolve(
-  'test_data/English Longitudinal Study of Ageing/wave_5_ifs_derived_variables.sav'
-);
+const SOURCE_FILE = path.resolve('test_data/English Longitudinal Study of Ageing/wave_4_ifs_derived_variables.sav');
+const TARGET_FILE = path.resolve('test_data/English Longitudinal Study of Ageing/wave_5_ifs_derived_variables.sav');
 
 const CONSTRUCT_ID = 'srh3_hrs';
 const OUTPUT_TABLE = 'harm_eval05_wave4_wave5_srh3_hrs';
@@ -52,12 +48,9 @@ function toCsv(result) {
 
   const lines = ['wave,value,label,count'];
   for (const row of result.counts) {
-    lines.push([
-      row._wave,
-      row._value ?? '',
-      JSON.stringify(labelByValue.get(String(row._value)) ?? ''),
-      row.count,
-    ].join(','));
+    lines.push(
+      [row._wave, row._value ?? '', JSON.stringify(labelByValue.get(String(row._value)) ?? ''), row.count].join(','),
+    );
   }
   return lines.join('\n');
 }
@@ -168,16 +161,14 @@ async function main() {
 
         const queryResp = await useVelocityStore
           .getState()
-          .engineProxy.query(
-            `SELECT _wave, _value, COUNT(*) AS count FROM "${outputTable}" GROUP BY 1,2 ORDER BY 1,2`
-          );
+          .engineProxy.query(`SELECT _wave, _value, COUNT(*) AS count FROM "${outputTable}" GROUP BY 1,2 ORDER BY 1,2`);
 
         const counts = queryResp.data ?? [];
         const labelByValue = new Map(
           (sourceVars.find((variable) => variable.id === constructId)?.valueLabels ?? []).map((item) => [
             item.value,
             item.label,
-          ])
+          ]),
         );
 
         const validSummary = [1, 2].map((wave) => {
@@ -236,7 +227,7 @@ async function main() {
             total: mappings.length,
             autoMatched: mappings.filter((mapping) => mapping.status === 'auto_matched').length,
             confirmed: (useVelocityStore.getState().harmonization.session?.mappings ?? []).filter(
-              (mapping) => mapping.confirmed
+              (mapping) => mapping.confirmed,
             ).length,
           },
           selectedMapping: {
@@ -253,7 +244,7 @@ async function main() {
           sessionJson: serializeSessionFile(sessionFile),
         };
       },
-      { constructId: CONSTRUCT_ID, outputTable: OUTPUT_TABLE }
+      { constructId: CONSTRUCT_ID, outputTable: OUTPUT_TABLE },
     );
 
     const sessionPath = path.join(OUTPUT_DIR, 'session.velocity');
@@ -262,11 +253,7 @@ async function main() {
 
     await writeFile(sessionPath, result.sessionJson, 'utf8');
     await writeFile(countsPath, toCsv(result), 'utf8');
-    await writeFile(
-      detailPath,
-      JSON.stringify({ ...result, sessionJson: undefined }, jsonReplacer, 2),
-      'utf8'
-    );
+    await writeFile(detailPath, JSON.stringify({ ...result, sessionJson: undefined }, jsonReplacer, 2), 'utf8');
 
     console.log(
       JSON.stringify(
@@ -283,8 +270,8 @@ async function main() {
           validSummary: result.validSummary,
         },
         jsonReplacer,
-        2
-      )
+        2,
+      ),
     );
   } finally {
     await browser.close();

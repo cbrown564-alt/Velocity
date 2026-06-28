@@ -67,24 +67,30 @@ describe('BrowserEngine', () => {
     const proxy = createMockProxy();
     const engine = new BrowserEngine(proxy);
 
-    const filters: Filter[] = [{
-      id: 'f1',
-      variableId: 'gender',
-      operator: 'eq',
-      value: 'Female',
-    }];
-
-    await engine.runAnalysis('crosstab', {
-      rowVars: ['gender'],
-      colVar: 'score',
-      filters,
-      weightVar: null,
-      analysisSettings: {
-        comparisonMethod: 'cell_vs_rest',
-        correctionType: 'none',
-        significanceLevel: 0.95,
+    const filters: Filter[] = [
+      {
+        id: 'f1',
+        variableId: 'gender',
+        operator: 'eq',
+        value: 'Female',
       },
-    }, { dataset, variableSets });
+    ];
+
+    await engine.runAnalysis(
+      'crosstab',
+      {
+        rowVars: ['gender'],
+        colVar: 'score',
+        filters,
+        weightVar: null,
+        analysisSettings: {
+          comparisonMethod: 'cell_vs_rest',
+          correctionType: 'none',
+          significanceLevel: 0.95,
+        },
+      },
+      { dataset, variableSets },
+    );
 
     expect(proxy.runCrosstab).toHaveBeenCalledTimes(1);
     const [options, context, settings] = (proxy.runCrosstab as ReturnType<typeof vi.fn>).mock.calls[0]!;
@@ -119,13 +125,7 @@ describe('BrowserEngine', () => {
       missingValues,
     });
 
-    expect(proxy.getVariableStats).toHaveBeenCalledWith(
-      'likert',
-      'ordered',
-      'allow_numeric_stats',
-      10,
-      missingValues,
-    );
+    expect(proxy.getVariableStats).toHaveBeenCalledWith('likert', 'ordered', 'allow_numeric_stats', 10, missingValues);
   });
 
   it('throws ANALYSIS_NOT_FOUND for unknown analysis id', async () => {
@@ -157,7 +157,9 @@ describe('BrowserEngine', () => {
       type: 'engine.savLoaded' as const,
       requestId: 'req-1',
       variables: [{ id: 'q1', name: 'q1', label: 'Q1', type: 'nominal' as const, valueLabels: [], missingValues: {} }],
-      variableSets: [{ id: 'vs1', name: 'Q1', variableIds: ['q1'], structure: 'single' as const, type: 'nominal' as const }],
+      variableSets: [
+        { id: 'vs1', name: 'Q1', variableIds: ['q1'], structure: 'single' as const, type: 'nominal' as const },
+      ],
       rowCount: 42,
       durationMs: 10,
     };
@@ -186,7 +188,10 @@ describe('BrowserEngine', () => {
     const csvLoaded = {
       type: 'engine.csvLoaded' as const,
       requestId: 'req-2',
-      schema: [{ name: 'age', type: 'INTEGER' }, { name: 'gender', type: 'VARCHAR' }],
+      schema: [
+        { name: 'age', type: 'INTEGER' },
+        { name: 'gender', type: 'VARCHAR' },
+      ],
       rowCount: 99,
       durationMs: 5,
     };

@@ -48,11 +48,7 @@ export const StatisticsTooltip: React.FC<StatisticsTooltipProps> = ({
   const hasCorrection = correctionMethod && correctionMethod !== 'none' && adjustedPValue !== undefined;
 
   const correctionLabel =
-    correctionMethod === 'bonferroni'
-      ? 'Bonferroni'
-      : correctionMethod === 'fdr'
-        ? 'Benjamini-Hochberg (FDR)'
-        : null;
+    correctionMethod === 'bonferroni' ? 'Bonferroni' : correctionMethod === 'fdr' ? 'Benjamini-Hochberg (FDR)' : null;
 
   // Determine significance interpretation
   const getInterpretation = () => {
@@ -102,44 +98,26 @@ export const StatisticsTooltip: React.FC<StatisticsTooltipProps> = ({
     <div className="space-y-3 min-w-[240px]">
       {/* Header: Test Name */}
       <div className="border-b border-[var(--border-color)] pb-2">
-        <div className="font-semibold text-[var(--text-primary)]">
-          Welch's T-Test
-        </div>
-        <div className="text-[10px] text-[var(--text-secondary)]">
-          Cell vs Rest Comparison
-        </div>
+        <div className="font-semibold text-[var(--text-primary)]">Welch's T-Test</div>
+        <div className="text-[10px] text-[var(--text-secondary)]">Cell vs Rest Comparison</div>
         {isOverlapCorrected && (
-          <div className="text-[10px] text-[var(--text-secondary)]">
-            Dependent samples (overlap-corrected)
-          </div>
+          <div className="text-[10px] text-[var(--text-secondary)]">Dependent samples (overlap-corrected)</div>
         )}
       </div>
 
       {/* Statistics Grid */}
       <div className="grid grid-cols-3 gap-2 text-center">
         <div>
-          <div className="text-[10px] text-[var(--text-secondary)] uppercase tracking-wide">
-            t-score
-          </div>
-          <div className="font-mono font-semibold text-sm">
-            {tScore.toFixed(2)}
-          </div>
+          <div className="text-[10px] text-[var(--text-secondary)] uppercase tracking-wide">t-score</div>
+          <div className="font-mono font-semibold text-sm">{tScore.toFixed(2)}</div>
         </div>
         <div>
-          <div className="text-[10px] text-[var(--text-secondary)] uppercase tracking-wide">
-            p-value
-          </div>
-          <div className="font-mono font-semibold text-sm">
-            {pValue < 0.001 ? '<0.001' : pValue.toFixed(3)}
-          </div>
+          <div className="text-[10px] text-[var(--text-secondary)] uppercase tracking-wide">p-value</div>
+          <div className="font-mono font-semibold text-sm">{pValue < 0.001 ? '<0.001' : pValue.toFixed(3)}</div>
         </div>
         <div>
-          <div className="text-[10px] text-[var(--text-secondary)] uppercase tracking-wide">
-            Eff. N
-          </div>
-          <div className="font-mono font-semibold text-sm">
-            {effN.toFixed(1)}
-          </div>
+          <div className="text-[10px] text-[var(--text-secondary)] uppercase tracking-wide">Eff. N</div>
+          <div className="font-mono font-semibold text-sm">{effN.toFixed(1)}</div>
         </div>
       </div>
 
@@ -154,9 +132,7 @@ export const StatisticsTooltip: React.FC<StatisticsTooltipProps> = ({
           </div>
           <div className="text-xs">
             <span className="text-[var(--text-secondary)]">Adjusted p-value: </span>
-            <span className="font-mono">
-              {adjustedPValue < 0.001 ? '<0.001' : adjustedPValue.toFixed(3)}
-            </span>
+            <span className="font-mono">{adjustedPValue < 0.001 ? '<0.001' : adjustedPValue.toFixed(3)}</span>
           </div>
         </div>
       )}
@@ -192,15 +168,10 @@ export const StatisticsTooltip: React.FC<StatisticsTooltipProps> = ({
 
       {/* Interpretation */}
       <div className="pt-2 border-t border-[var(--border-color)]">
-        <div
-          className="font-semibold text-sm mb-1"
-          style={{ color: interpretation.color }}
-        >
+        <div className="font-semibold text-sm mb-1" style={{ color: interpretation.color }}>
           {interpretation.summary}
         </div>
-        <div className="text-[11px] text-[var(--text-secondary)] leading-relaxed">
-          {interpretation.detail}
-        </div>
+        <div className="text-[11px] text-[var(--text-secondary)] leading-relaxed">{interpretation.detail}</div>
       </div>
 
       {/* Methodology Note */}

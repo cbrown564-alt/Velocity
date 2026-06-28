@@ -60,16 +60,7 @@ export interface RResult {
   durationMs: number;
 }
 
-export type RValue =
-  | number
-  | string
-  | boolean
-  | null
-  | number[]
-  | string[]
-  | RDataFrame
-  | RMatrix
-  | RList;
+export type RValue = number | string | boolean | null | number[] | string[] | RDataFrame | RMatrix | RList;
 
 export interface RDataFrame {
   type: 'data.frame';
@@ -123,13 +114,7 @@ export interface SurveyDesignConfig {
   statistics: SurveyStatistic[];
 }
 
-export type SurveyStatistic =
-  | 'mean'
-  | 'total'
-  | 'proportion'
-  | 'quantile'
-  | 'ratio'
-  | 'variance';
+export type SurveyStatistic = 'mean' | 'total' | 'proportion' | 'quantile' | 'ratio' | 'variance';
 
 export interface SurveyResult {
   /** Design effect (deff) for each variable */
@@ -267,7 +252,7 @@ export type AnalysisEngine = 'auto' | 'duckdb' | 'webr';
 export function selectEngine(
   preferredEngine: AnalysisEngine,
   requiresDesignEffects: boolean,
-  requiresMixedModels: boolean
+  requiresMixedModels: boolean,
 ): 'duckdb' | 'webr' {
   if (preferredEngine === 'webr') {
     return 'webr';

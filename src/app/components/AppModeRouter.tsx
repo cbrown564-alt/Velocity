@@ -89,118 +89,112 @@ export const AppModeRouter: React.FC<AppModeRouterProps> = ({
 
   return (
     <>
-    <AnimatePresence>
-      {phase === 'uploading' && <UploadProgressBar progress={loadProgress} />}
-    </AnimatePresence>
+      <AnimatePresence>{phase === 'uploading' && <UploadProgressBar progress={loadProgress} />}</AnimatePresence>
 
-    <AnimatePresence>
-      {phase === 'uploading' && (
-        <UploadOverlay
-          loadStageHeadline={loadStageHeadline}
-          loadProgress={loadProgress}
-          pendingSavFileName={fileUpload.pendingSavFile?.name}
-          datasetName={dataset?.name}
-        />
-      )}
-    </AnimatePresence>
-
-    <AnimatePresence mode="wait">
-      {phase === 'splash' && (
-        <SplashScreen
-          isDbReady={isDbReady}
-          initError={initError}
-          workspace={workspace}
-          dataset={dataset}
-          persistenceError={persistenceError}
-          persistenceState={persistenceState}
-          loadProgress={loadProgress}
-          opfsRehydrateError={persistence.opfsRehydrateError}
-          opfsErrorHint={persistence.opfsErrorHint ?? undefined}
-          onOpenDataset={onOpenDataset}
-          onUploadFile={onUploadFile}
-          onLoadExample={onLoadExample}
-          onCreateProject={onCreateProject}
-          onDeleteDataset={onDeleteDataset}
-          onToggleStar={onToggleStar}
-          onLinkDatasets={onLinkDatasets}
-          onUnlinkDataset={onUnlinkDataset}
-          onCompareWaves={onCompareWaves}
-          onBatchStar={onBatchStar}
-          onBatchDelete={onBatchDelete}
-          onExport={onExport}
-          onImportSession={onImportSession}
-          onRebuildFromOpfs={persistence.rebuildFromOpfsSource}
-          onDiscard={onDiscard}
-        />
-      )}
-      {phase === 'dashboard' && (
-        <motion.div
-          key="analysis-dashboard"
-          {...getMotionProps({
-            preset: 'fade',
-            duration: reducedMotion ? DURATIONS.instant : DURATIONS.fast,
-            reducedMotion,
-          })}
-          className="h-full"
-        >
-          <DashboardShell
-            persistence={persistence}
-            onReturnToWorkspace={onReturnToWorkspace}
-            onOpenSessionImport={onOpenSessionImport}
-            onExportSession={onExportSession}
+      <AnimatePresence>
+        {phase === 'uploading' && (
+          <UploadOverlay
+            loadStageHeadline={loadStageHeadline}
+            loadProgress={loadProgress}
+            pendingSavFileName={fileUpload.pendingSavFile?.name}
+            datasetName={dataset?.name}
           />
-        </motion.div>
-      )}
-    </AnimatePresence>
+        )}
+      </AnimatePresence>
 
-    <AnimatePresence>
-      {phase === 'restoring' && persistedDataInfo && (
-        <RestorationPrompt
-          rowCount={persistedDataInfo.rowCount}
-          columnCount={persistedDataInfo.schema.length}
-          datasetName={persistedDataInfo.metadata?.datasetName || dataset?.name}
-          lastModified={persistedDataInfo.metadata?.lastModified}
-          warning={persistence.restorationPromptWarning}
-          onRestore={onRestore}
-          onDiscard={onDiscard}
-        />
-      )}
-    </AnimatePresence>
+      <AnimatePresence mode="wait">
+        {phase === 'splash' && (
+          <SplashScreen
+            isDbReady={isDbReady}
+            initError={initError}
+            workspace={workspace}
+            dataset={dataset}
+            persistenceError={persistenceError}
+            persistenceState={persistenceState}
+            loadProgress={loadProgress}
+            opfsRehydrateError={persistence.opfsRehydrateError}
+            opfsErrorHint={persistence.opfsErrorHint ?? undefined}
+            onOpenDataset={onOpenDataset}
+            onUploadFile={onUploadFile}
+            onLoadExample={onLoadExample}
+            onCreateProject={onCreateProject}
+            onDeleteDataset={onDeleteDataset}
+            onToggleStar={onToggleStar}
+            onLinkDatasets={onLinkDatasets}
+            onUnlinkDataset={onUnlinkDataset}
+            onCompareWaves={onCompareWaves}
+            onBatchStar={onBatchStar}
+            onBatchDelete={onBatchDelete}
+            onExport={onExport}
+            onImportSession={onImportSession}
+            onRebuildFromOpfs={persistence.rebuildFromOpfsSource}
+            onDiscard={onDiscard}
+          />
+        )}
+        {phase === 'dashboard' && (
+          <motion.div
+            key="analysis-dashboard"
+            {...getMotionProps({
+              preset: 'fade',
+              duration: reducedMotion ? DURATIONS.instant : DURATIONS.fast,
+              reducedMotion,
+            })}
+            className="h-full"
+          >
+            <DashboardShell
+              persistence={persistence}
+              onReturnToWorkspace={onReturnToWorkspace}
+              onOpenSessionImport={onOpenSessionImport}
+              onExportSession={onExportSession}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-    <AnimatePresence>
-      {persistence.showPartialLoadNotice && dataset && (
-        <PartialLoadNotice
-          title="Dataset Loaded With Partial Metadata"
-          message={
-            persistence.partialLoadMessage ||
-            'This dataset may have loaded with partial metadata.'
-          }
-          details={
-            dataset.loadDiagnostics?.valueLabelsDropped
-              ? `${dataset.loadDiagnostics.valueLabelsDropped.toLocaleString()} value labels were removed from cached metadata to keep the app within browser storage limits.`
-              : undefined
-          }
-          canRebuild={Boolean(dataset.opfsFileKey)}
-          onRebuild={() => {
-            persistence.setShowPartialLoadNotice(false);
-            void persistence.rebuildFromOpfsSource('dashboard');
-          }}
-          onDismiss={persistence.handleDismissPartialLoadNotice}
-        />
-      )}
-    </AnimatePresence>
+      <AnimatePresence>
+        {phase === 'restoring' && persistedDataInfo && (
+          <RestorationPrompt
+            rowCount={persistedDataInfo.rowCount}
+            columnCount={persistedDataInfo.schema.length}
+            datasetName={persistedDataInfo.metadata?.datasetName || dataset?.name}
+            lastModified={persistedDataInfo.metadata?.lastModified}
+            warning={persistence.restorationPromptWarning}
+            onRestore={onRestore}
+            onDiscard={onDiscard}
+          />
+        )}
+      </AnimatePresence>
 
-    <AnimatePresence>
-      {phase === 'metadata' && dataset && (
-        <MetadataScreen
-          dataset={dataset}
-          pendingSavSizeMb={fileUpload.pendingSavSizeMb ?? undefined}
-          onCancel={fileUpload.handleMetadataCancel}
-          onLoadFull={fileUpload.handleMetadataLoadFull}
-        />
-      )}
-    </AnimatePresence>
+      <AnimatePresence>
+        {persistence.showPartialLoadNotice && dataset && (
+          <PartialLoadNotice
+            title="Dataset Loaded With Partial Metadata"
+            message={persistence.partialLoadMessage || 'This dataset may have loaded with partial metadata.'}
+            details={
+              dataset.loadDiagnostics?.valueLabelsDropped
+                ? `${dataset.loadDiagnostics.valueLabelsDropped.toLocaleString()} value labels were removed from cached metadata to keep the app within browser storage limits.`
+                : undefined
+            }
+            canRebuild={Boolean(dataset.opfsFileKey)}
+            onRebuild={() => {
+              persistence.setShowPartialLoadNotice(false);
+              void persistence.rebuildFromOpfsSource('dashboard');
+            }}
+            onDismiss={persistence.handleDismissPartialLoadNotice}
+          />
+        )}
+      </AnimatePresence>
 
+      <AnimatePresence>
+        {phase === 'metadata' && dataset && (
+          <MetadataScreen
+            dataset={dataset}
+            pendingSavSizeMb={fileUpload.pendingSavSizeMb ?? undefined}
+            onCancel={fileUpload.handleMetadataCancel}
+            onLoadFull={fileUpload.handleMetadataLoadFull}
+          />
+        )}
+      </AnimatePresence>
     </>
   );
 };

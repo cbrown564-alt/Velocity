@@ -91,7 +91,7 @@ export function useWorkspace(): UseWorkspaceReturn {
     if (!dataset || hasRegisteredDataset.current) return;
 
     // Check if dataset already exists in workspace
-    const existing = workspace.datasets.find(d => d.id === dataset.id);
+    const existing = workspace.datasets.find((d) => d.id === dataset.id);
 
     if (existing) {
       // Update existing entry
@@ -185,42 +185,63 @@ export function useWorkspace(): UseWorkspaceReturn {
       },
       { saveDatasetSession, updateStoredDataset },
     );
-  }, [dataset, activeDatasetId, tableConfig, activeFilters, transformLog, variableSets, folders, saveDatasetSession, updateStoredDataset]);
+  }, [
+    dataset,
+    activeDatasetId,
+    tableConfig,
+    activeFilters,
+    transformLog,
+    variableSets,
+    folders,
+    saveDatasetSession,
+    updateStoredDataset,
+  ]);
 
   /**
    * Delete a dataset from the workspace.
    */
-  const deleteDataset = useCallback(async (id: string): Promise<void> => {
-    const storedDataset = workspace.datasets.find(d => d.id === id);
-    if (storedDataset) {
-      await opfsFileManager.deleteDatasetPersistence(storedDataset.id, storedDataset.opfsFileKey);
-      removeStoredDatasets([id]);
-    }
+  const deleteDataset = useCallback(
+    async (id: string): Promise<void> => {
+      const storedDataset = workspace.datasets.find((d) => d.id === id);
+      if (storedDataset) {
+        await opfsFileManager.deleteDatasetPersistence(storedDataset.id, storedDataset.opfsFileKey);
+        removeStoredDatasets([id]);
+      }
 
-    await refreshStorageQuota();
-  }, [workspace.datasets, removeStoredDatasets, refreshStorageQuota]);
+      await refreshStorageQuota();
+    },
+    [workspace.datasets, removeStoredDatasets, refreshStorageQuota],
+  );
 
   /**
    * Delete multiple datasets from the workspace.
    */
-  const deleteDatasets = useCallback(async (ids: string[]): Promise<void> => {
-    await Promise.all(ids.map(async (id) => {
-      const storedDataset = workspace.datasets.find(d => d.id === id);
-      if (storedDataset) {
-        await opfsFileManager.deleteDatasetPersistence(storedDataset.id, storedDataset.opfsFileKey);
-      }
-    }));
+  const deleteDatasets = useCallback(
+    async (ids: string[]): Promise<void> => {
+      await Promise.all(
+        ids.map(async (id) => {
+          const storedDataset = workspace.datasets.find((d) => d.id === id);
+          if (storedDataset) {
+            await opfsFileManager.deleteDatasetPersistence(storedDataset.id, storedDataset.opfsFileKey);
+          }
+        }),
+      );
 
-    removeStoredDatasets(ids);
-    await refreshStorageQuota();
-  }, [workspace.datasets, removeStoredDatasets, refreshStorageQuota]);
+      removeStoredDatasets(ids);
+      await refreshStorageQuota();
+    },
+    [workspace.datasets, removeStoredDatasets, refreshStorageQuota],
+  );
 
   /**
    * Toggle star status for a dataset.
    */
-  const toggleStar = useCallback((id: string) => {
-    toggleDatasetStar(id);
-  }, [toggleDatasetStar]);
+  const toggleStar = useCallback(
+    (id: string) => {
+      toggleDatasetStar(id);
+    },
+    [toggleDatasetStar],
+  );
 
   /**
    * Return to workspace view.

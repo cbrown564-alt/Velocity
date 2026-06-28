@@ -21,17 +21,17 @@ describe('buildWorkspaceDatasetOpenPatch', () => {
       rowCount: 100,
       source: 'sav',
       opfsFileKey: 'grid_123.sav',
-      variables: [
-        { id: 'q1_a', name: 'q1_a', label: 'Brand A', type: 'scale', valueLabels: [], missingValues: {} },
+      variables: [{ id: 'q1_a', name: 'q1_a', label: 'Brand A', type: 'scale', valueLabels: [], missingValues: {} }],
+      variableSets: [
+        {
+          id: 'grid-1',
+          name: 'Brand Ratings',
+          variableIds: ['q1_a'],
+          structure: 'grid',
+          type: 'scale',
+          folderId: 'folder-1',
+        },
       ],
-      variableSets: [{
-        id: 'grid-1',
-        name: 'Brand Ratings',
-        variableIds: ['q1_a'],
-        structure: 'grid',
-        type: 'scale',
-        folderId: 'folder-1',
-      }],
       folders: [{ id: 'folder-1', name: 'Brands', order: 0 }],
       sessionState: {
         tableConfig: { rowVars: ['q1_a'], colVar: null },
@@ -56,9 +56,7 @@ describe('buildWorkspaceDatasetOpenPatch', () => {
       name: 'empty.sav',
       rowCount: 0,
       source: 'sav',
-      variables: [
-        { id: 'q1', name: 'q1', label: 'Q1', type: 'categorical', valueLabels: [], missingValues: {} },
-      ],
+      variables: [{ id: 'q1', name: 'q1', label: 'Q1', type: 'categorical', valueLabels: [], missingValues: {} }],
     });
 
     expect(patch.variableSets).toHaveLength(1);
@@ -93,23 +91,26 @@ describe('buildWorkspaceDatasetOpenPatch', () => {
     const recode = vi.fn().mockResolvedValue({ data: { column: 'q1_binned' } });
     const flushPersistedData = vi.fn().mockResolvedValue(undefined);
 
-    await rehydrateDatasetFromOpfsSource({
-      browserEngine: {
-        ping: vi.fn().mockResolvedValue({ hasData: false }),
-        loadBuffer,
-        recode,
-      } as any,
-      dataset: {
-        id: 'ds-1',
-        name: 'grid.sav',
-        rowCount: 50,
-        source: 'sav',
-        variables: [],
-        opfsFileKey: 'grid_123.sav',
+    await rehydrateDatasetFromOpfsSource(
+      {
+        browserEngine: {
+          ping: vi.fn().mockResolvedValue({ hasData: false }),
+          loadBuffer,
+          recode,
+        } as any,
+        dataset: {
+          id: 'ds-1',
+          name: 'grid.sav',
+          rowCount: 50,
+          source: 'sav',
+          variables: [],
+          opfsFileKey: 'grid_123.sav',
+        },
+        transformLog: [],
+        flushPersistedData,
       },
-      transformLog: [],
-      flushPersistedData,
-    }, { forceReload: true });
+      { forceReload: true },
+    );
 
     expect(loadBuffer).toHaveBeenCalledWith('grid.sav', expect.any(ArrayBuffer), 'sav');
     expect(flushPersistedData).toHaveBeenCalled();
@@ -141,30 +142,35 @@ describe('buildWorkspaceDatasetOpenPatch', () => {
       },
     });
 
-    await rehydrateDatasetFromOpfsSource({
-      browserEngine: {
-        ping: vi.fn().mockResolvedValue({ hasData: false }),
-        loadBuffer,
-        recode,
-      } as any,
-      dataset: {
-        id: 'ds-1',
-        name: 'grid.sav',
-        rowCount: 50,
-        source: 'sav',
-        variables: [],
-        opfsFileKey: 'grid_123.sav',
+    await rehydrateDatasetFromOpfsSource(
+      {
+        browserEngine: {
+          ping: vi.fn().mockResolvedValue({ hasData: false }),
+          loadBuffer,
+          recode,
+        } as any,
+        dataset: {
+          id: 'ds-1',
+          name: 'grid.sav',
+          rowCount: 50,
+          source: 'sav',
+          variables: [],
+          opfsFileKey: 'grid_123.sav',
+        },
+        transformLog: [
+          {
+            type: 'recode',
+            sourceColId: 'q1',
+            newColId: 'q1_binned',
+            label: 'Q1 Binned',
+            config: { mode: 'binning', rules: [{ min: 0, max: 5, label: 'Low' }] },
+            createdAt: 1,
+          },
+        ],
+        flushPersistedData: vi.fn().mockResolvedValue(undefined),
       },
-      transformLog: [{
-        type: 'recode',
-        sourceColId: 'q1',
-        newColId: 'q1_binned',
-        label: 'Q1 Binned',
-        config: { mode: 'binning', rules: [{ min: 0, max: 5, label: 'Low' }] },
-        createdAt: 1,
-      }],
-      flushPersistedData: vi.fn().mockResolvedValue(undefined),
-    }, { forceReload: true });
+      { forceReload: true },
+    );
 
     expect(recode).toHaveBeenCalledWith(
       'q1',
@@ -185,9 +191,7 @@ describe('openWorkspaceDatasetLifecycle', () => {
     rowCount: 100,
     source: 'sav',
     opfsFileKey: `${id}_key.sav`,
-    variables: [
-      { id: 'sex', name: 'sex', label: 'Sex', type: 'categorical', valueLabels: [], missingValues: {} },
-    ],
+    variables: [{ id: 'sex', name: 'sex', label: 'Sex', type: 'categorical', valueLabels: [], missingValues: {} }],
   });
 
   it('rehydrates from OPFS source even when engine ping reports hasData', async () => {
@@ -207,9 +211,10 @@ describe('openWorkspaceDatasetLifecycle', () => {
       },
       flushPersistedData,
       respawnWorker,
-      getBrowserEngine: () => ({
-        ping: vi.fn().mockResolvedValue({ hasData: true, rowCount: 5 }),
-      }) as any,
+      getBrowserEngine: () =>
+        ({
+          ping: vi.fn().mockResolvedValue({ hasData: true, rowCount: 5 }),
+        }) as any,
       applyOpenPatch,
       applySameDatasetSession: vi.fn(),
       rehydrateFromOpfs,

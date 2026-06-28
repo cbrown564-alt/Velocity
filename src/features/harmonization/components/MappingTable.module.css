@@ -68,10 +68,18 @@
   letter-spacing: 0.04em;
 }
 
-.headerStatus { text-align: center; }
-.headerArrow { text-align: center; }
-.headerScore { text-align: center; }
-.headerActions { text-align: center; }
+.headerStatus {
+  text-align: center;
+}
+.headerArrow {
+  text-align: center;
+}
+.headerScore {
+  text-align: center;
+}
+.headerActions {
+  text-align: center;
+}
 
 /* Row */
 .listWrapper {
@@ -99,10 +107,18 @@
 }
 
 /* Status colors */
-.confirmed .rowStatus { color: var(--status-success-text); }
-.autoMatched .rowStatus { color: var(--status-warning-text); }
-.unmapped .rowStatus { color: var(--destructive); }
-.excluded .rowStatus { color: var(--text-secondary); }
+.confirmed .rowStatus {
+  color: var(--status-success-text);
+}
+.autoMatched .rowStatus {
+  color: var(--status-warning-text);
+}
+.unmapped .rowStatus {
+  color: var(--destructive);
+}
+.excluded .rowStatus {
+  color: var(--text-secondary);
+}
 
 .rowStatus {
   display: flex;
@@ -110,7 +126,8 @@
   justify-content: center;
 }
 
-.rowSource, .rowTarget {
+.rowSource,
+.rowTarget {
   display: flex;
   flex-direction: column;
   gap: 1px;
@@ -171,7 +188,8 @@
   gap: var(--space-1);
 }
 
-.actionBtn, .actionBtnDanger {
+.actionBtn,
+.actionBtnDanger {
   display: flex;
   align-items: center;
   justify-content: center;

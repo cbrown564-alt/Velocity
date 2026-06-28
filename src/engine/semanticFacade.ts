@@ -1,9 +1,7 @@
 import { autoAnnotate } from '../core/semantic/annotator';
 import { buildConceptsFromAnnotations } from '../core/semantic/conceptDiscovery';
 import { buildSearchIndex, listVariablesByCategory, searchVariables } from '../core/semantic/search';
-import {
-  collectTopicGuidanceWarnings,
-} from '../core/semantic/analysisGuardrails';
+import { collectTopicGuidanceWarnings } from '../core/semantic/analysisGuardrails';
 import { suggestAnalyses, suggestBreaks, suggestHarmonizations } from '../core/semantic/suggestions';
 import type {
   AnalysisSuggestion,
@@ -25,9 +23,7 @@ function cloneConcept(concept: Concept): Concept {
     canonicalScale: concept.canonicalScale
       ? {
           ...concept.canonicalScale,
-          anchors: concept.canonicalScale.anchors
-            ? { ...concept.canonicalScale.anchors }
-            : undefined,
+          anchors: concept.canonicalScale.anchors ? { ...concept.canonicalScale.anchors } : undefined,
         }
       : undefined,
     variableRefs: concept.variableRefs.map((ref) => ({ ...ref })),
@@ -90,7 +86,7 @@ export class SemanticFacade {
         this.host.state.variableSets,
         annotations,
         dataset.id,
-        this.host.state.conceptStore
+        this.host.state.conceptStore,
       );
 
       return { annotated: annotations.size, total: dataset.variables.length };
@@ -99,7 +95,7 @@ export class SemanticFacade {
 
   annotateVariable(
     variableId: string,
-    annotation: Partial<SemanticAnnotation> & Pick<SemanticAnnotation, 'topic' | 'measurementIntent'>
+    annotation: Partial<SemanticAnnotation> & Pick<SemanticAnnotation, 'topic' | 'measurementIntent'>,
   ): void {
     const dataset = this.host.requireDataset();
     const variable = this.host.requireVariable(variableId);
@@ -111,9 +107,7 @@ export class SemanticFacade {
     };
 
     this.host.state.semanticAnnotations.set(variableId, full);
-    dataset.variables = dataset.variables.map((v) =>
-      v.id === variableId ? { ...v, semantic: full } : v
-    );
+    dataset.variables = dataset.variables.map((v) => (v.id === variableId ? { ...v, semantic: full } : v));
     void variable;
   }
 
@@ -126,25 +120,18 @@ export class SemanticFacade {
 
   async searchVariables(
     query: string,
-    options: { limit?: number } = {}
+    options: { limit?: number } = {},
   ): Promise<ResultEnvelope<SemanticSearchResult[]>> {
     return this.host.wrap('searchVariables', { query, ...options }, async () => {
       const dataset = this.host.requireDataset();
       const concepts = this.host.state.conceptStore.listConcepts();
-      const index = buildSearchIndex(
-        dataset.variables,
-        dataset.id,
-        this.host.state.semanticAnnotations,
-        concepts
-      );
+      const index = buildSearchIndex(dataset.variables, dataset.id, this.host.state.semanticAnnotations, concepts);
       return searchVariables(query, index, options.limit ?? 20);
     });
   }
 
   listConcepts(): ResultEnvelope<Concept[]> {
-    return this.host.wrapSync('listConcepts', {}, () =>
-      cloneConcepts(this.host.state.conceptStore.listConcepts())
-    );
+    return this.host.wrapSync('listConcepts', {}, () => cloneConcepts(this.host.state.conceptStore.listConcepts()));
   }
 
   createConcept(spec: {
@@ -183,36 +170,25 @@ export class SemanticFacade {
 
   suggestHarmonizations(): ResultEnvelope<HarmonizationSuggestion[]> {
     return this.host.wrapSync('suggestHarmonizations', {}, () =>
-      suggestHarmonizations(this.host.state.conceptStore.listConcepts())
+      suggestHarmonizations(this.host.state.conceptStore.listConcepts()),
     );
   }
 
   listVariablesByCategory(
     category: MeasurementIntent,
-    options?: { includeUnannotated?: boolean; limit?: number }
+    options?: { includeUnannotated?: boolean; limit?: number },
   ): ResultEnvelope<SemanticSearchResult[]> {
     return this.host.wrapSync('listVariablesByCategory', { category, ...options }, () => {
       const dataset = this.host.requireDataset();
       const concepts = this.host.state.conceptStore.listConcepts();
-      const index = buildSearchIndex(
-        dataset.variables,
-        dataset.id,
-        this.host.state.semanticAnnotations,
-        concepts
-      );
+      const index = buildSearchIndex(dataset.variables, dataset.id, this.host.state.semanticAnnotations, concepts);
       return listVariablesByCategory(index.entries, category, options);
     });
   }
 
-  suggestBreaks(
-    variableId: string,
-    options?: { limit?: number }
-  ): ResultEnvelope<BreakSuggestion[]> {
+  suggestBreaks(variableId: string, options?: { limit?: number }): ResultEnvelope<BreakSuggestion[]> {
     const topicVar = this.host.requireVariable(variableId);
-    const warnings = collectTopicGuidanceWarnings(
-      topicVar,
-      this.host.state.semanticAnnotations.get(variableId)
-    );
+    const warnings = collectTopicGuidanceWarnings(topicVar, this.host.state.semanticAnnotations.get(variableId));
 
     return this.host.wrapSync(
       'suggestBreaks',
@@ -229,7 +205,7 @@ export class SemanticFacade {
         }));
         return suggestBreaks(topicAnnotated, allAnnotated, options);
       },
-      warnings
+      warnings,
     );
   }
 

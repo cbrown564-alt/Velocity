@@ -30,10 +30,13 @@ export class VariableStatsRunner implements AnalysisRunner<VariableStatsConfig, 
     type: 'object',
     properties: {
       column: { type: 'string' },
-      variableType: { type: 'string', enum: ['categorical', 'ordered', 'numeric', 'text', 'date', 'nominal', 'ordinal', 'scale'] },
-      binCount: { type: 'number' }
+      variableType: {
+        type: 'string',
+        enum: ['categorical', 'ordered', 'numeric', 'text', 'date', 'nominal', 'ordinal', 'scale'],
+      },
+      binCount: { type: 'number' },
     },
-    required: ['column']
+    required: ['column'],
   };
 
   async run(adapter: DatabaseAdapter, config: VariableStatsConfig): Promise<VariableStatsResult> {
@@ -43,7 +46,7 @@ export class VariableStatsRunner implements AnalysisRunner<VariableStatsConfig, 
       config.variableType,
       config.orderedScoring,
       config.binCount,
-      config.missingValues
+      config.missingValues,
     );
   }
 }
@@ -60,7 +63,7 @@ export async function getVariableStats(
   variableType?: VariableType,
   orderedScoring?: 'categorical_only' | 'allow_numeric_stats',
   binCount: number = 10,
-  missingValues?: MissingValueDef
+  missingValues?: MissingValueDef,
 ): Promise<VariableStatsResult> {
   const escapedColumn = column.replace(/"/g, '""');
   const userMissingConditions: string[] = [];
@@ -129,14 +132,13 @@ export async function getVariableStats(
     }
   }
 
-  const frequencies: VariableStatsFrequency[] = Array.from(frequencyMap.values())
-    .sort((a, b) => {
-      if (b.count !== a.count) return b.count - a.count;
-      const av = a.value;
-      const bv = b.value;
-      if (typeof av === 'number' && typeof bv === 'number') return av - bv;
-      return String(av).localeCompare(String(bv));
-    });
+  const frequencies: VariableStatsFrequency[] = Array.from(frequencyMap.values()).sort((a, b) => {
+    if (b.count !== a.count) return b.count - a.count;
+    const av = a.value;
+    const bv = b.value;
+    if (typeof av === 'number' && typeof bv === 'number') return av - bv;
+    return String(av).localeCompare(String(bv));
+  });
 
   const result: VariableStatsResult = {
     column,
@@ -246,7 +248,7 @@ export async function getVariableStats(
           upperFence,
           whiskerMin,
           whiskerMax,
-          outliers
+          outliers,
         };
       }
     } catch (error: any) {

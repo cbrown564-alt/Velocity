@@ -49,11 +49,11 @@ describe('Agent demo: sleep.sav → PPTX', () => {
 
       // Find variables
       const vars = engine.describe().data.dataset!.variables;
-      const qualsleep = vars.find(v => v.name === 'qualsleep')!;
-      const sex = vars.find(v => v.name === 'sex')!;
-      const ess = vars.find(v => v.name === 'ess')!;
-      const marital = vars.find(v => v.name === 'marital')!;
-      const anxiety = vars.find(v => v.name === 'anxiety')!;
+      const qualsleep = vars.find((v) => v.name === 'qualsleep')!;
+      const sex = vars.find((v) => v.name === 'sex')!;
+      const ess = vars.find((v) => v.name === 'ess')!;
+      const marital = vars.find((v) => v.name === 'marital')!;
+      const anxiety = vars.find((v) => v.name === 'anxiety')!;
 
       // Annotate
       await engine.annotateDataset();
@@ -65,8 +65,18 @@ describe('Agent demo: sleep.sav → PPTX', () => {
           {
             title: 'Sleep Quality',
             slides: [
-              { rowVars: [qualsleep.id], colVar: sex.id, title: 'Quality of Sleep by Gender', chartType: 'horizontal-bar' },
-              { rowVars: [ess.id], colVar: marital.id, title: 'Epworth Sleepiness Scale by Marital Status', chartType: 'grouped-bar' },
+              {
+                rowVars: [qualsleep.id],
+                colVar: sex.id,
+                title: 'Quality of Sleep by Gender',
+                chartType: 'horizontal-bar',
+              },
+              {
+                rowVars: [ess.id],
+                colVar: marital.id,
+                title: 'Epworth Sleepiness Scale by Marital Status',
+                chartType: 'grouped-bar',
+              },
             ],
           },
           {
@@ -80,7 +90,7 @@ describe('Agent demo: sleep.sav → PPTX', () => {
 
       console.log(`Built deck: ${deckResult.data?.slides.length} slides, ${deckResult.data?.errors.length} errors`);
       expect(deckResult.data?.errors).toEqual([]);
-      expect(deckResult.data?.slides.map(s => s.resolvedTitle)).toEqual([
+      expect(deckResult.data?.slides.map((s) => s.resolvedTitle)).toEqual([
         'Quality of Sleep by Gender',
         'Epworth Sleepiness Scale by Marital Status',
         'HADS Anxiety by Gender',
@@ -95,13 +105,11 @@ describe('Agent demo: sleep.sav → PPTX', () => {
       }
 
       const fixtureBytes = readFileSync(fixturePath);
-      expect(await normalizedPptxEntries(bytes)).toEqual(
-        await normalizedPptxEntries(fixtureBytes),
-      );
+      expect(await normalizedPptxEntries(bytes)).toEqual(await normalizedPptxEntries(fixtureBytes));
 
       console.log(`\n✓ PPTX matched fixture: ${fixturePath}`);
       console.log(`  Size: ${(bytes.byteLength / 1024).toFixed(1)} KB`);
-      console.log(`  Slides: ${deckResult.data?.slides.map(s => s.resolvedTitle).join(', ')}`);
+      console.log(`  Slides: ${deckResult.data?.slides.map((s) => s.resolvedTitle).join(', ')}`);
     } finally {
       await engine.close();
     }

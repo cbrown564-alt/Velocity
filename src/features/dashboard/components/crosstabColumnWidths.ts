@@ -16,7 +16,7 @@ export interface CrosstabColumnWidths {
 export function computeCrosstabColumnWidths(
   colKeys: string[],
   colLabels: Record<string, string>,
-  hasTotalColumn: boolean
+  hasTotalColumn: boolean,
 ): CrosstabColumnWidths {
   if (colKeys.length === 0) {
     return { rowLabel: `${ROW_LABEL_PCT}%`, columns: {} };
@@ -28,9 +28,7 @@ export function computeCrosstabColumnWidths(
   });
   const weightSum = weights.reduce((sum, weight) => sum + weight, 0) || 1;
 
-  const dataBudget = hasTotalColumn
-    ? 100 - ROW_LABEL_PCT - TOTAL_COL_PCT
-    : 100 - ROW_LABEL_PCT;
+  const dataBudget = hasTotalColumn ? 100 - ROW_LABEL_PCT - TOTAL_COL_PCT : 100 - ROW_LABEL_PCT;
 
   const columns: Record<string, string> = {};
   colKeys.forEach((key, index) => {

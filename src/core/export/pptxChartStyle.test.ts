@@ -1,8 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {
-  buildPresentationChartOptions,
-  resolveChartColorsForExport,
-} from './pptxChartStyle';
+import { buildPresentationChartOptions, resolveChartColorsForExport } from './pptxChartStyle';
 import type { ExportBranding } from './types';
 
 const branding = {
@@ -18,17 +15,11 @@ describe('resolveChartColorsForExport', () => {
   });
 
   it('uses one color per series for multi-series charts', () => {
-    expect(resolveChartColorsForExport(3, branding)).toEqual([
-      '2D4A3E',
-      'E07860',
-      'E8B468',
-    ]);
+    expect(resolveChartColorsForExport(3, branding)).toEqual(['2D4A3E', 'E07860', 'E8B468']);
   });
 
   it('falls back to header color when palette is empty', () => {
-    expect(
-      resolveChartColorsForExport(1, { headerColor: 'E07860', chartColors: [] }),
-    ).toEqual(['E07860']);
+    expect(resolveChartColorsForExport(1, { headerColor: 'E07860', chartColors: [] })).toEqual(['E07860']);
   });
 });
 
@@ -44,9 +35,7 @@ describe('buildPresentationChartOptions', () => {
     });
 
     expect(opts.chartColors).toEqual(['2D4A3E']);
-    expect(opts.valGridLine).toEqual(
-      expect.objectContaining({ color: expect.any(String), size: expect.any(Number) }),
-    );
+    expect(opts.valGridLine).toEqual(expect.objectContaining({ color: expect.any(String), size: expect.any(Number) }));
     expect(opts.barGapWidthPct).toBe(25);
     expect(opts.valAxisLabelFontSize).toBeGreaterThanOrEqual(9);
     expect(opts.catAxisLabelFontSize).toBeGreaterThanOrEqual(9);

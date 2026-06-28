@@ -36,13 +36,7 @@ function makeProcessedData(): ProcessedAnalysisData {
 
 describe('GroupedBarRenderer legend labels', () => {
   it('renders full legend labels without truncation', () => {
-    render(
-      <GroupedBarRenderer
-        width={800}
-        height={400}
-        processedData={makeProcessedData()}
-      />
-    );
+    render(<GroupedBarRenderer width={800} height={400} processedData={makeProcessedData()} />);
 
     expect(screen.getAllByText('International').length).toBeGreaterThan(0);
     expect(screen.queryByText('Internatio...')).not.toBeInTheDocument();

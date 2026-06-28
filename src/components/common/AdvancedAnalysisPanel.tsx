@@ -29,9 +29,7 @@ interface AdvancedAnalysisPanelProps {
  * - Mixed effects model specification
  * - Engine selection (auto/duckdb/webr)
  */
-export const AdvancedAnalysisPanel: React.FC<AdvancedAnalysisPanelProps> = ({
-  defaultExpanded = false,
-}) => {
+export const AdvancedAnalysisPanel: React.FC<AdvancedAnalysisPanelProps> = ({ defaultExpanded = false }) => {
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
   const [activeSection, setActiveSection] = useState<string | null>(null);
 
@@ -98,9 +96,7 @@ export const AdvancedAnalysisPanel: React.FC<AdvancedAnalysisPanelProps> = ({
       title: 'Engine',
       content: (
         <div className={styles.sectionContent}>
-          <p className={styles.sectionDescription}>
-            Choose which computational engine powers your analysis.
-          </p>
+          <p className={styles.sectionDescription}>Choose which computational engine powers your analysis.</p>
 
           <div className={styles.engineSelector}>
             <button
@@ -140,10 +136,7 @@ export const AdvancedAnalysisPanel: React.FC<AdvancedAnalysisPanelProps> = ({
             {webrStatus === 'initializing' && (
               <div className={styles.progressContainer}>
                 <div className={styles.progressTrack}>
-                  <div
-                    className={styles.progressBar}
-                    style={{ width: `${webrInitProgress}%` }}
-                  />
+                  <div className={styles.progressBar} style={{ width: `${webrInitProgress}%` }} />
                 </div>
                 <span className={styles.progressLabel}>{webrInitProgress}%</span>
               </div>
@@ -182,9 +175,7 @@ export const AdvancedAnalysisPanel: React.FC<AdvancedAnalysisPanelProps> = ({
           <div className={styles.toggleRow}>
             <div className={styles.toggleInfo}>
               <span className={styles.toggleLabel}>Enable Design Effects</span>
-              <span className={styles.toggleHint}>
-                Calculate deff using svydesign()
-              </span>
+              <span className={styles.toggleHint}>Calculate deff using svydesign()</span>
             </div>
             <button
               className={`${styles.toggle} ${analysisSettings.enableDesignEffects ? styles.toggleOn : ''}`}
@@ -203,9 +194,7 @@ export const AdvancedAnalysisPanel: React.FC<AdvancedAnalysisPanelProps> = ({
                 <select className={styles.fieldSelect} disabled>
                   <option>Use dataset weight</option>
                 </select>
-                <span className={styles.fieldHint}>
-                  Automatically uses the dataset's weight variable if set
-                </span>
+                <span className={styles.fieldHint}>Automatically uses the dataset's weight variable if set</span>
               </div>
 
               <div className={styles.fieldGroup}>
@@ -213,9 +202,7 @@ export const AdvancedAnalysisPanel: React.FC<AdvancedAnalysisPanelProps> = ({
                 <select className={styles.fieldSelect} disabled>
                   <option>None (SRS assumed)</option>
                 </select>
-                <span className={styles.fieldHint}>
-                  Primary sampling unit for clustered designs
-                </span>
+                <span className={styles.fieldHint}>Primary sampling unit for clustered designs</span>
               </div>
 
               <div className={styles.fieldGroup}>
@@ -223,9 +210,7 @@ export const AdvancedAnalysisPanel: React.FC<AdvancedAnalysisPanelProps> = ({
                 <select className={styles.fieldSelect} disabled>
                   <option>None</option>
                 </select>
-                <span className={styles.fieldHint}>
-                  Stratification variable for stratified sampling
-                </span>
+                <span className={styles.fieldHint}>Stratification variable for stratified sampling</span>
               </div>
             </div>
           )}
@@ -233,9 +218,7 @@ export const AdvancedAnalysisPanel: React.FC<AdvancedAnalysisPanelProps> = ({
           {!analysisSettings.enableDesignEffects && (
             <div className={styles.infoBox}>
               <Sparkles size={14} />
-              <span>
-                Enable design effects to account for complex sampling and get accurate standard errors.
-              </span>
+              <span>Enable design effects to account for complex sampling and get accurate standard errors.</span>
             </div>
           )}
         </div>
@@ -254,16 +237,16 @@ export const AdvancedAnalysisPanel: React.FC<AdvancedAnalysisPanelProps> = ({
           <div className={styles.infoBox}>
             <Beaker size={14} />
             <span>
-              Mixed effects models require the WebR engine and lme4 package.
-              Select a continuous dependent variable and specify random effects structure.
+              Mixed effects models require the WebR engine and lme4 package. Select a continuous dependent variable and
+              specify random effects structure.
             </span>
           </div>
 
           <div className={styles.comingSoon}>
             <span className={styles.comingSoonBadge}>Coming Soon</span>
             <p>
-              Full mixed model specification interface with random effects builder,
-              model comparison, and ICC calculation.
+              Full mixed model specification interface with random effects builder, model comparison, and ICC
+              calculation.
             </p>
           </div>
         </div>
@@ -273,16 +256,11 @@ export const AdvancedAnalysisPanel: React.FC<AdvancedAnalysisPanelProps> = ({
 
   return (
     <div className={styles.panel}>
-      <button
-        onClick={() => setIsExpanded(!isExpanded)}
-        className={styles.header}
-      >
+      <button onClick={() => setIsExpanded(!isExpanded)} className={styles.header}>
         <div className={styles.headerLeft}>
           <Beaker size={16} className={styles.headerIcon} />
           <span className={styles.headerTitle}>Advanced Analysis</span>
-          {webrStatus === 'ready' && (
-            <span className={styles.readyBadge}>R Ready</span>
-          )}
+          {webrStatus === 'ready' && <span className={styles.readyBadge}>R Ready</span>}
         </div>
         {isExpanded ? (
           <ChevronDown size={16} className={styles.chevron} />
@@ -311,15 +289,11 @@ export const AdvancedAnalysisPanel: React.FC<AdvancedAnalysisPanelProps> = ({
           </div>
 
           {activeSection && (
-            <div className={styles.content}>
-              {sections.find((s) => s.id === activeSection)?.content}
-            </div>
+            <div className={styles.content}>{sections.find((s) => s.id === activeSection)?.content}</div>
           )}
 
           {!activeSection && (
-            <div className={styles.placeholder}>
-              Select a topic above to configure advanced statistical options.
-            </div>
+            <div className={styles.placeholder}>Select a topic above to configure advanced statistical options.</div>
           )}
         </div>
       )}

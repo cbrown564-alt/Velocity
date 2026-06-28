@@ -11,54 +11,50 @@ import { useVelocityStore } from '../../store';
 import styles from './MillerColumns.module.css';
 
 interface DataSourceColumnProps {
-    className?: string;
+  className?: string;
 }
 
 export const DataSourceColumn: React.FC<DataSourceColumnProps> = ({ className }) => {
-    const {
-        dataset,
-        selectedDataSourceId,
-        setSelectedDataSourceId,
-    } = useVelocityStore();
+  const { dataset, selectedDataSourceId, setSelectedDataSourceId } = useVelocityStore();
 
-    // Auto-select the only dataset on load
-    useEffect(() => {
-        if (dataset && !selectedDataSourceId) {
-            setSelectedDataSourceId(dataset.id);
-        }
-    }, [dataset, selectedDataSourceId, setSelectedDataSourceId]);
+  // Auto-select the only dataset on load
+  useEffect(() => {
+    if (dataset && !selectedDataSourceId) {
+      setSelectedDataSourceId(dataset.id);
+    }
+  }, [dataset, selectedDataSourceId, setSelectedDataSourceId]);
 
-    const handleSelect = (id: string) => {
-        setSelectedDataSourceId(id);
-    };
+  const handleSelect = (id: string) => {
+    setSelectedDataSourceId(id);
+  };
 
-    return (
-        <div className={`${styles.column} ${styles.col1} ${className || ''}`}>
-            <div className={styles.columnHeader}>
-                <span className={styles.columnTitle}>Sources</span>
+  return (
+    <div className={`${styles.column} ${styles.col1} ${className || ''}`}>
+      <div className={styles.columnHeader}>
+        <span className={styles.columnTitle}>Sources</span>
+      </div>
+
+      <div className={styles.columnContent}>
+        {dataset ? (
+          <div
+            className={`${styles.item} ${selectedDataSourceId === dataset.id ? styles.itemActive : ''}`}
+            onClick={() => handleSelect(dataset.id)}
+          >
+            <div className={styles.itemContent}>
+              <Database className={styles.itemIcon} size={16} />
+              <span className={styles.itemLabel}>{dataset.name}</span>
             </div>
-
-            <div className={styles.columnContent}>
-                {dataset ? (
-                    <div
-                        className={`${styles.item} ${selectedDataSourceId === dataset.id ? styles.itemActive : ''}`}
-                        onClick={() => handleSelect(dataset.id)}
-                    >
-                        <div className={styles.itemContent}>
-                            <Database className={styles.itemIcon} size={16} />
-                            <span className={styles.itemLabel}>{dataset.name}</span>
-                        </div>
-                        <div className={styles.itemMeta}>
-                            <ChevronRight className={styles.itemChevron} size={14} />
-                        </div>
-                    </div>
-                ) : (
-                    <div className={styles.emptyState}>
-                        <Database className={styles.emptyIcon} />
-                        <span className={styles.emptyText}>No data loaded</span>
-                    </div>
-                )}
+            <div className={styles.itemMeta}>
+              <ChevronRight className={styles.itemChevron} size={14} />
             </div>
-        </div>
-    );
+          </div>
+        ) : (
+          <div className={styles.emptyState}>
+            <Database className={styles.emptyIcon} />
+            <span className={styles.emptyText}>No data loaded</span>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 };

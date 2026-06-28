@@ -37,12 +37,14 @@ describe('resolveDrillDownContext', () => {
       rowPath: [{ variable: 'brand_coke', value: 'Coca-Cola' }],
       colValue: null,
       colVarId: null,
-      variableSets: [{
-        id: 'brand_awareness',
-        variableIds: ['brand_coke', 'brand_pepsi'],
-        structure: 'multiple',
-        countedValue: 1,
-      }],
+      variableSets: [
+        {
+          id: 'brand_awareness',
+          variableIds: ['brand_coke', 'brand_pepsi'],
+          structure: 'multiple',
+          countedValue: 1,
+        },
+      ],
       variables: [
         { id: 'brand_coke', label: 'Coca-Cola' },
         { id: 'brand_pepsi', label: 'Pepsi' },
@@ -59,12 +61,14 @@ describe('resolveDrillDownContext', () => {
       rowPath: [{ variable: 'gender', value: 'Male' }],
       colValue: 'Pepsi',
       colVarId: 'brand_awareness',
-      variableSets: [{
-        id: 'brand_awareness',
-        variableIds: ['brand_coke', 'brand_pepsi'],
-        structure: 'multiple',
-        countedValue: 1,
-      }],
+      variableSets: [
+        {
+          id: 'brand_awareness',
+          variableIds: ['brand_coke', 'brand_pepsi'],
+          structure: 'multiple',
+          countedValue: 1,
+        },
+      ],
       variables: [
         { id: 'gender', label: 'Gender' },
         { id: 'brand_coke', label: 'Coca-Cola' },

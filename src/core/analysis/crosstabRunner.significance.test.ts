@@ -9,17 +9,13 @@ class MockAdapter implements DatabaseAdapter {
   constructor(
     private readonly mainRows: Record<string, unknown>[],
     private readonly totalRows: Record<string, unknown>[],
-    private readonly overlapRows: Record<string, unknown>[] = []
-  ) { }
+    private readonly overlapRows: Record<string, unknown>[] = [],
+  ) {}
 
   async query(sql: string): Promise<QueryResult> {
     this.queries.push(sql);
     this.queryCount += 1;
-    const rows = this.queryCount === 1
-      ? this.mainRows
-      : this.queryCount === 2
-        ? this.totalRows
-        : this.overlapRows;
+    const rows = this.queryCount === 1 ? this.mainRows : this.queryCount === 2 ? this.totalRows : this.overlapRows;
     return {
       columns: [],
       rows,
@@ -27,10 +23,12 @@ class MockAdapter implements DatabaseAdapter {
     };
   }
 
-  async execute(_sql: string): Promise<void> { }
-  async insertArrowBuffer(_tableName: string, _buffer: Uint8Array): Promise<void> { }
-  async getTableNames(): Promise<string[]> { return ['main']; }
-  async close(): Promise<void> { }
+  async execute(_sql: string): Promise<void> {}
+  async insertArrowBuffer(_tableName: string, _buffer: Uint8Array): Promise<void> {}
+  async getTableNames(): Promise<string[]> {
+    return ['main'];
+  }
+  async close(): Promise<void> {}
 }
 
 const mainRows = [
@@ -72,7 +70,7 @@ describe('crosstabRunner significance integration', () => {
           },
         },
         variableSets: {},
-      }
+      },
     );
 
     expect(adapter.queries[0]).toContain('WHERE NOT ("q1" IS NULL OR "q1" IN (999) OR ("q1" >= 98 AND "q1" <= 99))');
@@ -92,7 +90,7 @@ describe('crosstabRunner significance integration', () => {
           significanceLevel: 0.95,
         },
       },
-      { variables: {}, variableSets: {} }
+      { variables: {}, variableSets: {} },
     );
 
     expect(result.rows).toHaveLength(4);
@@ -103,7 +101,7 @@ describe('crosstabRunner significance integration', () => {
     });
 
     // Bonferroni should remove all 95% flags in this fixture.
-    expect(result.rows.some(row => row.sig === 'high_95' || row.sig === 'low_95')).toBe(false);
+    expect(result.rows.some((row) => row.sig === 'high_95' || row.sig === 'low_95')).toBe(false);
   });
 
   it('uses pairwise mode and suppresses cell-vs-rest arrows', async () => {
@@ -117,15 +115,15 @@ describe('crosstabRunner significance integration', () => {
         significanceOptions: {
           comparisonMethod: 'pairwise',
           correctionType: 'none',
-          significanceLevel: 0.80,
+          significanceLevel: 0.8,
         },
       },
-      { variables: {}, variableSets: {} }
+      { variables: {}, variableSets: {} },
     );
 
-    expect(result.rows.every(row => row.sig === undefined)).toBe(true);
-    expect(result.rows.some(row => typeof row.columnLetter === 'string')).toBe(true);
-    expect(result.rows.some(row => typeof row.sigLetters === 'string' && row.sigLetters.length > 0)).toBe(true);
+    expect(result.rows.every((row) => row.sig === undefined)).toBe(true);
+    expect(result.rows.some((row) => typeof row.columnLetter === 'string')).toBe(true);
+    expect(result.rows.some((row) => typeof row.sigLetters === 'string' && row.sigLetters.length > 0)).toBe(true);
   });
 
   it('applies overlap-corrected dependent pairwise tests for MR columns', async () => {
@@ -157,11 +155,11 @@ describe('crosstabRunner significance integration', () => {
           significanceLevel: 0.95,
         },
       },
-      { variables: {}, variableSets: {} }
+      { variables: {}, variableSets: {} },
     );
 
-    expect(result.rows.every(row => row.sig === undefined)).toBe(true);
-    expect(result.rows.every(row => row.stats?.isOverlapCorrected === true)).toBe(true);
-    expect(result.rows.some(row => typeof row.columnLetter === 'string')).toBe(true);
+    expect(result.rows.every((row) => row.sig === undefined)).toBe(true);
+    expect(result.rows.every((row) => row.stats?.isOverlapCorrected === true)).toBe(true);
+    expect(result.rows.some((row) => typeof row.columnLetter === 'string')).toBe(true);
   });
 });

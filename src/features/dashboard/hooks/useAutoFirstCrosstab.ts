@@ -1,9 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useVelocityStore } from '../../../store';
-import {
-  pickAutoFirstCrosstabPair,
-  resolveAutoCrosstabTableConfig,
-} from '../lib/autoFirstCrosstab';
+import { pickAutoFirstCrosstabPair, resolveAutoCrosstabTableConfig } from '../lib/autoFirstCrosstab';
 
 /**
  * One-time auto-first-crosstab after Load Example (mock_data.csv only).

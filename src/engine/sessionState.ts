@@ -25,7 +25,7 @@ export class SessionState {
   constructor(
     private readonly host: VelocityEngineHost,
     private readonly readSemanticState: () => SemanticStateSnapshot,
-    private readonly restoreSemanticState: (state: SemanticStateSnapshot) => void
+    private readonly restoreSemanticState: (state: SemanticStateSnapshot) => void,
   ) {}
 
   resetSessionState(): void {
@@ -77,24 +77,18 @@ export class SessionState {
   }
 
   addFilter(filter: Filter): ResultEnvelope<FilterMutationResult> {
-    return this.host.wrapSync(
-      'addFilter',
-      { filterId: filter.id, variableId: filter.variableId },
-      () => {
-        this.host.requireVariable(filter.variableId);
-        const cloned = cloneFilter(filter);
-        this.host.state.activeFilters = [...this.host.state.activeFilters, cloned];
-        return { filter: cloned };
-      }
-    );
+    return this.host.wrapSync('addFilter', { filterId: filter.id, variableId: filter.variableId }, () => {
+      this.host.requireVariable(filter.variableId);
+      const cloned = cloneFilter(filter);
+      this.host.state.activeFilters = [...this.host.state.activeFilters, cloned];
+      return { filter: cloned };
+    });
   }
 
   removeFilter(filterId: string): ResultEnvelope<RemoveFilterResult> {
     return this.host.wrapSync('removeFilter', { filterId }, () => {
       const before = this.host.state.activeFilters.length;
-      this.host.state.activeFilters = this.host.state.activeFilters.filter(
-        (filter) => filter.id !== filterId
-      );
+      this.host.state.activeFilters = this.host.state.activeFilters.filter((filter) => filter.id !== filterId);
       return { filterId, removed: this.host.state.activeFilters.length < before };
     });
   }
@@ -108,9 +102,7 @@ export class SessionState {
   }
 
   getActiveFilters(): ResultEnvelope<Filter[]> {
-    return this.host.wrapSync('getActiveFilters', {}, () =>
-      this.host.state.activeFilters.map(cloneFilter)
-    );
+    return this.host.wrapSync('getActiveFilters', {}, () => this.host.state.activeFilters.map(cloneFilter));
   }
 
   async exportSession(): Promise<ResultEnvelope<VelocitySessionFile>> {
@@ -158,12 +150,12 @@ export class SessionState {
           committedSlides: deck.slides.length,
           committedSections: deck.spec.sections.length,
         };
-      }
+      },
     );
   }
 
   async importSession(
-    session: VelocitySessionFile
+    session: VelocitySessionFile,
   ): Promise<ResultEnvelope<ReturnType<typeof importSessionFile>['diagnostics']>> {
     return this.host.wrap('importSession', { formatVersion: session.formatVersion }, async () => {
       const dataset = this.host.requireDataset();

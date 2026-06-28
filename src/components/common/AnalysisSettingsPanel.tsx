@@ -100,9 +100,7 @@ export const AnalysisSettingsPanel: React.FC<AnalysisSettingsPanelProps> = ({
         <button
           onClick={handleCIToggle}
           className={`relative w-9 h-5 rounded-full transition-colors ${
-            analysisSettings.showConfidenceIntervals
-              ? 'bg-[var(--color-accent)]'
-              : 'bg-[var(--bg-active)]'
+            analysisSettings.showConfidenceIntervals ? 'bg-[var(--color-accent)]' : 'bg-[var(--bg-active)]'
           }`}
         >
           <span
@@ -114,10 +112,13 @@ export const AnalysisSettingsPanel: React.FC<AnalysisSettingsPanelProps> = ({
       </div>
 
       {/* Info Text */}
-      <div className={isInline
-        ? 'w-full text-[10px] text-[var(--text-secondary)] pt-2 border-t border-[var(--border-color)]'
-        : 'mt-3 pt-3 border-t border-[var(--border-color)] text-[10px] text-[var(--text-secondary)]'
-      }>
+      <div
+        className={
+          isInline
+            ? 'w-full text-[10px] text-[var(--text-secondary)] pt-2 border-t border-[var(--border-color)]'
+            : 'mt-3 pt-3 border-t border-[var(--border-color)] text-[10px] text-[var(--text-secondary)]'
+        }
+      >
         {analysisSettings.comparisonMethod === 'cell_vs_rest' ? (
           <span>Cell vs Rest compares each cell to the remaining sample (↑↓ arrows)</span>
         ) : (

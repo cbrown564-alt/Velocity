@@ -28,7 +28,7 @@ import { DuckDBNodeAdapter } from '../../src/adapters/DuckDBNodeAdapter';
 import { runCrosstab } from '../../src/core/analysis/crosstabRunner';
 import { Variable, VariableSet } from '../../src/types';
 
-const SAV_DIR  = resolve(__dirname, '../../test_data');
+const SAV_DIR = resolve(__dirname, '../../test_data');
 const EXPECTED = resolve(__dirname, 'expected');
 
 // ---------------------------------------------------------------------------
@@ -68,11 +68,7 @@ function expectCloseDeep(actual: any, expected: any, tolerance = 1e-6): void {
   expect(actual).toEqual(expected);
 }
 
-function expectCloseDeepFromFixture(
-  actual: any,
-  fixtureName: string,
-  tolerance = 1e-6,
-): void {
+function expectCloseDeepFromFixture(actual: any, fixtureName: string, tolerance = 1e-6): void {
   const expected = loadExpected(fixtureName);
   expect(expected, `Fixture not found: ${fixtureName}`).not.toBeNull();
   expectCloseDeep(actual, expected, tolerance);
@@ -92,17 +88,26 @@ describe('R Parity: sleep.sav', () => {
   beforeAll(async () => {
     db = await DuckDBNodeAdapter.create();
     const result = await db.loadSav(resolve(SAV_DIR, 'sleep.sav'));
-    vars    = Object.fromEntries(result.variables.map(v => [v.id, v]));
-    varSets = Object.fromEntries(result.variableSets.map(vs => [vs.id, vs]));
+    vars = Object.fromEntries(result.variables.map((v) => [v.id, v]));
+    varSets = Object.fromEntries(result.variableSets.map((vs) => [vs.id, vs]));
   }, 30_000);
 
-  afterAll(async () => { await db.close(); });
+  afterAll(async () => {
+    await db.close();
+  });
 
   // ── Test 1 ────────────────────────────────────────────────────────────────
   it('Test 1 – unweighted frequency: SEX', async () => {
-    const results = await runCrosstab(db, {
-      rowVars: ['SEX'], colVar: null, weightVar: null, filters: [],
-    }, { variables: vars, variableSets: varSets });
+    const results = await runCrosstab(
+      db,
+      {
+        rowVars: ['SEX'],
+        colVar: null,
+        weightVar: null,
+        filters: [],
+      },
+      { variables: vars, variableSets: varSets },
+    );
 
     expectCloseDeepFromFixture(sortRows(results.rows), 'r_sleep_freq_sex.json');
   });
@@ -112,22 +117,33 @@ describe('R Parity: sleep.sav', () => {
   let crosstabMARITAL_SEX: Awaited<ReturnType<typeof runCrosstab>>;
 
   it('Test 2 – unweighted crosstab: MARITAL x SEX', async () => {
-    crosstabMARITAL_SEX = await runCrosstab(db, {
-      rowVars: ['MARITAL'], colVar: 'SEX', weightVar: null, filters: [],
-    }, { variables: vars, variableSets: varSets });
-
-    expectCloseDeepFromFixture(
-      sortRows(crosstabMARITAL_SEX.rows),
-      'r_sleep_crosstab_marital_sex.json',
+    crosstabMARITAL_SEX = await runCrosstab(
+      db,
+      {
+        rowVars: ['MARITAL'],
+        colVar: 'SEX',
+        weightVar: null,
+        filters: [],
+      },
+      { variables: vars, variableSets: varSets },
     );
+
+    expectCloseDeepFromFixture(sortRows(crosstabMARITAL_SEX.rows), 'r_sleep_crosstab_marital_sex.json');
   });
 
   it('Test 3 – chi-square: MARITAL x SEX', async () => {
     // Re-run if test 2 didn't run first (test isolation)
     if (!crosstabMARITAL_SEX) {
-      crosstabMARITAL_SEX = await runCrosstab(db, {
-        rowVars: ['MARITAL'], colVar: 'SEX', weightVar: null, filters: [],
-      }, { variables: vars, variableSets: varSets });
+      crosstabMARITAL_SEX = await runCrosstab(
+        db,
+        {
+          rowVars: ['MARITAL'],
+          colVar: 'SEX',
+          weightVar: null,
+          filters: [],
+        },
+        { variables: vars, variableSets: varSets },
+      );
     }
     const chiSq = crosstabMARITAL_SEX.tableStats?.chiSquare;
     expect(chiSq, 'tableStats.chiSquare should be present').toBeDefined();
@@ -139,18 +155,32 @@ describe('R Parity: sleep.sav', () => {
   // auto-promotes AGE to measureVar. measureLabel = vars['age'].label = "age",
   // so rowKey_0 = "age" in the output.
   it('Test 4 – unweighted mean/stddev: AGE by SEX', async () => {
-    const results = await runCrosstab(db, {
-      rowVars: ['age'], colVar: 'sex', weightVar: null, filters: [],
-    }, { variables: vars, variableSets: varSets });
+    const results = await runCrosstab(
+      db,
+      {
+        rowVars: ['age'],
+        colVar: 'sex',
+        weightVar: null,
+        filters: [],
+      },
+      { variables: vars, variableSets: varSets },
+    );
 
     expectCloseDeepFromFixture(sortRows(results.rows), 'r_sleep_mean_age_sex.json');
   });
 
   // ── Test 5 ────────────────────────────────────────────────────────────────
   it('Test 5 – unweighted mean/stddev: AGE by MARITAL', async () => {
-    const results = await runCrosstab(db, {
-      rowVars: ['age'], colVar: 'marital', weightVar: null, filters: [],
-    }, { variables: vars, variableSets: varSets });
+    const results = await runCrosstab(
+      db,
+      {
+        rowVars: ['age'],
+        colVar: 'marital',
+        weightVar: null,
+        filters: [],
+      },
+      { variables: vars, variableSets: varSets },
+    );
 
     expectCloseDeepFromFixture(sortRows(results.rows), 'r_sleep_mean_age_marital.json');
   });
@@ -167,70 +197,94 @@ describe('R Parity: bsa93.sav', () => {
 
   beforeAll(async () => {
     db = await DuckDBNodeAdapter.create();
-    const result = await db.loadSav(
-      resolve(SAV_DIR, 'British Social Attitudes Survey', 'bsa93.sav'),
-    );
-    vars    = Object.fromEntries(result.variables.map(v => [v.id, v]));
-    varSets = Object.fromEntries(result.variableSets.map(vs => [vs.id, vs]));
+    const result = await db.loadSav(resolve(SAV_DIR, 'British Social Attitudes Survey', 'bsa93.sav'));
+    vars = Object.fromEntries(result.variables.map((v) => [v.id, v]));
+    varSets = Object.fromEntries(result.variableSets.map((vs) => [vs.id, vs]));
   }, 30_000);
 
-  afterAll(async () => { await db.close(); });
+  afterAll(async () => {
+    await db.close();
+  });
 
   // ── Test 6 ────────────────────────────────────────────────────────────────
   it('Test 6 – unweighted frequency: TAXSPEND', async () => {
-    const results = await runCrosstab(db, {
-      rowVars: ['TAXSPEND'], colVar: null, weightVar: null, filters: [],
-    }, { variables: vars, variableSets: varSets });
+    const results = await runCrosstab(
+      db,
+      {
+        rowVars: ['TAXSPEND'],
+        colVar: null,
+        weightVar: null,
+        filters: [],
+      },
+      { variables: vars, variableSets: varSets },
+    );
 
     expectCloseDeepFromFixture(sortRows(results.rows), 'r_bsa93_freq_taxspend.json');
   });
 
   // ── Test 7 ────────────────────────────────────────────────────────────────
   it('Test 7 – weighted frequency: TAXSPEND by WTFACTOR', async () => {
-    const results = await runCrosstab(db, {
-      rowVars: ['TAXSPEND'], colVar: null, weightVar: 'WTFACTOR', filters: [],
-    }, { variables: vars, variableSets: varSets });
-
-    expectCloseDeepFromFixture(
-      sortRows(results.rows),
-      'r_bsa93_wfreq_taxspend.json',
-      1e-4,
+    const results = await runCrosstab(
+      db,
+      {
+        rowVars: ['TAXSPEND'],
+        colVar: null,
+        weightVar: 'WTFACTOR',
+        filters: [],
+      },
+      { variables: vars, variableSets: varSets },
     );
+
+    expectCloseDeepFromFixture(sortRows(results.rows), 'r_bsa93_wfreq_taxspend.json', 1e-4);
   });
 
   // ── Tests 8 & 10 ──────────────────────────────────────────────────────────
   let crosstabNHSSAT_VERSION: Awaited<ReturnType<typeof runCrosstab>>;
 
   it('Test 8 – unweighted crosstab: NHSSAT x VERSION', async () => {
-    crosstabNHSSAT_VERSION = await runCrosstab(db, {
-      rowVars: ['NHSSAT'], colVar: 'VERSION', weightVar: null, filters: [],
-    }, { variables: vars, variableSets: varSets });
-
-    expectCloseDeepFromFixture(
-      sortRows(crosstabNHSSAT_VERSION.rows),
-      'r_bsa93_crosstab_nhssat_version.json',
+    crosstabNHSSAT_VERSION = await runCrosstab(
+      db,
+      {
+        rowVars: ['NHSSAT'],
+        colVar: 'VERSION',
+        weightVar: null,
+        filters: [],
+      },
+      { variables: vars, variableSets: varSets },
     );
+
+    expectCloseDeepFromFixture(sortRows(crosstabNHSSAT_VERSION.rows), 'r_bsa93_crosstab_nhssat_version.json');
   });
 
   // ── Test 9 ────────────────────────────────────────────────────────────────
   it('Test 9 – weighted crosstab: NHSSAT x VERSION by WTFACTOR', async () => {
-    const results = await runCrosstab(db, {
-      rowVars: ['NHSSAT'], colVar: 'VERSION', weightVar: 'WTFACTOR', filters: [],
-    }, { variables: vars, variableSets: varSets });
-
-    expectCloseDeepFromFixture(
-      sortRows(results.rows),
-      'r_bsa93_wcrosstab_nhssat_version.json',
-      1e-4,
+    const results = await runCrosstab(
+      db,
+      {
+        rowVars: ['NHSSAT'],
+        colVar: 'VERSION',
+        weightVar: 'WTFACTOR',
+        filters: [],
+      },
+      { variables: vars, variableSets: varSets },
     );
+
+    expectCloseDeepFromFixture(sortRows(results.rows), 'r_bsa93_wcrosstab_nhssat_version.json', 1e-4);
   });
 
   // ── Test 10 ───────────────────────────────────────────────────────────────
   it('Test 10 – chi-square: NHSSAT x VERSION', async () => {
     if (!crosstabNHSSAT_VERSION) {
-      crosstabNHSSAT_VERSION = await runCrosstab(db, {
-        rowVars: ['NHSSAT'], colVar: 'VERSION', weightVar: null, filters: [],
-      }, { variables: vars, variableSets: varSets });
+      crosstabNHSSAT_VERSION = await runCrosstab(
+        db,
+        {
+          rowVars: ['NHSSAT'],
+          colVar: 'VERSION',
+          weightVar: null,
+          filters: [],
+        },
+        { variables: vars, variableSets: varSets },
+      );
     }
     const chiSq = crosstabNHSSAT_VERSION.tableStats?.chiSquare;
     expect(chiSq, 'tableStats.chiSquare should be present').toBeDefined();
@@ -239,29 +293,35 @@ describe('R Parity: bsa93.sav', () => {
 
   // ── Test 11 ───────────────────────────────────────────────────────────────
   it('Test 11 – weighted frequency: DOLE by WTFACTOR', async () => {
-    const results = await runCrosstab(db, {
-      rowVars: ['DOLE'], colVar: null, weightVar: 'WTFACTOR', filters: [],
-    }, { variables: vars, variableSets: varSets });
-
-    expectCloseDeepFromFixture(
-      sortRows(results.rows),
-      'r_bsa93_wfreq_dole.json',
-      1e-4,
+    const results = await runCrosstab(
+      db,
+      {
+        rowVars: ['DOLE'],
+        colVar: null,
+        weightVar: 'WTFACTOR',
+        filters: [],
+      },
+      { variables: vars, variableSets: varSets },
     );
+
+    expectCloseDeepFromFixture(sortRows(results.rows), 'r_bsa93_wfreq_dole.json', 1e-4);
   });
 
   // ── Test 12 ───────────────────────────────────────────────────────────────
   // Kish's ESS = weightedCount² / sumSqWeights — validated via fixture fields
   it('Test 12 – ESS per group: VERSION with WTFACTOR', async () => {
-    const results = await runCrosstab(db, {
-      rowVars: ['VERSION'], colVar: null, weightVar: 'WTFACTOR', filters: [],
-    }, { variables: vars, variableSets: varSets });
-
-    expectCloseDeepFromFixture(
-      sortRows(results.rows),
-      'r_bsa93_wfreq_version_ess.json',
-      1e-4,
+    const results = await runCrosstab(
+      db,
+      {
+        rowVars: ['VERSION'],
+        colVar: null,
+        weightVar: 'WTFACTOR',
+        filters: [],
+      },
+      { variables: vars, variableSets: varSets },
     );
+
+    expectCloseDeepFromFixture(sortRows(results.rows), 'r_bsa93_wfreq_version_ess.json', 1e-4);
   });
 });
 

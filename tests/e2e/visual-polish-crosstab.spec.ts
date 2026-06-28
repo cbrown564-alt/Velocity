@@ -59,7 +59,12 @@ test('P1 crosstab render gate — gender x region with trust anchor', async ({ p
 
   await reachDashboardWithExample(page);
 
-  if (await page.getByText('Ready for Analysis').isVisible({ timeout: 3000 }).catch(() => false)) {
+  if (
+    await page
+      .getByText('Ready for Analysis')
+      .isVisible({ timeout: 3000 })
+      .catch(() => false)
+  ) {
     await page.getByRole('button', { name: /product sat Good starting point/i }).click();
     await page.waitForTimeout(800);
     await expect(page.getByTestId('story-shelf-suggestion')).toBeVisible({ timeout: 8000 });
@@ -67,7 +72,10 @@ test('P1 crosstab render gate — gender x region with trust anchor', async ({ p
     await page.waitForTimeout(500);
   }
 
-  await page.getByRole('button', { name: /^gender$/i }).first().click();
+  await page
+    .getByRole('button', { name: /^gender$/i })
+    .first()
+    .click();
   await page.waitForTimeout(1200);
 
   const regionBtn = page.getByRole('button', { name: /^region$/i });

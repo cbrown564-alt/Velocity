@@ -1,10 +1,5 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import {
-  formatFileSize,
-  formatRelativeTime,
-  getStorageHealthStatus,
-  PROJECT_COLORS,
-} from './workspaceFormatters';
+import { formatFileSize, formatRelativeTime, getStorageHealthStatus, PROJECT_COLORS } from './workspaceFormatters';
 
 describe('workspaceFormatters', () => {
   afterEach(() => {
@@ -79,7 +74,7 @@ describe('workspaceFormatters', () => {
   describe('PROJECT_COLORS', () => {
     it('exposes a non-empty palette', () => {
       expect(PROJECT_COLORS.length).toBeGreaterThan(0);
-      expect(PROJECT_COLORS.every(c => c.startsWith('#'))).toBe(true);
+      expect(PROJECT_COLORS.every((c) => c.startsWith('#'))).toBe(true);
     });
   });
 });

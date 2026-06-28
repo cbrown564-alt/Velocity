@@ -105,6 +105,8 @@ npm run eval:06      # Browser eval runner (EVAL-06)
 
 ```bash
 npm run test
+npm run lint
+npm run format:check
 npm run typecheck:all
 npm run build
 npm run test:mutation   # optional: Stryker mutation score for src/core/
@@ -114,7 +116,7 @@ See `docs/arch_08_testing.md` for the full pyramid, coverage gates, and mutation
 
 ## 6. Code Style
 
-*   **Linting:** ESLint + Prettier (Standard config).
+*   **Linting:** ESLint flat config plus Prettier. Existing legacy findings currently report as warnings so the repo can adopt the gate without unrelated cleanup churn.
 *   **Naming:**
     *   React Components: `PascalCase` (e.g., `VariableCard.tsx`)
     *   Functions/Variables: `camelCase`

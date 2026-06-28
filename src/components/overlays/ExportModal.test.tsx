@@ -8,7 +8,9 @@ describe('ExportModal accessibility', () => {
   beforeEach(() => {
     localStorage.clear();
     useVelocityStore.setState({
-      slides: [{ id: 's1', title: 'Slide 1', analysisState: { rowVars: [], colVar: null, filters: [], weightVar: null } }],
+      slides: [
+        { id: 's1', title: 'Slide 1', analysisState: { rowVars: [], colVar: null, filters: [], weightVar: null } },
+      ],
       activeSlideId: 's1',
       tableConfig: { rowVars: [], colVar: null },
       activeFilters: [],
@@ -27,13 +29,7 @@ describe('ExportModal accessibility', () => {
   });
 
   it('exposes export format choices as named radio controls', () => {
-    render(
-      <ExportModal
-        isOpen
-        onClose={vi.fn()}
-        config={{ title: 'Report', analyses: [] }}
-      />
-    );
+    render(<ExportModal isOpen onClose={vi.fn()} config={{ title: 'Report', analyses: [] }} />);
 
     expect(screen.getByRole('radiogroup', { name: /export format/i })).toBeInTheDocument();
     expect(screen.getByRole('radio', { name: 'PowerPoint' })).toBeInTheDocument();
@@ -42,17 +38,19 @@ describe('ExportModal accessibility', () => {
 
   it('resolves default slide titles from the active analysis state before export', () => {
     useVelocityStore.setState({
-      slides: [{
-        id: 's1',
-        title: 'New Slide',
-        subtitle: '',
-        analysisState: { rowVars: [], colVar: null, filters: [], weightVar: null },
-        visualizationType: 'table',
-        layoutMode: 'focus',
-        cells: [{ id: 'c1', content: { type: 'table' } }],
-        createdAt: 1,
-        updatedAt: 1,
-      }],
+      slides: [
+        {
+          id: 's1',
+          title: 'New Slide',
+          subtitle: '',
+          analysisState: { rowVars: [], colVar: null, filters: [], weightVar: null },
+          visualizationType: 'table',
+          layoutMode: 'focus',
+          cells: [{ id: 'c1', content: { type: 'table' } }],
+          createdAt: 1,
+          updatedAt: 1,
+        },
+      ],
       activeSlideId: 's1',
       tableConfig: { rowVars: ['gender'], colVar: 'region' },
       activeFilters: [],
@@ -75,26 +73,14 @@ describe('ExportModal accessibility', () => {
       analysisSettings: {},
     } as never);
 
-    render(
-      <ExportModal
-        isOpen
-        onClose={vi.fn()}
-        config={{ title: 'New Slide', analyses: [] }}
-      />
-    );
+    render(<ExportModal isOpen onClose={vi.fn()} config={{ title: 'New Slide', analyses: [] }} />);
 
     expect(screen.getByLabelText(/report title/i)).toHaveValue('Gender by Region');
     expect(screen.getByText(/current slide \(gender by region\)/i)).toBeInTheDocument();
   });
 
   it('uses a single centered modal shell instead of a duplicated backdrop overlay', () => {
-    const { container } = render(
-      <ExportModal
-        isOpen
-        onClose={vi.fn()}
-        config={{ title: 'Report', analyses: [] }}
-      />
-    );
+    const { container } = render(<ExportModal isOpen onClose={vi.fn()} config={{ title: 'Report', analyses: [] }} />);
 
     expect(container.children).toHaveLength(1);
     expect(screen.getByTestId('export-modal').parentElement).toBe(container.firstElementChild);
@@ -102,17 +88,19 @@ describe('ExportModal accessibility', () => {
 
   it('blocks export and shows review issues when slide recipes are incomplete', () => {
     useVelocityStore.setState({
-      slides: [{
-        id: 's1',
-        title: 'Broken Slide',
-        subtitle: '',
-        analysisState: { rowVars: [], colVar: null, filters: [], weightVar: null },
-        visualizationType: 'table',
-        layoutMode: 'focus',
-        cells: [{ id: 'c1', content: { type: 'table' } }],
-        createdAt: 1,
-        updatedAt: 1,
-      }],
+      slides: [
+        {
+          id: 's1',
+          title: 'Broken Slide',
+          subtitle: '',
+          analysisState: { rowVars: [], colVar: null, filters: [], weightVar: null },
+          visualizationType: 'table',
+          layoutMode: 'focus',
+          cells: [{ id: 'c1', content: { type: 'table' } }],
+          createdAt: 1,
+          updatedAt: 1,
+        },
+      ],
       activeSlideId: 's1',
       tableConfig: { rowVars: [], colVar: null },
       activeFilters: [],
@@ -129,13 +117,7 @@ describe('ExportModal accessibility', () => {
       analysisSettings: {},
     } as never);
 
-    render(
-      <ExportModal
-        isOpen
-        onClose={vi.fn()}
-        config={{ title: 'Report', analyses: [] }}
-      />
-    );
+    render(<ExportModal isOpen onClose={vi.fn()} config={{ title: 'Report', analyses: [] }} />);
 
     expect(screen.getByTestId('export-review-list')).toBeInTheDocument();
     expect(screen.getByTestId('deck-readiness-status')).toHaveTextContent(/blocked/i);
@@ -173,7 +155,7 @@ describe('ExportModal accessibility', () => {
             ],
           },
         }}
-      />
+      />,
     );
 
     expect(screen.getByText(/template mode/i)).toBeInTheDocument();
@@ -212,7 +194,7 @@ describe('ExportModal accessibility', () => {
             ],
           },
         }}
-      />
+      />,
     );
 
     fireEvent.click(screen.getByLabelText(/apply mapped placeholders/i));
@@ -230,13 +212,7 @@ describe('ExportModal accessibility', () => {
       type: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
     });
 
-    const { unmount } = render(
-      <ExportModal
-        isOpen
-        onClose={vi.fn()}
-        config={{ title: 'Report', analyses: [] }}
-      />
-    );
+    const { unmount } = render(<ExportModal isOpen onClose={vi.fn()} config={{ title: 'Report', analyses: [] }} />);
 
     fireEvent.change(screen.getByLabelText(/import client template/i), {
       target: { files: [file] },
@@ -248,13 +224,7 @@ describe('ExportModal accessibility', () => {
 
     unmount();
 
-    render(
-      <ExportModal
-        isOpen
-        onClose={vi.fn()}
-        config={{ title: 'Report', analyses: [] }}
-      />
-    );
+    render(<ExportModal isOpen onClose={vi.fn()} config={{ title: 'Report', analyses: [] }} />);
 
     await waitFor(() => {
       expect(screen.getByLabelText(/apply mapped placeholders/i)).toBeEnabled();

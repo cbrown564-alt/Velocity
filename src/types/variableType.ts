@@ -34,10 +34,7 @@ export function isCategoricalType(type: VariableType | undefined | null): boolea
   return normalizeVariableType(type) === 'categorical';
 }
 
-export function allowsNumericStats(
-  type: VariableType | undefined | null,
-  orderedScoring?: OrderedScoring
-): boolean {
+export function allowsNumericStats(type: VariableType | undefined | null, orderedScoring?: OrderedScoring): boolean {
   if (type === 'numeric') return true;
   return normalizeVariableType(type) === 'ordered' && orderedScoring === 'allow_numeric_stats';
 }

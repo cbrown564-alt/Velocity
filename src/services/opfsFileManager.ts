@@ -161,10 +161,7 @@ export async function getFileSize(name: string): Promise<number> {
 /**
  * Get persisted bytes for one workspace dataset (source upload + DuckDB files).
  */
-export async function getDatasetPersistenceSize(
-  datasetId: string,
-  opfsFileKey?: string,
-): Promise<number> {
+export async function getDatasetPersistenceSize(datasetId: string, opfsFileKey?: string): Promise<number> {
   let total = 0;
 
   if (opfsFileKey) {
@@ -295,9 +292,7 @@ export async function deleteDatasetPersistence(datasetId: string, opfsFileKey?: 
   const prefix = `${DB_PREFIX}_v${OPFS_SCHEMA_VERSION}_dataset_${datasetId}`;
   const dbFiles = await listDbFiles().catch(() => []);
   await Promise.all(
-    dbFiles
-      .filter((file) => file.name.includes(prefix))
-      .map((file) => deleteDbFile(file.name).catch(() => {})),
+    dbFiles.filter((file) => file.name.includes(prefix)).map((file) => deleteDbFile(file.name).catch(() => {})),
   );
 }
 

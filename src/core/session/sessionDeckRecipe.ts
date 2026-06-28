@@ -40,10 +40,7 @@ function sectionToRecipeSection(section: SlideSection): SessionDeckRecipeSection
   };
 }
 
-export function buildSessionDeckRecipe(
-  slides: Slide[],
-  sections: SlideSection[]
-): SessionDeckRecipe {
+export function buildSessionDeckRecipe(slides: Slide[], sections: SlideSection[]): SessionDeckRecipe {
   return {
     recipeVersion: 1,
     sections: sections.map(sectionToRecipeSection),
@@ -51,13 +48,8 @@ export function buildSessionDeckRecipe(
   };
 }
 
-export function findStaleDeckRecipeSlideIds(
-  deckRecipe: SessionDeckRecipe | undefined,
-  slides: Slide[]
-): string[] {
+export function findStaleDeckRecipeSlideIds(deckRecipe: SessionDeckRecipe | undefined, slides: Slide[]): string[] {
   if (!deckRecipe) return [];
   const validSlideIds = new Set(slides.map((slide) => slide.id));
-  return deckRecipe.slideRecipes
-    .map((recipe) => recipe.slideId)
-    .filter((slideId) => !validSlideIds.has(slideId));
+  return deckRecipe.slideRecipes.map((recipe) => recipe.slideId).filter((slideId) => !validSlideIds.has(slideId));
 }

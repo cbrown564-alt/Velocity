@@ -7,9 +7,7 @@ export const mapCrosstabRows = (rows: CrosstabSqlRow[], isWeighted: boolean): Ag
     const rowKeys = extractRowKeys(row) as AggregatedRow['rowKeys'];
     const count = Number(row.count ?? row.validCount ?? 0);
     const weightedCount =
-      row.weightedCount !== undefined
-        ? Number(row.weightedCount)
-        : (isWeighted ? Number(row.count ?? 0) : undefined);
+      row.weightedCount !== undefined ? Number(row.weightedCount) : isWeighted ? Number(row.count ?? 0) : undefined;
 
     return {
       rowKeys,

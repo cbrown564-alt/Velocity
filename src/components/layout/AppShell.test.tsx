@@ -14,7 +14,7 @@ describe('AppShell', () => {
     render(
       <AppShell>
         <div data-testid="child">Child</div>
-      </AppShell>
+      </AppShell>,
     );
 
     // Simulate opening Variable Manager
@@ -30,7 +30,7 @@ describe('AppShell', () => {
     const { getByTestId } = render(
       <AppShell>
         <div data-testid="child">Child</div>
-      </AppShell>
+      </AppShell>,
     );
     expect(getByTestId('child')).toBeInTheDocument();
   });
@@ -41,7 +41,7 @@ describe('AppShell', () => {
     render(
       <AppShell>
         <div>Child</div>
-      </AppShell>
+      </AppShell>,
     );
 
     act(() => {
@@ -57,7 +57,7 @@ describe('AppShell', () => {
     render(
       <AppShell>
         <div>Child</div>
-      </AppShell>
+      </AppShell>,
     );
 
     act(() => {
@@ -76,7 +76,7 @@ describe('AppShell', () => {
     render(
       <AppShell>
         <div>Child</div>
-      </AppShell>
+      </AppShell>,
     );
 
     act(() => {

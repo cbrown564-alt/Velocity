@@ -18,17 +18,18 @@ function makeProcessedData(overrides: Partial<ProcessedAnalysisData> = {}): Proc
   };
 }
 
-function makeRow(label: string, rawValue: string, cells: Record<string, { percent: number; sig?: ProcessedAnalysisData['rows'][0]['cells'][string]['sig'] }>) {
+function makeRow(
+  label: string,
+  rawValue: string,
+  cells: Record<string, { percent: number; sig?: ProcessedAnalysisData['rows'][0]['cells'][string]['sig'] }>,
+) {
   return {
     key: rawValue,
     label,
     rawValue,
     depth: 0,
     cells: Object.fromEntries(
-      Object.entries(cells).map(([col, cell]) => [
-        col,
-        { count: 10, percent: cell.percent, sig: cell.sig },
-      ])
+      Object.entries(cells).map(([col, cell]) => [col, { count: 10, percent: cell.percent, sig: cell.sig }]),
     ),
     total: 50,
     children: [],
@@ -133,9 +134,7 @@ describe('generateNarrativeTitle', () => {
 
   it('works with single-column data (no col variable)', () => {
     const data = makeProcessedData({
-      rows: [
-        makeRow('A', '1', { _total: { percent: 60, sig: 'high_95' } }),
-      ],
+      rows: [makeRow('A', '1', { _total: { percent: 60, sig: 'high_95' } })],
       columns: [{ key: '_total', label: 'Total', total: 100 }],
     });
     const title = generateNarrativeTitle(data, null, 'Gender', null);

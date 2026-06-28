@@ -39,10 +39,7 @@ export function isRespondentIdentifierVariable(variable: Variable): boolean {
 /**
  * Attach auto-annotated semantic metadata after ingest (CSV and similar).
  */
-export function enrichVariablesWithSemantic(
-  variables: Variable[],
-  variableSets: VariableSet[]
-): Variable[] {
+export function enrichVariablesWithSemantic(variables: Variable[], variableSets: VariableSet[]): Variable[] {
   const annotations = autoAnnotate(variables, variableSets);
   return variables.map((variable) => {
     const semantic = annotations.get(variable.id);
@@ -53,11 +50,7 @@ export function enrichVariablesWithSemantic(
 /**
  * High-cardinality row keys (e.g. one category per respondent) — unsuitable for crosstab rows/cols.
  */
-export function isHighCardinalityRowKey(
-  variable: Variable,
-  rowCount: number,
-  distinctValueCount?: number
-): boolean {
+export function isHighCardinalityRowKey(variable: Variable, rowCount: number, distinctValueCount?: number): boolean {
   if (rowCount <= 0) return false;
   if (isRespondentIdentifierVariable(variable)) return true;
 
@@ -72,7 +65,7 @@ export function isHighCardinalityRowKey(
  */
 export function isExcludedFromAutoAnalysis(
   variable: Variable,
-  options?: { rowCount?: number; distinctValueCount?: number }
+  options?: { rowCount?: number; distinctValueCount?: number },
 ): boolean {
   if (variable.synthetic) return true;
 

@@ -79,7 +79,9 @@ export async function loadSAVChunkedLegacy(
 
       const progressPct = Math.round(batch.progress * 100);
       if (chunksInserted % 5 === 0 || progressPct >= 99) {
-        console.log(`📊 [Worker] Legacy chunk ${chunksInserted}: ${totalRowsInserted}/${batch.totalRows} rows (${progressPct}%)`);
+        console.log(
+          `📊 [Worker] Legacy chunk ${chunksInserted}: ${totalRowsInserted}/${batch.totalRows} rows (${progressPct}%)`,
+        );
         onProgress?.({
           phase: 'inserting',
           progress: batch.progress,
@@ -140,7 +142,9 @@ export async function loadSAVChunkedLegacy(
   }
 
   const durationMs = performance.now() - start;
-  console.log(`🦆 [Worker] Loaded SAV (legacy streaming): ${streamingResult.metadata.rowCount} rows in ${chunksInserted} chunks, ${processedMeta.variables.length} variables in ${durationMs.toFixed(2)}ms`);
+  console.log(
+    `🦆 [Worker] Loaded SAV (legacy streaming): ${streamingResult.metadata.rowCount} rows in ${chunksInserted} chunks, ${processedMeta.variables.length} variables in ${durationMs.toFixed(2)}ms`,
+  );
   onProgress?.({
     phase: 'complete',
     progress: 1,

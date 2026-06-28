@@ -44,7 +44,7 @@ const renderWorkspaceView = (workspaceState: WorkspaceState) =>
       onBatchDelete={vi.fn()}
       onExport={vi.fn()}
       onImportSession={vi.fn()}
-    />
+    />,
   );
 
 describe('WorkspaceView', () => {

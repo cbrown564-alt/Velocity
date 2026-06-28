@@ -27,8 +27,7 @@ function computeSettingsPopoverCoords(anchor: HTMLElement): SettingsPopoverCoord
   const rect = anchor.getBoundingClientRect();
   const spaceBelow = window.innerHeight - rect.bottom - SETTINGS_VIEWPORT_MARGIN;
   const spaceAbove = rect.top - SETTINGS_VIEWPORT_MARGIN;
-  const placement =
-    spaceBelow < SETTINGS_POPOVER_MAX_HEIGHT * 0.6 && spaceAbove > spaceBelow ? 'above' : 'below';
+  const placement = spaceBelow < SETTINGS_POPOVER_MAX_HEIGHT * 0.6 && spaceAbove > spaceBelow ? 'above' : 'below';
 
   let left = rect.left;
   if (left + SETTINGS_POPOVER_WIDTH > window.innerWidth - SETTINGS_VIEWPORT_MARGIN) {
@@ -97,11 +96,7 @@ export const StatisticsStatusBar: React.FC<StatisticsStatusBarProps> = ({
     }
 
     if (analysisSettings.correctionType !== 'none') {
-      parts.push(
-        analysisSettings.correctionType === 'bonferroni'
-          ? 'Bonferroni'
-          : 'BH (FDR)'
-      );
+      parts.push(analysisSettings.correctionType === 'bonferroni' ? 'Bonferroni' : 'BH (FDR)');
     }
 
     return parts.join(' · ');
@@ -148,7 +143,7 @@ export const StatisticsStatusBar: React.FC<StatisticsStatusBarProps> = ({
     <>
       <div className={`${styles.statusBar} statistics-status-bar`}>
         <div className={styles.statusRow}>
-          {(isCatCrossTab || isCatNumeric) ? (
+          {isCatCrossTab || isCatNumeric ? (
             <div className={styles.methodologyGroup}>
               {showGear && (
                 <button
@@ -174,9 +169,7 @@ export const StatisticsStatusBar: React.FC<StatisticsStatusBarProps> = ({
               </button>
             </div>
           ) : noCol ? (
-            <span className={styles.descriptiveLabel}>
-              Frequency distribution
-            </span>
+            <span className={styles.descriptiveLabel}>Frequency distribution</span>
           ) : null}
 
           {isCatCrossTab && (
@@ -217,10 +210,11 @@ export const StatisticsStatusBar: React.FC<StatisticsStatusBarProps> = ({
               delay={200}
               maxWidth={280}
             >
-              <div className={`${styles.chiSquareBadge} ${isSignificantChi ? styles.chiSquareSignificant : styles.chiSquareInsignificant}`}>
+              <div
+                className={`${styles.chiSquareBadge} ${isSignificantChi ? styles.chiSquareSignificant : styles.chiSquareInsignificant}`}
+              >
                 χ² = {chiSq.chiSquare.toFixed(1)}
-                {' · '}
-                p {chiSq.pValue < 0.001 ? '< .001' : `= ${chiSq.pValue.toFixed(3)}`}
+                {' · '}p {chiSq.pValue < 0.001 ? '< .001' : `= ${chiSq.pValue.toFixed(3)}`}
                 {' · '}
                 {isSignificantChi ? 'Associated' : 'Independent'}
               </div>
@@ -274,7 +268,7 @@ export const StatisticsStatusBar: React.FC<StatisticsStatusBarProps> = ({
               </>
             )}
           </AnimatePresence>,
-          document.body
+          document.body,
         )}
 
       <MethodologyDrawer

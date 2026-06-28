@@ -90,36 +90,35 @@ describe('validateDatasetMatch', () => {
   });
 
   it('ignores synthetic grid helper columns when validating a matching SAV', () => {
-    const result = validateDatasetMatch({
-      ...validSession.dataset,
-      fingerprint: {
-        columnCount: 4,
-        columnNames: [
-          'q1',
-          'q2',
-          'heuristic_grid_sleep_energy_scale',
-          'heuristic_grid_sleep_energy_items',
+    const result = validateDatasetMatch(
+      {
+        ...validSession.dataset,
+        fingerprint: {
+          columnCount: 4,
+          columnNames: ['q1', 'q2', 'heuristic_grid_sleep_energy_scale', 'heuristic_grid_sleep_energy_items'],
+        },
+      },
+      {
+        rowCount: 1000,
+        columnNames: ['q1', 'q2'],
+      },
+      {
+        sessionVariables: [
+          { id: 'q1' },
+          { id: 'q2' },
+          {
+            id: 'heuristic_grid_sleep_energy_scale',
+            synthetic: true,
+            sourceGridId: 'heuristic_grid_sleep_energy',
+          },
+          {
+            id: 'heuristic_grid_sleep_energy_items',
+            synthetic: true,
+            sourceGridId: 'heuristic_grid_sleep_energy',
+          },
         ],
       },
-    }, {
-      rowCount: 1000,
-      columnNames: ['q1', 'q2'],
-    }, {
-      sessionVariables: [
-        { id: 'q1' },
-        { id: 'q2' },
-        {
-          id: 'heuristic_grid_sleep_energy_scale',
-          synthetic: true,
-          sourceGridId: 'heuristic_grid_sleep_energy',
-        },
-        {
-          id: 'heuristic_grid_sleep_energy_items',
-          synthetic: true,
-          sourceGridId: 'heuristic_grid_sleep_energy',
-        },
-      ],
-    });
+    );
 
     expect(result.status).toBe('strict_match');
     expect(result.canProceed).toBe(true);

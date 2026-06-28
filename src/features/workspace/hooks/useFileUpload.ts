@@ -7,10 +7,7 @@ import { useVelocityStore } from '../../../store';
 import { MOCK_DATASET } from '../../../constants';
 import { formatUploadFailure, getUploadFormatError } from '../../../lib/uploadFeedback';
 import * as opfsFileManager from '../../../services/opfsFileManager';
-import {
-  assignOpfsKeyAndLoad,
-  assignOpfsStorageForUpload,
-} from './assignOpfsKeyAndLoad';
+import { assignOpfsKeyAndLoad, assignOpfsStorageForUpload } from './assignOpfsKeyAndLoad';
 import { recordPilotEvent } from '../../../services/pilotOnboarding';
 
 type AppMode = 'splash' | 'uploading' | 'dashboard' | 'restoring' | 'metadata';
@@ -34,8 +31,7 @@ export function useFileUpload(
   setMode: React.Dispatch<React.SetStateAction<AppMode>>,
   opfsAvailableLocal: boolean,
 ): FileUploadState {
-  const { loadCSV, loadSAV, loadSAVSample, discardPersistedData, setLoadProgress, addToast } =
-    useVelocityStore();
+  const { loadCSV, loadSAV, loadSAVSample, discardPersistedData, setLoadProgress, addToast } = useVelocityStore();
 
   const [pendingSavFile, setPendingSavFile] = React.useState<File | null>(null);
   const [pendingSavSizeMb, setPendingSavSizeMb] = React.useState<number | null>(null);
@@ -46,7 +42,7 @@ export function useFileUpload(
     const headers = Object.keys(MOCK_DATASET.data[0]);
     const csvRows = [
       headers.join(','),
-      ...MOCK_DATASET.data.map(row => headers.map(fieldName => `"${row[fieldName]}"`).join(','))
+      ...MOCK_DATASET.data.map((row) => headers.map((fieldName) => `"${row[fieldName]}"`).join(',')),
     ];
     const csvContent = csvRows.join('\n');
     await loadCSV('mock_data.csv', csvContent);
@@ -63,112 +59,106 @@ export function useFileUpload(
     [addToast, setLoadProgress, setMode],
   );
 
-  const handleFileUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    e.target.value = '';
+  const handleFileUpload = useCallback(
+    async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      e.target.value = '';
 
-    const formatError = getUploadFormatError(file.name);
-    if (formatError) {
-      addToast({
-        type: 'warning',
-        title: formatError.title,
-        message: formatError.message,
-        duration: formatError.duration,
+      const formatError = getUploadFormatError(file.name);
+      if (formatError) {
+        addToast({
+          type: 'warning',
+          title: formatError.title,
+          message: formatError.message,
+          duration: formatError.duration,
+        });
+        return;
+      }
+
+      setMode('uploading');
+
+      const ext = file.name.toLowerCase().split('.').pop();
+      recordPilotEvent('file_selected', {
+        fileName: file.name,
+        fileSizeMb: Number((file.size / (1024 * 1024)).toFixed(2)),
+        format: ext ?? 'unknown',
       });
-      return;
-    }
 
-    setMode('uploading');
+      try {
+        if (ext === 'sav') {
+          const datasetId = crypto.randomUUID();
+          const fileSizeMb = file.size / (1024 * 1024);
+          const shouldWarn = fileSizeMb >= SAV_WARN_MB;
+          const mustMetadataOnly = fileSizeMb >= SAV_HARD_MB;
 
-    const ext = file.name.toLowerCase().split('.').pop();
-    recordPilotEvent('file_selected', {
-      fileName: file.name,
-      fileSizeMb: Number((file.size / (1024 * 1024)).toFixed(2)),
-      format: ext ?? 'unknown',
-    });
+          setPendingSavFile(file);
+          setPendingSavSizeMb(fileSizeMb);
 
-    try {
+          const { buffer, storageKey } = await assignOpfsStorageForUpload(file, opfsAvailableLocal);
+          setOpfsStorageKey(storageKey);
 
-      if (ext === 'sav') {
-        const datasetId = crypto.randomUUID();
-        const fileSizeMb = file.size / (1024 * 1024);
-        const shouldWarn = fileSizeMb >= SAV_WARN_MB;
-        const mustMetadataOnly = fileSizeMb >= SAV_HARD_MB;
+          if (mustMetadataOnly || shouldWarn) {
+            await loadSAVSample(file.name, buffer, SAV_SAMPLE_ROWS);
 
-        setPendingSavFile(file);
-        setPendingSavSizeMb(fileSizeMb);
+            const sampledDataset = useVelocityStore.getState().dataset;
+            const sampledRows = sampledDataset?.rowCount ?? 0;
+            const sampledVars = sampledDataset?.variables.length ?? 0;
+            const estimatedCells = sampledRows * sampledVars;
+            const isHighCellRisk = estimatedCells >= SAV_HIGH_RISK_CELLS;
+            const isElevatedCellRisk = estimatedCells >= SAV_ELEVATED_RISK_CELLS;
 
-        const { buffer, storageKey } = await assignOpfsStorageForUpload(file, opfsAvailableLocal);
-        setOpfsStorageKey(storageKey);
-
-        if (mustMetadataOnly || shouldWarn) {
-          await loadSAVSample(file.name, buffer, SAV_SAMPLE_ROWS);
-
-          const sampledDataset = useVelocityStore.getState().dataset;
-          const sampledRows = sampledDataset?.rowCount ?? 0;
-          const sampledVars = sampledDataset?.variables.length ?? 0;
-          const estimatedCells = sampledRows * sampledVars;
-          const isHighCellRisk = estimatedCells >= SAV_HIGH_RISK_CELLS;
-          const isElevatedCellRisk = estimatedCells >= SAV_ELEVATED_RISK_CELLS;
-
-          if (mustMetadataOnly || isHighCellRisk) {
-            setMode('metadata');
-            return;
-          }
-
-          if (shouldWarn || isElevatedCellRisk) {
-            const riskSummary = sampledRows > 0 && sampledVars > 0
-              ? `${sampledRows.toLocaleString()} rows × ${sampledVars.toLocaleString()} variables (${estimatedCells.toLocaleString()} cells).`
-              : `${fileSizeMb.toFixed(1)} MB file.`;
-            const proceed = window.confirm(
-              `This SAV file is high-risk for browser memory pressure.\n\n${riskSummary}\n\nLoad full data anyway?`
-            );
-            if (!proceed) {
+            if (mustMetadataOnly || isHighCellRisk) {
               setMode('metadata');
               return;
             }
+
+            if (shouldWarn || isElevatedCellRisk) {
+              const riskSummary =
+                sampledRows > 0 && sampledVars > 0
+                  ? `${sampledRows.toLocaleString()} rows × ${sampledVars.toLocaleString()} variables (${estimatedCells.toLocaleString()} cells).`
+                  : `${fileSizeMb.toFixed(1)} MB file.`;
+              const proceed = window.confirm(
+                `This SAV file is high-risk for browser memory pressure.\n\n${riskSummary}\n\nLoad full data anyway?`,
+              );
+              if (!proceed) {
+                setMode('metadata');
+                return;
+              }
+            }
           }
+
+          await assignOpfsKeyAndLoad(file.name, buffer, loadSAV, { datasetId, opfsFileKey: storageKey });
+          setOpfsStorageKey(null);
+          setPendingSavFile(null);
+          setPendingSavSizeMb(null);
+        } else {
+          setPendingSavFile(null);
+          setPendingSavSizeMb(null);
+          setOpfsStorageKey(null);
+          setLoadProgress({
+            phase: 'parsing',
+            progress: 0.05,
+            message: 'Reading file...',
+          });
+          const text = await file.text();
+          setLoadProgress({
+            phase: 'parsing',
+            progress: 0.2,
+            message: 'Parsing variables...',
+          });
+          await loadCSV(file.name, text);
         }
 
-        await assignOpfsKeyAndLoad(file.name, buffer, loadSAV, { datasetId, opfsFileKey: storageKey });
-        setOpfsStorageKey(null);
-        setPendingSavFile(null);
-        setPendingSavSizeMb(null);
-      } else {
-        setPendingSavFile(null);
-        setPendingSavSizeMb(null);
-        setOpfsStorageKey(null);
-        setLoadProgress({
-          phase: 'parsing',
-          progress: 0.05,
-          message: 'Reading file...',
-        });
-        const text = await file.text();
-        setLoadProgress({
-          phase: 'parsing',
-          progress: 0.2,
-          message: 'Parsing variables...',
-        });
-        await loadCSV(file.name, text);
+        setLoadProgress(null);
+        setMode('dashboard');
+      } catch (err) {
+        console.error(err);
+        reportUploadError(err, file.name);
       }
-
-      setLoadProgress(null);
-      setMode('dashboard');
-    } catch (err) {
-      console.error(err);
-      reportUploadError(err, file.name);
-    }
-  }, [
-    loadCSV,
-    loadSAV,
-    loadSAVSample,
-    opfsAvailableLocal,
-    setMode,
-    setLoadProgress,
-    addToast,
-    reportUploadError,
-  ]);
+    },
+    [loadCSV, loadSAV, loadSAVSample, opfsAvailableLocal, setMode, setLoadProgress, addToast, reportUploadError],
+  );
 
   const handleMetadataLoadFull = useCallback(async () => {
     if (!pendingSavFile && !opfsStorageKey) return;
@@ -203,7 +193,7 @@ export function useFileUpload(
   const handleMetadataCancel = useCallback(async () => {
     await discardPersistedData();
     if (opfsStorageKey) {
-      await opfsFileManager.deleteFile(opfsStorageKey).catch(() => { });
+      await opfsFileManager.deleteFile(opfsStorageKey).catch(() => {});
       setOpfsStorageKey(null);
     }
     setPendingSavFile(null);
@@ -213,7 +203,9 @@ export function useFileUpload(
 
   const handleDemoClick = useCallback(() => {
     setMode('uploading');
-    setTimeout(() => { loadMockData(); }, 800);
+    setTimeout(() => {
+      loadMockData();
+    }, 800);
   }, [loadMockData, setMode]);
 
   return {

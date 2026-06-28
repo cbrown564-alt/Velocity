@@ -40,7 +40,7 @@ export const VariableCard: React.FC<VariableCardProps> = ({
   dragListeners,
   dragAttributes,
   setNodeRef,
-  style
+  style,
 }) => {
   const setHoveredVariableSetId = useVelocityStore((state) => state.setHoveredVariableSetId);
 
@@ -80,10 +80,7 @@ export const VariableCard: React.FC<VariableCardProps> = ({
     >
       {/* Shelf color indicator */}
       {shelfType && (
-        <div
-          className="absolute left-0 top-1.5 bottom-1.5 w-[3px] rounded-full"
-          style={{ background: shelfColor }}
-        />
+        <div className="absolute left-0 top-1.5 bottom-1.5 w-[3px] rounded-full" style={{ background: shelfColor }} />
       )}
 
       <div
@@ -94,7 +91,10 @@ export const VariableCard: React.FC<VariableCardProps> = ({
       </div>
 
       <div className="flex-1 min-w-0 flex items-center gap-2">
-        <span className="shrink-0 flex items-center text-[var(--text-secondary)]" title={variableSet.structure === 'single' ? variableSet.type : variableSet.structure}>
+        <span
+          className="shrink-0 flex items-center text-[var(--text-secondary)]"
+          title={variableSet.structure === 'single' ? variableSet.type : variableSet.structure}
+        >
           <VariableTypeIcon
             type={variableSet.type}
             structure={variableSet.structure as any}
@@ -102,7 +102,11 @@ export const VariableCard: React.FC<VariableCardProps> = ({
             className="text-[var(--text-secondary)]"
           />
         </span>
-        <span className={`text-sm font-medium truncate font-body leading-none ${isSelected ? 'text-[var(--text-primary)]' : 'text-[var(--text-secondary)] group-hover:text-[var(--text-primary)]'}`}>{variableSet.name}</span>
+        <span
+          className={`text-sm font-medium truncate font-body leading-none ${isSelected ? 'text-[var(--text-primary)]' : 'text-[var(--text-secondary)] group-hover:text-[var(--text-primary)]'}`}
+        >
+          {variableSet.name}
+        </span>
         {variableSet.derived && (
           <span
             className="text-[9px] px-1 py-0.5 rounded bg-[var(--bg-active)] text-[var(--text-tertiary)] uppercase tracking-wider font-semibold shrink-0 flex items-center gap-1"
@@ -114,10 +118,12 @@ export const VariableCard: React.FC<VariableCardProps> = ({
         )}
       </div>
 
-      <div className="absolute right-2 text-[var(--text-secondary)] group-hover:text-[var(--color-accent)] transition-colors shrink-0 opacity-0 group-hover:opacity-100 flex items-center justify-center w-5 h-5 rounded hover:bg-[var(--bg-active)]" title="Click to assign">
+      <div
+        className="absolute right-2 text-[var(--text-secondary)] group-hover:text-[var(--color-accent)] transition-colors shrink-0 opacity-0 group-hover:opacity-100 flex items-center justify-center w-5 h-5 rounded hover:bg-[var(--bg-active)]"
+        title="Click to assign"
+      >
         <Plus size={14} />
       </div>
-
     </Component>
   );
 };
@@ -144,11 +150,11 @@ export const DraggableVariable: React.FC<DraggableVariableProps> = ({
   shelfType,
   onRecode,
   onClick,
-  onContextMenu
+  onContextMenu,
 }) => {
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: variableSet.id,
-    data: { variableSet }
+    data: { variableSet },
   });
 
   return (

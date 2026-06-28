@@ -8,7 +8,7 @@ export function wrapEnvelope<T>(
   operation: string,
   inputs: Record<string, unknown>,
   fn: () => Promise<T>,
-  warnings: string[] = []
+  warnings: string[] = [],
 ): Promise<ResultEnvelope<T>> {
   const start = performance.now();
   return fn().then((data) => {
@@ -36,7 +36,7 @@ export function wrapEnvelopeSync<T>(
   operation: string,
   inputs: Record<string, unknown>,
   fn: () => T,
-  warnings: string[] = []
+  warnings: string[] = [],
 ): ResultEnvelope<T> {
   const start = performance.now();
   const data = fn();

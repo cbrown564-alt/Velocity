@@ -12,11 +12,16 @@ async function uploadSavAndReachDashboard(page: import('@playwright/test').Page,
   const surveyQuestions = page.getByText(/Survey Questions/);
   const metadataLoaded = page.getByText('Metadata Loaded');
 
-  await expect.poll(async () => {
-    if (await surveyQuestions.isVisible().catch(() => false)) return 'dashboard';
-    if (await metadataLoaded.isVisible().catch(() => false)) return 'metadata';
-    return 'pending';
-  }, { timeout: 120000 }).not.toBe('pending');
+  await expect
+    .poll(
+      async () => {
+        if (await surveyQuestions.isVisible().catch(() => false)) return 'dashboard';
+        if (await metadataLoaded.isVisible().catch(() => false)) return 'metadata';
+        return 'pending';
+      },
+      { timeout: 120000 },
+    )
+    .not.toBe('pending');
 
   if (await metadataLoaded.isVisible().catch(() => false)) {
     await page.getByRole('button', { name: 'Load Full Data' }).click();
@@ -39,11 +44,7 @@ async function openDatasetFromWorkspace(page: import('@playwright/test').Page, f
 }
 
 /** Assert DuckDB schema matches UI variables after a workspace dataset switch. */
-async function expectCrosstabRenders(
-  page: import('@playwright/test').Page,
-  rowVar: RegExp,
-  colVar: RegExp,
-) {
+async function expectCrosstabRenders(page: import('@playwright/test').Page, rowVar: RegExp, colVar: RegExp) {
   await page.getByRole('button', { name: rowVar }).first().click();
   await page.waitForTimeout(1000);
   await page.getByRole('button', { name: colVar }).first().click();
@@ -86,21 +87,26 @@ test('workspace switches between stored datasets without re-upload', async ({ pa
 
   await expect(page.getByText('sleep.sav')).toBeVisible({ timeout: 30000 });
   await expect(page.getByText('test_small.sav')).toBeVisible({ timeout: 30000 });
-  await expect.poll(async () => {
-    return page.evaluate(async () => {
-      const raw = localStorage.getItem('velocity-state');
-      if (!raw) return false;
-      const parsed = JSON.parse(raw);
-      const datasets = parsed?.state?.workspace?.datasets ?? [];
-      const sleep = datasets.find((entry: any) => entry.fileName === 'sleep.sav');
-      if (!sleep?.opfsFileKey) return false;
+  await expect
+    .poll(
+      async () => {
+        return page.evaluate(async () => {
+          const raw = localStorage.getItem('velocity-state');
+          if (!raw) return false;
+          const parsed = JSON.parse(raw);
+          const datasets = parsed?.state?.workspace?.datasets ?? [];
+          const sleep = datasets.find((entry: any) => entry.fileName === 'sleep.sav');
+          if (!sleep?.opfsFileKey) return false;
 
-      const root = await navigator.storage.getDirectory();
-      const uploaded = await root.getDirectoryHandle('uploaded_sav');
-      await uploaded.getFileHandle(sleep.opfsFileKey);
-      return true;
-    });
-  }, { timeout: 30000 }).toBe(true);
+          const root = await navigator.storage.getDirectory();
+          const uploaded = await root.getDirectoryHandle('uploaded_sav');
+          await uploaded.getFileHandle(sleep.opfsFileKey);
+          return true;
+        });
+      },
+      { timeout: 30000 },
+    )
+    .toBe(true);
 
   await openDatasetFromWorkspace(page, 'sleep.sav');
   await expect(page.getByText('sleep.sav (271 rows)')).toBeVisible({ timeout: 30000 });

@@ -66,32 +66,31 @@ export function assertValidDeckSpec(spec: unknown): asserts spec is DeckSpec {
       assertStringArray(
         slide.rowVars,
         `Deck spec section ${sectionNumber} slide ${slideNumber} must include a rowVars string array.`,
-        `${slidePath}.rowVars`
+        `${slidePath}.rowVars`,
       );
       assertOptionalStringOrNull(
         slide.colVar,
         `Deck spec section ${sectionNumber} slide ${slideNumber} colVar must be a string or null.`,
-        `${slidePath}.colVar`
+        `${slidePath}.colVar`,
       );
       assertOptionalStringOrNull(
         slide.weightVar,
         `Deck spec section ${sectionNumber} slide ${slideNumber} weightVar must be a string or null.`,
-        `${slidePath}.weightVar`
+        `${slidePath}.weightVar`,
       );
 
       if (slide.filters !== undefined) {
         if (!Array.isArray(slide.filters)) {
-          invalidDeckSpec(
-            `Deck spec section ${sectionNumber} slide ${slideNumber} filters must be an array.`,
-            { path: `${slidePath}.filters` }
-          );
+          invalidDeckSpec(`Deck spec section ${sectionNumber} slide ${slideNumber} filters must be an array.`, {
+            path: `${slidePath}.filters`,
+          });
         }
 
         slide.filters.forEach((filter, filterIndex) => {
           if (!isRecord(filter) || typeof filter.variableId !== 'string') {
             invalidDeckSpec(
               `Deck spec section ${sectionNumber} slide ${slideNumber} filter ${filterIndex + 1} must include a variableId string.`,
-              { path: `${slidePath}.filters.${filterIndex}.variableId` }
+              { path: `${slidePath}.filters.${filterIndex}.variableId` },
             );
           }
         });

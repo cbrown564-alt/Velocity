@@ -57,10 +57,7 @@ export interface TemplateExportOptions {
 export class ExportError extends Error {
   code: 'EMPTY_DATA' | 'TIMEOUT' | 'GENERATION_FAILED' | 'INVALID_CONFIG';
 
-  constructor(
-    message: string,
-    code: 'EMPTY_DATA' | 'TIMEOUT' | 'GENERATION_FAILED' | 'INVALID_CONFIG'
-  ) {
+  constructor(message: string, code: 'EMPTY_DATA' | 'TIMEOUT' | 'GENERATION_FAILED' | 'INVALID_CONFIG') {
     super(message);
     this.name = 'ExportError';
     this.code = code;

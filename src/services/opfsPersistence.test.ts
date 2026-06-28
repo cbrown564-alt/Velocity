@@ -5,7 +5,7 @@ describe('initOpfsPersistence', () => {
   it('falls back to memory and flags corruption when repair fails', async () => {
     const openPath = vi.fn(async () => ({
       ok: false,
-      error: 'The file "opfs://bad.db" exists, but it is not a valid DuckDB database file!'
+      error: 'The file "opfs://bad.db" exists, but it is not a valid DuckDB database file!',
     }));
     const openMemory = vi.fn(async () => undefined);
 
@@ -34,7 +34,7 @@ describe('initOpfsPersistence', () => {
       if (path === 'opfs://candidate.db') return { ok: true };
       return {
         ok: false,
-        error: 'not a valid DuckDB database file'
+        error: 'not a valid DuckDB database file',
       };
     });
     const openMemory = vi.fn(async () => undefined);
@@ -62,7 +62,8 @@ describe('initOpfsPersistence', () => {
     const quarantine = vi.fn(async () => undefined);
     const openPath = vi.fn(async () => ({
       ok: false,
-      error: 'IO Error: Failed to scan dictionary string - index was out of range. Database file appears to be corrupted.',
+      error:
+        'IO Error: Failed to scan dictionary string - index was out of range. Database file appears to be corrupted.',
     }));
 
     const result = await initOpfsPersistence({
@@ -130,7 +131,7 @@ describe('initOpfsPersistence', () => {
   it('falls back to memory on non-corruption errors', async () => {
     const openPath = vi.fn(async () => ({
       ok: false,
-      error: 'permission denied'
+      error: 'permission denied',
     }));
     const openMemory = vi.fn(async () => undefined);
 

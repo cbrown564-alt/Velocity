@@ -20,7 +20,7 @@ export const harmonizationHandlers: Record<string, ToolHandler> = {
       String(a.targetTable),
       a.mappings as VariableMapping[],
       a.sourceVarNames as Record<string, string>,
-      a.targetVarNames as Record<string, string>
+      a.targetVarNames as Record<string, string>,
     );
     return successResponse(result);
   },

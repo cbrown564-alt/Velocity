@@ -35,9 +35,7 @@ export function buildQualitySummary({
 } = {}) {
   const timingResults = evaluateTimingTargets(steps, timingTargets);
   const recoverability = summarizeRecoverabilityChecks(recoverabilityChecks);
-  const consoleErrors = consoleMessages
-    .filter((message) => message.type === 'error')
-    .map((message) => message.text);
+  const consoleErrors = consoleMessages.filter((message) => message.type === 'error').map((message) => message.text);
   const pageErrorMessages = pageErrors.map((error) => error.message ?? String(error));
 
   const hasFailedTiming = timingResults.some((target) => target.status === 'failed' || target.status === 'missing');
@@ -45,11 +43,7 @@ export function buildQualitySummary({
   const hasErrors = consoleErrors.length > 0 || pageErrorMessages.length > 0;
 
   return {
-    status: hasFailedTiming || hasErrors
-      ? 'needs_review'
-      : hasManualChecks
-        ? 'needs_review'
-        : 'passed',
+    status: hasFailedTiming || hasErrors ? 'needs_review' : hasManualChecks ? 'needs_review' : 'passed',
     timingTargets: timingResults,
     recoverabilityChecks: recoverability,
     consoleErrors,

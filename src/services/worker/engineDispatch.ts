@@ -1,9 +1,6 @@
 import type { EngineWorkerRequest } from '../../types/engineWorker';
 import { isEngineMessage } from '../../types/engineWorker';
-import {
-  isFatalDatabaseRuntimeError,
-  recoverFromFatalDatabaseError,
-} from './duckdbPersistence';
+import { isFatalDatabaseRuntimeError, recoverFromFatalDatabaseError } from './duckdbPersistence';
 import { engineHandlers } from './engineHandlers';
 import { postEngineResponse } from './engineMessaging';
 

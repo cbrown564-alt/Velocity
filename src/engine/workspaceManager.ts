@@ -3,17 +3,8 @@ import { buildHarmonizedTableQuery } from '../core/harmonization/harmonizationQu
 import type { VariableMapping } from '../types/harmonization';
 import type { ResultEnvelope, WorkspaceDatasetSummary } from './types';
 import { VelocityError } from './types';
-import {
-  buildCsvVariables,
-  buildDefaultVariableSets,
-  getBasename,
-  inferDatasetSource,
-} from './datasetLoading';
-import type {
-  LoadableNodeAdapter,
-  VelocityEngineHost,
-  WorkspaceDatasetEntry,
-} from './velocityEngineTypes';
+import { buildCsvVariables, buildDefaultVariableSets, getBasename, inferDatasetSource } from './datasetLoading';
+import type { LoadableNodeAdapter, VelocityEngineHost, WorkspaceDatasetEntry } from './velocityEngineTypes';
 
 function workspaceTableName(datasetId: string): string {
   return `ws_${datasetId.replace(/[^a-zA-Z0-9_]/g, '_')}`;
@@ -21,7 +12,7 @@ function workspaceTableName(datasetId: string): string {
 
 function toWorkspaceSummary(
   entry: WorkspaceDatasetEntry,
-  activeWorkspaceDatasetId: string | null
+  activeWorkspaceDatasetId: string | null,
 ): WorkspaceDatasetSummary {
   return {
     id: entry.id,
@@ -36,10 +27,7 @@ function toWorkspaceSummary(
   };
 }
 
-function requireWorkspaceEntry(
-  host: VelocityEngineHost,
-  datasetId: string
-): WorkspaceDatasetEntry {
+function requireWorkspaceEntry(host: VelocityEngineHost, datasetId: string): WorkspaceDatasetEntry {
   const entry = host.state.workspaceDatasets.get(datasetId);
   if (!entry) {
     throw new VelocityError('WORKSPACE_DATASET_NOT_FOUND', `Unknown workspace dataset: ${datasetId}`, {
@@ -70,7 +58,7 @@ export class WorkspaceManager {
 
   async loadWorkspaceDataset(
     path: string,
-    options?: { metadataOnly?: boolean; waveNumber?: number; makeActive?: boolean }
+    options?: { metadataOnly?: boolean; waveNumber?: number; makeActive?: boolean },
   ): Promise<ResultEnvelope<WorkspaceDatasetSummary>> {
     return this.host.wrap('loadWorkspaceDataset', { path, ...options }, async () => {
       const resolvedPath = this.host.resolveSafePath(path);
@@ -104,9 +92,7 @@ export class WorkspaceManager {
           throw new VelocityError('FILE_LOAD_FAILED', 'Current adapter does not support CSV file loading.');
         }
         rowCount = await nodeAdapter.loadCSV(resolvedPath, tableName);
-        const schema = await this.host.adapter.query(
-          `PRAGMA table_info('${tableName.replace(/'/g, "''")}')`
-        );
+        const schema = await this.host.adapter.query(`PRAGMA table_info('${tableName.replace(/'/g, "''")}')`);
         variables = buildCsvVariables(schema.rows);
         variableSets = buildDefaultVariableSets(variables);
       }
@@ -136,8 +122,8 @@ export class WorkspaceManager {
   listWorkspaceDatasets(): ResultEnvelope<WorkspaceDatasetSummary[]> {
     return this.host.wrapSync('listWorkspaceDatasets', {}, () =>
       Array.from(this.host.state.workspaceDatasets.values()).map((entry) =>
-        toWorkspaceSummary(entry, this.host.state.activeWorkspaceDatasetId)
-      )
+        toWorkspaceSummary(entry, this.host.state.activeWorkspaceDatasetId),
+      ),
     );
   }
 
@@ -181,17 +167,13 @@ export class WorkspaceManager {
 
   proposeWorkspaceMappings(
     sourceDatasetId: string,
-    targetDatasetId: string
+    targetDatasetId: string,
   ): Promise<ResultEnvelope<VariableMapping[]>> {
-    return this.host.wrap(
-      'proposeWorkspaceMappings',
-      { sourceDatasetId, targetDatasetId },
-      async () => {
-        const source = requireWorkspaceEntry(this.host, sourceDatasetId);
-        const target = requireWorkspaceEntry(this.host, targetDatasetId);
-        return autoMatchVariables(source.variables, target.variables);
-      }
-    );
+    return this.host.wrap('proposeWorkspaceMappings', { sourceDatasetId, targetDatasetId }, async () => {
+      const source = requireWorkspaceEntry(this.host, sourceDatasetId);
+      const target = requireWorkspaceEntry(this.host, targetDatasetId);
+      return autoMatchVariables(source.variables, target.variables);
+    });
   }
 
   async harmonizeWorkspaceDatasets(params: {
@@ -208,7 +190,7 @@ export class WorkspaceManager {
       if (source.metadataOnly || target.metadataOnly) {
         throw new VelocityError(
           'METADATA_ONLY',
-          'Both workspace datasets must have full row data. Call loadWorkspaceDatasetFull first.'
+          'Both workspace datasets must have full row data. Call loadWorkspaceDatasetFull first.',
         );
       }
 
@@ -230,7 +212,7 @@ export class WorkspaceManager {
         target.tableName,
         eligible,
         sourceVarNames,
-        targetVarNames
+        targetVarNames,
       );
       const safeOutput = params.outputTableName.replace(/"/g, '""');
       await this.host.adapter.execute(`CREATE OR REPLACE TABLE "${safeOutput}" AS (${sql})`);

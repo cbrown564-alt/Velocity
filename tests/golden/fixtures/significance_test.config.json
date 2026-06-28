@@ -1,27 +1,25 @@
 {
-    "csvFile": "significance_test.csv",
-    "expectedFile": "significance_test.expected.json",
-    "config": {
-        "rowVars": [
-            "response"
-        ],
-        "colVar": "group",
-        "weightVar": null,
-        "filters": []
+  "csvFile": "significance_test.csv",
+  "expectedFile": "significance_test.expected.json",
+  "config": {
+    "rowVars": ["response"],
+    "colVar": "group",
+    "weightVar": null,
+    "filters": []
+  },
+  "context": {
+    "variables": {
+      "response": {
+        "name": "response",
+        "type": "categorical",
+        "label": "Response"
+      },
+      "group": {
+        "name": "group",
+        "type": "categorical",
+        "label": "Group"
+      }
     },
-    "context": {
-        "variables": {
-            "response": {
-                "name": "response",
-                "type": "categorical",
-                "label": "Response"
-            },
-            "group": {
-                "name": "group",
-                "type": "categorical",
-                "label": "Group"
-            }
-        },
-        "variableSets": {}
-    }
+    "variableSets": {}
+  }
 }

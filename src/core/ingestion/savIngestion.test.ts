@@ -59,9 +59,7 @@ describe('savIngestion loadSav', () => {
 
     expect(execute).toHaveBeenCalledWith('LOAD read_stat;');
     expect(execute).toHaveBeenCalledWith('INSTALL read_stat FROM community;');
-    expect(
-      execute.mock.calls.some((call) => String(call[0]).includes("SELECT * FROM read_stat('"))
-    ).toBe(true);
+    expect(execute.mock.calls.some((call) => String(call[0]).includes("SELECT * FROM read_stat('"))).toBe(true);
     expect(result.rowCount).toBe(271);
   });
 

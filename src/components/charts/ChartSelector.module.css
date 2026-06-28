@@ -3,42 +3,42 @@
  */
 
 .container {
-    display: flex;
-    align-items: center;
-    gap: var(--space-1);
-    background: var(--mat-panel-bg, var(--bg-panel));
-    backdrop-filter: var(--mat-panel-filter, none);
-    -webkit-backdrop-filter: var(--mat-panel-filter, none);
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    padding: var(--space-1);
-    box-shadow: var(--shadow-float);
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  background: var(--mat-panel-bg, var(--bg-panel));
+  backdrop-filter: var(--mat-panel-filter, none);
+  -webkit-backdrop-filter: var(--mat-panel-filter, none);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: var(--space-1);
+  box-shadow: var(--shadow-float);
 }
 
 .button {
-    padding: 6px;
-    border-radius: 6px;
-    transition: all 0.15s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: none;
-    background: none;
-    cursor: pointer;
-    color: var(--text-secondary);
+  padding: 6px;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: var(--text-secondary);
 }
 
 .button:hover {
-    background-color: var(--bg-active);
-    color: var(--text-primary);
+  background-color: var(--bg-active);
+  color: var(--text-primary);
 }
 
 .buttonActive {
-    background-color: var(--bg-active);
-    color: var(--color-accent);
+  background-color: var(--bg-active);
+  color: var(--color-accent);
 }
 
 .buttonActive:hover {
-    background-color: var(--bg-active);
-    opacity: 0.8;
+  background-color: var(--bg-active);
+  opacity: 0.8;
 }

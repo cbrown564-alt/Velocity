@@ -30,14 +30,34 @@
       "id": "brand-tracker-client-readout",
       "datasetIds": ["brand-tracker-wave-1", "brand-tracker-wave-2"],
       "audience": "Boutique agency consultant preparing a recurring client readout.",
-      "requiredSections": ["Executive Summary", "Brand Health", "Segment Differences", "Drivers And Implications", "Method Notes"],
-      "requiredEvidence": ["base size", "wave", "segment", "brand", "metric definition", "human-confirmed action titles"]
+      "requiredSections": [
+        "Executive Summary",
+        "Brand Health",
+        "Segment Differences",
+        "Drivers And Implications",
+        "Method Notes"
+      ],
+      "requiredEvidence": [
+        "base size",
+        "wave",
+        "segment",
+        "brand",
+        "metric definition",
+        "human-confirmed action titles"
+      ]
     },
     {
       "id": "concept-test-decision-readout",
       "datasetIds": ["concept-test"],
       "audience": "Consultant recommending which concept to progress.",
-      "requiredSections": ["Executive Summary", "Concept Winner", "Why It Wins", "Barriers", "Recommended Changes", "Method Notes"],
+      "requiredSections": [
+        "Executive Summary",
+        "Concept Winner",
+        "Why It Wins",
+        "Barriers",
+        "Recommended Changes",
+        "Method Notes"
+      ],
       "requiredEvidence": ["base size", "concept", "segment", "metric definition", "recommendation caveats"]
     }
   ]

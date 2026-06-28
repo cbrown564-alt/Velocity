@@ -12,9 +12,9 @@ export const VARIABLES: Variable[] = [
     type: 'categorical',
     valueLabels: [
       { value: 1, label: 'Female' },
-      { value: 2, label: 'Male' }
+      { value: 2, label: 'Male' },
     ],
-    missingValues: {}
+    missingValues: {},
   },
   {
     id: 'age_group',
@@ -28,9 +28,9 @@ export const VARIABLES: Variable[] = [
       { value: 2, label: '25-34' },
       { value: 3, label: '35-44' },
       { value: 4, label: '45-54' },
-      { value: 5, label: '55+' }
+      { value: 5, label: '55+' },
     ],
-    missingValues: {}
+    missingValues: {},
   },
   {
     id: 'region',
@@ -42,9 +42,9 @@ export const VARIABLES: Variable[] = [
       { value: 2, label: 'South' },
       { value: 3, label: 'East' },
       { value: 4, label: 'West' },
-      { value: 5, label: 'International' }
+      { value: 5, label: 'International' },
     ],
-    missingValues: {}
+    missingValues: {},
   },
   {
     id: 'nps_segment',
@@ -56,9 +56,9 @@ export const VARIABLES: Variable[] = [
     valueLabels: [
       { value: 1, label: 'Detractor' },
       { value: 2, label: 'Passive' },
-      { value: 3, label: 'Promoter' }
+      { value: 3, label: 'Promoter' },
     ],
-    missingValues: {}
+    missingValues: {},
   },
   {
     id: 'intent_to_buy',
@@ -72,9 +72,9 @@ export const VARIABLES: Variable[] = [
       { value: 2, label: 'Unlikely' },
       { value: 3, label: 'Neutral' },
       { value: 4, label: 'Likely' },
-      { value: 5, label: 'Very Likely' }
+      { value: 5, label: 'Very Likely' },
     ],
-    missingValues: {}
+    missingValues: {},
   },
   {
     id: 'product_sat',
@@ -82,7 +82,7 @@ export const VARIABLES: Variable[] = [
     label: 'Product Satisfaction',
     type: 'numeric',
     valueLabels: [],
-    missingValues: { discrete: [-99] }
+    missingValues: { discrete: [-99] },
   },
 ];
 

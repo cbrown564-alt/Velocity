@@ -6,7 +6,7 @@ function buildMatrixCrosstabEnvelope(
   longRows: Record<string, unknown>[],
   config: { weightVar?: string | null },
   baseMetadata: { isWeighted?: boolean } = {},
-  tableStats?: unknown
+  tableStats?: unknown,
 ): ResultEnvelope<unknown> {
   const hasPerCallWeight = typeof config.weightVar === 'string' && config.weightVar.length > 0;
   const isWeighted = hasPerCallWeight || baseMetadata.isWeighted === true;
@@ -45,7 +45,7 @@ describe('VelocityEngine crosstab matrix envelope', () => {
       ],
       {},
       { isWeighted: false },
-      { chiSquare: { statistic: 5.4, df: 1, pValue: 0.02 } }
+      { chiSquare: { statistic: 5.4, df: 1, pValue: 0.02 } },
     );
 
     expect(envelope.data).toMatchObject({
@@ -66,7 +66,7 @@ describe('VelocityEngine crosstab matrix envelope', () => {
         { rowKey_0: 'Female', colKey: 'Brand A', count: 40, weightedCount: 100 },
       ],
       { weightVar: 'WEIGHT' },
-      { isWeighted: false }
+      { isWeighted: false },
     );
 
     expect(envelope.metadata?.isWeighted).toBe(true);

@@ -1,9 +1,5 @@
 import { SESSION_FORMAT_VERSION } from './sessionTypes';
-import type {
-  ExportSessionInput,
-  SessionWorkspaceSnapshot,
-  VelocitySessionFile,
-} from './sessionTypes';
+import type { ExportSessionInput, SessionWorkspaceSnapshot, VelocitySessionFile } from './sessionTypes';
 import { buildSessionDeckRecipe } from './sessionDeckRecipe';
 
 function getFingerprintColumnNames(input: ExportSessionInput): string[] {
@@ -20,7 +16,9 @@ function getFingerprintColumnNames(input: ExportSessionInput): string[] {
     .filter((id) => !derivedIds.has(id));
 }
 
-function shouldIncludeWorkspace(input?: ExportSessionInput['workspace']): input is NonNullable<ExportSessionInput['workspace']> {
+function shouldIncludeWorkspace(
+  input?: ExportSessionInput['workspace'],
+): input is NonNullable<ExportSessionInput['workspace']> {
   if (!input) return false;
   return input.projects.length > 0 || input.datasets.length > 1;
 }
@@ -89,13 +87,7 @@ export function exportSession(input: ExportSessionInput): VelocitySessionFile {
     base.harmonizationSession = input.harmonizationSession;
   }
 
-  if (
-    input.semantic &&
-    (
-      Object.keys(input.semantic.annotations).length > 0 ||
-      input.semantic.concepts.length > 0
-    )
-  ) {
+  if (input.semantic && (Object.keys(input.semantic.annotations).length > 0 || input.semantic.concepts.length > 0)) {
     base.semantic = input.semantic;
   }
 

@@ -17,7 +17,7 @@ export type BarEntranceMotionProps = Partial<SVGMotionProps<SVGRectElement>> & {
 export function getBarEntranceMotionProps(
   orientation: BarOrientation,
   index: number,
-  enabled: boolean
+  enabled: boolean,
 ): BarEntranceMotionProps {
   if (!enabled) return {};
 

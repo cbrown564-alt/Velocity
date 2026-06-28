@@ -17,8 +17,8 @@ type LegacyDuckDBChunk = {
 export class DuckDBNodeAdapter implements DatabaseAdapter {
   private constructor(
     private instance: DuckDBInstance,
-    private connection: DuckDBConnection
-  ) { }
+    private connection: DuckDBConnection,
+  ) {}
 
   static async create(): Promise<DuckDBNodeAdapter> {
     const instance = await DuckDBInstance.create(':memory:');
@@ -86,15 +86,13 @@ export class DuckDBNodeAdapter implements DatabaseAdapter {
   async insertArrowBuffer(tableName: string, buffer: Uint8Array): Promise<void> {
     throw new Error(
       'DuckDBNodeAdapter.insertArrowBuffer not yet implemented. ' +
-      'Use loadCSV() or execute() with INSERT statements instead.'
+        'Use loadCSV() or execute() with INSERT statements instead.',
     );
   }
 
   async getTableNames(): Promise<string[]> {
-    const result = await this.query(
-      `SELECT table_name FROM information_schema.tables WHERE table_schema = 'main'`
-    );
-    return result.rows.map(r => r.table_name as string);
+    const result = await this.query(`SELECT table_name FROM information_schema.tables WHERE table_schema = 'main'`);
+    return result.rows.map((r) => r.table_name as string);
   }
 
   async close(): Promise<void> {
@@ -109,7 +107,10 @@ export class DuckDBNodeAdapter implements DatabaseAdapter {
     return Number(result.rows[0]?.cnt);
   }
 
-  async loadSav(filePath: string, tableName: string = 'main'): Promise<{ variables: Variable[]; variableSets: VariableSet[]; rowCount: number }> {
+  async loadSav(
+    filePath: string,
+    tableName: string = 'main',
+  ): Promise<{ variables: Variable[]; variableSets: VariableSet[]; rowCount: number }> {
     const { loadSav } = await import('../core/ingestion/savIngestion');
     return loadSav(this, filePath, tableName);
   }

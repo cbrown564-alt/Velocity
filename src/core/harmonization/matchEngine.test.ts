@@ -165,11 +165,11 @@ describe('autoMatchVariables', () => {
   it('matches identical variables correctly', () => {
     const mappings = autoMatchVariables(wave1Variables, wave2Variables);
 
-    const q1Match = mappings.find(m => m.sourceVariableId === 'w1_q1');
+    const q1Match = mappings.find((m) => m.sourceVariableId === 'w1_q1');
     expect(q1Match?.targetVariableId).toBe('w2_q1');
     expect(q1Match?.status).toBe('auto_matched');
 
-    const ageMatch = mappings.find(m => m.sourceVariableId === 'w1_age');
+    const ageMatch = mappings.find((m) => m.sourceVariableId === 'w1_age');
     expect(ageMatch?.targetVariableId).toBe('w2_age');
   });
 
@@ -177,23 +177,21 @@ describe('autoMatchVariables', () => {
     // At high threshold (0.9), Q4 (NPS) has no target scoring that high
     const mappings = autoMatchVariables(wave1Variables, wave2Variables, undefined, 0.9);
 
-    const q4Match = mappings.find(m => m.sourceVariableId === 'w1_q4');
+    const q4Match = mappings.find((m) => m.sourceVariableId === 'w1_q4');
     expect(q4Match?.status).toBe('unmapped');
     expect(q4Match?.targetVariableId).toBeNull();
   });
 
   it('does not double-assign the same target variable', () => {
     const mappings = autoMatchVariables(wave1Variables, wave2Variables);
-    const assignedTargets = mappings
-      .filter(m => m.targetVariableId !== null)
-      .map(m => m.targetVariableId);
+    const assignedTargets = mappings.filter((m) => m.targetVariableId !== null).map((m) => m.targetVariableId);
     const uniqueTargets = new Set(assignedTargets);
     expect(assignedTargets.length).toBe(uniqueTargets.size);
   });
 
   it('respects threshold and leaves low-score pairs unmapped', () => {
     const mappings = autoMatchVariables(wave1Variables, wave2Variables, undefined, 0.99);
-    const matched = mappings.filter(m => m.status === 'auto_matched');
+    const matched = mappings.filter((m) => m.status === 'auto_matched');
     for (const m of matched) {
       expect(m.score!.total).toBeGreaterThanOrEqual(0.99);
     }
@@ -202,7 +200,7 @@ describe('autoMatchVariables', () => {
   it('generates warnings for inverted scales', () => {
     const mappings = autoMatchVariables([invertedScaleSource], [invertedScaleTarget]);
     const mapping = mappings[0];
-    const inversionWarning = mapping.warnings.find(w => w.kind === 'scale_inversion');
+    const inversionWarning = mapping.warnings.find((w) => w.kind === 'scale_inversion');
     expect(inversionWarning).toBeDefined();
   });
 });

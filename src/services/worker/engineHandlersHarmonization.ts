@@ -86,11 +86,7 @@ export const engineHandlersHarmonization: Pick<
     const { conn } = workerDbState;
     if (!conn) throw new Error('DuckDB not initialized');
     const { buildRespondentOverlapQuery } = await import('../../core/harmonization/harmonizationQueries');
-    const sql = buildRespondentOverlapQuery(
-      request.sourceTable,
-      request.targetTable,
-      request.keyColumn,
-    );
+    const sql = buildRespondentOverlapQuery(request.sourceTable, request.targetTable, request.keyColumn);
     const result = await conn.query(sql);
     const row = result.toArray()[0] as any;
     postEngineResponse({

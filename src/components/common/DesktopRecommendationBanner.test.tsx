@@ -1,10 +1,7 @@
 import React from 'react';
 import { describe, expect, it } from 'vitest';
 import { act, render, screen } from '@testing-library/react';
-import {
-  DesktopRecommendationBanner,
-  MIN_DESKTOP_RECOMMENDED_WIDTH,
-} from './DesktopRecommendationBanner';
+import { DesktopRecommendationBanner, MIN_DESKTOP_RECOMMENDED_WIDTH } from './DesktopRecommendationBanner';
 
 function setViewportWidth(width: number) {
   Object.defineProperty(window, 'innerWidth', {

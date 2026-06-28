@@ -34,9 +34,7 @@ function cloneSemanticBlock(semantic: SemanticSessionBlock): SemanticSessionBloc
       canonicalScale: concept.canonicalScale
         ? {
             ...concept.canonicalScale,
-            anchors: concept.canonicalScale.anchors
-              ? { ...concept.canonicalScale.anchors }
-              : undefined,
+            anchors: concept.canonicalScale.anchors ? { ...concept.canonicalScale.anchors } : undefined,
           }
         : undefined,
       variableRefs: concept.variableRefs.map((ref) => ({ ...ref })),
