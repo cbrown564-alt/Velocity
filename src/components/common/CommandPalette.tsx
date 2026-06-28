@@ -9,7 +9,6 @@ import {
   Moon,
   Sun,
   Droplets,
-  Command,
   Keyboard,
 } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
@@ -24,20 +23,14 @@ interface CommandItem {
 }
 
 export const CommandPalette: React.FC = () => {
-  const { theme, setTheme, availableThemes } = useTheme();
+  const { setTheme, availableThemes } = useTheme();
   const {
     commandPaletteOpen,
     closeCommandPalette,
     toggleAppMode,
     toggleFocusMode,
-    setFocusMode,
     reset,
-    analysisExportModal,
-    openAnalysisExportModal,
-    closeAnalysisExportModal,
     addToast,
-    slides,
-    activeSlideId,
   } = useVelocityStore();
 
   const [query, setQuery] = useState('');

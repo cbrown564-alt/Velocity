@@ -4,7 +4,9 @@ async function clearBrowserStorage(page: import('@playwright/test').Page) {
   await page.evaluate(async () => {
     try {
       localStorage.clear();
-    } catch {}
+    } catch {
+      // Best-effort browser storage cleanup.
+    }
     try {
       if (navigator.storage?.getDirectory) {
         const root = await navigator.storage.getDirectory();
@@ -12,10 +14,14 @@ async function clearBrowserStorage(page: import('@playwright/test').Page) {
         for await (const [name] of root.entries()) {
           try {
             await root.removeEntry(name, { recursive: true });
-          } catch {}
+          } catch {
+            // Ignore entries that are removed between listing and deletion.
+          }
         }
       }
-    } catch {}
+    } catch {
+      // OPFS is not guaranteed in every browser used by this suite.
+    }
   });
 }
 

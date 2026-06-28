@@ -24,7 +24,7 @@ vi.mock('pptxgenjs', () => {
       this.record = record;
     }
 
-    addText(text: string, _opts: any) {
+    addText(text: string) {
       this.record.texts.push({ text });
     }
 

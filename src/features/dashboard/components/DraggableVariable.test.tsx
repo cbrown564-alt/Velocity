@@ -7,7 +7,6 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { DndContext } from '@dnd-kit/core';
 import { DraggableVariable, VariableCard } from './DraggableVariable';
 import { mockNominalSet, mockOrdinalSet, mockScaleSet } from '../../../test/fixtures/variables';
-import { VariableSet } from '../../../types';
 
 // Wrap component with DndContext for draggable functionality
 const renderWithDnd = (ui: React.ReactElement) => {

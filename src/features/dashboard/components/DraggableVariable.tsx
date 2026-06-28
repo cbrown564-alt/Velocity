@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { useDraggable } from '@dnd-kit/core';
 import { GripVertical, Plus, GitBranch } from 'lucide-react';
 import { VariableTypeIcon } from '../../../components/common/VariableTypeIcon';
-import { VariableSet, VariableType } from '../../../types';
+import { VariableSet } from '../../../types';
 import { useVelocityStore } from '../../../store';
 
 interface VariableCardProps {
@@ -34,7 +34,6 @@ export const VariableCard: React.FC<VariableCardProps> = ({
   isHovered,
   isOverlay,
   shelfType,
-  onRecode,
   onClick,
   onContextMenu,
   dragListeners,

@@ -52,8 +52,7 @@ export async function loadCSVToWasm(
 ): Promise<void> {
   const wasmAdapter = adapter as DuckDBWasmAdapter;
   const rawConn = wasmAdapter.getRawConnection();
-  // @ts-ignore - access to internal db instance
-  const db = wasmAdapter['db'] || wasmAdapter['conn']['db'];
+  const db = (wasmAdapter as any).db || (wasmAdapter as any).conn.db;
 
   const content = readFileSync(filePath, 'utf-8');
   const fileName = 'data.csv';

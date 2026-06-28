@@ -1,5 +1,5 @@
 import React from 'react';
-import { CheckCircle, SlidersHorizontal, Hash, Type, Calendar, Grid3X3, SquareCheck, LucideIcon } from 'lucide-react';
+import { CheckCircle, SlidersHorizontal, Hash, Type, Calendar, Grid3X3, SquareCheck } from 'lucide-react';
 
 export interface VariableTypeIconProps {
   type?: string;

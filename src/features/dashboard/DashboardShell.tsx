@@ -79,7 +79,6 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
     openFilterModal,
     removeFilter,
     openAnalysisExportModal,
-    setSelectedVariableSetId,
     hoveredVariableSetId,
     transformLog,
     lastSeenTransformCount,

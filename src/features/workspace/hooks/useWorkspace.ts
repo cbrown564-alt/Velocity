@@ -41,7 +41,6 @@ export function useWorkspace(): UseWorkspaceReturn {
     setActiveDataset,
     addStoredDataset,
     updateStoredDataset,
-    removeStoredDataset,
     removeStoredDatasets,
     toggleDatasetStar,
     updateDatasetAccess,

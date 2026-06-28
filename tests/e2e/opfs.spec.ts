@@ -132,7 +132,9 @@ test('Reload smoke: app boots after reload', async ({ page }) => {
   await page.evaluate(async () => {
     try {
       localStorage.clear();
-    } catch {}
+    } catch {
+      // Best-effort browser storage cleanup.
+    }
 
     try {
       if (navigator.storage?.getDirectory) {

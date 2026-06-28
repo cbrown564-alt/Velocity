@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import * as d3scale from 'd3-scale';
 import { area, curveBasis } from 'd3-shape';
 import { BaseChartRendererProps } from '../../../types/charts';
@@ -59,7 +59,7 @@ export const RidgelineRenderer: React.FC<BaseChartRendererProps> = ({ width, hei
 
   // Area Generator
   const areaGenerator = area<any>()
-    .x((d) => xScale((d.x0 + d.x1) / 2))
+    .x((datum) => xScale((datum.x0 + datum.x1) / 2))
     .y0((d) => 0) // Baseline is relative to the group's y position
     .y1((d) => -heightScale(d.value || d.count || 0))
     .curve(curveBasis);
@@ -84,7 +84,6 @@ export const RidgelineRenderer: React.FC<BaseChartRendererProps> = ({ width, hei
         {groups.map((g, i) => {
           const y = yScale(g.label) || 0;
           const color = colors ? colors[i % colors.length] : DEFAULT_PALETTE[i % DEFAULT_PALETTE.length];
-          const isSelected = false; // Add selection logic later
 
           return (
             <g key={g.label} transform={`translate(0,${y})`}>

@@ -74,12 +74,10 @@ export function usePersistenceManager(
     persistenceState,
     persistedDataInfo,
     persistenceError,
-    opfsAvailable,
     activeDbPath,
     isWorkspaceMode,
     restoreFromPersistence,
     rehydrateDatasetFromOpfs,
-    discardPersistedData,
     initWorker,
     updateStorageQuota,
   } = useVelocityStore();

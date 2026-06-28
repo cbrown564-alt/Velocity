@@ -23,7 +23,6 @@ export const GroupedBoxPlotRenderer: React.FC<BaseChartRendererProps> = ({
   height,
   colors,
   processedData,
-  variableStats,
 }) => {
   // For grouped box plot: rows are the nominal groups, cells contain the stats
   // We need to extract stats from each row's cells (typically the "Total" column)

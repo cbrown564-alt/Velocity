@@ -6,10 +6,9 @@
  * title/subtitle resolution, and export format routing.
  */
 
-import { describe, expect, it, vi, beforeEach } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { DeckBuilder } from '../DeckBuilder';
 import type { DatasetDescription, DeckSpec, ResultEnvelope } from '../types';
-import { VelocityError } from '../types';
 import type { Filter, Variable } from '../../types';
 
 // ---------------------------------------------------------------------------

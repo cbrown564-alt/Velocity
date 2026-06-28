@@ -83,7 +83,6 @@ function expectCloseDeep(actual: any, expected: any, tolerance = 1e-10, path = '
       expect(actual).toEqual(expected);
       return;
     }
-    const actualKeys = Object.keys(actual).sort();
     const expectedKeys = Object.keys(expected).sort();
 
     // We only check keys present in expected to allow WASM extra fields if any,

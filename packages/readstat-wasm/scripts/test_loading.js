@@ -1,10 +1,6 @@
 import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
 import createModule from '../dist/readstat.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 const savPath = '/Users/cobro/Code/Velocity/test_data/WVS_Cross-National_Wave_7_spss_v6_0.sav';
 
 async function runTest() {

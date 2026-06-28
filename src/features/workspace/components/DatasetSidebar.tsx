@@ -8,7 +8,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useReducedMotion, DURATIONS } from '../../../lib/motion';
-import { ChevronLeft, ChevronRight, Database, Star, Link2, Layers, Plus, Home, Sparkles } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Database, Star, Layers, Plus, Home, Sparkles } from 'lucide-react';
 import type { StoredDataset, Project } from '../types';
 import styles from './DatasetSidebar.module.css';
 

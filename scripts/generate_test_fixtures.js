@@ -7,7 +7,9 @@ const FIXTURES_DIR = join(__dirname, '../tests/golden/fixtures');
 
 try {
   mkdirSync(FIXTURES_DIR, { recursive: true });
-} catch (e) {}
+} catch {
+  // Fixture generation can continue if the directory already exists.
+}
 
 // 1. weighted_crosstab.csv
 const weightedCrosstab = [

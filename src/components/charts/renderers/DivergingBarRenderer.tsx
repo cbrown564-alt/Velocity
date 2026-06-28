@@ -1,6 +1,5 @@
 import React, { useMemo, useCallback } from 'react';
 import * as d3 from 'd3-scale';
-import { max } from 'd3-array';
 import { BaseChartRendererProps } from '../../../types/charts';
 import { useChartSelection } from '../hooks/useChartSelection';
 import { ChartPlotArea } from '../shared/ChartPlotArea';
@@ -18,7 +17,6 @@ import { ChartPlotArea } from '../shared/ChartPlotArea';
 export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
   width,
   height,
-  colors,
   processedData,
   interactive = true,
   selectedKeys,
@@ -110,7 +108,6 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
   const avgColumnWidth = 50;
   const rightMargin = 40 + avgColumnWidth;
 
-  const gapForSpecial = 20; // Gap between diverging and special bars
   const margin = { top: 75, right: rightMargin, bottom: 30, left: leftMargin };
 
   // We split inner width.
@@ -133,7 +130,6 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
   // Allocate width
   // Fraction of width for diverging
   const divergingFraction = (maxDiverging * 2) / totalDomainWidth;
-  const divergingWidth = innerWidth * (maxSpecial > 0 ? divergingFraction : 1);
 
   // The gap in pixels
   const pixelGap = 30;
@@ -504,7 +500,6 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
                   if (val === 0) return null;
 
                   const start = currentSpecial;
-                  const end = currentSpecial + val;
                   currentSpecial += val;
 
                   const xBase = divergingPixelWidth + pixelGap;

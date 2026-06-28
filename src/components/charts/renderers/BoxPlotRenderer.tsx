@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useCallback } from 'react';
+import React from 'react';
 import * as d3scale from 'd3-scale';
 import { BaseChartRendererProps } from '../../../types/charts';
 // getChartColor removed
@@ -12,11 +12,7 @@ import { BaseChartRendererProps } from '../../../types/charts';
 export const BoxPlotRenderer: React.FC<BaseChartRendererProps> = ({
   width,
   height,
-  colors,
   processedData,
-  interactive = true,
-  selectedKeys,
-  onSelectionChange,
   variableStats,
 }) => {
   // NOTE: True box plot calculation usually happens on backend or worker.

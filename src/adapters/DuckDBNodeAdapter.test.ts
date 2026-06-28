@@ -81,11 +81,11 @@ describe('DuckDBNodeAdapter.queryStream', () => {
 
 describe('DuckDBNodeAdapter.loadCSV', () => {
   it('escapes single quotes in file paths', async () => {
-    const run = vi.fn(async (_sql: string) => undefined);
-    const runAndReadAll = vi.fn(async (_sql: string) => ({
+    const run = vi.fn(async () => undefined);
+    const runAndReadAll = vi.fn(async () => ({
       columnNames: () => ['cnt'],
       currentRowCount: 1,
-      value: (_c: number, _r: number) => 1,
+      value: () => 1,
     }));
 
     const connection = { run, runAndReadAll, closeSync: vi.fn() };

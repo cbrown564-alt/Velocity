@@ -1,7 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Loader2 } from 'lucide-react';
-import { useReducedMotion, DURATIONS } from '../../lib/motion';
+import { useReducedMotion } from '../../lib/motion';
 import type { LoadProgressState } from '../../store/slices/data/types';
 
 export interface UploadProgressBarProps {

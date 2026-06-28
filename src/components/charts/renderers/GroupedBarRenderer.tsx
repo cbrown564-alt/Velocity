@@ -36,7 +36,6 @@ export const GroupedBarRenderer: React.FC<BaseChartRendererProps> = ({
 
   const margin = { top: 48, right: 40, bottom: 32, left: leftMargin };
   const innerWidth = Math.max(width - margin.left - margin.right, 200);
-  const innerHeight = Math.max(height - margin.top - margin.bottom, 150);
 
   // Calculate height based on number of rows and groups
   // Each group needs enough space for N bars

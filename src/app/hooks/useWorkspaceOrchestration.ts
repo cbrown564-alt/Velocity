@@ -43,7 +43,6 @@ export function useWorkspaceOrchestration({
   setPhase,
   openProjectLink,
   openCrossWave,
-  openWorkspaceExport,
   closeCrossWaveOverlay,
   closeProjectLinkOverlay,
 }: UseWorkspaceOrchestrationOptions): UseWorkspaceOrchestrationReturn {

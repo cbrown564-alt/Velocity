@@ -21,7 +21,6 @@ export const StackedBarRenderer: React.FC<StackedBarRendererProps> = ({
   width,
   height,
   colors,
-  type,
   processedData,
   interactive = true,
   selectedKeys,
@@ -246,7 +245,7 @@ export const StackedBarRenderer: React.FC<StackedBarRendererProps> = ({
 
             return (
               <g key={stackKeys[seriesIndex]}>
-                {seriesItem.map((d, i) => {
+                {seriesItem.map((d) => {
                   const barWidth = xScale(d[1]) - xScale(d[0]);
                   const y = yScale(d.data.label) || 0;
 

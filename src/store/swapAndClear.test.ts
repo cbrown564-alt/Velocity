@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useVelocityStore } from './index';
 
@@ -79,8 +79,7 @@ describe('Store: swapAxes and clearConfiguration', () => {
       const { result } = renderHook(() => useVelocityStore());
       act(() => {
         result.current.setTableConfig({ rowVars: ['r1'], colVar: 'c1' });
-        // @ts-ignore - simulating result presence
-        useVelocityStore.setState({ queryResult: [{}] });
+        useVelocityStore.setState({ queryResult: [{} as any] });
       });
 
       expect(result.current.tableConfig.rowVars.length).toBe(1);

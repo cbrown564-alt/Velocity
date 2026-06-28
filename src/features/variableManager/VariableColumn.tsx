@@ -6,7 +6,7 @@
  * Only shown for multi-variable sets (grids, multi-response).
  */
 
-import React, { useMemo, useEffect, useCallback, useRef } from 'react';
+import React, { useMemo, useCallback, useRef } from 'react';
 import { CheckCircle, ChevronRight } from 'lucide-react';
 import { useVelocityStore } from '../../store';
 import type { Variable, Dataset } from '../../types/dataset';

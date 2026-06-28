@@ -64,7 +64,7 @@ export const VerticalBarRenderer: React.FC<BaseChartRendererProps> = ({
 
   // Drag-to-merge Logic
   const getDropTarget = useCallback(
-    (x: number, y: number) => {
+    (x: number) => {
       for (const item of chartData) {
         const barX = xScale(item.label) || 0;
         const barWidth = xScale.bandwidth();

@@ -4,7 +4,7 @@ import { hexbin as d3Hexbin } from 'd3-hexbin';
 import { BaseChartRendererProps } from '../../../types/charts';
 // getChartColor removed
 
-export const HexbinRenderer: React.FC<BaseChartRendererProps> = ({ width, height, colors, processedData }) => {
+export const HexbinRenderer: React.FC<BaseChartRendererProps> = ({ width, height, processedData }) => {
   // Hexbin requires raw x,y data.
   // processedData might contain a series with `data` array of {x, y} objects.
   const points = useMemo(() => {

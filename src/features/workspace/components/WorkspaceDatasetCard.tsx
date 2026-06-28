@@ -18,7 +18,7 @@ export const WorkspaceDatasetCard: React.FC<{
   onToggleStar: () => void;
   onDelete: () => void;
   onContextMenu: (e: React.MouseEvent) => void;
-}> = ({ dataset, project, isSelected, onSelect, onOpen, onToggleStar, onDelete, onContextMenu }) => {
+}> = ({ dataset, project, isSelected, onSelect, onOpen, onToggleStar, onContextMenu }) => {
   const reducedMotion = useReducedMotion();
   const hasSession = Boolean(dataset.sessionState);
   const isRecentlyOpened = Date.now() - dataset.lastOpenedAt < 24 * 60 * 60 * 1000;

@@ -26,10 +26,6 @@ export const ValueRemapPanel: React.FC<ValueRemapPanelProps> = ({
   onUpdateValueMappings,
 }) => {
   const hasScaleInversion = mapping.warnings.some((w) => w.kind === 'scale_inversion');
-  const orphanValues = useMemo(
-    () => mapping.warnings.find((w) => w.kind === 'data_loss')?.orphanValues ?? [],
-    [mapping.warnings],
-  );
 
   const targetOptions = useMemo(
     () => [
@@ -100,7 +96,6 @@ export const ValueRemapPanel: React.FC<ValueRemapPanelProps> = ({
         <div className={styles.rows}>
           {mapping.valueMappings.map((vm, i) => {
             const isOrphan = vm.targetValue === null;
-            const isInList = orphanValues.includes(vm.sourceValue ?? -1);
 
             return (
               <div key={i} className={[styles.valueRow, isOrphan ? styles.orphanRow : ''].join(' ')}>

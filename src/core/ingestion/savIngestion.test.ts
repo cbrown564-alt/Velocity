@@ -33,7 +33,7 @@ describe('savIngestion loadSav', () => {
   });
 
   it('escapes single quotes in SAV file paths', async () => {
-    const execute = vi.fn(async (_sql: string) => undefined);
+    const execute = vi.fn(async () => undefined);
     const adapter = { execute, query: vi.fn() } as any;
 
     const result = await loadSav(adapter, tempSavPath, 'main');

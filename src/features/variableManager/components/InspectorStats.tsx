@@ -2,7 +2,6 @@ import React, { useMemo, useState, useRef, useCallback } from 'react';
 import { CheckCircle, AlertTriangle, Edit2 } from 'lucide-react';
 import type { Variable } from '../../../types/dataset';
 import type { VariableStatsResult } from '../../../types/worker';
-import { allowsNumericStats } from '../../../types';
 import { useVelocityStore } from '../../../store';
 import { ConvertSystemMissingModal } from '../../../components/overlays/ConvertSystemMissingModal';
 import styles from '../VariableInspector.module.css';
@@ -18,7 +17,6 @@ interface InspectorStatsProps {
 export const InspectorStats: React.FC<InspectorStatsProps> = ({
   variable,
   stats,
-  isLoadingStats,
   hoveredKey,
   onHoverChange,
 }) => {
@@ -27,12 +25,6 @@ export const InspectorStats: React.FC<InspectorStatsProps> = ({
   const hasValueLabels = variable.valueLabels && variable.valueLabels.length > 0;
   const hasMissingValues =
     (variable.missingValues.discrete && variable.missingValues.discrete.length > 0) || variable.missingValues.range;
-
-  const totalObservations = stats?.totalCount || 0;
-  const missingCount = stats?.missingCount || 0;
-  const validCount = Math.max(0, totalObservations - missingCount);
-  const percentMissing = totalObservations > 0 ? (missingCount / totalObservations) * 100 : 0;
-  const isNumericVariable = allowsNumericStats(variable?.type, variable?.orderedScoring);
 
   // Inline editing state
   const [editingCode, setEditingCode] = useState<string | null>(null);
@@ -85,7 +77,6 @@ export const InspectorStats: React.FC<InspectorStatsProps> = ({
     }
 
     // 2. Merge stats frequencies
-    const total = stats?.totalCount || 1;
     if (stats?.frequencies) {
       stats.frequencies.forEach((f) => {
         const key = String(f.value);

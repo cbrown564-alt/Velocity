@@ -139,7 +139,6 @@ describe('slidesSlice', () => {
 
       // First update the slide's analysis state
       act(() => {
-        const slideId = result.current.slides[0].id;
         // Set some table config that will be captured
         result.current.setTableConfig({ rowVars: ['var1', 'var2'], colVar: 'var3' });
         result.current.snapshotCurrentSlide();

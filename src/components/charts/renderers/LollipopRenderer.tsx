@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo } from 'react';
 import * as d3 from 'd3-scale';
 import { max } from 'd3-array';
 import { BaseChartRendererProps } from '../../../types/charts';

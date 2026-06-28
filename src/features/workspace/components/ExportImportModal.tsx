@@ -90,7 +90,11 @@ export const ExportImportModal: React.FC<ExportImportModalProps> = ({
     const exportProjects = exportMode === 'full' ? projects : projects.filter((p) => relevantProjectIds.has(p.id));
 
     // Strip session state from datasets (large, not portable)
-    const cleanDatasets = exportDatasets.map(({ sessionState, ...rest }) => rest);
+    const cleanDatasets = exportDatasets.map((dataset) => {
+      const copy = { ...dataset };
+      delete copy.sessionState;
+      return copy;
+    });
 
     return {
       version: '1.0.0',

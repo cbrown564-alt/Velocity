@@ -5,7 +5,7 @@
  * Color-coded by status: confirmed=green, auto_matched=amber, unmapped=red.
  */
 
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo } from 'react';
 import { List, type RowComponentProps } from 'react-window';
 import { CheckCircle2, AlertCircle, XCircle, HelpCircle, Search } from 'lucide-react';
 import type { VariableMapping, MappingStatus } from '../../../types/harmonization';

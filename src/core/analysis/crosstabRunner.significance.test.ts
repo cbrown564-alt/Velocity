@@ -23,8 +23,8 @@ class MockAdapter implements DatabaseAdapter {
     };
   }
 
-  async execute(_sql: string): Promise<void> {}
-  async insertArrowBuffer(_tableName: string, _buffer: Uint8Array): Promise<void> {}
+  async execute(): Promise<void> {}
+  async insertArrowBuffer(): Promise<void> {}
   async getTableNames(): Promise<string[]> {
     return ['main'];
   }

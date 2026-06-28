@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { buildGridQuery, buildGridHistogramQuery } from './queryBuilder';
+import { buildGridHistogramQuery } from './queryBuilder';
 import { buildCrosstabQuery } from './queryBuilder';
 
 describe('Query Builder: Numeric Grids', () => {

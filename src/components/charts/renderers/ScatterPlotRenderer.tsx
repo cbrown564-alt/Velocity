@@ -3,7 +3,7 @@ import * as d3scale from 'd3-scale';
 import { BaseChartRendererProps } from '../../../types/charts';
 // getChartColor removed
 
-export const ScatterPlotRenderer: React.FC<BaseChartRendererProps> = ({ width, height, colors, processedData }) => {
+export const ScatterPlotRenderer: React.FC<BaseChartRendererProps> = ({ width, height, processedData }) => {
   // Expecting processedData.series[0].data to contain { x, y, value } points
   const points = useMemo(() => {
     if (!processedData?.series?.[0]?.data) return [];
@@ -22,8 +22,8 @@ export const ScatterPlotRenderer: React.FC<BaseChartRendererProps> = ({ width, h
   const xExtent = useMemo(() => {
     if (points.length === 0) return [0, 100];
     const values = points.map((p) => p.x!);
-    let min = Math.min(...values);
-    let max = Math.max(...values);
+    const min = Math.min(...values);
+    const max = Math.max(...values);
     const padding = (max - min) * 0.05 || 1; // Default padding if single point
     return [min - padding, max + padding];
   }, [points]);
@@ -31,8 +31,8 @@ export const ScatterPlotRenderer: React.FC<BaseChartRendererProps> = ({ width, h
   const yExtent = useMemo(() => {
     if (points.length === 0) return [0, 100];
     const values = points.map((p) => p.y!);
-    let min = Math.min(...values);
-    let max = Math.max(...values);
+    const min = Math.min(...values);
+    const max = Math.max(...values);
     const padding = (max - min) * 0.05 || 1;
     return [min - padding, max + padding];
   }, [points]);

@@ -11,13 +11,11 @@ import { useReducedMotion, getBackdropProps, getModalPresenceProps } from '../..
 import {
   X,
   Link2,
-  Unlink,
   FolderPlus,
   Layers,
   Database,
   Check,
   AlertCircle,
-  ChevronDown,
   ArrowRight,
 } from 'lucide-react';
 import type { StoredDataset, Project } from '../types';

@@ -54,13 +54,6 @@ function formatDate(timestamp: number): string {
   });
 }
 
-function formatShortDate(timestamp: number): string {
-  return new Date(timestamp).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-  });
-}
-
 export const WaveTimeline: React.FC<WaveTimelineProps> = ({
   project,
   datasets,

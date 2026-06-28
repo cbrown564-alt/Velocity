@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect, useMemo, useCallback } from 'react';
 import { AggregatedRow } from '../../types';
-import { BaseChartRendererProps, AnalysisChartConfig, ChartContextMenuEvent, MergeEvent } from '../../types/charts';
+import { AnalysisChartConfig, ChartContextMenuEvent, MergeEvent } from '../../types/charts';
 import { CHART_PALETTE } from './shared/chartColors';
 import {
   HorizontalBarRenderer,
@@ -19,13 +19,12 @@ import {
   HexbinRenderer,
   ScatterPlotRenderer,
 } from './renderers';
-import { ProcessedAnalysisData, ChartDataPoint, ChartSeries } from '../../types/processedData';
+import { ProcessedAnalysisData, ChartDataPoint } from '../../types/processedData';
 import { ChartSelector } from './ChartSelector';
 import { recommendChart } from '../../core/visualization/chartRecommender';
 import { resolveMetricChartType } from '../../core/visualization/chartTypeResolver';
 import { transformChartData } from '../../services/chartDataTransformer';
 import { ChartLegend } from './shared/ChartLegend';
-import { ChartType } from '../../types/charts';
 import { useVelocityStore } from '../../store';
 import { ChartContextMenu, ContextMenuOption } from '../overlays/ChartContextMenu';
 import { InputModal } from '../overlays/InputModal';
@@ -63,7 +62,6 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
   isMultipleResponse = false,
   className = '',
   variableStats,
-  initialProcessedData,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
@@ -171,7 +169,6 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
     const firstRowVar = chartData.rowVariables[0];
     if (!firstRowVar) return [];
 
-    const selectedLabels = contextMenu.selectedItems.map((item) => item.label).join(', ');
     const selectedValues = contextMenu.selectedItems.map((item) => item.rawValue);
 
     const options: ContextMenuOption[] = [];

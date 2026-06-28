@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { AlertCircle, BarChart3, LayoutGrid, Loader2 } from 'lucide-react';
-import { useReducedMotion, getMotionProps, DURATIONS } from '../../lib/motion';
+import { AlertCircle, Loader2 } from 'lucide-react';
+import { useReducedMotion } from '../../lib/motion';
 import { getPersistenceDisplayMessage } from '../../lib/persistenceDisplay';
 import { getLoadStageHeadline } from '../../lib/uploadFeedback';
 import type { Dataset } from '../../types/dataset';

@@ -20,10 +20,7 @@ import {
   UserPlus,
   BarChart3,
   ArrowLeftRight,
-  Calendar,
   Layers,
-  AlertTriangle,
-  CheckCircle2,
   ChevronDown,
   Database,
 } from 'lucide-react';
@@ -42,8 +39,6 @@ interface CrossWavePanelProps {
   /** Callback to open Harmonization Workspace for two waves */
   onOpenHarmonization?: (wave1: StoredDataset, wave2: StoredDataset) => void;
 }
-
-type ComparisonMetric = 'respondents' | 'attrition' | 'variables';
 
 interface WaveComparison {
   wave1: StoredDataset;
@@ -81,7 +76,6 @@ export const CrossWavePanel: React.FC<CrossWavePanelProps> = ({
 }) => {
   const [wave1Id, setWave1Id] = useState<string | null>(selectedWaves?.[0]?.id || null);
   const [wave2Id, setWave2Id] = useState<string | null>(selectedWaves?.[1]?.id || null);
-  const [activeMetric, setActiveMetric] = useState<ComparisonMetric>('respondents');
 
   // Get sorted wave datasets
   const waveDatasets = useMemo(() => {

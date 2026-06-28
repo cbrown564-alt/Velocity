@@ -87,7 +87,7 @@ export const useChartDragMerge = ({
       }));
     };
 
-    const handleMouseUp = (e: MouseEvent) => {
+    const handleMouseUp = () => {
       if (dragState.dropTarget && dragState.draggedItem && onMerge) {
         const targetItem = chartData.find((d) => d.label === dragState.dropTarget);
         if (targetItem) {

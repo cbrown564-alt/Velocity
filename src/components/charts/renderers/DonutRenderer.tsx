@@ -108,16 +108,7 @@ export const DonutRenderer: React.FC<BaseChartRendererProps> = ({
       <g transform={`translate(${centerX},${centerY})`}>
         {arcs.map((d, i) => {
           const sliceColor = colors ? colors[i % colors.length] : DEFAULT_PALETTE[i % DEFAULT_PALETTE.length];
-          const isLargeSlice = d.endAngle - d.startAngle > 0.2;
           const isSelected = selectedKeys?.has(d.data.label);
-
-          // Callout line computations
-          const pos = labelArc.centroid(d);
-          const midAngle = d.startAngle + (d.endAngle - d.startAngle) / 2;
-          pos[0] = radius * 1.1 * (midAngle < Math.PI ? 1 : -1);
-
-          // Anchor for text
-          const textAnchor = midAngle < Math.PI ? 'start' : 'end';
 
           return (
             <g

@@ -673,17 +673,23 @@ async function ensureDashboard(page, { clearStorage = true } = {}) {
     await page.evaluate(async () => {
       try {
         localStorage.clear();
-      } catch {}
+      } catch {
+        // Best-effort browser storage cleanup.
+      }
       try {
         if (navigator.storage?.getDirectory) {
           const root = await navigator.storage.getDirectory();
           for await (const [name] of root.entries()) {
             try {
               await root.removeEntry(name, { recursive: true });
-            } catch {}
+            } catch {
+              // Ignore individual OPFS entries that disappear during cleanup.
+            }
           }
         }
-      } catch {}
+      } catch {
+        // OPFS is optional in this visual pass.
+      }
     });
     await page.reload();
     await page.waitForTimeout(3000);
@@ -857,7 +863,7 @@ async function testDnDMicroDelight(page, results) {
     await overlayLocator.waitFor({ state: 'visible', timeout: 2000 });
     overlayDuringDrag = true;
   } catch {
-    overlayDuringDrag = false;
+    // Overlay is optional for the remainder of the drag flow.
   }
 
   await page.mouse.move(endX, endY, { steps: 14 });

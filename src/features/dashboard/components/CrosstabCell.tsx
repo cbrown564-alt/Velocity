@@ -22,7 +22,7 @@ function usePhosphorGhost(value: number, animationTrigger: string | undefined): 
   useEffect(() => {
     if (animationTrigger && animationTrigger !== prevTriggerRef.current && isMissionControl()) {
       setGhost({ value: prevValueRef.current, key: prevTriggerRef.current ?? 'init' });
-      const timer = setTimeout(() => setGhost(null), 220);
+      setTimeout(() => setGhost(null), 220);
       prevTriggerRef.current = animationTrigger;
     } else {
       prevTriggerRef.current = animationTrigger;

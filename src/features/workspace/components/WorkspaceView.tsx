@@ -61,7 +61,6 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
   onCreateProject,
   onDeleteDataset,
   onToggleStar,
-  onLinkDatasets,
   onUnlinkDataset,
   onCompareWaves,
   onBatchStar,

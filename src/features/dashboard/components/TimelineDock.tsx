@@ -25,7 +25,6 @@ import {
   DragEndEvent,
 } from '@dnd-kit/core';
 import {
-  arrayMove,
   SortableContext,
   sortableKeyboardCoordinates,
   horizontalListSortingStrategy,
@@ -314,7 +313,6 @@ const SectionDivider: React.FC<{ section: SlideSection }> = ({ section }) => (
 // ============================================================================
 
 export const TimelineDock: React.FC = () => {
-  const reducedMotion = useReducedMotion();
   const slides = useVelocityStore((state) => state.slides);
   const sections = useVelocityStore((state) => state.sections);
   const activeSlideId = useVelocityStore((state) => state.activeSlideId);
@@ -461,7 +459,7 @@ export const TimelineDock: React.FC = () => {
           <div className="flex items-center gap-1.5 flex-1 min-w-0 overflow-x-auto scrollbar-none py-1">
             <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
               <SortableContext items={slides.map((s) => s.id)} strategy={horizontalListSortingStrategy}>
-                {itemsWithDividers.map((item, i) => {
+                {itemsWithDividers.map((item) => {
                   if (item.type === 'divider' && item.section) {
                     return <SectionDivider key={`divider-${item.section.id}`} section={item.section} />;
                   }

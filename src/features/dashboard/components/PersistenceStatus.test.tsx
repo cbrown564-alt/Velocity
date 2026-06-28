@@ -7,7 +7,7 @@ const noop = () => {};
 
 beforeAll(() => {
   if (!window.matchMedia) {
-    vi.stubGlobal('matchMedia', (_query: string) => ({
+    vi.stubGlobal('matchMedia', () => ({
       matches: false,
       media: '',
       onchange: null,

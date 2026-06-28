@@ -11,7 +11,7 @@ interface ChartLegendProps {
   className?: string;
 }
 
-export const ChartLegend: React.FC<ChartLegendProps> = ({ items, position = 'bottom', className = '' }) => {
+export const ChartLegend: React.FC<ChartLegendProps> = ({ items, className = '' }) => {
   if (!items || items.length === 0) return null;
 
   return (

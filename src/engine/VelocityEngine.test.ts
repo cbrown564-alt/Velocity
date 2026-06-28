@@ -303,7 +303,7 @@ describe('VelocityEngine', () => {
       readonly label = 'Wrapping Runner';
       readonly configSchema = {};
 
-      async run(_adapter: DatabaseAdapter) {
+      async run() {
         // Simulates a runner that mistakenly returns a ResultEnvelope
         return {
           data: { innerResult: true },

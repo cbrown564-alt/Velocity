@@ -44,7 +44,6 @@ export const PersistenceStatus: React.FC<PersistenceStatusProps> = ({
   opfsAvailable,
   dbLabel,
   usageMb,
-  quotaMb,
   usagePct,
   error,
   errorHint,

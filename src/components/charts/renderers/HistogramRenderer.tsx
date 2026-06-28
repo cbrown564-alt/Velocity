@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useCallback, useState, useMemo } from 'react'
 import * as d3 from 'd3-selection';
 import { scaleLinear } from 'd3-scale';
 import { axisBottom, axisLeft } from 'd3-axis';
-import { max, extent } from 'd3-array';
+import { max } from 'd3-array';
 import { BaseChartRendererProps, BinData } from '../../../types/charts';
 // getChartColor removed replaced by CSS vars
 
@@ -18,7 +18,6 @@ import styles from './HistogramRenderer.module.css';
 export const HistogramRenderer: React.FC<BaseChartRendererProps> = ({
   width,
   height,
-  colors,
   processedData,
   interactive,
   variableStats,
@@ -211,10 +210,10 @@ export const HistogramRenderer: React.FC<BaseChartRendererProps> = ({
       })
       .attr('rx', 1)
       .style('cursor', interactive ? 'pointer' : 'default')
-      .on('mouseenter', (event, d) => {
+      .on('mouseenter', (_event, d) => {
         if (onHoverChange) onHoverChange(`${d.x0} - ${d.x1}`);
       })
-      .on('mouseleave', (event, d) => {
+      .on('mouseleave', () => {
         if (onHoverChange) onHoverChange(null);
       });
 

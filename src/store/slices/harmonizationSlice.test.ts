@@ -179,7 +179,7 @@ describe('harmonizationSlice', () => {
       // Verify buildHarmonizedTable was called with correct args
       expect(mockBuildHarmonizedTable).toHaveBeenCalledTimes(1);
       const callArgs = mockBuildHarmonizedTable.mock.calls[0];
-      const [sourceTable, targetTable, mappings, outputTableName, sourceVarNames, targetVarNames] = callArgs;
+      const [sourceTable, targetTable, , , sourceVarNames, targetVarNames] = callArgs;
 
       expect(sourceTable).toBe('wave1_table');
       expect(targetTable).toBe('wave2_table');

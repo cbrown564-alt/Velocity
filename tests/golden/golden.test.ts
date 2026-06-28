@@ -8,7 +8,7 @@
 
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { readFileSync, writeFileSync, readdirSync, appendFileSync, existsSync } from 'fs';
-import { resolve, join } from 'path';
+import { resolve } from 'path';
 import { DuckDBNodeAdapter } from '../../src/adapters/DuckDBNodeAdapter';
 import { runCrosstab } from '../../src/core/analysis/crosstabRunner';
 import { getVariableStats } from '../../src/core/analysis/variableStatsRunner';

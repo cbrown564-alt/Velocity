@@ -87,7 +87,7 @@ class FakeDirectoryHandle {
     throw createNotFoundError();
   }
 
-  async removeEntry(name: string, _options?: { recursive?: boolean }): Promise<void> {
+  async removeEntry(name: string): Promise<void> {
     if (this.files.delete(name)) return;
     if (this.directories.delete(name)) return;
     throw createNotFoundError();

@@ -75,10 +75,6 @@ export const DataDrawer: React.FC<DataDrawerProps> = ({
     URL.revokeObjectURL(url);
   };
 
-  const isFilterColumn = (colName: string) => {
-    return filterColumns.some((fc) => fc.toLowerCase() === colName.toLowerCase());
-  };
-
   const reducedMotion = useReducedMotion();
 
   return (

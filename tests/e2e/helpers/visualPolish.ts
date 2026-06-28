@@ -12,7 +12,9 @@ export async function clearBrowserStorage(page: Page) {
   await page.evaluate(async () => {
     try {
       localStorage.clear();
-    } catch {}
+    } catch {
+      // Best-effort browser storage cleanup.
+    }
     try {
       if (navigator.storage?.getDirectory) {
         const root = await navigator.storage.getDirectory();
@@ -20,10 +22,14 @@ export async function clearBrowserStorage(page: Page) {
         for await (const [name] of root.entries()) {
           try {
             await root.removeEntry(name, { recursive: true });
-          } catch {}
+          } catch {
+            // Ignore entries that are removed between listing and deletion.
+          }
         }
       }
-    } catch {}
+    } catch {
+      // OPFS is not guaranteed in every browser used by this suite.
+    }
   });
 }
 

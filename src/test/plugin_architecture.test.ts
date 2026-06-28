@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { analysisRegistry } from '../core/analysis/registry';
 import { AnalysisRunner } from '../core/analysis/AnalysisRunner';
 import { DatabaseAdapter } from '../core/DatabaseAdapter';

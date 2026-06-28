@@ -29,10 +29,6 @@ const DATASETS = {
   },
 };
 
-function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
 function jsonReplacer(_key, value) {
   return typeof value === 'bigint' ? Number(value) : value;
 }
@@ -509,7 +505,7 @@ async function main() {
 
     const analysisPayload = selectedConfig.analyses.length > 0 ? await runBoundedAnalysis(page, selectedConfig) : null;
 
-    let result = {
+    const result = {
       dataset: {
         key: selectedConfig.key,
         label: selectedConfig.label,

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import * as d3scale from 'd3-scale';
 import { area, curveCatmullRom } from 'd3-shape';
 import { BaseChartRendererProps } from '../../../types/charts';
@@ -21,7 +21,6 @@ export const ViolinRenderer: React.FC<BaseChartRendererProps> = ({
   height,
   colors,
   processedData,
-  variableStats,
 }) => {
   // Similar to box plot, we need distribution data.
   // Assumption: variableStats.density or processedData.series[].density is available.

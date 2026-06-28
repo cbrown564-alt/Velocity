@@ -3,7 +3,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { fireEvent, render } from '@testing-library/react';
 import { DataTable } from './DataTable';
 import { useVelocityStore } from '../../../store';
-import type { Variable, AggregatedRow } from '../../../types';
+import type { Variable } from '../../../types';
 import type { ProcessedAnalysisData } from '../../../types/processedData';
 
 // Mock useProcessedAnalysisData to return controlled data

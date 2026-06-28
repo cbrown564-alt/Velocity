@@ -39,7 +39,6 @@ interface StatisticsTooltipProps {
 export const StatisticsTooltip: React.FC<StatisticsTooltipProps> = ({
   stats,
   sig,
-  value,
   isMetric = false,
   ci95,
   ci80,
