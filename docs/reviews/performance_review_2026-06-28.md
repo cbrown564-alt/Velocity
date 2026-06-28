@@ -444,7 +444,20 @@ Task 2 tuning evidence (WVS, 97,220 rows × 613 vars, single iteration via `benc
 
 Tuning conclusion: v3 single-pass beats v2 on wall-clock at every batch size (parse and vectorize), confirming v3 as the canonical path. The v3 bridge queue depth never exceeds 2 at the current `initialCredits=2 / maxCredits=4` — the consumer (Arrow build + insert) keeps pace with the producer, so raising `maxCredits` would only let the producer run further ahead and grow memory with no throughput gain, while lowering it risks serializing. The default chunk size (5,000) sits in the middle of the curve and benefits from the adaptive 500–10,000 clamp already in place. **No constant changes are warranted; the existing chunk-size and credit defaults are validated against WVS-scale data.**
 
-Limitations (honest): these are Node-side parser/vectorize timings and peak RSS, not the browser worker's insert path, and Node RSS high-water marks are GC-noisy — so the batch-count and bridge-queue-depth signals are reliable for chunk/credit selection, but the absolute peak-RSS figures are not a browser memory profile. Separately, the Task 3 routing change can only be exercised end-to-end in the browser worker (`loadSAV`/`loadSAVChunked`); the Node benchmark bypasses that routing, and `test_data` contains no 8–50 MB `.sav` in the newly-targeted medium band (only sub-8 MB files and the 176 MB WVS), so the medium-band peak-memory delta specifically remains structurally argued rather than measured here.
+Limitations (honest): these are Node-side parser/vectorize timings and peak RSS, not the browser worker's insert path, and Node RSS high-water marks are GC-noisy — so the batch-count and bridge-queue-depth signals are reliable for chunk/credit selection, but the absolute peak-RSS figures are not a browser memory profile. Separately, the Task 3 routing change can only be exercised end-to-end in the browser worker (`loadSAV`/`loadSAVChunked`); the Node benchmark bypasses that routing, so the medium-band *browser* peak-memory delta specifically remains structurally argued rather than measured here. (Superseded in part by the correction below: medium-band `.sav` fixtures now exist locally and have measured Node-side ingestion numbers; only the browser routing/peak-memory delta is still unmeasured.)
+
+Correction (2026-06-28, later): the earlier claim that `test_data` had no 8–50 MB `.sav` is now obsolete. Four mid-size fixtures were added (local-only / gitignored) and wired into both SAV benchmark harnesses — three GSS annual cross-sections (NORC, no-login download) and one stitched British Social Attitudes file — filling the gap between `sleep.sav` (0.03 MB) and the 176 MB WVS. The stitched fixture is produced by `scripts/stitch-bsa-waves.py` (BSA waves 2014–2017, columns shared by ≥3 waves); fresh numbers are in `validation/benchmark_sav_ingestion_midsize.json`.
+
+Medium-band ingestion evidence (Node-side, `benchmark-sav-ingestion.ts`; same Node/GC caveats as the WVS numbers above — not a browser worker memory profile):
+
+| Dataset | Size | Shape | Full Parse | Node/DuckDB Ingest | Peak RSS, Ingest |
+| :--- | ---: | :--- | ---: | ---: | ---: |
+| `GSS2021.sav` | 17.4 MB | 4,032 × 938 | 134.3 ms | 798.4 ms | 507 MB |
+| `GSS2024.sav` | 20.0 MB | 3,986 × 980 | 129.2 ms | 751.1 ms | 572 MB |
+| `GSS2022.sav` | 29.2 MB | 4,149 × 1,290 | 192.1 ms | 1,222.0 ms | 796 MB |
+| `bsa_stitched_2014_2017.sav` | 42.2 MB | 14,136 × 390 | 100.5 ms | 813.0 ms | 868 MB |
+
+All four ingest with full metadata/full-parse/window/node row-count parity. The set spans the band with two complementary shapes: GSS is wide/short (≈1k columns, ≈4k rows, stressing the column transpose) and the stitched BSA file is narrow/tall with realistic partial missingness (390 trend variables shared by ≥3 of the 2014–2017 waves). What these Node numbers still do *not* exercise is the Task 3 `loadSAV`/`loadSAVChunked` routing itself — they characterize medium-file parse+ingest cost but the browser routing/peak-memory delta remains the open browser-tooling item.
 
 Validation:
 
@@ -456,6 +469,8 @@ npx eslint src/services/worker/savArrowHelpers.ts src/services/worker/savArrowHe
 npm run build
 # Task 2 tuning evidence (real WVS-scale .sav):
 npx tsx scripts/benchmark-sav-v2-v3.ts --iterations=1 --batch=5000
+# Medium-band fixtures (added later): GSS + stitched BSA ingestion numbers:
+npx tsx scripts/benchmark-sav-ingestion.ts --output=validation/benchmark_sav_ingestion_midsize.json
 ```
 
 Next phase: Phase 4, Rendering Scalability.
@@ -471,7 +486,7 @@ Tasks:
 Success criteria:
 
 - WVS-scale browser path has lower peak memory than full materialization. (Held before and after; unchanged by this phase.)
-- Medium pilot files do not trigger avoidable memory spikes. (Addressed structurally by the lowered routing threshold; browser peak-RSS confirmation still pending suitable tooling/data.)
+- Medium pilot files do not trigger avoidable memory spikes. (Addressed structurally by the lowered routing threshold; medium-band Node-side parse+ingest is now measured — see the correction above — but the browser routing/peak-RSS delta is still pending browser tooling.)
 - Progress UI reflects actual parse/insert phases. (Done: parse/vectorize/insert/verify now distinct.)
 
 Risk:
