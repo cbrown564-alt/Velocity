@@ -2,7 +2,7 @@ import * as arrow from 'apache-arrow';
 import type { Variable, VariableSet } from '../../types';
 import { processMetadata } from '../../core/ingestion/savLoader';
 import { escapeString } from '../../core/sql/queryBuilder';
-import { CHUNKED_THRESHOLD_BYTES } from './savArrowHelpers';
+import { shouldUseStreamingIngestion, STREAMING_ROUTE_THRESHOLD_BYTES } from './savArrowHelpers';
 import { loadSAVChunked } from './savChunkedLoader';
 import type { SavLoadProgressReporter } from './loadProgress';
 import { getSchema } from './workerQueries';
@@ -38,9 +38,9 @@ export async function loadSAV(
   const { db, conn } = workerDbState;
   if (!db || !conn) throw new Error('DB not initialized');
 
-  if (forceChunked || buffer.byteLength > CHUNKED_THRESHOLD_BYTES) {
+  if (shouldUseStreamingIngestion(buffer.byteLength, forceChunked)) {
     console.log(
-      `🦆 [Worker] Auto-routing to chunked mode (${(buffer.byteLength / 1024 / 1024).toFixed(1)} MB > ${CHUNKED_THRESHOLD_BYTES / 1024 / 1024} MB threshold)`,
+      `🦆 [Worker] Auto-routing to bounded-memory streaming (${(buffer.byteLength / 1024 / 1024).toFixed(1)} MB > ${STREAMING_ROUTE_THRESHOLD_BYTES / 1024 / 1024} MB threshold)`,
     );
     return loadSAVChunked(buffer, undefined, onProgress);
   }
@@ -91,6 +91,13 @@ export async function loadSAV(
   }
   (parsed as any).rows = [];
 
+  onProgress?.({
+    phase: 'vectorizing',
+    progress: 0.75,
+    totalRows: numRows,
+    message: 'Building columns...',
+  });
+
   const vectors: Record<string, arrow.Vector> = {};
   parsed.metadata.variables.forEach((v, i) => {
     const data = columnsData[i];
@@ -113,6 +120,13 @@ export async function loadSAV(
 
   try {
     await conn.insertArrowTable(table, { name: 'main', create: true });
+
+    onProgress?.({
+      phase: 'verifying',
+      progress: 0.95,
+      totalRows: numRows,
+      message: 'Verifying data integrity...',
+    });
 
     const verifyResult = await conn.query(`SELECT COUNT(*) as cnt FROM main`);
     const count = Number(verifyResult.toArray()[0]?.cnt);

@@ -8,7 +8,6 @@ import {
   buildVectorsFromBatch,
   CHUNK_DOWNSHIFT_FACTOR,
   CHUNK_UPSHIFT_FACTOR,
-  CHUNKED_THRESHOLD_BYTES,
   clampChunkSize,
   DEFAULT_CHUNK_SIZE,
   ENABLE_SAV_STREAMING_LEGACY,
@@ -18,6 +17,7 @@ import {
   MIN_CHUNK_SIZE,
   type SavColumnMetadata,
   SLOW_BATCH_MS,
+  STREAMING_ROUTE_THRESHOLD_BYTES,
   V3_INITIAL_CREDITS,
   V3_MAX_CREDITS,
 } from './savArrowHelpers';
@@ -63,9 +63,9 @@ export async function loadSAVChunked(
   chunkSize: number = DEFAULT_CHUNK_SIZE,
   onProgress?: SavLoadProgressReporter,
 ): Promise<SavLoadResult> {
-  const isLargeFile = buffer.byteLength >= CHUNKED_THRESHOLD_BYTES;
+  const shouldStream = buffer.byteLength >= STREAMING_ROUTE_THRESHOLD_BYTES;
 
-  if (isLargeFile && ENABLE_SAV_STREAMING_V3_SINGLE_PASS) {
+  if (shouldStream && ENABLE_SAV_STREAMING_V3_SINGLE_PASS) {
     try {
       return await loadSAVChunkedStreaming(buffer, chunkSize, 'v3-single-pass', onProgress);
     } catch (error: unknown) {
@@ -75,7 +75,7 @@ export async function loadSAVChunked(
     }
   }
 
-  if (isLargeFile) {
+  if (shouldStream) {
     try {
       return await loadSAVChunkedStreaming(buffer, chunkSize, 'v2', onProgress);
     } catch (error: unknown) {
@@ -214,6 +214,14 @@ async function loadSAVChunkedStreaming(
       rowCount: streamingResult.metadata.rowCount,
     },
     rows: [],
+  });
+
+  onProgress?.({
+    phase: 'verifying',
+    progress: 0.99,
+    rowsProcessed: rowsInserted,
+    totalRows: streamingResult.metadata.rowCount,
+    message: 'Verifying data integrity...',
   });
 
   const verifyResult = await conn.query(`SELECT COUNT(*) as cnt FROM main`);

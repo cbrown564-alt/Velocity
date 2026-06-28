@@ -48,7 +48,7 @@ export interface PersistedDataInfo {
 }
 
 export interface LoadProgressState {
-  phase: 'parsing' | 'inserting' | 'complete';
+  phase: 'parsing' | 'vectorizing' | 'inserting' | 'verifying' | 'complete';
   progress: number;
   message: string;
   rowsProcessed?: number;

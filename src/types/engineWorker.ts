@@ -180,7 +180,7 @@ export type EngineWorkerResponse = EngineResponseBase &
       }
     | {
         type: 'engine.loadProgress';
-        phase: 'parsing' | 'inserting' | 'complete';
+        phase: 'parsing' | 'vectorizing' | 'inserting' | 'verifying' | 'complete';
         progress: number;
         rowsProcessed?: number;
         totalRows?: number;

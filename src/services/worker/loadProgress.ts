@@ -1,7 +1,7 @@
 import type { EngineResponseByType } from '../../types/engineWorker';
 
 export type SavLoadProgressUpdate = {
-  phase: 'parsing' | 'inserting' | 'complete';
+  phase: 'parsing' | 'vectorizing' | 'inserting' | 'verifying' | 'complete';
   progress: number;
   rowsProcessed?: number;
   totalRows?: number;

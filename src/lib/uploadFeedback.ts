@@ -28,8 +28,12 @@ export function getLoadStageHeadline(progress: LoadProgressState | null): string
   switch (progress.phase) {
     case 'parsing':
       return 'Parsing variables…';
+    case 'vectorizing':
+      return 'Building columns…';
     case 'inserting':
       return 'Building index…';
+    case 'verifying':
+      return 'Verifying data…';
     case 'complete':
       return 'Ready';
     default:

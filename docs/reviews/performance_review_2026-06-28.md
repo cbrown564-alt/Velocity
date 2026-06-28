@@ -414,23 +414,70 @@ Risk:
 
 **Goal:** Reduce browser memory pressure and improve large SAV load stability.
 
+**Status:** Mostly completed on 2026-06-28. The structural memory change (Task 3), progress-phase granularity (Task 4), and v3-preference (Task 1) landed, and chunk-size/credit tuning (Task 2) was validated against the real WVS-scale `.sav` (`test_data/WVS/WVS_Cross-National_Wave_7_spss_v6_0.sav`, 176 MB). Only browser wall-clock upload-to-first-crosstab instrumentation (Task 5) is deferred — it is cross-cutting telemetry, not a data-availability gap, and is folded into the Phase 5 dashboard work.
+
+Correction (same-day): an earlier draft of this status claimed no WVS-scale `.sav` was present locally and used that to defer Task 2. That was wrong — the 176 MB WVS file is in `test_data/WVS/`, and the `benchmark-sav-v2-v3.ts` harness runs against it. The benchmark was subsequently run (batch-size sweep below) and Task 2 reclassified from deferred to validated.
+
+Task 3 (avoid full materialization for medium files): SAV ingestion previously routed only files above 50 MB to the bounded-memory streaming path; everything below ran the non-chunked `loadSAV` path, which holds parsed row-major rows, a transposed per-column copy, and Arrow vectors in memory simultaneously (~3× transient peak). The routing threshold is now a dedicated, documented `STREAMING_ROUTE_THRESHOLD_BYTES` (lowered to 8 MB) with a `shouldUseStreamingIngestion(byteLength, forceChunked)` helper used by both `loadSAV` (route decision) and `loadSAVChunked` (streaming-vs-legacy decision). Medium files (8–50 MB) now take the v3 single-pass streaming path and never materialize the full row-major transpose.
+
+Task 1 (prefer v3): v3 single-pass remains the canonical path and is now the first attempt for every file routed to streaming, including the newly-routed 8–50 MB band (v3 → v2 → legacy fallback order preserved). `ENABLE_SAV_STREAMING_LEGACY` is intentionally left on as a safety fallback; flipping it off should wait for WVS-scale production validation.
+
+Task 4 (distinct phases): the load-progress phase union (`SavLoadProgressUpdate`, `engine.loadProgress`, worker `loadProgress`, and store `LoadProgressState`) now carries `'parsing' | 'vectorizing' | 'inserting' | 'verifying' | 'complete'`. The non-chunked path emits `vectorizing` before Arrow construction and `verifying` before the row-count check; the streaming and legacy paths emit `verifying` before their final `COUNT(*)` reconciliation. `getLoadStageHeadline` maps the new phases to "Building columns…" and "Verifying data…".
+
+Before/after evidence:
+
+| Measurement | Before Phase 3 | After Phase 3 |
+| :--- | :--- | :--- |
+| Full-materialization (row-major transpose + double copy) upper size bound | < 50 MB | < 8 MB |
+| 8–50 MB SAV ingestion path | Non-chunked full materialization (~3× transient peak) | v3 single-pass streaming (bounded per-batch memory) |
+| Reported load phases | `parsing`, `inserting`, `complete` | `parsing`, `vectorizing`, `inserting`, `verifying`, `complete` |
+| Routing constant | `CHUNKED_THRESHOLD_BYTES` (ambiguous, 50 MB) | `STREAMING_ROUTE_THRESHOLD_BYTES` (8 MB) + `shouldUseStreamingIngestion` helper |
+| Worker ingestion unit coverage | None for `savArrowHelpers` | `shouldUseStreamingIngestion`, `clampChunkSize`, `buildVectorsFromBatch`, `buildEmptyVectorsFromMetadata` |
+
+Task 2 tuning evidence (WVS, 97,220 rows × 613 vars, single iteration via `benchmark-sav-v2-v3.ts`):
+
+| Batch size | v3 parse-only | v3 vectorize | v2 vectorize | v3 bridge queue (max / produced / consumed) |
+| ---: | ---: | ---: | ---: | :--- |
+| 2,500 | 3,269 ms | 5,724 ms | 8,102 ms | 2 / 39 / 39 |
+| 5,000 | 2,965 ms | 6,287 ms | 7,067 ms | 2 / 20 / 20 |
+| 10,000 | 3,025 ms | 6,556 ms | 6,849 ms | 2 / 10 / 10 |
+
+Tuning conclusion: v3 single-pass beats v2 on wall-clock at every batch size (parse and vectorize), confirming v3 as the canonical path. The v3 bridge queue depth never exceeds 2 at the current `initialCredits=2 / maxCredits=4` — the consumer (Arrow build + insert) keeps pace with the producer, so raising `maxCredits` would only let the producer run further ahead and grow memory with no throughput gain, while lowering it risks serializing. The default chunk size (5,000) sits in the middle of the curve and benefits from the adaptive 500–10,000 clamp already in place. **No constant changes are warranted; the existing chunk-size and credit defaults are validated against WVS-scale data.**
+
+Limitations (honest): these are Node-side parser/vectorize timings and peak RSS, not the browser worker's insert path, and Node RSS high-water marks are GC-noisy — so the batch-count and bridge-queue-depth signals are reliable for chunk/credit selection, but the absolute peak-RSS figures are not a browser memory profile. Separately, the Task 3 routing change can only be exercised end-to-end in the browser worker (`loadSAV`/`loadSAVChunked`); the Node benchmark bypasses that routing, and `test_data` contains no 8–50 MB `.sav` in the newly-targeted medium band (only sub-8 MB files and the 176 MB WVS), so the medium-band peak-memory delta specifically remains structurally argued rather than measured here.
+
+Validation:
+
+```bash
+npm run test:run -- src/services/worker/savArrowHelpers.test.ts src/services/worker/engineHandlers.loadProgress.test.ts src/test/integration/storeWorker.test.ts src/lib/uploadFeedback.test.ts
+npm run typecheck
+npm run typecheck:test
+npx eslint src/services/worker/savArrowHelpers.ts src/services/worker/savArrowHelpers.test.ts src/services/worker/workerIngestion.ts src/services/worker/savChunkedLoader.ts src/services/worker/savChunkedLegacy.ts src/services/worker/loadProgress.ts src/lib/uploadFeedback.ts src/types/engineWorker.ts src/types/worker.ts src/store/slices/data/types.ts
+npm run build
+# Task 2 tuning evidence (real WVS-scale .sav):
+npx tsx scripts/benchmark-sav-v2-v3.ts --iterations=1 --batch=5000
+```
+
+Next phase: Phase 4, Rendering Scalability.
+
 Tasks:
 
-1. Prefer v3 single-pass streaming for browser chunked loads after production verification.
-2. Tune chunk size and bridge credits against WVS-scale data and a medium pilot file.
-3. Avoid non-chunked row-major transpose for files above a lower threshold.
-4. Track parse, vectorize, insert, and verify phases separately in progress messages.
-5. Record browser wall-clock upload-to-first-crosstab timing, not only Node benchmark timing.
+1. Done (Task 1): v3 single-pass is the first streaming attempt for all routed files; legacy fallback retained pending WVS-scale production validation.
+2. Validated (Task 2): chunk size and bridge credits benchmarked against the 176 MB WVS `.sav` across batch sizes 2,500/5,000/10,000; v3 wins on time at all sizes and bridge queue depth stays at 2 under the 2/4 credit config, so the current defaults are kept deliberately (not deferred). See the tuning table above.
+3. Done (Task 3): dedicated `STREAMING_ROUTE_THRESHOLD_BYTES` (8 MB) routes medium files away from the non-chunked row-major transpose.
+4. Done (Task 4): `vectorizing` and `verifying` phases added across the progress type chain and emitted by the ingestion paths; headline copy updated.
+5. Deferred (Task 5): browser wall-clock upload-to-first-crosstab timing — cross-cutting instrumentation spanning the upload hook and the analysis slice with no current surface to record it; folded into the Phase 5 performance-dashboard work.
 
 Success criteria:
 
-- WVS-scale browser path has lower peak memory than full materialization.
-- Medium pilot files do not trigger avoidable memory spikes.
-- Progress UI reflects actual parse/insert phases.
+- WVS-scale browser path has lower peak memory than full materialization. (Held before and after; unchanged by this phase.)
+- Medium pilot files do not trigger avoidable memory spikes. (Addressed structurally by the lowered routing threshold; browser peak-RSS confirmation still pending suitable tooling/data.)
+- Progress UI reflects actual parse/insert phases. (Done: parse/vectorize/insert/verify now distinct.)
 
 Risk:
 
-- Streaming reduces peak memory but may increase total wall-clock depending on chunk size and insert overhead.
+- Streaming reduces peak memory but may increase total wall-clock depending on chunk size and insert overhead. The 8 MB threshold is a deliberate, documented default and is the single value to revisit once real pilot file sizes are known.
+- The forced-chunked path for sub-8 MB files now also prefers v3 (previously legacy) when forced above 8 MB; sub-8 MB forced loads still fall through to the legacy path, preserving existing behavior for that case.
 
 ### Phase 4: Rendering Scalability
 

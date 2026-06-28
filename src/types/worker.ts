@@ -244,7 +244,7 @@ export type WorkerResponse = WorkerResponseBase &
       }
     | {
         type: 'loadProgress';
-        phase: 'parsing' | 'inserting' | 'complete';
+        phase: 'parsing' | 'vectorizing' | 'inserting' | 'verifying' | 'complete';
         progress: number;
         rowsProcessed?: number;
         totalRows?: number;

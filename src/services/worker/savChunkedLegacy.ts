@@ -134,6 +134,14 @@ export async function loadSAVChunkedLegacy(
     rows: [],
   });
 
+  onProgress?.({
+    phase: 'verifying',
+    progress: 0.99,
+    rowsProcessed: totalRowsInserted,
+    totalRows: streamingResult.metadata.rowCount,
+    message: 'Verifying data integrity...',
+  });
+
   const verifyResult = await conn.query(`SELECT COUNT(*) as cnt FROM main`);
   const count = Number(verifyResult.toArray()[0]?.cnt);
 
