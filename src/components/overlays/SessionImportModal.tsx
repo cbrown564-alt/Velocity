@@ -6,13 +6,7 @@ import type { DatasetMatchResult, VelocitySessionFile } from '../../core/session
 import { parseSessionFile, validateDatasetMatch } from '../../core/session';
 import { decodeSessionFile } from '../../services/sessionFileCodec';
 import { ModalShell } from './ModalShell';
-
-export interface SessionImportPayload {
-  sessionFile: VelocitySessionFile;
-  savFileName: string;
-  savBuffer: ArrayBuffer;
-  matchResult: DatasetMatchResult;
-}
+import type { SessionImportPayload } from './sessionModalTypes';
 
 interface SessionImportModalProps {
   isOpen: boolean;

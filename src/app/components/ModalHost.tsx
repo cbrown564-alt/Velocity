@@ -4,7 +4,7 @@ import { RecodeModal } from '../../components/overlays/RecodeModal';
 import { FilterModal } from '../../components/overlays/FilterModal';
 import { SessionImportModal } from '../../components/overlays/SessionImportModal';
 import { SessionExportModal } from '../../components/overlays/SessionExportModal';
-import type { SessionExportSummary } from '../../components/overlays/SessionExportModal';
+import type { SessionExportSummary, SessionImportPayload } from '../../components/overlays/sessionModalTypes';
 import { InputModal } from '../../components/overlays/InputModal';
 import { ModalShell } from '../../components/overlays/ModalShell';
 import {
@@ -18,7 +18,6 @@ import {
 } from '../../features/workspace';
 import { HarmonizationWorkspace } from '../../features/harmonization';
 import type { Filter, Variable } from '../../store';
-import type { SessionImportPayload } from '../../components/overlays/SessionImportModal';
 import type { DrillDownState } from '../../store/slices/drillDownSlice';
 import type { AnalysisExportModalState } from '../../store/slices/uiSlice';
 import type { AppOverlay } from '../types';

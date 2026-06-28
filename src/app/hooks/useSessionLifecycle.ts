@@ -14,8 +14,7 @@ import {
   type ImportedSessionSemanticState,
 } from '../../services/sessionSemanticState';
 import { useVelocityStore } from '../../store';
-import type { SessionImportPayload } from '../../components/overlays/SessionImportModal';
-import type { SessionExportSummary } from '../../components/overlays/SessionExportModal';
+import type { SessionImportPayload, SessionExportSummary } from '../../components/overlays/sessionModalTypes';
 import type { PersistenceManagerState } from '../../hooks/usePersistenceManager';
 import type { FileUploadState } from '../../features/workspace/hooks/useFileUpload';
 import type { AppPhase } from '../types';

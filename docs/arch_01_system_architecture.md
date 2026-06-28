@@ -152,10 +152,6 @@ PRs. New code must not add to them.
 - `src/store/slices/workspaceSlice.ts` and `src/store/slices/uiSlice.ts` import
   from `src/features/workspace` (store → feature). → resolve by moving the
   shared types/helpers into the kernel.
-- `src/app/hooks/useSessionLifecycle.ts` imports payload types from
-  `src/components/overlays/SessionImportModal` / `SessionExportModal` (app →
-  component module for a type). → resolve by relocating those payload types to a
-  neutral types module (UI Topology PR).
 - `src/types/worker.ts` and `src/types/engineWorker.ts` import
   `CrosstabQueryOptions` from `src/core/sql/queryBuilder` (kernel → platform
   back-edge). Type-only and entirely within the headless side, so low-risk, but

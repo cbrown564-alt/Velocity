@@ -2,16 +2,7 @@ import React from 'react';
 import { useReducedMotion, getMotionProps } from '../../lib/motion';
 import { Download, FileText, LayoutGrid, Wand2, Filter, Layers, ShieldCheck, X } from 'lucide-react';
 import { ModalShell } from './ModalShell';
-
-export interface SessionExportSummary {
-  datasetName: string;
-  rowCount: number;
-  columnCount: number;
-  recodeCount: number;
-  slideCount: number;
-  filterCount: number;
-  sectionCount: number;
-}
+import type { SessionExportSummary } from './sessionModalTypes';
 
 interface SessionExportModalProps {
   isOpen: boolean;
