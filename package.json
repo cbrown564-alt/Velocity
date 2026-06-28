@@ -32,6 +32,7 @@
     "eval:06": "node scripts/eval/run-eval-06.mjs",
     "benchmark:sav": "npx tsx scripts/benchmark-sav-ingestion.ts",
     "benchmark:sav:v2v3": "npx tsx scripts/benchmark-sav-v2-v3.ts",
+    "benchmark:crosstab": "npx tsx scripts/benchmark-crosstab-render.ts",
     "test": "vitest",
     "test:run": "vitest run",
     "test:coverage": "vitest run --coverage",

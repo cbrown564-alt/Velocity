@@ -498,23 +498,68 @@ Risk:
 
 **Goal:** Keep large results responsive after query completion.
 
+**Status:** Conservative subset completed on 2026-06-28 — the part this phase's own Risk note prescribes as the starting point ("Start with thresholded reduced motion and tree indexing before full table virtualization"). The motion threshold (Task 1) and the render-shape benchmark (Task 5) landed, and the `treeBuilder` `colKey` indexing (Task 4) was confirmed already in place from Phase 2. Full row/column virtualization (Tasks 2 and 3) is deliberately staged as the next focused step, not started here — see the deferral note below.
+
+Task 1 (motion thresholds): per-cell entry animations in the crosstab (the `AnimatedNumber`, the fade-in metadata wrapper, the significance spring-lock, and the Mission Control phosphor ghost) each mount their own Framer Motion instance. On large result matrices the count of simultaneously-animating cells — not DuckDB — is what makes the table jank after a query completes. A new `crosstabMotionPolicy` helper (`MAX_ANIMATED_CROSSTAB_CELLS = 500`, `countTreeNodes`, `shouldAnimateCrosstab`) drives a single gate in `DataTable`: when total rendered cells (row nodes × body columns) exceed the threshold, `animationKey` is left `undefined`, which every animated path in `CrosstabCell` already treats as "render static." Ordinary survey crosstabs (a 5-point Likert × 6-column banner = 30 cells; a 20-row categorical × 10-column banner = 200 cells) keep their entry animation; wide banners and long multi-level tables drop it. This leaves the existing `prefers-reduced-motion` path unchanged and adds the size threshold as an independent gate.
+
+Task 4 (treeBuilder indexing): already implemented in Phase 2. `buildTree` indexes each group's rows into a `Map<string, AggregatedRow[]>` keyed by `colKey` once per node (`rowsByColumn`), replacing the old per-column `groupData.filter(d => d.colKey === cKey)` scan. The render benchmark below confirms the processing path is now cheap (sub-2 ms even at 6,840 cells), so the remaining rendering cost is DOM/motion, not tree building.
+
+Task 5 (render-shape benchmark): `scripts/benchmark-crosstab-render.ts` (`npm run benchmark:crosstab`) measures `processAnalysisData`/`buildTree` on the two shapes that stress the table — wide banners and deep multi-level rows — and reports row-node count, rendered-cell count, and whether each result crosses the Task 1 animation threshold. Honest scope: this is a Node-side measurement of the processing path, not a headless-browser DOM render/commit profile, and Node RSS is GC-noisy (timing is the reliable signal). Browser wall-clock render timing is folded into the Phase 5 performance dashboard, consistent with Phase 3 Task 5. Fresh output is in `validation/benchmark_crosstab_render_latest.json`.
+
+Render benchmark evidence (30 iterations, `processAnalysisData`):
+
+| Scenario | Shape | Row nodes | Rendered cells | Animations | Mean | Min / Max |
+| :--- | :--- | ---: | ---: | :--- | ---: | ---: |
+| `wide-banner-typical` | 12 × 30 banner | 12 | 360 | on | 0.15 ms | 0.10 / 0.41 ms |
+| `wide-banner-large` | 24 × 60 banner | 24 | 1,440 | off | 0.41 ms | 0.34 / 0.76 ms |
+| `multi-level-typical` | 8 × 6 × 5 nested × 6 | 296 | 1,776 | off | 0.47 ms | 0.40 / 0.89 ms |
+| `multi-level-deep` | 10 × 8 × 6 nested × 12 | 570 | 6,840 | off | 1.43 ms | 1.20 / 2.00 ms |
+
+Primary inference: the tree-building/processing path is not the rendering bottleneck (≤ ~1.4 ms mean even at 6,840 cells), which is why this phase targets the per-cell motion instances rather than the compute. The `Animations` column shows the Task 1 threshold in action: only the typical wide banner (360 cells) stays animated; every larger shape renders static.
+
+Before/after evidence:
+
+| Measurement | Before Phase 4 | After Phase 4 |
+| :--- | :--- | :--- |
+| Per-cell entry animation on large tables | Always on (one Framer Motion instance per cell) | Suppressed above 500 rendered cells; cells render static |
+| Animation gate | `prefers-reduced-motion` only | `prefers-reduced-motion` **or** result-size threshold |
+| Render-shape regression coverage | None | `benchmark:crosstab` (wide-banner + multi-level) + `crosstabMotionPolicy` unit tests + DataTable threshold test |
+| `treeBuilder` cell construction | (already indexed in Phase 2) | Confirmed; benchmarked sub-2 ms at 6,840 cells |
+| Production build main JS gzip | 154.39 KB after Phase 2 | 154.93 KB after Phase 4 |
+
+Validation:
+
+```bash
+npm run test:run -- src/features/dashboard/components/crosstabMotionPolicy.test.ts src/features/dashboard/components/DataTable.test.tsx src/features/dashboard/components/CrosstabCell.test.tsx src/core/analysis/analysisProcessor.test.ts src/hooks/useProcessedAnalysisData.test.tsx
+npm run typecheck
+npm run typecheck:test
+npx eslint src/features/dashboard/components/crosstabMotionPolicy.ts src/features/dashboard/components/crosstabMotionPolicy.test.ts src/features/dashboard/components/DataTable.tsx src/features/dashboard/components/DataTable.test.tsx scripts/benchmark-crosstab-render.ts
+npm run build
+npm run benchmark:crosstab
+```
+
+Deferral note (Tasks 2 and 3 — full row/column virtualization): not started in this phase, by design. The crosstab uses semantic `<table>`/`<thead sticky>`/recursive `<CrosstabRow>` `<tr>` fragments, with drag-to-merge keyed off `data-merge-*` DOM attributes and live element positions, expandable multi-level rows, per-cell tooltips, and export parity. Windowing that structure safely (without breaking sticky headers, drag positioning, row expansion, column widths, or export) is a large, regression-prone refactor — exactly why this phase's Risk note and the Recommended Execution Order both place it last. Task 1 already removes the dominant per-cell cost (motion instances) for large tables; virtualization should be its own focused PR once a real pilot-scale result surface exists to test against.
+
+Next phase: Phase 5, Ongoing Performance Guardrails.
+
 Tasks:
 
-1. Add result-size thresholds for reduced motion and non-animated cells.
-2. Virtualize crosstab rows for large row counts.
-3. Consider horizontal column virtualization for very wide banners.
-4. Optimize `treeBuilder` by indexing group rows by `colKey` once per node.
-5. Add browser benchmarks for a wide-banner table and a multi-level row table.
+1. Done (Task 1): result-size threshold suppresses per-cell entry animations above `MAX_ANIMATED_CROSSTAB_CELLS` (500 rendered cells); independent of the existing reduced-motion path.
+2. Deferred (Task 2): virtualize crosstab rows for large row counts — staged as a dedicated follow-up (see deferral note).
+3. Deferred (Task 3): horizontal column virtualization for very wide banners — staged with Task 2.
+4. Done (Task 4): `treeBuilder` already indexes group rows by `colKey` once per node (`rowsByColumn`, landed Phase 2); confirmed and benchmarked here.
+5. Done (Task 5): `benchmark:crosstab` measures the wide-banner and multi-level row shapes; results in `validation/benchmark_crosstab_render_latest.json`.
 
 Success criteria:
 
-- Large result table interaction stays responsive.
-- Render time and layout shifts are measured before/after.
-- Drag-to-merge and sticky headers remain usable.
+- Large result table interaction stays responsive. (Addressed for the dominant cost: per-cell motion is suppressed above the threshold. Full DOM-node reduction via virtualization is staged.)
+- Render time and layout shifts are measured before/after. (Processing path measured via `benchmark:crosstab`; in-browser render/CLS timing folded into Phase 5.)
+- Drag-to-merge and sticky headers remain usable. (Unchanged — no structural table change was made; preserving these is the explicit constraint on the deferred virtualization work.)
 
 Risk:
 
-- Virtualized tables complicate accessibility, sticky headers, row expansion, and drag interactions. Start with thresholded reduced motion and tree indexing before full table virtualization.
+- Virtualized tables complicate accessibility, sticky headers, row expansion, and drag interactions. Start with thresholded reduced motion and tree indexing before full table virtualization. (Followed: thresholding and tree indexing shipped first; virtualization deferred.)
+- The 500-cell threshold is a deliberate default. It is the single value to revisit if pilot users report either lost animation on tables they consider "presentation-sized" or jank on tables below it.
 
 ### Phase 5: Ongoing Performance Guardrails
 
@@ -562,5 +607,6 @@ The measurement commands refreshed:
 
 - `validation/benchmark_sav_ingestion_latest.json`
 - `validation/benchmark_sav_v2_v3_latest.json`
+- `validation/benchmark_crosstab_render_latest.json` (Phase 4; `npm run benchmark:crosstab`)
 
 Keep these if today's measurements should become the current local benchmark baseline; otherwise regenerate or discard intentionally in the performance PR.

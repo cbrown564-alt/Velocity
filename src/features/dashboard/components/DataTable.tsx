@@ -15,6 +15,7 @@ import { toUiCaps } from '../../../core/text/displayCase';
 import { CrosstabRow } from './CrosstabRow';
 import { CrosstabCell } from './CrosstabCell';
 import { computeCrosstabColumnWidths } from './crosstabColumnWidths';
+import { countTreeNodes, shouldAnimateCrosstab } from './crosstabMotionPolicy';
 import { AnalysisOutputFrame } from './AnalysisOutputFrame';
 export type { RowPathEntry, TableRowNode } from '../../../core/analysis/treeBuilder';
 
@@ -176,8 +177,13 @@ export const DataTable: React.FC<DataTableProps> = ({
 
   // Stable key that changes whenever the underlying query result changes,
   // triggering cell entry animations (Settling Scale) in CrosstabCell.
+  // Left undefined for large result matrices so every cell renders static
+  // (no per-cell Framer Motion instance) and the table stays responsive
+  // (Phase 4: Rendering Scalability).
   const animationKey = useMemo(() => {
     if (!tableData?.rows.length) return undefined;
+    const nodeCount = countTreeNodes(tableData.rows);
+    if (!shouldAnimateCrosstab(nodeCount, tableData.colKeys.length)) return undefined;
     const first = tableData.rows[0]?.key ?? '';
     const last = tableData.rows[tableData.rows.length - 1]?.key ?? '';
     return `${first}-${last}-${tableData.rows.length}-${tableData.colKeys.length}-${tableData.grandTotal}`;

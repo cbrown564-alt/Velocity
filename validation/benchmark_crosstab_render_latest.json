@@ -1,0 +1,63 @@
+{
+  "generatedAt": "2026-06-28T21:54:42.713Z",
+  "note": "Node-side processAnalysisData/buildTree timing. Not a browser DOM render profile; RSS is GC-noisy and informational only.",
+  "iterations": 30,
+  "scenarios": [
+    {
+      "key": "wide-banner-typical",
+      "description": "12 rows x 30 banner columns",
+      "inputRows": 360,
+      "rowNodeCount": 12,
+      "columnCount": 30,
+      "renderedCellCount": 360,
+      "animationsEnabled": true,
+      "iterations": 30,
+      "meanMs": 0.14816519999999875,
+      "minMs": 0.10283400000000142,
+      "maxMs": 0.40837499999997817,
+      "peakRssBytes": 97861632
+    },
+    {
+      "key": "wide-banner-large",
+      "description": "24 rows x 60 banner columns",
+      "inputRows": 1440,
+      "rowNodeCount": 24,
+      "columnCount": 60,
+      "renderedCellCount": 1440,
+      "animationsEnabled": false,
+      "iterations": 30,
+      "meanMs": 0.4091182333333345,
+      "minMs": 0.33899999999999864,
+      "maxMs": 0.7581250000000068,
+      "peakRssBytes": 102957056
+    },
+    {
+      "key": "multi-level-typical",
+      "description": "8 x 6 x 5 nested rows x 6 column(s)",
+      "inputRows": 1440,
+      "rowNodeCount": 296,
+      "columnCount": 6,
+      "renderedCellCount": 1776,
+      "animationsEnabled": false,
+      "iterations": 30,
+      "meanMs": 0.4699180333333326,
+      "minMs": 0.4042919999999981,
+      "maxMs": 0.893749999999983,
+      "peakRssBytes": 108150784
+    },
+    {
+      "key": "multi-level-deep",
+      "description": "10 x 8 x 6 nested rows x 12 column(s)",
+      "inputRows": 5760,
+      "rowNodeCount": 570,
+      "columnCount": 12,
+      "renderedCellCount": 6840,
+      "animationsEnabled": false,
+      "iterations": 30,
+      "meanMs": 1.429290233333335,
+      "minMs": 1.2013330000000053,
+      "maxMs": 2.0049580000000162,
+      "peakRssBytes": 112640000
+    }
+  ]
+}

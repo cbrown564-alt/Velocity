@@ -202,6 +202,45 @@ describe('DataTable Insight Halo', () => {
     expect(cells[1].className).not.toContain('bg-[var(--halo-mid)]');
   });
 
+  it('animates cells for small result matrices but suppresses motion for large ones', () => {
+    const analysisSettings = {
+      comparisonMethod: 'cell_vs_rest' as const,
+      correctionType: 'none' as const,
+      showConfidenceIntervals: false,
+      significanceLevel: 0.95 as const,
+      engine: 'auto' as const,
+      enableDesignEffects: false,
+    };
+
+    // Dense matrix builder so every (row, col) cell is populated.
+    const dense = (rows: number, cols: number) =>
+      makeProcessedData(
+        Array.from({ length: rows }).flatMap((_, r) =>
+          Array.from({ length: cols }).map((__, c) => ({
+            col: `c${c}`,
+            row: `r${r}`,
+            percent: 50,
+          })),
+        ),
+      );
+
+    // Small table (4 cells): entry animations active.
+    mockUseProcessedAnalysisData.mockReturnValue(dense(2, 2));
+    useVelocityStore.setState({ analysisSettings, transformLog: [] });
+    const small = render(
+      <DataTable data={[]} rowVariables={dense(2, 2).rowVariables} colVariable={null} totalCount={100} />,
+    );
+    expect(small.container.querySelector('[data-animated="true"]')).toBeTruthy();
+    small.unmount();
+
+    // Large table (30 x 20 = 600 cells > MAX_ANIMATED_CROSSTAB_CELLS): no motion instances.
+    mockUseProcessedAnalysisData.mockReturnValue(dense(30, 20));
+    const large = render(
+      <DataTable data={[]} rowVariables={dense(30, 20).rowVariables} colVariable={null} totalCount={100} />,
+    );
+    expect(large.container.querySelector('[data-animated="true"]')).toBeNull();
+  });
+
   it('uses fixed table layout with proportional column widths (UXP-002)', () => {
     const processed = makeProcessedData([
       { col: 'east', row: 'r1', percent: 50 },
