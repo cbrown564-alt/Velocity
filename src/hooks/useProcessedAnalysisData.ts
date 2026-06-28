@@ -4,9 +4,6 @@ import { AggregatedRow, Variable } from '../types';
 import { ProcessedAnalysisData } from '../types/processedData';
 import { ChartType } from '../types/charts';
 
-// Re-export types for backward compatibility (if any consumers were missed)
-export type { ProcessedAnalysisData, ChartDataPoint, ChartSeries } from '../types/processedData';
-
 interface UseProcessedAnalysisDataOptions {
   data: AggregatedRow[];
   rowVariables: Variable[];
