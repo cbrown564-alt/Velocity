@@ -1,9 +1,10 @@
 /**
  * Velocity Type Definitions
  *
- * Core data model types from arch_02_data_model.md.
- * These are re-exported from store.ts for consistency.
- * Legacy types are provided for backward compatibility with existing components.
+ * Shared kernel of type contracts (see arch_01 §5). Canonical data-model types
+ * (arch_02_data_model.md) are re-exported from the focused modules below
+ * (`./variableType`, `./recode`, `./dataset`, `./analysis`, `./workspaceSession`);
+ * cross-cutting analysis/UI result shapes are declared inline.
  */
 
 // ============================================================================
@@ -155,14 +156,8 @@ export interface Collaborator {
 // Legacy Compatibility Types
 // ============================================================================
 
-// Old Respondent type - kept for mock data compatibility
+// Legacy flat-row shape used by the mock-data generator in constants.ts.
 export interface Respondent {
   id: string;
   [key: string]: string | number;
-}
-
-// Old DataSet type - kept for mock data compatibility
-export interface DataSet {
-  variables: import('./dataset').Variable[];
-  data: Respondent[];
 }
