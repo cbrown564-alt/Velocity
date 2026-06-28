@@ -1,0 +1,61 @@
+{
+  "generatedAt": "2026-06-28T23:57:22.125Z",
+  "note": "Production-browser (vite preview of dist) wall-clock dashboard. Timings are single-sample and machine-sensitive; only the byte metrics are deterministic and budgeted. Regenerable working artifact, not frozen pilot evidence.",
+  "appOrigin": "http://127.0.0.1:4182",
+  "metrics": {
+    "workerReadyMs": 830,
+    "uploadToReadyMs": 450,
+    "firstCrosstabMs": 286,
+    "exportModalOpenMs": 851,
+    "initialLoadedBytes": {
+      "startupAssetTransferBytes": 422830,
+      "startupJsTransferBytes": 395958,
+      "startupJsTransferBudgetBytes": 600000,
+      "exportVendorOnStartup": false
+    }
+  },
+  "startupJsAssets": [
+    {
+      "name": "/assets/index-BhS76iHg.js",
+      "transferSize": 156642
+    },
+    {
+      "name": "/assets/analysisWorker-DbO8eZVt.js",
+      "transferSize": 77252
+    },
+    {
+      "name": "/assets/ui-vendor-B0vpdIwE.js",
+      "transferSize": 74394
+    },
+    {
+      "name": "/assets/motion-vendor-BBmVl-by.js",
+      "transferSize": 42332
+    },
+    {
+      "name": "/assets/d3-vendor-BPWbNkwa.js",
+      "transferSize": 27256
+    },
+    {
+      "name": "/assets/dnd-vendor-wECW7STV.js",
+      "transferSize": 17013
+    },
+    {
+      "name": "/assets/runtime-vendor-DdPMya_n.js",
+      "transferSize": 1069
+    }
+  ],
+  "pilotEvents": [
+    {
+      "name": "file_selected",
+      "elapsedMs": 0
+    },
+    {
+      "name": "canvas_ready",
+      "elapsedMs": 77
+    },
+    {
+      "name": "first_crosstab",
+      "elapsedMs": 690
+    }
+  ]
+}

@@ -7,6 +7,10 @@ const baseURL = `http://${host}:${port}`;
 export default defineConfig({
   testDir: 'tests/e2e',
   testMatch: '**/*.spec.ts',
+  // Production-only specs build and serve `dist`; they have dedicated configs
+  // (`playwright.production.config.ts`, `playwright.performance.config.ts`) and
+  // must not run against this dev server, where `/assets/*` bundles don't exist.
+  testIgnore: ['**/production-smoke.spec.ts', '**/performance-dashboard.spec.ts'],
   timeout: 120000,
   retries: process.env.CI ? 1 : 0,
   expect: {

@@ -572,22 +572,63 @@ Risk:
 
 **Goal:** Prevent regressions while pilot work continues.
 
+**Status:** All four tasks completed on 2026-06-29. Phase 5 is the final phase; the implementation plan is complete.
+
+Task 1 (performance dashboard): `npm run benchmark:perf` runs `tests/e2e/performance-dashboard.spec.ts` via the new `playwright.performance.config.ts`, which builds and serves `dist` (production bundle, not the Vite dev server) and drives the whole pilot path in a real browser — cold start → in-memory CSV upload → `gender × region` first crosstab → export modal open. It records the five requested metrics — initial loaded bytes, worker ready, upload-to-ready, first crosstab, and export modal open — plus the on-device pilot telemetry (`velocity-pilot-events`) for cross-reference, and writes `validation/performance_dashboard_latest.json`. This is the convergence point the earlier phases deferred into: Phase 3 Task 5 (browser upload-to-first-crosstab wall-clock) and Phase 4 Task 5 (browser render timing) are both now measured here in a production browser. Honest scope: the timing metrics are single-sample wall-clock readings and machine-sensitive (record-and-trend, not gated); only the byte metrics are deterministic for a given build, and those are what the budget gates.
+
+Task 2 (reproducible vs. frozen evidence): `validation/README.md` now has a "Performance Benchmarks" section listing each script (`benchmark:sav`, `benchmark:sav:v2v3`, `benchmark:crosstab`, `benchmark:perf`), its output JSON, and a policy: `*_latest.json` files are regenerable working artifacts (the current local baseline, safe to overwrite in a perf PR), and any number that becomes a stakeholder-facing pilot claim must be copied to a dated, descriptive frozen filename that reruns never overwrite. It also documents that benchmark timings/RSS are environment-sensitive and only the dashboard byte metrics are deterministic.
+
+Task 3 (PR checklist language): the PR template's "Performance / Threading Notes" section gained a required "Performance Change" subsection prompting for a hypothesis, the measurement method (named benchmark commands), a before/after metric table, and confirmation that the first-load byte budget still passes and `*_latest.json` artifacts were regenerated if the baseline moved.
+
+Task 4 (thresholds): a single shared budget (`tests/e2e/helpers/performanceBudget.ts`, `STARTUP_JS_TRANSFER_BUDGET_BYTES = 600,000`) gates the summed transfer size of same-origin startup `/assets/*.js` fetched before any upload. It is asserted in both the production smoke test (`tests/e2e/production-smoke.spec.ts`, the CI/release gate) and the dashboard. The budget sits ~55% above the current ~387 KB-gzipped baseline so ordinary growth passes, but a category regression such as re-bundling the ~396 KB export-vendor chunk onto cold start trips it; the existing `exportVendorOnStartup`/`export-vendor` checks remain the precise guard for that specific chunk. "Where stable enough" was honored literally — only the deterministic byte metric is gated; the machine-sensitive timing metrics are reported but not asserted as tight gates.
+
+Config note: `production-smoke.spec.ts` and `performance-dashboard.spec.ts` both build and serve `dist`, so the default dev-server `playwright.config.ts` now `testIgnore`s them (they run only via their dedicated production/performance configs). This also fixed a latent issue where the dev default config already matched `production-smoke.spec.ts`.
+
+Before/after evidence:
+
+| Measurement | Before Phase 5 | After Phase 5 |
+| :--- | :--- | :--- |
+| Browser upload-to-first-crosstab / render wall-clock | Deferred (Phase 3 Task 5, Phase 4 Task 5) | Measured in production browser by `npm run benchmark:perf` |
+| Reported production-browser metrics | Worker-ready only (production smoke artifact) | Worker ready, upload→ready, first crosstab, export modal open, startup bytes |
+| First-load byte budget gate | `export-vendor` absence only | `export-vendor` absence **and** summed startup JS ≤ 600 KB budget |
+| Benchmark artifact policy | Implicit (`*_latest.json`, undocumented) | Documented reproducible-vs-frozen policy in `validation/README.md` |
+| PR performance evidence | "Performance / Threading Notes" free-text | Required hypothesis / measurement / before-after table + budget checkbox |
+| Production-only specs under dev config | Matched by default config (would fail new byte assertion) | `testIgnore`d; run only via dedicated production/performance configs |
+
+Dashboard reading (production build, single sample on the review machine — illustrative, not a frozen claim):
+
+| Metric | Value |
+| :--- | ---: |
+| Worker ready | ~830 ms |
+| Upload → ready | ~450 ms |
+| First crosstab | ~286 ms |
+| Export modal open | ~580–850 ms |
+| Startup JS (gzip, transfer) | 386.7 KB (budget 585.9 KB) |
+| Startup assets (gzip, transfer) | 412.9 KB |
+| `export-vendor` on startup | No |
+
+Validation:
+
+```bash
+npm run typecheck
+npm run typecheck:test
+npx eslint tests/e2e/performance-dashboard.spec.ts tests/e2e/helpers/performanceBudget.ts tests/e2e/production-smoke.spec.ts playwright.performance.config.ts playwright.config.ts
+npm run build
+PLAYWRIGHT_PERFORMANCE_PORT=4178 npm run benchmark:perf
+PLAYWRIGHT_PRODUCTION_PORT=4181 npm run test:e2e:production
+```
+
 Tasks:
 
-1. Add a small performance dashboard or script that reports:
-   - initial loaded bytes
-   - worker ready time
-   - upload-to-ready time
-   - first crosstab time
-   - export modal open time
-2. Keep benchmark JSON files reproducible and separate from frozen pilot evidence.
-3. Add PR checklist language: performance hypothesis, measurement, before/after evidence.
-4. Add thresholds for production smoke and first-load payload where stable enough.
+1. Done (Task 1): `npm run benchmark:perf` reports initial loaded bytes, worker ready time, upload-to-ready time, first crosstab time, and export modal open time from a production-browser run, writing `validation/performance_dashboard_latest.json`.
+2. Done (Task 2): `validation/README.md` documents the reproducible `*_latest.json` working artifacts vs. dated frozen pilot evidence, with regenerate commands.
+3. Done (Task 3): PR template requires a performance hypothesis, measurement method, and before/after evidence table.
+4. Done (Task 4): shared `STARTUP_JS_TRANSFER_BUDGET_BYTES` budget gates startup JS bytes in the production smoke test and dashboard; only the deterministic byte metric is gated, per "where stable enough".
 
 Success criteria:
 
-- Performance regressions become visible in normal development.
-- Pilot claims can cite production-browser evidence, not only Node or Vite dev evidence.
+- Performance regressions become visible in normal development. (Addressed: the first-load byte budget runs in the production smoke gate, and `npm run benchmark:perf` gives a one-command production-browser reading of the five pilot metrics.)
+- Pilot claims can cite production-browser evidence, not only Node or Vite dev evidence. (Addressed: the dashboard runs against the served `dist` production bundle and records browser wall-clock metrics; the reproducible-vs-frozen policy keeps cited numbers from being silently overwritten.)
 
 ## Recommended Execution Order
 
@@ -615,5 +656,6 @@ The measurement commands refreshed:
 - `validation/benchmark_sav_ingestion_latest.json`
 - `validation/benchmark_sav_v2_v3_latest.json`
 - `validation/benchmark_crosstab_render_latest.json` (Phase 4; `npm run benchmark:crosstab`)
+- `validation/performance_dashboard_latest.json` (Phase 5; `npm run benchmark:perf`)
 
 Keep these if today's measurements should become the current local benchmark baseline; otherwise regenerate or discard intentionally in the performance PR.

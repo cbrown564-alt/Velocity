@@ -1,3 +1,48 @@
+# Validation
+
+This directory holds two kinds of artifact:
+
+1. **Performance benchmarks** — regenerable JSON readings of build size, SAV
+   ingestion, crosstab processing, and the production-browser dashboard (see
+   below).
+2. **R reference fixtures** — R scripts that generate statistical ground-truth
+   fixtures (see [Validation: R Reference Fixtures](#validation-r-reference-fixtures)).
+
+## Performance Benchmarks
+
+These scripts produce the `*_latest.json` readings that the performance review
+(`docs/reviews/performance_review_2026-06-28.md`) cites.
+
+| Command | Output | What it measures |
+| :--- | :--- | :--- |
+| `npm run benchmark:sav` | `benchmark_sav_ingestion_latest.json` | SAV metadata/parse/ingest time + peak RSS (Node) |
+| `npm run benchmark:sav:v2v3` | `benchmark_sav_v2_v3_latest.json` | v2 vs v3 SAV parser parse/vectorize time (Node) |
+| `npm run benchmark:crosstab` | `benchmark_crosstab_render_latest.json` | `processAnalysisData`/`buildTree` time on stress shapes (Node) |
+| `npm run benchmark:perf` | `performance_dashboard_latest.json` | Production-browser cold start → first crosstab → export modal (Playwright) |
+
+The medium-band SAV fixtures write to `benchmark_sav_ingestion_midsize.json`
+(`npm run benchmark:sav -- --output=validation/benchmark_sav_ingestion_midsize.json`);
+those `.sav` inputs are local-only / gitignored.
+
+### Reproducible working artifacts vs. frozen pilot evidence
+
+The `*_latest.json` files are **reproducible working artifacts**, not frozen
+evidence. Treat them as the *current local baseline*: regenerate them freely,
+and let a performance PR overwrite them intentionally. Two consequences:
+
+- **Timing is environment-sensitive.** The Node benchmarks' RSS high-water marks
+  are GC-noisy, and the `benchmark:perf` dashboard is a single-sample wall-clock
+  reading on whatever machine runs it. Only the dashboard's **byte** metrics
+  (`startupJsTransferBytes`) are deterministic for a given build — those are the
+  ones gated in CI (`tests/e2e/production-smoke.spec.ts`,
+  `tests/e2e/helpers/performanceBudget.ts`). Compare timings only within the same
+  machine/run, never across machines.
+- **Do not cite `*_latest.json` directly to stakeholders.** When a measurement
+  becomes a *pilot claim*, copy it to a dated, descriptive filename
+  (e.g. `validation/frozen/perf_dashboard_2026-06-29_macbook.json`) so a later
+  rerun cannot silently overwrite the evidence behind the claim. Frozen evidence
+  is never regenerated in place.
+
 # Validation: R Reference Fixtures
 
 This directory contains R scripts that generate reference JSON fixtures for

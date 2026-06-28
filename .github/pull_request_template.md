@@ -55,6 +55,21 @@ Results:
 - Any heavy processing introduced or moved?
 - Evidence that main thread remains render/state only:
 
+### Performance Change (required if this PR claims or risks a perf change)
+- [ ] No performance-relevant change (skip the rest of this section).
+- **Hypothesis:** what should get faster/lighter, and why?
+- **Measurement:** how was it measured? (e.g. `npm run benchmark:perf`,
+  `benchmark:sav`, `benchmark:crosstab`, `test:e2e:production`, browser trace)
+- **Before/after evidence:** paste the relevant numbers (initial bytes, worker
+  ready, upload→ready, first crosstab, export modal open, or benchmark deltas).
+
+| Metric | Before | After |
+| :--- | ---: | ---: |
+|  |  |  |
+
+- [ ] First-load byte budget still passes (`npm run test:e2e:production`).
+- [ ] `*_latest.json` benchmark artifacts regenerated if this PR moves the baseline (see `validation/README.md`).
+
 ## Docs-to-Code Sync
 - [ ] No contract/invariant changed, so no docs update needed.
 - [ ] Contract/invariant changed and docs were updated in this PR.

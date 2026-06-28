@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { STARTUP_JS_TRANSFER_BUDGET_BYTES, formatBytes } from './helpers/performanceBudget';
 
 test('production build initializes the analysis worker and DuckDB assets', async ({ page, baseURL }, testInfo) => {
   const consoleMessages: string[] = [];
@@ -38,18 +39,35 @@ test('production build initializes the analysis worker and DuckDB assets', async
   await engineReady;
 
   const bodyText = await page.locator('body').innerText();
+  const allResources = await page.evaluate(() =>
+    performance
+      .getEntriesByType('resource')
+      .filter((entry): entry is PerformanceResourceTiming => entry.entryType === 'resource')
+      .map((entry) => ({
+        name: entry.name,
+        duration: Math.round(entry.duration),
+        transferSize: entry.transferSize,
+      })),
+  );
+
+  // First-load payload budget (Phase 5 Task 4): same-origin startup JS bytes
+  // fetched before any dataset upload. This is the stable byte guard that the
+  // performance dashboard also applies; it catches a category regression such as
+  // re-bundling the export-vendor chunk onto the cold-start path.
+  const startupJsAssets = allResources.filter(
+    (entry) =>
+      new URL(entry.name).origin === appOrigin && entry.name.includes('/assets/') && entry.name.includes('.js'),
+  );
+  const startupJsTransferBytes = startupJsAssets.reduce((sum, entry) => sum + entry.transferSize, 0);
+
   const startupTiming = {
     workerReadyMs: Date.now() - startedAt,
-    resources: await page.evaluate(() =>
-      performance
-        .getEntriesByType('resource')
-        .map((entry) => ({
-          name: entry.name,
-          duration: Math.round(entry.duration),
-          transferSize: 'transferSize' in entry ? (entry as PerformanceResourceTiming).transferSize : null,
-        }))
-        .filter((entry) => entry.name.includes('analysisWorker') || entry.name.includes('duckdb-')),
-    ),
+    startupJsTransferBytes,
+    startupJsTransferBudgetBytes: STARTUP_JS_TRANSFER_BUDGET_BYTES,
+    startupJsAssets: startupJsAssets
+      .map((entry) => ({ name: new URL(entry.name).pathname, transferSize: entry.transferSize }))
+      .sort((a, b) => b.transferSize - a.transferSize),
+    resources: allResources.filter((entry) => entry.name.includes('analysisWorker') || entry.name.includes('duckdb-')),
   };
 
   await testInfo.attach('production-startup-resources.json', {
@@ -77,4 +95,10 @@ test('production build initializes the analysis worker and DuckDB assets', async
   expect(workerAssetResponses.every((response) => response.status === 200)).toBe(true);
   expect(workerAssetResponses.every((response) => new URL(response.url).origin === appOrigin)).toBe(true);
   expect(startupAssetResponses.some((response) => response.url.includes('export-vendor'))).toBe(false);
+
+  expect(startupJsAssets.length, 'startup should fetch main-thread JS assets').toBeGreaterThan(0);
+  expect(
+    startupJsTransferBytes,
+    `startup JS ${formatBytes(startupJsTransferBytes)} exceeds first-load budget ${formatBytes(STARTUP_JS_TRANSFER_BUDGET_BYTES)}`,
+  ).toBeLessThanOrEqual(STARTUP_JS_TRANSFER_BUDGET_BYTES);
 });
