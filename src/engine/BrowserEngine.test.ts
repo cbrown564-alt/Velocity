@@ -1,7 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
-import { BrowserEngine } from './BrowserEngine';
+import { BrowserEngine, createBrowserEngine } from './BrowserEngine';
 import type { EngineProxy } from '../services/EngineProxy';
 import type { Dataset, Filter, VariableSet } from '../types';
+import type { EngineRecodeConfig } from './types';
 
 const mockEnvelope = {
   operation: 'runCrosstab',
@@ -212,5 +213,175 @@ describe('BrowserEngine', () => {
       variableSetCount: 2,
       source: 'csv',
     });
+  });
+});
+
+// ============================================================================
+// Pure transport delegation — characterizes the facade's pass-through contract:
+// every method forwards its arguments verbatim to the matching EngineProxy method
+// and returns the proxy's result unchanged. Void methods only assert delegation.
+// ============================================================================
+
+type AnyFn = (...args: unknown[]) => unknown;
+
+/** Build a proxy whose methods each return a per-method sentinel, to prove pass-through. */
+function fullMockProxy(): { proxy: EngineProxy; sentinels: Record<string, unknown> } {
+  const methods = [
+    'init',
+    'ping',
+    'checkPersistedData',
+    'clearPersistedData',
+    'flushPersistedData',
+    'updatePersistenceMetadata',
+    'loadCSV',
+    'loadSAV',
+    'loadSAVMetadata',
+    'loadSAVSample',
+    'query',
+    'getSchema',
+    'getUniqueValues',
+    'getVariableStats',
+    'runCrosstab',
+    'processData',
+    'recodeVariable',
+    'dropColumn',
+    'updateColumn',
+    'fillSystemMissing',
+    'exportArrow',
+    'getValueFrequencies',
+    'buildHarmonizedTable',
+    'getRespondentOverlap',
+    'dispose',
+    'terminate',
+    'getWorker',
+    'setDatasetContext',
+  ] as const;
+
+  const sentinels: Record<string, unknown> = {};
+  const obj: Record<string, AnyFn> = {};
+  for (const name of methods) {
+    const sentinel = { __sentinel: name };
+    sentinels[name] = sentinel;
+    obj[name] = vi.fn().mockReturnValue(sentinel);
+  }
+  return { proxy: obj as unknown as EngineProxy, sentinels };
+}
+
+describe('BrowserEngine transport delegation', () => {
+  const buffer = new ArrayBuffer(8);
+  const sentinelArg = (label: string) => ({ __arg: label });
+
+  // method, args, whether the facade returns the proxy result (false for void methods)
+  const cases: Array<{ method: string; args: unknown[]; passthrough: boolean }> = [
+    { method: 'init', args: [{ forceCleanStart: true, datasetId: 'ds', schemaVersion: 3 }], passthrough: true },
+    { method: 'ping', args: [], passthrough: true },
+    { method: 'checkPersistedData', args: [], passthrough: true },
+    { method: 'clearPersistedData', args: [], passthrough: true },
+    { method: 'flushPersistedData', args: [], passthrough: true },
+    { method: 'updatePersistenceMetadata', args: [sentinelArg('metadata')], passthrough: false },
+    { method: 'loadCSV', args: ['f.csv', 'a,b\n1,2'], passthrough: true },
+    { method: 'loadSAV', args: [buffer, true], passthrough: true },
+    { method: 'loadSAVMetadata', args: [buffer], passthrough: true },
+    { method: 'loadSAVSample', args: [buffer, 100, 'spread'], passthrough: true },
+    { method: 'query', args: ['SELECT 2'], passthrough: true },
+    { method: 'getSchema', args: [], passthrough: true },
+    { method: 'getUniqueValues', args: ['gender'], passthrough: true },
+    {
+      method: 'getVariableStats',
+      args: ['score', 'numeric', 'allow_numeric_stats', 5, { discrete: [99] }],
+      passthrough: true,
+    },
+    {
+      method: 'runCrosstab',
+      args: [sentinelArg('options'), sentinelArg('context'), sentinelArg('settings'), sentinelArg('processOpts')],
+      passthrough: true,
+    },
+    { method: 'processData', args: [[], sentinelArg('options'), 'bar'], passthrough: true },
+    { method: 'recodeVariable', args: ['src', 'dst', sentinelArg('config')], passthrough: true },
+    { method: 'dropColumn', args: ['col'], passthrough: true },
+    { method: 'updateColumn', args: ['src', 'dst', sentinelArg('config')], passthrough: true },
+    { method: 'fillSystemMissing', args: ['col', 99], passthrough: true },
+    { method: 'exportArrow', args: ['SELECT 1', ['a', 'b']], passthrough: true },
+    { method: 'getValueFrequencies', args: ['table', 'col'], passthrough: true },
+    {
+      method: 'buildHarmonizedTable',
+      args: ['srcT', 'tgtT', [], 'outT', { a: 'b' }, { c: 'd' }],
+      passthrough: true,
+    },
+    { method: 'getRespondentOverlap', args: ['srcT', 'tgtT', 'id'], passthrough: true },
+    { method: 'dispose', args: [], passthrough: false },
+    { method: 'terminate', args: [], passthrough: false },
+    { method: 'getWorker', args: [], passthrough: true },
+    { method: 'setDatasetContext', args: ['ds', 42], passthrough: false },
+  ];
+
+  it.each(cases)('$method forwards args and result to proxy.$method', async ({ method, args, passthrough }) => {
+    const { proxy, sentinels } = fullMockProxy();
+    const engine = new BrowserEngine(proxy);
+
+    const result = await (engine as unknown as Record<string, AnyFn>)[method]!(...args);
+
+    const proxyFn = (proxy as unknown as Record<string, ReturnType<typeof vi.fn>>)[method]!;
+    expect(proxyFn).toHaveBeenCalledTimes(1);
+    expect(proxyFn).toHaveBeenCalledWith(...args);
+    if (passthrough) {
+      expect(result).toBe(sentinels[method]);
+    }
+  });
+});
+
+describe('BrowserEngine.recode', () => {
+  it('sanitizes the target name, delegates to recodeVariable, and returns the column envelope', async () => {
+    const proxy = createMockProxy({ recodeVariable: vi.fn().mockResolvedValue({ type: 'engine.recodeComplete' }) });
+    const engine = new BrowserEngine(proxy);
+    const config: EngineRecodeConfig = { mode: 'categorical', targetVariableName: '1 bad name!' };
+
+    const result = await engine.recode('age', config);
+
+    // Leading digit prefixed with "_" and non-identifier chars replaced with "_".
+    expect(proxy.recodeVariable).toHaveBeenCalledWith('age', '_1_bad_name_', config);
+    expect(result.data).toEqual({ column: '_1_bad_name_' });
+    expect(result.operation).toBe('recode');
+    expect(result.inputs).toMatchObject({ sourceVar: 'age' });
+  });
+
+  it('derives a default target name from the source variable when none is given', async () => {
+    const proxy = createMockProxy({ recodeVariable: vi.fn().mockResolvedValue({ type: 'engine.recodeComplete' }) });
+    const engine = new BrowserEngine(proxy);
+
+    const result = await engine.recode('income', { mode: 'binning' });
+
+    expect(proxy.recodeVariable).toHaveBeenCalledWith('income', 'income_recode', { mode: 'binning' });
+    expect(result.data).toEqual({ column: 'income_recode' });
+  });
+});
+
+describe('BrowserEngine.runAnalysis variableStats validation', () => {
+  it('throws INVALID_VARIABLE when no column is supplied', async () => {
+    const engine = new BrowserEngine(createMockProxy());
+
+    await expect(engine.runAnalysis('variableStats', {})).rejects.toMatchObject({
+      code: 'INVALID_VARIABLE',
+    });
+  });
+
+  it('coerces a non-object config to an empty record (no column → INVALID_VARIABLE)', async () => {
+    const engine = new BrowserEngine(createMockProxy());
+
+    // Array/null configs are tolerated by toRecord() and treated as "{}".
+    await expect(engine.runAnalysis('variableStats', [])).rejects.toMatchObject({
+      code: 'INVALID_VARIABLE',
+    });
+  });
+});
+
+describe('createBrowserEngine', () => {
+  it('constructs a BrowserEngine wired to the given proxy', async () => {
+    const proxy = createMockProxy();
+    const engine = createBrowserEngine(proxy);
+
+    expect(engine).toBeInstanceOf(BrowserEngine);
+    await engine.ping();
+    expect(proxy.ping).toHaveBeenCalled();
   });
 });

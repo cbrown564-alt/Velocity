@@ -60,9 +60,9 @@ export default defineConfig({
       // fact failing). Raise these as characterization tests land — never lower.
       thresholds: {
         branches: 79,
-        functions: 78,
-        lines: 80,
-        statements: 80,
+        functions: 82,
+        lines: 81,
+        statements: 81,
       },
     },
   },
