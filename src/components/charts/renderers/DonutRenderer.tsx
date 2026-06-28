@@ -197,7 +197,7 @@ export const DonutRenderer: React.FC<BaseChartRendererProps> = ({
             fontFamily: 'var(--font-mono)',
           }}
         >
-          {series.data.reduce((sum, d) => sum + d.value, 0).toLocaleString()}
+          {chartData.reduce((sum, d) => sum + d.value, 0).toLocaleString()}
         </text>
       </g>
     </svg>
