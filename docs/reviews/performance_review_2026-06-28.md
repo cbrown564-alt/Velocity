@@ -498,7 +498,9 @@ Risk:
 
 **Goal:** Keep large results responsive after query completion.
 
-**Status:** Conservative subset completed on 2026-06-28 — the part this phase's own Risk note prescribes as the starting point ("Start with thresholded reduced motion and tree indexing before full table virtualization"). The motion threshold (Task 1) and the render-shape benchmark (Task 5) landed, and the `treeBuilder` `colKey` indexing (Task 4) was confirmed already in place from Phase 2. Full row/column virtualization (Tasks 2 and 3) is deliberately staged as the next focused step, not started here — see the deferral note below.
+**Status:** Tasks 1, 2, 4, and 5 completed on 2026-06-28, in the order this phase's own Risk note prescribes ("Start with thresholded reduced motion and tree indexing before full table virtualization"): the motion threshold (Task 1) and tree indexing (Task 4) shipped first, then the render-shape benchmark (Task 5), then row virtualization (Task 2). Only horizontal column virtualization for very wide banners (Task 3) remains deliberately deferred — see the deferral note below.
+
+Task 2 (row virtualization): large tables now window the `<tbody>` instead of rendering every row. Rather than replace the semantic `<table>` with a div-based windowing list (which would break the sticky `<thead>`, fixed column widths, and the `data-merge-*` drag targets), the table structure is preserved and only the body is windowed: `flattenVisibleRows` flattens the recursive row tree into display order (including a node's children only when expanded, mirroring `CrosstabRow`'s `expandedKeys[key] ?? true`), `computeRowWindow` picks the visible slice from the scroll position (offset by the sticky header height), and top/bottom spacer `<tr>`s carry the height of the off-screen rows so the scrollbar stays correct. Rendering is gated by `shouldVirtualizeRows` (`VIRTUALIZE_ROW_THRESHOLD = 100` flattened rows): tables at or below the threshold keep the original recursive, fully-featured path unchanged, so the common case has zero behavior change. `CrosstabRow` gained a `renderChildren` prop (default `true`); the windowed path passes `false` because flattening already linearises the hierarchy. The scroll listener is `requestAnimationFrame`-throttled (one re-render per frame), and `useCrosstabRowWindow` measures the container with `ResizeObserver` when available (falling back to a window `resize` listener). Row height is a per-density estimate (`ESTIMATED_ROW_HEIGHT`: compact 33 px, generous 45 px) — the standard fixed-height windowing assumption; multi-line labels introduce minor, bounded scroll drift. Drag-to-merge still works because drags start from and target on-screen rows; the one bounded limitation is that a multi-select merge whose *source* rows are scrolled off-screen resolves those sources by raw key rather than label (the target, always under the cursor, is unaffected). Honest verification boundary: the flattening, window math, and the windowed/non-windowed DataTable branches are unit-tested (jsdom has no layout, so the hook falls back to the default viewport and a representative window still renders); real-browser scroll/drag/sticky behaviour on a >100-row table is not yet exercised by an automated gate and is the recommended large-table e2e fixture for Phase 5.
 
 Task 1 (motion thresholds): per-cell entry animations in the crosstab (the `AnimatedNumber`, the fade-in metadata wrapper, the significance spring-lock, and the Mission Control phosphor ghost) each mount their own Framer Motion instance. On large result matrices the count of simultaneously-animating cells — not DuckDB — is what makes the table jank after a query completes. A new `crosstabMotionPolicy` helper (`MAX_ANIMATED_CROSSTAB_CELLS = 500`, `countTreeNodes`, `shouldAnimateCrosstab`) drives a single gate in `DataTable`: when total rendered cells (row nodes × body columns) exceed the threshold, `animationKey` is left `undefined`, which every animated path in `CrosstabCell` already treats as "render static." Ordinary survey crosstabs (a 5-point Likert × 6-column banner = 30 cells; a 20-row categorical × 10-column banner = 200 cells) keep their entry animation; wide banners and long multi-level tables drop it. This leaves the existing `prefers-reduced-motion` path unchanged and adds the size threshold as an independent gate.
 
@@ -523,43 +525,44 @@ Before/after evidence:
 | :--- | :--- | :--- |
 | Per-cell entry animation on large tables | Always on (one Framer Motion instance per cell) | Suppressed above 500 rendered cells; cells render static |
 | Animation gate | `prefers-reduced-motion` only | `prefers-reduced-motion` **or** result-size threshold |
-| Render-shape regression coverage | None | `benchmark:crosstab` (wide-banner + multi-level) + `crosstabMotionPolicy` unit tests + DataTable threshold test |
+| Rows in DOM for a large table | All flattened rows | Windowed above 100 rows (visible slice + overscan + spacers) |
+| Render-shape regression coverage | None | `benchmark:crosstab` (wide-banner + multi-level) + `crosstabMotionPolicy` / `crosstabVirtualization` unit tests + DataTable threshold & windowing tests |
 | `treeBuilder` cell construction | (already indexed in Phase 2) | Confirmed; benchmarked sub-2 ms at 6,840 cells |
-| Production build main JS gzip | 154.39 KB after Phase 2 | 154.93 KB after Phase 4 |
+| Production build main JS gzip | 154.39 KB after Phase 2 | 155.28 KB after Phase 4 |
 
 Validation:
 
 ```bash
-npm run test:run -- src/features/dashboard/components/crosstabMotionPolicy.test.ts src/features/dashboard/components/DataTable.test.tsx src/features/dashboard/components/CrosstabCell.test.tsx src/core/analysis/analysisProcessor.test.ts src/hooks/useProcessedAnalysisData.test.tsx
+npm run test:run -- src/features/dashboard/components/crosstabMotionPolicy.test.ts src/features/dashboard/components/crosstabVirtualization.test.ts src/features/dashboard/components/DataTable.test.tsx src/features/dashboard/components/CrosstabCell.test.tsx src/core/analysis/analysisProcessor.test.ts src/hooks/useProcessedAnalysisData.test.tsx
 npm run typecheck
 npm run typecheck:test
-npx eslint src/features/dashboard/components/crosstabMotionPolicy.ts src/features/dashboard/components/crosstabMotionPolicy.test.ts src/features/dashboard/components/DataTable.tsx src/features/dashboard/components/DataTable.test.tsx scripts/benchmark-crosstab-render.ts
+npx eslint src/features/dashboard/components/crosstabMotionPolicy.ts src/features/dashboard/components/crosstabVirtualization.ts src/features/dashboard/components/useCrosstabRowWindow.ts src/features/dashboard/components/CrosstabRow.tsx src/features/dashboard/components/DataTable.tsx src/features/dashboard/components/DataTable.test.tsx scripts/benchmark-crosstab-render.ts
 npm run build
 npm run benchmark:crosstab
 ```
 
-Deferral note (Tasks 2 and 3 — full row/column virtualization): not started in this phase, by design. The crosstab uses semantic `<table>`/`<thead sticky>`/recursive `<CrosstabRow>` `<tr>` fragments, with drag-to-merge keyed off `data-merge-*` DOM attributes and live element positions, expandable multi-level rows, per-cell tooltips, and export parity. Windowing that structure safely (without breaking sticky headers, drag positioning, row expansion, column widths, or export) is a large, regression-prone refactor — exactly why this phase's Risk note and the Recommended Execution Order both place it last. Task 1 already removes the dominant per-cell cost (motion instances) for large tables; virtualization should be its own focused PR once a real pilot-scale result surface exists to test against.
+Deferral note (Task 3 — horizontal column virtualization for very wide banners): still deferred, by design. Row virtualization (Task 2) handles the tall-table case, which is the common large-result shape. Column virtualization is a separate problem: the sticky `<thead>`, fixed proportional column widths (`computeCrosstabColumnWidths`), per-column drag-to-merge targets, and the trailing Total column all assume every column is laid out, so windowing columns would require re-deriving widths for a moving horizontal window and re-anchoring drag math. It is only worth it for genuinely wide banners (tens of columns), which the animation threshold (Task 1) already de-risks for jank. Defer until a real pilot banner exceeds what a normal scroll handles, and treat it as its own focused PR.
 
 Next phase: Phase 5, Ongoing Performance Guardrails.
 
 Tasks:
 
 1. Done (Task 1): result-size threshold suppresses per-cell entry animations above `MAX_ANIMATED_CROSSTAB_CELLS` (500 rendered cells); independent of the existing reduced-motion path.
-2. Deferred (Task 2): virtualize crosstab rows for large row counts — staged as a dedicated follow-up (see deferral note).
-3. Deferred (Task 3): horizontal column virtualization for very wide banners — staged with Task 2.
+2. Done (Task 2): large tables window the `<tbody>` above `VIRTUALIZE_ROW_THRESHOLD` (100 flattened rows) via `flattenVisibleRows` + `computeRowWindow` + spacer rows, preserving the `<table>`/sticky-header/column-width/drag-merge structure; small tables keep the original recursive path. Unit-tested; real-browser scroll/drag verification on a >100-row table recommended as a Phase 5 e2e fixture.
+3. Deferred (Task 3): horizontal column virtualization for very wide banners — staged as its own follow-up (see deferral note).
 4. Done (Task 4): `treeBuilder` already indexes group rows by `colKey` once per node (`rowsByColumn`, landed Phase 2); confirmed and benchmarked here.
 5. Done (Task 5): `benchmark:crosstab` measures the wide-banner and multi-level row shapes; results in `validation/benchmark_crosstab_render_latest.json`.
 
 Success criteria:
 
-- Large result table interaction stays responsive. (Addressed for the dominant cost: per-cell motion is suppressed above the threshold. Full DOM-node reduction via virtualization is staged.)
-- Render time and layout shifts are measured before/after. (Processing path measured via `benchmark:crosstab`; in-browser render/CLS timing folded into Phase 5.)
-- Drag-to-merge and sticky headers remain usable. (Unchanged — no structural table change was made; preserving these is the explicit constraint on the deferred virtualization work.)
+- Large result table interaction stays responsive. (Addressed: per-cell motion is suppressed above the cell threshold, and rows are windowed above the row threshold so off-screen rows are not in the DOM. Column virtualization for very wide banners is staged.)
+- Render time and layout shifts are measured before/after. (Processing path measured via `benchmark:crosstab`; in-browser render/CLS timing folded into Phase 5, alongside the recommended large-table scroll/drag e2e fixture.)
+- Drag-to-merge and sticky headers remain usable. (Preserved by design — the `<table>`/`<thead sticky>` structure and `data-merge-*` attributes are unchanged; only the `<tbody>` is windowed. The one bounded limitation is label resolution for off-screen multi-select merge *sources*, documented above.)
 
 Risk:
 
-- Virtualized tables complicate accessibility, sticky headers, row expansion, and drag interactions. Start with thresholded reduced motion and tree indexing before full table virtualization. (Followed: thresholding and tree indexing shipped first; virtualization deferred.)
-- The 500-cell threshold is a deliberate default. It is the single value to revisit if pilot users report either lost animation on tables they consider "presentation-sized" or jank on tables below it.
+- Virtualized tables complicate accessibility, sticky headers, row expansion, and drag interactions. (Mitigated by keeping the semantic table and windowing only the body with spacer rows, and by leaving tables ≤ 100 rows on the original path. The residual risk is scroll drift from the fixed per-density row-height estimate when many rows wrap to multiple lines — bounded, and the single knob to revisit if pilot tables show drift.)
+- The 500-cell animation threshold and the 100-row virtualization threshold are deliberate defaults. Revisit them if pilot users report lost animation on "presentation-sized" tables, jank below the thresholds, or visible scroll drift.
 
 ### Phase 5: Ongoing Performance Guardrails
 

@@ -6,7 +6,7 @@ import { useTableDragMerge } from '../../../hooks/useTableDragMerge';
 import { useMergeOrchestration } from '../../../hooks/useMergeOrchestration';
 import { InputModal } from '../../../components/overlays/InputModal';
 import { ChartContextMenu } from '../../../components/overlays/ChartContextMenu';
-import { RowPathEntry } from '../../../core/analysis/treeBuilder';
+import { RowPathEntry, type TableRowNode } from '../../../core/analysis/treeBuilder';
 import { StatisticsStatusBar } from '../../../components/common/StatisticsStatusBar';
 import { useReducedMotion } from '../../../lib/motion';
 import { useVelocityStore } from '../../../store';
@@ -16,6 +16,12 @@ import { CrosstabRow } from './CrosstabRow';
 import { CrosstabCell } from './CrosstabCell';
 import { computeCrosstabColumnWidths } from './crosstabColumnWidths';
 import { countTreeNodes, shouldAnimateCrosstab } from './crosstabMotionPolicy';
+import {
+  ESTIMATED_ROW_HEIGHT,
+  flattenVisibleRows,
+  shouldVirtualizeRows,
+} from './crosstabVirtualization';
+import { useCrosstabRowWindow } from './useCrosstabRowWindow';
 import { AnalysisOutputFrame } from './AnalysisOutputFrame';
 export type { RowPathEntry, TableRowNode } from '../../../core/analysis/treeBuilder';
 
@@ -90,6 +96,7 @@ export const DataTable: React.FC<DataTableProps> = ({
   const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
   const [selectedCols, setSelectedCols] = useState<Set<string>>(new Set());
   const tableContainerRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLTableSectionElement>(null);
 
   // Merge orchestration (modal + recode)
   const firstRowVarId = rowVariables[0]?.id;
@@ -195,6 +202,24 @@ export const DataTable: React.FC<DataTableProps> = ({
     return computeCrosstabColumnWidths(tableData.colKeys, tableData.colLabels, hasTotalColumn);
   }, [tableData]);
 
+  // Row virtualization: flatten the visible (expanded) row tree and window it
+  // for large tables so only the on-screen rows are in the DOM. Small tables
+  // keep the recursive, fully-featured rendering path (Phase 4: Rendering
+  // Scalability, Task 2).
+  const flatRows = useMemo<TableRowNode[]>(
+    () => (tableData ? flattenVisibleRows(tableData.rows, expandedKeys) : []),
+    [tableData, expandedKeys],
+  );
+  const virtualizeRows = shouldVirtualizeRows(flatRows.length);
+  const rowHeight = ESTIMATED_ROW_HEIGHT[density];
+  const rowWindow = useCrosstabRowWindow({
+    enabled: virtualizeRows,
+    containerRef: tableContainerRef,
+    headerRef,
+    rowCount: flatRows.length,
+    rowHeight,
+  });
+
   const haloClass = useCallback((sig?: string | null): string => {
     if (sig === 'high_95' || sig === 'low_95') return 'bg-[var(--halo-high)]';
     if (sig === 'high_80' || sig === 'low_80') return 'bg-[var(--halo-mid)]';
@@ -211,6 +236,36 @@ export const DataTable: React.FC<DataTableProps> = ({
   }, []);
 
   if (!tableData) return null;
+
+  // Number of columns spanned by spacer rows: row-label + body columns + total.
+  const totalColSpan = 1 + tableData.colKeys.length + (tableData.colKeys.length > 1 ? 1 : 0);
+
+  const renderRow = (row: TableRowNode, withChildren: boolean) => (
+    <CrosstabRow
+      key={row.key}
+      row={row}
+      tableData={tableData}
+      rowVariables={rowVariables}
+      colVariable={colVariable}
+      expandedKeys={expandedKeys}
+      onToggleRow={toggleRow}
+      dragState={dragState}
+      onDragStart={handleDragStart}
+      selectedRows={selectedRows}
+      onToggleRowSelection={toggleRowSelection}
+      hoveredCol={hoveredCol}
+      onHoverCol={setHoveredCol}
+      onCellClick={onCellClick}
+      density={density}
+      animationKey={animationKey}
+      reducedMotion={reducedMotion}
+      haloClass={haloClass}
+      variableStats={variableStats}
+      transformLog={transformLog}
+      onRowContextMenu={handleRowContextMenu}
+      renderChildren={withChildren}
+    />
+  );
 
   return (
     <AnalysisOutputFrame
@@ -229,7 +284,10 @@ export const DataTable: React.FC<DataTableProps> = ({
     >
       <div ref={tableContainerRef} className={`${mergeStyles.tableScrollRegion} custom-scrollbar`}>
         <table className={`${mergeStyles.crosstabTable} w-full text-sm text-left border-collapse`}>
-          <thead className="text-xs bg-[var(--bg-panel)] border-b border-[var(--border-grid)] data-[theme=liquid-glass]:bg-[var(--mat-panel-bg)] data-[theme=liquid-glass]:backdrop-blur-md">
+          <thead
+            ref={headerRef}
+            className="text-xs bg-[var(--bg-panel)] border-b border-[var(--border-grid)] data-[theme=liquid-glass]:bg-[var(--mat-panel-bg)] data-[theme=liquid-glass]:backdrop-blur-md"
+          >
             <tr className="font-body">
               <th
                 style={{ width: columnWidths?.rowLabel }}
@@ -310,31 +368,23 @@ export const DataTable: React.FC<DataTableProps> = ({
             </tr>
           </thead>
           <tbody className="divide-y divide-[var(--border-grid)] font-body">
-            {tableData.rows.map((row) => (
-              <CrosstabRow
-                key={row.key}
-                row={row}
-                tableData={tableData}
-                rowVariables={rowVariables}
-                colVariable={colVariable}
-                expandedKeys={expandedKeys}
-                onToggleRow={toggleRow}
-                dragState={dragState}
-                onDragStart={handleDragStart}
-                selectedRows={selectedRows}
-                onToggleRowSelection={toggleRowSelection}
-                hoveredCol={hoveredCol}
-                onHoverCol={setHoveredCol}
-                onCellClick={onCellClick}
-                density={density}
-                animationKey={animationKey}
-                reducedMotion={reducedMotion}
-                haloClass={haloClass}
-                variableStats={variableStats}
-                transformLog={transformLog}
-                onRowContextMenu={handleRowContextMenu}
-              />
-            ))}
+            {virtualizeRows ? (
+              <>
+                {rowWindow.topPadding > 0 && (
+                  <tr aria-hidden style={{ height: rowWindow.topPadding, borderTopWidth: 0 }}>
+                    <td colSpan={totalColSpan} style={{ padding: 0, borderWidth: 0 }} />
+                  </tr>
+                )}
+                {flatRows.slice(rowWindow.startIndex, rowWindow.endIndex).map((row) => renderRow(row, false))}
+                {rowWindow.bottomPadding > 0 && (
+                  <tr aria-hidden style={{ height: rowWindow.bottomPadding, borderTopWidth: 0 }}>
+                    <td colSpan={totalColSpan} style={{ padding: 0, borderWidth: 0 }} />
+                  </tr>
+                )}
+              </>
+            ) : (
+              tableData.rows.map((row) => renderRow(row, true))
+            )}
             <tr
               className={`${mergeStyles.totalRow} bg-[var(--bg-surface)] font-semibold border-t border-[var(--border-grid)] border-b border-[var(--border-grid)]`}
             >

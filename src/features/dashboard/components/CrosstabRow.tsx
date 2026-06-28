@@ -39,6 +39,13 @@ export interface CrosstabRowProps {
   variableStats?: VariableStatsResult | null;
   transformLog: DataTransform[];
   onRowContextMenu: (params: { variableId: string; rowLabel: string; x: number; y: number }) => void;
+  /**
+   * When false, the component renders only its own `<tr>` and not its child
+   * rows. Used by the virtualized table path, where the row tree is flattened
+   * upstream and each visible row is rendered independently. Defaults to true
+   * (recursive rendering) for the non-virtualized path.
+   */
+  renderChildren?: boolean;
 }
 
 export const CrosstabRow: React.FC<CrosstabRowProps> = ({
@@ -62,6 +69,7 @@ export const CrosstabRow: React.FC<CrosstabRowProps> = ({
   variableStats,
   transformLog,
   onRowContextMenu,
+  renderChildren = true,
 }) => {
   const isExpanded = expandedKeys[row.key] ?? true;
   const hasChildren = row.children.length > 0;
@@ -242,7 +250,8 @@ export const CrosstabRow: React.FC<CrosstabRowProps> = ({
           </td>
         )}
       </tr>
-      {hasChildren &&
+      {renderChildren &&
+        hasChildren &&
         isExpanded &&
         row.children.map((child) => (
           <CrosstabRow

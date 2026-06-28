@@ -241,6 +241,64 @@ describe('DataTable Insight Halo', () => {
     expect(large.container.querySelector('[data-animated="true"]')).toBeNull();
   });
 
+  it('windows large tables: renders a subset of rows plus a spacer, keeping the total row', () => {
+    const analysisSettings = {
+      comparisonMethod: 'cell_vs_rest' as const,
+      correctionType: 'none' as const,
+      showConfidenceIntervals: false,
+      significanceLevel: 0.95 as const,
+      engine: 'auto' as const,
+      enableDesignEffects: false,
+    };
+
+    // 150 rows (> VIRTUALIZE_ROW_THRESHOLD) x 1 column.
+    const big = makeProcessedData(
+      Array.from({ length: 150 }).map((_, r) => ({ col: 'c1', row: `r${r}`, percent: 50 })),
+    );
+    mockUseProcessedAnalysisData.mockReturnValue(big);
+    useVelocityStore.setState({ analysisSettings, transformLog: [] });
+
+    const { container } = render(
+      <DataTable data={[]} rowVariables={big.rowVariables} colVariable={null} totalCount={100} />,
+    );
+
+    const dataRows = container.querySelectorAll('tbody tr.data-row-interactive');
+    // Windowed: far fewer than 150 rows are in the DOM.
+    expect(dataRows.length).toBeGreaterThan(0);
+    expect(dataRows.length).toBeLessThan(60);
+
+    // A spacer row preserves the scroll height of the off-screen rows.
+    expect(container.querySelector('tbody tr[aria-hidden]')).toBeTruthy();
+
+    // The pinned Total row is still rendered.
+    expect(container.querySelector('tbody .total-row-label')?.textContent).toBe('Total');
+  });
+
+  it('does not window small tables (no spacer rows)', () => {
+    const small = makeProcessedData(
+      Array.from({ length: 5 }).map((_, r) => ({ col: 'c1', row: `r${r}`, percent: 50 })),
+    );
+    mockUseProcessedAnalysisData.mockReturnValue(small);
+    useVelocityStore.setState({
+      analysisSettings: {
+        comparisonMethod: 'cell_vs_rest',
+        correctionType: 'none',
+        showConfidenceIntervals: false,
+        significanceLevel: 0.95,
+        engine: 'auto',
+        enableDesignEffects: false,
+      },
+      transformLog: [],
+    });
+
+    const { container } = render(
+      <DataTable data={[]} rowVariables={small.rowVariables} colVariable={null} totalCount={100} />,
+    );
+
+    expect(container.querySelectorAll('tbody tr.data-row-interactive').length).toBe(5);
+    expect(container.querySelector('tbody tr[aria-hidden]')).toBeNull();
+  });
+
   it('uses fixed table layout with proportional column widths (UXP-002)', () => {
     const processed = makeProcessedData([
       { col: 'east', row: 'r1', percent: 50 },
