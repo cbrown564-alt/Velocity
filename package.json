@@ -15,6 +15,7 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
+    "clean": "node scripts/clean.mjs",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "typecheck:test": "tsc --noEmit -p tsconfig.test.json",
     "typecheck:mcp": "tsc --noEmit -p mcp-server/tsconfig.json",
