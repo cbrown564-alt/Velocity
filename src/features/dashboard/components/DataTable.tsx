@@ -22,6 +22,14 @@ import {
   shouldVirtualizeRows,
 } from './crosstabVirtualization';
 import { useCrosstabRowWindow } from './useCrosstabRowWindow';
+import {
+  VIRTUALIZED_COL_WIDTH,
+  VIRTUALIZED_ROW_LABEL_WIDTH,
+  VIRTUALIZED_TOTAL_COL_WIDTH,
+  shouldVirtualizeCols,
+  virtualizedTableWidth,
+} from './crosstabColumnVirtualization';
+import { useCrosstabColWindow } from './useCrosstabColWindow';
 import { AnalysisOutputFrame } from './AnalysisOutputFrame';
 export type { RowPathEntry, TableRowNode } from '../../../core/analysis/treeBuilder';
 
@@ -199,6 +207,20 @@ export const DataTable: React.FC<DataTableProps> = ({
   const columnWidths = useMemo(() => {
     if (!tableData) return null;
     const hasTotalColumn = tableData.colKeys.length > 1;
+    // Column virtualization (Phase 4 Task 3): very wide banners switch from
+    // proportional percentage widths to a uniform fixed pixel width per data
+    // column so the windowing math (and the off-screen spacer cells) can assume
+    // a single column width, the horizontal analog of the fixed row-height
+    // assumption used by row virtualization.
+    if (shouldVirtualizeCols(tableData.colKeys.length)) {
+      const columns: Record<string, string> = {};
+      for (const key of tableData.colKeys) columns[key] = `${VIRTUALIZED_COL_WIDTH}px`;
+      return {
+        rowLabel: `${VIRTUALIZED_ROW_LABEL_WIDTH}px`,
+        columns,
+        total: hasTotalColumn ? `${VIRTUALIZED_TOTAL_COL_WIDTH}px` : undefined,
+      };
+    }
     return computeCrosstabColumnWidths(tableData.colKeys, tableData.colLabels, hasTotalColumn);
   }, [tableData]);
 
@@ -220,6 +242,30 @@ export const DataTable: React.FC<DataTableProps> = ({
     rowHeight,
   });
 
+  // Column virtualization: very wide banners window the on-screen slice of body
+  // columns and render left/right spacer cells for the off-screen columns
+  // (Phase 4: Rendering Scalability, Task 3). The row-label and Total columns
+  // are never windowed. Tables at or below the threshold render every column
+  // with proportional widths, so the common case is unchanged.
+  const colCount = tableData?.colKeys.length ?? 0;
+  const virtualizeCols = shouldVirtualizeCols(colCount);
+  const colWindow = useCrosstabColWindow({
+    enabled: virtualizeCols,
+    containerRef: tableContainerRef,
+    colCount,
+    colWidth: VIRTUALIZED_COL_WIDTH,
+    leftOffset: VIRTUALIZED_ROW_LABEL_WIDTH,
+  });
+  const visibleColKeys = useMemo(
+    () =>
+      tableData && virtualizeCols
+        ? tableData.colKeys.slice(colWindow.startIndex, colWindow.endIndex)
+        : (tableData?.colKeys ?? []),
+    [tableData, virtualizeCols, colWindow.startIndex, colWindow.endIndex],
+  );
+  const colLeftPadding = virtualizeCols ? colWindow.leftPadding : 0;
+  const colRightPadding = virtualizeCols ? colWindow.rightPadding : 0;
+
   const haloClass = useCallback((sig?: string | null): string => {
     if (sig === 'high_95' || sig === 'low_95') return 'bg-[var(--halo-high)]';
     if (sig === 'high_80' || sig === 'low_80') return 'bg-[var(--halo-mid)]';
@@ -237,8 +283,20 @@ export const DataTable: React.FC<DataTableProps> = ({
 
   if (!tableData) return null;
 
-  // Number of columns spanned by spacer rows: row-label + body columns + total.
-  const totalColSpan = 1 + tableData.colKeys.length + (tableData.colKeys.length > 1 ? 1 : 0);
+  const hasTotalColumn = tableData.colKeys.length > 1;
+  // Number of columns actually rendered in a body row: row-label + optional
+  // left spacer + visible body columns + optional right spacer + total. Used as
+  // the colSpan for the row-virtualization spacer rows (browsers clamp colSpan
+  // to the real column count, but this keeps it exact).
+  const renderedColumnCount =
+    1 +
+    (colLeftPadding > 0 ? 1 : 0) +
+    visibleColKeys.length +
+    (colRightPadding > 0 ? 1 : 0) +
+    (hasTotalColumn ? 1 : 0);
+  // Fixed natural table width when columns are virtualized so the horizontal
+  // scrollbar stays stable regardless of which column slice is on screen.
+  const tableWidth = virtualizeCols ? virtualizedTableWidth(colCount, hasTotalColumn) : undefined;
 
   const renderRow = (row: TableRowNode, withChildren: boolean) => (
     <CrosstabRow
@@ -264,8 +322,25 @@ export const DataTable: React.FC<DataTableProps> = ({
       transformLog={transformLog}
       onRowContextMenu={handleRowContextMenu}
       renderChildren={withChildren}
+      visibleColKeys={visibleColKeys}
+      colLeftPadding={colLeftPadding}
+      colRightPadding={colRightPadding}
     />
   );
+
+  /** Spacer cell for off-screen columns (header or body). */
+  const colSpacer = (width: number, isHeader: boolean) =>
+    width > 0 ? (
+      isHeader ? (
+        <th
+          aria-hidden
+          style={{ width, padding: 0 }}
+          className="sticky top-0 z-10 bg-[var(--bg-panel)] data-[theme=liquid-glass]:bg-[var(--mat-panel-bg)] border-b border-[var(--border-grid)]"
+        />
+      ) : (
+        <td aria-hidden style={{ width, padding: 0 }} className="border-l border-[var(--border-subtle)]" />
+      )
+    ) : null;
 
   return (
     <AnalysisOutputFrame
@@ -287,7 +362,10 @@ export const DataTable: React.FC<DataTableProps> = ({
         data-testid="crosstab-scroll-region"
         className={`${mergeStyles.tableScrollRegion} custom-scrollbar`}
       >
-        <table className={`${mergeStyles.crosstabTable} w-full text-sm text-left border-collapse`}>
+        <table
+          style={tableWidth ? { width: tableWidth } : undefined}
+          className={`${mergeStyles.crosstabTable} w-full text-sm text-left border-collapse`}
+        >
           <thead
             ref={headerRef}
             className="text-xs bg-[var(--bg-panel)] border-b border-[var(--border-grid)] data-[theme=liquid-glass]:bg-[var(--mat-panel-bg)] data-[theme=liquid-glass]:backdrop-blur-md"
@@ -299,7 +377,8 @@ export const DataTable: React.FC<DataTableProps> = ({
               >
                 {toUiCaps(rowVariables[0].label)}
               </th>
-              {tableData.colKeys.map((col) => {
+              {colSpacer(colLeftPadding, true)}
+              {visibleColKeys.map((col) => {
                 const isColDragging =
                   dragState.isDragging &&
                   dragState.draggedItem?.rawValue === col &&
@@ -361,6 +440,7 @@ export const DataTable: React.FC<DataTableProps> = ({
                   </th>
                 );
               })}
+              {colSpacer(colRightPadding, true)}
               {tableData.colKeys.length > 1 && (
                 <th
                   style={{ width: columnWidths?.total }}
@@ -376,13 +456,13 @@ export const DataTable: React.FC<DataTableProps> = ({
               <>
                 {rowWindow.topPadding > 0 && (
                   <tr aria-hidden style={{ height: rowWindow.topPadding, borderTopWidth: 0 }}>
-                    <td colSpan={totalColSpan} style={{ padding: 0, borderWidth: 0 }} />
+                    <td colSpan={renderedColumnCount} style={{ padding: 0, borderWidth: 0 }} />
                   </tr>
                 )}
                 {flatRows.slice(rowWindow.startIndex, rowWindow.endIndex).map((row) => renderRow(row, false))}
                 {rowWindow.bottomPadding > 0 && (
                   <tr aria-hidden style={{ height: rowWindow.bottomPadding, borderTopWidth: 0 }}>
-                    <td colSpan={totalColSpan} style={{ padding: 0, borderWidth: 0 }} />
+                    <td colSpan={renderedColumnCount} style={{ padding: 0, borderWidth: 0 }} />
                   </tr>
                 )}
               </>
@@ -397,7 +477,8 @@ export const DataTable: React.FC<DataTableProps> = ({
               >
                 Total
               </td>
-              {tableData.colKeys.map((col) => (
+              {colSpacer(colLeftPadding, false)}
+              {visibleColKeys.map((col) => (
                 <td
                   key={col}
                   className={`total-row-cell px-2 ${density === 'generous' ? 'py-2.5' : 'py-1.5'} text-right align-middle data-cell`}
@@ -412,6 +493,7 @@ export const DataTable: React.FC<DataTableProps> = ({
                   />
                 </td>
               ))}
+              {colSpacer(colRightPadding, false)}
               {tableData.colKeys.length > 1 && (
                 <td
                   className={`total-row-cell px-2 ${density === 'generous' ? 'py-2.5' : 'py-1.5'} text-right align-middle data-cell bg-[var(--bg-active)]/30`}

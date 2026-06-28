@@ -46,6 +46,16 @@ export interface CrosstabRowProps {
    * (recursive rendering) for the non-virtualized path.
    */
   renderChildren?: boolean;
+  /**
+   * Column (horizontal) virtualization (Phase 4 Task 3). When columns are
+   * windowed, `visibleColKeys` is the on-screen slice of `tableData.colKeys`
+   * and `colLeftPadding` / `colRightPadding` are the px widths of the
+   * off-screen columns, rendered as spacer cells. Defaults to rendering every
+   * column with no spacers, so the common (non-windowed) path is unchanged.
+   */
+  visibleColKeys?: string[];
+  colLeftPadding?: number;
+  colRightPadding?: number;
 }
 
 export const CrosstabRow: React.FC<CrosstabRowProps> = ({
@@ -70,7 +80,11 @@ export const CrosstabRow: React.FC<CrosstabRowProps> = ({
   transformLog,
   onRowContextMenu,
   renderChildren = true,
+  visibleColKeys,
+  colLeftPadding = 0,
+  colRightPadding = 0,
 }) => {
+  const cols = visibleColKeys ?? tableData.colKeys;
   const isExpanded = expandedKeys[row.key] ?? true;
   const hasChildren = row.children.length > 0;
   const paddingLeft = row.depth * 24 + 8;
@@ -147,7 +161,10 @@ export const CrosstabRow: React.FC<CrosstabRowProps> = ({
             <span className="leading-snug">{row.label}</span>
           </div>
         </td>
-        {tableData.colKeys.map((col) => {
+        {colLeftPadding > 0 && (
+          <td aria-hidden style={{ width: colLeftPadding, padding: 0 }} className="border-l border-[var(--border-subtle)]" />
+        )}
+        {cols.map((col) => {
           const cell = row.cells[col];
           const isZero = cell.mean !== undefined ? Math.abs(cell.mean) === 0 : cell.percent === 0;
 
@@ -223,6 +240,9 @@ export const CrosstabRow: React.FC<CrosstabRowProps> = ({
             </td>
           );
         })}
+        {colRightPadding > 0 && (
+          <td aria-hidden style={{ width: colRightPadding, padding: 0 }} className="border-l border-[var(--border-subtle)]" />
+        )}
         {tableData.colKeys.length > 1 && (
           <td
             className={`px-2 ${density === 'generous' ? 'py-2.5' : 'py-1'} text-right bg-[var(--bg-active)]/30 align-middle data-cell`}
@@ -276,6 +296,9 @@ export const CrosstabRow: React.FC<CrosstabRowProps> = ({
             variableStats={variableStats}
             transformLog={transformLog}
             onRowContextMenu={onRowContextMenu}
+            visibleColKeys={visibleColKeys}
+            colLeftPadding={colLeftPadding}
+            colRightPadding={colRightPadding}
           />
         ))}
     </React.Fragment>

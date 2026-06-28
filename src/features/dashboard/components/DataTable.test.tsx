@@ -299,6 +299,89 @@ describe('DataTable Insight Halo', () => {
     expect(container.querySelector('tbody tr[aria-hidden]')).toBeNull();
   });
 
+  it('windows wide banners: renders a subset of columns plus a spacer, keeping the row-label and total headers', () => {
+    const analysisSettings = {
+      comparisonMethod: 'cell_vs_rest' as const,
+      correctionType: 'none' as const,
+      showConfidenceIntervals: false,
+      significanceLevel: 0.95 as const,
+      engine: 'auto' as const,
+      enableDesignEffects: false,
+    };
+
+    // 3 rows x 40 columns (> VIRTUALIZE_COL_THRESHOLD = 30): columns window,
+    // rows do not (well below VIRTUALIZE_ROW_THRESHOLD).
+    const colVar = {
+      id: 'region',
+      name: 'region',
+      label: 'Region',
+      type: 'categorical',
+      valueLabels: [],
+      missingValues: {},
+    } as Variable;
+    const wide = makeProcessedData(
+      Array.from({ length: 3 }).flatMap((_, r) =>
+        Array.from({ length: 40 }).map((__, c) => ({ col: `c${c}`, row: `r${r}`, percent: 50 })),
+      ),
+    );
+    wide.colVariable = colVar;
+    mockUseProcessedAnalysisData.mockReturnValue(wide);
+    useVelocityStore.setState({ analysisSettings, transformLog: [] });
+
+    const { container } = render(
+      <DataTable data={[]} rowVariables={wide.rowVariables} colVariable={colVar} totalCount={100} />,
+    );
+
+    // Windowed: far fewer than the 40 logical body columns are in the DOM.
+    const colHeaders = container.querySelectorAll('thead th[data-merge-axis="column"]');
+    expect(colHeaders.length).toBeGreaterThan(0);
+    expect(colHeaders.length).toBeLessThan(40);
+
+    // A spacer header preserves the scroll width of the off-screen columns.
+    expect(container.querySelector('thead th[aria-hidden]')).toBeTruthy();
+
+    // The row-label header and the trailing Total header are never windowed.
+    const headerCells = container.querySelectorAll('thead th');
+    expect((headerCells[0] as HTMLElement).textContent).toBeTruthy();
+    expect(Array.from(headerCells).some((th) => th.textContent?.trim() === 'Total')).toBe(true);
+  });
+
+  it('does not window narrow banners (no column spacer headers)', () => {
+    const colVar = {
+      id: 'region',
+      name: 'region',
+      label: 'Region',
+      type: 'categorical',
+      valueLabels: [],
+      missingValues: {},
+    } as Variable;
+    const narrow = makeProcessedData(
+      Array.from({ length: 2 }).flatMap((_, r) =>
+        Array.from({ length: 5 }).map((__, c) => ({ col: `c${c}`, row: `r${r}`, percent: 50 })),
+      ),
+    );
+    narrow.colVariable = colVar;
+    mockUseProcessedAnalysisData.mockReturnValue(narrow);
+    useVelocityStore.setState({
+      analysisSettings: {
+        comparisonMethod: 'cell_vs_rest',
+        correctionType: 'none',
+        showConfidenceIntervals: false,
+        significanceLevel: 0.95,
+        engine: 'auto',
+        enableDesignEffects: false,
+      },
+      transformLog: [],
+    });
+
+    const { container } = render(
+      <DataTable data={[]} rowVariables={narrow.rowVariables} colVariable={colVar} totalCount={100} />,
+    );
+
+    expect(container.querySelectorAll('thead th[data-merge-axis="column"]').length).toBe(5);
+    expect(container.querySelector('thead th[aria-hidden]')).toBeNull();
+  });
+
   it('uses fixed table layout with proportional column widths (UXP-002)', () => {
     const processed = makeProcessedData([
       { col: 'east', row: 'r1', percent: 50 },
