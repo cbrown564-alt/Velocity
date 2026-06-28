@@ -1,0 +1,319 @@
+{
+  "generatedAt": "2026-06-28T18:09:18.462Z",
+  "datasets": [
+    {
+      "key": "sleep",
+      "filePath": "/Users/cobro/code/Velocity/test_data/sleep.sav",
+      "fileSizeBytes": 26781,
+      "metadataParse": {
+        "result": {
+          "rowCount": 271,
+          "variableCount": 55
+        },
+        "durationMs": 7.968291000000022,
+        "peakRssBytes": 162021376,
+        "startRssBytes": 122306560,
+        "endRssBytes": 162021376
+      },
+      "fullParse": {
+        "result": {
+          "rowCount": 271,
+          "variableCount": 55
+        },
+        "durationMs": 3.420749999999998,
+        "peakRssBytes": 162578432,
+        "startRssBytes": 162021376,
+        "endRssBytes": 162578432
+      },
+      "windowParse": {
+        "result": {
+          "rowCount": 271,
+          "variableCount": 55,
+          "chunkSize": 5000,
+          "windows": 1
+        },
+        "durationMs": 4.621250000000032,
+        "peakRssBytes": 162693120,
+        "startRssBytes": 162578432,
+        "endRssBytes": 162693120
+      },
+      "nodeIngestion": {
+        "result": {
+          "rowCount": 271,
+          "variableCount": 59
+        },
+        "durationMs": 107.654041,
+        "peakRssBytes": 225886208,
+        "startRssBytes": 162693120,
+        "endRssBytes": 225886208
+      },
+      "parity": {
+        "metadataVsFullRows": true,
+        "metadataVsWindowRows": true,
+        "metadataVsNodeRows": true
+      }
+    },
+    {
+      "key": "gss2021",
+      "filePath": "/Users/cobro/code/Velocity/test_data/GSS/GSS2021.sav",
+      "fileSizeBytes": 18273326,
+      "metadataParse": {
+        "result": {
+          "rowCount": 4032,
+          "variableCount": 938
+        },
+        "durationMs": 10.958666999999991,
+        "peakRssBytes": 265568256,
+        "startRssBytes": 244531200,
+        "endRssBytes": 265568256
+      },
+      "fullParse": {
+        "result": {
+          "rowCount": 4032,
+          "variableCount": 938
+        },
+        "durationMs": 134.260875,
+        "peakRssBytes": 388661248,
+        "startRssBytes": 265568256,
+        "endRssBytes": 388661248
+      },
+      "windowParse": {
+        "result": {
+          "rowCount": 4032,
+          "variableCount": 938,
+          "chunkSize": 5000,
+          "windows": 1
+        },
+        "durationMs": 125.74295900000004,
+        "peakRssBytes": 388677632,
+        "startRssBytes": 388661248,
+        "endRssBytes": 388677632
+      },
+      "nodeIngestion": {
+        "result": {
+          "rowCount": 4032,
+          "variableCount": 1022
+        },
+        "durationMs": 798.3572499999999,
+        "peakRssBytes": 531808256,
+        "startRssBytes": 388677632,
+        "endRssBytes": 531808256
+      },
+      "parity": {
+        "metadataVsFullRows": true,
+        "metadataVsWindowRows": true,
+        "metadataVsNodeRows": true
+      }
+    },
+    {
+      "key": "gss2024",
+      "filePath": "/Users/cobro/code/Velocity/test_data/GSS/GSS2024.sav",
+      "fileSizeBytes": 20922610,
+      "metadataParse": {
+        "result": {
+          "rowCount": 3986,
+          "variableCount": 980
+        },
+        "durationMs": 10.974709000000075,
+        "peakRssBytes": 552779776,
+        "startRssBytes": 552779776,
+        "endRssBytes": 552779776
+      },
+      "fullParse": {
+        "result": {
+          "rowCount": 3986,
+          "variableCount": 980
+        },
+        "durationMs": 129.17495899999994,
+        "peakRssBytes": 555565056,
+        "startRssBytes": 552779776,
+        "endRssBytes": 555565056
+      },
+      "windowParse": {
+        "result": {
+          "rowCount": 3986,
+          "variableCount": 980,
+          "chunkSize": 5000,
+          "windows": 1
+        },
+        "durationMs": 130.47454199999993,
+        "peakRssBytes": 555565056,
+        "startRssBytes": 555565056,
+        "endRssBytes": 555565056
+      },
+      "nodeIngestion": {
+        "result": {
+          "rowCount": 3986,
+          "variableCount": 1108
+        },
+        "durationMs": 751.1073339999998,
+        "peakRssBytes": 599326720,
+        "startRssBytes": 555565056,
+        "endRssBytes": 599326720
+      },
+      "parity": {
+        "metadataVsFullRows": true,
+        "metadataVsWindowRows": true,
+        "metadataVsNodeRows": true
+      }
+    },
+    {
+      "key": "gss2022",
+      "filePath": "/Users/cobro/code/Velocity/test_data/GSS/GSS2022.sav",
+      "fileSizeBytes": 30652435,
+      "metadataParse": {
+        "result": {
+          "rowCount": 4149,
+          "variableCount": 1290
+        },
+        "durationMs": 11.886707999999999,
+        "peakRssBytes": 630472704,
+        "startRssBytes": 630472704,
+        "endRssBytes": 630472704
+      },
+      "fullParse": {
+        "result": {
+          "rowCount": 4149,
+          "variableCount": 1290
+        },
+        "durationMs": 192.07733299999973,
+        "peakRssBytes": 764362752,
+        "startRssBytes": 630472704,
+        "endRssBytes": 764362752
+      },
+      "windowParse": {
+        "result": {
+          "rowCount": 4149,
+          "variableCount": 1290,
+          "chunkSize": 5000,
+          "windows": 1
+        },
+        "durationMs": 184.79641600000014,
+        "peakRssBytes": 764362752,
+        "startRssBytes": 764362752,
+        "endRssBytes": 764362752
+      },
+      "nodeIngestion": {
+        "result": {
+          "rowCount": 4149,
+          "variableCount": 1444
+        },
+        "durationMs": 1222.0130840000002,
+        "peakRssBytes": 835125248,
+        "startRssBytes": 764362752,
+        "endRssBytes": 835125248
+      },
+      "parity": {
+        "metadataVsFullRows": true,
+        "metadataVsWindowRows": true,
+        "metadataVsNodeRows": true
+      }
+    },
+    {
+      "key": "bsa2014_2017",
+      "filePath": "/Users/cobro/code/Velocity/test_data/British Social Attitudes Survey/bsa_stitched_2014_2017.sav",
+      "fileSizeBytes": 44247505,
+      "metadataParse": {
+        "result": {
+          "rowCount": 14136,
+          "variableCount": 390
+        },
+        "durationMs": 6.968125000000327,
+        "peakRssBytes": 866353152,
+        "startRssBytes": 866353152,
+        "endRssBytes": 850411520
+      },
+      "fullParse": {
+        "result": {
+          "rowCount": 14136,
+          "variableCount": 390
+        },
+        "durationMs": 100.45841599999949,
+        "peakRssBytes": 850411520,
+        "startRssBytes": 850411520,
+        "endRssBytes": 846954496
+      },
+      "windowParse": {
+        "result": {
+          "rowCount": 14136,
+          "variableCount": 390,
+          "chunkSize": 5000,
+          "windows": 3
+        },
+        "durationMs": 101.75633299999936,
+        "peakRssBytes": 846954496,
+        "startRssBytes": 846954496,
+        "endRssBytes": 843612160
+      },
+      "nodeIngestion": {
+        "result": {
+          "rowCount": 14136,
+          "variableCount": 414
+        },
+        "durationMs": 813.0326660000001,
+        "peakRssBytes": 910295040,
+        "startRssBytes": 843612160,
+        "endRssBytes": 910295040
+      },
+      "parity": {
+        "metadataVsFullRows": true,
+        "metadataVsWindowRows": true,
+        "metadataVsNodeRows": true
+      }
+    },
+    {
+      "key": "wvs7",
+      "filePath": "/Users/cobro/code/Velocity/test_data/WVS/WVS_Cross-National_Wave_7_spss_v6_0.sav",
+      "fileSizeBytes": 185163494,
+      "metadataParse": {
+        "result": {
+          "rowCount": 97220,
+          "variableCount": 613
+        },
+        "durationMs": 22.983499999999367,
+        "peakRssBytes": 1090682880,
+        "startRssBytes": 1090666496,
+        "endRssBytes": 1090682880
+      },
+      "fullParse": {
+        "result": {
+          "rowCount": 97220,
+          "variableCount": 613
+        },
+        "durationMs": 1819.5205840000008,
+        "peakRssBytes": 2434760704,
+        "startRssBytes": 1090682880,
+        "endRssBytes": 2434760704
+      },
+      "windowParse": {
+        "result": {
+          "rowCount": 97220,
+          "variableCount": 613,
+          "chunkSize": 5000,
+          "windows": 20
+        },
+        "durationMs": 2963.9071249999997,
+        "peakRssBytes": 2434760704,
+        "startRssBytes": 2434760704,
+        "endRssBytes": 2142109696
+      },
+      "nodeIngestion": {
+        "result": {
+          "rowCount": 97220,
+          "variableCount": 693
+        },
+        "durationMs": 16807.436917,
+        "peakRssBytes": 2532343808,
+        "startRssBytes": 2142109696,
+        "endRssBytes": 2436202496
+      },
+      "parity": {
+        "metadataVsFullRows": true,
+        "metadataVsWindowRows": true,
+        "metadataVsNodeRows": true
+      }
+    }
+  ],
+  "skipped": [],
+  "failures": []
+}
