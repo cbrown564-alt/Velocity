@@ -4,6 +4,8 @@ import { chromium } from '@playwright/test';
 import path from 'node:path';
 import { promises as fs } from 'node:fs';
 import process from 'node:process';
+import { fileURLToPath } from 'node:url';
+import { buildQualitySummary } from './demo-quality.mjs';
 
 const DEFAULT_BASE_URL = process.env.DEMO_BASE_URL || 'http://127.0.0.1:4173';
 const DEFAULT_CONTRACT = 'demo/contracts/first-analysis.json';
@@ -204,7 +206,7 @@ async function executeStep(page, step, config) {
   return { downloadMeta };
 }
 
-async function run() {
+export async function run() {
   const args = parseArgs(process.argv);
   const contractPath = path.resolve(process.cwd(), args.contractPath);
   const contract = await readJson(contractPath);
@@ -223,6 +225,21 @@ async function run() {
     reducedMotion: 'reduce',
   });
   const page = await context.newPage();
+  const consoleMessages = [];
+  const pageErrors = [];
+
+  page.on('console', (message) => {
+    consoleMessages.push({
+      type: message.type(),
+      text: message.text(),
+    });
+  });
+  page.on('pageerror', (error) => {
+    pageErrors.push({
+      message: error.message,
+      stack: error.stack,
+    });
+  });
 
   const runLog = {
     contract: {
@@ -306,13 +323,22 @@ async function run() {
     throw error;
   } finally {
     runLog.finishedAt = new Date().toISOString();
+    runLog.quality = buildQualitySummary({
+      steps: runLog.steps,
+      timingTargets: contract.quality?.timingTargets ?? [],
+      recoverabilityChecks: contract.quality?.recoverabilityChecks ?? [],
+      consoleMessages,
+      pageErrors,
+    });
     await fs.writeFile(path.join(artifactsDir, 'steps.json'), JSON.stringify(runLog, null, 2), 'utf8');
     await context.close();
     await browser.close();
   }
 }
 
-run().catch((error) => {
-  console.error(`[demo-runner] ${error instanceof Error ? error.message : String(error)}`);
-  process.exitCode = 1;
-});
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  run().catch((error) => {
+    console.error(`[demo-runner] ${error instanceof Error ? error.message : String(error)}`);
+    process.exitCode = 1;
+  });
+}

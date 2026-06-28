@@ -1,0 +1,44 @@
+{
+  "version": 1,
+  "status": "synthetic_harness_fixtures",
+  "createdFor": "docs/workstreams/deck_native/07_report_quality_experience_plan_v2.md",
+  "datasets": [
+    {
+      "id": "brand-tracker-wave-1",
+      "archetype": "brand_tracker",
+      "path": "demo/report-quality/fixtures/brand_tracker_wave_1.csv",
+      "expectedRows": 12,
+      "job": "Baseline brand health story across awareness, consideration, usage, and NPS by segment and brand."
+    },
+    {
+      "id": "brand-tracker-wave-2",
+      "archetype": "brand_tracker",
+      "path": "demo/report-quality/fixtures/brand_tracker_wave_2.csv",
+      "expectedRows": 12,
+      "job": "Wave-refresh story that updates movement direction and magnitude against wave 1."
+    },
+    {
+      "id": "concept-test",
+      "archetype": "concept_test",
+      "path": "demo/report-quality/fixtures/concept_test.csv",
+      "expectedRows": 12,
+      "job": "Decide which concept is stronger, why, and what should change before the next round."
+    }
+  ],
+  "expectedDeckJobs": [
+    {
+      "id": "brand-tracker-client-readout",
+      "datasetIds": ["brand-tracker-wave-1", "brand-tracker-wave-2"],
+      "audience": "Boutique agency consultant preparing a recurring client readout.",
+      "requiredSections": ["Executive Summary", "Brand Health", "Segment Differences", "Drivers And Implications", "Method Notes"],
+      "requiredEvidence": ["base size", "wave", "segment", "brand", "metric definition", "human-confirmed action titles"]
+    },
+    {
+      "id": "concept-test-decision-readout",
+      "datasetIds": ["concept-test"],
+      "audience": "Consultant recommending which concept to progress.",
+      "requiredSections": ["Executive Summary", "Concept Winner", "Why It Wins", "Barriers", "Recommended Changes", "Method Notes"],
+      "requiredEvidence": ["base size", "concept", "segment", "metric definition", "recommendation caveats"]
+    }
+  ]
+}

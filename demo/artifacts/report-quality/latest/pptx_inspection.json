@@ -1,0 +1,137 @@
+{
+  "status": "needs_review",
+  "pptxPath": "/Users/cobro/code/Velocity/tests/fixtures/export/sleep-report.pptx",
+  "inspectedAt": "2026-06-28T12:26:57.248Z",
+  "fileSizeBytes": 141555,
+  "slideCount": 6,
+  "notesSlideCount": 6,
+  "mediaCount": 0,
+  "editableTextBoxCount": 11,
+  "tableCount": 3,
+  "chartCount": 0,
+  "pictureCount": 0,
+  "remainingTokens": [],
+  "emptySlides": [],
+  "overflowWarnings": [
+    {
+      "slideNumber": 1,
+      "shapeIndex": 1,
+      "textLength": 34,
+      "roughCapacity": 12,
+      "message": "Text may overflow its XML bounds."
+    },
+    {
+      "slideNumber": 2,
+      "shapeIndex": 1,
+      "textLength": 13,
+      "roughCapacity": 12,
+      "message": "Text may overflow its XML bounds."
+    },
+    {
+      "slideNumber": 3,
+      "shapeIndex": 1,
+      "textLength": 26,
+      "roughCapacity": 12,
+      "message": "Text may overflow its XML bounds."
+    },
+    {
+      "slideNumber": 4,
+      "shapeIndex": 1,
+      "textLength": 42,
+      "roughCapacity": 12,
+      "message": "Text may overflow its XML bounds."
+    },
+    {
+      "slideNumber": 5,
+      "shapeIndex": 1,
+      "textLength": 13,
+      "roughCapacity": 12,
+      "message": "Text may overflow its XML bounds."
+    },
+    {
+      "slideNumber": 6,
+      "shapeIndex": 1,
+      "textLength": 22,
+      "roughCapacity": 12,
+      "message": "Text may overflow its XML bounds."
+    }
+  ],
+  "fonts": [
+    "Atkinson Hyperlegible"
+  ],
+  "colors": [
+    "000000",
+    "1C1C1C",
+    "666666",
+    "CCCCCC",
+    "E07A5F",
+    "FFFFFF"
+  ],
+  "themeFonts": [
+    "Angsana New",
+    "Arial",
+    "Calibri",
+    "Calibri Light",
+    "Cordia New",
+    "DaunPenh",
+    "DokChampa",
+    "Ebrima",
+    "Estrangelo Edessa",
+    "Euphemia",
+    "Gautami",
+    "Iskoola Pota",
+    "Javanese Text",
+    "Kalinga",
+    "Kartika",
+    "Latha",
+    "Leelawadee UI",
+    "Mangal",
+    "Microsoft Himalaya",
+    "Microsoft JhengHei",
+    "Microsoft New Tai Lue",
+    "Microsoft Tai Le",
+    "Microsoft Uighur",
+    "Microsoft Yi Baiti",
+    "Mongolian Baiti",
+    "MoolBoran",
+    "MV Boli",
+    "Myanmar Text",
+    "Nirmala UI",
+    "Nyala",
+    "Phagspa",
+    "Plantagenet Cherokee",
+    "Raavi",
+    "Segoe UI",
+    "Shruti",
+    "Sylfaen",
+    "Times New Roman",
+    "Tunga",
+    "Vrinda",
+    "맑은 고딕",
+    "新細明體",
+    "游ゴシック",
+    "游ゴシック Light",
+    "等线",
+    "等线 Light"
+  ],
+  "themeColors": [
+    "000000",
+    "0563C1",
+    "44546A",
+    "4472C4",
+    "5B9BD5",
+    "70AD47",
+    "954F72",
+    "A5A5A5",
+    "E7E6E6",
+    "ED7D31",
+    "FFC000"
+  ],
+  "fontCount": 1,
+  "paletteSize": 6,
+  "media": [],
+  "warnings": [
+    "Potential text overflow detected.",
+    "Palette has more than four detected colors."
+  ]
+}

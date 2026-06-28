@@ -111,5 +111,41 @@
   "successMetric": {
     "type": "stepCount",
     "minimumCompleted": 7
+  },
+  "quality": {
+    "timingTargets": [
+      {
+        "stepId": "compose-crosstab-break",
+        "label": "first representative crosstab under 5 seconds",
+        "maxDurationMs": 5000
+      },
+      {
+        "stepId": "open-export-modal",
+        "label": "export review opens under 1 second once deck is ready",
+        "maxDurationMs": 1000
+      },
+      {
+        "stepId": "export-pptx",
+        "label": "one-slide PPTX export under 3 seconds for small files",
+        "maxDurationMs": 3000
+      }
+    ],
+    "recoverabilityChecks": [
+      {
+        "id": "title-edit-undo",
+        "status": "manual",
+        "description": "Edit the report title, undo with Cmd/Ctrl+Z, and confirm the original title returns before export."
+      },
+      {
+        "id": "slide-reorder-undo",
+        "status": "manual",
+        "description": "Reorder a slide, undo the move, and confirm the deck order is restored."
+      },
+      {
+        "id": "reopen-draft",
+        "status": "manual",
+        "description": "Refresh or reopen a stored dataset and confirm the in-progress export/title state is not silently lost."
+      }
+    ]
   }
 }

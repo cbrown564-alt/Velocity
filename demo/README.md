@@ -8,6 +8,7 @@ This folder defines a repeatable demo capture flow for Velocity.
 - `contracts/deck-export-complete.json`: machine-readable full export proof contract (asserts real `.pptx` download).
 - `scripts/run-demo-flow.mjs`: Playwright-based runner to execute a contract.
 - `qa/checklist.md`: human QA checklist before publishing.
+- `report-quality/`: synthetic report-quality fixtures, story checklist, and exemplar gate.
 - `artifacts/`: run outputs (created at runtime).
 
 ## Run it
@@ -46,8 +47,16 @@ Assertion types:
 Each run writes:
 
 - `demo/artifacts/<flow>/latest/steps.json`: step log, duration, pass/fail, download metadata.
+- `demo/artifacts/<flow>/latest/steps.json` also includes a `quality` block when the contract defines timing or recoverability targets.
 - `demo/artifacts/<flow>/latest/screens/*.png`: step screenshots where `capture=true`.
 - `demo/artifacts/<flow>/latest/downloads/*`: saved export files for proof flows.
+
+Report-quality PPTX review:
+
+```bash
+npm run report-quality:inspect -- tests/fixtures/export/sleep-report.pptx
+npm run report-quality:review -- tests/fixtures/export/sleep-report.pptx --out-dir demo/artifacts/report-quality/latest
+```
 
 Capture quality defaults:
 

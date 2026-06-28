@@ -40,6 +40,66 @@ describe('ExportModal accessibility', () => {
     expect(screen.getByRole('radio', { name: 'Excel' })).toBeInTheDocument();
   });
 
+  it('resolves default slide titles from the active analysis state before export', () => {
+    useVelocityStore.setState({
+      slides: [{
+        id: 's1',
+        title: 'New Slide',
+        subtitle: '',
+        analysisState: { rowVars: [], colVar: null, filters: [], weightVar: null },
+        visualizationType: 'table',
+        layoutMode: 'focus',
+        cells: [{ id: 'c1', content: { type: 'table' } }],
+        createdAt: 1,
+        updatedAt: 1,
+      }],
+      activeSlideId: 's1',
+      tableConfig: { rowVars: ['gender'], colVar: 'region' },
+      activeFilters: [],
+      dataset: {
+        id: 'd1',
+        name: 'Dataset',
+        rowCount: 10,
+        source: 'csv',
+        variables: [
+          { id: 'gender', name: 'gender', label: 'Gender', type: 'nominal' },
+          { id: 'region', name: 'region', label: 'Region', type: 'nominal' },
+        ],
+      },
+      variableSets: [
+        { id: 'gender', name: 'gender', variableIds: ['gender'], structure: 'single' },
+        { id: 'region', name: 'region', variableIds: ['region'], structure: 'single' },
+      ],
+      browserEngine: { runAnalysis: vi.fn() },
+      isQuerying: false,
+      analysisSettings: {},
+    } as never);
+
+    render(
+      <ExportModal
+        isOpen
+        onClose={vi.fn()}
+        config={{ title: 'New Slide', analyses: [] }}
+      />
+    );
+
+    expect(screen.getByLabelText(/report title/i)).toHaveValue('Gender by Region');
+    expect(screen.getByText(/current slide \(gender by region\)/i)).toBeInTheDocument();
+  });
+
+  it('uses a single centered modal shell instead of a duplicated backdrop overlay', () => {
+    const { container } = render(
+      <ExportModal
+        isOpen
+        onClose={vi.fn()}
+        config={{ title: 'Report', analyses: [] }}
+      />
+    );
+
+    expect(container.children).toHaveLength(1);
+    expect(screen.getByTestId('export-modal').parentElement).toBe(container.firstElementChild);
+  });
+
   it('blocks export and shows review issues when slide recipes are incomplete', () => {
     useVelocityStore.setState({
       slides: [{

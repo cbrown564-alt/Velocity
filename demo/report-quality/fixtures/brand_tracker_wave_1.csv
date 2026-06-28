@@ -1,0 +1,13 @@
+respondent_id,wave,segment,brand,awareness,consideration,usage,nps
+1,2026-Q1,Core,Atlas,1,1,1,8
+2,2026-Q1,Core,Atlas,1,1,0,7
+3,2026-Q1,Core,Beacon,1,0,0,4
+4,2026-Q1,Core,Cirrus,0,0,0,3
+5,2026-Q1,Growth,Atlas,1,0,0,6
+6,2026-Q1,Growth,Beacon,1,1,1,7
+7,2026-Q1,Growth,Beacon,1,1,0,6
+8,2026-Q1,Growth,Cirrus,1,0,0,5
+9,2026-Q1,At Risk,Atlas,0,0,0,2
+10,2026-Q1,At Risk,Beacon,1,0,0,4
+11,2026-Q1,At Risk,Cirrus,1,1,0,5
+12,2026-Q1,At Risk,Cirrus,0,0,0,3

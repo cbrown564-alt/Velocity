@@ -242,6 +242,7 @@ docs/workstreams/deck_native/
     builder_handoff.md
     evaluator_review.md
   06_final_verification.md
+  07_report_quality_experience_plan.md
   ...
 ```
 
@@ -377,6 +378,7 @@ Validation:
 | Card | Outcome | Dependencies | Validation |
 | :--- | :--- | :--- | :--- |
 | PR review / merge decision | Human review of completed deck-native technical workstream before any `PILOT-5` tracker promotion | final verification | PR checklist, mutation/CI decision, and pilot-evidence decision |
+| Report quality experience plan | User stories, PPTX quality rubric, UX smoothness standard, configurability/story-building roadmap, and evaluation harness | final verification | `docs/workstreams/deck_native/07_report_quality_experience_plan.md` reviewed by human owner |
 
 ### Next
 

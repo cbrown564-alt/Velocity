@@ -39,7 +39,9 @@
     "test:e2e:visual-polish": "playwright test tests/e2e/visual-polish-theme-table.spec.ts",
     "test:e2e:visual-polish:update": "playwright test tests/e2e/visual-polish-theme-table.spec.ts --update-snapshots",
     "demo:run:first-analysis": "node demo/scripts/run-demo-flow.mjs --contract demo/contracts/first-analysis.json",
-    "demo:run:deck-export-complete": "node demo/scripts/run-demo-flow.mjs --contract demo/contracts/deck-export-complete.json"
+    "demo:run:deck-export-complete": "node demo/scripts/run-demo-flow.mjs --contract demo/contracts/deck-export-complete.json",
+    "report-quality:inspect": "node scripts/report-quality/inspect-pptx.mjs",
+    "report-quality:review": "node scripts/report-quality/review-artifact.mjs"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

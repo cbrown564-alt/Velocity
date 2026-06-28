@@ -82,6 +82,7 @@ export const ModalShell: React.FC<ModalShellProps> = ({
               {...panelMotion}
               className={panelClassName}
               style={panelStyle}
+              data-testid={panelDataTestId}
               onClick={(event) => event.stopPropagation()}
               onKeyDown={onPanelKeyDown}
             >

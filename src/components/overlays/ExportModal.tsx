@@ -13,6 +13,7 @@ import { exportXlsx } from '../../core/export/xlsxExporter';
 import { ExportConfig, TemplateRefreshMode } from '../../core/export/types';
 import { useVelocityStore } from '../../store';
 import { buildExportConfig } from '../../core/export/buildExportConfig';
+import { resolveSlideTitle } from '../../core/export/resolveSlideDefaults';
 import { buildExportReview, slidesToRecipes } from '../../core/export/slideRecipe';
 import {
     applyTemplateBindingsToPptx,
@@ -22,6 +23,7 @@ import {
 } from '../../core/export/templateMapping';
 import { resolveAnalysisVariables } from '../../core/export/resolveAnalysisVariables';
 import { runCrosstabForExport } from '../../core/export/runCrosstabForExport';
+import type { Variable, VariableSet } from '../../types';
 import type { SlideAnalysisState } from '../../types/slides';
 import { ModalShell } from './ModalShell';
 import { recordPilotEvent } from '../../services/pilotOnboarding';
@@ -37,6 +39,57 @@ interface ExportModalProps {
 
 type ExportFormat = 'pptx' | 'xlsx';
 type ExportScope = 'current' | 'all' | 'selected';
+
+function resolveLabeledReference(
+    referenceId: string,
+    variableSets: VariableSet[],
+    variables: Variable[]
+) {
+    const variableSet = variableSets.find((set) => set.id === referenceId);
+    if (variableSet) {
+        return {
+            id: variableSet.id,
+            name: variableSet.name,
+            label: variableSet.name,
+        };
+    }
+
+    const variable = variables.find((candidate) => candidate.id === referenceId);
+    if (variable) {
+        return {
+            id: variable.id,
+            name: variable.name,
+            label: variable.label || variable.name,
+        };
+    }
+
+    return {
+        id: referenceId,
+        name: referenceId,
+        label: referenceId,
+    };
+}
+
+function resolveExportSlideTitle(
+    savedTitle: string | undefined,
+    analysisState: SlideAnalysisState,
+    variableSets: VariableSet[],
+    variables: Variable[]
+): string {
+    const trimmedTitle = savedTitle?.trim();
+    if (trimmedTitle && trimmedTitle !== 'New Slide') {
+        return trimmedTitle;
+    }
+
+    return resolveSlideTitle(
+        analysisState.rowVars.map((rowVarId) =>
+            resolveLabeledReference(rowVarId, variableSets, variables)
+        ),
+        analysisState.colVar
+            ? resolveLabeledReference(analysisState.colVar, variableSets, variables)
+            : null
+    );
+}
 
 export const ExportModal: React.FC<ExportModalProps> = ({
     isOpen,
@@ -67,14 +120,35 @@ export const ExportModal: React.FC<ExportModalProps> = ({
     const isQuerying = useVelocityStore((state) => state.isQuerying);
     const analysisSettings = useVelocityStore((state) => state.analysisSettings);
 
+    const activeAnalysisState = useMemo<SlideAnalysisState>(() => ({
+        rowVars: tableConfig.rowVars,
+        colVar: tableConfig.colVar,
+        filters: activeFilters,
+        weightVar: dataset?.weightVariable ?? null,
+    }), [tableConfig.rowVars, tableConfig.colVar, activeFilters, dataset?.weightVariable]);
+
+    const resolveTitleForSlide = (slideId: string): string | null => {
+        const slide = slides.find((candidate) => candidate.id === slideId);
+        if (!slide || !dataset) return null;
+        const analysisState = slideId === activeSlideId ? activeAnalysisState : slide.analysisState;
+        return resolveExportSlideTitle(slide.title, analysisState, variableSets, dataset.variables);
+    };
+
     const activeSlideTitle = useMemo(() => {
         if (!activeSlideId) return null;
-        return slides.find((slide) => slide.id === activeSlideId)?.title || null;
-    }, [slides, activeSlideId]);
+        return resolveTitleForSlide(activeSlideId);
+    }, [slides, activeSlideId, activeAnalysisState, variableSets, dataset]);
+
+    const initialResolvedTitle = useMemo(() => {
+        if (initialConfig.title.trim() && initialConfig.title.trim() !== 'New Slide') {
+            return initialConfig.title;
+        }
+        return activeSlideTitle ?? initialConfig.title;
+    }, [activeSlideTitle, initialConfig.title]);
 
     useEffect(() => {
         if (!isOpen) return;
-        setTitle(initialConfig.title);
+        setTitle(initialResolvedTitle);
         setExportSuccess(false);
         setExportError(null);
         setScope('current');
@@ -82,7 +156,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
         setUseTemplateMode(false);
         setTemplateRefreshMode('wave_refresh');
         setTemplateOptionsState(initialConfig.templateOptions ?? null);
-    }, [isOpen, initialConfig.title, activeSlideId]);
+    }, [isOpen, initialResolvedTitle, activeSlideId, initialConfig.templateOptions]);
 
     const slideIdsForScope = useMemo(() => {
         if (scope === 'current') {
@@ -303,13 +377,14 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                 if (!slide) continue;
 
                 const analysisState: SlideAnalysisState = slideId === activeSlideId
-                    ? {
-                        rowVars: tableConfig.rowVars,
-                        colVar: tableConfig.colVar,
-                        filters: activeFilters,
-                        weightVar: dataset.weightVariable ?? null,
-                    }
+                    ? activeAnalysisState
                     : slide.analysisState;
+                const resolvedSlideTitle = resolveExportSlideTitle(
+                    slide.title,
+                    analysisState,
+                    variableSets,
+                    dataset.variables
+                );
 
                 const weightVar = analysisState.weightVar ?? dataset.weightVariable ?? null;
                 const { rowVariables, colVariable, firstRowVarSet } = resolveAnalysisVariables(
@@ -332,7 +407,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
 
                 const slideConfig = buildExportConfig({
                     title,
-                    label: slide.title,
+                    label: resolvedSlideTitle,
                     data: crosstab.data,
                     rowVariables,
                     colVariable,
@@ -444,10 +519,9 @@ export const ExportModal: React.FC<ExportModalProps> = ({
         <ModalShell
             isOpen={isOpen}
             onClose={onClose}
+            layout="unified"
             escapeToClose
             backdropClassName={styles.backdrop}
-            overlayClassName={styles.backdrop}
-            overlayStyle={{ pointerEvents: 'none' }}
             panelClassName={styles.modal}
             panelStyle={{ pointerEvents: 'auto' }}
             panelDataTestId="export-modal"

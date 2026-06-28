@@ -8,6 +8,54 @@ import { expect, afterEach, vi } from 'vitest';
 import { cleanup } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
 
+function createStorageMock(): Storage {
+    let store: Record<string, string> = {};
+
+    return {
+        get length() {
+            return Object.keys(store).length;
+        },
+        clear() {
+            store = {};
+        },
+        getItem(key: string) {
+            return Object.prototype.hasOwnProperty.call(store, key) ? store[key] : null;
+        },
+        key(index: number) {
+            return Object.keys(store)[index] ?? null;
+        },
+        removeItem(key: string) {
+            delete store[key];
+        },
+        setItem(key: string, value: string) {
+            store[key] = String(value);
+        },
+    };
+}
+
+const hasUsableStorage = (value: unknown): value is Storage => {
+    return typeof value === 'object'
+        && value !== null
+        && typeof (value as Storage).getItem === 'function'
+        && typeof (value as Storage).setItem === 'function'
+        && typeof (value as Storage).removeItem === 'function'
+        && typeof (value as Storage).clear === 'function';
+};
+
+if (!hasUsableStorage(globalThis.localStorage)) {
+    const localStorageMock = createStorageMock();
+    Object.defineProperty(globalThis, 'localStorage', {
+        value: localStorageMock,
+        configurable: true,
+    });
+    if (typeof window !== 'undefined') {
+        Object.defineProperty(window, 'localStorage', {
+            value: localStorageMock,
+            configurable: true,
+        });
+    }
+}
+
 // Cleanup after each test for React Testing Library
 afterEach(() => {
     cleanup();
