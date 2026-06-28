@@ -149,9 +149,6 @@ from its own layer or any layer **below** it, never above.
 These violations exist today and are explicitly scoped to later stabilization
 PRs. New code must not add to them.
 
-- `src/store/slices/workspaceSlice.ts` and `src/store/slices/uiSlice.ts` import
-  from `src/features/workspace` (store → feature). → resolve by moving the
-  shared types/helpers into the kernel.
 - `src/types/worker.ts` and `src/types/engineWorker.ts` import
   `CrosstabQueryOptions` from `src/core/sql/queryBuilder` (kernel → platform
   back-edge). Type-only and entirely within the headless side, so low-risk, but

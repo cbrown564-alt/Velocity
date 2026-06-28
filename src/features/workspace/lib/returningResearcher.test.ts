@@ -1,13 +1,8 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import type { StoredDataset } from '../types';
 import { useVelocityStore } from '../../../store';
-import {
-  MS_THREE_DAYS,
-  computeActivityTouchPatch,
-  findResumeCandidate,
-  formatDeckSummaryTooltip,
-  shouldShowWelcomeBack,
-} from './returningResearcher';
+import { findResumeCandidate, formatDeckSummaryTooltip } from './returningResearcher';
+import { MS_THREE_DAYS, computeActivityTouchPatch, shouldShowWelcomeBack } from '../../../lib/welcomeBack';
 
 const baseDataset = (overrides: Partial<StoredDataset> = {}): StoredDataset => ({
   id: 'ds-1',

@@ -7,7 +7,8 @@
 
 import { useCallback, useMemo } from 'react';
 import { useVelocityStore } from '../../../store';
-import { findResumeCandidate, shouldShowWelcomeBack, type ResumeCandidate } from '../lib/returningResearcher';
+import { findResumeCandidate, type ResumeCandidate } from '../lib/returningResearcher';
+import { shouldShowWelcomeBack } from '../../../lib/welcomeBack';
 import type { StoredDataset } from '../types';
 
 export interface UseWelcomeBackOptions {

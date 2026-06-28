@@ -10,7 +10,7 @@ import { MAX_VISIBLE_TOASTS } from '../toastPolicy';
 import type { VariableType } from './data/types';
 import type { Variable } from './data/types';
 import type { ExportConfig } from '../../core/export/types';
-import { computeActivityTouchPatch } from '../../features/workspace/lib/returningResearcher';
+import { computeActivityTouchPatch } from '../../lib/welcomeBack';
 
 // ============================================================================
 // Types

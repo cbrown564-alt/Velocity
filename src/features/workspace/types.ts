@@ -1,56 +1,9 @@
-import type { DatasetSessionState, Folder, Variable, VariableSet } from '../../types';
+// Data contracts now live in the shared kernel (arch_01 §5) so the store can use
+// them without importing from this feature. Re-exported here for feature/UI
+// consumers that already import from the workspace barrel.
+import type { StoredDataset, Project, WorkspaceState } from '../../types/workspace';
 
-export interface StoredDataset {
-  id: string;
-  name: string;
-  fileName: string;
-  rowCount: number;
-  columnCount: number;
-  fileSize: number; // bytes
-  source: 'sav' | 'csv' | 'arrow';
-  createdAt: number;
-  lastOpenedAt: number;
-  lastModifiedAt: number;
-  projectId?: string;
-  starred: boolean;
-  /** Wave number for linked longitudinal studies */
-  waveNumber?: number;
-  /** Key variable for linking respondents across waves */
-  respondentKey?: string;
-  /** Thumbnail data for preview (sparkline of first variable) */
-  thumbnail?: number[];
-  /** Session state to restore */
-  sessionState?: DatasetSessionState;
-  /** Optional variable metadata for cross-wave harmonization */
-  variables?: Variable[];
-  /** Original variable grouping metadata from ingest/manager state */
-  variableSets?: VariableSet[];
-  /** Original folder metadata from variable organization */
-  folders?: Folder[];
-  /** OPFS key for restoring this dataset's source file */
-  opfsFileKey?: string;
-  /** DuckDB table containing this dataset's rows */
-  tableName?: string;
-}
-
-export interface Project {
-  id: string;
-  name: string;
-  color: string;
-  description?: string;
-  createdAt: number;
-  datasetIds: string[];
-  /** For wave-linked projects */
-  isLongitudinal: boolean;
-  respondentKeyVariable?: string;
-}
-
-export interface WorkspaceState {
-  datasets: StoredDataset[];
-  projects: Project[];
-  storageUsed: number;
-  storageQuota: number;
-}
+export type { StoredDataset, Project, WorkspaceState };
 
 export interface WorkspaceViewProps {
   workspaceState: WorkspaceState;

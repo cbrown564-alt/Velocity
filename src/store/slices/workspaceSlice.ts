@@ -7,7 +7,7 @@
 
 import { StateCreator } from 'zustand';
 import { v4 as uuidv4 } from 'uuid';
-import type { StoredDataset, Project, WorkspaceState } from '../../features/workspace';
+import type { StoredDataset, Project, WorkspaceState } from '../../types/workspace';
 
 // ============================================================================
 // Types
