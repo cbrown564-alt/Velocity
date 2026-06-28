@@ -60,7 +60,7 @@ export const RidgelineRenderer: React.FC<BaseChartRendererProps> = ({ width, hei
   // Area Generator
   const areaGenerator = area<any>()
     .x((datum) => xScale((datum.x0 + datum.x1) / 2))
-    .y0((d) => 0) // Baseline is relative to the group's y position
+    .y0(() => 0) // Baseline is relative to the group's y position
     .y1((d) => -heightScale(d.value || d.count || 0))
     .curve(curveBasis);
 

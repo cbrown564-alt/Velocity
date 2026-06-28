@@ -79,7 +79,7 @@ export const StackedBarRenderer: React.FC<StackedBarRendererProps> = ({
         rowLabels: columns.map((c) => c.label),
       };
     }
-  }, [rows, columns, rowVariables, colVariable, grandTotal, isSingleVariable]);
+  }, [rows, columns, rowVariables, grandTotal, isSingleVariable]);
 
   // Dynamic margin based on label lengths
   const maxRowLabelLength = Math.max(...rowLabels.map((l) => (l || '').length), 10);

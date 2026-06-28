@@ -2,11 +2,11 @@ import React from 'react';
 import { DataDrawer } from '../../components/overlays/DataDrawer';
 import { RecodeModal } from '../../components/overlays/RecodeModal';
 import { FilterModal } from '../../components/overlays/FilterModal';
-import { ExportModal } from '../../components/overlays/ExportModal';
 import { SessionImportModal } from '../../components/overlays/SessionImportModal';
 import { SessionExportModal } from '../../components/overlays/SessionExportModal';
 import type { SessionExportSummary } from '../../components/overlays/SessionExportModal';
 import { InputModal } from '../../components/overlays/InputModal';
+import { ModalShell } from '../../components/overlays/ModalShell';
 import {
   ProjectLinkModal,
   CrossWavePanel,
@@ -23,6 +23,26 @@ import type { DrillDownState } from '../../store/slices/drillDownSlice';
 import type { AnalysisExportModalState } from '../../store/slices/uiSlice';
 import type { AppOverlay } from '../types';
 import { datasetTableName } from '../utils';
+
+const ExportModal = React.lazy(() =>
+  import('../../components/overlays/ExportModal').then((module) => ({ default: module.ExportModal })),
+);
+
+const ExportModalFallback: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen, onClose }) => (
+  <ModalShell
+    isOpen={isOpen}
+    onClose={onClose}
+    layout="unified"
+    escapeToClose
+    panelClassName="w-full max-w-md rounded-lg border border-[var(--border-color)] bg-[var(--bg-panel)] p-6 shadow-xl"
+    panelStyle={{ pointerEvents: 'auto' }}
+    panelDataTestId="export-modal-loading"
+  >
+    <div role="status" className="text-sm font-medium text-[var(--text-secondary)]">
+      Preparing export...
+    </div>
+  </ModalShell>
+);
 
 export interface ModalHostProps {
   overlay: AppOverlay;
@@ -166,11 +186,17 @@ export const ModalHost: React.FC<ModalHostProps> = ({
       onImport={onWorkspaceImport}
     />
 
-    <ExportModal
-      isOpen={analysisExportModal.isOpen}
-      onClose={onCloseAnalysisExportModal}
-      config={analysisExportModal.config ?? { title: 'Analysis Report', analyses: [] }}
-    />
+    {analysisExportModal.isOpen && (
+      <React.Suspense
+        fallback={<ExportModalFallback isOpen={analysisExportModal.isOpen} onClose={onCloseAnalysisExportModal} />}
+      >
+        <ExportModal
+          isOpen={analysisExportModal.isOpen}
+          onClose={onCloseAnalysisExportModal}
+          config={analysisExportModal.config ?? { title: 'Analysis Report', analyses: [] }}
+        />
+      </React.Suspense>
+    )}
 
     <SessionImportModal isOpen={overlay.kind === 'sessionImport'} onClose={closeOverlay} onImport={onSessionImport} />
 

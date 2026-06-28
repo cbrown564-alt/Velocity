@@ -51,7 +51,7 @@ export const HistogramRenderer: React.FC<BaseChartRendererProps> = ({
       let x1 = 1;
 
       // Try to parse range from label (e.g. "10 - 20")
-      const rangeMatch = (row.label || '').match(/([\d\.]+)\s*-\s*([\d\.]+)/);
+      const rangeMatch = (row.label || '').match(/([\d.]+)\s*-\s*([\d.]+)/);
       if (rangeMatch) {
         x0 = parseFloat(rangeMatch[1]);
         x1 = parseFloat(rangeMatch[2]);

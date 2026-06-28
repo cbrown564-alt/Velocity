@@ -12,7 +12,6 @@ import { resolveSlideTitle, resolveSlideSubtitle } from '../core/export/resolveS
 import { recommendChart } from '../core/visualization/chartRecommender';
 import { mapCrosstabRows } from '../core/analysis/mapCrosstabRows';
 import type { CrosstabSqlRow } from '../core/analysis/crosstab/types';
-import { exportPptx, exportXlsx } from '../core/export';
 import type { AnalysisExportItem, ExportConfig } from '../core/export/types';
 import type { Filter, Variable } from '../types';
 import type {
@@ -215,9 +214,11 @@ export class DeckBuilder {
     };
 
     if (options.format === 'pptx') {
+      const { exportPptx } = await import('../core/export/pptxExporter');
       return exportPptx(config);
     }
     if (options.format === 'xlsx') {
+      const { exportXlsx } = await import('../core/export/xlsxExporter');
       return exportXlsx(config);
     }
 

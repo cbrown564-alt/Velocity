@@ -134,7 +134,6 @@ export const DonutRenderer: React.FC<BaseChartRendererProps> = ({
               {(() => {
                 if (labelMode === 'none') return null;
 
-                const pos = labelArc.centroid(d);
                 const midAngle = d.startAngle + (d.endAngle - d.startAngle) / 2;
                 const isRightSide = midAngle < Math.PI;
 

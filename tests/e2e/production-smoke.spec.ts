@@ -4,6 +4,7 @@ test('production build initializes the analysis worker and DuckDB assets', async
   const consoleMessages: string[] = [];
   const pageErrors: string[] = [];
   const workerAssetResponses: Array<{ status: number; url: string }> = [];
+  const startupAssetResponses: Array<{ status: number; url: string }> = [];
   const appOrigin = new URL(baseURL ?? 'http://127.0.0.1:4175').origin;
   const startedAt = Date.now();
 
@@ -25,6 +26,9 @@ test('production build initializes the analysis worker and DuckDB assets', async
   page.on('pageerror', (error) => pageErrors.push(error.message));
   page.on('response', (response) => {
     const url = response.url();
+    if (url.includes('/assets/')) {
+      startupAssetResponses.push({ status: response.status(), url });
+    }
     if (url.includes('analysisWorker') || url.includes('duckdb-')) {
       workerAssetResponses.push({ status: response.status(), url });
     }
@@ -53,6 +57,7 @@ test('production build initializes the analysis worker and DuckDB assets', async
       {
         ...startupTiming,
         workerAssetResponses,
+        startupAssetResponses,
         consoleMessages,
         pageErrors,
       },
@@ -71,4 +76,5 @@ test('production build initializes the analysis worker and DuckDB assets', async
   expect(workerAssetResponses.some((response) => response.url.includes('.wasm'))).toBe(true);
   expect(workerAssetResponses.every((response) => response.status === 200)).toBe(true);
   expect(workerAssetResponses.every((response) => new URL(response.url).origin === appOrigin)).toBe(true);
+  expect(startupAssetResponses.some((response) => response.url.includes('export-vendor'))).toBe(false);
 });

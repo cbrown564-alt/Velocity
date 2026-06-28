@@ -309,6 +309,33 @@ Risk:
 
 **Goal:** Reduce initial payload without changing analysis behavior.
 
+**Status:** Completed on 2026-06-28. `ModalHost` now lazy-loads the analysis `ExportModal` behind explicit export intent, with a lightweight modal loading state for the first open. `DeckBuilder.export()` dynamically imports the PPTX/XLSX exporters only when deck export is invoked, preventing engine/deck startup from pulling export libraries. Vite chunking now keeps generated runtime helpers in `runtime-vendor` instead of colocating them with export libraries. Google Fonts are consolidated into one HTML stylesheet request and CSS `@import` font requests were removed.
+
+Before/after evidence:
+
+| Measurement | Before Phase 1 | After Phase 1 |
+| :--- | ---: | ---: |
+| Initial `export-vendor` startup fetch | Yes, modulepreloaded | No startup fetch |
+| `export-vendor` gzip kept off startup path | 396.11 KB | 395.67 KB deferred |
+| Main app chunk gzip | 163.99 KB | 153.74 KB |
+| App CSS gzip | 28.28 KB | 26.57 KB |
+
+Validation:
+
+```bash
+npm run build
+PLAYWRIGHT_PRODUCTION_PORT=4176 npm run test:e2e:production
+npm run test:e2e -- tests/e2e/pilot-workflow.spec.ts
+npm run test:run -- src/components/overlays/ExportModal.test.tsx src/engine/__tests__/DeckBuilder.test.ts
+npm run typecheck
+npm run typecheck:test
+npx eslint src/app/components/ModalHost.tsx src/engine/DeckBuilder.ts tests/e2e/production-smoke.spec.ts playwright.production.config.ts vite.config.ts
+```
+
+The production smoke test now asserts startup never fetches `export-vendor` while still requiring the analysis worker and DuckDB WASM/worker assets to initialize successfully.
+
+Next phase: Phase 2, Query and Worker Bridge Efficiency.
+
 Tasks:
 
 1. Lazy-load `ExportModal` from `ModalHost`.

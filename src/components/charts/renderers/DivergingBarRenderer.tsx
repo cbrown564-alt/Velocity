@@ -127,10 +127,6 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
 
   const totalDomainWidth = maxDiverging * 2 + (maxSpecial > 0 ? maxSpecial * 1.2 : 0); // 1.2 for some padding/gap logic in logical units? No, let's do pixel allocation.
 
-  // Allocate width
-  // Fraction of width for diverging
-  const divergingFraction = (maxDiverging * 2) / totalDomainWidth;
-
   // The gap in pixels
   const pixelGap = 30;
   // Recalculate if we have special

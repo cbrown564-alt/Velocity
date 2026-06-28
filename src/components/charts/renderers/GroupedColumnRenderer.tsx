@@ -75,26 +75,19 @@ export const GroupedColumnRenderer: React.FC<BaseChartRendererProps> = ({
 
   // Y: Values scale
   const yScale = useMemo(() => {
-    let maxVal = 1;
-
-    if (isPercentMode) {
-      // Find max percentage across all cells (relative to column total)
-      maxVal =
-        max(rows, (row) => {
-          return max(columnKeys, (key) => {
-            const cell = row.cells[key];
-            if (!cell) return 0;
-            // Use pre-calculated percent from buildTree (it's 0-100)
-            return cell.percent / 100;
-          });
-        }) || 1;
-    } else {
-      // Find max count across all cells
-      maxVal =
-        max(rows, (row) => {
-          return max(columnKeys, (key) => row.cells[key]?.count || 0);
-        }) || 1;
-    }
+    const maxVal =
+      (isPercentMode
+        ? max(rows, (row) => {
+            return max(columnKeys, (key) => {
+              const cell = row.cells[key];
+              if (!cell) return 0;
+              // Use pre-calculated percent from buildTree (it's 0-100)
+              return cell.percent / 100;
+            });
+          })
+        : max(rows, (row) => {
+            return max(columnKeys, (key) => row.cells[key]?.count || 0);
+          })) || 1;
 
     return d3
       .scaleLinear()

@@ -31,6 +31,10 @@ export default defineConfig(({ mode }) => {
       rollupOptions: {
         output: {
           manualChunks(id) {
+            if (id.includes('vite/preload-helper') || id.includes('commonjsHelpers')) {
+              return 'runtime-vendor';
+            }
+
             if (!id.includes('node_modules')) return;
 
             if (id.includes('@duckdb/') || id.includes('apache-arrow')) {
