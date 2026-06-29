@@ -127,7 +127,7 @@ export async function applyTheme(page: Page, label: string) {
   await page.keyboard.press('Escape');
   await page.waitForTimeout(200);
   await page
-    .getByRole('button', { name: /Change theme/i })
+    .getByRole('button', { name: /Activate to switch to/i })
     .first()
     .click({ force: true });
   await themeList.waitFor({ timeout: 5000 });
