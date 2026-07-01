@@ -149,7 +149,7 @@ When changing `src/core/`, run mutation tests locally or rely on the CI `mutatio
 
 ### Known blind spots (stabilization)
 
-`vitest.config.ts` still excludes large product areas without full characterization coverage: `src/features/`, `src/components/overlays/`, `src/components/charts/`, untested `src/store/slices/*` and `src/store/slices/data/*` modules, `src/services/EngineProxy.ts`, `duckDbArrow.ts`, `duckdbBundles.ts`, and `src/hooks/`. **STAB-CI-6 (July 2026)** removed exclusions for `harmonizationSlice.ts`, `uiSlice.ts`, and `variableCatalogActions.ts` now that co-located tests exist; `features/` and `overlays/` remain excluded until function coverage on those surfaces exceeds the 82% floor. Green Vitest coverage does not imply workspace/export UI confidence — treat Playwright E2E as the product gate for excluded UI.
+`vitest.config.ts` still excludes some product areas without full characterization coverage: `src/components/charts/`, untested `src/store/slices/data/*` modules, `src/hooks/`, `duckDbArrow.ts`, and harmonization/onboarding UI not yet pulled into the coverage set. **STAB-CI-7 (July 2026)** removed blanket exclusions for `src/features/` and `src/components/overlays/` after 40+ co-located characterization tests landed; global thresholds pass with those paths measured (features+overlays aggregate ~74% fn — per-module ratchet tracked as STAB-CI-10). **STAB-CI-8** added `EngineProxy.test.ts` and `duckdbBundles.test.ts`. Green Vitest coverage does not imply workspace/export UI confidence — treat Playwright E2E as the product gate for excluded UI.
 
 ## 8. CI/CD Pipeline
 

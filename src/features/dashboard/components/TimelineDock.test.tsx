@@ -122,4 +122,38 @@ describe('TimelineDock', () => {
 
     expect(useVelocityStore.getState().slides.length).toBe(countBefore);
   });
+
+  it('adds a slide on N when canvas is active', () => {
+    useVelocityStore.setState({ appMode: 'analysis' });
+    render(<TimelineDock />);
+    const countBefore = useVelocityStore.getState().slides.length;
+
+    act(() => {
+      fireEvent.keyDown(document, { key: 'n' });
+    });
+
+    expect(useVelocityStore.getState().slides.length).toBe(countBefore + 1);
+  });
+
+  it('navigates to the next slide with ArrowRight', () => {
+    useVelocityStore.setState({ appMode: 'analysis', activeSlideId: 'slide-1' });
+    render(<TimelineDock />);
+
+    act(() => {
+      fireEvent.keyDown(document, { key: 'ArrowRight' });
+    });
+
+    expect(useVelocityStore.getState().activeSlideId).toBe('slide-2');
+  });
+
+  it('opens delete confirmation when Delete is pressed with multiple slides', () => {
+    useVelocityStore.setState({ appMode: 'analysis', activeSlideId: 'slide-1' });
+    render(<TimelineDock />);
+
+    act(() => {
+      fireEvent.keyDown(document, { key: 'Delete' });
+    });
+
+    expect(screen.getByText(/delete slide/i)).toBeInTheDocument();
+  });
 });

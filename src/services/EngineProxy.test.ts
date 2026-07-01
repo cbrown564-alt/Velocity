@@ -285,9 +285,7 @@ describe('EngineProxy broadcast callbacks', () => {
     });
 
     expect(onProgress).toHaveBeenCalledOnce();
-    expect(onProgress).toHaveBeenCalledWith(
-      expect.objectContaining({ type: 'engine.loadProgress', phase: 'parsing' }),
-    );
+    expect(onProgress).toHaveBeenCalledWith(expect.objectContaining({ type: 'engine.loadProgress', phase: 'parsing' }));
   });
 
   it('calls onPersistenceStatus when engine.persistenceStatus arrives', () => {
@@ -313,9 +311,7 @@ describe('EngineProxy broadcast callbacks', () => {
     handle.emit({ type: 'engine.corruptionDetected', message: 'db is corrupt' });
 
     expect(onCorruption).toHaveBeenCalledOnce();
-    expect(onCorruption).toHaveBeenCalledWith(
-      expect.objectContaining({ type: 'engine.corruptionDetected' }),
-    );
+    expect(onCorruption).toHaveBeenCalledWith(expect.objectContaining({ type: 'engine.corruptionDetected' }));
   });
 
   it('engine.persistenceStatus with a requestId does NOT resolve the pending request', async () => {
@@ -471,7 +467,13 @@ describe('EngineProxy.updatePersistenceMetadata', () => {
     const handle = createMockWorker();
     const proxy = new EngineProxy(handle.worker);
 
-    proxy.updatePersistenceMetadata({ datasetName: 'x', rowCount: 1, columnCount: 1, schemaVersion: 1, lastModified: 0 });
+    proxy.updatePersistenceMetadata({
+      datasetName: 'x',
+      rowCount: 1,
+      columnCount: 1,
+      schemaVersion: 1,
+      lastModified: 0,
+    });
 
     // If dispose rejected the update call, we'd get an unhandled rejection. Instead it's void.
     expect(() => proxy.dispose()).not.toThrow();
@@ -754,20 +756,23 @@ describe('EngineProxy delegation methods send the correct message type', () => {
     },
   ];
 
-  it.each(cases)('$method posts $msgType and resolves', async ({ method, args, msgType, responseType, responseExtra }) => {
-    const handle = createMockWorker();
-    handle.postMessage.mockImplementation((msg: { type: string; requestId: string }) => {
-      handle.emit({ type: responseType, requestId: msg.requestId, ...(responseExtra ?? {}) });
-    });
+  it.each(cases)(
+    '$method posts $msgType and resolves',
+    async ({ method, args, msgType, responseType, responseExtra }) => {
+      const handle = createMockWorker();
+      handle.postMessage.mockImplementation((msg: { type: string; requestId: string }) => {
+        handle.emit({ type: responseType, requestId: msg.requestId, ...(responseExtra ?? {}) });
+      });
 
-    const proxy = new EngineProxy(handle.worker);
-    await (proxy as unknown as Record<string, (...a: unknown[]) => Promise<unknown>>)[method]!(...args);
+      const proxy = new EngineProxy(handle.worker);
+      await (proxy as unknown as Record<string, (...a: unknown[]) => Promise<unknown>>)[method]!(...args);
 
-    // For transferable methods (loadSAV*), postMessage receives a second argument
-    // (the transfer array). Check only the message payload via the first call argument.
-    const sentMessage = handle.postMessage.mock.calls[0]?.[0] as Record<string, unknown>;
-    expect(sentMessage).toMatchObject({ type: msgType, requestId: expect.any(String) });
-  });
+      // For transferable methods (loadSAV*), postMessage receives a second argument
+      // (the transfer array). Check only the message payload via the first call argument.
+      const sentMessage = handle.postMessage.mock.calls[0]?.[0] as Record<string, unknown>;
+      expect(sentMessage).toMatchObject({ type: msgType, requestId: expect.any(String) });
+    },
+  );
 });
 
 // ────────────────────────────────────────────────────────────
