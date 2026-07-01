@@ -6,7 +6,7 @@ import {
   resolveActiveMicroTip,
   type MicroTipDefinition,
 } from '../onboarding/contextualMicroTips';
-import { isFirstCrosstabTourDone } from '../onboarding/firstCrosstabTour';
+import { isFirstCrosstabTourDone, shouldSuppressFirstRunCoaching } from '../onboarding/firstCrosstabTour';
 
 export function useContextualMicroTips(): {
   activeTip: MicroTipDefinition | null;
@@ -20,7 +20,7 @@ export function useContextualMicroTips(): {
   const [, forceRefresh] = useState(0);
   const prevAppModeRef = useRef(appMode);
   const focusCountedRef = useRef(false);
-  const crosstabRenderCountRef = useRef(0);
+  const prevExportConfigRef = useRef<string | null>(null);
 
   const hasRenderedCrosstab =
     tableConfig.rowVars.length > 0 && tableConfig.colVar !== null && !isQuerying && queryResult.length > 0;
@@ -38,16 +38,23 @@ export function useContextualMicroTips(): {
   useEffect(() => {
     if (!hasRenderedCrosstab || !isFirstCrosstabTourDone() || focusCountedRef.current) return;
     focusCountedRef.current = true;
-    incrementMicroTipAction('focus');
-    refresh();
+    const timer = window.setTimeout(() => {
+      incrementMicroTipAction('focus');
+      refresh();
+    }, 60_000);
+    return () => window.clearTimeout(timer);
   }, [hasRenderedCrosstab, refresh]);
 
   useEffect(() => {
-    if (!hasRenderedCrosstab) return;
-    crosstabRenderCountRef.current += 1;
+    if (!hasRenderedCrosstab || !isFirstCrosstabTourDone()) return;
+
+    const configKey = `${tableConfig.rowVars.join(',')}|${tableConfig.colVar ?? ''}`;
+    if (prevExportConfigRef.current === configKey) return;
+    prevExportConfigRef.current = configKey;
+
     incrementMicroTipAction('export');
     refresh();
-  }, [hasRenderedCrosstab, queryResult, refresh]);
+  }, [hasRenderedCrosstab, tableConfig.rowVars, tableConfig.colVar, refresh]);
 
   useEffect(() => {
     if (prevAppModeRef.current !== 'variables' && appMode === 'variables') {
@@ -57,7 +64,10 @@ export function useContextualMicroTips(): {
     prevAppModeRef.current = appMode;
   }, [appMode, refresh]);
 
-  const activeTip = appMode === 'analysis' && isFirstCrosstabTourDone() ? resolveActiveMicroTip() : null;
+  const activeTip =
+    appMode === 'analysis' && isFirstCrosstabTourDone() && !shouldSuppressFirstRunCoaching()
+      ? resolveActiveMicroTip()
+      : null;
 
   return { activeTip, dismissActiveTip };
 }

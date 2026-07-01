@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import path from 'path';
+import { openDatasetFromWorkspaceSearch } from './helpers/visualPolish';
 
 const sleepSavFixture = path.resolve(process.cwd(), 'test_data/sleep.sav');
 
@@ -89,10 +90,9 @@ test('pilot workflow: upload, crosstab, export PPTX, reopen, event log', async (
   expect(eventNames).toContain('first_crosstab');
   expect(eventNames).toContain('pptx_exported');
 
-  await page.getByRole('button', { name: 'All Datasets' }).click();
-  await page.getByPlaceholder('Search datasets...').fill('sleep.sav');
-  await page.getByRole('heading', { name: 'sleep.sav' }).dblclick();
+  await openDatasetFromWorkspaceSearch(page, 'sleep.sav');
   await expect(page.getByText('sleep.sav (271 rows)')).toBeVisible({ timeout: 120000 });
+  await expect(page.getByTestId('first-crosstab-tour')).toBeHidden({ timeout: 5000 });
 
   const afterReopen = await page.evaluate(() => {
     const raw = localStorage.getItem('velocity-pilot-events');

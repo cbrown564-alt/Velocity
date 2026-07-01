@@ -40,6 +40,36 @@ describe('AnalysisOutputFrame', () => {
     expect(container.querySelector('.analysis-frame')).toHaveAttribute('data-bleed', 'true');
   });
 
+  it('shrink-wraps frame height to content when frameClassName is shrink-wrap', () => {
+    const { container } = render(
+      <AnalysisOutputFrame frameClassName="shrink-wrap">
+        <table>
+          <tbody>
+            <tr>
+              <td>cell</td>
+            </tr>
+          </tbody>
+        </table>
+      </AnalysisOutputFrame>,
+    );
+
+    const frame = container.querySelector('.analysis-frame');
+    expect(frame?.className).toMatch(/shrinkWrap/);
+  });
+
+  it('keeps bleed styling when shrink-wrapped for focus mode', () => {
+    const { container } = render(
+      <AnalysisOutputFrame bleed frameClassName="shrink-wrap">
+        <span>body</span>
+      </AnalysisOutputFrame>,
+    );
+
+    const frame = container.querySelector('.analysis-frame');
+    expect(frame).toHaveAttribute('data-bleed', 'true');
+    expect(frame?.className).toMatch(/shrinkWrap/);
+    expect(frame?.className).toMatch(/bleed/);
+  });
+
   it('renders footer band as sibling after body when footer prop is set', () => {
     const { container } = render(
       <AnalysisOutputFrame footer={<div data-testid="stats-footer">footer</div>}>

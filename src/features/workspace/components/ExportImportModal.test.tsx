@@ -72,7 +72,7 @@ describe('ExportImportModal', () => {
 
   it('shows dataset count in export preview', () => {
     render(<ExportImportModal isOpen onClose={vi.fn()} workspaceState={workspaceState} onImport={vi.fn()} />);
-    expect(screen.getByText('1 datasets')).toBeInTheDocument();
+    expect(screen.getByText('1 dataset')).toBeInTheDocument();
   });
 
   it('calls onClose when close button is clicked', () => {

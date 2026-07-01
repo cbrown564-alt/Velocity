@@ -11,6 +11,7 @@
 
 /* Title */
 .slide-header-title {
+  font-family: var(--font-body);
   font-size: 1.25rem;
   font-weight: 600;
   color: var(--text-primary);

@@ -11,9 +11,13 @@
 }
 
 .frame.shrinkWrap {
-  flex: 0 0 auto;
+  flex: none;
   align-self: flex-start;
   max-height: 100%;
+}
+
+.shrinkWrap .body {
+  flex: 0 1 auto;
 }
 
 .bleed {
@@ -35,6 +39,10 @@
 
 .bodyChart {
   padding: 1.5rem;
+  min-height: 0;
+}
+
+.frame:not(.shrinkWrap) .bodyChart {
   min-height: 400px;
 }
 

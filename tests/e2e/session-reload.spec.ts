@@ -124,9 +124,9 @@ test('reload keeps workspace when user returned before refresh', async ({ page }
   await buildGenderRegionCrosstab(page);
 
   await page.locator('button[title="Return to Workspace"]').click();
-  await expect(page.getByText(/Recent Datasets|Welcome to Velocity/i)).toBeVisible({ timeout: 30000 });
+  await expect(page.getByText(/Recent Datasets|No datasets yet/i)).toBeVisible({ timeout: 30000 });
 
   await page.reload();
-  await expect(page.getByText(/Recent Datasets|Welcome to Velocity/i)).toBeVisible({ timeout: 120000 });
+  await expect(page.getByText(/Recent Datasets|No datasets yet/i)).toBeVisible({ timeout: 120000 });
   await expect(page.getByRole('button', { name: 'Table view' })).toHaveCount(0);
 });

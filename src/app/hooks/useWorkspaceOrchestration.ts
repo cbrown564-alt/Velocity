@@ -3,6 +3,7 @@ import type { Filter, Variable } from '../../store';
 import { useVelocityStore } from '../../store';
 import { persistDatasetSession } from '../../store/datasetSessionCoordinator';
 import { registerReturnToWorkspaceHandler } from '../../lib/navigationActions';
+import { pluralize } from '../../lib/pluralize';
 import * as opfsFileManager from '../../services/opfsFileManager';
 import type { Project, StoredDataset, WorkspaceExport } from '../../features/workspace';
 import type { AppPhase } from '../types';
@@ -405,7 +406,7 @@ export function useWorkspaceOrchestration({
 
   const handleBatchDelete = useCallback(
     async (ids: string[]) => {
-      if (!window.confirm(`Delete ${ids.length} datasets from your workspace?`)) return;
+      if (!window.confirm(`Delete ${pluralize(ids.length, 'dataset')} from your workspace?`)) return;
 
       await Promise.all(
         ids.map(async (id) => {

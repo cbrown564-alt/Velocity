@@ -47,7 +47,13 @@ async function clearBrowserStorage(page: import('@playwright/test').Page): Promi
     }
     try {
       localStorage.setItem('velocity-first-crosstab-tour-done', '1');
+      localStorage.setItem('velocity-first-crosstab-tour-step-rows', '1');
+      localStorage.setItem('velocity-first-crosstab-tour-step-columns', '1');
+      localStorage.setItem('velocity-first-crosstab-tour-step-significance', '1');
       localStorage.setItem('velocity-focus-tip-seen', '1');
+      localStorage.setItem('velocity-micro-tip-dismissed-focus', '1');
+      localStorage.setItem('velocity-micro-tip-dismissed-export', '1');
+      localStorage.setItem('velocity-micro-tip-dismissed-variable-manager', '1');
     } catch {
       // best-effort onboarding flag seeding for stable e2e
     }

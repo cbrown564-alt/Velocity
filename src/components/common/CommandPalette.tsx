@@ -303,15 +303,15 @@ export const CommandPalette: React.FC = () => {
       }}
     >
       <div className="w-full max-w-lg bg-[var(--bg-panel)] border border-[var(--border-color)] rounded-xl shadow-2xl overflow-hidden flex flex-col">
-        <div className="flex items-center gap-3 px-4 py-3 border-b border-[var(--border-color)]">
-          <Search size={18} className="text-[var(--text-secondary)]" />
+        <div className="flex items-center gap-3 px-4 py-3 border-b border-[var(--border-color)] focus-within:ring-1 focus-within:ring-[var(--border-color-active)]">
+          <Search size={18} className="text-[var(--text-secondary)] shrink-0" />
           <input
             ref={inputRef}
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Type a command or search variables..."
-            className="flex-1 bg-transparent text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] outline-none"
+            className="flex-1 bg-transparent text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] outline-none ring-0"
           />
           <kbd className="hidden sm:inline-block text-[10px] px-1.5 py-0.5 bg-[var(--bg-active)] rounded text-[var(--text-tertiary)] border border-[var(--border-color-muted)]">
             ESC

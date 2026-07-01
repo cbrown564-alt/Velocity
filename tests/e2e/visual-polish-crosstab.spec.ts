@@ -96,9 +96,6 @@ test('P1 crosstab render gate — gender x region with trust anchor', async ({ p
   const pctCells = page.locator('text=/\\d+\\.\\d%/');
   await expect(pctCells.first()).toBeVisible({ timeout: 30000 });
 
-  const nCells = page.locator('text=/n=\\d+/');
-  await expect(nCells.first()).toBeVisible({ timeout: 30000 });
-
   const frame = page.locator('.analysis-frame').filter({ has: table });
   await expect(frame).toBeVisible();
 

@@ -71,8 +71,8 @@ export const DataTable: React.FC<DataTableProps> = ({
   frameBleed = false,
 }) => {
   const analysisSettings = useVelocityStore((state) => state.analysisSettings);
-  const showCellN = analysisSettings.showCellN ?? true;
-  const showColumnBases = analysisSettings.showColumnBases ?? true;
+  const showCellN = analysisSettings.showCellN ?? false;
+  const showColumnBases = analysisSettings.showColumnBases ?? false;
   const processedQueryResult = useVelocityStore((state) => state.processedQueryResult);
   const transformLog = useVelocityStore((state) => state.transformLog);
   const deleteGroupedVariable = useVelocityStore((state) => state.deleteGroupedVariable);
@@ -342,8 +342,8 @@ export const DataTable: React.FC<DataTableProps> = ({
       bleed={frameBleed}
       density={density}
       reducedMotion={reducedMotion}
-      frameClassName={density === 'generous' || frameBleed || virtualizeRows ? undefined : 'shrink-wrap'}
-      className={density === 'generous' || frameBleed || virtualizeRows ? 'h-full min-h-0' : ''}
+      frameClassName={virtualizeRows ? undefined : 'shrink-wrap'}
+      className={virtualizeRows ? 'h-full min-h-0' : ''}
       footer={
         <StatisticsStatusBar
           analysisSettings={analysisSettings}
@@ -356,7 +356,7 @@ export const DataTable: React.FC<DataTableProps> = ({
       <div
         ref={tableContainerRef}
         data-testid="crosstab-scroll-region"
-        className={`${mergeStyles.tableScrollRegion} custom-scrollbar`}
+        className={`${mergeStyles.tableScrollRegion} ${virtualizeRows ? '' : mergeStyles.tableScrollNatural} custom-scrollbar`}
       >
         <table
           style={tableWidth ? { width: tableWidth } : undefined}

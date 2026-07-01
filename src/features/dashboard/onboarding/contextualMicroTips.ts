@@ -101,7 +101,8 @@ export function isMicroTipEligible(id: MicroTipId): boolean {
   return readActionCount(id) >= definition.actionThreshold;
 }
 
-export function resolveActiveMicroTip(): MicroTipDefinition | null {
+export function resolveActiveMicroTip(options?: { suppressFirstRun?: boolean }): MicroTipDefinition | null {
+  if (options?.suppressFirstRun) return null;
   for (const id of MICRO_TIP_PRIORITY) {
     if (isMicroTipEligible(id)) {
       return MICRO_TIP_DEFINITIONS[id];

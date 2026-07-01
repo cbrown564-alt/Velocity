@@ -94,34 +94,29 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
       )}
 
       {(!isDbReady || initError) && (
-        <div className="absolute inset-0 flex items-center justify-center bg-[var(--bg-app)] z-50">
-          <div className="text-center space-y-4 max-w-md w-full px-6">
-            <h1 className="text-4xl font-bold tracking-tight text-[var(--text-primary)]">Velocity.</h1>
-            <p className="text-[var(--text-secondary)] text-lg">The zero-latency research dashboard.</p>
+        <div
+          className="absolute top-0 left-0 right-0 z-50 border-b border-[var(--border-color-muted)] bg-[var(--bg-panel)]/95 backdrop-blur-sm"
+          data-testid="engine-init-bar"
+        >
+          <div className="max-w-4xl mx-auto px-6 py-3 flex items-center gap-3">
             {initError ? (
-              <div className="flex items-center justify-center gap-2 text-[var(--color-error)] text-sm font-medium bg-[var(--status-error-surface)] p-2 rounded-md">
-                <AlertCircle size={16} />
-                <span>{initError}</span>
-              </div>
+              <>
+                <AlertCircle size={16} className="text-[var(--color-error)] shrink-0" />
+                <p className="text-sm text-[var(--color-error)]">{initError}</p>
+              </>
             ) : (
-              <div className="flex items-center justify-center gap-2">
-                <Loader2 className="w-5 h-5 text-[var(--color-accent)] animate-spin" />
-                <p className="text-sm text-[var(--color-accent)]" data-testid="engine-init-headline">
-                  {initHeadline}
-                </p>
-              </div>
-            )}
-            {!initError && (
-              <div className="space-y-1">
-                <p className="text-xs text-[var(--text-secondary)]" data-testid="engine-init-detail">
-                  {initDetail}
-                </p>
-                {initPercent !== null && (
-                  <p className="text-xs text-[var(--text-tertiary)]" data-testid="engine-init-progress">
-                    {initPercent}% complete
+              <>
+                <Loader2 className="w-4 h-4 text-[var(--text-secondary)] animate-spin shrink-0" />
+                <div className="min-w-0">
+                  <p className="text-sm text-[var(--text-primary)] truncate" data-testid="engine-init-headline">
+                    {initHeadline}
                   </p>
-                )}
-              </div>
+                  <p className="text-xs text-[var(--text-primary)]/80 truncate" data-testid="engine-init-detail">
+                    {initDetail}
+                    {initPercent !== null ? ` · ${initPercent}%` : ''}
+                  </p>
+                </div>
+              </>
             )}
           </div>
         </div>

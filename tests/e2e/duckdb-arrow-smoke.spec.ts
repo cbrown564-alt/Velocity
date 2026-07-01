@@ -87,7 +87,6 @@ test('SAV upload exercises Arrow→DuckDB ingestion in a real browser', async ({
   await expect(table).toBeVisible({ timeout: 30000 });
   await expect(table.locator('tbody tr')).not.toHaveCount(0);
   await expect(page.locator('text=/\\d+\\.\\d%/').first()).toBeVisible({ timeout: 30000 });
-  await expect(page.locator('text=/n=\\d+/').first()).toBeVisible({ timeout: 30000 });
 
   expect(pageErrors).toEqual([]);
   expect(consoleMessages.some((message) => message.includes('Worker runtime error'))).toBe(false);

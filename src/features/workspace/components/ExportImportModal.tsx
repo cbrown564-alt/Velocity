@@ -23,6 +23,7 @@ import {
   Check,
 } from 'lucide-react';
 import type { StoredDataset, Project, WorkspaceState } from '../types';
+import { pluralize } from '../../../lib/pluralize';
 import styles from './ExportImportModal.module.css';
 
 interface ExportImportModalProps {
@@ -227,7 +228,7 @@ export const ExportImportModal: React.FC<ExportImportModalProps> = ({
                     >
                       <Database size={14} />
                       Full Workspace
-                      <span className={styles.modeMeta}>{datasets.length} datasets</span>
+                      <span className={styles.modeMeta}>{pluralize(datasets.length, 'dataset')}</span>
                     </button>
                     <button
                       className={exportMode === 'selected' ? styles.active : ''}
@@ -235,7 +236,7 @@ export const ExportImportModal: React.FC<ExportImportModalProps> = ({
                     >
                       <CheckCircle2 size={14} />
                       Selected Only
-                      <span className={styles.modeMeta}>{selectedDatasetIds.length} datasets</span>
+                      <span className={styles.modeMeta}>{pluralize(selectedDatasetIds.length, 'dataset')}</span>
                     </button>
                   </div>
                 )}
@@ -246,7 +247,7 @@ export const ExportImportModal: React.FC<ExportImportModalProps> = ({
                   <div className={styles.previewStats}>
                     <div className={styles.previewStat}>
                       <Database size={16} />
-                      <span>{exportPreview.metadata.totalDatasets} datasets</span>
+                      <span>{pluralize(exportPreview.metadata.totalDatasets, 'dataset')}</span>
                     </div>
                     <div className={styles.previewStat}>
                       <FolderOpen size={16} />
@@ -334,7 +335,7 @@ export const ExportImportModal: React.FC<ExportImportModalProps> = ({
                     <div className={styles.previewStats}>
                       <div className={styles.previewStat}>
                         <Database size={16} />
-                        <span>{importData.metadata.totalDatasets} datasets</span>
+                        <span>{pluralize(importData.metadata.totalDatasets, 'dataset')}</span>
                       </div>
                       <div className={styles.previewStat}>
                         <FolderOpen size={16} />

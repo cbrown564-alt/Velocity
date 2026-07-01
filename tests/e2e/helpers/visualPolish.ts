@@ -17,7 +17,13 @@ export async function clearBrowserStorage(page: Page) {
     }
     try {
       localStorage.setItem('velocity-first-crosstab-tour-done', '1');
+      localStorage.setItem('velocity-first-crosstab-tour-step-rows', '1');
+      localStorage.setItem('velocity-first-crosstab-tour-step-columns', '1');
+      localStorage.setItem('velocity-first-crosstab-tour-step-significance', '1');
       localStorage.setItem('velocity-focus-tip-seen', '1');
+      localStorage.setItem('velocity-micro-tip-dismissed-focus', '1');
+      localStorage.setItem('velocity-micro-tip-dismissed-export', '1');
+      localStorage.setItem('velocity-micro-tip-dismissed-variable-manager', '1');
     } catch {
       // Best-effort onboarding flag seeding for stable e2e.
     }
@@ -162,4 +168,16 @@ export async function assertOpfsSupported(page: Page) {
       return false;
     }
   });
+}
+
+/** Open a dataset from workspace search (compact list mode when results ≤ 3). */
+export async function openDatasetFromWorkspaceSearch(page: Page, fileName: string) {
+  await page.getByRole('button', { name: 'All Datasets' }).click();
+  await page.getByPlaceholder('Search datasets...').fill(fileName);
+  const listItem = page.getByRole('button', { name: `Open dataset ${fileName}` });
+  if (await listItem.isVisible({ timeout: 3000 }).catch(() => false)) {
+    await listItem.dblclick();
+    return;
+  }
+  await page.getByRole('heading', { name: fileName }).dblclick();
 }

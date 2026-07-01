@@ -3,6 +3,12 @@ import * as d3 from 'd3-scale';
 import { max } from 'd3-array';
 import { BaseChartRendererProps } from '../../../types/charts';
 import { CHART_BAR_FILL_OPACITY, CHART_PALETTE } from '../shared/chartColors';
+import { SvgChartSeriesLegend } from '../shared/SvgChartSeriesLegend';
+import {
+  formatAxisTick,
+  formatBarTooltip,
+  formatBarValueLabel,
+} from '../../../core/visualization/chartLabelFormatters';
 
 const DEFAULT_PALETTE = CHART_PALETTE;
 
@@ -30,10 +36,7 @@ export const GroupedBarRenderer: React.FC<BaseChartRendererProps> = ({
   const maxRowLabelLength = Math.max(...rows.map((r) => (r.label || '').length), 10);
   const leftMargin = Math.min(Math.max(maxRowLabelLength * 6, 100), 200);
 
-  // Calculate legend width
-  const legendItemWidth = 100;
-  const legendWidth = Math.min(columns.length * legendItemWidth, width - leftMargin - 40);
-
+  // Calculate legend width — dynamic layout handled by SvgChartSeriesLegend
   const margin = { top: 48, right: 40, bottom: 32, left: leftMargin };
   const innerWidth = Math.max(width - margin.left - margin.right, 200);
 
@@ -115,38 +118,20 @@ export const GroupedBarRenderer: React.FC<BaseChartRendererProps> = ({
   );
 
   return (
-    <div style={{ width, height, overflowY: 'auto', overflowX: 'hidden' }}>
+    <div style={{ width, height, overflowY: 'auto', overflowX: 'auto' }}>
       <svg
         width={width}
         height={Math.max(height, actualHeight + margin.top + margin.bottom)}
         style={{ display: 'block', overflow: 'visible', fontFamily: 'var(--font-mono)' }}
       >
         <g transform={`translate(${margin.left},${margin.top})`}>
-          {/* Legend (Top) */}
-          <g transform={`translate(${(innerWidth - legendWidth) / 2}, -${margin.top - 8})`}>
-            {columnLabels.map((label, i) => {
-              const xOffset = i * legendItemWidth;
-              return (
-                <g key={columnKeys[i]} transform={`translate(${xOffset}, 0)`}>
-                  <rect
-                    width={12}
-                    height={12}
-                    rx={1}
-                    fill={colors ? colors[i % colors.length] : DEFAULT_PALETTE[i % DEFAULT_PALETTE.length]}
-                    fillOpacity={CHART_BAR_FILL_OPACITY}
-                  />
-                  <text
-                    x={18}
-                    y={10}
-                    style={{ fontSize: '11px', fill: 'var(--viz-text-axis)', fontFamily: 'var(--font-body)' }}
-                  >
-                    {label ? <title>{label}</title> : null}
-                    {label || ''}
-                  </text>
-                </g>
-              );
-            })}
-          </g>
+          <SvgChartSeriesLegend
+            labels={columnLabels}
+            keys={columnKeys}
+            colors={colors ?? DEFAULT_PALETTE}
+            innerWidth={innerWidth}
+            fillOpacity={CHART_BAR_FILL_OPACITY}
+          />
 
           {/* Grid lines */}
           {xTicks.map((tick) => (
@@ -168,7 +153,7 @@ export const GroupedBarRenderer: React.FC<BaseChartRendererProps> = ({
               <g key={tick} transform={`translate(${xScale(tick)},0)`}>
                 <line y2={4} stroke="var(--viz-stroke-main)" />
                 <text y={18} textAnchor="middle" style={{ fontSize: '10px', fill: 'var(--viz-text-axis)' }}>
-                  {isPercentMode ? `${Math.round(tick * 100)}%` : tick.toLocaleString()}
+                  {formatAxisTick(labelMode, tick)}
                 </text>
               </g>
             ))}
@@ -184,7 +169,7 @@ export const GroupedBarRenderer: React.FC<BaseChartRendererProps> = ({
               textAnchor="end"
               style={{ fontSize: 'var(--text-xs)', fill: 'var(--viz-text-axis)', fontFamily: 'var(--font-body)' }}
             >
-              {r.label && r.label.length > 25 ? r.label.substring(0, 23) + '...' : r.label}
+              {r.label}
             </text>
           ))}
 
@@ -220,7 +205,9 @@ export const GroupedBarRenderer: React.FC<BaseChartRendererProps> = ({
                           transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                           cursor: interactive ? 'pointer' : 'default',
                         }}
-                      />
+                      >
+                        <title>{formatBarTooltip(columnLabels[i] ?? colKey, count, percent)}</title>
+                      </rect>
                       {/* Value label if wide enough and not hidden */}
                       {labelMode !== 'none' && barWidth > 20 && (
                         <text
@@ -237,7 +224,7 @@ export const GroupedBarRenderer: React.FC<BaseChartRendererProps> = ({
                             fontFamily: 'var(--font-mono)',
                           }}
                         >
-                          {isPercentMode ? `${Math.round(value * 100)}%` : count.toLocaleString()}
+                          {formatBarValueLabel(labelMode, count, percent)}
                         </text>
                       )}
                     </g>

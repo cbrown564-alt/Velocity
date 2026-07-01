@@ -7,8 +7,23 @@ interface ContextualMicroTipChipProps {
   onDismiss: () => void;
 }
 
+interface ChipPosition {
+  top: number;
+  left: number;
+}
+
+function resolveChipPosition(anchor: Element): ChipPosition {
+  const rect = anchor.getBoundingClientRect();
+  const maxLeft = window.innerWidth - 280;
+
+  return {
+    top: rect.bottom + 8,
+    left: Math.max(12, Math.min(rect.left, maxLeft)),
+  };
+}
+
 export const ContextualMicroTipChip: React.FC<ContextualMicroTipChipProps> = ({ tip, onDismiss }) => {
-  const [position, setPosition] = useState<{ top: number; left: number } | null>(null);
+  const [position, setPosition] = useState<ChipPosition | null>(null);
 
   useEffect(() => {
     const updatePosition = () => {
@@ -18,11 +33,7 @@ export const ContextualMicroTipChip: React.FC<ContextualMicroTipChipProps> = ({ 
         return;
       }
 
-      const rect = anchor.getBoundingClientRect();
-      setPosition({
-        top: rect.bottom + 8,
-        left: Math.max(12, Math.min(rect.left, window.innerWidth - 320)),
-      });
+      setPosition(resolveChipPosition(anchor));
     };
 
     updatePosition();

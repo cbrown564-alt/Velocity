@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { FolderOpen, Link2, TrendingUp } from 'lucide-react';
 import type { StoredDataset, Project } from '../types';
 import { formatRelativeTime } from '../lib/workspaceFormatters';
+import { pluralize } from '../../../lib/pluralize';
 import { WaveTimeline } from './WaveTimeline';
 import styles from './WorkspaceProjectCard.module.css';
 
@@ -40,7 +41,7 @@ export const WorkspaceProjectCard: React.FC<{
         </div>
         <div className={styles.projectInfo}>
           <h3>{project.name}</h3>
-          <p>{project.description || `${datasets.length} datasets`}</p>
+          <p>{project.description || pluralize(datasets.length, 'dataset')}</p>
         </div>
         {project.isLongitudinal && datasets.length > 1 && (
           <motion.button

@@ -8,6 +8,11 @@ import { ChartDataPoint } from '../../../types/processedData';
 import { useChartDragMerge } from '../hooks/useChartDragMerge';
 import { useChartSelection } from '../hooks/useChartSelection';
 import { ChartPlotArea } from '../shared/ChartPlotArea';
+import {
+  formatAxisTick,
+  formatBarTooltip,
+  formatBarValueLabel,
+} from '../../../core/visualization/chartLabelFormatters';
 
 /**
  * Vertical Bar (Column) Chart Renderer
@@ -50,12 +55,11 @@ export const VerticalBarRenderer: React.FC<BaseChartRendererProps> = ({
   }, [chartData, innerWidth]);
 
   const yScale = useMemo(() => {
-    const maxVal = max(chartData, (d) => d.value) || 1;
-    return d3
-      .scaleLinear()
-      .domain([0, maxVal * 1.1]) // Add 10% padding
-      .range([innerHeight, 0]);
-  }, [chartData, innerHeight]);
+    const usePercent = labelMode === 'percent';
+    const maxVal = usePercent ? 1 : max(chartData, (d) => d.value) || 1;
+    const domainMax = usePercent ? 1 : maxVal * 1.1;
+    return d3.scaleLinear().domain([0, domainMax]).range([innerHeight, 0]);
+  }, [chartData, innerHeight, labelMode]);
 
   const { handleToggle, handleItemContextMenu } = useChartSelection<ChartDataPoint>({
     interactive,
@@ -129,7 +133,7 @@ export const VerticalBarRenderer: React.FC<BaseChartRendererProps> = ({
               textAnchor="end"
               style={{ fontSize: '10px', fill: 'var(--viz-text-axis)' }}
             >
-              {tick.toLocaleString()}
+              {formatAxisTick(labelMode, tick)}
             </text>
           ))}
         </g>
@@ -168,7 +172,8 @@ export const VerticalBarRenderer: React.FC<BaseChartRendererProps> = ({
 
         {/* Columns */}
         {chartData.map((d, i) => {
-          const barHeight = innerHeight - yScale(d.value);
+          const barValue = labelMode === 'percent' ? d.percent / 100 : d.value;
+          const barHeight = innerHeight - yScale(barValue);
           const isSelected = selectedKeys?.has(d.label);
           const isDragging = dragState.isDragging && dragState.draggedItem?.label === d.label;
           const isDropTarget = dragState.isDragging && dragState.dropTarget === d.label;
@@ -199,7 +204,7 @@ export const VerticalBarRenderer: React.FC<BaseChartRendererProps> = ({
               {isDropTarget && (
                 <rect
                   x={(xScale(d.label) || 0) - 4}
-                  y={yScale(d.value) - 4}
+                  y={yScale(barValue) - 4}
                   width={xScale.bandwidth() + 8}
                   height={barHeight + 8}
                   fill="none"
@@ -212,7 +217,7 @@ export const VerticalBarRenderer: React.FC<BaseChartRendererProps> = ({
 
               <BarRect
                 x={xScale(d.label)}
-                y={yScale(d.value)}
+                y={yScale(barValue)}
                 width={xScale.bandwidth()}
                 height={barHeight}
                 fill={isDropTarget ? 'var(--status-success-bg)' : colors ? colors[0] : 'var(--viz-fill-secondary)'}
@@ -229,13 +234,15 @@ export const VerticalBarRenderer: React.FC<BaseChartRendererProps> = ({
                   transformBox: entranceProps.style?.transformBox,
                   transition: dragState.isDragging ? 'none' : 'height 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                 }}
-              />
+              >
+                <title>{formatBarTooltip(d.label, d.value, d.percent)}</title>
+              </BarRect>
 
               {/* Labels */}
               {labelMode !== 'none' && (
                 <text
                   x={(xScale(d.label) || 0) + xScale.bandwidth() / 2}
-                  y={yScale(d.value) - 6}
+                  y={yScale(barValue) - 6}
                   textAnchor="middle"
                   style={{
                     fontSize: '11px',
@@ -244,7 +251,7 @@ export const VerticalBarRenderer: React.FC<BaseChartRendererProps> = ({
                     fontFamily: 'var(--font-mono)',
                   }}
                 >
-                  {labelMode === 'percent' ? `${d.percent.toFixed(1)}%` : d.value.toLocaleString()}
+                  {formatBarValueLabel(labelMode, d.value, d.percent)}
                 </text>
               )}
             </g>

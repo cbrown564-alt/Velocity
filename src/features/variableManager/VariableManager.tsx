@@ -233,7 +233,7 @@ export const VariableManager: React.FC<VariableManagerProps> = ({ onClose }) => 
         <FacetedSearchBar />
 
         {/* Miller Columns */}
-        <div className={millerStyles.container}>
+        <div className={`${millerStyles.container} ${!showInspector ? millerStyles.containerNoInspector : ''}`}>
           {/* Column 1: Data Sources */}
           <DataSourceColumn className={shouldCollapseNav ? millerStyles.columnHidden : ''} />
 

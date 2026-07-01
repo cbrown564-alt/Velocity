@@ -181,12 +181,16 @@
   padding-top: var(--space-2);
 }
 
-.sessionIndicator {
+.sessionBadge {
   display: inline-flex;
   align-items: center;
   gap: var(--space-1);
-  margin-left: auto;
-  color: var(--color-accent);
+  font-size: var(--text-xxs);
+  font-weight: 500;
+  color: var(--text-secondary);
+  padding: var(--space-1) var(--space-2);
+  background: var(--bg-active);
+  border-radius: var(--border-radius-sm);
 }
 
 /* Card actions */
