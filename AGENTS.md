@@ -39,6 +39,7 @@ Paths are relative to `docs/` unless noted.
 | Worker / `EngineProxy` | `arch_07_agent_architecture.md` §11, `playbooks/worker_migration.md` | Convergence and migration |
 | `docs/` or prioritization | `README.md`, `roadmap_00_strategic_guide.md`, `tracker_00_implementation_status.md`, `blue_02_feature_matrix.md` | Scope and sequencing |
 | React UI, CSS, tokens | `design_01_system.md`, `design_02_ux_modes.md`, tracker §7 if styling | Tokens and mode separation |
+| CI / testing / workflows | `arch_08_testing.md`, `playbooks/pre_pr_verification.md` | Local ↔ CI gate parity |
 
 ## 2. Global Invariants
 
@@ -61,7 +62,7 @@ Paths are relative to `docs/` unless noted.
 Inputs: `arch_01`, `arch_03`, `arch_07`, relevant `design_*`, roadmap, feature matrix. Output: design brief. Done when invariants and scope gates are respected.
 
 ### Implementer
-Inputs: `arch_02`, `arch_03`, `arch_07` (+ domain docs). Output: code + tests. Done when tests pass, envelope/provenance rules hold, no logic in transports.
+Inputs: `arch_02`, `arch_03`, `arch_07` (+ domain docs). Output: code + tests. Done when `docs/playbooks/pre_pr_verification.md` gates pass (or CI equivalent), envelope/provenance rules hold, no logic in transports.
 
 ### Maintainer
 Inputs: `arch_03`, `design_01`, `design_02`. Zero behavior change unless tests updated.
@@ -75,6 +76,7 @@ Checklist: dual-state, core portability, stats/UX/engine/MCP/session rules per �
 | :--- | :--- |
 | Refactor | `docs/playbooks/refactor_safely.md` |
 | New behavior | `docs/playbooks/add_tests_first.md` |
+| Pre-PR / CI verification | `docs/playbooks/pre_pr_verification.md` |
 | Statistics | `docs/playbooks/stats_integrity.md` |
 | Performance | `docs/playbooks/performance_pass.md` |
 | Triage | `docs/playbooks/log_triage.md` |

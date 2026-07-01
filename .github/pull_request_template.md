@@ -16,6 +16,7 @@ List docs read based on touched areas (per `AGENTS.md`):
 - [ ] `docs/arch_03_headless_core.md` (`src/core/*` or `adapters/*`)
 - [ ] `docs/arch_04_statistical_engine.md` (stats, weights, significance)
 - [ ] `docs/arch_05_visualisation_engine.md` (charts / D3 / canvas)
+- [ ] `docs/arch_08_testing.md` (CI gates, test strategy, pre-PR verification)
 - [ ] `docs/roadmap_00_strategic_guide.md`
 - [ ] `docs/blue_02_feature_matrix.md`
 - [ ] `docs/design_01_system.md` (React UI / CSS / theme tokens)
@@ -34,17 +35,23 @@ Describe interface/schema/type contract deltas.
 - If yes, list exact contracts and migration impact:
 
 ## Test Plan
-Commands run and outcomes.
+Commands run and outcomes. **Both CI jobs must be green** (`test` + `e2e` when UI/workspace touched). See `docs/playbooks/pre_pr_verification.md`.
 
 ```bash
-# paste exact commands here (typecheck, lint, unit, integration/golden)
+# Minimum: mirrors test job
+npm run ci
+
+# When UI/workspace/persistence/shortcuts/onboarding changed:
+npm run ci:e2e
+
+# When src/core/** changed:
+npm run test:mutation:ci
 ```
 
 Results:
-- [ ] Typecheck passed
-- [ ] Lint passed
-- [ ] Targeted unit tests passed
-- [ ] Integration/golden tests passed (if applicable)
+- [ ] `npm run ci` passed (lint, format, typecheck:all, guards, coverage, build)
+- [ ] `npm run ci:e2e` passed (if UI/workspace/persistence/shortcuts/onboarding touched)
+- [ ] `npm run test:mutation:ci` passed (if `src/core/**` changed)
 - [ ] Manual verification completed (if applicable)
 
 ## Risks + Mitigations

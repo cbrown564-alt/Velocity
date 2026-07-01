@@ -191,6 +191,26 @@ These rows remain directionally valid, but should not become active until `PILOT
 1. `PILOT-6` paid pilot recruiting.
 2. `PILOT-4a` processing gap discovery.
 
+### 4.5 CI Truth Maintenance (`STAB-CI`)
+
+**Source:** `docs/audit_08_ci_failure_rca_2026-07-01.md` — repeated CI failures from local ↔ CI gate mismatch and doc drift (July 2026).
+
+| ID | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence / validation |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| STAB-CI-2 | CI local parity | `npm run ci` / `ci:e2e`, pre-PR playbook, doc + PR template sync | STAB-CI-1 (Done) | Done | No | A | `docs/playbooks/pre_pr_verification.md`, `docs/audit_08_ci_failure_rca_2026-07-01.md`, PR template, `makeVariable()` |
+| STAB-CI-3 | ESLint ratchet | Warn → error on ratcheted rules; changed-file guard | STAB-CI-2 | Done | No | A | `eslint.config.js`, `scripts/check-eslint-ratchet.mjs`, `npm run lint --max-warnings 0` |
+| STAB-CI-4 | E2E companion enforcement | UI trigger paths require `tests/e2e/` updates in same PR | STAB-CI-2 | Done | No | A,I | `scripts/check-e2e-companion.mjs`, wired in CI + `npm run ci` |
+| STAB-CI-5 | DuckDB Arrow browser smoke | Playwright gate for WASM Arrow ingestion path | STAB-CI-2 | Done | No | I | `tests/e2e/duckdb-arrow-smoke.spec.ts`; `duckDbArrow.test.ts` points to e2e |
+| STAB-CI-6 | Coverage exclusion ratchet | Measure store slices with characterization tests | STAB-CI-2 | Done | No | A | `harmonizationSlice`, `uiSlice`, `variableCatalogActions` in coverage set; thresholds pass |
+
+#### STAB-CI deferred (future ratchets)
+
+| ID | Outcome |
+| :--- | :--- |
+| STAB-CI-7 | Shrink `src/features/` and `src/components/overlays/` exclusions (need ~82% function coverage on those surfaces) |
+| STAB-CI-8 | `EngineProxy.ts` / `duckdbBundles.ts` characterization + coverage inclusion |
+| STAB-CI-9 | Optional `test:parity` in CI when runtime budget allows |
+
 ## 5. Completed Work Reference
 
 Completed work is no longer expanded in this tracker. Use `docs/completed_foundations_summary.md` for the durable summary of:
