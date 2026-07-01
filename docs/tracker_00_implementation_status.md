@@ -191,6 +191,23 @@ These rows remain directionally valid, but should not become active until `PILOT
 1. `PILOT-6` paid pilot recruiting.
 2. `PILOT-4a` processing gap discovery.
 
+### 4.5 CI Truth Maintenance (`STAB-CI-2`)
+
+**Source:** `docs/audit_08_ci_failure_rca_2026-07-01.md` — repeated CI failures from local ↔ CI gate mismatch and doc drift (July 2026).
+
+| ID | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence / validation |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| STAB-CI-2 | CI local parity | `npm run ci` / `ci:e2e` scripts, pre-PR playbook, doc + PR template sync | STAB-CI-1 (Done) | In progress | No | A | `docs/playbooks/pre_pr_verification.md`, `docs/audit_08_ci_failure_rca_2026-07-01.md`, updated `arch_08_testing.md`, PR template, `makeVariable()` factory |
+
+#### STAB-CI-2 Follow-ups (not started)
+
+| ID | Outcome |
+| :--- | :--- |
+| STAB-CI-3 | ESLint warn → error ratchet on touched files |
+| STAB-CI-4 | Mandatory E2E companion updates in UI playbook enforcement |
+| STAB-CI-5 | Replace skipped `duckDbArrow.test.ts` with browser smoke |
+| STAB-CI-6 | Shrink Vitest coverage exclusions as characterization tests land |
+
 ## 5. Completed Work Reference
 
 Completed work is no longer expanded in this tracker. Use `docs/completed_foundations_summary.md` for the durable summary of:

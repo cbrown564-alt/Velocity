@@ -116,12 +116,12 @@ Reusable test data matching `arch_02_data_model.md`:
 
 | Metric | Threshold |
 |--------|-----------|
-| Branches | 80% |
-| Functions | 80% |
-| Lines | 80% |
-| Statements | 80% |
+| Branches | 79% |
+| Functions | 82% |
+| Lines | 81% |
+| Statements | 81% |
 
-Coverage is enforced in CI on the **included** file set. PRs failing coverage checks will not merge.
+Thresholds match `vitest.config.ts` ratchet floors (corrected June 2026 after excluding test files from the measured set). PRs failing coverage checks will not merge.
 
 ### Mutation testing (`src/core/`)
 
@@ -152,19 +152,23 @@ When changing `src/core/`, run mutation tests locally or rely on the CI `mutatio
 
 ## 8. CI/CD Pipeline
 
-GitHub Actions (`.github/workflows/test.yml`) runs on every PR to `main`:
+GitHub Actions runs on every PR to `main` across **two required jobs** plus an optional path-filtered mutation workflow. Local parity: `npm run ci` (test job) and `npm run ci:e2e` (e2e job). See `docs/playbooks/pre_pr_verification.md`.
 
-### `test` job
+### `test` job (`.github/workflows/test.yml`)
 
-1. **Typecheck**: `npm run typecheck:all` (app, tests, and MCP package)
-2. **Architecture guards**: `npm run check:worker-boundary`, `npm run check:querybuilder-pure`
-3. **Design token policy**: `npm run check:design-tokens`
-4. **Unit/integration tests with coverage**: `npm run test:run -- --coverage` (80% thresholds on non-excluded paths)
-5. **Production build**: `npm run build`
+1. **Lint**: `npm run lint` (ESLint; most legacy findings are warnings — Prettier is the hard format gate)
+2. **Format**: `npm run format:check`
+3. **Typecheck**: `npm run typecheck:all` (app, tests via `tsconfig.test.json`, and MCP package)
+4. **Architecture guards**: `npm run check:worker-boundary`, `npm run check:querybuilder-pure`
+5. **Design token policy**: `npm run check:design-tokens`
+6. **Unit/integration tests with coverage**: `npm run test:run -- --coverage` (thresholds on non-excluded paths; see §7)
+7. **Production build**: `npm run build`
 
-### `e2e` job
+### `e2e` job (parallel, also required for green PR)
 
-1. **Playwright**: `npm run test:e2e` (includes `workspace-switch.spec.ts`; browser installed in CI)
+1. **Playwright**: `npm run test:e2e` (includes `workspace-switch.spec.ts`; browsers installed in CI)
+
+Both jobs must pass. A green `test` job does **not** imply a green PR if `e2e` fails.
 
 ### Architecture guards (`test` job)
 
@@ -176,11 +180,13 @@ GitHub Actions (`.github/workflows/test.yml`) runs on every PR to `main`:
 
 1. **Mutation testing**: `npm run test:mutation:ci` (Stryker + Vitest; 40% break threshold on gated `src/core/` scope)
 
-### Deferred (post–`STAB-CI-1`)
+Run locally when touching `src/core/**` even if the workflow is path-filtered.
 
-- No ESLint gate today (no lint script in `package.json`)
+### Deferred (post–`STAB-CI-2`)
+
+- ESLint warn → error ratchet on touched files
 - `npm run test:parity` remains optional/local unless runtime is proven acceptable for every PR
-- Shrinking Vitest coverage exclusions (tracker: future `STAB-CI-2` or dedicated row when scheduled)
+- Shrinking Vitest coverage exclusions (tracker: `STAB-CI-2` follow-ups)
 
 ## 9. Writing New Tests
 
