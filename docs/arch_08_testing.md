@@ -42,7 +42,7 @@ npm run test:mutation # Stryker mutation testing for src/core/
 npm run typecheck:mcp # MCP package/server TypeScript contract
 npm run test:ui       # Interactive UI
 npm run test:e2e      # Playwright E2E (CI e2e job)
-npm run test:parity   # WASM vs Node adapter parity on golden fixtures (optional; not in default CI)
+npm run test:parity   # WASM vs Node adapter parity on golden fixtures (in CI test job; STAB-CI-9)
 ```
 
 ## 4. Directory Structure
@@ -165,7 +165,8 @@ GitHub Actions runs on every PR to `main` across **two required jobs** plus an o
 5. **Architecture guards**: `npm run check:worker-boundary`, `npm run check:querybuilder-pure`
 6. **Design token policy**: `npm run check:design-tokens`
 7. **Unit/integration tests with coverage**: `npm run test:run -- --coverage` (thresholds on non-excluded paths; see §7)
-8. **Production build**: `npm run build`
+8. **Parity tests**: `npm run test:parity` — WASM vs Node adapter parity on golden fixtures (~2.4s wall-clock; `STAB-CI-9` complete July 2026)
+9. **Production build**: `npm run build`
 
 ### `e2e` job (parallel, also required for green PR)
 
@@ -187,7 +188,6 @@ Run locally when touching `src/core/**` even if the workflow is path-filtered.
 
 ### Deferred (post–`STAB-CI-3`)
 
-- `npm run test:parity` remains optional/local unless runtime is proven acceptable for every PR
 - Further Vitest coverage exclusion shrink (`features/`, `overlays/`) after characterization tests raise function coverage above thresholds
 
 ## 9. Writing New Tests

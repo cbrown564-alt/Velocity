@@ -68,6 +68,9 @@ jobs:
       - name: Run tests with coverage
         run: npm run test:run -- --coverage
 
+      - name: Run parity tests (WASM vs Node adapter)
+        run: npm run test:parity
+
       - name: Production build
         run: npm run build
 
