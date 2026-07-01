@@ -112,7 +112,8 @@ async function uploadSavAndReachDashboard(page) {
 
 async function main() {
   console.log(`Output: ${OUT_DIR}`);
-  const server = startDevServer();
+  const useExternalServer = process.env.SKIP_DEV_SERVER === '1';
+  const server = useExternalServer ? null : startDevServer();
   try {
     await waitForServer(BASE_URL);
 
@@ -251,7 +252,7 @@ async function main() {
     await browser.close();
     console.log('\nDone.');
   } finally {
-    server.kill('SIGTERM');
+    if (server) server.kill('SIGTERM');
   }
 }
 
