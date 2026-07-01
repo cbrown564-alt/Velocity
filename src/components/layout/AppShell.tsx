@@ -57,7 +57,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
   useEffect(() => {
     const unregister = registerShortcut({
       id: 'global-toggle-manager',
-      contexts: ['global', 'canvas'],
+      contexts: ['global', 'canvas', 'manager'],
       priority: 30,
       match: (event) => (event.key === 'd' || event.key === 'D') && !event.metaKey && !event.ctrlKey,
       handler: (event) => {

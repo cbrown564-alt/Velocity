@@ -45,4 +45,18 @@ describe('keyboard shortcut registry', () => {
     expect(managerHandler).toHaveBeenCalledTimes(1);
     expect(canvasHandler).not.toHaveBeenCalled();
   });
+
+  it('allows manager toggle shortcut while Variable Manager is open', () => {
+    const toggleManager = vi.fn();
+    registerShortcut({
+      id: 'toggle-manager',
+      contexts: ['global', 'canvas', 'manager'],
+      match: (event) => event.key === 'd',
+      handler: toggleManager,
+    });
+
+    setManagerShortcutContext(true);
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'd' }));
+    expect(toggleManager).toHaveBeenCalledTimes(1);
+  });
 });
