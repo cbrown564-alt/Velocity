@@ -23,6 +23,17 @@ describe('ModalShell', () => {
     expect(screen.queryByText('Modal body')).not.toBeInTheDocument();
   });
 
+  it('exposes dialog semantics on the panel', () => {
+    render(
+      <ModalShell isOpen onClose={() => {}} ariaLabel="Test dialog">
+        <p>Modal body</p>
+      </ModalShell>,
+    );
+
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
+    expect(screen.getByRole('dialog')).toHaveAttribute('aria-modal', 'true');
+  });
+
   it('calls onClose when backdrop is clicked (split layout)', () => {
     const onClose = vi.fn();
     const { container } = render(
@@ -37,10 +48,10 @@ describe('ModalShell', () => {
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
-  it('registers Escape to close when escapeToClose is enabled', () => {
+  it('registers Escape to close by default', () => {
     const onClose = vi.fn();
     render(
-      <ModalShell isOpen onClose={onClose} escapeToClose>
+      <ModalShell isOpen onClose={onClose}>
         <p>Modal body</p>
       </ModalShell>,
     );

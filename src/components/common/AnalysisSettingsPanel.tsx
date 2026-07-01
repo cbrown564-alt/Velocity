@@ -33,6 +33,14 @@ export const AnalysisSettingsPanel: React.FC<AnalysisSettingsPanelProps> = ({
     updateAnalysisSettings({ showConfidenceIntervals: !analysisSettings.showConfidenceIntervals });
   };
 
+  const handleCellNToggle = () => {
+    updateAnalysisSettings({ showCellN: !analysisSettings.showCellN });
+  };
+
+  const handleColumnBasesToggle = () => {
+    updateAnalysisSettings({ showColumnBases: !analysisSettings.showColumnBases });
+  };
+
   const isInline = variant === 'inline';
 
   const wrapperClass = isInline
@@ -98,7 +106,9 @@ export const AnalysisSettingsPanel: React.FC<AnalysisSettingsPanelProps> = ({
           {isInline ? 'Intervals:' : 'Show Confidence Intervals'}
         </label>
         <button
+          type="button"
           onClick={handleCIToggle}
+          aria-pressed={analysisSettings.showConfidenceIntervals}
           className={`relative w-9 h-5 rounded-full transition-colors ${
             analysisSettings.showConfidenceIntervals ? 'bg-[var(--color-accent)]' : 'bg-[var(--bg-active)]'
           }`}
@@ -109,6 +119,59 @@ export const AnalysisSettingsPanel: React.FC<AnalysisSettingsPanelProps> = ({
             }`}
           />
         </button>
+      </div>
+
+      {/* Table display toggles (UXP-040) */}
+      <div
+        className={
+          isInline
+            ? 'flex flex-wrap items-center gap-4 w-full pt-2 border-t border-[var(--border-color)]'
+            : 'mt-3 pt-3 border-t border-[var(--border-color)] space-y-3'
+        }
+      >
+        <div className="text-[10px] font-semibold text-[var(--text-secondary)] uppercase tracking-wide">
+          Table display
+        </div>
+        <div className="flex items-center gap-2">
+          <label htmlFor="toggle-show-cell-n" className="text-xs text-[var(--text-secondary)] shrink-0">
+            Show cell n
+          </label>
+          <button
+            id="toggle-show-cell-n"
+            type="button"
+            onClick={handleCellNToggle}
+            aria-pressed={analysisSettings.showCellN}
+            className={`relative w-9 h-5 rounded-full transition-colors ${
+              analysisSettings.showCellN ? 'bg-[var(--color-accent)]' : 'bg-[var(--bg-active)]'
+            }`}
+          >
+            <span
+              className={`absolute top-0.5 left-0.5 w-4 h-4 bg-[var(--bg-panel)] rounded-full transition-transform shadow-sm ${
+                analysisSettings.showCellN ? 'translate-x-4' : ''
+              }`}
+            />
+          </button>
+        </div>
+        <div className="flex items-center gap-2">
+          <label htmlFor="toggle-show-column-bases" className="text-xs text-[var(--text-secondary)] shrink-0">
+            Show column bases
+          </label>
+          <button
+            id="toggle-show-column-bases"
+            type="button"
+            onClick={handleColumnBasesToggle}
+            aria-pressed={analysisSettings.showColumnBases}
+            className={`relative w-9 h-5 rounded-full transition-colors ${
+              analysisSettings.showColumnBases ? 'bg-[var(--color-accent)]' : 'bg-[var(--bg-active)]'
+            }`}
+          >
+            <span
+              className={`absolute top-0.5 left-0.5 w-4 h-4 bg-[var(--bg-panel)] rounded-full transition-transform shadow-sm ${
+                analysisSettings.showColumnBases ? 'translate-x-4' : ''
+              }`}
+            />
+          </button>
+        </div>
       </div>
 
       {/* Info Text */}

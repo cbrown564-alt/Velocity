@@ -130,7 +130,7 @@ export const ThemeSwitcher: React.FC = () => {
     open && coords ? (
       <div
         ref={panelRef}
-        className="fixed z-[100] w-64 bg-[var(--bg-panel)] border border-[var(--border-color)] rounded-xl shadow-xl p-3 flex flex-col gap-2"
+        className="fixed z-[var(--z-popover)] w-64 bg-[var(--bg-panel)] border border-[var(--border-color)] rounded-xl shadow-xl p-3 flex flex-col gap-2"
         role="listbox"
         aria-label="Theme selection"
         style={{

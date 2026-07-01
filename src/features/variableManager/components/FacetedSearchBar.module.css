@@ -208,7 +208,7 @@
   position: absolute;
   top: 100%;
   left: 0;
-  z-index: 100;
+  z-index: var(--z-popover);
   min-width: 220px;
   margin-top: var(--space-1);
   padding: var(--space-2);

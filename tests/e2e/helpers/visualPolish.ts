@@ -16,6 +16,12 @@ export async function clearBrowserStorage(page: Page) {
       // Best-effort browser storage cleanup.
     }
     try {
+      localStorage.setItem('velocity-first-crosstab-tour-done', '1');
+      localStorage.setItem('velocity-focus-tip-seen', '1');
+    } catch {
+      // Best-effort onboarding flag seeding for stable e2e.
+    }
+    try {
       if (navigator.storage?.getDirectory) {
         const root = await navigator.storage.getDirectory();
         // @ts-expect-error - entries() returns an async iterator
@@ -110,6 +116,12 @@ export async function buildGenderRegionCrosstab(page: Page) {
 
 export async function waitForStableCrosstab(page: Page) {
   await ensureCorrectionNone(page);
+
+  const tour = page.getByTestId('first-crosstab-tour');
+  if (await tour.isVisible({ timeout: 1000 }).catch(() => false)) {
+    await page.getByRole('button', { name: /got it/i }).click();
+    await expect(tour).toBeHidden({ timeout: 5000 });
+  }
 
   const storyShelf = page.getByTestId('story-shelf-suggestion');
   if (await storyShelf.isVisible({ timeout: 8000 }).catch(() => false)) {

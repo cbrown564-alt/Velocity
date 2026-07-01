@@ -105,6 +105,8 @@ const defaultAnalysisSettings: AnalysisSettings = {
   comparisonMethod: 'cell_vs_rest',
   correctionType: 'none',
   showConfidenceIntervals: false,
+  showCellN: true,
+  showColumnBases: true,
   significanceLevel: 0.95,
   engine: 'auto',
   enableDesignEffects: false,
@@ -369,8 +371,11 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
     set((state) => ({
       analysisSettings: { ...state.analysisSettings, ...settings },
     }));
-    // Re-run analysis to apply new settings
-    triggerAnalysisSafely(get().runAnalysis, 'updateAnalysisSettings analysis');
+    const displayOnlyKeys = new Set(['showCellN', 'showColumnBases']);
+    const needsRerun = Object.keys(settings).some((key) => !displayOnlyKeys.has(key));
+    if (needsRerun) {
+      triggerAnalysisSafely(get().runAnalysis, 'updateAnalysisSettings analysis');
+    }
   },
 
   reset: () => {

@@ -26,6 +26,7 @@ import { FilterBar } from '../../components/common/FilterBar';
 import { AppShell } from '../../components/layout/AppShell';
 import { VariableCard } from './components/DraggableVariable';
 import { ContextMenu } from './components/ContextMenu';
+import { FirstCrosstabTourOverlay } from './onboarding/FirstCrosstabTour';
 
 import type { PersistenceManagerState } from '../../hooks/usePersistenceManager';
 
@@ -346,6 +347,7 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
           />
         )}
       </DndContext>
+      <FirstCrosstabTourOverlay />
     </AppShell>
   );
 };

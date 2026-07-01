@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useId, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useReducedMotion, getBackdropProps, getModalPresenceProps, getMotionProps } from '../../lib/motion';
 import { useModalEscape } from '../../hooks/useModalEscape';
+import { useFocusTrap } from '../../hooks/useFocusTrap';
 
 export type ModalShellLayout = 'split' | 'unified';
 
@@ -26,11 +27,16 @@ export interface ModalShellProps {
   unmountWhenClosed?: boolean;
   /** Override default panel enter/exit motion (Session modals use custom duration). */
   panelMotionProps?: ReturnType<typeof getMotionProps>;
+  /** Accessible name hooks for dialog semantics */
+  ariaLabelledBy?: string;
+  ariaDescribedBy?: string;
+  /** Dialog label when no visible title element is wired */
+  ariaLabel?: string;
 }
 
-const DEFAULT_BACKDROP = 'fixed inset-0 bg-[var(--text-primary)]/30 backdrop-blur-sm z-50';
+const DEFAULT_BACKDROP = 'fixed inset-0 bg-[var(--text-primary)]/30 backdrop-blur-sm z-[var(--z-modal)]';
 
-const DEFAULT_OVERLAY = 'fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none';
+const DEFAULT_OVERLAY = 'fixed inset-0 z-[var(--z-modal)] flex items-center justify-center p-4 pointer-events-none';
 
 export const ModalShell: React.FC<ModalShellProps> = ({
   isOpen,
@@ -38,7 +44,7 @@ export const ModalShell: React.FC<ModalShellProps> = ({
   children,
   layout = 'split',
   onBackdropClick,
-  escapeToClose = false,
+  escapeToClose = true,
   onPanelKeyDown,
   backdropClassName = DEFAULT_BACKDROP,
   panelClassName = '',
@@ -48,14 +54,30 @@ export const ModalShell: React.FC<ModalShellProps> = ({
   overlayStyle,
   unmountWhenClosed = false,
   panelMotionProps,
+  ariaLabelledBy,
+  ariaDescribedBy,
+  ariaLabel,
 }) => {
   const reducedMotion = useReducedMotion();
   const backdropMotion = getBackdropProps(reducedMotion);
   const panelMotion = panelMotionProps ?? getModalPresenceProps(reducedMotion);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const fallbackLabelId = useId();
+  const labelledBy = ariaLabelledBy ?? (ariaLabel ? fallbackLabelId : undefined);
 
   useModalEscape(escapeToClose && isOpen, onClose);
+  useFocusTrap(isOpen, panelRef);
 
   const handleBackdropClick = onBackdropClick === null ? undefined : (onBackdropClick ?? onClose);
+
+  const dialogProps = {
+    role: 'dialog' as const,
+    'aria-modal': true,
+    ...(labelledBy ? { 'aria-labelledby': labelledBy } : {}),
+    ...(ariaDescribedBy ? { 'aria-describedby': ariaDescribedBy } : {}),
+    ...(ariaLabel && !labelledBy ? { 'aria-label': ariaLabel } : {}),
+    tabIndex: -1,
+  };
 
   if (unmountWhenClosed && !isOpen) {
     return null;
@@ -68,12 +90,19 @@ export const ModalShell: React.FC<ModalShellProps> = ({
           <motion.div {...backdropMotion} className={backdropClassName} onClick={handleBackdropClick}>
             <motion.div
               {...panelMotion}
+              ref={panelRef}
+              {...dialogProps}
               className={panelClassName}
               style={panelStyle}
               data-testid={panelDataTestId}
               onClick={(event) => event.stopPropagation()}
               onKeyDown={onPanelKeyDown}
             >
+              {ariaLabel && !ariaLabelledBy ? (
+                <span id={fallbackLabelId} className="sr-only">
+                  {ariaLabel}
+                </span>
+              ) : null}
               {children}
             </motion.div>
           </motion.div>
@@ -88,7 +117,19 @@ export const ModalShell: React.FC<ModalShellProps> = ({
         <>
           <motion.div {...backdropMotion} onClick={handleBackdropClick} className={backdropClassName} />
           <motion.div {...panelMotion} className={overlayClassName} style={overlayStyle}>
-            <div className={panelClassName} style={panelStyle} data-testid={panelDataTestId} onKeyDown={onPanelKeyDown}>
+            <div
+              ref={panelRef}
+              {...dialogProps}
+              className={panelClassName}
+              style={panelStyle}
+              data-testid={panelDataTestId}
+              onKeyDown={onPanelKeyDown}
+            >
+              {ariaLabel && !ariaLabelledBy ? (
+                <span id={fallbackLabelId} className="sr-only">
+                  {ariaLabel}
+                </span>
+              ) : null}
               {children}
             </div>
           </motion.div>

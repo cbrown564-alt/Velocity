@@ -10,7 +10,10 @@ export function normalizeCrosstabColKey(colKey: unknown): string {
   return String(colKey);
 }
 
-export function resolveCrosstabColLabel(key: string, colVariable: { valueLabels?: { value: number | string; label: string }[] } | null): string {
+export function resolveCrosstabColLabel(
+  key: string,
+  colVariable: { valueLabels?: { value: number | string; label: string }[] } | null,
+): string {
   if (key === CROSSTAB_MISSING_COL_KEY) {
     return CROSSTAB_MISSING_COL_LABEL;
   }

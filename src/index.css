@@ -128,6 +128,14 @@
   --text-2xl: 2rem;
   /* 32px */
 
+  /* Stacking (semantic z-index scale — STAB-UI-T4) */
+  --z-sticky: 10;
+  --z-dropdown: 50;
+  --z-popover: 100;
+  --z-toast: 150;
+  --z-modal: 200;
+  --z-menu: 250;
+
   /* Spacing (8px base) */
   --space-1: 0.25rem;
   --space-2: 0.5rem;
@@ -619,7 +627,7 @@ h3 {
   border-radius: var(--border-radius-lg);
   box-shadow: var(--shadow-lg);
 
-  z-index: 100;
+  z-index: var(--z-popover);
 }
 
 .timeline-nav-btn {

@@ -10,7 +10,7 @@
   justify-content: center;
   background: color-mix(in srgb, var(--text-primary) 50%, transparent);
   backdrop-filter: blur(4px);
-  z-index: 200;
+  z-index: var(--z-modal);
 }
 
 .modal {

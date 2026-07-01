@@ -84,6 +84,8 @@ export interface CrosstabCellProps {
   animationTrigger?: string;
   /** Respects prefers-reduced-motion; passed from parent DataTable */
   reducedMotion?: boolean;
+  /** When false, hides cell n= metadata (UXP-040) */
+  showCellN?: boolean;
 }
 
 function primaryTextClass(isZero: boolean, isSignificant: boolean): string {
@@ -232,6 +234,7 @@ export const CrosstabCell: React.FC<CrosstabCellProps> = ({
   size = 'default',
   animationTrigger,
   reducedMotion = false,
+  showCellN = true,
 }) => {
   const primaryClass = primaryTextClass(isZero, isSignificant);
   const secondaryClass = secondaryTextClass(isZero);
@@ -328,7 +331,7 @@ export const CrosstabCell: React.FC<CrosstabCellProps> = ({
           className={`${secondarySizeClass} font-mono tracking-tight ${secondaryClass}`}
         >
           {stdDev !== undefined && <span className="mr-2">SD: {stdDev.toFixed(1)}</span>}
-          {sampleN !== undefined && (
+          {sampleN !== undefined && showCellN && (
             <span className={smallBaseClass(sampleN)} data-small-base={smallBaseClass(sampleN) ? 'true' : undefined}>
               n={sampleN}
             </span>
@@ -373,7 +376,7 @@ export const CrosstabCell: React.FC<CrosstabCellProps> = ({
           reducedMotion={reducedMotion}
         />
       </div>
-      {count !== undefined && (
+      {showCellN && count !== undefined && (
         <FadeIn
           animationTrigger={animationTrigger}
           reducedMotion={reducedMotion}

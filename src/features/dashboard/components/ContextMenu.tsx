@@ -69,7 +69,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, actions, onClose
           duration: reducedMotion ? DURATIONS.instant : DURATIONS.fast,
           reducedMotion,
         })}
-        className="fixed z-[9999] min-w-[200px] bg-[var(--bg-surface)] rounded-lg shadow-xl border border-[var(--border-subtle)] py-1.5 overflow-hidden backdrop-blur-sm"
+        className="fixed z-[var(--z-menu)] min-w-[200px] bg-[var(--bg-surface)] rounded-lg shadow-xl border border-[var(--border-subtle)] py-1.5 overflow-hidden backdrop-blur-sm"
         style={{ top: position.top, left: position.left }}
       >
         {actions.map((action, index) => (

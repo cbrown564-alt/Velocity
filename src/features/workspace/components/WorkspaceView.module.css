@@ -270,7 +270,7 @@
 .filterTabs {
   position: sticky;
   top: 0;
-  z-index: 10;
+  z-index: var(--z-sticky);
   display: flex;
   align-items: center;
   gap: var(--space-1);
@@ -550,12 +550,12 @@
 .contextBackdrop {
   position: fixed;
   inset: 0;
-  z-index: 100;
+  z-index: var(--z-popover);
 }
 
 .contextMenu {
   position: fixed;
-  z-index: 101;
+  z-index: calc(var(--z-popover) + 1);
   min-width: 180px;
   padding: var(--space-2);
   background: var(--bg-panel);

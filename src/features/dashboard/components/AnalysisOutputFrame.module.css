@@ -10,6 +10,12 @@
   flex-direction: column;
 }
 
+.frame.shrinkWrap {
+  flex: 0 0 auto;
+  align-self: flex-start;
+  max-height: 100%;
+}
+
 .bleed {
   border-radius: 0;
   border-left: none;

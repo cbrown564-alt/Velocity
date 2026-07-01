@@ -112,9 +112,9 @@ Completed Phase 1-4, stabilization, UI polish, engine/MCP, export, parity, and h
 
 #### Recommended Next Pull
 
-1. `STAB-UI-T4` + `STAB-UI-T2`: Z-index token scale + ModalShell a11y foundation (`docs/plan_03_ui_technical_foundation.md`).
-2. `STAB-UI-F1` remainder: content-aware slide height (F1.2) + statistics visibility toggles (F1.4 / UXP-040).
-3. `STAB-UI-F3.2` + `STAB-UI-F2.1`: first-crosstab spotlight + Focus discoverability tip.
+1. `STAB-UI-F3.3` + `STAB-UI-F3.4`: contextual micro-tips + workspace banner discipline.
+2. `STAB-UI-F2.2`–`F2.4`: timeline compaction, accent budget, VM inspector empty state.
+3. `STAB-UI-T3` + `STAB-UI-T1`: error boundaries + store selector migration.
 4. `PILOT-6`: recruit paid pilots — deploy per `pilot_01_packaging.md`, collect Pilot Log exports.
 
 ### 4.2 Future Gates
@@ -141,9 +141,9 @@ These rows remain directionally valid, but should not become active until `PILOT
 
 | ID | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence / validation |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| STAB-UI-F1 | Hero output | Overflow/scroll affordance, content-aware slide height, table↔chart transition, statistics visibility toggles (UXP-040 / UXF-001–005) | STAB-UI-P (Done) | In progress | Yes | T,L,U,I,A | **P0 slice Done (PR #6):** widened slide frame to `min(100%,1400px)`, horizontal scroll on `AnalysisOutputFrame` / slide content region, chart “Preparing chart…” placeholder (UXF-003 partial); e2e snapshots refreshed in `visual-polish-theme-table.spec.ts`. **Remaining:** F1.2 shrink-wrap height, F1.4 statistics toggles (UXP-040). |
-| STAB-UI-F2 | Chrome density | Focus discoverability, compact timeline, accent budget, Variable Manager inspector empty state (UXF-006–009) | STAB-UI-F1 | Not started | No | T,L,U,I | Plan §F2; `TimelineDock`, `DashboardShell`, `VariableInspector`; `pilot-workflow.spec.ts` smoke |
-| STAB-UI-F3 | Activation | Welcome-back label hydration, first-crosstab spotlight, contextual tips, workspace banner discipline (UXF-010–012, UXF-014) | None | In progress | Yes | T,L,U,I,V | **F3.1 Done (PR #6):** `TableConfig.rowVarLabels` / `colVarLabel` persisted on session capture; `findResumeCandidate` resolves labels or generic resume copy (UXF-010); unit tests in `returningResearcher.test.ts`, `useWorkspaceOpen.test.ts`. **Remaining:** F3.2 spotlight, F3.3 tips, F3.4 banner discipline. |
+| STAB-UI-F1 | Hero output | Overflow/scroll affordance, content-aware slide height, table↔chart transition, statistics visibility toggles (UXP-040 / UXF-001–005) | STAB-UI-P (Done) | Done | Yes | T,L,U,I,A | **P0 slice Done (PR #6):** widened slide frame, horizontal scroll, chart placeholder. **F1.2 Done:** compact table shrink-wrap via `AnalysisOutputFrame.shrinkWrap` + `SlideContainer` flex contract. **F1.4 Done:** `showCellN` / `showColumnBases` toggles in `AnalysisSettingsPanel`; layout reflow without ghost gutters. |
+| STAB-UI-F2 | Chrome density | Focus discoverability, compact timeline, accent budget, Variable Manager inspector empty state (UXF-006–009) | STAB-UI-F1 | In progress | No | T,L,U,I | **F2.1 Done:** deferred Focus tip toast after first crosstab (`useFirstCrosstabTour`). Remaining: F2.2–F2.4. |
+| STAB-UI-F3 | Activation | Welcome-back label hydration, first-crosstab spotlight, contextual tips, workspace banner discipline (UXF-010–012, UXF-014) | None | In progress | Yes | T,L,U,I,V | **F3.1 Done (PR #6).** **F3.2 Done:** `FirstCrosstabTour` 3-step spotlight + replay from `?` shortcuts modal. **Remaining:** F3.3 tips, F3.4 banner discipline. |
 | STAB-UI-F4 | Command palette | Variable search → shelf actions, export/focus/filter commands, empty-state `⌘K` hint (UXF-013) | STAB-UI-C (Done) | Not started | No | T,L,U | Plan §F4; `CommandPalette.tsx`; extend `CommandPalette.test.tsx` |
 | STAB-UI-F5 | Accessibility themes | High-contrast + colorblind significance themes; splash contrast fix (UXF-015–016) | STAB-UI-F1 | Frozen | Yes | T,L,U,I | Plan §F5; `themes.ts`, `ThemeSwitcher`; defer until F1–F3 complete or pilot requests |
 
@@ -172,8 +172,8 @@ These rows remain directionally valid, but should not become active until `PILOT
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | STAB-UI-T7 | Recode wiring | Fix `ModalHost` `RecodeModal onSave` noop; all recode paths persist (UXT-012) | None | Done | Yes | T,L,U | **PR #6:** `ModalHost` wires `onSaveRecode` → `handleRecodeSave` (`persistDatasetSession`); `RecodeModal.test.tsx` verifies save callback. UXT-012 closed. |
 | STAB-UI-T5 | VM theme fix | Replace hardcoded white `rgba` in `FacetedSearchBar.module.css`; token cleanup (UXT-010, UXT-021) | None | Done | No | T,L,U | **PR #6:** `color-mix(in srgb, var(--text-inverse) …)` replaces hardcoded white on active insight badges/chips. UXT-010 closed; UXT-021 partial (tailwind dead hexes deferred). |
-| STAB-UI-T4 | Z-index scale | Semantic `--z-*` tokens; toast above modal; menus above sticky headers (UXT-009) | None | Not started | No | T,L,U | Plan §T4; manual stacking checklist §8 |
-| STAB-UI-T2 | Modal foundation | `ModalShell` dialog semantics, focus trap/restore, form labels, close labels, keyboard click targets (UXT-003–008, UXT-014–016) | STAB-UI-T4 | Not started | Yes | T,L,U,I | Plan §T2; `ModalShell.test.tsx`; `pilot-workflow.spec.ts` |
+| STAB-UI-T4 | Z-index scale | Semantic `--z-*` tokens; toast above modal; menus above sticky headers (UXT-009) | None | Done | No | T,L,U | Plan §T4; `--z-sticky` through `--z-menu` in `index.css`; migrated ToastLayer, modals, menus, popovers; `ModalShell` defaults use `--z-modal` |
+| STAB-UI-T2 | Modal foundation | `ModalShell` dialog semantics, focus trap/restore, form labels, close labels, keyboard click targets (UXT-003–008, UXT-014–016) | STAB-UI-T4 | Done | Yes | T,L,U,I | `ModalShell` — `role="dialog"`, `aria-modal`, `useFocusTrap`, default `escapeToClose`; tests in `ModalShell.test.tsx` |
 | STAB-UI-T3 | Error boundaries | `AnalysisErrorBoundary` on slide + chart renderers (UXT-005) | None | Not started | No | T,L,U | Plan §T3; boundary unit test |
 | STAB-UI-T1 | Store selectors | Eliminate bare `useVelocityStore()` in 18 files; optional memo on hot leaves (UXT-001–002) | None | Not started | No | T,L,U,G | Plan §T1; `rg useVelocityStore\(\)` zero; optional `benchmark:crosstab` |
 | STAB-UI-T6 | Shortcuts & hygiene | Unified keydown registry, lazy Monaco, dev-gated console noise (UXT-011, UXT-013, UXT-019) | STAB-UI-T2 | Not started | No | T,L,U | Plan §T6 |

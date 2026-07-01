@@ -66,7 +66,7 @@ export const SessionExportModal: React.FC<SessionExportModalProps> = ({ isOpen, 
       onClose={handleClose}
       layout="unified"
       onBackdropClick={handleClose}
-      backdropClassName="fixed inset-0 z-[140] flex items-center justify-center bg-[var(--text-primary)]/40 px-4"
+      backdropClassName="fixed inset-0 z-[var(--z-modal)] flex items-center justify-center bg-[var(--text-primary)]/40 px-4"
       panelClassName="w-full max-w-md rounded-xl border border-[var(--border-color)] bg-[var(--bg-surface)] shadow-2xl"
       panelMotionProps={panelMotionProps}
     >

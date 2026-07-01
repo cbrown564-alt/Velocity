@@ -56,6 +56,8 @@ export interface CrosstabRowProps {
   visibleColKeys?: string[];
   colLeftPadding?: number;
   colRightPadding?: number;
+  /** When false, hides cell n= beneath percentages (UXP-040) */
+  showCellN?: boolean;
 }
 
 export const CrosstabRow: React.FC<CrosstabRowProps> = ({
@@ -83,6 +85,7 @@ export const CrosstabRow: React.FC<CrosstabRowProps> = ({
   visibleColKeys,
   colLeftPadding = 0,
   colRightPadding = 0,
+  showCellN = true,
 }) => {
   const cols = visibleColKeys ?? tableData.colKeys;
   const isExpanded = expandedKeys[row.key] ?? true;
@@ -191,6 +194,7 @@ export const CrosstabRow: React.FC<CrosstabRowProps> = ({
                 showMeanBadge
                 animationTrigger={animationKey}
                 reducedMotion={reducedMotion}
+                showCellN={showCellN}
               />
             ) : (
               <CrosstabCell
@@ -204,6 +208,7 @@ export const CrosstabRow: React.FC<CrosstabRowProps> = ({
                 sigLetters={cell.sigLetters}
                 animationTrigger={animationKey}
                 reducedMotion={reducedMotion}
+                showCellN={showCellN}
               />
             );
 
@@ -264,6 +269,7 @@ export const CrosstabRow: React.FC<CrosstabRowProps> = ({
                 showMeanBadge
                 animationTrigger={animationKey}
                 reducedMotion={reducedMotion}
+                showCellN={showCellN}
               />
             ) : (
               <CrosstabCell
@@ -273,6 +279,7 @@ export const CrosstabRow: React.FC<CrosstabRowProps> = ({
                 count={row.total}
                 animationTrigger={animationKey}
                 reducedMotion={reducedMotion}
+                showCellN={showCellN}
               />
             )}
           </td>

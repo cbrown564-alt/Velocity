@@ -9,6 +9,8 @@ const baseSettings = {
   comparisonMethod: 'cell_vs_rest' as const,
   correctionType: 'none' as const,
   showConfidenceIntervals: false,
+  showCellN: true,
+  showColumnBases: true,
 };
 
 describe('StatisticsStatusBar chi-square styling (UXP-034)', () => {

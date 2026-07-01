@@ -24,7 +24,7 @@ export const PartialLoadNotice: React.FC<PartialLoadNoticeProps> = ({
   return (
     <motion.div
       {...getBackdropProps(reducedMotion)}
-      className="fixed inset-0 flex items-center justify-center bg-[var(--text-primary)]/30 z-[110] px-4"
+      className="fixed inset-0 flex items-center justify-center bg-[var(--text-primary)]/30 z-[var(--z-popover)] px-4"
     >
       <motion.div
         {...getMotionProps({

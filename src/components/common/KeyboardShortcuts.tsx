@@ -1,6 +1,7 @@
 import React, { useEffect, useId } from 'react';
 import { useVelocityStore } from '../../store';
 import { X } from 'lucide-react';
+import { replayFirstCrosstabTour } from '../../features/dashboard/onboarding/firstCrosstabTour';
 
 interface ShortcutGroup {
   title: string;
@@ -56,7 +57,7 @@ export const KeyboardShortcuts: React.FC = () => {
 
   return (
     <div
-      className="fixed inset-0 z-[200] flex items-center justify-center bg-[rgb(0_0_0_/0.2)] backdrop-blur-sm p-4"
+      className="fixed inset-0 z-[var(--z-modal)] flex items-center justify-center bg-[rgb(0_0_0_/0.2)] backdrop-blur-sm p-4"
       onClick={(e) => {
         if (e.target === e.currentTarget) closeShortcuts();
       }}
@@ -112,6 +113,19 @@ export const KeyboardShortcuts: React.FC = () => {
               </ul>
             </section>
           ))}
+        </div>
+
+        <div className="px-5 py-3 border-t border-[var(--border-color)] bg-[var(--bg-surface)]">
+          <button
+            type="button"
+            onClick={() => {
+              replayFirstCrosstabTour();
+              closeShortcuts();
+            }}
+            className="text-xs font-medium text-[var(--color-accent)] hover:underline"
+          >
+            Replay getting started tour
+          </button>
         </div>
       </div>
     </div>

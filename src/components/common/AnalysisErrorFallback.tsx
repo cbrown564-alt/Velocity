@@ -11,12 +11,7 @@ export interface AnalysisErrorFallbackProps {
   onRetry?: () => void;
 }
 
-export const AnalysisErrorFallback: React.FC<AnalysisErrorFallbackProps> = ({
-  surface,
-  slideId,
-  message,
-  onRetry,
-}) => {
+export const AnalysisErrorFallback: React.FC<AnalysisErrorFallbackProps> = ({ surface, slideId, message, onRetry }) => {
   const reducedMotion = useReducedMotion();
   const headline = surface === 'chart' ? "This chart couldn't render" : "This table couldn't render";
 

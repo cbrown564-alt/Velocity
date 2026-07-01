@@ -3,7 +3,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { AnalysisErrorBoundary } from './AnalysisErrorBoundary';
 
-function ThrowOnRender({ message = 'boom' }: { message?: string }) {
+function ThrowOnRender({ message = 'boom' }: { message?: string }): React.ReactNode {
   throw new Error(message);
 }
 

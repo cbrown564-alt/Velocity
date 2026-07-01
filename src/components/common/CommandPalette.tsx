@@ -157,7 +157,7 @@ export const CommandPalette: React.FC = () => {
 
   return (
     <div
-      className="fixed inset-0 z-[200] flex items-start justify-center pt-[20vh] bg-[rgb(0_0_0_/0.2)] backdrop-blur-sm"
+      className="fixed inset-0 z-[var(--z-modal)] flex items-start justify-center pt-[20vh] bg-[rgb(0_0_0_/0.2)] backdrop-blur-sm"
       onClick={(e) => {
         if (e.target === e.currentTarget) closeCommandPalette();
       }}

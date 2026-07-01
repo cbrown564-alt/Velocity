@@ -250,7 +250,7 @@ const SlideThumb: React.FC<SlideThumbProps> = ({
           <motion.div
             ref={menuRef}
             {...getMotionProps({ preset: 'fadeScale', duration: DURATIONS.instant, reducedMotion })}
-            className="fixed z-[100] bg-[var(--bg-panel)] border border-[var(--border-color)] rounded-lg shadow-xl py-1 min-w-[140px]"
+            className="fixed z-[var(--z-popover)] bg-[var(--bg-panel)] border border-[var(--border-color)] rounded-lg shadow-xl py-1 min-w-[140px]"
             style={{ left: menuPosition.x, top: menuPosition.y - 80 }}
           >
             <button

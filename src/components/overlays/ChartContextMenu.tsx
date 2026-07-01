@@ -72,7 +72,7 @@ export const ChartContextMenu: React.FC<ChartContextMenuProps> = ({
   return (
     <div
       ref={menuRef}
-      className="fixed z-[1000] min-w-[180px] bg-[var(--bg-surface)] rounded-lg shadow-xl border border-[var(--border-subtle)] overflow-hidden animate-in fade-in zoom-in-95 duration-100"
+      className="fixed z-[var(--z-menu)] min-w-[180px] bg-[var(--bg-surface)] rounded-lg shadow-xl border border-[var(--border-subtle)] overflow-hidden animate-in fade-in zoom-in-95 duration-100"
       style={{
         top: adjustedPos.y,
         left: adjustedPos.x,
