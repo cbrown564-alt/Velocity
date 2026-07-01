@@ -3,6 +3,7 @@
  * Pure functions — no React or engine dependencies.
  */
 
+import type { TableConfig } from '../../../types/analysis';
 import type { Variable } from '../../../types';
 import type { StoredDataset } from '../types';
 import { MS_THREE_DAYS } from '../../../lib/welcomeBack';
@@ -13,16 +14,52 @@ export type ResumeCandidate = {
   summaryLine: string;
 };
 
-function resolveVarLabel(id: string, variables?: Variable[]): string {
-  const v = variables?.find((x) => x.id === id || x.name === id);
-  return v?.label || v?.name || id;
+const UUID_LIKE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+function isOpaqueId(value: string): boolean {
+  return UUID_LIKE.test(value);
+}
+
+function resolveVarLabel(id: string, variables: Variable[] | undefined, tableConfig: TableConfig, rowIndex?: number): string {
+  const match = variables?.find((x) => x.id === id || x.name === id);
+  if (match?.label) return match.label;
+  if (match?.name && !isOpaqueId(match.name)) return match.name;
+
+  if (rowIndex !== undefined && tableConfig.rowVarLabels?.[rowIndex]) {
+    const label = tableConfig.rowVarLabels[rowIndex];
+    if (!isOpaqueId(label)) return label;
+  }
+
+  if (tableConfig.colVar === id && tableConfig.colVarLabel && !isOpaqueId(tableConfig.colVarLabel)) {
+    return tableConfig.colVarLabel;
+  }
+
+  if (!isOpaqueId(id)) return id;
+  return id;
+}
+
+function buildAnalysisSummary(tableConfig: TableConfig, variables?: Variable[]): string | null {
+  const rowVars = tableConfig.rowVars ?? [];
+  const colVar = tableConfig.colVar;
+  if (rowVars.length === 0 && !colVar) return null;
+
+  const rowLabels = rowVars.map((id, index) => resolveVarLabel(id, variables, tableConfig, index));
+  const colLabel = colVar ? resolveVarLabel(colVar, variables, tableConfig) : null;
+
+  if (rowLabels.some(isOpaqueId) || (colLabel && isOpaqueId(colLabel))) {
+    return null;
+  }
+
+  const rowLabel = rowLabels.join(', ');
+  if (rowLabel && colLabel) return `${rowLabel} × ${colLabel}`;
+  return rowLabel || colLabel || null;
 }
 
 /** Pick the best dataset to resume from workspace + persisted analysis config. */
 export function findResumeCandidate(
   datasets: StoredDataset[],
   activeDatasetId: string | null,
-  tableConfig: { rowVars: string[]; colVar: string | null },
+  tableConfig: TableConfig,
   now = Date.now(),
 ): ResumeCandidate | null {
   const hasLiveConfig = tableConfig.rowVars.length > 0 || Boolean(tableConfig.colVar);
@@ -48,14 +85,7 @@ export function findResumeCandidate(
   const useLive = pick.id === activeDatasetId && hasLiveConfig;
   const cfg = useLive ? tableConfig : (pick.sessionState?.tableConfig ?? { rowVars: [], colVar: null });
 
-  const rowVars = cfg.rowVars ?? [];
-  const colVar = cfg.colVar;
-  if (rowVars.length === 0 && !colVar) return null;
-
-  const vars = pick.variables;
-  const rowLabel = rowVars.map((id) => resolveVarLabel(id, vars)).join(', ');
-  const colLabel = colVar ? resolveVarLabel(colVar, vars) : null;
-  const analysis = rowLabel && colLabel ? `${rowLabel} × ${colLabel}` : rowLabel || colLabel || 'your last analysis';
+  const analysis = buildAnalysisSummary(cfg, pick.variables);
 
   const editedAgoMs = now - pick.lastModifiedAt;
   const editedNote =
@@ -63,10 +93,14 @@ export function findResumeCandidate(
       ? `${Math.max(1, Math.floor(editedAgoMs / 3_600_000))}h ago`
       : `${Math.floor(editedAgoMs / MS_THREE_DAYS)}d ago`;
 
+  const summaryLine = analysis
+    ? `You were analyzing ${analysis} in ${pick.name} (${editedNote}).`
+    : `Resume your last analysis in ${pick.name} (${editedNote}).`;
+
   return {
     datasetId: pick.id,
     datasetName: pick.name,
-    summaryLine: `You were analyzing ${analysis} in ${pick.name} (${editedNote}).`,
+    summaryLine,
   };
 }
 
@@ -75,21 +109,10 @@ export function formatDeckSummaryTooltip(dataset: StoredDataset): string | null 
   const session = dataset.sessionState;
   if (!session?.tableConfig) return null;
 
-  const { rowVars, colVar } = session.tableConfig;
-  const vars = dataset.variables;
-  const labels = [
-    ...rowVars.map((id) => resolveVarLabel(id, vars)),
-    ...(colVar ? [resolveVarLabel(colVar, vars)] : []),
-  ].filter(Boolean);
+  const analysis = buildAnalysisSummary(session.tableConfig, dataset.variables);
+  if (!analysis) return null;
 
-  if (labels.length === 0) return null;
-
-  const parts: string[] = [];
-  if (labels.length >= 2) {
-    parts.push(`${labels[0]} × ${labels.slice(1).join(', ')}`);
-  } else {
-    parts.push(labels[0]);
-  }
+  const parts: string[] = [analysis];
 
   const filterCount = Array.isArray(session.activeFilters) ? session.activeFilters.length : 0;
   if (filterCount > 0) {

@@ -63,6 +63,7 @@ export interface ModalHostProps {
   onCloseDrillDown: () => void;
   onLoadMoreDrillDown: () => void;
   onCloseRecodeModal: () => void;
+  onSaveRecode: () => void;
   onCloseFilterModal: () => void;
   onSaveFilter: (filter: Omit<Filter, 'id'>, applyToAll: boolean) => void;
   onCloseAnalysisExportModal: () => void;
@@ -91,6 +92,7 @@ export const ModalHost: React.FC<ModalHostProps> = ({
   onCloseDrillDown,
   onLoadMoreDrillDown,
   onCloseRecodeModal,
+  onSaveRecode,
   onCloseFilterModal,
   onSaveFilter,
   onCloseAnalysisExportModal,
@@ -124,7 +126,7 @@ export const ModalHost: React.FC<ModalHostProps> = ({
       isOpen={recodeModal.isOpen}
       onClose={onCloseRecodeModal}
       variable={recodeModal.variable as Parameters<typeof RecodeModal>[0]['variable']}
-      onSave={async () => {}}
+      onSave={onSaveRecode}
     />
 
     <FilterModal isOpen={filterModal.isOpen} onClose={onCloseFilterModal} variables={variables} onSave={onSaveFilter} />

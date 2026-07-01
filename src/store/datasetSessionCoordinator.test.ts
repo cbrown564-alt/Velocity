@@ -3,6 +3,7 @@ import {
   captureBeforeDatasetSwitch,
   captureCatalogSnapshot,
   captureSessionSnapshot,
+  enrichTableConfigLabels,
   normalizeStoredSessionState,
   persistDatasetSession,
   sessionStateToStorePatch,
@@ -31,7 +32,12 @@ describe('datasetSessionCoordinator', () => {
     const live = baseLive();
 
     expect(captureSessionSnapshot(live)).toEqual({
-      tableConfig: { rowVars: ['q1'], colVar: null },
+      tableConfig: {
+        rowVars: ['q1'],
+        colVar: null,
+        rowVarLabels: ['Q1'],
+        colVarLabel: null,
+      },
       activeFilters: [{ id: 'f1', variableId: 'q1', operator: 'eq', value: 1 }],
       transformLog: [],
     });
@@ -106,6 +112,16 @@ describe('datasetSessionCoordinator', () => {
       tableConfig: { rowVars: ['a'], colVar: 'b' },
       activeFilters: [{ id: 'f1', variableId: 'a', operator: 'in', value: [1, 2] }],
       transformLog: [],
+    });
+  });
+
+  it('enriches table config labels from the live variable catalog', () => {
+    const live = baseLive();
+    expect(enrichTableConfigLabels(live.tableConfig, live.dataset?.variables)).toEqual({
+      rowVars: ['q1'],
+      colVar: null,
+      rowVarLabels: ['Q1'],
+      colVarLabel: null,
     });
   });
 

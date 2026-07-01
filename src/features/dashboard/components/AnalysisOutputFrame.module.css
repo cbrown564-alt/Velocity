@@ -20,9 +20,11 @@
 .body {
   flex: 1 1 auto;
   min-height: 0;
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
+  scrollbar-gutter: stable;
 }
 
 .bodyChart {

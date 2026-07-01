@@ -110,6 +110,7 @@ export default function App() {
         onCloseDrillDown={closeDrillDown}
         onLoadMoreDrillDown={loadMoreDrillDown}
         onCloseRecodeModal={closeRecodeModal}
+        onSaveRecode={workspaceOrchestration.handleRecodeSave}
         onCloseFilterModal={closeFilterModal}
         onSaveFilter={workspaceOrchestration.handleSaveFilter}
         onCloseAnalysisExportModal={closeAnalysisExportModal}

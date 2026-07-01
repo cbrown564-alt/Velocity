@@ -253,7 +253,11 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
 
   const renderContent = () => {
     if (dimensions.width === 0 || dimensions.height === 0) {
-      return null;
+      return (
+        <div className={styles.placeholder} role="status" aria-live="polite">
+          Preparing chart…
+        </div>
+      );
     }
 
     if (!displayChartData) {

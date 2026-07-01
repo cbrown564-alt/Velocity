@@ -84,9 +84,11 @@ describe('SlideContainer', () => {
     expect(canvas).toBeInTheDocument();
     expect(canvas?.className).toContain('flex-1');
     expect(canvas?.className).toContain('min-h-0');
+    expect(canvas?.className).toContain('max-w-[min(100%,1400px)]');
     expect(canvas?.className).toContain('surface-panel');
     expect(canvas?.className).not.toContain('bg-white');
     expect(header?.parentElement?.className).toContain('flex-shrink-0');
+    expect(container.querySelector('[data-testid="slide-content-region"]')).toBeInTheDocument();
   });
 
   it('auto-populates gender × region on mock_data.csv when deck is empty', async () => {
