@@ -116,6 +116,7 @@ export const DashboardToolbar: React.FC<DashboardToolbarProps> = ({
       <button
         onClick={onExport}
         disabled={!canOpenExport}
+        data-testid="export-slide-button"
         className="flex items-center gap-2 px-2 xl:px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--color-accent)] rounded-md hover:bg-[var(--bg-surface)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         title="Export current slide"
         aria-label="Export"
@@ -128,6 +129,7 @@ export const DashboardToolbar: React.FC<DashboardToolbarProps> = ({
 
       <button
         onClick={onToggleFocusMode}
+        data-testid="focus-mode-toggle"
         className={`p-2 rounded-lg transition-colors ${focusMode ? 'bg-[var(--color-accent)] text-[var(--text-inverse)]' : 'hover:bg-[var(--bg-active)] text-[var(--text-secondary)] hover:text-[var(--color-accent)]'}`}
         title={focusMode ? 'Exit Focus Mode (F)' : 'Enter Focus Mode (F)'}
         aria-label={focusMode ? 'Exit Focus Mode' : 'Enter Focus Mode'}

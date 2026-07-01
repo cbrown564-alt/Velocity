@@ -246,7 +246,7 @@ export const SlideHeader: React.FC<SlideHeaderProps> = ({ className = '' }) => {
         ) : (
           <>
             <h2
-              className="slide-header-title cursor-pointer hover:text-[var(--color-accent)] transition-colors"
+              className="slide-header-title cursor-pointer hover:text-[var(--text-primary)] transition-colors"
               onClick={() => startEditing('title')}
             >
               {displayTitle}

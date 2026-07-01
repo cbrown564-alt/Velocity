@@ -67,15 +67,15 @@ Update **Status** when addressed: `open` | `in_progress` | `fixed` | `wontfix` |
 | **UXF-003** | Table ↔ chart toggle | Brief empty canvas flash when switching views | P1 | F1 | open |
 | **UXF-004** | Slide layout | Large vertical dead space below small crosstabs; artifact does not scale to content | P1 | F1 | open |
 | **UXF-005** | Deck display | No user toggle for cell `n=` / column bases in presentation mode (UXP-040 deferred) | P1 | F1 | open |
-| **UXF-006** | Focus mode | Feature exists but is undiscoverable; chrome competes with output by default | P1 | F2 | open |
-| **UXF-007** | Timeline dock | Duplicate wayfinding with bottom tab (“1 Gender by Region” ×2) | P2 | F2 | open |
-| **UXF-008** | Accent budget | Headers, sig markers, shelf chips, timeline dots all use accent | P2 | F2 | open |
-| **UXF-009** | Variable Manager | Inspector pane ~35% blank with no placeholder when nothing selected | P2 | F2 | open |
+| **UXF-006** | Focus mode | Feature exists but is undiscoverable; chrome competes with output by default | P1 | F2 | fixed |
+| **UXF-007** | Timeline dock | Duplicate wayfinding with bottom tab (“1 Gender by Region” ×2) | P2 | F2 | fixed |
+| **UXF-008** | Accent budget | Headers, sig markers, shelf chips, timeline dots all use accent | P2 | F2 | fixed |
+| **UXF-009** | Variable Manager | Inspector pane ~35% blank with no placeholder when nothing selected | P2 | F2 | fixed |
 | **UXF-010** | Welcome back | Resume card shows raw variable UUIDs when workspace record lacks `variables` labels | P0 | F3 | open |
 | **UXF-011** | First run | No guided spotlight for first crosstab (rows → columns → significance) | P1 | F3 | open |
-| **UXF-012** | Discovery | Weighting, significance settings, drill-down paths undiscoverable without exploration | P2 | F3 | open |
+| **UXF-012** | Discovery | Weighting, significance settings, drill-down paths undiscoverable without exploration | P2 | F3 | fixed |
 | **UXF-013** | Command palette | `⌘K` is action-only; no variable search or filter/export commands | P1 | F4 | open |
-| **UXF-014** | Workspace | Privacy + welcome + pilot banners stack above sparse dataset grid | P2 | F3 | open |
+| **UXF-014** | Workspace | Privacy + welcome + pilot banners stack above sparse dataset grid | P2 | F3 | fixed |
 | **UXF-015** | Splash | “Checking local storage…” secondary copy fails contrast on Soft Machine | P2 | F5 | open |
 | **UXF-016** | Themes | No high-contrast or colorblind-safe significance theme | P2 | F5 | deferred |
 

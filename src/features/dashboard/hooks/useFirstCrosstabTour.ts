@@ -1,15 +1,11 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useVelocityStore } from '../../../store';
 import {
-  isFocusTipSeen,
   markFirstCrosstabTourDone,
-  markFocusTipSeen,
   resolveFirstCrosstabTourStep,
   type FirstCrosstabTourStep,
 } from '../onboarding/firstCrosstabTour';
 import { recordPilotEvent } from '../../../services/pilotOnboarding';
-
-const FOCUS_TIP_DELAY_MS = 1200;
 
 export function useFirstCrosstabTour(): {
   tourStep: FirstCrosstabTourStep | null;
@@ -23,7 +19,6 @@ export function useFirstCrosstabTour(): {
   const dataset = useVelocityStore((state) => state.dataset);
 
   const [, forceRefresh] = useState(0);
-  const focusTipTimerRef = useRef<number | null>(null);
 
   const hasRenderedCrosstab =
     tableConfig.rowVars.length > 0 && tableConfig.colVar !== null && !isQuerying && queryResult.length > 0;
@@ -37,42 +32,13 @@ export function useFirstCrosstabTour(): {
     });
   }, [dataset, focusMode, appMode, tableConfig.rowVars.length, tableConfig.colVar, hasRenderedCrosstab]);
 
-  const scheduleFocusTip = useCallback(() => {
-    if (isFocusTipSeen() || !hasRenderedCrosstab) return;
-
-    if (focusTipTimerRef.current !== null) {
-      window.clearTimeout(focusTipTimerRef.current);
-    }
-
-    focusTipTimerRef.current = window.setTimeout(() => {
-      if (isFocusTipSeen()) return;
-      markFocusTipSeen();
-      useVelocityStore.getState().addToast({
-        dedupeKey: 'focus-mode-tip',
-        title: 'Presentation-ready view',
-        message: 'Press F for Focus mode when you want a cleaner, client-facing layout.',
-        type: 'info',
-        duration: 9000,
-      });
-    }, FOCUS_TIP_DELAY_MS);
-  }, [hasRenderedCrosstab]);
-
   const dismissTourStep = useCallback(() => {
     markFirstCrosstabTourDone();
     if (hasRenderedCrosstab) {
       recordPilotEvent('first_crosstab', { source: 'activation-tour-complete' });
-      scheduleFocusTip();
     }
     forceRefresh((value) => value + 1);
-  }, [hasRenderedCrosstab, scheduleFocusTip]);
-
-  useEffect(() => {
-    return () => {
-      if (focusTipTimerRef.current !== null) {
-        window.clearTimeout(focusTipTimerRef.current);
-      }
-    };
-  }, []);
+  }, [hasRenderedCrosstab]);
 
   useEffect(() => {
     if (tourStep === 'significance' && hasRenderedCrosstab) {

@@ -7,7 +7,7 @@
  */
 
 import React, { useMemo, useEffect, useState, useCallback } from 'react';
-import { Info } from 'lucide-react';
+import { Info, MousePointerClick, Search, BarChart3 } from 'lucide-react';
 import { useVelocityStore } from '../../store';
 import type { Variable } from '../../types/dataset';
 import type { VariableStatsResult } from '../../types/worker';
@@ -251,11 +251,25 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
   // If no variable selected, show empty state
   if (!variable) {
     return (
-      <div className={`${styles.inspector} ${className || ''}`}>
+      <div className={`${styles.inspector} ${className || ''}`} data-testid="variable-inspector-empty">
         <div className={styles.emptyState}>
-          <Info className={styles.emptyIcon} />
-          <h3 className={styles.emptyTitle}>No Variable Selected</h3>
-          <p className={styles.emptyText}>Select a variable to view its details</p>
+          <MousePointerClick className={styles.emptyIcon} aria-hidden />
+          <h3 className={styles.emptyTitle}>Select a variable</h3>
+          <p className={styles.emptyText}>Pick a variable from the list to inspect labels, distribution, and recode options.</p>
+          <ul className={styles.emptyGuide}>
+            <li>
+              <Search size={14} aria-hidden />
+              <span>Use search or facets to find variables quickly</span>
+            </li>
+            <li>
+              <BarChart3 size={14} aria-hidden />
+              <span>Review distribution charts before adding to your crosstab</span>
+            </li>
+            <li>
+              <Info size={14} aria-hidden />
+              <span>Right-click chart bars to create grouped values</span>
+            </li>
+          </ul>
         </div>
       </div>
     );
