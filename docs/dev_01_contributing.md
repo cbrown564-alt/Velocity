@@ -99,17 +99,16 @@ npm run eval:06      # Browser eval runner (EVAL-06)
 
 ## 5. Testing
 
+Run **`npm run ci`** before every PR (mirrors the CI `test` job). When UI, workspace, persistence, shortcuts, or onboarding changed, also run **`npm run ci:e2e`**. Full gate list: `docs/playbooks/pre_pr_verification.md`.
+
 *   **Unit/integration tests:** Vitest
 *   **Golden/parity tests:** Vitest suites under `tests/`
 *   **End-to-End:** Playwright
 
 ```bash
-npm run test
-npm run lint
-npm run format:check
-npm run typecheck:all
-npm run build
-npm run test:mutation   # optional: Stryker mutation score for src/core/
+npm run ci              # lint, format, typecheck:all, guards, coverage, build
+npm run ci:e2e          # Playwright (after: npx playwright install --with-deps)
+npm run test:mutation:ci   # when src/core/** changed
 ```
 
 See `docs/arch_08_testing.md` for the full pyramid, coverage gates, and mutation thresholds.

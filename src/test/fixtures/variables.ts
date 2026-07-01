@@ -29,6 +29,17 @@ export const satisfactionValueLabels: ValueLabel[] = [
 // Variables
 // ============================================================================
 
+/** Typed factory for tests — prefer over inline partial objects or `as never` store casts. */
+export function makeVariable(overrides: Partial<Variable> & Pick<Variable, 'id' | 'name'>): Variable {
+  return {
+    label: overrides.name,
+    type: 'categorical',
+    valueLabels: [],
+    missingValues: { discrete: [-99] },
+    ...overrides,
+  };
+}
+
 export const mockNominalVariable: Variable = {
   id: 'var_gender',
   name: 'Q1_Gender',
