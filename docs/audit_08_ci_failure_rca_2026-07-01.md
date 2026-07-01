@@ -93,7 +93,7 @@ Repeated pattern when touching shortcuts, onboarding, banners, or theme labels:
 
 | ID | Action | Rationale |
 | :--- | :--- | :--- |
-| STAB-CI-3 | ESLint warn → error ratchet on touched files | Lint passes today with warnings only |
+| STAB-CI-3 | ESLint warn → error ratchet on touched files | Lint passes today with warnings only | **Done** — rules promoted to `error`, `check:eslint-ratchet` in CI |
 | STAB-CI-4 | UI playbook: require E2E update when changing shortcuts/onboarding/banners | Repeated failure pattern |
 | STAB-CI-5 | Replace `describe.skip` on `duckDbArrow.test.ts` with browser smoke | Critical WASM path untested |
 | STAB-CI-6 | Shrink coverage exclusions as characterization tests land | Honest green for product code |

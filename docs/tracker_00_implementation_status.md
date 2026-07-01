@@ -203,7 +203,7 @@ These rows remain directionally valid, but should not become active until `PILOT
 
 | ID | Outcome |
 | :--- | :--- |
-| STAB-CI-3 | ESLint warn → error ratchet on touched files |
+| STAB-CI-3 | ESLint warn → error ratchet on touched files | Done | No | A | `eslint.config.js` rules promoted to `error`; `npm run lint --max-warnings 0`; `scripts/check-eslint-ratchet.mjs` in CI |
 | STAB-CI-4 | Mandatory E2E companion updates in UI playbook enforcement |
 | STAB-CI-5 | Replace skipped `duckDbArrow.test.ts` with browser smoke |
 | STAB-CI-6 | Shrink Vitest coverage exclusions as characterization tests land |

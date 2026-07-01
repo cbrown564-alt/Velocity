@@ -36,6 +36,7 @@ npm run test:mutation:ci
 
 ```bash
 npm run lint
+npm run check:eslint-ratchet
 npm run format:check
 npm run typecheck:all
 npm run check:worker-boundary

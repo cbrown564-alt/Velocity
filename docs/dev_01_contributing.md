@@ -115,7 +115,7 @@ See `docs/arch_08_testing.md` for the full pyramid, coverage gates, and mutation
 
 ## 6. Code Style
 
-*   **Linting:** ESLint flat config plus Prettier. Existing legacy findings currently report as warnings so the repo can adopt the gate without unrelated cleanup churn.
+*   **Linting:** ESLint flat config plus Prettier. Ratcheted rules are `error` with `--max-warnings 0`; changed files are also checked via `npm run check:eslint-ratchet` (STAB-CI-3).
 *   **Naming:**
     *   React Components: `PascalCase` (e.g., `VariableCard.tsx`)
     *   Functions/Variables: `camelCase`

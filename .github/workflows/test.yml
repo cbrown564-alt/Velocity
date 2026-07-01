@@ -15,6 +15,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: recursive
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -27,6 +28,11 @@ jobs:
 
       - name: Lint
         run: npm run lint
+
+      - name: Enforce ESLint ratchet (changed files)
+        run: npm run check:eslint-ratchet
+        env:
+          GITHUB_BASE_REF: ${{ github.base_ref }}
 
       - name: Check formatting
         run: npm run format:check

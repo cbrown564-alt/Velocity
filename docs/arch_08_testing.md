@@ -156,13 +156,14 @@ GitHub Actions runs on every PR to `main` across **two required jobs** plus an o
 
 ### `test` job (`.github/workflows/test.yml`)
 
-1. **Lint**: `npm run lint` (ESLint; most legacy findings are warnings — Prettier is the hard format gate)
-2. **Format**: `npm run format:check`
-3. **Typecheck**: `npm run typecheck:all` (app, tests via `tsconfig.test.json`, and MCP package)
-4. **Architecture guards**: `npm run check:worker-boundary`, `npm run check:querybuilder-pure`
-5. **Design token policy**: `npm run check:design-tokens`
-6. **Unit/integration tests with coverage**: `npm run test:run -- --coverage` (thresholds on non-excluded paths; see §7)
-7. **Production build**: `npm run build`
+1. **Lint**: `npm run lint` — ESLint with `--max-warnings 0`; ratcheted rules are `error` (STAB-CI-3)
+2. **ESLint ratchet**: `npm run check:eslint-ratchet` — changed files vs merge base must be clean (allowlist in `scripts/check-eslint-ratchet.mjs`)
+3. **Format**: `npm run format:check`
+4. **Typecheck**: `npm run typecheck:all` (app, tests via `tsconfig.test.json`, and MCP package)
+5. **Architecture guards**: `npm run check:worker-boundary`, `npm run check:querybuilder-pure`
+6. **Design token policy**: `npm run check:design-tokens`
+7. **Unit/integration tests with coverage**: `npm run test:run -- --coverage` (thresholds on non-excluded paths; see §7)
+8. **Production build**: `npm run build`
 
 ### `e2e` job (parallel, also required for green PR)
 
@@ -182,11 +183,10 @@ Both jobs must pass. A green `test` job does **not** imply a green PR if `e2e` f
 
 Run locally when touching `src/core/**` even if the workflow is path-filtered.
 
-### Deferred (post–`STAB-CI-2`)
+### Deferred (post–`STAB-CI-3`)
 
-- ESLint warn → error ratchet on touched files
 - `npm run test:parity` remains optional/local unless runtime is proven acceptable for every PR
-- Shrinking Vitest coverage exclusions (tracker: `STAB-CI-2` follow-ups)
+- Shrinking Vitest coverage exclusions (tracker: `STAB-CI-6`)
 
 ## 9. Writing New Tests
 
