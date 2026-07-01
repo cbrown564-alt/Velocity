@@ -93,6 +93,7 @@ test('pilot workflow: upload, crosstab, export PPTX, reopen, event log', async (
   await page.getByPlaceholder('Search datasets...').fill('sleep.sav');
   await page.getByRole('heading', { name: 'sleep.sav' }).dblclick();
   await expect(page.getByText('sleep.sav (271 rows)')).toBeVisible({ timeout: 120000 });
+  await expect(page.getByTestId('first-crosstab-tour')).toBeHidden({ timeout: 5000 });
 
   const afterReopen = await page.evaluate(() => {
     const raw = localStorage.getItem('velocity-pilot-events');

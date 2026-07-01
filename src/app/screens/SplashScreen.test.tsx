@@ -65,6 +65,7 @@ describe('SplashScreen', () => {
 
     expect(screen.getByTestId('engine-init-headline')).toHaveTextContent('Parsing variables…');
     expect(screen.getByTestId('engine-init-detail')).toHaveTextContent('Parsing metadata');
-    expect(screen.getByTestId('engine-init-progress')).toHaveTextContent('42% complete');
+    expect(screen.getByTestId('engine-init-detail')).toHaveTextContent('42%');
+    expect(screen.getByTestId('engine-init-bar')).toBeInTheDocument();
   });
 });

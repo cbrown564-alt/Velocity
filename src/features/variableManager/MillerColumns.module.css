@@ -38,6 +38,12 @@
   background-color: transparent;
 }
 
+.containerNoInspector .col3,
+.containerNoInspector .col4:not(.columnHidden) {
+  flex: 1;
+  min-width: var(--miller-col-3);
+}
+
 /* ============================================================================
    Base Column Styles
    ============================================================================ */
@@ -84,6 +90,7 @@
   min-width: var(--miller-col-5-min);
   background-color: var(--bg-panel);
 }
+
 
 /* Column hiding animation */
 .columnHidden {

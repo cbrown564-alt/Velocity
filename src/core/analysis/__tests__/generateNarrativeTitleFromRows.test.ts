@@ -45,6 +45,15 @@ describe('generateNarrativeTitleFromRows', () => {
     expect(title).toContain('West');
   });
 
+  it('returns null when resolver cannot map numeric codes to labels', () => {
+    const rows = [makeRow(['0'], '4', 50, { sig: 'high_95' })];
+    const resolver = {
+      rowLabel: () => null,
+      colLabel: () => null,
+    };
+    expect(generateNarrativeTitleFromRows(rows, null, 'Sex', 'Marital status', resolver)).toBeNull();
+  });
+
   it('uses label resolver when provided', () => {
     const rows = [makeRow(['1'], 'east', 50, { sig: 'high_95' })];
     const resolver = {

@@ -1,45 +1,25 @@
 import React from 'react';
-import { motion } from 'framer-motion';
-import { useReducedMotion, getMotionProps, DURATIONS } from '../../../lib/motion';
 import { FileUp, Sparkles } from 'lucide-react';
-import { Logo } from '../../../components/common/Logo';
 import styles from './WorkspaceEmptyState.module.css';
-import { PILOT_PRIVACY_DETAIL } from '../../../constants/pilotCopy';
 
 export const WorkspaceEmptyState: React.FC<{
   onUpload: () => void;
   onLoadExample: () => void;
 }> = ({ onUpload, onLoadExample }) => {
-  const reducedMotion = useReducedMotion();
   return (
-    <motion.div
-      className={styles.emptyState}
-      {...getMotionProps({
-        preset: 'fadeScale',
-        duration: reducedMotion ? DURATIONS.instant : DURATIONS.complex,
-        ease: 'snappy',
-        reducedMotion,
-      })}
-    >
-      <Logo size={48} className={styles.emptyLogo} />
-      <h2>Welcome to Velocity</h2>
-      <p>{PILOT_PRIVACY_DETAIL}</p>
+    <div className={styles.emptyList} data-testid="workspace-empty-state">
+      <p className={styles.emptyHeading}>No datasets yet</p>
+      <p className={styles.emptyHint}>Upload a survey file or try the example dataset to start analyzing.</p>
       <div className={styles.emptyActions}>
-        <motion.button className={styles.uploadCard} onClick={onUpload}>
-          <div className={styles.cardIconWrapper}>
-            <FileUp size={24} />
-          </div>
-          <span className={styles.cardTitle}>Upload Dataset</span>
-          <span className={styles.cardDesc}>.SAV or .CSV</span>
-        </motion.button>
-        <motion.button className={styles.exampleCard} onClick={onLoadExample}>
-          <div className={styles.cardIconWrapper}>
-            <Sparkles size={24} />
-          </div>
-          <span className={styles.cardTitle}>Load Example</span>
-          <span className={styles.cardDesc}>Explore features instantly</span>
-        </motion.button>
+        <button type="button" className={styles.actionRow} onClick={onUpload}>
+          <FileUp size={16} aria-hidden />
+          <span>Upload .SAV or .CSV</span>
+        </button>
+        <button type="button" className={styles.actionRow} onClick={onLoadExample}>
+          <Sparkles size={16} aria-hidden />
+          <span>Load example dataset</span>
+        </button>
       </div>
-    </motion.div>
+    </div>
   );
 };

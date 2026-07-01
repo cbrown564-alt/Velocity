@@ -71,8 +71,8 @@ export const DataTable: React.FC<DataTableProps> = ({
   frameBleed = false,
 }) => {
   const analysisSettings = useVelocityStore((state) => state.analysisSettings);
-  const showCellN = analysisSettings.showCellN ?? true;
-  const showColumnBases = analysisSettings.showColumnBases ?? true;
+  const showCellN = analysisSettings.showCellN ?? false;
+  const showColumnBases = analysisSettings.showColumnBases ?? false;
   const processedQueryResult = useVelocityStore((state) => state.processedQueryResult);
   const transformLog = useVelocityStore((state) => state.transformLog);
   const deleteGroupedVariable = useVelocityStore((state) => state.deleteGroupedVariable);

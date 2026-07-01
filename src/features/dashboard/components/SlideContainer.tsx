@@ -254,7 +254,7 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
 
   return (
     <div
-      className={`flex-1 flex flex-col min-h-0 h-full bg-glass-app ${className}`}
+      className={`flex-1 flex flex-col min-h-0 h-full bg-glass-app ${focusMode && shrinkWrapSlide ? 'justify-center' : ''} ${className}`}
       aria-busy={isQuerying}
       aria-live="polite"
     >
@@ -282,7 +282,9 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
             resetKey={analysisResetKey}
             onRetry={() => void useVelocityStore.getState().runAnalysis()}
           >
-            {renderCellContent()}
+            <div key={analysisResetKey} className="min-h-0 animate-[fadeIn_0.15s_ease-out]">
+              {renderCellContent()}
+            </div>
           </AnalysisErrorBoundary>
         </div>
       </div>
