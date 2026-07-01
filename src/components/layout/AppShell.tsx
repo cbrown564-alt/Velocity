@@ -18,10 +18,14 @@ interface AppShellProps {
 }
 
 export const AppShell: React.FC<AppShellProps> = ({ children }) => {
-  const { appMode, toggleAppMode } = useVelocityStore();
+  const appMode = useVelocityStore((state) => state.appMode);
+  const toggleAppMode = useVelocityStore((state) => state.toggleAppMode);
+  const focusMode = useVelocityStore((state) => state.focusMode);
+  const toggleFocusMode = useVelocityStore((state) => state.toggleFocusMode);
+  const setFocusMode = useVelocityStore((state) => state.setFocusMode);
+  const openCommandPalette = useVelocityStore((state) => state.openCommandPalette);
+  const openShortcuts = useVelocityStore((state) => state.openShortcuts);
   const reducedMotion = useReducedMotion();
-
-  const { focusMode, toggleFocusMode, setFocusMode, openCommandPalette, openShortcuts } = useVelocityStore();
 
   // Keyboard shortcuts
   const handleKeyDown = useCallback(
@@ -113,7 +117,11 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
  * Placed in the header to switch between modes.
  */
 export const ModeToggleButton: React.FC = () => {
-  const { appMode, toggleAppMode, transformLog, lastSeenTransformCount, markTransformsSeen } = useVelocityStore();
+  const appMode = useVelocityStore((state) => state.appMode);
+  const toggleAppMode = useVelocityStore((state) => state.toggleAppMode);
+  const transformLog = useVelocityStore((state) => state.transformLog);
+  const lastSeenTransformCount = useVelocityStore((state) => state.lastSeenTransformCount);
+  const markTransformsSeen = useVelocityStore((state) => state.markTransformsSeen);
 
   const hasNewTransforms = lastSeenTransformCount >= 0 && transformLog.length > lastSeenTransformCount;
 

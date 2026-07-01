@@ -2,6 +2,7 @@ import React, { useEffect, useId } from 'react';
 import { useVelocityStore } from '../../store';
 import { X } from 'lucide-react';
 import { replayFirstCrosstabTour } from '../../features/dashboard/onboarding/firstCrosstabTour';
+import { resetContextualTips } from '../../features/dashboard/onboarding/contextualMicroTips';
 
 interface ShortcutGroup {
   title: string;
@@ -38,7 +39,8 @@ const SHORTCUTS: ShortcutGroup[] = [
 ];
 
 export const KeyboardShortcuts: React.FC = () => {
-  const { shortcutsOpen, closeShortcuts } = useVelocityStore();
+  const shortcutsOpen = useVelocityStore((state) => state.shortcutsOpen);
+  const closeShortcuts = useVelocityStore((state) => state.closeShortcuts);
   const titleId = useId();
 
   useEffect(() => {
@@ -120,6 +122,7 @@ export const KeyboardShortcuts: React.FC = () => {
             type="button"
             onClick={() => {
               replayFirstCrosstabTour();
+              resetContextualTips();
               closeShortcuts();
             }}
             className="text-xs font-medium text-[var(--color-accent)] hover:underline"

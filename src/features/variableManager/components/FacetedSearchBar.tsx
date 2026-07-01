@@ -275,17 +275,15 @@ function StatusInsight({
 // ============================================================================
 
 export const FacetedSearchBar: React.FC = () => {
-  const {
-    variableSets,
-    dataset,
-    activeFolderId,
-    managerSearchQuery,
-    facetFilters,
-    setFacetFilters,
-    clearFacetFilters,
-    variableStats,
-    bulkHide,
-  } = useVelocityStore();
+  const variableSets = useVelocityStore((state) => state.variableSets);
+  const dataset = useVelocityStore((state) => state.dataset);
+  const activeFolderId = useVelocityStore((state) => state.activeFolderId);
+  const managerSearchQuery = useVelocityStore((state) => state.managerSearchQuery);
+  const facetFilters = useVelocityStore((state) => state.facetFilters);
+  const setFacetFilters = useVelocityStore((state) => state.setFacetFilters);
+  const clearFacetFilters = useVelocityStore((state) => state.clearFacetFilters);
+  const variableStats = useVelocityStore((state) => state.variableStats);
+  const bulkHide = useVelocityStore((state) => state.bulkHide);
 
   // ------------------------------------------------------------------------
   // Insight computations

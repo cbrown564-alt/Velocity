@@ -47,41 +47,39 @@ export function useWorkspaceOrchestration({
   closeCrossWaveOverlay,
   closeProjectLinkOverlay,
 }: UseWorkspaceOrchestrationOptions): UseWorkspaceOrchestrationReturn {
-  const {
-    isDbReady,
-    dataset,
-    variableSets,
-    folders,
-    transformLog,
-    tableConfig,
-    activeFilters,
-    slides,
-    browserEngine,
-    activeDbPath,
-    workspace,
-    activeDatasetId,
-    addStoredDataset,
-    updateStoredDataset,
-    toggleDatasetStar,
-    removeStoredDataset,
-    removeStoredDatasets,
-    saveDatasetSession,
-    setAppMode,
-    setWorkspaceMode,
-    createProject,
-    addDatasetsToProject,
-    removeDatasetsFromProject,
-    setDatasetWave,
-    setDatasetRespondentKey,
-    harmonization,
-    openHarmonization,
-    closeHarmonization,
-    setActiveDataset,
-    addFilter,
-    addFilterToSlides,
-    respawnWorker,
-    touchLastActiveAt,
-  } = useVelocityStore();
+  const isDbReady = useVelocityStore((state) => state.isDbReady);
+  const dataset = useVelocityStore((state) => state.dataset);
+  const variableSets = useVelocityStore((state) => state.variableSets);
+  const folders = useVelocityStore((state) => state.folders);
+  const transformLog = useVelocityStore((state) => state.transformLog);
+  const tableConfig = useVelocityStore((state) => state.tableConfig);
+  const activeFilters = useVelocityStore((state) => state.activeFilters);
+  const slides = useVelocityStore((state) => state.slides);
+  const browserEngine = useVelocityStore((state) => state.browserEngine);
+  const activeDbPath = useVelocityStore((state) => state.activeDbPath);
+  const workspace = useVelocityStore((state) => state.workspace);
+  const activeDatasetId = useVelocityStore((state) => state.activeDatasetId);
+  const addStoredDataset = useVelocityStore((state) => state.addStoredDataset);
+  const updateStoredDataset = useVelocityStore((state) => state.updateStoredDataset);
+  const toggleDatasetStar = useVelocityStore((state) => state.toggleDatasetStar);
+  const removeStoredDataset = useVelocityStore((state) => state.removeStoredDataset);
+  const removeStoredDatasets = useVelocityStore((state) => state.removeStoredDatasets);
+  const saveDatasetSession = useVelocityStore((state) => state.saveDatasetSession);
+  const setAppMode = useVelocityStore((state) => state.setAppMode);
+  const setWorkspaceMode = useVelocityStore((state) => state.setWorkspaceMode);
+  const createProject = useVelocityStore((state) => state.createProject);
+  const addDatasetsToProject = useVelocityStore((state) => state.addDatasetsToProject);
+  const removeDatasetsFromProject = useVelocityStore((state) => state.removeDatasetsFromProject);
+  const setDatasetWave = useVelocityStore((state) => state.setDatasetWave);
+  const setDatasetRespondentKey = useVelocityStore((state) => state.setDatasetRespondentKey);
+  const harmonization = useVelocityStore((state) => state.harmonization);
+  const openHarmonization = useVelocityStore((state) => state.openHarmonization);
+  const closeHarmonization = useVelocityStore((state) => state.closeHarmonization);
+  const setActiveDataset = useVelocityStore((state) => state.setActiveDataset);
+  const addFilter = useVelocityStore((state) => state.addFilter);
+  const addFilterToSlides = useVelocityStore((state) => state.addFilterToSlides);
+  const respawnWorker = useVelocityStore((state) => state.respawnWorker);
+  const touchLastActiveAt = useVelocityStore((state) => state.touchLastActiveAt);
 
   const registeredDatasetIds = useRef<Set<string>>(new Set());
   const materializedDatasetTables = useRef<Set<string>>(new Set());

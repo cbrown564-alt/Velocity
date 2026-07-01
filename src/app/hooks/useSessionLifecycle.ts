@@ -51,23 +51,21 @@ export function useSessionLifecycle({
   closeSessionImportOverlay,
   openSessionExportOverlay,
 }: UseSessionLifecycleOptions): UseSessionLifecycleReturn {
-  const {
-    dataset,
-    variableSets,
-    folders,
-    transformLog,
-    tableConfig,
-    activeFilters,
-    analysisSettings,
-    slides,
-    sections,
-    workspace,
-    activeDatasetId,
-    harmonization,
-    loadSAV,
-    recodeVariable,
-    discardPersistedData,
-  } = useVelocityStore();
+  const dataset = useVelocityStore((state) => state.dataset);
+  const variableSets = useVelocityStore((state) => state.variableSets);
+  const folders = useVelocityStore((state) => state.folders);
+  const transformLog = useVelocityStore((state) => state.transformLog);
+  const tableConfig = useVelocityStore((state) => state.tableConfig);
+  const activeFilters = useVelocityStore((state) => state.activeFilters);
+  const analysisSettings = useVelocityStore((state) => state.analysisSettings);
+  const slides = useVelocityStore((state) => state.slides);
+  const sections = useVelocityStore((state) => state.sections);
+  const workspace = useVelocityStore((state) => state.workspace);
+  const activeDatasetId = useVelocityStore((state) => state.activeDatasetId);
+  const harmonization = useVelocityStore((state) => state.harmonization);
+  const loadSAV = useVelocityStore((state) => state.loadSAV);
+  const recodeVariable = useVelocityStore((state) => state.recodeVariable);
+  const discardPersistedData = useVelocityStore((state) => state.discardPersistedData);
 
   const [sessionImportDiagnostics, setSessionImportDiagnostics] = useState<SessionImportDiagnosticsSummary | null>(
     null,

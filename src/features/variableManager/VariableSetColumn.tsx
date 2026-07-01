@@ -257,27 +257,25 @@ const VariableSetRow = ({
 // ============================================================================
 
 export const VariableSetColumn: React.FC = () => {
-  const {
-    dataset,
-    variableSets,
-    activeFolderId,
-    managerSearchQuery,
-    selectedVariableSetId,
-    selectedVariableSetIds,
-    setSelectedVariableSetId,
-    setSelectedVariableId,
-    toggleVariableSetSelection,
-    selectVariableSetRange,
-    selectSingleVariableSet,
-    getVariableStats,
-    variableStats,
-    setActiveFolderId,
-    facetFilters,
-    convertMultipleToGrid,
-    hoveredVariableSetId,
-    setHoveredVariableSetId,
-    transformLog,
-  } = useVelocityStore();
+  const dataset = useVelocityStore((state) => state.dataset);
+  const variableSets = useVelocityStore((state) => state.variableSets);
+  const activeFolderId = useVelocityStore((state) => state.activeFolderId);
+  const managerSearchQuery = useVelocityStore((state) => state.managerSearchQuery);
+  const selectedVariableSetId = useVelocityStore((state) => state.selectedVariableSetId);
+  const selectedVariableSetIds = useVelocityStore((state) => state.selectedVariableSetIds);
+  const setSelectedVariableSetId = useVelocityStore((state) => state.setSelectedVariableSetId);
+  const setSelectedVariableId = useVelocityStore((state) => state.setSelectedVariableId);
+  const toggleVariableSetSelection = useVelocityStore((state) => state.toggleVariableSetSelection);
+  const selectVariableSetRange = useVelocityStore((state) => state.selectVariableSetRange);
+  const selectSingleVariableSet = useVelocityStore((state) => state.selectSingleVariableSet);
+  const getVariableStats = useVelocityStore((state) => state.getVariableStats);
+  const variableStats = useVelocityStore((state) => state.variableStats);
+  const setActiveFolderId = useVelocityStore((state) => state.setActiveFolderId);
+  const facetFilters = useVelocityStore((state) => state.facetFilters);
+  const convertMultipleToGrid = useVelocityStore((state) => state.convertMultipleToGrid);
+  const hoveredVariableSetId = useVelocityStore((state) => state.hoveredVariableSetId);
+  const setHoveredVariableSetId = useVelocityStore((state) => state.setHoveredVariableSetId);
+  const transformLog = useVelocityStore((state) => state.transformLog);
 
   const listRef = useListRef(null);
   const filteredSets = useMemo(

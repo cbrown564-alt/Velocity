@@ -17,16 +17,14 @@ import { allowsNumericStats } from '../../../types';
 import { applyCanvasPlacement, placeVariableSet } from '../../../core/grid/gridUtils';
 
 export function useDashboardDnD() {
-  const {
-    dataset,
-    tableConfig,
-    setTableConfig,
-    setDraggingId,
-    reorderRowVars,
-    setWeightVariable,
-    setSelectedVariableSetId,
-    openRecodeModal,
-  } = useVelocityStore();
+  const dataset = useVelocityStore((state) => state.dataset);
+  const tableConfig = useVelocityStore((state) => state.tableConfig);
+  const setTableConfig = useVelocityStore((state) => state.setTableConfig);
+  const setDraggingId = useVelocityStore((state) => state.setDraggingId);
+  const reorderRowVars = useVelocityStore((state) => state.reorderRowVars);
+  const setWeightVariable = useVelocityStore((state) => state.setWeightVariable);
+  const setSelectedVariableSetId = useVelocityStore((state) => state.setSelectedVariableSetId);
+  const openRecodeModal = useVelocityStore((state) => state.openRecodeModal);
 
   const [activeDragSet, setActiveDragSet] = useState<VariableSet | null>(null);
   const [selectedSetIds, setSelectedSetIds] = useState<Set<string>>(new Set());

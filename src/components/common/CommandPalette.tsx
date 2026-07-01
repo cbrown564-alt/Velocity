@@ -13,8 +13,12 @@ interface CommandItem {
 
 export const CommandPalette: React.FC = () => {
   const { setTheme, availableThemes } = useTheme();
-  const { commandPaletteOpen, closeCommandPalette, toggleAppMode, toggleFocusMode, reset, addToast } =
-    useVelocityStore();
+  const commandPaletteOpen = useVelocityStore((state) => state.commandPaletteOpen);
+  const closeCommandPalette = useVelocityStore((state) => state.closeCommandPalette);
+  const toggleAppMode = useVelocityStore((state) => state.toggleAppMode);
+  const toggleFocusMode = useVelocityStore((state) => state.toggleFocusMode);
+  const reset = useVelocityStore((state) => state.reset);
+  const addToast = useVelocityStore((state) => state.addToast);
 
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);

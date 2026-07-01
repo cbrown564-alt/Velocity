@@ -39,7 +39,7 @@ export const AnalysisShelf: React.FC<AnalysisShelfProps> = ({
       !tableConfig.colVar &&
       !(dataset?.weightVariable || rememberedWeightVar) && (
         <div className="flex items-center gap-3 text-xs text-[var(--text-secondary)]">
-          <Plus size={14} className="text-[var(--color-accent)]" />
+          <Plus size={14} className="text-[var(--text-secondary)]" />
           <span className="font-medium">Drag variables to rows, columns, or weight to begin</span>
         </div>
       )}

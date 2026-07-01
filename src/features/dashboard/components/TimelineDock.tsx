@@ -189,7 +189,7 @@ const SlideThumb: React.FC<SlideThumbProps> = ({
                         border
                         ${
                           isActive
-                            ? 'bg-[var(--color-accent)]/10 border-[var(--color-accent)]/25 text-[var(--color-accent)]'
+                            ? 'bg-[var(--bg-active)] border-[var(--border-color)] text-[var(--text-primary)]'
                             : 'bg-transparent border-transparent text-[var(--text-secondary)] hover:bg-[var(--bg-active)] hover:text-[var(--text-primary)]'
                         }
                         ${isDragging ? 'opacity-40' : ''}
@@ -212,11 +212,11 @@ const SlideThumb: React.FC<SlideThumbProps> = ({
           {/* Number */}
           <span className="tabular-nums">{index + 1}</span>
 
-          {/* Truncated auto-title (only show on active or hover) */}
+          {/* Truncated auto-title (active slide only; inactive show on hover) */}
           <span
             className={`
                         max-w-[120px] truncate transition-all duration-150
-                        ${isActive ? 'opacity-100' : 'opacity-70'}
+                        ${isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-70'}
                     `}
             style={{ fontFamily: 'var(--font-body, sans-serif)', fontWeight: 400 }}
           >
@@ -440,19 +440,19 @@ export const TimelineDock: React.FC = () => {
     <>
       {/* Film-strip rail — sits in document flow as flex child */}
       <div
-        className="shrink-0 border-t border-[var(--border-color)] shadow-up"
+        className="group/dock shrink-0 border-t border-[var(--border-color)] shadow-up transition-[height] duration-200 hover:h-14 h-12"
         style={{ background: 'var(--bg-panel)' }}
       >
-        <div className="flex items-center h-14 px-4 gap-3 max-w-[1400px] mx-auto">
+        <div className="flex items-center h-12 group-hover/dock:h-14 px-4 gap-2 max-w-[1400px] mx-auto transition-[height] duration-200">
           {/* Slide counter label */}
           <span
-            className="text-xs font-semibold uppercase tracking-wider shrink-0 select-none bg-[var(--bg-active)] px-2 py-1 rounded"
+            className="text-[10px] font-semibold uppercase tracking-wider shrink-0 select-none bg-[var(--bg-active)] px-1.5 py-0.5 rounded"
             style={{
               color: 'var(--text-secondary)',
               fontFamily: 'var(--font-mono, monospace)',
             }}
           >
-            {activeIndex + 1} / {slides.length}
+            {activeIndex + 1}/{slides.length}
           </span>
 
           {/* Slide capsules */}

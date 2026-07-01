@@ -28,21 +28,19 @@ export function useWorkspaceOpen({
   setMode,
   clearImportedSessionSemantic,
 }: UseWorkspaceOpenOptions): UseWorkspaceOpenReturn {
-  const {
-    dataset,
-    activeDatasetId,
-    tableConfig,
-    activeFilters,
-    transformLog,
-    variableSets,
-    folders,
-    saveDatasetSession,
-    updateDatasetAccess,
-    updateStoredDataset,
-    setActiveDataset,
-    setWorkspaceMode,
-    openWorkspaceDataset,
-  } = useVelocityStore();
+  const dataset = useVelocityStore((state) => state.dataset);
+  const activeDatasetId = useVelocityStore((state) => state.activeDatasetId);
+  const tableConfig = useVelocityStore((state) => state.tableConfig);
+  const activeFilters = useVelocityStore((state) => state.activeFilters);
+  const transformLog = useVelocityStore((state) => state.transformLog);
+  const variableSets = useVelocityStore((state) => state.variableSets);
+  const folders = useVelocityStore((state) => state.folders);
+  const saveDatasetSession = useVelocityStore((state) => state.saveDatasetSession);
+  const updateDatasetAccess = useVelocityStore((state) => state.updateDatasetAccess);
+  const updateStoredDataset = useVelocityStore((state) => state.updateStoredDataset);
+  const setActiveDataset = useVelocityStore((state) => state.setActiveDataset);
+  const setWorkspaceMode = useVelocityStore((state) => state.setWorkspaceMode);
+  const openWorkspaceDataset = useVelocityStore((state) => state.openWorkspaceDataset);
 
   const openDataset = useCallback(
     async (storedDataset: StoredDataset) => {

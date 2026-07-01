@@ -32,31 +32,24 @@ interface UseWorkspaceReturn {
  * Hook for managing workspace state and dataset operations.
  */
 export function useWorkspace(): UseWorkspaceReturn {
-  const {
-    // Workspace state
-    workspace,
-    activeDatasetId,
-    isWorkspaceMode,
-    setWorkspaceMode,
-    setActiveDataset,
-    addStoredDataset,
-    updateStoredDataset,
-    removeStoredDatasets,
-    toggleDatasetStar,
-    updateDatasetAccess,
-    saveDatasetSession,
-    updateStorageQuota,
-
-    // Data state
-    dataset,
-    variableSets,
-    folders,
-    tableConfig,
-    activeFilters,
-    transformLog,
-
-    // Data actions
-  } = useVelocityStore();
+  const workspace = useVelocityStore((state) => state.workspace);
+  const activeDatasetId = useVelocityStore((state) => state.activeDatasetId);
+  const isWorkspaceMode = useVelocityStore((state) => state.isWorkspaceMode);
+  const setWorkspaceMode = useVelocityStore((state) => state.setWorkspaceMode);
+  const setActiveDataset = useVelocityStore((state) => state.setActiveDataset);
+  const addStoredDataset = useVelocityStore((state) => state.addStoredDataset);
+  const updateStoredDataset = useVelocityStore((state) => state.updateStoredDataset);
+  const removeStoredDatasets = useVelocityStore((state) => state.removeStoredDatasets);
+  const toggleDatasetStar = useVelocityStore((state) => state.toggleDatasetStar);
+  const updateDatasetAccess = useVelocityStore((state) => state.updateDatasetAccess);
+  const saveDatasetSession = useVelocityStore((state) => state.saveDatasetSession);
+  const updateStorageQuota = useVelocityStore((state) => state.updateStorageQuota);
+  const dataset = useVelocityStore((state) => state.dataset);
+  const variableSets = useVelocityStore((state) => state.variableSets);
+  const folders = useVelocityStore((state) => state.folders);
+  const tableConfig = useVelocityStore((state) => state.tableConfig);
+  const activeFilters = useVelocityStore((state) => state.activeFilters);
+  const transformLog = useVelocityStore((state) => state.transformLog);
 
   // Track if we've registered the current dataset
   const hasRegisteredDataset = useRef(false);

@@ -7,7 +7,7 @@
  */
 
 import React, { useMemo, useEffect, useState, useCallback } from 'react';
-import { Info } from 'lucide-react';
+import { Info, MousePointerClick } from 'lucide-react';
 import { useVelocityStore } from '../../store';
 import type { Variable } from '../../types/dataset';
 import type { VariableStatsResult } from '../../types/worker';
@@ -34,19 +34,17 @@ interface ContextMenuState {
 }
 
 export const VariableInspector: React.FC<VariableInspectorProps> = ({ className }) => {
-  const {
-    dataset,
-    selectedVariableId,
-    getVariableStats,
-    variableStats,
-    variableStatsLoading,
-    recodeVariable,
-    deleteGroupedVariable,
-    splitGroupValue,
-    getUniqueValues,
-    setSelectedVariableId,
-    transformLog,
-  } = useVelocityStore();
+  const dataset = useVelocityStore((state) => state.dataset);
+  const selectedVariableId = useVelocityStore((state) => state.selectedVariableId);
+  const getVariableStats = useVelocityStore((state) => state.getVariableStats);
+  const variableStats = useVelocityStore((state) => state.variableStats);
+  const variableStatsLoading = useVelocityStore((state) => state.variableStatsLoading);
+  const recodeVariable = useVelocityStore((state) => state.recodeVariable);
+  const deleteGroupedVariable = useVelocityStore((state) => state.deleteGroupedVariable);
+  const splitGroupValue = useVelocityStore((state) => state.splitGroupValue);
+  const getUniqueValues = useVelocityStore((state) => state.getUniqueValues);
+  const setSelectedVariableId = useVelocityStore((state) => state.setSelectedVariableId);
+  const transformLog = useVelocityStore((state) => state.transformLog);
 
   // Context menu state for chart interactions
   const [contextMenu, setContextMenu] = useState<ContextMenuState>({
@@ -251,11 +249,19 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
   // If no variable selected, show empty state
   if (!variable) {
     return (
-      <div className={`${styles.inspector} ${className || ''}`}>
+      <div className={`${styles.inspector} ${className || ''}`} data-testid="variable-inspector-empty">
         <div className={styles.emptyState}>
-          <Info className={styles.emptyIcon} />
-          <h3 className={styles.emptyTitle}>No Variable Selected</h3>
-          <p className={styles.emptyText}>Select a variable to view its details</p>
+          <div className={styles.emptyIconWrap}>
+            <MousePointerClick className={styles.emptyIcon} aria-hidden />
+          </div>
+          <h3 className={styles.emptyTitle}>Select a variable</h3>
+          <p className={styles.emptyText}>
+            Click any variable in the list to inspect its distribution, value labels, and recoding options.
+          </p>
+          <p className={styles.emptyHint}>
+            <Info size={14} aria-hidden />
+            <span>Tip: press D to open Variable Manager from the analysis canvas.</span>
+          </p>
         </div>
       </div>
     );

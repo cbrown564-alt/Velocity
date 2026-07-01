@@ -43,18 +43,16 @@ export const HarmonizationWorkspace: React.FC<HarmonizationWorkspaceProps> = ({
   sourceTableName,
   targetTableName,
 }) => {
-  const {
-    harmonization,
-    closeHarmonization,
-    runAutoMatch,
-    confirmMapping,
-    confirmAllMappings,
-    selectMapping,
-    updateValueMapping,
-    updateMapping,
-    refreshSankeyData,
-    applyHarmonization,
-  } = useVelocityStore();
+  const harmonization = useVelocityStore((state) => state.harmonization);
+  const closeHarmonization = useVelocityStore((state) => state.closeHarmonization);
+  const runAutoMatch = useVelocityStore((state) => state.runAutoMatch);
+  const confirmMapping = useVelocityStore((state) => state.confirmMapping);
+  const confirmAllMappings = useVelocityStore((state) => state.confirmAllMappings);
+  const selectMapping = useVelocityStore((state) => state.selectMapping);
+  const updateValueMapping = useVelocityStore((state) => state.updateValueMapping);
+  const updateMapping = useVelocityStore((state) => state.updateMapping);
+  const refreshSankeyData = useVelocityStore((state) => state.refreshSankeyData);
+  const applyHarmonization = useVelocityStore((state) => state.applyHarmonization);
 
   const { isOpen, session, matchingInProgress, sankeyData, selectedMappingId } = harmonization;
 

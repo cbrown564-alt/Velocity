@@ -24,7 +24,11 @@ export interface UseWelcomeBackReturn {
 }
 
 export function useWelcomeBack({ datasets, onOpenDataset }: UseWelcomeBackOptions): UseWelcomeBackReturn {
-  const { lastActiveAt, welcomeBackDismissed, dismissWelcomeBack, activeDatasetId, tableConfig } = useVelocityStore();
+  const lastActiveAt = useVelocityStore((state) => state.lastActiveAt);
+  const welcomeBackDismissed = useVelocityStore((state) => state.welcomeBackDismissed);
+  const dismissWelcomeBack = useVelocityStore((state) => state.dismissWelcomeBack);
+  const activeDatasetId = useVelocityStore((state) => state.activeDatasetId);
+  const tableConfig = useVelocityStore((state) => state.tableConfig);
 
   const resumeCandidate = useMemo(
     () => findResumeCandidate(datasets, activeDatasetId, tableConfig),

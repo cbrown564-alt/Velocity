@@ -27,6 +27,8 @@ import { AppShell } from '../../components/layout/AppShell';
 import { VariableCard } from './components/DraggableVariable';
 import { ContextMenu } from './components/ContextMenu';
 import { FirstCrosstabTourOverlay } from './onboarding/FirstCrosstabTour';
+import { ContextualTipChip } from './onboarding/ContextualTipChip';
+import { useContextualMicroTips } from './hooks/useContextualMicroTips';
 
 import type { PersistenceManagerState } from '../../hooks/usePersistenceManager';
 
@@ -57,37 +59,35 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
 }) => {
   const { theme } = useTheme();
 
-  const {
-    dataset,
-    variableSets,
-    tableConfig,
-    queryResult,
-    isQuerying,
-    draggingId,
-    searchQuery,
-    activeFilters,
-    slides,
-    activeSlideId,
-    selectedVariableSetId,
-    focusMode,
-    toggleFocusMode,
-    tableDensity,
-    toggleTableDensity,
-    setTableDensity,
-    setTableConfig,
-    setSearchQuery,
-    reset,
-    openFilterModal,
-    removeFilter,
-    openAnalysisExportModal,
-    hoveredVariableSetId,
-    transformLog,
-    lastSeenTransformCount,
-    markTransformsSeen,
-    opfsAvailable,
-    persistenceMode,
-    persistenceError,
-  } = useVelocityStore();
+  const dataset = useVelocityStore((state) => state.dataset);
+  const variableSets = useVelocityStore((state) => state.variableSets);
+  const tableConfig = useVelocityStore((state) => state.tableConfig);
+  const queryResult = useVelocityStore((state) => state.queryResult);
+  const isQuerying = useVelocityStore((state) => state.isQuerying);
+  const draggingId = useVelocityStore((state) => state.draggingId);
+  const searchQuery = useVelocityStore((state) => state.searchQuery);
+  const activeFilters = useVelocityStore((state) => state.activeFilters);
+  const slides = useVelocityStore((state) => state.slides);
+  const activeSlideId = useVelocityStore((state) => state.activeSlideId);
+  const selectedVariableSetId = useVelocityStore((state) => state.selectedVariableSetId);
+  const focusMode = useVelocityStore((state) => state.focusMode);
+  const toggleFocusMode = useVelocityStore((state) => state.toggleFocusMode);
+  const tableDensity = useVelocityStore((state) => state.tableDensity);
+  const toggleTableDensity = useVelocityStore((state) => state.toggleTableDensity);
+  const setTableDensity = useVelocityStore((state) => state.setTableDensity);
+  const setTableConfig = useVelocityStore((state) => state.setTableConfig);
+  const setSearchQuery = useVelocityStore((state) => state.setSearchQuery);
+  const reset = useVelocityStore((state) => state.reset);
+  const openFilterModal = useVelocityStore((state) => state.openFilterModal);
+  const removeFilter = useVelocityStore((state) => state.removeFilter);
+  const openAnalysisExportModal = useVelocityStore((state) => state.openAnalysisExportModal);
+  const hoveredVariableSetId = useVelocityStore((state) => state.hoveredVariableSetId);
+  const transformLog = useVelocityStore((state) => state.transformLog);
+  const lastSeenTransformCount = useVelocityStore((state) => state.lastSeenTransformCount);
+  const markTransformsSeen = useVelocityStore((state) => state.markTransformsSeen);
+  const opfsAvailable = useVelocityStore((state) => state.opfsAvailable);
+  const persistenceMode = useVelocityStore((state) => state.persistenceMode);
+  const persistenceError = useVelocityStore((state) => state.persistenceError);
 
   React.useEffect(() => {
     if (lastSeenTransformCount < 0) {
@@ -190,6 +190,10 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
   const handleExport = useCallback(() => {
     openAnalysisExportModal(buildCurrentExportConfig());
   }, [openAnalysisExportModal, buildCurrentExportConfig]);
+
+  const { activeTip, dismissActiveTip, handleTipAction } = useContextualMicroTips({
+    onExport: handleExport,
+  });
 
   const variables = dataset?.variables || [];
   const filename = dataset?.name || '';
@@ -348,6 +352,11 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
         )}
       </DndContext>
       <FirstCrosstabTourOverlay />
+      {activeTip && !focusMode && (
+        <div className="pointer-events-none fixed bottom-20 left-1/2 z-[var(--z-toast)] -translate-x-1/2 px-4">
+          <ContextualTipChip tipId={activeTip} onAction={handleTipAction} onDismiss={dismissActiveTip} />
+        </div>
+      )}
     </AppShell>
   );
 };

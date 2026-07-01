@@ -77,15 +77,13 @@ const VariableItem: React.FC<VariableItemProps> = ({
 };
 
 export const VariableColumn: React.FC = () => {
-  const {
-    dataset,
-    variableSets,
-    selectedVariableSetId,
-    selectedVariableId,
-    setSelectedVariableId,
-    getVariableStats,
-    variableStats,
-  } = useVelocityStore();
+  const dataset = useVelocityStore((state) => state.dataset);
+  const variableSets = useVelocityStore((state) => state.variableSets);
+  const selectedVariableSetId = useVelocityStore((state) => state.selectedVariableSetId);
+  const selectedVariableId = useVelocityStore((state) => state.selectedVariableId);
+  const setSelectedVariableId = useVelocityStore((state) => state.setSelectedVariableId);
+  const getVariableStats = useVelocityStore((state) => state.getVariableStats);
+  const variableStats = useVelocityStore((state) => state.variableStats);
 
   const contentRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<Map<string, HTMLDivElement>>(new Map());

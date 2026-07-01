@@ -40,21 +40,19 @@ interface VariableManagerProps {
 }
 
 export const VariableManager: React.FC<VariableManagerProps> = ({ onClose }) => {
-  const {
-    dataset,
-    variableSets,
-    managerSearchQuery,
-    setManagerSearchQuery,
-    selectedVariableSetIds,
-    selectedVariableSetId,
-    selectedVariableId,
-    activeFolderId,
-    selectAllVariableSets,
-    clearSelection,
-    moveToFolder,
-    facetFilters,
-    variableStats,
-  } = useVelocityStore();
+  const dataset = useVelocityStore((state) => state.dataset);
+  const variableSets = useVelocityStore((state) => state.variableSets);
+  const managerSearchQuery = useVelocityStore((state) => state.managerSearchQuery);
+  const setManagerSearchQuery = useVelocityStore((state) => state.setManagerSearchQuery);
+  const selectedVariableSetIds = useVelocityStore((state) => state.selectedVariableSetIds);
+  const selectedVariableSetId = useVelocityStore((state) => state.selectedVariableSetId);
+  const selectedVariableId = useVelocityStore((state) => state.selectedVariableId);
+  const activeFolderId = useVelocityStore((state) => state.activeFolderId);
+  const selectAllVariableSets = useVelocityStore((state) => state.selectAllVariableSets);
+  const clearSelection = useVelocityStore((state) => state.clearSelection);
+  const moveToFolder = useVelocityStore((state) => state.moveToFolder);
+  const facetFilters = useVelocityStore((state) => state.facetFilters);
+  const variableStats = useVelocityStore((state) => state.variableStats);
 
   // Configure dnd-kit sensors
   const sensors = useSensors(

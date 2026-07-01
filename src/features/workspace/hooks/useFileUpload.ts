@@ -31,7 +31,12 @@ export function useFileUpload(
   setMode: React.Dispatch<React.SetStateAction<AppMode>>,
   opfsAvailableLocal: boolean,
 ): FileUploadState {
-  const { loadCSV, loadSAV, loadSAVSample, discardPersistedData, setLoadProgress, addToast } = useVelocityStore();
+  const loadCSV = useVelocityStore((state) => state.loadCSV);
+  const loadSAV = useVelocityStore((state) => state.loadSAV);
+  const loadSAVSample = useVelocityStore((state) => state.loadSAVSample);
+  const discardPersistedData = useVelocityStore((state) => state.discardPersistedData);
+  const setLoadProgress = useVelocityStore((state) => state.setLoadProgress);
+  const addToast = useVelocityStore((state) => state.addToast);
 
   const [pendingSavFile, setPendingSavFile] = React.useState<File | null>(null);
   const [pendingSavSizeMb, setPendingSavSizeMb] = React.useState<number | null>(null);

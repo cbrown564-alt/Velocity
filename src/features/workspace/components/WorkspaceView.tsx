@@ -38,13 +38,12 @@ import {
   type WorkspaceCategoryChip,
 } from '../lib/workspaceLibrary';
 import { useWelcomeBack } from '../hooks/useWelcomeBack';
-import { WelcomeBackCard } from './WelcomeBackCard';
+import { WorkspaceStatusStrip } from './WorkspaceStatusStrip';
 import { WorkspaceStorageIndicator } from './WorkspaceStorageIndicator';
 import { WorkspaceDatasetCard } from './WorkspaceDatasetCard';
 import { WorkspaceDatasetListItem } from './WorkspaceDatasetListItem';
 import { WorkspaceProjectCard } from './WorkspaceProjectCard';
 import { WorkspaceEmptyState } from './WorkspaceEmptyState';
-import { PilotEnvironmentBanner } from '../../../components/common/PilotEnvironmentBanner';
 import { downloadPilotEventLog } from '../../../services/pilotOnboarding';
 import type { StoredDataset, Project, WorkspaceViewProps } from '../types';
 
@@ -313,11 +312,12 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
         </div>
       </header>
 
-      <PilotEnvironmentBanner />
-
-      {showWelcomeBack && resumeCandidate && (
-        <WelcomeBackCard candidate={resumeCandidate} onResume={onResume} onDismiss={onDismiss} />
-      )}
+      <WorkspaceStatusStrip
+        showWelcomeBack={showWelcomeBack}
+        resumeCandidate={resumeCandidate}
+        onResume={onResume}
+        onDismissWelcomeBack={onDismiss}
+      />
 
       <nav className={styles.filterTabs}>
         <button className={filterMode === 'recent' ? styles.active : ''} onClick={() => setFilterMode('recent')}>
