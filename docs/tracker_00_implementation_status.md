@@ -112,9 +112,10 @@ Completed Phase 1-4, stabilization, UI polish, engine/MCP, export, parity, and h
 
 #### Recommended Next Pull
 
-1. `PILOT-6`: recruit paid pilots — deploy per `pilot_01_packaging.md`, collect Pilot Log exports.
+1. **`audit_07` PPR P0 bundle** — coaching discipline (PPR-005), shrink-wrap hero frame (UXF-004), label truncation (PPR-004), chart axis/legend (UXF-002/PPR-008), resume trust (PPR-016). Re-screenshot per [`assets/ui-pilot-readiness-audit/`](assets/ui-pilot-readiness-audit/README.md) before PILOT-6 demo photography.
 2. `PILOT-4a`: continue processing gap discovery with external project/file reviews.
-3. `STAB-UI-F5`: accessibility themes (only if pilot requests).
+3. `PILOT-6`: recruit paid pilots only after PPR P0 closes or demo scope explicitly avoids hero-output screenshots.
+4. `STAB-UI-F5`: accessibility themes (only if pilot requests).
 
 ### 4.2 Future Gates
 
@@ -136,6 +137,7 @@ These rows remain directionally valid, but should not become active until `PILOT
 
 **Source:** July 2026 full UI audit; extends closed `STAB-UI-P` / UXR programs.  
 **Reference:** [`docs/plan_02_ui_presentation_workstream.md`](plan_02_ui_presentation_workstream.md) — findings register (`UXF-###`), slice specs, acceptance checklists.  
+**Pilot presentation gate:** [`docs/audit_07_pilot_presentation_readiness_2026-07-01.md`](audit_07_pilot_presentation_readiness_2026-07-01.md) — Linear-bar workflow screenshot audit (July 1, 2026). Tracker rows F1–F4 marked Done below reflect shipped slices; **PPR P0 items in audit §5 remain open** for paid-pilot demo readiness.  
 **Goal:** Client-presentable crosstab/chart slides and credible first-five-minutes activation for `PILOT-6`.
 
 | ID | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence / validation |
@@ -156,7 +158,8 @@ These rows remain directionally valid, but should not become active until `PILOT
 
 #### STAB-UI-F Recommended Pull
 
-1. `STAB-UI-F5` accessibility themes (only if pilot requests).
+1. **`audit_07` PPR P0** — see [`audit_07_pilot_presentation_readiness_2026-07-01.md`](audit_07_pilot_presentation_readiness_2026-07-01.md) §5–§6 (coaching + hero frame + truncation first).
+2. `STAB-UI-F5` accessibility themes (only if pilot requests).
 
 ### 4.4 Technical UI Foundation (`STAB-UI-T`)
 
