@@ -58,7 +58,17 @@ graph TD
 
   STABUIC["STAB-UI-C Complete"] --> STABUID["STAB-UI-D Done"]
   STABUID --> UXRREM["UXR Program Complete"]
+  UXRREM --> STABUIF["STAB-UI-F Presentation"]
+  STABUIF -. supports pilot UX .-> P6
   UXRREM -. supports polish .-> P1
+
+  STABUIF1["STAB-UI-F1 Frame artifact"] --> STABUIF2["STAB-UI-F2 Chrome density"]
+  STABUIF3["STAB-UI-F3 Activation"] --> STABUIF2
+
+  UXRREM --> STABUIT["STAB-UI-T Technical UI"]
+  STABUIT7["STAB-UI-T7 Recode wiring"] --> STABUIT2["STAB-UI-T2 Modal foundation"]
+  STABUIT4["STAB-UI-T4 Z-index"] --> STABUIT2
+  STABUIT --> STABUIF
 
   P7 -. gate .-> S5R1["S5-R-1 WebR Bridge"]
   P7 -. gate .-> S5PREP1["S5-PREP-1 Recipe Manager"]
@@ -102,9 +112,9 @@ Completed Phase 1-4, stabilization, UI polish, engine/MCP, export, parity, and h
 
 #### Recommended Next Pull
 
-1. `PILOT-6`: recruit paid pilots — deploy per `pilot_01_packaging.md`, collect Pilot Log exports.
-2. `PILOT-3`: complete PPTX template loop once pilots confirm wedge value.
-3. `PILOT-4a`: observe pilot files to rank processing gaps before building `PILOT-4b`.
+1. `STAB-UI-T7` + `STAB-UI-T5`: Recode modal wiring + FacetedSearchBar theme — P0 bugs, hours (`docs/plan_03_ui_technical_foundation.md`).
+2. `STAB-UI-F1` + `STAB-UI-F3.1`: hero output overflow and welcome-back UUID fix (`docs/plan_02_ui_presentation_workstream.md`).
+3. `PILOT-6`: recruit paid pilots — deploy per `pilot_01_packaging.md`, collect Pilot Log exports.
 
 ### 4.2 Future Gates
 
@@ -121,6 +131,71 @@ These rows remain directionally valid, but should not become active until `PILOT
 | S6-AI-3 | AI | Action hub workflows | S6-AI-2 | Frozen | Yes | T,L,U,I,A,V | Activate after repeatable agent workflows exist |
 | S7-CLOUD-1 | Cloud | Realtime collaboration backend + UI integration | S6-AI-3 | Frozen | Yes | T,L,U,I,A,V | Activate only for in-house/team ICP expansion |
 | S7-CLOUD-2 | Cloud | Direct survey platform imports via backend proxy | S7-CLOUD-1 | Frozen | Yes | T,L,U,I,A,V | Activate only after governance/import pain is observed in target segment |
+
+### 4.3 Presentation & Activation (`STAB-UI-F`)
+
+**Source:** July 2026 full UI audit; extends closed `STAB-UI-P` / UXR programs.  
+**Reference:** [`docs/plan_02_ui_presentation_workstream.md`](plan_02_ui_presentation_workstream.md) — findings register (`UXF-###`), slice specs, acceptance checklists.  
+**Goal:** Client-presentable crosstab/chart slides and credible first-five-minutes activation for `PILOT-6`.
+
+| ID | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence / validation |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| STAB-UI-F1 | Hero output | Overflow/scroll affordance, content-aware slide height, table↔chart transition, statistics visibility toggles (UXP-040 / UXF-001–005) | STAB-UI-P (Done) | Not started | Yes | T,L,U,I,A | Plan §F1; `SlideContainer`, `DataTable`, `AnalysisOutputFrame`, `CrosstabCell`; extend `visual-polish-theme-table.spec.ts`; human frame-it checklist §7 |
+| STAB-UI-F2 | Chrome density | Focus discoverability, compact timeline, accent budget, Variable Manager inspector empty state (UXF-006–009) | STAB-UI-F1 | Not started | No | T,L,U,I | Plan §F2; `TimelineDock`, `DashboardShell`, `VariableInspector`; `pilot-workflow.spec.ts` smoke |
+| STAB-UI-F3 | Activation | Welcome-back label hydration, first-crosstab spotlight, contextual tips, workspace banner discipline (UXF-010–012, UXF-014) | None | Not started | Yes | T,L,U,I,V | Plan §F3; `returningResearcher.ts`, onboarding module, `WelcomeBackCard`, `WorkspaceView`; unit tests for resume copy |
+| STAB-UI-F4 | Command palette | Variable search → shelf actions, export/focus/filter commands, empty-state `⌘K` hint (UXF-013) | STAB-UI-C (Done) | Not started | No | T,L,U | Plan §F4; `CommandPalette.tsx`; extend `CommandPalette.test.tsx` |
+| STAB-UI-F5 | Accessibility themes | High-contrast + colorblind significance themes; splash contrast fix (UXF-015–016) | STAB-UI-F1 | Frozen | Yes | T,L,U,I | Plan §F5; `themes.ts`, `ThemeSwitcher`; defer until F1–F3 complete or pilot requests |
+
+#### STAB-UI-F Dependency Notes
+
+- **F3.1** (welcome UUID) has no dependency on F1 — pull first for a quick trust win.
+- **F1** blocks **F2** (shared slide frame contract) and **F5** (significance color stability).
+- **F4** can run in parallel with F1/F3 after palette API is agreed in plan §F4.
+- Do not expand scope into Liquid Glass maturity, mobile layout, or component monolith refactors without `PILOT-7` gate.
+- Update `UXF-###` status in the plan doc when each finding closes; link PR URLs in tracker row notes on merge.
+
+#### STAB-UI-F Recommended Pull
+
+1. `STAB-UI-F3` welcome-back labels (F3.1) — small diff, fixes P0 copy bug.
+2. `STAB-UI-F1` overflow + slide height (F1.1–F1.2) — fixes P0 clipping in pilot demos.
+3. `STAB-UI-F1` statistics toggles (F1.4 / UXP-040) — deck vs research density.
+4. `STAB-UI-F3` first-crosstab spotlight + `STAB-UI-F2` Focus tip — activation pair.
+5. `STAB-UI-F4` variable search in command palette.
+
+### 4.4 Technical UI Foundation (`STAB-UI-T`)
+
+**Source:** July 2026 independent technical UI audit (perf, modal/a11y infra, resilience, stacking).  
+**Reference:** [`docs/plan_03_ui_technical_foundation.md`](plan_03_ui_technical_foundation.md) — findings register (`UXT-###`), subscription inventory, slice specs.  
+**Goal:** Fast, accessible, resilient UI for `PILOT-6`; complements `STAB-UI-F` presentation work.
+
+| ID | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence / validation |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| STAB-UI-T7 | Recode wiring | Fix `ModalHost` `RecodeModal onSave` noop; all recode paths persist (UXT-012) | None | Not started | Yes | T,L,U | Plan §T7; `ModalHost.tsx`; recode integration test |
+| STAB-UI-T5 | VM theme fix | Replace hardcoded white `rgba` in `FacetedSearchBar.module.css`; token cleanup (UXT-010, UXT-021) | None | Not started | No | T,L,U | Plan §T5; visual check Soft Machine + MC |
+| STAB-UI-T4 | Z-index scale | Semantic `--z-*` tokens; toast above modal; menus above sticky headers (UXT-009) | None | Not started | No | T,L,U | Plan §T4; manual stacking checklist §8 |
+| STAB-UI-T2 | Modal foundation | `ModalShell` dialog semantics, focus trap/restore, form labels, close labels, keyboard click targets (UXT-003–008, UXT-014–016) | STAB-UI-T4 | Not started | Yes | T,L,U,I | Plan §T2; `ModalShell.test.tsx`; `pilot-workflow.spec.ts` |
+| STAB-UI-T3 | Error boundaries | `AnalysisErrorBoundary` on slide + chart renderers (UXT-005) | None | Not started | No | T,L,U | Plan §T3; boundary unit test |
+| STAB-UI-T1 | Store selectors | Eliminate bare `useVelocityStore()` in 18 files; optional memo on hot leaves (UXT-001–002) | None | Not started | No | T,L,U,G | Plan §T1; `rg useVelocityStore\(\)` zero; optional `benchmark:crosstab` |
+| STAB-UI-T6 | Shortcuts & hygiene | Unified keydown registry, lazy Monaco, dev-gated console noise (UXT-011, UXT-013, UXT-019) | STAB-UI-T2 | Not started | No | T,L,U | Plan §T6 |
+
+#### STAB-UI-T Dependency Notes
+
+- **T7** and **T5** have no dependencies — pull before or parallel with **STAB-UI-F**.
+- **T4** should land before or with **T2** so modal/toast/menu stacking is stable during modal work.
+- **T1** is the largest diff; safe to run parallel with **T3** after **T7/T5** land.
+- **T6** shortcut registry should follow **T2** so modal context integrates cleanly.
+- UXT-017, UXT-018, UXT-020 remain **deferred** unless a slice touches those files.
+- Update `UXT-###` status in the plan doc on merge; link PRs in tracker notes.
+
+#### STAB-UI-T Recommended Pull
+
+1. `STAB-UI-T7` — Recode noop (P0 functional bug).  
+2. `STAB-UI-T5` — FacetedSearchBar on Soft Machine (P0 visible defect).  
+3. `STAB-UI-T4` — Z-index token scale.  
+4. `STAB-UI-T2` — ModalShell accessible dialog foundation.  
+5. `STAB-UI-T3` — Error boundaries.  
+6. `STAB-UI-T1` — Store selector migration.  
+7. `STAB-UI-T6` — Shortcut registry + lazy Monaco.
 
 ## 5. Completed Work Reference
 
