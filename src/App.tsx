@@ -47,27 +47,25 @@ export default function App() {
     clearImportedSessionSemantic: session.clearImportedSessionSemantic,
   });
 
-  const {
-    isDbReady,
-    initError,
-    dataset,
-    workspace,
-    persistedDataInfo,
-    persistenceError,
-    persistenceState,
-    loadProgress,
-    drillDown,
-    recodeModal,
-    filterModal,
-    analysisExportModal,
-    harmonization,
-    closeDrillDown,
-    loadMoreDrillDown,
-    closeRecodeModal,
-    closeFilterModal,
-    closeAnalysisExportModal,
-    toggleDatasetStar,
-  } = useVelocityStore();
+  const isDbReady = useVelocityStore((state) => state.isDbReady);
+  const initError = useVelocityStore((state) => state.initError);
+  const dataset = useVelocityStore((state) => state.dataset);
+  const workspace = useVelocityStore((state) => state.workspace);
+  const persistedDataInfo = useVelocityStore((state) => state.persistedDataInfo);
+  const persistenceError = useVelocityStore((state) => state.persistenceError);
+  const persistenceState = useVelocityStore((state) => state.persistenceState);
+  const loadProgress = useVelocityStore((state) => state.loadProgress);
+  const drillDown = useVelocityStore((state) => state.drillDown);
+  const recodeModal = useVelocityStore((state) => state.recodeModal);
+  const filterModal = useVelocityStore((state) => state.filterModal);
+  const analysisExportModal = useVelocityStore((state) => state.analysisExportModal);
+  const harmonization = useVelocityStore((state) => state.harmonization);
+  const closeDrillDown = useVelocityStore((state) => state.closeDrillDown);
+  const loadMoreDrillDown = useVelocityStore((state) => state.loadMoreDrillDown);
+  const closeRecodeModal = useVelocityStore((state) => state.closeRecodeModal);
+  const closeFilterModal = useVelocityStore((state) => state.closeFilterModal);
+  const closeAnalysisExportModal = useVelocityStore((state) => state.closeAnalysisExportModal);
+  const toggleDatasetStar = useVelocityStore((state) => state.toggleDatasetStar);
 
   const loadStageHeadline = getLoadStageHeadline(loadProgress);
   const variables = dataset?.variables ?? [];

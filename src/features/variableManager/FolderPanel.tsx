@@ -58,7 +58,12 @@ const FolderItem: React.FC<FolderItemProps> = ({ id, name, count, isActive, onCl
 };
 
 export const FolderPanel: React.FC = () => {
-  const { folders, variableSets, activeFolderId, setActiveFolderId, createFolder, deleteFolder } = useVelocityStore();
+  const folders = useVelocityStore((state) => state.folders);
+  const variableSets = useVelocityStore((state) => state.variableSets);
+  const activeFolderId = useVelocityStore((state) => state.activeFolderId);
+  const setActiveFolderId = useVelocityStore((state) => state.setActiveFolderId);
+  const createFolder = useVelocityStore((state) => state.createFolder);
+  const deleteFolder = useVelocityStore((state) => state.deleteFolder);
 
   const [isCreating, setIsCreating] = useState(false);
   const [newFolderName, setNewFolderName] = useState('');

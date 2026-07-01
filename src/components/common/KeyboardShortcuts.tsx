@@ -38,7 +38,8 @@ const SHORTCUTS: ShortcutGroup[] = [
 ];
 
 export const KeyboardShortcuts: React.FC = () => {
-  const { shortcutsOpen, closeShortcuts } = useVelocityStore();
+  const shortcutsOpen = useVelocityStore((state) => state.shortcutsOpen);
+  const closeShortcuts = useVelocityStore((state) => state.closeShortcuts);
   const titleId = useId();
 
   useEffect(() => {

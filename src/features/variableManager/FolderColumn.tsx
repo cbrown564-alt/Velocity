@@ -62,8 +62,13 @@ interface FolderColumnProps {
 }
 
 export const FolderColumn: React.FC<FolderColumnProps> = ({ className }) => {
-  const { dataset, folders, variableSets, activeFolderId, setActiveFolderId, createFolder, deleteFolder } =
-    useVelocityStore();
+  const dataset = useVelocityStore((state) => state.dataset);
+  const folders = useVelocityStore((state) => state.folders);
+  const variableSets = useVelocityStore((state) => state.variableSets);
+  const activeFolderId = useVelocityStore((state) => state.activeFolderId);
+  const setActiveFolderId = useVelocityStore((state) => state.setActiveFolderId);
+  const createFolder = useVelocityStore((state) => state.createFolder);
+  const deleteFolder = useVelocityStore((state) => state.deleteFolder);
 
   const [isCreating, setIsCreating] = useState(false);
   const [newFolderName, setNewFolderName] = useState('');

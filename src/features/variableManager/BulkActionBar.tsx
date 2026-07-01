@@ -21,7 +21,11 @@ interface BulkActionBarProps {
 
 export const BulkActionBar: React.FC<BulkActionBarProps> = ({ selectedCount, selectedIds, onClearSelection }) => {
   const reducedMotion = useReducedMotion();
-  const { createFolder, moveToFolder, bulkSetType, bulkHide, variableSets } = useVelocityStore();
+  const createFolder = useVelocityStore((state) => state.createFolder);
+  const moveToFolder = useVelocityStore((state) => state.moveToFolder);
+  const bulkSetType = useVelocityStore((state) => state.bulkSetType);
+  const bulkHide = useVelocityStore((state) => state.bulkHide);
+  const variableSets = useVelocityStore((state) => state.variableSets);
 
   const [showTypeMenu, setShowTypeMenu] = useState(false);
   const [showFolderModal, setShowFolderModal] = useState(false);

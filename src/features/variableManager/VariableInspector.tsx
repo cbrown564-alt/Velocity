@@ -34,19 +34,17 @@ interface ContextMenuState {
 }
 
 export const VariableInspector: React.FC<VariableInspectorProps> = ({ className }) => {
-  const {
-    dataset,
-    selectedVariableId,
-    getVariableStats,
-    variableStats,
-    variableStatsLoading,
-    recodeVariable,
-    deleteGroupedVariable,
-    splitGroupValue,
-    getUniqueValues,
-    setSelectedVariableId,
-    transformLog,
-  } = useVelocityStore();
+  const dataset = useVelocityStore((state) => state.dataset);
+  const selectedVariableId = useVelocityStore((state) => state.selectedVariableId);
+  const getVariableStats = useVelocityStore((state) => state.getVariableStats);
+  const variableStats = useVelocityStore((state) => state.variableStats);
+  const variableStatsLoading = useVelocityStore((state) => state.variableStatsLoading);
+  const recodeVariable = useVelocityStore((state) => state.recodeVariable);
+  const deleteGroupedVariable = useVelocityStore((state) => state.deleteGroupedVariable);
+  const splitGroupValue = useVelocityStore((state) => state.splitGroupValue);
+  const getUniqueValues = useVelocityStore((state) => state.getUniqueValues);
+  const setSelectedVariableId = useVelocityStore((state) => state.setSelectedVariableId);
+  const transformLog = useVelocityStore((state) => state.transformLog);
 
   // Context menu state for chart interactions
   const [contextMenu, setContextMenu] = useState<ContextMenuState>({

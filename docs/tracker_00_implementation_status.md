@@ -113,9 +113,8 @@ Completed Phase 1-4, stabilization, UI polish, engine/MCP, export, parity, and h
 #### Recommended Next Pull
 
 1. `STAB-UI-F4`: variable search in command palette.
-2. `STAB-UI-T1`: store selector migration (largest perf win).
-3. `STAB-UI-T6`: shortcut registry + lazy Monaco.
-4. `PILOT-6`: recruit paid pilots — deploy per `pilot_01_packaging.md`, collect Pilot Log exports.
+2. `STAB-UI-T6`: shortcut registry + lazy Monaco.
+3. `PILOT-6`: recruit paid pilots — deploy per `pilot_01_packaging.md`, collect Pilot Log exports.
 
 ### 4.2 Future Gates
 
@@ -173,7 +172,7 @@ These rows remain directionally valid, but should not become active until `PILOT
 | STAB-UI-T4 | Z-index scale | Semantic `--z-*` tokens; toast above modal; menus above sticky headers (UXT-009) | None | Done | No | T,L,U | Plan §T4; `--z-sticky` through `--z-menu` in `index.css`; migrated ToastLayer, modals, menus, popovers; `ModalShell` defaults use `--z-modal` |
 | STAB-UI-T2 | Modal foundation | `ModalShell` dialog semantics, focus trap/restore, form labels, close labels, keyboard click targets (UXT-003–008, UXT-014–016) | STAB-UI-T4 | Done | Yes | T,L,U,I | `ModalShell` — `role="dialog"`, `aria-modal`, `useFocusTrap`, default `escapeToClose`; tests in `ModalShell.test.tsx` |
 | STAB-UI-T3 | Error boundaries | `AnalysisErrorBoundary` on slide + chart renderers (UXT-005) | None | Done | No | T,L,U | `AnalysisErrorBoundary` + `AnalysisErrorFallback` wrap `SlideContainer` output and `AnalysisChart` renderers; reset on config change + Retry; tests in `AnalysisErrorBoundary.test.tsx`. |
-| STAB-UI-T1 | Store selectors | Eliminate bare `useVelocityStore()` in 18 files; optional memo on hot leaves (UXT-001–002) | None | Not started | No | T,L,U,G | Plan §T1; `rg useVelocityStore\(\)` zero; optional `benchmark:crosstab` |
+| STAB-UI-T1 | Store selectors | Eliminate bare `useVelocityStore()` in 18 files; optional memo on hot leaves (UXT-001–002) | None | Done | No | T,L,U,G | Migrated all production component/hook call sites in plan §T1 to granular selectors (`App.tsx`, `AppShell`, `DashboardShell`, Variable Manager columns, workspace hooks, harmonization shell, etc.). `rg 'useVelocityStore\(\)' src --glob '*.tsx'` returns zero in production components; bare calls remain only in store test harnesses. UXT-001 closed; UXT-002 deferred pending profile. |
 | STAB-UI-T6 | Shortcuts & hygiene | Unified keydown registry, lazy Monaco, dev-gated console noise (UXT-011, UXT-013, UXT-019) | STAB-UI-T2 | Not started | No | T,L,U | Plan §T6 |
 
 #### STAB-UI-T Dependency Notes

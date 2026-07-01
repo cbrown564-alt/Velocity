@@ -68,19 +68,17 @@ export function usePersistenceManager(
   mode: AppMode,
   setMode: React.Dispatch<React.SetStateAction<AppMode>>,
 ): PersistenceManagerState {
-  const {
-    dataset,
-    isDbReady,
-    persistenceState,
-    persistedDataInfo,
-    persistenceError,
-    activeDbPath,
-    isWorkspaceMode,
-    restoreFromPersistence,
-    rehydrateDatasetFromOpfs,
-    initWorker,
-    updateStorageQuota,
-  } = useVelocityStore();
+  const dataset = useVelocityStore((state) => state.dataset);
+  const isDbReady = useVelocityStore((state) => state.isDbReady);
+  const persistenceState = useVelocityStore((state) => state.persistenceState);
+  const persistedDataInfo = useVelocityStore((state) => state.persistedDataInfo);
+  const persistenceError = useVelocityStore((state) => state.persistenceError);
+  const activeDbPath = useVelocityStore((state) => state.activeDbPath);
+  const isWorkspaceMode = useVelocityStore((state) => state.isWorkspaceMode);
+  const restoreFromPersistence = useVelocityStore((state) => state.restoreFromPersistence);
+  const rehydrateDatasetFromOpfs = useVelocityStore((state) => state.rehydrateDatasetFromOpfs);
+  const initWorker = useVelocityStore((state) => state.initWorker);
+  const updateStorageQuota = useVelocityStore((state) => state.updateStorageQuota);
 
   // -- Local state --
   const [opfsAvailableLocal, setOpfsAvailableLocal] = React.useState(false);

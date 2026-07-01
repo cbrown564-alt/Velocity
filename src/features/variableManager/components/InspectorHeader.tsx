@@ -48,7 +48,7 @@ interface InspectorHeaderProps {
 }
 
 export const InspectorHeader: React.FC<InspectorHeaderProps> = ({ variable, stats, isLoadingStats }) => {
-  const { updateVariableMetadata } = useVelocityStore();
+  const updateVariableMetadata = useVelocityStore((state) => state.updateVariableMetadata);
   const hasValueLabels = variable.valueLabels && variable.valueLabels.length > 0;
 
   const displayName = variable.label && variable.label.trim() !== '' ? variable.label : variable.name;

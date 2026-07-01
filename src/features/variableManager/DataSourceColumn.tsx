@@ -15,7 +15,9 @@ interface DataSourceColumnProps {
 }
 
 export const DataSourceColumn: React.FC<DataSourceColumnProps> = ({ className }) => {
-  const { dataset, selectedDataSourceId, setSelectedDataSourceId } = useVelocityStore();
+  const dataset = useVelocityStore((state) => state.dataset);
+  const selectedDataSourceId = useVelocityStore((state) => state.selectedDataSourceId);
+  const setSelectedDataSourceId = useVelocityStore((state) => state.setSelectedDataSourceId);
 
   // Auto-select the only dataset on load
   useEffect(() => {

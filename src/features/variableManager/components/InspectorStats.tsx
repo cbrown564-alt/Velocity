@@ -15,7 +15,9 @@ interface InspectorStatsProps {
 }
 
 export const InspectorStats: React.FC<InspectorStatsProps> = ({ variable, stats, hoveredKey, onHoverChange }) => {
-  const { updateValueLabel, toggleDiscreteMissingValue, fillSystemMissing } = useVelocityStore();
+  const updateValueLabel = useVelocityStore((state) => state.updateValueLabel);
+  const toggleDiscreteMissingValue = useVelocityStore((state) => state.toggleDiscreteMissingValue);
+  const fillSystemMissing = useVelocityStore((state) => state.fillSystemMissing);
 
   const hasValueLabels = variable.valueLabels && variable.valueLabels.length > 0;
   const hasMissingValues =
