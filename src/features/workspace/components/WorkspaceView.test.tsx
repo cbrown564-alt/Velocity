@@ -12,6 +12,10 @@ vi.mock('../../../components/common/PilotEnvironmentBanner', () => ({
   PilotEnvironmentBanner: () => null,
 }));
 
+vi.mock('./WorkspaceStatusStrip', () => ({
+  WorkspaceStatusStrip: () => null,
+}));
+
 const makeDataset = (id: string, overrides: Partial<StoredDataset> = {}): StoredDataset => ({
   id,
   name: `${id}.sav`,

@@ -55,7 +55,7 @@ Update **Status:** `open` | `in_progress` | `fixed` | `wontfix` | `deferred`.
 | **UXT-002** | Perf | Zero `React.memo` on hot leaves (crosstab cells, chart SVG, variable cards) | P1 | T1 | open |
 | **UXT-003** | Modals | `ModalShell` lacks `role="dialog"`, `aria-modal`, focus trap, focus restore; `escapeToClose` defaults `false` | P0 | T2 | open |
 | **UXT-004** | Modals | Overlays bypassing `ModalShell` miss shared behavior (`DataDrawer`, `CommandPalette`, `ProjectLinkModal`, `CrossWavePanel`, `ExportImportModal`) | P1 | T2 | open |
-| **UXT-005** | Resilience | No `ErrorBoundary` — chart/D3 exception unmounts entire dashboard | P0 | T3 | open |
+| **UXT-005** | Resilience | No `ErrorBoundary` — chart/D3 exception unmounts entire dashboard | P0 | T3 | fixed |
 | **UXT-006** | Forms | ~31 `<label>` elements; ~2 use `htmlFor` — SR announces unlabeled fields | P1 | T2 | open |
 | **UXT-007** | A11y | Icon-only close buttons without `aria-label` (9+ sites) | P1 | T2 | open |
 | **UXT-008** | A11y | Click-to-edit `<div onClick>` without keyboard path (`InspectorHeader`, `WorkspaceProjectCard`, `DataTable` merge UI) | P1 | T2 | open |

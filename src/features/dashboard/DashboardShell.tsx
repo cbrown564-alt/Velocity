@@ -27,6 +27,8 @@ import { AppShell } from '../../components/layout/AppShell';
 import { VariableCard } from './components/DraggableVariable';
 import { ContextMenu } from './components/ContextMenu';
 import { FirstCrosstabTourOverlay } from './onboarding/FirstCrosstabTour';
+import { ContextualMicroTipChip } from './onboarding/ContextualMicroTipChip';
+import { useContextualMicroTips } from './hooks/useContextualMicroTips';
 
 import type { PersistenceManagerState } from '../../hooks/usePersistenceManager';
 
@@ -149,6 +151,7 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
 
   const [sidebarCollapsed, setSidebarCollapsed] = React.useState(false);
   const [sidebarUserToggled, setSidebarUserToggled] = React.useState(false);
+  const { activeTip, dismissActiveTip } = useContextualMicroTips();
 
   React.useEffect(() => {
     const media = window.matchMedia('(max-width: 1279px)');
@@ -348,6 +351,7 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
         )}
       </DndContext>
       <FirstCrosstabTourOverlay />
+      {activeTip && <ContextualMicroTipChip tip={activeTip} onDismiss={dismissActiveTip} />}
     </AppShell>
   );
 };

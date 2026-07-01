@@ -212,11 +212,11 @@ const SlideThumb: React.FC<SlideThumbProps> = ({
           {/* Number */}
           <span className="tabular-nums">{index + 1}</span>
 
-          {/* Truncated auto-title (only show on active or hover) */}
+          {/* Truncated auto-title (active slide, or on dock hover/focus) */}
           <span
             className={`
                         max-w-[120px] truncate transition-all duration-150
-                        ${isActive ? 'opacity-100' : 'opacity-70'}
+                        ${isActive ? 'opacity-100' : 'opacity-0 group-hover/dock:opacity-70 group-focus-within/dock:opacity-70 w-0 group-hover/dock:w-auto group-focus-within/dock:w-auto overflow-hidden'}
                     `}
             style={{ fontFamily: 'var(--font-body, sans-serif)', fontWeight: 400 }}
           >
@@ -440,19 +440,20 @@ export const TimelineDock: React.FC = () => {
     <>
       {/* Film-strip rail — sits in document flow as flex child */}
       <div
-        className="shrink-0 border-t border-[var(--border-color)] shadow-up"
+        className="group/dock shrink-0 border-t border-[var(--border-color)] shadow-up transition-[height] duration-200 hover:h-14 focus-within:h-14 h-12"
         style={{ background: 'var(--bg-panel)' }}
+        data-testid="timeline-dock"
       >
-        <div className="flex items-center h-14 px-4 gap-3 max-w-[1400px] mx-auto">
-          {/* Slide counter label */}
+        <div className="flex items-center h-full px-4 gap-3 max-w-[1400px] mx-auto">
+          {/* Slide counter — compact by default, full label on dock hover/focus */}
           <span
-            className="text-xs font-semibold uppercase tracking-wider shrink-0 select-none bg-[var(--bg-active)] px-2 py-1 rounded"
+            className="text-[10px] font-semibold uppercase tracking-wider shrink-0 select-none bg-[var(--bg-active)] px-1.5 py-0.5 rounded group-hover/dock:px-2 group-hover/dock:py-1 group-hover/dock:text-xs transition-all"
             style={{
               color: 'var(--text-secondary)',
               fontFamily: 'var(--font-mono, monospace)',
             }}
           >
-            {activeIndex + 1} / {slides.length}
+            {activeIndex + 1}/{slides.length}
           </span>
 
           {/* Slide capsules */}

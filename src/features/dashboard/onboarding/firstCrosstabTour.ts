@@ -1,5 +1,7 @@
 /** First-crosstab spotlight tour + Focus tip persistence (STAB-UI-F3.2 / F2.1). */
 
+import { resetAllMicroTips } from './contextualMicroTips';
+
 export type FirstCrosstabTourStep = 'rows' | 'columns' | 'significance';
 
 const TOUR_DONE_KEY = 'velocity-first-crosstab-tour-done';
@@ -66,6 +68,7 @@ export function resetFocusTipSeen(): void {
 export function replayFirstCrosstabTour(): void {
   resetFirstCrosstabTour();
   resetFocusTipSeen();
+  resetAllMicroTips();
 }
 
 export function resolveFirstCrosstabTourStep(input: {
