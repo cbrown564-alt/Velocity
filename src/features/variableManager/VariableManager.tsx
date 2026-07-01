@@ -12,7 +12,7 @@
  * - Bulk actions (hide, change type, group)
  */
 
-import React, { useEffect, useCallback, useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import {
   DndContext,
   closestCenter,
@@ -25,6 +25,7 @@ import {
 import { X, Search, Grid3X3, Tag, BarChart2, SlidersHorizontal, Calendar, Type } from 'lucide-react';
 import { useVelocityStore } from '../../store';
 import { isCategoricalType, normalizeVariableType } from '../../types';
+import { registerShortcut } from '../../lib/keyboardShortcuts/registry';
 import { BulkActionBar } from './BulkActionBar';
 import { DataSourceColumn } from './DataSourceColumn';
 import { FolderColumn } from './FolderColumn';
@@ -114,33 +115,37 @@ export const VariableManager: React.FC<VariableManagerProps> = ({ onClose }) => 
     }
   };
 
-  // Keyboard shortcuts
-  const handleKeyDown = useCallback(
-    (event: KeyboardEvent) => {
-      // Ignore if typing in input
-      const target = event.target as HTMLElement;
-      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') return;
-
-      if (event.key === 'Escape') {
+  useEffect(() => {
+    const unregisterEscape = registerShortcut({
+      id: 'manager-escape',
+      contexts: ['manager'],
+      priority: 10,
+      match: (event) => event.key === 'Escape',
+      handler: () => {
         if (selectedVariableSetIds.length > 0) {
           clearSelection();
         } else {
           onClose();
         }
-      }
+      },
+    });
 
-      if ((event.metaKey || event.ctrlKey) && event.key === 'a') {
+    const unregisterSelectAll = registerShortcut({
+      id: 'manager-select-all',
+      contexts: ['manager'],
+      priority: 20,
+      match: (event) => (event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'a',
+      handler: (event) => {
         event.preventDefault();
         selectAllVariableSets(filteredIds);
-      }
-    },
-    [selectedVariableSetIds, clearSelection, selectAllVariableSets, filteredIds, onClose],
-  );
+      },
+    });
 
-  useEffect(() => {
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [handleKeyDown]);
+    return () => {
+      unregisterEscape();
+      unregisterSelectAll();
+    };
+  }, [selectedVariableSetIds, clearSelection, selectAllVariableSets, filteredIds, onClose]);
 
   // Determine if Inspector should be visible
   const showInspector = !!selectedVariableId;

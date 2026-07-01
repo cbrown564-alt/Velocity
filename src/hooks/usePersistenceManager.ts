@@ -317,7 +317,9 @@ export function usePersistenceManager(
         if (cancelled) return;
         setPersistentStorageGranted(granted);
         setPersistentStorageResolved(true);
-        console.log(`[Storage] Persistent storage ${granted ? 'granted' : 'denied'}`);
+        if (import.meta.env.DEV) {
+          console.log(`[Storage] Persistent storage ${granted ? 'granted' : 'denied'}`);
+        }
       })
       .catch((error) => {
         if (cancelled) return;
@@ -433,13 +435,17 @@ export function usePersistenceManager(
       const shouldPreferSourceRebuild = Boolean(dataset?.opfsFileKey) && persistentStorageGranted === false;
 
       if (hasMatchingMetadata && shouldPreferSourceRebuild) {
-        console.log(
-          '[App] Persistent storage denied; rebuilding from OPFS source file instead of trusting persisted DuckDB cache',
-        );
+        if (import.meta.env.DEV) {
+          console.log(
+            '[App] Persistent storage denied; rebuilding from OPFS source file instead of trusting persisted DuckDB cache',
+          );
+        }
         hasProcessedPersistence.current = true;
         void rebuildFromOpfsSource('splash', { forceReload: true });
       } else if (hasMatchingMetadata) {
-        console.log('[App] Auto-restoring: localStorage metadata matches OPFS data');
+        if (import.meta.env.DEV) {
+          console.log('[App] Auto-restoring: localStorage metadata matches OPFS data');
+        }
         hasProcessedPersistence.current = true;
         const restored = attemptRestoreFromPersistence();
         if (isWorkspaceMode) {
@@ -448,7 +454,9 @@ export function usePersistenceManager(
           setMode(restored ? 'dashboard' : 'restoring');
         }
       } else {
-        console.log('[App] Showing restoration prompt: metadata mismatch or missing');
+        if (import.meta.env.DEV) {
+          console.log('[App] Showing restoration prompt: metadata mismatch or missing');
+        }
         setMode('restoring');
       }
     } else if (persistenceState === 'ready' && mode === 'restoring') {
@@ -460,7 +468,9 @@ export function usePersistenceManager(
       }
     } else if (persistenceState === 'ready' && mode === 'splash') {
       if (dataset?.opfsFileKey) {
-        console.log('[App] Rehydrating DuckDB from OPFS source file');
+        if (import.meta.env.DEV) {
+          console.log('[App] Rehydrating DuckDB from OPFS source file');
+        }
         hasProcessedPersistence.current = true;
         void rebuildFromOpfsSource('splash');
       } else {
@@ -486,7 +496,9 @@ export function usePersistenceManager(
     if (autoRecoveredDatasets.current.has(dataset.id)) return;
 
     autoRecoveredDatasets.current.add(dataset.id);
-    console.log('[App] Persisted DuckDB restore failed; rebuilding from OPFS source file');
+    if (import.meta.env.DEV) {
+      console.log('[App] Persisted DuckDB restore failed; rebuilding from OPFS source file');
+    }
     void rebuildFromOpfsSource(mode === 'dashboard' ? 'dashboard' : 'splash', { forceReload: true });
   }, [dataset?.id, dataset?.opfsFileKey, mode, persistenceState, rebuildFromOpfsSource]);
 

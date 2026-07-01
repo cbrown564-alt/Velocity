@@ -112,9 +112,9 @@ Completed Phase 1-4, stabilization, UI polish, engine/MCP, export, parity, and h
 
 #### Recommended Next Pull
 
-1. `STAB-UI-F4`: variable search in command palette.
-2. `STAB-UI-T6`: shortcut registry + lazy Monaco.
-3. `PILOT-6`: recruit paid pilots — deploy per `pilot_01_packaging.md`, collect Pilot Log exports.
+1. `PILOT-6`: recruit paid pilots — deploy per `pilot_01_packaging.md`, collect Pilot Log exports.
+2. `PILOT-4a`: continue processing gap discovery with external project/file reviews.
+3. `STAB-UI-F5`: accessibility themes (only if pilot requests).
 
 ### 4.2 Future Gates
 
@@ -143,7 +143,7 @@ These rows remain directionally valid, but should not become active until `PILOT
 | STAB-UI-F1 | Hero output | Overflow/scroll affordance, content-aware slide height, table↔chart transition, statistics visibility toggles (UXP-040 / UXF-001–005) | STAB-UI-P (Done) | Done | Yes | T,L,U,I,A | **P0 slice Done (PR #6):** widened slide frame, horizontal scroll, chart placeholder. **F1.2 Done:** compact table shrink-wrap via `AnalysisOutputFrame.shrinkWrap` + `SlideContainer` flex contract. **F1.4 Done:** `showCellN` / `showColumnBases` toggles in `AnalysisSettingsPanel`; layout reflow without ghost gutters. |
 | STAB-UI-F2 | Chrome density | Focus discoverability, compact timeline, accent budget, Variable Manager inspector empty state (UXF-006–009) | STAB-UI-F1 | Done | No | T,L,U,I | **F2.1–F2.4 Done:** Focus discoverability via micro-tip chips; timeline dock compact default (`h-12` / 48px) with hover expand; inactive slide labels hidden until dock hover; slide title hover uses primary not accent; VM inspector guided empty state (`variable-inspector-empty`). |
 | STAB-UI-F3 | Activation | Welcome-back label hydration, first-crosstab spotlight, contextual tips, workspace banner discipline (UXF-010–012, UXF-014) | None | Done | Yes | T,L,U,I,V | **F3.1–F3.4 Done:** welcome-back labels; first-crosstab tour; **F3.3** contextual micro-tips (Focus, Export, Variable Manager) via `contextualMicroTips.ts` + `ContextualMicroTipChip`; **F3.4** combined `WorkspaceStatusStrip` with session-scoped dismiss. Tests: `contextualMicroTips.test.ts`, `WorkspaceStatusStrip.test.tsx`. |
-| STAB-UI-F4 | Command palette | Variable search → shelf actions, export/focus/filter commands, empty-state `⌘K` hint (UXF-013) | STAB-UI-C (Done) | Not started | No | T,L,U | Plan §F4; `CommandPalette.tsx`; extend `CommandPalette.test.tsx` |
+| STAB-UI-F4 | Command palette | Variable search → shelf actions, export/focus/filter commands, empty-state `⌘K` hint (UXF-013) | STAB-UI-C (Done) | Done | No | T,L,U | `CommandPalette.tsx` variable search + shelf actions (rows/columns/weight), wired export/filter/workspace commands, `commandPaletteSearch.ts`, `useAnalysisExportAction.ts`, SlideContainer/DropZone ⌘K hints; tests in `CommandPalette.test.tsx`, `commandPaletteSearch.test.ts` |
 | STAB-UI-F5 | Accessibility themes | High-contrast + colorblind significance themes; splash contrast fix (UXF-015–016) | STAB-UI-F1 | Frozen | Yes | T,L,U,I | Plan §F5; `themes.ts`, `ThemeSwitcher`; defer until F1–F3 complete or pilot requests |
 
 #### STAB-UI-F Dependency Notes
@@ -156,8 +156,7 @@ These rows remain directionally valid, but should not become active until `PILOT
 
 #### STAB-UI-F Recommended Pull
 
-1. `STAB-UI-F4` variable search in command palette.
-2. `STAB-UI-F5` accessibility themes (only if pilot requests).
+1. `STAB-UI-F5` accessibility themes (only if pilot requests).
 
 ### 4.4 Technical UI Foundation (`STAB-UI-T`)
 
@@ -173,7 +172,7 @@ These rows remain directionally valid, but should not become active until `PILOT
 | STAB-UI-T2 | Modal foundation | `ModalShell` dialog semantics, focus trap/restore, form labels, close labels, keyboard click targets (UXT-003–008, UXT-014–016) | STAB-UI-T4 | Done | Yes | T,L,U,I | `ModalShell` — `role="dialog"`, `aria-modal`, `useFocusTrap`, default `escapeToClose`; tests in `ModalShell.test.tsx` |
 | STAB-UI-T3 | Error boundaries | `AnalysisErrorBoundary` on slide + chart renderers (UXT-005) | None | Done | No | T,L,U | `AnalysisErrorBoundary` + `AnalysisErrorFallback` wrap `SlideContainer` output and `AnalysisChart` renderers; reset on config change + Retry; tests in `AnalysisErrorBoundary.test.tsx`. |
 | STAB-UI-T1 | Store selectors | Eliminate bare `useVelocityStore()` in 18 files; optional memo on hot leaves (UXT-001–002) | None | Done | No | T,L,U,G | Migrated all production component/hook call sites in plan §T1 to granular selectors (`App.tsx`, `AppShell`, `DashboardShell`, Variable Manager columns, workspace hooks, harmonization shell, etc.). `rg 'useVelocityStore\(\)' src --glob '*.tsx'` returns zero in production components; bare calls remain only in store test harnesses. UXT-001 closed; UXT-002 deferred pending profile. |
-| STAB-UI-T6 | Shortcuts & hygiene | Unified keydown registry, lazy Monaco, dev-gated console noise (UXT-011, UXT-013, UXT-019) | STAB-UI-T2 | Not started | No | T,L,U | Plan §T6 |
+| STAB-UI-T6 | Shortcuts & hygiene | Unified keydown registry, lazy Monaco, dev-gated console noise (UXT-011, UXT-013, UXT-019) | STAB-UI-T2 | Done | No | T,L,U | `src/lib/keyboardShortcuts/registry.ts` replaces scattered listeners in AppShell, VariableManager, TimelineDock, KeyboardShortcuts; CommandPalette uses modal context; `RCodeEditor` lazy-loads Monaco; `usePersistenceManager` logs gated behind `import.meta.env.DEV`; tests in `registry.test.ts` |
 
 #### STAB-UI-T Dependency Notes
 
@@ -186,8 +185,8 @@ These rows remain directionally valid, but should not become active until `PILOT
 
 #### STAB-UI-T Recommended Pull
 
-1. `STAB-UI-T1` — Store selector migration.  
-2. `STAB-UI-T6` — Shortcut registry + lazy Monaco.
+1. `PILOT-6` paid pilot recruiting.
+2. `PILOT-4a` processing gap discovery.
 
 ## 5. Completed Work Reference
 

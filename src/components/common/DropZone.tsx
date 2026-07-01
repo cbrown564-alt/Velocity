@@ -256,6 +256,7 @@ export const DropZone: React.FC<DropZoneProps> = ({
       <div className="flex items-center gap-2 pointer-events-none">
         <Plus size={16} className={active || isOver ? 'text-[var(--color-accent)]' : 'text-[var(--text-secondary)]'} />
         <span className="shelf-label text-xs font-medium uppercase tracking-widest font-mono">{label}</span>
+        <span className="text-[10px] normal-case tracking-normal text-[var(--text-tertiary)]">or ⌘K</span>
       </div>
     </div>
   );

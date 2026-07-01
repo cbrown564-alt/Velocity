@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 import type { Filter, Variable } from '../../store';
 import { useVelocityStore } from '../../store';
 import { persistDatasetSession } from '../../store/datasetSessionCoordinator';
+import { registerReturnToWorkspaceHandler } from '../../lib/navigationActions';
 import * as opfsFileManager from '../../services/opfsFileManager';
 import type { Project, StoredDataset, WorkspaceExport } from '../../features/workspace';
 import type { AppPhase } from '../types';
@@ -237,6 +238,8 @@ export function useWorkspaceOrchestration({
     setWorkspaceMode,
     setPhase,
   ]);
+
+  useEffect(() => registerReturnToWorkspaceHandler(handleReturnToWorkspace), [handleReturnToWorkspace]);
 
   useEffect(() => {
     if (phase === 'dashboard' && prevPhaseRef.current !== 'dashboard') {

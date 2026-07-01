@@ -149,6 +149,11 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
           <div className="flex flex-col items-center gap-1">
             <p className="text-base font-medium text-[var(--text-primary)]">Ready for Analysis</p>
             <p className="text-sm">Drag or click variables to start building your view.</p>
+            <p className="text-xs text-[var(--text-tertiary)]">
+              Tip: press{' '}
+              <kbd className="px-1 rounded bg-[var(--bg-active)] border border-[var(--border-color-muted)]">⌘K</kbd> to
+              search variables and run commands.
+            </p>
           </div>
 
           {suggestions.length > 0 && (
