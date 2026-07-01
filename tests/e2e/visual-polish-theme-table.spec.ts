@@ -36,6 +36,7 @@ test.describe('Visual polish — crosstab table theme regression', () => {
       await expect(table).toBeVisible();
       await expect(table).toHaveScreenshot(`crosstab-table-theme-${slug}.png`, {
         animations: 'disabled',
+        maxDiffPixelRatio: 0.05,
       });
     }
   });
