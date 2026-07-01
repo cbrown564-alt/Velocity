@@ -127,6 +127,30 @@ No proactive new docs.
 ### Step 8 — Mutation check (when touching `src/core/`)
 For logic under `src/core/`, run `npm run test:mutation` on the changed module before opening a PR. CI runs the gated scope via `.github/workflows/mutation.yml` when `src/core/**` changes. Surviving mutants in the HTML report indicate assertions that do not pin behavior.
 
+### Step 9 — Pre-PR CI verification (always)
+Before opening a PR, run the gates CI runs. See `docs/playbooks/pre_pr_verification.md`.
+
+Minimum for any code change:
+
+```bash
+npm run ci
+```
+
+When UI, workspace, persistence, shortcuts, or onboarding changed:
+
+```bash
+npx playwright install --with-deps   # once per environment
+npm run ci:e2e
+```
+
+When `src/core/**` changed:
+
+```bash
+npm run test:mutation:ci
+```
+
+Use `makeVariable()` from `src/test/fixtures/variables.ts` for typed test data — do not bypass incomplete fixtures with `as never` on store state.
+
 ## Reviewer checklist
 Reviewers should verify:
 - tests exist and would have failed before the change
@@ -144,5 +168,6 @@ Reviewers should verify:
 ## Definition of Done
 - at least one test added for the new behavior
 - at least one edge case test added
-- tests pass and meaningfully pin expected outcomes
+- `npm run ci` passes (and `npm run ci:e2e` when UI/workspace/persistence/shortcuts touched)
+- `npm run test:mutation:ci` passes when `src/core/**` changed
 - no invariant violations introduced
