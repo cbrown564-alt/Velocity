@@ -3,18 +3,15 @@
  * Composes extracted Sidebar, Toolbar, AnalysisShelf, and useDashboardDnD.
  */
 
-import React, { useCallback } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import { getMotionProps, DURATIONS } from '../../lib/motion';
 import { Loader2, Pencil } from 'lucide-react';
-import { useTheme } from '../../context/ThemeContext';
 import { DndContext, DragOverlay, useDroppable } from '@dnd-kit/core';
 
 import { useVelocityStore } from '../../store';
-import { useResolvedVariables } from './hooks/useResolvedVariables';
 import { useDashboardDnD } from './hooks/useDashboardDnD';
-import { buildExportConfig } from '../../core/export/buildExportConfig';
-import { resolveExportBranding } from '../../core/export/resolveThemeColors';
+import { useAnalysisExportAction } from './hooks/useAnalysisExportAction';
 import { filterSyntheticGridShellSets } from '../../core/services/syntheticGridShellFilters';
 
 import { DashboardSidebar } from './components/DashboardSidebar';
@@ -57,8 +54,6 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
   onOpenSessionImport,
   onExportSession,
 }) => {
-  const { theme } = useTheme();
-
   const dataset = useVelocityStore((state) => state.dataset);
   const variableSets = useVelocityStore((state) => state.variableSets);
   const tableConfig = useVelocityStore((state) => state.tableConfig);
@@ -80,7 +75,6 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
   const reset = useVelocityStore((state) => state.reset);
   const openFilterModal = useVelocityStore((state) => state.openFilterModal);
   const removeFilter = useVelocityStore((state) => state.removeFilter);
-  const openAnalysisExportModal = useVelocityStore((state) => state.openAnalysisExportModal);
   const hoveredVariableSetId = useVelocityStore((state) => state.hoveredVariableSetId);
   const transformLog = useVelocityStore((state) => state.transformLog);
   const lastSeenTransformCount = useVelocityStore((state) => state.lastSeenTransformCount);
@@ -95,39 +89,10 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
     }
   }, [lastSeenTransformCount, transformLog.length, markTransformsSeen]);
 
-  const { resolvedRowVars, resolvedColVar, firstRowVarSet } = useResolvedVariables();
-  const isMultipleResponse = firstRowVarSet?.structure === 'multiple';
-  const isWeighted = !!dataset?.weightVariable;
-
   const activeSlide = React.useMemo(() => slides.find((s) => s.id === activeSlideId) || null, [slides, activeSlideId]);
 
-  const canOpenExport = !!dataset;
-
-  const buildCurrentExportConfig = useCallback(() => {
-    const title = activeSlide?.title || dataset?.name || 'Analysis Report';
-    return buildExportConfig({
-      title,
-      data: queryResult,
-      rowVariables: resolvedRowVars,
-      colVariable: resolvedColVar,
-      isWeighted,
-      isMultipleResponse,
-      viewType: activeSlide?.visualizationType,
-      chartType: activeSlide?.chartType,
-      branding: resolveExportBranding(theme),
-    });
-  }, [
-    activeSlide?.title,
-    activeSlide?.visualizationType,
-    activeSlide?.chartType,
-    dataset?.name,
-    queryResult,
-    resolvedRowVars,
-    resolvedColVar,
-    isWeighted,
-    isMultipleResponse,
-    theme,
-  ]);
+  const { openExport, canExport: canOpenExport } = useAnalysisExportAction();
+  const handleExport = openExport;
 
   const {
     sensors,
@@ -187,10 +152,6 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
     setSidebarUserToggled(true);
     setSidebarCollapsed((collapsed) => !collapsed);
   };
-
-  const handleExport = useCallback(() => {
-    openAnalysisExportModal(buildCurrentExportConfig());
-  }, [openAnalysisExportModal, buildCurrentExportConfig]);
 
   const variables = dataset?.variables || [];
   const filename = dataset?.name || '';

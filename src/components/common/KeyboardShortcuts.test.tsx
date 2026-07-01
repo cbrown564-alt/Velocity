@@ -24,7 +24,7 @@ describe('KeyboardShortcuts', () => {
 
   it('renders shortcut groups', () => {
     render(<KeyboardShortcuts />);
-    expect(screen.getByText('Global')).toBeInTheDocument();
+    expect(screen.getByText('Commands')).toBeInTheDocument();
     expect(screen.getByText('Canvas')).toBeInTheDocument();
     expect(screen.getByText('Manager')).toBeInTheDocument();
   });

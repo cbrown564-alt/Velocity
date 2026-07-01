@@ -51,8 +51,8 @@ Update **Status:** `open` | `in_progress` | `fixed` | `wontfix` | `deferred`.
 
 | ID | Area | Issue | Severity | Slice | Status |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **UXT-001** | Store | Whole-store `useVelocityStore()` in 18 files (~20 call sites); any tick re-renders heavy subtrees | P0 | T1 | open |
-| **UXT-002** | Perf | Zero `React.memo` on hot leaves (crosstab cells, chart SVG, variable cards) | P1 | T1 | open |
+| **UXT-001** | Store | Whole-store `useVelocityStore()` in 18 files (~20 call sites); any tick re-renders heavy subtrees | P0 | T1 | fixed |
+| **UXT-002** | Perf | Zero `React.memo` on hot leaves (crosstab cells, chart SVG, variable cards) | P1 | T1 | deferred |
 | **UXT-003** | Modals | `ModalShell` lacks `role="dialog"`, `aria-modal`, focus trap, focus restore; `escapeToClose` defaults `false` | P0 | T2 | open |
 | **UXT-004** | Modals | Overlays bypassing `ModalShell` miss shared behavior (`DataDrawer`, `CommandPalette`, `ProjectLinkModal`, `CrossWavePanel`, `ExportImportModal`) | P1 | T2 | open |
 | **UXT-005** | Resilience | No `ErrorBoundary` — chart/D3 exception unmounts entire dashboard | P0 | T3 | fixed |
@@ -61,15 +61,15 @@ Update **Status:** `open` | `in_progress` | `fixed` | `wontfix` | `deferred`.
 | **UXT-008** | A11y | Click-to-edit `<div onClick>` without keyboard path (`InspectorHeader`, `WorkspaceProjectCard`, `DataTable` merge UI) | P1 | T2 | open |
 | **UXT-009** | Stacking | Ad hoc z-index (37+ values); toast z-130 under session modal z-140; chart menu z-1000 under table sticky z-9999 | P0 | T4 | open |
 | **UXT-010** | Theme | `FacetedSearchBar.module.css` hardcodes `rgba(255,255,255,…)` — invisible on Soft Machine cream panels | P0 | T5 | open |
-| **UXT-011** | Shortcuts | 6+ parallel `document.keydown` listeners; precedence depends on mount order | P1 | T6 | open |
+| **UXT-011** | Shortcuts | 6+ parallel `document.keydown` listeners; precedence depends on mount order | P1 | T6 | fixed |
 | **UXT-012** | Bug | `ModalHost` mounts `<RecodeModal onSave={async () => {}}>` — recodes may not persist from this path | P0 | T7 | open |
-| **UXT-013** | Bundle | Monaco eagerly imported in `RCodeEditor.tsx` — multi-MB main chunk | P2 | T6 | open |
+| **UXT-013** | Bundle | Monaco eagerly imported in `RCodeEditor.tsx` — multi-MB main chunk | P2 | T6 | fixed |
 | **UXT-014** | A11y | No skip link; receded canvas not `aria-hidden`/`inert` when Variable Manager open | P2 | T2 | open |
 | **UXT-015** | Menus | Context menus lack `role="menu"` / `menuitem`, arrow nav (`ContextMenu`, `ChartContextMenu`) | P2 | T2 | open |
 | **UXT-016** | Tables | `RecodeModal` table headers lack `scope` | P3 | T2 | open |
 | **UXT-017** | Tokens | `--space-*` unused in CSS modules; ~611 raw px values | P3 | deferred | deferred |
 | **UXT-018** | Charts | ~20 hardcoded SVG `fontSize: '10px'/'11px'` in renderers | P3 | deferred | deferred |
-| **UXT-019** | Hygiene | 30+ `console.*` in shipped paths (10 in `usePersistenceManager.ts`) | P3 | T6 | open |
+| **UXT-019** | Hygiene | 30+ `console.*` in shipped paths (10 in `usePersistenceManager.ts`) | P3 | T6 | fixed |
 | **UXT-020** | Types | ~40 `any` in variable-manager + chart subsystems | P3 | deferred | deferred |
 | **UXT-021** | Tokens | `tailwind.config.cjs` dead gray hexes; stray warning hex in `index.css:180` | P3 | T5 | open |
 

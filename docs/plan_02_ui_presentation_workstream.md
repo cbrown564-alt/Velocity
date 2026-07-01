@@ -74,7 +74,7 @@ Update **Status** when addressed: `open` | `in_progress` | `fixed` | `wontfix` |
 | **UXF-010** | Welcome back | Resume card shows raw variable UUIDs when workspace record lacks `variables` labels | P0 | F3 | open |
 | **UXF-011** | First run | No guided spotlight for first crosstab (rows → columns → significance) | P1 | F3 | open |
 | **UXF-012** | Discovery | Weighting, significance settings, drill-down paths undiscoverable without exploration | P2 | F3 | fixed |
-| **UXF-013** | Command palette | `⌘K` is action-only; no variable search or filter/export commands | P1 | F4 | open |
+| **UXF-013** | Command palette | `⌘K` is action-only; no variable search or filter/export commands | P1 | F4 | fixed |
 | **UXF-014** | Workspace | Privacy + welcome + pilot banners stack above sparse dataset grid | P2 | F3 | fixed |
 | **UXF-015** | Splash | “Checking local storage…” secondary copy fails contrast on Soft Machine | P2 | F5 | open |
 | **UXF-016** | Themes | No high-contrast or colorblind-safe significance theme | P2 | F5 | deferred |

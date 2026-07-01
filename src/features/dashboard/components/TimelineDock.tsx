@@ -33,6 +33,7 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import { Plus, BarChart3, Table2, Copy, Trash2 } from 'lucide-react';
 import { useVelocityStore } from '../../../store';
+import { registerShortcut } from '../../../lib/keyboardShortcuts/registry';
 import { resolveSlideTitle } from '../../../core/export/resolveSlideDefaults';
 import { Slide, SlideSection, SlideAnalysisState } from '../../../types/slides';
 import { ConfirmModal } from '../../../components/overlays/ConfirmModal';
@@ -367,53 +368,79 @@ export const TimelineDock: React.FC = () => {
   );
 
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (useVelocityStore.getState().appMode === 'variables') {
-        return;
-      }
+    const unregisterPrev = registerShortcut({
+      id: 'canvas-slide-prev',
+      contexts: ['canvas'],
+      priority: 10,
+      match: (event) => event.key === 'ArrowLeft',
+      handler: (event) => {
+        if (useVelocityStore.getState().appMode === 'variables') return;
+        event.preventDefault();
+        navigateSlide('prev');
+      },
+    });
 
-      const target = e.target as HTMLElement;
-      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
-        return;
-      }
+    const unregisterNext = registerShortcut({
+      id: 'canvas-slide-next',
+      contexts: ['canvas'],
+      priority: 11,
+      match: (event) => event.key === 'ArrowRight',
+      handler: (event) => {
+        if (useVelocityStore.getState().appMode === 'variables') return;
+        event.preventDefault();
+        navigateSlide('next');
+      },
+    });
 
-      switch (e.key) {
-        case 'ArrowLeft':
-          e.preventDefault();
-          navigateSlide('prev');
-          break;
-        case 'ArrowRight':
-          e.preventDefault();
-          navigateSlide('next');
-          break;
-        case 'n':
-        case 'N':
-          if (!e.metaKey && !e.ctrlKey) {
-            e.preventDefault();
-            addSlide();
-          }
-          break;
-        case 'd':
-        case 'D':
-          if ((e.metaKey || e.ctrlKey) && activeSlideId) {
-            e.preventDefault();
-            duplicateSlide(activeSlideId);
-          }
-          break;
-        case 'Delete':
-        case 'Backspace':
-          if (!e.metaKey && !e.ctrlKey && activeSlideId && slides.length > 1) {
-            e.preventDefault();
-            setSlideToDelete(activeSlideId);
-            setDeleteModalOpen(true);
-          }
-          break;
-      }
+    const unregisterNewSlide = registerShortcut({
+      id: 'canvas-new-slide',
+      contexts: ['canvas'],
+      priority: 20,
+      match: (event) => (event.key === 'n' || event.key === 'N') && !event.metaKey && !event.ctrlKey,
+      handler: (event) => {
+        if (useVelocityStore.getState().appMode === 'variables') return;
+        event.preventDefault();
+        addSlide();
+      },
+    });
+
+    const unregisterDuplicate = registerShortcut({
+      id: 'canvas-duplicate-slide',
+      contexts: ['canvas'],
+      priority: 21,
+      match: (event) => (event.key === 'd' || event.key === 'D') && (event.metaKey || event.ctrlKey),
+      handler: (event) => {
+        if (useVelocityStore.getState().appMode === 'variables') return;
+        const slideId = useVelocityStore.getState().activeSlideId;
+        if (!slideId) return;
+        event.preventDefault();
+        duplicateSlide(slideId);
+      },
+    });
+
+    const unregisterDelete = registerShortcut({
+      id: 'canvas-delete-slide',
+      contexts: ['canvas'],
+      priority: 22,
+      match: (event) => (event.key === 'Delete' || event.key === 'Backspace') && !event.metaKey && !event.ctrlKey,
+      handler: (event) => {
+        if (useVelocityStore.getState().appMode === 'variables') return;
+        const { activeSlideId: slideId, slides: deckSlides } = useVelocityStore.getState();
+        if (!slideId || deckSlides.length <= 1) return;
+        event.preventDefault();
+        setSlideToDelete(slideId);
+        setDeleteModalOpen(true);
+      },
+    });
+
+    return () => {
+      unregisterPrev();
+      unregisterNext();
+      unregisterNewSlide();
+      unregisterDuplicate();
+      unregisterDelete();
     };
-
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [navigateSlide, addSlide, duplicateSlide, activeSlideId, slides.length]);
+  }, [navigateSlide, addSlide, duplicateSlide]);
 
   const itemsWithDividers = useMemo(() => {
     const result: Array<{ type: 'slide' | 'divider'; slide?: Slide; section?: SlideSection; index?: number }> = [];

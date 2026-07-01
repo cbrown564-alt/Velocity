@@ -1,5 +1,5 @@
-import React, { useState, useRef, useCallback } from 'react';
-import Editor, { OnMount } from '@monaco-editor/react';
+import React, { useState, useRef, useCallback, Suspense } from 'react';
+import type { OnMount } from '@monaco-editor/react';
 import {
   Play,
   Code2,
@@ -111,6 +111,8 @@ t.test(
 )`,
   },
 ];
+
+const LazyMonacoEditor = React.lazy(() => import('@monaco-editor/react'));
 
 /**
  * RCodeEditor
@@ -259,28 +261,36 @@ export const RCodeEditor: React.FC<RCodeEditorProps> = ({ defaultExpanded = fals
 
           {/* Editor */}
           <div className={styles.editorContainer}>
-            <Editor
-              height="200px"
-              defaultLanguage="r"
-              value={code}
-              onChange={(value) => setCode(value || '')}
-              onMount={handleEditorMount}
-              theme="vs-dark"
-              options={{
-                minimap: { enabled: false },
-                fontSize: 13,
-                fontFamily: 'JetBrains Mono, monospace',
-                lineNumbers: 'on',
-                scrollBeyondLastLine: false,
-                automaticLayout: true,
-                tabSize: 2,
-                wordWrap: 'on',
-                padding: { top: 12, bottom: 12 },
-                renderLineHighlight: 'line',
-                cursorBlinking: 'smooth',
-                smoothScrolling: true,
-              }}
-            />
+            <Suspense
+              fallback={
+                <div className={styles.resultsBody} role="status">
+                  Loading editor...
+                </div>
+              }
+            >
+              <LazyMonacoEditor
+                height="200px"
+                defaultLanguage="r"
+                value={code}
+                onChange={(value) => setCode(value || '')}
+                onMount={handleEditorMount}
+                theme="vs-dark"
+                options={{
+                  minimap: { enabled: false },
+                  fontSize: 13,
+                  fontFamily: 'JetBrains Mono, monospace',
+                  lineNumbers: 'on',
+                  scrollBeyondLastLine: false,
+                  automaticLayout: true,
+                  tabSize: 2,
+                  wordWrap: 'on',
+                  padding: { top: 12, bottom: 12 },
+                  renderLineHighlight: 'line',
+                  cursorBlinking: 'smooth',
+                  smoothScrolling: true,
+                }}
+              />
+            </Suspense>
           </div>
 
           {/* Results Area */}

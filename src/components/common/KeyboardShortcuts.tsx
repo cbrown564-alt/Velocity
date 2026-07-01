@@ -2,6 +2,7 @@ import React, { useEffect, useId } from 'react';
 import { useVelocityStore } from '../../store';
 import { X } from 'lucide-react';
 import { replayFirstCrosstabTour } from '../../features/dashboard/onboarding/firstCrosstabTour';
+import { pushModalShortcutContext, registerShortcut } from '../../lib/keyboardShortcuts/registry';
 
 interface ShortcutGroup {
   title: string;
@@ -10,9 +11,9 @@ interface ShortcutGroup {
 
 const SHORTCUTS: ShortcutGroup[] = [
   {
-    title: 'Global',
+    title: 'Commands',
     items: [
-      { keys: ['Cmd', 'K'], description: 'Open Command Palette' },
+      { keys: ['Cmd', 'K'], description: 'Open Command Palette (variables, export, filters)' },
       { keys: ['?'], description: 'Open Keyboard Shortcuts' },
       { keys: ['D'], description: 'Toggle Variable Manager' },
       { keys: ['F'], description: 'Toggle Focus Mode' },
@@ -43,15 +44,23 @@ export const KeyboardShortcuts: React.FC = () => {
   const titleId = useId();
 
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (!shortcutsOpen) return;
-      if (e.key === 'Escape') {
-        e.preventDefault();
+    if (!shortcutsOpen) return;
+    return pushModalShortcutContext();
+  }, [shortcutsOpen]);
+
+  useEffect(() => {
+    if (!shortcutsOpen) return;
+    const unregister = registerShortcut({
+      id: 'shortcuts-modal-escape',
+      contexts: ['modal'],
+      priority: 1,
+      match: (event) => event.key === 'Escape',
+      handler: (event) => {
+        event.preventDefault();
         closeShortcuts();
-      }
-    };
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
+      },
+    });
+    return unregister;
   }, [shortcutsOpen, closeShortcuts]);
 
   if (!shortcutsOpen) return null;

@@ -1,17 +1,10 @@
-/**
- * AppShell Component
- *
- * Wrapper component that manages mode transitions between
- * Analysis Canvas (hub) and Variable Manager (spoke).
- * Implements the "Soft Modal" pattern from research_08_UX_patterns_for_surveys.md.
- */
-
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useVelocityStore } from '../../store';
 import { VariableManager } from '../../features/variableManager/VariableManager';
 import { Database } from 'lucide-react';
 import { getMotionProps, useReducedMotion, DURATIONS, EASINGS } from '../../lib/motion';
+import { registerShortcut, setManagerShortcutContext } from '../../lib/keyboardShortcuts/registry';
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -27,41 +20,69 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
   const openShortcuts = useVelocityStore((state) => state.openShortcuts);
   const reducedMotion = useReducedMotion();
 
-  // Keyboard shortcuts
-  const handleKeyDown = useCallback(
-    (event: KeyboardEvent) => {
-      // Ignore if user is typing in an input
-      const target = event.target as HTMLElement;
-      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
-        return;
-      }
+  useEffect(() => {
+    setManagerShortcutContext(appMode === 'variables');
+  }, [appMode]);
 
-      // Command palette (Cmd+K or Ctrl+K)
-      if ((event.metaKey || event.ctrlKey) && event.key === 'k') {
+  useEffect(() => {
+    const unregister = registerShortcut({
+      id: 'global-command-palette',
+      contexts: ['global', 'canvas'],
+      priority: 10,
+      match: (event) => (event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k',
+      handler: (event) => {
         event.preventDefault();
         openCommandPalette();
-        return;
-      }
+      },
+    });
 
-      // Shortcuts reference (?)
-      if (event.key === '?') {
+    return unregister;
+  }, [openCommandPalette]);
+
+  useEffect(() => {
+    const unregister = registerShortcut({
+      id: 'global-shortcuts-reference',
+      contexts: ['global', 'canvas'],
+      priority: 20,
+      match: (event) => event.key === '?',
+      handler: (event) => {
         event.preventDefault();
         openShortcuts();
-        return;
-      }
+      },
+    });
 
-      if ((event.key === 'd' || event.key === 'D') && !event.metaKey && !event.ctrlKey) {
+    return unregister;
+  }, [openShortcuts]);
+
+  useEffect(() => {
+    const unregister = registerShortcut({
+      id: 'global-toggle-manager',
+      contexts: ['global', 'canvas'],
+      priority: 30,
+      match: (event) => (event.key === 'd' || event.key === 'D') && !event.metaKey && !event.ctrlKey,
+      handler: (event) => {
         event.preventDefault();
         toggleAppMode();
-      }
+      },
+    });
 
-      if ((event.key === 'f' || event.key === 'F') && appMode !== 'variables') {
+    return unregister;
+  }, [toggleAppMode]);
+
+  useEffect(() => {
+    const unregister = registerShortcut({
+      id: 'global-toggle-focus',
+      contexts: ['global', 'canvas'],
+      priority: 40,
+      match: (event) => (event.key === 'f' || event.key === 'F') && appMode !== 'variables',
+      handler: (event) => {
         event.preventDefault();
         toggleFocusMode();
-      }
-    },
-    [appMode, toggleAppMode, toggleFocusMode, openCommandPalette, openShortcuts],
-  );
+      },
+    });
+
+    return unregister;
+  }, [appMode, toggleFocusMode]);
 
   // Exit focus mode when Variable Manager opens
   useEffect(() => {
@@ -69,11 +90,6 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
       setFocusMode(false);
     }
   }, [appMode, focusMode, setFocusMode]);
-
-  useEffect(() => {
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [handleKeyDown]);
 
   return (
     <div className="relative h-screen overflow-hidden">
