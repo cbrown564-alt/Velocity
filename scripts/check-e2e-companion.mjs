@@ -166,8 +166,7 @@ if (firedTriggers.length === 0) {
 }
 
 if (hasE2eCompanionUpdate) {
-  const helperOnly =
-    e2eChanges.length > 0 && e2eChanges.every((filePath) => filePath.startsWith(E2E_HELPERS_PREFIX));
+  const helperOnly = e2eChanges.length > 0 && e2eChanges.every((filePath) => filePath.startsWith(E2E_HELPERS_PREFIX));
   const detail = helperOnly
     ? `${e2eChanges.length} helper file(s) under tests/e2e/helpers/`
     : `${e2eChanges.length} file(s) under tests/e2e/`;

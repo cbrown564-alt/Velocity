@@ -95,6 +95,7 @@ Playwright specs under `tests/e2e/` validate product journeys in a real browser.
 
 | Spec | Covers |
 | :--- | :--- |
+| `duckdb-arrow-smoke.spec.ts` | SAV upload → Arrow `insertArrowTable` → crosstab in real browser; records COOP/COEP / `crossOriginIsolated` (`STAB-CI-5`; replaces skipped `duckDbArrow.test.ts`) |
 | `opfs.spec.ts` | OPFS persistence, session restore, Start Fresh |
 | `session-export.spec.ts` | Session export round-trip |
 | `agentWorkflow.test.ts` | Agent-oriented UI workflow |
@@ -148,7 +149,7 @@ When changing `src/core/`, run mutation tests locally or rely on the CI `mutatio
 
 ### Known blind spots (stabilization)
 
-`vitest.config.ts` excludes large product areas (`src/features/`, `src/store/slices/`, `src/components/overlays/`, `src/services/EngineProxy.ts`, etc.). Green coverage does not imply workspace/export UI confidence — treat Playwright E2E as the product gate until exclusions are reduced post-stabilization.
+`vitest.config.ts` still excludes large product areas without full characterization coverage: `src/features/`, `src/components/overlays/`, `src/components/charts/`, untested `src/store/slices/*` and `src/store/slices/data/*` modules, `src/services/EngineProxy.ts`, `duckDbArrow.ts`, `duckdbBundles.ts`, and `src/hooks/`. **STAB-CI-6 (July 2026)** removed exclusions for `harmonizationSlice.ts`, `uiSlice.ts`, and `variableCatalogActions.ts` now that co-located tests exist; `features/` and `overlays/` remain excluded until function coverage on those surfaces exceeds the 82% floor. Green Vitest coverage does not imply workspace/export UI confidence — treat Playwright E2E as the product gate for excluded UI.
 
 ## 8. CI/CD Pipeline
 
@@ -158,7 +159,8 @@ GitHub Actions runs on every PR to `main` across **two required jobs** plus an o
 
 1. **Lint**: `npm run lint` — ESLint with `--max-warnings 0`; ratcheted rules are `error` (STAB-CI-3)
 2. **ESLint ratchet**: `npm run check:eslint-ratchet` — changed files vs merge base must be clean (allowlist in `scripts/check-eslint-ratchet.mjs`)
-3. **Format**: `npm run format:check`
+3. **E2E companion**: `npm run check:e2e-companion` — UI trigger paths require `tests/e2e/` updates (STAB-CI-4)
+4. **Format**: `npm run format:check`
 4. **Typecheck**: `npm run typecheck:all` (app, tests via `tsconfig.test.json`, and MCP package)
 5. **Architecture guards**: `npm run check:worker-boundary`, `npm run check:querybuilder-pure`
 6. **Design token policy**: `npm run check:design-tokens`
@@ -186,7 +188,7 @@ Run locally when touching `src/core/**` even if the workflow is path-filtered.
 ### Deferred (post–`STAB-CI-3`)
 
 - `npm run test:parity` remains optional/local unless runtime is proven acceptable for every PR
-- Shrinking Vitest coverage exclusions (tracker: `STAB-CI-6`)
+- Further Vitest coverage exclusion shrink (`features/`, `overlays/`) after characterization tests raise function coverage above thresholds
 
 ## 9. Writing New Tests
 

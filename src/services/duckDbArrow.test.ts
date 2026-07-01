@@ -4,13 +4,10 @@
  * These tests verify that Arrow tables can be inserted into DuckDB-WASM
  * and queried correctly. This is a critical path for the app's performance.
  *
- * IMPORTANT: These tests require a REAL browser environment and are skipped
- * in vitest/happy-dom because WASM Workers don't work in the test environment.
- *
- * To run these tests, use the browser verification steps in the implementation plan:
- * 1. npm run dev
- * 2. Load test_data/sleep.sav
- * 3. Check console for "Arrow table inserted successfully"
+ * IMPORTANT: Skipped in vitest/happy-dom because WASM Workers don't work there.
+ * Automated browser coverage lives in:
+ *   tests/e2e/duckdb-arrow-smoke.spec.ts
+ * (SAV upload → workerIngestion insertArrowTable → crosstab; runs in CI e2e job)
  */
 
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';

@@ -68,6 +68,7 @@ Use **only** when the change is narrowly scoped **and** you will still run `npm 
 | :--- | :--- |
 | Pure `src/core/` logic | `typecheck:all` + targeted tests + `test:mutation:ci` |
 | Single component, no UI flow | `typecheck:all` + targeted `vitest run path/to/test` |
+| DuckDB-WASM / SAV Arrow ingestion (`workerIngestion`, `insertArrowTable`) | `npx playwright test tests/e2e/duckdb-arrow-smoke.spec.ts` (+ full `ci:e2e` before merge) |
 | Docs only (no scripts) | `format:check` |
 | Docs + new/edited scripts | `format:check` + `typecheck:all` if TS |
 
