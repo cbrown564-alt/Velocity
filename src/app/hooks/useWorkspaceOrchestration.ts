@@ -32,6 +32,7 @@ export interface UseWorkspaceOrchestrationReturn {
   handleBatchStar: (ids: string[], starred: boolean) => void;
   handleBatchDelete: (ids: string[]) => Promise<void>;
   handleSaveFilter: (filter: Omit<Filter, 'id'>, applyToAll: boolean) => void;
+  handleRecodeSave: () => void;
   harmonizationSourceDataset: StoredDataset | null;
   harmonizationTargetDataset: StoredDataset | null;
   harmonizationSourceVars: Variable[] | null;
@@ -450,6 +451,31 @@ export function useWorkspaceOrchestration({
     [addFilter, addFilterToSlides, slides],
   );
 
+  const handleRecodeSave = useCallback(() => {
+    persistDatasetSession(
+      {
+        dataset,
+        activeDatasetId,
+        tableConfig,
+        activeFilters,
+        transformLog,
+        variableSets,
+        folders,
+      },
+      { saveDatasetSession, updateStoredDataset },
+    );
+  }, [
+    dataset,
+    activeDatasetId,
+    tableConfig,
+    activeFilters,
+    transformLog,
+    variableSets,
+    folders,
+    saveDatasetSession,
+    updateStoredDataset,
+  ]);
+
   return {
     handleDeleteDataset,
     handleReturnToWorkspace,
@@ -465,6 +491,7 @@ export function useWorkspaceOrchestration({
     handleBatchStar,
     handleBatchDelete,
     handleSaveFilter,
+    handleRecodeSave,
     harmonizationSourceDataset,
     harmonizationTargetDataset,
     harmonizationSourceVars,

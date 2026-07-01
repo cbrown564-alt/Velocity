@@ -6,6 +6,10 @@
 export interface TableConfig {
   rowVars: string[];
   colVar: string | null;
+  /** Human-readable row labels persisted for welcome-back when variable catalog is absent */
+  rowVarLabels?: string[];
+  /** Human-readable column label persisted for welcome-back when variable catalog is absent */
+  colVarLabel?: string | null;
 }
 
 export type ComparisonMethod = 'cell_vs_rest' | 'pairwise';

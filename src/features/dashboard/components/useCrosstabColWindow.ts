@@ -1,10 +1,5 @@
 import { RefObject, useEffect, useState } from 'react';
-import {
-  COL_OVERSCAN,
-  ColWindow,
-  DEFAULT_VIEWPORT_WIDTH,
-  computeColWindow,
-} from './crosstabColumnVirtualization';
+import { COL_OVERSCAN, ColWindow, DEFAULT_VIEWPORT_WIDTH, computeColWindow } from './crosstabColumnVirtualization';
 
 interface UseCrosstabColWindowParams {
   /** When false, the full range is returned (no windowing). */

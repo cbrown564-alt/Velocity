@@ -135,7 +135,9 @@ export async function loadSAV(
       throw new Error(`Arrow insertion verification failed: expected ${numRows} rows, got ${count}`);
     }
   } catch (err: any) {
-    throw new Error(`Arrow insertion failed: ${err.message}. Check apache-arrow version compatibility.`, { cause: err });
+    throw new Error(`Arrow insertion failed: ${err.message}. Check apache-arrow version compatibility.`, {
+      cause: err,
+    });
   }
 
   const durationMs = performance.now() - start;

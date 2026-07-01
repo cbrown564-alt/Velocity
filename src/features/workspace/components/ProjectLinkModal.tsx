@@ -8,16 +8,7 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useReducedMotion, getBackdropProps, getModalPresenceProps } from '../../../lib/motion';
-import {
-  X,
-  Link2,
-  FolderPlus,
-  Layers,
-  Database,
-  Check,
-  AlertCircle,
-  ArrowRight,
-} from 'lucide-react';
+import { X, Link2, FolderPlus, Layers, Database, Check, AlertCircle, ArrowRight } from 'lucide-react';
 import type { StoredDataset, Project } from '../types';
 import styles from './ProjectLinkModal.module.css';
 

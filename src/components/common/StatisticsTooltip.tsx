@@ -36,13 +36,7 @@ interface StatisticsTooltipProps {
  * for a crosstab cell. Shows t-score, p-value, ESS, and plain English
  * interpretation.
  */
-export const StatisticsTooltip: React.FC<StatisticsTooltipProps> = ({
-  stats,
-  sig,
-  isMetric = false,
-  ci95,
-  ci80,
-}) => {
+export const StatisticsTooltip: React.FC<StatisticsTooltipProps> = ({ stats, sig, isMetric = false, ci95, ci80 }) => {
   const { tScore, pValue, adjustedPValue, correctionMethod, isOverlapCorrected, effN } = stats;
   const hasCorrection = correctionMethod && correctionMethod !== 'none' && adjustedPValue !== undefined;
 

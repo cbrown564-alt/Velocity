@@ -31,8 +31,14 @@ export const HexbinRenderer: React.FC<BaseChartRendererProps> = ({ width, height
     return [Math.min(...values), Math.max(...values)];
   }, [points]);
 
-  const xScale = useMemo(() => d3scale.scaleLinear().domain(xExtent).range([0, innerWidth]).nice(), [xExtent, innerWidth]);
-  const yScale = useMemo(() => d3scale.scaleLinear().domain(yExtent).range([innerHeight, 0]).nice(), [yExtent, innerHeight]);
+  const xScale = useMemo(
+    () => d3scale.scaleLinear().domain(xExtent).range([0, innerWidth]).nice(),
+    [xExtent, innerWidth],
+  );
+  const yScale = useMemo(
+    () => d3scale.scaleLinear().domain(yExtent).range([innerHeight, 0]).nice(),
+    [yExtent, innerHeight],
+  );
 
   const { bins, hexagonPath } = useMemo(() => {
     const hexbinGenerator = d3Hexbin()

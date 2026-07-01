@@ -183,7 +183,7 @@
 }
 
 .insightButtonActive .insightBadge {
-  background-color: rgba(255, 255, 255, 0.25);
+  background-color: color-mix(in srgb, var(--text-inverse) 25%, transparent);
 }
 
 .insightBadgeMuted {
@@ -197,7 +197,7 @@
 }
 
 .insightButtonActive .insightOk {
-  color: rgba(255, 255, 255, 0.8);
+  color: color-mix(in srgb, var(--text-inverse) 80%, transparent);
 }
 
 /* ============================================================================
@@ -361,14 +361,14 @@
   padding: 0;
   border: none;
   border-radius: 50%;
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: color-mix(in srgb, var(--text-inverse) 20%, transparent);
   color: currentColor;
   cursor: pointer;
   transition: background-color var(--transition-fast);
 }
 
 .chipRemove:hover {
-  background-color: rgba(255, 255, 255, 0.3);
+  background-color: color-mix(in srgb, var(--text-inverse) 30%, transparent);
 }
 
 /* ============================================================================

@@ -181,9 +181,9 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
       );
     }
 
-    const contentType = activeSlide.visualizationType;
+    const viewType = activeSlide.visualizationType;
 
-    switch (contentType) {
+    switch (viewType) {
       case 'chart': {
         const recommendedType = chartRecommendation?.default || 'horizontal-bar';
         const config: AnalysisChartConfig = {
@@ -242,12 +242,15 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
           Updating analysis results
         </div>
       )}
-      <div className="surface-panel w-full max-w-[1200px] mx-auto flex flex-col flex-1 min-h-0 h-full rounded-xl shadow-md border border-[var(--border-color)] overflow-hidden">
+      <div className="surface-panel w-full max-w-[min(100%,1400px)] mx-auto flex flex-col flex-1 min-h-0 max-h-full self-stretch rounded-xl shadow-md border border-[var(--border-color)]">
         <div className={`flex-shrink-0 ${focusMode ? 'px-4 pt-4' : 'px-6 pt-5'}`}>
           <SlideHeader className={focusMode ? 'compact' : ''} />
         </div>
 
-        <div className={`flex-1 min-h-0 flex flex-col ${focusMode ? 'px-0 pb-2' : 'px-6 pb-6'}`}>
+        <div
+          className={`flex-1 min-h-0 flex flex-col overflow-x-auto overflow-y-auto ${focusMode ? 'px-0 pb-2' : 'px-6 pb-6'}`}
+          data-testid="slide-content-region"
+        >
           {renderCellContent()}
         </div>
       </div>

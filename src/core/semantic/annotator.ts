@@ -18,11 +18,9 @@ import { WEIGHT_NAME_PATTERNS } from './weightPatterns';
 // Rule Helpers
 // ============================================================================
 
-
 function normLabel(label: string): string {
   return label.toLowerCase();
 }
-
 
 function hasLikertLabels(variable: Variable): boolean {
   const likertPatterns = [

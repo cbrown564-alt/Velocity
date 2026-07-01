@@ -37,10 +37,7 @@ export const ROW_OVERSCAN = 8;
  * default unless `expandedKeys` explicitly marks it collapsed — this mirrors
  * `CrosstabRow`'s `expandedKeys[row.key] ?? true`.
  */
-export function flattenVisibleRows(
-  rows: TableRowNode[],
-  expandedKeys: Record<string, boolean>,
-): TableRowNode[] {
+export function flattenVisibleRows(rows: TableRowNode[], expandedKeys: Record<string, boolean>): TableRowNode[] {
   const out: TableRowNode[] = [];
   const walk = (nodes: TableRowNode[]): void => {
     for (const node of nodes) {

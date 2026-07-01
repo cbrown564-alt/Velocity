@@ -7,13 +7,7 @@
 
 import type { StateCreator } from 'zustand';
 import { getWebREngine, resetWebREngine, WebREngine } from '../../engine/webr/WebREngine';
-import type {
-  SurveyDesignConfig,
-  SurveyResult,
-  MixedModelConfig,
-  MixedModelResult,
-  RResult,
-} from '../../types/webr';
+import type { SurveyDesignConfig, SurveyResult, MixedModelConfig, MixedModelResult, RResult } from '../../types/webr';
 
 // ============================================================================
 // Types

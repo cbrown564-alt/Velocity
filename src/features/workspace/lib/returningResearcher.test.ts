@@ -67,6 +67,54 @@ describe('returningResearcher', () => {
     expect(candidate?.summaryLine).toMatch(/gender.*region/i);
   });
 
+  it('findResumeCandidate uses persisted labels when variable catalog is missing', () => {
+    const uuidRow = 'a1b2c3d4-e5f6-7890-abcd-ef1234567890';
+    const uuidCol = 'b2c3d4e5-f6a7-8901-bcde-f12345678901';
+    const candidate = findResumeCandidate(
+      [
+        baseDataset({
+          sessionState: {
+            tableConfig: {
+              rowVars: [uuidRow],
+              colVar: uuidCol,
+              rowVarLabels: ['Gender'],
+              colVarLabel: 'Region',
+            },
+            activeFilters: [],
+            transformLog: [],
+          },
+        }),
+      ],
+      null,
+      { rowVars: [], colVar: null },
+      Date.now(),
+    );
+    expect(candidate?.summaryLine).toMatch(/Gender × Region/);
+    expect(candidate?.summaryLine).not.toMatch(/a1b2c3d4/i);
+  });
+
+  it('findResumeCandidate falls back to generic copy when labels are opaque ids', () => {
+    const candidate = findResumeCandidate(
+      [
+        baseDataset({
+          sessionState: {
+            tableConfig: {
+              rowVars: ['a1b2c3d4-e5f6-7890-abcd-ef1234567890'],
+              colVar: 'b2c3d4e5-f6a7-8901-bcde-f12345678901',
+            },
+            activeFilters: [],
+            transformLog: [],
+          },
+        }),
+      ],
+      null,
+      { rowVars: [], colVar: null },
+      Date.now(),
+    );
+    expect(candidate?.summaryLine).toMatch(/Resume your last analysis in mock_data/i);
+    expect(candidate?.summaryLine).not.toMatch(/a1b2c3d4/i);
+  });
+
   it('formatDeckSummaryTooltip includes variables and filters', () => {
     const tip = formatDeckSummaryTooltip(
       baseDataset({

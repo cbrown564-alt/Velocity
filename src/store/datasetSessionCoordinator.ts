@@ -7,6 +7,21 @@
 
 import type { Filter, TableConfig } from '../types/analysis';
 import type { DataTransform, Dataset, Folder, Variable, VariableSet } from '../types/dataset';
+
+function resolveVarDisplayLabel(id: string, variables?: Variable[]): string {
+  const match = variables?.find((v) => v.id === id || v.name === id);
+  return match?.label || match?.name || id;
+}
+
+/** Persist display labels alongside ids so welcome-back copy survives without a variable catalog. */
+export function enrichTableConfigLabels(tableConfig: TableConfig, variables?: Variable[]): TableConfig {
+  if (!variables?.length) return tableConfig;
+  return {
+    ...tableConfig,
+    rowVarLabels: tableConfig.rowVars.map((id) => resolveVarDisplayLabel(id, variables)),
+    colVarLabel: tableConfig.colVar ? resolveVarDisplayLabel(tableConfig.colVar, variables) : null,
+  };
+}
 import type { DatasetSessionState } from '../types/workspaceSession';
 
 export type { DatasetSessionState };
@@ -33,10 +48,10 @@ export interface DatasetSessionPersistenceActions {
 }
 
 export function captureSessionSnapshot(
-  live: Pick<DatasetLiveState, 'tableConfig' | 'activeFilters' | 'transformLog'>,
+  live: Pick<DatasetLiveState, 'tableConfig' | 'activeFilters' | 'transformLog' | 'dataset'>,
 ): DatasetSessionState {
   return {
-    tableConfig: live.tableConfig,
+    tableConfig: enrichTableConfigLabels(live.tableConfig, live.dataset?.variables),
     activeFilters: live.activeFilters,
     transformLog: live.transformLog,
   };

@@ -1,9 +1,5 @@
 import { RefObject, useEffect, useState } from 'react';
-import {
-  DEFAULT_VIEWPORT_HEIGHT,
-  RowWindow,
-  computeRowWindow,
-} from './crosstabVirtualization';
+import { DEFAULT_VIEWPORT_HEIGHT, RowWindow, computeRowWindow } from './crosstabVirtualization';
 
 interface UseCrosstabRowWindowParams {
   /** When false, the full range is returned (no windowing). */

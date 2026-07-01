@@ -16,11 +16,7 @@ import { CrosstabRow } from './CrosstabRow';
 import { CrosstabCell } from './CrosstabCell';
 import { computeCrosstabColumnWidths } from './crosstabColumnWidths';
 import { countTreeNodes, shouldAnimateCrosstab } from './crosstabMotionPolicy';
-import {
-  ESTIMATED_ROW_HEIGHT,
-  flattenVisibleRows,
-  shouldVirtualizeRows,
-} from './crosstabVirtualization';
+import { ESTIMATED_ROW_HEIGHT, flattenVisibleRows, shouldVirtualizeRows } from './crosstabVirtualization';
 import { useCrosstabRowWindow } from './useCrosstabRowWindow';
 import {
   VIRTUALIZED_COL_WIDTH,
@@ -289,11 +285,7 @@ export const DataTable: React.FC<DataTableProps> = ({
   // the colSpan for the row-virtualization spacer rows (browsers clamp colSpan
   // to the real column count, but this keeps it exact).
   const renderedColumnCount =
-    1 +
-    (colLeftPadding > 0 ? 1 : 0) +
-    visibleColKeys.length +
-    (colRightPadding > 0 ? 1 : 0) +
-    (hasTotalColumn ? 1 : 0);
+    1 + (colLeftPadding > 0 ? 1 : 0) + visibleColKeys.length + (colRightPadding > 0 ? 1 : 0) + (hasTotalColumn ? 1 : 0);
   // Fixed natural table width when columns are virtualized so the horizontal
   // scrollbar stays stable regardless of which column slice is on screen.
   const tableWidth = virtualizeCols ? virtualizedTableWidth(colCount, hasTotalColumn) : undefined;
