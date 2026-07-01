@@ -17,6 +17,8 @@ Velocity’s UI passed stabilization and the May 2026 UXR program (`STAB-UI-D`, 
 
 This document is the **single reference** for scope, findings, slice specs, acceptance criteria, and validation. Tracker rows live in `docs/tracker_00_implementation_status.md` §4.3.
 
+**Pilot presentation gate (July 1, 2026):** [`audit_07_pilot_presentation_readiness_2026-07-01.md`](audit_07_pilot_presentation_readiness_2026-07-01.md) — workflow screenshot audit against a Linear quality bar. Prioritized **`PPR-###`** fix IDs live there; map to `UXF-###` rows below. Reconcile UXF statuses when PPR items close.
+
 ---
 
 ## 2. Relationship to prior work
