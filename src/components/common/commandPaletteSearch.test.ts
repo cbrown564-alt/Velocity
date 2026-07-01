@@ -24,8 +24,8 @@ describe('commandPaletteSearch', () => {
   });
 
   it('detects numeric weight eligibility', () => {
-    const numericSet = { ...mockOrdinalSet, id: 'weight', name: 'Weight', variableIds: [mockScaleVariable.id] };
     const variables = [{ ...mockScaleVariable, id: 'w1' }];
+    const numericSet = { ...mockOrdinalSet, id: 'weight', name: 'Weight', variableIds: ['w1'] };
     expect(canAddVariableSetToWeight(numericSet, variables)).toBe(true);
     expect(canAddVariableSetToWeight(mockNominalSet, variables)).toBe(false);
   });
