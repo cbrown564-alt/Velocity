@@ -166,7 +166,10 @@ async function main() {
     await shot(page, '05-building-crosstab-one-variable');
 
     // 6. Crosstab table result
-    await page.getByRole('button', { name: /marital status/i }).first().click();
+    await page
+      .getByRole('button', { name: /marital status/i })
+      .first()
+      .click();
     await page.locator('table').waitFor({ state: 'visible', timeout: 30000 });
     await page.waitForTimeout(2500);
     await shot(page, '06-crosstab-table-result');
