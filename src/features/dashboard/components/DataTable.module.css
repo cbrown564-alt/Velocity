@@ -67,13 +67,18 @@
   box-shadow: inset 0 -2px 0 var(--color-accent);
 }
 
-/* Scroll region fills frame body; footer stays pinned below */
+/* Scroll region fills frame body when virtualized; otherwise sizes to table content */
 .tableScrollRegion {
   flex: 1 1 auto;
   min-height: 0;
   height: 100%;
   overflow: auto;
   position: relative;
+}
+
+.tableScrollNatural {
+  flex: 0 0 auto;
+  height: auto;
 }
 
 /* UXP-002: fixed table layout with proportional data columns */

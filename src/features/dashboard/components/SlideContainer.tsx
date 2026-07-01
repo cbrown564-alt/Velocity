@@ -17,8 +17,6 @@ import { applyCanvasPlacement } from '../../../core/grid/gridUtils';
 import { getMotionProps, useReducedMotion, DURATIONS } from '../../../lib/motion';
 import { AnalysisOutputFrame } from './AnalysisOutputFrame';
 import { AnalysisErrorBoundary } from '../../../components/common/AnalysisErrorBoundary';
-import { VIRTUALIZE_ROW_THRESHOLD } from './crosstabVirtualization';
-
 import './SlideHeader.css';
 
 interface SlideContainerProps {
@@ -77,7 +75,7 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
     [tableConfig.rowVars, tableConfig.colVar],
   );
 
-  const suggestions = useSuggestedVariables(allVariables, variableSets, inUseIds, 5, dataset?.rowCount);
+  const suggestions = useSuggestedVariables(allVariables, variableSets, inUseIds, 3, dataset?.rowCount);
   const reducedMotion = useReducedMotion();
   useAutoFirstCrosstab(resolvedRowVars.length, tableConfig.colVar);
 
@@ -101,12 +99,7 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
 
   const analysisResetKey = `${activeSlideId}:${tableConfig.rowVars.join(',')}:${tableConfig.colVar ?? ''}:${activeSlide.visualizationType}`;
   const analysisSurface = activeSlide.visualizationType === 'chart' ? 'chart' : 'table';
-  const shrinkWrapSlide =
-    resolvedRowVars.length > 0 &&
-    activeSlide.visualizationType === 'table' &&
-    !focusMode &&
-    tableDensity === 'compact' &&
-    chartData.length <= VIRTUALIZE_ROW_THRESHOLD;
+  const shrinkWrapSlide = resolvedRowVars.length > 0;
 
   const renderCellContent = () => {
     if (queryError && !isQuerying) {
@@ -173,18 +166,24 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
                       reducedMotion,
                     })}
                     onClick={() => handleSuggestClick(s.setId)}
-                    className="group flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--bg-active)] border border-[var(--border-color)] hover:border-[var(--color-accent)] hover:bg-[color-mix(in_srgb,var(--color-accent),transparent_92%)] transition-all text-left"
-                    title={s.reason}
+                    className="group flex items-start gap-2 px-3 py-2 rounded-lg bg-[var(--bg-active)] border border-[var(--border-color)] hover:border-[var(--color-accent)] hover:bg-[color-mix(in_srgb,var(--color-accent),transparent_92%)] transition-all text-left max-w-[240px]"
+                    title={`${s.name} — ${s.reason}`}
                   >
                     <MousePointerClick
                       size={14}
-                      className="text-[var(--text-secondary)] group-hover:text-[var(--color-accent)] transition-colors shrink-0"
+                      className="text-[var(--text-secondary)] group-hover:text-[var(--color-accent)] transition-colors shrink-0 mt-0.5"
                     />
                     <div className="flex flex-col min-w-0">
-                      <span className="text-sm font-medium text-[var(--text-primary)] truncate max-w-[200px]">
+                      <span
+                        className="text-sm font-medium text-[var(--text-primary)] line-clamp-2 leading-snug"
+                        title={s.name}
+                      >
                         {s.name}
                       </span>
-                      <span className="text-[10px] text-[var(--text-secondary)] truncate max-w-[200px]">
+                      <span
+                        className="text-[10px] text-[var(--text-secondary)] line-clamp-2 leading-snug"
+                        title={s.reason}
+                      >
                         {s.reason}
                       </span>
                     </div>
@@ -212,7 +211,7 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
             density={tableDensity}
             reducedMotion={reducedMotion}
             bleed={focusMode}
-            className="h-full"
+            frameClassName="shrink-wrap"
           >
             <AnalysisChart
               data={chartData}
