@@ -6,6 +6,7 @@ import {
   isFirstCrosstabTourDone,
   isFirstCrosstabTourStepDismissed,
   markFirstCrosstabTourDone,
+  markSessionFirstCrosstab,
   replayFirstCrosstabTour,
   resolveFirstCrosstabTourStep,
   shouldSuppressFirstRunCoaching,
@@ -68,6 +69,17 @@ describe('firstCrosstabTour', () => {
     recordPilotEvent('workspace_reopened', { datasetId: 'demo' });
     expect(shouldSuppressFirstRunCoaching()).toBe(true);
     expect(resolveFirstCrosstabTourStep({ rowCount: 1, hasColumn: true, hasRenderedCrosstab: true })).toBeNull();
+  });
+
+  it('suppresses coaching on session resume when first_crosstab was recorded earlier', () => {
+    recordPilotEvent('first_crosstab', { rowVars: ['sex'], colVar: 'marital' });
+    expect(shouldSuppressFirstRunCoaching()).toBe(true);
+  });
+
+  it('allows coaching in same session after first crosstab', () => {
+    recordPilotEvent('first_crosstab', { rowVars: ['sex'], colVar: 'marital' });
+    markSessionFirstCrosstab();
+    expect(shouldSuppressFirstRunCoaching()).toBe(false);
   });
 
   it('replays tour by clearing flags', () => {

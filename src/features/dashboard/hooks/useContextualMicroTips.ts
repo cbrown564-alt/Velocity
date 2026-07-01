@@ -38,8 +38,11 @@ export function useContextualMicroTips(): {
   useEffect(() => {
     if (!hasRenderedCrosstab || !isFirstCrosstabTourDone() || focusCountedRef.current) return;
     focusCountedRef.current = true;
-    incrementMicroTipAction('focus');
-    refresh();
+    const timer = window.setTimeout(() => {
+      incrementMicroTipAction('focus');
+      refresh();
+    }, 60_000);
+    return () => window.clearTimeout(timer);
   }, [hasRenderedCrosstab, refresh]);
 
   useEffect(() => {

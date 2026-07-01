@@ -178,7 +178,7 @@ export const GroupedColumnRenderer: React.FC<BaseChartRendererProps> = ({
                   fontFamily: 'var(--font-body)',
                 }}
               >
-                {r.label && r.label.length > 15 ? r.label.substring(0, 12) + '...' : r.label}
+              {r.label}
               </text>
             </g>
           ))}

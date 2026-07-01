@@ -48,6 +48,8 @@ interface AnalysisChartProps {
   variableStats?: any;
   /** Optional initial processed data (fallback/optimization) */
   initialProcessedData?: ProcessedAnalysisData | null;
+  /** Shrink-wrap chart height to category count instead of filling slide frame (UXF-004) */
+  contentSized?: boolean;
 }
 
 /**
@@ -63,6 +65,7 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
   isMultipleResponse = false,
   className = '',
   variableStats,
+  contentSized = false,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
@@ -235,11 +238,21 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
   const measureContainer = useCallback(() => {
     const el = containerRef.current;
     if (!el) return;
-    const { width, height } = el.getBoundingClientRect();
-    if (width > 0 && height > 0) {
+    const { width } = el.getBoundingClientRect();
+    if (width <= 0) return;
+
+    let height: number;
+    if (contentSized && displayChartData) {
+      const categoryCount = displayChartData.series[0]?.data.length ?? 4;
+      height = Math.max(100, categoryCount * 36 + 72);
+    } else {
+      height = el.getBoundingClientRect().height;
+    }
+
+    if (height > 0) {
       setDimensions((prev) => (prev.width === width && prev.height === height ? prev : { width, height }));
     }
-  }, []);
+  }, [contentSized, displayChartData]);
 
   // Simple resize observer + initial measure (chart mode can mount before layout settles)
   useEffect(() => {
@@ -349,7 +362,7 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
     })) || [];
 
   return (
-    <div className={`${styles.container} ${className}`}>
+    <div className={`${styles.container} ${contentSized ? styles.contentSized : ''} ${className}`}>
       {/* Toolbar / Header */}
       <div className={styles.toolbar}>
         <div className={styles.toolbarLeft}>

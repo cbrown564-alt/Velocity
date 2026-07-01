@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React from 'react';
 import { X } from 'lucide-react';
 import type { FirstCrosstabTourStep } from './firstCrosstabTour';
 import { FIRST_CROSSTAB_TOUR_STEPS } from './firstCrosstabTour';
@@ -9,66 +9,12 @@ interface FirstCrosstabTourProps {
   onDismiss: () => void;
 }
 
-interface ChipPosition {
-  top: number;
-  left: number;
-}
-
-function resolveChipPosition(anchor: Element, step: FirstCrosstabTourStep): ChipPosition {
-  const rect = anchor.getBoundingClientRect();
-  const maxLeft = window.innerWidth - 280;
-
-  if (step === 'significance') {
-    return {
-      top: Math.max(12, rect.top - 4),
-      left: Math.max(12, Math.min(rect.right + 12, maxLeft)),
-    };
-  }
-
-  return {
-    top: rect.bottom + 8,
-    left: Math.max(12, Math.min(rect.left, maxLeft)),
-  };
-}
-
 /**
- * Inline shelf/toolbar coaching chip for the first-crosstab activation tour (PPR-005).
+ * Fixed corner coaching chip for the first-crosstab activation tour (PPR-005).
+ * Anchored bottom-left so hints never overlay hero table/chart output or stats footer.
  */
 export const FirstCrosstabTour: React.FC<FirstCrosstabTourProps> = ({ step, onDismiss }) => {
-  const [position, setPosition] = useState<ChipPosition | null>(null);
-
-  const updatePosition = useCallback(() => {
-    if (!step) {
-      setPosition(null);
-      return;
-    }
-
-    const anchorTestId = FIRST_CROSSTAB_TOUR_STEPS[step].anchorTestId;
-    const anchor = document.querySelector(`[data-testid="${anchorTestId}"]`);
-    if (!anchor) {
-      setPosition(null);
-      return;
-    }
-
-    setPosition(resolveChipPosition(anchor, step));
-  }, [step]);
-
-  useEffect(() => {
-    updatePosition();
-    if (!step) return;
-
-    window.addEventListener('resize', updatePosition);
-    window.addEventListener('scroll', updatePosition, true);
-    const timer = window.setInterval(updatePosition, 400);
-
-    return () => {
-      window.removeEventListener('resize', updatePosition);
-      window.removeEventListener('scroll', updatePosition, true);
-      window.clearInterval(timer);
-    };
-  }, [step, updatePosition]);
-
-  if (!step || !position) return null;
+  if (!step) return null;
 
   const copy = FIRST_CROSSTAB_TOUR_STEPS[step];
 
@@ -77,8 +23,7 @@ export const FirstCrosstabTour: React.FC<FirstCrosstabTourProps> = ({ step, onDi
       role="status"
       data-testid="first-crosstab-tour"
       data-tour-step={step}
-      className="fixed z-[var(--z-toast)] max-w-xs rounded-lg border border-[var(--border-color-muted)] bg-[var(--bg-panel)] px-3 py-2.5 shadow-lg pointer-events-auto"
-      style={{ top: position.top, left: position.left }}
+      className="fixed bottom-4 left-4 z-[var(--z-toast)] max-w-xs rounded-lg border border-[var(--border-color-muted)] bg-[var(--bg-panel)] px-3 py-2.5 shadow-lg pointer-events-auto"
     >
       <div className="flex items-start gap-2">
         <div className="min-w-0 flex-1">

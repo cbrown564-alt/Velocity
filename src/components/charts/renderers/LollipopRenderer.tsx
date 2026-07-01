@@ -118,7 +118,7 @@ export const LollipopRenderer: React.FC<BaseChartRendererProps> = ({
             className={`text-xs ${selectedKeys?.has(d.label) ? 'font-bold fill-[var(--text-primary)]' : 'fill-[var(--viz-text-axis)]'}`}
             style={{ fontFamily: 'var(--font-body)' }}
           >
-            {(d.label || '').length > 25 ? (d.label || '').substring(0, 23) + '...' : d.label}
+            {d.label}
           </text>
         ))}
 

@@ -71,6 +71,9 @@ export function markFirstCrosstabTourDone(): void {
 export function resetFirstCrosstabTour(): void {
   clearFlag(TOUR_DONE_KEY);
   ALL_TOUR_STEPS.forEach((step) => clearFlag(stepDismissedKey(step)));
+  if (typeof sessionStorage !== 'undefined') {
+    sessionStorage.removeItem(SESSION_CROSSTAB_KEY);
+  }
 }
 
 export function isFocusTipSeen(): boolean {
@@ -91,9 +94,25 @@ export function replayFirstCrosstabTour(): void {
   resetAllMicroTips();
 }
 
-/** Suppress first-run coaching after workspace reopen (PPR-016). */
+const SESSION_CROSSTAB_KEY = 'velocity-session-first-crosstab';
+
+/** Mark that a crosstab rendered in this browser tab session (PPR-016). */
+export function markSessionFirstCrosstab(): void {
+  if (typeof sessionStorage === 'undefined') return;
+  sessionStorage.setItem(SESSION_CROSSTAB_KEY, '1');
+}
+
+function hasSessionFirstCrosstab(): boolean {
+  if (typeof sessionStorage === 'undefined') return false;
+  return sessionStorage.getItem(SESSION_CROSSTAB_KEY) === '1';
+}
+
+/** Suppress first-run coaching after workspace reopen or session resume (PPR-016). */
 export function shouldSuppressFirstRunCoaching(): boolean {
-  return getPilotEventLog().some((event) => event.name === 'workspace_reopened');
+  const events = getPilotEventLog();
+  if (events.some((event) => event.name === 'workspace_reopened')) return true;
+  const hadPriorCrosstab = events.some((event) => event.name === 'first_crosstab');
+  return hadPriorCrosstab && !hasSessionFirstCrosstab();
 }
 
 export function completeFirstCrosstabTourStepDismissal(

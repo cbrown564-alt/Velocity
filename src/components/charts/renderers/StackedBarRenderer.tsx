@@ -216,7 +216,7 @@ export const StackedBarRenderer: React.FC<StackedBarRendererProps> = ({
               className="text-xs fill-[var(--viz-text-axis)]"
               style={{ fontFamily: 'var(--font-body)' }}
             >
-              {(d.label || '').length > 25 ? (d.label || '').substring(0, 23) + '...' : d.label}
+              {d.label}
             </text>
           ))}
 

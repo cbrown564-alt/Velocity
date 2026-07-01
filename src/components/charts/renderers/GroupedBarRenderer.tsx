@@ -165,7 +165,7 @@ export const GroupedBarRenderer: React.FC<BaseChartRendererProps> = ({
               textAnchor="end"
               style={{ fontSize: 'var(--text-xs)', fill: 'var(--viz-text-axis)', fontFamily: 'var(--font-body)' }}
             >
-              {r.label && r.label.length > 25 ? r.label.substring(0, 23) + '...' : r.label}
+              {r.label}
             </text>
           ))}
 

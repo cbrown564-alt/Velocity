@@ -252,7 +252,7 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
                 fill: selectedKeys?.has(d.label) ? 'var(--text-primary)' : 'var(--viz-text-axis)',
               }}
             >
-              {(d.label || '').length > 35 ? (d.label || '').substring(0, 32) + '...' : d.label}
+              {d.label}
             </text>
           ))}
 

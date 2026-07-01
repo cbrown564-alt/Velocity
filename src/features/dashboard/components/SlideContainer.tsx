@@ -17,6 +17,7 @@ import { applyCanvasPlacement } from '../../../core/grid/gridUtils';
 import { getMotionProps, useReducedMotion, DURATIONS } from '../../../lib/motion';
 import { AnalysisOutputFrame } from './AnalysisOutputFrame';
 import { AnalysisErrorBoundary } from '../../../components/common/AnalysisErrorBoundary';
+import { VIRTUALIZE_ROW_THRESHOLD } from './crosstabVirtualization';
 import './SlideHeader.css';
 
 interface SlideContainerProps {
@@ -99,7 +100,11 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
 
   const analysisResetKey = `${activeSlideId}:${tableConfig.rowVars.join(',')}:${tableConfig.colVar ?? ''}:${activeSlide.visualizationType}`;
   const analysisSurface = activeSlide.visualizationType === 'chart' ? 'chart' : 'table';
-  const shrinkWrapSlide = resolvedRowVars.length > 0;
+  const tableNeedsFill =
+    resolvedRowVars.length > 0 &&
+    activeSlide.visualizationType === 'table' &&
+    chartData.length > VIRTUALIZE_ROW_THRESHOLD;
+  const shrinkWrapSlide = resolvedRowVars.length > 0 && !tableNeedsFill;
 
   const renderCellContent = () => {
     if (queryError && !isQuerying) {
@@ -221,6 +226,7 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
               isWeighted={isWeighted}
               isMultipleResponse={isMultipleResponse}
               variableStats={variableStats}
+              contentSized
             />
           </AnalysisOutputFrame>
         );

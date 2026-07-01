@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useVelocityStore } from '../../../store';
 import {
   completeFirstCrosstabTourStepDismissal,
+  markSessionFirstCrosstab,
   resolveFirstCrosstabTourStep,
   type FirstCrosstabTourStep,
 } from '../onboarding/firstCrosstabTour';
@@ -40,6 +41,11 @@ export function useFirstCrosstabTour(): {
     }
     forceRefresh((value) => value + 1);
   }, [tourStep, hasRenderedCrosstab]);
+
+  useEffect(() => {
+    if (!hasRenderedCrosstab) return;
+    markSessionFirstCrosstab();
+  }, [hasRenderedCrosstab]);
 
   useEffect(() => {
     if (tourStep === 'significance' && hasRenderedCrosstab) {
