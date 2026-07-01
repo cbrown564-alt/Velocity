@@ -23,7 +23,8 @@ export function computeCrosstabColumnWidths(
   }
 
   const weights = colKeys.map((key) => {
-    const label = colLabels[key] ?? key;
+    const raw = colLabels[key] ?? key;
+    const label = raw == null ? '' : String(raw);
     return Math.max(label.length, NUMERIC_FLOOR);
   });
   const weightSum = weights.reduce((sum, weight) => sum + weight, 0) || 1;

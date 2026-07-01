@@ -33,6 +33,7 @@ import { useProcessedAnalysisData } from '../../hooks/useProcessedAnalysisData';
 import { useMergeOrchestration } from '../../hooks/useMergeOrchestration';
 import styles from './AnalysisChart.module.css';
 import { ArrowLeftRight, RotateCcw } from 'lucide-react';
+import { AnalysisErrorBoundary } from '../common/AnalysisErrorBoundary';
 
 interface AnalysisChartProps {
   data: AggregatedRow[];
@@ -447,7 +448,14 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
             : 'Analysis chart'
         }
       >
-        {renderContent()}
+        <AnalysisErrorBoundary
+          surface="chart"
+          slideId={activeSlideId}
+          resetKey={`${activeSlideId}:${activeChartType}:${rowVariables.map((variable) => variable.id).join(',')}:${colVariable?.id ?? ''}`}
+          onRetry={() => void useVelocityStore.getState().runAnalysis()}
+        >
+          {renderContent()}
+        </AnalysisErrorBoundary>
       </div>
 
       {/* Screen-reader accessible data table (visually hidden) */}

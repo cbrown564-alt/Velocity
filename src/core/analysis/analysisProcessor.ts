@@ -1,6 +1,7 @@
 import { AggregatedRow, Variable } from '../../types';
 import { ProcessedAnalysisData, ProcessedColumn, ChartSeries, ProcessedRow } from '../../types/processedData';
 import { buildTree } from './treeBuilder';
+import { normalizeCrosstabColKey, resolveCrosstabColLabel } from './colKeyUtils';
 
 interface ProcessAnalysisOptions {
   data: AggregatedRow[];
@@ -30,11 +31,16 @@ export const processAnalysisData = ({
     return null;
   }
 
+  const normalizedData: AggregatedRow[] = data.map((row) => ({
+    ...row,
+    colKey: normalizeCrosstabColKey(row.colKey),
+  }));
+
   // ====================================================================
   // 1. Extract Column Keys
   // ====================================================================
   let colKeys: string[] = ['Total'];
-  const uniqueDataKeys = Array.from(new Set(data.map((d) => d.colKey))).sort() as string[];
+  const uniqueDataKeys = Array.from(new Set(normalizedData.map((d) => d.colKey))).sort();
 
   // Use data keys if we have columns or multiple implicit columns
   // or if we have a single data key that is NOT 'Total' (e.g. renamed implicit column)
@@ -49,10 +55,9 @@ export const processAnalysisData = ({
   colKeys.forEach((k) => (colTotals[k] = 0));
   let grandTotal = 0;
 
-  data.forEach((d) => {
+  normalizedData.forEach((d) => {
     const effectiveCount = isWeighted && d.weightedCount !== undefined ? d.weightedCount : d.count;
     const key = colKeys.includes(d.colKey) ? d.colKey : 'Total';
-    // Note: if data has keys not in colKeys (shouldn't happen with logic above), careful
     if (colTotals[key] !== undefined) {
       colTotals[key] += effectiveCount;
     }
@@ -62,19 +67,16 @@ export const processAnalysisData = ({
   // ====================================================================
   // 3. Resolve Column Labels
   // ====================================================================
-  const columns: ProcessedColumn[] = colKeys.map((key) => {
-    let label = key;
-    if (colVariable?.valueLabels) {
-      const found = colVariable.valueLabels.find((vl) => String(vl.value) === String(key));
-      if (found) label = found.label;
-    }
-    return { key, label, total: colTotals[key] || 0 };
-  });
+  const columns: ProcessedColumn[] = colKeys.map((key) => ({
+    key,
+    label: resolveCrosstabColLabel(key, colVariable),
+    total: colTotals[key] || 0,
+  }));
 
   // ====================================================================
   // 4. Build Tree Structure
   // ====================================================================
-  const rows = buildTree(data, 0, rowVariables, colKeys, colTotals, isWeighted, isMultipleResponse, '', []);
+  const rows = buildTree(normalizedData, 0, rowVariables, colKeys, colTotals, isWeighted, isMultipleResponse, '', []);
 
   // ====================================================================
   // 5. Build Chart Series (flattened for renderers)

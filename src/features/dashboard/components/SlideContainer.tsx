@@ -16,6 +16,7 @@ import { useAutoFirstCrosstab } from '../hooks/useAutoFirstCrosstab';
 import { applyCanvasPlacement } from '../../../core/grid/gridUtils';
 import { getMotionProps, useReducedMotion, DURATIONS } from '../../../lib/motion';
 import { AnalysisOutputFrame } from './AnalysisOutputFrame';
+import { AnalysisErrorBoundary } from '../../../components/common/AnalysisErrorBoundary';
 
 import './SlideHeader.css';
 
@@ -96,6 +97,9 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
       .getState()
       .setTableConfig(applyCanvasPlacement(setId, set.structure, useVelocityStore.getState().tableConfig));
   };
+
+  const analysisResetKey = `${activeSlideId}:${tableConfig.rowVars.join(',')}:${tableConfig.colVar ?? ''}:${activeSlide.visualizationType}`;
+  const analysisSurface = activeSlide.visualizationType === 'chart' ? 'chart' : 'table';
 
   const renderCellContent = () => {
     if (queryError && !isQuerying) {
@@ -251,7 +255,14 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
           className={`flex-1 min-h-0 flex flex-col overflow-x-auto overflow-y-auto ${focusMode ? 'px-0 pb-2' : 'px-6 pb-6'}`}
           data-testid="slide-content-region"
         >
-          {renderCellContent()}
+          <AnalysisErrorBoundary
+            surface={analysisSurface}
+            slideId={activeSlideId}
+            resetKey={analysisResetKey}
+            onRetry={() => void useVelocityStore.getState().runAnalysis()}
+          >
+            {renderCellContent()}
+          </AnalysisErrorBoundary>
         </div>
       </div>
     </div>

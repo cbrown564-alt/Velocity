@@ -30,4 +30,8 @@ describe('computeCrosstabColumnWidths', () => {
     expect(widths.total).toBeUndefined();
     expect(parseFloat(widths.columns.a)).toBeCloseTo(72, 0);
   });
+
+  it('does not crash when a column label is null', () => {
+    expect(() => computeCrosstabColumnWidths(['yes', null as unknown as string], { yes: 'yes', null: null }, true)).not.toThrow();
+  });
 });

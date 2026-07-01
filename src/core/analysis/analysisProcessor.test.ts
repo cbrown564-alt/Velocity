@@ -116,6 +116,38 @@ describe('analysisProcessor', () => {
     // Grand Total = 10 + 30 + 40 + 20 = 100
     expect(result.grandTotal).toBe(100);
   });
+
+  it('normalizes null column keys to a missing bucket with a display label', () => {
+    const smoke: Variable = {
+      id: 'smoke',
+      name: 'smoke',
+      label: 'do you smoke',
+      type: 'categorical',
+      valueLabels: [
+        { value: 1, label: 'yes' },
+        { value: 2, label: 'no' },
+      ],
+      missingValues: {},
+    };
+
+    const crosstabData: AggregatedRow[] = [
+      { rowKeys: ['1'], colKey: '1', count: 15 },
+      { rowKeys: ['1'], colKey: null as unknown as string, count: 1 },
+      { rowKeys: ['0'], colKey: '2', count: 131 },
+    ];
+
+    const result = processAnalysisData({
+      data: crosstabData,
+      rowVariables: [mockRowVariable],
+      colVariable: smoke,
+    });
+
+    expect(result).not.toBeNull();
+    expect(result!.columns.map((col) => col.key)).toEqual(['(Missing)', '1', '2']);
+    expect(result!.columns.find((col) => col.key === '(Missing)')?.label).toBe('(Missing)');
+    expect(result!.columns.find((col) => col.key === '1')?.label).toBe('yes');
+  });
+
   it('handles metric distribution data correctly', () => {
     const metricData: AggregatedRow[] = [
       {
