@@ -8,8 +8,9 @@ const SIG_RANK: Record<string, number> = {
 };
 
 /** Hide insights when label resolver failed and we only have numeric SPSS codes (PPR-007). */
-function looksLikeUnresolvedCode(label: string, key: string): boolean {
-  return label === key && /^-?\d+(\.\d+)?$/.test(key.trim());
+function looksLikeUnresolvedCode(label: string, key: string | number): boolean {
+  const keyStr = String(key).trim();
+  return String(label) === keyStr && /^-?\d+(\.\d+)?$/.test(keyStr);
 }
 
 interface LabelResolver {
@@ -65,8 +66,10 @@ export function generateNarrativeTitleFromRows(
 
   if (bestCell) {
     const direction = bestCell.sig.startsWith('high') ? 'over-represented' : 'under-represented';
-    const rowLabel = resolver?.rowLabel?.(bestCell.rowKey) || bestCell.rowKey;
-    const colLabel = resolver?.colLabel?.(bestCell.colKey) || bestCell.colKey;
+    const rowKeyStr = String(bestCell.rowKey);
+    const colKeyStr = String(bestCell.colKey);
+    const rowLabel = resolver?.rowLabel?.(rowKeyStr) || rowKeyStr;
+    const colLabel = resolver?.colLabel?.(colKeyStr) || colKeyStr;
 
     if (
       resolver &&

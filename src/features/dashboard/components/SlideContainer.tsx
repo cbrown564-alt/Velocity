@@ -185,10 +185,7 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
                       >
                         {s.name}
                       </span>
-                      <span
-                        className="text-[10px] text-[var(--text-secondary)] truncate leading-snug"
-                        title={s.reason}
-                      >
+                      <span className="text-[10px] text-[var(--text-secondary)] truncate leading-snug" title={s.reason}>
                         {s.reason}
                       </span>
                     </div>

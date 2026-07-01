@@ -54,6 +54,17 @@ describe('generateNarrativeTitleFromRows', () => {
     expect(generateNarrativeTitleFromRows(rows, null, 'Sex', 'Marital status', resolver)).toBeNull();
   });
 
+  it('does not throw when row/col keys are numeric', () => {
+    const rows = [makeRow(['1'], '2', 50, { sig: 'high_95' }), makeRow(['2'], '2', 40)] as AggregatedRow[];
+    (rows[0] as { rowKeys: unknown[] }).rowKeys = [1];
+    (rows[0] as { colKey: unknown }).colKey = 2;
+    const resolver = {
+      rowLabel: (k: string) => (k === '1' ? 'Female' : null),
+      colLabel: (k: string) => (k === '2' ? 'Married' : null),
+    };
+    expect(generateNarrativeTitleFromRows(rows, null, 'Sex', 'Marital status', resolver)).toContain('Female');
+  });
+
   it('uses label resolver when provided', () => {
     const rows = [makeRow(['1'], 'east', 50, { sig: 'high_95' })];
     const resolver = {

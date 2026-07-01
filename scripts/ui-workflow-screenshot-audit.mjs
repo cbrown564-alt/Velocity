@@ -110,6 +110,39 @@ async function uploadSavAndReachDashboard(page) {
   }
 }
 
+async function dismissActiveTour(page) {
+  const tour = page.getByTestId('first-crosstab-tour');
+  if (await tour.isVisible().catch(() => false)) {
+    await tour.getByRole('button', { name: /got it/i }).click();
+    await page.waitForTimeout(400);
+  }
+}
+
+async function waitForCrosstabReady(page, timeoutMs = 90000) {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    const table = page.locator('.analysis-frame table');
+    if (await table.isVisible().catch(() => false)) {
+      const headers = await table
+        .locator('th')
+        .allTextContents()
+        .catch(() => []);
+      const joined = headers.join(' ').toLowerCase();
+      if (/single|married|divorced|widowed/.test(joined)) {
+        return;
+      }
+    }
+    await page.waitForTimeout(350);
+  }
+  throw new Error('Crosstab table did not become ready (expected banner columns)');
+}
+
+async function clickSidebarVariable(page, pattern) {
+  const card = page.locator('[data-testid="variable-draggable"]').filter({ hasText: pattern }).first();
+  await card.waitFor({ state: 'visible', timeout: 30000 });
+  await card.click();
+}
+
 async function main() {
   console.log(`Output: ${OUT_DIR}`);
   const useExternalServer = process.env.SKIP_DEV_SERVER === '1';
@@ -162,17 +195,16 @@ async function main() {
     await shot(page, '04-dashboard-variable-browser');
 
     // 5. Building first crosstab — one variable on shelf
-    await page.getByRole('button', { name: /^sex$/i }).first().click();
-    await page.waitForTimeout(600);
+    await clickSidebarVariable(page, /^sex$/i);
+    await page.locator('.analysis-frame table').waitFor({ state: 'visible', timeout: 60000 });
+    await page.waitForTimeout(800);
     await shot(page, '05-building-crosstab-one-variable');
 
     // 6. Crosstab table result
-    await page
-      .getByRole('button', { name: /marital status/i })
-      .first()
-      .click();
-    await page.locator('table').waitFor({ state: 'visible', timeout: 30000 });
-    await page.waitForTimeout(2500);
+    await dismissActiveTour(page);
+    await clickSidebarVariable(page, /marital status/i);
+    await waitForCrosstabReady(page);
+    await page.waitForTimeout(1500);
     await shot(page, '06-crosstab-table-result');
 
     // 7. Chart view
