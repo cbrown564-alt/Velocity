@@ -10,6 +10,7 @@ import { ChartDataPoint } from '../../../types/processedData';
 import { useChartDragMerge } from '../hooks/useChartDragMerge';
 import { useChartSelection } from '../hooks/useChartSelection';
 import { ChartPlotArea } from '../shared/ChartPlotArea';
+import { formatAxisTick, formatBarTooltip, formatBarValueLabel } from '../../../core/visualization/chartLabelFormatters';
 
 /**
  * Horizontal Bar Chart Renderer
@@ -71,12 +72,11 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
   }, [chartData, actualHeight]);
 
   const xScale = useMemo(() => {
-    const maxVal = max(chartData, (d) => d.value) || 1;
-    return d3
-      .scaleLinear()
-      .domain([0, maxVal * 1.1]) // Add 10% padding
-      .range([0, innerWidth]);
-  }, [chartData, innerWidth]);
+    const usePercent = labelMode === 'percent';
+    const maxVal = usePercent ? 1 : max(chartData, (d) => d.value) || 1;
+    const domainMax = usePercent ? 1 : maxVal * 1.1;
+    return d3.scaleLinear().domain([0, domainMax]).range([0, innerWidth]);
+  }, [chartData, innerWidth, labelMode]);
 
   const { handleToggle, handleItemContextMenu } = useChartSelection<ChartDataPoint>({
     interactive,
@@ -231,7 +231,7 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
                     fill: 'var(--viz-text-axis)',
                   }}
                 >
-                  {tick}
+                  {formatAxisTick(labelMode, tick)}
                 </text>
               </g>
             ))}
@@ -258,7 +258,8 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
 
           {/* Bars */}
           {chartData.map((d, i) => {
-            const barWidth = xScale(d.value);
+            const barValue = labelMode === 'percent' ? d.percent / 100 : d.value;
+            const barWidth = xScale(barValue);
             const y = yScale(d.label) || 0;
             const isSelected = selectedKeys?.has(d.label);
             const isDragging = dragState.isDragging && dragState.draggedItem?.label === d.label;
@@ -356,7 +357,9 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
                     transition: dragState.isDragging ? 'none' : 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                     cursor: onMerge ? 'grab' : interactive ? 'pointer' : 'default',
                   }}
-                />
+                >
+                  <title>{formatBarTooltip(d.label, d.value, d.percent)}</title>
+                </BarRect>
 
                 {/* Label Logic */}
                 {labelMode !== 'none' && (
@@ -370,7 +373,7 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
                       fill: isSelected ? 'var(--text-primary)' : 'var(--viz-text-value)',
                     }}
                   >
-                    {labelMode === 'percent' ? `${d.percent.toFixed(1)}%` : d.value.toLocaleString()}
+                    {formatBarValueLabel(labelMode, d.value, d.percent)}
                   </text>
                 )}
               </g>
@@ -393,7 +396,7 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
                   margin.top -
                   yScale.bandwidth() / 2
                 }
-                width={xScale(dragState.draggedItem.value)}
+                width={xScale(labelMode === 'percent' ? dragState.draggedItem.percent / 100 : dragState.draggedItem.value)}
                 height={yScale.bandwidth()}
                 fill="var(--viz-fill-secondary)" // Solid Cyan for dragging
                 rx={3}
@@ -401,7 +404,7 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
                 strokeWidth={2}
               />
               <text
-                x={xScale(dragState.draggedItem.value) / 2}
+                x={xScale(labelMode === 'percent' ? dragState.draggedItem.percent / 100 : dragState.draggedItem.value) / 2}
                 y={dragState.currentY - (svgRef.current?.getBoundingClientRect().top || 0) - margin.top}
                 textAnchor="middle"
                 style={{

@@ -126,7 +126,7 @@ const VariableSetItem: React.FC<VariableSetItemProps> = ({
         >
           <VariableTypeIcon type={variableSet.type} structure={variableSet.structure as any} size={14} />
         </span>
-        <span className={styles.itemLabel}>
+        <span className={styles.itemLabel} title={variableSet.name}>
           {variableSet.name}
           {variableSet.hidden && (
             <EyeOff

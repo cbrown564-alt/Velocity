@@ -74,7 +74,7 @@ export const DropZone: React.FC<DropZoneProps> = ({
               className={weightEnabled ? 'text-[var(--color-accent)]' : 'text-[var(--text-secondary)]'}
             />
             <span
-              className={`text-sm font-medium font-body truncate max-w-[140px] ${weightEnabled ? 'text-[var(--color-accent)]' : 'text-[var(--text-secondary)] line-through'}`}
+              className={`text-sm font-medium font-body line-clamp-2 leading-snug min-w-0 max-w-[200px] ${weightEnabled ? 'text-[var(--color-accent)]' : 'text-[var(--text-secondary)] line-through'}`}
               title={weightVar.name}
             >
               {weightVar.name}
@@ -203,10 +203,10 @@ export const DropZone: React.FC<DropZoneProps> = ({
             layout
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="relative flex items-center justify-between p-2 pl-3 pr-2 bg-[var(--bg-panel)] border border-[var(--border-color)] rounded-md group"
+            className="relative flex items-center justify-between p-2 pl-3 pr-2 bg-[var(--bg-panel)] border border-[var(--border-color)] rounded-md group max-w-[240px]"
           >
             <span
-              className="text-sm font-medium text-[var(--text-primary)] font-body truncate max-w-[160px]"
+              className="text-sm font-medium text-[var(--text-primary)] font-body line-clamp-2 leading-snug min-w-0"
               title={set.name}
             >
               {set.name}

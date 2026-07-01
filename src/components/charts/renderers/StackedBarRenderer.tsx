@@ -6,6 +6,8 @@ import { BaseChartRendererProps } from '../../../types/charts';
 import { CHART_BAR_FILL_OPACITY } from '../shared/chartColors';
 import { useChartSelection } from '../hooks/useChartSelection';
 import { ChartPlotArea } from '../shared/ChartPlotArea';
+import { SvgChartSeriesLegend } from '../shared/SvgChartSeriesLegend';
+import { formatAxisTick, formatBarTooltip, formatBarValueLabel } from '../../../core/visualization/chartLabelFormatters';
 
 interface StackedBarRendererProps extends BaseChartRendererProps {
   type: 'stacked-bar';
@@ -85,10 +87,7 @@ export const StackedBarRenderer: React.FC<StackedBarRendererProps> = ({
   const maxRowLabelLength = Math.max(...rowLabels.map((l) => (l || '').length), 10);
   const leftMargin = Math.min(Math.max(maxRowLabelLength * 6, 100), 200);
 
-  // Calculate legend width
-  const legendItemWidth = 100;
-  const legendWidth = Math.min(stackKeys.length * legendItemWidth, width - leftMargin - 40);
-
+  // Legend layout handled by SvgChartSeriesLegend
   const margin = { top: 48, right: 40, bottom: 32, left: leftMargin };
   const innerWidth = Math.max(width - margin.left - margin.right, 200);
   const innerHeight = Math.max(height - margin.top - margin.bottom, 150);
@@ -161,7 +160,7 @@ export const StackedBarRenderer: React.FC<StackedBarRendererProps> = ({
   const xTicks = isPercentMode ? [0, 0.25, 0.5, 0.75, 1] : xScale.ticks(5);
 
   return (
-    <div style={{ width, height, overflowY: 'auto', overflowX: 'hidden' }}>
+    <div style={{ width, height, overflowY: 'auto', overflowX: 'auto' }}>
       <svg
         width={width}
         height={Math.max(height, actualHeight + margin.top + margin.bottom)}
@@ -169,32 +168,16 @@ export const StackedBarRenderer: React.FC<StackedBarRendererProps> = ({
         style={{ display: 'block' }}
       >
         <ChartPlotArea margin={margin}>
-          {/* Legend (Top) */}
-          <g transform={`translate(${(innerWidth - legendWidth) / 2}, -${margin.top - 8})`}>
-            {stackLabels.map((label, i) => {
-              const xOffset = i * legendItemWidth;
-              return (
-                <g key={stackKeys[i]} transform={`translate(${xOffset}, 0)`}>
-                  <rect
-                    width={12}
-                    height={12}
-                    rx={1}
-                    fill={colors ? colors[i % colors.length] : `var(--viz-palette-${(i % 6) + 1})`}
-                    fillOpacity={CHART_BAR_FILL_OPACITY}
-                  />
-                  <text
-                    x={18}
-                    y={10}
-                    className="text-[11px] fill-[var(--viz-text-axis)]"
-                    style={{ fontFamily: 'var(--font-body)' }}
-                  >
-                    {label ? <title>{label}</title> : null}
-                    {label || ''}
-                  </text>
-                </g>
-              );
-            })}
-          </g>
+          <SvgChartSeriesLegend
+            labels={stackLabels}
+            keys={stackKeys}
+            colors={
+              colors ??
+              stackKeys.map((_, i) => `var(--viz-palette-${(i % 6) + 1})`)
+            }
+            innerWidth={innerWidth}
+            fillOpacity={CHART_BAR_FILL_OPACITY}
+          />
 
           {/* Grid lines */}
           {xTicks.map((tick) => (
@@ -216,7 +199,7 @@ export const StackedBarRenderer: React.FC<StackedBarRendererProps> = ({
               <g key={tick} transform={`translate(${xScale(tick)},0)`}>
                 <line y2={4} stroke="var(--viz-stroke-main)" />
                 <text y={18} textAnchor="middle" className="text-[10px] fill-[var(--viz-text-axis)] font-mono">
-                  {isPercentMode ? `${Math.round(tick * 100)}%` : tick.toLocaleString()}
+                  {formatAxisTick(labelMode ?? 'count', tick)}
                 </text>
               </g>
             ))}
@@ -257,10 +240,11 @@ export const StackedBarRenderer: React.FC<StackedBarRendererProps> = ({
 
                   const isSelected = isSingleVariable ? selectedKeys?.has(segmentKey) : selectedKeys?.has(rowLabel);
 
-                  // Only show label if segment is wide enough
                   const showLabel = barWidth > 30;
                   const value = d[1] - d[0];
-                  const displayValue = isPercentMode ? `${Math.round(value * 100)}%` : value.toLocaleString();
+                  const segmentPercent = isPercentMode ? value * 100 : (value / (d.data._total || 1)) * 100;
+                  const displayValue = formatBarValueLabel(labelMode ?? 'count', value, segmentPercent);
+                  const segmentLabel = stackLabels[seriesIndex] ?? segmentKey;
 
                   return (
                     <g
@@ -279,8 +263,10 @@ export const StackedBarRenderer: React.FC<StackedBarRendererProps> = ({
                         className="transition-all duration-300 hover:opacity-80 chart-bar-rect"
                         stroke={isSelected ? 'var(--text-accent)' : 'var(--viz-stroke-bar)'}
                         strokeWidth={isSelected ? 2 : 1}
-                      />
-                      {labelMode !== 'none' && showLabel && (
+                      >
+                        <title>{formatBarTooltip(segmentLabel, Math.round(value), segmentPercent)}</title>
+                      </rect>
+                      {labelMode !== 'none' && showLabel && displayValue && (
                         <text
                           x={xScale(d[0]) + barWidth / 2}
                           y={y + yScale.bandwidth() / 2}

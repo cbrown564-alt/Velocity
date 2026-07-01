@@ -290,9 +290,14 @@
   font-size: var(--text-sm);
   font-weight: 500;
   color: var(--text-primary);
-  white-space: nowrap;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  white-space: normal;
   overflow: hidden;
   text-overflow: ellipsis;
+  line-height: 1.25;
 }
 
 .itemActive .itemLabel {

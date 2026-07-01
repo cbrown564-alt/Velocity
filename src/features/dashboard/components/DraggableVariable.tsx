@@ -102,7 +102,8 @@ export const VariableCard: React.FC<VariableCardProps> = ({
           />
         </span>
         <span
-          className={`text-sm font-medium truncate font-body leading-none ${isSelected ? 'text-[var(--text-primary)]' : 'text-[var(--text-secondary)] group-hover:text-[var(--text-primary)]'}`}
+          className={`text-sm font-medium font-body leading-snug line-clamp-2 min-w-0 ${isSelected ? 'text-[var(--text-primary)]' : 'text-[var(--text-secondary)] group-hover:text-[var(--text-primary)]'}`}
+          title={variableSet.name}
         >
           {variableSet.name}
         </span>
