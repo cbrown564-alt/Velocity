@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useVelocityStore } from '../../../store';
 import {
-  markFirstCrosstabTourDone,
+  completeFirstCrosstabTourStepDismissal,
   resolveFirstCrosstabTourStep,
   type FirstCrosstabTourStep,
 } from '../onboarding/firstCrosstabTour';
@@ -33,12 +33,13 @@ export function useFirstCrosstabTour(): {
   }, [dataset, focusMode, appMode, tableConfig.rowVars.length, tableConfig.colVar, hasRenderedCrosstab]);
 
   const dismissTourStep = useCallback(() => {
-    markFirstCrosstabTourDone();
+    if (!tourStep) return;
+    completeFirstCrosstabTourStepDismissal(tourStep, hasRenderedCrosstab);
     if (hasRenderedCrosstab) {
       recordPilotEvent('first_crosstab', { source: 'activation-tour-complete' });
     }
     forceRefresh((value) => value + 1);
-  }, [hasRenderedCrosstab]);
+  }, [tourStep, hasRenderedCrosstab]);
 
   useEffect(() => {
     if (tourStep === 'significance' && hasRenderedCrosstab) {

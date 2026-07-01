@@ -1,30 +1,36 @@
-/** First-crosstab spotlight tour + Focus tip persistence (STAB-UI-F3.2 / F2.1). */
+/** First-crosstab inline coaching + Focus tip persistence (STAB-UI-F3.2 / PPR-005 / PPR-016). */
 
+import { getPilotEventLog } from '../../../services/pilotOnboarding';
 import { resetAllMicroTips } from './contextualMicroTips';
 
 export type FirstCrosstabTourStep = 'rows' | 'columns' | 'significance';
 
 const TOUR_DONE_KEY = 'velocity-first-crosstab-tour-done';
+const STEP_DISMISSED_PREFIX = 'velocity-first-crosstab-tour-step-';
 const FOCUS_TIP_KEY = 'velocity-focus-tip-seen';
 
-export const FIRST_CROSSTAB_TOUR_STEPS: Record<FirstCrosstabTourStep, { target: string; title: string; body: string }> =
-  {
-    rows: {
-      target: '[data-testid="drop-zone-rows"]',
-      title: 'Start with rows',
-      body: 'Drag or click a variable here to define what each table row represents.',
-    },
-    columns: {
-      target: '[data-testid="drop-zone-cols"]',
-      title: 'Add a column break',
-      body: 'Drop a second variable in Columns to build your first crosstab.',
-    },
-    significance: {
-      target: '.statistics-status-bar',
-      title: 'Read the significance markers',
-      body: 'Arrows and letters in cells show where groups differ. The footer explains the active test.',
-    },
-  };
+const ALL_TOUR_STEPS: FirstCrosstabTourStep[] = ['rows', 'columns', 'significance'];
+
+export const FIRST_CROSSTAB_TOUR_STEPS: Record<
+  FirstCrosstabTourStep,
+  { anchorTestId: string; title: string; body: string }
+> = {
+  rows: {
+    anchorTestId: 'drop-zone-rows',
+    title: 'Start with rows',
+    body: 'Drag or click a variable here to define what each table row represents.',
+  },
+  columns: {
+    anchorTestId: 'drop-zone-cols',
+    title: 'Add a column break',
+    body: 'Drop a second variable in Columns to build your first crosstab.',
+  },
+  significance: {
+    anchorTestId: 'drop-zone-cols',
+    title: 'Read the significance markers',
+    body: 'Arrows and letters in cells show where groups differ. The footer explains the active test.',
+  },
+};
 
 function readFlag(key: string): boolean {
   if (typeof localStorage === 'undefined') return false;
@@ -41,8 +47,21 @@ function clearFlag(key: string): void {
   localStorage.removeItem(key);
 }
 
+function stepDismissedKey(step: FirstCrosstabTourStep): string {
+  return `${STEP_DISMISSED_PREFIX}${step}`;
+}
+
+export function isFirstCrosstabTourStepDismissed(step: FirstCrosstabTourStep): boolean {
+  return readFlag(stepDismissedKey(step));
+}
+
+export function dismissFirstCrosstabTourStep(step: FirstCrosstabTourStep): void {
+  writeFlag(stepDismissedKey(step));
+}
+
 export function isFirstCrosstabTourDone(): boolean {
-  return readFlag(TOUR_DONE_KEY);
+  if (readFlag(TOUR_DONE_KEY)) return true;
+  return ALL_TOUR_STEPS.every((step) => isFirstCrosstabTourStepDismissed(step));
 }
 
 export function markFirstCrosstabTourDone(): void {
@@ -51,6 +70,7 @@ export function markFirstCrosstabTourDone(): void {
 
 export function resetFirstCrosstabTour(): void {
   clearFlag(TOUR_DONE_KEY);
+  ALL_TOUR_STEPS.forEach((step) => clearFlag(stepDismissedKey(step)));
 }
 
 export function isFocusTipSeen(): boolean {
@@ -71,13 +91,38 @@ export function replayFirstCrosstabTour(): void {
   resetAllMicroTips();
 }
 
+/** Suppress first-run coaching after workspace reopen (PPR-016). */
+export function shouldSuppressFirstRunCoaching(): boolean {
+  return getPilotEventLog().some((event) => event.name === 'workspace_reopened');
+}
+
+export function completeFirstCrosstabTourStepDismissal(
+  step: FirstCrosstabTourStep,
+  hasRenderedCrosstab: boolean,
+): void {
+  dismissFirstCrosstabTourStep(step);
+  if (hasRenderedCrosstab) {
+    markFirstCrosstabTourDone();
+  }
+}
+
 export function resolveFirstCrosstabTourStep(input: {
   rowCount: number;
   hasColumn: boolean;
   hasRenderedCrosstab: boolean;
+  suppressFirstRun?: boolean;
 }): FirstCrosstabTourStep | null {
-  if (isFirstCrosstabTourDone()) return null;
-  if (input.hasRenderedCrosstab) return 'significance';
-  if (input.hasColumn || input.rowCount > 0) return input.rowCount > 0 ? 'columns' : 'rows';
-  return 'rows';
+  if (input.suppressFirstRun || shouldSuppressFirstRunCoaching() || isFirstCrosstabTourDone()) {
+    return null;
+  }
+
+  if (input.hasRenderedCrosstab) {
+    return isFirstCrosstabTourStepDismissed('significance') ? null : 'significance';
+  }
+
+  if (input.rowCount > 0) {
+    return isFirstCrosstabTourStepDismissed('columns') ? null : 'columns';
+  }
+
+  return isFirstCrosstabTourStepDismissed('rows') ? null : 'rows';
 }
