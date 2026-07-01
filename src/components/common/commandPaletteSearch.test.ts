@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { mockNominalSet, mockOrdinalSet } from '../../test/fixtures/variables';
+import { mockNominalSet, mockOrdinalSet, mockScaleVariable } from '../../test/fixtures/variables';
 import { buildShelfPlacement, canAddVariableSetToWeight, searchVariableSetsForPalette } from './commandPaletteSearch';
 
 describe('commandPaletteSearch', () => {
@@ -24,8 +24,8 @@ describe('commandPaletteSearch', () => {
   });
 
   it('detects numeric weight eligibility', () => {
-    const numericSet = { ...mockOrdinalSet, id: 'weight', name: 'Weight', variableIds: ['w1'] };
-    const variables = [{ id: 'w1', type: 'numeric' as const }];
+    const numericSet = { ...mockOrdinalSet, id: 'weight', name: 'Weight', variableIds: [mockScaleVariable.id] };
+    const variables = [{ ...mockScaleVariable, id: 'w1' }];
     expect(canAddVariableSetToWeight(numericSet, variables)).toBe(true);
     expect(canAddVariableSetToWeight(mockNominalSet, variables)).toBe(false);
   });
