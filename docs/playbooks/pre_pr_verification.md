@@ -37,6 +37,7 @@ npm run test:mutation:ci
 ```bash
 npm run lint
 npm run check:eslint-ratchet
+npm run check:e2e-companion
 npm run format:check
 npm run typecheck:all
 npm run check:worker-boundary
@@ -97,7 +98,7 @@ See `docs/playbooks/ui_mode_change.md` for mode-specific guidance.
 | Ran `npm run typecheck` but not `typecheck:all` | `typecheck:test` on test fixtures |
 | Ran unit tests without `--coverage` | Coverage threshold in Vitest |
 | Skipped Prettier | `format:check` (first step after lint) |
-| UI change without E2E update | Parallel `e2e` job fails while `test` job passes |
+| UI change without E2E update | `check:e2e-companion` (test job) and parallel `e2e` job |
 | Partial `{ id, type }` variable in tests | `typecheck:test` or runtime assertion mismatch |
 
 ## Definition of Done

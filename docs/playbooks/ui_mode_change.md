@@ -80,6 +80,8 @@ Prefer tests that are resilient:
 
 **E2E companions (required when changing shortcuts, onboarding, banners, or theme labels)**
 - Update Playwright specs or helpers in the same PR — see `docs/playbooks/pre_pr_verification.md`
+- CI enforces this via `npm run check:e2e-companion` (same merge-base diff as ESLint ratchet)
+- Trigger paths: `src/lib/keyboardShortcuts/**`, `src/features/dashboard/onboarding/**`, `WorkspaceStatusStrip`, `ThemeSwitcher`, contextual micro tips
 - Run `npm run ci:e2e` before merge
 
 **Token usage checks**

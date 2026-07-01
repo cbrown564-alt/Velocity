@@ -34,6 +34,11 @@ jobs:
         env:
           GITHUB_BASE_REF: ${{ github.base_ref }}
 
+      - name: Enforce E2E companion updates (UI trigger paths)
+        run: npm run check:e2e-companion
+        env:
+          GITHUB_BASE_REF: ${{ github.base_ref }}
+
       - name: Check formatting
         run: npm run format:check
 
