@@ -82,7 +82,13 @@ describe('computeRowWindow', () => {
   });
 
   it('subtracts the sticky header offset from the visible-row calculation', () => {
-    const noOffset = computeRowWindow({ scrollTop: 300, viewportHeight: 600, rowHeight: 30, rowCount: 1000, overscan: 0 });
+    const noOffset = computeRowWindow({
+      scrollTop: 300,
+      viewportHeight: 600,
+      rowHeight: 30,
+      rowCount: 1000,
+      overscan: 0,
+    });
     const withOffset = computeRowWindow({
       scrollTop: 300,
       viewportHeight: 600,

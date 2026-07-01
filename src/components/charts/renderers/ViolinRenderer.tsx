@@ -16,12 +16,7 @@ const DEFAULT_PALETTE = [
  * Shows density distribution.
  * Requires pre-calculated density bins (bins: {x0, x1, count/density}) for each series.
  */
-export const ViolinRenderer: React.FC<BaseChartRendererProps> = ({
-  width,
-  height,
-  colors,
-  processedData,
-}) => {
+export const ViolinRenderer: React.FC<BaseChartRendererProps> = ({ width, height, colors, processedData }) => {
   // Similar to box plot, we need distribution data.
   // Assumption: variableStats.density or processedData.series[].density is available.
   // If not, we show a simplified placeholder or just use what we have.

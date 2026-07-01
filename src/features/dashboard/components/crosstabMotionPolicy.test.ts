@@ -1,10 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import type { TableRowNode } from '../../../core/analysis/treeBuilder';
-import {
-  MAX_ANIMATED_CROSSTAB_CELLS,
-  countTreeNodes,
-  shouldAnimateCrosstab,
-} from './crosstabMotionPolicy';
+import { MAX_ANIMATED_CROSSTAB_CELLS, countTreeNodes, shouldAnimateCrosstab } from './crosstabMotionPolicy';
 
 /** Minimal node factory — only the fields countTreeNodes reads matter here. */
 function node(key: string, children: TableRowNode[] = []): TableRowNode {
@@ -30,10 +26,7 @@ describe('countTreeNodes', () => {
   });
 
   it('counts nested child rows', () => {
-    const tree = [
-      node('a', [node('a1'), node('a2')]),
-      node('b', [node('b1', [node('b1a')])]),
-    ];
+    const tree = [node('a', [node('a1'), node('a2')]), node('b', [node('b1', [node('b1a')])])];
     // a, a1, a2, b, b1, b1a = 6
     expect(countTreeNodes(tree)).toBe(6);
   });

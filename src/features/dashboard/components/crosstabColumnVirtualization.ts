@@ -55,9 +55,7 @@ export function shouldVirtualizeCols(colCount: number): boolean {
  *  regardless of scroll position, so the horizontal scrollbar stays stable. */
 export function virtualizedTableWidth(colCount: number, hasTotalColumn: boolean): number {
   return (
-    VIRTUALIZED_ROW_LABEL_WIDTH +
-    colCount * VIRTUALIZED_COL_WIDTH +
-    (hasTotalColumn ? VIRTUALIZED_TOTAL_COL_WIDTH : 0)
+    VIRTUALIZED_ROW_LABEL_WIDTH + colCount * VIRTUALIZED_COL_WIDTH + (hasTotalColumn ? VIRTUALIZED_TOTAL_COL_WIDTH : 0)
   );
 }
 

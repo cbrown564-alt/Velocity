@@ -1,11 +1,6 @@
 import { HistogramBin } from '../../../types';
 import { DatabaseAdapter } from '../../DatabaseAdapter';
-import {
-  buildGridHistogramQuery,
-  buildFilterClause,
-  escapeIdentifier,
-  escapeString,
-} from '../../sql/queryBuilder';
+import { buildGridHistogramQuery, buildFilterClause, escapeIdentifier, escapeString } from '../../sql/queryBuilder';
 import type { CrosstabQueryOptions } from '../../../types/worker';
 import { extractRowKeyStrings } from './rowKeys';
 import type { CrosstabHistogramBinSqlRow, CrosstabSqlRow } from './types';

@@ -20,7 +20,12 @@ function isOpaqueId(value: string): boolean {
   return UUID_LIKE.test(value);
 }
 
-function resolveVarLabel(id: string, variables: Variable[] | undefined, tableConfig: TableConfig, rowIndex?: number): string {
+function resolveVarLabel(
+  id: string,
+  variables: Variable[] | undefined,
+  tableConfig: TableConfig,
+  rowIndex?: number,
+): string {
   const match = variables?.find((x) => x.id === id || x.name === id);
   if (match?.label) return match.label;
   if (match?.name && !isOpaqueId(match.name)) return match.name;

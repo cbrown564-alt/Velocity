@@ -162,7 +162,11 @@ export const CrosstabRow: React.FC<CrosstabRowProps> = ({
           </div>
         </td>
         {colLeftPadding > 0 && (
-          <td aria-hidden style={{ width: colLeftPadding, padding: 0 }} className="border-l border-[var(--border-subtle)]" />
+          <td
+            aria-hidden
+            style={{ width: colLeftPadding, padding: 0 }}
+            className="border-l border-[var(--border-subtle)]"
+          />
         )}
         {cols.map((col) => {
           const cell = row.cells[col];
@@ -241,7 +245,11 @@ export const CrosstabRow: React.FC<CrosstabRowProps> = ({
           );
         })}
         {colRightPadding > 0 && (
-          <td aria-hidden style={{ width: colRightPadding, padding: 0 }} className="border-l border-[var(--border-subtle)]" />
+          <td
+            aria-hidden
+            style={{ width: colRightPadding, padding: 0 }}
+            className="border-l border-[var(--border-subtle)]"
+          />
         )}
         {tableData.colKeys.length > 1 && (
           <td

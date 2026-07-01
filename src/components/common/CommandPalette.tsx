@@ -1,16 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import {
-  Search,
-  LayoutGrid,
-  Maximize2,
-  RotateCcw,
-  FileDown,
-  Home,
-  Moon,
-  Sun,
-  Droplets,
-  Keyboard,
-} from 'lucide-react';
+import { Search, LayoutGrid, Maximize2, RotateCcw, FileDown, Home, Moon, Sun, Droplets, Keyboard } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { useVelocityStore } from '../../store';
 
@@ -24,14 +13,8 @@ interface CommandItem {
 
 export const CommandPalette: React.FC = () => {
   const { setTheme, availableThemes } = useTheme();
-  const {
-    commandPaletteOpen,
-    closeCommandPalette,
-    toggleAppMode,
-    toggleFocusMode,
-    reset,
-    addToast,
-  } = useVelocityStore();
+  const { commandPaletteOpen, closeCommandPalette, toggleAppMode, toggleFocusMode, reset, addToast } =
+    useVelocityStore();
 
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);

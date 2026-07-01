@@ -28,9 +28,7 @@ describe('virtualizedTableWidth', () => {
   });
 
   it('omits the total column width when there is no total column', () => {
-    expect(virtualizedTableWidth(50, false)).toBe(
-      VIRTUALIZED_ROW_LABEL_WIDTH + 50 * VIRTUALIZED_COL_WIDTH,
-    );
+    expect(virtualizedTableWidth(50, false)).toBe(VIRTUALIZED_ROW_LABEL_WIDTH + 50 * VIRTUALIZED_COL_WIDTH);
   });
 });
 
@@ -63,7 +61,13 @@ describe('computeColWindow', () => {
   });
 
   it('subtracts the row-label column offset from the visible-column calculation', () => {
-    const noOffset = computeColWindow({ scrollLeft: 1000, viewportWidth: 1000, colWidth: 100, colCount: 100, overscan: 0 });
+    const noOffset = computeColWindow({
+      scrollLeft: 1000,
+      viewportWidth: 1000,
+      colWidth: 100,
+      colCount: 100,
+      overscan: 0,
+    });
     const withOffset = computeColWindow({
       scrollLeft: 1000,
       viewportWidth: 1000,
@@ -78,7 +82,13 @@ describe('computeColWindow', () => {
   });
 
   it('clamps to the end of the banner without negative right padding', () => {
-    const w = computeColWindow({ scrollLeft: 1_000_000, viewportWidth: 1000, colWidth: 100, colCount: 20, overscan: 4 });
+    const w = computeColWindow({
+      scrollLeft: 1_000_000,
+      viewportWidth: 1000,
+      colWidth: 100,
+      colCount: 20,
+      overscan: 4,
+    });
     expect(w.endIndex).toBe(20);
     expect(w.rightPadding).toBe(0);
   });

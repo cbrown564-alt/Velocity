@@ -35,20 +35,23 @@ export const InspectorDistribution: React.FC<InspectorDistributionProps> = ({
   const { width: containerWidth } = useResizeObserver(containerRef);
   const chartWidth = Math.max(280, containerWidth); // section has no horizontal padding
 
-  const isMissingValue = useCallback((value: number | string | null): boolean => {
-    if (value === null) return true;
-    if (!variable?.missingValues) return false;
-    const numericValue = typeof value === 'number' ? value : Number(value);
-    if (Number.isFinite(numericValue)) {
-      if (variable.missingValues.discrete?.includes(numericValue)) return true;
-      if (variable.missingValues.range) {
-        const low = Math.min(variable.missingValues.range.low, variable.missingValues.range.high);
-        const high = Math.max(variable.missingValues.range.low, variable.missingValues.range.high);
-        if (numericValue >= low && numericValue <= high) return true;
+  const isMissingValue = useCallback(
+    (value: number | string | null): boolean => {
+      if (value === null) return true;
+      if (!variable?.missingValues) return false;
+      const numericValue = typeof value === 'number' ? value : Number(value);
+      if (Number.isFinite(numericValue)) {
+        if (variable.missingValues.discrete?.includes(numericValue)) return true;
+        if (variable.missingValues.range) {
+          const low = Math.min(variable.missingValues.range.low, variable.missingValues.range.high);
+          const high = Math.max(variable.missingValues.range.low, variable.missingValues.range.high);
+          if (numericValue >= low && numericValue <= high) return true;
+        }
       }
-    }
-    return false;
-  }, [variable?.missingValues]);
+      return false;
+    },
+    [variable?.missingValues],
+  );
 
   // Prepare data for Nominal/Ordinal Charts (HorizontalBarRenderer)
   const nominalChartData = useMemo(() => {

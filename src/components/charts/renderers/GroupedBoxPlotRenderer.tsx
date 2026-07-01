@@ -18,12 +18,7 @@ const DEFAULT_PALETTE = [
  * The cells contain the distribution stats (min, q1, median, q3, max) for the scale variable
  * within that group.
  */
-export const GroupedBoxPlotRenderer: React.FC<BaseChartRendererProps> = ({
-  width,
-  height,
-  colors,
-  processedData,
-}) => {
+export const GroupedBoxPlotRenderer: React.FC<BaseChartRendererProps> = ({ width, height, colors, processedData }) => {
   // For grouped box plot: rows are the nominal groups, cells contain the stats
   // We need to extract stats from each row's cells (typically the "Total" column)
 

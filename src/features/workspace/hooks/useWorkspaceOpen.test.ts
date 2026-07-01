@@ -73,7 +73,7 @@ describe('useWorkspaceOpen', () => {
 
     expect(clearImportedSessionSemantic).toHaveBeenCalledOnce();
     expect(saveDatasetSession).toHaveBeenCalledWith('ds-current', {
-      tableConfig: { rowVars: ['q1'], colVar: null },
+      tableConfig: { rowVars: ['q1'], colVar: null, rowVarLabels: ['Q1'], colVarLabel: null },
       activeFilters: [{ id: 'f1', variableId: 'q1', operator: 'eq', value: 1 }],
       transformLog: [],
     });

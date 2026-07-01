@@ -22,7 +22,12 @@ import type {
 import type { ChartType } from '../types/charts';
 import type { OrderedScoring, VariableType } from '../types';
 import type { ProcessedAnalysisData } from '../types/processedData';
-import type { CrosstabQueryOptions, WorkerAnalysisContext, WorkerAnalysisSettings, VariableStatsResult } from '../types/worker';
+import type {
+  CrosstabQueryOptions,
+  WorkerAnalysisContext,
+  WorkerAnalysisSettings,
+  VariableStatsResult,
+} from '../types/worker';
 import type { VariableMapping } from '../types/harmonization';
 import type { DatasetSummary, EngineRecodeConfig, ResultEnvelope } from './types';
 import { VelocityError } from './types';

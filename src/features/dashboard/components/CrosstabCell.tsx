@@ -274,7 +274,6 @@ export const CrosstabCell: React.FC<CrosstabCellProps> = ({
   }
 
   if (variant === 'metric') {
-
     if (isZero) {
       return (
         <div className={CELL_STACK} data-testid="crosstab-cell-metric" data-zero-cell="true">
@@ -338,7 +337,6 @@ export const CrosstabCell: React.FC<CrosstabCellProps> = ({
       </div>
     );
   }
-
 
   if (isZero) {
     return (

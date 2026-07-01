@@ -93,7 +93,10 @@ const DATASETS = [
   { key: 'gss2024', filePath: path.resolve(process.cwd(), 'test_data/GSS/GSS2024.sav') },
   { key: 'gss2022', filePath: path.resolve(process.cwd(), 'test_data/GSS/GSS2022.sav') },
   // Mid-size (8-50 MB) band: stitched British Social Attitudes waves 2014-2017 (harmonization fixture).
-  { key: 'bsa2014_2017', filePath: path.resolve(process.cwd(), 'test_data/British Social Attitudes Survey/bsa_stitched_2014_2017.sav') },
+  {
+    key: 'bsa2014_2017',
+    filePath: path.resolve(process.cwd(), 'test_data/British Social Attitudes Survey/bsa_stitched_2014_2017.sav'),
+  },
   { key: 'wvs7', filePath: path.resolve(process.cwd(), 'test_data/WVS/WVS_Cross-National_Wave_7_spss_v6_0.sav') },
 ];
 

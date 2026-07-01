@@ -9,12 +9,7 @@ import { BaseChartRendererProps } from '../../../types/charts';
  * Data expected: Array of { label: string, min, q1, median, q3, max, ... }
  * derived from 'variableStats' or specialized aggregation.
  */
-export const BoxPlotRenderer: React.FC<BaseChartRendererProps> = ({
-  width,
-  height,
-  processedData,
-  variableStats,
-}) => {
+export const BoxPlotRenderer: React.FC<BaseChartRendererProps> = ({ width, height, processedData, variableStats }) => {
   // NOTE: True box plot calculation usually happens on backend or worker.
   // Here we assume keys in variableStats or processedData contain the quartiles.
   // If stats are not pre-calculated, we might need to compute them from raw data
