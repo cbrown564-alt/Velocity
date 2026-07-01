@@ -202,14 +202,15 @@ These rows remain directionally valid, but should not become active until `PILOT
 | STAB-CI-4 | E2E companion enforcement | UI trigger paths require `tests/e2e/` updates in same PR | STAB-CI-2 | Done | No | A,I | `scripts/check-e2e-companion.mjs`, wired in CI + `npm run ci` |
 | STAB-CI-5 | DuckDB Arrow browser smoke | Playwright gate for WASM Arrow ingestion path | STAB-CI-2 | Done | No | I | `tests/e2e/duckdb-arrow-smoke.spec.ts`; `duckDbArrow.test.ts` points to e2e |
 | STAB-CI-6 | Coverage exclusion ratchet | Measure store slices with characterization tests | STAB-CI-2 | Done | No | A | `harmonizationSlice`, `uiSlice`, `variableCatalogActions` in coverage set; thresholds pass |
+| STAB-CI-7 | Features/overlays coverage ratchet | Remove blanket `src/features/` + `src/components/overlays/` exclusions; add characterization tests | STAB-CI-6 | Done | No | A | Blanket exclusions removed in `vitest.config.ts`; 40+ new/extended co-located tests (workspace, variable manager, dashboard, overlays); global coverage passes (82.03% fn / 79.41% br, July 2026); measured features+overlays aggregate 73.9% fn — per-module follow-up remains |
+| STAB-CI-8 | EngineProxy / duckdbBundles characterization | `EngineProxy.ts` + `duckdbBundles.ts` in coverage set with co-located tests | STAB-CI-6 | Done | No | A | `src/services/EngineProxy.test.ts`, `src/services/duckdbBundles.test.ts`; service exclusions removed |
+| STAB-CI-9 | Parity gate in CI | `npm run test:parity` (WASM vs Node adapter on golden fixtures) added to `test` job and `npm run ci` | STAB-CI-2 | Done | No | G | 8 tests, ~2.4s wall-clock on CI-class hardware; full-CI path chosen (under 3-min budget); step in `.github/workflows/test.yml` after coverage, before build; `arch_08_testing.md` §8 updated (July 2026) |
 
 #### STAB-CI deferred (future ratchets)
 
 | ID | Outcome |
 | :--- | :--- |
-| STAB-CI-7 | Shrink `src/features/` and `src/components/overlays/` exclusions (need ~82% function coverage on those surfaces) |
-| STAB-CI-8 | `EngineProxy.ts` / `duckdbBundles.ts` characterization + coverage inclusion |
-| STAB-CI-9 | Optional `test:parity` in CI when runtime budget allows |
+| STAB-CI-10 | Raise features/overlays per-module function coverage from 73.9% aggregate toward 82% (harmonization UI, onboarding hooks, remaining overlay modals) |
 
 ## 5. Completed Work Reference
 

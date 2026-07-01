@@ -97,6 +97,8 @@ Repeated pattern when touching shortcuts, onboarding, banners, or theme labels:
 | STAB-CI-4 | UI playbook: require E2E update when changing shortcuts/onboarding/banners | Repeated failure pattern | **Done** — `scripts/check-e2e-companion.mjs` in CI |
 | STAB-CI-5 | Replace `describe.skip` on `duckDbArrow.test.ts` with browser smoke | Critical WASM path untested | **Done** — `tests/e2e/duckdb-arrow-smoke.spec.ts` |
 | STAB-CI-6 | Shrink coverage exclusions as characterization tests land | Honest green for product code | **Done** — store slice ratchet; `features/`/`overlays/` deferred to STAB-CI-7 |
+| STAB-CI-7 | Remove blanket `features/`/`overlays/` exclusions + characterization tests | Honest product-surface measurement | **Done** — blanket exclusions removed; global thresholds pass |
+| STAB-CI-8 | `EngineProxy.ts` / `duckdbBundles.ts` characterization | Service-layer coverage | **Done** — co-located tests; exclusions removed |
 
 ## References
 

@@ -30,20 +30,16 @@ export default defineConfig({
         '*.config.{js,cjs,mjs,ts}',
         'test_*.{js,mjs,ts}',
         'src/components/charts/',
-        // STAB-CI-6: overlays/ stays excluded — tested modals still ~33% function coverage;
-        // ConfirmModal.test.tsx + InputModal.test.tsx added for next ratchet step.
-        'src/components/overlays/',
+        // STAB-CI-7: overlays/ exclusion removed after characterization tests added.
+        // 'src/components/overlays/',
         'src/engine/webr/',
         'src/core/export/chartBuilder.ts',
         'src/core/export/resolveThemeColors.ts',
         'src/core/export/types.ts',
-        // STAB-CI-6: features/ stays excluded — full removal drops all metrics below thresholds;
-        // partial lib/onboarding inclusion also misses function threshold (81.12%).
-        'src/features/',
+        // STAB-CI-7: features/ exclusion removed after characterization tests added.
+        // 'src/features/',
         'src/hooks/',
-        'src/services/EngineProxy.ts',
         'src/services/duckDbArrow.ts',
-        'src/services/duckdbBundles.ts',
         // STAB-CI-6 ratchet: harmonizationSlice + uiSlice removed from exclusions
         // (characterization tests in harmonizationSlice.test.ts, uiSlice.focusMode.test.ts).
         // data/ submodules without tests stay excluded; variableCatalogActions.ts is measured.
