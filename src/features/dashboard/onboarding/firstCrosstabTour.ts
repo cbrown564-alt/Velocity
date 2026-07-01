@@ -5,26 +5,24 @@ export type FirstCrosstabTourStep = 'rows' | 'columns' | 'significance';
 const TOUR_DONE_KEY = 'velocity-first-crosstab-tour-done';
 const FOCUS_TIP_KEY = 'velocity-focus-tip-seen';
 
-export const FIRST_CROSSTAB_TOUR_STEPS: Record<
-  FirstCrosstabTourStep,
-  { target: string; title: string; body: string }
-> = {
-  rows: {
-    target: '[data-testid="drop-zone-rows"]',
-    title: 'Start with rows',
-    body: 'Drag or click a variable here to define what each table row represents.',
-  },
-  columns: {
-    target: '[data-testid="drop-zone-cols"]',
-    title: 'Add a column break',
-    body: 'Drop a second variable in Columns to build your first crosstab.',
-  },
-  significance: {
-    target: '.statistics-status-bar',
-    title: 'Read the significance markers',
-    body: 'Arrows and letters in cells show where groups differ. The footer explains the active test.',
-  },
-};
+export const FIRST_CROSSTAB_TOUR_STEPS: Record<FirstCrosstabTourStep, { target: string; title: string; body: string }> =
+  {
+    rows: {
+      target: '[data-testid="drop-zone-rows"]',
+      title: 'Start with rows',
+      body: 'Drag or click a variable here to define what each table row represents.',
+    },
+    columns: {
+      target: '[data-testid="drop-zone-cols"]',
+      title: 'Add a column break',
+      body: 'Drop a second variable in Columns to build your first crosstab.',
+    },
+    significance: {
+      target: '.statistics-status-bar',
+      title: 'Read the significance markers',
+      body: 'Arrows and letters in cells show where groups differ. The footer explains the active test.',
+    },
+  };
 
 function readFlag(key: string): boolean {
   if (typeof localStorage === 'undefined') return false;

@@ -342,8 +342,8 @@ export const DataTable: React.FC<DataTableProps> = ({
       bleed={frameBleed}
       density={density}
       reducedMotion={reducedMotion}
-      frameClassName={density === 'generous' || frameBleed ? undefined : 'shrink-wrap'}
-      className={density === 'generous' || frameBleed ? 'h-full min-h-0' : ''}
+      frameClassName={density === 'generous' || frameBleed || virtualizeRows ? undefined : 'shrink-wrap'}
+      className={density === 'generous' || frameBleed || virtualizeRows ? 'h-full min-h-0' : ''}
       footer={
         <StatisticsStatusBar
           analysisSettings={analysisSettings}
@@ -466,46 +466,46 @@ export const DataTable: React.FC<DataTableProps> = ({
               tableData.rows.map((row) => renderRow(row, true))
             )}
             {showColumnBases ? (
-            <tr
-              className={`${mergeStyles.totalRow} bg-[var(--bg-surface)] font-semibold border-t border-[var(--border-grid)] border-b border-[var(--border-grid)]`}
-            >
-              <td
-                className={`total-row-label px-2 ${density === 'generous' ? 'py-2.5' : 'py-1.5'} text-[var(--text-secondary)] font-body text-xs font-bold uppercase tracking-wide`}
+              <tr
+                className={`${mergeStyles.totalRow} bg-[var(--bg-surface)] font-semibold border-t border-[var(--border-grid)] border-b border-[var(--border-grid)]`}
               >
-                Total
-              </td>
-              {colSpacer(colLeftPadding, false)}
-              {visibleColKeys.map((col) => (
                 <td
-                  key={col}
-                  className={`total-row-cell px-2 ${density === 'generous' ? 'py-2.5' : 'py-1.5'} text-right align-middle data-cell`}
+                  className={`total-row-label px-2 ${density === 'generous' ? 'py-2.5' : 'py-1.5'} text-[var(--text-secondary)] font-body text-xs font-bold uppercase tracking-wide`}
                 >
-                  <CrosstabCell
-                    key={`coltotal-${animationKey}-${col}`}
-                    variant="count"
-                    count={tableData.colTotals[col]}
-                    size="marginal"
-                    animationTrigger={animationKey}
-                    reducedMotion={reducedMotion}
-                  />
+                  Total
                 </td>
-              ))}
-              {colSpacer(colRightPadding, false)}
-              {tableData.colKeys.length > 1 && (
-                <td
-                  className={`total-row-cell px-2 ${density === 'generous' ? 'py-2.5' : 'py-1.5'} text-right align-middle data-cell bg-[var(--bg-active)]/30`}
-                >
-                  <CrosstabCell
-                    key={`grand-${animationKey}`}
-                    variant="count"
-                    count={totalCount}
-                    size="marginal"
-                    animationTrigger={animationKey}
-                    reducedMotion={reducedMotion}
-                  />
-                </td>
-              )}
-            </tr>
+                {colSpacer(colLeftPadding, false)}
+                {visibleColKeys.map((col) => (
+                  <td
+                    key={col}
+                    className={`total-row-cell px-2 ${density === 'generous' ? 'py-2.5' : 'py-1.5'} text-right align-middle data-cell`}
+                  >
+                    <CrosstabCell
+                      key={`coltotal-${animationKey}-${col}`}
+                      variant="count"
+                      count={tableData.colTotals[col]}
+                      size="marginal"
+                      animationTrigger={animationKey}
+                      reducedMotion={reducedMotion}
+                    />
+                  </td>
+                ))}
+                {colSpacer(colRightPadding, false)}
+                {tableData.colKeys.length > 1 && (
+                  <td
+                    className={`total-row-cell px-2 ${density === 'generous' ? 'py-2.5' : 'py-1.5'} text-right align-middle data-cell bg-[var(--bg-active)]/30`}
+                  >
+                    <CrosstabCell
+                      key={`grand-${animationKey}`}
+                      variant="count"
+                      count={totalCount}
+                      size="marginal"
+                      animationTrigger={animationKey}
+                      reducedMotion={reducedMotion}
+                    />
+                  </td>
+                )}
+              </tr>
             ) : null}
           </tbody>
         </table>

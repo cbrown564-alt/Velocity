@@ -34,8 +34,7 @@ export interface ModalShellProps {
   ariaLabel?: string;
 }
 
-const DEFAULT_BACKDROP =
-  'fixed inset-0 bg-[var(--text-primary)]/30 backdrop-blur-sm z-[var(--z-modal)]';
+const DEFAULT_BACKDROP = 'fixed inset-0 bg-[var(--text-primary)]/30 backdrop-blur-sm z-[var(--z-modal)]';
 
 const DEFAULT_OVERLAY = 'fixed inset-0 z-[var(--z-modal)] flex items-center justify-center p-4 pointer-events-none';
 
@@ -99,7 +98,11 @@ export const ModalShell: React.FC<ModalShellProps> = ({
               onClick={(event) => event.stopPropagation()}
               onKeyDown={onPanelKeyDown}
             >
-              {ariaLabel && !ariaLabelledBy ? <span id={fallbackLabelId} className="sr-only">{ariaLabel}</span> : null}
+              {ariaLabel && !ariaLabelledBy ? (
+                <span id={fallbackLabelId} className="sr-only">
+                  {ariaLabel}
+                </span>
+              ) : null}
               {children}
             </motion.div>
           </motion.div>
@@ -122,7 +125,11 @@ export const ModalShell: React.FC<ModalShellProps> = ({
               data-testid={panelDataTestId}
               onKeyDown={onPanelKeyDown}
             >
-              {ariaLabel && !ariaLabelledBy ? <span id={fallbackLabelId} className="sr-only">{ariaLabel}</span> : null}
+              {ariaLabel && !ariaLabelledBy ? (
+                <span id={fallbackLabelId} className="sr-only">
+                  {ariaLabel}
+                </span>
+              ) : null}
               {children}
             </div>
           </motion.div>

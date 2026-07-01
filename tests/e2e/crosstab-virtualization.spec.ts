@@ -40,6 +40,12 @@ async function clearBrowserStorage(page: import('@playwright/test').Page): Promi
       // best-effort
     }
     try {
+      localStorage.setItem('velocity-first-crosstab-tour-done', '1');
+      localStorage.setItem('velocity-focus-tip-seen', '1');
+    } catch {
+      // best-effort onboarding flag seeding for stable e2e
+    }
+    try {
       if (navigator.storage?.getDirectory) {
         const root = await navigator.storage.getDirectory();
         // @ts-expect-error entries() is an async iterator

@@ -122,7 +122,13 @@ export const AnalysisSettingsPanel: React.FC<AnalysisSettingsPanelProps> = ({
       </div>
 
       {/* Table display toggles (UXP-040) */}
-      <div className={isInline ? 'flex flex-wrap items-center gap-4 w-full pt-2 border-t border-[var(--border-color)]' : 'mt-3 pt-3 border-t border-[var(--border-color)] space-y-3'}>
+      <div
+        className={
+          isInline
+            ? 'flex flex-wrap items-center gap-4 w-full pt-2 border-t border-[var(--border-color)]'
+            : 'mt-3 pt-3 border-t border-[var(--border-color)] space-y-3'
+        }
+      >
         <div className="text-[10px] font-semibold text-[var(--text-secondary)] uppercase tracking-wide">
           Table display
         </div>

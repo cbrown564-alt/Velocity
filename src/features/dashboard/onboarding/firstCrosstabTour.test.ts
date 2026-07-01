@@ -16,9 +16,9 @@ describe('firstCrosstabTour', () => {
   it('resolves tour steps from table config progress', () => {
     expect(resolveFirstCrosstabTourStep({ rowCount: 0, hasColumn: false, hasRenderedCrosstab: false })).toBe('rows');
     expect(resolveFirstCrosstabTourStep({ rowCount: 1, hasColumn: false, hasRenderedCrosstab: false })).toBe('columns');
-    expect(
-      resolveFirstCrosstabTourStep({ rowCount: 1, hasColumn: true, hasRenderedCrosstab: true }),
-    ).toBe('significance');
+    expect(resolveFirstCrosstabTourStep({ rowCount: 1, hasColumn: true, hasRenderedCrosstab: true })).toBe(
+      'significance',
+    );
   });
 
   it('returns null after tour is marked done', () => {

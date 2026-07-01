@@ -32,6 +32,8 @@ describe('computeCrosstabColumnWidths', () => {
   });
 
   it('does not crash when a column label is null', () => {
-    expect(() => computeCrosstabColumnWidths(['yes', null as unknown as string], { yes: 'yes', null: null }, true)).not.toThrow();
+    expect(() =>
+      computeCrosstabColumnWidths(['yes', null as unknown as string], { yes: 'yes', null: null }, true),
+    ).not.toThrow();
   });
 });

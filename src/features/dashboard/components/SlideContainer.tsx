@@ -17,6 +17,7 @@ import { applyCanvasPlacement } from '../../../core/grid/gridUtils';
 import { getMotionProps, useReducedMotion, DURATIONS } from '../../../lib/motion';
 import { AnalysisOutputFrame } from './AnalysisOutputFrame';
 import { AnalysisErrorBoundary } from '../../../components/common/AnalysisErrorBoundary';
+import { VIRTUALIZE_ROW_THRESHOLD } from './crosstabVirtualization';
 
 import './SlideHeader.css';
 
@@ -101,7 +102,11 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
   const analysisResetKey = `${activeSlideId}:${tableConfig.rowVars.join(',')}:${tableConfig.colVar ?? ''}:${activeSlide.visualizationType}`;
   const analysisSurface = activeSlide.visualizationType === 'chart' ? 'chart' : 'table';
   const shrinkWrapSlide =
-    resolvedRowVars.length > 0 && activeSlide.visualizationType === 'table' && !focusMode && tableDensity === 'compact';
+    resolvedRowVars.length > 0 &&
+    activeSlide.visualizationType === 'table' &&
+    !focusMode &&
+    tableDensity === 'compact' &&
+    chartData.length <= VIRTUALIZE_ROW_THRESHOLD;
 
   const renderCellContent = () => {
     if (queryError && !isQuerying) {
