@@ -255,7 +255,9 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
         <div className={styles.emptyState}>
           <MousePointerClick className={styles.emptyIcon} aria-hidden />
           <h3 className={styles.emptyTitle}>Select a variable</h3>
-          <p className={styles.emptyText}>Pick a variable from the list to inspect labels, distribution, and recode options.</p>
+          <p className={styles.emptyText}>
+            Pick a variable from the list to inspect labels, distribution, and recode options.
+          </p>
           <ul className={styles.emptyGuide}>
             <li>
               <Search size={14} aria-hidden />

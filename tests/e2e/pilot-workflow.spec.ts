@@ -45,7 +45,8 @@ test('pilot workflow: upload, crosstab, export PPTX, reopen, event log', async (
 
   test.skip(!opfsSupported, 'OPFS not supported in this environment');
 
-  await expect(page.getByTestId('pilot-environment-banner')).toBeVisible({ timeout: 60000 });
+  await expect(page.getByTestId('workspace-status-strip')).toBeVisible({ timeout: 60000 });
+  await expect(page.getByTestId('workspace-status-pilot')).toBeVisible();
   await expect(page.getByText(/never leaves this device/i)).toBeVisible();
 
   await uploadSavAndReachDashboard(page);
