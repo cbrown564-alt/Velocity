@@ -254,4 +254,36 @@ describe('SlideContainer', () => {
     });
     expect(useVelocityStore.getState().hasSeenAutoCrosstab).toBe(true);
   });
+
+  it('renders chart surface when slide visualization type is chart', () => {
+    const slide = createSlide({
+      id: 'slide-1',
+      visualizationType: 'chart',
+      cells: [{ id: 'cell-1', content: { type: 'chart', chartType: 'horizontal-bar' } }],
+    });
+    useVelocityStore.setState({
+      slides: [slide],
+      activeSlideId: 'slide-1',
+      activeCellId: slide.cells[0].id,
+      tableConfig: { rowVars: ['gender'], colVar: 'region' },
+      queryResult: [{ rowKeys: ['1'], colKey: 'east', count: 10 }],
+      variableSets: [
+        { id: 'gender', name: 'Gender', variableIds: ['v1'], type: 'categorical', structure: 'single' },
+        { id: 'region', name: 'Region', variableIds: ['v2'], type: 'categorical', structure: 'single' },
+      ],
+      dataset: {
+        id: 'ds1',
+        name: 'test',
+        rowCount: 100,
+        variables: [
+          { id: 'v1', name: 'gender', label: 'Gender', type: 'categorical', valueLabels: [], missingValues: {} },
+          { id: 'v2', name: 'region', label: 'Region', type: 'categorical', valueLabels: [], missingValues: {} },
+        ],
+        source: 'csv',
+      },
+    });
+
+    const { container } = render(<SlideContainer />);
+    expect(container.querySelector('[data-testid="slide-content-region"]')).toBeInTheDocument();
+  });
 });

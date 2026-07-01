@@ -42,7 +42,7 @@ npm run test:mutation # Stryker mutation testing for src/core/
 npm run typecheck:mcp # MCP package/server TypeScript contract
 npm run test:ui       # Interactive UI
 npm run test:e2e      # Playwright E2E (CI e2e job)
-npm run test:parity   # WASM vs Node adapter parity on golden fixtures (optional; not in default CI)
+npm run test:parity   # WASM vs Node adapter parity on golden fixtures (in CI test job; STAB-CI-9)
 ```
 
 ## 4. Directory Structure
@@ -149,7 +149,7 @@ When changing `src/core/`, run mutation tests locally or rely on the CI `mutatio
 
 ### Known blind spots (stabilization)
 
-`vitest.config.ts` still excludes large product areas without full characterization coverage: `src/features/`, `src/components/overlays/`, `src/components/charts/`, untested `src/store/slices/*` and `src/store/slices/data/*` modules, `src/services/EngineProxy.ts`, `duckDbArrow.ts`, `duckdbBundles.ts`, and `src/hooks/`. **STAB-CI-6 (July 2026)** removed exclusions for `harmonizationSlice.ts`, `uiSlice.ts`, and `variableCatalogActions.ts` now that co-located tests exist; `features/` and `overlays/` remain excluded until function coverage on those surfaces exceeds the 82% floor. Green Vitest coverage does not imply workspace/export UI confidence — treat Playwright E2E as the product gate for excluded UI.
+`vitest.config.ts` still excludes some product areas without full characterization coverage: `src/components/charts/`, untested `src/store/slices/data/*` modules, `src/hooks/`, `duckDbArrow.ts`, and harmonization/onboarding UI not yet pulled into the coverage set. **STAB-CI-7 (July 2026)** removed blanket exclusions for `src/features/` and `src/components/overlays/` after 40+ co-located characterization tests landed; global thresholds pass with those paths measured (features+overlays aggregate ~74% fn — per-module ratchet tracked as STAB-CI-10). **STAB-CI-8** added `EngineProxy.test.ts` and `duckdbBundles.test.ts`. Green Vitest coverage does not imply workspace/export UI confidence — treat Playwright E2E as the product gate for excluded UI.
 
 ## 8. CI/CD Pipeline
 
@@ -165,7 +165,8 @@ GitHub Actions runs on every PR to `main` across **two required jobs** plus an o
 5. **Architecture guards**: `npm run check:worker-boundary`, `npm run check:querybuilder-pure`
 6. **Design token policy**: `npm run check:design-tokens`
 7. **Unit/integration tests with coverage**: `npm run test:run -- --coverage` (thresholds on non-excluded paths; see §7)
-8. **Production build**: `npm run build`
+8. **Parity tests**: `npm run test:parity` — WASM vs Node adapter parity on golden fixtures (~2.4s wall-clock; `STAB-CI-9` complete July 2026)
+9. **Production build**: `npm run build`
 
 ### `e2e` job (parallel, also required for green PR)
 
@@ -187,7 +188,6 @@ Run locally when touching `src/core/**` even if the workflow is path-filtered.
 
 ### Deferred (post–`STAB-CI-3`)
 
-- `npm run test:parity` remains optional/local unless runtime is proven acceptable for every PR
 - Further Vitest coverage exclusion shrink (`features/`, `overlays/`) after characterization tests raise function coverage above thresholds
 
 ## 9. Writing New Tests

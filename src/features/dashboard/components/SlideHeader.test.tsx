@@ -230,4 +230,29 @@ describe('SlideHeader', () => {
     render(<SlideHeader />);
     expect(screen.queryByTitle('Click to use suggested title')).not.toBeInTheDocument();
   });
+
+  it('commits inline title edits on Enter', async () => {
+    render(<SlideHeader />);
+
+    fireEvent.click(screen.getByText('New Slide'));
+    const input = screen.getByDisplayValue('New Slide');
+    fireEvent.change(input, { target: { value: 'Quarterly Tracker' } });
+    fireEvent.keyDown(input, { key: 'Enter' });
+
+    await waitFor(() => {
+      expect(useVelocityStore.getState().slides[0]?.title).toBe('Quarterly Tracker');
+    });
+  });
+
+  it('cancels inline title edits on Escape', () => {
+    render(<SlideHeader />);
+
+    fireEvent.click(screen.getByText('New Slide'));
+    const input = screen.getByDisplayValue('New Slide');
+    fireEvent.change(input, { target: { value: 'Draft Title' } });
+    fireEvent.keyDown(input, { key: 'Escape' });
+
+    expect(screen.getByText('New Slide')).toBeInTheDocument();
+    expect(useVelocityStore.getState().slides[0]?.title).toBe('New Slide');
+  });
 });
