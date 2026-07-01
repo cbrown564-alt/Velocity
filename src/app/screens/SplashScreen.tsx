@@ -111,7 +111,7 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
                   <p className="text-sm text-[var(--text-primary)] truncate" data-testid="engine-init-headline">
                     {initHeadline}
                   </p>
-                  <p className="text-xs text-[var(--text-secondary)] truncate" data-testid="engine-init-detail">
+                  <p className="text-xs text-[var(--text-primary)]/80 truncate" data-testid="engine-init-detail">
                     {initDetail}
                     {initPercent !== null ? ` · ${initPercent}%` : ''}
                   </p>

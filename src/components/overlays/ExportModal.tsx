@@ -5,7 +5,7 @@
  * Calls the export pipeline from src/core/export/*.
  */
 
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { X, FileDown, FileSpreadsheet, Presentation, Download, CheckCircle2 } from 'lucide-react';
 import styles from './ExportModal.module.css';
 import { exportPptx } from '../../core/export/pptxExporter';
@@ -97,6 +97,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({ isOpen, onClose, confi
   const [useTemplateMode, setUseTemplateMode] = useState(false);
   const [templateRefreshMode, setTemplateRefreshMode] = useState<TemplateRefreshMode>('wave_refresh');
   const [templateOptionsState, setTemplateOptionsState] = useState(initialConfig.templateOptions ?? null);
+  const templateInputRef = useRef<HTMLInputElement>(null);
 
   const slides = useVelocityStore((state) => state.slides);
   const activeSlideId = useVelocityStore((state) => state.activeSlideId);
@@ -692,16 +693,31 @@ export const ExportModal: React.FC<ExportModalProps> = ({ isOpen, onClose, confi
               </div>
             )}
             <div className={styles.inputGroup}>
-              <label htmlFor="template-import" className={styles.inputLabel}>
+              <span className={styles.inputLabel} id="template-import-label">
                 Import Client Template (.pptx)
-              </label>
+              </span>
               <input
                 id="template-import"
+                ref={templateInputRef}
                 type="file"
                 accept=".pptx,application/vnd.openxmlformats-officedocument.presentationml.presentation"
-                className={styles.input}
+                className={styles.hiddenInput}
                 onChange={handleTemplateImport}
+                aria-labelledby="template-import-label"
               />
+              <button
+                type="button"
+                className={styles.templateDropzone}
+                onClick={() => templateInputRef.current?.click()}
+              >
+                <Presentation size={20} />
+                <span className={styles.templateDropzoneTitle}>
+                  {templateOptionsState?.template?.filename ?? 'Choose template file'}
+                </span>
+                <span className={styles.templateDropzoneHint}>
+                  {templateOptionsState ? 'Click to replace template' : 'Click to browse or drop a .pptx file'}
+                </span>
+              </button>
             </div>
             {useTemplateMode && templateReviewIssues.length > 0 && (
               <ul className={styles.reviewList} data-testid="template-review-list">

@@ -10,6 +10,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useReducedMotion, getBackdropProps, getModalPresenceProps } from '../../../lib/motion';
 import { X, Link2, FolderPlus, Layers, Database, Check, AlertCircle, ArrowRight } from 'lucide-react';
 import type { StoredDataset, Project } from '../types';
+import { pluralize } from '../../../lib/pluralize';
 import styles from './ProjectLinkModal.module.css';
 
 interface ProjectLinkModalProps {
@@ -311,7 +312,7 @@ export const ProjectLinkModal: React.FC<ProjectLinkModalProps> = ({
                         <div className={styles.projectInfo}>
                           <span className={styles.projectName}>{project.name}</span>
                           <span className={styles.projectMeta}>
-                            {project.datasetIds.length} datasets
+                            {pluralize(project.datasetIds.length, 'dataset')}
                             {project.isLongitudinal && ' · Longitudinal'}
                           </span>
                         </div>

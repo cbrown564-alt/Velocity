@@ -7,11 +7,18 @@ import type { TableConfig } from '../../../types/analysis';
 import type { Variable } from '../../../types';
 import type { StoredDataset } from '../types';
 import { MS_THREE_DAYS } from '../../../lib/welcomeBack';
+import { enrichTableConfigLabels } from '../../../store/datasetSessionCoordinator';
 
 export type ResumeCandidate = {
   datasetId: string;
   datasetName: string;
   summaryLine: string;
+};
+
+export type FindResumeCandidateOptions = {
+  /** Live variable catalog for the active dataset (store), when table config is in memory. */
+  liveVariables?: Variable[];
+  now?: number;
 };
 
 const UUID_LIKE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -65,8 +72,9 @@ export function findResumeCandidate(
   datasets: StoredDataset[],
   activeDatasetId: string | null,
   tableConfig: TableConfig,
-  now = Date.now(),
+  options: FindResumeCandidateOptions = {},
 ): ResumeCandidate | null {
+  const now = options.now ?? Date.now();
   const hasLiveConfig = tableConfig.rowVars.length > 0 || Boolean(tableConfig.colVar);
 
   const scoreDataset = (d: StoredDataset): number => {
@@ -88,9 +96,11 @@ export function findResumeCandidate(
   if (!pick) return null;
 
   const useLive = pick.id === activeDatasetId && hasLiveConfig;
-  const cfg = useLive ? tableConfig : (pick.sessionState?.tableConfig ?? { rowVars: [], colVar: null });
+  const variables = useLive ? (options.liveVariables ?? pick.variables) : pick.variables;
+  const rawCfg = useLive ? tableConfig : (pick.sessionState?.tableConfig ?? { rowVars: [], colVar: null });
+  const cfg = enrichTableConfigLabels(rawCfg, variables);
 
-  const analysis = buildAnalysisSummary(cfg, pick.variables);
+  const analysis = buildAnalysisSummary(cfg, variables);
 
   const editedAgoMs = now - pick.lastModifiedAt;
   const editedNote =

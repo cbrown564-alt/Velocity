@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import path from 'path';
+import { openDatasetFromWorkspaceSearch } from './helpers/visualPolish';
 
 const smallSavFixture = path.resolve(process.cwd(), 'test_data/fixtures/test_small.sav');
 const sleepSavFixture = path.resolve(process.cwd(), 'test_data/sleep.sav');
@@ -37,9 +38,7 @@ async function returnToWorkspace(page: import('@playwright/test').Page) {
 }
 
 async function openDatasetFromWorkspace(page: import('@playwright/test').Page, fileName: string) {
-  await page.getByRole('button', { name: 'All Datasets' }).click();
-  await page.getByPlaceholder('Search datasets...').fill(fileName);
-  await page.getByRole('heading', { name: fileName }).dblclick();
+  await openDatasetFromWorkspaceSearch(page, fileName);
   await expect(page.getByText(/Survey Questions/)).toBeVisible({ timeout: 120000 });
 }
 

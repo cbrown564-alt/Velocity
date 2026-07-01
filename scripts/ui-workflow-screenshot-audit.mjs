@@ -268,7 +268,12 @@ async function main() {
     await page.getByPlaceholder('Search datasets...').fill('sleep.sav');
     await page.waitForTimeout(400);
     await shot(page, '13-dataset-search-reopen');
-    await page.getByRole('heading', { name: 'sleep.sav' }).dblclick();
+    const reopenListItem = page.getByRole('button', { name: 'Open dataset sleep.sav' });
+    if (await reopenListItem.isVisible().catch(() => false)) {
+      await reopenListItem.dblclick();
+    } else {
+      await page.getByRole('heading', { name: 'sleep.sav' }).dblclick();
+    }
     await page.getByText(/sleep\.sav \(271 rows\)/).waitFor({ state: 'visible', timeout: 120000 });
     await page.waitForTimeout(1500);
     await shot(page, '14-resumed-analysis-session');

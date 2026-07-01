@@ -38,6 +38,7 @@ import {
   type WorkspaceCategoryChip,
 } from '../lib/workspaceLibrary';
 import { useWelcomeBack } from '../hooks/useWelcomeBack';
+import { pluralize } from '../../../lib/pluralize';
 import { WorkspaceStorageIndicator } from './WorkspaceStorageIndicator';
 import { WorkspaceDatasetCard } from './WorkspaceDatasetCard';
 import { WorkspaceDatasetListItem } from './WorkspaceDatasetListItem';
@@ -144,6 +145,8 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
   }, [projects, datasets]);
 
   const showFilteredEmptyState = !isEmpty && filterMode !== 'projects' && filteredDatasets.length === 0;
+
+  const effectiveViewMode = searchQuery.trim() && filteredDatasets.length <= 3 ? 'list' : viewMode;
 
   const filteredEmptyMessage = searchQuery
     ? 'No datasets match your search. Try a different keyword or clear filters.'
@@ -497,11 +500,11 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
                       {filterMode === 'all' && 'All Datasets'}
                     </h2>
                   </div>
-                  <span className={styles.count}>{filteredDatasets.length} datasets</span>
+                  <span className={styles.count}>{pluralize(filteredDatasets.length, 'dataset')}</span>
                 </div>
               )}
 
-              {viewMode === 'grid' ? (
+              {effectiveViewMode === 'grid' ? (
                 <div className={styles.datasetsGrid}>
                   <AnimatePresence mode="popLayout">
                     {filteredDatasets.map((dataset) => (

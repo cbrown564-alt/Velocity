@@ -65,7 +65,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: var(--text-2xl);
   font-weight: 600;
   color: var(--text-primary);
@@ -433,7 +433,7 @@
 }
 
 .sectionHeader h2 {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: var(--text-lg);
   font-weight: 600;
   color: var(--text-primary);

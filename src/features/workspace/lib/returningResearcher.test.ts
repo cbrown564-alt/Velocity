@@ -62,7 +62,12 @@ describe('returningResearcher', () => {
       }),
       baseDataset({ id: 'active', lastModifiedAt: Date.now() - 1000 }),
     ];
-    const candidate = findResumeCandidate(datasets, 'active', { rowVars: ['gender'], colVar: 'region' }, Date.now());
+    const candidate = findResumeCandidate(
+      datasets,
+      'active',
+      { rowVars: ['gender'], colVar: 'region' },
+      { now: Date.now() },
+    );
     expect(candidate?.datasetId).toBe('active');
     expect(candidate?.summaryLine).toMatch(/gender.*region/i);
   });
@@ -87,7 +92,7 @@ describe('returningResearcher', () => {
       ],
       null,
       { rowVars: [], colVar: null },
-      Date.now(),
+      { now: Date.now() },
     );
     expect(candidate?.summaryLine).toMatch(/Gender × Region/);
     expect(candidate?.summaryLine).not.toMatch(/a1b2c3d4/i);
@@ -109,9 +114,28 @@ describe('returningResearcher', () => {
       ],
       null,
       { rowVars: [], colVar: null },
-      Date.now(),
+      { now: Date.now() },
     );
     expect(candidate?.summaryLine).toMatch(/Resume your last analysis in mock_data/i);
+    expect(candidate?.summaryLine).not.toMatch(/a1b2c3d4/i);
+  });
+
+  it('findResumeCandidate resolves live UUID ids from store variable catalog', () => {
+    const uuidRow = 'a1b2c3d4-e5f6-7890-abcd-ef1234567890';
+    const uuidCol = 'b2c3d4e5-f6a7-8901-bcde-f12345678901';
+    const candidate = findResumeCandidate(
+      [baseDataset({ id: 'active' })],
+      'active',
+      { rowVars: [uuidRow], colVar: uuidCol },
+      {
+        liveVariables: [
+          { id: uuidRow, name: 'gender', label: 'Gender', type: 'categorical', valueLabels: [], missingValues: {} },
+          { id: uuidCol, name: 'region', label: 'Region', type: 'categorical', valueLabels: [], missingValues: {} },
+        ],
+        now: Date.now(),
+      },
+    );
+    expect(candidate?.summaryLine).toMatch(/Gender × Region/);
     expect(candidate?.summaryLine).not.toMatch(/a1b2c3d4/i);
   });
 

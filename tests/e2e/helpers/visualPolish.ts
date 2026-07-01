@@ -169,3 +169,15 @@ export async function assertOpfsSupported(page: Page) {
     }
   });
 }
+
+/** Open a dataset from workspace search (compact list mode when results ≤ 3). */
+export async function openDatasetFromWorkspaceSearch(page: Page, fileName: string) {
+  await page.getByRole('button', { name: 'All Datasets' }).click();
+  await page.getByPlaceholder('Search datasets...').fill(fileName);
+  const listItem = page.getByRole('button', { name: `Open dataset ${fileName}` });
+  if (await listItem.isVisible({ timeout: 3000 }).catch(() => false)) {
+    await listItem.dblclick();
+    return;
+  }
+  await page.getByRole('heading', { name: fileName }).dblclick();
+}

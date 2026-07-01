@@ -29,10 +29,11 @@ export function useWelcomeBack({ datasets, onOpenDataset }: UseWelcomeBackOption
   const dismissWelcomeBack = useVelocityStore((state) => state.dismissWelcomeBack);
   const activeDatasetId = useVelocityStore((state) => state.activeDatasetId);
   const tableConfig = useVelocityStore((state) => state.tableConfig);
+  const liveVariables = useVelocityStore((state) => state.dataset?.variables);
 
   const resumeCandidate = useMemo(
-    () => findResumeCandidate(datasets, activeDatasetId, tableConfig),
-    [datasets, activeDatasetId, tableConfig],
+    () => findResumeCandidate(datasets, activeDatasetId, tableConfig, { liveVariables }),
+    [datasets, activeDatasetId, tableConfig, liveVariables],
   );
 
   const showWelcomeBack =
