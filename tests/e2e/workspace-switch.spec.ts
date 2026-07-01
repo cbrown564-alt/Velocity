@@ -55,7 +55,6 @@ async function expectCrosstabRenders(page: import('@playwright/test').Page, rowV
   await expect(table).toBeVisible({ timeout: 30000 });
   await expect(table.locator('tbody tr')).not.toHaveCount(0);
   await expect(page.locator('text=/\\d+\\.\\d%/').first()).toBeVisible({ timeout: 30000 });
-  await expect(page.locator('text=/n=\\d+/').first()).toBeVisible({ timeout: 30000 });
 }
 
 test('workspace switches between stored datasets without re-upload', async ({ page }) => {

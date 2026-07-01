@@ -117,12 +117,12 @@ test('Start Fresh clears persisted session after reload', async ({ page }) => {
   await expect(startFreshButton).toBeVisible({ timeout: 30000 });
   await startFreshButton.click();
 
-  await expect(page.getByText('Welcome to Velocity')).toBeVisible({ timeout: 30000 });
+  await expect(page.getByTestId('workspace-empty-state')).toBeVisible({ timeout: 30000 });
   await expect(page.getByRole('button', { name: 'Restore Session' })).toBeHidden({ timeout: 5000 });
 
   await page.reload();
 
-  await expect(page.getByText('Welcome to Velocity')).toBeVisible({ timeout: 30000 });
+  await expect(page.getByTestId('workspace-empty-state')).toBeVisible({ timeout: 30000 });
   await expect(page.getByRole('button', { name: 'Restore Session' })).toBeHidden({ timeout: 5000 });
 });
 
@@ -155,5 +155,5 @@ test('Reload smoke: app boots after reload', async ({ page }) => {
 
   await page.reload();
 
-  await expect(page.getByText('Velocity.')).toBeVisible({ timeout: 30000 });
+  await expect(page.getByText('Velocity Workspace')).toBeVisible({ timeout: 30000 });
 });
