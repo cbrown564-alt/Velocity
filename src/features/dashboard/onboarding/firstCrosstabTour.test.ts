@@ -41,15 +41,13 @@ describe('firstCrosstabTour', () => {
     expect(resolveFirstCrosstabTourStep({ rowCount: 1, hasColumn: false, hasRenderedCrosstab: false })).toBe('columns');
 
     dismissFirstCrosstabTourStep('columns');
-    expect(
-      resolveFirstCrosstabTourStep({ rowCount: 1, hasColumn: true, hasRenderedCrosstab: true }),
-    ).toBe('significance');
+    expect(resolveFirstCrosstabTourStep({ rowCount: 1, hasColumn: true, hasRenderedCrosstab: true })).toBe(
+      'significance',
+    );
 
     dismissFirstCrosstabTourStep('significance');
     expect(isFirstCrosstabTourDone()).toBe(true);
-    expect(
-      resolveFirstCrosstabTourStep({ rowCount: 1, hasColumn: true, hasRenderedCrosstab: true }),
-    ).toBeNull();
+    expect(resolveFirstCrosstabTourStep({ rowCount: 1, hasColumn: true, hasRenderedCrosstab: true })).toBeNull();
   });
 
   it('marks the tour done when any step is dismissed after a crosstab renders', () => {

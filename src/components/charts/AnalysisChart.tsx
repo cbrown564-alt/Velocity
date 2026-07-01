@@ -83,9 +83,7 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
 
   // Label Mode State — crosstabs default to column % on bars (counts in tooltip)
   const analysisLabelKey = `${rowVariables.map((v) => v.id).join(',')}:${colVariable?.id ?? ''}`;
-  const [labelMode, setLabelMode] = useState<'count' | 'percent' | 'none'>(() =>
-    colVariable ? 'percent' : 'count',
-  );
+  const [labelMode, setLabelMode] = useState<'count' | 'percent' | 'none'>(() => (colVariable ? 'percent' : 'count'));
 
   useEffect(() => {
     setLabelMode(colVariable ? 'percent' : 'count');

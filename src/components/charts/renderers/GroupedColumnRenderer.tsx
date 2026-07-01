@@ -3,7 +3,11 @@ import * as d3 from 'd3-scale';
 import { max } from 'd3-array';
 import { BaseChartRendererProps } from '../../../types/charts';
 import { SvgChartSeriesLegend } from '../shared/SvgChartSeriesLegend';
-import { formatAxisTick, formatBarTooltip, formatBarValueLabel } from '../../../core/visualization/chartLabelFormatters';
+import {
+  formatAxisTick,
+  formatBarTooltip,
+  formatBarValueLabel,
+} from '../../../core/visualization/chartLabelFormatters';
 
 const DEFAULT_PALETTE = [
   'var(--viz-palette-1)',
@@ -178,7 +182,7 @@ export const GroupedColumnRenderer: React.FC<BaseChartRendererProps> = ({
                   fontFamily: 'var(--font-body)',
                 }}
               >
-              {r.label}
+                {r.label}
               </text>
             </g>
           ))}

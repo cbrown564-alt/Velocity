@@ -8,7 +8,11 @@ import { ChartDataPoint } from '../../../types/processedData';
 import { useChartDragMerge } from '../hooks/useChartDragMerge';
 import { useChartSelection } from '../hooks/useChartSelection';
 import { ChartPlotArea } from '../shared/ChartPlotArea';
-import { formatAxisTick, formatBarTooltip, formatBarValueLabel } from '../../../core/visualization/chartLabelFormatters';
+import {
+  formatAxisTick,
+  formatBarTooltip,
+  formatBarValueLabel,
+} from '../../../core/visualization/chartLabelFormatters';
 
 /**
  * Vertical Bar (Column) Chart Renderer

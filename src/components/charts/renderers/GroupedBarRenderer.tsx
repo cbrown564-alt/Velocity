@@ -4,7 +4,11 @@ import { max } from 'd3-array';
 import { BaseChartRendererProps } from '../../../types/charts';
 import { CHART_BAR_FILL_OPACITY, CHART_PALETTE } from '../shared/chartColors';
 import { SvgChartSeriesLegend } from '../shared/SvgChartSeriesLegend';
-import { formatAxisTick, formatBarTooltip, formatBarValueLabel } from '../../../core/visualization/chartLabelFormatters';
+import {
+  formatAxisTick,
+  formatBarTooltip,
+  formatBarValueLabel,
+} from '../../../core/visualization/chartLabelFormatters';
 
 const DEFAULT_PALETTE = CHART_PALETTE;
 

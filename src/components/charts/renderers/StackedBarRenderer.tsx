@@ -7,7 +7,11 @@ import { CHART_BAR_FILL_OPACITY } from '../shared/chartColors';
 import { useChartSelection } from '../hooks/useChartSelection';
 import { ChartPlotArea } from '../shared/ChartPlotArea';
 import { SvgChartSeriesLegend } from '../shared/SvgChartSeriesLegend';
-import { formatAxisTick, formatBarTooltip, formatBarValueLabel } from '../../../core/visualization/chartLabelFormatters';
+import {
+  formatAxisTick,
+  formatBarTooltip,
+  formatBarValueLabel,
+} from '../../../core/visualization/chartLabelFormatters';
 
 interface StackedBarRendererProps extends BaseChartRendererProps {
   type: 'stacked-bar';
@@ -171,10 +175,7 @@ export const StackedBarRenderer: React.FC<StackedBarRendererProps> = ({
           <SvgChartSeriesLegend
             labels={stackLabels}
             keys={stackKeys}
-            colors={
-              colors ??
-              stackKeys.map((_, i) => `var(--viz-palette-${(i % 6) + 1})`)
-            }
+            colors={colors ?? stackKeys.map((_, i) => `var(--viz-palette-${(i % 6) + 1})`)}
             innerWidth={innerWidth}
             fillOpacity={CHART_BAR_FILL_OPACITY}
           />

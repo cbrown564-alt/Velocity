@@ -19,11 +19,7 @@ export function formatAxisTick(labelMode: ChartLabelDisplayMode, tick: number): 
 }
 
 /** Format the value shown on or beside a bar. */
-export function formatBarValueLabel(
-  labelMode: ChartLabelDisplayMode,
-  count: number,
-  percent: number,
-): string | null {
+export function formatBarValueLabel(labelMode: ChartLabelDisplayMode, count: number, percent: number): string | null {
   if (labelMode === 'none') return null;
   if (isPercentAxisMode(labelMode)) {
     return `${Math.round(percent)}%`;

@@ -183,9 +183,7 @@ describe('SlideContainer', () => {
       focusMode: true,
       tableConfig: { rowVars: ['gender'], colVar: null },
       queryResult: [{ rowKeys: ['1'], colKey: 'Total', count: 10 }],
-      variableSets: [
-        { id: 'gender', name: 'Gender', variableIds: ['v-g'], type: 'categorical', structure: 'single' },
-      ],
+      variableSets: [{ id: 'gender', name: 'Gender', variableIds: ['v-g'], type: 'categorical', structure: 'single' }],
       dataset: {
         id: 'ds1',
         name: 'test',

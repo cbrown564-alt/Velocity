@@ -10,7 +10,11 @@ import { ChartDataPoint } from '../../../types/processedData';
 import { useChartDragMerge } from '../hooks/useChartDragMerge';
 import { useChartSelection } from '../hooks/useChartSelection';
 import { ChartPlotArea } from '../shared/ChartPlotArea';
-import { formatAxisTick, formatBarTooltip, formatBarValueLabel } from '../../../core/visualization/chartLabelFormatters';
+import {
+  formatAxisTick,
+  formatBarTooltip,
+  formatBarValueLabel,
+} from '../../../core/visualization/chartLabelFormatters';
 
 /**
  * Horizontal Bar Chart Renderer
@@ -396,7 +400,9 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
                   margin.top -
                   yScale.bandwidth() / 2
                 }
-                width={xScale(labelMode === 'percent' ? dragState.draggedItem.percent / 100 : dragState.draggedItem.value)}
+                width={xScale(
+                  labelMode === 'percent' ? dragState.draggedItem.percent / 100 : dragState.draggedItem.value,
+                )}
                 height={yScale.bandwidth()}
                 fill="var(--viz-fill-secondary)" // Solid Cyan for dragging
                 rx={3}
@@ -404,7 +410,10 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
                 strokeWidth={2}
               />
               <text
-                x={xScale(labelMode === 'percent' ? dragState.draggedItem.percent / 100 : dragState.draggedItem.value) / 2}
+                x={
+                  xScale(labelMode === 'percent' ? dragState.draggedItem.percent / 100 : dragState.draggedItem.value) /
+                  2
+                }
                 y={dragState.currentY - (svgRef.current?.getBoundingClientRect().top || 0) - margin.top}
                 textAnchor="middle"
                 style={{

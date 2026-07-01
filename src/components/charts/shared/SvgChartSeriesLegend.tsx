@@ -34,13 +34,7 @@ export const SvgChartSeriesLegend: React.FC<SvgChartSeriesLegendProps> = ({
     <g transform={`translate(${startX}, ${y})`}>
       {labels.map((label, i) => (
         <g key={keys[i] ?? i} transform={`translate(${layout[i]!.x}, 0)`}>
-          <rect
-            width={12}
-            height={12}
-            rx={1}
-            fill={colors[i % colors.length]}
-            fillOpacity={fillOpacity}
-          />
+          <rect width={12} height={12} rx={1} fill={colors[i % colors.length]} fillOpacity={fillOpacity} />
           <text
             x={18}
             y={10}
