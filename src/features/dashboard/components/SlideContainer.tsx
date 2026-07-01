@@ -171,22 +171,22 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
                       reducedMotion,
                     })}
                     onClick={() => handleSuggestClick(s.setId)}
-                    className="group flex items-start gap-2 px-3 py-2 rounded-lg bg-[var(--bg-active)] border border-[var(--border-color)] hover:border-[var(--color-accent)] hover:bg-[color-mix(in_srgb,var(--color-accent),transparent_92%)] transition-all text-left max-w-[240px]"
+                    className="group flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--bg-active)] border border-[var(--border-color)] hover:border-[var(--color-accent)] hover:bg-[color-mix(in_srgb,var(--color-accent),transparent_92%)] transition-all text-left max-w-[280px]"
                     title={`${s.name} — ${s.reason}`}
                   >
                     <MousePointerClick
                       size={14}
-                      className="text-[var(--text-secondary)] group-hover:text-[var(--color-accent)] transition-colors shrink-0 mt-0.5"
+                      className="text-[var(--text-secondary)] group-hover:text-[var(--color-accent)] transition-colors shrink-0"
                     />
                     <div className="flex flex-col min-w-0">
                       <span
-                        className="text-sm font-medium text-[var(--text-primary)] line-clamp-2 leading-snug"
+                        className="text-sm font-medium text-[var(--text-primary)] truncate leading-snug"
                         title={s.name}
                       >
                         {s.name}
                       </span>
                       <span
-                        className="text-[10px] text-[var(--text-secondary)] line-clamp-2 leading-snug"
+                        className="text-[10px] text-[var(--text-secondary)] truncate leading-snug"
                         title={s.reason}
                       >
                         {s.reason}
