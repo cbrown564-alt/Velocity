@@ -15,7 +15,7 @@
   backdrop-filter: blur(4px);
   display: flex;
   justify-content: flex-end;
-  z-index: 100;
+  z-index: var(--z-popover);
 }
 
 .panel {

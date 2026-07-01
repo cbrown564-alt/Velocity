@@ -71,6 +71,8 @@ export const DataTable: React.FC<DataTableProps> = ({
   frameBleed = false,
 }) => {
   const analysisSettings = useVelocityStore((state) => state.analysisSettings);
+  const showCellN = analysisSettings.showCellN ?? true;
+  const showColumnBases = analysisSettings.showColumnBases ?? true;
   const processedQueryResult = useVelocityStore((state) => state.processedQueryResult);
   const transformLog = useVelocityStore((state) => state.transformLog);
   const deleteGroupedVariable = useVelocityStore((state) => state.deleteGroupedVariable);
@@ -317,6 +319,7 @@ export const DataTable: React.FC<DataTableProps> = ({
       visibleColKeys={visibleColKeys}
       colLeftPadding={colLeftPadding}
       colRightPadding={colRightPadding}
+      showCellN={showCellN}
     />
   );
 
@@ -339,7 +342,8 @@ export const DataTable: React.FC<DataTableProps> = ({
       bleed={frameBleed}
       density={density}
       reducedMotion={reducedMotion}
-      className="h-full min-h-0"
+      frameClassName={density === 'generous' || frameBleed ? undefined : 'shrink-wrap'}
+      className={density === 'generous' || frameBleed ? 'h-full min-h-0' : ''}
       footer={
         <StatisticsStatusBar
           analysisSettings={analysisSettings}
@@ -461,6 +465,7 @@ export const DataTable: React.FC<DataTableProps> = ({
             ) : (
               tableData.rows.map((row) => renderRow(row, true))
             )}
+            {showColumnBases ? (
             <tr
               className={`${mergeStyles.totalRow} bg-[var(--bg-surface)] font-semibold border-t border-[var(--border-grid)] border-b border-[var(--border-grid)]`}
             >
@@ -501,6 +506,7 @@ export const DataTable: React.FC<DataTableProps> = ({
                 </td>
               )}
             </tr>
+            ) : null}
           </tbody>
         </table>
       </div>

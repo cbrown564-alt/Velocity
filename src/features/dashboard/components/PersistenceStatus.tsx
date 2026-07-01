@@ -138,7 +138,7 @@ export const PersistenceStatus: React.FC<PersistenceStatusProps> = ({
       {/* Details Modal */}
       <AnimatePresence>
         {showDetails && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div className="fixed inset-0 z-[var(--z-popover)] flex items-center justify-center p-4">
             <motion.div
               {...getBackdropProps(reducedMotion)}
               onClick={() => setShowDetails(false)}

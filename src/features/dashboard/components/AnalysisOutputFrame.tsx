@@ -14,6 +14,8 @@ export interface AnalysisOutputFrameProps {
   density?: 'compact' | 'generous';
   reducedMotion?: boolean;
   className?: string;
+  /** Extra class on frame root — e.g. shrink-wrap height (F1.2) */
+  frameClassName?: string;
 }
 
 /**
@@ -28,6 +30,7 @@ export const AnalysisOutputFrame: React.FC<AnalysisOutputFrameProps> = ({
   density = 'compact',
   reducedMotion = false,
   className = '',
+  frameClassName = '',
 }) => {
   const bodyClass = bodyPadding === 'chart' ? styles.bodyChart : '';
 
@@ -36,7 +39,7 @@ export const AnalysisOutputFrame: React.FC<AnalysisOutputFrameProps> = ({
       {...getMotionProps({ preset: 'fadeUp', duration: DURATIONS.enter, reducedMotion })}
       data-density={density}
       data-bleed={bleed ? 'true' : undefined}
-      className={`analysis-frame ${styles.frame} ${bleed ? styles.bleed : ''} ${className}`.trim()}
+      className={`analysis-frame ${styles.frame} ${frameClassName === 'shrink-wrap' ? styles.shrinkWrap : ''} ${bleed ? styles.bleed : ''} ${className}`.trim()}
     >
       <div className={`${styles.body} ${bodyClass}`}>{children}</div>
       {footer ? <div className={styles.footerBand}>{footer}</div> : null}

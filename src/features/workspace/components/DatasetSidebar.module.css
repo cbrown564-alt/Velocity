@@ -29,7 +29,7 @@
   top: 50%;
   right: -12px;
   transform: translateY(-50%);
-  z-index: 10;
+  z-index: var(--z-sticky);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -203,7 +203,7 @@
   border-radius: var(--border-radius-md);
   box-shadow: var(--shadow-lg);
   white-space: nowrap;
-  z-index: 100;
+  z-index: var(--z-popover);
   pointer-events: none;
 }
 

@@ -45,6 +45,8 @@ interface StatisticsStatusBarProps {
     comparisonMethod: ComparisonMethod;
     correctionType: CorrectionType;
     showConfidenceIntervals: boolean;
+    showCellN: boolean;
+    showColumnBases: boolean;
   };
   /** Table-level statistics (chi-square, etc.) */
   tableStats?: TableStats | null;

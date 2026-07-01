@@ -98,7 +98,7 @@ const VariableSetItem: React.FC<VariableSetItemProps> = ({
   const style = {
     transform: CSS.Transform.toString(transform),
     opacity: isDragging ? 0.5 : 1,
-    zIndex: isDragging ? 1000 : undefined,
+    zIndex: isDragging ? 250 : undefined,
     backgroundColor: isSelected && !isActive ? 'var(--bg-active)' : undefined,
     userSelect: 'none' as const,
   };

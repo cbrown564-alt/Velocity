@@ -100,6 +100,8 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
 
   const analysisResetKey = `${activeSlideId}:${tableConfig.rowVars.join(',')}:${tableConfig.colVar ?? ''}:${activeSlide.visualizationType}`;
   const analysisSurface = activeSlide.visualizationType === 'chart' ? 'chart' : 'table';
+  const shrinkWrapSlide =
+    resolvedRowVars.length > 0 && activeSlide.visualizationType === 'table' && !focusMode && tableDensity === 'compact';
 
   const renderCellContent = () => {
     if (queryError && !isQuerying) {
@@ -246,13 +248,17 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
           Updating analysis results
         </div>
       )}
-      <div className="surface-panel w-full max-w-[min(100%,1400px)] mx-auto flex flex-col flex-1 min-h-0 max-h-full self-stretch rounded-xl shadow-md border border-[var(--border-color)]">
+      <div
+        className={`surface-panel w-full max-w-[min(100%,1400px)] mx-auto flex flex-col min-h-0 max-h-full rounded-xl shadow-md border border-[var(--border-color)] ${
+          shrinkWrapSlide ? 'flex-none self-start' : 'flex-1 self-stretch'
+        }`}
+      >
         <div className={`flex-shrink-0 ${focusMode ? 'px-4 pt-4' : 'px-6 pt-5'}`}>
           <SlideHeader className={focusMode ? 'compact' : ''} />
         </div>
 
         <div
-          className={`flex-1 min-h-0 flex flex-col overflow-x-auto overflow-y-auto ${focusMode ? 'px-0 pb-2' : 'px-6 pb-6'}`}
+          className={`${shrinkWrapSlide ? 'flex-none' : 'flex-1'} min-h-0 flex flex-col overflow-x-auto overflow-y-auto ${focusMode ? 'px-0 pb-2' : 'px-6 pb-6'}`}
           data-testid="slide-content-region"
         >
           <AnalysisErrorBoundary

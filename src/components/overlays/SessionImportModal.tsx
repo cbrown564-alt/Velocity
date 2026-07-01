@@ -173,7 +173,7 @@ export const SessionImportModal: React.FC<SessionImportModalProps> = ({ isOpen, 
       escapeToClose
       unmountWhenClosed
       onBackdropClick={handleClose}
-      backdropClassName="fixed inset-0 z-[140] flex items-center justify-center bg-[var(--text-primary)]/40 px-4"
+      backdropClassName="fixed inset-0 z-[var(--z-modal)] flex items-center justify-center bg-[var(--text-primary)]/40 px-4"
       panelClassName="w-full max-w-2xl rounded-xl border border-[var(--border-color)] bg-[var(--bg-surface)] shadow-2xl"
       panelMotionProps={panelMotionProps}
     >

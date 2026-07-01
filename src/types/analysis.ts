@@ -20,6 +20,10 @@ export interface AnalysisSettings {
   comparisonMethod: ComparisonMethod;
   correctionType: CorrectionType;
   showConfidenceIntervals: boolean;
+  /** Show cell sample sizes (n=) beneath percentages (UXP-040) */
+  showCellN: boolean;
+  /** Show column base row beneath crosstab body (UXP-040) */
+  showColumnBases: boolean;
   significanceLevel: 0.95 | 0.9 | 0.8;
   /** Analysis engine selection: auto selects WebR for design effects/mixed models */
   engine: AnalysisEngine;

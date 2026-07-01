@@ -3,6 +3,12 @@ import { render, screen } from '@testing-library/react';
 import { CrosstabCell } from './CrosstabCell';
 
 describe('CrosstabCell', () => {
+  it('hides cell n when showCellN is false', () => {
+    render(<CrosstabCell variant="frequency" percent={47.7} count={21} showCellN={false} />);
+    expect(screen.getByText('47.7%')).toBeInTheDocument();
+    expect(screen.queryByText('n=21')).not.toBeInTheDocument();
+  });
+
   it('stacks frequency percent and sample size right-aligned (strategy A)', () => {
     render(<CrosstabCell variant="frequency" percent={47.7} count={21} sig="high_95" />);
     expect(screen.getByText('47.7%')).toBeInTheDocument();

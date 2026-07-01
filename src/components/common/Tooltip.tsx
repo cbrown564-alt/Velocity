@@ -103,7 +103,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
       ? createPortal(
           <div
             role="tooltip"
-            className="fixed z-[100] pointer-events-none animate-[fadeInUp_0.15s_ease-out]"
+            className="fixed z-[var(--z-popover)] pointer-events-none animate-[fadeInUp_0.15s_ease-out]"
             style={{
               left: coords.x,
               top: coords.y,

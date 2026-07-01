@@ -42,7 +42,7 @@
 .mergeGhost {
   position: fixed;
   pointer-events: none;
-  z-index: 9999;
+  z-index: var(--z-menu);
   padding: 4px 10px;
   border-radius: var(--border-radius-sm);
   background: var(--bg-panel);

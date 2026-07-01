@@ -25,7 +25,7 @@ export const DesktopRecommendationBanner: React.FC<DesktopRecommendationBannerPr
 
   return (
     <div
-      className="fixed top-3 left-1/2 z-[60] w-[min(92vw,640px)] -translate-x-1/2 rounded-lg border border-[var(--status-warning-border)] bg-[var(--status-warning-surface)] px-3 py-2 text-xs text-[var(--status-warning-text)] shadow-lg"
+      className="fixed top-3 left-1/2 z-[var(--z-dropdown)] w-[min(92vw,640px)] -translate-x-1/2 rounded-lg border border-[var(--status-warning-border)] bg-[var(--status-warning-surface)] px-3 py-2 text-xs text-[var(--status-warning-text)] shadow-lg"
       role="status"
       aria-live="polite"
       data-testid="desktop-recommendation-banner"
