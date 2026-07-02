@@ -17,7 +17,7 @@ Velocity’s UI passed stabilization and the May 2026 UXR program (`STAB-UI-D`, 
 
 This document is the **single reference** for scope, findings, slice specs, acceptance criteria, and validation. Tracker rows live in `docs/tracker_00_implementation_status.md` §4.3.
 
-**Pilot presentation gate (July 1, 2026):** [`audit_07_pilot_presentation_readiness_2026-07-01.md`](audit_07_pilot_presentation_readiness_2026-07-01.md) — workflow screenshot audit against a Linear quality bar. Prioritized **`PPR-###`** fix IDs live there; map to `UXF-###` rows below. Reconcile UXF statuses when PPR items close.
+**Pilot presentation gate (July 1, 2026):** [`audit_07_pilot_presentation_readiness_2026-07-01.md`](audit_07_pilot_presentation_readiness_2026-07-01.md) — workflow screenshot audit against a Linear quality bar. **Gate closed July 2, 2026** via [PR #18](https://github.com/cbrown564-alt/velocity/pull/18); UXF register reconciled below.
 
 ---
 
@@ -64,21 +64,21 @@ Update **Status** when addressed: `open` | `in_progress` | `fixed` | `wontfix` |
 
 | ID | Surface | Issue | Severity | Slice | Status |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **UXF-001** | Crosstab slide | Data columns clip at card edge (e.g. “NORTH” truncated); horizontal overflow not surfaced to user | P0 | F1 | open |
-| **UXF-002** | Chart slide | Grouped bar chart clips right at 1920px inside `max-w-[1200px]` frame | P0 | F1 | open |
-| **UXF-003** | Table ↔ chart toggle | Brief empty canvas flash when switching views | P1 | F1 | open |
-| **UXF-004** | Slide layout | Large vertical dead space below small crosstabs; artifact does not scale to content | P1 | F1 | open |
-| **UXF-005** | Deck display | No user toggle for cell `n=` / column bases in presentation mode (UXP-040 deferred) | P1 | F1 | open |
+| **UXF-001** | Crosstab slide | Data columns clip at card edge (e.g. “NORTH” truncated); horizontal overflow not surfaced to user | P0 | F1 | fixed — PR #6 F1.1 scroll + PR #18 verify |
+| **UXF-002** | Chart slide | Grouped bar chart clips right at 1920px inside `max-w-[1200px]` frame | P0 | F1 | fixed — PR #18 PPR-008 (`SvgChartSeriesLegend`, % labels) |
+| **UXF-003** | Table ↔ chart toggle | Brief empty canvas flash when switching views | P1 | F1 | fixed — PR #18 fade wrapper on view switch |
+| **UXF-004** | Slide layout | Large vertical dead space below small crosstabs; artifact does not scale to content | P1 | F1 | fixed — PR #18 PPR-006 shrink-wrap |
+| **UXF-005** | Deck display | No user toggle for cell `n=` / column bases in presentation mode (UXP-040 deferred) | P1 | F1 | fixed — PR #6 toggles + PR #18 deck-clean defaults |
 | **UXF-006** | Focus mode | Feature exists but is undiscoverable; chrome competes with output by default | P1 | F2 | fixed |
 | **UXF-007** | Timeline dock | Duplicate wayfinding with bottom tab (“1 Gender by Region” ×2) | P2 | F2 | fixed |
 | **UXF-008** | Accent budget | Headers, sig markers, shelf chips, timeline dots all use accent | P2 | F2 | fixed |
-| **UXF-009** | Variable Manager | Inspector pane ~35% blank with no placeholder when nothing selected | P2 | F2 | fixed |
-| **UXF-010** | Welcome back | Resume card shows raw variable UUIDs when workspace record lacks `variables` labels | P0 | F3 | open |
-| **UXF-011** | First run | No guided spotlight for first crosstab (rows → columns → significance) | P1 | F3 | open |
+| **UXF-009** | Variable Manager | Inspector pane ~35% blank with no placeholder when nothing selected | P2 | F2 | fixed — PR #6 guided empty + PR #18 column expand |
+| **UXF-010** | Welcome back | Resume card shows raw variable UUIDs when workspace record lacks `variables` labels | P0 | F3 | fixed — PR #18 store catalog label hydration |
+| **UXF-011** | First run | No guided spotlight for first crosstab (rows → columns → significance) | P1 | F3 | fixed — PR #18 PPR-005 corner chips (replaces popover overlay) |
 | **UXF-012** | Discovery | Weighting, significance settings, drill-down paths undiscoverable without exploration | P2 | F3 | fixed |
 | **UXF-013** | Command palette | `⌘K` is action-only; no variable search or filter/export commands | P1 | F4 | fixed |
 | **UXF-014** | Workspace | Privacy + welcome + pilot banners stack above sparse dataset grid | P2 | F3 | fixed |
-| **UXF-015** | Splash | “Checking local storage…” secondary copy fails contrast on Soft Machine | P2 | F5 | open |
+| **UXF-015** | Splash | “Checking local storage…” secondary copy fails contrast on Soft Machine | P2 | F5 | fixed — PR #18 init bar contrast |
 | **UXF-016** | Themes | No high-contrast or colorblind-safe significance theme | P2 | F5 | deferred |
 
 **Evidence (July 1, 2026):** Live session at `localhost:3000`, dataset `mock_data.csv`, `gender × region`, Soft Machine theme; code refs `SlideContainer.tsx` (`max-w-[1200px]`), `returningResearcher.ts` (`resolveVarLabel` fallback to id).
@@ -441,11 +441,11 @@ npx playwright test tests/e2e/visual-polish-theme-table.spec.ts tests/e2e/pilot-
 
 STAB-UI-F is **Done** when:
 
-- All UXF-001–015 are `fixed` or `wontfix` with rationale  
-- UXP-040 implemented or explicitly merged into F1.4 acceptance  
-- Tracker §4.3 rows are `Done` with PR links  
-- Human validation checklist passes on Soft Machine + Mission Control  
-- `PILOT-6` runbook references this doc for UI smoke before pilot sessions  
+- All UXF-001–015 are `fixed` or `wontfix` with rationale — **met July 2, 2026** (UXF-016 deferred to F5)
+- UXP-040 implemented or explicitly merged into F1.4 acceptance — **met** (F1.4 toggles + deck defaults)
+- Tracker §4.3 rows are `Done` with PR links — **met** (PR #6, PR #18)
+- Human validation checklist passes on Soft Machine + Mission Control — **met** via PR #18 `screenshots-p2-final/` pass
+- `PILOT-6` runbook references this doc for UI smoke before pilot sessions
 
 Move narrative summary to `docs/completed_foundations_summary.md` §UI excellence; keep this plan as the historical spec.
 
@@ -456,3 +456,4 @@ Move narrative summary to `docs/completed_foundations_summary.md` §UI excellenc
 | Date | Change |
 | :--- | :--- |
 | 2026-07-01 | Initial workstream spec from full UI audit (live app + code review) |
+| 2026-07-02 | UXF register reconciled with PR #18 PPR closure; workstream sign-off criteria met (UXF-016 deferred) |

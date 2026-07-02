@@ -112,10 +112,9 @@ Completed Phase 1-4, stabilization, UI polish, engine/MCP, export, parity, and h
 
 #### Recommended Next Pull
 
-1. **`audit_07` PPR P0 bundle** — coaching discipline (PPR-005), shrink-wrap hero frame (UXF-004), label truncation (PPR-004), chart axis/legend (UXF-002/PPR-008), resume trust (PPR-016). Re-screenshot per [`assets/ui-pilot-readiness-audit/`](assets/ui-pilot-readiness-audit/README.md) before PILOT-6 demo photography.
-2. `PILOT-4a`: continue processing gap discovery with external project/file reviews.
-3. `PILOT-6`: recruit paid pilots only after PPR P0 closes or demo scope explicitly avoids hero-output screenshots.
-4. `STAB-UI-F5`: accessibility themes (only if pilot requests).
+1. `PILOT-4a`: continue processing gap discovery with external project/file reviews.
+2. `PILOT-6`: recruit paid pilots — presentation gate closed via PR #18 ([`audit_07`](audit_07_pilot_presentation_readiness_2026-07-01.md) §5).
+3. `STAB-UI-F5`: accessibility themes (only if pilot requests).
 
 ### 4.2 Future Gates
 
@@ -137,16 +136,16 @@ These rows remain directionally valid, but should not become active until `PILOT
 
 **Source:** July 2026 full UI audit; extends closed `STAB-UI-P` / UXR programs.  
 **Reference:** [`docs/plan_02_ui_presentation_workstream.md`](plan_02_ui_presentation_workstream.md) — findings register (`UXF-###`), slice specs, acceptance checklists.  
-**Pilot presentation gate:** [`docs/audit_07_pilot_presentation_readiness_2026-07-01.md`](audit_07_pilot_presentation_readiness_2026-07-01.md) — Linear-bar workflow screenshot audit (July 1, 2026). Tracker rows F1–F4 marked Done below reflect shipped slices; **PPR P0 items in audit §5 remain open** for paid-pilot demo readiness.  
+**Pilot presentation gate:** [`docs/audit_07_pilot_presentation_readiness_2026-07-01.md`](audit_07_pilot_presentation_readiness_2026-07-01.md) — Linear-bar workflow screenshot audit (July 1, 2026). **Gate closed July 2, 2026** — PPR P0/P1/P2 shipped in [PR #18](https://github.com/cbrown564-alt/velocity/pull/18); post-fix evidence in [`screenshots-p2-final/`](assets/ui-pilot-readiness-audit/screenshots-p2-final/).  
 **Goal:** Client-presentable crosstab/chart slides and credible first-five-minutes activation for `PILOT-6`.
 
 | ID | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence / validation |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| STAB-UI-F1 | Hero output | Overflow/scroll affordance, content-aware slide height, table↔chart transition, statistics visibility toggles (UXP-040 / UXF-001–005) | STAB-UI-P (Done) | Done | Yes | T,L,U,I,A | **P0 slice Done (PR #6):** widened slide frame, horizontal scroll, chart placeholder. **F1.2 Done:** compact table shrink-wrap via `AnalysisOutputFrame.shrinkWrap` + `SlideContainer` flex contract. **F1.4 Done:** `showCellN` / `showColumnBases` toggles in `AnalysisSettingsPanel`; layout reflow without ghost gutters. |
-| STAB-UI-F2 | Chrome density | Focus discoverability, compact timeline, accent budget, Variable Manager inspector empty state (UXF-006–009) | STAB-UI-F1 | Done | No | T,L,U,I | **F2.1–F2.4 Done:** Focus discoverability via micro-tip chips; timeline dock compact default (`h-12` / 48px) with hover expand; inactive slide labels hidden until dock hover; slide title hover uses primary not accent; VM inspector guided empty state (`variable-inspector-empty`). |
-| STAB-UI-F3 | Activation | Welcome-back label hydration, first-crosstab spotlight, contextual tips, workspace banner discipline (UXF-010–012, UXF-014) | None | Done | Yes | T,L,U,I,V | **F3.1–F3.4 Done:** welcome-back labels; first-crosstab tour; **F3.3** contextual micro-tips (Focus, Export, Variable Manager) via `contextualMicroTips.ts` + `ContextualMicroTipChip`; **F3.4** combined `WorkspaceStatusStrip` with session-scoped dismiss. Tests: `contextualMicroTips.test.ts`, `WorkspaceStatusStrip.test.tsx`. |
-| STAB-UI-F4 | Command palette | Variable search → shelf actions, export/focus/filter commands, empty-state `⌘K` hint (UXF-013) | STAB-UI-C (Done) | Done | No | T,L,U | `CommandPalette.tsx` variable search + shelf actions (rows/columns/weight), wired export/filter/workspace commands, `commandPaletteSearch.ts`, `useAnalysisExportAction.ts`, SlideContainer/DropZone ⌘K hints; tests in `CommandPalette.test.tsx`, `commandPaletteSearch.test.ts` |
-| STAB-UI-F5 | Accessibility themes | High-contrast + colorblind significance themes; splash contrast fix (UXF-015–016) | STAB-UI-F1 | Frozen | Yes | T,L,U,I | Plan §F5; `themes.ts`, `ThemeSwitcher`; defer until F1–F3 complete or pilot requests |
+| STAB-UI-F1 | Hero output | Overflow/scroll affordance, content-aware slide height, table↔chart transition, statistics visibility toggles (UXP-040 / UXF-001–005) | STAB-UI-P (Done) | Done | Yes | T,L,U,I,A | **PR #6:** widened slide frame, horizontal scroll, chart placeholder. **F1.2 PR #18:** shrink-wrap via `AnalysisOutputFrame.shrinkWrap` + content-sized charts. **F1.3 PR #18:** view-switch fade. **F1.4:** `showCellN` / `showColumnBases` toggles; deck-clean defaults off. UXF-001–005 closed. |
+| STAB-UI-F2 | Chrome density | Focus discoverability, compact timeline, accent budget, Variable Manager inspector empty state (UXF-006–009) | STAB-UI-F1 | Done | No | T,L,U,I | **F2.1–F2.4 Done:** Focus discoverability via micro-tip chips; timeline dock compact default; inactive slide labels hidden until dock hover; slide title hover uses primary not accent; VM inspector guided empty state. **PR #18:** focus toolbar hide (PPR-011), VM column expand (UXF-009). |
+| STAB-UI-F3 | Activation | Welcome-back label hydration, first-crosstab spotlight, contextual tips, workspace banner discipline (UXF-010–012, UXF-014) | None | Done | Yes | T,L,U,I,V | **F3.1–F3.4 Done:** welcome-back labels (**PR #18** catalog hydration). **PR #18 PPR-005:** corner coaching chips + session-scoped dismiss; resume trust (PPR-016). Contextual micro-tips via `contextualMicroTips.ts`; `WorkspaceStatusStrip`. Tests: `contextualMicroTips.test.ts`, `firstCrosstabTour.test.ts`, `WorkspaceStatusStrip.test.tsx`. |
+| STAB-UI-F4 | Command palette | Variable search → shelf actions, export/focus/filter commands, empty-state `⌘K` hint (UXF-013) | STAB-UI-C (Done) | Done | No | T,L,U | `CommandPalette.tsx` variable search + shelf actions; **PR #18 PPR-012** neutral focus ring. Tests: `CommandPalette.test.tsx`, `commandPaletteSearch.test.ts` |
+| STAB-UI-F5 | Accessibility themes | High-contrast + colorblind significance themes (UXF-016) | STAB-UI-F1 | Frozen | Yes | T,L,U,I | UXF-015 splash contrast closed in PR #18; UXF-016 high-contrast/colorblind themes deferred until pilot requests |
 
 #### STAB-UI-F Dependency Notes
 
@@ -158,8 +157,9 @@ These rows remain directionally valid, but should not become active until `PILOT
 
 #### STAB-UI-F Recommended Pull
 
-1. **`audit_07` PPR P0** — see [`audit_07_pilot_presentation_readiness_2026-07-01.md`](audit_07_pilot_presentation_readiness_2026-07-01.md) §5–§6 (coaching + hero frame + truncation first).
-2. `STAB-UI-F5` accessibility themes (only if pilot requests).
+1. `PILOT-6` paid pilot recruiting (presentation gate closed — PR #18).
+2. `PILOT-4a` processing gap discovery.
+3. `STAB-UI-F5` accessibility themes (only if pilot requests).
 
 ### 4.4 Technical UI Foundation (`STAB-UI-T`)
 
