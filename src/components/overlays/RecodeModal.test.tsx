@@ -83,4 +83,37 @@ describe('RecodeModal', () => {
     expect(onSave).not.toHaveBeenCalled();
     expect(onClose).toHaveBeenCalled();
   });
+
+  it('marks binning table column headers with scope="col"', async () => {
+    useVelocityStore.setState({
+      recodeVariable: vi.fn(),
+      getUniqueValues: vi.fn().mockResolvedValue(['1', '2', '3']),
+    } as never);
+
+    render(
+      <RecodeModal
+        isOpen
+        onClose={vi.fn()}
+        onSave={vi.fn()}
+        variable={{
+          id: 'age',
+          name: 'age',
+          label: 'Age',
+          type: 'numeric',
+          valueLabels: [],
+          missingValues: {},
+        }}
+      />,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Min (>=)')).toBeInTheDocument();
+    });
+
+    const headers = screen.getAllByRole('columnheader');
+    expect(headers.length).toBeGreaterThan(0);
+    headers.forEach((header) => {
+      expect(header).toHaveAttribute('scope', 'col');
+    });
+  });
 });

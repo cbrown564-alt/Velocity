@@ -6,7 +6,11 @@ import type { WorkspaceState } from '../types';
 
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    div: React.forwardRef(({ children, ...props }: any, ref) => (
+      <div ref={ref} {...props}>
+        {children}
+      </div>
+    )),
     button: ({ children, ...props }: any) => <button {...props}>{children}</button>,
   },
   AnimatePresence: ({ children }: any) => <>{children}</>,
@@ -114,5 +118,11 @@ describe('ExportImportModal', () => {
         expect(navigator.clipboard.writeText).toHaveBeenCalled();
       });
     }
+  });
+
+  it('exposes dialog semantics via ModalShell', () => {
+    render(<ExportImportModal isOpen onClose={vi.fn()} workspaceState={workspaceState} onImport={vi.fn()} />);
+    expect(screen.getByRole('dialog')).toHaveAttribute('aria-modal', 'true');
+    expect(screen.getByRole('heading', { name: 'Export & Import' })).toHaveAttribute('id');
   });
 });

@@ -6,7 +6,11 @@ import type { Project, StoredDataset } from '../types';
 
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, ...props }: React.PropsWithChildren<Record<string, unknown>>) => <div {...props}>{children}</div>,
+    div: React.forwardRef(({ children, ...props }: React.PropsWithChildren<Record<string, unknown>>, ref) => (
+      <div ref={ref as React.Ref<HTMLDivElement>} {...props}>
+        {children}
+      </div>
+    )),
     button: ({ children, ...props }: React.PropsWithChildren<Record<string, unknown>>) => (
       <button {...props}>{children}</button>
     ),
@@ -121,5 +125,24 @@ describe('ProjectLinkModal', () => {
 
     expect(onAddToProject).toHaveBeenCalledWith(['ds1'], 'p-existing');
     expect(onClose).toHaveBeenCalled();
+  });
+
+  it('exposes dialog semantics via ModalShell', () => {
+    render(
+      <ProjectLinkModal
+        isOpen
+        onClose={vi.fn()}
+        datasets={datasets}
+        projects={[]}
+        selectedDatasetIds={['ds1']}
+        onCreateProject={vi.fn()}
+        onAddToProject={vi.fn()}
+        onUpdateWaveNumber={vi.fn()}
+        onSetRespondentKey={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByRole('dialog')).toHaveAttribute('aria-modal', 'true');
+    expect(screen.getByRole('heading', { name: 'Link Datasets' })).toHaveAttribute('id');
   });
 });

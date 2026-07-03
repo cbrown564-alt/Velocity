@@ -103,4 +103,10 @@ describe('CrossWavePanel', () => {
       expect.objectContaining({ id: 'w2' }),
     );
   });
+
+  it('exposes dialog semantics via ModalShell', () => {
+    render(<CrossWavePanel isOpen onClose={vi.fn()} project={project} datasets={[wave1, wave2]} />);
+    expect(screen.getByRole('dialog')).toHaveAttribute('aria-modal', 'true');
+    expect(screen.getByRole('heading', { name: 'Cross-Wave Analysis' })).toHaveAttribute('id');
+  });
 });

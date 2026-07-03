@@ -128,4 +128,22 @@ describe('DataDrawer', () => {
     expect(screen.getByText(/showing/i)).toBeInTheDocument();
     expect(screen.getByText(/50/)).toBeInTheDocument();
   });
+
+  it('exposes dialog semantics with labelled title', () => {
+    render(
+      <DataDrawer
+        isOpen
+        onClose={vi.fn()}
+        title="Gender × Region"
+        data={sampleData}
+        loading={false}
+        totalCount={2}
+        loadedCount={2}
+      />,
+    );
+    const dialog = screen.getByRole('dialog');
+    expect(dialog).toHaveAttribute('aria-modal', 'true');
+    expect(dialog).toHaveAttribute('aria-labelledby');
+    expect(screen.getByRole('heading', { name: 'X-Ray View' })).toHaveAttribute('id');
+  });
 });
