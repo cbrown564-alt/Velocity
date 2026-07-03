@@ -130,7 +130,7 @@ export const LollipopRenderer: React.FC<BaseChartRendererProps> = ({
           const color = isSelected
             ? colors
               ? colors[1]
-              : 'var(--text-accent)'
+              : 'var(--viz-fill-primary)'
             : colors
               ? colors[0]
               : 'var(--viz-fill-primary)';
@@ -150,7 +150,7 @@ export const LollipopRenderer: React.FC<BaseChartRendererProps> = ({
                 y1={yVal}
                 x2={xVal}
                 y2={yVal}
-                stroke={isSelected ? 'var(--text-accent)' : 'var(--viz-stroke-main)'}
+                stroke={isSelected ? 'var(--viz-fill-primary)' : 'var(--viz-stroke-main)'}
                 strokeWidth={2}
               />
 
@@ -160,7 +160,7 @@ export const LollipopRenderer: React.FC<BaseChartRendererProps> = ({
                 cy={yVal}
                 r={isSelected ? 8 : 6}
                 fill={color}
-                stroke={isSelected ? 'var(--text-accent)' : 'var(--viz-stroke-bar)'}
+                stroke={isSelected ? 'var(--viz-fill-primary)' : 'var(--viz-stroke-bar)'}
                 strokeWidth={2}
               />
 

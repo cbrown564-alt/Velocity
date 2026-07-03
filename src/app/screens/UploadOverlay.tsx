@@ -26,7 +26,7 @@ export const UploadOverlay: React.FC<UploadOverlayProps> = ({
     >
       <div className="text-center space-y-4 max-w-md w-full px-6">
         <div className="mx-auto w-14 h-14 rounded-full bg-[var(--bg-panel)] border border-[var(--border-color)] flex items-center justify-center">
-          <Loader2 className="w-7 h-7 text-[var(--color-accent)] animate-spin" />
+          <Loader2 className="w-7 h-7 text-[var(--text-secondary)] animate-spin" />
         </div>
         <div className="space-y-1">
           <p className="font-medium text-[var(--text-primary)]" data-testid="upload-stage-headline">

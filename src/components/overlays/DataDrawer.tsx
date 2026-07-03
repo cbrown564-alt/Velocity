@@ -113,7 +113,7 @@ export const DataDrawer: React.FC<DataDrawerProps> = ({
             {/* Header */}
             <div className="h-16 border-b border-[var(--border-color)] flex items-center justify-between px-6 bg-[var(--bg-panel)] shrink-0">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-[var(--bg-active)] rounded-lg text-[var(--text-accent)]">
+                <div className="p-2 bg-[var(--bg-active)] rounded-lg text-[var(--text-secondary)]">
                   <ListFilter size={20} />
                 </div>
                 <div>
@@ -154,7 +154,7 @@ export const DataDrawer: React.FC<DataDrawerProps> = ({
             <div className="flex-1 overflow-auto p-6 bg-[var(--bg-active)]/50">
               {loading && data.length === 0 ? (
                 <div className="h-full flex items-center justify-center flex-col gap-3 text-[var(--text-tertiary)]">
-                  <Loader2 className="animate-spin h-8 w-8 text-[var(--text-accent)]" />
+                  <Loader2 className="animate-spin h-8 w-8 text-[var(--text-secondary)]" />
                   <span className="text-sm font-medium font-body">Fetching raw records...</span>
                 </div>
               ) : data.length === 0 ? (
@@ -175,9 +175,9 @@ export const DataDrawer: React.FC<DataDrawerProps> = ({
                           {orderedColumns.filterCols.map((key, idx) => (
                             <th
                               key={key}
-                              className={`px-3 py-2.5 whitespace-nowrap border-b border-[var(--border-color)] bg-[var(--bg-active)] text-[var(--text-accent)] font-semibold ${
+                              className={`px-3 py-2.5 whitespace-nowrap border-b border-[var(--border-color)] bg-[var(--bg-active)] text-[var(--text-secondary)] font-semibold ${
                                 idx === orderedColumns.filterCols.length - 1
-                                  ? 'border-r-2 border-r-[var(--text-accent)]/30'
+                                  ? 'border-r-2 border-r-[var(--border-color-active)]/30'
                                   : ''
                               }`}
                             >
@@ -209,9 +209,9 @@ export const DataDrawer: React.FC<DataDrawerProps> = ({
                             {orderedColumns.filterCols.map((col, idx) => (
                               <td
                                 key={col}
-                                className={`px-3 py-2 whitespace-nowrap max-w-[180px] overflow-hidden text-ellipsis bg-[var(--text-accent)]/5 text-[var(--text-primary)] font-medium ${
+                                className={`px-3 py-2 whitespace-nowrap max-w-[180px] overflow-hidden text-ellipsis bg-[var(--bg-rail)] text-[var(--text-primary)] font-medium ${
                                   idx === orderedColumns.filterCols.length - 1
-                                    ? 'border-r-2 border-r-[var(--text-accent)]/20'
+                                    ? 'border-r-2 border-r-[var(--border-color-active)]/20'
                                     : ''
                                 }`}
                               >
@@ -255,7 +255,7 @@ export const DataDrawer: React.FC<DataDrawerProps> = ({
                 <button
                   onClick={onLoadMore}
                   disabled={loading}
-                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[var(--text-accent)] hover:bg-[var(--bg-hover)] rounded-md transition-colors disabled:opacity-50"
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] rounded-md transition-colors disabled:opacity-50"
                 >
                   {loading ? <Loader2 size={14} className="animate-spin" /> : <ChevronDown size={14} />}
                   Load More

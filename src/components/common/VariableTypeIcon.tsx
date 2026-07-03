@@ -9,40 +9,25 @@ export interface VariableTypeIconProps {
   style?: React.CSSProperties;
 }
 
+const MONOCHROME_BOX =
+  'inline-flex items-center justify-center shrink-0 rounded border border-[var(--border-color)] text-[var(--text-tertiary)]';
+
 export const VariableTypeIcon: React.FC<VariableTypeIconProps> = ({
-  type,
-  structure = 'single',
-  size = 14,
-  className,
-  style,
+  type, structure = 'single', size = 14, className = '', style,
 }) => {
-  // Handle structure-based icons (from VariableSetColumn)
-  if (structure === 'grid') {
-    return <Grid3X3 size={size} className={className} style={style} />;
-  }
-
-  if (structure === 'multiple') {
-    return <SquareCheck size={size} className={className} style={style} />;
-  }
-
-  // Handle type-based icons
+  const boxClass = `${MONOCHROME_BOX} ${className}`.trim();
+  const iconSize = Math.max(10, size - 4);
+  const renderIcon = (icon: React.ReactNode) => (
+    <span className={boxClass} style={{ width: size + 6, height: size + 6, ...style }}>{icon}</span>
+  );
+  if (structure === 'grid') return renderIcon(<Grid3X3 size={iconSize} />);
+  if (structure === 'multiple') return renderIcon(<SquareCheck size={iconSize} />);
   switch (type) {
-    case 'categorical':
-      return <CheckCircle size={size} className={className} style={style} />;
-    case 'ordered':
-      return <SlidersHorizontal size={size} className={className} style={style} />;
-    case 'nominal':
-      return <CheckCircle size={size} className={className} style={style} />;
-    case 'ordinal':
-    case 'scale':
-      return <SlidersHorizontal size={size} className={className} style={style} />;
-    case 'numeric':
-      return <Hash size={size} className={className} style={style} />;
-    case 'text':
-      return <Type size={size} className={className} style={style} />;
-    case 'date':
-      return <Calendar size={size} className={className} style={style} />;
-    default:
-      return <CheckCircle size={size} className={className} style={style} />;
+    case 'categorical': case 'nominal': return renderIcon(<CheckCircle size={iconSize} />);
+    case 'ordered': case 'ordinal': case 'scale': return renderIcon(<SlidersHorizontal size={iconSize} />);
+    case 'numeric': return renderIcon(<Hash size={iconSize} />);
+    case 'text': return renderIcon(<Type size={iconSize} />);
+    case 'date': return renderIcon(<Calendar size={iconSize} />);
+    default: return renderIcon(<CheckCircle size={iconSize} />);
   }
 };

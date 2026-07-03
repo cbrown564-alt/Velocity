@@ -190,7 +190,7 @@ const SlideThumb: React.FC<SlideThumbProps> = ({
                         border
                         ${
                           isActive
-                            ? 'bg-[var(--color-accent)]/10 border-[var(--color-accent)]/25 text-[var(--color-accent)]'
+                            ? 'bg-[var(--bg-rail)] border-[var(--border-color)] text-[var(--text-primary)]'
                             : 'bg-transparent border-transparent text-[var(--text-secondary)] hover:bg-[var(--bg-active)] hover:text-[var(--text-primary)]'
                         }
                         ${isDragging ? 'opacity-40' : ''}
@@ -203,7 +203,7 @@ const SlideThumb: React.FC<SlideThumbProps> = ({
           {section && (
             <span
               className="w-1 h-1 rounded-full shrink-0"
-              style={{ backgroundColor: section.color || 'var(--color-accent)' }}
+              style={{ backgroundColor: section.color || 'var(--viz-fill-primary)' }}
             />
           )}
 

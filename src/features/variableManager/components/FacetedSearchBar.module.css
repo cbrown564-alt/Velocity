@@ -70,7 +70,7 @@
 }
 
 .typeBarActive {
-  background-color: color-mix(in srgb, var(--color-accent) 12%, var(--bg-active));
+  background-color: var(--bg-rail);
 }
 
 .typeBarEmpty {
@@ -85,14 +85,14 @@
 .typeBarFill {
   width: 4px;
   min-height: 2px;
-  background-color: var(--color-accent);
+  background-color: var(--viz-fill-primary);
   border-radius: 1px;
   transition: height 0.2s ease-out;
 }
 
 .typeBarActive .typeBarFill {
-  background-color: var(--color-accent);
-  box-shadow: 0 0 4px color-mix(in srgb, var(--color-accent) 40%, transparent);
+  background-color: var(--viz-fill-primary);
+  
 }
 
 .typeBarEmpty .typeBarFill {
@@ -108,7 +108,7 @@
 }
 
 .typeBarActive .typeBarLabel {
-  color: var(--color-accent);
+  color: var(--text-primary);
 }
 
 /* ============================================================================
@@ -138,13 +138,13 @@
 }
 
 .insightButtonActive {
-  background-color: var(--color-accent);
-  border-color: var(--color-accent);
-  color: var(--text-inverse);
+  background-color: var(--bg-rail);
+  border-color: var(--border-color-active);
+  color: var(--text-primary);
 }
 
 .insightButtonActive:hover {
-  background-color: var(--color-accent-hover);
+  background-color: var(--bg-active);
   opacity: 1;
 }
 
@@ -257,8 +257,8 @@
 }
 
 .checkboxChecked {
-  background-color: var(--color-accent);
-  border-color: var(--color-accent);
+  background-color: var(--viz-fill-primary);
+  border-color: var(--border-color-active);
 }
 
 .checkmark {
@@ -316,7 +316,7 @@
   border-top: 1px solid var(--border-color);
   border-radius: 0 0 var(--border-radius-sm) var(--border-radius-sm);
   background: transparent;
-  color: var(--color-accent);
+  color: var(--text-primary);
   font-family: var(--font-body);
   font-size: var(--text-sm);
   font-weight: 500;
@@ -345,11 +345,12 @@
   align-items: center;
   gap: var(--space-1);
   padding: var(--space-1) var(--space-2);
-  background-color: var(--color-accent);
+  background-color: var(--bg-rail);
+  border: 1px solid var(--border-color);
   border-radius: 12px;
   font-family: var(--font-body);
   font-size: var(--text-xs);
-  color: var(--text-inverse);
+  color: var(--text-primary);
 }
 
 .chipRemove {
@@ -388,7 +389,7 @@
 }
 
 .clearAll:hover {
-  color: var(--color-accent);
+  color: var(--text-primary);
 }
 
 /* ============================================================================

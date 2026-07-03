@@ -11,11 +11,11 @@ export const Logo: React.FC<LogoProps> = ({ className = '', size = 24 }) => {
       <defs>
         <linearGradient id="logoWave1" x1="0%" y1="0%" x2="100%" y2="100%">
           <stop offset="0%" stopColor="var(--viz-palette-1)" />
-          <stop offset="100%" stopColor="var(--color-accent)" />
+          <stop offset="100%" stopColor="var(--viz-fill-primary)" />
         </linearGradient>
         <linearGradient id="logoWave2" x1="100%" y1="0%" x2="0%" y2="100%">
           <stop offset="0%" stopColor="var(--viz-palette-2)" />
-          <stop offset="100%" stopColor="var(--color-accent)" />
+          <stop offset="100%" stopColor="var(--viz-fill-primary)" />
         </linearGradient>
       </defs>
       <path

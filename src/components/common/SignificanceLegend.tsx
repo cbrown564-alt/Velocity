@@ -71,7 +71,7 @@ export const SignificanceLegend: React.FC<SignificanceLegendProps> = ({
         {showMethodologyLink && (
           <button
             onClick={onMethodologyClick}
-            className="text-[var(--color-accent)] hover:underline font-normal flex items-center gap-1"
+            className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:underline font-normal flex items-center gap-1"
           >
             <Info size={12} />
             How we calculate

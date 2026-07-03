@@ -35,9 +35,9 @@ export const FilterBar: React.FC<FilterBarProps> = ({ filters, variables, onAddF
           color: 'var(--text-secondary)',
         }}
         onMouseEnter={(e) => {
-          e.currentTarget.style.borderColor = 'var(--text-accent)';
-          e.currentTarget.style.color = 'var(--text-accent)';
-          e.currentTarget.style.backgroundColor = 'color-mix(in srgb, var(--text-accent) 5%, transparent)';
+          e.currentTarget.style.borderColor = 'var(--border-color-active)';
+          e.currentTarget.style.color = 'var(--text-primary)';
+          e.currentTarget.style.backgroundColor = 'var(--bg-rail)';
         }}
         onMouseLeave={(e) => {
           e.currentTarget.style.borderColor = 'var(--border-color-muted)';

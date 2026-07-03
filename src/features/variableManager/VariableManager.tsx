@@ -209,30 +209,30 @@ export const VariableManager: React.FC<VariableManagerProps> = ({ onClose }) => 
         <header className="flex items-center justify-between px-6 py-4 border-b border-[var(--border-color)] bg-[var(--bg-panel)]">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
-              <Grid3X3 className="w-5 h-5 text-[var(--color-accent)]" />
+              <Grid3X3 className="w-5 h-5 text-[var(--text-tertiary)]" />
               <h1 className="font-display text-lg font-semibold text-[var(--text-primary)] m-0">Variable Manager</h1>
             </div>
 
             {/* Quick Stats */}
             <div className="flex items-center gap-3 text-xs text-[var(--text-secondary)] ml-4">
               <span className="flex items-center gap-1">
-                <Tag size={12} className="text-[var(--color-accent)]" />
+                <Tag size={12} className="text-[var(--text-tertiary)]" />
                 {typeStats.categorical} Category
               </span>
               <span className="flex items-center gap-1">
-                <SlidersHorizontal size={12} className="text-[var(--text-accent)]" />
+                <SlidersHorizontal size={12} className="text-[var(--text-tertiary)]" />
                 {typeStats.scale} Scale
               </span>
               <span className="flex items-center gap-1">
-                <BarChart2 size={12} className="text-[var(--text-accent)]" />
+                <BarChart2 size={12} className="text-[var(--text-tertiary)]" />
                 {typeStats.numeric} Numeric
               </span>
               <span className="flex items-center gap-1">
-                <Calendar size={12} className="text-[var(--text-accent)]" />
+                <Calendar size={12} className="text-[var(--text-tertiary)]" />
                 {typeStats.date} Date
               </span>
               <span className="flex items-center gap-1">
-                <Type size={12} className="text-[var(--text-accent)]" />
+                <Type size={12} className="text-[var(--text-tertiary)]" />
                 {typeStats.text} Text
               </span>
               <span className="text-[var(--border-color-active)]">|</span>
@@ -249,7 +249,7 @@ export const VariableManager: React.FC<VariableManagerProps> = ({ onClose }) => 
                 placeholder="Search variables..."
                 value={managerSearchQuery}
                 onChange={(e) => setManagerSearchQuery(e.target.value)}
-                className="w-full pl-8 pr-3 py-1.5 bg-transparent border-b border-[var(--border-color)] text-sm font-body outline-none focus:border-[var(--color-accent)] focus:border-b-2 transition-all placeholder:text-[var(--text-secondary)] text-[var(--text-primary)]"
+                className="w-full pl-8 pr-3 py-1.5 bg-transparent border-b border-[var(--border-color)] text-sm font-body outline-none focus:border-[var(--border-color-active)] focus:border-b-2 transition-all placeholder:text-[var(--text-secondary)] text-[var(--text-primary)]"
               />
             </div>
 
