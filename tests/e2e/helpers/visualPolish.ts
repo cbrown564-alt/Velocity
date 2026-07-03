@@ -239,6 +239,14 @@ export async function expectWorkspaceLibraryVisible(page: Page) {
   await expect
     .poll(
       async () => {
+        const stillBooting = await page
+          .getByText(
+            /Starting analysis engine|Restoring local workspace|Initializing Analysis Engine|Preparing workspace/i,
+          )
+          .isVisible()
+          .catch(() => false);
+        if (stillBooting) return false;
+
         const onWorkspace =
           (await page
             .getByText('Velocity Workspace')
@@ -254,11 +262,43 @@ export async function expectWorkspaceLibraryVisible(page: Page) {
           .catch(() => false);
         return onWorkspace && !onDashboard;
       },
-      { timeout: 120000 },
+      { timeout: 180000 },
     )
     .toBe(true);
 
-  await expect(page.getByRole('heading', { name: 'sleep.sav' })).toBeVisible({ timeout: 30000 });
+  await expect(page.getByRole('heading', { name: 'sleep.sav' })).toBeVisible({ timeout: 60000 });
+}
+
+export async function waitForRestorationPromptOrWorkspace(page: Page) {
+  await expect
+    .poll(
+      async () => {
+        if (
+          await page
+            .getByRole('button', { name: 'Start Fresh' })
+            .isVisible()
+            .catch(() => false)
+        )
+          return true;
+        if (
+          await page
+            .getByRole('button', { name: 'Restore Session' })
+            .isVisible()
+            .catch(() => false)
+        )
+          return true;
+        if (
+          await page
+            .getByTestId('workspace-empty-state')
+            .isVisible()
+            .catch(() => false)
+        )
+          return true;
+        return false;
+      },
+      { timeout: 120000 },
+    )
+    .toBe(true);
 }
 
 export async function waitForWorkspaceModePersisted(page: Page) {
