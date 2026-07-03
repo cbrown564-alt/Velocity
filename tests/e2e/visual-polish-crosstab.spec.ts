@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { assertOpfsSupported, buildExampleCrosstab, reachDashboardWithExample } from './helpers/visualPolish';
+import { assertOpfsSupported, buildExampleCrosstab, reachDashboardWithSleepExample } from './helpers/visualPolish';
 
 test('P1 crosstab render gate — sex x marital status with trust anchor', async ({ page }) => {
   await page.goto('/');
@@ -7,7 +7,7 @@ test('P1 crosstab render gate — sex x marital status with trust anchor', async
 
   test.skip(!(await assertOpfsSupported(page)), 'OPFS not supported in this environment');
 
-  await reachDashboardWithExample(page);
+  await reachDashboardWithSleepExample(page);
   await buildExampleCrosstab(page);
 
   const table = page.locator('table');

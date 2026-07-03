@@ -5,7 +5,7 @@ import {
   assertOpfsSupported,
   buildExampleCrosstab,
   crosstabTable,
-  reachDashboardWithExample,
+  reachDashboardWithSleepExample,
   waitForStableCrosstab,
 } from './helpers/visualPolish';
 
@@ -24,7 +24,7 @@ test.describe('Visual polish — crosstab table theme regression', () => {
     await page.goto('/');
     test.skip(!(await assertOpfsSupported(page)), 'OPFS not supported in this environment');
 
-    await reachDashboardWithExample(page);
+    await reachDashboardWithSleepExample(page);
     await buildExampleCrosstab(page);
     await waitForStableCrosstab(page);
 

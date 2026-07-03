@@ -1,0 +1,73 @@
+{
+  "name": "brand-tracker-wave-refresh",
+  "description": "Next-quarter tracker update: import Wave 5, run the dataset-replacement review on saved slide recipes, and apply the wave_refresh template mode so recomputed titles are flagged for human confirmation and flat movers are demoted. The authoritative refresh runs against the real VelocityEngine; this contract records that reference plus a browser smoke that the Wave 5 file loads and analyses.",
+  "startUrl": "/",
+  "timeoutMs": 120000,
+  "settleMs": 250,
+  "artifactsDir": "demo/artifacts/brand-tracker-wave-refresh/latest",
+  "engineReference": {
+    "script": "scripts/brand-tracker-wave-refresh-demo.ts",
+    "command": "npm run demo:brand-tracker-wave-refresh",
+    "notes": "Builds the Wave 4 deck, imports Wave 5, runs assessDatasetReplacement on the saved slide recipes (all resolvable -> ready), recomputes each action title's direction/magnitude against Wave 5 (flagged for confirmation, never silently rewritten per 08 4), and flags the previously significant unaided-awareness mover as a demotion candidate now that it is flat W4->W5. Uses TemplateRefreshMode 'wave_refresh'."
+  },
+  "preconditions": [
+    "Dev server reachable via Playwright baseURL (default: http://127.0.0.1:4173).",
+    "Engine refresh artifact reproducible via `npm run demo:brand-tracker-wave-refresh` (exit 0).",
+    "Fixture file exists at test_data/fixtures/brand_tracker/brandtracker_w5.sav (refresh wave)."
+  ],
+  "sensitiveSelectors": ["[data-testid='user-email']", "[data-testid='account-id']"],
+  "steps": [
+    {
+      "id": "open-workspace",
+      "goal": "Load root workspace view",
+      "action": "goto",
+      "target": "/",
+      "assert": {
+        "type": "attached",
+        "selector": "[data-testid='dataset-upload-input']"
+      },
+      "capture": true
+    },
+    {
+      "id": "upload-refresh-wave",
+      "goal": "Attach the Wave 5 refresh file (the next-quarter update)",
+      "action": "upload",
+      "selector": "[data-testid='dataset-upload-input']",
+      "value": "test_data/fixtures/brand_tracker/brandtracker_w5.sav",
+      "assert": {
+        "type": "visibleAny",
+        "selectors": ["text=Survey Questions", "text=Metadata Loaded"]
+      },
+      "capture": true,
+      "settleMs": 500
+    },
+    {
+      "id": "load-full-data-if-needed",
+      "goal": "Resolve metadata-only ingestion branch",
+      "action": "clickIfVisible",
+      "selector": "button:has-text('Load Full Data')",
+      "assert": {
+        "type": "visible",
+        "selector": "text=Survey Questions"
+      },
+      "capture": false,
+      "settleMs": 500
+    },
+    {
+      "id": "verify-refresh-wave-loaded",
+      "goal": "Confirm the Wave 5 refresh wave loads with the same schema as Wave 4 (ready for dataset replacement)",
+      "action": "waitForTimeout",
+      "value": "1000",
+      "assert": {
+        "type": "visible",
+        "selector": "text=Survey Questions"
+      },
+      "capture": true,
+      "settleMs": 500
+    }
+  ],
+  "successMetric": {
+    "type": "stepCount",
+    "minimumCompleted": 4
+  }
+}

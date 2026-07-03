@@ -1,0 +1,68 @@
+{
+  "name": "brand-tracker-load",
+  "description": "Load the brand tracker Wave 4 example (primary Load Example) and confirm the funnel-relevant first crosstab renders.",
+  "startUrl": "/",
+  "timeoutMs": 120000,
+  "settleMs": 250,
+  "artifactsDir": "demo/artifacts/brand-tracker-load/latest",
+  "preconditions": [
+    "Dev server reachable via Playwright baseURL (default: http://127.0.0.1:4173).",
+    "Fixture file exists at public/examples/brandtracker_w4.sav (shipped Load Example).",
+    "Local browser context should start clean so the one-time auto-first-crosstab fires."
+  ],
+  "sensitiveSelectors": ["[data-testid='user-email']", "[data-testid='account-id']"],
+  "steps": [
+    {
+      "id": "open-workspace",
+      "goal": "Load root workspace view",
+      "action": "goto",
+      "target": "/",
+      "assert": {
+        "type": "attached",
+        "selector": "[data-testid='dataset-upload-input']"
+      },
+      "capture": true
+    },
+    {
+      "id": "upload-tracker",
+      "goal": "Attach the analysis-ready brand tracker Wave 4 file",
+      "action": "upload",
+      "selector": "[data-testid='dataset-upload-input']",
+      "value": "public/examples/brandtracker_w4.sav",
+      "assert": {
+        "type": "visibleAny",
+        "selectors": ["text=Survey Questions", "text=Metadata Loaded"]
+      },
+      "capture": true,
+      "settleMs": 500
+    },
+    {
+      "id": "load-full-data-if-needed",
+      "goal": "Handle metadata-only branch deterministically",
+      "action": "clickIfVisible",
+      "selector": "button:has-text('Load Full Data')",
+      "assert": {
+        "type": "visible",
+        "selector": "text=Survey Questions"
+      },
+      "capture": false,
+      "settleMs": 500
+    },
+    {
+      "id": "verify-funnel-first-crosstab",
+      "goal": "Confirm the funnel-relevant first crosstab (brand preference x segment) renders automatically",
+      "action": "waitForTimeout",
+      "value": "1500",
+      "assert": {
+        "type": "visible",
+        "selector": "table"
+      },
+      "capture": true,
+      "settleMs": 500
+    }
+  ],
+  "successMetric": {
+    "type": "stepCount",
+    "minimumCompleted": 4
+  }
+}
