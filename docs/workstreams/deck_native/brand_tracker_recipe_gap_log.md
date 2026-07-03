@@ -31,7 +31,7 @@ The script drives raw Wave 4 (`test_data/fixtures/brand_tracker/brandtracker_w4_
 - **NPS score → shares.** Displayed promoter/passive/detractor shares instead of a single `%promoters − %detractors` stat (matches plan §4.2 disposition).
 - **Cross-wave attribute rename → single-wave analysis.** The fuzzy mapping and a harmonized stacked table are demonstrated, but the Wave-4 driver crosstabs read the raw `att_value_atlas` directly rather than an in-place-renamed column (single-wave analysis needs no rename).
 - **Banner tables → per-break crosstabs.** Segment / age-band / driver cuts are composed as one crosstab per break; no persistent banner plan.
-- **Wave-5 refresh → stub.** Wave 5 is registered but `assessDatasetReplacement` + `wave_refresh` template mode are Phase D.
+- **Wave-5 refresh → dedicated Phase D demo.** Wave 5 is registered here; the full `assessDatasetReplacement` + `wave_refresh` template-mode demonstration lives in `scripts/brand-tracker-wave-refresh-demo.ts` (`npm run demo:brand-tracker-wave-refresh`, Phase D). That script confirms saved slide recipes on shipped variables resolve READY on Wave 5, recomputes each action title's direction/magnitude with the defensibility guard and **flags** them for human confirmation (never silent rewrite, per `08` §4), flags the flat unaided-awareness headline as a **demotion candidate**, and shows that recipe-derived nets (recode targets) do **not** survive replacement — making `INF-04` (`RECIPE-REPLAY`) concrete without building the replay engine.
 
 ## Gaps logged (internal signals, `pilot_04a` §7)
 

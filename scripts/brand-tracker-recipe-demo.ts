@@ -397,11 +397,15 @@ async function main(): Promise<void> {
   console.log('    Recipe = transformLog; steps 4–7 replay on reopen (arch_07 §8). Derived variables in transformLog:');
   for (const t of recodeTransforms) console.log(`      • ${t.sourceColId} → ${t.newColId}`);
 
-  // ── Step 10: Next quarter — swap in wave 5 (stub / log only; full refresh = Phase D) ─
-  section('STEP 10 · Wave-5 swap (stub — full wave refresh is Phase D)');
+  // ── Step 10: Next quarter — swap in wave 5 (full refresh demo lives in Phase D) ─
+  section('STEP 10 · Wave-5 swap (full wave refresh: scripts/brand-tracker-wave-refresh-demo.ts)');
   const w5 = unwrap(await engine.loadWorkspaceDataset(WAVE5, { waveNumber: 5 }), 'workspace load W5');
   console.log(`  ✓ Registered refresh wave ${w5.name} (${w5.rowCount} rows) in workspace`);
-  console.log('  ℹ Wave refresh (assessDatasetReplacement + wave_refresh template mode) is out of Phase B scope.');
+  console.log(
+    '  ℹ Wave refresh (assessDatasetReplacement + wave_refresh template mode) is demonstrated end to end by\n' +
+      '    `npm run demo:brand-tracker-wave-refresh` (Phase D): dataset-replacement review, recomputed titles\n' +
+      '    flagged for confirmation, flat-mover demotion, and the RECIPE-REPLAY limitation made legible.',
+  );
   logGap(
     'INF-04',
     'repeating steps 4–7 on wave 5 requires manual re-execution of every recode; there is no cross-dataset ' +
