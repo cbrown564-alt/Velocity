@@ -1,6 +1,6 @@
 # Design Reset: Pathways to a Calm, Story-First Velocity
 
-**Status:** Pathway B approved (July 3, 2026) — evolved Soft Machine identity, dark mode deferred. Phase 0 (north-star screens) in progress; see `docs/assets/design-reset-north-star/north_star.html`
+**Status:** Pathway B approved (July 3, 2026) — evolved Soft Machine identity, dark mode deferred. Phase 0 complete (`docs/assets/design-reset-north-star/north_star.html`). Execution: [`plan_05_design_reset_implementation.md`](plan_05_design_reset_implementation.md)
 **Date:** July 3, 2026
 **Quality bar:** Linear-grade restraint, applied structurally this time — not as a fix list
 **Companion docs:** [`audit_07_pilot_presentation_readiness_2026-07-01.md`](audit_07_pilot_presentation_readiness_2026-07-01.md) (tactical predecessor), [`deck_native_multi_agent_plan.md`](deck_native_multi_agent_plan.md) (product direction), [`design_01_system.md`](design_01_system.md) (to be superseded), [`design_02_ux_modes.md`](design_02_ux_modes.md)
