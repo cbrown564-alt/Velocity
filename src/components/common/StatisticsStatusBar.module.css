@@ -143,8 +143,8 @@
 }
 
 .gearButtonActive {
-  color: var(--color-accent);
-  background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+  color: var(--border-color-active);
+  background: color-mix(in srgb, var(--border-color-active) 10%, transparent);
 }
 
 /* Collapsible settings tray */

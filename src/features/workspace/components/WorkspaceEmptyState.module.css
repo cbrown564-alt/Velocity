@@ -111,7 +111,7 @@
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--color-accent);
+  color: var(--border-color-active);
 }
 
 .firstRunHeadline {
@@ -178,7 +178,7 @@
   width: 1.125rem;
   height: 1.125rem;
   border-radius: 999px;
-  background: var(--color-accent);
+  background: var(--border-color-active);
   color: var(--text-inverse);
   font-size: 0.625rem;
   font-weight: 700;
@@ -215,7 +215,7 @@
   width: 1.75rem;
   height: 2px;
   border-radius: 999px;
-  background: color-mix(in srgb, var(--border-color) 85%, var(--color-accent));
+  background: color-mix(in srgb, var(--border-color) 85%, var(--border-color-active));
 }
 
 .workflowConnectorArrow {
@@ -269,8 +269,8 @@
 }
 
 .dropZoneActive {
-  background: color-mix(in srgb, var(--color-accent) 5%, var(--bg-panel));
-  border-bottom-color: color-mix(in srgb, var(--color-accent) 35%, var(--border-color));
+  background: color-mix(in srgb, var(--border-color-active) 5%, var(--bg-panel));
+  border-bottom-color: color-mix(in srgb, var(--border-color-active) 35%, var(--border-color));
 }
 
 .dropIconWrap {
@@ -287,9 +287,9 @@
 }
 
 .dropZoneActive .dropIconWrap {
-  border-color: color-mix(in srgb, var(--color-accent) 40%, var(--border-color));
-  color: var(--color-accent);
-  background: color-mix(in srgb, var(--color-accent) 8%, var(--bg-panel));
+  border-color: color-mix(in srgb, var(--border-color-active) 40%, var(--border-color));
+  color: var(--border-color-active);
+  background: color-mix(in srgb, var(--border-color-active) 8%, var(--bg-panel));
 }
 
 .dropZoneLabel {
@@ -339,7 +339,7 @@
   padding: var(--space-3) var(--space-6);
   border: none;
   border-radius: var(--border-radius-md);
-  background: var(--color-accent);
+  background: var(--border-color-active);
   color: var(--text-inverse);
   font-size: var(--text-base);
   font-weight: 600;
@@ -395,8 +395,8 @@
 }
 
 .exampleRow:hover .exampleIcon {
-  color: var(--color-accent);
-  border-color: color-mix(in srgb, var(--color-accent) 25%, var(--border-color));
+  color: var(--border-color-active);
+  border-color: color-mix(in srgb, var(--border-color-active) 25%, var(--border-color));
 }
 
 .exampleCopy {
@@ -428,7 +428,7 @@
 }
 
 .exampleRow:hover .exampleArrow {
-  color: var(--color-accent);
+  color: var(--border-color-active);
   transform: translateX(2px);
 }
 

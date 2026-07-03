@@ -164,8 +164,10 @@ describe('DropZone', () => {
       );
 
       const zone = container.firstChild as HTMLElement;
-      // Active state should apply accent border with transparent mix
-      expect(zone.className).toContain('border-[color-mix(in_srgb,var(--color-accent),transparent_50%)]');
+      // Active (drag in progress, not yet over this target) is neutral ink, not accent —
+      // accent is reserved for the live drop target (isOver).
+      expect(zone.className).toContain('border-[var(--border-color-active)]');
+      expect(zone.className).not.toContain('color-accent');
     });
 
     it('does not show active styling when active is false', () => {

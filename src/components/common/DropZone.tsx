@@ -43,16 +43,13 @@ export const DropZone: React.FC<DropZoneProps> = ({
           ref={setNodeRef}
           data-testid={id}
           className={`
-            flex items-center gap-2 min-h-[36px] px-2 py-1 rounded-md transition-all duration-200
-            ${
-              active
-                ? 'bg-[var(--bg-surface)] border border-dashed border-[color-mix(in_srgb,var(--color-accent),transparent_70%)]'
-                : 'border border-transparent'
-            }
+            flex items-center gap-2 min-h-[36px] px-2 py-1 rounded-md transition-all duration-200 border border-dashed
             ${
               isOver
                 ? 'ring-2 ring-[color-mix(in_srgb,var(--color-accent),transparent_50%)] bg-[var(--bg-surface)] border-[var(--color-accent)]'
-                : ''
+                : active
+                  ? 'border-[var(--border-color)] bg-[var(--bg-surface)]'
+                  : 'border-transparent'
             }
           `}
         >
@@ -64,17 +61,17 @@ export const DropZone: React.FC<DropZoneProps> = ({
               relative flex items-center gap-2 py-1.5 px-3 rounded-md border transition-all duration-200
               ${
                 weightEnabled
-                  ? 'bg-[color-mix(in_srgb,var(--color-accent),transparent_92%)] border-[color-mix(in_srgb,var(--color-accent),transparent_60%)]'
+                  ? 'bg-[var(--bg-panel-tint)] border-[var(--border-color)]'
                   : 'bg-[var(--bg-panel)] border-[var(--border-color)] opacity-60'
               }
             `}
           >
             <Weight
               size={13}
-              className={weightEnabled ? 'text-[var(--color-accent)]' : 'text-[var(--text-secondary)]'}
+              className={weightEnabled ? 'text-[var(--text-primary)]' : 'text-[var(--text-secondary)]'}
             />
             <span
-              className={`text-sm font-medium font-body line-clamp-2 leading-snug min-w-0 ${weightEnabled ? 'text-[var(--color-accent)]' : 'text-[var(--text-secondary)] line-through'}`}
+              className={`text-sm font-medium font-body line-clamp-2 leading-snug min-w-0 ${weightEnabled ? 'text-[var(--text-primary)]' : 'text-[var(--text-secondary)] line-through'}`}
               title={weightVar.name}
             >
               {weightVar.name}
@@ -91,7 +88,7 @@ export const DropZone: React.FC<DropZoneProps> = ({
                 }
               >
                 {weightEnabled ? (
-                  <ToggleRight size={18} className="text-[var(--color-accent)]" />
+                  <ToggleRight size={18} className="text-[var(--text-primary)]" />
                 ) : (
                   <ToggleLeft size={18} className="text-[var(--text-secondary)]" />
                 )}
@@ -101,7 +98,7 @@ export const DropZone: React.FC<DropZoneProps> = ({
             {/* Remove button */}
             <button
               onClick={() => onRemove(weightVar.id)}
-              className="p-1 text-[var(--text-secondary)] hover:text-[var(--color-accent)] hover:bg-[var(--bg-active)] rounded-full transition-colors"
+              className="p-1 text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-active)] rounded-full transition-colors"
               aria-label={`Remove weight variable ${weightVar.name}`}
             >
               <svg
@@ -134,17 +131,14 @@ export const DropZone: React.FC<DropZoneProps> = ({
             isOver
               ? 'border-[var(--color-accent)] bg-[color-mix(in_srgb,var(--color-accent),transparent_90%)] text-[var(--color-accent)]'
               : active
-                ? 'border-[color-mix(in_srgb,var(--color-accent),transparent_50%)] bg-[var(--bg-surface)] text-[color-mix(in_srgb,var(--color-accent),transparent_30%)]'
+                ? 'border-[var(--border-color-active)] bg-[var(--bg-surface)] text-[var(--text-secondary)]'
                 : 'border-[var(--border-color)] text-[var(--text-secondary)] hover:border-[var(--border-color-active)] hover:bg-[var(--bg-active)]'
           }
           h-9 min-w-[160px]
         `}
       >
         <div className="flex items-center gap-2 pointer-events-none">
-          <Weight
-            size={14}
-            className={active || isOver ? 'text-[var(--color-accent)]' : 'text-[var(--text-secondary)]'}
-          />
+          <Weight size={14} className={isOver ? 'text-[var(--color-accent)]' : 'text-[var(--text-secondary)]'} />
           <span className="shelf-label text-xs font-medium uppercase tracking-widest font-mono">{label}</span>
         </div>
       </div>
@@ -162,14 +156,11 @@ export const DropZone: React.FC<DropZoneProps> = ({
           className={`
             w-full min-h-[52px] px-2 py-1.5 rounded-md transition-all duration-200 flex items-center
             ${
-              active
-                ? 'bg-[var(--bg-surface)] border-2 border-dashed border-[color-mix(in_srgb,var(--color-accent),transparent_70%)] backdrop-blur-sm'
-                : 'border-2 border-transparent bg-transparent'
-            }
-            ${
               isOver
-                ? 'ring-2 ring-[color-mix(in_srgb,var(--color-accent),transparent_50%)] bg-[var(--bg-surface)] border-[var(--color-accent)]'
-                : ''
+                ? 'ring-2 ring-[color-mix(in_srgb,var(--color-accent),transparent_50%)] bg-[var(--bg-surface)] border-2 border-[var(--color-accent)]'
+                : active
+                  ? 'bg-[var(--bg-surface)] border-2 border-dashed border-[var(--border-color)]'
+                  : 'border-2 border-transparent bg-transparent'
             }
           `}
         >
@@ -186,14 +177,11 @@ export const DropZone: React.FC<DropZoneProps> = ({
         className={`
           flex flex-row flex-wrap gap-2 min-w-[120px] min-h-[40px] px-2 py-1.5 rounded-md transition-all duration-200 items-center
           ${
-            active
-              ? 'bg-[var(--bg-surface)] border-2 border-dashed border-[color-mix(in_srgb,var(--color-accent),transparent_70%)] backdrop-blur-sm'
-              : 'border-2 border-dashed border-transparent'
-          }
-          ${
             isOver
-              ? 'ring-2 ring-[color-mix(in_srgb,var(--color-accent),transparent_50%)] bg-[var(--bg-surface)] border-[var(--color-accent)]'
-              : ''
+              ? 'ring-2 ring-[color-mix(in_srgb,var(--color-accent),transparent_50%)] bg-[var(--bg-surface)] border-2 border-dashed border-[var(--color-accent)]'
+              : active
+                ? 'bg-[var(--bg-surface)] border-2 border-dashed border-[var(--border-color)]'
+                : 'border-2 border-dashed border-transparent'
           }
         `}
       >
@@ -213,7 +201,7 @@ export const DropZone: React.FC<DropZoneProps> = ({
             </span>
             <button
               onClick={() => onRemove(set.id)}
-              className="ml-2 p-1 text-[var(--text-secondary)] hover:text-[var(--color-accent)] hover:bg-[var(--bg-active)] rounded-full transition-colors"
+              className="ml-2 p-1 text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-active)] rounded-full transition-colors"
               aria-label={`Remove column variable ${set.name}`}
             >
               <svg
@@ -247,14 +235,14 @@ export const DropZone: React.FC<DropZoneProps> = ({
           isOver
             ? 'border-[var(--color-accent)] bg-[color-mix(in_srgb,var(--color-accent),transparent_90%)] text-[var(--color-accent)]'
             : active
-              ? 'border-[color-mix(in_srgb,var(--color-accent),transparent_50%)] bg-[var(--bg-surface)] text-[color-mix(in_srgb,var(--color-accent),transparent_30%)]'
+              ? 'border-[var(--border-color-active)] bg-[var(--bg-surface)] text-[var(--text-secondary)]'
               : 'border-[var(--border-color)] text-[var(--text-secondary)] hover:border-[var(--border-color-active)] hover:bg-[var(--bg-active)]'
         }
         h-10 w-full min-w-[200px]
       `}
     >
       <div className="flex items-center gap-2 pointer-events-none">
-        <Plus size={16} className={active || isOver ? 'text-[var(--color-accent)]' : 'text-[var(--text-secondary)]'} />
+        <Plus size={16} className={isOver ? 'text-[var(--color-accent)]' : 'text-[var(--text-secondary)]'} />
         <span className="shelf-label text-xs font-medium uppercase tracking-widest font-mono">{label}</span>
         <span className="text-[10px] normal-case tracking-normal text-[var(--text-tertiary)]">or ⌘K</span>
       </div>

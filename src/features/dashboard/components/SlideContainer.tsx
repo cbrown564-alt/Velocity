@@ -102,7 +102,7 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
           <button
             type="button"
             onClick={() => void useVelocityStore.getState().runAnalysis()}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--color-accent)] text-[var(--text-inverse)] text-sm font-medium hover:opacity-90 transition-opacity"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--text-primary)] text-[var(--text-inverse)] text-sm font-medium hover:opacity-90 transition-opacity"
           >
             <RefreshCw size={14} />
             Retry

@@ -43,12 +43,12 @@
 }
 
 .thresholdHandle:hover line {
-  stroke: var(--color-accent);
+  stroke: var(--border-color-active);
   stroke-width: 3;
 }
 
 .thresholdHandle:hover .handleGrip {
-  fill: var(--color-accent);
+  fill: var(--border-color-active);
 }
 
 .handleGrip {

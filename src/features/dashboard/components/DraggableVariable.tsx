@@ -60,11 +60,11 @@ export const VariableCard: React.FC<VariableCardProps> = ({
       style={cardStyle}
       {...dragListeners}
       {...dragAttributes}
-      className={`group flex items-center gap-2 px-2 h-9 bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-lg shadow-sm cursor-grab hover:border-[var(--color-accent)] hover:shadow-float transition-all active:cursor-grabbing relative pr-8
-        ${isDragging ? 'ring-2 ring-[var(--color-accent)] ring-opacity-50 grayscale shadow-drag' : ''}
-        ${isSelected ? 'bg-[var(--bg-active)] border-[var(--color-accent)] ring-1 ring-[var(--color-accent)]' : 'hover:bg-[var(--bg-panel)]'}
-        ${isFocused && !isSelected ? 'border-[var(--color-accent)] bg-[var(--bg-active)] ring-1 ring-[var(--color-accent)]/30' : ''}
-        ${isHovered && !isSelected && !isFocused ? 'border-[var(--color-accent)]/60 bg-[color-mix(in_srgb,var(--color-accent),transparent_94%)]' : ''}
+      className={`group flex items-center gap-2 px-2 h-9 bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-lg shadow-sm cursor-grab hover:border-[var(--border-color-active)] hover:shadow-float transition-all active:cursor-grabbing relative pr-8
+        ${isDragging ? 'ring-2 ring-[var(--border-color-active)] ring-opacity-50 grayscale shadow-drag' : ''}
+        ${isSelected ? 'bg-[var(--bg-rail)] border-[var(--border-color-active)]' : 'hover:bg-[var(--bg-panel)]'}
+        ${isFocused && !isSelected ? 'border-[var(--border-color-active)] bg-[var(--bg-rail)]' : ''}
+        ${isHovered && !isSelected && !isFocused ? 'border-[var(--border-color-active)]/60 bg-[var(--bg-rail)]' : ''}
         ${isOverlay ? 'shadow-xl scale-105 cursor-grabbing !opacity-100 z-[var(--z-popover)]' : ''}
       `}
       onMouseEnter={() => setHoveredVariableSetId(variableSet.id)}
@@ -119,7 +119,7 @@ export const VariableCard: React.FC<VariableCardProps> = ({
       </div>
 
       <div
-        className="absolute right-2 text-[var(--text-secondary)] group-hover:text-[var(--color-accent)] transition-colors shrink-0 opacity-0 group-hover:opacity-100 flex items-center justify-center w-5 h-5 rounded hover:bg-[var(--bg-active)]"
+        className="absolute right-2 text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors shrink-0 opacity-0 group-hover:opacity-100 flex items-center justify-center w-5 h-5 rounded hover:bg-[var(--bg-active)]"
         title="Click to assign"
       >
         <Plus size={14} />

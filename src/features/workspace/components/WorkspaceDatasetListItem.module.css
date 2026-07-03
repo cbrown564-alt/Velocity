@@ -16,8 +16,8 @@
 }
 
 .datasetListItem.selected {
-  border-color: var(--color-accent);
-  background: color-mix(in srgb, var(--color-accent) 5%, var(--bg-panel));
+  border-color: var(--border-color-active);
+  background: color-mix(in srgb, var(--border-color-active) 5%, var(--bg-panel));
 }
 
 .starButton {
@@ -81,7 +81,7 @@
 }
 
 .sessionDot {
-  color: var(--color-accent);
+  color: var(--border-color-active);
 }
 
 .listTime {
