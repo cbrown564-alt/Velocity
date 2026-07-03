@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Home,
   Table,
@@ -9,53 +9,189 @@ import {
   RotateCcw,
   Maximize2,
   Minimize2,
-  Rows3,
+  Database,
+  MoreHorizontal,
 } from 'lucide-react';
 
 import type { Dataset } from '../../../types/dataset';
 import type { Slide } from '../../../types/slides';
 import { useVelocityStore } from '../../../store';
-import { ModeToggleButton } from '../../../components/layout/AppShell';
 
 export interface DashboardToolbarProps {
   dataset: Dataset | null;
   activeSlideId: string | null;
   activeSlide: Slide | null;
   focusMode: boolean;
-  tableDensity: 'compact' | 'generous';
   canOpenExport: boolean;
   onReturnToWorkspace: () => void;
   onOpenSessionImport: () => void;
   onExportSession: () => void;
   onExport: () => void;
   onToggleFocusMode: () => void;
-  onToggleTableDensity: () => void;
   onReset: () => void;
 }
+
+/** Ghost button per north-star topbar: transparent default, --bg-rail hover, no borders */
+const GHOST_BUTTON =
+  'inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-[12.5px] text-[var(--text-secondary)] hover:bg-[var(--bg-rail)] hover:text-[var(--text-primary)] transition-colors';
+
+const KBD_HINT = 'font-mono text-[10.5px] text-[var(--text-tertiary)] ml-1';
+
+const OverflowMenu: React.FC<{
+  dataset: Dataset | null;
+  focusMode: boolean;
+  onOpenSessionImport: () => void;
+  onExportSession: () => void;
+  onToggleFocusMode: () => void;
+  onReset: () => void;
+}> = ({ dataset, focusMode, onOpenSessionImport, onExportSession, onToggleFocusMode, onReset }) => {
+  const [open, setOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const handleOutsideClick = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    };
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setOpen(false);
+    };
+    document.addEventListener('mousedown', handleOutsideClick);
+    document.addEventListener('keydown', handleEscape);
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [open]);
+
+  const itemClass =
+    'w-full flex items-center gap-2.5 px-3 py-2 text-sm text-[var(--text-primary)] hover:bg-[var(--bg-rail)] transition-colors text-left disabled:opacity-50 disabled:cursor-not-allowed';
+
+  return (
+    <div ref={menuRef} className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className={GHOST_BUTTON}
+        aria-label="More"
+        aria-haspopup="menu"
+        aria-expanded={open}
+      >
+        <MoreHorizontal size={16} aria-hidden />
+      </button>
+
+      {open && (
+        <div
+          role="menu"
+          aria-label="More actions"
+          className="absolute right-0 top-full mt-1 w-56 z-[var(--z-dropdown)] bg-[var(--bg-panel)] border border-[var(--border-color)] rounded-lg shadow-lg py-1.5 overflow-hidden"
+        >
+          <button
+            type="button"
+            role="menuitem"
+            onClick={() => {
+              setOpen(false);
+              onOpenSessionImport();
+            }}
+            className={itemClass}
+            aria-label="Import Session"
+          >
+            <Upload size={14} className="text-[var(--text-tertiary)]" aria-hidden />
+            Import Session
+          </button>
+
+          <button
+            type="button"
+            role="menuitem"
+            onClick={() => {
+              setOpen(false);
+              onExportSession();
+            }}
+            disabled={!dataset}
+            className={itemClass}
+            aria-label="Export Session"
+          >
+            <Download size={14} className="text-[var(--text-tertiary)]" aria-hidden />
+            Export Session
+          </button>
+
+          <button
+            type="button"
+            role="menuitem"
+            onClick={() => {
+              setOpen(false);
+              useVelocityStore.getState().toggleAppMode();
+            }}
+            className={itemClass}
+          >
+            <Database size={14} className="text-[var(--text-tertiary)]" aria-hidden />
+            Variable Manager
+          </button>
+
+          <button
+            type="button"
+            role="menuitem"
+            data-testid="focus-mode-toggle"
+            onClick={() => {
+              setOpen(false);
+              onToggleFocusMode();
+            }}
+            aria-pressed={focusMode}
+            className={itemClass}
+          >
+            {focusMode ? (
+              <Minimize2 size={14} className="text-[var(--text-tertiary)]" aria-hidden />
+            ) : (
+              <Maximize2 size={14} className="text-[var(--text-tertiary)]" aria-hidden />
+            )}
+            {focusMode ? 'Exit Focus Mode' : 'Enter Focus Mode'}
+          </button>
+
+          <div className="my-1 border-t border-[var(--border-color-muted)]" />
+
+          <button
+            type="button"
+            role="menuitem"
+            onClick={() => {
+              setOpen(false);
+              onReset();
+            }}
+            className={itemClass}
+            aria-label="Reset"
+          >
+            <RotateCcw size={14} className="text-[var(--text-tertiary)]" aria-hidden />
+            Reset
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
 
 export const DashboardToolbar: React.FC<DashboardToolbarProps> = ({
   dataset,
   activeSlideId,
   activeSlide,
   focusMode,
-  tableDensity,
   canOpenExport,
   onReturnToWorkspace,
   onOpenSessionImport,
   onExportSession,
   onExport,
   onToggleFocusMode,
-  onToggleTableDensity,
   onReset,
 }) => (
   <header className="surface-panel relative z-[var(--z-sticky)] h-14 border-b border-[var(--border-color-muted)] flex items-center justify-between px-6 bg-[var(--bg-panel)] shrink-0 overflow-visible">
     <div className="flex items-center gap-4 text-sm text-[var(--text-secondary)]">
       <button
         onClick={onReturnToWorkspace}
-        className="flex items-center gap-1.5 px-2 py-1.5 rounded-md hover:bg-[var(--bg-surface)] text-[var(--text-secondary)] hover:text-[var(--color-accent)] transition-colors"
+        className={GHOST_BUTTON}
         title="Return to Workspace"
+        aria-label="Return to Workspace"
       >
-        <Home size={16} />
+        <Home size={16} aria-hidden />
       </button>
       {!focusMode && (
         <>
@@ -65,8 +201,8 @@ export const DashboardToolbar: React.FC<DashboardToolbarProps> = ({
       )}
     </div>
 
-    <div className="flex items-center gap-2 xl:gap-4 shrink-0">
-      <div className="flex items-center bg-[var(--bg-surface)] p-1 rounded-lg">
+    <div className="flex items-center gap-2 shrink-0">
+      <div className="flex items-center bg-[var(--bg-rail)] p-1 rounded-lg">
         <button
           type="button"
           onClick={() => {
@@ -76,7 +212,7 @@ export const DashboardToolbar: React.FC<DashboardToolbarProps> = ({
           }}
           aria-label="Table view"
           aria-pressed={activeSlide?.visualizationType === 'table'}
-          className={`p-1.5 rounded-md transition-all ${activeSlide?.visualizationType === 'table' ? 'bg-[var(--bg-panel)] text-[var(--color-accent)] shadow-sm' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}
+          className={`p-1.5 rounded-md transition-all ${activeSlide?.visualizationType === 'table' ? 'bg-[var(--bg-panel)] text-[var(--text-primary)] shadow-sm' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}
         >
           <Table size={16} aria-hidden />
         </button>
@@ -89,80 +225,40 @@ export const DashboardToolbar: React.FC<DashboardToolbarProps> = ({
           }}
           aria-label="Chart view"
           aria-pressed={activeSlide?.visualizationType === 'chart'}
-          className={`p-1.5 rounded-md transition-all ${activeSlide?.visualizationType === 'chart' ? 'bg-[var(--bg-panel)] text-[var(--color-accent)] shadow-sm' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}
+          className={`p-1.5 rounded-md transition-all ${activeSlide?.visualizationType === 'chart' ? 'bg-[var(--bg-panel)] text-[var(--text-primary)] shadow-sm' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}
         >
           <BarChart3 size={16} aria-hidden />
         </button>
       </div>
 
-      {!focusMode && (
-        <>
-          <button
-            onClick={onOpenSessionImport}
-            className="flex items-center gap-2 px-2 xl:px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--color-accent)] rounded-md hover:bg-[var(--bg-surface)] transition-colors"
-            title="Import portable session"
-            aria-label="Import Session"
-          >
-            <Upload size={14} aria-hidden />
-            <span className="hidden xl:inline">Import Session</span>
-          </button>
+      <button
+        type="button"
+        onClick={() => useVelocityStore.getState().openCommandPalette()}
+        className={GHOST_BUTTON}
+      >
+        Insert
+        <kbd className={KBD_HINT}>⌘K</kbd>
+      </button>
 
-          <button
-            onClick={onExportSession}
-            disabled={!dataset}
-            className="flex items-center gap-2 px-2 xl:px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--color-accent)] rounded-md hover:bg-[var(--bg-surface)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            title="Export portable session"
-            aria-label="Export Session"
-          >
-            <Download size={14} aria-hidden />
-            <span className="hidden xl:inline">Export Session</span>
-          </button>
-
-          <button
-            onClick={onExport}
-            disabled={!canOpenExport}
-            data-testid="export-slide-button"
-            className="flex items-center gap-2 px-2 xl:px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--color-accent)] rounded-md hover:bg-[var(--bg-surface)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            title="Export current slide"
-            aria-label="Export"
-          >
-            <FileDown size={14} aria-hidden />
-            <span className="hidden xl:inline">Export</span>
-          </button>
-
-          <button
-            onClick={onToggleTableDensity}
-            className={`p-2 rounded-lg transition-colors ${tableDensity === 'generous' ? 'bg-[var(--color-accent)] text-[var(--text-inverse)]' : 'hover:bg-[var(--bg-active)] text-[var(--text-secondary)] hover:text-[var(--color-accent)]'}`}
-            title={tableDensity === 'generous' ? 'Switch to Compact View' : 'Switch to Presentation View'}
-            aria-label={tableDensity === 'generous' ? 'Compact View' : 'Presentation View'}
-            aria-pressed={tableDensity === 'generous'}
-          >
-            <Rows3 size={18} />
-          </button>
-
-          <ModeToggleButton />
-
-          <button
-            onClick={onReset}
-            className="text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--color-accent)] flex items-center gap-1.5 px-2 xl:px-3 py-1.5 rounded-md hover:bg-[var(--bg-surface)] transition-colors"
-            title="Reset analysis"
-            aria-label="Reset"
-          >
-            <RotateCcw size={12} aria-hidden />
-            <span className="hidden xl:inline">Reset</span>
-          </button>
-        </>
-      )}
+      <OverflowMenu
+        dataset={dataset}
+        focusMode={focusMode}
+        onOpenSessionImport={onOpenSessionImport}
+        onExportSession={onExportSession}
+        onToggleFocusMode={onToggleFocusMode}
+        onReset={onReset}
+      />
 
       <button
-        onClick={onToggleFocusMode}
-        data-testid="focus-mode-toggle"
-        className={`p-2 rounded-lg transition-colors ${focusMode ? 'bg-[var(--color-accent)] text-[var(--text-inverse)]' : 'hover:bg-[var(--bg-active)] text-[var(--text-secondary)] hover:text-[var(--color-accent)]'}`}
-        title={focusMode ? 'Exit Focus Mode (F)' : 'Enter Focus Mode (F)'}
-        aria-label={focusMode ? 'Exit Focus Mode' : 'Enter Focus Mode'}
-        aria-pressed={focusMode}
+        onClick={onExport}
+        disabled={!canOpenExport}
+        data-testid="export-slide-button"
+        className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-md text-[12.5px] font-medium bg-[var(--color-accent)] text-[var(--text-inverse)] hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+        title="Export current slide"
+        aria-label="Export"
       >
-        {focusMode ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
+        <FileDown size={14} aria-hidden />
+        Export
       </button>
     </div>
   </header>
