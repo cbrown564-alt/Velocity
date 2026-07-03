@@ -1,4 +1,5 @@
-import React, { useEffect, useId } from 'react';
+import React, { useEffect, useId, useRef } from 'react';
+import { useFocusTrap } from '../../hooks/useFocusTrap';
 import { useVelocityStore } from '../../store';
 import { X } from 'lucide-react';
 import { replayFirstCrosstabTour } from '../../features/dashboard/onboarding/firstCrosstabTour';
@@ -42,6 +43,9 @@ export const KeyboardShortcuts: React.FC = () => {
   const shortcutsOpen = useVelocityStore((state) => state.shortcutsOpen);
   const closeShortcuts = useVelocityStore((state) => state.closeShortcuts);
   const titleId = useId();
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  useFocusTrap(shortcutsOpen, panelRef);
 
   useEffect(() => {
     if (!shortcutsOpen) return;
@@ -73,9 +77,11 @@ export const KeyboardShortcuts: React.FC = () => {
       }}
     >
       <div
+        ref={panelRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
+        tabIndex={-1}
         className="w-full max-w-md bg-[var(--bg-panel)] border border-[var(--border-color)] rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[80vh]"
       >
         <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--border-color)]">

@@ -5,12 +5,12 @@
  * particularly for longitudinal studies with multiple survey waves.
  */
 
-import React, { useState, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useReducedMotion, getBackdropProps, getModalPresenceProps } from '../../../lib/motion';
+import React, { useState, useMemo, useId } from 'react';
+import { motion } from 'framer-motion';
 import { X, Link2, FolderPlus, Layers, Database, Check, AlertCircle, ArrowRight } from 'lucide-react';
 import type { StoredDataset, Project } from '../types';
 import { pluralize } from '../../../lib/pluralize';
+import { ModalShell } from '../../../components/overlays/ModalShell';
 import styles from './ProjectLinkModal.module.css';
 
 interface ProjectLinkModalProps {
@@ -55,6 +55,7 @@ export const ProjectLinkModal: React.FC<ProjectLinkModalProps> = ({
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
   const [waveAssignments, setWaveAssignments] = useState<Record<string, number>>({});
   const [respondentKeyVar, setRespondentKeyVar] = useState('');
+  const titleId = useId();
 
   // Get selected datasets
   const selectedDatasets = useMemo(() => {
@@ -113,28 +114,26 @@ export const ProjectLinkModal: React.FC<ProjectLinkModalProps> = ({
     onClose();
   };
 
-  const reducedMotion = useReducedMotion();
-
-  if (!isOpen) return null;
-
   return (
-    <AnimatePresence>
-      <motion.div className={styles.overlay} {...getBackdropProps(reducedMotion)} onClick={onClose}>
-        <motion.div
-          className={styles.modal}
-          {...getModalPresenceProps(reducedMotion)}
-          onClick={(e) => e.stopPropagation()}
-        >
+    <ModalShell
+      isOpen={isOpen}
+      onClose={onClose}
+      layout="unified"
+      unmountWhenClosed
+      backdropClassName={styles.overlay}
+      panelClassName={styles.modal}
+      ariaLabelledBy={titleId}
+    >
           {/* Header */}
           <div className={styles.header}>
             <div className={styles.headerIcon}>
               <Link2 size={20} />
             </div>
             <div className={styles.headerText}>
-              <h2>Link Datasets</h2>
+              <h2 id={titleId}>Link Datasets</h2>
               <p>Create a project to group related datasets together</p>
             </div>
-            <button className={styles.closeButton} onClick={onClose}>
+            <button className={styles.closeButton} onClick={onClose} aria-label="Close link datasets modal">
               <X size={18} />
             </button>
           </div>
@@ -177,8 +176,9 @@ export const ProjectLinkModal: React.FC<ProjectLinkModalProps> = ({
               <>
                 {/* Project name */}
                 <div className={styles.field}>
-                  <label>Project Name</label>
+                  <label htmlFor="project-link-name">Project Name</label>
                   <input
+                    id="project-link-name"
                     type="text"
                     placeholder="e.g., Brand Tracking 2024"
                     value={projectName}
@@ -189,8 +189,9 @@ export const ProjectLinkModal: React.FC<ProjectLinkModalProps> = ({
 
                 {/* Description */}
                 <div className={styles.field}>
-                  <label>Description (optional)</label>
+                  <label htmlFor="project-link-description">Description (optional)</label>
                   <textarea
+                    id="project-link-description"
                     placeholder="Brief description of this project..."
                     value={projectDescription}
                     onChange={(e) => setProjectDescription(e.target.value)}
@@ -250,8 +251,9 @@ export const ProjectLinkModal: React.FC<ProjectLinkModalProps> = ({
                             {d.name}
                           </span>
                           <div className={styles.waveSelector}>
-                            <label>Wave</label>
+                            <label htmlFor={`project-link-wave-${d.id}`}>Wave</label>
                             <select
+                              id={`project-link-wave-${d.id}`}
                               value={waveAssignments[d.id] || 1}
                               onChange={(e) =>
                                 setWaveAssignments((prev) => ({
@@ -277,7 +279,12 @@ export const ProjectLinkModal: React.FC<ProjectLinkModalProps> = ({
                       <p className={styles.waveHint}>
                         Select a variable that uniquely identifies respondents across waves
                       </p>
-                      <select value={respondentKeyVar} onChange={(e) => setRespondentKeyVar(e.target.value)}>
+                      <label htmlFor="project-link-respondent-key" className="sr-only">
+                        Respondent linking key
+                      </label>
+                      <select
+                        id="project-link-respondent-key"
+                        value={respondentKeyVar} onChange={(e) => setRespondentKeyVar(e.target.value)}>
                         <option value="">Select a variable...</option>
                         {potentialKeyVariables.map((v) => (
                           <option key={v} value={v}>
@@ -341,9 +348,7 @@ export const ProjectLinkModal: React.FC<ProjectLinkModalProps> = ({
               {mode === 'create' ? 'Create Project' : 'Add to Project'}
             </motion.button>
           </div>
-        </motion.div>
-      </motion.div>
-    </AnimatePresence>
+    </ModalShell>
   );
 };
 

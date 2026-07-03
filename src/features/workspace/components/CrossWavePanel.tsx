@@ -8,9 +8,9 @@
  * - Trend visualization placeholder
  */
 
-import React, { useState, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useReducedMotion, getBackdropProps, getMotionProps, DURATIONS } from '../../../lib/motion';
+import React, { useState, useMemo, useId } from 'react';
+import { motion } from 'framer-motion';
+import { useReducedMotion, getMotionProps, DURATIONS } from '../../../lib/motion';
 import {
   X,
   TrendingUp,
@@ -25,6 +25,7 @@ import {
   Database,
 } from 'lucide-react';
 import type { StoredDataset, Project } from '../types';
+import { ModalShell } from '../../../components/overlays/ModalShell';
 import styles from './CrossWavePanel.module.css';
 
 interface CrossWavePanelProps {
@@ -76,6 +77,7 @@ export const CrossWavePanel: React.FC<CrossWavePanelProps> = ({
 }) => {
   const [wave1Id, setWave1Id] = useState<string | null>(selectedWaves?.[0]?.id || null);
   const [wave2Id, setWave2Id] = useState<string | null>(selectedWaves?.[1]?.id || null);
+  const titleId = useId();
 
   // Get sorted wave datasets
   const waveDatasets = useMemo(() => {
@@ -117,33 +119,36 @@ export const CrossWavePanel: React.FC<CrossWavePanelProps> = ({
   }, [waveDatasets]);
 
   const reducedMotion = useReducedMotion();
-
-  if (!isOpen) return null;
+  const panelMotionProps = getMotionProps({
+    preset: 'slideLeft',
+    duration: reducedMotion ? DURATIONS.instant : DURATIONS.normal,
+    reducedMotion,
+  });
 
   return (
-    <AnimatePresence>
-      <motion.div className={styles.overlay} {...getBackdropProps(reducedMotion)} onClick={onClose}>
-        <motion.div
-          className={styles.panel}
-          {...getMotionProps({
-            preset: 'slideLeft',
-            duration: reducedMotion ? DURATIONS.instant : DURATIONS.normal,
-            reducedMotion,
-          })}
-          onClick={(e) => e.stopPropagation()}
-        >
+    <ModalShell
+      isOpen={isOpen}
+      onClose={onClose}
+      layout="split"
+      unmountWhenClosed
+      backdropClassName={styles.backdrop}
+      overlayClassName={styles.overlay}
+      panelClassName={`${styles.panel} pointer-events-auto`}
+      panelMotionProps={panelMotionProps}
+      ariaLabelledBy={titleId}
+    >
           {/* Header */}
           <div className={styles.header}>
             <div className={styles.headerIcon} style={{ '--project-color': project.color } as React.CSSProperties}>
               <TrendingUp size={20} />
             </div>
             <div className={styles.headerText}>
-              <h2>Cross-Wave Analysis</h2>
+              <h2 id={titleId}>Cross-Wave Analysis</h2>
               <p>
                 {project.name} · {waveDatasets.length} waves
               </p>
             </div>
-            <button className={styles.closeButton} onClick={onClose}>
+            <button className={styles.closeButton} onClick={onClose} aria-label="Close cross-wave panel">
               <X size={18} />
             </button>
           </div>
@@ -151,9 +156,9 @@ export const CrossWavePanel: React.FC<CrossWavePanelProps> = ({
           {/* Wave selector */}
           <div className={styles.waveSelector}>
             <div className={styles.wavePicker}>
-              <label>Compare</label>
+              <label htmlFor="cross-wave-compare">Compare</label>
               <div className={styles.selectWrapper}>
-                <select value={wave1Id || ''} onChange={(e) => setWave1Id(e.target.value || null)}>
+                <select id="cross-wave-compare" value={wave1Id || ''} onChange={(e) => setWave1Id(e.target.value || null)}>
                   <option value="">Select wave...</option>
                   {waveDatasets.map((d) => (
                     <option key={d.id} value={d.id}>
@@ -168,9 +173,9 @@ export const CrossWavePanel: React.FC<CrossWavePanelProps> = ({
             <ArrowLeftRight size={16} className={styles.compareArrow} />
 
             <div className={styles.wavePicker}>
-              <label>To</label>
+              <label htmlFor="cross-wave-to">To</label>
               <div className={styles.selectWrapper}>
-                <select value={wave2Id || ''} onChange={(e) => setWave2Id(e.target.value || null)}>
+                <select id="cross-wave-to" value={wave2Id || ''} onChange={(e) => setWave2Id(e.target.value || null)}>
                   <option value="">Select wave...</option>
                   {waveDatasets.map((d) => (
                     <option key={d.id} value={d.id}>
@@ -330,9 +335,7 @@ export const CrossWavePanel: React.FC<CrossWavePanelProps> = ({
               </button>
             </div>
           )}
-        </motion.div>
-      </motion.div>
-    </AnimatePresence>
+    </ModalShell>
   );
 };
 

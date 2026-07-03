@@ -1,6 +1,8 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useId, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useReducedMotion } from '../../lib/motion';
+import { useFocusTrap } from '../../hooks/useFocusTrap';
+import { useModalEscape } from '../../hooks/useModalEscape';
 import { X, Download, ListFilter, ChevronDown, Loader2 } from 'lucide-react';
 
 interface DataDrawerProps {
@@ -30,7 +32,12 @@ export const DataDrawer: React.FC<DataDrawerProps> = ({
   onLoadMore,
   filterColumns = [],
 }) => {
+  const titleId = useId();
+  const panelRef = useRef<HTMLDivElement>(null);
   const hasMore = loadedCount < totalCount;
+
+  useFocusTrap(isOpen, panelRef);
+  useModalEscape(isOpen, onClose);
 
   // Compute ordered columns: filter columns first, then the rest
   const orderedColumns = useMemo(() => {
@@ -92,6 +99,11 @@ export const DataDrawer: React.FC<DataDrawerProps> = ({
 
           {/* Drawer Panel */}
           <motion.div
+            ref={panelRef}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={titleId}
+            tabIndex={-1}
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
@@ -105,7 +117,10 @@ export const DataDrawer: React.FC<DataDrawerProps> = ({
                   <ListFilter size={20} />
                 </div>
                 <div>
-                  <h2 className="font-semibold text-[var(--text-primary)] leading-tight font-display text-lg">
+                  <h2
+                    id={titleId}
+                    className="font-semibold text-[var(--text-primary)] leading-tight font-display text-lg"
+                  >
                     X-Ray View
                   </h2>
                   <p

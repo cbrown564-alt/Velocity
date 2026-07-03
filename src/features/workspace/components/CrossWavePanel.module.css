@@ -8,14 +8,21 @@
    Overlay & Panel
    ============================================================================ */
 
-.overlay {
+.backdrop {
   position: fixed;
   inset: 0;
   background: color-mix(in srgb, var(--text-primary) 50%, transparent);
   backdrop-filter: blur(4px);
+  z-index: var(--z-popover);
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
   display: flex;
   justify-content: flex-end;
   z-index: var(--z-popover);
+  pointer-events: none;
 }
 
 .panel {

@@ -6,9 +6,8 @@
  * - Import: Restore workspace configuration from JSON
  */
 
-import React, { useState, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useReducedMotion, getBackdropProps, getModalPresenceProps } from '../../../lib/motion';
+import React, { useState, useRef, useId } from 'react';
+import { motion } from 'framer-motion';
 import {
   X,
   Download,
@@ -24,6 +23,7 @@ import {
 } from 'lucide-react';
 import type { StoredDataset, Project, WorkspaceState } from '../types';
 import { pluralize } from '../../../lib/pluralize';
+import { ModalShell } from '../../../components/overlays/ModalShell';
 import styles from './ExportImportModal.module.css';
 
 interface ExportImportModalProps {
@@ -79,6 +79,7 @@ export const ExportImportModal: React.FC<ExportImportModalProps> = ({
   const [importError, setImportError] = useState<string | null>(null);
   const [importSuccess, setImportSuccess] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const titleId = useId();
 
   const { datasets, projects } = workspaceState;
 
@@ -175,30 +176,28 @@ export const ExportImportModal: React.FC<ExportImportModalProps> = ({
     }
   };
 
-  const reducedMotion = useReducedMotion();
-
-  if (!isOpen) return null;
-
   const exportPreview = generateExport();
 
   return (
-    <AnimatePresence>
-      <motion.div className={styles.overlay} {...getBackdropProps(reducedMotion)} onClick={onClose}>
-        <motion.div
-          className={styles.modal}
-          {...getModalPresenceProps(reducedMotion)}
-          onClick={(e) => e.stopPropagation()}
-        >
+    <ModalShell
+      isOpen={isOpen}
+      onClose={onClose}
+      layout="unified"
+      unmountWhenClosed
+      backdropClassName={styles.overlay}
+      panelClassName={styles.modal}
+      ariaLabelledBy={titleId}
+    >
           {/* Header */}
           <div className={styles.header}>
             <div className={styles.headerIcon}>
               <FileJson size={20} />
             </div>
             <div className={styles.headerText}>
-              <h2>Export & Import</h2>
+              <h2 id={titleId}>Export & Import</h2>
               <p>Backup or restore your workspace configuration</p>
             </div>
-            <button className={styles.closeButton} onClick={onClose}>
+            <button className={styles.closeButton} onClick={onClose} aria-label="Close export import modal">
               <X size={18} />
             </button>
           </div>
@@ -385,9 +384,7 @@ export const ExportImportModal: React.FC<ExportImportModalProps> = ({
               </>
             )}
           </div>
-        </motion.div>
-      </motion.div>
-    </AnimatePresence>
+    </ModalShell>
   );
 };
 

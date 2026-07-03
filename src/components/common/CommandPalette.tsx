@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useFocusTrap } from '../../hooks/useFocusTrap';
 import {
   Search,
   LayoutGrid,
@@ -58,6 +59,9 @@ export const CommandPalette: React.FC = () => {
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  useFocusTrap(commandPaletteOpen, panelRef);
 
   const commands = useMemo<CommandItem[]>(() => {
     const runShelfAction = (set: (typeof variableSets)[number], target: VariableShelfTarget) => {
@@ -295,14 +299,18 @@ export const CommandPalette: React.FC = () => {
   return (
     <div
       className="fixed inset-0 z-[var(--z-modal)] flex items-start justify-center pt-[20vh] bg-[rgb(0_0_0_/0.2)] backdrop-blur-sm"
-      role="dialog"
-      aria-modal="true"
-      aria-label="Command palette"
       onClick={(e) => {
         if (e.target === e.currentTarget) closeCommandPalette();
       }}
     >
-      <div className="w-full max-w-lg bg-[var(--bg-panel)] border border-[var(--border-color)] rounded-xl shadow-2xl overflow-hidden flex flex-col">
+      <div
+        ref={panelRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Command palette"
+        tabIndex={-1}
+        className="w-full max-w-lg bg-[var(--bg-panel)] border border-[var(--border-color)] rounded-xl shadow-2xl overflow-hidden flex flex-col"
+      >
         <div className="flex items-center gap-3 px-4 py-3 border-b border-[var(--border-color)] focus-within:ring-1 focus-within:ring-[var(--border-color-active)]">
           <Search size={18} className="text-[var(--text-secondary)] shrink-0" />
           <input
