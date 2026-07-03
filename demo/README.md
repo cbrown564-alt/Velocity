@@ -6,6 +6,10 @@ This folder defines a repeatable demo capture flow for Velocity.
 
 - `contracts/first-analysis.json`: machine-readable quick "aha" flow contract.
 - `contracts/deck-export-complete.json`: machine-readable full export proof contract (asserts real `.pptx` download).
+- `contracts/brand-tracker-load.json`: load the primary Load Example (brand tracker Wave 4) and confirm the funnel-relevant first crosstab.
+- `contracts/brand-tracker-recipe.json`: raw-wave to analysis-ready recipe (references the engine recipe script `npm run demo:brand-tracker-recipe`).
+- `contracts/brand-tracker-deck-export.json`: brand tracker deck export proof (asserts real `.pptx` download).
+- `contracts/brand-tracker-wave-refresh.json`: next-quarter Wave 5 refresh (references the engine script `npm run demo:brand-tracker-wave-refresh`).
 - `scripts/run-demo-flow.mjs`: Playwright-based runner to execute a contract.
 - `qa/checklist.md`: human QA checklist before publishing.
 - `report-quality/`: synthetic report-quality fixtures, story checklist, and exemplar gate.
