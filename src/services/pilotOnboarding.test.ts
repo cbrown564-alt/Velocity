@@ -1,10 +1,11 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import {
   recordPilotEvent,
   getPilotEventLog,
   buildPilotEventExport,
   clearPilotEventLog,
   resetPilotSession,
+  downloadPilotEventLog,
 } from './pilotOnboarding';
 
 describe('pilotOnboarding', () => {
@@ -38,5 +39,23 @@ describe('pilotOnboarding', () => {
     expect(exported.eventCount).toBe(1);
     expect(exported.events[0].name).toBe('canvas_ready');
     expect(exported.sessionStartedAt).toBeTruthy();
+  });
+
+  it('downloadPilotEventLog triggers a JSON file download', () => {
+    recordPilotEvent('pptx_exported', { slideCount: 1 });
+    const click = vi.fn();
+    const revoke = vi.spyOn(URL, 'revokeObjectURL').mockImplementation(() => {});
+    vi.spyOn(URL, 'createObjectURL').mockReturnValue('blob:mock');
+    const link = document.createElement('a');
+    vi.spyOn(document, 'createElement').mockReturnValue(link);
+    vi.spyOn(document.body, 'appendChild').mockImplementation(() => link);
+    vi.spyOn(document.body, 'removeChild').mockImplementation(() => link);
+    link.click = click;
+
+    downloadPilotEventLog();
+
+    expect(click).toHaveBeenCalled();
+    expect(link.download).toMatch(/^velocity-pilot-events-\d{4}-\d{2}-\d{2}\.json$/);
+    expect(revoke).toHaveBeenCalledWith('blob:mock');
   });
 });
