@@ -29,7 +29,10 @@ export const WorkspaceOutcomePreview: React.FC = () => {
               <th scope="row">Male</th>
               <td>18%</td>
               <td>
-                52% <span className={styles.sigUp} aria-hidden>▲</span>
+                52%{' '}
+                <span className={styles.sigUp} aria-hidden>
+                  ▲
+                </span>
               </td>
               <td>12%</td>
             </tr>
@@ -38,7 +41,10 @@ export const WorkspaceOutcomePreview: React.FC = () => {
               <td>22%</td>
               <td>44%</td>
               <td>
-                28% <span className={styles.sigUp} aria-hidden>▲</span>
+                28%{' '}
+                <span className={styles.sigUp} aria-hidden>
+                  ▲
+                </span>
               </td>
             </tr>
           </tbody>

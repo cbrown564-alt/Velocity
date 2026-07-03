@@ -87,9 +87,7 @@ describe('useFileUpload', () => {
     const addToast = vi.fn();
     useVelocityStore.setState({ loadSAV, addToast });
 
-    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-      new Response(new Uint8Array([1, 2, 3]), { status: 200 }),
-    );
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(new Uint8Array([1, 2, 3]), { status: 200 }));
 
     const { result } = renderHook(() => useFileUpload(setMode, true));
 

@@ -89,7 +89,9 @@ export async function reachDashboardWithExample(page: Page) {
     return;
   }
 
-  const loadExample = page.getByRole('button', { name: /walk through sleep study example|try sleep study example|load example/i });
+  const loadExample = page.getByRole('button', {
+    name: /walk through sleep study example|try sleep study example|load example/i,
+  });
   await expect(loadExample).toBeVisible({ timeout: 60000 });
   await loadExample.click();
   await expect(tableView).toBeVisible({ timeout: 120000 });
