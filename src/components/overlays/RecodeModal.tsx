@@ -209,9 +209,15 @@ export const RecodeModal: React.FC<RecodeModalProps> = ({ isOpen, onClose, varia
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="bg-[var(--bg-surface)] border-b border-[var(--border-color)] text-xs text-[var(--text-secondary)] uppercase tracking-wider">
-                    <th scope="col" className="p-3 font-semibold">Min (&gt;=)</th>
-                    <th scope="col" className="p-3 font-semibold">Max (&lt;)</th>
-                    <th scope="col" className="p-3 font-semibold">Label</th>
+                    <th scope="col" className="p-3 font-semibold">
+                      Min (&gt;=)
+                    </th>
+                    <th scope="col" className="p-3 font-semibold">
+                      Max (&lt;)
+                    </th>
+                    <th scope="col" className="p-3 font-semibold">
+                      Label
+                    </th>
                     <th scope="col" className="p-3 w-10"></th>
                   </tr>
                 </thead>

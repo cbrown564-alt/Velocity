@@ -124,231 +124,230 @@ export const ProjectLinkModal: React.FC<ProjectLinkModalProps> = ({
       panelClassName={styles.modal}
       ariaLabelledBy={titleId}
     >
-          {/* Header */}
-          <div className={styles.header}>
-            <div className={styles.headerIcon}>
-              <Link2 size={20} />
+      {/* Header */}
+      <div className={styles.header}>
+        <div className={styles.headerIcon}>
+          <Link2 size={20} />
+        </div>
+        <div className={styles.headerText}>
+          <h2 id={titleId}>Link Datasets</h2>
+          <p>Create a project to group related datasets together</p>
+        </div>
+        <button className={styles.closeButton} onClick={onClose} aria-label="Close link datasets modal">
+          <X size={18} />
+        </button>
+      </div>
+
+      {/* Selected datasets preview */}
+      <div className={styles.selectedPreview}>
+        <span className={styles.previewLabel}>
+          {selectedDatasets.length} dataset{selectedDatasets.length !== 1 ? 's' : ''} selected
+        </span>
+        <div className={styles.previewList}>
+          {selectedDatasets.map((d, i) => (
+            <React.Fragment key={d.id}>
+              <span className={styles.previewItem}>
+                <Database size={12} />
+                {d.name}
+              </span>
+              {i < selectedDatasets.length - 1 && <ArrowRight size={12} className={styles.arrow} />}
+            </React.Fragment>
+          ))}
+        </div>
+      </div>
+
+      {/* Mode tabs */}
+      <div className={styles.modeTabs}>
+        <button className={mode === 'create' ? styles.active : ''} onClick={() => setMode('create')}>
+          <FolderPlus size={14} />
+          New Project
+        </button>
+        {projects.length > 0 && (
+          <button className={mode === 'existing' ? styles.active : ''} onClick={() => setMode('existing')}>
+            <Link2 size={14} />
+            Add to Existing
+          </button>
+        )}
+      </div>
+
+      {/* Content */}
+      <div className={styles.content}>
+        {mode === 'create' ? (
+          <>
+            {/* Project name */}
+            <div className={styles.field}>
+              <label htmlFor="project-link-name">Project Name</label>
+              <input
+                id="project-link-name"
+                type="text"
+                placeholder="e.g., Brand Tracking 2024"
+                value={projectName}
+                onChange={(e) => setProjectName(e.target.value)}
+                autoFocus
+              />
             </div>
-            <div className={styles.headerText}>
-              <h2 id={titleId}>Link Datasets</h2>
-              <p>Create a project to group related datasets together</p>
+
+            {/* Description */}
+            <div className={styles.field}>
+              <label htmlFor="project-link-description">Description (optional)</label>
+              <textarea
+                id="project-link-description"
+                placeholder="Brief description of this project..."
+                value={projectDescription}
+                onChange={(e) => setProjectDescription(e.target.value)}
+                rows={2}
+              />
             </div>
-            <button className={styles.closeButton} onClick={onClose} aria-label="Close link datasets modal">
-              <X size={18} />
-            </button>
-          </div>
 
-          {/* Selected datasets preview */}
-          <div className={styles.selectedPreview}>
-            <span className={styles.previewLabel}>
-              {selectedDatasets.length} dataset{selectedDatasets.length !== 1 ? 's' : ''} selected
-            </span>
-            <div className={styles.previewList}>
-              {selectedDatasets.map((d, i) => (
-                <React.Fragment key={d.id}>
-                  <span className={styles.previewItem}>
-                    <Database size={12} />
-                    {d.name}
-                  </span>
-                  {i < selectedDatasets.length - 1 && <ArrowRight size={12} className={styles.arrow} />}
-                </React.Fragment>
-              ))}
+            {/* Color picker */}
+            <div className={styles.field}>
+              <label>Color</label>
+              <div className={styles.colorPicker}>
+                {PROJECT_COLORS.map((color) => (
+                  <button
+                    key={color.value}
+                    className={`${styles.colorOption} ${selectedColor === color.value ? styles.selected : ''}`}
+                    style={{ background: color.value }}
+                    onClick={() => setSelectedColor(color.value)}
+                    title={color.name}
+                  >
+                    {selectedColor === color.value && <Check size={12} />}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
 
-          {/* Mode tabs */}
-          <div className={styles.modeTabs}>
-            <button className={mode === 'create' ? styles.active : ''} onClick={() => setMode('create')}>
-              <FolderPlus size={14} />
-              New Project
-            </button>
-            {projects.length > 0 && (
-              <button className={mode === 'existing' ? styles.active : ''} onClick={() => setMode('existing')}>
-                <Link2 size={14} />
-                Add to Existing
-              </button>
-            )}
-          </div>
-
-          {/* Content */}
-          <div className={styles.content}>
-            {mode === 'create' ? (
-              <>
-                {/* Project name */}
-                <div className={styles.field}>
-                  <label htmlFor="project-link-name">Project Name</label>
-                  <input
-                    id="project-link-name"
-                    type="text"
-                    placeholder="e.g., Brand Tracking 2024"
-                    value={projectName}
-                    onChange={(e) => setProjectName(e.target.value)}
-                    autoFocus
-                  />
-                </div>
-
-                {/* Description */}
-                <div className={styles.field}>
-                  <label htmlFor="project-link-description">Description (optional)</label>
-                  <textarea
-                    id="project-link-description"
-                    placeholder="Brief description of this project..."
-                    value={projectDescription}
-                    onChange={(e) => setProjectDescription(e.target.value)}
-                    rows={2}
-                  />
-                </div>
-
-                {/* Color picker */}
-                <div className={styles.field}>
-                  <label>Color</label>
-                  <div className={styles.colorPicker}>
-                    {PROJECT_COLORS.map((color) => (
-                      <button
-                        key={color.value}
-                        className={`${styles.colorOption} ${selectedColor === color.value ? styles.selected : ''}`}
-                        style={{ background: color.value }}
-                        onClick={() => setSelectedColor(color.value)}
-                        title={color.name}
-                      >
-                        {selectedColor === color.value && <Check size={12} />}
-                      </button>
-                    ))}
+            {/* Longitudinal toggle */}
+            <div className={styles.field}>
+              <div className={styles.toggleRow}>
+                <div className={styles.toggleInfo}>
+                  <Layers size={16} />
+                  <div>
+                    <span className={styles.toggleLabel}>Longitudinal Study</span>
+                    <span className={styles.toggleDescription}>
+                      Link datasets as survey waves with respondent tracking
+                    </span>
                   </div>
                 </div>
+                <button
+                  className={`${styles.toggle} ${isLongitudinal ? styles.active : ''}`}
+                  onClick={() => setIsLongitudinal(!isLongitudinal)}
+                >
+                  <span className={styles.toggleKnob} />
+                </button>
+              </div>
+            </div>
 
-                {/* Longitudinal toggle */}
-                <div className={styles.field}>
-                  <div className={styles.toggleRow}>
-                    <div className={styles.toggleInfo}>
-                      <Layers size={16} />
-                      <div>
-                        <span className={styles.toggleLabel}>Longitudinal Study</span>
-                        <span className={styles.toggleDescription}>
-                          Link datasets as survey waves with respondent tracking
-                        </span>
+            {/* Wave configuration (if longitudinal) */}
+            {isLongitudinal && selectedDatasets.length > 1 && (
+              <div className={styles.waveConfig}>
+                <h4>Wave Assignment</h4>
+                <p className={styles.waveHint}>Assign wave numbers to track data across time periods</p>
+                <div className={styles.waveList}>
+                  {selectedDatasets.map((d) => (
+                    <div key={d.id} className={styles.waveItem}>
+                      <span className={styles.waveDataset}>
+                        <Database size={14} />
+                        {d.name}
+                      </span>
+                      <div className={styles.waveSelector}>
+                        <label htmlFor={`project-link-wave-${d.id}`}>Wave</label>
+                        <select
+                          id={`project-link-wave-${d.id}`}
+                          value={waveAssignments[d.id] || 1}
+                          onChange={(e) =>
+                            setWaveAssignments((prev) => ({
+                              ...prev,
+                              [d.id]: parseInt(e.target.value),
+                            }))
+                          }
+                        >
+                          {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
+                            <option key={n} value={n}>
+                              {n}
+                            </option>
+                          ))}
+                        </select>
                       </div>
                     </div>
-                    <button
-                      className={`${styles.toggle} ${isLongitudinal ? styles.active : ''}`}
-                      onClick={() => setIsLongitudinal(!isLongitudinal)}
-                    >
-                      <span className={styles.toggleKnob} />
-                    </button>
-                  </div>
+                  ))}
                 </div>
 
-                {/* Wave configuration (if longitudinal) */}
-                {isLongitudinal && selectedDatasets.length > 1 && (
-                  <div className={styles.waveConfig}>
-                    <h4>Wave Assignment</h4>
-                    <p className={styles.waveHint}>Assign wave numbers to track data across time periods</p>
-                    <div className={styles.waveList}>
-                      {selectedDatasets.map((d) => (
-                        <div key={d.id} className={styles.waveItem}>
-                          <span className={styles.waveDataset}>
-                            <Database size={14} />
-                            {d.name}
-                          </span>
-                          <div className={styles.waveSelector}>
-                            <label htmlFor={`project-link-wave-${d.id}`}>Wave</label>
-                            <select
-                              id={`project-link-wave-${d.id}`}
-                              value={waveAssignments[d.id] || 1}
-                              onChange={(e) =>
-                                setWaveAssignments((prev) => ({
-                                  ...prev,
-                                  [d.id]: parseInt(e.target.value),
-                                }))
-                              }
-                            >
-                              {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
-                                <option key={n} value={n}>
-                                  {n}
-                                </option>
-                              ))}
-                            </select>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Respondent key */}
-                    <div className={styles.keyConfig}>
-                      <h4>Respondent Linking Key</h4>
-                      <p className={styles.waveHint}>
-                        Select a variable that uniquely identifies respondents across waves
-                      </p>
-                      <label htmlFor="project-link-respondent-key" className="sr-only">
-                        Respondent linking key
-                      </label>
-                      <select
-                        id="project-link-respondent-key"
-                        value={respondentKeyVar}
-                        onChange={(e) => setRespondentKeyVar(e.target.value)}>
-                        <option value="">Select a variable...</option>
-                        {potentialKeyVariables.map((v) => (
-                          <option key={v} value={v}>
-                            {v}
-                          </option>
-                        ))}
-                      </select>
-                      {!respondentKeyVar && (
-                        <div className={styles.keyWarning}>
-                          <AlertCircle size={12} />
-                          <span>Without a key, respondent matching won't be available</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
-              </>
-            ) : (
-              <>
-                {/* Existing project selection */}
-                <div className={styles.field}>
-                  <label>Select Project</label>
-                  <div className={styles.projectList}>
-                    {projects.map((project) => (
-                      <button
-                        key={project.id}
-                        className={`${styles.projectOption} ${selectedProjectId === project.id ? styles.selected : ''}`}
-                        onClick={() => setSelectedProjectId(project.id)}
-                        style={{ '--project-color': project.color } as React.CSSProperties}
-                      >
-                        <div className={styles.projectDot} />
-                        <div className={styles.projectInfo}>
-                          <span className={styles.projectName}>{project.name}</span>
-                          <span className={styles.projectMeta}>
-                            {pluralize(project.datasetIds.length, 'dataset')}
-                            {project.isLongitudinal && ' · Longitudinal'}
-                          </span>
-                        </div>
-                        {selectedProjectId === project.id && <Check size={16} className={styles.checkIcon} />}
-                      </button>
+                {/* Respondent key */}
+                <div className={styles.keyConfig}>
+                  <h4>Respondent Linking Key</h4>
+                  <p className={styles.waveHint}>Select a variable that uniquely identifies respondents across waves</p>
+                  <label htmlFor="project-link-respondent-key" className="sr-only">
+                    Respondent linking key
+                  </label>
+                  <select
+                    id="project-link-respondent-key"
+                    value={respondentKeyVar}
+                    onChange={(e) => setRespondentKeyVar(e.target.value)}
+                  >
+                    <option value="">Select a variable...</option>
+                    {potentialKeyVariables.map((v) => (
+                      <option key={v} value={v}>
+                        {v}
+                      </option>
                     ))}
-                  </div>
+                  </select>
+                  {!respondentKeyVar && (
+                    <div className={styles.keyWarning}>
+                      <AlertCircle size={12} />
+                      <span>Without a key, respondent matching won't be available</span>
+                    </div>
+                  )}
                 </div>
-              </>
+              </div>
             )}
-          </div>
+          </>
+        ) : (
+          <>
+            {/* Existing project selection */}
+            <div className={styles.field}>
+              <label>Select Project</label>
+              <div className={styles.projectList}>
+                {projects.map((project) => (
+                  <button
+                    key={project.id}
+                    className={`${styles.projectOption} ${selectedProjectId === project.id ? styles.selected : ''}`}
+                    onClick={() => setSelectedProjectId(project.id)}
+                    style={{ '--project-color': project.color } as React.CSSProperties}
+                  >
+                    <div className={styles.projectDot} />
+                    <div className={styles.projectInfo}>
+                      <span className={styles.projectName}>{project.name}</span>
+                      <span className={styles.projectMeta}>
+                        {pluralize(project.datasetIds.length, 'dataset')}
+                        {project.isLongitudinal && ' · Longitudinal'}
+                      </span>
+                    </div>
+                    {selectedProjectId === project.id && <Check size={16} className={styles.checkIcon} />}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
+      </div>
 
-          {/* Footer */}
-          <div className={styles.footer}>
-            <button className={styles.cancelButton} onClick={onClose}>
-              Cancel
-            </button>
-            <motion.button
-              className={styles.confirmButton}
-              onClick={mode === 'create' ? handleCreate : handleAddToExisting}
-              disabled={mode === 'create' ? !projectName.trim() : !selectedProjectId}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <Link2 size={16} />
-              {mode === 'create' ? 'Create Project' : 'Add to Project'}
-            </motion.button>
-          </div>
+      {/* Footer */}
+      <div className={styles.footer}>
+        <button className={styles.cancelButton} onClick={onClose}>
+          Cancel
+        </button>
+        <motion.button
+          className={styles.confirmButton}
+          onClick={mode === 'create' ? handleCreate : handleAddToExisting}
+          disabled={mode === 'create' ? !projectName.trim() : !selectedProjectId}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+        >
+          <Link2 size={16} />
+          {mode === 'create' ? 'Create Project' : 'Add to Project'}
+        </motion.button>
+      </div>
     </ModalShell>
   );
 };

@@ -45,6 +45,34 @@ export async function clearBrowserStorage(page: Page) {
   });
 }
 
+export async function uploadFileAndReachDashboard(
+  page: Page,
+  file: string | { name: string; mimeType: string; buffer: Buffer },
+) {
+  const fileInput = page.getByTestId('dataset-upload-input');
+  await expect(fileInput).toBeAttached({ timeout: 60000 });
+  await fileInput.setInputFiles(file);
+
+  const surveyQuestions = page.getByText(/Survey Questions/);
+  const metadataLoaded = page.getByText('Metadata Loaded');
+
+  await expect
+    .poll(
+      async () => {
+        if (await surveyQuestions.isVisible().catch(() => false)) return 'dashboard';
+        if (await metadataLoaded.isVisible().catch(() => false)) return 'metadata';
+        return 'pending';
+      },
+      { timeout: 120000 },
+    )
+    .not.toBe('pending');
+
+  if (await metadataLoaded.isVisible().catch(() => false)) {
+    await page.getByRole('button', { name: 'Load Full Data' }).click();
+    await expect(surveyQuestions).toBeVisible({ timeout: 120000 });
+  }
+}
+
 export async function reachDashboardWithExample(page: Page) {
   await clearBrowserStorage(page);
   await page.reload();

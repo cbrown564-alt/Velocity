@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { clearBrowserStorage, uploadFileAndReachDashboard } from './helpers/visualPolish';
 
 /**
  * Phase 4 Task 2 — crosstab row virtualization, verified in a real browser.
@@ -32,49 +33,13 @@ function buildLargeCsv(): string {
   return lines.join('\n');
 }
 
-async function clearBrowserStorage(page: import('@playwright/test').Page): Promise<void> {
-  await page.evaluate(async () => {
-    try {
-      localStorage.clear();
-    } catch {
-      // best-effort
-    }
-    try {
-      localStorage.setItem('velocity-first-crosstab-tour-done', '1');
-      localStorage.setItem('velocity-first-crosstab-tour-step-rows', '1');
-      localStorage.setItem('velocity-first-crosstab-tour-step-columns', '1');
-      localStorage.setItem('velocity-first-crosstab-tour-step-significance', '1');
-      localStorage.setItem('velocity-focus-tip-seen', '1');
-      localStorage.setItem('velocity-micro-tip-dismissed-focus', '1');
-      localStorage.setItem('velocity-micro-tip-dismissed-export', '1');
-      localStorage.setItem('velocity-micro-tip-dismissed-variable-manager', '1');
-    } catch {
-      // best-effort onboarding flag seeding for stable e2e
-    }
-    try {
-      if (navigator.storage?.getDirectory) {
-        const root = await navigator.storage.getDirectory();
-        // @ts-expect-error entries() is an async iterator
-        for await (const [name] of root.entries()) {
-          await root.removeEntry(name, { recursive: true }).catch(() => {});
-        }
-      }
-    } catch {
-      // OPFS not guaranteed
-    }
-  });
-}
-
 test('crosstab rows virtualize for large tables (scroll-driven windowing)', async ({ page }) => {
   await page.goto('/');
   page.on('dialog', (dialog) => dialog.dismiss());
   await clearBrowserStorage(page);
   await page.reload();
 
-  // Upload an in-memory CSV (no committed fixture needed) and reach the dashboard.
-  const fileInput = page.getByTestId('dataset-upload-input');
-  await expect(fileInput).toBeAttached({ timeout: 60000 });
-  await fileInput.setInputFiles({
+  await uploadFileAndReachDashboard(page, {
     name: 'large_table.csv',
     mimeType: 'text/csv',
     buffer: Buffer.from(buildLargeCsv(), 'utf8'),

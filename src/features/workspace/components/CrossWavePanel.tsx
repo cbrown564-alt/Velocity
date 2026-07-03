@@ -137,204 +137,204 @@ export const CrossWavePanel: React.FC<CrossWavePanelProps> = ({
       panelMotionProps={panelMotionProps}
       ariaLabelledBy={titleId}
     >
-          {/* Header */}
-          <div className={styles.header}>
-            <div className={styles.headerIcon} style={{ '--project-color': project.color } as React.CSSProperties}>
-              <TrendingUp size={20} />
+      {/* Header */}
+      <div className={styles.header}>
+        <div className={styles.headerIcon} style={{ '--project-color': project.color } as React.CSSProperties}>
+          <TrendingUp size={20} />
+        </div>
+        <div className={styles.headerText}>
+          <h2 id={titleId}>Cross-Wave Analysis</h2>
+          <p>
+            {project.name} · {waveDatasets.length} waves
+          </p>
+        </div>
+        <button className={styles.closeButton} onClick={onClose} aria-label="Close cross-wave panel">
+          <X size={18} />
+        </button>
+      </div>
+
+      {/* Wave selector */}
+      <div className={styles.waveSelector}>
+        <div className={styles.wavePicker}>
+          <label htmlFor="cross-wave-compare">Compare</label>
+          <div className={styles.selectWrapper}>
+            <select id="cross-wave-compare" value={wave1Id || ''} onChange={(e) => setWave1Id(e.target.value || null)}>
+              <option value="">Select wave...</option>
+              {waveDatasets.map((d) => (
+                <option key={d.id} value={d.id}>
+                  Wave {d.waveNumber} - {d.name}
+                </option>
+              ))}
+            </select>
+            <ChevronDown size={14} />
+          </div>
+        </div>
+
+        <ArrowLeftRight size={16} className={styles.compareArrow} />
+
+        <div className={styles.wavePicker}>
+          <label htmlFor="cross-wave-to">To</label>
+          <div className={styles.selectWrapper}>
+            <select id="cross-wave-to" value={wave2Id || ''} onChange={(e) => setWave2Id(e.target.value || null)}>
+              <option value="">Select wave...</option>
+              {waveDatasets.map((d) => (
+                <option key={d.id} value={d.id}>
+                  Wave {d.waveNumber} - {d.name}
+                </option>
+              ))}
+            </select>
+            <ChevronDown size={14} />
+          </div>
+        </div>
+      </div>
+
+      {/* Comparison results */}
+      {comparison && (
+        <div className={styles.comparisonResults}>
+          {/* Summary cards */}
+          <div className={styles.summaryCards}>
+            <div className={`${styles.summaryCard} ${styles[comparison.direction]}`}>
+              <div className={styles.summaryIcon}>
+                {comparison.direction === 'increase' ? (
+                  <UserPlus size={20} />
+                ) : comparison.direction === 'decrease' ? (
+                  <UserMinus size={20} />
+                ) : (
+                  <Users size={20} />
+                )}
+              </div>
+              <div className={styles.summaryContent}>
+                <span className={styles.summaryLabel}>Respondent Change</span>
+                <span className={styles.summaryValue}>
+                  {comparison.respondentDiff > 0 ? '+' : ''}
+                  {formatNumber(comparison.respondentDiff)}
+                </span>
+                <span className={styles.summaryPercent}>{formatPercent(comparison.respondentDiffPercent)}</span>
+              </div>
             </div>
-            <div className={styles.headerText}>
-              <h2 id={titleId}>Cross-Wave Analysis</h2>
-              <p>
-                {project.name} · {waveDatasets.length} waves
-              </p>
+
+            <div className={styles.summaryCard}>
+              <div className={styles.summaryIcon}>
+                <BarChart3 size={20} />
+              </div>
+              <div className={styles.summaryContent}>
+                <span className={styles.summaryLabel}>Variable Change</span>
+                <span className={styles.summaryValue}>
+                  {comparison.variableDiff > 0 ? '+' : ''}
+                  {comparison.variableDiff}
+                </span>
+                <span className={styles.summaryPercent}>
+                  {comparison.wave1.columnCount} → {comparison.wave2.columnCount}
+                </span>
+              </div>
             </div>
-            <button className={styles.closeButton} onClick={onClose} aria-label="Close cross-wave panel">
-              <X size={18} />
-            </button>
           </div>
 
-          {/* Wave selector */}
-          <div className={styles.waveSelector}>
-            <div className={styles.wavePicker}>
-              <label htmlFor="cross-wave-compare">Compare</label>
-              <div className={styles.selectWrapper}>
-                <select id="cross-wave-compare" value={wave1Id || ''} onChange={(e) => setWave1Id(e.target.value || null)}>
-                  <option value="">Select wave...</option>
-                  {waveDatasets.map((d) => (
-                    <option key={d.id} value={d.id}>
-                      Wave {d.waveNumber} - {d.name}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown size={14} />
+          {/* Wave detail comparison */}
+          <div className={styles.waveDetails}>
+            <div className={styles.waveDetailCard}>
+              <div className={styles.waveDetailHeader}>
+                <Layers size={14} />
+                <span>Wave {comparison.wave1.waveNumber}</span>
+                <span className={styles.waveDate}>{formatDate(comparison.wave1.createdAt)}</span>
               </div>
+              <div className={styles.waveDetailStats}>
+                <div>
+                  <Users size={12} />
+                  <span>{formatNumber(comparison.wave1.rowCount)} respondents</span>
+                </div>
+                <div>
+                  <Database size={12} />
+                  <span>{comparison.wave1.columnCount} variables</span>
+                </div>
+              </div>
+              {onOpenDataset && (
+                <button className={styles.openButton} onClick={() => onOpenDataset(comparison.wave1)}>
+                  Open Dataset
+                </button>
+              )}
             </div>
 
-            <ArrowLeftRight size={16} className={styles.compareArrow} />
-
-            <div className={styles.wavePicker}>
-              <label htmlFor="cross-wave-to">To</label>
-              <div className={styles.selectWrapper}>
-                <select id="cross-wave-to" value={wave2Id || ''} onChange={(e) => setWave2Id(e.target.value || null)}>
-                  <option value="">Select wave...</option>
-                  {waveDatasets.map((d) => (
-                    <option key={d.id} value={d.id}>
-                      Wave {d.waveNumber} - {d.name}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown size={14} />
+            <div className={styles.waveDetailCard}>
+              <div className={styles.waveDetailHeader}>
+                <Layers size={14} />
+                <span>Wave {comparison.wave2.waveNumber}</span>
+                <span className={styles.waveDate}>{formatDate(comparison.wave2.createdAt)}</span>
               </div>
+              <div className={styles.waveDetailStats}>
+                <div>
+                  <Users size={12} />
+                  <span>{formatNumber(comparison.wave2.rowCount)} respondents</span>
+                </div>
+                <div>
+                  <Database size={12} />
+                  <span>{comparison.wave2.columnCount} variables</span>
+                </div>
+              </div>
+              {onOpenDataset && (
+                <button className={styles.openButton} onClick={() => onOpenDataset(comparison.wave2)}>
+                  Open Dataset
+                </button>
+              )}
             </div>
           </div>
+        </div>
+      )}
 
-          {/* Comparison results */}
-          {comparison && (
-            <div className={styles.comparisonResults}>
-              {/* Summary cards */}
-              <div className={styles.summaryCards}>
-                <div className={`${styles.summaryCard} ${styles[comparison.direction]}`}>
-                  <div className={styles.summaryIcon}>
-                    {comparison.direction === 'increase' ? (
-                      <UserPlus size={20} />
-                    ) : comparison.direction === 'decrease' ? (
-                      <UserMinus size={20} />
-                    ) : (
-                      <Users size={20} />
-                    )}
-                  </div>
-                  <div className={styles.summaryContent}>
-                    <span className={styles.summaryLabel}>Respondent Change</span>
-                    <span className={styles.summaryValue}>
-                      {comparison.respondentDiff > 0 ? '+' : ''}
-                      {formatNumber(comparison.respondentDiff)}
-                    </span>
-                    <span className={styles.summaryPercent}>{formatPercent(comparison.respondentDiffPercent)}</span>
-                  </div>
+      {/* Attrition funnel */}
+      {attritionFunnel && attritionFunnel.length > 1 && (
+        <div className={styles.attritionSection}>
+          <h3>
+            <UserMinus size={16} />
+            Panel Attrition Funnel
+          </h3>
+          <div className={styles.funnelChart}>
+            {attritionFunnel.map((wave, i) => (
+              <div key={wave.wave} className={styles.funnelStep}>
+                <div className={styles.funnelBar}>
+                  <motion.div
+                    className={styles.funnelFill}
+                    style={{ '--project-color': project.color } as React.CSSProperties}
+                    initial={{ width: 0 }}
+                    animate={{ width: `${wave.retention}%` }}
+                    transition={{ duration: reducedMotion ? 0.01 : 0.5, delay: reducedMotion ? 0 : i * 0.1 }}
+                  />
+                  <span className={styles.funnelCount}>{formatNumber(wave.count)}</span>
                 </div>
-
-                <div className={styles.summaryCard}>
-                  <div className={styles.summaryIcon}>
-                    <BarChart3 size={20} />
-                  </div>
-                  <div className={styles.summaryContent}>
-                    <span className={styles.summaryLabel}>Variable Change</span>
-                    <span className={styles.summaryValue}>
-                      {comparison.variableDiff > 0 ? '+' : ''}
-                      {comparison.variableDiff}
-                    </span>
-                    <span className={styles.summaryPercent}>
-                      {comparison.wave1.columnCount} → {comparison.wave2.columnCount}
-                    </span>
-                  </div>
+                <div className={styles.funnelLabel}>
+                  <span>W{wave.wave}</span>
+                  <span className={styles.funnelRetention}>{wave.retention.toFixed(0)}%</span>
                 </div>
+                {wave.attrition > 0 && (
+                  <div className={styles.funnelAttrition}>
+                    <TrendingDown size={10} />-{wave.attrition.toFixed(1)}%
+                  </div>
+                )}
               </div>
+            ))}
+          </div>
+        </div>
+      )}
 
-              {/* Wave detail comparison */}
-              <div className={styles.waveDetails}>
-                <div className={styles.waveDetailCard}>
-                  <div className={styles.waveDetailHeader}>
-                    <Layers size={14} />
-                    <span>Wave {comparison.wave1.waveNumber}</span>
-                    <span className={styles.waveDate}>{formatDate(comparison.wave1.createdAt)}</span>
-                  </div>
-                  <div className={styles.waveDetailStats}>
-                    <div>
-                      <Users size={12} />
-                      <span>{formatNumber(comparison.wave1.rowCount)} respondents</span>
-                    </div>
-                    <div>
-                      <Database size={12} />
-                      <span>{comparison.wave1.columnCount} variables</span>
-                    </div>
-                  </div>
-                  {onOpenDataset && (
-                    <button className={styles.openButton} onClick={() => onOpenDataset(comparison.wave1)}>
-                      Open Dataset
-                    </button>
-                  )}
-                </div>
-
-                <div className={styles.waveDetailCard}>
-                  <div className={styles.waveDetailHeader}>
-                    <Layers size={14} />
-                    <span>Wave {comparison.wave2.waveNumber}</span>
-                    <span className={styles.waveDate}>{formatDate(comparison.wave2.createdAt)}</span>
-                  </div>
-                  <div className={styles.waveDetailStats}>
-                    <div>
-                      <Users size={12} />
-                      <span>{formatNumber(comparison.wave2.rowCount)} respondents</span>
-                    </div>
-                    <div>
-                      <Database size={12} />
-                      <span>{comparison.wave2.columnCount} variables</span>
-                    </div>
-                  </div>
-                  {onOpenDataset && (
-                    <button className={styles.openButton} onClick={() => onOpenDataset(comparison.wave2)}>
-                      Open Dataset
-                    </button>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Attrition funnel */}
-          {attritionFunnel && attritionFunnel.length > 1 && (
-            <div className={styles.attritionSection}>
-              <h3>
-                <UserMinus size={16} />
-                Panel Attrition Funnel
-              </h3>
-              <div className={styles.funnelChart}>
-                {attritionFunnel.map((wave, i) => (
-                  <div key={wave.wave} className={styles.funnelStep}>
-                    <div className={styles.funnelBar}>
-                      <motion.div
-                        className={styles.funnelFill}
-                        style={{ '--project-color': project.color } as React.CSSProperties}
-                        initial={{ width: 0 }}
-                        animate={{ width: `${wave.retention}%` }}
-                        transition={{ duration: reducedMotion ? 0.01 : 0.5, delay: reducedMotion ? 0 : i * 0.1 }}
-                      />
-                      <span className={styles.funnelCount}>{formatNumber(wave.count)}</span>
-                    </div>
-                    <div className={styles.funnelLabel}>
-                      <span>W{wave.wave}</span>
-                      <span className={styles.funnelRetention}>{wave.retention.toFixed(0)}%</span>
-                    </div>
-                    {wave.attrition > 0 && (
-                      <div className={styles.funnelAttrition}>
-                        <TrendingDown size={10} />-{wave.attrition.toFixed(1)}%
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Variable Harmonization */}
-          {comparison && (
-            <div className={styles.harmonizeSection}>
-              <h3>
-                <ArrowLeftRight size={16} />
-                Variable Harmonization
-              </h3>
-              <p className={styles.harmonizeDesc}>
-                Map variables across waves to track how questions, scales, and coding have drifted over time.
-              </p>
-              <button
-                className={styles.harmonizeButton}
-                onClick={() => onOpenHarmonization?.(comparison.wave1, comparison.wave2)}
-              >
-                <ArrowLeftRight size={14} />
-                Open Harmonization Workspace
-              </button>
-            </div>
-          )}
+      {/* Variable Harmonization */}
+      {comparison && (
+        <div className={styles.harmonizeSection}>
+          <h3>
+            <ArrowLeftRight size={16} />
+            Variable Harmonization
+          </h3>
+          <p className={styles.harmonizeDesc}>
+            Map variables across waves to track how questions, scales, and coding have drifted over time.
+          </p>
+          <button
+            className={styles.harmonizeButton}
+            onClick={() => onOpenHarmonization?.(comparison.wave1, comparison.wave2)}
+          >
+            <ArrowLeftRight size={14} />
+            Open Harmonization Workspace
+          </button>
+        </div>
+      )}
     </ModalShell>
   );
 };

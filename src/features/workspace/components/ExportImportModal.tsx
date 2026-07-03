@@ -188,202 +188,198 @@ export const ExportImportModal: React.FC<ExportImportModalProps> = ({
       panelClassName={styles.modal}
       ariaLabelledBy={titleId}
     >
-          {/* Header */}
-          <div className={styles.header}>
-            <div className={styles.headerIcon}>
-              <FileJson size={20} />
+      {/* Header */}
+      <div className={styles.header}>
+        <div className={styles.headerIcon}>
+          <FileJson size={20} />
+        </div>
+        <div className={styles.headerText}>
+          <h2 id={titleId}>Export & Import</h2>
+          <p>Backup or restore your workspace configuration</p>
+        </div>
+        <button className={styles.closeButton} onClick={onClose} aria-label="Close export import modal">
+          <X size={18} />
+        </button>
+      </div>
+
+      {/* Tabs */}
+      <div className={styles.tabs}>
+        <button className={activeTab === 'export' ? styles.active : ''} onClick={() => setActiveTab('export')}>
+          <Download size={14} />
+          Export
+        </button>
+        <button className={activeTab === 'import' ? styles.active : ''} onClick={() => setActiveTab('import')}>
+          <Upload size={14} />
+          Import
+        </button>
+      </div>
+
+      {/* Content */}
+      <div className={styles.content}>
+        {activeTab === 'export' ? (
+          <>
+            {/* Export mode selection */}
+            {selectedDatasetIds.length > 0 && (
+              <div className={styles.modeSelector}>
+                <button className={exportMode === 'full' ? styles.active : ''} onClick={() => setExportMode('full')}>
+                  <Database size={14} />
+                  Full Workspace
+                  <span className={styles.modeMeta}>{pluralize(datasets.length, 'dataset')}</span>
+                </button>
+                <button
+                  className={exportMode === 'selected' ? styles.active : ''}
+                  onClick={() => setExportMode('selected')}
+                >
+                  <CheckCircle2 size={14} />
+                  Selected Only
+                  <span className={styles.modeMeta}>{pluralize(selectedDatasetIds.length, 'dataset')}</span>
+                </button>
+              </div>
+            )}
+
+            {/* Export preview */}
+            <div className={styles.preview}>
+              <h4>Export Preview</h4>
+              <div className={styles.previewStats}>
+                <div className={styles.previewStat}>
+                  <Database size={16} />
+                  <span>{pluralize(exportPreview.metadata.totalDatasets, 'dataset')}</span>
+                </div>
+                <div className={styles.previewStat}>
+                  <FolderOpen size={16} />
+                  <span>{exportPreview.metadata.totalProjects} projects</span>
+                </div>
+                <div className={styles.previewStat}>
+                  <Settings size={16} />
+                  <span>{exportPreview.metadata.totalRows.toLocaleString()} rows</span>
+                </div>
+              </div>
+
+              <div className={styles.previewNote}>
+                <AlertCircle size={14} />
+                <span>
+                  Export includes metadata only. Original data files must be re-uploaded when importing on a new device.
+                </span>
+              </div>
             </div>
-            <div className={styles.headerText}>
-              <h2 id={titleId}>Export & Import</h2>
-              <p>Backup or restore your workspace configuration</p>
+
+            {/* Export actions */}
+            <div className={styles.exportActions}>
+              <motion.button
+                className={styles.primaryButton}
+                onClick={handleExport}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <Download size={16} />
+                Download JSON
+              </motion.button>
+              <motion.button
+                className={styles.secondaryButton}
+                onClick={handleCopyToClipboard}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                {copied ? <Check size={16} /> : <Copy size={16} />}
+                {copied ? 'Copied!' : 'Copy to Clipboard'}
+              </motion.button>
             </div>
-            <button className={styles.closeButton} onClick={onClose} aria-label="Close export import modal">
-              <X size={18} />
-            </button>
-          </div>
+          </>
+        ) : (
+          <>
+            {/* Import dropzone */}
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileSelect}
+              accept=".json"
+              className={styles.hiddenInput}
+            />
 
-          {/* Tabs */}
-          <div className={styles.tabs}>
-            <button className={activeTab === 'export' ? styles.active : ''} onClick={() => setActiveTab('export')}>
-              <Download size={14} />
-              Export
-            </button>
-            <button className={activeTab === 'import' ? styles.active : ''} onClick={() => setActiveTab('import')}>
-              <Upload size={14} />
-              Import
-            </button>
-          </div>
+            {!importData && !importSuccess && (
+              <motion.div
+                className={styles.dropzone}
+                onClick={() => fileInputRef.current?.click()}
+                whileHover={{ scale: 1.01 }}
+              >
+                <Upload size={32} />
+                <h4>Select a workspace file</h4>
+                <p>Click to browse or drag & drop a .json export file</p>
+              </motion.div>
+            )}
 
-          {/* Content */}
-          <div className={styles.content}>
-            {activeTab === 'export' ? (
-              <>
-                {/* Export mode selection */}
-                {selectedDatasetIds.length > 0 && (
-                  <div className={styles.modeSelector}>
-                    <button
-                      className={exportMode === 'full' ? styles.active : ''}
-                      onClick={() => setExportMode('full')}
-                    >
-                      <Database size={14} />
-                      Full Workspace
-                      <span className={styles.modeMeta}>{pluralize(datasets.length, 'dataset')}</span>
-                    </button>
-                    <button
-                      className={exportMode === 'selected' ? styles.active : ''}
-                      onClick={() => setExportMode('selected')}
-                    >
-                      <CheckCircle2 size={14} />
-                      Selected Only
-                      <span className={styles.modeMeta}>{pluralize(selectedDatasetIds.length, 'dataset')}</span>
-                    </button>
+            {importError && (
+              <div className={styles.error}>
+                <AlertCircle size={16} />
+                <span>{importError}</span>
+              </div>
+            )}
+
+            {importSuccess && (
+              <div className={styles.success}>
+                <CheckCircle2 size={32} />
+                <h4>Import Successful</h4>
+                <p>Your workspace has been updated</p>
+              </div>
+            )}
+
+            {/* Import preview */}
+            {importData && !importSuccess && (
+              <div className={styles.importPreview}>
+                <h4>Ready to Import</h4>
+                <div className={styles.previewStats}>
+                  <div className={styles.previewStat}>
+                    <Database size={16} />
+                    <span>{pluralize(importData.metadata.totalDatasets, 'dataset')}</span>
                   </div>
-                )}
-
-                {/* Export preview */}
-                <div className={styles.preview}>
-                  <h4>Export Preview</h4>
-                  <div className={styles.previewStats}>
-                    <div className={styles.previewStat}>
-                      <Database size={16} />
-                      <span>{pluralize(exportPreview.metadata.totalDatasets, 'dataset')}</span>
-                    </div>
-                    <div className={styles.previewStat}>
-                      <FolderOpen size={16} />
-                      <span>{exportPreview.metadata.totalProjects} projects</span>
-                    </div>
-                    <div className={styles.previewStat}>
-                      <Settings size={16} />
-                      <span>{exportPreview.metadata.totalRows.toLocaleString()} rows</span>
-                    </div>
-                  </div>
-
-                  <div className={styles.previewNote}>
-                    <AlertCircle size={14} />
-                    <span>
-                      Export includes metadata only. Original data files must be re-uploaded when importing on a new
-                      device.
-                    </span>
+                  <div className={styles.previewStat}>
+                    <FolderOpen size={16} />
+                    <span>{importData.metadata.totalProjects} projects</span>
                   </div>
                 </div>
 
-                {/* Export actions */}
-                <div className={styles.exportActions}>
+                <div className={styles.importMeta}>
+                  <span>Exported: {formatDate(importData.exportedAt)}</span>
+                  <span>Type: {importData.exportType === 'full' ? 'Full workspace' : 'Partial'}</span>
+                </div>
+
+                <div className={styles.importWarning}>
+                  <AlertCircle size={14} />
+                  <span>
+                    Importing will add these datasets and projects to your workspace. Existing items with the same ID
+                    will be updated.
+                  </span>
+                </div>
+
+                <div className={styles.importActions}>
                   <motion.button
                     className={styles.primaryButton}
-                    onClick={handleExport}
+                    onClick={handleImport}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                   >
-                    <Download size={16} />
-                    Download JSON
+                    <Upload size={16} />
+                    Import Workspace
                   </motion.button>
                   <motion.button
                     className={styles.secondaryButton}
-                    onClick={handleCopyToClipboard}
+                    onClick={() => {
+                      setImportData(null);
+                      if (fileInputRef.current) {
+                        fileInputRef.current.value = '';
+                      }
+                    }}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                   >
-                    {copied ? <Check size={16} /> : <Copy size={16} />}
-                    {copied ? 'Copied!' : 'Copy to Clipboard'}
+                    Cancel
                   </motion.button>
                 </div>
-              </>
-            ) : (
-              <>
-                {/* Import dropzone */}
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  onChange={handleFileSelect}
-                  accept=".json"
-                  className={styles.hiddenInput}
-                />
-
-                {!importData && !importSuccess && (
-                  <motion.div
-                    className={styles.dropzone}
-                    onClick={() => fileInputRef.current?.click()}
-                    whileHover={{ scale: 1.01 }}
-                  >
-                    <Upload size={32} />
-                    <h4>Select a workspace file</h4>
-                    <p>Click to browse or drag & drop a .json export file</p>
-                  </motion.div>
-                )}
-
-                {importError && (
-                  <div className={styles.error}>
-                    <AlertCircle size={16} />
-                    <span>{importError}</span>
-                  </div>
-                )}
-
-                {importSuccess && (
-                  <div className={styles.success}>
-                    <CheckCircle2 size={32} />
-                    <h4>Import Successful</h4>
-                    <p>Your workspace has been updated</p>
-                  </div>
-                )}
-
-                {/* Import preview */}
-                {importData && !importSuccess && (
-                  <div className={styles.importPreview}>
-                    <h4>Ready to Import</h4>
-                    <div className={styles.previewStats}>
-                      <div className={styles.previewStat}>
-                        <Database size={16} />
-                        <span>{pluralize(importData.metadata.totalDatasets, 'dataset')}</span>
-                      </div>
-                      <div className={styles.previewStat}>
-                        <FolderOpen size={16} />
-                        <span>{importData.metadata.totalProjects} projects</span>
-                      </div>
-                    </div>
-
-                    <div className={styles.importMeta}>
-                      <span>Exported: {formatDate(importData.exportedAt)}</span>
-                      <span>Type: {importData.exportType === 'full' ? 'Full workspace' : 'Partial'}</span>
-                    </div>
-
-                    <div className={styles.importWarning}>
-                      <AlertCircle size={14} />
-                      <span>
-                        Importing will add these datasets and projects to your workspace. Existing items with the same
-                        ID will be updated.
-                      </span>
-                    </div>
-
-                    <div className={styles.importActions}>
-                      <motion.button
-                        className={styles.primaryButton}
-                        onClick={handleImport}
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                      >
-                        <Upload size={16} />
-                        Import Workspace
-                      </motion.button>
-                      <motion.button
-                        className={styles.secondaryButton}
-                        onClick={() => {
-                          setImportData(null);
-                          if (fileInputRef.current) {
-                            fileInputRef.current.value = '';
-                          }
-                        }}
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                      >
-                        Cancel
-                      </motion.button>
-                    </div>
-                  </div>
-                )}
-              </>
+              </div>
             )}
-          </div>
+          </>
+        )}
+      </div>
     </ModalShell>
   );
 };
