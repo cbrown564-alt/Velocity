@@ -1,5 +1,10 @@
 import { test, expect } from '@playwright/test';
-import { buildExampleCrosstab, reachDashboardWithExample } from './helpers/visualPolish';
+import {
+  buildExampleCrosstab,
+  expectWorkspaceLibraryVisible,
+  reachDashboardWithExample,
+  waitForWorkspaceModePersisted,
+} from './helpers/visualPolish';
 
 test('reload restores dashboard without workspace overlay blocking controls', async ({ page }) => {
   await page.goto('/');
@@ -54,9 +59,9 @@ test('reload keeps workspace when user returned before refresh', async ({ page }
   await buildExampleCrosstab(page);
 
   await page.locator('button[title="Return to Workspace"]').click();
-  await expect(page.getByText(/Recent Datasets|No datasets yet/i)).toBeVisible({ timeout: 30000 });
+  await expectWorkspaceLibraryVisible(page);
+  await waitForWorkspaceModePersisted(page);
 
   await page.reload();
-  await expect(page.getByText(/Recent Datasets|No datasets yet/i)).toBeVisible({ timeout: 120000 });
-  await expect(page.getByRole('button', { name: 'Table view' })).toHaveCount(0);
+  await expectWorkspaceLibraryVisible(page);
 });

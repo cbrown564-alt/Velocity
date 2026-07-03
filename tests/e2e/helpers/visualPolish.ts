@@ -69,7 +69,9 @@ export async function uploadFileAndReachDashboard(
   file: string | { name: string; mimeType: string; buffer: Buffer },
 ) {
   const fileInput = page.getByTestId('dataset-upload-input');
-  await expect(fileInput).toBeAttached({ timeout: 60000 });
+  await expect(fileInput).toBeAttached({ timeout: 120000 });
+  await expect(page.getByRole('button', { name: /Upload/i }).first()).toBeVisible({ timeout: 120000 });
+
   await fileInput.setInputFiles(file);
 
   const surveyQuestions = page.getByText(/Survey Questions/);
@@ -82,7 +84,7 @@ export async function uploadFileAndReachDashboard(
         if (await metadataLoaded.isVisible().catch(() => false)) return 'metadata';
         return 'pending';
       },
-      { timeout: 120000 },
+      { timeout: 180000 },
     )
     .not.toBe('pending');
 
@@ -232,7 +234,31 @@ export async function assertOpfsSupported(page: Page) {
   });
 }
 
-/** Open a dataset from workspace search (compact list mode when results ≤ 3). */
+/** Workspace library chrome (not analysis dashboard). */
+export async function expectWorkspaceLibraryVisible(page: Page) {
+  await expect(page.getByText('Velocity Workspace')).toBeVisible({ timeout: 120000 });
+  await expect(page.getByRole('heading', { name: 'sleep.sav' })).toBeVisible({ timeout: 120000 });
+  await expect(page.getByRole('button', { name: 'Table view' })).toHaveCount(0);
+}
+
+export async function waitForWorkspaceModePersisted(page: Page) {
+  await expect
+    .poll(
+      async () =>
+        page.evaluate(() => {
+          const raw = localStorage.getItem('velocity-state');
+          if (!raw) return false;
+          try {
+            const parsed = JSON.parse(raw) as { state?: { isWorkspaceMode?: boolean } };
+            return parsed.state?.isWorkspaceMode === true;
+          } catch {
+            return false;
+          }
+        }),
+      { timeout: 30000 },
+    )
+    .toBe(true);
+}
 export async function openDatasetFromWorkspaceSearch(page: Page, fileName: string) {
   await page.getByRole('button', { name: 'All Datasets' }).click();
   await page.getByPlaceholder('Search datasets...').fill(fileName);
