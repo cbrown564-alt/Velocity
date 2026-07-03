@@ -2,7 +2,6 @@
  * WorkspaceView Styles
  *
  * Theme-agnostic styles using Velocity's semantic token system.
- * Works across Soft Machine, Mission Control, and Liquid Glass themes.
  */
 
 /* ============================================================================
@@ -620,13 +619,3 @@
    ============================================================================ */
 
 /* Liquid Glass: Enhanced blur */
-[data-theme='liquid-glass'] .header,
-[data-theme='liquid-glass'] .filterTabs {
-  background: var(--mat-panel-bg, var(--bg-panel));
-  backdrop-filter: var(--mat-panel-filter, blur(25px) saturate(180%));
-}
-
-[data-theme='liquid-glass'] .contextMenu {
-  background: var(--mat-overlay-bg, var(--bg-panel));
-  backdrop-filter: var(--mat-overlay-filter, blur(40px) saturate(200%));
-}

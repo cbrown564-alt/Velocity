@@ -251,39 +251,5 @@
   color: var(--text-primary);
 }
 
-/* Mission Control: Radar sweep on hover */
-[data-theme='mission-control'] .datasetCard::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 0;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    color-mix(in srgb, var(--color-accent) 10%, transparent) 50%,
-    transparent 100%
-  );
-  pointer-events: none;
-  transition: width 0.3s ease;
-}
-
-[data-theme='mission-control'] .datasetCard:hover::after {
-  width: 100%;
-}
-
 /* Soft Machine: Left accent bar */
-[data-theme='soft-machine'] .datasetCard {
-  border-left: 3px solid transparent;
-}
-
-[data-theme='soft-machine'] .datasetCard:hover {
-  border-left-color: var(--color-accent);
-}
-
 /* Liquid Glass: Enhanced blur */
-[data-theme='liquid-glass'] .datasetCard {
-  background: var(--mat-panel-bg, var(--bg-panel));
-  backdrop-filter: var(--mat-panel-filter, blur(15px) saturate(150%));
-}

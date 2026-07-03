@@ -4,14 +4,6 @@ import { expect, type Page } from '@playwright/test';
 /** Bundled sleep.sav for e2e that must preserve sex×marital visual baselines. */
 export const SLEEP_SAV_FIXTURE = path.resolve(process.cwd(), 'test_data/sleep.sav');
 
-export const VP_THEMES = [
-  ['sm', 'Soft Machine'],
-  ['mc', 'Mission Control'],
-  ['lg', 'Liquid Glass'],
-] as const;
-
-export type ThemeSlug = (typeof VP_THEMES)[number][0];
-
 export async function clearBrowserStorage(
   page: Page,
   options?: {
@@ -226,19 +218,6 @@ export async function waitForStableCrosstab(page: Page) {
   await expect(footer).toBeVisible({ timeout: 15000 });
 
   await page.waitForTimeout(400);
-}
-
-export async function applyTheme(page: Page, label: string) {
-  const themeList = page.locator('[role="listbox"][aria-label="Theme selection"]');
-  await page.keyboard.press('Escape');
-  await page.waitForTimeout(200);
-  await page
-    .getByRole('button', { name: /Activate to switch to/i })
-    .first()
-    .click({ force: true });
-  await themeList.waitFor({ timeout: 5000 });
-  await themeList.getByText(label, { exact: true }).click({ force: true });
-  await page.waitForTimeout(900);
 }
 
 export function crosstabTable(page: Page) {

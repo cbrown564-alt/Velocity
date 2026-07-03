@@ -51,12 +51,6 @@ const TRIGGER_RULES = [
     e2eHints: ['tests/e2e/pilot-workflow.spec.ts'],
   },
   {
-    id: 'theme-switcher',
-    label: 'Theme switcher labels / a11y',
-    patterns: ['src/components/common/ThemeSwitcher.tsx'],
-    e2eHints: ['tests/e2e/visual-polish-theme-table.spec.ts'],
-  },
-  {
     id: 'contextual-micro-tips',
     label: 'Contextual micro tips / chips',
     patterns: [

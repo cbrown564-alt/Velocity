@@ -2,7 +2,6 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { CommandPalette } from './CommandPalette';
 import { useVelocityStore } from '../../store';
-import { ThemeProvider } from '../../context/ThemeContext';
 
 beforeEach(() => {
   useVelocityStore.setState({
@@ -31,22 +30,21 @@ beforeEach(() => {
   } as any);
 });
 
-const Wrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => <ThemeProvider>{children}</ThemeProvider>;
 
 describe('CommandPalette', () => {
   it('does not render when closed', () => {
     useVelocityStore.setState({ commandPaletteOpen: false });
-    render(<CommandPalette />, { wrapper: Wrapper });
+    render(<CommandPalette />);
     expect(screen.queryByPlaceholderText('Type a command or search variables...')).not.toBeInTheDocument();
   });
 
   it('renders search input when open', () => {
-    render(<CommandPalette />, { wrapper: Wrapper });
+    render(<CommandPalette />);
     expect(screen.getByPlaceholderText('Type a command or search variables...')).toBeInTheDocument();
   });
 
   it('filters commands based on query', () => {
-    render(<CommandPalette />, { wrapper: Wrapper });
+    render(<CommandPalette />);
     const input = screen.getByPlaceholderText('Type a command or search variables...');
     fireEvent.change(input, { target: { value: 'focus' } });
     expect(screen.getByText('Toggle Focus Mode')).toBeInTheDocument();
@@ -54,7 +52,7 @@ describe('CommandPalette', () => {
   });
 
   it('shows variable shelf actions when searching variables', () => {
-    render(<CommandPalette />, { wrapper: Wrapper });
+    render(<CommandPalette />);
     const input = screen.getByPlaceholderText('Type a command or search variables...');
     fireEvent.change(input, { target: { value: 'reg' } });
     expect(screen.getByText('Add Region to Columns')).toBeInTheDocument();
@@ -64,7 +62,7 @@ describe('CommandPalette', () => {
   it('adds a matched variable to columns', () => {
     const setTableConfig = vi.fn();
     useVelocityStore.setState({ setTableConfig });
-    render(<CommandPalette />, { wrapper: Wrapper });
+    render(<CommandPalette />);
     const input = screen.getByPlaceholderText('Type a command or search variables...');
     fireEvent.change(input, { target: { value: 'reg' } });
     fireEvent.click(screen.getByText('Add Region to Columns'));
@@ -74,20 +72,20 @@ describe('CommandPalette', () => {
   it('opens filter modal from command list', () => {
     const openFilterModal = vi.fn();
     useVelocityStore.setState({ openFilterModal });
-    render(<CommandPalette />, { wrapper: Wrapper });
+    render(<CommandPalette />);
     fireEvent.click(screen.getByText('Open Filters'));
     expect(openFilterModal).toHaveBeenCalled();
   });
 
   it('shows no results message for unmatched query', () => {
-    render(<CommandPalette />, { wrapper: Wrapper });
+    render(<CommandPalette />);
     const input = screen.getByPlaceholderText('Type a command or search variables...');
     fireEvent.change(input, { target: { value: 'xyznonexistent' } });
     expect(screen.getByText(/No commands found/)).toBeInTheDocument();
   });
 
   it('closes on escape', () => {
-    render(<CommandPalette />, { wrapper: Wrapper });
+    render(<CommandPalette />);
     fireEvent.keyDown(document, { key: 'Escape' });
     expect(useVelocityStore.getState().commandPaletteOpen).toBe(false);
   });
@@ -95,13 +93,13 @@ describe('CommandPalette', () => {
   it('executes action on click', () => {
     const toggleFocus = vi.fn();
     useVelocityStore.setState({ toggleFocusMode: toggleFocus });
-    render(<CommandPalette />, { wrapper: Wrapper });
+    render(<CommandPalette />);
     fireEvent.click(screen.getByText('Toggle Focus Mode'));
     expect(toggleFocus).toHaveBeenCalled();
   });
 
   it('exposes dialog semantics on the panel', () => {
-    render(<CommandPalette />, { wrapper: Wrapper });
+    render(<CommandPalette />);
     const dialog = screen.getByRole('dialog');
     expect(dialog).toHaveAttribute('aria-modal', 'true');
     expect(dialog).toHaveAttribute('aria-label', 'Command palette');

@@ -27,7 +27,6 @@ import {
   Download,
 } from 'lucide-react';
 import { Logo } from '../../../components/common/Logo';
-import { ThemeSwitcher } from '../../../components/common/ThemeSwitcher';
 import styles from './WorkspaceView.module.css';
 import {
   applyWorkspaceCategoryFilter,
@@ -288,7 +287,6 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
           )}
 
           <div className={styles.headerActions}>
-            <ThemeSwitcher />
             {!showFirstRunLanding && (
               <>
                 <div className={styles.viewToggle}>

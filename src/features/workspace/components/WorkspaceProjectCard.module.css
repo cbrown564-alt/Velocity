@@ -142,7 +142,3 @@
 }
 
 /* Liquid Glass: Enhanced blur */
-[data-theme='liquid-glass'] .projectCard {
-  background: var(--mat-panel-bg, var(--bg-panel));
-  backdrop-filter: var(--mat-panel-filter, blur(15px) saturate(150%));
-}

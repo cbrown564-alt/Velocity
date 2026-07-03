@@ -15,7 +15,6 @@ import {
 import type { Dataset } from '../../../types/dataset';
 import type { Slide } from '../../../types/slides';
 import { useVelocityStore } from '../../../store';
-import { ThemeSwitcher } from '../../../components/common/ThemeSwitcher';
 import { ModeToggleButton } from '../../../components/layout/AppShell';
 
 export interface DashboardToolbarProps {
@@ -130,8 +129,6 @@ export const DashboardToolbar: React.FC<DashboardToolbarProps> = ({
             <FileDown size={14} aria-hidden />
             <span className="hidden xl:inline">Export</span>
           </button>
-
-          <ThemeSwitcher />
 
           <button
             onClick={onToggleTableDensity}

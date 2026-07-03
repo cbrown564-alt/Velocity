@@ -1,15 +1,16 @@
 import { useCallback } from 'react';
-import { useTheme } from '../../../context/ThemeContext';
+import { velocity } from '../../../theme/themes';
 import { useVelocityStore } from '../../../store';
 import { buildExportConfig } from '../../../core/export/buildExportConfig';
 import { resolveExportBranding } from '../../../core/export/resolveThemeColors';
 import { useResolvedVariables } from './useResolvedVariables';
 
+const exportBranding = resolveExportBranding(velocity);
+
 /**
  * Shared export entry point for toolbar and command palette.
  */
 export function useAnalysisExportAction() {
-  const { theme } = useTheme();
   const openAnalysisExportModal = useVelocityStore((state) => state.openAnalysisExportModal);
   const queryResult = useVelocityStore((state) => state.queryResult);
   const dataset = useVelocityStore((state) => state.dataset);
@@ -32,7 +33,7 @@ export function useAnalysisExportAction() {
       isMultipleResponse,
       viewType: activeSlide?.visualizationType,
       chartType: activeSlide?.chartType,
-      branding: resolveExportBranding(theme),
+      branding: exportBranding,
     });
   }, [
     activeSlide?.title,
@@ -44,7 +45,6 @@ export function useAnalysisExportAction() {
     resolvedColVar,
     isWeighted,
     isMultipleResponse,
-    theme,
   ]);
 
   const openExport = useCallback(() => {

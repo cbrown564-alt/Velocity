@@ -245,33 +245,6 @@
 
 /* Soft Machine: Left Accent Bar
    Applied via theme attribute selector */
-[data-theme='soft-machine'] .item {
-  position: relative;
-}
-
-[data-theme='soft-machine'] .item::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 3px;
-  background-color: var(--color-accent);
-  transform: scaleY(0);
-  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  transform-origin: center;
-  border-radius: 0 2px 2px 0;
-}
-
-[data-theme='soft-machine'] .item:hover::before,
-[data-theme='soft-machine'] .itemActive::before {
-  transform: scaleY(0.7);
-}
-
-[data-theme='soft-machine'] .itemActive::before {
-  transform: scaleY(1);
-}
-
 .itemContent {
   display: flex;
   align-items: center;

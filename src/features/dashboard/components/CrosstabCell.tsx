@@ -1,70 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowDown, ArrowUp } from 'lucide-react';
 import { AnimatedNumber } from '../../../components/common/AnimatedNumber';
 
 type CellSig = 'high_95' | 'high_80' | 'low_95' | 'low_80';
-
-/** Detect Mission Control theme for phosphor persistence */
-function isMissionControl(): boolean {
-  return document.documentElement.getAttribute('data-theme') === 'mission-control';
-}
-
-/**
- * Tracks previous primary value and emits a ghost for 200ms when
- * animationTrigger changes. Only active in Mission Control.
- */
-function usePhosphorGhost(value: number, animationTrigger: string | undefined): { value: number; key: string } | null {
-  const [ghost, setGhost] = useState<{ value: number; key: string } | null>(null);
-  const prevTriggerRef = useRef(animationTrigger);
-  const prevValueRef = useRef(value);
-
-  useEffect(() => {
-    if (animationTrigger && animationTrigger !== prevTriggerRef.current && isMissionControl()) {
-      setGhost({ value: prevValueRef.current, key: prevTriggerRef.current ?? 'init' });
-      setTimeout(() => setGhost(null), 220);
-      prevTriggerRef.current = animationTrigger;
-    } else {
-      prevTriggerRef.current = animationTrigger;
-    }
-    prevValueRef.current = value;
-  }, [animationTrigger, value]);
-
-  return ghost;
-}
-
-/**
- * Renders primary value with an optional phosphor ghost overlay.
- * In Mission Control, the old value lingers like CRT phosphor decay.
- */
-function PhosphorWrap({
-  children,
-  ghost,
-  formatter,
-  className,
-}: {
-  children: React.ReactNode;
-  ghost: { value: number; key: string } | null;
-  formatter: (v: number) => string;
-  className?: string;
-}) {
-  if (!ghost) return <>{children}</>;
-  return (
-    <span className="relative inline-block">
-      {children}
-      <motion.span
-        key={ghost.key}
-        className={`phosphor-ghost absolute inset-0 pointer-events-none ${className}`}
-        initial={{ opacity: 0.75 }}
-        animate={{ opacity: 0 }}
-        transition={{ duration: 0.2, ease: 'easeOut' }}
-        aria-hidden
-      >
-        {formatter(ghost.value)}
-      </motion.span>
-    </span>
-  );
-}
 
 export interface CrosstabCellProps {
   variant: 'frequency' | 'metric' | 'count';
@@ -243,9 +182,6 @@ export const CrosstabCell: React.FC<CrosstabCellProps> = ({
 
   const n = count ?? 0;
   const sampleN = validCount ?? count;
-  const ghost = usePhosphorGhost(n, animationTrigger);
-  const meanGhost = usePhosphorGhost(mean ?? 0, animationTrigger);
-  const pctGhost = usePhosphorGhost(percent ?? 0, animationTrigger);
 
   if (variant === 'count') {
     const countDisplay = animationTrigger ? (
@@ -261,9 +197,7 @@ export const CrosstabCell: React.FC<CrosstabCellProps> = ({
     );
     return (
       <div className={CELL_STACK} data-testid="crosstab-cell-count">
-        <PhosphorWrap ghost={ghost} formatter={(v) => `${Math.round(v)}`} className={primaryClass}>
-          {countDisplay}
-        </PhosphorWrap>
+        {countDisplay}
         <FadeIn
           animationTrigger={animationTrigger}
           reducedMotion={reducedMotion}
@@ -300,9 +234,7 @@ export const CrosstabCell: React.FC<CrosstabCellProps> = ({
     return (
       <div className={CELL_STACK} data-testid="crosstab-cell-metric">
         <div className="flex w-full items-baseline justify-end gap-1">
-          <PhosphorWrap ghost={meanGhost} formatter={(v) => v.toFixed(1)} className={primaryClass}>
-            {meanEl}
-          </PhosphorWrap>
+          {meanEl}
           {sigLetters ? (
             <SpringLock animationTrigger={animationTrigger} reducedMotion={reducedMotion}>
               <span className={`${secondarySizeClass} font-mono font-semibold text-[var(--color-success)] align-super`}>
@@ -368,9 +300,7 @@ export const CrosstabCell: React.FC<CrosstabCellProps> = ({
   return (
     <div className={CELL_STACK} data-testid="crosstab-cell-frequency">
       <div className="flex w-full items-center justify-end gap-0.5">
-        <PhosphorWrap ghost={pctGhost} formatter={(v) => `${v.toFixed(1)}%`} className={primaryClass}>
-          {percentEl}
-        </PhosphorWrap>
+        {percentEl}
         <SignificanceMarkers
           sig={sig}
           sigLetters={sigLetters}

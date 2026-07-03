@@ -7,16 +7,12 @@ import {
   RotateCcw,
   FileDown,
   Home,
-  Moon,
-  Sun,
-  Droplets,
   Keyboard,
   Filter,
   Rows3,
   Columns3,
   Weight,
 } from 'lucide-react';
-import { useTheme } from '../../context/ThemeContext';
 import { useVelocityStore } from '../../store';
 import { invokeReturnToWorkspace } from '../../lib/navigationActions';
 import { pushModalShortcutContext } from '../../lib/keyboardShortcuts/registry';
@@ -38,7 +34,6 @@ interface CommandItem {
 }
 
 export const CommandPalette: React.FC = () => {
-  const { setTheme, availableThemes } = useTheme();
   const commandPaletteOpen = useVelocityStore((state) => state.commandPaletteOpen);
   const closeCommandPalette = useVelocityStore((state) => state.closeCommandPalette);
   const toggleAppMode = useVelocityStore((state) => state.toggleAppMode);
@@ -175,28 +170,6 @@ export const CommandPalette: React.FC = () => {
       },
     ];
 
-    availableThemes.forEach((themeOption) => {
-      const icon =
-        themeOption.id === 'soft-machine' ? (
-          <Sun size={16} />
-        ) : themeOption.id === 'mission-control' ? (
-          <Moon size={16} />
-        ) : (
-          <Droplets size={16} />
-        );
-      list.push({
-        id: `theme-${themeOption.id}`,
-        label: `Switch Theme: ${themeOption.name}`,
-        icon,
-        kind: 'action',
-        action: () => {
-          setTheme(themeOption.id);
-          closeCommandPalette();
-          addToast({ message: `Switched to ${themeOption.name}`, type: 'success' });
-        },
-      });
-    });
-
     const variableMatches = searchVariableSetsForPalette(query, variableSets);
     for (const match of variableMatches) {
       const { set } = match;
@@ -227,14 +200,12 @@ export const CommandPalette: React.FC = () => {
 
     return list;
   }, [
-    availableThemes,
     query,
     variableSets,
     dataset?.variables,
     tableConfig,
     setTableConfig,
     setWeightVariable,
-    setTheme,
     toggleAppMode,
     toggleFocusMode,
     reset,
