@@ -8,6 +8,7 @@ Navigation hub for live documentation. **Agent rules: [`AGENTS.md`](../AGENTS.md
 | :--- | :--- |
 | What to work on | `tracker_00_implementation_status.md` (pilot, `STAB-UI-F`, `STAB-UI-T`, gated work) |
 | **Pilot UI presentation gate** | **`audit_07_pilot_presentation_readiness_2026-07-01.md`** — Linear-bar screenshot audit, PPR fix list, frozen workflow screenshots |
+| **User journey screenshots** | **`user_journey_screenshots.md`** — three main journeys (activation, presentation/export, durability) with design decisions and open questions |
 | Pilot contract (PILOT-0) | `pilot_00_brief.md` — SAV-to-deck thesis, scope, metrics, ICP screen |
 | Trust evidence (PILOT-2) | `pilot_02_trust_pack.md` — parity, benchmarks, limitations, reproduce commands |
 | Pilot packaging (PILOT-1) | `pilot_01_packaging.md` — build, host, browser matrix, event log |
