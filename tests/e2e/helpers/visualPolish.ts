@@ -301,6 +301,59 @@ export async function waitForRestorationPromptOrWorkspace(page: Page) {
     .toBe(true);
 }
 
+export async function ensureWorkspaceLibraryAfterReload(page: Page) {
+  await expect
+    .poll(
+      async () => {
+        const stillBooting = await page
+          .getByText(
+            /Starting analysis engine|Restoring local workspace|Initializing Analysis Engine|Preparing workspace/i,
+          )
+          .isVisible()
+          .catch(() => false);
+        if (stillBooting) return 'booting';
+
+        if (
+          await page
+            .getByText('Velocity Workspace')
+            .isVisible()
+            .catch(() => false)
+        )
+          return 'workspace';
+        if (
+          await page
+            .getByRole('heading', { name: 'Recent Datasets' })
+            .isVisible()
+            .catch(() => false)
+        ) {
+          return 'workspace';
+        }
+        if (
+          await page
+            .getByRole('button', { name: 'Table view' })
+            .isVisible()
+            .catch(() => false)
+        ) {
+          return 'dashboard';
+        }
+        return 'pending';
+      },
+      { timeout: 180000 },
+    )
+    .toMatch(/workspace|dashboard/);
+
+  if (
+    await page
+      .getByRole('button', { name: 'Table view' })
+      .isVisible()
+      .catch(() => false)
+  ) {
+    await page.locator('button[title="Return to Workspace"]').click();
+  }
+
+  await expectWorkspaceLibraryVisible(page);
+}
+
 export async function waitForWorkspaceModePersisted(page: Page) {
   await expect
     .poll(
@@ -319,6 +372,7 @@ export async function waitForWorkspaceModePersisted(page: Page) {
     )
     .toBe(true);
 }
+
 export async function openDatasetFromWorkspaceSearch(page: Page, fileName: string) {
   await page.getByRole('button', { name: 'All Datasets' }).click();
   await page.getByPlaceholder('Search datasets...').fill(fileName);

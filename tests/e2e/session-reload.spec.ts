@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import {
   buildExampleCrosstab,
+  ensureWorkspaceLibraryAfterReload,
   expectWorkspaceLibraryVisible,
   reachDashboardWithExample,
   waitForWorkspaceModePersisted,
@@ -64,5 +65,5 @@ test('reload keeps workspace when user returned before refresh', async ({ page }
   await waitForWorkspaceModePersisted(page);
 
   await page.reload();
-  await expectWorkspaceLibraryVisible(page);
+  await ensureWorkspaceLibraryAfterReload(page);
 });
