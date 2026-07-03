@@ -110,11 +110,6 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
     chartData.length > VIRTUALIZE_ROW_THRESHOLD;
   const shrinkWrapSlide = resolvedRowVars.length > 0 && !tableNeedsFill;
 
-  // Content-aware slide height (UXF-004): tables shrink-wrap the card to their
-  // content and cap at the canvas height (internal scroll takes over beyond
-  // that). Charts, empty, and error states keep filling the canvas.
-  const shrinkWrap = activeSlide.visualizationType === 'table' && !queryError && resolvedRowVars.length > 0;
-
   const renderCellContent = () => {
     if (queryError && !isQuerying) {
       return (
