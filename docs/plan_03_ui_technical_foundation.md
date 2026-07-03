@@ -54,19 +54,19 @@ Update **Status:** `open` | `in_progress` | `fixed` | `wontfix` | `deferred`.
 | **UXT-001** | Store | Whole-store `useVelocityStore()` in 18 files (~20 call sites); any tick re-renders heavy subtrees | P0 | T1 | fixed |
 | **UXT-002** | Perf | Zero `React.memo` on hot leaves (crosstab cells, chart SVG, variable cards) | P1 | T1 | deferred |
 | **UXT-003** | Modals | `ModalShell` lacks `role="dialog"`, `aria-modal`, focus trap, focus restore; `escapeToClose` defaults `false` | P0 | T2 | fixed — T2.1: `ModalShell` dialog semantics, `useFocusTrap`, default `escapeToClose={true}` |
-| **UXT-004** | Modals | Overlays bypassing `ModalShell` miss shared behavior (`DataDrawer`, `CommandPalette`, `ProjectLinkModal`, `CrossWavePanel`, `ExportImportModal`) | P1 | T2 | open |
+| **UXT-004** | Modals | Overlays bypassing `ModalShell` miss shared behavior (`DataDrawer`, `CommandPalette`, `ProjectLinkModal`, `CrossWavePanel`, `ExportImportModal`) | P1 | T2 | fixed — migrated to `ModalShell` or equivalent dialog + focus trap |
 | **UXT-005** | Resilience | No `ErrorBoundary` — chart/D3 exception unmounts entire dashboard | P0 | T3 | fixed |
-| **UXT-006** | Forms | ~31 `<label>` elements; ~2 use `htmlFor` — SR announces unlabeled fields | P1 | T2 | open |
-| **UXT-007** | A11y | Icon-only close buttons without `aria-label` (9+ sites) | P1 | T2 | open |
-| **UXT-008** | A11y | Click-to-edit `<div onClick>` without keyboard path (`InspectorHeader`, `WorkspaceProjectCard`, `DataTable` merge UI) | P1 | T2 | open |
-| **UXT-009** | Stacking | Ad hoc z-index (37+ values); toast z-130 under session modal z-140; chart menu z-1000 under table sticky z-9999 | P0 | T4 | in_progress — semantic `--z-*` tokens in `index.css`; hot paths migrated; many components still use raw `z-10`/`z-50` literals |
+| **UXT-006** | Forms | ~31 `<label>` elements; ~2 use `htmlFor` — SR announces unlabeled fields | P1 | T2 | fixed — `htmlFor` + matching `id` on modal form fields |
+| **UXT-007** | A11y | Icon-only close buttons without `aria-label` (9+ sites) | P1 | T2 | fixed — `aria-label="Close …"` on icon-only dismiss buttons |
+| **UXT-008** | A11y | Click-to-edit `<div onClick>` without keyboard path (`InspectorHeader`, `WorkspaceProjectCard`, `DataTable` merge UI) | P1 | T2 | fixed — `role="button"`, `tabIndex={0}`, Enter/Space handlers |
+| **UXT-009** | Stacking | Ad hoc z-index (37+ values); toast z-130 under session modal z-140; chart menu z-1000 under table sticky z-9999 | P0 | T4 | fixed — semantic `--z-*` tokens; 35 ad-hoc literals migrated to zero |
 | **UXT-010** | Theme | `FacetedSearchBar.module.css` hardcodes `rgba(255,255,255,…)` — invisible on Soft Machine cream panels | P0 | T5 | fixed — `color-mix(in srgb, var(--text-inverse) …)` replaces hardcoded white |
 | **UXT-011** | Shortcuts | 6+ parallel `document.keydown` listeners; precedence depends on mount order | P1 | T6 | fixed |
 | **UXT-012** | Bug | `ModalHost` mounts `<RecodeModal onSave={async () => {}}>` — recodes may not persist from this path | P0 | T7 | fixed — `ModalHost` wires `onSaveRecode`; `RecodeModal.test.tsx` verifies save callback |
 | **UXT-013** | Bundle | Monaco eagerly imported in `RCodeEditor.tsx` — multi-MB main chunk | P2 | T6 | fixed |
-| **UXT-014** | A11y | No skip link; receded canvas not `aria-hidden`/`inert` when Variable Manager open | P2 | T2 | open |
-| **UXT-015** | Menus | Context menus lack `role="menu"` / `menuitem`, arrow nav (`ContextMenu`, `ChartContextMenu`) | P2 | T2 | open |
-| **UXT-016** | Tables | `RecodeModal` table headers lack `scope` | P3 | T2 | open |
+| **UXT-014** | A11y | No skip link; receded canvas not `aria-hidden`/`inert` when Variable Manager open | P2 | T2 | fixed — skip link in `AppShell`; receded canvas `aria-hidden` + `inert` |
+| **UXT-015** | Menus | Context menus lack `role="menu"` / `menuitem`, arrow nav (`ContextMenu`, `ChartContextMenu`) | P2 | T2 | fixed — WAI-ARIA menu pattern + arrow/Home/End/Escape nav |
+| **UXT-016** | Tables | `RecodeModal` table headers lack `scope` | P3 | T2 | fixed — `scope="col"` on binning table headers |
 | **UXT-017** | Tokens | `--space-*` unused in CSS modules; ~611 raw px values | P3 | deferred | deferred |
 | **UXT-018** | Charts | ~20 hardcoded SVG `fontSize: '10px'/'11px'` in renderers | P3 | deferred | deferred |
 | **UXT-019** | Hygiene | 30+ `console.*` in shipped paths (10 in `usePersistenceManager.ts`) | P3 | T6 | fixed |
@@ -358,3 +358,4 @@ Summarize in `docs/completed_foundations_summary.md` §UI excellence; keep this 
 | :--- | :--- |
 | 2026-07-01 | Initial workstream from independent technical UI audit |
 | 2026-07-03 | Findings register reconciled with code audit: UXT-003/010/012 fixed; UXT-009 in_progress; UXT-021 deferred; T1 acceptance + manual checklist updated |
+| 2026-07-03 | Integration merge: UXT-004/006–009/014–016 fixed; STAB-UI-T2 + T4 complete; lint fix on `SlideContainer` |
