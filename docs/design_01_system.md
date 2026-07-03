@@ -433,6 +433,10 @@ Implementation: `src/core/text/displayCase.ts` (`toTitleCase`, `toUiCaps`); `res
 
 **Layout rule (UXP-020):** Never use `opacity-0` on in-flow content that affects column width (e.g. `n=`). Hover-only chrome (pencil, grip) must be `position: absolute` so hover does not shift layout.
 
+**Statistics visibility toggles (UXP-040 / UXF-005):** The status bar under every crosstab exposes two toggles — **Cell n** (per-cell `n=` metadata) and **Bases** (the column-bases Total row). Hiding a statistic removes it from layout flow (no reserved space, honoring UXP-020); columns reflow. State lives in `analysisSettings` (`showCellN`, `showColumnBases`; deck-clean defaults off) and is session-scoped. The filtered N in the slide subtitle is unaffected (trust invariant, UXR-010). Exports mirror the canvas defaults; hidden bases are a canvas display concern only.
+
+**Content-aware slide height (UXF-004):** The slide card shrink-wraps table content and caps at the canvas height (internal scroll takes over past the cap, preserving virtualization). Charts, empty, and error states still fill the canvas. The card is the single panel on the canvas — no nested panel chrome around it.
+
 ---
 
 ## 11. Design Rationale

@@ -80,6 +80,9 @@ Update **Status** when addressed: `open` | `in_progress` | `fixed` | `wontfix` |
 | **UXF-014** | Workspace | Privacy + welcome + pilot banners stack above sparse dataset grid | P2 | F3 | fixed |
 | **UXF-015** | Splash | “Checking local storage…” secondary copy fails contrast on Soft Machine | P2 | F5 | fixed — PR #18 init bar contrast |
 | **UXF-016** | Themes | No high-contrast or colorblind-safe significance theme | P2 | F5 | deferred |
+| **UXF-017** | Liquid Glass | Material override applied per-cell to sticky table headers — dark blocks, lost grid borders | P0 | F1 | fixed — July 3 `:not(th, td, …)` scoping in `index.css` |
+
+**July 3, 2026 incremental:** deterministic example dataset (mulberry32); Liquid Glass header regression fix (UXF-017); status-bar Cell n/Bases toggles; CrosstabCell layout-flow when `n=` hidden; one-time Focus tip toast (`useFocusModeTip`); quiet workspace storage note; VM inspector guided empty state; single-panel canvas chrome.
 
 **Evidence (July 1, 2026):** Live session at `localhost:3000`, dataset `mock_data.csv`, `gender × region`, Soft Machine theme; code refs `SlideContainer.tsx` (`max-w-[1200px]`), `returningResearcher.ts` (`resolveVarLabel` fallback to id).
 
@@ -457,3 +460,4 @@ Move narrative summary to `docs/completed_foundations_summary.md` §UI excellenc
 | :--- | :--- |
 | 2026-07-01 | Initial workstream spec from full UI audit (live app + code review) |
 | 2026-07-02 | UXF register reconciled with PR #18 PPR closure; workstream sign-off criteria met (UXF-016 deferred) |
+| 2026-07-03 | Incremental polish: mulberry32 example data, UXF-017 Liquid Glass fix, status-bar display toggles, layout-flow `n=` removal, Focus tip toast, quiet storage note |
