@@ -220,9 +220,12 @@
    If --mat variables are missing (e.g. in other themes), they can fall back or stay simple.
 */
 
-/* Base Panel Surface */
+/* Base Panel Surface.
+   Table cells are excluded: applying per-cell material borders, backdrop
+   blur, and shadows to sticky <th>/<td> stacks into dark blocks and
+   destroys grid borders (LG header regression). */
 .surface-panel,
-[data-theme='liquid-glass'] .bg-\[var\(--bg-panel\)\] {
+[data-theme='liquid-glass'] .bg-\[var\(--bg-panel\)\]:not(th, td, thead, tbody, tr) {
   background: var(--mat-panel-bg, var(--bg-panel));
   backdrop-filter: var(--mat-panel-filter, none);
   -webkit-backdrop-filter: var(--mat-panel-filter, none);
@@ -230,9 +233,17 @@
   box-shadow: var(--shadow-md);
 }
 
+/* Liquid Glass table cells: quiet translucent fill, no per-cell chrome */
+[data-theme='liquid-glass'] th.bg-\[var\(--bg-panel\)\],
+[data-theme='liquid-glass'] td.bg-\[var\(--bg-panel\)\] {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
 /* Overlay Surface (Popovers) */
 .surface-overlay,
-[data-theme='liquid-glass'] .bg-\[var\(--bg-surface\)\] {
+[data-theme='liquid-glass'] .bg-\[var\(--bg-surface\)\]:not(th, td, thead, tbody, tr, span) {
   background: var(--mat-overlay-bg, var(--bg-surface));
   backdrop-filter: var(--mat-overlay-filter, none);
   -webkit-backdrop-filter: var(--mat-overlay-filter, none);
@@ -336,6 +347,13 @@ h3 {
 :focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
+}
+
+/* Opt-out for inputs whose container renders its own focus affordance
+   (command palette, search fields with focus-within borders). The global
+   ring otherwise beats Tailwind's outline-none on source order. */
+.focus-quiet:focus-visible {
+  outline: none;
 }
 
 /* --------------------------------------------------------------------------
