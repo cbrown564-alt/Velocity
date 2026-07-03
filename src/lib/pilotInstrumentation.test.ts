@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
-import { isPilotInstrumentationVisible } from './pilotInstrumentation';
+import { enablePilotInstrumentation, isPilotInstrumentationVisible } from './pilotInstrumentation';
 
 describe('isPilotInstrumentationVisible', () => {
   beforeEach(() => {
@@ -25,6 +25,24 @@ describe('isPilotInstrumentationVisible', () => {
     vi.stubEnv('DEV', false);
     vi.stubEnv('VITE_PILOT_INSTRUMENTATION', '');
     localStorage.setItem('velocity-pilot-instrumentation', '1');
+    expect(isPilotInstrumentationVisible()).toBe(true);
+  });
+
+  it('returns false when no instrumentation flags are enabled', () => {
+    vi.stubEnv('DEV', false);
+    vi.stubEnv('VITE_PILOT_INSTRUMENTATION', '');
+    expect(isPilotInstrumentationVisible()).toBe(false);
+  });
+});
+
+describe('enablePilotInstrumentation', () => {
+  beforeEach(() => {
+    localStorage.clear();
+  });
+
+  it('persists the opt-in flag in localStorage', () => {
+    enablePilotInstrumentation();
+    expect(localStorage.getItem('velocity-pilot-instrumentation')).toBe('1');
     expect(isPilotInstrumentationVisible()).toBe(true);
   });
 });

@@ -447,6 +447,7 @@ describe('WorkspaceView', () => {
         onBatchDelete={vi.fn()}
         onExport={vi.fn()}
         onImportSession={vi.fn()}
+        onFileDrop={vi.fn()}
       />,
     );
 
@@ -456,6 +457,36 @@ describe('WorkspaceView', () => {
     expect(screen.queryByTestId('workspace-search-input')).not.toBeInTheDocument();
     expect(screen.queryByTestId('pilot-event-log-download')).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /recent/i })).not.toBeInTheDocument();
+  });
+
+  it('forwards dropped files during first-run landing', () => {
+    const onFileDrop = vi.fn();
+    render(
+      <WorkspaceView
+        workspaceState={{ datasets: [], projects: [], storageUsed: 0, storageQuota: 1024 * 1024 }}
+        onOpenDataset={vi.fn()}
+        onUploadFile={vi.fn()}
+        onLoadExample={vi.fn()}
+        onCreateProject={vi.fn()}
+        onDeleteDataset={vi.fn()}
+        onToggleStar={vi.fn()}
+        onLinkDatasets={vi.fn()}
+        onUnlinkDataset={vi.fn()}
+        onCompareWaves={vi.fn()}
+        onBatchStar={vi.fn()}
+        onBatchDelete={vi.fn()}
+        onExport={vi.fn()}
+        onImportSession={vi.fn()}
+        onFileDrop={onFileDrop}
+      />,
+    );
+
+    const file = new File(['abc'], 'client.sav', { type: 'application/octet-stream' });
+    fireEvent.drop(screen.getByTestId('workspace-upload-dropzone'), {
+      dataTransfer: { files: [file] },
+    });
+
+    expect(onFileDrop).toHaveBeenCalledWith(file);
   });
 
   it('shows library chrome when workspace is empty but user has activated before', () => {

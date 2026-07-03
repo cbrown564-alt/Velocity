@@ -235,5 +235,5 @@
 .dropZoneError {
   margin: var(--space-2) 0 0;
   font-size: var(--text-xs);
-  color: var(--color-error, #c0392b);
+  color: var(--color-error);
 }
