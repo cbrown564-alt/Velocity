@@ -47,7 +47,19 @@ describe('pickAutoFirstCrosstabPair', () => {
     });
   });
 
-  it('returns null for non-mock datasets', () => {
+  it('prefers sex × marital status on sleep.sav', () => {
+    const sets = [
+      set({ id: 's', name: 'sex' }),
+      set({ id: 'm', name: 'marital status' }),
+      set({ id: 'w', name: 'weight' }),
+    ];
+    expect(pickAutoFirstCrosstabPair('sleep.sav', sets)).toEqual({
+      rowSetId: 's',
+      colSetId: 'm',
+    });
+  });
+
+  it('returns null for non-example datasets', () => {
     const sets = [set({ id: 'id', name: 'id' }), set({ id: 'a', name: 'segment' }), set({ id: 'b', name: 'channel' })];
     expect(pickAutoFirstCrosstabPair('survey.csv', sets)).toBeNull();
   });

@@ -32,6 +32,7 @@ export interface SplashScreenProps {
   onBatchDelete: (ids: string[]) => Promise<void>;
   onExport: (ids: string[]) => void;
   onImportSession: () => void;
+  onFileDrop?: (file: File) => void;
   onRebuildFromOpfs: (mode: 'splash' | 'dashboard') => void;
   onDiscard: () => void;
 }
@@ -59,6 +60,7 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
   onBatchDelete,
   onExport,
   onImportSession,
+  onFileDrop,
   onRebuildFromOpfs,
   onDiscard,
 }) => {
@@ -90,6 +92,7 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
           onBatchDelete={onBatchDelete}
           onExport={onExport}
           onImportSession={onImportSession}
+          onFileDrop={onFileDrop}
         />
       )}
 

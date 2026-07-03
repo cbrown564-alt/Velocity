@@ -3,12 +3,11 @@
  */
 
 import React, { useCallback } from 'react';
-import { useVelocityStore } from '../../../store';
-import { MOCK_DATASET } from '../../../constants';
 import { formatUploadFailure, getUploadFormatError } from '../../../lib/uploadFeedback';
 import * as opfsFileManager from '../../../services/opfsFileManager';
-import { assignOpfsKeyAndLoad, assignOpfsStorageForUpload } from './assignOpfsKeyAndLoad';
 import { recordPilotEvent } from '../../../services/pilotOnboarding';
+import { useVelocityStore } from '../../../store';
+import { assignOpfsKeyAndLoad, assignOpfsStorageForUpload } from './assignOpfsKeyAndLoad';
 
 type AppMode = 'splash' | 'uploading' | 'dashboard' | 'restoring' | 'metadata';
 
@@ -18,10 +17,14 @@ const SAV_SAMPLE_ROWS = 1000;
 const SAV_ELEVATED_RISK_CELLS = 20_000_000;
 const SAV_HIGH_RISK_CELLS = 40_000_000;
 
+export const EXAMPLE_SAV_URL = '/examples/sleep.sav';
+export const EXAMPLE_SAV_NAME = 'sleep.sav';
+
 export interface FileUploadState {
   pendingSavFile: File | null;
   pendingSavSizeMb: number | null;
   handleFileUpload: (e: React.ChangeEvent<HTMLInputElement>) => Promise<void>;
+  handleDroppedFile: (file: File) => Promise<void>;
   handleMetadataLoadFull: () => Promise<void>;
   handleMetadataCancel: () => Promise<void>;
   handleDemoClick: () => void;
@@ -42,18 +45,6 @@ export function useFileUpload(
   const [pendingSavSizeMb, setPendingSavSizeMb] = React.useState<number | null>(null);
   const [opfsStorageKey, setOpfsStorageKey] = React.useState<string | null>(null);
 
-  const loadMockData = useCallback(async () => {
-    if (MOCK_DATASET.data.length === 0) return;
-    const headers = Object.keys(MOCK_DATASET.data[0]);
-    const csvRows = [
-      headers.join(','),
-      ...MOCK_DATASET.data.map((row) => headers.map((fieldName) => `"${row[fieldName]}"`).join(',')),
-    ];
-    const csvContent = csvRows.join('\n');
-    await loadCSV('mock_data.csv', csvContent);
-    setMode('dashboard');
-  }, [loadCSV, setMode]);
-
   const reportUploadError = useCallback(
     (err: unknown, fileName: string) => {
       const { title, message, duration } = formatUploadFailure(err, fileName);
@@ -64,12 +55,8 @@ export function useFileUpload(
     [addToast, setLoadProgress, setMode],
   );
 
-  const handleFileUpload = useCallback(
-    async (e: React.ChangeEvent<HTMLInputElement>) => {
-      const file = e.target.files?.[0];
-      if (!file) return;
-      e.target.value = '';
-
+  const processUploadFile = useCallback(
+    async (file: File) => {
       const formatError = getUploadFormatError(file.name);
       if (formatError) {
         addToast({
@@ -165,6 +152,64 @@ export function useFileUpload(
     [loadCSV, loadSAV, loadSAVSample, opfsAvailableLocal, setMode, setLoadProgress, addToast, reportUploadError],
   );
 
+  const handleFileUpload = useCallback(
+    async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      e.target.value = '';
+      await processUploadFile(file);
+    },
+    [processUploadFile],
+  );
+
+  const handleDroppedFile = useCallback(
+    async (file: File) => {
+      await processUploadFile(file);
+    },
+    [processUploadFile],
+  );
+
+  const loadExampleDataset = useCallback(async () => {
+    setMode('uploading');
+    setLoadProgress({
+      phase: 'parsing',
+      progress: 0.1,
+      message: 'Loading Sleep study example…',
+    });
+
+    try {
+      const response = await fetch(EXAMPLE_SAV_URL);
+      if (!response.ok) {
+        throw new Error('Example dataset is unavailable. Check your connection and reload.');
+      }
+
+      const buffer = await response.arrayBuffer();
+      const file = new File([buffer], EXAMPLE_SAV_NAME, { type: 'application/octet-stream' });
+
+      recordPilotEvent('file_selected', {
+        fileName: EXAMPLE_SAV_NAME,
+        fileSizeMb: Number((file.size / (1024 * 1024)).toFixed(2)),
+        format: 'sav',
+        source: 'example',
+      });
+
+      const { storageKey } = await assignOpfsStorageForUpload(file, opfsAvailableLocal);
+      await assignOpfsKeyAndLoad(EXAMPLE_SAV_NAME, buffer, loadSAV, { opfsFileKey: storageKey });
+
+      setLoadProgress(null);
+      setMode('dashboard');
+      addToast({
+        type: 'info',
+        title: 'Sleep study example loaded',
+        message: 'Explore sex × marital status, then export an editable PowerPoint slide.',
+        duration: 9000,
+      });
+    } catch (err) {
+      console.error(err);
+      reportUploadError(err, EXAMPLE_SAV_NAME);
+    }
+  }, [addToast, loadSAV, opfsAvailableLocal, reportUploadError, setLoadProgress, setMode]);
+
   const handleMetadataLoadFull = useCallback(async () => {
     if (!pendingSavFile && !opfsStorageKey) return;
     setMode('uploading');
@@ -207,16 +252,14 @@ export function useFileUpload(
   }, [discardPersistedData, opfsStorageKey, setMode]);
 
   const handleDemoClick = useCallback(() => {
-    setMode('uploading');
-    setTimeout(() => {
-      loadMockData();
-    }, 800);
-  }, [loadMockData, setMode]);
+    void loadExampleDataset();
+  }, [loadExampleDataset]);
 
   return {
     pendingSavFile,
     pendingSavSizeMb,
     handleFileUpload,
+    handleDroppedFile,
     handleMetadataLoadFull,
     handleMetadataCancel,
     handleDemoClick,

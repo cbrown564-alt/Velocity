@@ -4,6 +4,10 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { WorkspaceView } from './WorkspaceView';
 import type { StoredDataset, WorkspaceState } from '../types';
 
+vi.mock('../../../lib/pilotInstrumentation', () => ({
+  isPilotInstrumentationVisible: () => true,
+}));
+
 vi.mock('../../../components/common/ThemeSwitcher', () => ({
   ThemeSwitcher: () => <div data-testid="theme-switcher" />,
 }));
@@ -422,7 +426,7 @@ describe('WorkspaceView', () => {
       />,
     );
 
-    fireEvent.click(screen.getByRole('button', { name: /walk through example/i }));
+    fireEvent.click(screen.getByRole('button', { name: /walk through sleep study example/i }));
     expect(onLoadExample).toHaveBeenCalled();
   });
 

@@ -34,7 +34,7 @@ async function reachDashboardWithExample(page: import('@playwright/test').Page) 
     return;
   }
 
-  const loadExample = page.getByRole('button', { name: /Load Example/i });
+  const loadExample = page.getByRole('button', { name: /walk through sleep study example|try sleep study example|load example/i });
   await expect(loadExample).toBeVisible({ timeout: 60000 });
   await loadExample.click();
   await expect(tableView).toBeVisible({ timeout: 120000 });

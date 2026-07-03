@@ -46,6 +46,7 @@ import { WorkspaceProjectCard } from './WorkspaceProjectCard';
 import { WorkspaceEmptyState } from './WorkspaceEmptyState';
 import { WorkspaceStatusStrip } from './WorkspaceStatusStrip';
 import { downloadPilotEventLog, recordPilotEvent } from '../../../services/pilotOnboarding';
+import { isPilotInstrumentationVisible } from '../../../lib/pilotInstrumentation';
 import { isFirstRunLanding } from '../lib/firstRunLanding';
 import type { StoredDataset, Project, WorkspaceViewProps } from '../types';
 
@@ -68,6 +69,7 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
   onBatchDelete,
   onExport,
   onImportSession,
+  onFileDrop,
 }) => {
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
   const [filterMode, setFilterMode] = useState<FilterMode>('recent');
@@ -107,6 +109,18 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
     }
     onLoadExample();
   }, [onLoadExample, showFirstRunLanding]);
+
+  const handleFileDropWithTracking = useCallback(
+    (file: File) => {
+      if (showFirstRunLanding) {
+        recordPilotEvent('landing_cta_upload', { source: 'drop' });
+      }
+      onFileDrop?.(file);
+    },
+    [onFileDrop, showFirstRunLanding],
+  );
+
+  const showPilotLog = isPilotInstrumentationVisible();
 
   const { showWelcomeBack, resumeCandidate, onResume, onDismiss } = useWelcomeBack({
     datasets,
@@ -317,17 +331,19 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
                     Import Session
                   </motion.button>
                 )}
-                <motion.button
-                  className={styles.importButton}
-                  onClick={downloadPilotEventLog}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  title="Download local pilot workflow event log (JSON)"
-                  data-testid="pilot-event-log-download"
-                >
-                  <Download size={16} />
-                  Pilot Log
-                </motion.button>
+                {showPilotLog && (
+                  <motion.button
+                    className={styles.importButton}
+                    onClick={downloadPilotEventLog}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    title="Download local pilot workflow event log (JSON)"
+                    data-testid="pilot-event-log-download"
+                  >
+                    <Download size={16} />
+                    Pilot Log
+                  </motion.button>
+                )}
               </>
             )}
             <motion.button
@@ -459,6 +475,7 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
             onLoadExample={handleLoadExampleWithTracking}
             isFirstRun={showFirstRunLanding}
             onImportSession={showFirstRunLanding ? onImportSession : undefined}
+            onFileDrop={onFileDrop ? handleFileDropWithTracking : undefined}
           />
         ) : (
           <>
