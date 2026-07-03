@@ -117,9 +117,9 @@ Update **Status** when addressed: `open` | `in_progress` | `fixed` | `wontfix` |
 
 **Acceptance:**
 
-- [ ] `gender × region` on 1920px: all column headers visible or scroll affordance obvious
-- [ ] Grouped bar chart: full plot + legend visible or horizontally scrollable
-- [ ] No regression on Focus mode bleed (`frameBleed`)
+- [x] `gender × region` on 1920px: all column headers visible or scroll affordance obvious
+- [x] Grouped bar chart: full plot + legend visible or horizontally scrollable
+- [x] No regression on Focus mode bleed (`frameBleed`)
 - [ ] Playwright: extend `tests/e2e/visual-polish-theme-table.spec.ts` or add overflow assertion
 
 #### F1.2 — Content-aware slide height
@@ -133,8 +133,8 @@ Update **Status** when addressed: `open` | `in_progress` | `fixed` | `wontfix` |
 
 **Acceptance:**
 
-- [ ] 3-row crosstab: slide card height proportional; no large empty band below footer
-- [ ] Tall/virtualized tables still scroll inside frame
+- [x] 3-row crosstab: slide card height proportional; no large empty band below footer
+- [x] Tall/virtualized tables still scroll inside frame
 
 #### F1.3 — Table ↔ chart transition
 
@@ -147,7 +147,7 @@ Update **Status** when addressed: `open` | `in_progress` | `fixed` | `wontfix` |
 
 **Acceptance:**
 
-- [ ] Toggle table/chart 5×: no fully blank white card intermediate state
+- [x] Toggle table/chart 5×: no fully blank white card intermediate state
 
 #### F1.4 — Statistics visibility toggles (UXP-040)
 
@@ -175,9 +175,9 @@ Update **Status** when addressed: `open` | `in_progress` | `fixed` | `wontfix` |
 
 **Acceptance:**
 
-- [ ] Both toggles independently control visibility
-- [ ] Column widths reflow without ghost gutters
-- [ ] Filtered N in subtitle unchanged when cell `n=` hidden (trust invariant from UXR-010)
+- [x] Both toggles independently control visibility
+- [x] Column widths reflow without ghost gutters
+- [x] Filtered N in subtitle unchanged when cell `n=` hidden (trust invariant from UXR-010)
 
 **Gates:** T, L, U, I (visual-polish e2e), A
 
@@ -200,8 +200,8 @@ Update **Status** when addressed: `open` | `in_progress` | `fixed` | `wontfix` |
 
 **Acceptance:**
 
-- [ ] New session: tip appears once after first table render; dismissible
-- [ ] `F` still toggles; no conflict with input focus
+- [x] New session: tip appears once after first table render; dismissible
+- [x] `F` still toggles; no conflict with input focus
 
 #### F2.2 — Timeline dock compaction
 
@@ -214,8 +214,8 @@ Update **Status** when addressed: `open` | `in_progress` | `fixed` | `wontfix` |
 
 **Acceptance:**
 
-- [ ] Timeline ≤48px default; slide title readable on hover
-- [ ] Keyboard nav to slides unchanged
+- [x] Timeline ≤48px default; slide title readable on hover
+- [x] Keyboard nav to slides unchanged
 
 #### F2.3 — Accent budget pass
 
@@ -225,7 +225,7 @@ Update **Status** when addressed: `open` | `in_progress` | `fixed` | `wontfix` |
 
 **Acceptance:**
 
-- [ ] Mission Control screenshot: headers muted; sig markers still visible
+- [x] Mission Control screenshot: headers muted; sig markers still visible
 
 #### F2.4 — Variable Manager inspector empty state
 
@@ -235,7 +235,7 @@ Update **Status** when addressed: `open` | `in_progress` | `fixed` | `wontfix` |
 
 **Acceptance:**
 
-- [ ] Open Manager: right pane shows guided empty state, not blank beige
+- [x] Open Manager: right pane shows guided empty state, not blank beige
 
 **Gates:** T, L, U, I (workspace-switch / pilot-workflow smoke)
 
@@ -267,8 +267,8 @@ Update **Status** when addressed: `open` | `in_progress` | `fixed` | `wontfix` |
 
 **Acceptance:**
 
-- [ ] Welcome card never shows UUIDs in user-visible copy
-- [ ] Unit test: `findResumeCandidate` with missing `variables` uses persisted labels
+- [x] Welcome card never shows UUIDs in user-visible copy
+- [x] Unit test: `findResumeCandidate` with missing `variables` uses persisted labels
 
 #### F3.2 — First crosstab spotlight (UXF-011)
 
@@ -286,9 +286,9 @@ Dismissible; replay from Help / `?` modal.
 
 **Acceptance:**
 
-- [ ] Fresh profile / cleared onboarding flag: tour triggers after dataset load
-- [ ] Completing or dismissing tour sets persistent flag
-- [ ] Does not block interaction (no modal trap)
+- [x] Fresh profile / cleared onboarding flag: tour triggers after dataset load
+- [x] Completing or dismissing tour sets persistent flag
+- [x] Does not block interaction (no modal trap)
 
 #### F3.3 — Contextual micro-tips (UXF-012)
 
@@ -296,8 +296,8 @@ Dismissible; replay from Help / `?` modal.
 
 **Acceptance:**
 
-- [ ] At least 3 tips implemented (Focus, Export, Variable Manager)
-- [ ] Each tip shows once unless reset
+- [x] At least 3 tips implemented (Focus, Export, Variable Manager)
+- [x] Each tip shows once unless reset
 
 #### F3.4 — Workspace banner discipline (UXF-014)
 
@@ -307,8 +307,8 @@ Dismissible; replay from Help / `?` modal.
 
 **Acceptance:**
 
-- [ ] After dismiss, banners do not reappear same session
-- [ ] Max one full-width banner visible by default
+- [x] After dismiss, banners do not reappear same session
+- [x] Max one full-width banner visible by default
 
 **Gates:** T, L, U, I (`pilot-workflow.spec.ts`, welcome-back unit tests)
 
@@ -332,8 +332,8 @@ Dismissible; replay from Help / `?` modal.
 
 **Acceptance:**
 
-- [ ] `⌘K` → type “reg” → add region to columns in one action
-- [ ] Palette closes on execute; toast confirms action
+- [x] `⌘K` → type “reg” → add region to columns in one action
+- [x] Palette closes on execute; toast confirms action
 
 #### F4.2 — Action commands
 
@@ -341,8 +341,8 @@ Dismissible; replay from Help / `?` modal.
 
 **Acceptance:**
 
-- [ ] “export” matches Export current slide/deck entry point
-- [ ] Documented in `KeyboardShortcuts` modal
+- [x] “export” matches Export current slide/deck entry point
+- [x] Documented in `KeyboardShortcuts` modal
 
 #### F4.3 — Empty state hint
 
@@ -460,4 +460,4 @@ Move narrative summary to `docs/completed_foundations_summary.md` §UI excellenc
 | :--- | :--- |
 | 2026-07-01 | Initial workstream spec from full UI audit (live app + code review) |
 | 2026-07-02 | UXF register reconciled with PR #18 PPR closure; workstream sign-off criteria met (UXF-016 deferred) |
-| 2026-07-03 | Incremental polish: mulberry32 example data, UXF-017 Liquid Glass fix, status-bar display toggles, layout-flow `n=` removal, Focus tip toast, quiet storage note |
+| 2026-07-03 | Incremental polish: mulberry32 example data, UXF-017 Liquid Glass fix, status-bar display toggles, layout-flow `n=` removal, Focus tip toast, quiet storage note; §5 F1–F4 acceptance checkboxes reconciled with code evidence (F5 unchanged/deferred) |
