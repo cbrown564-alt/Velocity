@@ -42,7 +42,7 @@ function buildWideCsv(): string {
 test('crosstab columns virtualize for wide banners (scroll-driven windowing)', async ({ page }) => {
   await page.goto('/');
   page.on('dialog', (dialog) => dialog.dismiss());
-  await clearBrowserStorage(page);
+  await clearBrowserStorage(page, { seedActivation: true });
   await page.reload();
 
   await uploadFileAndReachDashboard(page, {

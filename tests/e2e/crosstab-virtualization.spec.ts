@@ -36,7 +36,7 @@ function buildLargeCsv(): string {
 test('crosstab rows virtualize for large tables (scroll-driven windowing)', async ({ page }) => {
   await page.goto('/');
   page.on('dialog', (dialog) => dialog.dismiss());
-  await clearBrowserStorage(page);
+  await clearBrowserStorage(page, { seedActivation: true });
   await page.reload();
 
   await uploadFileAndReachDashboard(page, {

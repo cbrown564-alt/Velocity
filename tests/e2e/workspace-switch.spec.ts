@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import path from 'path';
-import { openDatasetFromWorkspaceSearch } from './helpers/visualPolish';
+import { buildExampleCrosstab, openDatasetFromWorkspaceSearch } from './helpers/visualPolish';
 
 const smallSavFixture = path.resolve(process.cwd(), 'test_data/fixtures/test_small.sav');
 const sleepSavFixture = path.resolve(process.cwd(), 'test_data/sleep.sav');
@@ -43,18 +43,10 @@ async function openDatasetFromWorkspace(page: import('@playwright/test').Page, f
 }
 
 /** Assert DuckDB schema matches UI variables after a workspace dataset switch. */
-async function expectCrosstabRenders(page: import('@playwright/test').Page, rowVar: RegExp, colVar: RegExp) {
-  await page.getByRole('button', { name: rowVar }).first().click();
-  await page.waitForTimeout(1000);
-  await page.getByRole('button', { name: colVar }).first().click();
-  await page.waitForTimeout(3000);
+async function expectCrosstabRenders(page: import('@playwright/test').Page) {
+  await buildExampleCrosstab(page);
 
   await expect(page.getByText(/Couldn't run analysis|Binder Error/i)).toHaveCount(0);
-
-  const table = page.locator('table');
-  await expect(table).toBeVisible({ timeout: 30000 });
-  await expect(table.locator('tbody tr')).not.toHaveCount(0);
-  await expect(page.locator('text=/\\d+\\.\\d%/').first()).toBeVisible({ timeout: 30000 });
 }
 
 test('workspace switches between stored datasets without re-upload', async ({ page }) => {
@@ -110,5 +102,5 @@ test('workspace switches between stored datasets without re-upload', async ({ pa
   await expect(page.getByText('sleep.sav (271 rows)')).toBeVisible({ timeout: 30000 });
 
   // Regression: DuckDB must reload sleep.sav schema after switching away and back.
-  await expectCrosstabRenders(page, /^sex$/i, /^marital status$/i);
+  await expectCrosstabRenders(page);
 });

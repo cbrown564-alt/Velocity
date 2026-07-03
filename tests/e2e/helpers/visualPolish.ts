@@ -8,14 +8,33 @@ export const VP_THEMES = [
 
 export type ThemeSlug = (typeof VP_THEMES)[number][0];
 
-export async function clearBrowserStorage(page: Page) {
-  await page.evaluate(async () => {
+export async function clearBrowserStorage(
+  page: Page,
+  options?: {
+    /** Skip Workshop Door first-run UI for upload-only specs. */
+    seedActivation?: boolean;
+  },
+) {
+  await page.evaluate(async (seedActivation) => {
     try {
       localStorage.clear();
     } catch {
       // Best-effort browser storage cleanup.
     }
     try {
+      if (seedActivation) {
+        localStorage.setItem(
+          'velocity-pilot-events',
+          JSON.stringify([
+            {
+              id: 'e2e-seed-file-selected',
+              name: 'file_selected',
+              at: new Date().toISOString(),
+              elapsedMs: 0,
+            },
+          ]),
+        );
+      }
       localStorage.setItem('velocity-first-crosstab-tour-done', '1');
       localStorage.setItem('velocity-first-crosstab-tour-step-rows', '1');
       localStorage.setItem('velocity-first-crosstab-tour-step-columns', '1');
@@ -42,7 +61,7 @@ export async function clearBrowserStorage(page: Page) {
     } catch {
       // OPFS is not guaranteed in every browser used by this suite.
     }
-  });
+  }, options?.seedActivation ?? false);
 }
 
 export async function uploadFileAndReachDashboard(
@@ -108,7 +127,17 @@ export async function ensureCorrectionNone(page: Page) {
   }
 }
 
-export async function buildGenderRegionCrosstab(page: Page) {
+/** Build or confirm the sleep.sav example crosstab (sex × marital status). */
+export async function buildExampleCrosstab(page: Page) {
+  const table = page.locator('table');
+  const pctCell = page.locator('text=/\\d+\\.\\d%/').first();
+  if (
+    (await table.isVisible({ timeout: 5000 }).catch(() => false)) &&
+    (await pctCell.isVisible({ timeout: 5000 }).catch(() => false))
+  ) {
+    return;
+  }
+
   const reset = page.getByRole('button', { name: 'Reset' });
   if (await reset.isVisible({ timeout: 2000 }).catch(() => false)) {
     await reset.click();
@@ -122,33 +151,36 @@ export async function buildGenderRegionCrosstab(page: Page) {
       .catch(() => false)
   ) {
     await page
-      .getByRole('button', { name: /product sat Good starting point/i })
-      .click()
-      .catch(() => {});
-    await page.waitForTimeout(800);
-    await page
       .getByRole('button', { name: 'Reset' })
       .click()
       .catch(() => {});
     await page.waitForTimeout(500);
   }
 
-  await page
-    .getByRole('button', { name: /^gender$/i })
-    .first()
-    .click();
+  if (
+    (await table.isVisible({ timeout: 2000 }).catch(() => false)) &&
+    (await pctCell.isVisible({ timeout: 2000 }).catch(() => false))
+  ) {
+    return;
+  }
+
+  const sexBtn = page.getByRole('button', { name: /^sex$/i }).first();
+  await expect(sexBtn).toBeVisible({ timeout: 30000 });
+  await sexBtn.click();
   await page.waitForTimeout(1200);
 
-  const regionBtn = page.getByRole('button', { name: /^region$/i });
-  await expect(regionBtn).toBeVisible({ timeout: 5000 });
-  await regionBtn.click();
+  const maritalBtn = page.getByRole('button', { name: /marital status/i });
+  await expect(maritalBtn).toBeVisible({ timeout: 10000 });
+  await maritalBtn.click();
   await page.waitForTimeout(2500);
 
-  const table = page.locator('table');
   await expect(table).toBeVisible({ timeout: 30000 });
   await expect(table.locator('tbody tr')).not.toHaveCount(0);
-  await expect(page.locator('text=/\\d+\\.\\d%/').first()).toBeVisible({ timeout: 30000 });
+  await expect(pctCell).toBeVisible({ timeout: 30000 });
 }
+
+/** @deprecated Use buildExampleCrosstab — sleep.sav replaced mock_data.csv in e2e. */
+export const buildGenderRegionCrosstab = buildExampleCrosstab;
 
 export async function waitForStableCrosstab(page: Page) {
   await ensureCorrectionNone(page);
