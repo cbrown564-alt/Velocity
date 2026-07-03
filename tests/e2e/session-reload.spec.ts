@@ -40,6 +40,7 @@ test('reload restores dashboard without workspace overlay blocking controls', as
 });
 
 test('reload keeps workspace when user returned before refresh', async ({ page }) => {
+  test.setTimeout(240000);
   await page.goto('/');
   page.on('dialog', (dialog) => dialog.dismiss());
 

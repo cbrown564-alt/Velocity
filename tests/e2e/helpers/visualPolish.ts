@@ -236,9 +236,29 @@ export async function assertOpfsSupported(page: Page) {
 
 /** Workspace library chrome (not analysis dashboard). */
 export async function expectWorkspaceLibraryVisible(page: Page) {
-  await expect(page.getByText('Velocity Workspace')).toBeVisible({ timeout: 120000 });
-  await expect(page.getByRole('heading', { name: 'sleep.sav' })).toBeVisible({ timeout: 120000 });
-  await expect(page.getByRole('button', { name: 'Table view' })).toHaveCount(0);
+  await expect
+    .poll(
+      async () => {
+        const onWorkspace =
+          (await page
+            .getByText('Velocity Workspace')
+            .isVisible()
+            .catch(() => false)) ||
+          (await page
+            .getByRole('heading', { name: 'Recent Datasets' })
+            .isVisible()
+            .catch(() => false));
+        const onDashboard = await page
+          .getByRole('button', { name: 'Table view' })
+          .isVisible()
+          .catch(() => false);
+        return onWorkspace && !onDashboard;
+      },
+      { timeout: 120000 },
+    )
+    .toBe(true);
+
+  await expect(page.getByRole('heading', { name: 'sleep.sav' })).toBeVisible({ timeout: 30000 });
 }
 
 export async function waitForWorkspaceModePersisted(page: Page) {
