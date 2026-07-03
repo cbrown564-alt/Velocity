@@ -51,6 +51,7 @@ reports/mutation/
 *.sav
 !test_data/British Social Attitudes Survey/bsa93.sav
 !test_data/fixtures/test_small.sav
+!public/examples/sleep.sav
 public/demo/wvs.csv
 public/demo/*.csv
 test_data/wvs_processed/

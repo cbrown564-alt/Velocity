@@ -39,7 +39,7 @@ function findSetByAliases(sets: VariableSet[], aliases: string[]): VariableSet |
 
 /**
  * Choose a first crosstab pair for onboarding.
- * Mock-only: prefers gender × region on mock_data.csv; otherwise null.
+ * Example datasets: sleep.sav (sex × marital status) or mock_data.csv (gender × region).
  */
 export function pickAutoFirstCrosstabPair(
   datasetName: string | undefined,
@@ -48,6 +48,14 @@ export function pickAutoFirstCrosstabPair(
 ): AutoCrosstabPair | null {
   const eligible = variableSets.filter((set) => isEligibleSet(set, variables));
   if (eligible.length < 2) return null;
+
+  if (datasetName === 'sleep.sav') {
+    const sex = findSetByAliases(eligible, ['sex', 'gender']);
+    const marital = findSetByAliases(eligible, ['marital status', 'marital_status', 'marital']);
+    if (sex && marital) {
+      return { rowSetId: sex.id, colSetId: marital.id };
+    }
+  }
 
   if (datasetName === 'mock_data.csv') {
     const gender = findSetByAliases(eligible, ['gender']);

@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import path from 'path';
+import { buildExampleCrosstab } from './helpers/visualPolish';
 
 const sleepSavFixture = path.resolve(process.cwd(), 'test_data/sleep.sav');
 
@@ -73,13 +74,7 @@ test('SAV upload exercises Arrow→DuckDB ingestion in a real browser', async ({
   // workerIngestion.ts insertArrowTable path: full SAV load must land rows in DuckDB.
   await expect(page.getByText('sleep.sav (271 rows)')).toBeVisible({ timeout: 30000 });
 
-  await page.getByRole('button', { name: /^sex$/i }).first().click();
-  await page.waitForTimeout(500);
-  await page
-    .getByRole('button', { name: /marital status/i })
-    .first()
-    .click();
-  await page.waitForTimeout(3000);
+  await buildExampleCrosstab(page);
 
   await expect(page.getByText(/Couldn't run analysis|Binder Error|Arrow insertion failed/i)).toHaveCount(0);
 

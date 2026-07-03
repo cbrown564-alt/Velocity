@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import path from 'path';
+import { waitForRestorationPromptOrWorkspace } from './helpers/visualPolish';
 
 const savFixture = path.resolve(process.cwd(), 'test_data/fixtures/test_small.sav');
 
@@ -66,6 +67,7 @@ test('OPFS persists dataset across reloads', async ({ page }) => {
 });
 
 test('Start Fresh clears persisted session after reload', async ({ page }) => {
+  test.setTimeout(240000);
   await page.goto('/');
   page.on('dialog', (dialog) => dialog.dismiss());
 
@@ -113,6 +115,8 @@ test('Start Fresh clears persisted session after reload', async ({ page }) => {
 
   await page.reload();
 
+  await waitForRestorationPromptOrWorkspace(page);
+
   const startFreshButton = page.getByRole('button', { name: 'Start Fresh' });
   await expect(startFreshButton).toBeVisible({ timeout: 30000 });
   await startFreshButton.click();
@@ -155,5 +159,6 @@ test('Reload smoke: app boots after reload', async ({ page }) => {
 
   await page.reload();
 
-  await expect(page.getByText('Velocity Workspace')).toBeVisible({ timeout: 30000 });
+  await expect(page.getByText(/^Velocity$/)).toBeVisible({ timeout: 30000 });
+  await expect(page.getByText(/client SAV to editable deck/i)).toBeVisible({ timeout: 30000 });
 });

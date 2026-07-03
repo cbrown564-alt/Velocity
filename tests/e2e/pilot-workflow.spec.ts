@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import path from 'path';
-import { openDatasetFromWorkspaceSearch } from './helpers/visualPolish';
+import { buildExampleCrosstab, openDatasetFromWorkspaceSearch } from './helpers/visualPolish';
 
 const sleepSavFixture = path.resolve(process.cwd(), 'test_data/sleep.sav');
 
@@ -48,18 +48,12 @@ test('pilot workflow: upload, crosstab, export PPTX, reopen, event log', async (
 
   await expect(page.getByTestId('workspace-status-strip')).toBeVisible({ timeout: 60000 });
   await expect(page.getByTestId('workspace-status-pilot')).toBeVisible();
-  await expect(page.getByText(/never leaves this device/i)).toBeVisible();
+  await expect(page.getByTestId('workspace-status-pilot').getByText(/never leaves this device/i)).toBeVisible();
 
   await uploadSavAndReachDashboard(page);
   await expect(page.getByText('sleep.sav (271 rows)')).toBeVisible({ timeout: 30000 });
 
-  await page.getByRole('button', { name: /^sex$/i }).first().click();
-  await page.waitForTimeout(500);
-  await page
-    .getByRole('button', { name: /marital status/i })
-    .first()
-    .click();
-  await page.waitForTimeout(3000);
+  await buildExampleCrosstab(page);
 
   const table = page.locator('table');
   await expect(table).toBeVisible({ timeout: 30000 });

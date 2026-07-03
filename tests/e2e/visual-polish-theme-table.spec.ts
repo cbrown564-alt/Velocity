@@ -3,7 +3,7 @@ import {
   VP_THEMES,
   applyTheme,
   assertOpfsSupported,
-  buildGenderRegionCrosstab,
+  buildExampleCrosstab,
   crosstabTable,
   reachDashboardWithExample,
   waitForStableCrosstab,
@@ -20,12 +20,12 @@ test.describe('Visual polish — crosstab table theme regression', () => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
   });
 
-  test('gender×region table matches baseline on all three themes', async ({ page }) => {
+  test('sex×marital status table matches baseline on all three themes', async ({ page }) => {
     await page.goto('/');
     test.skip(!(await assertOpfsSupported(page)), 'OPFS not supported in this environment');
 
     await reachDashboardWithExample(page);
-    await buildGenderRegionCrosstab(page);
+    await buildExampleCrosstab(page);
     await waitForStableCrosstab(page);
 
     for (const [slug, label] of VP_THEMES) {

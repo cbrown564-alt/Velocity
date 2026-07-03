@@ -59,3 +59,181 @@
   color: var(--text-secondary);
   flex-shrink: 0;
 }
+
+.actionRowPrimary {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--text-inverse);
+  font-weight: 600;
+}
+
+.actionRowPrimary svg {
+  color: var(--text-inverse);
+}
+
+.actionRowPrimary:hover {
+  opacity: 0.92;
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+/* First-run Workshop Door layout */
+
+.firstRun {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-8) var(--space-6);
+  overflow-y: auto;
+}
+
+.firstRunGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-8);
+  width: 100%;
+  max-width: 960px;
+  align-items: center;
+}
+
+@media (min-width: 960px) {
+  .firstRunGrid {
+    grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.9fr);
+  }
+}
+
+.firstRunContent {
+  width: 100%;
+  max-width: 560px;
+}
+
+@media (min-width: 960px) {
+  .firstRunContent {
+    max-width: none;
+  }
+}
+
+.firstRunHeadline {
+  font-family: var(--font-body);
+  font-size: var(--text-2xl);
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.25;
+  margin: 0 0 var(--space-4);
+}
+
+.firstRunSubhead {
+  font-size: var(--text-base);
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 0 0 var(--space-6);
+}
+
+.workflowSteps {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--space-6);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+.workflowSteps li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.workflowSteps li:not(:last-child)::after {
+  content: '→';
+  margin-left: var(--space-2);
+  color: var(--text-tertiary, var(--text-secondary));
+  opacity: 0.7;
+}
+
+.tertiaryLink {
+  margin: var(--space-4) 0 0;
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.textLink {
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--color-accent);
+  font-family: var(--font-body);
+  font-size: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.textLink:hover {
+  opacity: 0.85;
+}
+
+.tertiaryHint {
+  color: var(--text-secondary);
+}
+
+.firstRunMicro {
+  margin: var(--space-5) 0 0;
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.kbd {
+  display: inline-block;
+  padding: 0 var(--space-1);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-sm);
+  background: var(--bg-surface);
+  font-family: var(--font-mono, monospace);
+  font-size: 0.85em;
+  line-height: 1.4;
+}
+
+.dropZone {
+  margin-bottom: var(--space-4);
+  padding: var(--space-5) var(--space-4);
+  border: 1px dashed var(--border-color);
+  border-radius: var(--border-radius-md);
+  background: var(--bg-surface);
+  text-align: center;
+  transition:
+    border-color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.dropZoneActive {
+  border-color: var(--color-accent);
+  background: color-mix(in srgb, var(--color-accent) 6%, var(--bg-surface));
+}
+
+.dropZoneLabel {
+  margin: 0 0 var(--space-1);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.dropZoneHint {
+  margin: 0;
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.dropZoneError {
+  margin: var(--space-2) 0 0;
+  font-size: var(--text-xs);
+  color: var(--color-error);
+}

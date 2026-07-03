@@ -25,4 +25,6 @@ export interface WorkspaceViewProps {
   onExport?: (selectedIds: string[]) => void;
   /** Callback to open the portable session import flow */
   onImportSession?: () => void;
+  /** Handle a file dropped on the empty-state drop zone */
+  onFileDrop?: (file: File) => void;
 }

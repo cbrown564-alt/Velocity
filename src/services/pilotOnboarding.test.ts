@@ -33,6 +33,13 @@ describe('pilotOnboarding', () => {
     expect(getPilotEventLog()).toHaveLength(1);
   });
 
+  it('records landing_view only once per session', () => {
+    recordPilotEvent('landing_view');
+    const duplicate = recordPilotEvent('landing_view');
+    expect(duplicate).toBeNull();
+    expect(getPilotEventLog()).toHaveLength(1);
+  });
+
   it('exports JSON log with session metadata', () => {
     recordPilotEvent('canvas_ready', { fileName: 'sleep.sav', rowCount: 271 });
     const exported = JSON.parse(buildPilotEventExport());

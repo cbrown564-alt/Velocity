@@ -1,7 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { act, renderHook } from '@testing-library/react';
 import { useVelocityStore } from '../../../store';
-import { useFileUpload } from './useFileUpload';
+import { assignOpfsKeyAndLoad } from './assignOpfsKeyAndLoad';
+import { EXAMPLE_SAV_NAME, EXAMPLE_SAV_URL, useFileUpload } from './useFileUpload';
 
 vi.mock('../../../services/opfsFileManager', () => ({
   readFile: vi.fn(),
@@ -50,6 +51,21 @@ describe('useFileUpload', () => {
     expect(setMode).toHaveBeenCalledWith('dashboard');
   });
 
+  it('loads dropped SAV files through the shared upload path', async () => {
+    const loadSAV = vi.fn().mockResolvedValue(undefined);
+    useVelocityStore.setState({ loadSAV });
+
+    const { result } = renderHook(() => useFileUpload(setMode, true));
+    const file = new File([new Uint8Array([1, 2, 3])], 'client.sav', { type: 'application/octet-stream' });
+
+    await act(async () => {
+      await result.current.handleDroppedFile(file);
+    });
+
+    expect(loadSAV).toHaveBeenCalled();
+    expect(setMode).toHaveBeenCalledWith('dashboard');
+  });
+
   it('shows a format warning for unsupported uploads', async () => {
     const addToast = vi.fn();
     useVelocityStore.setState({ addToast });
@@ -66,23 +82,32 @@ describe('useFileUpload', () => {
     expect(setMode).not.toHaveBeenCalledWith('dashboard');
   });
 
-  it('starts demo mode and loads mock data', () => {
-    vi.useFakeTimers();
-    const loadCSV = vi.fn().mockResolvedValue(undefined);
-    useVelocityStore.setState({ loadCSV });
+  it('loads the bundled sleep.sav example dataset', async () => {
+    const loadSAV = vi.fn().mockResolvedValue(undefined);
+    const addToast = vi.fn();
+    useVelocityStore.setState({ loadSAV, addToast });
 
-    const { result } = renderHook(() => useFileUpload(setMode, false));
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(new Uint8Array([1, 2, 3]), { status: 200 }));
 
-    act(() => {
+    const { result } = renderHook(() => useFileUpload(setMode, true));
+
+    await act(async () => {
       result.current.handleDemoClick();
-    });
-    expect(setMode).toHaveBeenCalledWith('uploading');
-
-    act(() => {
-      vi.advanceTimersByTime(800);
+      await Promise.resolve();
     });
 
-    expect(loadCSV).toHaveBeenCalledWith('mock_data.csv', expect.any(String));
-    vi.useRealTimers();
+    expect(globalThis.fetch).toHaveBeenCalledWith(EXAMPLE_SAV_URL);
+    expect(assignOpfsKeyAndLoad).toHaveBeenCalledWith(
+      EXAMPLE_SAV_NAME,
+      expect.any(ArrayBuffer),
+      loadSAV,
+      expect.objectContaining({ opfsFileKey: 'opfs-key' }),
+    );
+    expect(setMode).toHaveBeenCalledWith('dashboard');
+    expect(addToast).toHaveBeenCalledWith(
+      expect.objectContaining({
+        title: 'Sleep study example loaded',
+      }),
+    );
   });
 });

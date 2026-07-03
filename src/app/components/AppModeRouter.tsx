@@ -46,6 +46,7 @@ export interface AppModeRouterProps {
   onBatchDelete: (ids: string[]) => Promise<void>;
   onExport: (ids: string[]) => void;
   onImportSession: () => void;
+  onFileDrop?: (file: File) => void;
   onRestore: () => void;
   onDiscard: () => void;
   onReturnToWorkspace: () => void;
@@ -79,6 +80,7 @@ export const AppModeRouter: React.FC<AppModeRouterProps> = ({
   onBatchDelete,
   onExport,
   onImportSession,
+  onFileDrop,
   onRestore,
   onDiscard,
   onReturnToWorkspace,
@@ -127,6 +129,7 @@ export const AppModeRouter: React.FC<AppModeRouterProps> = ({
             onBatchDelete={onBatchDelete}
             onExport={onExport}
             onImportSession={onImportSession}
+            onFileDrop={onFileDrop}
             onRebuildFromOpfs={persistence.rebuildFromOpfsSource}
             onDiscard={onDiscard}
           />

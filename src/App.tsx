@@ -149,6 +149,7 @@ export default function App() {
         onBatchDelete={workspaceOrchestration.handleBatchDelete}
         onExport={overlay.openWorkspaceExport}
         onImportSession={handleOpenSessionImportModal}
+        onFileDrop={session.handleFileDrop}
         onRestore={session.handleRestore}
         onDiscard={() => void session.handleDiscard()}
         onReturnToWorkspace={workspaceOrchestration.handleReturnToWorkspace}

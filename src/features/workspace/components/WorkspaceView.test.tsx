@@ -4,6 +4,10 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { WorkspaceView } from './WorkspaceView';
 import type { StoredDataset, WorkspaceState } from '../types';
 
+vi.mock('../../../lib/pilotInstrumentation', () => ({
+  isPilotInstrumentationVisible: () => true,
+}));
+
 vi.mock('../../../components/common/ThemeSwitcher', () => ({
   ThemeSwitcher: () => <div data-testid="theme-switcher" />,
 }));
@@ -69,6 +73,10 @@ const workspaceWithDatasets = {
 };
 
 describe('WorkspaceView', () => {
+  beforeEach(() => {
+    localStorage.clear();
+  });
+
   it('shows feedback when starred search has no matches', () => {
     renderWorkspaceView({
       datasets: [makeDataset('alpha', { starred: true })],
@@ -418,8 +426,105 @@ describe('WorkspaceView', () => {
       />,
     );
 
-    fireEvent.click(screen.getByRole('button', { name: /load example/i }));
+    fireEvent.click(screen.getByRole('button', { name: /walk through sleep study example/i }));
     expect(onLoadExample).toHaveBeenCalled();
+  });
+
+  it('shows Workshop Door first-run landing when workspace is empty and unactivated', () => {
+    render(
+      <WorkspaceView
+        workspaceState={{ datasets: [], projects: [], storageUsed: 0, storageQuota: 1024 * 1024 }}
+        onOpenDataset={vi.fn()}
+        onUploadFile={vi.fn()}
+        onLoadExample={vi.fn()}
+        onCreateProject={vi.fn()}
+        onDeleteDataset={vi.fn()}
+        onToggleStar={vi.fn()}
+        onLinkDatasets={vi.fn()}
+        onUnlinkDataset={vi.fn()}
+        onCompareWaves={vi.fn()}
+        onBatchStar={vi.fn()}
+        onBatchDelete={vi.fn()}
+        onExport={vi.fn()}
+        onImportSession={vi.fn()}
+        onFileDrop={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByText('Velocity')).toBeInTheDocument();
+    expect(screen.queryByText('Velocity Workspace')).not.toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(/client SAV to editable deck/i);
+    expect(screen.queryByTestId('workspace-search-input')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('pilot-event-log-download')).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /recent/i })).not.toBeInTheDocument();
+  });
+
+  it('forwards dropped files during first-run landing', () => {
+    const onFileDrop = vi.fn();
+    render(
+      <WorkspaceView
+        workspaceState={{ datasets: [], projects: [], storageUsed: 0, storageQuota: 1024 * 1024 }}
+        onOpenDataset={vi.fn()}
+        onUploadFile={vi.fn()}
+        onLoadExample={vi.fn()}
+        onCreateProject={vi.fn()}
+        onDeleteDataset={vi.fn()}
+        onToggleStar={vi.fn()}
+        onLinkDatasets={vi.fn()}
+        onUnlinkDataset={vi.fn()}
+        onCompareWaves={vi.fn()}
+        onBatchStar={vi.fn()}
+        onBatchDelete={vi.fn()}
+        onExport={vi.fn()}
+        onImportSession={vi.fn()}
+        onFileDrop={onFileDrop}
+      />,
+    );
+
+    const file = new File(['abc'], 'client.sav', { type: 'application/octet-stream' });
+    fireEvent.drop(screen.getByTestId('workspace-upload-dropzone'), {
+      dataTransfer: { files: [file] },
+    });
+
+    expect(onFileDrop).toHaveBeenCalledWith(file);
+  });
+
+  it('shows library chrome when workspace is empty but user has activated before', () => {
+    localStorage.setItem(
+      'velocity-pilot-events',
+      JSON.stringify([
+        {
+          id: 'evt-1',
+          name: 'file_selected',
+          at: new Date().toISOString(),
+          elapsedMs: 1000,
+        },
+      ]),
+    );
+
+    render(
+      <WorkspaceView
+        workspaceState={{ datasets: [], projects: [], storageUsed: 0, storageQuota: 1024 * 1024 }}
+        onOpenDataset={vi.fn()}
+        onUploadFile={vi.fn()}
+        onLoadExample={vi.fn()}
+        onCreateProject={vi.fn()}
+        onDeleteDataset={vi.fn()}
+        onToggleStar={vi.fn()}
+        onLinkDatasets={vi.fn()}
+        onUnlinkDataset={vi.fn()}
+        onCompareWaves={vi.fn()}
+        onBatchStar={vi.fn()}
+        onBatchDelete={vi.fn()}
+        onExport={vi.fn()}
+        onImportSession={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByText('Velocity Workspace')).toBeInTheDocument();
+    expect(screen.getByText('No datasets yet')).toBeInTheDocument();
+    expect(screen.getByTestId('workspace-search-input')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /recent/i })).toBeInTheDocument();
   });
 
   it('calls onToggleStar from the dataset context menu', () => {
