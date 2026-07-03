@@ -51,9 +51,9 @@ test('OPFS persists dataset across reloads', async ({ page }) => {
   const modeToggle = page.locator('button[title="Toggle Variable Manager (D)"]');
   await expect(modeToggle).toBeVisible({ timeout: 30000 });
   await modeToggle.click();
-  await expect(page.getByText('Variable Manager')).toBeVisible({ timeout: 30000 });
+  await expect(page.getByRole('heading', { name: 'Variables' })).toBeVisible({ timeout: 30000 });
   await page.keyboard.press('d');
-  await expect(page.getByText('Variable Manager')).toBeHidden({ timeout: 30000 });
+  await expect(page.getByRole('heading', { name: 'Variables' })).toBeHidden({ timeout: 30000 });
   await expect(surveyQuestions).toBeVisible({ timeout: 30000 });
 
   await page.reload();
