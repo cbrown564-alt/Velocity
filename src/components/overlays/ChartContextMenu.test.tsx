@@ -70,4 +70,29 @@ describe('ChartContextMenu', () => {
     fireEvent.click(document.body);
     expect(onClose).toHaveBeenCalled();
   });
+
+  it('exposes menu semantics and supports arrow key navigation', () => {
+    render(
+      <ChartContextMenu
+        isOpen
+        position={{ x: 10, y: 10 }}
+        options={[
+          { label: 'Edit', onClick: noop },
+          { label: 'Delete', onClick: noop, danger: true },
+        ]}
+        onClose={noop}
+      />,
+    );
+
+    expect(screen.getByRole('menu')).toBeInTheDocument();
+    const items = screen.getAllByRole('menuitem');
+    expect(items).toHaveLength(2);
+    expect(items[0]).toHaveFocus();
+
+    fireEvent.keyDown(screen.getByRole('menu'), { key: 'ArrowDown' });
+    expect(items[1]).toHaveFocus();
+
+    fireEvent.keyDown(screen.getByRole('menu'), { key: 'ArrowUp' });
+    expect(items[0]).toHaveFocus();
+  });
 });

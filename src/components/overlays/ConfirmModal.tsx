@@ -68,6 +68,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
         <button
           onClick={onClose}
           className="p-1.5 rounded-md text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-active)] transition-colors"
+          aria-label="Close confirm modal"
         >
           <X size={18} />
         </button>

@@ -66,6 +66,21 @@ describe('WorkspaceProjectCard', () => {
     expect(onOpenProject).toHaveBeenCalledTimes(1);
   });
 
+  it('calls onOpenProject when project header receives Enter key', () => {
+    const onOpenProject = vi.fn();
+    render(
+      <WorkspaceProjectCard
+        project={nonLongProject}
+        datasets={[makeDataset('ds-1')]}
+        harmonizationStatus="none"
+        onOpenProject={onOpenProject}
+      />,
+    );
+    const header = screen.getByRole('button', { name: /Open project Brand Study/i });
+    fireEvent.keyDown(header, { key: 'Enter' });
+    expect(onOpenProject).toHaveBeenCalledTimes(1);
+  });
+
   it('shows harmonization ring for longitudinal project with harmonization', () => {
     render(
       <WorkspaceProjectCard

@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState, useCallback } from 'react';
 
 export interface ContextMenuOption {
   label: string;
@@ -24,6 +24,7 @@ export const ChartContextMenu: React.FC<ChartContextMenuProps> = ({
   onClose,
 }) => {
   const menuRef = useRef<HTMLDivElement>(null);
+  const itemRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const [adjustedPos, setAdjustedPos] = useState(position);
 
   useEffect(() => {
@@ -33,18 +34,20 @@ export const ChartContextMenu: React.FC<ChartContextMenuProps> = ({
           onClose();
         }
       };
-      // Use capture to handle clicks outside immediately
       document.addEventListener('click', handleClick, true);
       return () => document.removeEventListener('click', handleClick, true);
     }
   }, [isOpen, onClose]);
 
-  // Update position when props change
+  useEffect(() => {
+    if (!isOpen) return;
+    itemRefs.current.find((el) => el)?.focus();
+  }, [isOpen, options]);
+
   useEffect(() => {
     setAdjustedPos(position);
   }, [position]);
 
-  // Clamping / Positioning logic
   useLayoutEffect(() => {
     if (!isOpen || !menuRef.current) return;
 
@@ -54,12 +57,10 @@ export const ChartContextMenu: React.FC<ChartContextMenuProps> = ({
     let newX = position.x;
     let newY = position.y;
 
-    // Check vertical overflow
     if (newY + rect.height > innerHeight) {
       newY = Math.max(0, position.y - rect.height);
     }
 
-    // Check horizontal overflow
     if (newX + rect.width > innerWidth) {
       newX = Math.max(0, position.x - rect.width);
     }
@@ -67,16 +68,63 @@ export const ChartContextMenu: React.FC<ChartContextMenuProps> = ({
     setAdjustedPos({ x: newX, y: newY });
   }, [isOpen, position]);
 
+  const focusEnabledItem = useCallback((direction: 'next' | 'prev' | 'first' | 'last') => {
+    const enabledButtons = itemRefs.current.filter((el) => el);
+    if (enabledButtons.length === 0) return;
+
+    const currentIndex = enabledButtons.findIndex((el) => el === document.activeElement);
+
+    switch (direction) {
+      case 'next':
+        enabledButtons[(currentIndex + 1) % enabledButtons.length]?.focus();
+        break;
+      case 'prev':
+        enabledButtons[(currentIndex - 1 + enabledButtons.length) % enabledButtons.length]?.focus();
+        break;
+      case 'first':
+        enabledButtons[0]?.focus();
+        break;
+      case 'last':
+        enabledButtons[enabledButtons.length - 1]?.focus();
+        break;
+    }
+  }, []);
+
+  const handleMenuKeyDown = (e: React.KeyboardEvent) => {
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        focusEnabledItem('next');
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        focusEnabledItem('prev');
+        break;
+      case 'Home':
+        e.preventDefault();
+        focusEnabledItem('first');
+        break;
+      case 'End':
+        e.preventDefault();
+        focusEnabledItem('last');
+        break;
+      case 'Escape':
+        e.preventDefault();
+        onClose();
+        break;
+    }
+  };
+
   if (!isOpen) return null;
 
   return (
     <div
       ref={menuRef}
+      role="menu"
+      aria-label={title ? `${title} menu` : 'Chart context menu'}
+      onKeyDown={handleMenuKeyDown}
       className="fixed z-[var(--z-menu)] min-w-[180px] bg-[var(--bg-surface)] rounded-lg shadow-xl border border-[var(--border-subtle)] overflow-hidden animate-in fade-in zoom-in-95 duration-100"
-      style={{
-        top: adjustedPos.y,
-        left: adjustedPos.x,
-      }}
+      style={{ top: adjustedPos.y, left: adjustedPos.x }}
       onClick={(e) => e.stopPropagation()}
     >
       {(title || subtitle) && (
@@ -89,6 +137,10 @@ export const ChartContextMenu: React.FC<ChartContextMenuProps> = ({
         {options.map((option, index) => (
           <button
             key={index}
+            ref={(el) => {
+              itemRefs.current[index] = el;
+            }}
+            role="menuitem"
             className={`w-full text-left px-2.5 py-1.5 text-[13px] rounded transition-colors flex items-center
                             ${
                               option.danger

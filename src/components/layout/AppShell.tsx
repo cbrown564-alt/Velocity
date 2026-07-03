@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useVelocityStore } from '../../store';
 import { VariableManager } from '../../features/variableManager/VariableManager';
@@ -91,10 +91,26 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
     }
   }, [appMode, focusMode, setFocusMode]);
 
+  const canvasRef = useRef<HTMLDivElement>(null);
+  const isCanvasHidden = appMode === 'variables';
+  const supportsInert = typeof HTMLElement !== 'undefined' && 'inert' in HTMLElement.prototype;
+
+  useEffect(() => {
+    const el = canvasRef.current;
+    if (!el || !supportsInert) return;
+    el.inert = isCanvasHidden;
+  }, [isCanvasHidden, supportsInert]);
+
   return (
     <div className="relative h-screen overflow-hidden">
+      <a href="#main-content" className="skip-link">
+        Skip to main content
+      </a>
       {/* Analysis Canvas (always rendered, recedes when Variable Manager is open) */}
       <motion.div
+        ref={canvasRef}
+        aria-hidden={isCanvasHidden ? true : undefined}
+        data-testid="analysis-canvas"
         animate={{
           scale: appMode === 'variables' ? 0.95 : 1,
           filter: appMode === 'variables' ? 'blur(4px)' : 'blur(0px)',

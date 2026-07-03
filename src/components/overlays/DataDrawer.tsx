@@ -143,6 +143,7 @@ export const DataDrawer: React.FC<DataDrawerProps> = ({
                 <button
                   onClick={onClose}
                   className="p-2 hover:bg-[var(--bg-hover)] rounded-full text-[var(--text-tertiary)] transition-colors"
+                  aria-label="Close data drawer"
                 >
                   <X size={18} />
                 </button>

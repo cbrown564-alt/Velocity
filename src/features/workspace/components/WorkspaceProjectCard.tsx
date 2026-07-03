@@ -35,7 +35,19 @@ export const WorkspaceProjectCard: React.FC<{
           data-testid="harmonization-ring"
         />
       )}
-      <div className={styles.projectHeader} onClick={onOpenProject}>
+      <div
+        className={styles.projectHeader}
+        onClick={onOpenProject}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            onOpenProject();
+          }
+        }}
+        role="button"
+        tabIndex={0}
+        aria-label={`Open project ${project.name}`}
+      >
         <div className={styles.projectIcon}>
           {project.isLongitudinal ? <Link2 size={18} /> : <FolderOpen size={18} />}
         </div>

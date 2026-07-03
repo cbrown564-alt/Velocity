@@ -112,6 +112,7 @@ export const RecodeModal: React.FC<RecodeModalProps> = ({ isOpen, onClose, varia
         <button
           onClick={onClose}
           className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+          aria-label="Close recode modal"
         >
           <X size={20} />
         </button>
@@ -120,10 +121,14 @@ export const RecodeModal: React.FC<RecodeModalProps> = ({ isOpen, onClose, varia
       {/* Body */}
       <div className="p-6 overflow-y-auto bg-[var(--bg-surface)] flex-1 font-body">
         <div className="mb-6">
-          <label className="block text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-2">
+          <label
+            htmlFor="recode-new-var-name"
+            className="block text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-2"
+          >
             New Variable Name
           </label>
           <input
+            id="recode-new-var-name"
             type="text"
             value={newVarName}
             onChange={(e) => setNewVarName(e.target.value)}

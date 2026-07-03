@@ -356,6 +356,26 @@ h3 {
   outline: none;
 }
 
+/* Skip link — visible on keyboard focus only */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 0;
+  z-index: calc(var(--z-modal) + 1);
+  padding: 0.75rem 1rem;
+  background: var(--bg-panel);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 0 0 0.375rem 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
 /* --------------------------------------------------------------------------
    Accessibility: Reduced Motion
    -------------------------------------------------------------------------- */

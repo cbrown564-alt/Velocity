@@ -284,7 +284,8 @@ export const ProjectLinkModal: React.FC<ProjectLinkModalProps> = ({
                       </label>
                       <select
                         id="project-link-respondent-key"
-                        value={respondentKeyVar} onChange={(e) => setRespondentKeyVar(e.target.value)}>
+                        value={respondentKeyVar}
+                        onChange={(e) => setRespondentKeyVar(e.target.value)}>
                         <option value="">Select a variable...</option>
                         {potentialKeyVariables.map((v) => (
                           <option key={v} value={v}>

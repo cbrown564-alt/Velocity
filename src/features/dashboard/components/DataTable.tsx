@@ -422,6 +422,18 @@ export const DataTable: React.FC<DataTableProps> = ({
                         toggleColSelection(col);
                       }
                     }}
+                    onKeyDown={(e) => {
+                      if (!colVariable || dragState.isDragging) return;
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        toggleColSelection(col);
+                      }
+                    }}
+                    role={colVariable ? 'button' : undefined}
+                    tabIndex={colVariable ? 0 : undefined}
+                    aria-label={
+                      colVariable ? `Select column ${toUiCaps(tableData.colLabels[col])} for merge` : undefined
+                    }
                   >
                     <div className="flex flex-col gap-0.5 items-start">
                       {tableData.colLetters[col] && (

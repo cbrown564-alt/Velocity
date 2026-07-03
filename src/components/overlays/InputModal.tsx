@@ -67,6 +67,7 @@ export const InputModal: React.FC<InputModalProps> = ({
         <button
           onClick={onClose}
           className="p-1.5 rounded-md text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] transition-colors"
+          aria-label="Close input modal"
         >
           <X size={18} />
         </button>

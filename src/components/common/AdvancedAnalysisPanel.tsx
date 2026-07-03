@@ -190,24 +190,30 @@ export const AdvancedAnalysisPanel: React.FC<AdvancedAnalysisPanelProps> = ({ de
           {analysisSettings.enableDesignEffects && (
             <div className={styles.surveyFields}>
               <div className={styles.fieldGroup}>
-                <label className={styles.fieldLabel}>Weight Variable</label>
-                <select className={styles.fieldSelect} disabled>
+                <label htmlFor="survey-weight-var" className={styles.fieldLabel}>
+                  Weight Variable
+                </label>
+                <select id="survey-weight-var" className={styles.fieldSelect} disabled>
                   <option>Use dataset weight</option>
                 </select>
                 <span className={styles.fieldHint}>Automatically uses the dataset's weight variable if set</span>
               </div>
 
               <div className={styles.fieldGroup}>
-                <label className={styles.fieldLabel}>Cluster Variable (PSU)</label>
-                <select className={styles.fieldSelect} disabled>
+                <label htmlFor="survey-cluster-var" className={styles.fieldLabel}>
+                  Cluster Variable (PSU)
+                </label>
+                <select id="survey-cluster-var" className={styles.fieldSelect} disabled>
                   <option>None (SRS assumed)</option>
                 </select>
                 <span className={styles.fieldHint}>Primary sampling unit for clustered designs</span>
               </div>
 
               <div className={styles.fieldGroup}>
-                <label className={styles.fieldLabel}>Strata Variable</label>
-                <select className={styles.fieldSelect} disabled>
+                <label htmlFor="survey-strata-var" className={styles.fieldLabel}>
+                  Strata Variable
+                </label>
+                <select id="survey-strata-var" className={styles.fieldSelect} disabled>
                   <option>None</option>
                 </select>
                 <span className={styles.fieldHint}>Stratification variable for stratified sampling</span>

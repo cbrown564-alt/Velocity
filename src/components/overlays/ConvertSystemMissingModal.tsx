@@ -80,6 +80,7 @@ export const ConvertSystemMissingModal: React.FC<ConvertSystemMissingModalProps>
           onClick={onClose}
           disabled={isSubmitting}
           className="p-1.5 rounded-md text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          aria-label="Close convert system missing modal"
         >
           <X size={18} />
         </button>
@@ -87,8 +88,11 @@ export const ConvertSystemMissingModal: React.FC<ConvertSystemMissingModalProps>
 
       <form onSubmit={handleSubmit} className="p-5 space-y-3">
         <div>
-          <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Replacement Code</label>
+          <label htmlFor="convert-missing-code" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
+            Replacement Code
+          </label>
           <input
+            id="convert-missing-code"
             ref={codeRef}
             type="number"
             step="any"
@@ -99,8 +103,11 @@ export const ConvertSystemMissingModal: React.FC<ConvertSystemMissingModalProps>
           />
         </div>
         <div>
-          <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Label</label>
+          <label htmlFor="convert-missing-label" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
+            Label
+          </label>
           <input
+            id="convert-missing-label"
             type="text"
             value={labelDraft}
             onChange={(e) => setLabelDraft(e.target.value)}

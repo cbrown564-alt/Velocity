@@ -109,4 +109,18 @@ describe('InspectorHeader', () => {
     fireEvent.click(screen.getByText('Q1_Gender'));
     expect(screen.getByRole('textbox')).toBeInTheDocument();
   });
+
+  it('enters label edit mode on Enter key when label button is focused', () => {
+    render(<InspectorHeader variable={genderVar} stats={null} isLoadingStats={false} />);
+    const labelButton = screen.getByRole('button', { name: /Edit variable label Gender/i });
+    fireEvent.keyDown(labelButton, { key: 'Enter' });
+    expect(screen.getByRole('textbox')).toBeInTheDocument();
+  });
+
+  it('enters name edit mode on Space key when name button is focused', () => {
+    render(<InspectorHeader variable={genderVar} stats={null} isLoadingStats={false} />);
+    const nameButton = screen.getByRole('button', { name: /Edit variable name Q1_Gender/i });
+    fireEvent.keyDown(nameButton, { key: ' ' });
+    expect(screen.getByRole('textbox')).toBeInTheDocument();
+  });
 });
