@@ -3,13 +3,14 @@ import { createPortal } from 'react-dom';
 import { MethodologyDrawer } from './MethodologyPanel';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useReducedMotion, DURATIONS } from '../../lib/motion';
-import { Settings, X } from 'lucide-react';
+import { Settings, X, Check } from 'lucide-react';
 import { SignificanceLegend } from './SignificanceLegend';
 import { AnalysisSettingsPanel } from './AnalysisSettingsPanel';
 import { Tooltip } from './Tooltip';
 import type { Variable, TableStats } from '../../types';
 import { allowsNumericStats } from '../../types';
 import type { ComparisonMethod, CorrectionType } from '../../store/slices/analysisSlice';
+import { useVelocityStore } from '../../store';
 import styles from './StatisticsStatusBar.module.css';
 
 const SETTINGS_POPOVER_WIDTH = 360;
@@ -69,6 +70,7 @@ export const StatisticsStatusBar: React.FC<StatisticsStatusBarProps> = ({
   overlapCorrected,
 }) => {
   const reducedMotion = useReducedMotion();
+  const updateAnalysisSettings = useVelocityStore((state) => state.updateAnalysisSettings);
   const [showSettings, setShowSettings] = useState(false);
   const [showMethodology, setShowMethodology] = useState(false);
   const methodologyPillRef = useRef<HTMLButtonElement>(null);
@@ -185,6 +187,30 @@ export const StatisticsStatusBar: React.FC<StatisticsStatusBarProps> = ({
           )}
 
           <div className={styles.spacer} />
+
+          {/* Table display toggles (UXP-040 / UXF-005) */}
+          <div className={styles.displayToggleGroup} role="group" aria-label="Table display">
+            <button
+              type="button"
+              className={`${styles.displayToggle} ${analysisSettings.showCellN ? styles.displayToggleOn : ''}`}
+              onClick={() => updateAnalysisSettings({ showCellN: !analysisSettings.showCellN })}
+              aria-pressed={analysisSettings.showCellN}
+              title={analysisSettings.showCellN ? 'Hide cell n' : 'Show cell n'}
+            >
+              {analysisSettings.showCellN && <Check size={10} aria-hidden />}
+              Cell n
+            </button>
+            <button
+              type="button"
+              className={`${styles.displayToggle} ${analysisSettings.showColumnBases ? styles.displayToggleOn : ''}`}
+              onClick={() => updateAnalysisSettings({ showColumnBases: !analysisSettings.showColumnBases })}
+              aria-pressed={analysisSettings.showColumnBases}
+              title={analysisSettings.showColumnBases ? 'Hide column bases' : 'Show column bases'}
+            >
+              {analysisSettings.showColumnBases && <Check size={10} aria-hidden />}
+              Bases
+            </button>
+          </div>
 
           {chiSq && (
             <Tooltip

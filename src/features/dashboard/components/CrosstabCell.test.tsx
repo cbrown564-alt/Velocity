@@ -52,6 +52,20 @@ describe('CrosstabCell', () => {
     expect(screen.getByText('n=131')).not.toHaveAttribute('data-small-base');
   });
 
+  it('removes frequency n= from layout flow when showCellN is false (UXP-040)', () => {
+    render(<CrosstabCell variant="frequency" percent={47.7} count={21} showCellN={false} />);
+    expect(screen.getByText('47.7%')).toBeInTheDocument();
+    expect(screen.queryByText('n=21')).not.toBeInTheDocument();
+    // No reserved placeholder: the stack has exactly one child row
+    expect(screen.getByTestId('crosstab-cell-frequency').childElementCount).toBe(1);
+  });
+
+  it('removes metric n= but keeps SD when showCellN is false (UXP-040)', () => {
+    render(<CrosstabCell variant="metric" mean={3.2} count={44} stdDev={1.1} showCellN={false} />);
+    expect(screen.queryByText(/n=44/)).not.toBeInTheDocument();
+    expect(screen.getByText(/SD: 1.1/)).toBeInTheDocument();
+  });
+
   it('renders em-dash for zero frequency cells instead of 0%', () => {
     render(<CrosstabCell variant="frequency" isZero percent={0} count={0} />);
     expect(screen.getByText('—')).toBeInTheDocument();

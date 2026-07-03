@@ -452,3 +452,48 @@ describe('DataTable Insight Halo', () => {
     expect(northWidth).toBeGreaterThan(eastWidth);
   });
 });
+
+describe('DataTable statistics visibility toggles (UXP-040 / UXF-005)', () => {
+  const rowVar = {
+    id: 'v1',
+    name: 'gender',
+    label: 'Gender',
+    type: 'categorical',
+    valueLabels: [],
+    missingValues: {},
+  } as Variable;
+
+  beforeEach(() => {
+    useVelocityStore.setState({
+      analysisSettings: { ...useVelocityStore.getState().analysisSettings, showCellN: true, showColumnBases: true },
+      transformLog: [],
+    });
+    mockUseProcessedAnalysisData.mockReturnValue(
+      makeProcessedData([
+        { col: 'east', row: 'male', percent: 50 },
+        { col: 'west', row: 'male', percent: 50 },
+      ]),
+    );
+  });
+
+  it('hides the column bases (Total) row when showColumnBases is false', () => {
+    useVelocityStore.setState({
+      analysisSettings: { ...useVelocityStore.getState().analysisSettings, showColumnBases: false },
+    });
+    const { container } = render(<DataTable data={[]} rowVariables={[rowVar]} colVariable={null} totalCount={100} />);
+    expect(container.querySelector('.total-row-label')).toBeNull();
+  });
+
+  it('shows the column bases (Total) row by default', () => {
+    const { container } = render(<DataTable data={[]} rowVariables={[rowVar]} colVariable={null} totalCount={100} />);
+    expect(container.querySelector('.total-row-label')).not.toBeNull();
+  });
+
+  it('removes cell n= metadata when showCellN is false', () => {
+    useVelocityStore.setState({
+      analysisSettings: { ...useVelocityStore.getState().analysisSettings, showCellN: false },
+    });
+    const { container } = render(<DataTable data={[]} rowVariables={[rowVar]} colVariable={null} totalCount={100} />);
+    expect(container.textContent).not.toContain('n=10');
+  });
+});

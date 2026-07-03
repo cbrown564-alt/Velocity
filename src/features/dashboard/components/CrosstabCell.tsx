@@ -84,7 +84,7 @@ export interface CrosstabCellProps {
   animationTrigger?: string;
   /** Respects prefers-reduced-motion; passed from parent DataTable */
   reducedMotion?: boolean;
-  /** When false, hides cell n= metadata (UXP-040) */
+  /** When false, hides cell n= metadata and removes it from layout flow (UXP-040) */
   showCellN?: boolean;
 }
 
@@ -324,19 +324,21 @@ export const CrosstabCell: React.FC<CrosstabCellProps> = ({
             )
           )}
         </div>
-        <FadeIn
-          animationTrigger={animationTrigger}
-          reducedMotion={reducedMotion}
-          delay={0.1}
-          className={`${secondarySizeClass} font-mono tracking-tight ${secondaryClass}`}
-        >
-          {stdDev !== undefined && <span className="mr-2">SD: {stdDev.toFixed(1)}</span>}
-          {sampleN !== undefined && showCellN && (
-            <span className={smallBaseClass(sampleN)} data-small-base={smallBaseClass(sampleN) ? 'true' : undefined}>
-              n={sampleN}
-            </span>
-          )}
-        </FadeIn>
+        {(stdDev !== undefined || (showCellN && sampleN !== undefined)) && (
+          <FadeIn
+            animationTrigger={animationTrigger}
+            reducedMotion={reducedMotion}
+            delay={0.1}
+            className={`${secondarySizeClass} font-mono tracking-tight ${secondaryClass}`}
+          >
+            {stdDev !== undefined && <span className="mr-2">SD: {stdDev.toFixed(1)}</span>}
+            {showCellN && sampleN !== undefined && (
+              <span className={smallBaseClass(sampleN)} data-small-base={smallBaseClass(sampleN) ? 'true' : undefined}>
+                n={sampleN}
+              </span>
+            )}
+          </FadeIn>
+        )}
       </div>
     );
   }
