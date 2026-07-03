@@ -23,7 +23,7 @@ import { FilterBar } from '../../components/common/FilterBar';
 import { AppShell } from '../../components/layout/AppShell';
 import { VariableCard } from './components/DraggableVariable';
 import { ContextMenu } from './components/ContextMenu';
-import { FirstCrosstabTourOverlay } from './onboarding/FirstCrosstabTour';
+import { FirstCrosstabTourOverlay } from './onboarding/FirstCrosstabTour.tsx';
 import { ContextualMicroTipChip } from './onboarding/ContextualMicroTipChip';
 import { useContextualMicroTips } from './hooks/useContextualMicroTips';
 
