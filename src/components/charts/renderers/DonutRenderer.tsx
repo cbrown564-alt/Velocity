@@ -118,7 +118,7 @@ export const DonutRenderer: React.FC<BaseChartRendererProps> = ({
               <path
                 d={arc(d) || ''}
                 fill={sliceColor}
-                stroke={isSelected ? 'var(--text-accent)' : 'var(--viz-stroke-bar)'} // Separator
+                stroke={isSelected ? 'var(--viz-fill-primary)' : 'var(--viz-stroke-bar)'} // Separator
                 strokeWidth={isSelected ? 3 : 1}
                 fillOpacity={0.6} // Semi-transparent for holographic feel
                 className="transition-all duration-300 hover:opacity-90"

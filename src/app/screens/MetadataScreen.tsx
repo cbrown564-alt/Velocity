@@ -122,7 +122,7 @@ export const MetadataScreen: React.FC<MetadataScreenProps> = ({ dataset, pending
             onClick={onLoadFull}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className="flex-1 py-3.5 px-6 rounded-xl bg-[var(--color-accent)] text-[var(--text-inverse)] font-semibold shadow-md shadow-[var(--color-accent)]/20"
+            className="flex-1 py-3.5 px-6 rounded-xl bg-[var(--color-accent)] text-[var(--text-inverse)] font-semibold shadow-md"
           >
             Load Full Data
           </motion.button>

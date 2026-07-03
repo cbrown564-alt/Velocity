@@ -143,8 +143,7 @@
 
 .columnAction:hover {
   background-color: var(--bg-active);
-  color: var(--text-accent);
-  box-shadow: 0 0 8px var(--color-accent);
+  color: var(--text-primary);
 }
 
 /* ============================================================================
@@ -200,7 +199,7 @@
 
 .itemActive {
   background-color: var(--bg-active);
-  color: var(--color-accent);
+  color: var(--text-primary);
   /* Left accent bar for Soft Machine theme */
   border-left: none;
   padding-left: var(--space-3);
@@ -214,8 +213,8 @@
 
 /* Cross-surface hover link (Living Inspector) */
 .itemHoverLinked {
-  background-color: color-mix(in srgb, var(--color-accent) 6%, var(--bg-surface));
-  border-left: 2px solid var(--color-accent);
+  background-color: var(--bg-rail);
+  border-left: 2px solid var(--border-color-active);
   padding-left: calc(var(--space-3) - 2px);
 }
 
@@ -239,7 +238,7 @@
 }
 
 .lineageBadge svg {
-  color: var(--color-accent);
+  color: var(--text-secondary);
   opacity: 0.7;
 }
 
@@ -261,7 +260,7 @@
 }
 
 .itemActive .itemIcon {
-  color: var(--color-accent);
+  color: var(--text-primary);
 }
 
 .itemLabel {
@@ -298,7 +297,7 @@
 }
 
 .itemActive .itemCount {
-  color: var(--color-accent);
+  color: var(--text-secondary);
   opacity: 0.8;
 }
 
@@ -310,7 +309,7 @@
 }
 
 .itemActive .itemChevron {
-  color: var(--color-accent);
+  color: var(--text-secondary);
   opacity: 0.6;
 }
 

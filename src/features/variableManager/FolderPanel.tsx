@@ -31,14 +31,14 @@ const FolderItem: React.FC<FolderItemProps> = ({ id, name, count, isActive, onCl
                 transition-all duration-150
                 ${
                   isActive
-                    ? 'bg-[var(--bg-active)] text-[var(--text-accent)]'
+                    ? 'bg-[var(--bg-active)] text-[var(--text-primary)]'
                     : 'hover:bg-[var(--bg-hover)] text-[var(--text-primary)]'
                 }
                 ${isOver ? 'ring-2 ring-[var(--border-color-active)] bg-[var(--bg-active)]' : ''}
             `}
     >
       <div className="flex items-center gap-2">
-        <Folder size={16} className={isActive ? 'text-[var(--text-accent)]' : 'text-[var(--text-tertiary)]'} />
+        <Folder size={16} className={isActive ? 'text-[var(--text-primary)]' : 'text-[var(--text-tertiary)]'} />
         <span className="text-sm font-medium truncate max-w-32">{name}</span>
       </div>
       <div className="flex items-center gap-1">
@@ -110,7 +110,7 @@ export const FolderPanel: React.FC = () => {
         <h3 className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">Folders</h3>
         <button
           onClick={() => setIsCreating(true)}
-          className="p-1 text-[var(--text-tertiary)] hover:text-[var(--text-accent)] transition-colors"
+          className="p-1 text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors"
           title="Create folder"
         >
           <FolderPlus size={16} />
@@ -125,7 +125,7 @@ export const FolderPanel: React.FC = () => {
                         transition-colors
                         ${
                           activeFolderId === null
-                            ? 'bg-[var(--bg-active)] text-[var(--text-accent)]'
+                            ? 'bg-[var(--bg-active)] text-[var(--text-primary)]'
                             : 'hover:bg-[var(--bg-hover)] text-[var(--text-primary)]'
                         }
                     `}
@@ -133,7 +133,7 @@ export const FolderPanel: React.FC = () => {
           <div className="flex items-center gap-2">
             <Layers
               size={16}
-              className={activeFolderId === null ? 'text-[var(--text-accent)]' : 'text-[var(--text-tertiary)]'}
+              className={activeFolderId === null ? 'text-[var(--text-primary)]' : 'text-[var(--text-tertiary)]'}
             />
             <span className="text-sm font-medium">All Variables</span>
           </div>
@@ -148,7 +148,7 @@ export const FolderPanel: React.FC = () => {
                         transition-all
                         ${
                           activeFolderId === 'ungrouped'
-                            ? 'bg-[var(--bg-active)] text-[var(--text-accent)]'
+                            ? 'bg-[var(--bg-active)] text-[var(--text-primary)]'
                             : 'hover:bg-[var(--bg-hover)] text-[var(--text-primary)]'
                         }
                         ${isOverUngrouped ? 'ring-2 ring-[var(--border-color-active)] bg-[var(--bg-active)]' : ''}
@@ -157,7 +157,7 @@ export const FolderPanel: React.FC = () => {
           <div className="flex items-center gap-2">
             <Folder
               size={16}
-              className={activeFolderId === 'ungrouped' ? 'text-[var(--text-accent)]' : 'text-[var(--text-tertiary)]'}
+              className={activeFolderId === 'ungrouped' ? 'text-[var(--text-primary)]' : 'text-[var(--text-tertiary)]'}
             />
             <span className="text-sm font-medium">Ungrouped</span>
           </div>

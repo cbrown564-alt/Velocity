@@ -75,7 +75,7 @@ export const Sparkline: React.FC<SparklineProps> = ({
               y={y}
               width={binWidth + 0.5} // Slight overlap to close gaps
               height={barHeight}
-              fill="var(--color-accent)"
+              fill="var(--viz-fill-primary)"
               opacity={0.8}
             />
           );
@@ -172,7 +172,7 @@ export const Sparkline: React.FC<SparklineProps> = ({
                 y={0}
                 width={segmentWidth + 0.5} // Overlap to prevent sub-pixel gaps
                 height={height}
-                fill="var(--color-accent)"
+                fill="var(--viz-fill-primary)"
                 opacity={opacity}
               />
             );

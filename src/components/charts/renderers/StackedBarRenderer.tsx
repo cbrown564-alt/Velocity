@@ -262,7 +262,7 @@ export const StackedBarRenderer: React.FC<StackedBarRendererProps> = ({
                         fill={segmentColor}
                         fillOpacity={CHART_BAR_FILL_OPACITY}
                         className="transition-all duration-300 hover:opacity-80 chart-bar-rect"
-                        stroke={isSelected ? 'var(--text-accent)' : 'var(--viz-stroke-bar)'}
+                        stroke={isSelected ? 'var(--viz-fill-primary)' : 'var(--viz-stroke-bar)'}
                         strokeWidth={isSelected ? 2 : 1}
                       >
                         <title>{formatBarTooltip(segmentLabel, Math.round(value), segmentPercent)}</title>

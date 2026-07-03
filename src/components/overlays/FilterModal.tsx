@@ -228,7 +228,7 @@ export const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, varia
                   border: '1px solid var(--border-color)',
                   color: 'var(--text-primary)',
                 }}
-                onFocus={(e) => (e.currentTarget.style.borderColor = 'var(--color-accent)')}
+                onFocus={(e) => (e.currentTarget.style.borderColor = 'var(--border-color-active)')}
                 onBlur={(e) => (e.currentTarget.style.borderColor = 'var(--border-color)')}
                 autoFocus
               />
@@ -293,8 +293,8 @@ export const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, varia
                       <div
                         className="w-5 h-5 rounded border-2 flex items-center justify-center transition-colors shrink-0"
                         style={{
-                          borderColor: isSelected ? 'var(--color-accent)' : 'var(--border-color)',
-                          backgroundColor: isSelected ? 'var(--color-accent)' : 'transparent',
+                          borderColor: isSelected ? 'var(--border-color-active)' : 'var(--border-color)',
+                          backgroundColor: isSelected ? 'var(--border-color-active)' : 'transparent',
                         }}
                       >
                         {isSelected && <Check size={12} color="var(--text-inverse)" strokeWidth={3} />}
@@ -336,10 +336,10 @@ export const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, varia
                 id="applyAll"
                 checked={applyToAll}
                 onChange={(e) => setApplyToAll(e.target.checked)}
-                className="w-4 h-4 rounded appearance-none border-2 checked:bg-[var(--color-accent)] checked:border-[var(--color-accent)] transition-colors cursor-pointer relative"
+                className="w-4 h-4 rounded appearance-none border-2 checked:bg-[var(--border-color-active)] checked:border-[var(--border-color-active)] transition-colors cursor-pointer relative"
                 style={{
-                  borderColor: applyToAll ? 'var(--color-accent)' : 'var(--border-color)',
-                  backgroundColor: applyToAll ? 'var(--color-accent)' : 'transparent',
+                  borderColor: applyToAll ? 'var(--border-color-active)' : 'var(--border-color)',
+                  backgroundColor: applyToAll ? 'var(--border-color-active)' : 'transparent',
                 }}
               />
               <label

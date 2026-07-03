@@ -151,7 +151,7 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
                   <div className="flex-1 relative min-h-0 flex flex-col">
                     {isQuerying && (
                       <div className="absolute inset-0 bg-[var(--bg-panel)]/50 z-[var(--z-sticky)] flex items-center justify-center backdrop-blur-sm">
-                        <Loader2 className="animate-spin text-[var(--color-accent)]" size={32} />
+                        <Loader2 className="animate-spin text-[var(--text-secondary)]" size={32} />
                       </div>
                     )}
                     <div className="flex-1 min-h-0 flex flex-col">

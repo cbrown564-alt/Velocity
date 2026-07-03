@@ -207,7 +207,7 @@
   --border-radius-lg: calc(var(--radius) + 4px);
 
   /* Shelf Colors */
-  --shelf-row: var(--color-accent);
+  --shelf-row: var(--border-color-active);
   --shelf-col: var(--viz-secondary);
   --shelf-weight: var(--status-warning-text);
 

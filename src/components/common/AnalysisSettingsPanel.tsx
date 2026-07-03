@@ -50,7 +50,7 @@ export const AnalysisSettingsPanel: React.FC<AnalysisSettingsPanelProps> = ({
   return (
     <div className={wrapperClass}>
       {!isInline && (
-        <div className="text-xs font-semibold text-[var(--text-accent)] uppercase tracking-wide mb-3">
+        <div className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wide mb-3">
           Statistical Settings
         </div>
       )}
@@ -65,7 +65,7 @@ export const AnalysisSettingsPanel: React.FC<AnalysisSettingsPanelProps> = ({
             onClick={() => handleComparisonMethodChange('cell_vs_rest')}
             className={`px-2 py-1 text-xs rounded transition-colors ${
               analysisSettings.comparisonMethod === 'cell_vs_rest'
-                ? 'bg-[var(--color-accent)] text-[var(--text-inverse)]'
+                ? 'bg-[var(--bg-rail)] text-[var(--text-primary)]'
                 : 'bg-[var(--bg-panel)] text-[var(--text-primary)] hover:bg-[var(--bg-active)]'
             } ${isInline ? '' : 'flex-1'}`}
           >
@@ -75,7 +75,7 @@ export const AnalysisSettingsPanel: React.FC<AnalysisSettingsPanelProps> = ({
             onClick={() => handleComparisonMethodChange('pairwise')}
             className={`px-2 py-1 text-xs rounded transition-colors ${
               analysisSettings.comparisonMethod === 'pairwise'
-                ? 'bg-[var(--color-accent)] text-[var(--text-inverse)]'
+                ? 'bg-[var(--bg-rail)] text-[var(--text-primary)]'
                 : 'bg-[var(--bg-panel)] text-[var(--text-primary)] hover:bg-[var(--bg-active)]'
             } ${isInline ? '' : 'flex-1'}`}
           >
@@ -92,7 +92,7 @@ export const AnalysisSettingsPanel: React.FC<AnalysisSettingsPanelProps> = ({
         <select
           value={analysisSettings.correctionType}
           onChange={(e) => handleCorrectionChange(e.target.value as CorrectionType)}
-          className={`px-2 py-1 text-xs bg-[var(--bg-panel)] border border-[var(--border-color)] rounded text-[var(--text-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-accent)] ${isInline ? '' : 'w-full'}`}
+          className={`px-2 py-1 text-xs bg-[var(--bg-panel)] border border-[var(--border-color)] rounded text-[var(--text-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--border-color-active)] ${isInline ? '' : 'w-full'}`}
         >
           <option value="none">None</option>
           <option value="bonferroni">Bonferroni (FWER)</option>
@@ -110,7 +110,7 @@ export const AnalysisSettingsPanel: React.FC<AnalysisSettingsPanelProps> = ({
           onClick={handleCIToggle}
           aria-pressed={analysisSettings.showConfidenceIntervals}
           className={`relative w-9 h-5 rounded-full transition-colors ${
-            analysisSettings.showConfidenceIntervals ? 'bg-[var(--color-accent)]' : 'bg-[var(--bg-active)]'
+            analysisSettings.showConfidenceIntervals ? 'bg-[var(--border-color-active)]' : 'bg-[var(--bg-active)]'
           }`}
         >
           <span
@@ -142,7 +142,7 @@ export const AnalysisSettingsPanel: React.FC<AnalysisSettingsPanelProps> = ({
             onClick={handleCellNToggle}
             aria-pressed={analysisSettings.showCellN}
             className={`relative w-9 h-5 rounded-full transition-colors ${
-              analysisSettings.showCellN ? 'bg-[var(--color-accent)]' : 'bg-[var(--bg-active)]'
+              analysisSettings.showCellN ? 'bg-[var(--border-color-active)]' : 'bg-[var(--bg-active)]'
             }`}
           >
             <span
@@ -162,7 +162,7 @@ export const AnalysisSettingsPanel: React.FC<AnalysisSettingsPanelProps> = ({
             onClick={handleColumnBasesToggle}
             aria-pressed={analysisSettings.showColumnBases}
             className={`relative w-9 h-5 rounded-full transition-colors ${
-              analysisSettings.showColumnBases ? 'bg-[var(--color-accent)]' : 'bg-[var(--bg-active)]'
+              analysisSettings.showColumnBases ? 'bg-[var(--border-color-active)]' : 'bg-[var(--bg-active)]'
             }`}
           >
             <span

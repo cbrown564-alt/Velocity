@@ -59,7 +59,7 @@ const EmptyChip: React.FC<{ children: React.ReactNode; highlight?: boolean }> = 
   <span
     className={`block text-[12.5px] rounded-md px-2.5 py-[7px] leading-[1.35] border border-dashed ${
       highlight
-        ? 'border-[var(--color-accent)] text-[var(--text-secondary)]'
+        ? 'border-[var(--border-color)] bg-[var(--bg-rail)] text-[var(--text-secondary)]'
         : 'border-[var(--border-color)] text-[var(--text-tertiary)]'
     }`}
   >
