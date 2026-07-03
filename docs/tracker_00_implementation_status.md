@@ -57,7 +57,7 @@ graph TD
   P6 --> P7["PILOT-7 Readout + Roadmap Gate"]
 
   P0 --> PD1["PILOT-DEMO-1 Tracker Dataset (Done)"]
-  PD1 --> PD2["PILOT-DEMO-2 Recipe Demo"]
+  PD1 --> PD2["PILOT-DEMO-2 Recipe Demo (Done)"]
   PD1 --> PD3["PILOT-DEMO-3 Tracker Deck"]
   PD2 --> PD4["PILOT-DEMO-4 Integration + EVAL-07"]
   PD3 --> PD4
@@ -109,7 +109,7 @@ Completed Phase 1-4, stabilization, UI polish, engine/MCP, export, parity, and h
 | PILOT-6 | Paid Pilot Program | Recruit and run 5-8 qualified paid boutique-agency/consultant pilots | PILOT-0; can start before PILOT-3 if scope is explicit | In progress | No | V | Program kit + execution workflow: [`docs/pilot_06_paid_pilot_program.md`](pilot_06_paid_pilot_program.md), [`docs/pilot_evidence_collection_checklist.md`](pilot_evidence_collection_checklist.md); remaining gate evidence: signed paid commitments + observed workflow records |
 | PILOT-7 | Roadmap Gate | Decide whether to continue, narrow, pause, or expand based on paid-pilot evidence; update roadmap, feature matrix, and this tracker | PILOT-6 | Not started | No | A,V | Decision memo with metrics, retained wedge, rejected assumptions, next 1-3 workstreams |
 | PILOT-DEMO-1 | Demo Asset | Brand tracker synthetic dataset + ground truth (plan Phase A): deterministic generator, 5 committed waves + raw W4, rim weights, planted SCR storyline, engine-parity golden test | PILOT-0 | Done | No | T,L,U,G | [`docs/workstreams/deck_native/10_brand_tracker_demo_plan.md`](workstreams/deck_native/10_brand_tracker_demo_plan.md) §7 Phase A — `scripts/python/generate_brand_tracker.py` + config; `public/examples/brandtracker_w4.sav`; `test_data/fixtures/brand_tracker/`; `validation/brand_tracker_ground_truth.json`; `tests/golden/brand_tracker_parity.test.ts` (12 tests green); full `npm run ci` pass (2026-07-03) |
-| PILOT-DEMO-2 | Demo Asset | Transformation recipe demo + gap log (plan Phase B): raw W4 → analysis-ready via existing MCP tools; gaps logged as PILOT-4a internal signals | PILOT-DEMO-1 | Not started | No | T,L,U,I,A | Plan §4; scripted run with zero manual repair; session round-trip replay test |
+| PILOT-DEMO-2 | Demo Asset | Transformation recipe demo + gap log (plan Phase B): raw W4 → analysis-ready via existing engine primitives; gaps logged as PILOT-4a internal signals | PILOT-DEMO-1 | Done | No | T,L,U,I,A | Plan §4 — `scripts/brand-tracker-recipe-demo.ts` runs steps 1–10 with zero manual repair (exit 0; `npm run demo:brand-tracker-recipe`); session round-trip replay test `src/engine/__tests__/brand_tracker_recipe_roundtrip.test.ts` (green); gap signals INF-06…INF-09 added to [`docs/pilot_04a_processing_gap_discovery.md`](pilot_04a_processing_gap_discovery.md) §7 + walkthrough [`docs/workstreams/deck_native/brand_tracker_recipe_gap_log.md`](workstreams/deck_native/brand_tracker_recipe_gap_log.md); no new engine surface (2026-07-03) |
 | PILOT-DEMO-3 | Demo Asset | Tracker deck + north-star exemplar candidate (plan Phase C): `scripts/brand-tracker-demo.ts`, ~18-slide deck per story template, rubric-scored exemplar artifacts | PILOT-DEMO-1 | Not started | No | T,L,U,I | Plan §5; rubric deck-level pass; inspect-pptx clean; exemplar diff evidence |
 | PILOT-DEMO-4 | Demo Asset | Demo integration + wave refresh + EVAL-07 (plan Phase D): Load Example swap, autoFirstCrosstab, demo contracts, e2e, wave-5 refresh, EVAL-07 freeze | PILOT-DEMO-2, PILOT-DEMO-3 | Not started | No | T,L,U,I,G,V | Plan §6; e2e green; EVAL-07 artifacts frozen; consultant sign-off requested for exemplar promotion |
 
