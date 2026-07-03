@@ -1,20 +1,16 @@
 import React, { useMemo } from 'react';
-import { AlertCircle, LayoutGrid, RefreshCw, Sparkles, MousePointerClick } from 'lucide-react';
+import { AlertCircle, RefreshCw } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useVelocityStore } from '../../../store';
 import { AnalysisChart } from '../../../components/charts/AnalysisChart';
 import { DataTable } from './DataTable';
 import { SlideHeader } from './SlideHeader';
 import { AnalysisChartConfig } from '../../../types/charts';
-import { Variable } from '../../../types';
 
 import { computeAnalysisSampleSize } from '../../../core/analysis/computeAnalysisSampleSize';
 import { recommendChart } from '../../../core/visualization/chartRecommender';
 import { useResolvedVariables } from '../hooks/useResolvedVariables';
-import { useSuggestedVariables } from '../hooks/useSuggestedVariables';
 import { useAutoFirstCrosstab } from '../hooks/useAutoFirstCrosstab';
-import { useFocusModeTip } from '../hooks/useFocusModeTip';
-import { applyCanvasPlacement } from '../../../core/grid/gridUtils';
 import { getMotionProps, useReducedMotion, DURATIONS } from '../../../lib/motion';
 import { AnalysisOutputFrame } from './AnalysisOutputFrame';
 import { AnalysisErrorBoundary } from '../../../components/common/AnalysisErrorBoundary';
@@ -24,8 +20,6 @@ import './SlideHeader.css';
 interface SlideContainerProps {
   className?: string;
 }
-
-const EMPTY_VARIABLES: Variable[] = [];
 
 /**
  * Renders the active slide's layout and content.
@@ -39,8 +33,6 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
   // Data access
   const chartData = useVelocityStore((state) => state.queryResult);
   const tableConfig = useVelocityStore((state) => state.tableConfig);
-  const variableSets = useVelocityStore((state) => state.variableSets);
-  const allVariables = useVelocityStore((state) => state.dataset?.variables ?? EMPTY_VARIABLES);
   const isWeighted = useVelocityStore((state) => !!state.dataset?.weightVariable);
   const variableStats = useVelocityStore((state) => state.activeVariableStats);
   const tableStats = useVelocityStore((state) => state.tableStats);
@@ -49,7 +41,6 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
   const openDrillDown = useVelocityStore((state) => state.openDrillDown);
   const tableDensity = useVelocityStore((state) => state.tableDensity);
   const focusMode = useVelocityStore((state) => state.focusMode);
-  const dataset = useVelocityStore((state) => state.dataset);
 
   const totalCount = useMemo(() => {
     const fromQuery = computeAnalysisSampleSize(chartData, { isWeighted });
@@ -72,17 +63,8 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
     });
   }, [resolvedRowVars, resolvedColVar, firstVarSet, isMultipleResponse]);
 
-  const inUseIds = useMemo(
-    () => new Set([...tableConfig.rowVars, ...(tableConfig.colVar ? [tableConfig.colVar] : [])]),
-    [tableConfig.rowVars, tableConfig.colVar],
-  );
-
-  const suggestions = useSuggestedVariables(allVariables, variableSets, inUseIds, 3, dataset?.rowCount);
   const reducedMotion = useReducedMotion();
   useAutoFirstCrosstab(resolvedRowVars.length, tableConfig.colVar);
-  useFocusModeTip(
-    activeSlide?.visualizationType === 'table' && resolvedRowVars.length > 0 && chartData.length > 0 && !isQuerying,
-  );
 
   if (!activeSlide) {
     return <div className="p-4 text-[var(--text-secondary)]">No active slide</div>;
@@ -92,15 +74,6 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
   if (!cell) {
     return <div className="p-4 text-[var(--text-secondary)]">Empty slide</div>;
   }
-
-  const handleSuggestClick = (setId: string) => {
-    const set = variableSets.find((s) => s.id === setId);
-    if (!set) return;
-
-    useVelocityStore
-      .getState()
-      .setTableConfig(applyCanvasPlacement(setId, set.structure, useVelocityStore.getState().tableConfig));
-  };
 
   const analysisResetKey = `${activeSlideId}:${tableConfig.rowVars.join(',')}:${tableConfig.colVar ?? ''}:${activeSlide.visualizationType}`;
   const analysisSurface = activeSlide.visualizationType === 'chart' ? 'chart' : 'table';
@@ -140,65 +113,25 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
 
     if (resolvedRowVars.length === 0) {
       return (
-        <motion.div
-          {...getMotionProps({ preset: 'fadeUp', duration: DURATIONS.enter, reducedMotion })}
-          className="w-full h-full rounded-xl flex flex-col items-center justify-center text-[var(--text-secondary)] gap-5 bg-gradient-to-b from-[var(--bg-panel)] to-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-inset-lg relative overflow-hidden"
+        <div
+          className="w-full min-h-[340px] h-full flex flex-col items-center justify-center gap-4"
+          data-testid="empty-slide-state"
         >
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[var(--color-accent)] to-transparent opacity-20" />
-          <div className="relative flex items-center justify-center w-20 h-20 rounded-2xl bg-[var(--bg-active)] border border-[var(--border-color)] shadow-sm">
-            <LayoutGrid size={32} className="text-[var(--color-accent)] opacity-80" />
-          </div>
-          <div className="flex flex-col items-center gap-1">
-            <p className="text-base font-medium text-[var(--text-primary)]">Ready for Analysis</p>
-            <p className="text-sm">Drag or click variables to start building your view.</p>
-            <p className="text-xs text-[var(--text-tertiary)]">
-              Tip: press{' '}
-              <kbd className="px-1 rounded bg-[var(--bg-active)] border border-[var(--border-color-muted)]">⌘K</kbd> to
-              search variables and run commands.
-            </p>
-          </div>
-
-          {suggestions.length > 0 && (
-            <div className="flex flex-col items-center gap-3 mt-2 max-w-lg px-4">
-              <div className="flex items-center gap-2 text-xs text-[var(--text-secondary)] uppercase tracking-wider font-semibold">
-                <Sparkles size={12} className="text-[var(--color-accent)]" />
-                <span>Suggested starting points</span>
-              </div>
-              <div className="flex flex-wrap items-center justify-center gap-2">
-                {suggestions.map((s, i) => (
-                  <motion.button
-                    key={s.setId}
-                    {...getMotionProps({
-                      preset: 'fadeScale',
-                      duration: DURATIONS.fast,
-                      delay: i * 0.05,
-                      reducedMotion,
-                    })}
-                    onClick={() => handleSuggestClick(s.setId)}
-                    className="group flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--bg-active)] border border-[var(--border-color)] hover:border-[var(--color-accent)] hover:bg-[color-mix(in_srgb,var(--color-accent),transparent_92%)] transition-all text-left max-w-[280px]"
-                    title={`${s.name} — ${s.reason}`}
-                  >
-                    <MousePointerClick
-                      size={14}
-                      className="text-[var(--text-secondary)] group-hover:text-[var(--color-accent)] transition-colors shrink-0"
-                    />
-                    <div className="flex flex-col min-w-0">
-                      <span
-                        className="text-sm font-medium text-[var(--text-primary)] truncate leading-snug"
-                        title={s.name}
-                      >
-                        {s.name}
-                      </span>
-                      <span className="text-[10px] text-[var(--text-secondary)] truncate leading-snug" title={s.reason}>
-                        {s.reason}
-                      </span>
-                    </div>
-                  </motion.button>
-                ))}
-              </div>
-            </div>
-          )}
-        </motion.div>
+          <p className="text-sm text-[var(--text-secondary)]">
+            Drag a variable here, or press{' '}
+            <kbd className="px-1.5 py-0.5 rounded border border-[var(--border-color)] bg-[var(--bg-panel-tint)] font-mono text-xs">
+              ⌘K
+            </kbd>
+            .
+          </p>
+          <button
+            type="button"
+            onClick={() => useVelocityStore.getState().openCommandPalette()}
+            className="px-3 py-1.5 rounded-md border border-[var(--border-color)] text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-panel-tint)] transition-colors"
+          >
+            Browse variables
+          </button>
+        </div>
       );
     }
 

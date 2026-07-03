@@ -31,16 +31,8 @@ export async function clearBrowserStorage(
           ]),
         );
       }
-      localStorage.setItem('velocity-first-crosstab-tour-done', '1');
-      localStorage.setItem('velocity-first-crosstab-tour-step-rows', '1');
-      localStorage.setItem('velocity-first-crosstab-tour-step-columns', '1');
-      localStorage.setItem('velocity-first-crosstab-tour-step-significance', '1');
-      localStorage.setItem('velocity-focus-tip-seen', '1');
-      localStorage.setItem('velocity-micro-tip-dismissed-focus', '1');
-      localStorage.setItem('velocity-micro-tip-dismissed-export', '1');
-      localStorage.setItem('velocity-micro-tip-dismissed-variable-manager', '1');
     } catch {
-      // Best-effort onboarding flag seeding for stable e2e.
+      // Best-effort activation seeding for stable e2e.
     }
     try {
       if (navigator.storage?.getDirectory) {
@@ -202,17 +194,6 @@ export const buildGenderRegionCrosstab = buildExampleCrosstab;
 
 export async function waitForStableCrosstab(page: Page) {
   await ensureCorrectionNone(page);
-
-  const tour = page.getByTestId('first-crosstab-tour');
-  if (await tour.isVisible({ timeout: 1000 }).catch(() => false)) {
-    await page.getByRole('button', { name: /got it/i }).click();
-    await expect(tour).toBeHidden({ timeout: 5000 });
-  }
-
-  const storyShelf = page.getByTestId('story-shelf-suggestion');
-  if (await storyShelf.isVisible({ timeout: 8000 }).catch(() => false)) {
-    await expect(storyShelf).toBeHidden({ timeout: 12000 });
-  }
 
   const footer = page.locator('.analysis-frame .statistics-status-bar').first();
   await expect(footer).toBeVisible({ timeout: 15000 });

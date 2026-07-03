@@ -50,16 +50,6 @@ const TRIGGER_RULES = [
     ],
     e2eHints: ['tests/e2e/pilot-workflow.spec.ts'],
   },
-  {
-    id: 'contextual-micro-tips',
-    label: 'Contextual micro tips / chips',
-    patterns: [
-      'src/features/dashboard/onboarding/ContextualMicroTipChip.tsx',
-      'src/features/dashboard/onboarding/contextualMicroTips.ts',
-      'src/features/dashboard/hooks/useContextualMicroTips.ts',
-    ],
-    e2eHints: ['tests/e2e/helpers/visualPolish.ts', 'tests/e2e/pilot-workflow.spec.ts'],
-  },
 ];
 
 /**
