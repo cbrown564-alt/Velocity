@@ -1,4 +1,8 @@
+import path from 'path';
 import { expect, type Page } from '@playwright/test';
+
+/** Bundled sleep.sav for e2e that must preserve sex×marital visual baselines. */
+export const SLEEP_SAV_FIXTURE = path.resolve(process.cwd(), 'test_data/sleep.sav');
 
 export const VP_THEMES = [
   ['sm', 'Soft Machine'],
@@ -111,11 +115,19 @@ export async function reachDashboardWithExample(page: Page) {
   }
 
   const loadExample = page.getByRole('button', {
-    name: /walk through sleep study example|try sleep study example|load example/i,
+    name: /walk through sleep study example|try sleep study example|load example|brand tracker/i,
   });
   await expect(loadExample).toBeVisible({ timeout: 60000 });
   await loadExample.click();
   await expect(tableView).toBeVisible({ timeout: 120000 });
+}
+
+/** Upload sleep.sav for specs that depend on sex×marital baselines (visual regression). */
+export async function reachDashboardWithSleepExample(page: Page) {
+  await clearBrowserStorage(page, { seedActivation: true });
+  await page.reload();
+  await uploadFileAndReachDashboard(page, SLEEP_SAV_FIXTURE);
+  await expect(page.getByRole('button', { name: 'Table view' })).toBeVisible({ timeout: 120000 });
 }
 
 export async function ensureCorrectionNone(page: Page) {
@@ -133,7 +145,20 @@ export async function ensureCorrectionNone(page: Page) {
 export async function buildExampleCrosstab(page: Page) {
   const table = page.locator('table');
   const pctCell = page.locator('text=/\\d+\\.\\d%/').first();
+  const sexBtn = page.getByRole('button', { name: /^sex$/i }).first();
+  const hasSleepVars = await sexBtn.isVisible({ timeout: 2000 }).catch(() => false);
+
+  // Brand tracker Load Example auto-applies brand preference × segment; skip sleep-only steps.
   if (
+    !hasSleepVars &&
+    (await table.isVisible({ timeout: 5000 }).catch(() => false)) &&
+    (await pctCell.isVisible({ timeout: 5000 }).catch(() => false))
+  ) {
+    return;
+  }
+
+  if (
+    hasSleepVars &&
     (await table.isVisible({ timeout: 5000 }).catch(() => false)) &&
     (await pctCell.isVisible({ timeout: 5000 }).catch(() => false))
   ) {
@@ -166,7 +191,6 @@ export async function buildExampleCrosstab(page: Page) {
     return;
   }
 
-  const sexBtn = page.getByRole('button', { name: /^sex$/i }).first();
   await expect(sexBtn).toBeVisible({ timeout: 30000 });
   await sexBtn.click();
   await page.waitForTimeout(1200);
@@ -266,7 +290,7 @@ export async function expectWorkspaceLibraryVisible(page: Page) {
     )
     .toBe(true);
 
-  await expect(page.getByRole('heading', { name: 'sleep.sav' })).toBeVisible({ timeout: 60000 });
+  await expect(page.getByRole('heading', { name: /brandtracker_w4\.sav|sleep\.sav/i })).toBeVisible({ timeout: 60000 });
 }
 
 export async function waitForRestorationPromptOrWorkspace(page: Page) {
