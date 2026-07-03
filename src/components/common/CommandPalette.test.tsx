@@ -16,12 +16,18 @@ beforeEach(() => {
     setTableConfig: vi.fn(),
     setWeightVariable: vi.fn(),
     tableConfig: { rowVars: [], colVar: null },
-    variableSets: [{ id: 'region', name: 'Region', structure: 'single', variableIds: ['region_var'] }],
+    variableSets: [
+      { id: 'region', name: 'Region', structure: 'single', variableIds: ['region_var'] },
+      { id: 'age', name: 'Age', structure: 'single', variableIds: ['age_var'], type: 'numeric' },
+    ],
     dataset: {
       id: 'ds1',
       name: 'Demo',
       rowCount: 100,
-      variables: [{ id: 'region_var', name: 'region_var', label: 'Region', type: 'nominal' }],
+      variables: [
+        { id: 'region_var', name: 'region_var', label: 'Region of residence', type: 'nominal' },
+        { id: 'age_var', name: 'age_var', label: 'Age in years', type: 'numeric' },
+      ],
     },
     isWorkspaceMode: false,
     queryResult: [],
@@ -30,72 +36,108 @@ beforeEach(() => {
   } as any);
 });
 
-
-describe('CommandPalette', () => {
+describe('CommandPalette (insert palette)', () => {
   it('does not render when closed', () => {
     useVelocityStore.setState({ commandPaletteOpen: false });
     render(<CommandPalette />);
-    expect(screen.queryByPlaceholderText('Type a command or search variables...')).not.toBeInTheDocument();
+    expect(screen.queryByPlaceholderText('Find a variable…')).not.toBeInTheDocument();
   });
 
   it('renders search input when open', () => {
     render(<CommandPalette />);
-    expect(screen.getByPlaceholderText('Type a command or search variables...')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Find a variable…')).toBeInTheDocument();
   });
 
-  it('filters commands based on query', () => {
+  it('lists variables as the default result set on empty query', () => {
     render(<CommandPalette />);
-    const input = screen.getByPlaceholderText('Type a command or search variables...');
-    fireEvent.change(input, { target: { value: 'focus' } });
+    expect(screen.getByText('Region')).toBeInTheDocument();
+    expect(screen.getByText('Age')).toBeInTheDocument();
+  });
+
+  it('matches variables on underlying labels', () => {
+    render(<CommandPalette />);
+    fireEvent.change(screen.getByPlaceholderText('Find a variable…'), { target: { value: 'residence' } });
+    expect(screen.getByText('Region')).toBeInTheDocument();
+    expect(screen.queryByText('Age')).not.toBeInTheDocument();
+  });
+
+  it('Enter adds the selected variable to rows', () => {
+    const setTableConfig = vi.fn();
+    useVelocityStore.setState({ setTableConfig });
+    render(<CommandPalette />);
+    fireEvent.change(screen.getByPlaceholderText('Find a variable…'), { target: { value: 'reg' } });
+    fireEvent.keyDown(document, { key: 'Enter' });
+    expect(setTableConfig).toHaveBeenCalledWith({ rowVars: ['region'] });
+  });
+
+  it('Alt+Enter adds the selected variable to columns', () => {
+    const setTableConfig = vi.fn();
+    useVelocityStore.setState({ setTableConfig });
+    render(<CommandPalette />);
+    fireEvent.change(screen.getByPlaceholderText('Find a variable…'), { target: { value: 'reg' } });
+    fireEvent.keyDown(document, { key: 'Enter', altKey: true });
+    expect(setTableConfig).toHaveBeenCalledWith({ colVar: 'region' });
+  });
+
+  it('Shift+Enter opens the filter modal preselected to the variable', () => {
+    const openFilterModal = vi.fn();
+    useVelocityStore.setState({ openFilterModal });
+    render(<CommandPalette />);
+    fireEvent.change(screen.getByPlaceholderText('Find a variable…'), { target: { value: 'reg' } });
+    fireEvent.keyDown(document, { key: 'Enter', shiftKey: true });
+    expect(openFilterModal).toHaveBeenCalledWith('region_var');
+  });
+
+  it('click inserts to rows', () => {
+    const setTableConfig = vi.fn();
+    useVelocityStore.setState({ setTableConfig });
+    render(<CommandPalette />);
+    fireEvent.click(screen.getByTestId('palette-variable-region'));
+    expect(setTableConfig).toHaveBeenCalledWith({ rowVars: ['region'] });
+  });
+
+  it('shows commands behind the > prefix', () => {
+    render(<CommandPalette />);
+    fireEvent.change(screen.getByPlaceholderText('Find a variable…'), { target: { value: '>' } });
+    expect(screen.getByText('Toggle Focus Mode')).toBeInTheDocument();
+    expect(screen.getByText('Reset Analysis')).toBeInTheDocument();
+  });
+
+  it('filters commands by query after the prefix', () => {
+    render(<CommandPalette />);
+    fireEvent.change(screen.getByPlaceholderText('Find a variable…'), { target: { value: '>focus' } });
     expect(screen.getByText('Toggle Focus Mode')).toBeInTheDocument();
     expect(screen.queryByText('Reset Analysis')).not.toBeInTheDocument();
   });
 
-  it('shows variable shelf actions when searching variables', () => {
+  it('executes a command on click', () => {
+    const toggleFocus = vi.fn();
+    useVelocityStore.setState({ toggleFocusMode: toggleFocus });
     render(<CommandPalette />);
-    const input = screen.getByPlaceholderText('Type a command or search variables...');
-    fireEvent.change(input, { target: { value: 'reg' } });
-    expect(screen.getByText('Add Region to Columns')).toBeInTheDocument();
-    expect(screen.getByText('Add Region to Rows')).toBeInTheDocument();
-  });
-
-  it('adds a matched variable to columns', () => {
-    const setTableConfig = vi.fn();
-    useVelocityStore.setState({ setTableConfig });
-    render(<CommandPalette />);
-    const input = screen.getByPlaceholderText('Type a command or search variables...');
-    fireEvent.change(input, { target: { value: 'reg' } });
-    fireEvent.click(screen.getByText('Add Region to Columns'));
-    expect(setTableConfig).toHaveBeenCalledWith({ colVar: 'region' });
+    fireEvent.change(screen.getByPlaceholderText('Find a variable…'), { target: { value: '>focus' } });
+    fireEvent.click(screen.getByText('Toggle Focus Mode'));
+    expect(toggleFocus).toHaveBeenCalled();
   });
 
   it('opens filter modal from command list', () => {
     const openFilterModal = vi.fn();
     useVelocityStore.setState({ openFilterModal });
     render(<CommandPalette />);
+    fireEvent.change(screen.getByPlaceholderText('Find a variable…'), { target: { value: '>filters' } });
     fireEvent.click(screen.getByText('Open Filters'));
     expect(openFilterModal).toHaveBeenCalled();
   });
 
   it('shows no results message for unmatched query', () => {
     render(<CommandPalette />);
-    const input = screen.getByPlaceholderText('Type a command or search variables...');
-    fireEvent.change(input, { target: { value: 'xyznonexistent' } });
-    expect(screen.getByText(/No commands found/)).toBeInTheDocument();
+    fireEvent.change(screen.getByPlaceholderText('Find a variable…'), { target: { value: 'xyznonexistent' } });
+    expect(screen.getByText(/No matching variables/)).toBeInTheDocument();
   });
 
   it('closes on escape', () => {
     render(<CommandPalette />);
     fireEvent.keyDown(document, { key: 'Escape' });
     expect(useVelocityStore.getState().commandPaletteOpen).toBe(false);
-  });
-
-  it('executes action on click', () => {
-    const toggleFocus = vi.fn();
-    useVelocityStore.setState({ toggleFocusMode: toggleFocus });
-    render(<CommandPalette />);
-    fireEvent.click(screen.getByText('Toggle Focus Mode'));
-    expect(toggleFocus).toHaveBeenCalled();
   });
 
   it('exposes dialog semantics on the panel', () => {

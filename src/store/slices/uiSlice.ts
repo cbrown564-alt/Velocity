@@ -35,6 +35,8 @@ export interface RecodeModalState {
 
 export interface FilterModalState {
   isOpen: boolean;
+  /** Preselect this variable and jump straight to value selection. */
+  initialVariableId?: string | null;
 }
 
 export interface AnalysisExportModalState {
@@ -124,7 +126,7 @@ export interface UISlice {
   setManagerSearchQuery: (query: string) => void;
   openRecodeModal: (variable: Variable) => void;
   closeRecodeModal: () => void;
-  openFilterModal: () => void;
+  openFilterModal: (initialVariableId?: string) => void;
   closeFilterModal: () => void;
   openAnalysisExportModal: (config: ExportConfig) => void;
   closeAnalysisExportModal: () => void;
@@ -243,7 +245,7 @@ export const createUISlice: StateCreator<UISlice, [], [], UISlice> = (set) => ({
   openRecodeModal: (variable) => set({ recodeModal: { isOpen: true, variable } }),
   closeRecodeModal: () => set({ recodeModal: { isOpen: false, variable: null } }),
 
-  openFilterModal: () => set({ filterModal: { isOpen: true } }),
+  openFilterModal: (initialVariableId) => set({ filterModal: { isOpen: true, initialVariableId: initialVariableId ?? null } }),
   closeFilterModal: () => set({ filterModal: { isOpen: false } }),
 
   openAnalysisExportModal: (config) => set({ analysisExportModal: { isOpen: true, config } }),

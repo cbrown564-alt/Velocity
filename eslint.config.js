@@ -9,6 +9,7 @@ export default tseslint.config(
   {
     ignores: [
       '.agents/**',
+      '.claude/**',
       '.venv/**',
       'coverage/**',
       'dist/**',

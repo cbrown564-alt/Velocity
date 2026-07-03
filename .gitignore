@@ -72,3 +72,4 @@ tests/golden/perf_log.jsonl
 # Large external exemplar: full Kantar BrandZ report kept local-only (143MB > GitHub limit).
 # Lightweight curated slide PNGs live under demo/artifacts/report-quality/exemplars/.
 docs/Kantar_BrandZ_2025_Most_Valuable_Global_Brands.pdf
+.claude/

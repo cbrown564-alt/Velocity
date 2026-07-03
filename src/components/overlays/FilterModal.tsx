@@ -18,11 +18,13 @@ interface FilterModalProps {
   onClose: () => void;
   variables: Variable[];
   onSave: (filter: Omit<Filter, 'id'>, applyToAll: boolean) => void;
+  /** When set, preselect this variable and jump straight to value selection. */
+  initialVariableId?: string | null;
 }
 
 type Step = 'variable' | 'values';
 
-export const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, variables, onSave }) => {
+export const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, variables, onSave, initialVariableId = null }) => {
   const [step, setStep] = useState<Step>('variable');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedVariable, setSelectedVariable] = useState<Variable | null>(null);
@@ -64,6 +66,18 @@ export const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, varia
     setSelectedValues([]);
     setStep('values');
   };
+
+  // Palette-driven entry (⇧↵ on a variable): land directly on value selection.
+  React.useEffect(() => {
+    if (!isOpen || !initialVariableId) return;
+    const variable = variables.find((v) => v.id === initialVariableId);
+    if (variable) {
+      setSelectedVariable(variable);
+      setSelectedValues([]);
+      setStep('values');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, initialVariableId]);
 
   // Effect to load values when step changes to 'values'
   React.useEffect(() => {
