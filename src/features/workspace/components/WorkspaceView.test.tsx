@@ -426,7 +426,7 @@ describe('WorkspaceView', () => {
       />,
     );
 
-    fireEvent.click(screen.getByRole('button', { name: /walk through sleep study example/i }));
+    fireEvent.click(screen.getByRole('button', { name: /try the brand tracker example/i }));
     expect(onLoadExample).toHaveBeenCalled();
   });
 
@@ -453,9 +453,11 @@ describe('WorkspaceView', () => {
 
     expect(screen.getByText('Velocity')).toBeInTheDocument();
     expect(screen.queryByText('Velocity Workspace')).not.toBeInTheDocument();
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(/client SAV to editable deck/i);
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(/client survey file/i);
+    expect(screen.queryByText('Local Storage')).not.toBeInTheDocument();
+    expect(screen.getByText(/Brand preference × segment/i)).toBeInTheDocument();
     expect(screen.queryByTestId('workspace-search-input')).not.toBeInTheDocument();
-    expect(screen.queryByTestId('pilot-event-log-download')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('workspace-status-strip')).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /recent/i })).not.toBeInTheDocument();
   });
 

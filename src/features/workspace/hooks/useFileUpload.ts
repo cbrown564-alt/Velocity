@@ -227,7 +227,7 @@ export function useFileUpload(
           : {
               type: 'info',
               title: 'Brand tracker example loaded',
-              message: 'Explore Atlas consideration by segment, then export an editable PowerPoint deck.',
+              message: 'Explore brand preference by segment, then export an editable PowerPoint deck.',
               duration: 9000,
             },
       );

@@ -115,7 +115,7 @@ export async function reachDashboardWithExample(page: Page) {
   }
 
   const loadExample = page.getByRole('button', {
-    name: /walk through sleep study example|try sleep study example|load example|brand tracker/i,
+    name: /try the brand tracker example|upload survey file|load example|brand tracker/i,
   });
   await expect(loadExample).toBeVisible({ timeout: 60000 });
   await loadExample.click();

@@ -238,13 +238,13 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
 
   return (
     <div className={styles.workspace}>
-      <header className={styles.header}>
+      <header className={`${styles.header} ${showFirstRunLanding ? styles.headerFirstRun : ''}`}>
         <div className={styles.headerLeft}>
           <div className={styles.title}>
             <Logo size={32} />
             {showFirstRunLanding ? 'Velocity' : 'Velocity Workspace'}
           </div>
-          <WorkspaceStorageIndicator used={storageUsed} quota={storageQuota} />
+          {!showFirstRunLanding && <WorkspaceStorageIndicator used={storageUsed} quota={storageQuota} />}
         </div>
 
         <div className={styles.headerRight}>
@@ -344,17 +344,17 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
                     Pilot Log
                   </motion.button>
                 )}
+                <motion.button
+                  className={styles.uploadButton}
+                  onClick={handleUploadWithTracking}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <FileUp size={16} />
+                  Upload
+                </motion.button>
               </>
             )}
-            <motion.button
-              className={styles.uploadButton}
-              onClick={handleUploadWithTracking}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <FileUp size={16} />
-              {showFirstRunLanding ? 'Upload client .SAV' : 'Upload'}
-            </motion.button>
           </div>
         </div>
       </header>
@@ -364,6 +364,7 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
         resumeCandidate={resumeCandidate}
         onResume={onResume}
         onDismissWelcomeBack={onDismiss}
+        hidePrivacyHeadline={showFirstRunLanding}
       />
 
       {!showFirstRunLanding && (

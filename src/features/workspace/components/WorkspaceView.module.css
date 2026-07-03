@@ -34,6 +34,15 @@
   backdrop-filter: var(--mat-panel-filter, none);
 }
 
+.headerFirstRun {
+  padding: var(--space-4) var(--space-8);
+  border-bottom-color: color-mix(in srgb, var(--border-color) 65%, transparent);
+}
+
+.headerFirstRun .title {
+  font-size: var(--text-xl);
+}
+
 .headerLeft {
   display: flex;
   align-items: center;
@@ -379,7 +388,9 @@
 .contentFirstRun {
   display: flex;
   flex-direction: column;
+  align-items: stretch;
   padding: 0;
+  overflow-x: hidden;
 }
 
 /* ============================================================================
