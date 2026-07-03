@@ -1,0 +1,204 @@
+{
+  "deck_id": "brandtracker-w4-north-star-candidate",
+  "run_id": "2026-07-03-phase-c",
+  "source_deck": "tests/fixtures/export/brandtracker-report.pptx",
+  "ground_truth": "validation/brand_tracker_ground_truth.json",
+  "scored_by": "agent (candidate); human sign-off pending",
+  "slides": [
+    {
+      "slide_index": 1,
+      "role": "context",
+      "title": "Atlas chilled-coffee brand tracker: Wave 4 readout (2026-Q2, n=1,200, weighted)",
+      "gates": { "G1_supported": true, "G2_defensible": true },
+      "reduced_scoring": true,
+      "notes": "Context slide; G1 only. Base (n=1,200), wave (W4/2026-Q2) and weighting stated correctly."
+    },
+    {
+      "slide_index": 2,
+      "role": "finding",
+      "title": "Atlas health is up and top-of-funnel; Beacon now leads Meridian on consideration",
+      "gates": { "G1_supported": true, "G2_defensible": true },
+      "criteria": { "C1_conclusion": 3, "C2_specificity": 2, "C3_comparison": 3, "C4_form": 3 },
+      "comparison_applicable": true,
+      "score": 2.75,
+      "band": "Strong",
+      "notes": "Exec-summary SCR verdict; qualitative direction, competitor comparator named."
+    },
+    {
+      "slide_index": 3,
+      "role": "finding",
+      "title": "Atlas aided awareness rose 6pts to 73%, its first significant gain in four waves",
+      "gates": { "G1_supported": true, "G2_defensible": true },
+      "criteria": { "C1_conclusion": 3, "C2_specificity": 3, "C3_comparison": 3, "C4_form": 3 },
+      "comparison_applicable": true,
+      "score": 3.0,
+      "band": "Strong",
+      "notes": "aided +5.9pts to 72.7% (z=2.96, p=0.003); direction+magnitude+level+history."
+    },
+    {
+      "slide_index": 4,
+      "role": "finding",
+      "title": "Consideration climbed 5pts to 38% of the market, tracking the awareness gain",
+      "gates": { "G1_supported": true, "G2_defensible": true },
+      "criteria": { "C1_conclusion": 3, "C2_specificity": 3, "C3_comparison": 2, "C4_form": 3 },
+      "comparison_applicable": true,
+      "score": 2.75,
+      "band": "Strong",
+      "notes": "consider T2B(total) +4.5pts to 37.7% (p=0.029); comparator vs W3 in subtitle."
+    },
+    {
+      "slide_index": 5,
+      "role": "finding",
+      "title": "The gain is at the top: unaided awareness jumped 6pts to 37%",
+      "gates": { "G1_supported": true, "G2_defensible": true },
+      "criteria": { "C1_conclusion": 3, "C2_specificity": 3, "C3_comparison": 2, "C4_form": 3 },
+      "comparison_applicable": true,
+      "score": 2.75,
+      "band": "Strong",
+      "notes": "unaided +5.7pts to 36.5% (p=0.005); diagnostic 'at the top' conclusion."
+    },
+    {
+      "slide_index": 6,
+      "role": "comparison",
+      "title": "Awareness-to-consideration conversion held flat near 53%, so the lift is reach not persuasion",
+      "gates": { "G1_supported": true, "G2_defensible": true },
+      "criteria": { "C1_conclusion": 3, "C2_specificity": 2, "C3_comparison": 2, "C4_form": 3 },
+      "comparison_applicable": true,
+      "score": 2.5,
+      "band": "Strong",
+      "notes": "conversion +2.0pts (p=0.44) not significant; honest 'held flat'."
+    },
+    {
+      "slide_index": 7,
+      "role": "finding",
+      "title": "Usage is broadly stable at 15%, so the new interest has yet to reach trial",
+      "gates": { "G1_supported": true, "G2_defensible": true },
+      "criteria": { "C1_conclusion": 3, "C2_specificity": 2, "C3_comparison": 2, "C4_form": 3 },
+      "comparison_applicable": true,
+      "score": 2.5,
+      "band": "Strong",
+      "notes": "usage +2.4pts (p=0.10) not significant; 'broadly stable' defensibility guard."
+    },
+    {
+      "slide_index": 8,
+      "role": "comparison",
+      "title": "Beacon overtook Meridian on consideration for the first time in four waves, at 42%",
+      "gates": { "G1_supported": true, "G2_defensible": true },
+      "criteria": { "C1_conclusion": 3, "C2_specificity": 3, "C3_comparison": 3, "C4_form": 3 },
+      "comparison_applicable": true,
+      "score": 3.0,
+      "band": "Strong",
+      "notes": "Beacon 41.7% > Meridian 38.5%; rank change + 4-wave history (storyline_checks.beacon_overtake)."
+    },
+    {
+      "slide_index": 9,
+      "role": "comparison",
+      "title": "Beacon and Meridian lead preference near 25%, with Atlas third at 20%",
+      "gates": { "G1_supported": true, "G2_defensible": true },
+      "criteria": { "C1_conclusion": 3, "C2_specificity": 2, "C3_comparison": 3, "C4_form": 3 },
+      "comparison_applicable": true,
+      "score": 2.75,
+      "band": "Strong",
+      "notes": "Preference standings (Meridian 24.9 / Beacon 24.8 / Atlas 19.5); no unsupported change claim."
+    },
+    {
+      "slide_index": 10,
+      "role": "finding",
+      "title": "'Innovative' associations rose 7pts to 37%, likely fuelling Atlas's awareness gain",
+      "gates": { "G1_supported": true, "G2_defensible": true },
+      "criteria": { "C1_conclusion": 3, "C2_specificity": 3, "C3_comparison": 2, "C4_form": 3 },
+      "comparison_applicable": true,
+      "score": 2.75,
+      "band": "Strong",
+      "notes": "'innovative' T2B +6.7pts to 37.0% (p=0.007); honest causal hedge 'likely'."
+    },
+    {
+      "slide_index": 11,
+      "role": "finding",
+      "title": "'Worth the price' is broadly stable at 35%, within margin of error versus Q1",
+      "gates": { "G1_supported": true, "G2_defensible": true },
+      "criteria": { "C1_conclusion": 3, "C2_specificity": 2, "C3_comparison": 2, "C4_form": 3 },
+      "comparison_applicable": true,
+      "score": 2.5,
+      "band": "Strong",
+      "notes": "'worth the price' -1.9pts (p=0.46) not significant; the defensibility-guard slide."
+    },
+    {
+      "slide_index": 12,
+      "role": "finding",
+      "title": "Ad recall jumped 7pts to 26%, consistent with the awareness and innovation gains",
+      "gates": { "G1_supported": true, "G2_defensible": true },
+      "criteria": { "C1_conclusion": 3, "C2_specificity": 3, "C3_comparison": 2, "C4_form": 3 },
+      "comparison_applicable": true,
+      "score": 2.75,
+      "band": "Strong",
+      "notes": "ad recall +7.4pts to 26.4% (p<0.001); supporting driver evidence."
+    },
+    {
+      "slide_index": 13,
+      "role": "comparison",
+      "title": "Atlas's awareness gain is concentrated in the Growth segment, up 13pts to 46%",
+      "gates": { "G1_supported": true, "G2_defensible": true },
+      "criteria": { "C1_conclusion": 3, "C2_specificity": 3, "C3_comparison": 3, "C4_form": 3 },
+      "comparison_applicable": true,
+      "score": 3.0,
+      "band": "Strong",
+      "notes": "Growth unaided +13.4pts to 46.2% (p<0.001); the only significant segment divergence."
+    },
+    {
+      "slide_index": 14,
+      "role": "comparison",
+      "title": "Under-35s drove the gain, up 9pts to 42%; older buyers held steady",
+      "gates": { "G1_supported": true, "G2_defensible": true },
+      "criteria": { "C1_conclusion": 3, "C2_specificity": 3, "C3_comparison": 3, "C4_form": 3 },
+      "comparison_applicable": true,
+      "score": 3.0,
+      "band": "Strong",
+      "notes": "18-34 unaided +8.9pts to 42.0% (p=0.006); older bands not significant (honest contrast)."
+    },
+    {
+      "slide_index": 15,
+      "role": "recommendation",
+      "title": "Convert Growth's new awareness: shift Q3 activation and trial offers to under-35s",
+      "gates": { "G1_supported": true, "G2_defensible": true },
+      "criteria": { "C1_conclusion": 3, "C2_specificity": null, "C3_comparison": null, "C4_form": 3 },
+      "comparison_applicable": false,
+      "score": 3.0,
+      "band": "Strong",
+      "notes": "Imperative and specific; ties to funnel (flat conversion) + segment (Growth/under-35) findings."
+    },
+    {
+      "slide_index": 16,
+      "role": "appendix",
+      "title": "Appendix: Atlas consideration distribution and top-two-box base, Wave 4",
+      "gates": { "G1_supported": true, "G2_defensible": true },
+      "reduced_scoring": true,
+      "notes": "Appendix; G1 only. Distribution + T2B base reproducible from the exhibit."
+    },
+    {
+      "slide_index": 17,
+      "role": "caveat",
+      "title": "Appendix: Atlas NPS rose to +7 on a low base (n=189 users) — read directionally",
+      "gates": { "G1_supported": true, "G2_defensible": true },
+      "reduced_scoring": true,
+      "notes": "Caveat stated as a conclusion (low base, read directionally); NPS +9.7pts not significant (p=0.25)."
+    },
+    {
+      "slide_index": 18,
+      "role": "appendix",
+      "title": "Appendix: method, weighting, and the raw-to-analysis-ready transformation recipe",
+      "gates": { "G1_supported": true, "G2_defensible": true },
+      "reduced_scoring": true,
+      "notes": "Appendix; G1 only. Weighting, significance settings, and numbered recipe (plan §4.1)."
+    }
+  ],
+  "rollup": {
+    "body_slides": 14,
+    "gate_failures": 0,
+    "pct_good_or_strong": 1.0,
+    "pct_strong": 1.0,
+    "exec_summary_all_good_or_strong": true,
+    "narrative_band_supported": 3,
+    "blocks": []
+  }
+}
