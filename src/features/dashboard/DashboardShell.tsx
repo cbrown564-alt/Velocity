@@ -65,7 +65,6 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
   const focusMode = useVelocityStore((state) => state.focusMode);
   const toggleFocusMode = useVelocityStore((state) => state.toggleFocusMode);
   const tableDensity = useVelocityStore((state) => state.tableDensity);
-  const toggleTableDensity = useVelocityStore((state) => state.toggleTableDensity);
   const setTableDensity = useVelocityStore((state) => state.setTableDensity);
   const setTableConfig = useVelocityStore((state) => state.setTableConfig);
   const setSearchQuery = useVelocityStore((state) => state.setSearchQuery);
@@ -205,14 +204,12 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
               activeSlideId={activeSlideId}
               activeSlide={activeSlide}
               focusMode={focusMode}
-              tableDensity={tableDensity}
               canOpenExport={canOpenExport}
               onReturnToWorkspace={onReturnToWorkspace}
               onOpenSessionImport={onOpenSessionImport}
               onExportSession={onExportSession}
               onExport={handleExport}
               onToggleFocusMode={toggleFocusMode}
-              onToggleTableDensity={toggleTableDensity}
               onReset={reset}
             />
 

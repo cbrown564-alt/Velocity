@@ -70,8 +70,8 @@
 }
 
 .expandButton:hover {
-  background: var(--color-accent);
-  border-color: var(--color-accent);
+  background: var(--border-color-active);
+  border-color: var(--border-color-active);
   color: white;
 }
 

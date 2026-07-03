@@ -11,13 +11,13 @@
 }
 
 .datasetCard:hover {
-  border-color: var(--color-accent);
+  border-color: var(--border-color-active);
   box-shadow: var(--shadow-md);
 }
 
 .datasetCard.selected {
-  border-color: var(--color-accent);
-  background: color-mix(in srgb, var(--color-accent) 5%, var(--bg-panel));
+  border-color: var(--border-color-active);
+  background: color-mix(in srgb, var(--border-color-active) 5%, var(--bg-panel));
 }
 
 /* Selection ring */
@@ -37,7 +37,7 @@
 
 .datasetCard:hover .selectionRing,
 .datasetCard.selected .selectionRing {
-  border-color: var(--color-accent);
+  border-color: var(--border-color-active);
 }
 
 .checkmark {
@@ -46,7 +46,7 @@
   justify-content: center;
   width: 100%;
   height: 100%;
-  background: var(--color-accent);
+  background: var(--border-color-active);
   color: var(--text-inverse);
   border-radius: 50%;
 }
@@ -95,7 +95,7 @@
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: var(--color-accent);
+  background: var(--border-color-active);
   box-shadow: 0 0 0 2px var(--bg-panel);
   animation: activityPulse 2s ease-in-out infinite;
 }
@@ -219,7 +219,7 @@
   padding: var(--space-2);
   border: none;
   border-radius: var(--border-radius-md);
-  background: var(--color-accent);
+  background: var(--border-color-active);
   color: var(--text-inverse);
   font-size: var(--text-sm);
   font-weight: 500;
@@ -247,7 +247,7 @@
 }
 
 .iconButton:hover {
-  border-color: var(--color-accent);
+  border-color: var(--border-color-active);
   color: var(--text-primary);
 }
 

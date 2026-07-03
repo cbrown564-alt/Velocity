@@ -41,8 +41,8 @@
   justify-content: center;
   width: 40px;
   height: 40px;
-  background: color-mix(in srgb, var(--color-accent) 15%, transparent);
-  color: var(--color-accent);
+  background: color-mix(in srgb, var(--border-color-active) 15%, transparent);
+  color: var(--border-color-active);
   border-radius: var(--border-radius-md);
   flex-shrink: 0;
 }
@@ -144,13 +144,13 @@
 }
 
 .modeTabs button:hover {
-  border-color: var(--color-accent);
+  border-color: var(--border-color-active);
   color: var(--text-primary);
 }
 
 .modeTabs button.active {
-  background: var(--color-accent);
-  border-color: var(--color-accent);
+  background: var(--border-color-active);
+  border-color: var(--border-color-active);
   color: var(--text-inverse);
 }
 
@@ -192,7 +192,7 @@
 .field textarea:focus,
 .field select:focus {
   outline: none;
-  border-color: var(--color-accent);
+  border-color: var(--border-color-active);
 }
 
 .field input::placeholder,
@@ -279,7 +279,7 @@
 }
 
 .toggle.active {
-  background: var(--color-accent);
+  background: var(--border-color-active);
 }
 
 .toggleKnob {
@@ -481,7 +481,7 @@
   padding: var(--space-2) var(--space-4);
   border: none;
   border-radius: var(--border-radius-md);
-  background: var(--color-accent);
+  background: var(--border-color-active);
   color: var(--text-inverse);
   font-size: var(--text-sm);
   font-weight: 500;

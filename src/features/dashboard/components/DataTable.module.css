@@ -34,8 +34,8 @@
 
 /* Selected row/col headers */
 .mergeSelected {
-  background-color: color-mix(in srgb, var(--color-accent) 6%, transparent);
-  box-shadow: inset 2px 0 0 var(--color-accent);
+  background-color: var(--bg-rail);
+  box-shadow: inset 2px 0 0 var(--border-color-active);
 }
 
 /* Floating ghost label that follows the cursor */
@@ -63,8 +63,8 @@
 
 /* Column header selected state */
 .colSelected {
-  background-color: color-mix(in srgb, var(--color-accent) 6%, transparent) !important;
-  box-shadow: inset 0 -2px 0 var(--color-accent);
+  background-color: var(--bg-rail) !important;
+  box-shadow: inset 0 -2px 0 var(--border-color-active);
 }
 
 /* Scroll region fills frame body when virtualized; otherwise sizes to table content */

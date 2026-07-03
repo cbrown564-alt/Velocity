@@ -24,7 +24,7 @@
   bottom: var(--space-4);
   width: 4px;
   border-radius: 0 2px 2px 0;
-  background: var(--color-accent);
+  background: var(--border-color-active);
 }
 
 .slideHeader {
@@ -41,8 +41,8 @@
   align-items: center;
   padding: 3px var(--space-2);
   border-radius: var(--border-radius-sm);
-  background: color-mix(in srgb, var(--color-accent) 12%, transparent);
-  color: var(--color-accent);
+  background: color-mix(in srgb, var(--border-color-active) 12%, transparent);
+  color: var(--border-color-active);
   font-size: 0.625rem;
   font-weight: 700;
   letter-spacing: 0.07em;

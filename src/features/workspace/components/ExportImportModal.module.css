@@ -45,8 +45,8 @@
   width: 40px;
   height: 40px;
   border-radius: var(--radius-md);
-  background: color-mix(in srgb, var(--color-accent) 15%, transparent);
-  color: var(--color-accent);
+  background: color-mix(in srgb, var(--border-color-active) 15%, transparent);
+  color: var(--border-color-active);
 }
 
 .headerText {
@@ -114,8 +114,8 @@
 }
 
 .tabs button.active {
-  color: var(--color-accent);
-  border-bottom-color: var(--color-accent);
+  color: var(--border-color-active);
+  border-bottom-color: var(--border-color-active);
 }
 
 /* Content */
@@ -151,12 +151,12 @@
 }
 
 .modeSelector button:hover {
-  border-color: var(--color-accent);
+  border-color: var(--border-color-active);
 }
 
 .modeSelector button.active {
-  border-color: var(--color-accent);
-  background: color-mix(in srgb, var(--color-accent) 5%, transparent);
+  border-color: var(--border-color-active);
+  background: color-mix(in srgb, var(--border-color-active) 5%, transparent);
 }
 
 .modeSelector button svg {
@@ -164,7 +164,7 @@
 }
 
 .modeSelector button.active svg {
-  color: var(--color-accent);
+  color: var(--border-color-active);
 }
 
 .modeMeta {
@@ -207,7 +207,7 @@
 }
 
 .previewStat svg {
-  color: var(--color-accent);
+  color: var(--border-color-active);
 }
 
 .previewNote,
@@ -243,7 +243,7 @@
   justify-content: center;
   gap: var(--space-2);
   padding: var(--space-3);
-  background: var(--color-accent);
+  background: var(--border-color-active);
   border: none;
   border-radius: var(--radius-md);
   font-size: var(--text-sm);
@@ -276,7 +276,7 @@
 
 .secondaryButton:hover {
   background: var(--bg-active);
-  border-color: var(--color-accent);
+  border-color: var(--border-color-active);
 }
 
 /* Import */
@@ -300,8 +300,8 @@
 }
 
 .dropzone:hover {
-  border-color: var(--color-accent);
-  background: color-mix(in srgb, var(--color-accent) 5%, transparent);
+  border-color: var(--border-color-active);
+  background: color-mix(in srgb, var(--border-color-active) 5%, transparent);
 }
 
 .dropzone svg {
@@ -309,7 +309,7 @@
 }
 
 .dropzone:hover svg {
-  color: var(--color-accent);
+  color: var(--border-color-active);
 }
 
 .dropzone h4 {

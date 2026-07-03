@@ -86,7 +86,7 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
       <button
         type="button"
         onClick={onToggleSidebar}
-        className="absolute -right-3 top-4 z-[var(--z-dropdown)] w-6 h-6 rounded-full border border-[var(--border-color)] bg-[var(--bg-panel)] text-[var(--text-secondary)] hover:text-[var(--color-accent)] flex items-center justify-center shadow-sm"
+        className="absolute -right-3 top-4 z-[var(--z-dropdown)] w-6 h-6 rounded-full border border-[var(--border-color)] bg-[var(--bg-panel)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-rail)] flex items-center justify-center shadow-sm"
         aria-label={sidebarCollapsed ? 'Expand variable sidebar' : 'Collapse variable sidebar'}
         aria-expanded={!sidebarCollapsed}
       >
@@ -107,7 +107,7 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
                 placeholder="Search variables..."
                 value={searchQuery}
                 onChange={(e) => onSearchChange(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 bg-[var(--bg-surface)] border-none rounded-md text-sm focus:ring-2 focus:ring-[var(--color-accent)]/20 focus:bg-[var(--bg-panel)] transition-all outline-none text-[var(--text-primary)]"
+                className="w-full pl-9 pr-3 py-2 bg-[var(--bg-surface)] border-none rounded-md text-sm focus:ring-2 focus:ring-[var(--border-color-active)]/20 focus:bg-[var(--bg-panel)] transition-all outline-none text-[var(--text-primary)]"
               />
             </div>
           </div>
