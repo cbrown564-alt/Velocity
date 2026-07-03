@@ -40,6 +40,42 @@ interface VariableManagerProps {
   onClose: () => void;
 }
 
+/**
+ * Fills the inspector column when no variable is selected — a guided
+ * placeholder instead of a blank panel (UXF-009).
+ */
+const InspectorEmptyState: React.FC<{ hasSelection: boolean }> = ({ hasSelection }) => (
+  <div
+    className="flex-1 min-w-0 flex flex-col items-center justify-center gap-4 px-8 text-center select-none"
+    data-testid="inspector-empty-state"
+  >
+    <div className="flex items-center justify-center w-14 h-14 rounded-xl bg-[var(--bg-active)] border border-[var(--border-color)]">
+      <SlidersHorizontal size={22} className="text-[var(--text-secondary)]" aria-hidden />
+    </div>
+    <div className="space-y-1 max-w-xs">
+      <p className="text-sm font-medium text-[var(--text-primary)]">
+        {hasSelection ? 'Select a variable to inspect' : 'Nothing selected'}
+      </p>
+      <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
+        {hasSelection
+          ? 'Pick a variable on the left to preview its distribution, value labels, and quality.'
+          : 'Choose a variable set to preview distributions, edit labels, and check data quality.'}
+      </p>
+    </div>
+    <div className="flex items-center gap-3 text-[10px] text-[var(--text-tertiary)]">
+      <span>
+        <kbd className="px-1.5 py-0.5 bg-[var(--bg-active)] rounded font-mono">↑↓</kbd> navigate
+      </span>
+      <span>
+        <kbd className="px-1.5 py-0.5 bg-[var(--bg-active)] rounded font-mono">⌘A</kbd> select all
+      </span>
+      <span>
+        <kbd className="px-1.5 py-0.5 bg-[var(--bg-active)] rounded font-mono">Esc</kbd> close
+      </span>
+    </div>
+  </div>
+);
+
 export const VariableManager: React.FC<VariableManagerProps> = ({ onClose }) => {
   const dataset = useVelocityStore((state) => state.dataset);
   const variableSets = useVelocityStore((state) => state.variableSets);
@@ -246,8 +282,8 @@ export const VariableManager: React.FC<VariableManagerProps> = ({ onClose }) => 
           {/* Column 4: Variables (conditionally shown) */}
           <VariableColumn />
 
-          {/* Column 5: Inspector (conditionally shown) */}
-          {showInspector && <VariableInspector />}
+          {/* Column 5: Inspector, or a guided empty state when nothing is selected (UXF-009) */}
+          {showInspector ? <VariableInspector /> : <InspectorEmptyState hasSelection={!!selectedVariableSetId} />}
         </div>
 
         {/* Footer */}

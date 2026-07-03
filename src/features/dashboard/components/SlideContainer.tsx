@@ -13,6 +13,7 @@ import { recommendChart } from '../../../core/visualization/chartRecommender';
 import { useResolvedVariables } from '../hooks/useResolvedVariables';
 import { useSuggestedVariables } from '../hooks/useSuggestedVariables';
 import { useAutoFirstCrosstab } from '../hooks/useAutoFirstCrosstab';
+import { useFocusModeTip } from '../hooks/useFocusModeTip';
 import { applyCanvasPlacement } from '../../../core/grid/gridUtils';
 import { getMotionProps, useReducedMotion, DURATIONS } from '../../../lib/motion';
 import { AnalysisOutputFrame } from './AnalysisOutputFrame';
@@ -79,6 +80,9 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
   const suggestions = useSuggestedVariables(allVariables, variableSets, inUseIds, 3, dataset?.rowCount);
   const reducedMotion = useReducedMotion();
   useAutoFirstCrosstab(resolvedRowVars.length, tableConfig.colVar);
+  useFocusModeTip(
+    activeSlide?.visualizationType === 'table' && resolvedRowVars.length > 0 && chartData.length > 0 && !isQuerying,
+  );
 
   if (!activeSlide) {
     return <div className="p-4 text-[var(--text-secondary)]">No active slide</div>;
@@ -105,6 +109,11 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
     activeSlide.visualizationType === 'table' &&
     chartData.length > VIRTUALIZE_ROW_THRESHOLD;
   const shrinkWrapSlide = resolvedRowVars.length > 0 && !tableNeedsFill;
+
+  // Content-aware slide height (UXF-004): tables shrink-wrap the card to their
+  // content and cap at the canvas height (internal scroll takes over beyond
+  // that). Charts, empty, and error states keep filling the canvas.
+  const shrinkWrap = activeSlide.visualizationType === 'table' && !queryError && resolvedRowVars.length > 0;
 
   const renderCellContent = () => {
     if (queryError && !isQuerying) {

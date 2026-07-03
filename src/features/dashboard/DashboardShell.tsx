@@ -243,13 +243,9 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
 
               <SmartCanvas className={`flex-1 relative min-h-0 flex flex-col ${focusMode ? 'p-2' : 'p-4'}`}>
                 <div className="flex-1 w-full min-h-0 flex flex-col">
-                  <div
-                    className={`flex-1 relative min-h-0 flex flex-col ${
-                      focusMode
-                        ? 'bg-transparent border-0 shadow-none rounded-none'
-                        : 'bg-[var(--bg-panel)] rounded-xl border border-[var(--border-color)] shadow-sm'
-                    }`}
-                  >
+                  {/* The slide's own surface-panel is the single card on the
+                      canvas; no nested panel chrome around it (UXF-004/008) */}
+                  <div className="flex-1 relative min-h-0 flex flex-col">
                     {isQuerying && (
                       <div className="absolute inset-0 bg-[var(--bg-panel)]/50 z-20 flex items-center justify-center backdrop-blur-sm">
                         <Loader2 className="animate-spin text-[var(--color-accent)]" size={32} />

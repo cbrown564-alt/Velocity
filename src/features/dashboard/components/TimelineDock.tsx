@@ -479,6 +479,7 @@ export const TimelineDock: React.FC = () => {
               color: 'var(--text-secondary)',
               fontFamily: 'var(--font-mono, monospace)',
             }}
+            aria-label={`Slide ${activeIndex + 1} of ${slides.length}`}
           >
             {activeIndex + 1}/{slides.length}
           </span>
@@ -526,19 +527,23 @@ export const TimelineDock: React.FC = () => {
             </DndContext>
           </div>
 
-          {/* Add slide button */}
+          {/* Add slide button — quiet ghost control (accent budget, UXF-008) */}
           <div className="pl-2 border-l border-[var(--border-color)] shrink-0">
             <button
               onClick={() => addSlide()}
               className="
-                              flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium
-                              bg-[var(--color-accent)] text-[var(--text-inverse)] shadow-sm hover:shadow 
-                              transition-all duration-150 hover:bg-opacity-90 active:scale-95
+                              flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium
+                              text-[var(--text-secondary)] border border-transparent
+                              hover:text-[var(--text-primary)] hover:bg-[var(--bg-active)]
+                              transition-colors duration-150
                           "
               title="New Slide (N)"
             >
-              <Plus size={14} strokeWidth={2.5} />
+              <Plus size={14} strokeWidth={2} />
               <span className="hidden sm:inline">New Slide</span>
+              <kbd className="hidden xl:inline text-[10px] px-1 rounded bg-[var(--bg-active)] text-[var(--text-tertiary)] font-mono">
+                N
+              </kbd>
             </button>
           </div>
         </div>
