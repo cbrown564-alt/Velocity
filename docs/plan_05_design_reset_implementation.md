@@ -1,7 +1,7 @@
 # Design Reset Implementation Plan (Pathway B)
 
-**Status:** Ready to execute — Phase 0 complete, Phase 1 not started
-**Date:** July 3, 2026
+**Status:** In execution on branch `design-reset/phase-1-4` — Phase 1 landed (WP1.4 audit pending), Phase 2 partially landed (see §8)
+**Date:** July 3, 2026 (status updated same day)
 **Purpose:** Standalone execution plan for the approved design reset. A fresh session should be able to pick up any work package from this document alone, without the originating conversation.
 
 ---
@@ -236,20 +236,24 @@ Re-read `docs/design_02_ux_modes.md` §2 and the deck-native charter before star
 
 ## 8. Status board
 
-| WP | Name | Status | PR |
+All in-flight work lives on branch `design-reset/phase-1-4` (not yet PR'd/merged to main).
+
+| WP | Name | Status | Commit |
 | :--- | :--- | :--- | :--- |
-| 0 | North star screens | **Done** | commit `b41c546` |
-| 1.1 | Single theme | Not started | |
-| 1.2 | Delete coaching layer | Not started | |
-| 1.3 | Quiet toolbar | Not started | |
-| 1.4 | Accent budget | Not started | |
-| 2.1 | Story rail | Not started | |
-| 2.2 | Insert palette | Not started | |
-| 2.3 | Recipe inspector | Not started | |
-| 2.4 | Honest slide | Not started | |
-| 2.5 | Two-pane Variable Manager | Not started | |
-| 3.1–3.4 | Density & craft | Not started | |
-| 4.1–4.4 | Evidence & reconciliation | Not started | |
+| 0 | North star screens | **Done** | `b41c546` (main) |
+| 1.1 | Single theme | **Done** — one static token set in `index.css`; ThemeContext/ThemeSwitcher deleted; viz palette re-derived + validated; fonts trimmed | `bc3bee5` |
+| 1.2 | Delete coaching layer | **Done** — onboarding dir + hooks deleted; one-line empty state; single status slot replaces toast stack; story-shelf pill removed | `a3a230c` |
+| 1.3 | Quiet toolbar | **Done** — view toggle, Insert ⌘K, overflow `···`, primary Export (only accent) | `978fb4b` (merged `be73c01`) |
+| 1.4 | Accent budget | **Landed, audit pending** — repo-wide sweep harvested from interrupted sub-agent; grep audit + sig-arrow/legend accent check still to verify | `baa0f47` |
+| 2.1 | Story rail | **In progress** — `StoryRail.tsx` built (rows, rename, reorder, shortcuts, persistence footer); NOT yet wired into `DashboardShell`; sidebar + TimelineDock still render | `1413119` |
+| 2.2 | Insert palette | **Done** — variables default, `>` commands, ↵/⌥↵/⇧↵ grammar, label search, filter preselect; drag-out supported when mounted in dashboard DndContext | `22e6511`, `be73c01` |
+| 2.3 | Recipe inspector | **In progress** — `RecipeInspector.tsx` built (chips as droppables reusing shelf zone ids, display + significance settings); NOT yet wired; shelf + FilterBar still render | `1413119` |
+| 2.4 | Honest slide | **Done** — frame footer removed; StatisticsStatusBar renders as muted margin note outside the card; settings controls removed from it (inspector owns them) | `99e104f`, `e3ef8ce` |
+| 2.5 | Two-pane Variable Manager | **In progress** — sub-agent partial on branch `design-reset/wp-2-5` (worktree `.claude/worktrees/agent-a12b6403628805e82`): FolderFilterMenu, dense-row model + tests; `VariableManager.tsx` rebuild and Miller-column deletion not started | `acfadf0` (that branch) |
+| 3.1–3.4 | Density & craft | Not started (partial credit: rail rename ↵, ⌘↑/⌘↓ reorder shipped with 2.1 component) | |
+| 4.1–4.4 | Evidence & reconciliation | Not started — E2E/visual baselines NOT yet re-recorded (theme spec reduced to single baseline, will need `--update-snapshots` run); screenshot audit pending | |
+
+**Resume next:** (1) wire StoryRail + RecipeInspector into `DashboardShell` (replace DashboardSidebar/TimelineDock/AnalysisShelf/FilterBar; add `Recipe` toggle to toolbar; mount `<CommandPalette withinDnd />` inside the DndContext); (2) finish WP1.4 audit (grep `--color-accent|--text-accent` consumers, sig arrows → accent, SignificanceLegend copy); (3) finish WP2.5 from the `design-reset/wp-2-5` branch; (4) Phase 3–4.
 
 ---
 
