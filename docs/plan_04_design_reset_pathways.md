@@ -1,6 +1,6 @@
 # Design Reset: Pathways to a Calm, Story-First Velocity
 
-**Status:** Proposal — pathway decision pending human owner
+**Status:** Pathway B approved (July 3, 2026) — evolved Soft Machine identity, dark mode deferred. Phase 0 (north-star screens) in progress; see `docs/assets/design-reset-north-star/north_star.html`
 **Date:** July 3, 2026
 **Quality bar:** Linear-grade restraint, applied structurally this time — not as a fix list
 **Companion docs:** [`audit_07_pilot_presentation_readiness_2026-07-01.md`](audit_07_pilot_presentation_readiness_2026-07-01.md) (tactical predecessor), [`deck_native_multi_agent_plan.md`](deck_native_multi_agent_plan.md) (product direction), [`design_01_system.md`](design_01_system.md) (to be superseded), [`design_02_ux_modes.md`](design_02_ux_modes.md)
@@ -142,9 +142,9 @@ Gates per phase: typecheck, lint, unit, E2E/visual re-baseline, screenshot pack 
 
 ---
 
-## 7. Open decisions for the human owner
+## 7. Decisions (resolved July 3, 2026)
 
-1. **Pathway choice** — A (reset only), B (recommended), or B with C's palette-first insertion emphasized.
-2. **Surviving theme identity** — evolve Soft Machine (warm neutral + serif slide titles) vs. a colder Linear-like neutral. Recommendation: evolved Soft Machine — warmth is a brand asset in a field of gray enterprise tools, *if* the accent budget is enforced.
-3. **Timing vs. PILOT-6** — Phase 1 (subtraction) before pilot photography is low-risk and high-ROI; Phase 2 (inversion) either before pilots (stronger first impression, later date) or validated by pilot evidence first.
-4. **Dark mode** — explicitly deferred until a pilot asks; it must be the same identity, not a second personality.
+1. **Pathway choice** — **B approved** (deck-first inversion + visual reset, with C's palette-first insertion as the universal entry point).
+2. **Surviving theme identity** — **evolved Soft Machine**: warm neutrals, green-ink text, one sienna accent under a strict budget, serif reserved for the slide artifact only.
+3. **Timing vs. PILOT-6** — open; revisit after Phase 0 north-star review.
+4. **Dark mode** — **deferred** until a pilot asks; must be the same identity, not a second personality.
