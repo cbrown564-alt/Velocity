@@ -203,7 +203,7 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
             persistenceError={persistenceError}
           />
 
-          <main className="flex-1 flex flex-col bg-[var(--bg-app)] relative overflow-hidden z-0">
+          <main id="main-content" className="flex-1 flex flex-col bg-[var(--bg-app)] relative overflow-hidden z-0">
             <DashboardToolbar
               dataset={dataset}
               activeSlideId={activeSlideId}
@@ -247,7 +247,7 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
                       canvas; no nested panel chrome around it (UXF-004/008) */}
                   <div className="flex-1 relative min-h-0 flex flex-col">
                     {isQuerying && (
-                      <div className="absolute inset-0 bg-[var(--bg-panel)]/50 z-20 flex items-center justify-center backdrop-blur-sm">
+                      <div className="absolute inset-0 bg-[var(--bg-panel)]/50 z-[var(--z-sticky)] flex items-center justify-center backdrop-blur-sm">
                         <Loader2 className="animate-spin text-[var(--color-accent)]" size={32} />
                       </div>
                     )}

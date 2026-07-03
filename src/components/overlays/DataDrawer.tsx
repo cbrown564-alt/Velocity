@@ -87,7 +87,7 @@ export const DataDrawer: React.FC<DataDrawerProps> = ({
             animate={{ opacity: 0.5 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-[var(--text-primary)]/20 backdrop-blur-sm z-40"
+            className="fixed inset-0 bg-[var(--text-primary)]/20 backdrop-blur-sm z-[var(--z-modal)]"
           />
 
           {/* Drawer Panel */}
@@ -96,7 +96,7 @@ export const DataDrawer: React.FC<DataDrawerProps> = ({
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={reducedMotion ? { duration: 0.01 } : { type: 'spring', damping: 30, stiffness: 300 }}
-            className="fixed inset-y-0 right-0 w-[700px] bg-[var(--bg-panel)] shadow-[var(--shadow-drag)] z-50 flex flex-col border-l border-[var(--border-color)]"
+            className="fixed inset-y-0 right-0 w-[700px] bg-[var(--bg-panel)] shadow-[var(--shadow-drag)] z-[var(--z-modal)] flex flex-col border-l border-[var(--border-color)]"
           >
             {/* Header */}
             <div className="h-16 border-b border-[var(--border-color)] flex items-center justify-between px-6 bg-[var(--bg-panel)] shrink-0">
@@ -149,7 +149,7 @@ export const DataDrawer: React.FC<DataDrawerProps> = ({
                 <div className="bg-[var(--bg-panel)] border border-[var(--border-color)] rounded-lg overflow-hidden shadow-sm">
                   <div className="overflow-x-auto max-h-[calc(100vh-220px)]">
                     <table className="w-full text-xs text-left">
-                      <thead className="border-b border-[var(--bg-hover)] text-[var(--text-secondary)] uppercase font-medium font-body sticky top-0 z-10">
+                      <thead className="border-b border-[var(--bg-hover)] text-[var(--text-secondary)] uppercase font-medium font-body sticky top-0 z-[var(--z-sticky)]">
                         <tr>
                           {/* Row number column */}
                           <th className="px-3 py-2.5 whitespace-nowrap bg-[var(--bg-active)] border-b border-[var(--border-color)] text-center w-12">

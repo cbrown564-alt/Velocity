@@ -264,7 +264,7 @@ export const StatisticsStatusBar: React.FC<StatisticsStatusBarProps> = ({
                   exit={{ opacity: 0 }}
                   transition={{ duration: reducedMotion ? DURATIONS.instant : DURATIONS.fast }}
                   onClick={() => setShowSettings(false)}
-                  className="fixed inset-0 z-40 bg-transparent cursor-default"
+                  className="fixed inset-0 z-[var(--z-dropdown)] bg-transparent cursor-default"
                 />
                 <motion.div
                   role="dialog"

@@ -99,4 +99,11 @@ describe('CommandPalette', () => {
     fireEvent.click(screen.getByText('Toggle Focus Mode'));
     expect(toggleFocus).toHaveBeenCalled();
   });
+
+  it('exposes dialog semantics on the panel', () => {
+    render(<CommandPalette />, { wrapper: Wrapper });
+    const dialog = screen.getByRole('dialog');
+    expect(dialog).toHaveAttribute('aria-modal', 'true');
+    expect(dialog).toHaveAttribute('aria-label', 'Command palette');
+  });
 });

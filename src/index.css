@@ -453,7 +453,7 @@ h3 {
   background: var(--color-accent);
   box-shadow: 0 0 8px var(--color-accent);
   transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  z-index: 10;
+  z-index: var(--z-sticky);
 }
 
 [data-theme='mission-control'] .data-row-interactive:hover {

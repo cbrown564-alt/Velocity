@@ -20,7 +20,7 @@ interface FilterBarProps {
 export const FilterBar: React.FC<FilterBarProps> = ({ filters, variables, onAddFilter, onRemoveFilter }) => {
   return (
     <div
-      className="h-12 border-b flex items-center px-6 gap-3 shrink-0 z-10"
+      className="h-12 border-b flex items-center px-6 gap-3 shrink-0 z-[var(--z-sticky)]"
       style={{
         borderColor: 'var(--border-color)',
         backgroundColor: 'var(--bg-surface)',

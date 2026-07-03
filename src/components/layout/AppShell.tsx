@@ -118,7 +118,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
               ease: 'standard',
               reducedMotion,
             })}
-            className="absolute inset-0 z-50"
+            className="absolute inset-0 z-[var(--z-modal)]"
           >
             <VariableManager onClose={toggleAppMode} />
           </motion.div>

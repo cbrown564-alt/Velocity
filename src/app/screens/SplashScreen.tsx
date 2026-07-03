@@ -72,7 +72,7 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
       key="workspace-splash"
       initial={{ opacity: 1 }}
       exit={{ opacity: 0, transition: { duration: reducedMotion ? 0 : 0.12 } }}
-      className="fixed inset-0 bg-[var(--bg-app)] z-40"
+      className="fixed inset-0 bg-[var(--bg-app)] z-[var(--z-modal)]"
     >
       {isDbReady && !initError && (
         <WorkspaceView
@@ -95,7 +95,7 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
 
       {(!isDbReady || initError) && (
         <div
-          className="absolute top-0 left-0 right-0 z-50 border-b border-[var(--border-color-muted)] bg-[var(--bg-panel)]/95 backdrop-blur-sm"
+          className="absolute top-0 left-0 right-0 z-[var(--z-dropdown)] border-b border-[var(--border-color-muted)] bg-[var(--bg-panel)]/95 backdrop-blur-sm"
           data-testid="engine-init-bar"
         >
           <div className="max-w-4xl mx-auto px-6 py-3 flex items-center gap-3">

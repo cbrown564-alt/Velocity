@@ -330,7 +330,7 @@ export const DataTable: React.FC<DataTableProps> = ({
         <th
           aria-hidden
           style={{ width, padding: 0 }}
-          className="sticky top-0 z-10 bg-[var(--bg-panel)] data-[theme=liquid-glass]:bg-[var(--mat-panel-bg)] border-b border-[var(--border-grid)]"
+          className="sticky top-0 z-[var(--z-sticky)] bg-[var(--bg-panel)] data-[theme=liquid-glass]:bg-[var(--mat-panel-bg)] border-b border-[var(--border-grid)]"
         />
       ) : (
         <td aria-hidden style={{ width, padding: 0 }} className="border-l border-[var(--border-subtle)]" />
@@ -369,7 +369,7 @@ export const DataTable: React.FC<DataTableProps> = ({
             <tr className="font-body">
               <th
                 style={{ width: columnWidths?.rowLabel }}
-                className={`px-2 ${density === 'generous' ? 'py-4' : 'py-2.5'} font-bold text-[var(--text-secondary)] tracking-wider text-left align-bottom sticky top-0 bg-[var(--bg-panel)] data-[theme=liquid-glass]:bg-[var(--mat-panel-bg)] data-[theme=liquid-glass]:backdrop-blur-md z-10 box-border border-b border-[var(--border-grid)] uppercase text-[11px] font-body`}
+                className={`px-2 ${density === 'generous' ? 'py-4' : 'py-2.5'} font-bold text-[var(--text-secondary)] tracking-wider text-left align-bottom sticky top-0 bg-[var(--bg-panel)] data-[theme=liquid-glass]:bg-[var(--mat-panel-bg)] data-[theme=liquid-glass]:backdrop-blur-md z-[var(--z-sticky)] box-border border-b border-[var(--border-grid)] uppercase text-[11px] font-body`}
               >
                 {toUiCaps(rowVariables[0].label)}
               </th>
@@ -388,7 +388,7 @@ export const DataTable: React.FC<DataTableProps> = ({
                     key={col}
                     style={{ width: columnWidths?.columns[col] }}
                     className={[
-                      `px-2 ${density === 'generous' ? 'py-3' : 'py-2'} font-bold font-mono text-[var(--text-secondary)] text-left align-bottom sticky top-0 bg-[var(--bg-panel)] data-[theme=liquid-glass]:bg-[var(--mat-panel-bg)] data-[theme=liquid-glass]:backdrop-blur-md z-10 border-b border-l border-[var(--border-grid)] transition-colors`,
+                      `px-2 ${density === 'generous' ? 'py-3' : 'py-2'} font-bold font-mono text-[var(--text-secondary)] text-left align-bottom sticky top-0 bg-[var(--bg-panel)] data-[theme=liquid-glass]:bg-[var(--mat-panel-bg)] data-[theme=liquid-glass]:backdrop-blur-md z-[var(--z-sticky)] border-b border-l border-[var(--border-grid)] transition-colors`,
                       hoveredCol === col
                         ? 'bg-[var(--bg-active)] border-l-[var(--border-color-active)]'
                         : 'border-l-transparent',
@@ -440,7 +440,7 @@ export const DataTable: React.FC<DataTableProps> = ({
               {tableData.colKeys.length > 1 && (
                 <th
                   style={{ width: columnWidths?.total }}
-                  className="px-2 py-2.5 font-bold font-mono text-left text-[var(--text-secondary)] bg-[var(--bg-active)] align-bottom sticky top-0 z-10 border-b border-[var(--border-grid)] shadow-[inset_0_-2px_0_var(--border-grid)] text-[11px] uppercase tracking-wider"
+                  className="px-2 py-2.5 font-bold font-mono text-left text-[var(--text-secondary)] bg-[var(--bg-active)] align-bottom sticky top-0 z-[var(--z-sticky)] border-b border-[var(--border-grid)] shadow-[inset_0_-2px_0_var(--border-grid)] text-[11px] uppercase tracking-wider"
                 >
                   Total
                 </th>

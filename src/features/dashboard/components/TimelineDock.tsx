@@ -171,7 +171,7 @@ const SlideThumb: React.FC<SlideThumbProps> = ({
         style={style}
         {...attributes}
         {...listeners}
-        className={`relative group ${isDragging ? 'z-50' : ''}`}
+        className={`relative group ${isDragging ? 'z-[var(--z-popover)]' : ''}`}
       >
         <motion.button
           onClick={onClick}
@@ -230,7 +230,7 @@ const SlideThumb: React.FC<SlideThumbProps> = ({
 
         {/* Tooltip — shows full title on hover for inactive slides */}
         {!isActive && (
-          <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
+          <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-[var(--z-popover)]">
             <div
               className="text-[10px] py-0.5 px-2 rounded shadow-lg"
               style={{
@@ -294,7 +294,7 @@ const SlideThumb: React.FC<SlideThumbProps> = ({
 const SectionDivider: React.FC<{ section: SlideSection }> = ({ section }) => (
   <div className="flex items-center justify-center mx-0.5 group relative self-stretch">
     <div className="w-px h-3.5 rounded-full" style={{ backgroundColor: section.color || 'var(--border-color)' }} />
-    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
+    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-[var(--z-popover)]">
       <div
         className="text-[9px] py-0.5 px-1.5 rounded shadow-lg uppercase tracking-wider font-medium"
         style={{

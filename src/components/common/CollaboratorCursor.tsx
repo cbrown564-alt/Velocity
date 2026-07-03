@@ -19,10 +19,10 @@ export const CollaboratorCursor: React.FC<{ user: Collaborator }> = ({ user }) =
         duration: reducedMotion ? DURATIONS.instant : 1.5,
         ease: 'easeInOut', // Smooth floating movement
       }}
-      className="absolute pointer-events-none z-50 flex flex-col items-start font-body"
+      className="absolute pointer-events-none z-[var(--z-popover)] flex flex-col items-start font-body"
       style={{ color: user.color }}
     >
-      <MousePointer2 size={16} fill={user.color} className="relative z-10" />
+      <MousePointer2 size={16} fill={user.color} className="relative z-[var(--z-sticky)]" />
 
       <div
         className="ml-3 -mt-1 bg-[var(--bg-surface)] border shadow-sm rounded-lg px-2 py-1 flex flex-col min-w-max"

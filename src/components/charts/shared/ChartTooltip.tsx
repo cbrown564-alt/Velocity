@@ -14,7 +14,7 @@ export const ChartTooltip: React.FC<ChartTooltipProps> = ({ x, y, visible, conte
   // Use portal to break out of chart container overflow
   return createPortal(
     <div
-      className="fixed z-50 pointer-events-none transition-opacity duration-150 ease-in-out"
+      className="fixed z-[var(--z-popover)] pointer-events-none transition-opacity duration-150 ease-in-out"
       style={{
         left: x,
         top: y,

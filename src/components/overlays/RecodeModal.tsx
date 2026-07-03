@@ -92,7 +92,7 @@ export const RecodeModal: React.FC<RecodeModalProps> = ({ isOpen, onClose, varia
     <ModalShell
       isOpen={isOpen}
       onClose={onClose}
-      backdropClassName="fixed inset-0 bg-[var(--text-primary)]/60 backdrop-blur-sm z-50"
+      backdropClassName="fixed inset-0 bg-[var(--text-primary)]/60 backdrop-blur-sm z-[var(--z-modal)]"
       panelClassName="bg-[var(--bg-panel)] rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden pointer-events-auto flex flex-col max-h-[85vh]"
     >
       {/* Header */}

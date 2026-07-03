@@ -47,4 +47,11 @@ describe('KeyboardShortcuts', () => {
     fireEvent.click(screen.getByRole('button', { name: /close/i }));
     expect(useVelocityStore.getState().shortcutsOpen).toBe(false);
   });
+
+  it('exposes dialog semantics on the panel', () => {
+    render(<KeyboardShortcuts />);
+    const dialog = screen.getByRole('dialog');
+    expect(dialog).toHaveAttribute('aria-modal', 'true');
+    expect(dialog).toHaveAttribute('aria-labelledby');
+  });
 });

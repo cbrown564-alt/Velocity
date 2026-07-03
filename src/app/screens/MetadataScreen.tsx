@@ -17,7 +17,7 @@ export const MetadataScreen: React.FC<MetadataScreenProps> = ({ dataset, pending
   return (
     <motion.div
       {...getMotionProps({ preset: 'fade', duration: DURATIONS.enter, reducedMotion })}
-      className="fixed inset-0 flex items-center justify-center bg-[var(--bg-app)] z-40"
+      className="fixed inset-0 flex items-center justify-center bg-[var(--bg-app)] z-[var(--z-modal)]"
     >
       <div className="text-center space-y-8 max-w-2xl w-full px-6">
         <div className="space-y-3">

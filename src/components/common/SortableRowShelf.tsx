@@ -42,7 +42,7 @@ const SortableItem: React.FC<SortableItemProps> = ({ variableSet, onRemove }) =>
       className={`relative flex items-center justify-between p-2 pl-2 pr-2 bg-[var(--bg-panel)] border border-[var(--border-color)] rounded-md group
                 ${
                   isDragging
-                    ? 'z-50 shadow-lg ring-2 ring-[var(--color-accent)]'
+                    ? 'z-[var(--z-popover)] shadow-lg ring-2 ring-[var(--color-accent)]'
                     : 'hover:bg-[var(--bg-active)] hover:border-[var(--color-accent-hover)]'
                 }`}
     >

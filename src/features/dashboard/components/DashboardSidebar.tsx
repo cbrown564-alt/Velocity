@@ -79,14 +79,14 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
 
   return (
     <aside
-      className={`surface-panel bg-[var(--bg-panel)] border-r border-[var(--border-color)] flex flex-col shrink-0 z-30 relative transition-all duration-300 ${
+      className={`surface-panel bg-[var(--bg-panel)] border-r border-[var(--border-color)] flex flex-col shrink-0 z-[var(--z-sticky)] relative transition-all duration-300 ${
         focusMode ? 'w-0 opacity-0 overflow-hidden' : sidebarCollapsed ? 'w-14 opacity-100' : 'w-72 opacity-100'
       }`}
     >
       <button
         type="button"
         onClick={onToggleSidebar}
-        className="absolute -right-3 top-4 z-40 w-6 h-6 rounded-full border border-[var(--border-color)] bg-[var(--bg-panel)] text-[var(--text-secondary)] hover:text-[var(--color-accent)] flex items-center justify-center shadow-sm"
+        className="absolute -right-3 top-4 z-[var(--z-dropdown)] w-6 h-6 rounded-full border border-[var(--border-color)] bg-[var(--bg-panel)] text-[var(--text-secondary)] hover:text-[var(--color-accent)] flex items-center justify-center shadow-sm"
         aria-label={sidebarCollapsed ? 'Expand variable sidebar' : 'Collapse variable sidebar'}
         aria-expanded={!sidebarCollapsed}
       >

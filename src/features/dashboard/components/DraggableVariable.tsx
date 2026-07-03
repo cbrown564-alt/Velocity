@@ -65,7 +65,7 @@ export const VariableCard: React.FC<VariableCardProps> = ({
         ${isSelected ? 'bg-[var(--bg-active)] border-[var(--color-accent)] ring-1 ring-[var(--color-accent)]' : 'hover:bg-[var(--bg-panel)]'}
         ${isFocused && !isSelected ? 'border-[var(--color-accent)] bg-[var(--bg-active)] ring-1 ring-[var(--color-accent)]/30' : ''}
         ${isHovered && !isSelected && !isFocused ? 'border-[var(--color-accent)]/60 bg-[color-mix(in_srgb,var(--color-accent),transparent_94%)]' : ''}
-        ${isOverlay ? 'shadow-xl scale-105 cursor-grabbing !opacity-100 z-50' : ''}
+        ${isOverlay ? 'shadow-xl scale-105 cursor-grabbing !opacity-100 z-[var(--z-popover)]' : ''}
       `}
       onMouseEnter={() => setHoveredVariableSetId(variableSet.id)}
       onMouseLeave={() => setHoveredVariableSetId(null)}

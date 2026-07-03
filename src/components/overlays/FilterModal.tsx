@@ -144,7 +144,7 @@ export const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, varia
       layout="unified"
       escapeToClose
       unmountWhenClosed
-      backdropClassName="fixed inset-0 bg-[var(--text-primary)]/30 backdrop-blur-sm z-50 flex items-center justify-center"
+      backdropClassName="fixed inset-0 bg-[var(--text-primary)]/30 backdrop-blur-sm z-[var(--z-modal)] flex items-center justify-center"
       panelClassName="w-full max-w-md rounded-lg overflow-hidden shadow-2xl"
       panelStyle={{
         backgroundColor: 'var(--bg-panel)',
