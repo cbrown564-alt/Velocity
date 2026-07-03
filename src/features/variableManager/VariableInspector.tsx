@@ -44,6 +44,8 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
   const splitGroupValue = useVelocityStore((state) => state.splitGroupValue);
   const getUniqueValues = useVelocityStore((state) => state.getUniqueValues);
   const setSelectedVariableId = useVelocityStore((state) => state.setSelectedVariableId);
+  const selectedVariableSetId = useVelocityStore((state) => state.selectedVariableSetId);
+  const variableSets = useVelocityStore((state) => state.variableSets);
   const transformLog = useVelocityStore((state) => state.transformLog);
 
   // Context menu state for chart interactions
@@ -70,7 +72,18 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
   // State for cross-highlighting
   const [hoveredKey, setHoveredKey] = useState<string | null>(null);
 
-  // Get the selected variable
+  const selectedSet = useMemo(() => {
+    if (!selectedVariableSetId) return null;
+    return variableSets.find((vs) => vs.id === selectedVariableSetId) ?? null;
+  }, [selectedVariableSetId, variableSets]);
+
+  const setVariables = useMemo((): Variable[] => {
+    if (!selectedSet || !dataset) return [];
+    return selectedSet.variableIds
+      .map((id) => dataset.variables.find((v) => v.id === id))
+      .filter((v): v is Variable => v !== undefined);
+  }, [selectedSet, dataset]);
+
   const variable = useMemo((): Variable | null => {
     if (!selectedVariableId || !dataset) return null;
     return dataset.variables.find((v) => v.id === selectedVariableId) || null;
@@ -277,7 +290,28 @@ export const VariableInspector: React.FC<VariableInspectorProps> = ({ className 
 
   return (
     <div className={`${styles.inspector} ${className || ''}`}>
-      {/* Header */}
+      {setVariables.length > 1 && (
+        <div className={styles.subVariableNav} role="tablist" aria-label="Variables in set">
+          {setVariables.map((setVar) => {
+            const isActive = setVar.id === selectedVariableId;
+            const tabLabel = setVar.label?.trim() || setVar.name;
+            return (
+              <button
+                key={setVar.id}
+                type="button"
+                role="tab"
+                aria-selected={isActive}
+                className={`${styles.subVariableTab} ${isActive ? styles.subVariableTabActive : ''}`}
+                onClick={() => setSelectedVariableId(setVar.id)}
+                title={tabLabel}
+              >
+                {setVar.name}
+              </button>
+            );
+          })}
+        </div>
+      )}
+
       <InspectorHeader variable={variable} stats={stats} isLoadingStats={isLoadingStats} />
 
       {/* Content feed: Chart -> Dictionary */}

@@ -1,18 +1,10 @@
 /**
  * VariableManager Component
  *
- * The "Data Gardening" spoke in the hub-and-spoke architecture.
- * Full-screen overlay for organizing and managing variables.
- *
- * Features (Milestone 2.2 - Card Sorting):
- * - Miller Column navigation: Sources → Folders → Variable Sets → Variables → Inspector
- * - Multi-select with Shift and Cmd/Ctrl click
- * - Drag-and-drop reordering
- * - Folder organization
- * - Bulk actions (hide, change type, group)
+ * Two-pane layout: dense variable list + inspector (WP2.5 design reset).
  */
 
-import React, { useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import {
   DndContext,
   closestCenter,
@@ -22,84 +14,68 @@ import {
   useSensors,
   DragEndEvent,
 } from '@dnd-kit/core';
-import { X, Search, Grid3X3, Tag, BarChart2, SlidersHorizontal, Calendar, Type } from 'lucide-react';
+import { X } from 'lucide-react';
 import { useVelocityStore } from '../../store';
-import { isCategoricalType, normalizeVariableType } from '../../types';
+import type { TypeFacet } from '../../store/slices/uiSlice';
+import { normalizeVariableType } from '../../types';
 import { registerShortcut } from '../../lib/keyboardShortcuts/registry';
 import { BulkActionBar } from './BulkActionBar';
-import { DataSourceColumn } from './DataSourceColumn';
-import { FolderColumn } from './FolderColumn';
-import { VariableSetColumn } from './VariableSetColumn';
-import { VariableColumn } from './VariableColumn';
+import { VariableList } from './VariableList';
 import { VariableInspector } from './VariableInspector';
-import { FacetedSearchBar } from './components/FacetedSearchBar';
 import { filterVariableSets } from './variableSetFilters';
-import millerStyles from './MillerColumns.module.css';
+import styles from './VariableManager.module.css';
 
 interface VariableManagerProps {
   onClose: () => void;
 }
 
-/**
- * Fills the inspector column when no variable is selected — a guided
- * placeholder instead of a blank panel (UXF-009).
- */
-const InspectorEmptyState: React.FC<{ hasSelection: boolean }> = ({ hasSelection }) => (
-  <div
-    className="flex-1 min-w-0 flex flex-col items-center justify-center gap-4 px-8 text-center select-none"
-    data-testid="inspector-empty-state"
-  >
-    <div className="flex items-center justify-center w-14 h-14 rounded-xl bg-[var(--bg-active)] border border-[var(--border-color)]">
-      <SlidersHorizontal size={22} className="text-[var(--text-secondary)]" aria-hidden />
-    </div>
-    <div className="space-y-1 max-w-xs">
-      <p className="text-sm font-medium text-[var(--text-primary)]">
-        {hasSelection ? 'Select a variable to inspect' : 'Nothing selected'}
-      </p>
-      <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
-        {hasSelection
-          ? 'Pick a variable on the left to preview its distribution, value labels, and quality.'
-          : 'Choose a variable set to preview distributions, edit labels, and check data quality.'}
-      </p>
-    </div>
-    <div className="flex items-center gap-3 text-[10px] text-[var(--text-tertiary)]">
-      <span>
-        <kbd className="px-1.5 py-0.5 bg-[var(--bg-active)] rounded font-mono">↑↓</kbd> navigate
-      </span>
-      <span>
-        <kbd className="px-1.5 py-0.5 bg-[var(--bg-active)] rounded font-mono">⌘A</kbd> select all
-      </span>
-      <span>
-        <kbd className="px-1.5 py-0.5 bg-[var(--bg-active)] rounded font-mono">Esc</kbd> close
-      </span>
-    </div>
-  </div>
-);
+type TypeChip = {
+  id: 'all' | TypeFacet;
+  label: string;
+  count: number;
+};
+
+const TYPE_CHIP_ORDER: { id: TypeFacet; label: string }[] = [
+  { id: 'categorical', label: 'Category' },
+  { id: 'ordered', label: 'Scale' },
+  { id: 'numeric', label: 'Numeric' },
+  { id: 'date', label: 'Date' },
+  { id: 'text', label: 'Text' },
+];
 
 export const VariableManager: React.FC<VariableManagerProps> = ({ onClose }) => {
   const dataset = useVelocityStore((state) => state.dataset);
   const variableSets = useVelocityStore((state) => state.variableSets);
+  const folders = useVelocityStore((state) => state.folders);
   const managerSearchQuery = useVelocityStore((state) => state.managerSearchQuery);
   const setManagerSearchQuery = useVelocityStore((state) => state.setManagerSearchQuery);
   const selectedVariableSetIds = useVelocityStore((state) => state.selectedVariableSetIds);
-  const selectedVariableSetId = useVelocityStore((state) => state.selectedVariableSetId);
-  const selectedVariableId = useVelocityStore((state) => state.selectedVariableId);
   const activeFolderId = useVelocityStore((state) => state.activeFolderId);
+  const setActiveFolderId = useVelocityStore((state) => state.setActiveFolderId);
   const selectAllVariableSets = useVelocityStore((state) => state.selectAllVariableSets);
   const clearSelection = useVelocityStore((state) => state.clearSelection);
   const moveToFolder = useVelocityStore((state) => state.moveToFolder);
   const facetFilters = useVelocityStore((state) => state.facetFilters);
+  const setFacetFilters = useVelocityStore((state) => state.setFacetFilters);
   const variableStats = useVelocityStore((state) => state.variableStats);
 
-  // Configure dnd-kit sensors
   const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: { distance: 8 },
-    }),
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
     useSensor(KeyboardSensor),
   );
 
   const visibleVariableSets = useMemo(() => filterVariableSets(variableSets, { dataset }), [variableSets, dataset]);
+
+  const folderScopedSets = useMemo(
+    () =>
+      filterVariableSets(variableSets, {
+        dataset,
+        activeFolderId,
+        searchQuery: managerSearchQuery,
+        variableStats,
+      }),
+    [variableSets, dataset, activeFolderId, managerSearchQuery, variableStats],
+  );
 
   const filteredSets = useMemo(
     () =>
@@ -110,37 +86,66 @@ export const VariableManager: React.FC<VariableManagerProps> = ({ onClose }) => 
         facetFilters,
         variableStats,
       }),
-    [variableSets, dataset, managerSearchQuery, activeFolderId, facetFilters, variableStats],
+    [variableSets, dataset, activeFolderId, managerSearchQuery, facetFilters, variableStats],
   );
 
   const filteredIds = useMemo(() => filteredSets.map((vs) => vs.id), [filteredSets]);
 
-  // Group variables by type for quick stats
-  const typeStats = useMemo(() => {
-    const stats = { categorical: 0, scale: 0, numeric: 0, date: 0, text: 0 };
-    visibleVariableSets.forEach((vs) => {
+  const typeChips = useMemo((): TypeChip[] => {
+    const counts = { categorical: 0, ordered: 0, numeric: 0, date: 0, text: 0 };
+    folderScopedSets.forEach((vs) => {
       const type = normalizeVariableType(vs.type || 'categorical');
-      if (isCategoricalType(type)) {
-        stats.categorical++;
-      } else if (type === 'ordered') {
-        stats.scale++;
-      } else if (type === 'numeric') {
-        stats.numeric++;
-      } else if (type === 'date') {
-        stats.date++;
-      } else if (type === 'text') {
-        stats.text++;
-      }
+      if (type === 'categorical') counts.categorical++;
+      else if (type === 'ordered') counts.ordered++;
+      else if (type === 'numeric') counts.numeric++;
+      else if (type === 'date') counts.date++;
+      else if (type === 'text') counts.text++;
     });
-    return stats;
-  }, [visibleVariableSets]);
+    const chips: TypeChip[] = [{ id: 'all', label: 'All', count: folderScopedSets.length }];
+    TYPE_CHIP_ORDER.forEach(({ id, label }) => {
+      if (counts[id] > 0) chips.push({ id, label, count: counts[id] });
+    });
+    return chips;
+  }, [folderScopedSets]);
 
-  // Handle drag end for folder drops
+  const folderChips = useMemo(() => {
+    const counts: Record<string, number> = { ungrouped: 0 };
+    folders.forEach((f) => {
+      counts[f.id] = 0;
+    });
+    visibleVariableSets.forEach((vs) => {
+      if (vs.folderId && counts[vs.folderId] !== undefined) counts[vs.folderId]++;
+      else counts.ungrouped++;
+    });
+    return {
+      all: visibleVariableSets.length,
+      ungrouped: counts.ungrouped,
+      folders: folders.map((f) => ({ id: f.id, name: f.name, count: counts[f.id] || 0 })),
+    };
+  }, [folders, visibleVariableSets]);
+
+  const activeTypeChip = facetFilters.types.length === 1 ? facetFilters.types[0] : 'all';
+
+  const handleTypeChip = useCallback(
+    (chipId: TypeChip['id']) => {
+      if (chipId === 'all') {
+        setFacetFilters({ types: [] });
+        return;
+      }
+      const isActive = facetFilters.types.length === 1 && facetFilters.types[0] === chipId;
+      setFacetFilters({ types: isActive ? [] : [chipId] });
+    },
+    [facetFilters.types, setFacetFilters],
+  );
+
+  const handleFolderChip = useCallback(
+    (folderId: string | null) => setActiveFolderId(folderId),
+    [setActiveFolderId],
+  );
+
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
-
-    // Check if dropping on a folder
     if (String(over.id).startsWith('folder-')) {
       const folderId = String(over.id).replace('folder-', '');
       const idsToMove = selectedVariableSetIds.includes(String(active.id))
@@ -158,14 +163,10 @@ export const VariableManager: React.FC<VariableManagerProps> = ({ onClose }) => 
       priority: 10,
       match: (event) => event.key === 'Escape',
       handler: () => {
-        if (selectedVariableSetIds.length > 0) {
-          clearSelection();
-        } else {
-          onClose();
-        }
+        if (selectedVariableSetIds.length > 0) clearSelection();
+        else onClose();
       },
     });
-
     const unregisterSelectAll = registerShortcut({
       id: 'manager-select-all',
       contexts: ['manager'],
@@ -176,128 +177,115 @@ export const VariableManager: React.FC<VariableManagerProps> = ({ onClose }) => 
         selectAllVariableSets(filteredIds);
       },
     });
-
     return () => {
       unregisterEscape();
       unregisterSelectAll();
     };
   }, [selectedVariableSetIds, clearSelection, selectAllVariableSets, filteredIds, onClose]);
 
-  // Determine if Inspector should be visible
-  const showInspector = !!selectedVariableId;
-
-  // Responsive: Track window width to collapse columns on small screens
-  const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
-
-  useEffect(() => {
-    const handleResize = () => setWindowWidth(window.innerWidth);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  // Compact mode: < 1200px
-  const isCompact = windowWidth < 1200;
-
-  // Collapse navigation columns (Sources, Folders) if in compact mode and a variable set is selected
-  // This gives space to the actual variable content
-  const shouldCollapseNav = isCompact && !!selectedVariableSetId;
-
   return (
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-      <div className="h-full bg-glass-app flex flex-col">
-        {/* Header */}
-        <header className="flex items-center justify-between px-6 py-4 border-b border-[var(--border-color)] bg-[var(--bg-panel)]">
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <Grid3X3 className="w-5 h-5 text-[var(--text-tertiary)]" />
-              <h1 className="font-display text-lg font-semibold text-[var(--text-primary)] m-0">Variable Manager</h1>
-            </div>
-
-            {/* Quick Stats */}
-            <div className="flex items-center gap-3 text-xs text-[var(--text-secondary)] ml-4">
-              <span className="flex items-center gap-1">
-                <Tag size={12} className="text-[var(--text-tertiary)]" />
-                {typeStats.categorical} Category
+      <div className={styles.shell} data-testid="variable-manager">
+        <header className={styles.header}>
+          <div className="flex items-center gap-3 min-w-0">
+            <h1 className={styles.headerTitle}>Variables</h1>
+            {dataset && (
+              <span className={styles.headerMeta}>
+                {dataset.name} · {visibleVariableSets.length} variables · {dataset.rowCount.toLocaleString()} rows
               </span>
-              <span className="flex items-center gap-1">
-                <SlidersHorizontal size={12} className="text-[var(--text-tertiary)]" />
-                {typeStats.scale} Scale
-              </span>
-              <span className="flex items-center gap-1">
-                <BarChart2 size={12} className="text-[var(--text-tertiary)]" />
-                {typeStats.numeric} Numeric
-              </span>
-              <span className="flex items-center gap-1">
-                <Calendar size={12} className="text-[var(--text-tertiary)]" />
-                {typeStats.date} Date
-              </span>
-              <span className="flex items-center gap-1">
-                <Type size={12} className="text-[var(--text-tertiary)]" />
-                {typeStats.text} Text
-              </span>
-              <span className="text-[var(--border-color-active)]">|</span>
-              <span>{visibleVariableSets.length} total</span>
-            </div>
+            )}
           </div>
-
-          <div className="flex items-center gap-4">
-            {/* Search */}
-            <div className="relative w-60">
-              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[var(--text-secondary)]" />
-              <input
-                type="text"
-                placeholder="Search variables..."
-                value={managerSearchQuery}
-                onChange={(e) => setManagerSearchQuery(e.target.value)}
-                className="w-full pl-8 pr-3 py-1.5 bg-transparent border-b border-[var(--border-color)] text-sm font-body outline-none focus:border-[var(--border-color-active)] focus:border-b-2 transition-all placeholder:text-[var(--text-secondary)] text-[var(--text-primary)]"
-              />
-            </div>
-
-            {/* Close Button */}
-            <button
-              type="button"
-              onClick={onClose}
-              aria-label="Close Variable Manager"
-              className="flex items-center justify-center w-8 h-8 p-0 border-none rounded-sm bg-transparent text-[var(--text-secondary)] cursor-pointer hover:bg-[var(--bg-active)] hover:text-[var(--text-primary)] transition-colors"
-            >
-              <X size={20} aria-hidden />
-            </button>
-          </div>
+          <button type="button" onClick={onClose} aria-label="Close Variable Manager" className={styles.closeButton}>
+            <X size={18} aria-hidden />
+          </button>
         </header>
 
-        {/* Faceted Search Bar */}
-        <FacetedSearchBar />
-
-        {/* Miller Columns */}
-        <div className={`${millerStyles.container} ${!showInspector ? millerStyles.containerNoInspector : ''}`}>
-          {/* Column 1: Data Sources */}
-          <DataSourceColumn className={shouldCollapseNav ? millerStyles.columnHidden : ''} />
-
-          {/* Column 2: Folders */}
-          <FolderColumn className={shouldCollapseNav ? millerStyles.columnHidden : ''} />
-
-          {/* Column 3: Variable Sets */}
-          <VariableSetColumn />
-
-          {/* Column 4: Variables (conditionally shown) */}
-          <VariableColumn />
-
-          {/* Column 5: Inspector, or a guided empty state when nothing is selected (UXF-009) */}
-          {showInspector ? <VariableInspector /> : <InspectorEmptyState hasSelection={!!selectedVariableSetId} />}
+        <div className={styles.body}>
+          <div className={styles.listPane}>
+            <div className={styles.tools}>
+              <div className={styles.search}>
+                <span className={styles.searchIcon} aria-hidden>⌕</span>
+                <input
+                  type="search"
+                  placeholder="Filter variables…"
+                  aria-label="Filter variables"
+                  value={managerSearchQuery}
+                  onChange={(e) => setManagerSearchQuery(e.target.value)}
+                  className={styles.searchInput}
+                />
+              </div>
+              <div className={styles.chips} role="group" aria-label="Type filters">
+                {typeChips.map((chip) => {
+                  const isActive = chip.id === 'all' ? activeTypeChip === 'all' : activeTypeChip === chip.id;
+                  return (
+                    <button
+                      key={chip.id}
+                      type="button"
+                      className={`${styles.chip} ${isActive ? styles.chipActive : ''}`}
+                      onClick={() => handleTypeChip(chip.id)}
+                      aria-pressed={isActive}
+                    >
+                      {chip.label} {chip.count}
+                    </button>
+                  );
+                })}
+              </div>
+              {(folders.length > 0 || folderChips.ungrouped < folderChips.all) && (
+                <>
+                  <span className={styles.chipDivider} aria-hidden />
+                  <div className={styles.chips} role="group" aria-label="Folder filters">
+                    <button
+                      type="button"
+                      className={`${styles.chip} ${activeFolderId === null ? styles.chipActive : ''}`}
+                      onClick={() => handleFolderChip(null)}
+                      aria-pressed={activeFolderId === null}
+                    >
+                      All folders {folderChips.all}
+                    </button>
+                    <button
+                      type="button"
+                      className={`${styles.chip} ${activeFolderId === 'ungrouped' ? styles.chipActive : ''}`}
+                      onClick={() => handleFolderChip('ungrouped')}
+                      aria-pressed={activeFolderId === 'ungrouped'}
+                    >
+                      Ungrouped {folderChips.ungrouped}
+                    </button>
+                    {folderChips.folders.map((folder) => (
+                      <button
+                        key={folder.id}
+                        type="button"
+                        className={`${styles.chip} ${activeFolderId === folder.id ? styles.chipActive : ''}`}
+                        onClick={() => handleFolderChip(folder.id)}
+                        aria-pressed={activeFolderId === folder.id}
+                      >
+                        {folder.name} {folder.count}
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+            <div className={styles.rows}>
+              <VariableList />
+            </div>
+          </div>
+          <aside className={styles.inspectorPane}>
+            <VariableInspector />
+          </aside>
         </div>
 
-        {/* Footer */}
-        <footer className="px-6 py-3 border-t border-[var(--border-color)] bg-[var(--bg-panel)] text-xs text-[var(--text-secondary)] flex items-center justify-between">
+        <footer className={styles.footer}>
           <span>
-            {dataset?.name} • {dataset?.rowCount.toLocaleString()} rows
+            {filteredSets.length} shown
+            {managerSearchQuery || facetFilters.types.length > 0 || activeFolderId
+              ? ` of ${visibleVariableSets.length}`
+              : ''}
           </span>
-          <span className="text-[var(--text-secondary)] opacity-70">
-            <kbd className="px-1.5 py-0.5 bg-[var(--bg-active)] rounded text-[10px] font-mono mr-1">⌘A</kbd> Select all
-            •<kbd className="px-1.5 py-0.5 bg-[var(--bg-active)] rounded text-[10px] font-mono mx-1">Esc</kbd> Close
+          <span>
+            <kbd>⌘A</kbd> Select all · <kbd>Esc</kbd> Close
           </span>
         </footer>
 
-        {/* Bulk Action Bar */}
         <BulkActionBar
           selectedCount={selectedVariableSetIds.length}
           selectedIds={selectedVariableSetIds}
