@@ -195,7 +195,7 @@ export const buildGenderRegionCrosstab = buildExampleCrosstab;
 export async function waitForStableCrosstab(page: Page) {
   await ensureCorrectionNone(page);
 
-  const footer = page.locator('.analysis-frame .statistics-status-bar').first();
+  const footer = page.locator('.statistics-status-bar').first();
   await expect(footer).toBeVisible({ timeout: 15000 });
 
   await page.waitForTimeout(400);

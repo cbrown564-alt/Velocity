@@ -14,6 +14,7 @@ import { useAutoFirstCrosstab } from '../hooks/useAutoFirstCrosstab';
 import { getMotionProps, useReducedMotion, DURATIONS } from '../../../lib/motion';
 import { AnalysisOutputFrame } from './AnalysisOutputFrame';
 import { AnalysisErrorBoundary } from '../../../components/common/AnalysisErrorBoundary';
+import { StatisticsStatusBar } from '../../../components/common/StatisticsStatusBar';
 import { VIRTUALIZE_ROW_THRESHOLD } from './crosstabVirtualization';
 import './SlideHeader.css';
 
@@ -41,6 +42,7 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
   const openDrillDown = useVelocityStore((state) => state.openDrillDown);
   const tableDensity = useVelocityStore((state) => state.tableDensity);
   const focusMode = useVelocityStore((state) => state.focusMode);
+  const analysisSettings = useVelocityStore((state) => state.analysisSettings);
 
   const totalCount = useMemo(() => {
     const fromQuery = computeAnalysisSampleSize(chartData, { isWeighted });
@@ -65,6 +67,8 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
 
   const reducedMotion = useReducedMotion();
   useAutoFirstCrosstab(resolvedRowVars.length, tableConfig.colVar);
+
+  const overlapCorrected = useMemo(() => chartData.some((row) => row.stats?.isOverlapCorrected), [chartData]);
 
   if (!activeSlide) {
     return <div className="p-4 text-[var(--text-secondary)]">No active slide</div>;
@@ -174,7 +178,6 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
             totalCount={totalCount}
             isWeighted={isWeighted}
             variableStats={variableStats}
-            tableStats={tableStats}
             isMultipleResponse={isMultipleResponse}
             density={tableDensity}
             frameBleed={focusMode}
@@ -222,6 +225,18 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
           </AnalysisErrorBoundary>
         </div>
       </div>
+
+      {/* Margin note — working annotations live outside the exportable artifact */}
+      {activeSlide.visualizationType === 'table' && resolvedRowVars.length > 0 && !queryError && (
+        <div className="w-full max-w-[min(100%,1400px)] mx-auto shrink-0">
+          <StatisticsStatusBar
+            analysisSettings={analysisSettings}
+            tableStats={tableStats}
+            colVariable={resolvedColVar}
+            overlapCorrected={overlapCorrected}
+          />
+        </div>
+      )}
     </div>
   );
 };

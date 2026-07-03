@@ -1,14 +1,14 @@
 /* ============================================================
-   StatisticsStatusBar – Status strip below the crosstab table
+   StatisticsStatusBar – margin note below the slide artifact
    ============================================================ */
 
 .statusBar {
   display: flex;
   flex-direction: column;
-  padding: 6px 16px;
-  border-top: 1px solid var(--border-grid);
+  padding: 10px 6px 0;
   font-family: var(--font-body);
-  min-height: 32px;
+  color: var(--text-tertiary);
+  font-size: 11.5px;
 }
 
 .statusRow {

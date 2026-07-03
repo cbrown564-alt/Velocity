@@ -5,8 +5,6 @@ import styles from './AnalysisOutputFrame.module.css';
 
 export interface AnalysisOutputFrameProps {
   children: React.ReactNode;
-  /** Footer band — e.g. StatisticsStatusBar */
-  footer?: React.ReactNode;
   /** Edge-to-edge within slide content area (Focus mode) */
   bleed?: boolean;
   /** Chart bodies need inner padding; tables manage their own scroll region */
@@ -20,11 +18,11 @@ export interface AnalysisOutputFrameProps {
 
 /**
  * Shared output chrome for crosstab tables and analysis charts (UXP-023).
- * One bordered artifact: body + optional footer band.
+ * One bordered artifact containing only exportable content; working
+ * annotations (stats, methodology) render outside as a margin note.
  */
 export const AnalysisOutputFrame: React.FC<AnalysisOutputFrameProps> = ({
   children,
-  footer,
   bleed = false,
   bodyPadding = 'none',
   density = 'compact',
@@ -42,7 +40,6 @@ export const AnalysisOutputFrame: React.FC<AnalysisOutputFrameProps> = ({
       className={`analysis-frame ${styles.frame} ${frameClassName === 'shrink-wrap' ? styles.shrinkWrap : ''} ${bleed ? styles.bleed : ''} ${className}`.trim()}
     >
       <div className={`${styles.body} ${bodyClass}`}>{children}</div>
-      {footer ? <div className={styles.footerBand}>{footer}</div> : null}
     </motion.div>
   );
 };

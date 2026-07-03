@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useRef, useCallback } from 'react';
-import { AggregatedRow, Variable, TableStats } from '../../../types';
+import { AggregatedRow, Variable } from '../../../types';
 import type { VariableStatsResult } from '../../../types/worker';
 import { useProcessedAnalysisData } from '../../../hooks/useProcessedAnalysisData';
 import { useTableDragMerge } from '../../../hooks/useTableDragMerge';
@@ -7,7 +7,6 @@ import { useMergeOrchestration } from '../../../hooks/useMergeOrchestration';
 import { InputModal } from '../../../components/overlays/InputModal';
 import { ChartContextMenu } from '../../../components/overlays/ChartContextMenu';
 import { RowPathEntry, type TableRowNode } from '../../../core/analysis/treeBuilder';
-import { StatisticsStatusBar } from '../../../components/common/StatisticsStatusBar';
 import { useReducedMotion } from '../../../lib/motion';
 import { useVelocityStore } from '../../../store';
 import mergeStyles from './DataTable.module.css';
@@ -50,7 +49,6 @@ interface DataTableProps {
   /** If true, row keys are already labels (multiple response) - skip label resolution */
   isMultipleResponse?: boolean;
   /** Table-level statistics (chi-square, etc.) */
-  tableStats?: TableStats | null;
   /** Table density: compact (exploration) or generous (presentation) */
   density?: 'compact' | 'generous';
   /** Bleed output frame to slide edges (Focus mode) */
@@ -66,7 +64,6 @@ export const DataTable: React.FC<DataTableProps> = ({
   onCellClick,
   variableStats,
   isMultipleResponse = false,
-  tableStats,
   density = 'compact',
   frameBleed = false,
 }) => {
@@ -77,7 +74,6 @@ export const DataTable: React.FC<DataTableProps> = ({
   const transformLog = useVelocityStore((state) => state.transformLog);
   const deleteGroupedVariable = useVelocityStore((state) => state.deleteGroupedVariable);
   const splitGroupValue = useVelocityStore((state) => state.splitGroupValue);
-  const overlapCorrected = useMemo(() => data.some((row) => row.stats?.isOverlapCorrected), [data]);
 
   // UI State for expanded rows
   const [expandedKeys, setExpandedKeys] = useState<Record<string, boolean>>({});
@@ -344,14 +340,6 @@ export const DataTable: React.FC<DataTableProps> = ({
       reducedMotion={reducedMotion}
       frameClassName={virtualizeRows ? undefined : 'shrink-wrap'}
       className={virtualizeRows ? 'h-full min-h-0' : ''}
-      footer={
-        <StatisticsStatusBar
-          analysisSettings={analysisSettings}
-          tableStats={tableStats}
-          colVariable={colVariable}
-          overlapCorrected={overlapCorrected}
-        />
-      }
     >
       <div
         ref={tableContainerRef}
