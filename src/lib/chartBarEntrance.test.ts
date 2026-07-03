@@ -10,7 +10,7 @@ describe('getBarEntranceMotionProps', () => {
     const props = getBarEntranceMotionProps('vertical', 1, true);
     expect(props.initial).toEqual({ scaleY: 0 });
     expect(props.animate).toEqual({ scaleY: 1 });
-    expect(props.transition?.delay).toBe(0.025);
+    expect(props.transition?.delay).toBe(0.01);
   });
 
   it('returns scaleX entrance for horizontal bars', () => {

@@ -469,7 +469,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({ isOpen, onClose, confi
       }, 1500);
     } catch (error) {
       console.error('Export failed:', error);
-      setExportError(error instanceof Error ? error.message : 'Export failed. Please try again.');
+      setExportError(error instanceof Error ? error.message : 'Export failed.');
     } finally {
       setIsExporting(false);
     }

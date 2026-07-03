@@ -17,7 +17,7 @@ import type { TableRowNode } from '../../../core/analysis/treeBuilder';
  * banner is 200 cells — while wide banners and long multi-level tables (which
  * are the cases that actually jank) drop it.
  */
-export const MAX_ANIMATED_CROSSTAB_CELLS = 500;
+export const MAX_ANIMATED_CROSSTAB_CELLS = 0;
 
 /**
  * Count every node in the row tree, including expanded child rows. Child rows

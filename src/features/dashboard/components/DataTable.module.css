@@ -85,6 +85,12 @@
 .crosstabTable {
   table-layout: fixed;
   width: 100%;
+  font-variant-numeric: tabular-nums;
+}
+
+.crosstabTable td.data-cell,
+.crosstabTable td.statistic-value {
+  font-variant-numeric: tabular-nums;
 }
 
 .crosstabTable th,

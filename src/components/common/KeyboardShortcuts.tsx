@@ -13,27 +13,40 @@ const SHORTCUTS: ShortcutGroup[] = [
   {
     title: 'Commands',
     items: [
-      { keys: ['Cmd', 'K'], description: 'Open Command Palette (variables, export, filters)' },
-      { keys: ['?'], description: 'Open Keyboard Shortcuts' },
-      { keys: ['D'], description: 'Toggle Variable Manager' },
-      { keys: ['F'], description: 'Toggle Focus Mode' },
+      { keys: ['⌘', 'K'], description: 'Open insert palette' },
+      { keys: ['?'], description: 'Show keyboard shortcuts' },
+      { keys: ['D'], description: 'Open variable manager' },
+      { keys: ['F'], description: 'Toggle focus mode' },
     ],
   },
   {
-    title: 'Canvas',
+    title: 'Story rail',
     items: [
-      { keys: ['←'], description: 'Previous slide' },
-      { keys: ['→'], description: 'Next slide' },
+      { keys: ['↑', 'K'], description: 'Previous slide' },
+      { keys: ['↓', 'J'], description: 'Next slide' },
+      { keys: ['↵'], description: 'Rename active slide' },
+      { keys: ['⌘', '↑'], description: 'Move slide up' },
+      { keys: ['⌘', '↓'], description: 'Move slide down' },
+      { keys: ['N'], description: 'New slide' },
+      { keys: ['⌘', 'D'], description: 'Duplicate slide' },
       { keys: ['Delete'], description: 'Delete active slide' },
-      { keys: ['Cmd', 'A'], description: 'Select all variables' },
     ],
   },
   {
-    title: 'Manager',
+    title: 'Insert palette',
     items: [
-      { keys: ['Esc'], description: 'Close Variable Manager' },
-      { keys: ['Shift', 'Click'], description: 'Range select' },
-      { keys: ['Cmd', 'Click'], description: 'Multi-select' },
+      { keys: ['↵'], description: 'Insert as rows' },
+      { keys: ['⌥', '↵'], description: 'Insert as columns' },
+      { keys: ['⇧', '↵'], description: 'Insert as filter' },
+      { keys: ['Esc'], description: 'Close palette' },
+    ],
+  },
+  {
+    title: 'Variable manager',
+    items: [
+      { keys: ['Esc'], description: 'Close manager' },
+      { keys: ['⇧', 'Click'], description: 'Range select' },
+      { keys: ['⌘', 'Click'], description: 'Multi-select' },
     ],
   },
 ];
@@ -84,8 +97,8 @@ export const KeyboardShortcuts: React.FC = () => {
         className="w-full max-w-md bg-[var(--bg-panel)] border border-[var(--border-color)] rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[80vh]"
       >
         <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--border-color)]">
-          <h2 id={titleId} className="text-base font-semibold text-[var(--text-primary)]">
-            Keyboard Shortcuts
+          <h2 id={titleId} className="text-[13px] font-semibold text-[var(--text-primary)]">
+            Keyboard shortcuts
           </h2>
           <button
             type="button"
@@ -100,10 +113,7 @@ export const KeyboardShortcuts: React.FC = () => {
         <div className="overflow-y-auto p-5 space-y-6">
           {SHORTCUTS.map((group) => (
             <section key={group.title} aria-labelledby={`${titleId}-${group.title}`}>
-              <h3
-                id={`${titleId}-${group.title}`}
-                className="text-[10px] font-bold text-[var(--text-tertiary)] uppercase tracking-wider mb-3"
-              >
+              <h3 id={`${titleId}-${group.title}`} className="chrome-label mb-3">
                 {group.title}
               </h3>
               <ul className="space-y-2">
@@ -112,7 +122,7 @@ export const KeyboardShortcuts: React.FC = () => {
                     key={`${group.title}-${item.description}`}
                     className="flex items-center justify-between py-1.5 gap-4"
                   >
-                    <span className="text-sm text-[var(--text-secondary)]">{item.description}</span>
+                    <span className="text-[13px] text-[var(--text-secondary)]">{item.description}</span>
                     <span className="flex items-center gap-1 shrink-0">
                       {item.keys.map((key, ki) => (
                         <React.Fragment key={key}>

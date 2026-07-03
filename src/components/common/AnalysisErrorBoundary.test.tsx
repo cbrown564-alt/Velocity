@@ -31,8 +31,8 @@ describe('AnalysisErrorBoundary', () => {
     );
 
     expect(screen.getByTestId('dashboard-shell')).toBeInTheDocument();
-    expect(screen.getByRole('alert')).toHaveTextContent("This table couldn't render");
-    expect(screen.getByText('Slide: slide-1')).toBeInTheDocument();
+    expect(screen.getByRole('alert')).toHaveTextContent("Table failed to render");
+    expect(screen.getByText('Slide slide-1')).toBeInTheDocument();
     expect(screen.getByText('boom')).toBeInTheDocument();
   });
 
@@ -54,7 +54,7 @@ describe('AnalysisErrorBoundary', () => {
       </AnalysisErrorBoundary>,
     );
 
-    expect(screen.getByRole('alert')).toHaveTextContent("This chart couldn't render");
+    expect(screen.getByRole('alert')).toHaveTextContent("Chart failed to render");
     fireEvent.click(screen.getByRole('button', { name: 'Retry' }));
 
     expect(onRetry).toHaveBeenCalledTimes(1);

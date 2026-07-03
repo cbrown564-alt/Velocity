@@ -40,13 +40,13 @@ export const DURATIONS = {
   /** 200ms — standard UI transitions */
   normal: 0.2,
   /** 250ms — emphasis transitions */
-  emphasis: 0.25,
+  emphasis: 0.2,
   /** 300ms — enter animations */
-  enter: 0.3,
+  enter: 0.2,
   /** 400ms — complex / shared-element transitions */
-  complex: 0.4,
+  complex: 0.2,
   /** 600ms — dramatic / page transitions */
-  dramatic: 0.6,
+  dramatic: 0.2,
 } as const;
 
 /* -------------------------------------------------------------------------- */
@@ -173,7 +173,7 @@ export interface VariantOptions {
 export function buildVariants(options: VariantOptions = {}): Variants {
   const {
     preset = 'fade',
-    duration = DURATIONS.normal,
+    duration = DURATIONS.fast,
     ease = 'standard',
     staggerChildren,
     delay = 0,

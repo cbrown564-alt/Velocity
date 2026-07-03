@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react';
 import { AlertCircle, RefreshCw } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { useVelocityStore } from '../../../store';
 import { AnalysisChart } from '../../../components/charts/AnalysisChart';
 import { DataTable } from './DataTable';
@@ -11,7 +10,6 @@ import { computeAnalysisSampleSize } from '../../../core/analysis/computeAnalysi
 import { recommendChart } from '../../../core/visualization/chartRecommender';
 import { useResolvedVariables } from '../hooks/useResolvedVariables';
 import { useAutoFirstCrosstab } from '../hooks/useAutoFirstCrosstab';
-import { getMotionProps, useReducedMotion, DURATIONS } from '../../../lib/motion';
 import { AnalysisOutputFrame } from './AnalysisOutputFrame';
 import { AnalysisErrorBoundary } from '../../../components/common/AnalysisErrorBoundary';
 import { StatisticsStatusBar } from '../../../components/common/StatisticsStatusBar';
@@ -22,16 +20,11 @@ interface SlideContainerProps {
   className?: string;
 }
 
-/**
- * Renders the active slide's layout and content.
- * For Phase 2.5, this primarily supports 'focus' mode (single cell).
- */
 export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }) => {
   const activeSlideId = useVelocityStore((state) => state.activeSlideId);
   const slides = useVelocityStore((state) => state.slides);
   const activeSlide = slides.find((s) => s.id === activeSlideId);
 
-  // Data access
   const chartData = useVelocityStore((state) => state.queryResult);
   const tableConfig = useVelocityStore((state) => state.tableConfig);
   const isWeighted = useVelocityStore((state) => !!state.dataset?.weightVariable);
@@ -51,12 +44,10 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
   }, [chartData, isWeighted]);
 
   const { resolvedRowVars, resolvedColVar, firstRowVarSet: firstVarSet } = useResolvedVariables();
-
   const isMultipleResponse = firstVarSet?.structure === 'multiple';
 
   const chartRecommendation = useMemo(() => {
     if (resolvedRowVars.length === 0) return null;
-
     return recommendChart({
       rowVars: resolvedRowVars,
       colVar: resolvedColVar,
@@ -65,18 +56,16 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
     });
   }, [resolvedRowVars, resolvedColVar, firstVarSet, isMultipleResponse]);
 
-  const reducedMotion = useReducedMotion();
   useAutoFirstCrosstab(resolvedRowVars.length, tableConfig.colVar);
-
   const overlapCorrected = useMemo(() => chartData.some((row) => row.stats?.isOverlapCorrected), [chartData]);
 
   if (!activeSlide) {
-    return <div className="p-4 text-[var(--text-secondary)]">No active slide</div>;
+    return <div className="p-4 text-[13px] text-[var(--text-secondary)]">Select a slide</div>;
   }
 
   const cell = activeSlide.cells[0];
   if (!cell) {
-    return <div className="p-4 text-[var(--text-secondary)]">Empty slide</div>;
+    return <div className="p-4 text-[13px] text-[var(--text-secondary)]">Add content to this slide</div>;
   }
 
   const analysisResetKey = `${activeSlideId}:${tableConfig.rowVars.join(',')}:${tableConfig.colVar ?? ''}:${activeSlide.visualizationType}`;
@@ -90,28 +79,24 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
   const renderCellContent = () => {
     if (queryError && !isQuerying) {
       return (
-        <motion.div
-          {...getMotionProps({ preset: 'fadeUp', duration: DURATIONS.enter, reducedMotion })}
+        <div
           className="w-full h-full rounded-xl flex flex-col items-center justify-center gap-4 p-8 bg-[var(--status-error-surface)] border border-[var(--status-error-border)] text-center"
           role="alert"
         >
           <AlertCircle size={32} className="text-[var(--color-error)]" />
-          <motion.div
-            {...getMotionProps({ preset: 'fadeUp', duration: DURATIONS.fast, reducedMotion })}
-            className="space-y-1 max-w-md"
-          >
-            <p className="text-base font-medium text-[var(--text-primary)]">Couldn&apos;t run analysis</p>
-            <p className="text-sm text-[var(--text-secondary)]">{queryError}</p>
-          </motion.div>
+          <div className="space-y-1 max-w-md">
+            <p className="text-[13px] font-medium text-[var(--text-primary)]">Analysis failed</p>
+            <p className="text-[13px] text-[var(--text-secondary)]">{queryError}</p>
+          </div>
           <button
             type="button"
             onClick={() => void useVelocityStore.getState().runAnalysis()}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--text-primary)] text-[var(--text-inverse)] text-sm font-medium hover:opacity-90 transition-opacity"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--text-primary)] text-[var(--text-inverse)] text-[13px] font-medium hover:opacity-90 transition-opacity"
           >
             <RefreshCw size={14} />
             Retry
           </button>
-        </motion.div>
+        </div>
       );
     }
 
@@ -121,9 +106,9 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
           className="w-full min-h-[340px] h-full flex flex-col items-center justify-center gap-4"
           data-testid="empty-slide-state"
         >
-          <p className="text-sm text-[var(--text-secondary)]">
+          <p className="text-[13px] text-[var(--text-secondary)]">
             Drag a variable here, or press{' '}
-            <kbd className="px-1.5 py-0.5 rounded border border-[var(--border-color)] bg-[var(--bg-panel-tint)] font-mono text-xs">
+            <kbd className="px-1.5 py-0.5 rounded border border-[var(--border-color)] bg-[var(--bg-panel-tint)] font-mono text-[11px]">
               ⌘K
             </kbd>
             .
@@ -131,7 +116,7 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
           <button
             type="button"
             onClick={() => useVelocityStore.getState().openCommandPalette()}
-            className="px-3 py-1.5 rounded-md border border-[var(--border-color)] text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-panel-tint)] transition-colors"
+            className="px-3 py-1.5 rounded-md border border-[var(--border-color)] text-[13px] text-[var(--text-secondary)] hover:bg-[var(--bg-panel-tint)] transition-colors"
           >
             Browse variables
           </button>
@@ -152,7 +137,6 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
           <AnalysisOutputFrame
             bodyPadding="chart"
             density={tableDensity}
-            reducedMotion={reducedMotion}
             bleed={focusMode}
             frameClassName="shrink-wrap"
           >
@@ -185,7 +169,7 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
           />
         );
       default:
-        return <div>Unknown content type</div>;
+        return <div className="text-[13px] text-[var(--text-secondary)]">Unsupported visualization type</div>;
     }
   };
 
@@ -219,14 +203,13 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
             resetKey={analysisResetKey}
             onRetry={() => void useVelocityStore.getState().runAnalysis()}
           >
-            <div key={analysisResetKey} className="min-h-0 animate-[fadeIn_0.15s_ease-out]">
+            <div key={analysisResetKey} className="min-h-0">
               {renderCellContent()}
             </div>
           </AnalysisErrorBoundary>
         </div>
       </div>
 
-      {/* Margin note — working annotations live outside the exportable artifact */}
       {activeSlide.visualizationType === 'table' && resolvedRowVars.length > 0 && !queryError && (
         <div className="w-full max-w-[min(100%,1400px)] mx-auto shrink-0">
           <StatisticsStatusBar
