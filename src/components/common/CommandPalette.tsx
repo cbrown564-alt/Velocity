@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useDraggable } from '@dnd-kit/core';
 import { useFocusTrap } from '../../hooks/useFocusTrap';
 import {
   Search,
@@ -36,11 +37,91 @@ interface CommandItem {
 
 const VARIABLE_LIMIT = 12;
 
+interface PaletteVariableRowProps {
+  set: VariableSet;
+  index: number;
+  selected: boolean;
+  label: string | undefined;
+  onSelect: (index: number) => void;
+  onInsert: (set: VariableSet, modifiers: { altKey: boolean; shiftKey: boolean }) => void;
+}
+
+const rowContent = (set: VariableSet, label: string | undefined) => (
+  <>
+    <span className="w-[18px] shrink-0 text-center font-mono text-[11px] text-[var(--text-tertiary)] border border-[var(--border-color)] rounded px-0 py-px">
+      {variableSetGlyph(set)}
+    </span>
+    <span className="flex-1 min-w-0">
+      <span className="block font-mono text-[12.5px] text-[var(--text-primary)] truncate">{set.name}</span>
+      {label && label !== set.name && (
+        <span className="block text-[11.5px] text-[var(--text-secondary)] truncate">{label}</span>
+      )}
+    </span>
+    <span className="shrink-0 text-[11px] text-[var(--text-tertiary)] whitespace-nowrap">{variableSetMeta(set)}</span>
+  </>
+);
+
+const rowClass = (selected: boolean) =>
+  `w-full flex items-center gap-3 px-3 py-2 rounded-md text-left transition-colors ${
+    selected ? 'bg-[var(--bg-panel-tint)] shadow-[inset_0_0_0_1px_var(--border-color)]' : ''
+  }`;
+
+const PaletteVariableRow: React.FC<PaletteVariableRowProps> = ({ set, index, selected, label, onSelect, onInsert }) => (
+  <button
+    type="button"
+    onClick={(e) => onInsert(set, e)}
+    onMouseEnter={() => onSelect(index)}
+    data-selected={selected || undefined}
+    data-testid={`palette-variable-${set.id}`}
+    className={rowClass(selected)}
+  >
+    {rowContent(set, label)}
+  </button>
+);
+
+/** Palette row that can also be dragged onto the slide (dashboard mount only). */
+const DraggablePaletteRow: React.FC<PaletteVariableRowProps> = ({
+  set,
+  index,
+  selected,
+  label,
+  onSelect,
+  onInsert,
+}) => {
+  const { attributes, listeners, setNodeRef } = useDraggable({
+    id: `palette-${set.id}`,
+    data: { variableSet: set, source: 'palette' },
+  });
+  return (
+    <button
+      ref={setNodeRef}
+      {...attributes}
+      {...listeners}
+      type="button"
+      onClick={(e) => onInsert(set, e)}
+      onMouseEnter={() => onSelect(index)}
+      data-selected={selected || undefined}
+      data-testid={`palette-variable-${set.id}`}
+      className={rowClass(selected)}
+    >
+      {rowContent(set, label)}
+    </button>
+  );
+};
+
+export interface CommandPaletteProps {
+  /**
+   * True when mounted inside the dashboard's DndContext — rows become
+   * draggable onto the slide, and the palette hides itself during a drag.
+   */
+  withinDnd?: boolean;
+}
+
 /**
  * Insert palette (⌘K) — variables are the default result set; ↵ adds to rows,
  * ⌥↵ to columns, ⇧↵ filters. Commands live behind a `>` prefix.
  */
-export const CommandPalette: React.FC = () => {
+export const CommandPalette: React.FC<CommandPaletteProps> = ({ withinDnd = false }) => {
   const commandPaletteOpen = useVelocityStore((state) => state.commandPaletteOpen);
   const closeCommandPalette = useVelocityStore((state) => state.closeCommandPalette);
   const toggleAppMode = useVelocityStore((state) => state.toggleAppMode);
@@ -54,6 +135,7 @@ export const CommandPalette: React.FC = () => {
   const variableSets = useVelocityStore((state) => state.variableSets);
   const dataset = useVelocityStore((state) => state.dataset);
   const isWorkspaceMode = useVelocityStore((state) => state.isWorkspaceMode);
+  const draggingId = useVelocityStore((state) => state.draggingId);
 
   const { openExport, canExport } = useAnalysisExportAction();
 
@@ -226,6 +308,19 @@ export const CommandPalette: React.FC = () => {
     return pushModalShortcutContext();
   }, [commandPaletteOpen]);
 
+  // Hide (don't unmount — unmounting cancels the drag) while a row is being
+  // dragged out; close once the drag completes.
+  const hiddenForDrag = withinDnd && commandPaletteOpen && !!draggingId;
+  const wasHiddenForDragRef = useRef(false);
+  useEffect(() => {
+    if (hiddenForDrag) {
+      wasHiddenForDragRef.current = true;
+    } else if (wasHiddenForDragRef.current && !draggingId) {
+      wasHiddenForDragRef.current = false;
+      if (commandPaletteOpen) closeCommandPalette();
+    }
+  }, [hiddenForDrag, draggingId, commandPaletteOpen, closeCommandPalette]);
+
   useEffect(() => {
     const selected = listRef.current?.querySelector('[data-selected="true"]');
     selected?.scrollIntoView({ block: 'nearest' });
@@ -270,7 +365,9 @@ export const CommandPalette: React.FC = () => {
 
   return (
     <div
-      className="fixed inset-0 z-[var(--z-modal)] flex items-start justify-center pt-[16vh] bg-[rgb(36_48_42/0.18)]"
+      className={`fixed inset-0 z-[var(--z-modal)] flex items-start justify-center pt-[16vh] bg-[rgb(36_48_42/0.18)] ${
+        hiddenForDrag ? 'opacity-0 pointer-events-none' : ''
+      }`}
       onClick={(e) => {
         if (e.target === e.currentTarget) closeCommandPalette();
       }}
@@ -323,35 +420,20 @@ export const CommandPalette: React.FC = () => {
               </button>
             ))
           ) : (
-            variableResults.map((set, index) => (
-              <button
-                key={set.id}
-                type="button"
-                onClick={(e) => insertVariable(set, resolveInsertTarget(e))}
-                onMouseEnter={() => setSelectedIndex(index)}
-                data-selected={index === selectedIndex || undefined}
-                data-testid={`palette-variable-${set.id}`}
-                className={`w-full flex items-center gap-3 px-3 py-2 rounded-md text-left transition-colors ${
-                  index === selectedIndex ? 'bg-[var(--bg-panel-tint)] shadow-[inset_0_0_0_1px_var(--border-color)]' : ''
-                }`}
-              >
-                <span className="w-[18px] shrink-0 text-center font-mono text-[11px] text-[var(--text-tertiary)] border border-[var(--border-color)] rounded px-0 py-px">
-                  {variableSetGlyph(set)}
-                </span>
-                <span className="flex-1 min-w-0">
-                  <span className="block font-mono text-[12.5px] text-[var(--text-primary)] truncate">{set.name}</span>
-                  {variableLabels.get(set.variableIds[0]) &&
-                    variableLabels.get(set.variableIds[0]) !== set.name && (
-                      <span className="block text-[11.5px] text-[var(--text-secondary)] truncate">
-                        {variableLabels.get(set.variableIds[0])}
-                      </span>
-                    )}
-                </span>
-                <span className="shrink-0 text-[11px] text-[var(--text-tertiary)] whitespace-nowrap">
-                  {variableSetMeta(set)}
-                </span>
-              </button>
-            ))
+            variableResults.map((set, index) => {
+              const Row = withinDnd ? DraggablePaletteRow : PaletteVariableRow;
+              return (
+                <Row
+                  key={set.id}
+                  set={set}
+                  index={index}
+                  selected={index === selectedIndex}
+                  label={variableLabels.get(set.variableIds[0])}
+                  onSelect={setSelectedIndex}
+                  onInsert={(target, modifiers) => insertVariable(target, resolveInsertTarget(modifiers))}
+                />
+              );
+            })
           )}
         </div>
 

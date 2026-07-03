@@ -48,6 +48,7 @@ export default function App() {
   });
 
   const isDbReady = useVelocityStore((state) => state.isDbReady);
+  const isWorkspaceMode = useVelocityStore((state) => state.isWorkspaceMode);
   const initError = useVelocityStore((state) => state.initError);
   const dataset = useVelocityStore((state) => state.dataset);
   const workspace = useVelocityStore((state) => state.workspace);
@@ -157,7 +158,9 @@ export default function App() {
         onExportSession={session.handleExportSession}
       />
 
-      <CommandPalette />
+      {/* Inside the dashboard, the palette mounts within DashboardShell's
+          DndContext so rows can be dragged onto the slide. */}
+      {isWorkspaceMode && <CommandPalette />}
       <KeyboardShortcuts />
       <ToastLayer />
     </div>
