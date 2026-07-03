@@ -47,6 +47,79 @@ describe('pickAutoFirstCrosstabPair', () => {
     });
   });
 
+  it('prefers brand preference × segment on brandtracker_w4.sav', () => {
+    const sets = [
+      set({ id: 'vs_resp_id', name: 'Respondent ID', variableIds: ['resp_id'] }),
+      set({ id: 'vs_segment', name: 'SEG. Consumer segment (from segmentation model)', variableIds: ['segment'] }),
+      set({ id: 'vs_brand_pref', name: 'Q5. And which ONE of these brands do you most prefer?', variableIds: ['brand_pref'] }),
+      set({ id: 'vs_age_band', name: 'D1b. Age band', variableIds: ['age_band'] }),
+    ];
+    const segmentLabels = [
+      { value: 1, label: 'Core' },
+      { value: 2, label: 'Growth' },
+      { value: 3, label: 'Value' },
+    ];
+    const brandLabels = [
+      { value: 1, label: 'Atlas' },
+      { value: 2, label: 'Beacon' },
+      { value: 3, label: 'Meridian' },
+    ];
+    const variables = [
+      variable({ id: 'resp_id', name: 'resp_id' }),
+      variable({ id: 'segment', name: 'segment', valueLabels: segmentLabels }),
+      variable({ id: 'brand_pref', name: 'brand_pref', valueLabels: brandLabels }),
+      variable({
+        id: 'age_band',
+        name: 'age_band',
+        valueLabels: [
+          { value: 1, label: '18-34' },
+          { value: 2, label: '35-54' },
+        ],
+      }),
+    ];
+    expect(pickAutoFirstCrosstabPair('brandtracker_w4.sav', sets, variables)).toEqual({
+      rowSetId: 'vs_brand_pref',
+      colSetId: 'vs_segment',
+    });
+  });
+
+  it('falls back to unaided first mention × segment when brand preference is absent', () => {
+    const sets = [
+      set({ id: 'vs_segment', name: 'SEG. Consumer segment', variableIds: ['segment'] }),
+      set({ id: 'vs_unaided_first', name: 'Q1. Which brand comes to mind first?', variableIds: ['unaided_first'] }),
+    ];
+    const variables = [
+      variable({
+        id: 'segment',
+        name: 'segment',
+        valueLabels: [
+          { value: 1, label: 'Core' },
+          { value: 2, label: 'Growth' },
+        ],
+      }),
+      variable({
+        id: 'unaided_first',
+        name: 'unaided_first',
+        valueLabels: [
+          { value: 1, label: 'Atlas' },
+          { value: 2, label: 'Beacon' },
+        ],
+      }),
+    ];
+    expect(pickAutoFirstCrosstabPair('brandtracker_w4.sav', sets, variables)).toEqual({
+      rowSetId: 'vs_unaided_first',
+      colSetId: 'vs_segment',
+    });
+  });
+
+  it('returns null on brandtracker_w4.sav when variables are not provided', () => {
+    const sets = [
+      set({ id: 'vs_segment', name: 'SEG. Consumer segment', variableIds: ['segment'] }),
+      set({ id: 'vs_brand_pref', name: 'Q5. Preference', variableIds: ['brand_pref'] }),
+    ];
+    expect(pickAutoFirstCrosstabPair('brandtracker_w4.sav', sets)).toBeNull();
+  });
+
   it('prefers sex × marital status on sleep.sav', () => {
     const sets = [
       set({ id: 's', name: 'sex' }),

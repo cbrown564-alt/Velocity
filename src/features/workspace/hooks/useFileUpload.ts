@@ -17,8 +17,15 @@ const SAV_SAMPLE_ROWS = 1000;
 const SAV_ELEVATED_RISK_CELLS = 20_000_000;
 const SAV_HIGH_RISK_CELLS = 40_000_000;
 
-export const EXAMPLE_SAV_URL = '/examples/sleep.sav';
-export const EXAMPLE_SAV_NAME = 'sleep.sav';
+// Primary Load Example: the brand tracker is the pilot-archetype demo centerpiece
+// (docs/workstreams/deck_native/10_brand_tracker_demo_plan.md §6).
+export const EXAMPLE_SAV_URL = '/examples/brandtracker_w4.sav';
+export const EXAMPLE_SAV_NAME = 'brandtracker_w4.sav';
+
+// Secondary/backup example. sleep.sav still anchors frozen EVAL-01/03/04 baselines
+// and the R-parity suite, so it stays shipped and is used as a runtime fallback.
+export const BACKUP_EXAMPLE_SAV_URL = '/examples/sleep.sav';
+export const BACKUP_EXAMPLE_SAV_NAME = 'sleep.sav';
 
 export interface FileUploadState {
   pendingSavFile: File | null;
@@ -174,36 +181,56 @@ export function useFileUpload(
     setLoadProgress({
       phase: 'parsing',
       progress: 0.1,
-      message: 'Loading Sleep study example…',
+      message: 'Loading brand tracker example…',
     });
 
-    try {
-      const response = await fetch(EXAMPLE_SAV_URL);
+    const fetchExample = async (url: string, name: string): Promise<void> => {
+      const response = await fetch(url);
       if (!response.ok) {
-        throw new Error('Example dataset is unavailable. Check your connection and reload.');
+        throw new Error(`Example dataset "${name}" is unavailable. Check your connection and reload.`);
       }
 
       const buffer = await response.arrayBuffer();
-      const file = new File([buffer], EXAMPLE_SAV_NAME, { type: 'application/octet-stream' });
+      const file = new File([buffer], name, { type: 'application/octet-stream' });
 
       recordPilotEvent('file_selected', {
-        fileName: EXAMPLE_SAV_NAME,
+        fileName: name,
         fileSizeMb: Number((file.size / (1024 * 1024)).toFixed(2)),
         format: 'sav',
         source: 'example',
       });
 
       const { storageKey } = await assignOpfsStorageForUpload(file, opfsAvailableLocal);
-      await assignOpfsKeyAndLoad(EXAMPLE_SAV_NAME, buffer, loadSAV, { opfsFileKey: storageKey });
+      await assignOpfsKeyAndLoad(name, buffer, loadSAV, { opfsFileKey: storageKey });
+    };
+
+    try {
+      let usedBackup = false;
+      try {
+        await fetchExample(EXAMPLE_SAV_URL, EXAMPLE_SAV_NAME);
+      } catch (primaryErr) {
+        console.warn('[useFileUpload] Primary example unavailable; falling back to sleep.sav', primaryErr);
+        usedBackup = true;
+        await fetchExample(BACKUP_EXAMPLE_SAV_URL, BACKUP_EXAMPLE_SAV_NAME);
+      }
 
       setLoadProgress(null);
       setMode('dashboard');
-      addToast({
-        type: 'info',
-        title: 'Sleep study example loaded',
-        message: 'Explore sex × marital status, then export an editable PowerPoint slide.',
-        duration: 9000,
-      });
+      addToast(
+        usedBackup
+          ? {
+              type: 'info',
+              title: 'Sleep study example loaded',
+              message: 'Explore sex × marital status, then export an editable PowerPoint slide.',
+              duration: 9000,
+            }
+          : {
+              type: 'info',
+              title: 'Brand tracker example loaded',
+              message: 'Explore Atlas consideration by segment, then export an editable PowerPoint deck.',
+              duration: 9000,
+            },
+      );
     } catch (err) {
       console.error(err);
       reportUploadError(err, EXAMPLE_SAV_NAME);
