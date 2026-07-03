@@ -155,5 +155,6 @@ test('Reload smoke: app boots after reload', async ({ page }) => {
 
   await page.reload();
 
-  await expect(page.getByText('Velocity Workspace')).toBeVisible({ timeout: 30000 });
+  await expect(page.getByText(/^Velocity$/)).toBeVisible({ timeout: 30000 });
+  await expect(page.getByText(/client SAV to editable deck/i)).toBeVisible({ timeout: 30000 });
 });
