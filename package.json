@@ -50,8 +50,10 @@
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:visual-polish": "playwright test tests/e2e/visual-polish-theme-table.spec.ts",
     "test:e2e:visual-polish:update": "playwright test tests/e2e/visual-polish-theme-table.spec.ts --update-snapshots",
+    "demo:brand-tracker-recipe": "npx tsx scripts/brand-tracker-recipe-demo.ts",
     "demo:run:first-analysis": "node demo/scripts/run-demo-flow.mjs --contract demo/contracts/first-analysis.json",
     "demo:run:deck-export-complete": "node demo/scripts/run-demo-flow.mjs --contract demo/contracts/deck-export-complete.json",
+    "demo:brand-tracker": "tsx scripts/brand-tracker-demo.ts",
     "report-quality:inspect": "node scripts/report-quality/inspect-pptx.mjs",
     "report-quality:review": "node scripts/report-quality/review-artifact.mjs"
   },
