@@ -89,13 +89,7 @@ async function measureActiveWave(engine: VelocityEngine): Promise<WaveMetrics> {
   };
 }
 
-function refreshTitle(
-  label: string,
-  before: number,
-  after: number,
-  significant: boolean,
-  wasHeadlineMover: boolean,
-) {
+function refreshTitle(label: string, before: number, after: number, significant: boolean, wasHeadlineMover: boolean) {
   const delta = after - before;
   const dir = delta >= 0 ? 'up' : 'down';
   // Defensibility guard (08 §4): a non-significant W4->W5 move is titled
@@ -241,7 +235,13 @@ async function main(): Promise<void> {
     },
     {
       slide: 'Atlas aided awareness rose 6pts…',
-      ...refreshTitle('Aided awareness', w4Metrics.aidedOverall, w5Metrics.aidedOverall, w4w5.aided.significant_95, false),
+      ...refreshTitle(
+        'Aided awareness',
+        w4Metrics.aidedOverall,
+        w5Metrics.aidedOverall,
+        w4w5.aided.significant_95,
+        false,
+      ),
     },
     {
       slide: 'Consideration climbed 5pts…',

@@ -51,7 +51,11 @@ describe('pickAutoFirstCrosstabPair', () => {
     const sets = [
       set({ id: 'vs_resp_id', name: 'Respondent ID', variableIds: ['resp_id'] }),
       set({ id: 'vs_segment', name: 'SEG. Consumer segment (from segmentation model)', variableIds: ['segment'] }),
-      set({ id: 'vs_brand_pref', name: 'Q5. And which ONE of these brands do you most prefer?', variableIds: ['brand_pref'] }),
+      set({
+        id: 'vs_brand_pref',
+        name: 'Q5. And which ONE of these brands do you most prefer?',
+        variableIds: ['brand_pref'],
+      }),
       set({ id: 'vs_age_band', name: 'D1b. Age band', variableIds: ['age_band'] }),
     ];
     const segmentLabels = [
