@@ -42,6 +42,7 @@ tmp/
 # Tooling noise
 scripts/agent-demo-output.txt
 scripts/python/inspect_sav_output.json
+__pycache__/
 
 # Mutation testing (Stryker)
 stryker-tmp/
@@ -52,6 +53,12 @@ reports/mutation/
 !test_data/British Social Attitudes Survey/bsa93.sav
 !test_data/fixtures/test_small.sav
 !public/examples/sleep.sav
+!public/examples/brandtracker_w4.sav
+!test_data/fixtures/brand_tracker/brandtracker_w1.sav
+!test_data/fixtures/brand_tracker/brandtracker_w2.sav
+!test_data/fixtures/brand_tracker/brandtracker_w3.sav
+!test_data/fixtures/brand_tracker/brandtracker_w5.sav
+!test_data/fixtures/brand_tracker/brandtracker_w4_raw.sav
 public/demo/wvs.csv
 public/demo/*.csv
 test_data/wvs_processed/
