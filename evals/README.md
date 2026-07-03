@@ -10,6 +10,7 @@ Frozen benchmark evidence and canonical briefs. Scoring and gap review: **`docs/
 | EVAL-04 | [`eval-04/brief.md`](eval-04/brief.md) |
 | EVAL-05 | [`eval-05/brief.md`](eval-05/brief.md) |
 | EVAL-06 | [`eval-06/brief.md`](eval-06/brief.md) |
+| EVAL-07 | [`eval-07/brief.md`](eval-07/brief.md) |
 
 EVAL-01 and EVAL-02 briefs live in their frozen `runs/run-2026-03-13/` directories.
 
@@ -20,6 +21,7 @@ EVAL-01 and EVAL-02 briefs live in their frozen `runs/run-2026-03-13/` directori
 | Engine-driven (Node) | `evals/eval-NN/scripts/` | `npx tsx evals/eval-02/scripts/01_explore.ts` (see folder `README.md`) |
 | Browser automation | `scripts/eval/run-eval-NN.mjs` | `npm run eval:05`, `npm run eval:05b`, or `npm run eval:06` (see `scripts/eval/README.md`) |
 | Engine (EVAL-05b fuzzy) | `evals/eval-05/scripts/run_fuzzy_harmonization.ts` | `npm run eval:05b:engine` |
+| Engine (EVAL-07 brand tracker) | `scripts/brand-tracker-*.ts` | `npm run eval:07` (deck + wave refresh); parity via `npx vitest run tests/golden/brand_tracker_parity.test.ts` |
 
 ## Run structure
 

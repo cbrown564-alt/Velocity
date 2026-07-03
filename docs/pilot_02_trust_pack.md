@@ -14,6 +14,7 @@ This document consolidates reproducible evidence for the SAV-to-deck wedge. It s
 | :--- | :--- | :--- |
 | **Crosstab & significance methodology** | Validated | Survey-native cell-vs-rest, Welch's t, Kish ESS — documented in `arch_04_statistical_engine.md` |
 | **R statistical parity** | Validated on 2 real SAV files | 12 active tests on `sleep.sav` (271 rows) and `bsa93.sav` (2,945 rows, weighted) |
+| **Brand tracker ground-truth parity** | Validated on the flagship demo | Engine reproduces weighted funnel metrics within 0.1pt across `brandtracker_w4.sav` (demo file) and waves 1/3/5 — `tests/golden/brand_tracker_parity.test.ts` |
 | **SPSS-style weighted formulas** | Validated on golden fixtures | 18 tests on weighted mean, ESS, frequency, significance |
 | **Browser vs Node compute parity** | Validated | 8 adapter parity tests — WASM and Node adapters agree on golden scenarios |
 | **SAV ingestion performance** | Benchmarked | `sleep.sav` and WVS Wave 7 (97,220 × 613) — see §5 |
@@ -78,7 +79,19 @@ Velocity output is compared against pre-generated R fixtures using `haven` + `su
 
 `tests/golden/spss_parity.test.ts` validates weighted mean, weighted stddev, ESS, weighted frequency bases, NULL exclusion from denominators, and cell-vs-rest t-tests on documented synthetic fixtures.
 
-### 3.3 Golden regression suite
+### 3.3 Brand tracker flagship demo parity
+
+The pilot-archetype demo (`docs/workstreams/deck_native/10_brand_tracker_demo_plan.md`) upgrades the trust pack from "parity on sleep/BSA teaching files" to "parity on the flagship demo." The synthetic multi-wave brand tracker ships with a committed, auditable ground-truth file (`validation/brand_tracker_ground_truth.json`) that fixes every number the demo deck displays: weighted funnel metrics per brand per wave, wave-over-wave deltas with z-test verdicts, segment cuts, and achieved weighting margins (design effect ≈ 1.12).
+
+`tests/golden/brand_tracker_parity.test.ts` asserts that the engine's weighted crosstabs on the committed `.sav` waves reproduce the ground truth within 0.1pt, including the planted storyline facts (e.g. Beacon overtakes Meridian on consideration in W4). The end-to-end demo scripts run against the same real engine:
+
+| Script | Command | What it proves |
+| :--- | :--- | :--- |
+| Recipe | `npm run demo:brand-tracker-recipe` | Raw agency wave → analysis-ready via shipped primitives (weight discovery, fuzzy mapping, recodes), session `transformLog` replays on reopen |
+| Deck | `npm run demo:brand-tracker` | 18-slide story-template deck built + exported to the golden PPTX with ground-truth action titles |
+| Wave refresh | `npm run demo:brand-tracker-wave-refresh` | Wave-5 dataset-replacement review is READY; recomputed titles flagged for confirmation; flat mover demoted (the "tracker update" outcome) |
+
+### 3.4 Golden regression suite
 
 `tests/golden/golden.test.ts` covers:
 
@@ -248,6 +261,12 @@ npm run test:run
 npx vitest run tests/golden/r_parity.test.ts
 npx vitest run tests/golden/spss_parity.test.ts
 npx vitest run tests/golden/golden.test.ts
+
+# Brand tracker flagship demo: ground-truth parity + end-to-end scripts
+npx vitest run tests/golden/brand_tracker_parity.test.ts
+npm run demo:brand-tracker-recipe        # raw wave -> analysis-ready (recipe = transformLog)
+npm run demo:brand-tracker               # 18-slide deck -> golden PPTX
+npm run demo:brand-tracker-wave-refresh  # wave-5 dataset-replacement review + wave_refresh titles
 
 # Browser vs Node adapter parity (optional)
 npm run test:parity

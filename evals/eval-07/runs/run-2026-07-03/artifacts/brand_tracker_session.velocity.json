@@ -1,0 +1,5048 @@
+{
+  "formatVersion": 2,
+  "exportedAt": "2026-07-03T15:01:52.627Z",
+  "velocityVersion": "dev",
+  "dataset": {
+    "originalFilename": "brandtracker_w4_raw.sav",
+    "rowCount": 1200,
+    "source": "sav",
+    "fingerprint": {
+      "columnCount": 80,
+      "columnNames": [
+        "resp_id",
+        "wave",
+        "int_date",
+        "cat_buyer",
+        "age",
+        "gender",
+        "body_weight_kg",
+        "region",
+        "income_band",
+        "urbanicity",
+        "segment",
+        "unaided_first",
+        "unaided_any_atlas",
+        "unaided_any_beacon",
+        "unaided_any_meridian",
+        "unaided_any_solstice",
+        "unaided_any_cardinal",
+        "aware_atlas",
+        "aware_beacon",
+        "aware_meridian",
+        "aware_solstice",
+        "aware_cardinal",
+        "consider_atlas",
+        "consider_beacon",
+        "consider_meridian",
+        "consider_solstice",
+        "consider_cardinal",
+        "used_p3m_atlas",
+        "used_p3m_beacon",
+        "used_p3m_meridian",
+        "used_p3m_solstice",
+        "used_p3m_cardinal",
+        "brand_pref",
+        "nps_atlas",
+        "att_taste_atlas",
+        "att_taste_beacon",
+        "att_taste_meridian",
+        "att_taste_solstice",
+        "att_taste_cardinal",
+        "att_value_atlas",
+        "att_value_beacon",
+        "att_worth_meridian",
+        "att_worth_solstice",
+        "att_worth_cardinal",
+        "att_innov_atlas",
+        "att_innov_beacon",
+        "att_innov_meridian",
+        "att_innov_solstice",
+        "att_innov_cardinal",
+        "att_forme_atlas",
+        "att_forme_beacon",
+        "att_forme_meridian",
+        "att_forme_solstice",
+        "att_forme_cardinal",
+        "att_avail_atlas",
+        "att_avail_beacon",
+        "att_avail_meridian",
+        "att_avail_solstice",
+        "att_avail_cardinal",
+        "att_premium_atlas",
+        "att_premium_beacon",
+        "att_premium_meridian",
+        "att_premium_solstice",
+        "att_premium_cardinal",
+        "att_trust_atlas",
+        "att_trust_beacon",
+        "att_trust_meridian",
+        "att_trust_solstice",
+        "att_trust_cardinal",
+        "att_sustain_atlas",
+        "att_sustain_beacon",
+        "att_sustain_meridian",
+        "att_sustain_solstice",
+        "att_sustain_cardinal",
+        "adrecall_atlas",
+        "adrecall_beacon",
+        "adrecall_meridian",
+        "adrecall_solstice",
+        "adrecall_cardinal",
+        "rim_wt_final"
+      ]
+    }
+  },
+  "variables": [
+    {
+      "id": "resp_id",
+      "name": "resp_id",
+      "label": "Respondent ID",
+      "type": "numeric",
+      "valueLabels": [],
+      "missingValues": {
+        "discrete": []
+      },
+      "semantic": {
+        "topic": "respondent_id",
+        "measurementIntent": "identifier",
+        "source": "auto",
+        "confidence": 0.9
+      }
+    },
+    {
+      "id": "wave",
+      "name": "wave",
+      "label": "Tracking wave",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "2025-Q3 (W1)"
+        },
+        {
+          "value": 2,
+          "label": "2025-Q4 (W2)"
+        },
+        {
+          "value": 3,
+          "label": "2026-Q1 (W3)"
+        },
+        {
+          "value": 4,
+          "label": "2026-Q2 (W4)"
+        },
+        {
+          "value": 5,
+          "label": "2026-Q3 (W5)"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      },
+      "semantic": {
+        "topic": "temporal",
+        "measurementIntent": "identifier",
+        "source": "auto",
+        "confidence": 0.85,
+        "temporalRole": "wave_id"
+      }
+    },
+    {
+      "id": "int_date",
+      "name": "int_date",
+      "label": "Interview date",
+      "type": "numeric",
+      "valueLabels": [],
+      "missingValues": {
+        "discrete": []
+      }
+    },
+    {
+      "id": "cat_buyer",
+      "name": "cat_buyer",
+      "label": "S2. Bought ready-to-drink chilled coffee in the past 3 months",
+      "type": "categorical",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "Yes - bought in past 3 months"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      },
+      "semantic": {
+        "topic": "brand_classification",
+        "measurementIntent": "classification",
+        "source": "auto",
+        "confidence": 0.6
+      }
+    },
+    {
+      "id": "age",
+      "name": "age",
+      "label": "D1. Age (years)",
+      "type": "numeric",
+      "valueLabels": [],
+      "missingValues": {
+        "discrete": []
+      },
+      "semantic": {
+        "topic": "demographics",
+        "measurementIntent": "demographic",
+        "source": "auto",
+        "confidence": 0.7
+      }
+    },
+    {
+      "id": "gender",
+      "name": "gender",
+      "label": "D2. Gender",
+      "type": "categorical",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "Male"
+        },
+        {
+          "value": 2,
+          "label": "Female"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      },
+      "semantic": {
+        "topic": "demographics",
+        "measurementIntent": "demographic",
+        "conceptFamily": "gender",
+        "source": "auto",
+        "confidence": 0.9
+      }
+    },
+    {
+      "id": "body_weight_kg",
+      "name": "body_weight_kg",
+      "label": "Body weight (kg)",
+      "type": "numeric",
+      "valueLabels": [],
+      "missingValues": {
+        "discrete": []
+      }
+    },
+    {
+      "id": "region",
+      "name": "region",
+      "label": "D3. Region",
+      "type": "categorical",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "North"
+        },
+        {
+          "value": 2,
+          "label": "East"
+        },
+        {
+          "value": 3,
+          "label": "South"
+        },
+        {
+          "value": 4,
+          "label": "West"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      },
+      "semantic": {
+        "topic": "demographics",
+        "measurementIntent": "demographic",
+        "source": "auto",
+        "confidence": 0.7
+      }
+    },
+    {
+      "id": "income_band",
+      "name": "income_band",
+      "label": "D4. Household income band",
+      "type": "categorical",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "Under $30,000"
+        },
+        {
+          "value": 2,
+          "label": "$30,000 - $49,999"
+        },
+        {
+          "value": 3,
+          "label": "$50,000 - $74,999"
+        },
+        {
+          "value": 4,
+          "label": "$75,000 - $99,999"
+        },
+        {
+          "value": 5,
+          "label": "$100,000 or more"
+        },
+        {
+          "value": 99,
+          "label": "Refused"
+        }
+      ],
+      "missingValues": {
+        "discrete": [
+          99
+        ]
+      },
+      "semantic": {
+        "topic": "demographics",
+        "measurementIntent": "demographic",
+        "source": "auto",
+        "confidence": 0.7
+      }
+    },
+    {
+      "id": "urbanicity",
+      "name": "urbanicity",
+      "label": "D5. Area type",
+      "type": "categorical",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "Urban"
+        },
+        {
+          "value": 2,
+          "label": "Suburban"
+        },
+        {
+          "value": 3,
+          "label": "Rural"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      }
+    },
+    {
+      "id": "segment",
+      "name": "segment",
+      "label": "SEG. Consumer segment (from segmentation model)",
+      "type": "categorical",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "Core"
+        },
+        {
+          "value": 2,
+          "label": "Growth"
+        },
+        {
+          "value": 3,
+          "label": "Value"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      },
+      "semantic": {
+        "topic": "brand_classification",
+        "measurementIntent": "classification",
+        "source": "auto",
+        "confidence": 0.6
+      }
+    },
+    {
+      "id": "unaided_first",
+      "name": "unaided_first",
+      "label": "Q1. Thinking of ready-to-drink chilled coffee, which brand comes to mind first? (unaided, first mention)",
+      "type": "categorical",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "Atlas"
+        },
+        {
+          "value": 2,
+          "label": "Beacon"
+        },
+        {
+          "value": 3,
+          "label": "Meridian"
+        },
+        {
+          "value": 4,
+          "label": "Solstice"
+        },
+        {
+          "value": 5,
+          "label": "Cardinal"
+        },
+        {
+          "value": 6,
+          "label": "Another brand (not listed)"
+        },
+        {
+          "value": 7,
+          "label": "No brand mentioned"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      }
+    },
+    {
+      "id": "unaided_any_atlas",
+      "name": "unaided_any_atlas",
+      "label": "Q1a. Unaided brand awareness - any mention: Atlas",
+      "type": "categorical",
+      "valueLabels": [
+        {
+          "value": 0,
+          "label": "Not mentioned"
+        },
+        {
+          "value": 1,
+          "label": "Mentioned"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      },
+      "semantic": {
+        "topic": "brand_awareness",
+        "measurementIntent": "awareness",
+        "source": "auto",
+        "confidence": 0.65
+      }
+    },
+    {
+      "id": "unaided_any_beacon",
+      "name": "unaided_any_beacon",
+      "label": "Q1a. Unaided brand awareness - any mention: Beacon",
+      "type": "categorical",
+      "valueLabels": [
+        {
+          "value": 0,
+          "label": "Not mentioned"
+        },
+        {
+          "value": 1,
+          "label": "Mentioned"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      },
+      "semantic": {
+        "topic": "brand_awareness",
+        "measurementIntent": "awareness",
+        "source": "auto",
+        "confidence": 0.65
+      }
+    },
+    {
+      "id": "unaided_any_meridian",
+      "name": "unaided_any_meridian",
+      "label": "Q1a. Unaided brand awareness - any mention: Meridian",
+      "type": "categorical",
+      "valueLabels": [
+        {
+          "value": 0,
+          "label": "Not mentioned"
+        },
+        {
+          "value": 1,
+          "label": "Mentioned"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      },
+      "semantic": {
+        "topic": "brand_awareness",
+        "measurementIntent": "awareness",
+        "source": "auto",
+        "confidence": 0.65
+      }
+    },
+    {
+      "id": "unaided_any_solstice",
+      "name": "unaided_any_solstice",
+      "label": "Q1a. Unaided brand awareness - any mention: Solstice",
+      "type": "categorical",
+      "valueLabels": [
+        {
+          "value": 0,
+          "label": "Not mentioned"
+        },
+        {
+          "value": 1,
+          "label": "Mentioned"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      },
+      "semantic": {
+        "topic": "brand_awareness",
+        "measurementIntent": "awareness",
+        "source": "auto",
+        "confidence": 0.65
+      }
+    },
+    {
+      "id": "unaided_any_cardinal",
+      "name": "unaided_any_cardinal",
+      "label": "Q1a. Unaided brand awareness - any mention: Cardinal",
+      "type": "categorical",
+      "valueLabels": [
+        {
+          "value": 0,
+          "label": "Not mentioned"
+        },
+        {
+          "value": 1,
+          "label": "Mentioned"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      },
+      "semantic": {
+        "topic": "brand_awareness",
+        "measurementIntent": "awareness",
+        "source": "auto",
+        "confidence": 0.65
+      }
+    },
+    {
+      "id": "aware_atlas",
+      "name": "aware_atlas",
+      "label": "Q2. Which of these brands of ready-to-drink chilled coffee have you heard of, even if only by name? - Atlas",
+      "type": "categorical",
+      "valueLabels": [
+        {
+          "value": 0,
+          "label": "No"
+        },
+        {
+          "value": 1,
+          "label": "Yes - aware"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      },
+      "semantic": {
+        "topic": "brand_awareness",
+        "measurementIntent": "awareness",
+        "source": "auto",
+        "confidence": 0.8
+      }
+    },
+    {
+      "id": "aware_beacon",
+      "name": "aware_beacon",
+      "label": "Q2. Which of these brands of ready-to-drink chilled coffee have you heard of, even if only by name? - Beacon",
+      "type": "categorical",
+      "valueLabels": [
+        {
+          "value": 0,
+          "label": "No"
+        },
+        {
+          "value": 1,
+          "label": "Yes - aware"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      },
+      "semantic": {
+        "topic": "brand_awareness",
+        "measurementIntent": "awareness",
+        "source": "auto",
+        "confidence": 0.8
+      }
+    },
+    {
+      "id": "aware_meridian",
+      "name": "aware_meridian",
+      "label": "Q2. Which of these brands of ready-to-drink chilled coffee have you heard of, even if only by name? - Meridian",
+      "type": "categorical",
+      "valueLabels": [
+        {
+          "value": 0,
+          "label": "No"
+        },
+        {
+          "value": 1,
+          "label": "Yes - aware"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      },
+      "semantic": {
+        "topic": "brand_awareness",
+        "measurementIntent": "awareness",
+        "source": "auto",
+        "confidence": 0.8
+      }
+    },
+    {
+      "id": "aware_solstice",
+      "name": "aware_solstice",
+      "label": "Q2. Which of these brands of ready-to-drink chilled coffee have you heard of, even if only by name? - Solstice",
+      "type": "categorical",
+      "valueLabels": [
+        {
+          "value": 0,
+          "label": "No"
+        },
+        {
+          "value": 1,
+          "label": "Yes - aware"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      },
+      "semantic": {
+        "topic": "brand_awareness",
+        "measurementIntent": "awareness",
+        "source": "auto",
+        "confidence": 0.8
+      }
+    },
+    {
+      "id": "aware_cardinal",
+      "name": "aware_cardinal",
+      "label": "Q2. Which of these brands of ready-to-drink chilled coffee have you heard of, even if only by name? - Cardinal",
+      "type": "categorical",
+      "valueLabels": [
+        {
+          "value": 0,
+          "label": "No"
+        },
+        {
+          "value": 1,
+          "label": "Yes - aware"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      },
+      "semantic": {
+        "topic": "brand_awareness",
+        "measurementIntent": "awareness",
+        "source": "auto",
+        "confidence": 0.8
+      }
+    },
+    {
+      "id": "consider_atlas",
+      "name": "consider_atlas",
+      "label": "Q3. How likely would you be to consider buying each brand the next time you buy ready-to-drink chilled coffee? - Atlas (aware brands only)",
+      "type": "categorical",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "Would definitely consider"
+        },
+        {
+          "value": 2,
+          "label": "Would probably consider"
+        },
+        {
+          "value": 3,
+          "label": "Might or might not consider"
+        },
+        {
+          "value": 4,
+          "label": "Would probably not consider"
+        },
+        {
+          "value": 5,
+          "label": "Would definitely not consider"
+        },
+        {
+          "value": 98,
+          "label": "Don't know"
+        }
+      ],
+      "missingValues": {
+        "discrete": [
+          98,
+          99
+        ]
+      },
+      "semantic": {
+        "topic": "brand_awareness",
+        "measurementIntent": "awareness",
+        "source": "auto",
+        "confidence": 0.65
+      }
+    },
+    {
+      "id": "consider_beacon",
+      "name": "consider_beacon",
+      "label": "Q3. How likely would you be to consider buying each brand the next time you buy ready-to-drink chilled coffee? - Beacon (aware brands only)",
+      "type": "categorical",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "Would definitely consider"
+        },
+        {
+          "value": 2,
+          "label": "Would probably consider"
+        },
+        {
+          "value": 3,
+          "label": "Might or might not consider"
+        },
+        {
+          "value": 4,
+          "label": "Would probably not consider"
+        },
+        {
+          "value": 5,
+          "label": "Would definitely not consider"
+        },
+        {
+          "value": 98,
+          "label": "Don't know"
+        }
+      ],
+      "missingValues": {
+        "discrete": [
+          98,
+          99
+        ]
+      },
+      "semantic": {
+        "topic": "brand_awareness",
+        "measurementIntent": "awareness",
+        "source": "auto",
+        "confidence": 0.65
+      }
+    },
+    {
+      "id": "consider_meridian",
+      "name": "consider_meridian",
+      "label": "Q3. How likely would you be to consider buying each brand the next time you buy ready-to-drink chilled coffee? - Meridian (aware brands only)",
+      "type": "categorical",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "Would definitely consider"
+        },
+        {
+          "value": 2,
+          "label": "Would probably consider"
+        },
+        {
+          "value": 3,
+          "label": "Might or might not consider"
+        },
+        {
+          "value": 4,
+          "label": "Would probably not consider"
+        },
+        {
+          "value": 5,
+          "label": "Would definitely not consider"
+        },
+        {
+          "value": 98,
+          "label": "Don't know"
+        }
+      ],
+      "missingValues": {
+        "discrete": [
+          98,
+          99
+        ]
+      },
+      "semantic": {
+        "topic": "brand_awareness",
+        "measurementIntent": "awareness",
+        "source": "auto",
+        "confidence": 0.65
+      }
+    },
+    {
+      "id": "consider_solstice",
+      "name": "consider_solstice",
+      "label": "Q3. How likely would you be to consider buying each brand the next time you buy ready-to-drink chilled coffee? - Solstice (aware brands only)",
+      "type": "categorical",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "Would definitely consider"
+        },
+        {
+          "value": 2,
+          "label": "Would probably consider"
+        },
+        {
+          "value": 3,
+          "label": "Might or might not consider"
+        },
+        {
+          "value": 4,
+          "label": "Would probably not consider"
+        },
+        {
+          "value": 5,
+          "label": "Would definitely not consider"
+        },
+        {
+          "value": 98,
+          "label": "Don't know"
+        }
+      ],
+      "missingValues": {
+        "discrete": [
+          98,
+          99
+        ]
+      },
+      "semantic": {
+        "topic": "brand_awareness",
+        "measurementIntent": "awareness",
+        "source": "auto",
+        "confidence": 0.65
+      }
+    },
+    {
+      "id": "consider_cardinal",
+      "name": "consider_cardinal",
+      "label": "Q3. How likely would you be to consider buying each brand the next time you buy ready-to-drink chilled coffee? - Cardinal (aware brands only)",
+      "type": "categorical",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "Would definitely consider"
+        },
+        {
+          "value": 2,
+          "label": "Would probably consider"
+        },
+        {
+          "value": 3,
+          "label": "Might or might not consider"
+        },
+        {
+          "value": 4,
+          "label": "Would probably not consider"
+        },
+        {
+          "value": 5,
+          "label": "Would definitely not consider"
+        },
+        {
+          "value": 98,
+          "label": "Don't know"
+        }
+      ],
+      "missingValues": {
+        "discrete": [
+          98,
+          99
+        ]
+      },
+      "semantic": {
+        "topic": "brand_awareness",
+        "measurementIntent": "awareness",
+        "source": "auto",
+        "confidence": 0.65
+      }
+    },
+    {
+      "id": "used_p3m_atlas",
+      "name": "used_p3m_atlas",
+      "label": "Q4. Which of these brands have you bought or drunk in the past 3 months? - Atlas (aware brands only)",
+      "type": "categorical",
+      "valueLabels": [
+        {
+          "value": 0,
+          "label": "No"
+        },
+        {
+          "value": 1,
+          "label": "Yes - bought/drunk in past 3 months"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      },
+      "semantic": {
+        "topic": "brand_awareness",
+        "measurementIntent": "awareness",
+        "source": "auto",
+        "confidence": 0.65
+      }
+    },
+    {
+      "id": "used_p3m_beacon",
+      "name": "used_p3m_beacon",
+      "label": "Q4. Which of these brands have you bought or drunk in the past 3 months? - Beacon (aware brands only)",
+      "type": "categorical",
+      "valueLabels": [
+        {
+          "value": 0,
+          "label": "No"
+        },
+        {
+          "value": 1,
+          "label": "Yes - bought/drunk in past 3 months"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      },
+      "semantic": {
+        "topic": "brand_awareness",
+        "measurementIntent": "awareness",
+        "source": "auto",
+        "confidence": 0.65
+      }
+    },
+    {
+      "id": "used_p3m_meridian",
+      "name": "used_p3m_meridian",
+      "label": "Q4. Which of these brands have you bought or drunk in the past 3 months? - Meridian (aware brands only)",
+      "type": "categorical",
+      "valueLabels": [
+        {
+          "value": 0,
+          "label": "No"
+        },
+        {
+          "value": 1,
+          "label": "Yes - bought/drunk in past 3 months"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      },
+      "semantic": {
+        "topic": "brand_awareness",
+        "measurementIntent": "awareness",
+        "source": "auto",
+        "confidence": 0.65
+      }
+    },
+    {
+      "id": "used_p3m_solstice",
+      "name": "used_p3m_solstice",
+      "label": "Q4. Which of these brands have you bought or drunk in the past 3 months? - Solstice (aware brands only)",
+      "type": "categorical",
+      "valueLabels": [
+        {
+          "value": 0,
+          "label": "No"
+        },
+        {
+          "value": 1,
+          "label": "Yes - bought/drunk in past 3 months"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      },
+      "semantic": {
+        "topic": "brand_awareness",
+        "measurementIntent": "awareness",
+        "source": "auto",
+        "confidence": 0.65
+      }
+    },
+    {
+      "id": "used_p3m_cardinal",
+      "name": "used_p3m_cardinal",
+      "label": "Q4. Which of these brands have you bought or drunk in the past 3 months? - Cardinal (aware brands only)",
+      "type": "categorical",
+      "valueLabels": [
+        {
+          "value": 0,
+          "label": "No"
+        },
+        {
+          "value": 1,
+          "label": "Yes - bought/drunk in past 3 months"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      },
+      "semantic": {
+        "topic": "brand_awareness",
+        "measurementIntent": "awareness",
+        "source": "auto",
+        "confidence": 0.65
+      }
+    },
+    {
+      "id": "brand_pref",
+      "name": "brand_pref",
+      "label": "Q5. And which ONE of these brands do you most prefer?",
+      "type": "categorical",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "Atlas"
+        },
+        {
+          "value": 2,
+          "label": "Beacon"
+        },
+        {
+          "value": 3,
+          "label": "Meridian"
+        },
+        {
+          "value": 4,
+          "label": "Solstice"
+        },
+        {
+          "value": 5,
+          "label": "Cardinal"
+        },
+        {
+          "value": 6,
+          "label": "None of these"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      },
+      "semantic": {
+        "topic": "brand_classification",
+        "measurementIntent": "classification",
+        "source": "auto",
+        "confidence": 0.6
+      }
+    },
+    {
+      "id": "nps_atlas",
+      "name": "nps_atlas",
+      "label": "Q6. How likely are you to recommend Atlas to a friend or colleague? (0-10; Atlas P3M buyers only)",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 0,
+          "label": "0 - Not at all likely"
+        },
+        {
+          "value": 10,
+          "label": "10 - Extremely likely"
+        },
+        {
+          "value": 1,
+          "label": "1"
+        },
+        {
+          "value": 2,
+          "label": "2"
+        },
+        {
+          "value": 3,
+          "label": "3"
+        },
+        {
+          "value": 4,
+          "label": "4"
+        },
+        {
+          "value": 5,
+          "label": "5"
+        },
+        {
+          "value": 6,
+          "label": "6"
+        },
+        {
+          "value": 7,
+          "label": "7"
+        },
+        {
+          "value": 8,
+          "label": "8"
+        },
+        {
+          "value": 9,
+          "label": "9"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      },
+      "semantic": {
+        "topic": "nps",
+        "measurementIntent": "attitude",
+        "conceptFamily": "nps",
+        "source": "auto",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "att_taste_atlas",
+      "name": "att_taste_atlas",
+      "label": "Q7. How much do you agree or disagree that each brand tastes great? - Atlas (aware brands only)",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "Strongly disagree"
+        },
+        {
+          "value": 2,
+          "label": "Somewhat disagree"
+        },
+        {
+          "value": 3,
+          "label": "Neither agree nor disagree"
+        },
+        {
+          "value": 4,
+          "label": "Somewhat agree"
+        },
+        {
+          "value": 5,
+          "label": "Strongly agree"
+        },
+        {
+          "value": 98,
+          "label": "Don't know"
+        }
+      ],
+      "missingValues": {
+        "discrete": [
+          98,
+          99
+        ]
+      },
+      "semantic": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      }
+    },
+    {
+      "id": "att_taste_beacon",
+      "name": "att_taste_beacon",
+      "label": "Q7. How much do you agree or disagree that each brand tastes great? - Beacon (aware brands only)",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "Strongly disagree"
+        },
+        {
+          "value": 2,
+          "label": "Somewhat disagree"
+        },
+        {
+          "value": 3,
+          "label": "Neither agree nor disagree"
+        },
+        {
+          "value": 4,
+          "label": "Somewhat agree"
+        },
+        {
+          "value": 5,
+          "label": "Strongly agree"
+        },
+        {
+          "value": 98,
+          "label": "Don't know"
+        }
+      ],
+      "missingValues": {
+        "discrete": [
+          98,
+          99
+        ]
+      },
+      "semantic": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      }
+    },
+    {
+      "id": "att_taste_meridian",
+      "name": "att_taste_meridian",
+      "label": "Q7. How much do you agree or disagree that each brand tastes great? - Meridian (aware brands only)",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "Strongly disagree"
+        },
+        {
+          "value": 2,
+          "label": "Somewhat disagree"
+        },
+        {
+          "value": 3,
+          "label": "Neither agree nor disagree"
+        },
+        {
+          "value": 4,
+          "label": "Somewhat agree"
+        },
+        {
+          "value": 5,
+          "label": "Strongly agree"
+        },
+        {
+          "value": 98,
+          "label": "Don't know"
+        }
+      ],
+      "missingValues": {
+        "discrete": [
+          98,
+          99
+        ]
+      },
+      "semantic": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      }
+    },
+    {
+      "id": "att_taste_solstice",
+      "name": "att_taste_solstice",
+      "label": "Q7. How much do you agree or disagree that each brand tastes great? - Solstice (aware brands only)",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "Strongly disagree"
+        },
+        {
+          "value": 2,
+          "label": "Somewhat disagree"
+        },
+        {
+          "value": 3,
+          "label": "Neither agree nor disagree"
+        },
+        {
+          "value": 4,
+          "label": "Somewhat agree"
+        },
+        {
+          "value": 5,
+          "label": "Strongly agree"
+        },
+        {
+          "value": 98,
+          "label": "Don't know"
+        }
+      ],
+      "missingValues": {
+        "discrete": [
+          98,
+          99
+        ]
+      },
+      "semantic": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      }
+    },
+    {
+      "id": "att_taste_cardinal",
+      "name": "att_taste_cardinal",
+      "label": "Q7. How much do you agree or disagree that each brand tastes great? - Cardinal (aware brands only)",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "Strongly disagree"
+        },
+        {
+          "value": 2,
+          "label": "Somewhat disagree"
+        },
+        {
+          "value": 3,
+          "label": "Neither agree nor disagree"
+        },
+        {
+          "value": 4,
+          "label": "Somewhat agree"
+        },
+        {
+          "value": 5,
+          "label": "Strongly agree"
+        },
+        {
+          "value": 98,
+          "label": "Don't know"
+        }
+      ],
+      "missingValues": {
+        "discrete": [
+          98,
+          99
+        ]
+      },
+      "semantic": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      }
+    },
+    {
+      "id": "att_value_atlas",
+      "name": "att_value_atlas",
+      "label": "Q7. How much do you agree or disagree that each brand is worth the price? - Atlas (aware brands only)",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "Strongly disagree"
+        },
+        {
+          "value": 2,
+          "label": "Somewhat disagree"
+        },
+        {
+          "value": 3,
+          "label": "Neither agree nor disagree"
+        },
+        {
+          "value": 4,
+          "label": "Somewhat agree"
+        },
+        {
+          "value": 5,
+          "label": "Strongly agree"
+        },
+        {
+          "value": 98,
+          "label": "Don't know"
+        }
+      ],
+      "missingValues": {
+        "discrete": [
+          98,
+          99
+        ]
+      },
+      "semantic": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      }
+    },
+    {
+      "id": "att_value_beacon",
+      "name": "att_value_beacon",
+      "label": "Q7. How much do you agree or disagree that each brand is worth the price? - Beacon (aware brands only)",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "Strongly disagree"
+        },
+        {
+          "value": 2,
+          "label": "Somewhat disagree"
+        },
+        {
+          "value": 3,
+          "label": "Neither agree nor disagree"
+        },
+        {
+          "value": 4,
+          "label": "Somewhat agree"
+        },
+        {
+          "value": 5,
+          "label": "Strongly agree"
+        },
+        {
+          "value": 98,
+          "label": "Don't know"
+        }
+      ],
+      "missingValues": {
+        "discrete": [
+          98,
+          99
+        ]
+      },
+      "semantic": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      }
+    },
+    {
+      "id": "att_worth_meridian",
+      "name": "att_worth_meridian",
+      "label": "Q7. How much do you agree or disagree that each brand is worth the price? - Meridian (aware brands only)",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "Strongly disagree"
+        },
+        {
+          "value": 2,
+          "label": "Somewhat disagree"
+        },
+        {
+          "value": 3,
+          "label": "Neither agree nor disagree"
+        },
+        {
+          "value": 4,
+          "label": "Somewhat agree"
+        },
+        {
+          "value": 5,
+          "label": "Strongly agree"
+        },
+        {
+          "value": 98,
+          "label": "Don't know"
+        }
+      ],
+      "missingValues": {
+        "discrete": [
+          98,
+          99
+        ]
+      },
+      "semantic": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      }
+    },
+    {
+      "id": "att_worth_solstice",
+      "name": "att_worth_solstice",
+      "label": "Q7. How much do you agree or disagree that each brand is worth the price? - Solstice (aware brands only)",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "Strongly disagree"
+        },
+        {
+          "value": 2,
+          "label": "Somewhat disagree"
+        },
+        {
+          "value": 3,
+          "label": "Neither agree nor disagree"
+        },
+        {
+          "value": 4,
+          "label": "Somewhat agree"
+        },
+        {
+          "value": 5,
+          "label": "Strongly agree"
+        },
+        {
+          "value": 98,
+          "label": "Don't know"
+        }
+      ],
+      "missingValues": {
+        "discrete": [
+          98,
+          99
+        ]
+      },
+      "semantic": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      }
+    },
+    {
+      "id": "att_worth_cardinal",
+      "name": "att_worth_cardinal",
+      "label": "Q7. How much do you agree or disagree that each brand is worth the price? - Cardinal (aware brands only)",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "Strongly disagree"
+        },
+        {
+          "value": 2,
+          "label": "Somewhat disagree"
+        },
+        {
+          "value": 3,
+          "label": "Neither agree nor disagree"
+        },
+        {
+          "value": 4,
+          "label": "Somewhat agree"
+        },
+        {
+          "value": 5,
+          "label": "Strongly agree"
+        },
+        {
+          "value": 98,
+          "label": "Don't know"
+        }
+      ],
+      "missingValues": {
+        "discrete": [
+          98,
+          99
+        ]
+      },
+      "semantic": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      }
+    },
+    {
+      "id": "att_innov_atlas",
+      "name": "att_innov_atlas",
+      "label": "Q7. How much do you agree or disagree that each brand is innovative? - Atlas (aware brands only)",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "Strongly disagree"
+        },
+        {
+          "value": 2,
+          "label": "Somewhat disagree"
+        },
+        {
+          "value": 3,
+          "label": "Neither agree nor disagree"
+        },
+        {
+          "value": 4,
+          "label": "Somewhat agree"
+        },
+        {
+          "value": 5,
+          "label": "Strongly agree"
+        },
+        {
+          "value": 98,
+          "label": "Don't know"
+        }
+      ],
+      "missingValues": {
+        "discrete": [
+          98,
+          99
+        ]
+      },
+      "semantic": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      }
+    },
+    {
+      "id": "att_innov_beacon",
+      "name": "att_innov_beacon",
+      "label": "Q7. How much do you agree or disagree that each brand is innovative? - Beacon (aware brands only)",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "Strongly disagree"
+        },
+        {
+          "value": 2,
+          "label": "Somewhat disagree"
+        },
+        {
+          "value": 3,
+          "label": "Neither agree nor disagree"
+        },
+        {
+          "value": 4,
+          "label": "Somewhat agree"
+        },
+        {
+          "value": 5,
+          "label": "Strongly agree"
+        },
+        {
+          "value": 98,
+          "label": "Don't know"
+        }
+      ],
+      "missingValues": {
+        "discrete": [
+          98,
+          99
+        ]
+      },
+      "semantic": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      }
+    },
+    {
+      "id": "att_innov_meridian",
+      "name": "att_innov_meridian",
+      "label": "Q7. How much do you agree or disagree that each brand is innovative? - Meridian (aware brands only)",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "Strongly disagree"
+        },
+        {
+          "value": 2,
+          "label": "Somewhat disagree"
+        },
+        {
+          "value": 3,
+          "label": "Neither agree nor disagree"
+        },
+        {
+          "value": 4,
+          "label": "Somewhat agree"
+        },
+        {
+          "value": 5,
+          "label": "Strongly agree"
+        },
+        {
+          "value": 98,
+          "label": "Don't know"
+        }
+      ],
+      "missingValues": {
+        "discrete": [
+          98,
+          99
+        ]
+      },
+      "semantic": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      }
+    },
+    {
+      "id": "att_innov_solstice",
+      "name": "att_innov_solstice",
+      "label": "Q7. How much do you agree or disagree that each brand is innovative? - Solstice (aware brands only)",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "Strongly disagree"
+        },
+        {
+          "value": 2,
+          "label": "Somewhat disagree"
+        },
+        {
+          "value": 3,
+          "label": "Neither agree nor disagree"
+        },
+        {
+          "value": 4,
+          "label": "Somewhat agree"
+        },
+        {
+          "value": 5,
+          "label": "Strongly agree"
+        },
+        {
+          "value": 98,
+          "label": "Don't know"
+        }
+      ],
+      "missingValues": {
+        "discrete": [
+          98,
+          99
+        ]
+      },
+      "semantic": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      }
+    },
+    {
+      "id": "att_innov_cardinal",
+      "name": "att_innov_cardinal",
+      "label": "Q7. How much do you agree or disagree that each brand is innovative? - Cardinal (aware brands only)",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "Strongly disagree"
+        },
+        {
+          "value": 2,
+          "label": "Somewhat disagree"
+        },
+        {
+          "value": 3,
+          "label": "Neither agree nor disagree"
+        },
+        {
+          "value": 4,
+          "label": "Somewhat agree"
+        },
+        {
+          "value": 5,
+          "label": "Strongly agree"
+        },
+        {
+          "value": 98,
+          "label": "Don't know"
+        }
+      ],
+      "missingValues": {
+        "discrete": [
+          98,
+          99
+        ]
+      },
+      "semantic": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      }
+    },
+    {
+      "id": "att_forme_atlas",
+      "name": "att_forme_atlas",
+      "label": "Q7. How much do you agree or disagree that each brand is for someone like me? - Atlas (aware brands only)",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "Strongly disagree"
+        },
+        {
+          "value": 2,
+          "label": "Somewhat disagree"
+        },
+        {
+          "value": 3,
+          "label": "Neither agree nor disagree"
+        },
+        {
+          "value": 4,
+          "label": "Somewhat agree"
+        },
+        {
+          "value": 5,
+          "label": "Strongly agree"
+        },
+        {
+          "value": 98,
+          "label": "Don't know"
+        }
+      ],
+      "missingValues": {
+        "discrete": [
+          98,
+          99
+        ]
+      },
+      "semantic": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      }
+    },
+    {
+      "id": "att_forme_beacon",
+      "name": "att_forme_beacon",
+      "label": "Q7. How much do you agree or disagree that each brand is for someone like me? - Beacon (aware brands only)",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "Strongly disagree"
+        },
+        {
+          "value": 2,
+          "label": "Somewhat disagree"
+        },
+        {
+          "value": 3,
+          "label": "Neither agree nor disagree"
+        },
+        {
+          "value": 4,
+          "label": "Somewhat agree"
+        },
+        {
+          "value": 5,
+          "label": "Strongly agree"
+        },
+        {
+          "value": 98,
+          "label": "Don't know"
+        }
+      ],
+      "missingValues": {
+        "discrete": [
+          98,
+          99
+        ]
+      },
+      "semantic": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      }
+    },
+    {
+      "id": "att_forme_meridian",
+      "name": "att_forme_meridian",
+      "label": "Q7. How much do you agree or disagree that each brand is for someone like me? - Meridian (aware brands only)",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "Strongly disagree"
+        },
+        {
+          "value": 2,
+          "label": "Somewhat disagree"
+        },
+        {
+          "value": 3,
+          "label": "Neither agree nor disagree"
+        },
+        {
+          "value": 4,
+          "label": "Somewhat agree"
+        },
+        {
+          "value": 5,
+          "label": "Strongly agree"
+        },
+        {
+          "value": 98,
+          "label": "Don't know"
+        }
+      ],
+      "missingValues": {
+        "discrete": [
+          98,
+          99
+        ]
+      },
+      "semantic": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      }
+    },
+    {
+      "id": "att_forme_solstice",
+      "name": "att_forme_solstice",
+      "label": "Q7. How much do you agree or disagree that each brand is for someone like me? - Solstice (aware brands only)",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "Strongly disagree"
+        },
+        {
+          "value": 2,
+          "label": "Somewhat disagree"
+        },
+        {
+          "value": 3,
+          "label": "Neither agree nor disagree"
+        },
+        {
+          "value": 4,
+          "label": "Somewhat agree"
+        },
+        {
+          "value": 5,
+          "label": "Strongly agree"
+        },
+        {
+          "value": 98,
+          "label": "Don't know"
+        }
+      ],
+      "missingValues": {
+        "discrete": [
+          98,
+          99
+        ]
+      },
+      "semantic": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      }
+    },
+    {
+      "id": "att_forme_cardinal",
+      "name": "att_forme_cardinal",
+      "label": "Q7. How much do you agree or disagree that each brand is for someone like me? - Cardinal (aware brands only)",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "Strongly disagree"
+        },
+        {
+          "value": 2,
+          "label": "Somewhat disagree"
+        },
+        {
+          "value": 3,
+          "label": "Neither agree nor disagree"
+        },
+        {
+          "value": 4,
+          "label": "Somewhat agree"
+        },
+        {
+          "value": 5,
+          "label": "Strongly agree"
+        },
+        {
+          "value": 98,
+          "label": "Don't know"
+        }
+      ],
+      "missingValues": {
+        "discrete": [
+          98,
+          99
+        ]
+      },
+      "semantic": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      }
+    },
+    {
+      "id": "att_avail_atlas",
+      "name": "att_avail_atlas",
+      "label": "Q7. How much do you agree or disagree that each brand is widely available? - Atlas (aware brands only)",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "Strongly disagree"
+        },
+        {
+          "value": 2,
+          "label": "Somewhat disagree"
+        },
+        {
+          "value": 3,
+          "label": "Neither agree nor disagree"
+        },
+        {
+          "value": 4,
+          "label": "Somewhat agree"
+        },
+        {
+          "value": 5,
+          "label": "Strongly agree"
+        },
+        {
+          "value": 98,
+          "label": "Don't know"
+        }
+      ],
+      "missingValues": {
+        "discrete": [
+          98,
+          99
+        ]
+      },
+      "semantic": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      }
+    },
+    {
+      "id": "att_avail_beacon",
+      "name": "att_avail_beacon",
+      "label": "Q7. How much do you agree or disagree that each brand is widely available? - Beacon (aware brands only)",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "Strongly disagree"
+        },
+        {
+          "value": 2,
+          "label": "Somewhat disagree"
+        },
+        {
+          "value": 3,
+          "label": "Neither agree nor disagree"
+        },
+        {
+          "value": 4,
+          "label": "Somewhat agree"
+        },
+        {
+          "value": 5,
+          "label": "Strongly agree"
+        },
+        {
+          "value": 98,
+          "label": "Don't know"
+        }
+      ],
+      "missingValues": {
+        "discrete": [
+          98,
+          99
+        ]
+      },
+      "semantic": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      }
+    },
+    {
+      "id": "att_avail_meridian",
+      "name": "att_avail_meridian",
+      "label": "Q7. How much do you agree or disagree that each brand is widely available? - Meridian (aware brands only)",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "Strongly disagree"
+        },
+        {
+          "value": 2,
+          "label": "Somewhat disagree"
+        },
+        {
+          "value": 3,
+          "label": "Neither agree nor disagree"
+        },
+        {
+          "value": 4,
+          "label": "Somewhat agree"
+        },
+        {
+          "value": 5,
+          "label": "Strongly agree"
+        },
+        {
+          "value": 98,
+          "label": "Don't know"
+        }
+      ],
+      "missingValues": {
+        "discrete": [
+          98,
+          99
+        ]
+      },
+      "semantic": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      }
+    },
+    {
+      "id": "att_avail_solstice",
+      "name": "att_avail_solstice",
+      "label": "Q7. How much do you agree or disagree that each brand is widely available? - Solstice (aware brands only)",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "Strongly disagree"
+        },
+        {
+          "value": 2,
+          "label": "Somewhat disagree"
+        },
+        {
+          "value": 3,
+          "label": "Neither agree nor disagree"
+        },
+        {
+          "value": 4,
+          "label": "Somewhat agree"
+        },
+        {
+          "value": 5,
+          "label": "Strongly agree"
+        },
+        {
+          "value": 98,
+          "label": "Don't know"
+        }
+      ],
+      "missingValues": {
+        "discrete": [
+          98,
+          99
+        ]
+      },
+      "semantic": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      }
+    },
+    {
+      "id": "att_avail_cardinal",
+      "name": "att_avail_cardinal",
+      "label": "Q7. How much do you agree or disagree that each brand is widely available? - Cardinal (aware brands only)",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "Strongly disagree"
+        },
+        {
+          "value": 2,
+          "label": "Somewhat disagree"
+        },
+        {
+          "value": 3,
+          "label": "Neither agree nor disagree"
+        },
+        {
+          "value": 4,
+          "label": "Somewhat agree"
+        },
+        {
+          "value": 5,
+          "label": "Strongly agree"
+        },
+        {
+          "value": 98,
+          "label": "Don't know"
+        }
+      ],
+      "missingValues": {
+        "discrete": [
+          98,
+          99
+        ]
+      },
+      "semantic": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      }
+    },
+    {
+      "id": "att_premium_atlas",
+      "name": "att_premium_atlas",
+      "label": "Q7. How much do you agree or disagree that each brand is a premium brand? - Atlas (aware brands only)",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "Strongly disagree"
+        },
+        {
+          "value": 2,
+          "label": "Somewhat disagree"
+        },
+        {
+          "value": 3,
+          "label": "Neither agree nor disagree"
+        },
+        {
+          "value": 4,
+          "label": "Somewhat agree"
+        },
+        {
+          "value": 5,
+          "label": "Strongly agree"
+        },
+        {
+          "value": 98,
+          "label": "Don't know"
+        }
+      ],
+      "missingValues": {
+        "discrete": [
+          98,
+          99
+        ]
+      },
+      "semantic": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      }
+    },
+    {
+      "id": "att_premium_beacon",
+      "name": "att_premium_beacon",
+      "label": "Q7. How much do you agree or disagree that each brand is a premium brand? - Beacon (aware brands only)",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "Strongly disagree"
+        },
+        {
+          "value": 2,
+          "label": "Somewhat disagree"
+        },
+        {
+          "value": 3,
+          "label": "Neither agree nor disagree"
+        },
+        {
+          "value": 4,
+          "label": "Somewhat agree"
+        },
+        {
+          "value": 5,
+          "label": "Strongly agree"
+        },
+        {
+          "value": 98,
+          "label": "Don't know"
+        }
+      ],
+      "missingValues": {
+        "discrete": [
+          98,
+          99
+        ]
+      },
+      "semantic": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      }
+    },
+    {
+      "id": "att_premium_meridian",
+      "name": "att_premium_meridian",
+      "label": "Q7. How much do you agree or disagree that each brand is a premium brand? - Meridian (aware brands only)",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "Strongly disagree"
+        },
+        {
+          "value": 2,
+          "label": "Somewhat disagree"
+        },
+        {
+          "value": 3,
+          "label": "Neither agree nor disagree"
+        },
+        {
+          "value": 4,
+          "label": "Somewhat agree"
+        },
+        {
+          "value": 5,
+          "label": "Strongly agree"
+        },
+        {
+          "value": 98,
+          "label": "Don't know"
+        }
+      ],
+      "missingValues": {
+        "discrete": [
+          98,
+          99
+        ]
+      },
+      "semantic": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      }
+    },
+    {
+      "id": "att_premium_solstice",
+      "name": "att_premium_solstice",
+      "label": "Q7. How much do you agree or disagree that each brand is a premium brand? - Solstice (aware brands only)",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "Strongly disagree"
+        },
+        {
+          "value": 2,
+          "label": "Somewhat disagree"
+        },
+        {
+          "value": 3,
+          "label": "Neither agree nor disagree"
+        },
+        {
+          "value": 4,
+          "label": "Somewhat agree"
+        },
+        {
+          "value": 5,
+          "label": "Strongly agree"
+        },
+        {
+          "value": 98,
+          "label": "Don't know"
+        }
+      ],
+      "missingValues": {
+        "discrete": [
+          98,
+          99
+        ]
+      },
+      "semantic": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      }
+    },
+    {
+      "id": "att_premium_cardinal",
+      "name": "att_premium_cardinal",
+      "label": "Q7. How much do you agree or disagree that each brand is a premium brand? - Cardinal (aware brands only)",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "Strongly disagree"
+        },
+        {
+          "value": 2,
+          "label": "Somewhat disagree"
+        },
+        {
+          "value": 3,
+          "label": "Neither agree nor disagree"
+        },
+        {
+          "value": 4,
+          "label": "Somewhat agree"
+        },
+        {
+          "value": 5,
+          "label": "Strongly agree"
+        },
+        {
+          "value": 98,
+          "label": "Don't know"
+        }
+      ],
+      "missingValues": {
+        "discrete": [
+          98,
+          99
+        ]
+      },
+      "semantic": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      }
+    },
+    {
+      "id": "att_trust_atlas",
+      "name": "att_trust_atlas",
+      "label": "Q7. How much do you agree or disagree that each brand is a brand I trust? - Atlas (aware brands only)",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "Strongly disagree"
+        },
+        {
+          "value": 2,
+          "label": "Somewhat disagree"
+        },
+        {
+          "value": 3,
+          "label": "Neither agree nor disagree"
+        },
+        {
+          "value": 4,
+          "label": "Somewhat agree"
+        },
+        {
+          "value": 5,
+          "label": "Strongly agree"
+        },
+        {
+          "value": 98,
+          "label": "Don't know"
+        }
+      ],
+      "missingValues": {
+        "discrete": [
+          98,
+          99
+        ]
+      },
+      "semantic": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      }
+    },
+    {
+      "id": "att_trust_beacon",
+      "name": "att_trust_beacon",
+      "label": "Q7. How much do you agree or disagree that each brand is a brand I trust? - Beacon (aware brands only)",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "Strongly disagree"
+        },
+        {
+          "value": 2,
+          "label": "Somewhat disagree"
+        },
+        {
+          "value": 3,
+          "label": "Neither agree nor disagree"
+        },
+        {
+          "value": 4,
+          "label": "Somewhat agree"
+        },
+        {
+          "value": 5,
+          "label": "Strongly agree"
+        },
+        {
+          "value": 98,
+          "label": "Don't know"
+        }
+      ],
+      "missingValues": {
+        "discrete": [
+          98,
+          99
+        ]
+      },
+      "semantic": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      }
+    },
+    {
+      "id": "att_trust_meridian",
+      "name": "att_trust_meridian",
+      "label": "Q7. How much do you agree or disagree that each brand is a brand I trust? - Meridian (aware brands only)",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "Strongly disagree"
+        },
+        {
+          "value": 2,
+          "label": "Somewhat disagree"
+        },
+        {
+          "value": 3,
+          "label": "Neither agree nor disagree"
+        },
+        {
+          "value": 4,
+          "label": "Somewhat agree"
+        },
+        {
+          "value": 5,
+          "label": "Strongly agree"
+        },
+        {
+          "value": 98,
+          "label": "Don't know"
+        }
+      ],
+      "missingValues": {
+        "discrete": [
+          98,
+          99
+        ]
+      },
+      "semantic": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      }
+    },
+    {
+      "id": "att_trust_solstice",
+      "name": "att_trust_solstice",
+      "label": "Q7. How much do you agree or disagree that each brand is a brand I trust? - Solstice (aware brands only)",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "Strongly disagree"
+        },
+        {
+          "value": 2,
+          "label": "Somewhat disagree"
+        },
+        {
+          "value": 3,
+          "label": "Neither agree nor disagree"
+        },
+        {
+          "value": 4,
+          "label": "Somewhat agree"
+        },
+        {
+          "value": 5,
+          "label": "Strongly agree"
+        },
+        {
+          "value": 98,
+          "label": "Don't know"
+        }
+      ],
+      "missingValues": {
+        "discrete": [
+          98,
+          99
+        ]
+      },
+      "semantic": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      }
+    },
+    {
+      "id": "att_trust_cardinal",
+      "name": "att_trust_cardinal",
+      "label": "Q7. How much do you agree or disagree that each brand is a brand I trust? - Cardinal (aware brands only)",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "Strongly disagree"
+        },
+        {
+          "value": 2,
+          "label": "Somewhat disagree"
+        },
+        {
+          "value": 3,
+          "label": "Neither agree nor disagree"
+        },
+        {
+          "value": 4,
+          "label": "Somewhat agree"
+        },
+        {
+          "value": 5,
+          "label": "Strongly agree"
+        },
+        {
+          "value": 98,
+          "label": "Don't know"
+        }
+      ],
+      "missingValues": {
+        "discrete": [
+          98,
+          99
+        ]
+      },
+      "semantic": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      }
+    },
+    {
+      "id": "att_sustain_atlas",
+      "name": "att_sustain_atlas",
+      "label": "Q7. How much do you agree or disagree that each brand is environmentally sustainable? - Atlas (aware brands only)",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "Strongly disagree"
+        },
+        {
+          "value": 2,
+          "label": "Somewhat disagree"
+        },
+        {
+          "value": 3,
+          "label": "Neither agree nor disagree"
+        },
+        {
+          "value": 4,
+          "label": "Somewhat agree"
+        },
+        {
+          "value": 5,
+          "label": "Strongly agree"
+        },
+        {
+          "value": 98,
+          "label": "Don't know"
+        }
+      ],
+      "missingValues": {
+        "discrete": [
+          98,
+          99
+        ]
+      },
+      "semantic": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      }
+    },
+    {
+      "id": "att_sustain_beacon",
+      "name": "att_sustain_beacon",
+      "label": "Q7. How much do you agree or disagree that each brand is environmentally sustainable? - Beacon (aware brands only)",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "Strongly disagree"
+        },
+        {
+          "value": 2,
+          "label": "Somewhat disagree"
+        },
+        {
+          "value": 3,
+          "label": "Neither agree nor disagree"
+        },
+        {
+          "value": 4,
+          "label": "Somewhat agree"
+        },
+        {
+          "value": 5,
+          "label": "Strongly agree"
+        },
+        {
+          "value": 98,
+          "label": "Don't know"
+        }
+      ],
+      "missingValues": {
+        "discrete": [
+          98,
+          99
+        ]
+      },
+      "semantic": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      }
+    },
+    {
+      "id": "att_sustain_meridian",
+      "name": "att_sustain_meridian",
+      "label": "Q7. How much do you agree or disagree that each brand is environmentally sustainable? - Meridian (aware brands only)",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "Strongly disagree"
+        },
+        {
+          "value": 2,
+          "label": "Somewhat disagree"
+        },
+        {
+          "value": 3,
+          "label": "Neither agree nor disagree"
+        },
+        {
+          "value": 4,
+          "label": "Somewhat agree"
+        },
+        {
+          "value": 5,
+          "label": "Strongly agree"
+        },
+        {
+          "value": 98,
+          "label": "Don't know"
+        }
+      ],
+      "missingValues": {
+        "discrete": [
+          98,
+          99
+        ]
+      },
+      "semantic": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      }
+    },
+    {
+      "id": "att_sustain_solstice",
+      "name": "att_sustain_solstice",
+      "label": "Q7. How much do you agree or disagree that each brand is environmentally sustainable? - Solstice (aware brands only)",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "Strongly disagree"
+        },
+        {
+          "value": 2,
+          "label": "Somewhat disagree"
+        },
+        {
+          "value": 3,
+          "label": "Neither agree nor disagree"
+        },
+        {
+          "value": 4,
+          "label": "Somewhat agree"
+        },
+        {
+          "value": 5,
+          "label": "Strongly agree"
+        },
+        {
+          "value": 98,
+          "label": "Don't know"
+        }
+      ],
+      "missingValues": {
+        "discrete": [
+          98,
+          99
+        ]
+      },
+      "semantic": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      }
+    },
+    {
+      "id": "att_sustain_cardinal",
+      "name": "att_sustain_cardinal",
+      "label": "Q7. How much do you agree or disagree that each brand is environmentally sustainable? - Cardinal (aware brands only)",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "Strongly disagree"
+        },
+        {
+          "value": 2,
+          "label": "Somewhat disagree"
+        },
+        {
+          "value": 3,
+          "label": "Neither agree nor disagree"
+        },
+        {
+          "value": 4,
+          "label": "Somewhat agree"
+        },
+        {
+          "value": 5,
+          "label": "Strongly agree"
+        },
+        {
+          "value": 98,
+          "label": "Don't know"
+        }
+      ],
+      "missingValues": {
+        "discrete": [
+          98,
+          99
+        ]
+      },
+      "semantic": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      }
+    },
+    {
+      "id": "adrecall_atlas",
+      "name": "adrecall_atlas",
+      "label": "Q8. Have you seen or heard any advertising for these brands in the past month? - Atlas",
+      "type": "categorical",
+      "valueLabels": [
+        {
+          "value": 0,
+          "label": "No"
+        },
+        {
+          "value": 1,
+          "label": "Yes"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      }
+    },
+    {
+      "id": "adrecall_beacon",
+      "name": "adrecall_beacon",
+      "label": "Q8. Have you seen or heard any advertising for these brands in the past month? - Beacon",
+      "type": "categorical",
+      "valueLabels": [
+        {
+          "value": 0,
+          "label": "No"
+        },
+        {
+          "value": 1,
+          "label": "Yes"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      }
+    },
+    {
+      "id": "adrecall_meridian",
+      "name": "adrecall_meridian",
+      "label": "Q8. Have you seen or heard any advertising for these brands in the past month? - Meridian",
+      "type": "categorical",
+      "valueLabels": [
+        {
+          "value": 0,
+          "label": "No"
+        },
+        {
+          "value": 1,
+          "label": "Yes"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      }
+    },
+    {
+      "id": "adrecall_solstice",
+      "name": "adrecall_solstice",
+      "label": "Q8. Have you seen or heard any advertising for these brands in the past month? - Solstice",
+      "type": "categorical",
+      "valueLabels": [
+        {
+          "value": 0,
+          "label": "No"
+        },
+        {
+          "value": 1,
+          "label": "Yes"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      }
+    },
+    {
+      "id": "adrecall_cardinal",
+      "name": "adrecall_cardinal",
+      "label": "Q8. Have you seen or heard any advertising for these brands in the past month? - Cardinal",
+      "type": "categorical",
+      "valueLabels": [
+        {
+          "value": 0,
+          "label": "No"
+        },
+        {
+          "value": 1,
+          "label": "Yes"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      }
+    },
+    {
+      "id": "rim_wt_final",
+      "name": "rim_wt_final",
+      "label": "final wt",
+      "type": "numeric",
+      "valueLabels": [],
+      "missingValues": {
+        "discrete": []
+      }
+    },
+    {
+      "id": "heuristic_grid_consider_atlas_consider_beacon_consider_meridian_consider_solstice_consider_cardinal_scale",
+      "name": "consider_atlas_scale",
+      "label": "consider_atlas",
+      "type": "categorical",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "Would definitely consider"
+        },
+        {
+          "value": 2,
+          "label": "Would probably consider"
+        },
+        {
+          "value": 3,
+          "label": "Might or might not consider"
+        },
+        {
+          "value": 4,
+          "label": "Would probably not consider"
+        },
+        {
+          "value": 5,
+          "label": "Would definitely not consider"
+        },
+        {
+          "value": 98,
+          "label": "Don't know"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      },
+      "synthetic": true,
+      "sourceGridId": "heuristic_grid_consider_atlas_consider_beacon_consider_meridian_consider_solstice_consider_cardinal"
+    },
+    {
+      "id": "heuristic_grid_consider_atlas_consider_beacon_consider_meridian_consider_solstice_consider_cardinal_items",
+      "name": "heuristic_grid_consider_atlas_consider_beacon_consider_meridian_consider_solstice_consider_cardinal_items",
+      "label": "consider_atlas",
+      "type": "categorical",
+      "valueLabels": [
+        {
+          "value": 0,
+          "label": "Q3. How likely would you be to consider buying each brand the next time you buy ready-to-drink chilled coffee? - Atlas (aware brands only)"
+        },
+        {
+          "value": 1,
+          "label": "Q3. How likely would you be to consider buying each brand the next time you buy ready-to-drink chilled coffee? - Beacon (aware brands only)"
+        },
+        {
+          "value": 2,
+          "label": "Q3. How likely would you be to consider buying each brand the next time you buy ready-to-drink chilled coffee? - Meridian (aware brands only)"
+        },
+        {
+          "value": 3,
+          "label": "Q3. How likely would you be to consider buying each brand the next time you buy ready-to-drink chilled coffee? - Solstice (aware brands only)"
+        },
+        {
+          "value": 4,
+          "label": "Q3. How likely would you be to consider buying each brand the next time you buy ready-to-drink chilled coffee? - Cardinal (aware brands only)"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      },
+      "synthetic": true,
+      "sourceGridId": "heuristic_grid_consider_atlas_consider_beacon_consider_meridian_consider_solstice_consider_cardinal",
+      "semantic": {
+        "topic": "nps",
+        "measurementIntent": "attitude",
+        "conceptFamily": "nps",
+        "source": "auto",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "heuristic_grid_att_taste_atlas_att_taste_beacon_att_taste_meridian_att_taste_solstice_att_taste_cardinal_att_value_atlas_att_value_beacon_att_worth_meridian_att_worth_solstice_att_worth_cardinal_att_innov_atlas_att_innov_beacon_att_innov_meridian_att_innov_solstice_att_innov_cardinal_att_forme_atlas_att_forme_beacon_att_forme_meridian_att_forme_solstice_att_forme_cardinal_att_avail_atlas_att_avail_beacon_att_avail_meridian_att_avail_solstice_att_avail_cardinal_att_premium_atlas_att_premium_beacon_att_premium_meridian_att_premium_solstice_att_premium_cardinal_att_trust_atlas_att_trust_beacon_att_trust_meridian_att_trust_solstice_att_trust_cardinal_att_sustain_atlas_att_sustain_beacon_att_sustain_meridian_att_sustain_solstice_att_sustain_cardinal_scale",
+      "name": "att_taste_atlas_scale",
+      "label": "att_taste_atlas",
+      "type": "ordered",
+      "orderedStyle": "rating",
+      "orderedScoring": "allow_numeric_stats",
+      "valueLabels": [
+        {
+          "value": 1,
+          "label": "Strongly disagree"
+        },
+        {
+          "value": 2,
+          "label": "Somewhat disagree"
+        },
+        {
+          "value": 3,
+          "label": "Neither agree nor disagree"
+        },
+        {
+          "value": 4,
+          "label": "Somewhat agree"
+        },
+        {
+          "value": 5,
+          "label": "Strongly agree"
+        },
+        {
+          "value": 98,
+          "label": "Don't know"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      },
+      "synthetic": true,
+      "sourceGridId": "heuristic_grid_att_taste_atlas_att_taste_beacon_att_taste_meridian_att_taste_solstice_att_taste_cardinal_att_value_atlas_att_value_beacon_att_worth_meridian_att_worth_solstice_att_worth_cardinal_att_innov_atlas_att_innov_beacon_att_innov_meridian_att_innov_solstice_att_innov_cardinal_att_forme_atlas_att_forme_beacon_att_forme_meridian_att_forme_solstice_att_forme_cardinal_att_avail_atlas_att_avail_beacon_att_avail_meridian_att_avail_solstice_att_avail_cardinal_att_premium_atlas_att_premium_beacon_att_premium_meridian_att_premium_solstice_att_premium_cardinal_att_trust_atlas_att_trust_beacon_att_trust_meridian_att_trust_solstice_att_trust_cardinal_att_sustain_atlas_att_sustain_beacon_att_sustain_meridian_att_sustain_solstice_att_sustain_cardinal",
+      "semantic": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 0.75
+      }
+    },
+    {
+      "id": "heuristic_grid_att_taste_atlas_att_taste_beacon_att_taste_meridian_att_taste_solstice_att_taste_cardinal_att_value_atlas_att_value_beacon_att_worth_meridian_att_worth_solstice_att_worth_cardinal_att_innov_atlas_att_innov_beacon_att_innov_meridian_att_innov_solstice_att_innov_cardinal_att_forme_atlas_att_forme_beacon_att_forme_meridian_att_forme_solstice_att_forme_cardinal_att_avail_atlas_att_avail_beacon_att_avail_meridian_att_avail_solstice_att_avail_cardinal_att_premium_atlas_att_premium_beacon_att_premium_meridian_att_premium_solstice_att_premium_cardinal_att_trust_atlas_att_trust_beacon_att_trust_meridian_att_trust_solstice_att_trust_cardinal_att_sustain_atlas_att_sustain_beacon_att_sustain_meridian_att_sustain_solstice_att_sustain_cardinal_items",
+      "name": "heuristic_grid_att_taste_atlas_att_taste_beacon_att_taste_meridian_att_taste_solstice_att_taste_cardinal_att_value_atlas_att_value_beacon_att_worth_meridian_att_worth_solstice_att_worth_cardinal_att_innov_atlas_att_innov_beacon_att_innov_meridian_att_innov_solstice_att_innov_cardinal_att_forme_atlas_att_forme_beacon_att_forme_meridian_att_forme_solstice_att_forme_cardinal_att_avail_atlas_att_avail_beacon_att_avail_meridian_att_avail_solstice_att_avail_cardinal_att_premium_atlas_att_premium_beacon_att_premium_meridian_att_premium_solstice_att_premium_cardinal_att_trust_atlas_att_trust_beacon_att_trust_meridian_att_trust_solstice_att_trust_cardinal_att_sustain_atlas_att_sustain_beacon_att_sustain_meridian_att_sustain_solstice_att_sustain_cardinal_items",
+      "label": "att_taste_atlas",
+      "type": "categorical",
+      "valueLabels": [
+        {
+          "value": 0,
+          "label": "Q7. How much do you agree or disagree that each brand tastes great? - Atlas (aware brands only)"
+        },
+        {
+          "value": 1,
+          "label": "Q7. How much do you agree or disagree that each brand tastes great? - Beacon (aware brands only)"
+        },
+        {
+          "value": 2,
+          "label": "Q7. How much do you agree or disagree that each brand tastes great? - Meridian (aware brands only)"
+        },
+        {
+          "value": 3,
+          "label": "Q7. How much do you agree or disagree that each brand tastes great? - Solstice (aware brands only)"
+        },
+        {
+          "value": 4,
+          "label": "Q7. How much do you agree or disagree that each brand tastes great? - Cardinal (aware brands only)"
+        },
+        {
+          "value": 5,
+          "label": "Q7. How much do you agree or disagree that each brand is worth the price? - Atlas (aware brands only)"
+        },
+        {
+          "value": 6,
+          "label": "Q7. How much do you agree or disagree that each brand is worth the price? - Beacon (aware brands only)"
+        },
+        {
+          "value": 7,
+          "label": "Q7. How much do you agree or disagree that each brand is worth the price? - Meridian (aware brands only)"
+        },
+        {
+          "value": 8,
+          "label": "Q7. How much do you agree or disagree that each brand is worth the price? - Solstice (aware brands only)"
+        },
+        {
+          "value": 9,
+          "label": "Q7. How much do you agree or disagree that each brand is worth the price? - Cardinal (aware brands only)"
+        },
+        {
+          "value": 10,
+          "label": "Q7. How much do you agree or disagree that each brand is innovative? - Atlas (aware brands only)"
+        },
+        {
+          "value": 11,
+          "label": "Q7. How much do you agree or disagree that each brand is innovative? - Beacon (aware brands only)"
+        },
+        {
+          "value": 12,
+          "label": "Q7. How much do you agree or disagree that each brand is innovative? - Meridian (aware brands only)"
+        },
+        {
+          "value": 13,
+          "label": "Q7. How much do you agree or disagree that each brand is innovative? - Solstice (aware brands only)"
+        },
+        {
+          "value": 14,
+          "label": "Q7. How much do you agree or disagree that each brand is innovative? - Cardinal (aware brands only)"
+        },
+        {
+          "value": 15,
+          "label": "Q7. How much do you agree or disagree that each brand is for someone like me? - Atlas (aware brands only)"
+        },
+        {
+          "value": 16,
+          "label": "Q7. How much do you agree or disagree that each brand is for someone like me? - Beacon (aware brands only)"
+        },
+        {
+          "value": 17,
+          "label": "Q7. How much do you agree or disagree that each brand is for someone like me? - Meridian (aware brands only)"
+        },
+        {
+          "value": 18,
+          "label": "Q7. How much do you agree or disagree that each brand is for someone like me? - Solstice (aware brands only)"
+        },
+        {
+          "value": 19,
+          "label": "Q7. How much do you agree or disagree that each brand is for someone like me? - Cardinal (aware brands only)"
+        },
+        {
+          "value": 20,
+          "label": "Q7. How much do you agree or disagree that each brand is widely available? - Atlas (aware brands only)"
+        },
+        {
+          "value": 21,
+          "label": "Q7. How much do you agree or disagree that each brand is widely available? - Beacon (aware brands only)"
+        },
+        {
+          "value": 22,
+          "label": "Q7. How much do you agree or disagree that each brand is widely available? - Meridian (aware brands only)"
+        },
+        {
+          "value": 23,
+          "label": "Q7. How much do you agree or disagree that each brand is widely available? - Solstice (aware brands only)"
+        },
+        {
+          "value": 24,
+          "label": "Q7. How much do you agree or disagree that each brand is widely available? - Cardinal (aware brands only)"
+        },
+        {
+          "value": 25,
+          "label": "Q7. How much do you agree or disagree that each brand is a premium brand? - Atlas (aware brands only)"
+        },
+        {
+          "value": 26,
+          "label": "Q7. How much do you agree or disagree that each brand is a premium brand? - Beacon (aware brands only)"
+        },
+        {
+          "value": 27,
+          "label": "Q7. How much do you agree or disagree that each brand is a premium brand? - Meridian (aware brands only)"
+        },
+        {
+          "value": 28,
+          "label": "Q7. How much do you agree or disagree that each brand is a premium brand? - Solstice (aware brands only)"
+        },
+        {
+          "value": 29,
+          "label": "Q7. How much do you agree or disagree that each brand is a premium brand? - Cardinal (aware brands only)"
+        },
+        {
+          "value": 30,
+          "label": "Q7. How much do you agree or disagree that each brand is a brand I trust? - Atlas (aware brands only)"
+        },
+        {
+          "value": 31,
+          "label": "Q7. How much do you agree or disagree that each brand is a brand I trust? - Beacon (aware brands only)"
+        },
+        {
+          "value": 32,
+          "label": "Q7. How much do you agree or disagree that each brand is a brand I trust? - Meridian (aware brands only)"
+        },
+        {
+          "value": 33,
+          "label": "Q7. How much do you agree or disagree that each brand is a brand I trust? - Solstice (aware brands only)"
+        },
+        {
+          "value": 34,
+          "label": "Q7. How much do you agree or disagree that each brand is a brand I trust? - Cardinal (aware brands only)"
+        },
+        {
+          "value": 35,
+          "label": "Q7. How much do you agree or disagree that each brand is environmentally sustainable? - Atlas (aware brands only)"
+        },
+        {
+          "value": 36,
+          "label": "Q7. How much do you agree or disagree that each brand is environmentally sustainable? - Beacon (aware brands only)"
+        },
+        {
+          "value": 37,
+          "label": "Q7. How much do you agree or disagree that each brand is environmentally sustainable? - Meridian (aware brands only)"
+        },
+        {
+          "value": 38,
+          "label": "Q7. How much do you agree or disagree that each brand is environmentally sustainable? - Solstice (aware brands only)"
+        },
+        {
+          "value": 39,
+          "label": "Q7. How much do you agree or disagree that each brand is environmentally sustainable? - Cardinal (aware brands only)"
+        }
+      ],
+      "missingValues": {
+        "discrete": []
+      },
+      "synthetic": true,
+      "sourceGridId": "heuristic_grid_att_taste_atlas_att_taste_beacon_att_taste_meridian_att_taste_solstice_att_taste_cardinal_att_value_atlas_att_value_beacon_att_worth_meridian_att_worth_solstice_att_worth_cardinal_att_innov_atlas_att_innov_beacon_att_innov_meridian_att_innov_solstice_att_innov_cardinal_att_forme_atlas_att_forme_beacon_att_forme_meridian_att_forme_solstice_att_forme_cardinal_att_avail_atlas_att_avail_beacon_att_avail_meridian_att_avail_solstice_att_avail_cardinal_att_premium_atlas_att_premium_beacon_att_premium_meridian_att_premium_solstice_att_premium_cardinal_att_trust_atlas_att_trust_beacon_att_trust_meridian_att_trust_solstice_att_trust_cardinal_att_sustain_atlas_att_sustain_beacon_att_sustain_meridian_att_sustain_solstice_att_sustain_cardinal",
+      "semantic": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 0.75
+      }
+    },
+    {
+      "id": "consider_atlas_fixed",
+      "name": "consider_atlas_fixed",
+      "label": "Consideration atlas (canonical direction)",
+      "type": "categorical",
+      "valueLabels": [],
+      "missingValues": {}
+    },
+    {
+      "id": "consider_beacon_fixed",
+      "name": "consider_beacon_fixed",
+      "label": "Consideration beacon (canonical direction)",
+      "type": "categorical",
+      "valueLabels": [],
+      "missingValues": {}
+    },
+    {
+      "id": "consider_meridian_fixed",
+      "name": "consider_meridian_fixed",
+      "label": "Consideration meridian (canonical direction)",
+      "type": "categorical",
+      "valueLabels": [],
+      "missingValues": {}
+    },
+    {
+      "id": "consider_solstice_fixed",
+      "name": "consider_solstice_fixed",
+      "label": "Consideration solstice (canonical direction)",
+      "type": "categorical",
+      "valueLabels": [],
+      "missingValues": {}
+    },
+    {
+      "id": "consider_cardinal_fixed",
+      "name": "consider_cardinal_fixed",
+      "label": "Consideration cardinal (canonical direction)",
+      "type": "categorical",
+      "valueLabels": [],
+      "missingValues": {}
+    },
+    {
+      "id": "age_band",
+      "name": "age_band",
+      "label": "Age band (derived)",
+      "type": "categorical",
+      "valueLabels": [],
+      "missingValues": {}
+    },
+    {
+      "id": "consider_atlas_t2b",
+      "name": "consider_atlas_t2b",
+      "label": "atlas consideration T2B",
+      "type": "categorical",
+      "valueLabels": [],
+      "missingValues": {}
+    },
+    {
+      "id": "consider_beacon_t2b",
+      "name": "consider_beacon_t2b",
+      "label": "beacon consideration T2B",
+      "type": "categorical",
+      "valueLabels": [],
+      "missingValues": {}
+    },
+    {
+      "id": "consider_meridian_t2b",
+      "name": "consider_meridian_t2b",
+      "label": "meridian consideration T2B",
+      "type": "categorical",
+      "valueLabels": [],
+      "missingValues": {}
+    },
+    {
+      "id": "consider_solstice_t2b",
+      "name": "consider_solstice_t2b",
+      "label": "solstice consideration T2B",
+      "type": "categorical",
+      "valueLabels": [],
+      "missingValues": {}
+    },
+    {
+      "id": "consider_cardinal_t2b",
+      "name": "consider_cardinal_t2b",
+      "label": "cardinal consideration T2B",
+      "type": "categorical",
+      "valueLabels": [],
+      "missingValues": {}
+    },
+    {
+      "id": "nps_atlas_class",
+      "name": "nps_atlas_class",
+      "label": "Atlas NPS class (derived)",
+      "type": "categorical",
+      "valueLabels": [],
+      "missingValues": {}
+    }
+  ],
+  "variableSets": [
+    {
+      "id": "vs_resp_id",
+      "name": "Respondent ID",
+      "variableIds": [
+        "resp_id"
+      ],
+      "structure": "single",
+      "type": "numeric"
+    },
+    {
+      "id": "vs_wave",
+      "name": "Tracking wave",
+      "variableIds": [
+        "wave"
+      ],
+      "structure": "single",
+      "type": "ordered"
+    },
+    {
+      "id": "vs_int_date",
+      "name": "Interview date",
+      "variableIds": [
+        "int_date"
+      ],
+      "structure": "single",
+      "type": "numeric"
+    },
+    {
+      "id": "vs_cat_buyer",
+      "name": "S2. Bought ready-to-drink chilled coffee in the past 3 months",
+      "variableIds": [
+        "cat_buyer"
+      ],
+      "structure": "single",
+      "type": "categorical"
+    },
+    {
+      "id": "vs_age",
+      "name": "D1. Age (years)",
+      "variableIds": [
+        "age"
+      ],
+      "structure": "single",
+      "type": "numeric"
+    },
+    {
+      "id": "vs_gender",
+      "name": "D2. Gender",
+      "variableIds": [
+        "gender"
+      ],
+      "structure": "single",
+      "type": "categorical"
+    },
+    {
+      "id": "vs_body_weight_kg",
+      "name": "Body weight (kg)",
+      "variableIds": [
+        "body_weight_kg"
+      ],
+      "structure": "single",
+      "type": "numeric"
+    },
+    {
+      "id": "vs_region",
+      "name": "D3. Region",
+      "variableIds": [
+        "region"
+      ],
+      "structure": "single",
+      "type": "categorical"
+    },
+    {
+      "id": "vs_income_band",
+      "name": "D4. Household income band",
+      "variableIds": [
+        "income_band"
+      ],
+      "structure": "single",
+      "type": "categorical"
+    },
+    {
+      "id": "vs_urbanicity",
+      "name": "D5. Area type",
+      "variableIds": [
+        "urbanicity"
+      ],
+      "structure": "single",
+      "type": "categorical"
+    },
+    {
+      "id": "vs_segment",
+      "name": "SEG. Consumer segment (from segmentation model)",
+      "variableIds": [
+        "segment"
+      ],
+      "structure": "single",
+      "type": "categorical"
+    },
+    {
+      "id": "vs_unaided_first",
+      "name": "Q1. Thinking of ready-to-drink chilled coffee, which brand comes to mind first? (unaided, first mention)",
+      "variableIds": [
+        "unaided_first"
+      ],
+      "structure": "single",
+      "type": "categorical"
+    },
+    {
+      "id": "heuristic_multiple_unaided_any_atlas_unaided_any_beacon_unaided_any_meridian_unaided_any_solstice_unaided_any_cardinal",
+      "name": "unaided_any_atlas",
+      "variableIds": [
+        "unaided_any_atlas",
+        "unaided_any_beacon",
+        "unaided_any_meridian",
+        "unaided_any_solstice",
+        "unaided_any_cardinal"
+      ],
+      "structure": "multiple",
+      "type": "categorical",
+      "countedValue": 1,
+      "description": "Detected multi-response with shared Yes/No scale"
+    },
+    {
+      "id": "heuristic_multiple_aware_atlas_aware_beacon_aware_meridian_aware_solstice_aware_cardinal",
+      "name": "aware_atlas",
+      "variableIds": [
+        "aware_atlas",
+        "aware_beacon",
+        "aware_meridian",
+        "aware_solstice",
+        "aware_cardinal"
+      ],
+      "structure": "multiple",
+      "type": "categorical",
+      "countedValue": 1,
+      "description": "Detected multi-response with shared Yes/No scale"
+    },
+    {
+      "id": "heuristic_grid_consider_atlas_consider_beacon_consider_meridian_consider_solstice_consider_cardinal",
+      "name": "consider_atlas",
+      "variableIds": [
+        "consider_atlas",
+        "consider_beacon",
+        "consider_meridian",
+        "consider_solstice",
+        "consider_cardinal"
+      ],
+      "structure": "grid",
+      "type": "categorical",
+      "description": "Detected grid with shared scale",
+      "gridMetadata": {
+        "sharedScale": {
+          "valueLabels": {
+            "1": "Would definitely consider",
+            "2": "Would probably consider",
+            "3": "Might or might not consider",
+            "4": "Would probably not consider",
+            "5": "Would definitely not consider",
+            "98": "Don't know"
+          },
+          "type": "categorical"
+        },
+        "itemLabels": [
+          "Q3. How likely would you be to consider buying each brand the next time you buy ready-to-drink chilled coffee? - Atlas (aware brands only)",
+          "Q3. How likely would you be to consider buying each brand the next time you buy ready-to-drink chilled coffee? - Beacon (aware brands only)",
+          "Q3. How likely would you be to consider buying each brand the next time you buy ready-to-drink chilled coffee? - Meridian (aware brands only)",
+          "Q3. How likely would you be to consider buying each brand the next time you buy ready-to-drink chilled coffee? - Solstice (aware brands only)",
+          "Q3. How likely would you be to consider buying each brand the next time you buy ready-to-drink chilled coffee? - Cardinal (aware brands only)"
+        ],
+        "itemMapping": {
+          "consider_atlas": 0,
+          "consider_beacon": 1,
+          "consider_meridian": 2,
+          "consider_solstice": 3,
+          "consider_cardinal": 4
+        }
+      }
+    },
+    {
+      "id": "heuristic_multiple_used_p3m_atlas_used_p3m_beacon_used_p3m_meridian_used_p3m_solstice_used_p3m_cardinal",
+      "name": "used_p3m_atlas",
+      "variableIds": [
+        "used_p3m_atlas",
+        "used_p3m_beacon",
+        "used_p3m_meridian",
+        "used_p3m_solstice",
+        "used_p3m_cardinal"
+      ],
+      "structure": "multiple",
+      "type": "categorical",
+      "countedValue": 1,
+      "description": "Detected multi-response with shared Yes/No scale"
+    },
+    {
+      "id": "vs_brand_pref",
+      "name": "Q5. And which ONE of these brands do you most prefer?",
+      "variableIds": [
+        "brand_pref"
+      ],
+      "structure": "single",
+      "type": "categorical"
+    },
+    {
+      "id": "vs_nps_atlas",
+      "name": "Q6. How likely are you to recommend Atlas to a friend or colleague? (0-10; Atlas P3M buyers only)",
+      "variableIds": [
+        "nps_atlas"
+      ],
+      "structure": "single",
+      "type": "ordered"
+    },
+    {
+      "id": "heuristic_grid_att_taste_atlas_att_taste_beacon_att_taste_meridian_att_taste_solstice_att_taste_cardinal_att_value_atlas_att_value_beacon_att_worth_meridian_att_worth_solstice_att_worth_cardinal_att_innov_atlas_att_innov_beacon_att_innov_meridian_att_innov_solstice_att_innov_cardinal_att_forme_atlas_att_forme_beacon_att_forme_meridian_att_forme_solstice_att_forme_cardinal_att_avail_atlas_att_avail_beacon_att_avail_meridian_att_avail_solstice_att_avail_cardinal_att_premium_atlas_att_premium_beacon_att_premium_meridian_att_premium_solstice_att_premium_cardinal_att_trust_atlas_att_trust_beacon_att_trust_meridian_att_trust_solstice_att_trust_cardinal_att_sustain_atlas_att_sustain_beacon_att_sustain_meridian_att_sustain_solstice_att_sustain_cardinal",
+      "name": "att_taste_atlas",
+      "variableIds": [
+        "att_taste_atlas",
+        "att_taste_beacon",
+        "att_taste_meridian",
+        "att_taste_solstice",
+        "att_taste_cardinal",
+        "att_value_atlas",
+        "att_value_beacon",
+        "att_worth_meridian",
+        "att_worth_solstice",
+        "att_worth_cardinal",
+        "att_innov_atlas",
+        "att_innov_beacon",
+        "att_innov_meridian",
+        "att_innov_solstice",
+        "att_innov_cardinal",
+        "att_forme_atlas",
+        "att_forme_beacon",
+        "att_forme_meridian",
+        "att_forme_solstice",
+        "att_forme_cardinal",
+        "att_avail_atlas",
+        "att_avail_beacon",
+        "att_avail_meridian",
+        "att_avail_solstice",
+        "att_avail_cardinal",
+        "att_premium_atlas",
+        "att_premium_beacon",
+        "att_premium_meridian",
+        "att_premium_solstice",
+        "att_premium_cardinal",
+        "att_trust_atlas",
+        "att_trust_beacon",
+        "att_trust_meridian",
+        "att_trust_solstice",
+        "att_trust_cardinal",
+        "att_sustain_atlas",
+        "att_sustain_beacon",
+        "att_sustain_meridian",
+        "att_sustain_solstice",
+        "att_sustain_cardinal"
+      ],
+      "structure": "grid",
+      "type": "ordered",
+      "description": "Detected grid with shared scale",
+      "gridMetadata": {
+        "sharedScale": {
+          "valueLabels": {
+            "1": "Strongly disagree",
+            "2": "Somewhat disagree",
+            "3": "Neither agree nor disagree",
+            "4": "Somewhat agree",
+            "5": "Strongly agree",
+            "98": "Don't know"
+          },
+          "type": "ordered",
+          "orderedStyle": "rating",
+          "orderedScoring": "allow_numeric_stats"
+        },
+        "itemLabels": [
+          "Q7. How much do you agree or disagree that each brand tastes great? - Atlas (aware brands only)",
+          "Q7. How much do you agree or disagree that each brand tastes great? - Beacon (aware brands only)",
+          "Q7. How much do you agree or disagree that each brand tastes great? - Meridian (aware brands only)",
+          "Q7. How much do you agree or disagree that each brand tastes great? - Solstice (aware brands only)",
+          "Q7. How much do you agree or disagree that each brand tastes great? - Cardinal (aware brands only)",
+          "Q7. How much do you agree or disagree that each brand is worth the price? - Atlas (aware brands only)",
+          "Q7. How much do you agree or disagree that each brand is worth the price? - Beacon (aware brands only)",
+          "Q7. How much do you agree or disagree that each brand is worth the price? - Meridian (aware brands only)",
+          "Q7. How much do you agree or disagree that each brand is worth the price? - Solstice (aware brands only)",
+          "Q7. How much do you agree or disagree that each brand is worth the price? - Cardinal (aware brands only)",
+          "Q7. How much do you agree or disagree that each brand is innovative? - Atlas (aware brands only)",
+          "Q7. How much do you agree or disagree that each brand is innovative? - Beacon (aware brands only)",
+          "Q7. How much do you agree or disagree that each brand is innovative? - Meridian (aware brands only)",
+          "Q7. How much do you agree or disagree that each brand is innovative? - Solstice (aware brands only)",
+          "Q7. How much do you agree or disagree that each brand is innovative? - Cardinal (aware brands only)",
+          "Q7. How much do you agree or disagree that each brand is for someone like me? - Atlas (aware brands only)",
+          "Q7. How much do you agree or disagree that each brand is for someone like me? - Beacon (aware brands only)",
+          "Q7. How much do you agree or disagree that each brand is for someone like me? - Meridian (aware brands only)",
+          "Q7. How much do you agree or disagree that each brand is for someone like me? - Solstice (aware brands only)",
+          "Q7. How much do you agree or disagree that each brand is for someone like me? - Cardinal (aware brands only)",
+          "Q7. How much do you agree or disagree that each brand is widely available? - Atlas (aware brands only)",
+          "Q7. How much do you agree or disagree that each brand is widely available? - Beacon (aware brands only)",
+          "Q7. How much do you agree or disagree that each brand is widely available? - Meridian (aware brands only)",
+          "Q7. How much do you agree or disagree that each brand is widely available? - Solstice (aware brands only)",
+          "Q7. How much do you agree or disagree that each brand is widely available? - Cardinal (aware brands only)",
+          "Q7. How much do you agree or disagree that each brand is a premium brand? - Atlas (aware brands only)",
+          "Q7. How much do you agree or disagree that each brand is a premium brand? - Beacon (aware brands only)",
+          "Q7. How much do you agree or disagree that each brand is a premium brand? - Meridian (aware brands only)",
+          "Q7. How much do you agree or disagree that each brand is a premium brand? - Solstice (aware brands only)",
+          "Q7. How much do you agree or disagree that each brand is a premium brand? - Cardinal (aware brands only)",
+          "Q7. How much do you agree or disagree that each brand is a brand I trust? - Atlas (aware brands only)",
+          "Q7. How much do you agree or disagree that each brand is a brand I trust? - Beacon (aware brands only)",
+          "Q7. How much do you agree or disagree that each brand is a brand I trust? - Meridian (aware brands only)",
+          "Q7. How much do you agree or disagree that each brand is a brand I trust? - Solstice (aware brands only)",
+          "Q7. How much do you agree or disagree that each brand is a brand I trust? - Cardinal (aware brands only)",
+          "Q7. How much do you agree or disagree that each brand is environmentally sustainable? - Atlas (aware brands only)",
+          "Q7. How much do you agree or disagree that each brand is environmentally sustainable? - Beacon (aware brands only)",
+          "Q7. How much do you agree or disagree that each brand is environmentally sustainable? - Meridian (aware brands only)",
+          "Q7. How much do you agree or disagree that each brand is environmentally sustainable? - Solstice (aware brands only)",
+          "Q7. How much do you agree or disagree that each brand is environmentally sustainable? - Cardinal (aware brands only)"
+        ],
+        "itemMapping": {
+          "att_taste_atlas": 0,
+          "att_taste_beacon": 1,
+          "att_taste_meridian": 2,
+          "att_taste_solstice": 3,
+          "att_taste_cardinal": 4,
+          "att_value_atlas": 5,
+          "att_value_beacon": 6,
+          "att_worth_meridian": 7,
+          "att_worth_solstice": 8,
+          "att_worth_cardinal": 9,
+          "att_innov_atlas": 10,
+          "att_innov_beacon": 11,
+          "att_innov_meridian": 12,
+          "att_innov_solstice": 13,
+          "att_innov_cardinal": 14,
+          "att_forme_atlas": 15,
+          "att_forme_beacon": 16,
+          "att_forme_meridian": 17,
+          "att_forme_solstice": 18,
+          "att_forme_cardinal": 19,
+          "att_avail_atlas": 20,
+          "att_avail_beacon": 21,
+          "att_avail_meridian": 22,
+          "att_avail_solstice": 23,
+          "att_avail_cardinal": 24,
+          "att_premium_atlas": 25,
+          "att_premium_beacon": 26,
+          "att_premium_meridian": 27,
+          "att_premium_solstice": 28,
+          "att_premium_cardinal": 29,
+          "att_trust_atlas": 30,
+          "att_trust_beacon": 31,
+          "att_trust_meridian": 32,
+          "att_trust_solstice": 33,
+          "att_trust_cardinal": 34,
+          "att_sustain_atlas": 35,
+          "att_sustain_beacon": 36,
+          "att_sustain_meridian": 37,
+          "att_sustain_solstice": 38,
+          "att_sustain_cardinal": 39
+        }
+      }
+    },
+    {
+      "id": "heuristic_multiple_adrecall_atlas_adrecall_beacon_adrecall_meridian_adrecall_solstice_adrecall_cardinal",
+      "name": "adrecall_atlas",
+      "variableIds": [
+        "adrecall_atlas",
+        "adrecall_beacon",
+        "adrecall_meridian",
+        "adrecall_solstice",
+        "adrecall_cardinal"
+      ],
+      "structure": "multiple",
+      "type": "categorical",
+      "countedValue": 1,
+      "description": "Detected multi-response with shared Yes/No scale"
+    },
+    {
+      "id": "vs_rim_wt_final",
+      "name": "final wt",
+      "variableIds": [
+        "rim_wt_final"
+      ],
+      "structure": "single",
+      "type": "numeric"
+    },
+    {
+      "id": "heuristic_grid_consider_atlas_consider_beacon_consider_meridian_consider_solstice_consider_cardinal_scale",
+      "name": "consider_atlas",
+      "variableIds": [
+        "heuristic_grid_consider_atlas_consider_beacon_consider_meridian_consider_solstice_consider_cardinal_scale"
+      ],
+      "structure": "single",
+      "type": "categorical",
+      "derived": true,
+      "description": "Synthetic variable for grid unpivoting"
+    },
+    {
+      "id": "heuristic_grid_consider_atlas_consider_beacon_consider_meridian_consider_solstice_consider_cardinal_items",
+      "name": "consider_atlas",
+      "variableIds": [
+        "heuristic_grid_consider_atlas_consider_beacon_consider_meridian_consider_solstice_consider_cardinal_items"
+      ],
+      "structure": "single",
+      "type": "categorical",
+      "derived": true,
+      "description": "Synthetic variable for grid unpivoting"
+    },
+    {
+      "id": "heuristic_grid_att_taste_atlas_att_taste_beacon_att_taste_meridian_att_taste_solstice_att_taste_cardinal_att_value_atlas_att_value_beacon_att_worth_meridian_att_worth_solstice_att_worth_cardinal_att_innov_atlas_att_innov_beacon_att_innov_meridian_att_innov_solstice_att_innov_cardinal_att_forme_atlas_att_forme_beacon_att_forme_meridian_att_forme_solstice_att_forme_cardinal_att_avail_atlas_att_avail_beacon_att_avail_meridian_att_avail_solstice_att_avail_cardinal_att_premium_atlas_att_premium_beacon_att_premium_meridian_att_premium_solstice_att_premium_cardinal_att_trust_atlas_att_trust_beacon_att_trust_meridian_att_trust_solstice_att_trust_cardinal_att_sustain_atlas_att_sustain_beacon_att_sustain_meridian_att_sustain_solstice_att_sustain_cardinal_scale",
+      "name": "att_taste_atlas",
+      "variableIds": [
+        "heuristic_grid_att_taste_atlas_att_taste_beacon_att_taste_meridian_att_taste_solstice_att_taste_cardinal_att_value_atlas_att_value_beacon_att_worth_meridian_att_worth_solstice_att_worth_cardinal_att_innov_atlas_att_innov_beacon_att_innov_meridian_att_innov_solstice_att_innov_cardinal_att_forme_atlas_att_forme_beacon_att_forme_meridian_att_forme_solstice_att_forme_cardinal_att_avail_atlas_att_avail_beacon_att_avail_meridian_att_avail_solstice_att_avail_cardinal_att_premium_atlas_att_premium_beacon_att_premium_meridian_att_premium_solstice_att_premium_cardinal_att_trust_atlas_att_trust_beacon_att_trust_meridian_att_trust_solstice_att_trust_cardinal_att_sustain_atlas_att_sustain_beacon_att_sustain_meridian_att_sustain_solstice_att_sustain_cardinal_scale"
+      ],
+      "structure": "single",
+      "type": "ordered",
+      "derived": true,
+      "description": "Synthetic variable for grid unpivoting"
+    },
+    {
+      "id": "heuristic_grid_att_taste_atlas_att_taste_beacon_att_taste_meridian_att_taste_solstice_att_taste_cardinal_att_value_atlas_att_value_beacon_att_worth_meridian_att_worth_solstice_att_worth_cardinal_att_innov_atlas_att_innov_beacon_att_innov_meridian_att_innov_solstice_att_innov_cardinal_att_forme_atlas_att_forme_beacon_att_forme_meridian_att_forme_solstice_att_forme_cardinal_att_avail_atlas_att_avail_beacon_att_avail_meridian_att_avail_solstice_att_avail_cardinal_att_premium_atlas_att_premium_beacon_att_premium_meridian_att_premium_solstice_att_premium_cardinal_att_trust_atlas_att_trust_beacon_att_trust_meridian_att_trust_solstice_att_trust_cardinal_att_sustain_atlas_att_sustain_beacon_att_sustain_meridian_att_sustain_solstice_att_sustain_cardinal_items",
+      "name": "att_taste_atlas",
+      "variableIds": [
+        "heuristic_grid_att_taste_atlas_att_taste_beacon_att_taste_meridian_att_taste_solstice_att_taste_cardinal_att_value_atlas_att_value_beacon_att_worth_meridian_att_worth_solstice_att_worth_cardinal_att_innov_atlas_att_innov_beacon_att_innov_meridian_att_innov_solstice_att_innov_cardinal_att_forme_atlas_att_forme_beacon_att_forme_meridian_att_forme_solstice_att_forme_cardinal_att_avail_atlas_att_avail_beacon_att_avail_meridian_att_avail_solstice_att_avail_cardinal_att_premium_atlas_att_premium_beacon_att_premium_meridian_att_premium_solstice_att_premium_cardinal_att_trust_atlas_att_trust_beacon_att_trust_meridian_att_trust_solstice_att_trust_cardinal_att_sustain_atlas_att_sustain_beacon_att_sustain_meridian_att_sustain_solstice_att_sustain_cardinal_items"
+      ],
+      "structure": "single",
+      "type": "categorical",
+      "derived": true,
+      "description": "Synthetic variable for grid unpivoting"
+    },
+    {
+      "id": "consider_atlas_fixed",
+      "name": "Consideration atlas (canonical direction)",
+      "variableIds": [
+        "consider_atlas_fixed"
+      ],
+      "structure": "single",
+      "type": "categorical"
+    },
+    {
+      "id": "consider_beacon_fixed",
+      "name": "Consideration beacon (canonical direction)",
+      "variableIds": [
+        "consider_beacon_fixed"
+      ],
+      "structure": "single",
+      "type": "categorical"
+    },
+    {
+      "id": "consider_meridian_fixed",
+      "name": "Consideration meridian (canonical direction)",
+      "variableIds": [
+        "consider_meridian_fixed"
+      ],
+      "structure": "single",
+      "type": "categorical"
+    },
+    {
+      "id": "consider_solstice_fixed",
+      "name": "Consideration solstice (canonical direction)",
+      "variableIds": [
+        "consider_solstice_fixed"
+      ],
+      "structure": "single",
+      "type": "categorical"
+    },
+    {
+      "id": "consider_cardinal_fixed",
+      "name": "Consideration cardinal (canonical direction)",
+      "variableIds": [
+        "consider_cardinal_fixed"
+      ],
+      "structure": "single",
+      "type": "categorical"
+    },
+    {
+      "id": "age_band",
+      "name": "Age band (derived)",
+      "variableIds": [
+        "age_band"
+      ],
+      "structure": "single",
+      "type": "categorical"
+    },
+    {
+      "id": "consider_atlas_t2b",
+      "name": "atlas consideration T2B",
+      "variableIds": [
+        "consider_atlas_t2b"
+      ],
+      "structure": "single",
+      "type": "categorical"
+    },
+    {
+      "id": "consider_beacon_t2b",
+      "name": "beacon consideration T2B",
+      "variableIds": [
+        "consider_beacon_t2b"
+      ],
+      "structure": "single",
+      "type": "categorical"
+    },
+    {
+      "id": "consider_meridian_t2b",
+      "name": "meridian consideration T2B",
+      "variableIds": [
+        "consider_meridian_t2b"
+      ],
+      "structure": "single",
+      "type": "categorical"
+    },
+    {
+      "id": "consider_solstice_t2b",
+      "name": "solstice consideration T2B",
+      "variableIds": [
+        "consider_solstice_t2b"
+      ],
+      "structure": "single",
+      "type": "categorical"
+    },
+    {
+      "id": "consider_cardinal_t2b",
+      "name": "cardinal consideration T2B",
+      "variableIds": [
+        "consider_cardinal_t2b"
+      ],
+      "structure": "single",
+      "type": "categorical"
+    },
+    {
+      "id": "nps_atlas_class",
+      "name": "Atlas NPS class (derived)",
+      "variableIds": [
+        "nps_atlas_class"
+      ],
+      "structure": "single",
+      "type": "categorical"
+    }
+  ],
+  "folders": [],
+  "transformLog": [
+    {
+      "type": "recode",
+      "sourceColId": "consider_atlas",
+      "newColId": "consider_atlas_fixed",
+      "label": "Consideration atlas (canonical direction)",
+      "config": {
+        "mode": "categorical",
+        "mappings": {
+          "1": "5",
+          "2": "4",
+          "3": "3",
+          "4": "2",
+          "5": "1",
+          "98": "98"
+        },
+        "targetVariableName": "consider_atlas_fixed",
+        "label": "Consideration atlas (canonical direction)"
+      },
+      "createdAt": 1783090912433
+    },
+    {
+      "type": "recode",
+      "sourceColId": "consider_beacon",
+      "newColId": "consider_beacon_fixed",
+      "label": "Consideration beacon (canonical direction)",
+      "config": {
+        "mode": "categorical",
+        "mappings": {
+          "1": "5",
+          "2": "4",
+          "3": "3",
+          "4": "2",
+          "5": "1",
+          "98": "98"
+        },
+        "targetVariableName": "consider_beacon_fixed",
+        "label": "Consideration beacon (canonical direction)"
+      },
+      "createdAt": 1783090912435
+    },
+    {
+      "type": "recode",
+      "sourceColId": "consider_meridian",
+      "newColId": "consider_meridian_fixed",
+      "label": "Consideration meridian (canonical direction)",
+      "config": {
+        "mode": "categorical",
+        "mappings": {
+          "1": "5",
+          "2": "4",
+          "3": "3",
+          "4": "2",
+          "5": "1",
+          "98": "98"
+        },
+        "targetVariableName": "consider_meridian_fixed",
+        "label": "Consideration meridian (canonical direction)"
+      },
+      "createdAt": 1783090912438
+    },
+    {
+      "type": "recode",
+      "sourceColId": "consider_solstice",
+      "newColId": "consider_solstice_fixed",
+      "label": "Consideration solstice (canonical direction)",
+      "config": {
+        "mode": "categorical",
+        "mappings": {
+          "1": "5",
+          "2": "4",
+          "3": "3",
+          "4": "2",
+          "5": "1",
+          "98": "98"
+        },
+        "targetVariableName": "consider_solstice_fixed",
+        "label": "Consideration solstice (canonical direction)"
+      },
+      "createdAt": 1783090912440
+    },
+    {
+      "type": "recode",
+      "sourceColId": "consider_cardinal",
+      "newColId": "consider_cardinal_fixed",
+      "label": "Consideration cardinal (canonical direction)",
+      "config": {
+        "mode": "categorical",
+        "mappings": {
+          "1": "5",
+          "2": "4",
+          "3": "3",
+          "4": "2",
+          "5": "1",
+          "98": "98"
+        },
+        "targetVariableName": "consider_cardinal_fixed",
+        "label": "Consideration cardinal (canonical direction)"
+      },
+      "createdAt": 1783090912443
+    },
+    {
+      "type": "recode",
+      "sourceColId": "age",
+      "newColId": "age_band",
+      "label": "Age band (derived)",
+      "config": {
+        "mode": "binning",
+        "rules": [
+          {
+            "min": 18,
+            "max": 35,
+            "label": "18-34"
+          },
+          {
+            "min": 35,
+            "max": 55,
+            "label": "35-54"
+          },
+          {
+            "min": 55,
+            "max": 200,
+            "label": "55+"
+          }
+        ],
+        "targetVariableName": "age_band",
+        "label": "Age band (derived)"
+      },
+      "createdAt": 1783090912445
+    },
+    {
+      "type": "recode",
+      "sourceColId": "consider_atlas_fixed",
+      "newColId": "consider_atlas_t2b",
+      "label": "atlas consideration T2B",
+      "config": {
+        "mode": "categorical",
+        "mappings": {
+          "1": "Not T2B",
+          "2": "Not T2B",
+          "3": "Not T2B",
+          "4": "T2B",
+          "5": "T2B",
+          "98": "DK"
+        },
+        "targetVariableName": "consider_atlas_t2b",
+        "label": "atlas consideration T2B"
+      },
+      "createdAt": 1783090912451
+    },
+    {
+      "type": "recode",
+      "sourceColId": "consider_beacon_fixed",
+      "newColId": "consider_beacon_t2b",
+      "label": "beacon consideration T2B",
+      "config": {
+        "mode": "categorical",
+        "mappings": {
+          "1": "Not T2B",
+          "2": "Not T2B",
+          "3": "Not T2B",
+          "4": "T2B",
+          "5": "T2B",
+          "98": "DK"
+        },
+        "targetVariableName": "consider_beacon_t2b",
+        "label": "beacon consideration T2B"
+      },
+      "createdAt": 1783090912452
+    },
+    {
+      "type": "recode",
+      "sourceColId": "consider_meridian_fixed",
+      "newColId": "consider_meridian_t2b",
+      "label": "meridian consideration T2B",
+      "config": {
+        "mode": "categorical",
+        "mappings": {
+          "1": "Not T2B",
+          "2": "Not T2B",
+          "3": "Not T2B",
+          "4": "T2B",
+          "5": "T2B",
+          "98": "DK"
+        },
+        "targetVariableName": "consider_meridian_t2b",
+        "label": "meridian consideration T2B"
+      },
+      "createdAt": 1783090912454
+    },
+    {
+      "type": "recode",
+      "sourceColId": "consider_solstice_fixed",
+      "newColId": "consider_solstice_t2b",
+      "label": "solstice consideration T2B",
+      "config": {
+        "mode": "categorical",
+        "mappings": {
+          "1": "Not T2B",
+          "2": "Not T2B",
+          "3": "Not T2B",
+          "4": "T2B",
+          "5": "T2B",
+          "98": "DK"
+        },
+        "targetVariableName": "consider_solstice_t2b",
+        "label": "solstice consideration T2B"
+      },
+      "createdAt": 1783090912456
+    },
+    {
+      "type": "recode",
+      "sourceColId": "consider_cardinal_fixed",
+      "newColId": "consider_cardinal_t2b",
+      "label": "cardinal consideration T2B",
+      "config": {
+        "mode": "categorical",
+        "mappings": {
+          "1": "Not T2B",
+          "2": "Not T2B",
+          "3": "Not T2B",
+          "4": "T2B",
+          "5": "T2B",
+          "98": "DK"
+        },
+        "targetVariableName": "consider_cardinal_t2b",
+        "label": "cardinal consideration T2B"
+      },
+      "createdAt": 1783090912457
+    },
+    {
+      "type": "recode",
+      "sourceColId": "nps_atlas",
+      "newColId": "nps_atlas_class",
+      "label": "Atlas NPS class (derived)",
+      "config": {
+        "mode": "binning",
+        "rules": [
+          {
+            "min": 0,
+            "max": 7,
+            "label": "Detractor"
+          },
+          {
+            "min": 7,
+            "max": 9,
+            "label": "Passive"
+          },
+          {
+            "min": 9,
+            "max": 11,
+            "label": "Promoter"
+          }
+        ],
+        "targetVariableName": "nps_atlas_class",
+        "label": "Atlas NPS class (derived)"
+      },
+      "createdAt": 1783090912459
+    }
+  ],
+  "tableConfig": {
+    "rowVars": [],
+    "colVar": null
+  },
+  "activeFilters": [],
+  "weightVariable": "rim_wt_final",
+  "slides": [
+    {
+      "id": "deck-slide-0-1783090912627",
+      "title": "Atlas consideration (T2B) by segment",
+      "subtitle": "Weighted by final wt · N = 1,200 Respondents",
+      "analysisState": {
+        "rowVars": [
+          "consider_atlas_t2b"
+        ],
+        "colVar": "segment",
+        "filters": [],
+        "weightVar": "rim_wt_final"
+      },
+      "visualizationType": "chart",
+      "chartType": "grouped-bar",
+      "layoutMode": "focus",
+      "cells": [],
+      "sectionId": "deck-section-0-1783090912627",
+      "createdAt": 1783090912627,
+      "updatedAt": 1783090912627
+    },
+    {
+      "id": "deck-slide-1-1783090912627",
+      "title": "Atlas past-3-month usage by segment",
+      "subtitle": "Weighted by final wt · N = 1,200 Respondents",
+      "analysisState": {
+        "rowVars": [
+          "used_p3m_atlas"
+        ],
+        "colVar": "segment",
+        "filters": [],
+        "weightVar": "rim_wt_final"
+      },
+      "visualizationType": "chart",
+      "chartType": "grouped-bar",
+      "layoutMode": "focus",
+      "cells": [],
+      "sectionId": "deck-section-0-1783090912627",
+      "createdAt": 1783090912627,
+      "updatedAt": 1783090912627
+    },
+    {
+      "id": "deck-slide-2-1783090912627",
+      "title": "Beacon consideration (T2B) by segment",
+      "subtitle": "Weighted by final wt · N = 1,200 Respondents",
+      "analysisState": {
+        "rowVars": [
+          "consider_beacon_t2b"
+        ],
+        "colVar": "segment",
+        "filters": [],
+        "weightVar": "rim_wt_final"
+      },
+      "visualizationType": "chart",
+      "chartType": "grouped-bar",
+      "layoutMode": "focus",
+      "cells": [],
+      "sectionId": "deck-section-1-1783090912627",
+      "createdAt": 1783090912627,
+      "updatedAt": 1783090912627
+    },
+    {
+      "id": "deck-slide-3-1783090912627",
+      "title": "Meridian consideration (T2B) by segment",
+      "subtitle": "Weighted by final wt · N = 1,200 Respondents",
+      "analysisState": {
+        "rowVars": [
+          "consider_meridian_t2b"
+        ],
+        "colVar": "segment",
+        "filters": [],
+        "weightVar": "rim_wt_final"
+      },
+      "visualizationType": "chart",
+      "chartType": "grouped-bar",
+      "layoutMode": "focus",
+      "cells": [],
+      "sectionId": "deck-section-1-1783090912627",
+      "createdAt": 1783090912627,
+      "updatedAt": 1783090912627
+    },
+    {
+      "id": "deck-slide-4-1783090912627",
+      "title": "Atlas consideration (T2B) by age band",
+      "subtitle": "Weighted by final wt · N = 1,200 Respondents",
+      "analysisState": {
+        "rowVars": [
+          "consider_atlas_t2b"
+        ],
+        "colVar": "age_band",
+        "filters": [],
+        "weightVar": "rim_wt_final"
+      },
+      "visualizationType": "chart",
+      "chartType": "grouped-bar",
+      "layoutMode": "focus",
+      "cells": [],
+      "sectionId": "deck-section-2-1783090912627",
+      "createdAt": 1783090912627,
+      "updatedAt": 1783090912627
+    },
+    {
+      "id": "deck-slide-5-1783090912627",
+      "title": "Atlas \"innovative\" association by segment",
+      "subtitle": "Weighted by final wt · N = 1,200 Respondents",
+      "analysisState": {
+        "rowVars": [
+          "att_innov_atlas"
+        ],
+        "colVar": "segment",
+        "filters": [],
+        "weightVar": "rim_wt_final"
+      },
+      "visualizationType": "chart",
+      "chartType": "grouped-bar",
+      "layoutMode": "focus",
+      "cells": [],
+      "sectionId": "deck-section-2-1783090912627",
+      "createdAt": 1783090912627,
+      "updatedAt": 1783090912627
+    },
+    {
+      "id": "deck-slide-6-1783090912627",
+      "title": "Atlas NPS classes by segment (low base — Atlas users only)",
+      "subtitle": "Weighted by final wt · N = 1,200 Respondents",
+      "analysisState": {
+        "rowVars": [
+          "nps_atlas_class"
+        ],
+        "colVar": "segment",
+        "filters": [],
+        "weightVar": "rim_wt_final"
+      },
+      "visualizationType": "chart",
+      "chartType": "grouped-bar",
+      "layoutMode": "focus",
+      "cells": [],
+      "sectionId": "deck-section-3-1783090912627",
+      "createdAt": 1783090912627,
+      "updatedAt": 1783090912627
+    }
+  ],
+  "sections": [
+    {
+      "id": "deck-section-0-1783090912627",
+      "title": "Funnel"
+    },
+    {
+      "id": "deck-section-1-1783090912627",
+      "title": "Competitive position"
+    },
+    {
+      "id": "deck-section-2-1783090912627",
+      "title": "Segments & drivers"
+    },
+    {
+      "id": "deck-section-3-1783090912627",
+      "title": "Advocacy"
+    }
+  ],
+  "deckRecipe": {
+    "recipeVersion": 1,
+    "sections": [
+      {
+        "id": "deck-section-0-1783090912627",
+        "title": "Funnel"
+      },
+      {
+        "id": "deck-section-1-1783090912627",
+        "title": "Competitive position"
+      },
+      {
+        "id": "deck-section-2-1783090912627",
+        "title": "Segments & drivers"
+      },
+      {
+        "id": "deck-section-3-1783090912627",
+        "title": "Advocacy"
+      }
+    ],
+    "slideRecipes": [
+      {
+        "slideId": "deck-slide-0-1783090912627",
+        "title": "Atlas consideration (T2B) by segment",
+        "subtitle": "Weighted by final wt · N = 1,200 Respondents",
+        "analysisState": {
+          "rowVars": [
+            "consider_atlas_t2b"
+          ],
+          "colVar": "segment",
+          "filters": [],
+          "weightVar": "rim_wt_final"
+        },
+        "visualizationType": "chart",
+        "chartType": "grouped-bar",
+        "sectionId": "deck-section-0-1783090912627"
+      },
+      {
+        "slideId": "deck-slide-1-1783090912627",
+        "title": "Atlas past-3-month usage by segment",
+        "subtitle": "Weighted by final wt · N = 1,200 Respondents",
+        "analysisState": {
+          "rowVars": [
+            "used_p3m_atlas"
+          ],
+          "colVar": "segment",
+          "filters": [],
+          "weightVar": "rim_wt_final"
+        },
+        "visualizationType": "chart",
+        "chartType": "grouped-bar",
+        "sectionId": "deck-section-0-1783090912627"
+      },
+      {
+        "slideId": "deck-slide-2-1783090912627",
+        "title": "Beacon consideration (T2B) by segment",
+        "subtitle": "Weighted by final wt · N = 1,200 Respondents",
+        "analysisState": {
+          "rowVars": [
+            "consider_beacon_t2b"
+          ],
+          "colVar": "segment",
+          "filters": [],
+          "weightVar": "rim_wt_final"
+        },
+        "visualizationType": "chart",
+        "chartType": "grouped-bar",
+        "sectionId": "deck-section-1-1783090912627"
+      },
+      {
+        "slideId": "deck-slide-3-1783090912627",
+        "title": "Meridian consideration (T2B) by segment",
+        "subtitle": "Weighted by final wt · N = 1,200 Respondents",
+        "analysisState": {
+          "rowVars": [
+            "consider_meridian_t2b"
+          ],
+          "colVar": "segment",
+          "filters": [],
+          "weightVar": "rim_wt_final"
+        },
+        "visualizationType": "chart",
+        "chartType": "grouped-bar",
+        "sectionId": "deck-section-1-1783090912627"
+      },
+      {
+        "slideId": "deck-slide-4-1783090912627",
+        "title": "Atlas consideration (T2B) by age band",
+        "subtitle": "Weighted by final wt · N = 1,200 Respondents",
+        "analysisState": {
+          "rowVars": [
+            "consider_atlas_t2b"
+          ],
+          "colVar": "age_band",
+          "filters": [],
+          "weightVar": "rim_wt_final"
+        },
+        "visualizationType": "chart",
+        "chartType": "grouped-bar",
+        "sectionId": "deck-section-2-1783090912627"
+      },
+      {
+        "slideId": "deck-slide-5-1783090912627",
+        "title": "Atlas \"innovative\" association by segment",
+        "subtitle": "Weighted by final wt · N = 1,200 Respondents",
+        "analysisState": {
+          "rowVars": [
+            "att_innov_atlas"
+          ],
+          "colVar": "segment",
+          "filters": [],
+          "weightVar": "rim_wt_final"
+        },
+        "visualizationType": "chart",
+        "chartType": "grouped-bar",
+        "sectionId": "deck-section-2-1783090912627"
+      },
+      {
+        "slideId": "deck-slide-6-1783090912627",
+        "title": "Atlas NPS classes by segment (low base — Atlas users only)",
+        "subtitle": "Weighted by final wt · N = 1,200 Respondents",
+        "analysisState": {
+          "rowVars": [
+            "nps_atlas_class"
+          ],
+          "colVar": "segment",
+          "filters": [],
+          "weightVar": "rim_wt_final"
+        },
+        "visualizationType": "chart",
+        "chartType": "grouped-bar",
+        "sectionId": "deck-section-3-1783090912627"
+      }
+    ]
+  },
+  "harmonizationSession": null,
+  "semantic": {
+    "annotations": {
+      "resp_id": {
+        "topic": "respondent_id",
+        "measurementIntent": "identifier",
+        "source": "auto",
+        "confidence": 0.9
+      },
+      "wave": {
+        "topic": "temporal",
+        "measurementIntent": "identifier",
+        "source": "auto",
+        "confidence": 0.85,
+        "temporalRole": "wave_id"
+      },
+      "cat_buyer": {
+        "topic": "brand_classification",
+        "measurementIntent": "classification",
+        "source": "auto",
+        "confidence": 0.6
+      },
+      "age": {
+        "topic": "demographics",
+        "measurementIntent": "demographic",
+        "source": "auto",
+        "confidence": 0.7
+      },
+      "gender": {
+        "topic": "demographics",
+        "measurementIntent": "demographic",
+        "conceptFamily": "gender",
+        "source": "auto",
+        "confidence": 0.9
+      },
+      "region": {
+        "topic": "demographics",
+        "measurementIntent": "demographic",
+        "source": "auto",
+        "confidence": 0.7
+      },
+      "income_band": {
+        "topic": "demographics",
+        "measurementIntent": "demographic",
+        "source": "auto",
+        "confidence": 0.7
+      },
+      "segment": {
+        "topic": "brand_classification",
+        "measurementIntent": "classification",
+        "source": "auto",
+        "confidence": 0.6
+      },
+      "unaided_any_atlas": {
+        "topic": "brand_awareness",
+        "measurementIntent": "awareness",
+        "source": "auto",
+        "confidence": 0.65
+      },
+      "unaided_any_beacon": {
+        "topic": "brand_awareness",
+        "measurementIntent": "awareness",
+        "source": "auto",
+        "confidence": 0.65
+      },
+      "unaided_any_meridian": {
+        "topic": "brand_awareness",
+        "measurementIntent": "awareness",
+        "source": "auto",
+        "confidence": 0.65
+      },
+      "unaided_any_solstice": {
+        "topic": "brand_awareness",
+        "measurementIntent": "awareness",
+        "source": "auto",
+        "confidence": 0.65
+      },
+      "unaided_any_cardinal": {
+        "topic": "brand_awareness",
+        "measurementIntent": "awareness",
+        "source": "auto",
+        "confidence": 0.65
+      },
+      "aware_atlas": {
+        "topic": "brand_awareness",
+        "measurementIntent": "awareness",
+        "source": "auto",
+        "confidence": 0.8
+      },
+      "aware_beacon": {
+        "topic": "brand_awareness",
+        "measurementIntent": "awareness",
+        "source": "auto",
+        "confidence": 0.8
+      },
+      "aware_meridian": {
+        "topic": "brand_awareness",
+        "measurementIntent": "awareness",
+        "source": "auto",
+        "confidence": 0.8
+      },
+      "aware_solstice": {
+        "topic": "brand_awareness",
+        "measurementIntent": "awareness",
+        "source": "auto",
+        "confidence": 0.8
+      },
+      "aware_cardinal": {
+        "topic": "brand_awareness",
+        "measurementIntent": "awareness",
+        "source": "auto",
+        "confidence": 0.8
+      },
+      "consider_atlas": {
+        "topic": "brand_awareness",
+        "measurementIntent": "awareness",
+        "source": "auto",
+        "confidence": 0.65
+      },
+      "consider_beacon": {
+        "topic": "brand_awareness",
+        "measurementIntent": "awareness",
+        "source": "auto",
+        "confidence": 0.65
+      },
+      "consider_meridian": {
+        "topic": "brand_awareness",
+        "measurementIntent": "awareness",
+        "source": "auto",
+        "confidence": 0.65
+      },
+      "consider_solstice": {
+        "topic": "brand_awareness",
+        "measurementIntent": "awareness",
+        "source": "auto",
+        "confidence": 0.65
+      },
+      "consider_cardinal": {
+        "topic": "brand_awareness",
+        "measurementIntent": "awareness",
+        "source": "auto",
+        "confidence": 0.65
+      },
+      "used_p3m_atlas": {
+        "topic": "brand_awareness",
+        "measurementIntent": "awareness",
+        "source": "auto",
+        "confidence": 0.65
+      },
+      "used_p3m_beacon": {
+        "topic": "brand_awareness",
+        "measurementIntent": "awareness",
+        "source": "auto",
+        "confidence": 0.65
+      },
+      "used_p3m_meridian": {
+        "topic": "brand_awareness",
+        "measurementIntent": "awareness",
+        "source": "auto",
+        "confidence": 0.65
+      },
+      "used_p3m_solstice": {
+        "topic": "brand_awareness",
+        "measurementIntent": "awareness",
+        "source": "auto",
+        "confidence": 0.65
+      },
+      "used_p3m_cardinal": {
+        "topic": "brand_awareness",
+        "measurementIntent": "awareness",
+        "source": "auto",
+        "confidence": 0.65
+      },
+      "brand_pref": {
+        "topic": "brand_classification",
+        "measurementIntent": "classification",
+        "source": "auto",
+        "confidence": 0.6
+      },
+      "nps_atlas": {
+        "topic": "nps",
+        "measurementIntent": "attitude",
+        "conceptFamily": "nps",
+        "source": "auto",
+        "confidence": 0.85
+      },
+      "att_taste_atlas": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      },
+      "att_taste_beacon": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      },
+      "att_taste_meridian": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      },
+      "att_taste_solstice": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      },
+      "att_taste_cardinal": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      },
+      "att_value_atlas": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      },
+      "att_value_beacon": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      },
+      "att_worth_meridian": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      },
+      "att_worth_solstice": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      },
+      "att_worth_cardinal": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      },
+      "att_innov_atlas": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      },
+      "att_innov_beacon": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      },
+      "att_innov_meridian": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      },
+      "att_innov_solstice": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      },
+      "att_innov_cardinal": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      },
+      "att_forme_atlas": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      },
+      "att_forme_beacon": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      },
+      "att_forme_meridian": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      },
+      "att_forme_solstice": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      },
+      "att_forme_cardinal": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      },
+      "att_avail_atlas": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      },
+      "att_avail_beacon": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      },
+      "att_avail_meridian": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      },
+      "att_avail_solstice": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      },
+      "att_avail_cardinal": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      },
+      "att_premium_atlas": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      },
+      "att_premium_beacon": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      },
+      "att_premium_meridian": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      },
+      "att_premium_solstice": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      },
+      "att_premium_cardinal": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      },
+      "att_trust_atlas": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      },
+      "att_trust_beacon": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      },
+      "att_trust_meridian": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      },
+      "att_trust_solstice": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      },
+      "att_trust_cardinal": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      },
+      "att_sustain_atlas": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      },
+      "att_sustain_beacon": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      },
+      "att_sustain_meridian": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      },
+      "att_sustain_solstice": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      },
+      "att_sustain_cardinal": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 1
+      },
+      "heuristic_grid_consider_atlas_consider_beacon_consider_meridian_consider_solstice_consider_cardinal_items": {
+        "topic": "nps",
+        "measurementIntent": "attitude",
+        "conceptFamily": "nps",
+        "source": "auto",
+        "confidence": 0.85
+      },
+      "heuristic_grid_att_taste_atlas_att_taste_beacon_att_taste_meridian_att_taste_solstice_att_taste_cardinal_att_value_atlas_att_value_beacon_att_worth_meridian_att_worth_solstice_att_worth_cardinal_att_innov_atlas_att_innov_beacon_att_innov_meridian_att_innov_solstice_att_innov_cardinal_att_forme_atlas_att_forme_beacon_att_forme_meridian_att_forme_solstice_att_forme_cardinal_att_avail_atlas_att_avail_beacon_att_avail_meridian_att_avail_solstice_att_avail_cardinal_att_premium_atlas_att_premium_beacon_att_premium_meridian_att_premium_solstice_att_premium_cardinal_att_trust_atlas_att_trust_beacon_att_trust_meridian_att_trust_solstice_att_trust_cardinal_att_sustain_atlas_att_sustain_beacon_att_sustain_meridian_att_sustain_solstice_att_sustain_cardinal_scale": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 0.75
+      },
+      "heuristic_grid_att_taste_atlas_att_taste_beacon_att_taste_meridian_att_taste_solstice_att_taste_cardinal_att_value_atlas_att_value_beacon_att_worth_meridian_att_worth_solstice_att_worth_cardinal_att_innov_atlas_att_innov_beacon_att_innov_meridian_att_innov_solstice_att_innov_cardinal_att_forme_atlas_att_forme_beacon_att_forme_meridian_att_forme_solstice_att_forme_cardinal_att_avail_atlas_att_avail_beacon_att_avail_meridian_att_avail_solstice_att_avail_cardinal_att_premium_atlas_att_premium_beacon_att_premium_meridian_att_premium_solstice_att_premium_cardinal_att_trust_atlas_att_trust_beacon_att_trust_meridian_att_trust_solstice_att_trust_cardinal_att_sustain_atlas_att_sustain_beacon_att_sustain_meridian_att_sustain_solstice_att_sustain_cardinal_items": {
+        "topic": "attitude_scale",
+        "measurementIntent": "attitude",
+        "source": "auto",
+        "confidence": 0.75
+      }
+    },
+    "concepts": [
+      {
+        "id": "concept-1783090912355-1",
+        "name": "gender (2pt)",
+        "aliases": [
+          "gender"
+        ],
+        "canonicalScale": {
+          "points": 2,
+          "direction": "ascending"
+        },
+        "variableRefs": [
+          {
+            "datasetId": "dataset-1783090912349",
+            "variableId": "gender",
+            "matchConfidence": 0.9
+          }
+        ]
+      },
+      {
+        "id": "concept-1783090912355-2",
+        "name": "nps (5pt)",
+        "aliases": [
+          "nps"
+        ],
+        "canonicalScale": {
+          "points": 5,
+          "direction": "ascending"
+        },
+        "variableRefs": [
+          {
+            "datasetId": "dataset-1783090912349",
+            "variableId": "heuristic_grid_consider_atlas_consider_beacon_consider_meridian_consider_solstice_consider_cardinal_items",
+            "matchConfidence": 0.85
+          }
+        ]
+      },
+      {
+        "id": "concept-1783090912355-3",
+        "name": "nps (11pt)",
+        "aliases": [
+          "nps"
+        ],
+        "canonicalScale": {
+          "points": 11,
+          "direction": "ascending"
+        },
+        "variableRefs": [
+          {
+            "datasetId": "dataset-1783090912349",
+            "variableId": "nps_atlas",
+            "matchConfidence": 0.85
+          }
+        ]
+      }
+    ]
+  }
+}
