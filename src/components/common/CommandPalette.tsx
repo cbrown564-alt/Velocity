@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState, useCallback } from 'react';
 import { useDraggable } from '@dnd-kit/core';
 import { useFocusTrap } from '../../hooks/useFocusTrap';
 import { Search, LayoutGrid, Maximize2, RotateCcw, FileDown, Home, Keyboard, Filter, ChevronRight } from 'lucide-react';
@@ -17,6 +17,11 @@ import {
   type InsertTarget,
 } from './commandPaletteSearch';
 import type { VariableSet, Variable } from '../../types';
+import {
+  dismissPaletteOnboarding,
+  resolvePaletteOnboardingWorkspaceId,
+  shouldShowPaletteOnboarding,
+} from '../../lib/paletteOnboarding';
 
 interface CommandItem {
   id: string;
@@ -27,6 +32,45 @@ interface CommandItem {
 }
 
 const VARIABLE_LIMIT = 12;
+
+const ONBOARDING_STEPS = [
+  { step: 1, label: 'Search for a variable' },
+  { step: 2, label: 'Add to rows', shortcut: '↵' },
+  { step: 3, label: 'Add to columns', shortcut: '⌥↵' },
+] as const;
+
+interface PaletteOnboardingGhostProps {
+  onDismiss: () => void;
+}
+
+const PaletteOnboardingGhost: React.FC<PaletteOnboardingGhostProps> = ({ onDismiss }) => (
+  <div
+    className="mx-2 mb-1 rounded-md border border-dashed border-[var(--border-color-muted)] bg-[var(--bg-panel-tint)]/60 px-3 py-2.5"
+    data-testid="palette-onboarding-ghost"
+  >
+    <p className="mb-2 text-[11px] font-medium uppercase tracking-wide text-[var(--text-tertiary)]">Insert palette</p>
+    <ol className="space-y-1.5">
+      {ONBOARDING_STEPS.map((item) => (
+        <li key={item.step} className="flex items-center gap-2 text-[12px] text-[var(--text-secondary)]">
+          <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full border border-[var(--border-color-muted)] font-mono text-[10px] text-[var(--text-tertiary)]">
+            {item.step}
+          </span>
+          <span className="flex-1">{item.label}</span>
+          {'shortcut' in item && item.shortcut ? (
+            <kbd className="font-mono text-[10.5px] text-[var(--text-tertiary)]">{item.shortcut}</kbd>
+          ) : null}
+        </li>
+      ))}
+    </ol>
+    <button
+      type="button"
+      onClick={onDismiss}
+      className="mt-2.5 text-[11px] text-[var(--text-tertiary)] underline-offset-2 hover:text-[var(--text-secondary)] hover:underline"
+    >
+      Got it
+    </button>
+  </div>
+);
 
 interface PaletteVariableRowProps {
   set: VariableSet;
@@ -140,6 +184,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ withinDnd = fals
   const tableConfig = useVelocityStore((state) => state.tableConfig);
   const variableSets = useVelocityStore((state) => state.variableSets);
   const dataset = useVelocityStore((state) => state.dataset);
+  const activeDatasetId = useVelocityStore((state) => state.activeDatasetId);
   const isWorkspaceMode = useVelocityStore((state) => state.isWorkspaceMode);
   const draggingId = useVelocityStore((state) => state.draggingId);
 
@@ -147,9 +192,33 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ withinDnd = fals
 
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [onboardingVisible, setOnboardingVisible] = useState(false);
+  const onboardingVisibleRef = useRef(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
+
+  const workspaceId = resolvePaletteOnboardingWorkspaceId(activeDatasetId, dataset?.id ?? null);
+
+  const dismissOnboarding = useCallback(() => {
+    dismissPaletteOnboarding(workspaceId);
+    setOnboardingVisible(false);
+    onboardingVisibleRef.current = false;
+  }, [workspaceId]);
+
+  const finalizeOnboardingIfShown = useCallback(() => {
+    if (!onboardingVisibleRef.current) return;
+    dismissOnboarding();
+  }, [dismissOnboarding]);
+
+  useEffect(() => {
+    onboardingVisibleRef.current = onboardingVisible;
+  }, [onboardingVisible]);
+
+  const closePalette = useCallback(() => {
+    finalizeOnboardingIfShown();
+    closeCommandPalette();
+  }, [finalizeOnboardingIfShown, closeCommandPalette]);
 
   useFocusTrap(commandPaletteOpen, panelRef);
 
@@ -158,9 +227,14 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ withinDnd = fals
 
   const insertVariable = useMemo(() => {
     return (set: VariableSet, target: InsertTarget) => {
+      const finish = () => {
+        finalizeOnboardingIfShown();
+        closeCommandPalette();
+      };
+
       if (target === 'filter') {
         openFilterModal(set.variableIds[0]);
-        closeCommandPalette();
+        finish();
         return;
       }
 
@@ -172,7 +246,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ withinDnd = fals
         }
         setWeightVariable(set.variableIds[0]);
         addToast({ message: `${set.name} → weight`, type: 'success' });
-        closeCommandPalette();
+        finish();
         return;
       }
 
@@ -180,7 +254,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ withinDnd = fals
       const { placement, redirectedFromColumn } = buildShelfPlacement(set, shelfTarget, tableConfig);
       if (!placement) {
         addToast({ message: `${set.name} is already on the slide`, type: 'info' });
-        closeCommandPalette();
+        finish();
         return;
       }
 
@@ -190,7 +264,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ withinDnd = fals
       } else {
         addToast({ message: `${set.name} → ${target}`, type: 'success' });
       }
-      closeCommandPalette();
+      finish();
     };
   }, [
     tableConfig,
@@ -201,6 +275,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ withinDnd = fals
     addToast,
     closeCommandPalette,
     rejectRecipeColumnPlacement,
+    finalizeOnboardingIfShown,
   ]);
 
   const commands = useMemo<CommandItem[]>(
@@ -344,9 +419,16 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ withinDnd = fals
     if (commandPaletteOpen) {
       setQuery('');
       setSelectedIndex(0);
+      const showOnboarding =
+        commandPaletteInsertTarget === null && Boolean(dataset) && shouldShowPaletteOnboarding(workspaceId);
+      setOnboardingVisible(showOnboarding);
+      onboardingVisibleRef.current = showOnboarding;
       requestAnimationFrame(() => inputRef.current?.focus());
+    } else {
+      setOnboardingVisible(false);
+      onboardingVisibleRef.current = false;
     }
-  }, [commandPaletteOpen]);
+  }, [commandPaletteOpen, commandPaletteInsertTarget, dataset, workspaceId]);
 
   useEffect(() => {
     if (!commandPaletteOpen) return;
@@ -362,9 +444,9 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ withinDnd = fals
       wasHiddenForDragRef.current = true;
     } else if (wasHiddenForDragRef.current && !draggingId) {
       wasHiddenForDragRef.current = false;
-      if (commandPaletteOpen) closeCommandPalette();
+      if (commandPaletteOpen) closePalette();
     }
-  }, [hiddenForDrag, draggingId, commandPaletteOpen, closeCommandPalette]);
+  }, [hiddenForDrag, draggingId, commandPaletteOpen, closePalette]);
 
   useEffect(() => {
     const selected = listRef.current?.querySelector('[data-selected="true"]');
@@ -390,7 +472,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ withinDnd = fals
         }
       } else if (e.key === 'Escape') {
         e.preventDefault();
-        closeCommandPalette();
+        closePalette();
       }
     };
     document.addEventListener('keydown', handleKeyDown);
@@ -403,7 +485,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ withinDnd = fals
     selectedIndex,
     resultCount,
     insertVariable,
-    closeCommandPalette,
+    closePalette,
     commandPaletteInsertTarget,
   ]);
 
@@ -415,7 +497,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ withinDnd = fals
         hiddenForDrag ? 'opacity-0 pointer-events-none' : ''
       }`}
       onClick={(e) => {
-        if (e.target === e.currentTarget) closeCommandPalette();
+        if (e.target === e.currentTarget) closePalette();
       }}
     >
       <div
@@ -440,6 +522,9 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ withinDnd = fals
         </div>
 
         <div ref={listRef} className="max-h-[50vh] overflow-y-auto p-1.5">
+          {onboardingVisible && !commandMode && commandPaletteInsertTarget === null && (
+            <PaletteOnboardingGhost onDismiss={dismissOnboarding} />
+          )}
           {resultCount === 0 ? (
             <div className="px-4 py-8 text-center text-sm text-[var(--text-tertiary)]">
               {commandMode
