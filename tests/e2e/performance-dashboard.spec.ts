@@ -127,7 +127,7 @@ test('performance dashboard: cold start, upload, first crosstab, export modal', 
   try {
     const exportStart = Date.now();
     await page.getByRole('button', { name: 'Export', exact: true }).click({ timeout: 15000 });
-    await expect(page.getByTestId('export-modal-submit')).toBeVisible({ timeout: 30000 });
+    await expect(page.getByTestId('export-modal-review')).toBeVisible({ timeout: 30000 });
     exportModalOpenMs = Date.now() - exportStart;
   } catch {
     // Best-effort: leave exportModalOpenMs null; the assertion below flags it.
