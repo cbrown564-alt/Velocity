@@ -1,11 +1,10 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import {
+  buildSessionImportRailSummary,
   exportSession,
-  hasSessionImportDiagnostics,
   importSession,
-  listSessionImportDiagnostics,
   serializeSessionFile,
-  type SessionImportDiagnosticsSummary,
+  type SessionImportRailSummary,
 } from '../../core/session';
 import { encodeSessionFile } from '../../services/sessionFileCodec';
 import {
@@ -34,6 +33,8 @@ export interface UseSessionLifecycleReturn {
   importedSessionSemantic: ImportedSessionSemanticState | null;
   clearImportedSessionSemantic: () => void;
   sessionExportSummary: SessionExportSummary | null;
+  sessionImportSummary: SessionImportRailSummary | null;
+  dismissSessionImportSummary: () => void;
   handleExportSession: () => void;
   handleOpenSessionImportModal: () => void;
   handleSessionImport: (payload: SessionImportPayload) => Promise<void>;
@@ -68,13 +69,16 @@ export function useSessionLifecycle({
   const recodeVariable = useVelocityStore((state) => state.recodeVariable);
   const discardPersistedData = useVelocityStore((state) => state.discardPersistedData);
 
-  const [sessionImportDiagnostics, setSessionImportDiagnostics] = useState<SessionImportDiagnosticsSummary | null>(
-    null,
-  );
+  const [sessionImportSummary, setSessionImportSummary] = useState<SessionImportRailSummary | null>(null);
   const [importedSessionSemantic, setImportedSessionSemantic] = useState<ImportedSessionSemanticState | null>(null);
+
+  const dismissSessionImportSummary = useCallback(() => {
+    setSessionImportSummary(null);
+  }, []);
 
   const clearImportedSessionSemantic = useCallback(() => {
     setImportedSessionSemantic(null);
+    setSessionImportSummary(null);
   }, []);
 
   const doExportSessionDownload = useCallback(async () => {
@@ -162,13 +166,13 @@ export function useSessionLifecycle({
   }, [dataset, openSessionExportOverlay]);
 
   const handleOpenSessionImportModal = useCallback(() => {
-    setSessionImportDiagnostics(null);
+    setSessionImportSummary(null);
   }, []);
 
   const handleSessionImport = useCallback(
     async (payload: SessionImportPayload) => {
       const previousPhase = phase;
-      setSessionImportDiagnostics(null);
+      setSessionImportSummary(null);
       setPhase('uploading');
       try {
         await loadSAV(payload.savFileName, payload.savBuffer, { datasetId: crypto.randomUUID() });
@@ -201,11 +205,11 @@ export function useSessionLifecycle({
         }));
         await useVelocityStore.getState().runAnalysis();
         setImportedSessionSemantic(captureImportedSessionSemanticState(payload.sessionFile));
+        setSessionImportSummary(
+          buildSessionImportRailSummary(payload.sessionFile, imported.patch.slides, imported.diagnostics),
+        );
         setPhase('dashboard');
         closeSessionImportOverlay();
-        if (hasSessionImportDiagnostics(imported.diagnostics)) {
-          setSessionImportDiagnostics(imported.diagnostics);
-        }
       } catch (importError: unknown) {
         setPhase(previousPhase);
         const message = importError instanceof Error ? importError.message : undefined;
@@ -214,30 +218,6 @@ export function useSessionLifecycle({
     },
     [phase, loadSAV, recodeVariable, setPhase, closeSessionImportOverlay],
   );
-
-  const sessionImportMessages = useMemo(
-    () => (sessionImportDiagnostics ? listSessionImportDiagnostics(sessionImportDiagnostics) : []),
-    [sessionImportDiagnostics],
-  );
-
-  useEffect(() => {
-    if (!sessionImportDiagnostics || sessionImportMessages.length === 0) return;
-
-    const preview = sessionImportMessages
-      .slice(0, 2)
-      .map((item) => item.message)
-      .join(' ');
-    const extra = sessionImportMessages.length > 2 ? ` (+${sessionImportMessages.length - 2} more)` : '';
-
-    useVelocityStore.getState().addToast({
-      dedupeKey: 'session-import',
-      title: 'Session imported with adjustments',
-      message: `${preview}${extra}`.trim(),
-      type: 'warning',
-      duration: 10_000,
-    });
-    setSessionImportDiagnostics(null);
-  }, [sessionImportDiagnostics, sessionImportMessages]);
 
   const handleRestore = useCallback(() => {
     void warmUpEngineOnIntent('restore-prompt');
@@ -283,6 +263,8 @@ export function useSessionLifecycle({
     importedSessionSemantic,
     clearImportedSessionSemantic,
     sessionExportSummary,
+    sessionImportSummary,
+    dismissSessionImportSummary,
     handleExportSession,
     handleOpenSessionImportModal,
     handleSessionImport,

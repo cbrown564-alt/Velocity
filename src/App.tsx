@@ -152,6 +152,8 @@ export default function App() {
         onReturnToWorkspace={workspaceOrchestration.handleReturnToWorkspace}
         onOpenSessionImport={handleOpenSessionImportModal}
         onExportSession={session.handleExportSession}
+        sessionImportSummary={session.sessionImportSummary}
+        onDismissSessionImportSummary={session.dismissSessionImportSummary}
       />
 
       {/* Inside the dashboard, the palette mounts within DashboardShell's

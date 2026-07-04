@@ -21,6 +21,8 @@ export type {
   SessionStatePatch,
 } from './sessionImporter';
 export { hasSessionImportDiagnostics, listSessionImportDiagnostics } from './sessionImportDiagnostics';
+export { buildSessionImportRailSummary, findAffectedSlideNumbers } from './sessionImportRailSummary';
+export type { SessionImportRailSummary } from './sessionImportRailSummary';
 export { parseSessionFile, validateDatasetMatch, validateSessionFile } from './sessionValidator';
 export type {
   DatasetMatchInput,

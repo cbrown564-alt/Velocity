@@ -1,10 +1,11 @@
 import React from 'react';
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { StoryRail } from './StoryRail';
 import { useVelocityStore } from '../../../store';
 import type { Slide } from '../../../types/slides';
 import type { PersistenceManagerState } from '../../../hooks/usePersistenceManager';
+import type { SessionImportRailSummary } from '../../../core/session/sessionImportRailSummary';
 
 const noop = () => {};
 const noopAsync = async () => {};
@@ -157,5 +158,31 @@ describe('StoryRail', () => {
     fireEvent.change(input, { target: { value: 'Renamed slide' } });
     fireEvent.keyDown(input, { key: 'Enter' });
     expect(useVelocityStore.getState().slides[0].title).toBe('Renamed slide');
+  });
+  describe('session import summary (DESIGN-CONV-I)', () => {
+    const summary: SessionImportRailSummary = {
+      slideCount: 3,
+      hasAdjustments: true,
+      unresolvedVariableLabels: ['Brand', 'Weight'],
+      affectedSlideNumbers: [2],
+      adjustmentMessages: [{ id: 'dropped-filter-ids', message: '1 filter was removed.' }],
+    };
+    it('renders a persistent session import summary in the rail footer', () => {
+      render(<StoryRail {...railProps} sessionImportSummary={summary} onDismissSessionImportSummary={noop} />);
+      expect(screen.getByTestId('session-import-summary')).toBeInTheDocument();
+      expect(screen.getByText(/Session imported · 3 slides/)).toBeInTheDocument();
+      expect(screen.getByTestId('session-import-unresolved')).toHaveTextContent('2 variables unresolved');
+      expect(screen.getByTestId('session-import-affected')).toHaveTextContent('Affects slides 2');
+    });
+    it('dismisses the session import summary from the rail footer', () => {
+      const onDismiss = vi.fn();
+      const { rerender } = render(
+        <StoryRail {...railProps} sessionImportSummary={summary} onDismissSessionImportSummary={onDismiss} />,
+      );
+      fireEvent.click(screen.getByTestId('session-import-summary-dismiss'));
+      expect(onDismiss).toHaveBeenCalledTimes(1);
+      rerender(<StoryRail {...railProps} sessionImportSummary={null} onDismissSessionImportSummary={onDismiss} />);
+      expect(screen.queryByTestId('session-import-summary')).not.toBeInTheDocument();
+    });
   });
 });

@@ -13,6 +13,7 @@ import { useAnalysisExportAction } from './hooks/useAnalysisExportAction';
 import { StoryRail } from './components/StoryRail';
 import { RecipeInspector } from './components/RecipeInspector';
 import { DashboardToolbar } from './components/DashboardToolbar';
+import { RecentVariableStrip } from './components/RecentVariableStrip';
 import { SlideContainer } from './components/SlideContainer';
 import { AppShell } from '../../components/layout/AppShell';
 import { CommandPalette } from '../../components/common/CommandPalette';
@@ -20,6 +21,7 @@ import { VariableCard } from './components/DraggableVariable';
 import { ContextMenu } from './components/ContextMenu';
 
 import type { PersistenceManagerState } from '../../hooks/usePersistenceManager';
+import type { SessionImportRailSummary } from '../../core/session/sessionImportRailSummary';
 
 const SmartCanvas: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className }) => {
   const { setNodeRef, isOver } = useDroppable({ id: 'canvas' });
@@ -38,6 +40,8 @@ export interface DashboardShellProps {
   onReturnToWorkspace: () => void;
   onOpenSessionImport: () => void;
   onExportSession: () => void;
+  sessionImportSummary?: SessionImportRailSummary | null;
+  onDismissSessionImportSummary?: () => void;
 }
 
 export const DashboardShell: React.FC<DashboardShellProps> = ({
@@ -45,6 +49,8 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
   onReturnToWorkspace,
   onOpenSessionImport,
   onExportSession,
+  sessionImportSummary = null,
+  onDismissSessionImportSummary,
 }) => {
   const dataset = useVelocityStore((state) => state.dataset);
   const isQuerying = useVelocityStore((state) => state.isQuerying);
@@ -87,6 +93,7 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
     weightEnabled,
     handleDragStart,
     handleDragEnd,
+    handleVariableClick,
     handleRecodeClick,
     handleToggleWeight,
     handleWeightRemove,
@@ -128,6 +135,8 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
             opfsAvailable={opfsAvailable}
             persistenceMode={persistenceMode}
             persistenceError={persistenceError}
+            sessionImportSummary={sessionImportSummary}
+            onDismissSessionImportSummary={onDismissSessionImportSummary}
           />
 
           <main
@@ -149,6 +158,8 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
               onToggleFocusMode={toggleFocusMode}
               onReset={reset}
             />
+
+            <RecentVariableStrip onVariableClick={handleVariableClick} />
 
             <div className="flex-1 flex min-h-0 min-w-0 overflow-hidden" data-testid="dashboard-workspace">
               <SmartCanvas
