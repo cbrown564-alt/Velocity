@@ -26,6 +26,7 @@ import { CSS } from '@dnd-kit/utilities';
 import { Copy, Trash2, X } from 'lucide-react';
 import { useVelocityStore } from '../../../store';
 import { registerShortcut } from '../../../lib/keyboardShortcuts/registry';
+import { useReducedMotion } from '../../../lib/motion';
 import { resolveSlideTitle } from '../../../core/export/resolveSlideDefaults';
 import { Slide, SlideAnalysisState } from '../../../types/slides';
 import { ConfirmModal } from '../../../components/overlays/ConfirmModal';
@@ -92,6 +93,11 @@ function getRecipeSummary(
   const rows = source.rowVars.map(name).join(' + ');
   return source.colVar ? `${rows} × ${name(source.colVar)}` : rows;
 }
+
+/** Expanded rail width — full deck outline (design_01 layout regions). */
+export const STORY_RAIL_WIDTH_EXPANDED_PX = 240;
+/** Collapsed icon strip — must stay under 48px per DESIGN-CONV-G. */
+export const STORY_RAIL_WIDTH_COLLAPSED_PX = 44;
 
 interface SlideRowProps {
   slide: Slide;
@@ -335,6 +341,12 @@ export const StoryRail: React.FC<StoryRailProps> = ({
   const [slideToDelete, setSlideToDelete] = useState<string | null>(null);
 
   const [renamingSlideId, setRenamingSlideId] = useState<string | null>(null);
+  const [isHovered, setIsHovered] = useState(false);
+  const reducedMotion = useReducedMotion();
+
+  const canCollapse = slides.length === 1;
+  const isExpanded = !canCollapse || isHovered || renamingSlideId !== null;
+  const railWidthPx = isExpanded ? STORY_RAIL_WIDTH_EXPANDED_PX : STORY_RAIL_WIDTH_COLLAPSED_PX;
 
   const deckName = useMemo(() => {
     if (!dataset?.name) return 'Untitled deck';
@@ -511,18 +523,61 @@ export const StoryRail: React.FC<StoryRailProps> = ({
   return (
     <aside
       data-testid="story-rail"
+      data-rail-expanded={isExpanded ? 'true' : 'false'}
+      data-rail-collapsed={canCollapse && !isHovered ? 'true' : 'false'}
       aria-label="Deck outline"
-      className="w-[240px] shrink-0 flex flex-col px-2.5 pt-2 pb-3 border-r border-[var(--border-color-muted)]"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      style={{ width: `${railWidthPx}px` }}
+      className={`shrink-0 flex flex-col overflow-hidden border-r border-[var(--border-color-muted)] transition-[width] ease-out ${
+        reducedMotion ? 'duration-0' : 'duration-150'
+      } ${isExpanded ? 'px-2.5 pt-2 pb-3' : 'px-1 pt-2 pb-2'}`}
     >
-      <div className="px-2.5 pt-2 pb-3.5 text-[13px] font-semibold tracking-[0.01em] text-[var(--text-primary)]">
-        {deckName}
-      </div>
+      {isExpanded ? (
+        <div className="px-2.5 pt-2 pb-3.5 text-[13px] font-semibold tracking-[0.01em] text-[var(--text-primary)]">
+          {deckName}
+        </div>
+      ) : (
+        <div
+          className="flex justify-center pb-2 text-[11px] font-mono text-[var(--text-tertiary)]"
+          title={deckName}
+          aria-hidden
+        >
+          1
+        </div>
+      )}
 
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <SortableContext items={slides.map((s) => s.id)} strategy={verticalListSortingStrategy}>
           <ol className="flex flex-col gap-0.5 overflow-y-auto min-h-0" aria-label="Slides">
             {slides.map((slide, index) => {
               const isActive = slide.id === activeSlideId;
+              if (!isExpanded) {
+                const displayLabel = getSlideDisplayLabel(
+                  slide,
+                  variableSets,
+                  isActive
+                    ? { rowVars: tableConfig?.rowVars ?? [], colVar: tableConfig?.colVar ?? null }
+                    : undefined,
+                );
+                return (
+                  <li
+                    key={slide.id}
+                    data-testid={`story-rail-slide-${index + 1}-compact`}
+                    aria-current={isActive ? 'true' : undefined}
+                    aria-label={`Slide ${index + 1}: ${displayLabel}`}
+                    title={displayLabel}
+                    onClick={() => setActiveSlide(slide.id)}
+                    className={`flex justify-center py-1.5 rounded-md cursor-default transition-colors ${
+                      isActive ? 'bg-[var(--bg-panel)] shadow-[0_0_0_1px_var(--border-color)]' : 'hover:bg-[var(--bg-rail)]'
+                    }`}
+                  >
+                    <span className="w-7 h-7 flex items-center justify-center rounded-md font-mono text-[11px] text-[var(--text-secondary)]">
+                      {index + 1}
+                    </span>
+                  </li>
+                );
+              }
               return (
                 <SlideRow
                   key={slide.id}
@@ -554,13 +609,19 @@ export const StoryRail: React.FC<StoryRailProps> = ({
         type="button"
         onClick={() => addSlide()}
         title="New slide (N)"
-        className="mt-1.5 px-2.5 py-[7px] text-left text-[12.5px] rounded-md text-[var(--text-tertiary)] hover:bg-[var(--bg-rail)] hover:text-[var(--text-secondary)] transition-colors"
+        aria-label="New slide"
+        className={`mt-1.5 rounded-md text-[var(--text-tertiary)] hover:bg-[var(--bg-rail)] hover:text-[var(--text-secondary)] transition-colors ${
+          isExpanded
+            ? 'px-2.5 py-[7px] text-left text-[12.5px]'
+            : 'mx-auto w-7 h-7 flex items-center justify-center text-[16px] leading-none'
+        }`}
       >
-        + New slide
+        {isExpanded ? '+ New slide' : '+'}
       </button>
 
-      <div className="mt-auto px-2.5 pt-2 text-[11px] text-[var(--text-tertiary)]">
-        <PersistenceStatus
+      {isExpanded && (
+        <div className="mt-auto px-2.5 pt-2 text-[11px] text-[var(--text-tertiary)]">
+          <PersistenceStatus
           mode={persistenceMode}
           opfsAvailable={opfsAvailable}
           dbLabel={persistence.opfsDbLabel}
@@ -583,7 +644,8 @@ export const StoryRail: React.FC<StoryRailProps> = ({
           onPurge={persistence.purgeQuarantinedDbs}
           onRebuild={() => void persistence.rebuildFromOpfsSource('dashboard')}
         />
-      </div>
+        </div>
+      )}
 
       <ConfirmModal
         isOpen={deleteModalOpen}
