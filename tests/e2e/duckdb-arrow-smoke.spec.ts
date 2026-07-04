@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import path from 'path';
-import { buildExampleCrosstab, uploadSavAndReachDashboard } from './helpers/visualPolish';
+import { buildExampleCrosstab, expectDatasetLoaded, uploadSavAndReachDashboard } from './helpers/visualPolish';
 
 const sleepSavFixture = path.resolve(process.cwd(), 'test_data/sleep.sav');
 
@@ -47,7 +47,7 @@ test('SAV upload exercises Arrow→DuckDB ingestion in a real browser', async ({
   await uploadSavAndReachDashboard(page, sleepSavFixture);
 
   // workerIngestion.ts insertArrowTable path: full SAV load must land rows in DuckDB.
-  await expect(page.getByText('sleep.sav (271 rows)')).toBeVisible({ timeout: 30000 });
+  await expectDatasetLoaded(page, 'sleep.sav', { rowCount: 271 });
 
   await buildExampleCrosstab(page);
 

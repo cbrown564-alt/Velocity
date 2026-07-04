@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import path from 'path';
-import { uploadSavAndReachDashboard } from './helpers/visualPolish';
+import { openOverflowMenu, uploadSavAndReachDashboard } from './helpers/visualPolish';
 
 const savFixture = path.resolve(process.cwd(), 'test_data/sleep.sav');
 
@@ -13,7 +13,8 @@ test('Export Session completes and downloads a session file for sleep.sav', asyn
 
   await uploadSavAndReachDashboard(page, savFixture);
 
-  await page.getByTitle('Export portable session').click();
+  await openOverflowMenu(page);
+  await page.getByRole('menuitem', { name: 'Export Session' }).click();
   await expect(page.getByRole('button', { name: /Download \.velocity/i })).toBeVisible({ timeout: 10000 });
 
   const downloadPromise = page.waitForEvent('download', { timeout: 15000 });

@@ -3,6 +3,7 @@ import path from 'path';
 import {
   buildExampleCrosstab,
   dashboardReadyLocator,
+  expectDatasetLoaded,
   openDatasetFromWorkspaceSearch,
   uploadSavAndReachDashboard,
 } from './helpers/visualPolish';
@@ -49,7 +50,7 @@ test('workspace switches between stored datasets without re-upload', async ({ pa
   await expect(page.getByRole('button', { name: /Upload/i }).first()).toBeVisible({ timeout: 60000 });
 
   await uploadSavAndReachDashboard(page, sleepSavFixture);
-  await expect(page.getByText('sleep.sav (271 rows)')).toBeVisible({ timeout: 30000 });
+  await expectDatasetLoaded(page, 'sleep.sav', { rowCount: 271 });
   await returnToWorkspace(page);
 
   await uploadSavAndReachDashboard(page, smallSavFixture);
@@ -79,7 +80,7 @@ test('workspace switches between stored datasets without re-upload', async ({ pa
     .toBe(true);
 
   await openDatasetFromWorkspace(page, 'sleep.sav');
-  await expect(page.getByText('sleep.sav (271 rows)')).toBeVisible({ timeout: 30000 });
+  await expectDatasetLoaded(page, 'sleep.sav', { rowCount: 271 });
 
   // Regression: DuckDB must reload sleep.sav schema after switching away and back.
   await expectCrosstabRenders(page);

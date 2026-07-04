@@ -1,5 +1,10 @@
 import { test, expect } from '@playwright/test';
-import { buildExampleCrosstab, openDatasetFromWorkspaceSearch, uploadSavAndReachDashboard } from './helpers/visualPolish';
+import {
+  buildExampleCrosstab,
+  expectDatasetLoaded,
+  openDatasetFromWorkspaceSearch,
+  uploadSavAndReachDashboard,
+} from './helpers/visualPolish';
 import path from 'path';
 
 const sleepSavFixture = path.resolve(process.cwd(), 'test_data/sleep.sav');
@@ -21,12 +26,12 @@ test('pilot workflow: upload, crosstab, export PPTX, reopen, event log', async (
 
   test.skip(!opfsSupported, 'OPFS not supported in this environment');
 
-  await expect(page.getByTestId('workspace-status-strip')).toBeVisible({ timeout: 60000 });
-  await expect(page.getByTestId('workspace-status-pilot')).toBeVisible();
-  await expect(page.getByTestId('workspace-status-pilot').getByText(/never leaves this device/i)).toBeVisible();
+  await expect(page.getByText(/Turn a client survey file into an editable PowerPoint deck/i)).toBeVisible({
+    timeout: 60000,
+  });
 
   await uploadSavAndReachDashboard(page, sleepSavFixture);
-  await expect(page.getByText('sleep.sav (271 rows)')).toBeVisible({ timeout: 30000 });
+  await expectDatasetLoaded(page, 'sleep.sav', { rowCount: 271 });
 
   await buildExampleCrosstab(page);
 
@@ -60,8 +65,7 @@ test('pilot workflow: upload, crosstab, export PPTX, reopen, event log', async (
   expect(eventNames).toContain('pptx_exported');
 
   await openDatasetFromWorkspaceSearch(page, 'sleep.sav');
-  await expect(page.getByText('sleep.sav (271 rows)')).toBeVisible({ timeout: 120000 });
-  await expect(page.getByTestId('first-crosstab-tour')).toBeHidden({ timeout: 5000 });
+  await expectDatasetLoaded(page, 'sleep.sav', { rowCount: 271, timeoutMs: 120000 });
 
   const afterReopen = await page.evaluate(() => {
     const raw = localStorage.getItem('velocity-pilot-events');

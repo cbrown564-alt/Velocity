@@ -1,0 +1,18 @@
+{
+  "capturedAt": "2026-07-04T10:48:09.119Z",
+  "environment": {
+    "viewport": "1440×900",
+    "dataset": "test_data/sleep.sav",
+    "browser": "chromium"
+  },
+  "elapsedMs": 10553,
+  "elapsedFormatted": "0:10",
+  "interruptionCount": 0,
+  "interruptions": [],
+  "pass": true,
+  "criteria": {
+    "maxElapsedMs": 300000,
+    "maxInterruptions": 0
+  },
+  "pptxPath": "/workspace/docs/assets/design-reset-evidence/wp42-five-minute-pass.pptx"
+}

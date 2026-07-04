@@ -112,7 +112,9 @@ async function insertVariable(page, query, target = 'rows') {
 }
 
 async function addNewSlide(page) {
-  await page.getByText('+ New slide').click();
+  await page.keyboard.press('Escape');
+  await page.waitForTimeout(200);
+  await page.keyboard.press('n');
   await page.waitForTimeout(600);
 }
 
@@ -120,9 +122,7 @@ async function main() {
   const useExternalServer = process.env.SKIP_DEV_SERVER === '1';
   const server = useExternalServer ? null : startDevServer();
   const interruptions = [];
-  const startedAt = Date.now();
-  let fileDropAt = null;
-  let pptxSavedAt = null;
+  const timings = { fileDropAt: 0, pptxSavedAt: 0 };
 
   try {
     await waitForServer(BASE_URL);
@@ -148,13 +148,15 @@ async function main() {
       await startFresh.click();
     }
 
-    fileDropAt = Date.now();
+    timings.fileDropAt = Date.now();
     await page.getByTestId('dataset-upload-input').setInputFiles(SLEEP_SAV);
     await waitForDashboardReady(page);
 
     // Slide 1: sex × marital
     await insertVariable(page, 'sex', 'rows');
     await insertVariable(page, 'marital', 'columns');
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(300);
     await page.locator('.analysis-frame table').waitFor({ state: 'visible', timeout: 60000 });
 
     // Slide 2
@@ -172,14 +174,13 @@ async function main() {
     const downloadPromise = page.waitForEvent('download', { timeout: 120000 });
     await page.getByTestId('export-modal-submit').click();
     const download = await downloadPromise;
-    pptxSavedAt = Date.now();
+    timings.pptxSavedAt = Date.now();
     const savePath = path.join(OUT_DIR, 'wp42-five-minute-pass.pptx');
     await download.saveAs(savePath);
 
     await browser.close();
 
-    const elapsedMs = pptxSavedAt - fileDropAt;
-    const elapsedSec = (elapsedMs / 1000).toFixed(1);
+    const elapsedMs = timings.pptxSavedAt - timings.fileDropAt;
     const pass = elapsedMs < 5 * 60 * 1000 && interruptions.length === 0;
 
     const report = {

@@ -117,27 +117,55 @@ async function waitForDashboardReady(page, timeoutMs = 120000) {
   throw new Error('Dashboard did not become ready in time');
 }
 
-async function uploadSavAndReachDashboard(page) {
+async function uploadSavAndReachDashboard(page, options = {}) {
+  const { captureEmptySlideImmediately = false } = options;
   const fileInput = page.getByTestId('dataset-upload-input');
   await fileInput.setInputFiles(SLEEP_SAV);
-  await waitForDashboardReady(page);
+
+  const tableView = page.getByRole('button', { name: 'Table view' });
+  const metadataLoaded = page.getByText('Metadata Loaded');
+  const deadline = Date.now() + 120000;
+
+  while (Date.now() < deadline) {
+    if (await tableView.isVisible().catch(() => false)) {
+      if (captureEmptySlideImmediately) return 'dashboard';
+      break;
+    }
+    if (await metadataLoaded.isVisible().catch(() => false)) {
+      await shot(page, '03-metadata-loaded-interstitial');
+      await page.getByRole('button', { name: 'Load Full Data' }).click();
+      await tableView.waitFor({ state: 'visible', timeout: 120000 });
+      if (captureEmptySlideImmediately) return 'dashboard';
+      break;
+    }
+    await page.waitForTimeout(300);
+  }
+
+  if (!captureEmptySlideImmediately) {
+    await tableView.waitFor({ state: 'visible', timeout: 5000 });
+  }
 }
 
 async function resetActiveSlideRecipe(page) {
   await openOverflowMenu(page);
   await page.getByRole('menuitem', { name: 'Reset' }).click();
-  await page.waitForTimeout(800);
+  await page.getByTestId('empty-slide-state').waitFor({ state: 'visible', timeout: 30000 });
+  await page.waitForTimeout(400);
 }
 
-async function waitForEmptySlide(page, timeoutMs = 30000) {
+async function waitForEmptySlide(page, timeoutMs = 60000) {
   const deadline = Date.now() + timeoutMs;
   while (Date.now() < deadline) {
+    const emptyState = page.getByTestId('empty-slide-state');
+    if (await emptyState.isVisible().catch(() => false)) return;
+
     const table = page.locator('.analysis-frame table');
     const pctCell = page.locator('text=/\\d+\\.\\d%/').first();
     const tableVisible = await table.isVisible().catch(() => false);
     const pctVisible = await pctCell.isVisible().catch(() => false);
     if (!tableVisible && !pctVisible) return;
-    await page.waitForTimeout(250);
+
+    await page.waitForTimeout(300);
   }
   throw new Error('Slide did not return to empty state');
 }
@@ -238,17 +266,13 @@ async function main() {
     await page.waitForTimeout(800);
     await shot(page, '01-workspace-landing');
 
-    // 2–3. Upload + optional metadata interstitial
-    await uploadSavAndReachDashboard(page);
-
-    // 4. Dashboard — story rail + empty slide (reset auto-first-crosstab for sleep.sav)
-    const tableAfterUpload = page.locator('.analysis-frame table');
-    if (await tableAfterUpload.isVisible().catch(() => false)) {
-      await resetActiveSlideRecipe(page);
-    }
-    await waitForEmptySlide(page);
-    await page.waitForTimeout(600);
+    // 2–3. Upload; capture empty slide before auto-first-crosstab paints
+    await uploadSavAndReachDashboard(page, { captureEmptySlideImmediately: true });
+    await page.waitForTimeout(200);
     await shot(page, '04-dashboard-story-rail-empty-slide');
+
+    // Continue workflow on the same session (auto-first-crosstab may apply after frame 04)
+    await page.waitForTimeout(1500);
 
     // 5. Building first crosstab — one variable on rows via insert palette
     await insertVariableFromPalette(page, 'sex', 'rows');

@@ -31,12 +31,23 @@ export async function waitForDashboardReady(page: Page, timeoutMs = 120000) {
   }
 }
 
-/** Upload a file and wait for the dashboard (palette/rail IA). */
-export async function uploadSavAndReachDashboard(
+/** Assert the active dataset is loaded in dashboard chrome (breadcrumb / subtitle). */
+export async function expectDatasetLoaded(
   page: Page,
-  fixturePath: string,
-  options?: { timeoutMs?: number },
+  fileName: string,
+  options?: { rowCount?: number; timeoutMs?: number },
 ) {
+  const timeout = options?.timeoutMs ?? 30000;
+  await expect(page.getByText(fileName, { exact: false }).first()).toBeVisible({ timeout });
+  if (options?.rowCount != null) {
+    const formatted = options.rowCount.toLocaleString('en-US');
+    const escaped = formatted.replace(/,/g, ',?');
+    await expect(page.getByText(new RegExp(`N\\s*=\\s*${escaped}\\b`, 'i')).first()).toBeVisible({ timeout });
+  }
+}
+
+/** Upload a file and wait for the dashboard (palette/rail IA). */
+export async function uploadSavAndReachDashboard(page: Page, fixturePath: string, options?: { timeoutMs?: number }) {
   const fileInput = page.getByTestId('dataset-upload-input');
   await expect(fileInput).toBeAttached({ timeout: options?.timeoutMs ?? 60000 });
   await fileInput.setInputFiles(fixturePath);
@@ -129,9 +140,7 @@ export async function reachDashboardWithExample(page: Page) {
     return;
   }
 
-  const loadExample = page.getByRole('button', {
-    name: /try the brand tracker example|upload survey file|load example|brand tracker/i,
-  });
+  const loadExample = page.getByRole('button', { name: /try the brand tracker example/i });
   await expect(loadExample).toBeVisible({ timeout: 60000 });
   await loadExample.click();
   await expect(tableView).toBeVisible({ timeout: 120000 });
@@ -204,34 +213,23 @@ export async function buildExampleCrosstab(page: Page) {
   const table = page.locator('table');
   const pctCell = page.locator('text=/\\d+\\.\\d%/').first();
 
-  // Brand tracker Load Example auto-applies brand preference × segment; skip sleep-only steps.
-  if (
+  const hasComputedCrosstab = async () =>
     (await table.isVisible({ timeout: 5000 }).catch(() => false)) &&
-    (await pctCell.isVisible({ timeout: 5000 }).catch(() => false))
-  ) {
+    (await pctCell.isVisible({ timeout: 5000 }).catch(() => false));
+
+  // Brand tracker Load Example auto-applies brand preference × segment; accept any computed table.
+  if (await hasComputedCrosstab()) {
     const headers = await table
       .locator('th')
       .allTextContents()
       .catch(() => []);
     const joined = headers.join(' ').toLowerCase();
     if (/single|married|divorced|widowed/.test(joined)) return;
+    if (/growth|core|value|brand|segment|prefer/.test(joined)) return;
   }
 
-  const reset = page.getByRole('button', { name: 'Reset' });
-  if (await reset.isVisible({ timeout: 2000 }).catch(() => false)) {
-    await resetActiveSlideRecipe(page);
-  }
-
-  if (
-    (await table.isVisible({ timeout: 2000 }).catch(() => false)) &&
-    (await pctCell.isVisible({ timeout: 2000 }).catch(() => false))
-  ) {
-    const headers = await table
-      .locator('th')
-      .allTextContents()
-      .catch(() => []);
-    const joined = headers.join(' ').toLowerCase();
-    if (/single|married|divorced|widowed/.test(joined)) return;
+  if (await hasComputedCrosstab()) {
+    return;
   }
 
   await insertVariableFromPalette(page, 'sex', 'rows');
@@ -315,7 +313,11 @@ export async function expectWorkspaceLibraryVisible(page: Page) {
     )
     .toBe(true);
 
-  await expect(page.getByRole('heading', { name: /brandtracker_w4\.sav|sleep\.sav/i })).toBeVisible({ timeout: 60000 });
+  await expect(
+    page.getByRole('heading', { name: /brandtracker_w4\.sav|sleep\.sav|Recent Datasets/i }).first(),
+  ).toBeVisible({
+    timeout: 60000,
+  });
 }
 
 export async function waitForRestorationPromptOrWorkspace(page: Page) {

@@ -7,7 +7,7 @@
  *
  * Run: node scripts/report-quality/canvas-pptx-parity.mjs [path/to/export.pptx]
  */
-import { readFile, writeFile } from 'node:fs/promises';
+import { writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import process from 'node:process';
 import { fileURLToPath } from 'node:url';
