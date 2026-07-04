@@ -122,7 +122,7 @@ describe('ExportModal accessibility', () => {
     expect(screen.getByTestId('export-review-list')).toBeInTheDocument();
     expect(screen.getByTestId('deck-readiness-status')).toHaveTextContent(/blocked/i);
     expect(screen.getByText(/add at least one row variable/i)).toBeInTheDocument();
-    expect(screen.getByTestId('export-modal-submit')).toBeDisabled();
+    expect(screen.getByTestId('export-modal-review')).toBeDisabled();
   });
 
   it('shows template mode controls and wave refresh options when template config is present', () => {
@@ -201,7 +201,7 @@ describe('ExportModal accessibility', () => {
 
     expect(screen.getByTestId('export-review-list')).toBeInTheDocument();
     expect(screen.getAllByText(/template mapping references/i).length).toBeGreaterThan(0);
-    expect(screen.getByTestId('export-modal-submit')).toBeDisabled();
+    expect(screen.getByTestId('export-modal-review')).toBeDisabled();
   });
 
   it('switches scope to all slides and changes footer text', () => {
@@ -250,11 +250,65 @@ describe('ExportModal accessibility', () => {
     }
   });
 
-  it('switches to Excel format', () => {
+  it('switches to Excel format and keeps direct export submit', () => {
     render(<ExportModal isOpen onClose={vi.fn()} config={{ title: 'Report', analyses: [] }} />);
     fireEvent.click(screen.getByRole('radio', { name: 'Excel' }));
-    // Template mode section should disappear (only for pptx)
     expect(screen.queryByText(/template mode/i)).not.toBeInTheDocument();
+    expect(screen.getByTestId('export-modal-submit')).toBeInTheDocument();
+    expect(screen.queryByTestId('export-modal-review')).not.toBeInTheDocument();
+  });
+
+  it('gates PPTX export behind preview lane with filmstrip and significance audit', () => {
+    useVelocityStore.setState({
+      slides: [
+        {
+          id: 's1',
+          title: 'New Slide',
+          subtitle: '',
+          analysisState: { rowVars: ['gender'], colVar: 'region', filters: [], weightVar: null },
+          visualizationType: 'table',
+          layoutMode: 'focus',
+          cells: [{ id: 'c1', content: { type: 'table' } }],
+          createdAt: 1,
+          updatedAt: 1,
+        },
+      ],
+      activeSlideId: 's1',
+      tableConfig: { rowVars: ['gender'], colVar: 'region' },
+      activeFilters: [],
+      dataset: {
+        id: 'd1',
+        name: 'Dataset',
+        rowCount: 10,
+        source: 'csv',
+        variables: [
+          { id: 'gender', name: 'gender', label: 'Gender', type: 'nominal' },
+          { id: 'region', name: 'region', label: 'Region', type: 'nominal' },
+        ],
+      },
+      variableSets: [
+        { id: 'gender', name: 'gender', variableIds: ['gender'], structure: 'single' },
+        { id: 'region', name: 'region', variableIds: ['region'], structure: 'single' },
+      ],
+      browserEngine: { runAnalysis: vi.fn() },
+      isQuerying: false,
+      analysisSettings: {
+        comparisonMethod: 'cell_vs_rest',
+        correctionType: 'none',
+        showConfidenceIntervals: false,
+        showCellN: false,
+        showColumnBases: false,
+        significanceLevel: 0.95,
+        engine: 'native',
+        enableDesignEffects: false,
+      },
+    } as never);
+    render(<ExportModal isOpen onClose={vi.fn()} config={{ title: 'Report', analyses: [] }} />);
+    fireEvent.click(screen.getByTestId('export-modal-review'));
+    expect(screen.getByTestId('export-preview-lane')).toBeInTheDocument();
+    expect(screen.getByTestId('export-preview-significance-audit')).toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('export-preview-back'));
+    expect(screen.queryByTestId('export-preview-lane')).not.toBeInTheDocument();
   });
 
   it('toggles show significance checkbox', () => {

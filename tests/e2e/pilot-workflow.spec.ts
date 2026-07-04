@@ -40,7 +40,9 @@ test('pilot workflow: upload, crosstab, export PPTX, reopen, event log', async (
   await expect(page.locator('text=/\\d+\\.\\d%/').first()).toBeVisible({ timeout: 30000 });
 
   await page.getByRole('button', { name: 'Export', exact: true }).click();
-  await expect(page.getByTestId('export-modal-submit')).toBeVisible({ timeout: 10000 });
+  await expect(page.getByTestId('export-modal-review')).toBeVisible({ timeout: 10000 });
+  await page.getByTestId('export-modal-review').click();
+  await expect(page.getByTestId('export-preview-lane')).toBeVisible({ timeout: 10000 });
 
   const downloadPromise = page.waitForEvent('download', { timeout: 120000 });
   await page.getByTestId('export-modal-submit').click();
