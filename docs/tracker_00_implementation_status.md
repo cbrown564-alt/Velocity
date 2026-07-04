@@ -231,7 +231,7 @@ These rows remain directionally valid, but should not become active until `PILOT
 | DESIGN-CONV-C | C | Discovery | Thin collapsible "recent & pinned" variable strip below toolbar (~32px); not a full sidebar wall | DESIGN-CONV-A | Not started | Yes | T,L,U,I,V | Accent budget audit; consultant drag-first usability pass |
 | DESIGN-CONV-D | D | Keyboard | First ⌘K on new workspace: inline 3-step ghost inside palette (search → ↵ rows → ⌥↵ columns); dismiss forever | DESIGN-RESET-1 | Not started | Yes | T,L,U,I | No coaching reappear on reopen; session-scoped dismiss flag |
 | DESIGN-CONV-E | E | Story | Workspace "Start from template" → 3-slide tracker skeleton (awareness · consideration · preference); story rail pre-populated | DESIGN-CONV-B, PILOT-DEMO-3 | Not started | Yes | T,L,U,I,V | Brand tracker template fixture; e2e template-start workflow |
-| DESIGN-CONV-F | F | Natural language | Insert palette NL row/column binding ("Q5 by segment") — variable binding only, not full AI analysis | DESIGN-CONV-D | Not started | Yes | T,L,U,I,A,V | Eval against Displayr-positioning guardrail; inspectability tests |
+| DESIGN-CONV-F | F | Natural language | Insert palette NL row/column binding ("Q5 by segment") — variable binding only, not full AI analysis | DESIGN-CONV-D | In review | Yes | T,L,U,I,A,V | Deterministic `paletteNlParse` + CommandPalette inspectability tests; Displayr/AI-analysis copy guardrail; prefer merge after D |
 | DESIGN-CONV-G | G | Polish | Story rail collapses to icon strip (&lt;48px) on single-slide sessions; expands on hover or deck growth | DESIGN-RESET-1 | Not started | Yes | T,L,U,I | Motion budget per WP3.2; screenshot at 1-slide vs 5-slide |
 | DESIGN-CONV-H | H | Continuity | After upload, land on slide 1 with palette pre-focused; reduce Workshop Door → first insertion gap | DESIGN-RESET-1 | Not started | Yes | T,L,U,I,V | Timed handoff metric in five-minute pass script |
 | DESIGN-CONV-I | I | Agent | Quiet "what changed" summary on agent session import — slides added, variables unresolved — story rail footer | DESIGN-CONV-Q6 | Not started | Yes | T,L,U,I,A | MCP handoff eval scenario; muted per calm-tech rules |
@@ -256,6 +256,7 @@ These rows remain directionally valid, but should not become active until `PILOT
 - **Q5** (focus retirement) should land before PILOT-6 photography so screenshots reflect final chrome.
 - **Q6** audit must complete before **I** implementation to avoid speculative agent UI.
 - **J** stays frozen until Wave 1–3 journey items reach `Done` or a pilot explicitly blocks.
+- **F** is binding grammar only (not S6-AI / full auto-analysis). Prefer merge after **D** because both touch CommandPalette; keep NL isolated in `paletteNlParse` + thin palette integration.
 
 #### DESIGN-CONV recommended pull
 
