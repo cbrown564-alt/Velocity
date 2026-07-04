@@ -42,6 +42,7 @@ export interface UseSessionLifecycleReturn {
   handleDiscard: () => Promise<void>;
   handleDatasetFileUpload: (event: React.ChangeEvent<HTMLInputElement>) => Promise<void>;
   handleLoadExample: () => void;
+  handleStartFromTemplate: () => void;
   handleFileDrop: (file: File) => void;
 }
 
@@ -270,6 +271,11 @@ export function useSessionLifecycle({
     fileUpload.handleDemoClick();
   }, [clearImportedSessionSemantic, fileUpload]);
 
+  const handleStartFromTemplate = useCallback(() => {
+    clearImportedSessionSemantic();
+    fileUpload.handleBrandTrackerTemplateClick();
+  }, [clearImportedSessionSemantic, fileUpload]);
+
   const handleFileDrop = useCallback(
     (file: File) => {
       void warmUpEngineOnIntent('file-drop');
@@ -291,6 +297,7 @@ export function useSessionLifecycle({
     handleDiscard,
     handleDatasetFileUpload,
     handleLoadExample,
+    handleStartFromTemplate,
     handleFileDrop,
   };
 }

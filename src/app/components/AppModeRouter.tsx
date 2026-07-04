@@ -39,6 +39,7 @@ export interface AppModeRouterProps {
   onOpenDataset: (storedDataset: StoredDataset) => Promise<void>;
   onUploadFile: () => void;
   onLoadExample: () => void;
+  onStartFromTemplate?: () => void;
   onCreateProject: (ids: string[]) => void;
   onDeleteDataset: (id: string) => Promise<void>;
   onToggleStar: (id: string) => void;
@@ -73,6 +74,7 @@ export const AppModeRouter: React.FC<AppModeRouterProps> = ({
   onOpenDataset,
   onUploadFile,
   onLoadExample,
+  onStartFromTemplate,
   onCreateProject,
   onDeleteDataset,
   onToggleStar,
@@ -122,6 +124,7 @@ export const AppModeRouter: React.FC<AppModeRouterProps> = ({
             onOpenDataset={onOpenDataset}
             onUploadFile={onUploadFile}
             onLoadExample={onLoadExample}
+            onStartFromTemplate={onStartFromTemplate}
             onCreateProject={onCreateProject}
             onDeleteDataset={onDeleteDataset}
             onToggleStar={onToggleStar}

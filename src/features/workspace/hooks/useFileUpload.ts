@@ -9,6 +9,11 @@ import * as opfsFileManager from '../../../services/opfsFileManager';
 import { recordPilotEvent } from '../../../services/pilotOnboarding';
 import { useVelocityStore } from '../../../store';
 import { assignOpfsKeyAndLoad, assignOpfsStorageForUpload } from './assignOpfsKeyAndLoad';
+import {
+  BRAND_TRACKER_FUNNEL_TEMPLATE,
+  materializeBrandTrackerFunnelSkeleton,
+} from '../../../core/deckTemplates/brandTrackerSkeleton';
+import { findVariableIdByName } from '../../../core/deckTemplates/resolveTemplateBindings';
 
 type AppMode = 'splash' | 'uploading' | 'dashboard' | 'restoring' | 'metadata';
 
@@ -36,6 +41,7 @@ export interface FileUploadState {
   handleMetadataLoadFull: () => Promise<void>;
   handleMetadataCancel: () => Promise<void>;
   handleDemoClick: () => void;
+  handleBrandTrackerTemplateClick: () => void;
 }
 
 export function useFileUpload(
@@ -48,6 +54,9 @@ export function useFileUpload(
   const discardPersistedData = useVelocityStore((state) => state.discardPersistedData);
   const setLoadProgress = useVelocityStore((state) => state.setLoadProgress);
   const addToast = useVelocityStore((state) => state.addToast);
+  const applyDeckTemplate = useVelocityStore((state) => state.applyDeckTemplate);
+  const setWeightVariable = useVelocityStore((state) => state.setWeightVariable);
+  const markAutoCrosstabSeen = useVelocityStore((state) => state.markAutoCrosstabSeen);
 
   const [pendingSavFile, setPendingSavFile] = React.useState<File | null>(null);
   const [pendingSavSizeMb, setPendingSavSizeMb] = React.useState<number | null>(null);
@@ -177,6 +186,18 @@ export function useFileUpload(
     [processUploadFile],
   );
 
+  const applyBrandTrackerTemplateToStore = useCallback(() => {
+    const { variableSets, dataset } = useVelocityStore.getState();
+    if (!dataset) return;
+    applyDeckTemplate(materializeBrandTrackerFunnelSkeleton(variableSets, dataset.variables));
+    markAutoCrosstabSeen();
+    const weightName = BRAND_TRACKER_FUNNEL_TEMPLATE.weightVariableName;
+    if (weightName) {
+      const weightId = findVariableIdByName(dataset.variables, [weightName]);
+      if (weightId) setWeightVariable(weightId);
+    }
+  }, [applyDeckTemplate, markAutoCrosstabSeen, setWeightVariable]);
+
   const loadExampleDataset = useCallback(async () => {
     setMode('uploading');
     setLoadProgress({
@@ -238,6 +259,48 @@ export function useFileUpload(
     }
   }, [addToast, loadSAV, opfsAvailableLocal, reportUploadError, setLoadProgress, setMode]);
 
+  const loadBrandTrackerTemplate = useCallback(async () => {
+    setMode('uploading');
+    setLoadProgress({ phase: 'parsing', progress: 0.1, message: 'Loading brand tracker template…' });
+    const fetchExample = async (url: string, name: string): Promise<void> => {
+      const response = await fetch(url);
+      if (!response.ok) throw new Error(`Example dataset "${name}" is unavailable.`);
+      const buffer = await response.arrayBuffer();
+      const file = new File([buffer], name, { type: 'application/octet-stream' });
+      recordPilotEvent('file_selected', {
+        fileName: name,
+        fileSizeMb: Number((file.size / (1024 * 1024)).toFixed(2)),
+        format: 'sav',
+        source: 'template',
+      });
+      const { storageKey } = await assignOpfsStorageForUpload(file, opfsAvailableLocal);
+      await assignOpfsKeyAndLoad(name, buffer, loadSAV, { opfsFileKey: storageKey });
+    };
+    try {
+      await fetchExample(EXAMPLE_SAV_URL, EXAMPLE_SAV_NAME);
+      applyBrandTrackerTemplateToStore();
+      setLoadProgress(null);
+      setMode('dashboard');
+      addToast({
+        type: 'info',
+        title: 'Brand tracker template ready',
+        message: 'Three-slide funnel skeleton loaded. Replace variables via the insert palette (⌘K).',
+        duration: 9000,
+      });
+    } catch (err) {
+      console.error(err);
+      reportUploadError(err, EXAMPLE_SAV_NAME);
+    }
+  }, [
+    addToast,
+    applyBrandTrackerTemplateToStore,
+    loadSAV,
+    opfsAvailableLocal,
+    reportUploadError,
+    setLoadProgress,
+    setMode,
+  ]);
+
   const handleMetadataLoadFull = useCallback(async () => {
     if (!pendingSavFile && !opfsStorageKey) return;
     setMode('uploading');
@@ -291,6 +354,9 @@ export function useFileUpload(
     handleMetadataLoadFull,
     handleMetadataCancel,
     handleDemoClick,
+    handleBrandTrackerTemplateClick: () => {
+      void loadBrandTrackerTemplate();
+    },
   };
 }
 

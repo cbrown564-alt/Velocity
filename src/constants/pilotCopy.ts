@@ -37,6 +37,10 @@ export const PILOT_LANDING_EXAMPLE_CTA = PILOT_LANDING_EXAMPLE_TITLE;
 
 export const PILOT_LANDING_EXAMPLE_SHORT = PILOT_LANDING_EXAMPLE_TITLE;
 
+export const PILOT_LANDING_TEMPLATE_TITLE = 'Start from template';
+export const PILOT_LANDING_TEMPLATE_DESC = '3-slide brand tracker skeleton · awareness, consideration, preference';
+export const PILOT_LANDING_TEMPLATE_SHORT = PILOT_LANDING_TEMPLATE_TITLE;
+
 export const PILOT_LANDING_IMPORT_LABEL = 'Import a saved session';
 
 export const PILOT_LANDING_IMPORT_HINT = '— deck layout only, no respondent data';

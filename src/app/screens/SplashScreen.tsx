@@ -22,6 +22,7 @@ export interface SplashScreenProps {
   onOpenDataset: (storedDataset: StoredDataset) => Promise<void>;
   onUploadFile: () => void;
   onLoadExample: () => void;
+  onStartFromTemplate?: () => void;
   onCreateProject: (ids: string[]) => void;
   onDeleteDataset: (id: string) => Promise<void>;
   onToggleStar: (id: string) => void;
@@ -50,6 +51,7 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
   onOpenDataset,
   onUploadFile,
   onLoadExample,
+  onStartFromTemplate,
   onCreateProject,
   onDeleteDataset,
   onToggleStar,
@@ -82,6 +84,7 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
           onOpenDataset={onOpenDataset}
           onUploadFile={onUploadFile}
           onLoadExample={onLoadExample}
+          onStartFromTemplate={onStartFromTemplate}
           onCreateProject={onCreateProject}
           onDeleteDataset={onDeleteDataset}
           onToggleStar={onToggleStar}

@@ -136,6 +136,7 @@ export default function App() {
         onOpenDataset={handleOpenDataset}
         onUploadFile={handleUploadFile}
         onLoadExample={session.handleLoadExample}
+        onStartFromTemplate={session.handleStartFromTemplate}
         onCreateProject={workspaceOrchestration.handleOpenProjectModal}
         onDeleteDataset={workspaceOrchestration.handleDeleteDataset}
         onToggleStar={toggleDatasetStar}
