@@ -9,6 +9,7 @@ import { DndContext, DragOverlay, useDroppable } from '@dnd-kit/core';
 import { useVelocityStore } from '../../store';
 import { useDashboardDnD } from './hooks/useDashboardDnD';
 import { useAnalysisExportAction } from './hooks/useAnalysisExportAction';
+import { useCanvasHandoff } from './hooks/useCanvasHandoff';
 
 import { StoryRail } from './components/StoryRail';
 import { RecipeInspector } from './components/RecipeInspector';
@@ -91,6 +92,8 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
     handleToggleWeight,
     handleWeightRemove,
   } = useDashboardDnD();
+
+  useCanvasHandoff();
 
   const prevDensityRef = React.useRef<'compact' | 'generous'>('compact');
   const wasFocusedRef = React.useRef(focusMode);

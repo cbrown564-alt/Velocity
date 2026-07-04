@@ -47,6 +47,7 @@ export interface PersistedState {
   appMode: VelocityState['appMode'];
   activeFolderId: VelocityState['activeFolderId'];
   hasSeenAutoCrosstab: VelocityState['hasSeenAutoCrosstab'];
+  hasSeenCanvasHandoff: VelocityState['hasSeenCanvasHandoff'];
   lastActiveAt: VelocityState['lastActiveAt'];
   lastSeenTransformCount: VelocityState['lastSeenTransformCount'];
   welcomeBackDismissed: VelocityState['welcomeBackDismissed'];
@@ -130,6 +131,7 @@ export const partialize = (state: VelocityState): PersistedState => {
     appMode: state.appMode,
     activeFolderId: state.activeFolderId,
     hasSeenAutoCrosstab: state.hasSeenAutoCrosstab,
+    hasSeenCanvasHandoff: state.hasSeenCanvasHandoff,
     lastActiveAt: state.lastActiveAt,
     lastSeenTransformCount: state.lastSeenTransformCount,
     welcomeBackDismissed: state.welcomeBackDismissed,

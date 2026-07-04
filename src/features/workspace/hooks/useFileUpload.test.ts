@@ -32,6 +32,8 @@ describe('useFileUpload', () => {
     vi.clearAllMocks();
     useVelocityStore.getState().reset();
     useVelocityStore.setState({
+      canvasHandoffTrigger: null,
+      hasSeenCanvasHandoff: false,
       loadCSV: vi.fn().mockResolvedValue(undefined),
       loadSAV: vi.fn().mockResolvedValue(undefined),
       loadSAVSample: vi.fn().mockResolvedValue(undefined),
@@ -54,6 +56,7 @@ describe('useFileUpload', () => {
     });
 
     expect(loadCSV).toHaveBeenCalledWith('sample.csv', 'a,b\n1,2');
+    expect(useVelocityStore.getState().canvasHandoffTrigger).toBe('fresh_upload');
     expect(setMode).toHaveBeenCalledWith('dashboard');
   });
 
@@ -69,6 +72,7 @@ describe('useFileUpload', () => {
     });
 
     expect(loadSAV).toHaveBeenCalled();
+    expect(useVelocityStore.getState().canvasHandoffTrigger).toBe('fresh_upload');
     expect(setMode).toHaveBeenCalledWith('dashboard');
   });
 
@@ -111,6 +115,7 @@ describe('useFileUpload', () => {
       expect.objectContaining({ opfsFileKey: 'opfs-key' }),
     );
     expect(setMode).toHaveBeenCalledWith('dashboard');
+    expect(useVelocityStore.getState().canvasHandoffTrigger).toBeNull();
     expect(addToast).toHaveBeenCalledWith(
       expect.objectContaining({
         title: 'Brand tracker example loaded',
@@ -148,6 +153,7 @@ describe('useFileUpload', () => {
       expect.objectContaining({ opfsFileKey: 'opfs-key' }),
     );
     expect(setMode).toHaveBeenCalledWith('dashboard');
+    expect(useVelocityStore.getState().canvasHandoffTrigger).toBeNull();
     expect(addToast).toHaveBeenCalledWith(
       expect.objectContaining({
         title: 'Sleep study example loaded',

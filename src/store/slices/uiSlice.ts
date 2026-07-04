@@ -105,6 +105,10 @@ export interface UISlice {
   shortcutsOpen: boolean;
   /** Whether the user has already seen the auto-crosstab onboarding */
   hasSeenAutoCrosstab: boolean;
+  /** Pending Workshop Door → canvas handoff (DESIGN-CONV-H); ephemeral */
+  canvasHandoffTrigger: 'fresh_upload' | null;
+  /** One-time canvas handoff consumed; suppresses repeat palette auto-open */
+  hasSeenCanvasHandoff: boolean;
   /** Timestamp when user last returned to workspace (returning-researcher ritual) */
   lastActiveAt: number;
   /** Transform log length last acknowledged on Variables button (-1 = sync on next dashboard visit) */
@@ -182,6 +186,9 @@ export interface UISlice {
 
   // Onboarding
   markAutoCrosstabSeen: () => void;
+  requestCanvasHandoff: () => void;
+  clearCanvasHandoff: () => void;
+  markCanvasHandoffSeen: () => void;
   touchLastActiveAt: () => void;
   dismissWelcomeBack: () => void;
   markTransformsSeen: (count: number) => void;
@@ -218,6 +225,8 @@ export const createUISlice: StateCreator<UISlice, [], [], UISlice> = (set) => ({
   recipeColumnRejectNonce: 0,
   shortcutsOpen: false,
   hasSeenAutoCrosstab: false,
+  canvasHandoffTrigger: null,
+  hasSeenCanvasHandoff: false,
   lastActiveAt: 0,
   lastSeenTransformCount: -1,
   welcomeBackDismissed: false,
@@ -402,6 +411,9 @@ export const createUISlice: StateCreator<UISlice, [], [], UISlice> = (set) => ({
 
   // Onboarding Actions
   markAutoCrosstabSeen: () => set({ hasSeenAutoCrosstab: true }),
+  requestCanvasHandoff: () => set({ canvasHandoffTrigger: 'fresh_upload' }),
+  clearCanvasHandoff: () => set({ canvasHandoffTrigger: null }),
+  markCanvasHandoffSeen: () => set({ hasSeenCanvasHandoff: true }),
   touchLastActiveAt: () => set((state) => computeActivityTouchPatch(state)),
   dismissWelcomeBack: () =>
     set({

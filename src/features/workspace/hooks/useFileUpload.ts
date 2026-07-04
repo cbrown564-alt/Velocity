@@ -151,6 +151,7 @@ export function useFileUpload(
         }
 
         setLoadProgress(null);
+        useVelocityStore.getState().requestCanvasHandoff();
         setMode('dashboard');
       } catch (err) {
         console.error(err);
@@ -261,6 +262,7 @@ export function useFileUpload(
       setOpfsStorageKey(null);
       setPendingSavFile(null);
       setPendingSavSizeMb(null);
+      useVelocityStore.getState().requestCanvasHandoff();
       setMode('dashboard');
     } catch (err) {
       console.error(err);
