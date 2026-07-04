@@ -50,6 +50,10 @@ export const PILOT_LANDING_LIBRARY_HINT =
 
 export const PILOT_LANDING_LIBRARY_UPLOAD = 'Upload survey file';
 
+/** Post-load coach line for the brand tracker example (toast body). */
+export const PILOT_BRAND_TRACKER_LOADED_COACH =
+  '⌘K to swap variables · Weight is on · Recipe panel for filters · Export when ready';
+
 export const PILOT_BROWSER_LIMITS = {
   recommendedBrowsers: 'Chrome or Edge 120+, Safari 17+ (desktop)',
   fileFormats: '.sav and .csv',

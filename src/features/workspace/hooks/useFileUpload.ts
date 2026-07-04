@@ -3,6 +3,7 @@
  */
 
 import React, { useCallback } from 'react';
+import { PILOT_BRAND_TRACKER_LOADED_COACH } from '../../../constants/pilotCopy';
 import { formatUploadFailure, getUploadFormatError } from '../../../lib/uploadFeedback';
 import * as opfsFileManager from '../../../services/opfsFileManager';
 import { recordPilotEvent } from '../../../services/pilotOnboarding';
@@ -227,8 +228,8 @@ export function useFileUpload(
           : {
               type: 'info',
               title: 'Brand tracker example loaded',
-              message: 'Explore brand preference by segment, then export an editable PowerPoint deck.',
-              duration: 9000,
+              message: `Brand preference × segment is ready. ${PILOT_BRAND_TRACKER_LOADED_COACH}`,
+              duration: 12000,
             },
       );
     } catch (err) {

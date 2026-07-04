@@ -114,6 +114,7 @@ describe('useFileUpload', () => {
     expect(addToast).toHaveBeenCalledWith(
       expect.objectContaining({
         title: 'Brand tracker example loaded',
+        message: expect.stringContaining('⌘K to swap variables'),
       }),
     );
   });

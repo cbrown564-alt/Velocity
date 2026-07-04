@@ -175,6 +175,7 @@ These rows remain directionally valid, but should not become active until `PILOT
 | STAB-UI-F4 | Command palette | Variable search → shelf actions, export/focus/filter commands, empty-state `⌘K` hint (UXF-013) | STAB-UI-C (Done) | Done | No | T,L,U | `CommandPalette.tsx` variable search + shelf actions; **PR #18 PPR-012** neutral focus ring. Tests: `CommandPalette.test.tsx`, `commandPaletteSearch.test.ts` |
 | STAB-UI-F5 | Accessibility themes | High-contrast + colorblind significance themes (UXF-016) | STAB-UI-F1 | Frozen | Yes | T,L,U,I | UXF-015 splash contrast closed in PR #18; UXF-016 high-contrast/colorblind themes deferred until pilot requests |
 | STAB-UI-F6 | Nested row chart semantics | Define and implement chart representation for nested row recipes (e.g. measure parent + categorical children); table supports expand/collapse but chart renderers consume top-level `processedData.rows` only — scope, chart type, and table↔chart sync TBD | STAB-UI-F1; nested-row crosstab table fix (July 2026) | Not started | Yes | T,L,U,I,A | **Follow-up (July 2026).** Example: Age (numeric) + Region (nested) × Gender — table shows Age means with expandable Region rows; chart currently plots parent row only (means) or misaligns mixed metric/frequency semantics. Design options to evaluate: parent-only default, explicit drill level / row picker, small multiples by nested var, inherit table expand state, or chart-only flatten to leaves. See `arch_05_visualisation_engine.md`, `user_journey_screenshots.md` §2.2 open question. |
+| STAB-UI-VAR-1 | Variable catalog ordering | Shared browse-order contract for ⌘K insert palette (empty query) and Variable Manager: **Smart** (default), **File order** (ingest/column order), **Alphabetical** (display name); optional future grouping tiers | DESIGN-RESET-1 | Not started | Yes | T,L,U,I,A | **Contract (July 2026 intro-flow QA).** Today both surfaces lack user-controlled ordering — palette shows first *N* file-order sets; VM lists ingest order only. **Smart** mode (default) should be dataset-agnostic: rank by analysis intent (outcomes → banners/segments → grids/multiples → demographics → admin/IDs), then stable tie-break within tier (file order until semantic annotations mature). **File order** preserves source column order (`VariableSet.order` / ingest index). **Alphabetical** sorts by primary display label (`variable.label` ?? `set.name`). One pure ordering function in `src/core/` or `src/lib/`; persisted `variableCatalogOrderMode` preference in `uiSlice`; VM sort control (segmented or dropdown); palette empty-query browse calls the same function (no demo-specific hacks). Grouping/folders remain separate from sort mode. Do **not** conflate with `STAB-UI-F4` palette search grammar or synthetic-shell filtering (shipped separately, July 2026). |
 
 #### STAB-UI-F Dependency Notes
 
@@ -182,6 +183,7 @@ These rows remain directionally valid, but should not become active until `PILOT
 - **F1** blocks **F2** (shared slide frame contract) and **F5** (significance color stability).
 - **F4** can run in parallel with F1/F3 after palette API is agreed in plan §F4.
 - **F6** is a design follow-up from the July 2026 nested-row crosstab fix — do not block pilot on it; requires a short design brief before implementation (mixed metric + frequency semantics, table expand state vs chart scope).
+- **STAB-UI-VAR-1** addresses catalog browse order/grouping for palette + Variable Manager; intro-flow work (auto-weight, coach toast, synthetic-shell palette filter) ships separately and must not embed demo-specific sort rules.
 - Do not expand scope into Liquid Glass maturity, mobile layout, or component monolith refactors without `PILOT-7` gate.
 - Update `UXF-###` status in the plan doc when each finding closes; link PR URLs in tracker row notes on merge.
 
@@ -189,7 +191,8 @@ These rows remain directionally valid, but should not become active until `PILOT
 
 1. `PILOT-6` paid pilot recruiting (presentation gate closed — PR #18).
 2. `PILOT-4a` processing gap discovery.
-3. `STAB-UI-F5` accessibility themes (only if pilot requests).
+3. `STAB-UI-VAR-1` variable catalog ordering (smart / file / alphabetical) when intro-flow browse pain recurs on real pilot files.
+4. `STAB-UI-F5` accessibility themes (only if pilot requests).
 
 ### 4.3.1 Design Reset — Pathway B (`DESIGN-RESET-1`)
 

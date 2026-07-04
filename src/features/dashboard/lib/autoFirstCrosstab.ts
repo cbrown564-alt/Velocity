@@ -13,6 +13,9 @@ export type AutoCrosstabPair = {
   colSetId: string;
 };
 
+/** Sampling weight to apply when loading the pilot-archetype brand tracker example. */
+export const BRAND_TRACKER_EXAMPLE_WEIGHT_VAR = 'wt';
+
 function normalizeName(name: string): string {
   return name.trim().toLowerCase().replace(/\s+/g, '_');
 }
@@ -124,4 +127,22 @@ export function resolveAutoCrosstabTableConfig(
   }
 
   return { rowVars: [rowSet.id], colVar: colSet.id };
+}
+
+/**
+ * Resolve the default sampling weight for example-dataset onboarding.
+ * Brand tracker ships with `wt` (rim weight); other examples leave weight unset.
+ */
+export function resolveExampleDatasetWeightVariable(
+  datasetName: string | undefined,
+  variables: Variable[] | undefined,
+  currentWeightVariable: string | null | undefined,
+): string | null {
+  if (currentWeightVariable || !variables?.length) return null;
+  if (datasetName !== 'brandtracker_w4.sav') return null;
+
+  const weightVar = variables.find(
+    (variable) => variable.id === BRAND_TRACKER_EXAMPLE_WEIGHT_VAR || variable.name === BRAND_TRACKER_EXAMPLE_WEIGHT_VAR,
+  );
+  return weightVar?.id ?? null;
 }

@@ -1,7 +1,9 @@
 import type { VariableSet, Variable } from '../../types';
+import type { Dataset } from '../../types/dataset';
 import { allowsNumericStats } from '../../types';
 import type { ShelfPlacementResolution, TableConfigSnapshot } from '../../core/grid/gridUtils';
 import { resolveShelfPlacement } from '../../core/grid/gridUtils';
+import { filterSyntheticGridShellSets } from '../../core/services/syntheticGridShellFilters';
 import { resolveEffectiveVariableSetType } from '../../lib/resolveVariableSetType';
 
 export type VariableShelfTarget = 'drop-zone-rows' | 'drop-zone-cols' | 'drop-zone-weight';
@@ -57,7 +59,14 @@ function scoreVariableSet(query: string, set: VariableSet, labelLookup?: Map<str
 export interface PaletteSearchOptions {
   /** Dataset variables — enables matching on variable names and labels. */
   variables?: Variable[];
+  /** Full dataset — excludes synthetic grid shell sets from browse/search. */
+  dataset?: Dataset | null;
   limit?: number;
+}
+
+function paletteBrowsableSets(variableSets: VariableSet[], dataset?: Dataset | null): VariableSet[] {
+  const visible = variableSets.filter((set) => !set.hidden);
+  return dataset ? filterSyntheticGridShellSets(visible, dataset) : visible;
 }
 
 export function searchVariableSetsForPalette(
@@ -65,14 +74,13 @@ export function searchVariableSetsForPalette(
   variableSets: VariableSet[],
   options: PaletteSearchOptions = {},
 ): VariablePaletteMatch[] {
-  const { variables, limit = 12 } = options;
+  const { variables, dataset, limit = 12 } = options;
   const trimmed = query.trim();
   if (!trimmed) return [];
 
   const lookup = variables ? new Map(variables.map((v) => [v.id, v])) : undefined;
 
-  return variableSets
-    .filter((set) => !set.hidden)
+  return paletteBrowsableSets(variableSets, dataset)
     .map((set) => ({ set, score: scoreVariableSet(trimmed, set, lookup) }))
     .filter((match) => match.score > 0)
     .sort((a, b) => b.score - a.score || a.set.name.localeCompare(b.set.name))
@@ -80,8 +88,12 @@ export function searchVariableSetsForPalette(
 }
 
 /** Default (empty-query) result set: browseable list of visible sets. */
-export function listVariableSetsForPalette(variableSets: VariableSet[], limit = 12): VariableSet[] {
-  return variableSets.filter((set) => !set.hidden).slice(0, limit);
+export function listVariableSetsForPalette(
+  variableSets: VariableSet[],
+  limit = 12,
+  dataset?: Dataset | null,
+): VariableSet[] {
+  return paletteBrowsableSets(variableSets, dataset).slice(0, limit);
 }
 
 /** Monochrome type glyph letter, per north-star `.tglyph`. */

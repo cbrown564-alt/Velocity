@@ -308,10 +308,11 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ withinDnd = fals
     const variables = dataset?.variables;
     let results: VariableSet[];
     if (!query.trim()) {
-      results = listVariableSetsForPalette(variableSets, VARIABLE_LIMIT);
+      results = listVariableSetsForPalette(variableSets, VARIABLE_LIMIT, dataset);
     } else {
       results = searchVariableSetsForPalette(query, variableSets, {
         variables,
+        dataset,
         limit: VARIABLE_LIMIT,
       }).map((match) => match.set);
     }

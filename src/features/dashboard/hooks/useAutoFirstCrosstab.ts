@@ -1,6 +1,10 @@
 import { useEffect, useRef } from 'react';
 import { useVelocityStore } from '../../../store';
-import { pickAutoFirstCrosstabPair, resolveAutoCrosstabTableConfig } from '../lib/autoFirstCrosstab';
+import {
+  pickAutoFirstCrosstabPair,
+  resolveAutoCrosstabTableConfig,
+  resolveExampleDatasetWeightVariable,
+} from '../lib/autoFirstCrosstab';
 
 /**
  * One-time auto-first-crosstab after Load Example (brandtracker_w4.sav, sleep.sav,
@@ -34,6 +38,16 @@ export function useAutoFirstCrosstab(
     if (!config) return;
 
     autoCrosstabAppliedRef.current = true;
+
+    const weightVarId = resolveExampleDatasetWeightVariable(
+      dataset?.name,
+      dataset?.variables,
+      dataset?.weightVariable,
+    );
+    if (weightVarId) {
+      useVelocityStore.getState().setWeightVariable(weightVarId);
+    }
+
     useVelocityStore.getState().setTableConfig(config);
     markAutoCrosstabSeen();
   }, [

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import type { Variable, VariableSet } from '../../../types';
-import { pickAutoFirstCrosstabPair, resolveAutoCrosstabTableConfig } from './autoFirstCrosstab';
+import { pickAutoFirstCrosstabPair, resolveAutoCrosstabTableConfig, resolveExampleDatasetWeightVariable } from './autoFirstCrosstab';
 
 function set(overrides: Partial<VariableSet> & { id: string; name: string }): VariableSet {
   return {
@@ -228,5 +228,22 @@ describe('resolveAutoCrosstabTableConfig', () => {
       rowVars: ['row'],
       colVar: 'grid1_items',
     });
+  });
+});
+
+describe('resolveExampleDatasetWeightVariable', () => {
+  it('returns wt for brandtracker_w4.sav when weight is unset', () => {
+    const variables = [variable({ id: 'wt', name: 'wt', type: 'numeric' })];
+    expect(resolveExampleDatasetWeightVariable('brandtracker_w4.sav', variables, null)).toBe('wt');
+  });
+
+  it('returns null when weight is already set', () => {
+    const variables = [variable({ id: 'wt', name: 'wt', type: 'numeric' })];
+    expect(resolveExampleDatasetWeightVariable('brandtracker_w4.sav', variables, 'wt')).toBeNull();
+  });
+
+  it('returns null for non-tracker examples', () => {
+    const variables = [variable({ id: 'wt', name: 'wt', type: 'numeric' })];
+    expect(resolveExampleDatasetWeightVariable('sleep.sav', variables, null)).toBeNull();
   });
 });

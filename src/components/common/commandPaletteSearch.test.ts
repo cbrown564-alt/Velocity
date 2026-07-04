@@ -40,6 +40,41 @@ describe('commandPaletteSearch', () => {
     expect(listVariableSetsForPalette(sets).map((s) => s.id)).toEqual(['region']);
   });
 
+  it('excludes synthetic grid shell sets from palette browse and search', () => {
+    const parentGridId = 'heuristic_grid_fatigue1_fatigue2_fatigue3';
+    const sets = [
+      { ...mockNominalSet, id: parentGridId, name: 'Fatigue battery', structure: 'grid', variableIds: ['f1', 'f2'] },
+      {
+        ...mockNominalSet,
+        id: `${parentGridId}_scale`,
+        name: 'fatigue_scale',
+        structure: 'single',
+        variableIds: [`${parentGridId}_scale`],
+      },
+      { ...mockNominalSet, id: 'region', name: 'Region' },
+    ];
+    const dataset = {
+      id: 'ds1',
+      name: 'demo.sav',
+      rowCount: 100,
+      variables: [
+        {
+          ...mockScaleVariable,
+          id: `${parentGridId}_scale`,
+          name: `${parentGridId}_scale`,
+          synthetic: true,
+          sourceGridId: parentGridId,
+        },
+      ],
+      source: 'sav' as const,
+    };
+
+    expect(listVariableSetsForPalette(sets, 12, dataset).map((s) => s.id)).toEqual([parentGridId, 'region']);
+    expect(
+      searchVariableSetsForPalette('fatigue', sets, { dataset, variables: dataset.variables }).map((m) => m.set.id),
+    ).toEqual([parentGridId]);
+  });
+
   describe('insertion grammar (↵ columns, ⌥↵ rows, ⇧↵ filter)', () => {
     it('plain Enter targets columns', () => {
       expect(resolveInsertTarget({})).toBe('columns');

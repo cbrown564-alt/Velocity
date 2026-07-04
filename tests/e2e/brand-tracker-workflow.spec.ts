@@ -33,4 +33,13 @@ test('brand tracker workflow: load example, auto funnel-relevant first crosstab'
   // The Growth attitudinal segment is one of the banner columns for the funnel cut
   // (rendered uppercase via CSS, so match case-insensitively).
   await expect(page.getByText(/growth/i).first()).toBeVisible({ timeout: 60000 });
+
+  // Example onboarding applies rim weight automatically for the tracker demo.
+  await page.getByTestId('recipe-inspector-toggle').click();
+  await expect(page.getByText(/Analysis weight/i).first()).toBeVisible({ timeout: 15000 });
+  await expect(page.getByText('Applied').first()).toBeVisible({ timeout: 15000 });
+
+  // Export path is reachable once a crosstab is computed.
+  await page.getByRole('button', { name: 'Export', exact: true }).click();
+  await expect(page.getByTestId('export-modal-submit')).toBeVisible({ timeout: 15000 });
 });
