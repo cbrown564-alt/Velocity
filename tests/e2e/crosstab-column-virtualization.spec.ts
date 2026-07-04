@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { clearBrowserStorage, uploadFileAndReachDashboard } from './helpers/visualPolish';
+import { clearBrowserStorage, insertVariableFromPalette, uploadFileAndReachDashboard } from './helpers/visualPolish';
 
 /**
  * Phase 4 Task 3 — crosstab column (horizontal) virtualization, verified in a
@@ -52,16 +52,9 @@ test('crosstab columns virtualize for wide banners (scroll-driven windowing)', a
     buffer: Buffer.from(buildWideCsv(), 'utf8'),
   });
 
-  // Build a region × wave crosstab: first variable becomes rows, second columns.
-  const regionBtn = page.getByRole('button', { name: /^region$/i }).first();
-  await expect(regionBtn).toBeVisible({ timeout: 120000 });
-  await regionBtn.click();
-  await page.waitForTimeout(1000);
-
-  const waveBtn = page.getByRole('button', { name: /^wave$/i }).first();
-  await expect(waveBtn).toBeVisible({ timeout: 10000 });
-  await waveBtn.click();
-  await page.waitForTimeout(2500);
+  // Build a region × wave crosstab via insert palette (resident sidebar removed).
+  await insertVariableFromPalette(page, 'region', 'rows');
+  await insertVariableFromPalette(page, 'wave', 'columns');
 
   const table = page.locator('table');
   await expect(table).toBeVisible({ timeout: 30000 });

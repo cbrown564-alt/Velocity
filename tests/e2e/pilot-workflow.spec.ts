@@ -1,33 +1,8 @@
 import { test, expect } from '@playwright/test';
+import { buildExampleCrosstab, openDatasetFromWorkspaceSearch, uploadSavAndReachDashboard } from './helpers/visualPolish';
 import path from 'path';
-import { buildExampleCrosstab, openDatasetFromWorkspaceSearch } from './helpers/visualPolish';
 
 const sleepSavFixture = path.resolve(process.cwd(), 'test_data/sleep.sav');
-
-async function uploadSavAndReachDashboard(page: import('@playwright/test').Page) {
-  const fileInput = page.getByTestId('dataset-upload-input');
-  await expect(fileInput).toBeAttached({ timeout: 60000 });
-  await fileInput.setInputFiles(sleepSavFixture);
-
-  const surveyQuestions = page.getByText(/Survey Questions/);
-  const metadataLoaded = page.getByText('Metadata Loaded');
-
-  await expect
-    .poll(
-      async () => {
-        if (await surveyQuestions.isVisible().catch(() => false)) return 'dashboard';
-        if (await metadataLoaded.isVisible().catch(() => false)) return 'metadata';
-        return 'pending';
-      },
-      { timeout: 120000 },
-    )
-    .not.toBe('pending');
-
-  if (await metadataLoaded.isVisible().catch(() => false)) {
-    await page.getByRole('button', { name: 'Load Full Data' }).click();
-    await expect(surveyQuestions).toBeVisible({ timeout: 120000 });
-  }
-}
 
 test('pilot workflow: upload, crosstab, export PPTX, reopen, event log', async ({ page }) => {
   await page.goto('/');
@@ -50,7 +25,7 @@ test('pilot workflow: upload, crosstab, export PPTX, reopen, event log', async (
   await expect(page.getByTestId('workspace-status-pilot')).toBeVisible();
   await expect(page.getByTestId('workspace-status-pilot').getByText(/never leaves this device/i)).toBeVisible();
 
-  await uploadSavAndReachDashboard(page);
+  await uploadSavAndReachDashboard(page, sleepSavFixture);
   await expect(page.getByText('sleep.sav (271 rows)')).toBeVisible({ timeout: 30000 });
 
   await buildExampleCrosstab(page);

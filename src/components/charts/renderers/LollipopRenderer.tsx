@@ -138,7 +138,7 @@ export const LollipopRenderer: React.FC<BaseChartRendererProps> = ({
           return (
             <g
               key={d.label}
-              className={`transition-all duration-300 ${interactive ? 'cursor-pointer hover:opacity-80' : ''}`}
+              className={`transition-all duration-200 ${interactive ? 'cursor-pointer hover:opacity-80' : ''}`}
               onClick={(e) => {
                 e.stopPropagation();
                 handleToggle(d.label, e);

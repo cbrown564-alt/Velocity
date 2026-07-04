@@ -279,7 +279,7 @@ All work packages landed on branch `cursor/design-reset-integration-69a6` (integ
 | 3.3 | Copy pass | **Done** | `da434a5` — empty states, errors, labels per writing rules |
 | 3.4 | Type & spacing sweep | **Done** | `da434a5` — 13px UI base, hairline discipline, tabular-nums |
 | 4.1 | Screenshot audit | **Done** | `docs/assets/design-reset-evidence/screenshots/` (15 frames, July 3 2026) |
-| 4.2 | Five-minute metric | **Done** | Methodology documented §6; manual timed pass gate for PILOT-6 |
+| 4.2 | Five-minute metric | **Done** | Executed via `scripts/design-reset-five-minute-pass.mjs`; results in `docs/assets/design-reset-evidence/wp42-five-minute-pass.json` |
 | 4.3 | Docs reconciliation | **Done** | `design_01_system.md`, `design_02_ux_modes.md`, tracker §7 updated |
 | 4.4 | PILOT-6 re-screenshot flag | **Done** | Flag raised §6 — photography predates reset; re-capture required |
 

@@ -87,7 +87,7 @@ async function waitForWorkspaceReady(page) {
       page.getByRole('button', { name: /Upload survey file/i }),
       page.getByRole('button', { name: /Try the brand tracker example/i }),
       page.getByTestId('dataset-upload-input'),
-      page.getByText('Survey Questions'),
+      page.getByRole('button', { name: 'Table view' }),
       page.getByTestId('workspace-status-strip'),
       page.getByRole('heading', { name: 'Recent Datasets' }),
     ];
@@ -99,24 +99,67 @@ async function waitForWorkspaceReady(page) {
   throw new Error('Workspace did not become ready in time');
 }
 
-async function uploadSavAndReachDashboard(page) {
-  const fileInput = page.getByTestId('dataset-upload-input');
-  await fileInput.setInputFiles(SLEEP_SAV);
-
-  const surveyQuestions = page.getByText(/Survey Questions/);
+async function waitForDashboardReady(page, timeoutMs = 120000) {
+  const tableView = page.getByRole('button', { name: 'Table view' });
   const metadataLoaded = page.getByText('Metadata Loaded');
+  const deadline = Date.now() + timeoutMs;
 
-  const deadline = Date.now() + 120000;
   while (Date.now() < deadline) {
-    if (await surveyQuestions.isVisible().catch(() => false)) break;
+    if (await tableView.isVisible().catch(() => false)) return;
     if (await metadataLoaded.isVisible().catch(() => false)) {
       await shot(page, '03-metadata-loaded-interstitial');
       await page.getByRole('button', { name: 'Load Full Data' }).click();
-      await surveyQuestions.waitFor({ state: 'visible', timeout: 120000 });
-      break;
+      await tableView.waitFor({ state: 'visible', timeout: timeoutMs });
+      return;
     }
     await page.waitForTimeout(300);
   }
+  throw new Error('Dashboard did not become ready in time');
+}
+
+async function uploadSavAndReachDashboard(page) {
+  const fileInput = page.getByTestId('dataset-upload-input');
+  await fileInput.setInputFiles(SLEEP_SAV);
+  await waitForDashboardReady(page);
+}
+
+async function resetActiveSlideRecipe(page) {
+  await openOverflowMenu(page);
+  await page.getByRole('menuitem', { name: 'Reset' }).click();
+  await page.waitForTimeout(800);
+}
+
+async function waitForEmptySlide(page, timeoutMs = 30000) {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    const table = page.locator('.analysis-frame table');
+    const pctCell = page.locator('text=/\\d+\\.\\d%/').first();
+    const tableVisible = await table.isVisible().catch(() => false);
+    const pctVisible = await pctCell.isVisible().catch(() => false);
+    if (!tableVisible && !pctVisible) return;
+    await page.waitForTimeout(250);
+  }
+  throw new Error('Slide did not return to empty state');
+}
+
+async function captureEngineInitSplash(browser) {
+  const splashContext = await browser.newContext({
+    viewport: { width: 1440, height: 900 },
+    deviceScaleFactor: 2,
+  });
+  const splashPage = await splashContext.newPage();
+  splashPage.on('dialog', (d) => d.dismiss());
+  await clearBrowserStorage(splashPage);
+
+  const splashPromise = splashPage
+    .getByText(/Starting analysis engine|Initializing Analysis Engine|Preparing workspace/i)
+    .waitFor({ state: 'visible', timeout: 8000 })
+    .catch(() => null);
+
+  await splashPage.goto(BASE_URL, { waitUntil: 'domcontentloaded' });
+  await splashPromise;
+  await shot(splashPage, '00-engine-init-splash');
+  await splashContext.close();
 }
 
 async function openInsertPalette(page) {
@@ -184,40 +227,27 @@ async function main() {
     const page = await context.newPage();
     page.on('dialog', (d) => d.dismiss());
 
+    // 0. Engine init splash — isolated cold load so frame 00 ≠ workspace landing
+    await captureEngineInitSplash(browser);
+
+    // 1. Workspace landing (fresh profile)
     await page.goto(BASE_URL);
-
-    const opfsSupported = await page.evaluate(async () => {
-      try {
-        if (!self.isSecureContext) return false;
-        if (!navigator.storage?.getDirectory) return false;
-        await navigator.storage.getDirectory();
-        return true;
-      } catch {
-        return false;
-      }
-    });
-    if (!opfsSupported) {
-      throw new Error('OPFS not supported — cannot run full workflow audit');
-    }
-
-    // 0. Engine init splash (may flash briefly)
-    await page.waitForTimeout(1500);
-    await shot(page, '00-engine-init-splash');
-
-    // 1. Workspace landing (fresh)
     await clearBrowserStorage(page);
     await page.reload();
     await waitForWorkspaceReady(page);
     await page.waitForTimeout(800);
     await shot(page, '01-workspace-landing');
 
-    // 2. Upload initiated — file picker state isn't visible; capture after strip + empty grid
+    // 2–3. Upload + optional metadata interstitial
     await uploadSavAndReachDashboard(page);
 
-    // 3. Metadata interstitial captured inside upload helper if shown
-
-    // 4. Dashboard — story rail + empty slide (variables summoned via palette)
-    await page.waitForTimeout(1000);
+    // 4. Dashboard — story rail + empty slide (reset auto-first-crosstab for sleep.sav)
+    const tableAfterUpload = page.locator('.analysis-frame table');
+    if (await tableAfterUpload.isVisible().catch(() => false)) {
+      await resetActiveSlideRecipe(page);
+    }
+    await waitForEmptySlide(page);
+    await page.waitForTimeout(600);
     await shot(page, '04-dashboard-story-rail-empty-slide');
 
     // 5. Building first crosstab — one variable on rows via insert palette

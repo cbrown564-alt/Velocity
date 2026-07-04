@@ -39,13 +39,13 @@ export const DURATIONS = {
   fast: 0.15,
   /** 200ms — standard UI transitions */
   normal: 0.2,
-  /** 250ms — emphasis transitions */
+  /** 200ms — emphasis / enter transitions (WP3.2 cap) */
   emphasis: 0.2,
-  /** 300ms — enter animations */
+  /** 200ms — enter animations (WP3.2 cap) */
   enter: 0.2,
-  /** 400ms — complex / shared-element transitions */
+  /** 200ms — complex / shared-element transitions (WP3.2 cap) */
   complex: 0.2,
-  /** 600ms — dramatic / page transitions */
+  /** 200ms — dramatic / page transitions (WP3.2 cap) */
   dramatic: 0.2,
 } as const;
 

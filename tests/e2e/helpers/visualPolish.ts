@@ -4,6 +4,45 @@ import { expect, type Page } from '@playwright/test';
 /** Bundled sleep.sav for e2e that must preserve sex×marital visual baselines. */
 export const SLEEP_SAV_FIXTURE = path.resolve(process.cwd(), 'test_data/sleep.sav');
 
+/** Dashboard sentinel after dataset load — replaces deleted "Survey Questions" sidebar heading. */
+export function dashboardReadyLocator(page: Page) {
+  return page.getByRole('button', { name: 'Table view' });
+}
+
+/** Wait until upload finishes and the analysis dashboard is interactive. */
+export async function waitForDashboardReady(page: Page, timeoutMs = 120000) {
+  const tableView = dashboardReadyLocator(page);
+  const metadataLoaded = page.getByText('Metadata Loaded');
+
+  await expect
+    .poll(
+      async () => {
+        if (await tableView.isVisible().catch(() => false)) return 'dashboard';
+        if (await metadataLoaded.isVisible().catch(() => false)) return 'metadata';
+        return 'pending';
+      },
+      { timeout: timeoutMs },
+    )
+    .not.toBe('pending');
+
+  if (await metadataLoaded.isVisible().catch(() => false)) {
+    await page.getByRole('button', { name: 'Load Full Data' }).click();
+    await expect(tableView).toBeVisible({ timeout: timeoutMs });
+  }
+}
+
+/** Upload a file and wait for the dashboard (palette/rail IA). */
+export async function uploadSavAndReachDashboard(
+  page: Page,
+  fixturePath: string,
+  options?: { timeoutMs?: number },
+) {
+  const fileInput = page.getByTestId('dataset-upload-input');
+  await expect(fileInput).toBeAttached({ timeout: options?.timeoutMs ?? 60000 });
+  await fileInput.setInputFiles(fixturePath);
+  await waitForDashboardReady(page, options?.timeoutMs ?? 120000);
+}
+
 export async function clearBrowserStorage(
   page: Page,
   options?: {
@@ -71,26 +110,7 @@ export async function uploadFileAndReachDashboard(
   await expect(fileInput).toBeAttached({ timeout: 120000 });
 
   await fileInput.setInputFiles(file);
-
-  const surveyQuestions = page.getByText(/Survey Questions/);
-  const metadataLoaded = page.getByText('Metadata Loaded');
-
-  await expect
-    .poll(
-      async () => {
-        if (await tableView.isVisible().catch(() => false)) return 'dashboard';
-        if (await surveyQuestions.isVisible().catch(() => false)) return 'dashboard';
-        if (await metadataLoaded.isVisible().catch(() => false)) return 'metadata';
-        return 'pending';
-      },
-      { timeout: 180000 },
-    )
-    .not.toBe('pending');
-
-  if (await metadataLoaded.isVisible().catch(() => false)) {
-    await page.getByRole('button', { name: 'Load Full Data' }).click();
-    await expect(tableView.or(surveyQuestions)).toBeVisible({ timeout: 120000 });
-  }
+  await waitForDashboardReady(page, 180000);
 }
 
 export async function reachDashboardWithExample(page: Page) {
@@ -199,9 +219,7 @@ export async function buildExampleCrosstab(page: Page) {
 
   const reset = page.getByRole('button', { name: 'Reset' });
   if (await reset.isVisible({ timeout: 2000 }).catch(() => false)) {
-    await openOverflowMenu(page);
-    await page.getByRole('menuitem', { name: 'Reset' }).click();
-    await page.waitForTimeout(600);
+    await resetActiveSlideRecipe(page);
   }
 
   if (
@@ -224,9 +242,16 @@ export async function buildExampleCrosstab(page: Page) {
   await expect(pctCell).toBeVisible({ timeout: 30000 });
 }
 
-async function openOverflowMenu(page: Page) {
+export async function openOverflowMenu(page: Page) {
   await page.getByRole('button', { name: 'More' }).click();
   await expect(page.getByRole('menu', { name: 'More actions' })).toBeVisible({ timeout: 5000 });
+}
+
+/** Reset the active slide recipe to an empty state (clears auto-first-crosstab). */
+export async function resetActiveSlideRecipe(page: Page) {
+  await openOverflowMenu(page);
+  await page.getByRole('menuitem', { name: 'Reset' }).click();
+  await page.waitForTimeout(600);
 }
 
 /** @deprecated Use buildExampleCrosstab — sleep.sav replaced mock_data.csv in e2e. */
