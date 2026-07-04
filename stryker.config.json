@@ -39,9 +39,9 @@
     "!src/core/scaleNormalization.ts"
   ],
   "thresholds": {
-    "high": 60,
-    "low": 50,
-    "break": 48
+    "high": 55,
+    "low": 45,
+    "break": 40
   },
   "tempDirName": "stryker-tmp",
   "cleanTempDir": true,

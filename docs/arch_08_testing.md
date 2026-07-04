@@ -124,7 +124,7 @@ Playwright specs under `tests/e2e/*.spec.ts` validate product journeys in a real
 | `session-export.spec.ts` | e2e | Session export round-trip |
 | `session-reload.spec.ts` | e2e | Session reload after navigation |
 | `visual-polish-crosstab.spec.ts` | e2e | P1 crosstab render trust anchor |
-| `visual-polish-theme-table.spec.ts` | **@visual** | Table materials × themes (screenshot regression) |
+| `visual-polish-theme-table.spec.ts` | **@visual** | Sleep sex×marital crosstab DOM regression (percent cells, headers) |
 | `workspace-switch.spec.ts` | e2e | Upload two datasets, switch from catalog without re-upload (`STAB-WS-1`) |
 
 **Vitest in `tests/e2e/` (not Playwright):**
