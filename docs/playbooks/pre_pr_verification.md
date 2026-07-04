@@ -6,22 +6,40 @@ This playbook applies to **all** code changes — features, fixes, refactors, do
 
 ## Non-negotiable rule
 
-A PR is not ready until **both** required workflow jobs would pass:
+A PR is not ready until **all required workflow jobs** would pass:
 
-1. **`test` job** — lint, format, typecheck, architecture guards, Vitest+coverage, build
-2. **`e2e` job** — full Playwright suite (required when touching UI, workspace, persistence, shortcuts, or onboarding)
+| Workflow | Required jobs |
+| :--- | :--- |
+| `test.yml` | `lint-format`, `typecheck`, `arch-guards`, `unit-coverage`, `build`, `e2e` |
+| `mutation.yml` | `mutation` (when `src/core/**` changes) |
 
-Additionally, when `src/core/**` changes, the path-filtered **`mutation` workflow** must pass (`npm run test:mutation:ci`).
+The `visual-e2e` workflow is **informational only** — it does not block merge.
+
+## Environment setup (once per clone)
+
+```bash
+git submodule update --init --recursive   # packages/readstat-wasm
+npm ci --legacy-peer-deps
+npx lefthook install                      # optional: pre-commit format + lint (STAB-CI-13)
+npx playwright install --with-deps        # before first ci:e2e
+```
+
+**Ratchet merge base:** ESLint and E2E companion guards diff changed files against the PR merge base. CI sets `GITHUB_BASE_REF` and uses `fetch-depth: 0` on checkout. Locally, run from a branch with an upstream tracking ref, or override:
+
+```bash
+ESLINT_RATCHET_BASE=origin/main npm run check:eslint-ratchet
+E2E_COMPANION_BASE=origin/main npm run check:e2e-companion
+```
 
 ## Quick path (recommended)
 
 ```bash
-# Mirrors .github/workflows/test.yml — test job
-npm run ci
+# Full required gates (test.yml + e2e)
+npm run ci:full
 
-# Mirrors .github/workflows/test.yml — e2e job (install browsers once per machine/lockfile)
-npx playwright install --with-deps
-npm run ci:e2e
+# Or stepwise:
+npm run ci              # lint through build (all test.yml jobs except e2e)
+npm run ci:e2e          # Playwright product gates (excludes @visual)
 ```
 
 When `src/core/**` changed:
@@ -30,28 +48,81 @@ When `src/core/**` changed:
 npm run test:mutation:ci
 ```
 
+Fast lint/format feedback during development:
+
+```bash
+npm run ci:lint         # mirrors lint-format job only
+```
+
+## PR-type decision tree
+
+```
+Changed files?
+├─ docs only (no scripts)     → format:check
+├─ docs + scripts             → format:check + typecheck:all (if TS)
+├─ src/core/** only           → typecheck:all + targeted vitest + test:mutation:ci
+├─ UI trigger paths*          → ci:lint + ci:e2e (same PR must touch tests/e2e/)
+├─ DuckDB Arrow / SAV WASM    → targeted playwright smoke + ci:full before merge
+└─ default                    → npm run ci:full (+ test:mutation:ci if core touched)
+```
+
+\*Trigger paths: keyboard shortcuts, onboarding tours, workspace banners, theme switcher labels, Workshop Door landing — see `scripts/check-e2e-companion.mjs`.
+
 ## Full command list (same order as CI)
 
-### `test` job
+### `lint-format` job
 
 ```bash
 npm run lint
 npm run check:eslint-ratchet
 npm run check:e2e-companion
 npm run format:check
+```
+
+Shortcut: `npm run ci:lint`
+
+### `typecheck` job
+
+```bash
 npm run typecheck:all
+```
+
+### `arch-guards` job
+
+```bash
 npm run check:worker-boundary
 npm run check:querybuilder-pure
 npm run check:design-tokens
+```
+
+### `unit-coverage` job
+
+```bash
 npm run test:run -- --coverage
+npm run test:parity
+```
+
+### `build` job
+
+```bash
 npm run build
 ```
+
+Combined locally: `npm run ci` runs lint-format → typecheck → arch-guards → unit-coverage → build in sequence.
 
 ### `e2e` job
 
 ```bash
 npx playwright install --with-deps   # once per environment
-npm run test:e2e
+npm run test:e2e                     # excludes @visual specs
+```
+
+Shortcut: `npm run ci:e2e`
+
+### `visual-e2e` workflow (informational)
+
+```bash
+npm run test:e2e:visual
 ```
 
 ### `mutation` workflow (path-filtered in CI)
@@ -62,13 +133,13 @@ npm run test:mutation:ci
 
 ## Scoped shortcuts (only when the full suite is unnecessary)
 
-Use **only** when the change is narrowly scoped **and** you will still run `npm run ci` before merge:
+Use **only** when the change is narrowly scoped **and** you will still run `npm run ci:full` before merge:
 
 | Change type | Minimum local verification |
 | :--- | :--- |
 | Pure `src/core/` logic | `typecheck:all` + targeted tests + `test:mutation:ci` |
 | Single component, no UI flow | `typecheck:all` + targeted `vitest run path/to/test` |
-| DuckDB-WASM / SAV Arrow ingestion (`workerIngestion`, `insertArrowTable`) | `npx playwright test tests/e2e/duckdb-arrow-smoke.spec.ts` (+ full `ci:e2e` before merge) |
+| DuckDB-WASM / SAV Arrow ingestion (`workerIngestion`, `insertArrowTable`) | `npx playwright test tests/e2e/duckdb-arrow-smoke.spec.ts` (+ `ci:full` before merge) |
 | Docs only (no scripts) | `format:check` |
 | Docs + new/edited scripts | `format:check` + `typecheck:all` if TS |
 
@@ -82,7 +153,7 @@ When changing any of the following, update E2E helpers or specs in the **same PR
 - Onboarding / spotlight tours
 - Workspace banners or status strips
 - Theme switcher labels or a11y names
-- Modal open/close behavior tied to shortcuts
+- Workshop Door / first-run landing CTAs
 
 See `docs/playbooks/ui_mode_change.md` for mode-specific guidance.
 
@@ -96,21 +167,22 @@ See `docs/playbooks/ui_mode_change.md` for mode-specific guidance.
 
 | Mistake | CI gate that catches it |
 | :--- | :--- |
-| Ran `npm run typecheck` but not `typecheck:all` | `typecheck:test` on test fixtures |
-| Ran unit tests without `--coverage` | Coverage threshold in Vitest |
-| Skipped Prettier | `format:check` (first step after lint) |
-| UI change without E2E update | `check:e2e-companion` (test job) and parallel `e2e` job |
+| Ran `npm run typecheck` but not `typecheck:all` | `typecheck` job (`typecheck:test` on test fixtures) |
+| Ran unit tests without `--coverage` | `unit-coverage` job (global + per-path thresholds) |
+| Skipped Prettier | `lint-format` job (`format:check`, step 4) |
+| UI change without E2E update | `check:e2e-companion` (`lint-format` job) and `e2e` job |
 | Partial `{ id, type }` variable in tests | `typecheck:test` or runtime assertion mismatch |
+| Ran full Playwright including `@visual` and assumed merge gate | `e2e` job excludes `@visual`; visual specs are informational only |
+| Forgot submodules before `npm ci` | WASM/readstat build failures in parity or e2e |
 
 ## Definition of Done
 
-- [ ] `npm run ci` passes locally
-- [ ] `npm run ci:e2e` passes locally (when UI/workspace/persistence/shortcuts touched)
+- [ ] `npm run ci:full` passes locally (or `npm run ci` + `npm run ci:e2e` separately)
 - [ ] `npm run test:mutation:ci` passes (when `src/core/**` touched)
 - [ ] PR template checkboxes reflect commands actually run
 
 ## References
 
-- CI workflows: `.github/workflows/test.yml`, `.github/workflows/mutation.yml`
+- CI workflows: `.github/workflows/test.yml`, `.github/workflows/visual-e2e.yml`, `.github/workflows/mutation.yml`
 - Testing architecture: `docs/arch_08_testing.md`
 - RCA (July 2026): `docs/audit_08_ci_failure_rca_2026-07-01.md`

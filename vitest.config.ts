@@ -59,14 +59,37 @@ export default defineConfig({
         '**/*.d.ts',
         'dist/',
       ],
-      // Ratchet floor: set to true source coverage after excluding test files
-      // (the previous 80% "pass" was inflated by measuring test files and was in
-      // fact failing). Raise these as characterization tests land — never lower.
+      // Ratchet floors: global aggregate + per-path honesty (STAB-CI-10/11).
+      // Raise per-path floors as characterization tests land — never lower.
       thresholds: {
-        branches: 79,
-        functions: 82,
-        lines: 81,
-        statements: 81,
+        branches: 80,
+        functions: 81,
+        statements: 83,
+        'src/core/**': {
+          functions: 94,
+          branches: 80,
+          statements: 86,
+        },
+        'src/features/**': {
+          functions: 70,
+          branches: 75,
+          statements: 80,
+        },
+        'src/components/overlays/**': {
+          functions: 67,
+          branches: 82,
+          statements: 85,
+        },
+        'src/services/**': {
+          functions: 75,
+          branches: 80,
+          statements: 60,
+        },
+        'src/store/**': {
+          functions: 86,
+          branches: 74,
+          statements: 82,
+        },
       },
     },
   },

@@ -60,7 +60,10 @@ export const VerticalBarRenderer: React.FC<BaseChartRendererProps> = ({
   const peakCount = useMemo(() => max(chartData, (d) => d.value) || 1, [chartData]);
 
   const yScale = useMemo(() => {
-    return d3.scaleLinear().domain([0, peakCount * 1.1]).range([innerHeight, 0]);
+    return d3
+      .scaleLinear()
+      .domain([0, peakCount * 1.1])
+      .range([innerHeight, 0]);
   }, [peakCount, innerHeight]);
 
   const { handleToggle, handleItemContextMenu } = useChartSelection<ChartDataPoint>({

@@ -229,12 +229,25 @@ These rows remain directionally valid, but should not become active until `PILOT
 | STAB-CI-7 | Features/overlays coverage ratchet | Remove blanket `src/features/` + `src/components/overlays/` exclusions; add characterization tests | STAB-CI-6 | Done | No | A | Blanket exclusions removed in `vitest.config.ts`; 40+ new/extended co-located tests (workspace, variable manager, dashboard, overlays); global coverage passes (82.03% fn / 79.41% br, July 2026); measured features+overlays aggregate 73.9% fn — per-module follow-up remains |
 | STAB-CI-8 | EngineProxy / duckdbBundles characterization | `EngineProxy.ts` + `duckdbBundles.ts` in coverage set with co-located tests | STAB-CI-6 | Done | No | A | `src/services/EngineProxy.test.ts`, `src/services/duckdbBundles.test.ts`; service exclusions removed |
 | STAB-CI-9 | Parity gate in CI | `npm run test:parity` (WASM vs Node adapter on golden fixtures) added to `test` job and `npm run ci` | STAB-CI-2 | Done | No | G | 8 tests, ~2.4s wall-clock on CI-class hardware; full-CI path chosen (under 3-min budget); step in `.github/workflows/test.yml` after coverage, before build; `arch_08_testing.md` §8 updated (July 2026) |
+| STAB-CI-10 | Features/overlays per-module coverage ratchet | Per-path honesty floors for `src/features/**` and `src/components/overlays/**` | STAB-CI-7 | Done | No | A | Initial per-path floors in `vitest.config.ts` (fn 70% / 67%); ongoing raise tracked with STAB-CI-11 |
+| STAB-CI-11 | Per-path coverage thresholds | Global + path-specific floors in `vitest.config.ts` (`core`, `features`, `overlays`, `services`, `store`) | STAB-CI-10 | Done | No | A | Global br 80 / fn 81 / stmt 83; per-path blocks enforced in `unit-coverage` job |
+| STAB-CI-12 | Parallel CI jobs | Split monolithic `test` job into `lint-format`, `typecheck`, `arch-guards`, `unit-coverage`, `build`, `e2e` | STAB-CI-2 | Done | No | A | `.github/workflows/test.yml`; concurrency cancel; job summaries |
+| STAB-CI-13 | Pre-commit hooks | Lefthook runs `format:check` + `lint` on staged files | STAB-CI-3 | Done | No | A | `lefthook.yml`; `npx lefthook install`; opt-out `LEFTHOOK=0` |
+| STAB-CI-14 | CI script shortcuts | `npm run ci:lint` (lint-format job), `ci:full` (ci + e2e) | STAB-CI-12 | Done | No | A | `package.json`; referenced in workflow job summaries |
+| STAB-CI-15 | `@visual` quarantine | Product `e2e` job excludes screenshot specs via `--grep-invert @visual` | STAB-CI-12 | Done | No | I | `test:e2e`, `test:e2e:visual`, `test:e2e:visual:update` scripts |
+| STAB-CI-16 | Visual E2E workflow | Non-blocking `visual-e2e.yml` for `@visual` screenshot regression | STAB-CI-15 | Done | No | I | `continue-on-error: true`; `npm run test:e2e:visual` |
+| STAB-CI-17 | Remove skipped `duckDbArrow.test.ts` | Delete Vitest skip suite; browser path gated by Playwright smoke only | STAB-CI-5 | Done | No | I | `duckDbArrow.test.ts` removed; `duckdb-arrow-smoke.spec.ts` remains required gate |
+| STAB-CI-18 | E2E companion expansion | Theme switcher + Workshop Door landing trigger rules | STAB-CI-4 | Done | No | A,I | `scripts/check-e2e-companion.mjs` — `theme-switcher`, `workshop-door-landing` rules |
+| STAB-CI-19 | Mutation threshold raise | Stryker break 40 → 48 when measured score ≥ 48 | STAB-CI-8 | Blocked | No | A | Baseline ~46%; raise deferred to avoid false CI failures |
+| STAB-CI-20 | CI artifacts | Upload coverage + Playwright reports on failure | STAB-CI-12 | Done | No | A | `coverage-report` (always); `playwright-report` / `playwright-test-results` on e2e failure |
+| STAB-CI-21 | CI bootstrap parity | Submodules recursive checkout, `npm ci --legacy-peer-deps`, ratchet fetch-depth | STAB-CI-12 | Done | No | A | All jobs; `lint-format` uses `fetch-depth: 0` for merge-base ratchets |
+| STAB-CI-22 | Doc sync (CI overhaul) | Update `arch_08`, pre-PR playbook, tracker §4.5, PR template, contributing, RCA banner | STAB-CI-12 | Done | No | A | This row; `docs/arch_08_testing.md` §7–§8, `pre_pr_verification.md`, `.github/pull_request_template.md` |
 
 #### STAB-CI deferred (future ratchets)
 
 | ID | Outcome |
 | :--- | :--- |
-| STAB-CI-10 | Raise features/overlays per-module function coverage from 73.9% aggregate toward 82% (harmonization UI, onboarding hooks, remaining overlay modals) |
+| STAB-CI-23 | Raise per-path features/overlays function floors toward 82% as characterization tests land |
 
 ## 5. Completed Work Reference
 

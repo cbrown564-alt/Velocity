@@ -151,7 +151,9 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
             />
 
             <div className="flex-1 flex min-h-0 min-w-0 overflow-hidden" data-testid="dashboard-workspace">
-              <SmartCanvas className={`flex-1 min-h-0 min-w-0 overflow-hidden flex flex-col ${focusMode ? 'p-2' : 'p-4'}`}>
+              <SmartCanvas
+                className={`flex-1 min-h-0 min-w-0 overflow-hidden flex flex-col ${focusMode ? 'p-2' : 'p-4'}`}
+              >
                 <div className="flex-1 w-full min-h-0 flex flex-col">
                   <div className="flex-1 relative min-h-0 flex flex-col">
                     {isQuerying && (

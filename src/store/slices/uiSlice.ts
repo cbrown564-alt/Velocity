@@ -394,8 +394,7 @@ export const createUISlice: StateCreator<UISlice, [], [], UISlice> = (set) => ({
   openCommandPalette: (insertTarget = null) =>
     set({ commandPaletteOpen: true, commandPaletteInsertTarget: insertTarget }),
   closeCommandPalette: () => set({ commandPaletteOpen: false, commandPaletteInsertTarget: null }),
-  rejectRecipeColumnPlacement: () =>
-    set((state) => ({ recipeColumnRejectNonce: state.recipeColumnRejectNonce + 1 })),
+  rejectRecipeColumnPlacement: () => set((state) => ({ recipeColumnRejectNonce: state.recipeColumnRejectNonce + 1 })),
 
   // Shortcuts Reference Actions
   openShortcuts: () => set({ shortcutsOpen: true }),

@@ -1,6 +1,6 @@
 import type { Dataset, Variable, VariableSet } from '../../types/dataset';
 import type { VariableStatsResult } from '../../types/worker';
-import { isCategoricalType, normalizeVariableType } from '../../types';
+import { isCategoricalType } from '../../types';
 import { resolveEffectiveVariableSetType } from '../../lib/resolveVariableSetType';
 
 export interface VariableRowDisplay {

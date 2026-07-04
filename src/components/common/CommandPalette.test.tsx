@@ -133,9 +133,7 @@ describe('CommandPalette (insert palette)', () => {
     useVelocityStore.setState({
       commandPaletteInsertTarget: 'weight',
       setWeightVariable,
-      variableSets: [
-        { id: 'wt', name: 'Weight var', structure: 'single', variableIds: ['wt_var'], type: 'numeric' },
-      ],
+      variableSets: [{ id: 'wt', name: 'Weight var', structure: 'single', variableIds: ['wt_var'], type: 'numeric' }],
       dataset: {
         id: 'ds1',
         name: 'Demo',

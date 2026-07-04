@@ -76,9 +76,9 @@ describe('placeVariableSet', () => {
 
 describe('applyRecipeChipDrop', () => {
   it('moves a column chip to rows', () => {
-    expect(applyRecipeChipDrop('region', 'column', 'drop-zone-rows', { rowVars: ['gender'], colVar: 'region' })).toEqual(
-      { rowVars: ['gender', 'region'], colVar: null },
-    );
+    expect(
+      applyRecipeChipDrop('region', 'column', 'drop-zone-rows', { rowVars: ['gender'], colVar: 'region' }),
+    ).toEqual({ rowVars: ['gender', 'region'], colVar: null });
   });
 
   it('moves a row chip to columns and swaps the previous column to rows', () => {
@@ -89,7 +89,9 @@ describe('applyRecipeChipDrop', () => {
   });
 
   it('no-ops when a row chip is dropped on rows', () => {
-    expect(applyRecipeChipDrop('gender', 'row', 'drop-zone-rows', { rowVars: ['gender'], colVar: 'region' })).toBeNull();
+    expect(
+      applyRecipeChipDrop('gender', 'row', 'drop-zone-rows', { rowVars: ['gender'], colVar: 'region' }),
+    ).toBeNull();
   });
 });
 

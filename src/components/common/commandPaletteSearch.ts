@@ -1,5 +1,5 @@
 import type { VariableSet, Variable } from '../../types';
-import { allowsNumericStats, normalizeVariableType } from '../../types';
+import { allowsNumericStats } from '../../types';
 import type { ShelfPlacementResolution, TableConfigSnapshot } from '../../core/grid/gridUtils';
 import { resolveShelfPlacement } from '../../core/grid/gridUtils';
 import { resolveEffectiveVariableSetType } from '../../lib/resolveVariableSetType';

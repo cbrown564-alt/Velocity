@@ -19,12 +19,33 @@ function makeProcessedData(rowCount: number, colCount: number): ProcessedAnalysi
       label: `Col ${i}`,
       total: 10,
     })),
-    series: [{ label: 'Series', data: Array.from({ length: rowCount }, (_, i) => ({ label: `Row ${i}`, rawValue: String(i), value: 10, percent: 10 })) }],
+    series: [
+      {
+        key: 'series',
+        label: 'Series',
+        data: Array.from({ length: rowCount }, (_, i) => ({
+          label: `Row ${i}`,
+          rawValue: String(i),
+          value: 10,
+          percent: 10,
+        })),
+      },
+    ],
     grandTotal: rowCount * 10,
     isMetric: false,
     isGrid: false,
     rowVariables: [],
-    colVariable: colCount > 1 ? ({ id: 'seg', name: 'seg', label: 'Segment', type: 'categorical', valueLabels: [], missingValues: {} } as never) : null,
+    colVariable:
+      colCount > 1
+        ? ({
+            id: 'seg',
+            name: 'seg',
+            label: 'Segment',
+            type: 'categorical',
+            valueLabels: [],
+            missingValues: {},
+          } as never)
+        : null,
     isMultipleResponse: false,
   };
 }
