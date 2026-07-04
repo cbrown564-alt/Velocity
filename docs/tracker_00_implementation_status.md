@@ -124,9 +124,10 @@ Completed Phase 1-4, stabilization, UI polish, engine/MCP, export, parity, and h
 
 #### Recommended Next Pull
 
-1. `PILOT-4a`: continue processing gap discovery with external project/file reviews.
-2. `PILOT-6`: recruit paid pilots — presentation gate closed via PR #18 ([`audit_07`](audit_07_pilot_presentation_readiness_2026-07-01.md) §5).
-3. `STAB-UI-F5`: accessibility themes (only if pilot requests).
+1. `DESIGN-CONV-A`: post-reset pilot photography ready; run 3–5 unscripted first sessions ([`design_conv_a_unscripted_session_scorecard.md`](design_conv_a_unscripted_session_scorecard.md)).
+2. `PILOT-4a`: continue processing gap discovery with external project/file reviews.
+3. `PILOT-6`: recruit paid pilots — use post-reset evidence pack for outreach.
+4. `STAB-UI-F5`: accessibility themes (only if pilot requests).
 
 ### 4.2 Future Gates
 
@@ -181,7 +182,7 @@ These rows remain directionally valid, but should not become active until `PILOT
 
 | ID | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence / validation |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| DESIGN-RESET-1 | Full reset (phases 0–4) | Single theme; story rail; insert palette; recipe inspector; honest slide; two-pane VM; density/craft; evidence pack | STAB-UI-F (partial supersession) | Done | Yes | T,L,U,I,V | Branch `cursor/design-reset-integration-69a6` @ `a655c0d`; screenshot pack [`docs/assets/design-reset-evidence/`](assets/design-reset-evidence/); docs `design_01_system.md`, `design_02_ux_modes.md` reconciled; E2E theme baseline `visual-polish-theme-table.spec.ts`; **PILOT-6 re-screenshot flagged** (photography predates reset) |
+| DESIGN-RESET-1 | Full reset (phases 0–4) | Single theme; story rail; insert palette; recipe inspector; honest slide; two-pane VM; density/craft; evidence pack | STAB-UI-F (partial supersession) | Done | Yes | T,L,U,I,V | Branch `cursor/design-reset-integration-69a6` @ `a655c0d`; screenshot pack [`docs/assets/design-reset-evidence/`](assets/design-reset-evidence/) (Jul 4 capture + `manifest.json`); `npm run screenshot:design-reset-evidence`; docs `design_01_system.md`, `design_02_ux_modes.md` reconciled; E2E theme baseline `visual-polish-theme-table.spec.ts`; **PILOT-6 photography current** — unscripted sessions pending [`design_conv_a_unscripted_session_scorecard.md`](design_conv_a_unscripted_session_scorecard.md) |
 
 **Supersedes (do not re-implement):** multi-theme switcher, resident variable sidebar, analysis shelf, timeline dock, coaching layer. STAB-UI-F2/F3/F4 rows remain historical; behavior now matches plan_05.
 
