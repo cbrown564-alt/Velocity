@@ -1,5 +1,7 @@
 # CI Failure Root Cause Analysis
 
+> **Historical document.** This RCA covers CI failures on `main` from June 15 – July 1, 2026. Corrective actions through `STAB-CI-9` landed in PR #17; the CI/testing overhaul (`STAB-CI-11`–`STAB-CI-22`, July 2026) split parallel jobs, quarantined `@visual` specs, and updated docs/playbooks. For current gates, use [`docs/arch_08_testing.md`](arch_08_testing.md) §8 and [`docs/playbooks/pre_pr_verification.md`](playbooks/pre_pr_verification.md).
+
 Date: 2026-07-01  
 Scope: Repeated CI failures on `main` (June 15 – July 1, 2026)  
 Method: Git history analysis, GitHub Actions run inspection, testing-strategy audit, process/doc gap audit

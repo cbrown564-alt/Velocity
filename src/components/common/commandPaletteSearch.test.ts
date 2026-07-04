@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { mockNominalSet, mockOrdinalSet, mockScaleVariable } from '../../test/fixtures/variables';
+import { makeVariable, mockNominalSet, mockOrdinalSet, mockScaleVariable } from '../../test/fixtures/variables';
 import {
   buildShelfPlacement,
   canAddVariableSetToWeight,
@@ -80,13 +80,12 @@ describe('commandPaletteSearch', () => {
 
   it('prefers underlying variable type over a stale numeric set type', () => {
     const set = { ...mockNominalSet, id: 'cat_buyer', type: 'numeric' as const };
-    const variable = {
-      ...mockNominalSet,
+    const variable = makeVariable({
       id: 'cat_buyer',
       name: 'cat_buyer',
-      type: 'categorical' as const,
+      type: 'categorical',
       valueLabels: [{ value: 1, label: 'Yes' }],
-    };
+    });
     expect(variableSetGlyph(set, variable)).toBe('C');
     expect(variableSetMeta(set, variable)).toBe('Category');
   });

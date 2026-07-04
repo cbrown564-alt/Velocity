@@ -9,11 +9,15 @@ describe('analysisSlice row-data guard', () => {
         id: 'ds1',
         name: 'demo.sav',
         rowCount: 100,
-        variables: [{ id: 'gender', name: 'gender', label: 'Gender', type: 'categorical', valueLabels: [], missingValues: {} }],
+        variables: [
+          { id: 'gender', name: 'gender', label: 'Gender', type: 'categorical', valueLabels: [], missingValues: {} },
+        ],
         source: 'sav',
         opfsFileKey: 'demo.sav',
       },
-      variableSets: [{ id: 'gender', name: 'Gender', variableIds: ['gender'], structure: 'single', type: 'categorical' }],
+      variableSets: [
+        { id: 'gender', name: 'Gender', variableIds: ['gender'], structure: 'single', type: 'categorical' },
+      ],
       browserEngine: {
         ping: vi.fn().mockResolvedValue({ hasData: false }),
         runAnalysis: vi.fn(),

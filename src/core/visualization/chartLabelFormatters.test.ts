@@ -23,9 +23,7 @@ describe('chartLabelFormatters', () => {
   });
 
   it('formats value-axis ticks as percent without changing count scale', () => {
-    expect(
-      formatValueAxisTick('percent', 50, { peakCount: 100, grandTotal: 200, hasColumnBreak: false }),
-    ).toBe('25%');
+    expect(formatValueAxisTick('percent', 50, { peakCount: 100, grandTotal: 200, hasColumnBreak: false })).toBe('25%');
     expect(formatValueAxisTick('percent', 50, { peakCount: 100, hasColumnBreak: true })).toBe('50%');
     expect(formatValueAxisTick('count', 1200, { peakCount: 100 })).toBe('1,200');
   });

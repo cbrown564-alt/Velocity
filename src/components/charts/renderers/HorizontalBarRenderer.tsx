@@ -81,7 +81,10 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
   const peakCount = useMemo(() => max(chartData, (d) => d.value) || 1, [chartData]);
 
   const xScale = useMemo(() => {
-    return d3.scaleLinear().domain([0, peakCount * 1.1]).range([0, innerWidth]);
+    return d3
+      .scaleLinear()
+      .domain([0, peakCount * 1.1])
+      .range([0, innerWidth]);
   }, [peakCount, innerWidth]);
 
   const { handleToggle, handleItemContextMenu } = useChartSelection<ChartDataPoint>({
@@ -402,9 +405,7 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
                   margin.top -
                   yScale.bandwidth() / 2
                 }
-                width={xScale(
-                  dragState.draggedItem.value,
-                )}
+                width={xScale(dragState.draggedItem.value)}
                 height={yScale.bandwidth()}
                 fill="var(--viz-fill-secondary)" // Solid Cyan for dragging
                 rx={3}
@@ -412,10 +413,7 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
                 strokeWidth={2}
               />
               <text
-                x={
-                  xScale(dragState.draggedItem.value) /
-                  2
-                }
+                x={xScale(dragState.draggedItem.value) / 2}
                 y={dragState.currentY - (svgRef.current?.getBoundingClientRect().top || 0) - margin.top}
                 textAnchor="middle"
                 style={{

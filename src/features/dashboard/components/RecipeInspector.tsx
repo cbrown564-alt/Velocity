@@ -331,9 +331,7 @@ export const RecipeInspector: React.FC<RecipeInspectorProps> = ({
               <EmptyChip highlight={dragging}>Drop or ⌘K to add columns</EmptyChip>
             )}
           </DropField>
-          {!colSet && (
-            <FieldAction label="+ Add column" onClick={() => openCommandPalette('columns')} />
-          )}
+          {!colSet && <FieldAction label="+ Add column" onClick={() => openCommandPalette('columns')} />}
         </Field>
 
         <Field label="Filter">
@@ -366,9 +364,7 @@ export const RecipeInspector: React.FC<RecipeInspectorProps> = ({
               <EmptyChip highlight={dragging}>Drop or choose a numeric variable</EmptyChip>
             )}
           </DropField>
-          {!weightName && (
-            <FieldAction label="+ Add weight" onClick={() => openCommandPalette('weight')} />
-          )}
+          {!weightName && <FieldAction label="+ Add weight" onClick={() => openCommandPalette('weight')} />}
           {weightName && (
             <button
               type="button"

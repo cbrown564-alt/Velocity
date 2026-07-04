@@ -7,7 +7,7 @@ import {
   waitForStableCrosstab,
 } from './helpers/visualPolish';
 
-test.describe('Visual polish — crosstab table regression', () => {
+test.describe('Visual polish — crosstab table regression', { tag: '@visual' }, () => {
   test.beforeEach(async ({ page, context }) => {
     page.on('dialog', (dialog) => dialog.dismiss());
     await context.addInitScript(() => {

@@ -107,9 +107,7 @@ export async function runCrosstab(
       : null;
 
   const measureRows =
-    nestedOptions && modifiedOptions.measureLabel
-      ? rows.filter((row) => extractRowKeyStrings(row).length === 1)
-      : rows;
+    nestedOptions && modifiedOptions.measureLabel ? rows.filter((row) => extractRowKeyStrings(row).length === 1) : rows;
   const nestedRows = nestedOptions ? rows.filter((row) => extractRowKeyStrings(row).length > 1) : rows;
 
   await attachHistograms(adapter, measureOptions, measureRows);

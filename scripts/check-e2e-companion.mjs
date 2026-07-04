@@ -50,6 +50,30 @@ const TRIGGER_RULES = [
     ],
     e2eHints: ['tests/e2e/pilot-workflow.spec.ts'],
   },
+  {
+    id: 'theme-switcher',
+    label: 'Theme switcher labels / a11y names',
+    patterns: [
+      'src/features/settings/components/ThemeSwitcher.tsx',
+      'src/features/settings/components/ThemeSwitcher.module.css',
+    ],
+    e2eHints: ['tests/e2e/visual-polish-theme-table.spec.ts', 'tests/e2e/helpers/visualPolish.ts'],
+  },
+  {
+    id: 'workshop-door-landing',
+    label: 'Workshop Door / first-run landing CTAs',
+    patterns: [
+      'src/features/workspace/components/WorkshopDoor.tsx',
+      'src/features/workspace/components/WorkshopDoor.module.css',
+      'src/features/workspace/components/WorkspaceEmptyState.tsx',
+    ],
+    e2eHints: [
+      'tests/e2e/pilot-workflow.spec.ts',
+      'tests/e2e/opfs.spec.ts',
+      'tests/e2e/workspace-switch.spec.ts',
+      'tests/e2e/helpers/visualPolish.ts',
+    ],
+  },
 ];
 
 /**
