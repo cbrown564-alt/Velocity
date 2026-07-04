@@ -38,9 +38,7 @@ describe('VariableList', () => {
         ],
         source: 'sav',
       },
-      variableSets: [
-        { id: 'gender', name: 'Gender', variableIds: ['v1'], type: 'categorical', structure: 'single' },
-      ],
+      variableSets: [{ id: 'gender', name: 'Gender', variableIds: ['v1'], type: 'categorical', structure: 'single' }],
       managerSearchQuery: '',
       selectedVariableSetIds: [],
       selectedVariableSetId: null,
@@ -60,8 +58,65 @@ describe('VariableList', () => {
   });
 
   it('renders dense rows with mono name and label', () => {
-    render(<DndContext><VariableList /></DndContext>);
+    render(
+      <DndContext>
+        <VariableList />
+      </DndContext>,
+    );
     expect(screen.getByText('d2_gender')).toBeInTheDocument();
     expect(screen.getByText('D2. Gender')).toBeInTheDocument();
+  });
+
+  it('selects a row on click', () => {
+    const selectSingleVariableSet = vi.fn();
+    useVelocityStore.setState({ selectSingleVariableSet });
+    render(
+      <DndContext>
+        <VariableList />
+      </DndContext>,
+    );
+    fireEvent.click(screen.getByText('d2_gender'));
+    expect(selectSingleVariableSet).toHaveBeenCalledWith('gender');
+  });
+
+  it('filters rows by manager search query', () => {
+    useVelocityStore.setState({
+      managerSearchQuery: 'nomatch',
+      variableSets: [
+        { id: 'gender', name: 'Gender', variableIds: ['v1'], type: 'categorical', structure: 'single' },
+        { id: 'age', name: 'Age', variableIds: ['v2'], type: 'numeric', structure: 'single' },
+      ],
+      dataset: {
+        id: 'ds1',
+        name: 'demo.sav',
+        rowCount: 100,
+        variables: [
+          {
+            id: 'v1',
+            name: 'd2_gender',
+            label: 'D2. Gender',
+            type: 'categorical',
+            valueLabels: [],
+            missingValues: {},
+          },
+          {
+            id: 'v2',
+            name: 'd1_age',
+            label: 'D1. Age',
+            type: 'numeric',
+            valueLabels: [],
+            missingValues: {},
+          },
+        ],
+        source: 'sav',
+      },
+    });
+    render(
+      <DndContext>
+        <VariableList />
+      </DndContext>,
+    );
+    expect(screen.queryByText('d2_gender')).not.toBeInTheDocument();
+    expect(screen.queryByText('d1_age')).not.toBeInTheDocument();
   });
 });

@@ -8,7 +8,6 @@ vi.mock('../../../lib/pilotInstrumentation', () => ({
   isPilotInstrumentationVisible: () => true,
 }));
 
-
 vi.mock('../../../components/common/PilotEnvironmentBanner', () => ({
   PilotEnvironmentBanner: () => null,
 }));

@@ -173,6 +173,16 @@ These rows remain directionally valid, but should not become active until `PILOT
 2. `PILOT-4a` processing gap discovery.
 3. `STAB-UI-F5` accessibility themes (only if pilot requests).
 
+### 4.3.1 Design Reset — Pathway B (`DESIGN-RESET-1`)
+
+**Source:** [`docs/plan_05_design_reset_implementation.md`](plan_05_design_reset_implementation.md) — deck-first IA inversion + single evolved Soft Machine identity (July 2026).
+
+| ID | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence / validation |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| DESIGN-RESET-1 | Full reset (phases 0–4) | Single theme; story rail; insert palette; recipe inspector; honest slide; two-pane VM; density/craft; evidence pack | STAB-UI-F (partial supersession) | Done | Yes | T,L,U,I,V | Branch `cursor/design-reset-integration-69a6` @ `a655c0d`; screenshot pack [`docs/assets/design-reset-evidence/`](assets/design-reset-evidence/); docs `design_01_system.md`, `design_02_ux_modes.md` reconciled; E2E theme baseline `visual-polish-theme-table.spec.ts`; **PILOT-6 re-screenshot flagged** (photography predates reset) |
+
+**Supersedes (do not re-implement):** multi-theme switcher, resident variable sidebar, analysis shelf, timeline dock, coaching layer. STAB-UI-F2/F3/F4 rows remain historical; behavior now matches plan_05.
+
 ### 4.4 Technical UI Foundation (`STAB-UI-T`)
 
 **Source:** July 2026 independent technical UI audit (perf, modal/a11y infra, resilience, stacking).  

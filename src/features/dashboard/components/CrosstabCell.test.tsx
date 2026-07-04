@@ -112,5 +112,4 @@ describe('CrosstabCell', () => {
       expect(marker).toBeInTheDocument();
     });
   });
-
 });

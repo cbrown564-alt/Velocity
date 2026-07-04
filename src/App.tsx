@@ -158,7 +158,7 @@ export default function App() {
 
       {/* Inside the dashboard, the palette mounts within DashboardShell's
           DndContext so rows can be dragged onto the slide. */}
-            <KeyboardShortcuts />
+      <KeyboardShortcuts />
       <ToastLayer />
     </div>
   );

@@ -138,10 +138,7 @@ export const VariableManager: React.FC<VariableManagerProps> = ({ onClose }) => 
     [facetFilters.types, setFacetFilters],
   );
 
-  const handleFolderChip = useCallback(
-    (folderId: string | null) => setActiveFolderId(folderId),
-    [setActiveFolderId],
-  );
+  const handleFolderChip = useCallback((folderId: string | null) => setActiveFolderId(folderId), [setActiveFolderId]);
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
@@ -204,7 +201,9 @@ export const VariableManager: React.FC<VariableManagerProps> = ({ onClose }) => 
           <div className={styles.listPane}>
             <div className={styles.tools}>
               <div className={styles.search}>
-                <span className={styles.searchIcon} aria-hidden>⌕</span>
+                <span className={styles.searchIcon} aria-hidden>
+                  ⌕
+                </span>
                 <input
                   type="search"
                   placeholder="Filter variables…"

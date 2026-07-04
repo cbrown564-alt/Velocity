@@ -1,17 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useDraggable } from '@dnd-kit/core';
 import { useFocusTrap } from '../../hooks/useFocusTrap';
-import {
-  Search,
-  LayoutGrid,
-  Maximize2,
-  RotateCcw,
-  FileDown,
-  Home,
-  Keyboard,
-  Filter,
-  ChevronRight,
-} from 'lucide-react';
+import { Search, LayoutGrid, Maximize2, RotateCcw, FileDown, Home, Keyboard, Filter, ChevronRight } from 'lucide-react';
 import { useVelocityStore } from '../../store';
 import { invokeReturnToWorkspace } from '../../lib/navigationActions';
 import { pushModalShortcutContext } from '../../lib/keyboardShortcuts/registry';
@@ -407,7 +397,9 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ withinDnd = fals
                 onMouseEnter={() => setSelectedIndex(index)}
                 data-selected={index === selectedIndex || undefined}
                 className={`w-full flex items-center gap-3 px-3 py-2 rounded-md text-left transition-colors ${
-                  index === selectedIndex ? 'bg-[var(--bg-panel-tint)] shadow-[inset_0_0_0_1px_var(--border-color)]' : ''
+                  index === selectedIndex
+                    ? 'bg-[var(--bg-panel-tint)] shadow-[inset_0_0_0_1px_var(--border-color)]'
+                    : ''
                 }`}
               >
                 <span className="text-[var(--text-tertiary)]">{cmd.icon}</span>

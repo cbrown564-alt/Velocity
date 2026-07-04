@@ -51,9 +51,7 @@ export function getVariableRowDisplay(
 
   const monoName = primaryVariable?.name ?? variableSet.name;
   const label =
-    primaryVariable?.label && primaryVariable.label.trim() !== ''
-      ? primaryVariable.label
-      : variableSet.name;
+    primaryVariable?.label && primaryVariable.label.trim() !== '' ? primaryVariable.label : variableSet.name;
 
   if (structureMeta) {
     return { monoName, label, meta: structureMeta };

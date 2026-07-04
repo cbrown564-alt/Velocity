@@ -109,6 +109,10 @@ describe('DashboardShell (WP2.1 / WP2.3)', () => {
         showColumnBases: false,
         comparisonMethod: 'cell_vs_rest',
         correctionType: 'none',
+        showConfidenceIntervals: false,
+        significanceLevel: 0.95,
+        engine: 'auto',
+        enableDesignEffects: false,
       },
       dataset: {
         id: 'ds1',

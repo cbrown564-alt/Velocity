@@ -24,7 +24,13 @@ interface FilterModalProps {
 
 type Step = 'variable' | 'values';
 
-export const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose, variables, onSave, initialVariableId = null }) => {
+export const FilterModal: React.FC<FilterModalProps> = ({
+  isOpen,
+  onClose,
+  variables,
+  onSave,
+  initialVariableId = null,
+}) => {
   const [step, setStep] = useState<Step>('variable');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedVariable, setSelectedVariable] = useState<Variable | null>(null);

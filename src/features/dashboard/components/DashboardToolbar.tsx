@@ -245,11 +245,7 @@ export const DashboardToolbar: React.FC<DashboardToolbarProps> = ({
         Recipe
       </button>
 
-      <button
-        type="button"
-        onClick={() => useVelocityStore.getState().openCommandPalette()}
-        className={GHOST_BUTTON}
-      >
+      <button type="button" onClick={() => useVelocityStore.getState().openCommandPalette()} className={GHOST_BUTTON}>
         Insert
         <kbd className={KBD_HINT}>⌘K</kbd>
       </button>

@@ -56,9 +56,19 @@ export async function uploadFileAndReachDashboard(
   page: Page,
   file: string | { name: string; mimeType: string; buffer: Buffer },
 ) {
+  const tableView = page.getByRole('button', { name: 'Table view' });
+  if (await tableView.isVisible({ timeout: 3000 }).catch(() => false)) {
+    return;
+  }
+
+  const startFresh = page.getByRole('button', { name: 'Start Fresh' });
+  if (await startFresh.isVisible({ timeout: 2000 }).catch(() => false)) {
+    await startFresh.click();
+    await page.waitForTimeout(500);
+  }
+
   const fileInput = page.getByTestId('dataset-upload-input');
   await expect(fileInput).toBeAttached({ timeout: 120000 });
-  await expect(page.getByRole('button', { name: /Upload/i }).first()).toBeVisible({ timeout: 120000 });
 
   await fileInput.setInputFiles(file);
 
@@ -68,6 +78,7 @@ export async function uploadFileAndReachDashboard(
   await expect
     .poll(
       async () => {
+        if (await tableView.isVisible().catch(() => false)) return 'dashboard';
         if (await surveyQuestions.isVisible().catch(() => false)) return 'dashboard';
         if (await metadataLoaded.isVisible().catch(() => false)) return 'metadata';
         return 'pending';
@@ -78,7 +89,7 @@ export async function uploadFileAndReachDashboard(
 
   if (await metadataLoaded.isVisible().catch(() => false)) {
     await page.getByRole('button', { name: 'Load Full Data' }).click();
-    await expect(surveyQuestions).toBeVisible({ timeout: 120000 });
+    await expect(tableView.or(surveyQuestions)).toBeVisible({ timeout: 120000 });
   }
 }
 
@@ -110,8 +121,20 @@ export async function reachDashboardWithExample(page: Page) {
 export async function reachDashboardWithSleepExample(page: Page) {
   await clearBrowserStorage(page, { seedActivation: true });
   await page.reload();
+
+  const tableView = page.getByRole('button', { name: 'Table view' });
+  if (await tableView.isVisible({ timeout: 5000 }).catch(() => false)) {
+    return;
+  }
+
+  const startFresh = page.getByRole('button', { name: 'Start Fresh' });
+  if (await startFresh.isVisible({ timeout: 3000 }).catch(() => false)) {
+    await startFresh.click();
+    await expect(tableView.or(page.getByTestId('workspace-empty-state'))).toBeVisible({ timeout: 120000 });
+  }
+
   await uploadFileAndReachDashboard(page, SLEEP_SAV_FIXTURE);
-  await expect(page.getByRole('button', { name: 'Table view' })).toBeVisible({ timeout: 120000 });
+  await expect(tableView).toBeVisible({ timeout: 120000 });
 }
 
 export async function ensureCorrectionNone(page: Page) {
@@ -125,68 +148,85 @@ export async function ensureCorrectionNone(page: Page) {
   }
 }
 
+/** Open the insert palette (⌘K) from the dashboard toolbar. */
+export async function openInsertPalette(page: Page) {
+  const insertBtn = page.getByRole('button', { name: /insert/i });
+  if (await insertBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+    await insertBtn.click();
+  } else {
+    await page.keyboard.press('Control+KeyK');
+  }
+  await expect(page.getByPlaceholder('Find a variable…')).toBeVisible({ timeout: 10000 });
+}
+
+/** Insert a variable via palette grammar: ↵ rows, ⌥↵ columns, ⇧↵ filter. */
+export async function insertVariableFromPalette(
+  page: Page,
+  query: string,
+  target: 'rows' | 'columns' | 'filter' = 'rows',
+) {
+  await openInsertPalette(page);
+  const input = page.getByPlaceholder('Find a variable…');
+  await input.fill(query);
+  await page.waitForTimeout(350);
+  if (target === 'columns') {
+    await page.keyboard.press('Alt+Enter');
+  } else if (target === 'filter') {
+    await page.keyboard.press('Shift+Enter');
+  } else {
+    await page.keyboard.press('Enter');
+  }
+  await page.waitForTimeout(900);
+}
+
 /** Build or confirm the sleep.sav example crosstab (sex × marital status). */
 export async function buildExampleCrosstab(page: Page) {
   const table = page.locator('table');
   const pctCell = page.locator('text=/\\d+\\.\\d%/').first();
-  const sexBtn = page.getByRole('button', { name: /^sex$/i }).first();
-  const hasSleepVars = await sexBtn.isVisible({ timeout: 2000 }).catch(() => false);
 
   // Brand tracker Load Example auto-applies brand preference × segment; skip sleep-only steps.
   if (
-    !hasSleepVars &&
     (await table.isVisible({ timeout: 5000 }).catch(() => false)) &&
     (await pctCell.isVisible({ timeout: 5000 }).catch(() => false))
   ) {
-    return;
-  }
-
-  if (
-    hasSleepVars &&
-    (await table.isVisible({ timeout: 5000 }).catch(() => false)) &&
-    (await pctCell.isVisible({ timeout: 5000 }).catch(() => false))
-  ) {
-    return;
+    const headers = await table
+      .locator('th')
+      .allTextContents()
+      .catch(() => []);
+    const joined = headers.join(' ').toLowerCase();
+    if (/single|married|divorced|widowed/.test(joined)) return;
   }
 
   const reset = page.getByRole('button', { name: 'Reset' });
   if (await reset.isVisible({ timeout: 2000 }).catch(() => false)) {
-    await reset.click();
+    await openOverflowMenu(page);
+    await page.getByRole('menuitem', { name: 'Reset' }).click();
     await page.waitForTimeout(600);
-  }
-
-  if (
-    await page
-      .getByText('Ready for Analysis')
-      .isVisible({ timeout: 3000 })
-      .catch(() => false)
-  ) {
-    await page
-      .getByRole('button', { name: 'Reset' })
-      .click()
-      .catch(() => {});
-    await page.waitForTimeout(500);
   }
 
   if (
     (await table.isVisible({ timeout: 2000 }).catch(() => false)) &&
     (await pctCell.isVisible({ timeout: 2000 }).catch(() => false))
   ) {
-    return;
+    const headers = await table
+      .locator('th')
+      .allTextContents()
+      .catch(() => []);
+    const joined = headers.join(' ').toLowerCase();
+    if (/single|married|divorced|widowed/.test(joined)) return;
   }
 
-  await expect(sexBtn).toBeVisible({ timeout: 30000 });
-  await sexBtn.click();
-  await page.waitForTimeout(1200);
-
-  const maritalBtn = page.getByRole('button', { name: /marital status/i });
-  await expect(maritalBtn).toBeVisible({ timeout: 10000 });
-  await maritalBtn.click();
-  await page.waitForTimeout(2500);
+  await insertVariableFromPalette(page, 'sex', 'rows');
+  await insertVariableFromPalette(page, 'marital', 'columns');
 
   await expect(table).toBeVisible({ timeout: 30000 });
   await expect(table.locator('tbody tr')).not.toHaveCount(0);
   await expect(pctCell).toBeVisible({ timeout: 30000 });
+}
+
+async function openOverflowMenu(page: Page) {
+  await page.getByRole('button', { name: 'More' }).click();
+  await expect(page.getByRole('menu', { name: 'More actions' })).toBeVisible({ timeout: 5000 });
 }
 
 /** @deprecated Use buildExampleCrosstab — sleep.sav replaced mock_data.csv in e2e. */
@@ -195,7 +235,7 @@ export const buildGenderRegionCrosstab = buildExampleCrosstab;
 export async function waitForStableCrosstab(page: Page) {
   await ensureCorrectionNone(page);
 
-  const footer = page.locator('.statistics-status-bar').first();
+  const footer = page.locator('.statistics-status-bar, [class*="statistics"]').first();
   await expect(footer).toBeVisible({ timeout: 15000 });
 
   await page.waitForTimeout(400);

@@ -70,7 +70,11 @@ const VariableRowItem: React.FC<VariableRowItemProps> = ({
       aria-selected={isActive}
     >
       <span className={listStyles.glyph}>
-        <VariableTypeIcon type={variableSet.type} structure={variableSet.structure as 'single' | 'multiple' | 'grid'} size={14} />
+        <VariableTypeIcon
+          type={variableSet.type}
+          structure={variableSet.structure as 'single' | 'multiple' | 'grid'}
+          size={14}
+        />
       </span>
       <span className={listStyles.monoName} title={display.monoName}>
         {display.monoName}

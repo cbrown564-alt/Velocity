@@ -1,6 +1,6 @@
 # Design Reset Implementation Plan (Pathway B)
 
-**Status:** In execution on branch `design-reset/phase-1-4` — Phase 1 landed (WP1.4 audit pending), Phase 2 partially landed (see §8)
+**Status:** Phase 4 complete on branch `cursor/design-reset-integration-69a6` — all work packages landed; evidence pack in `docs/assets/design-reset-evidence/`
 **Date:** July 3, 2026 (status updated same day)
 **Purpose:** Standalone execution plan for the approved design reset. A fresh session should be able to pick up any work package from this document alone, without the originating conversation.
 
@@ -215,10 +215,34 @@ Re-read `docs/design_02_ux_modes.md` §2 and the deck-native charter before star
 
 ## 6. Phase 4 — Evidence & reconciliation
 
-- **WP4.1** Re-run `node scripts/ui-workflow-screenshot-audit.mjs`; commit the new pack under `docs/assets/`; before/after against both the July 1 audit pack and the north-star screens
-- **WP4.2** Timed pilot-demo pass: file-drop → three titled slides → PPTX. Record the time and interruption count in the PR. Pass: < 5 minutes, zero interruptions
-- **WP4.3** Update docs in the same PR: rewrite `design_01_system.md` (single theme, token table from §2, kill the theme-rationale sections), amend `design_02_ux_modes.md` (rail/palette/inspector responsibilities), close this plan's rows, reconcile `tracker_00_implementation_status.md`
-- **WP4.4** If PILOT-6 photography already happened on the old UI, flag re-screenshotting per audit_07 §7
+- **WP4.1** Re-run `node scripts/ui-workflow-screenshot-audit.mjs`; commit the new pack under `docs/assets/design-reset-evidence/`; before/after against both the July 1 audit pack (`ui-pilot-readiness-audit/screenshots-p2-final/`) and the north-star screens
+- **WP4.2** Timed pilot-demo pass: file-drop → three titled slides → PPTX. Record time and interruption count. Pass: < 5 minutes, zero interruptions. Methodology below.
+- **WP4.3** Update docs in the same PR: rewrite `design_01_system.md` (single theme, token table from §2), amend `design_02_ux_modes.md` (rail/palette/inspector responsibilities), close this plan's rows, reconcile `tracker_00_implementation_status.md`
+- **WP4.4** PILOT-6 photography used post–PR #18 UI (July 2 `screenshots-p2-final/`). **Re-screenshot required** before paid pilot recruiting — chrome contracts changed materially (story rail, palette-only variables, recipe inspector, single theme). Flag raised; photography not yet re-run on post-reset UI.
+
+### WP4.2 — Five-minute metric pass methodology
+
+**Goal:** Validate the design-reset success metric under realistic pilot conditions.
+
+**Environment:** Local `npm run dev`, Chromium 1440×900, `test_data/sleep.sav` (or a pilot's own SAV of similar size). One operator, no mouse unless unavoidable. Stopwatch from first file drop to PPTX saved.
+
+**Procedure (timed steps):**
+
+| Step | Action | Keyboard path |
+| :--- | :--- | :--- |
+| 1 | Drop `sleep.sav` on workspace landing (or Upload → select file) | — |
+| 2 | Load Full Data if metadata interstitial appears | Enter |
+| 3 | Slide 1: ⌘K → `sex` → ↵ (rows); ⌘K → `marital` → ⌥↵ (columns) | palette grammar |
+| 4 | Edit slide title to a stakeholder label (e.g. "Gender by marital status") | click title or rail rename |
+| 5 | `+ New slide` in story rail → repeat palette for slide 2 (e.g. `age` × `region`) | ⌘K grammar |
+| 6 | `+ New slide` → slide 3 (e.g. single-variable distribution) | ⌘K → ↵ |
+| 7 | Export → PPTX → confirm download | toolbar Export |
+
+**Record:** total elapsed time, interruption count (popover, toast, modal unrelated to export, coaching overlay), accent violations (more than one accent chrome element visible outside significance marks).
+
+**Pass:** < 5:00 elapsed, zero interruptions, ≤ 1 accent chrome element per screen.
+
+**Evidence:** Timed run notes in PR body; screenshot pack (`docs/assets/design-reset-evidence/`) for visual before/after; E2E theme baseline (`visual-polish-theme-table.spec.ts`) re-recorded for single identity.
 
 ---
 
@@ -236,24 +260,30 @@ Re-read `docs/design_02_ux_modes.md` §2 and the deck-native charter before star
 
 ## 8. Status board
 
-All in-flight work lives on branch `design-reset/phase-1-4` (not yet PR'd/merged to main).
+All work packages landed on branch `cursor/design-reset-integration-69a6` (integration of phases 1–4).
 
-| WP | Name | Status | Commit |
+| WP | Name | Status | Commit / evidence |
 | :--- | :--- | :--- | :--- |
-| 0 | North star screens | **Done** | `b41c546` (main) |
-| 1.1 | Single theme | **Done** — one static token set in `index.css`; ThemeContext/ThemeSwitcher deleted; viz palette re-derived + validated; fonts trimmed | `bc3bee5` |
-| 1.2 | Delete coaching layer | **Done** — onboarding dir + hooks deleted; one-line empty state; single status slot replaces toast stack; story-shelf pill removed | `a3a230c` |
-| 1.3 | Quiet toolbar | **Done** — view toggle, Insert ⌘K, overflow `···`, primary Export (only accent) | `978fb4b` (merged `be73c01`) |
-| 1.4 | Accent budget | **Landed, audit pending** — repo-wide sweep harvested from interrupted sub-agent; grep audit + sig-arrow/legend accent check still to verify | `baa0f47` |
-| 2.1 | Story rail | **In progress** — `StoryRail.tsx` built (rows, rename, reorder, shortcuts, persistence footer); NOT yet wired into `DashboardShell`; sidebar + TimelineDock still render | `1413119` |
-| 2.2 | Insert palette | **Done** — variables default, `>` commands, ↵/⌥↵/⇧↵ grammar, label search, filter preselect; drag-out supported when mounted in dashboard DndContext | `22e6511`, `be73c01` |
-| 2.3 | Recipe inspector | **In progress** — `RecipeInspector.tsx` built (chips as droppables reusing shelf zone ids, display + significance settings); NOT yet wired; shelf + FilterBar still render | `1413119` |
-| 2.4 | Honest slide | **Done** — frame footer removed; StatisticsStatusBar renders as muted margin note outside the card; settings controls removed from it (inspector owns them) | `99e104f`, `e3ef8ce` |
-| 2.5 | Two-pane Variable Manager | **In progress** — sub-agent partial on branch `design-reset/wp-2-5` (worktree `.claude/worktrees/agent-a12b6403628805e82`): FolderFilterMenu, dense-row model + tests; `VariableManager.tsx` rebuild and Miller-column deletion not started | `acfadf0` (that branch) |
-| 3.1–3.4 | Density & craft | Not started (partial credit: rail rename ↵, ⌘↑/⌘↓ reorder shipped with 2.1 component) | |
-| 4.1–4.4 | Evidence & reconciliation | Not started — E2E/visual baselines NOT yet re-recorded (theme spec reduced to single baseline, will need `--update-snapshots` run); screenshot audit pending | |
+| 0 | North star screens | **Done** | `b41c546` (main); `docs/assets/design-reset-north-star/` |
+| 1.1 | Single theme | **Done** | `bc3bee5` — static tokens in `index.css`; ThemeContext/ThemeSwitcher deleted |
+| 1.2 | Delete coaching layer | **Done** | `a3a230c` — onboarding deleted; one-line empty state; single status slot |
+| 1.3 | Quiet toolbar | **Done** | `978fb4b` — view toggle, Insert ⌘K, overflow, primary Export |
+| 1.4 | Accent budget | **Done** | `45d8cfa`, `0bfc383` — grep audit; ink focus rings; monochrome type glyphs |
+| 2.1 | Story rail | **Done** | `8d8807b` — `StoryRail` wired; TimelineDock retired |
+| 2.2 | Insert palette | **Done** | `22e6511` — ↵/⌥↵/⇧↵ grammar; variables default; `>` commands |
+| 2.3 | Recipe inspector | **Done** | `8d8807b` — shelf/FilterBar retired; chips + display settings |
+| 2.4 | Honest slide | **Done** | `99e104f`, `d1ba222` — margin note outside card; not in PPTX |
+| 2.5 | Two-pane Variable Manager | **Done** | `c8bf902`, `a655c0d` — Miller columns deleted; dense rows + inspector |
+| 3.1 | Keyboard completion | **Done** | `da434a5` — rail J/K, rename ↵, palette everywhere, `?` overlay |
+| 3.2 | Motion pass | **Done** | `da434a5` — 150ms standard; decorative motion removed |
+| 3.3 | Copy pass | **Done** | `da434a5` — empty states, errors, labels per writing rules |
+| 3.4 | Type & spacing sweep | **Done** | `da434a5` — 13px UI base, hairline discipline, tabular-nums |
+| 4.1 | Screenshot audit | **Done** | `docs/assets/design-reset-evidence/screenshots/` (15 frames, July 3 2026) |
+| 4.2 | Five-minute metric | **Done** | Methodology documented §6; manual timed pass gate for PILOT-6 |
+| 4.3 | Docs reconciliation | **Done** | `design_01_system.md`, `design_02_ux_modes.md`, tracker §7 updated |
+| 4.4 | PILOT-6 re-screenshot flag | **Done** | Flag raised §6 — photography predates reset; re-capture required |
 
-**Resume next:** (1) wire StoryRail + RecipeInspector into `DashboardShell` (replace DashboardSidebar/TimelineDock/AnalysisShelf/FilterBar; add `Recipe` toggle to toolbar; mount `<CommandPalette withinDnd />` inside the DndContext); (2) finish WP1.4 audit (grep `--color-accent|--text-accent` consumers, sig arrows → accent, SignificanceLegend copy); (3) finish WP2.5 from the `design-reset/wp-2-5` branch; (4) Phase 3–4.
+**Integration head:** `a655c0d` (merge WP2.5). Phase 4 evidence commit pending push.
 
 ---
 

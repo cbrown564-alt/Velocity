@@ -74,14 +74,23 @@ async function shot(page, name, fullPage = false) {
 }
 
 async function waitForWorkspaceReady(page) {
-  const candidates = [
-    page.getByRole('button', { name: /Load Example/i }),
-    page.getByTestId('dataset-upload-input'),
-    page.getByText('Survey Questions'),
-    page.getByTestId('workspace-status-strip'),
-  ];
-  const deadline = Date.now() + 120000;
+  const deadline = Date.now() + 180000;
   while (Date.now() < deadline) {
+    const startFresh = page.getByRole('button', { name: 'Start Fresh' });
+    if (await startFresh.isVisible().catch(() => false)) {
+      await startFresh.click();
+      await page.waitForTimeout(600);
+    }
+
+    const candidates = [
+      page.getByTestId('workspace-empty-state'),
+      page.getByRole('button', { name: /Upload survey file/i }),
+      page.getByRole('button', { name: /Try the brand tracker example/i }),
+      page.getByTestId('dataset-upload-input'),
+      page.getByText('Survey Questions'),
+      page.getByTestId('workspace-status-strip'),
+      page.getByRole('heading', { name: 'Recent Datasets' }),
+    ];
     for (const loc of candidates) {
       if (await loc.isVisible().catch(() => false)) return;
     }
@@ -110,12 +119,30 @@ async function uploadSavAndReachDashboard(page) {
   }
 }
 
-async function dismissActiveTour(page) {
-  const tour = page.getByTestId('first-crosstab-tour');
-  if (await tour.isVisible().catch(() => false)) {
-    await tour.getByRole('button', { name: /got it/i }).click();
-    await page.waitForTimeout(400);
+async function openInsertPalette(page) {
+  const insertBtn = page.getByRole('button', { name: /insert/i });
+  if (await insertBtn.isVisible().catch(() => false)) {
+    await insertBtn.click();
+  } else {
+    await page.keyboard.press('Control+KeyK');
   }
+  await page.getByPlaceholder('Find a variable…').waitFor({ state: 'visible', timeout: 10000 });
+  await page.waitForTimeout(300);
+}
+
+async function insertVariableFromPalette(page, query, target = 'rows') {
+  await openInsertPalette(page);
+  const input = page.getByPlaceholder('Find a variable…');
+  await input.fill(query);
+  await page.waitForTimeout(400);
+  if (target === 'columns') {
+    await page.keyboard.press('Alt+Enter');
+  } else if (target === 'filter') {
+    await page.keyboard.press('Shift+Enter');
+  } else {
+    await page.keyboard.press('Enter');
+  }
+  await page.waitForTimeout(900);
 }
 
 async function waitForCrosstabReady(page, timeoutMs = 90000) {
@@ -137,10 +164,9 @@ async function waitForCrosstabReady(page, timeoutMs = 90000) {
   throw new Error('Crosstab table did not become ready (expected banner columns)');
 }
 
-async function clickSidebarVariable(page, pattern) {
-  const card = page.locator('[data-testid="variable-draggable"]').filter({ hasText: pattern }).first();
-  await card.waitFor({ state: 'visible', timeout: 30000 });
-  await card.click();
+async function openOverflowMenu(page) {
+  await page.getByRole('button', { name: 'More' }).click();
+  await page.getByRole('menu', { name: 'More actions' }).waitFor({ state: 'visible', timeout: 5000 });
 }
 
 async function main() {
@@ -190,19 +216,18 @@ async function main() {
 
     // 3. Metadata interstitial captured inside upload helper if shown
 
-    // 4. Dashboard / variable browser before analysis
+    // 4. Dashboard — story rail + empty slide (variables summoned via palette)
     await page.waitForTimeout(1000);
-    await shot(page, '04-dashboard-variable-browser');
+    await shot(page, '04-dashboard-story-rail-empty-slide');
 
-    // 5. Building first crosstab — one variable on shelf
-    await clickSidebarVariable(page, /^sex$/i);
+    // 5. Building first crosstab — one variable on rows via insert palette
+    await insertVariableFromPalette(page, 'sex', 'rows');
     await page.locator('.analysis-frame table').waitFor({ state: 'visible', timeout: 60000 });
     await page.waitForTimeout(800);
     await shot(page, '05-building-crosstab-one-variable');
 
-    // 6. Crosstab table result
-    await dismissActiveTour(page);
-    await clickSidebarVariable(page, /marital status/i);
+    // 6. Crosstab table result — second variable on columns (⌥↵)
+    await insertVariableFromPalette(page, 'marital', 'columns');
     await waitForCrosstabReady(page);
     await page.waitForTimeout(1500);
     await shot(page, '06-crosstab-table-result');
@@ -225,66 +250,57 @@ async function main() {
     await page.keyboard.press('Escape');
     await page.waitForTimeout(400);
 
-    // 9. Variable Manager
-    const vmBtn = page.getByRole('button', { name: /variable manager|variables/i }).first();
-    if (await vmBtn.isVisible().catch(() => false)) {
-      await vmBtn.click();
-      await page.waitForTimeout(1200);
-      await shot(page, '09-variable-manager');
-      await page.keyboard.press('Escape');
-      await page.waitForTimeout(400);
-    } else {
-      await page.keyboard.press('KeyV');
-      await page.waitForTimeout(1200);
-      await shot(page, '09-variable-manager');
-      await page.keyboard.press('Escape');
-    }
+    // 9. Recipe inspector (slide properties)
+    await page.getByTestId('recipe-inspector-toggle').click();
+    await page.waitForTimeout(800);
+    await shot(page, '09-recipe-inspector');
+    await page.getByTestId('recipe-inspector-toggle').click();
+    await page.waitForTimeout(400);
 
-    // 10. Focus mode
-    const focusBtn = page.getByRole('button', { name: /focus/i }).first();
-    if (await focusBtn.isVisible().catch(() => false)) {
-      await focusBtn.click();
-      await page.waitForTimeout(800);
-      await shot(page, '10-focus-mode');
-      await focusBtn.click();
-      await page.waitForTimeout(400);
-    }
-
-    // 11. Command palette
-    await page.keyboard.press('Control+KeyK');
+    // 10. Variable Manager (overflow menu)
+    await openOverflowMenu(page);
+    await page.getByRole('menuitem', { name: 'Variable Manager' }).click();
+    await page.waitForTimeout(1200);
+    await shot(page, '10-variable-manager');
+    await page.keyboard.press('Escape');
     await page.waitForTimeout(600);
-    await shot(page, '11-command-palette');
+
+    // 11. Focus mode (overflow menu — force click if table chrome overlaps menu)
+    await openOverflowMenu(page);
+    await page.getByTestId('focus-mode-toggle').click({ force: true });
+    await page.waitForTimeout(800);
+    await shot(page, '11-focus-mode');
+    await openOverflowMenu(page);
+    await page.getByTestId('focus-mode-toggle').click({ force: true });
+    await page.waitForTimeout(400);
+
+    // 12. Insert palette
+    await openInsertPalette(page);
+    await page.waitForTimeout(600);
+    await shot(page, '12-insert-palette');
     await page.keyboard.press('Escape');
 
-    // 12. Return to workspace
+    // 13. Return to workspace
     const homeButton = page.locator('button[title="Return to Workspace"]');
     await homeButton.click();
     await waitForWorkspaceReady(page);
     await page.waitForTimeout(800);
-    await shot(page, '12-workspace-after-session');
+    await shot(page, '13-workspace-after-session');
 
-    // 13. Reopen dataset (resume flow)
+    // 14. Reopen dataset (resume flow)
     await page.getByRole('button', { name: 'All Datasets' }).click();
     await page.getByPlaceholder('Search datasets...').fill('sleep.sav');
     await page.waitForTimeout(400);
-    await shot(page, '13-dataset-search-reopen');
+    await shot(page, '14-dataset-search-reopen');
     const reopenListItem = page.getByRole('button', { name: 'Open dataset sleep.sav' });
     if (await reopenListItem.isVisible().catch(() => false)) {
       await reopenListItem.dblclick();
     } else {
       await page.getByRole('heading', { name: 'sleep.sav' }).dblclick();
     }
-    await page.getByText(/sleep\.sav \(271 rows\)/).waitFor({ state: 'visible', timeout: 120000 });
+    await page.getByRole('button', { name: 'Table view' }).waitFor({ state: 'visible', timeout: 120000 });
     await page.waitForTimeout(1500);
-    await shot(page, '14-resumed-analysis-session');
-
-    // 14. Analysis settings panel if visible
-    const settingsBtn = page.getByRole('button', { name: /settings|analysis settings/i }).first();
-    if (await settingsBtn.isVisible().catch(() => false)) {
-      await settingsBtn.click();
-      await page.waitForTimeout(600);
-      await shot(page, '15-analysis-settings');
-    }
+    await shot(page, '15-resumed-analysis-session');
 
     await browser.close();
     console.log('\nDone.');

@@ -42,10 +42,7 @@ export function filterVariableSets(
       return vs.variableIds.some((variableId) => {
         const variable = dataset.variables.find((v) => v.id === variableId);
         if (!variable) return false;
-        return (
-          variable.name.toLowerCase().includes(query) ||
-          (variable.label?.toLowerCase().includes(query) ?? false)
-        );
+        return variable.name.toLowerCase().includes(query) || (variable.label?.toLowerCase().includes(query) ?? false);
       });
     });
   }

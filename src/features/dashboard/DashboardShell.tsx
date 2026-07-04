@@ -128,7 +128,10 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
             persistenceError={persistenceError}
           />
 
-          <main id="main-content" className="flex-1 flex flex-col bg-[var(--bg-app)] relative overflow-hidden z-0 min-w-0">
+          <main
+            id="main-content"
+            className="flex-1 flex flex-col bg-[var(--bg-app)] relative overflow-hidden z-0 min-w-0"
+          >
             <DashboardToolbar
               dataset={dataset}
               activeSlideId={activeSlideId}

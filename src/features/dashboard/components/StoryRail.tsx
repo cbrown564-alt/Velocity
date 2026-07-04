@@ -69,7 +69,11 @@ function getSlideDisplayLabel(
   const columnVariable = sourceState.colVar
     ? (() => {
         const set = variableSets.find((v) => v.id === sourceState.colVar);
-        return { id: sourceState.colVar!, name: set?.name || sourceState.colVar!, label: set?.name || sourceState.colVar! };
+        return {
+          id: sourceState.colVar!,
+          name: set?.name || sourceState.colVar!,
+          label: set?.name || sourceState.colVar!,
+        };
       })()
     : null;
 
@@ -511,9 +515,7 @@ export const StoryRail: React.FC<StoryRailProps> = ({
                   canDelete={slides.length > 1}
                   variableSets={variableSets}
                   currentTableConfig={
-                    isActive
-                      ? { rowVars: tableConfig?.rowVars ?? [], colVar: tableConfig?.colVar ?? null }
-                      : undefined
+                    isActive ? { rowVars: tableConfig?.rowVars ?? [], colVar: tableConfig?.colVar ?? null } : undefined
                   }
                   onSelect={() => setActiveSlide(slide.id)}
                   onDuplicate={() => duplicateSlide(slide.id)}
