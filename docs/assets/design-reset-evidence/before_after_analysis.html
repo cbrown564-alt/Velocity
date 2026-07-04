@@ -221,6 +221,10 @@
       font-family: var(--mono); font-size: 1.5rem; font-weight: 500; color: var(--ink);
     }
     .metric .lbl { font-size: 11px; color: var(--ink-3); margin-top: 4px; }
+    .metric.pending .val { color: var(--ink-3); font-size: 1.25rem; }
+    .metric-bar .metric-note {
+      grid-column: 1 / -1; font-size: 12px; color: var(--ink-2); text-align: center; margin-top: 4px;
+    }
 
     /* ── Lightbox ── */
     .lightbox {
@@ -245,6 +249,7 @@
   <nav aria-label="Sections">
     <button class="on" data-target="journey">Journey</button>
     <button data-target="comparisons">Comparisons</button>
+    <button data-target="sessions">Sessions</button>
     <button data-target="analysis">Analysis</button>
     <button data-target="questions">Questions</button>
     <button data-target="paths">Paths forward</button>
@@ -260,7 +265,8 @@
     </p>
     <div class="meta-row">
       <span class="pill"><strong>Before</strong> screenshots-p2-final · Jul 2</span>
-      <span class="pill"><strong>After</strong> design-reset-evidence · Jul 3–4</span>
+      <span class="pill"><strong>After</strong> design-reset-evidence · Jul 4</span>
+      <span class="pill"><strong>Photography</strong> PILOT-6 ready</span>
       <span class="pill"><strong>Pathway</strong> B — deck-first inversion</span>
     </div>
   </header>
@@ -286,6 +292,23 @@
       <div class="metric"><div class="val">0</div><div class="lbl">Interruptions (toasts, tours, popovers)</div></div>
       <div class="metric"><div class="val">3</div><div class="lbl">Deck slides built via palette</div></div>
       <div class="metric"><div class="val">≤1</div><div class="lbl">Accent chrome element per screen</div></div>
+    </div>
+  </section>
+
+  <!-- ── Unscripted session evidence (DESIGN-CONV-A) ── -->
+  <section id="sessions">
+    <h2>Unscripted session evidence</h2>
+    <p class="section-lede">
+      Path A metrics from 3–5 consultant first sessions on the post-reset UI. Scripted five-minute pass numbers above; these fields update from human observations using the
+      <a href="../../design_conv_a_unscripted_session_scorecard.md">session scorecard template</a>.
+    </p>
+
+    <div class="metric-bar">
+      <div class="metric pending"><div class="val">—</div><div class="lbl">Median time to first crosstab (unscripted)</div></div>
+      <div class="metric pending"><div class="val">—</div><div class="lbl">Palette discovery rate (⌘K without prompt)</div></div>
+      <div class="metric pending"><div class="val">—</div><div class="lbl">Median interruption count (first session)</div></div>
+      <div class="metric pending"><div class="val">0 / 5</div><div class="lbl">Sessions scored</div></div>
+      <p class="metric-note">Pending real human sessions — do not invent scores. Fill blanks in <code>sessions/U0N.md</code>, then replace these values from the scorecard rollup (target ≥3). Remove <code>pending</code> class when live.</p>
     </div>
   </section>
 
@@ -579,7 +602,7 @@
           <li><strong>Rich list metadata at a glance.</strong> Sparklines and top-category chips retreated to inspector — less noise, more clicks for power users.</li>
           <li><strong>Focus mode as transformation.</strong> Default chrome is already quiet; focus hides less than before relative to the old crowded toolbar.</li>
           <li><strong>General-purpose ⌘K.</strong> Session import, reset, and settings no longer in the primary summon surface.</li>
-          <li><strong>PILOT-6 photography alignment.</strong> Marketing screenshots still show pre-reset chrome — re-capture required before paid recruiting.</li>
+          <li><strong>First-run discovery risk.</strong> Summon-only insertion depends on ⌘K discovery — unscripted session evidence (Path A) will confirm or refute.</li>
         </ul>
       </div>
     </div>
@@ -714,6 +737,8 @@
       Evidence sources:
       <a href="../ui-pilot-readiness-audit/screenshots-p2-final/">Before (screenshots-p2-final)</a> ·
       <a href="screenshots/">After (design-reset-evidence)</a> ·
+      <a href="screenshots/manifest.json">Screenshot manifest</a> ·
+      <a href="../../design_conv_a_unscripted_session_scorecard.md">Session scorecard</a> ·
       <a href="../design-reset-north-star/north_star.html">North star mock</a> ·
       <a href="../../plan_05_design_reset_implementation.md">plan_05</a> ·
       <a href="wp42-five-minute-pass.json">Five-minute pass JSON</a>
@@ -738,7 +763,7 @@
   });
 
   // Update nav on scroll
-  const sections = ['journey', 'comparisons', 'analysis', 'questions', 'paths'];
+  const sections = ['journey', 'sessions', 'comparisons', 'analysis', 'questions', 'paths'];
   const navBtns = document.querySelectorAll('.meta nav button');
   const observer = new IntersectionObserver(entries => {
     entries.forEach(entry => {

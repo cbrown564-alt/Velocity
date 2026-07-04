@@ -1,8 +1,10 @@
 # PILOT-6: Paid Pilot Program Kit
 
 **Status:** In progress (assets ready; recruitment and commitments pending)  
-**Depends on:** `PILOT-0`, `PILOT-1`, `PILOT-2`  
+**Depends on:** `PILOT-0`, `PILOT-1`, `PILOT-2`; outreach photography via `DESIGN-CONV-A`  
 **Purpose:** Recruit and run 5-8 qualified paid pilots without over-promising beyond shipped product scope.
+
+**Photography (DESIGN-CONV-A):** Use the post-reset pack at [`docs/assets/design-reset-evidence/`](assets/design-reset-evidence/) — not pre-reset `ui-pilot-readiness-audit` shots. Regenerate with `npm run screenshot:design-reset-evidence` if UI drifted; attach `01-workspace-landing`, `06-crosstab-table-result`, and `12-insert-palette` (or link `before_after_analysis.html`) in outreach. Score first sessions with [`design_conv_a_unscripted_session_scorecard.md`](design_conv_a_unscripted_session_scorecard.md).
 
 ---
 

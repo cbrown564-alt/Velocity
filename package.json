@@ -62,7 +62,8 @@
     "demo:brand-tracker-wave-refresh": "tsx scripts/brand-tracker-wave-refresh-demo.ts",
     "journey-gate": "node scripts/plan-06-journey-gate.mjs",
     "report-quality:inspect": "node scripts/report-quality/inspect-pptx.mjs",
-    "report-quality:review": "node scripts/report-quality/review-artifact.mjs"
+    "report-quality:review": "node scripts/report-quality/review-artifact.mjs",
+    "screenshot:design-reset-evidence": "SCREENSHOT_OUT=docs/assets/design-reset-evidence/screenshots node scripts/ui-workflow-screenshot-audit.mjs"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

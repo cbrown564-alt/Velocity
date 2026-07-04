@@ -1,0 +1,36 @@
+{
+  "pack": "design-reset-evidence",
+  "capturedAt": "2026-07-04T19:59:00Z",
+  "branch": "main",
+  "commit": "7f2c98ace3ae43efd73d1eb5b92b9edb72953576",
+  "script": "scripts/ui-workflow-screenshot-audit.mjs",
+  "npmScript": "npm run screenshot:design-reset-evidence",
+  "viewport": "1440x900",
+  "deviceScaleFactor": 2,
+  "dataset": "test_data/sleep.sav",
+  "theme": "evolved Soft Machine (single theme)",
+  "stages": [
+    "00-engine-init-splash.png",
+    "01-workspace-landing.png",
+    "04-dashboard-story-rail-empty-slide.png",
+    "05-building-crosstab-one-variable.png",
+    "06-crosstab-table-result.png",
+    "07-chart-view.png",
+    "08-export-modal.png",
+    "09-recipe-inspector.png",
+    "10-variable-manager.png",
+    "11-focus-mode.png",
+    "12-insert-palette.png",
+    "13-workspace-after-session.png",
+    "14-dataset-search-reopen.png",
+    "15-resumed-analysis-session.png"
+  ],
+  "pilot6Use": "Use this pack for PILOT-6 outreach photography and before_after_analysis.html until UI changes (DESIGN-CONV-Q5 focus retirement, export preview, etc.) require refresh.",
+  "regenAttempt": {
+    "attemptedAt": "2026-07-14T21:40:00Z",
+    "result": "failed",
+    "error": "Workspace did not become ready in time (waitForWorkspaceReady in scripts/ui-workflow-screenshot-audit.mjs)",
+    "command": "npm run screenshot:design-reset-evidence",
+    "note": "Kept July 4 pack PNGs + capturedAt unchanged. Re-run after fixing workspace boot selectors / worker init on current main; do not bump capturedAt without successful full capture."
+  }
+}
