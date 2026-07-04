@@ -137,6 +137,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ withinDnd = fals
   const setTableConfig = useVelocityStore((state) => state.setTableConfig);
   const setWeightVariable = useVelocityStore((state) => state.setWeightVariable);
   const rejectRecipeColumnPlacement = useVelocityStore((state) => state.rejectRecipeColumnPlacement);
+  const recordRecentVariableSet = useVelocityStore((state) => state.recordRecentVariableSet);
   const tableConfig = useVelocityStore((state) => state.tableConfig);
   const variableSets = useVelocityStore((state) => state.variableSets);
   const dataset = useVelocityStore((state) => state.dataset);
@@ -160,6 +161,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ withinDnd = fals
     return (set: VariableSet, target: InsertTarget) => {
       if (target === 'filter') {
         openFilterModal(set.variableIds[0]);
+        recordRecentVariableSet(set.id);
         closeCommandPalette();
         return;
       }
@@ -171,6 +173,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ withinDnd = fals
           return;
         }
         setWeightVariable(set.variableIds[0]);
+        recordRecentVariableSet(set.id);
         addToast({ message: `${set.name} → weight`, type: 'success' });
         closeCommandPalette();
         return;
@@ -185,6 +188,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ withinDnd = fals
       }
 
       setTableConfig(placement);
+      recordRecentVariableSet(set.id);
       if (redirectedFromColumn) {
         rejectRecipeColumnPlacement();
       } else {
@@ -201,6 +205,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ withinDnd = fals
     addToast,
     closeCommandPalette,
     rejectRecipeColumnPlacement,
+    recordRecentVariableSet,
   ]);
 
   const commands = useMemo<CommandItem[]>(

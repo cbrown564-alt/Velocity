@@ -50,6 +50,9 @@ export interface PersistedState {
   lastActiveAt: VelocityState['lastActiveAt'];
   lastSeenTransformCount: VelocityState['lastSeenTransformCount'];
   welcomeBackDismissed: VelocityState['welcomeBackDismissed'];
+  pinnedVariableSetIds: VelocityState['pinnedVariableSetIds'];
+  recentVariableSetIds: VelocityState['recentVariableSetIds'];
+  recentStripCollapsed: VelocityState['recentStripCollapsed'];
 
   // From AnalysisSlice
   tableConfig: VelocityState['tableConfig'];
@@ -133,6 +136,9 @@ export const partialize = (state: VelocityState): PersistedState => {
     lastActiveAt: state.lastActiveAt,
     lastSeenTransformCount: state.lastSeenTransformCount,
     welcomeBackDismissed: state.welcomeBackDismissed,
+    pinnedVariableSetIds: state.pinnedVariableSetIds ?? [],
+    recentVariableSetIds: state.recentVariableSetIds ?? [],
+    recentStripCollapsed: state.recentStripCollapsed ?? false,
 
     // AnalysisSlice - persist configuration but NOT query results
     tableConfig: state.tableConfig,
