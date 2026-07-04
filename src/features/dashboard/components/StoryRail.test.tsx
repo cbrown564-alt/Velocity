@@ -1,6 +1,6 @@
 import React from 'react';
 import { describe, it, expect, beforeEach } from 'vitest';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import { StoryRail } from './StoryRail';
 import { useVelocityStore } from '../../../store';
 import type { Slide } from '../../../types/slides';
@@ -157,5 +157,94 @@ describe('StoryRail', () => {
     fireEvent.change(input, { target: { value: 'Renamed slide' } });
     fireEvent.keyDown(input, { key: 'Enter' });
     expect(useVelocityStore.getState().slides[0].title).toBe('Renamed slide');
+  });
+
+  describe('collapsible rail (DESIGN-CONV-G)', () => {
+    it('collapses to an icon strip when the deck has a single slide', () => {
+      useVelocityStore.setState({
+        slides: [createSlide({ id: 'slide-1', title: 'Only slide' })],
+        activeSlideId: 'slide-1',
+      });
+      render(<StoryRail {...railProps} />);
+
+      const rail = screen.getByTestId('story-rail');
+      expect(rail).toHaveAttribute('data-rail-collapsed', 'true');
+      expect(rail).toHaveAttribute('data-rail-expanded', 'false');
+      expect(rail.style.width).toBe('44px');
+      expect(screen.queryByText('brand-tracker')).not.toBeInTheDocument();
+      expect(screen.queryByText('+ New slide')).not.toBeInTheDocument();
+      expect(screen.getByTestId('story-rail-slide-1-compact')).toBeInTheDocument();
+    });
+
+    it('stays expanded when the deck has multiple slides', () => {
+      render(<StoryRail {...railProps} />);
+
+      const rail = screen.getByTestId('story-rail');
+      expect(rail).toHaveAttribute('data-rail-collapsed', 'false');
+      expect(rail).toHaveAttribute('data-rail-expanded', 'true');
+      expect(rail.style.width).toBe('240px');
+      expect(screen.getByText('brand-tracker')).toBeInTheDocument();
+      expect(screen.getByTestId('story-rail-slide-1')).toBeInTheDocument();
+      expect(screen.queryByTestId('story-rail-slide-1-compact')).not.toBeInTheDocument();
+    });
+
+    it('expands on hover when collapsed for a single-slide session', () => {
+      useVelocityStore.setState({
+        slides: [createSlide({ id: 'slide-1', title: 'Only slide' })],
+        activeSlideId: 'slide-1',
+      });
+      render(<StoryRail {...railProps} />);
+
+      const rail = screen.getByTestId('story-rail');
+      fireEvent.mouseEnter(rail);
+
+      expect(rail).toHaveAttribute('data-rail-collapsed', 'false');
+      expect(rail).toHaveAttribute('data-rail-expanded', 'true');
+      expect(rail.style.width).toBe('240px');
+      expect(screen.getByText('brand-tracker')).toBeInTheDocument();
+      expect(screen.getByTestId('story-rail-slide-1')).toBeInTheDocument();
+    });
+
+    it('expands when the deck grows beyond one slide', () => {
+      useVelocityStore.setState({
+        slides: [createSlide({ id: 'slide-1', title: 'Only slide' })],
+        activeSlideId: 'slide-1',
+      });
+      const { rerender } = render(<StoryRail {...railProps} />);
+      expect(screen.getByTestId('story-rail')).toHaveAttribute('data-rail-collapsed', 'true');
+
+      act(() => {
+        useVelocityStore.setState({
+          slides: [
+            createSlide({ id: 'slide-1', title: 'First slide' }),
+            createSlide({ id: 'slide-2', title: 'Second slide' }),
+          ],
+          activeSlideId: 'slide-1',
+        });
+      });
+      rerender(<StoryRail {...railProps} />);
+
+      const rail = screen.getByTestId('story-rail');
+      expect(rail).toHaveAttribute('data-rail-collapsed', 'false');
+      expect(rail).toHaveAttribute('data-rail-expanded', 'true');
+      expect(rail.style.width).toBe('240px');
+    });
+
+    it('re-collapses when the deck returns to a single slide', () => {
+      const { rerender } = render(<StoryRail {...railProps} />);
+      expect(screen.getByTestId('story-rail')).toHaveAttribute('data-rail-expanded', 'true');
+
+      act(() => {
+        useVelocityStore.setState({
+          slides: [createSlide({ id: 'slide-1', title: 'Only slide' })],
+          activeSlideId: 'slide-1',
+        });
+      });
+      rerender(<StoryRail {...railProps} />);
+
+      const rail = screen.getByTestId('story-rail');
+      expect(rail).toHaveAttribute('data-rail-collapsed', 'true');
+      expect(rail).toHaveAttribute('data-rail-expanded', 'false');
+    });
   });
 });
