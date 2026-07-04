@@ -222,7 +222,7 @@ export const MethodologyDrawer: React.FC<MethodologyDrawerProps> = ({ isOpen, on
                       shrink-0 px-2 py-1 rounded text-[10px] font-medium transition-colors
                       ${
                         isActive
-                          ? 'bg-[var(--bg-active)] text-[var(--color-accent)]'
+                          ? 'bg-[var(--bg-active)] text-[var(--text-primary)]'
                           : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-active)]'
                       }
                     `}

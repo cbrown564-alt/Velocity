@@ -1,34 +1,15 @@
 import { test, expect } from '@playwright/test';
 import path from 'path';
-import { buildExampleCrosstab, openDatasetFromWorkspaceSearch } from './helpers/visualPolish';
+import {
+  buildExampleCrosstab,
+  dashboardReadyLocator,
+  expectDatasetLoaded,
+  openDatasetFromWorkspaceSearch,
+  uploadSavAndReachDashboard,
+} from './helpers/visualPolish';
 
 const smallSavFixture = path.resolve(process.cwd(), 'test_data/fixtures/test_small.sav');
 const sleepSavFixture = path.resolve(process.cwd(), 'test_data/sleep.sav');
-
-async function uploadSavAndReachDashboard(page: import('@playwright/test').Page, fixturePath: string) {
-  const fileInput = page.getByTestId('dataset-upload-input');
-  await expect(fileInput).toBeAttached({ timeout: 60000 });
-  await fileInput.setInputFiles(fixturePath);
-
-  const surveyQuestions = page.getByText(/Survey Questions/);
-  const metadataLoaded = page.getByText('Metadata Loaded');
-
-  await expect
-    .poll(
-      async () => {
-        if (await surveyQuestions.isVisible().catch(() => false)) return 'dashboard';
-        if (await metadataLoaded.isVisible().catch(() => false)) return 'metadata';
-        return 'pending';
-      },
-      { timeout: 120000 },
-    )
-    .not.toBe('pending');
-
-  if (await metadataLoaded.isVisible().catch(() => false)) {
-    await page.getByRole('button', { name: 'Load Full Data' }).click();
-    await expect(surveyQuestions).toBeVisible({ timeout: 120000 });
-  }
-}
 
 async function returnToWorkspace(page: import('@playwright/test').Page) {
   const homeButton = page.locator('button[title="Return to Workspace"]');
@@ -39,7 +20,7 @@ async function returnToWorkspace(page: import('@playwright/test').Page) {
 
 async function openDatasetFromWorkspace(page: import('@playwright/test').Page, fileName: string) {
   await openDatasetFromWorkspaceSearch(page, fileName);
-  await expect(page.getByText(/Survey Questions/)).toBeVisible({ timeout: 120000 });
+  await expect(dashboardReadyLocator(page)).toBeVisible({ timeout: 120000 });
 }
 
 /** Assert DuckDB schema matches UI variables after a workspace dataset switch. */
@@ -69,7 +50,7 @@ test('workspace switches between stored datasets without re-upload', async ({ pa
   await expect(page.getByRole('button', { name: /Upload/i }).first()).toBeVisible({ timeout: 60000 });
 
   await uploadSavAndReachDashboard(page, sleepSavFixture);
-  await expect(page.getByText('sleep.sav (271 rows)')).toBeVisible({ timeout: 30000 });
+  await expectDatasetLoaded(page, 'sleep.sav', { rowCount: 271 });
   await returnToWorkspace(page);
 
   await uploadSavAndReachDashboard(page, smallSavFixture);
@@ -99,7 +80,7 @@ test('workspace switches between stored datasets without re-upload', async ({ pa
     .toBe(true);
 
   await openDatasetFromWorkspace(page, 'sleep.sav');
-  await expect(page.getByText('sleep.sav (271 rows)')).toBeVisible({ timeout: 30000 });
+  await expectDatasetLoaded(page, 'sleep.sav', { rowCount: 271 });
 
   // Regression: DuckDB must reload sleep.sav schema after switching away and back.
   await expectCrosstabRenders(page);

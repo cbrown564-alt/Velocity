@@ -5,7 +5,6 @@ import { useFileUpload } from './features/workspace/hooks/useFileUpload';
 import { useWorkspaceOpen } from './features/workspace/hooks/useWorkspaceOpen';
 import { getLoadStageHeadline } from './lib/uploadFeedback';
 import { ToastLayer } from './components/common/ToastLayer';
-import { CommandPalette } from './components/common/CommandPalette';
 import { KeyboardShortcuts } from './components/common/KeyboardShortcuts';
 import { DesktopRecommendationBanner } from './components/common/DesktopRecommendationBanner';
 import { AppModeRouter } from './app/components/AppModeRouter';
@@ -48,7 +47,6 @@ export default function App() {
   });
 
   const isDbReady = useVelocityStore((state) => state.isDbReady);
-  const isWorkspaceMode = useVelocityStore((state) => state.isWorkspaceMode);
   const initError = useVelocityStore((state) => state.initError);
   const dataset = useVelocityStore((state) => state.dataset);
   const workspace = useVelocityStore((state) => state.workspace);
@@ -160,7 +158,6 @@ export default function App() {
 
       {/* Inside the dashboard, the palette mounts within DashboardShell's
           DndContext so rows can be dragged onto the slide. */}
-      {isWorkspaceMode && <CommandPalette />}
       <KeyboardShortcuts />
       <ToastLayer />
     </div>

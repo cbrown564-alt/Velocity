@@ -28,7 +28,7 @@ export const PilotEnvironmentBanner: React.FC = () => {
       <div className="flex items-start justify-between gap-3">
         <div className="space-y-2">
           <div className="flex items-center gap-2 text-[var(--text-primary)]">
-            <ShieldCheck size={16} className="shrink-0 text-[var(--color-accent)]" />
+            <ShieldCheck size={16} className="shrink-0 text-[var(--text-secondary)]" />
             <span className="font-medium">{PILOT_PRIVACY_HEADLINE}</span>
           </div>
           {hasWarnings && (

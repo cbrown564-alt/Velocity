@@ -59,7 +59,7 @@ const EmptyChip: React.FC<{ children: React.ReactNode; highlight?: boolean }> = 
   <span
     className={`block text-[12.5px] rounded-md px-2.5 py-[7px] leading-[1.35] border border-dashed ${
       highlight
-        ? 'border-[var(--color-accent)] text-[var(--text-secondary)]'
+        ? 'border-[var(--border-color)] bg-[var(--bg-rail)] text-[var(--text-secondary)]'
         : 'border-[var(--border-color)] text-[var(--text-tertiary)]'
     }`}
   >
@@ -199,9 +199,7 @@ export const RecipeInspector: React.FC<RecipeInspectorProps> = ({
                   key={set.id}
                   title={set.name}
                   subtitle={setSubtitle(set)}
-                  onRemove={() =>
-                    setTableConfig({ rowVars: tableConfig.rowVars.filter((id) => id !== set.id) })
-                  }
+                  onRemove={() => setTableConfig({ rowVars: tableConfig.rowVars.filter((id) => id !== set.id) })}
                   removeLabel={`Remove ${set.name} from rows`}
                 />
               ))
@@ -273,7 +271,10 @@ export const RecipeInspector: React.FC<RecipeInspectorProps> = ({
           )}
         </Field>
 
-        <hr className="border-none border-t border-[var(--border-color-muted)] my-4" style={{ borderTopStyle: 'solid' }} />
+        <hr
+          className="border-none border-t border-[var(--border-color-muted)] my-4"
+          style={{ borderTopStyle: 'solid' }}
+        />
 
         <SettingRow label="Cell n">
           <ToggleButton

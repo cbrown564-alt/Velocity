@@ -59,5 +59,4 @@ describe('AnalysisOutputFrame', () => {
     expect(frame?.className).toMatch(/shrinkWrap/);
     expect(frame?.className).toMatch(/bleed/);
   });
-
 });

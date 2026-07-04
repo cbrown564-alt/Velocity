@@ -39,14 +39,14 @@ export const DURATIONS = {
   fast: 0.15,
   /** 200ms — standard UI transitions */
   normal: 0.2,
-  /** 250ms — emphasis transitions */
-  emphasis: 0.25,
-  /** 300ms — enter animations */
-  enter: 0.3,
-  /** 400ms — complex / shared-element transitions */
-  complex: 0.4,
-  /** 600ms — dramatic / page transitions */
-  dramatic: 0.6,
+  /** 200ms — emphasis / enter transitions (WP3.2 cap) */
+  emphasis: 0.2,
+  /** 200ms — enter animations (WP3.2 cap) */
+  enter: 0.2,
+  /** 200ms — complex / shared-element transitions (WP3.2 cap) */
+  complex: 0.2,
+  /** 200ms — dramatic / page transitions (WP3.2 cap) */
+  dramatic: 0.2,
 } as const;
 
 /* -------------------------------------------------------------------------- */
@@ -173,7 +173,7 @@ export interface VariantOptions {
 export function buildVariants(options: VariantOptions = {}): Variants {
   const {
     preset = 'fade',
-    duration = DURATIONS.normal,
+    duration = DURATIONS.fast,
     ease = 'standard',
     staggerChildren,
     delay = 0,

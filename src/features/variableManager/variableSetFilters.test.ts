@@ -149,12 +149,14 @@ describe('variableSetFilters', () => {
       expect(result.map((v) => v.id)).toEqual(['vs_age']);
     });
 
-    it('filters by search query (case-insensitive)', () => {
-      const result = filterVariableSets(allSets, {
-        dataset,
-        searchQuery: 'AGE',
-      });
+    it('filters by search query on set name (case-insensitive)', () => {
+      const result = filterVariableSets(allSets, { dataset, searchQuery: 'AGE' });
       expect(result.map((v) => v.id)).toEqual(['vs_age']);
+    });
+
+    it('filters by search query on variable name or label', () => {
+      const result = filterVariableSets(allSets, { dataset, searchQuery: 'q_scale' });
+      expect(result.map((v) => v.id)).toEqual(['vs_q_scale']);
     });
 
     it('filters by type facet', () => {

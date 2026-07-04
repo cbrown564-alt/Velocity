@@ -114,16 +114,14 @@ function SignificanceMarkers({
   if (sigLetters) {
     return (
       <SpringLock animationTrigger={animationTrigger} reducedMotion={reducedMotion}>
-        <span className="text-[10px] font-mono font-semibold text-[var(--color-success)] align-super">
-          {sigLetters}
-        </span>
+        <span className="sig-marker text-[10px] font-mono align-super">{sigLetters}</span>
       </SpringLock>
     );
   }
   if (sig === 'high_95') {
     return (
       <SpringLock animationTrigger={animationTrigger} reducedMotion={reducedMotion}>
-        <ArrowUp size={12} style={{ color: 'var(--color-success)' }} className="shrink-0" aria-hidden />
+        <ArrowUp size={12} className="sig-marker shrink-0" aria-hidden />
       </SpringLock>
     );
   }
@@ -137,7 +135,7 @@ function SignificanceMarkers({
   if (sig === 'low_95') {
     return (
       <SpringLock animationTrigger={animationTrigger} reducedMotion={reducedMotion}>
-        <ArrowDown size={12} style={{ color: 'var(--color-error)' }} className="shrink-0" aria-hidden />
+        <ArrowDown size={12} className="sig-marker shrink-0" aria-hidden />
       </SpringLock>
     );
   }

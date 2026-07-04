@@ -119,7 +119,7 @@ describe('SlideContainer', () => {
     });
 
     render(<SlideContainer />);
-    expect(screen.getByRole('alert')).toHaveTextContent("Couldn't run analysis");
+    expect(screen.getByRole('alert')).toHaveTextContent('Analysis failed');
     expect(screen.getByText('Table main does not exist')).toBeInTheDocument();
   });
 

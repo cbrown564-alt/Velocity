@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import path from 'path';
+import { openOverflowMenu, uploadSavAndReachDashboard } from './helpers/visualPolish';
 
 const savFixture = path.resolve(process.cwd(), 'test_data/sleep.sav');
 
@@ -10,30 +11,10 @@ test('Export Session completes and downloads a session file for sleep.sav', asyn
   await expect(page.getByRole('button', { name: /Upload/i }).first()).toBeVisible({ timeout: 60000 });
   await page.waitForTimeout(2500);
 
-  const fileInput = page.getByTestId('dataset-upload-input');
-  await expect(fileInput).toBeAttached({ timeout: 60000 });
-  await fileInput.setInputFiles(savFixture);
+  await uploadSavAndReachDashboard(page, savFixture);
 
-  const surveyQuestions = page.getByText(/Survey Questions/i);
-  const metadataLoaded = page.getByText('Metadata Loaded');
-
-  await expect
-    .poll(
-      async () => {
-        if (await surveyQuestions.isVisible().catch(() => false)) return 'dashboard';
-        if (await metadataLoaded.isVisible().catch(() => false)) return 'metadata';
-        return 'pending';
-      },
-      { timeout: 120000 },
-    )
-    .not.toBe('pending');
-
-  if (await metadataLoaded.isVisible().catch(() => false)) {
-    await page.getByRole('button', { name: 'Load Full Data' }).click();
-    await expect(surveyQuestions).toBeVisible({ timeout: 120000 });
-  }
-
-  await page.getByTitle('Export portable session').click();
+  await openOverflowMenu(page);
+  await page.getByRole('menuitem', { name: 'Export Session' }).click();
   await expect(page.getByRole('button', { name: /Download \.velocity/i })).toBeVisible({ timeout: 10000 });
 
   const downloadPromise = page.waitForEvent('download', { timeout: 15000 });

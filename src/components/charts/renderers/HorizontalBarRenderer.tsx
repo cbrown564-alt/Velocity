@@ -337,7 +337,7 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
                   }
                   stroke={
                     isSelected
-                      ? 'var(--text-accent)'
+                      ? 'var(--viz-fill-primary)'
                       : hoveredKey === (d.code !== undefined ? String(d.code) : d.label)
                         ? 'var(--viz-fill-primary)'
                         : d.isMissing

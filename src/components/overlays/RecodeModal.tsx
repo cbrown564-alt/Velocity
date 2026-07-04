@@ -98,7 +98,7 @@ export const RecodeModal: React.FC<RecodeModalProps> = ({ isOpen, onClose, varia
       {/* Header */}
       <div className="p-6 border-b border-[var(--border-color)] flex items-center justify-between bg-[var(--bg-panel)]">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-[var(--bg-surface)] text-[var(--color-accent)] rounded-lg">
+          <div className="p-2 bg-[var(--bg-surface)] text-[var(--text-secondary)] rounded-lg">
             <Wand2 size={20} />
           </div>
           <div>
@@ -132,7 +132,7 @@ export const RecodeModal: React.FC<RecodeModalProps> = ({ isOpen, onClose, varia
             type="text"
             value={newVarName}
             onChange={(e) => setNewVarName(e.target.value)}
-            className="w-full px-4 py-2 border border-[var(--border-color)] rounded-lg focus:ring-2 focus:ring-[var(--color-accent)]/20 focus:border-[var(--color-accent)] outline-none font-medium text-[var(--text-primary)] bg-[var(--bg-panel)]"
+            className="w-full px-4 py-2 border border-[var(--border-color)] rounded-lg focus:ring-2 focus:ring-[var(--border-color-active)]/20 focus:border-[var(--border-color-active)] outline-none font-medium text-[var(--text-primary)] bg-[var(--bg-panel)]"
           />
         </div>
 
@@ -143,7 +143,7 @@ export const RecodeModal: React.FC<RecodeModalProps> = ({ isOpen, onClose, varia
               onClick={() => setMode('categorical')}
               className={`flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-md transition-all ${
                 mode === 'categorical'
-                  ? 'bg-[var(--bg-panel)] text-[var(--color-accent)] shadow-sm'
+                  ? 'bg-[var(--bg-panel)] text-[var(--text-primary)] shadow-sm'
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
               }`}
             >
@@ -154,7 +154,7 @@ export const RecodeModal: React.FC<RecodeModalProps> = ({ isOpen, onClose, varia
               onClick={() => setMode('binning')}
               className={`flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-md transition-all ${
                 mode === 'binning'
-                  ? 'bg-[var(--bg-panel)] text-[var(--color-accent)] shadow-sm'
+                  ? 'bg-[var(--bg-panel)] text-[var(--text-primary)] shadow-sm'
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
               }`}
             >
@@ -188,14 +188,14 @@ export const RecodeModal: React.FC<RecodeModalProps> = ({ isOpen, onClose, varia
                       <div className="text-sm text-[var(--text-primary)] font-medium truncate" title={displayLabel}>
                         {displayLabel}
                       </div>
-                      <div className="text-[var(--border-color)] group-hover:text-[var(--color-accent)]/50">
+                      <div className="text-[var(--border-color)] group-hover:text-[var(--text-secondary)]">
                         <ArrowRight size={16} />
                       </div>
                       <input
                         type="text"
                         value={mappings[val] || val}
                         onChange={(e) => handleMappingChange(val, e.target.value)}
-                        className="w-full px-3 py-1.5 border border-[var(--border-color)] rounded-md text-sm text-[var(--text-primary)] bg-[var(--bg-app)] focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent)]/20 outline-none"
+                        className="w-full px-3 py-1.5 border border-[var(--border-color)] rounded-md text-sm text-[var(--text-primary)] bg-[var(--bg-app)] focus:border-[var(--border-color-active)] focus:ring-2 focus:ring-[var(--border-color-active)]/20 outline-none"
                       />
                     </div>
                   );
@@ -235,7 +235,7 @@ export const RecodeModal: React.FC<RecodeModalProps> = ({ isOpen, onClose, varia
                             newRules[idx].min = val;
                             setRules(newRules);
                           }}
-                          className="w-full px-3 py-1.5 border border-[var(--border-color)] bg-[var(--bg-app)] rounded-md text-sm text-[var(--text-primary)] focus:border-[var(--color-accent)] outline-none"
+                          className="w-full px-3 py-1.5 border border-[var(--border-color)] bg-[var(--bg-app)] rounded-md text-sm text-[var(--text-primary)] focus:border-[var(--border-color-active)] outline-none"
                         />
                       </td>
                       <td className="p-2">
@@ -249,7 +249,7 @@ export const RecodeModal: React.FC<RecodeModalProps> = ({ isOpen, onClose, varia
                             newRules[idx].max = val;
                             setRules(newRules);
                           }}
-                          className="w-full px-3 py-1.5 border border-[var(--border-color)] bg-[var(--bg-app)] rounded-md text-sm text-[var(--text-primary)] focus:border-[var(--color-accent)] outline-none"
+                          className="w-full px-3 py-1.5 border border-[var(--border-color)] bg-[var(--bg-app)] rounded-md text-sm text-[var(--text-primary)] focus:border-[var(--border-color-active)] outline-none"
                         />
                       </td>
                       <td className="p-2">
@@ -261,7 +261,7 @@ export const RecodeModal: React.FC<RecodeModalProps> = ({ isOpen, onClose, varia
                             newRules[idx].label = e.target.value;
                             setRules(newRules);
                           }}
-                          className="w-full px-3 py-1.5 border border-[var(--border-color)] bg-[var(--bg-app)] rounded-md text-sm text-[var(--text-primary)] focus:border-[var(--color-accent)] outline-none"
+                          className="w-full px-3 py-1.5 border border-[var(--border-color)] bg-[var(--bg-app)] rounded-md text-sm text-[var(--text-primary)] focus:border-[var(--border-color-active)] outline-none"
                         />
                       </td>
                       <td className="p-2 text-center">
@@ -282,7 +282,7 @@ export const RecodeModal: React.FC<RecodeModalProps> = ({ isOpen, onClose, varia
               onClick={() =>
                 setRules([...rules, { min: undefined, max: undefined, label: `Group ${rules.length + 1}` }])
               }
-              className="flex items-center gap-2 text-xs font-medium text-[var(--color-accent)] hover:bg-[var(--color-accent)]/10 px-3 py-2 rounded-lg transition-colors border border-[var(--color-accent)]/20"
+              className="flex items-center gap-2 text-xs font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-rail)] px-3 py-2 rounded-lg transition-colors border border-[var(--border-color)]"
             >
               <Plus size={14} />
               Add Interval

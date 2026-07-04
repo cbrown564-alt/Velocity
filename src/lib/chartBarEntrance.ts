@@ -1,8 +1,8 @@
 import type { CSSProperties } from 'react';
 import type { SVGMotionProps } from 'framer-motion';
 
-export const CHART_BAR_ENTRANCE_DURATION_S = 0.3;
-export const CHART_BAR_ENTRANCE_STAGGER_S = 0.025;
+export const CHART_BAR_ENTRANCE_DURATION_S = 0.15;
+export const CHART_BAR_ENTRANCE_STAGGER_S = 0.01;
 
 type BarOrientation = 'horizontal' | 'vertical';
 

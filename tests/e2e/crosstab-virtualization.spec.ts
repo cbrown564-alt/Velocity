@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { clearBrowserStorage, uploadFileAndReachDashboard } from './helpers/visualPolish';
+import { clearBrowserStorage, insertVariableFromPalette, uploadFileAndReachDashboard } from './helpers/visualPolish';
 
 /**
  * Phase 4 Task 2 — crosstab row virtualization, verified in a real browser.
@@ -46,16 +46,9 @@ test('crosstab rows virtualize for large tables (scroll-driven windowing)', asyn
     buffer: Buffer.from(buildLargeCsv(), 'utf8'),
   });
 
-  // Build a city × region crosstab: first variable becomes rows, second columns.
-  const cityBtn = page.getByRole('button', { name: /^city$/i }).first();
-  await expect(cityBtn).toBeVisible({ timeout: 120000 });
-  await cityBtn.click();
-  await page.waitForTimeout(1000);
-
-  const regionBtn = page.getByRole('button', { name: /^region$/i }).first();
-  await expect(regionBtn).toBeVisible({ timeout: 10000 });
-  await regionBtn.click();
-  await page.waitForTimeout(2500);
+  // Build a city × region crosstab via insert palette (resident sidebar removed).
+  await insertVariableFromPalette(page, 'city', 'rows');
+  await insertVariableFromPalette(page, 'region', 'columns');
 
   const table = page.locator('table');
   await expect(table).toBeVisible({ timeout: 30000 });

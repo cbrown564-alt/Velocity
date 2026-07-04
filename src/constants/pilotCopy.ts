@@ -24,8 +24,7 @@ export const PILOT_LANDING_WORKFLOW_STEPS = [
 
 export const PILOT_LANDING_DROP_LABEL = 'Drop your survey file here';
 
-export const PILOT_LANDING_DROP_HINT =
-  'SPSS and CSV files welcome · weights preserved · nothing uploads to a server';
+export const PILOT_LANDING_DROP_HINT = 'SPSS and CSV files welcome · weights preserved · nothing uploads to a server';
 
 export const PILOT_LANDING_UPLOAD_CTA = 'Upload survey file';
 

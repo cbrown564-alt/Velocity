@@ -69,7 +69,11 @@ function getSlideDisplayLabel(
   const columnVariable = sourceState.colVar
     ? (() => {
         const set = variableSets.find((v) => v.id === sourceState.colVar);
-        return { id: sourceState.colVar!, name: set?.name || sourceState.colVar!, label: set?.name || sourceState.colVar! };
+        return {
+          id: sourceState.colVar!,
+          name: set?.name || sourceState.colVar!,
+          label: set?.name || sourceState.colVar!,
+        };
       })()
     : null;
 
@@ -97,9 +101,11 @@ interface SlideRowProps {
   canDelete: boolean;
   variableSets: NamedSet[];
   currentTableConfig?: { rowVars: string[]; colVar: string | null };
+  forceRename?: boolean;
   onSelect: () => void;
   onDuplicate: () => void;
   onDelete: () => void;
+  onRenameDone?: () => void;
 }
 
 const SlideRow: React.FC<SlideRowProps> = ({
@@ -110,9 +116,11 @@ const SlideRow: React.FC<SlideRowProps> = ({
   canDelete,
   variableSets,
   currentTableConfig,
+  forceRename = false,
   onSelect,
   onDuplicate,
   onDelete,
+  onRenameDone,
 }) => {
   const updateSlideTitle = useVelocityStore((state) => state.updateSlideTitle);
   const [contextMenuOpen, setContextMenuOpen] = useState(false);
@@ -144,6 +152,11 @@ const SlideRow: React.FC<SlideRowProps> = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [contextMenuOpen]);
 
+  const startRename = useCallback(() => {
+    setRenameValue(slide.title === 'New Slide' ? displayLabel : slide.title);
+    setRenaming(true);
+  }, [slide.title, displayLabel]);
+
   useEffect(() => {
     if (renaming) {
       renameInputRef.current?.focus();
@@ -151,15 +164,15 @@ const SlideRow: React.FC<SlideRowProps> = ({
     }
   }, [renaming]);
 
-  const startRename = () => {
-    setRenameValue(slide.title === 'New Slide' ? displayLabel : slide.title);
-    setRenaming(true);
-  };
+  useEffect(() => {
+    if (forceRename && !renaming) startRename();
+  }, [forceRename, renaming, startRename]);
 
   const commitRename = () => {
     const trimmed = renameValue.trim();
     if (trimmed) updateSlideTitle(slide.id, trimmed);
     setRenaming(false);
+    onRenameDone?.();
   };
 
   return (
@@ -199,7 +212,10 @@ const SlideRow: React.FC<SlideRowProps> = ({
               onKeyDown={(e) => {
                 e.stopPropagation();
                 if (e.key === 'Enter') commitRename();
-                if (e.key === 'Escape') setRenaming(false);
+                if (e.key === 'Escape') {
+                  setRenaming(false);
+                  onRenameDone?.();
+                }
               }}
               aria-label="Rename slide"
               className="w-full bg-transparent text-[12.5px] text-[var(--text-primary)] outline-none border-b border-[var(--border-color)]"
@@ -300,6 +316,8 @@ export const StoryRail: React.FC<StoryRailProps> = ({
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [slideToDelete, setSlideToDelete] = useState<string | null>(null);
 
+  const [renamingSlideId, setRenamingSlideId] = useState<string | null>(null);
+
   const deckName = useMemo(() => {
     if (!dataset?.name) return 'Untitled deck';
     return dataset.name.replace(/\.(sav|csv|xlsx)$/i, '');
@@ -336,6 +354,10 @@ export const StoryRail: React.FC<StoryRailProps> = ({
 
   useEffect(() => {
     const inCanvas = () => useVelocityStore.getState().appMode !== 'variables';
+    const goSlide = (direction: 'prev' | 'next') => {
+      if (!inCanvas()) return;
+      navigateSlide(direction);
+    };
     const unregister = [
       registerShortcut({
         id: 'canvas-slide-prev',
@@ -357,6 +379,43 @@ export const StoryRail: React.FC<StoryRailProps> = ({
           if (!inCanvas()) return;
           event.preventDefault();
           navigateSlide('next');
+        },
+      }),
+      registerShortcut({
+        id: 'rail-slide-prev',
+        contexts: ['canvas'],
+        priority: 12,
+        match: (event) =>
+          (event.key === 'ArrowUp' || event.key === 'k' || event.key === 'K') && !event.metaKey && !event.ctrlKey,
+        handler: (event) => {
+          if (!inCanvas()) return;
+          event.preventDefault();
+          goSlide('prev');
+        },
+      }),
+      registerShortcut({
+        id: 'rail-slide-next',
+        contexts: ['canvas'],
+        priority: 13,
+        match: (event) =>
+          (event.key === 'ArrowDown' || event.key === 'j' || event.key === 'J') && !event.metaKey && !event.ctrlKey,
+        handler: (event) => {
+          if (!inCanvas()) return;
+          event.preventDefault();
+          goSlide('next');
+        },
+      }),
+      registerShortcut({
+        id: 'rail-rename-slide',
+        contexts: ['canvas'],
+        priority: 14,
+        match: (event) => event.key === 'Enter' && !event.metaKey && !event.ctrlKey && !event.altKey,
+        handler: (event) => {
+          if (!inCanvas()) return;
+          const slideId = useVelocityStore.getState().activeSlideId;
+          if (!slideId) return;
+          event.preventDefault();
+          setRenamingSlideId(slideId);
         },
       }),
       registerShortcut({
@@ -456,9 +515,7 @@ export const StoryRail: React.FC<StoryRailProps> = ({
                   canDelete={slides.length > 1}
                   variableSets={variableSets}
                   currentTableConfig={
-                    isActive
-                      ? { rowVars: tableConfig?.rowVars ?? [], colVar: tableConfig?.colVar ?? null }
-                      : undefined
+                    isActive ? { rowVars: tableConfig?.rowVars ?? [], colVar: tableConfig?.colVar ?? null } : undefined
                   }
                   onSelect={() => setActiveSlide(slide.id)}
                   onDuplicate={() => duplicateSlide(slide.id)}
@@ -466,6 +523,8 @@ export const StoryRail: React.FC<StoryRailProps> = ({
                     setSlideToDelete(slide.id);
                     setDeleteModalOpen(true);
                   }}
+                  forceRename={renamingSlideId === slide.id}
+                  onRenameDone={() => setRenamingSlideId(null)}
                 />
               );
             })}

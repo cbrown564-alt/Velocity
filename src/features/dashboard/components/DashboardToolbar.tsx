@@ -23,6 +23,8 @@ export interface DashboardToolbarProps {
   activeSlide: Slide | null;
   focusMode: boolean;
   canOpenExport: boolean;
+  recipeOpen: boolean;
+  onToggleRecipe: () => void;
   onReturnToWorkspace: () => void;
   onOpenSessionImport: () => void;
   onExportSession: () => void;
@@ -176,6 +178,8 @@ export const DashboardToolbar: React.FC<DashboardToolbarProps> = ({
   activeSlide,
   focusMode,
   canOpenExport,
+  recipeOpen,
+  onToggleRecipe,
   onReturnToWorkspace,
   onOpenSessionImport,
   onExportSession,
@@ -233,9 +237,15 @@ export const DashboardToolbar: React.FC<DashboardToolbarProps> = ({
 
       <button
         type="button"
-        onClick={() => useVelocityStore.getState().openCommandPalette()}
-        className={GHOST_BUTTON}
+        data-testid="recipe-inspector-toggle"
+        onClick={onToggleRecipe}
+        aria-pressed={recipeOpen}
+        className={`${GHOST_BUTTON} ${recipeOpen ? 'bg-[var(--bg-rail)] text-[var(--text-primary)]' : ''}`}
       >
+        Recipe
+      </button>
+
+      <button type="button" onClick={() => useVelocityStore.getState().openCommandPalette()} className={GHOST_BUTTON}>
         Insert
         <kbd className={KBD_HINT}>⌘K</kbd>
       </button>

@@ -35,8 +35,16 @@ export function filterVariableSets(
   }
 
   if (searchQuery) {
-    const query = searchQuery.toLowerCase();
-    sets = sets.filter((vs) => vs.name.toLowerCase().includes(query));
+    const query = searchQuery.toLowerCase().trim();
+    sets = sets.filter((vs) => {
+      if (vs.name.toLowerCase().includes(query)) return true;
+      if (!dataset) return false;
+      return vs.variableIds.some((variableId) => {
+        const variable = dataset.variables.find((v) => v.id === variableId);
+        if (!variable) return false;
+        return variable.name.toLowerCase().includes(query) || (variable.label?.toLowerCase().includes(query) ?? false);
+      });
+    });
   }
 
   if (facetFilters.types.length > 0) {

@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import path from 'path';
-import { clearBrowserStorage, uploadFileAndReachDashboard } from './helpers/visualPolish';
+import { clearBrowserStorage, expectDatasetLoaded, uploadFileAndReachDashboard } from './helpers/visualPolish';
 
 /**
  * Brand tracker workflow smoke (PILOT-DEMO-4 / Phase D).
@@ -20,7 +20,7 @@ test('brand tracker workflow: load example, auto funnel-relevant first crosstab'
 
   await uploadFileAndReachDashboard(page, brandTrackerFixture);
 
-  await expect(page.getByText(/brandtracker_w4\.sav \(1200 rows\)/)).toBeVisible({ timeout: 60000 });
+  await expectDatasetLoaded(page, 'brandtracker_w4.sav', { rowCount: 1200 });
 
   // The one-time auto-first-crosstab picks brand preference x segment for the
   // tracker file, so a computed table with a segment banner appears without any

@@ -245,7 +245,8 @@ export const createUISlice: StateCreator<UISlice, [], [], UISlice> = (set) => ({
   openRecodeModal: (variable) => set({ recodeModal: { isOpen: true, variable } }),
   closeRecodeModal: () => set({ recodeModal: { isOpen: false, variable: null } }),
 
-  openFilterModal: (initialVariableId) => set({ filterModal: { isOpen: true, initialVariableId: initialVariableId ?? null } }),
+  openFilterModal: (initialVariableId) =>
+    set({ filterModal: { isOpen: true, initialVariableId: initialVariableId ?? null } }),
   closeFilterModal: () => set({ filterModal: { isOpen: false } }),
 
   openAnalysisExportModal: (config) => set({ analysisExportModal: { isOpen: true, config } }),

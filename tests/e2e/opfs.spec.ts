@@ -1,6 +1,10 @@
 import { test, expect } from '@playwright/test';
 import path from 'path';
-import { waitForRestorationPromptOrWorkspace } from './helpers/visualPolish';
+import {
+  dashboardReadyLocator,
+  uploadSavAndReachDashboard,
+  waitForRestorationPromptOrWorkspace,
+} from './helpers/visualPolish';
 
 const savFixture = path.resolve(process.cwd(), 'test_data/fixtures/test_small.sav');
 
@@ -23,38 +27,14 @@ test('OPFS persists dataset across reloads', async ({ page }) => {
 
   await expect(page.getByRole('button', { name: /Upload/i }).first()).toBeVisible({ timeout: 60000 });
 
-  const fileInput = page.getByTestId('dataset-upload-input');
-  await expect(fileInput).toBeAttached({ timeout: 60000 });
-  await fileInput.setInputFiles(savFixture);
-
-  const surveyQuestions = page.getByText(/Survey Questions/);
-  const metadataLoaded = page.getByText('Metadata Loaded');
-
-  await expect
-    .poll(
-      async () => {
-        if (await surveyQuestions.isVisible().catch(() => false)) return 'dashboard';
-        if (await metadataLoaded.isVisible().catch(() => false)) return 'metadata';
-        return 'pending';
-      },
-      { timeout: 120000 },
-    )
-    .not.toBe('pending');
-
-  if (await metadataLoaded.isVisible().catch(() => false)) {
-    const loadFull = page.getByRole('button', { name: 'Load Full Data' });
-    await loadFull.click();
-    await expect(surveyQuestions).toBeVisible({ timeout: 120000 });
-  }
+  await uploadSavAndReachDashboard(page, savFixture);
 
   // Hub-and-spoke mode transition should preserve loaded state.
-  const modeToggle = page.locator('button[title="Toggle Variable Manager (D)"]');
-  await expect(modeToggle).toBeVisible({ timeout: 30000 });
-  await modeToggle.click();
-  await expect(page.getByText('Variable Manager')).toBeVisible({ timeout: 30000 });
   await page.keyboard.press('d');
-  await expect(page.getByText('Variable Manager')).toBeHidden({ timeout: 30000 });
-  await expect(surveyQuestions).toBeVisible({ timeout: 30000 });
+  await expect(page.getByRole('heading', { name: 'Variables' })).toBeVisible({ timeout: 30000 });
+  await page.keyboard.press('d');
+  await expect(page.getByRole('heading', { name: 'Variables' })).toBeHidden({ timeout: 30000 });
+  await expect(dashboardReadyLocator(page)).toBeVisible({ timeout: 30000 });
 
   await page.reload();
 
@@ -63,7 +43,7 @@ test('OPFS persists dataset across reloads', async ({ page }) => {
     await restoreButton.click();
   }
 
-  await expect(page.getByText('Survey Questions')).toBeVisible({ timeout: 120000 });
+  await expect(dashboardReadyLocator(page)).toBeVisible({ timeout: 120000 });
 });
 
 test('Start Fresh clears persisted session after reload', async ({ page }) => {
@@ -86,28 +66,7 @@ test('Start Fresh clears persisted session after reload', async ({ page }) => {
 
   await expect(page.getByRole('button', { name: /Upload/i }).first()).toBeVisible({ timeout: 60000 });
 
-  const fileInput = page.getByTestId('dataset-upload-input');
-  await expect(fileInput).toBeAttached({ timeout: 60000 });
-  await fileInput.setInputFiles(savFixture);
-
-  const surveyQuestions = page.getByText(/Survey Questions/);
-  const metadataLoaded = page.getByText('Metadata Loaded');
-
-  await expect
-    .poll(
-      async () => {
-        if (await surveyQuestions.isVisible().catch(() => false)) return 'dashboard';
-        if (await metadataLoaded.isVisible().catch(() => false)) return 'metadata';
-        return 'pending';
-      },
-      { timeout: 120000 },
-    )
-    .not.toBe('pending');
-
-  if (await metadataLoaded.isVisible().catch(() => false)) {
-    await page.getByRole('button', { name: 'Load Full Data' }).click();
-    await expect(surveyQuestions).toBeVisible({ timeout: 120000 });
-  }
+  await uploadSavAndReachDashboard(page, savFixture);
 
   await page.evaluate(() => {
     localStorage.removeItem('velocity-state');
@@ -160,5 +119,7 @@ test('Reload smoke: app boots after reload', async ({ page }) => {
   await page.reload();
 
   await expect(page.getByText(/^Velocity$/)).toBeVisible({ timeout: 30000 });
-  await expect(page.getByText(/client SAV to editable deck/i)).toBeVisible({ timeout: 30000 });
+  await expect(page.getByText(/Turn a client survey file into an editable PowerPoint deck/i)).toBeVisible({
+    timeout: 30000,
+  });
 });

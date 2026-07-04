@@ -14,28 +14,43 @@
   flex-direction: column;
   flex: 1;
   min-width: 280px;
-  background-color: var(--mat-panel-bg, var(--bg-panel));
-  backdrop-filter: var(--mat-panel-filter, none);
-  -webkit-backdrop-filter: var(--mat-panel-filter, none);
-  border-left: 1px solid var(--border-subtle);
+  background-color: var(--bg-panel);
   overflow: hidden;
-  animation: slideIn var(--transition-base);
 }
 
 .inspectorHidden {
   display: none;
 }
 
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateX(20px);
-  }
+.subVariableNav {
+  display: flex;
+  gap: 4px;
+  padding: 12px 26px 0;
+  overflow-x: auto;
+  flex-shrink: 0;
+}
 
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+.subVariableTab {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-secondary);
+  padding: 4px 8px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background: transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 120ms ease;
+}
+
+.subVariableTab:hover {
+  background: var(--bg-rail);
+}
+
+.subVariableTabActive {
+  background: var(--bg-panel-tint, var(--bg-rail));
+  color: var(--text-primary);
+  border-color: var(--border-color);
 }
 
 /* ============================================================================
@@ -43,7 +58,7 @@
    ============================================================================ */
 
 .header {
-  padding: var(--space-4) var(--space-6) 0 var(--space-6);
+  padding: 22px 26px 0 26px;
   border-bottom: 1px solid var(--border-color);
   background-color: transparent;
   display: flex;
@@ -73,12 +88,13 @@
 }
 
 .variablePrimaryTitle {
-  font-family: var(--font-display);
-  font-size: var(--text-xl);
+  font-family: var(--font-body);
+  font-size: 15px;
   font-weight: 600;
   color: var(--text-primary);
   margin: 0;
-  line-height: 1.2;
+  line-height: 1.4;
+  text-wrap: balance;
 }
 
 .editIcon {
