@@ -8,6 +8,7 @@ Captured July 3, 2026 on branch `cursor/design-reset-integration-69a6` after the
 
 | Reference | Location | Notes |
 | :--- | :--- | :--- |
+| **Before/after analysis** | [`before_after_analysis.html`](before_after_analysis.html) | Side-by-side comparisons, gains/losses, questions, paths forward |
 | North-star mock | [`design-reset-north-star/`](../design-reset-north-star/) | Visual target (interactive `north_star.html` + static PNGs) |
 | July 1 pre-reset audit | [`ui-pilot-readiness-audit/screenshots-p2-final/`](../ui-pilot-readiness-audit/screenshots-p2-final/) | Post–PR #18 baseline before design reset |
 | This pack | `screenshots/` | Post-reset production UI |
