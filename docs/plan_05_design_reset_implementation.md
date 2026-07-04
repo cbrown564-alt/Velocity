@@ -270,16 +270,16 @@ All work packages landed on branch `cursor/design-reset-integration-69a6` (integ
 | 1.3 | Quiet toolbar | **Done** | `978fb4b` — view toggle, Insert ⌘K, overflow, primary Export |
 | 1.4 | Accent budget | **Done** | `45d8cfa`, `0bfc383` — grep audit; ink focus rings; monochrome type glyphs |
 | 2.1 | Story rail | **Done** | `8d8807b` — `StoryRail` wired; TimelineDock retired |
-| 2.2 | Insert palette | **Done** | `22e6511` — ↵/⌥↵/⇧↵ grammar; variables default; `>` commands |
+| 2.2 | Insert palette | **Done** | `22e6511` — ↵/⌥↵/⇧↵ grammar; variables default; `>` commands; WP2.2 open budget verified (`wp22-palette-open-benchmark.json`, median 15ms on 500-var fixture) |
 | 2.3 | Recipe inspector | **Done** | `8d8807b` — shelf/FilterBar retired; chips + display settings |
-| 2.4 | Honest slide | **Done** | `99e104f`, `d1ba222` — margin note outside card; not in PPTX |
+| 2.4 | Honest slide | **Done** | `99e104f`, `d1ba222` — margin note outside card; not in PPTX; structural parity via `canvas-pptx-parity.mjs` (`wp24-canvas-pptx-parity.json`) |
 | 2.5 | Two-pane Variable Manager | **Done** | `c8bf902`, `a655c0d` — Miller columns deleted; dense rows + inspector |
 | 3.1 | Keyboard completion | **Done** | `da434a5` — rail J/K, rename ↵, palette everywhere, `?` overlay |
 | 3.2 | Motion pass | **Done** | `da434a5` — 150ms standard; decorative motion removed |
 | 3.3 | Copy pass | **Done** | `da434a5` — empty states, errors, labels per writing rules |
 | 3.4 | Type & spacing sweep | **Done** | `da434a5` — 13px UI base, hairline discipline, tabular-nums |
 | 4.1 | Screenshot audit | **Done** | `docs/assets/design-reset-evidence/screenshots/` (15 frames, July 3 2026) |
-| 4.2 | Five-minute metric | **Done** | Executed via `scripts/design-reset-five-minute-pass.mjs`; results in `docs/assets/design-reset-evidence/wp42-five-minute-pass.json` |
+| 4.2 | Five-minute metric | **Done** | `scripts/design-reset-five-minute-pass.mjs` — **0:11** elapsed, 3 deck slides, 4 exported slides (title + 3 tables), 0 interruptions (`wp42-five-minute-pass.json`, July 4 2026) |
 | 4.3 | Docs reconciliation | **Done** | `design_01_system.md`, `design_02_ux_modes.md`, tracker §7 updated |
 | 4.4 | PILOT-6 re-screenshot flag | **Done** | Flag raised §6 — photography predates reset; re-capture required |
 

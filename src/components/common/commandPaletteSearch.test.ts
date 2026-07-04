@@ -84,4 +84,21 @@ describe('commandPaletteSearch', () => {
     expect(canAddVariableSetToWeight(numericSet, variables)).toBe(true);
     expect(canAddVariableSetToWeight(mockNominalSet, variables)).toBe(false);
   });
+
+  it('searches 500 variable sets within the WP2.2 open budget (<100ms)', () => {
+    const sets = Array.from({ length: 500 }, (_, i) => ({
+      ...mockNominalSet,
+      id: `var_${i}`,
+      name: `Variable ${i}`,
+      variableIds: [`v${i}`],
+    }));
+
+    const start = performance.now();
+    const results = searchVariableSetsForPalette('Variable 42', sets);
+    const elapsedMs = performance.now() - start;
+
+    expect(results.length).toBeGreaterThan(0);
+    expect(results.some((match) => match.set.id === 'var_42')).toBe(true);
+    expect(elapsedMs).toBeLessThan(100);
+  });
 });

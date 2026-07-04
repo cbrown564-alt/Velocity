@@ -39,3 +39,20 @@ SCREENSHOT_OUT=docs/assets/design-reset-evidence/screenshots node scripts/ui-wor
 ```
 
 Defaults: 1440×900 viewport, 2× device scale, single evolved Soft Machine theme, dataset `test_data/sleep.sav`.
+
+## Verification artifacts
+
+| File | Work package | Notes |
+| :--- | :--- | :--- |
+| `wp42-five-minute-pass.json` | WP4.2 | Timed pass: file-drop → 3 titled slides → All Slides PPTX export |
+| `wp42-five-minute-pass.pptx` | WP4.2 | Exported deck from the timed pass (candidate for WP2.4 parity) |
+| `wp22-palette-open-benchmark.json` | WP2.2 | Insert palette open latency on 500-variable fixture (<100ms budget) |
+| `wp24-canvas-pptx-parity.json` | WP2.4 | Structural export quality vs golden `tests/fixtures/export/sleep-report.pptx` |
+
+Regenerate verification artifacts:
+
+```bash
+node scripts/design-reset-five-minute-pass.mjs
+node scripts/design-reset-palette-open-benchmark.mjs
+node scripts/report-quality/canvas-pptx-parity.mjs
+```

@@ -1,18 +1,45 @@
 {
-  "capturedAt": "2026-07-04T10:48:09.119Z",
+  "capturedAt": "2026-07-04T11:38:03.180Z",
   "environment": {
     "viewport": "1440×900",
     "dataset": "test_data/sleep.sav",
     "browser": "chromium"
   },
-  "elapsedMs": 10553,
-  "elapsedFormatted": "0:10",
+  "elapsedMs": 11554,
+  "elapsedFormatted": "0:11",
+  "slideCount": 3,
+  "exportedSlideCount": 4,
+  "exportedTableCount": 3,
+  "steps": [
+    {
+      "step": "dashboard-ready",
+      "atMs": 1289
+    },
+    {
+      "step": "slide-1-crosstab",
+      "atMs": 1691
+    },
+    {
+      "step": "slide-2-crosstab",
+      "atMs": 6853
+    },
+    {
+      "step": "slide-3-rows",
+      "atMs": 10064
+    },
+    {
+      "step": "pptx-saved",
+      "atMs": 11554
+    }
+  ],
   "interruptionCount": 0,
   "interruptions": [],
   "pass": true,
   "criteria": {
     "maxElapsedMs": 300000,
-    "maxInterruptions": 0
+    "maxInterruptions": 0,
+    "minSlides": 3,
+    "minExportedSlides": 3
   },
   "pptxPath": "/workspace/docs/assets/design-reset-evidence/wp42-five-minute-pass.pptx"
 }
