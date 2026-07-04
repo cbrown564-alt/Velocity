@@ -242,12 +242,13 @@ These rows remain directionally valid, but should not become active until `PILOT
 | STAB-CI-20 | CI artifacts | Upload coverage + Playwright reports on failure | STAB-CI-12 | Done | No | A | `coverage-report` (always); `playwright-report` / `playwright-test-results` on e2e failure |
 | STAB-CI-21 | CI bootstrap parity | Submodules recursive checkout, `npm ci --legacy-peer-deps`, ratchet fetch-depth | STAB-CI-12 | Done | No | A | All jobs; `lint-format` uses `fetch-depth: 0` for merge-base ratchets |
 | STAB-CI-22 | Doc sync (CI overhaul) | Update `arch_08`, pre-PR playbook, tracker §4.5, PR template, contributing, RCA banner | STAB-CI-12 | Done | No | A | This row; `docs/arch_08_testing.md` §7–§8, `pre_pr_verification.md`, `.github/pull_request_template.md` |
+| STAB-CI-23 | Features/overlays coverage ratchet | Raise per-path `src/features/**` and `src/components/overlays/**` function floors toward 82% as characterization tests land | STAB-CI-11 | In progress | No | A,U | **Baseline (July 2026):** measured fn 70.1% (`features`) / 67.1% (`overlays`) vs floors 70% / 67%; global fn 81.9%. **Target:** raise per-path fn floors incrementally toward 82% (global fn floor). **Slices (parallel):** overlays (`RecodeModal`, `ExportModal`, `FilterModal`, `SessionImportModal`), workspace (`WorkspaceView`, `ExportImportModal`, `WaveTimeline`), dashboard (hooks + `StoryRail`, `DashboardToolbar`, `DataTable`), variableManager (`VariableInspector`, `VariableManager`, `VariableList`), harmonization (no co-located tests yet). See `arch_08_testing.md` §7.1. |
 
 #### STAB-CI deferred (future ratchets)
 
 | ID | Outcome |
 | :--- | :--- |
-| STAB-CI-23 | Raise per-path features/overlays function floors toward 82% as characterization tests land |
+| STAB-CI-24+ | Further per-path ratchets (`services`, `store`, harmonization UI) after STAB-CI-23 closes the features/overlays gap |
 
 ## 5. Completed Work Reference
 

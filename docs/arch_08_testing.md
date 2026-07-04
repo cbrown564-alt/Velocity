@@ -167,6 +167,29 @@ Per-path floors (`STAB-CI-11`; configured in `vitest.config.ts` — raise as tes
 
 PRs failing any global or per-path threshold will not merge.
 
+### STAB-CI-23: features/overlays function ratchet (in progress)
+
+**Goal:** raise per-path function floors for `src/features/**` and `src/components/overlays/**` toward the global fn floor (81% today; 82% aspirational) by landing characterization tests — never lower existing floors.
+
+**Measured baseline (July 2026, `npm run test:run -- --coverage`):**
+
+| Path glob | Measured fn | Current floor | Gap to 82% |
+| :--- | ---: | ---: | ---: |
+| `src/features/**` | 70.1% | 70% | ~12 pts |
+| `src/components/overlays/**` | 67.1% | 67% | ~15 pts |
+
+**Execution slices** (parallel-safe; add co-located `*.test.{ts,tsx}` only):
+
+| Slice | Priority modules (fn &lt; 70%) | Notes |
+| :--- | :--- | :--- |
+| Overlays | `RecodeModal`, `ExportModal`, `FilterModal`, `SessionImportModal`, `DataDrawer` | Extend existing modal tests; cover cancel/error/secondary actions |
+| Workspace | `WorkspaceView`, `ExportImportModal`, `WaveTimeline`, `DatasetSidebar` | Hook + component characterization; mock OPFS/store |
+| Dashboard | `useDashboardDnD`, `useResolvedVariables`, `useAutoFirstCrosstab`, `StoryRail`, `DashboardToolbar`, `DataTable`, `SlideContainer` | Hooks currently untested; extend shell/toolbar tests |
+| Variable manager | `VariableInspector`, `VariableManager`, `VariableList` | Inspector at ~33% fn; extend selection/filter paths |
+| Harmonization UI | `HarmonizationWorkspace`, `WaveDetectionBanner`, `ValueRemapPanel`, `MappingTable` | No co-located tests yet; exclude from floor raise until first tests land |
+
+**Ratchet policy:** land tests in a slice → re-measure aggregate fn for that glob → raise `vitest.config.ts` floor only when measured fn exceeds the new floor by ≥1 pt. Do not raise both globs in one PR unless both pass. Close STAB-CI-23 when both globs sustain ≥82% fn with updated floors.
+
 ### Mutation testing (`src/core/`)
 
 Stryker mutation testing measures whether unit tests actually detect logic changes, not just line coverage.
@@ -192,7 +215,7 @@ When changing `src/core/`, run mutation tests locally or rely on the CI `mutatio
 
 ### Known blind spots (stabilization)
 
-`vitest.config.ts` still excludes some product areas without full characterization coverage: `src/components/charts/`, untested `src/store/slices/data/*` modules, `src/hooks/`, `duckDbArrow.ts` (browser path gated by Playwright smoke), and harmonization/onboarding UI below per-path floors. **STAB-CI-7 (July 2026)** removed blanket exclusions for `src/features/` and `src/components/overlays/` after 40+ co-located characterization tests landed. **STAB-CI-8** added `EngineProxy.test.ts` and `duckdbBundles.test.ts`. **STAB-CI-11** added per-path honesty thresholds. Green Vitest coverage does not imply workspace/export UI confidence — treat Playwright E2E as the product gate for excluded UI.
+`vitest.config.ts` still excludes some product areas without full characterization coverage: `src/components/charts/`, untested `src/store/slices/data/*` modules, `src/hooks/`, `duckDbArrow.ts` (browser path gated by Playwright smoke), and harmonization/onboarding UI below per-path floors. **STAB-CI-7 (July 2026)** removed blanket exclusions for `src/features/` and `src/components/overlays/` after 40+ co-located characterization tests landed. **STAB-CI-8** added `EngineProxy.test.ts` and `duckdbBundles.test.ts`. **STAB-CI-11** added per-path honesty thresholds. **STAB-CI-23 (July 2026)** tracks the next ratchet: features/overlays function coverage toward 82% (see §7.1). Green Vitest coverage does not imply workspace/export UI confidence — treat Playwright E2E as the product gate for excluded UI.
 
 ## 8. CI/CD Pipeline
 
