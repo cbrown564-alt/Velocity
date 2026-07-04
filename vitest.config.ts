@@ -41,7 +41,7 @@ export default defineConfig({
         'src/hooks/',
         'src/services/duckDbArrow.ts',
         // STAB-CI-6 ratchet: harmonizationSlice + uiSlice removed from exclusions
-        // (characterization tests in harmonizationSlice.test.ts, uiSlice.focusMode.test.ts).
+        // (characterization tests in harmonizationSlice.test.ts).
         // data/ submodules without tests stay excluded; variableCatalogActions.ts is measured.
         'src/store/slices/data/datasetActions.ts',
         'src/store/slices/data/engineActions.ts',

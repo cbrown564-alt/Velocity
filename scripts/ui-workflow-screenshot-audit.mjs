@@ -277,16 +277,7 @@ async function main() {
     await page.keyboard.press('Escape');
     await page.waitForTimeout(600);
 
-    // 11. Focus mode (overflow menu — force click if table chrome overlaps menu)
-    await openOverflowMenu(page);
-    await page.getByTestId('focus-mode-toggle').click({ force: true });
-    await page.waitForTimeout(800);
-    await shot(page, '11-focus-mode');
-    await openOverflowMenu(page);
-    await page.getByTestId('focus-mode-toggle').click({ force: true });
-    await page.waitForTimeout(400);
-
-    // 12. Insert palette
+    // 11. Insert palette
     await openInsertPalette(page);
     await page.waitForTimeout(600);
     await shot(page, '12-insert-palette');

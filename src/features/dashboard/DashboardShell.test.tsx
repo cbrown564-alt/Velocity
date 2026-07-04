@@ -145,7 +145,6 @@ describe('DashboardShell (WP2.1 / WP2.3)', () => {
       opfsAvailable: true,
       persistenceMode: 'opfs',
       persistenceError: null,
-      focusMode: false,
       isQuerying: false,
     });
   });

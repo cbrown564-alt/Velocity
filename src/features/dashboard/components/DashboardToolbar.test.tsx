@@ -21,7 +21,6 @@ const baseProps = {
   dataset: { id: 'ds1', name: 'demo.sav', rowCount: 100, variables: [], source: 'sav' as const },
   activeSlideId: 'slide-1',
   activeSlide: slide,
-  focusMode: false,
   canOpenExport: true,
   recipeOpen: false,
   onToggleRecipe: vi.fn(),
@@ -29,7 +28,6 @@ const baseProps = {
   onOpenSessionImport: vi.fn(),
   onExportSession: vi.fn(),
   onExport: vi.fn(),
-  onToggleFocusMode: vi.fn(),
   onReset: vi.fn(),
 };
 
@@ -54,15 +52,11 @@ describe('DashboardToolbar', () => {
     expect(useVelocityStore.getState().commandPaletteOpen).toBe(true);
   });
 
-  it('routes overflow actions to Variable Manager and focus mode', () => {
+  it('routes overflow actions to Variable Manager', () => {
     render(<DashboardToolbar {...baseProps} />);
     fireEvent.click(screen.getByRole('button', { name: 'More' }));
     fireEvent.click(screen.getByRole('menuitem', { name: 'Variable Manager' }));
     expect(useVelocityStore.getState().appMode).toBe('variables');
-
-    fireEvent.click(screen.getByRole('button', { name: 'More' }));
-    fireEvent.click(screen.getByTestId('focus-mode-toggle'));
-    expect(baseProps.onToggleFocusMode).toHaveBeenCalled();
   });
 
   it('calls export and recipe toggle handlers', () => {
