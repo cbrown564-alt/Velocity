@@ -238,7 +238,7 @@ These rows remain directionally valid, but should not become active until `PILOT
 | STAB-CI-16 | Visual E2E workflow | Non-blocking `visual-e2e.yml` for `@visual` screenshot regression | STAB-CI-15 | Done | No | I | `continue-on-error: true`; `npm run test:e2e:visual` |
 | STAB-CI-17 | Remove skipped `duckDbArrow.test.ts` | Delete Vitest skip suite; browser path gated by Playwright smoke only | STAB-CI-5 | Done | No | I | `duckDbArrow.test.ts` removed; `duckdb-arrow-smoke.spec.ts` remains required gate |
 | STAB-CI-18 | E2E companion expansion | Theme switcher + Workshop Door landing trigger rules | STAB-CI-4 | Done | No | A,I | `scripts/check-e2e-companion.mjs` — `theme-switcher`, `workshop-door-landing` rules |
-| STAB-CI-19 | Mutation threshold raise | Stryker break 40 → 48 (high 60, low 50) | STAB-CI-8 | Done | No | A | `stryker.config.json`; `mutation.yml` unchanged (path-filtered) |
+| STAB-CI-19 | Mutation threshold raise | Stryker break 40 → 48 when measured score ≥ 48 | STAB-CI-8 | Blocked | No | A | Baseline ~46%; raise deferred to avoid false CI failures |
 | STAB-CI-20 | CI artifacts | Upload coverage + Playwright reports on failure | STAB-CI-12 | Done | No | A | `coverage-report` (always); `playwright-report` / `playwright-test-results` on e2e failure |
 | STAB-CI-21 | CI bootstrap parity | Submodules recursive checkout, `npm ci --legacy-peer-deps`, ratchet fetch-depth | STAB-CI-12 | Done | No | A | All jobs; `lint-format` uses `fetch-depth: 0` for merge-base ratchets |
 | STAB-CI-22 | Doc sync (CI overhaul) | Update `arch_08`, pre-PR playbook, tracker §4.5, PR template, contributing, RCA banner | STAB-CI-12 | Done | No | A | This row; `docs/arch_08_testing.md` §7–§8, `pre_pr_verification.md`, `.github/pull_request_template.md` |

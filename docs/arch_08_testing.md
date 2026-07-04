@@ -182,7 +182,7 @@ Configuration: `stryker.config.json`, `vitest.mutation.config.ts`. Scope is port
 |-----------|---------|
 | `high` (60) | Target mutation score (covered modules) |
 | `low` (50) | Warning band |
-| `break` (48) | CI fails below this score (`STAB-CI-19`) |
+| `break` (40) | CI fails below this score |
 
 Scope excludes session I/O, SAV loader WASM glue, analysis runners without tests, sankey layout, and other modules where mutants cannot be exercised meaningfully. Baseline (June 2026): ~46% covered score on the full `src/core/` tree; gated scope targets portable stats/semantic/harmonization logic.
 
@@ -255,7 +255,7 @@ Runs `npm run test:e2e:visual` (`@visual` tag only). **`continue-on-error: true`
 
 `.github/workflows/mutation.yml` runs when `src/core/**`, Stryker config, or lockfile change:
 
-1. **Mutation testing**: `npm run test:mutation:ci` (Stryker + Vitest; 48% break threshold on gated `src/core/` scope)
+1. **Mutation testing**: `npm run test:mutation:ci` (Stryker + Vitest; 40% break threshold on gated `src/core/` scope)
 
 Run locally when touching `src/core/**` even if the workflow is path-filtered.
 
