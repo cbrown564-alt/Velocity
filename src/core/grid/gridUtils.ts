@@ -12,6 +12,8 @@ export type TableConfigSnapshot = {
   colVar: string | null;
 };
 
+export type RecipeChipSlot = 'row' | 'column';
+
 /** Synthetic variable ids for a grid VariableSet. */
 export function gridSyntheticVarIds(setId: string): { scaleId: string; itemsId: string } {
   return { scaleId: `${setId}_scale`, itemsId: `${setId}_items` };
@@ -70,6 +72,77 @@ export function placeVariableSet(
       return _exhaustive;
     }
   }
+}
+
+export type ShelfPlacementResolution = {
+  placement: Partial<TableConfigSnapshot> | null;
+  /** User targeted columns but the recipe requires at least one row first. */
+  redirectedFromColumn: boolean;
+};
+
+/**
+ * Resolve shelf/canvas placement, redirecting column-first drops when no rows exist.
+ * Grid sets keep their column drop behaviour (items are placed on rows automatically).
+ */
+export function resolveShelfPlacement(
+  setId: string,
+  structure: VariableSet['structure'],
+  target: GridDropTarget,
+  current: TableConfigSnapshot,
+): ShelfPlacementResolution {
+  let effectiveTarget = target;
+  let redirectedFromColumn = false;
+
+  if (target === 'drop-zone-cols' && current.rowVars.length === 0 && structure !== 'grid') {
+    effectiveTarget = 'drop-zone-rows';
+    redirectedFromColumn = true;
+  }
+
+  const placement = placeVariableSet(setId, structure, effectiveTarget, current);
+  return { placement, redirectedFromColumn };
+}
+
+/**
+ * Move a recipe chip between rows and columns (swap when a column is already set).
+ * Returns null for no-op drops (e.g. row chip dropped back on rows).
+ */
+export function applyRecipeChipDrop(
+  setId: string,
+  from: RecipeChipSlot,
+  target: GridDropTarget,
+  current: TableConfigSnapshot,
+): Partial<TableConfigSnapshot> | null {
+  if (target !== 'drop-zone-rows' && target !== 'drop-zone-cols') {
+    return null;
+  }
+
+  if (target === 'drop-zone-rows') {
+    if (from === 'row') {
+      return null;
+    }
+    if (current.colVar !== setId) {
+      return null;
+    }
+    return { rowVars: [...current.rowVars, setId], colVar: null };
+  }
+
+  // drop-zone-cols
+  if (from === 'column') {
+    if (current.colVar === setId) {
+      return null;
+    }
+    return { colVar: setId };
+  }
+
+  if (!current.rowVars.includes(setId)) {
+    return null;
+  }
+
+  const rowVars = current.rowVars.filter((id) => id !== setId);
+  if (current.colVar) {
+    rowVars.push(current.colVar);
+  }
+  return { rowVars, colVar: setId };
 }
 
 /** Canvas click / suggest placement (first row, then column). */

@@ -11,9 +11,9 @@ import { useChartDragMerge } from '../hooks/useChartDragMerge';
 import { useChartSelection } from '../hooks/useChartSelection';
 import { ChartPlotArea } from '../shared/ChartPlotArea';
 import {
-  formatAxisTick,
   formatBarTooltip,
   formatBarValueLabel,
+  formatValueAxisTick,
 } from '../../../core/visualization/chartLabelFormatters';
 
 /**
@@ -48,6 +48,9 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
     selectedKeysRef.current = selectedKeys;
   }, [selectedKeys]);
 
+  const { colVariable, columns, grandTotal } = processedData;
+  const hasColumnBreak = !!colVariable || columns.length > 1;
+
   // Use the first series (single column analysis) or "Total" column
   const chartData = useMemo(() => {
     const series = processedData.series[0];
@@ -75,12 +78,11 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
       .padding(0.25);
   }, [chartData, actualHeight]);
 
+  const peakCount = useMemo(() => max(chartData, (d) => d.value) || 1, [chartData]);
+
   const xScale = useMemo(() => {
-    const usePercent = labelMode === 'percent';
-    const maxVal = usePercent ? 1 : max(chartData, (d) => d.value) || 1;
-    const domainMax = usePercent ? 1 : maxVal * 1.1;
-    return d3.scaleLinear().domain([0, domainMax]).range([0, innerWidth]);
-  }, [chartData, innerWidth, labelMode]);
+    return d3.scaleLinear().domain([0, peakCount * 1.1]).range([0, innerWidth]);
+  }, [peakCount, innerWidth]);
 
   const { handleToggle, handleItemContextMenu } = useChartSelection<ChartDataPoint>({
     interactive,
@@ -235,7 +237,7 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
                     fill: 'var(--viz-text-axis)',
                   }}
                 >
-                  {formatAxisTick(labelMode, tick)}
+                  {formatValueAxisTick(labelMode, tick, { peakCount, grandTotal, hasColumnBreak })}
                 </text>
               </g>
             ))}
@@ -262,7 +264,7 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
 
           {/* Bars */}
           {chartData.map((d, i) => {
-            const barValue = labelMode === 'percent' ? d.percent / 100 : d.value;
+            const barValue = d.value;
             const barWidth = xScale(barValue);
             const y = yScale(d.label) || 0;
             const isSelected = selectedKeys?.has(d.label);
@@ -401,7 +403,7 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
                   yScale.bandwidth() / 2
                 }
                 width={xScale(
-                  labelMode === 'percent' ? dragState.draggedItem.percent / 100 : dragState.draggedItem.value,
+                  dragState.draggedItem.value,
                 )}
                 height={yScale.bandwidth()}
                 fill="var(--viz-fill-secondary)" // Solid Cyan for dragging
@@ -411,7 +413,7 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
               />
               <text
                 x={
-                  xScale(labelMode === 'percent' ? dragState.draggedItem.percent / 100 : dragState.draggedItem.value) /
+                  xScale(dragState.draggedItem.value) /
                   2
                 }
                 y={dragState.currentY - (svgRef.current?.getBoundingClientRect().top || 0) - margin.top}

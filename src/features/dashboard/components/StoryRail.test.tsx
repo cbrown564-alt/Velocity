@@ -136,6 +136,20 @@ describe('StoryRail', () => {
     expect(useVelocityStore.getState().activeSlideId).toBe('slide-1');
   });
 
+  it('confirms slide deletion from the hover delete control', () => {
+    render(<StoryRail {...railProps} />);
+    fireEvent.click(screen.getByTestId('story-rail-delete-slide-2'));
+    fireEvent.click(screen.getByRole('button', { name: 'Delete' }));
+    expect(useVelocityStore.getState().slides).toHaveLength(1);
+    expect(useVelocityStore.getState().activeSlideId).toBe('slide-1');
+  });
+
+  it('hides hover delete when only one slide remains', () => {
+    useVelocityStore.setState({ slides: [createSlide({ id: 'slide-1', title: 'Only slide' })] });
+    render(<StoryRail {...railProps} />);
+    expect(screen.queryByTestId('story-rail-delete-slide-1')).not.toBeInTheDocument();
+  });
+
   it('renames a slide on double-click', () => {
     render(<StoryRail {...railProps} />);
     fireEvent.doubleClick(screen.getByTestId('story-rail-slide-1'));

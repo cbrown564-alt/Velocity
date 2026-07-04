@@ -13,11 +13,17 @@
 .frame.shrinkWrap {
   flex: none;
   align-self: flex-start;
-  max-height: 100%;
+  max-height: none;
+  overflow: visible;
 }
 
 .shrinkWrap .body {
   flex: 0 1 auto;
+  overflow: visible;
+}
+
+.shrinkWrap .bodyChart {
+  overflow: visible;
 }
 
 .bleed {

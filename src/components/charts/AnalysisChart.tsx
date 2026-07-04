@@ -23,6 +23,7 @@ import { ProcessedAnalysisData, ChartDataPoint } from '../../types/processedData
 import { ChartSelector } from './ChartSelector';
 import { recommendChart } from '../../core/visualization/chartRecommender';
 import { resolveMetricChartType } from '../../core/visualization/chartTypeResolver';
+import { estimateContentSizedChartHeight } from '../../core/visualization/estimateContentSizedChartHeight';
 import { transformChartData } from '../../services/chartDataTransformer';
 import { ChartLegend } from './shared/ChartLegend';
 import { useVelocityStore } from '../../store';
@@ -241,8 +242,7 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
 
     let height: number;
     if (contentSized && displayChartData) {
-      const categoryCount = displayChartData.series[0]?.data.length ?? 4;
-      height = Math.max(100, categoryCount * 36 + 72);
+      height = estimateContentSizedChartHeight(effectiveChartType, displayChartData);
     } else {
       height = el.getBoundingClientRect().height;
     }
@@ -250,7 +250,7 @@ export const AnalysisChart: React.FC<AnalysisChartProps> = ({
     if (height > 0) {
       setDimensions((prev) => (prev.width === width && prev.height === height ? prev : { width, height }));
     }
-  }, [contentSized, displayChartData]);
+  }, [contentSized, displayChartData, effectiveChartType]);
 
   // Simple resize observer + initial measure (chart mode can mount before layout settles)
   useEffect(() => {

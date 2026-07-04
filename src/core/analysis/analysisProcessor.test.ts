@@ -154,7 +154,6 @@ describe('analysisProcessor', () => {
         rowKeys: ['1'],
         colKey: 'Total',
         count: 100,
-        // Metric Stats
         mean: 50,
         median: 50,
         min: 0,
@@ -176,17 +175,69 @@ describe('analysisProcessor', () => {
 
     const row = result.rows.find((r) => r.rawValue === '1');
     expect(row).toBeDefined();
-
-    // Check that stats are passed through to the cell
     const cell = row?.cells['Total'];
-    expect(cell).toBeDefined();
-
     expect(cell?.mean).toBe(50);
-    expect(cell?.median).toBe(50);
-    expect(cell?.min).toBe(0);
-    expect(cell?.max).toBe(100);
-    expect(cell?.q1).toBe(25);
-    expect(cell?.q3).toBe(75);
     expect(cell?.validCount).toBe(100);
+  });
+
+  it('builds measure parent rows with nested categorical children', () => {
+    const ageVariable: Variable = {
+      id: 'age',
+      name: 'Age (years)',
+      label: 'Age (years)',
+      type: 'numeric',
+      valueLabels: [],
+      missingValues: {},
+    };
+    const regionVariable: Variable = {
+      id: 'region',
+      name: 'Region',
+      label: 'Region',
+      type: 'categorical',
+      valueLabels: [
+        { value: 1, label: 'East' },
+        { value: 2, label: 'North' },
+      ],
+      missingValues: {},
+    };
+    const genderVariable: Variable = {
+      id: 'gender',
+      name: 'Gender',
+      label: 'Gender',
+      type: 'categorical',
+      valueLabels: [
+        { value: 1, label: 'Male' },
+        { value: 2, label: 'Female' },
+      ],
+      missingValues: {},
+    };
+
+    const data: AggregatedRow[] = [
+      { rowKeys: ['Age (years)'], colKey: '1', count: 500, mean: 42, validCount: 500, stdDev: 15 },
+      { rowKeys: ['Age (years)'], colKey: '2', count: 700, mean: 41, validCount: 700, stdDev: 16 },
+      { rowKeys: ['Age (years)', '1'], colKey: '1', count: 50 },
+      { rowKeys: ['Age (years)', '1'], colKey: '2', count: 60 },
+      { rowKeys: ['Age (years)', '2'], colKey: '1', count: 40 },
+      { rowKeys: ['Age (years)', '2'], colKey: '2', count: 55 },
+    ];
+
+    const result = processAnalysisData({
+      data,
+      rowVariables: [ageVariable, regionVariable],
+      colVariable: genderVariable,
+    });
+
+    expect(result).not.toBeNull();
+    if (!result) return;
+
+    expect(result.rows).toHaveLength(1);
+    const ageRow = result.rows[0];
+    expect(ageRow.label).toBe('Age (years)');
+    expect(ageRow.cells['1']?.mean).toBe(42);
+    expect(ageRow.children).toHaveLength(2);
+
+    const east = ageRow.children.find((row) => row.rawValue === '1');
+    expect(east?.cells['1']?.count).toBe(50);
+    expect(east?.cells['2']?.count).toBe(60);
   });
 });

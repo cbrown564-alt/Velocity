@@ -1,11 +1,11 @@
 /**
  * Shared formatters for chart axis ticks and bar value labels.
- * Keeps percent vs count semantics consistent across renderers.
+ * Bar geometry always uses counts; label mode switches axis tick labels and bar value labels.
  */
 
 export type ChartLabelDisplayMode = 'count' | 'percent' | 'none';
 
-/** Whether the axis domain represents 0–100 percent scale. */
+/** Whether axis ticks should be formatted as percentages (0–1 domain). */
 export function isPercentAxisMode(labelMode: ChartLabelDisplayMode): boolean {
   return labelMode === 'percent';
 }
@@ -16,6 +16,38 @@ export function formatAxisTick(labelMode: ChartLabelDisplayMode, tick: number): 
     return `${Math.round(tick * 100)}%`;
   }
   return tick.toLocaleString();
+}
+
+export interface ValueAxisTickOptions {
+  /** Largest count in the chart (unpadded domain maximum). */
+  peakCount: number;
+  /** Respondent / cell base for single-column distributions. */
+  grandTotal?: number;
+  /** True when a column banner splits the chart (cross-tab). */
+  hasColumnBreak?: boolean;
+}
+
+/**
+ * Format a value-axis tick while bar geometry stays count-based.
+ * Percent ticks are a linear rescale of the count axis so bar positions are unchanged.
+ */
+export function formatValueAxisTick(
+  labelMode: ChartLabelDisplayMode,
+  tick: number,
+  options: ValueAxisTickOptions,
+): string {
+  if (labelMode === 'percent') {
+    const { peakCount, grandTotal = 0, hasColumnBreak = false } = options;
+    const reference = hasColumnBreak ? peakCount : grandTotal > 0 ? grandTotal : peakCount;
+    if (reference <= 0) return '0%';
+    return formatAxisTick('percent', tick / reference);
+  }
+  return formatAxisTick('count', tick);
+}
+
+/** Peak count across grouped cells, or the tallest single-series bar. */
+export function resolvePeakCount(values: number[]): number {
+  return values.reduce((peak, value) => (value > peak ? value : peak), 0) || 1;
 }
 
 /** Format the value shown on or beside a bar. */

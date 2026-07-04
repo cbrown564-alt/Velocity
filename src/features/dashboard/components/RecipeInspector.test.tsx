@@ -47,6 +47,36 @@ describe('RecipeInspector', () => {
     });
   });
 
+  it('shakes the columns field when a column-first placement is rejected', () => {
+    useVelocityStore.setState({ recipeColumnRejectNonce: 1 });
+    const { container } = render(
+      <RecipeInspector
+        open
+        weightEnabled={false}
+        rememberedWeightVar={null}
+        onWeightRemove={vi.fn()}
+        onToggleWeight={vi.fn()}
+      />,
+      { wrapper },
+    );
+    expect(container.querySelector('[class*="rejectShake"]')).toBeTruthy();
+  });
+
+  it('renders draggable recipe chips for rows and columns', () => {
+    render(
+      <RecipeInspector
+        open
+        weightEnabled={false}
+        rememberedWeightVar={null}
+        onWeightRemove={vi.fn()}
+        onToggleWeight={vi.fn()}
+      />,
+      { wrapper },
+    );
+    expect(screen.getByText('Q5_gender').closest('.cursor-grab')).toBeTruthy();
+    expect(screen.getByText('SEG').closest('.cursor-grab')).toBeTruthy();
+  });
+
   it('shows recipe chips and display settings when open', () => {
     render(
       <RecipeInspector
@@ -113,6 +143,28 @@ describe('RecipeInspector', () => {
     );
     fireEvent.click(screen.getByRole('button', { name: '+ Add filter' }));
     expect(openFilterModal).toHaveBeenCalled();
+  });
+
+  it('opens the insert palette for columns and weight', () => {
+    const openCommandPalette = vi.fn();
+    useVelocityStore.setState({
+      openCommandPalette,
+      tableConfig: { rowVars: ['gender'], colVar: null },
+    });
+    render(
+      <RecipeInspector
+        open
+        weightEnabled={false}
+        rememberedWeightVar={null}
+        onWeightRemove={vi.fn()}
+        onToggleWeight={vi.fn()}
+      />,
+      { wrapper },
+    );
+    fireEvent.click(screen.getByRole('button', { name: '+ Add column' }));
+    expect(openCommandPalette).toHaveBeenCalledWith('columns');
+    fireEvent.click(screen.getByRole('button', { name: '+ Add weight' }));
+    expect(openCommandPalette).toHaveBeenCalledWith('weight');
   });
 
   it('updates comparison method from inspector select', () => {

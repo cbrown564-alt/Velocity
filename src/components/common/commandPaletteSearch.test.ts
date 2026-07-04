@@ -40,19 +40,29 @@ describe('commandPaletteSearch', () => {
     expect(listVariableSetsForPalette(sets).map((s) => s.id)).toEqual(['region']);
   });
 
-  describe('insertion grammar (↵ rows, ⌥↵ columns, ⇧↵ filter)', () => {
-    it('plain Enter targets rows', () => {
-      expect(resolveInsertTarget({})).toBe('rows');
-      expect(resolveInsertTarget({ altKey: false, shiftKey: false })).toBe('rows');
+  describe('insertion grammar (↵ columns, ⌥↵ rows, ⇧↵ filter)', () => {
+    it('plain Enter targets columns', () => {
+      expect(resolveInsertTarget({})).toBe('columns');
+      expect(resolveInsertTarget({ altKey: false, shiftKey: false })).toBe('columns');
     });
 
-    it('Alt+Enter targets columns', () => {
-      expect(resolveInsertTarget({ altKey: true })).toBe('columns');
+    it('Alt+Enter targets rows', () => {
+      expect(resolveInsertTarget({ altKey: true })).toBe('rows');
     });
 
     it('Shift+Enter targets filter, winning over Alt', () => {
       expect(resolveInsertTarget({ shiftKey: true })).toBe('filter');
       expect(resolveInsertTarget({ shiftKey: true, altKey: true })).toBe('filter');
+    });
+
+    it('uses a preset insert target when no modifiers are held', () => {
+      expect(resolveInsertTarget({}, 'columns')).toBe('columns');
+      expect(resolveInsertTarget({}, 'weight')).toBe('weight');
+    });
+
+    it('modifier keys override a preset insert target', () => {
+      expect(resolveInsertTarget({ altKey: true }, 'weight')).toBe('rows');
+      expect(resolveInsertTarget({ shiftKey: true }, 'columns')).toBe('filter');
     });
   });
 
@@ -68,13 +78,32 @@ describe('commandPaletteSearch', () => {
     expect(variableSetMeta({ ...mockNominalSet, type: 'numeric' })).toBe('Numeric');
   });
 
+  it('prefers underlying variable type over a stale numeric set type', () => {
+    const set = { ...mockNominalSet, id: 'cat_buyer', type: 'numeric' as const };
+    const variable = {
+      ...mockNominalSet,
+      id: 'cat_buyer',
+      name: 'cat_buyer',
+      type: 'categorical' as const,
+      valueLabels: [{ value: 1, label: 'Yes' }],
+    };
+    expect(variableSetGlyph(set, variable)).toBe('C');
+    expect(variableSetMeta(set, variable)).toBe('Category');
+  });
+
   it('builds row and column shelf placements', () => {
     const set = { ...mockNominalSet, id: 'region', name: 'Region' };
     expect(buildShelfPlacement(set, 'drop-zone-rows', { rowVars: [], colVar: null })).toEqual({
-      rowVars: ['region'],
+      placement: { rowVars: ['region'] },
+      redirectedFromColumn: false,
     });
     expect(buildShelfPlacement(set, 'drop-zone-cols', { rowVars: [], colVar: null })).toEqual({
-      colVar: 'region',
+      placement: { rowVars: ['region'] },
+      redirectedFromColumn: true,
+    });
+    expect(buildShelfPlacement(set, 'drop-zone-cols', { rowVars: ['gender'], colVar: null })).toEqual({
+      placement: { colVar: 'region' },
+      redirectedFromColumn: false,
     });
   });
 

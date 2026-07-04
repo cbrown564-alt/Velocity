@@ -158,12 +158,14 @@ These rows remain directionally valid, but should not become active until `PILOT
 | STAB-UI-F3 | Activation | Welcome-back label hydration, first-crosstab spotlight, contextual tips, workspace banner discipline (UXF-010–012, UXF-014) | None | Done | Yes | T,L,U,I,V | **F3.1–F3.4 Done:** welcome-back labels (**PR #18** catalog hydration). **PR #18 PPR-005:** corner coaching chips + session-scoped dismiss; resume trust (PPR-016). Contextual micro-tips via `contextualMicroTips.ts`; `WorkspaceStatusStrip`. Tests: `contextualMicroTips.test.ts`, `firstCrosstabTour.test.ts`, `WorkspaceStatusStrip.test.tsx`. |
 | STAB-UI-F4 | Command palette | Variable search → shelf actions, export/focus/filter commands, empty-state `⌘K` hint (UXF-013) | STAB-UI-C (Done) | Done | No | T,L,U | `CommandPalette.tsx` variable search + shelf actions; **PR #18 PPR-012** neutral focus ring. Tests: `CommandPalette.test.tsx`, `commandPaletteSearch.test.ts` |
 | STAB-UI-F5 | Accessibility themes | High-contrast + colorblind significance themes (UXF-016) | STAB-UI-F1 | Frozen | Yes | T,L,U,I | UXF-015 splash contrast closed in PR #18; UXF-016 high-contrast/colorblind themes deferred until pilot requests |
+| STAB-UI-F6 | Nested row chart semantics | Define and implement chart representation for nested row recipes (e.g. measure parent + categorical children); table supports expand/collapse but chart renderers consume top-level `processedData.rows` only — scope, chart type, and table↔chart sync TBD | STAB-UI-F1; nested-row crosstab table fix (July 2026) | Not started | Yes | T,L,U,I,A | **Follow-up (July 2026).** Example: Age (numeric) + Region (nested) × Gender — table shows Age means with expandable Region rows; chart currently plots parent row only (means) or misaligns mixed metric/frequency semantics. Design options to evaluate: parent-only default, explicit drill level / row picker, small multiples by nested var, inherit table expand state, or chart-only flatten to leaves. See `arch_05_visualisation_engine.md`, `user_journey_screenshots.md` §2.2 open question. |
 
 #### STAB-UI-F Dependency Notes
 
 - **F3.1** (welcome UUID) has no dependency on F1 — pull first for a quick trust win.
 - **F1** blocks **F2** (shared slide frame contract) and **F5** (significance color stability).
 - **F4** can run in parallel with F1/F3 after palette API is agreed in plan §F4.
+- **F6** is a design follow-up from the July 2026 nested-row crosstab fix — do not block pilot on it; requires a short design brief before implementation (mixed metric + frequency semantics, table expand state vs chart scope).
 - Do not expand scope into Liquid Glass maturity, mobile layout, or component monolith refactors without `PILOT-7` gate.
 - Update `UXF-###` status in the plan doc when each finding closes; link PR URLs in tracker row notes on merge.
 

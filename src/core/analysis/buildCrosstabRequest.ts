@@ -132,17 +132,23 @@ export const buildCrosstabRequest = ({
 
     addToContext(measureVarId);
 
+    const resolveToCol = (id: string): string => {
+      const variable = dataset.variables.find((v) => v.id === id);
+      if (variable) return id;
+      const varSet = variableSets.find((s) => s.id === id);
+      if (varSet && varSet.variableIds.length > 0) {
+        return varSet.variableIds[0];
+      }
+      return id;
+    };
+
     if (isRowScale) {
       const col = colVar ? colVarSet?.variableIds[0] || colVar : null;
       options.colVar = col;
+      if (rowVars.length > 1) {
+        options.nestedRowVars = rowVars.slice(1).map(resolveToCol);
+      }
     } else {
-      const resolveToCol = (id: string): string => {
-        const varSet = variableSets.find((s) => s.id === id);
-        if (varSet && varSet.variableIds.length > 0) {
-          return varSet.variableIds[0];
-        }
-        return id;
-      };
       options.rowVars = rowVars.map(resolveToCol);
       options.colVar = null;
     }

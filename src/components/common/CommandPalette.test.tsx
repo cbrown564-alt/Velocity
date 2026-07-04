@@ -6,6 +6,7 @@ import { useVelocityStore } from '../../store';
 beforeEach(() => {
   useVelocityStore.setState({
     commandPaletteOpen: true,
+    commandPaletteInsertTarget: null,
     closeCommandPalette: vi.fn(() => useVelocityStore.setState({ commandPaletteOpen: false })),
     toggleAppMode: vi.fn(),
     toggleFocusMode: vi.fn(),
@@ -54,6 +55,31 @@ describe('CommandPalette (insert palette)', () => {
     expect(screen.getByText('Age')).toBeInTheDocument();
   });
 
+  it('shows categorical metadata from the underlying variable when the set type is stale', () => {
+    useVelocityStore.setState({
+      variableSets: [
+        { id: 'cat_buyer', name: 'cat buyer', structure: 'single', variableIds: ['cat_buyer_var'], type: 'numeric' },
+      ],
+      dataset: {
+        id: 'ds1',
+        name: 'Demo',
+        rowCount: 100,
+        variables: [
+          {
+            id: 'cat_buyer_var',
+            name: 'cat_buyer',
+            label: 'Category buyer',
+            type: 'categorical',
+            valueLabels: [{ value: 1, label: 'Yes' }],
+          },
+        ],
+      },
+    } as any);
+    render(<CommandPalette />);
+    expect(screen.getByText('Category')).toBeInTheDocument();
+    expect(screen.queryByText('Numeric')).not.toBeInTheDocument();
+  });
+
   it('matches variables on underlying labels', () => {
     render(<CommandPalette />);
     fireEvent.change(screen.getByPlaceholderText('Find a variable…'), { target: { value: 'residence' } });
@@ -61,22 +87,36 @@ describe('CommandPalette (insert palette)', () => {
     expect(screen.queryByText('Age')).not.toBeInTheDocument();
   });
 
-  it('Enter adds the selected variable to rows', () => {
+  it('Enter adds the selected variable to columns when rows exist', () => {
     const setTableConfig = vi.fn();
-    useVelocityStore.setState({ setTableConfig });
+    useVelocityStore.setState({
+      setTableConfig,
+      tableConfig: { rowVars: ['age'], colVar: null },
+    });
+    render(<CommandPalette />);
+    fireEvent.change(screen.getByPlaceholderText('Find a variable…'), { target: { value: 'reg' } });
+    fireEvent.keyDown(document, { key: 'Enter' });
+    expect(setTableConfig).toHaveBeenCalledWith({ colVar: 'region' });
+  });
+
+  it('Enter redirects to rows with a column reject when no rows exist', () => {
+    const setTableConfig = vi.fn();
+    const rejectRecipeColumnPlacement = vi.fn();
+    useVelocityStore.setState({ setTableConfig, rejectRecipeColumnPlacement });
     render(<CommandPalette />);
     fireEvent.change(screen.getByPlaceholderText('Find a variable…'), { target: { value: 'reg' } });
     fireEvent.keyDown(document, { key: 'Enter' });
     expect(setTableConfig).toHaveBeenCalledWith({ rowVars: ['region'] });
+    expect(rejectRecipeColumnPlacement).toHaveBeenCalled();
   });
 
-  it('Alt+Enter adds the selected variable to columns', () => {
+  it('Alt+Enter adds the selected variable to rows', () => {
     const setTableConfig = vi.fn();
     useVelocityStore.setState({ setTableConfig });
     render(<CommandPalette />);
     fireEvent.change(screen.getByPlaceholderText('Find a variable…'), { target: { value: 'reg' } });
     fireEvent.keyDown(document, { key: 'Enter', altKey: true });
-    expect(setTableConfig).toHaveBeenCalledWith({ colVar: 'region' });
+    expect(setTableConfig).toHaveBeenCalledWith({ rowVars: ['region'] });
   });
 
   it('Shift+Enter opens the filter modal preselected to the variable', () => {
@@ -88,12 +128,48 @@ describe('CommandPalette (insert palette)', () => {
     expect(openFilterModal).toHaveBeenCalledWith('region_var');
   });
 
-  it('click inserts to rows', () => {
+  it('assigns weight when opened with the weight insert target', () => {
+    const setWeightVariable = vi.fn();
+    useVelocityStore.setState({
+      commandPaletteInsertTarget: 'weight',
+      setWeightVariable,
+      variableSets: [
+        { id: 'wt', name: 'Weight var', structure: 'single', variableIds: ['wt_var'], type: 'numeric' },
+      ],
+      dataset: {
+        id: 'ds1',
+        name: 'Demo',
+        rowCount: 100,
+        variables: [{ id: 'wt_var', name: 'wt', label: 'Weight', type: 'numeric' }],
+      },
+    } as any);
+    render(<CommandPalette />);
+    fireEvent.keyDown(document, { key: 'Enter' });
+    expect(setWeightVariable).toHaveBeenCalledWith('wt_var');
+  });
+
+  it('adds to columns when opened with the columns insert target and rows exist', () => {
     const setTableConfig = vi.fn();
-    useVelocityStore.setState({ setTableConfig });
+    useVelocityStore.setState({
+      commandPaletteInsertTarget: 'columns',
+      setTableConfig,
+      tableConfig: { rowVars: ['gender'], colVar: null },
+    });
+    render(<CommandPalette />);
+    fireEvent.change(screen.getByPlaceholderText('Find a variable…'), { target: { value: 'reg' } });
+    fireEvent.keyDown(document, { key: 'Enter' });
+    expect(setTableConfig).toHaveBeenCalledWith({ colVar: 'region' });
+  });
+
+  it('click inserts to columns when rows exist', () => {
+    const setTableConfig = vi.fn();
+    useVelocityStore.setState({
+      setTableConfig,
+      tableConfig: { rowVars: ['gender'], colVar: null },
+    });
     render(<CommandPalette />);
     fireEvent.click(screen.getByTestId('palette-variable-region'));
-    expect(setTableConfig).toHaveBeenCalledWith({ rowVars: ['region'] });
+    expect(setTableConfig).toHaveBeenCalledWith({ colVar: 'region' });
   });
 
   it('shows commands behind the > prefix', () => {

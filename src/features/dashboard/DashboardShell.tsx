@@ -63,6 +63,8 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
   const persistenceError = useVelocityStore((state) => state.persistenceError);
 
   const [recipeOpen, setRecipeOpen] = React.useState(false);
+  const draggingId = useVelocityStore((state) => state.draggingId);
+  const recipePanelExpanded = recipeOpen || !!draggingId;
 
   React.useEffect(() => {
     if (lastSeenTransformCount < 0) {
@@ -148,8 +150,8 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
               onReset={reset}
             />
 
-            <div className="flex-1 flex min-h-0">
-              <SmartCanvas className={`flex-1 relative min-h-0 flex flex-col ${focusMode ? 'p-2' : 'p-4'}`}>
+            <div className="flex-1 flex min-h-0 min-w-0 overflow-hidden" data-testid="dashboard-workspace">
+              <SmartCanvas className={`flex-1 min-h-0 min-w-0 overflow-hidden flex flex-col ${focusMode ? 'p-2' : 'p-4'}`}>
                 <div className="flex-1 w-full min-h-0 flex flex-col">
                   <div className="flex-1 relative min-h-0 flex flex-col">
                     {isQuerying && (
@@ -164,13 +166,20 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
                 </div>
               </SmartCanvas>
 
-              <RecipeInspector
-                open={recipeOpen}
-                weightEnabled={weightEnabled}
-                rememberedWeightVar={rememberedWeightVar}
-                onWeightRemove={handleWeightRemove}
-                onToggleWeight={handleToggleWeight}
-              />
+              <div
+                className={`relative z-10 shrink-0 h-full overflow-hidden transition-[width] duration-150 ease-out ${
+                  recipePanelExpanded ? 'w-[280px]' : 'w-0'
+                }`}
+                data-recipe-expanded={recipePanelExpanded ? 'true' : 'false'}
+              >
+                <RecipeInspector
+                  open={recipeOpen}
+                  weightEnabled={weightEnabled}
+                  rememberedWeightVar={rememberedWeightVar}
+                  onWeightRemove={handleWeightRemove}
+                  onToggleWeight={handleToggleWeight}
+                />
+              </div>
             </div>
           </main>
         </div>

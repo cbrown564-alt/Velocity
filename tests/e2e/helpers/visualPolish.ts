@@ -188,17 +188,17 @@ export async function openInsertPalette(page: Page) {
   await expect(page.getByPlaceholder('Find a variable…')).toBeVisible({ timeout: 10000 });
 }
 
-/** Insert a variable via palette grammar: ↵ rows, ⌥↵ columns, ⇧↵ filter. */
+/** Insert a variable via palette grammar: ↵ columns, ⌥↵ rows, ⇧↵ filter. */
 export async function insertVariableFromPalette(
   page: Page,
   query: string,
-  target: 'rows' | 'columns' | 'filter' = 'rows',
+  target: 'rows' | 'columns' | 'filter' = 'columns',
 ) {
   await openInsertPalette(page);
   const input = page.getByPlaceholder('Find a variable…');
   await input.fill(query);
   await page.waitForTimeout(350);
-  if (target === 'columns') {
+  if (target === 'rows') {
     await page.keyboard.press('Alt+Enter');
   } else if (target === 'filter') {
     await page.keyboard.press('Shift+Enter');

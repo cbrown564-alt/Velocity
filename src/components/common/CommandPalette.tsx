@@ -8,6 +8,7 @@ import { pushModalShortcutContext } from '../../lib/keyboardShortcuts/registry';
 import { useAnalysisExportAction } from '../../features/dashboard/hooks/useAnalysisExportAction';
 import {
   buildShelfPlacement,
+  canAddVariableSetToWeight,
   listVariableSetsForPalette,
   resolveInsertTarget,
   searchVariableSetsForPalette,
@@ -15,7 +16,7 @@ import {
   variableSetMeta,
   type InsertTarget,
 } from './commandPaletteSearch';
-import type { VariableSet } from '../../types';
+import type { VariableSet, Variable } from '../../types';
 
 interface CommandItem {
   id: string;
@@ -29,6 +30,7 @@ const VARIABLE_LIMIT = 12;
 
 interface PaletteVariableRowProps {
   set: VariableSet;
+  primaryVariable?: Variable;
   index: number;
   selected: boolean;
   label: string | undefined;
@@ -36,10 +38,10 @@ interface PaletteVariableRowProps {
   onInsert: (set: VariableSet, modifiers: { altKey: boolean; shiftKey: boolean }) => void;
 }
 
-const rowContent = (set: VariableSet, label: string | undefined) => (
+const rowContent = (set: VariableSet, label: string | undefined, primaryVariable?: Variable) => (
   <>
     <span className="w-[18px] shrink-0 text-center font-mono text-[11px] text-[var(--text-tertiary)] border border-[var(--border-color)] rounded px-0 py-px">
-      {variableSetGlyph(set)}
+      {variableSetGlyph(set, primaryVariable)}
     </span>
     <span className="flex-1 min-w-0">
       <span className="block font-mono text-[12.5px] text-[var(--text-primary)] truncate">{set.name}</span>
@@ -47,7 +49,9 @@ const rowContent = (set: VariableSet, label: string | undefined) => (
         <span className="block text-[11.5px] text-[var(--text-secondary)] truncate">{label}</span>
       )}
     </span>
-    <span className="shrink-0 text-[11px] text-[var(--text-tertiary)] whitespace-nowrap">{variableSetMeta(set)}</span>
+    <span className="shrink-0 text-[11px] text-[var(--text-tertiary)] whitespace-nowrap">
+      {variableSetMeta(set, primaryVariable)}
+    </span>
   </>
 );
 
@@ -56,7 +60,15 @@ const rowClass = (selected: boolean) =>
     selected ? 'bg-[var(--bg-panel-tint)] shadow-[inset_0_0_0_1px_var(--border-color)]' : ''
   }`;
 
-const PaletteVariableRow: React.FC<PaletteVariableRowProps> = ({ set, index, selected, label, onSelect, onInsert }) => (
+const PaletteVariableRow: React.FC<PaletteVariableRowProps> = ({
+  set,
+  primaryVariable,
+  index,
+  selected,
+  label,
+  onSelect,
+  onInsert,
+}) => (
   <button
     type="button"
     onClick={(e) => onInsert(set, e)}
@@ -65,13 +77,14 @@ const PaletteVariableRow: React.FC<PaletteVariableRowProps> = ({ set, index, sel
     data-testid={`palette-variable-${set.id}`}
     className={rowClass(selected)}
   >
-    {rowContent(set, label)}
+    {rowContent(set, label, primaryVariable)}
   </button>
 );
 
 /** Palette row that can also be dragged onto the slide (dashboard mount only). */
 const DraggablePaletteRow: React.FC<PaletteVariableRowProps> = ({
   set,
+  primaryVariable,
   index,
   selected,
   label,
@@ -94,7 +107,7 @@ const DraggablePaletteRow: React.FC<PaletteVariableRowProps> = ({
       data-testid={`palette-variable-${set.id}`}
       className={rowClass(selected)}
     >
-      {rowContent(set, label)}
+      {rowContent(set, label, primaryVariable)}
     </button>
   );
 };
@@ -108,11 +121,12 @@ export interface CommandPaletteProps {
 }
 
 /**
- * Insert palette (⌘K) — variables are the default result set; ↵ adds to rows,
- * ⌥↵ to columns, ⇧↵ filters. Commands live behind a `>` prefix.
+ * Insert palette (⌘K) — variables are the default result set; ↵ adds to columns,
+ * ⌥↵ to rows, ⇧↵ filters. Commands live behind a `>` prefix.
  */
 export const CommandPalette: React.FC<CommandPaletteProps> = ({ withinDnd = false }) => {
   const commandPaletteOpen = useVelocityStore((state) => state.commandPaletteOpen);
+  const commandPaletteInsertTarget = useVelocityStore((state) => state.commandPaletteInsertTarget);
   const closeCommandPalette = useVelocityStore((state) => state.closeCommandPalette);
   const toggleAppMode = useVelocityStore((state) => state.toggleAppMode);
   const toggleFocusMode = useVelocityStore((state) => state.toggleFocusMode);
@@ -121,6 +135,8 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ withinDnd = fals
   const openShortcuts = useVelocityStore((state) => state.openShortcuts);
   const openFilterModal = useVelocityStore((state) => state.openFilterModal);
   const setTableConfig = useVelocityStore((state) => state.setTableConfig);
+  const setWeightVariable = useVelocityStore((state) => state.setWeightVariable);
+  const rejectRecipeColumnPlacement = useVelocityStore((state) => state.rejectRecipeColumnPlacement);
   const tableConfig = useVelocityStore((state) => state.tableConfig);
   const variableSets = useVelocityStore((state) => state.variableSets);
   const dataset = useVelocityStore((state) => state.dataset);
@@ -148,8 +164,20 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ withinDnd = fals
         return;
       }
 
+      if (target === 'weight') {
+        const variables = dataset?.variables ?? [];
+        if (!canAddVariableSetToWeight(set, variables)) {
+          addToast({ message: 'Choose a numeric variable for weight', type: 'warning' });
+          return;
+        }
+        setWeightVariable(set.variableIds[0]);
+        addToast({ message: `${set.name} → weight`, type: 'success' });
+        closeCommandPalette();
+        return;
+      }
+
       const shelfTarget = target === 'columns' ? 'drop-zone-cols' : 'drop-zone-rows';
-      const placement = buildShelfPlacement(set, shelfTarget, tableConfig);
+      const { placement, redirectedFromColumn } = buildShelfPlacement(set, shelfTarget, tableConfig);
       if (!placement) {
         addToast({ message: `${set.name} is already on the slide`, type: 'info' });
         closeCommandPalette();
@@ -157,10 +185,23 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ withinDnd = fals
       }
 
       setTableConfig(placement);
-      addToast({ message: `${set.name} → ${target}`, type: 'success' });
+      if (redirectedFromColumn) {
+        rejectRecipeColumnPlacement();
+      } else {
+        addToast({ message: `${set.name} → ${target}`, type: 'success' });
+      }
       closeCommandPalette();
     };
-  }, [tableConfig, setTableConfig, openFilterModal, addToast, closeCommandPalette]);
+  }, [
+    tableConfig,
+    setTableConfig,
+    setWeightVariable,
+    dataset?.variables,
+    openFilterModal,
+    addToast,
+    closeCommandPalette,
+    rejectRecipeColumnPlacement,
+  ]);
 
   const commands = useMemo<CommandItem[]>(
     () => [
@@ -264,12 +305,21 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ withinDnd = fals
 
   const variableResults = useMemo<VariableSet[]>(() => {
     if (commandMode) return [];
-    if (!query.trim()) return listVariableSetsForPalette(variableSets, VARIABLE_LIMIT);
-    return searchVariableSetsForPalette(query, variableSets, {
-      variables: dataset?.variables,
-      limit: VARIABLE_LIMIT,
-    }).map((match) => match.set);
-  }, [commandMode, query, variableSets, dataset?.variables]);
+    const variables = dataset?.variables;
+    let results: VariableSet[];
+    if (!query.trim()) {
+      results = listVariableSetsForPalette(variableSets, VARIABLE_LIMIT);
+    } else {
+      results = searchVariableSetsForPalette(query, variableSets, {
+        variables,
+        limit: VARIABLE_LIMIT,
+      }).map((match) => match.set);
+    }
+    if (commandPaletteInsertTarget === 'weight' && variables) {
+      results = results.filter((set) => canAddVariableSetToWeight(set, variables));
+    }
+    return results;
+  }, [commandMode, query, variableSets, dataset?.variables, commandPaletteInsertTarget]);
 
   const variableLabels = useMemo(() => {
     const lookup = new Map<string, string>();
@@ -277,6 +327,10 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ withinDnd = fals
       lookup.set(variable.id, variable.label || variable.name);
     }
     return lookup;
+  }, [dataset?.variables]);
+
+  const variableById = useMemo(() => {
+    return new Map((dataset?.variables ?? []).map((variable) => [variable.id, variable]));
   }, [dataset?.variables]);
 
   const resultCount = commandMode ? filteredCommands.length : variableResults.length;
@@ -331,7 +385,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ withinDnd = fals
           filteredCommands[selectedIndex]?.action();
         } else {
           const set = variableResults[selectedIndex];
-          if (set) insertVariable(set, resolveInsertTarget(e));
+          if (set) insertVariable(set, resolveInsertTarget(e, commandPaletteInsertTarget));
         }
       } else if (e.key === 'Escape') {
         e.preventDefault();
@@ -349,6 +403,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ withinDnd = fals
     resultCount,
     insertVariable,
     closeCommandPalette,
+    commandPaletteInsertTarget,
   ]);
 
   if (!commandPaletteOpen) return null;
@@ -386,7 +441,11 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ withinDnd = fals
         <div ref={listRef} className="max-h-[50vh] overflow-y-auto p-1.5">
           {resultCount === 0 ? (
             <div className="px-4 py-8 text-center text-sm text-[var(--text-tertiary)]">
-              {commandMode ? 'No matching commands.' : 'No matching variables.'}
+              {commandMode
+                ? 'No matching commands.'
+                : commandPaletteInsertTarget === 'weight'
+                  ? 'No numeric weight variables found.'
+                  : 'No matching variables.'}
             </div>
           ) : commandMode ? (
             filteredCommands.map((cmd, index) => (
@@ -414,15 +473,19 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ withinDnd = fals
           ) : (
             variableResults.map((set, index) => {
               const Row = withinDnd ? DraggablePaletteRow : PaletteVariableRow;
+              const primaryVariable = variableById.get(set.variableIds[0]);
               return (
                 <Row
                   key={set.id}
                   set={set}
+                  primaryVariable={primaryVariable}
                   index={index}
                   selected={index === selectedIndex}
                   label={variableLabels.get(set.variableIds[0])}
                   onSelect={setSelectedIndex}
-                  onInsert={(target, modifiers) => insertVariable(target, resolveInsertTarget(modifiers))}
+                  onInsert={(target, modifiers) =>
+                    insertVariable(target, resolveInsertTarget(modifiers, commandPaletteInsertTarget))
+                  }
                 />
               );
             })
@@ -434,13 +497,43 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ withinDnd = fals
             <span>
               <kbd className="font-mono text-[10.5px] text-[var(--text-secondary)]">↵</kbd> Run
             </span>
+          ) : commandPaletteInsertTarget === 'columns' ? (
+            <>
+              <span>
+                <kbd className="font-mono text-[10.5px] text-[var(--text-secondary)]">↵</kbd> Add to columns
+              </span>
+              <span className="inline-flex items-center gap-1">
+                <ChevronRight size={11} aria-hidden />
+                Commands
+              </span>
+            </>
+          ) : commandPaletteInsertTarget === 'weight' ? (
+            <>
+              <span>
+                <kbd className="font-mono text-[10.5px] text-[var(--text-secondary)]">↵</kbd> Set as weight
+              </span>
+              <span className="inline-flex items-center gap-1">
+                <ChevronRight size={11} aria-hidden />
+                Commands
+              </span>
+            </>
+          ) : commandPaletteInsertTarget === 'filter' ? (
+            <>
+              <span>
+                <kbd className="font-mono text-[10.5px] text-[var(--text-secondary)]">↵</kbd> Add as filter
+              </span>
+              <span className="inline-flex items-center gap-1">
+                <ChevronRight size={11} aria-hidden />
+                Commands
+              </span>
+            </>
           ) : (
             <>
               <span>
-                <kbd className="font-mono text-[10.5px] text-[var(--text-secondary)]">↵</kbd> Add to rows
+                <kbd className="font-mono text-[10.5px] text-[var(--text-secondary)]">↵</kbd> Add to columns
               </span>
               <span>
-                <kbd className="font-mono text-[10.5px] text-[var(--text-secondary)]">⌥↵</kbd> Columns
+                <kbd className="font-mono text-[10.5px] text-[var(--text-secondary)]">⌥↵</kbd> Rows
               </span>
               <span>
                 <kbd className="font-mono text-[10.5px] text-[var(--text-secondary)]">⇧↵</kbd> Filter

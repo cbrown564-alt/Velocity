@@ -1,7 +1,6 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { DURATIONS, getMotionProps, useReducedMotion } from '../../lib/motion';
-import { DashboardShell } from '../../features/dashboard/DashboardShell';
 import type { PersistenceManagerState } from '../../hooks/usePersistenceManager';
 import type { FileUploadState } from '../../features/workspace/hooks/useFileUpload';
 import type { Dataset } from '../../types/dataset';
@@ -9,6 +8,10 @@ import type { LoadProgressState } from '../../store/slices/data/types';
 import type { PersistenceState } from '../../store/slices/data/types';
 import type { WorkspaceState, Project, StoredDataset } from '../../features/workspace';
 import type { AppPhase } from '../types';
+
+const DashboardShell = React.lazy(() =>
+  import('../../features/dashboard/DashboardShell').then((module) => ({ default: module.DashboardShell })),
+);
 import { MetadataScreen } from '../screens/MetadataScreen';
 import { PartialLoadNotice } from '../screens/PartialLoadNotice';
 import { RestorationPrompt } from '../screens/RestorationPrompt';
@@ -144,12 +147,20 @@ export const AppModeRouter: React.FC<AppModeRouterProps> = ({
             })}
             className="h-full"
           >
-            <DashboardShell
-              persistence={persistence}
-              onReturnToWorkspace={onReturnToWorkspace}
-              onOpenSessionImport={onOpenSessionImport}
-              onExportSession={onExportSession}
-            />
+            <Suspense
+              fallback={
+                <div className="h-full flex items-center justify-center text-sm text-[var(--text-secondary)]">
+                  Loading analysis…
+                </div>
+              }
+            >
+              <DashboardShell
+                persistence={persistence}
+                onReturnToWorkspace={onReturnToWorkspace}
+                onOpenSessionImport={onOpenSessionImport}
+                onExportSession={onExportSession}
+              />
+            </Suspense>
           </motion.div>
         )}
       </AnimatePresence>

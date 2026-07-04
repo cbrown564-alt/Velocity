@@ -23,7 +23,7 @@ import {
   useSortable,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Copy, Trash2 } from 'lucide-react';
+import { Copy, Trash2, X } from 'lucide-react';
 import { useVelocityStore } from '../../../store';
 import { registerShortcut } from '../../../lib/keyboardShortcuts/registry';
 import { resolveSlideTitle } from '../../../core/export/resolveSlideDefaults';
@@ -195,11 +195,13 @@ const SlideRow: React.FC<SlideRowProps> = ({
         }}
         aria-current={isActive ? 'true' : undefined}
         aria-label={`Slide ${index + 1}: ${displayLabel}`}
-        className={`flex gap-2.5 items-baseline px-2.5 py-[7px] rounded-md cursor-default transition-colors ${
+        className={`group/slide relative flex gap-2.5 items-start px-2.5 py-[7px] pr-7 rounded-md cursor-default transition-colors ${
           isDragging ? 'opacity-40' : ''
         } ${isActive ? 'bg-[var(--bg-panel)] shadow-[0_0_0_1px_var(--border-color)]' : 'hover:bg-[var(--bg-rail)]'}`}
       >
-        <span className="w-3 shrink-0 text-right font-mono text-[11px] text-[var(--text-tertiary)]">{index + 1}</span>
+        <span className="w-3 shrink-0 text-right font-mono text-[11px] text-[var(--text-tertiary)] leading-[1.35]">
+          {index + 1}
+        </span>
         <div className="min-w-0 flex-1">
           {renaming ? (
             <input
@@ -237,6 +239,22 @@ const SlideRow: React.FC<SlideRowProps> = ({
             <span className="block text-[11px] text-[var(--text-tertiary)] truncate mt-px">{recipeSummary}</span>
           )}
         </div>
+        {canDelete && (
+          <button
+            type="button"
+            aria-label={`Delete slide ${index + 1}`}
+            title="Delete slide"
+            data-testid={`story-rail-delete-slide-${index + 1}`}
+            onPointerDown={(event) => event.stopPropagation()}
+            onClick={(event) => {
+              event.stopPropagation();
+              onDelete();
+            }}
+            className="absolute top-1 right-1 p-0.5 rounded text-[var(--text-tertiary)] opacity-0 group-hover/slide:opacity-100 focus-visible:opacity-100 hover:text-[var(--color-error)] hover:bg-[var(--status-error-surface)] transition-opacity"
+          >
+            <X size={12} aria-hidden />
+          </button>
+        )}
       </li>
 
       {contextMenuOpen && (

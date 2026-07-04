@@ -170,22 +170,55 @@ describe('DashboardShell (WP2.1 / WP2.3)', () => {
   it('toggles RecipeInspector from the toolbar (collapsed by default)', () => {
     render(<DashboardShell {...shellProps} />);
 
+    const workspace = screen.getByTestId('dashboard-workspace');
     const inspector = screen.getByTestId('recipe-inspector');
-    expect(inspector.className).toContain('w-0');
+    const recipePanel = workspace.querySelector('[data-recipe-expanded]');
+    expect(recipePanel).toHaveAttribute('data-recipe-expanded', 'false');
+    expect(inspector).toHaveAttribute('data-open', 'false');
 
     const toggle = screen.getByTestId('recipe-inspector-toggle');
     expect(toggle).toHaveAttribute('aria-pressed', 'false');
 
     fireEvent.click(toggle);
     expect(toggle).toHaveAttribute('aria-pressed', 'true');
-    expect(inspector.className).toContain('w-[280px]');
+    expect(recipePanel).toHaveAttribute('data-recipe-expanded', 'true');
+    expect(inspector).toHaveAttribute('data-open', 'true');
     expect(screen.getByText(/Recipe — Slide 1/)).toBeInTheDocument();
     expect(within(inspector).getByText('Q5_gender')).toBeInTheDocument();
     expect(within(inspector).getByText('SEG')).toBeInTheDocument();
 
     fireEvent.click(toggle);
     expect(toggle).toHaveAttribute('aria-pressed', 'false');
-    expect(inspector.className).toContain('w-0');
+    expect(recipePanel).toHaveAttribute('data-recipe-expanded', 'false');
+    expect(inspector).toHaveAttribute('data-open', 'false');
+  });
+
+  it('opens RecipeInspector in chart view', () => {
+    const slide = createSlide({
+      id: 'slide-1',
+      title: 'Awareness by segment',
+      visualizationType: 'chart',
+      cells: [{ id: 'cell-1', content: { type: 'chart', chartType: 'grouped-bar' } }],
+    });
+    useVelocityStore.setState({
+      slides: [slide],
+      activeSlideId: 'slide-1',
+      activeCellId: slide.cells[0].id,
+      queryResult: [
+        { rowKeys: ['1'], colKey: 'north', count: 10 },
+        { rowKeys: ['2'], colKey: 'north', count: 12 },
+      ],
+    });
+
+    render(<DashboardShell {...shellProps} />);
+
+    fireEvent.click(screen.getByLabelText('Chart view'));
+    fireEvent.click(screen.getByTestId('recipe-inspector-toggle'));
+
+    const workspace = screen.getByTestId('dashboard-workspace');
+    expect(workspace.querySelector('[data-recipe-expanded]')).toHaveAttribute('data-recipe-expanded', 'true');
+    expect(screen.getByTestId('recipe-inspector')).toHaveAttribute('data-open', 'true');
+    expect(screen.getByText(/Recipe — Slide 1/)).toBeVisible();
   });
 
   it('mounts CommandPalette inside the dashboard DndContext for drag-out insertion', () => {

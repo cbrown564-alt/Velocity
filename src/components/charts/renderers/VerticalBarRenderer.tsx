@@ -9,9 +9,9 @@ import { useChartDragMerge } from '../hooks/useChartDragMerge';
 import { useChartSelection } from '../hooks/useChartSelection';
 import { ChartPlotArea } from '../shared/ChartPlotArea';
 import {
-  formatAxisTick,
   formatBarTooltip,
   formatBarValueLabel,
+  formatValueAxisTick,
 } from '../../../core/visualization/chartLabelFormatters';
 
 /**
@@ -34,6 +34,9 @@ export const VerticalBarRenderer: React.FC<BaseChartRendererProps> = ({
   const BarRect = animateBarEntrance ? motion.rect : 'rect';
   const svgRef = useRef<SVGSVGElement>(null);
 
+  const { colVariable, columns, grandTotal } = processedData;
+  const hasColumnBreak = !!colVariable || columns.length > 1;
+
   // Use the first series (single column analysis) or "Total" column
   const chartData = useMemo(() => {
     const series = processedData.series[0];
@@ -54,12 +57,11 @@ export const VerticalBarRenderer: React.FC<BaseChartRendererProps> = ({
       .padding(0.25);
   }, [chartData, innerWidth]);
 
+  const peakCount = useMemo(() => max(chartData, (d) => d.value) || 1, [chartData]);
+
   const yScale = useMemo(() => {
-    const usePercent = labelMode === 'percent';
-    const maxVal = usePercent ? 1 : max(chartData, (d) => d.value) || 1;
-    const domainMax = usePercent ? 1 : maxVal * 1.1;
-    return d3.scaleLinear().domain([0, domainMax]).range([innerHeight, 0]);
-  }, [chartData, innerHeight, labelMode]);
+    return d3.scaleLinear().domain([0, peakCount * 1.1]).range([innerHeight, 0]);
+  }, [peakCount, innerHeight]);
 
   const { handleToggle, handleItemContextMenu } = useChartSelection<ChartDataPoint>({
     interactive,
@@ -133,7 +135,7 @@ export const VerticalBarRenderer: React.FC<BaseChartRendererProps> = ({
               textAnchor="end"
               style={{ fontSize: '10px', fill: 'var(--viz-text-axis)' }}
             >
-              {formatAxisTick(labelMode, tick)}
+              {formatValueAxisTick(labelMode, tick, { peakCount, grandTotal, hasColumnBreak })}
             </text>
           ))}
         </g>
@@ -172,7 +174,7 @@ export const VerticalBarRenderer: React.FC<BaseChartRendererProps> = ({
 
         {/* Columns */}
         {chartData.map((d, i) => {
-          const barValue = labelMode === 'percent' ? d.percent / 100 : d.value;
+          const barValue = d.value;
           const barHeight = innerHeight - yScale(barValue);
           const isSelected = selectedKeys?.has(d.label);
           const isDragging = dragState.isDragging && dragState.draggedItem?.label === d.label;

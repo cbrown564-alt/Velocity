@@ -1,6 +1,7 @@
 import type { Dataset, Variable, VariableSet } from '../../types/dataset';
 import type { VariableStatsResult } from '../../types/worker';
 import { isCategoricalType, normalizeVariableType } from '../../types';
+import { resolveEffectiveVariableSetType } from '../../lib/resolveVariableSetType';
 
 export interface VariableRowDisplay {
   monoName: string;
@@ -61,7 +62,7 @@ export function getVariableRowDisplay(
     return { monoName, label, meta: '' };
   }
 
-  const type = normalizeVariableType(variableSet.type || primaryVariable?.type || 'categorical');
+  const type = resolveEffectiveVariableSetType(variableSet, primaryVariable);
   const validCount = Math.max(0, stats.totalCount - stats.missingCount);
 
   if (isCategoricalType(type) || type === 'text') {

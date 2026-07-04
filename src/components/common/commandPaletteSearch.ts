@@ -1,16 +1,22 @@
 import type { VariableSet, Variable } from '../../types';
 import { allowsNumericStats, normalizeVariableType } from '../../types';
-import { placeVariableSet } from '../../core/grid/gridUtils';
+import type { ShelfPlacementResolution, TableConfigSnapshot } from '../../core/grid/gridUtils';
+import { resolveShelfPlacement } from '../../core/grid/gridUtils';
+import { resolveEffectiveVariableSetType } from '../../lib/resolveVariableSetType';
 
 export type VariableShelfTarget = 'drop-zone-rows' | 'drop-zone-cols' | 'drop-zone-weight';
 
-/** Insertion grammar: ↵ → rows, ⌥↵ → columns, ⇧↵ → filter. */
-export type InsertTarget = 'rows' | 'columns' | 'filter';
+/** Insertion grammar: ↵ → columns, ⌥↵ → rows, ⇧↵ → filter; weight via recipe inspector. */
+export type InsertTarget = 'rows' | 'columns' | 'filter' | 'weight';
 
-export function resolveInsertTarget(modifiers: { altKey?: boolean; shiftKey?: boolean }): InsertTarget {
+export function resolveInsertTarget(
+  modifiers: { altKey?: boolean; shiftKey?: boolean },
+  preset?: InsertTarget | null,
+): InsertTarget {
   if (modifiers.shiftKey) return 'filter';
-  if (modifiers.altKey) return 'columns';
-  return 'rows';
+  if (modifiers.altKey) return 'rows';
+  if (preset) return preset;
+  return 'columns';
 }
 
 export interface VariablePaletteMatch {
@@ -79,10 +85,10 @@ export function listVariableSetsForPalette(variableSets: VariableSet[], limit = 
 }
 
 /** Monochrome type glyph letter, per north-star `.tglyph`. */
-export function variableSetGlyph(set: VariableSet): string {
+export function variableSetGlyph(set: VariableSet, primaryVariable?: Variable): string {
   if (set.structure === 'multiple') return 'M';
   if (set.structure === 'grid') return 'G';
-  switch (normalizeVariableType(set.type)) {
+  switch (resolveEffectiveVariableSetType(set, primaryVariable)) {
     case 'ordered':
       return 'S';
     case 'numeric':
@@ -98,10 +104,10 @@ export function variableSetGlyph(set: VariableSet): string {
 }
 
 /** Right-hand metadata column for a palette row. */
-export function variableSetMeta(set: VariableSet): string {
+export function variableSetMeta(set: VariableSet, primaryVariable?: Variable): string {
   if (set.structure === 'multiple') return `Multi · ${set.variableIds.length}`;
   if (set.structure === 'grid') return `Grid · ${set.variableIds.length}`;
-  switch (normalizeVariableType(set.type)) {
+  switch (resolveEffectiveVariableSetType(set, primaryVariable)) {
     case 'ordered':
       return 'Scale';
     case 'numeric':
@@ -126,10 +132,12 @@ export function canAddVariableSetToWeight(set: VariableSet, variables: Variable[
 export function buildShelfPlacement(
   set: VariableSet,
   target: VariableShelfTarget,
-  tableConfig: { rowVars: string[]; colVar: string | null },
-): Partial<{ rowVars: string[]; colVar: string | null }> | null {
+  tableConfig: TableConfigSnapshot,
+): ShelfPlacementResolution {
   if (target === 'drop-zone-weight') {
-    return null;
+    return { placement: null, redirectedFromColumn: false };
   }
-  return placeVariableSet(set.id, set.structure, target, tableConfig);
+  return resolveShelfPlacement(set.id, set.structure, target, tableConfig);
 }
+
+export type { ShelfPlacementResolution } from '../../core/grid/gridUtils';

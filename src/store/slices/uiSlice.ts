@@ -97,6 +97,10 @@ export interface UISlice {
   toasts: Toast[];
   /** Command palette open state */
   commandPaletteOpen: boolean;
+  /** When set, ↵ inserts into this recipe slot (cleared on close). */
+  commandPaletteInsertTarget: 'rows' | 'columns' | 'filter' | 'weight' | null;
+  /** Incremented when a column-first placement is rejected (columns field shake). */
+  recipeColumnRejectNonce: number;
   /** Keyboard shortcut reference open state */
   shortcutsOpen: boolean;
   /** Whether the user has already seen the auto-crosstab onboarding */
@@ -168,8 +172,9 @@ export interface UISlice {
   clearToasts: () => void;
 
   // Command Palette
-  openCommandPalette: () => void;
+  openCommandPalette: (insertTarget?: 'rows' | 'columns' | 'filter' | 'weight' | null) => void;
   closeCommandPalette: () => void;
+  rejectRecipeColumnPlacement: () => void;
 
   // Shortcuts Reference
   openShortcuts: () => void;
@@ -209,6 +214,8 @@ export const createUISlice: StateCreator<UISlice, [], [], UISlice> = (set) => ({
   tableDensity: 'compact',
   toasts: [],
   commandPaletteOpen: false,
+  commandPaletteInsertTarget: null,
+  recipeColumnRejectNonce: 0,
   shortcutsOpen: false,
   hasSeenAutoCrosstab: false,
   lastActiveAt: 0,
@@ -384,8 +391,11 @@ export const createUISlice: StateCreator<UISlice, [], [], UISlice> = (set) => ({
   clearToasts: () => set({ toasts: [] }),
 
   // Command Palette Actions
-  openCommandPalette: () => set({ commandPaletteOpen: true }),
-  closeCommandPalette: () => set({ commandPaletteOpen: false }),
+  openCommandPalette: (insertTarget = null) =>
+    set({ commandPaletteOpen: true, commandPaletteInsertTarget: insertTarget }),
+  closeCommandPalette: () => set({ commandPaletteOpen: false, commandPaletteInsertTarget: null }),
+  rejectRecipeColumnPlacement: () =>
+    set((state) => ({ recipeColumnRejectNonce: state.recipeColumnRejectNonce + 1 })),
 
   // Shortcuts Reference Actions
   openShortcuts: () => set({ shortcutsOpen: true }),

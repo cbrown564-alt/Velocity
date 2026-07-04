@@ -8,11 +8,12 @@ import { CSS } from '@dnd-kit/utilities';
 import { EyeOff } from 'lucide-react';
 import { List, useListRef, type RowComponentProps } from 'react-window';
 import { useVelocityStore } from '../../store';
-import type { Dataset, VariableSet } from '../../types/dataset';
+import type { Dataset, Variable, VariableSet } from '../../types/dataset';
 import type { VariableStatsResult } from '../../types/worker';
 import { VariableTypeIcon } from '../../components/common/VariableTypeIcon';
 import { filterVariableSets } from './variableSetFilters';
-import { getVariableRowDisplay } from './variableRowMeta';
+import { getPrimaryVariable, getVariableRowDisplay } from './variableRowMeta';
+import { resolveEffectiveVariableSetType } from '../../lib/resolveVariableSetType';
 import listStyles from './VariableList.module.css';
 
 const ROW_HEIGHT = 32;
@@ -20,6 +21,7 @@ const OVERSCAN_COUNT = 8;
 
 interface VariableRowItemProps {
   variableSet: VariableSet;
+  primaryVariable: Variable | null;
   display: ReturnType<typeof getVariableRowDisplay>;
   isActive: boolean;
   isSelected: boolean;
@@ -30,6 +32,7 @@ interface VariableRowItemProps {
 
 const VariableRowItem: React.FC<VariableRowItemProps> = ({
   variableSet,
+  primaryVariable,
   display,
   isActive,
   isSelected,
@@ -71,7 +74,7 @@ const VariableRowItem: React.FC<VariableRowItemProps> = ({
     >
       <span className={listStyles.glyph}>
         <VariableTypeIcon
-          type={variableSet.type}
+          type={resolveEffectiveVariableSetType(variableSet, primaryVariable)}
           structure={variableSet.structure as 'single' | 'multiple' | 'grid'}
           size={14}
         />
@@ -120,11 +123,13 @@ const VariableListRow = ({
 
   const stats = getStatsForSet(vs);
   const display = getVariableRowDisplay(vs, dataset, stats);
+  const primaryVariable = getPrimaryVariable(vs, dataset);
 
   return (
     <div style={style}>
       <VariableRowItem
         variableSet={vs}
+        primaryVariable={primaryVariable}
         display={display}
         isActive={selectedVariableSetId === vs.id}
         isSelected={selectedVariableSetIds.includes(vs.id)}

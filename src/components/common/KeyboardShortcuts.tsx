@@ -35,8 +35,8 @@ const SHORTCUTS: ShortcutGroup[] = [
   {
     title: 'Insert palette',
     items: [
-      { keys: ['↵'], description: 'Insert as rows' },
-      { keys: ['⌥', '↵'], description: 'Insert as columns' },
+      { keys: ['↵'], description: 'Insert as columns' },
+      { keys: ['⌥', '↵'], description: 'Insert as rows' },
       { keys: ['⇧', '↵'], description: 'Insert as filter' },
       { keys: ['Esc'], description: 'Close palette' },
     ],

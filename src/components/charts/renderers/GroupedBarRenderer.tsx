@@ -5,9 +5,9 @@ import { BaseChartRendererProps } from '../../../types/charts';
 import { CHART_BAR_FILL_OPACITY, CHART_PALETTE } from '../shared/chartColors';
 import { SvgChartSeriesLegend } from '../shared/SvgChartSeriesLegend';
 import {
-  formatAxisTick,
   formatBarTooltip,
   formatBarValueLabel,
+  formatValueAxisTick,
 } from '../../../core/visualization/chartLabelFormatters';
 
 const DEFAULT_PALETTE = CHART_PALETTE;
@@ -26,7 +26,8 @@ export const GroupedBarRenderer: React.FC<BaseChartRendererProps> = ({
   onContextMenu,
   labelMode = 'count',
 }) => {
-  const { rows, columns } = processedData;
+  const { rows, columns, colVariable, grandTotal } = processedData;
+  const hasColumnBreak = !!colVariable || columns.length > 1;
 
   // Get column keys and labels for the legend/sub-groups
   const columnKeys = columns.map((c) => c.key);
@@ -67,28 +68,21 @@ export const GroupedBarRenderer: React.FC<BaseChartRendererProps> = ({
     return d3.scaleBand().domain(columnKeys).range([0, y0Scale.bandwidth()]).padding(barPadding);
   }, [columnKeys, y0Scale]);
 
-  const isPercentMode = labelMode === 'percent';
+  const peakCount = useMemo(() => {
+    return (
+      max(rows, (row) => {
+        return max(columnKeys, (key) => row.cells[key]?.count || 0);
+      }) || 1
+    );
+  }, [rows, columnKeys]);
 
-  // X: Validation scale
+  // Bar geometry always uses counts; labelMode switches axis + bar labels only.
   const xScale = useMemo(() => {
-    const maxVal =
-      (isPercentMode
-        ? max(rows, (row) => {
-            return max(columnKeys, (key) => {
-              const cell = row.cells[key];
-              if (!cell) return 0;
-              return cell.percent / 100;
-            });
-          })
-        : max(rows, (row) => {
-            return max(columnKeys, (key) => row.cells[key]?.count || 0);
-          })) || 1;
-
     return d3
       .scaleLinear()
-      .domain([0, maxVal * 1.1]) // Add 10% padding
+      .domain([0, peakCount * 1.1]) // Add 10% padding
       .range([0, innerWidth]);
-  }, [rows, columnKeys, innerWidth, isPercentMode]);
+  }, [peakCount, innerWidth]);
 
   const xTicks = xScale.ticks(5);
 
@@ -118,7 +112,7 @@ export const GroupedBarRenderer: React.FC<BaseChartRendererProps> = ({
   );
 
   return (
-    <div style={{ width, height, overflowY: 'auto', overflowX: 'auto' }}>
+    <div style={{ width, minHeight: height, height: Math.max(height, actualHeight + margin.top + margin.bottom) }}>
       <svg
         width={width}
         height={Math.max(height, actualHeight + margin.top + margin.bottom)}
@@ -153,7 +147,7 @@ export const GroupedBarRenderer: React.FC<BaseChartRendererProps> = ({
               <g key={tick} transform={`translate(${xScale(tick)},0)`}>
                 <line y2={4} stroke="var(--viz-stroke-main)" />
                 <text y={18} textAnchor="middle" style={{ fontSize: '10px', fill: 'var(--viz-text-axis)' }}>
-                  {formatAxisTick(labelMode, tick)}
+                  {formatValueAxisTick(labelMode, tick, { peakCount, grandTotal, hasColumnBreak })}
                 </text>
               </g>
             ))}
@@ -186,8 +180,7 @@ export const GroupedBarRenderer: React.FC<BaseChartRendererProps> = ({
                 {columnKeys.map((colKey, i) => {
                   const count = row.cells[colKey]?.count || 0;
                   const percent = row.cells[colKey]?.percent || 0;
-                  const value = isPercentMode ? percent / 100 : count;
-                  const barWidth = xScale(value);
+                  const barWidth = xScale(count);
                   const barY = y1Scale(colKey) || 0;
                   const barHeight = y1Scale.bandwidth();
 

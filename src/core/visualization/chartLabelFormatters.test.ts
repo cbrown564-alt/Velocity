@@ -3,8 +3,10 @@ import {
   formatAxisTick,
   formatBarTooltip,
   formatBarValueLabel,
+  formatValueAxisTick,
   isPercentAxisMode,
   layoutLegendItems,
+  resolvePeakCount,
 } from './chartLabelFormatters';
 
 describe('chartLabelFormatters', () => {
@@ -18,6 +20,19 @@ describe('chartLabelFormatters', () => {
     expect(formatAxisTick('percent', 0.5)).toBe('50%');
     expect(formatAxisTick('percent', 1)).toBe('100%');
     expect(formatAxisTick('count', 1200)).toBe('1,200');
+  });
+
+  it('formats value-axis ticks as percent without changing count scale', () => {
+    expect(
+      formatValueAxisTick('percent', 50, { peakCount: 100, grandTotal: 200, hasColumnBreak: false }),
+    ).toBe('25%');
+    expect(formatValueAxisTick('percent', 50, { peakCount: 100, hasColumnBreak: true })).toBe('50%');
+    expect(formatValueAxisTick('count', 1200, { peakCount: 100 })).toBe('1,200');
+  });
+
+  it('resolves peak count from values', () => {
+    expect(resolvePeakCount([10, 55, 30])).toBe(55);
+    expect(resolvePeakCount([])).toBe(1);
   });
 
   it('formats bar labels as percent when axis is percent scale', () => {
