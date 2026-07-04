@@ -283,7 +283,7 @@ All work packages landed on branch `cursor/design-reset-integration-69a6` (integ
 | 4.3 | Docs reconciliation | **Done** | `design_01_system.md`, `design_02_ux_modes.md`, tracker §7 updated |
 | 4.4 | PILOT-6 re-screenshot flag | **Done** | Flag raised §6 — photography predates reset; re-capture required |
 
-**Integration head:** `a655c0d` (merge WP2.5). Phase 4 evidence commit pending push.
+**Integration head:** `5c85707` (Phase 4 evidence + docs reconciliation).
 
 ---
 
