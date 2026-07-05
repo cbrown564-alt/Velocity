@@ -224,4 +224,40 @@ describe('initOpfsPersistence', () => {
     expect(result.decision).toBe('rebuild');
     expect(openMemory).toHaveBeenCalledTimes(1);
   });
+
+  it('falls back to the next candidate when an OPFS open attempt times out', async () => {
+    vi.useFakeTimers();
+
+    const openPath = vi.fn(async (path: string) => {
+      if (path === 'opfs://slow.db') {
+        return new Promise<{ ok: boolean }>(() => undefined);
+      }
+      return { ok: true };
+    });
+
+    const initPromise = initOpfsPersistence({
+      enableOpfs: true,
+      opfsSupport: { supported: true },
+      desiredPath: 'opfs://slow.db',
+      fallbackPath: null,
+      attemptTimeoutMs: 2000,
+      openPath,
+      listCandidates: async () => [{ path: 'opfs://slow.db' }, { path: 'opfs://fast.db' }],
+      quarantine: vi.fn(async () => undefined),
+      buildRepairPath: () => 'opfs://repair.db',
+      openMemory: vi.fn(async () => undefined),
+      validateOpenedPath: async (path) => path === 'opfs://fast.db',
+      resetBetweenAttempts: vi.fn(async () => undefined),
+    });
+
+    await vi.advanceTimersByTimeAsync(2000);
+
+    const result = await initPromise;
+
+    expect(result.opfsAvailable).toBe(true);
+    expect(result.activeDbPath).toBe('opfs://fast.db');
+    expect(result.persistenceError).toContain('timed out');
+
+    vi.useRealTimers();
+  });
 });

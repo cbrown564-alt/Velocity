@@ -57,6 +57,8 @@ export interface EngineProxyOptions {
   onPersistenceStatus?: PersistenceStatusCallback;
   /** Called on corruption detection. */
   onCorruption?: CorruptionCallback;
+  /** Called when the underlying worker throws a runtime or message error. */
+  onWorkerError?: (message: string) => void;
 }
 
 // ============================================================================
@@ -70,6 +72,7 @@ export class EngineProxy {
   private onProgress?: ProgressCallback;
   private onPersistenceStatus?: PersistenceStatusCallback;
   private onCorruption?: CorruptionCallback;
+  private onWorkerError?: (message: string) => void;
   private disposed = false;
   private datasetContext = { datasetName: 'unloaded', rowCount: 0 };
 
@@ -79,8 +82,11 @@ export class EngineProxy {
     this.onProgress = options.onProgress;
     this.onPersistenceStatus = options.onPersistenceStatus;
     this.onCorruption = options.onCorruption;
+    this.onWorkerError = options.onWorkerError;
 
     this.worker.addEventListener('message', this.handleMessage);
+    this.worker.addEventListener('error', this.handleWorkerRuntimeError);
+    this.worker.addEventListener('messageerror', this.handleWorkerMessageError);
   }
 
   // ==========================================================================
@@ -324,13 +330,9 @@ export class EngineProxy {
   dispose(): void {
     this.disposed = true;
     this.worker.removeEventListener('message', this.handleMessage);
-
-    // Reject all pending requests
-    for (const [, pending] of this.pending) {
-      clearTimeout(pending.timer);
-      pending.reject(new Error('EngineProxy disposed'));
-    }
-    this.pending.clear();
+    this.worker.removeEventListener('error', this.handleWorkerRuntimeError);
+    this.worker.removeEventListener('messageerror', this.handleWorkerMessageError);
+    this.rejectAllPending(new Error('EngineProxy disposed'));
   }
 
   /** Terminate the underlying worker and dispose. */
@@ -376,6 +378,30 @@ export class EngineProxy {
       },
     };
   }
+
+  private rejectAllPending(error: Error): void {
+    for (const [, pending] of this.pending) {
+      clearTimeout(pending.timer);
+      pending.reject(error);
+    }
+    this.pending.clear();
+  }
+
+  private handleWorkerRuntimeError = (event: ErrorEvent): void => {
+    const message = event.message || 'Worker runtime error';
+    console.error('[EngineProxy] Worker runtime error:', message);
+    this.onWorkerError?.(message);
+    this.rejectAllPending(new Error(message));
+  };
+
+  /**
+   * Non-engine messages (Vite dev plumbing, DuckDB internals) can occasionally fail
+   * structured clone on the worker port. Ignore them — engine protocol responses are
+   * sanitized in postEngineResponse and handled in handleMessage.
+   */
+  private handleWorkerMessageError = (): void => {
+    console.warn('[EngineProxy] Ignored worker message that failed deserialization');
+  };
 
   private send(
     payload: Record<string, unknown> & { type: string },

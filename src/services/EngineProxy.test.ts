@@ -13,11 +13,12 @@ import type { EngineProxyOptions } from './EngineProxy';
 
 // ─── Mock Worker ──────────────────────────────────────────────────────────────
 
-type MockListener = (event: MessageEvent) => void;
+type MockListener = (event: MessageEvent | ErrorEvent) => void;
 
 interface MockWorkerHandle {
   worker: Worker;
   emit: (data: unknown) => void;
+  emitError: (message?: string) => void;
   postMessage: ReturnType<typeof vi.fn>;
   addEventListener: ReturnType<typeof vi.fn>;
   removeEventListener: ReturnType<typeof vi.fn>;
@@ -25,13 +26,27 @@ interface MockWorkerHandle {
 }
 
 function createMockWorker(): MockWorkerHandle {
-  const listeners: MockListener[] = [];
+  const messageListeners: MockListener[] = [];
+  const errorListeners: MockListener[] = [];
+  const messageErrorListeners: MockListener[] = [];
 
-  const addEventListenerMock = vi.fn((_type: string, fn: EventListenerOrEventListenerObject) => {
-    listeners.push(fn as MockListener);
+  const addEventListenerMock = vi.fn((type: string, fn: EventListenerOrEventListenerObject) => {
+    if (type === 'message') {
+      messageListeners.push(fn as MockListener);
+      return;
+    }
+    if (type === 'error') {
+      errorListeners.push(fn as MockListener);
+      return;
+    }
+    if (type === 'messageerror') {
+      messageErrorListeners.push(fn as MockListener);
+    }
   });
 
-  const removeEventListenerMock = vi.fn((_type: string, fn: EventListenerOrEventListenerObject) => {
+  const removeEventListenerMock = vi.fn((type: string, fn: EventListenerOrEventListenerObject) => {
+    const listeners =
+      type === 'message' ? messageListeners : type === 'error' ? errorListeners : messageErrorListeners;
     const idx = listeners.indexOf(fn as MockListener);
     if (idx !== -1) listeners.splice(idx, 1);
   });
@@ -48,12 +63,18 @@ function createMockWorker(): MockWorkerHandle {
 
   const emit = (data: unknown) => {
     const event = new MessageEvent('message', { data });
-    [...listeners].forEach((fn) => fn(event));
+    [...messageListeners].forEach((fn) => fn(event));
+  };
+
+  const emitError = (message = 'Worker script error') => {
+    const event = new ErrorEvent('error', { message });
+    [...errorListeners].forEach((fn) => fn(event));
   };
 
   return {
     worker,
     emit,
+    emitError,
     postMessage: postMessageMock,
     addEventListener: addEventListenerMock,
     removeEventListener: removeEventListenerMock,
@@ -102,10 +123,47 @@ afterEach(() => {
 // ────────────────────────────────────────────────────────────
 
 describe('EngineProxy constructor', () => {
-  it('registers a message listener on the worker', () => {
+  it('registers message and worker error listeners on the worker', () => {
     const handle = createMockWorker();
     new EngineProxy(handle.worker);
     expect(handle.addEventListener).toHaveBeenCalledWith('message', expect.any(Function));
+    expect(handle.addEventListener).toHaveBeenCalledWith('error', expect.any(Function));
+    expect(handle.addEventListener).toHaveBeenCalledWith('messageerror', expect.any(Function));
+  });
+});
+
+describe('EngineProxy worker errors', () => {
+  it('rejects pending requests when the worker emits an error event', async () => {
+    const handle = createMockWorker();
+    const proxy = new EngineProxy(handle.worker);
+
+    const promise = proxy.ping();
+    handle.emitError('Worker failed to bootstrap');
+
+    await expect(promise).rejects.toThrow('Worker failed to bootstrap');
+  });
+
+  it('invokes onWorkerError when the worker emits an error event', async () => {
+    const handle = createMockWorker();
+    const onWorkerError = vi.fn();
+    const proxy = new EngineProxy(handle.worker, { onWorkerError });
+
+    const promise = proxy.init();
+    handle.emitError('Worker script load failed');
+
+    await expect(promise).rejects.toThrow('Worker script load failed');
+    expect(onWorkerError).toHaveBeenCalledWith('Worker script load failed');
+  });
+
+  it('does not reject pending requests on messageerror (non-engine worker noise)', async () => {
+    const handle = createMockWorker();
+    const proxy = new EngineProxy(handle.worker);
+
+    const promise = proxy.ping();
+    const reqId = lastRequestId(handle);
+    handle.emit({ type: 'engine.pong', requestId: reqId, hasData: false });
+
+    await expect(promise).resolves.toMatchObject({ type: 'engine.pong' });
   });
 });
 

@@ -31,11 +31,23 @@ export function createEngineActions(
         getOpfsAvailable: () => get().opfsAvailable,
         getPersistenceState: () => get().persistenceState,
         bridge: bridge(),
-        setWorkerRuntimeError: (message) => set({ initError: message }),
-        assignBrowserEngine: (engine) => set({ browserEngine: engine, persistenceState: 'checking' }),
+        setWorkerRuntimeError: (message) =>
+          set({
+            initError: message,
+            persistenceState: 'error',
+            browserEngine: null,
+            isDbReady: false,
+          }),
+        assignBrowserEngine: (engine) => set({ browserEngine: engine }),
         setInitSuccess: (opfsAvailable) => set({ isDbReady: true, opfsAvailable }),
         setPersistenceReady: () => set({ persistenceState: 'ready' }),
-        setInitError: (message) => set({ initError: message, persistenceState: 'error' }),
+        setInitError: (message) =>
+          set({
+            initError: message,
+            persistenceState: 'error',
+            browserEngine: null,
+            isDbReady: false,
+          }),
         checkPersistedData: () => get().checkPersistedData(),
         onLoadProgress: handleLoadProgress,
       });
@@ -71,6 +83,8 @@ export function createEngineActions(
           set({
             initError: message,
             persistenceState: 'error',
+            browserEngine: null,
+            isDbReady: false,
           }),
         setWorkerRuntimeError: (message) => set({ initError: message }),
         cleanStart,
