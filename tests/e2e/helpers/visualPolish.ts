@@ -208,10 +208,20 @@ export async function insertVariableFromPalette(
   await page.waitForTimeout(900);
 }
 
+/** Wait until the active slide finishes a crosstab recomputation. */
+export async function waitForAnalysisIdle(page: Page, timeoutMs = 120000) {
+  const updating = page.getByText('Updating analysis results');
+  if (await updating.isVisible().catch(() => false)) {
+    await expect(updating).toBeHidden({ timeout: timeoutMs });
+  }
+}
+
 /** Build or confirm the sleep.sav example crosstab (sex × marital status). */
 export async function buildExampleCrosstab(page: Page) {
   const table = page.locator('table');
   const pctCell = page.locator('text=/\\d+\\.\\d%/').first();
+
+  await waitForAnalysisIdle(page);
 
   const hasComputedCrosstab = async () =>
     (await table.isVisible({ timeout: 5000 }).catch(() => false)) &&

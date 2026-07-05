@@ -258,6 +258,7 @@ export function useSessionLifecycle({
   const handleDatasetFileUpload = useCallback(
     async (event: React.ChangeEvent<HTMLInputElement>) => {
       clearImportedSessionSemantic();
+      await warmUpEngineOnIntent('file-upload');
       await fileUpload.handleFileUpload(event);
     },
     [clearImportedSessionSemantic, fileUpload],

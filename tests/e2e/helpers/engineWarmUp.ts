@@ -16,7 +16,7 @@ export function waitForEngineReadyConsole(page: Page, timeoutMs = 60_000): Promi
   return new Promise((resolve, reject) => {
     const timer = setTimeout(() => reject(new Error('Timed out waiting for analysis engine')), timeoutMs);
     page.on('console', function onConsole(message) {
-      if (message.text().includes('[enginePersistenceBridge] Engine ready')) {
+      if (message.text().includes('Engine ready, OPFS available')) {
         clearTimeout(timer);
         page.off('console', onConsole);
         resolve();

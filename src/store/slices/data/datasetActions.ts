@@ -117,7 +117,7 @@ export function createDatasetActions(
       const targetDatasetId = options?.datasetId;
       const currentDataset = get().dataset;
 
-      if (targetDatasetId && currentDataset?.id !== targetDatasetId) {
+      if (targetDatasetId && currentDataset?.id && currentDataset.id !== targetDatasetId) {
         if (currentDataset) {
           await get()
             .flushPersistedData()

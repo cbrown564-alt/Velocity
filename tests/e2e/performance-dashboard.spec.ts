@@ -14,7 +14,7 @@ import { warmUpEngine, waitForEngineReadyConsole } from './helpers/engineWarmUp'
  * path and reports, in one JSON artifact:
  *
  *   - initialLoadedBytes  — same-origin startup assets fetched before upload
- *   - workerReadyMs       — navigation start -> "[enginePersistenceBridge] Engine ready"
+ *   - workerReadyMs       — navigation start -> "[workspaceBoot] Engine ready"
  *   - uploadToReadyMs     — file selected -> dashboard ready for analysis
  *   - firstCrosstabMs     — first variable selected -> rendered percentages
  *   - exportModalOpenMs   — Export clicked -> export submit visible (lazy chunk)
