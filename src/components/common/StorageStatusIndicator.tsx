@@ -23,27 +23,33 @@ export const StorageStatusIndicator: React.FC<StorageStatusIndicatorProps> = ({
     );
   }
 
+  // Normal states stay quiet: a standing amber/green box for the browser
+  // default is alarm fatigue. Storage Health (PersistenceStatus) carries the
+  // detail; only genuine degradation (no OPFS above) warrants warning color.
   if (persistentStorageGranted === true) {
     return (
-      <div className="mt-2 flex items-center gap-1.5 text-[11px] text-[var(--color-success)] bg-[var(--status-success-surface)] border border-[var(--status-success-border)] rounded px-2 py-1">
-        <CheckCircle2 size={12} />
-        <span>Session stored securely in this browser</span>
+      <div className="mt-2 flex items-center gap-1.5 text-[11px] text-[var(--text-secondary)]">
+        <CheckCircle2 size={12} className="shrink-0 opacity-70" />
+        <span>Session stored in this browser</span>
       </div>
     );
   }
 
   if (persistentStorageGranted === false) {
     return (
-      <div className="mt-2 flex items-center gap-1.5 text-[11px] text-[var(--status-warning-text)] bg-[var(--status-warning-surface)] border border-[var(--status-warning-border)] rounded px-2 py-1">
-        <AlertCircle size={12} />
-        <span>Session stored locally - may be cleared by browser</span>
+      <div
+        className="mt-2 flex items-center gap-1.5 text-[11px] text-[var(--text-secondary)]"
+        title="The browser may clear local data under storage pressure. Export a session file for a durable copy."
+      >
+        <AlertCircle size={12} className="shrink-0 opacity-70" />
+        <span>Session stored locally</span>
       </div>
     );
   }
 
   return (
-    <div className="mt-2 flex items-center gap-1.5 text-[11px] text-[var(--text-secondary)] bg-[var(--bg-surface)] border border-[var(--border-color-muted)] rounded px-2 py-1">
-      <AlertCircle size={12} />
+    <div className="mt-2 flex items-center gap-1.5 text-[11px] text-[var(--text-secondary)] opacity-70">
+      <AlertCircle size={12} className="shrink-0" />
       <span>Checking storage durability...</span>
     </div>
   );

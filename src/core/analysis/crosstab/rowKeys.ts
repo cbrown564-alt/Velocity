@@ -1,4 +1,5 @@
 import type { CrosstabRowKeyFields } from './types';
+import type { CrosstabSqlRow } from './types';
 
 /**
  * Collect rowKey_0, rowKey_1, … in index order until the first gap.
@@ -22,6 +23,19 @@ export function extractRowKeyStrings(row: CrosstabRowKeyFields): string[] {
 /** Join rowKey path with a separator (default '|' for significance / totals maps). */
 export function joinRowKeyPath(row: CrosstabRowKeyFields, separator = '|'): string {
   return extractRowKeyStrings(row).join(separator);
+}
+
+/** Prefix nested frequency rows so they nest under a measure parent row in buildTree. */
+export function prefixNestedCrosstabRows(rows: CrosstabSqlRow[], measureLabel: string): CrosstabSqlRow[] {
+  return rows.map((row) => {
+    const keys = extractRowKeys(row);
+    const prefixed: CrosstabSqlRow = { ...row };
+    prefixed.rowKey_0 = measureLabel;
+    keys.forEach((key, index) => {
+      prefixed[`rowKey_${index + 1}`] = key;
+    });
+    return prefixed;
+  });
 }
 
 /** Normalize colKey from SQL rows for map lookups (defaults to 'Total'). */

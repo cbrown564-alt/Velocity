@@ -1,5 +1,7 @@
 # CI Failure Root Cause Analysis
 
+> **Historical document.** This RCA covers CI failures on `main` from June 15 – July 1, 2026. Corrective actions through `STAB-CI-9` landed in PR #17; the CI/testing overhaul (`STAB-CI-11`–`STAB-CI-22`, July 2026) split parallel jobs, quarantined `@visual` specs, and updated docs/playbooks. For current gates, use [`docs/arch_08_testing.md`](arch_08_testing.md) §8 and [`docs/playbooks/pre_pr_verification.md`](playbooks/pre_pr_verification.md).
+
 Date: 2026-07-01  
 Scope: Repeated CI failures on `main` (June 15 – July 1, 2026)  
 Method: Git history analysis, GitHub Actions run inspection, testing-strategy audit, process/doc gap audit
@@ -94,9 +96,11 @@ Repeated pattern when touching shortcuts, onboarding, banners, or theme labels:
 | ID | Action | Rationale |
 | :--- | :--- | :--- |
 | STAB-CI-3 | ESLint warn → error ratchet on touched files | Lint passes today with warnings only | **Done** — rules promoted to `error`, `check:eslint-ratchet` in CI |
-| STAB-CI-4 | UI playbook: require E2E update when changing shortcuts/onboarding/banners | Repeated failure pattern |
-| STAB-CI-5 | Replace `describe.skip` on `duckDbArrow.test.ts` with browser smoke | Critical WASM path untested |
-| STAB-CI-6 | Shrink coverage exclusions as characterization tests land | Honest green for product code |
+| STAB-CI-4 | UI playbook: require E2E update when changing shortcuts/onboarding/banners | Repeated failure pattern | **Done** — `scripts/check-e2e-companion.mjs` in CI |
+| STAB-CI-5 | Replace `describe.skip` on `duckDbArrow.test.ts` with browser smoke | Critical WASM path untested | **Done** — `tests/e2e/duckdb-arrow-smoke.spec.ts` |
+| STAB-CI-6 | Shrink coverage exclusions as characterization tests land | Honest green for product code | **Done** — store slice ratchet; `features/`/`overlays/` deferred to STAB-CI-7 |
+| STAB-CI-7 | Remove blanket `features/`/`overlays/` exclusions + characterization tests | Honest product-surface measurement | **Done** — blanket exclusions removed; global thresholds pass |
+| STAB-CI-8 | `EngineProxy.ts` / `duckdbBundles.ts` characterization | Service-layer coverage | **Done** — co-located tests; exclusions removed |
 
 ## References
 

@@ -49,4 +49,71 @@ describe('RecodeModal', () => {
     expect(onSave).toHaveBeenCalledTimes(1);
     expect(onClose).toHaveBeenCalledTimes(1);
   });
+
+  it('closes without saving when cancel is clicked', async () => {
+    const onSave = vi.fn();
+    const onClose = vi.fn();
+
+    useVelocityStore.setState({
+      recodeVariable: vi.fn(),
+      getUniqueValues: vi.fn().mockResolvedValue(['1']),
+    } as never);
+
+    render(
+      <RecodeModal
+        isOpen
+        onClose={onClose}
+        onSave={onSave}
+        variable={{
+          id: 'gender',
+          name: 'gender',
+          label: 'Gender',
+          type: 'categorical',
+          valueLabels: [],
+          missingValues: {},
+        }}
+      />,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByDisplayValue('Gender (Recoded)')).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: /cancel/i }));
+    expect(onSave).not.toHaveBeenCalled();
+    expect(onClose).toHaveBeenCalled();
+  });
+
+  it('marks binning table column headers with scope="col"', async () => {
+    useVelocityStore.setState({
+      recodeVariable: vi.fn(),
+      getUniqueValues: vi.fn().mockResolvedValue(['1', '2', '3']),
+    } as never);
+
+    render(
+      <RecodeModal
+        isOpen
+        onClose={vi.fn()}
+        onSave={vi.fn()}
+        variable={{
+          id: 'age',
+          name: 'age',
+          label: 'Age',
+          type: 'numeric',
+          valueLabels: [],
+          missingValues: {},
+        }}
+      />,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Min (>=)')).toBeInTheDocument();
+    });
+
+    const headers = screen.getAllByRole('columnheader');
+    expect(headers.length).toBeGreaterThan(0);
+    headers.forEach((header) => {
+      expect(header).toHaveAttribute('scope', 'col');
+    });
+  });
 });

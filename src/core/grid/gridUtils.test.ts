@@ -2,9 +2,11 @@ import { describe, it, expect } from 'vitest';
 import {
   applyCanvasPlacement,
   applyGridSetDrop,
+  applyRecipeChipDrop,
   generateSyntheticGridVariables,
   gridSetToTableConfig,
   placeVariableSet,
+  resolveShelfPlacement,
 } from './gridUtils';
 import type { VariableSet } from '../../types';
 
@@ -68,6 +70,45 @@ describe('placeVariableSet', () => {
 
     it('delegates canvas to full grid layout', () => {
       expect(placeVariableSet(setId, 'grid', 'canvas', empty)).toEqual(gridSetToTableConfig(setId, 'full'));
+    });
+  });
+});
+
+describe('applyRecipeChipDrop', () => {
+  it('moves a column chip to rows', () => {
+    expect(
+      applyRecipeChipDrop('region', 'column', 'drop-zone-rows', { rowVars: ['gender'], colVar: 'region' }),
+    ).toEqual({ rowVars: ['gender', 'region'], colVar: null });
+  });
+
+  it('moves a row chip to columns and swaps the previous column to rows', () => {
+    expect(applyRecipeChipDrop('gender', 'row', 'drop-zone-cols', { rowVars: ['gender'], colVar: 'region' })).toEqual({
+      rowVars: ['region'],
+      colVar: 'gender',
+    });
+  });
+
+  it('no-ops when a row chip is dropped on rows', () => {
+    expect(
+      applyRecipeChipDrop('gender', 'row', 'drop-zone-rows', { rowVars: ['gender'], colVar: 'region' }),
+    ).toBeNull();
+  });
+});
+
+describe('resolveShelfPlacement', () => {
+  const empty = { rowVars: [] as string[], colVar: null as string | null };
+
+  it('redirects column-first placement to rows when no rows exist', () => {
+    expect(resolveShelfPlacement('region', 'single', 'drop-zone-cols', empty)).toEqual({
+      placement: { rowVars: ['region'] },
+      redirectedFromColumn: true,
+    });
+  });
+
+  it('allows column placement once a row exists', () => {
+    expect(resolveShelfPlacement('region', 'single', 'drop-zone-cols', { rowVars: ['gender'], colVar: null })).toEqual({
+      placement: { colVar: 'region' },
+      redirectedFromColumn: false,
     });
   });
 });

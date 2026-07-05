@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useRef, useCallback } from 'react';
-import { AggregatedRow, Variable, TableStats } from '../../../types';
+import { AggregatedRow, Variable } from '../../../types';
 import type { VariableStatsResult } from '../../../types/worker';
 import { useProcessedAnalysisData } from '../../../hooks/useProcessedAnalysisData';
 import { useTableDragMerge } from '../../../hooks/useTableDragMerge';
@@ -7,7 +7,6 @@ import { useMergeOrchestration } from '../../../hooks/useMergeOrchestration';
 import { InputModal } from '../../../components/overlays/InputModal';
 import { ChartContextMenu } from '../../../components/overlays/ChartContextMenu';
 import { RowPathEntry, type TableRowNode } from '../../../core/analysis/treeBuilder';
-import { StatisticsStatusBar } from '../../../components/common/StatisticsStatusBar';
 import { useReducedMotion } from '../../../lib/motion';
 import { useVelocityStore } from '../../../store';
 import mergeStyles from './DataTable.module.css';
@@ -50,7 +49,6 @@ interface DataTableProps {
   /** If true, row keys are already labels (multiple response) - skip label resolution */
   isMultipleResponse?: boolean;
   /** Table-level statistics (chi-square, etc.) */
-  tableStats?: TableStats | null;
   /** Table density: compact (exploration) or generous (presentation) */
   density?: 'compact' | 'generous';
   /** Bleed output frame to slide edges (Focus mode) */
@@ -66,18 +64,16 @@ export const DataTable: React.FC<DataTableProps> = ({
   onCellClick,
   variableStats,
   isMultipleResponse = false,
-  tableStats,
   density = 'compact',
   frameBleed = false,
 }) => {
   const analysisSettings = useVelocityStore((state) => state.analysisSettings);
-  const showCellN = analysisSettings.showCellN ?? true;
-  const showColumnBases = analysisSettings.showColumnBases ?? true;
+  const showCellN = analysisSettings.showCellN ?? false;
+  const showColumnBases = analysisSettings.showColumnBases ?? false;
   const processedQueryResult = useVelocityStore((state) => state.processedQueryResult);
   const transformLog = useVelocityStore((state) => state.transformLog);
   const deleteGroupedVariable = useVelocityStore((state) => state.deleteGroupedVariable);
   const splitGroupValue = useVelocityStore((state) => state.splitGroupValue);
-  const overlapCorrected = useMemo(() => data.some((row) => row.stats?.isOverlapCorrected), [data]);
 
   // UI State for expanded rows
   const [expandedKeys, setExpandedKeys] = useState<Record<string, boolean>>({});
@@ -330,7 +326,7 @@ export const DataTable: React.FC<DataTableProps> = ({
         <th
           aria-hidden
           style={{ width, padding: 0 }}
-          className="sticky top-0 z-10 bg-[var(--bg-panel)] data-[theme=liquid-glass]:bg-[var(--mat-panel-bg)] border-b border-[var(--border-grid)]"
+          className="sticky top-0 z-[var(--z-sticky)] bg-[var(--bg-panel)] data-[theme=liquid-glass]:bg-[var(--mat-panel-bg)] border-b border-[var(--border-grid)]"
         />
       ) : (
         <td aria-hidden style={{ width, padding: 0 }} className="border-l border-[var(--border-subtle)]" />
@@ -342,21 +338,13 @@ export const DataTable: React.FC<DataTableProps> = ({
       bleed={frameBleed}
       density={density}
       reducedMotion={reducedMotion}
-      frameClassName={density === 'generous' || frameBleed || virtualizeRows ? undefined : 'shrink-wrap'}
-      className={density === 'generous' || frameBleed || virtualizeRows ? 'h-full min-h-0' : ''}
-      footer={
-        <StatisticsStatusBar
-          analysisSettings={analysisSettings}
-          tableStats={tableStats}
-          colVariable={colVariable}
-          overlapCorrected={overlapCorrected}
-        />
-      }
+      frameClassName={virtualizeRows ? undefined : 'shrink-wrap'}
+      className={virtualizeRows ? 'h-full min-h-0' : ''}
     >
       <div
         ref={tableContainerRef}
         data-testid="crosstab-scroll-region"
-        className={`${mergeStyles.tableScrollRegion} custom-scrollbar`}
+        className={`${mergeStyles.tableScrollRegion} ${virtualizeRows ? '' : mergeStyles.tableScrollNatural} custom-scrollbar`}
       >
         <table
           style={tableWidth ? { width: tableWidth } : undefined}
@@ -369,7 +357,7 @@ export const DataTable: React.FC<DataTableProps> = ({
             <tr className="font-body">
               <th
                 style={{ width: columnWidths?.rowLabel }}
-                className={`px-2 ${density === 'generous' ? 'py-4' : 'py-2.5'} font-bold text-[var(--text-secondary)] tracking-wider text-left align-bottom sticky top-0 bg-[var(--bg-panel)] data-[theme=liquid-glass]:bg-[var(--mat-panel-bg)] data-[theme=liquid-glass]:backdrop-blur-md z-10 box-border border-b border-[var(--border-grid)] uppercase text-[11px] font-body`}
+                className={`px-2 ${density === 'generous' ? 'py-4' : 'py-2.5'} font-bold text-[var(--text-secondary)] tracking-wider text-left align-bottom sticky top-0 bg-[var(--bg-panel)] data-[theme=liquid-glass]:bg-[var(--mat-panel-bg)] data-[theme=liquid-glass]:backdrop-blur-md z-[var(--z-sticky)] box-border border-b border-[var(--border-grid)] uppercase text-[11px] font-body`}
               >
                 {toUiCaps(rowVariables[0].label)}
               </th>
@@ -388,7 +376,7 @@ export const DataTable: React.FC<DataTableProps> = ({
                     key={col}
                     style={{ width: columnWidths?.columns[col] }}
                     className={[
-                      `px-2 ${density === 'generous' ? 'py-3' : 'py-2'} font-bold font-mono text-[var(--text-secondary)] text-left align-bottom sticky top-0 bg-[var(--bg-panel)] data-[theme=liquid-glass]:bg-[var(--mat-panel-bg)] data-[theme=liquid-glass]:backdrop-blur-md z-10 border-b border-l border-[var(--border-grid)] transition-colors`,
+                      `px-2 ${density === 'generous' ? 'py-3' : 'py-2'} font-bold font-mono text-[var(--text-secondary)] text-left align-bottom sticky top-0 bg-[var(--bg-panel)] data-[theme=liquid-glass]:bg-[var(--mat-panel-bg)] data-[theme=liquid-glass]:backdrop-blur-md z-[var(--z-sticky)] border-b border-l border-[var(--border-grid)] transition-colors`,
                       hoveredCol === col
                         ? 'bg-[var(--bg-active)] border-l-[var(--border-color-active)]'
                         : 'border-l-transparent',
@@ -422,6 +410,18 @@ export const DataTable: React.FC<DataTableProps> = ({
                         toggleColSelection(col);
                       }
                     }}
+                    onKeyDown={(e) => {
+                      if (!colVariable || dragState.isDragging) return;
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        toggleColSelection(col);
+                      }
+                    }}
+                    role={colVariable ? 'button' : undefined}
+                    tabIndex={colVariable ? 0 : undefined}
+                    aria-label={
+                      colVariable ? `Select column ${toUiCaps(tableData.colLabels[col])} for merge` : undefined
+                    }
                   >
                     <div className="flex flex-col gap-0.5 items-start">
                       {tableData.colLetters[col] && (
@@ -440,7 +440,7 @@ export const DataTable: React.FC<DataTableProps> = ({
               {tableData.colKeys.length > 1 && (
                 <th
                   style={{ width: columnWidths?.total }}
-                  className="px-2 py-2.5 font-bold font-mono text-left text-[var(--text-secondary)] bg-[var(--bg-active)] align-bottom sticky top-0 z-10 border-b border-[var(--border-grid)] shadow-[inset_0_-2px_0_var(--border-grid)] text-[11px] uppercase tracking-wider"
+                  className="px-2 py-2.5 font-bold font-mono text-left text-[var(--text-secondary)] bg-[var(--bg-active)] align-bottom sticky top-0 z-[var(--z-sticky)] border-b border-[var(--border-grid)] shadow-[inset_0_-2px_0_var(--border-grid)] text-[11px] uppercase tracking-wider"
                 >
                   Total
                 </th>

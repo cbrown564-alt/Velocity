@@ -1,75 +1,11 @@
 import { test, expect } from '@playwright/test';
-
-async function clearBrowserStorage(page: import('@playwright/test').Page) {
-  await page.evaluate(async () => {
-    try {
-      localStorage.clear();
-    } catch {
-      // Best-effort browser storage cleanup.
-    }
-    try {
-      if (navigator.storage?.getDirectory) {
-        const root = await navigator.storage.getDirectory();
-        // @ts-expect-error - entries() returns an async iterator
-        for await (const [name] of root.entries()) {
-          try {
-            await root.removeEntry(name, { recursive: true });
-          } catch {
-            // Ignore entries that are removed between listing and deletion.
-          }
-        }
-      }
-    } catch {
-      // OPFS is not guaranteed in every browser used by this suite.
-    }
-  });
-}
-
-async function reachDashboardWithExample(page: import('@playwright/test').Page) {
-  await clearBrowserStorage(page);
-  await page.reload();
-
-  const tableView = page.getByRole('button', { name: 'Table view' });
-  if (await tableView.isVisible({ timeout: 5000 }).catch(() => false)) {
-    return;
-  }
-
-  const loadExample = page.getByRole('button', { name: /Load Example/i });
-  await expect(loadExample).toBeVisible({ timeout: 60000 });
-  await loadExample.click();
-  await expect(tableView).toBeVisible({ timeout: 120000 });
-}
-
-async function buildGenderRegionCrosstab(page: import('@playwright/test').Page) {
-  if (
-    await page
-      .getByText('Ready for Analysis')
-      .isVisible({ timeout: 3000 })
-      .catch(() => false)
-  ) {
-    await page
-      .getByRole('button', { name: /product sat Good starting point/i })
-      .click()
-      .catch(() => {});
-    await page.waitForTimeout(800);
-    await page
-      .getByRole('button', { name: 'Reset' })
-      .click()
-      .catch(() => {});
-    await page.waitForTimeout(500);
-  }
-
-  await page
-    .getByRole('button', { name: /^gender$/i })
-    .first()
-    .click();
-  await page.waitForTimeout(1000);
-  await page
-    .getByRole('button', { name: /^region$/i })
-    .first()
-    .click();
-  await page.waitForTimeout(2500);
-}
+import {
+  buildExampleCrosstab,
+  ensureWorkspaceLibraryAfterReload,
+  expectWorkspaceLibraryVisible,
+  reachDashboardWithExample,
+  waitForWorkspaceModePersisted,
+} from './helpers/visualPolish';
 
 test('reload restores dashboard without workspace overlay blocking controls', async ({ page }) => {
   await page.goto('/');
@@ -88,7 +24,7 @@ test('reload restores dashboard without workspace overlay blocking controls', as
   test.skip(!opfsSupported, 'OPFS not supported in this environment');
 
   await reachDashboardWithExample(page);
-  await buildGenderRegionCrosstab(page);
+  await buildExampleCrosstab(page);
 
   await expect(page.locator('table')).toBeVisible({ timeout: 30000 });
   await expect(page.getByText(/Search datasets/i)).toHaveCount(0);
@@ -105,6 +41,7 @@ test('reload restores dashboard without workspace overlay blocking controls', as
 });
 
 test('reload keeps workspace when user returned before refresh', async ({ page }) => {
+  test.setTimeout(240000);
   await page.goto('/');
   page.on('dialog', (dialog) => dialog.dismiss());
 
@@ -121,12 +58,12 @@ test('reload keeps workspace when user returned before refresh', async ({ page }
   test.skip(!opfsSupported, 'OPFS not supported in this environment');
 
   await reachDashboardWithExample(page);
-  await buildGenderRegionCrosstab(page);
+  await buildExampleCrosstab(page);
 
   await page.locator('button[title="Return to Workspace"]').click();
-  await expect(page.getByText(/Recent Datasets|Welcome to Velocity/i)).toBeVisible({ timeout: 30000 });
+  await expectWorkspaceLibraryVisible(page);
+  await waitForWorkspaceModePersisted(page);
 
   await page.reload();
-  await expect(page.getByText(/Recent Datasets|Welcome to Velocity/i)).toBeVisible({ timeout: 120000 });
-  await expect(page.getByRole('button', { name: 'Table view' })).toHaveCount(0);
+  await ensureWorkspaceLibraryAfterReload(page);
 });

@@ -41,6 +41,7 @@ export interface UseSessionLifecycleReturn {
   handleDiscard: () => Promise<void>;
   handleDatasetFileUpload: (event: React.ChangeEvent<HTMLInputElement>) => Promise<void>;
   handleLoadExample: () => void;
+  handleFileDrop: (file: File) => void;
 }
 
 export function useSessionLifecycle({
@@ -275,6 +276,14 @@ export function useSessionLifecycle({
     fileUpload.handleDemoClick();
   }, [clearImportedSessionSemantic, fileUpload]);
 
+  const handleFileDrop = useCallback(
+    (file: File) => {
+      clearImportedSessionSemantic();
+      void fileUpload.handleDroppedFile(file);
+    },
+    [clearImportedSessionSemantic, fileUpload],
+  );
+
   return {
     importedSessionSemantic,
     clearImportedSessionSemantic,
@@ -287,5 +296,6 @@ export function useSessionLifecycle({
     handleDiscard,
     handleDatasetFileUpload,
     handleLoadExample,
+    handleFileDrop,
   };
 }

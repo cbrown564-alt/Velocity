@@ -8,14 +8,21 @@
    Overlay & Panel
    ============================================================================ */
 
-.overlay {
+.backdrop {
   position: fixed;
   inset: 0;
   background: color-mix(in srgb, var(--text-primary) 50%, transparent);
   backdrop-filter: blur(4px);
+  z-index: var(--z-popover);
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
   display: flex;
   justify-content: flex-end;
   z-index: var(--z-popover);
+  pointer-events: none;
 }
 
 .panel {
@@ -49,8 +56,8 @@
   width: 40px;
   height: 40px;
   border-radius: var(--radius-md);
-  background: color-mix(in srgb, var(--project-color, var(--color-accent)) 15%, transparent);
-  color: var(--project-color, var(--color-accent));
+  background: color-mix(in srgb, var(--project-color, var(--viz-fill-primary)) 15%, transparent);
+  color: var(--project-color, var(--viz-fill-primary));
 }
 
 .headerText {
@@ -136,8 +143,8 @@
 
 .selectWrapper select:focus {
   outline: none;
-  border-color: var(--color-accent);
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-accent) 20%, transparent);
+  border-color: var(--border-color-active);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--border-color-active) 20%, transparent);
 }
 
 .selectWrapper svg {
@@ -270,7 +277,7 @@
 }
 
 .waveDetailHeader svg {
-  color: var(--color-accent);
+  color: var(--border-color-active);
 }
 
 .waveDate {
@@ -307,8 +314,8 @@
 }
 
 .openButton:hover {
-  background: var(--color-accent);
-  border-color: var(--color-accent);
+  background: var(--border-color-active);
+  border-color: var(--border-color-active);
   color: white;
 }
 
@@ -363,7 +370,7 @@
   top: 0;
   left: 0;
   height: 100%;
-  background: var(--project-color, var(--color-accent));
+  background: var(--project-color, var(--viz-fill-primary));
   border-radius: var(--radius-sm);
   opacity: 0.8;
 }
@@ -483,9 +490,9 @@
   padding: var(--space-2) var(--space-3);
   font-size: var(--text-sm);
   font-weight: 500;
-  background: color-mix(in srgb, var(--color-accent) 10%, transparent);
-  color: var(--color-accent);
-  border: 1px solid color-mix(in srgb, var(--color-accent) 30%, transparent);
+  background: color-mix(in srgb, var(--border-color-active) 10%, transparent);
+  color: var(--border-color-active);
+  border: 1px solid color-mix(in srgb, var(--border-color-active) 30%, transparent);
   border-radius: var(--radius-sm);
   cursor: pointer;
   transition: all 0.15s ease;
@@ -493,6 +500,6 @@
 }
 
 .harmonizeButton:hover {
-  background: color-mix(in srgb, var(--color-accent) 18%, transparent);
-  border-color: var(--color-accent);
+  background: color-mix(in srgb, var(--border-color-active) 18%, transparent);
+  border-color: var(--border-color-active);
 }

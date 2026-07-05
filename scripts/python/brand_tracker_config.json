@@ -1,0 +1,356 @@
+{
+  "seed": 20260703,
+  "category": "ready-to-drink chilled coffee",
+  "country_note": "Single-country online panel, adults 18-75, category buyers past 3 months",
+  "brands": [
+    {
+      "key": "atlas",
+      "name": "Atlas",
+      "code": 1,
+      "role": "client"
+    },
+    {
+      "key": "beacon",
+      "name": "Beacon",
+      "code": 2,
+      "role": "challenger"
+    },
+    {
+      "key": "meridian",
+      "name": "Meridian",
+      "code": 3,
+      "role": "legacy leader"
+    },
+    {
+      "key": "solstice",
+      "name": "Solstice",
+      "code": 4,
+      "role": "insurgent"
+    },
+    {
+      "key": "cardinal",
+      "name": "Cardinal",
+      "code": 5,
+      "role": "niche"
+    }
+  ],
+  "attributes": [
+    {
+      "key": "taste",
+      "statement": "tastes great"
+    },
+    {
+      "key": "worth",
+      "statement": "is worth the price"
+    },
+    {
+      "key": "innov",
+      "statement": "is innovative"
+    },
+    {
+      "key": "forme",
+      "statement": "is for someone like me"
+    },
+    {
+      "key": "avail",
+      "statement": "is widely available"
+    },
+    {
+      "key": "premium",
+      "statement": "is a premium brand"
+    },
+    {
+      "key": "trust",
+      "statement": "is a brand I trust"
+    },
+    {
+      "key": "sustain",
+      "statement": "is environmentally sustainable"
+    }
+  ],
+  "waves": [
+    {
+      "key": "w1",
+      "code": 1,
+      "label": "2025-Q3 (W1)",
+      "field_start": "2025-07-14",
+      "field_end": "2025-07-27",
+      "n": 1200
+    },
+    {
+      "key": "w2",
+      "code": 2,
+      "label": "2025-Q4 (W2)",
+      "field_start": "2025-10-13",
+      "field_end": "2025-10-26",
+      "n": 1200
+    },
+    {
+      "key": "w3",
+      "code": 3,
+      "label": "2026-Q1 (W3)",
+      "field_start": "2026-01-12",
+      "field_end": "2026-01-25",
+      "n": 1200
+    },
+    {
+      "key": "w4",
+      "code": 4,
+      "label": "2026-Q2 (W4)",
+      "field_start": "2026-04-13",
+      "field_end": "2026-04-26",
+      "n": 1200
+    },
+    {
+      "key": "w5",
+      "code": 5,
+      "label": "2026-Q3 (W5)",
+      "field_start": "2026-07-13",
+      "field_end": "2026-07-26",
+      "n": 1200
+    }
+  ],
+  "sample": {
+    "age_bands": [
+      {
+        "code": 1,
+        "label": "18-34",
+        "lo": 18,
+        "hi": 34
+      },
+      {
+        "code": 2,
+        "label": "35-54",
+        "lo": 35,
+        "hi": 54
+      },
+      {
+        "code": 3,
+        "label": "55+",
+        "lo": 55,
+        "hi": 75
+      }
+    ],
+    "sample_distribution": {
+      "age_band": [0.39, 0.4, 0.21],
+      "gender": [0.43, 0.57],
+      "region": [0.28, 0.32, 0.22, 0.18]
+    },
+    "population_margins": {
+      "age_band": [0.3, 0.38, 0.32],
+      "gender": [0.49, 0.51],
+      "region": [0.25, 0.28, 0.26, 0.21]
+    },
+    "gender_labels": {
+      "1": "Male",
+      "2": "Female"
+    },
+    "region_labels": {
+      "1": "North",
+      "2": "East",
+      "3": "South",
+      "4": "West"
+    },
+    "urbanicity_distribution": [0.34, 0.46, 0.2],
+    "urbanicity_labels": {
+      "1": "Urban",
+      "2": "Suburban",
+      "3": "Rural"
+    },
+    "income_labels": {
+      "1": "Under $30,000",
+      "2": "$30,000 - $49,999",
+      "3": "$50,000 - $74,999",
+      "4": "$75,000 - $99,999",
+      "5": "$100,000 or more"
+    },
+    "income_by_segment": {
+      "core": [0.12, 0.2, 0.27, 0.26, 0.15],
+      "growth": [0.15, 0.23, 0.28, 0.22, 0.12],
+      "value": [0.24, 0.3, 0.26, 0.14, 0.06]
+    }
+  },
+  "segments": {
+    "labels": {
+      "1": "Core",
+      "2": "Growth",
+      "3": "Value"
+    },
+    "keys": ["core", "growth", "value"],
+    "by_age_band": {
+      "1": [0.3, 0.55, 0.15],
+      "2": [0.38, 0.38, 0.24],
+      "3": [0.4, 0.25, 0.35]
+    }
+  },
+  "missing_rates": {
+    "income_refused": 0.04,
+    "consider_dk": 0.025,
+    "attribute_dk": 0.02
+  },
+  "noise": {
+    "selection": 0.9,
+    "scale_assign": 0.9
+  },
+  "affinity_tilts": {
+    "segment": {
+      "atlas": [0.1, 0.35, -0.1],
+      "beacon": [0.0, 0.3, 0.0],
+      "meridian": [0.3, -0.1, 0.25],
+      "solstice": [-0.1, 0.4, -0.2],
+      "cardinal": [0.15, 0.0, -0.1]
+    },
+    "age_band": {
+      "atlas": [0.15, 0.0, -0.15],
+      "beacon": [0.2, 0.0, -0.2],
+      "meridian": [-0.2, 0.0, 0.25],
+      "solstice": [0.35, -0.05, -0.3],
+      "cardinal": [0.0, 0.0, 0.1]
+    }
+  },
+  "scale_splits": {
+    "consider_t2b": [0.62, 0.38],
+    "consider_rest": [0.2, 0.32, 0.48],
+    "attribute_t2b": [0.6, 0.4],
+    "attribute_rest": [0.22, 0.33, 0.45]
+  },
+  "brand_metrics": {
+    "atlas": {
+      "aided_by_segment": {
+        "core": [68.0, 68.0, 68.5, 70.5, 71.0],
+        "growth": [68.0, 68.0, 69.0, 79.0, 79.5],
+        "value": [62.0, 62.0, 62.0, 64.5, 65.0]
+      },
+      "aided_age_adjust": {
+        "1": [2.0, 2.0, 2.0, 3.0, 3.0],
+        "2": [0.0, 0.0, 0.0, 0.0, 0.0],
+        "3": [-3.0, -3.0, -3.0, -3.0, -3.0]
+      },
+      "unaided_by_segment": {
+        "core": [31.0, 31.5, 32.0, 33.0, 33.5],
+        "growth": [31.0, 32.0, 33.0, 46.0, 47.0],
+        "value": [26.0, 26.5, 27.0, 29.0, 29.5]
+      },
+      "unaided_age_adjust": {
+        "1": [2.0, 2.0, 2.0, 3.0, 3.0],
+        "2": [0.0, 0.0, 0.0, -1.0, -1.0],
+        "3": [-3.0, -3.0, -3.0, -3.0, -3.0]
+      },
+      "consider_t2b_of_aware": [51.5, 51.5, 51.5, 54.5, 54.8],
+      "usage_of_aware": [19.5, 19.5, 20.0, 21.5, 21.8],
+      "adrecall": [18.0, 18.0, 19.0, 28.0, 29.0],
+      "attributes_t2b_of_aware": {
+        "taste": [54.0, 54.5, 55.0, 56.0, 56.0],
+        "worth": [39.0, 38.5, 38.0, 37.2, 37.0],
+        "innov": [30.0, 30.5, 31.0, 39.0, 39.3],
+        "forme": [34.0, 34.5, 35.0, 37.0, 37.5],
+        "avail": [44.0, 44.5, 45.0, 46.0, 46.5],
+        "premium": [47.0, 47.5, 48.0, 48.5, 48.5],
+        "trust": [42.0, 42.0, 42.5, 43.0, 43.5],
+        "sustain": [39.0, 39.5, 40.0, 41.0, 41.0]
+      }
+    },
+    "beacon": {
+      "aided": [58.0, 60.0, 62.0, 64.0, 65.0],
+      "unaided": [22.0, 23.5, 25.0, 26.5, 27.5],
+      "consider_t2b_of_aware": [60.0, 61.0, 62.0, 69.5, 70.0],
+      "usage_of_aware": [26.0, 27.0, 28.0, 29.0, 29.5],
+      "adrecall": [22.0, 23.0, 24.0, 25.0, 26.0],
+      "attributes_t2b_of_aware": {
+        "taste": [57.0, 57.5, 58.0, 58.5, 59.0],
+        "worth": [45.0, 45.0, 45.5, 46.0, 46.0],
+        "innov": [48.0, 50.0, 52.0, 54.0, 55.0],
+        "forme": [41.0, 41.5, 42.0, 43.0, 43.5],
+        "avail": [48.0, 49.0, 50.0, 51.0, 52.0],
+        "premium": [40.0, 40.0, 40.5, 41.0, 41.0],
+        "trust": [44.0, 44.5, 45.0, 45.5, 46.0],
+        "sustain": [43.0, 43.5, 44.0, 44.5, 45.0]
+      }
+    },
+    "meridian": {
+      "aided": [89.5, 90.0, 89.8, 90.2, 90.0],
+      "unaided": [45.0, 45.5, 45.0, 45.2, 45.0],
+      "consider_t2b_of_aware": [46.5, 45.5, 44.5, 42.0, 41.5],
+      "usage_of_aware": [36.0, 35.5, 35.0, 34.5, 34.3],
+      "adrecall": [30.0, 30.0, 29.5, 29.0, 29.0],
+      "attributes_t2b_of_aware": {
+        "taste": [60.0, 60.0, 59.8, 59.5, 59.5],
+        "worth": [50.0, 50.0, 49.8, 49.5, 49.5],
+        "innov": [26.0, 25.5, 25.0, 24.5, 24.5],
+        "forme": [45.0, 45.0, 44.8, 44.5, 44.5],
+        "avail": [80.0, 80.0, 79.8, 80.0, 80.0],
+        "premium": [35.0, 35.0, 34.8, 34.5, 34.5],
+        "trust": [65.0, 65.0, 64.8, 64.5, 64.5],
+        "sustain": [30.0, 30.2, 30.0, 30.2, 30.0]
+      }
+    },
+    "solstice": {
+      "aided": [24.0, 25.0, 25.5, 26.0, 26.0],
+      "unaided": [8.0, 8.5, 9.0, 9.5, 9.5],
+      "consider_t2b_of_aware": [55.0, 55.0, 55.5, 55.0, 55.5],
+      "usage_of_aware": [30.0, 30.0, 30.0, 30.5, 30.5],
+      "adrecall": [12.0, 12.5, 12.0, 12.5, 13.0],
+      "attributes_t2b_of_aware": {
+        "taste": [50.0, 50.5, 50.0, 50.5, 51.0],
+        "worth": [35.0, 35.0, 35.5, 35.0, 35.5],
+        "innov": [60.0, 60.5, 61.0, 61.0, 61.5],
+        "forme": [30.0, 30.5, 30.0, 30.5, 31.0],
+        "avail": [24.0, 24.5, 25.0, 25.5, 26.0],
+        "premium": [55.0, 55.0, 55.5, 55.0, 55.5],
+        "trust": [30.0, 30.5, 30.0, 30.5, 31.0],
+        "sustain": [65.0, 65.0, 65.5, 65.0, 65.5]
+      }
+    },
+    "cardinal": {
+      "aided": [20.0, 20.5, 20.0, 20.5, 21.0],
+      "unaided": [5.0, 5.0, 5.2, 5.0, 5.3],
+      "consider_t2b_of_aware": [50.0, 50.5, 50.0, 50.0, 50.5],
+      "usage_of_aware": [35.0, 35.0, 34.5, 35.0, 35.0],
+      "adrecall": [8.0, 8.0, 8.5, 8.0, 8.5],
+      "attributes_t2b_of_aware": {
+        "taste": [52.0, 52.0, 52.5, 52.0, 52.5],
+        "worth": [40.0, 40.0, 40.5, 40.0, 40.5],
+        "innov": [35.0, 35.0, 35.5, 35.0, 35.0],
+        "forme": [25.0, 25.5, 25.0, 25.0, 25.5],
+        "avail": [20.0, 20.0, 20.5, 20.0, 20.5],
+        "premium": [60.0, 60.0, 60.5, 60.0, 60.5],
+        "trust": [40.0, 40.5, 40.0, 40.5, 40.0],
+        "sustain": [50.0, 50.0, 50.5, 50.0, 50.5]
+      }
+    }
+  },
+  "nps": {
+    "class_share_order": ["promoter", "passive", "detractor"],
+    "class_shares": {
+      "w1": [0.25, 0.45, 0.3],
+      "w2": [0.26, 0.45, 0.29],
+      "w3": [0.27, 0.44, 0.29],
+      "w4": [0.33, 0.44, 0.23],
+      "w5": [0.34, 0.43, 0.23]
+    },
+    "detractor_value_probs": [0.03, 0.03, 0.06, 0.1, 0.16, 0.28, 0.34],
+    "passive_value_probs": [0.5, 0.5],
+    "promoter_value_probs": [0.55, 0.45]
+  },
+  "unaided_first": {
+    "other_brand_share_of_non_mentioners": 0.25
+  },
+  "raw_wave4": {
+    "_comment": "W5 refresh: unaided awareness delta W4->W5 is the deliberately flattened mover (was significant W3->W4, goes flat in W5).",
+    "renamed_attribute_variables": {
+      "att_worth_atlas": "att_value_atlas",
+      "att_worth_beacon": "att_value_beacon"
+    },
+    "weight_name": "rim_wt_final",
+    "weight_label": "final wt",
+    "decoy": {
+      "name": "body_weight_kg",
+      "label": "Body weight (kg)",
+      "mean": 76.0,
+      "sd": 12.0,
+      "gender_shift": 6.0,
+      "lo": 60.0,
+      "hi": 110.0
+    }
+  }
+}

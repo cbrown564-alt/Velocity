@@ -38,8 +38,33 @@ function findSetByAliases(sets: VariableSet[], aliases: string[]): VariableSet |
 }
 
 /**
+ * Find an eligible set by the name of one of its underlying variables.
+ * Tracker files carry long agency-style labels as set names (e.g. "SEG. Consumer
+ * segment…"), so alias matching on the set name does not work; match on the
+ * short variable name/id instead.
+ */
+function findSetByVariableName(
+  sets: VariableSet[],
+  variables: Variable[] | undefined,
+  names: string[],
+): VariableSet | undefined {
+  if (!variables?.length) return undefined;
+  const wanted = new Set(names.map(normalizeName));
+  return sets.find((set) =>
+    set.variableIds.some((id) => {
+      const variable = variables.find((v) => v.id === id);
+      if (!variable) return false;
+      return wanted.has(normalizeName(variable.name ?? variable.id));
+    }),
+  );
+}
+
+/**
  * Choose a first crosstab pair for onboarding.
- * Mock-only: prefers gender × region on mock_data.csv; otherwise null.
+ * Example datasets:
+ * - brandtracker_w4.sav — funnel-relevant cut (brand preference × segment)
+ * - sleep.sav — sex × marital status
+ * - mock_data.csv — gender × region
  */
 export function pickAutoFirstCrosstabPair(
   datasetName: string | undefined,
@@ -48,6 +73,28 @@ export function pickAutoFirstCrosstabPair(
 ): AutoCrosstabPair | null {
   const eligible = variableSets.filter((set) => isEligibleSet(set, variables));
   if (eligible.length < 2) return null;
+
+  if (datasetName === 'brandtracker_w4.sav') {
+    // Funnel-relevant first cut for the pilot-archetype tracker: brand preference
+    // (a funnel-stage outcome) by attitudinal segment. Atlas consideration T2B is
+    // a recipe-derived net, so preference is the equivalent clean single-variable
+    // cut available on the raw analysis-ready wave.
+    const segment = findSetByVariableName(eligible, variables, ['segment']);
+    const preference =
+      findSetByVariableName(eligible, variables, ['brand_pref']) ??
+      findSetByVariableName(eligible, variables, ['unaided_first']);
+    if (preference && segment) {
+      return { rowSetId: preference.id, colSetId: segment.id };
+    }
+  }
+
+  if (datasetName === 'sleep.sav') {
+    const sex = findSetByAliases(eligible, ['sex', 'gender']);
+    const marital = findSetByAliases(eligible, ['marital status', 'marital_status', 'marital']);
+    if (sex && marital) {
+      return { rowSetId: sex.id, colSetId: marital.id };
+    }
+  }
 
   if (datasetName === 'mock_data.csv') {
     const gender = findSetByAliases(eligible, ['gender']);

@@ -16,7 +16,9 @@ import { analysisRegistry } from './registry';
 import { attachHistograms } from './crosstab/histogram';
 import { applySignificanceTesting } from './crosstab/significance';
 import { computeChiSquareTableStats } from './crosstab/chiSquare';
+import { extractRowKeyStrings } from './crosstab/rowKeys';
 import { prepareCrosstabOptions } from './crosstab/prepare';
+import { runMeasureWithNestedRowVars } from './crosstab/hybridMeasureNested';
 import type {
   CrosstabConfig,
   CrosstabContext,
@@ -64,14 +66,58 @@ export async function runCrosstab(
 ): Promise<CrosstabResultData> {
   const modifiedOptions = prepareCrosstabOptions(options, context);
 
-  const sql = buildCrosstabQuery(modifiedOptions);
-  const mainResult = await adapter.query(sql);
-  const rows = mainResult.rows as CrosstabSqlRow[];
+  let rows: CrosstabSqlRow[];
+  if (modifiedOptions.measureVar && modifiedOptions.nestedRowVars?.length) {
+    rows = await runMeasureWithNestedRowVars(
+      adapter,
+      modifiedOptions as CrosstabQueryOptions & { includeDistributions?: boolean; nestedRowVars: string[] },
+      context,
+    );
+  } else {
+    const sql = buildCrosstabQuery(modifiedOptions);
+    const mainResult = await adapter.query(sql);
+    rows = mainResult.rows as CrosstabSqlRow[];
+  }
 
-  await attachHistograms(adapter, modifiedOptions, rows);
-  await applySignificanceTesting(adapter, modifiedOptions, rows);
+  const measureOptions =
+    modifiedOptions.measureVar && modifiedOptions.nestedRowVars?.length
+      ? prepareCrosstabOptions(
+          {
+            ...modifiedOptions,
+            rowVars: [],
+            nestedRowVars: undefined,
+          },
+          context,
+        )
+      : modifiedOptions;
 
-  const tableStats = computeChiSquareTableStats(modifiedOptions, rows);
+  const nestedOptions =
+    modifiedOptions.measureVar && modifiedOptions.nestedRowVars?.length
+      ? prepareCrosstabOptions(
+          {
+            ...modifiedOptions,
+            rowVars: modifiedOptions.nestedRowVars,
+            measureVar: undefined,
+            measureLabel: undefined,
+            includeDistributions: false,
+            nestedRowVars: undefined,
+          },
+          context,
+        )
+      : null;
+
+  const measureRows =
+    nestedOptions && modifiedOptions.measureLabel ? rows.filter((row) => extractRowKeyStrings(row).length === 1) : rows;
+  const nestedRows = nestedOptions ? rows.filter((row) => extractRowKeyStrings(row).length > 1) : rows;
+
+  await attachHistograms(adapter, measureOptions, measureRows);
+  if (nestedOptions) {
+    await applySignificanceTesting(adapter, nestedOptions, nestedRows);
+  } else {
+    await applySignificanceTesting(adapter, modifiedOptions, rows);
+  }
+
+  const tableStats = computeChiSquareTableStats(nestedOptions ?? modifiedOptions, nestedOptions ? nestedRows : rows);
 
   return { rows, tableStats };
 }

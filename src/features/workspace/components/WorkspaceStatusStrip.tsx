@@ -21,6 +21,8 @@ export interface WorkspaceStatusStripProps {
   resumeCandidate: ResumeCandidate | null;
   onResume: () => void;
   onDismissWelcomeBack: () => void;
+  /** When true, privacy headline is omitted (covered by first-run hero copy). Warnings still show. */
+  hidePrivacyHeadline?: boolean;
 }
 
 export const WorkspaceStatusStrip: React.FC<WorkspaceStatusStripProps> = ({
@@ -28,6 +30,7 @@ export const WorkspaceStatusStrip: React.FC<WorkspaceStatusStripProps> = ({
   resumeCandidate,
   onResume,
   onDismissWelcomeBack,
+  hidePrivacyHeadline = false,
 }) => {
   const [sessionDismissed, setSessionDismissed] = useState(isSessionDismissed);
   const [pilotDismissed, setPilotDismissed] = useState(isPilotPermanentlyDismissed);
@@ -44,8 +47,10 @@ export const WorkspaceStatusStrip: React.FC<WorkspaceStatusStripProps> = ({
   );
   const showPilotSection = Boolean(status) && !pilotDismissed;
   const showWelcomeSection = showWelcomeBack && resumeCandidate;
+  const showPrivacySection = showPilotSection && !hidePrivacyHeadline;
+  const showEnvironmentWarnings = showPilotSection && hasPilotWarnings;
 
-  if (!showWelcomeSection && !showPilotSection) return null;
+  if (!showWelcomeSection && !showPrivacySection && !showEnvironmentWarnings) return null;
 
   const handleDismiss = () => {
     setSessionDismissed(true);
@@ -75,7 +80,7 @@ export const WorkspaceStatusStrip: React.FC<WorkspaceStatusStripProps> = ({
           </div>
         )}
 
-        {showPilotSection && (
+        {showPrivacySection && (
           <div
             className={`${styles.pilotSection} ${showWelcomeSection ? styles.pilotSectionBordered : ''}`}
             data-testid="workspace-status-pilot"
@@ -85,16 +90,24 @@ export const WorkspaceStatusStrip: React.FC<WorkspaceStatusStripProps> = ({
                 <ShieldCheck size={16} className={styles.pilotIcon} aria-hidden />
                 <span>{PILOT_PRIVACY_HEADLINE}</span>
               </div>
-              {hasPilotWarnings && status && (
-                <ul className={styles.warningList}>
-                  {status.warnings.map((warning) => (
-                    <li key={warning}>
-                      <AlertTriangle size={12} aria-hidden />
-                      <span>{warning}</span>
-                    </li>
-                  ))}
-                </ul>
-              )}
+            </div>
+          </div>
+        )}
+
+        {showEnvironmentWarnings && status && (
+          <div
+            className={`${styles.pilotSection} ${showWelcomeSection || showPrivacySection ? styles.pilotSectionBordered : ''}`}
+            data-testid="workspace-status-pilot-warnings"
+          >
+            <div className={styles.pilotCopy}>
+              <ul className={styles.warningList}>
+                {status.warnings.map((warning) => (
+                  <li key={warning}>
+                    <AlertTriangle size={12} aria-hidden />
+                    <span>{warning}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
         )}

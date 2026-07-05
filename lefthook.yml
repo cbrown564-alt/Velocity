@@ -1,0 +1,11 @@
+# STAB-CI-13: fast-fail on the dominant CI failure modes (format + lint).
+# Install: npx lefthook install
+# Opt out for WIP commits: LEFTHOOK=0 git commit
+
+pre-commit:
+  parallel: true
+  commands:
+    format:
+      run: npm run format:check
+    lint:
+      run: npm run lint

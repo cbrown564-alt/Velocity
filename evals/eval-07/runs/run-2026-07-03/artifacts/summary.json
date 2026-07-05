@@ -1,0 +1,83 @@
+{
+  "evalId": "eval-07",
+  "runId": "run-2026-07-03",
+  "runDate": "2026-07-03",
+  "commitSha": "0950ba084fdef8e0300dcc9f334c352a5ceda09c",
+  "briefPath": "evals/eval-07/brief.md",
+  "dataset": {
+    "path": "public/examples/brandtracker_w4.sav",
+    "fallbackPath": "test_data/fixtures/brand_tracker/brandtracker_w5.sav",
+    "rowCount": 1200,
+    "variableCount": 84
+  },
+  "outcome": "success",
+  "outcomePattern": "pattern_7_end_to_end_success",
+  "toolMetrics": {
+    "totalToolCalls": 34,
+    "retries": 0,
+    "externalScriptsWritten": 0
+  },
+  "artifacts": {
+    "deck": {
+      "path": "artifacts/brand_tracker_deck.pptx",
+      "produced": true,
+      "notes": "18-slide story-template Wave 4 readout; golden tests/fixtures/export/brandtracker-report.pptx. Action titles carry ground-truth numbers; non-significant movers titled 'broadly stable'."
+    },
+    "session": {
+      "path": "artifacts/brand_tracker_session.velocity.json",
+      "produced": true,
+      "notes": "Recipe session; transformLog replays the derived variables (recipe steps 4-7) on reopen per arch_07 8."
+    },
+    "summary": {
+      "path": "artifacts/summary.json",
+      "produced": true
+    }
+  },
+  "scores": [
+    {
+      "layer": "engine",
+      "score": 5,
+      "notes": "Weighted crosstabs and significance reproduce the committed ground truth within 0.1pt across Waves 4/3/5, including the Beacon-over-Meridian rank fact (tests/golden/brand_tracker_parity.test.ts)."
+    },
+    {
+      "layer": "mcp_workflow",
+      "score": 4,
+      "notes": "The raw -> analysis-ready -> deck recipe and the wave-5 refresh run on shipped primitives with zero manual repair; the one named limitation is cross-dataset recode replay (RECIPE-REPLAY / INF-04), correctly deferred."
+    },
+    {
+      "layer": "semantic_layer",
+      "score": 4,
+      "notes": "Weight discovery picks the genuine rim weight (mean approx 1.0) over the body_weight_kg decoy; derived T2B / NPS nets still require explicit recodes (NET-DERIVE)."
+    },
+    {
+      "layer": "deliverable_layer",
+      "score": 5,
+      "notes": "An 18-slide story-template deck with ground-truth action titles and an honest 'broadly stable' defensibility slide, plus a portable session with a replayable transformLog."
+    },
+    {
+      "layer": "product_defaults",
+      "score": 4,
+      "notes": "brandtracker_w4.sav is the primary Load Example and the first crosstab defaults to a funnel-relevant cut (brand preference x segment); recipe-derived nets still do not survive wave replacement."
+    },
+    {
+      "layer": "agent_prompting",
+      "score": 4,
+      "notes": "The planted story is deterministic and auditable, so any remaining gap is attributable to product surface rather than prompt drift."
+    }
+  ],
+  "notableFindings": [
+    "Engine reproduces the committed brand tracker ground truth within 0.1pt on Waves 4/3/5, upgrading the trust pack from parity on teaching files to parity on the flagship demo.",
+    "The full raw-agency-wave to story-template-deck loop completes on shipped primitives with zero manual repair and no new engine surface.",
+    "The wave-5 dataset-replacement review is READY for saved recipes on shipped variables; recomputed titles are flagged for human confirmation and never silently rewritten.",
+    "The previously significant unaided-awareness headline flattens on Wave 5 (+1.4pts, not significant) and is flagged as a demotion candidate; every non-significant W4->W5 move is titled 'broadly stable'."
+  ],
+  "blockers": [
+    "Recipe-derived nets (recode targets such as consider_atlas_t2b) do not survive cross-dataset replacement, so the wave refresh re-runs on shipped variables only (RECIPE-REPLAY / INF-04) — deferred by design.",
+    "NPS score and consideration T2B are derived nets rather than single displayed stats (NET-DERIVE / INF-06, INF-07)."
+  ],
+  "followUps": [
+    "Pursue consultant sign-off (brand_tracker_north_star_signoff.md) to promote the agent-built deck from candidate to north-star exemplar.",
+    "Keep validation/brand_tracker_ground_truth.json as the regression anchor and re-run EVAL-07 on engine changes as a pilot-archetype regression guard.",
+    "Sequence RECIPE-REPLAY (cross-wave recipe replay) only with external pilot observation evidence (PILOT-4b)."
+  ]
+}

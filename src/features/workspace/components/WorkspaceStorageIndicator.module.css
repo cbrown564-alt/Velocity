@@ -33,7 +33,7 @@
 }
 
 .storageFill.healthy {
-  background: var(--color-accent);
+  background: var(--border-color-active);
 }
 
 .storageFill.warning {

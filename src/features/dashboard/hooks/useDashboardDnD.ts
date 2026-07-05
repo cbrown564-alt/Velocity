@@ -14,7 +14,8 @@ import { arrayMove } from '@dnd-kit/sortable';
 
 import { useVelocityStore, type VariableSet } from '../../../store';
 import { allowsNumericStats } from '../../../types';
-import { applyCanvasPlacement, placeVariableSet } from '../../../core/grid/gridUtils';
+import { applyCanvasPlacement, applyRecipeChipDrop, resolveShelfPlacement } from '../../../core/grid/gridUtils';
+import type { RecipeChipSlot } from '../../../core/grid/gridUtils';
 
 export function useDashboardDnD() {
   const dataset = useVelocityStore((state) => state.dataset);
@@ -46,6 +47,18 @@ export function useDashboardDnD() {
     const activeData = active?.data?.current;
     const isDraggingFromSidebar = activeData?.variableSet && !activeData?.type?.includes('sortable');
     const isReordering = activeData?.type === 'sortable-row';
+    const isRecipeChip = activeData?.type === 'sortable-row' || activeData?.type === 'recipe-chip';
+
+    const rectCollisions = rectIntersection(args);
+    if (rectCollisions.length > 0) {
+      const dropZoneCollision = rectCollisions.find(
+        (c) =>
+          c.id === 'drop-zone-rows' || c.id === 'drop-zone-cols' || c.id === 'drop-zone-weight' || c.id === 'canvas',
+      );
+      if (dropZoneCollision && (isDraggingFromSidebar || isRecipeChip)) {
+        return [dropZoneCollision];
+      }
+    }
 
     if (isReordering) {
       const sortableCollisions = closestCenter(args);
@@ -57,15 +70,7 @@ export function useDashboardDnD() {
       }
     }
 
-    const rectCollisions = rectIntersection(args);
     if (rectCollisions.length > 0) {
-      const dropZoneCollision = rectCollisions.find(
-        (c) =>
-          c.id === 'drop-zone-rows' || c.id === 'drop-zone-cols' || c.id === 'drop-zone-weight' || c.id === 'canvas',
-      );
-      if (dropZoneCollision && isDraggingFromSidebar) {
-        return [dropZoneCollision];
-      }
       return rectCollisions;
     }
 
@@ -99,7 +104,24 @@ export function useDashboardDnD() {
       return;
     }
 
-    if (active.data.current?.variableSet) {
+    const activeData = active.data.current;
+    const recipeSlot =
+      (activeData?.slot as RecipeChipSlot | undefined) ??
+      (tableConfig.rowVars.includes(activeId) ? 'row' : tableConfig.colVar === activeId ? 'column' : null);
+
+    if (
+      recipeSlot &&
+      (overId === 'drop-zone-rows' || overId === 'drop-zone-cols') &&
+      (activeData?.type === 'sortable-row' || activeData?.type === 'recipe-chip')
+    ) {
+      const patch = applyRecipeChipDrop(activeId, recipeSlot, overId, tableConfig);
+      if (patch) {
+        setTableConfig(patch);
+      }
+      return;
+    }
+
+    if (activeData?.variableSet) {
       const zoneId = over.id;
       const variableSet = active.data.current.variableSet;
       const setId = variableSet.id;
@@ -118,9 +140,25 @@ export function useDashboardDnD() {
       }
 
       if (zoneId === 'drop-zone-rows' || zoneId === 'drop-zone-cols' || zoneId === 'canvas') {
-        const placement = placeVariableSet(setId, variableSet.structure, zoneId, tableConfig);
+        if (zoneId === 'canvas') {
+          const placement = applyCanvasPlacement(setId, variableSet.structure, tableConfig);
+          if (Object.keys(placement).length > 0) {
+            setTableConfig(placement);
+          }
+          return;
+        }
+
+        const { placement, redirectedFromColumn } = resolveShelfPlacement(
+          setId,
+          variableSet.structure,
+          zoneId,
+          tableConfig,
+        );
         if (placement) {
           setTableConfig(placement);
+          if (redirectedFromColumn) {
+            useVelocityStore.getState().rejectRecipeColumnPlacement();
+          }
         }
       }
     }

@@ -1,0 +1,60 @@
+{
+  "checkedAt": "2026-07-04T11:42:55.694Z",
+  "goldenPath": "/workspace/tests/fixtures/export/sleep-report.pptx",
+  "candidatePath": "/workspace/docs/assets/design-reset-evidence/wp42-five-minute-pass.pptx",
+  "golden": {
+    "slideCount": 6,
+    "tableCount": 3,
+    "editableTextBoxCount": 11,
+    "remainingTokens": [],
+    "emptySlides": []
+  },
+  "candidate": {
+    "slideCount": 4,
+    "tableCount": 3,
+    "editableTextBoxCount": 4,
+    "emptySlides": [],
+    "remainingTokens": [],
+    "overflowWarnings": [
+      {
+        "slideNumber": 1,
+        "shapeIndex": 1,
+        "textLength": 27,
+        "roughCapacity": 12,
+        "message": "Text may overflow its XML bounds."
+      },
+      {
+        "slideNumber": 2,
+        "shapeIndex": 1,
+        "textLength": 24,
+        "roughCapacity": 12,
+        "message": "Text may overflow its XML bounds."
+      },
+      {
+        "slideNumber": 3,
+        "shapeIndex": 1,
+        "textLength": 19,
+        "roughCapacity": 12,
+        "message": "Text may overflow its XML bounds."
+      },
+      {
+        "slideNumber": 4,
+        "shapeIndex": 1,
+        "textLength": 27,
+        "roughCapacity": 12,
+        "message": "Text may overflow its XML bounds."
+      }
+    ],
+    "warnings": [
+      "Potential text overflow detected.",
+      "Palette has more than four detected colors."
+    ]
+  },
+  "diffs": [
+    {
+      "label": "slide-count-vs-golden",
+      "message": "Candidate has 4 slides; golden has 6"
+    }
+  ],
+  "pass": true
+}

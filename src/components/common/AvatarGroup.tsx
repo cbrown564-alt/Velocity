@@ -14,7 +14,7 @@ export const AvatarGroup: React.FC<{ users: Collaborator[] }> = ({ users }) => {
             .split(' ')
             .map((n) => n[0])
             .join('')}
-          <div className="absolute top-full mt-1 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--text-primary)] text-[var(--text-inverse)] text-xs px-2 py-1 rounded whitespace-nowrap z-50 pointer-events-none">
+          <div className="absolute top-full mt-1 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--text-primary)] text-[var(--text-inverse)] text-xs px-2 py-1 rounded whitespace-nowrap z-[var(--z-popover)] pointer-events-none">
             {user.name}
           </div>
         </div>

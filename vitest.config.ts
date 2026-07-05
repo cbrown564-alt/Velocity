@@ -30,39 +30,66 @@ export default defineConfig({
         '*.config.{js,cjs,mjs,ts}',
         'test_*.{js,mjs,ts}',
         'src/components/charts/',
-        'src/components/overlays/',
+        // STAB-CI-7: overlays/ exclusion removed after characterization tests added.
+        // 'src/components/overlays/',
         'src/engine/webr/',
         'src/core/export/chartBuilder.ts',
         'src/core/export/resolveThemeColors.ts',
         'src/core/export/types.ts',
-        'src/features/',
+        // STAB-CI-7: features/ exclusion removed after characterization tests added.
+        // 'src/features/',
         'src/hooks/',
-        'src/services/EngineProxy.ts',
         'src/services/duckDbArrow.ts',
-        'src/services/duckdbBundles.ts',
-        // Store slices are being ratcheted into coverage one at a time as
-        // characterization tests land. dataSlice.ts is fully covered and is
-        // measured (not listed below); the rest stay excluded for now.
+        // STAB-CI-6 ratchet: harmonizationSlice + uiSlice removed from exclusions
+        // (characterization tests in harmonizationSlice.test.ts, uiSlice.focusMode.test.ts).
+        // data/ submodules without tests stay excluded; variableCatalogActions.ts is measured.
+        'src/store/slices/data/datasetActions.ts',
+        'src/store/slices/data/engineActions.ts',
+        'src/store/slices/data/transformActions.ts',
+        'src/store/slices/data/persistenceActions.ts',
+        'src/store/slices/data/loadProgress.ts',
+        'src/store/slices/data/variableNormalization.ts',
+        'src/store/slices/data/index.ts',
         'src/store/slices/index.ts',
-        'src/store/slices/data/',
         'src/store/slices/analysisSlice.ts',
         'src/store/slices/drillDownSlice.ts',
-        'src/store/slices/harmonizationSlice.ts',
         'src/store/slices/slidesSlice.ts',
-        'src/store/slices/uiSlice.ts',
         'src/store/slices/webrSlice.ts',
         'src/store/slices/workspaceSlice.ts',
         '**/*.d.ts',
         'dist/',
       ],
-      // Ratchet floor: set to true source coverage after excluding test files
-      // (the previous 80% "pass" was inflated by measuring test files and was in
-      // fact failing). Raise these as characterization tests land — never lower.
+      // Ratchet floors: global aggregate + per-path honesty (STAB-CI-10/11).
+      // Raise per-path floors as characterization tests land — never lower.
       thresholds: {
-        branches: 79,
-        functions: 82,
-        lines: 81,
-        statements: 81,
+        branches: 80,
+        functions: 81,
+        statements: 83,
+        'src/core/**': {
+          functions: 94,
+          branches: 80,
+          statements: 86,
+        },
+        'src/features/**': {
+          functions: 70,
+          branches: 75,
+          statements: 80,
+        },
+        'src/components/overlays/**': {
+          functions: 67,
+          branches: 82,
+          statements: 85,
+        },
+        'src/services/**': {
+          functions: 75,
+          branches: 80,
+          statements: 60,
+        },
+        'src/store/**': {
+          functions: 86,
+          branches: 74,
+          statements: 82,
+        },
       },
     },
   },

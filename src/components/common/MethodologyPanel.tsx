@@ -167,7 +167,7 @@ export const MethodologyDrawer: React.FC<MethodologyDrawerProps> = ({ isOpen, on
             exit={{ opacity: 0 }}
             transition={{ duration: reducedMotion ? 0.01 : 0.15 }}
             onClick={onClose}
-            className="fixed inset-0 z-40 bg-transparent cursor-default"
+            className="fixed inset-0 z-[var(--z-dropdown)] bg-transparent cursor-default"
           />
 
           {coords && (
@@ -178,7 +178,7 @@ export const MethodologyDrawer: React.FC<MethodologyDrawerProps> = ({ isOpen, on
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={reducedMotion ? { duration: 0.01 } : { duration: 0.18, ease: 'easeOut' }}
-              className="methodology-popover fixed z-50 w-[min(300px,calc(100vw-1.5rem))] max-h-[min(42vh,280px)] flex flex-col rounded-lg border border-[var(--border-color)] bg-[var(--bg-panel)] shadow-lg overflow-hidden"
+              className="methodology-popover fixed z-[var(--z-popover)] w-[min(300px,calc(100vw-1.5rem))] max-h-[min(42vh,280px)] flex flex-col rounded-lg border border-[var(--border-color)] bg-[var(--bg-panel)] shadow-lg overflow-hidden"
               style={{
                 top: coords.top,
                 left: coords.left,
@@ -222,7 +222,7 @@ export const MethodologyDrawer: React.FC<MethodologyDrawerProps> = ({ isOpen, on
                       shrink-0 px-2 py-1 rounded text-[10px] font-medium transition-colors
                       ${
                         isActive
-                          ? 'bg-[var(--bg-active)] text-[var(--color-accent)]'
+                          ? 'bg-[var(--bg-active)] text-[var(--text-primary)]'
                           : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-active)]'
                       }
                     `}

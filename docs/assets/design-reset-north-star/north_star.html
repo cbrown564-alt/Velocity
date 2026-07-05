@@ -1,0 +1,618 @@
+<title>Velocity — North Star (Phase 0)</title>
+<style>
+  :root {
+    --ground: #F1EFEA;
+    --rail: #ECE9E3;
+    --panel: #FDFCFA;
+    --panel-tint: #F7F5F0;
+    --ink: #24302A;
+    --ink-2: #67736C;
+    --ink-3: #9AA39C;
+    --line: #E3DFD7;
+    --line-soft: #ECE8E1;
+    --accent: #B54E33;
+    --mark: #6F8177;
+    --meta-bg: #232A26;
+    --meta-ink: #EDEAE4;
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: var(--sans);
+    font-size: 13px;
+    color: var(--ink);
+    background: var(--ground);
+    -webkit-font-smoothing: antialiased;
+  }
+  button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; border-radius: 4px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+  /* ── Evaluation chrome (not part of the design) ─────────────────── */
+  .meta {
+    height: 44px; display: flex; align-items: center; gap: 20px;
+    background: var(--meta-bg); color: var(--meta-ink); padding: 0 16px;
+  }
+  .meta .brand { font-size: 12px; font-weight: 600; letter-spacing: 0.02em; white-space: nowrap; }
+  .meta .brand small { font-weight: 400; opacity: 0.55; margin-left: 8px; }
+  .meta nav { display: flex; gap: 4px; flex: 1; }
+  .meta nav button {
+    font-size: 12px; padding: 5px 10px; border-radius: 5px; color: var(--meta-ink);
+    opacity: 0.6; transition: opacity 120ms, background 120ms;
+  }
+  .meta nav button:hover { opacity: 0.9; }
+  .meta nav button.on { opacity: 1; background: rgba(255,255,255,0.12); }
+  .meta nav button kbd {
+    font-family: var(--mono); font-size: 10px; opacity: 0.6; margin-right: 6px;
+  }
+  .meta .notes-btn { font-size: 12px; opacity: 0.6; padding: 5px 10px; }
+  .meta .notes-btn:hover { opacity: 1; }
+
+  .stage { height: calc(100vh - 44px); overflow: auto; }
+  .screen { display: none; height: 100%; min-width: 1120px; }
+  .screen.on { display: block; }
+
+  /* ── App frame ──────────────────────────────────────────────────── */
+  .app { height: 100%; display: flex; flex-direction: column; }
+  .topbar {
+    height: 48px; flex: none; display: flex; align-items: center;
+    justify-content: space-between; padding: 0 16px;
+  }
+  .dataset { font-size: 12px; color: var(--ink-3); }
+  .dataset b { color: var(--ink-2); font-weight: 500; }
+  .tb-right { display: flex; align-items: center; gap: 6px; }
+  .ghost {
+    padding: 6px 10px; border-radius: 6px; color: var(--ink-2); font-size: 12.5px;
+    transition: background 120ms, color 120ms;
+  }
+  .ghost:hover { background: var(--rail); color: var(--ink); }
+  .ghost[aria-pressed="true"] { background: var(--rail); color: var(--ink); }
+  .ghost kbd {
+    font-family: var(--mono); font-size: 10.5px; color: var(--ink-3); margin-left: 5px;
+  }
+  .primary {
+    padding: 6px 14px; border-radius: 6px; background: var(--accent); color: #FFFDFB;
+    font-size: 12.5px; font-weight: 500; transition: filter 120ms;
+  }
+  .primary:hover { filter: brightness(0.93); }
+  .primary[disabled] { background: var(--line); color: var(--ink-3); cursor: default; }
+
+  .body { flex: 1; display: flex; min-height: 0; }
+
+  /* ── Story rail ─────────────────────────────────────────────────── */
+  .rail {
+    width: 240px; flex: none; display: flex; flex-direction: column;
+    padding: 8px 10px 12px; border-right: 1px solid var(--line-soft);
+  }
+  .deck-name {
+    font-size: 13px; font-weight: 600; padding: 8px 10px 14px; letter-spacing: 0.01em;
+  }
+  .slides { list-style: none; display: flex; flex-direction: column; gap: 2px; }
+  .slides li {
+    display: flex; gap: 10px; align-items: baseline; padding: 7px 10px;
+    border-radius: 6px; cursor: default; transition: background 120ms;
+  }
+  .slides li:hover { background: var(--rail); }
+  .slides li.on { background: var(--panel); box-shadow: 0 0 0 1px var(--line); }
+  .slides .num {
+    font-family: var(--mono); font-size: 11px; color: var(--ink-3); width: 12px;
+    flex: none; text-align: right;
+  }
+  .slides em { font-style: normal; font-size: 12.5px; display: block; line-height: 1.35; }
+  .slides li.on em { font-weight: 500; }
+  .slides small { font-size: 11px; color: var(--ink-3); display: block; margin-top: 1px; }
+  .newslide {
+    margin-top: 6px; padding: 7px 10px; text-align: left; font-size: 12.5px;
+    color: var(--ink-3); border-radius: 6px; transition: background 120ms, color 120ms;
+  }
+  .newslide:hover { background: var(--rail); color: var(--ink-2); }
+  .rail .foot { margin-top: auto; padding: 8px 10px 0; font-size: 11px; color: var(--ink-3); }
+
+  /* ── Canvas & slide ─────────────────────────────────────────────── */
+  .canvas { flex: 1; overflow: auto; display: flex; justify-content: center; padding: 36px 48px; }
+  .slidewrap { width: 100%; max-width: 880px; align-self: start; }
+  .slide {
+    background: var(--panel); border-radius: 10px; padding: 40px 48px 36px;
+    box-shadow: 0 1px 2px rgba(35,42,38,0.06), 0 12px 32px rgba(35,42,38,0.05);
+  }
+  .slide h1 {
+    font-family: var(--serif); font-weight: 500; font-size: 23px; letter-spacing: 0.002em;
+    text-wrap: balance;
+  }
+  .slide .sub { font-size: 12px; color: var(--ink-2); margin: 8px 0 26px; }
+
+  table.xtab { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+  .xtab th {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--ink-2); text-align: right; padding: 0 4px 10px; border-bottom: 1px solid var(--line);
+  }
+  .xtab th.lbl { text-align: left; padding-left: 0; font-weight: 500; letter-spacing: 0.05em; }
+  .xtab td {
+    font-family: var(--mono); font-size: 13px; text-align: right; padding: 9px 4px;
+    border-bottom: 1px solid var(--line-soft); white-space: nowrap;
+  }
+  .xtab td.lbl { font-family: var(--sans); text-align: left; padding-left: 0; color: var(--ink); }
+  .xtab tr:last-child td { border-bottom: none; }
+  .xtab .tot { background: var(--panel-tint); }
+  .xtab th.tot, .xtab td.tot { padding-left: 14px; padding-right: 8px; }
+  .sig {
+    display: inline-block; width: 1em; font-size: 11px; font-weight: 700;
+    color: var(--accent); text-align: center;
+  }
+  .marginnote { font-size: 11.5px; color: var(--ink-3); padding: 12px 6px 0; }
+
+  /* Empty slide (first run) */
+  .slide.empty {
+    min-height: 340px; display: flex; flex-direction: column; align-items: center;
+    justify-content: center; gap: 14px;
+  }
+  .slide.empty p { font-size: 14px; color: var(--ink-2); }
+  .slide.empty p kbd {
+    font-family: var(--mono); font-size: 12px; background: var(--panel-tint);
+    border: 1px solid var(--line); border-radius: 4px; padding: 1px 5px;
+  }
+  .slide.empty .ghost { color: var(--ink-2); border: 1px solid var(--line); }
+  .slide.empty .ghost:hover { background: var(--panel-tint); }
+
+  /* ── Recipe inspector ───────────────────────────────────────────── */
+  .inspector {
+    width: 0; flex: none; overflow: hidden; border-left: 1px solid transparent;
+    transition: width 160ms ease;
+  }
+  .app.recipe-open .inspector { width: 280px; border-left-color: var(--line-soft); }
+  .inspector .in { width: 280px; padding: 18px 20px; }
+  .inspector h2 {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--ink-3); margin-bottom: 16px;
+  }
+  .field { margin-bottom: 14px; }
+  .field label {
+    display: block; font-size: 10.5px; font-weight: 600; letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--ink-3); margin-bottom: 5px;
+  }
+  .field .chip {
+    display: block; font-size: 12.5px; background: var(--panel); border: 1px solid var(--line);
+    border-radius: 6px; padding: 7px 10px; line-height: 1.35;
+  }
+  .field .chip small { color: var(--ink-3); display: block; font-size: 11px; margin-top: 1px; }
+  .field .chip.none { color: var(--ink-3); background: none; border-style: dashed; }
+  .inspector hr { border: none; border-top: 1px solid var(--line-soft); margin: 18px 0; }
+  .setting { display: flex; justify-content: space-between; font-size: 12.5px; padding: 5px 0; }
+  .setting span { color: var(--ink-2); }
+  .setting b { font-weight: 500; color: var(--ink-3); }
+  .inspector .method { font-size: 11.5px; color: var(--ink-3); line-height: 1.5; margin-top: 14px; }
+
+  /* ── Insert palette ─────────────────────────────────────────────── */
+  .backdrop { position: relative; height: 100%; }
+  .backdrop .app { filter: saturate(0.9); }
+  .scrim { position: absolute; inset: 0; background: rgba(36,48,42,0.18); }
+  .palette {
+    position: absolute; top: 12%; left: 50%; transform: translateX(-50%);
+    width: 580px; background: var(--panel); border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(35,42,38,0.10), 0 24px 60px rgba(35,42,38,0.18);
+    overflow: hidden;
+  }
+  .pal-input { display: flex; align-items: center; gap: 10px; padding: 14px 16px; border-bottom: 1px solid var(--line-soft); }
+  .pal-input .g { color: var(--ink-3); font-size: 15px; }
+  .pal-input input {
+    flex: 1; border: none; background: none; font: inherit; font-size: 14px; color: var(--ink);
+  }
+  .pal-input input:focus { outline: none; }
+  .palette ul { list-style: none; padding: 6px; }
+  .palette li {
+    display: flex; align-items: center; gap: 12px; padding: 8px 10px; border-radius: 6px;
+  }
+  .palette li:hover { background: var(--rail); }
+  .palette li.on { background: var(--panel-tint); box-shadow: inset 0 0 0 1px var(--line); }
+  .tglyph {
+    font-family: var(--mono); font-size: 11px; color: var(--ink-3); width: 18px; flex: none;
+    text-align: center; border: 1px solid var(--line); border-radius: 4px; padding: 1px 0;
+  }
+  .palette li em { font-style: normal; font-family: var(--mono); font-size: 12.5px; display: block; }
+  .palette li small { font-size: 11.5px; color: var(--ink-2); display: block; margin-top: 1px; }
+  .palette li .vmeta { margin-left: auto; font-size: 11px; color: var(--ink-3); white-space: nowrap; }
+  .palette footer {
+    display: flex; gap: 16px; padding: 10px 16px; border-top: 1px solid var(--line-soft);
+    font-size: 11px; color: var(--ink-3);
+  }
+  .palette footer kbd { font-family: var(--mono); font-size: 10.5px; color: var(--ink-2); }
+
+  /* ── Variable Manager ───────────────────────────────────────────── */
+  .vm-body { flex: 1; display: flex; min-height: 0; }
+  .vm-list { flex: 1; min-width: 0; display: flex; flex-direction: column; padding: 0 0 0 16px; }
+  .vm-tools { display: flex; align-items: center; gap: 10px; padding: 6px 16px 12px 10px; }
+  .vm-search {
+    flex: none; width: 260px; display: flex; align-items: center; gap: 8px;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 6px 10px;
+  }
+  .vm-search input { border: none; background: none; font: inherit; font-size: 12.5px; flex: 1; }
+  .vm-search input:focus { outline: none; }
+  .vm-search .g { color: var(--ink-3); font-size: 13px; }
+  .chips { display: flex; gap: 4px; }
+  .chips button {
+    font-size: 11.5px; color: var(--ink-2); padding: 4px 9px; border-radius: 12px;
+    transition: background 120ms;
+  }
+  .chips button:hover { background: var(--rail); }
+  .chips button.on { background: var(--ink); color: var(--ground); }
+  .vm-rows { flex: 1; overflow: auto; padding: 0 8px 16px 0; }
+  .vm-row {
+    display: flex; align-items: center; gap: 12px; height: 32px; padding: 0 10px;
+    border-radius: 6px; cursor: default;
+  }
+  .vm-row:hover { background: var(--rail); }
+  .vm-row.on { background: var(--panel); box-shadow: 0 0 0 1px var(--line); }
+  .vm-row .name { font-family: var(--mono); font-size: 12px; flex: none; width: 150px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .vm-row .lab {
+    flex: 1; min-width: 0; font-size: 12.5px; color: var(--ink-2);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .vm-row .vmeta {
+    flex: none; font-family: var(--mono); font-size: 11px; color: var(--ink-3);
+  }
+  .vm-inspector {
+    width: 400px; flex: none; overflow: auto; border-left: 1px solid var(--line-soft);
+    padding: 22px 26px;
+  }
+  .vm-inspector h1 { font-size: 15px; font-weight: 600; line-height: 1.4; text-wrap: balance; }
+  .vm-inspector .code {
+    display: inline-block; font-family: var(--mono); font-size: 11px; color: var(--ink-2);
+    background: var(--rail); border-radius: 4px; padding: 2px 7px; margin: 10px 0 4px;
+  }
+  .vm-inspector .typeline { font-size: 12px; color: var(--ink-2); margin: 6px 0 24px; }
+  .vm-inspector h2 {
+    font-size: 10.5px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--ink-3); margin: 0 0 12px;
+  }
+  .dist { display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
+  .dist .drow { display: grid; grid-template-columns: 92px 1fr 90px; align-items: center; gap: 10px; }
+  .dist .dlab { font-size: 12px; color: var(--ink-2); }
+  .dist .dbar { height: 14px; border-radius: 3px; background: var(--mark); }
+  .dist .dval { font-family: var(--mono); font-size: 11.5px; color: var(--ink-2); text-align: right;
+    font-variant-numeric: tabular-nums; }
+  table.map { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; margin-bottom: 28px; }
+  .map th {
+    font-size: 10.5px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--ink-3); text-align: left; padding: 0 8px 8px 0; border-bottom: 1px solid var(--line);
+  }
+  .map th.r, .map td.r { text-align: right; padding-right: 0; }
+  .map td {
+    font-size: 12.5px; padding: 7px 8px 7px 0; border-bottom: 1px solid var(--line-soft);
+  }
+  .map td.mono { font-family: var(--mono); font-size: 12px; color: var(--ink-2); }
+  .map tr:last-child td { border-bottom: none; }
+  .vm-actions { display: flex; gap: 6px; }
+  .vm-actions .ghost { border: 1px solid var(--line); }
+
+  /* ── Notes sheet (evaluation chrome) ────────────────────────────── */
+  .notes {
+    position: fixed; top: 44px; right: 0; bottom: 0; width: 380px; background: var(--panel);
+    border-left: 1px solid var(--line); box-shadow: -12px 0 40px rgba(35,42,38,0.10);
+    padding: 24px 28px; overflow: auto; display: none; z-index: 30;
+  }
+  .notes.on { display: block; }
+  .notes h2 { font-size: 14px; margin-bottom: 4px; }
+  .notes .x { position: absolute; top: 16px; right: 16px; color: var(--ink-3); font-size: 14px; }
+  .notes h3 {
+    font-size: 10.5px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--ink-3); margin: 22px 0 10px;
+  }
+  .notes p, .notes li { font-size: 12.5px; line-height: 1.55; color: var(--ink-2); }
+  .notes ul { padding-left: 16px; display: flex; flex-direction: column; gap: 6px; }
+  .notes b { color: var(--ink); font-weight: 600; }
+  .sw { display: flex; align-items: center; gap: 10px; margin-bottom: 7px; font-size: 12px; color: var(--ink-2); }
+  .sw i {
+    width: 16px; height: 16px; border-radius: 4px; border: 1px solid var(--line); flex: none;
+  }
+  .sw code { font-family: var(--mono); font-size: 11px; color: var(--ink-3); margin-left: auto; }
+</style>
+
+<div class="meta">
+  <div class="brand">Velocity<small>Phase 0 · North star</small></div>
+  <nav>
+    <button data-s="1" class="on"><kbd>1</kbd>Canvas</button>
+    <button data-s="2"><kbd>2</kbd>First run</button>
+    <button data-s="3"><kbd>3</kbd>Insert palette</button>
+    <button data-s="4"><kbd>4</kbd>Variable manager</button>
+  </nav>
+  <button class="notes-btn" id="notesBtn">Design notes</button>
+</div>
+
+<div class="stage">
+
+  <!-- ════ Screen 1 · Canvas ════ -->
+  <section class="screen on" id="s1">
+    <div class="app" id="app1">
+      <header class="topbar">
+        <div class="dataset"><b>brandtracker_w4.sav</b> · 1,200 respondents</div>
+        <div class="tb-right">
+          <button class="ghost" id="insertBtn1">Insert<kbd>⌘K</kbd></button>
+          <button class="ghost" id="recipeBtn" aria-pressed="false">Recipe</button>
+          <button class="ghost" aria-label="More">···</button>
+          <button class="primary">Export</button>
+        </div>
+      </header>
+      <div class="body">
+        <aside class="rail">
+          <div class="deck-name">Atlas RTD Coffee — W4 debrief</div>
+          <ol class="slides">
+            <li class="on"><span class="num">1</span><div><em>Brand preference by segment</em><small>Q5 × SEG</small></div></li>
+            <li><span class="num">2</span><div><em>Unaided awareness, brand set</em><small>Q1a multi</small></div></li>
+            <li><span class="num">3</span><div><em>Consideration funnel</em><small>aware → consider → use</small></div></li>
+            <li><span class="num">4</span><div><em>Likelihood to recommend</em><small>Q6 × SEG</small></div></li>
+          </ol>
+          <button class="newslide">+ New slide</button>
+          <div class="foot">Saved locally · 1.1 MB</div>
+        </aside>
+        <main class="canvas">
+          <div class="slidewrap">
+            <article class="slide">
+              <h1>Brand preference by segment</h1>
+              <p class="sub">Q5. Which one of these brands do you most prefer? · N = 1,200</p>
+              <table class="xtab">
+                <thead>
+                  <tr><th class="lbl">Preferred brand</th><th>Core</th><th>Growth</th><th>Value</th><th class="tot">Total</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td class="lbl">Beacon</td><td>21.2<span class="sig">↓</span></td><td>29.4<span class="sig">↑</span></td><td>24.5<span class="sig"></span></td><td class="tot">25.4<span class="sig"></span></td></tr>
+                  <tr><td class="lbl">Meridian</td><td>30.4<span class="sig">↑</span></td><td>12.3<span class="sig">↓</span></td><td>30.0<span class="sig">↑</span></td><td class="tot">22.8<span class="sig"></span></td></tr>
+                  <tr><td class="lbl">Atlas</td><td>17.0<span class="sig"></span></td><td>27.0<span class="sig">↑</span></td><td>14.7<span class="sig">↓</span></td><td class="tot">20.7<span class="sig"></span></td></tr>
+                  <tr><td class="lbl">None of these</td><td>16.7<span class="sig"></span></td><td>12.9<span class="sig"></span></td><td>20.9<span class="sig"></span></td><td class="tot">16.1<span class="sig"></span></td></tr>
+                  <tr><td class="lbl">Solstice</td><td>6.6<span class="sig"></span></td><td>13.9<span class="sig">↑</span></td><td>4.0<span class="sig"></span></td><td class="tot">9.1<span class="sig"></span></td></tr>
+                  <tr><td class="lbl">Cardinal</td><td>8.0<span class="sig"></span></td><td>4.4<span class="sig"></span></td><td>5.9<span class="sig"></span></td><td class="tot">6.0<span class="sig"></span></td></tr>
+                </tbody>
+              </table>
+            </article>
+            <p class="marginnote">Welch’s t, cell vs rest · ↑ ↓ significant at 95% · χ² 100.7, p &lt; .001</p>
+          </div>
+        </main>
+        <aside class="inspector" aria-label="Slide recipe">
+          <div class="in">
+            <h2>Recipe — Slide 1</h2>
+            <div class="field"><label>Rows</label><span class="chip">Q5. Brand most preferred<small>6 categories</small></span></div>
+            <div class="field"><label>Columns</label><span class="chip">SEG. Consumer segment<small>Core · Growth · Value</small></span></div>
+            <div class="field"><label>Filter</label><span class="chip none">None — all 1,200</span></div>
+            <div class="field"><label>Weight</label><span class="chip none">None</span></div>
+            <hr>
+            <div class="setting"><span>Cell n</span><b>Off</b></div>
+            <div class="setting"><span>Column bases</span><b>Off</b></div>
+            <div class="setting"><span>Significance</span><b>95% · cell vs rest</b></div>
+            <p class="method">Welch’s t with Kish effective sample size. Every figure traces to the engine’s result envelope.</p>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════ Screen 2 · First run ════ -->
+  <section class="screen" id="s2">
+    <div class="app">
+      <header class="topbar">
+        <div class="dataset"><b>brandtracker_w4.sav</b> · 1,200 respondents</div>
+        <div class="tb-right">
+          <button class="ghost" id="insertBtn2">Insert<kbd>⌘K</kbd></button>
+          <button class="ghost" aria-label="More">···</button>
+          <button class="primary" disabled>Export</button>
+        </div>
+      </header>
+      <div class="body">
+        <aside class="rail">
+          <div class="deck-name">Untitled deck</div>
+          <ol class="slides">
+            <li class="on"><span class="num">1</span><div><em>Untitled slide</em></div></li>
+          </ol>
+          <button class="newslide">+ New slide</button>
+          <div class="foot">Saved locally</div>
+        </aside>
+        <main class="canvas">
+          <div class="slidewrap">
+            <article class="slide empty">
+              <p>Drag a variable here, or press <kbd>⌘K</kbd>.</p>
+              <button class="ghost">Browse variables</button>
+            </article>
+          </div>
+        </main>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════ Screen 3 · Insert palette ════ -->
+  <section class="screen" id="s3">
+    <div class="backdrop">
+      <div class="app">
+        <header class="topbar">
+          <div class="dataset"><b>brandtracker_w4.sav</b> · 1,200 respondents</div>
+          <div class="tb-right">
+            <button class="ghost">Insert<kbd>⌘K</kbd></button>
+            <button class="ghost">Recipe</button>
+            <button class="ghost" aria-label="More">···</button>
+            <button class="primary">Export</button>
+          </div>
+        </header>
+        <div class="body">
+          <aside class="rail">
+            <div class="deck-name">Atlas RTD Coffee — W4 debrief</div>
+            <ol class="slides">
+              <li class="on"><span class="num">1</span><div><em>Brand preference by segment</em><small>Q5 × SEG</small></div></li>
+              <li><span class="num">2</span><div><em>Unaided awareness, brand set</em><small>Q1a multi</small></div></li>
+              <li><span class="num">3</span><div><em>Consideration funnel</em><small>aware → consider → use</small></div></li>
+              <li><span class="num">4</span><div><em>Likelihood to recommend</em><small>Q6 × SEG</small></div></li>
+            </ol>
+            <button class="newslide">+ New slide</button>
+          </aside>
+          <main class="canvas">
+            <div class="slidewrap">
+              <article class="slide">
+                <h1>Brand preference by segment</h1>
+                <p class="sub">Q5. Which one of these brands do you most prefer? · N = 1,200</p>
+              </article>
+            </div>
+          </main>
+        </div>
+      </div>
+      <div class="scrim"></div>
+      <div class="palette" role="dialog" aria-label="Insert variable">
+        <div class="pal-input"><span class="g">⌕</span><input value="atlas" aria-label="Find a variable"></div>
+        <ul>
+          <li class="on"><span class="tglyph">M</span><div><em>unaided_any_atlas</em><small>Q1a. Unaided brand awareness — any mention: Atlas</small></div><span class="vmeta">Multi · 5</span></li>
+          <li><span class="tglyph">M</span><div><em>aware_atlas</em><small>Q2. Prompted awareness: Atlas</small></div><span class="vmeta">Multi · 5</span></li>
+          <li><span class="tglyph">G</span><div><em>consider_atlas</em><small>Q3. Consideration: Atlas</small></div><span class="vmeta">Grid · 5</span></li>
+          <li><span class="tglyph">M</span><div><em>used_p3m_atlas</em><small>Q4. Used in the past 3 months: Atlas</small></div><span class="vmeta">Multi · 5</span></li>
+          <li><span class="tglyph">G</span><div><em>att_taste_atlas</em><small>Q7. “Atlas tastes great” — agreement</small></div><span class="vmeta">Grid · 40</span></li>
+        </ul>
+        <footer>
+          <span><kbd>↵</kbd> Add to rows</span>
+          <span><kbd>⌥↵</kbd> Columns</span>
+          <span><kbd>⇧↵</kbd> Filter</span>
+          <span style="margin-left:auto"><kbd>esc</kbd> Close</span>
+        </footer>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════ Screen 4 · Variable manager ════ -->
+  <section class="screen" id="s4">
+    <div class="app">
+      <header class="topbar">
+        <div class="dataset"><button class="ghost" style="margin-left:-10px">← Canvas</button></div>
+        <div class="dataset"><b>Variables</b> · brandtracker_w4.sav</div>
+        <div class="tb-right"><span class="dataset">21 variables · 1,200 rows</span></div>
+      </header>
+      <div class="vm-body">
+        <div class="vm-list">
+          <div class="vm-tools">
+            <div class="vm-search"><span class="g">⌕</span><input placeholder="Filter variables…" aria-label="Filter variables"></div>
+            <div class="chips">
+              <button class="on">All 21</button>
+              <button>Category 13</button>
+              <button>Scale 4</button>
+              <button>Numeric 4</button>
+            </div>
+          </div>
+          <div class="vm-rows">
+            <div class="vm-row"><span class="tglyph">#</span><span class="name">respondent_id</span><span class="lab">Respondent ID</span><span class="vmeta">1,200 unique</span></div>
+            <div class="vm-row"><span class="tglyph">S</span><span class="name">tracking_wave</span><span class="lab">Tracking wave</span><span class="vmeta">W1 – W4</span></div>
+            <div class="vm-row"><span class="tglyph">#</span><span class="name">interview_date</span><span class="lab">Interview date</span><span class="vmeta">Jan – Mar 2026</span></div>
+            <div class="vm-row"><span class="tglyph">C</span><span class="name">s2_bought_rtd</span><span class="lab">S2. Bought ready-to-drink chilled coffee in the past 3 months</span><span class="vmeta">Yes 100%</span></div>
+            <div class="vm-row"><span class="tglyph">#</span><span class="name">d1_age</span><span class="lab">D1. Age in years</span><span class="vmeta">μ 38.4</span></div>
+            <div class="vm-row"><span class="tglyph">S</span><span class="name">d1b_age_band</span><span class="lab">D1b. Age band (derived from D1)</span><span class="vmeta">5 bands</span></div>
+            <div class="vm-row"><span class="tglyph">C</span><span class="name">d2_gender</span><span class="lab">D2. Gender</span><span class="vmeta">Female 57%</span></div>
+            <div class="vm-row"><span class="tglyph">C</span><span class="name">d3_region</span><span class="lab">D3. Region</span><span class="vmeta">East 32%</span></div>
+            <div class="vm-row"><span class="tglyph">C</span><span class="name">d4_income_band</span><span class="lab">D4. Household income band</span><span class="vmeta">$50–75k 26%</span></div>
+            <div class="vm-row"><span class="tglyph">C</span><span class="name">d5_area_type</span><span class="lab">D5. Area type</span><span class="vmeta">Suburban 46%</span></div>
+            <div class="vm-row"><span class="tglyph">C</span><span class="name">seg_segment</span><span class="lab">SEG. Consumer segment (from segmentation model)</span><span class="vmeta">Growth 42%</span></div>
+            <div class="vm-row"><span class="tglyph">C</span><span class="name">q1_first_mention</span><span class="lab">Q1. Thinking of ready-to-drink chilled coffee, which brand comes to mind first?</span><span class="vmeta">Meridian 28%</span></div>
+            <div class="vm-row on"><span class="tglyph">M</span><span class="name">unaided_any_atlas</span><span class="lab">Q1a. Unaided brand awareness — any mention: Atlas</span><span class="vmeta">Mentioned 38%</span></div>
+            <div class="vm-row"><span class="tglyph">M</span><span class="name">aware_atlas</span><span class="lab">Q2. Prompted awareness: Atlas</span><span class="vmeta">Mentioned 74%</span></div>
+            <div class="vm-row"><span class="tglyph">G</span><span class="name">consider_atlas</span><span class="lab">Q3. Consideration: Atlas</span><span class="vmeta">Grid · 5</span></div>
+            <div class="vm-row"><span class="tglyph">M</span><span class="name">used_p3m_atlas</span><span class="lab">Q4. Used in the past 3 months: Atlas</span><span class="vmeta">Mentioned 22%</span></div>
+            <div class="vm-row"><span class="tglyph">C</span><span class="name">q5_preference</span><span class="lab">Q5. And which one of these brands do you most prefer?</span><span class="vmeta">Beacon 25%</span></div>
+            <div class="vm-row"><span class="tglyph">S</span><span class="name">q6_recommend</span><span class="lab">Q6. How likely are you to recommend Atlas to a friend or colleague?</span><span class="vmeta">μ 7.2</span></div>
+            <div class="vm-row"><span class="tglyph">G</span><span class="name">att_taste_atlas</span><span class="lab">Q7. Attitude grid: Atlas</span><span class="vmeta">Grid · 40</span></div>
+          </div>
+        </div>
+        <aside class="vm-inspector">
+          <h1>Q1a. Unaided brand awareness — any mention: Atlas</h1>
+          <span class="code">unaided_any_atlas</span>
+          <p class="typeline">Category · 2 values · 1,200 valid · part of multi-response set <b>unaided_any</b> (5)</p>
+          <h2>Distribution</h2>
+          <div class="dist">
+            <div class="drow"><span class="dlab">Not mentioned</span><div class="dbar" style="width:100%"></div><span class="dval">749 · 62.4%</span></div>
+            <div class="drow"><span class="dlab">Mentioned</span><div class="dbar" style="width:60.2%"></div><span class="dval">451 · 37.6%</span></div>
+          </div>
+          <h2>Value mapping</h2>
+          <table class="map">
+            <thead><tr><th>Code</th><th>Label</th><th class="r">Count</th><th class="r">%</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">0</td><td>Not mentioned</td><td class="mono r">749</td><td class="mono r">62.4</td></tr>
+              <tr><td class="mono">1</td><td>Mentioned</td><td class="mono r">451</td><td class="mono r">37.6</td></tr>
+            </tbody>
+          </table>
+          <div class="vm-actions">
+            <button class="ghost">Recode…</button>
+            <button class="ghost">Add to slide</button>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- ── Design notes (evaluation chrome) ── -->
+<aside class="notes" id="notes" aria-label="Design notes">
+  <button class="x" id="notesX" aria-label="Close notes">✕</button>
+  <h2>North star — design notes</h2>
+  <p>Phase 0 of the design reset (plan_04, Pathway B). Four target states, judged against: file-drop → three titled slides → PPTX in under 5 minutes, zero interruptions, at most one accent element visible.</p>
+
+  <h3>Tokens — evolved Soft Machine</h3>
+  <div class="sw"><i style="background:#F1EFEA"></i>Ground — app surface<code>#F1EFEA</code></div>
+  <div class="sw"><i style="background:#FDFCFA"></i>Panel — the slide only<code>#FDFCFA</code></div>
+  <div class="sw"><i style="background:#24302A"></i>Ink — green-ink text<code>#24302A</code></div>
+  <div class="sw"><i style="background:#67736C"></i>Ink 2 — secondary<code>#67736C</code></div>
+  <div class="sw"><i style="background:#B54E33"></i>Accent — sienna<code>#B54E33</code></div>
+  <div class="sw"><i style="background:#6F8177"></i>Mark — data bars<code>#6F8177</code></div>
+
+  <h3>Type</h3>
+  <p>Production: <b>Fraunces</b> (slide titles only), <b>Plus Jakarta Sans</b> (all chrome), <b>JetBrains Mono</b> (data, tabular). This mock uses system stand-ins (Palatino / system sans / SF Mono) because it is dependency-free.</p>
+
+  <h3>Rules this mock encodes</h3>
+  <ul>
+    <li><b>Accent budget:</b> sienna appears only on Export and significance arrows. Screen 2 has zero accent (Export disabled); screen 4 has zero accent.</li>
+    <li><b>The slide is the only white object.</b> Everything else recedes into warm gray. What you see is what exports; stats live in the margin note, outside the artifact.</li>
+    <li><b>The story is the navigation.</b> Left rail is the deck outline. No variable wall, no timeline dock.</li>
+    <li><b>Variables are summoned, not resident.</b> ⌘K opens the insert palette (try it on screens 1–2). Enter adds to rows; modifiers to columns/filter.</li>
+    <li><b>The recipe is slide state.</b> Rows/columns/filter/weight sit in a collapsed right inspector (toggle “Recipe”), not persistent shelf chrome.</li>
+    <li><b>Two-pane Variable Manager.</b> Search + filter chips + dense 32px rows + inspector. Type is a monochrome glyph; color is reserved for meaning.</li>
+    <li><b>Empty state = one line + one action.</b> No tours, tips, pills, or toasts anywhere.</li>
+  </ul>
+
+  <h3>Try</h3>
+  <ul>
+    <li>Keys <b>1–4</b> switch screens</li>
+    <li><b>⌘K / Ctrl-K</b> opens the palette; <b>esc</b> returns</li>
+    <li><b>Recipe</b> toggles the slide inspector on screen 1</li>
+  </ul>
+</aside>
+
+<script>
+  const tabs = document.querySelectorAll('.meta nav button');
+  const screens = document.querySelectorAll('.screen');
+  function show(n) {
+    tabs.forEach(t => t.classList.toggle('on', t.dataset.s === String(n)));
+    screens.forEach(s => s.classList.toggle('on', s.id === 's' + n));
+  }
+  tabs.forEach(t => t.addEventListener('click', () => show(t.dataset.s)));
+
+  const app1 = document.getElementById('app1');
+  const recipeBtn = document.getElementById('recipeBtn');
+  recipeBtn.addEventListener('click', () => {
+    const open = app1.classList.toggle('recipe-open');
+    recipeBtn.setAttribute('aria-pressed', String(open));
+  });
+
+  document.getElementById('insertBtn1').addEventListener('click', () => show(3));
+  document.getElementById('insertBtn2').addEventListener('click', () => show(3));
+
+  const notes = document.getElementById('notes');
+  document.getElementById('notesBtn').addEventListener('click', () => notes.classList.toggle('on'));
+  document.getElementById('notesX').addEventListener('click', () => notes.classList.remove('on'));
+
+  document.addEventListener('keydown', (e) => {
+    if (e.target.tagName === 'INPUT') {
+      if (e.key === 'Escape') { e.target.blur(); show(1); }
+      return;
+    }
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); show(3); return; }
+    if (e.key === 'Escape') {
+      if (notes.classList.contains('on')) { notes.classList.remove('on'); return; }
+      if (document.getElementById('s3').classList.contains('on')) show(1);
+      return;
+    }
+    if (['1', '2', '3', '4'].includes(e.key)) show(e.key);
+  });
+</script>

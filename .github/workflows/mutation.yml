@@ -46,3 +46,14 @@ jobs:
           name: mutation-report
           path: reports/mutation/
           retention-days: 7
+
+      - name: Job summary
+        if: always()
+        run: |
+          {
+            echo '### mutation job'
+            echo '- `npm run test:mutation:ci` (Stryker break threshold: 48%)'
+            echo ''
+            echo 'Runs when `src/core/**`, Stryker config, or lockfile change.'
+            echo 'Download **mutation-report** artifact for HTML details on failure.'
+          } >> "$GITHUB_STEP_SUMMARY"

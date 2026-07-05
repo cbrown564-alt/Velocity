@@ -56,7 +56,7 @@ describe('index.css semantic tokens (STAB-DS-1)', () => {
   const root = rootBlock(indexCss);
 
   it('defines tertiary text and hover surface tokens', () => {
-    expect(root).toMatch(/--text-tertiary:\s*var\(--muted-foreground\)/);
+    expect(root).toMatch(/--text-tertiary:\s*#9aa39c/);
     expect(root).toMatch(/--bg-hover:\s*var\(--secondary\)/);
   });
 

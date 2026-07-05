@@ -9,8 +9,8 @@
   align-items: center;
   gap: var(--space-3);
   padding: var(--space-2) var(--space-4);
-  background: color-mix(in srgb, var(--color-accent) 8%, var(--bg-panel));
-  border-bottom: 1px solid color-mix(in srgb, var(--color-accent) 25%, var(--border-color));
+  background: color-mix(in srgb, var(--border-color-active) 8%, var(--bg-panel));
+  border-bottom: 1px solid color-mix(in srgb, var(--border-color-active) 25%, var(--border-color));
   overflow: hidden;
 }
 
@@ -21,8 +21,8 @@
   width: 30px;
   height: 30px;
   border-radius: var(--radius-sm);
-  background: color-mix(in srgb, var(--color-accent) 15%, transparent);
-  color: var(--color-accent);
+  background: color-mix(in srgb, var(--border-color-active) 15%, transparent);
+  color: var(--border-color-active);
   flex-shrink: 0;
 }
 
@@ -64,7 +64,7 @@
   padding: 5px 12px;
   font-size: 12px;
   font-weight: 500;
-  background: var(--color-accent);
+  background: var(--border-color-active);
   color: var(--text-inverse);
   border: none;
   border-radius: var(--radius-sm);

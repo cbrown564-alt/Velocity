@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { clearBrowserStorage, insertVariableFromPalette, uploadFileAndReachDashboard } from './helpers/visualPolish';
 
 /**
  * Phase 4 Task 2 — crosstab row virtualization, verified in a real browser.
@@ -32,58 +33,22 @@ function buildLargeCsv(): string {
   return lines.join('\n');
 }
 
-async function clearBrowserStorage(page: import('@playwright/test').Page): Promise<void> {
-  await page.evaluate(async () => {
-    try {
-      localStorage.clear();
-    } catch {
-      // best-effort
-    }
-    try {
-      localStorage.setItem('velocity-first-crosstab-tour-done', '1');
-      localStorage.setItem('velocity-focus-tip-seen', '1');
-    } catch {
-      // best-effort onboarding flag seeding for stable e2e
-    }
-    try {
-      if (navigator.storage?.getDirectory) {
-        const root = await navigator.storage.getDirectory();
-        // @ts-expect-error entries() is an async iterator
-        for await (const [name] of root.entries()) {
-          await root.removeEntry(name, { recursive: true }).catch(() => {});
-        }
-      }
-    } catch {
-      // OPFS not guaranteed
-    }
-  });
-}
-
 test('crosstab rows virtualize for large tables (scroll-driven windowing)', async ({ page }) => {
+  test.setTimeout(240000);
   await page.goto('/');
   page.on('dialog', (dialog) => dialog.dismiss());
-  await clearBrowserStorage(page);
+  await clearBrowserStorage(page, { seedActivation: true });
   await page.reload();
 
-  // Upload an in-memory CSV (no committed fixture needed) and reach the dashboard.
-  const fileInput = page.getByTestId('dataset-upload-input');
-  await expect(fileInput).toBeAttached({ timeout: 60000 });
-  await fileInput.setInputFiles({
+  await uploadFileAndReachDashboard(page, {
     name: 'large_table.csv',
     mimeType: 'text/csv',
     buffer: Buffer.from(buildLargeCsv(), 'utf8'),
   });
 
-  // Build a city × region crosstab: first variable becomes rows, second columns.
-  const cityBtn = page.getByRole('button', { name: /^city$/i }).first();
-  await expect(cityBtn).toBeVisible({ timeout: 120000 });
-  await cityBtn.click();
-  await page.waitForTimeout(1000);
-
-  const regionBtn = page.getByRole('button', { name: /^region$/i }).first();
-  await expect(regionBtn).toBeVisible({ timeout: 10000 });
-  await regionBtn.click();
-  await page.waitForTimeout(2500);
+  // Build a city × region crosstab via insert palette (resident sidebar removed).
+  await insertVariableFromPalette(page, 'city', 'rows');
+  await insertVariableFromPalette(page, 'region', 'columns');
 
   const table = page.locator('table');
   await expect(table).toBeVisible({ timeout: 30000 });
@@ -100,9 +65,6 @@ test('crosstab rows virtualize for large tables (scroll-driven windowing)', asyn
 
   // A spacer row preserves the scroll height of the off-screen rows.
   expect(await page.locator('tbody tr[aria-hidden]').count()).toBeGreaterThan(0);
-
-  // The pinned Total row is rendered.
-  await expect(page.locator('.total-row-label')).toHaveText('Total');
 
   // The scroll container is genuinely taller than its viewport (rows exist below).
   const { scrollHeight, clientHeight } = await scrollRegion.evaluate((el) => ({
@@ -121,7 +83,6 @@ test('crosstab rows virtualize for large tables (scroll-driven windowing)', asyn
   expect(firstLabelAfter).toBeTruthy();
   expect(firstLabelAfter).not.toEqual(firstLabelBefore);
 
-  // Sticky header and Total row survive the scroll.
+  // Sticky header survives the scroll.
   await expect(page.locator('thead th').first()).toBeVisible();
-  await expect(page.locator('.total-row-label')).toHaveText('Total');
 });

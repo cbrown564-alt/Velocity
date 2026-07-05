@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { clearBrowserStorage, insertVariableFromPalette, uploadFileAndReachDashboard } from './helpers/visualPolish';
 
 /**
  * Phase 4 Task 3 — crosstab column (horizontal) virtualization, verified in a
@@ -38,58 +39,22 @@ function buildWideCsv(): string {
   return lines.join('\n');
 }
 
-async function clearBrowserStorage(page: import('@playwright/test').Page): Promise<void> {
-  await page.evaluate(async () => {
-    try {
-      localStorage.clear();
-    } catch {
-      // best-effort
-    }
-    try {
-      localStorage.setItem('velocity-first-crosstab-tour-done', '1');
-      localStorage.setItem('velocity-focus-tip-seen', '1');
-    } catch {
-      // best-effort onboarding flag seeding for stable e2e
-    }
-    try {
-      if (navigator.storage?.getDirectory) {
-        const root = await navigator.storage.getDirectory();
-        // @ts-expect-error entries() is an async iterator
-        for await (const [name] of root.entries()) {
-          await root.removeEntry(name, { recursive: true }).catch(() => {});
-        }
-      }
-    } catch {
-      // OPFS not guaranteed
-    }
-  });
-}
-
 test('crosstab columns virtualize for wide banners (scroll-driven windowing)', async ({ page }) => {
+  test.setTimeout(240000);
   await page.goto('/');
   page.on('dialog', (dialog) => dialog.dismiss());
-  await clearBrowserStorage(page);
+  await clearBrowserStorage(page, { seedActivation: true });
   await page.reload();
 
-  // Upload an in-memory CSV (no committed fixture needed) and reach the dashboard.
-  const fileInput = page.getByTestId('dataset-upload-input');
-  await expect(fileInput).toBeAttached({ timeout: 60000 });
-  await fileInput.setInputFiles({
+  await uploadFileAndReachDashboard(page, {
     name: 'wide_banner.csv',
     mimeType: 'text/csv',
     buffer: Buffer.from(buildWideCsv(), 'utf8'),
   });
 
-  // Build a region × wave crosstab: first variable becomes rows, second columns.
-  const regionBtn = page.getByRole('button', { name: /^region$/i }).first();
-  await expect(regionBtn).toBeVisible({ timeout: 120000 });
-  await regionBtn.click();
-  await page.waitForTimeout(1000);
-
-  const waveBtn = page.getByRole('button', { name: /^wave$/i }).first();
-  await expect(waveBtn).toBeVisible({ timeout: 10000 });
-  await waveBtn.click();
-  await page.waitForTimeout(2500);
+  // Build a region × wave crosstab via insert palette (resident sidebar removed).
+  await insertVariableFromPalette(page, 'region', 'rows');
+  await insertVariableFromPalette(page, 'wave', 'columns');
 
   const table = page.locator('table');
   await expect(table).toBeVisible({ timeout: 30000 });

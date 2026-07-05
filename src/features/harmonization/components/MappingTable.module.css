@@ -103,7 +103,7 @@
 }
 
 .rowSelected {
-  background: color-mix(in srgb, var(--color-accent) 8%, transparent) !important;
+  background: color-mix(in srgb, var(--border-color-active) 8%, transparent) !important;
 }
 
 /* Status colors */

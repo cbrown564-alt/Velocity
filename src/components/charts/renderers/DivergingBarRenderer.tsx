@@ -374,7 +374,7 @@ export const DivergingBarRenderer: React.FC<BaseChartRendererProps> = ({
                     fontWeight: isSelected ? 600 : 400,
                   }}
                 >
-                  {(row.label || '').length > 25 ? (row.label || '').substring(0, 23) + '...' : row.label || ''}
+                  {row.label || ''}
                 </text>
 
                 {/* DIVERGING: Neutral Bar */}

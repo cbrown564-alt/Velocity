@@ -58,7 +58,7 @@ export interface ModalHostProps {
   };
   drillDown: DrillDownState;
   recodeModal: { isOpen: boolean; variable: unknown };
-  filterModal: { isOpen: boolean };
+  filterModal: { isOpen: boolean; initialVariableId?: string | null };
   analysisExportModal: AnalysisExportModalState;
   onCloseDrillDown: () => void;
   onLoadMoreDrillDown: () => void;
@@ -129,7 +129,13 @@ export const ModalHost: React.FC<ModalHostProps> = ({
       onSave={onSaveRecode}
     />
 
-    <FilterModal isOpen={filterModal.isOpen} onClose={onCloseFilterModal} variables={variables} onSave={onSaveFilter} />
+    <FilterModal
+      isOpen={filterModal.isOpen}
+      initialVariableId={filterModal.initialVariableId ?? null}
+      onClose={onCloseFilterModal}
+      variables={variables}
+      onSave={onSaveFilter}
+    />
 
     <InputModal
       isOpen={overlay.kind === 'combine'}

@@ -37,7 +37,7 @@ const RAW_TAILWIND_PALETTE =
   /\b(?:bg|text|border|ring|fill|stroke|divide|from|to|via|hover:bg|hover:text|hover:border|focus:border|focus:ring|hover:stroke|hover:fill)-(?:white|black|slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)(?:-\d+)?(?:\/[\d.]+)?\b/;
 
 const ROOT_TOKEN_CHECKS = [
-  /--text-tertiary:\s*var\(--muted-foreground\)/,
+  /--text-tertiary:\s*#9aa39c/,
   /--bg-hover:\s*var\(--secondary\)/,
   /--color-warning:\s*var\(--status-warning-text\)/,
   /--status-error-bg:/,

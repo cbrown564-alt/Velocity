@@ -41,12 +41,12 @@ export const SignificanceLegend: React.FC<SignificanceLegendProps> = ({
   if (compact) {
     return (
       <div className="flex items-center gap-4 text-[10px] text-[var(--text-secondary)]">
-        {/* 95% — full-strength green/red */}
+        {/* 95% — accent sienna (design reset accent budget) */}
         <span className="flex items-center gap-1">
-          <ArrowUp size={10} style={{ color: 'var(--color-success)' }} />
-          <span style={{ color: 'var(--color-success)' }}>Higher</span>
-          <ArrowDown size={10} style={{ color: 'var(--color-error)' }} />
-          <span style={{ color: 'var(--color-error)' }}>Lower</span>
+          <ArrowUp size={10} className="sig-marker" />
+          <span className="sig-marker">Higher</span>
+          <ArrowDown size={10} className="sig-marker" />
+          <span className="sig-marker">Lower</span>
           <span>(95%)</span>
         </span>
         {/* 80% — neutral grey: categorically distinct from 95% colored arrows */}
@@ -71,7 +71,7 @@ export const SignificanceLegend: React.FC<SignificanceLegendProps> = ({
         {showMethodologyLink && (
           <button
             onClick={onMethodologyClick}
-            className="text-[var(--color-accent)] hover:underline font-normal flex items-center gap-1"
+            className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:underline font-normal flex items-center gap-1"
           >
             <Info size={12} />
             How we calculate
@@ -86,11 +86,11 @@ export const SignificanceLegend: React.FC<SignificanceLegendProps> = ({
             95% Confidence
           </div>
           <div className="flex items-center gap-2">
-            <ArrowUp size={14} style={{ color: 'var(--color-success)' }} />
+            <ArrowUp size={14} className="sig-marker" />
             <span className="text-[var(--text-primary)]">Significantly higher than rest</span>
           </div>
           <div className="flex items-center gap-2">
-            <ArrowDown size={14} style={{ color: 'var(--color-error)' }} />
+            <ArrowDown size={14} className="sig-marker" />
             <span className="text-[var(--text-primary)]">Significantly lower than rest</span>
           </div>
         </div>

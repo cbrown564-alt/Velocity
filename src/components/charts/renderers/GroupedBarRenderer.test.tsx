@@ -23,7 +23,7 @@ function makeProcessedData(): ProcessedAnalysisData {
     series: [],
     columns: [
       { key: 'international', label: 'International', total: 100 },
-      { key: 'south', label: 'South', total: 100 },
+      { key: 'south', label: 'Married/defacto', total: 100 },
     ],
     grandTotal: 100,
     isMetric: false,
@@ -36,9 +36,32 @@ function makeProcessedData(): ProcessedAnalysisData {
 
 describe('GroupedBarRenderer legend labels', () => {
   it('renders full legend labels without truncation', () => {
-    render(<GroupedBarRenderer width={800} height={400} processedData={makeProcessedData()} />);
+    render(<GroupedBarRenderer width={800} height={400} processedData={makeProcessedData()} labelMode="percent" />);
 
     expect(screen.getAllByText('International').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Married/defacto').length).toBeGreaterThan(0);
+    expect(screen.queryByText('Married/defact')).not.toBeInTheDocument();
     expect(screen.queryByText('Internatio...')).not.toBeInTheDocument();
+  });
+
+  it('updates axis labels without changing bar geometry', () => {
+    const data = makeProcessedData();
+
+    const { container: countContainer, unmount } = render(
+      <GroupedBarRenderer width={800} height={400} processedData={data} labelMode="count" />,
+    );
+    const countWidths = Array.from(countContainer.querySelectorAll('rect')).map((rect) => rect.getAttribute('width'));
+    expect(countContainer.textContent).toContain('45');
+    unmount();
+
+    const { container: percentContainer } = render(
+      <GroupedBarRenderer width={800} height={400} processedData={data} labelMode="percent" />,
+    );
+    const percentWidths = Array.from(percentContainer.querySelectorAll('rect')).map((rect) =>
+      rect.getAttribute('width'),
+    );
+
+    expect(percentWidths).toEqual(countWidths);
+    expect(percentContainer.textContent).toMatch(/%/);
   });
 });

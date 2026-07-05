@@ -35,7 +35,7 @@
 
 .buttonActive {
   background-color: var(--bg-active);
-  color: var(--color-accent);
+  color: var(--border-color-active);
 }
 
 .buttonActive:hover {

@@ -71,7 +71,7 @@ export const BulkActionBar: React.FC<BulkActionBarProps> = ({ selectedCount, sel
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: reducedMotion ? 0 : 100, opacity: 0 }}
             transition={reducedMotion ? { duration: 0.01 } : { type: 'spring', damping: 25, stiffness: 300 }}
-            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50"
+            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[var(--z-popover)]"
           >
             <div className="bg-[var(--mat-panel-bg,var(--bg-panel))] backdrop-blur-md border border-[var(--border-color)] text-[var(--text-primary)] rounded-xl shadow-float px-4 py-3 flex items-center gap-4">
               {/* Selection Count */}
@@ -104,7 +104,7 @@ export const BulkActionBar: React.FC<BulkActionBarProps> = ({ selectedCount, sel
                   </button>
 
                   {showTypeMenu && (
-                    <div className="absolute bottom-full left-0 mb-2 bg-[var(--mat-overlay-bg,var(--bg-panel))] backdrop-blur-md border border-[var(--border-color)] rounded-lg shadow-float py-1 min-w-32 z-50 overflow-hidden">
+                    <div className="absolute bottom-full left-0 mb-2 bg-[var(--mat-overlay-bg,var(--bg-panel))] backdrop-blur-md border border-[var(--border-color)] rounded-lg shadow-float py-1 min-w-32 z-[var(--z-popover)] overflow-hidden">
                       <button
                         onClick={() => handleSetType('categorical')}
                         className="w-full flex items-center gap-2 px-3 py-2 hover:bg-[var(--bg-surface)] text-left text-sm font-body text-[var(--text-secondary)] hover:text-[var(--text-primary)]"

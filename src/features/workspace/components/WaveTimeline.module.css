@@ -45,7 +45,7 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: var(--project-color, var(--color-accent));
+  background: var(--project-color, var(--viz-fill-primary));
   color: white;
   font-size: var(--text-xs);
   font-weight: 600;
@@ -55,7 +55,7 @@
 }
 
 .compactWaveNode:hover {
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--project-color, var(--color-accent)) 30%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--project-color, var(--viz-fill-primary)) 30%, transparent);
 }
 
 .compactWaveNumber {
@@ -243,7 +243,7 @@
   gap: var(--space-1);
   font-weight: 600;
   font-size: var(--text-sm);
-  color: var(--project-color, var(--color-accent));
+  color: var(--project-color, var(--viz-fill-primary));
 }
 
 .waveDate {
@@ -270,7 +270,7 @@
 }
 
 .waveCard:hover {
-  border-color: var(--project-color, var(--color-accent));
+  border-color: var(--project-color, var(--viz-fill-primary));
   box-shadow: 0 2px 8px color-mix(in srgb, var(--text-primary) 8%, transparent);
 }
 
@@ -313,7 +313,7 @@
 
 .retentionFill {
   height: 100%;
-  background: var(--project-color, var(--color-accent));
+  background: var(--project-color, var(--viz-fill-primary));
   border-radius: 2px;
 }
 
@@ -385,8 +385,8 @@
 }
 
 .compareButton:hover {
-  background: var(--color-accent);
-  border-color: var(--color-accent);
+  background: var(--border-color-active);
+  border-color: var(--border-color-active);
   color: white;
 }
 
@@ -407,7 +407,7 @@
 
 .keyVariable {
   font-family: var(--font-mono);
-  color: var(--color-accent);
+  color: var(--border-color-active);
   background: var(--bg-active);
   padding: var(--space-1) var(--space-2);
   border-radius: var(--radius-sm);

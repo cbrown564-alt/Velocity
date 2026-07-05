@@ -24,7 +24,7 @@ describe('Motion DSL (STAB-UI-A)', () => {
     it('has expected durations', () => {
       expect(DURATIONS.fast).toBe(0.15);
       expect(DURATIONS.normal).toBe(0.2);
-      expect(DURATIONS.enter).toBe(0.3);
+      expect(DURATIONS.enter).toBe(0.2);
     });
   });
 

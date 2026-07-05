@@ -17,7 +17,7 @@ export const MetadataScreen: React.FC<MetadataScreenProps> = ({ dataset, pending
   return (
     <motion.div
       {...getMotionProps({ preset: 'fade', duration: DURATIONS.enter, reducedMotion })}
-      className="fixed inset-0 flex items-center justify-center bg-[var(--bg-app)] z-40"
+      className="fixed inset-0 flex items-center justify-center bg-[var(--bg-app)] z-[var(--z-modal)]"
     >
       <div className="text-center space-y-8 max-w-2xl w-full px-6">
         <div className="space-y-3">
@@ -122,7 +122,7 @@ export const MetadataScreen: React.FC<MetadataScreenProps> = ({ dataset, pending
             onClick={onLoadFull}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className="flex-1 py-3.5 px-6 rounded-xl bg-[var(--color-accent)] text-[var(--text-inverse)] font-semibold shadow-md shadow-[var(--color-accent)]/20"
+            className="flex-1 py-3.5 px-6 rounded-xl bg-[var(--color-accent)] text-[var(--text-inverse)] font-semibold shadow-md"
           >
             Load Full Data
           </motion.button>

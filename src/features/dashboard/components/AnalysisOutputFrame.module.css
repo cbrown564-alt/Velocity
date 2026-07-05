@@ -11,9 +11,19 @@
 }
 
 .frame.shrinkWrap {
-  flex: 0 0 auto;
+  flex: none;
   align-self: flex-start;
-  max-height: 100%;
+  max-height: none;
+  overflow: visible;
+}
+
+.shrinkWrap .body {
+  flex: 0 1 auto;
+  overflow: visible;
+}
+
+.shrinkWrap .bodyChart {
+  overflow: visible;
 }
 
 .bleed {
@@ -35,12 +45,9 @@
 
 .bodyChart {
   padding: 1.5rem;
-  min-height: 400px;
+  min-height: 0;
 }
 
-.footerBand {
-  flex-shrink: 0;
-  position: relative;
-  z-index: 2;
-  background: var(--bg-panel);
+.frame:not(.shrinkWrap) .bodyChart {
+  min-height: 400px;
 }

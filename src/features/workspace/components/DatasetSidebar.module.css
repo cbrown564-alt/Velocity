@@ -50,7 +50,7 @@
 
 .toggleButton:hover {
   color: var(--text-primary);
-  border-color: var(--color-accent);
+  border-color: var(--border-color-active);
 }
 
 /* Header */
@@ -102,7 +102,7 @@
 }
 
 .datasetItem.active {
-  background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+  background: color-mix(in srgb, var(--border-color-active) 10%, transparent);
 }
 
 /* Dataset icon */
@@ -122,15 +122,15 @@
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: var(--color-accent);
-  box-shadow: 0 0 8px var(--color-accent);
+  background: var(--border-color-active);
+  box-shadow: 0 0 8px var(--border-color-active);
 }
 
 .projectDot {
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: var(--project-color, var(--color-accent));
+  background: var(--project-color, var(--viz-fill-primary));
 }
 
 /* Dataset content */
@@ -162,7 +162,7 @@
 }
 
 .sessionIcon {
-  color: var(--color-accent);
+  color: var(--border-color-active);
   flex-shrink: 0;
 }
 
@@ -266,12 +266,3 @@
 }
 
 /* Theme-specific overrides */
-[data-theme='liquid-glass'] .sidebar {
-  background: var(--mat-panel-bg, var(--bg-panel));
-  backdrop-filter: var(--mat-panel-filter, blur(25px) saturate(180%));
-}
-
-[data-theme='liquid-glass'] .tooltip {
-  background: var(--mat-overlay-bg, var(--bg-panel));
-  backdrop-filter: var(--mat-overlay-filter, blur(40px) saturate(200%));
-}

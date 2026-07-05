@@ -26,6 +26,7 @@ export function buildMissingExclusionSql(options: CrosstabQueryOptions, context:
   const involvedVariableIds = new Set<string>();
 
   options.rowVars.forEach((id) => involvedVariableIds.add(id));
+  options.nestedRowVars?.forEach((id) => involvedVariableIds.add(id));
   if (options.colVar) involvedVariableIds.add(options.colVar);
   if (options.measureVar) involvedVariableIds.add(options.measureVar);
 

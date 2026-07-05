@@ -34,8 +34,8 @@
 
 /* Selected row/col headers */
 .mergeSelected {
-  background-color: color-mix(in srgb, var(--color-accent) 6%, transparent);
-  box-shadow: inset 2px 0 0 var(--color-accent);
+  background-color: var(--bg-rail);
+  box-shadow: inset 2px 0 0 var(--border-color-active);
 }
 
 /* Floating ghost label that follows the cursor */
@@ -63,11 +63,11 @@
 
 /* Column header selected state */
 .colSelected {
-  background-color: color-mix(in srgb, var(--color-accent) 6%, transparent) !important;
-  box-shadow: inset 0 -2px 0 var(--color-accent);
+  background-color: var(--bg-rail) !important;
+  box-shadow: inset 0 -2px 0 var(--border-color-active);
 }
 
-/* Scroll region fills frame body; footer stays pinned below */
+/* Scroll region fills frame body when virtualized; otherwise sizes to table content */
 .tableScrollRegion {
   flex: 1 1 auto;
   min-height: 0;
@@ -76,10 +76,21 @@
   position: relative;
 }
 
+.tableScrollNatural {
+  flex: 0 0 auto;
+  height: auto;
+}
+
 /* UXP-002: fixed table layout with proportional data columns */
 .crosstabTable {
   table-layout: fixed;
   width: 100%;
+  font-variant-numeric: tabular-nums;
+}
+
+.crosstabTable td.data-cell,
+.crosstabTable td.statistic-value {
+  font-variant-numeric: tabular-nums;
 }
 
 .crosstabTable th,

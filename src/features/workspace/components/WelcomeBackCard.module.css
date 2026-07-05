@@ -18,7 +18,7 @@
   height: 36px;
   border-radius: var(--radius-full);
   background: var(--status-info-surface, var(--bg-active));
-  color: var(--color-accent);
+  color: var(--border-color-active);
   flex-shrink: 0;
 }
 
@@ -33,7 +33,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: var(--color-accent);
+  color: var(--border-color-active);
 }
 
 .summary {
@@ -54,7 +54,7 @@
   padding: var(--space-2) var(--space-4);
   border-radius: var(--radius-md);
   border: none;
-  background: var(--color-accent);
+  background: var(--border-color-active);
   color: var(--text-inverse);
   font-size: var(--text-sm);
   font-weight: 500;

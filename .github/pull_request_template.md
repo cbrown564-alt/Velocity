@@ -35,22 +35,33 @@ Describe interface/schema/type contract deltas.
 - If yes, list exact contracts and migration impact:
 
 ## Test Plan
-Commands run and outcomes. **Both CI jobs must be green** (`test` + `e2e` when UI/workspace touched). See `docs/playbooks/pre_pr_verification.md`.
+Commands run and outcomes. **All required CI jobs must be green** — see [pre-PR verification playbook](docs/playbooks/pre_pr_verification.md).
 
 ```bash
-# Minimum: mirrors test job
-npm run ci
+# Recommended: all required test.yml jobs + e2e
+npm run ci:full
 
-# When UI/workspace/persistence/shortcuts/onboarding changed:
-npm run ci:e2e
+# Or stepwise:
+npm run ci              # lint-format → typecheck → arch-guards → unit-coverage → build
+npm run ci:e2e          # Playwright product gates (excludes @visual)
 
 # When src/core/** changed:
 npm run test:mutation:ci
 ```
 
+| CI job (`test.yml`) | Local mirror |
+| :--- | :--- |
+| `lint-format` | `npm run ci:lint` |
+| `typecheck` | `npm run typecheck:all` |
+| `arch-guards` | worker-boundary + querybuilder-pure + design-tokens checks |
+| `unit-coverage` | `npm run test:run -- --coverage` + `npm run test:parity` |
+| `build` | `npm run build` |
+| `e2e` | `npm run ci:e2e` |
+| `visual-e2e` (informational) | `npm run test:e2e:visual` — does **not** block merge |
+
 Results:
-- [ ] `npm run ci` passed (lint, format, typecheck:all, guards, coverage, build)
-- [ ] `npm run ci:e2e` passed (if UI/workspace/persistence/shortcuts/onboarding touched)
+- [ ] `npm run ci:full` passed (or `ci` + `ci:e2e` separately)
+- [ ] `npm run test:parity` included in coverage run (part of `ci`)
 - [ ] `npm run test:mutation:ci` passed (if `src/core/**` changed)
 - [ ] Manual verification completed (if applicable)
 

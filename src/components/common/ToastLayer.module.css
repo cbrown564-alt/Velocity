@@ -1,103 +1,62 @@
+/**
+ * ToastLayer — single muted status slot, bottom center.
+ * One line at a time; quiet by design (no icon stack, no per-type color).
+ */
+
 .region {
   position: fixed;
-  bottom: var(--space-6, 1.5rem);
-  right: var(--space-6, 1.5rem);
+  bottom: var(--space-4);
+  left: 50%;
+  transform: translateX(-50%);
   z-index: var(--z-toast);
   display: flex;
-  flex-direction: column-reverse;
-  align-items: flex-end;
-  gap: var(--space-3, 0.75rem);
-  width: min(100vw - 2rem, 22rem);
+  justify-content: center;
   pointer-events: none;
+  max-width: min(100vw - 2rem, 32rem);
 }
 
-.toast {
+.slot {
   pointer-events: auto;
-  display: flex;
-  align-items: flex-start;
-  gap: var(--space-3, 0.75rem);
-  padding: var(--space-3, 0.75rem) var(--space-4, 1rem);
-  border-radius: var(--radius-lg, 0.5rem);
-  border: 1px solid var(--border-subtle);
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--border-color-muted);
+  border-radius: var(--border-radius-md);
   background: var(--bg-panel);
-  box-shadow: var(--shadow-lg, 0 8px 24px rgb(0 0 0 / 12%));
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
 }
 
-.toastSuccess {
-  border-color: color-mix(in srgb, var(--color-success) 25%, var(--border-subtle));
-}
-
-.toastInfo {
-  border-color: color-mix(in srgb, var(--color-accent) 20%, var(--border-subtle));
-}
-
-.toastWarning {
-  border-color: var(--status-warning-border);
-  background: var(--status-warning-surface);
-}
-
-.toastError {
-  border-color: color-mix(in srgb, var(--color-error) 25%, var(--border-subtle));
-}
-
-.iconSuccess {
-  color: var(--color-success);
-}
-
-.iconInfo {
-  color: var(--color-accent);
-}
-
-.iconWarning {
-  color: var(--status-warning-text);
-}
-
-.iconError {
-  color: var(--color-error);
-}
-
-.body {
-  flex: 1;
-  min-width: 0;
-}
-
-.title {
-  margin: 0 0 0.25rem;
-  font-size: var(--text-sm, 0.875rem);
-  font-weight: 600;
-  color: var(--text-primary);
-  line-height: 1.3;
+.slotError {
+  border-color: var(--status-error-border);
 }
 
 .message {
-  margin: 0;
-  font-size: var(--text-sm, 0.875rem);
+  font-size: var(--text-xs);
   color: var(--text-secondary);
   line-height: 1.45;
 }
 
-.action {
-  margin-top: var(--space-2, 0.5rem);
-  font-size: var(--text-xs, 0.75rem);
+.slotError .message {
+  color: var(--status-error-text);
+}
+
+.title {
   font-weight: 600;
-  color: var(--color-accent);
-}
-
-.action:hover {
-  text-decoration: underline;
-}
-
-.dismiss {
-  flex-shrink: 0;
-  padding: var(--space-1, 0.25rem);
-  border: none;
-  border-radius: var(--radius, 0.25rem);
-  background: transparent;
-  color: var(--text-secondary);
-  cursor: pointer;
-}
-
-.dismiss:hover {
-  background: var(--bg-active);
   color: var(--text-primary);
+}
+
+.slotError .title {
+  color: var(--status-error-text);
+}
+
+.action {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--text-primary);
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
