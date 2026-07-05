@@ -114,6 +114,21 @@ export async function initOpfsPersistence(deps: PersistenceInitDeps): Promise<Pe
   let persistenceError: string | undefined;
   let corruptionDetected = false;
   let corruptionMessage: string | undefined;
+  let bundleIncompatible = false;
+
+  const isBundleIncompatibleError = (message: string) => {
+    const normalized = message.toLowerCase();
+    // COI (multithreaded) DuckDB can't share an OPFS sync access handle across
+    // pthread workers, so reopening throws a DataClone / postMessage error and
+    // wedges the worker. Treat it as fatal-for-OPFS, not corruption.
+    return normalized.includes('could not be cloned') || normalized.includes('dataclone');
+  };
+
+  // Time-bound the memory fallback: if a prior OPFS open wedged the worker,
+  // db.open(':memory:') can hang forever. Surfacing an init error (recoverable
+  // by reload) is always better than an infinite "Initializing…" spinner.
+  const openMemoryGuarded = () =>
+    withAttemptTimeout(openMemory(), attemptTimeoutMs, () => onAttemptTimeout?.(':memory:', 'memory fallback'));
 
   const isCorruptionError = (message: string) => {
     const normalized = message.toLowerCase();
@@ -209,6 +224,9 @@ export async function initOpfsPersistence(deps: PersistenceInitDeps): Promise<Pe
         corruptionMessage = errorMsg;
         await quarantine(path);
       }
+      if (isBundleIncompatibleError(errorMsg)) {
+        bundleIncompatible = true;
+      }
       await discardAttempt();
       return false;
     }
@@ -260,6 +278,22 @@ export async function initOpfsPersistence(deps: PersistenceInitDeps): Promise<Pe
     }
   }
 
+  if (bundleIncompatible) {
+    // The DuckDB bundle can't reopen OPFS databases; further opens only wedge the
+    // worker. Fall straight to memory — the boot state machine rebuilds from the
+    // source file. (With OPFS persistence enabled the app now boots the EH bundle,
+    // which reopens cleanly; this guards any residual COI-with-OPFS path.)
+    await openMemoryGuarded();
+    releaseOpfsLock?.();
+    return {
+      opfsAvailable: false,
+      mode: 'memory',
+      activeDbPath: ':memory:',
+      decision: hasPersistedSource ? 'rebuild' : 'memory_fallback',
+      persistenceError: persistenceError || 'DuckDB bundle cannot reopen OPFS databases',
+    };
+  }
+
   if (existingAttempts.length === 0 && !hasPersistedSource) {
     const created = await attemptOpen(desiredPath, 'OPFS persistence (new)', false);
     if (created) {
@@ -291,7 +325,7 @@ export async function initOpfsPersistence(deps: PersistenceInitDeps): Promise<Pe
 
   // Every OPFS path failed — abandon OPFS for this session and release the
   // single-owner lock so another tab/worker can take ownership.
-  await openMemory();
+  await openMemoryGuarded();
   releaseOpfsLock?.();
   return {
     opfsAvailable: false,

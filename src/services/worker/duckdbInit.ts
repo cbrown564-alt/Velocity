@@ -1,6 +1,11 @@
 import * as duckdb from '@duckdb/duckdb-wasm';
 import { DuckDBWasmAdapter } from '../../adapters/DuckDBWasmAdapter';
-import { getLocalDuckDbBundles, resolveDuckDbBundleUrls, resolveDuckDbBundleVariant } from '../duckdbBundles';
+import {
+  getLocalDuckDbBundles,
+  resolveDuckDbBundleUrls,
+  resolveDuckDbBundleVariant,
+  selectBootBundle,
+} from '../duckdbBundles';
 import type { DuckDbBundleVariant } from '../duckdbBundles';
 import { initOpfsPersistence } from '../opfsPersistence';
 import { acquireOpfsDbLock, releaseOpfsDbLock } from './opfsDbLock';
@@ -65,7 +70,7 @@ export async function init(
     await cleanOPFS();
   }
 
-  const selectedBundle = await duckdb.selectBundle(DUCKDB_BUNDLES as unknown as duckdb.DuckDBBundles);
+  const selectedBundle = await selectBootBundle(DUCKDB_BUNDLES, ENABLE_DUCKDB_OPFS_PERSISTENCE);
   const bundle = resolveDuckDbBundleUrls(selectedBundle);
   const duckdbBundle = resolveDuckDbBundleVariant(selectedBundle);
   workerDbState.duckdbBundle = duckdbBundle;

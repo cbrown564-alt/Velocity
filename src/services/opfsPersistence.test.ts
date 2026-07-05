@@ -225,6 +225,41 @@ describe('initOpfsPersistence', () => {
     expect(openMemory).toHaveBeenCalledTimes(1);
   });
 
+  it('short-circuits to memory on a bundle-incompatible open error without cascading to repair', async () => {
+    // COI reopen throws DataCloneError; further opens only wedge the worker, so
+    // we must go straight to memory and not attempt the repair path.
+    const openPath = vi.fn(async () => ({
+      ok: false,
+      error: "Failed to execute 'postMessage' on 'Worker': FileSystemSyncAccessHandle object could not be cloned.",
+    }));
+    const openMemory = vi.fn(async () => undefined);
+    const buildRepairPath = vi.fn(() => 'opfs://repair.db');
+    const releaseOpfsLock = vi.fn(() => undefined);
+
+    const result = await initOpfsPersistence({
+      enableOpfs: true,
+      opfsSupport: { supported: true },
+      desiredPath: 'opfs://a.db',
+      fallbackPath: null,
+      openPath,
+      listCandidates: async () => [{ path: 'opfs://a.db' }],
+      quarantine: vi.fn(async () => undefined),
+      buildRepairPath,
+      openMemory,
+      acquireOpfsLock: async () => true,
+      releaseOpfsLock,
+      dropOpenFiles: vi.fn(async () => undefined),
+    });
+
+    expect(result.mode).toBe('memory');
+    expect(result.decision).toBe('memory_fallback');
+    expect(openPath).toHaveBeenCalledTimes(1); // only the candidate; no repair attempt
+    expect(buildRepairPath).not.toHaveBeenCalled();
+    expect(openMemory).toHaveBeenCalledTimes(1);
+    expect(releaseOpfsLock).toHaveBeenCalledTimes(1);
+    expect(result.corruptionDetected).toBeUndefined();
+  });
+
   it('boots in memory with opfs_locked and never opens an OPFS path when the lock is held elsewhere', async () => {
     const openPath = vi.fn(async () => ({ ok: true }));
     const openMemory = vi.fn(async () => undefined);
