@@ -2,6 +2,12 @@ import React, { useMemo, useCallback } from 'react';
 import * as d3 from 'd3-scale';
 import { max } from 'd3-array';
 import { BaseChartRendererProps } from '../../../types/charts';
+import { SvgChartSeriesLegend } from '../shared/SvgChartSeriesLegend';
+import {
+  formatBarTooltip,
+  formatBarValueLabel,
+  formatValueAxisTick,
+} from '../../../core/visualization/chartLabelFormatters';
 
 const DEFAULT_PALETTE = [
   'var(--viz-palette-1)',
@@ -26,7 +32,8 @@ export const GroupedColumnRenderer: React.FC<BaseChartRendererProps> = ({
   onContextMenu,
   labelMode = 'count',
 }) => {
-  const { rows, columns } = processedData;
+  const { rows, columns, colVariable, grandTotal } = processedData;
+  const hasColumnBreak = !!colVariable || columns.length > 1;
 
   // Get column keys and labels for the legend/sub-groups
   const columnKeys = columns.map((c) => c.key);
@@ -71,35 +78,23 @@ export const GroupedColumnRenderer: React.FC<BaseChartRendererProps> = ({
     return d3.scaleBand().domain(columnKeys).range([0, x0Scale.bandwidth()]).padding(barPadding);
   }, [columnKeys, x0Scale]);
 
-  const isPercentMode = labelMode === 'percent';
+  const peakCount = useMemo(() => {
+    return (
+      max(rows, (row) => {
+        return max(columnKeys, (key) => row.cells[key]?.count || 0);
+      }) || 1
+    );
+  }, [rows, columnKeys]);
 
-  // Y: Values scale
+  // Bar geometry always uses counts; labelMode switches axis + bar labels only.
   const yScale = useMemo(() => {
-    const maxVal =
-      (isPercentMode
-        ? max(rows, (row) => {
-            return max(columnKeys, (key) => {
-              const cell = row.cells[key];
-              if (!cell) return 0;
-              // Use pre-calculated percent from buildTree (it's 0-100)
-              return cell.percent / 100;
-            });
-          })
-        : max(rows, (row) => {
-            return max(columnKeys, (key) => row.cells[key]?.count || 0);
-          })) || 1;
-
     return d3
       .scaleLinear()
-      .domain([0, maxVal * 1.1]) // Add 10% padding
+      .domain([0, peakCount * 1.1]) // Add 10% padding
       .range([innerHeight, 0]); // Inverted for SVG Y coords
-  }, [rows, columnKeys, innerHeight, isPercentMode]);
+  }, [peakCount, innerHeight]);
 
   const yTicks = yScale.ticks(5);
-
-  // Legend items
-  const legendItemWidth = 100;
-  const legendWidth = Math.min(columns.length * legendItemWidth, actualWidth - margin.left - margin.right);
 
   // Handle right-click on a group (row)
   const handleGroupContextMenu = useCallback(
@@ -133,31 +128,12 @@ export const GroupedColumnRenderer: React.FC<BaseChartRendererProps> = ({
         style={{ display: 'block', overflow: 'visible', fontFamily: 'var(--font-mono)' }}
       >
         <g transform={`translate(${margin.left},${margin.top})`}>
-          {/* Legend (Top) */}
-          <g transform={`translate(${(innerWidth - legendWidth) / 2}, -${margin.top - 8})`}>
-            {columnLabels.map((label, i) => {
-              const xOffset = i * legendItemWidth;
-              return (
-                <g key={columnKeys[i]} transform={`translate(${xOffset}, 0)`}>
-                  <rect
-                    width={12}
-                    height={12}
-                    rx={1}
-                    fill={colors ? colors[i % colors.length] : DEFAULT_PALETTE[i % DEFAULT_PALETTE.length]}
-                    fillOpacity={0.8}
-                  />
-                  <text
-                    x={18}
-                    y={10}
-                    style={{ fontSize: '11px', fill: 'var(--viz-text-axis)', fontFamily: 'var(--font-body)' }}
-                  >
-                    {label ? <title>{label}</title> : null}
-                    {label || ''}
-                  </text>
-                </g>
-              );
-            })}
-          </g>
+          <SvgChartSeriesLegend
+            labels={columnLabels}
+            keys={columnKeys}
+            colors={colors ?? DEFAULT_PALETTE}
+            innerWidth={innerWidth}
+          />
 
           {/* Grid lines (Horizontal for Column chart) */}
           {yTicks.map((tick) => (
@@ -179,7 +155,7 @@ export const GroupedColumnRenderer: React.FC<BaseChartRendererProps> = ({
               <g key={tick} transform={`translate(0, ${yScale(tick)})`}>
                 <line x2={-4} stroke="var(--viz-stroke-main)" />
                 <text x={-8} y={4} textAnchor="end" style={{ fontSize: '10px', fill: 'var(--viz-text-axis)' }}>
-                  {isPercentMode ? `${Math.round(tick * 100)}%` : tick.toLocaleString()}
+                  {formatValueAxisTick(labelMode, tick, { peakCount, grandTotal, hasColumnBreak })}
                 </text>
               </g>
             ))}
@@ -199,7 +175,7 @@ export const GroupedColumnRenderer: React.FC<BaseChartRendererProps> = ({
                   fontFamily: 'var(--font-body)',
                 }}
               >
-                {r.label && r.label.length > 15 ? r.label.substring(0, 12) + '...' : r.label}
+                {r.label}
               </text>
             </g>
           ))}
@@ -220,9 +196,8 @@ export const GroupedColumnRenderer: React.FC<BaseChartRendererProps> = ({
                 {columnKeys.map((colKey, i) => {
                   const count = row.cells[colKey]?.count || 0;
                   const percent = row.cells[colKey]?.percent || 0;
-                  const value = isPercentMode ? percent / 100 : count;
-                  const barHeight = Math.abs(yScale(value) - yScale(0));
-                  const barY = yScale(value);
+                  const barHeight = Math.abs(yScale(count) - yScale(0));
+                  const barY = yScale(count);
                   const barX = x1Scale(colKey) || 0;
                   const barWidth = x1Scale.bandwidth();
 
@@ -241,7 +216,9 @@ export const GroupedColumnRenderer: React.FC<BaseChartRendererProps> = ({
                           transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                           cursor: interactive ? 'pointer' : 'default',
                         }}
-                      />
+                      >
+                        <title>{formatBarTooltip(columnLabels[i] ?? colKey, count, percent)}</title>
+                      </rect>
                       {/* Value label if tall enough/wide enough and not hidden */}
                       {labelMode !== 'none' && barHeight > 14 && barWidth > 20 && (
                         <text
@@ -257,7 +234,7 @@ export const GroupedColumnRenderer: React.FC<BaseChartRendererProps> = ({
                             fontFamily: 'var(--font-mono)',
                           }}
                         >
-                          {isPercentMode ? `${Math.round(value * 100)}%` : count.toLocaleString()}
+                          {formatBarValueLabel(labelMode, count, percent)}
                         </text>
                       )}
                     </g>

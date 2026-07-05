@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { FolderOpen, Link2, TrendingUp } from 'lucide-react';
 import type { StoredDataset, Project } from '../types';
 import { formatRelativeTime } from '../lib/workspaceFormatters';
+import { pluralize } from '../../../lib/pluralize';
 import { WaveTimeline } from './WaveTimeline';
 import styles from './WorkspaceProjectCard.module.css';
 
@@ -34,13 +35,25 @@ export const WorkspaceProjectCard: React.FC<{
           data-testid="harmonization-ring"
         />
       )}
-      <div className={styles.projectHeader} onClick={onOpenProject}>
+      <div
+        className={styles.projectHeader}
+        onClick={onOpenProject}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            onOpenProject();
+          }
+        }}
+        role="button"
+        tabIndex={0}
+        aria-label={`Open project ${project.name}`}
+      >
         <div className={styles.projectIcon}>
           {project.isLongitudinal ? <Link2 size={18} /> : <FolderOpen size={18} />}
         </div>
         <div className={styles.projectInfo}>
           <h3>{project.name}</h3>
-          <p>{project.description || `${datasets.length} datasets`}</p>
+          <p>{project.description || pluralize(datasets.length, 'dataset')}</p>
         </div>
         {project.isLongitudinal && datasets.length > 1 && (
           <motion.button

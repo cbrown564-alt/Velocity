@@ -5,7 +5,6 @@ import { useFileUpload } from './features/workspace/hooks/useFileUpload';
 import { useWorkspaceOpen } from './features/workspace/hooks/useWorkspaceOpen';
 import { getLoadStageHeadline } from './lib/uploadFeedback';
 import { ToastLayer } from './components/common/ToastLayer';
-import { CommandPalette } from './components/common/CommandPalette';
 import { KeyboardShortcuts } from './components/common/KeyboardShortcuts';
 import { DesktopRecommendationBanner } from './components/common/DesktopRecommendationBanner';
 import { AppModeRouter } from './app/components/AppModeRouter';
@@ -149,6 +148,7 @@ export default function App() {
         onBatchDelete={workspaceOrchestration.handleBatchDelete}
         onExport={overlay.openWorkspaceExport}
         onImportSession={handleOpenSessionImportModal}
+        onFileDrop={session.handleFileDrop}
         onRestore={session.handleRestore}
         onDiscard={() => void session.handleDiscard()}
         onReturnToWorkspace={workspaceOrchestration.handleReturnToWorkspace}
@@ -156,7 +156,8 @@ export default function App() {
         onExportSession={session.handleExportSession}
       />
 
-      <CommandPalette />
+      {/* Inside the dashboard, the palette mounts within DashboardShell's
+          DndContext so rows can be dragged onto the slide. */}
       <KeyboardShortcuts />
       <ToastLayer />
     </div>

@@ -27,6 +27,7 @@ export type { AnalysisEngine, AnalysisSettings, ComparisonMethod, CorrectionType
 // Types (canonical definitions in src/types/analysis.ts)
 // ============================================================================
 import type { VariableType } from '../../types';
+import type { Dataset } from '../../types/dataset';
 import type { SlideAnalysisState } from '../../types/slides';
 import { buildCrosstabRequest } from '../../core/analysis/buildCrosstabRequest';
 import { mapCrosstabRows } from '../../core/analysis/mapCrosstabRows';
@@ -105,8 +106,8 @@ const defaultAnalysisSettings: AnalysisSettings = {
   comparisonMethod: 'cell_vs_rest',
   correctionType: 'none',
   showConfidenceIntervals: false,
-  showCellN: true,
-  showColumnBases: true,
+  showCellN: false,
+  showColumnBases: false,
   significanceLevel: 0.95,
   engine: 'auto',
   enableDesignEffects: false,
@@ -117,6 +118,27 @@ function triggerAnalysisSafely(runAnalysis: (() => Promise<void>) | undefined, c
   void runAnalysis().catch((error) => {
     console.warn(`[AnalysisSlice] ${context} failed:`, error);
   });
+}
+
+function missingRowDataMessage(dataset: Dataset | null): string {
+  if (dataset?.metadataOnly) {
+    return 'Analysis requires row data. Load the full dataset before building crosstabs.';
+  }
+  if (dataset?.opfsFileKey) {
+    return 'Row data is not loaded yet. Use Reload data in the story rail, or refresh the page.';
+  }
+  return 'Row data is not available. Re-upload the original dataset file to run analysis.';
+}
+
+function isMissingMainTableError(message: string): boolean {
+  return /table with name main does not exist/i.test(message);
+}
+
+function normalizeAnalysisErrorMessage(message: string, dataset: Dataset | null): string {
+  if (isMissingMainTableError(message)) {
+    return missingRowDataMessage(dataset);
+  }
+  return message;
 }
 
 export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
@@ -163,9 +185,36 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
       return;
     }
 
+    if (dataset.metadataOnly) {
+      set({
+        isQuerying: false,
+        queryResult: [],
+        processedQueryResult: null,
+        tableStats: null,
+        queryError: missingRowDataMessage(dataset),
+      });
+      return;
+    }
+
     set({ isQuerying: true, queryError: null });
 
     try {
+      let hasRowData = true;
+      if (typeof browserEngine.ping === 'function') {
+        const ping = await browserEngine.ping();
+        hasRowData = ping.hasData;
+      }
+      if (!hasRowData) {
+        set({
+          isQuerying: false,
+          queryResult: [],
+          processedQueryResult: null,
+          tableStats: null,
+          queryError: missingRowDataMessage(dataset),
+        });
+        return;
+      }
+
       const request = buildCrosstabRequest({
         dataset,
         variableSets,
@@ -268,8 +317,9 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
         });
       }
     } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : "Couldn't run analysis";
-      console.error('[AnalysisSlice] Query error:', message);
+      const rawMessage = error instanceof Error ? error.message : "Couldn't run analysis";
+      const message = normalizeAnalysisErrorMessage(rawMessage, dataset);
+      console.error('[AnalysisSlice] Query error:', rawMessage);
       set({
         isQuerying: false,
         queryResult: [],

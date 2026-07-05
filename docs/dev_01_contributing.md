@@ -16,7 +16,9 @@
     ```bash
     git clone <repo>
     cd velocity
-    npm install
+    git submodule update --init --recursive   # packages/readstat-wasm
+    npm ci --legacy-peer-deps
+    npx lefthook install                      # optional: pre-commit format + lint
     ```
 
 2.  **Start Dev Server:**
@@ -99,15 +101,17 @@ npm run eval:06      # Browser eval runner (EVAL-06)
 
 ## 5. Testing
 
-Run **`npm run ci`** before every PR (mirrors the CI `test` job). When UI, workspace, persistence, shortcuts, or onboarding changed, also run **`npm run ci:e2e`**. Full gate list: `docs/playbooks/pre_pr_verification.md`.
+Run **`npm run ci:full`** before every PR (mirrors all required `test.yml` jobs plus `e2e`). Full gate list: [`docs/playbooks/pre_pr_verification.md`](playbooks/pre_pr_verification.md).
 
 *   **Unit/integration tests:** Vitest
-*   **Golden/parity tests:** Vitest suites under `tests/`
-*   **End-to-End:** Playwright
+*   **Golden/parity tests:** Vitest suites under `tests/` (including `tests/e2e/agentWorkflow.test.ts`)
+*   **End-to-End:** Playwright (`tests/e2e/*.spec.ts`; `@visual` specs are informational only)
 
 ```bash
-npm run ci              # lint, format, typecheck:all, guards, coverage, build
-npm run ci:e2e          # Playwright (after: npx playwright install --with-deps)
+npm run ci:full         # ci + ci:e2e (recommended before PR)
+npm run ci              # lint-format through build (excludes e2e)
+npm run ci:lint         # fast lint/format/ratchet feedback
+npm run ci:e2e          # Playwright product gates (after: npx playwright install --with-deps)
 npm run test:mutation:ci   # when src/core/** changed
 ```
 
@@ -115,7 +119,7 @@ See `docs/arch_08_testing.md` for the full pyramid, coverage gates, and mutation
 
 ## 6. Code Style
 
-*   **Linting:** ESLint flat config plus Prettier. Existing legacy findings currently report as warnings so the repo can adopt the gate without unrelated cleanup churn.
+*   **Linting:** ESLint flat config plus Prettier. Ratcheted rules are `error` with `--max-warnings 0`; changed files are also checked via `npm run check:eslint-ratchet` (STAB-CI-3).
 *   **Naming:**
     *   React Components: `PascalCase` (e.g., `VariableCard.tsx`)
     *   Functions/Variables: `camelCase`

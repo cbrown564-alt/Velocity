@@ -5,7 +5,7 @@
  * Replaces the simple splash screen with a proper file browser.
  */
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useReducedMotion, getMotionProps, getModalPresenceProps, DURATIONS } from '../../../lib/motion';
 import {
@@ -27,7 +27,6 @@ import {
   Download,
 } from 'lucide-react';
 import { Logo } from '../../../components/common/Logo';
-import { ThemeSwitcher } from '../../../components/common/ThemeSwitcher';
 import styles from './WorkspaceView.module.css';
 import {
   applyWorkspaceCategoryFilter,
@@ -38,13 +37,16 @@ import {
   type WorkspaceCategoryChip,
 } from '../lib/workspaceLibrary';
 import { useWelcomeBack } from '../hooks/useWelcomeBack';
+import { pluralize } from '../../../lib/pluralize';
 import { WorkspaceStorageIndicator } from './WorkspaceStorageIndicator';
 import { WorkspaceDatasetCard } from './WorkspaceDatasetCard';
 import { WorkspaceDatasetListItem } from './WorkspaceDatasetListItem';
 import { WorkspaceProjectCard } from './WorkspaceProjectCard';
 import { WorkspaceEmptyState } from './WorkspaceEmptyState';
 import { WorkspaceStatusStrip } from './WorkspaceStatusStrip';
-import { downloadPilotEventLog } from '../../../services/pilotOnboarding';
+import { downloadPilotEventLog, recordPilotEvent } from '../../../services/pilotOnboarding';
+import { isPilotInstrumentationVisible } from '../../../lib/pilotInstrumentation';
+import { isFirstRunLanding } from '../lib/firstRunLanding';
 import type { StoredDataset, Project, WorkspaceViewProps } from '../types';
 
 export type { StoredDataset, Project, WorkspaceState } from '../types';
@@ -66,6 +68,7 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
   onBatchDelete,
   onExport,
   onImportSession,
+  onFileDrop,
 }) => {
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
   const [filterMode, setFilterMode] = useState<FilterMode>('recent');
@@ -84,6 +87,39 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
   const { datasets, projects, storageUsed, storageQuota } = workspaceState;
 
   const isEmpty = datasets.length === 0;
+  const showFirstRunLanding = isEmpty && isFirstRunLanding(datasets.length);
+
+  useEffect(() => {
+    if (showFirstRunLanding) {
+      recordPilotEvent('landing_view');
+    }
+  }, [showFirstRunLanding]);
+
+  const handleUploadWithTracking = useCallback(() => {
+    if (showFirstRunLanding) {
+      recordPilotEvent('landing_cta_upload');
+    }
+    onUploadFile();
+  }, [onUploadFile, showFirstRunLanding]);
+
+  const handleLoadExampleWithTracking = useCallback(() => {
+    if (showFirstRunLanding) {
+      recordPilotEvent('landing_cta_example');
+    }
+    onLoadExample();
+  }, [onLoadExample, showFirstRunLanding]);
+
+  const handleFileDropWithTracking = useCallback(
+    (file: File) => {
+      if (showFirstRunLanding) {
+        recordPilotEvent('landing_cta_upload', { source: 'drop' });
+      }
+      onFileDrop?.(file);
+    },
+    [onFileDrop, showFirstRunLanding],
+  );
+
+  const showPilotLog = isPilotInstrumentationVisible();
 
   const { showWelcomeBack, resumeCandidate, onResume, onDismiss } = useWelcomeBack({
     datasets,
@@ -145,6 +181,8 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
 
   const showFilteredEmptyState = !isEmpty && filterMode !== 'projects' && filteredDatasets.length === 0;
 
+  const effectiveViewMode = searchQuery.trim() && filteredDatasets.length <= 3 ? 'list' : viewMode;
+
   const filteredEmptyMessage = searchQuery
     ? 'No datasets match your search. Try a different keyword or clear filters.'
     : filterMode === 'starred'
@@ -199,115 +237,122 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
 
   return (
     <div className={styles.workspace}>
-      <header className={styles.header}>
+      <header className={`${styles.header} ${showFirstRunLanding ? styles.headerFirstRun : ''}`}>
         <div className={styles.headerLeft}>
           <div className={styles.title}>
             <Logo size={32} />
-            Velocity Workspace
+            {showFirstRunLanding ? 'Velocity' : 'Velocity Workspace'}
           </div>
-          <WorkspaceStorageIndicator used={storageUsed} quota={storageQuota} />
+          {!showFirstRunLanding && <WorkspaceStorageIndicator used={storageUsed} quota={storageQuota} />}
         </div>
 
         <div className={styles.headerRight}>
-          <div className={styles.searchArea}>
-            <div className={styles.searchBox}>
-              <Search size={16} />
-              <input
-                type="text"
-                placeholder="Search datasets..."
-                value={searchQuery}
-                onChange={(e) => {
-                  setSearchQuery(e.target.value);
-                  if (!e.target.value) setCategoryFilter(null);
-                }}
-                data-testid="workspace-search-input"
-              />
-            </div>
-            {ambientHints.length > 0 && (
-              <ul className={styles.searchHints} data-testid="workspace-search-hints">
-                {ambientHints.map((hint) => (
-                  <li key={hint.id}>{hint.message}</li>
-                ))}
-              </ul>
-            )}
-            {categoryChips.length > 0 && !searchQuery && (
-              <div className={styles.categoryChips} data-testid="workspace-category-chips">
-                {categoryChips.map((chip) => (
-                  <button
-                    key={chip.id}
-                    type="button"
-                    className={categoryFilter === chip.filter ? styles.chipActive : ''}
-                    onClick={() => setCategoryFilter((prev) => (prev === chip.filter ? null : chip.filter))}
-                  >
-                    {chip.count} {chip.label}
-                  </button>
-                ))}
+          {!showFirstRunLanding && (
+            <div className={styles.searchArea}>
+              <div className={styles.searchBox}>
+                <Search size={16} />
+                <input
+                  type="text"
+                  placeholder="Search datasets..."
+                  value={searchQuery}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    if (!e.target.value) setCategoryFilter(null);
+                  }}
+                  data-testid="workspace-search-input"
+                />
               </div>
-            )}
-          </div>
+              {ambientHints.length > 0 && (
+                <ul className={styles.searchHints} data-testid="workspace-search-hints">
+                  {ambientHints.map((hint) => (
+                    <li key={hint.id}>{hint.message}</li>
+                  ))}
+                </ul>
+              )}
+              {categoryChips.length > 0 && !searchQuery && (
+                <div className={styles.categoryChips} data-testid="workspace-category-chips">
+                  {categoryChips.map((chip) => (
+                    <button
+                      key={chip.id}
+                      type="button"
+                      className={categoryFilter === chip.filter ? styles.chipActive : ''}
+                      onClick={() => setCategoryFilter((prev) => (prev === chip.filter ? null : chip.filter))}
+                    >
+                      {chip.count} {chip.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
 
           <div className={styles.headerActions}>
-            <ThemeSwitcher />
-            <div className={styles.viewToggle}>
-              <button
-                className={viewMode === 'grid' ? styles.active : ''}
-                onClick={() => setViewMode('grid')}
-                aria-label="Grid view"
-              >
-                <Grid3X3 size={16} />
-              </button>
-              <button
-                className={viewMode === 'list' ? styles.active : ''}
-                onClick={() => setViewMode('list')}
-                aria-label="List view"
-              >
-                <List size={16} />
-              </button>
-            </div>
+            {!showFirstRunLanding && (
+              <>
+                <div className={styles.viewToggle}>
+                  <button
+                    className={viewMode === 'grid' ? styles.active : ''}
+                    onClick={() => setViewMode('grid')}
+                    aria-label="Grid view"
+                  >
+                    <Grid3X3 size={16} />
+                  </button>
+                  <button
+                    className={viewMode === 'list' ? styles.active : ''}
+                    onClick={() => setViewMode('list')}
+                    aria-label="List view"
+                  >
+                    <List size={16} />
+                  </button>
+                </div>
 
-            {onExport && datasets.length > 0 && (
-              <motion.button
-                className={styles.exportButton}
-                onClick={() => onExport([])}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                title="Export workspace"
-              >
-                <Download size={16} />
-              </motion.button>
+                {onExport && datasets.length > 0 && (
+                  <motion.button
+                    className={styles.exportButton}
+                    onClick={() => onExport([])}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    title="Export workspace"
+                  >
+                    <Download size={16} />
+                  </motion.button>
+                )}
+                {onImportSession && (
+                  <motion.button
+                    className={styles.importButton}
+                    onClick={onImportSession}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    title="Import portable session"
+                  >
+                    <Upload size={16} />
+                    Import Session
+                  </motion.button>
+                )}
+                {showPilotLog && (
+                  <motion.button
+                    className={styles.importButton}
+                    onClick={downloadPilotEventLog}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    title="Download local pilot workflow event log (JSON)"
+                    data-testid="pilot-event-log-download"
+                  >
+                    <Download size={16} />
+                    Pilot Log
+                  </motion.button>
+                )}
+                <motion.button
+                  className={styles.uploadButton}
+                  onClick={handleUploadWithTracking}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <FileUp size={16} />
+                  Upload
+                </motion.button>
+              </>
             )}
-            {onImportSession && (
-              <motion.button
-                className={styles.importButton}
-                onClick={onImportSession}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                title="Import portable session"
-              >
-                <Upload size={16} />
-                Import Session
-              </motion.button>
-            )}
-            <motion.button
-              className={styles.importButton}
-              onClick={downloadPilotEventLog}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              title="Download local pilot workflow event log (JSON)"
-              data-testid="pilot-event-log-download"
-            >
-              <Download size={16} />
-              Pilot Log
-            </motion.button>
-            <motion.button
-              className={styles.uploadButton}
-              onClick={onUploadFile}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <FileUp size={16} />
-              Upload
-            </motion.button>
           </div>
         </div>
       </header>
@@ -317,106 +362,120 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
         resumeCandidate={resumeCandidate}
         onResume={onResume}
         onDismissWelcomeBack={onDismiss}
+        hidePrivacyHeadline={showFirstRunLanding}
       />
 
-      <nav className={styles.filterTabs}>
-        <button className={filterMode === 'recent' ? styles.active : ''} onClick={() => setFilterMode('recent')}>
-          <Clock size={14} />
-          Recent
-        </button>
-        <button className={filterMode === 'starred' ? styles.active : ''} onClick={() => setFilterMode('starred')}>
-          <Star size={14} />
-          Starred
-        </button>
-        <button className={filterMode === 'projects' ? styles.active : ''} onClick={() => setFilterMode('projects')}>
-          <FolderOpen size={14} />
-          Projects
-        </button>
-        <button className={filterMode === 'all' ? styles.active : ''} onClick={() => setFilterMode('all')}>
-          <Database size={14} />
-          All Datasets
-        </button>
-
-        <div className={styles.tabSpacer} />
-
-        <AnimatePresence>
-          {selectedIds.size > 0 && (
-            <motion.div
-              className={styles.selectionActions}
-              {...getMotionProps({
-                preset: 'slideLeft',
-                duration: reducedMotion ? DURATIONS.instant : DURATIONS.normal,
-                reducedMotion,
-              })}
+      {!showFirstRunLanding && (
+        <nav className={styles.filterTabs}>
+          <button className={filterMode === 'recent' ? styles.active : ''} onClick={() => setFilterMode('recent')}>
+            <Clock size={14} />
+            Recent
+          </button>
+          <button className={filterMode === 'starred' ? styles.active : ''} onClick={() => setFilterMode('starred')}>
+            <Star size={14} />
+            Starred
+          </button>
+          {(datasets.length >= 2 || projects.length > 0) && (
+            <button
+              className={filterMode === 'projects' ? styles.active : ''}
+              onClick={() => setFilterMode('projects')}
             >
-              <span>{selectedIds.size} selected</span>
+              <FolderOpen size={14} />
+              Projects
+            </button>
+          )}
+          <button className={filterMode === 'all' ? styles.active : ''} onClick={() => setFilterMode('all')}>
+            <Database size={14} />
+            All Datasets
+          </button>
 
-              <button
-                onClick={() => {
-                  const allStarred = Array.from(selectedIds).every((id) => {
-                    const dataset = datasets.find((d) => d.id === id);
-                    return dataset?.starred;
-                  });
-                  if (onBatchStar) {
-                    onBatchStar(Array.from(selectedIds), !allStarred);
-                  } else {
-                    selectedIds.forEach((id) => onToggleStar(id));
-                  }
-                }}
-                title="Toggle Star"
+          <div className={styles.tabSpacer} />
+
+          <AnimatePresence>
+            {selectedIds.size > 0 && (
+              <motion.div
+                className={styles.selectionActions}
+                {...getMotionProps({
+                  preset: 'slideLeft',
+                  duration: reducedMotion ? DURATIONS.instant : DURATIONS.normal,
+                  reducedMotion,
+                })}
               >
-                {Array.from(selectedIds).every((id) => datasets.find((d) => d.id === id)?.starred) ? (
-                  <StarOff size={14} />
-                ) : (
-                  <Star size={14} />
-                )}
-                Star
-              </button>
+                <span>{selectedIds.size} selected</span>
 
-              <button onClick={() => onCreateProject(Array.from(selectedIds))}>
-                <Link2 size={14} />
-                Add to Project
-              </button>
-
-              {onExport && (
                 <button
                   onClick={() => {
-                    if (onExport) {
-                      onExport(Array.from(selectedIds));
+                    const allStarred = Array.from(selectedIds).every((id) => {
+                      const dataset = datasets.find((d) => d.id === id);
+                      return dataset?.starred;
+                    });
+                    if (onBatchStar) {
+                      onBatchStar(Array.from(selectedIds), !allStarred);
+                    } else {
+                      selectedIds.forEach((id) => onToggleStar(id));
                     }
                   }}
-                  title="Export selected"
+                  title="Toggle Star"
                 >
-                  <Download size={14} />
-                  Export
+                  {Array.from(selectedIds).every((id) => datasets.find((d) => d.id === id)?.starred) ? (
+                    <StarOff size={14} />
+                  ) : (
+                    <Star size={14} />
+                  )}
+                  Star
                 </button>
-              )}
 
-              <div className={styles.actionDivider} />
+                <button onClick={() => onCreateProject(Array.from(selectedIds))}>
+                  <Link2 size={14} />
+                  Add to Project
+                </button>
 
-              <button
-                className={styles.destructiveButton}
-                onClick={() => {
-                  if (onBatchDelete) {
-                    onBatchDelete(Array.from(selectedIds));
-                  } else {
-                    selectedIds.forEach((id) => onDeleteDataset(id));
-                  }
-                  setSelectedIds(new Set());
-                }}
-                title="Delete selected"
-              >
-                <Trash2 size={14} />
-                Delete
-              </button>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </nav>
+                {onExport && (
+                  <button
+                    onClick={() => {
+                      if (onExport) {
+                        onExport(Array.from(selectedIds));
+                      }
+                    }}
+                    title="Export selected"
+                  >
+                    <Download size={14} />
+                    Export
+                  </button>
+                )}
 
-      <main className={styles.content}>
+                <div className={styles.actionDivider} />
+
+                <button
+                  className={styles.destructiveButton}
+                  onClick={() => {
+                    if (onBatchDelete) {
+                      onBatchDelete(Array.from(selectedIds));
+                    } else {
+                      selectedIds.forEach((id) => onDeleteDataset(id));
+                    }
+                    setSelectedIds(new Set());
+                  }}
+                  title="Delete selected"
+                >
+                  <Trash2 size={14} />
+                  Delete
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </nav>
+      )}
+
+      <main className={`${styles.content} ${showFirstRunLanding ? styles.contentFirstRun : ''}`}>
         {isEmpty ? (
-          <WorkspaceEmptyState onUpload={onUploadFile} onLoadExample={onLoadExample} />
+          <WorkspaceEmptyState
+            onUpload={handleUploadWithTracking}
+            onLoadExample={handleLoadExampleWithTracking}
+            isFirstRun={showFirstRunLanding}
+            onImportSession={showFirstRunLanding ? onImportSession : undefined}
+            onFileDrop={onFileDrop ? handleFileDropWithTracking : undefined}
+          />
         ) : (
           <>
             {filterMode === 'projects' && projectsWithDatasets.length === 0 && (
@@ -497,11 +556,11 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
                       {filterMode === 'all' && 'All Datasets'}
                     </h2>
                   </div>
-                  <span className={styles.count}>{filteredDatasets.length} datasets</span>
+                  <span className={styles.count}>{pluralize(filteredDatasets.length, 'dataset')}</span>
                 </div>
               )}
 
-              {viewMode === 'grid' ? (
+              {effectiveViewMode === 'grid' ? (
                 <div className={styles.datasetsGrid}>
                   <AnimatePresence mode="popLayout">
                     {filteredDatasets.map((dataset) => (

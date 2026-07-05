@@ -1,75 +1,48 @@
 /**
- * ToastLayer — Single bottom-right notification stack
+ * ToastLayer — single muted status slot (bottom center).
  *
- * All transient feedback (backup reminder, session import, operations) routes here
- * so messages do not overlap separate fixed overlays in App.tsx.
+ * One transient message at a time; newer messages replace older ones.
+ * Callers keep using addToast; the layer renders only the latest entry and
+ * clears the rest, so nothing ever stacks over the artifact.
  */
 
 import React, { useEffect, useCallback } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
-import { X, CheckCircle2, Info, AlertCircle, AlertTriangle } from 'lucide-react';
 import { useVelocityStore } from '../../store';
 import type { Toast } from '../../store/slices/uiSlice';
-import { getMotionProps, useReducedMotion, DURATIONS } from '../../lib/motion';
 import styles from './ToastLayer.module.css';
-
-const ICONS = {
-  success: CheckCircle2,
-  info: Info,
-  warning: AlertTriangle,
-  error: AlertCircle,
-} as const;
-
-const TOAST_CLASS: Record<Toast['type'], string> = {
-  success: styles.toastSuccess,
-  info: styles.toastInfo,
-  warning: styles.toastWarning,
-  error: styles.toastError,
-};
-
-const ICON_CLASS: Record<Toast['type'], string> = {
-  success: styles.iconSuccess,
-  info: styles.iconInfo,
-  warning: styles.iconWarning,
-  error: styles.iconError,
-};
 
 export const ToastLayer: React.FC = () => {
   const toasts = useVelocityStore((state) => state.toasts);
   const dismissToast = useVelocityStore((state) => state.dismissToast);
-  const reducedMotion = useReducedMotion();
 
-  if (toasts.length === 0) {
+  // One message at a time: silently clear anything older than the latest.
+  useEffect(() => {
+    if (toasts.length > 1) {
+      for (const stale of toasts.slice(0, -1)) {
+        dismissToast(stale.id);
+      }
+    }
+  }, [toasts, dismissToast]);
+
+  const current = toasts[toasts.length - 1];
+
+  if (!current) {
     return null;
   }
 
   return (
-    <div
-      className={styles.region}
-      role="region"
-      aria-label="Notifications"
-      aria-live="polite"
-      aria-relevant="additions removals"
-    >
-      <AnimatePresence mode="popLayout">
-        {toasts.map((toast) => (
-          <ToastItem key={toast.id} toast={toast} reducedMotion={reducedMotion} onDismiss={dismissToast} />
-        ))}
-      </AnimatePresence>
+    <div className={styles.region} role="status" aria-live="polite">
+      <StatusMessage key={current.id} toast={current} onDismiss={dismissToast} />
     </div>
   );
 };
 
-interface ToastItemProps {
+interface StatusMessageProps {
   toast: Toast;
-  reducedMotion: boolean;
   onDismiss: (id: string) => void;
 }
 
-const ToastItem: React.FC<ToastItemProps> = ({ toast, reducedMotion, onDismiss }) => {
-  const Icon = ICONS[toast.type];
-  const iconClass = ICON_CLASS[toast.type];
-
+const StatusMessage: React.FC<StatusMessageProps> = ({ toast, onDismiss }) => {
   const handleDismiss = useCallback(() => {
     onDismiss(toast.id);
   }, [onDismiss, toast.id]);
@@ -80,36 +53,40 @@ const ToastItem: React.FC<ToastItemProps> = ({ toast, reducedMotion, onDismiss }
     return () => clearTimeout(timer);
   }, [toast.duration, handleDismiss, toast.id]);
 
+  const isError = toast.type === 'error';
+
   return (
-    <motion.div
-      {...getMotionProps({
-        preset: 'slideUp',
-        duration: reducedMotion ? DURATIONS.instant : DURATIONS.normal,
-        reducedMotion,
-      })}
-      layout
-      className={`${styles.toast} ${TOAST_CLASS[toast.type]}`}
+    <button
+      type="button"
+      onClick={handleDismiss}
+      className={`${styles.slot} ${isError ? styles.slotError : ''}`}
+      aria-label="Dismiss notification"
     >
-      <Icon size={18} className={`mt-0.5 shrink-0 ${iconClass}`} aria-hidden />
-      <div className={styles.body}>
-        {toast.title ? <p className={styles.title}>{toast.title}</p> : null}
-        <p className={styles.message}>{toast.message}</p>
-        {toast.action ? (
-          <button
-            type="button"
-            onClick={() => {
+      <span className={styles.message}>
+        {toast.title ? <span className={styles.title}>{toast.title} · </span> : null}
+        {toast.message}
+      </span>
+      {toast.action ? (
+        <span
+          role="button"
+          tabIndex={0}
+          onClick={(event) => {
+            event.stopPropagation();
+            toast.action?.onClick();
+            handleDismiss();
+          }}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+              event.stopPropagation();
               toast.action?.onClick();
               handleDismiss();
-            }}
-            className={styles.action}
-          >
-            {toast.action.label}
-          </button>
-        ) : null}
-      </div>
-      <button type="button" onClick={handleDismiss} className={styles.dismiss} aria-label="Dismiss notification">
-        <X size={14} />
-      </button>
-    </motion.div>
+            }
+          }}
+          className={styles.action}
+        >
+          {toast.action.label}
+        </span>
+      ) : null}
+    </button>
   );
 };

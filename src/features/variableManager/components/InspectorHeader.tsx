@@ -122,6 +122,15 @@ export const InspectorHeader: React.FC<InspectorHeaderProps> = ({ variable, stat
           <div
             className={styles.editableSubtitleContainer}
             onClick={!isEditingName ? startEditName : undefined}
+            onKeyDown={(e) => {
+              if (!isEditingName && (e.key === 'Enter' || e.key === ' ')) {
+                e.preventDefault();
+                startEditName();
+              }
+            }}
+            role={!isEditingName ? 'button' : undefined}
+            tabIndex={!isEditingName ? 0 : undefined}
+            aria-label={!isEditingName ? `Edit variable name ${variable.name}` : undefined}
             style={{ marginRight: '8px', marginBottom: '2px' }}
           >
             {isEditingName ? (
@@ -148,6 +157,15 @@ export const InspectorHeader: React.FC<InspectorHeaderProps> = ({ variable, stat
           {/* Display Name */}
           <div
             onClick={!isEditingLabel ? startEditLabel : undefined}
+            onKeyDown={(e) => {
+              if (!isEditingLabel && (e.key === 'Enter' || e.key === ' ')) {
+                e.preventDefault();
+                startEditLabel();
+              }
+            }}
+            role={!isEditingLabel ? 'button' : undefined}
+            tabIndex={!isEditingLabel ? 0 : undefined}
+            aria-label={!isEditingLabel ? `Edit variable label ${displayName}` : undefined}
             style={{
               display: 'flex',
               alignItems: 'center',

@@ -1,8 +1,5 @@
 /**
  * AdvancedAnalysisPanel Styles
- *
- * Dynamic panel that adapts to the current theme (Soft Machine, 
- * Mission Control, or Liquid Glass).
  */
 
 .panel {
@@ -36,7 +33,7 @@
 }
 
 .headerIcon {
-  color: var(--color-accent);
+  color: var(--border-color-active);
 }
 
 .headerTitle {
@@ -97,9 +94,9 @@
 }
 
 .tabActive {
-  color: var(--color-accent);
+  color: var(--border-color-active);
   background: var(--bg-panel);
-  border-bottom-color: var(--color-accent);
+  border-bottom-color: var(--border-color-active);
 }
 
 /* Content */
@@ -155,12 +152,12 @@
 }
 
 .engineActive {
-  border-color: var(--color-accent);
+  border-color: var(--border-color-active);
   background: var(--bg-active);
 }
 
 .engineActive .engineLabel {
-  color: var(--color-accent);
+  color: var(--border-color-active);
 }
 
 .engineLabel {
@@ -202,7 +199,7 @@
 }
 
 .statusLoading {
-  color: var(--color-accent);
+  color: var(--border-color-active);
   animation: spin 1s linear infinite;
 }
 
@@ -231,7 +228,7 @@
 
 .progressBar {
   height: 100%;
-  background: var(--color-accent);
+  background: var(--border-color-active);
   border-radius: 2px;
   transition: width 0.3s ease-out;
 }
@@ -329,8 +326,8 @@
 }
 
 .toggleOn {
-  background: var(--color-accent);
-  border-color: var(--color-accent);
+  background: var(--border-color-active);
+  border-color: var(--border-color-active);
 }
 
 .toggleThumb {
@@ -404,7 +401,7 @@
 .infoBox svg {
   flex-shrink: 0;
   margin-top: 1px;
-  color: var(--color-accent);
+  color: var(--border-color-active);
 }
 
 /* Coming Soon */
@@ -423,7 +420,7 @@
   text-transform: uppercase;
   letter-spacing: 0.1em;
   padding: 4px 12px;
-  background: linear-gradient(135deg, var(--color-accent), var(--viz-palette-5));
+  background: linear-gradient(135deg, var(--border-color-active), var(--viz-palette-5));
   color: white;
   border-radius: 9999px;
 }

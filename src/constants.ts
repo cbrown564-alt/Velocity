@@ -90,23 +90,39 @@ const AGE_OPTIONS = ['18-24', '25-34', '35-44', '45-54', '55+'];
 const INTENT_OPTIONS = ['Very Unlikely', 'Unlikely', 'Neutral', 'Likely', 'Very Likely'];
 const REGIONS = ['North', 'South', 'East', 'West', 'International'];
 
+/**
+ * Deterministic PRNG (mulberry32). The example dataset must be identical on
+ * every load: demos show stable numbers and visual snapshot baselines stop
+ * being data-dependent.
+ */
+const mulberry32 = (seed: number) => {
+  let a = seed >>> 0;
+  return () => {
+    a = (a + 0x6d2b79f5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+};
+
 const GENERATE_DATA = (count: number): Respondent[] => {
+  const random = mulberry32(0x5eed2026);
   const data: Respondent[] = [];
 
   for (let i = 0; i < count; i++) {
-    const npsScore = Math.floor(Math.random() * 11);
+    const npsScore = Math.floor(random() * 11);
     let npsSegment = 'Passive';
     if (npsScore <= 6) npsSegment = 'Detractor';
     if (npsScore >= 9) npsSegment = 'Promoter';
 
     data.push({
       id: `resp_${i}`,
-      gender: Math.random() > 0.5 ? 'Female' : 'Male',
-      age_group: AGE_OPTIONS[Math.floor(Math.random() * AGE_OPTIONS.length)],
-      region: REGIONS[Math.floor(Math.random() * REGIONS.length)],
+      gender: random() > 0.5 ? 'Female' : 'Male',
+      age_group: AGE_OPTIONS[Math.floor(random() * AGE_OPTIONS.length)],
+      region: REGIONS[Math.floor(random() * REGIONS.length)],
       nps_segment: npsSegment,
-      intent_to_buy: INTENT_OPTIONS[Math.floor(Math.random() * INTENT_OPTIONS.length)],
-      product_sat: Math.floor(Math.random() * 5) + 1,
+      intent_to_buy: INTENT_OPTIONS[Math.floor(random() * INTENT_OPTIONS.length)],
+      product_sat: Math.floor(random() * 5) + 1,
     });
   }
   return data;

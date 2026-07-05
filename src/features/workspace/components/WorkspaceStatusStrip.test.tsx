@@ -40,6 +40,22 @@ describe('WorkspaceStatusStrip', () => {
     expect(screen.getByText(resumeCandidate.summaryLine)).toBeInTheDocument();
   });
 
+  it('hides privacy headline on first-run landing when requested', async () => {
+    render(
+      <WorkspaceStatusStrip
+        showWelcomeBack={false}
+        resumeCandidate={null}
+        onResume={vi.fn()}
+        onDismissWelcomeBack={vi.fn()}
+        hidePrivacyHeadline
+      />,
+    );
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('workspace-status-strip')).not.toBeInTheDocument();
+    });
+  });
+
   it('hides the strip for the rest of the session after dismiss', async () => {
     const onDismissWelcomeBack = vi.fn();
 

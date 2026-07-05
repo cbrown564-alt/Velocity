@@ -16,8 +16,8 @@
 }
 
 .lasso {
-  fill: color-mix(in srgb, var(--color-accent) 12%, transparent);
-  stroke: var(--color-accent);
+  fill: color-mix(in srgb, var(--border-color-active) 12%, transparent);
+  stroke: var(--border-color-active);
   stroke-width: 1.5;
   stroke-dasharray: 6 3;
   stroke-linejoin: round;

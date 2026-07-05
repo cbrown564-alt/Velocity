@@ -13,8 +13,8 @@ const baseSettings = {
   showColumnBases: true,
 };
 
-describe('StatisticsStatusBar chi-square styling (UXP-034)', () => {
-  it('uses significant styling when p < 0.05', () => {
+describe('StatisticsStatusBar (margin note)', () => {
+  it('states the methodology in one muted line', () => {
     render(
       <StatisticsStatusBar
         analysisSettings={baseSettings}
@@ -25,12 +25,11 @@ describe('StatisticsStatusBar chi-square styling (UXP-034)', () => {
         overlapCorrected={false}
       />,
     );
-    const badge = screen.getByText(/χ² = 12\.4/);
-    expect(badge.className).toMatch(/chiSquareSignificant/);
-    expect(badge.className).not.toMatch(/chiSquareInsignificant/);
+    expect(screen.getByText(/Welch's t · cell vs rest/)).toBeInTheDocument();
+    expect(screen.getByText(/χ² 12\.4, p = \.012|χ² 12\.4, p = 0\.012/)).toBeInTheDocument();
   });
 
-  it('uses demoted styling when p ≥ 0.05', () => {
+  it('reports non-significant chi-square without alarm styling', () => {
     render(
       <StatisticsStatusBar
         analysisSettings={baseSettings}
@@ -41,13 +40,11 @@ describe('StatisticsStatusBar chi-square styling (UXP-034)', () => {
         overlapCorrected={false}
       />,
     );
-    const badge = screen.getByText(/χ² = 5\.8/);
-    expect(badge.className).toMatch(/chiSquareInsignificant/);
-    expect(badge.className).not.toMatch(/chiSquareSignificant/);
-    expect(badge).toHaveTextContent('Independent');
+    const note = screen.getByText(/χ² 5\.8/);
+    expect(note.className).toMatch(/chiSquareNote/);
   });
 
-  it('renders statistical settings in a fixed dialog popover', () => {
+  it('has no settings controls — configuration lives in the recipe inspector', () => {
     render(
       <StatisticsStatusBar
         analysisSettings={baseSettings}
@@ -59,7 +56,21 @@ describe('StatisticsStatusBar chi-square styling (UXP-034)', () => {
       />,
     );
 
-    fireEvent.click(screen.getByRole('button', { name: /statistical settings/i }));
-    expect(screen.getByRole('dialog', { name: /statistical settings/i })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /statistical settings/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /cell n/i })).not.toBeInTheDocument();
+  });
+
+  it('opens the methodology drawer from the methodology line', () => {
+    render(
+      <StatisticsStatusBar
+        analysisSettings={baseSettings}
+        tableStats={null}
+        colVariable={colVariable}
+        overlapCorrected={false}
+      />,
+    );
+    const pill = screen.getByRole('button', { name: /Welch's t · cell vs rest/ });
+    fireEvent.click(pill);
+    expect(pill).toHaveAttribute('aria-expanded', 'true');
   });
 });

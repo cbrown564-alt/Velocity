@@ -85,4 +85,35 @@ describe('AppShell', () => {
 
     expect(toggleFocusMode).not.toHaveBeenCalled();
   });
+
+  it('renders skip link to main content', () => {
+    render(
+      <AppShell>
+        <div>Child</div>
+      </AppShell>,
+    );
+
+    const skipLink = document.querySelector('.skip-link');
+    expect(skipLink).toBeInTheDocument();
+    expect(skipLink).toHaveAttribute('href', '#main-content');
+    expect(skipLink).toHaveTextContent('Skip to main content');
+  });
+
+  it('hides receded canvas from assistive tech when Variable Manager is open', async () => {
+    render(
+      <AppShell>
+        <div data-testid="child">Child</div>
+      </AppShell>,
+    );
+
+    await act(async () => {
+      useVelocityStore.setState({ appMode: 'variables' });
+    });
+
+    const canvas = document.querySelector('[data-testid="analysis-canvas"]');
+    expect(canvas).toHaveAttribute('aria-hidden', 'true');
+    if ('inert' in HTMLElement.prototype) {
+      expect((canvas as HTMLElement).inert).toBe(true);
+    }
+  });
 });

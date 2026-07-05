@@ -2,7 +2,6 @@
  * WorkspaceView Styles
  *
  * Theme-agnostic styles using Velocity's semantic token system.
- * Works across Soft Machine, Mission Control, and Liquid Glass themes.
  */
 
 /* ============================================================================
@@ -32,6 +31,15 @@
   border-bottom: 1px solid var(--border-color);
   background: var(--bg-panel);
   backdrop-filter: var(--mat-panel-filter, none);
+}
+
+.headerFirstRun {
+  padding: var(--space-4) var(--space-8);
+  border-bottom-color: color-mix(in srgb, var(--border-color) 65%, transparent);
+}
+
+.headerFirstRun .title {
+  font-size: var(--text-xl);
 }
 
 .headerLeft {
@@ -65,7 +73,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: var(--text-2xl);
   font-weight: 600;
   color: var(--text-primary);
@@ -73,7 +81,7 @@
 }
 
 .title svg {
-  color: var(--color-accent);
+  color: var(--border-color-active);
 }
 
 /* ============================================================================
@@ -131,9 +139,9 @@
 
 .categoryChips button:hover,
 .categoryChips button.chipActive {
-  border-color: var(--color-accent);
-  color: var(--color-accent);
-  background: color-mix(in srgb, var(--color-accent) 8%, var(--bg-surface));
+  border-color: var(--border-color-active);
+  color: var(--border-color-active);
+  background: color-mix(in srgb, var(--border-color-active) 8%, var(--bg-surface));
 }
 
 .searchBox svg {
@@ -185,7 +193,7 @@
 }
 
 .viewToggle button.active {
-  color: var(--color-accent);
+  color: var(--border-color-active);
   background: var(--bg-active);
 }
 
@@ -211,8 +219,8 @@
 
 .importButton:hover {
   background: var(--bg-active);
-  border-color: var(--color-accent);
-  color: var(--color-accent);
+  border-color: var(--border-color-active);
+  color: var(--border-color-active);
 }
 
 /* ============================================================================
@@ -226,7 +234,7 @@
   padding: var(--space-2) var(--space-4);
   border: none;
   border-radius: var(--border-radius-md);
-  background: var(--color-accent);
+  background: var(--border-color-active);
   color: var(--text-inverse);
   font-family: var(--font-body);
   font-size: var(--text-sm);
@@ -259,8 +267,8 @@
 
 .exportButton:hover {
   background: var(--bg-active);
-  border-color: var(--color-accent);
-  color: var(--color-accent);
+  border-color: var(--border-color-active);
+  color: var(--border-color-active);
 }
 
 /* ============================================================================
@@ -300,7 +308,7 @@
 }
 
 .filterTabs button.active {
-  color: var(--color-accent);
+  color: var(--border-color-active);
   background: var(--bg-active);
 }
 
@@ -323,7 +331,7 @@
 .selectionActions span {
   font-size: var(--text-xs);
   font-weight: 600;
-  color: var(--color-accent);
+  color: var(--border-color-active);
   margin-right: var(--space-2);
 }
 
@@ -345,7 +353,7 @@
 .selectionActions button:hover {
   background: var(--bg-surface);
   border-color: var(--border-color);
-  color: var(--color-accent);
+  color: var(--border-color-active);
 }
 
 .selectionActions .destructiveButton {
@@ -374,6 +382,14 @@
   flex: 1;
   padding: var(--space-8);
   overflow-y: auto;
+}
+
+.contentFirstRun {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 0;
+  overflow-x: hidden;
 }
 
 /* ============================================================================
@@ -413,12 +429,12 @@
 }
 
 .selectAllCheckbox:hover {
-  border-color: var(--color-accent);
+  border-color: var(--border-color-active);
 }
 
 .selectAllCheckbox:checked {
-  background: var(--color-accent);
-  border-color: var(--color-accent);
+  background: var(--border-color-active);
+  border-color: var(--border-color-active);
 }
 
 .selectAllCheckbox:checked::after {
@@ -433,7 +449,7 @@
 }
 
 .sectionHeader h2 {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: var(--text-lg);
   font-weight: 600;
   color: var(--text-primary);
@@ -456,7 +472,7 @@
 
 .sectionHeader button:hover {
   color: var(--text-primary);
-  border-color: var(--color-accent);
+  border-color: var(--border-color-active);
 }
 
 .count {
@@ -510,7 +526,7 @@
   font-size: var(--text-sm);
   font-weight: 500;
   color: var(--text-inverse);
-  background: var(--color-accent);
+  background: var(--border-color-active);
   border: none;
   border-radius: var(--border-radius-md);
   cursor: pointer;
@@ -603,13 +619,3 @@
    ============================================================================ */
 
 /* Liquid Glass: Enhanced blur */
-[data-theme='liquid-glass'] .header,
-[data-theme='liquid-glass'] .filterTabs {
-  background: var(--mat-panel-bg, var(--bg-panel));
-  backdrop-filter: var(--mat-panel-filter, blur(25px) saturate(180%));
-}
-
-[data-theme='liquid-glass'] .contextMenu {
-  background: var(--mat-overlay-bg, var(--bg-panel));
-  backdrop-filter: var(--mat-overlay-filter, blur(40px) saturate(200%));
-}

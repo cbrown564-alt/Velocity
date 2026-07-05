@@ -4,7 +4,15 @@
  */
 
 export type PilotOnboardingEventName =
-  'file_selected' | 'canvas_ready' | 'first_crosstab' | 'pptx_exported' | 'xlsx_exported' | 'workspace_reopened';
+  | 'landing_view'
+  | 'landing_cta_upload'
+  | 'landing_cta_example'
+  | 'file_selected'
+  | 'canvas_ready'
+  | 'first_crosstab'
+  | 'pptx_exported'
+  | 'xlsx_exported'
+  | 'workspace_reopened';
 
 export interface PilotOnboardingEvent {
   id: string;
@@ -72,6 +80,9 @@ export function recordPilotEvent(
 
   const events = readEvents();
   if (name === 'first_crosstab' && events.some((e) => e.name === 'first_crosstab')) {
+    return null;
+  }
+  if (name === 'landing_view' && events.some((e) => e.name === 'landing_view')) {
     return null;
   }
 

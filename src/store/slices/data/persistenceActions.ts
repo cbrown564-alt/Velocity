@@ -110,10 +110,20 @@ export function createPersistenceActions(
         console.log('[DataSlice] Restoring with existing dataset metadata');
         set({ persistenceState: 'ready' });
         const runAnalysis = resolveRunAnalysis(get);
-        if (runAnalysis) {
-          void runAnalysis().catch((error) => {
-            console.warn('[DataSlice] Analysis replay failed after persistence restore:', error);
-          });
+        const { browserEngine } = get();
+        if (typeof runAnalysis === 'function' && browserEngine) {
+          void (async () => {
+            try {
+              const status = await browserEngine.ping();
+              if (!status.hasData) {
+                console.warn('[DataSlice] Skipping analysis replay: DuckDB main table is not loaded yet');
+                return;
+              }
+              await runAnalysis();
+            } catch (error) {
+              console.warn('[DataSlice] Analysis replay failed after persistence restore:', error);
+            }
+          })();
         }
       } else {
         console.log('[DataSlice] Reconstructing dataset from OPFS schema');

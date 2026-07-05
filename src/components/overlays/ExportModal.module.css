@@ -2,7 +2,6 @@
  * ExportModal Styles
  *
  * Theme-agnostic styling using semantic tokens.
- * Works seamlessly across Soft Machine, Mission Control, and Liquid Glass themes.
  */
 
 .backdrop {
@@ -55,12 +54,12 @@
   width: 36px;
   height: 36px;
   border-radius: var(--radius);
-  background: color-mix(in srgb, var(--color-accent) 15%, transparent);
-  color: var(--color-accent);
+  background: color-mix(in srgb, var(--border-color-active) 15%, transparent);
+  color: var(--border-color-active);
 }
 
 .headerTitle {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: var(--text-lg);
   font-weight: 600;
   color: var(--text-primary);
@@ -132,13 +131,13 @@
 }
 
 .scopeOption:hover {
-  border-color: var(--color-accent);
+  border-color: var(--border-color-active);
   background: var(--bg-surface);
 }
 
 .scopeOption.selected {
-  border-color: var(--color-accent);
-  background: color-mix(in srgb, var(--color-accent) 6%, var(--bg-panel));
+  border-color: var(--border-color-active);
+  background: color-mix(in srgb, var(--border-color-active) 6%, var(--bg-panel));
 }
 
 .scopeOption input {
@@ -158,14 +157,14 @@
 }
 
 .scopeOption.selected .scopeRadio {
-  border-color: var(--color-accent);
+  border-color: var(--border-color-active);
 }
 
 .scopeOption.selected .scopeRadio::after {
   content: '';
   position: absolute;
   inset: 2px;
-  background: var(--color-accent);
+  background: var(--border-color-active);
   border-radius: 50%;
 }
 
@@ -226,8 +225,8 @@
 }
 
 .scopeActionButton:hover {
-  color: var(--color-accent);
-  border-color: var(--color-accent);
+  color: var(--border-color-active);
+  border-color: var(--border-color-active);
 }
 
 .scopeCount {
@@ -266,8 +265,8 @@
 }
 
 .scopeListItem input:checked + .scopeCheckbox {
-  border-color: var(--color-accent);
-  background: color-mix(in srgb, var(--color-accent) 20%, transparent);
+  border-color: var(--border-color-active);
+  background: color-mix(in srgb, var(--border-color-active) 20%, transparent);
 }
 
 .scopeListItem input:checked + .scopeCheckbox::after {
@@ -279,7 +278,7 @@
   justify-content: center;
   font-size: 10px;
   font-weight: 700;
-  color: var(--color-accent);
+  color: var(--border-color-active);
 }
 
 .scopeItemLabel {
@@ -316,14 +315,14 @@
 }
 
 .formatOption:hover {
-  border-color: var(--color-accent);
+  border-color: var(--border-color-active);
   background: var(--bg-surface);
   transform: translateY(-1px);
 }
 
 .formatOption.selected {
-  border-color: var(--color-accent);
-  background: color-mix(in srgb, var(--color-accent) 8%, var(--bg-panel));
+  border-color: var(--border-color-active);
+  background: color-mix(in srgb, var(--border-color-active) 8%, var(--bg-panel));
 }
 
 .formatOption.selected::after {
@@ -334,7 +333,7 @@
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: var(--color-accent);
+  background: var(--border-color-active);
 }
 
 .formatOption.selected::before {
@@ -366,12 +365,12 @@
 }
 
 .formatOption:hover .formatIcon {
-  color: var(--color-accent);
+  color: var(--border-color-active);
 }
 
 .formatOption.selected .formatIcon {
-  color: var(--color-accent);
-  background: color-mix(in srgb, var(--color-accent) 15%, transparent);
+  color: var(--border-color-active);
+  background: color-mix(in srgb, var(--border-color-active) 15%, transparent);
 }
 
 .formatName {
@@ -417,13 +416,58 @@
 
 .input:focus {
   outline: none;
-  border-color: var(--color-accent);
+  border-color: var(--border-color-active);
   background: var(--bg-panel);
 }
 
 .input::placeholder {
   color: var(--text-secondary);
   opacity: 0.6;
+}
+
+.hiddenInput {
+  display: none;
+}
+
+.templateDropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--space-5);
+  font-family: var(--font-body);
+  background: var(--bg-surface);
+  border: 2px dashed var(--border-color);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-align: center;
+}
+
+.templateDropzone:hover {
+  border-color: var(--border-color-active);
+  background: color-mix(in srgb, var(--border-color-active) 5%, transparent);
+}
+
+.templateDropzone svg {
+  color: var(--text-secondary);
+}
+
+.templateDropzone:hover svg {
+  color: var(--border-color-active);
+}
+
+.templateDropzoneTitle {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.templateDropzoneHint {
+  font-size: var(--text-xxs);
+  color: var(--text-secondary);
 }
 
 /* Checkboxes */
@@ -461,8 +505,8 @@
 }
 
 .checkboxItem input:checked + .checkbox {
-  background: var(--color-accent);
-  border-color: var(--color-accent);
+  background: var(--border-color-active);
+  border-color: var(--border-color-active);
 }
 
 .checkbox::after {

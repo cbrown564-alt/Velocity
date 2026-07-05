@@ -3,9 +3,10 @@ import { useVelocityStore } from '../../../store';
 import { pickAutoFirstCrosstabPair, resolveAutoCrosstabTableConfig } from '../lib/autoFirstCrosstab';
 
 /**
- * One-time auto-first-crosstab after Load Example (mock_data.csv only).
- * STAB-UI-E §9.4 — no toast; Story Shelf + deferred backup reminder.
+ * One-time auto-first-crosstab after Load Example (brandtracker_w4.sav, sleep.sav,
+ * or mock_data.csv). STAB-UI-E §9.4 — no toast; Story Shelf + deferred backup reminder.
  */
+const AUTO_CROSSTAB_EXAMPLES = new Set(['brandtracker_w4.sav', 'sleep.sav', 'mock_data.csv']);
 export function useAutoFirstCrosstab(
   resolvedRowVarsLength: number,
   tableConfigColVar: string | null | undefined,
@@ -20,9 +21,9 @@ export function useAutoFirstCrosstab(
   useEffect(() => {
     if (autoCrosstabAppliedRef.current || hasSeenAutoCrosstab) return;
 
-    const isMockDataset = dataset?.name === 'mock_data.csv';
+    const isExampleDataset = dataset?.name != null && AUTO_CROSSTAB_EXAMPLES.has(dataset.name);
     const isEmptyDeck = resolvedRowVarsLength === 0 && !tableConfigColVar;
-    if (!isMockDataset || !isEmptyDeck || variableSets.length === 0) {
+    if (!isExampleDataset || !isEmptyDeck || variableSets.length === 0) {
       return;
     }
 

@@ -123,7 +123,7 @@ export const buildTree = (
 
     colKeys.forEach((cKey) => {
       // Use weightedCount when weighted, otherwise count
-      const matchingRows = rowsByColumn.get(cKey) || [];
+      const matchingRows = (rowsByColumn.get(cKey) || []).filter((row) => row.rowKeys.length === depth + 1);
 
       const count = matchingRows.reduce((sum, d) => {
         const effectiveCount = isWeighted && d.weightedCount !== undefined ? d.weightedCount : d.count;

@@ -58,8 +58,8 @@
   width: 32px;
   height: 32px;
   border-radius: var(--radius-sm);
-  background: color-mix(in srgb, var(--color-accent) 15%, transparent);
-  color: var(--color-accent);
+  background: color-mix(in srgb, var(--border-color-active) 15%, transparent);
+  color: var(--border-color-active);
   flex-shrink: 0;
 }
 
@@ -100,7 +100,7 @@
 }
 
 .waveArrow {
-  color: var(--color-accent);
+  color: var(--border-color-active);
 }
 
 /* Header actions */
@@ -142,7 +142,7 @@
   padding: 6px 14px;
   font-size: 12px;
   font-weight: 600;
-  background: var(--color-accent);
+  background: var(--border-color-active);
   color: var(--text-inverse);
   border: none;
   border-radius: var(--radius-sm);
@@ -240,9 +240,9 @@
 }
 
 .lassoToggle.lassoActive {
-  background: color-mix(in srgb, var(--color-accent) 10%, transparent);
-  border-color: var(--color-accent);
-  color: var(--color-accent);
+  background: color-mix(in srgb, var(--border-color-active) 10%, transparent);
+  border-color: var(--border-color-active);
+  color: var(--border-color-active);
 }
 
 .lassoToggle:hover {
@@ -339,7 +339,7 @@
   width: 14px;
   height: 14px;
   border: 2px solid var(--border-color);
-  border-top-color: var(--color-accent);
+  border-top-color: var(--border-color-active);
   border-radius: 50%;
   animation: spin 0.6s linear infinite;
 }

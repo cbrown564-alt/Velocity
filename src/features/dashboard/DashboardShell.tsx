@@ -1,31 +1,23 @@
 /**
- * DashboardShell — Analysis canvas with sidebar, shelves, DnD, and main canvas.
- * Composes extracted Sidebar, Toolbar, AnalysisShelf, and useDashboardDnD.
+ * DashboardShell — Analysis canvas with story rail, recipe inspector, DnD, and main canvas.
  */
 
 import React from 'react';
-import { motion } from 'framer-motion';
-import { getMotionProps, DURATIONS } from '../../lib/motion';
 import { Loader2, Pencil } from 'lucide-react';
 import { DndContext, DragOverlay, useDroppable } from '@dnd-kit/core';
 
 import { useVelocityStore } from '../../store';
 import { useDashboardDnD } from './hooks/useDashboardDnD';
 import { useAnalysisExportAction } from './hooks/useAnalysisExportAction';
-import { filterSyntheticGridShellSets } from '../../core/services/syntheticGridShellFilters';
 
-import { DashboardSidebar } from './components/DashboardSidebar';
+import { StoryRail } from './components/StoryRail';
+import { RecipeInspector } from './components/RecipeInspector';
 import { DashboardToolbar } from './components/DashboardToolbar';
-import { AnalysisShelf } from './components/AnalysisShelf';
 import { SlideContainer } from './components/SlideContainer';
-import { TimelineDock } from './components/TimelineDock';
-import { FilterBar } from '../../components/common/FilterBar';
 import { AppShell } from '../../components/layout/AppShell';
+import { CommandPalette } from '../../components/common/CommandPalette';
 import { VariableCard } from './components/DraggableVariable';
 import { ContextMenu } from './components/ContextMenu';
-import { FirstCrosstabTourOverlay } from './onboarding/FirstCrosstabTour';
-import { ContextualMicroTipChip } from './onboarding/ContextualMicroTipChip';
-import { useContextualMicroTips } from './hooks/useContextualMicroTips';
 
 import type { PersistenceManagerState } from '../../hooks/usePersistenceManager';
 
@@ -34,7 +26,7 @@ const SmartCanvas: React.FC<{ children: React.ReactNode; className?: string }> =
   return (
     <div
       ref={setNodeRef}
-      className={`${className} ${isOver ? 'bg-[var(--bg-active)]/30' : ''} transition-colors duration-300`}
+      className={`${className} ${isOver ? 'bg-[var(--bg-active)]/30' : ''} transition-colors duration-150`}
     >
       {children}
     </div>
@@ -55,33 +47,24 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
   onExportSession,
 }) => {
   const dataset = useVelocityStore((state) => state.dataset);
-  const variableSets = useVelocityStore((state) => state.variableSets);
-  const tableConfig = useVelocityStore((state) => state.tableConfig);
-  const queryResult = useVelocityStore((state) => state.queryResult);
   const isQuerying = useVelocityStore((state) => state.isQuerying);
-  const draggingId = useVelocityStore((state) => state.draggingId);
-  const searchQuery = useVelocityStore((state) => state.searchQuery);
-  const activeFilters = useVelocityStore((state) => state.activeFilters);
   const slides = useVelocityStore((state) => state.slides);
   const activeSlideId = useVelocityStore((state) => state.activeSlideId);
-  const selectedVariableSetId = useVelocityStore((state) => state.selectedVariableSetId);
   const focusMode = useVelocityStore((state) => state.focusMode);
   const toggleFocusMode = useVelocityStore((state) => state.toggleFocusMode);
   const tableDensity = useVelocityStore((state) => state.tableDensity);
-  const toggleTableDensity = useVelocityStore((state) => state.toggleTableDensity);
   const setTableDensity = useVelocityStore((state) => state.setTableDensity);
-  const setTableConfig = useVelocityStore((state) => state.setTableConfig);
-  const setSearchQuery = useVelocityStore((state) => state.setSearchQuery);
   const reset = useVelocityStore((state) => state.reset);
-  const openFilterModal = useVelocityStore((state) => state.openFilterModal);
-  const removeFilter = useVelocityStore((state) => state.removeFilter);
-  const hoveredVariableSetId = useVelocityStore((state) => state.hoveredVariableSetId);
   const transformLog = useVelocityStore((state) => state.transformLog);
   const lastSeenTransformCount = useVelocityStore((state) => state.lastSeenTransformCount);
   const markTransformsSeen = useVelocityStore((state) => state.markTransformsSeen);
   const opfsAvailable = useVelocityStore((state) => state.opfsAvailable);
   const persistenceMode = useVelocityStore((state) => state.persistenceMode);
   const persistenceError = useVelocityStore((state) => state.persistenceError);
+
+  const [recipeOpen, setRecipeOpen] = React.useState(false);
+  const draggingId = useVelocityStore((state) => state.draggingId);
+  const recipePanelExpanded = recipeOpen || !!draggingId;
 
   React.useEffect(() => {
     if (lastSeenTransformCount < 0) {
@@ -98,33 +81,16 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
     sensors,
     customCollisionDetection,
     activeDragSet,
-    selectedSetIds,
     variableContextMenu,
     setVariableContextMenu,
-    weightEnabled,
     rememberedWeightVar,
+    weightEnabled,
     handleDragStart,
     handleDragEnd,
-    handleVariableClick,
-    handleContextMenu,
     handleRecodeClick,
     handleToggleWeight,
     handleWeightRemove,
   } = useDashboardDnD();
-
-  const [sidebarCollapsed, setSidebarCollapsed] = React.useState(false);
-  const [sidebarUserToggled, setSidebarUserToggled] = React.useState(false);
-  const { activeTip, dismissActiveTip } = useContextualMicroTips();
-
-  React.useEffect(() => {
-    const media = window.matchMedia('(max-width: 1279px)');
-    const apply = () => {
-      if (!sidebarUserToggled) setSidebarCollapsed(media.matches);
-    };
-    apply();
-    media.addEventListener('change', apply);
-    return () => media.removeEventListener('change', apply);
-  }, [sidebarUserToggled]);
 
   const prevDensityRef = React.useRef<'compact' | 'generous'>('compact');
   const wasFocusedRef = React.useRef(focusMode);
@@ -148,27 +114,6 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
     wasFocusedRef.current = isFocused;
   }, [focusMode, setTableDensity]);
 
-  const toggleSidebar = () => {
-    setSidebarUserToggled(true);
-    setSidebarCollapsed((collapsed) => !collapsed);
-  };
-
-  const variables = dataset?.variables || [];
-  const filename = dataset?.name || '';
-  const totalRows = dataset?.rowCount || queryResult.reduce((sum, r) => sum + r.count, 0);
-  const displaySets = filterSyntheticGridShellSets(variableSets || [], dataset);
-
-  const inUseIds = new Set([...tableConfig.rowVars, ...(tableConfig.colVar ? [tableConfig.colVar] : [])]);
-
-  const filteredSets = displaySets
-    .filter((s) => !inUseIds.has(s.id))
-    .filter((s) => !s.hidden)
-    .filter((s) => s.name.toLowerCase().includes(searchQuery.toLowerCase()));
-
-  const weightSetId = dataset?.weightVariable
-    ? (variableSets.find((s) => s.variableIds.includes(dataset.weightVariable!))?.id ?? null)
-    : null;
-
   return (
     <AppShell>
       <DndContext
@@ -177,120 +122,75 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       >
-        <motion.div {...getMotionProps({ preset: 'fade', duration: DURATIONS.enter })} className="flex h-screen">
-          <DashboardSidebar
-            focusMode={focusMode}
-            sidebarCollapsed={sidebarCollapsed}
-            onToggleSidebar={toggleSidebar}
-            searchQuery={searchQuery}
-            onSearchChange={setSearchQuery}
-            filteredSets={filteredSets}
-            selectedSetIds={selectedSetIds}
-            selectedVariableSetId={selectedVariableSetId}
-            hoveredVariableSetId={hoveredVariableSetId}
-            onRecode={handleRecodeClick}
-            onVariableClick={handleVariableClick}
-            onContextMenu={handleContextMenu}
-            rowIds={new Set(tableConfig.rowVars)}
-            colId={tableConfig.colVar}
-            weightId={weightSetId}
-            filename={filename}
-            totalRows={totalRows}
-            dataset={dataset}
+        <div className="flex h-screen">
+          <StoryRail
             persistence={persistence}
             opfsAvailable={opfsAvailable}
             persistenceMode={persistenceMode}
             persistenceError={persistenceError}
           />
 
-          <main className="flex-1 flex flex-col bg-[var(--bg-app)] relative overflow-hidden z-0">
+          <main
+            id="main-content"
+            className="flex-1 flex flex-col bg-[var(--bg-app)] relative overflow-hidden z-0 min-w-0"
+          >
             <DashboardToolbar
               dataset={dataset}
               activeSlideId={activeSlideId}
               activeSlide={activeSlide}
               focusMode={focusMode}
-              tableDensity={tableDensity}
               canOpenExport={canOpenExport}
+              recipeOpen={recipeOpen}
+              onToggleRecipe={() => setRecipeOpen((open) => !open)}
               onReturnToWorkspace={onReturnToWorkspace}
               onOpenSessionImport={onOpenSessionImport}
               onExportSession={onExportSession}
               onExport={handleExport}
               onToggleFocusMode={toggleFocusMode}
-              onToggleTableDensity={toggleTableDensity}
               onReset={reset}
             />
 
-            <FilterBar
-              filters={activeFilters}
-              variables={variables}
-              onAddFilter={openFilterModal}
-              onRemoveFilter={removeFilter}
-            />
-
-            <div className="flex-1 flex flex-col min-h-0 bg-[var(--bg-app)]">
-              <AnalysisShelf
-                focusMode={focusMode}
-                draggingId={draggingId}
-                tableConfig={tableConfig}
-                variableSets={variableSets}
-                dataset={dataset}
-                rememberedWeightVar={rememberedWeightVar}
-                weightEnabled={weightEnabled}
-                onSetTableConfig={setTableConfig}
-                onWeightRemove={handleWeightRemove}
-                onToggleWeight={handleToggleWeight}
-              />
-
-              <SmartCanvas className={`flex-1 relative min-h-0 flex flex-col ${focusMode ? 'p-2' : 'p-4'}`}>
+            <div className="flex-1 flex min-h-0 min-w-0 overflow-hidden" data-testid="dashboard-workspace">
+              <SmartCanvas
+                className={`flex-1 min-h-0 min-w-0 overflow-hidden flex flex-col ${focusMode ? 'p-2' : 'p-4'}`}
+              >
                 <div className="flex-1 w-full min-h-0 flex flex-col">
-                  <div
-                    className={`flex-1 relative min-h-0 flex flex-col ${
-                      focusMode
-                        ? 'bg-transparent border-0 shadow-none rounded-none'
-                        : 'bg-[var(--bg-panel)] rounded-xl border border-[var(--border-color)] shadow-sm'
-                    }`}
-                  >
+                  <div className="flex-1 relative min-h-0 flex flex-col">
                     {isQuerying && (
-                      <div className="absolute inset-0 bg-[var(--bg-panel)]/50 z-20 flex items-center justify-center backdrop-blur-sm">
-                        <Loader2 className="animate-spin text-[var(--color-accent)]" size={32} />
+                      <div className="absolute inset-0 bg-[var(--bg-panel)]/50 z-[var(--z-sticky)] flex items-center justify-center backdrop-blur-sm">
+                        <Loader2 className="animate-spin text-[var(--text-secondary)]" size={32} />
                       </div>
                     )}
                     <div className="flex-1 min-h-0 flex flex-col">
                       <SlideContainer className="flex-1 min-h-0" />
                     </div>
-                    <div className={`transition-all duration-300 ${focusMode ? 'h-0 opacity-0 overflow-hidden' : ''}`}>
-                      <TimelineDock />
-                    </div>
                   </div>
                 </div>
               </SmartCanvas>
+
+              <div
+                className={`relative z-10 shrink-0 h-full overflow-hidden transition-[width] duration-150 ease-out ${
+                  recipePanelExpanded ? 'w-[280px]' : 'w-0'
+                }`}
+                data-recipe-expanded={recipePanelExpanded ? 'true' : 'false'}
+              >
+                <RecipeInspector
+                  open={recipeOpen}
+                  weightEnabled={weightEnabled}
+                  rememberedWeightVar={rememberedWeightVar}
+                  onWeightRemove={handleWeightRemove}
+                  onToggleWeight={handleToggleWeight}
+                />
+              </div>
             </div>
           </main>
-        </motion.div>
+        </div>
 
-        <DragOverlay
-          dropAnimation={{
-            duration: 300,
-            easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
-          }}
-        >
-          {activeDragSet ? (
-            <motion.div
-              initial={{
-                scale: 1.02,
-                boxShadow: '0 8px 24px color-mix(in srgb, var(--text-primary) 12%, transparent)',
-              }}
-              animate={{
-                scale: 1.05,
-                boxShadow: '0 12px 32px color-mix(in srgb, var(--text-primary) 18%, transparent)',
-              }}
-              exit={{ scale: 1, boxShadow: '0 4px 12px color-mix(in srgb, var(--text-primary) 8%, transparent)' }}
-              transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-            >
-              <VariableCard variableSet={activeDragSet} isOverlay />
-            </motion.div>
-          ) : null}
+        <DragOverlay dropAnimation={{ duration: 150, easing: 'cubic-bezier(0.4, 0, 0.2, 1)' }}>
+          {activeDragSet ? <VariableCard variableSet={activeDragSet} isOverlay /> : null}
         </DragOverlay>
+
+        <CommandPalette withinDnd />
 
         {variableContextMenu && (
           <ContextMenu
@@ -309,8 +209,6 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
           />
         )}
       </DndContext>
-      <FirstCrosstabTourOverlay />
-      {activeTip && <ContextualMicroTipChip tip={activeTip} onDismiss={dismissActiveTip} />}
     </AppShell>
   );
 };

@@ -38,7 +38,7 @@
   width: 5px;
   height: 5px;
   border-radius: 1px;
-  background: var(--color-accent);
+  background: var(--border-color-active);
 }
 
 .slideThumbnail {
@@ -71,7 +71,7 @@
   flex: 1;
   height: 6px;
   border-radius: 1px;
-  background: var(--color-accent);
+  background: var(--border-color-active);
 }
 
 .miniBars {
@@ -87,7 +87,7 @@
   flex: 1;
   max-width: 10px;
   border-radius: 1px 1px 0 0;
-  background: var(--color-accent);
+  background: var(--border-color-active);
   min-height: 4px;
 }
 
@@ -104,6 +104,6 @@
   align-items: center;
   gap: var(--space-1);
   font-size: var(--text-xxs);
-  color: var(--color-accent);
+  color: var(--border-color-active);
   font-family: var(--font-mono);
 }

@@ -1,8 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useVelocityStore } from '../../store';
 import { VariableManager } from '../../features/variableManager/VariableManager';
-import { Database } from 'lucide-react';
 import { getMotionProps, useReducedMotion, DURATIONS, EASINGS } from '../../lib/motion';
 import { registerShortcut, setManagerShortcutContext } from '../../lib/keyboardShortcuts/registry';
 
@@ -91,10 +90,26 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
     }
   }, [appMode, focusMode, setFocusMode]);
 
+  const canvasRef = useRef<HTMLDivElement>(null);
+  const isCanvasHidden = appMode === 'variables';
+  const supportsInert = typeof HTMLElement !== 'undefined' && 'inert' in HTMLElement.prototype;
+
+  useEffect(() => {
+    const el = canvasRef.current;
+    if (!el || !supportsInert) return;
+    el.inert = isCanvasHidden;
+  }, [isCanvasHidden, supportsInert]);
+
   return (
     <div className="relative h-screen overflow-hidden">
+      <a href="#main-content" className="skip-link">
+        Skip to main content
+      </a>
       {/* Analysis Canvas (always rendered, recedes when Variable Manager is open) */}
       <motion.div
+        ref={canvasRef}
+        aria-hidden={isCanvasHidden ? true : undefined}
+        data-testid="analysis-canvas"
         animate={{
           scale: appMode === 'variables' ? 0.95 : 1,
           filter: appMode === 'variables' ? 'blur(4px)' : 'blur(0px)',
@@ -118,68 +133,12 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
               ease: 'standard',
               reducedMotion,
             })}
-            className="absolute inset-0 z-50"
+            className="absolute inset-0 z-[var(--z-modal)]"
           >
             <VariableManager onClose={toggleAppMode} />
           </motion.div>
         )}
       </AnimatePresence>
     </div>
-  );
-};
-
-/**
- * Mode Toggle Button
- * Placed in the header to switch between modes.
- */
-export const ModeToggleButton: React.FC = () => {
-  const appMode = useVelocityStore((state) => state.appMode);
-  const toggleAppMode = useVelocityStore((state) => state.toggleAppMode);
-  const transformLog = useVelocityStore((state) => state.transformLog);
-  const lastSeenTransformCount = useVelocityStore((state) => state.lastSeenTransformCount);
-  const markTransformsSeen = useVelocityStore((state) => state.markTransformsSeen);
-
-  const hasNewTransforms = lastSeenTransformCount >= 0 && transformLog.length > lastSeenTransformCount;
-
-  const handleClick = () => {
-    if (appMode !== 'variables') {
-      markTransformsSeen(transformLog.length);
-    }
-    toggleAppMode();
-  };
-
-  const newsTitle =
-    hasNewTransforms && appMode !== 'variables'
-      ? `${transformLog.length - lastSeenTransformCount} new transform${transformLog.length - lastSeenTransformCount === 1 ? '' : 's'} since your last visit`
-      : 'Toggle Variable Manager (D)';
-
-  return (
-    <button
-      onClick={handleClick}
-      className={`
-                relative flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium
-                transition-all duration-150
-                ${
-                  appMode === 'variables'
-                    ? 'bg-[var(--color-accent)] text-[var(--text-inverse)] shadow-sm'
-                    : 'text-[var(--text-secondary)] hover:text-[var(--color-accent)] hover:bg-[var(--bg-active)]'
-                }
-            `}
-      title={newsTitle}
-      data-testid="mode-toggle-variables"
-    >
-      <Database size={14} />
-      <span>Variables</span>
-      {hasNewTransforms && appMode !== 'variables' && (
-        <span
-          className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-[var(--color-accent)] ring-2 ring-[var(--bg-panel)]"
-          data-testid="manager-change-dot"
-          aria-hidden
-        />
-      )}
-      <kbd className="hidden sm:inline-block text-[10px] px-1 py-0.5 bg-[var(--border-color)] rounded ml-1 text-[var(--text-secondary)]">
-        D
-      </kbd>
-    </button>
   );
 };

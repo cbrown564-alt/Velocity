@@ -1,11 +1,10 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useReducedMotion, getMotionProps, getModalPresenceProps, DURATIONS } from '../../../lib/motion';
-import { Clock, Star, StarOff, MoreHorizontal, Database, ArrowUpRight, Check, Sparkles } from 'lucide-react';
+import { Star, StarOff, MoreHorizontal, Database, ArrowUpRight, Check, Sparkles } from 'lucide-react';
 import type { StoredDataset, Project } from '../types';
 import { formatDeckSummaryTooltip } from '../lib/returningResearcher';
 import { formatFileSize, formatRelativeTime } from '../lib/workspaceFormatters';
-import { DatasetPortrait } from './DatasetPortrait';
 import { ProjectBadge, WaveBadge } from './WorkspaceBadges';
 import styles from './WorkspaceDatasetCard.module.css';
 
@@ -21,7 +20,6 @@ export const WorkspaceDatasetCard: React.FC<{
 }> = ({ dataset, project, isSelected, onSelect, onOpen, onToggleStar, onContextMenu }) => {
   const reducedMotion = useReducedMotion();
   const hasSession = Boolean(dataset.sessionState);
-  const isRecentlyOpened = Date.now() - dataset.lastOpenedAt < 24 * 60 * 60 * 1000;
   const deckSummary = formatDeckSummaryTooltip(dataset);
 
   return (
@@ -45,8 +43,6 @@ export const WorkspaceDatasetCard: React.FC<{
           </motion.div>
         )}
       </div>
-
-      {isRecentlyOpened && <span className={styles.activityDot} title="Opened recently" />}
 
       <button
         className={`${styles.starButton} ${dataset.starred ? styles.starred : ''}`}
@@ -74,22 +70,19 @@ export const WorkspaceDatasetCard: React.FC<{
           <span>{formatFileSize(dataset.fileSize)}</span>
         </div>
 
-        <DatasetPortrait dataset={dataset} />
-
         <div className={styles.badges}>
           {project && <ProjectBadge project={project} compact />}
           {dataset.waveNumber && <WaveBadge waveNumber={dataset.waveNumber} />}
+          {hasSession && (
+            <span className={styles.sessionBadge} title={deckSummary ?? 'Session saved'}>
+              <Sparkles size={10} />
+              Session
+            </span>
+          )}
         </div>
 
         <div className={styles.lastOpened}>
-          <Clock size={12} />
           <span>{formatRelativeTime(dataset.lastOpenedAt)}</span>
-          {hasSession && (
-            <span className={styles.sessionIndicator}>
-              <Sparkles size={10} />
-              Session saved
-            </span>
-          )}
         </div>
       </div>
 

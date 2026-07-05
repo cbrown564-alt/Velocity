@@ -56,6 +56,14 @@ graph TD
   P5 --> P6
   P6 --> P7["PILOT-7 Readout + Roadmap Gate"]
 
+  P0 --> PD1["PILOT-DEMO-1 Tracker Dataset (Done)"]
+  PD1 --> PD2["PILOT-DEMO-2 Recipe Demo (Done)"]
+  PD1 --> PD3["PILOT-DEMO-3 Tracker Deck (Done)"]
+  PD2 --> PD4["PILOT-DEMO-4 Integration + EVAL-07 (Done)"]
+  PD3 --> PD4
+  PD4 -. demo asset .-> P6
+  PD2 -. gap signals .-> P4A
+
   STABUIC["STAB-UI-C Complete"] --> STABUID["STAB-UI-D Done"]
   STABUID --> UXRREM["UXR Program Complete"]
   UXRREM --> STABUIF["STAB-UI-F Presentation"]
@@ -69,6 +77,20 @@ graph TD
   STABUIT7["STAB-UI-T7 Recode wiring"] --> STABUIT2["STAB-UI-T2 Modal foundation"]
   STABUIT4["STAB-UI-T4 Z-index"] --> STABUIT2
   STABUIT --> STABUIF
+
+  DR1["DESIGN-RESET-1 Done"] --> DCA["DESIGN-CONV-A Pilot evidence"]
+  DR1 --> DCB["DESIGN-CONV-B Export preview"]
+  DCA --> DCC["DESIGN-CONV-C Recent strip"]
+  DCA --> DCD["DESIGN-CONV-D Palette onboarding"]
+  DCB --> DCH["DESIGN-CONV-H Canvas handoff"]
+  DCB --> DCI["DESIGN-CONV-I Recipe diff"]
+  DCB --> DCQ6["DESIGN-CONV-Q6 Recipe legibility"]
+  DCC --> DCE["DESIGN-CONV-E Deck templates"]
+  DCD --> DCF["DESIGN-CONV-F NL palette"]
+  DCB --> DCG["DESIGN-CONV-G Collapsible rail"]
+  DCB --> DCQ5["DESIGN-CONV-Q5 Retire focus mode"]
+  DCB --> DCJ["DESIGN-CONV-J Dark mode"]
+  DCB -. supports .-> P6
 
   P7 -. gate .-> S5R1["S5-R-1 WebR Bridge"]
   P7 -. gate .-> S5PREP1["S5-PREP-1 Recipe Manager"]
@@ -100,6 +122,10 @@ Completed Phase 1-4, stabilization, UI polish, engine/MCP, export, parity, and h
 | PILOT-5 | Bounded Agent Outcomes | Package the agent as auditable outcomes, not infrastructure: first-pass deck, tracker update, client-request assistant; manual control adjacent to every action | PILOT-2, PILOT-3, PILOT-4b if needed | Not started | Yes | T,L,U,I,A,V | Deck-native Gate 5 technical foundation exists (`VelocityEngine.draftDeckPlan`, `velocity_draft_deck_plan`, approval-required actions, malformed-spec rejection, variable-reference caveats), but full `PILOT-5` remains unpromoted until human acceptance, observed time reduction, and trust/correction evidence are available. |
 | PILOT-6 | Paid Pilot Program | Recruit and run 5-8 qualified paid boutique-agency/consultant pilots | PILOT-0; can start before PILOT-3 if scope is explicit | In progress | No | V | Program kit + execution workflow: [`docs/pilot_06_paid_pilot_program.md`](pilot_06_paid_pilot_program.md), [`docs/pilot_evidence_collection_checklist.md`](pilot_evidence_collection_checklist.md); remaining gate evidence: signed paid commitments + observed workflow records |
 | PILOT-7 | Roadmap Gate | Decide whether to continue, narrow, pause, or expand based on paid-pilot evidence; update roadmap, feature matrix, and this tracker | PILOT-6 | Not started | No | A,V | Decision memo with metrics, retained wedge, rejected assumptions, next 1-3 workstreams |
+| PILOT-DEMO-1 | Demo Asset | Brand tracker synthetic dataset + ground truth (plan Phase A): deterministic generator, 5 committed waves + raw W4, rim weights, planted SCR storyline, engine-parity golden test | PILOT-0 | Done | No | T,L,U,G | [`docs/workstreams/deck_native/10_brand_tracker_demo_plan.md`](workstreams/deck_native/10_brand_tracker_demo_plan.md) §7 Phase A — `scripts/python/generate_brand_tracker.py` + config; `public/examples/brandtracker_w4.sav`; `test_data/fixtures/brand_tracker/`; `validation/brand_tracker_ground_truth.json`; `tests/golden/brand_tracker_parity.test.ts` (12 tests green); full `npm run ci` pass (2026-07-03) |
+| PILOT-DEMO-2 | Demo Asset | Transformation recipe demo + gap log (plan Phase B): raw W4 → analysis-ready via existing engine primitives; gaps logged as PILOT-4a internal signals | PILOT-DEMO-1 | Done | No | T,L,U,I,A | Plan §4 — `scripts/brand-tracker-recipe-demo.ts` runs steps 1–10 with zero manual repair (exit 0; `npm run demo:brand-tracker-recipe`); session round-trip replay test `src/engine/__tests__/brand_tracker_recipe_roundtrip.test.ts` (green); gap signals INF-06…INF-09 added to [`docs/pilot_04a_processing_gap_discovery.md`](pilot_04a_processing_gap_discovery.md) §7 + walkthrough [`docs/workstreams/deck_native/brand_tracker_recipe_gap_log.md`](workstreams/deck_native/brand_tracker_recipe_gap_log.md); no new engine surface (2026-07-03) |
+| PILOT-DEMO-3 | Demo Asset | Tracker deck + north-star exemplar candidate (plan Phase C): `scripts/brand-tracker-demo.ts`, ~18-slide deck per story template, rubric-scored exemplar artifacts | PILOT-DEMO-1 | Done | No | T,L,U,I | Plan §5 Phase C — `scripts/brand-tracker-demo.ts` (`npm run demo:brand-tracker`, exit 0) builds an 18-slide deck (28 physical w/ dividers) on `public/examples/brandtracker_w4.sav`, weighted `wt`; golden PPTX `tests/fixtures/export/brandtracker-report.pptx`. Action titles use planted ground-truth numbers (sig movers stated; "worth the price" broadly stable; NPS low-base caveat). Exemplar candidate artifacts in `demo/artifacts/report-quality/exemplars/` (`brandtracker_w4_deck_candidate.md`, `_conformance.md` 10/10 checklist + narrative band 3, `_action_title_eval.json`, `_pptx_inspection.json`). inspect-pptx matches `sleep-report.pptx` baseline; T/L pass. Human sign-off still pending for promotion |
+| PILOT-DEMO-4 | Demo Asset | Demo integration + wave refresh + EVAL-07 (plan Phase D): Load Example swap, autoFirstCrosstab, demo contracts, e2e, wave-5 refresh, EVAL-07 freeze | PILOT-DEMO-2, PILOT-DEMO-3 | Done | No | T,L,U,I,G,V | Plan §6/§5.3 Phase D — brand tracker is the primary Load Example (`useFileUpload.ts`, sleep.sav retained as backup + fallback); funnel-relevant auto-first-crosstab (brand preference × segment) in `autoFirstCrosstab.ts`; demo contracts `demo/contracts/brand-tracker-{load,recipe,deck-export,wave-refresh}.json`; e2e smoke `tests/e2e/brand-tracker-workflow.spec.ts`; wave-5 refresh demo `scripts/brand-tracker-wave-refresh-demo.ts` (`npm run demo:brand-tracker-wave-refresh`, exit 0 — dataset-replacement review READY, recomputed titles flagged for confirmation, flat-mover demotion, RECIPE-REPLAY/INF-04 made legible); trust-pack parity commands added (`pilot_02_trust_pack.md` §3.3, §9); **EVAL-07 frozen** (`evals/eval-07/` brief + `runs/run-2026-07-03/` scorecard/gap_review/summary.json + deck/session artifacts, `npm run eval:07`). Frozen EVAL-01…06 and sleep.sav roles untouched; no new engine surface. Consultant sign-off (`brand_tracker_north_star_signoff.md`) remains the exemplar-promotion bar (2026-07-03) |
 
 #### Dependency Notes
 
@@ -112,10 +138,11 @@ Completed Phase 1-4, stabilization, UI polish, engine/MCP, export, parity, and h
 
 #### Recommended Next Pull
 
-1. **`audit_07` PPR P0 bundle** — coaching discipline (PPR-005), shrink-wrap hero frame (UXF-004), label truncation (PPR-004), chart axis/legend (UXF-002/PPR-008), resume trust (PPR-016). Re-screenshot per [`assets/ui-pilot-readiness-audit/`](assets/ui-pilot-readiness-audit/README.md) before PILOT-6 demo photography.
-2. `PILOT-4a`: continue processing gap discovery with external project/file reviews.
-3. `PILOT-6`: recruit paid pilots only after PPR P0 closes or demo scope explicitly avoids hero-output screenshots.
-4. `STAB-UI-F5`: accessibility themes (only if pilot requests).
+1. `DESIGN-CONV-B`: export preview lane before PPTX (confirmed convergence decision).
+2. `DESIGN-CONV-A`: post-reset pilot photography + unscripted session evidence loop.
+3. `PILOT-4a`: continue processing gap discovery with external project/file reviews.
+4. `PILOT-6`: recruit paid pilots — blocked on post-reset photography (`DESIGN-CONV-A`).
+5. `STAB-UI-F5`: accessibility themes (only if pilot requests).
 
 ### 4.2 Future Gates
 
@@ -137,29 +164,102 @@ These rows remain directionally valid, but should not become active until `PILOT
 
 **Source:** July 2026 full UI audit; extends closed `STAB-UI-P` / UXR programs.  
 **Reference:** [`docs/plan_02_ui_presentation_workstream.md`](plan_02_ui_presentation_workstream.md) — findings register (`UXF-###`), slice specs, acceptance checklists.  
-**Pilot presentation gate:** [`docs/audit_07_pilot_presentation_readiness_2026-07-01.md`](audit_07_pilot_presentation_readiness_2026-07-01.md) — Linear-bar workflow screenshot audit (July 1, 2026). Tracker rows F1–F4 marked Done below reflect shipped slices; **PPR P0 items in audit §5 remain open** for paid-pilot demo readiness.  
+**Pilot presentation gate:** [`docs/audit_07_pilot_presentation_readiness_2026-07-01.md`](audit_07_pilot_presentation_readiness_2026-07-01.md) — Linear-bar workflow screenshot audit (July 1, 2026). **Gate closed July 2, 2026** — PPR P0/P1/P2 shipped in [PR #18](https://github.com/cbrown564-alt/velocity/pull/18); post-fix evidence in [`screenshots-p2-final/`](assets/ui-pilot-readiness-audit/screenshots-p2-final/).  
 **Goal:** Client-presentable crosstab/chart slides and credible first-five-minutes activation for `PILOT-6`.
 
 | ID | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence / validation |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| STAB-UI-F1 | Hero output | Overflow/scroll affordance, content-aware slide height, table↔chart transition, statistics visibility toggles (UXP-040 / UXF-001–005) | STAB-UI-P (Done) | Done | Yes | T,L,U,I,A | **P0 slice Done (PR #6):** widened slide frame, horizontal scroll, chart placeholder. **F1.2 Done:** compact table shrink-wrap via `AnalysisOutputFrame.shrinkWrap` + `SlideContainer` flex contract. **F1.4 Done:** `showCellN` / `showColumnBases` toggles in `AnalysisSettingsPanel`; layout reflow without ghost gutters. |
-| STAB-UI-F2 | Chrome density | Focus discoverability, compact timeline, accent budget, Variable Manager inspector empty state (UXF-006–009) | STAB-UI-F1 | Done | No | T,L,U,I | **F2.1–F2.4 Done:** Focus discoverability via micro-tip chips; timeline dock compact default (`h-12` / 48px) with hover expand; inactive slide labels hidden until dock hover; slide title hover uses primary not accent; VM inspector guided empty state (`variable-inspector-empty`). |
-| STAB-UI-F3 | Activation | Welcome-back label hydration, first-crosstab spotlight, contextual tips, workspace banner discipline (UXF-010–012, UXF-014) | None | Done | Yes | T,L,U,I,V | **F3.1–F3.4 Done:** welcome-back labels; first-crosstab tour; **F3.3** contextual micro-tips (Focus, Export, Variable Manager) via `contextualMicroTips.ts` + `ContextualMicroTipChip`; **F3.4** combined `WorkspaceStatusStrip` with session-scoped dismiss. Tests: `contextualMicroTips.test.ts`, `WorkspaceStatusStrip.test.tsx`. |
-| STAB-UI-F4 | Command palette | Variable search → shelf actions, export/focus/filter commands, empty-state `⌘K` hint (UXF-013) | STAB-UI-C (Done) | Done | No | T,L,U | `CommandPalette.tsx` variable search + shelf actions (rows/columns/weight), wired export/filter/workspace commands, `commandPaletteSearch.ts`, `useAnalysisExportAction.ts`, SlideContainer/DropZone ⌘K hints; tests in `CommandPalette.test.tsx`, `commandPaletteSearch.test.ts` |
-| STAB-UI-F5 | Accessibility themes | High-contrast + colorblind significance themes; splash contrast fix (UXF-015–016) | STAB-UI-F1 | Frozen | Yes | T,L,U,I | Plan §F5; `themes.ts`, `ThemeSwitcher`; defer until F1–F3 complete or pilot requests |
+| STAB-UI-F1 | Hero output | Overflow/scroll affordance, content-aware slide height, table↔chart transition, statistics visibility toggles (UXP-040 / UXF-001–005) | STAB-UI-P (Done) | Done | Yes | T,L,U,I,A | **PR #6:** widened slide frame, horizontal scroll, chart placeholder. **F1.2 PR #18:** shrink-wrap via `AnalysisOutputFrame.shrinkWrap` + content-sized charts. **F1.3 PR #18:** view-switch fade. **F1.4:** `showCellN` / `showColumnBases` toggles; deck-clean defaults off. UXF-001–005 closed. **July 3:** UXF-017 LG header fix; mulberry32 example data; status-bar display toggles; CrosstabCell layout-flow when `n=` hidden. |
+| STAB-UI-F2 | Chrome density | Focus discoverability, compact timeline, accent budget, Variable Manager inspector empty state (UXF-006–009) | STAB-UI-F1 | Done | No | T,L,U,I | **F2.1–F2.4 Done:** Focus discoverability via micro-tip chips; timeline dock compact default; inactive slide labels hidden until dock hover; slide title hover uses primary not accent; VM inspector guided empty state. **PR #18:** focus toolbar hide (PPR-011), VM column expand (UXF-009). |
+| STAB-UI-F3 | Activation | Welcome-back label hydration, first-crosstab spotlight, contextual tips, workspace banner discipline (UXF-010–012, UXF-014) | None | Done | Yes | T,L,U,I,V | **F3.1–F3.4 Done:** welcome-back labels (**PR #18** catalog hydration). **PR #18 PPR-005:** corner coaching chips + session-scoped dismiss; resume trust (PPR-016). Contextual micro-tips via `contextualMicroTips.ts`; `WorkspaceStatusStrip`. Tests: `contextualMicroTips.test.ts`, `firstCrosstabTour.test.ts`, `WorkspaceStatusStrip.test.tsx`. |
+| STAB-UI-F4 | Command palette | Variable search → shelf actions, export/focus/filter commands, empty-state `⌘K` hint (UXF-013) | STAB-UI-C (Done) | Done | No | T,L,U | `CommandPalette.tsx` variable search + shelf actions; **PR #18 PPR-012** neutral focus ring. Tests: `CommandPalette.test.tsx`, `commandPaletteSearch.test.ts` |
+| STAB-UI-F5 | Accessibility themes | High-contrast + colorblind significance themes (UXF-016) | STAB-UI-F1 | Frozen | Yes | T,L,U,I | UXF-015 splash contrast closed in PR #18; UXF-016 high-contrast/colorblind themes deferred until pilot requests |
+| STAB-UI-F6 | Nested row chart semantics | Define and implement chart representation for nested row recipes (e.g. measure parent + categorical children); table supports expand/collapse but chart renderers consume top-level `processedData.rows` only — scope, chart type, and table↔chart sync TBD | STAB-UI-F1; nested-row crosstab table fix (July 2026) | Not started | Yes | T,L,U,I,A | **Follow-up (July 2026).** Example: Age (numeric) + Region (nested) × Gender — table shows Age means with expandable Region rows; chart currently plots parent row only (means) or misaligns mixed metric/frequency semantics. Design options to evaluate: parent-only default, explicit drill level / row picker, small multiples by nested var, inherit table expand state, or chart-only flatten to leaves. See `arch_05_visualisation_engine.md`, `user_journey_screenshots.md` §2.2 open question. |
 
 #### STAB-UI-F Dependency Notes
 
 - **F3.1** (welcome UUID) has no dependency on F1 — pull first for a quick trust win.
 - **F1** blocks **F2** (shared slide frame contract) and **F5** (significance color stability).
 - **F4** can run in parallel with F1/F3 after palette API is agreed in plan §F4.
+- **F6** is a design follow-up from the July 2026 nested-row crosstab fix — do not block pilot on it; requires a short design brief before implementation (mixed metric + frequency semantics, table expand state vs chart scope).
 - Do not expand scope into Liquid Glass maturity, mobile layout, or component monolith refactors without `PILOT-7` gate.
 - Update `UXF-###` status in the plan doc when each finding closes; link PR URLs in tracker row notes on merge.
 
 #### STAB-UI-F Recommended Pull
 
-1. **`audit_07` PPR P0** — see [`audit_07_pilot_presentation_readiness_2026-07-01.md`](audit_07_pilot_presentation_readiness_2026-07-01.md) §5–§6 (coaching + hero frame + truncation first).
-2. `STAB-UI-F5` accessibility themes (only if pilot requests).
+1. `PILOT-6` paid pilot recruiting (presentation gate closed — PR #18).
+2. `PILOT-4a` processing gap discovery.
+3. `STAB-UI-F5` accessibility themes (only if pilot requests).
+
+### 4.3.1 Design Reset — Pathway B (`DESIGN-RESET-1`)
+
+**Source:** [`docs/plan_05_design_reset_implementation.md`](plan_05_design_reset_implementation.md) — deck-first IA inversion + single evolved Soft Machine identity (July 2026).
+
+| ID | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence / validation |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| DESIGN-RESET-1 | Full reset (phases 0–4) | Single theme; story rail; insert palette; recipe inspector; honest slide; two-pane VM; density/craft; evidence pack | STAB-UI-F (partial supersession) | Done | Yes | T,L,U,I,V | Branch `cursor/design-reset-integration-69a6` @ `a655c0d`; screenshot pack [`docs/assets/design-reset-evidence/`](assets/design-reset-evidence/); docs `design_01_system.md`, `design_02_ux_modes.md` reconciled; E2E theme baseline `visual-polish-theme-table.spec.ts`; **PILOT-6 re-screenshot flagged** (photography predates reset) |
+
+**Supersedes (do not re-implement):** multi-theme switcher, resident variable sidebar, analysis shelf, timeline dock, coaching layer. STAB-UI-F2/F3/F4 rows remain historical; behavior now matches plan_05.
+
+### 4.3.2 Design Reset Convergence (`DESIGN-CONV`)
+
+**Source:** [`docs/assets/design-reset-evidence/before_after_analysis.html`](assets/design-reset-evidence/before_after_analysis.html) — key questions (Q1–Q7) and diverse paths forward (A–J).  
+**Decision date:** July 4, 2026 — product owner review of post-reset evidence pack.  
+**Goal:** Close convergence gaps on Sarah's five-minute journey (file-drop → three slides → PPTX) without re-litigating Pathway B. All paths A–J approved for execution; sequencing below reflects dependencies and decisions.
+
+#### Convergence decisions (Q1–Q7)
+
+| Q | Question | Decision | Tracker action |
+| :--- | :--- | :--- | :--- |
+| Q1 | Is summon-only variable discovery fast enough for drag-first consultants? | **Open — explore options.** Early feedback: summon-only feels unintuitive; consultants are not programmers. Do not assume ⌘K-only holds without evidence. Evaluate thin resident affordances (Path C) and one-time palette onboarding (Path D) before expanding summon-only. | `DESIGN-CONV-C`, `DESIGN-CONV-D`; `DESIGN-CONV-A` supplies behavioral evidence |
+| Q2 | Does the story rail earn its 240px on 1–2 slide decks? | **Proceed via Path G.** Collapsible rail reclaims space on small decks without abandoning deck-native IA. | `DESIGN-CONV-G` |
+| Q3 | Where does "review before export" live? | **Confirmed: deck preview step before PPTX.** Export is still fire-and-download; add a review lane (Path B) as a journey requirement, especially for agent-built sessions. | `DESIGN-CONV-B` — **Wave 1 priority** |
+| Q4 | Can we teach palette grammar without reintroducing coaching? | **Proceed via Path D.** One-time inline ghost inside the palette — dismiss forever, no tour overlay. | `DESIGN-CONV-D` |
+| Q5 | Is focus mode still a mode? | **Focus mode is redundant.** Default chrome + honest slide is the presentation surface; retire focus mode rather than polish it. | `DESIGN-CONV-Q5` |
+| Q6 | Does the UI make recipe structure legible for additive refinement (human + MCP)? | **Open question — audit before build.** Recipe inspector exists; legibility for handoff evals unproven. Audit first; implement diff/summary if gaps found (Path I). | `DESIGN-CONV-Q6` → `DESIGN-CONV-I` |
+| Q7 | Dark mode vs journey polish? | **Dark mode after journey polish.** Token inversion of evolved Soft Machine only when a pilot blocks without it. | `DESIGN-CONV-J` — **Frozen** until Wave 4 gate |
+
+#### Execution board
+
+| ID | Path | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence / validation |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| DESIGN-CONV-A | A | Validate | Post-reset PILOT-6 photography; 3–5 unscripted first sessions scored (time-to-first-crosstab, palette discovery rate, interruption count) | DESIGN-RESET-1 | In progress | No | V,I | Re-screenshot pack in `docs/assets/design-reset-evidence/`; session scorecard template; updates `before_after_analysis.html` metrics |
+| DESIGN-CONV-B | B | Journey | Export preview lane: thumbnail filmstrip of export-bound slides, recipe summary, significance audit — review step before PPTX download | DESIGN-RESET-1 | In progress | Yes | T,L,U,I,V | E2E export flow with preview gate; agent-handoff scenario (EVAL-03); screenshot in evidence pack |
+| DESIGN-CONV-C | C | Discovery | Thin collapsible "recent & pinned" variable strip below toolbar (~32px); not a full sidebar wall | DESIGN-CONV-A | Not started | Yes | T,L,U,I,V | Accent budget audit; consultant drag-first usability pass |
+| DESIGN-CONV-D | D | Keyboard | First ⌘K on new workspace: inline 3-step ghost inside palette (search → ↵ rows → ⌥↵ columns); dismiss forever | DESIGN-RESET-1 | Not started | Yes | T,L,U,I | No coaching reappear on reopen; session-scoped dismiss flag |
+| DESIGN-CONV-E | E | Story | Workspace "Start from template" → 3-slide tracker skeleton (awareness · consideration · preference); story rail pre-populated | DESIGN-CONV-B, PILOT-DEMO-3 | Not started | Yes | T,L,U,I,V | Brand tracker template fixture; e2e template-start workflow |
+| DESIGN-CONV-F | F | Natural language | Insert palette NL row/column binding ("Q5 by segment") — variable binding only, not full AI analysis | DESIGN-CONV-D | Not started | Yes | T,L,U,I,A,V | Eval against Displayr-positioning guardrail; inspectability tests |
+| DESIGN-CONV-G | G | Polish | Story rail collapses to icon strip (&lt;48px) on single-slide sessions; expands on hover or deck growth | DESIGN-RESET-1 | Not started | Yes | T,L,U,I | Motion budget per WP3.2; screenshot at 1-slide vs 5-slide |
+| DESIGN-CONV-H | H | Continuity | After upload, land on slide 1 with palette pre-focused; reduce Workshop Door → first insertion gap | DESIGN-RESET-1 | Not started | Yes | T,L,U,I,V | Timed handoff metric in five-minute pass script |
+| DESIGN-CONV-I | I | Agent | Quiet "what changed" summary on agent session import — slides added, variables unresolved — story rail footer | DESIGN-CONV-Q6 | Not started | Yes | T,L,U,I,A | MCP handoff eval scenario; muted per calm-tech rules |
+| DESIGN-CONV-J | J | Hold | Dark mode as token inversion of evolved Soft Machine | DESIGN-CONV-B, DESIGN-CONV-H, PILOT-7 or pilot request | Frozen | Yes | T,L,U,I | Pilot blocker evidence only |
+| DESIGN-CONV-Q5 | — | Retire | Remove focus mode (`F` shortcut, toolbar toggle, focus chrome rules); default canvas is presentation surface | DESIGN-RESET-1 | Not started | Yes | T,L,U,I | E2E focus specs retired or rewritten; `design_02_ux_modes.md` updated |
+| DESIGN-CONV-Q6 | — | Audit | Recipe structure legibility review for human + MCP additive refinement; gap list before `DESIGN-CONV-I` build | DESIGN-RESET-1 | In progress | No | A,V | Written audit against recipe inspector + story rail; links to EVAL-03 handoff criteria |
+
+#### Wave plan (multi-agent orchestration)
+
+| Wave | Items | Rationale |
+| :--- | :--- | :--- |
+| **1** | `DESIGN-CONV-A`, `DESIGN-CONV-B` | Evidence loop unblocks PILOT-6 photography; export preview is confirmed P0 journey gap |
+| **2** | `DESIGN-CONV-C`, `DESIGN-CONV-D`, `DESIGN-CONV-G`, `DESIGN-CONV-Q6` | Address Q1 summon concern + Q4 onboarding + Q2 rail space; legibility audit informs Wave 3 agent UI |
+| **3** | `DESIGN-CONV-H`, `DESIGN-CONV-I`, `DESIGN-CONV-Q5` | Journey continuity, agent handoff, focus mode retirement |
+| **4** | `DESIGN-CONV-E`, `DESIGN-CONV-F` | Higher-scope delight features after core journey polish |
+| **Hold** | `DESIGN-CONV-J` | Dark mode — after journey polish or explicit pilot blocker |
+
+#### DESIGN-CONV dependency notes
+
+- **B** is the confirmed product decision; do not ship PPTX-only export flow improvements without the preview lane.
+- **C** and **D** are paired experiments for Q1 — implement both, let **A** session evidence decide which to keep.
+- **Q5** (focus retirement) should land before PILOT-6 photography so screenshots reflect final chrome.
+- **Q6** audit must complete before **I** implementation to avoid speculative agent UI.
+- **J** stays frozen until Wave 1–3 journey items reach `Done` or a pilot explicitly blocks.
+
+#### DESIGN-CONV recommended pull
+
+1. `DESIGN-CONV-B` — export preview lane (Wave 1).
+2. `DESIGN-CONV-A` — post-reset photography + session evidence (Wave 1).
+3. `DESIGN-CONV-D` + `DESIGN-CONV-C` — consultant-friendly discovery (Wave 2).
+4. `DESIGN-CONV-Q5` — retire redundant focus mode (Wave 3, before PILOT-6 re-screenshot).
 
 ### 4.4 Technical UI Foundation (`STAB-UI-T`)
 
@@ -171,8 +271,8 @@ These rows remain directionally valid, but should not become active until `PILOT
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | STAB-UI-T7 | Recode wiring | Fix `ModalHost` `RecodeModal onSave` noop; all recode paths persist (UXT-012) | None | Done | Yes | T,L,U | **PR #6:** `ModalHost` wires `onSaveRecode` → `handleRecodeSave` (`persistDatasetSession`); `RecodeModal.test.tsx` verifies save callback. UXT-012 closed. |
 | STAB-UI-T5 | VM theme fix | Replace hardcoded white `rgba` in `FacetedSearchBar.module.css`; token cleanup (UXT-010, UXT-021) | None | Done | No | T,L,U | **PR #6:** `color-mix(in srgb, var(--text-inverse) …)` replaces hardcoded white on active insight badges/chips. UXT-010 closed; UXT-021 partial (tailwind dead hexes deferred). |
-| STAB-UI-T4 | Z-index scale | Semantic `--z-*` tokens; toast above modal; menus above sticky headers (UXT-009) | None | Done | No | T,L,U | Plan §T4; `--z-sticky` through `--z-menu` in `index.css`; migrated ToastLayer, modals, menus, popovers; `ModalShell` defaults use `--z-modal` |
-| STAB-UI-T2 | Modal foundation | `ModalShell` dialog semantics, focus trap/restore, form labels, close labels, keyboard click targets (UXT-003–008, UXT-014–016) | STAB-UI-T4 | Done | Yes | T,L,U,I | `ModalShell` — `role="dialog"`, `aria-modal`, `useFocusTrap`, default `escapeToClose`; tests in `ModalShell.test.tsx` |
+| STAB-UI-T4 | Z-index scale | Semantic `--z-*` tokens; toast above modal; menus above sticky headers (UXT-009) | None | Done | No | T,L,U | **PR #23:** migrated remaining ad-hoc z-index literals to `--z-sticky` through `--z-menu`; 35 → 0 raw literals in `src/` |
+| STAB-UI-T2 | Modal foundation | `ModalShell` dialog semantics, focus trap/restore, form labels, close labels, keyboard click targets (UXT-003–008, UXT-014–016) | STAB-UI-T4 | Done | Yes | T,L,U,I | **PR #21 + #22:** T2.1 `ModalShell` foundation; T2.2 bypass modal migration (UXT-004); T2.3–T2.6 form labels, close labels, keyboard parity, skip link, context menus, table scope (UXT-006–008, 014–016). Integration branch `cursor/stab-ui-integration-2f52`. |
 | STAB-UI-T3 | Error boundaries | `AnalysisErrorBoundary` on slide + chart renderers (UXT-005) | None | Done | No | T,L,U | `AnalysisErrorBoundary` + `AnalysisErrorFallback` wrap `SlideContainer` output and `AnalysisChart` renderers; reset on config change + Retry; tests in `AnalysisErrorBoundary.test.tsx`. |
 | STAB-UI-T1 | Store selectors | Eliminate bare `useVelocityStore()` in 18 files; optional memo on hot leaves (UXT-001–002) | None | Done | No | T,L,U,G | Migrated all production component/hook call sites in plan §T1 to granular selectors (`App.tsx`, `AppShell`, `DashboardShell`, Variable Manager columns, workspace hooks, harmonization shell, etc.). `rg 'useVelocityStore\(\)' src --glob '*.tsx'` returns zero in production components; bare calls remain only in store test harnesses. UXT-001 closed; UXT-002 deferred pending profile. |
 | STAB-UI-T6 | Shortcuts & hygiene | Unified keydown registry, lazy Monaco, dev-gated console noise (UXT-011, UXT-013, UXT-019) | STAB-UI-T2 | Done | No | T,L,U | `src/lib/keyboardShortcuts/registry.ts` replaces scattered listeners in AppShell, VariableManager, TimelineDock, KeyboardShortcuts; CommandPalette uses modal context; `RCodeEditor` lazy-loads Monaco; `usePersistenceManager` logs gated behind `import.meta.env.DEV`; tests in `registry.test.ts` |
@@ -191,22 +291,40 @@ These rows remain directionally valid, but should not become active until `PILOT
 1. `PILOT-6` paid pilot recruiting.
 2. `PILOT-4a` processing gap discovery.
 
-### 4.5 CI Truth Maintenance (`STAB-CI-2`)
+### 4.5 CI Truth Maintenance (`STAB-CI`)
 
 **Source:** `docs/audit_08_ci_failure_rca_2026-07-01.md` — repeated CI failures from local ↔ CI gate mismatch and doc drift (July 2026).
 
 | ID | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence / validation |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| STAB-CI-2 | CI local parity | `npm run ci` / `ci:e2e` scripts, pre-PR playbook, doc + PR template sync | STAB-CI-1 (Done) | In progress | No | A | `docs/playbooks/pre_pr_verification.md`, `docs/audit_08_ci_failure_rca_2026-07-01.md`, updated `arch_08_testing.md`, PR template, `makeVariable()` factory |
+| STAB-CI-2 | CI local parity | `npm run ci` / `ci:e2e`, pre-PR playbook, doc + PR template sync | STAB-CI-1 (Done) | Done | No | A | `docs/playbooks/pre_pr_verification.md`, `docs/audit_08_ci_failure_rca_2026-07-01.md`, PR template, `makeVariable()` |
+| STAB-CI-3 | ESLint ratchet | Warn → error on ratcheted rules; changed-file guard | STAB-CI-2 | Done | No | A | `eslint.config.js`, `scripts/check-eslint-ratchet.mjs`, `npm run lint --max-warnings 0` |
+| STAB-CI-4 | E2E companion enforcement | UI trigger paths require `tests/e2e/` updates in same PR | STAB-CI-2 | Done | No | A,I | `scripts/check-e2e-companion.mjs`, wired in CI + `npm run ci` |
+| STAB-CI-5 | DuckDB Arrow browser smoke | Playwright gate for WASM Arrow ingestion path | STAB-CI-2 | Done | No | I | `tests/e2e/duckdb-arrow-smoke.spec.ts`; `duckDbArrow.test.ts` points to e2e |
+| STAB-CI-6 | Coverage exclusion ratchet | Measure store slices with characterization tests | STAB-CI-2 | Done | No | A | `harmonizationSlice`, `uiSlice`, `variableCatalogActions` in coverage set; thresholds pass |
+| STAB-CI-7 | Features/overlays coverage ratchet | Remove blanket `src/features/` + `src/components/overlays/` exclusions; add characterization tests | STAB-CI-6 | Done | No | A | Blanket exclusions removed in `vitest.config.ts`; 40+ new/extended co-located tests (workspace, variable manager, dashboard, overlays); global coverage passes (82.03% fn / 79.41% br, July 2026); measured features+overlays aggregate 73.9% fn — per-module follow-up remains |
+| STAB-CI-8 | EngineProxy / duckdbBundles characterization | `EngineProxy.ts` + `duckdbBundles.ts` in coverage set with co-located tests | STAB-CI-6 | Done | No | A | `src/services/EngineProxy.test.ts`, `src/services/duckdbBundles.test.ts`; service exclusions removed |
+| STAB-CI-9 | Parity gate in CI | `npm run test:parity` (WASM vs Node adapter on golden fixtures) added to `test` job and `npm run ci` | STAB-CI-2 | Done | No | G | 8 tests, ~2.4s wall-clock on CI-class hardware; full-CI path chosen (under 3-min budget); step in `.github/workflows/test.yml` after coverage, before build; `arch_08_testing.md` §8 updated (July 2026) |
+| STAB-CI-10 | Features/overlays per-module coverage ratchet | Per-path honesty floors for `src/features/**` and `src/components/overlays/**` | STAB-CI-7 | Done | No | A | Initial per-path floors in `vitest.config.ts` (fn 70% / 67%); ongoing raise tracked with STAB-CI-11 |
+| STAB-CI-11 | Per-path coverage thresholds | Global + path-specific floors in `vitest.config.ts` (`core`, `features`, `overlays`, `services`, `store`) | STAB-CI-10 | Done | No | A | Global br 80 / fn 81 / stmt 83; per-path blocks enforced in `unit-coverage` job |
+| STAB-CI-12 | Parallel CI jobs | Split monolithic `test` job into `lint-format`, `typecheck`, `arch-guards`, `unit-coverage`, `build`, `e2e` | STAB-CI-2 | Done | No | A | `.github/workflows/test.yml`; concurrency cancel; job summaries |
+| STAB-CI-13 | Pre-commit hooks | Lefthook runs `format:check` + `lint` on staged files | STAB-CI-3 | Done | No | A | `lefthook.yml`; `npx lefthook install`; opt-out `LEFTHOOK=0` |
+| STAB-CI-14 | CI script shortcuts | `npm run ci:lint` (lint-format job), `ci:full` (ci + e2e) | STAB-CI-12 | Done | No | A | `package.json`; referenced in workflow job summaries |
+| STAB-CI-15 | `@visual` quarantine | Product `e2e` job excludes screenshot specs via `--grep-invert @visual` | STAB-CI-12 | Done | No | I | `test:e2e`, `test:e2e:visual`, `test:e2e:visual:update` scripts |
+| STAB-CI-16 | Visual E2E workflow | Non-blocking `visual-e2e.yml` for `@visual` screenshot regression | STAB-CI-15 | Done | No | I | `continue-on-error: true`; `npm run test:e2e:visual` |
+| STAB-CI-17 | Remove skipped `duckDbArrow.test.ts` | Delete Vitest skip suite; browser path gated by Playwright smoke only | STAB-CI-5 | Done | No | I | `duckDbArrow.test.ts` removed; `duckdb-arrow-smoke.spec.ts` remains required gate |
+| STAB-CI-18 | E2E companion expansion | Theme switcher + Workshop Door landing trigger rules | STAB-CI-4 | Done | No | A,I | `scripts/check-e2e-companion.mjs` — `theme-switcher`, `workshop-door-landing` rules |
+| STAB-CI-19 | Mutation threshold raise | Stryker break 40 → 48 when measured score ≥ 48 | STAB-CI-8 | Blocked | No | A | Baseline ~46%; raise deferred to avoid false CI failures |
+| STAB-CI-20 | CI artifacts | Upload coverage + Playwright reports on failure | STAB-CI-12 | Done | No | A | `coverage-report` (always); `playwright-report` / `playwright-test-results` on e2e failure |
+| STAB-CI-21 | CI bootstrap parity | Submodules recursive checkout, `npm ci --legacy-peer-deps`, ratchet fetch-depth | STAB-CI-12 | Done | No | A | All jobs; `lint-format` uses `fetch-depth: 0` for merge-base ratchets |
+| STAB-CI-22 | Doc sync (CI overhaul) | Update `arch_08`, pre-PR playbook, tracker §4.5, PR template, contributing, RCA banner | STAB-CI-12 | Done | No | A | This row; `docs/arch_08_testing.md` §7–§8, `pre_pr_verification.md`, `.github/pull_request_template.md` |
+| STAB-CI-23 | Features/overlays coverage ratchet | Raise per-path `src/features/**` and `src/components/overlays/**` function floors toward 82% as characterization tests land | STAB-CI-11 | In progress | No | A,U | **Baseline (July 2026):** measured fn 70.1% (`features`) / 67.1% (`overlays`) vs floors 70% / 67%; global fn 81.9%. **Target:** raise per-path fn floors incrementally toward 82% (global fn floor). **Slices (parallel):** overlays (`RecodeModal`, `ExportModal`, `FilterModal`, `SessionImportModal`), workspace (`WorkspaceView`, `ExportImportModal`, `WaveTimeline`), dashboard (hooks + `StoryRail`, `DashboardToolbar`, `DataTable`), variableManager (`VariableInspector`, `VariableManager`, `VariableList`), harmonization (no co-located tests yet). See `arch_08_testing.md` §7.1. |
 
-#### STAB-CI-2 Follow-ups (not started)
+#### STAB-CI deferred (future ratchets)
 
 | ID | Outcome |
 | :--- | :--- |
-| STAB-CI-3 | ESLint warn → error ratchet on touched files |
-| STAB-CI-4 | Mandatory E2E companion updates in UI playbook enforcement |
-| STAB-CI-5 | Replace skipped `duckDbArrow.test.ts` with browser smoke |
-| STAB-CI-6 | Shrink Vitest coverage exclusions as characterization tests land |
+| STAB-CI-24+ | Further per-path ratchets (`services`, `store`, harmonization UI) after STAB-CI-23 closes the features/overlays gap |
 
 ## 5. Completed Work Reference
 

@@ -70,7 +70,7 @@
   appearance: none;
   width: 14px;
   height: 14px;
-  background: var(--color-accent);
+  background: var(--border-color-active);
   border-radius: 50%;
   cursor: pointer;
 }
@@ -78,7 +78,7 @@
 .binSlider::-moz-range-thumb {
   width: 14px;
   height: 14px;
-  background: var(--color-accent);
+  background: var(--border-color-active);
   border-radius: 50%;
   cursor: pointer;
   border: none;
@@ -89,6 +89,16 @@
   min-height: 300px;
   position: relative;
   width: 100%;
+}
+
+.contentSized {
+  height: auto;
+}
+
+.contentSized .chartCanvas {
+  flex-grow: 0;
+  min-height: 0;
+  height: auto;
 }
 
 .constrained {
@@ -149,5 +159,5 @@
 
 .toggleButton.active {
   background-color: var(--bg-active);
-  color: var(--color-accent);
+  color: var(--border-color-active);
 }

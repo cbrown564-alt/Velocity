@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useReducedMotion, getMotionProps, DURATIONS } from '../../../lib/motion';
 
@@ -19,6 +19,7 @@ interface ContextMenuProps {
 
 export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, actions, onClose }) => {
   const ref = useRef<HTMLDivElement>(null);
+  const itemRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const [position, setPosition] = useState({ top: y, left: x });
 
   useEffect(() => {
@@ -35,7 +36,11 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, actions, onClose
     };
   }, [onClose]);
 
-  // Enhanced positioning logic to keep menu within viewport
+  useEffect(() => {
+    const firstEnabled = itemRefs.current.find((el, index) => el && !actions[index]?.disabled);
+    firstEnabled?.focus();
+  }, [actions]);
+
   useLayoutEffect(() => {
     if (!ref.current) return;
 
@@ -45,12 +50,10 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, actions, onClose
     let newTop = y;
     let newLeft = x;
 
-    // Check vertical overflow (bottom)
     if (y + rect.height > innerHeight) {
       newTop = Math.max(0, y - rect.height);
     }
 
-    // Check horizontal overflow (right)
     if (x + rect.width > innerWidth) {
       newLeft = Math.max(0, x - rect.width);
     }
@@ -58,12 +61,65 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, actions, onClose
     setPosition({ top: newTop, left: newLeft });
   }, [x, y, actions]);
 
+  const focusEnabledItem = useCallback(
+    (direction: 'next' | 'prev' | 'first' | 'last') => {
+      const enabledButtons = itemRefs.current.filter((el, index) => el && !actions[index]?.disabled);
+      if (enabledButtons.length === 0) return;
+
+      const currentIndex = enabledButtons.findIndex((el) => el === document.activeElement);
+
+      switch (direction) {
+        case 'next':
+          enabledButtons[(currentIndex + 1) % enabledButtons.length]?.focus();
+          break;
+        case 'prev':
+          enabledButtons[(currentIndex - 1 + enabledButtons.length) % enabledButtons.length]?.focus();
+          break;
+        case 'first':
+          enabledButtons[0]?.focus();
+          break;
+        case 'last':
+          enabledButtons[enabledButtons.length - 1]?.focus();
+          break;
+      }
+    },
+    [actions],
+  );
+
+  const handleMenuKeyDown = (e: React.KeyboardEvent) => {
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        focusEnabledItem('next');
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        focusEnabledItem('prev');
+        break;
+      case 'Home':
+        e.preventDefault();
+        focusEnabledItem('first');
+        break;
+      case 'End':
+        e.preventDefault();
+        focusEnabledItem('last');
+        break;
+      case 'Escape':
+        e.preventDefault();
+        onClose();
+        break;
+    }
+  };
+
   const reducedMotion = useReducedMotion();
 
   return (
     <AnimatePresence>
       <motion.div
         ref={ref}
+        role="menu"
+        aria-label="Context menu"
+        onKeyDown={handleMenuKeyDown}
         {...getMotionProps({
           preset: 'fadeScale',
           duration: reducedMotion ? DURATIONS.instant : DURATIONS.fast,
@@ -75,6 +131,10 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, actions, onClose
         {actions.map((action, index) => (
           <button
             key={index}
+            ref={(el) => {
+              itemRefs.current[index] = el;
+            }}
+            role="menuitem"
             onClick={(e) => {
               e.stopPropagation();
               if (!action.disabled) {

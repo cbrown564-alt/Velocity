@@ -26,7 +26,7 @@
 
 .welcomeIcon {
   flex-shrink: 0;
-  color: var(--color-accent);
+  color: var(--border-color-active);
 }
 
 .welcomeCopy {
@@ -40,7 +40,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: var(--color-accent);
+  color: var(--border-color-active);
 }
 
 .summary {
@@ -55,7 +55,7 @@
   padding: var(--space-2) var(--space-4);
   border-radius: var(--radius-md);
   border: none;
-  background: var(--color-accent);
+  background: var(--border-color-active);
   color: var(--text-inverse);
   font-size: var(--text-sm);
   font-weight: 500;
@@ -92,7 +92,7 @@
 
 .pilotIcon {
   flex-shrink: 0;
-  color: var(--color-accent);
+  color: var(--border-color-active);
 }
 
 .warningList {

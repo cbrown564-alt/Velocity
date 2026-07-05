@@ -1,0 +1,4323 @@
+{
+  "description": "Ground truth for the synthetic brand tracker demo dataset (docs/workstreams/deck_native/10_brand_tracker_demo_plan.md). All metrics are weighted by 'wt' unless suffixed otherwise. Percentages are 0-100.",
+  "metadata": {
+    "seed": 20260703,
+    "config_file": "scripts/python/brand_tracker_config.json",
+    "config_sha256": "ad0f4ab641fed5f0be5c37fcf239986d9acdbff6312ff7d2b953e5e5ba8378ad",
+    "generation_date": "2026-07-03T13:35:39Z",
+    "generation_command": "python3 scripts/python/generate_brand_tracker.py",
+    "generator": "scripts/python/generate_brand_tracker.py",
+    "category": "ready-to-drink chilled coffee",
+    "brands": {
+      "atlas": {
+        "name": "Atlas",
+        "code": 1,
+        "role": "client"
+      },
+      "beacon": {
+        "name": "Beacon",
+        "code": 2,
+        "role": "challenger"
+      },
+      "meridian": {
+        "name": "Meridian",
+        "code": 3,
+        "role": "legacy leader"
+      },
+      "solstice": {
+        "name": "Solstice",
+        "code": 4,
+        "role": "insurgent"
+      },
+      "cardinal": {
+        "name": "Cardinal",
+        "code": 5,
+        "role": "niche"
+      }
+    },
+    "data_checksums_sha256": {
+      "w1": "d83ddee973a295852a5870babaf3adc6e6408074aef7a8b93243983371d46802",
+      "w2": "7dd3c9d9ba632537af009038c0db7e56dac47bc2c78754dda6b0d531dd6d1701",
+      "w3": "211d14db2ec9a3e4a6904841460a6333a518b7b4a10d7060cd629e752849c60f",
+      "w4": "1ce0680800f1addb501966cad3f3e54c160eb45cb8de07af85f62b1c389e2bfc",
+      "w5": "5297a08fdb323beb0c639621c2d795fc007037c390a66659086b35120d3c41d4"
+    }
+  },
+  "significance": {
+    "method": "Two-proportion z-test (pooled) on Kish effective sample sizes n_eff = (sum w)^2 / sum(w^2) of each metric's weighted base; composite and NPS use an unpooled z on weighted means.",
+    "alpha": 0.05,
+    "z_critical": 1.959964
+  },
+  "definitions": {
+    "unaided_any_pct": "Weighted % of total base with any unaided mention of the brand (unaided_any_<brand>=1). Engine: weighted frequency of code 1 / sum of weighted counts for all codes on total base.",
+    "aided_pct": "Weighted % of total base aware of the brand (aware_<brand>=1). Engine: weighted frequency of code 1 / sum of weighted counts for codes 0+1.",
+    "consider_t2b_pct_of_total": "Weighted % of total base answering 4-5 on consider_<brand>. Engine: sum weightedCount(codes 4,5) / total weighted base (denominator from aware_<any>=0|1 frequency table).",
+    "consider_t2b_pct_of_answering": "Weighted % of valid consideration answers (codes 1-5; DK=98 and structural missing excluded) that are 4-5",
+    "consider_conversion": "Alias of consider_t2b_pct_of_answering: consideration conversion among aware brand answerers",
+    "used_p3m_pct_of_total": "Weighted % of total base with used_p3m_<brand>=1. Engine: weighted frequency of code 1 / total weighted base.",
+    "pref_share_pct": "Weighted % of total base preferring the brand (brand_pref)",
+    "nps.score": "Weighted %promoters (9-10) minus %detractors (0-6) among Atlas P3M users, in points",
+    "composite_atlas": "Brand health composite: per-respondent mean of (aided awareness, consideration T2B of total, P3M usage), weighted",
+    "attribute t2b_pct_of_answering": "Weighted % agreeing (4-5) among valid answers (1-5) for att_<attribute>_atlas; base = aware of brand and gave a rating",
+    "weight_mean": "Mean of wt across all respondents in the wave (should be ~1.0 after raking)",
+    "wave5_flattened_mover": "Unaided awareness W4->W5 delta (documented in config raw_wave4._comment); significant W3->W4, flat/non-significant W4->W5"
+  },
+  "files": {
+    "public/examples/brandtracker_w4.sav": "Demo wave (analysis-ready W4)",
+    "test_data/fixtures/brand_tracker/brandtracker_w1.sav": "Analysis-ready W1",
+    "test_data/fixtures/brand_tracker/brandtracker_w2.sav": "Analysis-ready W2",
+    "test_data/fixtures/brand_tracker/brandtracker_w3.sav": "Analysis-ready W3",
+    "test_data/fixtures/brand_tracker/brandtracker_w5.sav": "Analysis-ready W5 (refresh wave)",
+    "test_data/fixtures/brand_tracker/brandtracker_w4_raw.sav": "Raw agency-file variant of W4: same respondents/answers, but no age_band; consideration scale coded in reversed label order (1<->5, 2<->4); att_worth_atlas renamed att_value_atlas and att_worth_beacon renamed att_value_beacon; weight named rim_wt_final with label 'final wt'; junk decoy column body_weight_kg (respondent body weight ~60-110 kg)"
+  },
+  "waves": {
+    "w1": {
+      "label": "2025-Q3 (W1)",
+      "n": 1200,
+      "funnel": {
+        "atlas": {
+          "unaided_any_pct": 29.0698,
+          "aided_pct": 65.8594,
+          "consider_t2b_pct_of_total": 31.6771,
+          "consider_t2b_pct_of_answering": 49.6498,
+          "consider_answering_n_eff": 698.8874,
+          "used_p3m_pct_of_total": 12.122,
+          "used_p3m_pct_of_aware": 18.4058,
+          "aware_n_eff": 720.6386,
+          "pref_share_pct": 18.9962,
+          "adrecall_pct": 17.3215,
+          "aware_count_unweighted": 802,
+          "used_count_unweighted": 156,
+          "nps": {
+            "score": -7.7522,
+            "promoters_pct": 23.2007,
+            "detractors_pct": 30.9529,
+            "base_unweighted": 156,
+            "base_weighted": 145.4636,
+            "n_eff": 140.7344,
+            "score_variance": 0.5355
+          }
+        },
+        "beacon": {
+          "unaided_any_pct": 20.8189,
+          "aided_pct": 56.8408,
+          "consider_t2b_pct_of_total": 32.6799,
+          "consider_t2b_pct_of_answering": 59.1396,
+          "consider_answering_n_eff": 607.1743,
+          "used_p3m_pct_of_total": 14.262,
+          "used_p3m_pct_of_aware": 25.0911,
+          "aware_n_eff": 625.1106,
+          "pref_share_pct": 19.7083,
+          "adrecall_pct": 21.2689,
+          "aware_count_unweighted": 696,
+          "used_count_unweighted": 181
+        },
+        "meridian": {
+          "unaided_any_pct": 46.8086,
+          "aided_pct": 90.4727,
+          "consider_t2b_pct_of_total": 41.6393,
+          "consider_t2b_pct_of_answering": 47.4598,
+          "consider_answering_n_eff": 936.2792,
+          "used_p3m_pct_of_total": 33.9917,
+          "used_p3m_pct_of_aware": 37.5713,
+          "aware_n_eff": 961.8267,
+          "pref_share_pct": 26.7507,
+          "adrecall_pct": 31.5885,
+          "aware_count_unweighted": 1074,
+          "used_count_unweighted": 387
+        },
+        "solstice": {
+          "unaided_any_pct": 7.2798,
+          "aided_pct": 22.3558,
+          "consider_t2b_pct_of_total": 12.1291,
+          "consider_t2b_pct_of_answering": 55.5153,
+          "consider_answering_n_eff": 254.6767,
+          "used_p3m_pct_of_total": 6.6694,
+          "used_p3m_pct_of_aware": 29.833,
+          "aware_n_eff": 260.5615,
+          "pref_share_pct": 7.9745,
+          "adrecall_pct": 11.0975,
+          "aware_count_unweighted": 288,
+          "used_count_unweighted": 86
+        },
+        "cardinal": {
+          "unaided_any_pct": 5.5893,
+          "aided_pct": 20.9952,
+          "consider_t2b_pct_of_total": 10.468,
+          "consider_t2b_pct_of_answering": 51.4181,
+          "consider_answering_n_eff": 206.2394,
+          "used_p3m_pct_of_total": 7.9425,
+          "used_p3m_pct_of_aware": 37.8303,
+          "aware_n_eff": 214.3483,
+          "pref_share_pct": 6.7848,
+          "adrecall_pct": 8.5442,
+          "aware_count_unweighted": 240,
+          "used_count_unweighted": 84
+        }
+      },
+      "composite_atlas": {
+        "pct": 36.5528,
+        "variance": 0.1117,
+        "n_eff": 1074.4373
+      },
+      "attributes_t2b_of_answering": {
+        "atlas": {
+          "taste": {
+            "t2b_pct_of_answering": 52.3827,
+            "n_eff": 708.6288
+          },
+          "worth": {
+            "t2b_pct_of_answering": 37.3243,
+            "n_eff": 706.5572
+          },
+          "innov": {
+            "t2b_pct_of_answering": 28.1273,
+            "n_eff": 702.9189
+          },
+          "forme": {
+            "t2b_pct_of_answering": 32.2167,
+            "n_eff": 709.7408
+          },
+          "avail": {
+            "t2b_pct_of_answering": 42.0964,
+            "n_eff": 706.8724
+          },
+          "premium": {
+            "t2b_pct_of_answering": 44.9163,
+            "n_eff": 700.1064
+          },
+          "trust": {
+            "t2b_pct_of_answering": 40.2576,
+            "n_eff": 710.6214
+          },
+          "sustain": {
+            "t2b_pct_of_answering": 37.7258,
+            "n_eff": 709.571
+          }
+        },
+        "beacon": {
+          "taste": {
+            "t2b_pct_of_answering": 56.2789,
+            "n_eff": 612.5696
+          },
+          "worth": {
+            "t2b_pct_of_answering": 44.1514,
+            "n_eff": 612.2352
+          },
+          "innov": {
+            "t2b_pct_of_answering": 47.4503,
+            "n_eff": 615.0477
+          },
+          "forme": {
+            "t2b_pct_of_answering": 41.0499,
+            "n_eff": 614.4111
+          },
+          "avail": {
+            "t2b_pct_of_answering": 46.8803,
+            "n_eff": 614.7924
+          },
+          "premium": {
+            "t2b_pct_of_answering": 38.595,
+            "n_eff": 611.786
+          },
+          "trust": {
+            "t2b_pct_of_answering": 42.4291,
+            "n_eff": 612.6066
+          },
+          "sustain": {
+            "t2b_pct_of_answering": 42.3202,
+            "n_eff": 606.141
+          }
+        },
+        "meridian": {
+          "taste": {
+            "t2b_pct_of_answering": 61.2468,
+            "n_eff": 947.4038
+          },
+          "worth": {
+            "t2b_pct_of_answering": 51.9535,
+            "n_eff": 935.8213
+          },
+          "innov": {
+            "t2b_pct_of_answering": 27.0682,
+            "n_eff": 938.8429
+          },
+          "forme": {
+            "t2b_pct_of_answering": 47.0051,
+            "n_eff": 944.5899
+          },
+          "avail": {
+            "t2b_pct_of_answering": 80.9518,
+            "n_eff": 950.5315
+          },
+          "premium": {
+            "t2b_pct_of_answering": 36.4729,
+            "n_eff": 943.4305
+          },
+          "trust": {
+            "t2b_pct_of_answering": 66.4458,
+            "n_eff": 946.5723
+          },
+          "sustain": {
+            "t2b_pct_of_answering": 31.5978,
+            "n_eff": 947.9011
+          }
+        },
+        "solstice": {
+          "taste": {
+            "t2b_pct_of_answering": 49.626,
+            "n_eff": 252.7531
+          },
+          "worth": {
+            "t2b_pct_of_answering": 34.5764,
+            "n_eff": 254.875
+          },
+          "innov": {
+            "t2b_pct_of_answering": 59.1654,
+            "n_eff": 253.9209
+          },
+          "forme": {
+            "t2b_pct_of_answering": 28.9229,
+            "n_eff": 257.6355
+          },
+          "avail": {
+            "t2b_pct_of_answering": 22.6117,
+            "n_eff": 249.9933
+          },
+          "premium": {
+            "t2b_pct_of_answering": 53.9246,
+            "n_eff": 253.8588
+          },
+          "trust": {
+            "t2b_pct_of_answering": 29.168,
+            "n_eff": 254.9661
+          },
+          "sustain": {
+            "t2b_pct_of_answering": 64.0436,
+            "n_eff": 254.9244
+          }
+        },
+        "cardinal": {
+          "taste": {
+            "t2b_pct_of_answering": 54.5585,
+            "n_eff": 211.8786
+          },
+          "worth": {
+            "t2b_pct_of_answering": 42.6859,
+            "n_eff": 208.8567
+          },
+          "innov": {
+            "t2b_pct_of_answering": 39.2319,
+            "n_eff": 208.7833
+          },
+          "forme": {
+            "t2b_pct_of_answering": 25.3508,
+            "n_eff": 212.4956
+          },
+          "avail": {
+            "t2b_pct_of_answering": 21.4905,
+            "n_eff": 209.0267
+          },
+          "premium": {
+            "t2b_pct_of_answering": 62.3425,
+            "n_eff": 207.8192
+          },
+          "trust": {
+            "t2b_pct_of_answering": 41.1066,
+            "n_eff": 210.7522
+          },
+          "sustain": {
+            "t2b_pct_of_answering": 52.254,
+            "n_eff": 206.9889
+          }
+        }
+      },
+      "segments_atlas": {
+        "aided": {
+          "by_segment": {
+            "1": {
+              "label": "Core",
+              "pct": 67.084,
+              "n_unweighted": 424,
+              "n_eff": 378.8784
+            },
+            "2": {
+              "label": "Growth",
+              "pct": 68.38,
+              "n_unweighted": 503,
+              "n_eff": 458.972
+            },
+            "3": {
+              "label": "Value",
+              "pct": 60.1619,
+              "n_unweighted": 273,
+              "n_eff": 243.4601
+            }
+          },
+          "by_age_band": {
+            "1": {
+              "label": "18-34",
+              "pct": 69.0623,
+              "n_unweighted": 468,
+              "n_eff": 452.7481
+            },
+            "2": {
+              "label": "35-54",
+              "pct": 66.3349,
+              "n_unweighted": 480,
+              "n_eff": 464.1773
+            },
+            "3": {
+              "label": "55+",
+              "pct": 62.2919,
+              "n_unweighted": 252,
+              "n_eff": 243.3196
+            }
+          }
+        },
+        "unaided": {
+          "by_segment": {
+            "1": {
+              "label": "Core",
+              "pct": 29.3336,
+              "n_unweighted": 424,
+              "n_eff": 378.8784
+            },
+            "2": {
+              "label": "Growth",
+              "pct": 31.7636,
+              "n_unweighted": 503,
+              "n_eff": 458.972
+            },
+            "3": {
+              "label": "Value",
+              "pct": 24.5043,
+              "n_unweighted": 273,
+              "n_eff": 243.4601
+            }
+          },
+          "by_age_band": {
+            "1": {
+              "label": "18-34",
+              "pct": 31.919,
+              "n_unweighted": 468,
+              "n_eff": 452.7481
+            },
+            "2": {
+              "label": "35-54",
+              "pct": 29.9715,
+              "n_unweighted": 480,
+              "n_eff": 464.1773
+            },
+            "3": {
+              "label": "55+",
+              "pct": 25.328,
+              "n_unweighted": 252,
+              "n_eff": 243.3196
+            }
+          }
+        }
+      },
+      "weighting": {
+        "target_margins": {
+          "age_band": {
+            "18-34": 0.3,
+            "35-54": 0.38,
+            "55+": 0.32
+          },
+          "gender": {
+            "Male": 0.49,
+            "Female": 0.51
+          },
+          "region": {
+            "North": 0.25,
+            "East": 0.28,
+            "South": 0.26,
+            "West": 0.21
+          }
+        },
+        "achieved_margins_weighted": {
+          "age_band": {
+            "18-34": 0.3,
+            "35-54": 0.38,
+            "55+": 0.32
+          },
+          "gender": {
+            "Male": 0.49,
+            "Female": 0.51
+          },
+          "region": {
+            "North": 0.25,
+            "East": 0.28,
+            "South": 0.26,
+            "West": 0.21
+          }
+        },
+        "sample_margins_unweighted": {
+          "age_band": {
+            "18-34": 0.39,
+            "35-54": 0.4,
+            "55+": 0.21
+          },
+          "gender": {
+            "Male": 0.43,
+            "Female": 0.57
+          },
+          "region": {
+            "North": 0.28,
+            "East": 0.32,
+            "South": 0.22,
+            "West": 0.18
+          }
+        },
+        "design_effect": 1.1169,
+        "n": 1200,
+        "n_eff": 1074.4373,
+        "weight_mean": 1.0,
+        "weight_min": 0.6014,
+        "weight_max": 2.0365
+      }
+    },
+    "w2": {
+      "label": "2025-Q4 (W2)",
+      "n": 1200,
+      "funnel": {
+        "atlas": {
+          "unaided_any_pct": 29.8682,
+          "aided_pct": 66.2013,
+          "consider_t2b_pct_of_total": 32.4843,
+          "consider_t2b_pct_of_answering": 50.1686,
+          "consider_answering_n_eff": 700.4742,
+          "used_p3m_pct_of_total": 12.0765,
+          "used_p3m_pct_of_aware": 18.2421,
+          "aware_n_eff": 715.5476,
+          "pref_share_pct": 18.1483,
+          "adrecall_pct": 17.0916,
+          "aware_count_unweighted": 802,
+          "used_count_unweighted": 156,
+          "nps": {
+            "score": -6.9563,
+            "promoters_pct": 22.967,
+            "detractors_pct": 29.9234,
+            "base_unweighted": 156,
+            "base_weighted": 144.9181,
+            "n_eff": 138.2349,
+            "score_variance": 0.5241
+          }
+        },
+        "beacon": {
+          "unaided_any_pct": 22.3677,
+          "aided_pct": 58.5101,
+          "consider_t2b_pct_of_total": 34.1738,
+          "consider_t2b_pct_of_answering": 59.863,
+          "consider_answering_n_eff": 627.6579,
+          "used_p3m_pct_of_total": 15.3023,
+          "used_p3m_pct_of_aware": 26.1532,
+          "aware_n_eff": 642.5631,
+          "pref_share_pct": 20.2218,
+          "adrecall_pct": 21.3384,
+          "aware_count_unweighted": 720,
+          "used_count_unweighted": 194
+        },
+        "meridian": {
+          "unaided_any_pct": 46.7616,
+          "aided_pct": 91.0618,
+          "consider_t2b_pct_of_total": 42.3224,
+          "consider_t2b_pct_of_answering": 47.6709,
+          "consider_answering_n_eff": 937.5525,
+          "used_p3m_pct_of_total": 34.0462,
+          "used_p3m_pct_of_aware": 37.388,
+          "aware_n_eff": 962.67,
+          "pref_share_pct": 28.3549,
+          "adrecall_pct": 31.8279,
+          "aware_count_unweighted": 1080,
+          "used_count_unweighted": 383
+        },
+        "solstice": {
+          "unaided_any_pct": 7.3283,
+          "aided_pct": 23.1378,
+          "consider_t2b_pct_of_total": 12.2852,
+          "consider_t2b_pct_of_answering": 53.6282,
+          "consider_answering_n_eff": 266.7848,
+          "used_p3m_pct_of_total": 6.2984,
+          "used_p3m_pct_of_aware": 27.2211,
+          "aware_n_eff": 269.7276,
+          "pref_share_pct": 7.726,
+          "adrecall_pct": 11.312,
+          "aware_count_unweighted": 300,
+          "used_count_unweighted": 90
+        },
+        "cardinal": {
+          "unaided_any_pct": 4.9067,
+          "aided_pct": 20.3353,
+          "consider_t2b_pct_of_total": 10.1889,
+          "consider_t2b_pct_of_answering": 51.5988,
+          "consider_answering_n_eff": 214.16,
+          "used_p3m_pct_of_total": 7.4167,
+          "used_p3m_pct_of_aware": 36.4721,
+          "aware_n_eff": 221.3493,
+          "pref_share_pct": 6.4267,
+          "adrecall_pct": 8.0523,
+          "aware_count_unweighted": 246,
+          "used_count_unweighted": 86
+        }
+      },
+      "composite_atlas": {
+        "pct": 36.9207,
+        "variance": 0.1121,
+        "n_eff": 1071.0217
+      },
+      "attributes_t2b_of_answering": {
+        "atlas": {
+          "taste": {
+            "t2b_pct_of_answering": 53.5258,
+            "n_eff": 701.2288
+          },
+          "worth": {
+            "t2b_pct_of_answering": 36.6103,
+            "n_eff": 693.7858
+          },
+          "innov": {
+            "t2b_pct_of_answering": 28.7912,
+            "n_eff": 705.2695
+          },
+          "forme": {
+            "t2b_pct_of_answering": 33.8181,
+            "n_eff": 699.1073
+          },
+          "avail": {
+            "t2b_pct_of_answering": 43.7493,
+            "n_eff": 697.0735
+          },
+          "premium": {
+            "t2b_pct_of_answering": 46.3645,
+            "n_eff": 699.9226
+          },
+          "trust": {
+            "t2b_pct_of_answering": 41.0616,
+            "n_eff": 702.9529
+          },
+          "sustain": {
+            "t2b_pct_of_answering": 38.3007,
+            "n_eff": 691.2637
+          }
+        },
+        "beacon": {
+          "taste": {
+            "t2b_pct_of_answering": 55.8046,
+            "n_eff": 628.8757
+          },
+          "worth": {
+            "t2b_pct_of_answering": 43.442,
+            "n_eff": 632.9818
+          },
+          "innov": {
+            "t2b_pct_of_answering": 47.8129,
+            "n_eff": 632.1535
+          },
+          "forme": {
+            "t2b_pct_of_answering": 40.005,
+            "n_eff": 629.71
+          },
+          "avail": {
+            "t2b_pct_of_answering": 48.1358,
+            "n_eff": 628.9325
+          },
+          "premium": {
+            "t2b_pct_of_answering": 38.8824,
+            "n_eff": 633.2964
+          },
+          "trust": {
+            "t2b_pct_of_answering": 43.4928,
+            "n_eff": 634.9292
+          },
+          "sustain": {
+            "t2b_pct_of_answering": 43.3289,
+            "n_eff": 627.8613
+          }
+        },
+        "meridian": {
+          "taste": {
+            "t2b_pct_of_answering": 61.3655,
+            "n_eff": 945.6708
+          },
+          "worth": {
+            "t2b_pct_of_answering": 52.3467,
+            "n_eff": 949.2343
+          },
+          "innov": {
+            "t2b_pct_of_answering": 27.0491,
+            "n_eff": 945.0572
+          },
+          "forme": {
+            "t2b_pct_of_answering": 46.8095,
+            "n_eff": 943.7235
+          },
+          "avail": {
+            "t2b_pct_of_answering": 81.1627,
+            "n_eff": 943.2748
+          },
+          "premium": {
+            "t2b_pct_of_answering": 37.0949,
+            "n_eff": 939.5717
+          },
+          "trust": {
+            "t2b_pct_of_answering": 65.8021,
+            "n_eff": 944.3609
+          },
+          "sustain": {
+            "t2b_pct_of_answering": 31.8108,
+            "n_eff": 942.1343
+          }
+        },
+        "solstice": {
+          "taste": {
+            "t2b_pct_of_answering": 47.8906,
+            "n_eff": 264.8148
+          },
+          "worth": {
+            "t2b_pct_of_answering": 33.6014,
+            "n_eff": 266.2491
+          },
+          "innov": {
+            "t2b_pct_of_answering": 56.9108,
+            "n_eff": 260.862
+          },
+          "forme": {
+            "t2b_pct_of_answering": 27.695,
+            "n_eff": 265.1877
+          },
+          "avail": {
+            "t2b_pct_of_answering": 22.683,
+            "n_eff": 255.8266
+          },
+          "premium": {
+            "t2b_pct_of_answering": 53.9228,
+            "n_eff": 266.3083
+          },
+          "trust": {
+            "t2b_pct_of_answering": 28.8346,
+            "n_eff": 265.2226
+          },
+          "sustain": {
+            "t2b_pct_of_answering": 62.0486,
+            "n_eff": 267.9
+          }
+        },
+        "cardinal": {
+          "taste": {
+            "t2b_pct_of_answering": 52.1244,
+            "n_eff": 216.4141
+          },
+          "worth": {
+            "t2b_pct_of_answering": 42.0167,
+            "n_eff": 214.9096
+          },
+          "innov": {
+            "t2b_pct_of_answering": 35.2203,
+            "n_eff": 214.9527
+          },
+          "forme": {
+            "t2b_pct_of_answering": 26.47,
+            "n_eff": 215.6701
+          },
+          "avail": {
+            "t2b_pct_of_answering": 21.397,
+            "n_eff": 215.968
+          },
+          "premium": {
+            "t2b_pct_of_answering": 61.3301,
+            "n_eff": 216.5422
+          },
+          "trust": {
+            "t2b_pct_of_answering": 42.2486,
+            "n_eff": 214.31
+          },
+          "sustain": {
+            "t2b_pct_of_answering": 51.1443,
+            "n_eff": 216.4727
+          }
+        }
+      },
+      "segments_atlas": {
+        "aided": {
+          "by_segment": {
+            "1": {
+              "label": "Core",
+              "pct": 66.8852,
+              "n_unweighted": 424,
+              "n_eff": 378.8217
+            },
+            "2": {
+              "label": "Growth",
+              "pct": 68.7659,
+              "n_unweighted": 503,
+              "n_eff": 455.233
+            },
+            "3": {
+              "label": "Value",
+              "pct": 61.1389,
+              "n_unweighted": 273,
+              "n_eff": 242.1726
+            }
+          },
+          "by_age_band": {
+            "1": {
+              "label": "18-34",
+              "pct": 69.3571,
+              "n_unweighted": 468,
+              "n_eff": 450.1827
+            },
+            "2": {
+              "label": "35-54",
+              "pct": 66.0659,
+              "n_unweighted": 480,
+              "n_eff": 462.3011
+            },
+            "3": {
+              "label": "55+",
+              "pct": 63.4035,
+              "n_unweighted": 252,
+              "n_eff": 242.9888
+            }
+          }
+        },
+        "unaided": {
+          "by_segment": {
+            "1": {
+              "label": "Core",
+              "pct": 30.7217,
+              "n_unweighted": 424,
+              "n_eff": 378.8217
+            },
+            "2": {
+              "label": "Growth",
+              "pct": 32.2667,
+              "n_unweighted": 503,
+              "n_eff": 455.233
+            },
+            "3": {
+              "label": "Value",
+              "pct": 24.82,
+              "n_unweighted": 273,
+              "n_eff": 242.1726
+            }
+          },
+          "by_age_band": {
+            "1": {
+              "label": "18-34",
+              "pct": 32.3863,
+              "n_unweighted": 468,
+              "n_eff": 450.1827
+            },
+            "2": {
+              "label": "35-54",
+              "pct": 30.7482,
+              "n_unweighted": 480,
+              "n_eff": 462.3011
+            },
+            "3": {
+              "label": "55+",
+              "pct": 26.4625,
+              "n_unweighted": 252,
+              "n_eff": 242.9888
+            }
+          }
+        }
+      },
+      "weighting": {
+        "target_margins": {
+          "age_band": {
+            "18-34": 0.3,
+            "35-54": 0.38,
+            "55+": 0.32
+          },
+          "gender": {
+            "Male": 0.49,
+            "Female": 0.51
+          },
+          "region": {
+            "North": 0.25,
+            "East": 0.28,
+            "South": 0.26,
+            "West": 0.21
+          }
+        },
+        "achieved_margins_weighted": {
+          "age_band": {
+            "18-34": 0.3,
+            "35-54": 0.38,
+            "55+": 0.32
+          },
+          "gender": {
+            "Male": 0.49,
+            "Female": 0.51
+          },
+          "region": {
+            "North": 0.25,
+            "East": 0.28,
+            "South": 0.26,
+            "West": 0.21
+          }
+        },
+        "sample_margins_unweighted": {
+          "age_band": {
+            "18-34": 0.39,
+            "35-54": 0.4,
+            "55+": 0.21
+          },
+          "gender": {
+            "Male": 0.43,
+            "Female": 0.57
+          },
+          "region": {
+            "North": 0.28,
+            "East": 0.32,
+            "South": 0.22,
+            "West": 0.18
+          }
+        },
+        "design_effect": 1.1204,
+        "n": 1200,
+        "n_eff": 1071.0217,
+        "weight_mean": 1.0,
+        "weight_min": 0.5933,
+        "weight_max": 2.1247
+      }
+    },
+    "w3": {
+      "label": "2026-Q1 (W3)",
+      "n": 1200,
+      "funnel": {
+        "atlas": {
+          "unaided_any_pct": 30.7978,
+          "aided_pct": 66.8143,
+          "consider_t2b_pct_of_total": 33.1636,
+          "consider_t2b_pct_of_answering": 51.1222,
+          "consider_answering_n_eff": 696.7149,
+          "used_p3m_pct_of_total": 12.4299,
+          "used_p3m_pct_of_aware": 18.6036,
+          "aware_n_eff": 716.1033,
+          "pref_share_pct": 17.9788,
+          "adrecall_pct": 19.0324,
+          "aware_count_unweighted": 809,
+          "used_count_unweighted": 162,
+          "nps": {
+            "score": -2.2995,
+            "promoters_pct": 27.4221,
+            "detractors_pct": 29.7217,
+            "base_unweighted": 162,
+            "base_weighted": 149.1584,
+            "n_eff": 145.0646,
+            "score_variance": 0.5709
+          }
+        },
+        "beacon": {
+          "unaided_any_pct": 23.9068,
+          "aided_pct": 61.0707,
+          "consider_t2b_pct_of_total": 35.6369,
+          "consider_t2b_pct_of_answering": 60.0845,
+          "consider_answering_n_eff": 642.403,
+          "used_p3m_pct_of_total": 16.4651,
+          "used_p3m_pct_of_aware": 26.9607,
+          "aware_n_eff": 661.8029,
+          "pref_share_pct": 19.5984,
+          "adrecall_pct": 22.5477,
+          "aware_count_unweighted": 744,
+          "used_count_unweighted": 208
+        },
+        "meridian": {
+          "unaided_any_pct": 46.8166,
+          "aided_pct": 90.3399,
+          "consider_t2b_pct_of_total": 40.8295,
+          "consider_t2b_pct_of_answering": 46.5033,
+          "consider_answering_n_eff": 933.5648,
+          "used_p3m_pct_of_total": 32.8784,
+          "used_p3m_pct_of_aware": 36.3942,
+          "aware_n_eff": 958.7861,
+          "pref_share_pct": 26.3579,
+          "adrecall_pct": 30.5345,
+          "aware_count_unweighted": 1078,
+          "used_count_unweighted": 377
+        },
+        "solstice": {
+          "unaided_any_pct": 8.2337,
+          "aided_pct": 23.286,
+          "consider_t2b_pct_of_total": 12.2671,
+          "consider_t2b_pct_of_answering": 53.9925,
+          "consider_answering_n_eff": 272.698,
+          "used_p3m_pct_of_total": 6.8626,
+          "used_p3m_pct_of_aware": 29.471,
+          "aware_n_eff": 279.1073,
+          "pref_share_pct": 7.9742,
+          "adrecall_pct": 10.7051,
+          "aware_count_unweighted": 306,
+          "used_count_unweighted": 92
+        },
+        "cardinal": {
+          "unaided_any_pct": 5.0208,
+          "aided_pct": 20.5443,
+          "consider_t2b_pct_of_total": 9.98,
+          "consider_t2b_pct_of_answering": 49.4715,
+          "consider_answering_n_eff": 205.7949,
+          "used_p3m_pct_of_total": 7.0719,
+          "used_p3m_pct_of_aware": 34.4227,
+          "aware_n_eff": 209.5771,
+          "pref_share_pct": 6.585,
+          "adrecall_pct": 8.5181,
+          "aware_count_unweighted": 240,
+          "used_count_unweighted": 83
+        }
+      },
+      "composite_atlas": {
+        "pct": 37.4693,
+        "variance": 0.1119,
+        "n_eff": 1067.312
+      },
+      "attributes_t2b_of_answering": {
+        "atlas": {
+          "taste": {
+            "t2b_pct_of_answering": 53.9478,
+            "n_eff": 702.3675
+          },
+          "worth": {
+            "t2b_pct_of_answering": 37.1876,
+            "n_eff": 702.5589
+          },
+          "innov": {
+            "t2b_pct_of_answering": 30.3686,
+            "n_eff": 706.6847
+          },
+          "forme": {
+            "t2b_pct_of_answering": 33.7272,
+            "n_eff": 705.6064
+          },
+          "avail": {
+            "t2b_pct_of_answering": 44.4235,
+            "n_eff": 701.5002
+          },
+          "premium": {
+            "t2b_pct_of_answering": 47.0793,
+            "n_eff": 701.9622
+          },
+          "trust": {
+            "t2b_pct_of_answering": 40.8827,
+            "n_eff": 696.7415
+          },
+          "sustain": {
+            "t2b_pct_of_answering": 38.8446,
+            "n_eff": 705.069
+          }
+        },
+        "beacon": {
+          "taste": {
+            "t2b_pct_of_answering": 56.3871,
+            "n_eff": 647.2597
+          },
+          "worth": {
+            "t2b_pct_of_answering": 43.1547,
+            "n_eff": 644.2515
+          },
+          "innov": {
+            "t2b_pct_of_answering": 50.579,
+            "n_eff": 643.6424
+          },
+          "forme": {
+            "t2b_pct_of_answering": 39.7248,
+            "n_eff": 647.3164
+          },
+          "avail": {
+            "t2b_pct_of_answering": 47.7158,
+            "n_eff": 651.0763
+          },
+          "premium": {
+            "t2b_pct_of_answering": 38.5844,
+            "n_eff": 646.8527
+          },
+          "trust": {
+            "t2b_pct_of_answering": 43.7247,
+            "n_eff": 647.8358
+          },
+          "sustain": {
+            "t2b_pct_of_answering": 42.5167,
+            "n_eff": 647.1372
+          }
+        },
+        "meridian": {
+          "taste": {
+            "t2b_pct_of_answering": 61.6556,
+            "n_eff": 943.52
+          },
+          "worth": {
+            "t2b_pct_of_answering": 52.5123,
+            "n_eff": 938.1654
+          },
+          "innov": {
+            "t2b_pct_of_answering": 26.7312,
+            "n_eff": 942.5227
+          },
+          "forme": {
+            "t2b_pct_of_answering": 46.9621,
+            "n_eff": 929.9797
+          },
+          "avail": {
+            "t2b_pct_of_answering": 80.7492,
+            "n_eff": 936.7578
+          },
+          "premium": {
+            "t2b_pct_of_answering": 36.3622,
+            "n_eff": 938.6356
+          },
+          "trust": {
+            "t2b_pct_of_answering": 66.811,
+            "n_eff": 932.5738
+          },
+          "sustain": {
+            "t2b_pct_of_answering": 32.5803,
+            "n_eff": 940.0985
+          }
+        },
+        "solstice": {
+          "taste": {
+            "t2b_pct_of_answering": 48.4776,
+            "n_eff": 276.1735
+          },
+          "worth": {
+            "t2b_pct_of_answering": 34.1035,
+            "n_eff": 269.3536
+          },
+          "innov": {
+            "t2b_pct_of_answering": 60.4423,
+            "n_eff": 272.6763
+          },
+          "forme": {
+            "t2b_pct_of_answering": 28.5876,
+            "n_eff": 275.6043
+          },
+          "avail": {
+            "t2b_pct_of_answering": 23.8731,
+            "n_eff": 276.3201
+          },
+          "premium": {
+            "t2b_pct_of_answering": 54.3608,
+            "n_eff": 274.7833
+          },
+          "trust": {
+            "t2b_pct_of_answering": 30.0834,
+            "n_eff": 273.2512
+          },
+          "sustain": {
+            "t2b_pct_of_answering": 64.7506,
+            "n_eff": 275.2183
+          }
+        },
+        "cardinal": {
+          "taste": {
+            "t2b_pct_of_answering": 50.4912,
+            "n_eff": 208.6213
+          },
+          "worth": {
+            "t2b_pct_of_answering": 40.7795,
+            "n_eff": 207.3307
+          },
+          "innov": {
+            "t2b_pct_of_answering": 35.2641,
+            "n_eff": 205.5196
+          },
+          "forme": {
+            "t2b_pct_of_answering": 25.0578,
+            "n_eff": 206.9688
+          },
+          "avail": {
+            "t2b_pct_of_answering": 19.8273,
+            "n_eff": 202.3539
+          },
+          "premium": {
+            "t2b_pct_of_answering": 62.7273,
+            "n_eff": 207.6661
+          },
+          "trust": {
+            "t2b_pct_of_answering": 38.4196,
+            "n_eff": 205.7788
+          },
+          "sustain": {
+            "t2b_pct_of_answering": 50.5374,
+            "n_eff": 203.8785
+          }
+        }
+      },
+      "segments_atlas": {
+        "aided": {
+          "by_segment": {
+            "1": {
+              "label": "Core",
+              "pct": 66.9119,
+              "n_unweighted": 424,
+              "n_eff": 374.0815
+            },
+            "2": {
+              "label": "Growth",
+              "pct": 70.0371,
+              "n_unweighted": 503,
+              "n_eff": 458.7702
+            },
+            "3": {
+              "label": "Value",
+              "pct": 61.7018,
+              "n_unweighted": 273,
+              "n_eff": 242.7794
+            }
+          },
+          "by_age_band": {
+            "1": {
+              "label": "18-34",
+              "pct": 69.2483,
+              "n_unweighted": 468,
+              "n_eff": 450.1309
+            },
+            "2": {
+              "label": "35-54",
+              "pct": 66.7978,
+              "n_unweighted": 480,
+              "n_eff": 460.6939
+            },
+            "3": {
+              "label": "55+",
+              "pct": 64.5521,
+              "n_unweighted": 252,
+              "n_eff": 241.7654
+            }
+          }
+        },
+        "unaided": {
+          "by_segment": {
+            "1": {
+              "label": "Core",
+              "pct": 31.738,
+              "n_unweighted": 424,
+              "n_eff": 374.0815
+            },
+            "2": {
+              "label": "Growth",
+              "pct": 32.7877,
+              "n_unweighted": 503,
+              "n_eff": 458.7702
+            },
+            "3": {
+              "label": "Value",
+              "pct": 26.3418,
+              "n_unweighted": 273,
+              "n_eff": 242.7794
+            }
+          },
+          "by_age_band": {
+            "1": {
+              "label": "18-34",
+              "pct": 33.0649,
+              "n_unweighted": 468,
+              "n_eff": 450.1309
+            },
+            "2": {
+              "label": "35-54",
+              "pct": 31.0456,
+              "n_unweighted": 480,
+              "n_eff": 460.6939
+            },
+            "3": {
+              "label": "55+",
+              "pct": 28.3783,
+              "n_unweighted": 252,
+              "n_eff": 241.7654
+            }
+          }
+        }
+      },
+      "weighting": {
+        "target_margins": {
+          "age_band": {
+            "18-34": 0.3,
+            "35-54": 0.38,
+            "55+": 0.32
+          },
+          "gender": {
+            "Male": 0.49,
+            "Female": 0.51
+          },
+          "region": {
+            "North": 0.25,
+            "East": 0.28,
+            "South": 0.26,
+            "West": 0.21
+          }
+        },
+        "achieved_margins_weighted": {
+          "age_band": {
+            "18-34": 0.3,
+            "35-54": 0.38,
+            "55+": 0.32
+          },
+          "gender": {
+            "Male": 0.49,
+            "Female": 0.51
+          },
+          "region": {
+            "North": 0.25,
+            "East": 0.28,
+            "South": 0.26,
+            "West": 0.21
+          }
+        },
+        "sample_margins_unweighted": {
+          "age_band": {
+            "18-34": 0.39,
+            "35-54": 0.4,
+            "55+": 0.21
+          },
+          "gender": {
+            "Male": 0.43,
+            "Female": 0.57
+          },
+          "region": {
+            "North": 0.28,
+            "East": 0.32,
+            "South": 0.22,
+            "West": 0.18
+          }
+        },
+        "design_effect": 1.1243,
+        "n": 1200,
+        "n_eff": 1067.312,
+        "weight_mean": 1.0,
+        "weight_min": 0.578,
+        "weight_max": 2.1448
+      }
+    },
+    "w4": {
+      "label": "2026-Q2 (W4)",
+      "n": 1200,
+      "funnel": {
+        "atlas": {
+          "unaided_any_pct": 36.544,
+          "aided_pct": 72.6913,
+          "consider_t2b_pct_of_total": 37.6818,
+          "consider_t2b_pct_of_answering": 53.1372,
+          "consider_answering_n_eff": 766.0835,
+          "used_p3m_pct_of_total": 14.8574,
+          "used_p3m_pct_of_aware": 20.439,
+          "aware_n_eff": 784.789,
+          "pref_share_pct": 19.5328,
+          "adrecall_pct": 26.3833,
+          "aware_count_unweighted": 879,
+          "used_count_unweighted": 189,
+          "nps": {
+            "score": 7.4482,
+            "promoters_pct": 31.3365,
+            "detractors_pct": 23.8882,
+            "base_unweighted": 189,
+            "base_weighted": 178.2886,
+            "n_eff": 170.8385,
+            "score_variance": 0.5467
+          }
+        },
+        "beacon": {
+          "unaided_any_pct": 25.6719,
+          "aided_pct": 62.9452,
+          "consider_t2b_pct_of_total": 41.6749,
+          "consider_t2b_pct_of_answering": 68.7054,
+          "consider_answering_n_eff": 659.5232,
+          "used_p3m_pct_of_total": 18.0906,
+          "used_p3m_pct_of_aware": 28.7403,
+          "aware_n_eff": 684.1922,
+          "pref_share_pct": 24.8196,
+          "adrecall_pct": 23.9372,
+          "aware_count_unweighted": 768,
+          "used_count_unweighted": 223
+        },
+        "meridian": {
+          "unaided_any_pct": 47.367,
+          "aided_pct": 91.1803,
+          "consider_t2b_pct_of_total": 38.5406,
+          "consider_t2b_pct_of_answering": 43.1117,
+          "consider_answering_n_eff": 946.0019,
+          "used_p3m_pct_of_total": 32.3894,
+          "used_p3m_pct_of_aware": 35.5224,
+          "aware_n_eff": 966.1854,
+          "pref_share_pct": 24.9097,
+          "adrecall_pct": 30.2569,
+          "aware_count_unweighted": 1082,
+          "used_count_unweighted": 373
+        },
+        "solstice": {
+          "unaided_any_pct": 8.7929,
+          "aided_pct": 23.8668,
+          "consider_t2b_pct_of_total": 12.8431,
+          "consider_t2b_pct_of_answering": 54.4612,
+          "consider_answering_n_eff": 281.6221,
+          "used_p3m_pct_of_total": 7.0345,
+          "used_p3m_pct_of_aware": 29.4742,
+          "aware_n_eff": 285.3908,
+          "pref_share_pct": 8.3768,
+          "adrecall_pct": 11.16,
+          "aware_count_unweighted": 312,
+          "used_count_unweighted": 95
+        },
+        "cardinal": {
+          "unaided_any_pct": 5.1755,
+          "aided_pct": 20.5039,
+          "consider_t2b_pct_of_total": 9.9253,
+          "consider_t2b_pct_of_answering": 49.5999,
+          "consider_answering_n_eff": 214.8204,
+          "used_p3m_pct_of_total": 7.1917,
+          "used_p3m_pct_of_aware": 35.0746,
+          "aware_n_eff": 221.0461,
+          "pref_share_pct": 6.0824,
+          "adrecall_pct": 7.9856,
+          "aware_count_unweighted": 246,
+          "used_count_unweighted": 86
+        }
+      },
+      "composite_atlas": {
+        "pct": 41.7435,
+        "variance": 0.1129,
+        "n_eff": 1070.6451
+      },
+      "attributes_t2b_of_answering": {
+        "atlas": {
+          "taste": {
+            "t2b_pct_of_answering": 54.1649,
+            "n_eff": 766.0139
+          },
+          "worth": {
+            "t2b_pct_of_answering": 35.3351,
+            "n_eff": 773.4837
+          },
+          "innov": {
+            "t2b_pct_of_answering": 37.0216,
+            "n_eff": 769.6676
+          },
+          "forme": {
+            "t2b_pct_of_answering": 35.0387,
+            "n_eff": 766.5372
+          },
+          "avail": {
+            "t2b_pct_of_answering": 43.8542,
+            "n_eff": 773.7816
+          },
+          "premium": {
+            "t2b_pct_of_answering": 46.0555,
+            "n_eff": 763.4371
+          },
+          "trust": {
+            "t2b_pct_of_answering": 41.5193,
+            "n_eff": 762.4478
+          },
+          "sustain": {
+            "t2b_pct_of_answering": 39.3432,
+            "n_eff": 756.9459
+          }
+        },
+        "beacon": {
+          "taste": {
+            "t2b_pct_of_answering": 57.8859,
+            "n_eff": 670.3586
+          },
+          "worth": {
+            "t2b_pct_of_answering": 44.7646,
+            "n_eff": 674.9904
+          },
+          "innov": {
+            "t2b_pct_of_answering": 52.6018,
+            "n_eff": 668.1553
+          },
+          "forme": {
+            "t2b_pct_of_answering": 41.8651,
+            "n_eff": 671.1796
+          },
+          "avail": {
+            "t2b_pct_of_answering": 50.6946,
+            "n_eff": 673.9853
+          },
+          "premium": {
+            "t2b_pct_of_answering": 40.4714,
+            "n_eff": 669.7668
+          },
+          "trust": {
+            "t2b_pct_of_answering": 44.7925,
+            "n_eff": 669.9588
+          },
+          "sustain": {
+            "t2b_pct_of_answering": 43.7474,
+            "n_eff": 665.6752
+          }
+        },
+        "meridian": {
+          "taste": {
+            "t2b_pct_of_answering": 60.8514,
+            "n_eff": 949.3101
+          },
+          "worth": {
+            "t2b_pct_of_answering": 50.8593,
+            "n_eff": 941.4317
+          },
+          "innov": {
+            "t2b_pct_of_answering": 25.6566,
+            "n_eff": 947.9593
+          },
+          "forme": {
+            "t2b_pct_of_answering": 46.3726,
+            "n_eff": 948.9143
+          },
+          "avail": {
+            "t2b_pct_of_answering": 81.2412,
+            "n_eff": 942.7778
+          },
+          "premium": {
+            "t2b_pct_of_answering": 35.7298,
+            "n_eff": 946.9623
+          },
+          "trust": {
+            "t2b_pct_of_answering": 66.1631,
+            "n_eff": 947.5125
+          },
+          "sustain": {
+            "t2b_pct_of_answering": 31.5446,
+            "n_eff": 943.2803
+          }
+        },
+        "solstice": {
+          "taste": {
+            "t2b_pct_of_answering": 49.7138,
+            "n_eff": 282.6483
+          },
+          "worth": {
+            "t2b_pct_of_answering": 33.4645,
+            "n_eff": 281.6128
+          },
+          "innov": {
+            "t2b_pct_of_answering": 60.0178,
+            "n_eff": 280.7869
+          },
+          "forme": {
+            "t2b_pct_of_answering": 29.4259,
+            "n_eff": 281.551
+          },
+          "avail": {
+            "t2b_pct_of_answering": 25.1325,
+            "n_eff": 282.9654
+          },
+          "premium": {
+            "t2b_pct_of_answering": 54.0144,
+            "n_eff": 279.5038
+          },
+          "trust": {
+            "t2b_pct_of_answering": 29.7108,
+            "n_eff": 280.9216
+          },
+          "sustain": {
+            "t2b_pct_of_answering": 63.5346,
+            "n_eff": 274.6802
+          }
+        },
+        "cardinal": {
+          "taste": {
+            "t2b_pct_of_answering": 50.9435,
+            "n_eff": 217.2943
+          },
+          "worth": {
+            "t2b_pct_of_answering": 40.3462,
+            "n_eff": 219.3761
+          },
+          "innov": {
+            "t2b_pct_of_answering": 34.4699,
+            "n_eff": 216.6634
+          },
+          "forme": {
+            "t2b_pct_of_answering": 24.7456,
+            "n_eff": 215.4052
+          },
+          "avail": {
+            "t2b_pct_of_answering": 20.888,
+            "n_eff": 219.2203
+          },
+          "premium": {
+            "t2b_pct_of_answering": 60.0215,
+            "n_eff": 219.2221
+          },
+          "trust": {
+            "t2b_pct_of_answering": 39.1056,
+            "n_eff": 213.761
+          },
+          "sustain": {
+            "t2b_pct_of_answering": 50.844,
+            "n_eff": 215.3118
+          }
+        }
+      },
+      "segments_atlas": {
+        "aided": {
+          "by_segment": {
+            "1": {
+              "label": "Core",
+              "pct": 69.9289,
+              "n_unweighted": 424,
+              "n_eff": 378.05
+            },
+            "2": {
+              "label": "Growth",
+              "pct": 80.4896,
+              "n_unweighted": 503,
+              "n_eff": 455.0587
+            },
+            "3": {
+              "label": "Value",
+              "pct": 64.3966,
+              "n_unweighted": 273,
+              "n_eff": 242.6519
+            }
+          },
+          "by_age_band": {
+            "1": {
+              "label": "18-34",
+              "pct": 77.4151,
+              "n_unweighted": 468,
+              "n_eff": 451.61
+            },
+            "2": {
+              "label": "35-54",
+              "pct": 73.0782,
+              "n_unweighted": 480,
+              "n_eff": 461.2452
+            },
+            "3": {
+              "label": "55+",
+              "pct": 67.8033,
+              "n_unweighted": 252,
+              "n_eff": 242.8475
+            }
+          }
+        },
+        "unaided": {
+          "by_segment": {
+            "1": {
+              "label": "Core",
+              "pct": 32.1637,
+              "n_unweighted": 424,
+              "n_eff": 378.05
+            },
+            "2": {
+              "label": "Growth",
+              "pct": 46.1699,
+              "n_unweighted": 503,
+              "n_eff": 455.0587
+            },
+            "3": {
+              "label": "Value",
+              "pct": 27.7395,
+              "n_unweighted": 273,
+              "n_eff": 242.6519
+            }
+          },
+          "by_age_band": {
+            "1": {
+              "label": "18-34",
+              "pct": 42.0037,
+              "n_unweighted": 468,
+              "n_eff": 451.61
+            },
+            "2": {
+              "label": "35-54",
+              "pct": 36.1364,
+              "n_unweighted": 480,
+              "n_eff": 461.2452
+            },
+            "3": {
+              "label": "55+",
+              "pct": 31.9095,
+              "n_unweighted": 252,
+              "n_eff": 242.8475
+            }
+          }
+        }
+      },
+      "weighting": {
+        "target_margins": {
+          "age_band": {
+            "18-34": 0.3,
+            "35-54": 0.38,
+            "55+": 0.32
+          },
+          "gender": {
+            "Male": 0.49,
+            "Female": 0.51
+          },
+          "region": {
+            "North": 0.25,
+            "East": 0.28,
+            "South": 0.26,
+            "West": 0.21
+          }
+        },
+        "achieved_margins_weighted": {
+          "age_band": {
+            "18-34": 0.3,
+            "35-54": 0.38,
+            "55+": 0.32
+          },
+          "gender": {
+            "Male": 0.49,
+            "Female": 0.51
+          },
+          "region": {
+            "North": 0.25,
+            "East": 0.28,
+            "South": 0.26,
+            "West": 0.21
+          }
+        },
+        "sample_margins_unweighted": {
+          "age_band": {
+            "18-34": 0.39,
+            "35-54": 0.4,
+            "55+": 0.21
+          },
+          "gender": {
+            "Male": 0.43,
+            "Female": 0.57
+          },
+          "region": {
+            "North": 0.28,
+            "East": 0.32,
+            "South": 0.22,
+            "West": 0.18
+          }
+        },
+        "design_effect": 1.1208,
+        "n": 1200,
+        "n_eff": 1070.6451,
+        "weight_mean": 1.0,
+        "weight_min": 0.5991,
+        "weight_max": 2.1085
+      }
+    },
+    "w5": {
+      "label": "2026-Q3 (W5)",
+      "n": 1200,
+      "funnel": {
+        "atlas": {
+          "unaided_any_pct": 37.8966,
+          "aided_pct": 73.0176,
+          "consider_t2b_pct_of_total": 38.2513,
+          "consider_t2b_pct_of_answering": 53.997,
+          "consider_answering_n_eff": 770.3977,
+          "used_p3m_pct_of_total": 15.7006,
+          "used_p3m_pct_of_aware": 21.5024,
+          "aware_n_eff": 793.3805,
+          "pref_share_pct": 21.3504,
+          "adrecall_pct": 28.7606,
+          "aware_count_unweighted": 887,
+          "used_count_unweighted": 193,
+          "nps": {
+            "score": 11.7979,
+            "promoters_pct": 35.364,
+            "detractors_pct": 23.5661,
+            "base_unweighted": 193,
+            "base_weighted": 188.407,
+            "n_eff": 172.3803,
+            "score_variance": 0.5754
+          }
+        },
+        "beacon": {
+          "unaided_any_pct": 26.1315,
+          "aided_pct": 64.3642,
+          "consider_t2b_pct_of_total": 42.8995,
+          "consider_t2b_pct_of_answering": 68.6148,
+          "consider_answering_n_eff": 675.9537,
+          "used_p3m_pct_of_total": 18.408,
+          "used_p3m_pct_of_aware": 28.5997,
+          "aware_n_eff": 697.1249,
+          "pref_share_pct": 23.5151,
+          "adrecall_pct": 25.1699,
+          "aware_count_unweighted": 780,
+          "used_count_unweighted": 230
+        },
+        "meridian": {
+          "unaided_any_pct": 46.2542,
+          "aided_pct": 90.2105,
+          "consider_t2b_pct_of_total": 37.1548,
+          "consider_t2b_pct_of_answering": 42.3327,
+          "consider_answering_n_eff": 944.9886,
+          "used_p3m_pct_of_total": 31.5511,
+          "used_p3m_pct_of_aware": 34.975,
+          "aware_n_eff": 967.6826,
+          "pref_share_pct": 22.1128,
+          "adrecall_pct": 30.837,
+          "aware_count_unweighted": 1080,
+          "used_count_unweighted": 370
+        },
+        "solstice": {
+          "unaided_any_pct": 8.2607,
+          "aided_pct": 23.978,
+          "consider_t2b_pct_of_total": 12.587,
+          "consider_t2b_pct_of_answering": 53.7242,
+          "consider_answering_n_eff": 277.1486,
+          "used_p3m_pct_of_total": 6.8455,
+          "used_p3m_pct_of_aware": 28.5491,
+          "aware_n_eff": 284.6542,
+          "pref_share_pct": 8.0736,
+          "adrecall_pct": 11.7472,
+          "aware_count_unweighted": 312,
+          "used_count_unweighted": 95
+        },
+        "cardinal": {
+          "unaided_any_pct": 5.0464,
+          "aided_pct": 20.554,
+          "consider_t2b_pct_of_total": 10.2728,
+          "consider_t2b_pct_of_answering": 51.615,
+          "consider_answering_n_eff": 219.2767,
+          "used_p3m_pct_of_total": 6.858,
+          "used_p3m_pct_of_aware": 33.366,
+          "aware_n_eff": 225.6657,
+          "pref_share_pct": 6.6076,
+          "adrecall_pct": 8.2367,
+          "aware_count_unweighted": 252,
+          "used_count_unweighted": 88
+        }
+      },
+      "composite_atlas": {
+        "pct": 42.3232,
+        "variance": 0.1158,
+        "n_eff": 1073.8033
+      },
+      "attributes_t2b_of_answering": {
+        "atlas": {
+          "taste": {
+            "t2b_pct_of_answering": 54.9336,
+            "n_eff": 777.5226
+          },
+          "worth": {
+            "t2b_pct_of_answering": 36.3403,
+            "n_eff": 776.0475
+          },
+          "innov": {
+            "t2b_pct_of_answering": 38.6434,
+            "n_eff": 784.049
+          },
+          "forme": {
+            "t2b_pct_of_answering": 36.4668,
+            "n_eff": 774.2784
+          },
+          "avail": {
+            "t2b_pct_of_answering": 45.5831,
+            "n_eff": 776.9004
+          },
+          "premium": {
+            "t2b_pct_of_answering": 48.3591,
+            "n_eff": 781.5969
+          },
+          "trust": {
+            "t2b_pct_of_answering": 43.3421,
+            "n_eff": 771.7437
+          },
+          "sustain": {
+            "t2b_pct_of_answering": 40.9856,
+            "n_eff": 775.4457
+          }
+        },
+        "beacon": {
+          "taste": {
+            "t2b_pct_of_answering": 57.9634,
+            "n_eff": 684.5401
+          },
+          "worth": {
+            "t2b_pct_of_answering": 45.4945,
+            "n_eff": 690.0071
+          },
+          "innov": {
+            "t2b_pct_of_answering": 53.7638,
+            "n_eff": 685.9373
+          },
+          "forme": {
+            "t2b_pct_of_answering": 41.9801,
+            "n_eff": 678.4315
+          },
+          "avail": {
+            "t2b_pct_of_answering": 50.5512,
+            "n_eff": 681.2338
+          },
+          "premium": {
+            "t2b_pct_of_answering": 39.6282,
+            "n_eff": 686.9485
+          },
+          "trust": {
+            "t2b_pct_of_answering": 44.6169,
+            "n_eff": 685.1049
+          },
+          "sustain": {
+            "t2b_pct_of_answering": 43.5298,
+            "n_eff": 688.783
+          }
+        },
+        "meridian": {
+          "taste": {
+            "t2b_pct_of_answering": 60.5769,
+            "n_eff": 948.0946
+          },
+          "worth": {
+            "t2b_pct_of_answering": 50.7706,
+            "n_eff": 952.9893
+          },
+          "innov": {
+            "t2b_pct_of_answering": 25.0738,
+            "n_eff": 950.8894
+          },
+          "forme": {
+            "t2b_pct_of_answering": 46.1797,
+            "n_eff": 948.8589
+          },
+          "avail": {
+            "t2b_pct_of_answering": 80.5019,
+            "n_eff": 949.9627
+          },
+          "premium": {
+            "t2b_pct_of_answering": 35.8344,
+            "n_eff": 942.0918
+          },
+          "trust": {
+            "t2b_pct_of_answering": 66.1192,
+            "n_eff": 947.8947
+          },
+          "sustain": {
+            "t2b_pct_of_answering": 30.6527,
+            "n_eff": 941.6658
+          }
+        },
+        "solstice": {
+          "taste": {
+            "t2b_pct_of_answering": 49.1102,
+            "n_eff": 280.0894
+          },
+          "worth": {
+            "t2b_pct_of_answering": 33.2807,
+            "n_eff": 274.6279
+          },
+          "innov": {
+            "t2b_pct_of_answering": 59.1459,
+            "n_eff": 280.1532
+          },
+          "forme": {
+            "t2b_pct_of_answering": 29.1254,
+            "n_eff": 275.4682
+          },
+          "avail": {
+            "t2b_pct_of_answering": 24.1765,
+            "n_eff": 279.1291
+          },
+          "premium": {
+            "t2b_pct_of_answering": 52.8995,
+            "n_eff": 279.9426
+          },
+          "trust": {
+            "t2b_pct_of_answering": 28.9185,
+            "n_eff": 277.2579
+          },
+          "sustain": {
+            "t2b_pct_of_answering": 63.5395,
+            "n_eff": 276.2898
+          }
+        },
+        "cardinal": {
+          "taste": {
+            "t2b_pct_of_answering": 52.753,
+            "n_eff": 219.0926
+          },
+          "worth": {
+            "t2b_pct_of_answering": 41.1751,
+            "n_eff": 224.6725
+          },
+          "innov": {
+            "t2b_pct_of_answering": 35.2467,
+            "n_eff": 218.9938
+          },
+          "forme": {
+            "t2b_pct_of_answering": 25.3396,
+            "n_eff": 224.7274
+          },
+          "avail": {
+            "t2b_pct_of_answering": 20.2553,
+            "n_eff": 219.8607
+          },
+          "premium": {
+            "t2b_pct_of_answering": 59.6758,
+            "n_eff": 217.9813
+          },
+          "trust": {
+            "t2b_pct_of_answering": 40.996,
+            "n_eff": 220.8115
+          },
+          "sustain": {
+            "t2b_pct_of_answering": 50.3809,
+            "n_eff": 224.7394
+          }
+        }
+      },
+      "segments_atlas": {
+        "aided": {
+          "by_segment": {
+            "1": {
+              "label": "Core",
+              "pct": 71.4646,
+              "n_unweighted": 424,
+              "n_eff": 379.6578
+            },
+            "2": {
+              "label": "Growth",
+              "pct": 80.135,
+              "n_unweighted": 503,
+              "n_eff": 457.2644
+            },
+            "3": {
+              "label": "Value",
+              "pct": 64.0308,
+              "n_unweighted": 273,
+              "n_eff": 242.322
+            }
+          },
+          "by_age_band": {
+            "1": {
+              "label": "18-34",
+              "pct": 77.9642,
+              "n_unweighted": 468,
+              "n_eff": 452.4408
+            },
+            "2": {
+              "label": "35-54",
+              "pct": 72.7481,
+              "n_unweighted": 480,
+              "n_eff": 465.2296
+            },
+            "3": {
+              "label": "55+",
+              "pct": 68.7004,
+              "n_unweighted": 252,
+              "n_eff": 242.6748
+            }
+          }
+        },
+        "unaided": {
+          "by_segment": {
+            "1": {
+              "label": "Core",
+              "pct": 32.7066,
+              "n_unweighted": 424,
+              "n_eff": 379.6578
+            },
+            "2": {
+              "label": "Growth",
+              "pct": 47.9775,
+              "n_unweighted": 503,
+              "n_eff": 457.2644
+            },
+            "3": {
+              "label": "Value",
+              "pct": 29.5158,
+              "n_unweighted": 273,
+              "n_eff": 242.322
+            }
+          },
+          "by_age_band": {
+            "1": {
+              "label": "18-34",
+              "pct": 43.5972,
+              "n_unweighted": 468,
+              "n_eff": 452.4408
+            },
+            "2": {
+              "label": "35-54",
+              "pct": 37.3578,
+              "n_unweighted": 480,
+              "n_eff": 465.2296
+            },
+            "3": {
+              "label": "55+",
+              "pct": 33.1919,
+              "n_unweighted": 252,
+              "n_eff": 242.6748
+            }
+          }
+        }
+      },
+      "weighting": {
+        "target_margins": {
+          "age_band": {
+            "18-34": 0.3,
+            "35-54": 0.38,
+            "55+": 0.32
+          },
+          "gender": {
+            "Male": 0.49,
+            "Female": 0.51
+          },
+          "region": {
+            "North": 0.25,
+            "East": 0.28,
+            "South": 0.26,
+            "West": 0.21
+          }
+        },
+        "achieved_margins_weighted": {
+          "age_band": {
+            "18-34": 0.3,
+            "35-54": 0.38,
+            "55+": 0.32
+          },
+          "gender": {
+            "Male": 0.49,
+            "Female": 0.51
+          },
+          "region": {
+            "North": 0.25,
+            "East": 0.28,
+            "South": 0.26,
+            "West": 0.21
+          }
+        },
+        "sample_margins_unweighted": {
+          "age_band": {
+            "18-34": 0.39,
+            "35-54": 0.4,
+            "55+": 0.21
+          },
+          "gender": {
+            "Male": 0.43,
+            "Female": 0.57
+          },
+          "region": {
+            "North": 0.28,
+            "East": 0.32,
+            "South": 0.22,
+            "West": 0.18
+          }
+        },
+        "design_effect": 1.1175,
+        "n": 1200,
+        "n_eff": 1073.8033,
+        "weight_mean": 1.0,
+        "weight_min": 0.6018,
+        "weight_max": 2.044
+      }
+    }
+  },
+  "deltas": {
+    "w1_w2": {
+      "funnel": {
+        "atlas": {
+          "unaided_any": {
+            "from": 29.0698,
+            "to": 29.8682,
+            "delta_pts": 0.7984,
+            "z": 0.406,
+            "p": 0.685,
+            "significant_95": false
+          },
+          "aided": {
+            "from": 65.8594,
+            "to": 66.2013,
+            "delta_pts": 0.3419,
+            "z": 0.167,
+            "p": 0.8672,
+            "significant_95": false
+          },
+          "consider_t2b_of_total": {
+            "from": 31.6771,
+            "to": 32.4843,
+            "delta_pts": 0.8072,
+            "z": 0.4,
+            "p": 0.6888,
+            "significant_95": false
+          },
+          "consider_conversion": {
+            "from": 49.6498,
+            "to": 50.1686,
+            "delta_pts": 0.5188,
+            "z": 0.194,
+            "p": 0.8461,
+            "significant_95": false
+          },
+          "used_p3m_of_total": {
+            "from": 12.122,
+            "to": 12.0765,
+            "delta_pts": -0.0455,
+            "z": -0.032,
+            "p": 0.9742,
+            "significant_95": false
+          },
+          "pref_share": {
+            "from": 18.9962,
+            "to": 18.1483,
+            "delta_pts": -0.8479,
+            "z": -0.505,
+            "p": 0.6136,
+            "significant_95": false
+          },
+          "adrecall": {
+            "from": 17.3215,
+            "to": 17.0916,
+            "delta_pts": -0.2299,
+            "z": -0.141,
+            "p": 0.8878,
+            "significant_95": false
+          }
+        },
+        "beacon": {
+          "unaided_any": {
+            "from": 20.8189,
+            "to": 22.3677,
+            "delta_pts": 1.5488,
+            "z": 0.872,
+            "p": 0.3833,
+            "significant_95": false
+          },
+          "aided": {
+            "from": 56.8408,
+            "to": 58.5101,
+            "delta_pts": 1.6693,
+            "z": 0.782,
+            "p": 0.4339,
+            "significant_95": false
+          },
+          "consider_t2b_of_total": {
+            "from": 32.6799,
+            "to": 34.1738,
+            "delta_pts": 1.4939,
+            "z": 0.733,
+            "p": 0.4633,
+            "significant_95": false
+          },
+          "consider_conversion": {
+            "from": 59.1396,
+            "to": 59.863,
+            "delta_pts": 0.7234,
+            "z": 0.259,
+            "p": 0.7957,
+            "significant_95": false
+          },
+          "used_p3m_of_total": {
+            "from": 14.262,
+            "to": 15.3023,
+            "delta_pts": 1.0403,
+            "z": 0.679,
+            "p": 0.4972,
+            "significant_95": false
+          },
+          "pref_share": {
+            "from": 19.7083,
+            "to": 20.2218,
+            "delta_pts": 0.5135,
+            "z": 0.298,
+            "p": 0.7661,
+            "significant_95": false
+          },
+          "adrecall": {
+            "from": 21.2689,
+            "to": 21.3384,
+            "delta_pts": 0.0695,
+            "z": 0.039,
+            "p": 0.9686,
+            "significant_95": false
+          }
+        },
+        "meridian": {
+          "unaided_any": {
+            "from": 46.8086,
+            "to": 46.7616,
+            "delta_pts": -0.047,
+            "z": -0.022,
+            "p": 0.9826,
+            "significant_95": false
+          },
+          "aided": {
+            "from": 90.4727,
+            "to": 91.0618,
+            "delta_pts": 0.5891,
+            "z": 0.471,
+            "p": 0.6374,
+            "significant_95": false
+          },
+          "consider_t2b_of_total": {
+            "from": 41.6393,
+            "to": 42.3224,
+            "delta_pts": 0.6831,
+            "z": 0.321,
+            "p": 0.7485,
+            "significant_95": false
+          },
+          "consider_conversion": {
+            "from": 47.4598,
+            "to": 47.6709,
+            "delta_pts": 0.2111,
+            "z": 0.091,
+            "p": 0.9271,
+            "significant_95": false
+          },
+          "used_p3m_of_total": {
+            "from": 33.9917,
+            "to": 34.0462,
+            "delta_pts": 0.0545,
+            "z": 0.027,
+            "p": 0.9787,
+            "significant_95": false
+          },
+          "pref_share": {
+            "from": 26.7507,
+            "to": 28.3549,
+            "delta_pts": 1.6042,
+            "z": 0.832,
+            "p": 0.4056,
+            "significant_95": false
+          },
+          "adrecall": {
+            "from": 31.5885,
+            "to": 31.8279,
+            "delta_pts": 0.2394,
+            "z": 0.119,
+            "p": 0.9052,
+            "significant_95": false
+          }
+        },
+        "solstice": {
+          "unaided_any": {
+            "from": 7.2798,
+            "to": 7.3283,
+            "delta_pts": 0.0485,
+            "z": 0.043,
+            "p": 0.9656,
+            "significant_95": false
+          },
+          "aided": {
+            "from": 22.3558,
+            "to": 23.1378,
+            "delta_pts": 0.782,
+            "z": 0.432,
+            "p": 0.6657,
+            "significant_95": false
+          },
+          "consider_t2b_of_total": {
+            "from": 12.1291,
+            "to": 12.2852,
+            "delta_pts": 0.1561,
+            "z": 0.11,
+            "p": 0.9121,
+            "significant_95": false
+          },
+          "consider_conversion": {
+            "from": 55.5153,
+            "to": 53.6282,
+            "delta_pts": -1.8871,
+            "z": -0.433,
+            "p": 0.6653,
+            "significant_95": false
+          },
+          "used_p3m_of_total": {
+            "from": 6.6694,
+            "to": 6.2984,
+            "delta_pts": -0.371,
+            "z": -0.349,
+            "p": 0.7271,
+            "significant_95": false
+          },
+          "pref_share": {
+            "from": 7.9745,
+            "to": 7.726,
+            "delta_pts": -0.2485,
+            "z": -0.214,
+            "p": 0.8306,
+            "significant_95": false
+          },
+          "adrecall": {
+            "from": 11.0975,
+            "to": 11.312,
+            "delta_pts": 0.2145,
+            "z": 0.157,
+            "p": 0.8749,
+            "significant_95": false
+          }
+        },
+        "cardinal": {
+          "unaided_any": {
+            "from": 5.5893,
+            "to": 4.9067,
+            "delta_pts": -0.6826,
+            "z": -0.709,
+            "p": 0.4784,
+            "significant_95": false
+          },
+          "aided": {
+            "from": 20.9952,
+            "to": 20.3353,
+            "delta_pts": -0.6599,
+            "z": -0.377,
+            "p": 0.7058,
+            "significant_95": false
+          },
+          "consider_t2b_of_total": {
+            "from": 10.468,
+            "to": 10.1889,
+            "delta_pts": -0.2791,
+            "z": -0.212,
+            "p": 0.8318,
+            "significant_95": false
+          },
+          "consider_conversion": {
+            "from": 51.4181,
+            "to": 51.5988,
+            "delta_pts": 0.1807,
+            "z": 0.037,
+            "p": 0.9704,
+            "significant_95": false
+          },
+          "used_p3m_of_total": {
+            "from": 7.9425,
+            "to": 7.4167,
+            "delta_pts": -0.5258,
+            "z": -0.457,
+            "p": 0.6474,
+            "significant_95": false
+          },
+          "pref_share": {
+            "from": 6.7848,
+            "to": 6.4267,
+            "delta_pts": -0.3581,
+            "z": -0.334,
+            "p": 0.7385,
+            "significant_95": false
+          },
+          "adrecall": {
+            "from": 8.5442,
+            "to": 8.0523,
+            "delta_pts": -0.4919,
+            "z": -0.413,
+            "p": 0.6796,
+            "significant_95": false
+          }
+        }
+      },
+      "composite_atlas": {
+        "from": 36.5528,
+        "to": 36.9207,
+        "delta_pts": 0.3679,
+        "z": 0.255,
+        "p": 0.7989,
+        "significant_95": false
+      },
+      "nps_atlas": {
+        "from": -7.7522,
+        "to": -6.9563,
+        "delta_pts": 0.7959,
+        "z": 0.091,
+        "p": 0.9272,
+        "significant_95": false,
+        "low_base_flag": true
+      },
+      "attributes_atlas": {
+        "taste": {
+          "from": 52.3827,
+          "to": 53.5258,
+          "delta_pts": 1.1431,
+          "z": 0.43,
+          "p": 0.6672,
+          "significant_95": false
+        },
+        "worth": {
+          "from": 37.3243,
+          "to": 36.6103,
+          "delta_pts": -0.714,
+          "z": -0.277,
+          "p": 0.782,
+          "significant_95": false
+        },
+        "innov": {
+          "from": 28.1273,
+          "to": 28.7912,
+          "delta_pts": 0.6639,
+          "z": 0.276,
+          "p": 0.7825,
+          "significant_95": false
+        },
+        "forme": {
+          "from": 32.2167,
+          "to": 33.8181,
+          "delta_pts": 1.6014,
+          "z": 0.639,
+          "p": 0.5228,
+          "significant_95": false
+        },
+        "avail": {
+          "from": 42.0964,
+          "to": 43.7493,
+          "delta_pts": 1.6529,
+          "z": 0.626,
+          "p": 0.5316,
+          "significant_95": false
+        },
+        "premium": {
+          "from": 44.9163,
+          "to": 46.3645,
+          "delta_pts": 1.4482,
+          "z": 0.544,
+          "p": 0.5865,
+          "significant_95": false
+        },
+        "trust": {
+          "from": 40.2576,
+          "to": 41.0616,
+          "delta_pts": 0.804,
+          "z": 0.308,
+          "p": 0.7583,
+          "significant_95": false
+        },
+        "sustain": {
+          "from": 37.7258,
+          "to": 38.3007,
+          "delta_pts": 0.5749,
+          "z": 0.222,
+          "p": 0.8246,
+          "significant_95": false
+        }
+      },
+      "segments_atlas_aided_by_segment": {
+        "1": {
+          "label": "Core",
+          "from": 67.084,
+          "to": 66.8852,
+          "delta_pts": -0.1988,
+          "z": -0.058,
+          "p": 0.9536,
+          "significant_95": false
+        },
+        "2": {
+          "label": "Growth",
+          "from": 68.38,
+          "to": 68.7659,
+          "delta_pts": 0.3859,
+          "z": 0.126,
+          "p": 0.9,
+          "significant_95": false
+        },
+        "3": {
+          "label": "Value",
+          "from": 60.1619,
+          "to": 61.1389,
+          "delta_pts": 0.977,
+          "z": 0.22,
+          "p": 0.8256,
+          "significant_95": false
+        }
+      },
+      "segments_atlas_aided_by_age_band": {
+        "1": {
+          "label": "18-34",
+          "from": 69.0623,
+          "to": 69.3571,
+          "delta_pts": 0.2948,
+          "z": 0.096,
+          "p": 0.9236,
+          "significant_95": false
+        },
+        "2": {
+          "label": "35-54",
+          "from": 66.3349,
+          "to": 66.0659,
+          "delta_pts": -0.269,
+          "z": -0.087,
+          "p": 0.931,
+          "significant_95": false
+        },
+        "3": {
+          "label": "55+",
+          "from": 62.2919,
+          "to": 63.4035,
+          "delta_pts": 1.1116,
+          "z": 0.254,
+          "p": 0.7998,
+          "significant_95": false
+        }
+      },
+      "segments_atlas_unaided_by_segment": {
+        "1": {
+          "label": "Core",
+          "from": 29.3336,
+          "to": 30.7217,
+          "delta_pts": 1.3881,
+          "z": 0.417,
+          "p": 0.6768,
+          "significant_95": false
+        },
+        "2": {
+          "label": "Growth",
+          "from": 31.7636,
+          "to": 32.2667,
+          "delta_pts": 0.5031,
+          "z": 0.163,
+          "p": 0.8705,
+          "significant_95": false
+        },
+        "3": {
+          "label": "Value",
+          "from": 24.5043,
+          "to": 24.82,
+          "delta_pts": 0.3157,
+          "z": 0.081,
+          "p": 0.9357,
+          "significant_95": false
+        }
+      },
+      "segments_atlas_unaided_by_age_band": {
+        "1": {
+          "label": "18-34",
+          "from": 31.919,
+          "to": 32.3863,
+          "delta_pts": 0.4673,
+          "z": 0.15,
+          "p": 0.8805,
+          "significant_95": false
+        },
+        "2": {
+          "label": "35-54",
+          "from": 29.9715,
+          "to": 30.7482,
+          "delta_pts": 0.7767,
+          "z": 0.257,
+          "p": 0.7971,
+          "significant_95": false
+        },
+        "3": {
+          "label": "55+",
+          "from": 25.328,
+          "to": 26.4625,
+          "delta_pts": 1.1345,
+          "z": 0.286,
+          "p": 0.7752,
+          "significant_95": false
+        }
+      }
+    },
+    "w2_w3": {
+      "funnel": {
+        "atlas": {
+          "unaided_any": {
+            "from": 29.8682,
+            "to": 30.7978,
+            "delta_pts": 0.9296,
+            "z": 0.468,
+            "p": 0.6401,
+            "significant_95": false
+          },
+          "aided": {
+            "from": 66.2013,
+            "to": 66.8143,
+            "delta_pts": 0.613,
+            "z": 0.3,
+            "p": 0.7639,
+            "significant_95": false
+          },
+          "consider_t2b_of_total": {
+            "from": 32.4843,
+            "to": 33.1636,
+            "delta_pts": 0.6793,
+            "z": 0.334,
+            "p": 0.738,
+            "significant_95": false
+          },
+          "consider_conversion": {
+            "from": 50.1686,
+            "to": 51.1222,
+            "delta_pts": 0.9536,
+            "z": 0.356,
+            "p": 0.7215,
+            "significant_95": false
+          },
+          "used_p3m_of_total": {
+            "from": 12.0765,
+            "to": 12.4299,
+            "delta_pts": 0.3534,
+            "z": 0.249,
+            "p": 0.8032,
+            "significant_95": false
+          },
+          "pref_share": {
+            "from": 18.1483,
+            "to": 17.9788,
+            "delta_pts": -0.1695,
+            "z": -0.102,
+            "p": 0.9189,
+            "significant_95": false
+          },
+          "adrecall": {
+            "from": 17.0916,
+            "to": 19.0324,
+            "delta_pts": 1.9408,
+            "z": 1.166,
+            "p": 0.2434,
+            "significant_95": false
+          }
+        },
+        "beacon": {
+          "unaided_any": {
+            "from": 22.3677,
+            "to": 23.9068,
+            "delta_pts": 1.5391,
+            "z": 0.844,
+            "p": 0.3987,
+            "significant_95": false
+          },
+          "aided": {
+            "from": 58.5101,
+            "to": 61.0707,
+            "delta_pts": 2.5606,
+            "z": 1.207,
+            "p": 0.2273,
+            "significant_95": false
+          },
+          "consider_t2b_of_total": {
+            "from": 34.1738,
+            "to": 35.6369,
+            "delta_pts": 1.4631,
+            "z": 0.71,
+            "p": 0.4779,
+            "significant_95": false
+          },
+          "consider_conversion": {
+            "from": 59.863,
+            "to": 60.0845,
+            "delta_pts": 0.2215,
+            "z": 0.081,
+            "p": 0.9358,
+            "significant_95": false
+          },
+          "used_p3m_of_total": {
+            "from": 15.3023,
+            "to": 16.4651,
+            "delta_pts": 1.1628,
+            "z": 0.736,
+            "p": 0.462,
+            "significant_95": false
+          },
+          "pref_share": {
+            "from": 20.2218,
+            "to": 19.5984,
+            "delta_pts": -0.6234,
+            "z": -0.361,
+            "p": 0.7181,
+            "significant_95": false
+          },
+          "adrecall": {
+            "from": 21.3384,
+            "to": 22.5477,
+            "delta_pts": 1.2093,
+            "z": 0.676,
+            "p": 0.4993,
+            "significant_95": false
+          }
+        },
+        "meridian": {
+          "unaided_any": {
+            "from": 46.7616,
+            "to": 46.8166,
+            "delta_pts": 0.055,
+            "z": 0.025,
+            "p": 0.9797,
+            "significant_95": false
+          },
+          "aided": {
+            "from": 91.0618,
+            "to": 90.3399,
+            "delta_pts": -0.7219,
+            "z": -0.575,
+            "p": 0.5655,
+            "significant_95": false
+          },
+          "consider_t2b_of_total": {
+            "from": 42.3224,
+            "to": 40.8295,
+            "delta_pts": -1.4929,
+            "z": -0.7,
+            "p": 0.4837,
+            "significant_95": false
+          },
+          "consider_conversion": {
+            "from": 47.6709,
+            "to": 46.5033,
+            "delta_pts": -1.1676,
+            "z": -0.506,
+            "p": 0.6129,
+            "significant_95": false
+          },
+          "used_p3m_of_total": {
+            "from": 34.0462,
+            "to": 32.8784,
+            "delta_pts": -1.1678,
+            "z": -0.572,
+            "p": 0.5672,
+            "significant_95": false
+          },
+          "pref_share": {
+            "from": 28.3549,
+            "to": 26.3579,
+            "delta_pts": -1.997,
+            "z": -1.036,
+            "p": 0.3003,
+            "significant_95": false
+          },
+          "adrecall": {
+            "from": 31.8279,
+            "to": 30.5345,
+            "delta_pts": -1.2934,
+            "z": -0.646,
+            "p": 0.5186,
+            "significant_95": false
+          }
+        },
+        "solstice": {
+          "unaided_any": {
+            "from": 7.3283,
+            "to": 8.2337,
+            "delta_pts": 0.9054,
+            "z": 0.782,
+            "p": 0.4345,
+            "significant_95": false
+          },
+          "aided": {
+            "from": 23.1378,
+            "to": 23.286,
+            "delta_pts": 0.1482,
+            "z": 0.081,
+            "p": 0.9353,
+            "significant_95": false
+          },
+          "consider_t2b_of_total": {
+            "from": 12.2852,
+            "to": 12.2671,
+            "delta_pts": -0.0181,
+            "z": -0.013,
+            "p": 0.9898,
+            "significant_95": false
+          },
+          "consider_conversion": {
+            "from": 53.6282,
+            "to": 53.9925,
+            "delta_pts": 0.3643,
+            "z": 0.085,
+            "p": 0.9324,
+            "significant_95": false
+          },
+          "used_p3m_of_total": {
+            "from": 6.2984,
+            "to": 6.8626,
+            "delta_pts": 0.5642,
+            "z": 0.526,
+            "p": 0.5988,
+            "significant_95": false
+          },
+          "pref_share": {
+            "from": 7.726,
+            "to": 7.9742,
+            "delta_pts": 0.2482,
+            "z": 0.213,
+            "p": 0.831,
+            "significant_95": false
+          },
+          "adrecall": {
+            "from": 11.312,
+            "to": 10.7051,
+            "delta_pts": -0.6069,
+            "z": -0.448,
+            "p": 0.6539,
+            "significant_95": false
+          }
+        },
+        "cardinal": {
+          "unaided_any": {
+            "from": 4.9067,
+            "to": 5.0208,
+            "delta_pts": 0.1141,
+            "z": 0.121,
+            "p": 0.9033,
+            "significant_95": false
+          },
+          "aided": {
+            "from": 20.3353,
+            "to": 20.5443,
+            "delta_pts": 0.209,
+            "z": 0.12,
+            "p": 0.9046,
+            "significant_95": false
+          },
+          "consider_t2b_of_total": {
+            "from": 10.1889,
+            "to": 9.98,
+            "delta_pts": -0.2089,
+            "z": -0.16,
+            "p": 0.8726,
+            "significant_95": false
+          },
+          "consider_conversion": {
+            "from": 51.5988,
+            "to": 49.4715,
+            "delta_pts": -2.1273,
+            "z": -0.436,
+            "p": 0.6629,
+            "significant_95": false
+          },
+          "used_p3m_of_total": {
+            "from": 7.4167,
+            "to": 7.0719,
+            "delta_pts": -0.3448,
+            "z": -0.308,
+            "p": 0.7584,
+            "significant_95": false
+          },
+          "pref_share": {
+            "from": 6.4267,
+            "to": 6.585,
+            "delta_pts": 0.1583,
+            "z": 0.148,
+            "p": 0.882,
+            "significant_95": false
+          },
+          "adrecall": {
+            "from": 8.0523,
+            "to": 8.5181,
+            "delta_pts": 0.4658,
+            "z": 0.391,
+            "p": 0.696,
+            "significant_95": false
+          }
+        }
+      },
+      "composite_atlas": {
+        "from": 36.9207,
+        "to": 37.4693,
+        "delta_pts": 0.5486,
+        "z": 0.379,
+        "p": 0.7047,
+        "significant_95": false
+      },
+      "nps_atlas": {
+        "from": -6.9563,
+        "to": -2.2995,
+        "delta_pts": 4.6568,
+        "z": 0.53,
+        "p": 0.5963,
+        "significant_95": false,
+        "low_base_flag": true
+      },
+      "attributes_atlas": {
+        "taste": {
+          "from": 53.5258,
+          "to": 53.9478,
+          "delta_pts": 0.422,
+          "z": 0.159,
+          "p": 0.874,
+          "significant_95": false
+        },
+        "worth": {
+          "from": 36.6103,
+          "to": 37.1876,
+          "delta_pts": 0.5773,
+          "z": 0.224,
+          "p": 0.8231,
+          "significant_95": false
+        },
+        "innov": {
+          "from": 28.7912,
+          "to": 30.3686,
+          "delta_pts": 1.5774,
+          "z": 0.649,
+          "p": 0.5161,
+          "significant_95": false
+        },
+        "forme": {
+          "from": 33.8181,
+          "to": 33.7272,
+          "delta_pts": -0.0909,
+          "z": -0.036,
+          "p": 0.9713,
+          "significant_95": false
+        },
+        "avail": {
+          "from": 43.7493,
+          "to": 44.4235,
+          "delta_pts": 0.6742,
+          "z": 0.254,
+          "p": 0.7996,
+          "significant_95": false
+        },
+        "premium": {
+          "from": 46.3645,
+          "to": 47.0793,
+          "delta_pts": 0.7148,
+          "z": 0.268,
+          "p": 0.7885,
+          "significant_95": false
+        },
+        "trust": {
+          "from": 41.0616,
+          "to": 40.8827,
+          "delta_pts": -0.1789,
+          "z": -0.068,
+          "p": 0.9457,
+          "significant_95": false
+        },
+        "sustain": {
+          "from": 38.3007,
+          "to": 38.8446,
+          "delta_pts": 0.5439,
+          "z": 0.209,
+          "p": 0.8346,
+          "significant_95": false
+        }
+      },
+      "segments_atlas_aided_by_segment": {
+        "1": {
+          "label": "Core",
+          "from": 66.8852,
+          "to": 66.9119,
+          "delta_pts": 0.0267,
+          "z": 0.008,
+          "p": 0.9938,
+          "significant_95": false
+        },
+        "2": {
+          "label": "Growth",
+          "from": 68.7659,
+          "to": 70.0371,
+          "delta_pts": 1.2712,
+          "z": 0.417,
+          "p": 0.6767,
+          "significant_95": false
+        },
+        "3": {
+          "label": "Value",
+          "from": 61.1389,
+          "to": 61.7018,
+          "delta_pts": 0.5629,
+          "z": 0.127,
+          "p": 0.8987,
+          "significant_95": false
+        }
+      },
+      "segments_atlas_aided_by_age_band": {
+        "1": {
+          "label": "18-34",
+          "from": 69.3571,
+          "to": 69.2483,
+          "delta_pts": -0.1088,
+          "z": -0.035,
+          "p": 0.9718,
+          "significant_95": false
+        },
+        "2": {
+          "label": "35-54",
+          "from": 66.0659,
+          "to": 66.7978,
+          "delta_pts": 0.7319,
+          "z": 0.235,
+          "p": 0.8139,
+          "significant_95": false
+        },
+        "3": {
+          "label": "55+",
+          "from": 63.4035,
+          "to": 64.5521,
+          "delta_pts": 1.1486,
+          "z": 0.263,
+          "p": 0.7923,
+          "significant_95": false
+        }
+      },
+      "segments_atlas_unaided_by_segment": {
+        "1": {
+          "label": "Core",
+          "from": 30.7217,
+          "to": 31.738,
+          "delta_pts": 1.0163,
+          "z": 0.301,
+          "p": 0.7635,
+          "significant_95": false
+        },
+        "2": {
+          "label": "Growth",
+          "from": 32.2667,
+          "to": 32.7877,
+          "delta_pts": 0.521,
+          "z": 0.168,
+          "p": 0.8665,
+          "significant_95": false
+        },
+        "3": {
+          "label": "Value",
+          "from": 24.82,
+          "to": 26.3418,
+          "delta_pts": 1.5218,
+          "z": 0.384,
+          "p": 0.701,
+          "significant_95": false
+        }
+      },
+      "segments_atlas_unaided_by_age_band": {
+        "1": {
+          "label": "18-34",
+          "from": 32.3863,
+          "to": 33.0649,
+          "delta_pts": 0.6786,
+          "z": 0.217,
+          "p": 0.8282,
+          "significant_95": false
+        },
+        "2": {
+          "label": "35-54",
+          "from": 30.7482,
+          "to": 31.0456,
+          "delta_pts": 0.2974,
+          "z": 0.098,
+          "p": 0.9221,
+          "significant_95": false
+        },
+        "3": {
+          "label": "55+",
+          "from": 26.4625,
+          "to": 28.3783,
+          "delta_pts": 1.9158,
+          "z": 0.473,
+          "p": 0.6364,
+          "significant_95": false
+        }
+      }
+    },
+    "w3_w4": {
+      "funnel": {
+        "atlas": {
+          "unaided_any": {
+            "from": 30.7978,
+            "to": 36.544,
+            "delta_pts": 5.7462,
+            "z": 2.811,
+            "p": 0.0049,
+            "significant_95": true
+          },
+          "aided": {
+            "from": 66.8143,
+            "to": 72.6913,
+            "delta_pts": 5.877,
+            "z": 2.958,
+            "p": 0.0031,
+            "significant_95": true
+          },
+          "consider_t2b_of_total": {
+            "from": 33.1636,
+            "to": 37.6818,
+            "delta_pts": 4.5182,
+            "z": 2.184,
+            "p": 0.029,
+            "significant_95": true
+          },
+          "consider_conversion": {
+            "from": 51.1222,
+            "to": 53.1372,
+            "delta_pts": 2.015,
+            "z": 0.771,
+            "p": 0.441,
+            "significant_95": false
+          },
+          "used_p3m_of_total": {
+            "from": 12.4299,
+            "to": 14.8574,
+            "delta_pts": 2.4275,
+            "z": 1.635,
+            "p": 0.1021,
+            "significant_95": false
+          },
+          "pref_share": {
+            "from": 17.9788,
+            "to": 19.5328,
+            "delta_pts": 1.554,
+            "z": 0.92,
+            "p": 0.3574,
+            "significant_95": false
+          },
+          "adrecall": {
+            "from": 19.0324,
+            "to": 26.3833,
+            "delta_pts": 7.3509,
+            "z": 4.056,
+            "p": 0.0,
+            "significant_95": true
+          }
+        },
+        "beacon": {
+          "unaided_any": {
+            "from": 23.9068,
+            "to": 25.6719,
+            "delta_pts": 1.7651,
+            "z": 0.945,
+            "p": 0.3446,
+            "significant_95": false
+          },
+          "aided": {
+            "from": 61.0707,
+            "to": 62.9452,
+            "delta_pts": 1.8745,
+            "z": 0.893,
+            "p": 0.3719,
+            "significant_95": false
+          },
+          "consider_t2b_of_total": {
+            "from": 35.6369,
+            "to": 41.6749,
+            "delta_pts": 6.038,
+            "z": 2.867,
+            "p": 0.0041,
+            "significant_95": true
+          },
+          "consider_conversion": {
+            "from": 60.0845,
+            "to": 68.7054,
+            "delta_pts": 8.6209,
+            "z": 3.249,
+            "p": 0.0012,
+            "significant_95": true
+          },
+          "used_p3m_of_total": {
+            "from": 16.4651,
+            "to": 18.0906,
+            "delta_pts": 1.6255,
+            "z": 0.994,
+            "p": 0.3202,
+            "significant_95": false
+          },
+          "pref_share": {
+            "from": 19.5984,
+            "to": 24.8196,
+            "delta_pts": 5.2212,
+            "z": 2.904,
+            "p": 0.0037,
+            "significant_95": true
+          },
+          "adrecall": {
+            "from": 22.5477,
+            "to": 23.9372,
+            "delta_pts": 1.3895,
+            "z": 0.761,
+            "p": 0.4469,
+            "significant_95": false
+          }
+        },
+        "meridian": {
+          "unaided_any": {
+            "from": 46.8166,
+            "to": 47.367,
+            "delta_pts": 0.5504,
+            "z": 0.255,
+            "p": 0.7988,
+            "significant_95": false
+          },
+          "aided": {
+            "from": 90.3399,
+            "to": 91.1803,
+            "delta_pts": 0.8404,
+            "z": 0.671,
+            "p": 0.5023,
+            "significant_95": false
+          },
+          "consider_t2b_of_total": {
+            "from": 40.8295,
+            "to": 38.5406,
+            "delta_pts": -2.2889,
+            "z": -1.082,
+            "p": 0.2794,
+            "significant_95": false
+          },
+          "consider_conversion": {
+            "from": 46.5033,
+            "to": 43.1117,
+            "delta_pts": -3.3916,
+            "z": -1.478,
+            "p": 0.1393,
+            "significant_95": false
+          },
+          "used_p3m_of_total": {
+            "from": 32.8784,
+            "to": 32.3894,
+            "delta_pts": -0.489,
+            "z": -0.241,
+            "p": 0.8095,
+            "significant_95": false
+          },
+          "pref_share": {
+            "from": 26.3579,
+            "to": 24.9097,
+            "delta_pts": -1.4482,
+            "z": -0.767,
+            "p": 0.4432,
+            "significant_95": false
+          },
+          "adrecall": {
+            "from": 30.5345,
+            "to": 30.2569,
+            "delta_pts": -0.2776,
+            "z": -0.14,
+            "p": 0.889,
+            "significant_95": false
+          }
+        },
+        "solstice": {
+          "unaided_any": {
+            "from": 8.2337,
+            "to": 8.7929,
+            "delta_pts": 0.5592,
+            "z": 0.463,
+            "p": 0.6432,
+            "significant_95": false
+          },
+          "aided": {
+            "from": 23.286,
+            "to": 23.8668,
+            "delta_pts": 0.5808,
+            "z": 0.316,
+            "p": 0.7518,
+            "significant_95": false
+          },
+          "consider_t2b_of_total": {
+            "from": 12.2671,
+            "to": 12.8431,
+            "delta_pts": 0.576,
+            "z": 0.402,
+            "p": 0.6878,
+            "significant_95": false
+          },
+          "consider_conversion": {
+            "from": 53.9925,
+            "to": 54.4612,
+            "delta_pts": 0.4687,
+            "z": 0.111,
+            "p": 0.9118,
+            "significant_95": false
+          },
+          "used_p3m_of_total": {
+            "from": 6.8626,
+            "to": 7.0345,
+            "delta_pts": 0.1719,
+            "z": 0.156,
+            "p": 0.8758,
+            "significant_95": false
+          },
+          "pref_share": {
+            "from": 7.9742,
+            "to": 8.3768,
+            "delta_pts": 0.4026,
+            "z": 0.34,
+            "p": 0.7341,
+            "significant_95": false
+          },
+          "adrecall": {
+            "from": 10.7051,
+            "to": 11.16,
+            "delta_pts": 0.4549,
+            "z": 0.337,
+            "p": 0.7361,
+            "significant_95": false
+          }
+        },
+        "cardinal": {
+          "unaided_any": {
+            "from": 5.0208,
+            "to": 5.1755,
+            "delta_pts": 0.1547,
+            "z": 0.163,
+            "p": 0.8708,
+            "significant_95": false
+          },
+          "aided": {
+            "from": 20.5443,
+            "to": 20.5039,
+            "delta_pts": -0.0404,
+            "z": -0.023,
+            "p": 0.9815,
+            "significant_95": false
+          },
+          "consider_t2b_of_total": {
+            "from": 9.98,
+            "to": 9.9253,
+            "delta_pts": -0.0547,
+            "z": -0.042,
+            "p": 0.9663,
+            "significant_95": false
+          },
+          "consider_conversion": {
+            "from": 49.4715,
+            "to": 49.5999,
+            "delta_pts": 0.1284,
+            "z": 0.026,
+            "p": 0.979,
+            "significant_95": false
+          },
+          "used_p3m_of_total": {
+            "from": 7.0719,
+            "to": 7.1917,
+            "delta_pts": 0.1198,
+            "z": 0.108,
+            "p": 0.9143,
+            "significant_95": false
+          },
+          "pref_share": {
+            "from": 6.585,
+            "to": 6.0824,
+            "delta_pts": -0.5026,
+            "z": -0.477,
+            "p": 0.6333,
+            "significant_95": false
+          },
+          "adrecall": {
+            "from": 8.5181,
+            "to": 7.9856,
+            "delta_pts": -0.5325,
+            "z": -0.447,
+            "p": 0.6546,
+            "significant_95": false
+          }
+        }
+      },
+      "composite_atlas": {
+        "from": 37.4693,
+        "to": 41.7435,
+        "delta_pts": 4.2742,
+        "z": 2.947,
+        "p": 0.0032,
+        "significant_95": true
+      },
+      "nps_atlas": {
+        "from": -2.2995,
+        "to": 7.4482,
+        "delta_pts": 9.7477,
+        "z": 1.154,
+        "p": 0.2485,
+        "significant_95": false,
+        "low_base_flag": true
+      },
+      "attributes_atlas": {
+        "taste": {
+          "from": 53.9478,
+          "to": 54.1649,
+          "delta_pts": 0.2171,
+          "z": 0.083,
+          "p": 0.9335,
+          "significant_95": false
+        },
+        "worth": {
+          "from": 37.1876,
+          "to": 35.3351,
+          "delta_pts": -1.8525,
+          "z": -0.74,
+          "p": 0.4596,
+          "significant_95": false
+        },
+        "innov": {
+          "from": 30.3686,
+          "to": 37.0216,
+          "delta_pts": 6.653,
+          "z": 2.699,
+          "p": 0.007,
+          "significant_95": true
+        },
+        "forme": {
+          "from": 33.7272,
+          "to": 35.0387,
+          "delta_pts": 1.3115,
+          "z": 0.529,
+          "p": 0.5967,
+          "significant_95": false
+        },
+        "avail": {
+          "from": 44.4235,
+          "to": 43.8542,
+          "delta_pts": -0.5693,
+          "z": -0.22,
+          "p": 0.8259,
+          "significant_95": false
+        },
+        "premium": {
+          "from": 47.0793,
+          "to": 46.0555,
+          "delta_pts": -1.0238,
+          "z": -0.393,
+          "p": 0.6947,
+          "significant_95": false
+        },
+        "trust": {
+          "from": 40.8827,
+          "to": 41.5193,
+          "delta_pts": 0.6366,
+          "z": 0.247,
+          "p": 0.8051,
+          "significant_95": false
+        },
+        "sustain": {
+          "from": 38.8446,
+          "to": 39.3432,
+          "delta_pts": 0.4986,
+          "z": 0.195,
+          "p": 0.8452,
+          "significant_95": false
+        }
+      },
+      "segments_atlas_aided_by_segment": {
+        "1": {
+          "label": "Core",
+          "from": 66.9119,
+          "to": 69.9289,
+          "delta_pts": 3.017,
+          "z": 0.89,
+          "p": 0.3734,
+          "significant_95": false
+        },
+        "2": {
+          "label": "Growth",
+          "from": 70.0371,
+          "to": 80.4896,
+          "delta_pts": 10.4525,
+          "z": 3.66,
+          "p": 0.0003,
+          "significant_95": true
+        },
+        "3": {
+          "label": "Value",
+          "from": 61.7018,
+          "to": 64.3966,
+          "delta_pts": 2.6948,
+          "z": 0.615,
+          "p": 0.5385,
+          "significant_95": false
+        }
+      },
+      "segments_atlas_aided_by_age_band": {
+        "1": {
+          "label": "18-34",
+          "from": 69.2483,
+          "to": 77.4151,
+          "delta_pts": 8.1668,
+          "z": 2.773,
+          "p": 0.0056,
+          "significant_95": true
+        },
+        "2": {
+          "label": "35-54",
+          "from": 66.7978,
+          "to": 73.0782,
+          "delta_pts": 6.2804,
+          "z": 2.079,
+          "p": 0.0376,
+          "significant_95": true
+        },
+        "3": {
+          "label": "55+",
+          "from": 64.5521,
+          "to": 67.8033,
+          "delta_pts": 3.2512,
+          "z": 0.756,
+          "p": 0.4494,
+          "significant_95": false
+        }
+      },
+      "segments_atlas_unaided_by_segment": {
+        "1": {
+          "label": "Core",
+          "from": 31.738,
+          "to": 32.1637,
+          "delta_pts": 0.4257,
+          "z": 0.125,
+          "p": 0.9004,
+          "significant_95": false
+        },
+        "2": {
+          "label": "Growth",
+          "from": 32.7877,
+          "to": 46.1699,
+          "delta_pts": 13.3822,
+          "z": 4.138,
+          "p": 0.0,
+          "significant_95": true
+        },
+        "3": {
+          "label": "Value",
+          "from": 26.3418,
+          "to": 27.7395,
+          "delta_pts": 1.3977,
+          "z": 0.347,
+          "p": 0.7288,
+          "significant_95": false
+        }
+      },
+      "segments_atlas_unaided_by_age_band": {
+        "1": {
+          "label": "18-34",
+          "from": 33.0649,
+          "to": 42.0037,
+          "delta_pts": 8.9388,
+          "z": 2.772,
+          "p": 0.0056,
+          "significant_95": true
+        },
+        "2": {
+          "label": "35-54",
+          "from": 31.0456,
+          "to": 36.1364,
+          "delta_pts": 5.0908,
+          "z": 1.636,
+          "p": 0.1018,
+          "significant_95": false
+        },
+        "3": {
+          "label": "55+",
+          "from": 28.3783,
+          "to": 31.9095,
+          "delta_pts": 3.5312,
+          "z": 0.847,
+          "p": 0.397,
+          "significant_95": false
+        }
+      }
+    },
+    "w4_w5": {
+      "funnel": {
+        "atlas": {
+          "unaided_any": {
+            "from": 36.544,
+            "to": 37.8966,
+            "delta_pts": 1.3526,
+            "z": 0.648,
+            "p": 0.5171,
+            "significant_95": false
+          },
+          "aided": {
+            "from": 72.6913,
+            "to": 73.0176,
+            "delta_pts": 0.3263,
+            "z": 0.17,
+            "p": 0.8651,
+            "significant_95": false
+          },
+          "consider_t2b_of_total": {
+            "from": 37.6818,
+            "to": 38.2513,
+            "delta_pts": 0.5695,
+            "z": 0.272,
+            "p": 0.7858,
+            "significant_95": false
+          },
+          "consider_conversion": {
+            "from": 53.1372,
+            "to": 53.997,
+            "delta_pts": 0.8598,
+            "z": 0.338,
+            "p": 0.7355,
+            "significant_95": false
+          },
+          "used_p3m_of_total": {
+            "from": 14.8574,
+            "to": 15.7006,
+            "delta_pts": 0.8432,
+            "z": 0.543,
+            "p": 0.5874,
+            "significant_95": false
+          },
+          "pref_share": {
+            "from": 19.5328,
+            "to": 21.3504,
+            "delta_pts": 1.8176,
+            "z": 1.044,
+            "p": 0.2967,
+            "significant_95": false
+          },
+          "adrecall": {
+            "from": 26.3833,
+            "to": 28.7606,
+            "delta_pts": 2.3773,
+            "z": 1.232,
+            "p": 0.218,
+            "significant_95": false
+          }
+        },
+        "beacon": {
+          "unaided_any": {
+            "from": 25.6719,
+            "to": 26.1315,
+            "delta_pts": 0.4596,
+            "z": 0.243,
+            "p": 0.8081,
+            "significant_95": false
+          },
+          "aided": {
+            "from": 62.9452,
+            "to": 64.3642,
+            "delta_pts": 1.419,
+            "z": 0.683,
+            "p": 0.4946,
+            "significant_95": false
+          },
+          "consider_t2b_of_total": {
+            "from": 41.6749,
+            "to": 42.8995,
+            "delta_pts": 1.2246,
+            "z": 0.574,
+            "p": 0.566,
+            "significant_95": false
+          },
+          "consider_conversion": {
+            "from": 68.7054,
+            "to": 68.6148,
+            "delta_pts": -0.0906,
+            "z": -0.036,
+            "p": 0.9715,
+            "significant_95": false
+          },
+          "used_p3m_of_total": {
+            "from": 18.0906,
+            "to": 18.408,
+            "delta_pts": 0.3174,
+            "z": 0.19,
+            "p": 0.8491,
+            "significant_95": false
+          },
+          "pref_share": {
+            "from": 24.8196,
+            "to": 23.5151,
+            "delta_pts": -1.3045,
+            "z": -0.706,
+            "p": 0.4805,
+            "significant_95": false
+          },
+          "adrecall": {
+            "from": 23.9372,
+            "to": 25.1699,
+            "delta_pts": 1.2327,
+            "z": 0.663,
+            "p": 0.5072,
+            "significant_95": false
+          }
+        },
+        "meridian": {
+          "unaided_any": {
+            "from": 47.367,
+            "to": 46.2542,
+            "delta_pts": -1.1128,
+            "z": -0.516,
+            "p": 0.6056,
+            "significant_95": false
+          },
+          "aided": {
+            "from": 91.1803,
+            "to": 90.2105,
+            "delta_pts": -0.9698,
+            "z": -0.773,
+            "p": 0.4396,
+            "significant_95": false
+          },
+          "consider_t2b_of_total": {
+            "from": 38.5406,
+            "to": 37.1548,
+            "delta_pts": -1.3858,
+            "z": -0.662,
+            "p": 0.5082,
+            "significant_95": false
+          },
+          "consider_conversion": {
+            "from": 43.1117,
+            "to": 42.3327,
+            "delta_pts": -0.779,
+            "z": -0.342,
+            "p": 0.7321,
+            "significant_95": false
+          },
+          "used_p3m_of_total": {
+            "from": 32.3894,
+            "to": 31.5511,
+            "delta_pts": -0.8383,
+            "z": -0.416,
+            "p": 0.6773,
+            "significant_95": false
+          },
+          "pref_share": {
+            "from": 24.9097,
+            "to": 22.1128,
+            "delta_pts": -2.7969,
+            "z": -1.527,
+            "p": 0.1267,
+            "significant_95": false
+          },
+          "adrecall": {
+            "from": 30.2569,
+            "to": 30.837,
+            "delta_pts": 0.5801,
+            "z": 0.292,
+            "p": 0.7706,
+            "significant_95": false
+          }
+        },
+        "solstice": {
+          "unaided_any": {
+            "from": 8.7929,
+            "to": 8.2607,
+            "delta_pts": -0.5322,
+            "z": -0.441,
+            "p": 0.659,
+            "significant_95": false
+          },
+          "aided": {
+            "from": 23.8668,
+            "to": 23.978,
+            "delta_pts": 0.1112,
+            "z": 0.06,
+            "p": 0.9519,
+            "significant_95": false
+          },
+          "consider_t2b_of_total": {
+            "from": 12.8431,
+            "to": 12.587,
+            "delta_pts": -0.2561,
+            "z": -0.178,
+            "p": 0.8587,
+            "significant_95": false
+          },
+          "consider_conversion": {
+            "from": 54.4612,
+            "to": 53.7242,
+            "delta_pts": -0.737,
+            "z": -0.175,
+            "p": 0.8612,
+            "significant_95": false
+          },
+          "used_p3m_of_total": {
+            "from": 7.0345,
+            "to": 6.8455,
+            "delta_pts": -0.189,
+            "z": -0.172,
+            "p": 0.8633,
+            "significant_95": false
+          },
+          "pref_share": {
+            "from": 8.3768,
+            "to": 8.0736,
+            "delta_pts": -0.3032,
+            "z": -0.256,
+            "p": 0.7983,
+            "significant_95": false
+          },
+          "adrecall": {
+            "from": 11.16,
+            "to": 11.7472,
+            "delta_pts": 0.5872,
+            "z": 0.427,
+            "p": 0.6694,
+            "significant_95": false
+          }
+        },
+        "cardinal": {
+          "unaided_any": {
+            "from": 5.1755,
+            "to": 5.0464,
+            "delta_pts": -0.1291,
+            "z": -0.136,
+            "p": 0.892,
+            "significant_95": false
+          },
+          "aided": {
+            "from": 20.5039,
+            "to": 20.554,
+            "delta_pts": 0.0501,
+            "z": 0.029,
+            "p": 0.9771,
+            "significant_95": false
+          },
+          "consider_t2b_of_total": {
+            "from": 9.9253,
+            "to": 10.2728,
+            "delta_pts": 0.3475,
+            "z": 0.267,
+            "p": 0.7894,
+            "significant_95": false
+          },
+          "consider_conversion": {
+            "from": 49.5999,
+            "to": 51.615,
+            "delta_pts": 2.0151,
+            "z": 0.42,
+            "p": 0.6746,
+            "significant_95": false
+          },
+          "used_p3m_of_total": {
+            "from": 7.1917,
+            "to": 6.858,
+            "delta_pts": -0.3337,
+            "z": -0.302,
+            "p": 0.7624,
+            "significant_95": false
+          },
+          "pref_share": {
+            "from": 6.0824,
+            "to": 6.6076,
+            "delta_pts": 0.5252,
+            "z": 0.499,
+            "p": 0.6179,
+            "significant_95": false
+          },
+          "adrecall": {
+            "from": 7.9856,
+            "to": 8.2367,
+            "delta_pts": 0.2511,
+            "z": 0.213,
+            "p": 0.8314,
+            "significant_95": false
+          }
+        }
+      },
+      "composite_atlas": {
+        "from": 41.7435,
+        "to": 42.3232,
+        "delta_pts": 0.5797,
+        "z": 0.397,
+        "p": 0.6914,
+        "significant_95": false
+      },
+      "nps_atlas": {
+        "from": 7.4482,
+        "to": 11.7979,
+        "delta_pts": 4.3497,
+        "z": 0.538,
+        "p": 0.5906,
+        "significant_95": false,
+        "low_base_flag": true
+      },
+      "attributes_atlas": {
+        "taste": {
+          "from": 54.1649,
+          "to": 54.9336,
+          "delta_pts": 0.7687,
+          "z": 0.303,
+          "p": 0.7617,
+          "significant_95": false
+        },
+        "worth": {
+          "from": 35.3351,
+          "to": 36.3403,
+          "delta_pts": 1.0052,
+          "z": 0.413,
+          "p": 0.6799,
+          "significant_95": false
+        },
+        "innov": {
+          "from": 37.0216,
+          "to": 38.6434,
+          "delta_pts": 1.6218,
+          "z": 0.659,
+          "p": 0.5099,
+          "significant_95": false
+        },
+        "forme": {
+          "from": 35.0387,
+          "to": 36.4668,
+          "delta_pts": 1.4281,
+          "z": 0.585,
+          "p": 0.5587,
+          "significant_95": false
+        },
+        "avail": {
+          "from": 43.8542,
+          "to": 45.5831,
+          "delta_pts": 1.7289,
+          "z": 0.685,
+          "p": 0.4936,
+          "significant_95": false
+        },
+        "premium": {
+          "from": 46.0555,
+          "to": 48.3591,
+          "delta_pts": 2.3036,
+          "z": 0.907,
+          "p": 0.3645,
+          "significant_95": false
+        },
+        "trust": {
+          "from": 41.5193,
+          "to": 43.3421,
+          "delta_pts": 1.8228,
+          "z": 0.722,
+          "p": 0.4701,
+          "significant_95": false
+        },
+        "sustain": {
+          "from": 39.3432,
+          "to": 40.9856,
+          "delta_pts": 1.6424,
+          "z": 0.656,
+          "p": 0.512,
+          "significant_95": false
+        }
+      },
+      "segments_atlas_aided_by_segment": {
+        "1": {
+          "label": "Core",
+          "from": 69.9289,
+          "to": 71.4646,
+          "delta_pts": 1.5357,
+          "z": 0.464,
+          "p": 0.6424,
+          "significant_95": false
+        },
+        "2": {
+          "label": "Growth",
+          "from": 80.4896,
+          "to": 80.135,
+          "delta_pts": -0.3546,
+          "z": -0.135,
+          "p": 0.8929,
+          "significant_95": false
+        },
+        "3": {
+          "label": "Value",
+          "from": 64.3966,
+          "to": 64.0308,
+          "delta_pts": -0.3658,
+          "z": -0.084,
+          "p": 0.933,
+          "significant_95": false
+        }
+      },
+      "segments_atlas_aided_by_age_band": {
+        "1": {
+          "label": "18-34",
+          "from": 77.4151,
+          "to": 77.9642,
+          "delta_pts": 0.5491,
+          "z": 0.198,
+          "p": 0.8428,
+          "significant_95": false
+        },
+        "2": {
+          "label": "35-54",
+          "from": 73.0782,
+          "to": 72.7481,
+          "delta_pts": -0.3301,
+          "z": -0.113,
+          "p": 0.91,
+          "significant_95": false
+        },
+        "3": {
+          "label": "55+",
+          "from": 67.8033,
+          "to": 68.7004,
+          "delta_pts": 0.8971,
+          "z": 0.212,
+          "p": 0.8319,
+          "significant_95": false
+        }
+      },
+      "segments_atlas_unaided_by_segment": {
+        "1": {
+          "label": "Core",
+          "from": 32.1637,
+          "to": 32.7066,
+          "delta_pts": 0.5429,
+          "z": 0.16,
+          "p": 0.8732,
+          "significant_95": false
+        },
+        "2": {
+          "label": "Growth",
+          "from": 46.1699,
+          "to": 47.9775,
+          "delta_pts": 1.8076,
+          "z": 0.547,
+          "p": 0.5844,
+          "significant_95": false
+        },
+        "3": {
+          "label": "Value",
+          "from": 27.7395,
+          "to": 29.5158,
+          "delta_pts": 1.7763,
+          "z": 0.433,
+          "p": 0.6652,
+          "significant_95": false
+        }
+      },
+      "segments_atlas_unaided_by_age_band": {
+        "1": {
+          "label": "18-34",
+          "from": 42.0037,
+          "to": 43.5972,
+          "delta_pts": 1.5935,
+          "z": 0.484,
+          "p": 0.6283,
+          "significant_95": false
+        },
+        "2": {
+          "label": "35-54",
+          "from": 36.1364,
+          "to": 37.3578,
+          "delta_pts": 1.2214,
+          "z": 0.386,
+          "p": 0.6998,
+          "significant_95": false
+        },
+        "3": {
+          "label": "55+",
+          "from": 31.9095,
+          "to": 33.1919,
+          "delta_pts": 1.2824,
+          "z": 0.302,
+          "p": 0.763,
+          "significant_95": false
+        }
+      }
+    }
+  },
+  "storyline_checks": [
+    {
+      "id": "composite_up",
+      "element": 1,
+      "description": "Atlas brand health composite up ~4pts W3->W4, significant at 95% weighted",
+      "values": {
+        "from": 37.4693,
+        "to": 41.7435,
+        "delta_pts": 4.2742,
+        "z": 2.947,
+        "p": 0.0032,
+        "significant_95": true
+      },
+      "pass": true
+    },
+    {
+      "id": "top_of_funnel",
+      "element": 2,
+      "description": "Atlas unaided awareness +~6pts W3->W4 (significant); awareness->consideration conversion flat (not significant)",
+      "values": {
+        "unaided": {
+          "from": 30.7978,
+          "to": 36.544,
+          "delta_pts": 5.7462,
+          "z": 2.811,
+          "p": 0.0049,
+          "significant_95": true
+        },
+        "conversion": {
+          "from": 51.1222,
+          "to": 53.1372,
+          "delta_pts": 2.015,
+          "z": 0.771,
+          "p": 0.441,
+          "significant_95": false
+        }
+      },
+      "pass": true
+    },
+    {
+      "id": "beacon_overtake",
+      "element": 3,
+      "description": "Beacon overtakes Meridian on consideration T2B (of total) in W4 for the first time in 4 waves",
+      "values": {
+        "w1": {
+          "beacon": 32.6799,
+          "meridian": 41.6393
+        },
+        "w2": {
+          "beacon": 34.1738,
+          "meridian": 42.3224
+        },
+        "w3": {
+          "beacon": 35.6369,
+          "meridian": 40.8295
+        },
+        "w4": {
+          "beacon": 41.6749,
+          "meridian": 38.5406
+        }
+      },
+      "pass": true
+    },
+    {
+      "id": "drivers",
+      "element": 4,
+      "description": "Atlas 'innovative' +~7pts W3->W4 (significant); 'worth the price' -~2pts (not significant)",
+      "values": {
+        "innov": {
+          "from": 30.3686,
+          "to": 37.0216,
+          "delta_pts": 6.653,
+          "z": 2.699,
+          "p": 0.007,
+          "significant_95": true
+        },
+        "worth": {
+          "from": 37.1876,
+          "to": 35.3351,
+          "delta_pts": -1.8525,
+          "z": -0.74,
+          "p": 0.4596,
+          "significant_95": false
+        }
+      },
+      "pass": true
+    },
+    {
+      "id": "segment_divergence",
+      "element": 5,
+      "description": "Awareness gain concentrated in Growth segment (code 2) and under-35s; Core flat; exactly one significant segment divergence",
+      "values": {
+        "unaided_by_segment": {
+          "1": {
+            "label": "Core",
+            "from": 31.738,
+            "to": 32.1637,
+            "delta_pts": 0.4257,
+            "z": 0.125,
+            "p": 0.9004,
+            "significant_95": false
+          },
+          "2": {
+            "label": "Growth",
+            "from": 32.7877,
+            "to": 46.1699,
+            "delta_pts": 13.3822,
+            "z": 4.138,
+            "p": 0.0,
+            "significant_95": true
+          },
+          "3": {
+            "label": "Value",
+            "from": 26.3418,
+            "to": 27.7395,
+            "delta_pts": 1.3977,
+            "z": 0.347,
+            "p": 0.7288,
+            "significant_95": false
+          }
+        },
+        "aided_by_segment": {
+          "1": {
+            "label": "Core",
+            "from": 66.9119,
+            "to": 69.9289,
+            "delta_pts": 3.017,
+            "z": 0.89,
+            "p": 0.3734,
+            "significant_95": false
+          },
+          "2": {
+            "label": "Growth",
+            "from": 70.0371,
+            "to": 80.4896,
+            "delta_pts": 10.4525,
+            "z": 3.66,
+            "p": 0.0003,
+            "significant_95": true
+          },
+          "3": {
+            "label": "Value",
+            "from": 61.7018,
+            "to": 64.3966,
+            "delta_pts": 2.6948,
+            "z": 0.615,
+            "p": 0.5385,
+            "significant_95": false
+          }
+        },
+        "unaided_by_age_band": {
+          "1": {
+            "label": "18-34",
+            "from": 33.0649,
+            "to": 42.0037,
+            "delta_pts": 8.9388,
+            "z": 2.772,
+            "p": 0.0056,
+            "significant_95": true
+          },
+          "2": {
+            "label": "35-54",
+            "from": 31.0456,
+            "to": 36.1364,
+            "delta_pts": 5.0908,
+            "z": 1.636,
+            "p": 0.1018,
+            "significant_95": false
+          },
+          "3": {
+            "label": "55+",
+            "from": 28.3783,
+            "to": 31.9095,
+            "delta_pts": 3.5312,
+            "z": 0.847,
+            "p": 0.397,
+            "significant_95": false
+          }
+        }
+      },
+      "pass": true
+    },
+    {
+      "id": "nps_low_base",
+      "element": 6,
+      "description": "Atlas NPS improves W3->W4 but on n~180 users (low-base flag)",
+      "values": {
+        "delta": {
+          "from": -2.2995,
+          "to": 7.4482,
+          "delta_pts": 9.7477,
+          "z": 1.154,
+          "p": 0.2485,
+          "significant_95": false,
+          "low_base_flag": true
+        },
+        "base_unweighted_w4": 189
+      },
+      "pass": true
+    },
+    {
+      "id": "wave5_refresh",
+      "element": 7,
+      "description": "W5: Growth-segment unaided gain consolidates (does not fall back); unaided awareness and 'innovative' go flat W4->W5 (previously significant movers stabilise)",
+      "values": {
+        "growth_unaided_w4_w5": {
+          "label": "Growth",
+          "from": 46.1699,
+          "to": 47.9775,
+          "delta_pts": 1.8076,
+          "z": 0.547,
+          "p": 0.5844,
+          "significant_95": false
+        },
+        "unaided_total_w4_w5": {
+          "from": 36.544,
+          "to": 37.8966,
+          "delta_pts": 1.3526,
+          "z": 0.648,
+          "p": 0.5171,
+          "significant_95": false
+        },
+        "innov_w4_w5": {
+          "from": 37.0216,
+          "to": 38.6434,
+          "delta_pts": 1.6218,
+          "z": 0.659,
+          "p": 0.5099,
+          "significant_95": false
+        }
+      },
+      "pass": true
+    }
+  ],
+  "non_mover_guard": {
+    "whitelist_note": "planted movers exempt from the stability guard",
+    "violations": [],
+    "pass": true
+  }
+}

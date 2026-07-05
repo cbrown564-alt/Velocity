@@ -44,6 +44,8 @@ export interface CrosstabQueryOptions {
   measureLabel?: string;
   /** If true, fetch histogram/distribution data (for Violin/Ridgeline/BoxPlot) */
   includeDistributions?: boolean;
+  /** When the first row is a measure, remaining row variable ids for a nested frequency query. */
+  nestedRowVars?: string[];
   /** For grid structure: default to aggregating values (Mean) instead of counting frequencies */
   gridAggregate?: boolean;
 }

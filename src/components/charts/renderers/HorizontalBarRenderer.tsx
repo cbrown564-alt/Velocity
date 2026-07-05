@@ -10,6 +10,11 @@ import { ChartDataPoint } from '../../../types/processedData';
 import { useChartDragMerge } from '../hooks/useChartDragMerge';
 import { useChartSelection } from '../hooks/useChartSelection';
 import { ChartPlotArea } from '../shared/ChartPlotArea';
+import {
+  formatBarTooltip,
+  formatBarValueLabel,
+  formatValueAxisTick,
+} from '../../../core/visualization/chartLabelFormatters';
 
 /**
  * Horizontal Bar Chart Renderer
@@ -43,6 +48,9 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
     selectedKeysRef.current = selectedKeys;
   }, [selectedKeys]);
 
+  const { colVariable, columns, grandTotal } = processedData;
+  const hasColumnBreak = !!colVariable || columns.length > 1;
+
   // Use the first series (single column analysis) or "Total" column
   const chartData = useMemo(() => {
     const series = processedData.series[0];
@@ -70,13 +78,14 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
       .padding(0.25);
   }, [chartData, actualHeight]);
 
+  const peakCount = useMemo(() => max(chartData, (d) => d.value) || 1, [chartData]);
+
   const xScale = useMemo(() => {
-    const maxVal = max(chartData, (d) => d.value) || 1;
     return d3
       .scaleLinear()
-      .domain([0, maxVal * 1.1]) // Add 10% padding
+      .domain([0, peakCount * 1.1])
       .range([0, innerWidth]);
-  }, [chartData, innerWidth]);
+  }, [peakCount, innerWidth]);
 
   const { handleToggle, handleItemContextMenu } = useChartSelection<ChartDataPoint>({
     interactive,
@@ -231,7 +240,7 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
                     fill: 'var(--viz-text-axis)',
                   }}
                 >
-                  {tick}
+                  {formatValueAxisTick(labelMode, tick, { peakCount, grandTotal, hasColumnBreak })}
                 </text>
               </g>
             ))}
@@ -252,13 +261,14 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
                 fill: selectedKeys?.has(d.label) ? 'var(--text-primary)' : 'var(--viz-text-axis)',
               }}
             >
-              {(d.label || '').length > 35 ? (d.label || '').substring(0, 32) + '...' : d.label}
+              {d.label}
             </text>
           ))}
 
           {/* Bars */}
           {chartData.map((d, i) => {
-            const barWidth = xScale(d.value);
+            const barValue = d.value;
+            const barWidth = xScale(barValue);
             const y = yScale(d.label) || 0;
             const isSelected = selectedKeys?.has(d.label);
             const isDragging = dragState.isDragging && dragState.draggedItem?.label === d.label;
@@ -332,7 +342,7 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
                   }
                   stroke={
                     isSelected
-                      ? 'var(--text-accent)'
+                      ? 'var(--viz-fill-primary)'
                       : hoveredKey === (d.code !== undefined ? String(d.code) : d.label)
                         ? 'var(--viz-fill-primary)'
                         : d.isMissing
@@ -356,7 +366,9 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
                     transition: dragState.isDragging ? 'none' : 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                     cursor: onMerge ? 'grab' : interactive ? 'pointer' : 'default',
                   }}
-                />
+                >
+                  <title>{formatBarTooltip(d.label, d.value, d.percent)}</title>
+                </BarRect>
 
                 {/* Label Logic */}
                 {labelMode !== 'none' && (
@@ -370,7 +382,7 @@ export const HorizontalBarRenderer: React.FC<BaseChartRendererProps> = ({
                       fill: isSelected ? 'var(--text-primary)' : 'var(--viz-text-value)',
                     }}
                   >
-                    {labelMode === 'percent' ? `${d.percent.toFixed(1)}%` : d.value.toLocaleString()}
+                    {formatBarValueLabel(labelMode, d.value, d.percent)}
                   </text>
                 )}
               </g>

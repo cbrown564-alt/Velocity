@@ -68,7 +68,7 @@
 .autoAlignBtn:hover {
   background: var(--bg-active);
   color: var(--text-primary);
-  border-color: var(--color-accent);
+  border-color: var(--border-color-active);
 }
 
 /* Table */

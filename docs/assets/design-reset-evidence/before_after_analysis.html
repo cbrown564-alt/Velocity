@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Velocity — Design Reset: Before & After</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=JetBrains+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ground: #F1EFEA;
+      --rail: #ECE9E3;
+      --panel: #FDFCFA;
+      --panel-tint: #F7F5F0;
+      --ink: #24302A;
+      --ink-2: #67736C;
+      --ink-3: #9AA39C;
+      --line: #E3DFD7;
+      --line-soft: #ECE8E1;
+      --accent: #B54E33;
+      --mark: #6F8177;
+      --gain: #3D6B52;
+      --gain-bg: #E8F0EB;
+      --loss: #8B4A3A;
+      --loss-bg: #F5EBE8;
+      --meta-bg: #232A26;
+      --meta-ink: #EDEAE4;
+      --serif: "Fraunces", "Iowan Old Style", Georgia, serif;
+      --sans: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--sans);
+      font-size: 14px;
+      line-height: 1.55;
+      color: var(--ink);
+      background: var(--ground);
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; }
+    :focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; border-radius: 4px; }
+
+    /* ── Top meta bar ── */
+    .meta {
+      position: sticky; top: 0; z-index: 100;
+      height: 48px; display: flex; align-items: center; gap: 16px;
+      background: var(--meta-bg); color: var(--meta-ink); padding: 0 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .meta .brand { font-size: 13px; font-weight: 600; white-space: nowrap; }
+    .meta .brand small { font-weight: 400; opacity: 0.55; margin-left: 8px; }
+    .meta nav { display: flex; gap: 4px; flex: 1; overflow-x: auto; scrollbar-width: none; }
+    .meta nav button {
+      font-size: 12px; padding: 6px 10px; border-radius: 5px; color: var(--meta-ink);
+      opacity: 0.65; white-space: nowrap; transition: opacity 120ms, background 120ms;
+    }
+    .meta nav button:hover { opacity: 0.95; }
+    .meta nav button.on { opacity: 1; background: rgba(255,255,255,0.12); }
+
+    /* ── Layout ── */
+    .wrap { max-width: 1280px; margin: 0 auto; padding: 32px 24px 80px; }
+    .hero { margin-bottom: 40px; }
+    .hero h1 {
+      font-family: var(--serif); font-size: 2rem; font-weight: 600;
+      letter-spacing: -0.02em; margin-bottom: 12px;
+    }
+    .hero .lede { font-size: 15px; color: var(--ink-2); max-width: 72ch; }
+    .hero .meta-row {
+      display: flex; flex-wrap: wrap; gap: 12px; margin-top: 20px;
+    }
+    .pill {
+      font-size: 11px; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase;
+      padding: 5px 10px; border-radius: 999px; background: var(--panel);
+      border: 1px solid var(--line); color: var(--ink-2);
+    }
+    .pill strong { color: var(--ink); font-weight: 600; }
+
+    section { margin-bottom: 48px; scroll-margin-top: 64px; }
+    section > h2 {
+      font-family: var(--serif); font-size: 1.35rem; font-weight: 600;
+      margin-bottom: 8px; letter-spacing: -0.01em;
+    }
+    section > .section-lede { color: var(--ink-2); margin-bottom: 20px; max-width: 70ch; }
+
+    /* ── Journey strip ── */
+    .journey {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 8px; margin-bottom: 32px;
+    }
+    .journey-step {
+      background: var(--panel); border: 1px solid var(--line); border-radius: 8px;
+      padding: 12px 14px; position: relative;
+    }
+    .journey-step .num {
+      font-family: var(--mono); font-size: 10px; color: var(--ink-3); margin-bottom: 4px;
+    }
+    .journey-step .label { font-size: 13px; font-weight: 500; margin-bottom: 4px; }
+    .journey-step .hint { font-size: 11px; color: var(--ink-3); line-height: 1.4; }
+    .journey-step::after {
+      content: "→"; position: absolute; right: -14px; top: 50%; transform: translateY(-50%);
+      color: var(--ink-3); font-size: 14px; z-index: 1;
+    }
+    .journey-step:last-child::after { display: none; }
+
+    /* ── Comparison cards ── */
+    .compare {
+      background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+      overflow: hidden; margin-bottom: 28px;
+      box-shadow: 0 1px 2px rgba(35,42,38,0.04), 0 8px 24px rgba(35,42,38,0.04);
+    }
+    .compare-head {
+      padding: 16px 20px; border-bottom: 1px solid var(--line-soft);
+      display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 16px;
+    }
+    .compare-head h3 { font-size: 15px; font-weight: 600; }
+    .compare-head .stage {
+      font-size: 11px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--ink-3);
+    }
+    .compare-head .journey-tag {
+      margin-left: auto; font-size: 11px; color: var(--ink-3);
+      font-family: var(--mono);
+    }
+    .compare-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+    }
+    @media (max-width: 900px) {
+      .compare-grid { grid-template-columns: 1fr; }
+    }
+    .compare-col { min-width: 0; }
+    .compare-col + .compare-col { border-left: 1px solid var(--line-soft); }
+    @media (max-width: 900px) {
+      .compare-col + .compare-col { border-left: none; border-top: 1px solid var(--line-soft); }
+    }
+    .compare-label {
+      padding: 10px 16px; font-size: 11px; font-weight: 600; letter-spacing: 0.06em;
+      text-transform: uppercase; border-bottom: 1px solid var(--line-soft);
+    }
+    .compare-label.before { background: var(--panel-tint); color: var(--ink-2); }
+    .compare-label.after { background: var(--ground); color: var(--ink); }
+    .compare-label span { font-weight: 400; color: var(--ink-3); margin-left: 8px; text-transform: none; letter-spacing: 0; }
+    .compare-img {
+      display: block; width: 100%; height: auto; cursor: zoom-in;
+      background: var(--ground);
+    }
+    .compare-notes {
+      padding: 14px 16px; font-size: 12.5px; color: var(--ink-2);
+      border-top: 1px solid var(--line-soft); background: var(--panel-tint);
+    }
+    .compare-notes ul { margin: 6px 0 0 18px; }
+    .compare-notes li { margin-bottom: 4px; }
+
+    /* ── New surface (after only) ── */
+    .compare-single .compare-grid { grid-template-columns: 1fr; }
+    .compare-single .compare-label.after { border-bottom: none; }
+
+    /* ── Analysis grids ── */
+    .analysis-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+    }
+    @media (max-width: 800px) { .analysis-grid { grid-template-columns: 1fr; } }
+    .analysis-card {
+      border-radius: 10px; padding: 18px 20px; border: 1px solid var(--line);
+    }
+    .analysis-card.gain { background: var(--gain-bg); border-color: rgba(61,107,82,0.2); }
+    .analysis-card.loss { background: var(--loss-bg); border-color: rgba(139,74,58,0.2); }
+    .analysis-card h3 {
+      font-size: 13px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .analysis-card.gain h3 { color: var(--gain); }
+    .analysis-card.loss h3 { color: var(--loss); }
+    .analysis-card ul { margin-left: 18px; }
+    .analysis-card li { margin-bottom: 8px; font-size: 13px; color: var(--ink); }
+    .analysis-card li strong { font-weight: 600; }
+
+    /* ── Questions ── */
+    .questions { display: flex; flex-direction: column; gap: 12px; }
+    .question {
+      background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
+      padding: 16px 18px;
+    }
+    .question .q-num {
+      font-family: var(--mono); font-size: 10px; color: var(--accent); font-weight: 500;
+      margin-bottom: 6px;
+    }
+    .question p { font-size: 14px; font-weight: 500; margin-bottom: 6px; }
+    .question .context { font-size: 12.5px; color: var(--ink-2); }
+
+    /* ── Paths forward ── */
+    .paths { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+    .path {
+      background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
+      padding: 16px 18px; display: flex; flex-direction: column; gap: 8px;
+    }
+    .path .path-tag {
+      font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--mark); align-self: flex-start;
+    }
+    .path h4 { font-size: 14px; font-weight: 600; line-height: 1.35; }
+    .path p { font-size: 12.5px; color: var(--ink-2); flex: 1; }
+    .path .trade {
+      font-size: 11px; color: var(--ink-3); padding-top: 8px; border-top: 1px solid var(--line-soft);
+    }
+
+    /* ── Metric callout ── */
+    .metric-bar {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px; margin: 24px 0 32px;
+    }
+    .metric {
+      background: var(--panel); border: 1px solid var(--line); border-radius: 8px;
+      padding: 14px 16px; text-align: center;
+    }
+    .metric .val {
+      font-family: var(--mono); font-size: 1.5rem; font-weight: 500; color: var(--ink);
+    }
+    .metric .lbl { font-size: 11px; color: var(--ink-3); margin-top: 4px; }
+
+    /* ── Lightbox ── */
+    .lightbox {
+      display: none; position: fixed; inset: 0; z-index: 200;
+      background: rgba(35,42,38,0.92); padding: 24px;
+      align-items: center; justify-content: center; cursor: zoom-out;
+    }
+    .lightbox.on { display: flex; }
+    .lightbox img { max-width: 100%; max-height: 100%; border-radius: 6px; }
+
+    footer.doc-foot {
+      margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--line);
+      font-size: 12px; color: var(--ink-3);
+    }
+    footer.doc-foot a { color: var(--ink-2); }
+  </style>
+</head>
+<body>
+
+<header class="meta">
+  <div class="brand">Velocity <small>Design reset · before / after</small></div>
+  <nav aria-label="Sections">
+    <button class="on" data-target="journey">Journey</button>
+    <button data-target="comparisons">Comparisons</button>
+    <button data-target="analysis">Analysis</button>
+    <button data-target="questions">Questions</button>
+    <button data-target="paths">Paths forward</button>
+  </nav>
+</header>
+
+<div class="wrap">
+  <header class="hero">
+    <h1>What the design reset changed — and what it asks of us next</h1>
+    <p class="lede">
+      Side-by-side evidence from the July 2 post–PR&nbsp;#18 baseline (<em>before</em>) and the July 3–4 Pathway&nbsp;B reset (<em>after</em>).
+      Same workflow script, same dataset (<code>sleep.sav</code>), 1440×900 viewport. The central question: does Sarah get from file-drop to three client-ready slides faster — and does the tool feel like it disappears behind the story?
+    </p>
+    <div class="meta-row">
+      <span class="pill"><strong>Before</strong> screenshots-p2-final · Jul 2</span>
+      <span class="pill"><strong>After</strong> design-reset-evidence · Jul 3–4</span>
+      <span class="pill"><strong>Pathway</strong> B — deck-first inversion</span>
+    </div>
+  </header>
+
+  <!-- ── Journey ── -->
+  <section id="journey">
+    <h2>The central user journey</h2>
+    <p class="section-lede">
+      Sarah the Strategist, Friday 4&nbsp;PM: a <code>.sav</code> in hand, three slides due by five.
+      Every design decision should be judged against this spine — not against feature completeness or IDE familiarity.
+    </p>
+
+    <div class="journey" aria-label="Five-minute workflow">
+      <div class="journey-step"><div class="num">01</div><div class="label">Drop file</div><div class="hint">Workshop Door → first slide</div></div>
+      <div class="journey-step"><div class="num">02</div><div class="label">Find variables</div><div class="hint">⌘K palette or browse</div></div>
+      <div class="journey-step"><div class="num">03</div><div class="label">Build crosstabs</div><div class="hint">↵ rows · ⌥↵ columns</div></div>
+      <div class="journey-step"><div class="num">04</div><div class="label">Shape the story</div><div class="hint">Story rail · rename · reorder</div></div>
+      <div class="journey-step"><div class="num">05</div><div class="label">Export PPTX</div><div class="hint">One accent · honest slide</div></div>
+    </div>
+
+    <div class="metric-bar">
+      <div class="metric"><div class="val">0:11</div><div class="lbl">Five-minute metric pass (scripted)</div></div>
+      <div class="metric"><div class="val">0</div><div class="lbl">Interruptions (toasts, tours, popovers)</div></div>
+      <div class="metric"><div class="val">3</div><div class="lbl">Deck slides built via palette</div></div>
+      <div class="metric"><div class="val">≤1</div><div class="lbl">Accent chrome element per screen</div></div>
+    </div>
+  </section>
+
+  <!-- ── Comparisons ── -->
+  <section id="comparisons">
+    <h2>Major surfaces — side by side</h2>
+    <p class="section-lede">Click any screenshot to zoom. Filenames map to <code>scripts/ui-workflow-screenshot-audit.mjs</code> stages.</p>
+
+    <!-- Workspace -->
+    <article class="compare">
+      <div class="compare-head">
+        <span class="stage">Stage 01</span>
+        <h3>Workspace landing</h3>
+        <span class="journey-tag">Journey · Drop file</span>
+      </div>
+      <div class="compare-grid">
+        <div class="compare-col">
+          <div class="compare-label before">Before<span>Post–PR #18 · Jul 2</span></div>
+          <img class="compare-img" src="../ui-pilot-readiness-audit/screenshots-p2-final/01-workspace-landing.png" alt="Workspace landing before design reset" loading="lazy">
+        </div>
+        <div class="compare-col">
+          <div class="compare-label after">After<span>Design reset · Jul 3</span></div>
+          <img class="compare-img" src="screenshots/01-workspace-landing.png" alt="Workspace landing after design reset" loading="lazy">
+        </div>
+      </div>
+      <div class="compare-notes">
+        <strong>Read:</strong> Workspace was already improved by PR #18 (Workshop Door, quieter copy). The reset preserves this entry — the big IA shift happens <em>after</em> upload, on the canvas.
+      </div>
+    </article>
+
+    <!-- Empty canvas -->
+    <article class="compare">
+      <div class="compare-head">
+        <span class="stage">Stage 04</span>
+        <h3>Empty canvas — the IA inversion</h3>
+        <span class="journey-tag">Journey · First slide</span>
+      </div>
+      <div class="compare-grid">
+        <div class="compare-col">
+          <div class="compare-label before">Before<span>Variable browser resident</span></div>
+          <img class="compare-img" src="../ui-pilot-readiness-audit/screenshots-p2-final/04-dashboard-variable-browser.png" alt="Dashboard with resident variable sidebar before reset" loading="lazy">
+        </div>
+        <div class="compare-col">
+          <div class="compare-label after">After<span>Story rail + summoned variables</span></div>
+          <img class="compare-img" src="screenshots/04-dashboard-story-rail-empty-slide.png" alt="Dashboard with story rail and empty slide after reset" loading="lazy">
+        </div>
+      </div>
+      <div class="compare-notes">
+        <ul>
+          <li><strong>Before:</strong> Left sidebar = scrolling wall of 44px variable buttons; center = "Ready for Analysis" pills + huge empty frame; bottom timeline dock.</li>
+          <li><strong>After:</strong> Left rail = deck outline (filmstrip); center = honest slide card with one-line empty state; variables gone until summoned.</li>
+          <li><strong>Journey bet:</strong> The deck narrative is now primary navigation — like Pitch, not SPSS.</li>
+        </ul>
+      </div>
+    </article>
+
+    <!-- Building crosstab -->
+    <article class="compare">
+      <div class="compare-head">
+        <span class="stage">Stage 05</span>
+        <h3>Building a crosstab</h3>
+        <span class="journey-tag">Journey · Find variables</span>
+      </div>
+      <div class="compare-grid">
+        <div class="compare-col">
+          <div class="compare-label before">Before</div>
+          <img class="compare-img" src="../ui-pilot-readiness-audit/screenshots-p2-final/05-building-crosstab-one-variable.png" alt="Building crosstab with shelf zones before reset" loading="lazy">
+        </div>
+        <div class="compare-col">
+          <div class="compare-label after">After</div>
+          <img class="compare-img" src="screenshots/05-building-crosstab-one-variable.png" alt="Building crosstab via recipe inspector after reset" loading="lazy">
+        </div>
+      </div>
+      <div class="compare-notes">
+        <strong>Read:</strong> Persistent analysis shelf and coral drop-zone chrome replaced by recipe chips in a collapsible inspector. Drag still works from palette/VM; configuration is slide state, not standing furniture.
+      </div>
+    </article>
+
+    <!-- Hero crosstab -->
+    <article class="compare">
+      <div class="compare-head">
+        <span class="stage">Stage 06</span>
+        <h3>Hero crosstab output</h3>
+        <span class="journey-tag">Journey · Read significance</span>
+      </div>
+      <div class="compare-grid">
+        <div class="compare-col">
+          <div class="compare-label before">Before</div>
+          <img class="compare-img" src="../ui-pilot-readiness-audit/screenshots-p2-final/06-crosstab-table-result.png" alt="Crosstab result before reset" loading="lazy">
+        </div>
+        <div class="compare-col">
+          <div class="compare-label after">After</div>
+          <img class="compare-img" src="screenshots/06-crosstab-table-result.png" alt="Crosstab result after reset with margin note" loading="lazy">
+        </div>
+      </div>
+      <div class="compare-notes">
+        <ul>
+          <li><strong>Gained:</strong> Shrink-wrapped slide card; chi-square note as margin text <em>outside</em> the exportable artifact; zero coaching popovers on the hero.</li>
+          <li><strong>Watch:</strong> Significance still uses accent in cells — the accent budget allows this; ensure chrome stays at one accent (Export).</li>
+        </ul>
+      </div>
+    </article>
+
+    <!-- Chart -->
+    <article class="compare">
+      <div class="compare-head">
+        <span class="stage">Stage 07</span>
+        <h3>Chart view</h3>
+        <span class="journey-tag">Journey · Interpret</span>
+      </div>
+      <div class="compare-grid">
+        <div class="compare-col">
+          <div class="compare-label before">Before</div>
+          <img class="compare-img" src="../ui-pilot-readiness-audit/screenshots-p2-final/07-chart-view.png" alt="Chart view before reset" loading="lazy">
+        </div>
+        <div class="compare-col">
+          <div class="compare-label after">After</div>
+          <img class="compare-img" src="screenshots/07-chart-view.png" alt="Chart view after reset" loading="lazy">
+        </div>
+      </div>
+      <div class="compare-notes">
+        <strong>Read:</strong> PR #18 fixed truncation and axis semantics; the reset applies the same honest-slide frame and sage data marks. Chart quality is largely pre-reset engineering — the reset changes the <em>frame</em>, not the viz engine.
+      </div>
+    </article>
+
+    <!-- Insert palette -->
+    <article class="compare">
+      <div class="compare-head">
+        <span class="stage">Stage 11 → 12</span>
+        <h3>Variable discovery — command palette → insert palette</h3>
+        <span class="journey-tag">Journey · Find variables</span>
+      </div>
+      <div class="compare-grid">
+        <div class="compare-col">
+          <div class="compare-label before">Before<span>General ⌘K commands</span></div>
+          <img class="compare-img" src="../ui-pilot-readiness-audit/screenshots-p2-final/11-command-palette.png" alt="Command palette before reset" loading="lazy">
+        </div>
+        <div class="compare-col">
+          <div class="compare-label after">After<span>Insert palette · variable-first</span></div>
+          <img class="compare-img" src="screenshots/12-insert-palette.png" alt="Insert palette after reset" loading="lazy">
+        </div>
+      </div>
+      <div class="compare-notes">
+        <ul>
+          <li><strong>Gained:</strong> Dense 32px rows; insertion grammar footer (↵ rows · ⌥↵ columns · ⇧↵ filter); ink focus ring; median 15ms open on 500-variable fixture.</li>
+          <li><strong>Lost:</strong> One palette for everything — session ops and theme commands moved to overflow menu.</li>
+        </ul>
+      </div>
+    </article>
+
+    <!-- Recipe inspector (new) -->
+    <article class="compare compare-single">
+      <div class="compare-head">
+        <span class="stage">Stage 09 · New</span>
+        <h3>Recipe inspector — slide properties surface</h3>
+        <span class="journey-tag">Journey · Build crosstabs</span>
+      </div>
+      <div class="compare-grid">
+        <div class="compare-col">
+          <div class="compare-label after">After only<span>No before equivalent — was persistent shelf + filter bar</span></div>
+          <img class="compare-img" src="screenshots/09-recipe-inspector.png" alt="Recipe inspector panel after reset" loading="lazy">
+        </div>
+      </div>
+      <div class="compare-notes">
+        <strong>Read:</strong> Rows / columns / filter / weight as chips; display settings collapsed here. Makes the deck recipe visible product truth — directly serves review-before-export. Collapsed by default so the slide stays hero.
+      </div>
+    </article>
+
+    <!-- Variable Manager -->
+    <article class="compare">
+      <div class="compare-head">
+        <span class="stage">Stage 09 → 10</span>
+        <h3>Variable Manager</h3>
+        <span class="journey-tag">Journey · Clean data (spoke)</span>
+      </div>
+      <div class="compare-grid">
+        <div class="compare-col">
+          <div class="compare-label before">Before<span>Five Miller columns</span></div>
+          <img class="compare-img" src="../ui-pilot-readiness-audit/screenshots-p2-final/09-variable-manager.png" alt="Five-pane Variable Manager before reset" loading="lazy">
+        </div>
+        <div class="compare-col">
+          <div class="compare-label after">After<span>Two-pane dense list</span></div>
+          <img class="compare-img" src="screenshots/10-variable-manager.png" alt="Two-pane Variable Manager after reset" loading="lazy">
+        </div>
+      </div>
+      <div class="compare-notes">
+        <ul>
+          <li><strong>Gained:</strong> ~20+ variables visible at 900px; monochrome type glyphs; inspector fills the right pane; filter chips replace column navigation.</li>
+          <li><strong>Lost:</strong> Spatial folder/set navigation; simultaneous sparklines + top-category chips on every row.</li>
+        </ul>
+      </div>
+    </article>
+
+    <!-- Export -->
+    <article class="compare">
+      <div class="compare-head">
+        <span class="stage">Stage 08</span>
+        <h3>Export modal</h3>
+        <span class="journey-tag">Journey · Export PPTX</span>
+      </div>
+      <div class="compare-grid">
+        <div class="compare-col">
+          <div class="compare-label before">Before</div>
+          <img class="compare-img" src="../ui-pilot-readiness-audit/screenshots-p2-final/08-export-modal.png" alt="Export modal before reset" loading="lazy">
+        </div>
+        <div class="compare-col">
+          <div class="compare-label after">After</div>
+          <img class="compare-img" src="screenshots/08-export-modal.png" alt="Export modal after reset" loading="lazy">
+        </div>
+      </div>
+      <div class="compare-notes">
+        <strong>Read:</strong> Same export flow; reset applies evolved tokens and quiet styling. Structural PPTX parity verified via <code>canvas-pptx-parity.mjs</code>. Next opportunity: export preview as a first-class review step.
+      </div>
+    </article>
+
+    <!-- Focus mode -->
+    <article class="compare">
+      <div class="compare-head">
+        <span class="stage">Stage 10 → 11</span>
+        <h3>Focus mode</h3>
+        <span class="journey-tag">Journey · Present</span>
+      </div>
+      <div class="compare-grid">
+        <div class="compare-col">
+          <div class="compare-label before">Before</div>
+          <img class="compare-img" src="../ui-pilot-readiness-audit/screenshots-p2-final/10-focus-mode.png" alt="Focus mode before reset" loading="lazy">
+        </div>
+        <div class="compare-col">
+          <div class="compare-label after">After</div>
+          <img class="compare-img" src="screenshots/11-focus-mode.png" alt="Focus mode after reset" loading="lazy">
+        </div>
+      </div>
+      <div class="compare-notes">
+        <strong>Read:</strong> Focus mode was always a partial fix (hid sidebar, not toolbar). With the reset, default chrome is already quiet — focus is less transformative. The honest slide + story rail may make a separate "present mode" redundant over time.
+      </div>
+    </article>
+
+    <!-- Resumed session -->
+    <article class="compare">
+      <div class="compare-head">
+        <span class="stage">Stage 14 → 15</span>
+        <h3>Resumed analysis session</h3>
+        <span class="journey-tag">Journey · Return Friday</span>
+      </div>
+      <div class="compare-grid">
+        <div class="compare-col">
+          <div class="compare-label before">Before</div>
+          <img class="compare-img" src="../ui-pilot-readiness-audit/screenshots-p2-final/14-resumed-analysis-session.png" alt="Resumed session before reset" loading="lazy">
+        </div>
+        <div class="compare-col">
+          <div class="compare-label after">After</div>
+          <img class="compare-img" src="screenshots/15-resumed-analysis-session.png" alt="Resumed session after reset" loading="lazy">
+        </div>
+      </div>
+      <div class="compare-notes">
+        <strong>Read:</strong> Before, coaching popovers reappeared on reopen — session amnesia. After, deck state restores via story rail with zero coaching layer. Continuity is now structural (outline + recipes), not tooltip memory.
+      </div>
+    </article>
+  </section>
+
+  <!-- ── Analysis ── -->
+  <section id="analysis">
+    <h2>Visual analysis — what we gained and what we lost</h2>
+    <p class="section-lede">
+      Judged against the Linear bar (restrained chrome, one typographic system, content-sized layouts) and Sarah's five-minute journey.
+    </p>
+
+    <div class="analysis-grid">
+      <div class="analysis-card gain">
+        <h3>What we gained</h3>
+        <ul>
+          <li><strong>One opinionated identity.</strong> Three themes, materials, and hover animations deleted. Design surface ×3 → ×1; accent budget enforceable.</li>
+          <li><strong>Story-first IA.</strong> The deck outline is resident; variables and recipe config are summoned. The product posture matches the deck-native charter.</li>
+          <li><strong>Calm over the artifact.</strong> Coaching layer gone — no tours, stacked toasts, suggestion pills, or popovers on hero output. Zero interruptions in the timed pass.</li>
+          <li><strong>Honest slide contract.</strong> What you see exports; stats live in a margin note outside the card. WYSIWYG trust for client deliverables.</li>
+          <li><strong>Quiet toolbar.</strong> View toggle · Insert ⌘K · overflow · Export. Export is the only accent on most screens.</li>
+          <li><strong>Keyboard-native insertion.</strong> Palette grammar (↵ / ⌥↵ / ⇧↵) makes the 5-minute metric achievable without a mouse after file drop.</li>
+          <li><strong>Density where it matters.</strong> VM two-pane layout and palette rows scan 20–30 variables vs ~14 in the old sidebar buttons.</li>
+          <li><strong>Session continuity.</strong> Story rail + recipe persistence — reopen shows the deck, not a blank canvas with amnesiac coaching.</li>
+          <li><strong>Credibility signal.</strong> Restraint and craft in the tool mirror the deliverable Sarah is selling to clients.</li>
+        </ul>
+      </div>
+      <div class="analysis-card loss">
+        <h3>What we lost (or traded away)</h3>
+        <ul>
+          <li><strong>At-a-glance variable inventory.</strong> No resident list means experts can't scan the full field while thinking — they must summon ⌘K or open VM.</li>
+          <li><strong>Drag-from-sidebar muscle memory.</strong> Primary insertion path shifted to palette keyboard grammar; drag remains but is secondary.</li>
+          <li><strong>Visible starting points.</strong> Suggestion pills ("try sex × marital") removed with the coaching layer — discovery is self-directed.</li>
+          <li><strong>Theme personalization.</strong> Mission Control and Liquid Glass deleted, not deprecated — some evaluators liked the choice.</li>
+          <li><strong>Spatial VM navigation.</strong> Miller columns gave a mental map of folders/sets; now filter chips — faster search, less geography.</li>
+          <li><strong>Rich list metadata at a glance.</strong> Sparklines and top-category chips retreated to inspector — less noise, more clicks for power users.</li>
+          <li><strong>Focus mode as transformation.</strong> Default chrome is already quiet; focus hides less than before relative to the old crowded toolbar.</li>
+          <li><strong>General-purpose ⌘K.</strong> Session import, reset, and settings no longer in the primary summon surface.</li>
+          <li><strong>PILOT-6 photography alignment.</strong> Marketing screenshots still show pre-reset chrome — re-capture required before paid recruiting.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Questions ── -->
+  <section id="questions">
+    <h2>Key questions for convergence</h2>
+    <p class="section-lede">These surfaced from the side-by-side review and the reset's own risk register. Each needs a product decision, not just polish.</p>
+
+    <div class="questions">
+      <div class="question">
+        <div class="q-num">Q1</div>
+        <p>Is summon-only variable discovery fast enough for drag-first consultants?</p>
+        <p class="context">The palette opens in &lt;100ms on 500 variables, but first-time users may not discover ⌘K. Watch pilot session recordings: do they hunt for a sidebar that no longer exists?</p>
+      </div>
+      <div class="question">
+        <div class="q-num">Q2</div>
+        <p>Does the story rail earn its 240px when decks have only 1–2 slides?</p>
+        <p class="context">Sarah's Friday job is often three slides, not thirty. An empty or single-slide rail may feel like dead space — the inverse of the old variable sidebar problem.</p>
+      </div>
+      <div class="question">
+        <div class="q-num">Q3</div>
+        <p>Where does "review before export" live in the journey?</p>
+        <p class="context">Recipe inspector makes slide state visible, but export is still fire-and-download. Is a deck preview lane needed before PPTX — especially for agent-built sessions?</p>
+      </div>
+      <div class="question">
+        <div class="q-num">Q4</div>
+        <p>Can we teach palette grammar without reintroducing coaching?</p>
+        <p class="context">The footer hints (↵ / ⌥↵ / ⇧↵) help power users. First-run empty state says "press ⌘K" — is that sufficient, or do we need a one-time inline demo that never returns?</p>
+      </div>
+      <div class="question">
+        <div class="q-num">Q5</div>
+        <p>Is focus mode still a mode — or should default chrome <em>be</em> the presentation surface?</p>
+        <p class="context">Pathway D (workbench vs present split) was rejected. With honest slides and quiet chrome, does focus become redundant or should it hide the story rail too?</p>
+      </div>
+      <div class="question">
+        <div class="q-num">Q6</div>
+        <p>How do we onboard agents and humans to the same deck grammar?</p>
+        <p class="context">MCP agents build slides programmatically; humans use palette + rail. Misalignment shows up in handoff evals — does the UI make recipe structure legible enough for additive refinement?</p>
+      </div>
+      <div class="question">
+        <div class="q-num">Q7</div>
+        <p>When do we invest in dark mode vs journey polish?</p>
+        <p class="context">Deferred until a pilot asks — but late-night strategists exist. Does dark mode wait, or does export preview / workspace reopen (STAB-WS) take priority?</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Paths forward ── -->
+  <section id="paths">
+    <h2>Diverse paths forward</h2>
+    <p class="section-lede">
+      Not a roadmap — options to discuss and converge. All paths keep the central journey lens: file-drop → three slides → PPTX, delightful and easy.
+    </p>
+
+    <div class="paths">
+      <div class="path">
+        <span class="path-tag">Validate · Low risk</span>
+        <h4>A. Pilot-first evidence loop</h4>
+        <p>Re-run PILOT-6 photography on post-reset UI. Record 3–5 unscripted first sessions. Score: time-to-first-crosstab, palette discovery rate, interruption count. Let behavior decide whether summon-only insertion holds.</p>
+        <div class="trade">Trade-off: delays feature work; highest confidence in convergence.</div>
+      </div>
+
+      <div class="path">
+        <span class="path-tag">Journey · Medium</span>
+        <h4>B. Export preview lane</h4>
+        <p>Add a review step between canvas and download: thumbnail filmstrip of export-bound slides, recipe summary, significance audit. Makes "trust the numbers" tangible without coaching popovers.</p>
+        <div class="trade">Trade-off: adds a click; may save client embarrassment. Serves agent handoff (EVAL-03).</div>
+      </div>
+
+      <div class="path">
+        <span class="path-tag">Discovery · Medium</span>
+        <h4>C. Thin "recent & pinned" strip</h4>
+        <p>Not a full variable wall — a 32px collapsible row of last-used and pinned variables below the toolbar. Preserves scan speed for experts without resurrecting the 44px button list.</p>
+        <div class="trade">Trade-off: reintroduces resident chrome; must stay under accent budget and density rules.</div>
+      </div>
+
+      <div class="path">
+        <span class="path-tag">Keyboard · Medium</span>
+        <h4>D. Palette onboarding moment (once)</h4>
+        <p>First ⌘K on a new workspace: inline 3-step ghost (search → ↵ rows → ⌥↵ columns) inside the palette itself — dismiss forever, no tour overlay. Teaches grammar without coaching layer architecture.</p>
+        <div class="trade">Trade-off: one exception to "zero coaching"; must not persist or reappear on reopen.</div>
+      </div>
+
+      <div class="path">
+        <span class="path-tag">Story · Higher</span>
+        <h4>E. Deck templates for tracker debriefs</h4>
+        <p>Workspace entry: "Start from template" → 3-slide brand tracker skeleton (awareness · consideration · preference). Story rail pre-populated; Sarah replaces variables via palette.</p>
+        <div class="trade">Trade-off: scope creep toward content product; high journey delight if templates match ICP workflows.</div>
+      </div>
+
+      <div class="path">
+        <span class="path-tag">Natural language · Higher</span>
+        <h4>F. "Q5 by segment" in the palette</h4>
+        <p>Extend insert palette with natural-language row/column parsing (not full AI analysis — just variable binding). Speaks Sarah's language; keeps inspectability.</p>
+        <div class="trade">Trade-off: engineering + eval cost; must not become magic-button Displayr positioning.</div>
+      </div>
+
+      <div class="path">
+        <span class="path-tag">Polish · Low</span>
+        <h4>G. Collapsible story rail</h4>
+        <p>Rail collapses to icon strip (&lt;48px) on single-slide sessions; expands on hover or when deck grows. Reclaims horizontal space without losing deck-native IA.</p>
+        <div class="trade">Trade-off: motion + state complexity; test against "one transition" rule (WP3.2).</div>
+      </div>
+
+      <div class="path">
+        <span class="path-tag">Continuity · Medium</span>
+        <h4>H. Workspace → canvas handoff polish</h4>
+        <p>After upload, land directly on slide 1 with palette pre-focused (not empty canvas waiting for a click). Reduce the "now what?" beat between Workshop Door and first insertion.</p>
+        <div class="trade">Trade-off: may feel pushy if user wanted to browse workspace first; gate on dataset size.</div>
+      </div>
+
+      <div class="path">
+        <span class="path-tag">Agent · Medium</span>
+        <h4>I. Recipe diff for MCP handoff</h4>
+        <p>When importing an agent session, show a quiet "what changed" summary in the story rail footer — slides added, variables unresolved. Supports additive refinement without modal interruption.</p>
+        <div class="trade">Trade-off: agent-specific UI; must stay muted per calm-tech rules.</div>
+      </div>
+
+      <div class="path">
+        <span class="path-tag">Hold · Deferred</span>
+        <h4>J. Dark mode of the same identity</h4>
+        <p>Ship dark as token inversion of evolved Soft Machine — not Mission Control reborn. Only when a pilot blocks without it.</p>
+        <div class="trade">Trade-off: doubles visual QA surface; does not advance the five-minute journey directly.</div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="doc-foot">
+    <p>
+      Evidence sources:
+      <a href="../ui-pilot-readiness-audit/screenshots-p2-final/">Before (screenshots-p2-final)</a> ·
+      <a href="screenshots/">After (design-reset-evidence)</a> ·
+      <a href="../design-reset-north-star/north_star.html">North star mock</a> ·
+      <a href="../../plan_05_design_reset_implementation.md">plan_05</a> ·
+      <a href="wp42-five-minute-pass.json">Five-minute pass JSON</a>
+    </p>
+    <p style="margin-top:8px">Generated July 4, 2026 · Velocity design reset Phase 4</p>
+  </footer>
+</div>
+
+<div class="lightbox" id="lightbox" aria-hidden="true">
+  <img id="lightbox-img" alt="">
+</div>
+
+<script>
+  // Section nav scroll
+  document.querySelectorAll('.meta nav button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.meta nav button').forEach(b => b.classList.remove('on'));
+      btn.classList.add('on');
+      const el = document.getElementById(btn.dataset.target);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+
+  // Update nav on scroll
+  const sections = ['journey', 'comparisons', 'analysis', 'questions', 'paths'];
+  const navBtns = document.querySelectorAll('.meta nav button');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navBtns.forEach(b => b.classList.toggle('on', b.dataset.target === entry.target.id));
+      }
+    });
+  }, { rootMargin: '-40% 0px -50% 0px' });
+  sections.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) observer.observe(el);
+  });
+
+  // Lightbox
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImg = document.getElementById('lightbox-img');
+  document.querySelectorAll('.compare-img').forEach(img => {
+    img.addEventListener('click', () => {
+      lightboxImg.src = img.src;
+      lightboxImg.alt = img.alt;
+      lightbox.classList.add('on');
+      lightbox.setAttribute('aria-hidden', 'false');
+    });
+  });
+  lightbox.addEventListener('click', () => {
+    lightbox.classList.remove('on');
+    lightbox.setAttribute('aria-hidden', 'true');
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && lightbox.classList.contains('on')) {
+      lightbox.classList.remove('on');
+      lightbox.setAttribute('aria-hidden', 'true');
+    }
+  });
+</script>
+</body>
+</html>

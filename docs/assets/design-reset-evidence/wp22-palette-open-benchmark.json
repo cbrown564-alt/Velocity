@@ -1,0 +1,15 @@
+{
+  "capturedAt": "2026-07-04T11:43:02.233Z",
+  "fixture": "palette_500.csv (500 variables)",
+  "thresholdMs": 100,
+  "runs": [
+    22,
+    14,
+    15,
+    15,
+    16
+  ],
+  "medianMs": 15,
+  "maxMs": 22,
+  "pass": true
+}

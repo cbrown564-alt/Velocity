@@ -1,0 +1,22 @@
+@keyframes recipeColumnRejectShake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  15%,
+  45%,
+  75% {
+    transform: translateX(-3px);
+  }
+
+  30%,
+  60%,
+  90% {
+    transform: translateX(3px);
+  }
+}
+
+.rejectShake {
+  animation: recipeColumnRejectShake 0.45s ease-in-out;
+}

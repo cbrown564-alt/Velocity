@@ -8,6 +8,11 @@ import { ChartDataPoint } from '../../../types/processedData';
 import { useChartDragMerge } from '../hooks/useChartDragMerge';
 import { useChartSelection } from '../hooks/useChartSelection';
 import { ChartPlotArea } from '../shared/ChartPlotArea';
+import {
+  formatBarTooltip,
+  formatBarValueLabel,
+  formatValueAxisTick,
+} from '../../../core/visualization/chartLabelFormatters';
 
 /**
  * Vertical Bar (Column) Chart Renderer
@@ -29,6 +34,9 @@ export const VerticalBarRenderer: React.FC<BaseChartRendererProps> = ({
   const BarRect = animateBarEntrance ? motion.rect : 'rect';
   const svgRef = useRef<SVGSVGElement>(null);
 
+  const { colVariable, columns, grandTotal } = processedData;
+  const hasColumnBreak = !!colVariable || columns.length > 1;
+
   // Use the first series (single column analysis) or "Total" column
   const chartData = useMemo(() => {
     const series = processedData.series[0];
@@ -49,13 +57,14 @@ export const VerticalBarRenderer: React.FC<BaseChartRendererProps> = ({
       .padding(0.25);
   }, [chartData, innerWidth]);
 
+  const peakCount = useMemo(() => max(chartData, (d) => d.value) || 1, [chartData]);
+
   const yScale = useMemo(() => {
-    const maxVal = max(chartData, (d) => d.value) || 1;
     return d3
       .scaleLinear()
-      .domain([0, maxVal * 1.1]) // Add 10% padding
+      .domain([0, peakCount * 1.1])
       .range([innerHeight, 0]);
-  }, [chartData, innerHeight]);
+  }, [peakCount, innerHeight]);
 
   const { handleToggle, handleItemContextMenu } = useChartSelection<ChartDataPoint>({
     interactive,
@@ -129,7 +138,7 @@ export const VerticalBarRenderer: React.FC<BaseChartRendererProps> = ({
               textAnchor="end"
               style={{ fontSize: '10px', fill: 'var(--viz-text-axis)' }}
             >
-              {tick.toLocaleString()}
+              {formatValueAxisTick(labelMode, tick, { peakCount, grandTotal, hasColumnBreak })}
             </text>
           ))}
         </g>
@@ -168,7 +177,8 @@ export const VerticalBarRenderer: React.FC<BaseChartRendererProps> = ({
 
         {/* Columns */}
         {chartData.map((d, i) => {
-          const barHeight = innerHeight - yScale(d.value);
+          const barValue = d.value;
+          const barHeight = innerHeight - yScale(barValue);
           const isSelected = selectedKeys?.has(d.label);
           const isDragging = dragState.isDragging && dragState.draggedItem?.label === d.label;
           const isDropTarget = dragState.isDragging && dragState.dropTarget === d.label;
@@ -199,7 +209,7 @@ export const VerticalBarRenderer: React.FC<BaseChartRendererProps> = ({
               {isDropTarget && (
                 <rect
                   x={(xScale(d.label) || 0) - 4}
-                  y={yScale(d.value) - 4}
+                  y={yScale(barValue) - 4}
                   width={xScale.bandwidth() + 8}
                   height={barHeight + 8}
                   fill="none"
@@ -212,12 +222,12 @@ export const VerticalBarRenderer: React.FC<BaseChartRendererProps> = ({
 
               <BarRect
                 x={xScale(d.label)}
-                y={yScale(d.value)}
+                y={yScale(barValue)}
                 width={xScale.bandwidth()}
                 height={barHeight}
                 fill={isDropTarget ? 'var(--status-success-bg)' : colors ? colors[0] : 'var(--viz-fill-secondary)'}
                 fillOpacity={0.8}
-                stroke={isSelected ? 'var(--text-accent)' : 'none'}
+                stroke={isSelected ? 'var(--viz-fill-primary)' : 'none'}
                 strokeWidth={isSelected ? 2 : 0}
                 rx={1}
                 className="hover:opacity-90 chart-bar-rect"
@@ -229,13 +239,15 @@ export const VerticalBarRenderer: React.FC<BaseChartRendererProps> = ({
                   transformBox: entranceProps.style?.transformBox,
                   transition: dragState.isDragging ? 'none' : 'height 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                 }}
-              />
+              >
+                <title>{formatBarTooltip(d.label, d.value, d.percent)}</title>
+              </BarRect>
 
               {/* Labels */}
               {labelMode !== 'none' && (
                 <text
                   x={(xScale(d.label) || 0) + xScale.bandwidth() / 2}
-                  y={yScale(d.value) - 6}
+                  y={yScale(barValue) - 6}
                   textAnchor="middle"
                   style={{
                     fontSize: '11px',
@@ -244,7 +256,7 @@ export const VerticalBarRenderer: React.FC<BaseChartRendererProps> = ({
                     fontFamily: 'var(--font-mono)',
                   }}
                 >
-                  {labelMode === 'percent' ? `${d.percent.toFixed(1)}%` : d.value.toLocaleString()}
+                  {formatBarValueLabel(labelMode, d.value, d.percent)}
                 </text>
               )}
             </g>

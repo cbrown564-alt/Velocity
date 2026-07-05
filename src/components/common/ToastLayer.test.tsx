@@ -20,7 +20,7 @@ describe('ToastLayer', () => {
     expect(screen.getByText('Analysis complete')).toBeInTheDocument();
   });
 
-  it('dismisses a toast when close button clicked', () => {
+  it('dismisses a toast when clicked', () => {
     useVelocityStore.getState().addToast({ message: 'Dismiss me', type: 'info' });
     render(<ToastLayer />);
     const dismissBtn = screen.getByRole('button', { name: /dismiss notification/i });
@@ -28,23 +28,24 @@ describe('ToastLayer', () => {
     expect(useVelocityStore.getState().toasts).toHaveLength(0);
   });
 
-  it('renders multiple toasts', () => {
+  it('shows only the latest message and clears older ones', async () => {
     useVelocityStore.getState().addToast({ message: 'First', type: 'info' });
     useVelocityStore.getState().addToast({ message: 'Second', type: 'error' });
     render(<ToastLayer />);
-    expect(screen.getByText('First')).toBeInTheDocument();
+    expect(screen.queryByText('First')).not.toBeInTheDocument();
     expect(screen.getByText('Second')).toBeInTheDocument();
+    await vi.waitFor(() => expect(useVelocityStore.getState().toasts).toHaveLength(1));
   });
 
-  it('renders optional title above message', () => {
+  it('renders optional title inline with message', () => {
     useVelocityStore.getState().addToast({
       title: 'Saved on this device',
       message: 'Export Session when you need a backup.',
       type: 'info',
     });
     render(<ToastLayer />);
-    expect(screen.getByText('Saved on this device')).toBeInTheDocument();
-    expect(screen.getByText('Export Session when you need a backup.')).toBeInTheDocument();
+    expect(screen.getByText(/Saved on this device/)).toBeInTheDocument();
+    expect(screen.getByText(/Export Session when you need a backup\./)).toBeInTheDocument();
   });
 
   it('renders action button when provided', () => {
