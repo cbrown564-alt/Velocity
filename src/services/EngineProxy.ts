@@ -91,6 +91,7 @@ export class EngineProxy {
     forceCleanStart?: boolean;
     datasetId?: string;
     schemaVersion?: number;
+    hasPersistedSource?: boolean;
   }): Promise<EngineResponseByType<'engine.ready'>> {
     return this.send(
       {
@@ -98,6 +99,7 @@ export class EngineProxy {
         forceCleanStart: opts?.forceCleanStart,
         datasetId: opts?.datasetId,
         schemaVersion: opts?.schemaVersion,
+        hasPersistedSource: opts?.hasPersistedSource,
       },
       'engine.ready',
     ) as Promise<EngineResponseByType<'engine.ready'>>;

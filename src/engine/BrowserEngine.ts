@@ -207,6 +207,7 @@ export class BrowserEngine {
     forceCleanStart?: boolean;
     datasetId?: string;
     schemaVersion?: number;
+    hasPersistedSource?: boolean;
   }): Promise<EngineResponseByType<'engine.ready'>> {
     return this.proxy.init(opts);
   }

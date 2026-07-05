@@ -6,7 +6,7 @@ import {
   initializeEngineWorker,
   respawnEngineWorker,
   createStorePersistenceBridge,
-} from '../../enginePersistenceBridge';
+} from '../../../services/workspaceBoot/engineLifecycle';
 import type { EngineResponseByType } from '../../../types/engineWorker';
 import type { DataSlice } from './types';
 import type { DataSliceGet, DataSliceSet } from './sliceContext';
@@ -27,6 +27,7 @@ export function createEngineActions(
       await initializeEngineWorker({
         getExistingEngine: () => get().browserEngine,
         getDatasetId: () => get().dataset?.id,
+        getOpfsFileKey: () => get().dataset?.opfsFileKey,
         getOpfsAvailable: () => get().opfsAvailable,
         getPersistenceState: () => get().persistenceState,
         bridge: bridge(),
@@ -57,6 +58,7 @@ export function createEngineActions(
       await respawnEngineWorker({
         terminateWorker: () => get().terminateWorker(),
         getDatasetId: () => get().dataset?.id,
+        getOpfsFileKey: () => get().dataset?.opfsFileKey,
         bridge: bridge(),
         setBrowserEngine: (engine) => set({ browserEngine: engine }),
         setRespawnSuccess: (opfsAvailable) =>
@@ -70,6 +72,7 @@ export function createEngineActions(
             initError: message,
             persistenceState: 'error',
           }),
+        setWorkerRuntimeError: (message) => set({ initError: message }),
         cleanStart,
         datasetIdOverride,
         onLoadProgress: handleLoadProgress,

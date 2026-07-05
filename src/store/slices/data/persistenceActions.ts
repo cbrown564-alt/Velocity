@@ -3,7 +3,7 @@
  */
 
 import * as opfsFileManager from '../../../services/opfsFileManager';
-import { rehydrateDatasetFromOpfsSource } from '../../workspaceDatasetLifecycle';
+import { rehydrateDatasetFromOpfsSource } from '../../../services/workspaceBoot/rehydrate';
 import { recordPersistenceFallback } from '../../../services/pilotOnboarding';
 import type { Variable, VariableSet } from '../../../types/dataset';
 import type { DataSlice } from './types';

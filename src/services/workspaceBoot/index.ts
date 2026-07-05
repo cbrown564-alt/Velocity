@@ -1,0 +1,48 @@
+export { CACHE_OPEN_BUDGET_MS, OPFS_ATTEMPT_TIMEOUT_MS, RESPAWN_TERMINATION_DELAY_MS } from './constants';
+export {
+  resolveBootRestoreStrategy,
+  type AppBootMode,
+  type BootRestoreInput,
+  type BootRestorePlan,
+  type BootRestoreStrategy,
+} from './bootOrchestrator';
+export {
+  attachWorkerRuntimeHandlers,
+  createAnalysisWorker,
+  createBrowserEngine,
+  createEnginePersistenceCallbacks,
+  createEngineProxy,
+  createStorePersistenceBridge,
+  initializeEngineWorker,
+  respawnEngineWorker,
+  resetEngineInitDedupeForTests,
+  type EngineCorruptionPatch,
+  type EnginePersistenceBridge,
+  type EnginePersistenceStatusPatch,
+  type InitializeEngineContext,
+  type RespawnEngineContext,
+} from './engineLifecycle';
+export {
+  captureBeforeDatasetSwitch,
+  captureCatalogSnapshot,
+  captureSessionSnapshot,
+  enrichTableConfigLabels,
+  normalizeStoredSessionState,
+  persistDatasetSession,
+  sessionStateToStorePatch,
+  shouldCaptureBeforeSwitch,
+  type DatasetCatalogSnapshot,
+  type DatasetLiveState,
+  type DatasetSessionPersistenceActions,
+  type DatasetSessionState,
+  type DatasetSessionStorePatch,
+} from './session';
+export {
+  buildWorkspaceDatasetOpenPatch,
+  openWorkspaceDatasetLifecycle,
+  rehydrateDatasetFromOpfsSource,
+  type OpenWorkspaceDatasetContext,
+  type RehydrateFromOpfsContext,
+  type RunAnalysisFn,
+  type WorkspaceDatasetOpenPatch,
+} from './rehydrate';

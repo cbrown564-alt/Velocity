@@ -179,4 +179,49 @@ describe('initOpfsPersistence', () => {
     expect(result.persistenceError).toBe('OPFS unsupported');
     expect(openMemory).toHaveBeenCalledTimes(1);
   });
+
+  it('skips creating fresh DB when persisted source exists', async () => {
+    const openPath = vi.fn(async (path: string) => {
+      if (path === 'opfs://repair.db') return { ok: true };
+      return { ok: false, error: 'failed' };
+    });
+    const openMemory = vi.fn(async () => undefined);
+
+    const result = await initOpfsPersistence({
+      enableOpfs: true,
+      opfsSupport: { supported: true },
+      desiredPath: 'opfs://desired.db',
+      fallbackPath: null,
+      hasPersistedSource: true,
+      openPath,
+      listCandidates: async () => [],
+      quarantine: vi.fn(async () => undefined),
+      buildRepairPath: () => 'opfs://repair.db',
+      openMemory,
+    });
+
+    expect(openPath).not.toHaveBeenCalledWith('opfs://desired.db', 'OPFS persistence (new)');
+    expect(result.decision).toBe('rebuild');
+  });
+
+  it('returns rebuild decision on memory fallback when source exists', async () => {
+    const openPath = vi.fn(async () => ({ ok: false, error: 'permission denied' }));
+    const openMemory = vi.fn(async () => undefined);
+
+    const result = await initOpfsPersistence({
+      enableOpfs: true,
+      opfsSupport: { supported: true },
+      desiredPath: 'opfs://desired.db',
+      fallbackPath: null,
+      hasPersistedSource: true,
+      openPath,
+      listCandidates: async () => [],
+      quarantine: vi.fn(async () => undefined),
+      buildRepairPath: () => 'opfs://repair.db',
+      openMemory,
+    });
+
+    expect(result.decision).toBe('rebuild');
+    expect(openMemory).toHaveBeenCalledTimes(1);
+  });
 });

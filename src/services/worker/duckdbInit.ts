@@ -2,6 +2,7 @@ import * as duckdb from '@duckdb/duckdb-wasm';
 import { DuckDBWasmAdapter } from '../../adapters/DuckDBWasmAdapter';
 import { getLocalDuckDbBundles, resolveDuckDbBundleUrls } from '../duckdbBundles';
 import { initOpfsPersistence } from '../opfsPersistence';
+import { CACHE_OPEN_BUDGET_MS, OPFS_ATTEMPT_TIMEOUT_MS } from '../workspaceBoot/constants';
 import {
   buildOpfsDbPath,
   buildRepairDbPath,
@@ -46,6 +47,7 @@ export function stopKeepalive(): void {
 
 export async function init(
   forceCleanStart: boolean = false,
+  options: { hasPersistedSource?: boolean } = {},
 ): Promise<{ opfsAvailable: boolean; corruptionDetected?: boolean; corruptionMessage?: string }> {
   if (workerDbState.db) return { opfsAvailable: workerDbState.opfsAvailable };
 
@@ -118,6 +120,12 @@ export async function init(
     opfsSupport,
     desiredPath: desiredOpfsPath,
     fallbackPath: fallbackOpfsPath,
+    hasPersistedSource: options.hasPersistedSource ?? false,
+    attemptTimeoutMs: OPFS_ATTEMPT_TIMEOUT_MS,
+    cacheOpenBudgetMs: CACHE_OPEN_BUDGET_MS,
+    onAttemptTimeout: (path, label) => {
+      console.warn(`🦆 [Worker] OPFS open timed out (${label}): ${path}`);
+    },
     openPath: openOpfsPath,
     validateOpenedPath: async () => {
       try {

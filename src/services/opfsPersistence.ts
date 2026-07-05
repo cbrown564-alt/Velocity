@@ -28,6 +28,10 @@ export type PersistenceInitDeps = {
   openMemory: OpenMemory;
   validateOpenedPath?: ValidateOpenedPath;
   resetBetweenAttempts?: ResetBetweenAttempts;
+  hasPersistedSource?: boolean;
+  attemptTimeoutMs?: number;
+  cacheOpenBudgetMs?: number;
+  onAttemptTimeout?: (path: string, label: string) => void;
 };
 
 export type PersistenceInitResult = {
@@ -39,6 +43,29 @@ export type PersistenceInitResult = {
   corruptionDetected?: boolean;
   corruptionMessage?: string;
 };
+
+async function withAttemptTimeout<T>(
+  promise: Promise<T>,
+  timeoutMs: number | undefined,
+  onTimeout: (() => void) | undefined,
+): Promise<T> {
+  if (!timeoutMs || timeoutMs <= 0) return promise;
+
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  try {
+    return await Promise.race([
+      promise,
+      new Promise<T>((_, reject) => {
+        timer = setTimeout(() => {
+          onTimeout?.();
+          reject(new Error(`OPFS open attempt timed out after ${timeoutMs}ms`));
+        }, timeoutMs);
+      }),
+    ]);
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
+}
 
 export async function initOpfsPersistence(deps: PersistenceInitDeps): Promise<PersistenceInitResult> {
   const {
@@ -54,6 +81,10 @@ export async function initOpfsPersistence(deps: PersistenceInitDeps): Promise<Pe
     openMemory,
     validateOpenedPath,
     resetBetweenAttempts,
+    hasPersistedSource = false,
+    attemptTimeoutMs,
+    cacheOpenBudgetMs,
+    onAttemptTimeout,
   } = deps;
 
   let opfsAvailable = false;
@@ -106,12 +137,24 @@ export async function initOpfsPersistence(deps: PersistenceInitDeps): Promise<Pe
 
   const candidatePaths = new Set(candidates.map((candidate) => candidate.path));
   const attemptedPaths = new Set<string>();
+  const cacheOpenStartedAt = Date.now();
+
+  const isCacheBudgetExceeded = () =>
+    cacheOpenBudgetMs != null && cacheOpenBudgetMs > 0 && Date.now() - cacheOpenStartedAt >= cacheOpenBudgetMs;
 
   const attemptOpen = async (path: string, label: string, requirePersistedData: boolean) => {
     if (attemptedPaths.has(path)) return false;
     attemptedPaths.add(path);
 
-    const openResult = await openPath(path, label);
+    let openResult: { ok: boolean; error?: string };
+    try {
+      openResult = await withAttemptTimeout(openPath(path, label), attemptTimeoutMs, () =>
+        onAttemptTimeout?.(path, label),
+      );
+    } catch (error: any) {
+      openResult = { ok: false, error: error?.message || String(error) };
+    }
+
     if (!openResult.ok) {
       const errorMsg = openResult.error || '';
       persistenceError = errorMsg;
@@ -153,6 +196,10 @@ export async function initOpfsPersistence(deps: PersistenceInitDeps): Promise<Pe
   }
 
   for (const attempt of existingAttempts) {
+    if (isCacheBudgetExceeded()) {
+      persistenceError = persistenceError || `Cache open budget exceeded (${cacheOpenBudgetMs}ms)`;
+      break;
+    }
     const ok = await attemptOpen(attempt.path, attempt.label, true);
     if (ok) {
       return {
@@ -167,7 +214,7 @@ export async function initOpfsPersistence(deps: PersistenceInitDeps): Promise<Pe
     }
   }
 
-  if (existingAttempts.length === 0) {
+  if (existingAttempts.length === 0 && !hasPersistedSource) {
     const created = await attemptOpen(desiredPath, 'OPFS persistence (new)', false);
     if (created) {
       return {
@@ -201,7 +248,7 @@ export async function initOpfsPersistence(deps: PersistenceInitDeps): Promise<Pe
     opfsAvailable: false,
     mode: enableOpfs ? 'memory' : 'disabled',
     activeDbPath: ':memory:',
-    decision: 'memory_fallback',
+    decision: hasPersistedSource ? 'rebuild' : 'memory_fallback',
     persistenceError: persistenceError || 'Failed to open OPFS database',
     corruptionDetected: corruptionDetected || undefined,
     corruptionMessage,

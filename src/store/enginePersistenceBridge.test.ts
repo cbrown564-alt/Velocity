@@ -49,7 +49,7 @@ describe('enginePersistenceBridge callbacks', () => {
       persistedDataInfo: null,
     });
     expect(warnSpy).toHaveBeenCalledWith(
-      '[enginePersistenceBridge] OPFS corruption detected during respawn:',
+      '[workspaceBoot] OPFS corruption detected during respawn:',
       'checksum mismatch',
     );
 

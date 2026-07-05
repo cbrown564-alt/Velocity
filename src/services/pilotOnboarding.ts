@@ -5,11 +5,14 @@
 
 export type OpfsBootDecision = 'cache_open' | 'rebuild' | 'fresh' | 'memory_fallback' | 'disabled';
 
+export type BootRestoreStrategy = 'open-cache' | 'rebuild-from-source' | 'fresh';
+
 export type PilotOnboardingEventName =
   | 'landing_view'
   | 'landing_cta_upload'
   | 'landing_cta_example'
   | 'boot_start'
+  | 'boot_transition'
   | 'engine_ready'
   | 'opfs_decision'
   | 'file_selected'
@@ -146,6 +149,18 @@ export function recordOpfsDecision(
 ): PilotOnboardingEvent | null {
   return recordPilotEvent('opfs_decision', {
     decision,
+    durationFromBootMs: durationSince(bootStartMs),
+    ...payload,
+  });
+}
+
+export function recordBootTransition(payload: {
+  from: string;
+  to: BootRestoreStrategy;
+  reason: string;
+  [key: string]: unknown;
+}): PilotOnboardingEvent | null {
+  return recordPilotEvent('boot_transition', {
     durationFromBootMs: durationSince(bootStartMs),
     ...payload,
   });

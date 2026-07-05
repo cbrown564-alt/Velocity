@@ -45,7 +45,13 @@ interface EngineRequestBase {
 export type EngineWorkerRequest = EngineRequestBase &
   // --- Lifecycle ---
   (
-    | { type: 'engine.init'; forceCleanStart?: boolean; datasetId?: string; schemaVersion?: number }
+    | {
+        type: 'engine.init';
+        forceCleanStart?: boolean;
+        datasetId?: string;
+        schemaVersion?: number;
+        hasPersistedSource?: boolean;
+      }
     | { type: 'engine.close' }
     | { type: 'engine.ping' }
 

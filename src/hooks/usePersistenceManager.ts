@@ -7,6 +7,7 @@ import React, { useEffect, useRef, useCallback } from 'react';
 import { useVelocityStore } from '../store';
 import { STORAGE_REMINDER_DELAY_MS } from '../store/toastPolicy';
 import { recordPersistenceFallback } from '../services/pilotOnboarding';
+import { resolveBootRestoreStrategy } from '../services/workspaceBoot/bootOrchestrator';
 import * as opfsFileManager from '../services/opfsFileManager';
 
 type AppMode = 'splash' | 'uploading' | 'dashboard' | 'restoring' | 'metadata';
@@ -418,69 +419,42 @@ export function usePersistenceManager(
     return () => window.clearTimeout(timer);
   }, [dataset?.id, tableConfig.rowVars.length, tableConfig.colVar]);
 
-  // Persistence state handling
+  // Persistence state handling — boot state machine (Plan 06 Phase 3)
   useEffect(() => {
     if (hasProcessedPersistence.current) return;
 
-    if (persistenceState === 'found' && persistedDataInfo) {
-      const shouldWaitForStorageDecision = Boolean(dataset?.opfsFileKey) && !persistentStorageResolved;
-      if (shouldWaitForStorageDecision) {
-        return;
-      }
+    const plan = resolveBootRestoreStrategy({
+      persistenceState,
+      persistedDataInfo,
+      dataset,
+      mode,
+      isWorkspaceMode,
+      persistentStorageGranted,
+      persistentStorageResolved,
+    });
 
-      const persistedMeta = persistedDataInfo.metadata;
-      const hasMatchingMetadata =
-        dataset &&
-        (persistedMeta
-          ? dataset.rowCount === persistedMeta.rowCount &&
-            dataset.variables.length === persistedMeta.columnCount &&
-            (persistedMeta.datasetId ? dataset.id === persistedMeta.datasetId : true)
-          : dataset.rowCount === persistedDataInfo.rowCount &&
-            dataset.variables.length === persistedDataInfo.schema.length);
-      const shouldPreferSourceRebuild = Boolean(dataset?.opfsFileKey) && persistentStorageGranted === false;
+    if (plan.kind === 'wait' || plan.kind === 'noop') return;
 
-      if (hasMatchingMetadata && shouldPreferSourceRebuild) {
-        if (import.meta.env.DEV) {
-          console.log(
-            '[App] Persistent storage denied; rebuilding from OPFS source file instead of trusting persisted DuckDB cache',
-          );
-        }
-        hasProcessedPersistence.current = true;
-        void rebuildFromOpfsSource('splash', { forceReload: true });
-      } else if (hasMatchingMetadata) {
-        if (import.meta.env.DEV) {
-          console.log('[App] Auto-restoring: localStorage metadata matches OPFS data');
-        }
-        hasProcessedPersistence.current = true;
-        const restored = attemptRestoreFromPersistence();
-        if (isWorkspaceMode) {
-          setMode('splash');
-        } else {
-          setMode(restored ? 'dashboard' : 'restoring');
-        }
-      } else {
-        if (import.meta.env.DEV) {
-          console.log('[App] Showing restoration prompt: metadata mismatch or missing');
-        }
-        setMode('restoring');
+    if (plan.kind === 'rebuild-from-source') {
+      if (persistenceState === 'corrupt') {
+        if (!dataset?.id || autoRecoveredDatasets.current.has(dataset.id)) return;
+        autoRecoveredDatasets.current.add(dataset.id);
       }
-    } else if (persistenceState === 'ready' && mode === 'restoring') {
       hasProcessedPersistence.current = true;
-      if (dataset) {
-        setMode('dashboard');
-      } else {
-        setMode('splash');
-      }
-    } else if (persistenceState === 'ready' && mode === 'splash') {
-      if (dataset?.opfsFileKey) {
-        if (import.meta.env.DEV) {
-          console.log('[App] Rehydrating DuckDB from OPFS source file');
-        }
-        hasProcessedPersistence.current = true;
-        void rebuildFromOpfsSource('splash');
-      } else {
-        hasProcessedPersistence.current = true;
-      }
+      void rebuildFromOpfsSource(plan.fallbackMode, { forceReload: plan.forceReload });
+      return;
+    }
+
+    if (plan.kind === 'restore-from-cache') {
+      hasProcessedPersistence.current = true;
+      const restored = attemptRestoreFromPersistence();
+      setMode(restored ? plan.nextMode : 'restoring');
+      return;
+    }
+
+    if (plan.kind === 'set-mode') {
+      hasProcessedPersistence.current = true;
+      setMode(plan.mode);
     }
   }, [
     persistenceState,
@@ -494,18 +468,6 @@ export function usePersistenceManager(
     rebuildFromOpfsSource,
     setMode,
   ]);
-
-  useEffect(() => {
-    if (persistenceState !== 'corrupt') return;
-    if (!dataset?.opfsFileKey || !dataset?.id) return;
-    if (autoRecoveredDatasets.current.has(dataset.id)) return;
-
-    autoRecoveredDatasets.current.add(dataset.id);
-    if (import.meta.env.DEV) {
-      console.log('[App] Persisted DuckDB restore failed; rebuilding from OPFS source file');
-    }
-    void rebuildFromOpfsSource(mode === 'dashboard' ? 'dashboard' : 'splash', { forceReload: true });
-  }, [dataset?.id, dataset?.opfsFileKey, mode, persistenceState, rebuildFromOpfsSource]);
 
   return {
     opfsAvailableLocal,

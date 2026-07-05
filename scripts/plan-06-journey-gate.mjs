@@ -158,6 +158,14 @@ async function main() {
     );
     results.push(waveRefreshBrowser);
 
+    const rebuildPath = await runTimed('persistence-rebuild-path', () =>
+      runCommand('npx', ['playwright', 'test', 'tests/e2e/persistence-chaos.spec.ts', '-g', '@rebuild-path'], {
+        env: sharedEnv,
+        inherit: true,
+      }),
+    );
+    results.push(rebuildPath);
+
     const report = {
       capturedAt: new Date().toISOString(),
       budgets: BUDGETS,

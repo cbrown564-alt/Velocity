@@ -6,8 +6,8 @@ import { enrichVariablesWithSemantic } from '../../../core/semantic/respondentId
 import type { AggregatedRow } from '../../../types';
 import type { Filter } from '../../../types/analysis';
 import type { VariableStatsResult } from '../../../types/worker';
-import { openWorkspaceDatasetLifecycle } from '../../workspaceDatasetLifecycle';
-import { sessionStateToStorePatch } from '../../datasetSessionCoordinator';
+import { openWorkspaceDatasetLifecycle } from '../../../services/workspaceBoot/rehydrate';
+import { sessionStateToStorePatch } from '../../../services/workspaceBoot/session';
 import type { Variable, VariableSet } from '../../../types/dataset';
 import type { DataSlice, WorkspaceDatasetOpenInput } from './types';
 import type { DataSliceGet, DataSliceSet } from './sliceContext';

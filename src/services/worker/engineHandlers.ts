@@ -37,7 +37,9 @@ export const engineHandlers: Record<EngineWorkerRequest['type'], EngineMessageHa
         schemaVersion: request.schemaVersion ?? OPFS_SCHEMA_VERSION,
       };
     }
-    const initResult = await init(request.forceCleanStart);
+    const initResult = await init(request.forceCleanStart, {
+      hasPersistedSource: request.hasPersistedSource,
+    });
     if (initResult.corruptionDetected) {
       postEngineResponse({
         type: 'engine.corruptionDetected',
