@@ -90,6 +90,7 @@ export function getPersistenceStatus() {
     opfsAvailable: workerDbState.opfsAvailable,
     mode: workerDbState.persistenceMode,
     dbPath: workerDbState.activeDbPath,
+    decision: workerDbState.opfsBootDecision,
     lastError: workerDbState.persistenceError || undefined,
   };
 }

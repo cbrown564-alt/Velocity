@@ -320,7 +320,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ withinDnd = fals
       results = results.filter((set) => canAddVariableSetToWeight(set, variables));
     }
     return results;
-  }, [commandMode, query, variableSets, dataset?.variables, commandPaletteInsertTarget]);
+  }, [commandMode, query, variableSets, dataset, commandPaletteInsertTarget]);
 
   const variableLabels = useMemo(() => {
     const lookup = new Map<string, string>();

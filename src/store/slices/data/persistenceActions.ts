@@ -4,6 +4,7 @@
 
 import * as opfsFileManager from '../../../services/opfsFileManager';
 import { rehydrateDatasetFromOpfsSource } from '../../workspaceDatasetLifecycle';
+import { recordPersistenceFallback } from '../../../services/pilotOnboarding';
 import type { Variable, VariableSet } from '../../../types/dataset';
 import type { DataSlice } from './types';
 import type { DataSliceGet, DataSliceSet } from './sliceContext';
@@ -70,11 +71,15 @@ export function createPersistenceActions(
         if (!response.ok) {
           console.warn('[DataSlice] OPFS flush failed:', response.error);
           set({ persistenceError: response.error || 'OPFS flush failed' });
+          recordPersistenceFallback('opfs_flush_failed', {
+            error: response.error || 'OPFS flush failed',
+          });
         }
       } catch (error: unknown) {
         const message = error instanceof Error ? error.message : String(error);
         console.warn('[DataSlice] OPFS flush error:', message);
         set({ persistenceError: message });
+        recordPersistenceFallback('opfs_flush_error', { error: message });
       }
     },
 

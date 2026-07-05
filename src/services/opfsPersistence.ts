@@ -1,5 +1,7 @@
 export type PersistenceMode = 'opfs' | 'memory' | 'disabled';
 
+export type OpfsBootDecision = 'cache_open' | 'rebuild' | 'fresh' | 'memory_fallback' | 'disabled';
+
 export type OpfsSupport = {
   supported: boolean;
   error?: string;
@@ -32,6 +34,7 @@ export type PersistenceInitResult = {
   opfsAvailable: boolean;
   mode: PersistenceMode;
   activeDbPath: string;
+  decision: OpfsBootDecision;
   persistenceError?: string;
   corruptionDetected?: boolean;
   corruptionMessage?: string;
@@ -77,6 +80,7 @@ export async function initOpfsPersistence(deps: PersistenceInitDeps): Promise<Pe
       opfsAvailable: false,
       mode: 'disabled',
       activeDbPath: ':memory:',
+      decision: 'disabled',
       persistenceError: disabledReason || 'OPFS disabled',
     };
   }
@@ -87,6 +91,7 @@ export async function initOpfsPersistence(deps: PersistenceInitDeps): Promise<Pe
       opfsAvailable: false,
       mode: 'disabled',
       activeDbPath: ':memory:',
+      decision: 'disabled',
       persistenceError: opfsSupport.error || 'OPFS unsupported',
     };
   }
@@ -154,6 +159,7 @@ export async function initOpfsPersistence(deps: PersistenceInitDeps): Promise<Pe
         opfsAvailable,
         mode,
         activeDbPath,
+        decision: 'cache_open',
         persistenceError,
         corruptionDetected: corruptionDetected || undefined,
         corruptionMessage,
@@ -168,6 +174,7 @@ export async function initOpfsPersistence(deps: PersistenceInitDeps): Promise<Pe
         opfsAvailable,
         mode,
         activeDbPath,
+        decision: 'fresh',
         persistenceError,
         corruptionDetected: corruptionDetected || undefined,
         corruptionMessage,
@@ -182,6 +189,7 @@ export async function initOpfsPersistence(deps: PersistenceInitDeps): Promise<Pe
       opfsAvailable,
       mode,
       activeDbPath,
+      decision: 'rebuild',
       persistenceError,
       corruptionDetected: corruptionDetected || undefined,
       corruptionMessage,
@@ -193,6 +201,7 @@ export async function initOpfsPersistence(deps: PersistenceInitDeps): Promise<Pe
     opfsAvailable: false,
     mode: enableOpfs ? 'memory' : 'disabled',
     activeDbPath: ':memory:',
+    decision: 'memory_fallback',
     persistenceError: persistenceError || 'Failed to open OPFS database',
     corruptionDetected: corruptionDetected || undefined,
     corruptionMessage,

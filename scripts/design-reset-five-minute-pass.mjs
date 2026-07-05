@@ -127,9 +127,8 @@ async function insertVariable(page, query, target = 'rows') {
   await closeOverlays(page);
 }
 
-async function waitForActiveSlideTable(page, timeoutMs = 60000) {
-  const table = page.locator('.analysis-frame table');
-  await table.waitFor({ state: 'visible', timeout: timeoutMs });
+async function waitForFirstCrosstab(page, timeoutMs = 60000) {
+  await page.locator('.analysis-frame table').waitFor({ state: 'visible', timeout: timeoutMs });
   await page.waitForFunction(
     () => {
       const active = document.querySelector('.analysis-frame table');
@@ -141,6 +140,23 @@ async function waitForActiveSlideTable(page, timeoutMs = 60000) {
     },
     { timeout: timeoutMs },
   );
+}
+
+async function runUploadToFirstCrosstab(page, savPath) {
+  const fileDropAt = Date.now();
+  await page.getByTestId('dataset-upload-input').setInputFiles(savPath);
+  await waitForDashboardReady(page);
+
+  const tableVisible = await page
+    .locator('.analysis-frame table')
+    .isVisible()
+    .catch(() => false);
+  if (!tableVisible) {
+    await insertVariable(page, 'sex', 'rows');
+    await insertVariable(page, 'marital', 'columns');
+  }
+  await waitForFirstCrosstab(page);
+  return Date.now() - fileDropAt;
 }
 
 async function addNewSlide(page) {
@@ -170,6 +186,10 @@ async function slideCount(page) {
   return page.getByTestId(/story-rail-slide-/).count();
 }
 
+async function waitForActiveSlideTable(page, timeoutMs = 60000) {
+  await waitForFirstCrosstab(page, timeoutMs);
+}
+
 async function exportAllSlidesPptx(page, savePath) {
   await closeOverlays(page);
   await page.getByRole('button', { name: 'Export', exact: true }).click();
@@ -179,10 +199,12 @@ async function exportAllSlidesPptx(page, savePath) {
     .filter({ hasText: /^All Slides/ })
     .click();
   await page.waitForTimeout(300);
+  const exportStartedAt = Date.now();
   const downloadPromise = page.waitForEvent('download', { timeout: 120000 });
   await page.getByTestId('export-modal-submit').click();
   const download = await downloadPromise;
   await download.saveAs(savePath);
+  return Date.now() - exportStartedAt;
 }
 
 async function renameActiveSlide(page, title) {
@@ -205,12 +227,29 @@ async function renameActiveSlide(page, title) {
   }
 }
 
+async function prepareColdSession(page) {
+  await page.goto(BASE_URL);
+  await clearBrowserStorage(page);
+  await page.reload();
+
+  const startFresh = page.getByRole('button', { name: 'Start Fresh' });
+  if (await startFresh.isVisible({ timeout: 3000 }).catch(() => false)) {
+    await startFresh.click();
+  }
+}
+
 async function main() {
   const useExternalServer = process.env.SKIP_DEV_SERVER === '1';
+  const journeyGate = process.env.JOURNEY_GATE === '1';
   const server = useExternalServer ? null : startDevServer();
   const interruptions = [];
   const timings = { fileDropAt: 0, pptxSavedAt: 0 };
   const steps = [];
+  const journeyMetrics = {
+    coldFirstCrosstabMs: null,
+    warmFirstCrosstabMs: null,
+    exportPptxMs: null,
+  };
 
   try {
     await waitForServer(BASE_URL);
@@ -227,32 +266,14 @@ async function main() {
       }
     });
 
-    await page.goto(BASE_URL);
-    await clearBrowserStorage(page);
-    await page.reload();
-
-    const startFresh = page.getByRole('button', { name: 'Start Fresh' });
-    if (await startFresh.isVisible({ timeout: 3000 }).catch(() => false)) {
-      await startFresh.click();
-    }
+    await prepareColdSession(page);
 
     timings.fileDropAt = Date.now();
-    await page.getByTestId('dataset-upload-input').setInputFiles(SLEEP_SAV);
-    await waitForDashboardReady(page);
-    steps.push({ step: 'dashboard-ready', atMs: Date.now() - timings.fileDropAt });
+    journeyMetrics.coldFirstCrosstabMs = await runUploadToFirstCrosstab(page, SLEEP_SAV);
+    steps.push({ step: 'cold-first-crosstab', atMs: journeyMetrics.coldFirstCrosstabMs });
+    steps.push({ step: 'dashboard-ready', atMs: journeyMetrics.coldFirstCrosstabMs });
 
-    // Slide 1: sex × marital (auto-first-crosstab may already apply; ensure recipe exists)
-    const tableVisible = await page
-      .locator('.analysis-frame table')
-      .isVisible()
-      .catch(() => false);
-    if (!tableVisible) {
-      await insertVariable(page, 'sex', 'rows');
-      await insertVariable(page, 'marital', 'columns');
-    }
-    await page.locator('.analysis-frame table').waitFor({ state: 'visible', timeout: 60000 });
     await renameActiveSlide(page, 'Gender by marital status');
-    await waitForActiveSlideTable(page);
     steps.push({ step: 'slide-1-crosstab', atMs: Date.now() - timings.fileDropAt });
 
     // Slide 2: edlevel × sex (nominal crosstab — age is numeric and may not show % cells)
@@ -277,9 +298,16 @@ async function main() {
 
     // Export all slides to PPTX (default scope is current slide only)
     const savePath = path.join(OUT_DIR, 'wp42-five-minute-pass.pptx');
-    await exportAllSlidesPptx(page, savePath);
+    journeyMetrics.exportPptxMs = await exportAllSlidesPptx(page, savePath);
     timings.pptxSavedAt = Date.now();
     steps.push({ step: 'pptx-saved', atMs: timings.pptxSavedAt - timings.fileDropAt });
+    steps.push({ step: 'export-duration', atMs: journeyMetrics.exportPptxMs });
+
+    if (journeyGate) {
+      await page.goto(BASE_URL);
+      journeyMetrics.warmFirstCrosstabMs = await runUploadToFirstCrosstab(page, SLEEP_SAV);
+      steps.push({ step: 'warm-first-crosstab', atMs: journeyMetrics.warmFirstCrosstabMs });
+    }
 
     const exported = await inspectPptx(savePath);
 
@@ -305,6 +333,7 @@ async function main() {
       interruptionCount: interruptions.length,
       interruptions,
       pass,
+      journeyMetrics,
       criteria: { maxElapsedMs: 300000, maxInterruptions: 0, minSlides: 3, minExportedSlides: 3 },
       pptxPath: savePath,
     };
@@ -315,6 +344,11 @@ async function main() {
     console.log(
       `WP4.2 five-minute pass: ${report.elapsedFormatted} elapsed, ${slides} deck slides, ${exported.slideCount} exported slides, ${interruptions.length} interruption(s)`,
     );
+    if (journeyGate) {
+      console.log(
+        `Journey metrics: cold=${journeyMetrics.coldFirstCrosstabMs}ms warm=${journeyMetrics.warmFirstCrosstabMs}ms export=${journeyMetrics.exportPptxMs}ms`,
+      );
+    }
     console.log(`Pass: ${pass ? 'YES' : 'NO'} (< 5:00, zero interruptions, ≥3 deck slides, ≥3 exported slides)`);
     console.log(`Report: ${reportPath}`);
     console.log(`PPTX: ${savePath}`);

@@ -158,6 +158,7 @@ export async function init(
   workerDbState.persistenceMode = initResult.mode;
   workerDbState.persistenceError = initResult.persistenceError ?? null;
   workerDbState.activeDbPath = initResult.activeDbPath;
+  workerDbState.opfsBootDecision = initResult.decision;
 
   if (initResult.corruptionDetected) {
     console.error('🦆 [Worker] OPFS corruption detected:', initResult.corruptionMessage);

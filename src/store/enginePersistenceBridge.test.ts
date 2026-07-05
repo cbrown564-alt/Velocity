@@ -14,6 +14,7 @@ describe('enginePersistenceBridge callbacks', () => {
       requestId: 'req-1',
       opfsAvailable: true,
       mode: 'opfs',
+      decision: 'cache_open',
       lastError: null,
       dbPath: 'opfs://datasets/ds-1.db',
     });

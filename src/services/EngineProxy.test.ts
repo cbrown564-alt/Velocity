@@ -298,6 +298,7 @@ describe('EngineProxy broadcast callbacks', () => {
       opfsAvailable: true,
       mode: 'opfs',
       dbPath: 'opfs://db.db',
+      decision: 'cache_open',
     });
 
     expect(onPersistenceStatus).toHaveBeenCalledOnce();
@@ -323,7 +324,14 @@ describe('EngineProxy broadcast callbacks', () => {
     const reqId = lastRequestId(handle);
 
     // Intermediate persistence status during init — should not resolve pending
-    handle.emit({ type: 'engine.persistenceStatus', requestId: reqId, opfsAvailable: true, mode: 'opfs', dbPath: '' });
+    handle.emit({
+      type: 'engine.persistenceStatus',
+      requestId: reqId,
+      opfsAvailable: true,
+      mode: 'opfs',
+      dbPath: '',
+      decision: 'cache_open',
+    });
 
     // Promise should still be pending; advance past timeout to confirm it was not resolved
     vi.advanceTimersByTime(501);

@@ -1,18 +1,27 @@
 /**
- * Local-first onboarding instrumentation for paid pilots (PILOT-1).
+ * Local-first onboarding instrumentation for paid pilots (PILOT-1, PILOT-6).
  * Events stay on-device in localStorage until exported.
  */
+
+export type OpfsBootDecision = 'cache_open' | 'rebuild' | 'fresh' | 'memory_fallback' | 'disabled';
 
 export type PilotOnboardingEventName =
   | 'landing_view'
   | 'landing_cta_upload'
   | 'landing_cta_example'
+  | 'boot_start'
+  | 'engine_ready'
+  | 'opfs_decision'
   | 'file_selected'
+  | 'dataset_ready'
   | 'canvas_ready'
   | 'first_crosstab'
   | 'pptx_exported'
   | 'xlsx_exported'
-  | 'workspace_reopened';
+  | 'persistence_corruption'
+  | 'persistence_fallback'
+  | 'workspace_reopened'
+  | 'sav_legacy_ingestion';
 
 export interface PilotOnboardingEvent {
   id: string;
@@ -26,6 +35,8 @@ const STORAGE_KEY = 'velocity-pilot-events';
 const SESSION_START_KEY = 'velocity-pilot-session-start';
 
 let sessionStartMs: number | null = null;
+let bootStartMs: number | null = null;
+let fileDropMs: number | null = null;
 
 function readEvents(): PilotOnboardingEvent[] {
   if (typeof localStorage === 'undefined') return [];
@@ -61,8 +72,15 @@ function ensureSessionStart(): number {
   return sessionStartMs;
 }
 
+function durationSince(startMs: number | null): number | undefined {
+  if (startMs === null) return undefined;
+  return Date.now() - startMs;
+}
+
 export function resetPilotSession(): void {
   sessionStartMs = Date.now();
+  bootStartMs = null;
+  fileDropMs = null;
   if (typeof localStorage !== 'undefined') {
     localStorage.setItem(SESSION_START_KEY, String(sessionStartMs));
   }
@@ -85,6 +103,9 @@ export function recordPilotEvent(
   if (name === 'landing_view' && events.some((e) => e.name === 'landing_view')) {
     return null;
   }
+  if (name === 'boot_start' && events.some((e) => e.name === 'boot_start')) {
+    return null;
+  }
 
   const start = ensureSessionStart();
   const event: PilotOnboardingEvent = {
@@ -97,7 +118,58 @@ export function recordPilotEvent(
 
   events.push(event);
   writeEvents(events);
+
+  if (name === 'boot_start') {
+    bootStartMs = Date.now();
+  }
+  if (name === 'file_selected') {
+    fileDropMs = Date.now();
+  }
+
   return event;
+}
+
+export function markBootStart(): PilotOnboardingEvent | null {
+  return recordPilotEvent('boot_start');
+}
+
+export function recordEngineReady(payload?: Record<string, unknown>): PilotOnboardingEvent | null {
+  return recordPilotEvent('engine_ready', {
+    durationFromBootMs: durationSince(bootStartMs),
+    ...payload,
+  });
+}
+
+export function recordOpfsDecision(
+  decision: OpfsBootDecision,
+  payload?: Record<string, unknown>,
+): PilotOnboardingEvent | null {
+  return recordPilotEvent('opfs_decision', {
+    decision,
+    durationFromBootMs: durationSince(bootStartMs),
+    ...payload,
+  });
+}
+
+export function recordDatasetReady(payload?: Record<string, unknown>): PilotOnboardingEvent | null {
+  return recordPilotEvent('dataset_ready', {
+    durationFromFileDropMs: durationSince(fileDropMs),
+    ...payload,
+  });
+}
+
+export function recordPersistenceCorruption(payload?: Record<string, unknown>): PilotOnboardingEvent | null {
+  return recordPilotEvent('persistence_corruption', payload);
+}
+
+export function recordPersistenceFallback(
+  reason: string,
+  payload?: Record<string, unknown>,
+): PilotOnboardingEvent | null {
+  return recordPilotEvent('persistence_fallback', {
+    reason,
+    ...payload,
+  });
 }
 
 export function buildPilotEventExport(): string {
@@ -133,4 +205,6 @@ export function clearPilotEventLog(): void {
   localStorage.removeItem(STORAGE_KEY);
   localStorage.removeItem(SESSION_START_KEY);
   sessionStartMs = null;
+  bootStartMs = null;
+  fileDropMs = null;
 }

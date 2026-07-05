@@ -6,6 +6,12 @@ import {
   clearPilotEventLog,
   resetPilotSession,
   downloadPilotEventLog,
+  markBootStart,
+  recordEngineReady,
+  recordOpfsDecision,
+  recordDatasetReady,
+  recordPersistenceCorruption,
+  recordPersistenceFallback,
 } from './pilotOnboarding';
 
 describe('pilotOnboarding', () => {
@@ -40,6 +46,37 @@ describe('pilotOnboarding', () => {
     expect(getPilotEventLog()).toHaveLength(1);
   });
 
+  it('records boot_start only once per session', () => {
+    markBootStart();
+    const duplicate = markBootStart();
+    expect(duplicate).toBeNull();
+    expect(getPilotEventLog()).toHaveLength(1);
+  });
+
+  it('records journey timing helpers with duration payloads', () => {
+    markBootStart();
+    recordEngineReady({ opfsAvailable: true });
+    recordOpfsDecision('cache_open', { mode: 'opfs', dbPath: 'opfs://velocity_data' });
+    recordPilotEvent('file_selected', { fileName: 'sleep.sav' });
+    recordDatasetReady({ fileName: 'sleep.sav', rowCount: 271 });
+    recordPersistenceCorruption({ message: 'corrupt db' });
+    recordPersistenceFallback('rebuild_from_opfs_source', { opfsFileKey: 'sleep.sav' });
+
+    const log = getPilotEventLog();
+    expect(log.map((event) => event.name)).toEqual([
+      'boot_start',
+      'engine_ready',
+      'opfs_decision',
+      'file_selected',
+      'dataset_ready',
+      'persistence_corruption',
+      'persistence_fallback',
+    ]);
+    expect(log[1]?.payload?.durationFromBootMs).toEqual(expect.any(Number));
+    expect(log[2]?.payload?.decision).toBe('cache_open');
+    expect(log[4]?.payload?.durationFromFileDropMs).toEqual(expect.any(Number));
+  });
+
   it('exports JSON log with session metadata', () => {
     recordPilotEvent('canvas_ready', { fileName: 'sleep.sav', rowCount: 271 });
     const exported = JSON.parse(buildPilotEventExport());
@@ -49,7 +86,7 @@ describe('pilotOnboarding', () => {
   });
 
   it('downloadPilotEventLog triggers a JSON file download', () => {
-    recordPilotEvent('pptx_exported', { slideCount: 1 });
+    recordPilotEvent('pptx_exported', { slideCount: 1, exportDurationMs: 1200 });
     const click = vi.fn();
     const revoke = vi.spyOn(URL, 'revokeObjectURL').mockImplementation(() => {});
     vi.spyOn(URL, 'createObjectURL').mockReturnValue('blob:mock');

@@ -39,11 +39,7 @@ export function useAutoFirstCrosstab(
 
     autoCrosstabAppliedRef.current = true;
 
-    const weightVarId = resolveExampleDatasetWeightVariable(
-      dataset?.name,
-      dataset?.variables,
-      dataset?.weightVariable,
-    );
+    const weightVarId = resolveExampleDatasetWeightVariable(dataset?.name, dataset?.variables, dataset?.weightVariable);
     if (weightVarId) {
       useVelocityStore.getState().setWeightVariable(weightVarId);
     }
@@ -53,6 +49,7 @@ export function useAutoFirstCrosstab(
   }, [
     dataset?.name,
     dataset?.variables,
+    dataset?.weightVariable,
     resolvedRowVarsLength,
     tableConfigColVar,
     hasSeenAutoCrosstab,

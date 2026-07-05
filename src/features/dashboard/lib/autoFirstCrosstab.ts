@@ -142,7 +142,8 @@ export function resolveExampleDatasetWeightVariable(
   if (datasetName !== 'brandtracker_w4.sav') return null;
 
   const weightVar = variables.find(
-    (variable) => variable.id === BRAND_TRACKER_EXAMPLE_WEIGHT_VAR || variable.name === BRAND_TRACKER_EXAMPLE_WEIGHT_VAR,
+    (variable) =>
+      variable.id === BRAND_TRACKER_EXAMPLE_WEIGHT_VAR || variable.name === BRAND_TRACKER_EXAMPLE_WEIGHT_VAR,
   );
   return weightVar?.id ?? null;
 }

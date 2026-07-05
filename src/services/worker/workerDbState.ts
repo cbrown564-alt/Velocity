@@ -5,6 +5,8 @@ export const OPFS_BASE_NAME = 'velocity_data';
 export const OPFS_SCHEMA_VERSION = 1;
 export const META_TABLE = 'velocity_meta';
 
+import type { OpfsBootDecision } from '../opfsPersistence';
+
 export type PersistenceMode = 'opfs' | 'memory' | 'disabled';
 
 export type PersistenceContext = {
@@ -22,6 +24,7 @@ export const workerDbState = {
   persistenceMode: 'memory' as PersistenceMode,
   persistenceError: null as string | null,
   activeDbPath: ':memory:',
+  opfsBootDecision: 'fresh' as OpfsBootDecision,
   persistenceContext: { schemaVersion: OPFS_SCHEMA_VERSION } as PersistenceContext,
   opfsAvailable: false,
   keepaliveInterval: null as ReturnType<typeof setInterval> | null,

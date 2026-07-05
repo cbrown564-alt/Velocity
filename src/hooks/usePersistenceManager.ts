@@ -6,6 +6,7 @@
 import React, { useEffect, useRef, useCallback } from 'react';
 import { useVelocityStore } from '../store';
 import { STORAGE_REMINDER_DELAY_MS } from '../store/toastPolicy';
+import { recordPersistenceFallback } from '../services/pilotOnboarding';
 import * as opfsFileManager from '../services/opfsFileManager';
 
 type AppMode = 'splash' | 'uploading' | 'dashboard' | 'restoring' | 'metadata';
@@ -230,6 +231,10 @@ export function usePersistenceManager(
       if (!dataset?.opfsFileKey) return;
       setOpfsRehydrateError(null);
       setMode('uploading');
+      recordPersistenceFallback('rebuild_from_opfs_source', {
+        opfsFileKey: dataset.opfsFileKey,
+        forceReload: options?.forceReload ?? false,
+      });
       try {
         await rehydrateDatasetFromOpfs(options);
         setMode('dashboard');

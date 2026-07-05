@@ -363,6 +363,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({ isOpen, onClose, confi
     setIsExporting(true);
     setExportSuccess(false);
     setExportError(null);
+    const exportStartedAt = Date.now();
 
     try {
       const analyses: ExportConfig['analyses'] = [];
@@ -461,6 +462,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({ isOpen, onClose, confi
         title,
         slideCount: slideIdsForScope.length,
         scope,
+        exportDurationMs: Date.now() - exportStartedAt,
       });
 
       setExportSuccess(true);

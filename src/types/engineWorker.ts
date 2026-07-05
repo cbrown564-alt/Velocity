@@ -104,19 +104,6 @@ export type EngineWorkerRequest = EngineRequestBase &
 
     // --- Export ---
     | { type: 'engine.exportArrow'; sql: string; columns?: string[] }
-
-    // --- Harmonization ---
-    | { type: 'engine.getValueFrequencies'; tableName: string; columnName: string }
-    | {
-        type: 'engine.buildHarmonizedTable';
-        sourceTable: string;
-        targetTable: string;
-        mappings: VariableMapping[];
-        outputTableName: string;
-        sourceVarNames?: Record<string, string>;
-        targetVarNames?: Record<string, string>;
-      }
-    | { type: 'engine.getRespondentOverlap'; sourceTable: string; targetTable: string; keyColumn: string }
   );
 
 // ============================================================================
@@ -140,6 +127,7 @@ export type EngineWorkerResponse = EngineResponseBase &
         opfsAvailable: boolean;
         mode: 'opfs' | 'memory' | 'disabled';
         dbPath: string;
+        decision: 'cache_open' | 'rebuild' | 'fresh' | 'memory_fallback' | 'disabled';
         lastError?: string;
       }
     | { type: 'engine.corruptionDetected'; message: string }
@@ -216,11 +204,6 @@ export type EngineWorkerResponse = EngineResponseBase &
 
     // --- Export ---
     | { type: 'engine.arrowExported'; buffer: ArrayBuffer; rowCount: number; durationMs: number }
-
-    // --- Harmonization ---
-    | { type: 'engine.valueFrequencies'; column: string; frequencies: Array<{ value: number; count: number }> }
-    | { type: 'engine.harmonizedTableCreated'; tableName: string; rowCount: number; durationMs: number }
-    | { type: 'engine.respondentOverlap'; totalSource: number; totalTarget: number; overlap: number }
 
     // --- Errors ---
     | { type: 'engine.error'; message: string; code?: string }

@@ -24,6 +24,7 @@ describe('initOpfsPersistence', () => {
     expect(result.mode).toBe('memory');
     expect(result.opfsAvailable).toBe(false);
     expect(result.activeDbPath).toBe(':memory:');
+    expect(result.decision).toBe('memory_fallback');
     expect(result.corruptionDetected).toBe(true);
     expect(result.persistenceError).toContain('not a valid DuckDB database file');
     expect(openMemory).toHaveBeenCalledTimes(1);
@@ -54,6 +55,7 @@ describe('initOpfsPersistence', () => {
     expect(result.opfsAvailable).toBe(true);
     expect(result.mode).toBe('opfs');
     expect(result.activeDbPath).toBe('opfs://candidate.db');
+    expect(result.decision).toBe('cache_open');
     expect(result.corruptionDetected).toBe(true);
     expect(openMemory).not.toHaveBeenCalled();
   });
@@ -103,6 +105,7 @@ describe('initOpfsPersistence', () => {
 
     expect(result.opfsAvailable).toBe(true);
     expect(result.activeDbPath).toBe('opfs://default.db');
+    expect(result.decision).toBe('cache_open');
     expect(openPath).toHaveBeenCalledWith('opfs://default.db', expect.any(String));
     expect(openPath).not.toHaveBeenCalledWith('opfs://dataset.db', expect.any(String));
   });
@@ -172,6 +175,7 @@ describe('initOpfsPersistence', () => {
     expect(result.opfsAvailable).toBe(false);
     expect(result.mode).toBe('disabled');
     expect(result.activeDbPath).toBe(':memory:');
+    expect(result.decision).toBe('disabled');
     expect(result.persistenceError).toBe('OPFS unsupported');
     expect(openMemory).toHaveBeenCalledTimes(1);
   });

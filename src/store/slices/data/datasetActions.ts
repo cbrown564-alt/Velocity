@@ -13,7 +13,7 @@ import type { DataSlice, WorkspaceDatasetOpenInput } from './types';
 import type { DataSliceGet, DataSliceSet } from './sliceContext';
 import { getRunAnalysis as resolveRunAnalysis } from './sliceContext';
 import { normalizeVariable, normalizeVariableSet } from './variableNormalization';
-import { recordPilotEvent } from '../../../services/pilotOnboarding';
+import { recordPilotEvent, recordDatasetReady } from '../../../services/pilotOnboarding';
 
 function postLoadAnalysisReset() {
   return {
@@ -99,6 +99,12 @@ export function createDatasetActions(
       }
 
       void get().flushPersistedData();
+      recordDatasetReady({
+        fileName,
+        format: 'csv',
+        rowCount: response.rowCount,
+        variableCount: variables.length,
+      });
       recordPilotEvent('canvas_ready', {
         fileName,
         format: 'csv',
@@ -170,6 +176,13 @@ export function createDatasetActions(
         });
       }
       void get().flushPersistedData();
+      recordDatasetReady({
+        fileName,
+        format: 'sav',
+        rowCount: response.rowCount,
+        variableCount: variables.length,
+        opfsFileKey: options?.opfsFileKey ?? null,
+      });
       recordPilotEvent('canvas_ready', {
         fileName,
         format: 'sav',

@@ -1,6 +1,10 @@
 import { describe, it, expect } from 'vitest';
 import type { Variable, VariableSet } from '../../../types';
-import { pickAutoFirstCrosstabPair, resolveAutoCrosstabTableConfig, resolveExampleDatasetWeightVariable } from './autoFirstCrosstab';
+import {
+  pickAutoFirstCrosstabPair,
+  resolveAutoCrosstabTableConfig,
+  resolveExampleDatasetWeightVariable,
+} from './autoFirstCrosstab';
 
 function set(overrides: Partial<VariableSet> & { id: string; name: string }): VariableSet {
   return {

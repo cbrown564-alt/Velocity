@@ -9,6 +9,13 @@ import { EngineProxy, type EngineProxyOptions } from '../services/EngineProxy';
 import { BrowserEngine } from '../engine/BrowserEngine';
 import type { EngineResponseByType } from '../types/engineWorker';
 import type { PersistenceState } from './slices/data/types';
+import {
+  markBootStart,
+  recordEngineReady,
+  recordOpfsDecision,
+  recordPersistenceCorruption,
+  type OpfsBootDecision,
+} from '../services/pilotOnboarding';
 import AnalysisWorker from '../services/analysisWorker?worker';
 
 type LoadProgressMessage = EngineResponseByType<'engine.loadProgress'>;
@@ -72,9 +79,17 @@ export function createEnginePersistenceCallbacks(
         persistenceError: msg.lastError ?? null,
         activeDbPath: msg.dbPath,
       });
+      recordOpfsDecision(msg.decision as OpfsBootDecision, {
+        mode: msg.mode,
+        dbPath: msg.dbPath,
+        lastError: msg.lastError ?? null,
+      });
     },
     onCorruption: (msg: CorruptionMessage) => {
       console.warn(`[enginePersistenceBridge] OPFS corruption detected${corruptionLogLabel}:`, msg.message);
+      recordPersistenceCorruption({
+        message: msg.message || 'OPFS database corruption detected',
+      });
       bridge.applyCorruption({
         persistenceState: 'corrupt',
         persistenceError: msg.message || 'OPFS database corruption detected',
@@ -126,6 +141,7 @@ export async function initializeEngineWorker(ctx: InitializeEngineContext): Prom
   }
 
   try {
+    markBootStart();
     const worker = createAnalysisWorker();
 
     worker.onerror = (error) => {
@@ -141,6 +157,9 @@ export async function initializeEngineWorker(ctx: InitializeEngineContext): Prom
     const result = await engine.init({ datasetId, schemaVersion: 1 });
 
     ctx.setInitSuccess(result.opfsAvailable);
+    recordEngineReady({
+      opfsAvailable: result.opfsAvailable,
+    });
     console.log(`[enginePersistenceBridge] Engine ready, OPFS available: ${result.opfsAvailable}`);
 
     if (ctx.getOpfsAvailable() && ctx.getPersistenceState() !== 'corrupt') {
