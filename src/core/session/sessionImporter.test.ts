@@ -70,7 +70,7 @@ function buildSessionFile(overrides: Partial<VelocitySessionFile> = {}): Velocit
       { id: 'filter-missing', variableId: 'q_missing', operator: 'eq', value: 1 },
     ],
     weightVariable: 'weight',
-    analysisSettings: { engine: 'webr' },
+    analysisSettings: { engine: 'duckdb' },
     slides: [
       {
         id: 'slide-1',

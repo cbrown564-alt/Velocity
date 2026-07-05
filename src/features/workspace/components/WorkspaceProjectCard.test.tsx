@@ -39,14 +39,7 @@ const longProject: Project = {
 
 describe('WorkspaceProjectCard', () => {
   it('renders project name', () => {
-    render(
-      <WorkspaceProjectCard
-        project={nonLongProject}
-        datasets={[makeDataset('ds-1')]}
-        harmonizationStatus="none"
-        onOpenProject={vi.fn()}
-      />,
-    );
+    render(<WorkspaceProjectCard project={nonLongProject} datasets={[makeDataset('ds-1')]} onOpenProject={vi.fn()} />);
     expect(screen.getByText('Brand Study')).toBeInTheDocument();
     expect(screen.getByTestId('project-card')).toBeInTheDocument();
   });
@@ -54,12 +47,7 @@ describe('WorkspaceProjectCard', () => {
   it('calls onOpenProject when project header is clicked', () => {
     const onOpenProject = vi.fn();
     render(
-      <WorkspaceProjectCard
-        project={nonLongProject}
-        datasets={[makeDataset('ds-1')]}
-        harmonizationStatus="none"
-        onOpenProject={onOpenProject}
-      />,
+      <WorkspaceProjectCard project={nonLongProject} datasets={[makeDataset('ds-1')]} onOpenProject={onOpenProject} />,
     );
     // Click the project header area
     fireEvent.click(screen.getByText('Brand Study'));
@@ -69,29 +57,11 @@ describe('WorkspaceProjectCard', () => {
   it('calls onOpenProject when project header receives Enter key', () => {
     const onOpenProject = vi.fn();
     render(
-      <WorkspaceProjectCard
-        project={nonLongProject}
-        datasets={[makeDataset('ds-1')]}
-        harmonizationStatus="none"
-        onOpenProject={onOpenProject}
-      />,
+      <WorkspaceProjectCard project={nonLongProject} datasets={[makeDataset('ds-1')]} onOpenProject={onOpenProject} />,
     );
     const header = screen.getByRole('button', { name: /Open project Brand Study/i });
     fireEvent.keyDown(header, { key: 'Enter' });
     expect(onOpenProject).toHaveBeenCalledTimes(1);
-  });
-
-  it('shows harmonization ring for longitudinal project with harmonization', () => {
-    render(
-      <WorkspaceProjectCard
-        project={longProject}
-        datasets={[makeDataset('ds-1', 1), makeDataset('ds-2', 2)]}
-        harmonizationStatus="complete"
-        onOpenProject={vi.fn()}
-      />,
-    );
-    expect(screen.getByTestId('harmonization-ring')).toBeInTheDocument();
-    expect(screen.getByTitle('Variables aligned across waves')).toBeInTheDocument();
   });
 
   it('does not show harmonization ring when status is none', () => {
@@ -99,7 +69,6 @@ describe('WorkspaceProjectCard', () => {
       <WorkspaceProjectCard
         project={longProject}
         datasets={[makeDataset('ds-1', 1), makeDataset('ds-2', 2)]}
-        harmonizationStatus="none"
         onOpenProject={vi.fn()}
       />,
     );
@@ -107,14 +76,7 @@ describe('WorkspaceProjectCard', () => {
   });
 
   it('shows total row count', () => {
-    render(
-      <WorkspaceProjectCard
-        project={nonLongProject}
-        datasets={[makeDataset('ds-1')]}
-        harmonizationStatus="none"
-        onOpenProject={vi.fn()}
-      />,
-    );
+    render(<WorkspaceProjectCard project={nonLongProject} datasets={[makeDataset('ds-1')]} onOpenProject={vi.fn()} />);
     expect(screen.getByText('1,000 total rows')).toBeInTheDocument();
   });
 
@@ -123,7 +85,6 @@ describe('WorkspaceProjectCard', () => {
       <WorkspaceProjectCard
         project={longProject}
         datasets={[makeDataset('ds-1', 1), makeDataset('ds-2', 2)]}
-        harmonizationStatus="none"
         onOpenProject={vi.fn()}
       />,
     );

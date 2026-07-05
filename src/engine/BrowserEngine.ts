@@ -28,7 +28,6 @@ import type {
   WorkerAnalysisSettings,
   VariableStatsResult,
 } from '../types/worker';
-import type { VariableMapping } from '../types/harmonization';
 import type { DatasetSummary, EngineRecodeConfig, ResultEnvelope } from './types';
 import { VelocityError } from './types';
 
@@ -330,39 +329,6 @@ export class BrowserEngine {
 
   async exportArrow(sql: string, columns?: string[]): Promise<EngineResponseByType<'engine.arrowExported'>> {
     return this.proxy.exportArrow(sql, columns);
-  }
-
-  async getValueFrequencies(
-    tableName: string,
-    columnName: string,
-  ): Promise<EngineResponseByType<'engine.valueFrequencies'>> {
-    return this.proxy.getValueFrequencies(tableName, columnName);
-  }
-
-  async buildHarmonizedTable(
-    sourceTable: string,
-    targetTable: string,
-    mappings: VariableMapping[],
-    outputTableName: string,
-    sourceVarNames?: Record<string, string>,
-    targetVarNames?: Record<string, string>,
-  ): Promise<EngineResponseByType<'engine.harmonizedTableCreated'>> {
-    return this.proxy.buildHarmonizedTable(
-      sourceTable,
-      targetTable,
-      mappings,
-      outputTableName,
-      sourceVarNames,
-      targetVarNames,
-    );
-  }
-
-  async getRespondentOverlap(
-    sourceTable: string,
-    targetTable: string,
-    keyColumn: string,
-  ): Promise<EngineResponseByType<'engine.respondentOverlap'>> {
-    return this.proxy.getRespondentOverlap(sourceTable, targetTable, keyColumn);
   }
 
   dispose(): void {

@@ -96,7 +96,6 @@ describe('Store: Persistence', () => {
         activeFilters: [],
         activeDatasetId: null,
         isWorkspaceMode: true,
-        harmonization: { session: null },
       } as unknown as VelocityState;
 
       const persisted = partialize(mockState);
@@ -116,7 +115,6 @@ describe('Store: Persistence', () => {
         activeFilters: [],
         activeDatasetId: 'ds1',
         isWorkspaceMode: true,
-        harmonization: { session: null },
         workspace: {
           datasets: [
             {

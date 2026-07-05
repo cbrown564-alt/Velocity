@@ -32,7 +32,6 @@ export default defineConfig({
         'src/components/charts/',
         // STAB-CI-7: overlays/ exclusion removed after characterization tests added.
         // 'src/components/overlays/',
-        'src/engine/webr/',
         'src/core/export/chartBuilder.ts',
         'src/core/export/resolveThemeColors.ts',
         'src/core/export/types.ts',
@@ -54,7 +53,6 @@ export default defineConfig({
         'src/store/slices/analysisSlice.ts',
         'src/store/slices/drillDownSlice.ts',
         'src/store/slices/slidesSlice.ts',
-        'src/store/slices/webrSlice.ts',
         'src/store/slices/workspaceSlice.ts',
         '**/*.d.ts',
         'dist/',

@@ -2,16 +2,13 @@ import { analysisRegistry } from '../core/analysis/registry';
 import { buildCrosstabRequest } from '../core/analysis/buildCrosstabRequest';
 import { runCrosstab } from '../core/analysis/crosstabRunner';
 import { getVariableStats } from '../core/analysis/variableStatsRunner';
-import { buildHarmonizedTableQuery } from '../core/harmonization/harmonizationQueries';
 import { buildCaseSql } from '../core/transforms/recodeSql';
-import { autoMatchVariables } from '../core/harmonization/matchEngine';
 import type { DatabaseAdapter, QueryResult } from '../core/DatabaseAdapter';
 import type { VelocitySessionFile } from '../core/session';
 import { importSession as importSessionFile } from '../core/session';
 import type { Filter, Variable } from '../types';
 import { normalizeVariableType } from '../types';
 import type { ChartRecommendation } from '../types/charts';
-import type { VariableMapping } from '../types/harmonization';
 import type {
   AnalysisSuggestion,
   BreakSuggestion,
@@ -555,62 +552,6 @@ export class VelocityEngine implements VelocityEngineHost {
     });
   }
 
-  async proposeMappings(wave1VarIds: string[], wave2VarIds: string[]): Promise<ResultEnvelope<VariableMapping[]>> {
-    return this.wrap(
-      'proposeMappings',
-      { wave1Count: wave1VarIds.length, wave2Count: wave2VarIds.length },
-      async () => {
-        const dataset = this.requireDataset();
-        const wave1Vars = wave1VarIds.map((id) => {
-          const v = dataset.variables.find((variable) => variable.id === id);
-          if (!v) throw new VelocityError('INVALID_VARIABLE', `Unknown wave1 variable: ${id}`);
-          return v;
-        });
-        const wave2Vars = wave2VarIds.map((id) => {
-          const v = dataset.variables.find((variable) => variable.id === id);
-          if (!v) throw new VelocityError('INVALID_VARIABLE', `Unknown wave2 variable: ${id}`);
-          return v;
-        });
-        return autoMatchVariables(wave1Vars, wave2Vars);
-      },
-    );
-  }
-
-  async buildHarmonizedTable(
-    sourceTable: string,
-    targetTable: string,
-    mappings: VariableMapping[],
-    sourceVarNames: Record<string, string>,
-    targetVarNames: Record<string, string>,
-  ): Promise<ResultEnvelope<{ sql: string }>> {
-    return this.wrap('buildHarmonizedTable', { sourceTable, targetTable, mappingCount: mappings.length }, async () => {
-      const sql = buildHarmonizedTableQuery(sourceTable, targetTable, mappings, sourceVarNames, targetVarNames);
-      return { sql };
-    });
-  }
-
-  async applyHarmonizedTable(
-    sourceTable: string,
-    targetTable: string,
-    mappings: VariableMapping[],
-    outputTableName: string,
-    sourceVarNames: Record<string, string>,
-    targetVarNames: Record<string, string>,
-  ): Promise<ResultEnvelope<{ tableName: string; rowCount: number; sql: string }>> {
-    return this.wrap(
-      'applyHarmonizedTable',
-      { sourceTable, targetTable, outputTableName, mappingCount: mappings.length },
-      async () => {
-        const sql = buildHarmonizedTableQuery(sourceTable, targetTable, mappings, sourceVarNames, targetVarNames);
-        const safeOutput = outputTableName.replace(/"/g, '""');
-        await this.adapter.execute(`CREATE OR REPLACE TABLE "${safeOutput}" AS (${sql})`);
-        const count = await this.adapter.query(`SELECT COUNT(*) AS cnt FROM "${safeOutput}"`);
-        const rowCount = Number(count.rows[0]?.cnt ?? 0);
-        return { tableName: outputTableName, rowCount, sql };
-      },
-    );
-  }
-
   async loadWorkspaceDataset(
     path: string,
     options?: { metadataOnly?: boolean; waveNumber?: number; makeActive?: boolean },
@@ -628,23 +569,6 @@ export class VelocityEngine implements VelocityEngineHost {
 
   async loadWorkspaceDatasetFull(datasetId: string): Promise<ResultEnvelope<WorkspaceDatasetSummary>> {
     return this.workspaceManager.loadWorkspaceDatasetFull(datasetId);
-  }
-
-  proposeWorkspaceMappings(
-    sourceDatasetId: string,
-    targetDatasetId: string,
-  ): Promise<ResultEnvelope<VariableMapping[]>> {
-    return this.workspaceManager.proposeWorkspaceMappings(sourceDatasetId, targetDatasetId);
-  }
-
-  async harmonizeWorkspaceDatasets(params: {
-    sourceDatasetId: string;
-    targetDatasetId: string;
-    mappings: VariableMapping[];
-    outputTableName: string;
-    onlyConfirmed?: boolean;
-  }): Promise<ResultEnvelope<{ tableName: string; rowCount: number; sql: string }>> {
-    return this.workspaceManager.harmonizeWorkspaceDatasets(params);
   }
 
   async importSession(

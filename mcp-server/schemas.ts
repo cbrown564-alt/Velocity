@@ -46,7 +46,7 @@ export const TOOLS = [
   {
     name: 'velocity_workspace_load',
     description:
-      'Register a dataset in the multi-dataset workspace (separate DuckDB table per dataset). Use for cross-wave harmonization. Set metadataOnly: true on large SAV files, then velocity_workspace_load_full before harmonizing.',
+      'Register a dataset in the multi-dataset workspace (separate DuckDB table per dataset). Set metadataOnly: true on large SAV files, then velocity_workspace_load_full before harmonizing.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -89,40 +89,6 @@ export const TOOLS = [
         datasetId: { type: 'string', description: 'Workspace dataset ID.' },
       },
       required: ['datasetId'],
-    },
-  },
-  {
-    name: 'velocity_workspace_propose_mappings',
-    description: 'Auto-propose variable mappings between two workspace datasets (cross-wave harmonization).',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        sourceDatasetId: { type: 'string', description: 'Source wave dataset ID.' },
-        targetDatasetId: { type: 'string', description: 'Target wave dataset ID.' },
-      },
-      required: ['sourceDatasetId', 'targetDatasetId'],
-    },
-  },
-  {
-    name: 'velocity_workspace_harmonize',
-    description:
-      'Build and materialize a harmonized DuckDB table from two workspace datasets using confirmed mappings.',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        sourceDatasetId: { type: 'string' },
-        targetDatasetId: { type: 'string' },
-        mappings: {
-          type: 'array',
-          description: 'VariableMapping[] (typically from velocity_workspace_propose_mappings).',
-        },
-        outputTableName: { type: 'string', description: 'Name for the harmonized output table.' },
-        onlyConfirmed: {
-          type: 'boolean',
-          description: 'If true, apply only mappings with status confirmed (default: true).',
-        },
-      },
-      required: ['sourceDatasetId', 'targetDatasetId', 'mappings', 'outputTableName'],
     },
   },
   {
@@ -415,34 +381,6 @@ export const TOOLS = [
         colVarId: { type: 'string', description: 'Column variable ID (optional).' },
       },
       required: ['rowVarIds'],
-    },
-  },
-  // Harmonization
-  {
-    name: 'velocity_propose_mappings',
-    description: 'Auto-propose variable mappings between two waves using similarity scoring.',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        wave1VarIds: { type: 'array', items: { type: 'string' }, description: 'Wave 1 variable IDs.' },
-        wave2VarIds: { type: 'array', items: { type: 'string' }, description: 'Wave 2 variable IDs.' },
-      },
-      required: ['wave1VarIds', 'wave2VarIds'],
-    },
-  },
-  {
-    name: 'velocity_build_harmonized_table',
-    description: 'Generate SQL for a harmonized table combining two waves with value remapping.',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        sourceTable: { type: 'string' },
-        targetTable: { type: 'string' },
-        mappings: { type: 'array', description: 'Confirmed VariableMapping[] from velocity_propose_mappings.' },
-        sourceVarNames: { type: 'object', description: 'Map of variable ID → column name for wave 1.' },
-        targetVarNames: { type: 'object', description: 'Map of variable ID → column name for wave 2.' },
-      },
-      required: ['sourceTable', 'targetTable', 'mappings', 'sourceVarNames', 'targetVarNames'],
     },
   },
   // Session

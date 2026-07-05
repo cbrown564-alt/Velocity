@@ -110,7 +110,6 @@ const defaultAnalysisSettings: AnalysisSettings = {
   showColumnBases: false,
   significanceLevel: 0.95,
   engine: 'auto',
-  enableDesignEffects: false,
 };
 
 function triggerAnalysisSafely(runAnalysis: (() => Promise<void>) | undefined, context: string): void {

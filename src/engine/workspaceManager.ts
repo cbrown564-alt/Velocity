@@ -1,6 +1,3 @@
-import { autoMatchVariables } from '../core/harmonization/matchEngine';
-import { buildHarmonizedTableQuery } from '../core/harmonization/harmonizationQueries';
-import type { VariableMapping } from '../types/harmonization';
 import type { ResultEnvelope, WorkspaceDatasetSummary } from './types';
 import { VelocityError } from './types';
 import { buildCsvVariables, buildDefaultVariableSets, getBasename, inferDatasetSource } from './datasetLoading';
@@ -162,64 +159,6 @@ export class WorkspaceManager {
       }
 
       return toWorkspaceSummary(entry, this.host.state.activeWorkspaceDatasetId);
-    });
-  }
-
-  proposeWorkspaceMappings(
-    sourceDatasetId: string,
-    targetDatasetId: string,
-  ): Promise<ResultEnvelope<VariableMapping[]>> {
-    return this.host.wrap('proposeWorkspaceMappings', { sourceDatasetId, targetDatasetId }, async () => {
-      const source = requireWorkspaceEntry(this.host, sourceDatasetId);
-      const target = requireWorkspaceEntry(this.host, targetDatasetId);
-      return autoMatchVariables(source.variables, target.variables);
-    });
-  }
-
-  async harmonizeWorkspaceDatasets(params: {
-    sourceDatasetId: string;
-    targetDatasetId: string;
-    mappings: VariableMapping[];
-    outputTableName: string;
-    onlyConfirmed?: boolean;
-  }): Promise<ResultEnvelope<{ tableName: string; rowCount: number; sql: string }>> {
-    return this.host.wrap('harmonizeWorkspaceDatasets', params, async () => {
-      const source = requireWorkspaceEntry(this.host, params.sourceDatasetId);
-      const target = requireWorkspaceEntry(this.host, params.targetDatasetId);
-
-      if (source.metadataOnly || target.metadataOnly) {
-        throw new VelocityError(
-          'METADATA_ONLY',
-          'Both workspace datasets must have full row data. Call loadWorkspaceDatasetFull first.',
-        );
-      }
-
-      const onlyConfirmed = params.onlyConfirmed !== false;
-      const eligible = params.mappings.filter((mapping) => {
-        if (mapping.targetVariableId === null || mapping.status === 'excluded') return false;
-        if (onlyConfirmed) return mapping.confirmed;
-        return true;
-      });
-
-      if (eligible.length === 0) {
-        throw new VelocityError('ANALYSIS_FAILED', 'No eligible mappings to harmonize.');
-      }
-
-      const sourceVarNames = Object.fromEntries(source.variables.map((v) => [v.id, v.name]));
-      const targetVarNames = Object.fromEntries(target.variables.map((v) => [v.id, v.name]));
-      const sql = buildHarmonizedTableQuery(
-        source.tableName,
-        target.tableName,
-        eligible,
-        sourceVarNames,
-        targetVarNames,
-      );
-      const safeOutput = params.outputTableName.replace(/"/g, '""');
-      await this.host.adapter.execute(`CREATE OR REPLACE TABLE "${safeOutput}" AS (${sql})`);
-      const count = await this.host.adapter.query(`SELECT COUNT(*) AS cnt FROM "${safeOutput}"`);
-      const rowCount = Number(count.rows[0]?.cnt ?? 0);
-
-      return { tableName: params.outputTableName, rowCount, sql };
     });
   }
 }

@@ -27,7 +27,6 @@ import type { OrderedScoring, VariableType } from '../types';
 import type { ProcessedAnalysisData } from '../types/processedData';
 import type { ChartType } from '../types/charts';
 import type { CrosstabQueryOptions, WorkerAnalysisSettings, WorkerAnalysisContext } from '../types/worker';
-import type { VariableMapping } from '../types/harmonization';
 
 // ============================================================================
 // Configuration
@@ -314,53 +313,6 @@ export class EngineProxy {
     return this.send({ type: 'engine.exportArrow', sql, columns }, 'engine.arrowExported') as Promise<
       EngineResponseByType<'engine.arrowExported'>
     >;
-  }
-
-  // ==========================================================================
-  // Harmonization
-  // ==========================================================================
-
-  async getValueFrequencies(
-    tableName: string,
-    columnName: string,
-  ): Promise<EngineResponseByType<'engine.valueFrequencies'>> {
-    return this.send(
-      { type: 'engine.getValueFrequencies', tableName, columnName },
-      'engine.valueFrequencies',
-    ) as Promise<EngineResponseByType<'engine.valueFrequencies'>>;
-  }
-
-  async buildHarmonizedTable(
-    sourceTable: string,
-    targetTable: string,
-    mappings: VariableMapping[],
-    outputTableName: string,
-    sourceVarNames?: Record<string, string>,
-    targetVarNames?: Record<string, string>,
-  ): Promise<EngineResponseByType<'engine.harmonizedTableCreated'>> {
-    return this.send(
-      {
-        type: 'engine.buildHarmonizedTable',
-        sourceTable,
-        targetTable,
-        mappings,
-        outputTableName,
-        sourceVarNames,
-        targetVarNames,
-      },
-      'engine.harmonizedTableCreated',
-    ) as Promise<EngineResponseByType<'engine.harmonizedTableCreated'>>;
-  }
-
-  async getRespondentOverlap(
-    sourceTable: string,
-    targetTable: string,
-    keyColumn: string,
-  ): Promise<EngineResponseByType<'engine.respondentOverlap'>> {
-    return this.send(
-      { type: 'engine.getRespondentOverlap', sourceTable, targetTable, keyColumn },
-      'engine.respondentOverlap',
-    ) as Promise<EngineResponseByType<'engine.respondentOverlap'>>;
   }
 
   // ==========================================================================

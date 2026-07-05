@@ -63,7 +63,6 @@ export function useSessionLifecycle({
   const sections = useVelocityStore((state) => state.sections);
   const workspace = useVelocityStore((state) => state.workspace);
   const activeDatasetId = useVelocityStore((state) => state.activeDatasetId);
-  const harmonization = useVelocityStore((state) => state.harmonization);
   const loadSAV = useVelocityStore((state) => state.loadSAV);
   const recodeVariable = useVelocityStore((state) => state.recodeVariable);
   const discardPersistedData = useVelocityStore((state) => state.discardPersistedData);
@@ -109,7 +108,7 @@ export function useSessionLifecycle({
         })),
       },
       activeDatasetId,
-      harmonizationSession: harmonization.session,
+      harmonizationSession: null,
       semantic,
       velocityVersion: import.meta.env.VITE_APP_VERSION ?? 'dev',
     });
@@ -139,7 +138,6 @@ export function useSessionLifecycle({
     workspace.datasets,
     workspace.projects,
     activeDatasetId,
-    harmonization.session,
     importedSessionSemantic,
   ]);
 
@@ -199,14 +197,6 @@ export function useSessionLifecycle({
           processedQueryResult: null,
           tableStats: null,
           activeVariableStats: null,
-          harmonization: {
-            ...state.harmonization,
-            isOpen: false,
-            session: imported.patch.harmonizationSession,
-            matchingInProgress: false,
-            sankeyData: null,
-            selectedMappingId: null,
-          },
         }));
         await useVelocityStore.getState().runAnalysis();
         setImportedSessionSemantic(captureImportedSessionSemanticState(payload.sessionFile));

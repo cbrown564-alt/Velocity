@@ -84,26 +84,6 @@ describe('CrossWavePanel', () => {
     expect(screen.getAllByText(/-20.0%/).length).toBeGreaterThan(0);
   });
 
-  it('calls onOpenHarmonization when harmonize waves is clicked', () => {
-    const onOpenHarmonization = vi.fn();
-    render(
-      <CrossWavePanel
-        isOpen
-        onClose={vi.fn()}
-        project={project}
-        datasets={[wave1, wave2]}
-        selectedWaves={[wave1, wave2]}
-        onOpenHarmonization={onOpenHarmonization}
-      />,
-    );
-
-    fireEvent.click(screen.getByRole('button', { name: /open harmonization workspace/i }));
-    expect(onOpenHarmonization).toHaveBeenCalledWith(
-      expect.objectContaining({ id: 'w1' }),
-      expect.objectContaining({ id: 'w2' }),
-    );
-  });
-
   it('exposes dialog semantics via ModalShell', () => {
     render(<CrossWavePanel isOpen onClose={vi.fn()} project={project} datasets={[wave1, wave2]} />);
     expect(screen.getByRole('dialog')).toHaveAttribute('aria-modal', 'true');

@@ -16,12 +16,10 @@ import {
   type WorkspaceState,
   type WorkspaceExport,
 } from '../../features/workspace';
-import { HarmonizationWorkspace } from '../../features/harmonization';
 import type { Filter, Variable } from '../../store';
 import type { DrillDownState } from '../../store/slices/drillDownSlice';
 import type { AnalysisExportModalState } from '../../store/slices/uiSlice';
 import type { AppOverlay } from '../types';
-import { datasetTableName } from '../utils';
 
 const ExportModal = React.lazy(() =>
   import('../../components/overlays/ExportModal').then((module) => ({ default: module.ExportModal })),
@@ -49,13 +47,6 @@ export interface ModalHostProps {
   workspace: WorkspaceState;
   variables: Variable[];
   sessionExportSummary: SessionExportSummary | null;
-  harmonization: {
-    isOpen: boolean;
-    sourceDataset: StoredDataset | null;
-    targetDataset: StoredDataset | null;
-    sourceVars: Variable[] | null;
-    targetVars: Variable[] | null;
-  };
   drillDown: DrillDownState;
   recodeModal: { isOpen: boolean; variable: unknown };
   filterModal: { isOpen: boolean; initialVariableId?: string | null };
@@ -74,7 +65,6 @@ export interface ModalHostProps {
   onUpdateWaveNumber: (id: string, wave: number) => void;
   onSetRespondentKey: (id: string, key: string) => void;
   onOpenDataset: (storedDataset: StoredDataset) => Promise<void>;
-  onOpenHarmonization: (w1: StoredDataset, w2: StoredDataset) => void;
   onWorkspaceImport: (data: WorkspaceExport) => void;
 }
 
@@ -84,7 +74,6 @@ export const ModalHost: React.FC<ModalHostProps> = ({
   workspace,
   variables,
   sessionExportSummary,
-  harmonization,
   drillDown,
   recodeModal,
   filterModal,
@@ -103,7 +92,6 @@ export const ModalHost: React.FC<ModalHostProps> = ({
   onUpdateWaveNumber,
   onSetRespondentKey,
   onOpenDataset,
-  onOpenHarmonization,
   onWorkspaceImport,
 }) => (
   <>
@@ -166,24 +154,8 @@ export const ModalHost: React.FC<ModalHostProps> = ({
         datasets={overlay.datasets}
         selectedWaves={overlay.selectedWaves}
         onOpenDataset={onOpenDataset}
-        onOpenHarmonization={onOpenHarmonization}
       />
     )}
-
-    {harmonization.isOpen &&
-      harmonization.sourceDataset &&
-      harmonization.targetDataset &&
-      harmonization.sourceVars &&
-      harmonization.targetVars && (
-        <HarmonizationWorkspace
-          sourceVars={harmonization.sourceVars}
-          targetVars={harmonization.targetVars}
-          sourceDatasetName={harmonization.sourceDataset.name}
-          targetDatasetName={harmonization.targetDataset.name}
-          sourceTableName={harmonization.sourceDataset.tableName ?? datasetTableName(harmonization.sourceDataset.id)}
-          targetTableName={harmonization.targetDataset.tableName ?? datasetTableName(harmonization.targetDataset.id)}
-        />
-      )}
 
     <ExportImportModal
       isOpen={overlay.kind === 'workspaceExport'}

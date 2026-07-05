@@ -4,7 +4,6 @@ import {
   buildActivityHeatmap,
   computeAmbientSearchHints,
   computeColorSignature,
-  computeHarmonizationStatus,
   computeWaveDeltaPreview,
   computeWorkspaceCategoryChips,
   findWaveGaps,
@@ -68,16 +67,6 @@ describe('workspaceLibrary', () => {
       Date.now(),
     );
     expect(chips.find((c) => c.id === 'unanalyzed')?.count).toBe(1);
-  });
-
-  it('computeHarmonizationStatus returns complete for overlapping waves', () => {
-    const project = { id: 'p1', name: 'Panel', color: '#fff', createdAt: 0, datasetIds: [], isLongitudinal: true };
-    const vars = [{ id: '1', name: 'age', label: 'Age', type: 'numeric' as const, valueLabels: [], missingValues: {} }];
-    const status = computeHarmonizationStatus(project, [
-      baseDataset({ projectId: 'p1', waveNumber: 1, variables: vars }),
-      baseDataset({ id: 'ds-2', projectId: 'p1', waveNumber: 2, variables: vars }),
-    ]);
-    expect(status).toBe('complete');
   });
 
   it('findWaveGaps detects missing wave numbers', () => {

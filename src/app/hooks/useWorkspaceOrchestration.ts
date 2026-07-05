@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useMemo, useRef } from 'react';
-import type { Filter, Variable } from '../../store';
+import { useCallback, useEffect, useRef } from 'react';
+import type { Filter } from '../../store';
 import { useVelocityStore } from '../../store';
 import { persistDatasetSession } from '../../store/datasetSessionCoordinator';
 import { registerReturnToWorkspaceHandler } from '../../lib/navigationActions';
@@ -29,16 +29,11 @@ export interface UseWorkspaceOrchestrationReturn {
   handleSetRespondentKey: (id: string, key: string) => void;
   handleUnlinkDataset: (id: string) => void;
   handleOpenCrossWavePanel: (project: Project, w1: StoredDataset, w2: StoredDataset) => void;
-  handleOpenHarmonization: (w1: StoredDataset, w2: StoredDataset) => void;
   handleWorkspaceImport: (data: WorkspaceExport) => void;
   handleBatchStar: (ids: string[], starred: boolean) => void;
   handleBatchDelete: (ids: string[]) => Promise<void>;
   handleSaveFilter: (filter: Omit<Filter, 'id'>, applyToAll: boolean) => void;
   handleRecodeSave: () => void;
-  harmonizationSourceDataset: StoredDataset | null;
-  harmonizationTargetDataset: StoredDataset | null;
-  harmonizationSourceVars: Variable[] | null;
-  harmonizationTargetVars: Variable[] | null;
 }
 
 export function useWorkspaceOrchestration({
@@ -46,7 +41,6 @@ export function useWorkspaceOrchestration({
   setPhase,
   openProjectLink,
   openCrossWave,
-  closeCrossWaveOverlay,
   closeProjectLinkOverlay,
 }: UseWorkspaceOrchestrationOptions): UseWorkspaceOrchestrationReturn {
   const isDbReady = useVelocityStore((state) => state.isDbReady);
@@ -74,9 +68,6 @@ export function useWorkspaceOrchestration({
   const removeDatasetsFromProject = useVelocityStore((state) => state.removeDatasetsFromProject);
   const setDatasetWave = useVelocityStore((state) => state.setDatasetWave);
   const setDatasetRespondentKey = useVelocityStore((state) => state.setDatasetRespondentKey);
-  const harmonization = useVelocityStore((state) => state.harmonization);
-  const openHarmonization = useVelocityStore((state) => state.openHarmonization);
-  const closeHarmonization = useVelocityStore((state) => state.closeHarmonization);
   const setActiveDataset = useVelocityStore((state) => state.setActiveDataset);
   const addFilter = useVelocityStore((state) => state.addFilter);
   const addFilterToSlides = useVelocityStore((state) => state.addFilterToSlides);
@@ -302,61 +293,6 @@ export function useWorkspaceOrchestration({
     [workspace.datasets, openCrossWave],
   );
 
-  const resolveWorkspaceVariables = useCallback(
-    (stored: StoredDataset): Variable[] | null => {
-      if (stored.variables && stored.variables.length > 0) return stored.variables as Variable[];
-      if (dataset?.id === stored.id) return dataset.variables as Variable[];
-      return null;
-    },
-    [dataset],
-  );
-
-  const handleOpenHarmonization = useCallback(
-    (w1: StoredDataset, w2: StoredDataset) => {
-      const src = resolveWorkspaceVariables(w1);
-      const tgt = resolveWorkspaceVariables(w2);
-      if (!src || !tgt) {
-        alert(
-          'Harmonization needs variable metadata for both waves. Open each dataset at least once to cache metadata.',
-        );
-        return;
-      }
-      openHarmonization(w1.id, w2.id);
-      closeCrossWaveOverlay();
-    },
-    [openHarmonization, resolveWorkspaceVariables, closeCrossWaveOverlay],
-  );
-
-  const harmonizationSession = harmonization.session;
-  const harmonizationSourceDataset = useMemo(
-    () =>
-      harmonizationSession
-        ? (workspace.datasets.find((d) => d.id === harmonizationSession.sourceDatasetId) ?? null)
-        : null,
-    [harmonizationSession, workspace.datasets],
-  );
-  const harmonizationTargetDataset = useMemo(
-    () =>
-      harmonizationSession
-        ? (workspace.datasets.find((d) => d.id === harmonizationSession.targetDatasetId) ?? null)
-        : null,
-    [harmonizationSession, workspace.datasets],
-  );
-  const harmonizationSourceVars = useMemo(
-    () => (harmonizationSourceDataset ? resolveWorkspaceVariables(harmonizationSourceDataset) : null),
-    [harmonizationSourceDataset, resolveWorkspaceVariables],
-  );
-  const harmonizationTargetVars = useMemo(
-    () => (harmonizationTargetDataset ? resolveWorkspaceVariables(harmonizationTargetDataset) : null),
-    [harmonizationTargetDataset, resolveWorkspaceVariables],
-  );
-
-  useEffect(() => {
-    if (!harmonization.isOpen) return;
-    if (harmonizationSourceVars && harmonizationTargetVars) return;
-    closeHarmonization();
-  }, [harmonization.isOpen, harmonizationSourceVars, harmonizationTargetVars, closeHarmonization]);
-
   const handleWorkspaceImport = useCallback(
     (data: WorkspaceExport) => {
       data.workspace.datasets.forEach((d) => {
@@ -488,15 +424,10 @@ export function useWorkspaceOrchestration({
     handleSetRespondentKey,
     handleUnlinkDataset,
     handleOpenCrossWavePanel,
-    handleOpenHarmonization,
     handleWorkspaceImport,
     handleBatchStar,
     handleBatchDelete,
     handleSaveFilter,
     handleRecodeSave,
-    harmonizationSourceDataset,
-    harmonizationTargetDataset,
-    harmonizationSourceVars,
-    harmonizationTargetVars,
   };
 }

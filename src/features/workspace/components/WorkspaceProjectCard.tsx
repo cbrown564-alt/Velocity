@@ -10,11 +10,10 @@ import styles from './WorkspaceProjectCard.module.css';
 export const WorkspaceProjectCard: React.FC<{
   project: Project;
   datasets: StoredDataset[];
-  harmonizationStatus: 'complete' | 'partial' | 'none';
   onOpenProject: () => void;
   onOpenDataset?: (dataset: StoredDataset) => void;
   onCompareWaves?: (wave1: StoredDataset, wave2: StoredDataset) => void;
-}> = ({ project, datasets, harmonizationStatus, onOpenProject, onOpenDataset, onCompareWaves }) => {
+}> = ({ project, datasets, onOpenProject, onOpenDataset, onCompareWaves }) => {
   const [showDetails, setShowDetails] = useState(false);
 
   return (
@@ -24,17 +23,7 @@ export const WorkspaceProjectCard: React.FC<{
       layout
       data-testid="project-card"
     >
-      {project.isLongitudinal && harmonizationStatus !== 'none' && (
-        <span
-          className={`${styles.harmonyRing} ${styles[`harmony_${harmonizationStatus}`]}`}
-          title={
-            harmonizationStatus === 'complete'
-              ? 'Variables aligned across waves'
-              : 'Partial variable overlap — harmonization recommended'
-          }
-          data-testid="harmonization-ring"
-        />
-      )}
+      {' '}
       <div
         className={styles.projectHeader}
         onClick={onOpenProject}
@@ -70,7 +59,6 @@ export const WorkspaceProjectCard: React.FC<{
           </motion.button>
         )}
       </div>
-
       {project.isLongitudinal && (
         <div className={styles.waveTimelineWrapper}>
           <WaveTimeline
@@ -82,7 +70,6 @@ export const WorkspaceProjectCard: React.FC<{
           />
         </div>
       )}
-
       <div className={styles.projectMeta}>
         <span>{datasets.reduce((sum, d) => sum + d.rowCount, 0).toLocaleString()} total rows</span>
         <span>{formatRelativeTime(Math.max(...datasets.map((d) => d.lastOpenedAt), 0))}</span>

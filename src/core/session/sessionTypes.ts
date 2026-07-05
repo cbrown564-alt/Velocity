@@ -1,6 +1,16 @@
 import type { AnalysisSettings, Filter, TableConfig } from '../../types/analysis';
 import type { DataTransform, Dataset, Folder, Variable, VariableSet } from '../../types/dataset';
-import type { HarmonizationSession } from '../../types/harmonization';
+/** Legacy session block — harmonization UI removed Plan 06 Phase 1. */
+export interface LegacyHarmonizationSession {
+  id: string;
+  sourceDatasetId: string;
+  targetDatasetId: string;
+  mappings: unknown[];
+  createdAt: number;
+  updatedAt: number;
+  outputTableName: string | null;
+}
+
 import type { SemanticSessionBlock } from '../../types/semantic';
 import type { Slide, SlideSection } from '../../types/slides';
 import type { SlideRecipe } from '../export/slideRecipe';
@@ -73,7 +83,7 @@ export interface VelocitySessionFile {
   sections: SlideSection[];
   deckRecipe?: SessionDeckRecipe;
   workspace?: SessionWorkspaceSnapshot;
-  harmonizationSession?: HarmonizationSession | null;
+  harmonizationSession?: LegacyHarmonizationSession | null;
   /** Phase 4: Semantic annotations and concepts (v2+, optional) */
   semantic?: SemanticSessionBlock;
 }
@@ -101,7 +111,7 @@ export interface ExportSessionInput {
   deckRecipe?: SessionDeckRecipe;
   workspace?: SessionWorkspaceInput;
   activeDatasetId?: string | null;
-  harmonizationSession?: HarmonizationSession | null;
+  harmonizationSession?: LegacyHarmonizationSession | null;
   /** Phase 4: Semantic annotations and concepts — omit if empty */
   semantic?: SemanticSessionBlock;
   velocityVersion?: string;

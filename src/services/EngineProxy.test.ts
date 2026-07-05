@@ -741,27 +741,6 @@ describe('EngineProxy delegation methods send the correct message type', () => {
       responseType: 'engine.arrowExported',
       responseExtra: { buffer: new ArrayBuffer(0), rowCount: 0, durationMs: 1 },
     },
-    {
-      method: 'getValueFrequencies',
-      args: ['my_table', 'col'],
-      msgType: 'engine.getValueFrequencies',
-      responseType: 'engine.valueFrequencies',
-      responseExtra: { column: 'col', frequencies: [] },
-    },
-    {
-      method: 'buildHarmonizedTable',
-      args: ['src', 'tgt', [], 'out'],
-      msgType: 'engine.buildHarmonizedTable',
-      responseType: 'engine.harmonizedTableCreated',
-      responseExtra: { tableName: 'out', rowCount: 0, durationMs: 1 },
-    },
-    {
-      method: 'getRespondentOverlap',
-      args: ['src', 'tgt', 'id'],
-      msgType: 'engine.getRespondentOverlap',
-      responseType: 'engine.respondentOverlap',
-      responseExtra: { totalSource: 0, totalTarget: 0, overlap: 0 },
-    },
   ];
 
   it.each(cases)(

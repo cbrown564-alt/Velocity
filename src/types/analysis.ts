@@ -14,7 +14,7 @@ export interface TableConfig {
 
 export type ComparisonMethod = 'cell_vs_rest' | 'pairwise';
 export type CorrectionType = 'none' | 'bonferroni' | 'fdr';
-export type AnalysisEngine = 'auto' | 'duckdb' | 'webr';
+export type AnalysisEngine = 'auto' | 'duckdb';
 
 export interface AnalysisSettings {
   comparisonMethod: ComparisonMethod;
@@ -25,10 +25,8 @@ export interface AnalysisSettings {
   /** Show column base row beneath crosstab body (UXP-040) */
   showColumnBases: boolean;
   significanceLevel: 0.95 | 0.9 | 0.8;
-  /** Analysis engine selection: auto selects WebR for design effects/mixed models */
+  /** Analysis engine selection (DuckDB-backed crosstabs in the wedge). */
   engine: AnalysisEngine;
-  /** Enable design effect calculation (requires WebR) */
-  enableDesignEffects: boolean;
 }
 
 export interface Filter {

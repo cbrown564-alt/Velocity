@@ -19,9 +19,8 @@ import {
   reopenWritableDatabase,
   updateMeta,
 } from './duckdbPersistence';
-import { engineHandlersHarmonization } from './engineHandlersHarmonization';
 import { toEngineLoadProgress } from './loadProgress';
-import { postEngineResponse } from './engineMessaging';
+import { postEngineResponse, postEngineTransfer } from './engineMessaging';
 import { loadCSV, loadSAV, loadSAVMetadata, loadSAVSample } from './workerIngestion';
 import { fillSystemMissing, getSchema, getUniqueValues, recodeVariable, runQuery } from './workerQueries';
 import { OPFS_SCHEMA_VERSION, workerDbState } from './workerDbState';
@@ -392,8 +391,25 @@ export const engineHandlers: Record<EngineWorkerRequest['type'], EngineMessageHa
     });
   },
 
-  ...engineHandlersHarmonization,
-
+  'engine.exportArrow': async (request) => {
+    if (request.type !== 'engine.exportArrow') return;
+    const arrow = await import('apache-arrow');
+    const { conn } = workerDbState;
+    if (!conn) throw new Error('DB not initialized');
+    const start = performance.now();
+    const result = await conn.query(request.sql);
+    const ipcBuffer = arrow.tableToIPC(result);
+    postEngineTransfer(
+      {
+        type: 'engine.arrowExported',
+        requestId: request.requestId,
+        buffer: ipcBuffer.buffer as ArrayBuffer,
+        rowCount: result.numRows,
+        durationMs: performance.now() - start,
+      },
+      [ipcBuffer.buffer as Transferable],
+    );
+  },
   'engine.close': async (request) => {
     if (request.type !== 'engine.close') return;
     const { adapter } = workerDbState;

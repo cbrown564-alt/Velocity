@@ -31,7 +31,6 @@ import styles from './WorkspaceView.module.css';
 import {
   applyWorkspaceCategoryFilter,
   computeAmbientSearchHints,
-  computeHarmonizationStatus,
   computeWorkspaceCategoryChips,
   matchesVariableKeyword,
   type WorkspaceCategoryChip,
@@ -519,7 +518,6 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
                       key={project.id}
                       project={project}
                       datasets={pDatasets}
-                      harmonizationStatus={computeHarmonizationStatus(project, pDatasets)}
                       onOpenProject={() => {
                         if (pDatasets.length > 0) {
                           onOpenDataset(pDatasets[0]);

@@ -25,7 +25,6 @@ describe('RecipeInspector', () => {
         showConfidenceIntervals: false,
         significanceLevel: 0.95,
         engine: 'auto',
-        enableDesignEffects: false,
       },
       slides: [
         {

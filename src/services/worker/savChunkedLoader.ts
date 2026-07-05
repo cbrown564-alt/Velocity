@@ -22,6 +22,7 @@ import {
   V3_MAX_CREDITS,
 } from './savArrowHelpers';
 import type { SavLoadProgressReporter } from './loadProgress';
+import { recordPilotEvent } from '../pilotOnboarding';
 import { workerDbState } from './workerDbState';
 
 type SavLoadResult = {
@@ -86,6 +87,7 @@ export async function loadSAVChunked(
   }
 
   if (ENABLE_SAV_STREAMING_LEGACY) {
+    recordPilotEvent('sav_legacy_ingestion', { fileSizeBytes: buffer.byteLength, route: 'legacy_chunked_fallback' });
     return loadSAVChunkedLegacy(buffer, chunkSize, onProgress);
   }
 

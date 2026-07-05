@@ -29,6 +29,4 @@ export {
 } from './analysisSlice';
 export { createDrillDownSlice, type DrillDownSlice, type DrillDownFilter, type DrillDownState } from './drillDownSlice';
 export { createSlidesSlice, type SlidesSlice } from './slidesSlice';
-export { createWebRSlice, type WebRSlice, type WebRStatus } from './webrSlice';
 export { createWorkspaceSlice, type WorkspaceSlice } from './workspaceSlice';
-export { createHarmonizationSlice, type HarmonizationSlice } from './harmonizationSlice';

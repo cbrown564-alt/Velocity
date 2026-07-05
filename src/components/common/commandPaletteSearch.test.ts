@@ -43,12 +43,18 @@ describe('commandPaletteSearch', () => {
   it('excludes synthetic grid shell sets from palette browse and search', () => {
     const parentGridId = 'heuristic_grid_fatigue1_fatigue2_fatigue3';
     const sets = [
-      { ...mockNominalSet, id: parentGridId, name: 'Fatigue battery', structure: 'grid', variableIds: ['f1', 'f2'] },
+      {
+        ...mockNominalSet,
+        id: parentGridId,
+        name: 'Fatigue battery',
+        structure: 'grid' as const,
+        variableIds: ['f1', 'f2'],
+      },
       {
         ...mockNominalSet,
         id: `${parentGridId}_scale`,
         name: 'fatigue_scale',
-        structure: 'single',
+        structure: 'single' as const,
         variableIds: [`${parentGridId}_scale`],
       },
       { ...mockNominalSet, id: 'region', name: 'Region' },

@@ -90,22 +90,6 @@ function makeEngine(overrides: Record<string, unknown> = {}) {
       durationMs: 1,
       warnings: [],
     }),
-    proposeWorkspaceMappings: vi.fn().mockResolvedValue({
-      data: [],
-      operation: 'proposeWorkspaceMappings',
-      inputs: {},
-      durationMs: 1,
-      warnings: [],
-      metadata: {},
-    }),
-    harmonizeWorkspaceDatasets: vi.fn().mockResolvedValue({
-      data: { tableName: 'harm_out', rowCount: 10, sql: 'SELECT 1' },
-      operation: 'harmonizeWorkspaceDatasets',
-      inputs: {},
-      durationMs: 1,
-      warnings: [],
-      metadata: {},
-    }),
     describe: vi.fn().mockReturnValue({
       data: {
         dataset: {
@@ -231,14 +215,6 @@ function makeEngine(overrides: Record<string, unknown> = {}) {
     proposeMappings: vi.fn().mockResolvedValue({
       data: [],
       operation: 'proposeMappings',
-      inputs: {},
-      durationMs: 1,
-      warnings: [],
-      metadata: {},
-    }),
-    buildHarmonizedTable: vi.fn().mockResolvedValue({
-      data: { sql: 'SELECT 1' },
-      operation: 'buildHarmonizedTable',
       inputs: {},
       durationMs: 1,
       warnings: [],
@@ -382,25 +358,6 @@ describe('velocity_workspace_load', () => {
       waveNumber: 4,
       makeActive: true,
     });
-  });
-});
-
-describe('velocity_workspace_harmonize', () => {
-  it('calls engine.harmonizeWorkspaceDatasets with dataset ids and mappings', async () => {
-    const engine = makeEngine();
-    await callTool(engine, 'velocity_workspace_harmonize', {
-      sourceDatasetId: 'ws-a',
-      targetDatasetId: 'ws-b',
-      mappings: [{ id: 'm1', sourceVariableId: 'Q1', targetVariableId: 'Q1', confirmed: true }],
-      outputTableName: 'harm_eval',
-    });
-    expect(engine.harmonizeWorkspaceDatasets).toHaveBeenCalledWith(
-      expect.objectContaining({
-        sourceDatasetId: 'ws-a',
-        targetDatasetId: 'ws-b',
-        outputTableName: 'harm_eval',
-      }),
-    );
   });
 });
 
@@ -798,18 +755,6 @@ describe('velocity_recommend_chart', () => {
     expect(engine.recommendChart).toHaveBeenCalledWith(['Q1'], null);
     const parsed = JSON.parse(result.content[0].text);
     expect(parsed.data).toHaveProperty('default');
-  });
-});
-
-describe('velocity_propose_mappings', () => {
-  it('calls engine.proposeMappings with the raw variable ID strings', async () => {
-    const engine = makeEngine();
-    await callTool(engine, 'velocity_propose_mappings', {
-      wave1VarIds: ['Q1'],
-      wave2VarIds: ['GENDER'],
-    });
-    // Engine now owns the ID→Variable lookup; MCP layer passes IDs only.
-    expect(engine.proposeMappings).toHaveBeenCalledWith(['Q1'], ['GENDER']);
   });
 });
 

@@ -124,43 +124,9 @@ async function main(): Promise<void> {
     throw new Error(`Weight discovery sanity check failed: ${trueWeight} mean ${rim_mean} not ≈ 1.0`);
   }
 
-  // ── Step 3: Map renamed attribute variables to the prior wave ─────────────
-  section('STEP 3 · Fuzzy variable mapping (att_value_* → att_worth_*)');
-  const proposed = unwrap(
-    await engine.proposeWorkspaceMappings(workspaceIds.rawW4, workspaceIds.w3),
-    'proposeWorkspaceMappings',
-  );
-  const renameMatches = proposed.filter(
-    (m) => m.sourceVariableId.startsWith('att_value_') && (m.targetVariableId ?? '').startsWith('att_worth_'),
-  );
-  console.log(`  ${proposed.length} candidate mappings; renamed-attribute matches:`);
-  for (const m of renameMatches) {
-    console.log(`    ${m.sourceVariableId.padEnd(18)} → ${m.targetVariableId}  (status=${m.status})`);
-  }
-  if (renameMatches.length < 2) {
-    throw new Error(`Expected att_value_* → att_worth_* fuzzy matches, found ${renameMatches.length}`);
-  }
-  // Confirm the renamed-attribute mappings and produce a harmonized stacked table.
-  const confirmed = proposed.map((m) => ({
-    ...m,
-    confirmed: renameMatches.some((rm) => rm.sourceVariableId === m.sourceVariableId) ? true : m.confirmed,
-  }));
-  const harmonized = unwrap(
-    await engine.harmonizeWorkspaceDatasets({
-      sourceDatasetId: workspaceIds.rawW4,
-      targetDatasetId: workspaceIds.w3,
-      mappings: confirmed,
-      outputTableName: 'bt_harmonized_w3_w4',
-      onlyConfirmed: true,
-    }),
-    'harmonizeWorkspaceDatasets',
-  );
-  console.log(`  ✓ Harmonized table "${harmonized.tableName}" → ${harmonized.rowCount} rows`);
-  logGap(
-    'INF-08',
-    'harmonize produces a NEW stacked output table; there is no in-place rename on the active dataset, ' +
-      'and harmonization mappings are not captured in transformLog/session for cross-wave replay (META-HYGIENE / RECIPE-REPLAY).',
-  );
+  section('STEP 3 · Fuzzy variable mapping (skipped — harmonization excised)');
+  console.log('  ⊘ Skipped: harmonization removed Plan 06 Phase 1');
+  logGap('INF-08', 'Harmonization cluster removed; recipe continues with in-wave recodes only.');
 
   // ── Step 4: Fix the reversed consideration scale (dual-state value remap) ─
   section('STEP 4 · Reverse consideration scale → canonical direction');

@@ -13,7 +13,6 @@ import type { RecodeConfig, Variable, VariableSet, AggregatedRow, TableStats, Mi
 import type { OrderedScoring, VariableType } from './index';
 import type { ProcessedAnalysisData } from './processedData';
 import type { ChartType } from './charts';
-import type { VariableMapping } from './harmonization';
 import type {
   CrosstabQueryOptions,
   WorkerAnalysisSettings,
@@ -104,19 +103,6 @@ export type EngineWorkerRequest = EngineRequestBase &
 
     // --- Export ---
     | { type: 'engine.exportArrow'; sql: string; columns?: string[] }
-
-    // --- Harmonization ---
-    | { type: 'engine.getValueFrequencies'; tableName: string; columnName: string }
-    | {
-        type: 'engine.buildHarmonizedTable';
-        sourceTable: string;
-        targetTable: string;
-        mappings: VariableMapping[];
-        outputTableName: string;
-        sourceVarNames?: Record<string, string>;
-        targetVarNames?: Record<string, string>;
-      }
-    | { type: 'engine.getRespondentOverlap'; sourceTable: string; targetTable: string; keyColumn: string }
   );
 
 // ============================================================================
@@ -217,11 +203,6 @@ export type EngineWorkerResponse = EngineResponseBase &
 
     // --- Export ---
     | { type: 'engine.arrowExported'; buffer: ArrayBuffer; rowCount: number; durationMs: number }
-
-    // --- Harmonization ---
-    | { type: 'engine.valueFrequencies'; column: string; frequencies: Array<{ value: number; count: number }> }
-    | { type: 'engine.harmonizedTableCreated'; tableName: string; rowCount: number; durationMs: number }
-    | { type: 'engine.respondentOverlap'; totalSource: number; totalTarget: number; overlap: number }
 
     // --- Errors ---
     | { type: 'engine.error'; message: string; code?: string }

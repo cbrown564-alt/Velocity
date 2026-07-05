@@ -368,7 +368,7 @@ describe('VelocityEngine', () => {
     expect(crosstab.operation).toContain('crosstab');
   }, 120_000);
 
-  it('registers workspace datasets and proposes cross-wave mappings', async () => {
+  it('registers multiple workspace datasets', async () => {
     const { DuckDBNodeAdapter } = await import('../adapters/DuckDBNodeAdapter');
     const adapter = await DuckDBNodeAdapter.create();
     const engine = await VelocityEngine.create({
@@ -383,9 +383,6 @@ describe('VelocityEngine', () => {
 
     const listed = engine.listWorkspaceDatasets();
     expect(listed.data).toHaveLength(2);
-
-    const mappings = await engine.proposeWorkspaceMappings(wave4.data.id, wave5.data.id);
-    expect(mappings.data.length).toBeGreaterThan(0);
   }, 120_000);
 
   it('wraps session getters and exportSession in provenance envelopes', async () => {
@@ -603,22 +600,13 @@ describe('VelocityEngine', () => {
     expect(engine.state.slides).toEqual([]);
   });
 
-  it('exposes chart, mapping, and harmonization helpers over the active dataset', async () => {
+  it('exposes chart recommendation over the active dataset', async () => {
     const adapter = new MockAdapter();
     const engine = await VelocityEngine.create({ runtime: 'node', adapter });
     await engine.loadFile('/data/brand_tracker.sav');
-
     const chart = await engine.recommendChart(['Q1'], 'GENDER');
     expect(chart.operation).toBe('recommendChart');
     expect(chart.data).toBeDefined();
-
-    const mappings = await engine.proposeMappings(['Q1'], ['Q1']);
-    expect(mappings.operation).toBe('proposeMappings');
-    expect(Array.isArray(mappings.data)).toBe(true);
-
-    const harmonized = await engine.buildHarmonizedTable('wave1', 'wave2', [], {}, {});
-    expect(harmonized.operation).toBe('buildHarmonizedTable');
-    expect(harmonized.data.sql).toContain('SELECT');
   });
 
   it('exposes semantic search, suggestions, and state snapshot helpers', async () => {

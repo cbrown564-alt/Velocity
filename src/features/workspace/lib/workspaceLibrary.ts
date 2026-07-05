@@ -40,8 +40,6 @@ export type AmbientSearchHint = {
   message: string;
 };
 
-export type HarmonizationRingStatus = 'complete' | 'partial' | 'none';
-
 export type WaveDeltaPreview = {
   variableDelta: number;
   responseRate: number;
@@ -219,31 +217,6 @@ export function applyWorkspaceCategoryFilter(
     default:
       return datasets;
   }
-}
-
-/** Harmonization ring: variable-name overlap across waves in a project. */
-export function computeHarmonizationStatus(project: Project, datasets: StoredDataset[]): HarmonizationRingStatus {
-  if (!project.isLongitudinal || datasets.length < 2) return 'none';
-
-  const waveDatasets = datasets
-    .filter((d) => d.projectId === project.id && d.variables && d.variables.length > 0)
-    .sort((a, b) => (a.waveNumber ?? 0) - (b.waveNumber ?? 0));
-
-  if (waveDatasets.length < 2) return 'none';
-
-  const nameSets = waveDatasets.map((d) => new Set((d.variables ?? []).map((v) => v.name.toLowerCase())));
-  let minOverlap = 1;
-  for (let i = 1; i < nameSets.length; i++) {
-    const prev = nameSets[i - 1];
-    const curr = nameSets[i];
-    const overlap = [...curr].filter((n) => prev.has(n)).length;
-    const ratio = overlap / Math.max(prev.size, curr.size, 1);
-    minOverlap = Math.min(minOverlap, ratio);
-  }
-
-  if (minOverlap >= 0.5) return 'complete';
-  if (minOverlap >= 0.2) return 'partial';
-  return 'none';
 }
 
 export function computeWaveDeltaPreview(

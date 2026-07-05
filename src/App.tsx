@@ -58,7 +58,6 @@ export default function App() {
   const recodeModal = useVelocityStore((state) => state.recodeModal);
   const filterModal = useVelocityStore((state) => state.filterModal);
   const analysisExportModal = useVelocityStore((state) => state.analysisExportModal);
-  const harmonization = useVelocityStore((state) => state.harmonization);
   const closeDrillDown = useVelocityStore((state) => state.closeDrillDown);
   const loadMoreDrillDown = useVelocityStore((state) => state.loadMoreDrillDown);
   const closeRecodeModal = useVelocityStore((state) => state.closeRecodeModal);
@@ -93,13 +92,6 @@ export default function App() {
         workspace={workspace}
         variables={variables}
         sessionExportSummary={session.sessionExportSummary}
-        harmonization={{
-          isOpen: harmonization.isOpen,
-          sourceDataset: workspaceOrchestration.harmonizationSourceDataset,
-          targetDataset: workspaceOrchestration.harmonizationTargetDataset,
-          sourceVars: workspaceOrchestration.harmonizationSourceVars,
-          targetVars: workspaceOrchestration.harmonizationTargetVars,
-        }}
         drillDown={drillDown}
         recodeModal={recodeModal}
         filterModal={filterModal}
@@ -118,7 +110,6 @@ export default function App() {
         onUpdateWaveNumber={workspaceOrchestration.handleUpdateWaveNumber}
         onSetRespondentKey={workspaceOrchestration.handleSetRespondentKey}
         onOpenDataset={handleOpenDataset}
-        onOpenHarmonization={workspaceOrchestration.handleOpenHarmonization}
         onWorkspaceImport={workspaceOrchestration.handleWorkspaceImport}
       />
 

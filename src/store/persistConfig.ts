@@ -67,8 +67,6 @@ export interface PersistedState {
   isWorkspaceMode: VelocityState['isWorkspaceMode'];
 
   // From HarmonizationSlice — only persist session, not ephemeral UI state
-  harmonizationSession: VelocityState['harmonization']['session'];
-
   // Data fingerprint for OPFS/localStorage reconciliation
   dataFingerprint?: DataFingerprint;
 }
@@ -153,8 +151,6 @@ export const partialize = (state: VelocityState): PersistedState => {
     isWorkspaceMode: state.isWorkspaceMode,
 
     // HarmonizationSlice - persist only the session (not open state or sankey data)
-    harmonizationSession: state.harmonization?.session ?? null,
-
     // Data fingerprint - used for OPFS/localStorage reconciliation
     // Only set when dataset exists
     dataFingerprint: persistDataset
@@ -188,9 +184,6 @@ export const onRehydrateStorage = (state: VelocityState | undefined) => {
       } else {
         console.log('⚠️ [Persist] Note: Data must be re-imported to DuckDB');
       }
-    }
-    if (state.harmonization?.session) {
-      console.log(`🔗 [Persist] Restored harmonization session: ${state.harmonization.session.id}`);
     }
   }
 };

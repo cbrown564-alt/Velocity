@@ -122,7 +122,6 @@ describe('DataTable hook stability', () => {
         showColumnBases: true,
         significanceLevel: 0.95,
         engine: 'auto',
-        enableDesignEffects: false,
       },
       transformLog: [],
     });
@@ -161,7 +160,6 @@ describe('DataTable Insight Halo', () => {
         showColumnBases: true,
         significanceLevel: 0.95,
         engine: 'auto',
-        enableDesignEffects: false,
       },
       transformLog: [],
     });
@@ -194,7 +192,6 @@ describe('DataTable Insight Halo', () => {
         showColumnBases: true,
         significanceLevel: 0.95,
         engine: 'auto',
-        enableDesignEffects: false,
       },
       transformLog: [],
     });
@@ -217,7 +214,6 @@ describe('DataTable Insight Halo', () => {
       showColumnBases: true,
       significanceLevel: 0.95 as const,
       engine: 'auto' as const,
-      enableDesignEffects: false,
     };
 
     // Dense matrix builder so every (row, col) cell is populated.
@@ -256,7 +252,6 @@ describe('DataTable Insight Halo', () => {
       showColumnBases: true,
       significanceLevel: 0.95 as const,
       engine: 'auto' as const,
-      enableDesignEffects: false,
     };
 
     // 150 rows (> VIRTUALIZE_ROW_THRESHOLD) x 1 column.
@@ -296,7 +291,6 @@ describe('DataTable Insight Halo', () => {
         showColumnBases: true,
         significanceLevel: 0.95,
         engine: 'auto',
-        enableDesignEffects: false,
       },
       transformLog: [],
     });
@@ -318,7 +312,6 @@ describe('DataTable Insight Halo', () => {
       showColumnBases: true,
       significanceLevel: 0.95 as const,
       engine: 'auto' as const,
-      enableDesignEffects: false,
     };
 
     // 3 rows x 40 columns (> VIRTUALIZE_COL_THRESHOLD = 30): columns window,
@@ -383,7 +376,6 @@ describe('DataTable Insight Halo', () => {
         showColumnBases: true,
         significanceLevel: 0.95,
         engine: 'auto',
-        enableDesignEffects: false,
       },
       transformLog: [],
     });
@@ -426,7 +418,6 @@ describe('DataTable Insight Halo', () => {
         showColumnBases: true,
         significanceLevel: 0.95,
         engine: 'auto',
-        enableDesignEffects: false,
       },
       transformLog: [],
     });

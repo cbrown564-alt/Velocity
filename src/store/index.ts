@@ -20,12 +20,8 @@ import {
   type DrillDownSlice,
   createSlidesSlice,
   type SlidesSlice,
-  createWebRSlice,
-  type WebRSlice,
   createWorkspaceSlice,
   type WorkspaceSlice,
-  createHarmonizationSlice,
-  type HarmonizationSlice,
 } from './slices';
 import { STORAGE_KEY, STORAGE_VERSION, partialize, onRehydrateStorage, type DataFingerprint } from './persistConfig';
 import { getSafeLocalStorage } from './safeStorage';
@@ -36,14 +32,7 @@ export type { DataFingerprint };
 // Combined Store Type
 // ============================================================================
 
-export type VelocityState = DataSlice &
-  UISlice &
-  AnalysisSlice &
-  DrillDownSlice &
-  SlidesSlice &
-  WebRSlice &
-  WorkspaceSlice &
-  HarmonizationSlice;
+export type VelocityState = DataSlice & UISlice & AnalysisSlice & DrillDownSlice & SlidesSlice & WorkspaceSlice;
 
 // ============================================================================
 // Store Implementation
@@ -57,9 +46,7 @@ export const useVelocityStore = create<VelocityState>()(
       ...createAnalysisSlice(...args),
       ...createDrillDownSlice(...args),
       ...createSlidesSlice(...args),
-      ...createWebRSlice(...args),
       ...createWorkspaceSlice(...args),
-      ...createHarmonizationSlice(...args),
     }),
     {
       name: STORAGE_KEY,

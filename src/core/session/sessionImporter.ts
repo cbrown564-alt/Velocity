@@ -8,7 +8,7 @@ import type {
   Variable,
   VariableSet,
 } from '../../types/dataset';
-import type { HarmonizationSession } from '../../types/harmonization';
+import type { LegacyHarmonizationSession } from './sessionTypes';
 import type { LayoutMode, Slide, SlideCell, SlideSection } from '../../types/slides';
 import type { SessionDeckRecipe, SessionWorkspaceSnapshot, VelocitySessionFile } from './sessionTypes';
 import { buildSessionDeckRecipe, findStaleDeckRecipeSlideIds } from './sessionDeckRecipe';
@@ -214,7 +214,7 @@ export interface SessionStatePatch {
   sections: SlideSection[];
   deckRecipe: SessionDeckRecipe;
   activeSlideId: string | null;
-  harmonizationSession: HarmonizationSession | null;
+  harmonizationSession: LegacyHarmonizationSession | null;
 }
 
 export interface SessionImportDiagnostics {
