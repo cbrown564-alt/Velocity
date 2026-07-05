@@ -1,6 +1,6 @@
 # Backend Reset: The Friday 4pm Engine
 
-**Status:** Proposed — review complete, awaiting approval to execute
+**Status:** Executed — Phases 0–5 merged to `main` (July 2026)
 **Date:** July 5, 2026
 **Purpose:** Apply the design-reset lens (Sarah the Strategist, Friday 4 PM) to the backend and architecture. The UI now serves the five-minute journey; this plan makes the platform underneath it *reliable, fast, and small enough to trust*.
 **Companion docs:** [`plan_04_design_reset_pathways.md`](plan_04_design_reset_pathways.md) (the lens), [`plan_05_design_reset_implementation.md`](plan_05_design_reset_implementation.md) (frontend execution + precedent), [`arch_06_local_first_persistence.md`](arch_06_local_first_persistence.md) (persistence doctrine), [`roadmap_00_strategic_guide.md`](roadmap_00_strategic_guide.md) (scope gates), tracker §4.3.2 (`DESIGN-CONV` board)

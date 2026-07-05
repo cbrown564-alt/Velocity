@@ -168,17 +168,17 @@ This ensures the user never has to:
    - show a “Rebuild from local file” button when DB restore fails
 5. **Complete reopenable workspace behavior:** verify source-file restore, transform replay, active dataset switching, OPFS cleanup on delete, and rebuild fallback with browser smoke coverage.
 
-## Boot State Machine (Plan 06 Phase 3 — planned)
+## Boot State Machine (Plan 06 Phase 3 — implemented)
 
-Plan 06 Phase 3 (`docs/plan_06_backend_reset.md` §6) will replace the current heuristic coordinator spread (`enginePersistenceBridge`, `datasetSessionCoordinator`, `workspaceDatasetLifecycle`, persistence halves of `persistenceActions`) with a **single boot state machine**:
+Plan 06 Phase 3 (`docs/plan_06_backend_reset.md` §6) replaced the heuristic coordinator spread with a **single boot state machine** in `src/services/workspaceBoot/`:
 
 ```
 restore = open-cache | rebuild-from-source | fresh
 ```
 
-Each transition emits journey telemetry (Plan 06 Phase 0) and is bounded by time budgets (e.g. cache open ≤ 2 s → abandon to rebuild). A Playwright chaos suite will assert 100% reopen success under corrupt DB, mid-write kill, second-tab lock, and quota pressure.
+`bootOrchestrator.ts` owns explicit restore strategy selection with time budgets (cache open ≤ 2 s → abandon to rebuild). Each transition emits journey telemetry (`boot_transition`, `opfs_decision`) from Plan 06 Phase 0. Playwright chaos coverage lives in `tests/e2e/persistence-chaos.spec.ts` and the `@rebuild-path` journey-gate CI job.
 
-**Status:** not yet merged on `main`; track on branch `cursor/plan-06-phase-3-persistence-6200`. Until then, the candidate-first OPFS selection fix and source-file + transform-log fallback described above remain the live behavior.
+Legacy store modules (`enginePersistenceBridge`, `datasetSessionCoordinator`, `workspaceDatasetLifecycle`) are thin re-exports over `workspaceBoot` for import stability.
 
 ## References (DuckDB-WASM)
 
