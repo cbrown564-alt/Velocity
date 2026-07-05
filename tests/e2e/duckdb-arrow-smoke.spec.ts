@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import path from 'path';
 import { buildExampleCrosstab, expectDatasetLoaded, uploadSavAndReachDashboard } from './helpers/visualPolish';
+import { warmUpEngine, waitForEngineReadyConsole } from './helpers/engineWarmUp';
 
 const sleepSavFixture = path.resolve(process.cwd(), 'test_data/sleep.sav');
 
@@ -11,19 +12,12 @@ test('SAV upload exercises Arrow→DuckDB ingestion in a real browser', async ({
   page.on('pageerror', (error) => pageErrors.push(error.message));
   page.on('console', (message) => consoleMessages.push(`${message.type()}: ${message.text()}`));
 
-  const engineReady = new Promise<void>((resolve, reject) => {
-    const timer = setTimeout(() => reject(new Error('Timed out waiting for analysis engine')), 60000);
-    page.on('console', (message) => {
-      if (message.text().includes('[enginePersistenceBridge] Engine ready')) {
-        clearTimeout(timer);
-        resolve();
-      }
-    });
-  });
+  const engineReady = waitForEngineReadyConsole(page, 60000);
 
   const response = await page.goto('/');
   page.on('dialog', (dialog) => dialog.dismiss());
 
+  await warmUpEngine(page, 'duckdb-arrow-smoke');
   await engineReady;
 
   const coopHeader = response?.headers()['cross-origin-opener-policy'];

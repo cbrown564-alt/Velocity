@@ -1,21 +1,21 @@
 import * as duckdb from '@duckdb/duckdb-wasm';
-import duckdbWasmMvp from '@duckdb/duckdb-wasm/dist/duckdb-mvp.wasm?url';
 import duckdbWasmEh from '@duckdb/duckdb-wasm/dist/duckdb-eh.wasm?url';
 import duckdbWasmCoi from '@duckdb/duckdb-wasm/dist/duckdb-coi.wasm?url';
-import duckdbWorkerMvp from '@duckdb/duckdb-wasm/dist/duckdb-browser-mvp.worker.js?url';
 import duckdbWorkerEh from '@duckdb/duckdb-wasm/dist/duckdb-browser-eh.worker.js?url';
 import duckdbWorkerCoi from '@duckdb/duckdb-wasm/dist/duckdb-browser-coi.worker.js?url';
 import duckdbWorkerCoiPthread from '@duckdb/duckdb-wasm/dist/duckdb-browser-coi.pthread.worker.js?url';
 
-export function getLocalDuckDbBundles(): duckdb.DuckDBBundles {
+export type DuckDbBundleVariant = 'eh' | 'coi';
+
+export type PilotDuckDbBundles = Record<DuckDbBundleVariant, duckdb.DuckDBBundle>;
+
+/** Pilot-supported bundles only (eh + coi). MVP dropped — no telemetry hits in pilots. */
+export function getLocalDuckDbBundles(): PilotDuckDbBundles {
   return {
-    mvp: {
-      mainModule: duckdbWasmMvp,
-      mainWorker: duckdbWorkerMvp,
-    },
     eh: {
       mainModule: duckdbWasmEh,
       mainWorker: duckdbWorkerEh,
+      pthreadWorker: null,
     },
     coi: {
       mainModule: duckdbWasmCoi,
@@ -23,6 +23,12 @@ export function getLocalDuckDbBundles(): duckdb.DuckDBBundles {
       pthreadWorker: duckdbWorkerCoiPthread,
     },
   };
+}
+
+export function resolveDuckDbBundleVariant(bundle: duckdb.DuckDBBundle): DuckDbBundleVariant {
+  const bundles = getLocalDuckDbBundles();
+  if (bundle.mainModule === bundles.coi.mainModule) return 'coi';
+  return 'eh';
 }
 
 export function resolveDuckDbBundleUrls(bundle: duckdb.DuckDBBundle): duckdb.DuckDBBundle {

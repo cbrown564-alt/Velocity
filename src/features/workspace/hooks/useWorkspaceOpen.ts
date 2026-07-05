@@ -9,6 +9,7 @@ import { useCallback } from 'react';
 import { useVelocityStore } from '../../../store';
 import { captureBeforeDatasetSwitch } from '../../../store/datasetSessionCoordinator';
 import { recordPilotEvent } from '../../../services/pilotOnboarding';
+import { warmUpEngineOnIntent } from '../../../services/engineWarmUp';
 import type { StoredDataset } from '../types';
 
 import type { AppPhase } from '../../../app/types';
@@ -44,6 +45,7 @@ export function useWorkspaceOpen({
 
   const openDataset = useCallback(
     async (storedDataset: StoredDataset) => {
+      void warmUpEngineOnIntent('open-dataset');
       clearImportedSessionSemantic();
       captureBeforeDatasetSwitch(
         {

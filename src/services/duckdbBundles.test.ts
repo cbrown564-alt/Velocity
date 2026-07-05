@@ -7,25 +7,25 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { getLocalDuckDbBundles, resolveDuckDbBundleUrls } from './duckdbBundles';
+import { getLocalDuckDbBundles, resolveDuckDbBundleUrls, resolveDuckDbBundleVariant } from './duckdbBundles';
 
 // ─── getLocalDuckDbBundles ────────────────────────────────────────────────────
 
 describe('getLocalDuckDbBundles', () => {
-  it('returns an object with mvp, eh, and coi keys', () => {
+  it('returns pilot-supported eh and coi bundles only (mvp removed)', () => {
     const bundles = getLocalDuckDbBundles();
-    expect(bundles).toHaveProperty('mvp');
     expect(bundles).toHaveProperty('eh');
     expect(bundles).toHaveProperty('coi');
+    expect(bundles).not.toHaveProperty('mvp');
   });
 
-  it.each(['mvp', 'eh', 'coi'] as const)('%s bundle has string mainModule URL', (key) => {
+  it.each(['eh', 'coi'] as const)('%s bundle has string mainModule URL', (key) => {
     const bundles = getLocalDuckDbBundles();
     expect(typeof bundles[key].mainModule).toBe('string');
     expect(bundles[key].mainModule.length).toBeGreaterThan(0);
   });
 
-  it.each(['mvp', 'eh', 'coi'] as const)('%s bundle has string mainWorker URL', (key) => {
+  it.each(['eh', 'coi'] as const)('%s bundle has string mainWorker URL', (key) => {
     const bundles = getLocalDuckDbBundles();
     expect(typeof bundles[key].mainWorker).toBe('string');
     expect(bundles[key].mainWorker.length).toBeGreaterThan(0);
@@ -37,10 +37,15 @@ describe('getLocalDuckDbBundles', () => {
     expect((bundles.coi.pthreadWorker as string).length).toBeGreaterThan(0);
   });
 
-  it('mvp and eh bundles do not declare a pthreadWorker', () => {
+  it('eh bundle declares a null pthreadWorker', () => {
     const bundles = getLocalDuckDbBundles();
-    expect(bundles.mvp).not.toHaveProperty('pthreadWorker');
-    expect(bundles.eh).not.toHaveProperty('pthreadWorker');
+    expect(bundles.eh.pthreadWorker).toBeNull();
+  });
+
+  it('resolveDuckDbBundleVariant identifies coi vs eh', () => {
+    const bundles = getLocalDuckDbBundles();
+    expect(resolveDuckDbBundleVariant(bundles.coi)).toBe('coi');
+    expect(resolveDuckDbBundleVariant(bundles.eh)).toBe('eh');
   });
 
   it('returns a new object each call (no shared reference)', () => {

@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { STARTUP_JS_TRANSFER_BUDGET_BYTES, formatBytes } from './helpers/performanceBudget';
+import { warmUpEngine, waitForEngineReadyConsole } from './helpers/engineWarmUp';
 
 /**
  * Phase 5 Task 1 — production-browser performance dashboard.
@@ -62,18 +63,11 @@ test('performance dashboard: cold start, upload, first crosstab, export modal', 
   page.on('dialog', (dialog) => dialog.dismiss());
 
   // --- Cold start: navigation -> worker/engine ready ---------------------------
-  const engineReady = new Promise<void>((resolve, reject) => {
-    const timer = setTimeout(() => reject(new Error('Timed out waiting for production engine readiness')), 90000);
-    page.on('console', (message) => {
-      if (message.text().includes('[enginePersistenceBridge] Engine ready')) {
-        clearTimeout(timer);
-        resolve();
-      }
-    });
-  });
+  const engineReady = waitForEngineReadyConsole(page, 90000);
 
   const navStart = Date.now();
   await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await warmUpEngine(page, 'performance-dashboard');
   await engineReady;
   const workerReadyMs = Date.now() - navStart;
 

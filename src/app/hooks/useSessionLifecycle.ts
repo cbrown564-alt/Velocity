@@ -19,6 +19,7 @@ import type { PersistenceManagerState } from '../../hooks/usePersistenceManager'
 import type { FileUploadState } from '../../features/workspace/hooks/useFileUpload';
 import type { AppPhase } from '../types';
 import { getSessionFilename } from '../utils';
+import { warmUpEngineOnIntent } from '../../services/engineWarmUp';
 
 export interface UseSessionLifecycleOptions {
   phase: AppPhase;
@@ -239,6 +240,7 @@ export function useSessionLifecycle({
   }, [sessionImportDiagnostics, sessionImportMessages]);
 
   const handleRestore = useCallback(() => {
+    void warmUpEngineOnIntent('restore-prompt');
     const restored = persistence.attemptRestoreFromPersistence();
     setPhase(restored ? 'dashboard' : 'restoring');
   }, [persistence, setPhase]);
@@ -262,12 +264,14 @@ export function useSessionLifecycle({
   );
 
   const handleLoadExample = useCallback(() => {
+    void warmUpEngineOnIntent('load-example');
     clearImportedSessionSemantic();
     fileUpload.handleDemoClick();
   }, [clearImportedSessionSemantic, fileUpload]);
 
   const handleFileDrop = useCallback(
     (file: File) => {
+      void warmUpEngineOnIntent('file-drop');
       clearImportedSessionSemantic();
       void fileUpload.handleDroppedFile(file);
     },

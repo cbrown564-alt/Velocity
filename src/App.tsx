@@ -3,6 +3,7 @@ import { useVelocityStore } from './store';
 import { usePersistenceManager } from './hooks/usePersistenceManager';
 import { useFileUpload } from './features/workspace/hooks/useFileUpload';
 import { useWorkspaceOpen } from './features/workspace/hooks/useWorkspaceOpen';
+import { warmUpEngineOnIntent } from './services/engineWarmUp';
 import { getLoadStageHeadline } from './lib/uploadFeedback';
 import { ToastLayer } from './components/common/ToastLayer';
 import { KeyboardShortcuts } from './components/common/KeyboardShortcuts';
@@ -69,9 +70,15 @@ export default function App() {
   const variables = dataset?.variables ?? [];
 
   const handleOpenSessionImportModal = useCallback(() => {
+    void warmUpEngineOnIntent('session-import');
     session.handleOpenSessionImportModal();
     overlay.openSessionImport();
   }, [session, overlay]);
+
+  const handleUploadFile = useCallback(() => {
+    void warmUpEngineOnIntent('file-picker');
+    fileInputRef.current?.click();
+  }, []);
 
   return (
     <div className="min-h-screen bg-[var(--bg-app)] text-[var(--text-primary)] antialiased overflow-hidden flex flex-col">
@@ -127,7 +134,7 @@ export default function App() {
         persistence={persistence}
         fileUpload={fileUpload}
         onOpenDataset={handleOpenDataset}
-        onUploadFile={() => fileInputRef.current?.click()}
+        onUploadFile={handleUploadFile}
         onLoadExample={session.handleLoadExample}
         onCreateProject={workspaceOrchestration.handleOpenProjectModal}
         onDeleteDataset={workspaceOrchestration.handleDeleteDataset}

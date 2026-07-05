@@ -66,7 +66,6 @@ export interface PersistedState {
   activeDatasetId: VelocityState['activeDatasetId'];
   isWorkspaceMode: VelocityState['isWorkspaceMode'];
 
-  // From HarmonizationSlice — only persist session, not ephemeral UI state
   // Data fingerprint for OPFS/localStorage reconciliation
   dataFingerprint?: DataFingerprint;
 }
@@ -115,7 +114,7 @@ export const partialize = (state: VelocityState): PersistedState => {
     ...sourceWorkspace,
     datasets: sourceWorkspace.datasets.map((dataset) => ({
       ...dataset,
-      // Keep variable identifiers for harmonization matching, but drop heavy label maps.
+      // Keep variable identifiers for workspace matching, but drop heavy label maps.
       variables: dataset.variables ? compactVariablesForWorkspacePersistence(dataset.variables) : dataset.variables,
     })),
   };
@@ -150,7 +149,6 @@ export const partialize = (state: VelocityState): PersistedState => {
     activeDatasetId: state.activeDatasetId,
     isWorkspaceMode: state.isWorkspaceMode,
 
-    // HarmonizationSlice - persist only the session (not open state or sankey data)
     // Data fingerprint - used for OPFS/localStorage reconciliation
     // Only set when dataset exists
     dataFingerprint: persistDataset

@@ -1,8 +1,10 @@
 # Local-First Persistence: OPFS + DuckDB-WASM Deep Dive
 
 Created: 2026-02-04  
-Updated: 2026-02-05  
+Updated: 2026-07-05  
 Scope: Velocity browser app (DuckDB-WASM + OPFS + Zustand localStorage)
+
+> **Historical RCA:** Incident write-ups for the OPFS reload loop and corruption cases live in `docs/archive/incidents/opfs_reload_investigation.md` and `docs/archive/bugs/opfs_corruption_loop.md`. This doc is the active persistence doctrine; those files are evidence only.
 
 ## Executive Summary
 
@@ -165,6 +167,18 @@ This ensures the user never has to:
    - detect “access handle locked” and show “another tab is using this dataset” guidance
    - show a “Rebuild from local file” button when DB restore fails
 5. **Complete reopenable workspace behavior:** verify source-file restore, transform replay, active dataset switching, OPFS cleanup on delete, and rebuild fallback with browser smoke coverage.
+
+## Boot State Machine (Plan 06 Phase 3 — planned)
+
+Plan 06 Phase 3 (`docs/plan_06_backend_reset.md` §6) will replace the current heuristic coordinator spread (`enginePersistenceBridge`, `datasetSessionCoordinator`, `workspaceDatasetLifecycle`, persistence halves of `persistenceActions`) with a **single boot state machine**:
+
+```
+restore = open-cache | rebuild-from-source | fresh
+```
+
+Each transition emits journey telemetry (Plan 06 Phase 0) and is bounded by time budgets (e.g. cache open ≤ 2 s → abandon to rebuild). A Playwright chaos suite will assert 100% reopen success under corrupt DB, mid-write kill, second-tab lock, and quota pressure.
+
+**Status:** not yet merged on `main`; track on branch `cursor/plan-06-phase-3-persistence-6200`. Until then, the candidate-first OPFS selection fix and source-file + transform-log fallback described above remain the live behavior.
 
 ## References (DuckDB-WASM)
 

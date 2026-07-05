@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { STARTUP_JS_TRANSFER_BUDGET_BYTES, formatBytes } from './helpers/performanceBudget';
+import { warmUpEngine, waitForEngineReadyConsole } from './helpers/engineWarmUp';
 
 test('production build initializes the analysis worker and DuckDB assets', async ({ page, baseURL }, testInfo) => {
   const consoleMessages: string[] = [];
@@ -9,20 +10,7 @@ test('production build initializes the analysis worker and DuckDB assets', async
   const appOrigin = new URL(baseURL ?? 'http://127.0.0.1:4175').origin;
   const startedAt = Date.now();
 
-  const engineReady = new Promise<void>((resolve, reject) => {
-    const timer = setTimeout(() => {
-      reject(new Error('Timed out waiting for production engine readiness'));
-    }, 60000);
-
-    page.on('console', (message) => {
-      const text = `${message.type()}: ${message.text()}`;
-      consoleMessages.push(text);
-      if (text.includes('[enginePersistenceBridge] Engine ready')) {
-        clearTimeout(timer);
-        resolve();
-      }
-    });
-  });
+  const engineReady = waitForEngineReadyConsole(page, 60000);
 
   page.on('pageerror', (error) => pageErrors.push(error.message));
   page.on('response', (response) => {
@@ -35,7 +23,12 @@ test('production build initializes the analysis worker and DuckDB assets', async
     }
   });
 
+  page.on('console', (message) => {
+    consoleMessages.push(`${message.type()}: ${message.text()}`);
+  });
+
   await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await warmUpEngine(page, 'production-smoke');
   await engineReady;
 
   const bodyText = await page.locator('body').innerText();

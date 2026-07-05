@@ -23,6 +23,8 @@ import type {
   NumericStats,
 } from './worker';
 
+export type DuckDbBundleVariant = 'eh' | 'coi';
+
 // Re-export for convenience
 export type { VariableStatsResult, VariableStatsFrequency, NumericStats, PersistedMetadata };
 
@@ -52,11 +54,9 @@ export type EngineWorkerRequest = EngineRequestBase &
         schemaVersion?: number;
         hasPersistedSource?: boolean;
       }
-    | { type: 'engine.close' }
     | { type: 'engine.ping' }
 
     // --- Persistence ---
-    | { type: 'engine.setPersistenceContext'; datasetId?: string; schemaVersion?: number }
     | { type: 'engine.updatePersistenceMetadata'; metadata: PersistedMetadata }
     | { type: 'engine.checkPersistedData' }
     | { type: 'engine.clearPersistedData' }
@@ -90,11 +90,6 @@ export type EngineWorkerRequest = EngineRequestBase &
         includeProcessedData?: WorkerProcessDataOptions;
       }
     | {
-        type: 'engine.runAnalysis';
-        id: string;
-        config: Record<string, unknown>;
-      }
-    | {
         type: 'engine.processData';
         data: AggregatedRow[];
         options: Omit<WorkerProcessDataOptions, 'chartType'>;
@@ -122,8 +117,7 @@ interface EngineResponseBase {
 export type EngineWorkerResponse = EngineResponseBase &
   // --- Lifecycle ---
   (
-    | { type: 'engine.ready'; opfsAvailable: boolean }
-    | { type: 'engine.closed' }
+    | { type: 'engine.ready'; opfsAvailable: boolean; duckdbBundle?: DuckDbBundleVariant }
     | { type: 'engine.pong'; hasData: boolean; rowCount?: number }
 
     // --- Persistence ---
@@ -198,7 +192,6 @@ export type EngineWorkerResponse = EngineResponseBase &
     | { type: 'engine.variableStats'; stats: VariableStatsResult }
 
     // --- Analysis ---
-    | { type: 'engine.analysisResult'; id: string; result: Record<string, unknown> | null; durationMs: number }
     | { type: 'engine.processedData'; result: ProcessedAnalysisData | null; durationMs?: number }
 
     // --- Transformations ---

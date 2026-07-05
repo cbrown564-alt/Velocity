@@ -31,11 +31,9 @@ All computation happens locally using WebAssembly or native Node extensions. No 
 │  └───────────────────┬───────────────────────────────────────┘  │
 │                      │                                          │
 │  ┌───────────────────▼───────────────────────────────────────┐  │
-│  │               Advanced Stats Plugins (Lazy Load)          │  │
-│  │  ┌─────────────┐              ┌─────────────┐             │  │
-│  │  │   WebR      │              │  Pyodide    │             │  │
-│  │  │ (Phase 3)   │              │  (Phase 4)  │             │  │
-│  │  └─────────────┘              └─────────────┘             │  │
+│  │               Future Plugin Seam (not bundled)            │  │
+│  │  Advanced stats (WebR) and NLP (Pyodide) re-enter here    │  │
+│  │  as lazy-loaded packages when PILOT-7 gates reopen.       │  │
 │  └───────────────────────────────────────────────────────────┘  │
 └─────────────────────────────────────────────────────────────────┘
 ```
@@ -61,10 +59,11 @@ All computation happens locally using WebAssembly or native Node extensions. No 
 *   **Purpose:** Manage UI view state (active tabs, modal visibility, current component states).
 *   **Future Convergence:** With the shift to `VelocityEngine`, the Zustand store is migrating away from holding domain/analysis state towards purely holding UI presentation state.
 
-### 2.5 Advanced Stats Plugins (Phase 3+)
-*   **WebR:** For `lme4`, `survey` package.
-*   **Pyodide:** For NLP (spaCy, scikit-learn).
-*   **Loading:** These are **not** bundled. They are fetched on-demand when the user executes operations requiring advanced mathematical modeling.
+### 2.5 Future Plugin Seam (PILOT-7 gated)
+
+WebR (mixed-effects, survey-weighting runners) and Pyodide (NLP) were **removed from the live runtime** in Plan 06 Phase 1. They are not bundled, registered in the store, or wired into the worker handler map.
+
+If paid pilots reopen advanced stats (`PILOT-7`), these capabilities re-enter as **lazy-loaded plugin packages** at this seam — not as kernel types or Zustand slices. See `docs/plan_06_backend_reset.md` WP1.2–1.3.
 
 ### 2.6 The UX Architecture (Soft Modal)
 *   **Concept:** "Hub-and-Spoke".
@@ -104,7 +103,7 @@ sequenceDiagram
 | :--- | :--- | :--- |
 | Browser Memory | ~4GB | Stream large files via OPFS; warn user if file > 500MB. |
 | Main Thread Blocking | Any >16ms task | All DuckDB queries run in Web Worker. |
-| Bundle Size | <1MB initial | Lazy-load WebR/Pyodide plugins. |
+| Bundle Size | <1MB initial | No frozen-feature WASM chunks; future plugins lazy-loaded at PILOT-7 seam. |
 
 ## 5. Module Ownership & Import Direction
 
@@ -120,7 +119,7 @@ from its own layer or any layer **below** it, never above.
 | # | Layer | Directories | Role |
 | :- | :--- | :--- | :--- |
 | 1 | **App shell** | `src/app` | Composition root: routing, session lifecycle, orchestration hooks. The only layer allowed to wire features together. |
-| 2 | **Features** | `src/features/*` | Self-contained feature modules (workspace, dashboard, variableManager, harmonization). Each owns its components, hooks, and lib. |
+| 2 | **Features** | `src/features/*` | Self-contained feature modules (workspace, dashboard, variableManager). Each owns its components, hooks, and lib. |
 | 3 | **Shared UI** | `src/components`, `src/context`, `src/theme`, shared `src/hooks` | Presentational, theming, and cross-feature UI primitives. No feature-specific logic. |
 | 4 | **UI state** | `src/store` | Zustand slices holding UI/presentation state (see §2.4). |
 | 5 | **Headless platform** | `src/engine`, `src/services`, `src/core`, `src/adapters` | Engine facade, workers/proxy, pure analysis/export logic, DB adapters. Runs in browser worker, CLI, and MCP server — **must not depend on any UI layer.** |

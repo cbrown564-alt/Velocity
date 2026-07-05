@@ -13,6 +13,8 @@ export type PilotOnboardingEventName =
   | 'landing_cta_example'
   | 'boot_start'
   | 'boot_transition'
+  | 'engine_warmup_intent'
+  | 'wasm_cache_probe'
   | 'engine_ready'
   | 'opfs_decision'
   | 'file_selected'
@@ -134,6 +136,10 @@ export function recordPilotEvent(
 
 export function markBootStart(): PilotOnboardingEvent | null {
   return recordPilotEvent('boot_start');
+}
+
+export function recordEngineWarmupIntent(source: string): PilotOnboardingEvent | null {
+  return recordPilotEvent('engine_warmup_intent', { source });
 }
 
 export function recordEngineReady(payload?: Record<string, unknown>): PilotOnboardingEvent | null {

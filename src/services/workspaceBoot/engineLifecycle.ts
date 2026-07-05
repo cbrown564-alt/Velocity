@@ -7,6 +7,8 @@ import { BrowserEngine } from '../../engine/BrowserEngine';
 import type { EngineResponseByType } from '../../types/engineWorker';
 import type { PersistenceState } from '../../store/slices/data/types';
 import * as opfsFileManager from '../opfsFileManager';
+import { getEngineWarmUpSource } from '../engineWarmUp';
+import { probeDuckDbWasmCache } from '../duckdbWasmCache';
 import {
   markBootStart,
   recordEngineReady,
@@ -173,7 +175,13 @@ async function runEngineInit(ctx: InitializeEngineContext): Promise<void> {
   const result = await engine.init({ datasetId, schemaVersion: 1, hasPersistedSource });
 
   ctx.setInitSuccess(result.opfsAvailable);
-  recordEngineReady({ opfsAvailable: result.opfsAvailable });
+  const wasmCacheAfter = await probeDuckDbWasmCache();
+  recordEngineReady({
+    opfsAvailable: result.opfsAvailable,
+    warmUpSource: getEngineWarmUpSource(),
+    duckdbBundle: result.duckdbBundle,
+    wasmCacheState: wasmCacheAfter,
+  });
   console.log(`[workspaceBoot] Engine ready, OPFS available: ${result.opfsAvailable}`);
 
   if (ctx.getOpfsAvailable() && ctx.getPersistenceState() !== 'corrupt') {

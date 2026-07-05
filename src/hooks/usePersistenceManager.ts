@@ -9,6 +9,7 @@ import { STORAGE_REMINDER_DELAY_MS } from '../store/toastPolicy';
 import { recordPersistenceFallback } from '../services/pilotOnboarding';
 import { resolveBootRestoreStrategy } from '../services/workspaceBoot/bootOrchestrator';
 import * as opfsFileManager from '../services/opfsFileManager';
+import { shouldWarmEngineOnBoot, warmUpEngineOnIntent } from '../services/engineWarmUp';
 
 type AppMode = 'splash' | 'uploading' | 'dashboard' | 'restoring' | 'metadata';
 
@@ -79,7 +80,6 @@ export function usePersistenceManager(
   const isWorkspaceMode = useVelocityStore((state) => state.isWorkspaceMode);
   const restoreFromPersistence = useVelocityStore((state) => state.restoreFromPersistence);
   const rehydrateDatasetFromOpfs = useVelocityStore((state) => state.rehydrateDatasetFromOpfs);
-  const initWorker = useVelocityStore((state) => state.initWorker);
   const updateStorageQuota = useVelocityStore((state) => state.updateStorageQuota);
 
   // -- Local state --
@@ -300,10 +300,12 @@ export function usePersistenceManager(
 
   // -- Effects --
 
-  // Init worker
+  // Warm up engine on boot only for returning sessions; fresh users defer until intent.
   useEffect(() => {
-    initWorker();
-  }, [initWorker]);
+    if (shouldWarmEngineOnBoot()) {
+      void warmUpEngineOnIntent('boot-resume');
+    }
+  }, []);
 
   // Request persistent storage
   useEffect(() => {

@@ -212,14 +212,6 @@ function makeEngine(overrides: Record<string, unknown> = {}) {
       warnings: [],
       metadata: {},
     }),
-    proposeMappings: vi.fn().mockResolvedValue({
-      data: [],
-      operation: 'proposeMappings',
-      inputs: {},
-      durationMs: 1,
-      warnings: [],
-      metadata: {},
-    }),
     exportSession: vi.fn().mockResolvedValue({
       data: { formatVersion: 2, dataset: { originalFilename: 'test.sav' } },
       operation: 'exportSession',

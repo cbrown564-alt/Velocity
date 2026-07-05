@@ -1,5 +1,6 @@
 import type * as duckdb from '@duckdb/duckdb-wasm';
 import type { DuckDBWasmAdapter } from '../../adapters/DuckDBWasmAdapter';
+import type { DuckDbBundleVariant } from '../duckdbBundles';
 
 export const OPFS_BASE_NAME = 'velocity_data';
 export const OPFS_SCHEMA_VERSION = 1;
@@ -27,6 +28,7 @@ export const workerDbState = {
   opfsBootDecision: 'fresh' as OpfsBootDecision,
   persistenceContext: { schemaVersion: OPFS_SCHEMA_VERSION } as PersistenceContext,
   opfsAvailable: false,
+  duckdbBundle: undefined as DuckDbBundleVariant | undefined,
   keepaliveInterval: null as ReturnType<typeof setInterval> | null,
   fatalRecoveryPromise: null as Promise<void> | null,
 };

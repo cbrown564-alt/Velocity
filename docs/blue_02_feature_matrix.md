@@ -38,12 +38,12 @@ This document catalogs every feature proposed across the three source documents 
 
 | Feature | Source Doc | Decision | Status | Rationale |
 | :--- | :--- | :--- | :--- | :--- |
-| **WebR Integration** | Aletheia | **KEEP** | **Pilot-gated** | Required for "Mixed Effects Models" and trusted weighting algorithms. Defer until paid pilots show weighting/advanced methods repeatedly block adoption. |
-| **Mixed Effects Models (MLM)** | Aletheia | **KEEP** | **Pilot-gated** | The differentiator for "Correct" WVS analysis. Defer until paid pilots or benchmark scope require it. |
-| **Visual Harmonization (Sankey)**| Aletheia | **KEEP** | **Done** | The harmonization workspace baseline has landed, including Sankey visualization and mapping workflow. Follow-up evals should test naming drift, partial label overlap, and scale inversion. |
+| **WebR Integration** | Aletheia | **Removed (gated re-entry)** | N/A | Excised Plan 06 Phase 1. Re-enters as lazy plugin at `arch_01` §2.5 seam when `PILOT-7` validates demand. Weighted crosstabs run through DuckDB SQL today. |
+| **Mixed Effects Models (MLM)** | Aletheia | **Removed (gated re-entry)** | N/A | `MixedEffectsRunner` removed with WebR cluster. Same PILOT-7 plugin seam. |
+| **Visual Harmonization (Sankey)**| Aletheia | **Removed (gated re-entry)** | N/A | Harmonization workspace excised Plan 06 Phase 1 (`~2,915` lines). Wave refresh uses in-wave recodes + deck recipe, not cross-wave harmonization. Eval artifacts frozen under `evals/eval-05/`. |
 | **Time Machine Animation** | Aletheia | **DELAY** | N/A | **Reasoning:** "Wow" factor but not daily utility. Prioritize core stats first. |
 | **GPU Scatterplots (Regl)** | Aletheia | **DELAY** | N/A | **Reasoning:** Only needed for N > 500k. Most survey files are N < 50k. DuckDB handles them fine without bespoke WebGL. |
-| **Syntax Drawer (R Code)** | Aletheia | **KEEP** | **Pilot-gated** | **Reasoning:** Critical for trust and reproducibility if pilots need advanced methods or transparent recipes. Do not build ahead of the trust-pack and pilot workflow. |
+| **Syntax Drawer (R Code)** | Aletheia | **Removed (gated re-entry)** | N/A | Monaco R editor removed Plan 06 Phase 1. Trust-pack methodology snapshots preserved in docs; live R execution re-enters via WebR plugin seam only. |
 | **Pyodide Plugin (NLP/AI)** | N/A (New) | **DELAY** | N/A | **Reasoning:** Build the survey/deck trust first, then add AI only where bounded agent outcomes prove time savings without trust failures. |
 
 ---

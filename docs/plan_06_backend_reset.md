@@ -168,6 +168,16 @@ With the state machine in place, fold `enginePersistenceBridge`, `datasetSession
 - **WP4.1 — WASM caching + warm-up:** service worker (or Cache Storage API) for the DuckDB bundle so the 34 MB fetch happens once per version; begin engine init on first user intent (landing interaction / file-picker open) so ingestion starts hot. Measure via WP0.1 cold/warm split.
 - **WP4.2 — Bundle audit:** drop the `mvp` DuckDB variant if telemetry shows no browser selecting it (every pilot-supported browser takes `eh`/`coi`); assert chunk budgets in CI (`index` < 350 KB, no frozen-feature chunks reappearing). Evaluate whether `motion-vendor` (126 KB, framer-motion in 42 files) is still warranted under the calm design language — coordinate with the DESIGN-CONV owners; likely a CSS-transition diet, but that is a frontend call.
 
+### Phase 4 implementation notes (July 2026)
+
+| Item | Decision |
+| :--- | :--- |
+| WASM cache | Version-scoped service worker (`public/velocity-duckdb-sw.js`) + Cache Storage prefetch on warm-up intent |
+| Warm-up triggers | Landing upload/example/drop, file-picker, open dataset, restore, session import; boot-resume when persisted workspace exists |
+| MVP bundle | Removed from `getLocalDuckDbBundles()` — zero pilot telemetry hits; saves ~5 MB from dist |
+| motion-vendor | **Finding:** 127 KB raw / 42 KB gzip; still used for modal AnimatePresence and workspace transitions in 40+ files. Not removed in Phase 4 — coordinate with DESIGN-CONV for incremental CSS-transition diet (see plan_05 WP3.2). |
+| CI gate | `scripts/check-chunk-budgets.mjs` after build — index < 350 KB, forbidden chunk patterns, no MVP wasm |
+
 ---
 
 ## 8. Phase 5 — Reconciliation

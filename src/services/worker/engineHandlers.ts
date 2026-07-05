@@ -1,13 +1,11 @@
 import { processAnalysisData } from '../../core/analysis/analysisProcessor';
 import { runCrosstab as coreRunCrosstab } from '../../core/analysis/crosstabRunner';
 import { mapCrosstabRows } from '../../core/analysis/mapCrosstabRows';
-import { analysisRegistry } from '../../core/analysis/registry';
 import { getVariableStats as coreGetVariableStats } from '../../core/analysis/variableStatsRunner';
 import { buildCaseSql } from '../../core/transforms/recodeSql';
 import type { EngineWorkerRequest } from '../../types/engineWorker';
 import type { EngineMessageHandler } from './engineHandlerTypes';
 import { transformChartData } from '../chartDataTransformer';
-import { buildOpfsDbPath } from './duckdbOpfs';
 import {
   checkPersistedData,
   clearPersistedData,
@@ -56,6 +54,7 @@ export const engineHandlers: Record<EngineWorkerRequest['type'], EngineMessageHa
       type: 'engine.ready',
       requestId,
       opfsAvailable: initResult.opfsAvailable,
+      duckdbBundle: initResult.duckdbBundle,
     });
   },
 
@@ -83,20 +82,6 @@ export const engineHandlers: Record<EngineWorkerRequest['type'], EngineMessageHa
       }
     } catch {
       postEngineResponse({ type: 'engine.pong', requestId, hasData: false });
-    }
-  },
-
-  'engine.setPersistenceContext': async (request) => {
-    if (request.type !== 'engine.setPersistenceContext') return;
-    workerDbState.persistenceContext = {
-      datasetId: request.datasetId,
-      schemaVersion: request.schemaVersion ?? OPFS_SCHEMA_VERSION,
-    };
-    if (!workerDbState.db) {
-      workerDbState.activeDbPath = buildOpfsDbPath(
-        workerDbState.persistenceContext.datasetId,
-        workerDbState.persistenceContext.schemaVersion,
-      );
     }
   },
 
@@ -315,23 +300,6 @@ export const engineHandlers: Record<EngineWorkerRequest['type'], EngineMessageHa
     });
   },
 
-  'engine.runAnalysis': async (request) => {
-    if (request.type !== 'engine.runAnalysis') return;
-    const { adapter } = workerDbState;
-    if (!adapter) throw new Error('DB not initialized');
-    const runner = analysisRegistry.get(request.id);
-    if (!runner) throw new Error(`Analysis runner not found: ${request.id}`);
-    const start = performance.now();
-    const result = await runner.run(adapter, request.config);
-    postEngineResponse({
-      type: 'engine.analysisResult',
-      requestId: request.requestId,
-      id: request.id,
-      result: result as Record<string, unknown>,
-      durationMs: performance.now() - start,
-    });
-  },
-
   'engine.processData': async (request) => {
     if (request.type !== 'engine.processData') return;
     const start = performance.now();
@@ -411,11 +379,5 @@ export const engineHandlers: Record<EngineWorkerRequest['type'], EngineMessageHa
       },
       [ipcBuffer.buffer as Transferable],
     );
-  },
-  'engine.close': async (request) => {
-    if (request.type !== 'engine.close') return;
-    const { adapter } = workerDbState;
-    if (adapter) await adapter.close();
-    postEngineResponse({ type: 'engine.closed', requestId: request.requestId });
   },
 };

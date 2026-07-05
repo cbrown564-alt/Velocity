@@ -142,6 +142,44 @@ Sessions are the checkpoint/restore mechanism. An agent can export a session aft
 
 See section 5 for the full deck builder design.
 
+### 3.7 Engine surface (post Plan 06 reset)
+
+After Phase 1 subtraction (WebR, harmonization, dead code) and Phase 2 one-deck unification, the live engine contract is:
+
+**VelocityEngine** (`src/engine/VelocityEngine.ts`) — Node/MCP/CLI. Owns session state, deck builder, semantic facade, workspace manager. All data-returning methods wrap `ResultEnvelope`.
+
+**BrowserEngine** (`src/engine/BrowserEngine.ts`) — main-thread facade over `EngineProxy`. Store slices call `BrowserEngine`, not `worker.postMessage()` directly. Crosstab still requires `BrowserEngineContext` (dataset + variableSets from Zustand) until browser session state fully migrates.
+
+**Worker handler map** (`src/services/worker/engineHandlers.ts`) — one handler per `engine.*` request type in `src/types/engineWorker.ts`. Orphaned messages removed in Plan 06 Phase 5 (`engine.runAnalysis`, `engine.close`, `engine.setPersistenceContext`).
+
+#### Sarah's journey → browser surface
+
+| Step | BrowserEngine / worker | Notes |
+| :--- | :--- | :--- |
+| Boot / reopen | `init`, `ping`, `checkPersistedData`, `clearPersistedData`, `flushPersistedData`, `updatePersistenceMetadata` | Persistence context passed on `init` (`datasetId`, `schemaVersion`). |
+| Drop `.sav` / `.csv` | `loadBuffer`, `loadSAV`, `loadCSV`, `loadSAVMetadata`, `loadSAVSample` | Progress via `engine.loadProgress` broadcast. |
+| Crosstabs / stats | `runAnalysis('crosstab' \| 'variableStats', …)`, `runCrosstab`, `getVariableStats`, `query`, `getUniqueValues` | `runAnalysis` routes to typed worker calls; generic `engine.runAnalysis` worker message removed. |
+| Transforms | `recode`, `recodeVariable`, `updateColumn`, `dropColumn`, `fillSystemMissing` | Transform log in store; worker executes SQL. |
+| Chart data | `processData` | Used by `useProcessedAnalysisData` after crosstab rows arrive. |
+| Export / introspection | `getDeckRecipe()` (store → `core/deck`), `core/export` pipeline | Single deck recipe; PPTX from same object as preview (Phase 2). |
+| Agent parity (headless) | VelocityEngine: `describe`, `runAnalysis`, `buildDeck`, `exportDeck`, `exportSession`, semantic tools | CLI frozen as parity harness — no feature growth. |
+
+#### Worker message inventory (20 handlers)
+
+| Request type | Handler purpose |
+| :--- | :--- |
+| `engine.init` | OPFS/memory DB bootstrap + persistence status |
+| `engine.ping` | Liveness + row-count probe |
+| `engine.updatePersistenceMetadata` | Meta table write (fire-and-forget from proxy) |
+| `engine.checkPersistedData` / `clearPersistedData` / `flushPersistedData` | Persistence lifecycle |
+| `engine.loadCSV` / `loadSAV` / `loadSAVMetadata` / `loadSAVSample` | Ingestion |
+| `engine.query` / `getSchema` / `getUniqueValues` / `getVariableStats` | Query + introspection |
+| `engine.runCrosstab` / `processData` | Analysis + chart post-process |
+| `engine.recodeVariable` / `dropColumn` / `updateColumn` / `fillSystemMissing` | Transforms |
+| `engine.exportArrow` | Arrow IPC export (diagnostics; no production UI consumer yet) |
+
+Removed (Phase 5): `engine.runAnalysis` (superseded by typed `runCrosstab` / `getVariableStats` from `BrowserEngine.runAnalysis`), `engine.close` (Node `VelocityEngine.close()` only), `engine.setPersistenceContext` (context set on `engine.init`).
+
 ## 4. ResultEnvelope
 
 Every engine operation that produces data wraps it in a provenance envelope:
@@ -386,13 +424,6 @@ The MCP server is a thin transport adapter over VelocityEngine. Each tool maps t
 | `velocity_export_deck` | `exportDeck()` | Export materialized deck to PPTX/XLSX |
 | `velocity_recommend_chart` | `recommendChart()` | Suggest chart type for given data shape |
 
-**Harmonization:**
-
-| Tool | Engine method | Description |
-|---|---|---|
-| `velocity_propose_mappings` | `proposeMappings()` | Auto-match variables across waves |
-| `velocity_build_harmonized_table` | `buildHarmonizedTable()` | Materialize harmonized dataset |
-
 **Session:**
 
 | Tool | Engine method | Description |
@@ -521,7 +552,8 @@ interface VelocitySessionFile {
   slides: Slide[];
   sections: SlideSection[];
   workspace?: { projects: Project[]; datasetLinks: Array<{ datasetFilename: string; datasetRowCount: number; role: string }> };
-  harmonizationSession?: HarmonizationSession | null;
+  /** Legacy field — harmonization UI removed Plan 06 Phase 1; preserved for import compatibility only. */
+  harmonizationSession?: LegacyHarmonizationSession | null;
   semantic?: SemanticSessionState;  // v2+: annotations and concepts
 }
 ```
@@ -676,7 +708,6 @@ The human watches the agent work and can intervene at any point. This is the "pa
 3. Create `mcp-server/` package using `@modelcontextprotocol/sdk`
 4. Map engine methods → MCP tools (per section 6.1)
 5. Expose `configSchema` from AnalysisRunners as tool input schemas
-6. Add harmonization tools (`proposeMappings`, `buildHarmonizedTable`)
 7. Test with Claude Code + real datasets
 
 ### Phase 3: Browser Convergence
@@ -731,8 +762,7 @@ Phases 1–4 are complete. Use `tracker_00_implementation_status.md` for current
 | PPTX exporter | `src/core/export/pptxExporter.ts` |
 | XLSX exporter | `src/core/export/xlsxExporter.ts` |
 | Export types | `src/core/export/types.ts` |
-| Chart recommender | `src/services/chartRecommender.ts` |
-| Harmonization match engine | `src/core/harmonization/matchEngine.ts` |
+| Chart recommender | `src/core/visualization/chartRecommender.ts` |
 | Slide types | `src/types/slides.ts` |
 | Node adapter | `src/adapters/DuckDBNodeAdapter.ts` |
 | WASM adapter | `src/adapters/DuckDBWasmAdapter.ts` |

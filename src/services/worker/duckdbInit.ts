@@ -1,6 +1,7 @@
 import * as duckdb from '@duckdb/duckdb-wasm';
 import { DuckDBWasmAdapter } from '../../adapters/DuckDBWasmAdapter';
-import { getLocalDuckDbBundles, resolveDuckDbBundleUrls } from '../duckdbBundles';
+import { getLocalDuckDbBundles, resolveDuckDbBundleUrls, resolveDuckDbBundleVariant } from '../duckdbBundles';
+import type { DuckDbBundleVariant } from '../duckdbBundles';
 import { initOpfsPersistence } from '../opfsPersistence';
 import { CACHE_OPEN_BUDGET_MS, OPFS_ATTEMPT_TIMEOUT_MS } from '../workspaceBoot/constants';
 import {
@@ -48,16 +49,26 @@ export function stopKeepalive(): void {
 export async function init(
   forceCleanStart: boolean = false,
   options: { hasPersistedSource?: boolean } = {},
-): Promise<{ opfsAvailable: boolean; corruptionDetected?: boolean; corruptionMessage?: string }> {
-  if (workerDbState.db) return { opfsAvailable: workerDbState.opfsAvailable };
+): Promise<{
+  opfsAvailable: boolean;
+  corruptionDetected?: boolean;
+  corruptionMessage?: string;
+  duckdbBundle?: DuckDbBundleVariant;
+}> {
+  if (workerDbState.db) {
+    return { opfsAvailable: workerDbState.opfsAvailable, duckdbBundle: workerDbState.duckdbBundle };
+  }
 
   if (forceCleanStart) {
     console.log('🦆 [Worker] Force clean start requested, clearing OPFS before DuckDB init...');
     await cleanOPFS();
   }
 
-  const bundle = resolveDuckDbBundleUrls(await duckdb.selectBundle(DUCKDB_BUNDLES));
-  console.log('🦆 [Worker] DuckDB Bundle Selected:', bundle);
+  const selectedBundle = await duckdb.selectBundle(DUCKDB_BUNDLES as unknown as duckdb.DuckDBBundles);
+  const bundle = resolveDuckDbBundleUrls(selectedBundle);
+  const duckdbBundle = resolveDuckDbBundleVariant(selectedBundle);
+  workerDbState.duckdbBundle = duckdbBundle;
+  console.log('🦆 [Worker] DuckDB Bundle Selected:', duckdbBundle, bundle);
 
   if (!bundle.mainWorker) {
     throw new Error('No main worker URL found in bundle');
@@ -186,5 +197,6 @@ export async function init(
     opfsAvailable: workerDbState.opfsAvailable,
     corruptionDetected: initResult.corruptionDetected,
     corruptionMessage: initResult.corruptionMessage,
+    duckdbBundle,
   };
 }

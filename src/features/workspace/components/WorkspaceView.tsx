@@ -44,6 +44,7 @@ import { WorkspaceProjectCard } from './WorkspaceProjectCard';
 import { WorkspaceEmptyState } from './WorkspaceEmptyState';
 import { WorkspaceStatusStrip } from './WorkspaceStatusStrip';
 import { downloadPilotEventLog, recordPilotEvent } from '../../../services/pilotOnboarding';
+import { warmUpEngineOnIntent } from '../../../services/engineWarmUp';
 import { isPilotInstrumentationVisible } from '../../../lib/pilotInstrumentation';
 import { isFirstRunLanding } from '../lib/firstRunLanding';
 import type { StoredDataset, Project, WorkspaceViewProps } from '../types';
@@ -95,6 +96,7 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
   }, [showFirstRunLanding]);
 
   const handleUploadWithTracking = useCallback(() => {
+    void warmUpEngineOnIntent('landing-upload');
     if (showFirstRunLanding) {
       recordPilotEvent('landing_cta_upload');
     }
@@ -102,6 +104,7 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
   }, [onUploadFile, showFirstRunLanding]);
 
   const handleLoadExampleWithTracking = useCallback(() => {
+    void warmUpEngineOnIntent('landing-example');
     if (showFirstRunLanding) {
       recordPilotEvent('landing_cta_example');
     }
@@ -110,6 +113,7 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
 
   const handleFileDropWithTracking = useCallback(
     (file: File) => {
+      void warmUpEngineOnIntent('landing-drop');
       if (showFirstRunLanding) {
         recordPilotEvent('landing_cta_upload', { source: 'drop' });
       }

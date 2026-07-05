@@ -46,7 +46,7 @@ export const TOOLS = [
   {
     name: 'velocity_workspace_load',
     description:
-      'Register a dataset in the multi-dataset workspace (separate DuckDB table per dataset). Set metadataOnly: true on large SAV files, then velocity_workspace_load_full before harmonizing.',
+      'Register a dataset in the multi-dataset workspace (separate DuckDB table per dataset). Set metadataOnly: true on large SAV files, then velocity_workspace_load_full before analysis.',
     inputSchema: {
       type: 'object',
       properties: {

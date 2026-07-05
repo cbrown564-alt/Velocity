@@ -13,10 +13,6 @@ vi.mock('../../core/analysis/crosstabRunner', () => ({
   runCrosstab: vi.fn(),
 }));
 
-vi.mock('../../core/analysis/registry', () => ({
-  analysisRegistry: { get: vi.fn() },
-}));
-
 vi.mock('../../core/analysis/variableStatsRunner', () => ({
   getVariableStats: vi.fn(),
 }));
@@ -29,10 +25,6 @@ vi.mock('../chartDataTransformer', () => ({
   transformChartData: vi.fn(),
 }));
 
-vi.mock('./duckdbOpfs', () => ({
-  buildOpfsDbPath: vi.fn(),
-}));
-
 vi.mock('./duckdbPersistence', () => ({
   checkPersistedData: vi.fn(),
   clearPersistedData: vi.fn(),
@@ -43,10 +35,6 @@ vi.mock('./duckdbPersistence', () => ({
   reopenInMemoryDatabase: vi.fn(),
   reopenWritableDatabase: vi.fn(),
   updateMeta: vi.fn(),
-}));
-
-vi.mock('./engineHandlersHarmonization', () => ({
-  engineHandlersHarmonization: {},
 }));
 
 vi.mock('./engineMessaging', () => ({
