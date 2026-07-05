@@ -3,6 +3,7 @@ import { DuckDBWasmAdapter } from '../../adapters/DuckDBWasmAdapter';
 import { getLocalDuckDbBundles, resolveDuckDbBundleUrls, resolveDuckDbBundleVariant } from '../duckdbBundles';
 import type { DuckDbBundleVariant } from '../duckdbBundles';
 import { initOpfsPersistence } from '../opfsPersistence';
+import { acquireOpfsDbLock, releaseOpfsDbLock } from './opfsDbLock';
 import { CACHE_OPEN_BUDGET_MS, OPFS_ATTEMPT_TIMEOUT_MS } from '../workspaceBoot/constants';
 import {
   buildOpfsDbPath,
@@ -162,6 +163,17 @@ export async function init(
         // ignore reset errors; we'll fall back to memory if needed
       }
     },
+    dropOpenFiles: async () => {
+      try {
+        // Release any OPFS sync access handle registered by the failed attempt.
+        // reset() does not drop OPFS file handles — dropFiles() does.
+        await workerDbState.db!.dropFiles();
+      } catch {
+        // best-effort handle release
+      }
+    },
+    acquireOpfsLock: () => acquireOpfsDbLock(),
+    releaseOpfsLock: () => releaseOpfsDbLock(),
     listCandidates: async () => {
       const candidates = await listOpfsDbFiles();
       return candidates.map((candidate) => ({ path: `opfs://${candidate.path}` }));

@@ -225,6 +225,122 @@ describe('initOpfsPersistence', () => {
     expect(openMemory).toHaveBeenCalledTimes(1);
   });
 
+  it('boots in memory with opfs_locked and never opens an OPFS path when the lock is held elsewhere', async () => {
+    const openPath = vi.fn(async () => ({ ok: true }));
+    const openMemory = vi.fn(async () => undefined);
+    const acquireOpfsLock = vi.fn(async () => false);
+    const releaseOpfsLock = vi.fn(() => undefined);
+    const listCandidates = vi.fn(async () => [{ path: 'opfs://default.db' }]);
+
+    const result = await initOpfsPersistence({
+      enableOpfs: true,
+      opfsSupport: { supported: true },
+      desiredPath: 'opfs://desired.db',
+      fallbackPath: 'opfs://default.db',
+      openPath,
+      listCandidates,
+      quarantine: vi.fn(async () => undefined),
+      buildRepairPath: () => 'opfs://repair.db',
+      openMemory,
+      acquireOpfsLock,
+      releaseOpfsLock,
+    });
+
+    expect(result.decision).toBe('opfs_locked');
+    expect(result.mode).toBe('memory');
+    expect(result.opfsAvailable).toBe(false);
+    expect(result.activeDbPath).toBe(':memory:');
+    expect(acquireOpfsLock).toHaveBeenCalledTimes(1);
+    expect(openMemory).toHaveBeenCalledTimes(1);
+    // Critical: we must not touch any opfs:// file when we don't own the lock.
+    expect(openPath).not.toHaveBeenCalled();
+    expect(listCandidates).not.toHaveBeenCalled();
+    // We never acquired ownership, so there is nothing to release.
+    expect(releaseOpfsLock).not.toHaveBeenCalled();
+  });
+
+  it('releases OPFS file handles before each re-open attempt (handle-leak regression)', async () => {
+    const events: string[] = [];
+    const openPath = vi.fn(async (path: string) => {
+      events.push(`open:${path}`);
+      // First candidate opens but has no persisted data → must be discarded.
+      // Second candidate has data → wins.
+      return { ok: true };
+    });
+    const dropOpenFiles = vi.fn(async () => {
+      events.push('dropFiles');
+    });
+    const resetBetweenAttempts = vi.fn(async () => {
+      events.push('reset');
+    });
+
+    const result = await initOpfsPersistence({
+      enableOpfs: true,
+      opfsSupport: { supported: true },
+      desiredPath: 'opfs://a.db',
+      fallbackPath: null,
+      openPath,
+      listCandidates: async () => [{ path: 'opfs://a.db' }, { path: 'opfs://b.db' }],
+      quarantine: vi.fn(async () => undefined),
+      buildRepairPath: () => 'opfs://repair.db',
+      openMemory: vi.fn(async () => undefined),
+      validateOpenedPath: async (path) => path === 'opfs://b.db',
+      resetBetweenAttempts,
+      dropOpenFiles,
+    });
+
+    expect(result.opfsAvailable).toBe(true);
+    expect(result.activeDbPath).toBe('opfs://b.db');
+    // The first (invalid) open must drop its handle *before* the second open,
+    // and dropFiles must run before reset in each discard.
+    expect(events).toEqual(['open:opfs://a.db', 'dropFiles', 'reset', 'open:opfs://b.db']);
+    expect(dropOpenFiles).toHaveBeenCalledTimes(1);
+  });
+
+  it('releases the single-owner lock when every OPFS path fails and it falls back to memory', async () => {
+    const releaseOpfsLock = vi.fn(() => undefined);
+    const result = await initOpfsPersistence({
+      enableOpfs: true,
+      opfsSupport: { supported: true },
+      desiredPath: 'opfs://bad.db',
+      fallbackPath: null,
+      openPath: vi.fn(async () => ({ ok: false, error: 'permission denied' })),
+      listCandidates: async () => [{ path: 'opfs://bad.db' }],
+      quarantine: vi.fn(async () => undefined),
+      buildRepairPath: () => 'opfs://repair.db',
+      openMemory: vi.fn(async () => undefined),
+      acquireOpfsLock: async () => true,
+      releaseOpfsLock,
+      dropOpenFiles: vi.fn(async () => undefined),
+    });
+
+    expect(result.mode).toBe('memory');
+    expect(result.decision).toBe('memory_fallback');
+    expect(releaseOpfsLock).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps the lock held (does not release) on a successful OPFS open', async () => {
+    const releaseOpfsLock = vi.fn(() => undefined);
+    const result = await initOpfsPersistence({
+      enableOpfs: true,
+      opfsSupport: { supported: true },
+      desiredPath: 'opfs://default.db',
+      fallbackPath: null,
+      openPath: vi.fn(async () => ({ ok: true })),
+      listCandidates: async () => [{ path: 'opfs://default.db' }],
+      quarantine: vi.fn(async () => undefined),
+      buildRepairPath: () => 'opfs://repair.db',
+      openMemory: vi.fn(async () => undefined),
+      acquireOpfsLock: async () => true,
+      releaseOpfsLock,
+      validateOpenedPath: async () => true,
+    });
+
+    expect(result.opfsAvailable).toBe(true);
+    expect(result.decision).toBe('cache_open');
+    expect(releaseOpfsLock).not.toHaveBeenCalled();
+  });
+
   it('falls back to the next candidate when an OPFS open attempt times out', async () => {
     vi.useFakeTimers();
 

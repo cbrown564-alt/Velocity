@@ -1,6 +1,12 @@
 export type PersistenceMode = 'opfs' | 'memory' | 'disabled';
 
-export type OpfsBootDecision = 'cache_open' | 'rebuild' | 'fresh' | 'memory_fallback' | 'disabled';
+export type OpfsBootDecision =
+  | 'cache_open'
+  | 'rebuild'
+  | 'fresh'
+  | 'memory_fallback'
+  | 'disabled'
+  | 'opfs_locked';
 
 export type OpfsSupport = {
   supported: boolean;
@@ -14,6 +20,15 @@ export type BuildRepairPath = () => string;
 export type OpenMemory = () => Promise<void>;
 export type ValidateOpenedPath = (path: string) => Promise<boolean>;
 export type ResetBetweenAttempts = () => Promise<void>;
+/** Release any OPFS file handles registered by the previous open attempt. */
+export type DropOpenFiles = () => Promise<void>;
+/** Acquire single-owner ownership of the OPFS DB. Returns false if another context holds it. */
+export type AcquireOpfsLock = () => Promise<boolean>;
+/** Release the single-owner OPFS DB lock (only when abandoning OPFS for memory). */
+export type ReleaseOpfsLock = () => void;
+
+export const OPFS_LOCKED_MESSAGE =
+  'OPFS database is locked by another tab or worker; using in-memory mode';
 
 export type PersistenceInitDeps = {
   enableOpfs: boolean;
@@ -28,6 +43,9 @@ export type PersistenceInitDeps = {
   openMemory: OpenMemory;
   validateOpenedPath?: ValidateOpenedPath;
   resetBetweenAttempts?: ResetBetweenAttempts;
+  dropOpenFiles?: DropOpenFiles;
+  acquireOpfsLock?: AcquireOpfsLock;
+  releaseOpfsLock?: ReleaseOpfsLock;
   hasPersistedSource?: boolean;
   attemptTimeoutMs?: number;
   cacheOpenBudgetMs?: number;
@@ -81,6 +99,9 @@ export async function initOpfsPersistence(deps: PersistenceInitDeps): Promise<Pe
     openMemory,
     validateOpenedPath,
     resetBetweenAttempts,
+    dropOpenFiles,
+    acquireOpfsLock,
+    releaseOpfsLock,
     hasPersistedSource = false,
     attemptTimeoutMs,
     cacheOpenBudgetMs,
@@ -127,6 +148,23 @@ export async function initOpfsPersistence(deps: PersistenceInitDeps): Promise<Pe
     };
   }
 
+  // Single-owner gate: OPFS sync access handles are exclusive per file across
+  // the whole origin. If another tab/worker owns the DB, boot cleanly in memory
+  // instead of colliding on the handle (which collapses the whole OPFS path).
+  if (acquireOpfsLock) {
+    const acquired = await acquireOpfsLock();
+    if (!acquired) {
+      await openMemory();
+      return {
+        opfsAvailable: false,
+        mode: 'memory',
+        activeDbPath: ':memory:',
+        decision: 'opfs_locked',
+        persistenceError: OPFS_LOCKED_MESSAGE,
+      };
+    }
+  }
+
   let candidates: { path: string }[];
   try {
     candidates = await listCandidates();
@@ -141,6 +179,14 @@ export async function initOpfsPersistence(deps: PersistenceInitDeps): Promise<Pe
 
   const isCacheBudgetExceeded = () =>
     cacheOpenBudgetMs != null && cacheOpenBudgetMs > 0 && Date.now() - cacheOpenStartedAt >= cacheOpenBudgetMs;
+
+  // Abandoning an OPFS open must release its sync access handle *before* the
+  // next open(), or DuckDB throws "another open Access Handle … same file".
+  // db.reset() alone does not drop OPFS handles — dropOpenFiles() does.
+  const discardAttempt = async () => {
+    await dropOpenFiles?.();
+    await resetBetweenAttempts?.();
+  };
 
   const attemptOpen = async (path: string, label: string, requirePersistedData: boolean) => {
     if (attemptedPaths.has(path)) return false;
@@ -163,7 +209,7 @@ export async function initOpfsPersistence(deps: PersistenceInitDeps): Promise<Pe
         corruptionMessage = errorMsg;
         await quarantine(path);
       }
-      await resetBetweenAttempts?.();
+      await discardAttempt();
       return false;
     }
 
@@ -171,11 +217,11 @@ export async function initOpfsPersistence(deps: PersistenceInitDeps): Promise<Pe
       try {
         const valid = await validateOpenedPath(path);
         if (!valid) {
-          await resetBetweenAttempts?.();
+          await discardAttempt();
           return false;
         }
       } catch {
-        await resetBetweenAttempts?.();
+        await discardAttempt();
         return false;
       }
     }
@@ -243,7 +289,10 @@ export async function initOpfsPersistence(deps: PersistenceInitDeps): Promise<Pe
     };
   }
 
+  // Every OPFS path failed — abandon OPFS for this session and release the
+  // single-owner lock so another tab/worker can take ownership.
   await openMemory();
+  releaseOpfsLock?.();
   return {
     opfsAvailable: false,
     mode: enableOpfs ? 'memory' : 'disabled',

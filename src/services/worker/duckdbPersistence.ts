@@ -8,6 +8,7 @@ import {
   isWriteModeCommitError,
 } from './duckdbErrorHelpers';
 import { init, stopKeepalive } from './duckdbInit';
+import { acquireOpfsDbLock, releaseOpfsDbLock } from './opfsDbLock';
 import { buildOpfsDbPath, buildRepairDbPath, quarantineCorruptedDb, removeOpfsDbFile } from './duckdbOpfs';
 import { postEngineResponse } from './engineMessaging';
 import { getSchema } from './workerQueries';
@@ -110,6 +111,15 @@ async function closeActiveDatabase(): Promise<void> {
   workerDbState.adapter = null;
 
   try {
+    // Release OPFS sync access handles before resetting. reset() alone does not
+    // drop OPFS file handles, so skipping this strands the handle and the next
+    // open() throws "another open Access Handle … same file".
+    await workerDbState.db.dropFiles();
+  } catch {
+    // Continue recovery even if handle release fails.
+  }
+
+  try {
     await workerDbState.db.reset();
   } catch {
     // Continue recovery even if reset fails.
@@ -122,28 +132,40 @@ export async function reopenWritableDatabase(pathOverride?: string): Promise<voi
   await closeActiveDatabase();
 
   if (workerDbState.opfsAvailable || pathOverride?.startsWith('opfs://')) {
-    const repairPath = pathOverride ?? buildRepairDbPath();
-    try {
-      await workerDbState.db.open({
-        path: repairPath,
-        accessMode: duckdb.DuckDBAccessMode.READ_WRITE,
-      });
-      workerDbState.activeDbPath = repairPath;
-      workerDbState.persistenceMode = 'opfs';
-      workerDbState.persistenceError = null;
-      workerDbState.conn = await workerDbState.db.connect();
-      workerDbState.adapter = new DuckDBWasmAdapter(workerDbState.conn, workerDbState.db);
-      console.warn('🦆 [Worker] Reopened DuckDB on writable OPFS repair path:', repairPath);
-      return;
-    } catch (error: any) {
-      workerDbState.persistenceError = error?.message || String(error);
-      console.warn(
-        '🦆 [Worker] Failed to reopen writable OPFS database, falling back to memory:',
-        workerDbState.persistenceError,
-      );
+    // Ensure this context still owns the single-owner OPFS lock before touching
+    // an opfs:// file. Normally the boot path already holds it; this guards
+    // recovery paths that could run after the lock was released.
+    const lockOk = await acquireOpfsDbLock();
+    if (!lockOk) {
+      workerDbState.persistenceError = 'OPFS database is locked by another tab or worker';
+      console.warn('🦆 [Worker] OPFS locked during reopen; falling back to memory');
+    } else {
+      const repairPath = pathOverride ?? buildRepairDbPath();
+      try {
+        await workerDbState.db.open({
+          path: repairPath,
+          accessMode: duckdb.DuckDBAccessMode.READ_WRITE,
+        });
+        workerDbState.activeDbPath = repairPath;
+        workerDbState.persistenceMode = 'opfs';
+        workerDbState.persistenceError = null;
+        workerDbState.conn = await workerDbState.db.connect();
+        workerDbState.adapter = new DuckDBWasmAdapter(workerDbState.conn, workerDbState.db);
+        console.warn('🦆 [Worker] Reopened DuckDB on writable OPFS repair path:', repairPath);
+        return;
+      } catch (error: any) {
+        workerDbState.persistenceError = error?.message || String(error);
+        console.warn(
+          '🦆 [Worker] Failed to reopen writable OPFS database, falling back to memory:',
+          workerDbState.persistenceError,
+        );
+      }
     }
   }
 
+  // Landing in memory mode — release the single-owner lock so another context
+  // can take OPFS ownership.
+  releaseOpfsDbLock();
   await workerDbState.db.open({ path: ':memory:' });
   workerDbState.activeDbPath = ':memory:';
   workerDbState.persistenceMode = 'memory';
@@ -156,6 +178,8 @@ export async function reopenWritableDatabase(pathOverride?: string): Promise<voi
 export async function reopenInMemoryDatabase(): Promise<void> {
   if (!workerDbState.db) throw new Error('DB not initialized');
   await closeActiveDatabase();
+  // Forced memory mode: hand the single-owner OPFS lock back to other contexts.
+  releaseOpfsDbLock();
   await workerDbState.db.open({ path: ':memory:' });
   workerDbState.activeDbPath = ':memory:';
   workerDbState.persistenceMode = 'memory';
@@ -280,9 +304,8 @@ export async function flushPersistedData(): Promise<{ ok: boolean; durationMs: n
       }
     }
 
-    const flushFn = (db as any).flushFiles;
-    if (typeof flushFn === 'function') {
-      await flushFn.call(db);
+    if (typeof db.flushFiles === 'function') {
+      await db.flushFiles();
     }
 
     return { ok: true, durationMs: performance.now() - start };

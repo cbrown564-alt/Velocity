@@ -23,7 +23,8 @@ export function getPersistenceDisplayMessage(
   if (
     normalized.includes('access handle') ||
     normalized.includes('writable stream') ||
-    normalized.includes('another open access handle')
+    normalized.includes('another open access handle') ||
+    normalized.includes('locked by another')
   ) {
     return {
       headline: 'Local storage is locked — another Velocity tab may be using it. Close other tabs and reload.',
