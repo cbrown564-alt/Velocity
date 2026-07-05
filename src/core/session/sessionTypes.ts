@@ -13,7 +13,7 @@ export interface LegacyHarmonizationSession {
 
 import type { SemanticSessionBlock } from '../../types/semantic';
 import type { Slide, SlideSection } from '../../types/slides';
-import type { SlideRecipe } from '../export/slideRecipe';
+import type { DeckRecipe, DeckRecipeSection } from '../deck/deckRecipe';
 
 export const SESSION_FORMAT_VERSION = 2 as const;
 export const SESSION_FORMAT_VERSION_V1 = 1 as const;
@@ -54,17 +54,8 @@ export interface SessionWorkspaceSnapshot {
   datasetLinks: SessionDatasetLink[];
 }
 
-export interface SessionDeckRecipeSection {
-  id: string;
-  title: string;
-  color?: string;
-}
-
-export interface SessionDeckRecipe {
-  recipeVersion: 1;
-  sections: SessionDeckRecipeSection[];
-  slideRecipes: SlideRecipe[];
-}
+export type SessionDeckRecipeSection = DeckRecipeSection;
+export type SessionDeckRecipe = DeckRecipe;
 
 export interface VelocitySessionFile {
   formatVersion: typeof SESSION_FORMAT_VERSION | typeof SESSION_FORMAT_VERSION_V1;

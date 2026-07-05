@@ -56,6 +56,14 @@ describe('slidesSlice', () => {
     });
   });
 
+  describe('getDeckRecipe', () => {
+    it('returns the canonical deck recipe from slide content state', () => {
+      const { result } = renderHook(() => useVelocityStore());
+      act(() => result.current.updateSlideTitle('slide-test-1', 'Awareness'));
+      expect(result.current.getDeckRecipe({ title: 'Tracker deck' }).slideRecipes[0].title).toBe('Awareness');
+    });
+  });
+
   describe('addSlide', () => {
     it('should snapshot the active slide before switching to a blank slide', () => {
       const { result } = renderHook(() => useVelocityStore());

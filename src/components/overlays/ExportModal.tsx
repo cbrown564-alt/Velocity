@@ -8,11 +8,10 @@
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { X, FileDown, FileSpreadsheet, Presentation, Download, CheckCircle2 } from 'lucide-react';
 import styles from './ExportModal.module.css';
-import { exportPptx } from '../../core/export/pptxExporter';
-import { exportXlsx } from '../../core/export/xlsxExporter';
+import { exportDeckRecipe } from '../../core/export/exportDeckRecipe';
 import { ExportConfig, TemplateRefreshMode } from '../../core/export/types';
 import { useVelocityStore } from '../../store';
-import { buildExportConfig } from '../../core/export/buildExportConfig';
+import { applyAnalysisStateOverrides, filterDeckRecipe } from '../../core/deck/deckRecipe';
 import { resolveSlideTitle } from '../../core/export/resolveSlideDefaults';
 import { buildExportReview, slidesToRecipes } from '../../core/export/slideRecipe';
 import {
@@ -21,8 +20,6 @@ import {
   buildTemplateApplicabilityReview,
   extractTemplateMetadataFromPptxBinary,
 } from '../../core/export/templateMapping';
-import { resolveAnalysisVariables } from '../../core/export/resolveAnalysisVariables';
-import { runCrosstabForExport } from '../../core/export/runCrosstabForExport';
 import type { Variable, VariableSet } from '../../types';
 import type { SlideAnalysisState } from '../../types/slides';
 import { ModalShell } from './ModalShell';
@@ -100,6 +97,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({ isOpen, onClose, confi
   const templateInputRef = useRef<HTMLInputElement>(null);
 
   const slides = useVelocityStore((state) => state.slides);
+  const getDeckRecipe = useVelocityStore((state) => state.getDeckRecipe);
   const activeSlideId = useVelocityStore((state) => state.activeSlideId);
   const tableConfig = useVelocityStore((state) => state.tableConfig);
   const activeFilters = useVelocityStore((state) => state.activeFilters);
@@ -366,81 +364,35 @@ export const ExportModal: React.FC<ExportModalProps> = ({ isOpen, onClose, confi
     const exportStartedAt = Date.now();
 
     try {
-      const analyses: ExportConfig['analyses'] = [];
-
-      for (const slideId of slideIdsForScope) {
-        const slide = slides.find((s) => s.id === slideId);
-        if (!slide) continue;
-
-        const analysisState: SlideAnalysisState = slideId === activeSlideId ? activeAnalysisState : slide.analysisState;
-        const resolvedSlideTitle = resolveExportSlideTitle(slide.title, analysisState, variableSets, dataset.variables);
-
-        const weightVar = analysisState.weightVar ?? dataset.weightVariable ?? null;
-        const { rowVariables, colVariable, firstRowVarSet } = resolveAnalysisVariables(
-          analysisState,
-          variableSets,
-          dataset.variables,
-        );
-
-        const isMultipleResponse = firstRowVarSet?.structure === 'multiple';
-        const crosstab = await runCrosstabForExport({
-          engine: browserEngine,
-          dataset,
-          variableSets,
-          rowVars: analysisState.rowVars,
-          colVar: analysisState.colVar,
-          filters: analysisState.filters,
-          weightVar,
-          analysisSettings,
-        });
-
-        const slideConfig = buildExportConfig({
-          title,
-          label: resolvedSlideTitle,
-          data: crosstab.data,
-          rowVariables,
-          colVariable,
-          isWeighted: !!weightVar,
-          isMultipleResponse: !!isMultipleResponse,
-          viewType: slide.visualizationType,
-          chartType: slide.chartType,
-        });
-
-        analyses.push(...slideConfig.analyses);
-      }
-
-      if (analyses.length === 0) {
+      const recipe = applyAnalysisStateOverrides(
+        filterDeckRecipe(getDeckRecipe({ title, branding: initialConfig.branding }), slideIdsForScope),
+        activeSlideId ? { [activeSlideId]: activeAnalysisState } : {},
+      );
+      const data = await exportDeckRecipe({
+        recipe,
+        format,
+        engine: browserEngine,
+        dataset,
+        variableSets,
+        analysisSettings,
+        displayOptions: { showSignificance, showPercents, showCounts },
+        exportOptions:
+          format === 'pptx' && useTemplateMode && templateOptionsState
+            ? {
+                templateOptions: {
+                  ...templateOptionsState,
+                  slideRecipes: templateSlideRecipes,
+                  applyTemplateBindings: applyTemplateBindingsToPptx,
+                  refreshMode: templateRefreshMode,
+                  preserveUntouchedContent: true,
+                },
+              }
+            : undefined,
+      });
+      if (data.byteLength === 0) {
         setExportError('No exportable analyses were found for the selected slides.');
         return;
       }
-
-      // Build export config with user options
-      const exportConfig: ExportConfig = {
-        title,
-        analyses: analyses.map((analysis) => ({
-          ...analysis,
-          options: {
-            showSignificance,
-            showPercents,
-            showCounts,
-          },
-        })),
-        branding: initialConfig.branding,
-        ...(format === 'pptx' && useTemplateMode && templateOptionsState
-          ? {
-              templateOptions: {
-                ...templateOptionsState,
-                slideRecipes: templateSlideRecipes,
-                applyTemplateBindings: applyTemplateBindingsToPptx,
-                refreshMode: templateRefreshMode,
-                preserveUntouchedContent: true,
-              },
-            }
-          : {}),
-      };
-
-      // Call appropriate exporter
-      const data = format === 'pptx' ? await exportPptx(exportConfig) : await exportXlsx(exportConfig);
 
       // Trigger download
       const blob = new Blob([data as unknown as BlobPart], {

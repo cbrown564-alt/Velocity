@@ -12,7 +12,11 @@ import { resolveSlideTitle, resolveSlideSubtitle } from '../core/export/resolveS
 import { recommendChart } from '../core/visualization/chartRecommender';
 import { mapCrosstabRows } from '../core/analysis/mapCrosstabRows';
 import type { CrosstabSqlRow } from '../core/analysis/crosstab/types';
-import type { AnalysisExportItem, ExportConfig } from '../core/export/types';
+import {
+  materializedDeckToExportConfig,
+  type MaterializedDeck,
+  type MaterializedSlide,
+} from '../core/export/materializedDeck';
 import type { Filter, Variable } from '../types';
 import type {
   BuiltDeck,
@@ -181,38 +185,8 @@ export class DeckBuilder {
   }
 
   async export(deck: BuiltDeck, options: DeckExportOptions): Promise<Uint8Array> {
-    // Build sections list from the deck spec
-    const sections = deck.spec.sections.map((section, i) => ({
-      id: `section-${i}`,
-      title: section.title,
-    }));
-
-    // Map each BuiltSlide to an AnalysisExportItem
-    const analyses: AnalysisExportItem[] = deck.slides.map((slide) => {
-      const sectionIndex = deck.spec.sections.findIndex((s) => s.title === slide.sectionTitle);
-      return {
-        label: slide.resolvedTitle,
-        subtitle: slide.resolvedSubtitle,
-        notes: slide.spec.notes,
-        sectionId: sectionIndex >= 0 ? `section-${sectionIndex}` : undefined,
-        result: slide.processed,
-        visualizationType: slide.spec.visualizationType,
-        chartType: slide.resolvedChartType,
-        options: {
-          showSignificance: slide.spec.displayOptions?.showSignificance,
-          showPercents: slide.spec.displayOptions?.showPercents,
-          showCounts: slide.spec.displayOptions?.showCounts,
-        },
-      };
-    });
-
-    const config: ExportConfig = {
-      title: deck.spec.title,
-      analyses,
-      sections,
-      branding: options.branding ?? deck.spec.branding,
-    };
-
+    const materialized = builtDeckToMaterializedDeck(deck, options.branding ?? deck.spec.branding);
+    const config = materializedDeckToExportConfig(materialized);
     if (options.format === 'pptx') {
       const { exportPptx } = await import('../core/export/pptxExporter');
       return exportPptx(config);
@@ -221,7 +195,31 @@ export class DeckBuilder {
       const { exportXlsx } = await import('../core/export/xlsxExporter');
       return exportXlsx(config);
     }
-
     throw new VelocityError('UNSUPPORTED_FORMAT', `Unsupported export format: ${options.format}`);
   }
+}
+
+function builtDeckToMaterializedDeck(deck: BuiltDeck, branding?: BuiltDeck['spec']['branding']): MaterializedDeck {
+  const sectionIdByTitle = new Map<string, string>();
+  const sections = deck.spec.sections.map((section, index) => {
+    const id = `section-${index}`;
+    sectionIdByTitle.set(section.title, id);
+    return { id, title: section.title };
+  });
+  const slides: MaterializedSlide[] = deck.slides.map((slide, index) => ({
+    slideId: `built-slide-${index}`,
+    label: slide.resolvedTitle,
+    subtitle: slide.resolvedSubtitle,
+    notes: slide.spec.notes,
+    sectionId: sectionIdByTitle.get(slide.sectionTitle),
+    result: slide.processed,
+    visualizationType: slide.spec.visualizationType ?? 'table',
+    chartType: slide.resolvedChartType,
+    options: {
+      showSignificance: slide.spec.displayOptions?.showSignificance ?? true,
+      showPercents: slide.spec.displayOptions?.showPercents ?? true,
+      showCounts: slide.spec.displayOptions?.showCounts ?? false,
+    },
+  }));
+  return { title: deck.spec.title, subtitle: deck.spec.subtitle, sections, slides, branding };
 }

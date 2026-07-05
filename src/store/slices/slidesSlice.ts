@@ -3,6 +3,8 @@ import { Slide, SlideCell, LayoutMode, SlideSection, SlideAnalysisState } from '
 import { ChartType } from '../../types/charts';
 import type { Filter } from '../../types';
 import type { AnalysisSlice } from './analysisSlice';
+import type { DeckRecipe } from '../../core/deck/deckRecipe';
+import { buildDeckRecipe } from '../../core/deck/deckRecipe';
 import type { UISlice } from './uiSlice';
 import type { DataSlice } from './dataSlice';
 
@@ -55,6 +57,8 @@ export interface SlidesSlice {
   snapshotCurrentSlide: () => void;
   setSlideVisualizationType: (slideId: string, type: 'table' | 'chart', chartType?: ChartType) => void;
   addFilterToSlides: (slideIds: string[], filter: any) => void;
+
+  getDeckRecipe: (metadata?: Pick<DeckRecipe, 'title' | 'subtitle' | 'branding'>) => DeckRecipe;
 }
 
 // ============================================================================
@@ -485,5 +489,10 @@ export const createSlidesSlice: SlidesSliceCreator = (set, get) => ({
         return slide;
       }),
     }));
+  },
+
+  getDeckRecipe: (metadata) => {
+    const state = get();
+    return buildDeckRecipe(state.slides, state.sections, metadata);
   },
 });
