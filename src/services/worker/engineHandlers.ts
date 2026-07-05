@@ -15,6 +15,7 @@ import {
   isWriteModeCommitError,
   reopenInMemoryDatabase,
   reopenWritableDatabase,
+  shutdownDatabase,
   updateMeta,
 } from './duckdbPersistence';
 import { toEngineLoadProgress } from './loadProgress';
@@ -56,6 +57,12 @@ export const engineHandlers: Record<EngineWorkerRequest['type'], EngineMessageHa
       opfsAvailable: initResult.opfsAvailable,
       duckdbBundle: initResult.duckdbBundle,
     });
+  },
+
+  'engine.shutdown': async (request) => {
+    if (request.type !== 'engine.shutdown') return;
+    await shutdownDatabase();
+    postEngineResponse({ type: 'engine.shutdownComplete', requestId: request.requestId });
   },
 
   'engine.ping': async (request) => {

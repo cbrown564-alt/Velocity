@@ -175,6 +175,34 @@ export async function reopenWritableDatabase(pathOverride?: string): Promise<voi
   console.warn('🦆 [Worker] Reopened DuckDB in memory mode after write-mode commit failure');
 }
 
+/**
+ * Graceful teardown before the main thread terminates this worker.
+ *
+ * Releasing the OPFS sync access handle (dropFiles) and the single-owner lock
+ * *here* — and acknowledging completion — lets the next worker take ownership
+ * without racing a terminated context's lingering handle. This is the real
+ * teardown ack that replaces the old fixed post-terminate sleep.
+ */
+export async function shutdownDatabase(): Promise<void> {
+  stopKeepalive();
+
+  try {
+    if (workerDbState.conn) await workerDbState.conn.close();
+  } catch {
+    // Ignore close failures during shutdown.
+  }
+  workerDbState.conn = null;
+  workerDbState.adapter = null;
+
+  try {
+    await workerDbState.db?.dropFiles();
+  } catch {
+    // Best-effort handle release.
+  }
+
+  releaseOpfsDbLock();
+}
+
 export async function reopenInMemoryDatabase(): Promise<void> {
   if (!workerDbState.db) throw new Error('DB not initialized');
   await closeActiveDatabase();

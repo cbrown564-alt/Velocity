@@ -77,6 +77,7 @@ export interface DataSlice {
 
   initWorker: () => Promise<void>;
   terminateWorker: () => void;
+  shutdownWorker: () => Promise<void>;
   respawnWorker: (cleanStart?: boolean, datasetIdOverride?: string) => Promise<void>;
   checkPersistedData: () => Promise<void>;
   clearPersistedData: () => Promise<void>;

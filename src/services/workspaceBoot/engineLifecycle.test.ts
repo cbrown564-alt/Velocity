@@ -13,11 +13,13 @@ import {
 
 const mockInit = vi.fn();
 const mockTerminate = vi.fn();
+const mockShutdown = vi.fn();
 
 vi.mock('../../engine/BrowserEngine', () => ({
   BrowserEngine: vi.fn().mockImplementation(() => ({
     init: mockInit,
     terminate: mockTerminate,
+    shutdown: mockShutdown,
   })),
 }));
 
@@ -81,6 +83,7 @@ describe('engineLifecycle', () => {
     resetEngineInitDedupeForTests();
     vi.clearAllMocks();
     mockInit.mockResolvedValue({ opfsAvailable: true, duckdbBundle: 'eh' });
+    mockShutdown.mockResolvedValue(undefined);
   });
 
   it('createStorePersistenceBridge forwards persistence and corruption patches', () => {
@@ -162,9 +165,11 @@ describe('engineLifecycle', () => {
 
     const ctx = createInitContext();
     const first = initializeEngineWorker(ctx);
-    await Promise.resolve();
     const second = initializeEngineWorker(ctx);
 
+    // The exclusive lifecycle queue schedules the init op on a microtask, so
+    // wait until it reaches engine.init() before resolving the pending call.
+    await vi.waitFor(() => expect(resolveInit).toBeInstanceOf(Function));
     resolveInit({ opfsAvailable: false, duckdbBundle: 'eh' });
     await Promise.all([first, second]);
 
@@ -181,9 +186,9 @@ describe('engineLifecycle', () => {
   });
 
   it('respawnEngineWorker reinitializes the worker and reports success', async () => {
-    vi.useFakeTimers();
     const ctx: RespawnEngineContext = {
-      terminateWorker: vi.fn(),
+      getExistingEngine: () => null,
+      clearEngineState: vi.fn(),
       getDatasetId: () => 'ds-1',
       getOpfsFileKey: () => 'source-key',
       bridge: {
@@ -197,21 +202,45 @@ describe('engineLifecycle', () => {
       cleanStart: true,
     };
 
-    const promise = respawnEngineWorker(ctx);
-    await vi.runAllTimersAsync();
-    await promise;
+    await respawnEngineWorker(ctx);
 
-    expect(ctx.terminateWorker).toHaveBeenCalled();
+    expect(ctx.clearEngineState).toHaveBeenCalled();
     expect(ctx.setBrowserEngine).toHaveBeenCalled();
     expect(ctx.setRespawnSuccess).toHaveBeenCalledWith(true);
-    vi.useRealTimers();
+  });
+
+  it('respawnEngineWorker gracefully shuts down the existing engine (no hard terminate)', async () => {
+    const existingShutdown = vi.fn().mockResolvedValue(undefined);
+    const existingTerminate = vi.fn();
+    const existing = {
+      shutdown: existingShutdown,
+      terminate: existingTerminate,
+    } as unknown as BrowserEngine;
+
+    const ctx: RespawnEngineContext = {
+      getExistingEngine: () => existing,
+      clearEngineState: vi.fn(),
+      getDatasetId: () => 'ds-1',
+      getOpfsFileKey: () => undefined,
+      bridge: { applyPersistenceStatus: vi.fn(), applyCorruption: vi.fn() },
+      setBrowserEngine: vi.fn(),
+      setRespawnSuccess: vi.fn(),
+      setRespawnError: vi.fn(),
+    };
+
+    await respawnEngineWorker(ctx);
+
+    expect(existingShutdown).toHaveBeenCalledTimes(1);
+    expect(existingTerminate).not.toHaveBeenCalled();
+    expect(ctx.clearEngineState).toHaveBeenCalled();
+    expect(ctx.setRespawnSuccess).toHaveBeenCalled();
   });
 
   it('respawnEngineWorker reports respawn failures', async () => {
-    vi.useFakeTimers();
     mockInit.mockRejectedValueOnce(new Error('respawn failed'));
     const ctx: RespawnEngineContext = {
-      terminateWorker: vi.fn(),
+      getExistingEngine: () => null,
+      clearEngineState: vi.fn(),
       getDatasetId: () => 'ds-1',
       getOpfsFileKey: () => undefined,
       bridge: {
@@ -223,11 +252,45 @@ describe('engineLifecycle', () => {
       setRespawnError: vi.fn(),
     };
 
-    const promise = respawnEngineWorker(ctx);
-    await vi.runAllTimersAsync();
-    await promise;
+    await respawnEngineWorker(ctx);
 
     expect(ctx.setRespawnError).toHaveBeenCalledWith('respawn failed');
-    vi.useRealTimers();
+  });
+
+  it('serializes a respawn behind an in-flight init (no overlapping workers)', async () => {
+    const order: string[] = [];
+    let resolveInit!: () => void;
+    mockInit.mockImplementationOnce(
+      () =>
+        new Promise<{ opfsAvailable: boolean; duckdbBundle: string }>((resolve) => {
+          order.push('init:start');
+          resolveInit = () => resolve({ opfsAvailable: false, duckdbBundle: 'eh' });
+        }),
+    );
+
+    const initPromise = initializeEngineWorker(createInitContext());
+    await Promise.resolve();
+
+    const respawnCtx: RespawnEngineContext = {
+      getExistingEngine: () => null,
+      clearEngineState: () => order.push('respawn:clear'),
+      getDatasetId: () => 'ds-1',
+      getOpfsFileKey: () => undefined,
+      bridge: { applyPersistenceStatus: vi.fn(), applyCorruption: vi.fn() },
+      setBrowserEngine: vi.fn(),
+      setRespawnSuccess: () => order.push('respawn:success'),
+      setRespawnError: vi.fn(),
+    };
+    const respawnPromise = respawnEngineWorker(respawnCtx);
+
+    // While init is still pending, the queued respawn must not have started.
+    await Promise.resolve();
+    expect(order).toEqual(['init:start']);
+
+    resolveInit();
+    await Promise.all([initPromise, respawnPromise]);
+
+    expect(order.indexOf('init:start')).toBeLessThan(order.indexOf('respawn:clear'));
+    expect(order).toContain('respawn:success');
   });
 });

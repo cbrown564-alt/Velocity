@@ -115,6 +115,23 @@ export class EngineProxy {
     return this.send({ type: 'engine.ping' }, 'engine.pong') as Promise<EngineResponseByType<'engine.pong'>>;
   }
 
+  /**
+   * Gracefully tear down the worker: ask it to release its OPFS handle + lock,
+   * wait for the acknowledgement (bounded), then terminate. Falls back to a hard
+   * terminate if the worker is wedged or the ack times out — so callers can
+   * always safely spawn a replacement worker afterwards.
+   */
+  async shutdown(ackTimeoutMs = 3000): Promise<void> {
+    if (this.disposed) return;
+    try {
+      await this.send({ type: 'engine.shutdown' }, 'engine.shutdownComplete', undefined, ackTimeoutMs);
+    } catch {
+      // Wedged worker or ack timeout — fall through to hard terminate.
+    } finally {
+      this.terminate();
+    }
+  }
+
   // ==========================================================================
   // Persistence
   // ==========================================================================
@@ -407,18 +424,20 @@ export class EngineProxy {
     payload: Record<string, unknown> & { type: string },
     _expectedType: string | string[],
     transfer?: Transferable[],
+    timeoutMs?: number,
   ): Promise<EngineWorkerResponse> {
     if (this.disposed) {
       return Promise.reject(new Error('EngineProxy is disposed'));
     }
 
     const requestId = crypto.randomUUID();
+    const effectiveTimeout = timeoutMs ?? this.timeoutMs;
 
     return new Promise<EngineWorkerResponse>((resolve, reject) => {
       const timer = setTimeout(() => {
         this.pending.delete(requestId);
-        reject(new Error(`EngineProxy timeout after ${this.timeoutMs}ms for ${payload.type}`));
-      }, this.timeoutMs);
+        reject(new Error(`EngineProxy timeout after ${effectiveTimeout}ms for ${payload.type}`));
+      }, effectiveTimeout);
 
       this.pending.set(requestId, { resolve, reject, timer });
 

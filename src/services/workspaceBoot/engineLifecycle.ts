@@ -17,11 +17,32 @@ import {
   type OpfsBootDecision,
 } from '../pilotOnboarding';
 import AnalysisWorker from '../analysisWorker?worker';
-import { RESPAWN_TERMINATION_DELAY_MS } from './constants';
+import { ENGINE_SHUTDOWN_ACK_TIMEOUT_MS } from './constants';
 
 type LoadProgressMessage = EngineResponseByType<'engine.loadProgress'>;
 type LoadProgressCallback = (msg: LoadProgressMessage) => void;
 
+/**
+ * Single serialized lifecycle queue. Every worker lifecycle transition — init,
+ * respawn, shutdown — runs through this chain so two workers can never be live
+ * at once (warm-up racing a respawn, StrictMode double-mount, dataset switch
+ * mid-boot). Combined with the per-worker OPFS lock, this is the ownership
+ * guarantee that keeps the DB file single-owner.
+ */
+let lifecycleChain: Promise<unknown> = Promise.resolve();
+
+function runExclusive<T>(op: () => Promise<T>): Promise<T> {
+  const run = lifecycleChain.then(op, op);
+  // Keep the chain alive regardless of this op's outcome so one failure does
+  // not deadlock later transitions.
+  lifecycleChain = run.then(
+    () => undefined,
+    () => undefined,
+  );
+  return run;
+}
+
+/** Init-specific dedupe: collapse concurrent boot requests onto one worker. */
 let initInFlight: Promise<void> | null = null;
 
 export function createAnalysisWorker(): Worker {
@@ -201,7 +222,13 @@ export async function initializeEngineWorker(ctx: InitializeEngineContext): Prom
     return;
   }
 
-  initInFlight = (async () => {
+  initInFlight = runExclusive(async () => {
+    // Re-check inside the exclusive section: a queued respawn/init may have
+    // created (or torn down) the engine while we waited for the lock.
+    if (ctx.getExistingEngine()) {
+      console.log('[workspaceBoot] Engine already initialized, skipping duplicate init');
+      return;
+    }
     try {
       await runEngineInit(ctx);
     } catch (error: unknown) {
@@ -209,7 +236,7 @@ export async function initializeEngineWorker(ctx: InitializeEngineContext): Prom
       console.error('[workspaceBoot] Failed to init engine:', error);
       ctx.setInitError(message);
     }
-  })().finally(() => {
+  }).finally(() => {
     initInFlight = null;
   });
 
@@ -217,7 +244,10 @@ export async function initializeEngineWorker(ctx: InitializeEngineContext): Prom
 }
 
 export interface RespawnEngineContext {
-  terminateWorker: () => void;
+  /** Current engine to gracefully shut down before the new worker boots. */
+  getExistingEngine: () => BrowserEngine | null;
+  /** Clear engine/readiness store state during the teardown gap. */
+  clearEngineState: () => void;
   getDatasetId: () => string | undefined;
   getOpfsFileKey: () => string | undefined;
   bridge: EnginePersistenceBridge;
@@ -230,44 +260,81 @@ export interface RespawnEngineContext {
   onLoadProgress?: LoadProgressCallback;
 }
 
-export async function respawnEngineWorker(ctx: RespawnEngineContext): Promise<void> {
-  const cleanStart = ctx.cleanStart ?? false;
-  console.log(`[workspaceBoot] Respawning engine (cleanStart: ${cleanStart})`);
-
-  ctx.terminateWorker();
-  await new Promise((resolve) => setTimeout(resolve, RESPAWN_TERMINATION_DELAY_MS));
-
+/** Gracefully tear down the current engine, waiting for its shutdown ack. */
+async function teardownExistingEngine(engine: BrowserEngine | null): Promise<void> {
+  if (!engine) return;
   try {
-    const worker = createAnalysisWorker();
-    if (ctx.setWorkerRuntimeError) {
-      attachWorkerRuntimeHandlers(worker, ctx.setWorkerRuntimeError, ' during respawn');
+    // Graceful: the worker releases its OPFS handle + lock and acks before we
+    // terminate, so the replacement worker can take ownership without racing a
+    // lingering handle. shutdown() hard-terminates on ack timeout.
+    await engine.shutdown(ENGINE_SHUTDOWN_ACK_TIMEOUT_MS);
+  } catch {
+    try {
+      engine.terminate();
+    } catch {
+      // Worker already gone.
     }
-
-    const engine = createBrowserEngine(worker, ctx.bridge, {
-      corruptionLogLabel: ' during respawn',
-      onLoadProgress: ctx.onLoadProgress,
-    });
-
-    ctx.setBrowserEngine(engine);
-
-    const datasetId = ctx.datasetIdOverride ?? ctx.getDatasetId();
-    const hasPersistedSource = await resolveHasPersistedSource(ctx.getOpfsFileKey());
-    const result = await engine.init({
-      forceCleanStart: cleanStart,
-      datasetId,
-      schemaVersion: 1,
-      hasPersistedSource,
-    });
-
-    ctx.setRespawnSuccess(result.opfsAvailable);
-    console.log(`[workspaceBoot] Engine respawned, OPFS available: ${result.opfsAvailable}`);
-  } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : 'Failed to respawn engine';
-    console.error('[workspaceBoot] Failed to respawn engine:', error);
-    ctx.setRespawnError(message);
   }
+}
+
+export async function respawnEngineWorker(ctx: RespawnEngineContext): Promise<void> {
+  return runExclusive(async () => {
+    const cleanStart = ctx.cleanStart ?? false;
+    console.log(`[workspaceBoot] Respawning engine (cleanStart: ${cleanStart})`);
+
+    await teardownExistingEngine(ctx.getExistingEngine());
+    ctx.clearEngineState();
+
+    try {
+      const worker = createAnalysisWorker();
+      if (ctx.setWorkerRuntimeError) {
+        attachWorkerRuntimeHandlers(worker, ctx.setWorkerRuntimeError, ' during respawn');
+      }
+
+      const engine = createBrowserEngine(worker, ctx.bridge, {
+        corruptionLogLabel: ' during respawn',
+        onLoadProgress: ctx.onLoadProgress,
+      });
+
+      ctx.setBrowserEngine(engine);
+
+      const datasetId = ctx.datasetIdOverride ?? ctx.getDatasetId();
+      const hasPersistedSource = await resolveHasPersistedSource(ctx.getOpfsFileKey());
+      const result = await engine.init({
+        forceCleanStart: cleanStart,
+        datasetId,
+        schemaVersion: 1,
+        hasPersistedSource,
+      });
+
+      ctx.setRespawnSuccess(result.opfsAvailable);
+      console.log(`[workspaceBoot] Engine respawned, OPFS available: ${result.opfsAvailable}`);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Failed to respawn engine';
+      console.error('[workspaceBoot] Failed to respawn engine:', error);
+      ctx.setRespawnError(message);
+    }
+  });
+}
+
+export interface ShutdownEngineContext {
+  getExistingEngine: () => BrowserEngine | null;
+  clearEngineState: () => void;
+}
+
+/**
+ * Gracefully tear down the engine and wait for the worker to release its OPFS
+ * handle + lock. Serialized with init/respawn so callers (e.g. discard) can
+ * safely mutate OPFS files immediately afterward.
+ */
+export async function shutdownEngineWorker(ctx: ShutdownEngineContext): Promise<void> {
+  return runExclusive(async () => {
+    await teardownExistingEngine(ctx.getExistingEngine());
+    ctx.clearEngineState();
+  });
 }
 
 export function resetEngineInitDedupeForTests(): void {
   initInFlight = null;
+  lifecycleChain = Promise.resolve();
 }
