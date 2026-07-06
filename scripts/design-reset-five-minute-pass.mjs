@@ -21,7 +21,17 @@ const OUT_DIR = process.env.WP42_OUT || path.join(ROOT, 'docs/assets/design-rese
 const PORT = Number(process.env.PLAYWRIGHT_PORT || '4173');
 const HOST = process.env.PLAYWRIGHT_HOST || '127.0.0.1';
 const BASE_URL = `http://${HOST}:${PORT}`;
-const SLEEP_SAV = path.resolve(ROOT, 'test_data/sleep.sav');
+const DASHBOARD_READY_TIMEOUT_MS = Number(process.env.DASHBOARD_READY_TIMEOUT_MS || 240000);
+
+function resolveSleepSavPath() {
+  const candidates = [path.resolve(ROOT, 'test_data/sleep.sav'), path.resolve(ROOT, 'public/examples/sleep.sav')];
+  for (const candidate of candidates) {
+    if (fs.existsSync(candidate)) return candidate;
+  }
+  throw new Error(`sleep.sav fixture not found. Tried: ${candidates.join(', ')}`);
+}
+
+const SLEEP_SAV = resolveSleepSavPath();
 
 fs.mkdirSync(OUT_DIR, { recursive: true });
 
@@ -47,11 +57,29 @@ function startDevServer() {
   });
 }
 
-async function clearBrowserStorage(page) {
-  await page.evaluate(async () => {
+async function clearBrowserStorage(page, options = {}) {
+  const seedActivation = options.seedActivation ?? false;
+  await page.evaluate(async (seed) => {
     try {
       localStorage.clear();
       sessionStorage.clear();
+    } catch {
+      /* ignore */
+    }
+    try {
+      if (seed) {
+        localStorage.setItem(
+          'velocity-pilot-events',
+          JSON.stringify([
+            {
+              id: 'journey-gate-seed-file-selected',
+              name: 'file_selected',
+              at: new Date().toISOString(),
+              elapsedMs: 0,
+            },
+          ]),
+        );
+      }
     } catch {
       /* ignore */
     }
@@ -69,23 +97,41 @@ async function clearBrowserStorage(page) {
     } catch {
       /* ignore */
     }
-  });
+  }, seedActivation);
 }
 
 async function waitForDashboardReady(page) {
   const tableView = page.getByRole('button', { name: 'Table view' });
   const metadataLoaded = page.getByText('Metadata Loaded');
-  const deadline = Date.now() + 180000;
+  const deadline = Date.now() + DASHBOARD_READY_TIMEOUT_MS;
   while (Date.now() < deadline) {
     if (await tableView.isVisible().catch(() => false)) return;
     if (await metadataLoaded.isVisible().catch(() => false)) {
       await page.getByRole('button', { name: 'Load Full Data' }).click();
-      await tableView.waitFor({ state: 'visible', timeout: 120000 });
+      await tableView.waitFor({ state: 'visible', timeout: DASHBOARD_READY_TIMEOUT_MS });
       return;
     }
     await page.waitForTimeout(300);
   }
   throw new Error('Dashboard did not become ready');
+}
+
+async function waitForUploadInput(page) {
+  const fileInput = page.getByTestId('dataset-upload-input');
+  const deadline = Date.now() + DASHBOARD_READY_TIMEOUT_MS;
+  while (Date.now() < deadline) {
+    if (
+      await fileInput
+        .count()
+        .then((n) => n > 0)
+        .catch(() => false)
+    ) {
+      await fileInput.waitFor({ state: 'attached', timeout: 5000 });
+      return fileInput;
+    }
+    await page.waitForTimeout(300);
+  }
+  throw new Error('dataset-upload-input not attached — Workshop Door may not have mounted');
 }
 
 async function closeOverlays(page) {
@@ -144,7 +190,8 @@ async function waitForFirstCrosstab(page, timeoutMs = 60000) {
 
 async function runUploadToFirstCrosstab(page, savPath) {
   const fileDropAt = Date.now();
-  await page.getByTestId('dataset-upload-input').setInputFiles(savPath);
+  const fileInput = await waitForUploadInput(page);
+  await fileInput.setInputFiles(savPath);
   await waitForDashboardReady(page);
 
   const tableVisible = await page
@@ -229,13 +276,23 @@ async function renameActiveSlide(page, title) {
 
 async function prepareColdSession(page) {
   await page.goto(BASE_URL);
-  await clearBrowserStorage(page);
+  await clearBrowserStorage(page, { seedActivation: true });
   await page.reload();
 
   const startFresh = page.getByRole('button', { name: 'Start Fresh' });
   if (await startFresh.isVisible({ timeout: 3000 }).catch(() => false)) {
     await startFresh.click();
   }
+
+  await page
+    .getByText(/Turn a client survey file into an editable PowerPoint deck/i)
+    .waitFor({ state: 'visible', timeout: DASHBOARD_READY_TIMEOUT_MS })
+    .catch(async () => {
+      const tableView = page.getByRole('button', { name: 'Table view' });
+      if (!(await tableView.isVisible().catch(() => false))) {
+        await waitForUploadInput(page);
+      }
+    });
 }
 
 async function main() {
@@ -323,7 +380,7 @@ async function main() {
 
     const report = {
       capturedAt: new Date().toISOString(),
-      environment: { viewport: '1440×900', dataset: 'test_data/sleep.sav', browser: 'chromium' },
+      environment: { viewport: '1440×900', dataset: path.basename(SLEEP_SAV), browser: 'chromium' },
       elapsedMs,
       elapsedFormatted: `${Math.floor(elapsedMs / 60000)}:${String(Math.floor((elapsedMs % 60000) / 1000)).padStart(2, '0')}`,
       slideCount: slides,

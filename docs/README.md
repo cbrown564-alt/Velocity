@@ -19,6 +19,7 @@ Navigation hub for live documentation. **Agent rules: [`AGENTS.md`](../AGENTS.md
 | Code quality remediation | `kanban_thermo_nuclear_remediation.md` (June 2026 thermo-nuclear review board) |
 | Why and sequencing | `roadmap_00_strategic_guide.md` |
 | Scope gates | `blue_02_feature_matrix.md` |
+| **New collaborator onboarding** | **`collaborator_onboarding.md`** + interactive [`assets/collaborator-onboarding/index.html`](assets/collaborator-onboarding/index.html) |
 | Local setup | `dev_01_contributing.md` |
 | MCP / agent workflow | `guide_agent_quickstart.md` + `AGENTS.md` |
 | Eval scoring & gaps | `eval_framework.md` + `evals/README.md` |

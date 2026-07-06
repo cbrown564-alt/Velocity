@@ -51,9 +51,7 @@ vi.mock('../pilotOnboarding', () => ({
   recordPersistenceCorruption: vi.fn(),
 }));
 
-function createInitContext(
-  overrides: Partial<InitializeEngineContext> = {},
-): InitializeEngineContext {
+function createInitContext(overrides: Partial<InitializeEngineContext> = {}): InitializeEngineContext {
   const bridge: EnginePersistenceBridge = {
     applyPersistenceStatus: vi.fn(),
     applyCorruption: vi.fn(),
@@ -105,7 +103,10 @@ describe('engineLifecycle', () => {
 
   it('attachWorkerRuntimeHandlers reports worker runtime and message errors', () => {
     const setWorkerRuntimeError = vi.fn();
-    const worker = { onerror: null as ((event: ErrorEvent) => void) | null, onmessageerror: null as (() => void) | null };
+    const worker = {
+      onerror: null as ((event: ErrorEvent) => void) | null,
+      onmessageerror: null as (() => void) | null,
+    };
 
     attachWorkerRuntimeHandlers(worker as unknown as Worker, setWorkerRuntimeError, ' during test');
 
