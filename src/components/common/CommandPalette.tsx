@@ -33,10 +33,11 @@ interface CommandItem {
 
 const VARIABLE_LIMIT = 12;
 
+/** Matches shipped insert grammar + palette footer (↵ columns, ⌥↵ rows). */
 const ONBOARDING_STEPS = [
   { step: 1, label: 'Search for a variable' },
-  { step: 2, label: 'Add to rows', shortcut: '↵' },
-  { step: 3, label: 'Add to columns', shortcut: '⌥↵' },
+  { step: 2, label: 'Add to columns', shortcut: '↵' },
+  { step: 3, label: 'Add to rows', shortcut: '⌥↵' },
 ] as const;
 
 interface PaletteOnboardingGhostProps {

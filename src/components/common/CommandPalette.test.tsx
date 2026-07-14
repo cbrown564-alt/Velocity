@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { act, render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { CommandPalette } from './CommandPalette';
 import { useVelocityStore } from '../../store';
 import { resetPaletteOnboardingForTests, shouldShowPaletteOnboarding } from '../../lib/paletteOnboarding';
@@ -229,8 +229,8 @@ describe('CommandPalette (insert palette)', () => {
       render(<CommandPalette />);
       const ghost = await screen.findByTestId('palette-onboarding-ghost');
       expect(ghost).toHaveTextContent('Search for a variable');
-      expect(ghost).toHaveTextContent('Add to rows');
-      expect(ghost).toHaveTextContent('Add to columns');
+      // Pin shipped grammar (footer + resolveInsertTarget): ↵ columns, ⌥↵ rows.
+      expect(ghost.textContent).toMatch(/Add to columns.*↵[\s\S]*Add to rows.*⌥↵/);
     });
 
     it('does not show the ghost when opened with a preset insert target', () => {
@@ -250,9 +250,13 @@ describe('CommandPalette (insert palette)', () => {
       const { rerender } = render(<CommandPalette />);
       fireEvent.click(await screen.findByRole('button', { name: 'Got it' }));
 
-      useVelocityStore.setState({ commandPaletteOpen: false });
+      act(() => {
+        useVelocityStore.setState({ commandPaletteOpen: false });
+      });
       rerender(<CommandPalette />);
-      useVelocityStore.setState({ commandPaletteOpen: true });
+      act(() => {
+        useVelocityStore.setState({ commandPaletteOpen: true });
+      });
       rerender(<CommandPalette />);
 
       await waitFor(() => {
@@ -266,7 +270,9 @@ describe('CommandPalette (insert palette)', () => {
       fireEvent.keyDown(document, { key: 'Escape' });
       expect(shouldShowPaletteOnboarding('ds1')).toBe(false);
 
-      useVelocityStore.setState({ commandPaletteOpen: true });
+      act(() => {
+        useVelocityStore.setState({ commandPaletteOpen: true });
+      });
       render(<CommandPalette />);
       await waitFor(() => {
         expect(screen.queryByTestId('palette-onboarding-ghost')).not.toBeInTheDocument();
