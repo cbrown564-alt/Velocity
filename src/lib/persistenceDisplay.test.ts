@@ -25,6 +25,13 @@ describe('getPersistenceDisplayMessage', () => {
     expect(result.detail).toBe(raw);
   });
 
+  it('maps the single-owner opfs_locked message to the another-tab headline', () => {
+    const raw = 'OPFS database is locked by another tab or worker; using in-memory mode';
+    const result = getPersistenceDisplayMessage(raw, null);
+    expect(result.headline).toContain('another Velocity tab');
+    expect(result.detail).toBe(raw);
+  });
+
   it('maps corrupt database errors to rebuild guidance', () => {
     const raw = 'File is not a valid DuckDB database file';
     const result = getPersistenceDisplayMessage(raw, null);

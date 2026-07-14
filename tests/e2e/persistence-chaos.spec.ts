@@ -157,6 +157,19 @@ test.describe('persistence chaos suite', () => {
     pageA.on('dialog', (dialog) => dialog.dismiss());
     pageB.on('dialog', (dialog) => dialog.dismiss());
 
+    // Regression guard (Layer 2 single-owner lock): the second tab must degrade
+    // cleanly to memory mode and NEVER surface the OPFS access-handle collision.
+    const pageBOpfsHandleErrors: string[] = [];
+    const collectHandleError = (text: string) => {
+      if (/createsyncaccesshandle|another open access handle/i.test(text)) {
+        pageBOpfsHandleErrors.push(text);
+      }
+    };
+    pageB.on('console', (msg) => {
+      if (msg.type() === 'error' || msg.type() === 'warning') collectHandleError(msg.text());
+    });
+    pageB.on('pageerror', (err) => collectHandleError(err.message));
+
     await pageA.goto('/');
     test.skip(!(await opfsSupported(pageA)), 'OPFS not supported in this environment');
     await reachDashboardWithExample(pageA);
@@ -184,6 +197,10 @@ test.describe('persistence chaos suite', () => {
     await pageA.reload();
     await waitForWorkspaceAfterReload(pageA);
     await expect(pageA.locator('table')).toBeVisible({ timeout: 60000 });
+
+    // The contended tab must have released/avoided the handle rather than
+    // colliding on it — no createSyncAccessHandle errors on pageB.
+    expect(pageBOpfsHandleErrors).toEqual([]);
 
     await context.close();
   });

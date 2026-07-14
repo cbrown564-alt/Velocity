@@ -5,6 +5,7 @@
 import {
   initializeEngineWorker,
   respawnEngineWorker,
+  shutdownEngineWorker,
   createStorePersistenceBridge,
 } from '../../../services/workspaceBoot/engineLifecycle';
 import type { EngineResponseByType } from '../../../types/engineWorker';
@@ -15,7 +16,7 @@ import { applyLoadProgressMessage } from './loadProgress';
 export function createEngineActions(
   set: DataSliceSet,
   get: DataSliceGet,
-): Pick<DataSlice, 'initWorker' | 'terminateWorker' | 'respawnWorker' | 'setLoadProgress'> {
+): Pick<DataSlice, 'initWorker' | 'terminateWorker' | 'shutdownWorker' | 'respawnWorker' | 'setLoadProgress'> {
   const bridge = () => createStorePersistenceBridge((partial) => set(partial));
 
   const handleLoadProgress = (msg: EngineResponseByType<'engine.loadProgress'>) => {
@@ -66,9 +67,18 @@ export function createEngineActions(
       });
     },
 
+    shutdownWorker: async () => {
+      await shutdownEngineWorker({
+        getExistingEngine: () => get().browserEngine,
+        clearEngineState: () => set({ browserEngine: null, isDbReady: false, initError: null }),
+      });
+      console.log('[DataSlice] Engine shut down');
+    },
+
     respawnWorker: async (cleanStart: boolean = false, datasetIdOverride?: string) => {
       await respawnEngineWorker({
-        terminateWorker: () => get().terminateWorker(),
+        getExistingEngine: () => get().browserEngine,
+        clearEngineState: () => set({ browserEngine: null, isDbReady: false, initError: null }),
         getDatasetId: () => get().dataset?.id,
         getOpfsFileKey: () => get().dataset?.opfsFileKey,
         bridge: bridge(),

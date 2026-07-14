@@ -203,7 +203,8 @@ export function usePersistenceManager(
     if (
       normalized.includes('access handle') ||
       normalized.includes('writable stream') ||
-      normalized.includes('another open access handle')
+      normalized.includes('another open access handle') ||
+      normalized.includes('locked by another')
     ) {
       return 'OPFS database is locked (often another tab is using it). Close other Velocity tabs and reload to re-enable fast OPFS DB restore.';
     }

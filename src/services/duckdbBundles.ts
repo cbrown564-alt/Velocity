@@ -25,6 +25,29 @@ export function getLocalDuckDbBundles(): PilotDuckDbBundles {
   };
 }
 
+/**
+ * Choose the DuckDB bundle to boot.
+ *
+ * The COI (multithreaded) bundle CANNOT reopen an OPFS database file: opening one
+ * calls `registerFileHandle`, which `postMessage`s the OPFS `FileSystemSyncAccessHandle`
+ * to its pthread workers — and that handle is not structured-cloneable, so it throws
+ * `DataCloneError` and wedges the worker (create works, reopen never does). The
+ * single-threaded EH bundle keeps the handle in one worker and reopens cleanly.
+ *
+ * So when OPFS DB persistence is enabled we deliberately force EH — fast, reliable
+ * reopen is the priority. With persistence disabled we defer to DuckDB's feature-based
+ * selection (COI when the context is cross-origin isolated) for multithreaded compute.
+ */
+export async function selectBootBundle(
+  bundles: PilotDuckDbBundles,
+  opfsPersistenceEnabled: boolean,
+): Promise<duckdb.DuckDBBundle> {
+  if (opfsPersistenceEnabled) {
+    return bundles.eh;
+  }
+  return duckdb.selectBundle(bundles as unknown as duckdb.DuckDBBundles);
+}
+
 export function resolveDuckDbBundleVariant(bundle: duckdb.DuckDBBundle): DuckDbBundleVariant {
   const bundles = getLocalDuckDbBundles();
   if (bundle.mainModule === bundles.coi.mainModule) return 'coi';

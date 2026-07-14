@@ -336,6 +336,11 @@ export class BrowserEngine {
     this.proxy.dispose();
   }
 
+  /** Graceful teardown: release OPFS handle + lock in the worker, then terminate. */
+  async shutdown(ackTimeoutMs?: number): Promise<void> {
+    return this.proxy.shutdown(ackTimeoutMs);
+  }
+
   terminate(): void {
     this.proxy.terminate();
   }

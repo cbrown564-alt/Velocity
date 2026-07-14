@@ -73,19 +73,31 @@ async function clearBrowserStorage(page) {
 }
 
 async function waitForDashboardReady(page) {
+  const dashboardWorkspace = page.getByTestId('dashboard-workspace');
   const tableView = page.getByRole('button', { name: 'Table view' });
   const metadataLoaded = page.getByText('Metadata Loaded');
-  const deadline = Date.now() + 180000;
+  const deadline = Date.now() + Number(process.env.DASHBOARD_READY_TIMEOUT_MS || 180000);
   while (Date.now() < deadline) {
+    if (await dashboardWorkspace.isVisible().catch(() => false)) return;
     if (await tableView.isVisible().catch(() => false)) return;
     if (await metadataLoaded.isVisible().catch(() => false)) {
       await page.getByRole('button', { name: 'Load Full Data' }).click();
-      await tableView.waitFor({ state: 'visible', timeout: 120000 });
+      await dashboardWorkspace.waitFor({ state: 'visible', timeout: 120000 });
       return;
     }
     await page.waitForTimeout(300);
   }
-  throw new Error('Dashboard did not become ready');
+  const dashboardWorkspaceCount = await dashboardWorkspace.count().catch(() => -1);
+  const tableViewCount = await tableView.count().catch(() => -1);
+  const metadataLoadedCount = await metadataLoaded.count().catch(() => -1);
+  const bodyText = await page
+    .locator('body')
+    .innerText()
+    .then((text) => text.slice(0, 1000))
+    .catch(() => '<unavailable>');
+  throw new Error(
+    `Dashboard did not become ready (url=${page.url()}, dashboardWorkspaceCount=${dashboardWorkspaceCount}, tableViewCount=${tableViewCount}, metadataLoadedCount=${metadataLoadedCount}, body=${JSON.stringify(bodyText)})`,
+  );
 }
 
 async function closeOverlays(page) {
