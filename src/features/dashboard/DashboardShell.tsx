@@ -13,6 +13,7 @@ import { useAnalysisExportAction } from './hooks/useAnalysisExportAction';
 import { StoryRail } from './components/StoryRail';
 import { RecipeInspector } from './components/RecipeInspector';
 import { DashboardToolbar } from './components/DashboardToolbar';
+import { RecentVariableStrip } from './components/RecentVariableStrip';
 import { SlideContainer } from './components/SlideContainer';
 import { AppShell } from '../../components/layout/AppShell';
 import { CommandPalette } from '../../components/common/CommandPalette';
@@ -87,6 +88,7 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
     weightEnabled,
     handleDragStart,
     handleDragEnd,
+    handleVariableClick,
     handleRecodeClick,
     handleToggleWeight,
     handleWeightRemove,
@@ -149,6 +151,8 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
               onToggleFocusMode={toggleFocusMode}
               onReset={reset}
             />
+
+            <RecentVariableStrip onVariableClick={handleVariableClick} />
 
             <div className="flex-1 flex min-h-0 min-w-0 overflow-hidden" data-testid="dashboard-workspace">
               <SmartCanvas

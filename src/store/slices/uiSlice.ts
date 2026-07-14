@@ -11,6 +11,7 @@ import type { VariableType } from './data/types';
 import type { Variable } from './data/types';
 import type { ExportConfig } from '../../core/export/types';
 import { computeActivityTouchPatch } from '../../lib/welcomeBack';
+import { touchRecentVariableIds } from '../../lib/recentVariableStrip';
 
 // ============================================================================
 // Types
@@ -113,6 +114,9 @@ export interface UISlice {
   welcomeBackDismissed: boolean;
   /** Cross-surface hover state for Living Inspector (Manager ↔ Canvas sidebar) */
   hoveredVariableSetId: string | null;
+  pinnedVariableSetIds: string[];
+  recentVariableSetIds: string[];
+  recentStripCollapsed: boolean;
 
   // Miller Column Navigation State
   /** Selected data source ID (for future multi-source support) */
@@ -187,6 +191,10 @@ export interface UISlice {
   markTransformsSeen: (count: number) => void;
   // Living Inspector (cross-surface hover)
   setHoveredVariableSetId: (id: string | null) => void;
+  recordRecentVariableSet: (id: string) => void;
+  togglePinnedVariableSet: (id: string) => void;
+  setRecentStripCollapsed: (collapsed: boolean) => void;
+  toggleRecentStripCollapsed: () => void;
 }
 
 const DEFAULT_WAVE_BANNER: WaveDetectionBannerState = {
@@ -222,6 +230,9 @@ export const createUISlice: StateCreator<UISlice, [], [], UISlice> = (set) => ({
   lastSeenTransformCount: -1,
   welcomeBackDismissed: false,
   hoveredVariableSetId: null,
+  pinnedVariableSetIds: [],
+  recentVariableSetIds: [],
+  recentStripCollapsed: false,
 
   // Miller Column Navigation State
   selectedDataSourceId: null,
@@ -412,4 +423,15 @@ export const createUISlice: StateCreator<UISlice, [], [], UISlice> = (set) => ({
 
   // Living Inspector Actions
   setHoveredVariableSetId: (id) => set({ hoveredVariableSetId: id }),
+
+  recordRecentVariableSet: (id) =>
+    set((state) => ({ recentVariableSetIds: touchRecentVariableIds(state.recentVariableSetIds ?? [], id) })),
+  togglePinnedVariableSet: (id) =>
+    set((state) => {
+      const pinned = state.pinnedVariableSetIds ?? [];
+      const isPinned = pinned.includes(id);
+      return { pinnedVariableSetIds: isPinned ? pinned.filter((x) => x !== id) : [...pinned, id] };
+    }),
+  setRecentStripCollapsed: (collapsed) => set({ recentStripCollapsed: collapsed }),
+  toggleRecentStripCollapsed: () => set((state) => ({ recentStripCollapsed: !state.recentStripCollapsed })),
 });

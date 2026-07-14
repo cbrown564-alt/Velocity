@@ -229,4 +229,16 @@ describe('DashboardShell (WP2.1 / WP2.3)', () => {
     expect(screen.getByRole('dialog', { name: 'Command palette' })).toBeInTheDocument();
     expect(screen.getByTestId('palette-variable-gender')).toBeInTheDocument();
   });
+
+  it('shows the recent & pinned strip when MRU variables exist (DESIGN-CONV-C)', () => {
+    useVelocityStore.setState({
+      recentVariableSetIds: ['gender', 'region'],
+      pinnedVariableSetIds: ['gender'],
+      recentStripCollapsed: false,
+    });
+    render(<DashboardShell {...shellProps} />);
+    expect(screen.getByTestId('recent-variable-strip')).toBeInTheDocument();
+    expect(screen.getByTestId('strip-variable-gender')).toBeInTheDocument();
+    expect(screen.getByTestId('strip-variable-region')).toBeInTheDocument();
+  });
 });
