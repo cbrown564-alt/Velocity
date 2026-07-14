@@ -30,7 +30,7 @@ The Analysis Canvas is the hub. Users build crosstabs and charts on slides, refi
 
 | Surface | Role | Entry |
 | :--- | :--- | :--- |
-| **Story rail** (left) | Deck outline — numbered slides, title, recipe summary, reorder, `+ New slide`, persistence footer | Always visible |
+| **Story rail** (left) | Deck outline — numbered slides, title, persistent recipe summary, reorder, `+ New slide`, persistence/footer summaries | Always visible; approved convergence makes it collapsible for small decks |
 | **Toolbar** (top) | View toggle, Recipe toggle, Insert ⌘K, overflow `···`, primary Export | Always visible |
 | **Slide artifact** (center) | Exportable content only — title, table/chart, shrink-wrapped card | Always visible |
 | **Statistics margin note** | One-line chi-square / sample note outside the card | Below slide when stats apply |
@@ -39,10 +39,10 @@ The Analysis Canvas is the hub. Users build crosstabs and charts on slides, refi
 
 | Surface | Role | Entry |
 | :--- | :--- | :--- |
-| **Insert palette** | Variable search, dense rows, insertion grammar (↵ rows, ⌥↵ columns, ⇧↵ filter); commands behind `>` prefix | `Insert ⌘K`, empty-state Browse, keyboard ⌘K |
+| **Insert palette** | Variable search, dense rows, one canonical insertion grammar, commands behind `>` prefix | `Insert ⌘K`, empty-state Browse, keyboard ⌘K |
 | **Recipe inspector** (right) | Rows / Columns / Filter / Weight chips, display settings (Cell n, Bases), significance method | `Recipe` ghost button; collapsed by default |
 | **Variable Manager** | High-density find/inspect/recode (see §3) | Overflow `···` → Variable Manager, or keyboard `V` |
-| **Export modal** | PPTX / session export | Primary Export button |
+| **Export review** | Preview export-bound slides, recipe/significance state, then download PPTX or export a session | Primary Export button |
 
 ### What left the canvas
 
@@ -113,8 +113,18 @@ graph TD
 
 ## 6. Success metric
 
-File-drop → three titled slides → PPTX in under **5 minutes**, zero interruptions, at most one accent-colored element visible at a time (excluding in-table significance marks). See [`plan_05_design_reset_implementation.md`](plan_05_design_reset_implementation.md) §6 WP4.2 for the timed pass methodology.
+File-drop → three titled, reproducible slides → reviewed PPTX in under **5 minutes**, zero interruptions, zero forced interactions, and at most one accent-colored element visible at a time (excluding in-table significance marks). Automation must assert each slide's saved rows, columns, filter, weight, and view state. Representative users must also complete the final candidate without coaching. See [`plan_05_design_reset_implementation.md`](plan_05_design_reset_implementation.md) §6.
 
-## 7. Current stabilization focus
+## 7. Current convergence focus
 
-The mode model is coherent after the design reset. The highest-priority UX gap remains workspace reopen/switch/rebuild predictability (STAB-WS). PILOT-6 demo photography should use the post-reset UI — re-screenshot if photography already happened on pre-reset chrome (see plan_05 WP4.4).
+The mode model is the approved target, but the implementation is not yet complete. The active gaps are:
+
+- reconcile approved convergence candidates with current `main`;
+- add review-before-download export;
+- settle and enforce one palette rows/columns grammar;
+- restore saved weight and analysis settings when switching slides or reopening sessions;
+- make recipe structure persistent and legible in the rail/inspector;
+- retire focus mode and fix menu hit testing, hidden-inspector focus, contrast, typography, and supported-width behavior;
+- recapture the journey and run 3–5 unscripted representative sessions on the final candidate.
+
+The tracker §4.3.2 owns ordering and completion. Until `DESIGN-CONV-A` passes, the reset is implemented but not verified or validated as a complete redesign.

@@ -15,6 +15,7 @@ Use with:
 - `Not started`: work item has not begun
 - `In progress`: active implementation
 - `Blocked`: waiting on dependency or decision
+- `Candidate`: implementation exists outside the current product line and must be reconciled, reviewed, and verified before it counts as product
 - `In review`: implementation complete, awaiting review gates
 - `Done`: merged with required evidence
 - `Merged`: absorbed into another tracker row (do not start separately)
@@ -41,7 +42,7 @@ graph TD
   P0 --> P1["PILOT-1 Pilot Build + Packaging"]
   P0 --> P2["PILOT-2 Trust Evidence Pack"]
   P0 --> P4A["PILOT-4a Processing Gap Discovery"]
-  P0 --> P6["PILOT-6 Paid Pilot Recruiting"]
+  P0 --> P6["PILOT-6 Paid Pilot Recruiting (Blocked)"]
 
   P1 --> P3["PILOT-3 Complete PPTX Loop"]
   P2 --> P3
@@ -78,26 +79,35 @@ graph TD
   STABUIT4["STAB-UI-T4 Z-index"] --> STABUIT2
   STABUIT --> STABUIF
 
-  DR1["DESIGN-RESET-1 Done"] --> DCA["DESIGN-CONV-A Pilot evidence"]
-  DR1 --> DCB["DESIGN-CONV-B Export preview"]
-  DCA --> DCC["DESIGN-CONV-C Recent strip"]
-  DCA --> DCD["DESIGN-CONV-D Palette onboarding"]
-  DCB --> DCH["DESIGN-CONV-H Canvas handoff"]
-  DCB --> DCI["DESIGN-CONV-I Recipe diff"]
-  DCB --> DCQ6["DESIGN-CONV-Q6 Recipe legibility"]
-  DCC --> DCE["DESIGN-CONV-E Deck templates"]
-  DCD --> DCF["DESIGN-CONV-F NL palette"]
-  DCB --> DCG["DESIGN-CONV-G Collapsible rail"]
-  DCB --> DCQ5["DESIGN-CONV-Q5 Retire focus mode"]
-  DCB --> DCJ["DESIGN-CONV-J Dark mode"]
-  DCB -. supports .-> P6
+  DR1["DESIGN-RESET-1 Foundation implemented"] --> DCR0["DESIGN-CONV-R0 Reconcile candidates"]
+  DCR0 --> DCB["B Export preview"]
+  DCR0 --> DCK1["K1 Palette + journey truth"]
+  DCR0 --> DCK2["K2 Saved-analysis fidelity"]
+  DCR0 --> DCK3["K3 Interaction + visual quality"]
+  DCR0 --> DCC["C Recent strip"]
+  DCR0 --> DCD["D Palette onboarding"]
+  DCR0 --> DCG["G Collapsible rail"]
+  DCR0 --> DCH["H Canvas handoff"]
+  DCR0 --> DCI["I Recipe diff"]
+  DCR0 --> DCQ5["Q5 Retire focus mode"]
+  DCB --> DCA["A Final evidence + sessions"]
+  DCK1 --> DCA
+  DCK2 --> DCA
+  DCK3 --> DCA
+  DCC --> DCA
+  DCD --> DCA
+  DCG --> DCA
+  DCH --> DCA
+  DCI --> DCA
+  DCQ5 --> DCA
+  DCA --> P6
 
   P7 -. gate .-> S5R1["S5-R-1 WebR Bridge"]
   P7 -. gate .-> S5PREP1["S5-PREP-1 Recipe Manager"]
   P7 -. gate .-> S6AI1["S6-AI-1 Semantic Reasoning"]
 ```
 
-Completed Phase 1-4, stabilization, UI polish, engine/MCP, export, parity, and harmonization work is summarized in `docs/completed_foundations_summary.md`. The active critical path is now the market-reset pilot workstream: prove the narrow SAV-to-deck wedge before expanding the platform.
+Completed Phase 1-4, stabilization, engine/MCP, export, parity, and historical foundations are summarized in `docs/completed_foundations_summary.md`. The active critical path is `DESIGN-CONV-R0` -> redesign closure -> `DESIGN-CONV-A` -> `PILOT-6` -> `PILOT-7`.
 
 ## 4. Execution Board
 
@@ -116,11 +126,11 @@ Completed Phase 1-4, stabilization, UI polish, engine/MCP, export, parity, and h
 | PILOT-0 | Strategy / Validation | Pilot thesis, ICP screen, workflow definition, success metrics, and pricing hypotheses for the SAV-to-deck wedge | External market assessment | Done | No | A,V | [`docs/pilot_00_brief.md`](pilot_00_brief.md) — thesis, workflow targets (<5 min crosstab, <15 min slide), 8 qualification criteria, 3 pricing hypotheses, scope boundaries; gate A conditional pass (June 2026 sub-agent audit) |
 | PILOT-1 | Release / Packaging | Deployable pilot build with durable project flow, clear privacy language, browser-limit warnings, and onboarding instrumentation | PILOT-0 | Done | Yes | T,L,U,I,A,V | [`docs/pilot_01_packaging.md`](pilot_01_packaging.md) — v0.1.0-pilot build, privacy banner, browser checks, local event log (`pilotOnboarding.ts`), `tests/e2e/pilot-workflow.spec.ts` |
 | PILOT-2 | Trust Evidence | Buyer-facing trust pack: parity results, performance benchmarks, missing-value behavior, weighting assumptions, known unsupported cases, and reproducible methodology notes | PILOT-0 | Done | No | G,A,V | [`docs/pilot_02_trust_pack.md`](pilot_02_trust_pack.md) — R/SPSS/golden parity, adapter parity (8/8, 2026-06-25), fresh `benchmark:sav` (sleep + WVS7), missing-value/weighting/limitations sections; `arch_04` weighted-mean gap corrected |
-| PILOT-3 | PowerPoint Loop | Complete the high-value PPTX loop: client template import/map, editable object preservation, saved slide recipes, dataset/wave replacement, review-before-export | PILOT-1, PILOT-2 | Done | Yes | T,L,U,I,A,V | Remaining gate closed: `src/components/overlays/ExportModal.tsx` now wires user-facing client template import (`.pptx`), default placeholder-slot mapping, and persisted template/mapping state across modal reopen (local storage draft restore), then routes template-mode exports through production `templateOptions` with `baseTemplate` + `applyTemplateBindings`; `src/core/export/templateMapping.ts` now provides binary PPTX metadata extraction (`extractTemplateMetadataFromPptxBinary`), default mapping builder, and concrete binary binding application (`applyTemplateBindingsToPptx`) used by export flow; integration evidence added in `src/core/export/__tests__/pptxExporter.semantics.test.ts` (real binary apply path through `exportPptx`), `src/core/export/templateMapping.test.ts` (binary extraction + binding application), and `src/components/overlays/ExportModal.test.tsx` (template import + persistence on reopen). Validation commands: `npm run test:run -- src/core/export/templateMapping.test.ts src/core/export/__tests__/pptxExporter.semantics.test.ts src/components/overlays/ExportModal.test.tsx` and `npm run typecheck`. |
+| PILOT-3 | PowerPoint Engine Loop | Complete template import/map, editable object preservation, saved slide recipes, and dataset/wave replacement | PILOT-1, PILOT-2 | Done | Yes | T,L,U,I,A | Engine/export contract and binary template application are implemented and tested. The frontend review-before-download lane is intentionally tracked separately as `DESIGN-CONV-B`; `PILOT-3` does not claim that journey is complete. |
 | PILOT-4a | Processing Discovery | Observe pilot files and classify which prep gaps actually block the Friday-4pm job: raking/RIM, nets, derived variables, banner plans, reshaping, repeatable recipes | PILOT-0 | In progress | No | V,A | Discovery kit + execution workflow: [`docs/pilot_04a_processing_gap_discovery.md`](pilot_04a_processing_gap_discovery.md), [`docs/pilot_evidence_collection_checklist.md`](pilot_evidence_collection_checklist.md); still requires 10-15 external project/file review notes, ranked blockers, and explicit "do not build yet" list from real pilot observations |
 | PILOT-4b | Minimum Viable Processing | Implement only the smallest processing layer required by PILOT-4a: reusable derived variables/nets, saved banner/break plans, common transformation recipes; raking only if repeatedly pilot-blocking | PILOT-4a | Blocked | Yes | T,L,U,I,G,A,V | Narrow implementation PRs with add-tests-first; transform/session replay tests; dual-state safeguards; pilot unblock evidence |
 | PILOT-5 | Bounded Agent Outcomes | Package the agent as auditable outcomes, not infrastructure: first-pass deck, tracker update, client-request assistant; manual control adjacent to every action | PILOT-2, PILOT-3, PILOT-4b if needed | Not started | Yes | T,L,U,I,A,V | Deck-native Gate 5 technical foundation exists (`VelocityEngine.draftDeckPlan`, `velocity_draft_deck_plan`, approval-required actions, malformed-spec rejection, variable-reference caveats), but full `PILOT-5` remains unpromoted until human acceptance, observed time reduction, and trust/correction evidence are available. |
-| PILOT-6 | Paid Pilot Program | Recruit and run 5-8 qualified paid boutique-agency/consultant pilots | PILOT-0; can start before PILOT-3 if scope is explicit | In progress | No | V | Program kit + execution workflow: [`docs/pilot_06_paid_pilot_program.md`](pilot_06_paid_pilot_program.md), [`docs/pilot_evidence_collection_checklist.md`](pilot_evidence_collection_checklist.md); remaining gate evidence: signed paid commitments + observed workflow records |
+| PILOT-6 | Paid Pilot Program | Recruit and run 5-8 qualified paid boutique-agency/consultant pilots | DESIGN-CONV-A, PILOT-0, PILOT-1, PILOT-2, PILOT-3 | Blocked | No | V | Program kit and execution workflow are ready. External recruiting and delivery wait for the redesign gate: reconciled final candidate, fresh screenshots, reproducible journey automation, and 3–5 unscripted representative sessions. |
 | PILOT-7 | Roadmap Gate | Decide whether to continue, narrow, pause, or expand based on paid-pilot evidence; update roadmap, feature matrix, and this tracker | PILOT-6 | Not started | No | A,V | Decision memo with metrics, retained wedge, rejected assumptions, next 1-3 workstreams |
 | PILOT-DEMO-1 | Demo Asset | Brand tracker synthetic dataset + ground truth (plan Phase A): deterministic generator, 5 committed waves + raw W4, rim weights, planted SCR storyline, engine-parity golden test | PILOT-0 | Done | No | T,L,U,G | [`docs/workstreams/deck_native/10_brand_tracker_demo_plan.md`](workstreams/deck_native/10_brand_tracker_demo_plan.md) §7 Phase A — `scripts/python/generate_brand_tracker.py` + config; `public/examples/brandtracker_w4.sav`; `test_data/fixtures/brand_tracker/`; `validation/brand_tracker_ground_truth.json`; `tests/golden/brand_tracker_parity.test.ts` (12 tests green); full `npm run ci` pass (2026-07-03) |
 | PILOT-DEMO-2 | Demo Asset | Transformation recipe demo + gap log (plan Phase B): raw W4 → analysis-ready via existing engine primitives; gaps logged as PILOT-4a internal signals | PILOT-DEMO-1 | Done | No | T,L,U,I,A | Plan §4 — `scripts/brand-tracker-recipe-demo.ts` runs steps 1–10 with zero manual repair (exit 0; `npm run demo:brand-tracker-recipe`); session round-trip replay test `src/engine/__tests__/brand_tracker_recipe_roundtrip.test.ts` (green); gap signals INF-06…INF-09 added to [`docs/pilot_04a_processing_gap_discovery.md`](pilot_04a_processing_gap_discovery.md) §7 + walkthrough [`docs/workstreams/deck_native/brand_tracker_recipe_gap_log.md`](workstreams/deck_native/brand_tracker_recipe_gap_log.md); no new engine surface (2026-07-03) |
@@ -133,16 +143,16 @@ Completed Phase 1-4, stabilization, UI polish, engine/MCP, export, parity, and h
 - `PILOT-1`, `PILOT-2`, and `PILOT-4a` can run in parallel after `PILOT-0`.
 - `PILOT-3` should stay single-threaded while it defines template/recipe contracts that export, session, and deck code will share.
 - `PILOT-4b` remains blocked until real pilot/project evidence shows which processing gaps are adoption blockers.
-- `PILOT-6` can begin immediately after `PILOT-0`, but the promise to pilots must match the current product surface.
+- `PILOT-6` program preparation can continue, but external recruiting and delivery remain blocked until `DESIGN-CONV-A` passes.
 - `PILOT-7` is the gate before re-opening broad Phase 5+ expansion.
 
 #### Recommended Next Pull
 
-1. `DESIGN-CONV-B`: export preview lane before PPTX (confirmed convergence decision).
-2. `DESIGN-CONV-A`: post-reset pilot photography + unscripted session evidence loop.
-3. `PILOT-4a`: continue processing gap discovery with external project/file reviews.
-4. `PILOT-6`: recruit paid pilots — blocked on post-reset photography (`DESIGN-CONV-A`).
-5. `STAB-UI-F5`: accessibility themes (only if pilot requests).
+1. `DESIGN-CONV-R0`: reconcile approved candidate branches against current `main` and decide the final integration order.
+2. `DESIGN-CONV-K1`, `K2`, `K3`, `B`, and the approved chrome/discovery candidates: close correctness and journey gaps.
+3. `DESIGN-CONV-A`: capture final evidence and run unscripted representative sessions.
+4. `PILOT-4a`: continue non-product processing-gap discovery where it does not depend on recruiting.
+5. `PILOT-6`: start recruiting only after `DESIGN-CONV-A` passes.
 
 ### 4.2 Future Gates
 
@@ -200,7 +210,7 @@ These rows remain directionally valid, but should not become active until `PILOT
 
 | ID | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence / validation |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| DESIGN-RESET-1 | Full reset (phases 0–4) | Single theme; story rail; insert palette; recipe inspector; honest slide; two-pane VM; density/craft; evidence pack | STAB-UI-F (partial supersession) | Done | Yes | T,L,U,I,V | Branch `cursor/design-reset-integration-69a6` @ `a655c0d`; screenshot pack [`docs/assets/design-reset-evidence/`](assets/design-reset-evidence/); docs `design_01_system.md`, `design_02_ux_modes.md` reconciled; E2E theme baseline `visual-polish-theme-table.spec.ts`; **PILOT-6 re-screenshot flagged** (photography predates reset) |
+| DESIGN-RESET-1 | Reset foundation | Single theme; story rail; insert palette; recipe inspector; honest slide; two-pane Variable Manager; baseline evidence pack | STAB-UI-F (partial supersession) | In review | Yes | T,L,U,I | Phases 1–3 are implemented on the current line. Phase 4 is incomplete: the committed screenshots are a July 4 baseline rather than final photography, the scripted five-minute pass does not prove the documented rows/columns grammar, and representative sessions have not run. Closure is owned by `DESIGN-CONV`. |
 
 **Supersedes (do not re-implement):** multi-theme switcher, resident variable sidebar, analysis shelf, timeline dock, coaching layer. STAB-UI-F2/F3/F4 rows remain historical; behavior now matches plan_05.
 
@@ -208,7 +218,9 @@ These rows remain directionally valid, but should not become active until `PILOT
 
 **Source:** [`docs/assets/design-reset-evidence/before_after_analysis.html`](assets/design-reset-evidence/before_after_analysis.html) — key questions (Q1–Q7) and diverse paths forward (A–J).  
 **Decision date:** July 4, 2026 — product owner review of post-reset evidence pack.  
-**Goal:** Close convergence gaps on Sarah's five-minute journey (file-drop → three slides → PPTX) without re-litigating Pathway B. All paths A–J approved for execution; sequencing below reflects dependencies and decisions.
+**Goal:** Finish Sarah's five-minute journey (file drop -> three faithful slides -> reviewed PPTX) on the current product line without re-litigating Pathway B. Candidate branches are evidence of implementation work, not proof that the product contains or passes it.
+
+**Current finding (July 14):** paths B–I and Q5 have candidate implementations outside current `main`; nine of ten candidate merges have textual conflicts with the current line. Current code still has direct-download export, global analysis state leaking across saved slides, mismatched palette instructions, focus-mode chrome, hidden-but-focusable inspector controls, low-contrast text uses, a slide-title font mismatch, and fixed-width layout risks. The recipe legibility audit is complete and found P0/P1 gaps.
 
 #### Convergence decisions (Q1–Q7)
 
@@ -219,50 +231,54 @@ These rows remain directionally valid, but should not become active until `PILOT
 | Q3 | Where does "review before export" live? | **Confirmed: deck preview step before PPTX.** Export is still fire-and-download; add a review lane (Path B) as a journey requirement, especially for agent-built sessions. | `DESIGN-CONV-B` — **Wave 1 priority** |
 | Q4 | Can we teach palette grammar without reintroducing coaching? | **Proceed via Path D.** One-time inline ghost inside the palette — dismiss forever, no tour overlay. | `DESIGN-CONV-D` |
 | Q5 | Is focus mode still a mode? | **Focus mode is redundant.** Default chrome + honest slide is the presentation surface; retire focus mode rather than polish it. | `DESIGN-CONV-Q5` |
-| Q6 | Does the UI make recipe structure legible for additive refinement (human + MCP)? | **Open question — audit before build.** Recipe inspector exists; legibility for handoff evals unproven. Audit first; implement diff/summary if gaps found (Path I). | `DESIGN-CONV-Q6` → `DESIGN-CONV-I` |
+| Q6 | Does the UI make recipe structure legible for additive refinement (human + MCP)? | **Audit complete: no.** The rail exposes only rows × columns; persistent filter/weight/view summaries, sections, and notes are absent. | `DESIGN-CONV-Q6` is Done; remediation is `DESIGN-CONV-K2` and `DESIGN-CONV-I` |
 | Q7 | Dark mode vs journey polish? | **Dark mode after journey polish.** Token inversion of evolved Soft Machine only when a pilot blocks without it. | `DESIGN-CONV-J` — **Frozen** until Wave 4 gate |
 
 #### Execution board
 
 | ID | Path | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence / validation |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| DESIGN-CONV-A | A | Validate | Post-reset PILOT-6 photography; 3–5 unscripted first sessions scored (time-to-first-crosstab, palette discovery rate, interruption count) | DESIGN-RESET-1 | In progress | No | V,I | Re-screenshot pack in `docs/assets/design-reset-evidence/`; session scorecard template; updates `before_after_analysis.html` metrics |
-| DESIGN-CONV-B | B | Journey | Export preview lane: thumbnail filmstrip of export-bound slides, recipe summary, significance audit — review step before PPTX download | DESIGN-RESET-1 | In progress | Yes | T,L,U,I,V | E2E export flow with preview gate; agent-handoff scenario (EVAL-03); screenshot in evidence pack |
-| DESIGN-CONV-C | C | Discovery | Thin collapsible "recent & pinned" variable strip below toolbar (~32px); not a full sidebar wall | DESIGN-CONV-A | Not started | Yes | T,L,U,I,V | Accent budget audit; consultant drag-first usability pass |
-| DESIGN-CONV-D | D | Keyboard | First ⌘K on new workspace: inline 3-step ghost inside palette (search → ↵ rows → ⌥↵ columns); dismiss forever | DESIGN-RESET-1 | Not started | Yes | T,L,U,I | No coaching reappear on reopen; session-scoped dismiss flag |
-| DESIGN-CONV-E | E | Story | Workspace "Start from template" → 3-slide tracker skeleton (awareness · consideration · preference); story rail pre-populated | DESIGN-CONV-B, PILOT-DEMO-3 | Not started | Yes | T,L,U,I,V | Brand tracker template fixture; e2e template-start workflow |
-| DESIGN-CONV-F | F | Natural language | Insert palette NL row/column binding ("Q5 by segment") — variable binding only, not full AI analysis | DESIGN-CONV-D | Not started | Yes | T,L,U,I,A,V | Eval against Displayr-positioning guardrail; inspectability tests |
-| DESIGN-CONV-G | G | Polish | Story rail collapses to icon strip (&lt;48px) on single-slide sessions; expands on hover or deck growth | DESIGN-RESET-1 | Not started | Yes | T,L,U,I | Motion budget per WP3.2; screenshot at 1-slide vs 5-slide |
-| DESIGN-CONV-H | H | Continuity | After upload, land on slide 1 with palette pre-focused; reduce Workshop Door → first insertion gap | DESIGN-RESET-1 | Not started | Yes | T,L,U,I,V | Timed handoff metric in five-minute pass script |
-| DESIGN-CONV-I | I | Agent | Quiet "what changed" summary on agent session import — slides added, variables unresolved — story rail footer | DESIGN-CONV-Q6 | Not started | Yes | T,L,U,I,A | MCP handoff eval scenario; muted per calm-tech rules |
+| DESIGN-CONV-R0 | — | Integrate | Inventory and reconcile all approved convergence candidates against current `main`; resolve conflicts and preserve backend-reset contracts | DESIGN-RESET-1 | Not started | No | T,L,U,I,A | Candidate/commit inventory, chosen integration order, clean merge or intentional reimplementation for every retained path; no candidate status silently promoted to Done |
+| DESIGN-CONV-K1 | — | Correctness | Choose one palette grammar and align UI copy, help, tests, five-minute script, and recipe assertions | DESIGN-CONV-R0 | Not started | Yes | T,L,U,I | One rows/columns contract; automation asserts the resulting recipe instead of timing clicks alone |
+| DESIGN-CONV-K2 | — | Correctness | Restore each slide's saved weight and analysis settings; expose persistent filter/weight/view summaries needed for recipe legibility | DESIGN-CONV-R0, DESIGN-CONV-Q6 | Not started | Yes | T,L,U,I,A | Slide switching and session round-trip tests; no global state leakage; rail/inspector show the state required to reproduce the slide |
+| DESIGN-CONV-K3 | — | Quality | Fix overflow-menu hit testing, make closed inspector content inert or unmounted, close contrast violations, align slide-title typography, and verify supported widths | DESIGN-CONV-R0 | Not started | Yes | T,L,U,I | Normal pointer interactions without force-click; keyboard/focus audit; token/contrast evidence; responsive screenshots at agreed widths |
+| DESIGN-CONV-A | A | Validate | Fresh final photography; reproducible journey automation; 3–5 unscripted sessions scored for time, discovery, errors, and recovery | DESIGN-CONV-B, C, D, G, H, I, Q5, K1, K2, K3 | Blocked | No | I,V | New evidence pack from current `main`; documented browser setup; no forced interactions; observed sessions on the final candidate, not an intermediate branch |
+| DESIGN-CONV-B | B | Journey | Export preview lane: export-bound thumbnails, recipe summary, significance audit, then PPTX download | DESIGN-CONV-R0 | Candidate | Yes | T,L,U,I,V | Candidate exists off-line; reconcile after backend reset, then prove preview is required before download in E2E and agent-handoff flows |
+| DESIGN-CONV-C | C | Discovery | Thin collapsible recent-and-pinned variable strip, not a full sidebar | DESIGN-CONV-R0 | Candidate | Yes | T,L,U,I,V | Reconcile candidate; retain only if representative sessions show it improves drag-first discovery without crowding the canvas |
+| DESIGN-CONV-D | D | Keyboard | First-palette inline ghost that teaches the canonical row/column grammar and dismisses permanently | DESIGN-CONV-R0, DESIGN-CONV-K1 | Candidate | Yes | T,L,U,I | Reconcile after K1 settles the grammar; no coaching on reopen |
+| DESIGN-CONV-E | E | Story | Start from a three-slide tracker template | DESIGN-CONV-B, PILOT-DEMO-3, DESIGN-CONV-A | Candidate | Yes | T,L,U,I,V | Non-blocking expansion; do not place on the pilot critical path before the core journey passes |
+| DESIGN-CONV-F | F | Natural language | Palette row/column binding from a short phrase | DESIGN-CONV-D, DESIGN-CONV-A | Candidate | Yes | T,L,U,I,A,V | Non-blocking expansion; require inspectability and observed demand before promotion |
+| DESIGN-CONV-G | G | Polish | Story rail collapses below 48px for small decks and expands predictably | DESIGN-CONV-R0 | Candidate | Yes | T,L,U,I | Reconcile candidate; screenshots and keyboard behavior at one and five slides |
+| DESIGN-CONV-H | H | Continuity | After upload, land on slide 1 with the insertion path ready | DESIGN-CONV-R0, DESIGN-CONV-K1 | Candidate | Yes | T,L,U,I,V | Reconcile candidate; five-minute automation asserts the resulting analysis state |
+| DESIGN-CONV-I | I | Agent | Quiet imported-session summary: slides added, unresolved variables, recipe changes | DESIGN-CONV-R0, DESIGN-CONV-K2 | Candidate | Yes | T,L,U,I,A | Reconcile candidate against the completed Q6 audit and MCP handoff criteria |
 | DESIGN-CONV-J | J | Hold | Dark mode as token inversion of evolved Soft Machine | DESIGN-CONV-B, DESIGN-CONV-H, PILOT-7 or pilot request | Frozen | Yes | T,L,U,I | Pilot blocker evidence only |
-| DESIGN-CONV-Q5 | — | Retire | Remove focus mode (`F` shortcut, toolbar toggle, focus chrome rules); default canvas is presentation surface | DESIGN-RESET-1 | Not started | Yes | T,L,U,I | E2E focus specs retired or rewritten; `design_02_ux_modes.md` updated |
-| DESIGN-CONV-Q6 | — | Audit | Recipe structure legibility review for human + MCP additive refinement; gap list before `DESIGN-CONV-I` build | DESIGN-RESET-1 | In progress | No | A,V | Written audit against recipe inspector + story rail; links to EVAL-03 handoff criteria |
+| DESIGN-CONV-Q5 | — | Retire | Remove focus mode; default canvas is the presentation surface | DESIGN-CONV-R0 | Candidate | Yes | T,L,U,I | Reconcile candidate; remove shortcut, toggle, chrome rules, and obsolete tests |
+| DESIGN-CONV-Q6 | — | Audit | Review recipe legibility for human and MCP additive refinement | DESIGN-RESET-1 | Done | No | A | [`docs/design_reset_recipe_legibility_audit.md`](design_reset_recipe_legibility_audit.md) identifies missing persistent analysis summaries and recipe structure; remediation is tracked in K2 and I |
 
 #### Wave plan (multi-agent orchestration)
 
 | Wave | Items | Rationale |
 | :--- | :--- | :--- |
-| **1** | `DESIGN-CONV-A`, `DESIGN-CONV-B` | Evidence loop unblocks PILOT-6 photography; export preview is confirmed P0 journey gap |
-| **2** | `DESIGN-CONV-C`, `DESIGN-CONV-D`, `DESIGN-CONV-G`, `DESIGN-CONV-Q6` | Address Q1 summon concern + Q4 onboarding + Q2 rail space; legibility audit informs Wave 3 agent UI |
-| **3** | `DESIGN-CONV-H`, `DESIGN-CONV-I`, `DESIGN-CONV-Q5` | Journey continuity, agent handoff, focus mode retirement |
-| **4** | `DESIGN-CONV-E`, `DESIGN-CONV-F` | Higher-scope delight features after core journey polish |
+| **0** | `DESIGN-CONV-R0` | Single integration baseline before parallel work; candidate branches conflict with the current line |
+| **1** | `DESIGN-CONV-K1`, `K2`, `K3`, `B`, `Q5` | Close correctness, export, and final-chrome blockers first |
+| **2** | `DESIGN-CONV-C`, `D`, `G`, `H`, `I` | Reconcile approved discovery, continuity, rail, and handoff candidates against the settled contracts |
+| **3** | `DESIGN-CONV-A` | Photograph and test only the final candidate; rerun after any session-driven correction |
+| **Later** | `DESIGN-CONV-E`, `F` | Non-blocking additions after the core journey passes |
 | **Hold** | `DESIGN-CONV-J` | Dark mode — after journey polish or explicit pilot blocker |
 
 #### DESIGN-CONV dependency notes
 
-- **B** is the confirmed product decision; do not ship PPTX-only export flow improvements without the preview lane.
-- **C** and **D** are paired experiments for Q1 — implement both, let **A** session evidence decide which to keep.
-- **Q5** (focus retirement) should land before PILOT-6 photography so screenshots reflect final chrome.
-- **Q6** audit must complete before **I** implementation to avoid speculative agent UI.
-- **J** stays frozen until Wave 1–3 journey items reach `Done` or a pilot explicitly blocks.
+- `R0` is single-threaded because every retained candidate must target one current integration baseline.
+- B, K1, K2, K3, and Q5 are pilot blockers. C, D, G, H, and I are approved candidates that must be reconciled and judged on the final experience.
+- A begins only after final chrome and behavior are on current `main`; intermediate screenshots and scripted timing do not satisfy it.
+- E and F do not block A or PILOT-6. J stays frozen until pilot evidence explicitly opens it.
 
 #### DESIGN-CONV recommended pull
 
-1. `DESIGN-CONV-B` — export preview lane (Wave 1).
-2. `DESIGN-CONV-A` — post-reset photography + session evidence (Wave 1).
-3. `DESIGN-CONV-D` + `DESIGN-CONV-C` — consultant-friendly discovery (Wave 2).
-4. `DESIGN-CONV-Q5` — retire redundant focus mode (Wave 3, before PILOT-6 re-screenshot).
+1. `DESIGN-CONV-R0` — reconcile candidates against current `main`.
+2. `DESIGN-CONV-K1`, `K2`, `K3`, `B`, `Q5` — correctness, review lane, and final chrome.
+3. `DESIGN-CONV-C`, `D`, `G`, `H`, `I` — retained convergence candidates.
+4. `DESIGN-CONV-A` — fresh photography and representative validation.
 
 ### 4.4 Technical UI Foundation (`STAB-UI-T`)
 

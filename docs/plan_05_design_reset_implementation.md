@@ -1,7 +1,7 @@
 # Design Reset Implementation Plan (Pathway B)
 
-**Status:** Phase 4 complete on branch `cursor/design-reset-integration-69a6` — all work packages landed; evidence pack in `docs/assets/design-reset-evidence/`
-**Date:** July 3, 2026 (status updated same day)
+**Status:** Phases 1–3 implemented; Phase 4 incomplete. The July 4 evidence is a baseline, not final validation. Active closure is tracked in `tracker_00_implementation_status.md` §4.3.2.
+**Date:** July 3, 2026 (status corrected July 14, 2026)
 **Purpose:** Standalone execution plan for the approved design reset. A fresh session should be able to pick up any work package from this document alone, without the originating conversation.
 
 ---
@@ -13,7 +13,7 @@ Read, in order:
 1. [`docs/plan_04_design_reset_pathways.md`](plan_04_design_reset_pathways.md) — strategy, diagnosis, kill list, resolved decisions
 2. [`docs/assets/design-reset-north-star/north_star.html`](assets/design-reset-north-star/north_star.html) — the visual target (interactive; open in a browser). Screenshot evidence: `ns-screen-{1,1-recipe,2,3,4}.png` in the same directory
 3. [`AGENTS.md`](../AGENTS.md) — operating invariants (engine/core/UI boundaries, test expectations, PR contract)
-4. [`docs/design_01_system.md`](design_01_system.md) + [`docs/design_02_ux_modes.md`](design_02_ux_modes.md) — current system being superseded (do not follow their three-theme guidance; they are updated in WP4.3)
+4. [`docs/design_01_system.md`](design_01_system.md) + [`docs/design_02_ux_modes.md`](design_02_ux_modes.md) — current target contracts; use their convergence sections for known implementation gaps
 5. [`docs/audit_07_pilot_presentation_readiness_2026-07-01.md`](audit_07_pilot_presentation_readiness_2026-07-01.md) — the tactical predecessor; explains what PR #18 already fixed
 6. [`docs/deck_native_multi_agent_plan.md`](deck_native_multi_agent_plan.md) — product direction this reset serves (Report Job / deck recipe as durable object)
 
@@ -48,10 +48,10 @@ Branch per work package (`design-reset/wp-1-1-single-theme`, …); commit after 
 | Phase | Name | Outcome | Ships alone? |
 | :--- | :--- | :--- | :--- |
 | 0 | North star | 4 target screens + tokens (done — `docs/assets/design-reset-north-star/`) | Done |
-| 1 | Subtraction | One theme, no coaching, quiet chrome; IA unchanged | **Yes** — safe before PILOT-6 photography |
-| 2 | Inversion | Story rail, insert palette, recipe inspector, honest slide, two-pane VM | Yes, after re-baselining |
-| 3 | Density & craft | Typography-driven density, keyboard completion, motion/copy pass | Yes |
-| 4 | Evidence | Screenshot audit, 5-minute metric pass, docs reconciled | Closes the reset |
+| 1 | Subtraction | One theme, no coaching, quiet chrome; IA unchanged | Implemented |
+| 2 | Inversion | Story rail, insert palette, recipe inspector, honest slide, two-pane VM | Implemented; correctness gaps remain in convergence |
+| 3 | Density & craft | Typography-driven density, keyboard completion, motion/copy pass | Implemented; final quality audit remains |
+| 4 | Evidence | Fresh final screenshots, truthful journey automation, representative sessions | **Open; closes the reset** |
 
 Dependency rule: Phase 1 is a prerequisite for everything. Inside phases, work packages are ordered but separable — each leaves the app coherent.
 
@@ -215,6 +215,8 @@ Re-read `docs/design_02_ux_modes.md` §2 and the deck-native charter before star
 
 ## 6. Phase 4 — Evidence & reconciliation
 
+Phase 4 was previously marked complete when the baseline pack and timed automation landed. That classification was too broad. The pack predates the approved convergence work, the documented palette grammar differs from current command behavior, the automation records elapsed time without asserting the intended rows/columns recipe, the normal overflow interaction currently requires a forced click in screenshot tooling, and no representative sessions have run. Phase 4 closes only after the tracker’s `DESIGN-CONV-A` gate passes.
+
 - **WP4.1** Re-run `node scripts/ui-workflow-screenshot-audit.mjs`; commit the new pack under `docs/assets/design-reset-evidence/`; before/after against both the July 1 audit pack (`ui-pilot-readiness-audit/screenshots-p2-final/`) and the north-star screens
 - **WP4.2** Timed pilot-demo pass: file-drop → three titled slides → PPTX. Record time and interruption count. Pass: < 5 minutes, zero interruptions. Methodology below.
 - **WP4.3** Update docs in the same PR: rewrite `design_01_system.md` (single theme, token table from §2), amend `design_02_ux_modes.md` (rail/palette/inspector responsibilities), close this plan's rows, reconcile `tracker_00_implementation_status.md`
@@ -222,7 +224,7 @@ Re-read `docs/design_02_ux_modes.md` §2 and the deck-native charter before star
 
 ### WP4.2 — Five-minute metric pass methodology
 
-**Goal:** Validate the design-reset success metric under realistic pilot conditions.
+**Goal:** Verify the automated journey and validate the final experience under representative pilot conditions.
 
 **Environment:** Local `npm run dev`, Chromium 1440×900, `test_data/sleep.sav` (or a pilot's own SAV of similar size). One operator, no mouse unless unavoidable. Stopwatch from first file drop to PPTX saved.
 
@@ -238,9 +240,11 @@ Re-read `docs/design_02_ux_modes.md` §2 and the deck-native charter before star
 | 6 | `+ New slide` → slide 3 (e.g. single-variable distribution) | ⌘K → ↵ |
 | 7 | Export → PPTX → confirm download | toolbar Export |
 
-**Record:** total elapsed time, interruption count (popover, toast, modal unrelated to export, coaching overlay), accent violations (more than one accent chrome element visible outside significance marks).
+**Record:** total elapsed time, resulting row/column recipe on every slide, interruption count (popover, toast, modal unrelated to export, coaching overlay), forced interactions, accent violations (more than one accent chrome element visible outside significance marks), and export-preview completion.
 
-**Pass:** < 5:00 elapsed, zero interruptions, ≤ 1 accent chrome element per screen.
+**Automated pass:** < 5:00 elapsed, correct saved recipe on every slide, zero interruptions, zero forced interactions, review-before-download completed, and ≤ 1 accent chrome element per screen.
+
+**Validation pass:** 3–5 people from the target workflow complete the final candidate without coaching; record discovery, errors, recovery, and confidence separately from automated timing.
 
 **Evidence:** Timed run notes in PR body; screenshot pack (`docs/assets/design-reset-evidence/`) for visual before/after; E2E theme baseline (`visual-polish-theme-table.spec.ts`) re-recorded for single identity.
 
@@ -250,7 +254,7 @@ Re-read `docs/design_02_ux_modes.md` §2 and the deck-native charter before star
 
 1. **Gates per PR:** typecheck (T), lint (L), unit (U), E2E/visual (I), screenshot evidence (V). `npm run ci` must pass locally before PR
 2. **Deletions are real:** removed components leave no dead exports, orphaned tests, unused tokens, or `TODO: restore`. Coverage config (`vitest.config.ts` excludes) may need pruning when files disappear
-3. **No engine/core changes.** This reset is `src/features/`, `src/components/`, `src/theme/`, `src/context/`, `src/index.css` only. If a package seems to need `src/core/` or `src/engine/` changes, stop and re-scope — exception: WP2.4's export parity may touch export *formatting*, never computation
+3. **Foundation scope:** phases 1–3 did not change engine computation. Active convergence may change persisted UI/store orchestration to restore each slide's weight and analysis settings; follow the engine/session and dual-state playbooks if that work crosses their boundaries.
 4. **E2E churn is expected:** re-record baselines intentionally per package, never blanket-update snapshots to green a build
 5. **Session compatibility:** `.velocity` session import must keep working across every package (deck state, analysisSettings). Add a round-trip test to any PR touching persisted shapes
 6. **MCP/agent surface untouched** except where UI state names leak into session exports — verify with `mcp:build` tests
@@ -260,7 +264,7 @@ Re-read `docs/design_02_ux_modes.md` §2 and the deck-native charter before star
 
 ## 8. Status board
 
-All work packages landed on branch `cursor/design-reset-integration-69a6` (integration of phases 1–4).
+Phases 1–3 landed. Phase 4 rows below distinguish baseline evidence from final closure.
 
 | WP | Name | Status | Commit / evidence |
 | :--- | :--- | :--- | :--- |
@@ -278,12 +282,12 @@ All work packages landed on branch `cursor/design-reset-integration-69a6` (integ
 | 3.2 | Motion pass | **Done** | `da434a5` — 150ms standard; decorative motion removed |
 | 3.3 | Copy pass | **Done** | `da434a5` — empty states, errors, labels per writing rules |
 | 3.4 | Type & spacing sweep | **Done** | `da434a5` — 13px UI base, hairline discipline, tabular-nums |
-| 4.1 | Screenshot audit | **Done** | `docs/assets/design-reset-evidence/screenshots/` (15 frames, July 3 2026) |
-| 4.2 | Five-minute metric | **Done** | `scripts/design-reset-five-minute-pass.mjs` — **0:11** elapsed, 3 deck slides, 4 exported slides (title + 3 tables), 0 interruptions (`wp42-five-minute-pass.json`, July 4 2026) |
-| 4.3 | Docs reconciliation | **Done** | `design_01_system.md`, `design_02_ux_modes.md`, tracker §7 updated |
-| 4.4 | PILOT-6 re-screenshot flag | **Done** | Flag raised §6 — photography predates reset; re-capture required |
+| 4.1 | Screenshot audit | **Baseline only** | `docs/assets/design-reset-evidence/screenshots/` (15 frames, July 3 2026); recapture after convergence |
+| 4.2 | Five-minute metric | **Automated baseline only** | Script recorded **0:11**, but does not yet prove the documented recipe grammar or normal pointer behavior; correct and rerun under `DESIGN-CONV-K1/K3` |
+| 4.3 | Docs reconciliation | **Done** | Core status documents corrected July 14; tracker §4.3.2 owns active closure |
+| 4.4 | Final photography and sessions | **Blocked** | Starts after convergence blockers land; requires fresh screenshots and 3–5 unscripted representative sessions (`DESIGN-CONV-A`) |
 
-**Integration head:** `5c85707` (Phase 4 evidence + docs reconciliation).
+**Foundation evidence head:** `5c85707`. Do not interpret this commit as final redesign validation.
 
 ---
 

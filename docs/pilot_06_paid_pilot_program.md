@@ -1,8 +1,10 @@
 # PILOT-6: Paid Pilot Program Kit
 
-**Status:** In progress (assets ready; recruitment and commitments pending)  
-**Depends on:** `PILOT-0`, `PILOT-1`, `PILOT-2`  
+**Status:** Program assets ready; external recruiting and delivery blocked on `DESIGN-CONV-A`
+**Depends on:** `DESIGN-CONV-A`, `PILOT-0`, `PILOT-1`, `PILOT-2`, `PILOT-3`
 **Purpose:** Recruit and run 5-8 qualified paid pilots without over-promising beyond shipped product scope.
+
+Preparation, prospect-list research, and internal rehearsal may continue. Do not send outreach, accept commitments, or schedule delivery until the final redesign candidate has fresh screenshots, reproducible journey evidence, and 3–5 unscripted representative sessions recorded in the tracker.
 
 ---
 
