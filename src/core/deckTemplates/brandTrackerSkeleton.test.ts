@@ -32,7 +32,9 @@ describe('materializeBrandTrackerFunnelSkeleton', () => {
     expect(result.slides).toHaveLength(3);
     expect(result.sections[0].title).toBe('The funnel');
     expect(result.slides.map((s) => s.title)).toEqual(['Awareness', 'Consideration', 'Preference']);
-    expect(result.slides[0].analysisState.rowVars).toEqual(['vs_aware']);
+    expect(result.slides.map((s) => s.analysisState.rowVars)).toEqual([['vs_aware'], ['vs_consider'], ['vs_pref']]);
+    expect(result.slides.every((s) => s.analysisState.weightVar === 'wt')).toBe(true);
+    expect(result.activeSlideId).toBe('template-slide-1');
     expect(result.unresolvedBindings).toEqual([]);
   });
 

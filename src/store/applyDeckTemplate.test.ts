@@ -31,6 +31,8 @@ describe('applyDeckTemplate', () => {
   it('replaces slides and sections with a materialized template', () => {
     const sets: VariableSet[] = [
       { id: 'vs_aware', name: 'Awareness', variableIds: ['aware_atlas'], structure: 'single', hidden: false },
+      { id: 'vs_consider', name: 'Consideration', variableIds: ['consider_atlas'], structure: 'single', hidden: false },
+      { id: 'vs_pref', name: 'Preference', variableIds: ['brand_pref'], structure: 'single', hidden: false },
     ];
     const variables: Variable[] = [
       {
@@ -41,12 +43,31 @@ describe('applyDeckTemplate', () => {
         valueLabels: [],
         missingValues: {},
       },
+      {
+        id: 'consider_atlas',
+        name: 'consider_atlas',
+        label: 'consider_atlas',
+        type: 'categorical',
+        valueLabels: [],
+        missingValues: {},
+      },
+      {
+        id: 'brand_pref',
+        name: 'brand_pref',
+        label: 'brand_pref',
+        type: 'categorical',
+        valueLabels: [],
+        missingValues: {},
+      },
     ];
     act(() => {
       useVelocityStore.getState().applyDeckTemplate(materializeBrandTrackerFunnelSkeleton(sets, variables));
     });
-    expect(useVelocityStore.getState().slides).toHaveLength(3);
-    expect(useVelocityStore.getState().tableConfig.rowVars).toEqual(['vs_aware']);
+    const state = useVelocityStore.getState();
+    expect(state.slides).toHaveLength(3);
+    expect(state.slides.map((s) => s.title)).toEqual(['Awareness', 'Consideration', 'Preference']);
+    expect(state.sections.map((s) => s.title)).toEqual(['The funnel']);
+    expect(state.tableConfig.rowVars).toEqual(['vs_aware']);
   });
 
   it('triggers analysis when rows are bound', () => {

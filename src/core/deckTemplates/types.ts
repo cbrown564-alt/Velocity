@@ -1,4 +1,5 @@
 import type { ChartType } from '../../types/charts';
+import type { Slide, SlideSection } from '../../types/slides';
 
 export interface DeckTemplateSlideBinding {
   title: string;
@@ -16,8 +17,8 @@ export interface DeckTemplateDefinition {
 }
 
 export interface MaterializedDeckTemplate {
-  slides: import('../../types/slides').Slide[];
-  sections: import('../../types/slides').SlideSection[];
+  slides: Slide[];
+  sections: SlideSection[];
   activeSlideId: string;
   activeCellId: string | null;
   unresolvedBindings: string[];
