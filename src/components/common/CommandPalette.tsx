@@ -16,6 +16,13 @@ import {
   variableSetMeta,
   type InsertTarget,
 } from './commandPaletteSearch';
+import {
+  buildCrosstabBindingTableConfig,
+  formatCrosstabBindingPreview,
+  parsePaletteNlCrosstab,
+  type PaletteNlCrosstabBinding,
+  type PaletteNlParseResult,
+} from './paletteNlParse';
 import type { VariableSet, Variable } from '../../types';
 
 interface CommandItem {
@@ -155,6 +162,21 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ withinDnd = fals
 
   const commandMode = query.startsWith('>');
   const commandQuery = commandMode ? query.slice(1).trim().toLowerCase() : '';
+
+  const nlBinding = useMemo<PaletteNlParseResult>(() => {
+    if (commandMode || commandPaletteInsertTarget !== null || !query.trim()) return { kind: 'none' };
+    return parsePaletteNlCrosstab(query, variableSets, { variables: dataset?.variables, dataset });
+  }, [commandMode, commandPaletteInsertTarget, query, variableSets, dataset]);
+  const crosstabBinding = nlBinding.kind === 'crosstab' ? nlBinding : null;
+  const partialBinding = nlBinding.kind === 'partial' ? nlBinding : null;
+  const applyCrosstabBinding = useMemo(
+    () => (binding: PaletteNlCrosstabBinding) => {
+      setTableConfig(buildCrosstabBindingTableConfig(binding));
+      addToast({ message: formatCrosstabBindingPreview(binding), type: 'success' });
+      closeCommandPalette();
+    },
+    [setTableConfig, addToast, closeCommandPalette],
+  );
 
   const insertVariable = useMemo(() => {
     return (set: VariableSet, target: InsertTarget) => {
@@ -304,7 +326,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ withinDnd = fals
   }, [commandMode, commandQuery, commands]);
 
   const variableResults = useMemo<VariableSet[]>(() => {
-    if (commandMode) return [];
+    if (commandMode || crosstabBinding) return [];
     const variables = dataset?.variables;
     let results: VariableSet[];
     if (!query.trim()) {
@@ -320,7 +342,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ withinDnd = fals
       results = results.filter((set) => canAddVariableSetToWeight(set, variables));
     }
     return results;
-  }, [commandMode, query, variableSets, dataset, commandPaletteInsertTarget]);
+  }, [commandMode, crosstabBinding, query, variableSets, dataset, commandPaletteInsertTarget]);
 
   const variableLabels = useMemo(() => {
     const lookup = new Map<string, string>();
@@ -334,7 +356,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ withinDnd = fals
     return new Map((dataset?.variables ?? []).map((variable) => [variable.id, variable]));
   }, [dataset?.variables]);
 
-  const resultCount = commandMode ? filteredCommands.length : variableResults.length;
+  const resultCount = commandMode ? filteredCommands.length : crosstabBinding ? 1 : variableResults.length;
 
   useEffect(() => {
     setSelectedIndex(0);
@@ -384,6 +406,8 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ withinDnd = fals
         e.preventDefault();
         if (commandMode) {
           filteredCommands[selectedIndex]?.action();
+        } else if (crosstabBinding) {
+          applyCrosstabBinding(crosstabBinding);
         } else {
           const set = variableResults[selectedIndex];
           if (set) insertVariable(set, resolveInsertTarget(e, commandPaletteInsertTarget));
@@ -403,6 +427,8 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ withinDnd = fals
     selectedIndex,
     resultCount,
     insertVariable,
+    applyCrosstabBinding,
+    crosstabBinding,
     closeCommandPalette,
     commandPaletteInsertTarget,
   ]);
@@ -440,13 +466,46 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ withinDnd = fals
         </div>
 
         <div ref={listRef} className="max-h-[50vh] overflow-y-auto p-1.5">
+          {partialBinding && (
+            <div
+              className="mx-1.5 mb-1 px-3 py-2.5 rounded-md border border-dashed border-[var(--border-color)] bg-[var(--bg-panel-tint)]"
+              data-testid="palette-nl-partial"
+            >
+              <p className="text-[11px] uppercase tracking-wide text-[var(--text-tertiary)] mb-2">
+                Crosstab binding (incomplete)
+              </p>
+              <div className="space-y-1 text-[12.5px] text-[var(--text-secondary)]">
+                <p>
+                  <span className="font-mono text-[var(--text-primary)]">{partialBinding.rowQuery}</span>
+                  {' → rows '}
+                  {partialBinding.row ? (
+                    <span className="text-[var(--text-primary)]">({partialBinding.row.setName})</span>
+                  ) : (
+                    <span className="text-[var(--text-tertiary)]">(no match)</span>
+                  )}
+                </p>
+                <p>
+                  <span className="font-mono text-[var(--text-primary)]">{partialBinding.columnQuery}</span>
+                  {' → columns '}
+                  {partialBinding.column ? (
+                    <span className="text-[var(--text-primary)]">({partialBinding.column.setName})</span>
+                  ) : (
+                    <span className="text-[var(--text-tertiary)]">(no match)</span>
+                  )}
+                </p>
+              </div>
+            </div>
+          )}
+
           {resultCount === 0 ? (
             <div className="px-4 py-8 text-center text-sm text-[var(--text-tertiary)]">
               {commandMode
                 ? 'No matching commands.'
-                : commandPaletteInsertTarget === 'weight'
-                  ? 'No numeric weight variables found.'
-                  : 'No matching variables.'}
+                : partialBinding
+                  ? 'Finish typing variable names on both sides, or pick from matches below.'
+                  : commandPaletteInsertTarget === 'weight'
+                    ? 'No numeric weight variables found.'
+                    : 'No matching variables.'}
             </div>
           ) : commandMode ? (
             filteredCommands.map((cmd, index) => (
@@ -471,6 +530,23 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ withinDnd = fals
                 )}
               </button>
             ))
+          ) : crosstabBinding ? (
+            <button
+              type="button"
+              onClick={() => applyCrosstabBinding(crosstabBinding)}
+              data-selected
+              data-testid="palette-nl-binding"
+              className="w-full mx-1.5 px-3 py-3 rounded-md text-left bg-[var(--bg-panel-tint)] shadow-[inset_0_0_0_1px_var(--border-color)]"
+            >
+              <p className="text-[11px] uppercase tracking-wide text-[var(--text-tertiary)] mb-2">Crosstab binding</p>
+              <p className="font-mono text-[13px] text-[var(--text-primary)] mb-1">
+                {formatCrosstabBindingPreview(crosstabBinding)}
+              </p>
+              <p className="text-[11.5px] text-[var(--text-secondary)]">
+                <span className="font-mono">{crosstabBinding.row.setName}</span> {crosstabBinding.connector}{' '}
+                <span className="font-mono">{crosstabBinding.column.setName}</span>
+              </p>
+            </button>
           ) : (
             variableResults.map((set, index) => {
               const Row = withinDnd ? DraggablePaletteRow : PaletteVariableRow;
@@ -498,6 +574,16 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ withinDnd = fals
             <span>
               <kbd className="font-mono text-[10.5px] text-[var(--text-secondary)]">↵</kbd> Run
             </span>
+          ) : crosstabBinding ? (
+            <>
+              <span>
+                <kbd className="font-mono text-[10.5px] text-[var(--text-secondary)]">↵</kbd> Apply binding
+              </span>
+              <span className="inline-flex items-center gap-1">
+                <ChevronRight size={11} aria-hidden />
+                Commands
+              </span>
+            </>
           ) : commandPaletteInsertTarget === 'columns' ? (
             <>
               <span>

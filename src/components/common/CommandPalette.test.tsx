@@ -220,4 +220,66 @@ describe('CommandPalette (insert palette)', () => {
     expect(dialog).toHaveAttribute('aria-modal', 'true');
     expect(dialog).toHaveAttribute('aria-label', 'Command palette');
   });
+
+  describe('natural-language crosstab binding (DESIGN-CONV-F)', () => {
+    const brandTrackerState = {
+      variableSets: [
+        { id: 'q5', name: 'q5_preference', structure: 'single', variableIds: ['v_q5'] },
+        {
+          id: 'vs_segment',
+          name: 'SEG. Consumer segment (from segmentation model)',
+          structure: 'single',
+          variableIds: ['segment'],
+        },
+      ],
+      dataset: {
+        id: 'ds1',
+        name: 'brandtracker_w4.sav',
+        rowCount: 1000,
+        variables: [
+          { id: 'v_q5', name: 'q5_preference', label: 'Which brand do you most prefer?', type: 'categorical' },
+          {
+            id: 'segment',
+            name: 'segment',
+            label: 'Consumer segment',
+            type: 'categorical',
+            valueLabels: [
+              { value: 1, label: 'Loyalists' },
+              { value: 2, label: 'Switchers' },
+            ],
+          },
+        ],
+      },
+    } as const;
+
+    it('shows inspectable binding preview and applies row/col config on Enter', () => {
+      const setTableConfig = vi.fn();
+      useVelocityStore.setState({ ...brandTrackerState, setTableConfig } as any);
+      render(<CommandPalette />);
+      fireEvent.change(screen.getByPlaceholderText('Find a variable…'), { target: { value: 'Q5 by segment' } });
+
+      const binding = screen.getByTestId('palette-nl-binding');
+      expect(binding).toHaveTextContent('Crosstab binding');
+      expect(binding).toHaveTextContent('q5_preference → rows');
+      expect(binding).toHaveTextContent('SEG. Consumer segment (from segmentation model) → columns');
+      expect(binding).not.toHaveTextContent(/AI|Displayr|auto-?analy/i);
+
+      fireEvent.keyDown(document, { key: 'Enter' });
+      expect(setTableConfig).toHaveBeenCalledWith({ rowVars: ['q5'], colVar: 'vs_segment' });
+    });
+
+    it('shows incomplete inspectable state when one side does not resolve', () => {
+      useVelocityStore.setState({ ...brandTrackerState } as any);
+      render(<CommandPalette />);
+      fireEvent.change(screen.getByPlaceholderText('Find a variable…'), {
+        target: { value: 'Q5 by unknown_banner' },
+      });
+
+      const partial = screen.getByTestId('palette-nl-partial');
+      expect(partial).toHaveTextContent('Crosstab binding (incomplete)');
+      expect(partial).toHaveTextContent('unknown_banner');
+      expect(partial).toHaveTextContent('(no match)');
+      expect(screen.queryByTestId('palette-nl-binding')).not.toBeInTheDocument();
+    });
+  });
 });
