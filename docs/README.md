@@ -6,9 +6,9 @@ Navigation hub for live documentation. **Agent rules: [`AGENTS.md`](../AGENTS.md
 
 | Need | Read |
 | :--- | :--- |
-| What to work on | `tracker_00_implementation_status.md` (pilot, `STAB-UI-F`, `STAB-UI-T`, gated work) |
-| **Pilot UI presentation gate** | **`audit_07_pilot_presentation_readiness_2026-07-01.md`** — Linear-bar screenshot audit, PPR fix list, frozen workflow screenshots |
-| **User journey screenshots** | **`user_journey_screenshots.md`** — three main journeys (activation, presentation/export, durability) with design decisions and open questions |
+| What to work on | `tracker_00_implementation_status.md` (active redesign-convergence board, pilot gate, stabilization, gated work) |
+| **Historical pilot UI presentation gate** | **`audit_07_pilot_presentation_readiness_2026-07-01.md`** — pre-reset baseline and PPR fix evidence; not final redesign photography |
+| **User journey screenshots** | **`user_journey_screenshots.md`** — current reset-era journey, evidence screenshots, and known gaps |
 | Pilot contract (PILOT-0) | `pilot_00_brief.md` — SAV-to-deck thesis, scope, metrics, ICP screen |
 | Trust evidence (PILOT-2) | `pilot_02_trust_pack.md` — parity, benchmarks, limitations, reproduce commands |
 | Pilot packaging (PILOT-1) | `pilot_01_packaging.md` — build, host, browser matrix, event log |
@@ -43,6 +43,7 @@ Navigation hub for live documentation. **Agent rules: [`AGENTS.md`](../AGENTS.md
 | `design_01_system.md` | Theme tokens and Tailwind rules |
 | `design_02_ux_modes.md` | Workspace, Canvas, Variable Manager |
 | `design_06_semantic_layer.md` | Annotations, concepts, discovery |
+| `plan_05_design_reset_implementation.md` | Design-reset foundation status and remaining validation |
 
 Deck, session, and workspace contracts are in **`arch_07`** §5, §8–§9. Historical UX/deck/workspace design briefs: `archive/2026-05/design/`.
 
@@ -50,8 +51,9 @@ Deck, session, and workspace contracts are in **`arch_07`** §5, §8–§9. Hist
 
 - `plan_01_comprehensive_ui_ux_review.md` — multi-session UI/UX review program (May 2026; UXR complete)
 - `plan_02_ui_presentation_workstream.md` — **active** presentation & activation (`STAB-UI-F`, tracker §4.3)
-- `plan_03_ui_technical_foundation.md` — **active** technical UI foundation (`STAB-UI-T`, tracker §4.4)
-- **`audit_07_pilot_presentation_readiness_2026-07-01.md`** — **active** pilot presentation gate (Linear bar, PPR prioritized fixes, screenshot evidence in `assets/ui-pilot-readiness-audit/`)
+- `plan_03_ui_technical_foundation.md` — technical UI foundation (`STAB-UI-T`, tracker §4.4)
+- `plan_05_design_reset_implementation.md` — **active context** for the implemented reset foundation and incomplete validation; current convergence sequencing lives in the tracker
+- **`audit_07_pilot_presentation_readiness_2026-07-01.md`** — historical pre-reset presentation baseline (Linear bar, PPR fixes, screenshots in `assets/ui-pilot-readiness-audit/`)
 - `reviews/ui_ux_review_2026-05/` — findings register and session notes for that program
 - `playbooks/` — refactors, stats, engine API, UI modes, worker migration, agent analysis, triage
 - `guide_plugin_authoring.md` — plugins

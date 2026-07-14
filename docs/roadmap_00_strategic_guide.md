@@ -27,32 +27,38 @@ For execution details and dependencies, use:
 - Task portfolio execution & eval tracking
 - Capability gap analysis
 
-4. Market-reset pilot (Commercial validation)
+4. Design convergence and representative validation
+- Reconcile the approved redesign candidates with the current product line
+- Complete export review, saved-analysis fidelity, interaction/accessibility, and visual-quality work
+- Capture fresh evidence and test the final candidate with representative users
+
+5. Market-reset pilot (Commercial validation)
 - SAV-to-deck pilot for boutique researchers and independent consultants
 - Trust/performance evidence pack
-- Complete PowerPoint loop and paid-pilot validation
+- Paid-pilot recruiting and delivery after the redesign gate passes
 
-5. Phase 5 expansion (Advanced stats)
+6. Phase 5 expansion (Advanced stats)
 - Harmonization workspace baseline
 - WebR bridge & advanced stats
 
-6. Phase 6/7 extensions (Cognitive Engine & Cloud)
+7. Phase 6/7 extensions (Cognitive Engine & Cloud)
 - Deep semantic reasoning
 - Realtime collaboration & platform imports
 
 ## 2.1 Current Reality Check
 
-As of **June 25, 2026**, Phase 4 validation, post-validation follow-through, May stabilization, and most UI excellence work are complete. The external market assessment resets the active question from "can the architecture work?" to "can Velocity own a narrow paid workflow?"
+As of **July 14, 2026**, Phase 4 validation, post-validation follow-through, May stabilization, and the structural design-reset foundation are complete. The redesign itself is not complete. Approved convergence work remains off the current product line, the export review lane is open, saved slides do not yet restore all analysis state, and final interaction, accessibility, visual, and representative-user evidence is missing.
 
 - **Engine validated:** Mean score 4.7/5 across six eval families. Computation, provenance, export, and session mechanics all work.
 - **Stabilization shipped:** Reopenable workspace (`STAB-WS-1`), matrix MCP + PPTX polish (`STAB-EXP-1`), design-token CI (`STAB-DS-1`), production build + E2E gates (`STAB-CI-1`).
 - **Phase 4 follow-through shipped:** Category-aware discovery, recommended breaks/guardrails, workspace-aware MCP, deck transport resilience, and EVAL-05b harmonization rerun are Done.
-- **No architecture rewrite needed:** Gaps are commercial workflow completion and validation, not an engine/platform thesis failure. Completed foundations are summarized in `docs/completed_foundations_summary.md`.
+- **No architecture rewrite needed:** Gaps are redesign convergence, commercial workflow completion, and validation, not an engine/platform thesis failure. Completed foundations are summarized in `docs/completed_foundations_summary.md`.
 - **Four benchmark baselines frozen:** EVAL-01 (small deck), EVAL-02 (large survey), EVAL-04 (convergence), EVAL-06 (stress).
 - **Market opening narrowed:** Velocity should not claim broad local-first survey AI novelty. The active wedge is analysis-ready SAV file -> defensible, editable client deck for boutique agencies and independent consultants.
 
 Implication:
-- The strategic critical path is **SAV-to-deck pilot validation**, not Phase 5 expansion: `PILOT-0` -> `PILOT-2` / `PILOT-1` -> `PILOT-3` / `PILOT-6` -> `PILOT-7`.
+- The strategic critical path is **design convergence and representative validation before paid-pilot recruiting**, not Phase 5 expansion: `DESIGN-CONV-R0` -> redesign closure -> `DESIGN-CONV-A` -> `PILOT-6` -> `PILOT-7`.
+- Pilot-program preparation may continue in parallel. External recruiting and delivery do not start until the redesign gate passes.
 - All feature additions must be evaluated against: "Does this improve paid-pilot completion, trust, or willingness to pay for the SAV-to-deck wedge?"
 - WebR (`S5-R-1`), broad prep (`S5-PREP-*`), deeper AI (Phase 6), and cloud collaboration (Phase 7) remain frozen until pilot evidence justifies them.
 - See `docs/archive/2026-03/phase4-eval/eval_s4_eval_5_phase_synthesis.md` for the full Phase 4 decision package.

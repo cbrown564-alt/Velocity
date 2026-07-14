@@ -29,7 +29,7 @@ This document catalogs every feature proposed across the three source documents 
 | **Recoding (Bucketing)** | Strategic | **KEEP** | **Done** | Users cannot analyze "Age" without grouping "18-24" etc. (Context Menus implemented) |
 | **Significance Testing (Auto)** | MVP | **KEEP** | **Done** | Standard MR requirement. A/B notations. |
 | **Confidence Level Toggle** | Strategic | **DELAY** | N/A | **Reasoning:** Defaults (95%) work for now. Add advanced settings later to avoid clutter. |
-| **Editable PPTX Export** | N/A (New) | **KEEP** | **Done / Template Loop Open** | `PptxGenJS` export is implemented and tested. The market-reset pilot elevates template reuse, saved slide recipes, wave replacement, and review-before-export as the next commercial-critical loop. |
+| **Editable PPTX Export** | N/A (New) | **KEEP** | **Done / Review Lane Open** | `PptxGenJS` export is implemented and tested. The approved frontend review-before-download experience and final visual verification remain redesign-convergence work. |
 | **Global Filter Bar** | Strategic | **KEEP** | **Done** | Standard UX pattern ("Show me this dashboard for Females"). |
 | **Mission Control Theme** | N/A (New) | **KEEP** | **Done** | **Visual Overhaul:** High-contrast "Electric Cyan" theme for professional "Analyst" feel. |
 
@@ -68,7 +68,8 @@ This document catalogs every feature proposed across the three source documents 
 ## 3. Revised Roadmap Summary
 
 1.  **Phase 1:** Core Viewer (DuckDB). *Status: complete.*
-2.  **Phase 2:** Strategic Workbench (grids, existing weights, recoding, editable PPTX). *Status: complete for current foundation; PowerPoint template loop is active pilot work.*
+2.  **Phase 2:** Strategic Workbench (grids, existing weights, recoding, editable PPTX). *Status: engine/export foundation complete; frontend review and saved-analysis fidelity are active design-convergence work.*
 3.  **Phase 3:** Engine/MCP/Semantic foundation. *Status: complete.*
 4.  **Phase 4:** Agent capability validation and follow-through. *Status: complete; completed details live in `completed_foundations_summary.md`.*
-5.  **Current market-reset pilot:** prioritize SAV-to-deck workflow completion, trust/performance evidence, PowerPoint template loop, minimum viable processing only where pilots block, bounded agent outcomes, and paid-pilot validation before WebR/AI/cloud expansion.
+5.  **Current design convergence:** reconcile approved redesign candidates, complete the export review and saved-analysis loop, close interaction/accessibility/visual gaps, and pass representative validation.
+6.  **Market-reset pilot:** after the redesign gate passes, prioritize SAV-to-deck trust/performance evidence, minimum viable processing only where pilots block, bounded agent outcomes, and paid-pilot validation before WebR/AI/cloud expansion.

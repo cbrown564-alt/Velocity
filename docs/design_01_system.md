@@ -22,13 +22,24 @@ Source of truth for values: [`docs/assets/design-reset-north-star/north_star.htm
 | `--bg-rail` | `#ECE9E3` | Hover/active washes on ground surfaces |
 | `--text-primary` | `#24302A` | Green-ink |
 | `--text-secondary` | `#67736C` | Passes 4.5:1 on panel |
-| `--text-tertiary` | `#9AA39C` | Metadata, disabled |
+| `--text-tertiary` | `#9AA39C` | Disabled or decorative metadata only; not meaningful copy until its contrast is corrected |
 | `--border-color` | `#E3DFD7` | Hairlines |
 | `--border-color-muted` | `#ECE8E1` | Row separators |
 | `--color-accent` | `#B54E33` | Sienna — primary action + significance + live drop target **only** |
 | `--viz-fill-primary` | `#6F8177` | Sage — data marks (distributions, charts) |
 
 Focus rings use ink (`--border-color-active` → `--ring` / `#24302A`), not accent.
+
+### Current conformance gaps
+
+This section is implementation status, not a change to the target system. As of July 14, 2026:
+
+- `--text-tertiary` measures about 2.53:1 on `--bg-panel` and 2.26:1 on `--bg-app`; it must not carry meaningful text. Existing uses need an audit and correction under `DESIGN-CONV-K3`.
+- `--text-secondary` is acceptable on the panel but is about 4.30:1 on the app ground, so small meaningful copy on the ground needs a stronger token.
+- the slide-title contract says Fraunces, while the current `SlideHeader` implementation uses the body face.
+- fixed rail/canvas widths have not been verified across the supported viewport range.
+
+Do not mark the design system enforced until these gaps pass direct contrast, typography, and responsive-layout checks.
 
 ### Accent budget
 
