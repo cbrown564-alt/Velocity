@@ -45,8 +45,7 @@ function createMockWorker(): MockWorkerHandle {
   });
 
   const removeEventListenerMock = vi.fn((type: string, fn: EventListenerOrEventListenerObject) => {
-    const listeners =
-      type === 'message' ? messageListeners : type === 'error' ? errorListeners : messageErrorListeners;
+    const listeners = type === 'message' ? messageListeners : type === 'error' ? errorListeners : messageErrorListeners;
     const idx = listeners.indexOf(fn as MockListener);
     if (idx !== -1) listeners.splice(idx, 1);
   });
