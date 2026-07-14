@@ -229,4 +229,80 @@ describe('DashboardShell (WP2.1 / WP2.3)', () => {
     expect(screen.getByRole('dialog', { name: 'Command palette' })).toBeInTheDocument();
     expect(screen.getByTestId('palette-variable-gender')).toBeInTheDocument();
   });
+
+  it('auto-opens insert palette on first upload handoff (DESIGN-CONV-H)', async () => {
+    useVelocityStore.setState({
+      canvasHandoffTrigger: 'fresh_upload',
+      hasSeenCanvasHandoff: false,
+      tableConfig: { rowVars: [], colVar: null },
+      dataset: {
+        id: 'ds-handoff',
+        name: 'client.sav',
+        rowCount: 800,
+        variables: [
+          {
+            id: 'v-g',
+            name: 'Q5_gender',
+            label: 'Gender',
+            type: 'categorical',
+            valueLabels: [],
+            missingValues: {},
+          },
+          {
+            id: 'v-r',
+            name: 'SEG',
+            label: 'Segment',
+            type: 'categorical',
+            valueLabels: [],
+            missingValues: {},
+          },
+        ],
+        source: 'sav',
+      },
+      commandPaletteOpen: false,
+    });
+
+    render(<DashboardShell {...shellProps} />);
+
+    expect(screen.getByRole('dialog', { name: 'Command palette' })).toBeInTheDocument();
+    expect(useVelocityStore.getState().activeSlideId).toBe('slide-1');
+    expect(useVelocityStore.getState().hasSeenCanvasHandoff).toBe(true);
+    expect(useVelocityStore.getState().canvasHandoffTrigger).toBeNull();
+
+    const search = await screen.findByPlaceholderText('Find a variable…');
+    await act(async () => {
+      await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+    });
+    expect(search).toHaveFocus();
+  });
+
+  it('lands on slide 1 without auto-opening palette when dataset exceeds size gate', () => {
+    useVelocityStore.setState({
+      canvasHandoffTrigger: 'fresh_upload',
+      hasSeenCanvasHandoff: false,
+      activeSlideId: 'slide-2',
+      tableConfig: { rowVars: [], colVar: null },
+      dataset: {
+        id: 'ds-large',
+        name: 'large.sav',
+        rowCount: 50_000,
+        variables: Array.from({ length: 30 }, (_, index) => ({
+          id: `v-${index}`,
+          name: `q${index}`,
+          label: `Q${index}`,
+          type: 'categorical' as const,
+          valueLabels: [],
+          missingValues: {},
+        })),
+        source: 'sav',
+      },
+      commandPaletteOpen: false,
+    });
+
+    render(<DashboardShell {...shellProps} />);
+
+    expect(screen.queryByRole('dialog', { name: 'Command palette' })).not.toBeInTheDocument();
+    expect(useVelocityStore.getState().activeSlideId).toBe('slide-1');
+    expect(useVelocityStore.getState().hasSeenCanvasHandoff).toBe(true);
+  });
 });
