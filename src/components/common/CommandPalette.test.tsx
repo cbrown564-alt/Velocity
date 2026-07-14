@@ -1,12 +1,15 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { act, render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { CommandPalette } from './CommandPalette';
 import { useVelocityStore } from '../../store';
+import { resetPaletteOnboardingForTests, shouldShowPaletteOnboarding } from '../../lib/paletteOnboarding';
 
 beforeEach(() => {
+  resetPaletteOnboardingForTests();
   useVelocityStore.setState({
     commandPaletteOpen: true,
     commandPaletteInsertTarget: null,
+    activeDatasetId: 'ds1',
     closeCommandPalette: vi.fn(() => useVelocityStore.setState({ commandPaletteOpen: false })),
     toggleAppMode: vi.fn(),
     toggleFocusMode: vi.fn(),
@@ -219,5 +222,68 @@ describe('CommandPalette (insert palette)', () => {
     const dialog = screen.getByRole('dialog');
     expect(dialog).toHaveAttribute('aria-modal', 'true');
     expect(dialog).toHaveAttribute('aria-label', 'Command palette');
+  });
+
+  describe('palette onboarding ghost (DESIGN-CONV-D)', () => {
+    it('shows the inline 3-step ghost on first palette open for a workspace', async () => {
+      render(<CommandPalette />);
+      const ghost = await screen.findByTestId('palette-onboarding-ghost');
+      expect(ghost).toHaveTextContent('Search for a variable');
+      // Pin shipped grammar (footer + resolveInsertTarget): ↵ columns, ⌥↵ rows.
+      expect(ghost.textContent).toMatch(/Add to columns.*↵[\s\S]*Add to rows.*⌥↵/);
+    });
+
+    it('does not show the ghost when opened with a preset insert target', () => {
+      useVelocityStore.setState({ commandPaletteInsertTarget: 'columns' });
+      render(<CommandPalette />);
+      expect(screen.queryByTestId('palette-onboarding-ghost')).not.toBeInTheDocument();
+    });
+
+    it('persists dismiss when Got it is clicked', async () => {
+      render(<CommandPalette />);
+      fireEvent.click(await screen.findByRole('button', { name: 'Got it' }));
+      expect(shouldShowPaletteOnboarding('ds1')).toBe(false);
+      expect(screen.queryByTestId('palette-onboarding-ghost')).not.toBeInTheDocument();
+    });
+
+    it('does not re-show the ghost after dismiss on a later palette open', async () => {
+      const { rerender } = render(<CommandPalette />);
+      fireEvent.click(await screen.findByRole('button', { name: 'Got it' }));
+
+      act(() => {
+        useVelocityStore.setState({ commandPaletteOpen: false });
+      });
+      rerender(<CommandPalette />);
+      act(() => {
+        useVelocityStore.setState({ commandPaletteOpen: true });
+      });
+      rerender(<CommandPalette />);
+
+      await waitFor(() => {
+        expect(screen.queryByTestId('palette-onboarding-ghost')).not.toBeInTheDocument();
+      });
+    });
+
+    it('persists dismiss when the palette is closed with escape', async () => {
+      render(<CommandPalette />);
+      await screen.findByTestId('palette-onboarding-ghost');
+      fireEvent.keyDown(document, { key: 'Escape' });
+      expect(shouldShowPaletteOnboarding('ds1')).toBe(false);
+
+      act(() => {
+        useVelocityStore.setState({ commandPaletteOpen: true });
+      });
+      render(<CommandPalette />);
+      await waitFor(() => {
+        expect(screen.queryByTestId('palette-onboarding-ghost')).not.toBeInTheDocument();
+      });
+    });
+
+    it('scopes dismiss per workspace', async () => {
+      render(<CommandPalette />);
+      fireEvent.click(await screen.findByRole('button', { name: 'Got it' }));
+      expect(shouldShowPaletteOnboarding('ds1')).toBe(false);
+      expect(shouldShowPaletteOnboarding('ds2')).toBe(true);
+    });
   });
 });
