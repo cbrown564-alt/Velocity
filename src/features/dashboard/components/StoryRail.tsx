@@ -26,7 +26,7 @@ import { CSS } from '@dnd-kit/utilities';
 import { Copy, Trash2, X } from 'lucide-react';
 import { useVelocityStore } from '../../../store';
 import { registerShortcut } from '../../../lib/keyboardShortcuts/registry';
-import { useReducedMotion } from '../../../lib/motion';
+import { cssTransition, useReducedMotion } from '../../../lib/motion';
 import { resolveSlideTitle } from '../../../core/export/resolveSlideDefaults';
 import { Slide, SlideAnalysisState } from '../../../types/slides';
 import { ConfirmModal } from '../../../components/overlays/ConfirmModal';
@@ -520,18 +520,20 @@ export const StoryRail: React.FC<StoryRailProps> = ({
     return () => unregister.forEach((fn) => fn());
   }, [navigateSlide, addSlide, duplicateSlide]);
 
+  const widthTransition = reducedMotion ? 'none' : cssTransition('width', 'fast', 'standard');
+
   return (
     <aside
       data-testid="story-rail"
       data-rail-expanded={isExpanded ? 'true' : 'false'}
-      data-rail-collapsed={canCollapse && !isHovered ? 'true' : 'false'}
+      data-rail-collapsed={isExpanded ? 'false' : 'true'}
       aria-label="Deck outline"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      style={{ width: `${railWidthPx}px` }}
-      className={`shrink-0 flex flex-col overflow-hidden border-r border-[var(--border-color-muted)] transition-[width] ease-out ${
-        reducedMotion ? 'duration-0' : 'duration-150'
-      } ${isExpanded ? 'px-2.5 pt-2 pb-3' : 'px-1 pt-2 pb-2'}`}
+      style={{ width: `${railWidthPx}px`, transition: widthTransition }}
+      className={`shrink-0 flex flex-col overflow-hidden border-r border-[var(--border-color-muted)] ${
+        isExpanded ? 'px-2.5 pt-2 pb-3' : 'px-1 pt-2 pb-2'
+      }`}
     >
       {isExpanded ? (
         <div className="px-2.5 pt-2 pb-3.5 text-[13px] font-semibold tracking-[0.01em] text-[var(--text-primary)]">
@@ -622,28 +624,28 @@ export const StoryRail: React.FC<StoryRailProps> = ({
       {isExpanded && (
         <div className="mt-auto px-2.5 pt-2 text-[11px] text-[var(--text-tertiary)]">
           <PersistenceStatus
-          mode={persistenceMode}
-          opfsAvailable={opfsAvailable}
-          dbLabel={persistence.opfsDbLabel}
-          usageMb={persistence.opfsUsageMb}
-          quotaMb={persistence.opfsQuotaMb}
-          usagePct={persistence.opfsUsagePct}
-          error={persistenceError}
-          errorHint={persistence.opfsErrorHint}
-          rehydrateError={persistence.opfsRehydrateError}
-          datasetRows={dataset?.rowCount ?? null}
-          datasetColumns={persistence.datasetVariableCount}
-          estimatedCells={persistence.estimatedCells}
-          labeledVariableCount={persistence.labeledVariableCount}
-          totalVariableCount={persistence.datasetVariableCount}
-          totalValueLabelCount={persistence.totalValueLabelCount}
-          memoryRisk={persistence.memoryRisk}
-          partialLoadMessage={persistence.partialLoadMessage}
-          opfsFileKey={dataset?.opfsFileKey}
-          onRefresh={persistence.refreshOpfsDbFiles}
-          onPurge={persistence.purgeQuarantinedDbs}
-          onRebuild={() => void persistence.rebuildFromOpfsSource('dashboard')}
-        />
+            mode={persistenceMode}
+            opfsAvailable={opfsAvailable}
+            dbLabel={persistence.opfsDbLabel}
+            usageMb={persistence.opfsUsageMb}
+            quotaMb={persistence.opfsQuotaMb}
+            usagePct={persistence.opfsUsagePct}
+            error={persistenceError}
+            errorHint={persistence.opfsErrorHint}
+            rehydrateError={persistence.opfsRehydrateError}
+            datasetRows={dataset?.rowCount ?? null}
+            datasetColumns={persistence.datasetVariableCount}
+            estimatedCells={persistence.estimatedCells}
+            labeledVariableCount={persistence.labeledVariableCount}
+            totalVariableCount={persistence.datasetVariableCount}
+            totalValueLabelCount={persistence.totalValueLabelCount}
+            memoryRisk={persistence.memoryRisk}
+            partialLoadMessage={persistence.partialLoadMessage}
+            opfsFileKey={dataset?.opfsFileKey}
+            onRefresh={persistence.refreshOpfsDbFiles}
+            onPurge={persistence.purgeQuarantinedDbs}
+            onRebuild={() => void persistence.rebuildFromOpfsSource('dashboard')}
+          />
         </div>
       )}
 

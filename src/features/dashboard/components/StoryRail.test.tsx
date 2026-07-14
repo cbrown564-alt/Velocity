@@ -246,5 +246,17 @@ describe('StoryRail', () => {
       expect(rail).toHaveAttribute('data-rail-collapsed', 'true');
       expect(rail).toHaveAttribute('data-rail-expanded', 'false');
     });
+
+    it('uses a calm width transition within the motion budget', () => {
+      useVelocityStore.setState({
+        slides: [createSlide({ id: 'slide-1', title: 'Only slide' })],
+        activeSlideId: 'slide-1',
+      });
+      render(<StoryRail {...railProps} />);
+
+      const rail = screen.getByTestId('story-rail');
+      expect(rail.style.transition).toMatch(/width/);
+      expect(rail.style.transition).toMatch(/150ms/);
+    });
   });
 });

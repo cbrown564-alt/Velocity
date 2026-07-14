@@ -30,7 +30,7 @@ The Analysis Canvas is the hub. Users build crosstabs and charts on slides, refi
 
 | Surface | Role | Entry |
 | :--- | :--- | :--- |
-| **Story rail** (left) | Deck outline — numbered slides, title, recipe summary, reorder, `+ New slide`, persistence footer | Always visible |
+| **Story rail** (left) | Deck outline — numbered slides, title, recipe summary, reorder, `+ New slide`, persistence footer | Always visible; collapses to a &lt;48px icon strip on single-slide sessions (hover or rename expands; multi-slide stays expanded) |
 | **Toolbar** (top) | View toggle, Recipe toggle, Insert ⌘K, overflow `···`, primary Export | Always visible |
 | **Slide artifact** (center) | Exportable content only — title, table/chart, shrink-wrapped card | Always visible |
 | **Statistics margin note** | One-line chi-square / sample note outside the card | Below slide when stats apply |
