@@ -86,6 +86,12 @@ The next strategic question is no longer "can the engine thesis work?" The answe
 - UI includes Sankey visualization, mapping table, value remapping, lasso selector, wave detection banner, and cross-wave entry points.
 - Session/store integration and tests are in place.
 
+### Design Reset Convergence — Q6 audit (July 2026)
+
+- **`DESIGN-CONV-Q6` Done:** Recipe structure legibility audit for human + MCP additive refinement. Living evidence: `docs/design_reset_recipe_legibility_audit.md` (verdict + gap list G1–G11).
+- **Unblocks `DESIGN-CONV-I`:** G3 (P0 persistent agent-import “what changed” summary) is the primary I scope; related gaps map to `DESIGN-CONV-B` (G8), `G`/`H`, and extended I work (sections, notes, weight restore).
+- No UI implementation shipped in this close-out; `DESIGN-CONV-J` remains Frozen.
+
 ## Evidence Anchors
 
 - `docs/eval_framework.md` and `evals/README.md`

@@ -43,6 +43,7 @@ Navigation hub for live documentation. **Agent rules: [`AGENTS.md`](../AGENTS.md
 | `design_01_system.md` | Theme tokens and Tailwind rules |
 | `design_02_ux_modes.md` | Workspace, Canvas, Variable Manager |
 | `design_06_semantic_layer.md` | Annotations, concepts, discovery |
+| `design_reset_recipe_legibility_audit.md` | **DESIGN-CONV-Q6 Done** — recipe legibility for human + MCP; gap list before `DESIGN-CONV-I` |
 
 Deck, session, and workspace contracts are in **`arch_07`** §5, §8–§9. Historical UX/deck/workspace design briefs: `archive/2026-05/design/`.
 
