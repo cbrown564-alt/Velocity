@@ -1,4 +1,4 @@
-export { CACHE_OPEN_BUDGET_MS, OPFS_ATTEMPT_TIMEOUT_MS, RESPAWN_TERMINATION_DELAY_MS } from './constants';
+export { CACHE_OPEN_BUDGET_MS, OPFS_ATTEMPT_TIMEOUT_MS, ENGINE_SHUTDOWN_ACK_TIMEOUT_MS } from './constants';
 export {
   resolveBootRestoreStrategy,
   type AppBootMode,
@@ -15,12 +15,14 @@ export {
   createStorePersistenceBridge,
   initializeEngineWorker,
   respawnEngineWorker,
+  shutdownEngineWorker,
   resetEngineInitDedupeForTests,
   type EngineCorruptionPatch,
   type EnginePersistenceBridge,
   type EnginePersistenceStatusPatch,
   type InitializeEngineContext,
   type RespawnEngineContext,
+  type ShutdownEngineContext,
 } from './engineLifecycle';
 export {
   captureBeforeDatasetSwitch,

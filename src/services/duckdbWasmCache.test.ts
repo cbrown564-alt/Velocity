@@ -29,7 +29,6 @@ describe('duckdbWasmCache', () => {
 
   it('returns unsupported when Cache Storage is unavailable', async () => {
     const originalCaches = globalThis.caches;
-    // @ts-expect-error test shim
     delete globalThis.caches;
 
     await expect(probeDuckDbWasmCache()).resolves.toBe('unsupported');

@@ -55,6 +55,7 @@ export type EngineWorkerRequest = EngineRequestBase &
         hasPersistedSource?: boolean;
       }
     | { type: 'engine.ping' }
+    | { type: 'engine.shutdown' }
 
     // --- Persistence ---
     | { type: 'engine.updatePersistenceMetadata'; metadata: PersistedMetadata }
@@ -119,6 +120,7 @@ export type EngineWorkerResponse = EngineResponseBase &
   (
     | { type: 'engine.ready'; opfsAvailable: boolean; duckdbBundle?: DuckDbBundleVariant }
     | { type: 'engine.pong'; hasData: boolean; rowCount?: number }
+    | { type: 'engine.shutdownComplete' }
 
     // --- Persistence ---
     | {
@@ -126,7 +128,7 @@ export type EngineWorkerResponse = EngineResponseBase &
         opfsAvailable: boolean;
         mode: 'opfs' | 'memory' | 'disabled';
         dbPath: string;
-        decision: 'cache_open' | 'rebuild' | 'fresh' | 'memory_fallback' | 'disabled';
+        decision: 'cache_open' | 'rebuild' | 'fresh' | 'memory_fallback' | 'disabled' | 'opfs_locked';
         lastError?: string;
       }
     | { type: 'engine.corruptionDetected'; message: string }

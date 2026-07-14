@@ -7,7 +7,12 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { getLocalDuckDbBundles, resolveDuckDbBundleUrls, resolveDuckDbBundleVariant } from './duckdbBundles';
+import {
+  getLocalDuckDbBundles,
+  resolveDuckDbBundleUrls,
+  resolveDuckDbBundleVariant,
+  selectBootBundle,
+} from './duckdbBundles';
 
 // ─── getLocalDuckDbBundles ────────────────────────────────────────────────────
 
@@ -52,6 +57,19 @@ describe('getLocalDuckDbBundles', () => {
     const a = getLocalDuckDbBundles();
     const b = getLocalDuckDbBundles();
     expect(a).not.toBe(b);
+  });
+});
+
+// ─── selectBootBundle ────────────────────────────────────────────────────────
+
+describe('selectBootBundle', () => {
+  it('forces the single-threaded EH bundle when OPFS DB persistence is enabled', async () => {
+    // COI cannot reopen OPFS DBs (DataCloneError on the sync access handle), so
+    // OPFS persistence must boot on EH.
+    const bundles = getLocalDuckDbBundles();
+    const selected = await selectBootBundle(bundles, true);
+    expect(resolveDuckDbBundleVariant(selected)).toBe('eh');
+    expect(selected.pthreadWorker).toBeNull();
   });
 });
 

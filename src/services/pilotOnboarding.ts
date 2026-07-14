@@ -3,7 +3,7 @@
  * Events stay on-device in localStorage until exported.
  */
 
-export type OpfsBootDecision = 'cache_open' | 'rebuild' | 'fresh' | 'memory_fallback' | 'disabled';
+export type OpfsBootDecision = 'cache_open' | 'rebuild' | 'fresh' | 'memory_fallback' | 'disabled' | 'opfs_locked';
 
 export type BootRestoreStrategy = 'open-cache' | 'rebuild-from-source' | 'fresh';
 

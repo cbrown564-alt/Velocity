@@ -181,7 +181,10 @@ export function createPersistenceActions(
       const activeDbPath = get().activeDbPath;
 
       if (activeDbPath?.startsWith('opfs://')) {
-        get().terminateWorker();
+        // Graceful shutdown releases the worker's OPFS sync access handle + lock
+        // before we delete the DB files — otherwise removeEntry races a live
+        // handle and throws the access-handle error.
+        await get().shutdownWorker();
         try {
           const dbFiles = await opfsFileManager.listDbFiles();
           await Promise.all(dbFiles.map((file) => opfsFileManager.deleteDbFile(file.name)));
