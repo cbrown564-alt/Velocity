@@ -1,10 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import {
-  __resetOpfsDbLockForTests,
-  acquireOpfsDbLock,
-  isOpfsDbLockHeld,
-  releaseOpfsDbLock,
-} from './opfsDbLock';
+import { __resetOpfsDbLockForTests, acquireOpfsDbLock, isOpfsDbLockHeld, releaseOpfsDbLock } from './opfsDbLock';
 
 /** Minimal Web Locks fake: models exclusive ownership + ifAvailable semantics. */
 class FakeLockManager {

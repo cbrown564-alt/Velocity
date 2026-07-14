@@ -1,12 +1,6 @@
 export type PersistenceMode = 'opfs' | 'memory' | 'disabled';
 
-export type OpfsBootDecision =
-  | 'cache_open'
-  | 'rebuild'
-  | 'fresh'
-  | 'memory_fallback'
-  | 'disabled'
-  | 'opfs_locked';
+export type OpfsBootDecision = 'cache_open' | 'rebuild' | 'fresh' | 'memory_fallback' | 'disabled' | 'opfs_locked';
 
 export type OpfsSupport = {
   supported: boolean;
@@ -27,8 +21,7 @@ export type AcquireOpfsLock = () => Promise<boolean>;
 /** Release the single-owner OPFS DB lock (only when abandoning OPFS for memory). */
 export type ReleaseOpfsLock = () => void;
 
-export const OPFS_LOCKED_MESSAGE =
-  'OPFS database is locked by another tab or worker; using in-memory mode';
+export const OPFS_LOCKED_MESSAGE = 'OPFS database is locked by another tab or worker; using in-memory mode';
 
 export type PersistenceInitDeps = {
   enableOpfs: boolean;
