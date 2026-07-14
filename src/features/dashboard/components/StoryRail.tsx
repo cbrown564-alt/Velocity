@@ -30,6 +30,8 @@ import { resolveSlideTitle } from '../../../core/export/resolveSlideDefaults';
 import { Slide, SlideAnalysisState } from '../../../types/slides';
 import { ConfirmModal } from '../../../components/overlays/ConfirmModal';
 import { PersistenceStatus } from './PersistenceStatus';
+import { SessionImportSummary } from './SessionImportSummary';
+import type { SessionImportRailSummary } from '../../../core/session/sessionImportRailSummary';
 import type { PersistenceManagerState } from '../../../hooks/usePersistenceManager';
 
 function isAnalysisStateEqual(current: SlideAnalysisState, saved: SlideAnalysisState): boolean {
@@ -310,6 +312,8 @@ export interface StoryRailProps {
   opfsAvailable: boolean;
   persistenceMode: string;
   persistenceError: string | null;
+  sessionImportSummary?: SessionImportRailSummary | null;
+  onDismissSessionImportSummary?: () => void;
 }
 
 export const StoryRail: React.FC<StoryRailProps> = ({
@@ -317,6 +321,8 @@ export const StoryRail: React.FC<StoryRailProps> = ({
   opfsAvailable,
   persistenceMode,
   persistenceError,
+  sessionImportSummary = null,
+  onDismissSessionImportSummary,
 }) => {
   const slides = useVelocityStore((state) => state.slides);
   const activeSlideId = useVelocityStore((state) => state.activeSlideId);
@@ -560,6 +566,9 @@ export const StoryRail: React.FC<StoryRailProps> = ({
       </button>
 
       <div className="mt-auto px-2.5 pt-2 text-[11px] text-[var(--text-tertiary)]">
+        {sessionImportSummary && onDismissSessionImportSummary && (
+          <SessionImportSummary summary={sessionImportSummary} onDismiss={onDismissSessionImportSummary} />
+        )}
         <PersistenceStatus
           mode={persistenceMode}
           opfsAvailable={opfsAvailable}

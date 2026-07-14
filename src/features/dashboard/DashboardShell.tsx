@@ -20,6 +20,7 @@ import { VariableCard } from './components/DraggableVariable';
 import { ContextMenu } from './components/ContextMenu';
 
 import type { PersistenceManagerState } from '../../hooks/usePersistenceManager';
+import type { SessionImportRailSummary } from '../../core/session/sessionImportRailSummary';
 
 const SmartCanvas: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className }) => {
   const { setNodeRef, isOver } = useDroppable({ id: 'canvas' });
@@ -38,6 +39,8 @@ export interface DashboardShellProps {
   onReturnToWorkspace: () => void;
   onOpenSessionImport: () => void;
   onExportSession: () => void;
+  sessionImportSummary?: SessionImportRailSummary | null;
+  onDismissSessionImportSummary?: () => void;
 }
 
 export const DashboardShell: React.FC<DashboardShellProps> = ({
@@ -45,6 +48,8 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
   onReturnToWorkspace,
   onOpenSessionImport,
   onExportSession,
+  sessionImportSummary = null,
+  onDismissSessionImportSummary,
 }) => {
   const dataset = useVelocityStore((state) => state.dataset);
   const isQuerying = useVelocityStore((state) => state.isQuerying);
@@ -128,6 +133,8 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
             opfsAvailable={opfsAvailable}
             persistenceMode={persistenceMode}
             persistenceError={persistenceError}
+            sessionImportSummary={sessionImportSummary}
+            onDismissSessionImportSummary={onDismissSessionImportSummary}
           />
 
           <main

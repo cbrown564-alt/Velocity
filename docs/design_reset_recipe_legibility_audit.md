@@ -18,7 +18,7 @@
 | Recipe summary line: `rows × col` only (e.g. `Q5_gender × SEG`) | Weight on any slide (rail or inactive) |
 | Active-slide unsaved dot (subtle grey pill) | Chart vs table mode |
 | Reorder, duplicate, delete, `+ New slide` | Speaker notes (`Slide.notes`) |
-| Persistence footer (OPFS / dataset stats) | Agent import diagnostics / “what changed” (DESIGN-CONV-I not built) |
+| Persistence footer (OPFS / dataset stats) | Agent import diagnostics beyond Path I summary (sections / notes — G4/G5) |
 
 Recipe summary is rows×cols only (`StoryRail.tsx` → `getRecipeSummary`). Active slide uses live `tableConfig`; inactive slides use saved `slide.analysisState`.
 
