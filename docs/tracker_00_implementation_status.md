@@ -219,7 +219,7 @@ These rows remain directionally valid, but should not become active until `PILOT
 | Q3 | Where does "review before export" live? | **Confirmed: deck preview step before PPTX.** Export is still fire-and-download; add a review lane (Path B) as a journey requirement, especially for agent-built sessions. | `DESIGN-CONV-B` — **Wave 1 priority** |
 | Q4 | Can we teach palette grammar without reintroducing coaching? | **Proceed via Path D.** One-time inline ghost inside the palette — dismiss forever, no tour overlay. | `DESIGN-CONV-D` |
 | Q5 | Is focus mode still a mode? | **Focus mode is redundant.** Default chrome + honest slide is the presentation surface; retire focus mode rather than polish it. | `DESIGN-CONV-Q5` |
-| Q6 | Does the UI make recipe structure legible for additive refinement (human + MCP)? | **Open question — audit before build.** Recipe inspector exists; legibility for handoff evals unproven. Audit first; implement diff/summary if gaps found (Path I). | `DESIGN-CONV-Q6` → `DESIGN-CONV-I` |
+| Q6 | Does the UI make recipe structure legible for additive refinement (human + MCP)? | **Audit complete — Path I warranted.** [`design_reset_recipe_legibility_audit.md`](design_reset_recipe_legibility_audit.md) finds G3 (ephemeral import toast) as P0 for MCP handoff; `DESIGN-CONV-I` implements the persistent rail footer. Other gaps map to B/G. | `DESIGN-CONV-Q6` → `DESIGN-CONV-I` |
 | Q7 | Dark mode vs journey polish? | **Dark mode after journey polish.** Token inversion of evolved Soft Machine only when a pilot blocks without it. | `DESIGN-CONV-J` — **Frozen** until Wave 4 gate |
 
 #### Execution board
@@ -234,10 +234,10 @@ These rows remain directionally valid, but should not become active until `PILOT
 | DESIGN-CONV-F | F | Natural language | Insert palette NL row/column binding ("Q5 by segment") — variable binding only, not full AI analysis | DESIGN-CONV-D | Not started | Yes | T,L,U,I,A,V | Eval against Displayr-positioning guardrail; inspectability tests |
 | DESIGN-CONV-G | G | Polish | Story rail collapses to icon strip (&lt;48px) on single-slide sessions; expands on hover or deck growth | DESIGN-RESET-1 | Not started | Yes | T,L,U,I | Motion budget per WP3.2; screenshot at 1-slide vs 5-slide |
 | DESIGN-CONV-H | H | Continuity | After upload, land on slide 1 with palette pre-focused; reduce Workshop Door → first insertion gap | DESIGN-RESET-1 | Not started | Yes | T,L,U,I,V | Timed handoff metric in five-minute pass script |
-| DESIGN-CONV-I | I | Agent | Quiet "what changed" summary on agent session import — slides added, variables unresolved — story rail footer | DESIGN-CONV-Q6 | Not started | Yes | T,L,U,I,A | MCP handoff eval scenario; muted per calm-tech rules |
+| DESIGN-CONV-I | I | Agent | Quiet "what changed" summary on agent session import — slides added, unresolved vars, dropped filters/weights — story rail footer | DESIGN-CONV-Q6 | In review | Yes | T,L,U,I,A | Persistent muted `SessionImportSummary` in StoryRail footer (replaces 10s toast); `sessionImportRailSummary` + StoryRail tests; Q6 G3 closed |
 | DESIGN-CONV-J | J | Hold | Dark mode as token inversion of evolved Soft Machine | DESIGN-CONV-B, DESIGN-CONV-H, PILOT-7 or pilot request | Frozen | Yes | T,L,U,I | Pilot blocker evidence only |
 | DESIGN-CONV-Q5 | — | Retire | Remove focus mode (`F` shortcut, toolbar toggle, focus chrome rules); default canvas is presentation surface | DESIGN-RESET-1 | Not started | Yes | T,L,U,I | E2E focus specs retired or rewritten; `design_02_ux_modes.md` updated |
-| DESIGN-CONV-Q6 | — | Audit | Recipe structure legibility review for human + MCP additive refinement; gap list before `DESIGN-CONV-I` build | DESIGN-RESET-1 | In progress | No | A,V | Written audit against recipe inspector + story rail; links to EVAL-03 handoff criteria |
+| DESIGN-CONV-Q6 | — | Audit | Recipe structure legibility review for human + MCP additive refinement; gap list before `DESIGN-CONV-I` build | DESIGN-RESET-1 | Done | No | A,V | [`design_reset_recipe_legibility_audit.md`](design_reset_recipe_legibility_audit.md) — G3 → Path I; dependency for `DESIGN-CONV-I` satisfied |
 
 #### Wave plan (multi-agent orchestration)
 

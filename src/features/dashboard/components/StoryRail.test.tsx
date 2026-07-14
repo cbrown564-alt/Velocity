@@ -173,6 +173,7 @@ describe('StoryRail', () => {
       expect(screen.getByText(/Session imported · 3 slides/)).toBeInTheDocument();
       expect(screen.getByTestId('session-import-unresolved')).toHaveTextContent('2 variables unresolved');
       expect(screen.getByTestId('session-import-affected')).toHaveTextContent('Affects slides 2');
+      expect(screen.getByText('1 filter was removed.')).toBeInTheDocument();
     });
     it('dismisses the session import summary from the rail footer', () => {
       const onDismiss = vi.fn();

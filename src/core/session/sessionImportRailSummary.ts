@@ -46,13 +46,16 @@ export function findAffectedSlideNumbers(
     ...diagnostics.droppedColVarIds,
   ]);
   const missingVariableIds = new Set(diagnostics.missingVariableIds);
+  const droppedFilterIds = new Set(diagnostics.droppedFilterIds);
   const affected = new Set<number>();
   originalSlides.forEach((slide, index) => {
     const state = slide.analysisState ?? { rowVars: [], colVar: null, filters: [], weightVar: null };
     const hasIssue =
       state.rowVars.some((rowVarId) => droppedSetIds.has(rowVarId)) ||
       (state.colVar ? droppedSetIds.has(state.colVar) : false) ||
-      state.filters.some((filter) => missingVariableIds.has(filter.variableId)) ||
+      state.filters.some(
+        (filter) => missingVariableIds.has(filter.variableId) || droppedFilterIds.has(filter.id),
+      ) ||
       (state.weightVar ? missingVariableIds.has(state.weightVar) : false);
     if (hasIssue) affected.add(index + 1);
   });
