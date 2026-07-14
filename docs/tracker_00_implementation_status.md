@@ -236,7 +236,7 @@ These rows remain directionally valid, but should not become active until `PILOT
 | DESIGN-CONV-H | H | Continuity | After upload, land on slide 1 with palette pre-focused; reduce Workshop Door → first insertion gap | DESIGN-RESET-1 | Not started | Yes | T,L,U,I,V | Timed handoff metric in five-minute pass script |
 | DESIGN-CONV-I | I | Agent | Quiet "what changed" summary on agent session import — slides added, variables unresolved — story rail footer | DESIGN-CONV-Q6 | Not started | Yes | T,L,U,I,A | MCP handoff eval scenario; muted per calm-tech rules |
 | DESIGN-CONV-J | J | Hold | Dark mode as token inversion of evolved Soft Machine | DESIGN-CONV-B, DESIGN-CONV-H, PILOT-7 or pilot request | Frozen | Yes | T,L,U,I | Pilot blocker evidence only |
-| DESIGN-CONV-Q5 | — | Retire | Remove focus mode (`F` shortcut, toolbar toggle, focus chrome rules); default canvas is presentation surface | DESIGN-RESET-1 | Not started | Yes | T,L,U,I | E2E focus specs retired or rewritten; `design_02_ux_modes.md` updated |
+| DESIGN-CONV-Q5 | — | Retire | Remove focus mode (`F` shortcut, toolbar toggle, focus chrome rules); default canvas is presentation surface | DESIGN-RESET-1 | In review | Yes | T,L,U,I | Focus store/API + F/toolbar/palette removed; focus unit tests deleted; screenshot/eval scripts cleaned; `design_02_ux_modes.md` updated |
 | DESIGN-CONV-Q6 | — | Audit | Recipe structure legibility review for human + MCP additive refinement; gap list before `DESIGN-CONV-I` build | DESIGN-RESET-1 | In progress | No | A,V | Written audit against recipe inspector + story rail; links to EVAL-03 handoff criteria |
 
 #### Wave plan (multi-agent orchestration)

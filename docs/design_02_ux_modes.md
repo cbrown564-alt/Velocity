@@ -50,6 +50,7 @@ The Analysis Canvas is the hub. Users build crosstabs and charts on slides, refi
 - Persistent analysis shelf / filter bar row (replaced by recipe inspector)
 - Timeline dock (the story rail **is** the timeline)
 - Coaching layer (tours, stacked toasts, suggested-starting-point pills)
+- Focus mode (`F`, toolbar toggle, focus-only chrome) — retired; the default Analysis Canvas **is** the presentation surface (DESIGN-CONV-Q5)
 
 ### Primary responsibilities
 
@@ -117,4 +118,6 @@ File-drop → three titled slides → PPTX in under **5 minutes**, zero interrup
 
 ## 7. Current stabilization focus
 
-The mode model is coherent after the design reset. The highest-priority UX gap remains workspace reopen/switch/rebuild predictability (STAB-WS). PILOT-6 demo photography should use the post-reset UI — re-screenshot if photography already happened on pre-reset chrome (see plan_05 WP4.4).
+The product has three modes only: Workspace, Analysis Canvas, and Variable Manager. There is no separate focus/presentation mode — canvas chrome is already the presentation posture.
+
+The highest-priority UX gap remains workspace reopen/switch/rebuild predictability (STAB-WS). PILOT-6 demo photography should use this post-reset chrome (no focus-mode toggle) — re-screenshot if photography already happened on pre-reset UI (see plan_05 WP4.4).
