@@ -54,4 +54,15 @@ describe('evaluateCanvasHandoff (DESIGN-CONV-H)', () => {
       openPalette: false,
     });
   });
+
+  it('evaluates handoff within a tight sync budget (timed metric)', () => {
+    const iterations = 1_000;
+    const start = performance.now();
+    for (let i = 0; i < iterations; i += 1) {
+      evaluateCanvasHandoff(ctx({ rowCount: 500 + (i % 50), variableCount: 20 }));
+    }
+    const elapsedMs = performance.now() - start;
+    // Gate decision must stay synchronous main-thread work (<<1ms per call).
+    expect(elapsedMs / iterations).toBeLessThan(0.5);
+  });
 });

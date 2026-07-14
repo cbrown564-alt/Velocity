@@ -145,6 +145,17 @@ async function waitForFirstCrosstab(page, timeoutMs = 60000) {
 async function runUploadToFirstCrosstab(page, savPath) {
   const fileDropAt = Date.now();
   await page.getByTestId('dataset-upload-input').setInputFiles(savPath);
+
+  // DESIGN-CONV-H: time to canvas ready / palette auto-open after upload.
+  const paletteInput = page.getByPlaceholder('Find a variable…');
+  const tableView = page.getByRole('button', { name: 'Table view' });
+  await Promise.race([
+    paletteInput.waitFor({ state: 'visible', timeout: 180000 }),
+    tableView.waitFor({ state: 'visible', timeout: 180000 }),
+  ]);
+  const canvasHandoffMs = Date.now() - fileDropAt;
+  const paletteAutoOpened = await paletteInput.isVisible().catch(() => false);
+
   await waitForDashboardReady(page);
 
   const tableVisible = await page
@@ -156,7 +167,11 @@ async function runUploadToFirstCrosstab(page, savPath) {
     await insertVariable(page, 'marital', 'columns');
   }
   await waitForFirstCrosstab(page);
-  return Date.now() - fileDropAt;
+  return {
+    firstCrosstabMs: Date.now() - fileDropAt,
+    canvasHandoffMs,
+    paletteAutoOpened,
+  };
 }
 
 async function addNewSlide(page) {
@@ -249,6 +264,8 @@ async function main() {
     coldFirstCrosstabMs: null,
     warmFirstCrosstabMs: null,
     exportPptxMs: null,
+    canvasHandoffMs: null,
+    paletteAutoOpened: null,
   };
 
   try {
@@ -269,7 +286,11 @@ async function main() {
     await prepareColdSession(page);
 
     timings.fileDropAt = Date.now();
-    journeyMetrics.coldFirstCrosstabMs = await runUploadToFirstCrosstab(page, SLEEP_SAV);
+    const coldUpload = await runUploadToFirstCrosstab(page, SLEEP_SAV);
+    journeyMetrics.coldFirstCrosstabMs = coldUpload.firstCrosstabMs;
+    journeyMetrics.canvasHandoffMs = coldUpload.canvasHandoffMs;
+    journeyMetrics.paletteAutoOpened = coldUpload.paletteAutoOpened;
+    steps.push({ step: 'canvas-handoff', atMs: coldUpload.canvasHandoffMs, paletteAutoOpened: coldUpload.paletteAutoOpened });
     steps.push({ step: 'cold-first-crosstab', atMs: journeyMetrics.coldFirstCrosstabMs });
     steps.push({ step: 'dashboard-ready', atMs: journeyMetrics.coldFirstCrosstabMs });
 
@@ -305,7 +326,8 @@ async function main() {
 
     if (journeyGate) {
       await page.goto(BASE_URL);
-      journeyMetrics.warmFirstCrosstabMs = await runUploadToFirstCrosstab(page, SLEEP_SAV);
+      const warmUpload = await runUploadToFirstCrosstab(page, SLEEP_SAV);
+      journeyMetrics.warmFirstCrosstabMs = warmUpload.firstCrosstabMs;
       steps.push({ step: 'warm-first-crosstab', atMs: journeyMetrics.warmFirstCrosstabMs });
     }
 
@@ -346,7 +368,11 @@ async function main() {
     );
     if (journeyGate) {
       console.log(
-        `Journey metrics: cold=${journeyMetrics.coldFirstCrosstabMs}ms warm=${journeyMetrics.warmFirstCrosstabMs}ms export=${journeyMetrics.exportPptxMs}ms`,
+        `Journey metrics: cold=${journeyMetrics.coldFirstCrosstabMs}ms warm=${journeyMetrics.warmFirstCrosstabMs}ms export=${journeyMetrics.exportPptxMs}ms handoff=${journeyMetrics.canvasHandoffMs}ms palette=${journeyMetrics.paletteAutoOpened}`,
+      );
+    } else {
+      console.log(
+        `Handoff metric: canvasHandoffMs=${journeyMetrics.canvasHandoffMs} paletteAutoOpened=${journeyMetrics.paletteAutoOpened}`,
       );
     }
     console.log(`Pass: ${pass ? 'YES' : 'NO'} (< 5:00, zero interruptions, ≥3 deck slides, ≥3 exported slides)`);
