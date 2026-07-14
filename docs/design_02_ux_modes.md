@@ -42,7 +42,7 @@ The Analysis Canvas is the hub. Users build crosstabs and charts on slides, refi
 | **Insert palette** | Variable search, dense rows, insertion grammar (↵ rows, ⌥↵ columns, ⇧↵ filter); commands behind `>` prefix | `Insert ⌘K`, empty-state Browse, keyboard ⌘K |
 | **Recipe inspector** (right) | Rows / Columns / Filter / Weight chips, display settings (Cell n, Bases), significance method | `Recipe` ghost button; collapsed by default |
 | **Variable Manager** | High-density find/inspect/recode (see §3) | Overflow `···` → Variable Manager, or keyboard `V` |
-| **Export modal** | PPTX / session export | Primary Export button |
+| **Export modal** | PPTX / session export; PPTX requires a preview lane (filmstrip, recipe summary, significance audit) before download | Primary Export button |
 
 ### What left the canvas
 

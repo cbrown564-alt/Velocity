@@ -408,6 +408,10 @@ export const ExportModal: React.FC<ExportModalProps> = ({ isOpen, onClose, confi
       setExportError('Select at least one slide to export.');
       return;
     }
+    if (format === 'pptx' && exportStep !== 'preview') {
+      setExportError('Review the export preview before downloading.');
+      return;
+    }
     if (!exportReview.canExport) {
       setExportError(
         exportReview.issues.find((issue) => issue.severity === 'block')?.message ??

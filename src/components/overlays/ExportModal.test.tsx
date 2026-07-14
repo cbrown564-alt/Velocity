@@ -304,11 +304,16 @@ describe('ExportModal accessibility', () => {
       },
     } as never);
     render(<ExportModal isOpen onClose={vi.fn()} config={{ title: 'Report', analyses: [] }} />);
+    expect(screen.getByTestId('export-modal-review')).toBeInTheDocument();
+    expect(screen.queryByTestId('export-modal-submit')).not.toBeInTheDocument();
     fireEvent.click(screen.getByTestId('export-modal-review'));
     expect(screen.getByTestId('export-preview-lane')).toBeInTheDocument();
     expect(screen.getByTestId('export-preview-significance-audit')).toBeInTheDocument();
+    expect(screen.getByTestId('export-preview-recipe-summary')).toHaveTextContent(/gender × region/i);
+    expect(screen.getByTestId('export-modal-submit')).toHaveTextContent(/download pptx/i);
     fireEvent.click(screen.getByTestId('export-preview-back'));
     expect(screen.queryByTestId('export-preview-lane')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('export-modal-submit')).not.toBeInTheDocument();
   });
 
   it('toggles show significance checkbox', () => {

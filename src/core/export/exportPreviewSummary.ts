@@ -55,18 +55,41 @@ export interface SignificanceAuditSummary {
   weight: string | null;
 }
 
+function comparisonMethodLabel(method: AnalysisSettings['comparisonMethod']): string {
+  switch (method) {
+    case 'pairwise':
+      return 'pairwise (A/B/C)';
+    case 'cell_vs_rest':
+      return 'cell vs rest';
+    default: {
+      const _exhaustive: never = method;
+      return _exhaustive;
+    }
+  }
+}
+
+function correctionTypeLabel(correction: AnalysisSettings['correctionType']): string {
+  switch (correction) {
+    case 'bonferroni':
+      return 'Bonferroni';
+    case 'fdr':
+      return 'BH (FDR)';
+    case 'none':
+      return 'none';
+    default: {
+      const _exhaustive: never = correction;
+      return _exhaustive;
+    }
+  }
+}
+
 export function buildSignificanceAuditSummary(
   analysisSettings: AnalysisSettings,
   showSignificance: boolean,
   weightVarName: string | null,
 ): SignificanceAuditSummary {
-  const comparisonLabel = analysisSettings.comparisonMethod === 'pairwise' ? 'pairwise (A/B/C)' : 'cell vs rest';
-  const correctionLabel =
-    analysisSettings.correctionType === 'bonferroni'
-      ? 'Bonferroni'
-      : analysisSettings.correctionType === 'fdr'
-        ? 'BH (FDR)'
-        : 'none';
+  const comparisonLabel = comparisonMethodLabel(analysisSettings.comparisonMethod);
+  const correctionLabel = correctionTypeLabel(analysisSettings.correctionType);
   const primaryLevel = Math.round(analysisSettings.significanceLevel * 100);
 
   return {

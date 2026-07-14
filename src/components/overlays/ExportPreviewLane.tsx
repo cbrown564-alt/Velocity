@@ -1,6 +1,10 @@
 import React from 'react';
 import { BarChart3, LayoutGrid } from 'lucide-react';
-import type { ExportPreviewSlideSummary, SignificanceAuditSummary } from '../../core/export/exportPreviewSummary';
+import type {
+  ExportPreviewSlideStatus,
+  ExportPreviewSlideSummary,
+  SignificanceAuditSummary,
+} from '../../core/export/exportPreviewSummary';
 import styles from './ExportModal.module.css';
 
 export interface ExportPreviewLaneProps {
@@ -11,6 +15,21 @@ export interface ExportPreviewLaneProps {
   showCounts: boolean;
   significanceAudit: SignificanceAuditSummary;
   issueCount: number;
+}
+
+function previewStatusLabel(status: ExportPreviewSlideStatus): string {
+  switch (status) {
+    case 'ready':
+      return 'Ready';
+    case 'warning':
+      return 'Review';
+    case 'blocked':
+      return 'Blocked';
+    default: {
+      const _exhaustive: never = status;
+      return _exhaustive;
+    }
+  }
 }
 
 function SlideThumbnailArt({
@@ -93,7 +112,7 @@ export const ExportPreviewLane: React.FC<ExportPreviewLaneProps> = ({
                   className={`${styles.previewThumbStatus} ${styles[`previewThumbStatus_${slide.status}`]}`}
                   data-testid={`export-preview-status-${slide.index}`}
                 >
-                  {slide.status === 'ready' ? 'Ready' : slide.status === 'warning' ? 'Review' : 'Blocked'}
+                  {previewStatusLabel(slide.status)}
                 </span>
               </button>
             );

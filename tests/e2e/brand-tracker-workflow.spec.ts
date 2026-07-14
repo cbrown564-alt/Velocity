@@ -39,7 +39,10 @@ test('brand tracker workflow: load example, auto funnel-relevant first crosstab'
   await expect(page.getByText(/Analysis weight/i).first()).toBeVisible({ timeout: 15000 });
   await expect(page.getByText('Applied').first()).toBeVisible({ timeout: 15000 });
 
-  // Export path is reachable once a crosstab is computed.
+  // Export path is reachable once a crosstab is computed; PPTX requires preview gate.
   await page.getByRole('button', { name: 'Export', exact: true }).click();
+  await expect(page.getByTestId('export-modal-review')).toBeVisible({ timeout: 15000 });
+  await page.getByTestId('export-modal-review').click();
+  await expect(page.getByTestId('export-preview-lane')).toBeVisible({ timeout: 15000 });
   await expect(page.getByTestId('export-modal-submit')).toBeVisible({ timeout: 15000 });
 });
