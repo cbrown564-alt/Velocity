@@ -10,6 +10,7 @@ export interface WorkspaceViewProps {
   onOpenDataset: (dataset: StoredDataset) => void;
   onUploadFile: () => void;
   onLoadExample: () => void;
+  onStartFromTemplate?: () => void;
   onCreateProject: (selectedDatasetIds: string[]) => void;
   onDeleteDataset: (id: string) => void;
   onToggleStar: (id: string) => void;

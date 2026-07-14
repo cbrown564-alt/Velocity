@@ -59,6 +59,7 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
   onOpenDataset,
   onUploadFile,
   onLoadExample,
+  onStartFromTemplate,
   onCreateProject,
   onDeleteDataset,
   onToggleStar,
@@ -110,6 +111,13 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
     }
     onLoadExample();
   }, [onLoadExample, showFirstRunLanding]);
+
+  const handleStartFromTemplateWithTracking = useCallback(() => {
+    if (showFirstRunLanding) {
+      recordPilotEvent('landing_cta_example', { source: 'template' });
+    }
+    onStartFromTemplate?.();
+  }, [onStartFromTemplate, showFirstRunLanding]);
 
   const handleFileDropWithTracking = useCallback(
     (file: File) => {
@@ -475,6 +483,7 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
           <WorkspaceEmptyState
             onUpload={handleUploadWithTracking}
             onLoadExample={handleLoadExampleWithTracking}
+            onStartFromTemplate={onStartFromTemplate ? handleStartFromTemplateWithTracking : undefined}
             isFirstRun={showFirstRunLanding}
             onImportSession={showFirstRunLanding ? onImportSession : undefined}
             onFileDrop={onFileDrop ? handleFileDropWithTracking : undefined}

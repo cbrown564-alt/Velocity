@@ -59,6 +59,13 @@ export interface SlidesSlice {
   addFilterToSlides: (slideIds: string[], filter: any) => void;
 
   getDeckRecipe: (metadata?: Pick<DeckRecipe, 'title' | 'subtitle' | 'branding'>) => DeckRecipe;
+
+  applyDeckTemplate: (payload: {
+    slides: Slide[];
+    sections: SlideSection[];
+    activeSlideId: string;
+    activeCellId: string | null;
+  }) => void;
 }
 
 // ============================================================================
@@ -494,5 +501,16 @@ export const createSlidesSlice: SlidesSliceCreator = (set, get) => ({
   getDeckRecipe: (metadata) => {
     const state = get();
     return buildDeckRecipe(state.slides, state.sections, metadata);
+  },
+
+  applyDeckTemplate: ({ slides, sections, activeSlideId, activeCellId }) => {
+    const activeSlide = slides.find((slide) => slide.id === activeSlideId) ?? slides[0];
+    set({
+      slides,
+      sections,
+      activeSlideId: activeSlide?.id ?? activeSlideId,
+      activeCellId: activeCellId ?? activeSlide?.cells[0]?.id ?? null,
+    });
+    if (activeSlide) projectSlideAnalysisState(get(), activeSlide.analysisState, { runAnalysis: true });
   },
 });

@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { ArrowRight, BarChart3, FileInput, FileUp, Presentation, Table2, Upload } from 'lucide-react';
+import { ArrowRight, BarChart3, FileInput, FileUp, LayoutTemplate, Presentation, Table2, Upload } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import {
   PILOT_LANDING_DROP_HINT,
@@ -15,6 +15,9 @@ import {
   PILOT_LANDING_LIBRARY_UPLOAD,
   PILOT_LANDING_PREVIEW_LABEL,
   PILOT_LANDING_SUBHEAD,
+  PILOT_LANDING_TEMPLATE_DESC,
+  PILOT_LANDING_TEMPLATE_SHORT,
+  PILOT_LANDING_TEMPLATE_TITLE,
   PILOT_LANDING_UPLOAD_CTA,
   PILOT_LANDING_WORKFLOW_STEPS,
 } from '../../../constants/pilotCopy';
@@ -27,10 +30,11 @@ const WORKFLOW_ICONS: LucideIcon[] = [FileInput, Table2, Presentation];
 export const WorkspaceEmptyState: React.FC<{
   onUpload: () => void;
   onLoadExample: () => void;
+  onStartFromTemplate?: () => void;
   isFirstRun?: boolean;
   onImportSession?: () => void;
   onFileDrop?: (file: File) => void;
-}> = ({ onUpload, onLoadExample, isFirstRun = false, onImportSession, onFileDrop }) => {
+}> = ({ onUpload, onLoadExample, onStartFromTemplate, isFirstRun = false, onImportSession, onFileDrop }) => {
   const [isDragOver, setIsDragOver] = useState(false);
   const [dropError, setDropError] = useState<string | null>(null);
 
@@ -145,6 +149,24 @@ export const WorkspaceEmptyState: React.FC<{
                   </span>
                   <ArrowRight size={18} className={styles.exampleArrow} aria-hidden />
                 </button>
+                {onStartFromTemplate ? (
+                  <button
+                    type="button"
+                    className={styles.exampleRow}
+                    onClick={onStartFromTemplate}
+                    data-testid="workspace-start-template"
+                    aria-label={`${PILOT_LANDING_TEMPLATE_TITLE} — ${PILOT_LANDING_TEMPLATE_DESC}`}
+                  >
+                    <span className={styles.exampleIcon} aria-hidden>
+                      <LayoutTemplate size={20} strokeWidth={1.75} />
+                    </span>
+                    <span className={styles.exampleCopy}>
+                      <span className={styles.exampleTitle}>{PILOT_LANDING_TEMPLATE_TITLE}</span>
+                      <span className={styles.exampleDesc}>{PILOT_LANDING_TEMPLATE_DESC}</span>
+                    </span>
+                    <ArrowRight size={18} className={styles.exampleArrow} aria-hidden />
+                  </button>
+                ) : null}
               </div>
             </div>
 
@@ -183,6 +205,17 @@ export const WorkspaceEmptyState: React.FC<{
           <BarChart3 size={16} aria-hidden />
           <span>{PILOT_LANDING_EXAMPLE_SHORT}</span>
         </button>
+        {onStartFromTemplate ? (
+          <button
+            type="button"
+            className={styles.actionRow}
+            onClick={onStartFromTemplate}
+            data-testid="workspace-start-template"
+          >
+            <LayoutTemplate size={16} aria-hidden />
+            <span>{PILOT_LANDING_TEMPLATE_SHORT}</span>
+          </button>
+        ) : null}
       </div>
     </div>
   );
