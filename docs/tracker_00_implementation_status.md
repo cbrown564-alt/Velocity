@@ -83,8 +83,8 @@ graph TD
   DCA --> DCC["DESIGN-CONV-C Recent strip"]
   DCA --> DCD["DESIGN-CONV-D Palette onboarding"]
   DCB --> DCH["DESIGN-CONV-H Canvas handoff"]
-  DCB --> DCI["DESIGN-CONV-I Recipe diff"]
-  DCB --> DCQ6["DESIGN-CONV-Q6 Recipe legibility"]
+  DR1 --> DCQ6["DESIGN-CONV-Q6 Recipe audit Done"]
+  DCQ6 --> DCI["DESIGN-CONV-I Recipe diff"]
   DCC --> DCE["DESIGN-CONV-E Deck templates"]
   DCD --> DCF["DESIGN-CONV-F NL palette"]
   DCB --> DCG["DESIGN-CONV-G Collapsible rail"]
@@ -219,7 +219,7 @@ These rows remain directionally valid, but should not become active until `PILOT
 | Q3 | Where does "review before export" live? | **Confirmed: deck preview step before PPTX.** Export is still fire-and-download; add a review lane (Path B) as a journey requirement, especially for agent-built sessions. | `DESIGN-CONV-B` — **Wave 1 priority** |
 | Q4 | Can we teach palette grammar without reintroducing coaching? | **Proceed via Path D.** One-time inline ghost inside the palette — dismiss forever, no tour overlay. | `DESIGN-CONV-D` |
 | Q5 | Is focus mode still a mode? | **Focus mode is redundant.** Default chrome + honest slide is the presentation surface; retire focus mode rather than polish it. | `DESIGN-CONV-Q5` |
-| Q6 | Does the UI make recipe structure legible for additive refinement (human + MCP)? | **Open question — audit before build.** Recipe inspector exists; legibility for handoff evals unproven. Audit first; implement diff/summary if gaps found (Path I). | `DESIGN-CONV-Q6` → `DESIGN-CONV-I` |
+| Q6 | Does the UI make recipe structure legible for additive refinement (human + MCP)? | **Audit closed — Path I warranted.** Partially legible for human single-slide edits; insufficient for MCP handoff without persistent import summary. Gap list G1–G11 in `design_reset_recipe_legibility_audit.md` (G3 → `I`). | `DESIGN-CONV-Q6` Done → `DESIGN-CONV-I` **unblocked** |
 | Q7 | Dark mode vs journey polish? | **Dark mode after journey polish.** Token inversion of evolved Soft Machine only when a pilot blocks without it. | `DESIGN-CONV-J` — **Frozen** until Wave 4 gate |
 
 #### Execution board
@@ -234,18 +234,18 @@ These rows remain directionally valid, but should not become active until `PILOT
 | DESIGN-CONV-F | F | Natural language | Insert palette NL row/column binding ("Q5 by segment") — variable binding only, not full AI analysis | DESIGN-CONV-D | Not started | Yes | T,L,U,I,A,V | Eval against Displayr-positioning guardrail; inspectability tests |
 | DESIGN-CONV-G | G | Polish | Story rail collapses to icon strip (&lt;48px) on single-slide sessions; expands on hover or deck growth | DESIGN-RESET-1 | Not started | Yes | T,L,U,I | Motion budget per WP3.2; screenshot at 1-slide vs 5-slide |
 | DESIGN-CONV-H | H | Continuity | After upload, land on slide 1 with palette pre-focused; reduce Workshop Door → first insertion gap | DESIGN-RESET-1 | Not started | Yes | T,L,U,I,V | Timed handoff metric in five-minute pass script |
-| DESIGN-CONV-I | I | Agent | Quiet "what changed" summary on agent session import — slides added, variables unresolved — story rail footer | DESIGN-CONV-Q6 | Not started | Yes | T,L,U,I,A | MCP handoff eval scenario; muted per calm-tech rules |
-| DESIGN-CONV-J | J | Hold | Dark mode as token inversion of evolved Soft Machine | DESIGN-CONV-B, DESIGN-CONV-H, PILOT-7 or pilot request | Frozen | Yes | T,L,U,I | Pilot blocker evidence only |
+| DESIGN-CONV-I | I | Agent | Quiet "what changed" summary on agent session import — slides added, variables unresolved — story rail footer | DESIGN-CONV-Q6 (Done) | Not started | Yes | T,L,U,I,A | **Unblocked by Q6.** Scope from audit G3 (P0 persistent handoff summary); also informs G1/G2/G4–G7/G9–G11. MCP handoff eval (EVAL-03); muted per calm-tech rules |
+| DESIGN-CONV-J | J | Hold | Dark mode as token inversion of evolved Soft Machine | DESIGN-CONV-B, DESIGN-CONV-H, PILOT-7 or pilot request | Frozen | Yes | T,L,U,I | Pilot blocker evidence only — do not activate |
 | DESIGN-CONV-Q5 | — | Retire | Remove focus mode (`F` shortcut, toolbar toggle, focus chrome rules); default canvas is presentation surface | DESIGN-RESET-1 | Not started | Yes | T,L,U,I | E2E focus specs retired or rewritten; `design_02_ux_modes.md` updated |
-| DESIGN-CONV-Q6 | — | Audit | Recipe structure legibility review for human + MCP additive refinement; gap list before `DESIGN-CONV-I` build | DESIGN-RESET-1 | In progress | No | A,V | Written audit against recipe inspector + story rail; links to EVAL-03 handoff criteria |
+| DESIGN-CONV-Q6 | — | Audit | Recipe structure legibility review for human + MCP additive refinement; gap list before `DESIGN-CONV-I` build | DESIGN-RESET-1 | Done | No | A,V | [`design_reset_recipe_legibility_audit.md`](design_reset_recipe_legibility_audit.md) — verdict + G1–G11 → I/B/G/H; EVAL-03 handoff criteria. **Unblocks `DESIGN-CONV-I`.** |
 
 #### Wave plan (multi-agent orchestration)
 
 | Wave | Items | Rationale |
 | :--- | :--- | :--- |
 | **1** | `DESIGN-CONV-A`, `DESIGN-CONV-B` | Evidence loop unblocks PILOT-6 photography; export preview is confirmed P0 journey gap |
-| **2** | `DESIGN-CONV-C`, `DESIGN-CONV-D`, `DESIGN-CONV-G`, `DESIGN-CONV-Q6` | Address Q1 summon concern + Q4 onboarding + Q2 rail space; legibility audit informs Wave 3 agent UI |
-| **3** | `DESIGN-CONV-H`, `DESIGN-CONV-I`, `DESIGN-CONV-Q5` | Journey continuity, agent handoff, focus mode retirement |
+| **2** | `DESIGN-CONV-C`, `DESIGN-CONV-D`, `DESIGN-CONV-G` | Address Q1 summon concern + Q4 onboarding + Q2 rail space (`Q6` Done — audit informs Wave 3 agent UI) |
+| **3** | `DESIGN-CONV-H`, `DESIGN-CONV-I`, `DESIGN-CONV-Q5` | Journey continuity, agent handoff (**I unblocked**), focus mode retirement |
 | **4** | `DESIGN-CONV-E`, `DESIGN-CONV-F` | Higher-scope delight features after core journey polish |
 | **Hold** | `DESIGN-CONV-J` | Dark mode — after journey polish or explicit pilot blocker |
 
@@ -254,15 +254,16 @@ These rows remain directionally valid, but should not become active until `PILOT
 - **B** is the confirmed product decision; do not ship PPTX-only export flow improvements without the preview lane.
 - **C** and **D** are paired experiments for Q1 — implement both, let **A** session evidence decide which to keep.
 - **Q5** (focus retirement) should land before PILOT-6 photography so screenshots reflect final chrome.
-- **Q6** audit must complete before **I** implementation to avoid speculative agent UI.
-- **J** stays frozen until Wave 1–3 journey items reach `Done` or a pilot explicitly blocks.
+- **Q6** Done — audit closed; **`DESIGN-CONV-I` is unblocked.** Build I from gap G3 (persistent import summary); do not expand into full recipe-inspector redesign in the same PR.
+- **J** stays frozen until Wave 1–3 journey items reach `Done` or a pilot explicitly blocks. Do not activate.
 
 #### DESIGN-CONV recommended pull
 
 1. `DESIGN-CONV-B` — export preview lane (Wave 1).
 2. `DESIGN-CONV-A` — post-reset photography + session evidence (Wave 1).
 3. `DESIGN-CONV-D` + `DESIGN-CONV-C` — consultant-friendly discovery (Wave 2).
-4. `DESIGN-CONV-Q5` — retire redundant focus mode (Wave 3, before PILOT-6 re-screenshot).
+4. `DESIGN-CONV-I` — agent import “what changed” summary (Wave 3; **unblocked by Q6**).
+5. `DESIGN-CONV-Q5` — retire redundant focus mode (Wave 3, before PILOT-6 re-screenshot).
 
 ### 4.4 Technical UI Foundation (`STAB-UI-T`)
 
@@ -341,6 +342,8 @@ Completed work is no longer expanded in this tracker. Use `docs/completed_founda
 - UI excellence: motion/accessibility, canvas polish, theme/density, delight layers, and **complete May 2026 UXR program** (`STAB-UI-D` + follow-on waves — all `UXR-###` entries fixed in `findings.md`)
 - Harmonization workspace and fuzzy EVAL-05 follow-up
 - Testing and evidence anchors
+
+Recently closed IDs (narrative elsewhere): `DESIGN-CONV-Q6` — living evidence `design_reset_recipe_legibility_audit.md`.
 
 ## 6. Update Rules
 

@@ -1,8 +1,9 @@
 # Recipe Structure Legibility Audit (DESIGN-CONV-Q6)
 
 **Task:** DESIGN-CONV-Q6 — Recipe structure legibility audit  
+**Status:** Done — closes tracker Q6; **unblocks `DESIGN-CONV-I`** (docs-only; no UI in this close-out)  
 **Date:** July 4, 2026  
-**Decision context:** Tracker §4.3.2 Q6 — open question; audit before `DESIGN-CONV-I`  
+**Decision context:** Tracker §4.3.2 Q6 — audit before `DESIGN-CONV-I`  
 **Verdict:** Partially legible for human additive refinement; insufficient for MCP handoff without summoned surfaces and a persistent import summary. Recipe truth exists in store/session, but the default UI exposes only a thin slice (rows×cols in the rail; full recipe behind a collapsed panel).
 
 ---
@@ -106,7 +107,7 @@ On agent session import, humans need a quiet, persistent summary (story rail foo
 ### Q6 answer
 
 - **Human manual path:** Borderline yes for single-slide edits if Sarah opens Recipe; no for multi-slide deck scanning without summoning.
-- **MCP handoff path:** No for self-explanatory additive refinement — EVAL-03 proves the primitive works, but UI does not expose agent-authored structure. **DESIGN-CONV-I is warranted.**
+- **MCP handoff path:** No for self-explanatory additive refinement — EVAL-03 proves the primitive works, but UI does not expose agent-authored structure. **`DESIGN-CONV-I` is warranted and unblocked.**
 
 ---
 
