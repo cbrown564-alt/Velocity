@@ -8,6 +8,9 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
+.worktrees/
+pnpm-lock.yaml
+pnpm-workspace.yaml
 dist
 !packages/readstat-wasm/dist/
 !packages/readstat-wasm/dist/readstat.js
