@@ -6,7 +6,7 @@ This document summarizes completed work so `docs/tracker_00_implementation_statu
 
 As of the June 2026 market reset, Velocity has a credible local-first survey analysis foundation: SAV/CSV ingestion, survey metadata preservation, weighted crosstabs, significance testing, editable exports, durable local workspace reopening, a headless engine, MCP tools, semantic discovery, and harmonization infrastructure.
 
-The engine and survey-analysis foundation is implemented within the documented scope. Audit 10 reopened fresh-session boot, returning-session reliability, Journey Gate, and CI promotion evidence after July's required browser runs were found red or unenforced. Those items remain active stabilization work until the audit's promoted-commit criteria pass. The commercial question remains whether a narrow wedge can win: analysis-ready SAV file -> defensible, editable client deck for boutique researchers and independent consultants.
+The engine and survey-analysis foundation is implemented and verified within the documented automated/local scope. Audit 10 closed the July fresh-session boot, returning-session reliability, Journey Gate, and CI-promotion incident on July 15, 2026: protected merge `b5640326343b570d8b04756c4c36c1edcfba394d`, 220/220 diagnostic starts, 200/200 final-candidate starts, and ten consecutive successful `main` Test/Journey pairs. See [Audit 10 §14](audit_10_engine_boot_ci_truth_rca_2026-07-14.md#14-evidence-inventory). This does not replace representative-user validation. The commercial question remains whether a narrow wedge can win: analysis-ready SAV file -> defensible, editable client deck for boutique researchers and independent consultants.
 
 ## Completed Foundation Map
 

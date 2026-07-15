@@ -1,9 +1,9 @@
 # Audit 09 — OPFS Persistence: Root-Cause Analysis & Remediation Journey
 
 - **Date:** 2026-07-05
-- **Branch:** `fix/opfs-single-owner-handle-release` (4 commits, not yet merged to `main`)
+- **Branch:** historical implementation branch `fix/opfs-single-owner-handle-release`; runtime fixes are on `main`
 - **Trigger:** App failed to load — console errors on boot, later a hard hang on returning sessions
-- **Status:** Runtime fixes merged; verification reopened by Audit 10 until the shared boot prerequisite, returning-session/chaos suite, and promoted-commit CI soak pass
+- **Status:** Verified in the supported Mac/Linux Chromium profiles — Audit 10 restored the shared boot prerequisite, returning-session/chaos coverage, and promoted-commit CI evidence on July 15, 2026
 - **Related:** `docs/arch_06_local_first_persistence.md`, `docs/plan_06_backend_reset.md`
 
 ---
@@ -251,25 +251,28 @@ there is the outstanding manual confirmation.
 
 ---
 
-## 9. Outstanding questions / follow-ups
+## 9. Verification closure and remaining follow-ups
 
-1. **Confirm on the original machine and promoted candidate.** Hard-reload the supported pilot build; expect
-   `Bundle Selected: eh`, `opened with OPFS …`, dashboard reached, no
-   `could not be cloned`, no hang.
-2. **Leftover OPFS artifacts.** The user's origin has empty/half-written `.db`
+Audit 10 closed the promotion gap. [Its §14 evidence](audit_10_engine_boot_ci_truth_rca_2026-07-14.md#14-evidence-inventory) links protected PR 60, merge `b5640326343b570d8b04756c4c36c1edcfba394d`, successful returning-session and persistence-chaos product E2E, production-preview coverage, a ten-pair `main` soak, and supported Mac/Linux Chromium profiles. The engine boot failure found by Audit 10 was a separate Vite cold-optimizer reload, not a recurrence of OPFS ownership or bundle incompatibility.
+
+Closed verification items:
+
+1. **Original affected and promoted profiles:** confirmed. Linux CI and Mac Chromium reach the dashboard without clone error or hang.
+2. **Promotion evidence:** exact commit, protected required contexts, and Test/Journey soak are linked from Audit 10.
+3. **Chaos E2E:** `persistence-chaos.spec.ts`, returning-session, OPFS reopen, workspace switch, and the boot recovery prerequisite pass in the promoted product-E2E suite.
+
+Remaining non-blocking follow-ups:
+
+1. **Leftover OPFS artifacts.** The user's origin has empty/half-written `.db`
    and `_repair_*.db` files from the wedged COI attempts. EH opens → fails
    validation → discards them harmlessly, but a one-time purge would tidy up.
-3. **EH performance.** Validate single-threaded query latency on the largest
+2. **EH performance.** Validate single-threaded query latency on the largest
    real pilot dataset. If unacceptable, revisit the "Hybrid: EH only when
    reopening" option (probe OPFS for a cache before choosing the bundle).
-4. **Promotion evidence.** Link the exact final commit and green required Test/Journey runs from Audit 10 before restoring a Verified claim.
-5. **Repair the chaos E2E.** Repoint `reachDashboardWithExample` at the current
-   landing UI so `persistence-chaos.spec.ts` (and the `@rebuild-path` CI gate)
-   run again; the strengthened "second tab" assertion is waiting behind it.
-6. **DuckDB-WASM upgrade watch.** Track whether a newer `@duckdb/duckdb-wasm`
+3. **DuckDB-WASM upgrade watch.** Track whether a newer `@duckdb/duckdb-wasm`
    fixes COI OPFS reopen (transferable handles); if so, EH-forcing could be
    relaxed. Current: `1.33.1-dev` / DuckDB engine `v1.4.3`.
-7. **`crossOriginIsolated` is now unused for compute.** If COI is never used,
+4. **`crossOriginIsolated` is now unused for compute.** If COI is never used,
    consider whether the pthread bundle assets still need prefetching/caching.
 
 ---

@@ -1,10 +1,10 @@
 # Audit 10 — Engine boot and CI truth incident
 
-**Status:** Open — stabilization blocker  
+**Status:** Complete — containment and Phases 1–6 verified and promoted July 15, 2026<br>
 **Date:** July 14, 2026  
 **Severity:** Major release-control and first-run failure  
 **Scope:** Fresh-session boot, intent-based engine warm-up, browser worker initialization, product E2E, Journey Gate, merge controls, and completion claims  
-**Role:** Active incident record and remediation owner until the completion criteria in §15 pass  
+**Role:** Closed incident record and canonical remediation evidence<br>
 **Precursor:** [`audit_09_opfs_persistence_rca_2026-07-05.md`](audit_09_opfs_persistence_rca_2026-07-05.md)
 
 ## 1. Executive finding
@@ -24,9 +24,27 @@ These failures were allowed to persist because the evidence system is not enforc
 - GitHub reports that `main` has **no branch protection** and the repository has **no rulesets**. The documented rule that all required jobs must pass is not a repository control.
 - Plan 06 says phases 0–5 were executed and that “CI stays green throughout,” while its journey gate has never recorded a successful run.
 
-The immediate decision should be to treat engine boot and CI truth as one stabilization incident. Pilot recruiting, further persistence promotion, and new engine-facing work should not rely on the current completion claims until the containment and verification gates in this report pass.
+The immediate decision was to treat engine boot and CI truth as one stabilization incident. Pilot recruiting, further persistence promotion, and new engine-facing work did not regain their completion claims until the containment and verification gates in this report passed.
 
-## 2. Impact
+### 1.1 Resolution — July 15, 2026
+
+[PR 60](https://github.com/cbrown564-alt/Velocity/pull/60) completed containment and Phases 1–6, then merged the fully protected head `1f11d232416c180b0be1c479302303df8317fe36` to `main` as `b5640326343b570d8b04756c4c36c1edcfba394d`.
+
+The Linux-only hidden-input failure was caused by Vite's cold dependency optimizer reloading the page after the upload had started. That reload terminated the in-flight analysis worker before DuckDB could acknowledge `engine.ready`. The causal fix pre-bundles DuckDB-WASM and Arrow dependencies through `optimizeDeps.include`, so the first intent no longer triggers an optimizer reload. The correlated trace turned the prior five-minute ambiguity into a specific boundary: analysis worker created, request in flight, page reload, worker terminated.
+
+| Phase | Verified outcome |
+| :--- | :--- |
+| 0 — Contain | `main` now requires the eight canonical contexts, strict/up-to-date heads, admin enforcement, resolved conversations, and no force-push/deletion. Deliberately failing [PR 61](https://github.com/cbrown564-alt/Velocity/pull/61) was `BLOCKED` while its [required `lint-format` job failed](https://github.com/cbrown564-alt/Velocity/actions/runs/29408179697/job/87328649471). |
+| 1 — First run | The workspace shell and real upload/example actions render before engine readiness. Clean-context Playwright exercises the visible file chooser rather than relying on the hidden input. |
+| 2 — Observe | One correlation ID spans shell, warm-up, workers, DuckDB bundle/WASM/OPFS, ready, file load, and terminal outcomes. Journey failures always retain boot trace, console/page/network errors, DOM, screenshot, Playwright trace, and Vite output. |
+| 3 — Isolate | The 11-cell diagnostic matrix passed 220/220 after toggling runtime, server, persistence, service worker, storage, concurrency, and start action. The four-cell final-candidate matrix passed 200/200 at 50 starts per cell. |
+| 4 — Repair | Boot has phase deadlines, cancellation and worker teardown, retry, and visible safe-memory recovery. Dev and production use the same bundle-selection contract. |
+| 5 — Verify | Playwright has an explicit boot prerequisite before dependent product journeys; Journey Gate runs both Vite and production-preview paths and always uploads evidence. Local `npm run ci:full` passed all 24 product E2E tests; production critical-path E2E passed 4/4. |
+| 6 — Promote | The protected PR head passed all eight required contexts, including the 53m33s mutation campaign. Ten sequential manual Test/Journey pairs then passed on the merge SHA, in addition to the automatic merge pair. The Mac Chromium pilot profile and the original affected Linux Chromium runner both passed. |
+
+These results are **Verified**, not user-validated: they establish the implemented runtime and promotion contract in the supported automated and local profiles, not representative-user acceptance.
+
+## 2. Impact at discovery
 
 ### 2.1 User impact
 
@@ -72,7 +90,7 @@ The immediate decision should be to treat engine boot and CI truth as one stabil
 - On the resulting `main`, Journey Gate run [29371060812](https://github.com/cbrown564-alt/Velocity/actions/runs/29371060812) failed with the same initialization screen.
 - The resulting `main` product E2E run [29371060792](https://github.com/cbrown564-alt/Velocity/actions/runs/29371060792) also failed: 13 failed, 2 flaky, and 6 passed in 17.1 minutes.
 
-## 4. Minimal reproductions
+## 4. Minimal reproductions before the fix
 
 ### 4.1 Fresh-session UI deadlock
 
@@ -187,29 +205,19 @@ The suite lacks a small, explicit boot contract that must pass before dependent 
 
 The underlying flaw is that status updates rely on implementation intent and selected local checks rather than a durable link to the exact commit and exact required run set used for promotion.
 
-## 7. Unresolved technical cause in Linux CI
+## 7. Resolved technical cause in Linux CI
 
-The exact cause of the hidden-input boot failure is **not proven**. It must not be described as another OPFS handle leak without new evidence.
+The hidden-input path did receive `engine.init`, selected the expected DuckDB bundle, and began worker startup. On a cold Vite server, the first import of DuckDB-WASM/Arrow caused dependency optimization after upload intent. Vite then reloaded the page, which terminated the in-flight analysis worker before `engine.ready` and left the harness observing only the replacement page's initialization state.
 
-Current hypotheses, ordered by the point at which new evidence can distinguish them rather than by confidence, are:
+The one-variable experiments separated this from the original hypotheses:
 
-1. Analysis worker starts but the `engine.init` handler does not run or return.
-2. DuckDB bundle selection differs under cross-origin isolation or headless Linux.
-3. The nested DuckDB worker is created but WASM fetch or instantiation does not complete.
-4. Service-worker registration/prefetch races with the worker’s module fetch or leaves a request unresolved.
-5. OPFS support detection, Web Lock acquisition, database open, reset, or `dropFiles()` does not complete in this environment.
-6. The two-minute `EngineProxy` timeout is reached but the resulting state is overwritten, swallowed, or not captured by the harness before its own timeout.
-7. Dev-server behavior differs from the built application; discarded Vite stdout/stderr may contain the only error.
-8. A concurrency interaction between multiple Playwright workers, browser contexts, service workers, or OPFS origins affects the full E2E suite. This cannot explain the single-journey job by itself but may amplify it.
+- production preview did not reproduce the optimizer reload;
+- forced-memory and OPFS paths behaved the same at this boundary;
+- enabling/disabling the service worker did not control the failure;
+- one and two contexts produced the same cold-optimizer signature;
+- pre-bundling DuckDB-WASM and Arrow dependencies removed the failure without increasing timeouts or changing persistence semantics.
 
-The following are specifically **not established**:
-
-- that PR 48 introduced the Journey Gate failure;
-- that increasing the readiness timeout would fix it;
-- that the dashboard selector is still wrong;
-- that OPFS ownership is the remaining failure;
-- that local success validates Linux CI or a pilot machine;
-- that all 13 named E2E features are independently broken.
+`vite.config.ts` now includes those runtime dependencies in `optimizeDeps.include`. Repetition after the change produced 220/220 diagnostic starts and 200/200 final-candidate starts. OPFS ownership remained a separate, real Audit 09 defect; it was not the remaining Linux boot cause. The prior 13 product failures were shared-prerequisite fan-out, not 13 independent feature regressions.
 
 ## 8. Why the previous fixes were insufficient
 
@@ -407,20 +415,62 @@ Do not:
 - mark Plan 06 or persistence complete because code and unit tests exist;
 - merge while required jobs are pending on the assumption that they will pass.
 
-## 13. Open questions
+## 13. Question disposition
 
-1. Does the journey’s analysis worker receive `engine.init` on the failing runner?
-2. Which DuckDB bundle is selected, and does the nested worker reach `instantiate()` completion?
-3. Does disabling the service worker or WASM prefetch remove the Linux-only failure?
-4. Does forced-memory boot pass while OPFS boot fails?
-5. Why is the two-minute `EngineProxy` timeout not visible in the final journey DOM or logs?
-6. Does the production build reproduce the Vite-dev-server failure?
-7. Which checks should be mandatory for every PR versus promotion-only, and what exact GitHub check names are stable enough for a ruleset?
-8. How many historical “Done” rows rely on merge state rather than successful required evidence?
+1. The analysis worker received `engine.init`; the cold optimizer reload terminated it before `engine.ready`.
+2. Bundle selection was correct. The failure occurred outside DuckDB persistence semantics, at Vite page/runtime replacement.
+3. Service-worker and WASM-prefetch toggles did not control the failure.
+4. Forced-memory and OPFS conditions both passed after dependency pre-bundling; OPFS was not the causal variable.
+5. The replacement page erased the failed page's user-visible timeout path. The persistent correlated trace and always-written artifacts now retain that transition.
+6. Production preview did not reproduce the cold Vite optimizer reload and remains a required critical-path check.
+7. The stable required contexts are `lint-format`, `typecheck`, `arch-guards`, `unit-coverage`, `build`, `e2e`, `mutation`, and `journey-gate`.
+8. Plan 06, Audit 09, the tracker, completed-foundations summary, testing architecture, pre-PR playbook, and docs index were audited and corrected as part of Phase 6. Any broader historical-status audit remains ordinary tracker maintenance rather than an open condition of this incident.
 
 ## 14. Evidence inventory
 
-### Source evidence
+### Promotion and control evidence
+
+- Implementation: [PR 60](https://github.com/cbrown564-alt/Velocity/pull/60), protected head `1f11d232416c180b0be1c479302303df8317fe36`, merge commit `b5640326343b570d8b04756c4c36c1edcfba394d`.
+- Exact-head required workflows: [Test run 29410394457](https://github.com/cbrown564-alt/Velocity/actions/runs/29410394457) and [Journey Gate run 29410394467](https://github.com/cbrown564-alt/Velocity/actions/runs/29410394467). All eight required contexts passed; the [mutation job](https://github.com/cbrown564-alt/Velocity/actions/runs/29410394457/job/87335878723) passed in 53m33s and [product E2E](https://github.com/cbrown564-alt/Velocity/actions/runs/29410394457/job/87336060884) passed.
+- Merge-control proof: deliberately failing [PR 61](https://github.com/cbrown564-alt/Velocity/pull/61) remained `BLOCKED` although GitHub classified its files as mergeable; its required [`lint-format` job](https://github.com/cbrown564-alt/Velocity/actions/runs/29408179697/job/87328649471) failed. The proof PR was closed and its temporary branch removed.
+- Protection API, July 15: strict/up-to-date required contexts; admin enforcement; conversation resolution; force pushes and deletions disabled. Required names are `lint-format`, `typecheck`, `arch-guards`, `unit-coverage`, `build`, `e2e`, `mutation`, and `journey-gate`.
+- Normal cancellation behavior: the merge push's [Test run 29413567636](https://github.com/cbrown564-alt/Velocity/actions/runs/29413567636) recorded a successful product-E2E job before the first intentional no-change rerun superseded its redundant mutation tail. Its paired [Journey run 29413567634](https://github.com/cbrown564-alt/Velocity/actions/runs/29413567634) passed. Superseded PR-head runs were likewise cancelled by workflow concurrency rather than allowed to race promotion evidence.
+
+### Ten-pair `main` soak
+
+Every row ran on `b5640326343b570d8b04756c4c36c1edcfba394d`. Each Test workflow completed successfully, including its product-E2E job; each paired Journey Gate completed successfully before the next pair was dispatched.
+
+| Pair | Test / product E2E | Journey Gate |
+| :---: | :--- | :--- |
+| 1 | [29413909637](https://github.com/cbrown564-alt/Velocity/actions/runs/29413909637) | [29413911265](https://github.com/cbrown564-alt/Velocity/actions/runs/29413911265) |
+| 2 | [29414199208](https://github.com/cbrown564-alt/Velocity/actions/runs/29414199208) | [29414200862](https://github.com/cbrown564-alt/Velocity/actions/runs/29414200862) |
+| 3 | [29414496473](https://github.com/cbrown564-alt/Velocity/actions/runs/29414496473) | [29414498134](https://github.com/cbrown564-alt/Velocity/actions/runs/29414498134) |
+| 4 | [29414790902](https://github.com/cbrown564-alt/Velocity/actions/runs/29414790902) | [29414792819](https://github.com/cbrown564-alt/Velocity/actions/runs/29414792819) |
+| 5 | [29415049817](https://github.com/cbrown564-alt/Velocity/actions/runs/29415049817) | [29415051428](https://github.com/cbrown564-alt/Velocity/actions/runs/29415051428) |
+| 6 | [29415332653](https://github.com/cbrown564-alt/Velocity/actions/runs/29415332653) | [29415334427](https://github.com/cbrown564-alt/Velocity/actions/runs/29415334427) |
+| 7 | [29415624124](https://github.com/cbrown564-alt/Velocity/actions/runs/29415624124) | [29415626144](https://github.com/cbrown564-alt/Velocity/actions/runs/29415626144) |
+| 8 | [29415983159](https://github.com/cbrown564-alt/Velocity/actions/runs/29415983159) | [29415985043](https://github.com/cbrown564-alt/Velocity/actions/runs/29415985043) |
+| 9 | [29416336937](https://github.com/cbrown564-alt/Velocity/actions/runs/29416336937) | [29416338828](https://github.com/cbrown564-alt/Velocity/actions/runs/29416338828) |
+| 10 | [29416637081](https://github.com/cbrown564-alt/Velocity/actions/runs/29416637081) | [29416639216](https://github.com/cbrown564-alt/Velocity/actions/runs/29416639216) |
+
+### Repetition and supported profiles
+
+- `validation/engine-boot/engine-boot-matrix-20.json`: 220/220 successful starts across 11 diagnostic cells.
+- `validation/engine-boot/engine-boot-experiment.json`: 200/200 successful starts across four final-candidate cells, 50 repetitions per cell.
+- Local supported pilot profile: macOS Chromium; `npm run ci:full` passed with 24/24 product E2E tests, `CI=true npm run journey-gate` passed the Vite critical path, and `npm run test:e2e:production` passed the production critical path 4/4.
+- Original affected profile: GitHub-hosted Linux Chromium; exact-head Journey Gate, product E2E, production preview, returning-session, and persistence-chaos coverage passed in the protected PR and the ten-pair `main` soak.
+
+### Resolution source evidence
+
+- `vite.config.ts` — pre-bundles DuckDB-WASM and Arrow dependencies so cold intent does not trigger a page reload.
+- `src/services/bootTrace.ts`, `src/services/worker/workerBootTrace.ts`, and `src/types/bootTrace.ts` — bounded correlated trace across main thread and worker.
+- `src/services/workspaceBoot/bootOrchestrator.ts` — end-to-end phase state, deadlines, cancellation, and recovery decisions.
+- `tests/e2e/engine-boot-contract.spec.ts` — clean shell, real visible upload, cold boot trace, and safe-memory recovery.
+- `scripts/engine-boot-experiment.mjs` — repeated controlled diagnostic and final-candidate cells.
+- `scripts/plan-06-journey-gate.mjs` and `.github/workflows/journey-gate.yml` — bounded server ownership, dev/production critical paths, and unconditional evidence.
+- `.github/workflows/test.yml` and `.github/workflows/red-main-incident.yml` — stable required contexts, boot-first product ladder, no-change reruns, and red-main ownership.
+
+### Historical source evidence — July 14 failing state
 
 - `src/app/screens/SplashScreen.tsx` — gates `WorkspaceView` on `isDbReady`.
 - `src/hooks/usePersistenceManager.ts` — starts engine on boot only for returning sessions.
@@ -435,7 +485,7 @@ Do not:
 - `docs/arch_08_testing.md` and `docs/playbooks/pre_pr_verification.md` — written all-gates-pass contract.
 - `docs/plan_06_backend_reset.md` — executed/green claims and journey budgets.
 
-### Run evidence
+### Historical red-run evidence
 
 - Journey workflow history query, July 14: 35 total, 28 failed, 7 cancelled, 0 successful.
 - [First Journey Gate PR run](https://github.com/cbrown564-alt/Velocity/actions/runs/28725482125).
@@ -448,15 +498,15 @@ Do not:
 
 ## 15. Completion criteria for this incident
 
-This incident is not complete when a patch exists or one local run passes. It is complete only when all of the following are true:
+This incident is not complete when a patch exists or one local run passes. It is complete because all of the following are true:
 
-- fresh-session controls are usable before engine readiness;
-- the Linux CI boot failure has a proven causal explanation;
-- boot failure is bounded, observable, and recoverable;
-- Journey Gate and product E2E pass on the exact promoted commit;
-- required checks are enforced by GitHub;
-- dependent E2E failures are classified behind a boot prerequisite;
-- failure artifacts are always produced;
-- local and CI verification commands match the canonical docs;
-- corrected project documents link the successful evidence;
-- the final candidate passes repeated main-branch and pilot-machine verification.
+- [x] fresh-session controls are usable before engine readiness;
+- [x] the Linux CI boot failure has a proven causal explanation;
+- [x] boot failure is bounded, observable, and recoverable;
+- [x] Journey Gate and product E2E pass on the exact promoted commit;
+- [x] required checks are enforced by GitHub;
+- [x] dependent E2E failures are classified behind a boot prerequisite;
+- [x] failure artifacts are always produced;
+- [x] local and CI verification commands match the canonical docs;
+- [x] corrected project documents link the successful evidence;
+- [x] the final candidate passes repeated main-branch and supported pilot-profile verification.
