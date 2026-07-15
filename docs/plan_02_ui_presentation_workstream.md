@@ -1,7 +1,7 @@
 # STAB-UI-F: Presentation & Activation Workstream
 
 **Created:** July 1, 2026  
-**Status:** Active — tracker §4.3  
+**Status:** Mostly shipped — leftovers on tracker §5.3 (`F5`/`F6`/`VAR-1`); narrative in `completed_foundations_summary.md`  
 **Owner flow:** Architect → Implementer → Reviewer (`AGENTS.md`)  
 **Playbooks:** `docs/playbooks/ui_mode_change.md`, `docs/playbooks/add_tests_first.md`
 
@@ -15,7 +15,7 @@ Velocity’s UI passed stabilization and the May 2026 UXR program (`STAB-UI-D`, 
 
 **STAB-UI-F** closes the remaining gap between “functionally credible” and “client-presentable without manual tweaking” — the surfaces that paid pilots (`PILOT-6`) will photograph, export, and judge in the first five minutes.
 
-This document is the **single reference** for scope, findings, slice specs, acceptance criteria, and validation. Tracker rows live in `docs/tracker_00_implementation_status.md` §4.3.
+This document is the **single reference** for scope, findings, slice specs, acceptance criteria, and validation. Open tracker leftovers live in `docs/tracker_00_implementation_status.md` §5.3; completed F1–F4 narrative is in `docs/completed_foundations_summary.md`.
 
 **Pilot presentation gate (July 1, 2026):** [`audit_07_pilot_presentation_readiness_2026-07-01.md`](audit_07_pilot_presentation_readiness_2026-07-01.md) — workflow screenshot audit against a Linear quality bar. **Gate closed July 2, 2026** via [PR #18](https://github.com/cbrown564-alt/velocity/pull/18); UXF register reconciled below.
 
@@ -446,7 +446,7 @@ STAB-UI-F is **Done** when:
 
 - All UXF-001–015 are `fixed` or `wontfix` with rationale — **met July 2, 2026** (UXF-016 deferred to F5)
 - UXP-040 implemented or explicitly merged into F1.4 acceptance — **met** (F1.4 toggles + deck defaults)
-- Tracker §4.3 rows are `Done` with PR links — **met** (PR #6, PR #18)
+- Tracker `STAB-UI-F1`–`F4` rows are `Done` with PR links — **met** (PR #6, PR #18); leftovers on tracker §5.3
 - Human validation checklist passes on Soft Machine + Mission Control — **met** via PR #18 `screenshots-p2-final/` pass
 - `PILOT-6` runbook references this doc for UI smoke before pilot sessions
 

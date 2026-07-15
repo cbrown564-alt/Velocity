@@ -1,7 +1,7 @@
 # STAB-UI-T: Technical UI Foundation Workstream
 
 **Created:** July 1, 2026  
-**Status:** Active — tracker §4.4  
+**Status:** Shipped (`STAB-UI-T1`–`T7`) — see `completed_foundations_summary.md`; this plan remains the historical spec  
 **Owner flow:** Architect → Implementer → Reviewer (`AGENTS.md`)  
 **Playbooks:** `docs/playbooks/ui_mode_change.md`, `docs/playbooks/add_tests_first.md`, `docs/playbooks/refactor_safely.md`
 
@@ -344,7 +344,7 @@ STAB-UI-T is **Done** when:
 
 - UXT-001–012 are `fixed` or `wontfix` with rationale  
 - UXT-013–016 fixed or deferred with tracker note  
-- Tracker §4.4 rows `Done` with PR links  
+- Tracker rows for `STAB-UI-T1`–`T7` are `Done` (narrative in `completed_foundations_summary.md`)  
 - No bare `useVelocityStore()` in component files  
 - ModalShell tests cover dialog + Esc + focus restore  
 

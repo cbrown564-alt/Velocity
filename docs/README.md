@@ -6,7 +6,7 @@ Navigation hub for live documentation. **Agent rules: [`AGENTS.md`](../AGENTS.md
 
 | Need | Read |
 | :--- | :--- |
-| What to work on | `tracker_00_implementation_status.md` (pilot, `STAB-UI-F`, `STAB-UI-T`, gated work) |
+| What to work on | `tracker_00_implementation_status.md` (pilot remaining, `DESIGN-CONV`, gated leftovers) |
 | **Pilot UI presentation gate** | **`audit_07_pilot_presentation_readiness_2026-07-01.md`** — Linear-bar screenshot audit, PPR fix list, frozen workflow screenshots |
 | **User journey screenshots** | **`user_journey_screenshots.md`** — three main journeys (activation, presentation/export, durability) with design decisions and open questions |
 | Pilot contract (PILOT-0) | `pilot_00_brief.md` — SAV-to-deck thesis, scope, metrics, ICP screen |
@@ -49,8 +49,8 @@ Deck, session, and workspace contracts are in **`arch_07`** §5, §8–§9. Hist
 ## Procedures
 
 - `plan_01_comprehensive_ui_ux_review.md` — multi-session UI/UX review program (May 2026; UXR complete)
-- `plan_02_ui_presentation_workstream.md` — **active** presentation & activation (`STAB-UI-F`, tracker §4.3)
-- `plan_03_ui_technical_foundation.md` — **active** technical UI foundation (`STAB-UI-T`, tracker §4.4)
+- `plan_02_ui_presentation_workstream.md` — presentation & activation spec (`STAB-UI-F1`–`F4` shipped; leftovers on tracker §5.3)
+- `plan_03_ui_technical_foundation.md` — technical UI foundation spec (`STAB-UI-T1`–`T7` shipped; see foundations summary)
 - **`audit_07_pilot_presentation_readiness_2026-07-01.md`** — **active** pilot presentation gate (Linear bar, PPR prioritized fixes, screenshot evidence in `assets/ui-pilot-readiness-audit/`)
 - `reviews/ui_ux_review_2026-05/` — findings register and session notes for that program
 - `playbooks/` — refactors, stats, engine API, UI modes, worker migration, agent analysis, triage

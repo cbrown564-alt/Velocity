@@ -1,6 +1,6 @@
 # Velocity Completed Foundations Summary
 
-This document summarizes completed work that used to make `docs/tracker_00_implementation_status.md` hard to read as an active execution board. The tracker now focuses on current work and gates; this file preserves the foundation story and evidence map.
+This document summarizes completed work so `docs/tracker_00_implementation_status.md` can stay a forward-looking execution board. The tracker focuses on active and gated work; this file preserves the foundation story and evidence map.
 
 ## Current State
 
@@ -85,6 +85,24 @@ The next strategic question is no longer "can the engine thesis work?" The answe
 - Core pure-TS engine supports Jaro-Winkler similarity, Jaccard value-label overlap, type compatibility, scale inversion detection, greedy auto-match, and harmonized SQL generation.
 - UI includes Sankey visualization, mapping table, value remapping, lasso selector, wave detection banner, and cross-wave entry points.
 - Session/store integration and tests are in place.
+
+### Market-Reset Pilot Foundations (July 2026)
+
+- **`PILOT-0`–`PILOT-3` Done:** thesis/brief (`pilot_00_brief.md`), packaging (`pilot_01_packaging.md`), trust pack (`pilot_02_trust_pack.md`), and PPTX client-template loop (binary metadata extraction, default mapping, `ExportModal` persistence, exporter binding tests).
+- **`PILOT-DEMO-1`–`4` Done:** brand-tracker synthetic dataset + ground truth, recipe demo + gap log (`pilot_04a` INF-06…09), tracker deck exemplar candidate, Load Example / wave-refresh / EVAL-07 freeze. Consultant north-star sign-off remains the exemplar-promotion bar.
+- Remaining pilot rows (`PILOT-4a/4b/5/6/7`) stay on the active tracker.
+
+### Presentation, Technical UI, and Design Reset (July 2026)
+
+- **`STAB-UI-F1`–`F4` Done:** slide frame/shrink-wrap/view transitions/stats toggles; chrome density; activation (welcome-back, first-crosstab tour, workspace banner); command palette shelf actions. Pilot presentation gate closed via [PR #18](https://github.com/cbrown564-alt/velocity/pull/18); evidence in `docs/assets/ui-pilot-readiness-audit/`. Spec: `plan_02_ui_presentation_workstream.md`. Leftovers on tracker: `STAB-UI-F5` (frozen), `F6`, `VAR-1`.
+- **`STAB-UI-T1`–`T7` Done:** store selectors, modal foundation, error boundaries, z-index tokens, VM theme fix, shortcuts/hygiene, recode wiring. Spec: `plan_03_ui_technical_foundation.md`.
+- **`DESIGN-RESET-1` Done:** Pathway B deck-first IA + evolved Soft Machine; evidence pack `docs/assets/design-reset-evidence/`; docs reconciled in `design_01_system.md` / `design_02_ux_modes.md`. Supersedes multi-theme switcher, resident variable sidebar, analysis shelf, timeline dock, coaching layer.
+- Active post-reset work is the **`DESIGN-CONV-*`** board on the tracker.
+
+### CI Truth Maintenance (`STAB-CI`, July 2026)
+
+- **`STAB-CI-2`–`22` Done:** local/`ci` parity playbook, ESLint ratchet, E2E companion enforcement, DuckDB Arrow browser smoke, coverage ratchets (store/services/features/overlays + per-path floors), parity gate in CI, parallel jobs, lefthook, `ci:lint`/`ci:full`, `@visual` quarantine + non-blocking visual workflow, CI artifacts/bootstrap, doc sync. Owner: `arch_08_testing.md`, `playbooks/pre_pr_verification.md`.
+- Remaining: `STAB-CI-23` (features/overlays floor raise), `STAB-CI-19` (mutation threshold, blocked), and deferred further ratchets.
 
 ## Evidence Anchors
 

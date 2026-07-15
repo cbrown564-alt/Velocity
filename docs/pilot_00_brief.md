@@ -1,7 +1,7 @@
 # PILOT-0: SAV-to-Deck Pilot Brief
 
 **Status:** Done (June 2026)  
-**Source:** `docs/velocity_external_market_assessment.pdf`, `docs/tracker_00_implementation_status.md` §4.1  
+**Source:** `docs/velocity_external_market_assessment.pdf`, `docs/tracker_00_implementation_status.md` §5.1  
 **Gates:** Architecture (A) — conditional pass; Market validation (V) — aligned with external assessment
 
 ---

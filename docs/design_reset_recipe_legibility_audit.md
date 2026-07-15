@@ -2,7 +2,7 @@
 
 **Task:** DESIGN-CONV-Q6 — Recipe structure legibility audit  
 **Date:** July 4, 2026  
-**Decision context:** Tracker §4.3.2 Q6 — open question; audit before `DESIGN-CONV-I`  
+**Decision context:** Tracker §5.2 Q6 — open question; audit before `DESIGN-CONV-I`  
 **Verdict:** Partially legible for human additive refinement; insufficient for MCP handoff without summoned surfaces and a persistent import summary. Recipe truth exists in store/session, but the default UI exposes only a thin slice (rows×cols in the rail; full recipe behind a collapsed panel).
 
 ---
