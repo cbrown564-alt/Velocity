@@ -37,11 +37,18 @@ export function createDatasetActions(
 ): Pick<DataSlice, 'loadCSV' | 'loadSAV' | 'loadSAVMetadata' | 'loadSAVSample' | 'openWorkspaceDataset'> {
   return {
     loadCSV: async (fileName: string, content: string) => {
+      set({ datasetStatus: 'loading' });
       const { browserEngine } = get();
-      if (!browserEngine) throw new Error('Engine not initialized');
+      if (!browserEngine) {
+        set({ datasetStatus: 'error' });
+        throw new Error('Engine not initialized');
+      }
 
       const buffer = new TextEncoder().encode(content).buffer;
-      const { loaded } = await browserEngine.loadBuffer(fileName, buffer, 'csv');
+      const { loaded } = await browserEngine.loadBuffer(fileName, buffer, 'csv').catch((error) => {
+        set({ datasetStatus: 'error' });
+        throw error;
+      });
       if (loaded.type !== 'engine.csvLoaded') {
         throw new Error('Unexpected loadBuffer response for CSV');
       }
@@ -82,6 +89,7 @@ export function createDatasetActions(
         },
         variableSets,
         transformLog: [],
+        datasetStatus: 'ready',
         ...clearVariableStatsCache(),
         ...postLoadAnalysisReset(),
       });
@@ -114,6 +122,7 @@ export function createDatasetActions(
     },
 
     loadSAV: async (fileName: string, buffer: ArrayBuffer, options?: { datasetId?: string; opfsFileKey?: string }) => {
+      set({ datasetStatus: 'loading' });
       const targetDatasetId = options?.datasetId;
       const currentDataset = get().dataset;
 
@@ -127,9 +136,15 @@ export function createDatasetActions(
       }
 
       const { browserEngine } = get();
-      if (!browserEngine) throw new Error('Engine not initialized');
+      if (!browserEngine) {
+        set({ datasetStatus: 'error' });
+        throw new Error('Engine not initialized');
+      }
 
-      const { loaded } = await browserEngine.loadBuffer(fileName, buffer, 'sav');
+      const { loaded } = await browserEngine.loadBuffer(fileName, buffer, 'sav').catch((error) => {
+        set({ datasetStatus: 'error' });
+        throw error;
+      });
       if (loaded.type !== 'engine.savLoaded') {
         throw new Error('Unexpected loadBuffer response for SAV');
       }
@@ -158,6 +173,7 @@ export function createDatasetActions(
         },
         variableSets,
         transformLog: [],
+        datasetStatus: 'ready',
         ...clearVariableStatsCache(),
         ...postLoadAnalysisReset(),
       });
@@ -193,10 +209,17 @@ export function createDatasetActions(
     },
 
     loadSAVMetadata: async (fileName: string, buffer: ArrayBuffer) => {
+      set({ datasetStatus: 'loading' });
       const { browserEngine } = get();
-      if (!browserEngine) throw new Error('Engine not initialized');
+      if (!browserEngine) {
+        set({ datasetStatus: 'error' });
+        throw new Error('Engine not initialized');
+      }
 
-      const response = await browserEngine.loadSAVMetadata(buffer);
+      const response = await browserEngine.loadSAVMetadata(buffer).catch((error) => {
+        set({ datasetStatus: 'error' });
+        throw error;
+      });
       const variableSets: VariableSet[] = response.variableSets.map(normalizeVariableSet);
       const variables: Variable[] = response.variables.map(normalizeVariable);
 
@@ -216,6 +239,7 @@ export function createDatasetActions(
           },
         },
         variableSets,
+        datasetStatus: 'ready',
         ...clearVariableStatsCache(),
         ...postLoadAnalysisReset(),
       });
@@ -231,10 +255,17 @@ export function createDatasetActions(
       rowLimit: number,
       strategy: 'sequential' | 'spread' = 'spread',
     ) => {
+      set({ datasetStatus: 'loading' });
       const { browserEngine } = get();
-      if (!browserEngine) throw new Error('Engine not initialized');
+      if (!browserEngine) {
+        set({ datasetStatus: 'error' });
+        throw new Error('Engine not initialized');
+      }
 
-      const response = await browserEngine.loadSAVSample(buffer, rowLimit, strategy);
+      const response = await browserEngine.loadSAVSample(buffer, rowLimit, strategy).catch((error) => {
+        set({ datasetStatus: 'error' });
+        throw error;
+      });
       const variableSets: VariableSet[] = response.variableSets.map(normalizeVariableSet);
       const variables: Variable[] = response.variables.map(normalizeVariable);
 
@@ -257,6 +288,7 @@ export function createDatasetActions(
           },
         },
         variableSets,
+        datasetStatus: 'ready',
         ...clearVariableStatsCache(),
         ...postLoadAnalysisReset(),
       });
@@ -267,8 +299,12 @@ export function createDatasetActions(
     },
 
     openWorkspaceDataset: async (stored: WorkspaceDatasetOpenInput) => {
+      set({ datasetStatus: 'loading' });
       const { browserEngine, dataset: currentDataset } = get();
-      if (!browserEngine) throw new Error('Engine not initialized');
+      if (!browserEngine) {
+        set({ datasetStatus: 'error' });
+        throw new Error('Engine not initialized');
+      }
 
       const runAnalysis = resolveRunAnalysis(get);
 
@@ -299,6 +335,7 @@ export function createDatasetActions(
             persistenceState: 'checking',
             persistedDataInfo: null,
             persistenceError: null,
+            datasetStatus: 'ready',
           });
         },
         applySameDatasetSession: (sessionState) => {

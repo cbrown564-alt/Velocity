@@ -1,20 +1,7 @@
 name: Mutation
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'src/core/**'
-      - 'stryker.config.json'
-      - 'vitest.mutation.config.ts'
-      - 'package-lock.json'
-  pull_request:
-    branches: [main]
-    paths:
-      - 'src/core/**'
-      - 'stryker.config.json'
-      - 'vitest.mutation.config.ts'
-      - 'package-lock.json'
+  workflow_dispatch:
 
 jobs:
   mutation:
@@ -54,6 +41,6 @@ jobs:
             echo '### mutation job'
             echo '- `npm run test:mutation:ci` (Stryker break threshold: 48%)'
             echo ''
-            echo 'Runs when `src/core/**`, Stryker config, or lockfile change.'
+            echo 'Manual deep run. The stable required mutation job lives in `Test`.'
             echo 'Download **mutation-report** artifact for HTML details on failure.'
           } >> "$GITHUB_STEP_SUMMARY"

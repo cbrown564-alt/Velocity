@@ -8,9 +8,10 @@ import type { DataSliceSet } from './sliceContext';
 
 export function applyLoadProgressMessage(set: DataSliceSet, msg: EngineResponseByType<'engine.loadProgress'>): void {
   if (msg.phase === 'complete') {
-    set({ loadProgress: null });
+    set({ loadProgress: null, datasetStatus: 'ready' });
   } else {
     set({
+      datasetStatus: 'loading',
       loadProgress: {
         phase: msg.phase,
         progress: msg.progress,
@@ -23,5 +24,5 @@ export function applyLoadProgressMessage(set: DataSliceSet, msg: EngineResponseB
 }
 
 export function createSetLoadProgress(set: DataSliceSet): (progress: LoadProgressState | null) => void {
-  return (progress) => set({ loadProgress: progress });
+  return (progress) => set({ loadProgress: progress, datasetStatus: progress ? 'loading' : undefined });
 }

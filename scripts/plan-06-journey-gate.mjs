@@ -94,6 +94,17 @@ async function main() {
   const results = [];
   const failures = [];
   const server = startDevServer();
+  let viteStdout = '';
+  let viteStderr = '';
+  let journeyMetrics = {};
+  const fiveMinuteReportPath = path.join(OUT_DIR, 'wp42-five-minute-pass.json');
+  let runError = null;
+  server.stdout.on('data', (chunk) => {
+    viteStdout += chunk.toString();
+  });
+  server.stderr.on('data', (chunk) => {
+    viteStderr += chunk.toString();
+  });
 
   console.log('Plan 06 journey gate — asserting §1 budgets');
   console.log(JSON.stringify(BUDGETS, null, 2));
@@ -117,9 +128,8 @@ async function main() {
     );
     results.push(fiveMinute);
 
-    const fiveMinuteReportPath = path.join(OUT_DIR, 'wp42-five-minute-pass.json');
     const fiveMinuteReport = JSON.parse(fs.readFileSync(fiveMinuteReportPath, 'utf8'));
-    const journeyMetrics = fiveMinuteReport.journeyMetrics ?? {};
+    journeyMetrics = fiveMinuteReport.journeyMetrics ?? {};
 
     if ((journeyMetrics.coldFirstCrosstabMs ?? Infinity) > BUDGETS.coldFirstCrosstabMs) {
       failures.push(
@@ -166,30 +176,31 @@ async function main() {
     );
     results.push(rebuildPath);
 
+    console.log(`\nJourney gate report: ${path.join(OUT_DIR, 'plan-06-journey-gate.json')}`);
+    if (failures.length > 0) {
+      throw new Error(`Journey gate budget failures: ${failures.join('; ')}`);
+    }
+
+    console.log('Journey gate PASSED');
+  } catch (error) {
+    runError = error;
+    throw error;
+  } finally {
+    fs.writeFileSync(path.join(OUT_DIR, 'vite-stdout.log'), viteStdout);
+    fs.writeFileSync(path.join(OUT_DIR, 'vite-stderr.log'), viteStderr);
     const report = {
       capturedAt: new Date().toISOString(),
       budgets: BUDGETS,
       results: results.map(({ label, elapsedMs }) => ({ label, elapsedMs })),
       journeyMetrics,
       fiveMinuteReportPath,
-      pass: failures.length === 0,
+      pass: !runError && failures.length === 0,
       failures,
+      error: runError instanceof Error ? { message: runError.message, stack: runError.stack ?? null } : null,
       notes:
         'Budgets mirror plan_06_backend_reset.md §1. Tune JOURNEY_BUDGET_* env vars if CI hardware requires headroom.',
     };
-
-    const reportPath = path.join(OUT_DIR, 'plan-06-journey-gate.json');
-    fs.writeFileSync(reportPath, `${JSON.stringify(report, null, 2)}\n`);
-
-    console.log(`\nJourney gate report: ${reportPath}`);
-    if (failures.length > 0) {
-      console.error('Journey gate FAILED:');
-      for (const failure of failures) console.error(`  - ${failure}`);
-      process.exit(1);
-    }
-
-    console.log('Journey gate PASSED');
-  } finally {
+    fs.writeFileSync(path.join(OUT_DIR, 'plan-06-journey-gate.json'), `${JSON.stringify(report, null, 2)}\n`);
     server.kill('SIGTERM');
   }
 }

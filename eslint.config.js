@@ -11,6 +11,7 @@ export default tseslint.config(
       '.agents/**',
       '.claude/**',
       '.venv/**',
+      '.worktrees/**',
       'coverage/**',
       'dist/**',
       'mcp-server/dist/**',

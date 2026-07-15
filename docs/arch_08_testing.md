@@ -219,7 +219,7 @@ When changing `src/core/`, run mutation tests locally or rely on the CI `mutatio
 
 ## 8. CI/CD Pipeline
 
-GitHub Actions runs on every PR to `main`. `.github/workflows/test.yml` splits the former monolithic `test` job into **six required jobs** that run in parallel where possible (`STAB-CI-12`). Local parity: `npm run ci` (lint through build), `npm run ci:e2e` (product Playwright gates), or `npm run ci:full` (both). See `docs/playbooks/pre_pr_verification.md`.
+GitHub Actions runs on every PR to `main`. The canonical merge contract has **eight stable required jobs**: seven jobs in `.github/workflows/test.yml` plus Journey Gate. Local parity: `npm run ci` (lint through build), `npm run ci:e2e` (boot prerequisite followed by product Playwright gates), `npm run journey-gate` plus `npm run test:e2e:production` (critical journey on dev and production builds), and `npm run ci:full` for the normal code gate. See `docs/playbooks/pre_pr_verification.md`.
 
 ### Merge gates summary
 
@@ -231,10 +231,11 @@ GitHub Actions runs on every PR to `main`. `.github/workflows/test.yml` splits t
 | `test.yml` | `unit-coverage` | Yes | `npm run test:run -- --coverage` + `npm run test:parity` |
 | `test.yml` | `build` | Yes | `npm run build` |
 | `test.yml` | `e2e` | Yes | `npm run ci:e2e` |
+| `test.yml` | `mutation` | Yes; expensive step runs only for core/config/lockfile changes | `npm run test:mutation:ci` when applicable |
+| `journey-gate.yml` | `journey-gate` | Yes | `npm run journey-gate` + `npm run test:e2e:production` |
 | `visual-e2e.yml` | `visual-e2e` | **No** (informational) | `npm run test:e2e:visual` |
-| `mutation.yml` | `mutation` | Yes (path-filtered) | `npm run test:mutation:ci` |
 
-All six `test.yml` jobs must pass. A green subset does **not** imply a mergeable PR.
+All eight required jobs must complete successfully on the current, up-to-date PR head. A green subset, pending job, skipped context, legacy combined commit status, or successful Vercel deployment does **not** imply a mergeable PR.
 
 ### `lint-format` job
 
@@ -268,15 +269,28 @@ Includes Vitest suites such as `tests/e2e/agentWorkflow.test.ts` (engine workflo
 
 ### `e2e` job (needs `lint-format`, `typecheck`; parallel with guards/coverage/build)
 
-1. **Playwright**: `npm run test:e2e` — 12 product specs; excludes `@visual` screenshot regression
+1. **Playwright boot prerequisite**: clean shell, real visible upload, worker/DuckDB phase trace, and failure-to-memory recovery. The `product` project depends on this project, so a boot failure skips dependents with the explicit Playwright dependency classification.
+2. **Playwright product suite**: `npm run test:e2e` — excludes `@visual` screenshot regression. Traces and screenshots are retained on failure.
+
+### `journey-gate` workflow
+
+1. `npm run journey-gate` runs the five-minute path against Vite dev, writes timing and causal diagnostics in `finally`, and enforces the frozen cold/warm/export/wave budgets.
+2. `npm run test:e2e:production` builds the application and runs the boot/upload contract plus production smoke against `vite preview`.
+3. The artifact upload is unconditional and includes the structured boot trace, browser console/page/network diagnostics, screenshot, DOM, Playwright trace, Vite stdout/stderr, and timing reports.
+
+`scripts/engine-boot-experiment.mjs` is the repeated diagnostic/soak harness. It records per-phase durations, bundle, persistence outcome, and failure phase across dev/preview, OPFS/memory, service-worker, storage, concurrency, and start-action cells.
 
 ### `visual-e2e` workflow (`.github/workflows/visual-e2e.yml`; STAB-CI-16)
 
 Runs `npm run test:e2e:visual` (`@visual` tag only). **`continue-on-error: true`** — failures are informational until Linux baselines stabilize. Update snapshots locally with `npm run test:e2e:visual:update`.
 
-### `mutation` workflow (path-filtered)
+### Stable mutation job
 
-`.github/workflows/mutation.yml` runs when `src/core/**`, Stryker config, or lockfile change:
+The required `mutation` job lives in `test.yml` and is present on every PR. It detects changes under `src/core/**`, Stryker/Vitest mutation configuration, and `package-lock.json`; the expensive Stryker step runs only when one of those paths changed. `.github/workflows/mutation.yml` remains a manual deep-run workflow and is not a required context.
+
+### Red-main ownership
+
+`.github/workflows/red-main-incident.yml` creates or updates the open `STOP: required main check is red` issue when Test or Journey Gate fails or times out on `main`. Required-check failure owns stabilization work before feature promotion resumes.
 
 1. **Mutation testing**: `npm run test:mutation:ci` (Stryker + Vitest; 40% break threshold on gated `src/core/` scope)
 

@@ -22,6 +22,7 @@ import type {
   VariableStatsFrequency,
   NumericStats,
 } from './worker';
+import type { BootTraceEvent } from './bootTrace';
 
 export type DuckDbBundleVariant = 'eh' | 'coi';
 
@@ -53,6 +54,8 @@ export type EngineWorkerRequest = EngineRequestBase &
         datasetId?: string;
         schemaVersion?: number;
         hasPersistedSource?: boolean;
+        bootCorrelationId?: string;
+        persistenceMode?: 'auto' | 'memory';
       }
     | { type: 'engine.ping' }
     | { type: 'engine.shutdown' }
@@ -121,6 +124,7 @@ export type EngineWorkerResponse = EngineResponseBase &
     | { type: 'engine.ready'; opfsAvailable: boolean; duckdbBundle?: DuckDbBundleVariant }
     | { type: 'engine.pong'; hasData: boolean; rowCount?: number }
     | { type: 'engine.shutdownComplete' }
+    | { type: 'engine.bootTrace'; event: BootTraceEvent }
 
     // --- Persistence ---
     | {

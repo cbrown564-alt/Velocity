@@ -61,6 +61,7 @@
     "demo:brand-tracker": "tsx scripts/brand-tracker-demo.ts",
     "demo:brand-tracker-wave-refresh": "tsx scripts/brand-tracker-wave-refresh-demo.ts",
     "journey-gate": "node scripts/plan-06-journey-gate.mjs",
+    "experiment:engine-boot": "node scripts/engine-boot-experiment.mjs",
     "report-quality:inspect": "node scripts/report-quality/inspect-pptx.mjs",
     "report-quality:review": "node scripts/report-quality/review-artifact.mjs"
   },

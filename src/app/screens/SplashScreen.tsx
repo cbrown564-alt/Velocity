@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { AlertCircle, Loader2 } from 'lucide-react';
 import { useReducedMotion } from '../../lib/motion';
@@ -7,10 +7,11 @@ import { getLoadStageHeadline } from '../../lib/uploadFeedback';
 import type { Dataset } from '../../types/dataset';
 import type { WorkspaceState, Project, StoredDataset } from '../../features/workspace';
 import { WorkspaceView } from '../../features/workspace';
-import type { LoadProgressState, PersistenceState } from '../../store/slices/data/types';
+import type { EngineBootStatus, LoadProgressState, PersistenceState } from '../../store/slices/data/types';
+import { recordBootTrace } from '../../services/bootTrace';
 
 export interface SplashScreenProps {
-  isDbReady: boolean;
+  engineStatus: EngineBootStatus;
   initError: string | null;
   persistenceState: PersistenceState;
   loadProgress: LoadProgressState | null;
@@ -35,10 +36,13 @@ export interface SplashScreenProps {
   onFileDrop?: (file: File) => void;
   onRebuildFromOpfs: (mode: 'splash' | 'dashboard') => void;
   onDiscard: () => void;
+  onRetryEngine: () => void;
+  onUseMemoryMode: () => void;
+  onCancelEngineBoot: () => void;
 }
 
 export const SplashScreen: React.FC<SplashScreenProps> = ({
-  isDbReady,
+  engineStatus,
   initError,
   persistenceState,
   loadProgress,
@@ -63,11 +67,18 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
   onFileDrop,
   onRebuildFromOpfs,
   onDiscard,
+  onRetryEngine,
+  onUseMemoryMode,
+  onCancelEngineBoot,
 }) => {
   const reducedMotion = useReducedMotion();
   const initHeadline = loadProgress ? getLoadStageHeadline(loadProgress) : getEngineInitHeadline(persistenceState);
   const initDetail = loadProgress?.message || getEngineInitDetail(persistenceState);
   const initPercent = loadProgress ? Math.max(0, Math.min(100, Math.round(loadProgress.progress * 100))) : null;
+
+  useEffect(() => {
+    recordBootTrace({ source: 'main', phase: 'shell.rendered', status: 'completed' });
+  }, []);
 
   return (
     <motion.div
@@ -76,37 +87,49 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
       exit={{ opacity: 0, transition: { duration: reducedMotion ? 0 : 0.12 } }}
       className="fixed inset-0 bg-[var(--bg-app)] z-[var(--z-modal)]"
     >
-      {isDbReady && !initError && (
-        <WorkspaceView
-          workspaceState={workspace}
-          onOpenDataset={onOpenDataset}
-          onUploadFile={onUploadFile}
-          onLoadExample={onLoadExample}
-          onCreateProject={onCreateProject}
-          onDeleteDataset={onDeleteDataset}
-          onToggleStar={onToggleStar}
-          onLinkDatasets={onLinkDatasets}
-          onUnlinkDataset={onUnlinkDataset}
-          onCompareWaves={onCompareWaves}
-          onBatchStar={onBatchStar}
-          onBatchDelete={onBatchDelete}
-          onExport={onExport}
-          onImportSession={onImportSession}
-          onFileDrop={onFileDrop}
-        />
-      )}
+      <WorkspaceView
+        workspaceState={workspace}
+        onOpenDataset={onOpenDataset}
+        onUploadFile={onUploadFile}
+        onLoadExample={onLoadExample}
+        onCreateProject={onCreateProject}
+        onDeleteDataset={onDeleteDataset}
+        onToggleStar={onToggleStar}
+        onLinkDatasets={onLinkDatasets}
+        onUnlinkDataset={onUnlinkDataset}
+        onCompareWaves={onCompareWaves}
+        onBatchStar={onBatchStar}
+        onBatchDelete={onBatchDelete}
+        onExport={onExport}
+        onImportSession={onImportSession}
+        onFileDrop={onFileDrop}
+      />
 
-      {(!isDbReady || initError) && (
+      {(engineStatus === 'starting' || engineStatus === 'error' || initError) && (
         <div
           className="absolute top-0 left-0 right-0 z-[var(--z-dropdown)] border-b border-[var(--border-color-muted)] bg-[var(--bg-panel)]/95 backdrop-blur-sm"
           data-testid="engine-init-bar"
         >
           <div className="max-w-4xl mx-auto px-6 py-3 flex items-center gap-3">
             {initError ? (
-              <>
+              <div className="flex min-w-0 flex-1 items-center gap-3">
                 <AlertCircle size={16} className="text-[var(--color-error)] shrink-0" />
-                <p className="text-sm text-[var(--color-error)]">{initError}</p>
-              </>
+                <p className="min-w-0 flex-1 truncate text-sm text-[var(--color-error)]">{initError}</p>
+                <button
+                  type="button"
+                  onClick={onRetryEngine}
+                  className="rounded border border-[var(--border-color)] px-3 py-1.5 text-xs font-medium text-[var(--text-primary)]"
+                >
+                  Retry engine
+                </button>
+                <button
+                  type="button"
+                  onClick={onUseMemoryMode}
+                  className="rounded bg-[var(--color-accent)] px-3 py-1.5 text-xs font-medium text-[var(--text-inverse)]"
+                >
+                  Use safe memory mode
+                </button>
+              </div>
             ) : (
               <>
                 <Loader2 className="w-4 h-4 text-[var(--text-secondary)] animate-spin shrink-0" />
@@ -119,6 +142,13 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
                     {initPercent !== null ? ` · ${initPercent}%` : ''}
                   </p>
                 </div>
+                <button
+                  type="button"
+                  onClick={onCancelEngineBoot}
+                  className="ml-auto rounded border border-[var(--border-color)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)]"
+                >
+                  Cancel engine start
+                </button>
               </>
             )}
           </div>

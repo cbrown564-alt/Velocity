@@ -9,7 +9,7 @@ Use with:
 - Scope gates: `docs/blue_02_feature_matrix.md`
 - Agent rules: `AGENTS.md`
 
-**Critical path:** market-reset pilot — prove the narrow SAV-to-deck wedge before expanding the platform. Presentation/technical UI foundations and the design reset are shipped; remaining product work is pilot validation, design-convergence polish, and a few gated leftovers.
+**Critical path:** close Audit 10's engine-boot and CI-truth incident before relying on pilot-readiness or persistence-promotion claims. After that, prove the narrow SAV-to-deck wedge before expanding the platform.
 
 ## 1. Status Model
 
@@ -37,12 +37,12 @@ Default owner flow: `Architect -> Implementer -> Reviewer`. Handoff: `docs/agent
 
 | Priority | Pull | Why |
 | :--- | :--- | :--- |
-| 1 | `DESIGN-CONV-B` | Confirmed P0: export preview lane before PPTX |
-| 2 | `DESIGN-CONV-A` | Post-reset photography + unscripted session evidence (unblocks PILOT-6 screenshots) |
-| 3 | `PILOT-4a` | External project/file reviews → ranked processing blockers |
-| 4 | `PILOT-6` | Paid pilot recruiting (promise must match current surface; photography after CONV-A) |
-| 5 | `DESIGN-CONV-Q6` | Recipe legibility audit before agent UI (`DESIGN-CONV-I`) |
-| 6 | `STAB-CI-23` | Features/overlays coverage floor raise (parallel hygiene) |
+| 1 | `STAB-BOOT-1`…`5`, `STAB-CI-25`…`26` | Audit 10 stabilization and promoted-commit proof |
+| 2 | `DESIGN-CONV-B` | Confirmed P0: export preview lane before PPTX |
+| 3 | `DESIGN-CONV-A` | Post-reset photography + unscripted session evidence (unblocks PILOT-6 screenshots) |
+| 4 | `PILOT-4a` | External project/file reviews → ranked processing blockers |
+| 5 | `PILOT-6` | Paid pilot recruiting (promise must match current surface; photography after CONV-A) |
+| 6 | `DESIGN-CONV-Q6` | Recipe legibility audit before agent UI (`DESIGN-CONV-I`) |
 
 Do **not** start `PILOT-4b`, Phase 5+, or `DESIGN-CONV-J` without the stated gates.
 
@@ -164,13 +164,20 @@ graph TD
 
 ### 5.4 CI Truth (remaining)
 
-**Shipped:** `STAB-CI-2`…`22` — see foundations summary and `arch_08_testing.md`.
+**Owner:** `audit_10_engine_boot_ci_truth_rca_2026-07-14.md`. Do not move these rows to Done until the audit's exact promoted-commit evidence is linked.
 
 | ID | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence / validation |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | STAB-CI-19 | Mutation threshold | Stryker break 40 → 48 when measured ≥ 48 | STAB-CI-8 | Blocked | No | A | Baseline ~46%; raise deferred to avoid false CI failures |
 | STAB-CI-23 | Features/overlays ratchet | Raise per-path `src/features/**` and `src/components/overlays/**` fn floors toward 82% | STAB-CI-11 | In progress | No | A,U | Baseline ~70% / 67% vs floors 70% / 67%. Slices: overlays, workspace, dashboard, variableManager, harmonization. See `arch_08` §7.1 |
 | STAB-CI-24+ | Further ratchets | `services`, `store`, harmonization UI floors after STAB-CI-23 | STAB-CI-23 | Frozen | No | A | Activate after features/overlays gap closes |
+| STAB-BOOT-1 | Fresh workspace before engine | Shell and real visible start actions work with engine idle | None | In progress | Yes | T,L,U,I,A | Clean-context visible-control and real file-chooser E2E |
+| STAB-BOOT-2 | Cross-thread boot evidence | Bounded correlated trace plus always-written failure artifacts | STAB-BOOT-1 | In progress | Yes | T,L,U,I,A | Trace contract E2E; failed experiment names exact phase; Journey artifact |
+| STAB-BOOT-3 | Linux CI cause | Prove the environmental trigger with repeated one-variable experiments | STAB-BOOT-2 | In progress | No | I,G,A | 20-run diagnostic cells and 50-run final candidate; exact CI trace/run |
+| STAB-BOOT-4 | Bounded recoverable boot | Per-phase deadlines, cancellation, retry, visible safe-memory recovery | STAB-BOOT-3 | In progress | Yes | T,L,U,I,A | Lifecycle tests plus real-browser forced-failure/recovery E2E |
+| STAB-BOOT-5 | Boot-first verification and soak | Boot prerequisite classifies dependents; dev/production critical paths stay green | STAB-BOOT-4 | In progress | Yes | T,L,U,I,G,A | Journey + product E2E green on 10 consecutive main runs and pilot profile |
+| STAB-CI-25 | Enforced merge controls | Eight canonical checks, up-to-date branch, routine bypass disabled, red-main owner | None | In progress | Yes | A,I | Deliberately failing required-check PR is unmergeable; protection API evidence |
+| STAB-CI-26 | Evidence-bound status | Correct Plan 06/Audit 09/tracker/testing docs with commit and runs | STAB-CI-25, STAB-BOOT-5 | In progress | No | A | Final Audit 10 evidence table links commit, PR, soak, chaos, and pilot profile |
 
 ### 5.5 Future gates (frozen until `PILOT-7`)
 

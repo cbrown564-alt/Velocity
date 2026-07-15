@@ -5,6 +5,7 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:
 
 concurrency:
   group: test-${{ github.workflow }}-${{ github.ref }}
@@ -235,4 +236,64 @@ jobs:
             echo ''
             echo 'Visual baselines: `npm run test:e2e:visual` (separate workflow, non-blocking)'
             echo 'Fix locally: `npm run ci:e2e` after `npx playwright install --with-deps`'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  mutation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Detect mutation-sensitive changes
+        id: changes
+        shell: bash
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            base="${{ github.event.pull_request.base.sha }}"
+          elif [[ "${{ github.event.before }}" != "" && "${{ github.event.before }}" != "0000000000000000000000000000000000000000" ]]; then
+            base="${{ github.event.before }}"
+          else
+            base="HEAD^"
+          fi
+          if git diff --quiet "$base" HEAD -- src/core stryker.config.json vitest.mutation.config.ts package-lock.json; then
+            echo "run=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Setup Node.js
+        if: steps.changes.outputs.run == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        if: steps.changes.outputs.run == 'true'
+        run: npm ci --legacy-peer-deps
+
+      - name: Run core mutation tests
+        if: steps.changes.outputs.run == 'true'
+        run: npm run test:mutation:ci
+        timeout-minutes: 90
+
+      - name: Upload mutation report
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: mutation-report
+          path: reports/mutation/
+          retention-days: 7
+
+      - name: Job summary
+        if: always()
+        run: |
+          {
+            echo '### mutation job'
+            echo "- Mutation-sensitive changes: ${{ steps.changes.outputs.run }}"
+            echo '- `npm run test:mutation:ci` when core/config/lockfile changes'
+            echo '- Stable job name remains present when the expensive step is skipped.'
           } >> "$GITHUB_STEP_SUMMARY"

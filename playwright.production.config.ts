@@ -6,13 +6,14 @@ const baseURL = `http://${host}:${port}`;
 
 export default defineConfig({
   testDir: 'tests/e2e',
-  testMatch: 'production-smoke.spec.ts',
+  testMatch: ['production-smoke.spec.ts', 'engine-boot-contract.spec.ts'],
   timeout: 120000,
   retries: process.env.CI ? 1 : 0,
   use: {
     baseURL,
     browserName: 'chromium',
     trace: 'retain-on-failure',
+    screenshot: 'only-on-failure',
     viewport: { width: 1440, height: 900 },
   },
   webServer: {

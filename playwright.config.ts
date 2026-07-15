@@ -24,6 +24,7 @@ export default defineConfig({
     baseURL,
     browserName: 'chromium',
     trace: 'retain-on-failure',
+    screenshot: 'only-on-failure',
     viewport: { width: 1440, height: 900 },
   },
   webServer: {
@@ -32,4 +33,20 @@ export default defineConfig({
     reuseExistingServer: !process.env.CI,
     timeout: 120000,
   },
+  projects: [
+    {
+      name: 'boot-prerequisite',
+      testMatch: '**/engine-boot-contract.spec.ts',
+      fullyParallel: false,
+    },
+    {
+      name: 'product',
+      testIgnore: [
+        '**/engine-boot-contract.spec.ts',
+        '**/production-smoke.spec.ts',
+        '**/performance-dashboard.spec.ts',
+      ],
+      dependencies: ['boot-prerequisite'],
+    },
+  ],
 });

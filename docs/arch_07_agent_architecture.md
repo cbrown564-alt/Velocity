@@ -152,6 +152,16 @@ After Phase 1 subtraction (WebR, harmonization, dead code) and Phase 2 one-deck 
 
 **Worker handler map** (`src/services/worker/engineHandlers.ts`) — one handler per `engine.*` request type in `src/types/engineWorker.ts`. Orphaned messages removed in Plan 06 Phase 5 (`engine.runAnalysis`, `engine.close`, `engine.setPersistenceContext`).
 
+#### Browser boot coordinator
+
+`src/services/workspaceBoot/engineLifecycle.ts` owns worker creation, readiness, cancellation, respawn, and shutdown. `engineWarmUp.ts` owns intent deduplication only; assigning a `BrowserEngine` proxy is not readiness. Concurrent callers await the in-flight coordinator until `engine.ready` arrives.
+
+The UI models shell, engine, persistence, and dataset status separately. The shell and upload/example/drop actions exist while the engine is idle. Intent starts the coordinator in normal OPFS mode; failure keeps the shell usable and offers retry or explicit safe memory mode. Cancellation hard-terminates the abandoned worker. Worker destruction releases any browser-held Web Lock.
+
+One bounded, survey-data-free boot trace follows a correlation ID through the main thread and analysis worker. It records shell/intent/import, worker creation and online state, `engine.init`, bundle/capabilities, nested worker, WASM fetch/instantiate, OPFS support/lock/open/reset/drop/fallback, connection, readiness, and first file load. Main-thread traces retain at most 200 events and coalesce repeated progress. Phase deadlines are defined in `workspaceBoot/constants.ts`; the overall proxy deadline terminates failed startup.
+
+OPFS mode continues to require the EH bundle. Safe memory mode disables persistence for that boot and uses the same feature-based bundle-selection function in dev and production. Memory fallback is an explicit `engine.persistenceStatus` decision and visible UI state; persistence E2E still asserts OPFS, so the fallback cannot silently satisfy persistence gates.
+
 #### Sarah's journey → browser surface
 
 | Step | BrowserEngine / worker | Notes |

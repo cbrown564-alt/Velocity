@@ -11,3 +11,12 @@ export const OPFS_ATTEMPT_TIMEOUT_MS = 2000;
  * lock are released before the next worker boots.
  */
 export const ENGINE_SHUTDOWN_ACK_TIMEOUT_MS = 3000;
+
+/** End-to-end deadline for the analysis worker to acknowledge engine.ready. */
+export const ENGINE_BOOT_TIMEOUT_MS = 90_000;
+
+/** Worker-side phase deadlines. These identify the stalled boundary precisely. */
+export const DUCKDB_BUNDLE_SELECT_TIMEOUT_MS = 10_000;
+export const DUCKDB_INSTANTIATE_TIMEOUT_MS = 60_000;
+export const DUCKDB_OPFS_SETUP_TIMEOUT_MS = 12_000;
+export const DUCKDB_CONNECT_TIMEOUT_MS = 10_000;

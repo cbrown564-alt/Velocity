@@ -7,6 +7,7 @@ Navigation hub for live documentation. **Agent rules: [`AGENTS.md`](../AGENTS.md
 | Need | Read |
 | :--- | :--- |
 | What to work on | `tracker_00_implementation_status.md` (pilot remaining, `DESIGN-CONV`, gated leftovers) |
+| **Engine boot / CI truth incident** | **`audit_10_engine_boot_ci_truth_rca_2026-07-14.md`** — active stabilization owner until promoted-commit soak and merge-control evidence pass |
 | **Pilot UI presentation gate** | **`audit_07_pilot_presentation_readiness_2026-07-01.md`** — Linear-bar screenshot audit, PPR fix list, frozen workflow screenshots |
 | **User journey screenshots** | **`user_journey_screenshots.md`** — three main journeys (activation, presentation/export, durability) with design decisions and open questions |
 | Pilot contract (PILOT-0) | `pilot_00_brief.md` — SAV-to-deck thesis, scope, metrics, ICP screen |
