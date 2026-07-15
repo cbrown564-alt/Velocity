@@ -111,10 +111,14 @@ function parseArgs() {
   };
   const repetitions = Number(read('--repetitions', process.env.BOOT_EXPERIMENT_REPETITIONS || '20'));
   const requested = read('--cells', 'baseline-dev,memory-dev,sw-blocked-dev,baseline-preview').split(',');
+  const artifactName = read('--artifact-name', process.env.BOOT_EXPERIMENT_ARTIFACT || 'engine-boot-experiment');
+  if (!/^[a-z0-9][a-z0-9-]*$/.test(artifactName)) {
+    throw new Error(`Invalid artifact name ${artifactName}; use lowercase letters, digits, and hyphens`);
+  }
   for (const name of requested) {
     if (!CELLS[name]) throw new Error(`Unknown cell ${name}. Available: ${Object.keys(CELLS).join(', ')}`);
   }
-  return { repetitions, requested };
+  return { repetitions, requested, artifactName };
 }
 
 function runCommand(command, args) {
@@ -213,7 +217,7 @@ async function startAction(page, cell) {
     const transfer = new DataTransfer();
     transfer.items.add(new File([data], 'sleep.sav', { type: 'application/octet-stream' }));
     document
-      .querySelector('[data-testid="workspace-empty-state"]')
+      .querySelector('[data-testid="workspace-upload-dropzone"]')
       ?.dispatchEvent(new DragEvent('drop', { bubbles: true, cancelable: true, dataTransfer: transfer }));
   }, bytes);
 }
@@ -249,6 +253,16 @@ function summarizeTrace(trace) {
 async function runOnce(browser, baseURL, cell, cellName, repetition, lane) {
   const context = await browser.newContext({ serviceWorkers: cell.serviceWorker ? 'allow' : 'block' });
   const page = await context.newPage();
+  const diagnostics = { console: [], pageErrors: [], requestFailures: [] };
+  page.on('console', (message) => {
+    if (message.type() === 'error' || message.type() === 'warning') {
+      diagnostics.console.push({ type: message.type(), text: message.text() });
+    }
+  });
+  page.on('pageerror', (error) => diagnostics.pageErrors.push(error.message));
+  page.on('requestfailed', (request) => {
+    diagnostics.requestFailures.push({ url: request.url(), errorText: request.failure()?.errorText ?? 'unknown' });
+  });
   const startedAt = Date.now();
   let error = null;
   try {
@@ -272,6 +286,7 @@ async function runOnce(browser, baseURL, cell, cellName, repetition, lane) {
     elapsedMs: Date.now() - startedAt,
     pass: error === null,
     error,
+    diagnostics,
     trace: summarizeTrace(trace),
   };
   await context.close();
@@ -304,7 +319,7 @@ async function runServerCells(browser, mode, cellNames, repetitions, results, se
 }
 
 async function main() {
-  const { repetitions, requested } = parseArgs();
+  const { repetitions, requested, artifactName } = parseArgs();
   fs.mkdirSync(OUT_DIR, { recursive: true });
   const browser = await chromium.launch();
   const results = [];
@@ -346,9 +361,9 @@ async function main() {
     summary,
     results,
   };
-  fs.writeFileSync(path.join(OUT_DIR, 'engine-boot-experiment.raw.json'), `${JSON.stringify(artifact, null, 2)}\n`);
+  fs.writeFileSync(path.join(OUT_DIR, `${artifactName}.raw.json`), `${JSON.stringify(artifact, null, 2)}\n`);
   fs.writeFileSync(
-    path.join(OUT_DIR, 'engine-boot-experiment.json'),
+    path.join(OUT_DIR, `${artifactName}.json`),
     `${JSON.stringify({ capturedAt: artifact.capturedAt, repetitions, cells: artifact.cells, summary }, null, 2)}\n`,
   );
   for (const [mode, logs] of Object.entries(serverLogs)) {

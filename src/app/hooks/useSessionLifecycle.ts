@@ -42,7 +42,22 @@ export interface UseSessionLifecycleReturn {
   handleDiscard: () => Promise<void>;
   handleDatasetFileUpload: (event: React.ChangeEvent<HTMLInputElement>) => Promise<void>;
   handleLoadExample: () => void;
-  handleFileDrop: (file: File) => void;
+  handleFileDrop: (file: File) => Promise<void>;
+}
+
+export interface FileDropEngineReadyDependencies {
+  warmUp: () => Promise<void>;
+  clearImportedSessionSemantic: () => void;
+  handleDroppedFile: (file: File) => Promise<void>;
+}
+
+export async function processFileDropAfterEngineReady(
+  file: File,
+  dependencies: FileDropEngineReadyDependencies,
+): Promise<void> {
+  dependencies.clearImportedSessionSemantic();
+  await dependencies.warmUp();
+  await dependencies.handleDroppedFile(file);
 }
 
 export function useSessionLifecycle({
@@ -271,11 +286,12 @@ export function useSessionLifecycle({
   }, [clearImportedSessionSemantic, fileUpload]);
 
   const handleFileDrop = useCallback(
-    (file: File) => {
-      void warmUpEngineOnIntent('file-drop');
-      clearImportedSessionSemantic();
-      void fileUpload.handleDroppedFile(file);
-    },
+    (file: File) =>
+      processFileDropAfterEngineReady(file, {
+        warmUp: () => warmUpEngineOnIntent('file-drop'),
+        clearImportedSessionSemantic,
+        handleDroppedFile: fileUpload.handleDroppedFile,
+      }),
     [clearImportedSessionSemantic, fileUpload],
   );
 

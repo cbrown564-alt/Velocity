@@ -183,7 +183,7 @@ export function createEngineProxy(
   return new EngineProxy(worker, {
     ...createEnginePersistenceCallbacks(bridge, options),
     onProgress: options.onLoadProgress,
-    timeoutMs: ENGINE_BOOT_TIMEOUT_MS,
+    initTimeoutMs: ENGINE_BOOT_TIMEOUT_MS,
   });
 }
 

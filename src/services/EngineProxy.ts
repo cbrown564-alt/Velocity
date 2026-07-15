@@ -54,6 +54,8 @@ type BootTraceCallback = (event: BootTraceEvent) => void;
 export interface EngineProxyOptions {
   /** Timeout per request in ms. Defaults to 120_000 (2 min). */
   timeoutMs?: number;
+  /** Engine-init deadline in ms. Defaults to the normal request timeout. */
+  initTimeoutMs?: number;
   /** Called on load-progress messages during file loading. */
   onProgress?: ProgressCallback;
   /** Called on persistence status updates during init. */
@@ -74,6 +76,7 @@ export class EngineProxy {
   private worker: Worker;
   private pending = new Map<string, PendingRequest>();
   private timeoutMs: number;
+  private initTimeoutMs: number;
   private onProgress?: ProgressCallback;
   private onPersistenceStatus?: PersistenceStatusCallback;
   private onCorruption?: CorruptionCallback;
@@ -85,6 +88,7 @@ export class EngineProxy {
   constructor(worker: Worker, options: EngineProxyOptions = {}) {
     this.worker = worker;
     this.timeoutMs = options.timeoutMs ?? DEFAULT_TIMEOUT_MS;
+    this.initTimeoutMs = options.initTimeoutMs ?? this.timeoutMs;
     this.onProgress = options.onProgress;
     this.onPersistenceStatus = options.onPersistenceStatus;
     this.onCorruption = options.onCorruption;
@@ -119,6 +123,8 @@ export class EngineProxy {
         persistenceMode: opts?.persistenceMode,
       },
       'engine.ready',
+      undefined,
+      this.initTimeoutMs,
     ) as Promise<EngineResponseByType<'engine.ready'>>;
   }
 

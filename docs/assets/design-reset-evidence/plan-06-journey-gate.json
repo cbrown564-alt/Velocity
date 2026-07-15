@@ -1,0 +1,37 @@
+{
+  "capturedAt": "2026-07-15T10:19:59.111Z",
+  "budgets": {
+    "coldFirstCrosstabMs": 10000,
+    "warmFirstCrosstabMs": 5000,
+    "exportPptxMs": 5000,
+    "waveRefreshMs": 30000
+  },
+  "results": [
+    {
+      "label": "five-minute-pass",
+      "elapsedMs": 9270
+    },
+    {
+      "label": "wave-refresh-engine",
+      "elapsedMs": 827
+    },
+    {
+      "label": "wave-refresh-browser",
+      "elapsedMs": 4924
+    },
+    {
+      "label": "persistence-rebuild-path",
+      "elapsedMs": 13209
+    }
+  ],
+  "journeyMetrics": {
+    "coldFirstCrosstabMs": 1689,
+    "warmFirstCrosstabMs": 964,
+    "exportPptxMs": 80
+  },
+  "fiveMinuteReportPath": "docs/assets/design-reset-evidence/wp42-five-minute-pass.json",
+  "pass": true,
+  "failures": [],
+  "error": null,
+  "notes": "Budgets mirror plan_06_backend_reset.md §1. Tune JOURNEY_BUDGET_* env vars if CI hardware requires headroom."
+}

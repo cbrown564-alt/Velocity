@@ -100,19 +100,59 @@ async function waitForDashboardReady(page) {
   );
 }
 
+async function currentDatasetId(page) {
+  return page.evaluate(() => window.__velocityStore?.getState().dataset?.id ?? null);
+}
+
+async function waitForUploadBaseline(page) {
+  await page.waitForFunction(
+    () => {
+      const state = window.__velocityStore?.getState();
+      if (!state || state.loadProgress !== null) return false;
+      if (state.engineStatus === 'idle') {
+        return state.datasetStatus === 'idle' && state.dataset === null;
+      }
+      return (
+        state.engineStatus === 'ready' && state.datasetStatus !== 'loading' && state.persistenceState !== 'checking'
+      );
+    },
+    undefined,
+    { timeout: Number(process.env.DASHBOARD_READY_TIMEOUT_MS || 180000) },
+  );
+}
+
+async function waitForUploadedDataset(page, previousDatasetId) {
+  await page.waitForFunction(
+    (priorId) => {
+      const state = window.__velocityStore?.getState();
+      return (
+        state?.datasetStatus === 'ready' &&
+        state.dataset?.id !== priorId &&
+        state.engineStatus === 'ready' &&
+        state.loadProgress === null
+      );
+    },
+    previousDatasetId,
+    { timeout: Number(process.env.DASHBOARD_READY_TIMEOUT_MS || 180000) },
+  );
+}
+
 async function closeOverlays(page) {
   for (let i = 0; i < 3; i += 1) {
     const paletteInput = page.getByPlaceholder('Find a variable…');
-    if (await paletteInput.isVisible().catch(() => false)) {
-      await page.keyboard.press('Escape');
-      await paletteInput.waitFor({ state: 'hidden', timeout: 3000 }).catch(() => {});
-    }
     const exportModal = page.getByTestId('export-modal-submit');
-    if (await exportModal.isVisible().catch(() => false)) {
+    const paletteVisible = await paletteInput.isVisible().catch(() => false);
+    const exportVisible = await exportModal.isVisible().catch(() => false);
+    if (!paletteVisible && !exportVisible) return;
+
+    if (paletteVisible) {
       await page.keyboard.press('Escape');
-      await exportModal.waitFor({ state: 'hidden', timeout: 3000 }).catch(() => {});
+      await paletteInput.waitFor({ state: 'hidden', timeout: 3000 });
     }
-    await page.waitForTimeout(150);
+    if (exportVisible) {
+      await page.keyboard.press('Escape');
+      await exportModal.waitFor({ state: 'hidden', timeout: 3000 });
+    }
   }
 }
 
@@ -127,16 +167,17 @@ async function insertVariable(page, query, target = 'rows') {
   const input = page.getByPlaceholder('Find a variable…');
   await input.fill('');
   await input.fill(query);
-  await page.waitForTimeout(250);
-  if (target === 'columns') {
+  await page
+    .locator('[data-testid^="palette-variable-"][data-selected="true"]')
+    .waitFor({ state: 'visible', timeout: 10000 });
+  if (target === 'rows') {
     await page.keyboard.press('Alt+Enter');
   } else if (target === 'filter') {
     await page.keyboard.press('Shift+Enter');
   } else {
     await page.keyboard.press('Enter');
   }
-  await page.waitForTimeout(700);
-  await closeOverlays(page);
+  await input.waitFor({ state: 'hidden', timeout: 10000 });
 }
 
 async function waitForFirstCrosstab(page, timeoutMs = 60000) {
@@ -155,8 +196,11 @@ async function waitForFirstCrosstab(page, timeoutMs = 60000) {
 }
 
 async function runUploadToFirstCrosstab(page, savPath) {
+  await waitForUploadBaseline(page);
+  const previousDatasetId = await currentDatasetId(page);
   const fileDropAt = Date.now();
   await page.getByTestId('dataset-upload-input').setInputFiles(savPath);
+  await waitForUploadedDataset(page, previousDatasetId);
   await waitForDashboardReady(page);
 
   const tableVisible = await page
@@ -391,7 +435,7 @@ async function main() {
       pass,
       journeyMetrics,
       criteria: { maxElapsedMs: 300000, maxInterruptions: 0, minSlides: 3, minExportedSlides: 3 },
-      pptxPath: savePath,
+      pptxPath: path.relative(ROOT, savePath),
     };
 
     console.log(

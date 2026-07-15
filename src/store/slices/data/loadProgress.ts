@@ -24,5 +24,11 @@ export function applyLoadProgressMessage(set: DataSliceSet, msg: EngineResponseB
 }
 
 export function createSetLoadProgress(set: DataSliceSet): (progress: LoadProgressState | null) => void {
-  return (progress) => set({ loadProgress: progress, datasetStatus: progress ? 'loading' : undefined });
+  return (progress) => {
+    if (progress) {
+      set({ loadProgress: progress, datasetStatus: 'loading' });
+      return;
+    }
+    set({ loadProgress: null });
+  };
 }

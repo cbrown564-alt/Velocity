@@ -193,7 +193,7 @@ async function main() {
       budgets: BUDGETS,
       results: results.map(({ label, elapsedMs }) => ({ label, elapsedMs })),
       journeyMetrics,
-      fiveMinuteReportPath,
+      fiveMinuteReportPath: path.relative(ROOT, fiveMinuteReportPath),
       pass: !runError && failures.length === 0,
       failures,
       error: runError instanceof Error ? { message: runError.message, stack: runError.stack ?? null } : null,

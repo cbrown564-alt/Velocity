@@ -55,8 +55,21 @@ test.describe('boot prerequisite', () => {
     );
   });
 
-  test('failed OPFS boot offers retry and recovers in safe memory mode', async ({ page }) => {
-    await page.route('**/duckdb-eh*.wasm*', (route) => route.abort('failed'));
+  test('failed engine boot offers retry and recovers in safe memory mode', async ({ page }) => {
+    await page.addInitScript(() => {
+      const NativeWorker = window.Worker;
+      const testWindow = window as typeof window & { __velocityFailWorkerConstruction?: boolean };
+      testWindow.__velocityFailWorkerConstruction = true;
+      class ControlledFailingWorker extends NativeWorker {
+        constructor(scriptURL: string | URL, options?: WorkerOptions) {
+          if (testWindow.__velocityFailWorkerConstruction) {
+            throw new Error('Injected analysis worker construction failure');
+          }
+          super(scriptURL, options);
+        }
+      }
+      Object.defineProperty(window, 'Worker', { configurable: true, value: ControlledFailingWorker });
+    });
     await page.goto('/');
 
     const firstChooserPromise = page.waitForEvent('filechooser');
@@ -69,6 +82,10 @@ test.describe('boot prerequisite', () => {
 
     await expect(page.getByRole('button', { name: 'Retry engine' })).toBeVisible({ timeout: 30_000 });
     await expect(page.getByRole('button', { name: 'Use safe memory mode' })).toBeVisible();
+    await page.evaluate(() => {
+      (window as typeof window & { __velocityFailWorkerConstruction?: boolean }).__velocityFailWorkerConstruction =
+        false;
+    });
     await page.getByRole('button', { name: 'Use safe memory mode' }).click();
     await expect(page.getByTestId('engine-init-bar')).toBeHidden({ timeout: 90_000 });
 

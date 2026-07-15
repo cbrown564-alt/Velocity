@@ -36,7 +36,7 @@
       "value": "test_data/fixtures/brand_tracker/brandtracker_w5.sav",
       "assert": {
         "type": "visibleAny",
-        "selectors": ["text=Survey Questions", "text=Metadata Loaded"]
+        "selectors": ["[aria-label='Table view']", "text=Metadata Loaded"]
       },
       "capture": true,
       "settleMs": 500
@@ -48,7 +48,7 @@
       "selector": "button:has-text('Load Full Data')",
       "assert": {
         "type": "visible",
-        "selector": "text=Survey Questions"
+        "selector": "[aria-label='Table view']"
       },
       "capture": false,
       "settleMs": 500
@@ -60,7 +60,7 @@
       "value": "1000",
       "assert": {
         "type": "visible",
-        "selector": "text=Survey Questions"
+        "selector": "[aria-label='Table view']"
       },
       "capture": true,
       "settleMs": 500

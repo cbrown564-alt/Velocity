@@ -15,6 +15,7 @@ export type BootRestorePlan =
   | { kind: 'rebuild-from-source'; fallbackMode: AppBootMode; forceReload?: boolean }
   | { kind: 'restore-from-cache'; nextMode: AppBootMode }
   | { kind: 'set-mode'; mode: AppBootMode }
+  | { kind: 'complete' }
   | { kind: 'noop' };
 
 export interface BootRestoreInput {
@@ -45,6 +46,10 @@ function emitTransition(from: string, to: BootRestoreStrategy, reason: string, e
   recordBootTransition({ from, to, reason, ...extra });
 }
 
+export function resolveRebuildSuccessMode(isWorkspaceMode: boolean): AppBootMode {
+  return isWorkspaceMode ? 'splash' : 'dashboard';
+}
+
 export function resolveBootRestoreStrategy(input: BootRestoreInput): BootRestorePlan {
   const {
     persistenceState,
@@ -55,6 +60,23 @@ export function resolveBootRestoreStrategy(input: BootRestoreInput): BootRestore
     persistentStorageGranted,
     persistentStorageResolved,
   } = input;
+
+  if (persistenceState === 'corrupt' && dataset?.opfsFileKey) {
+    emitTransition('corrupt', 'rebuild-from-source', 'duckdb_cache_corrupt');
+    return {
+      kind: 'rebuild-from-source',
+      fallbackMode: mode === 'dashboard' ? 'dashboard' : 'splash',
+      forceReload: true,
+    };
+  }
+
+  if (mode === 'uploading' || mode === 'metadata') {
+    return { kind: 'wait' };
+  }
+
+  if (mode === 'dashboard' && dataset && (persistenceState === 'found' || persistenceState === 'ready')) {
+    return { kind: 'complete' };
+  }
 
   if (persistenceState === 'found' && persistedDataInfo) {
     const shouldWaitForStorageDecision = Boolean(dataset?.opfsFileKey) && !persistentStorageResolved;
@@ -94,16 +116,7 @@ export function resolveBootRestoreStrategy(input: BootRestoreInput): BootRestore
       return { kind: 'rebuild-from-source', fallbackMode: 'splash' };
     }
     emitTransition('splash', 'fresh', 'no_opfs_source');
-    return { kind: 'noop' };
-  }
-
-  if (persistenceState === 'corrupt' && dataset?.opfsFileKey) {
-    emitTransition('corrupt', 'rebuild-from-source', 'duckdb_cache_corrupt');
-    return {
-      kind: 'rebuild-from-source',
-      fallbackMode: mode === 'dashboard' ? 'dashboard' : 'splash',
-      forceReload: true,
-    };
+    return { kind: 'complete' };
   }
 
   return { kind: 'noop' };

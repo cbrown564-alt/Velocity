@@ -296,6 +296,23 @@ describe('EngineProxy error responses', () => {
 // ────────────────────────────────────────────────────────────
 
 describe('EngineProxy timeout', () => {
+  it('uses the boot deadline for init without shortening later request deadlines', async () => {
+    vi.useFakeTimers();
+    const handle = createMockWorker();
+    const proxy = new EngineProxy(handle.worker, { timeoutMs: 5000, initTimeoutMs: 1000 });
+
+    const initPromise = proxy.init();
+    vi.advanceTimersByTime(1001);
+    await expect(initPromise).rejects.toThrow(/timeout.*1000ms/i);
+
+    const pingPromise = proxy.ping();
+    vi.advanceTimersByTime(1001);
+    const reqId = lastRequestId(handle);
+    handle.emit({ type: 'engine.pong', requestId: reqId, hasData: false });
+
+    await expect(pingPromise).resolves.toBeDefined();
+  });
+
   it('rejects with a timeout error after timeoutMs elapses', async () => {
     vi.useFakeTimers();
     const handle = createMockWorker();

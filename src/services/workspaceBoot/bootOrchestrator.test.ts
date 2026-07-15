@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { resolveBootRestoreStrategy } from './bootOrchestrator';
+import { resolveBootRestoreStrategy, resolveRebuildSuccessMode } from './bootOrchestrator';
 import type { Dataset } from '../../types/dataset';
 import type { PersistedDataInfo } from '../../store/slices/data/types';
 
@@ -25,6 +25,50 @@ const matchingPersistedInfo: PersistedDataInfo = {
 };
 
 describe('resolveBootRestoreStrategy', () => {
+  it('keeps source rebuilds in the user-selected app mode', () => {
+    expect(resolveRebuildSuccessMode(true)).toBe('splash');
+    expect(resolveRebuildSuccessMode(false)).toBe('dashboard');
+  });
+
+  it('waits while an explicit dataset load is in progress', () => {
+    const plan = resolveBootRestoreStrategy({
+      persistenceState: 'found',
+      persistedDataInfo: matchingPersistedInfo,
+      dataset: null,
+      mode: 'uploading',
+      isWorkspaceMode: false,
+      persistentStorageGranted: true,
+      persistentStorageResolved: true,
+    });
+    expect(plan).toEqual({ kind: 'wait' });
+  });
+
+  it('completes boot processing without restoring over an active dashboard', () => {
+    const plan = resolveBootRestoreStrategy({
+      persistenceState: 'found',
+      persistedDataInfo: matchingPersistedInfo,
+      dataset: sampleDataset,
+      mode: 'dashboard',
+      isWorkspaceMode: false,
+      persistentStorageGranted: true,
+      persistentStorageResolved: true,
+    });
+    expect(plan).toEqual({ kind: 'complete' });
+  });
+
+  it('completes a fresh boot when no persisted source exists', () => {
+    const plan = resolveBootRestoreStrategy({
+      persistenceState: 'ready',
+      persistedDataInfo: null,
+      dataset: null,
+      mode: 'splash',
+      isWorkspaceMode: true,
+      persistentStorageGranted: true,
+      persistentStorageResolved: true,
+    });
+    expect(plan).toEqual({ kind: 'complete' });
+  });
+
   it('waits for persistent storage decision when OPFS source exists', () => {
     const plan = resolveBootRestoreStrategy({
       persistenceState: 'found',

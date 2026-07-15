@@ -7,7 +7,7 @@ import React, { useEffect, useRef, useCallback } from 'react';
 import { useVelocityStore } from '../store';
 import { STORAGE_REMINDER_DELAY_MS } from '../store/toastPolicy';
 import { recordPersistenceFallback } from '../services/pilotOnboarding';
-import { resolveBootRestoreStrategy } from '../services/workspaceBoot/bootOrchestrator';
+import { resolveBootRestoreStrategy, resolveRebuildSuccessMode } from '../services/workspaceBoot/bootOrchestrator';
 import * as opfsFileManager from '../services/opfsFileManager';
 import { shouldWarmEngineOnBoot, warmUpEngineOnIntent } from '../services/engineWarmUp';
 
@@ -239,7 +239,7 @@ export function usePersistenceManager(
       });
       try {
         await rehydrateDatasetFromOpfs(options);
-        setMode('dashboard');
+        setMode(resolveRebuildSuccessMode(useVelocityStore.getState().isWorkspaceMode));
       } catch (error: any) {
         const message = error?.message || String(error) || 'Failed to restore from OPFS source file';
         setOpfsRehydrateError(message);
@@ -305,7 +305,17 @@ export function usePersistenceManager(
   useEffect(() => {
     if (shouldWarmEngineOnBoot()) {
       void warmUpEngineOnIntent('boot-resume');
+      return;
     }
+
+    let cancelled = false;
+    void opfsFileManager.hasPersistedArtifacts().then((hasArtifacts) => {
+      if (!cancelled && hasArtifacts) void warmUpEngineOnIntent('boot-opfs-artifact');
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   // Request persistent storage
@@ -437,6 +447,11 @@ export function usePersistenceManager(
     });
 
     if (plan.kind === 'wait' || plan.kind === 'noop') return;
+
+    if (plan.kind === 'complete') {
+      hasProcessedPersistence.current = true;
+      return;
+    }
 
     if (plan.kind === 'rebuild-from-source') {
       if (persistenceState === 'corrupt') {
