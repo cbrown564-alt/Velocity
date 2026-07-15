@@ -1,5 +1,5 @@
 {
-  "capturedAt": "2026-07-15T10:38:49.717Z",
+  "capturedAt": "2026-07-15T10:51:46.615Z",
   "budgets": {
     "coldFirstCrosstabMs": 10000,
     "warmFirstCrosstabMs": 5000,
@@ -9,25 +9,25 @@
   "results": [
     {
       "label": "five-minute-pass",
-      "elapsedMs": 12395
+      "elapsedMs": 10932
     },
     {
       "label": "wave-refresh-engine",
-      "elapsedMs": 1114
+      "elapsedMs": 953
     },
     {
       "label": "wave-refresh-browser",
-      "elapsedMs": 5494
+      "elapsedMs": 5510
     },
     {
       "label": "persistence-rebuild-path",
-      "elapsedMs": 17117
+      "elapsedMs": 16806
     }
   ],
   "journeyMetrics": {
-    "coldFirstCrosstabMs": 2138,
-    "warmFirstCrosstabMs": 1493,
-    "exportPptxMs": 92
+    "coldFirstCrosstabMs": 1996,
+    "warmFirstCrosstabMs": 1365,
+    "exportPptxMs": 86
   },
   "fiveMinuteReportPath": "docs/assets/design-reset-evidence/wp42-five-minute-pass.json",
   "pass": true,

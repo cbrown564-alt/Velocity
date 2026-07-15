@@ -47,11 +47,33 @@ async function waitForServer(url, timeoutMs = 120000) {
 }
 
 function startDevServer() {
-  return spawn('npm', ['run', 'dev', '--', '--host', HOST, '--port', String(PORT)], {
+  const viteEntry = path.join(ROOT, 'node_modules/vite/bin/vite.js');
+  return spawn(process.execPath, [viteEntry, '--host', HOST, '--port', String(PORT)], {
     cwd: ROOT,
     stdio: ['ignore', 'pipe', 'pipe'],
     env: { ...process.env, FORCE_COLOR: '0' },
   });
+}
+
+async function stopDevServer(server) {
+  if (server.exitCode !== null || server.signalCode !== null) return;
+
+  let resolveClosed;
+  const closed = new Promise((resolve) => {
+    resolveClosed = resolve;
+  });
+  server.once('close', resolveClosed);
+  server.once('error', resolveClosed);
+
+  server.kill('SIGTERM');
+  const stopped = await Promise.race([
+    closed.then(() => true),
+    new Promise((resolve) => setTimeout(() => resolve(false), 5000)),
+  ]);
+  if (stopped) return;
+
+  server.kill('SIGKILL');
+  await Promise.race([closed, new Promise((resolve) => setTimeout(resolve, 1000))]);
 }
 
 function runCommand(command, args, options = {}) {
@@ -201,7 +223,7 @@ async function main() {
         'Budgets mirror plan_06_backend_reset.md §1. Tune JOURNEY_BUDGET_* env vars if CI hardware requires headroom.',
     };
     fs.writeFileSync(path.join(OUT_DIR, 'plan-06-journey-gate.json'), `${JSON.stringify(report, null, 2)}\n`);
-    server.kill('SIGTERM');
+    await stopDevServer(server);
   }
 }
 
