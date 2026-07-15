@@ -15,6 +15,8 @@ A PR is not ready until **all required workflow jobs** would pass:
 
 The `visual-e2e` workflow is **informational only** — it does not block merge.
 
+GitHub enforces the eight required names on an up-to-date `main` head with admin enforcement. Audit 10's deliberately failing PR 61 proved that one failed required context leaves the PR blocked; [Audit 10 §14](../audit_10_engine_boot_ci_truth_rca_2026-07-14.md#14-evidence-inventory) records the protection and promotion evidence. Never use Vercel or the legacy combined commit status as a substitute for the required check runs.
+
 ## Environment setup (once per clone)
 
 ```bash

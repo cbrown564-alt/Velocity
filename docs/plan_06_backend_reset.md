@@ -1,9 +1,11 @@
 # Backend Reset: The Friday 4pm Engine
 
-**Status:** Reopened by Audit 10 — implementation merged in July 2026, but its engine-boot, Journey Gate, and CI-green completion claims require fresh promotion evidence
+**Status:** Verified — Phases 0–5 implemented and the reopened engine-boot, Journey Gate, product-E2E, persistence, and promotion claims restored by Audit 10 on July 15, 2026
 **Date:** July 5, 2026
 **Purpose:** Apply the design-reset lens (Sarah the Strategist, Friday 4 PM) to the backend and architecture. The UI now serves the five-minute journey; this plan makes the platform underneath it *reliable, fast, and small enough to trust*.
 **Companion docs:** [`plan_04_design_reset_pathways.md`](plan_04_design_reset_pathways.md) (the lens), [`plan_05_design_reset_implementation.md`](plan_05_design_reset_implementation.md) (frontend execution + precedent), [`arch_06_local_first_persistence.md`](arch_06_local_first_persistence.md) (persistence doctrine), [`roadmap_00_strategic_guide.md`](roadmap_00_strategic_guide.md) (scope gates), tracker §5.2 (`DESIGN-CONV` board)
+
+**Restored promotion evidence:** [Audit 10 §14](audit_10_engine_boot_ci_truth_rca_2026-07-14.md#14-evidence-inventory) links protected PR 60, merge `b5640326343b570d8b04756c4c36c1edcfba394d`, all eight successful required contexts, the blocked deliberately failing PR 61, 220/220 diagnostic starts, 200/200 final-candidate starts, and ten consecutive successful `main` Test/Journey pairs. This is verified implementation evidence, not representative-user validation.
 
 ---
 
@@ -194,7 +196,7 @@ With the state machine in place, fold `enginePersistenceBridge`, `datasetSession
 - **No touching the statistical core** (`core/stats`, crosstab runners, significance). It is the trust asset; parity evidence stays frozen.
 - **MCP server stays.** It is the PILOT-5 strategic surface and lives headless-side; it costs the browser nothing.
 - **No new abstraction layers** (no repository patterns, no event buses). Every phase here is subtraction or unification.
-- **Promotion rule:** phases may land alone, but no phase is called Verified or complete while a required Journey Gate or product E2E run is red, pending, skipped, or absent. Audit 10 owns the July boot/CI-truth repair and the evidence needed to restore the completion claim.
+- **Promotion rule:** phases may land alone, but no phase is called Verified or complete while a required Journey Gate or product E2E run is red, pending, skipped, or absent. Audit 10 closed the July boot/CI-truth repair on July 15, 2026; its §14 evidence restored this plan's Verified claim.
 
 ## 10. Sequencing note
 

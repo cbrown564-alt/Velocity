@@ -237,6 +237,8 @@ GitHub Actions runs on every PR to `main`. The canonical merge contract has **ei
 
 All eight required jobs must complete successfully on the current, up-to-date PR head. A green subset, pending job, skipped context, legacy combined commit status, or successful Vercel deployment does **not** imply a mergeable PR.
 
+This contract is enforced on `main`, not only documented. Branch protection requires all eight stable contexts with strict/up-to-date heads, admin enforcement, and resolved conversations; force pushes and deletion are disabled. Audit 10's deliberately failing [PR 61](https://github.com/cbrown564-alt/Velocity/pull/61) remained blocked while its required `lint-format` context failed. The exact protected implementation head and ten-pair `main` soak are linked in [Audit 10 §14](audit_10_engine_boot_ci_truth_rca_2026-07-14.md#14-evidence-inventory).
+
 ### `lint-format` job
 
 1. **Lint**: `npm run lint` — ESLint with `--max-warnings 0` (STAB-CI-3)
@@ -286,7 +288,7 @@ Runs `npm run test:e2e:visual` (`@visual` tag only). **`continue-on-error: true`
 
 ### Stable mutation job
 
-The required `mutation` job lives in `test.yml` and is present on every PR. It detects changes under `src/core/**`, Stryker/Vitest mutation configuration, and `package-lock.json`; the expensive Stryker step runs only when one of those paths changed. `.github/workflows/mutation.yml` remains a manual deep-run workflow and is not a required context.
+The required `mutation` job lives in `test.yml` and is present on every PR. It detects changes under `src/core/**`, Stryker/Vitest mutation configuration, and `package-lock.json`; the expensive Stryker step runs only when one of those paths changed. A `workflow_dispatch` rerun verifies the checked-out commit as a no-change run rather than reclassifying `HEAD^` as a fresh diff. `.github/workflows/mutation.yml` remains a manual deep-run workflow and is not a required context.
 
 ### Red-main ownership
 
