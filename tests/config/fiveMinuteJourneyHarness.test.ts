@@ -4,6 +4,9 @@ import { describe, expect, it } from 'vitest';
 
 const harnessPath = resolve(process.cwd(), 'scripts/design-reset-five-minute-pass.mjs');
 const harnessSource = readFileSync(harnessPath, 'utf8');
+const packageJson = JSON.parse(readFileSync(resolve(process.cwd(), 'package.json'), 'utf8')) as {
+  devDependencies?: Record<string, string>;
+};
 
 describe('five-minute journey measurement contract', () => {
   it('uses the documented palette shortcuts for rows and columns', () => {
@@ -32,5 +35,9 @@ describe('five-minute journey measurement contract', () => {
 
   it('writes a repository-relative PPTX evidence path', () => {
     expect(harnessSource).toContain('pptxPath: path.relative(ROOT, savePath)');
+  });
+
+  it('declares the TypeScript runner used by the wave-refresh gate', () => {
+    expect(packageJson.devDependencies?.tsx).toMatch(/^\^4\./);
   });
 });
