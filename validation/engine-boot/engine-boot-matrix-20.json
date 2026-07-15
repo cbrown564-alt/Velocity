@@ -1,0 +1,261 @@
+{
+  "capturedAt": "2026-07-15T10:06:12.229Z",
+  "repetitions": 20,
+  "cells": [
+    {
+      "name": "baseline-dev",
+      "server": "dev",
+      "persistence": "opfs",
+      "serviceWorker": true,
+      "storage": "fresh",
+      "concurrency": 1,
+      "action": "visible-upload"
+    },
+    {
+      "name": "memory-dev",
+      "server": "dev",
+      "persistence": "memory",
+      "serviceWorker": true,
+      "storage": "fresh",
+      "concurrency": 1,
+      "action": "visible-upload"
+    },
+    {
+      "name": "sw-blocked-dev",
+      "server": "dev",
+      "persistence": "opfs",
+      "serviceWorker": false,
+      "storage": "fresh",
+      "concurrency": 1,
+      "action": "visible-upload"
+    },
+    {
+      "name": "returning-dev",
+      "server": "dev",
+      "persistence": "opfs",
+      "serviceWorker": true,
+      "storage": "returning",
+      "concurrency": 1,
+      "action": "visible-upload"
+    },
+    {
+      "name": "corrupt-dev",
+      "server": "dev",
+      "persistence": "opfs",
+      "serviceWorker": true,
+      "storage": "corrupt",
+      "concurrency": 1,
+      "action": "visible-upload"
+    },
+    {
+      "name": "source-no-db-dev",
+      "server": "dev",
+      "persistence": "opfs",
+      "serviceWorker": true,
+      "storage": "source-no-db",
+      "concurrency": 1,
+      "action": "visible-upload"
+    },
+    {
+      "name": "two-context-dev",
+      "server": "dev",
+      "persistence": "opfs",
+      "serviceWorker": true,
+      "storage": "fresh",
+      "concurrency": 2,
+      "action": "visible-upload"
+    },
+    {
+      "name": "example-dev",
+      "server": "dev",
+      "persistence": "opfs",
+      "serviceWorker": true,
+      "storage": "fresh",
+      "concurrency": 1,
+      "action": "example"
+    },
+    {
+      "name": "drop-dev",
+      "server": "dev",
+      "persistence": "opfs",
+      "serviceWorker": true,
+      "storage": "fresh",
+      "concurrency": 1,
+      "action": "drop"
+    },
+    {
+      "name": "hidden-control-dev",
+      "server": "dev",
+      "persistence": "opfs",
+      "serviceWorker": true,
+      "storage": "fresh",
+      "concurrency": 1,
+      "action": "hidden-input"
+    },
+    {
+      "name": "baseline-preview",
+      "server": "preview",
+      "persistence": "opfs",
+      "serviceWorker": true,
+      "storage": "fresh",
+      "concurrency": 1,
+      "action": "visible-upload"
+    }
+  ],
+  "summary": {
+    "baseline-dev": {
+      "attempts": 20,
+      "passes": 20,
+      "failures": 0,
+      "medianMs": 1726,
+      "p95Ms": 3008,
+      "failurePhases": [],
+      "bundles": [
+        "eh"
+      ],
+      "persistenceModes": [
+        "opfs"
+      ]
+    },
+    "memory-dev": {
+      "attempts": 20,
+      "passes": 20,
+      "failures": 0,
+      "medianMs": 2138,
+      "p95Ms": 2163,
+      "failurePhases": [],
+      "bundles": [
+        "coi"
+      ],
+      "persistenceModes": [
+        "disabled"
+      ]
+    },
+    "sw-blocked-dev": {
+      "attempts": 20,
+      "passes": 20,
+      "failures": 0,
+      "medianMs": 1749,
+      "p95Ms": 1835,
+      "failurePhases": [],
+      "bundles": [
+        "eh"
+      ],
+      "persistenceModes": [
+        "opfs"
+      ]
+    },
+    "returning-dev": {
+      "attempts": 20,
+      "passes": 20,
+      "failures": 0,
+      "medianMs": 3300,
+      "p95Ms": 3423,
+      "failurePhases": [],
+      "bundles": [
+        "eh"
+      ],
+      "persistenceModes": [
+        "opfs"
+      ]
+    },
+    "corrupt-dev": {
+      "attempts": 20,
+      "passes": 20,
+      "failures": 0,
+      "medianMs": 1784,
+      "p95Ms": 1803,
+      "failurePhases": [],
+      "bundles": [
+        "eh"
+      ],
+      "persistenceModes": [
+        "opfs"
+      ]
+    },
+    "source-no-db-dev": {
+      "attempts": 20,
+      "passes": 20,
+      "failures": 0,
+      "medianMs": 1784,
+      "p95Ms": 1811,
+      "failurePhases": [],
+      "bundles": [
+        "eh"
+      ],
+      "persistenceModes": [
+        "opfs"
+      ]
+    },
+    "two-context-dev": {
+      "attempts": 40,
+      "passes": 40,
+      "failures": 0,
+      "medianMs": 2432,
+      "p95Ms": 2479,
+      "failurePhases": [],
+      "bundles": [
+        "eh"
+      ],
+      "persistenceModes": [
+        "opfs"
+      ]
+    },
+    "example-dev": {
+      "attempts": 20,
+      "passes": 20,
+      "failures": 0,
+      "medianMs": 1253,
+      "p95Ms": 1731,
+      "failurePhases": [],
+      "bundles": [
+        "eh"
+      ],
+      "persistenceModes": [
+        "opfs"
+      ]
+    },
+    "drop-dev": {
+      "attempts": 20,
+      "passes": 20,
+      "failures": 0,
+      "medianMs": 1698,
+      "p95Ms": 1713,
+      "failurePhases": [],
+      "bundles": [
+        "eh"
+      ],
+      "persistenceModes": [
+        "opfs"
+      ]
+    },
+    "hidden-control-dev": {
+      "attempts": 20,
+      "passes": 20,
+      "failures": 0,
+      "medianMs": 1714,
+      "p95Ms": 1735,
+      "failurePhases": [],
+      "bundles": [
+        "eh"
+      ],
+      "persistenceModes": [
+        "opfs"
+      ]
+    },
+    "baseline-preview": {
+      "attempts": 20,
+      "passes": 20,
+      "failures": 0,
+      "medianMs": 1610,
+      "p95Ms": 1682,
+      "failurePhases": [],
+      "bundles": [
+        "eh"
+      ],
+      "persistenceModes": [
+        "opfs"
+      ]
+    }
+  }
+}

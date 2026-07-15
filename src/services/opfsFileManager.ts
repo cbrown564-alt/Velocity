@@ -31,6 +31,25 @@ export async function isAvailable(): Promise<boolean> {
 }
 
 /**
+ * Detect persisted database or source-file artifacts when localStorage metadata
+ * is missing. This lets a returning session boot far enough to offer recovery
+ * without making a genuinely fresh session download DuckDB eagerly.
+ */
+export async function hasPersistedArtifacts(): Promise<boolean> {
+  try {
+    if (typeof navigator === 'undefined' || !navigator.storage?.getDirectory) return false;
+    const root = await navigator.storage.getDirectory();
+    for await (const entry of walkOpfs(root)) {
+      if (entry.handle.kind !== 'file') continue;
+      if (entry.name.startsWith(DB_PREFIX) || entry.path.startsWith(`${UPLOADED_DIR}/`)) return true;
+    }
+    return false;
+  } catch {
+    return false;
+  }
+}
+
+/**
  * Get the uploaded_sav directory handle, creating it if needed.
  */
 async function getUploadedDir(): Promise<FileSystemDirectoryHandle> {

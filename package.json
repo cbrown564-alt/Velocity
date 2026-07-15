@@ -61,6 +61,7 @@
     "demo:brand-tracker": "tsx scripts/brand-tracker-demo.ts",
     "demo:brand-tracker-wave-refresh": "tsx scripts/brand-tracker-wave-refresh-demo.ts",
     "journey-gate": "node scripts/plan-06-journey-gate.mjs",
+    "experiment:engine-boot": "node scripts/engine-boot-experiment.mjs",
     "report-quality:inspect": "node scripts/report-quality/inspect-pptx.mjs",
     "report-quality:review": "node scripts/report-quality/review-artifact.mjs"
   },
@@ -118,6 +119,7 @@
     "postcss": "^8.5.6",
     "prettier": "^3.9.1",
     "tailwindcss": "^3.4.17",
+    "tsx": "^4.23.1",
     "typescript": "~5.8.2",
     "typescript-eslint": "^8.62.0",
     "vite": "^6.2.0",

@@ -6,6 +6,7 @@ import type { FileUploadState } from '../../features/workspace/hooks/useFileUplo
 import type { Dataset } from '../../types/dataset';
 import type { LoadProgressState } from '../../store/slices/data/types';
 import type { PersistenceState } from '../../store/slices/data/types';
+import type { EngineBootStatus } from '../../store/slices/data/types';
 import type { WorkspaceState, Project, StoredDataset } from '../../features/workspace';
 import type { AppPhase } from '../types';
 
@@ -21,7 +22,7 @@ import { UploadProgressBar } from '../screens/UploadProgressBar';
 
 export interface AppModeRouterProps {
   phase: AppPhase;
-  isDbReady: boolean;
+  engineStatus: EngineBootStatus;
   initError: string | null;
   dataset: Dataset | null;
   workspace: WorkspaceState;
@@ -55,11 +56,14 @@ export interface AppModeRouterProps {
   onReturnToWorkspace: () => void;
   onOpenSessionImport: () => void;
   onExportSession: () => void;
+  onRetryEngine: () => void;
+  onUseMemoryMode: () => void;
+  onCancelEngineBoot: () => void;
 }
 
 export const AppModeRouter: React.FC<AppModeRouterProps> = ({
   phase,
-  isDbReady,
+  engineStatus,
   initError,
   dataset,
   workspace,
@@ -89,6 +93,9 @@ export const AppModeRouter: React.FC<AppModeRouterProps> = ({
   onReturnToWorkspace,
   onOpenSessionImport,
   onExportSession,
+  onRetryEngine,
+  onUseMemoryMode,
+  onCancelEngineBoot,
 }) => {
   const reducedMotion = useReducedMotion();
 
@@ -110,7 +117,7 @@ export const AppModeRouter: React.FC<AppModeRouterProps> = ({
       <AnimatePresence mode="wait">
         {phase === 'splash' && (
           <SplashScreen
-            isDbReady={isDbReady}
+            engineStatus={engineStatus}
             initError={initError}
             workspace={workspace}
             dataset={dataset}
@@ -135,6 +142,9 @@ export const AppModeRouter: React.FC<AppModeRouterProps> = ({
             onFileDrop={onFileDrop}
             onRebuildFromOpfs={persistence.rebuildFromOpfsSource}
             onDiscard={onDiscard}
+            onRetryEngine={onRetryEngine}
+            onUseMemoryMode={onUseMemoryMode}
+            onCancelEngineBoot={onCancelEngineBoot}
           />
         )}
         {phase === 'dashboard' && (

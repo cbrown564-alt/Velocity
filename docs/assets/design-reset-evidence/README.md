@@ -45,6 +45,7 @@ Defaults: 1440×900 viewport, 2× device scale, single evolved Soft Machine them
 
 | File | Work package | Notes |
 | :--- | :--- | :--- |
+| `plan-06-journey-gate.json` | Audit 10 / WP0.2 | Dev-server journey result and cold/warm/export/wave budgets; volatile browser diagnostics are retained by the CI artifact |
 | `wp42-five-minute-pass.json` | WP4.2 | Timed pass: file-drop → 3 titled slides → All Slides PPTX export |
 | `wp42-five-minute-pass.pptx` | WP4.2 | Exported deck from the timed pass (candidate for WP2.4 parity) |
 | `wp22-palette-open-benchmark.json` | WP2.2 | Insert palette open latency on 500-variable fixture (<100ms budget) |

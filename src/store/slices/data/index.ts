@@ -5,6 +5,9 @@
 export type {
   DataSlice,
   PersistenceState,
+  EngineBootStatus,
+  ShellStatus,
+  DatasetLoadStatus,
   PersistedDataInfo,
   LoadProgressState,
   WorkspaceDatasetOpenInput,

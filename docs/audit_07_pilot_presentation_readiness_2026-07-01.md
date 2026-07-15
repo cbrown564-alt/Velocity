@@ -2,7 +2,7 @@
 
 **Status:** Gate closed — PPR P0/P1/P2 shipped in [PR #18](https://github.com/cbrown564-alt/velocity/pull/18) (July 1, 2026); `PILOT-6` demo photography unblocked  
 **Quality bar:** [Linear](https://linear.app) — restrained chrome, one typographic system, content-sized layouts, no dominant element fighting the hero artifact  
-**Companion docs:** [`plan_02_ui_presentation_workstream.md`](plan_02_ui_presentation_workstream.md) (UXF register), [`tracker_00_implementation_status.md`](tracker_00_implementation_status.md) §4.3  
+**Companion docs:** [`plan_02_ui_presentation_workstream.md`](plan_02_ui_presentation_workstream.md) (UXF register), [`tracker_00_implementation_status.md`](tracker_00_implementation_status.md) §5.3 (leftovers; F1–F4 shipped)  
 **Screenshot packs:** Before — [`screenshots/`](assets/ui-pilot-readiness-audit/screenshots/) (July 1 audit baseline). After — [`screenshots-p2-final/`](assets/ui-pilot-readiness-audit/screenshots-p2-final/) (post–PR #18 sign-off).
 
 ---
@@ -291,7 +291,7 @@ graph TD
 
 ## 8. Update rules
 
-1. When a PPR or UXF row closes, update this doc’s table status, [`plan_02`](plan_02_ui_presentation_workstream.md) UXF register, and tracker §4.3 in the **same PR**.
+1. When a PPR or UXF row closes, update this doc’s table status, [`plan_02`](plan_02_ui_presentation_workstream.md) UXF register, and tracker §5.3 (or foundations summary if closing a shipped stream) in the **same PR**.
 2. Replace screenshots in [`assets/ui-pilot-readiness-audit/screenshots/`](assets/ui-pilot-readiness-audit/screenshots/) when visual contracts change.
 3. Re-run the capture script after any change to `SlideContainer`, coaching/tips, workspace empty state, or export modal.
 

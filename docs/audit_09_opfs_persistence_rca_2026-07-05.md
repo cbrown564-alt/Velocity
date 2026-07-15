@@ -3,7 +3,7 @@
 - **Date:** 2026-07-05
 - **Branch:** `fix/opfs-single-owner-handle-release` (4 commits, not yet merged to `main`)
 - **Trigger:** App failed to load — console errors on boot, later a hard hang on returning sessions
-- **Status:** Fixed and verified in real Chromium; awaiting confirmation on the original machine + merge
+- **Status:** Runtime fixes merged; verification reopened by Audit 10 until the shared boot prerequisite, returning-session/chaos suite, and promoted-commit CI soak pass
 - **Related:** `docs/arch_06_local_first_persistence.md`, `docs/plan_06_backend_reset.md`
 
 ---
@@ -253,7 +253,7 @@ there is the outstanding manual confirmation.
 
 ## 9. Outstanding questions / follow-ups
 
-1. **Confirm on the original machine.** Hard-reload `localhost:3001`; expect
+1. **Confirm on the original machine and promoted candidate.** Hard-reload the supported pilot build; expect
    `Bundle Selected: eh`, `opened with OPFS …`, dashboard reached, no
    `could not be cloned`, no hang.
 2. **Leftover OPFS artifacts.** The user's origin has empty/half-written `.db`
@@ -262,7 +262,7 @@ there is the outstanding manual confirmation.
 3. **EH performance.** Validate single-threaded query latency on the largest
    real pilot dataset. If unacceptable, revisit the "Hybrid: EH only when
    reopening" option (probe OPFS for a cache before choosing the bundle).
-4. **Merge.** Open a PR for `fix/opfs-single-owner-handle-release` → `main`.
+4. **Promotion evidence.** Link the exact final commit and green required Test/Journey runs from Audit 10 before restoring a Verified claim.
 5. **Repair the chaos E2E.** Repoint `reachDashboardWithExample` at the current
    landing UI so `persistence-chaos.spec.ts` (and the `@rebuild-path` CI gate)
    run again; the strengthened "second tab" assertion is waiting behind it.

@@ -208,6 +208,8 @@ export class BrowserEngine {
     datasetId?: string;
     schemaVersion?: number;
     hasPersistedSource?: boolean;
+    bootCorrelationId?: string;
+    persistenceMode?: 'auto' | 'memory';
   }): Promise<EngineResponseByType<'engine.ready'>> {
     return this.proxy.init(opts);
   }

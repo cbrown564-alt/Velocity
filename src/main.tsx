@@ -4,7 +4,9 @@ import App from './App';
 import './index.css';
 import { registerDuckDbWasmCache } from './services/duckdbWasmCache';
 import { exposeEngineWarmUpForTests } from './services/engineWarmUp';
+import { beginBootTrace } from './services/bootTrace';
 
+beginBootTrace('app-shell');
 void registerDuckDbWasmCache();
 exposeEngineWarmUpForTests();
 

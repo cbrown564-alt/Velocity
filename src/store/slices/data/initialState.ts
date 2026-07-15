@@ -7,9 +7,12 @@ import type { DataSlice } from './types';
 export const dataSliceInitialState: Pick<
   DataSlice,
   | 'browserEngine'
+  | 'shellStatus'
+  | 'engineStatus'
   | 'isDbReady'
   | 'initError'
   | 'dataset'
+  | 'datasetStatus'
   | 'variableSets'
   | 'folders'
   | 'transformLog'
@@ -24,9 +27,12 @@ export const dataSliceInitialState: Pick<
   | 'loadProgress'
 > = {
   browserEngine: null,
+  shellStatus: 'ready',
+  engineStatus: 'idle',
   isDbReady: false,
   initError: null,
   dataset: null,
+  datasetStatus: 'idle',
   variableSets: [],
   folders: [],
   transformLog: [],

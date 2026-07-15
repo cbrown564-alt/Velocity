@@ -8,6 +8,9 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
+.worktrees/
+pnpm-lock.yaml
+pnpm-workspace.yaml
 dist
 !packages/readstat-wasm/dist/
 !packages/readstat-wasm/dist/readstat.js
@@ -68,6 +71,15 @@ public/demo/*.csv
 test_data/wvs_processed/
 
 tests/golden/perf_log.jsonl
+validation/engine-boot/*.raw.json
+validation/engine-boot/*.log
+docs/assets/design-reset-evidence/vite-*.log
+docs/assets/design-reset-evidence/wp42-boot-trace.json
+docs/assets/design-reset-evidence/wp42-browser-diagnostics.json
+docs/assets/design-reset-evidence/wp42-page.html
+docs/assets/design-reset-evidence/wp42-page.png
+docs/assets/design-reset-evidence/wp42-playwright-trace.zip
+demo/artifacts/brand-tracker-wave-refresh/latest/
 
 # Large external exemplar: full Kantar BrandZ report kept local-only (143MB > GitHub limit).
 # Lightweight curated slide PNGs live under demo/artifacts/report-quality/exemplars/.

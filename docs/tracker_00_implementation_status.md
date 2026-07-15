@@ -10,6 +10,8 @@ Use with:
 - External market assessment: `docs/velocity_external_market_assessment.pdf`
 - Agent rules: `AGENTS.md`
 
+**Critical path:** close Audit 10's engine-boot and CI-truth incident before relying on pilot-readiness or persistence-promotion claims. Then resume redesign convergence and the narrow SAV-to-deck pilot gate.
+
 ## 1. Status Model
 
 - `Not started`: work item has not begun
@@ -38,6 +40,13 @@ Handoff required for every owner transition using `docs/agent_handoff_template.m
 
 ```mermaid
 graph TD
+  SB1["STAB-BOOT-1 Fresh workspace"] --> SB2["STAB-BOOT-2 Boot evidence"]
+  SB2 --> SB3["STAB-BOOT-3 Linux cause"]
+  SB3 --> SB4["STAB-BOOT-4 Recoverable boot"]
+  SB4 --> SB5["STAB-BOOT-5 Verification soak"]
+  SCI25["STAB-CI-25 Merge controls"] --> SCI26["STAB-CI-26 Evidence-bound status"]
+  SB5 --> SCI26
+
   MARKET["External Market Assessment"] --> P0["PILOT-0 Thesis + Success Criteria"]
   P0 --> P1["PILOT-1 Pilot Build + Packaging"]
   P0 --> P2["PILOT-2 Trust Evidence Pack"]
@@ -312,6 +321,8 @@ These rows remain directionally valid, but should not become active until `PILOT
 
 ### 4.5 CI Truth Maintenance (`STAB-CI`)
 
+Audit 10 owns `STAB-BOOT-1`…`5` and `STAB-CI-25`…`26`. Do not move these rows to Done until the exact promoted commit, enforced checks, repeated main runs, returning-session/chaos suite, and supported pilot profile are linked from the audit.
+
 **Source:** `docs/audit_08_ci_failure_rca_2026-07-01.md` — repeated CI failures from local ↔ CI gate mismatch and doc drift (July 2026).
 
 | ID | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence / validation |
@@ -338,6 +349,13 @@ These rows remain directionally valid, but should not become active until `PILOT
 | STAB-CI-21 | CI bootstrap parity | Submodules recursive checkout, `npm ci --legacy-peer-deps`, ratchet fetch-depth | STAB-CI-12 | Done | No | A | All jobs; `lint-format` uses `fetch-depth: 0` for merge-base ratchets |
 | STAB-CI-22 | Doc sync (CI overhaul) | Update `arch_08`, pre-PR playbook, tracker §4.5, PR template, contributing, RCA banner | STAB-CI-12 | Done | No | A | This row; `docs/arch_08_testing.md` §7–§8, `pre_pr_verification.md`, `.github/pull_request_template.md` |
 | STAB-CI-23 | Features/overlays coverage ratchet | Raise per-path `src/features/**` and `src/components/overlays/**` function floors toward 82% as characterization tests land | STAB-CI-11 | In progress | No | A,U | **Baseline (July 2026):** measured fn 70.1% (`features`) / 67.1% (`overlays`) vs floors 70% / 67%; global fn 81.9%. **Target:** raise per-path fn floors incrementally toward 82% (global fn floor). **Slices (parallel):** overlays (`RecodeModal`, `ExportModal`, `FilterModal`, `SessionImportModal`), workspace (`WorkspaceView`, `ExportImportModal`, `WaveTimeline`), dashboard (hooks + `StoryRail`, `DashboardToolbar`, `DataTable`), variableManager (`VariableInspector`, `VariableManager`, `VariableList`), harmonization (no co-located tests yet). See `arch_08_testing.md` §7.1. |
+| STAB-BOOT-1 | Fresh workspace before engine | Shell and real visible start actions work with engine idle | None | In progress | Yes | T,L,U,I,A | Clean-context visible-control and real file-chooser E2E |
+| STAB-BOOT-2 | Cross-thread boot evidence | Bounded correlated trace plus always-written failure artifacts | STAB-BOOT-1 | In progress | Yes | T,L,U,I,A | Trace contract E2E; failed experiment names exact phase; Journey artifact |
+| STAB-BOOT-3 | Linux CI cause | Prove the environmental trigger with repeated one-variable experiments | STAB-BOOT-2 | In progress | No | I,G,A | 20-run diagnostic cells and 50-run final candidate; exact CI trace/run |
+| STAB-BOOT-4 | Bounded recoverable boot | Per-phase deadlines, cancellation, retry, visible safe-memory recovery | STAB-BOOT-3 | In progress | Yes | T,L,U,I,A | Lifecycle tests plus real-browser forced-failure/recovery E2E |
+| STAB-BOOT-5 | Boot-first verification and soak | Boot prerequisite classifies dependents; dev/production critical paths stay green | STAB-BOOT-4 | In progress | Yes | T,L,U,I,G,A | Journey + product E2E green on 10 consecutive main runs and pilot profile |
+| STAB-CI-25 | Enforced merge controls | Eight canonical checks, up-to-date branch, routine bypass disabled, red-main owner | None | In progress | Yes | A,I | Deliberately failing required-check PR is unmergeable; protection API evidence |
+| STAB-CI-26 | Evidence-bound status | Correct Plan 06/Audit 09/tracker/testing docs with commit and runs | STAB-CI-25, STAB-BOOT-5 | In progress | No | A | Final Audit 10 evidence table links commit, PR, soak, chaos, and pilot profile |
 
 #### STAB-CI deferred (future ratchets)
 

@@ -10,8 +10,8 @@ A PR is not ready until **all required workflow jobs** would pass:
 
 | Workflow | Required jobs |
 | :--- | :--- |
-| `test.yml` | `lint-format`, `typecheck`, `arch-guards`, `unit-coverage`, `build`, `e2e` |
-| `mutation.yml` | `mutation` (when `src/core/**` changes) |
+| `test.yml` | `lint-format`, `typecheck`, `arch-guards`, `unit-coverage`, `build`, `e2e`, `mutation` |
+| `journey-gate.yml` | `journey-gate` |
 
 The `visual-e2e` workflow is **informational only** — it does not block merge.
 
@@ -36,6 +36,8 @@ E2E_COMPANION_BASE=origin/main npm run check:e2e-companion
 ```bash
 # Full required gates (test.yml + e2e)
 npm run ci:full
+npm run journey-gate
+npm run test:e2e:production
 
 # Or stepwise:
 npm run ci              # lint through build (all test.yml jobs except e2e)
@@ -110,7 +112,7 @@ npm run build
 
 Combined locally: `npm run ci` runs lint-format → typecheck → arch-guards → unit-coverage → build in sequence.
 
-### `e2e` job
+### `e2e` job (boot prerequisite, then dependent product journeys)
 
 ```bash
 npx playwright install --with-deps   # once per environment
@@ -119,13 +121,24 @@ npm run test:e2e                     # excludes @visual specs
 
 Shortcut: `npm run ci:e2e`
 
+If the `boot-prerequisite` Playwright project fails, fix that shared boundary first. The dependent `product` project is skipped by configuration; do not file the skipped journeys as feature regressions.
+
+### `journey-gate` job
+
+```bash
+npm run journey-gate
+npm run test:e2e:production
+```
+
+Both commands are required for engine, worker, persistence, first-run, upload, or journey-harness changes. The first command exercises the Vite diagnostic path and the second exercises the built application. Failure artifacts are written even when the journey exits early.
+
 ### `visual-e2e` workflow (informational)
 
 ```bash
 npm run test:e2e:visual
 ```
 
-### `mutation` workflow (path-filtered in CI)
+### Stable `mutation` job (conditional Stryker step)
 
 ```bash
 npm run test:mutation:ci
@@ -178,6 +191,8 @@ See `docs/playbooks/ui_mode_change.md` for mode-specific guidance.
 ## Definition of Done
 
 - [ ] `npm run ci:full` passes locally (or `npm run ci` + `npm run ci:e2e` separately)
+- [ ] Engine/worker/persistence/first-run changes also pass `npm run journey-gate` and `npm run test:e2e:production`
+- [ ] Every required GitHub job is complete and green on the current PR head before merge
 - [ ] `npm run test:mutation:ci` passes (when `src/core/**` touched)
 - [ ] PR template checkboxes reflect commands actually run
 

@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { BrowserEngine } from '../../engine/BrowserEngine';
 import {
   attachWorkerRuntimeHandlers,
+  cancelEngineBoot,
   createStorePersistenceBridge,
   initializeEngineWorker,
   resetEngineInitDedupeForTests,
@@ -175,6 +176,51 @@ describe('engineLifecycle', () => {
     await Promise.all([first, second]);
 
     expect(mockInit).toHaveBeenCalledTimes(1);
+  });
+
+  it('waits for the in-flight boot even after the proxy has been assigned', async () => {
+    let resolveInit!: (value: { opfsAvailable: boolean; duckdbBundle: string }) => void;
+    let assignedEngine: BrowserEngine | null = null;
+    mockInit.mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          resolveInit = resolve;
+        }),
+    );
+    const ctx = createInitContext({
+      getExistingEngine: () => assignedEngine,
+      assignBrowserEngine: (engine) => {
+        assignedEngine = engine;
+      },
+    });
+
+    const first = initializeEngineWorker(ctx);
+    await vi.waitFor(() => expect(assignedEngine).not.toBeNull());
+    let secondSettled = false;
+    const second = initializeEngineWorker(ctx).finally(() => {
+      secondSettled = true;
+    });
+    await Promise.resolve();
+
+    expect(secondSettled).toBe(false);
+    resolveInit({ opfsAvailable: false, duckdbBundle: 'eh' });
+    await Promise.all([first, second]);
+  });
+
+  it('cancels an in-flight boot and terminates its worker', async () => {
+    mockInit.mockImplementation(() => new Promise(() => {}));
+    const setInitCancelled = vi.fn();
+    const ctx = createInitContext({ setInitCancelled });
+
+    const boot = initializeEngineWorker(ctx);
+    await vi.waitFor(() => expect(mockInit).toHaveBeenCalled());
+
+    expect(cancelEngineBoot()).toBe(true);
+    await boot;
+
+    expect(mockTerminate).toHaveBeenCalled();
+    expect(setInitCancelled).toHaveBeenCalled();
+    expect(ctx.setInitError).not.toHaveBeenCalled();
   });
 
   it('initializeEngineWorker reports init failures', async () => {

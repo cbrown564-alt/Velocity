@@ -200,6 +200,23 @@ describe('opfsFileManager', () => {
     await expect(opfs.deleteDbFile('missing.db')).resolves.toBeUndefined();
   });
 
+  it('detects OPFS artifacts that require a returning-session boot', async () => {
+    const emptyRoot = new FakeDirectoryHandle('empty');
+    mockStorage(emptyRoot);
+    await expect(opfs.hasPersistedArtifacts()).resolves.toBe(false);
+
+    const databaseRoot = new FakeDirectoryHandle('database');
+    databaseRoot.seedFile('velocity_data_v1_default.db', new Uint8Array([1]));
+    mockStorage(databaseRoot);
+    await expect(opfs.hasPersistedArtifacts()).resolves.toBe(true);
+
+    const sourceRoot = new FakeDirectoryHandle('source');
+    const uploadedDir = await sourceRoot.getDirectoryHandle('uploaded_sav', { create: true });
+    uploadedDir.seedFile('sleep_123.sav', new Uint8Array([2]));
+    mockStorage(sourceRoot);
+    await expect(opfs.hasPersistedArtifacts()).resolves.toBe(true);
+  });
+
   it('lists and deletes DB files in nested directories', async () => {
     const root = new FakeDirectoryHandle('root');
     const duckDir = await root.getDirectoryHandle('.duckdb', { create: true });

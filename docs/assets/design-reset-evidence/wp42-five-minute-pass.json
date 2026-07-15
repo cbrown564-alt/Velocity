@@ -1,45 +1,62 @@
 {
-  "capturedAt": "2026-07-04T11:38:03.180Z",
+  "capturedAt": "2026-07-15T10:51:22.861Z",
   "environment": {
     "viewport": "1440×900",
     "dataset": "test_data/sleep.sav",
     "browser": "chromium"
   },
-  "elapsedMs": 11554,
-  "elapsedFormatted": "0:11",
+  "elapsedMs": 5669,
+  "elapsedFormatted": "0:05",
   "slideCount": 3,
   "exportedSlideCount": 4,
   "exportedTableCount": 3,
   "steps": [
     {
+      "step": "cold-first-crosstab",
+      "atMs": 1996
+    },
+    {
       "step": "dashboard-ready",
-      "atMs": 1289
+      "atMs": 1996
     },
     {
       "step": "slide-1-crosstab",
-      "atMs": 1691
+      "atMs": 2419
     },
     {
       "step": "slide-2-crosstab",
-      "atMs": 6853
+      "atMs": 3514
     },
     {
       "step": "slide-3-rows",
-      "atMs": 10064
+      "atMs": 4513
     },
     {
       "step": "pptx-saved",
-      "atMs": 11554
+      "atMs": 5669
+    },
+    {
+      "step": "export-duration",
+      "atMs": 86
+    },
+    {
+      "step": "warm-first-crosstab",
+      "atMs": 1365
     }
   ],
   "interruptionCount": 0,
   "interruptions": [],
   "pass": true,
+  "journeyMetrics": {
+    "coldFirstCrosstabMs": 1996,
+    "warmFirstCrosstabMs": 1365,
+    "exportPptxMs": 86
+  },
   "criteria": {
     "maxElapsedMs": 300000,
     "maxInterruptions": 0,
     "minSlides": 3,
     "minExportedSlides": 3
   },
-  "pptxPath": "/workspace/docs/assets/design-reset-evidence/wp42-five-minute-pass.pptx"
+  "pptxPath": "docs/assets/design-reset-evidence/wp42-five-minute-pass.pptx"
 }

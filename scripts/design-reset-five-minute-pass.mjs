@@ -100,19 +100,59 @@ async function waitForDashboardReady(page) {
   );
 }
 
+async function currentDatasetId(page) {
+  return page.evaluate(() => window.__velocityStore?.getState().dataset?.id ?? null);
+}
+
+async function waitForUploadBaseline(page) {
+  await page.waitForFunction(
+    () => {
+      const state = window.__velocityStore?.getState();
+      if (!state || state.loadProgress !== null) return false;
+      if (state.engineStatus === 'idle') {
+        return state.datasetStatus === 'idle' && state.dataset === null;
+      }
+      return (
+        state.engineStatus === 'ready' && state.datasetStatus !== 'loading' && state.persistenceState !== 'checking'
+      );
+    },
+    undefined,
+    { timeout: Number(process.env.DASHBOARD_READY_TIMEOUT_MS || 180000) },
+  );
+}
+
+async function waitForUploadedDataset(page, previousDatasetId) {
+  await page.waitForFunction(
+    (priorId) => {
+      const state = window.__velocityStore?.getState();
+      return (
+        state?.datasetStatus === 'ready' &&
+        state.dataset?.id !== priorId &&
+        state.engineStatus === 'ready' &&
+        state.loadProgress === null
+      );
+    },
+    previousDatasetId,
+    { timeout: Number(process.env.DASHBOARD_READY_TIMEOUT_MS || 180000) },
+  );
+}
+
 async function closeOverlays(page) {
   for (let i = 0; i < 3; i += 1) {
     const paletteInput = page.getByPlaceholder('Find a variable…');
-    if (await paletteInput.isVisible().catch(() => false)) {
-      await page.keyboard.press('Escape');
-      await paletteInput.waitFor({ state: 'hidden', timeout: 3000 }).catch(() => {});
-    }
     const exportModal = page.getByTestId('export-modal-submit');
-    if (await exportModal.isVisible().catch(() => false)) {
+    const paletteVisible = await paletteInput.isVisible().catch(() => false);
+    const exportVisible = await exportModal.isVisible().catch(() => false);
+    if (!paletteVisible && !exportVisible) return;
+
+    if (paletteVisible) {
       await page.keyboard.press('Escape');
-      await exportModal.waitFor({ state: 'hidden', timeout: 3000 }).catch(() => {});
+      await paletteInput.waitFor({ state: 'hidden', timeout: 3000 });
     }
-    await page.waitForTimeout(150);
+    if (exportVisible) {
+      await page.keyboard.press('Escape');
+      await exportModal.waitFor({ state: 'hidden', timeout: 3000 });
+    }
   }
 }
 
@@ -127,16 +167,17 @@ async function insertVariable(page, query, target = 'rows') {
   const input = page.getByPlaceholder('Find a variable…');
   await input.fill('');
   await input.fill(query);
-  await page.waitForTimeout(250);
-  if (target === 'columns') {
+  await page
+    .locator('[data-testid^="palette-variable-"][data-selected="true"]')
+    .waitFor({ state: 'visible', timeout: 10000 });
+  if (target === 'rows') {
     await page.keyboard.press('Alt+Enter');
   } else if (target === 'filter') {
     await page.keyboard.press('Shift+Enter');
   } else {
     await page.keyboard.press('Enter');
   }
-  await page.waitForTimeout(700);
-  await closeOverlays(page);
+  await input.waitFor({ state: 'hidden', timeout: 10000 });
 }
 
 async function waitForFirstCrosstab(page, timeoutMs = 60000) {
@@ -155,8 +196,11 @@ async function waitForFirstCrosstab(page, timeoutMs = 60000) {
 }
 
 async function runUploadToFirstCrosstab(page, savPath) {
+  await waitForUploadBaseline(page);
+  const previousDatasetId = await currentDatasetId(page);
   const fileDropAt = Date.now();
   await page.getByTestId('dataset-upload-input').setInputFiles(savPath);
+  await waitForUploadedDataset(page, previousDatasetId);
   await waitForDashboardReady(page);
 
   const tableVisible = await page
@@ -254,6 +298,14 @@ async function main() {
   const useExternalServer = process.env.SKIP_DEV_SERVER === '1';
   const journeyGate = process.env.JOURNEY_GATE === '1';
   const server = useExternalServer ? null : startDevServer();
+  let viteStdout = '';
+  let viteStderr = '';
+  server?.stdout.on('data', (chunk) => {
+    viteStdout += chunk.toString();
+  });
+  server?.stderr.on('data', (chunk) => {
+    viteStderr += chunk.toString();
+  });
   const interruptions = [];
   const timings = { fileDropAt: 0, pptxSavedAt: 0 };
   const steps = [];
@@ -262,20 +314,58 @@ async function main() {
     warmFirstCrosstabMs: null,
     exportPptxMs: null,
   };
+  const diagnostics = {
+    console: [],
+    pageErrors: [],
+    requestFailures: [],
+    workers: [],
+    serviceWorkers: [],
+  };
+  let browser = null;
+  let context = null;
+  let page = null;
+  let report = null;
+  let runError = null;
 
   try {
     await waitForServer(BASE_URL);
 
-    const browser = await chromium.launch();
-    const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
-    const page = await context.newPage();
+    browser = await chromium.launch();
+    context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+    await context.tracing.start({ screenshots: true, snapshots: true, sources: true });
+    page = await context.newPage();
     page.on('dialog', (d) => d.dismiss());
 
     page.on('console', (msg) => {
       const text = msg.text();
+      diagnostics.console.push({ type: msg.type(), text, at: new Date().toISOString() });
       if (/coaching|tour|onboarding/i.test(text)) {
         interruptions.push({ type: 'console', text });
       }
+    });
+    page.on('pageerror', (error) => {
+      diagnostics.pageErrors.push({ message: error.message, stack: error.stack ?? null });
+    });
+    page.on('requestfailed', (request) => {
+      diagnostics.requestFailures.push({
+        url: request.url(),
+        method: request.method(),
+        errorText: request.failure()?.errorText ?? 'unknown',
+      });
+    });
+    page.on('worker', (worker) => {
+      const entry = { url: worker.url(), openedAt: new Date().toISOString(), closedAt: null };
+      diagnostics.workers.push(entry);
+      worker.on('close', () => {
+        entry.closedAt = new Date().toISOString();
+      });
+    });
+    context.on('serviceworker', (worker) => {
+      const entry = { url: worker.url(), openedAt: new Date().toISOString(), closedAt: null };
+      diagnostics.serviceWorkers.push(entry);
+      worker.on('close', () => {
+        entry.closedAt = new Date().toISOString();
+      });
     });
 
     await prepareColdSession(page);
@@ -323,8 +413,6 @@ async function main() {
 
     const exported = await inspectPptx(savePath);
 
-    await browser.close();
-
     const elapsedMs = timings.pptxSavedAt - timings.fileDropAt;
     const pass =
       elapsedMs < 5 * 60 * 1000 &&
@@ -333,7 +421,7 @@ async function main() {
       exported.slideCount >= 3 &&
       exported.tableCount >= 2;
 
-    const report = {
+    report = {
       capturedAt: new Date().toISOString(),
       environment: { viewport: '1440×900', dataset: 'test_data/sleep.sav', browser: 'chromium' },
       elapsedMs,
@@ -347,11 +435,8 @@ async function main() {
       pass,
       journeyMetrics,
       criteria: { maxElapsedMs: 300000, maxInterruptions: 0, minSlides: 3, minExportedSlides: 3 },
-      pptxPath: savePath,
+      pptxPath: path.relative(ROOT, savePath),
     };
-
-    const reportPath = path.join(OUT_DIR, 'wp42-five-minute-pass.json');
-    fs.writeFileSync(reportPath, `${JSON.stringify(report, null, 2)}\n`);
 
     console.log(
       `WP4.2 five-minute pass: ${report.elapsedFormatted} elapsed, ${slides} deck slides, ${exported.slideCount} exported slides, ${interruptions.length} interruption(s)`,
@@ -362,11 +447,44 @@ async function main() {
       );
     }
     console.log(`Pass: ${pass ? 'YES' : 'NO'} (< 5:00, zero interruptions, ≥3 deck slides, ≥3 exported slides)`);
-    console.log(`Report: ${reportPath}`);
+    console.log(`Report: ${path.join(OUT_DIR, 'wp42-five-minute-pass.json')}`);
     console.log(`PPTX: ${savePath}`);
 
-    if (!pass) process.exit(1);
+    if (!pass) throw new Error('Five-minute journey criteria failed');
+  } catch (error) {
+    runError = error;
+    throw error;
   } finally {
+    if (page) {
+      await page.screenshot({ path: path.join(OUT_DIR, 'wp42-page.png'), fullPage: true }).catch(() => {});
+      const dom = await page.content().catch(() => '<!-- DOM unavailable -->');
+      fs.writeFileSync(path.join(OUT_DIR, 'wp42-page.html'), dom);
+      const bootTrace = await page.evaluate(() => window.__velocityGetBootTrace?.() ?? null).catch(() => null);
+      fs.writeFileSync(path.join(OUT_DIR, 'wp42-boot-trace.json'), `${JSON.stringify(bootTrace, null, 2)}\n`);
+    }
+    if (context) {
+      await context.tracing.stop({ path: path.join(OUT_DIR, 'wp42-playwright-trace.zip') }).catch(() => {});
+    }
+    await browser?.close().catch(() => {});
+
+    const finalReport = report ?? {
+      capturedAt: new Date().toISOString(),
+      environment: { viewport: '1440×900', dataset: 'test_data/sleep.sav', browser: 'chromium' },
+      elapsedMs: timings.fileDropAt ? Date.now() - timings.fileDropAt : null,
+      steps,
+      interruptionCount: interruptions.length,
+      interruptions,
+      pass: false,
+      journeyMetrics,
+      criteria: { maxElapsedMs: 300000, maxInterruptions: 0, minSlides: 3, minExportedSlides: 3 },
+      error: runError instanceof Error ? { message: runError.message, stack: runError.stack ?? null } : null,
+    };
+    fs.writeFileSync(path.join(OUT_DIR, 'wp42-five-minute-pass.json'), `${JSON.stringify(finalReport, null, 2)}\n`);
+    fs.writeFileSync(path.join(OUT_DIR, 'wp42-browser-diagnostics.json'), `${JSON.stringify(diagnostics, null, 2)}\n`);
+    if (server) {
+      fs.writeFileSync(path.join(OUT_DIR, 'vite-stdout.log'), viteStdout);
+      fs.writeFileSync(path.join(OUT_DIR, 'vite-stderr.log'), viteStderr);
+    }
     if (server) server.kill('SIGTERM');
   }
 }

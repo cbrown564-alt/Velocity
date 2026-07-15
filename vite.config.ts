@@ -3,7 +3,7 @@ import { readFileSync } from 'fs';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
-const packageJson = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf8'));
+const packageJson = JSON.parse(readFileSync(path.resolve(process.cwd(), 'package.json'), 'utf8'));
 
 export default defineConfig(() => ({
   define: {
@@ -32,7 +32,11 @@ export default defineConfig(() => ({
   },
   optimizeDeps: {
     exclude: ['@velocity/readstat-wasm'],
-    include: [],
+    // These dependencies are first executed inside the analysis worker. If
+    // Vite discovers them only after the first upload intent, a cold dev server
+    // performs a full-page dependency-optimizer reload and destroys the
+    // in-flight worker. CI always starts cold, so keep this list explicit.
+    include: ['@duckdb/duckdb-wasm', 'apache-arrow'],
   },
   worker: {
     format: 'es',

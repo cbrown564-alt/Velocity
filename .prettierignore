@@ -1,5 +1,6 @@
 .agents/
 .venv/
+.worktrees/
 coverage/
 demo/artifacts/
 docs/
@@ -7,6 +8,7 @@ dist/
 evals/
 mcp-server/dist/
 node_modules/
+pnpm-lock.yaml
 playwright-report/
 reports/
 stryker-tmp/
@@ -17,6 +19,7 @@ tmp/
 packages/readstat-wasm/dist/
 packages/readstat-wasm/lib/
 validation/benchmark_*.json
+validation/engine-boot/*.json
 
 *.md
 

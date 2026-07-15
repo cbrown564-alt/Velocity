@@ -27,6 +27,8 @@ import type { OrderedScoring, VariableType } from '../types';
 import type { ProcessedAnalysisData } from '../types/processedData';
 import type { ChartType } from '../types/charts';
 import type { CrosstabQueryOptions, WorkerAnalysisSettings, WorkerAnalysisContext } from '../types/worker';
+import type { BootTraceEvent } from '../types/bootTrace';
+import { mergeBootTraceEvent, recordBootTrace } from './bootTrace';
 
 // ============================================================================
 // Configuration
@@ -47,10 +49,13 @@ interface PendingRequest {
 type ProgressCallback = (msg: EngineResponseByType<'engine.loadProgress'>) => void;
 type PersistenceStatusCallback = (msg: EngineResponseByType<'engine.persistenceStatus'>) => void;
 type CorruptionCallback = (msg: EngineResponseByType<'engine.corruptionDetected'>) => void;
+type BootTraceCallback = (event: BootTraceEvent) => void;
 
 export interface EngineProxyOptions {
   /** Timeout per request in ms. Defaults to 120_000 (2 min). */
   timeoutMs?: number;
+  /** Engine-init deadline in ms. Defaults to the normal request timeout. */
+  initTimeoutMs?: number;
   /** Called on load-progress messages during file loading. */
   onProgress?: ProgressCallback;
   /** Called on persistence status updates during init. */
@@ -59,6 +64,8 @@ export interface EngineProxyOptions {
   onCorruption?: CorruptionCallback;
   /** Called when the underlying worker throws a runtime or message error. */
   onWorkerError?: (message: string) => void;
+  /** Called for bounded structured lifecycle events emitted by the worker. */
+  onBootTrace?: BootTraceCallback;
 }
 
 // ============================================================================
@@ -69,20 +76,24 @@ export class EngineProxy {
   private worker: Worker;
   private pending = new Map<string, PendingRequest>();
   private timeoutMs: number;
+  private initTimeoutMs: number;
   private onProgress?: ProgressCallback;
   private onPersistenceStatus?: PersistenceStatusCallback;
   private onCorruption?: CorruptionCallback;
   private onWorkerError?: (message: string) => void;
+  private onBootTrace?: BootTraceCallback;
   private disposed = false;
   private datasetContext = { datasetName: 'unloaded', rowCount: 0 };
 
   constructor(worker: Worker, options: EngineProxyOptions = {}) {
     this.worker = worker;
     this.timeoutMs = options.timeoutMs ?? DEFAULT_TIMEOUT_MS;
+    this.initTimeoutMs = options.initTimeoutMs ?? this.timeoutMs;
     this.onProgress = options.onProgress;
     this.onPersistenceStatus = options.onPersistenceStatus;
     this.onCorruption = options.onCorruption;
     this.onWorkerError = options.onWorkerError;
+    this.onBootTrace = options.onBootTrace;
 
     this.worker.addEventListener('message', this.handleMessage);
     this.worker.addEventListener('error', this.handleWorkerRuntimeError);
@@ -98,6 +109,8 @@ export class EngineProxy {
     datasetId?: string;
     schemaVersion?: number;
     hasPersistedSource?: boolean;
+    bootCorrelationId?: string;
+    persistenceMode?: 'auto' | 'memory';
   }): Promise<EngineResponseByType<'engine.ready'>> {
     return this.send(
       {
@@ -106,8 +119,12 @@ export class EngineProxy {
         datasetId: opts?.datasetId,
         schemaVersion: opts?.schemaVersion,
         hasPersistedSource: opts?.hasPersistedSource,
+        bootCorrelationId: opts?.bootCorrelationId,
+        persistenceMode: opts?.persistenceMode,
       },
       'engine.ready',
+      undefined,
+      this.initTimeoutMs,
     ) as Promise<EngineResponseByType<'engine.ready'>>;
   }
 
@@ -406,6 +423,7 @@ export class EngineProxy {
 
   private handleWorkerRuntimeError = (event: ErrorEvent): void => {
     const message = event.message || 'Worker runtime error';
+    recordBootTrace({ source: 'main', phase: 'analysis_worker.runtime', status: 'error', detail: { message } });
     console.error('[EngineProxy] Worker runtime error:', message);
     this.onWorkerError?.(message);
     this.rejectAllPending(new Error(message));
@@ -436,6 +454,12 @@ export class EngineProxy {
     return new Promise<EngineWorkerResponse>((resolve, reject) => {
       const timer = setTimeout(() => {
         this.pending.delete(requestId);
+        recordBootTrace({
+          source: 'main',
+          phase: payload.type,
+          status: 'timeout',
+          detail: { timeoutMs: effectiveTimeout },
+        });
         reject(new Error(`EngineProxy timeout after ${effectiveTimeout}ms for ${payload.type}`));
       }, effectiveTimeout);
 
@@ -461,6 +485,12 @@ export class EngineProxy {
     // Handle broadcast messages (no matching pending request)
     if (msg.type === 'engine.loadProgress') {
       this.onProgress?.(msg as EngineResponseByType<'engine.loadProgress'>);
+      return;
+    }
+    if (msg.type === 'engine.bootTrace') {
+      const event = (msg as EngineResponseByType<'engine.bootTrace'>).event;
+      mergeBootTraceEvent(event);
+      this.onBootTrace?.(event);
       return;
     }
     if (msg.type === 'engine.persistenceStatus') {

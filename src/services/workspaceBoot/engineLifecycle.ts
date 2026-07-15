@@ -9,6 +9,7 @@ import type { PersistenceState } from '../../store/slices/data/types';
 import * as opfsFileManager from '../opfsFileManager';
 import { getEngineWarmUpSource } from '../engineWarmUp';
 import { probeDuckDbWasmCache } from '../duckdbWasmCache';
+import { getBootTraceCorrelationId, recordBootTrace } from '../bootTrace';
 import {
   markBootStart,
   recordEngineReady,
@@ -17,7 +18,7 @@ import {
   type OpfsBootDecision,
 } from '../pilotOnboarding';
 import AnalysisWorker from '../analysisWorker?worker';
-import { ENGINE_SHUTDOWN_ACK_TIMEOUT_MS } from './constants';
+import { ENGINE_BOOT_TIMEOUT_MS, ENGINE_SHUTDOWN_ACK_TIMEOUT_MS } from './constants';
 
 type LoadProgressMessage = EngineResponseByType<'engine.loadProgress'>;
 type LoadProgressCallback = (msg: LoadProgressMessage) => void;
@@ -45,8 +46,23 @@ function runExclusive<T>(op: () => Promise<T>): Promise<T> {
 /** Init-specific dedupe: collapse concurrent boot requests onto one worker. */
 let initInFlight: Promise<void> | null = null;
 
+class EngineBootCancelledError extends Error {
+  constructor() {
+    super('Engine boot cancelled');
+    this.name = 'EngineBootCancelledError';
+  }
+}
+
+let activeBoot: {
+  engine: BrowserEngine;
+  cancelled: boolean;
+  rejectCancellation: (error: Error) => void;
+} | null = null;
+
 export function createAnalysisWorker(): Worker {
-  return new AnalysisWorker();
+  const worker = new AnalysisWorker();
+  recordBootTrace({ source: 'main', phase: 'analysis_worker.created', status: 'completed' });
+  return worker;
 }
 
 export function attachWorkerRuntimeHandlers(
@@ -56,10 +72,22 @@ export function attachWorkerRuntimeHandlers(
 ): void {
   worker.onerror = (error) => {
     console.error(`[workspaceBoot] Worker runtime error${logLabel}:`, error);
+    recordBootTrace({
+      source: 'main',
+      phase: 'analysis_worker.runtime',
+      status: 'error',
+      detail: { message: error.message || 'Worker runtime error' },
+    });
     setWorkerRuntimeError(error.message || 'Worker runtime error');
   };
   worker.onmessageerror = (event) => {
     console.error(`[workspaceBoot] Worker messageerror${logLabel}:`, event);
+    recordBootTrace({
+      source: 'main',
+      phase: 'analysis_worker.message',
+      status: 'error',
+      detail: { message: 'Worker message deserialization error' },
+    });
     setWorkerRuntimeError('Worker message deserialization error');
   };
 }
@@ -123,6 +151,14 @@ export function createEnginePersistenceCallbacks(
         dbPath: msg.dbPath,
         lastError: msg.lastError ?? null,
       });
+      if (msg.decision === 'memory_fallback' || msg.mode === 'memory') {
+        recordBootTrace({
+          source: 'main',
+          phase: 'persistence.memory_fallback',
+          status: 'fallback',
+          detail: { decision: msg.decision, message: msg.lastError ?? null },
+        });
+      }
     },
     onCorruption: (msg: CorruptionMessage) => {
       console.warn(`[workspaceBoot] OPFS corruption detected${corruptionLogLabel}:`, msg.message);
@@ -147,6 +183,7 @@ export function createEngineProxy(
   return new EngineProxy(worker, {
     ...createEnginePersistenceCallbacks(bridge, options),
     onProgress: options.onLoadProgress,
+    initTimeoutMs: ENGINE_BOOT_TIMEOUT_MS,
   });
 }
 
@@ -170,8 +207,10 @@ export interface InitializeEngineContext {
   setInitSuccess: (opfsAvailable: boolean) => void;
   setPersistenceReady: () => void;
   setInitError: (message: string) => void;
+  setInitCancelled?: () => void;
   checkPersistedData: () => Promise<void>;
   onLoadProgress?: LoadProgressCallback;
+  persistenceMode?: 'auto' | 'memory';
 }
 
 async function resolveHasPersistedSource(opfsFileKey: string | undefined): Promise<boolean> {
@@ -191,34 +230,71 @@ async function runEngineInit(ctx: InitializeEngineContext): Promise<void> {
   const engine = createBrowserEngine(worker, ctx.bridge, { onLoadProgress: ctx.onLoadProgress });
   ctx.assignBrowserEngine(engine);
 
-  const datasetId = ctx.getDatasetId();
-  const hasPersistedSource = await resolveHasPersistedSource(ctx.getOpfsFileKey());
-  const result = await engine.init({ datasetId, schemaVersion: 1, hasPersistedSource });
-
-  ctx.setInitSuccess(result.opfsAvailable);
-  const wasmCacheAfter = await probeDuckDbWasmCache();
-  recordEngineReady({
-    opfsAvailable: result.opfsAvailable,
-    warmUpSource: getEngineWarmUpSource(),
-    duckdbBundle: result.duckdbBundle,
-    wasmCacheState: wasmCacheAfter,
+  let rejectCancellation!: (error: Error) => void;
+  const cancellation = new Promise<never>((_, reject) => {
+    rejectCancellation = reject;
   });
-  console.log(`[workspaceBoot] Engine ready, OPFS available: ${result.opfsAvailable}`);
+  const boot = { engine, cancelled: false, rejectCancellation };
+  activeBoot = boot;
 
-  if (ctx.getOpfsAvailable() && ctx.getPersistenceState() !== 'corrupt') {
-    await ctx.checkPersistedData();
-  } else {
-    ctx.setPersistenceReady();
+  try {
+    const datasetId = ctx.getDatasetId();
+    const hasPersistedSource = await resolveHasPersistedSource(ctx.getOpfsFileKey());
+    const correlationId = getBootTraceCorrelationId();
+    recordBootTrace({ source: 'main', phase: 'engine.init.sent', status: 'completed', correlationId });
+    const result = await Promise.race([
+      engine.init({
+        datasetId,
+        schemaVersion: 1,
+        hasPersistedSource,
+        bootCorrelationId: correlationId,
+        persistenceMode: ctx.persistenceMode ?? 'auto',
+      }),
+      cancellation,
+    ]);
+    recordBootTrace({ source: 'main', phase: 'engine.ready.received', status: 'completed', correlationId });
+
+    ctx.setInitSuccess(result.opfsAvailable);
+    const wasmCacheAfter = await probeDuckDbWasmCache();
+    recordEngineReady({
+      opfsAvailable: result.opfsAvailable,
+      warmUpSource: getEngineWarmUpSource(),
+      duckdbBundle: result.duckdbBundle,
+      wasmCacheState: wasmCacheAfter,
+    });
+    console.log(`[workspaceBoot] Engine ready, OPFS available: ${result.opfsAvailable}`);
+
+    if (ctx.getOpfsAvailable() && ctx.getPersistenceState() !== 'corrupt') {
+      await ctx.checkPersistedData();
+    } else {
+      ctx.setPersistenceReady();
+    }
+    recordBootTrace({ source: 'main', phase: 'boot.terminal', status: 'completed', correlationId });
+  } catch (error) {
+    if (!(error instanceof EngineBootCancelledError)) engine.terminate();
+    throw error;
+  } finally {
+    if (activeBoot === boot) activeBoot = null;
   }
 }
 
+/** Cancel the current end-to-end boot. The abandoned worker is hard-terminated. */
+export function cancelEngineBoot(): boolean {
+  if (!activeBoot || activeBoot.cancelled) return false;
+  activeBoot.cancelled = true;
+  activeBoot.engine.terminate();
+  activeBoot.rejectCancellation(new EngineBootCancelledError());
+  recordBootTrace({ source: 'main', phase: 'boot.terminal', status: 'cancelled' });
+  return true;
+}
+
 export async function initializeEngineWorker(ctx: InitializeEngineContext): Promise<void> {
-  if (ctx.getExistingEngine()) {
-    console.log('[workspaceBoot] Engine already initialized, skipping duplicate init');
-    return;
-  }
   if (initInFlight) {
     await initInFlight;
+    return;
+  }
+  if (ctx.getExistingEngine()) {
+    console.log('[workspaceBoot] Engine already initialized, skipping duplicate init');
     return;
   }
 
@@ -232,8 +308,13 @@ export async function initializeEngineWorker(ctx: InitializeEngineContext): Prom
     try {
       await runEngineInit(ctx);
     } catch (error: unknown) {
+      if (error instanceof EngineBootCancelledError) {
+        ctx.setInitCancelled?.();
+        return;
+      }
       const message = error instanceof Error ? error.message : 'Failed to initialize engine';
       console.error('[workspaceBoot] Failed to init engine:', error);
+      recordBootTrace({ source: 'main', phase: 'boot.terminal', status: 'error', detail: { message } });
       ctx.setInitError(message);
     }
   }).finally(() => {
@@ -335,6 +416,7 @@ export async function shutdownEngineWorker(ctx: ShutdownEngineContext): Promise<
 }
 
 export function resetEngineInitDedupeForTests(): void {
+  activeBoot = null;
   initInFlight = null;
   lifecycleChain = Promise.resolve();
 }

@@ -4,6 +4,16 @@ const port = Number(process.env.PLAYWRIGHT_PORT || '4173');
 const host = process.env.PLAYWRIGHT_HOST || '127.0.0.1';
 const baseURL = `http://${host}:${port}`;
 
+export function shouldReuseExistingPlaywrightServer({
+  ci,
+  skipDevServer,
+}: {
+  ci: string | undefined;
+  skipDevServer: string | undefined;
+}): boolean {
+  return skipDevServer === '1' || !ci;
+}
+
 export default defineConfig({
   testDir: 'tests/e2e',
   testMatch: '**/*.spec.ts',
@@ -24,12 +34,32 @@ export default defineConfig({
     baseURL,
     browserName: 'chromium',
     trace: 'retain-on-failure',
+    screenshot: 'only-on-failure',
     viewport: { width: 1440, height: 900 },
   },
   webServer: {
     command: `npm run dev -- --host ${host} --port ${port}`,
     url: baseURL,
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: shouldReuseExistingPlaywrightServer({
+      ci: process.env.CI,
+      skipDevServer: process.env.SKIP_DEV_SERVER,
+    }),
     timeout: 120000,
   },
+  projects: [
+    {
+      name: 'boot-prerequisite',
+      testMatch: '**/engine-boot-contract.spec.ts',
+      fullyParallel: false,
+    },
+    {
+      name: 'product',
+      testIgnore: [
+        '**/engine-boot-contract.spec.ts',
+        '**/production-smoke.spec.ts',
+        '**/performance-dashboard.spec.ts',
+      ],
+      dependencies: ['boot-prerequisite'],
+    },
+  ],
 });

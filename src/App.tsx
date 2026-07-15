@@ -47,7 +47,7 @@ export default function App() {
     clearImportedSessionSemantic: session.clearImportedSessionSemantic,
   });
 
-  const isDbReady = useVelocityStore((state) => state.isDbReady);
+  const engineStatus = useVelocityStore((state) => state.engineStatus);
   const initError = useVelocityStore((state) => state.initError);
   const dataset = useVelocityStore((state) => state.dataset);
   const workspace = useVelocityStore((state) => state.workspace);
@@ -65,6 +65,7 @@ export default function App() {
   const closeFilterModal = useVelocityStore((state) => state.closeFilterModal);
   const closeAnalysisExportModal = useVelocityStore((state) => state.closeAnalysisExportModal);
   const toggleDatasetStar = useVelocityStore((state) => state.toggleDatasetStar);
+  const cancelWorkerBoot = useVelocityStore((state) => state.cancelWorkerBoot);
 
   const loadStageHeadline = getLoadStageHeadline(loadProgress);
   const variables = dataset?.variables ?? [];
@@ -122,7 +123,7 @@ export default function App() {
 
       <AppModeRouter
         phase={phase}
-        isDbReady={isDbReady}
+        engineStatus={engineStatus}
         initError={initError}
         dataset={dataset}
         workspace={workspace}
@@ -152,6 +153,11 @@ export default function App() {
         onReturnToWorkspace={workspaceOrchestration.handleReturnToWorkspace}
         onOpenSessionImport={handleOpenSessionImportModal}
         onExportSession={session.handleExportSession}
+        onRetryEngine={() => void warmUpEngineOnIntent('manual-retry').catch(() => {})}
+        onUseMemoryMode={() =>
+          void warmUpEngineOnIntent('memory-recovery', { persistenceMode: 'memory' }).catch(() => {})
+        }
+        onCancelEngineBoot={cancelWorkerBoot}
       />
 
       {/* Inside the dashboard, the palette mounts within DashboardShell's

@@ -30,7 +30,7 @@ beforeAll(() => {
 
 describe('SplashScreen', () => {
   const baseProps = {
-    isDbReady: false,
+    engineStatus: 'idle' as const,
     initError: null as string | null,
     persistenceState: 'checking' as const,
     loadProgress: null as null | { phase: 'parsing'; progress: number; message: string },
@@ -54,12 +54,24 @@ describe('SplashScreen', () => {
     onImportSession: noop,
     onRebuildFromOpfs: noop,
     onDiscard: noop,
+    onRetryEngine: noop,
+    onUseMemoryMode: noop,
+    onCancelEngineBoot: noop,
   };
+
+  it('keeps first-run workspace actions usable while the engine is idle', () => {
+    render(<SplashScreen {...baseProps} persistenceState="idle" />);
+
+    expect(screen.getByTestId('workspace-empty-state')).toBeVisible();
+    expect(screen.getByRole('button', { name: /Upload/i })).toBeEnabled();
+    expect(screen.getByRole('button', { name: /Try the brand tracker example/i })).toBeEnabled();
+  });
 
   it('shows initialization phase and progress during engine startup', () => {
     render(
       <SplashScreen
         {...baseProps}
+        engineStatus="starting"
         loadProgress={{
           phase: 'parsing',
           progress: 0.42,
@@ -75,10 +87,32 @@ describe('SplashScreen', () => {
   });
 
   it('shows init error in the engine bar', () => {
-    render(<SplashScreen {...baseProps} initError="Worker failed to start" />);
+    const onRetryEngine = vi.fn();
+    const onUseMemoryMode = vi.fn();
+    render(
+      <SplashScreen
+        {...baseProps}
+        engineStatus="error"
+        initError="Worker failed to start"
+        onRetryEngine={onRetryEngine}
+        onUseMemoryMode={onUseMemoryMode}
+      />,
+    );
 
     expect(screen.getByText('Worker failed to start')).toBeInTheDocument();
     expect(screen.queryByTestId('engine-init-headline')).not.toBeInTheDocument();
+    screen.getByRole('button', { name: 'Retry engine' }).click();
+    screen.getByRole('button', { name: 'Use safe memory mode' }).click();
+    expect(onRetryEngine).toHaveBeenCalled();
+    expect(onUseMemoryMode).toHaveBeenCalled();
+  });
+
+  it('keeps cancellation visible while the engine is starting', () => {
+    const onCancelEngineBoot = vi.fn();
+    render(<SplashScreen {...baseProps} engineStatus="starting" onCancelEngineBoot={onCancelEngineBoot} />);
+
+    screen.getByRole('button', { name: 'Cancel engine start' }).click();
+    expect(onCancelEngineBoot).toHaveBeenCalled();
   });
 
   it.each([
@@ -89,7 +123,7 @@ describe('SplashScreen', () => {
     ['error', 'Engine initialization failed'],
     ['idle', 'Initializing Analysis Engine...'],
   ] as const)('maps persistence state %s to init headline', (persistenceState, headline) => {
-    render(<SplashScreen {...baseProps} persistenceState={persistenceState} />);
+    render(<SplashScreen {...baseProps} engineStatus="starting" persistenceState={persistenceState} />);
     expect(screen.getByTestId('engine-init-headline')).toHaveTextContent(headline);
   });
 

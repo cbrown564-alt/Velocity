@@ -23,6 +23,7 @@ import { postEngineResponse, postEngineTransfer } from './engineMessaging';
 import { loadCSV, loadSAV, loadSAVMetadata, loadSAVSample } from './workerIngestion';
 import { fillSystemMissing, getSchema, getUniqueValues, recodeVariable, runQuery } from './workerQueries';
 import { OPFS_SCHEMA_VERSION, workerDbState } from './workerDbState';
+import { configureWorkerBootTrace, emitWorkerBootTrace } from './workerBootTrace';
 
 export type { EngineMessageHandler } from './engineHandlerTypes';
 
@@ -30,6 +31,9 @@ export const engineHandlers: Record<EngineWorkerRequest['type'], EngineMessageHa
   'engine.init': async (request) => {
     if (request.type !== 'engine.init') return;
     const { requestId } = request;
+    configureWorkerBootTrace(request.bootCorrelationId, requestId);
+    emitWorkerBootTrace('analysis_worker.online', 'completed');
+    emitWorkerBootTrace('engine.init.received', 'completed');
     if (request.datasetId || request.schemaVersion) {
       workerDbState.persistenceContext = {
         datasetId: request.datasetId,
@@ -38,6 +42,7 @@ export const engineHandlers: Record<EngineWorkerRequest['type'], EngineMessageHa
     }
     const initResult = await init(request.forceCleanStart, {
       hasPersistedSource: request.hasPersistedSource,
+      forceMemory: request.persistenceMode === 'memory',
     });
     if (initResult.corruptionDetected) {
       postEngineResponse({
@@ -57,6 +62,7 @@ export const engineHandlers: Record<EngineWorkerRequest['type'], EngineMessageHa
       opfsAvailable: initResult.opfsAvailable,
       duckdbBundle: initResult.duckdbBundle,
     });
+    emitWorkerBootTrace('engine.ready.sent', 'completed');
   },
 
   'engine.shutdown': async (request) => {
@@ -136,6 +142,7 @@ export const engineHandlers: Record<EngineWorkerRequest['type'], EngineMessageHa
     if (request.type !== 'engine.loadCSV') return;
     const { requestId } = request;
     let csvResult;
+    emitWorkerBootTrace('file_load.csv', 'started');
     try {
       csvResult = await loadCSV(request.fileName, request.content);
     } catch (error: any) {
@@ -158,12 +165,14 @@ export const engineHandlers: Record<EngineWorkerRequest['type'], EngineMessageHa
       rowCount: csvResult.rowCount,
       durationMs: csvResult.durationMs,
     });
+    emitWorkerBootTrace('file_load.csv', 'completed');
   },
 
   'engine.loadSAV': async (request) => {
     if (request.type !== 'engine.loadSAV') return;
     const { requestId } = request;
     let savResult;
+    emitWorkerBootTrace('file_load.sav', 'started');
     try {
       savResult = await loadSAV(request.buffer, request.forceChunked, (progress) => {
         postEngineResponse(toEngineLoadProgress(requestId, progress));
@@ -193,6 +202,7 @@ export const engineHandlers: Record<EngineWorkerRequest['type'], EngineMessageHa
       rowCount: savResult.rowCount,
       durationMs: savResult.durationMs,
     });
+    emitWorkerBootTrace('file_load.sav', 'completed');
   },
 
   'engine.loadSAVMetadata': async (request) => {

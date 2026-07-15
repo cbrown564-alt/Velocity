@@ -1,0 +1,100 @@
+{
+  "capturedAt": "2026-07-15T10:14:32.418Z",
+  "repetitions": 50,
+  "cells": [
+    {
+      "name": "baseline-dev",
+      "server": "dev",
+      "persistence": "opfs",
+      "serviceWorker": true,
+      "storage": "fresh",
+      "concurrency": 1,
+      "action": "visible-upload"
+    },
+    {
+      "name": "memory-dev",
+      "server": "dev",
+      "persistence": "memory",
+      "serviceWorker": true,
+      "storage": "fresh",
+      "concurrency": 1,
+      "action": "visible-upload"
+    },
+    {
+      "name": "sw-blocked-dev",
+      "server": "dev",
+      "persistence": "opfs",
+      "serviceWorker": false,
+      "storage": "fresh",
+      "concurrency": 1,
+      "action": "visible-upload"
+    },
+    {
+      "name": "baseline-preview",
+      "server": "preview",
+      "persistence": "opfs",
+      "serviceWorker": true,
+      "storage": "fresh",
+      "concurrency": 1,
+      "action": "visible-upload"
+    }
+  ],
+  "summary": {
+    "baseline-dev": {
+      "attempts": 50,
+      "passes": 50,
+      "failures": 0,
+      "medianMs": 1718,
+      "p95Ms": 1784,
+      "failurePhases": [],
+      "bundles": [
+        "eh"
+      ],
+      "persistenceModes": [
+        "opfs"
+      ]
+    },
+    "memory-dev": {
+      "attempts": 50,
+      "passes": 50,
+      "failures": 0,
+      "medianMs": 2161,
+      "p95Ms": 2304,
+      "failurePhases": [],
+      "bundles": [
+        "coi"
+      ],
+      "persistenceModes": [
+        "disabled"
+      ]
+    },
+    "sw-blocked-dev": {
+      "attempts": 50,
+      "passes": 50,
+      "failures": 0,
+      "medianMs": 1808,
+      "p95Ms": 5360,
+      "failurePhases": [],
+      "bundles": [
+        "eh"
+      ],
+      "persistenceModes": [
+        "opfs"
+      ]
+    },
+    "baseline-preview": {
+      "attempts": 50,
+      "passes": 50,
+      "failures": 0,
+      "medianMs": 2225,
+      "p95Ms": 4183,
+      "failurePhases": [],
+      "bundles": [
+        "eh"
+      ],
+      "persistenceModes": [
+        "opfs"
+      ]
+    }
+  }
+}

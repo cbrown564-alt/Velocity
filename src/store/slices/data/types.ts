@@ -33,6 +33,9 @@ export interface WorkspaceDatasetOpenInput {
 }
 
 export type PersistenceState = 'idle' | 'checking' | 'found' | 'restoring' | 'ready' | 'corrupt' | 'error';
+export type EngineBootStatus = 'idle' | 'starting' | 'ready' | 'error' | 'cancelled';
+export type ShellStatus = 'ready';
+export type DatasetLoadStatus = 'idle' | 'loading' | 'ready' | 'error';
 
 export interface PersistedDataInfo {
   schema: { name: string; type: string }[];
@@ -57,9 +60,12 @@ export interface LoadProgressState {
 
 export interface DataSlice {
   browserEngine: BrowserEngine | null;
+  shellStatus: ShellStatus;
+  engineStatus: EngineBootStatus;
   isDbReady: boolean;
   initError: string | null;
   dataset: Dataset | null;
+  datasetStatus: DatasetLoadStatus;
   variableSets: VariableSet[];
   folders: Folder[];
   transformLog: DataTransform[];
@@ -75,7 +81,8 @@ export interface DataSlice {
   persistedDataInfo: PersistedDataInfo | null;
   loadProgress: LoadProgressState | null;
 
-  initWorker: () => Promise<void>;
+  initWorker: (options?: { persistenceMode?: 'auto' | 'memory' }) => Promise<void>;
+  cancelWorkerBoot: () => void;
   terminateWorker: () => void;
   shutdownWorker: () => Promise<void>;
   respawnWorker: (cleanStart?: boolean, datasetIdOverride?: string) => Promise<void>;

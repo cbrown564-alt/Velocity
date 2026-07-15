@@ -9,10 +9,11 @@
 import { STORAGE_KEY } from '../store/persistConfig';
 import { prefetchDuckDbWasmAssets, probeDuckDbWasmCache, registerDuckDbWasmCache } from './duckdbWasmCache';
 import { markBootStart, recordEngineWarmupIntent, recordPilotEvent } from './pilotOnboarding';
+import { beginBootTrace, recordBootTrace } from './bootTrace';
 
 declare global {
   interface Window {
-    __velocityWarmUpEngine?: (source: string) => Promise<void>;
+    __velocityWarmUpEngine?: (source: string, persistenceMode?: 'auto' | 'memory') => Promise<void>;
   }
 }
 
@@ -47,26 +48,62 @@ export function resetEngineWarmUpForTests(): void {
   warmUpSource = null;
 }
 
-export async function warmUpEngineOnIntent(source: string): Promise<void> {
+export async function warmUpEngineOnIntent(
+  source: string,
+  options: { persistenceMode?: 'auto' | 'memory' } = {},
+): Promise<void> {
   if (warmUpPromise) return warmUpPromise;
 
   warmUpSource = source;
+  const correlationId = beginBootTrace(source);
   markBootStart();
   recordEngineWarmupIntent(source);
 
   warmUpPromise = (async () => {
+    recordBootTrace({ correlationId, source: 'main', phase: 'wasm_cache.probe', status: 'started' });
     const wasmCacheBefore = await probeDuckDbWasmCache();
+    recordBootTrace({
+      correlationId,
+      source: 'main',
+      phase: 'wasm_cache.probe',
+      status: 'completed',
+      detail: { cacheState: wasmCacheBefore },
+    });
     recordPilotEvent('wasm_cache_probe', {
       source,
       cacheState: wasmCacheBefore,
     });
 
-    void registerDuckDbWasmCache();
-    void prefetchDuckDbWasmAssets();
+    recordBootTrace({ correlationId, source: 'main', phase: 'service_worker.register', status: 'started' });
+    void registerDuckDbWasmCache().then((registration) => {
+      recordBootTrace({
+        correlationId,
+        source: 'service-worker',
+        phase: 'service_worker.register',
+        status: 'completed',
+        detail: { registered: Boolean(registration) },
+      });
+    });
+    recordBootTrace({ correlationId, source: 'main', phase: 'wasm_cache.prefetch', status: 'started' });
+    void prefetchDuckDbWasmAssets().then(() => {
+      recordBootTrace({ correlationId, source: 'service-worker', phase: 'wasm_cache.prefetch', status: 'completed' });
+    });
 
+    recordBootTrace({ correlationId, source: 'main', phase: 'store.dynamic_import', status: 'started' });
     const { useVelocityStore } = await import('../store');
-    await useVelocityStore.getState().initWorker();
+    recordBootTrace({ correlationId, source: 'main', phase: 'store.dynamic_import', status: 'completed' });
+    await useVelocityStore.getState().initWorker({ persistenceMode: options.persistenceMode ?? 'auto' });
+    const state = useVelocityStore.getState();
+    if (state.engineStatus === 'error') throw new Error(state.initError || 'Engine failed to start');
+    if (state.engineStatus === 'cancelled') throw new Error('Engine boot cancelled');
   })().catch((error) => {
+    recordBootTrace({
+      correlationId,
+      source: 'main',
+      phase: 'boot.terminal',
+      status: error instanceof Error && error.message === 'Engine boot cancelled' ? 'cancelled' : 'error',
+      detail: { message: error instanceof Error ? error.message : String(error) },
+    });
     warmUpPromise = null;
     throw error;
   });
@@ -76,5 +113,5 @@ export async function warmUpEngineOnIntent(source: string): Promise<void> {
 
 export function exposeEngineWarmUpForTests(): void {
   if (typeof window === 'undefined') return;
-  window.__velocityWarmUpEngine = warmUpEngineOnIntent;
+  window.__velocityWarmUpEngine = (source, persistenceMode) => warmUpEngineOnIntent(source, { persistenceMode });
 }
