@@ -1,0 +1,56 @@
+{
+  "contract": {
+    "name": "brand-tracker-wave-refresh",
+    "path": "demo/contracts/brand-tracker-wave-refresh.json",
+    "startUrl": "/",
+    "timeoutMs": 120000
+  },
+  "startedAt": "2026-07-15T10:51:24.848Z",
+  "baseUrl": "http://127.0.0.1:4173",
+  "completedSteps": 4,
+  "failedStepId": null,
+  "steps": [
+    {
+      "id": "open-workspace",
+      "goal": "Load root workspace view",
+      "action": "goto",
+      "durationMs": 527,
+      "screenshot": "screens/01-open-workspace.png",
+      "status": "passed"
+    },
+    {
+      "id": "upload-refresh-wave",
+      "goal": "Attach the Wave 5 refresh file (the next-quarter update)",
+      "action": "upload",
+      "durationMs": 1903,
+      "screenshot": "screens/02-upload-refresh-wave.png",
+      "status": "passed"
+    },
+    {
+      "id": "load-full-data-if-needed",
+      "goal": "Resolve metadata-only ingestion branch",
+      "action": "clickIfVisible",
+      "durationMs": 506,
+      "screenshot": null,
+      "status": "passed"
+    },
+    {
+      "id": "verify-refresh-wave-loaded",
+      "goal": "Confirm the Wave 5 refresh wave loads with the same schema as Wave 4 (ready for dataset replacement)",
+      "action": "waitForTimeout",
+      "durationMs": 1592,
+      "screenshot": "screens/04-verify-refresh-wave-loaded.png",
+      "status": "passed"
+    }
+  ],
+  "downloads": [],
+  "status": "passed",
+  "finishedAt": "2026-07-15T10:51:29.765Z",
+  "quality": {
+    "status": "passed",
+    "timingTargets": [],
+    "recoverabilityChecks": [],
+    "consoleErrors": [],
+    "pageErrors": []
+  }
+}

@@ -78,11 +78,11 @@ Prefer tests that are resilient:
 - Verify navigation/command transitions switch modes correctly
 - Verify a Canvas action does not mutate Manager-only state unexpectedly
 
-**E2E companions (required when changing shortcuts, onboarding, banners, or theme labels)**
-- Update Playwright specs or helpers in the same PR — see `docs/playbooks/pre_pr_verification.md`
-- CI enforces this via `npm run check:e2e-companion` (same merge-base diff as ESLint ratchet)
+**E2E companions (use when unit/component tests cannot cover the journey)**
+- Update Playwright specs or helpers when changing a browser interaction that needs end-to-end evidence — see `docs/playbooks/pre_pr_verification.md`
+- `npm run check:e2e-companion` remains an optional audit; default CI does not require a companion file based only on the changed path
 - Trigger paths: `src/lib/keyboardShortcuts/**`, `src/features/dashboard/onboarding/**`, `WorkspaceStatusStrip`, `ThemeSwitcher`, contextual micro tips
-- Run `npm run ci:e2e` before merge
+- Run the relevant Playwright spec; use `npm run ci:e2e` for broad or promotion-bound UI changes
 
 **Token usage checks**
 - If you have lint rules: enforce token usage

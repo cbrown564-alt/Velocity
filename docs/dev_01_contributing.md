@@ -101,25 +101,26 @@ npm run eval:06      # Browser eval runner (EVAL-06)
 
 ## 5. Testing
 
-Run **`npm run ci:full`** before every PR (mirrors all required `test.yml` jobs plus `e2e`). Full gate list: [`docs/playbooks/pre_pr_verification.md`](playbooks/pre_pr_verification.md).
+Run **`npm run ci`** before handing off a code change. Add targeted browser or specialist checks when the changed area needs them. See [`docs/playbooks/pre_pr_verification.md`](playbooks/pre_pr_verification.md).
 
 *   **Unit/integration tests:** Vitest
 *   **Golden/parity tests:** Vitest suites under `tests/` (including `tests/e2e/agentWorkflow.test.ts`)
 *   **End-to-End:** Playwright (`tests/e2e/*.spec.ts`; `@visual` specs are informational only)
 
 ```bash
-npm run ci:full         # ci + ci:e2e (recommended before PR)
-npm run ci              # lint-format through build (excludes e2e)
-npm run ci:lint         # fast lint/format/ratchet feedback
-npm run ci:e2e          # Playwright product gates (after: npx playwright install --with-deps)
-npm run test:mutation:ci   # when src/core/** changed
+npm run ci              # lint + app typecheck + Vitest smoke set + build
+npm run test:run        # full Vitest suite when relevant
+npm run ci:lint         # lint only
+npm run ci:e2e          # opt-in Playwright journeys
+npm run ci:full         # all typechecks + full Vitest + build + Playwright
+npm run test:mutation:ci   # opt-in core mutation evidence
 ```
 
-See `docs/arch_08_testing.md` for the full pyramid, coverage gates, and mutation thresholds.
+See `docs/arch_08_testing.md` for the default contract and opt-in checks.
 
 ## 6. Code Style
 
-*   **Linting:** ESLint flat config plus Prettier. Ratcheted rules are `error` with `--max-warnings 0`; changed files are also checked via `npm run check:eslint-ratchet` (STAB-CI-3).
+*   **Linting:** ESLint flat config plus Prettier. ESLint errors fail the default checks; warnings are reported. Optional pre-commit hooks inspect staged files only.
 *   **Naming:**
     *   React Components: `PascalCase` (e.g., `VariableCard.tsx`)
     *   Functions/Variables: `camelCase`

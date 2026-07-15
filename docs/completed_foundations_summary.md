@@ -103,6 +103,7 @@ The engine and survey-analysis foundation is implemented and verified within the
 
 - **`STAB-CI-2`–`22` Done:** local/`ci` parity playbook, ESLint ratchet, E2E companion enforcement, DuckDB Arrow browser smoke, coverage ratchets (store/services/features/overlays + per-path floors), parity gate in CI, parallel jobs, lefthook, `ci:lint`/`ci:full`, `@visual` quarantine + non-blocking visual workflow, CI artifacts/bootstrap, doc sync. Owner: `arch_08_testing.md`, `playbooks/pre_pr_verification.md`.
 - Remaining: `STAB-CI-23` (features/overlays floor raise), `STAB-CI-19` (mutation threshold, blocked), and deferred further ratchets.
+- **Current default (July 15):** the pre-launch merge contract was reduced to one job running lint, application typecheck, a representative Vitest smoke set, and build. The full Vitest suite, coverage ratchets, companion enforcement, browser journeys, parity, mutation, and journey timing remain available as opt-in evidence rather than default gates. `arch_08_testing.md` owns the current policy; the bullets above record what was previously implemented.
 
 ## Evidence Anchors
 

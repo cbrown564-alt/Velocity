@@ -35,34 +35,16 @@ Describe interface/schema/type contract deltas.
 - If yes, list exact contracts and migration impact:
 
 ## Test Plan
-Commands run and outcomes. **All required CI jobs must be green** — see [pre-PR verification playbook](docs/playbooks/pre_pr_verification.md).
+Commands run and outcomes. The default required check is documented in the [pre-PR verification playbook](docs/playbooks/pre_pr_verification.md).
 
 ```bash
-# Recommended: all required test.yml jobs + e2e
-npm run ci:full
-
-# Or stepwise:
-npm run ci              # lint-format → typecheck → arch-guards → unit-coverage → build
-npm run ci:e2e          # Playwright product gates (excludes @visual)
-
-# When src/core/** changed:
-npm run test:mutation:ci
+npm run ci              # lint → app typecheck → Vitest smoke set → build
+# Add targeted browser, parity, MCP, coverage, or mutation checks when relevant.
 ```
 
-| CI job (`test.yml`) | Local mirror |
-| :--- | :--- |
-| `lint-format` | `npm run ci:lint` |
-| `typecheck` | `npm run typecheck:all` |
-| `arch-guards` | worker-boundary + querybuilder-pure + design-tokens checks |
-| `unit-coverage` | `npm run test:run -- --coverage` + `npm run test:parity` |
-| `build` | `npm run build` |
-| `e2e` | `npm run ci:e2e` |
-| `visual-e2e` (informational) | `npm run test:e2e:visual` — does **not** block merge |
-
 Results:
-- [ ] `npm run ci:full` passed (or `ci` + `ci:e2e` separately)
-- [ ] `npm run test:parity` included in coverage run (part of `ci`)
-- [ ] `npm run test:mutation:ci` passed (if `src/core/**` changed)
+- [ ] `npm run ci` passed for a code change
+- [ ] Relevant targeted checks passed
 - [ ] Manual verification completed (if applicable)
 
 ## Risks + Mitigations

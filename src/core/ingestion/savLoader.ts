@@ -67,6 +67,11 @@ export interface ProcessedSavResult {
   variableSets: VariableSet[];
 }
 
+/** Remove fixed-width NUL padding from imported display metadata. */
+function normalizeMetadataLabel(label: string | undefined): string | undefined {
+  return label?.replace(/\0+$/g, '');
+}
+
 // ============================================================================
 // Main processing function
 // ============================================================================
@@ -96,7 +101,7 @@ export function processMetadata(data: ParsedSavData): ProcessedSavResult {
     if (v.valueLabelSetName && metadata.valueLabelSets[v.valueLabelSetName]) {
       valueLabels = metadata.valueLabelSets[v.valueLabelSetName].map((vl) => ({
         value: vl.value,
-        label: vl.label,
+        label: normalizeMetadataLabel(vl.label) ?? '',
       }));
     }
 
@@ -120,7 +125,7 @@ export function processMetadata(data: ParsedSavData): ProcessedSavResult {
     return {
       id,
       name: v.name,
-      label: v.label || v.name,
+      label: normalizeMetadataLabel(v.label) || v.name,
       type,
       orderedStyle,
       orderedScoring,
@@ -160,13 +165,14 @@ export function processMetadata(data: ParsedSavData): ProcessedSavResult {
 
     if (variableIds.length > 0) {
       const structure = mrSet.type === 'C' ? 'grid' : 'multiple';
-      const cleanName = mrSet.name.startsWith('$') ? mrSet.name.slice(1) : mrSet.name;
+      const normalizedName = normalizeMetadataLabel(mrSet.name) ?? mrSet.name;
+      const cleanName = normalizedName.startsWith('$') ? normalizedName.slice(1) : normalizedName;
       const firstVar = variables.find((v) => v.id === variableIds[0]);
       const setType = firstVar?.type;
 
       variableSets.push({
         id: `mrset_${cleanName}`,
-        name: mrSet.label || cleanName,
+        name: normalizeMetadataLabel(mrSet.label) || cleanName,
         variableIds,
         structure,
         type: setType,

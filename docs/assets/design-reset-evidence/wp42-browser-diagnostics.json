@@ -1,0 +1,1311 @@
+{
+  "console": [
+    {
+      "type": "debug",
+      "text": "[vite] connecting...",
+      "at": "2026-07-15T10:51:14.221Z"
+    },
+    {
+      "type": "info",
+      "text": "%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold",
+      "at": "2026-07-15T10:51:14.226Z"
+    },
+    {
+      "type": "log",
+      "text": "🔄 [Persist] State rehydrated from localStorage",
+      "at": "2026-07-15T10:51:14.234Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"e8b37c19-bcf0-4792-8560-aa93041e7726\",\"sequence\":1,\"at\":\"2026-07-15T10:51:14.255Z\",\"elapsedMs\":0,\"source\":\"main\",\"phase\":\"warmup.requested\",\"status\":\"started\",\"detail\":{\"source\":\"app-shell\"}}",
+      "at": "2026-07-15T10:51:14.256Z"
+    },
+    {
+      "type": "log",
+      "text": "[duckdbWasmCache] Service worker registered velocity-duckdb-wasm-v0.1.0-pilot",
+      "at": "2026-07-15T10:51:14.359Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"e8b37c19-bcf0-4792-8560-aa93041e7726\",\"sequence\":2,\"at\":\"2026-07-15T10:51:14.360Z\",\"elapsedMs\":105,\"source\":\"main\",\"phase\":\"shell.rendered\",\"status\":\"completed\"}",
+      "at": "2026-07-15T10:51:14.363Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"e8b37c19-bcf0-4792-8560-aa93041e7726\",\"sequence\":3,\"at\":\"2026-07-15T10:51:14.363Z\",\"elapsedMs\":108,\"source\":\"main\",\"phase\":\"shell.rendered\",\"status\":\"completed\"}",
+      "at": "2026-07-15T10:51:14.364Z"
+    },
+    {
+      "type": "debug",
+      "text": "[vite] connected.",
+      "at": "2026-07-15T10:51:14.364Z"
+    },
+    {
+      "type": "debug",
+      "text": "[vite] connecting...",
+      "at": "2026-07-15T10:51:14.490Z"
+    },
+    {
+      "type": "debug",
+      "text": "[vite] connected.",
+      "at": "2026-07-15T10:51:14.534Z"
+    },
+    {
+      "type": "info",
+      "text": "%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold",
+      "at": "2026-07-15T10:51:14.568Z"
+    },
+    {
+      "type": "log",
+      "text": "🔄 [Persist] State rehydrated from localStorage",
+      "at": "2026-07-15T10:51:14.570Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"629141a2-195a-4044-91c7-ba21b05a0b7f\",\"sequence\":1,\"at\":\"2026-07-15T10:51:14.553Z\",\"elapsedMs\":0,\"source\":\"main\",\"phase\":\"warmup.requested\",\"status\":\"started\",\"detail\":{\"source\":\"app-shell\"}}",
+      "at": "2026-07-15T10:51:14.570Z"
+    },
+    {
+      "type": "log",
+      "text": "[duckdbWasmCache] Service worker registered velocity-duckdb-wasm-v0.1.0-pilot",
+      "at": "2026-07-15T10:51:14.575Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"629141a2-195a-4044-91c7-ba21b05a0b7f\",\"sequence\":2,\"at\":\"2026-07-15T10:51:14.580Z\",\"elapsedMs\":28,\"source\":\"main\",\"phase\":\"shell.rendered\",\"status\":\"completed\"}",
+      "at": "2026-07-15T10:51:14.585Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"629141a2-195a-4044-91c7-ba21b05a0b7f\",\"sequence\":3,\"at\":\"2026-07-15T10:51:14.581Z\",\"elapsedMs\":28,\"source\":\"main\",\"phase\":\"shell.rendered\",\"status\":\"completed\"}",
+      "at": "2026-07-15T10:51:14.586Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"629141a2-195a-4044-91c7-ba21b05a0b7f\",\"sequence\":4,\"at\":\"2026-07-15T10:51:14.680Z\",\"elapsedMs\":128,\"source\":\"main\",\"phase\":\"warmup.requested\",\"status\":\"started\",\"detail\":{\"source\":\"file-upload\"}}",
+      "at": "2026-07-15T10:51:14.682Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"629141a2-195a-4044-91c7-ba21b05a0b7f\",\"sequence\":5,\"at\":\"2026-07-15T10:51:14.681Z\",\"elapsedMs\":128,\"source\":\"main\",\"phase\":\"wasm_cache.probe\",\"status\":\"started\"}",
+      "at": "2026-07-15T10:51:14.682Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"629141a2-195a-4044-91c7-ba21b05a0b7f\",\"sequence\":6,\"at\":\"2026-07-15T10:51:14.683Z\",\"elapsedMs\":131,\"source\":\"main\",\"phase\":\"wasm_cache.probe\",\"status\":\"completed\",\"detail\":{\"cacheState\":\"miss\"}}",
+      "at": "2026-07-15T10:51:14.684Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"629141a2-195a-4044-91c7-ba21b05a0b7f\",\"sequence\":7,\"at\":\"2026-07-15T10:51:14.683Z\",\"elapsedMs\":131,\"source\":\"main\",\"phase\":\"service_worker.register\",\"status\":\"started\"}",
+      "at": "2026-07-15T10:51:14.684Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"629141a2-195a-4044-91c7-ba21b05a0b7f\",\"sequence\":8,\"at\":\"2026-07-15T10:51:14.683Z\",\"elapsedMs\":131,\"source\":\"main\",\"phase\":\"wasm_cache.prefetch\",\"status\":\"started\"}",
+      "at": "2026-07-15T10:51:14.684Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"629141a2-195a-4044-91c7-ba21b05a0b7f\",\"sequence\":9,\"at\":\"2026-07-15T10:51:14.684Z\",\"elapsedMs\":131,\"source\":\"main\",\"phase\":\"store.dynamic_import\",\"status\":\"started\"}",
+      "at": "2026-07-15T10:51:14.684Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"629141a2-195a-4044-91c7-ba21b05a0b7f\",\"sequence\":10,\"at\":\"2026-07-15T10:51:14.684Z\",\"elapsedMs\":131,\"source\":\"service-worker\",\"phase\":\"service_worker.register\",\"status\":\"completed\",\"detail\":{\"registered\":true}}",
+      "at": "2026-07-15T10:51:14.684Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"629141a2-195a-4044-91c7-ba21b05a0b7f\",\"sequence\":11,\"at\":\"2026-07-15T10:51:14.685Z\",\"elapsedMs\":132,\"source\":\"main\",\"phase\":\"store.dynamic_import\",\"status\":\"completed\"}",
+      "at": "2026-07-15T10:51:14.688Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"629141a2-195a-4044-91c7-ba21b05a0b7f\",\"sequence\":12,\"at\":\"2026-07-15T10:51:14.698Z\",\"elapsedMs\":145,\"source\":\"main\",\"phase\":\"analysis_worker.created\",\"status\":\"completed\"}",
+      "at": "2026-07-15T10:51:14.698Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"629141a2-195a-4044-91c7-ba21b05a0b7f\",\"sequence\":13,\"at\":\"2026-07-15T10:51:14.709Z\",\"elapsedMs\":157,\"source\":\"main\",\"phase\":\"engine.init.sent\",\"status\":\"completed\"}",
+      "at": "2026-07-15T10:51:14.710Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"629141a2-195a-4044-91c7-ba21b05a0b7f\",\"sequence\":14,\"at\":\"2026-07-15T10:51:14.974Z\",\"elapsedMs\":421,\"source\":\"analysis-worker\",\"phase\":\"analysis_worker.online\",\"status\":\"completed\"}",
+      "at": "2026-07-15T10:51:14.976Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"629141a2-195a-4044-91c7-ba21b05a0b7f\",\"sequence\":15,\"at\":\"2026-07-15T10:51:14.974Z\",\"elapsedMs\":421,\"source\":\"analysis-worker\",\"phase\":\"engine.init.received\",\"status\":\"completed\"}",
+      "at": "2026-07-15T10:51:14.976Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"629141a2-195a-4044-91c7-ba21b05a0b7f\",\"sequence\":16,\"at\":\"2026-07-15T10:51:14.974Z\",\"elapsedMs\":422,\"source\":\"analysis-worker\",\"phase\":\"duckdb.bundle.select\",\"status\":\"started\",\"detail\":{\"crossOriginIsolated\":true,\"persistenceEnabled\":true}}",
+      "at": "2026-07-15T10:51:14.976Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"629141a2-195a-4044-91c7-ba21b05a0b7f\",\"sequence\":17,\"at\":\"2026-07-15T10:51:14.974Z\",\"elapsedMs\":422,\"source\":\"analysis-worker\",\"phase\":\"duckdb.bundle.select\",\"status\":\"completed\",\"durationMs\":0,\"detail\":{\"crossOriginIsolated\":true,\"persistenceEnabled\":true}}",
+      "at": "2026-07-15T10:51:14.977Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"629141a2-195a-4044-91c7-ba21b05a0b7f\",\"sequence\":18,\"at\":\"2026-07-15T10:51:14.975Z\",\"elapsedMs\":422,\"source\":\"analysis-worker\",\"phase\":\"duckdb.bundle.selected\",\"status\":\"completed\",\"detail\":{\"bundle\":\"eh\",\"crossOriginIsolated\":true}}",
+      "at": "2026-07-15T10:51:14.977Z"
+    },
+    {
+      "type": "log",
+      "text": "🦆 [Worker] DuckDB Bundle Selected: eh {mainModule: http://127.0.0.1:4173/node_modules/@duckdb/duckdb-wasm/dist/duckdb-eh.wasm, mainWorker: http://127.0.0.1:4173/node_modules/@duckdb/duckdb-wasm/dist/duckdb-browser-eh.worker.js, pthreadWorker: null}",
+      "at": "2026-07-15T10:51:14.978Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"629141a2-195a-4044-91c7-ba21b05a0b7f\",\"sequence\":19,\"at\":\"2026-07-15T10:51:14.975Z\",\"elapsedMs\":423,\"source\":\"analysis-worker\",\"phase\":\"duckdb.nested_worker.created\",\"status\":\"completed\",\"detail\":{\"bundle\":\"eh\"}}",
+      "at": "2026-07-15T10:51:14.978Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"629141a2-195a-4044-91c7-ba21b05a0b7f\",\"sequence\":20,\"at\":\"2026-07-15T10:51:14.975Z\",\"elapsedMs\":423,\"source\":\"analysis-worker\",\"phase\":\"wasm.fetch\",\"status\":\"started\",\"detail\":{\"bundle\":\"eh\"}}",
+      "at": "2026-07-15T10:51:14.979Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"629141a2-195a-4044-91c7-ba21b05a0b7f\",\"sequence\":21,\"at\":\"2026-07-15T10:51:14.976Z\",\"elapsedMs\":423,\"source\":\"analysis-worker\",\"phase\":\"duckdb.instantiate\",\"status\":\"started\"}",
+      "at": "2026-07-15T10:51:14.979Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"629141a2-195a-4044-91c7-ba21b05a0b7f\",\"sequence\":105,\"at\":\"2026-07-15T10:51:15.223Z\",\"elapsedMs\":670,\"source\":\"service-worker\",\"phase\":\"wasm_cache.prefetch\",\"status\":\"completed\"}",
+      "at": "2026-07-15T10:51:15.226Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"629141a2-195a-4044-91c7-ba21b05a0b7f\",\"sequence\":239,\"at\":\"2026-07-15T10:51:15.270Z\",\"elapsedMs\":717,\"source\":\"analysis-worker\",\"phase\":\"wasm.fetch\",\"status\":\"completed\",\"detail\":{\"bytesLoaded\":34242586,\"bytesTotal\":34242586}}",
+      "at": "2026-07-15T10:51:15.270Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"629141a2-195a-4044-91c7-ba21b05a0b7f\",\"sequence\":240,\"at\":\"2026-07-15T10:51:15.591Z\",\"elapsedMs\":1038,\"source\":\"analysis-worker\",\"phase\":\"duckdb.instantiate\",\"status\":\"completed\",\"durationMs\":615}",
+      "at": "2026-07-15T10:51:15.592Z"
+    },
+    {
+      "type": "log",
+      "text": "🦆 [Worker] DuckDB Version: v1.4.3",
+      "at": "2026-07-15T10:51:15.648Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"629141a2-195a-4044-91c7-ba21b05a0b7f\",\"sequence\":241,\"at\":\"2026-07-15T10:51:15.647Z\",\"elapsedMs\":1095,\"source\":\"analysis-worker\",\"phase\":\"opfs.support\",\"status\":\"started\"}",
+      "at": "2026-07-15T10:51:15.649Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"629141a2-195a-4044-91c7-ba21b05a0b7f\",\"sequence\":242,\"at\":\"2026-07-15T10:51:15.648Z\",\"elapsedMs\":1095,\"source\":\"analysis-worker\",\"phase\":\"opfs.support\",\"status\":\"completed\",\"durationMs\":0}",
+      "at": "2026-07-15T10:51:15.649Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"629141a2-195a-4044-91c7-ba21b05a0b7f\",\"sequence\":243,\"at\":\"2026-07-15T10:51:15.648Z\",\"elapsedMs\":1095,\"source\":\"analysis-worker\",\"phase\":\"opfs.support.result\",\"status\":\"completed\",\"detail\":{\"supported\":true,\"message\":null}}",
+      "at": "2026-07-15T10:51:15.649Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"629141a2-195a-4044-91c7-ba21b05a0b7f\",\"sequence\":244,\"at\":\"2026-07-15T10:51:15.648Z\",\"elapsedMs\":1096,\"source\":\"analysis-worker\",\"phase\":\"persistence.setup\",\"status\":\"started\"}",
+      "at": "2026-07-15T10:51:15.649Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"629141a2-195a-4044-91c7-ba21b05a0b7f\",\"sequence\":245,\"at\":\"2026-07-15T10:51:15.648Z\",\"elapsedMs\":1096,\"source\":\"analysis-worker\",\"phase\":\"opfs.lock\",\"status\":\"started\"}",
+      "at": "2026-07-15T10:51:15.649Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"629141a2-195a-4044-91c7-ba21b05a0b7f\",\"sequence\":246,\"at\":\"2026-07-15T10:51:15.649Z\",\"elapsedMs\":1096,\"source\":\"analysis-worker\",\"phase\":\"opfs.lock\",\"status\":\"completed\",\"detail\":{\"acquired\":true}}",
+      "at": "2026-07-15T10:51:15.649Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"629141a2-195a-4044-91c7-ba21b05a0b7f\",\"sequence\":247,\"at\":\"2026-07-15T10:51:15.649Z\",\"elapsedMs\":1097,\"source\":\"analysis-worker\",\"phase\":\"opfs.database_open\",\"status\":\"started\",\"detail\":{\"path\":\"opfs://velocity_data_v1_default.db\",\"label\":\"OPFS persistence (new)\"}}",
+      "at": "2026-07-15T10:51:15.650Z"
+    },
+    {
+      "type": "debug",
+      "text": "File opfs://velocity_data_v1_default.db does not exists yet, creating...",
+      "at": "2026-07-15T10:51:15.650Z"
+    },
+    {
+      "type": "debug",
+      "text": "File opfs://velocity_data_v1_default.db.wal does not exists yet, creating...",
+      "at": "2026-07-15T10:51:15.651Z"
+    },
+    {
+      "type": "log",
+      "text": "🦆 [Worker] DuckDB opened with OPFS persistence (new): opfs://velocity_data_v1_default.db",
+      "at": "2026-07-15T10:51:15.668Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"629141a2-195a-4044-91c7-ba21b05a0b7f\",\"sequence\":248,\"at\":\"2026-07-15T10:51:15.668Z\",\"elapsedMs\":1115,\"source\":\"analysis-worker\",\"phase\":\"opfs.database_open\",\"status\":\"completed\",\"durationMs\":18,\"detail\":{\"path\":\"opfs://velocity_data_v1_default.db\",\"label\":\"OPFS persistence (new)\"}}",
+      "at": "2026-07-15T10:51:15.669Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"629141a2-195a-4044-91c7-ba21b05a0b7f\",\"sequence\":249,\"at\":\"2026-07-15T10:51:15.668Z\",\"elapsedMs\":1115,\"source\":\"analysis-worker\",\"phase\":\"persistence.setup\",\"status\":\"completed\",\"durationMs\":20}",
+      "at": "2026-07-15T10:51:15.669Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"629141a2-195a-4044-91c7-ba21b05a0b7f\",\"sequence\":250,\"at\":\"2026-07-15T10:51:15.668Z\",\"elapsedMs\":1115,\"source\":\"analysis-worker\",\"phase\":\"persistence.outcome\",\"status\":\"completed\",\"detail\":{\"mode\":\"opfs\",\"decision\":\"fresh\",\"message\":null}}",
+      "at": "2026-07-15T10:51:15.669Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"629141a2-195a-4044-91c7-ba21b05a0b7f\",\"sequence\":251,\"at\":\"2026-07-15T10:51:15.668Z\",\"elapsedMs\":1115,\"source\":\"analysis-worker\",\"phase\":\"duckdb.connect\",\"status\":\"started\"}",
+      "at": "2026-07-15T10:51:15.669Z"
+    },
+    {
+      "type": "log",
+      "text": "🦆 [Worker] DuckDB Initialized",
+      "at": "2026-07-15T10:51:15.669Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"629141a2-195a-4044-91c7-ba21b05a0b7f\",\"sequence\":252,\"at\":\"2026-07-15T10:51:15.668Z\",\"elapsedMs\":1116,\"source\":\"analysis-worker\",\"phase\":\"duckdb.connect\",\"status\":\"completed\",\"durationMs\":1}",
+      "at": "2026-07-15T10:51:15.669Z"
+    },
+    {
+      "type": "log",
+      "text": "🦆 [Worker] Keepalive started (20s interval)",
+      "at": "2026-07-15T10:51:15.669Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"629141a2-195a-4044-91c7-ba21b05a0b7f\",\"sequence\":253,\"at\":\"2026-07-15T10:51:15.679Z\",\"elapsedMs\":1126,\"source\":\"main\",\"phase\":\"engine.ready.received\",\"status\":\"completed\"}",
+      "at": "2026-07-15T10:51:15.680Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"629141a2-195a-4044-91c7-ba21b05a0b7f\",\"sequence\":254,\"at\":\"2026-07-15T10:51:15.694Z\",\"elapsedMs\":1142,\"source\":\"analysis-worker\",\"phase\":\"engine.ready.sent\",\"status\":\"completed\"}",
+      "at": "2026-07-15T10:51:15.696Z"
+    },
+    {
+      "type": "log",
+      "text": "[Storage] Persistent storage denied",
+      "at": "2026-07-15T10:51:15.696Z"
+    },
+    {
+      "type": "log",
+      "text": "[workspaceBoot] Engine ready, OPFS available: true",
+      "at": "2026-07-15T10:51:15.707Z"
+    },
+    {
+      "type": "log",
+      "text": "{timestamp: Wed Jul 15 2026 11:51:15 GMT+0100 (British Summer Time), level: 2, origin: 4, topic: 4, event: 4}",
+      "at": "2026-07-15T10:51:15.708Z"
+    },
+    {
+      "type": "log",
+      "text": "[DataSlice] No persisted data found",
+      "at": "2026-07-15T10:51:15.782Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"629141a2-195a-4044-91c7-ba21b05a0b7f\",\"sequence\":255,\"at\":\"2026-07-15T10:51:15.792Z\",\"elapsedMs\":1239,\"source\":\"main\",\"phase\":\"boot.terminal\",\"status\":\"completed\"}",
+      "at": "2026-07-15T10:51:15.793Z"
+    },
+    {
+      "type": "log",
+      "text": "📁 [OPFS] Stored file: sleep_1784112675800.sav (0.03 MB)",
+      "at": "2026-07-15T10:51:15.810Z"
+    },
+    {
+      "type": "log",
+      "text": "[assignOpfsKeyAndLoad] Stored file in OPFS: sleep_1784112675800.sav",
+      "at": "2026-07-15T10:51:15.810Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"629141a2-195a-4044-91c7-ba21b05a0b7f\",\"sequence\":256,\"at\":\"2026-07-15T10:51:15.814Z\",\"elapsedMs\":1262,\"source\":\"analysis-worker\",\"phase\":\"file_load.sav\",\"status\":\"started\"}",
+      "at": "2026-07-15T10:51:15.815Z"
+    },
+    {
+      "type": "debug",
+      "text": "[vite] connecting...",
+      "at": "2026-07-15T10:51:15.821Z"
+    },
+    {
+      "type": "debug",
+      "text": "[vite] connected.",
+      "at": "2026-07-15T10:51:15.826Z"
+    },
+    {
+      "type": "log",
+      "text": "📦 [ReadStat] WASM module initialized",
+      "at": "2026-07-15T10:51:15.840Z"
+    },
+    {
+      "type": "log",
+      "text": "📦 [ReadStat] Parsing SAV file: 0.03 MB",
+      "at": "2026-07-15T10:51:15.843Z"
+    },
+    {
+      "type": "log",
+      "text": "📦 [ReadStat] Allocated 26781 bytes at ptr 5394648",
+      "at": "2026-07-15T10:51:15.843Z"
+    },
+    {
+      "type": "log",
+      "text": "📦 [ReadStat] Copied data to WASM memory, calling parse_sav...",
+      "at": "2026-07-15T10:51:15.845Z"
+    },
+    {
+      "type": "log",
+      "text": "📊 [Worker] Parse progress: 0.0%",
+      "at": "2026-07-15T10:51:15.860Z"
+    },
+    {
+      "type": "log",
+      "text": "{timestamp: Wed Jul 15 2026 11:51:15 GMT+0100 (British Summer Time), level: 2, origin: 4, topic: 4, event: 4}",
+      "at": "2026-07-15T10:51:15.880Z"
+    },
+    {
+      "type": "log",
+      "text": "{timestamp: Wed Jul 15 2026 11:51:15 GMT+0100 (British Summer Time), level: 2, origin: 4, topic: 4, event: 4}",
+      "at": "2026-07-15T10:51:15.916Z"
+    },
+    {
+      "type": "log",
+      "text": "🦆 [Worker] Loaded SAV: 271 rows, 59 variables in 111.11ms",
+      "at": "2026-07-15T10:51:15.922Z"
+    },
+    {
+      "type": "log",
+      "text": "📊 [DataSlice] Detected 2 grid sets, 3 multi-response sets",
+      "at": "2026-07-15T10:51:15.931Z"
+    },
+    {
+      "type": "log",
+      "text": "📊 [DataSlice] SAV loaded: 271 rows, 59 variables, 40 variable sets in 111.11ms",
+      "at": "2026-07-15T10:51:15.931Z"
+    },
+    {
+      "type": "log",
+      "text": "{timestamp: Wed Jul 15 2026 11:51:15 GMT+0100 (British Summer Time), level: 2, origin: 4, topic: 4, event: 4}",
+      "at": "2026-07-15T10:51:15.931Z"
+    },
+    {
+      "type": "log",
+      "text": "{timestamp: Wed Jul 15 2026 11:51:15 GMT+0100 (British Summer Time), level: 2, origin: 4, topic: 4, event: 4}",
+      "at": "2026-07-15T10:51:15.936Z"
+    },
+    {
+      "type": "log",
+      "text": "{timestamp: Wed Jul 15 2026 11:51:15 GMT+0100 (British Summer Time), level: 2, origin: 4, topic: 4, event: 4}",
+      "at": "2026-07-15T10:51:15.939Z"
+    },
+    {
+      "type": "log",
+      "text": "{timestamp: Wed Jul 15 2026 11:51:15 GMT+0100 (British Summer Time), level: 2, origin: 4, topic: 4, event: 4}",
+      "at": "2026-07-15T10:51:15.945Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"629141a2-195a-4044-91c7-ba21b05a0b7f\",\"sequence\":257,\"at\":\"2026-07-15T10:51:15.952Z\",\"elapsedMs\":1400,\"source\":\"analysis-worker\",\"phase\":\"file_load.sav\",\"status\":\"completed\"}",
+      "at": "2026-07-15T10:51:15.954Z"
+    },
+    {
+      "type": "log",
+      "text": "{timestamp: Wed Jul 15 2026 11:51:15 GMT+0100 (British Summer Time), level: 2, origin: 4, topic: 4, event: 4}",
+      "at": "2026-07-15T10:51:15.985Z"
+    },
+    {
+      "type": "log",
+      "text": "{timestamp: Wed Jul 15 2026 11:51:15 GMT+0100 (British Summer Time), level: 2, origin: 4, topic: 4, event: 4}",
+      "at": "2026-07-15T10:51:15.991Z"
+    },
+    {
+      "type": "log",
+      "text": "{timestamp: Wed Jul 15 2026 11:51:15 GMT+0100 (British Summer Time), level: 2, origin: 4, topic: 4, event: 4}",
+      "at": "2026-07-15T10:51:15.997Z"
+    },
+    {
+      "type": "log",
+      "text": "{timestamp: Wed Jul 15 2026 11:51:16 GMT+0100 (British Summer Time), level: 2, origin: 4, topic: 4, event: 4}",
+      "at": "2026-07-15T10:51:16.566Z"
+    },
+    {
+      "type": "log",
+      "text": "{timestamp: Wed Jul 15 2026 11:51:16 GMT+0100 (British Summer Time), level: 2, origin: 4, topic: 4, event: 4}",
+      "at": "2026-07-15T10:51:16.570Z"
+    },
+    {
+      "type": "log",
+      "text": "{timestamp: Wed Jul 15 2026 11:51:16 GMT+0100 (British Summer Time), level: 2, origin: 4, topic: 4, event: 4}",
+      "at": "2026-07-15T10:51:16.578Z"
+    },
+    {
+      "type": "log",
+      "text": "{timestamp: Wed Jul 15 2026 11:51:16 GMT+0100 (British Summer Time), level: 2, origin: 4, topic: 4, event: 4}",
+      "at": "2026-07-15T10:51:16.585Z"
+    },
+    {
+      "type": "log",
+      "text": "{timestamp: Wed Jul 15 2026 11:51:17 GMT+0100 (British Summer Time), level: 2, origin: 4, topic: 4, event: 4}",
+      "at": "2026-07-15T10:51:17.564Z"
+    },
+    {
+      "type": "log",
+      "text": "{timestamp: Wed Jul 15 2026 11:51:17 GMT+0100 (British Summer Time), level: 2, origin: 4, topic: 4, event: 4}",
+      "at": "2026-07-15T10:51:17.572Z"
+    },
+    {
+      "type": "log",
+      "text": "{timestamp: Wed Jul 15 2026 11:51:17 GMT+0100 (British Summer Time), level: 2, origin: 4, topic: 4, event: 4}",
+      "at": "2026-07-15T10:51:17.606Z"
+    },
+    {
+      "type": "log",
+      "text": "{timestamp: Wed Jul 15 2026 11:51:17 GMT+0100 (British Summer Time), level: 2, origin: 4, topic: 4, event: 4}",
+      "at": "2026-07-15T10:51:17.685Z"
+    },
+    {
+      "type": "log",
+      "text": "{timestamp: Wed Jul 15 2026 11:51:17 GMT+0100 (British Summer Time), level: 2, origin: 4, topic: 4, event: 4}",
+      "at": "2026-07-15T10:51:17.690Z"
+    },
+    {
+      "type": "log",
+      "text": "{timestamp: Wed Jul 15 2026 11:51:17 GMT+0100 (British Summer Time), level: 2, origin: 4, topic: 4, event: 4}",
+      "at": "2026-07-15T10:51:17.721Z"
+    },
+    {
+      "type": "log",
+      "text": "{timestamp: Wed Jul 15 2026 11:51:17 GMT+0100 (British Summer Time), level: 2, origin: 4, topic: 4, event: 4}",
+      "at": "2026-07-15T10:51:17.723Z"
+    },
+    {
+      "type": "log",
+      "text": "{timestamp: Wed Jul 15 2026 11:51:18 GMT+0100 (British Summer Time), level: 2, origin: 4, topic: 4, event: 4}",
+      "at": "2026-07-15T10:51:18.694Z"
+    },
+    {
+      "type": "log",
+      "text": "{timestamp: Wed Jul 15 2026 11:51:18 GMT+0100 (British Summer Time), level: 2, origin: 4, topic: 4, event: 4}",
+      "at": "2026-07-15T10:51:18.700Z"
+    },
+    {
+      "type": "log",
+      "text": "{timestamp: Wed Jul 15 2026 11:51:18 GMT+0100 (British Summer Time), level: 2, origin: 4, topic: 4, event: 4}",
+      "at": "2026-07-15T10:51:18.725Z"
+    },
+    {
+      "type": "log",
+      "text": "{timestamp: Wed Jul 15 2026 11:51:20 GMT+0100 (British Summer Time), level: 2, origin: 4, topic: 4, event: 4}",
+      "at": "2026-07-15T10:51:20.260Z"
+    },
+    {
+      "type": "log",
+      "text": "{timestamp: Wed Jul 15 2026 11:51:20 GMT+0100 (British Summer Time), level: 2, origin: 4, topic: 4, event: 4}",
+      "at": "2026-07-15T10:51:20.261Z"
+    },
+    {
+      "type": "log",
+      "text": "{timestamp: Wed Jul 15 2026 11:51:20 GMT+0100 (British Summer Time), level: 2, origin: 4, topic: 4, event: 4}",
+      "at": "2026-07-15T10:51:20.269Z"
+    },
+    {
+      "type": "log",
+      "text": "{timestamp: Wed Jul 15 2026 11:51:20 GMT+0100 (British Summer Time), level: 2, origin: 4, topic: 4, event: 4}",
+      "at": "2026-07-15T10:51:20.271Z"
+    },
+    {
+      "type": "log",
+      "text": "{timestamp: Wed Jul 15 2026 11:51:20 GMT+0100 (British Summer Time), level: 2, origin: 4, topic: 4, event: 4}",
+      "at": "2026-07-15T10:51:20.273Z"
+    },
+    {
+      "type": "debug",
+      "text": "[vite] connecting...",
+      "at": "2026-07-15T10:51:20.393Z"
+    },
+    {
+      "type": "debug",
+      "text": "[vite] connected.",
+      "at": "2026-07-15T10:51:20.412Z"
+    },
+    {
+      "type": "info",
+      "text": "%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold",
+      "at": "2026-07-15T10:51:20.453Z"
+    },
+    {
+      "type": "log",
+      "text": "🔄 [Persist] State rehydrated from localStorage",
+      "at": "2026-07-15T10:51:20.453Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"2ccd51f0-5a49-495e-96d2-563a671d0500\",\"sequence\":1,\"at\":\"2026-07-15T10:51:20.449Z\",\"elapsedMs\":0,\"source\":\"main\",\"phase\":\"warmup.requested\",\"status\":\"started\",\"detail\":{\"source\":\"app-shell\"}}",
+      "at": "2026-07-15T10:51:20.453Z"
+    },
+    {
+      "type": "log",
+      "text": "[duckdbWasmCache] Service worker registered velocity-duckdb-wasm-v0.1.0-pilot",
+      "at": "2026-07-15T10:51:20.467Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"2ccd51f0-5a49-495e-96d2-563a671d0500\",\"sequence\":2,\"at\":\"2026-07-15T10:51:20.515Z\",\"elapsedMs\":67,\"source\":\"main\",\"phase\":\"shell.rendered\",\"status\":\"completed\"}",
+      "at": "2026-07-15T10:51:20.517Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"2ccd51f0-5a49-495e-96d2-563a671d0500\",\"sequence\":3,\"at\":\"2026-07-15T10:51:20.516Z\",\"elapsedMs\":67,\"source\":\"main\",\"phase\":\"warmup.requested\",\"status\":\"started\",\"detail\":{\"source\":\"boot-resume\"}}",
+      "at": "2026-07-15T10:51:20.517Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"2ccd51f0-5a49-495e-96d2-563a671d0500\",\"sequence\":4,\"at\":\"2026-07-15T10:51:20.516Z\",\"elapsedMs\":67,\"source\":\"main\",\"phase\":\"wasm_cache.probe\",\"status\":\"started\"}",
+      "at": "2026-07-15T10:51:20.517Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"2ccd51f0-5a49-495e-96d2-563a671d0500\",\"sequence\":5,\"at\":\"2026-07-15T10:51:20.518Z\",\"elapsedMs\":69,\"source\":\"main\",\"phase\":\"shell.rendered\",\"status\":\"completed\"}",
+      "at": "2026-07-15T10:51:20.518Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"2ccd51f0-5a49-495e-96d2-563a671d0500\",\"sequence\":6,\"at\":\"2026-07-15T10:51:20.589Z\",\"elapsedMs\":140,\"source\":\"main\",\"phase\":\"wasm_cache.probe\",\"status\":\"completed\",\"detail\":{\"cacheState\":\"hit\"}}",
+      "at": "2026-07-15T10:51:20.591Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"2ccd51f0-5a49-495e-96d2-563a671d0500\",\"sequence\":7,\"at\":\"2026-07-15T10:51:20.589Z\",\"elapsedMs\":141,\"source\":\"main\",\"phase\":\"service_worker.register\",\"status\":\"started\"}",
+      "at": "2026-07-15T10:51:20.591Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"2ccd51f0-5a49-495e-96d2-563a671d0500\",\"sequence\":8,\"at\":\"2026-07-15T10:51:20.590Z\",\"elapsedMs\":141,\"source\":\"main\",\"phase\":\"wasm_cache.prefetch\",\"status\":\"started\"}",
+      "at": "2026-07-15T10:51:20.591Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"2ccd51f0-5a49-495e-96d2-563a671d0500\",\"sequence\":9,\"at\":\"2026-07-15T10:51:20.590Z\",\"elapsedMs\":141,\"source\":\"main\",\"phase\":\"store.dynamic_import\",\"status\":\"started\"}",
+      "at": "2026-07-15T10:51:20.591Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"2ccd51f0-5a49-495e-96d2-563a671d0500\",\"sequence\":10,\"at\":\"2026-07-15T10:51:20.590Z\",\"elapsedMs\":141,\"source\":\"service-worker\",\"phase\":\"service_worker.register\",\"status\":\"completed\",\"detail\":{\"registered\":true}}",
+      "at": "2026-07-15T10:51:20.591Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"2ccd51f0-5a49-495e-96d2-563a671d0500\",\"sequence\":11,\"at\":\"2026-07-15T10:51:20.593Z\",\"elapsedMs\":144,\"source\":\"service-worker\",\"phase\":\"wasm_cache.prefetch\",\"status\":\"completed\"}",
+      "at": "2026-07-15T10:51:20.593Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"2ccd51f0-5a49-495e-96d2-563a671d0500\",\"sequence\":12,\"at\":\"2026-07-15T10:51:20.594Z\",\"elapsedMs\":145,\"source\":\"main\",\"phase\":\"store.dynamic_import\",\"status\":\"completed\"}",
+      "at": "2026-07-15T10:51:20.594Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"2ccd51f0-5a49-495e-96d2-563a671d0500\",\"sequence\":13,\"at\":\"2026-07-15T10:51:20.613Z\",\"elapsedMs\":165,\"source\":\"main\",\"phase\":\"analysis_worker.created\",\"status\":\"completed\"}",
+      "at": "2026-07-15T10:51:20.615Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"2ccd51f0-5a49-495e-96d2-563a671d0500\",\"sequence\":14,\"at\":\"2026-07-15T10:51:20.636Z\",\"elapsedMs\":187,\"source\":\"main\",\"phase\":\"engine.init.sent\",\"status\":\"completed\"}",
+      "at": "2026-07-15T10:51:20.637Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"2ccd51f0-5a49-495e-96d2-563a671d0500\",\"sequence\":15,\"at\":\"2026-07-15T10:51:20.676Z\",\"elapsedMs\":227,\"source\":\"analysis-worker\",\"phase\":\"analysis_worker.online\",\"status\":\"completed\"}",
+      "at": "2026-07-15T10:51:20.678Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"2ccd51f0-5a49-495e-96d2-563a671d0500\",\"sequence\":16,\"at\":\"2026-07-15T10:51:20.676Z\",\"elapsedMs\":228,\"source\":\"analysis-worker\",\"phase\":\"engine.init.received\",\"status\":\"completed\"}",
+      "at": "2026-07-15T10:51:20.679Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"2ccd51f0-5a49-495e-96d2-563a671d0500\",\"sequence\":17,\"at\":\"2026-07-15T10:51:20.677Z\",\"elapsedMs\":228,\"source\":\"analysis-worker\",\"phase\":\"duckdb.bundle.select\",\"status\":\"started\",\"detail\":{\"crossOriginIsolated\":true,\"persistenceEnabled\":true}}",
+      "at": "2026-07-15T10:51:20.679Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"2ccd51f0-5a49-495e-96d2-563a671d0500\",\"sequence\":18,\"at\":\"2026-07-15T10:51:20.677Z\",\"elapsedMs\":228,\"source\":\"analysis-worker\",\"phase\":\"duckdb.bundle.select\",\"status\":\"completed\",\"durationMs\":0,\"detail\":{\"crossOriginIsolated\":true,\"persistenceEnabled\":true}}",
+      "at": "2026-07-15T10:51:20.679Z"
+    },
+    {
+      "type": "log",
+      "text": "🦆 [Worker] DuckDB Bundle Selected: eh {mainModule: http://127.0.0.1:4173/node_modules/@duckdb/duckdb-wasm/dist/duckdb-eh.wasm, mainWorker: http://127.0.0.1:4173/node_modules/@duckdb/duckdb-wasm/dist/duckdb-browser-eh.worker.js, pthreadWorker: null}",
+      "at": "2026-07-15T10:51:20.681Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"2ccd51f0-5a49-495e-96d2-563a671d0500\",\"sequence\":19,\"at\":\"2026-07-15T10:51:20.677Z\",\"elapsedMs\":228,\"source\":\"analysis-worker\",\"phase\":\"duckdb.bundle.selected\",\"status\":\"completed\",\"detail\":{\"bundle\":\"eh\",\"crossOriginIsolated\":true}}",
+      "at": "2026-07-15T10:51:20.681Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"2ccd51f0-5a49-495e-96d2-563a671d0500\",\"sequence\":20,\"at\":\"2026-07-15T10:51:20.678Z\",\"elapsedMs\":229,\"source\":\"analysis-worker\",\"phase\":\"duckdb.nested_worker.created\",\"status\":\"completed\",\"detail\":{\"bundle\":\"eh\"}}",
+      "at": "2026-07-15T10:51:20.682Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"2ccd51f0-5a49-495e-96d2-563a671d0500\",\"sequence\":21,\"at\":\"2026-07-15T10:51:20.678Z\",\"elapsedMs\":230,\"source\":\"analysis-worker\",\"phase\":\"wasm.fetch\",\"status\":\"started\",\"detail\":{\"bundle\":\"eh\"}}",
+      "at": "2026-07-15T10:51:20.682Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"2ccd51f0-5a49-495e-96d2-563a671d0500\",\"sequence\":22,\"at\":\"2026-07-15T10:51:20.679Z\",\"elapsedMs\":230,\"source\":\"analysis-worker\",\"phase\":\"duckdb.instantiate\",\"status\":\"started\"}",
+      "at": "2026-07-15T10:51:20.682Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"2ccd51f0-5a49-495e-96d2-563a671d0500\",\"sequence\":221,\"at\":\"2026-07-15T10:51:20.868Z\",\"elapsedMs\":419,\"source\":\"analysis-worker\",\"phase\":\"wasm.fetch\",\"status\":\"completed\",\"detail\":{\"bytesLoaded\":34242586,\"bytesTotal\":34242586}}",
+      "at": "2026-07-15T10:51:20.868Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"2ccd51f0-5a49-495e-96d2-563a671d0500\",\"sequence\":222,\"at\":\"2026-07-15T10:51:21.202Z\",\"elapsedMs\":753,\"source\":\"analysis-worker\",\"phase\":\"duckdb.instantiate\",\"status\":\"completed\",\"durationMs\":523}",
+      "at": "2026-07-15T10:51:21.203Z"
+    },
+    {
+      "type": "log",
+      "text": "🦆 [Worker] DuckDB Version: v1.4.3",
+      "at": "2026-07-15T10:51:21.270Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"2ccd51f0-5a49-495e-96d2-563a671d0500\",\"sequence\":223,\"at\":\"2026-07-15T10:51:21.269Z\",\"elapsedMs\":820,\"source\":\"analysis-worker\",\"phase\":\"opfs.support\",\"status\":\"started\"}",
+      "at": "2026-07-15T10:51:21.270Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"2ccd51f0-5a49-495e-96d2-563a671d0500\",\"sequence\":224,\"at\":\"2026-07-15T10:51:21.270Z\",\"elapsedMs\":821,\"source\":\"analysis-worker\",\"phase\":\"opfs.support\",\"status\":\"completed\",\"durationMs\":1}",
+      "at": "2026-07-15T10:51:21.271Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"2ccd51f0-5a49-495e-96d2-563a671d0500\",\"sequence\":225,\"at\":\"2026-07-15T10:51:21.270Z\",\"elapsedMs\":821,\"source\":\"analysis-worker\",\"phase\":\"opfs.support.result\",\"status\":\"completed\",\"detail\":{\"supported\":true,\"message\":null}}",
+      "at": "2026-07-15T10:51:21.271Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"2ccd51f0-5a49-495e-96d2-563a671d0500\",\"sequence\":226,\"at\":\"2026-07-15T10:51:21.270Z\",\"elapsedMs\":821,\"source\":\"analysis-worker\",\"phase\":\"persistence.setup\",\"status\":\"started\"}",
+      "at": "2026-07-15T10:51:21.271Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"2ccd51f0-5a49-495e-96d2-563a671d0500\",\"sequence\":227,\"at\":\"2026-07-15T10:51:21.270Z\",\"elapsedMs\":821,\"source\":\"analysis-worker\",\"phase\":\"opfs.lock\",\"status\":\"started\"}",
+      "at": "2026-07-15T10:51:21.271Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"2ccd51f0-5a49-495e-96d2-563a671d0500\",\"sequence\":228,\"at\":\"2026-07-15T10:51:21.271Z\",\"elapsedMs\":822,\"source\":\"analysis-worker\",\"phase\":\"opfs.lock\",\"status\":\"completed\",\"detail\":{\"acquired\":true}}",
+      "at": "2026-07-15T10:51:21.272Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"2ccd51f0-5a49-495e-96d2-563a671d0500\",\"sequence\":229,\"at\":\"2026-07-15T10:51:21.273Z\",\"elapsedMs\":824,\"source\":\"analysis-worker\",\"phase\":\"opfs.database_open\",\"status\":\"started\",\"detail\":{\"path\":\"opfs://velocity_data_v1_default.db\",\"label\":\"OPFS fallback DB\"}}",
+      "at": "2026-07-15T10:51:21.274Z"
+    },
+    {
+      "type": "log",
+      "text": "🦆 [Worker] DuckDB opened with OPFS fallback DB: opfs://velocity_data_v1_default.db",
+      "at": "2026-07-15T10:51:21.307Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"2ccd51f0-5a49-495e-96d2-563a671d0500\",\"sequence\":230,\"at\":\"2026-07-15T10:51:21.306Z\",\"elapsedMs\":857,\"source\":\"analysis-worker\",\"phase\":\"opfs.database_open\",\"status\":\"completed\",\"durationMs\":34,\"detail\":{\"path\":\"opfs://velocity_data_v1_default.db\",\"label\":\"OPFS fallback DB\"}}",
+      "at": "2026-07-15T10:51:21.307Z"
+    },
+    {
+      "type": "log",
+      "text": "{timestamp: Wed Jul 15 2026 11:51:21 GMT+0100 (British Summer Time), level: 2, origin: 4, topic: 4, event: 4}",
+      "at": "2026-07-15T10:51:21.307Z"
+    },
+    {
+      "type": "log",
+      "text": "🦆 [Worker] DuckDB Initialized",
+      "at": "2026-07-15T10:51:21.390Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"2ccd51f0-5a49-495e-96d2-563a671d0500\",\"sequence\":231,\"at\":\"2026-07-15T10:51:21.389Z\",\"elapsedMs\":940,\"source\":\"analysis-worker\",\"phase\":\"persistence.setup\",\"status\":\"completed\",\"durationMs\":119}",
+      "at": "2026-07-15T10:51:21.390Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"2ccd51f0-5a49-495e-96d2-563a671d0500\",\"sequence\":232,\"at\":\"2026-07-15T10:51:21.389Z\",\"elapsedMs\":940,\"source\":\"analysis-worker\",\"phase\":\"persistence.outcome\",\"status\":\"completed\",\"detail\":{\"mode\":\"opfs\",\"decision\":\"cache_open\",\"message\":null}}",
+      "at": "2026-07-15T10:51:21.390Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"2ccd51f0-5a49-495e-96d2-563a671d0500\",\"sequence\":233,\"at\":\"2026-07-15T10:51:21.389Z\",\"elapsedMs\":940,\"source\":\"analysis-worker\",\"phase\":\"duckdb.connect\",\"status\":\"started\"}",
+      "at": "2026-07-15T10:51:21.390Z"
+    },
+    {
+      "type": "log",
+      "text": "🦆 [Worker] Keepalive started (20s interval)",
+      "at": "2026-07-15T10:51:21.390Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"2ccd51f0-5a49-495e-96d2-563a671d0500\",\"sequence\":234,\"at\":\"2026-07-15T10:51:21.389Z\",\"elapsedMs\":940,\"source\":\"analysis-worker\",\"phase\":\"duckdb.connect\",\"status\":\"completed\",\"durationMs\":0}",
+      "at": "2026-07-15T10:51:21.390Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"2ccd51f0-5a49-495e-96d2-563a671d0500\",\"sequence\":235,\"at\":\"2026-07-15T10:51:21.408Z\",\"elapsedMs\":959,\"source\":\"main\",\"phase\":\"engine.ready.received\",\"status\":\"completed\"}",
+      "at": "2026-07-15T10:51:21.409Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"2ccd51f0-5a49-495e-96d2-563a671d0500\",\"sequence\":236,\"at\":\"2026-07-15T10:51:21.437Z\",\"elapsedMs\":988,\"source\":\"analysis-worker\",\"phase\":\"engine.ready.sent\",\"status\":\"completed\"}",
+      "at": "2026-07-15T10:51:21.438Z"
+    },
+    {
+      "type": "log",
+      "text": "[Storage] Persistent storage denied",
+      "at": "2026-07-15T10:51:21.440Z"
+    },
+    {
+      "type": "log",
+      "text": "[workspaceBoot] Engine ready, OPFS available: true",
+      "at": "2026-07-15T10:51:21.460Z"
+    },
+    {
+      "type": "log",
+      "text": "{timestamp: Wed Jul 15 2026 11:51:21 GMT+0100 (British Summer Time), level: 2, origin: 4, topic: 4, event: 4}",
+      "at": "2026-07-15T10:51:21.460Z"
+    },
+    {
+      "type": "log",
+      "text": "{timestamp: Wed Jul 15 2026 11:51:21 GMT+0100 (British Summer Time), level: 2, origin: 4, topic: 4, event: 4}",
+      "at": "2026-07-15T10:51:21.464Z"
+    },
+    {
+      "type": "log",
+      "text": "{timestamp: Wed Jul 15 2026 11:51:21 GMT+0100 (British Summer Time), level: 2, origin: 4, topic: 4, event: 4}",
+      "at": "2026-07-15T10:51:21.467Z"
+    },
+    {
+      "type": "log",
+      "text": "{timestamp: Wed Jul 15 2026 11:51:21 GMT+0100 (British Summer Time), level: 2, origin: 4, topic: 4, event: 4}",
+      "at": "2026-07-15T10:51:21.471Z"
+    },
+    {
+      "type": "log",
+      "text": "{timestamp: Wed Jul 15 2026 11:51:21 GMT+0100 (British Summer Time), level: 2, origin: 4, topic: 4, event: 4}",
+      "at": "2026-07-15T10:51:21.476Z"
+    },
+    {
+      "type": "log",
+      "text": "🦆 [Worker] Found persisted data: 271 rows, 55 columns",
+      "at": "2026-07-15T10:51:21.485Z"
+    },
+    {
+      "type": "log",
+      "text": "[DataSlice] Found persisted data: 271 rows, 55 columns",
+      "at": "2026-07-15T10:51:21.485Z"
+    },
+    {
+      "type": "log",
+      "text": "[workspaceBoot] Rehydrating DuckDB from OPFS source: sleep_1784112675800.sav",
+      "at": "2026-07-15T10:51:21.502Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"2ccd51f0-5a49-495e-96d2-563a671d0500\",\"sequence\":237,\"at\":\"2026-07-15T10:51:21.501Z\",\"elapsedMs\":1052,\"source\":\"main\",\"phase\":\"boot.terminal\",\"status\":\"completed\"}",
+      "at": "2026-07-15T10:51:21.502Z"
+    },
+    {
+      "type": "log",
+      "text": "📁 [OPFS] Read file: sleep_1784112675800.sav (0.03 MB)",
+      "at": "2026-07-15T10:51:21.541Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"2ccd51f0-5a49-495e-96d2-563a671d0500\",\"sequence\":238,\"at\":\"2026-07-15T10:51:21.545Z\",\"elapsedMs\":1096,\"source\":\"analysis-worker\",\"phase\":\"file_load.sav\",\"status\":\"started\"}",
+      "at": "2026-07-15T10:51:21.547Z"
+    },
+    {
+      "type": "debug",
+      "text": "[vite] connecting...",
+      "at": "2026-07-15T10:51:21.554Z"
+    },
+    {
+      "type": "debug",
+      "text": "[vite] connected.",
+      "at": "2026-07-15T10:51:21.557Z"
+    },
+    {
+      "type": "log",
+      "text": "📦 [ReadStat] WASM module initialized",
+      "at": "2026-07-15T10:51:21.566Z"
+    },
+    {
+      "type": "log",
+      "text": "📦 [ReadStat] Parsing SAV file: 0.03 MB",
+      "at": "2026-07-15T10:51:21.566Z"
+    },
+    {
+      "type": "log",
+      "text": "📦 [ReadStat] Allocated 26781 bytes at ptr 5394648",
+      "at": "2026-07-15T10:51:21.569Z"
+    },
+    {
+      "type": "log",
+      "text": "📦 [ReadStat] Copied data to WASM memory, calling parse_sav...",
+      "at": "2026-07-15T10:51:21.569Z"
+    },
+    {
+      "type": "log",
+      "text": "📊 [Worker] Parse progress: 0.0%",
+      "at": "2026-07-15T10:51:21.585Z"
+    },
+    {
+      "type": "log",
+      "text": "{timestamp: Wed Jul 15 2026 11:51:21 GMT+0100 (British Summer Time), level: 2, origin: 4, topic: 4, event: 4}",
+      "at": "2026-07-15T10:51:21.600Z"
+    },
+    {
+      "type": "log",
+      "text": "📁 [OPFS] Stored file: sleep_1784112681580.sav (0.03 MB)",
+      "at": "2026-07-15T10:51:21.626Z"
+    },
+    {
+      "type": "log",
+      "text": "[assignOpfsKeyAndLoad] Stored file in OPFS: sleep_1784112681580.sav",
+      "at": "2026-07-15T10:51:21.626Z"
+    },
+    {
+      "type": "log",
+      "text": "{timestamp: Wed Jul 15 2026 11:51:21 GMT+0100 (British Summer Time), level: 2, origin: 4, topic: 4, event: 4}",
+      "at": "2026-07-15T10:51:21.636Z"
+    },
+    {
+      "type": "log",
+      "text": "🦆 [Worker] Loaded SAV: 271 rows, 59 variables in 97.02ms",
+      "at": "2026-07-15T10:51:21.638Z"
+    },
+    {
+      "type": "log",
+      "text": "{timestamp: Wed Jul 15 2026 11:51:21 GMT+0100 (British Summer Time), level: 2, origin: 4, topic: 4, event: 4}",
+      "at": "2026-07-15T10:51:21.639Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"2ccd51f0-5a49-495e-96d2-563a671d0500\",\"sequence\":239,\"at\":\"2026-07-15T10:51:21.641Z\",\"elapsedMs\":1192,\"source\":\"analysis-worker\",\"phase\":\"file_load.sav\",\"status\":\"completed\"}",
+      "at": "2026-07-15T10:51:21.643Z"
+    },
+    {
+      "type": "log",
+      "text": "{timestamp: Wed Jul 15 2026 11:51:21 GMT+0100 (British Summer Time), level: 2, origin: 4, topic: 4, event: 4}",
+      "at": "2026-07-15T10:51:21.662Z"
+    },
+    {
+      "type": "log",
+      "text": "[workspaceBoot] Respawning engine (cleanStart: false)",
+      "at": "2026-07-15T10:51:21.665Z"
+    },
+    {
+      "type": "log",
+      "text": "{timestamp: Wed Jul 15 2026 11:51:21 GMT+0100 (British Summer Time), level: 2, origin: 4, topic: 4, event: 4}",
+      "at": "2026-07-15T10:51:21.669Z"
+    },
+    {
+      "type": "log",
+      "text": "🦆 [Worker] Keepalive stopped",
+      "at": "2026-07-15T10:51:21.669Z"
+    },
+    {
+      "type": "log",
+      "text": "Error: Failed to drop file: opfs://velocity_data_v1_default.db\n    at ha.dropFiles (http://127.0.0.1:4173/node_modules/@duckdb/duckdb-wasm/dist/duckdb-browser-eh.worker.js:1:745694)\n    at xo.onMessage (http://127.0.0.1:4173/node_modules/@duckdb/duckdb-wasm/dist/duckdb-browser-eh.worker.js:1:748374)\n    at globalThis.onmessage (http://127.0.0.1:4173/node_modules/@duckdb/duckdb-wasm/dist/duckdb-browser-eh.worker.js:1:772431)",
+      "at": "2026-07-15T10:51:21.673Z"
+    },
+    {
+      "type": "error",
+      "text": "[AnalysisSlice] Query error: EngineProxy disposed",
+      "at": "2026-07-15T10:51:21.674Z"
+    },
+    {
+      "type": "error",
+      "text": "[Worker/Engine] Error: Error: DB not initialized\n    at engine.runCrosstab (http://127.0.0.1:4173/src/services/worker/engineHandlers.ts:257:25)\n    at handleEngineMessage (http://127.0.0.1:4173/src/services/worker/engineDispatch.ts:10:13)\n    at runQueuedEngineMessage (http://127.0.0.1:4173/src/services/worker/engineDispatch.ts:38:11)\n    at http://127.0.0.1:4173/src/services/worker/engineDispatch.ts:55:54",
+      "at": "2026-07-15T10:51:21.676Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"2ccd51f0-5a49-495e-96d2-563a671d0500\",\"sequence\":240,\"at\":\"2026-07-15T10:51:21.672Z\",\"elapsedMs\":1223,\"source\":\"main\",\"phase\":\"analysis_worker.created\",\"status\":\"completed\"}",
+      "at": "2026-07-15T10:51:21.677Z"
+    },
+    {
+      "type": "error",
+      "text": "[Worker/Engine] Error: Error: DB not initialized\n    at flushPersistedData (http://127.0.0.1:4173/src/services/worker/duckdbPersistence.ts:255:18)\n    at engine.flushPersistedData (http://127.0.0.1:4173/src/services/worker/engineHandlers.ts:120:31)\n    at handleEngineMessage (http://127.0.0.1:4173/src/services/worker/engineDispatch.ts:10:13)\n    at runQueuedEngineMessage (http://127.0.0.1:4173/src/services/worker/engineDispatch.ts:38:11)\n    at http://127.0.0.1:4173/src/services/worker/engineDispatch.ts:55:54",
+      "at": "2026-07-15T10:51:21.857Z"
+    },
+    {
+      "type": "log",
+      "text": "🦆 [Worker] DuckDB Bundle Selected: eh {mainModule: http://127.0.0.1:4173/node_modules/@duckdb/duckdb-wasm/dist/duckdb-eh.wasm, mainWorker: http://127.0.0.1:4173/node_modules/@duckdb/duckdb-wasm/dist/duckdb-browser-eh.worker.js, pthreadWorker: null}",
+      "at": "2026-07-15T10:51:21.858Z"
+    },
+    {
+      "type": "warning",
+      "text": "[DataSlice] OPFS flush error: DB not initialized",
+      "at": "2026-07-15T10:51:21.861Z"
+    },
+    {
+      "type": "log",
+      "text": "[App] Skipping workspace table materialization for dataset_f28fafe9_4bd7_46dd_a80b_ee26192df081: DuckDB has no active main table",
+      "at": "2026-07-15T10:51:21.864Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"bf792a89-0d7e-4f70-a68c-a250a1651b3f\",\"sequence\":241,\"at\":\"2026-07-15T10:51:21.835Z\",\"elapsedMs\":1386,\"source\":\"analysis-worker\",\"phase\":\"analysis_worker.online\",\"status\":\"completed\"}",
+      "at": "2026-07-15T10:51:21.864Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"bf792a89-0d7e-4f70-a68c-a250a1651b3f\",\"sequence\":242,\"at\":\"2026-07-15T10:51:21.835Z\",\"elapsedMs\":1386,\"source\":\"analysis-worker\",\"phase\":\"engine.init.received\",\"status\":\"completed\"}",
+      "at": "2026-07-15T10:51:21.864Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"bf792a89-0d7e-4f70-a68c-a250a1651b3f\",\"sequence\":243,\"at\":\"2026-07-15T10:51:21.835Z\",\"elapsedMs\":1386,\"source\":\"analysis-worker\",\"phase\":\"duckdb.bundle.select\",\"status\":\"started\",\"detail\":{\"crossOriginIsolated\":true,\"persistenceEnabled\":true}}",
+      "at": "2026-07-15T10:51:21.865Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"bf792a89-0d7e-4f70-a68c-a250a1651b3f\",\"sequence\":244,\"at\":\"2026-07-15T10:51:21.835Z\",\"elapsedMs\":1386,\"source\":\"analysis-worker\",\"phase\":\"duckdb.bundle.select\",\"status\":\"completed\",\"durationMs\":0,\"detail\":{\"crossOriginIsolated\":true,\"persistenceEnabled\":true}}",
+      "at": "2026-07-15T10:51:21.865Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"bf792a89-0d7e-4f70-a68c-a250a1651b3f\",\"sequence\":245,\"at\":\"2026-07-15T10:51:21.836Z\",\"elapsedMs\":1387,\"source\":\"analysis-worker\",\"phase\":\"duckdb.bundle.selected\",\"status\":\"completed\",\"detail\":{\"bundle\":\"eh\",\"crossOriginIsolated\":true}}",
+      "at": "2026-07-15T10:51:21.866Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"bf792a89-0d7e-4f70-a68c-a250a1651b3f\",\"sequence\":246,\"at\":\"2026-07-15T10:51:21.837Z\",\"elapsedMs\":1388,\"source\":\"analysis-worker\",\"phase\":\"duckdb.nested_worker.created\",\"status\":\"completed\",\"detail\":{\"bundle\":\"eh\"}}",
+      "at": "2026-07-15T10:51:21.868Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"bf792a89-0d7e-4f70-a68c-a250a1651b3f\",\"sequence\":247,\"at\":\"2026-07-15T10:51:21.837Z\",\"elapsedMs\":1388,\"source\":\"analysis-worker\",\"phase\":\"wasm.fetch\",\"status\":\"started\",\"detail\":{\"bundle\":\"eh\"}}",
+      "at": "2026-07-15T10:51:21.868Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"bf792a89-0d7e-4f70-a68c-a250a1651b3f\",\"sequence\":248,\"at\":\"2026-07-15T10:51:21.837Z\",\"elapsedMs\":1388,\"source\":\"analysis-worker\",\"phase\":\"duckdb.instantiate\",\"status\":\"started\"}",
+      "at": "2026-07-15T10:51:21.868Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"bf792a89-0d7e-4f70-a68c-a250a1651b3f\",\"sequence\":451,\"at\":\"2026-07-15T10:51:22.030Z\",\"elapsedMs\":1581,\"source\":\"analysis-worker\",\"phase\":\"wasm.fetch\",\"status\":\"completed\",\"detail\":{\"bytesLoaded\":34242586,\"bytesTotal\":34242586}}",
+      "at": "2026-07-15T10:51:22.031Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"bf792a89-0d7e-4f70-a68c-a250a1651b3f\",\"sequence\":452,\"at\":\"2026-07-15T10:51:22.299Z\",\"elapsedMs\":1850,\"source\":\"analysis-worker\",\"phase\":\"duckdb.instantiate\",\"status\":\"completed\",\"durationMs\":476}",
+      "at": "2026-07-15T10:51:22.300Z"
+    },
+    {
+      "type": "log",
+      "text": "🦆 [Worker] DuckDB Version: v1.4.3",
+      "at": "2026-07-15T10:51:22.353Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"bf792a89-0d7e-4f70-a68c-a250a1651b3f\",\"sequence\":453,\"at\":\"2026-07-15T10:51:22.352Z\",\"elapsedMs\":1903,\"source\":\"analysis-worker\",\"phase\":\"opfs.support\",\"status\":\"started\"}",
+      "at": "2026-07-15T10:51:22.353Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"bf792a89-0d7e-4f70-a68c-a250a1651b3f\",\"sequence\":454,\"at\":\"2026-07-15T10:51:22.353Z\",\"elapsedMs\":1904,\"source\":\"analysis-worker\",\"phase\":\"opfs.support\",\"status\":\"completed\",\"durationMs\":1}",
+      "at": "2026-07-15T10:51:22.354Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"bf792a89-0d7e-4f70-a68c-a250a1651b3f\",\"sequence\":455,\"at\":\"2026-07-15T10:51:22.353Z\",\"elapsedMs\":1904,\"source\":\"analysis-worker\",\"phase\":\"opfs.support.result\",\"status\":\"completed\",\"detail\":{\"supported\":true,\"message\":null}}",
+      "at": "2026-07-15T10:51:22.354Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"bf792a89-0d7e-4f70-a68c-a250a1651b3f\",\"sequence\":456,\"at\":\"2026-07-15T10:51:22.353Z\",\"elapsedMs\":1904,\"source\":\"analysis-worker\",\"phase\":\"persistence.setup\",\"status\":\"started\"}",
+      "at": "2026-07-15T10:51:22.354Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"bf792a89-0d7e-4f70-a68c-a250a1651b3f\",\"sequence\":457,\"at\":\"2026-07-15T10:51:22.353Z\",\"elapsedMs\":1904,\"source\":\"analysis-worker\",\"phase\":\"opfs.lock\",\"status\":\"started\"}",
+      "at": "2026-07-15T10:51:22.354Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"bf792a89-0d7e-4f70-a68c-a250a1651b3f\",\"sequence\":458,\"at\":\"2026-07-15T10:51:22.353Z\",\"elapsedMs\":1905,\"source\":\"analysis-worker\",\"phase\":\"opfs.lock\",\"status\":\"completed\",\"detail\":{\"acquired\":true}}",
+      "at": "2026-07-15T10:51:22.354Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"bf792a89-0d7e-4f70-a68c-a250a1651b3f\",\"sequence\":459,\"at\":\"2026-07-15T10:51:22.354Z\",\"elapsedMs\":1906,\"source\":\"analysis-worker\",\"phase\":\"opfs.database_open\",\"status\":\"started\",\"detail\":{\"path\":\"opfs://velocity_data_v1_default.db\",\"label\":\"OPFS fallback DB\"}}",
+      "at": "2026-07-15T10:51:22.355Z"
+    },
+    {
+      "type": "log",
+      "text": "🦆 [Worker] DuckDB opened with OPFS fallback DB: opfs://velocity_data_v1_default.db",
+      "at": "2026-07-15T10:51:22.381Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"bf792a89-0d7e-4f70-a68c-a250a1651b3f\",\"sequence\":460,\"at\":\"2026-07-15T10:51:22.380Z\",\"elapsedMs\":1932,\"source\":\"analysis-worker\",\"phase\":\"opfs.database_open\",\"status\":\"completed\",\"durationMs\":26,\"detail\":{\"path\":\"opfs://velocity_data_v1_default.db\",\"label\":\"OPFS fallback DB\"}}",
+      "at": "2026-07-15T10:51:22.381Z"
+    },
+    {
+      "type": "log",
+      "text": "{timestamp: Wed Jul 15 2026 11:51:22 GMT+0100 (British Summer Time), level: 2, origin: 4, topic: 4, event: 4}",
+      "at": "2026-07-15T10:51:22.381Z"
+    },
+    {
+      "type": "log",
+      "text": "🦆 [Worker] DuckDB Initialized",
+      "at": "2026-07-15T10:51:22.446Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"bf792a89-0d7e-4f70-a68c-a250a1651b3f\",\"sequence\":461,\"at\":\"2026-07-15T10:51:22.446Z\",\"elapsedMs\":1997,\"source\":\"analysis-worker\",\"phase\":\"persistence.setup\",\"status\":\"completed\",\"durationMs\":93}",
+      "at": "2026-07-15T10:51:22.447Z"
+    },
+    {
+      "type": "log",
+      "text": "🦆 [Worker] Keepalive started (20s interval)",
+      "at": "2026-07-15T10:51:22.447Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"bf792a89-0d7e-4f70-a68c-a250a1651b3f\",\"sequence\":462,\"at\":\"2026-07-15T10:51:22.446Z\",\"elapsedMs\":1997,\"source\":\"analysis-worker\",\"phase\":\"persistence.outcome\",\"status\":\"completed\",\"detail\":{\"mode\":\"opfs\",\"decision\":\"cache_open\",\"message\":null}}",
+      "at": "2026-07-15T10:51:22.447Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"bf792a89-0d7e-4f70-a68c-a250a1651b3f\",\"sequence\":463,\"at\":\"2026-07-15T10:51:22.446Z\",\"elapsedMs\":1997,\"source\":\"analysis-worker\",\"phase\":\"duckdb.connect\",\"status\":\"started\"}",
+      "at": "2026-07-15T10:51:22.447Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"bf792a89-0d7e-4f70-a68c-a250a1651b3f\",\"sequence\":464,\"at\":\"2026-07-15T10:51:22.446Z\",\"elapsedMs\":1997,\"source\":\"analysis-worker\",\"phase\":\"duckdb.connect\",\"status\":\"completed\",\"durationMs\":0}",
+      "at": "2026-07-15T10:51:22.447Z"
+    },
+    {
+      "type": "log",
+      "text": "[workspaceBoot] Engine respawned, OPFS available: true",
+      "at": "2026-07-15T10:51:22.469Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"bf792a89-0d7e-4f70-a68c-a250a1651b3f\",\"sequence\":465,\"at\":\"2026-07-15T10:51:22.489Z\",\"elapsedMs\":2040,\"source\":\"analysis-worker\",\"phase\":\"engine.ready.sent\",\"status\":\"completed\"}",
+      "at": "2026-07-15T10:51:22.490Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"bf792a89-0d7e-4f70-a68c-a250a1651b3f\",\"sequence\":466,\"at\":\"2026-07-15T10:51:22.490Z\",\"elapsedMs\":2041,\"source\":\"analysis-worker\",\"phase\":\"file_load.sav\",\"status\":\"started\"}",
+      "at": "2026-07-15T10:51:22.490Z"
+    },
+    {
+      "type": "debug",
+      "text": "[vite] connecting...",
+      "at": "2026-07-15T10:51:22.499Z"
+    },
+    {
+      "type": "debug",
+      "text": "[vite] connected.",
+      "at": "2026-07-15T10:51:22.502Z"
+    },
+    {
+      "type": "log",
+      "text": "📦 [ReadStat] WASM module initialized",
+      "at": "2026-07-15T10:51:22.507Z"
+    },
+    {
+      "type": "log",
+      "text": "📦 [ReadStat] Parsing SAV file: 0.03 MB",
+      "at": "2026-07-15T10:51:22.507Z"
+    },
+    {
+      "type": "log",
+      "text": "📦 [ReadStat] Allocated 26781 bytes at ptr 5394648",
+      "at": "2026-07-15T10:51:22.509Z"
+    },
+    {
+      "type": "log",
+      "text": "📦 [ReadStat] Copied data to WASM memory, calling parse_sav...",
+      "at": "2026-07-15T10:51:22.509Z"
+    },
+    {
+      "type": "log",
+      "text": "📊 [Worker] Parse progress: 0.0%",
+      "at": "2026-07-15T10:51:22.521Z"
+    },
+    {
+      "type": "log",
+      "text": "{timestamp: Wed Jul 15 2026 11:51:22 GMT+0100 (British Summer Time), level: 2, origin: 4, topic: 4, event: 4}",
+      "at": "2026-07-15T10:51:22.532Z"
+    },
+    {
+      "type": "log",
+      "text": "{timestamp: Wed Jul 15 2026 11:51:22 GMT+0100 (British Summer Time), level: 2, origin: 4, topic: 4, event: 4}",
+      "at": "2026-07-15T10:51:22.562Z"
+    },
+    {
+      "type": "log",
+      "text": "🦆 [Worker] Loaded SAV: 271 rows, 59 variables in 74.38ms",
+      "at": "2026-07-15T10:51:22.564Z"
+    },
+    {
+      "type": "log",
+      "text": "📊 [DataSlice] Detected 2 grid sets, 3 multi-response sets",
+      "at": "2026-07-15T10:51:22.619Z"
+    },
+    {
+      "type": "log",
+      "text": "📊 [DataSlice] SAV loaded: 271 rows, 59 variables, 40 variable sets in 74.38ms",
+      "at": "2026-07-15T10:51:22.620Z"
+    },
+    {
+      "type": "log",
+      "text": "{timestamp: Wed Jul 15 2026 11:51:22 GMT+0100 (British Summer Time), level: 2, origin: 4, topic: 4, event: 4}",
+      "at": "2026-07-15T10:51:22.620Z"
+    },
+    {
+      "type": "log",
+      "text": "{timestamp: Wed Jul 15 2026 11:51:22 GMT+0100 (British Summer Time), level: 2, origin: 4, topic: 4, event: 4}",
+      "at": "2026-07-15T10:51:22.622Z"
+    },
+    {
+      "type": "log",
+      "text": "{timestamp: Wed Jul 15 2026 11:51:22 GMT+0100 (British Summer Time), level: 2, origin: 4, topic: 4, event: 4}",
+      "at": "2026-07-15T10:51:22.626Z"
+    },
+    {
+      "type": "info",
+      "text": "[boot-trace] {\"correlationId\":\"bf792a89-0d7e-4f70-a68c-a250a1651b3f\",\"sequence\":467,\"at\":\"2026-07-15T10:51:22.629Z\",\"elapsedMs\":2180,\"source\":\"analysis-worker\",\"phase\":\"file_load.sav\",\"status\":\"completed\"}",
+      "at": "2026-07-15T10:51:22.631Z"
+    },
+    {
+      "type": "log",
+      "text": "{timestamp: Wed Jul 15 2026 11:51:22 GMT+0100 (British Summer Time), level: 2, origin: 4, topic: 4, event: 4}",
+      "at": "2026-07-15T10:51:22.632Z"
+    },
+    {
+      "type": "log",
+      "text": "{timestamp: Wed Jul 15 2026 11:51:22 GMT+0100 (British Summer Time), level: 2, origin: 4, topic: 4, event: 4}",
+      "at": "2026-07-15T10:51:22.661Z"
+    },
+    {
+      "type": "log",
+      "text": "{timestamp: Wed Jul 15 2026 11:51:22 GMT+0100 (British Summer Time), level: 2, origin: 4, topic: 4, event: 4}",
+      "at": "2026-07-15T10:51:22.666Z"
+    },
+    {
+      "type": "log",
+      "text": "{timestamp: Wed Jul 15 2026 11:51:22 GMT+0100 (British Summer Time), level: 2, origin: 4, topic: 4, event: 4}",
+      "at": "2026-07-15T10:51:22.668Z"
+    },
+    {
+      "type": "log",
+      "text": "{timestamp: Wed Jul 15 2026 11:51:22 GMT+0100 (British Summer Time), level: 2, origin: 4, topic: 4, event: 4}",
+      "at": "2026-07-15T10:51:22.698Z"
+    },
+    {
+      "type": "log",
+      "text": "{timestamp: Wed Jul 15 2026 11:51:22 GMT+0100 (British Summer Time), level: 2, origin: 4, topic: 4, event: 4}",
+      "at": "2026-07-15T10:51:22.707Z"
+    },
+    {
+      "type": "log",
+      "text": "{timestamp: Wed Jul 15 2026 11:51:22 GMT+0100 (British Summer Time), level: 2, origin: 4, topic: 4, event: 4}",
+      "at": "2026-07-15T10:51:22.740Z"
+    },
+    {
+      "type": "log",
+      "text": "{timestamp: Wed Jul 15 2026 11:51:22 GMT+0100 (British Summer Time), level: 2, origin: 4, topic: 4, event: 4}",
+      "at": "2026-07-15T10:51:22.748Z"
+    },
+    {
+      "type": "log",
+      "text": "{timestamp: Wed Jul 15 2026 11:51:22 GMT+0100 (British Summer Time), level: 2, origin: 4, topic: 4, event: 4}",
+      "at": "2026-07-15T10:51:22.758Z"
+    },
+    {
+      "type": "log",
+      "text": "{timestamp: Wed Jul 15 2026 11:51:22 GMT+0100 (British Summer Time), level: 2, origin: 4, topic: 4, event: 4}",
+      "at": "2026-07-15T10:51:22.796Z"
+    },
+    {
+      "type": "log",
+      "text": "{timestamp: Wed Jul 15 2026 11:51:22 GMT+0100 (British Summer Time), level: 2, origin: 4, topic: 4, event: 4}",
+      "at": "2026-07-15T10:51:22.799Z"
+    }
+  ],
+  "pageErrors": [],
+  "requestFailures": [
+    {
+      "url": "https://fonts.gstatic.com/s/plusjakartasans/v12/LDIoaomQNQcsA88c7O9yZ4KMCoOg4Ko20yygg_vb.woff2",
+      "method": "GET",
+      "errorText": "net::ERR_ABORTED"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxDcwgknk-4.woff2",
+      "method": "GET",
+      "errorText": "net::ERR_ABORTED"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/fraunces/v38/6NU78FyLNQOQZAnv9bYEvDiIdE9Ea92uemAk_WBq8U_9v0c2Wa0KxC9TeP2Xz5c.woff2",
+      "method": "GET",
+      "errorText": "net::ERR_ABORTED"
+    }
+  ],
+  "workers": [
+    {
+      "url": "http://127.0.0.1:4173/src/services/analysisWorker.ts?worker_file&type=module",
+      "openedAt": "2026-07-15T10:51:14.857Z",
+      "closedAt": "2026-07-15T10:51:20.330Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/node_modules/@duckdb/duckdb-wasm/dist/duckdb-browser-eh.worker.js",
+      "openedAt": "2026-07-15T10:51:14.980Z",
+      "closedAt": "2026-07-15T10:51:20.329Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/src/services/analysisWorker.ts?worker_file&type=module",
+      "openedAt": "2026-07-15T10:51:20.637Z",
+      "closedAt": "2026-07-15T10:51:21.779Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/node_modules/@duckdb/duckdb-wasm/dist/duckdb-browser-eh.worker.js",
+      "openedAt": "2026-07-15T10:51:20.682Z",
+      "closedAt": "2026-07-15T10:51:21.677Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/src/services/analysisWorker.ts?worker_file&type=module",
+      "openedAt": "2026-07-15T10:51:21.679Z",
+      "closedAt": "2026-07-15T10:51:23.295Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/node_modules/@duckdb/duckdb-wasm/dist/duckdb-browser-eh.worker.js",
+      "openedAt": "2026-07-15T10:51:21.860Z",
+      "closedAt": null
+    }
+  ],
+  "serviceWorkers": [
+    {
+      "url": "http://127.0.0.1:4173/velocity-duckdb-sw.js?v=0.1.0-pilot",
+      "openedAt": "2026-07-15T10:51:14.262Z",
+      "closedAt": "2026-07-15T10:51:23.297Z"
+    }
+  ]
+}

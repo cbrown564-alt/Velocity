@@ -90,6 +90,17 @@ describe('slidesSlice', () => {
       });
       expect(result.current.activeSlideId).toBe(newSlide.id);
     });
+
+    it('clears the previous analysis error when switching to the new blank slide', () => {
+      const { result } = renderHook(() => useVelocityStore());
+      act(() => {
+        useVelocityStore.setState({ queryError: 'Parser Error: unterminated quoted string' });
+        result.current.addSlide();
+      });
+
+      expect(result.current.tableConfig.rowVars).toEqual([]);
+      expect(result.current.queryError).toBeNull();
+    });
   });
 
   describe('duplicateSlide', () => {

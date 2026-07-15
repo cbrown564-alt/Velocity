@@ -1,4 +1,4 @@
-# STAB-CI-13: fast-fail on the dominant CI failure modes (format + lint).
+# Optional staged-file feedback. Keep hooks narrower than repository CI.
 # Install: npx lefthook install
 # Opt out for WIP commits: LEFTHOOK=0 git commit
 
@@ -6,6 +6,8 @@ pre-commit:
   parallel: true
   commands:
     format:
-      run: npm run format:check
+      glob: '*.{js,jsx,ts,tsx,json,css,scss,md,yml,yaml,html}'
+      run: npx prettier --check {staged_files}
     lint:
-      run: npm run lint
+      glob: '*.{js,jsx,ts,tsx}'
+      run: npx eslint {staged_files}

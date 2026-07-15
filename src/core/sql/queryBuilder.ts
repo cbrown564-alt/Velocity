@@ -719,6 +719,9 @@ export function escapeIdentifier(identifier: string): string {
  * Escapes single quotes by doubling them.
  */
 export function escapeString(value: string): string {
+  if (value.includes('\0')) {
+    throw new Error('SQL string values cannot contain NUL characters');
+  }
   return value.replace(/'/g, "''");
 }
 

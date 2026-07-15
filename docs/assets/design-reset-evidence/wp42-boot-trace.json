@@ -1,0 +1,745 @@
+{
+  "correlationId": "2ccd51f0-5a49-495e-96d2-563a671d0500",
+  "source": "app-shell",
+  "startedAt": "2026-07-15T10:51:20.449Z",
+  "events": [
+    {
+      "correlationId": "2ccd51f0-5a49-495e-96d2-563a671d0500",
+      "sequence": 1,
+      "at": "2026-07-15T10:51:20.449Z",
+      "elapsedMs": 0,
+      "source": "main",
+      "phase": "warmup.requested",
+      "status": "started",
+      "detail": {
+        "source": "app-shell"
+      }
+    },
+    {
+      "correlationId": "2ccd51f0-5a49-495e-96d2-563a671d0500",
+      "sequence": 2,
+      "at": "2026-07-15T10:51:20.515Z",
+      "elapsedMs": 67,
+      "source": "main",
+      "phase": "shell.rendered",
+      "status": "completed"
+    },
+    {
+      "correlationId": "2ccd51f0-5a49-495e-96d2-563a671d0500",
+      "sequence": 3,
+      "at": "2026-07-15T10:51:20.516Z",
+      "elapsedMs": 67,
+      "source": "main",
+      "phase": "warmup.requested",
+      "status": "started",
+      "detail": {
+        "source": "boot-resume"
+      }
+    },
+    {
+      "correlationId": "2ccd51f0-5a49-495e-96d2-563a671d0500",
+      "sequence": 4,
+      "at": "2026-07-15T10:51:20.516Z",
+      "elapsedMs": 67,
+      "source": "main",
+      "phase": "wasm_cache.probe",
+      "status": "started"
+    },
+    {
+      "correlationId": "2ccd51f0-5a49-495e-96d2-563a671d0500",
+      "sequence": 5,
+      "at": "2026-07-15T10:51:20.518Z",
+      "elapsedMs": 69,
+      "source": "main",
+      "phase": "shell.rendered",
+      "status": "completed"
+    },
+    {
+      "correlationId": "2ccd51f0-5a49-495e-96d2-563a671d0500",
+      "sequence": 6,
+      "at": "2026-07-15T10:51:20.589Z",
+      "elapsedMs": 140,
+      "source": "main",
+      "phase": "wasm_cache.probe",
+      "status": "completed",
+      "detail": {
+        "cacheState": "hit"
+      }
+    },
+    {
+      "correlationId": "2ccd51f0-5a49-495e-96d2-563a671d0500",
+      "sequence": 7,
+      "at": "2026-07-15T10:51:20.589Z",
+      "elapsedMs": 141,
+      "source": "main",
+      "phase": "service_worker.register",
+      "status": "started"
+    },
+    {
+      "correlationId": "2ccd51f0-5a49-495e-96d2-563a671d0500",
+      "sequence": 8,
+      "at": "2026-07-15T10:51:20.590Z",
+      "elapsedMs": 141,
+      "source": "main",
+      "phase": "wasm_cache.prefetch",
+      "status": "started"
+    },
+    {
+      "correlationId": "2ccd51f0-5a49-495e-96d2-563a671d0500",
+      "sequence": 9,
+      "at": "2026-07-15T10:51:20.590Z",
+      "elapsedMs": 141,
+      "source": "main",
+      "phase": "store.dynamic_import",
+      "status": "started"
+    },
+    {
+      "correlationId": "2ccd51f0-5a49-495e-96d2-563a671d0500",
+      "sequence": 10,
+      "at": "2026-07-15T10:51:20.590Z",
+      "elapsedMs": 141,
+      "source": "service-worker",
+      "phase": "service_worker.register",
+      "status": "completed",
+      "detail": {
+        "registered": true
+      }
+    },
+    {
+      "correlationId": "2ccd51f0-5a49-495e-96d2-563a671d0500",
+      "sequence": 11,
+      "at": "2026-07-15T10:51:20.593Z",
+      "elapsedMs": 144,
+      "source": "service-worker",
+      "phase": "wasm_cache.prefetch",
+      "status": "completed"
+    },
+    {
+      "correlationId": "2ccd51f0-5a49-495e-96d2-563a671d0500",
+      "sequence": 12,
+      "at": "2026-07-15T10:51:20.594Z",
+      "elapsedMs": 145,
+      "source": "main",
+      "phase": "store.dynamic_import",
+      "status": "completed"
+    },
+    {
+      "correlationId": "2ccd51f0-5a49-495e-96d2-563a671d0500",
+      "sequence": 13,
+      "at": "2026-07-15T10:51:20.613Z",
+      "elapsedMs": 165,
+      "source": "main",
+      "phase": "analysis_worker.created",
+      "status": "completed"
+    },
+    {
+      "correlationId": "2ccd51f0-5a49-495e-96d2-563a671d0500",
+      "sequence": 14,
+      "at": "2026-07-15T10:51:20.636Z",
+      "elapsedMs": 187,
+      "source": "main",
+      "phase": "engine.init.sent",
+      "status": "completed"
+    },
+    {
+      "correlationId": "2ccd51f0-5a49-495e-96d2-563a671d0500",
+      "sequence": 15,
+      "at": "2026-07-15T10:51:20.676Z",
+      "elapsedMs": 227,
+      "source": "analysis-worker",
+      "phase": "analysis_worker.online",
+      "status": "completed"
+    },
+    {
+      "correlationId": "2ccd51f0-5a49-495e-96d2-563a671d0500",
+      "sequence": 16,
+      "at": "2026-07-15T10:51:20.676Z",
+      "elapsedMs": 228,
+      "source": "analysis-worker",
+      "phase": "engine.init.received",
+      "status": "completed"
+    },
+    {
+      "correlationId": "2ccd51f0-5a49-495e-96d2-563a671d0500",
+      "sequence": 17,
+      "at": "2026-07-15T10:51:20.677Z",
+      "elapsedMs": 228,
+      "source": "analysis-worker",
+      "phase": "duckdb.bundle.select",
+      "status": "started",
+      "detail": {
+        "crossOriginIsolated": true,
+        "persistenceEnabled": true
+      }
+    },
+    {
+      "correlationId": "2ccd51f0-5a49-495e-96d2-563a671d0500",
+      "sequence": 18,
+      "at": "2026-07-15T10:51:20.677Z",
+      "elapsedMs": 228,
+      "source": "analysis-worker",
+      "phase": "duckdb.bundle.select",
+      "status": "completed",
+      "durationMs": 0,
+      "detail": {
+        "crossOriginIsolated": true,
+        "persistenceEnabled": true
+      }
+    },
+    {
+      "correlationId": "2ccd51f0-5a49-495e-96d2-563a671d0500",
+      "sequence": 19,
+      "at": "2026-07-15T10:51:20.677Z",
+      "elapsedMs": 228,
+      "source": "analysis-worker",
+      "phase": "duckdb.bundle.selected",
+      "status": "completed",
+      "detail": {
+        "bundle": "eh",
+        "crossOriginIsolated": true
+      }
+    },
+    {
+      "correlationId": "2ccd51f0-5a49-495e-96d2-563a671d0500",
+      "sequence": 20,
+      "at": "2026-07-15T10:51:20.678Z",
+      "elapsedMs": 229,
+      "source": "analysis-worker",
+      "phase": "duckdb.nested_worker.created",
+      "status": "completed",
+      "detail": {
+        "bundle": "eh"
+      }
+    },
+    {
+      "correlationId": "2ccd51f0-5a49-495e-96d2-563a671d0500",
+      "sequence": 21,
+      "at": "2026-07-15T10:51:20.678Z",
+      "elapsedMs": 230,
+      "source": "analysis-worker",
+      "phase": "wasm.fetch",
+      "status": "started",
+      "detail": {
+        "bundle": "eh"
+      }
+    },
+    {
+      "correlationId": "2ccd51f0-5a49-495e-96d2-563a671d0500",
+      "sequence": 22,
+      "at": "2026-07-15T10:51:20.679Z",
+      "elapsedMs": 230,
+      "source": "analysis-worker",
+      "phase": "duckdb.instantiate",
+      "status": "started"
+    },
+    {
+      "correlationId": "2ccd51f0-5a49-495e-96d2-563a671d0500",
+      "sequence": 220,
+      "at": "2026-07-15T10:51:20.868Z",
+      "elapsedMs": 419,
+      "source": "analysis-worker",
+      "phase": "wasm.fetch",
+      "status": "progress",
+      "detail": {
+        "bytesLoaded": 34242586,
+        "bytesTotal": 34242586
+      }
+    },
+    {
+      "correlationId": "2ccd51f0-5a49-495e-96d2-563a671d0500",
+      "sequence": 221,
+      "at": "2026-07-15T10:51:20.868Z",
+      "elapsedMs": 419,
+      "source": "analysis-worker",
+      "phase": "wasm.fetch",
+      "status": "completed",
+      "detail": {
+        "bytesLoaded": 34242586,
+        "bytesTotal": 34242586
+      }
+    },
+    {
+      "correlationId": "2ccd51f0-5a49-495e-96d2-563a671d0500",
+      "sequence": 222,
+      "at": "2026-07-15T10:51:21.202Z",
+      "elapsedMs": 753,
+      "source": "analysis-worker",
+      "phase": "duckdb.instantiate",
+      "status": "completed",
+      "durationMs": 523
+    },
+    {
+      "correlationId": "2ccd51f0-5a49-495e-96d2-563a671d0500",
+      "sequence": 223,
+      "at": "2026-07-15T10:51:21.269Z",
+      "elapsedMs": 820,
+      "source": "analysis-worker",
+      "phase": "opfs.support",
+      "status": "started"
+    },
+    {
+      "correlationId": "2ccd51f0-5a49-495e-96d2-563a671d0500",
+      "sequence": 224,
+      "at": "2026-07-15T10:51:21.270Z",
+      "elapsedMs": 821,
+      "source": "analysis-worker",
+      "phase": "opfs.support",
+      "status": "completed",
+      "durationMs": 1
+    },
+    {
+      "correlationId": "2ccd51f0-5a49-495e-96d2-563a671d0500",
+      "sequence": 225,
+      "at": "2026-07-15T10:51:21.270Z",
+      "elapsedMs": 821,
+      "source": "analysis-worker",
+      "phase": "opfs.support.result",
+      "status": "completed",
+      "detail": {
+        "supported": true,
+        "message": null
+      }
+    },
+    {
+      "correlationId": "2ccd51f0-5a49-495e-96d2-563a671d0500",
+      "sequence": 226,
+      "at": "2026-07-15T10:51:21.270Z",
+      "elapsedMs": 821,
+      "source": "analysis-worker",
+      "phase": "persistence.setup",
+      "status": "started"
+    },
+    {
+      "correlationId": "2ccd51f0-5a49-495e-96d2-563a671d0500",
+      "sequence": 227,
+      "at": "2026-07-15T10:51:21.270Z",
+      "elapsedMs": 821,
+      "source": "analysis-worker",
+      "phase": "opfs.lock",
+      "status": "started"
+    },
+    {
+      "correlationId": "2ccd51f0-5a49-495e-96d2-563a671d0500",
+      "sequence": 228,
+      "at": "2026-07-15T10:51:21.271Z",
+      "elapsedMs": 822,
+      "source": "analysis-worker",
+      "phase": "opfs.lock",
+      "status": "completed",
+      "detail": {
+        "acquired": true
+      }
+    },
+    {
+      "correlationId": "2ccd51f0-5a49-495e-96d2-563a671d0500",
+      "sequence": 229,
+      "at": "2026-07-15T10:51:21.273Z",
+      "elapsedMs": 824,
+      "source": "analysis-worker",
+      "phase": "opfs.database_open",
+      "status": "started",
+      "detail": {
+        "path": "opfs://velocity_data_v1_default.db",
+        "label": "OPFS fallback DB"
+      }
+    },
+    {
+      "correlationId": "2ccd51f0-5a49-495e-96d2-563a671d0500",
+      "sequence": 230,
+      "at": "2026-07-15T10:51:21.306Z",
+      "elapsedMs": 857,
+      "source": "analysis-worker",
+      "phase": "opfs.database_open",
+      "status": "completed",
+      "durationMs": 34,
+      "detail": {
+        "path": "opfs://velocity_data_v1_default.db",
+        "label": "OPFS fallback DB"
+      }
+    },
+    {
+      "correlationId": "2ccd51f0-5a49-495e-96d2-563a671d0500",
+      "sequence": 231,
+      "at": "2026-07-15T10:51:21.389Z",
+      "elapsedMs": 940,
+      "source": "analysis-worker",
+      "phase": "persistence.setup",
+      "status": "completed",
+      "durationMs": 119
+    },
+    {
+      "correlationId": "2ccd51f0-5a49-495e-96d2-563a671d0500",
+      "sequence": 232,
+      "at": "2026-07-15T10:51:21.389Z",
+      "elapsedMs": 940,
+      "source": "analysis-worker",
+      "phase": "persistence.outcome",
+      "status": "completed",
+      "detail": {
+        "mode": "opfs",
+        "decision": "cache_open",
+        "message": null
+      }
+    },
+    {
+      "correlationId": "2ccd51f0-5a49-495e-96d2-563a671d0500",
+      "sequence": 233,
+      "at": "2026-07-15T10:51:21.389Z",
+      "elapsedMs": 940,
+      "source": "analysis-worker",
+      "phase": "duckdb.connect",
+      "status": "started"
+    },
+    {
+      "correlationId": "2ccd51f0-5a49-495e-96d2-563a671d0500",
+      "sequence": 234,
+      "at": "2026-07-15T10:51:21.389Z",
+      "elapsedMs": 940,
+      "source": "analysis-worker",
+      "phase": "duckdb.connect",
+      "status": "completed",
+      "durationMs": 0
+    },
+    {
+      "correlationId": "2ccd51f0-5a49-495e-96d2-563a671d0500",
+      "sequence": 235,
+      "at": "2026-07-15T10:51:21.408Z",
+      "elapsedMs": 959,
+      "source": "main",
+      "phase": "engine.ready.received",
+      "status": "completed"
+    },
+    {
+      "correlationId": "2ccd51f0-5a49-495e-96d2-563a671d0500",
+      "sequence": 236,
+      "at": "2026-07-15T10:51:21.437Z",
+      "elapsedMs": 988,
+      "source": "analysis-worker",
+      "phase": "engine.ready.sent",
+      "status": "completed"
+    },
+    {
+      "correlationId": "2ccd51f0-5a49-495e-96d2-563a671d0500",
+      "sequence": 237,
+      "at": "2026-07-15T10:51:21.501Z",
+      "elapsedMs": 1052,
+      "source": "main",
+      "phase": "boot.terminal",
+      "status": "completed"
+    },
+    {
+      "correlationId": "2ccd51f0-5a49-495e-96d2-563a671d0500",
+      "sequence": 238,
+      "at": "2026-07-15T10:51:21.545Z",
+      "elapsedMs": 1096,
+      "source": "analysis-worker",
+      "phase": "file_load.sav",
+      "status": "started"
+    },
+    {
+      "correlationId": "2ccd51f0-5a49-495e-96d2-563a671d0500",
+      "sequence": 239,
+      "at": "2026-07-15T10:51:21.641Z",
+      "elapsedMs": 1192,
+      "source": "analysis-worker",
+      "phase": "file_load.sav",
+      "status": "completed"
+    },
+    {
+      "correlationId": "2ccd51f0-5a49-495e-96d2-563a671d0500",
+      "sequence": 240,
+      "at": "2026-07-15T10:51:21.672Z",
+      "elapsedMs": 1223,
+      "source": "main",
+      "phase": "analysis_worker.created",
+      "status": "completed"
+    },
+    {
+      "correlationId": "bf792a89-0d7e-4f70-a68c-a250a1651b3f",
+      "sequence": 241,
+      "at": "2026-07-15T10:51:21.835Z",
+      "elapsedMs": 1386,
+      "source": "analysis-worker",
+      "phase": "analysis_worker.online",
+      "status": "completed"
+    },
+    {
+      "correlationId": "bf792a89-0d7e-4f70-a68c-a250a1651b3f",
+      "sequence": 242,
+      "at": "2026-07-15T10:51:21.835Z",
+      "elapsedMs": 1386,
+      "source": "analysis-worker",
+      "phase": "engine.init.received",
+      "status": "completed"
+    },
+    {
+      "correlationId": "bf792a89-0d7e-4f70-a68c-a250a1651b3f",
+      "sequence": 243,
+      "at": "2026-07-15T10:51:21.835Z",
+      "elapsedMs": 1386,
+      "source": "analysis-worker",
+      "phase": "duckdb.bundle.select",
+      "status": "started",
+      "detail": {
+        "crossOriginIsolated": true,
+        "persistenceEnabled": true
+      }
+    },
+    {
+      "correlationId": "bf792a89-0d7e-4f70-a68c-a250a1651b3f",
+      "sequence": 244,
+      "at": "2026-07-15T10:51:21.835Z",
+      "elapsedMs": 1386,
+      "source": "analysis-worker",
+      "phase": "duckdb.bundle.select",
+      "status": "completed",
+      "durationMs": 0,
+      "detail": {
+        "crossOriginIsolated": true,
+        "persistenceEnabled": true
+      }
+    },
+    {
+      "correlationId": "bf792a89-0d7e-4f70-a68c-a250a1651b3f",
+      "sequence": 245,
+      "at": "2026-07-15T10:51:21.836Z",
+      "elapsedMs": 1387,
+      "source": "analysis-worker",
+      "phase": "duckdb.bundle.selected",
+      "status": "completed",
+      "detail": {
+        "bundle": "eh",
+        "crossOriginIsolated": true
+      }
+    },
+    {
+      "correlationId": "bf792a89-0d7e-4f70-a68c-a250a1651b3f",
+      "sequence": 246,
+      "at": "2026-07-15T10:51:21.837Z",
+      "elapsedMs": 1388,
+      "source": "analysis-worker",
+      "phase": "duckdb.nested_worker.created",
+      "status": "completed",
+      "detail": {
+        "bundle": "eh"
+      }
+    },
+    {
+      "correlationId": "bf792a89-0d7e-4f70-a68c-a250a1651b3f",
+      "sequence": 247,
+      "at": "2026-07-15T10:51:21.837Z",
+      "elapsedMs": 1388,
+      "source": "analysis-worker",
+      "phase": "wasm.fetch",
+      "status": "started",
+      "detail": {
+        "bundle": "eh"
+      }
+    },
+    {
+      "correlationId": "bf792a89-0d7e-4f70-a68c-a250a1651b3f",
+      "sequence": 248,
+      "at": "2026-07-15T10:51:21.837Z",
+      "elapsedMs": 1388,
+      "source": "analysis-worker",
+      "phase": "duckdb.instantiate",
+      "status": "started"
+    },
+    {
+      "correlationId": "bf792a89-0d7e-4f70-a68c-a250a1651b3f",
+      "sequence": 450,
+      "at": "2026-07-15T10:51:22.030Z",
+      "elapsedMs": 1581,
+      "source": "analysis-worker",
+      "phase": "wasm.fetch",
+      "status": "progress",
+      "detail": {
+        "bytesLoaded": 34242586,
+        "bytesTotal": 34242586
+      }
+    },
+    {
+      "correlationId": "bf792a89-0d7e-4f70-a68c-a250a1651b3f",
+      "sequence": 451,
+      "at": "2026-07-15T10:51:22.030Z",
+      "elapsedMs": 1581,
+      "source": "analysis-worker",
+      "phase": "wasm.fetch",
+      "status": "completed",
+      "detail": {
+        "bytesLoaded": 34242586,
+        "bytesTotal": 34242586
+      }
+    },
+    {
+      "correlationId": "bf792a89-0d7e-4f70-a68c-a250a1651b3f",
+      "sequence": 452,
+      "at": "2026-07-15T10:51:22.299Z",
+      "elapsedMs": 1850,
+      "source": "analysis-worker",
+      "phase": "duckdb.instantiate",
+      "status": "completed",
+      "durationMs": 476
+    },
+    {
+      "correlationId": "bf792a89-0d7e-4f70-a68c-a250a1651b3f",
+      "sequence": 453,
+      "at": "2026-07-15T10:51:22.352Z",
+      "elapsedMs": 1903,
+      "source": "analysis-worker",
+      "phase": "opfs.support",
+      "status": "started"
+    },
+    {
+      "correlationId": "bf792a89-0d7e-4f70-a68c-a250a1651b3f",
+      "sequence": 454,
+      "at": "2026-07-15T10:51:22.353Z",
+      "elapsedMs": 1904,
+      "source": "analysis-worker",
+      "phase": "opfs.support",
+      "status": "completed",
+      "durationMs": 1
+    },
+    {
+      "correlationId": "bf792a89-0d7e-4f70-a68c-a250a1651b3f",
+      "sequence": 455,
+      "at": "2026-07-15T10:51:22.353Z",
+      "elapsedMs": 1904,
+      "source": "analysis-worker",
+      "phase": "opfs.support.result",
+      "status": "completed",
+      "detail": {
+        "supported": true,
+        "message": null
+      }
+    },
+    {
+      "correlationId": "bf792a89-0d7e-4f70-a68c-a250a1651b3f",
+      "sequence": 456,
+      "at": "2026-07-15T10:51:22.353Z",
+      "elapsedMs": 1904,
+      "source": "analysis-worker",
+      "phase": "persistence.setup",
+      "status": "started"
+    },
+    {
+      "correlationId": "bf792a89-0d7e-4f70-a68c-a250a1651b3f",
+      "sequence": 457,
+      "at": "2026-07-15T10:51:22.353Z",
+      "elapsedMs": 1904,
+      "source": "analysis-worker",
+      "phase": "opfs.lock",
+      "status": "started"
+    },
+    {
+      "correlationId": "bf792a89-0d7e-4f70-a68c-a250a1651b3f",
+      "sequence": 458,
+      "at": "2026-07-15T10:51:22.353Z",
+      "elapsedMs": 1905,
+      "source": "analysis-worker",
+      "phase": "opfs.lock",
+      "status": "completed",
+      "detail": {
+        "acquired": true
+      }
+    },
+    {
+      "correlationId": "bf792a89-0d7e-4f70-a68c-a250a1651b3f",
+      "sequence": 459,
+      "at": "2026-07-15T10:51:22.354Z",
+      "elapsedMs": 1906,
+      "source": "analysis-worker",
+      "phase": "opfs.database_open",
+      "status": "started",
+      "detail": {
+        "path": "opfs://velocity_data_v1_default.db",
+        "label": "OPFS fallback DB"
+      }
+    },
+    {
+      "correlationId": "bf792a89-0d7e-4f70-a68c-a250a1651b3f",
+      "sequence": 460,
+      "at": "2026-07-15T10:51:22.380Z",
+      "elapsedMs": 1932,
+      "source": "analysis-worker",
+      "phase": "opfs.database_open",
+      "status": "completed",
+      "durationMs": 26,
+      "detail": {
+        "path": "opfs://velocity_data_v1_default.db",
+        "label": "OPFS fallback DB"
+      }
+    },
+    {
+      "correlationId": "bf792a89-0d7e-4f70-a68c-a250a1651b3f",
+      "sequence": 461,
+      "at": "2026-07-15T10:51:22.446Z",
+      "elapsedMs": 1997,
+      "source": "analysis-worker",
+      "phase": "persistence.setup",
+      "status": "completed",
+      "durationMs": 93
+    },
+    {
+      "correlationId": "bf792a89-0d7e-4f70-a68c-a250a1651b3f",
+      "sequence": 462,
+      "at": "2026-07-15T10:51:22.446Z",
+      "elapsedMs": 1997,
+      "source": "analysis-worker",
+      "phase": "persistence.outcome",
+      "status": "completed",
+      "detail": {
+        "mode": "opfs",
+        "decision": "cache_open",
+        "message": null
+      }
+    },
+    {
+      "correlationId": "bf792a89-0d7e-4f70-a68c-a250a1651b3f",
+      "sequence": 463,
+      "at": "2026-07-15T10:51:22.446Z",
+      "elapsedMs": 1997,
+      "source": "analysis-worker",
+      "phase": "duckdb.connect",
+      "status": "started"
+    },
+    {
+      "correlationId": "bf792a89-0d7e-4f70-a68c-a250a1651b3f",
+      "sequence": 464,
+      "at": "2026-07-15T10:51:22.446Z",
+      "elapsedMs": 1997,
+      "source": "analysis-worker",
+      "phase": "duckdb.connect",
+      "status": "completed",
+      "durationMs": 0
+    },
+    {
+      "correlationId": "bf792a89-0d7e-4f70-a68c-a250a1651b3f",
+      "sequence": 465,
+      "at": "2026-07-15T10:51:22.489Z",
+      "elapsedMs": 2040,
+      "source": "analysis-worker",
+      "phase": "engine.ready.sent",
+      "status": "completed"
+    },
+    {
+      "correlationId": "bf792a89-0d7e-4f70-a68c-a250a1651b3f",
+      "sequence": 466,
+      "at": "2026-07-15T10:51:22.490Z",
+      "elapsedMs": 2041,
+      "source": "analysis-worker",
+      "phase": "file_load.sav",
+      "status": "started"
+    },
+    {
+      "correlationId": "bf792a89-0d7e-4f70-a68c-a250a1651b3f",
+      "sequence": 467,
+      "at": "2026-07-15T10:51:22.629Z",
+      "elapsedMs": 2180,
+      "source": "analysis-worker",
+      "phase": "file_load.sav",
+      "status": "completed"
+    }
+  ],
+  "terminal": null
+}

@@ -453,5 +453,9 @@ describe('queryBuilder', () => {
     it('leaves normal strings unchanged', () => {
       expect(escapeString('Hello')).toBe('Hello');
     });
+
+    it('rejects NUL characters before they reach DuckDB', () => {
+      expect(() => escapeString('Age\0')).toThrow('SQL string values cannot contain NUL characters');
+    });
   });
 });

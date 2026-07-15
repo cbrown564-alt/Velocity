@@ -171,6 +171,7 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
       },
       activeFilters: slideState.filters.map((filter) => ({ ...filter })),
       selectedChartType: null,
+      queryError: null,
     }));
     if (shouldRun) {
       triggerAnalysisSafely(get().runAnalysis, 'applySlideAnalysisState analysis');

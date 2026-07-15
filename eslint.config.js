@@ -10,6 +10,7 @@ export default tseslint.config(
     ignores: [
       '.agents/**',
       '.claude/**',
+      '.worktrees/**',
       '.venv/**',
       '.worktrees/**',
       'coverage/**',

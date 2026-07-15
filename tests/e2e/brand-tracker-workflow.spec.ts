@@ -39,6 +39,17 @@ test('brand tracker workflow: load example, auto funnel-relevant first crosstab'
   await expect(page.getByText(/Analysis weight/i).first()).toBeVisible({ timeout: 15000 });
   await expect(page.getByText('Applied').first()).toBeVisible({ timeout: 15000 });
 
+  // NUL-padded SAV labels are normalized before a single numeric variable is
+  // turned into a DuckDB string literal.
+  await page.getByRole('button', { name: '+ New slide', exact: true }).click();
+  await page.getByRole('button', { name: 'Insert ⌘K', exact: true }).click();
+  await page.getByRole('textbox', { name: 'Find a variable', exact: true }).fill('D1. Age');
+  await page.getByTestId('palette-variable-vs_AGE').click();
+
+  await expect(page.getByRole('heading', { name: 'D1. Age (years)', exact: true })).toBeVisible({ timeout: 60000 });
+  await expect(page.getByRole('alert')).toHaveCount(0);
+  await expect(page.locator('table')).toBeVisible({ timeout: 60000 });
+
   // Export path is reachable once a crosstab is computed.
   await page.getByRole('button', { name: 'Export', exact: true }).click();
   await expect(page.getByTestId('export-modal-submit')).toBeVisible({ timeout: 15000 });

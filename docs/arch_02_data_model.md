@@ -57,6 +57,8 @@ Every variable exists in two states simultaneously:
 
 The UI must always display *Labels*. The Engine must always compute on *Raw* values.
 
+Imported display labels remove terminal U+0000 padding before entering the data model. Variable names, raw categorical codes, missing-value definitions, and value-to-label mappings remain otherwise unchanged.
+
 ## 3. The VariableSet (Grids)
 
 A `VariableSet` groups related variables (e.g., Q5_1, Q5_2, Q5_3 for a brand rating grid).
