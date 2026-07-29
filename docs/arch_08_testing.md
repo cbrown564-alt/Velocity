@@ -195,23 +195,32 @@ PRs failing any global or per-path threshold will not merge.
 Stryker mutation testing measures whether unit tests actually detect logic changes, not just line coverage.
 
 ```bash
-npm run test:mutation       # local (concurrency 4)
-npm run test:mutation:ci    # CI-style (concurrency 2)
+npm run test:mutation       # local full gated scope (concurrency 4)
+npm run test:mutation:ci    # CI entry: diff-scoped vs merge base (concurrency 2)
+npm run test:mutation:full  # force full gated campaign (manual / Mutation workflow)
 ```
 
-Configuration: `stryker.config.json`, `vitest.mutation.config.ts`. Scope is portable logic under `src/core/` with exclusions for session I/O, WASM loader glue, untested runners, and layout-only modules. Tests include co-located `src/core/**/*.test.ts` plus golden/parity suites. Stryker uses the Vitest runner only (no project-wide TypeScript checker, so `npm run typecheck:all` remains the compile gate).
+Configuration: `stryker.config.json`, `vitest.mutation.config.ts`, `scripts/run-mutation-ci.mjs`, `scripts/lib/mutationScope.mjs`. Scope is portable logic under `src/core/` with exclusions for session I/O, WASM loader glue, untested runners, and layout-only modules. Tests include co-located `src/core/**/*.test.ts` plus golden/parity suites. Stryker uses the Vitest runner only (no project-wide TypeScript checker, so `npm run typecheck:all` remains the compile gate).
 
 | Threshold | Meaning |
 |-----------|---------|
-| `high` (60) | Target mutation score (covered modules) |
-| `low` (50) | Warning band |
+| `high` (55) | Target mutation score |
+| `low` (45) | Warning band |
 | `break` (40) | CI fails below this score |
 
-Scope excludes session I/O, SAV loader WASM glue, analysis runners without tests, sankey layout, and other modules where mutants cannot be exercised meaningfully. Baseline (June 2026): ~46% covered score on the full `src/core/` tree; gated scope targets portable stats/semantic/harmonization logic.
+**CI streamlining:** the required `mutation` job still reports on every PR, but the expensive Stryker step is **diff-scoped**:
 
-HTML report: `reports/mutation/mutation-report.html` (gitignored). Incremental results cache locally in `reports/mutation/stryker-incremental.json` to speed repeat runs.
+| Plan mode | When | What runs |
+|-----------|------|-----------|
+| `skip` | No mutate-eligible production files changed (UI-only, test-only, lockfile-only, excluded modules) | Job green without install/Stryker |
+| `scoped` | ≤8 mutate-eligible `src/core/` files changed | `stryker run --mutate <those files>` |
+| `full` | Mutation config/runner changed, `MUTATION_FULL=1`, or >8 eligible files | Full gated mutate set from `stryker.config.json` |
 
-When changing `src/core/`, run mutation tests locally or rely on the CI `mutation` job (path-filtered to `src/core/**`).
+Scope excludes session I/O, SAV loader WASM glue, analysis runners without tests, sankey layout, and other modules where mutants cannot be exercised meaningfully. Baseline (June 2026): ~46–48% score on the full gated tree. Use `npm run test:mutation:full` or `.github/workflows/mutation.yml` when you need the deep campaign.
+
+HTML report: `reports/mutation/mutation-report.html` (gitignored). Incremental results cache locally in `reports/mutation/stryker-incremental.json` to speed repeat local full runs.
+
+When changing mutate-eligible `src/core/` modules, run `npm run test:mutation:ci` locally (same scoping as CI) or rely on the PR `mutation` job.
 
 ### Known blind spots (stabilization)
 
@@ -231,7 +240,7 @@ GitHub Actions runs on every PR to `main`. The canonical merge contract has **ei
 | `test.yml` | `unit-coverage` | Yes | `npm run test:run -- --coverage` + `npm run test:parity` |
 | `test.yml` | `build` | Yes | `npm run build` |
 | `test.yml` | `e2e` | Yes | `npm run ci:e2e` |
-| `test.yml` | `mutation` | Yes; expensive step runs only for core/config/lockfile changes | `npm run test:mutation:ci` when applicable |
+| `test.yml` | `mutation` | Yes; expensive step is diff-scoped (skip / scoped / full) | `npm run test:mutation:ci` when applicable |
 | `journey-gate.yml` | `journey-gate` | Yes | `npm run journey-gate` + `npm run test:e2e:production` |
 | `visual-e2e.yml` | `visual-e2e` | **No** (informational) | `npm run test:e2e:visual` |
 
@@ -288,15 +297,15 @@ Runs `npm run test:e2e:visual` (`@visual` tag only). **`continue-on-error: true`
 
 ### Stable mutation job
 
-The required `mutation` job lives in `test.yml` and is present on every PR. It detects changes under `src/core/**`, Stryker/Vitest mutation configuration, and `package-lock.json`; the expensive Stryker step runs only when one of those paths changed. A `workflow_dispatch` rerun verifies the checked-out commit as a no-change run rather than reclassifying `HEAD^` as a fresh diff. `.github/workflows/mutation.yml` remains a manual deep-run workflow and is not a required context.
+The required `mutation` job lives in `test.yml` and is present on every PR. It plans against the PR base (or push before SHA) via `scripts/run-mutation-ci.mjs`: **skip** when no mutate-eligible production files changed; **scoped** `--mutate` for ≤8 eligible files; **full** gated campaign when mutation config/runner changes, more than eight eligible files change, or `MUTATION_FULL=1`. Lockfile-only and test-only `src/core/**` diffs no longer trigger the hour-long campaign. A `workflow_dispatch` rerun on `Test` treats the checked-out commit as a no-change skip. `.github/workflows/mutation.yml` remains the manual **full** deep-run workflow and is not a required context.
 
 ### Red-main ownership
 
 `.github/workflows/red-main-incident.yml` creates or updates the open `STOP: required main check is red` issue when Test or Journey Gate fails or times out on `main`. Required-check failure owns stabilization work before feature promotion resumes.
 
-1. **Mutation testing**: `npm run test:mutation:ci` (Stryker + Vitest; 40% break threshold on gated `src/core/` scope)
+1. **Mutation testing**: `npm run test:mutation:ci` (diff-scoped Stryker + Vitest; 40% break threshold on the planned mutate set)
 
-Run locally when touching `src/core/**` even if the workflow is path-filtered.
+Run locally when touching mutate-eligible `src/core/**` even if CI would skip unrelated paths.
 
 ### CI bootstrap (`STAB-CI-21`)
 

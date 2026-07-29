@@ -247,26 +247,23 @@ jobs:
           submodules: recursive
           fetch-depth: 0
 
-      - name: Detect mutation-sensitive changes
+      - name: Plan mutation scope
         id: changes
         shell: bash
         run: |
+          # Diff-scoped plan without installing deps (pure Node + git + stryker.config.json).
+          # Skip expensive install/Stryker when only tests, UI, or lockfile changed.
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-            base="${{ github.event.pull_request.base.sha }}"
+            export MUTATION_BASE_SHA="${{ github.event.pull_request.base.sha }}"
           elif [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            # A manual rerun verifies the checked-out commit without claiming
-            # that its parent changed again.
-            base="HEAD"
+            # Manual Test workflow rerun: treat as no-change unless MUTATION_FULL=1.
+            export MUTATION_BASE_SHA=HEAD
           elif [[ "${{ github.event.before }}" != "" && "${{ github.event.before }}" != "0000000000000000000000000000000000000000" ]]; then
-            base="${{ github.event.before }}"
+            export MUTATION_BASE_SHA="${{ github.event.before }}"
           else
-            base="HEAD^"
+            export MUTATION_BASE_SHA="HEAD^"
           fi
-          if git diff --quiet "$base" HEAD -- src/core stryker.config.json vitest.mutation.config.ts package-lock.json; then
-            echo "run=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "run=true" >> "$GITHUB_OUTPUT"
-          fi
+          node scripts/run-mutation-ci.mjs --plan
 
       - name: Setup Node.js
         if: steps.changes.outputs.run == 'true'
@@ -281,7 +278,18 @@ jobs:
 
       - name: Run core mutation tests
         if: steps.changes.outputs.run == 'true'
-        run: npm run test:mutation:ci
+        shell: bash
+        env:
+          MUTATION_CONCURRENCY: '2'
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            export MUTATION_BASE_SHA="${{ github.event.pull_request.base.sha }}"
+          elif [[ "${{ github.event.before }}" != "" && "${{ github.event.before }}" != "0000000000000000000000000000000000000000" ]]; then
+            export MUTATION_BASE_SHA="${{ github.event.before }}"
+          else
+            export MUTATION_BASE_SHA="HEAD^"
+          fi
+          npm run test:mutation:ci
         timeout-minutes: 90
 
       - name: Upload mutation report
@@ -297,7 +305,10 @@ jobs:
         run: |
           {
             echo '### mutation job'
-            echo "- Mutation-sensitive changes: ${{ steps.changes.outputs.run }}"
-            echo '- `npm run test:mutation:ci` when core/config/lockfile changes'
+            echo "- Run Stryker: ${{ steps.changes.outputs.run }}"
+            echo "- Mode: ${{ steps.changes.outputs.mode }}"
+            echo "- Reason: ${{ steps.changes.outputs.reason }}"
+            echo '- Diff-scoped by default; full campaign on config/runner changes, MUTATION_FULL=1, or >8 eligible files.'
+            echo '- Lockfile / test-only / non-mutate core paths skip the expensive step.'
             echo '- Stable job name remains present when the expensive step is skipped.'
           } >> "$GITHUB_STEP_SUMMARY"

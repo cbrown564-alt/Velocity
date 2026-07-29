@@ -125,7 +125,7 @@ Update existing docs only if you changed:
 No proactive new docs.
 
 ### Step 8 — Mutation check (when touching `src/core/`)
-For logic under `src/core/`, run `npm run test:mutation` on the changed module before opening a PR. CI runs the gated scope via `.github/workflows/mutation.yml` when `src/core/**` changes. Surviving mutants in the HTML report indicate assertions that do not pin behavior.
+For logic under `src/core/`, run `npm run test:mutation:ci` on the changed module before opening a PR (diff-scoped; same planner as CI). CI runs via `.github/workflows/test.yml` when mutate-eligible production files or mutation config change. Use `npm run test:mutation:full` for a deep gated campaign. Surviving mutants in the HTML report indicate assertions that do not pin behavior.
 
 ### Step 9 — Pre-PR CI verification (always)
 Before opening a PR, run the gates CI runs. See `docs/playbooks/pre_pr_verification.md`.
