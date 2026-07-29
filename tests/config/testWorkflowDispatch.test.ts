@@ -7,6 +7,8 @@ const source = readFileSync(resolve(process.cwd(), '.github/workflows/test.yml')
 describe('Test workflow manual reruns', () => {
   it('treats workflow_dispatch as a no-change verification run', () => {
     expect(source).toContain('[[ "${{ github.event_name }}" == "workflow_dispatch" ]]');
-    expect(source).toContain('base="HEAD"');
+    // Diff-scoped planner: manual Test reruns set MUTATION_BASE_SHA=HEAD so the
+    // plan sees no changed files vs itself (skip unless MUTATION_FULL=1).
+    expect(source).toContain('export MUTATION_BASE_SHA=HEAD');
   });
 });
