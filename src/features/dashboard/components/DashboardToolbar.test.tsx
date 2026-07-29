@@ -104,4 +104,18 @@ describe('DashboardToolbar', () => {
     fireEvent.keyDown(document, { key: 'Escape' });
     expect(screen.queryByRole('menu')).not.toBeInTheDocument();
   });
+
+  it('stacks the overflow menu above sticky chrome and closes on outside click (DESIGN-CONV-K3)', () => {
+    render(
+      <div>
+        <button type="button">Outside</button>
+        <DashboardToolbar {...baseProps} />
+      </div>,
+    );
+    fireEvent.click(screen.getByTestId('toolbar-overflow-trigger'));
+    const menu = screen.getByTestId('toolbar-overflow-menu');
+    expect(menu.className).toContain('z-[var(--z-menu)]');
+    fireEvent.mouseDown(screen.getByRole('button', { name: 'Outside' }));
+    expect(screen.queryByTestId('toolbar-overflow-menu')).not.toBeInTheDocument();
+  });
 });

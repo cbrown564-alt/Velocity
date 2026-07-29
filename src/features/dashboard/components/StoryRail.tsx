@@ -212,7 +212,7 @@ const SlideRow: React.FC<SlideRowProps> = ({
           isDragging ? 'opacity-40' : ''
         } ${isActive ? 'bg-[var(--bg-panel)] shadow-[0_0_0_1px_var(--border-color)]' : 'hover:bg-[var(--bg-rail)]'}`}
       >
-        <span className="w-3 shrink-0 text-right font-mono text-[11px] text-[var(--text-tertiary)] leading-[1.35]">
+        <span className="w-3 shrink-0 text-right font-mono text-[11px] text-[var(--text-secondary)] leading-[1.35]">
           {index + 1}
         </span>
         <div className="min-w-0 flex-1">
@@ -249,7 +249,7 @@ const SlideRow: React.FC<SlideRowProps> = ({
             </span>
           )}
           {recipeSummary && (
-            <span className="block text-[11px] text-[var(--text-tertiary)] truncate mt-px">{recipeSummary}</span>
+            <span className="block text-[11px] text-[var(--text-secondary)] truncate mt-px">{recipeSummary}</span>
           )}
         </div>
         {canDelete && (
@@ -567,12 +567,12 @@ export const StoryRail: React.FC<StoryRailProps> = ({
         type="button"
         onClick={() => addSlide()}
         title="New slide (N)"
-        className="mt-1.5 px-2.5 py-[7px] text-left text-[12.5px] rounded-md text-[var(--text-tertiary)] hover:bg-[var(--bg-rail)] hover:text-[var(--text-secondary)] transition-colors"
+        className="mt-1.5 px-2.5 py-[7px] text-left text-[12.5px] rounded-md text-[var(--text-secondary)] hover:bg-[var(--bg-rail)] hover:text-[var(--text-primary)] transition-colors"
       >
         + New slide
       </button>
 
-      <div className="mt-auto px-2.5 pt-2 text-[11px] text-[var(--text-tertiary)]">
+      <div className="mt-auto px-2.5 pt-2 text-[11px] text-[var(--text-secondary)]">
         <PersistenceStatus
           mode={persistenceMode}
           opfsAvailable={opfsAvailable}

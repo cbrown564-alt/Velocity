@@ -144,13 +144,15 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
                 }`}
                 data-recipe-expanded={recipePanelExpanded ? 'true' : 'false'}
               >
-                <RecipeInspector
-                  open={recipeOpen}
-                  weightEnabled={weightEnabled}
-                  rememberedWeightVar={rememberedWeightVar}
-                  onWeightRemove={handleWeightRemove}
-                  onToggleWeight={handleToggleWeight}
-                />
+                {recipePanelExpanded ? (
+                  <RecipeInspector
+                    open={recipeOpen}
+                    weightEnabled={weightEnabled}
+                    rememberedWeightVar={rememberedWeightVar}
+                    onWeightRemove={handleWeightRemove}
+                    onToggleWeight={handleToggleWeight}
+                  />
+                ) : null}
               </div>
             </div>
           </main>

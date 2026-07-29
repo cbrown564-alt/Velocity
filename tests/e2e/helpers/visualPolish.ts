@@ -251,8 +251,11 @@ export async function buildExampleCrosstab(page: Page) {
 }
 
 export async function openOverflowMenu(page: Page) {
-  await page.getByRole('button', { name: 'More' }).click();
-  await expect(page.getByRole('menu', { name: 'More actions' })).toBeVisible({ timeout: 5000 });
+  const trigger = page.getByTestId('toolbar-overflow-trigger').or(page.getByRole('button', { name: 'More' }));
+  await trigger.click();
+  await expect(
+    page.getByTestId('toolbar-overflow-menu').or(page.getByRole('menu', { name: 'More actions' })),
+  ).toBeVisible({ timeout: 5000 });
 }
 
 /** Reset the active slide recipe to an empty state (clears auto-first-crosstab). */

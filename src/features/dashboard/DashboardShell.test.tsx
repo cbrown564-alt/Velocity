@@ -169,10 +169,10 @@ describe('DashboardShell (WP2.1 / WP2.3)', () => {
     render(<DashboardShell {...shellProps} />);
 
     const workspace = screen.getByTestId('dashboard-workspace');
-    const inspector = screen.getByTestId('recipe-inspector');
     const recipePanel = workspace.querySelector('[data-recipe-expanded]');
     expect(recipePanel).toHaveAttribute('data-recipe-expanded', 'false');
-    expect(inspector).toHaveAttribute('data-open', 'false');
+    // DESIGN-CONV-K3: closed inspector is unmounted so controls are not focusable.
+    expect(screen.queryByTestId('recipe-inspector')).not.toBeInTheDocument();
 
     const toggle = screen.getByTestId('recipe-inspector-toggle');
     expect(toggle).toHaveAttribute('aria-pressed', 'false');
@@ -180,6 +180,7 @@ describe('DashboardShell (WP2.1 / WP2.3)', () => {
     fireEvent.click(toggle);
     expect(toggle).toHaveAttribute('aria-pressed', 'true');
     expect(recipePanel).toHaveAttribute('data-recipe-expanded', 'true');
+    const inspector = screen.getByTestId('recipe-inspector');
     expect(inspector).toHaveAttribute('data-open', 'true');
     expect(screen.getByText(/Recipe — Slide 1/)).toBeInTheDocument();
     expect(within(inspector).getByText('Q5_gender')).toBeInTheDocument();
@@ -188,7 +189,7 @@ describe('DashboardShell (WP2.1 / WP2.3)', () => {
     fireEvent.click(toggle);
     expect(toggle).toHaveAttribute('aria-pressed', 'false');
     expect(recipePanel).toHaveAttribute('data-recipe-expanded', 'false');
-    expect(inspector).toHaveAttribute('data-open', 'false');
+    expect(screen.queryByTestId('recipe-inspector')).not.toBeInTheDocument();
   });
 
   it('opens RecipeInspector in chart view', () => {

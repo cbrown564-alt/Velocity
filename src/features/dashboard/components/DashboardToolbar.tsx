@@ -20,7 +20,7 @@ export interface DashboardToolbarProps {
 
 const GHOST_BUTTON =
   'inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-[12.5px] text-[var(--text-secondary)] hover:bg-[var(--bg-rail)] hover:text-[var(--text-primary)] transition-colors';
-const KBD_HINT = 'font-mono text-[10.5px] text-[var(--text-tertiary)] ml-1';
+const KBD_HINT = 'font-mono text-[10.5px] text-[var(--text-secondary)] ml-1';
 
 const OverflowMenu: React.FC<{
   dataset: Dataset | null;
@@ -48,9 +48,10 @@ const OverflowMenu: React.FC<{
   const itemClass =
     'w-full flex items-center gap-2.5 px-3 py-2 text-sm text-[var(--text-primary)] hover:bg-[var(--bg-rail)] transition-colors text-left disabled:opacity-50 disabled:cursor-not-allowed';
   return (
-    <div ref={menuRef} className="relative">
+    <div ref={menuRef} className="relative" data-testid="toolbar-overflow">
       <button
         type="button"
+        data-testid="toolbar-overflow-trigger"
         onClick={() => setOpen((v) => !v)}
         className={GHOST_BUTTON}
         aria-label="More"
@@ -63,7 +64,8 @@ const OverflowMenu: React.FC<{
         <div
           role="menu"
           aria-label="More actions"
-          className="absolute right-0 top-full mt-1 w-56 z-[var(--z-dropdown)] bg-[var(--bg-panel)] border border-[var(--border-color)] rounded-lg shadow-lg py-1.5 overflow-hidden"
+          data-testid="toolbar-overflow-menu"
+          className="absolute right-0 top-full mt-1 w-56 z-[var(--z-menu)] bg-[var(--bg-panel)] border border-[var(--border-color)] rounded-lg shadow-lg py-1.5 overflow-hidden"
         >
           <button
             type="button"
@@ -137,8 +139,8 @@ export const DashboardToolbar: React.FC<DashboardToolbarProps> = ({
   onExport,
   onReset,
 }) => (
-  <header className="surface-panel relative z-[var(--z-sticky)] h-14 border-b border-[var(--border-color-muted)] flex items-center justify-between px-6 bg-[var(--bg-panel)] shrink-0 overflow-visible">
-    <div className="flex items-center gap-4 text-sm text-[var(--text-secondary)]">
+  <header className="surface-panel relative z-[var(--z-sticky)] h-14 border-b border-[var(--border-color-muted)] flex items-center justify-between gap-3 px-4 sm:px-6 bg-[var(--bg-panel)] shrink-0 overflow-visible">
+    <div className="flex items-center gap-4 text-sm text-[var(--text-secondary)] min-w-0">
       <button
         onClick={onReturnToWorkspace}
         className={GHOST_BUTTON}
@@ -147,8 +149,8 @@ export const DashboardToolbar: React.FC<DashboardToolbarProps> = ({
       >
         <Home size={16} aria-hidden />
       </button>
-      <span className="text-[var(--border-color)]">/</span>
-      <span className="text-[var(--text-primary)] font-medium">{dataset?.name || 'Untitled'}</span>
+      <span className="text-[var(--border-color)] shrink-0">/</span>
+      <span className="text-[var(--text-primary)] font-medium truncate min-w-0">{dataset?.name || 'Untitled'}</span>
     </div>
     <div className="flex items-center gap-2 shrink-0">
       <div className="flex items-center bg-[var(--bg-rail)] p-1 rounded-lg">

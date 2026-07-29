@@ -1,5 +1,7 @@
 import React from 'react';
 import { describe, it, expect, beforeEach } from 'vitest';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { SlideHeader } from './SlideHeader';
 import { useVelocityStore } from '../../../store';
@@ -47,7 +49,15 @@ describe('SlideHeader', () => {
 
   it('renders the active slide title', () => {
     render(<SlideHeader />);
-    expect(screen.getByText('New Slide')).toBeInTheDocument();
+    const title = screen.getByText('New Slide');
+    expect(title).toBeInTheDocument();
+    expect(title).toHaveClass('slide-header-title');
+  });
+
+  it('uses display typography for the slide artifact title (DESIGN-CONV-K3)', () => {
+    const css = readFileSync(resolve(__dirname, 'SlideHeader.css'), 'utf8');
+    expect(css).toMatch(/\.slide-header-title\s*\{[^}]*font-family:\s*var\(--font-display\)/s);
+    expect(css).toMatch(/\.slide-header-title-input\s*\{[^}]*font-family:\s*var\(--font-display\)/s);
   });
 
   it('shows filtered sample size in subtitle when filters are active (UXR-010)', () => {

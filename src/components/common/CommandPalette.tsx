@@ -481,7 +481,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ withinDnd = fals
           )}
         </div>
 
-        <div className="px-4 py-2 border-t border-[var(--border-color-muted)] flex items-center gap-4 text-[11px] text-[var(--text-tertiary)]">
+        <div className="px-4 py-2 border-t border-[var(--border-color-muted)] flex items-center gap-4 text-[11px] text-[var(--text-secondary)]">
           {commandMode ? (
             <span>
               <kbd className="font-mono text-[10.5px] text-[var(--text-secondary)]">↵</kbd> Run
