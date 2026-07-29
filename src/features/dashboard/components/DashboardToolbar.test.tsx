@@ -81,4 +81,27 @@ describe('DashboardToolbar', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Return to Workspace' }));
     expect(baseProps.onReturnToWorkspace).toHaveBeenCalled();
   });
+
+  it('routes overflow session and reset actions', () => {
+    render(<DashboardToolbar {...baseProps} />);
+    fireEvent.click(screen.getByRole('button', { name: 'More' }));
+    fireEvent.click(screen.getByRole('menuitem', { name: 'Import Session' }));
+    expect(baseProps.onOpenSessionImport).toHaveBeenCalled();
+
+    fireEvent.click(screen.getByRole('button', { name: 'More' }));
+    fireEvent.click(screen.getByRole('menuitem', { name: 'Export Session' }));
+    expect(baseProps.onExportSession).toHaveBeenCalled();
+
+    fireEvent.click(screen.getByRole('button', { name: 'More' }));
+    fireEvent.click(screen.getByRole('menuitem', { name: 'Reset' }));
+    expect(baseProps.onReset).toHaveBeenCalled();
+  });
+
+  it('closes the overflow menu on Escape', () => {
+    render(<DashboardToolbar {...baseProps} />);
+    fireEvent.click(screen.getByRole('button', { name: 'More' }));
+    expect(screen.getByRole('menu')).toBeInTheDocument();
+    fireEvent.keyDown(document, { key: 'Escape' });
+    expect(screen.queryByRole('menu')).not.toBeInTheDocument();
+  });
 });
