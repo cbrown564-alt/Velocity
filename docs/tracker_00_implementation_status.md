@@ -229,7 +229,7 @@ These rows remain directionally valid, but should not become active until `PILOT
 **Decision date:** July 4, 2026 — product owner review of post-reset evidence pack.  
 **Goal:** Finish Sarah's five-minute journey (file drop -> three faithful slides -> reviewed PPTX) on the current product line without re-litigating Pathway B. Candidate branches are evidence of implementation work, not proof that the product contains or passes it.
 
-**Current finding (July 29):** `DESIGN-CONV-R0` reconciliation is complete — see [`docs/cursor-capacity-sprint/R0_RECONCILIATION.md`](cursor-capacity-sprint/R0_RECONCILIATION.md). `DESIGN-CONV-Q5` and `DESIGN-CONV-K2` are Done on `main`. Paths B–I remain **Candidate** except Wave 1 items in flight (`K1`, `B`). F is rejected for this sprint; E is deferred. `DESIGN-CONV-K3` a11y/interaction closure is In review.
+**Current finding (July 29):** `DESIGN-CONV-R0` / `Q5` / `K2` / `K3` are Done on `main`. `DESIGN-CONV-K1` Grammar A is Done on this PR. `DESIGN-CONV-B` export preview remains In review. Paths C–I remain **Candidate**. F rejected; E deferred.
 
 
 #### Convergence decisions (Q1–Q7)
@@ -249,9 +249,9 @@ These rows remain directionally valid, but should not become active until `PILOT
 | ID | Path | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence / validation |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | DESIGN-CONV-R0 | — | Integrate | Inventory and reconcile all approved convergence candidates against current `main`; resolve conflicts and preserve backend-reset contracts | DESIGN-RESET-1 | Done | No | T,L,U,I,A | [`R0_RECONCILIATION.md`](cursor-capacity-sprint/R0_RECONCILIATION.md) on `main` baseline `3ba5964`: inventory, docs-vs-code conflict matrix, retain/defer/reject dispositions, overlap-aware Wave 1→2 sequence; no candidate silently promoted to Done |
-| DESIGN-CONV-K1 | — | Correctness | Choose one palette grammar and align UI copy, help, tests, five-minute script, and recipe assertions | DESIGN-CONV-R0 | Not started | Yes | T,L,U,I | One rows/columns contract; automation asserts the resulting recipe instead of timing clicks alone |
+| DESIGN-CONV-K1 | — | Correctness | Choose one palette grammar and align UI copy, help, tests, five-minute script, and recipe assertions | DESIGN-CONV-R0 | Done | Yes | T,L,U,I | Grammar A retained (↵ columns / ⌥↵ rows / ⇧↵ filter); docs aligned; five-minute harness asserts recipes by variable name via `__velocityStore` |
 | DESIGN-CONV-K2 | — | Correctness | Restore each slide's saved weight and analysis settings; expose persistent filter/weight/view summaries needed for recipe legibility | DESIGN-CONV-R0, DESIGN-CONV-Q6 | Done | Yes | T,L,U,I,A | Merged to `main`: store projects weight+settings on slide switch/add/remove/duplicate; session export snapshots active slide; import prefers active-slide contract; StoryRail shows filt/wt/view tokens; switch tests in `slidesSlice.test.ts` |
-| DESIGN-CONV-K3 | — | Quality | Fix overflow-menu hit testing, make closed inspector content inert or unmounted, close contrast violations, align slide-title typography, and verify supported widths | DESIGN-CONV-R0 | In review | Yes | T,L,U,I | Overflow menu `--z-menu` + test ids; closed recipe inspector unmounted; meaningful chrome uses `--text-secondary`; slide titles use `--font-display`; e2e overflow at 1440/1280/1024 without force-click |
+| DESIGN-CONV-K3 | — | Quality | Fix overflow-menu hit testing, make closed inspector content inert or unmounted, close contrast violations, align slide-title typography, and verify supported widths | DESIGN-CONV-R0 | Done | Yes | T,L,U,I | Merged to `main`: overflow `--z-menu`; closed inspector unmounted; meaningful chrome `--text-secondary`; slide titles `--font-display`; e2e overflow widths without force-click |
 | DESIGN-CONV-A | A | Validate | Fresh final photography; reproducible journey automation; 3–5 unscripted sessions scored for time, discovery, errors, and recovery | DESIGN-CONV-B, C, D, G, H, I, Q5, K1, K2, K3 | Blocked | No | I,V | New evidence pack from current `main`; documented browser setup; no forced interactions; observed sessions on the final candidate, not an intermediate branch |
 | DESIGN-CONV-B | B | Journey | Export preview lane: export-bound thumbnails, recipe summary, significance audit, then PPTX download | DESIGN-CONV-R0 | Candidate | Yes | T,L,U,I,V | R0: retain via partial transplant from PR #55 (`74338bb`); docs-only merge conflict; prove preview required before download in E2E after land |
 | DESIGN-CONV-C | C | Discovery | Thin collapsible recent-and-pinned variable strip, not a full sidebar | DESIGN-CONV-R0 | Candidate | Yes | T,L,U,I,V | R0: retain; docs-only conflict on #54; land after Q5; keep Candidate until DESIGN-CONV-A shows discovery value |
@@ -270,7 +270,7 @@ These rows remain directionally valid, but should not become active until `PILOT
 | Wave | Items | Rationale |
 | :--- | :--- | :--- |
 | **0** | ~~`DESIGN-CONV-R0`~~ Done | Integration baseline recorded in `R0_RECONCILIATION.md` |
-| **1** | `DESIGN-CONV-K1`, `K2`, `K3`, `B` (~~`Q5`~~ Done) | Close correctness, export, and remaining chrome blockers (R0 safer order: K1 → K2 → B → K3) |
+| **1** | `B`, `K3` (~~`Q5`~~ ~~`K2`~~ ~~`K1`~~ Done) | Close remaining export and chrome blockers |
 | **2** | `DESIGN-CONV-C`, `D`, `G`, `H`, `I` | Reconcile approved discovery, continuity, rail, and handoff candidates against the settled contracts (R0 order: D → C → H → G → I) |
 | **3** | `DESIGN-CONV-A` | Photograph and test only the final candidate; rerun after any session-driven correction |
 | **Later** | `DESIGN-CONV-E`, `F` | Non-blocking additions after the core journey passes |
@@ -286,7 +286,7 @@ These rows remain directionally valid, but should not become active until `PILOT
 #### DESIGN-CONV recommended pull
 
 1. ~~`DESIGN-CONV-R0`~~ — Done (`R0_RECONCILIATION.md`).
-2. ~~`DESIGN-CONV-Q5`~~ — Done; next `K1`, `K2`, `B`, `K3`.
+2. ~~`DESIGN-CONV-Q5`~~ / ~~`K2`~~ / ~~`K1`~~ — Done; next `B`, `K3`.
 3. `DESIGN-CONV-D`, `C`, `H`, `G`, `I` — Wave 2 in R0 overlap-safe order.
 4. `DESIGN-CONV-A` — fresh photography and representative validation on the final candidate only.
 

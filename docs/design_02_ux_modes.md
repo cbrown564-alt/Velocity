@@ -39,7 +39,7 @@ The Analysis Canvas is the hub. Users build crosstabs and charts on slides, refi
 
 | Surface | Role | Entry |
 | :--- | :--- | :--- |
-| **Insert palette** | Variable search, dense rows, one canonical insertion grammar, commands behind `>` prefix | `Insert ⌘K`, empty-state Browse, keyboard ⌘K |
+| **Insert palette** | Variable search, dense rows, **canonical grammar: ↵ → columns, ⌥↵ → rows, ⇧↵ → filter** (`DESIGN-CONV-K1`), commands behind `>` prefix | `Insert ⌘K`, empty-state Browse, keyboard ⌘K |
 | **Recipe inspector** (right) | Rows / Columns / Filter / Weight chips, display settings (Cell n, Bases), significance method | `Recipe` ghost button; collapsed by default |
 | **Variable Manager** | High-density find/inspect/recode (see §3) | Overflow `···` → Variable Manager, or keyboard `V` |
 | **Export review** | Preview export-bound slides, recipe/significance state, then download PPTX or export a session | Primary Export button |
@@ -123,12 +123,13 @@ The product has three modes only: Workspace, Analysis Canvas, and Variable Manag
 The mode model is the approved target, but the implementation is not yet complete. The active gaps are:
 
 - add review-before-download export (`DESIGN-CONV-B`);
-- settle and enforce one palette rows/columns grammar (`DESIGN-CONV-K1`);
-- restore saved weight and analysis settings when switching slides or reopening sessions (`DESIGN-CONV-K2`);
 - make recipe structure persistent and legible in the rail/inspector;
 - land retained Wave 2 discovery/continuity candidates per R0;
 - recapture the journey and run 3–5 unscripted representative sessions on the final candidate.
 
+Insert-palette grammar is settled as **Grammar A** (`DESIGN-CONV-K1`): ↵ → columns, ⌥↵ → rows, ⇧↵ → filter. Product code wins over the flipped north-star mock; Path D coaching must teach this contract.
+
 `DESIGN-CONV-K3` closes overflow hit-testing (menu uses `--z-menu`), unmounts the closed recipe inspector, lifts meaningful chrome copy off `--text-tertiary`, uses Fraunces for slide artifact titles, and verifies toolbar overflow at 1440/1280/1024 without force-click.
+
 
 The tracker §4.3.2 owns ordering and completion. Until `DESIGN-CONV-A` passes, the reset is implemented but not verified or validated as a complete redesign. PILOT-6 photography must use post-reset chrome without a focus-mode toggle.

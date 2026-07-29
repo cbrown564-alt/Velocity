@@ -104,6 +104,43 @@ async function currentDatasetId(page) {
   return page.evaluate(() => window.__velocityStore?.getState().dataset?.id ?? null);
 }
 
+/**
+ * DESIGN-CONV-K1: assert recipe state after palette inserts (Grammar A:
+ * ↵ → columns, ⌥↵ → rows, ⇧↵ → filter). Prefer store truth over click timing.
+ * Variable-set ids are UUIDs — match by underlying variable `name`.
+ */
+async function assertActiveRecipe(page, expected, timeoutMs = 15000) {
+  await page.waitForFunction(
+    ({ rowVars, colVar }) => {
+      const state = window.__velocityStore?.getState();
+      const cfg = state?.tableConfig;
+      if (!cfg) return false;
+      const sets = state.variableSets ?? [];
+      const variables = state.dataset?.variables ?? [];
+      const resolveName = (refId) => {
+        if (!refId) return null;
+        const set = sets.find((candidate) => candidate.id === refId);
+        if (set) {
+          const fromSet = set.variableIds
+            .map((variableId) => variables.find((variable) => variable.id === variableId)?.name)
+            .find(Boolean);
+          return (fromSet || set.name || '').toLowerCase();
+        }
+        const variable = variables.find((candidate) => candidate.id === refId || candidate.name === refId);
+        return (variable?.name || refId).toLowerCase();
+      };
+      if (cfg.rowVars.length !== rowVars.length) return false;
+      if (!rowVars.every((name, index) => resolveName(cfg.rowVars[index]) === name.toLowerCase())) {
+        return false;
+      }
+      if (colVar == null) return cfg.colVar == null;
+      return resolveName(cfg.colVar) === colVar.toLowerCase();
+    },
+    expected,
+    { timeout: timeoutMs },
+  );
+}
+
 async function waitForUploadBaseline(page) {
   await page.waitForFunction(
     () => {
@@ -210,6 +247,14 @@ async function runUploadToFirstCrosstab(page, savPath) {
   if (!tableVisible) {
     await insertVariable(page, 'sex', 'rows');
     await insertVariable(page, 'marital', 'columns');
+  }
+  // Even if a table was already painted, require the Grammar A sex × marital recipe.
+  try {
+    await assertActiveRecipe(page, { rowVars: ['sex'], colVar: 'marital' }, 3000);
+  } catch {
+    await insertVariable(page, 'sex', 'rows');
+    await insertVariable(page, 'marital', 'columns');
+    await assertActiveRecipe(page, { rowVars: ['sex'], colVar: 'marital' });
   }
   await waitForFirstCrosstab(page);
   return Date.now() - fileDropAt;
@@ -376,12 +421,14 @@ async function main() {
     steps.push({ step: 'dashboard-ready', atMs: journeyMetrics.coldFirstCrosstabMs });
 
     await renameActiveSlide(page, 'Gender by marital status');
+    await assertActiveRecipe(page, { rowVars: ['sex'], colVar: 'marital' });
     steps.push({ step: 'slide-1-crosstab', atMs: Date.now() - timings.fileDropAt });
 
     // Slide 2: edlevel × sex (nominal crosstab — age is numeric and may not show % cells)
     await addNewSlide(page);
     await insertVariable(page, 'edlevel', 'rows');
     await insertVariable(page, 'sex', 'columns');
+    await assertActiveRecipe(page, { rowVars: ['edlevel'], colVar: 'sex' });
     await waitForActiveSlideTable(page);
     await renameActiveSlide(page, 'Education by gender');
     steps.push({ step: 'slide-2-crosstab', atMs: Date.now() - timings.fileDropAt });
@@ -389,6 +436,7 @@ async function main() {
     // Slide 3: single-variable distribution
     await addNewSlide(page);
     await insertVariable(page, 'marital', 'rows');
+    await assertActiveRecipe(page, { rowVars: ['marital'], colVar: null });
     await waitForActiveSlideTable(page);
     await renameActiveSlide(page, 'Marital status distribution');
     steps.push({ step: 'slide-3-rows', atMs: Date.now() - timings.fileDropAt });
