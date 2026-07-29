@@ -50,6 +50,11 @@ describe('five-minute journey measurement contract', () => {
     expect(harnessSource).toContain('await waitForUploadedDataset(page, previousDatasetId);');
   });
 
+  it('requires the PPTX export preview lane before download (DESIGN-CONV-B)', () => {
+    expect(harnessSource).toContain("getByTestId('export-modal-review')");
+    expect(harnessSource).toContain("getByTestId('export-preview-lane')");
+  });
+
   it('writes a repository-relative PPTX evidence path', () => {
     expect(harnessSource).toContain('pptxPath: path.relative(ROOT, savePath)');
   });

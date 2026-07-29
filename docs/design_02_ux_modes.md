@@ -122,14 +122,11 @@ The product has three modes only: Workspace, Analysis Canvas, and Variable Manag
 
 The mode model is the approved target, but the implementation is not yet complete. The active gaps are:
 
-- add review-before-download export (`DESIGN-CONV-B`);
 - make recipe structure persistent and legible in the rail/inspector;
 - land retained Wave 2 discovery/continuity candidates per R0;
 - recapture the journey and run 3–5 unscripted representative sessions on the final candidate.
 
-Insert-palette grammar is settled as **Grammar A** (`DESIGN-CONV-K1`): ↵ → columns, ⌥↵ → rows, ⇧↵ → filter. Product code wins over the flipped north-star mock; Path D coaching must teach this contract.
-
-`DESIGN-CONV-K3` closes overflow hit-testing (menu uses `--z-menu`), unmounts the closed recipe inspector, lifts meaningful chrome copy off `--text-tertiary`, uses Fraunces for slide artifact titles, and verifies toolbar overflow at 1440/1280/1024 without force-click.
+Insert-palette grammar is settled as **Grammar A** (`DESIGN-CONV-K1`). `DESIGN-CONV-K3` a11y/interaction closure is Done. PPTX export includes a review-before-download preview lane (`DESIGN-CONV-B`): export-bound thumbnails, recipe/significance summary, then download. Excel remains a one-step export.
 
 
 The tracker §4.3.2 owns ordering and completion. Until `DESIGN-CONV-A` passes, the reset is implemented but not verified or validated as a complete redesign. PILOT-6 photography must use post-reset chrome without a focus-mode toggle.

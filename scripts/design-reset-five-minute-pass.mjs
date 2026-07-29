@@ -294,12 +294,15 @@ async function waitForActiveSlideTable(page, timeoutMs = 60000) {
 async function exportAllSlidesPptx(page, savePath) {
   await closeOverlays(page);
   await page.getByRole('button', { name: 'Export', exact: true }).click();
-  await page.getByTestId('export-modal-submit').waitFor({ state: 'visible', timeout: 10000 });
+  await page.getByTestId('export-modal-review').waitFor({ state: 'visible', timeout: 10000 });
   await page
     .locator('label')
     .filter({ hasText: /^All Slides/ })
     .click();
   await page.waitForTimeout(300);
+  // DESIGN-CONV-B: PPTX requires the preview lane before download.
+  await page.getByTestId('export-modal-review').click();
+  await page.getByTestId('export-preview-lane').waitFor({ state: 'visible', timeout: 10000 });
   const exportStartedAt = Date.now();
   const downloadPromise = page.waitForEvent('download', { timeout: 120000 });
   await page.getByTestId('export-modal-submit').click();

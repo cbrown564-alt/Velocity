@@ -229,7 +229,7 @@ These rows remain directionally valid, but should not become active until `PILOT
 **Decision date:** July 4, 2026 — product owner review of post-reset evidence pack.  
 **Goal:** Finish Sarah's five-minute journey (file drop -> three faithful slides -> reviewed PPTX) on the current product line without re-litigating Pathway B. Candidate branches are evidence of implementation work, not proof that the product contains or passes it.
 
-**Current finding (July 29):** `DESIGN-CONV-R0` / `Q5` / `K2` / `K3` are Done on `main`. `DESIGN-CONV-K1` Grammar A is Done on this PR. `DESIGN-CONV-B` export preview remains In review. Paths C–I remain **Candidate**. F rejected; E deferred.
+**Current finding (July 29):** Wave 1 core items `R0` / `Q5` / `K1` / `K2` / `K3` are Done on `main`. `DESIGN-CONV-B` export preview lane is Done on this PR. Paths C–I remain **Candidate**. F rejected; E deferred.
 
 
 #### Convergence decisions (Q1–Q7)
@@ -238,7 +238,7 @@ These rows remain directionally valid, but should not become active until `PILOT
 | :--- | :--- | :--- | :--- |
 | Q1 | Is summon-only variable discovery fast enough for drag-first consultants? | **Open — explore options.** Early feedback: summon-only feels unintuitive; consultants are not programmers. Do not assume ⌘K-only holds without evidence. Evaluate thin resident affordances (Path C) and one-time palette onboarding (Path D) before expanding summon-only. | `DESIGN-CONV-C`, `DESIGN-CONV-D`; `DESIGN-CONV-A` supplies behavioral evidence |
 | Q2 | Does the story rail earn its 240px on 1–2 slide decks? | **Proceed via Path G.** Collapsible rail reclaims space on small decks without abandoning deck-native IA. | `DESIGN-CONV-G` |
-| Q3 | Where does "review before export" live? | **Confirmed: deck preview step before PPTX.** Export is still fire-and-download; add a review lane (Path B) as a journey requirement, especially for agent-built sessions. | `DESIGN-CONV-B` — **Wave 1 priority** |
+| Q3 | Where does "review before export" live? | **Confirmed: deck preview step before PPTX.** Path B implements configure → review lane → download for PPTX (Excel remains one-step). | `DESIGN-CONV-B` — **Wave 1 priority** |
 | Q4 | Can we teach palette grammar without reintroducing coaching? | **Proceed via Path D.** One-time inline ghost inside the palette — dismiss forever, no tour overlay. | `DESIGN-CONV-D` |
 | Q5 | Is focus mode still a mode? | **Focus mode is redundant.** Default chrome + honest slide is the presentation surface; retire focus mode rather than polish it. | `DESIGN-CONV-Q5` |
 | Q6 | Does the UI make recipe structure legible for additive refinement (human + MCP)? | **Audit complete: no.** The rail exposes only rows × columns; persistent filter/weight/view summaries, sections, and notes are absent. | `DESIGN-CONV-Q6` is Done; remediation is `DESIGN-CONV-K2` and `DESIGN-CONV-I` |
@@ -253,7 +253,7 @@ These rows remain directionally valid, but should not become active until `PILOT
 | DESIGN-CONV-K2 | — | Correctness | Restore each slide's saved weight and analysis settings; expose persistent filter/weight/view summaries needed for recipe legibility | DESIGN-CONV-R0, DESIGN-CONV-Q6 | Done | Yes | T,L,U,I,A | Merged to `main`: store projects weight+settings on slide switch/add/remove/duplicate; session export snapshots active slide; import prefers active-slide contract; StoryRail shows filt/wt/view tokens; switch tests in `slidesSlice.test.ts` |
 | DESIGN-CONV-K3 | — | Quality | Fix overflow-menu hit testing, make closed inspector content inert or unmounted, close contrast violations, align slide-title typography, and verify supported widths | DESIGN-CONV-R0 | Done | Yes | T,L,U,I | Merged to `main`: overflow `--z-menu`; closed inspector unmounted; meaningful chrome `--text-secondary`; slide titles `--font-display`; e2e overflow widths without force-click |
 | DESIGN-CONV-A | A | Validate | Fresh final photography; reproducible journey automation; 3–5 unscripted sessions scored for time, discovery, errors, and recovery | DESIGN-CONV-B, C, D, G, H, I, Q5, K1, K2, K3 | Blocked | No | I,V | New evidence pack from current `main`; documented browser setup; no forced interactions; observed sessions on the final candidate, not an intermediate branch |
-| DESIGN-CONV-B | B | Journey | Export preview lane: export-bound thumbnails, recipe summary, significance audit, then PPTX download | DESIGN-CONV-R0 | Candidate | Yes | T,L,U,I,V | R0: retain via partial transplant from PR #55 (`74338bb`); docs-only merge conflict; prove preview required before download in E2E after land |
+| DESIGN-CONV-B | B | Journey | Export preview lane: export-bound thumbnails, recipe summary, significance audit, then PPTX download | DESIGN-CONV-R0 | Done | Yes | T,L,U,I,V | Partial transplant from #55: `ExportPreviewLane` + `exportPreviewSummary`; PPTX configure→review→download; Excel one-step; E2E + five-minute harness require preview |
 | DESIGN-CONV-C | C | Discovery | Thin collapsible recent-and-pinned variable strip, not a full sidebar | DESIGN-CONV-R0 | Candidate | Yes | T,L,U,I,V | R0: retain; docs-only conflict on #54; land after Q5; keep Candidate until DESIGN-CONV-A shows discovery value |
 | DESIGN-CONV-D | D | Keyboard | First-palette inline ghost that teaches the canonical row/column grammar and dismisses permanently | DESIGN-CONV-R0, DESIGN-CONV-K1 | Candidate | Yes | T,L,U,I | R0: retain from #52 after K1 settles grammar; docs-only conflict; no coaching on reopen |
 | DESIGN-CONV-E | E | Story | Start from a three-slide tracker template | DESIGN-CONV-B, PILOT-DEMO-3, DESIGN-CONV-A | Candidate | Yes | T,L,U,I,V | R0: defer / reimplement later; code conflicts in session/splash; not on pilot critical path before core journey |
@@ -270,7 +270,7 @@ These rows remain directionally valid, but should not become active until `PILOT
 | Wave | Items | Rationale |
 | :--- | :--- | :--- |
 | **0** | ~~`DESIGN-CONV-R0`~~ Done | Integration baseline recorded in `R0_RECONCILIATION.md` |
-| **1** | `B`, `K3` (~~`Q5`~~ ~~`K2`~~ ~~`K1`~~ Done) | Close remaining export and chrome blockers |
+| **1** | ~~`Q5`~~ ~~`K1`~~ ~~`K2`~~ ~~`K3`~~ ~~`B`~~ Done | Wave 1 pilot blockers closed |
 | **2** | `DESIGN-CONV-C`, `D`, `G`, `H`, `I` | Reconcile approved discovery, continuity, rail, and handoff candidates against the settled contracts (R0 order: D → C → H → G → I) |
 | **3** | `DESIGN-CONV-A` | Photograph and test only the final candidate; rerun after any session-driven correction |
 | **Later** | `DESIGN-CONV-E`, `F` | Non-blocking additions after the core journey passes |
@@ -286,7 +286,7 @@ These rows remain directionally valid, but should not become active until `PILOT
 #### DESIGN-CONV recommended pull
 
 1. ~~`DESIGN-CONV-R0`~~ — Done (`R0_RECONCILIATION.md`).
-2. ~~`DESIGN-CONV-Q5`~~ / ~~`K2`~~ / ~~`K1`~~ — Done; next `B`, `K3`.
+2. Wave 1 Done — next Wave 2: `D`, `C`, `H`, `G`, `I`.
 3. `DESIGN-CONV-D`, `C`, `H`, `G`, `I` — Wave 2 in R0 overlap-safe order.
 4. `DESIGN-CONV-A` — fresh photography and representative validation on the final candidate only.
 
