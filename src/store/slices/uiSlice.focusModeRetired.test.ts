@@ -7,7 +7,7 @@ import { useVelocityStore } from '../index';
  */
 describe('DESIGN-CONV-Q5 focus mode retirement', () => {
   it('does not expose focus mode state or actions on the store', () => {
-    const state = useVelocityStore.getState() as Record<string, unknown>;
+    const state = useVelocityStore.getState() as unknown as Record<string, unknown>;
 
     expect(state).not.toHaveProperty('focusMode');
     expect(state).not.toHaveProperty('setFocusMode');
