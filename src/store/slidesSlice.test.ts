@@ -380,6 +380,174 @@ describe('slidesSlice', () => {
 
       expect(mockRunCrosstab).not.toHaveBeenCalled();
     });
+
+    it('should restore each slide weightVariable when switching (DESIGN-CONV-K2)', () => {
+      const { result } = renderHook(() => useVelocityStore());
+
+      act(() => {
+        useVelocityStore.setState({
+          dataset: {
+            id: 'ds-1',
+            name: 'test.sav',
+            variables: [],
+            variableSets: [],
+            rowCount: 10,
+            weightVariable: 'wt_a',
+          } as never,
+          slides: [
+            {
+              id: 'slide-1',
+              title: 'Weighted A',
+              subtitle: '',
+              analysisState: {
+                rowVars: ['q1'],
+                colVar: 'seg',
+                filters: [],
+                weightVar: 'wt_a',
+              },
+              visualizationType: 'table',
+              layoutMode: 'focus',
+              cells: [{ id: 'cell-1', content: { type: 'table' } }],
+              createdAt: 1,
+              updatedAt: 1,
+            },
+            {
+              id: 'slide-2',
+              title: 'Unweighted B',
+              subtitle: '',
+              analysisState: {
+                rowVars: ['q2'],
+                colVar: null,
+                filters: [],
+                weightVar: null,
+              },
+              visualizationType: 'table',
+              layoutMode: 'focus',
+              cells: [{ id: 'cell-2', content: { type: 'table' } }],
+              createdAt: 2,
+              updatedAt: 2,
+            },
+          ],
+          activeSlideId: 'slide-1',
+          activeCellId: 'cell-1',
+          tableConfig: { rowVars: ['q1'], colVar: 'seg' },
+          activeFilters: [],
+        });
+      });
+
+      act(() => {
+        result.current.setActiveSlide('slide-2');
+      });
+
+      expect(result.current.dataset?.weightVariable).toBeUndefined();
+      expect(result.current.slides.find((s) => s.id === 'slide-1')?.analysisState.weightVar).toBe('wt_a');
+
+      act(() => {
+        result.current.setActiveSlide('slide-1');
+      });
+
+      expect(result.current.dataset?.weightVariable).toBe('wt_a');
+      expect(result.current.slides.find((s) => s.id === 'slide-2')?.analysisState.weightVar).toBeNull();
+    });
+
+    it('should restore per-slide analysisSettings when switching (DESIGN-CONV-K2)', () => {
+      const { result } = renderHook(() => useVelocityStore());
+
+      act(() => {
+        useVelocityStore.setState({
+          analysisSettings: {
+            comparisonMethod: 'cell_vs_rest',
+            correctionType: 'none',
+            showConfidenceIntervals: false,
+            showCellN: false,
+            showColumnBases: false,
+            significanceLevel: 0.95,
+            engine: 'auto',
+          },
+          slides: [
+            {
+              id: 'slide-1',
+              title: 'Defaults',
+              subtitle: '',
+              analysisState: {
+                rowVars: ['q1'],
+                colVar: null,
+                filters: [],
+                weightVar: null,
+              },
+              analysisSettings: {
+                comparisonMethod: 'cell_vs_rest',
+                correctionType: 'none',
+                showConfidenceIntervals: false,
+                showCellN: false,
+                showColumnBases: false,
+                significanceLevel: 0.95,
+                engine: 'auto',
+              },
+              visualizationType: 'table',
+              layoutMode: 'focus',
+              cells: [{ id: 'cell-1', content: { type: 'table' } }],
+              createdAt: 1,
+              updatedAt: 1,
+            },
+            {
+              id: 'slide-2',
+              title: 'Bonferroni',
+              subtitle: '',
+              analysisState: {
+                rowVars: ['q2'],
+                colVar: null,
+                filters: [],
+                weightVar: null,
+              },
+              analysisSettings: {
+                comparisonMethod: 'pairwise',
+                correctionType: 'bonferroni',
+                showConfidenceIntervals: true,
+                showCellN: true,
+                showColumnBases: true,
+                significanceLevel: 0.9,
+                engine: 'duckdb',
+              },
+              visualizationType: 'chart',
+              chartType: 'horizontal-bar',
+              layoutMode: 'focus',
+              cells: [{ id: 'cell-2', content: { type: 'chart', chartType: 'horizontal-bar' } }],
+              createdAt: 2,
+              updatedAt: 2,
+            },
+          ],
+          activeSlideId: 'slide-1',
+          activeCellId: 'cell-1',
+          tableConfig: { rowVars: ['q1'], colVar: null },
+          activeFilters: [],
+        });
+      });
+
+      act(() => {
+        result.current.setActiveSlide('slide-2');
+      });
+
+      expect(result.current.analysisSettings).toEqual({
+        comparisonMethod: 'pairwise',
+        correctionType: 'bonferroni',
+        showConfidenceIntervals: true,
+        showCellN: true,
+        showColumnBases: true,
+        significanceLevel: 0.9,
+        engine: 'duckdb',
+      });
+
+      act(() => {
+        result.current.updateAnalysisSettings({ correctionType: 'fdr' });
+      });
+      act(() => {
+        result.current.setActiveSlide('slide-1');
+      });
+
+      expect(result.current.analysisSettings.correctionType).toBe('none');
+      expect(result.current.slides.find((s) => s.id === 'slide-2')?.analysisSettings?.correctionType).toBe('fdr');
+    });
   });
 
   describe('removeSlide', () => {

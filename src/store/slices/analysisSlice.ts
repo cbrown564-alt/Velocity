@@ -112,6 +112,8 @@ const defaultAnalysisSettings: AnalysisSettings = {
   engine: 'auto',
 };
 
+export { defaultAnalysisSettings };
+
 function triggerAnalysisSafely(runAnalysis: (() => Promise<void>) | undefined, context: string): void {
   if (typeof runAnalysis !== 'function') return;
   void runAnalysis().catch((error) => {
@@ -164,14 +166,25 @@ export const createAnalysisSlice: AnalysisSliceCreator = (set, get) => ({
 
   applySlideAnalysisState: (slideState, options = {}) => {
     const { runAnalysis: shouldRun = true } = options;
-    set(() => ({
-      tableConfig: {
-        rowVars: [...slideState.rowVars],
-        colVar: slideState.colVar,
-      },
-      activeFilters: slideState.filters.map((filter) => ({ ...filter })),
-      selectedChartType: null,
-    }));
+    set((state) => {
+      const nextDataset = state.dataset
+        ? {
+            ...state.dataset,
+            // DESIGN-CONV-K2: project slide weight into live dataset before analysis.
+            // Empty/null clears the weight so slides do not leak a prior weight.
+            weightVariable: slideState.weightVar || undefined,
+          }
+        : state.dataset;
+      return {
+        tableConfig: {
+          rowVars: [...slideState.rowVars],
+          colVar: slideState.colVar,
+        },
+        activeFilters: slideState.filters.map((filter) => ({ ...filter })),
+        selectedChartType: null,
+        dataset: nextDataset,
+      };
+    });
     if (shouldRun) {
       triggerAnalysisSafely(get().runAnalysis, 'applySlideAnalysisState analysis');
     }

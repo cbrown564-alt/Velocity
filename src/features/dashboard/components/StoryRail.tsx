@@ -90,7 +90,20 @@ function getRecipeSummary(
   if (source.rowVars.length === 0) return null;
   const name = (id: string) => variableSets.find((v) => v.id === id)?.name || id;
   const rows = source.rowVars.map(name).join(' + ');
-  return source.colVar ? `${rows} × ${name(source.colVar)}` : rows;
+  const base = source.colVar ? `${rows} × ${name(source.colVar)}` : rows;
+
+  // DESIGN-CONV-K2: persistent filter / weight / view tokens for inactive slides.
+  // Active slide may pass live tableConfig for rows×cols; other fields always come from the slide.
+  const tokens: string[] = [base];
+  const filterCount = slide.analysisState.filters.length;
+  if (filterCount > 0) {
+    tokens.push(filterCount === 1 ? '1 filter' : `${filterCount} filters`);
+  }
+  if (slide.analysisState.weightVar) {
+    tokens.push(`wt ${name(slide.analysisState.weightVar)}`);
+  }
+  tokens.push(slide.visualizationType === 'chart' ? 'chart' : 'table');
+  return tokens.join(' · ');
 }
 
 interface SlideRowProps {

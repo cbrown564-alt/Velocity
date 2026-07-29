@@ -1,5 +1,6 @@
 import { ChartType } from './charts';
 import { Variable, Filter } from './index';
+import type { AnalysisSettings } from './analysis';
 
 export type LayoutMode = 'focus' | 'grid' | 'comparison' | 'freeform';
 
@@ -50,6 +51,12 @@ export interface Slide {
 
   // Analysis state (the "saved view")
   analysisState: SlideAnalysisState;
+
+  /**
+   * Per-slide significance / display settings (DESIGN-CONV-K2).
+   * Optional for back-compat with older sessions; missing means inherit live globals on activate.
+   */
+  analysisSettings?: AnalysisSettings;
 
   // Visualization
   /** Whether to show table or chart */
