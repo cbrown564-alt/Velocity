@@ -21,6 +21,7 @@ Navigation hub for live documentation. **Agent rules: [`AGENTS.md`](../AGENTS.md
 | Why and sequencing | `roadmap_00_strategic_guide.md` |
 | Scope gates | `blue_02_feature_matrix.md` |
 | Local setup | `dev_01_contributing.md` |
+| **New collaborator onboarding** | **`collaborator_onboarding.md`** + **[`collaborator_onboarding.html`](collaborator_onboarding.html)** — project overview, architecture explorer, inspectable evidence |
 | MCP / agent workflow | `guide_agent_quickstart.md` + `AGENTS.md` |
 | Eval scoring & gaps | `eval_framework.md` + `evals/README.md` |
 
