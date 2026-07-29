@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useDraggable } from '@dnd-kit/core';
 import { useFocusTrap } from '../../hooks/useFocusTrap';
-import { Search, LayoutGrid, Maximize2, RotateCcw, FileDown, Home, Keyboard, Filter, ChevronRight } from 'lucide-react';
+import { Search, LayoutGrid, RotateCcw, FileDown, Home, Keyboard, Filter, ChevronRight } from 'lucide-react';
 import { useVelocityStore } from '../../store';
 import { invokeReturnToWorkspace } from '../../lib/navigationActions';
 import { pushModalShortcutContext } from '../../lib/keyboardShortcuts/registry';
@@ -129,7 +129,6 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ withinDnd = fals
   const commandPaletteInsertTarget = useVelocityStore((state) => state.commandPaletteInsertTarget);
   const closeCommandPalette = useVelocityStore((state) => state.closeCommandPalette);
   const toggleAppMode = useVelocityStore((state) => state.toggleAppMode);
-  const toggleFocusMode = useVelocityStore((state) => state.toggleFocusMode);
   const reset = useVelocityStore((state) => state.reset);
   const addToast = useVelocityStore((state) => state.addToast);
   const openShortcuts = useVelocityStore((state) => state.openShortcuts);
@@ -216,16 +215,6 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ withinDnd = fals
         },
       },
       {
-        id: 'toggle-focus',
-        label: 'Toggle Focus Mode',
-        shortcut: 'F',
-        icon: <Maximize2 size={16} />,
-        action: () => {
-          toggleFocusMode();
-          closeCommandPalette();
-        },
-      },
-      {
         id: 'open-filters',
         label: 'Open Filters',
         icon: <Filter size={16} />,
@@ -281,7 +270,6 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ withinDnd = fals
     ],
     [
       toggleAppMode,
-      toggleFocusMode,
       reset,
       closeCommandPalette,
       addToast,

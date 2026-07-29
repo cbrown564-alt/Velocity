@@ -9,7 +9,6 @@ beforeEach(() => {
     commandPaletteInsertTarget: null,
     closeCommandPalette: vi.fn(() => useVelocityStore.setState({ commandPaletteOpen: false })),
     toggleAppMode: vi.fn(),
-    toggleFocusMode: vi.fn(),
     reset: vi.fn(),
     addToast: vi.fn(),
     openShortcuts: vi.fn(),
@@ -173,24 +172,15 @@ describe('CommandPalette (insert palette)', () => {
   it('shows commands behind the > prefix', () => {
     render(<CommandPalette />);
     fireEvent.change(screen.getByPlaceholderText('Find a variable…'), { target: { value: '>' } });
-    expect(screen.getByText('Toggle Focus Mode')).toBeInTheDocument();
     expect(screen.getByText('Reset Analysis')).toBeInTheDocument();
+    expect(screen.getByText('Open Filters')).toBeInTheDocument();
   });
 
   it('filters commands by query after the prefix', () => {
     render(<CommandPalette />);
-    fireEvent.change(screen.getByPlaceholderText('Find a variable…'), { target: { value: '>focus' } });
-    expect(screen.getByText('Toggle Focus Mode')).toBeInTheDocument();
-    expect(screen.queryByText('Reset Analysis')).not.toBeInTheDocument();
-  });
-
-  it('executes a command on click', () => {
-    const toggleFocus = vi.fn();
-    useVelocityStore.setState({ toggleFocusMode: toggleFocus });
-    render(<CommandPalette />);
-    fireEvent.change(screen.getByPlaceholderText('Find a variable…'), { target: { value: '>focus' } });
-    fireEvent.click(screen.getByText('Toggle Focus Mode'));
-    expect(toggleFocus).toHaveBeenCalled();
+    fireEvent.change(screen.getByPlaceholderText('Find a variable…'), { target: { value: '>reset' } });
+    expect(screen.getByText('Reset Analysis')).toBeInTheDocument();
+    expect(screen.queryByText('Open Filters')).not.toBeInTheDocument();
   });
 
   it('opens filter modal from command list', () => {

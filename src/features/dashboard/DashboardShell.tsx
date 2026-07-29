@@ -50,10 +50,6 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
   const isQuerying = useVelocityStore((state) => state.isQuerying);
   const slides = useVelocityStore((state) => state.slides);
   const activeSlideId = useVelocityStore((state) => state.activeSlideId);
-  const focusMode = useVelocityStore((state) => state.focusMode);
-  const toggleFocusMode = useVelocityStore((state) => state.toggleFocusMode);
-  const tableDensity = useVelocityStore((state) => state.tableDensity);
-  const setTableDensity = useVelocityStore((state) => state.setTableDensity);
   const reset = useVelocityStore((state) => state.reset);
   const transformLog = useVelocityStore((state) => state.transformLog);
   const lastSeenTransformCount = useVelocityStore((state) => state.lastSeenTransformCount);
@@ -92,28 +88,6 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
     handleWeightRemove,
   } = useDashboardDnD();
 
-  const prevDensityRef = React.useRef<'compact' | 'generous'>('compact');
-  const wasFocusedRef = React.useRef(focusMode);
-  const tableDensityRef = React.useRef(tableDensity);
-
-  React.useEffect(() => {
-    tableDensityRef.current = tableDensity;
-  }, [tableDensity]);
-
-  React.useEffect(() => {
-    const wasFocused = wasFocusedRef.current;
-    const isFocused = focusMode;
-
-    if (!wasFocused && isFocused) {
-      prevDensityRef.current = tableDensityRef.current;
-      setTableDensity('generous');
-    } else if (wasFocused && !isFocused) {
-      setTableDensity(prevDensityRef.current);
-    }
-
-    wasFocusedRef.current = isFocused;
-  }, [focusMode, setTableDensity]);
-
   return (
     <AppShell>
       <DndContext
@@ -138,7 +112,6 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
               dataset={dataset}
               activeSlideId={activeSlideId}
               activeSlide={activeSlide}
-              focusMode={focusMode}
               canOpenExport={canOpenExport}
               recipeOpen={recipeOpen}
               onToggleRecipe={() => setRecipeOpen((open) => !open)}
@@ -146,14 +119,11 @@ export const DashboardShell: React.FC<DashboardShellProps> = ({
               onOpenSessionImport={onOpenSessionImport}
               onExportSession={onExportSession}
               onExport={handleExport}
-              onToggleFocusMode={toggleFocusMode}
               onReset={reset}
             />
 
             <div className="flex-1 flex min-h-0 min-w-0 overflow-hidden" data-testid="dashboard-workspace">
-              <SmartCanvas
-                className={`flex-1 min-h-0 min-w-0 overflow-hidden flex flex-col ${focusMode ? 'p-2' : 'p-4'}`}
-              >
+              <SmartCanvas className="flex-1 min-h-0 min-w-0 overflow-hidden flex flex-col p-4">
                 <div className="flex-1 w-full min-h-0 flex flex-col">
                   <div className="flex-1 relative min-h-0 flex flex-col">
                     {isQuerying && (

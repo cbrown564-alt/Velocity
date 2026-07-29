@@ -34,7 +34,6 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
   const isQuerying = useVelocityStore((state) => state.isQuerying);
   const openDrillDown = useVelocityStore((state) => state.openDrillDown);
   const tableDensity = useVelocityStore((state) => state.tableDensity);
-  const focusMode = useVelocityStore((state) => state.focusMode);
   const analysisSettings = useVelocityStore((state) => state.analysisSettings);
 
   const totalCount = useMemo(() => {
@@ -134,12 +133,7 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
           enableVisualETL: true,
         };
         return (
-          <AnalysisOutputFrame
-            bodyPadding="chart"
-            density={tableDensity}
-            bleed={focusMode}
-            frameClassName="shrink-wrap"
-          >
+          <AnalysisOutputFrame bodyPadding="chart" density={tableDensity} frameClassName="shrink-wrap">
             <AnalysisChart
               data={chartData}
               config={config}
@@ -164,7 +158,6 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
             variableStats={variableStats}
             isMultipleResponse={isMultipleResponse}
             density={tableDensity}
-            frameBleed={focusMode}
             onCellClick={(rowPath, colValue) => void openDrillDown(rowPath, colValue)}
           />
         );
@@ -175,7 +168,7 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
 
   return (
     <div
-      className={`flex-1 flex flex-col min-h-0 h-full bg-glass-app ${focusMode && shrinkWrapSlide ? 'justify-center' : ''} ${className}`}
+      className={`flex-1 flex flex-col min-h-0 h-full bg-glass-app ${className}`}
       aria-busy={isQuerying}
       aria-live="polite"
     >
@@ -189,12 +182,12 @@ export const SlideContainer: React.FC<SlideContainerProps> = ({ className = '' }
           shrinkWrapSlide ? 'flex-none self-start' : 'flex-1 self-stretch'
         }`}
       >
-        <div className={`flex-shrink-0 ${focusMode ? 'px-4 pt-4' : 'px-6 pt-5'}`}>
-          <SlideHeader className={focusMode ? 'compact' : ''} />
+        <div className={`flex-shrink-0 px-6 pt-5`}>
+          <SlideHeader />
         </div>
 
         <div
-          className={`${shrinkWrapSlide ? 'flex-none' : 'flex-1'} min-h-0 flex flex-col overflow-x-auto overflow-y-auto ${focusMode ? 'px-0 pb-2' : 'px-6 pb-6'}`}
+          className={`${shrinkWrapSlide ? 'flex-none' : 'flex-1'} min-h-0 flex flex-col overflow-x-auto overflow-y-auto px-6 pb-6`}
           data-testid="slide-content-region"
         >
           <AnalysisErrorBoundary

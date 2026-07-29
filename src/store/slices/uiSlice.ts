@@ -89,8 +89,6 @@ export interface UISlice {
   lastSelectedId: string | null;
   /** Active folder filter in Variable Manager (null = all) */
   activeFolderId: string | null;
-  /** Focus mode hides chrome for immersive analysis */
-  focusMode: boolean;
   /** Table density: compact for exploration, generous for presentation */
   tableDensity: 'compact' | 'generous';
   /** Toast notification queue */
@@ -158,10 +156,6 @@ export interface UISlice {
   showWaveDetectionBanner: (state: Omit<WaveDetectionBannerState, 'isVisible'>) => void;
   dismissWaveDetectionBanner: () => void;
 
-  // Focus Mode
-  setFocusMode: (enabled: boolean) => void;
-  toggleFocusMode: () => void;
-
   // Table Density
   setTableDensity: (density: 'compact' | 'generous') => void;
   toggleTableDensity: () => void;
@@ -210,7 +204,6 @@ export const createUISlice: StateCreator<UISlice, [], [], UISlice> = (set) => ({
   selectedVariableSetIds: [],
   lastSelectedId: null,
   activeFolderId: null,
-  focusMode: false,
   tableDensity: 'compact',
   toasts: [],
   commandPaletteOpen: false,
@@ -356,10 +349,6 @@ export const createUISlice: StateCreator<UISlice, [], [], UISlice> = (set) => ({
     set({
       waveDetectionBanner: { ...DEFAULT_WAVE_BANNER },
     }),
-
-  // Focus Mode Actions
-  setFocusMode: (enabled) => set({ focusMode: enabled }),
-  toggleFocusMode: () => set((state) => ({ focusMode: !state.focusMode })),
 
   // Table Density Actions
   setTableDensity: (density) => set({ tableDensity: density }),

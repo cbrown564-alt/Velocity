@@ -158,7 +158,7 @@ Completed Phase 1-4, stabilization, engine/MCP, export, parity, and historical f
 #### Recommended Next Pull
 
 1. ~~`DESIGN-CONV-R0`~~: complete — [`R0_RECONCILIATION.md`](cursor-capacity-sprint/R0_RECONCILIATION.md).
-2. `DESIGN-CONV-K1`, `K2`, `K3`, `B`, and `Q5`: close correctness and journey gaps on the R0 sequence.
+2. `DESIGN-CONV-K1`, `K2`, `K3`, and `B`: close remaining Wave 1 correctness and export gaps (`Q5` Done).
 3. `DESIGN-CONV-A`: capture final evidence and run unscripted representative sessions.
 4. `PILOT-4a`: continue non-product processing-gap discovery where it does not depend on recruiting.
 5. `PILOT-6`: start recruiting only after `DESIGN-CONV-A` passes.
@@ -229,7 +229,7 @@ These rows remain directionally valid, but should not become active until `PILOT
 **Decision date:** July 4, 2026 — product owner review of post-reset evidence pack.  
 **Goal:** Finish Sarah's five-minute journey (file drop -> three faithful slides -> reviewed PPTX) on the current product line without re-litigating Pathway B. Candidate branches are evidence of implementation work, not proof that the product contains or passes it.
 
-**Current finding (July 29):** `DESIGN-CONV-R0` reconciliation is complete — see [`docs/cursor-capacity-sprint/R0_RECONCILIATION.md`](cursor-capacity-sprint/R0_RECONCILIATION.md). Paths B–I and Q5 remain **Candidate** (not Done): most merge conflicts are tracker/docs drift; real code conflicts are H (journey script), I (`App`/`AppModeRouter` wiring), and E (session/splash). F is rejected for this sprint; E is deferred until after the core journey. Current `main` still lacks the export preview lane, slide-specific saved analysis fidelity (K2), unified palette grammar (K1), focus-mode retirement (Q5), and the Wave 2 chrome/discovery candidates. Hidden-but-focusable inspector controls, contrast, slide-title typography, and fixed-width risks remain under K3.
+**Current finding (July 29):** `DESIGN-CONV-R0` reconciliation is complete — see [`docs/cursor-capacity-sprint/R0_RECONCILIATION.md`](cursor-capacity-sprint/R0_RECONCILIATION.md). `DESIGN-CONV-Q5` focus-mode retirement is Done on the R0 baseline. Paths B–I remain **Candidate** (not Done): most merge conflicts are tracker/docs drift; real code conflicts are H (journey script), I (`App`/`AppModeRouter` wiring), and E (session/splash). F is rejected for this sprint; E is deferred until after the core journey. Current `main` still lacks the export preview lane, slide-specific saved analysis fidelity (K2), unified palette grammar (K1), and the Wave 2 chrome/discovery candidates. Hidden-but-focusable inspector controls, contrast, slide-title typography, and fixed-width risks remain under K3.
 
 #### Convergence decisions (Q1–Q7)
 
@@ -261,7 +261,7 @@ These rows remain directionally valid, but should not become active until `PILOT
 | DESIGN-CONV-H | H | Continuity | After upload, land on slide 1 with the insertion path ready | DESIGN-CONV-R0, DESIGN-CONV-K1 | Candidate | Yes | T,L,U,I,V | R0: retain via partial transplant from #58; rework five-minute script conflict; after K1 + Q5 |
 | DESIGN-CONV-I | I | Agent | Quiet imported-session summary: slides added, unresolved variables, recipe changes | DESIGN-CONV-R0, DESIGN-CONV-K2 | Candidate | Yes | T,L,U,I,A | R0: retain via partial transplant from #56; App/AppModeRouter wiring conflicts; after K2 + G |
 | DESIGN-CONV-J | J | Hold | Dark mode as token inversion of evolved Soft Machine | DESIGN-CONV-B, DESIGN-CONV-H, PILOT-7 or pilot request | Frozen | Yes | T,L,U,I | Pilot blocker evidence only |
-| DESIGN-CONV-Q5 | — | Retire | Remove focus mode; default canvas is the presentation surface | DESIGN-CONV-R0 | Candidate | Yes | T,L,U,I | R0: retain via partial transplant from #50; docs-only conflict; Wave 1 before C/D/H (shared shell/palette/uiSlice) |
+| DESIGN-CONV-Q5 | — | Retire | Remove focus mode (`F` shortcut, toolbar toggle, focus chrome rules); default canvas is the presentation surface | DESIGN-CONV-R0 | Done | Yes | T,L,U,I | Transplant from #50 onto R0 baseline: focus store/API + F/toolbar/palette removed; focus unit tests deleted; screenshot/eval scripts cleaned; `design_02_ux_modes.md` updated |
 | DESIGN-CONV-Q6 | — | Audit | Review recipe legibility for human and MCP additive refinement | DESIGN-RESET-1 | Done | No | A | [`docs/design_reset_recipe_legibility_audit.md`](design_reset_recipe_legibility_audit.md) identifies missing persistent analysis summaries and recipe structure; remediation is tracked in K2 and I |
 
 #### Wave plan (multi-agent orchestration)
@@ -269,7 +269,7 @@ These rows remain directionally valid, but should not become active until `PILOT
 | Wave | Items | Rationale |
 | :--- | :--- | :--- |
 | **0** | ~~`DESIGN-CONV-R0`~~ Done | Integration baseline recorded in `R0_RECONCILIATION.md` |
-| **1** | `DESIGN-CONV-K1`, `K2`, `K3`, `B`, `Q5` | Close correctness, export, and final-chrome blockers first (R0 safer order: Q5 → K1 → K2 → B → K3) |
+| **1** | `DESIGN-CONV-K1`, `K2`, `K3`, `B` (~~`Q5`~~ Done) | Close correctness, export, and remaining chrome blockers (R0 safer order: K1 → K2 → B → K3) |
 | **2** | `DESIGN-CONV-C`, `D`, `G`, `H`, `I` | Reconcile approved discovery, continuity, rail, and handoff candidates against the settled contracts (R0 order: D → C → H → G → I) |
 | **3** | `DESIGN-CONV-A` | Photograph and test only the final candidate; rerun after any session-driven correction |
 | **Later** | `DESIGN-CONV-E`, `F` | Non-blocking additions after the core journey passes |
@@ -285,7 +285,7 @@ These rows remain directionally valid, but should not become active until `PILOT
 #### DESIGN-CONV recommended pull
 
 1. ~~`DESIGN-CONV-R0`~~ — Done (`R0_RECONCILIATION.md`).
-2. `DESIGN-CONV-Q5`, `K1`, `K2`, `B`, `K3` — Wave 1 per R0 safer serial order (B may parallel Q5/K2).
+2. ~~`DESIGN-CONV-Q5`~~ — Done; next `K1`, `K2`, `B`, `K3`.
 3. `DESIGN-CONV-D`, `C`, `H`, `G`, `I` — Wave 2 in R0 overlap-safe order.
 4. `DESIGN-CONV-A` — fresh photography and representative validation on the final candidate only.
 
