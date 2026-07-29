@@ -7,6 +7,7 @@ Navigation hub for live documentation. **Agent rules: [`AGENTS.md`](../AGENTS.md
 | Need | Read |
 | :--- | :--- |
 | What to work on | `tracker_00_implementation_status.md` (active redesign-convergence board, pilot gate, stabilization, gated work) |
+| Cursor capacity sprint | `cursor-capacity-sprint/PLAN.md` + `cursor-capacity-sprint/R0_RECONCILIATION.md` (execution aid; tracker remains canonical status) |
 | **Engine boot / CI truth incident** | **`audit_10_engine_boot_ci_truth_rca_2026-07-14.md`** — closed July 15, 2026; canonical root cause, protected-promotion, and ten-pair soak evidence |
 | **Historical pilot UI presentation gate** | **`audit_07_pilot_presentation_readiness_2026-07-01.md`** — pre-reset baseline and PPR fix evidence; not final redesign photography |
 | **User journey screenshots** | **`user_journey_screenshots.md`** — current reset-era journey, evidence screenshots, and known gaps |

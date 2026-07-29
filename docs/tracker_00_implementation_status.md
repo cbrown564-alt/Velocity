@@ -157,8 +157,8 @@ Completed Phase 1-4, stabilization, engine/MCP, export, parity, and historical f
 
 #### Recommended Next Pull
 
-1. `DESIGN-CONV-R0`: reconcile approved candidate branches against current `main` and decide the final integration order.
-2. `DESIGN-CONV-K1`, `K2`, `K3`, `B`, and the approved chrome/discovery candidates: close correctness and journey gaps.
+1. ~~`DESIGN-CONV-R0`~~: complete — [`R0_RECONCILIATION.md`](cursor-capacity-sprint/R0_RECONCILIATION.md).
+2. `DESIGN-CONV-K1`, `K2`, `K3`, `B`, and `Q5`: close correctness and journey gaps on the R0 sequence.
 3. `DESIGN-CONV-A`: capture final evidence and run unscripted representative sessions.
 4. `PILOT-4a`: continue non-product processing-gap discovery where it does not depend on recruiting.
 5. `PILOT-6`: start recruiting only after `DESIGN-CONV-A` passes.
@@ -229,7 +229,7 @@ These rows remain directionally valid, but should not become active until `PILOT
 **Decision date:** July 4, 2026 — product owner review of post-reset evidence pack.  
 **Goal:** Finish Sarah's five-minute journey (file drop -> three faithful slides -> reviewed PPTX) on the current product line without re-litigating Pathway B. Candidate branches are evidence of implementation work, not proof that the product contains or passes it.
 
-**Current finding (July 14):** paths B–I and Q5 have candidate implementations outside current `main`; nine of ten candidate merges have textual conflicts with the current line. Current code still has direct-download export, global analysis state leaking across saved slides, mismatched palette instructions, focus-mode chrome, hidden-but-focusable inspector controls, low-contrast text uses, a slide-title font mismatch, and fixed-width layout risks. The recipe legibility audit is complete and found P0/P1 gaps.
+**Current finding (July 29):** `DESIGN-CONV-R0` reconciliation is complete — see [`docs/cursor-capacity-sprint/R0_RECONCILIATION.md`](cursor-capacity-sprint/R0_RECONCILIATION.md). Paths B–I and Q5 remain **Candidate** (not Done): most merge conflicts are tracker/docs drift; real code conflicts are H (journey script), I (`App`/`AppModeRouter` wiring), and E (session/splash). F is rejected for this sprint; E is deferred until after the core journey. Current `main` still lacks the export preview lane, slide-specific saved analysis fidelity (K2), unified palette grammar (K1), focus-mode retirement (Q5), and the Wave 2 chrome/discovery candidates. Hidden-but-focusable inspector controls, contrast, slide-title typography, and fixed-width risks remain under K3.
 
 #### Convergence decisions (Q1–Q7)
 
@@ -247,30 +247,30 @@ These rows remain directionally valid, but should not become active until `PILOT
 
 | ID | Path | Stream | Outcome | Depends on | Status | Contract change | Gates | Evidence / validation |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| DESIGN-CONV-R0 | — | Integrate | Inventory and reconcile all approved convergence candidates against current `main`; resolve conflicts and preserve backend-reset contracts | DESIGN-RESET-1 | Not started | No | T,L,U,I,A | Candidate/commit inventory, chosen integration order, clean merge or intentional reimplementation for every retained path; no candidate status silently promoted to Done |
+| DESIGN-CONV-R0 | — | Integrate | Inventory and reconcile all approved convergence candidates against current `main`; resolve conflicts and preserve backend-reset contracts | DESIGN-RESET-1 | Done | No | T,L,U,I,A | [`R0_RECONCILIATION.md`](cursor-capacity-sprint/R0_RECONCILIATION.md) on `main` baseline `3ba5964`: inventory, docs-vs-code conflict matrix, retain/defer/reject dispositions, overlap-aware Wave 1→2 sequence; no candidate silently promoted to Done |
 | DESIGN-CONV-K1 | — | Correctness | Choose one palette grammar and align UI copy, help, tests, five-minute script, and recipe assertions | DESIGN-CONV-R0 | Not started | Yes | T,L,U,I | One rows/columns contract; automation asserts the resulting recipe instead of timing clicks alone |
 | DESIGN-CONV-K2 | — | Correctness | Restore each slide's saved weight and analysis settings; expose persistent filter/weight/view summaries needed for recipe legibility | DESIGN-CONV-R0, DESIGN-CONV-Q6 | Not started | Yes | T,L,U,I,A | Slide switching and session round-trip tests; no global state leakage; rail/inspector show the state required to reproduce the slide |
 | DESIGN-CONV-K3 | — | Quality | Fix overflow-menu hit testing, make closed inspector content inert or unmounted, close contrast violations, align slide-title typography, and verify supported widths | DESIGN-CONV-R0 | Not started | Yes | T,L,U,I | Normal pointer interactions without force-click; keyboard/focus audit; token/contrast evidence; responsive screenshots at agreed widths |
 | DESIGN-CONV-A | A | Validate | Fresh final photography; reproducible journey automation; 3–5 unscripted sessions scored for time, discovery, errors, and recovery | DESIGN-CONV-B, C, D, G, H, I, Q5, K1, K2, K3 | Blocked | No | I,V | New evidence pack from current `main`; documented browser setup; no forced interactions; observed sessions on the final candidate, not an intermediate branch |
-| DESIGN-CONV-B | B | Journey | Export preview lane: export-bound thumbnails, recipe summary, significance audit, then PPTX download | DESIGN-CONV-R0 | Candidate | Yes | T,L,U,I,V | Candidate exists off-line; reconcile after backend reset, then prove preview is required before download in E2E and agent-handoff flows |
-| DESIGN-CONV-C | C | Discovery | Thin collapsible recent-and-pinned variable strip, not a full sidebar | DESIGN-CONV-R0 | Candidate | Yes | T,L,U,I,V | Reconcile candidate; retain only if representative sessions show it improves drag-first discovery without crowding the canvas |
-| DESIGN-CONV-D | D | Keyboard | First-palette inline ghost that teaches the canonical row/column grammar and dismisses permanently | DESIGN-CONV-R0, DESIGN-CONV-K1 | Candidate | Yes | T,L,U,I | Reconcile after K1 settles the grammar; no coaching on reopen |
-| DESIGN-CONV-E | E | Story | Start from a three-slide tracker template | DESIGN-CONV-B, PILOT-DEMO-3, DESIGN-CONV-A | Candidate | Yes | T,L,U,I,V | Non-blocking expansion; do not place on the pilot critical path before the core journey passes |
-| DESIGN-CONV-F | F | Natural language | Palette row/column binding from a short phrase | DESIGN-CONV-D, DESIGN-CONV-A | Candidate | Yes | T,L,U,I,A,V | Non-blocking expansion; require inspectability and observed demand before promotion |
-| DESIGN-CONV-G | G | Polish | Story rail collapses below 48px for small decks and expands predictably | DESIGN-CONV-R0 | Candidate | Yes | T,L,U,I | Reconcile candidate; screenshots and keyboard behavior at one and five slides |
-| DESIGN-CONV-H | H | Continuity | After upload, land on slide 1 with the insertion path ready | DESIGN-CONV-R0, DESIGN-CONV-K1 | Candidate | Yes | T,L,U,I,V | Reconcile candidate; five-minute automation asserts the resulting analysis state |
-| DESIGN-CONV-I | I | Agent | Quiet imported-session summary: slides added, unresolved variables, recipe changes | DESIGN-CONV-R0, DESIGN-CONV-K2 | Candidate | Yes | T,L,U,I,A | Reconcile candidate against the completed Q6 audit and MCP handoff criteria |
+| DESIGN-CONV-B | B | Journey | Export preview lane: export-bound thumbnails, recipe summary, significance audit, then PPTX download | DESIGN-CONV-R0 | Candidate | Yes | T,L,U,I,V | R0: retain via partial transplant from PR #55 (`74338bb`); docs-only merge conflict; prove preview required before download in E2E after land |
+| DESIGN-CONV-C | C | Discovery | Thin collapsible recent-and-pinned variable strip, not a full sidebar | DESIGN-CONV-R0 | Candidate | Yes | T,L,U,I,V | R0: retain; docs-only conflict on #54; land after Q5; keep Candidate until DESIGN-CONV-A shows discovery value |
+| DESIGN-CONV-D | D | Keyboard | First-palette inline ghost that teaches the canonical row/column grammar and dismisses permanently | DESIGN-CONV-R0, DESIGN-CONV-K1 | Candidate | Yes | T,L,U,I | R0: retain from #52 after K1 settles grammar; docs-only conflict; no coaching on reopen |
+| DESIGN-CONV-E | E | Story | Start from a three-slide tracker template | DESIGN-CONV-B, PILOT-DEMO-3, DESIGN-CONV-A | Candidate | Yes | T,L,U,I,V | R0: defer / reimplement later; code conflicts in session/splash; not on pilot critical path before core journey |
+| DESIGN-CONV-F | F | Natural language | Palette row/column binding from a short phrase | DESIGN-CONV-D, DESIGN-CONV-A | Frozen | Yes | T,L,U,I,A,V | R0: reject for Cursor capacity sprint (explicit non-goal); reopen only after DESIGN-CONV-A demand |
+| DESIGN-CONV-G | G | Polish | Story rail collapses below 48px for small decks and expands predictably | DESIGN-CONV-R0 | Candidate | Yes | T,L,U,I | R0: retain from #49; docs-only conflict; land before I (shared StoryRail) |
+| DESIGN-CONV-H | H | Continuity | After upload, land on slide 1 with the insertion path ready | DESIGN-CONV-R0, DESIGN-CONV-K1 | Candidate | Yes | T,L,U,I,V | R0: retain via partial transplant from #58; rework five-minute script conflict; after K1 + Q5 |
+| DESIGN-CONV-I | I | Agent | Quiet imported-session summary: slides added, unresolved variables, recipe changes | DESIGN-CONV-R0, DESIGN-CONV-K2 | Candidate | Yes | T,L,U,I,A | R0: retain via partial transplant from #56; App/AppModeRouter wiring conflicts; after K2 + G |
 | DESIGN-CONV-J | J | Hold | Dark mode as token inversion of evolved Soft Machine | DESIGN-CONV-B, DESIGN-CONV-H, PILOT-7 or pilot request | Frozen | Yes | T,L,U,I | Pilot blocker evidence only |
-| DESIGN-CONV-Q5 | — | Retire | Remove focus mode; default canvas is the presentation surface | DESIGN-CONV-R0 | Candidate | Yes | T,L,U,I | Reconcile candidate; remove shortcut, toggle, chrome rules, and obsolete tests |
+| DESIGN-CONV-Q5 | — | Retire | Remove focus mode; default canvas is the presentation surface | DESIGN-CONV-R0 | Candidate | Yes | T,L,U,I | R0: retain via partial transplant from #50; docs-only conflict; Wave 1 before C/D/H (shared shell/palette/uiSlice) |
 | DESIGN-CONV-Q6 | — | Audit | Review recipe legibility for human and MCP additive refinement | DESIGN-RESET-1 | Done | No | A | [`docs/design_reset_recipe_legibility_audit.md`](design_reset_recipe_legibility_audit.md) identifies missing persistent analysis summaries and recipe structure; remediation is tracked in K2 and I |
 
 #### Wave plan (multi-agent orchestration)
 
 | Wave | Items | Rationale |
 | :--- | :--- | :--- |
-| **0** | `DESIGN-CONV-R0` | Single integration baseline before parallel work; candidate branches conflict with the current line |
-| **1** | `DESIGN-CONV-K1`, `K2`, `K3`, `B`, `Q5` | Close correctness, export, and final-chrome blockers first |
-| **2** | `DESIGN-CONV-C`, `D`, `G`, `H`, `I` | Reconcile approved discovery, continuity, rail, and handoff candidates against the settled contracts |
+| **0** | ~~`DESIGN-CONV-R0`~~ Done | Integration baseline recorded in `R0_RECONCILIATION.md` |
+| **1** | `DESIGN-CONV-K1`, `K2`, `K3`, `B`, `Q5` | Close correctness, export, and final-chrome blockers first (R0 safer order: Q5 → K1 → K2 → B → K3) |
+| **2** | `DESIGN-CONV-C`, `D`, `G`, `H`, `I` | Reconcile approved discovery, continuity, rail, and handoff candidates against the settled contracts (R0 order: D → C → H → G → I) |
 | **3** | `DESIGN-CONV-A` | Photograph and test only the final candidate; rerun after any session-driven correction |
 | **Later** | `DESIGN-CONV-E`, `F` | Non-blocking additions after the core journey passes |
 | **Hold** | `DESIGN-CONV-J` | Dark mode — after journey polish or explicit pilot blocker |
@@ -284,10 +284,10 @@ These rows remain directionally valid, but should not become active until `PILOT
 
 #### DESIGN-CONV recommended pull
 
-1. `DESIGN-CONV-R0` — reconcile candidates against current `main`.
-2. `DESIGN-CONV-K1`, `K2`, `K3`, `B`, `Q5` — correctness, review lane, and final chrome.
-3. `DESIGN-CONV-C`, `D`, `G`, `H`, `I` — retained convergence candidates.
-4. `DESIGN-CONV-A` — fresh photography and representative validation.
+1. ~~`DESIGN-CONV-R0`~~ — Done (`R0_RECONCILIATION.md`).
+2. `DESIGN-CONV-Q5`, `K1`, `K2`, `B`, `K3` — Wave 1 per R0 safer serial order (B may parallel Q5/K2).
+3. `DESIGN-CONV-D`, `C`, `H`, `G`, `I` — Wave 2 in R0 overlap-safe order.
+4. `DESIGN-CONV-A` — fresh photography and representative validation on the final candidate only.
 
 ### 4.4 Technical UI Foundation (`STAB-UI-T`)
 
