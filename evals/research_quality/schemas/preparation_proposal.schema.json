@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://velocity.local/schemas/preparation-proposal.json",
+  "title": "Velocity Survey Preparation Proposal",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["projectId", "wave", "variableMappings", "weight", "missingness", "routing", "transformations"],
+  "properties": {
+    "projectId": { "type": "string" },
+    "wave": { "type": ["string", "integer"] },
+    "variableMappings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["sourceVariable", "canonicalVariable", "confidence", "evidence"],
+        "properties": {
+          "sourceVariable": { "type": "string" },
+          "canonicalVariable": { "type": "string" },
+          "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+          "evidence": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+          "requiresReview": { "type": "boolean" }
+        }
+      }
+    },
+    "weight": {
+      "type": "object",
+      "required": ["sourceVariable", "action", "evidence"],
+      "properties": {
+        "sourceVariable": { "type": ["string", "null"] },
+        "action": { "enum": ["apply_existing", "none", "review"] },
+        "evidence": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "missingness": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["variables", "sourceRepresentation", "meaning", "canonicalRepresentation"],
+        "properties": {
+          "variables": { "type": "array", "items": { "type": "string" } },
+          "sourceRepresentation": {},
+          "meaning": { "enum": ["structural_not_asked", "dont_know", "refused", "system_missing", "other"] },
+          "canonicalRepresentation": {},
+          "evidence": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "routing": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["targetVariables", "eligibilityRule"],
+        "properties": {
+          "targetVariables": { "type": "array", "items": { "type": "string" } },
+          "eligibilityRule": { "type": "string" },
+          "evidence": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "transformations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type", "inputs", "output", "reason"],
+        "properties": {
+          "type": { "enum": ["rename", "recode", "derive", "reshape", "drop", "preserve", "review"] },
+          "inputs": { "type": "array", "items": { "type": "string" } },
+          "output": { "type": ["string", "null"] },
+          "reason": { "type": "string" },
+          "safeToExecute": { "type": "boolean" }
+        }
+      }
+    },
+    "warnings": { "type": "array", "items": { "type": "string" } }
+  }
+}
