@@ -1,0 +1,18 @@
+{
+  "projectId": "SBT-001",
+  "briefId": "BRIEF_NORTHSTAR_CX",
+  "thesis": "Northstar's Wave 4 problem is concentrated in the customer experience: advocacy and service experience deteriorate sharply even though broad awareness remains intact, making recovery among existing customers the immediate priority.",
+  "sections": [
+    {"rank":1,"role":"executive_thesis","headlineIntent":"Open on the divergence between customer experience and broad market visibility.","findingIds":["F_NORTHSTAR_NPS_DROP","F_NORTHSTAR_AWARE_RESILIENT"],"whyItMatters":"The CX director needs to distinguish a customer problem from an immediate awareness problem.","caveats":["Awareness resilience does not prove the incident has no wider future brand effect."]},
+    {"rank":2,"role":"primary_story","headlineIntent":"Quantify the Wave 4 advocacy deterioration among current Northstar customers.","findingIds":["F_NORTHSTAR_NPS_DROP"],"whyItMatters":"NPS captures the severity of the customer response in a familiar executive metric.","caveats":[]},
+    {"rank":3,"role":"support","headlineIntent":"Use satisfaction, problem incidence and reliability perceptions to show the deterioration is coherent across experience measures rather than a single noisy KPI.","findingIds":[],"whyItMatters":"Triangulation strengthens the interpretation while keeping each measure on its correct universe.","caveats":[]},
+    {"rank":4,"role":"support","headlineIntent":"Show Wave 5 recovery separately from the Wave 4 diagnosis and avoid implying full recovery unless the measures support it.","findingIds":[],"whyItMatters":"The action question is whether the problem is resolving, not merely whether Wave 4 was bad.","caveats":[]}
+  ],
+  "excludedFindings": [
+    {"findingId":"F_PULSE_WEIGHT_TRAP","reason":"not_brief_relevant","note":"Useful for category reporting, not the CX diagnosis."},
+    {"findingId":"F_HARBOUR_YOUTH_DECLINE","reason":"not_brief_relevant","note":"Outside the client question."},
+    {"findingId":"F_MOSAIC_LOWBASE_SPIKE","reason":"low_base","note":"Not suitable for reporting."}
+  ],
+  "tone":"Diagnostic, calm and action-oriented; avoid crisis language or unsupported forecasts.",
+  "targetSlideCount":7
+}
