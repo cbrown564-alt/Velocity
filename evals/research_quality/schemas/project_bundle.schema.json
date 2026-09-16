@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://velocity.local/schemas/research-quality-project-bundle.json",
+  "title": "Velocity Research Quality Project Bundle",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["projectId", "sourceType", "domain", "waves", "inputs", "licensing", "split"],
+  "properties": {
+    "projectId": { "type": "string", "minLength": 1 },
+    "title": { "type": "string" },
+    "sourceType": { "enum": ["public_real", "public_proxy", "synthetic", "licensed_private"] },
+    "domain": { "type": "string" },
+    "waves": { "type": "array", "minItems": 1, "items": { "type": ["string", "integer"] } },
+    "split": { "enum": ["development", "validation", "holdout", "external"] },
+    "difficulty": { "enum": ["basic", "intermediate", "hard", "adversarial"] },
+    "inputs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["data"],
+      "properties": {
+        "data": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+        "questionnaire": { "type": ["string", "null"] },
+        "codebook": { "type": ["string", "null"] },
+        "brief": { "type": ["string", "null"] },
+        "template": { "type": ["string", "null"] }
+      }
+    },
+    "reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "processingRecipe": { "type": ["string", "null"] },
+        "analysisPlan": { "type": ["string", "null"] },
+        "findings": { "type": ["string", "null"] },
+        "deckSpec": { "type": ["string", "null"] },
+        "deck": { "type": ["string", "null"] }
+      }
+    },
+    "hidden": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "truth": { "type": ["string", "null"] },
+        "graderConfig": { "type": ["string", "null"] }
+      }
+    },
+    "licensing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sourceUrl", "termsUrl", "evaluationAllowed", "trainingAllowed", "redistributionAllowed"],
+      "properties": {
+        "sourceUrl": { "type": "string" },
+        "termsUrl": { "type": "string" },
+        "licence": { "type": ["string", "null"] },
+        "evaluationAllowed": { "type": "boolean" },
+        "trainingAllowed": { "type": "boolean" },
+        "commercialPrototypeAllowed": { "type": ["boolean", "null"] },
+        "redistributionAllowed": { "type": "boolean" },
+        "attribution": { "type": ["string", "null"] },
+        "notes": { "type": ["string", "null"] }
+      }
+    },
+    "tags": { "type": "array", "items": { "type": "string" }, "uniqueItems": true }
+  }
+}
