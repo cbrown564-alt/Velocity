@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://velocity.local/schemas/research-quality-run-record.json",
+  "title": "Velocity Research Quality Run Record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["runId", "projectId", "system", "startedAt", "tracks", "artifacts"],
+  "properties": {
+    "runId": { "type": "string" },
+    "projectId": { "type": "string" },
+    "system": {
+      "type": "object",
+      "required": ["name", "version"],
+      "properties": {
+        "name": { "type": "string" },
+        "version": { "type": "string" },
+        "model": { "type": ["string", "null"] },
+        "promptVersion": { "type": ["string", "null"] },
+        "toolProfile": { "type": ["string", "null"] }
+      }
+    },
+    "startedAt": { "type": "string", "format": "date-time" },
+    "finishedAt": { "type": ["string", "null"], "format": "date-time" },
+    "tracks": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "status": { "enum": ["pass", "fail", "partial", "not_run"] },
+          "metrics": { "type": "object", "additionalProperties": { "type": ["number", "integer", "string", "boolean", "null"] } },
+          "hardGateFailures": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "researcherReview": {
+      "type": "object",
+      "properties": {
+        "activeMinutes": { "type": ["number", "null"], "minimum": 0 },
+        "correctionCount": { "type": ["integer", "null"], "minimum": 0 },
+        "majorCorrectionCount": { "type": ["integer", "null"], "minimum": 0 },
+        "accepted": { "type": ["boolean", "null"] },
+        "notes": { "type": ["string", "null"] }
+      }
+    },
+    "cost": {
+      "type": "object",
+      "properties": {
+        "latencySeconds": { "type": ["number", "null"], "minimum": 0 },
+        "estimatedUsd": { "type": ["number", "null"], "minimum": 0 }
+      }
+    },
+    "artifacts": {
+      "type": "object",
+      "additionalProperties": { "type": "string" }
+    }
+  }
+}
