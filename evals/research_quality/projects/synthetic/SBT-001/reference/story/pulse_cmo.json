@@ -1,0 +1,18 @@
+{
+  "projectId": "SBT-001",
+  "briefId": "BRIEF_PULSE_CMO",
+  "thesis": "Pulse has built credible upper-funnel momentum in the campaign period, with the strongest signal among younger consumers, but the tracker does not yet justify claiming equivalent behavioural conversion or campaign causality.",
+  "sections": [
+    {"rank":1,"role":"executive_thesis","headlineIntent":"Frame the result as credible momentum with explicit limits, not a campaign victory lap.","findingIds":["F_PULSE_CONSID_UP","F_PULSE_WEIGHT_TRAP"],"whyItMatters":"The CMO needs to know whether competitive position moved and how confidently to talk about it.","caveats":["Use weighted estimates.","Observed change is not causal proof."]},
+    {"rank":2,"role":"primary_story","headlineIntent":"Show the consideration improvement as the central competitive outcome, with younger consumers as an important explanatory cut where supported.","findingIds":["F_PULSE_CONSID_UP"],"whyItMatters":"Consideration is closer to competitive intent than awareness alone.","caveats":[]},
+    {"rank":3,"role":"support","headlineIntent":"Use campaign recognition and innovation imagery as supporting evidence that communications landed with the intended audience.","findingIds":[],"whyItMatters":"These measures help explain the pattern without being presented as proof of causation.","caveats":["Supporting analysis results may be used even when not promoted to standalone gold findings in Turn 4."]},
+    {"rank":4,"role":"context","headlineIntent":"Keep current usage/preference in view to show that upper-funnel momentum should not be confused with completed behavioural conversion.","findingIds":[],"whyItMatters":"Prevents an over-optimistic campaign narrative.","caveats":[]}
+  ],
+  "excludedFindings": [
+    {"findingId":"F_NORTHSTAR_NPS_DROP","reason":"not_brief_relevant","note":"Important category context but not central to the Pulse campaign evaluation."},
+    {"findingId":"F_HARBOUR_YOUTH_DECLINE","reason":"not_brief_relevant","note":"Strategically interesting but distracts from the campaign question."},
+    {"findingId":"F_MOSAIC_LOWBASE_SPIKE","reason":"low_base","note":"Not suitable for reporting."}
+  ],
+  "tone":"Confident but bounded; marketing-literate without attributing causality the design cannot establish.",
+  "targetSlideCount":7
+}
