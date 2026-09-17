@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "native_chart_primitive.schema.json",
+  "title": "Velocity native PowerPoint research chart primitive",
+  "type": "object",
+  "required": ["primitiveId", "family", "dataContract", "officeRecipe", "defaults"],
+  "properties": {
+    "primitiveId": {"type": "string", "pattern": "^MR_[A-Z0-9_]+$"},
+    "family": {"enum": ["bar", "stacked_bar", "line", "scatter", "dumbbell", "slope", "composition"]},
+    "analyticalJobs": {"type": "array", "items": {"type": "string"}},
+    "dataContract": {
+      "type": "object",
+      "required": ["requiredColumns"],
+      "properties": {
+        "requiredColumns": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+        "optionalColumns": {"type": "array", "items": {"type": "string"}},
+        "displayDataHumanReadable": {"const": true},
+        "helperData": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "officeRecipe": {
+      "type": "object",
+      "required": ["nativeChartType", "seriesRecipe"],
+      "properties": {
+        "nativeChartType": {"type": "string"},
+        "seriesRecipe": {"type": "array", "items": {"type": "object"}, "minItems": 1},
+        "helperTransforms": {"type": "array", "items": {"type": "string"}},
+        "dataLabelStrategy": {"type": "string"},
+        "axisStrategy": {"type": "string"}
+      }
+    },
+    "defaults": {
+      "type": "object",
+      "properties": {
+        "legend": {"enum": ["off", "on", "auto"]},
+        "directLabels": {"type": "boolean"},
+        "zeroBaseline": {"enum": ["required", "not_required", "diverging_zero"]},
+        "gridlines": {"enum": ["none", "minimal", "major"]},
+        "maxPrimarySeries": {"type": "integer", "minimum": 1}
+      }
+    },
+    "metadataSupport": {
+      "type": "array",
+      "items": {"enum": ["question", "universe", "unweighted_base", "weight", "period", "significance", "suppression", "source"]}
+    },
+    "qualityChecks": {"type": "array", "items": {"type": "string"}}
+  }
+}
