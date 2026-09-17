@@ -1,0 +1,35 @@
+{
+  "projectId": "SBT-001",
+  "briefId": "BRIEF_CATEGORY_BOARD",
+  "version": "visual-arguments-v2",
+  "arguments": [
+    {
+      "argumentId": "CB03",
+      "pageRole": "landscape",
+      "communicationGoal": "Separate competitive position from competitive momentum.",
+      "proposition": {"headlineIntent": "Northstar still owns the strongest position; Pulse owns the momentum.", "dekIntent": "Current scale and direction of travel are different strategic questions.", "claimStrength": "comparative", "forbiddenFramings": ["Pulse is the category leader"]},
+      "analyticalRelationship": {"type": "position_vs_momentum", "description": "Compare W5 total-sample consideration with change from W2 to W5 for each brand.", "comparisonFrame": "Current position × medium-term momentum"},
+      "evidence": {"primary": [{"refType":"derived_visual_measure","refId":"brand_w5_consideration_vs_w2_w5_change","role":"position and momentum for five brands","displayPriority":"hero"}], "context": [], "counterEvidence": [], "requiredUniverseNotes": ["Total eligible sample; unaware respondents count as not considering; weighted"]},
+      "visualForm": {"family":"position_momentum_map","rationale":"The board needs to see simultaneously who is large and who is moving; five time-series panels obscure that distinction.","alternativesRejected":[{"family":"annotated_line","reason":"Five lines prioritise chronology over the strategic position/momentum comparison."},{"family":"small_multiples","reason":"Creates excessive equal visual weight across brands."}],"sharedScaleRequired":true,"directLabelsPreferred":true},
+      "hierarchy": {"dominantElement":"Pulse's positive momentum relative to its current mid-tier position","readingOrder":["headline","Pulse","Northstar reference position","other brands","short synthesis"],"deEmphasise":["gridlines","legend","individual wave noise"],"informationBudget":"moderate"},
+      "annotationStrategy": {"annotations":[{"target":"zero-change line","textIntent":"No change since W2","purpose":"comparison"},{"target":"Pulse","textIntent":"Strongest positive momentum","purpose":"exception"}],"referenceMarks":["zero-change line"]},
+      "commentary": {"role":"synthesis","intent":"Position and momentum are different: Northstar remains largest while Pulse has changed most.","mustNotRepeatChart":true},
+      "styleConstraints": {"semanticEmphasis":["Pulse accent","Northstar dark contextual anchor","other brands muted"],"avoidContainers":true,"avoidLegendWhenDirectLabelsPossible":true,"avoidDecorativeKpis":true,"notes":["Prefer direct brand labels."]},
+      "qualityChecks": ["Axes and derived measures use the same approved weighted universe", "All five brands labelled", "No visual implication that momentum equals market size"]
+    },
+    {
+      "argumentId": "CB07",
+      "pageRole": "divergence",
+      "communicationGoal": "Show that Northstar's external market presence and customer experience moved differently.",
+      "proposition": {"headlineIntent": "Northstar still looks healthy from the outside. Its customers tell a different story.","dekIntent":"Awareness remains intact while advocacy, problems and reliability deteriorate among customers/familiar consumers.","claimStrength":"interpretive","forbiddenFramings":["Northstar's brand is collapsing","Awareness proves customers are unaffected"]},
+      "analyticalRelationship": {"type":"divergence","description":"Juxtapose stable total-market awareness with W4 deterioration in customer/familiar-brand experience measures.","comparisonFrame":"External market presence vs customer experience"},
+      "evidence": {"primary":[{"refType":"analysis","refId":"NORTHSTAR_NPS_W3_W4","role":"customer advocacy shock","displayPriority":"hero"}],"context":[{"refType":"analysis","refId":"NORTHSTAR_AWARE_W3_W4","role":"market visibility counterpoint","displayPriority":"primary"},{"refType":"analysis","refId":"NORTHSTAR_PROBLEM_W3_W4","role":"experience triangulation","displayPriority":"secondary"},{"refType":"analysis","refId":"NORTHSTAR_RELIABILITY_W3_W4","role":"perception triangulation","displayPriority":"secondary"}],"counterEvidence":[],"requiredUniverseNotes":["Awareness: all eligible respondents","NPS/problems: current Northstar customers","Reliability: sufficiently familiar Northstar respondents"]},
+      "visualForm": {"family":"paired_measures","rationale":"The argument is a divergence between different universes, not a common-scale time series. Juxtaposition preserves that distinction.","alternativesRejected":[{"family":"annotated_line","reason":"Overlaying awareness and NPS would imply a common scale and universe."},{"family":"bar","reason":"Independent bars would lose the before/after shock and divergence."}],"sharedScaleRequired":false,"directLabelsPreferred":true},
+      "hierarchy": {"dominantElement":"W3→W4 NPS collapse","readingOrder":["headline","customer NPS shock","stable awareness counterpoint","problem/reliability triangulation","interpretation"],"deEmphasise":["decorative KPI boxes","common axis across unlike metrics"],"informationBudget":"moderate"},
+      "annotationStrategy": {"annotations":[{"target":"W4 NPS","textIntent":"Customer advocacy breaks sharply","purpose":"inflection"},{"target":"awareness W3/W4","textIntent":"Market visibility barely changes","purpose":"comparison"}],"referenceMarks":[]},
+      "commentary": {"role":"synthesis","intent":"The immediate vulnerability is customer-led; market visibility has not yet absorbed the shock.","mustNotRepeatChart":true},
+      "styleConstraints": {"semanticEmphasis":["customer deterioration red","market awareness neutral"],"avoidContainers":true,"avoidLegendWhenDirectLabelsPossible":true,"avoidDecorativeKpis":true,"notes":["Universe labels must be adjacent to measures."]},
+      "qualityChecks": ["Never place awareness and NPS on a shared numeric axis", "Every metric labels its universe", "W4 event annotation does not imply unsupported downstream causality"]
+    }
+  ]
+}
