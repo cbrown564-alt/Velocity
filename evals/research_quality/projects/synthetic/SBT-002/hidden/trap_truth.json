@@ -1,0 +1,25 @@
+{
+  "project_id":"SBT-002",
+  "version":"0.1.0",
+  "visibility":"hidden_from_model_evaluation",
+  "major_truths":[
+    {"id":"TRUTH_A_BROAD","statement":"Flex has the strongest broad total-sample appeal and purchase-intent profile.","importance":"mandatory"},
+    {"id":"TRUTH_B_DIFF","statement":"Plus leads clearly on uniqueness and premium distinctiveness but is more polarising than Flex.","importance":"mandatory"},
+    {"id":"TRUTH_B_EXPLORER","statement":"Plus has a genuine positive interaction among the pre-specified food_explorer subgroup, creating a target-versus-total trade-off.","importance":"mandatory"},
+    {"id":"TRUTH_C_WEAK","statement":"Simple is credible and understandable but has no multi-measure case strong enough to displace Flex or the targeted Plus opportunity.","importance":"secondary"},
+    {"id":"TRUTH_DIAG_NONCAUSAL","statement":"Diagnostics correlate with appeal/purchase intent but are not independently manipulated; simple associations do not establish causal drivers.","importance":"mandatory_boundary"}
+  ],
+  "traps":[
+    {"id":"T1_TRIVIAL_SIG","mechanism":"Create one 2–3pp concept difference with low variance/large base so it can be statistically detectable but below the 5pp commercial-materiality threshold.","failure":"Elevating the difference as a major business finding because p<.05."},
+    {"id":"T2_MULTIPLICITY","mechanism":"Many concept × metric pairwise comparisons create nominal false-positive opportunities.","failure":"Using unadjusted isolated p-values for confirmatory claims."},
+    {"id":"T3_SUBGROUP_FISHING","mechanism":"Generate several demographic variables with no latent interaction; sampling noise may produce dramatic exploratory cuts.","failure":"Elevating an unplanned subgroup over the pre-specified food_explorer interaction."},
+    {"id":"T4_POLARISATION","mechanism":"Plus has more 5s and more 1–2 responses than Flex on at least one core measure, so top-2-box alone understates polarisation.","failure":"Describing Plus and Flex as having equivalent response shape from similar top-2-box results."},
+    {"id":"T5_MEAN_ORDINAL","mechanism":"At least one pair has a small mean difference despite substantively different ordinal distributions.","failure":"Treating the mean as the definitive representation of the 5-point outcome."},
+    {"id":"T6_WEIGHTING","mechanism":"Sampling over-represents younger food explorers; calibration weights reduce their contribution, changing at least one concept estimate by ~2pp or more without reversing the major truth.","failure":"Using unweighted top-lines as the primary result."},
+    {"id":"T7_DIAGNOSTIC_CAUSALITY","mechanism":"Latent overall concept response drives correlated diagnostics and purchase intent.","failure":"Claiming uniqueness/value/ease causes purchase intent from correlation alone."},
+    {"id":"T8_RANDOMISATION_BOUNDARY","mechanism":"Concept assignment is random; food_explorer and demographics are observational respondent traits.","failure":"Using causal language for subgroup membership or treating subgroup association like randomised treatment."},
+    {"id":"T9_ROUTED_BASE","mechanism":"premium_value_5 is observed only when understanding_5>=3, with routing rates differing by concept.","failure":"Comparing premium-value percentages directly to unconditional measures or ignoring changing denominators."},
+    {"id":"T10_SIMPLE_SEDUCTION","mechanism":"Simple receives a strong score on ease/credibility and one noisy exploratory subgroup result but remains weaker on the primary development decision.","failure":"Declaring Simple a hidden winner based on isolated evidence."}
+  ],
+  "anti_leakage":"This file must not be supplied to evaluated models. It is benchmark ground truth used for deterministic generation and scoring."
+}
