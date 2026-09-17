@@ -1,35 +1,106 @@
 {
   "projectId": "SBT-001",
   "briefId": "BRIEF_CATEGORY_BOARD",
-  "version": "visual-arguments-v2",
+  "version": "visual-arguments-v3",
+  "sharedStyle": {
+    "headline": "Finding-led, concise, normally no more than two lines; rewrite rather than shrink when it overruns.",
+    "directLabels": true,
+    "containers": "Avoid ornamental cards/boxes; use whitespace and fine rules for structure.",
+    "colour": "Mostly neutral marks. Pulse accent is stable; red means deterioration/risk, not Northstar identity; amber may indicate partial recovery.",
+    "notes": "Metric, universe, weighting and period remain readable and adjacent when they materially affect interpretation.",
+    "numberFormatting": "Distinguish %, percentage-point change and NPS points; use consistent rounding and derive changes from unrounded values.",
+    "accessibility": "Do not rely on colour alone for wave or semantic distinctions; reinforce with labels/marker treatment."
+  },
   "arguments": [
     {
-      "argumentId": "CB03",
-      "pageRole": "landscape",
-      "communicationGoal": "Separate competitive position from competitive momentum.",
-      "proposition": {"headlineIntent": "Northstar still owns the strongest position; Pulse owns the momentum.", "dekIntent": "Current scale and direction of travel are different strategic questions.", "claimStrength": "comparative", "forbiddenFramings": ["Pulse is the category leader"]},
-      "analyticalRelationship": {"type": "position_vs_momentum", "description": "Compare W5 total-sample consideration with change from W2 to W5 for each brand.", "comparisonFrame": "Current position × medium-term momentum"},
-      "evidence": {"primary": [{"refType":"derived_visual_measure","refId":"brand_w5_consideration_vs_w2_w5_change","role":"position and momentum for five brands","displayPriority":"hero"}], "context": [], "counterEvidence": [], "requiredUniverseNotes": ["Total eligible sample; unaware respondents count as not considering; weighted"]},
-      "visualForm": {"family":"position_momentum_map","rationale":"The board needs to see simultaneously who is large and who is moving; five time-series panels obscure that distinction.","alternativesRejected":[{"family":"annotated_line","reason":"Five lines prioritise chronology over the strategic position/momentum comparison."},{"family":"small_multiples","reason":"Creates excessive equal visual weight across brands."}],"sharedScaleRequired":true,"directLabelsPreferred":true},
-      "hierarchy": {"dominantElement":"Pulse's positive momentum relative to its current mid-tier position","readingOrder":["headline","Pulse","Northstar reference position","other brands","short synthesis"],"deEmphasise":["gridlines","legend","individual wave noise"],"informationBudget":"moderate"},
-      "annotationStrategy": {"annotations":[{"target":"zero-change line","textIntent":"No change since W2","purpose":"comparison"},{"target":"Pulse","textIntent":"Strongest positive momentum","purpose":"exception"}],"referenceMarks":["zero-change line"]},
-      "commentary": {"role":"synthesis","intent":"Position and momentum are different: Northstar remains largest while Pulse has changed most.","mustNotRepeatChart":true},
-      "styleConstraints": {"semanticEmphasis":["Pulse accent","Northstar dark contextual anchor","other brands muted"],"avoidContainers":true,"avoidLegendWhenDirectLabelsPossible":true,"avoidDecorativeKpis":true,"notes":["Prefer direct brand labels."]},
-      "qualityChecks": ["Axes and derived measures use the same approved weighted universe", "All five brands labelled", "No visual implication that momentum equals market size"]
+      "argumentId":"CB01","pageRole":"cover","communicationGoal":"Establish the category proposition without duplicating Slide 2.",
+      "proposition":{"headlineIntent":"Pulse advances; Northstar and Harbour face different vulnerabilities.","claimStrength":"interpretive","forbiddenFramings":["The entire category is uniformly accelerating"]},
+      "analyticalRelationship":{"type":"none","comparisonFrame":"Category thesis"},
+      "visualForm":{"family":"text_led","rationale":"The opener should frame the argument before evidence detail.","directLabelsPreferred":true},
+      "hierarchy":{"dominantElement":"headline","readingOrder":["headline","study context"],"deEmphasise":["brand signpost repetition","decorative KPIs"],"informationBudget":"low"},
+      "qualityChecks":["Clearly identifies SBT-001 as synthetic","Does not repeat Slide 2's three evidence anchors"]
     },
     {
-      "argumentId": "CB07",
-      "pageRole": "divergence",
-      "communicationGoal": "Show that Northstar's external market presence and customer experience moved differently.",
-      "proposition": {"headlineIntent": "Northstar still looks healthy from the outside. Its customers tell a different story.","dekIntent":"Awareness remains intact while advocacy, problems and reliability deteriorate among customers/familiar consumers.","claimStrength":"interpretive","forbiddenFramings":["Northstar's brand is collapsing","Awareness proves customers are unaffected"]},
-      "analyticalRelationship": {"type":"divergence","description":"Juxtapose stable total-market awareness with W4 deterioration in customer/familiar-brand experience measures.","comparisonFrame":"External market presence vs customer experience"},
-      "evidence": {"primary":[{"refType":"analysis","refId":"NORTHSTAR_NPS_W3_W4","role":"customer advocacy shock","displayPriority":"hero"}],"context":[{"refType":"analysis","refId":"NORTHSTAR_AWARE_W3_W4","role":"market visibility counterpoint","displayPriority":"primary"},{"refType":"analysis","refId":"NORTHSTAR_PROBLEM_W3_W4","role":"experience triangulation","displayPriority":"secondary"},{"refType":"analysis","refId":"NORTHSTAR_RELIABILITY_W3_W4","role":"perception triangulation","displayPriority":"secondary"}],"counterEvidence":[],"requiredUniverseNotes":["Awareness: all eligible respondents","NPS/problems: current Northstar customers","Reliability: sufficiently familiar Northstar respondents"]},
-      "visualForm": {"family":"paired_measures","rationale":"The argument is a divergence between different universes, not a common-scale time series. Juxtaposition preserves that distinction.","alternativesRejected":[{"family":"annotated_line","reason":"Overlaying awareness and NPS would imply a common scale and universe."},{"family":"bar","reason":"Independent bars would lose the before/after shock and divergence."}],"sharedScaleRequired":false,"directLabelsPreferred":true},
-      "hierarchy": {"dominantElement":"W3→W4 NPS collapse","readingOrder":["headline","customer NPS shock","stable awareness counterpoint","problem/reliability triangulation","interpretation"],"deEmphasise":["decorative KPI boxes","common axis across unlike metrics"],"informationBudget":"moderate"},
-      "annotationStrategy": {"annotations":[{"target":"W4 NPS","textIntent":"Customer advocacy breaks sharply","purpose":"inflection"},{"target":"awareness W3/W4","textIntent":"Market visibility barely changes","purpose":"comparison"}],"referenceMarks":[]},
-      "commentary": {"role":"synthesis","intent":"The immediate vulnerability is customer-led; market visibility has not yet absorbed the shock.","mustNotRepeatChart":true},
-      "styleConstraints": {"semanticEmphasis":["customer deterioration red","market awareness neutral"],"avoidContainers":true,"avoidLegendWhenDirectLabelsPossible":true,"avoidDecorativeKpis":true,"notes":["Universe labels must be adjacent to measures."]},
-      "qualityChecks": ["Never place awareness and NPS on a shared numeric axis", "Every metric labels its universe", "W4 event annotation does not imply unsupported downstream causality"]
+      "argumentId":"CB02","pageRole":"executive_synthesis","communicationGoal":"Summarise three distinct competitive pressures while preserving metric/universe/time distinctions.",
+      "proposition":{"headlineIntent":"Three pressures are reshaping the category.","dekIntent":"Pulse gains consideration. Northstar's customer advocacy falls sharply. Harbour weakens among 18–34s.","claimStrength":"synthesis","forbiddenFramings":["The three numeric magnitudes are directly comparable","Northstar has not recovered at all"]},
+      "analyticalRelationship":{"type":"multi_metric_synthesis","comparisonFrame":"Three evidence-backed mechanisms"},
+      "evidence":{"primary":[{"refType":"finding","refId":"F_PULSE_CONSID_UP","role":"Pulse anchor","displayPriority":"hero"},{"refType":"finding","refId":"F_NORTHSTAR_NPS_DROP","role":"Northstar anchor","displayPriority":"hero"},{"refType":"finding","refId":"F_HARBOUR_YOUTH_DECLINE","role":"Harbour anchor","displayPriority":"hero"}],"context":[{"refType":"finding","refId":"F_NORTHSTAR_AWARE_RESILIENT","role":"Northstar market counterpoint","displayPriority":"secondary"}],"requiredUniverseNotes":["Every anchor carries metric, population and period"]},
+      "visualForm":{"family":"editorial_evidence_strip","rationale":"Allows a board-level synopsis without creating three dashboard cards.","sharedScaleRequired":false,"directLabelsPreferred":true},
+      "hierarchy":{"dominantElement":"one integrated synopsis","readingOrder":["headline","dek","three evidence anchors","short synthesis"],"deEmphasise":["boxes","equal-size mini charts"],"informationBudget":"moderate"},
+      "qualityChecks":["Unlike metrics are not encoded on a shared quantitative scale","Northstar W5 partial recovery is acknowledged locally"]
+    },
+    {
+      "argumentId":"CB03","pageRole":"landscape","communicationGoal":"Separate current consideration from change since W2.",
+      "proposition":{"headlineIntent":"Northstar leads on consideration; Pulse records the largest gain.","dekIntent":"Current level and direction of travel are different competitive questions.","claimStrength":"comparative","forbiddenFramings":["Pulse is the category leader"]},
+      "analyticalRelationship":{"type":"position_vs_momentum","description":"Compare W5 total-sample consideration with W2→W5 percentage-point change for each brand.","comparisonFrame":"Current consideration × change"},
+      "evidence":{"primary":[{"refType":"derived_visual_measure","refId":"brand_w5_consideration_vs_w2_w5_change","role":"five-brand position and change","displayPriority":"hero"}],"requiredUniverseNotes":["Total eligible sample; unaware respondents count as not considering; weighted"]},
+      "visualForm":{"family":"position_momentum_map","rationale":"Shows level and change simultaneously.","sharedScaleRequired":true,"directLabelsPreferred":true},
+      "hierarchy":{"dominantElement":"Pulse change relative to current position","readingOrder":["headline","Pulse","Northstar","other brands","synthesis"],"deEmphasise":["gridlines","legend","quadrant decoration"],"informationBudget":"moderate"},
+      "annotationStrategy":{"annotations":[{"target":"zero-change line","textIntent":"No change since W2","purpose":"reference"},{"target":"Pulse","textIntent":"Largest positive change","purpose":"exception"}],"referenceMarks":["zero-change line"]},
+      "qualityChecks":["Axes state % versus percentage points","Equal point size unless a third variable is explicitly encoded","No arbitrary vertical threshold"]
+    },
+    {
+      "argumentId":"CB04","pageRole":"hero_finding","communicationGoal":"Show Pulse's W3 step-change and persistence without causal attribution.",
+      "proposition":{"headlineIntent":"Pulse's consideration gains persist beyond the Wave 3 jump.","claimStrength":"descriptive","forbiddenFramings":["The campaign caused the increase"]},
+      "analyticalRelationship":{"type":"trend_with_inflection","comparisonFrame":"Five-wave weighted consideration"},
+      "evidence":{"primary":[{"refType":"analysis_series","refId":"CONSID_TOTAL_PULSE_W1_W5","role":"Pulse consideration trend","displayPriority":"hero"}],"requiredUniverseNotes":["Total eligible sample; weighted"]},
+      "visualForm":{"family":"annotated_line","rationale":"The time path and W3 step-change are the argument.","sharedScaleRequired":false,"directLabelsPreferred":true},
+      "hierarchy":{"dominantElement":"Pulse line","readingOrder":["headline","W2→W3 change","W5 endpoint","local observational qualification"],"deEmphasise":["competitor series","repeated caveats"],"informationBudget":"moderate"},
+      "annotationStrategy":{"annotations":[{"target":"W2→W3","textIntent":"Weighted increase","purpose":"inflection"},{"target":"W3","textIntent":"Campaign period","purpose":"context"},{"target":"W5","textIntent":"Higher level persists","purpose":"endpoint"}]},
+      "qualityChecks":["All five wave observations shown","No smoothing that implies unseen values","No causal arrow from campaign marker"]
+    },
+    {
+      "argumentId":"CB05","pageRole":"segment_explanation","communicationGoal":"Make the difference in observed W2→W3 age-group change immediately visible.",
+      "proposition":{"headlineIntent":"Pulse's observed consideration increase is larger among 18–34s.","claimStrength":"descriptive","forbiddenFramings":["18–34s necessarily contribute most of total-market growth","Campaign recognition caused the age difference"]},
+      "analyticalRelationship":{"type":"segment_change_gap","comparisonFrame":"18–34 versus 35+ W2→W3 change"},
+      "evidence":{"primary":[{"refType":"analysis","refId":"PULSE_CONSID_18_34_W2_W3","role":"younger consideration change","displayPriority":"hero"},{"refType":"analysis","refId":"PULSE_CONSID_35_plus_W2_W3","role":"older consideration change","displayPriority":"hero"}],"context":[{"refType":"analysis","refId":"PULSE_CAMPAIGN_RECOG_18_34_W3","role":"younger recognition context","displayPriority":"secondary"},{"refType":"analysis","refId":"PULSE_CAMPAIGN_RECOG_35P_W3","role":"older recognition context","displayPriority":"secondary"}]},
+      "visualForm":{"family":"dumbbell_with_change_column","rationale":"Shows endpoints and makes the difference in change explicit.","sharedScaleRequired":true,"directLabelsPreferred":true},
+      "hierarchy":{"dominantElement":"percentage-point change column","readingOrder":["headline","18–34 change","35+ change","recognition context"],"deEmphasise":["recognition","decorative containers"],"informationBudget":"moderate"},
+      "qualityChecks":["W2/W3 marker convention is consistent","Recognition remains supporting context","No contribution claim without decomposition"]
+    },
+    {
+      "argumentId":"CB06","pageRole":"evidence_synthesis","communicationGoal":"Compare change across distinct Pulse measures without implying respondent-level funnel progression.",
+      "proposition":{"headlineIntent":"Pulse's consideration and preference gains outpace gains in provider share.","dekIntent":"W2→W5 weighted change across four population measures.","claimStrength":"comparative","forbiddenFramings":["Observed conversion funnel","Drop-off rate","Same respondents moved through each stage"]},
+      "analyticalRelationship":{"type":"parallel_measure_change","comparisonFrame":"W2 versus W5 across prompted awareness, consideration, preference and current-provider share"},
+      "evidence":{"primary":[{"refType":"derived_visual_measure","refId":"pulse_w2_w5_four_measure_change","role":"four comparable population shares","displayPriority":"hero"}],"requiredUniverseNotes":["All four displayed as total-sample/single-brand population shares; weighted","These are separate measures, not respondent transitions"]},
+      "visualForm":{"family":"aligned_dumbbells_with_change_column","rationale":"Makes the different changes visible without funnel geometry.","sharedScaleRequired":true,"directLabelsPreferred":true,"alternativesRejected":[{"family":"funnel","reason":"Would imply respondent-level progression and conversion rates not established by the marginal shares."}]},
+      "hierarchy":{"dominantElement":"change column","readingOrder":["headline","consideration/preference change","provider-share change","awareness context","research question"],"deEmphasise":["funnel arrows","innovation"],"informationBudget":"moderate"},
+      "qualityChecks":["Innovation absent from main visual","No flow arrows/tapered funnel/drop-off calculations","Current provider label matches underlying measure"]
+    },
+    {
+      "argumentId":"CB07","pageRole":"divergence","communicationGoal":"Juxtapose high market awareness with customer deterioration without collapsing universes.",
+      "proposition":{"headlineIntent":"Northstar's awareness remains high while customer advocacy falls sharply.","claimStrength":"descriptive","forbiddenFramings":["High awareness proves overall brand health","Awareness will subsequently absorb the shock"]},
+      "analyticalRelationship":{"type":"divergence","comparisonFrame":"Market awareness versus current-customer experience"},
+      "evidence":{"primary":[{"refType":"analysis","refId":"NORTHSTAR_NPS_W3_W4","role":"customer advocacy shock","displayPriority":"hero"}],"context":[{"refType":"analysis","refId":"NORTHSTAR_AWARE_W3_W4","role":"market awareness counterpoint","displayPriority":"primary"},{"refType":"analysis","refId":"NORTHSTAR_PROBLEM_W3_W4","role":"customer experience triangulation","displayPriority":"secondary"}],"requiredUniverseNotes":["Awareness: all eligible respondents","NPS/problems: current Northstar customers"]},
+      "visualForm":{"family":"paired_measures","rationale":"Juxtaposition preserves different units and universes.","sharedScaleRequired":false,"directLabelsPreferred":true},
+      "hierarchy":{"dominantElement":"W3→W4 NPS fall","readingOrder":["headline","NPS","problem incidence","awareness counterpoint","interpretation"],"deEmphasise":["common axis","decorative KPI boxes"],"informationBudget":"moderate"},
+      "qualityChecks":["Never put awareness and NPS on a shared or dual numeric axis","Universe labels adjacent to measures","No 'not yet' downstream prediction"]
+    },
+    {
+      "argumentId":"CB08","pageRole":"recovery","communicationGoal":"Show W5 rebound and remaining distance from W3 on two customer measures.",
+      "proposition":{"headlineIntent":"Northstar improves in Wave 5, but remains well short of its pre-shock position.","claimStrength":"comparative","forbiddenFramings":["Problem solved","W3 is a proven healthy benchmark"]},
+      "analyticalRelationship":{"type":"recovery_vs_reference","comparisonFrame":"W3 pre-shock reference, W4 trough, W5 recovery"},
+      "evidence":{"primary":[{"refType":"analysis_series","refId":"NORTHSTAR_NPS_W3_W5","role":"advocacy recovery","displayPriority":"hero"},{"refType":"analysis_series","refId":"NORTHSTAR_PROBLEM_W3_W5","role":"problem-incidence recovery","displayPriority":"hero"}]},
+      "visualForm":{"family":"two_measure_reference_comparison","rationale":"Two rows make both rebound and residual gap explicit without dashboard proliferation.","sharedScaleRequired":false,"directLabelsPreferred":true},
+      "hierarchy":{"dominantElement":"W5-versus-W3 residual gaps","readingOrder":["headline","NPS residual gap","problem residual gap","interpretation"],"deEmphasise":["satisfaction/reliability additions","green success semantics"],"informationBudget":"moderate"},
+      "qualityChecks":["NPS and problem incidence keep separate units/scales","Explicit W3 reference","W5 uses amber/neutral recovery semantics"]
+    },
+    {
+      "argumentId":"CB09","pageRole":"longitudinal_diagnosis","communicationGoal":"Show aggregate-versus-18–34 Harbour consideration divergence over five waves.",
+      "proposition":{"headlineIntent":"Harbour's aggregate result masks declining consideration among 18–34s.","claimStrength":"descriptive","forbiddenFramings":["Individual younger consumers are observed leaving","Installed base is proven to cause the aggregate pattern","W4→W5 proves stability"]},
+      "analyticalRelationship":{"type":"aggregate_vs_subgroup_trend","comparisonFrame":"Total-sample versus 18–34 consideration, W1→W5"},
+      "evidence":{"primary":[{"refType":"analysis_series","refId":"HARBOUR_CONSID_18_34_W1_W5","role":"younger trend","displayPriority":"hero"}],"context":[{"refType":"analysis_series","refId":"CONSID_TOTAL_HARBOUR_W1_W5","role":"aggregate trend","displayPriority":"primary"}],"requiredUniverseNotes":["Both are weighted consideration measures; subgroup is contained within aggregate"]},
+      "visualForm":{"family":"direct_labelled_two_series_line","rationale":"The two comparable series can be read directly on one scale.","sharedScaleRequired":true,"directLabelsPreferred":true},
+      "hierarchy":{"dominantElement":"18–34 decline","readingOrder":["headline","18–34 series","aggregate counterpoint","W1→W5 changes"],"deEmphasise":["drama","installed-base claims"],"informationBudget":"moderate"},
+      "qualityChecks":["Identical scale for both series","No extrapolation beyond W5","No individual-transition language"]
+    },
+    {
+      "argumentId":"CB10","pageRole":"implications","communicationGoal":"Close with operational next-wave questions and the measures that would answer them.",
+      "proposition":{"headlineIntent":"Three questions should shape the next wave.","claimStrength":"question","forbiddenFramings":["Campaign salience will fade","Northstar advocacy is structurally impaired","Harbour gap will inevitably become structural"]},
+      "analyticalRelationship":{"type":"none","comparisonFrame":"Next-wave evidence agenda"},
+      "visualForm":{"family":"text_led","rationale":"No new empirical claim is introduced on the close.","directLabelsPreferred":true},
+      "hierarchy":{"dominantElement":"three questions","readingOrder":["headline","Pulse question/watch","Northstar question/watch","Harbour question/watch"],"deEmphasise":["recommendation cards","new KPIs"],"informationBudget":"low"},
+      "qualityChecks":["Each question has an observable next-wave measure","No unsupported urgency or causal premise"]
     }
   ]
 }
