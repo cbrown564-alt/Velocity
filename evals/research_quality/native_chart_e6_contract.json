@@ -1,0 +1,21 @@
+{
+  "version":"1.0",
+  "purpose":"Grade native/editable PowerPoint research output separately from story and numerical correctness.",
+  "hardFailures":[
+    {"id":"E6_NON_NATIVE_QUANT_MARK","condition":"A freeform PowerPoint shape, image or manually drawn path encodes a quantitative value that should be represented by a native chart series."},
+    {"id":"E6_NO_EMBEDDED_DATA","condition":"A native chart has no inspectable embedded workbook/data relationship."},
+    {"id":"E6_OPAQUE_HELPER_DATA","condition":"An advanced primitive uses helper data without preserving a human-readable display-data table."},
+    {"id":"E6_UNLIKE_SHARED_AXIS","condition":"Measures with incompatible units/universes are placed on a common quantitative axis without an explicit valid transformation."},
+    {"id":"E6_CHART_DATA_MISMATCH","condition":"Displayed chart data do not resolve to the approved analysis/reference values."}
+  ],
+  "scoredDimensions":[
+    {"id":"native_inspectability","weight":25,"question":"Can a researcher use Edit Data to inspect and change the values underlying every quantitative visual?"},
+    {"id":"primitive_fit","weight":20,"question":"Does the native chart primitive match the analytical relationship?"},
+    {"id":"editorial_hierarchy","weight":20,"question":"Do typography, layout, emphasis and annotation create a clear page-level argument around the chart?"},
+    {"id":"research_metadata","weight":15,"question":"Are universe/base/weight/period/significance qualifications present where interpretation requires them?"},
+    {"id":"chart_craft","weight":10,"question":"Are axes, labels, gridlines, series emphasis and scales professionally configured rather than Office defaults?"},
+    {"id":"deck_rhythm","weight":10,"question":"Does the report vary page composition and analytical job without sacrificing chart inspectability?"}
+  ],
+  "requiredAutomatedChecks":["native chart object count by slide","embedded workbook relationship per chart","expected primitive/slide mapping","no raster-only quantitative visual","chart/reference value reconciliation"],
+  "requiredHumanChecks":["Edit Data spot-check every quantitative slide","full-size render QA","contact-sheet pacing/hierarchy review","advanced dumbbell/Likert edit propagation test"]
+}

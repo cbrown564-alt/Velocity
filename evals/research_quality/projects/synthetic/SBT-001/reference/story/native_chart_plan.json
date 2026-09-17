@@ -1,0 +1,17 @@
+{
+  "projectId":"SBT-001","briefId":"BRIEF_CATEGORY_BOARD","version":"native-chart-plan-v2",
+  "hardInvariant":"Every quantitative mark on data-bearing slides is a native Office chart mark with inspectable embedded workbook data.",
+  "slides":[
+    {"slide":1,"layout":"cover","nativeChartsRequired":0},
+    {"slide":2,"layout":"executive_synthesis","nativeChartsRequired":3,"charts":[{"primitive":"MR_SLOPE_TWO_PERIOD","data":"Pulse W2/W3 total-sample consideration"},{"primitive":"MR_TREND_HERO","data":"Northstar W3/W4/W5 current-customer NPS"},{"primitive":"MR_SLOPE_TWO_PERIOD","data":"Harbour W1/W5 18–34 consideration"}]},
+    {"slide":3,"layout":"full_width_analytical","nativeChartsRequired":1,"charts":[{"primitive":"MR_SCATTER_POSITION_CHANGE","data":"W5 total-sample consideration × W2→W5 change for all brands"}]},
+    {"slide":4,"layout":"hero_chart","nativeChartsRequired":1,"charts":[{"primitive":"MR_TREND_HERO","data":"Pulse total-sample consideration W1–W5"}]},
+    {"slide":5,"layout":"chart_commentary","nativeChartsRequired":1,"charts":[{"primitive":"MR_DUMBBELL_XY","data":"Pulse consideration W2/W3 for 18–34 and 35+","note":"Connector and both endpoints are one native XY line-with-markers series per row; no shape connector."}]},
+    {"slide":6,"layout":"full_width_analytical","nativeChartsRequired":1,"charts":[{"primitive":"MR_DUMBBELL_XY_MULTI","data":"Pulse W2/W5 awareness, consideration, preference, current-provider share","note":"All four rows are native XY line-with-markers series."}]},
+    {"slide":7,"layout":"two_chart_juxtaposition","nativeChartsRequired":2,"charts":[{"primitive":"MR_TREND_HERO","data":"Northstar current-customer NPS W3/W4"},{"primitive":"MR_TREND_HERO","data":"Northstar prompted awareness W3/W4","note":"Never share an axis with NPS."}]},
+    {"slide":8,"layout":"small_multiples","nativeChartsRequired":2,"charts":[{"primitive":"MR_TREND_HERO","data":"Northstar NPS W3/W4/W5"},{"primitive":"MR_TREND_HERO","data":"Northstar recent-problem incidence W3/W4/W5"}]},
+    {"slide":9,"layout":"hero_chart","nativeChartsRequired":1,"charts":[{"primitive":"MR_TREND_COMPARE","data":"Harbour aggregate and 18–34 consideration W1–W5"}]},
+    {"slide":10,"layout":"closing_questions","nativeChartsRequired":0}
+  ],
+  "acceptance":{"minimumNativeCharts":12,"expectedChartsBySlide":[0,3,1,1,1,1,2,2,1,0],"quantitativeShapeMarksAllowed":false,"embeddedWorkbookRequiredPerChart":true,"editDataInspectionRequired":true}
+}
