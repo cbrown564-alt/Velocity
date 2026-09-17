@@ -1,0 +1,139 @@
+{
+  "projectId": "SBT-001",
+  "briefId": "BRIEF_CATEGORY_BOARD",
+  "version": "storyboard-v2",
+  "designIntent": "Publication-quality board narrative inspired by strong research publications: argument-led sequence, purpose-built visual relationships, commentary that synthesises rather than repeats, and silent editorial restraint.",
+  "slideCount": 10,
+  "slides": [
+    {
+      "slide": 1,
+      "argumentId": "CB01",
+      "pageRole": "cover",
+      "communicationGoal": "Establish the single category-level proposition before exposing detail.",
+      "headlineIntent": "The category is becoming more competitive — but the pressure is coming from three different directions.",
+      "content": "Minimal cover: Pulse acquisition momentum; Northstar customer vulnerability; Harbour generational erosion. No KPI-card treatment.",
+      "visualForm": "text_led"
+    },
+    {
+      "slide": 2,
+      "argumentId": "CB02",
+      "pageRole": "executive_synthesis",
+      "communicationGoal": "Give the board the entire argument in one page without reproducing three mini-slides.",
+      "headlineIntent": "Pulse is strengthening, Northstar is vulnerable beneath the surface, and Harbour is weakening with future customers.",
+      "analyticalRelationship": "multi_metric_synthesis",
+      "visualForm": "mixed",
+      "evidence": ["F_PULSE_CONSID_UP", "F_NORTHSTAR_NPS_DROP", "F_NORTHSTAR_AWARE_RESILIENT", "F_HARBOUR_YOUTH_DECLINE"],
+      "hierarchy": "One integrated competitive synopsis. Pulse/Northstar/Harbour are distinct narrative lanes, but not equal-sized dashboard cards.",
+      "commentary": "One sentence on what the combination means for competitive dynamics; no questionnaire recap."
+    },
+    {
+      "slide": 3,
+      "argumentId": "CB03",
+      "pageRole": "landscape",
+      "communicationGoal": "Show who has competitive position today and who has momentum, so current size is not confused with direction of travel.",
+      "headlineIntent": "Northstar still owns the strongest position; Pulse owns the momentum.",
+      "analyticalRelationship": "position_vs_momentum",
+      "visualForm": "position_momentum_map",
+      "evidence": ["CONSID_TOTAL_*_W2", "CONSID_TOTAL_*_W5"],
+      "derivedMeasures": ["x = W5 total-sample consideration", "y = W2→W5 change in consideration"],
+      "hierarchy": "Pulse highlighted; Northstar contextual anchor; other brands muted but labelled directly.",
+      "annotations": ["Label Pulse's movement explicitly", "Use a zero-change reference line", "Do not use five separate trend charts"],
+      "commentary": "Explain that competitive position and momentum answer different questions."
+    },
+    {
+      "slide": 4,
+      "argumentId": "CB04",
+      "pageRole": "hero_finding",
+      "communicationGoal": "Demonstrate the Pulse inflection over time and locate the campaign-period break without claiming causality.",
+      "headlineIntent": "Pulse has broken out of its old consideration range since Wave 3.",
+      "analyticalRelationship": "trend",
+      "visualForm": "annotated_line",
+      "evidence": ["CONSID_TOTAL_PULSE_W1", "CONSID_TOTAL_PULSE_W2", "CONSID_TOTAL_PULSE_W3", "CONSID_TOTAL_PULSE_W4", "CONSID_TOTAL_PULSE_W5"],
+      "hierarchy": "One dominant Pulse series. Other brands appear only as faint context if useful; the Wave 3 inflection is annotated directly.",
+      "annotations": ["Wave 3 campaign period", "Weighted estimate", "Do not display the inflated unweighted movement as a competing headline"],
+      "commentary": "Pulse is now operating at a different consideration level than before Wave 3; this is observed tracker movement, not causal proof."
+    },
+    {
+      "slide": 5,
+      "argumentId": "CB05",
+      "pageRole": "segment_explanation",
+      "communicationGoal": "Show that Pulse's change is disproportionately concentrated among younger consumers.",
+      "headlineIntent": "Younger consumers are pulling Pulse forward faster than the market overall.",
+      "analyticalRelationship": "segment_gap",
+      "visualForm": "dumbbell",
+      "evidence": ["PULSE_CONSID_18_34_W2_W3", "PULSE_CONSID_35_plus_W2_W3", "PULSE_CAMPAIGN_RECOG_18_34_W3", "PULSE_CAMPAIGN_RECOG_35P_W3"],
+      "hierarchy": "Age gap is primary; campaign recognition is supporting context, not a second hero chart.",
+      "commentary": "The audience most responsive to the campaign period is also where consideration changes most strongly. Keep the relationship observational."
+    },
+    {
+      "slide": 6,
+      "argumentId": "CB06",
+      "pageRole": "evidence_synthesis",
+      "communicationGoal": "Show that Pulse perception and consideration have moved faster than customer conversion.",
+      "headlineIntent": "Pulse is becoming mentally available faster than it is becoming customers' provider.",
+      "analyticalRelationship": "funnel",
+      "visualForm": "funnel",
+      "evidence": ["AWARE_PULSE_W2", "AWARE_PULSE_W5", "PULSE_INNOVATION_W2", "PULSE_INNOVATION_W3", "CONSID_TOTAL_PULSE_W2", "CONSID_TOTAL_PULSE_W5", "PREF_PULSE_W2", "PREF_PULSE_W5", "USAGE_PULSE_W2", "USAGE_PULSE_W5"],
+      "hierarchy": "Use aligned W2/W5 stages or change markers. Emphasise the uneven conversion from awareness/image to usage rather than treating every stage equally.",
+      "commentary": "Synthesis is the value: upper-funnel and perception movement precede full behavioural conversion."
+    },
+    {
+      "slide": 7,
+      "argumentId": "CB07",
+      "pageRole": "divergence",
+      "communicationGoal": "Make the contradiction between Northstar's external market strength and internal customer deterioration visually unavoidable.",
+      "headlineIntent": "Northstar still looks healthy from the outside. Its customers tell a different story.",
+      "analyticalRelationship": "divergence",
+      "visualForm": "paired_measures",
+      "evidence": ["NORTHSTAR_AWARE_W3", "NORTHSTAR_AWARE_W4", "NORTHSTAR_NPS_W3", "NORTHSTAR_NPS_W4", "NORTHSTAR_PROBLEM_W3", "NORTHSTAR_PROBLEM_W4", "NORTHSTAR_RELIABILITY_W3", "NORTHSTAR_RELIABILITY_W4"],
+      "hierarchy": "Two clearly separated universes: MARKET vs CURRENT CUSTOMERS. NPS collapse is dominant; stable awareness is the counterpoint.",
+      "annotations": ["Universe labels must be explicit", "Do not put awareness and NPS on one quantitative axis"],
+      "commentary": "The risk is customer-led today; visibility has not yet absorbed the shock."
+    },
+    {
+      "slide": 8,
+      "argumentId": "CB08",
+      "pageRole": "evidence_synthesis",
+      "communicationGoal": "Assess whether Northstar's W5 recovery is broad enough to call the problem resolved.",
+      "headlineIntent": "Northstar is recovering in Wave 5, but the customer relationship has not simply reset.",
+      "analyticalRelationship": "recovery",
+      "visualForm": "small_multiples",
+      "evidence": ["NORTHSTAR_NPS_W3", "NORTHSTAR_NPS_W4", "NORTHSTAR_NPS_W5", "NORTHSTAR_SAT_W3", "NORTHSTAR_SAT_W4", "NORTHSTAR_SAT_W5", "NORTHSTAR_PROBLEM_W3", "NORTHSTAR_PROBLEM_W4", "NORTHSTAR_PROBLEM_W5", "NORTHSTAR_RELIABILITY_W3", "NORTHSTAR_RELIABILITY_W4", "NORTHSTAR_RELIABILITY_W5"],
+      "hierarchy": "Four compact W3→W4→W5 recovery trajectories using consistent visual grammar. No dashboard chrome; label values directly.",
+      "commentary": "Distinguish partial recovery from evidence of a complete return to baseline."
+    },
+    {
+      "slide": 9,
+      "argumentId": "CB09",
+      "pageRole": "longitudinal_diagnosis",
+      "communicationGoal": "Explain Harbour's strategic problem as a mismatch between today's installed base and tomorrow's acquisition audience.",
+      "headlineIntent": "Harbour's installed base is hiding an acquisition problem with younger consumers.",
+      "analyticalRelationship": "divergence",
+      "visualForm": "mixed",
+      "evidence": ["HARBOUR_CONSID_18_34_W1", "HARBOUR_CONSID_18_34_W2", "HARBOUR_CONSID_18_34_W3", "HARBOUR_CONSID_18_34_W4", "HARBOUR_CONSID_18_34_W5", "USAGE_HARBOUR_W1", "USAGE_HARBOUR_W5"],
+      "hierarchy": "Youth consideration trend is dominant. Current usage/installed-base evidence is contextual and should explain why total-market deterioration can look less dramatic.",
+      "commentary": "Harbour is not collapsing today; it is becoming harder to replenish tomorrow."
+    },
+    {
+      "slide": 10,
+      "argumentId": "CB10",
+      "pageRole": "implications",
+      "communicationGoal": "Close with the next management questions implied by the evidence rather than generic recommendations.",
+      "headlineIntent": "The next questions are about conversion, recovery and renewal.",
+      "analyticalRelationship": "none",
+      "visualForm": "text_led",
+      "evidence": ["F_PULSE_CONSID_UP", "F_NORTHSTAR_NPS_DROP", "F_HARBOUR_YOUTH_DECLINE"],
+      "hierarchy": "Three concise research/management questions, with no decorative KPI cards.",
+      "questions": [
+        "Pulse — Can the brand convert younger-consumer consideration before campaign salience decays?",
+        "Northstar — Is Wave 5 recovery sufficient to protect loyalty, or is advocacy structurally impaired?",
+        "Harbour — Can the proposition recruit younger consumers before the existing customer base ages out?"
+      ],
+      "commentary": "Implications should emerge from the prior argument. Do not introduce unsupported recommendations."
+    }
+  ],
+  "explicitlyRemoved": {
+    "formerSlide": "What we deliberately did not conclude",
+    "reason": "Trustworthy editorial restraint should be visible in what the report chooses not to elevate. The report should not self-congratulate for ignoring low-base or inflated statistics. Methodological qualifications remain local only when they materially change interpretation."
+  }
+}
