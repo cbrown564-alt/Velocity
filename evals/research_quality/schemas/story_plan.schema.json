@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://velocity.local/schemas/research-quality-story-plan.json",
+  "title": "Velocity Research Story Plan",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["projectId", "briefId", "thesis", "sections", "excludedFindings"],
+  "properties": {
+    "projectId": {"type": "string"},
+    "briefId": {"type": "string"},
+    "thesis": {"type": "string"},
+    "sections": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["rank", "role", "headlineIntent", "findingIds"],
+        "properties": {
+          "rank": {"type": "integer", "minimum": 1},
+          "role": {"enum": ["executive_thesis", "primary_story", "support", "context", "implication", "methodology"]},
+          "headlineIntent": {"type": "string"},
+          "findingIds": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+          "whyItMatters": {"type": "string"},
+          "caveats": {"type": "array", "items": {"type": "string"}}
+        }
+      }
+    },
+    "excludedFindings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["findingId", "reason"],
+        "properties": {
+          "findingId": {"type": "string"},
+          "reason": {"enum": ["low_base", "not_brief_relevant", "redundant", "weak_evidence", "context_only", "misleading_without_context", "other"]},
+          "note": {"type": "string"}
+        }
+      }
+    },
+    "tone": {"type": "string"},
+    "targetSlideCount": {"type": ["integer", "null"], "minimum": 1}
+  }
+}

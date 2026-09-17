@@ -1,0 +1,19 @@
+{
+  "projectId": "SBT-001",
+  "turn": 3,
+  "status": "PASS",
+  "checks": {
+    "1": {"rows": 2000, "columns": 85, "roundtripExact": true, "mismatchedColumns": [], "agencySha256": "09e90c4cd1f021391affe0814e77e309132f84512eb43f197d4dd14fa8739059"},
+    "2": {"rows": 2000, "columns": 85, "roundtripExact": true, "mismatchedColumns": [], "agencySha256": "ab2a43ac6655d5aea72255d45a1b1dddadebd8a7a0944f7523c304b6bb7d477f"},
+    "3": {"rows": 2000, "columns": 85, "roundtripExact": true, "mismatchedColumns": [], "agencySha256": "8ffeffe8eba6df0b077bd6f6c41480c41875312a6ae2b84a61cbadbf8c72de27"},
+    "4": {"rows": 2000, "columns": 85, "roundtripExact": true, "mismatchedColumns": [], "agencySha256": "bc66bcbf87e0aedbbc56585bcefd1f9f3b8c72c0c85fdf6389f54a9f0cb32772"},
+    "5": {"rows": 2000, "columns": 85, "roundtripExact": true, "mismatchedColumns": [], "agencySha256": "a33c1ee8aa6193b24b6ddcb3abd7d6fc92023290a863acaca7b17eb3df7ab882"}
+  },
+  "heterogeneity": {
+    "variableNaming": "different convention in every wave",
+    "weightNaming": {"1": "weight", "2": "WT_FINAL", "3": "rimwt", "4": "final_weight", "5": "wt"},
+    "missingness": ["W2 labelled yes/no", "W3 blank structural routed cells", "W4 negative missing codes", "W5 display labels for brand ids"],
+    "gridRepresentation": ["W1 numeric brand-first", "W3 uppercase semantic", "W4 attribute-first image naming", "W5 semantic descriptive names"]
+  },
+  "artifactPolicy": "Large materialised agency CSVs are generated deterministically from the frozen canonical waves; hashes above identify the validated Turn 3 outputs."
+}

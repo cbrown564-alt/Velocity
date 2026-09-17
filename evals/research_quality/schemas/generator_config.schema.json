@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://velocity.local/schemas/synthetic-generator-config.json",
+  "title": "Synthetic Brand Tracker Generator Config",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["generatorVersion", "projectId", "rootSeed", "waves", "sampleSizePerWave", "brands", "latentFactors", "weighting", "events"],
+  "properties": {
+    "generatorVersion": { "type": "string" },
+    "projectId": { "type": "string" },
+    "rootSeed": { "type": "integer" },
+    "waves": { "type": "array", "minItems": 2, "items": { "type": "integer" }, "uniqueItems": true },
+    "sampleSizePerWave": { "type": "integer", "minimum": 200 },
+    "brands": {
+      "type": "array",
+      "minItems": 3,
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "role"],
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "role": { "type": "string" },
+          "parameters": { "type": "object", "additionalProperties": { "type": "number" } }
+        }
+      }
+    },
+    "latentFactors": {
+      "type": "object",
+      "required": ["names", "correlationMatrix"],
+      "properties": {
+        "names": { "type": "array", "items": { "type": "string" }, "minItems": 2, "uniqueItems": true },
+        "correlationMatrix": {
+          "type": "array",
+          "items": { "type": "array", "items": { "type": "number", "minimum": -1, "maximum": 1 } }
+        }
+      }
+    },
+    "populationTargets": { "type": "object" },
+    "sampling": { "type": "object" },
+    "measurement": { "type": "object" },
+    "weighting": {
+      "type": "object",
+      "required": ["method", "trimMin", "trimMax", "rescaleMeanToOne"],
+      "properties": {
+        "method": { "enum": ["poststratification", "raking"] },
+        "trimMin": { "type": "number", "exclusiveMinimum": 0 },
+        "trimMax": { "type": "number", "exclusiveMinimum": 0 },
+        "rescaleMeanToOne": { "type": "boolean" }
+      }
+    },
+    "events": { "type": "array", "items": { "type": "object" } },
+    "validation": {
+      "type": "object",
+      "properties": {
+        "maxSeedAttempts": { "type": "integer", "minimum": 1, "maximum": 1000 },
+        "storylineGates": { "type": "array", "items": { "type": "object" } }
+      }
+    }
+  }
+}

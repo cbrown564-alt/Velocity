@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://velocity.local/schemas/research-quality-finding.json",
+  "title": "Evidence-bound Research Finding",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["findingId", "claimType", "analysisRef", "evidence", "statement"],
+  "properties": {
+    "findingId": { "type": "string" },
+    "claimType": { "enum": ["level", "difference", "trend", "rank", "association", "stability", "caveat"] },
+    "analysisRef": { "type": "string" },
+    "statement": { "type": "string" },
+    "evidence": {
+      "type": "object",
+      "required": ["metric", "base"],
+      "properties": {
+        "metric": { "type": "string" },
+        "value": { "type": ["number", "null"] },
+        "comparisonValue": { "type": ["number", "null"] },
+        "difference": { "type": ["number", "null"] },
+        "base": { "type": ["number", "integer"] },
+        "comparisonBase": { "type": ["number", "integer", "null"] },
+        "weight": { "type": ["string", "null"] },
+        "interval": { "type": ["string", "null"] },
+        "pValue": { "type": ["number", "null"] },
+        "multipleComparisonAdjustment": { "type": ["string", "null"] }
+      }
+    },
+    "interpretation": {
+      "type": "object",
+      "properties": {
+        "materiality": { "enum": ["unknown", "low", "medium", "high"] },
+        "clientRelevance": { "enum": ["unknown", "low", "medium", "high"] },
+        "confidence": { "enum": ["low", "medium", "high"] },
+        "caveats": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "properties": {
+        "datasetId": { "type": ["string", "null"] },
+        "wave": { "type": ["string", "integer", "null"] },
+        "sourceVariables": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

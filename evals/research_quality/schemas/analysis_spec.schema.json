@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://velocity.local/schemas/research-quality-analysis-spec.json",
+  "title": "Velocity Research Quality Analysis Spec",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["analysisId", "projectId", "analysisType", "measure", "universe", "weight"],
+  "properties": {
+    "analysisId": {"type": "string"},
+    "projectId": {"type": "string"},
+    "analysisType": {"enum": ["proportion", "mean", "nps", "wave_change", "segment_difference", "trend", "diagnostic"]},
+    "measure": {
+      "type": "object",
+      "required": ["variable"],
+      "properties": {
+        "variable": {"type": "string"},
+        "successValue": {"type": ["string", "number", "integer", "null"]},
+        "derivedMeasure": {"type": ["string", "null"]}
+      }
+    },
+    "universe": {
+      "type": "object",
+      "required": ["description"],
+      "properties": {
+        "description": {"type": "string"},
+        "filters": {"type": "array", "items": {"type": "object"}},
+        "excludeValues": {"type": "array", "items": {"type": ["string", "number", "integer"]}}
+      }
+    },
+    "wave": {"type": ["integer", "null"]},
+    "comparisonWave": {"type": ["integer", "null"]},
+    "segment": {"type": ["object", "null"]},
+    "weight": {"type": ["string", "null"]},
+    "test": {
+      "type": ["object", "null"],
+      "properties": {
+        "method": {"type": "string"},
+        "alpha": {"type": "number", "minimum": 0, "maximum": 1},
+        "multipleComparisonPolicy": {"type": ["string", "null"]}
+      }
+    },
+    "tags": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}
+  }
+}

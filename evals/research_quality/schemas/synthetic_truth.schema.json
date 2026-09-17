@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://velocity.local/schemas/synthetic-truth.json",
+  "title": "Velocity Synthetic Tracker Hidden Truth",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["projectId", "generatorVersion", "rootSeed", "events", "traps", "truthLayers"],
+  "properties": {
+    "projectId": { "type": "string" },
+    "generatorVersion": { "type": "string" },
+    "rootSeed": { "type": "integer" },
+    "selectedChildSeed": { "type": ["integer", "null"] },
+    "rejectedSeeds": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["seed", "reasons"],
+        "properties": {
+          "seed": { "type": "integer" },
+          "reasons": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["eventId", "wave", "mechanism", "intendedEffects"],
+        "properties": {
+          "eventId": { "type": "string" },
+          "wave": { "type": ["integer", "string"] },
+          "mechanism": { "type": "string" },
+          "targetSegments": { "type": "array", "items": { "type": "string" } },
+          "intendedEffects": { "type": "array", "items": { "type": "string" } },
+          "validated": { "type": "boolean" },
+          "validationRefs": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "traps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["trapId", "type", "expectedFailure", "goldBehaviour"],
+        "properties": {
+          "trapId": { "type": "string" },
+          "type": { "enum": ["weighting", "low_base", "multiple_comparison", "routing", "grid_base", "funnel", "trend", "wording", "other"] },
+          "expectedFailure": { "type": "string" },
+          "goldBehaviour": { "type": "string" },
+          "validated": { "type": "boolean" },
+          "validationRefs": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "truthLayers": {
+      "type": "object",
+      "required": ["world", "measurement", "processing", "population", "sample", "research"],
+      "properties": {
+        "world": { "type": "string" },
+        "measurement": { "type": "string" },
+        "processing": { "type": "string" },
+        "population": { "type": "string" },
+        "sample": { "type": "string" },
+        "research": { "type": "string" }
+      }
+    }
+  }
+}
