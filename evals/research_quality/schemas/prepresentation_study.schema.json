@@ -1,0 +1,19 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"prepresentation_study.schema.json",
+  "title":"Velocity pre-presentation study contract",
+  "type":"object",
+  "required":["study_id","version","research_archetype","business_question","design","measures","freeze"],
+  "properties":{
+    "study_id":{"type":"string"},
+    "version":{"type":"string"},
+    "research_archetype":{"type":"string"},
+    "business_question":{"type":"string"},
+    "design":{"type":"object"},
+    "measures":{"type":"array","items":{"type":"object","required":["variable","question_id","universe","role"]}},
+    "pre_specified_subgroups":{"type":"array","items":{"type":"object"}},
+    "analysis_policy":{"type":"object"},
+    "trap_ids":{"type":"array","items":{"type":"string"}},
+    "freeze":{"type":"object","required":["model_exposure_allowed","immutable_artifacts"]}
+  }
+}
