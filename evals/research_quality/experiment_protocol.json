@@ -1,19 +1,92 @@
 {
-  "version":"1.0",
-  "freeze_prerequisites":["study contract frozen","dataset fingerprint frozen","reference analysis frozen","freeze validator PASS","reference evidence bindings frozen","reference finding inventory frozen","scoring contract frozen"],
-  "arms":{
-    "E1_ONE_CALL":{"purpose":"End-to-end researcher from allowed raw study inputs","stages":["researcher"]},
-    "E2_STAGED":{"purpose":"Test decomposition benefit","stages":["analyst","verifier","prioritiser","story_editor"]},
-    "E3_ANALYSIS_SURFACE":{"purpose":"Isolate judgement from numerical analysis","stages":["researcher"],"input_override":"frozen deterministic analysis surface"},
-    "E4_RAW_DATA":{"purpose":"Measure analysis + research judgement","stages":["researcher"],"input_override":"respondent data + study semantics"},
-    "E5_STABILITY":{"purpose":"Repeated-run stability","stages":["same as parent arm"],"minimum_replicates":5}
+  "version": "1.0",
+  "freeze_prerequisites": [
+    "study contract frozen",
+    "dataset fingerprint frozen",
+    "reference analysis frozen",
+    "freeze validator PASS",
+    "reference evidence bindings frozen",
+    "reference finding inventory frozen",
+    "scoring contract frozen"
+  ],
+  "arms": {
+    "E1_ONE_CALL": {
+      "purpose": "End-to-end researcher from allowed raw study inputs",
+      "stages": [
+        "researcher"
+      ]
+    },
+    "E2_STAGED": {
+      "purpose": "Test decomposition benefit",
+      "stages": [
+        "analyst",
+        "verifier",
+        "prioritiser",
+        "story_editor"
+      ]
+    },
+    "E3_ANALYSIS_SURFACE": {
+      "purpose": "Isolate judgement from numerical analysis",
+      "stages": [
+        "researcher"
+      ],
+      "input_override": "frozen deterministic analysis surface"
+    },
+    "E4_RAW_DATA": {
+      "purpose": "Measure analysis + research judgement",
+      "stages": [
+        "researcher"
+      ],
+      "input_override": "respondent data + study semantics"
+    },
+    "E5_STABILITY": {
+      "purpose": "Repeated-run stability",
+      "stages": [
+        "same as parent arm"
+      ],
+      "minimum_replicates": 5
+    }
   },
-  "stage_boundaries":{
-    "analyst":"Produces structured analysis/evidence candidates; no story.",
-    "verifier":"Checks estimand, universe, weight, routing, inference and claim support; may reject/repair candidates.",
-    "prioritiser":"Selects and tiers supported findings; controls redundancy; no slide/layout decisions.",
-    "story_editor":"Orders selected findings into renderer-neutral beats; cannot introduce new unsupported evidence."
+  "stage_boundaries": {
+    "analyst": "Produces structured analysis/evidence candidates; no story.",
+    "verifier": "Checks estimand, universe, weight, routing, inference and claim support; may reject/repair candidates.",
+    "prioritiser": "Selects and tiers supported findings; controls redundancy; no slide/layout decisions.",
+    "story_editor": "Orders selected findings into renderer-neutral beats; cannot introduce new unsupported evidence."
   },
-  "run_validity":["exact input hashes recorded","no forbidden exposure paths","model/version recorded","structured output validates","reference artifacts never included in model context","no ground-truth edits after first valid model run"],
-  "comparison_metrics":["dimension scores","mandatory recall","selected precision","unsupported rate","do-not-elevate rate","redundancy-adjusted coverage","provenance coverage","core-finding selection frequency","cost if available","latency if available"]
+  "run_validity": [
+    "exact input hashes recorded",
+    "no forbidden exposure paths",
+    "model/version recorded",
+    "structured output validates",
+    "reference artifacts never included in model context",
+    "no ground-truth edits after first valid model run"
+  ],
+  "comparison_metrics": [
+    "dimension scores",
+    "mandatory recall",
+    "selected precision",
+    "unsupported rate",
+    "do-not-elevate rate",
+    "redundancy-adjusted coverage",
+    "provenance coverage",
+    "core-finding selection frequency",
+    "cost if available",
+    "latency if available"
+  ],
+  "jev_control_plane": {
+    "provider": "typesafe",
+    "default_model": "jev-latest",
+    "doc": "docs/workstreams/research_quality/jev_control_plane.md",
+    "stages": {
+      "cleaning": "Optional pre-analysis gate for E4\u2192E3 / processing triage; closed recipe enum only",
+      "verifier": "E2 verifier judgements via evals/research_quality/jev/verifier_questions.json",
+      "prioritiser": "E2 prioritiser tier/restraint using verifier pack question subset"
+    },
+    "non_goals": [
+      "sole E1 researcher",
+      "story synthesis",
+      "writing transform code",
+      "presentation scoring"
+    ]
+  }
 }

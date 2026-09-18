@@ -13,6 +13,7 @@ The benchmark now treats its evaluation infrastructure as software rather than p
 | Renderer neutrality | Reference findings contain analytical relationships, not slide/PPT instructions |
 | Selection scoring | Known fixture reproduces mandatory recall, precision, unsupported and restraint metrics |
 | Repository structure | Required study/generator/reference/freeze-validator files exist |
+| Jev control plane | Stage roles bind packs; packs are TypeSafe-shaped; cleaning recipes closed; verifier hard failures present; offline `jev_gate.py` PASS |
 
 ## Execution tests still pending
 

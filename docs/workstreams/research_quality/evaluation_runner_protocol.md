@@ -37,3 +37,7 @@ E5 should use at least five replicates per mature arm/model configuration. Repor
 ## Cross-study reporting
 
 Keep study-level metrics visible. Macro summaries across SBT-001/002/003 should not conceal an archetype-specific collapse.
+
+## TypeSafe Jev gates
+
+Optional System One gates may run at cleaning (pre-analysis), E2 verifier, and E2 prioritiser. Use `evals/research_quality/jev/` question packs and `scripts/python/research_quality/jev_gate.py`. Jev must not receive forbidden exposure paths and must not author findings, story beats, or transform code. See `jev_control_plane.md`.

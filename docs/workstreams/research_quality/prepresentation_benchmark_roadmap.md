@@ -230,3 +230,8 @@ Build SBT-002 end-to-end only through the presentation boundary. Before model ev
 7. scoring contract for analysis, finding correctness, completeness, prioritisation and synthesis.
 
 Then evaluate models without changing ground truth in response to their outputs.
+
+## TypeSafe Jev control plane
+
+For verifier, prioritiser, and raw-data cleaning triage, Velocity uses TypeSafe Jev as a calibrated decision layer (not a prose researcher). Spec: [`jev_control_plane.md`](jev_control_plane.md). Packs live under `evals/research_quality/jev/`.
+
