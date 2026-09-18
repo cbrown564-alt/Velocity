@@ -1,0 +1,19 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"prepresentation_evidence.schema.json",
+  "title":"Velocity evidence object",
+  "type":"object",
+  "required":["evidence_id","analysis_id","values","universe","weighting","interpretation"],
+  "properties":{
+    "evidence_id":{"type":"string"},
+    "analysis_id":{"type":"string"},
+    "values":{},
+    "universe":{"type":"string"},
+    "weighting":{"type":"string"},
+    "bases":{"type":"object"},
+    "uncertainty":{"type":"object"},
+    "source_variables":{"type":"array","items":{"type":"string"}},
+    "interpretation":{"type":"object","required":["permitted","unsupported_extensions"]},
+    "fingerprint":{"type":"string"}
+  }
+}

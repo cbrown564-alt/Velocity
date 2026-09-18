@@ -1,0 +1,22 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"model_research_output.schema.json",
+  "title":"Velocity model research output",
+  "type":"object",
+  "required":["study_id","findings","story"],
+  "properties":{
+    "study_id":{"type":"string"},
+    "analysis_claims":{"type":"array","items":{"type":"object","required":["analysis_id","values","universe","weighting"]}},
+    "findings":{"type":"array","items":{"type":"object","required":["model_finding_id","proposition","evidence_refs","importance"],"properties":{
+      "model_finding_id":{"type":"string"},
+      "proposition":{"type":"string"},
+      "evidence_refs":{"type":"array","items":{"type":"string"}},
+      "importance":{"enum":["primary","secondary","context"]},
+      "claim_strength":{"type":"string"},
+      "qualification":{"type":"string"},
+      "topic_cluster":{"type":"string"}
+    }}},
+    "story":{"type":"object","required":["beats"],"properties":{"beats":{"type":"array","items":{"type":"object","required":["order","finding_refs","headline_intent","analytical_relationship"]}}}},
+    "method_notes":{"type":"array","items":{"type":"string"}}
+  }
+}

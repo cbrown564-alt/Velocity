@@ -1,0 +1,24 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"evaluation_score.schema.json",
+  "title":"Velocity pre-presentation evaluation score",
+  "type":"object",
+  "required":["run_id","study_id","dimension_scores","selection_metrics","finding_matches","hard_failures"],
+  "properties":{
+    "run_id":{"type":"string"},
+    "study_id":{"type":"string"},
+    "dimension_scores":{"type":"object"},
+    "selection_metrics":{"type":"object","required":["mandatory_recall","selected_precision","unsupported_rate","do_not_elevate_rate","redundancy_adjusted_coverage"]},
+    "finding_matches":{"type":"array","items":{"type":"object","required":["model_finding_id","match_state"],"properties":{
+      "model_finding_id":{"type":"string"},
+      "reference_finding_id":{"type":["string","null"]},
+      "match_state":{"enum":["full","partial","unsupported","contradiction","duplicate"]},
+      "evidence_compatible":{"type":"boolean"},
+      "claim_strength_compatible":{"type":"boolean"},
+      "rationale":{"type":"string"}
+    }}},
+    "hard_failures":{"type":"array","items":{"type":"string"}},
+    "provenance_coverage":{"type":"number","minimum":0,"maximum":1},
+    "notes":{"type":"array","items":{"type":"string"}}
+  }
+}

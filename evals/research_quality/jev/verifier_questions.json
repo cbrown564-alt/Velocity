@@ -1,0 +1,66 @@
+{
+  "version": "1.0",
+  "stage": "verifier",
+  "state_paths_required": [
+    "candidate.proposition",
+    "candidate.evidence_summary",
+    "candidate.universe",
+    "candidate.weighting",
+    "candidate.claim_strength",
+    "study_semantics.routing_notes",
+    "study_semantics.policy_notes",
+    "selected_topic_clusters"
+  ],
+  "questions": {
+    "evidence_supported": {
+      "type": "noul",
+      "instructions": "Does `candidate.evidence_summary` support `candidate.proposition` under the stated `candidate.universe` and `candidate.weighting`?"
+    },
+    "universe_weight_routing_ok": {
+      "type": "noul",
+      "instructions": "Are `candidate.universe` and `candidate.weighting` compatible with `study_semantics.routing_notes` (no wrong routed universe presented as unconditional)?"
+    },
+    "causal_overclaim": {
+      "type": "noul",
+      "instructions": "Does `candidate.proposition` or `candidate.claim_strength` assert a causal claim unsupported by `study_semantics.policy_notes` / design?"
+    },
+    "do_not_elevate": {
+      "type": "noul",
+      "instructions": "Given `study_semantics.policy_notes` and evidence strength in `candidate.evidence_summary`, should this candidate be suppressed (do-not-elevate) rather than reported as primary?"
+    },
+    "redundant_with_selected": {
+      "type": "noul",
+      "instructions": "Is `candidate.proposition` redundant with an already selected topic in `selected_topic_clusters`?"
+    },
+    "importance_tier": {
+      "type": "choice",
+      "instructions": "If supported and not suppressed, which reportable tier fits `candidate.proposition`?",
+      "criteria": {
+        "primary": "Material to the research objective; should appear in the core narrative",
+        "secondary": "Useful coverage; omission is not automatically a major failure",
+        "context": "Methodological qualification or caveat, not a headline finding",
+        "reject": "Unsupported, policy-violating, or should not be selected"
+      }
+    },
+    "hard_failure": {
+      "type": "choice",
+      "instructions": "Which hard-failure class applies to `candidate.proposition` given `candidate.evidence_summary`, `candidate.universe`, and `study_semantics.policy_notes`, if any?",
+      "criteria": {
+        "none": "No hard failure",
+        "fabricated_evidence": "Evidence appears invented or unbound to an analysis family",
+        "wrong_routed_universe": "Routed/conditional measure treated as unconditional",
+        "unsupported_causal": "Causal claim unsupported by design",
+        "low_base_elevated": "Low-base or suppressed evidence elevated contrary to policy"
+      }
+    },
+    "disposition": {
+      "type": "choice",
+      "instructions": "Verifier disposition for `candidate.proposition` after applying the other judgements.",
+      "criteria": {
+        "accept": "Pass through as supported",
+        "repair": "Supported only after bounded repair of universe/weight/claim strength",
+        "reject": "Reject; do not pass to prioritiser/story"
+      }
+    }
+  }
+}
