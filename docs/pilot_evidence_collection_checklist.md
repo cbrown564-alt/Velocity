@@ -25,6 +25,7 @@
 - [ ] Consent language prepared for timing capture and session notes
 - [ ] Participant confirms sharing run artifacts (event log + exports + notes)
 - [ ] Participant confirms 2-4 observed runs in 60-90 days
+- [ ] Unscripted first-session scorecard ready ([`design_conv_a_unscripted_session_scorecard.md`](design_conv_a_unscripted_session_scorecard.md)) for DESIGN-CONV-A metrics
 
 ### D. Artifact folder readiness (create before first session)
 - [ ] `pilot_ops/<pilot-org>/00_admin/` (screener, terms, consent notes)
@@ -115,6 +116,7 @@
 - [ ] Confirm project is within pilot file profile and scope
 - [ ] Reconfirm consent for timing and note capture
 - [ ] Start session note template and assign session ID
+- [ ] For first unscripted session on design-reset UI: use [`design_conv_a_unscripted_session_scorecard.md`](design_conv_a_unscripted_session_scorecard.md) (time-to-first-crosstab, palette discovery, interruptions)
 
 ## Live run capture (30-60 min)
 - [ ] Record timing markers:

@@ -8,6 +8,8 @@ Preparation, prospect-list research, and internal rehearsal may continue. Do not
 
 ---
 
+The [unscripted session scorecard](design_conv_a_unscripted_session_scorecard.md) and [blank session cards](assets/design-reset-evidence/sessions/) support the remaining validation work. The July screenshot pack is historical and must be refreshed.
+
 ## 1) Outreach message templates
 
 ### A. Warm intro (agency lead / consultant)
