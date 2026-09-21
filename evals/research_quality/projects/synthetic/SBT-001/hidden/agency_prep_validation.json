@@ -1,19 +1,48 @@
 {
   "projectId": "SBT-001",
-  "turn": 3,
+  "version": "agency-v2",
+  "generatorVersion": "synthetic_brand_tracker_v2",
   "status": "PASS",
   "checks": {
-    "1": {"rows": 2000, "columns": 85, "roundtripExact": true, "mismatchedColumns": [], "agencySha256": "09e90c4cd1f021391affe0814e77e309132f84512eb43f197d4dd14fa8739059"},
-    "2": {"rows": 2000, "columns": 85, "roundtripExact": true, "mismatchedColumns": [], "agencySha256": "ab2a43ac6655d5aea72255d45a1b1dddadebd8a7a0944f7523c304b6bb7d477f"},
-    "3": {"rows": 2000, "columns": 85, "roundtripExact": true, "mismatchedColumns": [], "agencySha256": "8ffeffe8eba6df0b077bd6f6c41480c41875312a6ae2b84a61cbadbf8c72de27"},
-    "4": {"rows": 2000, "columns": 85, "roundtripExact": true, "mismatchedColumns": [], "agencySha256": "bc66bcbf87e0aedbbc56585bcefd1f9f3b8c72c0c85fdf6389f54a9f0cb32772"},
-    "5": {"rows": 2000, "columns": 85, "roundtripExact": true, "mismatchedColumns": [], "agencySha256": "a33c1ee8aa6193b24b6ddcb3abd7d6fc92023290a863acaca7b17eb3df7ab882"}
-  },
-  "heterogeneity": {
-    "variableNaming": "different convention in every wave",
-    "weightNaming": {"1": "weight", "2": "WT_FINAL", "3": "rimwt", "4": "final_weight", "5": "wt"},
-    "missingness": ["W2 labelled yes/no", "W3 blank structural routed cells", "W4 negative missing codes", "W5 display labels for brand ids"],
-    "gridRepresentation": ["W1 numeric brand-first", "W3 uppercase semantic", "W4 attribute-first image naming", "W5 semantic descriptive names"]
-  },
-  "artifactPolicy": "Large materialised agency CSVs are generated deterministically from the frozen canonical waves; hashes above identify the validated Turn 3 outputs."
+    "1": {
+      "rows": 2000,
+      "columns": 85,
+      "roundtripExact": true,
+      "mismatchedColumns": [],
+      "canonicalSha256": "a266cbd2f7570a34bea4a5f223a7e507afaa5eec8ef11b60d0b07138053af605",
+      "agencySha256": "8fc0fb01d54ce914e0e59847a1863d9afeccaeede71ed0e5d0c2c344941a7b3f"
+    },
+    "2": {
+      "rows": 2000,
+      "columns": 85,
+      "roundtripExact": true,
+      "mismatchedColumns": [],
+      "canonicalSha256": "fa604914d57777338515a8ca3e3444fcfc6a170e4aadf276022da5bb8d32c039",
+      "agencySha256": "8592a01e107b0df677e64418ad83b5055ba3bd5c49650af05a006ee79a8698c1"
+    },
+    "3": {
+      "rows": 2000,
+      "columns": 85,
+      "roundtripExact": true,
+      "mismatchedColumns": [],
+      "canonicalSha256": "c9019cac5e0cc0a70a0e42c4ea7883ea37aa651111cad2257c45b55728e56fe0",
+      "agencySha256": "44799849aee18709037b01bc4826de9c6be64de4fc828900ede186b8fc4b01b1"
+    },
+    "4": {
+      "rows": 2000,
+      "columns": 85,
+      "roundtripExact": true,
+      "mismatchedColumns": [],
+      "canonicalSha256": "3dcf473729ee80083367b5cd689248b91a4c167453c87891dc997e167ec98857",
+      "agencySha256": "60a008c7121bfc10f4b8f15a5a2c1df74ee3151b1d7c86042e2eafad010e0626"
+    },
+    "5": {
+      "rows": 2000,
+      "columns": 85,
+      "roundtripExact": true,
+      "mismatchedColumns": [],
+      "canonicalSha256": "2a995efbd3d107e94f5d64bbd314a99eda691332424376251d53a2f91ea07eb9",
+      "agencySha256": "8398f289acda38411d8cbb808b301737cc157586b5b9e4e408436cd2882dc8b2"
+    }
+  }
 }

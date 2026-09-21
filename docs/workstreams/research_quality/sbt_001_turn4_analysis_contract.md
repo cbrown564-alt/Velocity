@@ -1,5 +1,11 @@
 # SBT-001 Turn 4 — Reference Analysis and Finding Contract
 
+## Implemented contract and version
+
+The builder emits `turn4-v2` from `synthetic_brand_tracker_v2`. Finding schema v2 uses `analysisRefs` plus a non-empty `evidence` array in the same order. Each evidence record includes its `analysisRef`, metric, universe, wave, weight and numerical result (estimate, unweighted/weighted bases, ESS, SE and CI). Wave comparisons also include the comparison wave, change statistics and baseline result. `weight: null` denotes the unweighted diagnostic. Editorial relevance, promotion, materiality and caveats remain separate from the numerical records. The builder validates each finding against the schema before writing output.
+
+This replaces the unused draft singular `analysisRef`/single-evidence contract; no product session format changes. Existing analyses and finding IDs remain stable. Regression tests check the reference/evidence alignment, weighted denominators, routing, and schema validity. The broader analysis families and acceptance criteria below remain targets: the current builder computes 147 analyses and six findings; it does not yet execute an arbitrary `analysis_spec` or cover every listed analysis family.
+
 ## Purpose
 
 Turn 4 moves SBT-001 from preparation truth to **analysis truth**. It must create an executable reference layer that can grade whether a model chose the right analysis and whether its findings are supported.
@@ -50,7 +56,7 @@ Segment analysis is only eligible for editorial promotion when the unweighted ba
 ### D. Brand image
 
 For each brand × wave × attribute:
-- `% applies` among `F1_brand >= 3` only;
+- `% applies` among `F1_brand in {3,4,5}` only (97/98/99 are missing, never eligible);
 - DK excluded from valid percentage but reported in diagnostics;
 - base is familiar-brand respondents, never total sample.
 

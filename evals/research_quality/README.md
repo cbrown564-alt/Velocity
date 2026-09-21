@@ -2,6 +2,12 @@
 
 This directory is the implementation home for the evaluation programme defined in `docs/workstreams/research_quality/00_strategy.md`.
 
+## Implemented scope
+
+SBT-001 has executable canonical-data, agency-export and reference-analysis builders. Run the commands in `scripts/python/synthetic_tracker/README.md` to reproduce them and their regression tests. Current artifacts use `synthetic_brand_tracker_v2` and `turn4-v2`; the v1 summaries are historical evidence with a known image-routing defect.
+
+The E5 grader configuration and gold story plans are specifications, not an executable scorer. A multi-system runner, hidden split registry and researcher preference results are still planned. Historical deck rationale and later PR 73 prototypes are not a verified E6 reference for corrected v2 data.
+
 ## Design rules
 
 1. Split by **project**, never random respondent rows.
