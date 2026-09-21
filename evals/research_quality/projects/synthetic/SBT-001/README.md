@@ -1,9 +1,9 @@
-# SBT-001 generated project
+# SBT-001 synthetic tracker
 
-SBT-001 is a wholly synthetic five-wave UK mobile-network tracker with 2,000 respondents per wave and fictional brands only.
+Current generation version: `synthetic_brand_tracker_v2`; analysis: `turn4-v2`; agency exports: `agency-v2`.
 
-Run `python scripts/python/synthetic_tracker/generate_sbt001.py` from repository root to materialise `raw/wave_01.csv` through `wave_05.csv`, the generated codebook, processing references and hidden truth artifacts. The canonical CSV outputs are reproducible build artifacts rather than hand-edited fixtures.
+Run the three builders and regression suite in [`scripts/python/synthetic_tracker/README.md`](../../../../../scripts/python/synthetic_tracker/README.md) from the repository root. The canonical and agency CSVs and intermediate reference files are generated artifacts. Compact reports record the latest checked materialisation.
 
-The frozen calibration run uses root/selected seed `564001`. It passed every hard storyline and structural gate, including weighting, routed bases, campaign targeting, Northstar's Wave 4 customer-experience event, Harbour's multi-wave youth decline and the deliberately unstable Mosaic low-base subgroup.
+Historical v1 reports are retained in `hidden/history/v1/` and `reference/analysis/history/v1/`. Their image-routing PASS was incorrect: structural missing code 97 entered the familiar-brand universe. Corrected v2 uses codes 3/4/5 and independent validation. Historical story/design references must be checked against the corrected analysis before reuse.
 
-See `hidden/validation_report.json` for the frozen evidence. CSV is canonical. SAV should be derived from the same CSV/codebook when a compatible writer is available.
+The manifest points to generated findings; no verified v2 reference deck is supplied. Artifact provenance and deck limitations are in `docs/workstreams/research_quality/sbt_001_turn6_visual_language.md`.

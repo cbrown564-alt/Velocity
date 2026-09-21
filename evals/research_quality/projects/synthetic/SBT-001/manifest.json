@@ -1,9 +1,15 @@
 {
   "projectId": "SBT-001",
-  "title": "UK Mobile Brand Tracker — Five-Wave Synthetic Research Project",
+  "title": "UK Mobile Brand Tracker \u2014 Five-Wave Synthetic Research Project",
   "sourceType": "synthetic",
   "domain": "consumer_mobile_networks",
-  "waves": [1, 2, 3, 4, 5],
+  "waves": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
   "split": "development",
   "difficulty": "intermediate",
   "inputs": {
@@ -22,7 +28,7 @@
   "reference": {
     "processingRecipe": "reference/processing_recipe.json",
     "analysisPlan": null,
-    "findings": null,
+    "findings": "reference/analysis/findings.json",
     "deckSpec": null,
     "deck": null
   },
@@ -49,6 +55,7 @@
     "weighting",
     "grids",
     "routing",
-    "development"
+    "development",
+    "synthetic_brand_tracker_v2"
   ]
 }

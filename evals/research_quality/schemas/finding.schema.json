@@ -1,46 +1,218 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://velocity.local/schemas/research-quality-finding.json",
-  "title": "Evidence-bound Research Finding",
+  "$id": "https://velocity.local/schemas/research-quality-finding-v2.json",
+  "title": "Evidence-bound Research Finding v2",
   "type": "object",
   "additionalProperties": false,
-  "required": ["findingId", "claimType", "analysisRef", "evidence", "statement"],
+  "required": [
+    "findingId",
+    "claimType",
+    "analysisRefs",
+    "evidence",
+    "statement",
+    "promotionStatus",
+    "editorialRelevance",
+    "materiality",
+    "caveats"
+  ],
   "properties": {
-    "findingId": { "type": "string" },
-    "claimType": { "enum": ["level", "difference", "trend", "rank", "association", "stability", "caveat"] },
-    "analysisRef": { "type": "string" },
-    "statement": { "type": "string" },
+    "findingId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "claimType": {
+      "enum": [
+        "level",
+        "difference",
+        "trend",
+        "rank",
+        "association",
+        "stability",
+        "caveat"
+      ]
+    },
+    "analysisRefs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/evidence"
+      }
+    },
+    "statement": {
+      "type": "string",
+      "minLength": 1
+    },
+    "promotionStatus": {
+      "enum": [
+        "headline_candidate",
+        "supporting",
+        "context",
+        "caveat",
+        "do_not_promote"
+      ]
+    },
+    "editorialRelevance": {
+      "type": "object",
+      "additionalProperties": {
+        "enum": [
+          "none",
+          "low",
+          "medium",
+          "high"
+        ]
+      }
+    },
+    "materiality": {
+      "enum": [
+        "unknown",
+        "low",
+        "medium",
+        "high"
+      ]
+    },
+    "caveats": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "$defs": {
+    "result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "estimate",
+        "unweightedBase",
+        "weightedBase",
+        "ess",
+        "se",
+        "ci95"
+      ],
+      "properties": {
+        "estimate": {
+          "type": "number"
+        },
+        "unweightedBase": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "weightedBase": {
+          "type": "number"
+        },
+        "ess": {
+          "type": "number"
+        },
+        "se": {
+          "type": "number"
+        },
+        "ci95": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "comparison": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "difference",
+        "se",
+        "z",
+        "pValue",
+        "ci95",
+        "baselineResult"
+      ],
+      "properties": {
+        "difference": {
+          "type": "number"
+        },
+        "se": {
+          "type": "number"
+        },
+        "z": {
+          "type": "number"
+        },
+        "pValue": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "ci95": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {
+            "type": "number"
+          }
+        },
+        "baselineResult": {
+          "$ref": "#/$defs/result"
+        }
+      }
+    },
     "evidence": {
       "type": "object",
-      "required": ["metric", "base"],
+      "additionalProperties": false,
+      "required": [
+        "analysisRef",
+        "metric",
+        "universe",
+        "wave",
+        "weight",
+        "result"
+      ],
       "properties": {
-        "metric": { "type": "string" },
-        "value": { "type": ["number", "null"] },
-        "comparisonValue": { "type": ["number", "null"] },
-        "difference": { "type": ["number", "null"] },
-        "base": { "type": ["number", "integer"] },
-        "comparisonBase": { "type": ["number", "integer", "null"] },
-        "weight": { "type": ["string", "null"] },
-        "interval": { "type": ["string", "null"] },
-        "pValue": { "type": ["number", "null"] },
-        "multipleComparisonAdjustment": { "type": ["string", "null"] }
-      }
-    },
-    "interpretation": {
-      "type": "object",
-      "properties": {
-        "materiality": { "enum": ["unknown", "low", "medium", "high"] },
-        "clientRelevance": { "enum": ["unknown", "low", "medium", "high"] },
-        "confidence": { "enum": ["low", "medium", "high"] },
-        "caveats": { "type": "array", "items": { "type": "string" } }
-      }
-    },
-    "provenance": {
-      "type": "object",
-      "properties": {
-        "datasetId": { "type": ["string", "null"] },
-        "wave": { "type": ["string", "integer", "null"] },
-        "sourceVariables": { "type": "array", "items": { "type": "string" } }
+        "analysisRef": {
+          "type": "string",
+          "minLength": 1
+        },
+        "metric": {
+          "type": "string"
+        },
+        "universe": {
+          "type": "string",
+          "minLength": 1
+        },
+        "wave": {
+          "type": "integer"
+        },
+        "weight": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "result": {
+          "$ref": "#/$defs/result"
+        },
+        "comparisonWave": {
+          "type": "integer"
+        },
+        "comparison": {
+          "$ref": "#/$defs/comparison"
+        }
+      },
+      "dependentRequired": {
+        "comparison": [
+          "comparisonWave"
+        ],
+        "comparisonWave": [
+          "comparison"
+        ]
       }
     }
   }

@@ -59,6 +59,10 @@ npx lefthook install                      # optional pre-commit format+lint (STA
 npx playwright install --with-deps        # once per machine/lockfile, before ci:e2e
 ```
 
+## Synthetic research benchmark checks
+
+The `research-quality` job in `test.yml` installs the pinned Python requirements and runs `scripts/python/synthetic_tracker/tests/`. These tests build SBT-001 in temporary directories, check image-routing eligibility independently, validate finding schema/evidence and weight provenance, and verify lossless agency CSV recovery and repeatability. They do not establish researcher preference or publication quality. Local setup and commands are in `scripts/python/synthetic_tracker/README.md`.
+
 ## 4. Directory Structure
 
 ```
