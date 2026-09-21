@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useVelocityStore } from '../../../store';
 import {
+  AUTO_CROSSTAB_EXAMPLES,
   pickAutoFirstCrosstabPair,
   resolveAutoCrosstabTableConfig,
   resolveExampleDatasetWeightVariable,
@@ -10,7 +11,6 @@ import {
  * One-time auto-first-crosstab after Load Example (brandtracker_w4.sav, sleep.sav,
  * or mock_data.csv). STAB-UI-E §9.4 — no toast; Story Shelf + deferred backup reminder.
  */
-const AUTO_CROSSTAB_EXAMPLES = new Set(['brandtracker_w4.sav', 'sleep.sav', 'mock_data.csv']);
 export function useAutoFirstCrosstab(
   resolvedRowVarsLength: number,
   tableConfigColVar: string | null | undefined,

@@ -584,6 +584,8 @@ interface VelocitySessionFile {
 4. Preserve dual-state variable metadata (codes + labels).
 5. Version changes require a migration function; no silent field removal.
 
+The browser renders import diagnostics as a dismissible story-rail summary (`sessionImportRailSummary` / `SessionImportSummary`), rather than a timed toast. It reports unresolved variables, affected slides, and removed references or skipped transforms. The summary is transient UI state, does not change the session schema, and keeps a one-slide rail expanded until dismissal. Active-slide weight and analysis settings are restored before analysis as before.
+
 Implementation: `src/core/session/*`, `VelocityEngine.exportSession()` / `importSession()`.
 
 ## 9. Workspace & Local Persistence

@@ -54,6 +54,9 @@ test('workspace switches between stored datasets without re-upload', async ({ pa
   await returnToWorkspace(page);
 
   await uploadSavAndReachDashboard(page, smallSavFixture);
+  await expect(page.getByRole('dialog', { name: 'Command palette' })).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('dialog', { name: 'Command palette' })).toBeHidden();
   await returnToWorkspace(page);
 
   await expect(page.getByText('sleep.sav')).toBeVisible({ timeout: 30000 });

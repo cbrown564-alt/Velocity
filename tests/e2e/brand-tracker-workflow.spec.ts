@@ -44,7 +44,10 @@ test('brand tracker workflow: load example, auto funnel-relevant first crosstab'
   await page.getByRole('button', { name: '+ New slide', exact: true }).click();
   await page.getByRole('button', { name: 'Insert ⌘K', exact: true }).click();
   await page.getByRole('textbox', { name: 'Find a variable', exact: true }).fill('D1. Age');
-  await page.getByTestId('palette-variable-vs_AGE').click();
+  await page
+    .getByRole('dialog', { name: 'Command palette' })
+    .getByRole('button', { name: /D1\. Age \(years\)/ })
+    .click();
 
   await expect(page.getByRole('heading', { name: 'D1. Age (years)', exact: true })).toBeVisible({ timeout: 60000 });
   await expect(page.getByRole('alert')).toHaveCount(0);

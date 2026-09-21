@@ -47,9 +47,13 @@ export interface PersistedState {
   appMode: VelocityState['appMode'];
   activeFolderId: VelocityState['activeFolderId'];
   hasSeenAutoCrosstab: VelocityState['hasSeenAutoCrosstab'];
+  hasSeenCanvasHandoff: VelocityState['hasSeenCanvasHandoff'];
   lastActiveAt: VelocityState['lastActiveAt'];
   lastSeenTransformCount: VelocityState['lastSeenTransformCount'];
   welcomeBackDismissed: VelocityState['welcomeBackDismissed'];
+  pinnedVariableSetIds: VelocityState['pinnedVariableSetIds'];
+  recentVariableSetIds: VelocityState['recentVariableSetIds'];
+  recentStripCollapsed: VelocityState['recentStripCollapsed'];
 
   // From AnalysisSlice
   tableConfig: VelocityState['tableConfig'];
@@ -130,9 +134,13 @@ export const partialize = (state: VelocityState): PersistedState => {
     appMode: state.appMode,
     activeFolderId: state.activeFolderId,
     hasSeenAutoCrosstab: state.hasSeenAutoCrosstab,
+    hasSeenCanvasHandoff: state.hasSeenCanvasHandoff,
     lastActiveAt: state.lastActiveAt,
     lastSeenTransformCount: state.lastSeenTransformCount,
     welcomeBackDismissed: state.welcomeBackDismissed,
+    pinnedVariableSetIds: state.pinnedVariableSetIds ?? [],
+    recentVariableSetIds: state.recentVariableSetIds ?? [],
+    recentStripCollapsed: state.recentStripCollapsed ?? false,
 
     // AnalysisSlice - persist configuration but NOT query results
     tableConfig: state.tableConfig,

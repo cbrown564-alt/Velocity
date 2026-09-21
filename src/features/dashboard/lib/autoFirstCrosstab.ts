@@ -8,6 +8,8 @@ import { isExcludedFromAutoAnalysis } from '../../../core/semantic/respondentIde
 import { gridSetToTableConfig } from '../../../core/grid/gridUtils';
 import type { Variable, VariableSet } from '../../../types';
 
+export const AUTO_CROSSTAB_EXAMPLES = new Set(['brandtracker_w4.sav', 'sleep.sav', 'mock_data.csv']);
+
 export type AutoCrosstabPair = {
   rowSetId: string;
   colSetId: string;

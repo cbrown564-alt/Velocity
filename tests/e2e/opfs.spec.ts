@@ -29,6 +29,11 @@ test('OPFS persists dataset across reloads', async ({ page }) => {
 
   await uploadSavAndReachDashboard(page, savFixture);
 
+  // Fresh uploads hand off to the palette; leave it before testing global shortcuts.
+  await expect(page.getByRole('dialog', { name: 'Command palette' })).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('dialog', { name: 'Command palette' })).toBeHidden();
+
   // Hub-and-spoke mode transition should preserve loaded state.
   await page.keyboard.press('d');
   await expect(page.getByRole('heading', { name: 'Variables' })).toBeVisible({ timeout: 30000 });

@@ -239,6 +239,11 @@ async function runUploadToFirstCrosstab(page, savPath) {
   await page.getByTestId('dataset-upload-input').setInputFiles(savPath);
   await waitForUploadedDataset(page, previousDatasetId);
   await waitForDashboardReady(page);
+  const canvasHandoffMs = Date.now() - fileDropAt;
+  const paletteAutoOpened = await page
+    .getByPlaceholder('Find a variable…')
+    .isVisible()
+    .catch(() => false);
 
   const tableVisible = await page
     .locator('.analysis-frame table')
@@ -257,7 +262,7 @@ async function runUploadToFirstCrosstab(page, savPath) {
     await assertActiveRecipe(page, { rowVars: ['sex'], colVar: 'marital' });
   }
   await waitForFirstCrosstab(page);
-  return Date.now() - fileDropAt;
+  return { firstCrosstabMs: Date.now() - fileDropAt, canvasHandoffMs, paletteAutoOpened };
 }
 
 async function addNewSlide(page) {
@@ -359,6 +364,8 @@ async function main() {
   const steps = [];
   const journeyMetrics = {
     coldFirstCrosstabMs: null,
+    canvasHandoffMs: null,
+    paletteAutoOpened: null,
     warmFirstCrosstabMs: null,
     exportPptxMs: null,
   };
@@ -419,7 +426,10 @@ async function main() {
     await prepareColdSession(page);
 
     timings.fileDropAt = Date.now();
-    journeyMetrics.coldFirstCrosstabMs = await runUploadToFirstCrosstab(page, SLEEP_SAV);
+    const coldUpload = await runUploadToFirstCrosstab(page, SLEEP_SAV);
+    journeyMetrics.coldFirstCrosstabMs = coldUpload.firstCrosstabMs;
+    journeyMetrics.canvasHandoffMs = coldUpload.canvasHandoffMs;
+    journeyMetrics.paletteAutoOpened = coldUpload.paletteAutoOpened;
     steps.push({ step: 'cold-first-crosstab', atMs: journeyMetrics.coldFirstCrosstabMs });
     steps.push({ step: 'dashboard-ready', atMs: journeyMetrics.coldFirstCrosstabMs });
 
@@ -458,7 +468,7 @@ async function main() {
 
     if (journeyGate) {
       await page.goto(BASE_URL);
-      journeyMetrics.warmFirstCrosstabMs = await runUploadToFirstCrosstab(page, SLEEP_SAV);
+      journeyMetrics.warmFirstCrosstabMs = (await runUploadToFirstCrosstab(page, SLEEP_SAV)).firstCrosstabMs;
       steps.push({ step: 'warm-first-crosstab', atMs: journeyMetrics.warmFirstCrosstabMs });
     }
 

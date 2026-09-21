@@ -1,10 +1,11 @@
 import React from 'react';
-import { describe, it, expect, beforeEach } from 'vitest';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import { StoryRail } from './StoryRail';
 import { useVelocityStore } from '../../../store';
 import type { Slide } from '../../../types/slides';
 import type { PersistenceManagerState } from '../../../hooks/usePersistenceManager';
+import type { SessionImportRailSummary } from '../../../core/session/sessionImportRailSummary';
 
 const noop = () => {};
 const noopAsync = async () => {};
@@ -157,5 +158,148 @@ describe('StoryRail', () => {
     fireEvent.change(input, { target: { value: 'Renamed slide' } });
     fireEvent.keyDown(input, { key: 'Enter' });
     expect(useVelocityStore.getState().slides[0].title).toBe('Renamed slide');
+  });
+
+  it('does not intercept Enter intended for a focused button', () => {
+    render(<StoryRail {...railProps} />);
+    const button = screen.getByRole('button', { name: '+ New slide' });
+    const allowed = fireEvent.keyDown(button, { key: 'Enter' });
+    expect(allowed).toBe(true);
+    expect(screen.queryByRole('textbox', { name: 'Rename slide' })).not.toBeInTheDocument();
+  });
+
+  describe('collapsible rail (DESIGN-CONV-G)', () => {
+    it('collapses to an icon strip when the deck has a single slide', () => {
+      useVelocityStore.setState({
+        slides: [createSlide({ id: 'slide-1', title: 'Only slide' })],
+        activeSlideId: 'slide-1',
+      });
+      render(<StoryRail {...railProps} />);
+
+      const rail = screen.getByTestId('story-rail');
+      expect(rail).toHaveAttribute('data-rail-collapsed', 'true');
+      expect(rail).toHaveAttribute('data-rail-expanded', 'false');
+      expect(rail.style.width).toBe('44px');
+      expect(screen.queryByText('brand-tracker')).not.toBeInTheDocument();
+      expect(screen.queryByText('+ New slide')).not.toBeInTheDocument();
+      expect(screen.getByTestId('story-rail-slide-1-compact')).toBeInTheDocument();
+    });
+
+    it('stays expanded when the deck has multiple slides', () => {
+      render(<StoryRail {...railProps} />);
+
+      const rail = screen.getByTestId('story-rail');
+      expect(rail).toHaveAttribute('data-rail-collapsed', 'false');
+      expect(rail).toHaveAttribute('data-rail-expanded', 'true');
+      expect(rail.style.width).toBe('240px');
+      expect(screen.getByText('brand-tracker')).toBeInTheDocument();
+      expect(screen.getByTestId('story-rail-slide-1')).toBeInTheDocument();
+      expect(screen.queryByTestId('story-rail-slide-1-compact')).not.toBeInTheDocument();
+    });
+
+    it('expands using a keyboard-accessible toggle for a single-slide session', () => {
+      useVelocityStore.setState({
+        slides: [createSlide({ id: 'slide-1', title: 'Only slide' })],
+        activeSlideId: 'slide-1',
+      });
+      render(<StoryRail {...railProps} />);
+
+      const rail = screen.getByTestId('story-rail');
+      fireEvent.click(screen.getByRole('button', { name: 'Expand deck outline' }));
+
+      expect(rail).toHaveAttribute('data-rail-collapsed', 'false');
+      expect(rail).toHaveAttribute('data-rail-expanded', 'true');
+      expect(rail.style.width).toBe('240px');
+      expect(screen.getByText('brand-tracker')).toBeInTheDocument();
+      expect(screen.getByTestId('story-rail-slide-1')).toBeInTheDocument();
+    });
+
+    it('expands when the deck grows beyond one slide', () => {
+      useVelocityStore.setState({
+        slides: [createSlide({ id: 'slide-1', title: 'Only slide' })],
+        activeSlideId: 'slide-1',
+      });
+      const { rerender } = render(<StoryRail {...railProps} />);
+      expect(screen.getByTestId('story-rail')).toHaveAttribute('data-rail-collapsed', 'true');
+
+      act(() => {
+        useVelocityStore.setState({
+          slides: [
+            createSlide({ id: 'slide-1', title: 'First slide' }),
+            createSlide({ id: 'slide-2', title: 'Second slide' }),
+          ],
+          activeSlideId: 'slide-1',
+        });
+      });
+      rerender(<StoryRail {...railProps} />);
+
+      const rail = screen.getByTestId('story-rail');
+      expect(rail).toHaveAttribute('data-rail-collapsed', 'false');
+      expect(rail).toHaveAttribute('data-rail-expanded', 'true');
+      expect(rail.style.width).toBe('240px');
+    });
+
+    it('re-collapses when the deck returns to a single slide', () => {
+      const { rerender } = render(<StoryRail {...railProps} />);
+      expect(screen.getByTestId('story-rail')).toHaveAttribute('data-rail-expanded', 'true');
+
+      act(() => {
+        useVelocityStore.setState({
+          slides: [createSlide({ id: 'slide-1', title: 'Only slide' })],
+          activeSlideId: 'slide-1',
+        });
+      });
+      rerender(<StoryRail {...railProps} />);
+
+      const rail = screen.getByTestId('story-rail');
+      expect(rail).toHaveAttribute('data-rail-collapsed', 'true');
+      expect(rail).toHaveAttribute('data-rail-expanded', 'false');
+    });
+
+    it('uses a calm width transition within the motion budget', () => {
+      useVelocityStore.setState({
+        slides: [createSlide({ id: 'slide-1', title: 'Only slide' })],
+        activeSlideId: 'slide-1',
+      });
+      render(<StoryRail {...railProps} />);
+
+      const rail = screen.getByTestId('story-rail');
+      expect(rail.style.transition).toMatch(/width/);
+      expect(rail.style.transition).toMatch(/150ms/);
+    });
+  });
+  describe('session import summary (DESIGN-CONV-I)', () => {
+    const summary: SessionImportRailSummary = {
+      slideCount: 3,
+      hasAdjustments: true,
+      unresolvedVariableLabels: ['Brand', 'Weight'],
+      affectedSlideNumbers: [2],
+      adjustmentMessages: [{ id: 'dropped-filter-ids', message: '1 filter was removed.' }],
+    };
+    it('renders a persistent session import summary in the rail footer', () => {
+      render(<StoryRail {...railProps} sessionImportSummary={summary} onDismissSessionImportSummary={noop} />);
+      expect(screen.getByTestId('session-import-summary')).toBeInTheDocument();
+      expect(screen.getByText(/Session imported · 3 slides/)).toBeInTheDocument();
+      expect(screen.getByTestId('session-import-unresolved')).toHaveTextContent('2 variables unresolved');
+      expect(screen.getByTestId('session-import-affected')).toHaveTextContent('Affects slides 2');
+      expect(screen.getByText('1 filter was removed.')).toBeInTheDocument();
+    });
+    it('keeps import adjustments visible for a single-slide deck', () => {
+      useVelocityStore.setState({ slides: [createSlide({ id: 'slide-1' })], activeSlideId: 'slide-1' });
+      render(<StoryRail {...railProps} sessionImportSummary={summary} onDismissSessionImportSummary={noop} />);
+      expect(screen.getByTestId('session-import-summary')).toBeVisible();
+      expect(screen.getByTestId('story-rail')).toHaveAttribute('data-rail-expanded', 'true');
+    });
+
+    it('dismisses the session import summary from the rail footer', () => {
+      const onDismiss = vi.fn();
+      const { rerender } = render(
+        <StoryRail {...railProps} sessionImportSummary={summary} onDismissSessionImportSummary={onDismiss} />,
+      );
+      fireEvent.click(screen.getByTestId('session-import-summary-dismiss'));
+      expect(onDismiss).toHaveBeenCalledTimes(1);
+      rerender(<StoryRail {...railProps} sessionImportSummary={null} onDismissSessionImportSummary={onDismiss} />);
+      expect(screen.queryByTestId('session-import-summary')).not.toBeInTheDocument();
+    });
   });
 });

@@ -26,6 +26,7 @@ export function useDashboardDnD() {
   const setWeightVariable = useVelocityStore((state) => state.setWeightVariable);
   const setSelectedVariableSetId = useVelocityStore((state) => state.setSelectedVariableSetId);
   const openRecodeModal = useVelocityStore((state) => state.openRecodeModal);
+  const recordRecentVariableSet = useVelocityStore((state) => state.recordRecentVariableSet);
 
   const [activeDragSet, setActiveDragSet] = useState<VariableSet | null>(null);
   const [selectedSetIds, setSelectedSetIds] = useState<Set<string>>(new Set());
@@ -134,6 +135,7 @@ export function useDashboardDnD() {
             setWeightVariable(varId);
             setRememberedWeightVar(varId);
             setWeightEnabled(true);
+            recordRecentVariableSet(setId);
           }
         }
         return;
@@ -144,6 +146,7 @@ export function useDashboardDnD() {
           const placement = applyCanvasPlacement(setId, variableSet.structure, tableConfig);
           if (Object.keys(placement).length > 0) {
             setTableConfig(placement);
+            recordRecentVariableSet(setId);
           }
           return;
         }
@@ -159,6 +162,7 @@ export function useDashboardDnD() {
           if (redirectedFromColumn) {
             useVelocityStore.getState().rejectRecipeColumnPlacement();
           }
+          recordRecentVariableSet(setId);
         }
       }
     }
@@ -177,8 +181,9 @@ export function useDashboardDnD() {
       }
 
       setTableConfig(applyCanvasPlacement(set.id, set.structure, tableConfig));
+      recordRecentVariableSet(set.id);
     },
-    [selectedSetIds, setSelectedVariableSetId, setTableConfig, tableConfig],
+    [selectedSetIds, setSelectedVariableSetId, setTableConfig, tableConfig, recordRecentVariableSet],
   );
 
   const handleContextMenu = useCallback(

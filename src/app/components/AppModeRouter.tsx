@@ -9,6 +9,7 @@ import type { PersistenceState } from '../../store/slices/data/types';
 import type { EngineBootStatus } from '../../store/slices/data/types';
 import type { WorkspaceState, Project, StoredDataset } from '../../features/workspace';
 import type { AppPhase } from '../types';
+import type { SessionImportRailSummary } from '../../core/session/sessionImportRailSummary';
 
 const DashboardShell = React.lazy(() =>
   import('../../features/dashboard/DashboardShell').then((module) => ({ default: module.DashboardShell })),
@@ -59,6 +60,8 @@ export interface AppModeRouterProps {
   onRetryEngine: () => void;
   onUseMemoryMode: () => void;
   onCancelEngineBoot: () => void;
+  sessionImportSummary?: SessionImportRailSummary | null;
+  onDismissSessionImportSummary?: () => void;
 }
 
 export const AppModeRouter: React.FC<AppModeRouterProps> = ({
@@ -96,6 +99,8 @@ export const AppModeRouter: React.FC<AppModeRouterProps> = ({
   onRetryEngine,
   onUseMemoryMode,
   onCancelEngineBoot,
+  sessionImportSummary = null,
+  onDismissSessionImportSummary,
 }) => {
   const reducedMotion = useReducedMotion();
 
@@ -169,6 +174,8 @@ export const AppModeRouter: React.FC<AppModeRouterProps> = ({
                 onReturnToWorkspace={onReturnToWorkspace}
                 onOpenSessionImport={onOpenSessionImport}
                 onExportSession={onExportSession}
+                sessionImportSummary={sessionImportSummary}
+                onDismissSessionImportSummary={onDismissSessionImportSummary}
               />
             </Suspense>
           </motion.div>

@@ -158,6 +158,8 @@ export default function App() {
           void warmUpEngineOnIntent('memory-recovery', { persistenceMode: 'memory' }).catch(() => {})
         }
         onCancelEngineBoot={cancelWorkerBoot}
+        sessionImportSummary={session.sessionImportSummary}
+        onDismissSessionImportSummary={session.dismissSessionImportSummary}
       />
 
       {/* Inside the dashboard, the palette mounts within DashboardShell's

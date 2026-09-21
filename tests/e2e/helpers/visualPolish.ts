@@ -179,6 +179,8 @@ export async function ensureCorrectionNone(page: Page) {
 
 /** Open the insert palette (⌘K) from the dashboard toolbar. */
 export async function openInsertPalette(page: Page) {
+  // A fresh upload can already have opened the insertion path.
+  if (await page.getByRole('dialog', { name: 'Command palette' }).isVisible()) return;
   const insertBtn = page.getByRole('button', { name: /insert/i });
   if (await insertBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
     await insertBtn.click();

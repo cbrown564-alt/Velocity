@@ -26,10 +26,13 @@ import { CSS } from '@dnd-kit/utilities';
 import { Copy, Trash2, X } from 'lucide-react';
 import { useVelocityStore } from '../../../store';
 import { registerShortcut } from '../../../lib/keyboardShortcuts/registry';
+import { cssTransition, useReducedMotion } from '../../../lib/motion';
 import { resolveSlideTitle } from '../../../core/export/resolveSlideDefaults';
 import { Slide, SlideAnalysisState } from '../../../types/slides';
 import { ConfirmModal } from '../../../components/overlays/ConfirmModal';
 import { PersistenceStatus } from './PersistenceStatus';
+import { SessionImportSummary } from './SessionImportSummary';
+import type { SessionImportRailSummary } from '../../../core/session/sessionImportRailSummary';
 import type { PersistenceManagerState } from '../../../hooks/usePersistenceManager';
 
 function isAnalysisStateEqual(current: SlideAnalysisState, saved: SlideAnalysisState): boolean {
@@ -105,6 +108,11 @@ function getRecipeSummary(
   tokens.push(slide.visualizationType === 'chart' ? 'chart' : 'table');
   return tokens.join(' · ');
 }
+
+/** Expanded rail width — full deck outline (design_01 layout regions). */
+export const STORY_RAIL_WIDTH_EXPANDED_PX = 240;
+/** Collapsed icon strip — must stay under 48px per DESIGN-CONV-G. */
+export const STORY_RAIL_WIDTH_COLLAPSED_PX = 44;
 
 interface SlideRowProps {
   slide: Slide;
@@ -242,7 +250,7 @@ const SlideRow: React.FC<SlideRowProps> = ({
               {displayLabel}
               {hasUnsavedChanges && (
                 <span
-                  className="inline-block w-1.5 h-1.5 rounded-full bg-[var(--text-tertiary)] ml-1.5 align-middle"
+                  className="inline-block w-1.5 h-1.5 rounded-full bg-[var(--text-secondary)] ml-1.5 align-middle"
                   title="Unsaved analysis changes"
                 />
               )}
@@ -263,7 +271,7 @@ const SlideRow: React.FC<SlideRowProps> = ({
               event.stopPropagation();
               onDelete();
             }}
-            className="absolute top-1 right-1 p-0.5 rounded text-[var(--text-tertiary)] opacity-0 group-hover/slide:opacity-100 focus-visible:opacity-100 hover:text-[var(--color-error)] hover:bg-[var(--status-error-surface)] transition-opacity"
+            className="absolute top-1 right-1 p-0.5 rounded text-[var(--text-secondary)] opacity-0 group-hover/slide:opacity-100 focus-visible:opacity-100 hover:text-[var(--color-error)] hover:bg-[var(--status-error-surface)] transition-opacity"
           >
             <X size={12} aria-hidden />
           </button>
@@ -284,7 +292,7 @@ const SlideRow: React.FC<SlideRowProps> = ({
             className="w-full flex items-center gap-2 px-3 py-1.5 text-xs text-[var(--text-primary)] hover:bg-[var(--bg-rail)] transition-colors"
           >
             <span className="flex-1 text-left">Rename</span>
-            <kbd className="text-[10px] text-[var(--text-tertiary)] font-mono">↵</kbd>
+            <kbd className="text-[10px] text-[var(--text-secondary)] font-mono">↵</kbd>
           </button>
           <button
             onClick={() => {
@@ -295,7 +303,7 @@ const SlideRow: React.FC<SlideRowProps> = ({
           >
             <Copy size={12} />
             <span className="flex-1 text-left">Duplicate</span>
-            <kbd className="text-[10px] text-[var(--text-tertiary)] font-mono">⌘D</kbd>
+            <kbd className="text-[10px] text-[var(--text-secondary)] font-mono">⌘D</kbd>
           </button>
           <button
             onClick={() => {
@@ -306,7 +314,7 @@ const SlideRow: React.FC<SlideRowProps> = ({
             className={`w-full flex items-center gap-2 px-3 py-1.5 text-xs transition-colors ${
               canDelete
                 ? 'text-[var(--color-error)] hover:bg-[var(--status-error-surface)]'
-                : 'text-[var(--text-tertiary)] cursor-not-allowed'
+                : 'text-[var(--text-secondary)] cursor-not-allowed'
             }`}
           >
             <Trash2 size={12} />
@@ -323,6 +331,8 @@ export interface StoryRailProps {
   opfsAvailable: boolean;
   persistenceMode: string;
   persistenceError: string | null;
+  sessionImportSummary?: SessionImportRailSummary | null;
+  onDismissSessionImportSummary?: () => void;
 }
 
 export const StoryRail: React.FC<StoryRailProps> = ({
@@ -330,6 +340,8 @@ export const StoryRail: React.FC<StoryRailProps> = ({
   opfsAvailable,
   persistenceMode,
   persistenceError,
+  sessionImportSummary = null,
+  onDismissSessionImportSummary,
 }) => {
   const slides = useVelocityStore((state) => state.slides);
   const activeSlideId = useVelocityStore((state) => state.activeSlideId);
@@ -348,6 +360,13 @@ export const StoryRail: React.FC<StoryRailProps> = ({
   const [slideToDelete, setSlideToDelete] = useState<string | null>(null);
 
   const [renamingSlideId, setRenamingSlideId] = useState<string | null>(null);
+  const [manuallyExpanded, setManuallyExpanded] = useState(false);
+  const reducedMotion = useReducedMotion();
+
+  const canCollapse =
+    slides.length === 1 && !sessionImportSummary && !persistenceError && !persistence.opfsRehydrateError;
+  const isExpanded = !canCollapse || manuallyExpanded || renamingSlideId !== null;
+  const railWidthPx = isExpanded ? STORY_RAIL_WIDTH_EXPANDED_PX : STORY_RAIL_WIDTH_COLLAPSED_PX;
 
   const deckName = useMemo(() => {
     if (!dataset?.name) return 'Untitled deck';
@@ -440,7 +459,12 @@ export const StoryRail: React.FC<StoryRailProps> = ({
         id: 'rail-rename-slide',
         contexts: ['canvas'],
         priority: 14,
-        match: (event) => event.key === 'Enter' && !event.metaKey && !event.ctrlKey && !event.altKey,
+        match: (event) =>
+          event.key === 'Enter' &&
+          !event.metaKey &&
+          !event.ctrlKey &&
+          !event.altKey &&
+          !(event.target instanceof Element && event.target.closest('button, a[href], select')),
         handler: (event) => {
           if (!inCanvas()) return;
           const slideId = useVelocityStore.getState().activeSlideId;
@@ -521,21 +545,79 @@ export const StoryRail: React.FC<StoryRailProps> = ({
     return () => unregister.forEach((fn) => fn());
   }, [navigateSlide, addSlide, duplicateSlide]);
 
+  const widthTransition = reducedMotion ? 'none' : cssTransition('width', 'fast', 'standard');
+
   return (
     <aside
       data-testid="story-rail"
+      data-rail-expanded={isExpanded ? 'true' : 'false'}
+      data-rail-collapsed={isExpanded ? 'false' : 'true'}
       aria-label="Deck outline"
-      className="w-[240px] shrink-0 flex flex-col px-2.5 pt-2 pb-3 border-r border-[var(--border-color-muted)]"
+      style={{ width: `${railWidthPx}px`, transition: widthTransition }}
+      className={`shrink-0 flex flex-col overflow-hidden border-r border-[var(--border-color-muted)] ${
+        isExpanded ? 'px-2.5 pt-2 pb-3' : 'px-1 pt-2 pb-2'
+      }`}
     >
-      <div className="px-2.5 pt-2 pb-3.5 text-[13px] font-semibold tracking-[0.01em] text-[var(--text-primary)]">
-        {deckName}
-      </div>
+      {canCollapse && (
+        <button
+          type="button"
+          aria-label={isExpanded ? 'Collapse deck outline' : 'Expand deck outline'}
+          aria-expanded={isExpanded}
+          onClick={() => setManuallyExpanded(!isExpanded)}
+          className="h-8 shrink-0 rounded-md text-[var(--text-secondary)] hover:bg-[var(--bg-rail)]"
+        >
+          {isExpanded ? '‹' : '›'}
+        </button>
+      )}
+      {isExpanded ? (
+        <div className="px-2.5 pt-2 pb-3.5 text-[13px] font-semibold tracking-[0.01em] text-[var(--text-primary)]">
+          {deckName}
+        </div>
+      ) : (
+        <div
+          className="flex justify-center pb-2 text-[11px] font-mono text-[var(--text-secondary)]"
+          title={deckName}
+          aria-hidden
+        >
+          1
+        </div>
+      )}
 
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <SortableContext items={slides.map((s) => s.id)} strategy={verticalListSortingStrategy}>
           <ol className="flex flex-col gap-0.5 overflow-y-auto min-h-0" aria-label="Slides">
             {slides.map((slide, index) => {
               const isActive = slide.id === activeSlideId;
+              if (!isExpanded) {
+                const displayLabel = getSlideDisplayLabel(
+                  slide,
+                  variableSets,
+                  isActive ? { rowVars: tableConfig?.rowVars ?? [], colVar: tableConfig?.colVar ?? null } : undefined,
+                );
+                return (
+                  <li
+                    key={slide.id}
+                    data-testid={`story-rail-slide-${index + 1}-compact`}
+                    aria-current={isActive ? 'true' : undefined}
+                    aria-label={`Slide ${index + 1}: ${displayLabel}`}
+                    title={displayLabel}
+                    className={`flex justify-center py-1.5 rounded-md cursor-default transition-colors ${
+                      isActive
+                        ? 'bg-[var(--bg-panel)] shadow-[0_0_0_1px_var(--border-color)]'
+                        : 'hover:bg-[var(--bg-rail)]'
+                    }`}
+                  >
+                    <button
+                      type="button"
+                      aria-label={`Slide ${index + 1}: ${displayLabel}`}
+                      onClick={() => setActiveSlide(slide.id)}
+                      className="w-7 h-7 flex items-center justify-center rounded-md font-mono text-[11px] text-[var(--text-secondary)]"
+                    >
+                      {index + 1}
+                    </button>
+                  </li>
+                );
+              }
               return (
                 <SlideRow
                   key={slide.id}
@@ -567,36 +649,46 @@ export const StoryRail: React.FC<StoryRailProps> = ({
         type="button"
         onClick={() => addSlide()}
         title="New slide (N)"
-        className="mt-1.5 px-2.5 py-[7px] text-left text-[12.5px] rounded-md text-[var(--text-secondary)] hover:bg-[var(--bg-rail)] hover:text-[var(--text-primary)] transition-colors"
+        aria-label="+ New slide"
+        className={`mt-1.5 rounded-md text-[var(--text-secondary)] hover:bg-[var(--bg-rail)] hover:text-[var(--text-secondary)] transition-colors ${
+          isExpanded
+            ? 'px-2.5 py-[7px] text-left text-[12.5px]'
+            : 'mx-auto w-7 h-7 flex items-center justify-center text-[16px] leading-none'
+        }`}
       >
-        + New slide
+        {isExpanded ? '+ New slide' : '+'}
       </button>
 
-      <div className="mt-auto px-2.5 pt-2 text-[11px] text-[var(--text-secondary)]">
-        <PersistenceStatus
-          mode={persistenceMode}
-          opfsAvailable={opfsAvailable}
-          dbLabel={persistence.opfsDbLabel}
-          usageMb={persistence.opfsUsageMb}
-          quotaMb={persistence.opfsQuotaMb}
-          usagePct={persistence.opfsUsagePct}
-          error={persistenceError}
-          errorHint={persistence.opfsErrorHint}
-          rehydrateError={persistence.opfsRehydrateError}
-          datasetRows={dataset?.rowCount ?? null}
-          datasetColumns={persistence.datasetVariableCount}
-          estimatedCells={persistence.estimatedCells}
-          labeledVariableCount={persistence.labeledVariableCount}
-          totalVariableCount={persistence.datasetVariableCount}
-          totalValueLabelCount={persistence.totalValueLabelCount}
-          memoryRisk={persistence.memoryRisk}
-          partialLoadMessage={persistence.partialLoadMessage}
-          opfsFileKey={dataset?.opfsFileKey}
-          onRefresh={persistence.refreshOpfsDbFiles}
-          onPurge={persistence.purgeQuarantinedDbs}
-          onRebuild={() => void persistence.rebuildFromOpfsSource('dashboard')}
-        />
-      </div>
+      {isExpanded && (
+        <div className="mt-auto px-2.5 pt-2 text-[11px] text-[var(--text-secondary)]">
+          {sessionImportSummary && onDismissSessionImportSummary && (
+            <SessionImportSummary summary={sessionImportSummary} onDismiss={onDismissSessionImportSummary} />
+          )}
+          <PersistenceStatus
+            mode={persistenceMode}
+            opfsAvailable={opfsAvailable}
+            dbLabel={persistence.opfsDbLabel}
+            usageMb={persistence.opfsUsageMb}
+            quotaMb={persistence.opfsQuotaMb}
+            usagePct={persistence.opfsUsagePct}
+            error={persistenceError}
+            errorHint={persistence.opfsErrorHint}
+            rehydrateError={persistence.opfsRehydrateError}
+            datasetRows={dataset?.rowCount ?? null}
+            datasetColumns={persistence.datasetVariableCount}
+            estimatedCells={persistence.estimatedCells}
+            labeledVariableCount={persistence.labeledVariableCount}
+            totalVariableCount={persistence.datasetVariableCount}
+            totalValueLabelCount={persistence.totalValueLabelCount}
+            memoryRisk={persistence.memoryRisk}
+            partialLoadMessage={persistence.partialLoadMessage}
+            opfsFileKey={dataset?.opfsFileKey}
+            onRefresh={persistence.refreshOpfsDbFiles}
+            onPurge={persistence.purgeQuarantinedDbs}
+            onRebuild={() => void persistence.rebuildFromOpfsSource('dashboard')}
+          />
+        </div>
+      )}
 
       <ConfirmModal
         isOpen={deleteModalOpen}

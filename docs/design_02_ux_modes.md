@@ -30,7 +30,8 @@ The Analysis Canvas is the hub. Users build crosstabs and charts on slides, refi
 
 | Surface | Role | Entry |
 | :--- | :--- | :--- |
-| **Story rail** (left) | Deck outline — numbered slides, title, persistent recipe summary, reorder, `+ New slide`, persistence/footer summaries | Always visible; approved convergence makes it collapsible for small decks |
+| **Story rail** (left) | Deck outline — numbered slides, title, persistent recipe summary, reorder, `+ New slide`, persistence/footer summaries | 44px for one-slide decks, with an explicit expand/collapse button; expanded for larger decks and pending import/persistence warnings |
+| **Recent variables** | Up to eight available pinned/recent variables; click or drag to insert, separate accessible pin control | Below toolbar after first use; collapsible |
 | **Toolbar** (top) | View toggle, Recipe toggle, Insert ⌘K, overflow `···`, primary Export | Always visible |
 | **Slide artifact** (center) | Exportable content only — title, table/chart, shrink-wrapped card | Always visible |
 | **Statistics margin note** | One-line chi-square / sample note outside the card | Below slide when stats apply |
@@ -108,7 +109,7 @@ graph TD
 - Keep source-of-truth state in the store/engine path, not duplicated in ad hoc UI state.
 - Use semantic design tokens from `design_01_system.md` (single evolved Soft Machine identity).
 - Preserve the distinction between selection/navigation UI and analysis computation.
-- Variables are **summoned** (palette, VM), not resident on the canvas.
+- Full variable discovery is **summoned** (palette, VM). The Canvas may retain up to eight recent/pinned variables for reuse.
 - Deck recipe state binds to existing store/session structures — no parallel configuration model.
 - If a new feature crosses modes, document which mode owns the user decision and which mode only displays the result.
 
@@ -123,10 +124,14 @@ The product has three modes only: Workspace, Analysis Canvas, and Variable Manag
 The mode model is the approved target, but the implementation is not yet complete. The active gaps are:
 
 - make recipe structure persistent and legible in the rail/inspector;
-- land retained Wave 2 discovery/continuity candidates per R0;
+- verify the integrated Wave 2 discovery/continuity candidates and assess discovery value in representative sessions;
 - recapture the journey and run 3–5 unscripted representative sessions on the final candidate.
 
 Insert-palette grammar is settled as **Grammar A** (`DESIGN-CONV-K1`). `DESIGN-CONV-K3` a11y/interaction closure is Done. PPTX export includes a review-before-download preview lane (`DESIGN-CONV-B`): export-bound thumbnails, recipe/significance summary, then download. Excel remains a one-step export.
 
+
+The first general palette open shows inline row/column guidance once per dataset. Explicit recipe-slot opens skip it. Dismissal survives reopen when local storage is available; storage failures do not block insertion. Fresh, empty, full-data uploads activate slide 1 and may open the palette once per browser profile; existing analyses, pending example auto-analysis, metadata-only data, and workspace reopen do not trigger it. Auto-open is skipped above one million estimated cells.
+
+Session imports show a dismissible rail summary of slide count, unresolved variables, affected slides, and adjustments. The rail stays expanded until the summary is dismissed. This summary lasts for the current app session and clears when another dataset is loaded; it is not saved into the session file.
 
 The tracker §4.3.2 owns ordering and completion. Until `DESIGN-CONV-A` passes, the reset is implemented but not verified or validated as a complete redesign. PILOT-6 photography must use post-reset chrome without a focus-mode toggle.

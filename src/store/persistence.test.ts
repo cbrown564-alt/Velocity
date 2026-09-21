@@ -39,6 +39,24 @@ describe('Store: Persistence', () => {
   });
 
   describe('partialize function', () => {
+    it('persists discovery preferences but not a pending upload handoff', () => {
+      const persisted = partialize({
+        ...useVelocityStore.getState(),
+        pinnedVariableSetIds: ['gender'],
+        recentVariableSetIds: ['region', 'gender'],
+        recentStripCollapsed: true,
+        hasSeenCanvasHandoff: true,
+        canvasHandoffTrigger: 'fresh_upload',
+      });
+      expect(persisted).toMatchObject({
+        pinnedVariableSetIds: ['gender'],
+        recentVariableSetIds: ['region', 'gender'],
+        recentStripCollapsed: true,
+        hasSeenCanvasHandoff: true,
+      });
+      expect(persisted).not.toHaveProperty('canvasHandoffTrigger');
+    });
+
     it('preserves active dataset value labels while compacting workspace copies', () => {
       const mockState = {
         dataset: {
