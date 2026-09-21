@@ -1,0 +1,14 @@
+# Reproducible materialisations; retain compact validation evidence in Git.
+/raw/
+/agency_raw/
+/codebook.json
+/reference/processing_recipe.json
+/reference/weighting_targets.json
+/reference/variable_semantics.json
+/reference/agency_wave_mapping.json
+/reference/agency_processing_recipe.json
+/reference/analysis/analysis_results.json
+/reference/analysis/findings.json
+/hidden/planted_events.json
+/hidden/traps.json
+/hidden/generation_truth.json

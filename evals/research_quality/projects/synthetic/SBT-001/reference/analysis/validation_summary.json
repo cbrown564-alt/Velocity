@@ -1,27 +1,33 @@
 {
-  "projectId": "SBT-001",
-  "version": "turn4-v1",
-  "status": "PASS",
-  "source": "canonical Turn-2 data; deterministic Turn-4 analysis builder",
+  "canonicalSha256": {
+    "1": "a266cbd2f7570a34bea4a5f223a7e507afaa5eec8ef11b60d0b07138053af605",
+    "2": "fa604914d57777338515a8ca3e3444fcfc6a170e4aadf276022da5bb8d32c039",
+    "3": "c9019cac5e0cc0a70a0e42c4ea7883ea37aa651111cad2257c45b55728e56fe0",
+    "4": "3dcf473729ee80083367b5cd689248b91a4c167453c87891dc997e167ec98857",
+    "5": "2a995efbd3d107e94f5d64bbd314a99eda691332424376251d53a2f91ea07eb9"
+  },
+  "generatorVersion": "synthetic_brand_tracker_v2",
+  "analysisVersion": "turn4-v2",
+  "analysisCount": 147,
+  "findingCount": 6,
   "hardChecks": {
-    "referenceResultsDerivedFromCanonicalData": true,
-    "allResultsCarryUniverseBaseAndWeight": true,
-    "findingRefsResolveToExecutableAnalyses": true,
-    "briefRelevanceSeparatedFromCorrectness": true,
-    "lowBaseMosaicResultRetainedAndDoNotPromote": true,
-    "pulseWeightedAndUnweightedDiagnosticSeparated": true,
-    "nonSignificanceDoesNotAuthorizeStableLanguage": true,
-    "causalCampaignLanguageForbidden": true
+    "findingSchemaValid": true,
+    "imageRoutingValid": true,
+    "allResultsHaveBases": true,
+    "allFindingsHaveAnalysisRefs": true,
+    "mosaicLowBasePreserved": true
   },
-  "knownRealisedMetricsFromFrozenTurn2Validation": {
-    "pulseW2W3WeightedConsiderationChangePp": 3.77,
-    "pulseW2W3UnweightedConsiderationChangePp": 6.38,
-    "pulseCompositionOverstatementPp": 2.61,
-    "northstarW3Nps": -13.5,
-    "northstarW4Nps": -60.5,
-    "northstarW3W4AwarenessChangePp": 0.03,
-    "harbourYouthConsiderationW1Pct": 27.8,
-    "harbourYouthConsiderationW5Pct": 18.7
+  "keyMetrics": {
+    "pulseWeightedChangePp": 3.7657365082217287,
+    "pulseUnweightedChangePp": 6.379411095323329,
+    "northstarNpsChange": -48.16975410779524,
+    "northstarAwarenessChangePp": 0.03426050467775221,
+    "harbourYouthChangePp": -9.113113862494055,
+    "mosaicWave4Base": 33,
+    "pulseInnovationW2ValidBase": 803,
+    "pulseInnovationW2Pct": 78.03833563038035,
+    "pulseInnovationW3ValidBase": 941,
+    "pulseInnovationW3Pct": 83.28753570564817
   },
-  "note": "The executable builder recomputes precise values from canonical CSVs. Rounded metrics here are continuity checks from the frozen Turn-2 validation, not manually supplied gold results. Materialised analysis_results.json and findings.json are generated artifacts and may be kept out of Git if large; the builder is the source of truth."
+  "passed": true
 }

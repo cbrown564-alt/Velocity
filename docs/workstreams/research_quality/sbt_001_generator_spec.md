@@ -323,6 +323,8 @@ SAV export is desirable for product realism. CSV is the canonical generator outp
 
 ## 13. Reproducibility
 
+**Implemented correction (v2):** `synthetic_brand_tracker_v2` retains seed 564001 and the original RNG draw sequence, but image routing and the spontaneous-awareness familiarity term use only valid codes 3/4/5. Codes 97/98/99 must never satisfy familiarity eligibility. Independent validation uses prompted awareness plus the allowed familiarity codes. Original v1 summaries are retained as history; their image-routing PASS is invalid. Rebuild canonical data, agency exports and reference analysis together using `scripts/python/synthetic_tracker/README.md`. The named RNG streams below remain a design target; the current generator uses one stream per wave.
+
 - Root seed is explicit in `generator_config.json`.
 - Use named child RNG streams for population, sampling, measurement noise, events and text so changes in one component do not silently perturb all outputs.
 - Generator version is recorded in every manifest.

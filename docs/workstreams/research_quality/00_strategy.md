@@ -1,6 +1,6 @@
 # Research Quality Backbone
 
-**Status:** Proposed experimental workstream  
+**Status:** Experimental workstream. SBT-001 generation, reversible preparation and reference-analysis scripts are implemented; the comparative runner, executable E5 graders and researcher preference evidence remain planned.
 **Wedge:** Brand-tracker preparation -> analysis -> publication-quality editable deck  
 **Principle:** Models interpret, propose and communicate. Velocity computes. Publication requires verified evidence.
 
