@@ -1,6 +1,14 @@
 # SBT-001 Turn 6 — Publication-Quality Reference Deck
 
-## Purpose
+## Artifact status and provenance
+
+This document records the **historical eight-slide Turn 6 design**, not the current ten-slide design or a verified reference for corrected v2 data. The later direction is owned by `sbt_001_slide_design_iteration.md` and `reference/story/category_board_storyboard_v2.json`; it removes the deliberate-omission slide described below.
+
+The [original research conversation](https://chatgpt.com/c/6aaa9d34-4428-83eb-a4aa-dd87a352e481) contains `SBT-001_category_board_reference.pptx`, its v2 revision, and the later PR 73 `SBT-001_Category_Board_Canonical_v1.pptx`. These are searchable in the source account's [ChatGPT Library](https://chatgpt.com/library?search=SBT-001). The later canonical deck's ten-slide preview was located on 2026-09-21. Account-scoped conversation downloads are provenance, not a portable checked-in reference.
+
+PR 73 subsequently added `scripts/python/research_pptx/build_sbt001_native_deck.py`. It uses fixed numerical literals; it is a separate prototype, not a data-bound v2 renderer. The project manifest therefore leaves `reference.deck` null. Before E6 reference acceptance, bind a renderer to the corrected analysis output, retain the PPTX and rendered slides with hashes, and inspect the full result. No historical image-base values below should be used as v2 evidence.
+
+## Historical purpose
 
 Turn 6 establishes the first concrete visual/research-design target for Velocity. It is intentionally not a generic auto-report template. The reference artifact is an 8-slide **Category Board** readout built from the frozen SBT-001 story hierarchy and deterministic data.
 
@@ -106,7 +114,7 @@ Note that Turn-4's earlier `F_PULSE_CONSID_UP` finding uses the prompted-aware d
 
 ## Turn 7 implications
 
-The reference deck now enables controlled negative variants:
+The historical design proposed these controlled negative variants; a verified, retained reference is still required:
 
 1. questionnaire-order/mechanical deck;
 2. dashboard-density deck;

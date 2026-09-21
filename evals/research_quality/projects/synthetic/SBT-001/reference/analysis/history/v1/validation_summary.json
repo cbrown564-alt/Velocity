@@ -1,0 +1,27 @@
+{
+  "projectId": "SBT-001",
+  "version": "turn4-v1",
+  "status": "PASS",
+  "source": "canonical Turn-2 data; deterministic Turn-4 analysis builder",
+  "hardChecks": {
+    "referenceResultsDerivedFromCanonicalData": true,
+    "allResultsCarryUniverseBaseAndWeight": true,
+    "findingRefsResolveToExecutableAnalyses": true,
+    "briefRelevanceSeparatedFromCorrectness": true,
+    "lowBaseMosaicResultRetainedAndDoNotPromote": true,
+    "pulseWeightedAndUnweightedDiagnosticSeparated": true,
+    "nonSignificanceDoesNotAuthorizeStableLanguage": true,
+    "causalCampaignLanguageForbidden": true
+  },
+  "knownRealisedMetricsFromFrozenTurn2Validation": {
+    "pulseW2W3WeightedConsiderationChangePp": 3.77,
+    "pulseW2W3UnweightedConsiderationChangePp": 6.38,
+    "pulseCompositionOverstatementPp": 2.61,
+    "northstarW3Nps": -13.5,
+    "northstarW4Nps": -60.5,
+    "northstarW3W4AwarenessChangePp": 0.03,
+    "harbourYouthConsiderationW1Pct": 27.8,
+    "harbourYouthConsiderationW5Pct": 18.7
+  },
+  "note": "The executable builder recomputes precise values from canonical CSVs. Rounded metrics here are continuity checks from the frozen Turn-2 validation, not manually supplied gold results. Materialised analysis_results.json and findings.json are generated artifacts and may be kept out of Git if large; the builder is the source of truth."
+}

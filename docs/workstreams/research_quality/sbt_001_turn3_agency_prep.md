@@ -1,6 +1,8 @@
 # SBT-001 Turn 3 — Agency-style preparation benchmark
 
-**Status:** Implemented and independently materialised in the Turn 3 artifact package.
+**Status:** Reproducible `agency-v2` implementation in `scripts/python/synthetic_tracker/generate_agency_exports.py`, with exact round-trip tests. The conversation-era v1 validation is retained under `hidden/history/v1/`; its original byte hashes are not the v2 acceptance target.
+
+Generate corrected canonical data first, then run the agency builder as documented in `scripts/python/synthetic_tracker/README.md`. This implementation reconstructs the conventions below from this specification. The original `SBT-001_turn3.zip` is discoverable in the source account's [ChatGPT Library](https://chatgpt.com/library?search=SBT-001) and [research conversation](https://chatgpt.com/c/6aaa9d34-4428-83eb-a4aa-dd87a352e481); those account-scoped artifacts are historical provenance, not a dependency of the reproducible build.
 
 Turn 3 creates a deliberately heterogeneous agency-export layer over the frozen SBT-001 respondents. The canonical five-wave data remain unchanged; the new layer changes representation only. This gives E1/E2 an exact gold inverse transformation rather than relying on subjective notions of 'clean data'.
 
@@ -12,7 +14,7 @@ The benchmark should test whether a system can recover survey semantics across w
 
 | Wave | Naming style | Weight | Deliberate representation drift |
 |---|---|---|---|
-| 1 | legacy questionnaire numbers (`Q10_1`, `Q20_1_RELI`) | `weight` | numeric brand-first grids |
+| 1 | legacy questionnaire numbers (`Q10_1`, `Q20_1_RELIABLE`) | `weight` | numeric brand-first grids |
 | 2 | analyst-friendly abbreviations (`aw_northstar`, `img_*`) | `WT_FINAL` | binary questions exported as labelled Yes/No/Not asked/Don't know |
 | 3 | uppercase platform export (`AWARE_*`, `BIMAGE_*`) | `rimwt` | structural routed values exported as blanks; reversed column order |
 | 4 | lower-case questionnaire IDs (`q10_1`, `q20_reliable_1`) | `final_weight` | image grid changes to attribute-first naming; structural/DK codes become -99/-98 |
@@ -37,13 +39,15 @@ Forbidden shortcuts include treating all missing codes globally, filling routed 
 
 ## Gold artifacts
 
-The materialised Turn 3 package contains:
+The v2 builder materialises:
 
 - `agency_raw/agency_wave_01.csv` … `agency_wave_05.csv`;
 - `reference/agency_wave_mapping.json` — exact wave-specific field mapping and value-normalisation rules;
 - `reference/agency_processing_recipe.json` — semantic preparation contract;
 - `hidden/agency_prep_validation.json` — round-trip validation and hashes;
-- `generate_agency_exports.py` — deterministic corruption/materialisation script.
+- `scripts/python/synthetic_tracker/generate_agency_exports.py` — committed deterministic materialisation and inverse-recovery script.
+
+All 85 fields have explicit mappings. W4 maps structural/DK/refused to -99/-98/-97 per eligible variable. W2 labels preserve all five binary/missing codes (0/1/97/98/99). CSV recovery disables automatic NA detection and preserves weights, leading-zero IDs, column order and respondent order. Unexpected columns or unrecognised encoded numeric labels fail recovery.
 
 The generated agency files are intentionally not hand-edited. They are deterministic transformations of the frozen canonical waves.
 

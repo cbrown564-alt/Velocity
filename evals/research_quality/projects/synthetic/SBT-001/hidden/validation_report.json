@@ -1,6 +1,19 @@
 {
+  "canonicalSha256": {
+    "1": "a266cbd2f7570a34bea4a5f223a7e507afaa5eec8ef11b60d0b07138053af605",
+    "2": "fa604914d57777338515a8ca3e3444fcfc6a170e4aadf276022da5bb8d32c039",
+    "3": "c9019cac5e0cc0a70a0e42c4ea7883ea37aa651111cad2257c45b55728e56fe0",
+    "4": "3dcf473729ee80083367b5cd689248b91a4c167453c87891dc997e167ec98857",
+    "5": "2a995efbd3d107e94f5d64bbd314a99eda691332424376251d53a2f91ea07eb9"
+  },
+  "environment": {
+    "python": "3.14.4",
+    "numpy": "2.4.0",
+    "pandas": "2.3.3",
+    "scipy": "1.16.3"
+  },
   "projectId": "SBT-001",
-  "generatorVersion": "synthetic_brand_tracker_v1",
+  "generatorVersion": "synthetic_brand_tracker_v2",
   "rootSeed": 564001,
   "selectedSeed": 564001,
   "rejectedSeeds": [],
@@ -19,36 +32,86 @@
     "mosaic_low_base_trap": true
   },
   "metrics": {
-    "pulse_w3_weighted_uplift_pp": 3.765302956699146,
+    "pulse_w3_weighted_uplift_pp": 3.7657365082217287,
     "pulse_w3_unweighted_uplift_pp": 6.379411095323329,
-    "pulse_unweighted_overstatement_pp": 2.614108138624183,
+    "pulse_unweighted_overstatement_pp": 2.6136745871016003,
     "northstar_nps_w3": -13.504823151125404,
     "northstar_nps_w4": -60.45751633986929,
     "northstar_nps_drop": -46.95269318874388,
-    "northstar_awareness_w3": 93.53975738685152,
+    "northstar_awareness_w3": 93.53970697578016,
     "northstar_awareness_w4": 93.57396748045791,
-    "northstar_awareness_move": 0.034210093606390046,
+    "northstar_awareness_move": 0.03426050467774644,
     "harbour_youth_consider_w1": 27.833083405827807,
     "harbour_youth_consider_w5": 18.719969543333754,
     "harbour_youth_decline": -9.113113862494053,
-    "pulse_recog_young_w3": 40.25987984356148,
-    "pulse_recog_older_w3": 25.71012018494449,
+    "pulse_recog_young_w3": 40.259879843561464,
+    "pulse_recog_older_w3": 25.709314058743406,
     "min_kish_ess": 1809.409495992526
   },
   "structural": {
-    "rows_per_wave": [2000, 2000, 2000, 2000, 2000],
+    "rows_per_wave": [
+      2000,
+      2000,
+      2000,
+      2000,
+      2000
+    ],
     "unique_ids": true,
-    "weight_bounds": [[0.4628783115962539,2.8103326061201126],[0.4474217655653013,3.0],[0.35885718024931224,2.9999999999999996],[0.4473829974410194,2.646702774777123],[0.35056440869800376,1.8179268622482199]],
+    "weight_bounds": [
+      [
+        0.4628783115962539,
+        2.8103326061201126
+      ],
+      [
+        0.4474217655653013,
+        3.0
+      ],
+      [
+        0.35885718024931224,
+        2.9999999999999996
+      ],
+      [
+        0.4473829974410194,
+        2.646702774777123
+      ],
+      [
+        0.35056440869800376,
+        1.8179268622482199
+      ]
+    ],
     "image_routing_violations": 0,
     "service_routing_violations": 0
   },
   "lowBaseTrap": [
-    {"wave":1,"unweightedBase":18,"weightedPct":41.67117941841374},
-    {"wave":2,"unweightedBase":22,"weightedPct":35.37495606129728},
-    {"wave":3,"unweightedBase":21,"weightedPct":16.198023736044682},
-    {"wave":4,"unweightedBase":28,"weightedPct":50.233081907999576},
-    {"wave":5,"unweightedBase":37,"weightedPct":28.250475144991118}
+    {
+      "wave": 1,
+      "unweightedBase": 18,
+      "weightedPct": 41.67117941841374
+    },
+    {
+      "wave": 2,
+      "unweightedBase": 22,
+      "weightedPct": 35.38743232484436
+    },
+    {
+      "wave": 3,
+      "unweightedBase": 21,
+      "weightedPct": 16.20988804813124
+    },
+    {
+      "wave": 4,
+      "unweightedBase": 28,
+      "weightedPct": 50.23308190799957
+    },
+    {
+      "wave": 5,
+      "unweightedBase": 37,
+      "weightedPct": 28.250475144991118
+    }
   ],
   "status": "PASS",
-  "savExport": {"status":"BLOCKED_ENVIRONMENT","reason":"pyreadstat is unavailable in the execution environment; canonical CSV generation is validated and deterministic."}
+  "savExport": {
+    "status": "OPTIONAL",
+    "note": "CSV is canonical; SAV conversion requires a compatible writer such as pyreadstat."
+  }
 }
