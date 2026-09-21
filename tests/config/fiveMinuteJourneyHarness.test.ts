@@ -9,11 +9,28 @@ const packageJson = JSON.parse(readFileSync(resolve(process.cwd(), 'package.json
 };
 
 describe('five-minute journey measurement contract', () => {
-  it('uses the documented palette shortcuts for rows and columns', () => {
+  it('uses Grammar A palette shortcuts (↵ columns, ⌥↵ rows, ⇧↵ filter)', () => {
     expect(harnessSource).toContain("if (target === 'rows') {");
     expect(harnessSource).toContain("await page.keyboard.press('Alt+Enter');");
     expect(harnessSource).toContain("} else if (target === 'filter') {");
+    expect(harnessSource).toContain("await page.keyboard.press('Shift+Enter');");
     expect(harnessSource).toContain("await page.keyboard.press('Enter');");
+    // Default branch (columns) must remain Enter — not Alt+Enter.
+    const insertVariable = harnessSource.match(
+      /async function insertVariable[\s\S]*?\n}\n\nasync function waitForFirstCrosstab/,
+    )?.[0];
+    expect(insertVariable).toBeDefined();
+    expect(insertVariable).toMatch(/} else \{\s*await page\.keyboard\.press\('Enter'\);\s*\}/);
+  });
+
+  it('asserts resulting tableConfig recipes after palette inserts (DESIGN-CONV-K1)', () => {
+    expect(harnessSource).toContain('async function assertActiveRecipe(page, expected');
+    expect(harnessSource).toContain('window.__velocityStore?.getState()');
+    expect(harnessSource).toContain('resolveName');
+    expect(harnessSource).toContain('variableSets');
+    expect(harnessSource).toContain("await assertActiveRecipe(page, { rowVars: ['sex'], colVar: 'marital' })");
+    expect(harnessSource).toContain("await assertActiveRecipe(page, { rowVars: ['edlevel'], colVar: 'sex' })");
+    expect(harnessSource).toContain("await assertActiveRecipe(page, { rowVars: ['marital'], colVar: null })");
   });
 
   it('does not add fixed interaction sleeps to first-crosstab timing', () => {
@@ -31,6 +48,11 @@ describe('five-minute journey measurement contract', () => {
     expect(harnessSource).toContain('async function waitForUploadBaseline(page)');
     expect(harnessSource).toContain('await waitForUploadBaseline(page);');
     expect(harnessSource).toContain('await waitForUploadedDataset(page, previousDatasetId);');
+  });
+
+  it('requires the PPTX export preview lane before download (DESIGN-CONV-B)', () => {
+    expect(harnessSource).toContain("getByTestId('export-modal-review')");
+    expect(harnessSource).toContain("getByTestId('export-preview-lane')");
   });
 
   it('writes a repository-relative PPTX evidence path', () => {

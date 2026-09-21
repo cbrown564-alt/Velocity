@@ -1055,20 +1055,6 @@ async function main() {
       record(results, 'D-013 restores compact on toggle off', compact > 0);
     }
 
-    // --- D-014 Focus mode ---
-    const focusBtn = page.getByRole('button', { name: 'Enter Focus Mode' });
-    if (await focusBtn.isVisible()) {
-      await focusBtn.click();
-      await page.waitForTimeout(700);
-      const generousFocus = await page.locator('[data-density="generous"]').count();
-      record(results, 'D-014 Focus Breathing — focus enter', generousFocus > 0);
-      await shot(page, '04-focus-mode');
-      await page.getByRole('button', { name: 'Exit Focus Mode' }).click();
-      await page.waitForTimeout(700);
-      const afterExit = await page.locator('[data-density="compact"]').count();
-      record(results, 'D-014 Focus Breathing — density restored on exit', afterExit > 0);
-    }
-
     // --- D-011 Filter re-animate ---
     const animatedBefore = await page.locator('[data-animated="true"]').count();
     await applyNpsPromoterFilter(page);

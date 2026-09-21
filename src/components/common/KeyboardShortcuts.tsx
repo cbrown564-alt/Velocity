@@ -16,7 +16,6 @@ const SHORTCUTS: ShortcutGroup[] = [
       { keys: ['⌘', 'K'], description: 'Open insert palette' },
       { keys: ['?'], description: 'Show keyboard shortcuts' },
       { keys: ['D'], description: 'Open variable manager' },
-      { keys: ['F'], description: 'Toggle focus mode' },
     ],
   },
   {

@@ -1,32 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { useVelocityStore } from '../../store';
 
-describe('UISlice — Focus Mode', () => {
-  beforeEach(() => {
-    useVelocityStore.setState({ focusMode: false });
-  });
-
-  it('defaults focusMode to false', () => {
-    expect(useVelocityStore.getState().focusMode).toBe(false);
-  });
-
-  it('toggles focusMode on and off', () => {
-    useVelocityStore.getState().toggleFocusMode();
-    expect(useVelocityStore.getState().focusMode).toBe(true);
-
-    useVelocityStore.getState().toggleFocusMode();
-    expect(useVelocityStore.getState().focusMode).toBe(false);
-  });
-
-  it('sets focusMode explicitly', () => {
-    useVelocityStore.getState().setFocusMode(true);
-    expect(useVelocityStore.getState().focusMode).toBe(true);
-
-    useVelocityStore.getState().setFocusMode(false);
-    expect(useVelocityStore.getState().focusMode).toBe(false);
-  });
-});
-
 describe('UISlice — Table Density', () => {
   beforeEach(() => {
     useVelocityStore.setState({ tableDensity: 'compact' });

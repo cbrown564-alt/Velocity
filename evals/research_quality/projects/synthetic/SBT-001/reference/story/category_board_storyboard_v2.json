@@ -1,0 +1,147 @@
+{
+  "projectId": "SBT-001",
+  "briefId": "BRIEF_CATEGORY_BOARD",
+  "version": "storyboard-v3",
+  "designIntent": "Publication-quality board narrative: argument-led sequence, purpose-built visual relationships, precise bounded claims, direct comparison, and silent editorial restraint.",
+  "slideCount": 10,
+  "slides": [
+    {
+      "slide": 1,
+      "argumentId": "CB01",
+      "pageRole": "cover",
+      "communicationGoal": "Establish the category-level proposition without repeating the executive synopsis.",
+      "headlineIntent": "Pulse advances; Northstar and Harbour face different vulnerabilities.",
+      "content": "Minimal editorial cover. Identify SBT-001 as a synthetic UK mobile brand tracker, Waves 1–5. Do not reproduce the three evidence anchors from Slide 2 and do not use KPI cards.",
+      "visualForm": "text_led"
+    },
+    {
+      "slide": 2,
+      "argumentId": "CB02",
+      "pageRole": "executive_synthesis",
+      "communicationGoal": "Give the board the evidence-backed argument in one page without implying that unlike metrics are directly comparable.",
+      "headlineIntent": "Three pressures are reshaping the category.",
+      "dekIntent": "Pulse gains consideration. Northstar's customer advocacy falls sharply. Harbour weakens among 18–34s.",
+      "analyticalRelationship": "multi_metric_synthesis",
+      "visualForm": "editorial_evidence_strip",
+      "evidence": ["F_PULSE_CONSID_UP", "F_NORTHSTAR_NPS_DROP", "F_NORTHSTAR_AWARE_RESILIENT", "F_HARBOUR_YOUTH_DECLINE"],
+      "hierarchy": "One integrated synopsis with three evidence anchors separated by whitespace/fine rules, not cards. Each number must carry its metric, universe and period. Note Northstar's W5 partial recovery without displacing the W3→W4 shock as the anchor.",
+      "commentary": "Synthesize acquisition momentum, customer vulnerability and younger-audience erosion. Do not visually rank the magnitudes of unlike measures."
+    },
+    {
+      "slide": 3,
+      "argumentId": "CB03",
+      "pageRole": "landscape",
+      "communicationGoal": "Separate current competitive consideration from change since W2.",
+      "headlineIntent": "Northstar leads on consideration; Pulse records the largest gain.",
+      "analyticalRelationship": "position_vs_momentum",
+      "visualForm": "position_momentum_map",
+      "evidence": ["CONSID_TOTAL_*_W2", "CONSID_TOTAL_*_W5"],
+      "derivedMeasures": ["x = W5 total-sample consideration (%)", "y = W2→W5 change in consideration (percentage points)"],
+      "hierarchy": "Pulse highlighted through accent/annotation; Northstar contextual anchor; other brands muted and directly labelled. Equal point sizes unless a third variable is explicitly encoded.",
+      "annotations": ["No change since W2", "Pulse: largest positive change"],
+      "commentary": "Current consideration and change answer different competitive questions. Avoid arbitrary quadrants or thresholds."
+    },
+    {
+      "slide": 4,
+      "argumentId": "CB04",
+      "pageRole": "hero_finding",
+      "communicationGoal": "Show the Pulse W3 step-change and whether the higher level persists, without claiming campaign causality.",
+      "headlineIntent": "Pulse's consideration gains persist beyond the Wave 3 jump.",
+      "analyticalRelationship": "trend",
+      "visualForm": "annotated_line",
+      "evidence": ["CONSID_TOTAL_PULSE_W1", "CONSID_TOTAL_PULSE_W2", "CONSID_TOTAL_PULSE_W3", "CONSID_TOTAL_PULSE_W4", "CONSID_TOTAL_PULSE_W5"],
+      "hierarchy": "One dominant Pulse series with all five observations. Make W2→W3 change and W5 endpoint the primary annotations; competitor context only if it materially changes interpretation.",
+      "annotations": ["Wave 3 campaign period", "W2→W3 weighted change", "W5 endpoint", "Observed tracker movement; no causal claim"],
+      "commentary": "The pronounced W3 increase is followed by higher W4/W5 readings. Do not display the inflated unweighted movement as a competing headline."
+    },
+    {
+      "slide": 5,
+      "argumentId": "CB05",
+      "pageRole": "segment_explanation",
+      "communicationGoal": "Show that the observed Pulse consideration increase is larger among 18–34s than among 35+ respondents.",
+      "headlineIntent": "Pulse's observed consideration increase is larger among 18–34s.",
+      "analyticalRelationship": "segment_change_gap",
+      "visualForm": "dumbbell_with_change_column",
+      "evidence": ["PULSE_CONSID_18_34_W2_W3", "PULSE_CONSID_35_plus_W2_W3", "PULSE_CAMPAIGN_RECOG_18_34_W3", "PULSE_CAMPAIGN_RECOG_35P_W3"],
+      "hierarchy": "Two aligned W2/W3 dumbbells on one scale, with a right-aligned percentage-point change column. Campaign recognition is smaller supporting context, not a second hero chart.",
+      "commentary": "Describe the larger within-group change; do not claim that younger consumers account for most total-market growth unless contribution is separately established. Keep campaign relationships observational."
+    },
+    {
+      "slide": 6,
+      "argumentId": "CB06",
+      "pageRole": "evidence_synthesis",
+      "communicationGoal": "Compare changes in four distinct Pulse measures without implying observed respondent-level progression through a funnel.",
+      "headlineIntent": "Pulse's consideration and preference gains outpace gains in provider share.",
+      "dekIntent": "W2→W5 weighted change across prompted awareness, total-sample consideration, preference and current-provider share.",
+      "analyticalRelationship": "parallel_measure_change",
+      "visualForm": "aligned_dumbbells_with_change_column",
+      "evidence": ["AWARE_PULSE_W2", "AWARE_PULSE_W5", "CONSID_TOTAL_PULSE_W2", "CONSID_TOTAL_PULSE_W5", "PREF_PULSE_W2", "PREF_PULSE_W5", "USAGE_PULSE_W2", "USAGE_PULSE_W5"],
+      "boundValues": [
+        {"measure":"Prompted awareness","w2":57.79,"w5":73.82,"changePp":16.03},
+        {"measure":"Total-sample consideration","w2":20.29,"w5":29.59,"changePp":9.30},
+        {"measure":"Preferred brand = Pulse","w2":15.34,"w5":25.11,"changePp":9.77},
+        {"measure":"Current provider = Pulse","w2":15.16,"w5":19.79,"changePp":4.63}
+      ],
+      "hierarchy": "Four aligned W2/W5 dumbbells on one percentage scale. Make the change column prominent. Do not use tapered funnel geometry, flow arrows, drop-off rates or innovation in the main visual.",
+      "commentary": "These are changes in separate population measures, not observed transitions of the same respondents. The next research question is whether stronger consideration/preference is followed by further provider-share gains."
+    },
+    {
+      "slide": 7,
+      "argumentId": "CB07",
+      "pageRole": "divergence",
+      "communicationGoal": "Juxtapose Northstar's high market awareness with sharp customer-experience deterioration while preserving the different universes.",
+      "headlineIntent": "Northstar's awareness remains high while customer advocacy falls sharply.",
+      "analyticalRelationship": "divergence",
+      "visualForm": "paired_measures",
+      "evidence": ["NORTHSTAR_AWARE_W3", "NORTHSTAR_AWARE_W4", "NORTHSTAR_NPS_W3", "NORTHSTAR_NPS_W4", "NORTHSTAR_PROBLEM_W3", "NORTHSTAR_PROBLEM_W4"],
+      "hierarchy": "Current-customer NPS shock is dominant; recent-problem incidence triangulates it; prompted awareness is a smaller market counterpoint. Label MARKET — all eligible respondents and CURRENT CUSTOMERS adjacent to the evidence.",
+      "annotations": ["Universe labels explicit", "No shared or dual axis for awareness and NPS"],
+      "commentary": "Northstar remains widely known while customer advocacy and problem incidence deteriorate. Do not infer that awareness proves broader brand health or that awareness will later decline."
+    },
+    {
+      "slide": 8,
+      "argumentId": "CB08",
+      "pageRole": "recovery",
+      "communicationGoal": "Show both Northstar's W5 rebound and the remaining distance from its W3 pre-shock position.",
+      "headlineIntent": "Northstar improves in Wave 5, but remains well short of its pre-shock position.",
+      "analyticalRelationship": "recovery_vs_reference",
+      "visualForm": "two_measure_reference_comparison",
+      "evidence": ["NORTHSTAR_NPS_W3", "NORTHSTAR_NPS_W4", "NORTHSTAR_NPS_W5", "NORTHSTAR_PROBLEM_W3", "NORTHSTAR_PROBLEM_W4", "NORTHSTAR_PROBLEM_W5"],
+      "hierarchy": "Two compact measure rows/panels only. Show W3, W4 and W5 plus an explicit W5-versus-W3 residual gap. Keep NPS points and problem-incidence percentages on separate quantitative scales.",
+      "commentary": "Partial recovery is not restoration. W3 is a pre-shock reference, not a demonstrated healthy benchmark; do not use green success semantics."
+    },
+    {
+      "slide": 9,
+      "argumentId": "CB09",
+      "pageRole": "longitudinal_diagnosis",
+      "communicationGoal": "Show that Harbour's modest aggregate change masks a larger five-wave decline in consideration among 18–34s.",
+      "headlineIntent": "Harbour's aggregate result masks declining consideration among 18–34s.",
+      "analyticalRelationship": "aggregate_vs_subgroup_trend",
+      "visualForm": "direct_labelled_two_series_line",
+      "evidence": ["CONSID_TOTAL_HARBOUR_W1", "CONSID_TOTAL_HARBOUR_W2", "CONSID_TOTAL_HARBOUR_W3", "CONSID_TOTAL_HARBOUR_W4", "CONSID_TOTAL_HARBOUR_W5", "HARBOUR_CONSID_18_34_W1", "HARBOUR_CONSID_18_34_W2", "HARBOUR_CONSID_18_34_W3", "HARBOUR_CONSID_18_34_W4", "HARBOUR_CONSID_18_34_W5"],
+      "hierarchy": "One directly labelled two-series chart on a common scale. Youth trend is primary; aggregate trend is contextual. Emphasise W1→W5 changes without extrapolating beyond W5.",
+      "commentary": "Describe the aggregate/subgroup divergence. Do not describe individual younger consumers as leaving, do not imply an installed-base mechanism, and do not call W4→W5 stability without an appropriate test."
+    },
+    {
+      "slide": 10,
+      "argumentId": "CB10",
+      "pageRole": "implications",
+      "communicationGoal": "Close with operational next-wave questions and the evidence needed to answer them, without introducing prescriptions.",
+      "headlineIntent": "Three questions should shape the next wave.",
+      "analyticalRelationship": "none",
+      "visualForm": "text_led",
+      "evidence": ["F_PULSE_CONSID_UP", "F_NORTHSTAR_NPS_DROP", "F_HARBOUR_YOUTH_DECLINE"],
+      "hierarchy": "Three concise questions with one subordinate watch-line each. No cards and no new empirical claims.",
+      "questions": [
+        {"brand":"Pulse","question":"Are consideration gains translating into provider choice?","watch":"Preference and current-provider share."},
+        {"brand":"Northstar","question":"Is the customer recovery continuing?","watch":"NPS and recent-problem incidence relative to W3."},
+        {"brand":"Harbour","question":"Is younger-audience consideration continuing to decline or beginning to recover?","watch":"18–34 consideration alongside the aggregate trend."}
+      ],
+      "commentary": "Do not assume campaign salience will fade, that advocacy is structurally impaired, or that the Harbour gap will necessarily become structural."
+    }
+  ],
+  "explicitlyRemoved": {
+    "formerSlide": "What we deliberately did not conclude",
+    "reason": "Trustworthy editorial restraint should be visible in what the report chooses not to elevate. Methodological qualifications remain local only when they materially change interpretation."
+  }
+}

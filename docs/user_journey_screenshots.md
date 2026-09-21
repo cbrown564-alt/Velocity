@@ -40,7 +40,7 @@ The canvas now uses the reset information architecture: deck outline resident on
 
 ![Insert palette](assets/design-reset-evidence/screenshots/12-insert-palette.png)
 
-The palette is the main insertion surface. The documented grammar and current search behavior disagree about whether Enter inserts rows or columns. The timed script follows the documentation but does not assert the resulting recipe, so its elapsed-time result is not sufficient evidence. `DESIGN-CONV-K1` owns one canonical grammar across copy, behavior, tests, and automation.
+The palette is the main insertion surface. **Canonical grammar (`DESIGN-CONV-K1`):** ↵ adds to columns, ⌥↵ adds to rows, ⇧↵ adds to filter. Product code, help, five-minute automation, and docs share this vocabulary; automation asserts the resulting `tableConfig` / slide recipe, not click timing alone.
 
 ![Recipe inspector](assets/design-reset-evidence/screenshots/09-recipe-inspector.png)
 

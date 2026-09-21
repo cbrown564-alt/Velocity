@@ -1,8 +1,9 @@
 import { StateCreator } from 'zustand';
 import { Slide, SlideCell, LayoutMode, SlideSection, SlideAnalysisState } from '../../types/slides';
 import { ChartType } from '../../types/charts';
-import type { Filter } from '../../types';
+import type { AnalysisSettings, Filter } from '../../types';
 import type { AnalysisSlice } from './analysisSlice';
+import { defaultAnalysisSettings } from './analysisSlice';
 import type { DeckRecipe } from '../../core/deck/deckRecipe';
 import { buildDeckRecipe } from '../../core/deck/deckRecipe';
 import type { UISlice } from './uiSlice';
@@ -82,16 +83,19 @@ function captureAnalysisStateFromStore(state: {
 }
 
 /**
- * Project a slide's analysis config into the global store (single analysis trigger).
+ * Project a slide's bindings (+ optional settings) into live analysis globals.
+ * Settings are applied first so a subsequent runAnalysis sees the slide contract.
  */
-function projectSlideAnalysisState(
-  state: {
-    applySlideAnalysisState?: AnalysisSlice['applySlideAnalysisState'];
-  },
-  slideState: SlideAnalysisState,
+function projectSlideOntoStore(
+  get: () => SlidesSlice & Partial<AnalysisSlice> & Partial<UISlice> & Partial<DataSlice>,
+  set: (partial: Partial<SlidesSlice & Partial<AnalysisSlice> & Partial<UISlice> & Partial<DataSlice>>) => void,
+  slide: Pick<Slide, 'analysisState' | 'analysisSettings'>,
   options?: { runAnalysis?: boolean },
 ): void {
-  state.applySlideAnalysisState?.(slideState, options);
+  if (slide.analysisSettings) {
+    set({ analysisSettings: { ...slide.analysisSettings } });
+  }
+  get().applySlideAnalysisState?.(slide.analysisState, options);
 }
 
 /**
@@ -159,6 +163,9 @@ export const createSlidesSlice: SlidesSliceCreator = (set, get) => ({
     const currentAnalysisState = captureAnalysisStateFromStore(state);
     const currentVisualizationType = outgoingSlide?.visualizationType || 'table';
     const currentChartType = outgoingSlide?.chartType;
+    const currentAnalysisSettings = state.analysisSettings
+      ? ({ ...state.analysisSettings } as AnalysisSettings)
+      : { ...defaultAnalysisSettings };
 
     // Feature: Blank Canvas for new slides.
     // We do *not* inherit the current slide's state.
@@ -171,6 +178,7 @@ export const createSlidesSlice: SlidesSliceCreator = (set, get) => ({
       title,
       subtitle: '',
       analysisState,
+      analysisSettings: { ...defaultAnalysisSettings },
       visualizationType,
       chartType,
       layoutMode: 'focus',
@@ -195,6 +203,7 @@ export const createSlidesSlice: SlidesSliceCreator = (set, get) => ({
             return {
               ...slide,
               analysisState: currentAnalysisState,
+              analysisSettings: currentAnalysisSettings,
               visualizationType: currentVisualizationType as 'table' | 'chart',
               chartType: currentChartType,
               updatedAt: now,
@@ -209,31 +218,39 @@ export const createSlidesSlice: SlidesSliceCreator = (set, get) => ({
     });
 
     // Project blank canvas into global analysis store (no redundant analysis runs).
-    projectSlideAnalysisState(get(), createDefaultAnalysisState(), { runAnalysis: false });
+    projectSlideOntoStore(get, set, newSlide, { runAnalysis: false });
   },
 
-  removeSlide: (slideId) =>
-    set((state) => {
-      // Prevent deletion of last slide
-      if (state.slides.length <= 1) return state;
+  removeSlide: (slideId) => {
+    const state = get();
+    // Prevent deletion of last slide
+    if (state.slides.length <= 1) return;
 
-      const slideIndex = state.slides.findIndex((s) => s.id === slideId);
-      const newSlides = state.slides.filter((s) => s.id !== slideId);
+    const slideIndex = state.slides.findIndex((s) => s.id === slideId);
+    const newSlides = state.slides.filter((s) => s.id !== slideId);
 
-      // If we removed the active slide, activate the adjacent one
-      let newActiveId = state.activeSlideId;
-      if (state.activeSlideId === slideId) {
-        // Prefer next slide, fall back to previous
-        const nextIndex = Math.min(slideIndex, newSlides.length - 1);
-        newActiveId = newSlides[nextIndex]?.id ?? null;
+    // If we removed the active slide, activate the adjacent one
+    let newActiveId = state.activeSlideId;
+    const removedActive = state.activeSlideId === slideId;
+    if (removedActive) {
+      // Prefer next slide, fall back to previous
+      const nextIndex = Math.min(slideIndex, newSlides.length - 1);
+      newActiveId = newSlides[nextIndex]?.id ?? null;
+    }
+
+    set({
+      slides: newSlides,
+      activeSlideId: newActiveId,
+      activeCellId: newSlides.find((s) => s.id === newActiveId)?.cells[0]?.id ?? null,
+    });
+
+    if (removedActive && newActiveId) {
+      const incoming = newSlides.find((s) => s.id === newActiveId);
+      if (incoming) {
+        projectSlideOntoStore(get, set, incoming);
       }
-
-      return {
-        slides: newSlides,
-        activeSlideId: newActiveId,
-        activeCellId: newSlides.find((s) => s.id === newActiveId)?.cells[0]?.id ?? null,
-      };
-    }),
+    }
+  },
 
   duplicateSlide: (slideId) => {
     const state = get();
@@ -253,6 +270,7 @@ export const createSlidesSlice: SlidesSliceCreator = (set, get) => ({
         rowVars: [...sourceSlide.analysisState.rowVars],
         filters: sourceSlide.analysisState.filters.map((f) => ({ ...f })),
       },
+      analysisSettings: sourceSlide.analysisSettings ? { ...sourceSlide.analysisSettings } : undefined,
       cells: sourceSlide.cells.map((cell, i) => ({
         ...cell,
         id: `cell-${now}-${i}`,
@@ -272,6 +290,8 @@ export const createSlidesSlice: SlidesSliceCreator = (set, get) => ({
       activeSlideId: newSlideId,
       activeCellId: duplicatedSlide.cells[0]?.id ?? null,
     });
+
+    projectSlideOntoStore(get, set, duplicatedSlide);
   },
 
   setActiveSlide: (id) => {
@@ -285,6 +305,9 @@ export const createSlidesSlice: SlidesSliceCreator = (set, get) => ({
     const currentAnalysisState = captureAnalysisStateFromStore(state);
     const currentVisualizationType = outgoingSlide?.visualizationType || 'table';
     const currentChartType = outgoingSlide?.chartType;
+    const currentAnalysisSettings = state.analysisSettings
+      ? ({ ...state.analysisSettings } as AnalysisSettings)
+      : undefined;
 
     // Snapshot outgoing slide and activate incoming
     set({
@@ -293,6 +316,7 @@ export const createSlidesSlice: SlidesSliceCreator = (set, get) => ({
           return {
             ...s,
             analysisState: currentAnalysisState,
+            analysisSettings: currentAnalysisSettings,
             visualizationType: currentVisualizationType as 'table' | 'chart',
             chartType: currentChartType,
             updatedAt: now,
@@ -305,7 +329,7 @@ export const createSlidesSlice: SlidesSliceCreator = (set, get) => ({
     });
 
     // Project incoming slide config — one runAnalysis, not N+1 filter replay
-    projectSlideAnalysisState(get(), incomingSlide.analysisState);
+    projectSlideOntoStore(get, set, incomingSlide);
   },
 
   setSlideLayoutMode: (slideId, mode) =>
@@ -443,6 +467,9 @@ export const createSlidesSlice: SlidesSliceCreator = (set, get) => ({
     const activeSlide = state.slides.find((s) => s.id === state.activeSlideId);
     const visualizationType = activeSlide?.visualizationType || 'table';
     const chartType = activeSlide?.chartType;
+    const analysisSettings = state.analysisSettings
+      ? ({ ...state.analysisSettings } as AnalysisSettings)
+      : activeSlide?.analysisSettings;
 
     set({
       slides: state.slides.map((s) =>
@@ -450,6 +477,7 @@ export const createSlidesSlice: SlidesSliceCreator = (set, get) => ({
           ? {
               ...s,
               analysisState,
+              analysisSettings,
               visualizationType: visualizationType as 'table' | 'chart',
               chartType,
               updatedAt: now,

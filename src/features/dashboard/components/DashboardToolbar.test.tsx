@@ -21,7 +21,6 @@ const baseProps = {
   dataset: { id: 'ds1', name: 'demo.sav', rowCount: 100, variables: [], source: 'sav' as const },
   activeSlideId: 'slide-1',
   activeSlide: slide,
-  focusMode: false,
   canOpenExport: true,
   recipeOpen: false,
   onToggleRecipe: vi.fn(),
@@ -29,7 +28,6 @@ const baseProps = {
   onOpenSessionImport: vi.fn(),
   onExportSession: vi.fn(),
   onExport: vi.fn(),
-  onToggleFocusMode: vi.fn(),
   onReset: vi.fn(),
 };
 
@@ -54,15 +52,11 @@ describe('DashboardToolbar', () => {
     expect(useVelocityStore.getState().commandPaletteOpen).toBe(true);
   });
 
-  it('routes overflow actions to Variable Manager and focus mode', () => {
+  it('routes overflow actions to Variable Manager', () => {
     render(<DashboardToolbar {...baseProps} />);
     fireEvent.click(screen.getByRole('button', { name: 'More' }));
     fireEvent.click(screen.getByRole('menuitem', { name: 'Variable Manager' }));
     expect(useVelocityStore.getState().appMode).toBe('variables');
-
-    fireEvent.click(screen.getByRole('button', { name: 'More' }));
-    fireEvent.click(screen.getByTestId('focus-mode-toggle'));
-    expect(baseProps.onToggleFocusMode).toHaveBeenCalled();
   });
 
   it('calls export and recipe toggle handlers', () => {
@@ -86,5 +80,42 @@ describe('DashboardToolbar', () => {
     render(<DashboardToolbar {...baseProps} />);
     fireEvent.click(screen.getByRole('button', { name: 'Return to Workspace' }));
     expect(baseProps.onReturnToWorkspace).toHaveBeenCalled();
+  });
+
+  it('routes overflow session and reset actions', () => {
+    render(<DashboardToolbar {...baseProps} />);
+    fireEvent.click(screen.getByRole('button', { name: 'More' }));
+    fireEvent.click(screen.getByRole('menuitem', { name: 'Import Session' }));
+    expect(baseProps.onOpenSessionImport).toHaveBeenCalled();
+
+    fireEvent.click(screen.getByRole('button', { name: 'More' }));
+    fireEvent.click(screen.getByRole('menuitem', { name: 'Export Session' }));
+    expect(baseProps.onExportSession).toHaveBeenCalled();
+
+    fireEvent.click(screen.getByRole('button', { name: 'More' }));
+    fireEvent.click(screen.getByRole('menuitem', { name: 'Reset' }));
+    expect(baseProps.onReset).toHaveBeenCalled();
+  });
+
+  it('closes the overflow menu on Escape', () => {
+    render(<DashboardToolbar {...baseProps} />);
+    fireEvent.click(screen.getByRole('button', { name: 'More' }));
+    expect(screen.getByRole('menu')).toBeInTheDocument();
+    fireEvent.keyDown(document, { key: 'Escape' });
+    expect(screen.queryByRole('menu')).not.toBeInTheDocument();
+  });
+
+  it('stacks the overflow menu above sticky chrome and closes on outside click (DESIGN-CONV-K3)', () => {
+    render(
+      <div>
+        <button type="button">Outside</button>
+        <DashboardToolbar {...baseProps} />
+      </div>,
+    );
+    fireEvent.click(screen.getByTestId('toolbar-overflow-trigger'));
+    const menu = screen.getByTestId('toolbar-overflow-menu');
+    expect(menu.className).toContain('z-[var(--z-menu)]');
+    fireEvent.mouseDown(screen.getByRole('button', { name: 'Outside' }));
+    expect(screen.queryByTestId('toolbar-overflow-menu')).not.toBeInTheDocument();
   });
 });

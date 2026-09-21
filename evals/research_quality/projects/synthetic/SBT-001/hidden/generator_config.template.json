@@ -1,0 +1,65 @@
+{
+  "generatorVersion": "synthetic_brand_tracker_v1",
+  "projectId": "SBT-001",
+  "rootSeed": 564001,
+  "waves": [1, 2, 3, 4, 5],
+  "sampleSizePerWave": 2000,
+  "brands": [
+    {"id": "northstar", "name": "Northstar", "role": "market_leader", "parameters": {}},
+    {"id": "pulse", "name": "Pulse", "role": "growth_challenger", "parameters": {}},
+    {"id": "mosaic", "name": "Mosaic", "role": "mid_market", "parameters": {}},
+    {"id": "lumen", "name": "Lumen", "role": "premium_niche", "parameters": {}},
+    {"id": "harbour", "name": "Harbour", "role": "declining_incumbent", "parameters": {}}
+  ],
+  "latentFactors": {
+    "names": [
+      "price_sensitivity",
+      "quality_orientation",
+      "tech_affinity",
+      "service_sensitivity",
+      "brand_loyalty",
+      "ad_receptivity",
+      "switching_propensity"
+    ],
+    "correlationMatrix": [
+      [1.00, -0.20, -0.05, 0.05, 0.05, 0.00, 0.10],
+      [-0.20, 1.00, 0.25, 0.25, 0.10, 0.05, -0.05],
+      [-0.05, 0.25, 1.00, 0.05, -0.10, 0.25, 0.25],
+      [0.05, 0.25, 0.05, 1.00, 0.15, 0.00, -0.05],
+      [0.05, 0.10, -0.10, 0.15, 1.00, -0.05, -0.45],
+      [0.00, 0.05, 0.25, 0.00, -0.05, 1.00, 0.10],
+      [0.10, -0.05, 0.25, -0.05, -0.45, 0.10, 1.00]
+    ]
+  },
+  "populationTargets": {},
+  "sampling": {
+    "wave3YoungAdultOverSample": true
+  },
+  "measurement": {
+    "missingCodes": {"structural": 97, "dontKnow": 98, "refused": 99},
+    "imageFamiliarityThreshold": 3
+  },
+  "weighting": {
+    "method": "poststratification",
+    "trimMin": 0.35,
+    "trimMax": 3.0,
+    "rescaleMeanToOne": true
+  },
+  "events": [
+    {"eventId": "pulse_campaign_launch", "wave": 3, "parameters": {}},
+    {"eventId": "northstar_service_incident", "wave": 4, "parameters": {}},
+    {"eventId": "northstar_partial_recovery", "wave": 5, "parameters": {}},
+    {"eventId": "harbour_youth_decline", "wave": "1-5", "parameters": {}}
+  ],
+  "validation": {
+    "maxSeedAttempts": 50,
+    "storylineGates": [
+      {"id": "pulse_w3_weighted_uplift", "status": "CALIBRATE_TURN_2"},
+      {"id": "pulse_w3_unweighted_overstatement", "status": "CALIBRATE_TURN_2"},
+      {"id": "northstar_w4_customer_experience_drop", "status": "CALIBRATE_TURN_2"},
+      {"id": "northstar_w4_awareness_resilience", "status": "CALIBRATE_TURN_2"},
+      {"id": "harbour_w1_w5_youth_decline", "status": "CALIBRATE_TURN_2"},
+      {"id": "mosaic_low_base_trap", "status": "CALIBRATE_TURN_2"}
+    ]
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "projectId": "SBT-001",
+  "generatorVersion": "synthetic_brand_tracker_v1",
+  "rootSeed": 564001,
+  "selectedSeed": 564001,
+  "rejectedSeeds": [],
+  "hardGates": {
+    "pulse_w3_weighted_uplift": true,
+    "pulse_w3_unweighted_overstatement": true,
+    "northstar_w4_customer_experience_drop": true,
+    "northstar_w4_awareness_resilience": true,
+    "harbour_w1_w5_youth_decline": true,
+    "campaign_targeting": true,
+    "weight_ess": true,
+    "rows": true,
+    "unique_ids": true,
+    "image_routing": true,
+    "service_routing": true,
+    "mosaic_low_base_trap": true
+  },
+  "metrics": {
+    "pulse_w3_weighted_uplift_pp": 3.765302956699146,
+    "pulse_w3_unweighted_uplift_pp": 6.379411095323329,
+    "pulse_unweighted_overstatement_pp": 2.614108138624183,
+    "northstar_nps_w3": -13.504823151125404,
+    "northstar_nps_w4": -60.45751633986929,
+    "northstar_nps_drop": -46.95269318874388,
+    "northstar_awareness_w3": 93.53975738685152,
+    "northstar_awareness_w4": 93.57396748045791,
+    "northstar_awareness_move": 0.034210093606390046,
+    "harbour_youth_consider_w1": 27.833083405827807,
+    "harbour_youth_consider_w5": 18.719969543333754,
+    "harbour_youth_decline": -9.113113862494053,
+    "pulse_recog_young_w3": 40.25987984356148,
+    "pulse_recog_older_w3": 25.71012018494449,
+    "min_kish_ess": 1809.409495992526
+  },
+  "structural": {
+    "rows_per_wave": [2000, 2000, 2000, 2000, 2000],
+    "unique_ids": true,
+    "weight_bounds": [[0.4628783115962539,2.8103326061201126],[0.4474217655653013,3.0],[0.35885718024931224,2.9999999999999996],[0.4473829974410194,2.646702774777123],[0.35056440869800376,1.8179268622482199]],
+    "image_routing_violations": 0,
+    "service_routing_violations": 0
+  },
+  "lowBaseTrap": [
+    {"wave":1,"unweightedBase":18,"weightedPct":41.67117941841374},
+    {"wave":2,"unweightedBase":22,"weightedPct":35.37495606129728},
+    {"wave":3,"unweightedBase":21,"weightedPct":16.198023736044682},
+    {"wave":4,"unweightedBase":28,"weightedPct":50.233081907999576},
+    {"wave":5,"unweightedBase":37,"weightedPct":28.250475144991118}
+  ],
+  "status": "PASS",
+  "savExport": {"status":"BLOCKED_ENVIRONMENT","reason":"pyreadstat is unavailable in the execution environment; canonical CSV generation is validated and deterministic."}
+}

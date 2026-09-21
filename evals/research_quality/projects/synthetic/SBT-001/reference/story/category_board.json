@@ -1,0 +1,44 @@
+{
+  "projectId": "SBT-001",
+  "briefId": "BRIEF_CATEGORY_BOARD",
+  "thesis": "The category is not moving uniformly: Pulse has built credible challenger momentum, Northstar's market strength is masking a sharp customer-experience vulnerability, and Harbour has a slower structural problem with younger consumers.",
+  "sections": [
+    {
+      "rank": 1,
+      "role": "executive_thesis",
+      "headlineIntent": "Lead with the three different competitive dynamics rather than a metric-by-metric category recap.",
+      "findingIds": ["F_PULSE_CONSID_UP", "F_NORTHSTAR_NPS_DROP", "F_HARBOUR_YOUTH_DECLINE"],
+      "whyItMatters": "The board needs the shape of competitive change, not exhaustive survey coverage.",
+      "caveats": ["Pulse movement is observational and must use the weighted estimate."]
+    },
+    {
+      "rank": 2,
+      "role": "primary_story",
+      "headlineIntent": "Pulse has gained consideration in the campaign period, particularly enough to warrant competitive attention, but the raw sample exaggerates the scale.",
+      "findingIds": ["F_PULSE_CONSID_UP", "F_PULSE_WEIGHT_TRAP"],
+      "whyItMatters": "Separates a genuine challenger signal from a mechanically inflated unweighted story.",
+      "caveats": ["Do not state that the campaign caused the change."]
+    },
+    {
+      "rank": 3,
+      "role": "primary_story",
+      "headlineIntent": "Northstar's broad brand visibility remains intact while current-customer advocacy deteriorates sharply.",
+      "findingIds": ["F_NORTHSTAR_NPS_DROP", "F_NORTHSTAR_AWARE_RESILIENT"],
+      "whyItMatters": "The contrast is more decision-useful than either awareness or NPS in isolation.",
+      "caveats": ["Small awareness movement is not proof of statistical equivalence."]
+    },
+    {
+      "rank": 4,
+      "role": "primary_story",
+      "headlineIntent": "Harbour's challenge is structural rather than a one-wave shock: younger-consumer consideration has eroded over the tracker horizon.",
+      "findingIds": ["F_HARBOUR_YOUTH_DECLINE"],
+      "whyItMatters": "A gradual acquisition problem can matter strategically even without a spectacular adjacent-wave event.",
+      "caveats": []
+    }
+  ],
+  "excludedFindings": [
+    {"findingId": "F_MOSAIC_LOWBASE_SPIKE", "reason": "low_base", "note": "Dramatic point estimate but unstable and below the reporting threshold."}
+  ],
+  "tone": "Concise, evidence-led, commercially literate and restrained. Avoid generic growth-opportunity language.",
+  "targetSlideCount": 8
+}

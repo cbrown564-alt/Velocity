@@ -27,7 +27,7 @@ interface FieldProps {
 
 const Field: React.FC<FieldProps> = ({ label, children }) => (
   <div className="mb-3.5">
-    <span className="block text-[10.5px] font-semibold uppercase tracking-[0.06em] text-[var(--text-tertiary)] mb-1.5">
+    <span className="block text-[10.5px] font-semibold uppercase tracking-[0.06em] text-[var(--text-secondary)] mb-1.5">
       {label}
     </span>
     {children}
@@ -294,7 +294,7 @@ export const RecipeInspector: React.FC<RecipeInspectorProps> = ({
       }`}
     >
       <div className="w-[280px] px-5 py-4 h-full overflow-y-auto">
-        <h2 className="text-[11px] font-semibold uppercase tracking-[0.06em] text-[var(--text-tertiary)] mb-4">
+        <h2 className="text-[11px] font-semibold uppercase tracking-[0.06em] text-[var(--text-secondary)] mb-4">
           Recipe — Slide {slideNumber}
         </h2>
 
@@ -422,7 +422,7 @@ export const RecipeInspector: React.FC<RecipeInspectorProps> = ({
           <span className="text-[12px] text-[var(--text-tertiary)]">95% · {comparisonLabel}</span>
         </SettingRow>
 
-        <p className="text-[11.5px] text-[var(--text-tertiary)] leading-[1.5] mt-3.5">
+        <p className="text-[11.5px] text-[var(--text-secondary)] leading-[1.5] mt-3.5">
           Welch&apos;s t with Kish effective sample size{correctionLabel ? `, ${correctionLabel} corrected` : ''}. Every
           figure traces to the engine&apos;s result envelope.
         </p>

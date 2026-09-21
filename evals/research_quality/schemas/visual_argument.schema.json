@@ -1,0 +1,149 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://velocity.local/schemas/research-quality-visual-argument.json",
+  "title": "Velocity Visual Argument",
+  "description": "Intermediate representation between editorial story selection and slide rendering. It specifies why a page exists, which relationship it must communicate, and how evidence should be visually prioritised without prescribing exact pixels.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["argumentId", "projectId", "briefId", "pageRole", "communicationGoal", "proposition", "analyticalRelationship", "evidence", "visualForm", "hierarchy", "commentary"],
+  "properties": {
+    "argumentId": {"type": "string", "minLength": 1},
+    "projectId": {"type": "string"},
+    "briefId": {"type": "string"},
+    "pageRole": {
+      "enum": ["cover", "executive_synthesis", "landscape", "hero_finding", "segment_explanation", "evidence_synthesis", "divergence", "longitudinal_diagnosis", "implications", "methodology"]
+    },
+    "communicationGoal": {"type": "string", "minLength": 1},
+    "proposition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["headlineIntent", "claimStrength"],
+      "properties": {
+        "headlineIntent": {"type": "string"},
+        "dekIntent": {"type": ["string", "null"]},
+        "claimStrength": {"enum": ["descriptive", "comparative", "interpretive", "implication"]},
+        "forbiddenFramings": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "analyticalRelationship": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "description"],
+      "properties": {
+        "type": {
+          "enum": ["level", "rank", "change", "trend", "position_vs_momentum", "segment_gap", "funnel", "divergence", "recovery", "composition", "distribution", "part_to_whole", "multi_metric_synthesis", "none"]
+        },
+        "description": {"type": "string"},
+        "comparisonFrame": {"type": ["string", "null"]}
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["primary"],
+      "properties": {
+        "primary": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/evidenceRef"}
+        },
+        "context": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/evidenceRef"}
+        },
+        "counterEvidence": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/evidenceRef"}
+        },
+        "requiredUniverseNotes": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "visualForm": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["family", "rationale"],
+      "properties": {
+        "family": {
+          "enum": ["annotated_line", "slopegraph", "dumbbell", "dot_plot", "bar", "bullet", "position_momentum_map", "funnel", "paired_measures", "small_multiples", "table", "ranked_list", "text_led", "mixed"]
+        },
+        "rationale": {"type": "string"},
+        "alternativesRejected": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["family", "reason"],
+            "properties": {"family": {"type": "string"}, "reason": {"type": "string"}}
+          }
+        },
+        "sharedScaleRequired": {"type": "boolean"},
+        "directLabelsPreferred": {"type": "boolean"}
+      }
+    },
+    "hierarchy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dominantElement", "readingOrder"],
+      "properties": {
+        "dominantElement": {"type": "string"},
+        "readingOrder": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+        "deEmphasise": {"type": "array", "items": {"type": "string"}},
+        "informationBudget": {"enum": ["sparse", "moderate", "dense"]}
+      }
+    },
+    "annotationStrategy": {
+      "type": "object",
+      "properties": {
+        "annotations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["target", "purpose"],
+            "properties": {
+              "target": {"type": "string"},
+              "textIntent": {"type": ["string", "null"]},
+              "purpose": {"enum": ["event", "comparison", "context", "exception", "inflection", "base", "method"]}
+            }
+          }
+        },
+        "referenceMarks": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "commentary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role"],
+      "properties": {
+        "role": {"enum": ["none", "synthesis", "interpretation", "counterpoint", "implication", "methodological_qualification"]},
+        "intent": {"type": ["string", "null"]},
+        "mustNotRepeatChart": {"type": "boolean"}
+      }
+    },
+    "styleConstraints": {
+      "type": "object",
+      "properties": {
+        "semanticEmphasis": {"type": "array", "items": {"type": "string"}},
+        "avoidContainers": {"type": "boolean"},
+        "avoidLegendWhenDirectLabelsPossible": {"type": "boolean"},
+        "avoidDecorativeKpis": {"type": "boolean"},
+        "notes": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "qualityChecks": {
+      "type": "array",
+      "items": {"type": "string"}
+    }
+  },
+  "$defs": {
+    "evidenceRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["refType", "refId", "role"],
+      "properties": {
+        "refType": {"enum": ["finding", "analysis", "derived_visual_measure"]},
+        "refId": {"type": "string"},
+        "role": {"type": "string"},
+        "displayPriority": {"enum": ["hero", "primary", "secondary", "context"]}
+      }
+    }
+  }
+}

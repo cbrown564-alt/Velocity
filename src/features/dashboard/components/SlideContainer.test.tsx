@@ -178,53 +178,6 @@ describe('SlideContainer', () => {
     expect(container.querySelector('.analysis-frame')?.className).toMatch(/shrinkWrap/);
   });
 
-  it('shrink-wraps slide panel in focus mode while keeping bleed on output frame', () => {
-    useVelocityStore.setState({
-      focusMode: true,
-      tableConfig: { rowVars: ['gender'], colVar: null },
-      queryResult: [{ rowKeys: ['1'], colKey: 'Total', count: 10 }],
-      variableSets: [{ id: 'gender', name: 'Gender', variableIds: ['v-g'], type: 'categorical', structure: 'single' }],
-      dataset: {
-        id: 'ds1',
-        name: 'test',
-        rowCount: 100,
-        variables: [genderVariable],
-        source: 'csv',
-      },
-      processedQueryResult: {
-        rows: [
-          {
-            key: '1',
-            label: 'Male',
-            rawValue: '1',
-            depth: 0,
-            cells: { Total: { count: 10, percent: 100 } },
-            total: 10,
-            children: [],
-            rowPath: [{ variable: 'gender', value: '1' }],
-          },
-        ],
-        series: [],
-        columns: [{ key: 'Total', label: 'Total', total: 10 }],
-        grandTotal: 10,
-        isMetric: false,
-        isGrid: false,
-        rowVariables: [genderVariable],
-        colVariable: null,
-        isMultipleResponse: false,
-      },
-    });
-
-    const { container } = render(<SlideContainer />);
-    const canvas = container.querySelector('.surface-panel') as HTMLDivElement;
-    const frame = container.querySelector('.analysis-frame');
-
-    expect(canvas.className).toContain('flex-none');
-    expect(canvas.className).toContain('self-start');
-    expect(frame).toHaveAttribute('data-bleed', 'true');
-    expect(frame?.className).toMatch(/shrinkWrap/);
-  });
-
   it('auto-populates gender × region on mock_data.csv when deck is empty', async () => {
     useVelocityStore.setState({
       hasSeenAutoCrosstab: false,

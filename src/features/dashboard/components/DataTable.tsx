@@ -51,7 +51,7 @@ interface DataTableProps {
   /** Table-level statistics (chi-square, etc.) */
   /** Table density: compact (exploration) or generous (presentation) */
   density?: 'compact' | 'generous';
-  /** Bleed output frame to slide edges (Focus mode) */
+  /** Bleed output frame to slide edges (presentation layout) */
   frameBleed?: boolean;
 }
 

@@ -39,7 +39,7 @@ The Analysis Canvas is the hub. Users build crosstabs and charts on slides, refi
 
 | Surface | Role | Entry |
 | :--- | :--- | :--- |
-| **Insert palette** | Variable search, dense rows, one canonical insertion grammar, commands behind `>` prefix | `Insert ⌘K`, empty-state Browse, keyboard ⌘K |
+| **Insert palette** | Variable search, dense rows, **canonical grammar: ↵ → columns, ⌥↵ → rows, ⇧↵ → filter** (`DESIGN-CONV-K1`), commands behind `>` prefix | `Insert ⌘K`, empty-state Browse, keyboard ⌘K |
 | **Recipe inspector** (right) | Rows / Columns / Filter / Weight chips, display settings (Cell n, Bases), significance method | `Recipe` ghost button; collapsed by default |
 | **Variable Manager** | High-density find/inspect/recode (see §3) | Overflow `···` → Variable Manager, or keyboard `V` |
 | **Export review** | Preview export-bound slides, recipe/significance state, then download PPTX or export a session | Primary Export button |
@@ -50,6 +50,7 @@ The Analysis Canvas is the hub. Users build crosstabs and charts on slides, refi
 - Persistent analysis shelf / filter bar row (replaced by recipe inspector)
 - Timeline dock (the story rail **is** the timeline)
 - Coaching layer (tours, stacked toasts, suggested-starting-point pills)
+- Focus mode (`F`, toolbar toggle, focus-only chrome) — retired; the default Analysis Canvas **is** the presentation surface (DESIGN-CONV-Q5)
 
 ### Primary responsibilities
 
@@ -117,14 +118,15 @@ File-drop → three titled, reproducible slides → reviewed PPTX in under **5 m
 
 ## 7. Current convergence focus
 
+The product has three modes only: Workspace, Analysis Canvas, and Variable Manager. There is no separate focus/presentation mode — default canvas chrome is the presentation surface (`DESIGN-CONV-Q5`).
+
 The mode model is the approved target, but the implementation is not yet complete. The active gaps are:
 
-- reconcile approved convergence candidates with current `main`;
-- add review-before-download export;
-- settle and enforce one palette rows/columns grammar;
-- restore saved weight and analysis settings when switching slides or reopening sessions;
 - make recipe structure persistent and legible in the rail/inspector;
-- retire focus mode and fix menu hit testing, hidden-inspector focus, contrast, typography, and supported-width behavior;
+- land retained Wave 2 discovery/continuity candidates per R0;
 - recapture the journey and run 3–5 unscripted representative sessions on the final candidate.
 
-The tracker §4.3.2 owns ordering and completion. Until `DESIGN-CONV-A` passes, the reset is implemented but not verified or validated as a complete redesign.
+Insert-palette grammar is settled as **Grammar A** (`DESIGN-CONV-K1`). `DESIGN-CONV-K3` a11y/interaction closure is Done. PPTX export includes a review-before-download preview lane (`DESIGN-CONV-B`): export-bound thumbnails, recipe/significance summary, then download. Excel remains a one-step export.
+
+
+The tracker §4.3.2 owns ordering and completion. Until `DESIGN-CONV-A` passes, the reset is implemented but not verified or validated as a complete redesign. PILOT-6 photography must use post-reset chrome without a focus-mode toggle.

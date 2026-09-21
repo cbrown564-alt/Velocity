@@ -47,7 +47,7 @@ describe('AnalysisOutputFrame', () => {
     expect(frame?.className).toMatch(/shrinkWrap/);
   });
 
-  it('keeps bleed styling when shrink-wrapped for focus mode', () => {
+  it('keeps bleed styling when shrink-wrapped with bleed enabled', () => {
     const { container } = render(
       <AnalysisOutputFrame bleed frameClassName="shrink-wrap">
         <span>body</span>

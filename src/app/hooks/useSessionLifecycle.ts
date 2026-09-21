@@ -69,12 +69,8 @@ export function useSessionLifecycle({
   openSessionExportOverlay,
 }: UseSessionLifecycleOptions): UseSessionLifecycleReturn {
   const dataset = useVelocityStore((state) => state.dataset);
-  const variableSets = useVelocityStore((state) => state.variableSets);
-  const folders = useVelocityStore((state) => state.folders);
   const transformLog = useVelocityStore((state) => state.transformLog);
-  const tableConfig = useVelocityStore((state) => state.tableConfig);
   const activeFilters = useVelocityStore((state) => state.activeFilters);
-  const analysisSettings = useVelocityStore((state) => state.analysisSettings);
   const slides = useVelocityStore((state) => state.slides);
   const sections = useVelocityStore((state) => state.sections);
   const workspace = useVelocityStore((state) => state.workspace);
@@ -94,17 +90,20 @@ export function useSessionLifecycle({
 
   const doExportSessionDownload = useCallback(async () => {
     if (!dataset) return;
-    const semantic = selectExportSessionSemantic(dataset, importedSessionSemantic);
+    // DESIGN-CONV-K2: flush live globals into the active slide before serializing.
+    useVelocityStore.getState().snapshotCurrentSlide();
+    const live = useVelocityStore.getState();
+    const semantic = selectExportSessionSemantic(live.dataset ?? dataset, importedSessionSemantic);
     const sessionFile = exportSession({
-      dataset,
-      variableSets,
-      folders,
-      transformLog,
-      tableConfig,
-      activeFilters,
-      analysisSettings,
-      slides,
-      sections,
+      dataset: live.dataset ?? dataset,
+      variableSets: live.variableSets,
+      folders: live.folders,
+      transformLog: live.transformLog,
+      tableConfig: live.tableConfig,
+      activeFilters: live.activeFilters,
+      analysisSettings: live.analysisSettings,
+      slides: live.slides,
+      sections: live.sections,
       workspace: {
         datasets: workspace.datasets.map((s) => ({
           id: s.id,
@@ -141,21 +140,7 @@ export function useSessionLifecycle({
     anchor.click();
     document.body.removeChild(anchor);
     URL.revokeObjectURL(url);
-  }, [
-    dataset,
-    variableSets,
-    folders,
-    transformLog,
-    tableConfig,
-    activeFilters,
-    analysisSettings,
-    slides,
-    sections,
-    workspace.datasets,
-    workspace.projects,
-    activeDatasetId,
-    importedSessionSemantic,
-  ]);
+  }, [dataset, workspace.datasets, workspace.projects, activeDatasetId, importedSessionSemantic]);
 
   const sessionExportSummary = useMemo((): SessionExportSummary | null => {
     if (!dataset) return null;
@@ -214,6 +199,13 @@ export function useSessionLifecycle({
           tableStats: null,
           activeVariableStats: null,
         }));
+        // DESIGN-CONV-K2: prefer the active slide's saved contract over top-level globals.
+        if (activeSlide) {
+          if (activeSlide.analysisSettings) {
+            useVelocityStore.setState({ analysisSettings: { ...activeSlide.analysisSettings } });
+          }
+          useVelocityStore.getState().applySlideAnalysisState(activeSlide.analysisState, { runAnalysis: false });
+        }
         await useVelocityStore.getState().runAnalysis();
         setImportedSessionSemantic(captureImportedSessionSemanticState(payload.sessionFile));
         setPhase('dashboard');

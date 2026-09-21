@@ -162,7 +162,7 @@ Re-read `docs/design_02_ux_modes.md` §2 and the deck-native charter before star
 
 **Scope:** variables are summoned, not resident.
 
-- Evolve `CommandPalette.tsx` + `commandPaletteSearch.ts` into the insert palette per north-star screen 3: search-first, dense rows (mono variable name, label, type glyph, meta), insertion grammar **↵ → rows, ⌥↵ → columns, ⇧↵ → filter**, esc closes
+- Evolve `CommandPalette.tsx` + `commandPaletteSearch.ts` into the insert palette per north-star screen 3: search-first, dense rows (mono variable name, label, type glyph, meta), insertion grammar **↵ → columns, ⌥↵ → rows, ⇧↵ → filter** (`DESIGN-CONV-K1`; north-star mock originally flipped Enter/⌥Enter — product code wins), esc closes
 - `Insert ⌘K` toolbar button and empty-state `Browse variables` both open it
 - Drag out of the palette onto the slide still works (reuse `useDashboardDnD`)
 - Command actions (export, VM, etc.) remain available behind a `>` prefix or a commands tab — variables are the default result set
@@ -234,7 +234,7 @@ Phase 4 was previously marked complete when the baseline pack and timed automati
 | :--- | :--- | :--- |
 | 1 | Drop `sleep.sav` on workspace landing (or Upload → select file) | — |
 | 2 | Load Full Data if metadata interstitial appears | Enter |
-| 3 | Slide 1: ⌘K → `sex` → ↵ (rows); ⌘K → `marital` → ⌥↵ (columns) | palette grammar |
+| 3 | Slide 1: ⌘K → `sex` → ⌥↵ (rows); ⌘K → `marital` → ↵ (columns) | palette grammar (`DESIGN-CONV-K1`) |
 | 4 | Edit slide title to a stakeholder label (e.g. "Gender by marital status") | click title or rail rename |
 | 5 | `+ New slide` in story rail → repeat palette for slide 2 (e.g. `age` × `region`) | ⌘K grammar |
 | 6 | `+ New slide` → slide 3 (e.g. single-variable distribution) | ⌘K → ↵ |

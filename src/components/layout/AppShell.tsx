@@ -12,9 +12,6 @@ interface AppShellProps {
 export const AppShell: React.FC<AppShellProps> = ({ children }) => {
   const appMode = useVelocityStore((state) => state.appMode);
   const toggleAppMode = useVelocityStore((state) => state.toggleAppMode);
-  const focusMode = useVelocityStore((state) => state.focusMode);
-  const toggleFocusMode = useVelocityStore((state) => state.toggleFocusMode);
-  const setFocusMode = useVelocityStore((state) => state.setFocusMode);
   const openCommandPalette = useVelocityStore((state) => state.openCommandPalette);
   const openShortcuts = useVelocityStore((state) => state.openShortcuts);
   const reducedMotion = useReducedMotion();
@@ -34,7 +31,6 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
         openCommandPalette();
       },
     });
-
     return unregister;
   }, [openCommandPalette]);
 
@@ -49,7 +45,6 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
         openShortcuts();
       },
     });
-
     return unregister;
   }, [openShortcuts]);
 
@@ -64,31 +59,8 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
         toggleAppMode();
       },
     });
-
     return unregister;
   }, [toggleAppMode]);
-
-  useEffect(() => {
-    const unregister = registerShortcut({
-      id: 'global-toggle-focus',
-      contexts: ['global', 'canvas'],
-      priority: 40,
-      match: (event) => (event.key === 'f' || event.key === 'F') && appMode !== 'variables',
-      handler: (event) => {
-        event.preventDefault();
-        toggleFocusMode();
-      },
-    });
-
-    return unregister;
-  }, [appMode, toggleFocusMode]);
-
-  // Exit focus mode when Variable Manager opens
-  useEffect(() => {
-    if (appMode === 'variables' && focusMode) {
-      setFocusMode(false);
-    }
-  }, [appMode, focusMode, setFocusMode]);
 
   const canvasRef = useRef<HTMLDivElement>(null);
   const isCanvasHidden = appMode === 'variables';
@@ -105,7 +77,6 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
       <a href="#main-content" className="skip-link">
         Skip to main content
       </a>
-      {/* Analysis Canvas (always rendered, recedes when Variable Manager is open) */}
       <motion.div
         ref={canvasRef}
         aria-hidden={isCanvasHidden ? true : undefined}
@@ -114,16 +85,11 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
           scale: appMode === 'variables' ? 0.95 : 1,
           filter: appMode === 'variables' ? 'blur(4px)' : 'blur(0px)',
         }}
-        transition={{
-          duration: reducedMotion ? DURATIONS.instant : DURATIONS.normal,
-          ease: EASINGS.standard,
-        }}
+        transition={{ duration: reducedMotion ? DURATIONS.instant : DURATIONS.normal, ease: EASINGS.standard }}
         className="h-full"
       >
         {children}
       </motion.div>
-
-      {/* Variable Manager Overlay */}
       <AnimatePresence>
         {appMode === 'variables' && (
           <motion.div

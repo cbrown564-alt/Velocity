@@ -1,0 +1,46 @@
+{
+  "projectId": "SBT-001",
+  "version": "turn5-v1",
+  "weights": {
+    "briefAlignment": 0.25,
+    "materialityPrioritisation": 0.20,
+    "evidenceSynthesis": 0.15,
+    "restraint": 0.15,
+    "narrativeCoherence": 0.15,
+    "editorialEconomy": 0.10
+  },
+  "hardFailureRules": [
+    {"id":"HF_LOW_BASE_PROMOTION","findingId":"F_MOSAIC_LOWBASE_SPIKE","condition":"appears in executive_thesis or primary_story"},
+    {"id":"HF_UNWEIGHTED_PRIMARY","analysisId":"PULSE_CONSID_W2_W3_UNWEIGHTED","condition":"used as primary tracker movement without weighted correction"},
+    {"id":"HF_CAMPAIGN_CAUSALITY","condition":"story asserts Pulse campaign caused consideration growth"},
+    {"id":"HF_NONSIG_STABILITY","condition":"story infers stability solely from non-significance"},
+    {"id":"HF_UNIVERSE_COLLAPSE","condition":"customer-only and total-market measures are directly conflated"},
+    {"id":"HF_UNSUPPORTED_FINDING","condition":"finding or numeric claim has no resolvable analysis evidence"}
+  ],
+  "briefs": {
+    "BRIEF_CATEGORY_BOARD": {
+      "requiredFindingConcepts": ["F_PULSE_CONSID_UP", "F_NORTHSTAR_NPS_DROP", "F_HARBOUR_YOUTH_DECLINE"],
+      "importantSupportingConcepts": ["F_PULSE_WEIGHT_TRAP", "F_NORTHSTAR_AWARE_RESILIENT"],
+      "mustExcludeFromPrimary": ["F_MOSAIC_LOWBASE_SPIKE"],
+      "targetSections": [3, 6]
+    },
+    "BRIEF_PULSE_CMO": {
+      "requiredFindingConcepts": ["F_PULSE_CONSID_UP"],
+      "importantSupportingConcepts": ["F_PULSE_WEIGHT_TRAP"],
+      "mustExcludeFromPrimary": ["F_MOSAIC_LOWBASE_SPIKE", "F_HARBOUR_YOUTH_DECLINE"],
+      "targetSections": [3, 6]
+    },
+    "BRIEF_NORTHSTAR_CX": {
+      "requiredFindingConcepts": ["F_NORTHSTAR_NPS_DROP"],
+      "importantSupportingConcepts": ["F_NORTHSTAR_AWARE_RESILIENT"],
+      "mustExcludeFromPrimary": ["F_MOSAIC_LOWBASE_SPIKE", "F_HARBOUR_YOUTH_DECLINE"],
+      "targetSections": [3, 6]
+    }
+  },
+  "pairwiseReview": {
+    "primaryQuestion": "Which plan would you rather hand to a strong researcher to turn into the client deck?",
+    "allowedChoices": ["A", "B", "tie", "neither"],
+    "captureFailureTags": true,
+    "captureStructuredEdits": ["promote", "demote", "exclude", "combine", "split", "reorder", "reframe", "add_caveat"]
+  }
+}

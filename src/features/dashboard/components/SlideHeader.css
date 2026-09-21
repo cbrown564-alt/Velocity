@@ -9,11 +9,11 @@
   padding: 0 0 1rem 0;
 }
 
-/* Title */
+/* Title — Fraunces / --font-display inside the slide artifact (design_01) */
 .slide-header-title {
-  font-family: var(--font-body);
+  font-family: var(--font-display);
   font-size: 1.25rem;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--text-primary);
   margin: 0;
   line-height: 1.4;
@@ -45,8 +45,9 @@
 }
 
 .slide-header-title-input {
+  font-family: var(--font-display);
   font-size: 1.25rem;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .slide-header-subtitle-input {

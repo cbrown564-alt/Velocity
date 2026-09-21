@@ -90,7 +90,20 @@ function getRecipeSummary(
   if (source.rowVars.length === 0) return null;
   const name = (id: string) => variableSets.find((v) => v.id === id)?.name || id;
   const rows = source.rowVars.map(name).join(' + ');
-  return source.colVar ? `${rows} × ${name(source.colVar)}` : rows;
+  const base = source.colVar ? `${rows} × ${name(source.colVar)}` : rows;
+
+  // DESIGN-CONV-K2: persistent filter / weight / view tokens for inactive slides.
+  // Active slide may pass live tableConfig for rows×cols; other fields always come from the slide.
+  const tokens: string[] = [base];
+  const filterCount = slide.analysisState.filters.length;
+  if (filterCount > 0) {
+    tokens.push(filterCount === 1 ? '1 filter' : `${filterCount} filters`);
+  }
+  if (slide.analysisState.weightVar) {
+    tokens.push(`wt ${name(slide.analysisState.weightVar)}`);
+  }
+  tokens.push(slide.visualizationType === 'chart' ? 'chart' : 'table');
+  return tokens.join(' · ');
 }
 
 interface SlideRowProps {
@@ -199,7 +212,7 @@ const SlideRow: React.FC<SlideRowProps> = ({
           isDragging ? 'opacity-40' : ''
         } ${isActive ? 'bg-[var(--bg-panel)] shadow-[0_0_0_1px_var(--border-color)]' : 'hover:bg-[var(--bg-rail)]'}`}
       >
-        <span className="w-3 shrink-0 text-right font-mono text-[11px] text-[var(--text-tertiary)] leading-[1.35]">
+        <span className="w-3 shrink-0 text-right font-mono text-[11px] text-[var(--text-secondary)] leading-[1.35]">
           {index + 1}
         </span>
         <div className="min-w-0 flex-1">
@@ -236,7 +249,7 @@ const SlideRow: React.FC<SlideRowProps> = ({
             </span>
           )}
           {recipeSummary && (
-            <span className="block text-[11px] text-[var(--text-tertiary)] truncate mt-px">{recipeSummary}</span>
+            <span className="block text-[11px] text-[var(--text-secondary)] truncate mt-px">{recipeSummary}</span>
           )}
         </div>
         {canDelete && (
@@ -554,12 +567,12 @@ export const StoryRail: React.FC<StoryRailProps> = ({
         type="button"
         onClick={() => addSlide()}
         title="New slide (N)"
-        className="mt-1.5 px-2.5 py-[7px] text-left text-[12.5px] rounded-md text-[var(--text-tertiary)] hover:bg-[var(--bg-rail)] hover:text-[var(--text-secondary)] transition-colors"
+        className="mt-1.5 px-2.5 py-[7px] text-left text-[12.5px] rounded-md text-[var(--text-secondary)] hover:bg-[var(--bg-rail)] hover:text-[var(--text-primary)] transition-colors"
       >
         + New slide
       </button>
 
-      <div className="mt-auto px-2.5 pt-2 text-[11px] text-[var(--text-tertiary)]">
+      <div className="mt-auto px-2.5 pt-2 text-[11px] text-[var(--text-secondary)]">
         <PersistenceStatus
           mode={persistenceMode}
           opfsAvailable={opfsAvailable}

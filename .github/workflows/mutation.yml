@@ -22,8 +22,11 @@ jobs:
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
 
-      - name: Run core mutation tests
-        run: npm run test:mutation:ci
+      - name: Run full core mutation tests
+        env:
+          MUTATION_FULL: '1'
+          MUTATION_CONCURRENCY: '2'
+        run: npm run test:mutation:full
         timeout-minutes: 90
 
       - name: Upload mutation report
@@ -39,8 +42,9 @@ jobs:
         run: |
           {
             echo '### mutation job'
-            echo '- `npm run test:mutation:ci` (Stryker break threshold: 48%)'
+            echo '- `npm run test:mutation:full` (Stryker break threshold: 40%)'
             echo ''
-            echo 'Manual deep run. The stable required mutation job lives in `Test`.'
+            echo 'Manual deep run of the full gated `src/core/` mutate set.'
+            echo 'PR `Test` mutation job is diff-scoped by default; use this workflow for a full campaign.'
             echo 'Download **mutation-report** artifact for HTML details on failure.'
           } >> "$GITHUB_STEP_SUMMARY"

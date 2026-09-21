@@ -140,19 +140,21 @@ Both commands are required for engine, worker, persistence, first-run, upload, o
 npm run test:e2e:visual
 ```
 
-### Stable `mutation` job (conditional Stryker step)
+### Stable `mutation` job (diff-scoped Stryker)
 
 ```bash
-npm run test:mutation:ci
+npm run test:mutation:ci    # skip / scoped / full vs merge base
+npm run test:mutation:full  # force full gated campaign
 ```
 
+Narrow `src/core/` production edits mutate only those files. Mutation config/runner edits, `MUTATION_FULL=1`, or >8 eligible files run the full gated set. Test-only / lockfile-only / UI-only diffs skip Stryker while keeping the required job green.
 ## Scoped shortcuts (only when the full suite is unnecessary)
 
 Use **only** when the change is narrowly scoped **and** you will still run `npm run ci:full` before merge:
 
 | Change type | Minimum local verification |
 | :--- | :--- |
-| Pure `src/core/` logic | `typecheck:all` + targeted tests + `test:mutation:ci` |
+| Pure `src/core/` logic | `typecheck:all` + targeted tests + `test:mutation:ci` (scoped to changed files) |
 | Single component, no UI flow | `typecheck:all` + targeted `vitest run path/to/test` |
 | DuckDB-WASM / SAV Arrow ingestion (`workerIngestion`, `insertArrowTable`) | `npx playwright test tests/e2e/duckdb-arrow-smoke.spec.ts` (+ `ci:full` before merge) |
 | Docs only (no scripts) | `format:check` |
