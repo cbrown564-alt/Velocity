@@ -1,6 +1,6 @@
 # Research Quality Backbone
 
-**Status:** Experimental workstream. SBT-001 generation, reversible preparation and reference-analysis scripts are implemented; the comparative runner, executable E5 graders and researcher preference evidence remain planned.
+**Status (22 September 2026):** Experimental workstream. Corrected SBT-001 is merged; SBT-002/003 are frozen and a ten-output, one-model Codex pilot is complete. Explicit adjudication, deterministic selection scoring, a blinded researcher-review prototype and a bounded native-deck adapter are implemented. Independent researcher assessments, measured correction burden and product promotion remain pending. Current evidence: [`evals/research_quality/runs/2026-09-pilot-comparison/readout.md`](../../../evals/research_quality/runs/2026-09-pilot-comparison/readout.md).
 **Wedge:** Brand-tracker preparation -> analysis -> publication-quality editable deck  
 **Principle:** Models interpret, propose and communicate. Velocity computes. Publication requires verified evidence.
 
@@ -336,11 +336,14 @@ Do not invite agencies until the hidden evaluation set shows:
 - realistic steerability requests preserve locked numbers and evidence;
 - an unfamiliar held-out project can reach client-ready state with a plausible boutique-agency review burden.
 
-## 11. Immediate next build
+## 11. Current decision and next evidence
 
-1. Implement the bundle schema and split registry.
-2. Adapt a small LongDA-style public-survey set into Velocity-native evals.
-3. Create synthetic tracker generator v2 with hidden truth manifests and controlled traps.
-4. Build deterministic graders before adding model orchestration.
-5. Add pairwise deck-review tooling and a researcher taste rubric.
-6. Run the first baseline tournament before any fine-tuning decision.
+The September pilot supports a coverage-check experiment before fine-tuning. Approved analyses yielded complete mandatory finding recovery in four of five repeated one-pass runs; both raw workflows omitted polarisation despite calculating the distributions. This is provisional agent adjudication, not researcher consensus.
+
+1. Give the blinded pack to the user's reviewers. Preserve independent baseline findings, original decisions, preference, active minutes and corrections before revealing identities.
+2. Reconcile researcher disagreements with the frozen references; do not silently change v1. In a new study version, clarify the SBT-003 first-contact-resolution universe and align the raw/analysis information and inference methods.
+3. Test a study-neutral completeness check on another project/version, then compare more than one model/configuration. Current public FSA evidence covers nine published tables, not raw-survey preparation or unseen generalisation.
+4. Use the verified review/export prototype as the representative slice for a future product change. Promotion needs workspace/session migration design, worker/engine boundaries, accessibility and product-journey checks, plus reviewer evidence that it reduces correction burden.
+5. Decide on fine-tuning only if repeatable weaknesses survive better inputs, methods, coverage checks and workflow design. No training is authorised or performed by this pilot.
+
+The broader phases above are targets, not completed deliverables. Registry entries label all exposed projects as development/evaluation-only; no untouched holdout is claimed.

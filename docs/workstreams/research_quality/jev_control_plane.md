@@ -1,8 +1,10 @@
 # TypeSafe Jev control plane (research quality)
 
-## Role
+## Status and proposed role
 
-TypeSafe **Jev** is the System One decision layer for Velocity's research-quality harness. It does **not** generate findings, story beats, recode expressions, or slides. An LLM or `VelocityEngine` still produces candidates and applies transforms; Jev classifies, scores, gates, and escalates with calibrated probabilities.
+The question packs, output schema and offline validator are implemented. Live Jev calls and probability calibration have not been evaluated. The September Codex pilot did not use Jev; no evidence in that pilot supports a Jev benefit.
+
+The proposed role is to classify candidate evidence and preparation decisions. Jev must not generate findings, story beats, recode expressions or slides. An LLM or `VelocityEngine` would produce candidates and apply transforms. Calibration is an acceptance requirement, not an established capability of this harness.
 
 ## Where it sits
 

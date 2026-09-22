@@ -20,11 +20,18 @@ jobs:
         with:
           python-version: '3.12'
           cache: pip
-          cache-dependency-path: scripts/python/synthetic_tracker/requirements.txt
+          cache-dependency-path: |
+            scripts/python/synthetic_tracker/requirements.txt
+            scripts/python/research_quality/requirements.txt
       - name: Install synthetic benchmark dependencies
-        run: python -m pip install -r scripts/python/synthetic_tracker/requirements.txt
+        run: python -m pip install -r scripts/python/research_quality/requirements.txt
       - name: Verify SBT-001 routing, evidence and agency recovery
         run: python -m unittest discover -s scripts/python/synthetic_tracker/tests -v
+      - name: Verify research contracts and realised studies
+        run: |
+          python -m pytest tests/research_quality -q
+          python scripts/python/research_quality/freeze_study.py SBT-002 --verify
+          python scripts/python/research_quality/freeze_study.py SBT-003 --verify
 
   lint-format:
     runs-on: ubuntu-latest

@@ -74,3 +74,10 @@ Plus purchase intent moves from roughly 53.4% unweighted to 51.9% weighted (~1.5
 These are legitimate pre-freeze changes because they are evaluated against constraints declared before any model run. Tuning must be limited to making the pre-declared synthetic mechanisms observable; it must not redefine the target findings after seeing model behaviour.
 
 After tuning, rerun the complete truth/trap audit. Only a passing generator may produce the immutable SBT-002 evaluation dataset.
+
+
+## Candidate 0.4 — before any model exposure
+
+The executable check found candidate 0.3's understanding difference was 4.50pp. It met the later <5pp comment but missed the original 2–3pp trap. Dedicated understanding offsets were changed from Flex 1.15 / Simple 0.85 to 1.40 / 1.05, keeping the seed and all other streams fixed. The realised weighted difference is now 2.79pp (Holm p=0.0297). Plus has more extreme positive and negative appeal/purchase responses; the explorer interaction passes a direct difference-in-differences test.
+
+The reference proposition now explicitly states that Flex's numerical purchase-intent lead over Plus is not statistically established. Demographic cuts are exploratory; because age is related to explorer membership, they cannot all be labelled pure noise. Multiplicity is a structural opportunity here: no false-positive realisation is claimed. All these decisions precede evaluated model exposure.

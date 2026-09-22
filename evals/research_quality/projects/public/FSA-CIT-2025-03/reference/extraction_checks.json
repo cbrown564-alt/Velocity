@@ -1,0 +1,366 @@
+{
+  "status": "PASS",
+  "checks": [
+    {
+      "cell": "Percents!B11",
+      "error_pp": 0.0015065821550459546,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B13",
+      "error_pp": 0.003193564115068881,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B15",
+      "error_pp": 0.0009653827401336912,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B17",
+      "error_pp": 0.0013505607021002675,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B19",
+      "error_pp": 0.0017991223793272226,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B21",
+      "error_pp": 0.0036031204290589702,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B23",
+      "error_pp": 0.004700146270113947,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B25",
+      "error_pp": 0.0003851779619736817,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B30",
+      "error_pp": 0.00023890784982949498,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B32",
+      "error_pp": 0.0034617259873250816,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B34",
+      "error_pp": 0.0038371526084794993,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B36",
+      "error_pp": 0.0015602145294977277,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B38",
+      "error_pp": 0.00029741589468557095,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B40",
+      "error_pp": 0.0015699658703072217,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B42",
+      "error_pp": 0.0032228181374946985,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B44",
+      "error_pp": 0.00509019990248305,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B336",
+      "error_pp": 0.0035202340321802694,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B338",
+      "error_pp": 0.0014529497805924052,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B340",
+      "error_pp": 0.0013066796684544357,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B342",
+      "error_pp": 0.0030911750365674173,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B344",
+      "error_pp": 0.0013261823500732017,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B346",
+      "error_pp": 0.0019551438322769066,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B348",
+      "error_pp": 0.00497318381277978,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B350",
+      "error_pp": 0.004397854705022297,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B431",
+      "error_pp": 0.0014383227693812728,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B433",
+      "error_pp": 0.003466601657727608,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B435",
+      "error_pp": 0.004402730375428376,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B437",
+      "error_pp": 0.0008093612871773459,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B439",
+      "error_pp": 0.004227206240857928,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B441",
+      "error_pp": 0.0024427108727449465,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B443",
+      "error_pp": 0.002515845928812155,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B445",
+      "error_pp": 0.004787908337396729,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B450",
+      "error_pp": 0.0007654802535359551,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B452",
+      "error_pp": 0.0017016089712313942,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B454",
+      "error_pp": 0.0013505607020967147,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B456",
+      "error_pp": 0.0016528522671874768,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B458",
+      "error_pp": 0.003603120429058748,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B460",
+      "error_pp": 0.0023647001462698825,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B462",
+      "error_pp": 0.0009361287176901101,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B464",
+      "error_pp": 0.0003022915650880975,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B470",
+      "error_pp": 0.004953681131157239,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B472",
+      "error_pp": 0.00472452462212658,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B474",
+      "error_pp": 0.004807411019012164,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B476",
+      "error_pp": 0.0035446123842026722,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B478",
+      "error_pp": 0.0009751340809360798,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B480",
+      "error_pp": 0.003432471964894823,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B482",
+      "error_pp": 0.00032179424671596735,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B484",
+      "error_pp": 0.001647976596778733,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B508",
+      "error_pp": 0.0030862993661626703,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B510",
+      "error_pp": 0.001170160897125072,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B512",
+      "error_pp": 0.0035982447586562216,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B514",
+      "error_pp": 0.0033495855680154563,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B516",
+      "error_pp": 0.0028620185275478605,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B518",
+      "error_pp": 0.003578742077035457,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B520",
+      "error_pp": 0.004256460263292183,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B522",
+      "error_pp": 0.0030521696733245562,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B546",
+      "error_pp": 0.004680643588494071,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B548",
+      "error_pp": 0.0022525597269620334,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B550",
+      "error_pp": 0.0048805460750926954,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B552",
+      "error_pp": 0.0028230131643098844,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B554",
+      "error_pp": 0.00013164310092683706,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B556",
+      "error_pp": 0.0024280838615311495,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B558",
+      "error_pp": 0.0026913700633741655,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B560",
+      "error_pp": 0.0026913700633830473,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B617",
+      "error_pp": 0.003920039005363307,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B619",
+      "error_pp": 0.0012871769868354477,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B621",
+      "error_pp": 0.001374939054116453,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B623",
+      "error_pp": 0.003564115065820772,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B625",
+      "error_pp": 0.0033788395904441604,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B627",
+      "error_pp": 0.000360799609946838,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B629",
+      "error_pp": 0.004792784007797479,
+      "passed": true
+    },
+    {
+      "cell": "Percents!B631",
+      "error_pp": 0.0030570453437350764,
+      "passed": true
+    }
+  ],
+  "method": "Reconcile published weighted count/base to percentage with 0.006pp tolerance for independent rounding."
+}

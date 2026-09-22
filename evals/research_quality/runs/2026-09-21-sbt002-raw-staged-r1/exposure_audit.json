@@ -1,0 +1,16 @@
+{
+  "status": "PASS",
+  "scope": "Manual tool-trace review with a path/network precheck. Python scientific imports and reads of supplied respondents.csv only; no hidden/reference or external research access observed. This is observed trace evidence, not an OS filesystem-isolation proof.",
+  "command_count": 5,
+  "command_sha256": [
+    "595eea89c2826c528371f0cf5bdac1dd071d0daa587a907542b06e6ba9549dba",
+    "c7a21ff5793e3d88bdead68260fb049615a0faf5ec5265c43e50ad45c3921ef1",
+    "4891b1a862e7c9e0456b1ba3f48949958b289d63164c233e0e3f40d00acf2764",
+    "e0e3992754c9161a482cf6a548f9f9df5e648d9e1c1ffb3ac65ff085fc741065",
+    "c8852c4e1e168959726042e67a72cf31956d66c2f851a49b41e30b246077b787"
+  ],
+  "item_types": [
+    "command_execution"
+  ],
+  "model_completed": true
+}

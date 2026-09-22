@@ -1,17 +1,73 @@
 {
-  "project_id":"SBT-002",
-  "version":"0.1.0",
-  "presentation_score":null,
-  "dimensions":[
-    {"id":"analysis_correctness","weight":20,"criteria":["numeric accuracy","correct estimator","valid comparison"]},
-    {"id":"universe_weight_routing","weight":15,"criteria":["correct denominator","wt_final primary","routed premium-value base preserved"]},
-    {"id":"statistical_inference","weight":15,"criteria":["Holm policy respected","significance separated from >=5pp commercial materiality","exploratory subgroups labelled"]},
-    {"id":"finding_correctness","weight":15,"criteria":["claim supported","counter-evidence preserved","claim strength within boundary"]},
-    {"id":"finding_completeness","weight":15,"criteria":["mandatory finding recall","selected-finding precision","unsupported finding rate"]},
-    {"id":"prioritisation_redundancy","weight":10,"criteria":["mandatory outranks secondary/context","do_not_elevate resisted","redundant observations collapsed"]},
-    {"id":"synthesis_provenance","weight":10,"criteria":["coherent concept-development narrative","evidence IDs/values traceable","diagnostic causality restrained"]}
+  "project_id": "SBT-002",
+  "version": "0.1.0",
+  "presentation_score": 0,
+  "dimensions": [
+    {
+      "id": "analysis_correctness",
+      "weight": 20,
+      "criteria": [
+        "numeric accuracy",
+        "correct estimator",
+        "valid comparison"
+      ]
+    },
+    {
+      "id": "universe_weight_routing",
+      "weight": 15,
+      "criteria": [
+        "correct denominator",
+        "wt_final primary",
+        "routed premium-value base preserved"
+      ]
+    },
+    {
+      "id": "inference_correctness",
+      "weight": 15,
+      "criteria": [
+        "Holm policy respected",
+        "significance separated from >=5pp commercial materiality",
+        "exploratory subgroups labelled"
+      ]
+    },
+    {
+      "id": "finding_correctness",
+      "weight": 15,
+      "criteria": [
+        "claim supported",
+        "counter-evidence preserved",
+        "claim strength within boundary"
+      ]
+    },
+    {
+      "id": "finding_completeness",
+      "weight": 15,
+      "criteria": [
+        "mandatory finding recall",
+        "selected-finding precision",
+        "unsupported finding rate"
+      ]
+    },
+    {
+      "id": "prioritisation_redundancy",
+      "weight": 10,
+      "criteria": [
+        "mandatory outranks secondary/context",
+        "do_not_elevate resisted",
+        "redundant observations collapsed"
+      ]
+    },
+    {
+      "id": "synthesis_provenance",
+      "weight": 10,
+      "criteria": [
+        "coherent concept-development narrative",
+        "evidence IDs/values traceable",
+        "diagnostic causality restrained"
+      ]
+    }
   ],
-  "hard_failures":[
+  "hard_failures": [
     "Uses the routed premium_value_5 denominator as though it were unconditional.",
     "Uses unweighted top-lines as primary despite wt_final being supplied.",
     "Declares a concept winner primarily from a do_not_elevate finding.",
@@ -19,6 +75,11 @@
     "Treats exploratory demographic subgroup noise as confirmatory evidence without qualification.",
     "Invents or materially misstates a quantitative result."
   ],
-  "completeness_metrics":{"mandatory_recall":"mandatory reference findings recovered / mandatory reference findings","selected_precision":"supported reportable selected findings / all selected findings","do_not_elevate_rate":"do_not_elevate findings promoted to primary narrative / total do_not_elevate reference findings","redundancy_adjusted_coverage":"unique mandatory/secondary evidence clusters represented after duplicate claims are collapsed"},
-  "freeze_rule":"This scoring contract and the reference finding roles must not be altered in response to evaluated model outputs."
+  "completeness_metrics": {
+    "mandatory_recall": "mandatory reference findings recovered / mandatory reference findings",
+    "selected_precision": "supported reportable selected findings / all selected findings",
+    "do_not_elevate_rate": "do_not_elevate findings promoted to primary narrative / total do_not_elevate reference findings",
+    "redundancy_adjusted_coverage": "unique mandatory/secondary evidence clusters represented after duplicate claims are collapsed"
+  },
+  "freeze_rule": "This scoring contract and the reference finding roles must not be altered in response to evaluated model outputs."
 }

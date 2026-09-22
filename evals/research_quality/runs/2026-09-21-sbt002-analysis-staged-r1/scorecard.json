@@ -1,0 +1,141 @@
+{
+  "run_id": "2026-09-21-sbt002-analysis-staged-r1",
+  "study_id": "SBT-002",
+  "status": "provisional_agent_adjudication",
+  "scorer_version": "selection-1.1",
+  "scorer_sha256": "1d45ac4930ad7b419f97e40029a2eedecb635741698b9998309df101b8874253",
+  "dimension_scores": {
+    "analysis_correctness": {
+      "score": 5,
+      "note": "Reported primary point estimates agree with supplied/reference tables within reported rounding; additional raw diagnostics checked against the CSV."
+    },
+    "universe_weight_routing": {
+      "score": 5,
+      "note": "Weighted primary estimates and conditional/valid bases retained."
+    },
+    "inference_correctness": {
+      "score": 5,
+      "note": "Significance, practical size, descriptive contrasts and causal limits distinguished."
+    },
+    "finding_correctness": {
+      "score": 5,
+      "note": "No unsupported selected proposition identified in this pilot review."
+    },
+    "finding_completeness": {
+      "score": 5,
+      "note": "See separate mandatory-recall metric and proposed corrections."
+    },
+    "prioritisation_redundancy": {
+      "score": null,
+      "note": "Independent researcher preference pending; no fabricated taste score."
+    },
+    "synthesis_provenance": {
+      "score": null,
+      "note": "Evidence-reference resolution is deterministic below; narrative quality awaits independent review."
+    }
+  },
+  "selection_metrics": {
+    "mandatory_recall": 1.0,
+    "selected_precision": 1.0,
+    "unsupported_rate": 0.0,
+    "do_not_elevate_rate": 0.0,
+    "redundancy_adjusted_coverage": 1.0
+  },
+  "finding_matches": [
+    {
+      "model_finding_id": "F1",
+      "reference_finding_id": "F_A_BROAD",
+      "match_state": "full",
+      "model_importance": "primary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F1"
+      ],
+      "rationale": "Direction, valid universe and cited evidence support this proposition."
+    },
+    {
+      "model_finding_id": "F6",
+      "reference_finding_id": "F_C_POSITION",
+      "match_state": "full",
+      "model_importance": "primary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F6"
+      ],
+      "rationale": "Direction, valid universe and cited evidence support this proposition."
+    },
+    {
+      "model_finding_id": "F2",
+      "reference_finding_id": "F_B_EXPLORER",
+      "match_state": "full",
+      "model_importance": "primary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F2"
+      ],
+      "rationale": "Direction, valid universe and cited evidence support this proposition."
+    },
+    {
+      "model_finding_id": "F5",
+      "reference_finding_id": "F_ROUTED_PREMIUM",
+      "match_state": "full",
+      "model_importance": "primary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F5"
+      ],
+      "rationale": "Direction, valid universe and cited evidence support this proposition."
+    },
+    {
+      "model_finding_id": "F3",
+      "reference_finding_id": null,
+      "match_state": "supported_novel",
+      "model_importance": "secondary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F3"
+      ],
+      "rationale": "Supported additional development/diagnostic qualification. No frozen reference counterpart; earns precision only, never mandatory recall or coverage."
+    },
+    {
+      "model_finding_id": "F4",
+      "reference_finding_id": "F_B_DIFFERENTIATED",
+      "match_state": "full",
+      "model_importance": "secondary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F4"
+      ],
+      "rationale": "Direction, valid universe and cited evidence support this proposition."
+    }
+  ],
+  "hard_failures": [],
+  "provenance_coverage": 1.0,
+  "unresolved_references": [],
+  "missed_mandatory_findings": [],
+  "correction_burden": {
+    "human_active_minutes": null,
+    "human_corrections": null,
+    "proposed_agent_corrections": []
+  },
+  "costs": {
+    "elapsed_seconds": 344.6257675399538,
+    "input_tokens": 171409,
+    "cached_input_tokens": 23040,
+    "output_tokens": 10922,
+    "incremental_usd": null,
+    "billing": "Existing Codex ChatGPT access; dollar cost unavailable"
+  },
+  "notes": [
+    "Provisional manual adjudication by the primary Codex agent, not independent researcher validation. Finding rows were reviewed against the frozen evidence.",
+    "No change to frozen data, reference tiers or scoring weights followed model exposure. The scorer gained an explicit supported_novel state after the dry pilot: supported new claims must not be mislabelled unsupported or inflate reference recall. Every run uses the same scorer version.",
+    "Joint matches are explicit: complementary selected claims can jointly recover a reference proposition. No lexical matching is used.",
+    "Human correction counts, preference scores and active review time are pending; agent-proposed edits are not measured human burden."
+  ]
+}

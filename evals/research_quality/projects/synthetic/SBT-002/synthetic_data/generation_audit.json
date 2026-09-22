@@ -1,0 +1,15 @@
+{
+  "generator_version": "0.4-freeze-candidate",
+  "seed": 20260917,
+  "n": 2100,
+  "cell_n": {
+    "Flex": 700,
+    "Plus": 700,
+    "Simple": 700
+  },
+  "food_explorer_unweighted": 0.3319047619047619,
+  "weight_min": 0.46456416938774464,
+  "weight_max": 1.6857215517910202,
+  "weight_mean": 0.9999999999999998,
+  "routed_premium_n": 1875
+}

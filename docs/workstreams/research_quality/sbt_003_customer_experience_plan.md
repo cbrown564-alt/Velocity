@@ -1,5 +1,7 @@
 # SBT-003 — Customer experience benchmark plan
 
+**Status (22 September 2026):** SBT-003 v1.0.0 is frozen and one pilot output is complete. Independent researcher review is pending. In the next version, clarify that failure to resolve on first contact does not establish an issue remains unresolved now; preserve v1 evidence and scores. Current results and limitations are in [the pilot readout](../../../evals/research_quality/runs/2026-09-pilot-comparison/readout.md). The design below records intent, not independent validation.
+
 ## Why this study
 
 SBT-003 tests a different research archetype from tracker and concept testing: customer-experience diagnosis. It introduces NPS composition, service incidents, satisfaction, retention intent, correlated diagnostics, customer subgroups and the distinction between predictive/associational drivers and causal claims.

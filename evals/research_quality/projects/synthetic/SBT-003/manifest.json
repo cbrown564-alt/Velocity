@@ -1,1 +1,30 @@
-{"project_id":"SBT-003","version":"0.1.0-frozen-study-contract","title":"Northline customer experience diagnostic","status":"study_contract_frozen","presentation_in_scope":false,"design":{"type":"cross_sectional_current_customer","target_n":2400,"seed":20260918,"weight_variable":"wt_final"},"primary_outcomes":["nps_0_10","overall_satisfaction_5","renewal_intent_5"],"routed_universes":{"outage_severity_5":"outage_90d=1","support_quality_5":"support_contact_90d=1","resolved_first_contact":"support_contact_90d=1"},"analysis_policy":{"nps":"weighted promoter% minus detractor%; retain composition","small_base_warning_n":75,"suppress_n":40,"association":"non-causal unless separately identified"},"freeze_rule":"All ground truth/reference artifacts freeze before model exposure."}
+{
+  "project_id": "SBT-003",
+  "version": "1.0.0",
+  "title": "Northline customer experience diagnostic",
+  "status": "data_reference_frozen",
+  "presentation_in_scope": false,
+  "design": {
+    "type": "cross_sectional_current_customer",
+    "target_n": 2400,
+    "seed": 20260918,
+    "weight_variable": "wt_final"
+  },
+  "primary_outcomes": [
+    "nps_0_10",
+    "overall_satisfaction_5",
+    "renewal_intent_5"
+  ],
+  "routed_universes": {
+    "outage_severity_5": "outage_90d=1",
+    "support_quality_5": "support_contact_90d=1",
+    "resolved_first_contact": "support_contact_90d=1"
+  },
+  "analysis_policy": {
+    "nps": "weighted promoter% minus detractor%; retain composition",
+    "small_base_warning_n": 75,
+    "suppress_n": 40,
+    "association": "non-causal unless separately identified"
+  },
+  "freeze_rule": "All ground truth/reference artifacts freeze before model exposure."
+}

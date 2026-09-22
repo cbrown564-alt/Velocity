@@ -1,40 +1,14 @@
 # Pre-presentation research benchmark roadmap
 
-## Current conclusion
+## Current conclusion — 22 September 2026
 
-Velocity has positive evidence for the research-reasoning pipeline through a structured, presentation-neutral story specification. It does **not** yet have evidence for high-quality autonomous presentation production. Presentation generation is therefore backburnered and treated as an unresolved downstream renderer.
+The [September pilot](../../../evals/research_quality/runs/2026-09-pilot-comparison/readout.md) has ten completed outputs across frozen SBT-002/003 and a documented real published-table case. It supports improving finding completeness before training: both raw workflows computed full distributions but omitted polarisation from the final narrative. Five repeated approved-analysis runs fully recovered mandatory findings four times. A single staged analysis run recovered all of them; one pair cannot establish a staging advantage.
 
-The active research question is now:
+SBT-001 generation/preparation/reference corrections are merged in PR 76. Earlier positive story and presentation experiments remain historical evidence, not validation of corrected data. SBT-002/003 now pass realised-data and independent numerical checks; intended traps that did not occur are described as structural opportunities, not realised successes.
 
-> Given an unfamiliar synthetic research study, can Velocity reliably identify the important, defensible findings, reject seductive but invalid ones, and produce a complete, prioritised, evidence-traceable research narrative?
+Independent researcher assessments and correction burden are pending. The user's blinded review pack contains ten anonymous outputs. An offline review-to-native-chart prototype exercises provenance and renewed approval after evidence changes. It is not an integrated product feature or publication-quality presentation claim.
 
-## What SBT-001 has established
-
-### Strongly established
-
-1. **Controlled synthetic research worlds can be generated.** SBT-001 contains intentional phenomena, realistic survey structure and known analytical truth rather than merely plausible random rows.
-2. **Deterministic reference analysis is viable.** Weighted/unweighted estimates, routing, universes, waves, segments, customer-only measures and derived measures can be represented and checked independently of model output.
-3. **Evaluation can distinguish arithmetic correctness from research correctness.** Wrong universes, incompatible denominators, routed measures, low bases, causal overclaiming and misleading marginal comparisons are detectable failure modes.
-4. **Strong models can recover the major SBT-001 story.** They can identify Pulse momentum, Northstar customer deterioration/recovery and Harbour younger-audience weakness while declining to elevate seductive low-base Mosaic evidence.
-5. **Finding quality can be separated from numerical correctness.** Importance, evidence strength, redundancy, restraint, qualification and narrative role are useful independent dimensions.
-6. **Findings can be composed into a coherent presentation-neutral story.** Analytical relationships such as trend/inflection, position-versus-momentum, subgroup change, divergence and recovery-versus-reference can be specified before rendering.
-
-### Promising but not yet broadly established
-
-- finding prioritisation;
-- narrative synthesis;
-- visual-argument/analytical-relationship selection;
-- omission of technically true but strategically weak findings;
-- consistency across repeated runs/models.
-
-### Not established
-
-- generalisation beyond the brand-tracker archetype;
-- completeness/recall of important findings;
-- robustness across model families and repeated runs;
-- agreement with experienced human researchers on editorial importance;
-- transfer to real research datasets;
-- high-quality autonomous presentation production.
+Still unestablished: researcher agreement on mandatory findings, reduced review burden, multiple-model robustness, unseen-project generalisation, raw real-survey preparation and autonomous presentation quality. The FSA case supplies bounded transfer evidence from nine published tables only.
 
 ## Canonical active pipeline
 
@@ -202,7 +176,7 @@ Only after synthetic coverage is mature, evaluate selected real survey datasets/
 
 ## Presentation boundary
 
-Preserve prior PowerPoint/native-chart experiments as downstream research. Do not spend the current workstream on slide styling, chart templates or rendering. A future renderer should consume the structured story/evidence contracts without rerunning research reasoning.
+Preserve prior PowerPoint/native-chart experiments as downstream research. The bounded September adapter verifies that approved evidence can feed the existing native-chart renderer without rerunning research reasoning. Broad slide styling, new templates and autonomous presentation production remain deferred.
 
 ## Study expansion strategy
 
@@ -217,21 +191,13 @@ Proposed sequence:
 
 Pricing/choice and full segmentation can follow once these contracts are stable because they introduce additional modelling/evaluation complexity.
 
-## Immediate milestone
+## Current milestone and promotion boundary
 
-Build SBT-002 end-to-end only through the presentation boundary. Before model evaluation, freeze:
+SBT-002/003 and the selected FSA tables/references were frozen before valid model exposure. The capped pilot, scorecards, exposure audits and review pack are complete. Scoring remains provisional agent adjudication until the user's reviewers return independent exports. The scorer's post-dry-pilot addition of supported novel claims is recorded; frozen data, reference tiers and scoring weights were not changed.
 
-1. study brief and questionnaire;
-2. synthetic data-generating process and latent truth;
-3. intentional trap matrix;
-4. deterministic validation/reference analysis;
-5. reference evidence objects;
-6. reference finding inventory with importance tiers;
-7. scoring contract for analysis, finding correctness, completeness, prioritisation and synthesis.
-
-Then evaluate models without changing ground truth in response to their outputs.
+Next: collect independent reviews; resolve benchmark ambiguities in a new version; align inference methods and information across arms; test completeness checks on a new project; then decide whether to integrate the approved-evidence workflow into the product. The current SBT-002 adapter proves data-bound export through the existing renderer without changing production APIs or session persistence. Fine-tuning is deferred pending persistent failures that simpler changes do not resolve.
 
 ## TypeSafe Jev control plane
 
-For verifier, prioritiser, and raw-data cleaning triage, Velocity uses TypeSafe Jev as a calibrated decision layer (not a prose researcher). Spec: [`jev_control_plane.md`](jev_control_plane.md). Packs live under `evals/research_quality/jev/`.
+TypeSafe Jev is an optional proposed aid for verifier, prioritiser and raw-data cleaning decisions. Packs and offline validation exist; live use and calibration remain untested. The September pilot did not use it. Spec: [`jev_control_plane.md`](jev_control_plane.md). Packs live under `evals/research_quality/jev/`.
 

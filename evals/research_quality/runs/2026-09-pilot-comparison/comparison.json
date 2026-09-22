@@ -1,0 +1,249 @@
+{
+  "eval_id": "RQ-PILOT-2026-09",
+  "status": "provisional_agent_adjudication_human_review_pending",
+  "decision_question": "Given verified numbers, can the model select a complete defensible story, and does staging or raw-data access change omissions?",
+  "model": "gpt-6-astra",
+  "reasoning_effort": "low",
+  "runs": [
+    {
+      "run_id": "2026-09-21-sbt002-analysis-one-r1b",
+      "study_id": "SBT-002",
+      "surface": "analysis",
+      "workflow": "one_pass",
+      "replicate": 1,
+      "mandatory_recall": 1.0,
+      "missed": [],
+      "precision_provisional": 1.0,
+      "unsupported_rate_provisional": 0.0,
+      "do_not_elevate_rate_provisional": 0.0,
+      "costs": {
+        "elapsed_seconds": 89.46537695894949,
+        "input_tokens": 41105,
+        "cached_input_tokens": 11520,
+        "output_tokens": 2838,
+        "incremental_usd": null,
+        "billing": "Existing Codex ChatGPT access; dollar cost unavailable"
+      }
+    },
+    {
+      "run_id": "2026-09-21-sbt002-analysis-one-r2",
+      "study_id": "SBT-002",
+      "surface": "analysis",
+      "workflow": "one_pass",
+      "replicate": 2,
+      "mandatory_recall": 0.6666666666666666,
+      "missed": [
+        "F_B_DIFFERENTIATED"
+      ],
+      "precision_provisional": 1.0,
+      "unsupported_rate_provisional": 0.0,
+      "do_not_elevate_rate_provisional": 0.0,
+      "costs": {
+        "elapsed_seconds": 92.34400695899967,
+        "input_tokens": 41054,
+        "cached_input_tokens": 11520,
+        "output_tokens": 2932,
+        "incremental_usd": null,
+        "billing": "Existing Codex ChatGPT access; dollar cost unavailable"
+      }
+    },
+    {
+      "run_id": "2026-09-21-sbt002-analysis-one-r3",
+      "study_id": "SBT-002",
+      "surface": "analysis",
+      "workflow": "one_pass",
+      "replicate": 3,
+      "mandatory_recall": 1.0,
+      "missed": [],
+      "precision_provisional": 1.0,
+      "unsupported_rate_provisional": 0.0,
+      "do_not_elevate_rate_provisional": 0.0,
+      "costs": {
+        "elapsed_seconds": 85.82095512503292,
+        "input_tokens": 41054,
+        "cached_input_tokens": 0,
+        "output_tokens": 2709,
+        "incremental_usd": null,
+        "billing": "Existing Codex ChatGPT access; dollar cost unavailable"
+      }
+    },
+    {
+      "run_id": "2026-09-21-sbt002-analysis-one-r4",
+      "study_id": "SBT-002",
+      "surface": "analysis",
+      "workflow": "one_pass",
+      "replicate": 4,
+      "mandatory_recall": 1.0,
+      "missed": [],
+      "precision_provisional": 1.0,
+      "unsupported_rate_provisional": 0.0,
+      "do_not_elevate_rate_provisional": 0.0,
+      "costs": {
+        "elapsed_seconds": 94.1442071669735,
+        "input_tokens": 41046,
+        "cached_input_tokens": 0,
+        "output_tokens": 2964,
+        "incremental_usd": null,
+        "billing": "Existing Codex ChatGPT access; dollar cost unavailable"
+      }
+    },
+    {
+      "run_id": "2026-09-21-sbt002-analysis-one-r5",
+      "study_id": "SBT-002",
+      "surface": "analysis",
+      "workflow": "one_pass",
+      "replicate": 5,
+      "mandatory_recall": 1.0,
+      "missed": [],
+      "precision_provisional": 1.0,
+      "unsupported_rate_provisional": 0.0,
+      "do_not_elevate_rate_provisional": 0.0,
+      "costs": {
+        "elapsed_seconds": 89.40676083404105,
+        "input_tokens": 41048,
+        "cached_input_tokens": 11520,
+        "output_tokens": 2826,
+        "incremental_usd": null,
+        "billing": "Existing Codex ChatGPT access; dollar cost unavailable"
+      }
+    },
+    {
+      "run_id": "2026-09-21-sbt002-analysis-staged-r1",
+      "study_id": "SBT-002",
+      "surface": "analysis",
+      "workflow": "staged",
+      "replicate": 1,
+      "mandatory_recall": 1.0,
+      "missed": [],
+      "precision_provisional": 1.0,
+      "unsupported_rate_provisional": 0.0,
+      "do_not_elevate_rate_provisional": 0.0,
+      "costs": {
+        "elapsed_seconds": 344.6257675399538,
+        "input_tokens": 171409,
+        "cached_input_tokens": 23040,
+        "output_tokens": 10922,
+        "incremental_usd": null,
+        "billing": "Existing Codex ChatGPT access; dollar cost unavailable"
+      }
+    },
+    {
+      "run_id": "2026-09-21-sbt002-raw-one-r1",
+      "study_id": "SBT-002",
+      "surface": "raw",
+      "workflow": "one_pass",
+      "replicate": 1,
+      "mandatory_recall": 0.6666666666666666,
+      "missed": [
+        "F_B_DIFFERENTIATED"
+      ],
+      "precision_provisional": 1.0,
+      "unsupported_rate_provisional": 0.0,
+      "do_not_elevate_rate_provisional": 0.0,
+      "costs": {
+        "elapsed_seconds": 240.2727034999989,
+        "input_tokens": 103631,
+        "cached_input_tokens": 75392,
+        "output_tokens": 7587,
+        "incremental_usd": null,
+        "billing": "Existing Codex ChatGPT access; dollar cost unavailable"
+      }
+    },
+    {
+      "run_id": "2026-09-21-sbt002-raw-staged-r1",
+      "study_id": "SBT-002",
+      "surface": "raw",
+      "workflow": "staged",
+      "replicate": 1,
+      "mandatory_recall": 0.6666666666666666,
+      "missed": [
+        "F_B_DIFFERENTIATED"
+      ],
+      "precision_provisional": 1.0,
+      "unsupported_rate_provisional": 0.0,
+      "do_not_elevate_rate_provisional": 0.0,
+      "costs": {
+        "elapsed_seconds": 852.3909101649188,
+        "input_tokens": 251736,
+        "cached_input_tokens": 179840,
+        "output_tokens": 27099,
+        "incremental_usd": null,
+        "billing": "Existing Codex ChatGPT access; dollar cost unavailable"
+      }
+    },
+    {
+      "run_id": "2026-09-21-sbt003-analysis-one-r1",
+      "study_id": "SBT-003",
+      "surface": "analysis",
+      "workflow": "one_pass",
+      "replicate": 1,
+      "mandatory_recall": 0.75,
+      "missed": [
+        "CX_F_ASSOC_BOUNDARY"
+      ],
+      "precision_provisional": 1.0,
+      "unsupported_rate_provisional": 0.0,
+      "do_not_elevate_rate_provisional": 0.0,
+      "costs": {
+        "elapsed_seconds": 66.07715349993668,
+        "input_tokens": 21089,
+        "cached_input_tokens": 11520,
+        "output_tokens": 2046,
+        "incremental_usd": null,
+        "billing": "Existing Codex ChatGPT access; dollar cost unavailable"
+      }
+    },
+    {
+      "run_id": "2026-09-22-fsa-analysis-one-r1",
+      "study_id": "FSA-CIT-2025-03",
+      "surface": "analysis",
+      "workflow": "one_pass",
+      "replicate": 1,
+      "mandatory_recall": 1.0,
+      "missed": [],
+      "precision_provisional": 1.0,
+      "unsupported_rate_provisional": 0.0,
+      "do_not_elevate_rate_provisional": 0.0,
+      "costs": {
+        "elapsed_seconds": 57.96786262502428,
+        "input_tokens": 19723,
+        "cached_input_tokens": 0,
+        "output_tokens": 1759,
+        "incremental_usd": null,
+        "billing": "Existing Codex ChatGPT access; dollar cost unavailable"
+      }
+    }
+  ],
+  "replicate_stability": {
+    "runs": 5,
+    "mandatory_full_match_frequency": {
+      "F_A_BROAD": 5,
+      "F_B_DIFFERENTIATED": 4,
+      "F_B_EXPLORER": 5
+    },
+    "topic_cluster_pairwise_jaccard": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "mean_jaccard": 1.0,
+    "warning": "Topic coverage credits partial matches: perfect topic Jaccard can coexist with missing polarisation inside a selected topic."
+  },
+  "total_usage": {
+    "elapsed_seconds": 2012.515704373829,
+    "input_tokens": 772895,
+    "cached_input_tokens": 324352,
+    "output_tokens": 63682
+  },
+  "incremental_usd": null,
+  "human_preferences": null,
+  "human_correction_burden": null,
+  "independent_review_status": "awaiting reviewer exports"
+}

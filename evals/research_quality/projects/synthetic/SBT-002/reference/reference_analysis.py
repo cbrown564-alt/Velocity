@@ -1,49 +1,112 @@
-"""Deterministic reference analysis for SBT-002.
+"""Deterministic SBT-002 tables; no reference findings or trap labels in results."""
 
-Produces analysis_results.json from synthetic_data/respondents.csv. No model judgement is used.
-"""
-from __future__ import annotations
-import json, math
+import hashlib
+import json
+import math
+import sys
 from pathlib import Path
-import numpy as np
 import pandas as pd
 from scipy.stats import norm
 
-ROOT=Path(__file__).resolve().parents[1]
-DATA=ROOT/'synthetic_data/respondents.csv'
-OUT=ROOT/'reference'
-CORE=['appeal_5','purchase_intent_5','uniqueness_5','relevance_5','credibility_5','value_5','understanding_5']
-CONCEPTS=['Flex','Plus','Simple']
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT.parents[4] / "scripts/python/research_quality"))
+from analysis import distribution, pairwise, holm, correlation
 
-def wmean(x,w):
-    m=x.notna();return float(np.average(x[m],weights=w[m]))
-def wpct(mask,w,valid):
-    m=valid & mask.notna();return float(100*np.average(mask[m].astype(float),weights=w[m]))
-def neff(w): return float(w.sum()**2/(w.pow(2).sum()))
-def prop_stats(df,var,concept,sub=None):
-    d=df[df.concept.eq(concept)].copy()
-    if sub is not None:d=d.query(sub)
-    valid=d[var].notna();w=d.loc[valid,'wt_final'];x=d.loc[valid,var]
-    p=float(np.average((x>=4).astype(float),weights=w));n=neff(w);se=math.sqrt(max(p*(1-p)/n,1e-12))
-    return {'top2_pct':100*p,'bottom2_pct':100*float(np.average((x<=2).astype(float),weights=w)),'mean':wmean(x,w),'n_unweighted':int(valid.sum()),'n_eff':n,'se_prop':se}
-def holm(pvals):
-    order=np.argsort(pvals);m=len(pvals);adj=[0.0]*m;running=0
-    for rank,idx in enumerate(order):
-        val=(m-rank)*pvals[idx];running=max(running,val);adj[idx]=min(1.0,running)
-    return adj
+CORE = [
+    "appeal_5",
+    "purchase_intent_5",
+    "uniqueness_5",
+    "relevance_5",
+    "credibility_5",
+    "value_5",
+    "understanding_5",
+]
+CONCEPTS = ["Flex", "Plus", "Simple"]
+
 
 def main():
-    df=pd.read_csv(DATA);res={'project_id':'SBT-002','concept_metrics':{},'pairwise':{},'strategic_subgroup':{},'routing':{},'weighting_audit':{}}
-    for var in CORE+['premium_value_5']:
-        res['concept_metrics'][var]={c:prop_stats(df,var,c) for c in CONCEPTS}
-        pairs=[('Flex','Plus'),('Flex','Simple'),('Plus','Simple')];raw=[];tmp=[]
-        for a,b in pairs:
-            sa=res['concept_metrics'][var][a];sb=res['concept_metrics'][var][b];diff=sa['top2_pct']-sb['top2_pct'];se=math.sqrt(sa['se_prop']**2+sb['se_prop']**2);z=(diff/100)/se;p=2*norm.sf(abs(z));raw.append(p);tmp.append((a,b,diff,p))
-        adj=holm(raw);res['pairwise'][var]=[{'a':a,'b':b,'top2_diff_pp':d,'p_raw':p,'p_holm':adj[i],'significant_holm':adj[i]<.05,'commercially_material':abs(d)>=5} for i,(a,b,d,p) in enumerate(tmp)]
-    for group,label in [('food_explorer==1','food_explorer'),('food_explorer==0','non_explorer')]:
-        res['strategic_subgroup'][label]={c:{v:prop_stats(df,v,c,group) for v in ['appeal_5','purchase_intent_5','uniqueness_5']} for c in CONCEPTS}
-    res['routing']['premium_value_5']={c:{'eligible_n':int(((df.concept==c)&(df.understanding_5>=3)).sum()),'cell_n':int((df.concept==c).sum()),'routing_rate_pct':100*float(df.loc[df.concept==c,'premium_value_5'].notna().mean())} for c in CONCEPTS}
+    path = ROOT / "synthetic_data/respondents.csv"
+    df = pd.read_csv(path)
+
+    def cells(d, var):
+        return {
+            c: distribution(
+                d.loc[d.concept == c, var], d.loc[d.concept == c, "wt_final"]
+            )
+            for c in CONCEPTS
+        }
+
+    res = dict(
+        project_id="SBT-002",
+        weighting="wt_final",
+        source_sha256=hashlib.sha256(path.read_bytes()).hexdigest(),
+        method="Kish ESS Wald independent cells; Holm per metric across three pairs; two pre-specified Plus-minus-Flex interactions Holm-adjusted as one family",
+        concept_metrics={},
+        pairwise={},
+        strategic_subgroup={},
+        interactions={},
+        routing={},
+        weighting_audit={},
+        exploratory={},
+        diagnostic_associations={},
+    )
+    for var in CORE + ["premium_value_5"]:
+        res["concept_metrics"][var] = cells(df, var)
+        res["pairwise"][var] = pairwise(res["concept_metrics"][var])
+    for group, code in [("food_explorer", 1), ("non_explorer", 0)]:
+        d = df[df.food_explorer == code]
+        res["strategic_subgroup"][group] = {v: cells(d, v) for v in CORE[:3]}
+    for v in CORE[:2]:
+        yes, no = [
+            res["strategic_subgroup"][g][v] for g in ["food_explorer", "non_explorer"]
+        ]
+        diff = (yes["Plus"]["top2_pct"] - yes["Flex"]["top2_pct"]) - (
+            no["Plus"]["top2_pct"] - no["Flex"]["top2_pct"]
+        )
+        se = 100 * math.sqrt(
+            sum(d[c]["se_prop"] ** 2 for d in [yes, no] for c in ["Plus", "Flex"])
+        )
+        res["interactions"][v] = dict(
+            contrast="(Plus-Flex explorers) - (Plus-Flex non-explorers)",
+            diff_pp=diff,
+            se_pp=se,
+            p_raw=float(2 * norm.sf(abs(diff) / se)),
+        )
+    for v, p in zip(CORE[:2], holm([r["p_raw"] for r in res["interactions"].values()])):
+        res["interactions"][v].update(p_holm=p, significant_holm=p < 0.05)
+    res["routing"]["premium_value_5"] = {
+        c: dict(
+            eligible_n=int(((df.concept == c) & (df.understanding_5 >= 3)).sum()),
+            cell_n=int((df.concept == c).sum()),
+            routing_rate_pct=100
+            * float(df.loc[df.concept == c, "premium_value_5"].notna().mean()),
+            universe="understanding_5 >= 3",
+        )
+        for c in CONCEPTS
+    }
     for c in CONCEPTS:
-        d=df[df.concept==c];valid=d.purchase_intent_5.notna();res['weighting_audit'][c]={'purchase_top2_weighted_pct':prop_stats(df,'purchase_intent_5',c)['top2_pct'],'purchase_top2_unweighted_pct':100*float((d.loc[valid,'purchase_intent_5']>=4).mean())}
-    (OUT/'analysis_results.json').write_text(json.dumps(res,indent=2));print(json.dumps({'status':'ok','n':len(df)},indent=2))
-if __name__=='__main__':main()
+        d = df[df.concept == c]
+        res["weighting_audit"][c] = {
+            v: dict(
+                weighted_pct=res["concept_metrics"][v][c]["top2_pct"],
+                unweighted_pct=100 * float((d[v] >= 4).mean()),
+            )
+            for v in CORE
+        }
+    for dem in ["age", "gender", "region"]:
+        res["exploratory"][dem] = {
+            str(level): {v: cells(d, v) for v in CORE[:2]}
+            for level, d in df.groupby(dem)
+        }
+    for c in CONCEPTS:
+        d = df[df.concept == c]
+        res["diagnostic_associations"][c] = {
+            v: correlation(d[v], d.purchase_intent_5, d.wt_final) for v in CORE[2:]
+        }
+    (ROOT / "reference/analysis_results.json").write_text(
+        json.dumps(res, indent=2, allow_nan=False) + "\n"
+    )
+
+
+if __name__ == "__main__":
+    main()

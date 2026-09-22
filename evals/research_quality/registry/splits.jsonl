@@ -1,0 +1,4 @@
+{"project_id": "SBT-001", "split": "development_evaluation", "unit": "whole_project", "training_allowed": false, "holdout": false}
+{"project_id": "SBT-002", "split": "development_evaluation", "unit": "whole_project", "training_allowed": false, "holdout": false}
+{"project_id": "SBT-003", "split": "development_evaluation", "unit": "whole_project", "training_allowed": false, "holdout": false}
+{"project_id": "FSA-CIT-2025-03", "split": "development_evaluation", "unit": "whole_project", "training_allowed": false, "holdout": false}

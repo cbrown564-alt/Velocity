@@ -1,0 +1,204 @@
+You are a survey researcher working on a fictional benchmark study. Answer the business question using only the supplied study files. Do not browse, use connectors, inspect parent directories, discover other files, or access benchmark/generator/reference/scoring material. No delegated agents. Your only permitted shell work is reading supplied files and doing local numerical calculations. Do not install packages. Use the available Python scientific libraries if needed.
+Produce a concise, prioritised researcher narrative, with at most 10 findings, and a renderer-neutral story. Retain enough numerical detail, bases, inference and qualifications to audit each claim. The brief's declared analysis policy applies. Do not treat a numerical lead as proof of superiority. Evidence_refs should name exact analysis table paths; raw-data work should define analysis_claims with stable analysis_id, values, universe and weighting. All finding references in the story must resolve.
+Return ONLY a JSON object with these keys:
+study_id: string;
+analysis_claims: array of {analysis_id:string, values:object, universe:string, weighting:string};
+findings: array of {model_finding_id:string, proposition:string, evidence_refs:string[], importance:"primary"|"secondary"|"context", claim_strength:string, qualification:string, topic_cluster:string};
+story: {beats: array of {order:integer, finding_refs:string[], headline_intent:string, analytical_relationship:string}};
+method_notes: string[].
+
+Independently check the prior draft against the supplied study evidence. Repair or remove unsupported findings, numerical/base errors and overstatement. Record corrections in method_notes. Return the full corrected JSON.
+Supplied files: codebook.json, questionnaire.md, respondents.csv, study_materials.json
+
+Prior stage output:
+{"study_id":"SBT-002","analysis_claims":[{"analysis_id":"concept_metrics","values":{"concept_order":["Flex","Plus","Simple"],"unweighted_n":[700,700,700],"weight_sum":[703.52,696.325,700.155],"kish_effective_n":[650.1,645.6,645.2],"distribution_order":[1,2,3,4,5],"appeal_5":{"distribution_pct":[[1.78,14.62,22.64,34.22,26.74],[10.38,13.38,22.22,22.75,31.26],[5.87,21.03,32.03,28.88,12.2]],"top2_pct":[60.96,54.01,41.08],"comparisons":[{"contrast":"Flex-Plus","difference_pp":6.95,"ci95_unadjusted_pp":[1.57,12.33],"p_holm":0.011293,"material_point_estimate":true},{"contrast":"Flex-Simple","difference_pp":19.88,"ci95_unadjusted_pp":[14.55,25.21],"p_holm":7.9203e-13,"material_point_estimate":true},{"contrast":"Plus-Simple","difference_pp":12.93,"ci95_unadjusted_pp":[7.52,18.34],"p_holm":5.659e-06,"material_point_estimate":true}]},"purchase_intent_5":{"distribution_pct":[[3.84,16.22,26.72,30.1,23.12],[9.35,15.81,24.43,24.6,25.81],[8.79,17.75,33.04,26.72,13.69]],"top2_pct":[53.22,50.41,40.41],"comparisons":[{"contrast":"Flex-Plus","difference_pp":2.81,"ci95_unadjusted_pp":[-2.63,8.26],"p_holm":0.311353,"material_point_estimate":false},{"contrast":"Flex-Simple","difference_pp":12.81,"ci95_unadjusted_pp":[7.42,18.2],"p_holm":9.534e-06,"material_point_estimate":true},{"contrast":"Plus-Simple","difference_pp":10.0,"ci95_unadjusted_pp":[4.59,15.4],"p_holm":0.000576,"material_point_estimate":true}]},"uniqueness_5":{"distribution_pct":[[2.69,18.35,31.05,31.74,16.17],[0.53,3.86,14.22,33.9,47.48],[8.18,25.25,32.32,26.66,7.59]],"top2_pct":[47.91,81.39,34.25],"Plus_minus_Flex_pp":33.48,"Plus_vs_Flex_p_holm":1.57995e-40},"relevance_5":{"distribution_pct":[[2.68,10.8,22.82,35.89,27.81],[8.11,16.73,25.73,26.68,22.74],[5.66,23.63,29.78,28.42,12.51]],"top2_pct":[63.7,49.42,40.93],"Flex_minus_Plus_pp":14.28,"Flex_vs_Plus_p_holm":2.97138e-07},"credibility_5":{"distribution_pct":[[2.15,10.51,25.09,39.4,22.85],[7.87,20.1,29.87,24.16,17.99],[2.46,11.16,29.07,36.78,20.52]],"top2_pct":[62.25,42.15,57.31],"Flex_minus_Plus_pp":20.1,"Flex_vs_Plus_p_holm":3.47934e-13},"value_5":{"distribution_pct":[[3.14,14.22,26.31,36.47,19.87],[3.64,14.89,24.8,27.55,29.13],[6.43,18.84,30.23,30.67,13.82]],"top2_pct":[56.33,56.68,44.5],"Flex_minus_Plus_pp":-0.35,"Flex_vs_Plus_p_holm":0.900192},"understanding_5":{"distribution_pct":[[0,0.9,3.39,20.71,75.01],[7.92,24.23,35.6,23.87,8.38],[0,0.25,6.83,39.3,53.62]],"top2_pct":[95.71,32.25,92.92],"bottom2_pct":[0.9,32.15,0.25],"Flex_minus_Plus_pp":63.46,"Flex_vs_Plus_p_holm":5.73045e-224}},"universe":"All eligible respondents evaluating their randomly assigned concept; valid base 700 per concept for every listed outcome.","weighting":"wt_final; percentages normalized within concept and outcome-valid base."},{"analysis_id":"food_explorer","values":{"concept_order":["Flex","Plus","Simple"],"distribution_order":[1,2,3,4,5],"overall_explorer_unweighted_n":697,"overall_explorer_weighted_pct":23.834,"explorers":{"unweighted_n":[236,234,227],"weight_sum":[175.567,164.367,160.58],"kish_effective_n":[225.4,223.5,217.5],"appeal_5":{"distribution_pct":[[2.72,14.66,22.52,37.02,23.08],[4.31,7.49,16.08,22.86,49.25],[5.87,19.04,31.81,32.22,11.06]],"top2_pct":[60.1,72.12,43.28],"Plus_minus_Flex_pp":12.02,"ci95_unadjusted_pp":[3.34,20.69],"Plus_vs_Flex_p_holm":0.006646},"purchase_intent_5":{"distribution_pct":[[5.29,14.75,27.56,27.29,25.11],[2.6,14.41,19.05,22.53,41.41],[4.68,22.62,29.26,27.9,15.54]],"top2_pct":[52.4,63.94,43.44],"Plus_minus_Flex_pp":11.54,"ci95_unadjusted_pp":[2.44,20.64],"Plus_vs_Flex_p_holm":0.025871}},"non_explorers":{"unweighted_n":[464,466,473],"weight_sum":[527.953,531.958,539.575],"kish_effective_n":[446.3,449.1,454],"appeal_5":{"distribution_pct":[[1.46,14.61,22.68,33.29,27.96],[12.26,15.2,24.12,22.71,25.7],[5.87,21.62,32.09,27.89,12.53]],"top2_pct":[61.25,48.42,40.42],"Flex_minus_Plus_pp":12.83,"Flex_vs_Plus_p_holm":0.0002},"purchase_intent_5":{"distribution_pct":[[3.36,16.71,26.44,31.04,22.46],[11.43,16.24,26.09,25.24,20.99],[10.01,16.3,34.17,26.37,13.14]],"top2_pct":[53.5,46.23,39.51],"Flex_minus_Plus_pp":7.27,"ci95_unadjusted_pp":[0.73,13.8],"Flex_vs_Plus_p_holm":0.058706}},"interactions":{"definition":"(Plus-Flex among explorers) minus (Plus-Flex among non-explorers)","appeal_5":{"difference_pp":24.85,"ci95_unadjusted_pp":[14.03,35.67],"p_holm":2.031e-05},"purchase_intent_5":{"difference_pp":18.81,"ci95_unadjusted_pp":[7.6,30.02],"p_holm":0.003008}}},"universe":"Assigned-concept respondents split by the pre-exposure definition mean(food_p1, food_p2, food_p3) >= 4; all subgroup members have valid primary outcomes.","weighting":"wt_final, normalized within concept and subgroup; overall subgroup share normalized across all 2,100 respondents."},{"analysis_id":"premium_routed","values":{"concept_order":["Flex","Plus","Simple"],"eligible_unweighted_n":[694,483,698],"excluded_unweighted_n":[6,217,2],"eligible_weight_sum":[697.216,472.47,698.438],"kish_effective_n":[644.6,444.4,643.4],"eligible_weighted_pct_of_assigned_cell":[99.1,67.85,99.75],"distribution_order":[1,2,3,4,5],"premium_value_5":{"distribution_pct":[[2.73,14.66,32.52,33.12,16.97],[0.3,6.61,14.27,35.32,43.5],[6.93,21.66,33.68,27.98,9.75]],"top2_pct":[50.09,78.82,37.73]}},"universe":"Only respondents with understanding_5 >= 3; eligibility is measured after concept exposure and differs substantially by concept.","weighting":"wt_final normalized within each routed concept base; eligibility percentages use all assigned respondents."},{"analysis_id":"diagnostics","values":{"concept_order":["Flex","Plus","Simple"],"unweighted_n":[700,700,700],"selected_pct":{"like_flexibility":[59.55,26.53,20.02],"like_ease":[52.24,30.41,53.75],"like_broad_choice":[52.63,31.6,28.06],"like_familiar":[29.89,24.21,50.47],"like_new_flavours":[27.12,62.48,24.55],"like_chef":[20.08,53.88,24.53],"like_provenance":[19.11,48.22,19.09],"dislike_expensive":[32.39,38.8,35.26],"dislike_complicated":[15.91,40.87,15.69],"dislike_too_adventurous":[12.72,40.66,10.78],"dislike_not_different":[25.58,19.97,40.74],"dislike_limited_choice":[14.7,14.94,35.44]}},"universe":"All respondents within assigned concept; Q9 and Q10 multiple-response indicators, with no missing values.","weighting":"wt_final normalized within concept; descriptive percentages, no diagnostic significance tests."}],"findings":[{"model_finding_id":"F1","proposition":"Advance Flex as the broad-audience candidate and retain Plus for targeted development. Flex leads overall appeal, 60.96% versus 54.01% (+6.95pp; Holm p=.0113), but its purchase-intent lead, 53.22% versus 50.41% (+2.81pp; p=.311), does not establish superiority.","evidence_refs":["analysis_claims.concept_metrics.values.appeal_5","analysis_claims.concept_metrics.values.purchase_intent_5"],"importance":"primary","claim_strength":"Supported appeal advantage; purchase-intent difference inconclusive; advancement is a researcher recommendation.","qualification":"n=700 per concept. The appeal point estimate exceeds the 5pp materiality threshold, but its 95% interval spans 1.57\u201312.33pp. Purchase-intent non-significance does not establish equivalence.","topic_cluster":"advancement"},{"model_finding_id":"F2","proposition":"Prioritize Plus for food explorers, who comprise 23.83% of the weighted sample. Among explorers, Plus exceeds Flex on appeal, 72.12% versus 60.10% (+12.02pp; Holm p=.00665), and purchase intent, 63.94% versus 52.40% (+11.54pp; p=.0259). Direct interaction tests support a different Plus-versus-Flex response by explorer status.","evidence_refs":["analysis_claims.food_explorer.values.explorers","analysis_claims.food_explorer.values.interactions","analysis_claims.food_explorer.values.overall_explorer_weighted_pct"],"importance":"primary","claim_strength":"Pre-specified subgroup evidence with significant interaction tests.","qualification":"Explorer bases: Flex 236, Plus 234, Simple 227. Interaction differences are 24.85pp for appeal (Holm p=.0000203) and 18.81pp for intent (p=.00301). Both explorer advantage estimates exceed 5pp, but their confidence intervals include effects below 5pp. The subgroup share is not a market-size estimate.","topic_cluster":"targeting"},{"model_finding_id":"F3","proposition":"Flex's broader appeal is supported outside the explorer segment: appeal is 61.25% versus Plus's 48.42% (+12.83pp; Holm p=.00020). Its non-explorer purchase-intent lead, 53.50% versus 46.23%, remains inconclusive after correction (+7.27pp; p=.0587).","evidence_refs":["analysis_claims.food_explorer.values.non_explorers"],"importance":"secondary","claim_strength":"Supported appeal advantage; directional purchase-intent advantage.","qualification":"Non-explorer bases: Flex 464, Plus 466, Simple 473. A commercially material point estimate alone does not establish a purchase-intent advantage.","topic_cluster":"targeting"},{"model_finding_id":"F4","proposition":"Preserve Plus's differentiation while improving clarity and delivery credibility. Its uniqueness reaches 81.39% versus Flex's 47.91%, but understanding is 32.25% versus 95.71% and credibility 42.15% versus 62.25%; all three contrasts survive Holm correction. Plus's concerns include complexity (40.87%) and adventurousness (40.66%).","evidence_refs":["analysis_claims.concept_metrics.values.uniqueness_5","analysis_claims.concept_metrics.values.understanding_5","analysis_claims.concept_metrics.values.credibility_5","analysis_claims.diagnostics.values.selected_pct"],"importance":"primary","claim_strength":"Strong concept differences; diagnostic interpretation and development recommendation.","qualification":"n=700 per concept. Likes for new flavours (62.48%), chef inspiration (53.88%) and provenance (48.22%) suggest features to preserve. Diagnostics do not demonstrate that changing these features or concerns will improve purchase intent.","topic_cluster":"plus_development"},{"model_finding_id":"F5","proposition":"Plus's 78.82% premium-conviction result is conditional, not evidence of an unconditional premium advantage. Only 67.85% of its weighted cell qualified for this question, compared with 99.10% for Flex and 99.75% for Simple; their routed scores are 50.09% and 37.73%.","evidence_refs":["analysis_claims.premium_routed.values"],"importance":"primary","claim_strength":"Descriptive result with a consequential denominator limitation.","qualification":"Routed bases are Plus 483, Flex 694 and Simple 698. Understanding is affected by concept exposure, so these selected groups do not retain the unconditional randomized comparison. Unasked premium responses are unknown, not negative.","topic_cluster":"premium_evidence"},{"model_finding_id":"F6","proposition":"Deprioritize Simple in its current form. Both alternatives exceed it on overall appeal and purchase intent by at least 10pp on point estimates, with Holm p<=.000576. Easy understanding (92.92%) and ease/convenience likes (53.75%) have not translated into competitive primary outcomes.","evidence_refs":["analysis_claims.concept_metrics.values.appeal_5","analysis_claims.concept_metrics.values.purchase_intent_5","analysis_claims.concept_metrics.values.understanding_5","analysis_claims.diagnostics.values.selected_pct"],"importance":"primary","claim_strength":"Strong comparative primary-outcome evidence; recommendation to deprioritize.","qualification":"n=700 per concept. Simple's appeal is 41.08% and intent 40.41%. Concerns about insufficient difference (40.74%) and limited choice (35.44%) are descriptive development clues, not proven causes. No absolute advancement hurdle was supplied.","topic_cluster":"simple_decision"},{"model_finding_id":"F7","proposition":"Qualify advancement of both Flex and Plus with a concrete price test. Expected value is similar numerically, 56.33% and 56.68% (Holm p=.900), while 32.39% and 38.80% respectively select expense as a concern.","evidence_refs":["analysis_claims.concept_metrics.values.value_5","analysis_claims.diagnostics.values.selected_pct"],"importance":"secondary","claim_strength":"Descriptive pricing concern and research recommendation; no established value difference.","qualification":"n=700 per concept. Purchase intent assumes a 'reasonable price' and value assumes an unspecified 'modest premium'; neither measures conversion at a specific price. Expense percentages were not significance-tested.","topic_cluster":"commercial_qualification"}],"story":{"beats":[{"order":1,"finding_refs":["F1","F6"],"headline_intent":"Advance Flex and targeted Plus; deprioritize current Simple","analytical_relationship":"Lead with the comparative decision while separating appeal superiority from unresolved purchase-intent differences."},{"order":2,"finding_refs":["F2","F3"],"headline_intent":"Assign distinct audiences using the pre-specified explorer subgroup","analytical_relationship":"Explain the overall result through supported heterogeneity, retaining the weaker non-explorer intent inference."},{"order":3,"finding_refs":["F4","F5"],"headline_intent":"Develop Plus's clarity without overstating its premium evidence","analytical_relationship":"Connect differentiation and delivery concerns, then constrain interpretation using the routed denominator."},{"order":4,"finding_refs":["F7"],"headline_intent":"Make price-specific evidence the next commercial qualification","analytical_relationship":"Translate the limits of hypothetical stated intent into a focused next research step."}]},"method_notes":["Only the supplied questionnaire, codebook, study materials and respondents.csv informed this analysis. This is a fictional study; conclusions concern the synthetic benchmark and make no market or customer claims.","All 2,100 respondents were eligible; concept cells each contain 700 respondents. No duplicate respondent IDs, subgroup-definition mismatches or premium-routing mismatches were found. Only premium_value_5 has missing responses: 225 structurally unasked cases.","Primary estimates use supplied wt_final weights. Full weighted five-category distributions are retained, with top-two-box defined as scores 4\u20135. Rounding can make category percentages differ slightly from 100 or from rounded top-two-box totals.","Inference uses independent-cell normal Wald tests with a fixed-weight robust variance for each weighted proportion: n/(n-1) times sum[w_i^2(y_i-p)^2]/sum(w_i)^2. Difference variances add across independent cells. Calibration-estimation uncertainty cannot be incorporated from the supplied files.","The supplied policy names Holm correction but does not enumerate exact family membership. Operationally, each outcome's three pairwise concept comparisons form one family; subgroup comparisons use separate three-pair families within outcome and subgroup. Each outcome's three pairwise concept-by-explorer interactions form another family. No across-outcome correction is applied.","Reported confidence intervals are unadjusted 95% intervals; statistical decisions use Holm-adjusted p-values at .05. A point difference of at least 5pp is commercially material under the brief, separately from statistical significance; this does not prove the true difference exceeds 5pp.","Food explorer is the sole pre-specified strategic subgroup. Interaction tests compare between-concept differences across explorer status, rather than inferring heterogeneity from separate subgroup significance results. No demographic searches were used.","Routed premium scores and multiple-response diagnostics are descriptive. No causal driver analysis was conducted. Advancement recommendations are relative research judgments, not validation of real-world demand.","Evidence references are exact logical paths within this JSON's analysis_claims, keyed by stable analysis_id; they do not imply separately written table files."]}
+FILE codebook.json
+{"respondent_id":{"type":"identifier"},"age":{"type":"categorical","codes":{"18-24":"18-24","25-34":"25-34","35-44":"35-44","45-54":"45-54","55-64":"55-64"},"missing":"blank is not asked; exclude from valid base"},"gender":{"type":"categorical","codes":{"Man":"Man","Non-binary/other":"Non-binary/other","Prefer not":"Prefer not","Woman":"Woman"},"missing":"blank is not asked; exclude from valid base"},"region":{"type":"categorical","codes":{"East":"East","London":"London","Midlands":"Midlands","North":"North","Northern Ireland":"Northern Ireland","Scotland":"Scotland","South East":"South East","South West":"South West","Wales":"Wales"},"missing":"blank is not asked; exclude from valid base"},"mealkit_open_5":{"type":"ordinal","codes":{"1":"1","2":"2","3":"3","4":"4","5":"5"},"labels":"See questionnaire endpoints","missing":"blank is not asked; exclude from valid base"},"food_p1":{"type":"ordinal","codes":{"1":"1","2":"2","3":"3","4":"4","5":"5"},"labels":"See questionnaire endpoints","missing":"blank is not asked; exclude from valid base"},"food_p2":{"type":"ordinal","codes":{"1":"1","2":"2","3":"3","4":"4","5":"5"},"labels":"See questionnaire endpoints","missing":"blank is not asked; exclude from valid base"},"food_p3":{"type":"ordinal","codes":{"1":"1","2":"2","3":"3","4":"4","5":"5"},"labels":"See questionnaire endpoints","missing":"blank is not asked; exclude from valid base"},"food_explorer":{"type":"categorical","codes":{"0":"No/not selected","1":"Yes/selected"},"missing":"blank is not asked; exclude from valid base"},"mealkit_usage":{"type":"categorical","codes":{"Never":"Never","Occasional":"Occasional","Previous":"Previous","Regular":"Regular"},"missing":"blank is not asked; exclude from valid base"},"concept":{"type":"categorical","codes":{"Flex":"Flex","Plus":"Plus","Simple":"Simple"},"missing":"blank is not asked; exclude from valid base"},"appeal_5":{"type":"ordinal","codes":{"1":"1","2":"2","3":"3","4":"4","5":"5"},"labels":"See questionnaire endpoints","missing":"blank is not asked; exclude from valid base"},"purchase_intent_5":{"type":"ordinal","codes":{"1":"1","2":"2","3":"3","4":"4","5":"5"},"labels":"See questionnaire endpoints","missing":"blank is not asked; exclude from valid base"},"uniqueness_5":{"type":"ordinal","codes":{"1":"1","2":"2","3":"3","4":"4","5":"5"},"labels":"See questionnaire endpoints","missing":"blank is not asked; exclude from valid base"},"relevance_5":{"type":"ordinal","codes":{"1":"1","2":"2","3":"3","4":"4","5":"5"},"labels":"See questionnaire endpoints","missing":"blank is not asked; exclude from valid base"},"credibility_5":{"type":"ordinal","codes":{"1":"1","2":"2","3":"3","4":"4","5":"5"},"labels":"See questionnaire endpoints","missing":"blank is not asked; exclude from valid base"},"value_5":{"type":"ordinal","codes":{"1":"1","2":"2","3":"3","4":"4","5":"5"},"labels":"See questionnaire endpoints","missing":"blank is not asked; exclude from valid base"},"understanding_5":{"type":"ordinal","codes":{"1":"1","2":"2","3":"3","4":"4","5":"5"},"labels":"See questionnaire endpoints","missing":"blank is not asked; exclude from valid base"},"premium_value_5":{"type":"ordinal","codes":{"1":"1","2":"2","3":"3","4":"4","5":"5"},"labels":"See questionnaire endpoints","missing":"blank is not asked; exclude from valid base"},"wt_final":{"type":"weight","role":"supplied calibration weight; use as primary"},"like_flexibility":{"type":"categorical","codes":{"0":"No/not selected","1":"Yes/selected"},"missing":"blank is not asked; exclude from valid base"},"like_ease":{"type":"categorical","codes":{"0":"No/not selected","1":"Yes/selected"},"missing":"blank is not asked; exclude from valid base"},"like_broad_choice":{"type":"categorical","codes":{"0":"No/not selected","1":"Yes/selected"},"missing":"blank is not asked; exclude from valid base"},"like_familiar":{"type":"categorical","codes":{"0":"No/not selected","1":"Yes/selected"},"missing":"blank is not asked; exclude from valid base"},"like_new_flavours":{"type":"categorical","codes":{"0":"No/not selected","1":"Yes/selected"},"missing":"blank is not asked; exclude from valid base"},"like_chef":{"type":"categorical","codes":{"0":"No/not selected","1":"Yes/selected"},"missing":"blank is not asked; exclude from valid base"},"like_quality":{"type":"categorical","codes":{"0":"No/not selected","1":"Yes/selected"},"missing":"blank is not asked; exclude from valid base"},"like_provenance":{"type":"categorical","codes":{"0":"No/not selected","1":"Yes/selected"},"missing":"blank is not asked; exclude from valid base"},"like_premium":{"type":"categorical","codes":{"0":"No/not selected","1":"Yes/selected"},"missing":"blank is not asked; exclude from valid base"},"like_none":{"type":"categorical","codes":{"0":"No/not selected","1":"Yes/selected"},"missing":"blank is not asked; exclude from valid base"},"dislike_expensive":{"type":"categorical","codes":{"0":"No/not selected","1":"Yes/selected"},"missing":"blank is not asked; exclude from valid base"},"dislike_complicated":{"type":"categorical","codes":{"0":"No/not selected","1":"Yes/selected"},"missing":"blank is not asked; exclude from valid base"},"dislike_not_different":{"type":"categorical","codes":{"0":"No/not selected","1":"Yes/selected"},"missing":"blank is not asked; exclude from valid base"},"dislike_too_adventurous":{"type":"categorical","codes":{"0":"No/not selected","1":"Yes/selected"},"missing":"blank is not asked; exclude from valid base"},"dislike_limited_choice":{"type":"categorical","codes":{"0":"No/not selected","1":"Yes/selected"},"missing":"blank is not asked; exclude from valid base"},"dislike_unclear_benefit":{"type":"categorical","codes":{"0":"No/not selected","1":"Yes/selected"},"missing":"blank is not asked; exclude from valid base"},"dislike_low_frequency":{"type":"categorical","codes":{"0":"No/not selected","1":"Yes/selected"},"missing":"blank is not asked; exclude from valid base"},"dislike_none":{"type":"categorical","codes":{"0":"No/not selected","1":"Yes/selected"},"missing":"blank is not asked; exclude from valid base"}}
+END FILE
+
+FILE questionnaire.md
+# SBT-002 questionnaire — frozen v0.1
+
+## Study context
+
+UK adults aged 18–64 who are open to using a meal-kit delivery service in the next 12 months. Respondents are randomly assigned to one of three fictional concepts: **Flex**, **Plus**, or **Simple**. Concept assignment occurs after pre-concept profiling.
+
+## Screener / profiling
+
+### S1 Age
+
+18–24 / 25–34 / 35–44 / 45–54 / 55–64.
+
+### S2 Gender
+
+Woman / Man / Non-binary or another identity / Prefer not to say.
+
+### S3 Region
+
+London / South East / South West / East of England / Midlands / North of England / Scotland / Wales / Northern Ireland.
+
+### S4 Meal-kit openness
+
+How likely are you to consider using a meal-kit delivery service in the next 12 months?
+
+1 Definitely would not / 2 Probably would not / 3 Might or might not / 4 Probably would / 5 Definitely would.
+
+**Eligibility:** S4 >= 3.
+
+### P1–P3 Food exploration orientation
+
+Please indicate agreement from 1 Strongly disagree to 5 Strongly agree.
+
+- P1 I enjoy trying foods or flavours that are new to me.
+- P2 I often look for meals that feel different from my usual choices.
+- P3 I am willing to pay a little more for food that feels special or distinctive.
+
+**Derived pre-specified strategic subgroup:** `food_explorer = 1` when mean(P1:P3) >= 4.0. This definition is frozen before concept exposure.
+
+### P4 Current meal-kit usage
+
+Never used / Used previously / Use occasionally / Use regularly.
+
+## Randomisation
+
+### RAND Concept assignment
+
+Randomly assign approximately 1:1:1 to Flex / Plus / Simple. Assignment is independent of respondent characteristics before weighting.
+
+## Concept stimulus
+
+### Flex
+
+**Premium meals that fit around you.** Choose from a broad weekly menu, swap sides and proteins, skip or pause any week, and cook most meals in around 25 minutes. Designed to make a premium meal-kit subscription easy to keep using even when plans change.
+
+### Plus
+
+**Restaurant inspiration at home.** Explore chef-led weekly menus, more unusual flavours and ingredients, and stronger sourcing/provenance cues. Designed for people who want their meal kit to feel more like discovering something new than solving dinner routinely.
+
+### Simple
+
+**Premium dinner without the effort.** A focused menu of familiar dishes, fewer preparation steps and straightforward recipes using upgraded ingredients. Designed to make a premium meal feel dependable and easy on busy evenings.
+
+## Core evaluation
+
+All questions refer to the assigned concept.
+
+### Q1 Overall appeal
+
+How appealing is this concept to you?
+
+1 Not at all appealing / 2 / 3 / 4 / 5 Extremely appealing.
+
+Variable: `appeal_5`.
+
+### Q2 Purchase intent
+
+If this service were available at a reasonable price, how likely would you be to subscribe or try it?
+
+1 Definitely would not / 2 Probably would not / 3 Might or might not / 4 Probably would / 5 Definitely would.
+
+Variable: `purchase_intent_5`.
+
+### Q3 Uniqueness
+
+How different does this concept feel from meal-kit services you already know about?
+
+1 Not at all different / 2 / 3 / 4 / 5 Very different.
+
+Variable: `uniqueness_5`.
+
+### Q4 Relevance
+
+How relevant does this concept feel to your needs?
+
+1 Not at all relevant / 2 / 3 / 4 / 5 Extremely relevant.
+
+Variable: `relevance_5`.
+
+### Q5 Credibility
+
+How believable is it that a meal-kit provider could deliver this proposition consistently?
+
+1 Not at all believable / 2 / 3 / 4 / 5 Extremely believable.
+
+Variable: `credibility_5`.
+
+### Q6 Value for money
+
+Assuming a modest premium over a standard meal-kit subscription, how good or poor would you expect the value for money to be?
+
+1 Very poor / 2 / 3 / 4 / 5 Very good.
+
+Variable: `value_5`.
+
+### Q7 Ease of understanding
+
+How easy is the concept to understand?
+
+1 Very difficult / 2 / 3 / 4 / 5 Very easy.
+
+Variable: `understanding_5`.
+
+### Q8 Premium value — routed
+
+**Ask only if Q7 >= 3.**
+
+Thinking specifically about what makes this concept premium, how convincing is the premium proposition?
+
+1 Not at all convincing / 2 / 3 / 4 / 5 Extremely convincing.
+
+Variable: `premium_value_5`.
+
+**Universe:** respondents with `understanding_5 >= 3`. This must never be silently compared as though it has the unconditional Q1/Q2 denominator.
+
+## Likes / dislikes
+
+### Q9 What appeals?
+
+Which aspects, if any, particularly appeal to you? Select all that apply.
+
+- Flexibility / ability to pause or swap
+- Ease / convenience
+- Broad menu choice
+- Familiar meals
+- New or unusual flavours
+- Chef-led inspiration
+- Ingredient quality
+- Provenance / sourcing
+- Premium feel
+- None of these
+
+Variables: `like_*` binary indicators.
+
+### Q10 What concerns you?
+
+Which aspects, if any, concern you? Select all that apply.
+
+- Too expensive
+- Too complicated
+- Not different enough
+- Too unfamiliar / adventurous
+- Limited choice
+- Unclear benefit
+- Would not use often enough
+- None of these
+
+Variables: `dislike_*` binary indicators.
+
+## Analysis conventions
+
+- Primary concept summaries: weighted full 5-point distributions and top-2-box (4–5).
+- Bottom-2-box (1–2) is retained where polarisation/negative response matters.
+- Means are secondary descriptive summaries only.
+- Concept comparisons use the randomised monadic cells.
+- Pre-specified pairwise families use Holm-adjusted inference.
+- `food_explorer` is the only pre-specified strategic subgroup for confirmatory heterogeneity analysis.
+- Other demographic cuts are exploratory and cannot become mandatory headline findings solely because p < .05.
+- Statistical significance and commercial materiality are separate fields; default commercial-materiality threshold is 5 percentage points for top-2-box differences.
+- Diagnostic associations with appeal/purchase intent are descriptive unless a separately specified model/assumption supports stronger language.
+
+END FILE
+
+FILE study_materials.json
+{"study_id":"SBT-002","title":"Everyday meal-kit concept test","synthetic":true,"design":{"type":"randomised_monadic","target_n":2100,"cells":["Flex","Plus","Simple"],"allocation":"1:1:1","weight_variable":"wt_final"},"primary_outcomes":["appeal_5","purchase_intent_5"],"analysis_policy":{"primary_summary":"weighted distributions and top-2-box for pre-specified 5-point outcomes","ordinal_distribution_retained":true,"means":"secondary only","pairwise_alpha":0.05,"multiplicity":"Holm correction within each pre-specified concept-comparison family","commercial_materiality_pp":5.0,"exploratory_subgroups":"labelled exploratory; not eligible for primary headline findings without corroboration"},"decision_question":"Which meal-kit concepts should advance, for whom, and with what qualifications?","data_note":"Fictional study for a research workflow experiment; no market or customer claims.","output_note":"Evidence references are analysis table paths, for example concept_metrics.appeal_5 or groups.unresolved_contact. Raw-data runs may define analysis_claims with stable IDs and explicit values, universe and weighting."}
+END FILE

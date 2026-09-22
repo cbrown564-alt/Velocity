@@ -1,20 +1,66 @@
 {
-  "project_id":"SBT-002",
-  "version":"0.1.0-frozen-study-contract",
-  "title":"Everyday meal-kit concept test",
-  "status":"study_contract_frozen",
-  "presentation_in_scope":false,
-  "category":"UK direct-to-consumer meal-kit subscriptions",
-  "business_question":"Which of three proposed premium meal-kit concepts should advance, for whom, and why?",
-  "design":{"type":"randomised_monadic","target_n":2100,"cells":["Flex","Plus","Simple"],"allocation":"1:1:1","seed":20260917,"weight_variable":"wt_final"},
-  "concepts":{
-    "Flex":{"role":"broad_acceptance","proposition":"Flexible premium meal kits with easy swaps, pause-anytime ordering and broad weekly choice."},
-    "Plus":{"role":"differentiated_target_opportunity","proposition":"More adventurous premium meal kits with chef-led menus, provenance cues and elevated ingredients."},
-    "Simple":{"role":"credible_but_weak","proposition":"A streamlined premium meal-kit plan built around familiar meals and minimal preparation."}
+  "project_id": "SBT-002",
+  "version": "1.0.0",
+  "title": "Everyday meal-kit concept test",
+  "status": "data_reference_frozen",
+  "presentation_in_scope": false,
+  "category": "UK direct-to-consumer meal-kit subscriptions",
+  "business_question": "Which of three proposed premium meal-kit concepts should advance, for whom, and why?",
+  "design": {
+    "type": "randomised_monadic",
+    "target_n": 2100,
+    "cells": [
+      "Flex",
+      "Plus",
+      "Simple"
+    ],
+    "allocation": "1:1:1",
+    "seed": 20260917,
+    "weight_variable": "wt_final"
   },
-  "strategic_subgroup":{"variable":"food_explorer","definition":"Respondents scoring high on pre-concept food exploration/orientation items","pre_specified":true},
-  "core_measures":["appeal_5","purchase_intent_5","uniqueness_5","relevance_5","credibility_5","value_5","understanding_5","likes_multi","dislikes_multi"],
-  "routed_measure":{"variable":"premium_value_5","universe":"Respondents rating understanding >= 3","reason":"Creates an intentional denominator/comparability trap."},
-  "analysis_policy":{"primary_summary":"weighted distributions and top-2-box for pre-specified 5-point outcomes","ordinal_distribution_retained":true,"means":"secondary only","pairwise_alpha":0.05,"multiplicity":"Holm correction within each pre-specified concept-comparison family","commercial_materiality_pp":5.0,"exploratory_subgroups":"labelled exploratory; not eligible for mandatory headline findings without corroboration"},
-  "freeze_rule":"Questionnaire, DGP, seed, trap truth table, generated dataset, deterministic reference outputs, evidence inventory, finding inventory and scoring rules must be frozen before first model evaluation."
+  "concepts": {
+    "Flex": {
+      "role": "broad_acceptance",
+      "proposition": "Flexible premium meal kits with easy swaps, pause-anytime ordering and broad weekly choice."
+    },
+    "Plus": {
+      "role": "differentiated_target_opportunity",
+      "proposition": "More adventurous premium meal kits with chef-led menus, provenance cues and elevated ingredients."
+    },
+    "Simple": {
+      "role": "credible_but_weak",
+      "proposition": "A streamlined premium meal-kit plan built around familiar meals and minimal preparation."
+    }
+  },
+  "strategic_subgroup": {
+    "variable": "food_explorer",
+    "definition": "Respondents scoring high on pre-concept food exploration/orientation items",
+    "pre_specified": true
+  },
+  "core_measures": [
+    "appeal_5",
+    "purchase_intent_5",
+    "uniqueness_5",
+    "relevance_5",
+    "credibility_5",
+    "value_5",
+    "understanding_5",
+    "likes_multi",
+    "dislikes_multi"
+  ],
+  "routed_measure": {
+    "variable": "premium_value_5",
+    "universe": "Respondents rating understanding >= 3",
+    "reason": "Creates an intentional denominator/comparability trap."
+  },
+  "analysis_policy": {
+    "primary_summary": "weighted distributions and top-2-box for pre-specified 5-point outcomes",
+    "ordinal_distribution_retained": true,
+    "means": "secondary only",
+    "pairwise_alpha": 0.05,
+    "multiplicity": "Holm correction within each pre-specified concept-comparison family",
+    "commercial_materiality_pp": 5.0,
+    "exploratory_subgroups": "labelled exploratory; not eligible for primary headline findings without corroboration"
+  },
+  "freeze_rule": "Freeze questionnaire, generator, seed, trap truth, data, analyses, evidence, finding tiers and scoring rules before first model evaluation."
 }

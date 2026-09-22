@@ -23,7 +23,7 @@ Navigation hub for live documentation. **Agent rules: [`AGENTS.md`](../AGENTS.md
 | Scope gates | `blue_02_feature_matrix.md` |
 | Local setup | `dev_01_contributing.md` |
 | MCP / agent workflow | `guide_agent_quickstart.md` + `AGENTS.md` |
-| Research-quality benchmark | `workstreams/research_quality/00_strategy.md` + `../evals/research_quality/README.md` (experimental; SBT-001 generation/preparation/analysis checks) |
+| Research-quality benchmark | `workstreams/research_quality/00_strategy.md` + `../evals/research_quality/README.md` (experimental; frozen studies, capped model pilot and blinded researcher review) |
 | Eval scoring & gaps | `eval_framework.md` + `evals/README.md` |
 
 ## Architecture (`arch_*`)

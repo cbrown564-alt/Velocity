@@ -30,6 +30,22 @@ The story editor cannot access hidden reference material and cannot introduce a 
 
 Automated matching may propose candidate matches later, but benchmark scoring treats matching as an inspectable artifact. Full match requires compatible proposition direction, estimand/universe and evidence family. Partial matches do not count toward full mandatory recall. Contradictions and unsupported findings reduce precision.
 
+The deterministic scorer uses reference topic clusters, never model-invented clusters. Only mandatory/secondary clusters contribute coverage. A do-not-elevate reference counts once even if multiple model claims promote it. Explicit evidence or claim-strength incompatibility prevents support credit. Every model finding must have one adjudication row; factual support for a restraint finding and whether it was inappropriately promoted are separate judgements.
+
+`supported_novel` is an explicit additional supported-claim state in selection-1.1. It earns precision only and cannot improve frozen-reference recall or coverage. It was added after the dry pilot exposed a scoring defect; all completed runs use that same scorer version. A full semantic match can name complementary selected findings in `supporting_model_finding_ids`; each contribution remains inspectable. Human preference and correction burden are null until reviewers provide them.
+
+The September raw arms did not receive an exact inferential-method specification and had binary diagnostic items absent from the approved-analysis extract. Record these confounds when comparing input surfaces. The observed trace audit is a separate immutable artifact; the original execution manifest's pending audit field remains historical. Runner formatting after execution does not rewrite historical runner hashes or stage prompts.
+
+## Implemented pilot runner
+
+`scripts/python/research_quality/freeze_study.py` checks realised rows/tables, binds numeric reference evidence, writes an explicit public input package, and hashes frozen artifacts. Re-running a freeze only verifies it; changed bytes fail. The public package excludes concept roles, trap truth, reference findings and scoring keys. Model exposure is checked against resolved paths and exact bytes, including symlink escapes. SBT-001 retains its versioned camelCase reference format; SBT-002/003 use the pre-presentation snake_case schemas. These are separate versioned adapters, not interchangeable payloads.
+
+`pilot_runner.py` uses existing Codex ChatGPT access in a temporary directory containing only approved inputs, ignores user configuration and project instructions, and preserves prompts, raw events, parsed output, runtime, token usage and hashes. Analysis inputs are included verbatim (JSON whitespace compressed) in the prompt; raw-data arms can calculate from the CSV using local tools. Monetary cost is unavailable through the CLI and is recorded as null, never zero. Tool traces require exposure review before scoring. Failed attempts remain in their run directories.
+
+The pilot crosses `input_surface = analysis|raw` with `workflow = one_pass|staged`. Comparisons of workflow hold the input surface constant. Staged execution uses four fresh calls, carries the prior output forward, and preserves the original study evidence so verification can check it. Prompts and model configuration remain fixed for replicates. Do not treat a single pair or the same model's verification as independent researcher validation. E1–E5 here name experiment arms; the strategy's E1–E8 labels name research stages.
+
+Reference proportions exclude routed missing values and use supplied weights. Uncertainty uses an approximate independent-cell Wald test with Kish ESS, with Holm over the declared three comparisons per metric. The two pre-specified Plus-versus-Flex interaction contrasts form a separate Holm family. These are offline reference methods; the product engine's statistical methods are unchanged.
+
 ## Stability
 
 E5 should use at least five replicates per mature arm/model configuration. Report selection frequency for every mandatory finding and pairwise/Jaccard agreement of selected topic clusters; do not report only average total score.

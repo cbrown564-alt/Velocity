@@ -1,5 +1,7 @@
 # SBT-002 — Concept / product test benchmark plan
 
+**Status (22 September 2026):** SBT-002 v1.0.0 is frozen and eight pilot outputs are complete. Frozen realised findings supersede proposed latent roles below: Flex’s purchase advantage over Plus is not established, Simple is easy/credible, and the realised small significant difference is Flex versus Plus understanding. No deck output is part of benchmark scoring; the separate review/export prototype uses this case as a representative slice. Current results and limitations are in [the pilot readout](../../../evals/research_quality/runs/2026-09-pilot-comparison/readout.md). The design below records intent, not independent validation.
+
 ## Purpose
 
 SBT-002 is the first generalisation test after SBT-001. It should determine whether Velocity's pre-presentation research pipeline transfers from a longitudinal brand tracker to a cross-sectional concept/product test with experimental cells, ordinal purchase-intent measures, diagnostics, statistical comparisons and subgroup heterogeneity.
