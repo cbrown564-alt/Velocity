@@ -1,0 +1,729 @@
+{
+  "study_id": "SBT-003",
+  "evidence": [
+    {
+      "evidence_id": "SBT-003:company",
+      "analysis_id": "company",
+      "values": {
+        "nps": -54.65341767531964,
+        "promoter_pct": 11.601009823023679,
+        "passive_pct": 22.144562678633008,
+        "detractor_pct": 66.25442749834332,
+        "n": 2400,
+        "n_weighted": 2400.0,
+        "n_eff": 2232.602780940647
+      },
+      "universe": "All valid respondents in the named concept/group; see per-table bases.",
+      "weighting": "wt_final primary; explicitly named unweighted values are audit comparisons",
+      "interpretation": {
+        "permitted": "Descriptive comparison within the named universe and declared analysis policy.",
+        "unsupported_extensions": [
+          "Causal diagnostic effects",
+          "Sales or realised churn",
+          "Unqualified small-base promotion"
+        ]
+      },
+      "fingerprint": "f740be29cdc4f0902d9ca93b9d34c9009972fefdd788734bd12d6858c27220c3"
+    },
+    {
+      "evidence_id": "SBT-003:correlation_universes",
+      "analysis_id": "correlation_universes",
+      "values": {
+        "resolved_first_contact": "support_contact_90d = 1",
+        "other": "all valid current customers"
+      },
+      "universe": "Recent support contacts for support variables; other diagnostics use all valid current customers.",
+      "weighting": "wt_final primary; explicitly named unweighted values are audit comparisons",
+      "interpretation": {
+        "permitted": "Descriptive comparison within the named universe and declared analysis policy.",
+        "unsupported_extensions": [
+          "Causal diagnostic effects",
+          "Sales or realised churn",
+          "Unqualified small-base promotion"
+        ]
+      },
+      "fingerprint": "f740be29cdc4f0902d9ca93b9d34c9009972fefdd788734bd12d6858c27220c3"
+    },
+    {
+      "evidence_id": "SBT-003:diagnostic_correlations",
+      "analysis_id": "diagnostic_correlations",
+      "values": {
+        "reliability_5": 0.680916853456971,
+        "value_5": 0.49572050354568686,
+        "ease_5": 0.5154392990282676,
+        "trust_5": 0.6444561984047845,
+        "resolved_first_contact": 0.42650934162216114
+      },
+      "universe": "All valid respondents in the named concept/group; see per-table bases.",
+      "weighting": "wt_final primary; explicitly named unweighted values are audit comparisons",
+      "interpretation": {
+        "permitted": "Descriptive comparison within the named universe and declared analysis policy.",
+        "unsupported_extensions": [
+          "Causal diagnostic effects",
+          "Sales or realised churn",
+          "Unqualified small-base promotion"
+        ]
+      },
+      "fingerprint": "f740be29cdc4f0902d9ca93b9d34c9009972fefdd788734bd12d6858c27220c3"
+    },
+    {
+      "evidence_id": "SBT-003:groups.legacy_contact",
+      "analysis_id": "groups.legacy_contact",
+      "values": {
+        "nps": {
+          "nps": -78.53002877963374,
+          "promoter_pct": 5.793428628666986,
+          "passive_pct": 9.883113963032287,
+          "detractor_pct": 84.32345740830073,
+          "n": 251,
+          "n_weighted": 159.03394737733402,
+          "n_eff": 245.2118331805202
+        },
+        "renewal": {
+          "n_unweighted": 251,
+          "n_weighted": 159.03394737733402,
+          "n_eff": 245.2118331805202,
+          "top2_pct": 14.356501137032154,
+          "bottom2_pct": 67.63143202725209,
+          "mean": 2.075283538932904,
+          "distribution_pct": {
+            "1": 44.45014822202415,
+            "2": 23.18128380522795,
+            "3": 18.012066835715753,
+            "4": 9.103068131497661,
+            "5": 5.253433005534492
+          },
+          "se_prop": 0.022392407742419414
+        },
+        "prevalence_weighted_pct": 6.626414474055584,
+        "share_of_company_detractors_pct": 8.433582475476756
+      },
+      "universe": "All valid respondents in the named concept/group; see per-table bases.",
+      "weighting": "wt_final primary; explicitly named unweighted values are audit comparisons",
+      "interpretation": {
+        "permitted": "Descriptive comparison within the named universe and declared analysis policy.",
+        "unsupported_extensions": [
+          "Causal diagnostic effects",
+          "Sales or realised churn",
+          "Unqualified small-base promotion"
+        ]
+      },
+      "fingerprint": "f740be29cdc4f0902d9ca93b9d34c9009972fefdd788734bd12d6858c27220c3"
+    },
+    {
+      "evidence_id": "SBT-003:groups.long_tenure",
+      "analysis_id": "groups.long_tenure",
+      "values": {
+        "nps": {
+          "nps": -57.92891334819942,
+          "promoter_pct": 10.703262115892649,
+          "passive_pct": 20.664562420015287,
+          "detractor_pct": 68.63217546409207,
+          "n": 664,
+          "n_weighted": 641.2339581374414,
+          "n_eff": 609.810331644252
+        },
+        "renewal": {
+          "n_unweighted": 664,
+          "n_weighted": 641.2339581374414,
+          "n_eff": 609.810331644252,
+          "top2_pct": 30.700693121906646,
+          "bottom2_pct": 46.7536553740879,
+          "mean": 2.73906558990953,
+          "distribution_pct": {
+            "1": 21.152453751934313,
+            "2": 25.60120162215359,
+            "3": 22.54565150400544,
+            "4": 19.588718126838096,
+            "5": 11.111974995068554
+          },
+          "se_prop": 0.0186784634397235
+        },
+        "prevalence_weighted_pct": 26.718081589060056,
+        "share_of_company_detractors_pct": 27.676943759421203
+      },
+      "universe": "All valid respondents in the named concept/group; see per-table bases.",
+      "weighting": "wt_final primary; explicitly named unweighted values are audit comparisons",
+      "interpretation": {
+        "permitted": "Descriptive comparison within the named universe and declared analysis policy.",
+        "unsupported_extensions": [
+          "Causal diagnostic effects",
+          "Sales or realised churn",
+          "Unqualified small-base promotion"
+        ]
+      },
+      "fingerprint": "f740be29cdc4f0902d9ca93b9d34c9009972fefdd788734bd12d6858c27220c3"
+    },
+    {
+      "evidence_id": "SBT-003:groups.premium_unresolved",
+      "analysis_id": "groups.premium_unresolved",
+      "values": {
+        "nps": {
+          "nps": -89.24748165095981,
+          "promoter_pct": 1.5626757088410208,
+          "passive_pct": 7.627166931358133,
+          "detractor_pct": 90.81015735980084,
+          "n": 67,
+          "n_weighted": 31.346275338572436,
+          "n_eff": 66.74868086708153
+        },
+        "renewal": {
+          "n_unweighted": 67,
+          "n_weighted": 31.346275338572436,
+          "n_eff": 66.74868086708153,
+          "top2_pct": 7.40428813125853,
+          "bottom2_pct": 80.63755056869229,
+          "mean": 1.756094230383025,
+          "distribution_pct": {
+            "1": 52.59588565845697,
+            "2": 28.041664910235315,
+            "3": 11.958161300049184,
+            "4": 5.965716997065272,
+            "5": 1.4385711341932577
+          },
+          "se_prop": 0.032049093422527035
+        },
+        "prevalence_weighted_pct": 1.3060948057738515,
+        "share_of_company_detractors_pct": 1.7901697941938706
+      },
+      "universe": "understanding_5 >= 3, within assigned concept; routing table also reports unconditional cell N.",
+      "weighting": "wt_final primary; explicitly named unweighted values are audit comparisons",
+      "interpretation": {
+        "permitted": "Descriptive comparison within the named universe and declared analysis policy.",
+        "unsupported_extensions": [
+          "Causal diagnostic effects",
+          "Sales or realised churn",
+          "Unqualified small-base promotion"
+        ]
+      },
+      "fingerprint": "f740be29cdc4f0902d9ca93b9d34c9009972fefdd788734bd12d6858c27220c3"
+    },
+    {
+      "evidence_id": "SBT-003:groups.resolved_contact",
+      "analysis_id": "groups.resolved_contact",
+      "values": {
+        "nps": {
+          "nps": -52.64538814101003,
+          "promoter_pct": 12.927027705015446,
+          "passive_pct": 21.500556448959074,
+          "detractor_pct": 65.57241584602548,
+          "n": 359,
+          "n_weighted": 228.87352384895348,
+          "n_eff": 351.47222106299284
+        },
+        "renewal": {
+          "n_unweighted": 359,
+          "n_weighted": 228.87352384895348,
+          "n_eff": 351.47222106299284,
+          "top2_pct": 33.79680284003969,
+          "bottom2_pct": 41.539871494987125,
+          "mean": 2.8905144831686083,
+          "distribution_pct": {
+            "1": 16.33608628728217,
+            "2": 25.203785207704957,
+            "3": 24.663325664973183,
+            "4": 20.66619958094925,
+            "5": 13.130603259090437
+          },
+          "se_prop": 0.025230844550228407
+        },
+        "prevalence_weighted_pct": 9.536396827039727,
+        "share_of_company_detractors_pct": 9.438230802477362
+      },
+      "universe": "All valid respondents in the named concept/group; see per-table bases.",
+      "weighting": "wt_final primary; explicitly named unweighted values are audit comparisons",
+      "interpretation": {
+        "permitted": "Descriptive comparison within the named universe and declared analysis policy.",
+        "unsupported_extensions": [
+          "Causal diagnostic effects",
+          "Sales or realised churn",
+          "Unqualified small-base promotion"
+        ]
+      },
+      "fingerprint": "f740be29cdc4f0902d9ca93b9d34c9009972fefdd788734bd12d6858c27220c3"
+    },
+    {
+      "evidence_id": "SBT-003:groups.unresolved_contact",
+      "analysis_id": "groups.unresolved_contact",
+      "values": {
+        "nps": {
+          "nps": -87.44674661560575,
+          "promoter_pct": 2.222420689612692,
+          "passive_pct": 8.108412005168873,
+          "detractor_pct": 89.66916730521844,
+          "n": 323,
+          "n_weighted": 205.11469548793218,
+          "n_eff": 315.9714191745058
+        },
+        "renewal": {
+          "n_unweighted": 323,
+          "n_weighted": 205.11469548793218,
+          "n_eff": 315.9714191745058,
+          "top2_pct": 7.603495925979573,
+          "bottom2_pct": 74.67084701066014,
+          "mean": 1.8589402061223423,
+          "distribution_pct": {
+            "1": 48.96906542608545,
+            "2": 25.70178158457469,
+            "3": 17.725657063360273,
+            "4": 5.6730588029792965,
+            "5": 1.9304371230002766
+          },
+          "se_prop": 0.014911129025062473
+        },
+        "prevalence_weighted_pct": 8.546445645330508,
+        "share_of_company_detractors_pct": 11.566814375616776
+      },
+      "universe": "All valid respondents in the named concept/group; see per-table bases.",
+      "weighting": "wt_final primary; explicitly named unweighted values are audit comparisons",
+      "interpretation": {
+        "permitted": "Descriptive comparison within the named universe and declared analysis policy.",
+        "unsupported_extensions": [
+          "Causal diagnostic effects",
+          "Sales or realised churn",
+          "Unqualified small-base promotion"
+        ]
+      },
+      "fingerprint": "f740be29cdc4f0902d9ca93b9d34c9009972fefdd788734bd12d6858c27220c3"
+    },
+    {
+      "evidence_id": "SBT-003:renewal",
+      "analysis_id": "renewal",
+      "values": {
+        "n_unweighted": 2400,
+        "n_weighted": 2400.0,
+        "n_eff": 2232.602780940647,
+        "top2_pct": 33.36393660959359,
+        "bottom2_pct": 40.75267529951192,
+        "mean": 2.8744938698611704,
+        "distribution_pct": {
+          "1": 17.41974227513953,
+          "2": 23.332933024372394,
+          "3": 25.883388090894506,
+          "4": 21.10606865841867,
+          "5": 12.257867951174914
+        },
+        "se_prop": 0.009979012791846903
+      },
+      "universe": "All valid respondents in the named concept/group; see per-table bases.",
+      "weighting": "wt_final primary; explicitly named unweighted values are audit comparisons",
+      "interpretation": {
+        "permitted": "Descriptive comparison within the named universe and declared analysis policy.",
+        "unsupported_extensions": [
+          "Causal diagnostic effects",
+          "Sales or realised churn",
+          "Unqualified small-base promotion"
+        ]
+      },
+      "fingerprint": "f740be29cdc4f0902d9ca93b9d34c9009972fefdd788734bd12d6858c27220c3"
+    },
+    {
+      "evidence_id": "SBT-003:support",
+      "analysis_id": "support",
+      "values": {
+        "universe": "support_contact_90d = 1",
+        "contact_n": 682,
+        "quality": {
+          "n_unweighted": 682,
+          "n_weighted": 433.98821933688566,
+          "n_eff": 667.4420194406367,
+          "top2_pct": 34.7644071607215,
+          "bottom2_pct": 43.75824949981868,
+          "mean": 2.8210996484309896,
+          "distribution_pct": {
+            "1": 23.928309801762033,
+            "2": 19.82993969805665,
+            "3": 21.47734333945981,
+            "4": 19.73229017676334,
+            "5": 15.03211698395816
+          },
+          "se_prop": 0.018433293933007022
+        },
+        "resolved_pct": 52.737266508907055
+      },
+      "universe": "Recent support contacts for support variables; other diagnostics use all valid current customers.",
+      "weighting": "wt_final primary; explicitly named unweighted values are audit comparisons",
+      "interpretation": {
+        "permitted": "Descriptive comparison within the named universe and declared analysis policy.",
+        "unsupported_extensions": [
+          "Causal diagnostic effects",
+          "Sales or realised churn",
+          "Unqualified small-base promotion"
+        ]
+      },
+      "fingerprint": "f740be29cdc4f0902d9ca93b9d34c9009972fefdd788734bd12d6858c27220c3"
+    },
+    {
+      "evidence_id": "SBT-003:tenure",
+      "analysis_id": "tenure",
+      "values": {
+        "1-2y": {
+          "nps": {
+            "nps": -53.265250474484695,
+            "promoter_pct": 12.972708428355112,
+            "passive_pct": 20.789332668805088,
+            "detractor_pct": 66.23795890283981,
+            "n": 593,
+            "n_weighted": 607.2316943352319,
+            "n_eff": 556.7753077986306
+          },
+          "renewal": {
+            "n_unweighted": 593,
+            "n_weighted": 607.2316943352319,
+            "n_eff": 556.7753077986306,
+            "top2_pct": 35.23023574739039,
+            "bottom2_pct": 36.85459299722068,
+            "mean": 2.95651592582151,
+            "distribution_pct": {
+              "1": 15.198990957256527,
+              "2": 21.655602039964155,
+              "3": 27.915171255388923,
+              "4": 22.75529495815258,
+              "5": 12.47494078923781
+            },
+            "se_prop": 0.020244355237706683
+          },
+          "legacy_pct": 8.03022587212203,
+          "legacy_strata": {
+            "0": {
+              "nps": {
+                "nps": -51.042592995411056,
+                "promoter_pct": 13.478683310921982,
+                "passive_pct": 22.000040382744984,
+                "detractor_pct": 64.52127630633304,
+                "n": 542,
+                "n_weighted": 558.469617712999,
+                "n_eff": 509.9551097508811
+              },
+              "renewal": {
+                "n_unweighted": 542,
+                "n_weighted": 558.469617712999,
+                "n_eff": 509.9551097508811,
+                "top2_pct": 36.569896201525395,
+                "bottom2_pct": 36.12282488909128,
+                "mean": 2.9946697798310695,
+                "distribution_pct": {
+                  "1": 13.946069097928003,
+                  "2": 22.17675579116327,
+                  "3": 27.307278909383342,
+                  "4": 23.603920432924586,
+                  "5": 12.965975768600808
+                },
+                "se_prop": 0.021327679263888025
+              }
+            },
+            "1": {
+              "nps": {
+                "nps": -78.72123509674837,
+                "promoter_pct": 7.177803477349377,
+                "passive_pct": 6.923157948552884,
+                "detractor_pct": 85.89903857409774,
+                "n": 51,
+                "n_weighted": 48.76207662223275,
+                "n_eff": 46.93431229320129
+              },
+              "renewal": {
+                "n_unweighted": 51,
+                "n_weighted": 48.76207662223275,
+                "n_eff": 46.93431229320129,
+                "top2_pct": 19.887171761783236,
+                "bottom2_pct": 45.23549643510397,
+                "mean": 2.5195417495970074,
+                "distribution_pct": {
+                  "1": 29.548642167238665,
+                  "2": 15.6868542678653,
+                  "3": 34.877331803112796,
+                  "4": 13.036029961523058,
+                  "5": 6.8511418002601765
+                },
+                "se_prop": 0.05826292916454683
+              }
+            }
+          }
+        },
+        "3-5y": {
+          "nps": {
+            "nps": -54.92085634941588,
+            "promoter_pct": 10.339622175703033,
+            "passive_pct": 24.39989929917806,
+            "detractor_pct": 65.26047852511891,
+            "n": 763,
+            "n_weighted": 767.0321639082649,
+            "n_eff": 710.9469599986338
+          },
+          "renewal": {
+            "n_unweighted": 763,
+            "n_weighted": 767.0321639082649,
+            "n_eff": 710.9469599986338,
+            "top2_pct": 32.09334190158809,
+            "bottom2_pct": 41.57729109947614,
+            "mean": 2.842643541852001,
+            "distribution_pct": {
+              "1": 17.83315070891061,
+              "2": 23.744140390565533,
+              "3": 26.32936699893577,
+              "4": 20.511887809589332,
+              "5": 11.58145409199876
+            },
+            "se_prop": 0.017508343141478065
+          },
+          "legacy_pct": 24.11686072758262,
+          "legacy_strata": {
+            "0": {
+              "nps": {
+                "nps": -49.091939657409256,
+                "promoter_pct": 11.550102048547165,
+                "passive_pct": 27.807856245496417,
+                "detractor_pct": 60.64204170595642,
+                "n": 563,
+                "n_weighted": 582.0480852027455,
+                "n_eff": 530.1541492079921
+              },
+              "renewal": {
+                "n_unweighted": 563,
+                "n_weighted": 582.0480852027455,
+                "n_eff": 530.1541492079921,
+                "top2_pct": 35.73729335182665,
+                "bottom2_pct": 36.58871251261894,
+                "mean": 2.986559076356729,
+                "distribution_pct": {
+                  "1": 13.651094790162963,
+                  "2": 22.937617722455975,
+                  "3": 27.673994135554423,
+                  "4": 22.578871765198524,
+                  "5": 13.158421586628123
+                },
+                "se_prop": 0.020813218948933437
+              }
+            },
+            "1": {
+              "nps": {
+                "nps": -73.26140664504271,
+                "promoter_pct": 6.5308755143917505,
+                "passive_pct": 13.676842326173784,
+                "detractor_pct": 79.79228215943446,
+                "n": 200,
+                "n_weighted": 184.9840787055195,
+                "n_eff": 181.51430487230866
+              },
+              "renewal": {
+                "n_unweighted": 200,
+                "n_weighted": 184.9840787055195,
+                "n_eff": 181.51430487230866,
+                "top2_pct": 20.627733731278937,
+                "bottom2_pct": 57.27373716490184,
+                "mean": 2.389816672233913,
+                "distribution_pct": {
+                  "1": 30.99189202736138,
+                  "2": 26.281845137540458,
+                  "3": 22.098529103819214,
+                  "4": 14.008171046903271,
+                  "5": 6.6195626843756665
+                },
+                "se_prop": 0.03003341521434514
+              }
+            }
+          }
+        },
+        "6+y": {
+          "nps": {
+            "nps": -57.92891334819942,
+            "promoter_pct": 10.703262115892649,
+            "passive_pct": 20.664562420015287,
+            "detractor_pct": 68.63217546409207,
+            "n": 664,
+            "n_weighted": 641.2339581374414,
+            "n_eff": 609.810331644252
+          },
+          "renewal": {
+            "n_unweighted": 664,
+            "n_weighted": 641.2339581374414,
+            "n_eff": 609.810331644252,
+            "top2_pct": 30.700693121906646,
+            "bottom2_pct": 46.7536553740879,
+            "mean": 2.73906558990953,
+            "distribution_pct": {
+              "1": 21.152453751934313,
+              "2": 25.60120162215359,
+              "3": 22.54565150400544,
+              "4": 19.588718126838096,
+              "5": 11.111974995068554
+            },
+            "se_prop": 0.0186784634397235
+          },
+          "legacy_pct": 53.180079842245775,
+          "legacy_strata": {
+            "0": {
+              "nps": {
+                "nps": -50.91027121620761,
+                "promoter_pct": 12.35174591160282,
+                "passive_pct": 24.38623696058675,
+                "detractor_pct": 63.26201712781043,
+                "n": 303,
+                "n_weighted": 300.2252272243573,
+                "n_eff": 280.5845238773065
+              },
+              "renewal": {
+                "n_unweighted": 303,
+                "n_weighted": 300.2252272243573,
+                "n_eff": 280.5845238773065,
+                "top2_pct": 35.54573168368937,
+                "bottom2_pct": 41.33049738510116,
+                "mean": 2.922925986863655,
+                "distribution_pct": {
+                  "1": 17.577508145867874,
+                  "2": 23.752989239233287,
+                  "3": 23.123770931209457,
+                  "4": 19.89085915004418,
+                  "5": 15.654872533645191
+                },
+                "se_prop": 0.028575097041169256
+              }
+            },
+            "1": {
+              "nps": {
+                "nps": -64.1081493555636,
+                "promoter_pct": 9.25193146867558,
+                "passive_pct": 17.387987707085244,
+                "detractor_pct": 73.36008082423918,
+                "n": 361,
+                "n_weighted": 341.00873091308415,
+                "n_eff": 329.39112940877936
+              },
+              "renewal": {
+                "n_unweighted": 361,
+                "n_weighted": 341.00873091308415,
+                "n_eff": 329.39112940877936,
+                "top2_pct": 26.435104967529632,
+                "bottom2_pct": 51.528221805737765,
+                "mean": 2.577194281496661,
+                "distribution_pct": {
+                  "1": 24.299847820180535,
+                  "2": 27.22837398555723,
+                  "3": 22.0366732267326,
+                  "4": 19.322712159474854,
+                  "5": 7.1123928080547785
+                },
+                "se_prop": 0.024297963747695824
+              }
+            }
+          }
+        },
+        "<1y": {
+          "nps": {
+            "nps": -50.849657746213566,
+            "promoter_pct": 13.448209590229524,
+            "passive_pct": 22.253923073327385,
+            "detractor_pct": 64.29786733644309,
+            "n": 380,
+            "n_weighted": 384.50218361906207,
+            "n_eff": 355.50104957147823
+          },
+          "renewal": {
+            "n_unweighted": 380,
+            "n_weighted": 384.50218361906207,
+            "n_eff": 355.50104957147823,
+            "top2_pct": 37.39271264738865,
+            "bottom2_pct": 35.255957683002364,
+            "mean": 3.0343500387364983,
+            "distribution_pct": {
+              "1": 13.877165944083526,
+              "2": 21.378791738918842,
+              "3": 27.351329669608987,
+              "4": 22.217297794041574,
+              "5": 15.175414853347077
+            },
+            "se_prop": 0.025661703689928345
+          },
+          "legacy_pct": 2.988678510711435,
+          "legacy_strata": {
+            "0": {
+              "nps": {
+                "nps": -50.728972379690696,
+                "promoter_pct": 13.611989644810999,
+                "passive_pct": 22.047048330687304,
+                "detractor_pct": 64.34096202450169,
+                "n": 369,
+                "n_weighted": 373.01064948402296,
+                "n_eff": 344.95285266839545
+              },
+              "renewal": {
+                "n_unweighted": 369,
+                "n_weighted": 373.01064948402296,
+                "n_eff": 344.95285266839545,
+                "top2_pct": 37.67235844089464,
+                "bottom2_pct": 35.68606789054786,
+                "mean": 3.031289574604888,
+                "distribution_pct": {
+                  "1": 13.843447172234194,
+                  "2": 21.842620718313665,
+                  "3": 26.641573668557502,
+                  "4": 22.68624435851845,
+                  "5": 14.986114082376192
+                },
+                "se_prop": 0.026089867968501535
+              }
+            },
+            "1": {
+              "nps": {
+                "nps": -54.76705697428123,
+                "promoter_pct": 8.131973845370245,
+                "passive_pct": 28.96899533497828,
+                "detractor_pct": 62.89903081965148,
+                "n": 11,
+                "n_weighted": 11.491534135039132,
+                "n_eff": 10.548761772033238
+              },
+              "renewal": {
+                "n_unweighted": 11,
+                "n_weighted": 11.491534135039132,
+                "n_eff": 10.548761772033238,
+                "top2_pct": 28.31552087861622,
+                "bottom2_pct": 21.2947505908122,
+                "mean": 3.1336914930662374,
+                "distribution_pct": {
+                  "1": 14.97166393186497,
+                  "2": 6.323086658947228,
+                  "3": 50.38972853057159,
+                  "4": 6.9954779279314785,
+                  "5": 21.320042950684737
+                },
+                "se_prop": 0.1387152159194343
+              }
+            }
+          }
+        }
+      },
+      "universe": "All valid respondents in the named concept/group; see per-table bases.",
+      "weighting": "wt_final primary; explicitly named unweighted values are audit comparisons",
+      "interpretation": {
+        "permitted": "Descriptive comparison within the named universe and declared analysis policy.",
+        "unsupported_extensions": [
+          "Causal diagnostic effects",
+          "Sales or realised churn",
+          "Unqualified small-base promotion"
+        ]
+      },
+      "fingerprint": "f740be29cdc4f0902d9ca93b9d34c9009972fefdd788734bd12d6858c27220c3"
+    },
+    {
+      "evidence_id": "SBT-003:weighting_audit",
+      "analysis_id": "weighting_audit",
+      "values": {
+        "nps_weighted": -54.65341767531964,
+        "nps_unweighted": -56.91666666666667
+      },
+      "universe": "All valid respondents in the named concept/group; see per-table bases.",
+      "weighting": "wt_final primary; explicitly named unweighted values are audit comparisons",
+      "interpretation": {
+        "permitted": "Descriptive comparison within the named universe and declared analysis policy.",
+        "unsupported_extensions": [
+          "Causal diagnostic effects",
+          "Sales or realised churn",
+          "Unqualified small-base promotion"
+        ]
+      },
+      "fingerprint": "f740be29cdc4f0902d9ca93b9d34c9009972fefdd788734bd12d6858c27220c3"
+    }
+  ]
+}

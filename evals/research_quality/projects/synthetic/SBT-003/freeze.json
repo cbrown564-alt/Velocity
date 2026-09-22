@@ -1,0 +1,50 @@
+{
+  "study_id": "SBT-003",
+  "version": "1.0.0",
+  "status": "FROZEN",
+  "runtime": {
+    "python": "3.14.4",
+    "numpy": "2.4.0",
+    "pandas": "2.3.3",
+    "scipy": "1.16.3"
+  },
+  "artifacts": {
+    "evals/research_quality/experiment_protocol.json": "b789fd83752406c4becb3252463b38e282d3832abe227ea1f4f84c3dfbaeeb57",
+    "evals/research_quality/model_exposure_contract.json": "785324f457d9ab8c2d764fc014c04b376f5c7c0823d8bc19a26a04090ca3ffd1",
+    "evals/research_quality/prepresentation_scoring_contract.json": "080c5c7185880ce5880aee858b89f6d24f4562264a8fa0df2ab306d127b523fe",
+    "evals/research_quality/projects/synthetic/SBT-003/hidden/freeze_validation.json": "3c6b9b1d8f1702e6770f4d87f4b79b87bf9d5113a9752d3982dbad639fca3d0a",
+    "evals/research_quality/projects/synthetic/SBT-003/hidden/generate_sbt003.py": "b33bf883155e2681e39947fe4c021a6a2e76c91d6a7d9c12e83171d2265b3ae4",
+    "evals/research_quality/projects/synthetic/SBT-003/hidden/pre_freeze_validation.md": "f5937f5069f6d6723c5e3fa8ec310d23d56363def5c78cdb32870d0b08285440",
+    "evals/research_quality/projects/synthetic/SBT-003/hidden/trap_truth.json": "3d1184ce3b638dbdff0b5ecbf2cdabc8143f1842acd7b71ab67d513df53b8c75",
+    "evals/research_quality/projects/synthetic/SBT-003/hidden/validate_freeze.py": "a54cdd0b58ba5fd17e253c0e245ebbf6c75b8242f3680ec875210ad37f248ae2",
+    "evals/research_quality/projects/synthetic/SBT-003/manifest.json": "688335aa8b9ce1dc7291676d03babe5da9083e489902ba32bf0d3b6dc8daf525",
+    "evals/research_quality/projects/synthetic/SBT-003/model_inputs/analysis_results.json": "5186853dfc226228d3260bf8d55d493e51e8d662cbfa8f9f376124715753b294",
+    "evals/research_quality/projects/synthetic/SBT-003/model_inputs/codebook.json": "f484d7cc3cae71c6db0f25787e245749cece2f9e8195c91fb93da3ea32636a6d",
+    "evals/research_quality/projects/synthetic/SBT-003/model_inputs/questionnaire.md": "95dcfe581c8a43bfb08ac3cfca205285430dd5e757e7bc8c3ff350896e78c09a",
+    "evals/research_quality/projects/synthetic/SBT-003/model_inputs/respondents.csv": "f740be29cdc4f0902d9ca93b9d34c9009972fefdd788734bd12d6858c27220c3",
+    "evals/research_quality/projects/synthetic/SBT-003/model_inputs/study_materials.json": "dab20daaac7eb7aefd90a8a77ca208a101ebd2d90ab5c1424b945cc81a8843c6",
+    "evals/research_quality/projects/synthetic/SBT-003/questionnaire.md": "95dcfe581c8a43bfb08ac3cfca205285430dd5e757e7bc8c3ff350896e78c09a",
+    "evals/research_quality/projects/synthetic/SBT-003/reference/analysis_results.json": "5186853dfc226228d3260bf8d55d493e51e8d662cbfa8f9f376124715753b294",
+    "evals/research_quality/projects/synthetic/SBT-003/reference/evidence_inventory.json": "db86a7091696da6cdbc30779cb1cf5407dce2cf5e5e71aff4cb3cbd8f980030f",
+    "evals/research_quality/projects/synthetic/SBT-003/reference/reference_analysis.py": "bde5bd344111f147f644b82588bb2375e6afc6d27ddea86c17f6b040b016910a",
+    "evals/research_quality/projects/synthetic/SBT-003/reference/reference_findings.json": "66ff4fbdb574100e2a21efa122c5347ed750f1b6725727575ac4226a4f67bcd9",
+    "evals/research_quality/projects/synthetic/SBT-003/synthetic_data/generation_audit.json": "db8b4094e98c62a36789959b576b494a8f9cafaf3b5fb3a59fb2a7a381400705",
+    "evals/research_quality/projects/synthetic/SBT-003/synthetic_data/respondents.csv": "f740be29cdc4f0902d9ca93b9d34c9009972fefdd788734bd12d6858c27220c3",
+    "evals/research_quality/schemas/model_research_output.schema.json": "61de1eea762a4aba450bc538cba213a806169f0105ffc9d0de3f228821105cfc",
+    "evals/research_quality/schemas/prepresentation_evidence.schema.json": "bcfbc28021bec9f8f68583f78ebe7b5c434ef4874900d07056586c202da5f7e5",
+    "evals/research_quality/schemas/prepresentation_finding.schema.json": "915cd30268e218cfdc65249e78d8e46ead2364b190667f8689d9415e6db51ccd",
+    "evals/research_quality/schemas/prepresentation_story.schema.json": "8876286de7c1c9fb9d7ce91c6ef8a12383a2de573337f0ae592070dbe48b81f2",
+    "evals/research_quality/schemas/prepresentation_study.schema.json": "f22adb65b7db4fc2da509e95eae5ed01f8008623c504007bf54cdea92060bb51",
+    "scripts/python/research_quality/analysis.py": "4a737d5f6da82e71ac372ec8759f4b5ec8dd3b65c48652e744c0cdeaa59d23f0",
+    "scripts/python/research_quality/freeze_study.py": "fb71ecb38ac3388c900a192216951b2687cc964c8f80c3d3fb9e98df70815daf",
+    "scripts/python/research_quality/requirements.txt": "2b433e6f525e14e33e1964c6b69e057b885e5ae25a480618ea3dcb32fc1c9450",
+    "scripts/python/synthetic_tracker/requirements.txt": "1bdc10570f42bc88983aaf3b7baa7e8163e495e23ed13f4e00182dd96324b182"
+  },
+  "model_allowlist": {
+    "analysis_results.json": "5186853dfc226228d3260bf8d55d493e51e8d662cbfa8f9f376124715753b294",
+    "codebook.json": "f484d7cc3cae71c6db0f25787e245749cece2f9e8195c91fb93da3ea32636a6d",
+    "questionnaire.md": "95dcfe581c8a43bfb08ac3cfca205285430dd5e757e7bc8c3ff350896e78c09a",
+    "respondents.csv": "f740be29cdc4f0902d9ca93b9d34c9009972fefdd788734bd12d6858c27220c3",
+    "study_materials.json": "dab20daaac7eb7aefd90a8a77ca208a101ebd2d90ab5c1424b945cc81a8843c6"
+  }
+}

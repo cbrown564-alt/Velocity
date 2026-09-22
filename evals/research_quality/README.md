@@ -1,67 +1,53 @@
-# Research Quality Evaluation Harness
+# Research quality evaluation harness
 
-This directory is the implementation home for the evaluation programme defined in `docs/workstreams/research_quality/00_strategy.md`.
+This directory implements the experimental programme owned by `docs/workstreams/research_quality/00_strategy.md`. Current evidence is the [September pilot readout](runs/2026-09-pilot-comparison/readout.md), with machine-readable comparisons and per-run adjudications. Independent researcher validation is pending.
 
-## Implemented scope
+## Current scope
 
-SBT-001 has executable canonical-data, agency-export and reference-analysis builders. Run the commands in `scripts/python/synthetic_tracker/README.md` to reproduce them and their regression tests. Current artifacts use `synthetic_brand_tracker_v2` and `turn4-v2`; the v1 summaries are historical evidence with a known image-routing defect.
+- SBT-001 corrections are merged in PR 76. Reproduce canonical data, agency exports and corrected `turn4-v2` reference analysis with `scripts/python/synthetic_tracker/README.md`. Original v1 findings are historical and contain a known routing defect.
+- SBT-002 and SBT-003 v1.0.0 have realised-data checks, independent calculations, frozen reference findings and explicit model-input packages. Frozen bytes must not change after model exposure.
+- The existing-Codex pilot produced ten outputs: five repeated SBT-002 analysis/one-pass runs, one analysis/staged run, two raw-data workflows, one SBT-003 run and one public FSA published-table transfer run. Every stage preserves prompts, raw events, outputs, usage and hashes; one initial CLI-version failure is retained.
+- Selection metrics are executable from explicit semantic adjudications. The current scores were adjudicated by the primary agent, not independent researchers. Prioritisation, narrative preference and human correction burden remain unmeasured.
+- The blinded review prototype and offline SBT-002 native-chart adapter are implemented. They do not change Velocity's workspace/session format or production UI. General model comparison, product integration and publication-quality deck validation remain future work.
 
-The E5 grader configuration and gold story plans are specifications, not an executable scorer. A multi-system runner, hidden split registry and researcher preference results are still planned. Historical deck rationale and later PR 73 prototypes are not a verified E6 reference for corrected v2 data.
+## Reproduce and inspect
 
-## Design rules
+From the repository root, install `scripts/python/research_quality/requirements.txt` in an isolated environment, then run:
 
-1. Split by **project**, never random respondent rows.
-2. Freeze hidden eval projects before fine-tuning.
-3. Keep objective and subjective grading separate.
-4. Numbers and survey invariants are graded by code/reference outputs.
-5. Taste is graded primarily by researcher pairwise preference.
-6. Store complete run provenance so model, prompt, tools and costs are reproducible.
-7. No evaluation artifact becomes training data.
-
-## Planned layout
-
-```text
-evals/research_quality/
-  README.md
-  schemas/
-    project_bundle.schema.json
-    run_record.schema.json
-    finding.schema.json
-  registry/
-    datasets.jsonl
-    splits.jsonl
-  projects/
-    public/
-    synthetic/
-  graders/
-    prep/
-    analysis/
-    deck/
-    taste/
-  runs/
+```sh
+python -m pytest tests/research_quality -q
+python scripts/python/research_quality/freeze_study.py SBT-002 --verify
+python scripts/python/research_quality/freeze_study.py SBT-003 --verify
+python scripts/python/research_quality/audit_pilot_numbers.py
+python scripts/python/research_quality/score_run.py 2026-09-21-sbt002-analysis-one-r1b
+python scripts/python/research_quality/review_pack.py
+node tests/research_quality/review_pack.browser.mjs
+npx vitest run tests/research_quality/reviewed-deck.test.ts
 ```
 
-## Tracks
+`pilot_runner.py --help` documents opt-in model execution. Do not rerun models merely to inspect results; those commands consume Codex allowance. `run_manifest.py` and `validate_exposure.py` check exact allowlisted inputs. FSA input hashes are verified by the same run-manifest path; its source workbook is excluded from git and the source/rights record is in its `data_card.json`.
 
-| ID | Track | Primary grading |
-|---|---|---|
-| E1 | Survey interpretation | reference + deterministic |
-| E2 | Preparation execution | deterministic |
-| E3 | Brief-to-analysis plan | reference + expert |
-| E4 | Numerical analysis/findings | deterministic |
-| E5 | Story selection | researcher pairwise preference |
-| E6 | Deck generation | deterministic + researcher preference |
-| E7 | Steerability/revision | invariants + researcher preference |
-| E8 | End-to-end outcome | composite scorecard, no single opaque score |
+## Independent researcher review
 
-## First milestone
+Share **only** [reviewer_pack.zip](review/2026-09-pilot/reviewer_pack.zip), which contains `index.html`, instructions and source materials. Keep the adjacent private identity key, gold findings and pilot scores hidden until submissions are locked. Reviewers first record their own findings, then assess anonymous candidates, edit or reject findings, select a narrative, and export their decisions. Ask at least two researchers to work independently before discussing disagreements. Do not treat automated QA approvals as researcher judgements.
 
-A single runner should execute the same frozen project against multiple approaches and write one run record per system:
+The pack records active minutes and corrections, supports export/import, and invalidates approvals after evidence changes. `reviewed_research_prototype` is an explicitly versioned experimental export; it is not `VelocitySessionFile`.
 
-- current Velocity baseline;
-- strong general model without Velocity tools;
-- strong general model with Velocity tools;
-- public specialist model where practical;
-- later Velocity fine-tunes.
+For an approved SBT-002 analysis candidate:
 
-The first milestone is complete when a scorecard can explain not merely which system performed better, but **why**: preparation correctness, analysis correctness, finding coverage, story quality, deck quality, steerability and researcher correction burden.
+```sh
+npx tsx scripts/research-reviewed-deck.ts approved-review.json   evals/research_quality/projects/synthetic/SBT-002/model_inputs/analysis_results.json   reviewed.pptx
+```
+
+This adapter reuses Velocity's existing native PPTX exporter. It checks data/evidence hashes, accepted finding references and story positions, and retains original wording, corrections and every cited table in notes. It draws one representative chart per approved beat, favouring full ordinal distributions. Revised evidence requires renewed approval; values come from the new evidence after that approval. Raw claim-only references and other study types are outside this bounded adapter. The adapter omits labels below 5% to avoid collisions, retaining every value in native chart data and notes, and fixes stacked-distribution axes at 0–100%. It is a representative chart per beat, not a complete visualisation of every cited finding.
+
+## Data and scoring rules
+
+1. Split by project, never respondent rows. The registry labels these exposed development cases honestly; no secret holdout is claimed.
+2. Never use evaluation artifacts, reviewer corrections or public cases for training.
+3. Keep deterministic numerical checks, inspectable semantic adjudication and human editorial preference separate.
+4. Preserve failed runs and original outputs. A changed study creates a new benchmark version.
+5. Monetary cost unavailable from the CLI is null, not zero.
+6. See the runner protocol for the post-dry-pilot `supported_novel` scorer correction and the raw-arm method/input confounds. Do not infer a causal staging benefit from one pair.
+
+The original E1–E8 strategy labels describe research stages; the pre-presentation E1–E5 labels describe experiment arms. Their versioned camelCase (SBT-001) and snake_case (SBT-002/003) formats remain explicit adapters, not interchangeable schemas.

@@ -1,0 +1,360 @@
+{
+  "respondent_id": {
+    "type": "identifier"
+  },
+  "age": {
+    "type": "categorical",
+    "codes": {
+      "18-24": "18-24",
+      "25-34": "25-34",
+      "35-44": "35-44",
+      "45-54": "45-54",
+      "55-64": "55-64"
+    },
+    "missing": "blank is not asked; exclude from valid base"
+  },
+  "gender": {
+    "type": "categorical",
+    "codes": {
+      "Man": "Man",
+      "Non-binary/other": "Non-binary/other",
+      "Prefer not": "Prefer not",
+      "Woman": "Woman"
+    },
+    "missing": "blank is not asked; exclude from valid base"
+  },
+  "region": {
+    "type": "categorical",
+    "codes": {
+      "East": "East",
+      "London": "London",
+      "Midlands": "Midlands",
+      "North": "North",
+      "Northern Ireland": "Northern Ireland",
+      "Scotland": "Scotland",
+      "South East": "South East",
+      "South West": "South West",
+      "Wales": "Wales"
+    },
+    "missing": "blank is not asked; exclude from valid base"
+  },
+  "mealkit_open_5": {
+    "type": "ordinal",
+    "codes": {
+      "1": "1",
+      "2": "2",
+      "3": "3",
+      "4": "4",
+      "5": "5"
+    },
+    "labels": "See questionnaire endpoints",
+    "missing": "blank is not asked; exclude from valid base"
+  },
+  "food_p1": {
+    "type": "ordinal",
+    "codes": {
+      "1": "1",
+      "2": "2",
+      "3": "3",
+      "4": "4",
+      "5": "5"
+    },
+    "labels": "See questionnaire endpoints",
+    "missing": "blank is not asked; exclude from valid base"
+  },
+  "food_p2": {
+    "type": "ordinal",
+    "codes": {
+      "1": "1",
+      "2": "2",
+      "3": "3",
+      "4": "4",
+      "5": "5"
+    },
+    "labels": "See questionnaire endpoints",
+    "missing": "blank is not asked; exclude from valid base"
+  },
+  "food_p3": {
+    "type": "ordinal",
+    "codes": {
+      "1": "1",
+      "2": "2",
+      "3": "3",
+      "4": "4",
+      "5": "5"
+    },
+    "labels": "See questionnaire endpoints",
+    "missing": "blank is not asked; exclude from valid base"
+  },
+  "food_explorer": {
+    "type": "categorical",
+    "codes": {
+      "0": "No/not selected",
+      "1": "Yes/selected"
+    },
+    "missing": "blank is not asked; exclude from valid base"
+  },
+  "mealkit_usage": {
+    "type": "categorical",
+    "codes": {
+      "Never": "Never",
+      "Occasional": "Occasional",
+      "Previous": "Previous",
+      "Regular": "Regular"
+    },
+    "missing": "blank is not asked; exclude from valid base"
+  },
+  "concept": {
+    "type": "categorical",
+    "codes": {
+      "Flex": "Flex",
+      "Plus": "Plus",
+      "Simple": "Simple"
+    },
+    "missing": "blank is not asked; exclude from valid base"
+  },
+  "appeal_5": {
+    "type": "ordinal",
+    "codes": {
+      "1": "1",
+      "2": "2",
+      "3": "3",
+      "4": "4",
+      "5": "5"
+    },
+    "labels": "See questionnaire endpoints",
+    "missing": "blank is not asked; exclude from valid base"
+  },
+  "purchase_intent_5": {
+    "type": "ordinal",
+    "codes": {
+      "1": "1",
+      "2": "2",
+      "3": "3",
+      "4": "4",
+      "5": "5"
+    },
+    "labels": "See questionnaire endpoints",
+    "missing": "blank is not asked; exclude from valid base"
+  },
+  "uniqueness_5": {
+    "type": "ordinal",
+    "codes": {
+      "1": "1",
+      "2": "2",
+      "3": "3",
+      "4": "4",
+      "5": "5"
+    },
+    "labels": "See questionnaire endpoints",
+    "missing": "blank is not asked; exclude from valid base"
+  },
+  "relevance_5": {
+    "type": "ordinal",
+    "codes": {
+      "1": "1",
+      "2": "2",
+      "3": "3",
+      "4": "4",
+      "5": "5"
+    },
+    "labels": "See questionnaire endpoints",
+    "missing": "blank is not asked; exclude from valid base"
+  },
+  "credibility_5": {
+    "type": "ordinal",
+    "codes": {
+      "1": "1",
+      "2": "2",
+      "3": "3",
+      "4": "4",
+      "5": "5"
+    },
+    "labels": "See questionnaire endpoints",
+    "missing": "blank is not asked; exclude from valid base"
+  },
+  "value_5": {
+    "type": "ordinal",
+    "codes": {
+      "1": "1",
+      "2": "2",
+      "3": "3",
+      "4": "4",
+      "5": "5"
+    },
+    "labels": "See questionnaire endpoints",
+    "missing": "blank is not asked; exclude from valid base"
+  },
+  "understanding_5": {
+    "type": "ordinal",
+    "codes": {
+      "1": "1",
+      "2": "2",
+      "3": "3",
+      "4": "4",
+      "5": "5"
+    },
+    "labels": "See questionnaire endpoints",
+    "missing": "blank is not asked; exclude from valid base"
+  },
+  "premium_value_5": {
+    "type": "ordinal",
+    "codes": {
+      "1": "1",
+      "2": "2",
+      "3": "3",
+      "4": "4",
+      "5": "5"
+    },
+    "labels": "See questionnaire endpoints",
+    "missing": "blank is not asked; exclude from valid base"
+  },
+  "wt_final": {
+    "type": "weight",
+    "role": "supplied calibration weight; use as primary"
+  },
+  "like_flexibility": {
+    "type": "categorical",
+    "codes": {
+      "0": "No/not selected",
+      "1": "Yes/selected"
+    },
+    "missing": "blank is not asked; exclude from valid base"
+  },
+  "like_ease": {
+    "type": "categorical",
+    "codes": {
+      "0": "No/not selected",
+      "1": "Yes/selected"
+    },
+    "missing": "blank is not asked; exclude from valid base"
+  },
+  "like_broad_choice": {
+    "type": "categorical",
+    "codes": {
+      "0": "No/not selected",
+      "1": "Yes/selected"
+    },
+    "missing": "blank is not asked; exclude from valid base"
+  },
+  "like_familiar": {
+    "type": "categorical",
+    "codes": {
+      "0": "No/not selected",
+      "1": "Yes/selected"
+    },
+    "missing": "blank is not asked; exclude from valid base"
+  },
+  "like_new_flavours": {
+    "type": "categorical",
+    "codes": {
+      "0": "No/not selected",
+      "1": "Yes/selected"
+    },
+    "missing": "blank is not asked; exclude from valid base"
+  },
+  "like_chef": {
+    "type": "categorical",
+    "codes": {
+      "0": "No/not selected",
+      "1": "Yes/selected"
+    },
+    "missing": "blank is not asked; exclude from valid base"
+  },
+  "like_quality": {
+    "type": "categorical",
+    "codes": {
+      "0": "No/not selected",
+      "1": "Yes/selected"
+    },
+    "missing": "blank is not asked; exclude from valid base"
+  },
+  "like_provenance": {
+    "type": "categorical",
+    "codes": {
+      "0": "No/not selected",
+      "1": "Yes/selected"
+    },
+    "missing": "blank is not asked; exclude from valid base"
+  },
+  "like_premium": {
+    "type": "categorical",
+    "codes": {
+      "0": "No/not selected",
+      "1": "Yes/selected"
+    },
+    "missing": "blank is not asked; exclude from valid base"
+  },
+  "like_none": {
+    "type": "categorical",
+    "codes": {
+      "0": "No/not selected",
+      "1": "Yes/selected"
+    },
+    "missing": "blank is not asked; exclude from valid base"
+  },
+  "dislike_expensive": {
+    "type": "categorical",
+    "codes": {
+      "0": "No/not selected",
+      "1": "Yes/selected"
+    },
+    "missing": "blank is not asked; exclude from valid base"
+  },
+  "dislike_complicated": {
+    "type": "categorical",
+    "codes": {
+      "0": "No/not selected",
+      "1": "Yes/selected"
+    },
+    "missing": "blank is not asked; exclude from valid base"
+  },
+  "dislike_not_different": {
+    "type": "categorical",
+    "codes": {
+      "0": "No/not selected",
+      "1": "Yes/selected"
+    },
+    "missing": "blank is not asked; exclude from valid base"
+  },
+  "dislike_too_adventurous": {
+    "type": "categorical",
+    "codes": {
+      "0": "No/not selected",
+      "1": "Yes/selected"
+    },
+    "missing": "blank is not asked; exclude from valid base"
+  },
+  "dislike_limited_choice": {
+    "type": "categorical",
+    "codes": {
+      "0": "No/not selected",
+      "1": "Yes/selected"
+    },
+    "missing": "blank is not asked; exclude from valid base"
+  },
+  "dislike_unclear_benefit": {
+    "type": "categorical",
+    "codes": {
+      "0": "No/not selected",
+      "1": "Yes/selected"
+    },
+    "missing": "blank is not asked; exclude from valid base"
+  },
+  "dislike_low_frequency": {
+    "type": "categorical",
+    "codes": {
+      "0": "No/not selected",
+      "1": "Yes/selected"
+    },
+    "missing": "blank is not asked; exclude from valid base"
+  },
+  "dislike_none": {
+    "type": "categorical",
+    "codes": {
+      "0": "No/not selected",
+      "1": "Yes/selected"
+    },
+    "missing": "blank is not asked; exclude from valid base"
+  }
+}

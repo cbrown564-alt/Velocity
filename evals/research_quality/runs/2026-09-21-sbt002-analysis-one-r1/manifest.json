@@ -1,0 +1,77 @@
+{
+  "run_id": "2026-09-21-sbt002-analysis-one-r1",
+  "study_id": "SBT-002",
+  "study_version": "1.0.0",
+  "arm": "E3_ANALYSIS_SURFACE",
+  "input_surface": "analysis",
+  "workflow": "one_pass",
+  "model": {
+    "provider": "codex_chatgpt",
+    "model_id": "gpt-6-astra"
+  },
+  "replicate": 1,
+  "input_artifacts": [
+    {
+      "path": "/Users/cobro/code/Velocity-research/evals/research_quality/projects/synthetic/SBT-002/model_inputs/study_materials.json",
+      "sha256": "5b1bc5bddcb78139cc7260d6313bcffe9490975b84e0e6bdf33a83aed4ef6077",
+      "exposure_class": "study_material"
+    },
+    {
+      "path": "/Users/cobro/code/Velocity-research/evals/research_quality/projects/synthetic/SBT-002/model_inputs/questionnaire.md",
+      "sha256": "4fc7c6dfc39626c1d876a0d3c9d7d4db1bb77b85b65a76962b46c103399b3164",
+      "exposure_class": "study_material"
+    },
+    {
+      "path": "/Users/cobro/code/Velocity-research/evals/research_quality/projects/synthetic/SBT-002/model_inputs/codebook.json",
+      "sha256": "96f1262da3bb905f12cb7bfc315e7e2577d65547dd6a0c5d70d83d09c7db64ca",
+      "exposure_class": "study_material"
+    },
+    {
+      "path": "/Users/cobro/code/Velocity-research/evals/research_quality/projects/synthetic/SBT-002/model_inputs/analysis_results.json",
+      "sha256": "bec90db369d2781aa2575a10ffb9d098861d676a5eea8fbaa4711a422bcb6037",
+      "exposure_class": "analysis_surface"
+    }
+  ],
+  "output_artifacts": [
+    {
+      "path": "evals/research_quality/runs/2026-09-21-sbt002-analysis-one-r1/01-researcher/events.jsonl",
+      "sha256": "7254c3c57bd93a2a51ce5e95edf18ef9123d57f98bfe86664b2e0b4cf418df88",
+      "artifact_type": "jsonl"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-21-sbt002-analysis-one-r1/01-researcher/prompt.txt",
+      "sha256": "58c773feb42a37eadcd5e8a80aaec3552cd531a6021d75f110d7bd7a3b639ce8",
+      "artifact_type": "txt"
+    },
+    {
+      "path": "evals/research_quality/runs/2026-09-21-sbt002-analysis-one-r1/01-researcher/stderr.txt",
+      "sha256": "a66ab99eaa396470e1ee4320ca89a6feb77412a4a0cb148a759a955963975ad7",
+      "artifact_type": "txt"
+    }
+  ],
+  "stage_runs": [
+    {
+      "stage": "researcher",
+      "elapsed_seconds": 3.75190766598098,
+      "returncode": 1,
+      "usage": [],
+      "prompt_sha256": "58c773feb42a37eadcd5e8a80aaec3552cd531a6021d75f110d7bd7a3b639ce8"
+    }
+  ],
+  "status": "failed",
+  "created_at": "2026-09-21T22:52:36.834494+00:00",
+  "freeze_sha256": "d4b8a64dfa733e249e69c9bfaa462cda454c35d0ec0c08aaa3115ae5c1133d73",
+  "started_at": "2026-09-21T22:52:36.894924+00:00",
+  "runner_sha256": "8e5226d16d393c508c7e086b5aaf6953b7a3a2b4de2e2bbdfecf253f6c1b1e24",
+  "cli_version": "codex-cli 0.146.0",
+  "reasoning_effort": "low",
+  "timeout_per_stage_seconds": 360,
+  "cost": {
+    "billing": "existing ChatGPT Codex access",
+    "incremental_usd": null,
+    "reason": "CLI reports token usage, not monetary cost"
+  },
+  "exposure_audit": "pending tool-trace review",
+  "invalid_reason": "Codex researcher failed; inspect stderr/events",
+  "completed_at": "2026-09-21T22:52:40.888961+00:00"
+}

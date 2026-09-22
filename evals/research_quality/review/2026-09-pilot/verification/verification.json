@@ -1,0 +1,12 @@
+{
+  "status": "PASS",
+  "checks": [
+    "baseline before candidates",
+    "incomplete approval blocked",
+    "evidence-bound export",
+    "data update invalidates approval",
+    "invalid import preserves progress",
+    "mobile overflow",
+    "no browser errors"
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"evaluation_run.schema.json",
+  "title":"Velocity pre-presentation evaluation run",
+  "type":"object",
+  "required":["run_id","study_id","study_version","arm","model","input_artifacts","output_artifacts","status"],
+  "properties":{
+    "run_id":{"type":"string"},
+    "study_id":{"type":"string"},
+    "study_version":{"type":"string"},
+    "arm":{"enum":["E1_ONE_CALL","E2_STAGED","E3_ANALYSIS_SURFACE","E4_RAW_DATA","E5_STABILITY"]},
+    "model":{"type":"object","required":["provider","model_id"]},
+    "replicate":{"type":"integer","minimum":1},
+    "input_artifacts":{"type":"array","items":{"type":"object","required":["path","sha256","exposure_class"]}},
+    "stage_runs":{"type":"array","items":{"type":"object"}},
+    "output_artifacts":{"type":"array","items":{"type":"object","required":["path","sha256","artifact_type"]}},
+    "status":{"enum":["planned","running","complete","failed","invalid"]},
+    "invalid_reason":{"type":["string","null"]},
+    "started_at":{"type":["string","null"]},
+    "completed_at":{"type":["string","null"]}
+  }
+}

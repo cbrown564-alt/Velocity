@@ -47,6 +47,9 @@ graph TD
   SCI25["STAB-CI-25 Merge controls (Done)"] --> SCI26["STAB-CI-26 Evidence-bound status (Done)"]
   SB5 --> SCI26
 
+  RQ1["RQ-1 Frozen studies and capped pilot"] --> RQ2["RQ-2 Independent researcher review"]
+  RQ2 --> RQ3["RQ-3 Product promotion decision"]
+
   MARKET["External Market Assessment"] --> P0["PILOT-0 Thesis + Success Criteria"]
   P0 --> P1["PILOT-1 Pilot Build + Packaging"]
   P0 --> P2["PILOT-2 Trust Evidence Pack"]
@@ -363,6 +366,16 @@ Audit 10 closed `STAB-BOOT-1`…`5` and `STAB-CI-25`…`26` on July 15, 2026. Th
 | ID | Outcome |
 | :--- | :--- |
 | STAB-CI-24+ | Further per-path ratchets (`services`, `store`, harmonization UI) after STAB-CI-23 closes the features/overlays gap |
+
+### 4.6 Research-quality development pilot (`RQ`)
+
+This bounded experiment is authorised separately from product expansion. It does not change production UI, engine APIs or session persistence. Owners: `workstreams/research_quality/00_strategy.md`, `prepresentation_benchmark_roadmap.md` and `evaluation_runner_protocol.md`.
+
+| ID | Outcome | Depends on | Status | Evidence / remaining work |
+|---|---|---|---|---|
+| RQ-1 | Corrected SBT-001; frozen SBT-002/003; ten Codex outputs and explicit scores | SBT-001 corrections (PR 76) | In review | PR 75; `evals/research_quality/runs/2026-09-pilot-comparison/readout.md`; realised-data checks and per-run exposure/numeric audits. No human validation claim. |
+| RQ-2 | Independent findings, preferences and correction burden | RQ-1 | In progress | Blinded pack prepared at `evals/research_quality/review/2026-09-pilot/reviewer_pack.zip`. User's reviewers own assessments; none received. |
+| RQ-3 | Decide whether to promote approved-evidence workflow | RQ-2 | Frozen | Offline review/export prototype implemented; durable product integration awaits reviewer evidence, a new study version with aligned methods, and product-specific checks. Fine-tuning deferred. |
 
 ## 5. Completed Work Reference
 

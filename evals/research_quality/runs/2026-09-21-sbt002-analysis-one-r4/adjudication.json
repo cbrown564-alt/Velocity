@@ -1,0 +1,128 @@
+{
+  "adjudicator": "Codex primary agent; provisional, uncalibrated against researchers",
+  "matches": [
+    {
+      "model_finding_id": "F1",
+      "reference_finding_id": "F_A_BROAD",
+      "match_state": "full",
+      "model_importance": "primary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F1"
+      ],
+      "rationale": "Direction, valid universe and cited evidence support this proposition."
+    },
+    {
+      "model_finding_id": "F2",
+      "reference_finding_id": "F_B_EXPLORER",
+      "match_state": "full",
+      "model_importance": "primary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F2"
+      ],
+      "rationale": "Direction, valid universe and cited evidence support this proposition."
+    },
+    {
+      "model_finding_id": "F3",
+      "reference_finding_id": "F_C_POSITION",
+      "match_state": "full",
+      "model_importance": "primary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F3",
+        "F7"
+      ],
+      "rationale": "Direction, valid universe and cited evidence support this proposition. Assessed jointly with F3, F7; complementary selected findings supply the full proposition."
+    },
+    {
+      "model_finding_id": "F4",
+      "reference_finding_id": null,
+      "match_state": "supported_novel",
+      "model_importance": "secondary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F4"
+      ],
+      "rationale": "Supported additional development/diagnostic qualification. No frozen reference counterpart; earns precision only, never mandatory recall or coverage."
+    },
+    {
+      "model_finding_id": "F5",
+      "reference_finding_id": "F_B_DIFFERENTIATED",
+      "match_state": "full",
+      "model_importance": "primary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F5"
+      ],
+      "rationale": "Direction, valid universe and cited evidence support this proposition."
+    },
+    {
+      "model_finding_id": "F6",
+      "reference_finding_id": "F_ROUTED_PREMIUM",
+      "match_state": "full",
+      "model_importance": "primary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F6"
+      ],
+      "rationale": "Direction, valid universe and cited evidence support this proposition."
+    },
+    {
+      "model_finding_id": "F7",
+      "reference_finding_id": "F_C_POSITION",
+      "match_state": "partial",
+      "model_importance": "secondary",
+      "evidence_compatible": true,
+      "claim_strength_compatible": true,
+      "supporting_model_finding_ids": [
+        "F7"
+      ],
+      "rationale": "Supported component of a broader reference proposition; complementary claims may supply the rest, but this row alone earns no full recall."
+    }
+  ],
+  "dimension_scores": {
+    "analysis_correctness": {
+      "score": 5,
+      "note": "Reported primary point estimates agree with supplied/reference tables within reported rounding; additional raw diagnostics checked against the CSV."
+    },
+    "universe_weight_routing": {
+      "score": 5,
+      "note": "Weighted primary estimates and conditional/valid bases retained."
+    },
+    "inference_correctness": {
+      "score": 5,
+      "note": "Significance, practical size, descriptive contrasts and causal limits distinguished."
+    },
+    "finding_correctness": {
+      "score": 5,
+      "note": "No unsupported selected proposition identified in this pilot review."
+    },
+    "finding_completeness": {
+      "score": 5,
+      "note": "See separate mandatory-recall metric and proposed corrections."
+    },
+    "prioritisation_redundancy": {
+      "score": null,
+      "note": "Independent researcher preference pending; no fabricated taste score."
+    },
+    "synthesis_provenance": {
+      "score": null,
+      "note": "Evidence-reference resolution is deterministic below; narrative quality awaits independent review."
+    }
+  },
+  "hard_failures": [],
+  "proposed_corrections": [],
+  "notes": [
+    "Provisional manual adjudication by the primary Codex agent, not independent researcher validation. Finding rows were reviewed against the frozen evidence.",
+    "No change to frozen data, reference tiers or scoring weights followed model exposure. The scorer gained an explicit supported_novel state after the dry pilot: supported new claims must not be mislabelled unsupported or inflate reference recall. Every run uses the same scorer version.",
+    "Joint matches are explicit: complementary selected claims can jointly recover a reference proposition. No lexical matching is used.",
+    "Human correction counts, preference scores and active review time are pending; agent-proposed edits are not measured human burden."
+  ]
+}

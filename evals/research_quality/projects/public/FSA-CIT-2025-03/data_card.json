@@ -1,0 +1,14 @@
+{
+  "source": "https://fsaopendata.blob.core.windows.net/opendatacatalog/FSA-ConsumerInsightsSurvey-March25-Tablesv1.0.xlsx",
+  "catalog": "https://data.food.gov.uk/catalog/datasets/0bfd916a-4e01-4cb8-ba16-763f0b36b50c",
+  "methodology": "https://science.food.gov.uk/article/140560-consumer-insights-tracker-technical-report-2025",
+  "retrieved": "2026-09-21",
+  "source_sha256": "affa2345fb55e332653decd246f41c0f1564ebc50aceb6d4bc316e3c45dba633",
+  "license_catalog": "Open Government Licence v3",
+  "license_url": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
+  "attribution": "Food Standards Agency / YouGov, Consumer Insights Tracker, March 2025",
+  "allowed_use_in_this_project": "Internal evaluation of published aggregate facts; no model training.",
+  "redistribution": "Original workbook retained locally and excluded from git. The catalogue links OGL v3; workbook background also contains a publisher approval notice. No broader redistribution/training right is asserted.",
+  "respondent_data": false,
+  "split": "transfer evaluation; publicly reported case, contamination cannot be ruled out"
+}

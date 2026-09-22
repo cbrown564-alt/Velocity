@@ -61,7 +61,7 @@ npx playwright install --with-deps        # once per machine/lockfile, before ci
 
 ## Synthetic research benchmark checks
 
-The `research-quality` job in `test.yml` installs the pinned Python requirements and runs `scripts/python/synthetic_tracker/tests/`. These tests build SBT-001 in temporary directories, check image-routing eligibility independently, validate finding schema/evidence and weight provenance, and verify lossless agency CSV recovery and repeatability. They do not establish researcher preference or publication quality. Local setup and commands are in `scripts/python/synthetic_tracker/README.md`.
+The `research-quality` job in `test.yml` installs the pinned Python requirements and runs `scripts/python/synthetic_tracker/tests/` and `tests/research_quality/`. SBT-001 tests check routing, evidence, weights and lossless agency recovery. The pre-presentation tests check weighted valid bases, selection metrics, input hashes and realised SBT-002/003 traps; the job also verifies both frozen artifact inventories. Regeneration tests run in temporary copies. These checks do not establish researcher preference or publication quality. Commands are in `scripts/python/synthetic_tracker/README.md` and `evals/research_quality/README.md`.
 
 ## 4. Directory Structure
 

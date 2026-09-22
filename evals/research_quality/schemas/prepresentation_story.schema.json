@@ -1,0 +1,20 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"prepresentation_story.schema.json",
+  "title":"Velocity presentation-neutral research story",
+  "type":"object",
+  "required":["study_id","beats"],
+  "properties":{
+    "study_id":{"type":"string"},
+    "beats":{"type":"array","items":{"type":"object","required":["order","role","finding_ids","headline_intent","analytical_relationship"],"properties":{
+      "order":{"type":"integer"},
+      "role":{"type":"string"},
+      "finding_ids":{"type":"array","items":{"type":"string"}},
+      "headline_intent":{"type":"string"},
+      "analytical_relationship":{"type":"string"},
+      "required_qualification":{"type":"string"},
+      "management_question":{"type":"string"}
+    }}},
+    "renderer_requirements":{"const":null}
+  }
+}
