@@ -35,6 +35,13 @@ def score(reference, matches):
             "reference_finding_id"
         ):
             raise ValueError("Supported matches require a reference ID")
+        if (
+            m["match_state"] == "supported_novel"
+            and m.get("reference_finding_id") is not None
+        ):
+            raise ValueError(
+                "Novel claims cannot borrow a reference finding or topic cluster"
+            )
     mandatory = {k for k, v in refs.items() if v["tier"] == "mandatory"}
     dne = {k for k, v in refs.items() if v["tier"] == "do_not_elevate"}
     selected = [m for m in matches if m["match_state"] != "duplicate"]

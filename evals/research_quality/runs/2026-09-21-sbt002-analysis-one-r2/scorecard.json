@@ -3,7 +3,7 @@
   "study_id": "SBT-002",
   "status": "provisional_agent_adjudication",
   "scorer_version": "selection-1.1",
-  "scorer_sha256": "1d45ac4930ad7b419f97e40029a2eedecb635741698b9998309df101b8874253",
+  "scorer_sha256": "c1f68ac6c2baaf31ef7272cc49d5d63cb773317094c00ccfd5e165e9fb75aa40",
   "dimension_scores": {
     "analysis_correctness": {
       "score": 5,

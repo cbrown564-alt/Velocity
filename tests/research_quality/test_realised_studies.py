@@ -198,3 +198,21 @@ def test_symlink_escape_cannot_be_allowlisted(tmp_path):
             {link.name: digest},
             package,
         )
+
+
+def test_novel_claim_cannot_borrow_a_reference_cluster():
+    m = module("score_selection")
+    reference = [dict(finding_id="A", tier="mandatory", topic_cluster="a")]
+    with pytest.raises(ValueError, match="Novel claims"):
+        m.score(
+            reference,
+            [
+                dict(
+                    model_finding_id="m",
+                    reference_finding_id="A",
+                    match_state="supported_novel",
+                    evidence_compatible=True,
+                    claim_strength_compatible=True,
+                )
+            ],
+        )
